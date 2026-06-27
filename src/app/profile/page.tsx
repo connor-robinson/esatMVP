@@ -515,7 +515,7 @@ export default function ProfilePage() {
   };
 
   const settingsButtonClass =
-    "bg-surface-elevated border-border-subtle hover:bg-surface-mid hover:border-border";
+    "border-0 bg-surface-mid text-text shadow-none hover:bg-surface-neutral focus-visible:shadow-none";
 
   const SettingsButton = ({
     className,
@@ -785,7 +785,7 @@ export default function ProfilePage() {
                       label="Avatar"
                       description="Generated from your username"
                       value={
-                        <div className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-border bg-primary/10 text-sm font-semibold text-primary ring-1 ring-border-subtle">
+                        <div className="flex h-16 w-16 items-center justify-center rounded-full border border-text-muted/35 bg-surface-mid text-base font-semibold text-text">
                           {getDisplayInitials(preferences.username, email)}
                         </div>
                       }
