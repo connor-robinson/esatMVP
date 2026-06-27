@@ -58,7 +58,31 @@ export function RoadmapAnalytics({
     const stageElement = document.querySelector(
       `[data-stage-id="${nextStage.id}"]`,
     ) as HTMLElement | null;
-    stageElement?.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (!stageElement) return;
+
+    const rect = stageElement.getBoundingClientRect();
+    const targetY = Math.max(
+      0,
+      window.scrollY + rect.top + rect.height / 2 - window.innerHeight * 0.42,
+    );
+    const distance = targetY - window.scrollY;
+    if (Math.abs(distance) < 8) return;
+
+    const duration = Math.min(
+      1050,
+      Math.max(420, Math.abs(distance) * 0.5),
+    );
+    const startY = window.scrollY;
+    const start = performance.now();
+
+    const step = (now: number) => {
+      const t = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      window.scrollTo(0, startY + distance * eased);
+      if (t < 1) requestAnimationFrame(step);
+    };
+
+    requestAnimationFrame(step);
   };
 
   return (

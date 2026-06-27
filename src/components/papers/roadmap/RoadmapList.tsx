@@ -34,11 +34,21 @@ interface RoadmapListProps {
   timelineAnchorRef?: RefObject<HTMLDivElement | null>;
 }
 
-const SCROLL_DURATION_MS = 5800;
-const SCROLL_START_DELAY_MS = 700;
+const SCROLL_MIN_MS = 420;
+const SCROLL_MAX_MS = 1050;
+const SCROLL_MS_PER_PX = 0.5;
+const SCROLL_BASE_DELAY_MS = 280;
 
-function easeInOutQuint(t: number): number {
-  return t < 0.5 ? 16 * t * t * t * t * t : 1 - Math.pow(-2 * t + 2, 5) / 2;
+/** Fast start, gentle stop — matches other roadmap motion. */
+function easeOutCubic(t: number): number {
+  return 1 - Math.pow(1 - t, 3);
+}
+
+function scrollDurationForDistance(distancePx: number): number {
+  return Math.min(
+    SCROLL_MAX_MS,
+    Math.max(SCROLL_MIN_MS, Math.abs(distancePx) * SCROLL_MS_PER_PX),
+  );
 }
 
 export function RoadmapList({
@@ -162,7 +172,12 @@ export function RoadmapList({
 
   // After completion loads: scroll to current stage, then expand it
   useEffect(() => {
-    if (completionLoading || nodes.length === 0 || hasRevealedRef.current) {
+    if (
+      completionLoading ||
+      !listRevealed ||
+      nodes.length === 0 ||
+      hasRevealedRef.current
+    ) {
       return;
     }
 
@@ -173,6 +188,10 @@ export function RoadmapList({
     }
 
     const targetStageId = nodes[targetIndex].stage.id;
+    const scrollStartDelayMs = Math.min(
+      900,
+      SCROLL_BASE_DELAY_MS + nodes.length * 40,
+    );
 
     const timeoutId = setTimeout(() => {
       if (hasRevealedRef.current) return;
@@ -195,6 +214,7 @@ export function RoadmapList({
         targetCenterY - window.innerHeight / 2,
       );
       const scrollDistance = finalTargetY - initialScrollY;
+      const scrollDurationMs = scrollDurationForDistance(scrollDistance);
 
       if (Math.abs(scrollDistance) < 8) {
         setExpandedStageId(targetStageId);
@@ -224,6 +244,7 @@ export function RoadmapList({
         removeInterruptListeners();
         finishScrollRef.current = null;
         window.scrollTo({ top: finalTargetY, behavior: "auto" });
+        measurePositionsRef.current();
 
         if (reveal) {
           requestAnimationFrame(() => {
@@ -259,13 +280,12 @@ export function RoadmapList({
 
         if (!startTime) startTime = timestamp;
         const elapsed = timestamp - startTime;
-        const progress = Math.min(elapsed / SCROLL_DURATION_MS, 1);
-        const easeProgress = easeInOutQuint(progress);
+        const progress = Math.min(elapsed / scrollDurationMs, 1);
+        const easeProgress = easeOutCubic(progress);
         const currentY = initialScrollY + scrollDistance * easeProgress;
 
         expectedScrollYRef.current = currentY;
         window.scrollTo(0, currentY);
-        measurePositionsRef.current();
 
         if (progress < 1) {
           scrollRafRef.current = requestAnimationFrame(step);
@@ -275,7 +295,7 @@ export function RoadmapList({
       };
 
       scrollRafRef.current = requestAnimationFrame(step);
-    }, SCROLL_START_DELAY_MS);
+    }, scrollStartDelayMs);
 
     return () => {
       clearTimeout(timeoutId);
@@ -283,7 +303,7 @@ export function RoadmapList({
         finishScrollRef.current(false);
       }
     };
-  }, [completionLoading, nodes]);
+  }, [completionLoading, listRevealed, nodes]);
 
   useEffect(() => {
     cardRefs.current = cardRefs.current.slice(0, nodes.length);
