@@ -1,0 +1,1126 @@
+{
+  "exported_at": "2026-06-29T15:59:10.766603+00:00",
+  "cohort": "borderline_curriculum_only",
+  "cohort_label": "human_review with borderline curriculum as sole blocker",
+  "part": 2,
+  "parts_total": 2,
+  "questions_in_part": 22,
+  "questions_in_cohort": 45,
+  "questions": [
+    {
+      "id": "b36a75e2-dc03-4e41-8362-45e32e64730e",
+      "id_prefix": "b36a75e2",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M_1bf60554-Easy-d0fe36be77",
+      "schema_id": "M_1bf60554",
+      "subject": "Math 2",
+      "test_type": "ESAT",
+      "primary_tag": "M2-MM7",
+      "secondary_tags": [],
+      "difficulty": "Easy",
+      "status": "pending",
+      "question_stem": "The function $F(t)$ is defined for $t > 0$ by\n\n$$\nF(t) = \\int_0^t (x^2 - 6x) \\, \\mathrm{d}x\n$$\n\nWhat is the minimum value of $F(t)$?",
+      "options": {
+        "A": "$-36$",
+        "B": "$-32$",
+        "C": "$-18$",
+        "D": "$-9$",
+        "E": "$0$",
+        "F": "$6$",
+        "G": "$36$"
+      },
+      "correct_option": "A",
+      "solution_reasoning": "The function is defined as $F(t) = \\int_0^t (x^2 - 6x) \\, \\mathrm{d}x$.\n\nTo find the minimum value of $F(t)$, we first need to find its stationary points by solving $F'(t) = 0$.\n\nBy the Fundamental Theorem of Calculus, the derivative of $F(t)$ with respect to $t$ is the integrand evaluated at $x=t$. So,\n\n$$\nF'(t) = t^2 - 6t\n$$\n\nSetting the derivative to zero to find stationary points:\n\n$$\nt^2 - 6t = 0\n$$\n\n$$\nt(t - 6) = 0\n$$\n\nThis gives $t=0$ or $t=6$. Since the function is defined for $t > 0$, the only stationary point in the domain is at $t=6$.\n\nTo determine the nature of this stationary point, we can use the second derivative:\n\n$$\nF''(t) = 2t - 6\n$$\n\nAt $t=6$, $F''(6) = 2(6) - 6 = 12 - 6 = 6$. Since $F''(6) > 0$, the point is a local minimum.\n\nNow we must find the value of the function at this point. First, we evaluate the integral to find an explicit expression for $F(t)$:\n\n$$\nF(t) = \\left[ \\frac{x^3}{3} - 3x^2 \\right]_0^t\n$$\n\n$$\nF(t) = \\left( \\frac{t^3}{3} - 3t^2 \\right) - (0) = \\frac{t^3}{3} - 3t^2\n$$\n\nFinally, we substitute $t=6$ into the expression for $F(t)$:\n\n$$\nF(6) = \\frac{6^3}{3} - 3(6^2) = \\frac{216}{3} - 3(36) = 72 - 108 = -36\n$$\n\nThus, the minimum value of $F(t)$ is $-36$.",
+      "solution_key_insight": "To find the minimum value of the function $F(t)$, find the value of $t$ for which its derivative, $F'(t)$, is zero. The derivative can be found using the Fundamental Theorem of Calculus.",
+      "distractor_map": {
+        "A": "Correct.",
+        "B": "This is the result of an integration error, for example treating $\\int x^2 \\, \\mathrm{d}x$ as $x^3$ and $\\int 6x \\, \\mathrm{d}x$ as $3x^2$. This gives $F(t) = t^3/3 - 3t^2$ but then leads to a different stationary point if the differentiation is also incorrect, or if the stationary point $t=4$ from a different error (e.g. $F(t)=t^3-6t^2$) is used with the correct integral expression.",
+        "C": "This is the value of the integral $F(t)$ evaluated at $t=3$. The value $t=3$ is the location of the minimum of the *integrand* $f(x)=x^2-6x$, not the minimum of the integral function $F(t)$.",
+        "D": "This is the minimum value of the *integrand* $f(x)=x^2-6x$, which occurs at $x=3$ giving $3^2-6(3)=-9$. The question asks for the minimum value of the integral function $F(t)$.",
+        "E": "",
+        "F": "This is the value of $t$ at which the minimum occurs, not the minimum value of the function $F(t)$ itself."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T20:41:18.987098+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is a well-constructed Math 2 calculus problem. It requires the application of the Fundamental Theorem of Calculus, differentiation to find stationary points, the second derivative test to confirm a minimum, and integration to evaluate the function at that minimum. All concepts are firmly within the M2-MM7 (Differentiation and integration) syllabus. The pacing is appropriate for an 'Easy' difficulty item, likely taking a proficient student around 90-120 seconds. The solution reasoning is clear and correct. The distractors are well-designed, targeting common errors such as confusing the minimum of the integrand with the minimum of the integral function, or confusing the location of the minimum with its value.",
+        "job_id": "20260626-200555-c30c4146",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "All concepts used (Fundamental Theorem of Calculus, differentiation of polynomials, solving quadratic equations, second derivative test, integration of polynomials, evaluating definite integrals, finding extrema) are explicitly covered under M2-MM7 and M2-MM1.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "c40d7baf-ff05-4b09-b19e-dc5579376cf2",
+      "id_prefix": "c40d7baf",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M41-Hard-cb5157256d",
+      "schema_id": "M41",
+      "subject": "Math 1",
+      "test_type": "ESAT",
+      "primary_tag": "M1-M5",
+      "secondary_tags": [
+        "M1-M3",
+        "M1-M4"
+      ],
+      "difficulty": "Hard",
+      "status": "pending",
+      "question_stem": "Two solid objects are geometrically similar and made of the same material. The mass of the larger object is 64 times the mass of the smaller object.\nWhat is the ratio of the height of the smaller object to the height of the larger object?\n",
+      "options": {
+        "A": "1 : 64",
+        "B": "1 : 16",
+        "C": "1 : 8",
+        "D": "1 : 4",
+        "E": "4 : 1"
+      },
+      "correct_option": "D",
+      "solution_reasoning": "For objects made of the same material, mass is proportional to volume. For geometrically similar objects, volume is proportional to the cube of any corresponding linear dimension, such as height ( $h$). Therefore, mass is proportional to the cube of the height: $M \\propto h^3$.\n\nLet the masses and heights of the smaller and larger objects be $M_S, h_S$ and $M_L, h_L$ respectively. We are given that $M_L = 64 M_S$.\n\nThe ratio of masses is related to the ratio of heights as follows:\n\n$$\n\\frac{M_L}{M_S} = \\left(\\frac{h_L}{h_S}\\right)^3\n$$\n\nSubstituting the known values:\n\n$$\n64 = \\left(\\frac{h_L}{h_S}\\right)^3\n$$\n\nTaking the cube root of both sides gives the ratio of the heights:\n\n$$\n\\frac{h_L}{h_S} = \\sqrt[3]{64} = 4\n$$\n\nThe question asks for the ratio of the height of the smaller object to the larger object, which is $h_S : h_L$. This is the reciprocal of our result, so the ratio is $1:4$.",
+      "solution_key_insight": "For objects made of the same material, mass is proportional to volume. Consider how volume scales with a linear dimension like height for geometrically similar shapes.",
+      "distractor_map": {
+        "A": "This is the ratio of the masses, which would imply that height scales linearly with mass.",
+        "B": "This would be the ratio of the surface areas, as area scales with the square of the linear dimension ( $1:4^2 = 1:16$).",
+        "C": "This incorrectly assumes mass scales with the square of the height (like area), giving a linear scale factor of $\\sqrt{64}=8$.",
+        "D": "Correct.",
+        "E": "This is the ratio of the height of the larger object to the smaller object, not the smaller to the larger as requested."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T17:49:15.480873+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is well-constructed and directly tests core Math 1 concepts related to ratio, proportion, and geometry of similar shapes. The solution is clear, accurate, and the distractors are thoughtfully designed to target common misconceptions. Pacing is appropriate for a 'Hard' difficulty Math 1 question, as the calculations are straightforward once the underlying principles are understood.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The question tests the understanding of how volume scales with linear dimensions for geometrically similar objects, and how mass relates to volume for objects of the same material. This is a direct application of ratio and proportion and geometry of similar figures, which are explicitly covered in Math 1.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "c8811468-ca84-41b2-b31a-ea052b5c08f0",
+      "id_prefix": "c8811468",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M79-Medium-13fd6bad83",
+      "schema_id": "M79",
+      "subject": "Math 2",
+      "test_type": "ESAT",
+      "primary_tag": "M2-MM1",
+      "secondary_tags": [],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "What is the minimum value of the expression $$(x^2 + 2x)^2 - 4x^2 - 8x + 10$$ as $x$ varies over the real numbers?\n",
+      "options": {
+        "A": "2",
+        "B": "6",
+        "C": "7",
+        "D": "10",
+        "E": "15"
+      },
+      "correct_option": "B",
+      "solution_reasoning": "Let the expression be $E$. By factoring $-4$ from the third and fourth terms, we can see a common structure:\n\n$$ \nE = (x^2 + 2x)^2 - 4(x^2 + 2x) + 10 \n$$ \n\nThis suggests the substitution $u = x^2 + 2x$. The expression becomes a quadratic in $u$:\n\n$$ \nE = u^2 - 4u + 10 \n$$ \n\nCompleting the square for this quadratic gives:\n\n$$ \nE = (u - 2)^2 - 4 + 10 = (u - 2)^2 + 6 \n$$ \n\nThe minimum value of this expression is $6$, which occurs when $u = 2$.\n\nWe must check if $u=2$ is an attainable value. The function $u(x) = x^2 + 2x$ can itself be analysed by completing the square: $u = (x+1)^2 - 1$.\nThe minimum value of $u$ is $-1$. Since $2$ is in the range of possible values for $u$ (as $2 > -1$), the minimum value of $E$ is indeed $6$.",
+      "solution_key_insight": "Notice that the terms $-4x^2 - 8x$ are a multiple of the term inside the bracket, $x^2 + 2x$. This suggests making a substitution.",
+      "distractor_map": {
+        "A": "This is the value of the substituted variable, $u$, at the minimum, not the minimum value of the expression itself.",
+        "B": "This is the correct minimum value.",
+        "C": "This can be obtained by a sign error when factoring, leading to $u^2+4u+10$, which has its minimum at $u=-1$ (the boundary of its attainable range).",
+        "D": "This is the constant term, which is the value of the expression at $x=0$, but this is not the minimum point.",
+        "E": "This is the value of the expression at $x=-1$, which corresponds to the minimum of $u=x^2+2x$, but this point is a local maximum of the overall expression."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T17:54:47.542696+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is well-constructed and directly assesses core concepts within the Math 2 curriculum, specifically 'Algebra and functions' (M2-MM1). The solution path involves algebraic manipulation, substitution, completing the square for quadratic functions, and verifying the attainability of the substituted variable's value, all of which are appropriate for the specified difficulty and subject. The distractors are plausible and target common errors or misunderstandings. The pacing is suitable for a medium-difficulty Math 2 question.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The problem requires algebraic manipulation, substitution, finding the minimum value of a quadratic function by completing the square, and determining the range of a quadratic function to ensure the substituted value is attainable. All these concepts are fundamental to 'Algebra and functions' (M2-MM1) in Mathematics 2.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "c8d3635c-3285-404d-bf8a-ee79fff75aeb",
+      "id_prefix": "c8d3635c",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "C_a9a3eea7-Hard-7c47915404",
+      "schema_id": "P_a9a3eea7",
+      "subject": "Physics",
+      "test_type": "ESAT",
+      "primary_tag": "P-P3",
+      "secondary_tags": [],
+      "difficulty": "Hard",
+      "status": "pending",
+      "question_stem": "A spherical gas bubble of radius $r$ is produced by a reaction and rises vertically through a liquid of density $\\rho$ at a constant terminal velocity $v$.\n\nThe density of the gas is negligible compared to the density of the liquid. The drag force $F$ opposing the motion of the bubble is given by the equation:\n\n$$\nF = k r v\n$$\n\nwhere $k$ is a constant.\n\nWhich of the following is the correct expression for the terminal velocity $v$?\n\n(Assume the volume of a sphere is $V = \\frac{4}{3}\\pi r^3$)",
+      "options": {
+        "A": "$\\frac{4 \\pi \\rho g r^2}{3 k}$",
+        "B": "$\\frac{4 \\pi \\rho g r}{3 k}$",
+        "C": "$\\frac{4 \\pi \\rho g r^3}{3 k}$",
+        "D": "$\\frac{3 k}{4 \\pi \\rho g r^2}$",
+        "E": "$\\frac{3 \\pi \\rho g r^2}{4 k}$"
+      },
+      "correct_option": "A",
+      "solution_reasoning": "At terminal velocity, the forces acting on the bubble are in equilibrium (acceleration is zero).\n\n**1. Identify the forces:**\n*   **Upward force:** Buoyant force ( $F_B$), equal to the weight of the displaced liquid (Archimedes' principle).\n\n    $$\n    F_B = \\text{mass of displaced liquid} \\times g = (\\rho V) g = \\rho \\left( \\frac{4}{3}\\pi r^3 \\right) g\n    $$\n\n*   **Downward forces:**\n    *   Drag force ( $F_D = k r v$).\n    *   Weight of the bubble ( $W$). Since the gas density is negligible, $W \\approx 0$.\n\n**2. Equate forces:**\n\n$$\n\\text{Upward Force} = \\text{Downward Force}\n$$\n\n$$\n\\frac{4}{3}\\pi r^3 \\rho g = k r v\n$$\n\n**3. Solve for $v$:**\n\n$$\nv = \\frac{\\frac{4}{3}\\pi r^3 \\rho g}{k r}\n$$\n\n$$\nv = \\frac{4 \\pi \\rho g r^2}{3 k}\n$$\n",
+      "solution_key_insight": "At terminal velocity, the upward buoyant force must exactly balance the downward drag force (since the weight of the gas is negligible).",
+      "distractor_map": {
+        "A": "Correct answer.",
+        "B": "Incorrect power of $r$ (likely cancelled $r^3$ with $r$ incorrectly or assumed volume $\\propto r^2$).",
+        "C": "Incorrect power of $r$ (forgot to divide by the $r$ term from the drag force equation).",
+        "D": "Inverted the expression (solved for $1/v$ or rearranged the equation incorrectly).",
+        "E": "Incorrect numerical coefficient (inverted the fraction $4/3$)."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T17:55:40.065516+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is well-constructed, testing fundamental physics principles (buoyancy, terminal velocity, force equilibrium) and basic algebraic manipulation. The solution is clear, correct, and the distractor analysis is insightful. The pacing is appropriate for a 'Hard' difficulty item, likely falling into the medium-hard range for a well-prepared student. All concepts align perfectly with the specified curriculum codes.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The item directly assesses core principles of mechanics related to forces in fluids and equilibrium, which are central to the P-P3 curriculum.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "ca9b9880-78ee-433e-ace5-845fae205404",
+      "id_prefix": "ca9b9880",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M68-Medium-fa8bdaa03a",
+      "schema_id": "M68",
+      "subject": "Math 1",
+      "test_type": "ESAT",
+      "primary_tag": "M1-M6",
+      "secondary_tags": [
+        "M1-M4",
+        "M1-M2"
+      ],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "A data set $S$ consists of $n$ distinct integers, where $n \\ge 2$. Let $\\mu$ be the mean, $m$ be the median, and $r$ be the range of $S$. A new integer $k$ is added to the set $S$.\nWhich of the following statements **must** be true?\n1. If $k > \\mu$, the new mean is greater than $\\mu$. 2. If $k > r$, the new range is greater than $r$. 3. If $k < m$, the new median is less than $m$.\n",
+      "options": {
+        "A": "1 only",
+        "B": "1 and 2 only",
+        "C": "1 and 3 only",
+        "D": "2 and 3 only",
+        "E": "1, 2 and 3"
+      },
+      "correct_option": "C",
+      "solution_reasoning": "We analyse the three statements individually.\n\n**1. Mean**\nThe sum of the elements in $S$ is $n\\mu$. The new mean is:\n\n$$\n\\mu_{\\text{new}} = \\frac{n\\mu + k}{n+1}\n$$\n\nIf $k > \\mu$, then $n\\mu + k > (n+1)\\mu$, which implies $\\mu_{\\text{new}} > \\mu$. This statement is true.\n\n**2. Range**\nThe range $r$ is defined as $\\max(S) - \\min(S)$. It only increases if $k > \\max(S)$ or $k < \\min(S)$. The condition $k > r$ compares $k$ to the magnitude of the spread, not the maximum value. Consider $S = \\{10, 20\\}$, where $r=10$. If we add $k=15$, we have $k > r$, but the new set $\\{10, 15, 20\\}$ has the same range. This statement is false.\n\n**3. Median**\nSince the integers in $S$ are distinct:\n- If $n$ is odd, $m$ is the unique middle element. Adding $k < m$ shifts the median to the average of $m$ and the element immediately below it (or $k$). This average is strictly less than $m$.\n- If $n$ is even, $m$ is the average of the two middle terms, $x_{n/2}$ and $x_{n/2+1}$. Since elements are distinct, $x_{n/2} < m$. Adding $k < m$ shifts the median to $x_{n/2}$ (or lower), which is strictly less than $m$.\n\nThis statement is true.\n\nThus, statements 1 and 3 are true.",
+      "solution_key_insight": "The range is a difference between values, not a value itself; comparing $k$ to $r$ does not guarantee $k$ is outside the existing data. For the median, note that the integers in $S$ are distinct.",
+      "distractor_map": {
+        "A": "Correctly identifies the mean but fails to recognise that adding a value below the median strictly lowers it for distinct integers.",
+        "B": "Incorrectly assumes that if a value exceeds the range magnitude, it must exceed the maximum element.",
+        "C": "Correct option.",
+        "D": "Fails to verify the mean correctly and falls for the distractor regarding the range.",
+        "E": "Incorrectly believes the statement about the range is true."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T18:02:26.205607+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The question is well-designed and effectively tests the understanding of fundamental statistical measures (mean, median, range) and how they are affected by the addition of a new data point. Each statement requires careful consideration, with the median statement benefiting from the 'distinct integers' condition and the range statement requiring a good understanding of its definition to identify a counterexample. The solution reasoning is clear and accurate, correctly identifying statements 1 and 3 as true and statement 2 as false. The pacing is appropriate for a medium-difficulty ESAT item, requiring a few steps of logical deduction and calculation for each statement.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The question directly assesses the definitions and properties of mean, median, and range, and how these measures change when a new data point is introduced. This is a core statistical concept. The evaluation of 'must be true' statements involves logical reasoning and basic algebraic manipulation of inequalities, which are covered under algebra. All aspects are well within the scope of Math 1.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "d64f4e06-7620-4818-97af-1d0f55dbd978",
+      "id_prefix": "d64f4e06",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M5-Hard-73cd8154eb",
+      "schema_id": "M5",
+      "subject": "Math 2",
+      "test_type": "ESAT",
+      "primary_tag": "M2-MM1",
+      "secondary_tags": [
+        "M2-MM3"
+      ],
+      "difficulty": "Hard",
+      "status": "pending",
+      "question_stem": "What is the maximum value of the expression $\\sin^2 x + 3 \\cos x$ for real values of $x$?\n",
+      "options": {
+        "A": "1",
+        "B": "3",
+        "C": "13/4",
+        "D": "4",
+        "E": "5"
+      },
+      "correct_option": "B",
+      "solution_reasoning": "We can express the function entirely in terms of $\\cos x$ using the identity $\\sin^2 x = 1 - \\cos^2 x$. Let the expression be $y$.\n\n$$\ny = (1 - \\cos^2 x) + 3 \\cos x = -\\cos^2 x + 3 \\cos x + 1\n$$\n\nLet $u = \\cos x$. Since $x$ is a real number, the possible values for $u$ are in the interval $[-1, 1]$. We need to find the maximum value of the quadratic function $f(u) = -u^2 + 3u + 1$ on this restricted domain.\n\nThe parabola $f(u)$ opens downwards, and its vertex is at $u = -\\frac{3}{2(-1)} = 1.5$.\n\nSince the vertex is outside the domain $[-1, 1]$, the maximum value on this interval must occur at an endpoint. As the vertex is to the right of the interval, the function is strictly increasing on $[-1, 1]$. The maximum value therefore occurs at $u=1$.\n\nSubstituting $u=1$ into the expression gives:\n\n$$\nf(1) = -(1)^2 + 3(1) + 1 = -1 + 3 + 1 = 3\n$$\n\nThe maximum value is 3.",
+      "solution_key_insight": "Rewrite the expression as a quadratic in terms of $\\cos x$. Remember to consider the restricted domain of $\\cos x$ when finding the maximum of this quadratic.",
+      "distractor_map": {
+        "A": "This is the value of the expression when $\\cos x = 0$, which is not the maximum.",
+        "B": "Correct answer.",
+        "C": "This is the value at the vertex of the quadratic ( $u=1.5$), but this value of $\\cos x$ is not possible.",
+        "D": "This results from incorrectly adding the maximum of $\\sin^2 x$ (1) and the maximum of $3 \\cos x$ (3), which do not occur at the same value of $x$.",
+        "E": "This value could arise from a sign error when evaluating the quadratic, for example calculating $1+3+1$ instead of $-1+3+1$."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T18:20:30.882841+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is well-constructed and directly tests core concepts within the Math 2 syllabus. The problem requires students to apply trigonometric identities to transform an expression into a quadratic function, then find the maximum value of this quadratic over a restricted domain (the range of cos x). This is a standard and appropriate 'Hard' level problem for Math 2.\n\nThe solution provided is clear, accurate, and follows a logical progression. It correctly identifies the key steps: substitution using a trigonometric identity, defining a new variable with its restricted domain, finding the vertex of the resulting quadratic, and evaluating the function at the appropriate point within the domain. The distractor analysis is also insightful, explaining common errors.\n\nPacing is appropriate; a student familiar with these concepts should be able to solve this within the typical ESAT time limit for a 'Hard' question.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "All concepts used (trigonometric identities, range of trigonometric functions, quadratic functions, finding extrema on a restricted domain) are explicitly covered in M2-MM1 (Algebra and functions) and M2-MM3 (Trigonometry).",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "d76f0ca9-74e1-4a05-8f80-b58eb7ce0759",
+      "id_prefix": "d76f0ca9",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M47-Medium-573e38de4a",
+      "schema_id": "M47",
+      "subject": "Math 2",
+      "test_type": "ESAT",
+      "primary_tag": "M2-MM4",
+      "secondary_tags": [
+        "M2-MM1"
+      ],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "Find the set of real values of $x$ that satisfy the equation $$\\log_2(x) + \\log_2(x-2) = 3$$",
+      "options": {
+        "A": "{3}",
+        "B": "{4}",
+        "C": "{5}",
+        "D": "{-2, 4}",
+        "E": "{-1, 3}"
+      },
+      "correct_option": "B",
+      "solution_reasoning": "The equation can be simplified by combining the logarithmic terms using the rule $\\log_a M + \\log_a N = \\log_a(MN)$:\n\n$$\n\\log_2(x(x-2)) = 3\n$$\n\nWriting this in exponential form gives $x(x-2) = 2^3 = 8$. This leads to a quadratic equation:\n\n$$\nx^2 - 2x - 8 = 0\n$$\n\nFactorising yields $(x-4)(x+2) = 0$, giving potential solutions $x=4$ and $x=-2$.\n\nHowever, the arguments of the logarithms in the original equation must be positive. This requires $x > 0$ and $x-2 > 0$, which simplifies to the condition $x>2$.\n\nOf our two potential solutions, only $x=4$ satisfies this condition. The solution $x=-2$ is extraneous, as $\\log_2(-2)$ is undefined.",
+      "solution_key_insight": "After solving the equation, remember to check that your solutions are valid within the domain of the original logarithmic terms.",
+      "distractor_map": {
+        "A": "This is the positive solution to $x(x-2)=3$, which arises from forgetting to evaluate $2^3$ on the right-hand side.",
+        "B": "This is the correct answer.",
+        "C": "This results from incorrectly applying the logarithm addition rule as $\\log(a)+\\log(b) = \\log(a+b)$, leading to the equation $2x-2=8$.",
+        "D": "This includes the extraneous solution $x=-2$, which is invalid as it makes the arguments of the original logarithms negative.",
+        "E": "These are the two solutions to $x(x-2)=3$, which arises from forgetting to evaluate $2^3$ on the right-hand side."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T18:27:54.930997+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is a well-constructed Math 2 question testing the properties of logarithms, solving logarithmic equations, and understanding domain restrictions. The question stem is clear, the options are appropriate, and the correct answer is unambiguously derived. The solution reasoning is thorough and accurate, including the crucial step of checking for extraneous solutions. The distractor map effectively explains common errors. Pacing is appropriate for a medium-difficulty Math 2 question.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The item perfectly aligns with the 'Exponentials and logarithms' (M2-MM4) and 'Algebra and functions' (M2-MM1) sections of the Math 2 curriculum.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "d77f74ab-c311-433a-8e73-efdc7bf77c60",
+      "id_prefix": "d77f74ab",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M82-Medium-0416fcb079",
+      "schema_id": "M82",
+      "subject": "Math 1",
+      "test_type": "ESAT",
+      "primary_tag": "M1-M3",
+      "secondary_tags": [
+        "M1-M4"
+      ],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "Element X consists of two naturally occurring isotopes with mass numbers 69 and 71. The relative atomic mass of X is 69.8.\nWhat is the percentage abundance of the isotope with mass number 69?\n",
+      "options": {
+        "A": "20%",
+        "B": "40%",
+        "C": "50%",
+        "D": "60%",
+        "E": "80%"
+      },
+      "correct_option": "D",
+      "solution_reasoning": "Let the proportion of the isotope with mass number 69 be $p$. The proportion of the isotope with mass number 71 must therefore be $1-p$.\n\nThe relative atomic mass is a weighted average of the masses of the isotopes, so we can set up the equation:\n\n$$\n69p + 71(1-p) = 69.8\n$$\n\nExpanding the brackets gives $69p + 71 - 71p = 69.8$, which simplifies to $71 - 2p = 69.8$.\n\nRearranging to solve for $p$:\n\n$$\n2p = 71 - 69.8 = 1.2\n$$\n\nThis gives $p = 0.6$. This proportion corresponds to a percentage abundance of $60\\%$.",
+      "solution_key_insight": "The relative atomic mass is a weighted average. If the abundance of the isotope with mass 69 is $p$, what is the abundance of the isotope with mass 71 in terms of $p$?",
+      "distractor_map": {
+        "A": "This is $100\\% - 80\\%$. The $80\\%$ likely comes from misinterpreting the decimal part of the atomic mass.",
+        "B": "This is the abundance of the heavier isotope (mass number 71), which is $1 - 0.6 = 0.4$ or $40\\%$.",
+        "C": "This assumes the isotopes have equal abundance, which would result in a relative atomic mass of $(69+71)/2 = 70$.",
+        "D": "Correct answer.",
+        "E": "This mistake comes from misinterpreting the decimal part of the atomic mass, $0.8$, as a proportion, leading to an answer of $80\\%$."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T18:28:43.544592+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is a standard weighted average problem, which falls squarely within 'Ratio and proportion' (M1-M3) and 'Algebra' (M1-M4) for setting up and solving the linear equation. The problem is well-posed, the solution is clear and correct, and the distractors are plausible. It is solvable within the expected ESAT timeframe for a medium difficulty question. No Math 2 concepts are required.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "All concepts used are firmly within the Math 1 curriculum.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "dcacc5a7-6760-42d9-b0f0-db38e077c11f",
+      "id_prefix": "dcacc5a7",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M_1ef961ec-Medium-fb2dc72fa7",
+      "schema_id": "M_1ef961ec",
+      "subject": "Math 2",
+      "test_type": "ESAT",
+      "primary_tag": "M2-MM7",
+      "secondary_tags": [
+        "M2-MM2",
+        "M2-MM1"
+      ],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "The line $L$ is tangent to the circle with equation $x^2 + y^2 = 20$ at the point $(4, -2)$.\nThe line $L$ is also tangent to the curve with equation $y = ax^2 + bx$ at the point where $x=1$.\n\nWhat is the value of $a-b$?",
+      "options": {
+        "A": "$-28$",
+        "B": "$-4$",
+        "C": "$4$",
+        "D": "$13$",
+        "E": "$23$",
+        "F": "$28$"
+      },
+      "correct_option": "F",
+      "solution_reasoning": "Step 1: Find the equation of the tangent line $L$.\nThe circle $x^2 + y^2 = 20$ has its centre at the origin $(0, 0)$.\nThe gradient of the radius from the centre $(0, 0)$ to the point of tangency $(4, -2)$ is:\n\n$$\nm_{\\text{radius}} = \\frac{-2 - 0}{4 - 0} = -\\frac{1}{2}\n$$\n\nThe tangent line $L$ is perpendicular to the radius at the point of tangency. Therefore, its gradient is the negative reciprocal of the radius gradient:\n\n$$\nm_L = -\\frac{1}{m_{\\text{radius}}} = -\\frac{1}{-1/2} = 2\n$$\n\nThe equation of the line $L$ can be found using the point-gradient form with the point $(4, -2)$ and gradient $m_L=2$:\n\n$$\ny - (-2) = 2(x - 4)\n$$\n\n$$\ny + 2 = 2x - 8\n$$\n\n$$\ny = 2x - 10\n$$\n\nStep 2: Use the tangency condition for the parabola.\nThe curve is $y = ax^2 + bx$. Its derivative is $\\frac{dy}{dx} = 2ax + b$.\nThe line $L$ is tangent to this curve at $x=1$. This means the gradient of the curve at $x=1$ must be equal to the gradient of $L$.\n\n$$\n\\frac{dy}{dx}\\bigg|_{x=1} = 2a(1) + b = m_L = 2\n$$\n\nThis gives our first equation: $2a + b = 2$.\n\nStep 3: Find the point of tangency and form a second equation.\nThe point of tangency lies on both the line $L$ and the parabola. Since we know its $x$ -coordinate is $1$, we can find its $y$ -coordinate using the equation of line $L$:\n\n$$\ny = 2(1) - 10 = -8\n$$\n\nSo the point of tangency is $(1, -8)$. This point must also satisfy the parabola's equation $y = ax^2 + bx$:\n\n$$\n-8 = a(1)^2 + b(1)\n$$\n\nThis gives our second equation: $a + b = -8$.\n\nStep 4: Solve the simultaneous equations.\nWe have the system:\n1) $2a + b = 2$\n2) $a + b = -8$\n\nSubtracting equation (2) from equation (1):\n\n$$\n(2a + b) - (a + b) = 2 - (-8)\n$$\n\n$$\na = 10\n$$\n\nSubstitute $a=10$ into equation (2):\n\n$$\n10 + b = -8 \\implies b = -18\n$$\n\nStep 5: Calculate the required value.\nThe question asks for the value of $a-b$.\n\n$$\na - b = 10 - (-18) = 10 + 18 = 28\n$$\n\nThus, the correct option is F.",
+      "solution_key_insight": "First, find the equation of the tangent line to the circle. Then, use the conditions for tangency (matching gradients and a common point) to determine the coefficients of the parabola.",
+      "distractor_map": {
+        "A": "This is the value of $b-a = -18 - 10 = -28$, a sign error in the final calculation.",
+        "B": "This can result from a sign error when solving the simultaneous equations, for example by calculating $a = 2 - 8 = -6$, which leads to $b = -2$ and $a-b = -4$.",
+        "C": "This can result from correctly finding the gradient condition $2a+b=2$ but incorrectly finding the point condition, for instance by assuming the point of tangency is $(1,0)$, which gives $a+b=0$. Solving these gives $a=2, b=-2$ and $a-b=4$.",
+        "D": "This results from using the circle's point of tangency $(4, -2)$ as a point on the parabola, giving the incorrect condition $16a+4b=-2$, and combining it with the correct point condition $a+b=-8$. This leads to $a=5/2, b=-21/2$ and $a-b=13$.",
+        "E": "This results from using the gradient of the radius ( $-1/2$) instead of the tangent's gradient for the parabola's derivative at $x=1$. This gives the condition $2a+b=-1/2$ instead of $2a+b=2$. Solving with $a+b=-8$ gives $a=15/2, b=-31/2$ and $a-b=23$.",
+        "F": "This is the correct value derived from the worked solution."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T18:33:30.971815+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The question is a well-constructed Math 2 problem that effectively combines concepts from coordinate geometry (M2-MM2), differentiation (M2-MM7), and algebra (M2-MM1). The problem requires finding the equation of a tangent line to a circle, then using the conditions of tangency (matching gradients and a common point) to a parabola to solve for unknown coefficients. The solution is clear, accurate, and logically structured. The distractors are well-designed, targeting common errors students might make. While the estimated time to solve is slightly above the 90-second guideline for a medium question (around 115-120 seconds), it is reasonable given the multi-step nature of the problem and the combination of different mathematical topics. The calculations are straightforward and do not involve complex numbers or extensive algebraic manipulation beyond solving simultaneous linear equations. Overall, it's a high-quality item.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The question requires knowledge of: 1. Equation of a circle and finding the tangent to a circle at a given point (Coordinate geometry - M2-MM2). 2. Differentiation of polynomial functions and using the derivative to find the gradient of a tangent (Differentiation and integration - M2-MM7). 3. Solving simultaneous linear equations (Algebra and functions - M2-MM1). All these topics are explicitly covered within the Math 2 curriculum.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "ddb28c06-8246-47a1-8532-951d03b8072e",
+      "id_prefix": "ddb28c06",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M_72682ff8-Medium-285e9d3596",
+      "schema_id": "M_72682ff8",
+      "subject": "Math 2",
+      "test_type": "ESAT",
+      "primary_tag": "M2-MM1",
+      "secondary_tags": [
+        "M2-MM7"
+      ],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "A curve has the equation $y = x^3 + ax^2 + bx$, where $a$ and $b$ are real constants.\n\nThe curve has a stationary point at $x = 2$.\n\nWhat is the total area of the finite region or regions bounded by the curve and the $x$ -axis?",
+      "options": {
+        "A": "$\\frac{4}{3}$",
+        "B": "$\\frac{27}{4}$",
+        "C": "108",
+        "D": "0",
+        "E": "Cannot be determined from the information given.",
+        "F": "$\\frac{32}{3}$"
+      },
+      "correct_option": "E",
+      "solution_reasoning": "Let the equation of the curve be $f(x) = x^3 + ax^2 + bx$.\n\nTo find the stationary points, we first find the derivative with respect to $x$:\n\n$$\n\n\\frac{dy}{dx} = 3x^2 + 2ax + b\n\n$$\n\n\nWe are given that the curve has a stationary point at $x=2$. This means that $\\frac{dy}{dx} = 0$ when $x=2$.\n\nSubstituting $x=2$ into the derivative:\n\n$$\n\n3(2)^2 + 2a(2) + b = 0 \n\n$$\n\n$$\n\n12 + 4a + b = 0 \n\n$$\n\n\nThis is a single linear equation relating the two unknown constants, $a$ and $b$. This means there is not a unique solution for $a$ and $b$. We can express $b$ in terms of $a$: $b = -4a - 12$.\n\nThe equation of the curve is therefore $y = x^3 + ax^2 - (4a+12)x$. The roots of this cubic, which determine the boundaries of the area regions, depend on the value of $a$.\n\nThe roots are given by $x(x^2 + ax - (4a+12)) = 0$. One root is $x=0$, and the other two depend on the solutions to the quadratic equation $x^2 + ax - (4a+12) = 0$.\n\nSince the roots and the shape of the curve depend on the choice of $a$, the area bounded by the curve and the x-axis will also depend on $a$. To confirm this, we can test two possible valid pairs of $(a, b)$.\n\nCase 1: Let's assume (without justification) that the stationary point at $x=2$ is also a root, so $f(2)=0$.\n$(2)^3 + a(2)^2 + b(2) = 0 \\implies 8 + 4a + 2b = 0 \\implies 4 + 2a + b = 0$.\nSolving simultaneously with $12 + 4a + b = 0$ gives $a=-4$ and $b=4$. The curve is $y = x^3 - 4x^2 + 4x = x(x-2)^2$. The area is $\\int_0^2 x(x-2)^2 dx = \\frac{4}{3}$.\n\nCase 2: Let's assume (without justification) that the other stationary point is at $x=0$. This means $f'(0)=0$, so $b=0$.\nFrom $12+4a+b=0$, we get $12+4a=0$, so $a=-3$. The curve is $y = x^3 - 3x^2 = x^2(x-3)$. The area is $|\\int_0^3 (x^3-3x^2) dx| = |[\\frac{x^4}{4} - x^3]_0^3| = |\\frac{81}{4} - 27| = |-\\frac{27}{4}| = \\frac{27}{4}$.\n\nSince different valid scenarios (different choices of $a$) lead to different areas, the area cannot be determined from the information given.\n\nTherefore the correct answer is E.",
+      "solution_key_insight": "The single condition on the derivative provides only one linear equation relating the two unknown coefficients, $a$ and $b$. This is insufficient to uniquely determine the curve, and therefore the area cannot be uniquely determined.",
+      "distractor_map": {
+        "A": "This is the area calculated by making the unjustified assumption that the stationary point at $x=2$ is also a root (i.e., it lies on the x-axis). This provides a second equation to solve for $a$ and $b$, leading to the specific curve $y=x(x-2)^2$.",
+        "B": "This is the area calculated by making the unjustified assumption that the other stationary point is at $x=0$. This provides a second condition ( $b=0$) to solve for $a$ and $b$, leading to the specific curve $y=x^2(x-3)$.",
+        "C": "This is the area calculated by assuming the two non-zero roots of the cubic are equal and positive, leading to the curve $y=x(x-6)^2$, which has stationary points at $x=2$ and $x=6$.",
+        "D": "This might be chosen if a student incorrectly concludes that the function must be odd (implying symmetric regions that cancel out, giving a net area of 0), or if they assume $a=b=0$, which gives $y=x^3$ (no finite bounded area), but this violates the stationary point condition.",
+        "E": "Correct. The information provides only one equation for two unknowns, so the curve is not uniquely determined, and neither is the area.",
+        "F": "This distractor, $32/3$, is $2 \\times (16/3)$. A possible error path could involve calculating the area for $y=x^3-4x^2$ (a slight variant of one of the wrong paths) which gives $|-64/3|$ or making some other calculation error."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T18:36:27.06347+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is well-constructed and effectively tests a key mathematical reasoning skill: determining when there is sufficient information to solve a problem. The core concept is that a single condition (stationary point at x=2) for a function with two unknown parameters (a and b) leads to a single equation relating those parameters, meaning the parameters (and thus the specific curve) are not uniquely determined. Consequently, the area bounded by the curve and the x-axis cannot be uniquely determined.\n\nThe solution reasoning is excellent, clearly demonstrating the derivation of the relationship between 'a' and 'b' and then providing two concrete examples (leading to options A and B) to prove that different valid curves yield different areas. This thoroughly justifies option E.\n\nThe distractors are well-chosen, representing plausible numerical answers that would arise from making additional, unjustified assumptions about the curve (e.g., that the stationary point is also a root, or that another specific point is a stationary point). This makes the item challenging for students who do not grasp the concept of sufficiency of information.\n\nPacing is appropriate. A student who quickly identifies the non-uniqueness can answer relatively fast. Students who attempt to force a solution will spend too much time, which is a valid aspect of ESAT-style questions testing problem-solving strategy.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The question requires differentiation to find stationary points (`M2-MM7`), algebraic manipulation of polynomials and understanding of roots (`M2-MM1`), and the concept of definite integration for area under a curve (`M2-MM7`). All these concepts are explicitly covered in the Math 2 curriculum.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "de2975ce-03d4-4733-8582-872067ff6f12",
+      "id_prefix": "de2975ce",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "B_7a9e4059-Medium-a6442c48d9",
+      "schema_id": "C_7a9e4059",
+      "subject": "Chemistry",
+      "test_type": "ESAT",
+      "primary_tag": "chemistry-C9",
+      "secondary_tags": [
+        "chemistry-C10"
+      ],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "An enzyme has an optimum pH of 7. The rate of the enzyme-catalysed reaction is measured in three separate mixtures. In each mixture, the final volume is identical.\n\n    The results are:\n\n    | Mixture | Substance Added (Final Concentration) | Relative Rate / % |\n    |---|---|---|\n    | 1 | Water (Control) | 100 |\n    | 2 | Acid X ( $0.01 \\text{ mol dm}^{-3}$) | 5 |\n    | 3 | Acid Y ( $0.01 \\text{ mol dm}^{-3}$) | 45 |\n\n    Which conclusion is best supported by these results?\n    ",
+      "options": {
+        "A": "Acid X is a stronger acid than Acid Y.",
+        "B": "The solution in Mixture 2 has a higher pH than the solution in Mixture 3.",
+        "C": "The difference in rate is due to the inhibitory effect of the anion in Acid X.",
+        "D": "Acid Y does not dissociate in aqueous solution.",
+        "E": "The concentration of hydrogen ions, $[H^+]$, is the same in Mixture 2 and Mixture 3."
+      },
+      "correct_option": "A",
+      "solution_reasoning": "The enzyme works optimally at pH $7$. Adding an acid lowers the pH, moving the conditions away from the optimum and reducing enzyme activity (likely via denaturation or alteration of active site charge).\n\n    Mixture 2 shows a very large drop in activity ( $100\\% \\to 5\\%$), indicating a significant deviation from the optimum pH (a very low pH).\n    Mixture 3 shows a moderate drop ( $100\\% \\to 45\\%$), indicating a smaller deviation (a moderately low pH).\n\n    Since both acids are present at the same molar concentration ( $0.01 \\text{ mol dm}^{-3}$), the difference in pH must be due to the extent of dissociation. Acid X produces a lower pH (more $H^+$ ions) than Acid Y, implying Acid X dissociates more fully. Therefore, Acid X is a stronger acid than Acid Y.\n    ",
+      "solution_key_insight": "Recall that for acids at the same molar concentration, a stronger acid dissociates more fully, creating a lower pH (higher $[H^+]$) and thus a greater effect on pH-sensitive systems.",
+      "distractor_map": {
+        "A": "Correct answer",
+        "B": "Incorrectly infers that the mixture with the 'stronger' effect (lower activity) has a higher pH, or confuses the inverse nature of the pH scale (where more acidic = lower pH).",
+        "C": "Assumes that because the molar concentrations of the acids are equal, their effect on pH must be identical, leading to the incorrect conclusion that the difference in activity must be caused by the specific anion acting as an inhibitor.",
+        "D": "Incorrectly assumes that because Acid Y is 'weaker' (less effect), it does not dissociate at all; however, the drop from 100% to 45% shows it does have an effect.",
+        "E": "Confuses the molar concentration of the acid molecules (which is equal) with the concentration of dissociated hydrogen ions (which depends on acid strength)."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T21:01:06.382481+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The question directly assesses knowledge of acid strength, pH, and their effect on reaction rates, which are covered under 'chemistry-C9: Acids, bases and salts' and 'chemistry-C10: Rates of reaction'. The biological context of enzymes is a common application used to test chemical principles.",
+        "job_id": "all-curriculum-v2",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The question directly assesses knowledge of acid strength, pH, and their effect on reaction rates, which are covered under 'chemistry-C9: Acids, bases and salts' and 'chemistry-C10: Rates of reaction'. The biological context of enzymes is a common application used to test chemical principles.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "e3919770-9761-4cf0-93c9-0176a9ca89ca",
+      "id_prefix": "e3919770",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M7-Medium-768d0c9895",
+      "schema_id": "M7",
+      "subject": "Math 2",
+      "test_type": "ESAT",
+      "primary_tag": "M2-MM2",
+      "secondary_tags": [
+        "M2-MM1"
+      ],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "Real variables$x$and$y$satisfy the equation$$x^2 + y^2 - 4x - 2y + 1 = 0$$\nWhat is the maximum value of the expression$4x + 3y$?\n",
+      "options": {
+        "A": "11",
+        "B": "17",
+        "C": "19",
+        "D": "21",
+        "E": "25"
+      },
+      "correct_option": "D",
+      "solution_reasoning": "The equation of the circle can be rewritten by completing the square:\n\n$$ \n(x^2 - 4x) + (y^2 - 2y) + 1 = 0 \\\\ \n(x-2)^2 - 4 + (y-1)^2 - 1 + 1 = 0 \\\\ \n(x-2)^2 + (y-1)^2 = 4 \n$$ \n\nThis is a circle with centre $(2, 1)$ and radius $r=2$.\n\nWe want to find the maximum value of $k = 4x + 3y$. The equation $4x + 3y = k$ represents a family of parallel lines. The maximum value of $k$ for a point $(x,y)$ on the circle occurs when this line is tangent to the circle.\n\nFor the line $4x + 3y - k = 0$ to be tangent, its perpendicular distance from the centre $(2, 1)$ must equal the radius, $2$.\n\n$$ \n\\frac{|4(2) + 3(1) - k|}{\\sqrt{4^2 + 3^2}} = 2 \n$$ \n\nThis simplifies to:\n\n$$ \n\\frac{|11 - k|}{5} = 2 \\implies |11 - k| = 10 \n$$ \n\nThis gives two possible values for $k$:\n$11 - k = 10 \\implies k = 1$\n$11 - k = -10 \\implies k = 21$\n\nThe maximum value is $21$.",
+      "solution_key_insight": "First, find the centre and radius of the circle. The expression $4x+3y$ is maximised when the line $4x+3y=k$ is tangent to this circle.",
+      "distractor_map": {
+        "A": "This is the value of the expression $4x+3y$ at the centre of the circle, not the maximum value on its circumference.",
+        "B": "This is the value of the expression at the highest point of the circle, $(2,3)$.",
+        "C": "This is the value of the expression at the rightmost point of the circle, $(4,1)$.",
+        "D": "Correct answer.",
+        "E": "This results from incorrectly adding the radius to both coordinates of the centre before evaluating the expression."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T18:53:50.907706+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The question is a standard coordinate geometry problem involving finding the maximum value of a linear expression subject to a circular constraint. It requires completing the square to identify the circle's properties (center and radius) and then applying the condition for tangency using the distance from a point to a line formula. This is a classic application of coordinate geometry concepts and is well-aligned with the Math 2 curriculum (M2-MM1 for algebraic manipulation/completing the square, and M2-MM2 for coordinate geometry of circles and lines, including distance formula and tangency). The solution provided is clear, correct, and efficient. The distractors are well-designed, targeting common errors or values at specific points on the circle. The pacing is appropriate for a medium-difficulty ESAT item, likely taking a student around 90-105 seconds.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The problem requires completing the square and algebraic manipulation (M2-MM1) to find the circle's equation. Subsequently, it uses coordinate geometry concepts such as the equation of a circle, the distance from a point to a line, and the condition for tangency (M2-MM2). All these topics are explicitly covered and appropriate for the Math 2 curriculum.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "e7ee9695-a2cf-4bf7-8b02-de401d13fe19",
+      "id_prefix": "e7ee9695",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "B_ba3774f0-Medium-2a0c12afa0",
+      "schema_id": "B_ba3774f0",
+      "subject": "Biology",
+      "test_type": "ESAT",
+      "primary_tag": "biology-B4",
+      "secondary_tags": [
+        "biology-B3"
+      ],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "Haemophilia A is a condition caused by a recessive allele on the X chromosome.\n\nA woman with a normal phenotype has a brother with haemophilia A. Both of her\n\nparents have a normal phenotype.\n\nThe woman has a child with a man who has a normal phenotype.\n\nWhat is the probability that this child will have haemophilia A?",
+      "options": {
+        "A": "$\\frac{1}{2}$",
+        "B": "$\\frac{1}{4}$",
+        "C": "$\\frac{1}{8}$",
+        "D": "$\\frac{1}{16}$",
+        "E": "$\\frac{1}{6}$"
+      },
+      "correct_option": "C",
+      "solution_reasoning": "First, determine the woman's genotype probability.\n\nSince her parents are normal but have an affected son ( $X^h Y$), the mother must be a carrier ( $X^H X^h$) and the father is normal ( $X^H Y$).\n\nThe woman is their daughter and has a normal phenotype. The cross $X^H X^h \\times X^H Y$ produces female offspring that are 1/2 $X^H X^H$ and 1/2 $X^H X^h$.\n\nTherefore, the probability the woman is a carrier is 1/2.\n\nSecond, calculate the transmission probability.\nThe cross is Woman (probability 1/2 carrier) $\\times$ Normal Man ( $X^H Y$).\nIf she is a carrier, the probability of an affected child ( $X^h Y$) is 1/4.\nIf she is not a carrier, the probability is 0.\n\nTotal probability:\n\n$$\nP(\\text{Carrier}) \\times P(\\text{Affected} | \\text{Carrier}) = \\frac{1}{2} \\times \\frac{1}{4} = \\frac{1}{8}\n$$",
+      "solution_key_insight": "The woman's genotype is not certain; calculate the probability she is a carrier based on her parents, then multiply this by the probability of passing the condition to a child.",
+      "distractor_map": {
+        "A": "Confused the probability of the woman being a carrier (1/2) with the final answer, or calculated the risk for a son assuming the mother is a carrier.",
+        "B": "Assumed the woman is definitely a carrier because the trait is in her family, omitting the 1/2 probability of her inheriting the allele.",
+        "C": "Correct answer.",
+        "D": "Miscalculated the combined probability (e.g., applying an extra 1/2 factor for sex determination unnecessarily).",
+        "E": "Incorrectly treated the condition as autosomal recessive (calculating 2/3 chance of being a carrier x 1/4 chance of transmission)."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T21:01:29.019036+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "All concepts required to solve the problem (X-linked inheritance, recessive alleles, genotype/phenotype, and probability calculations) are explicitly covered by the specified curriculum codes.",
+        "job_id": "all-curriculum-v2",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "All concepts required to solve the problem (X-linked inheritance, recessive alleles, genotype/phenotype, and probability calculations) are explicitly covered by the specified curriculum codes.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "ed5ec571-0165-4ab4-a514-c5492394dc2a",
+      "id_prefix": "ed5ec571",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M_0cc81c22-Easy-f4a83fc468",
+      "schema_id": "M_0cc81c22",
+      "subject": "Math 1",
+      "test_type": "ESAT",
+      "primary_tag": "M1-M7",
+      "secondary_tags": [
+        "M1-M2"
+      ],
+      "difficulty": "Easy",
+      "status": "pending",
+      "question_stem": "An event has a probability of $\\frac{2}{3}$ of occurring.\n\nThree independent trials of the event are performed.\n\nWhat is the probability that the event occurs at least once?",
+      "options": {
+        "A": "$\\frac{1}{27}$",
+        "B": "$\\frac{8}{27}$",
+        "C": "$\\frac{4}{9}$",
+        "D": "$\\frac{2}{3}$",
+        "E": "$\\frac{19}{27}$",
+        "F": "$\\frac{26}{27}$"
+      },
+      "correct_option": "F",
+      "solution_reasoning": "Let $E$ be the event occurring in a single trial. We are given the probability $P(E) = \\frac{2}{3}$.\n\nThe probability that the event does *not* occur in a single trial is the complement, $P(E') = 1 - P(E)$.\n\n\n\n$$\nP(E') = 1 - \\frac{2}{3} = \\frac{1}{3}\n$$\n\n\n\n\nThe question asks for the probability that the event occurs at least once in three independent trials. This is the complement of the event 'not occurring in any of the three trials'.\n\nFirst, we calculate the probability that the event does not occur in any of the three trials. Since the trials are independent, we multiply the probabilities:\n\n\n\n$$\nP(\\text{fails all three}) = P(E') \\times P(E') \\times P(E') = \\left(\\frac{1}{3}\\right)^3 = \\frac{1}{27}\n$$\n\n\n\n\nThe probability of the event occurring at least once is 1 minus this value:\n\n\n\n$$\nP(\\text{at least one}) = 1 - P(\\text{fails all three}) = 1 - \\frac{1}{27} = \\frac{26}{27}\n$$\n\n\n\n\nTherefore, the correct answer is F.",
+      "solution_key_insight": "The probability of an event occurring 'at least once' is found most easily by calculating 1 minus the probability that it never occurs (the complement event).",
+      "distractor_map": {
+        "A": "This is the probability that the event never occurs, $(\\frac{1}{3})^3$. The candidate has calculated the probability of the complement event but forgotten to subtract it from 1.",
+        "B": "This is the probability that the event occurs in all three trials, $(\\frac{2}{3})^3$. This is $P(\\text{all})$ not $P(\\text{at least one})$.",
+        "C": "This is the probability of the event occurring exactly twice: $\\binom{3}{2}(\\frac{2}{3})^2(\\frac{1}{3})^1 = 3 \\times \\frac{4}{9} \\times \\frac{1}{3} = \\frac{12}{27} = \\frac{4}{9}$.",
+        "D": "This is the probability of the event occurring in a single trial, ignoring that three trials are performed.",
+        "E": "This is $1 - P(\\text{all occur}) = 1 - (\\frac{2}{3})^3 = 1 - \\frac{8}{27} = \\frac{19}{27}$. This results from misidentifying the complement of 'at least one' as 'not all'.",
+        "F": "This is the correct answer, $1 - P(\\text{none occur})$."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T19:09:06.031768+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The question is a well-constructed and straightforward application of complementary probability and independent events, perfectly suited for Math 1. The solution is clear, concise, and correct. The pacing is excellent for an Easy difficulty item, allowing a student familiar with the concepts to solve it quickly. The distractors are also well-designed, targeting common errors or partial calculations.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The question directly assesses understanding of probability of independent events and complementary events, which are core concepts within M1-M7 (Probability). Basic arithmetic with fractions is covered under M1-M2 (Number). All required concepts are explicitly allowed for Math 1.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 5
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "ee9c113a-ebd2-4bde-8636-670bf74ca051",
+      "id_prefix": "ee9c113a",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M_2859f9c5-Medium-0d538a5396",
+      "schema_id": "M_2859f9c5",
+      "subject": "Math 1",
+      "test_type": "ESAT",
+      "primary_tag": "M1-M4",
+      "secondary_tags": [
+        "M1-M3",
+        "M1-M5"
+      ],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "The variables $x$ and $y$ are related such that the graph of $y$ against $x$ is a straight line passing through the origin and the point $(0.4, 2)$.\n\nA cylinder has height $h = 12$ and a circular base of diameter $d = 6$ and area $A$.\n\nA quantity $M$ is defined by the formula:\n\n$$\n M = \\frac{\\frac{y}{A}}{\\frac{x}{h}}\n$$\n\n\nWhat is the value of $M$?",
+      "options": {
+        "A": "$\\frac{4}{15\\pi}$",
+        "B": "$\\frac{5}{3\\pi}$",
+        "C": "$\\frac{10}{\\pi}$",
+        "D": "$\\frac{20}{3\\pi}$",
+        "E": "$\\frac{15\\pi}{4}$",
+        "F": "$15\\pi$"
+      },
+      "correct_option": "D",
+      "solution_reasoning": "First, we rearrange the expression for $M$:\n\n$$\n M = \\frac{\\frac{y}{A}}{\\frac{x}{h}} = \\frac{y}{A} \\times \\frac{h}{x} = \\left(\\frac{y}{x}\\right) \\left(\\frac{h}{A}\\right)\n$$\n\n\nThe graph of $y$ against $x$ is a straight line through $(0,0)$ and $(0.4, 2)$. The ratio $\\frac{y}{x}$ is the constant gradient of this line.\n\n$$\n \\frac{y}{x} = \\frac{2 - 0}{0.4 - 0} = \\frac{2}{0.4} = \\frac{2}{4/10} = \\frac{20}{4} = 5\n$$\n\n\nNext, we find the base area $A$ of the cylinder. The diameter is $d=6$, so the radius is $r = d/2 = 3$.\n\n$$\n A = \\pi r^2 = \\pi (3^2) = 9\\pi\n$$\n\n\nThe height is given as $h = 12$.\n\nNow we can substitute these values back into the rearranged formula for $M$:\n\n$$\n M = \\left(\\frac{y}{x}\\right) \\left(\\frac{h}{A}\\right) = (5) \\left(\\frac{12}{9\\pi}\\right)\n$$\n\n\nSimplifying the fraction:\n\n$$\n M = 5 \\times \\frac{4}{3\\pi} = \\frac{20}{3\\pi}\n$$\n\n\nTherefore, the correct answer is D.",
+      "solution_key_insight": "The expression for $M$ can be rearranged into the product of the gradient of the line ( $y/x$) and a geometric ratio ( $h/A$). Calculate these two components separately.",
+      "distractor_map": {
+        "A": "This is the result of using the inverse gradient, $\\frac{x}{y} = \\frac{1}{5}$, instead of the correct gradient $\\frac{y}{x}=5$.",
+        "B": "This results from incorrectly calculating the area of the circle using the diameter instead of the radius, as if $A = \\pi d^2 = 36\\pi$. This gives $M = 5 \\times \\frac{12}{36\\pi} = \\frac{5}{3\\pi}$.",
+        "C": "This is the result of using the circumference of the base ( $C = \\pi d = 6\\pi$) instead of the area.",
+        "D": "Matches the worked solution.",
+        "E": "This results from an error in dividing the fractions, calculating $M = \\left(\\frac{y}{x}\\right) \\left(\\frac{A}{h}\\right)$ instead of $M = \\left(\\frac{y}{x}\\right) \\left(\\frac{h}{A}\\right)$.",
+        "F": "This results from making two errors: incorrectly dividing the fractions (using $A/h$) and using the wrong area formula ( $A = \\pi d^2 = 36\\pi$). This gives $M = 5 \\times \\frac{36\\pi}{12} = 15\\pi$."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T19:13:00.235101+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is well-constructed and assesses multiple Math 1 concepts in a single problem. The solution is clear and correct, and the distractors are plausible, targeting common errors. The pacing is appropriate for a medium-difficulty question, requiring several steps but each being straightforward.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The question requires understanding of linear relationships and gradients (M1-M4, M1-M3), algebraic manipulation of fractions (M1-M4), calculation of the area of a circle (M1-M5), and basic arithmetic (M1-M2). All these concepts are explicitly covered within the Math 1 curriculum.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "eedf32dc-06b8-46e6-b1d0-f90898e02ee7",
+      "id_prefix": "eedf32dc",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M3-Medium-157893800c",
+      "schema_id": "M3",
+      "subject": "Math 2",
+      "test_type": "ESAT",
+      "primary_tag": "M2-MM7",
+      "secondary_tags": [
+        "M2-MM1"
+      ],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "The curve with equation$$y = x^3 - 3ax^2 + b$$where$a$and$b$are non-zero constants, intersects the$x$-axis at exactly two distinct points.\nWhich of the following expresses$b$in terms of$a$?\n",
+      "options": {
+        "A": "$b = a^3$",
+        "B": "$b = 2a^3$",
+        "C": "$b = 4a^3$",
+        "D": "$b = -2a^3$",
+        "E": "$b = -4a^3$"
+      },
+      "correct_option": "C",
+      "solution_reasoning": "For the cubic to have exactly two distinct roots, one of the stationary points must lie on the $x$ -axis (meaning the local maximum or minimum value is zero).\n\nWe differentiate to locate the stationary points:\n\n$$\n\\frac{dy}{dx} = 3x^2 - 6ax = 3x(x - 2a)\n$$\n\nThe stationary points occur at $x = 0$ and $x = 2a$.\n\nWe evaluate the curve at these points:\n1. At $x = 0$, $y = 0^3 - 3a(0)^2 + b = b$.\n2. At $x = 2a$, $y = (2a)^3 - 3a(2a)^2 + b = 8a^3 - 12a^3 + b = b - 4a^3$.\n\nThe problem states that $b$ is non-zero, so the stationary point at $x = 0$ cannot be on the axis. Therefore, the stationary point at $x = 2a$ must be zero:\n\n$$\nb - 4a^3 = 0 \\implies b = 4a^3\n$$",
+      "solution_key_insight": "A cubic curve intersects the $x$ -axis at exactly two distinct points if and only if one of its stationary points lies on the $x$ -axis.",
+      "distractor_map": {
+        "A": "Likely arises from an arithmetic error in the powers of $a$.",
+        "B": "Corresponds to setting $y(a) = 0$ instead of using the stationary point.",
+        "C": "Correct answer.",
+        "D": "Likely results from a sign error in the calculation.",
+        "E": "Corresponds to a sign error when rearranging the final equation."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T19:13:54.369129+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The question is a well-constructed Math 2 item. It requires students to apply differentiation to find stationary points of a cubic function and then use the conceptual understanding that for a cubic to have exactly two distinct roots, one of its stationary points must lie on the x-axis. The algebraic manipulation is straightforward, and the constraint that 'b' is non-zero helps guide the student to the correct stationary point. The pacing is appropriate for a medium-difficulty question, allowing sufficient time for differentiation, solving for critical points, substitution, and conceptual application within the ESAT time limits. The solution reasoning is clear and accurate, and the answer key is correct.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The core concepts tested are finding derivatives, identifying stationary points, and interpreting the graphical implications of a cubic having exactly two distinct x-intercepts, all of which fall under Differentiation and Integration (M2-MM7) and Algebra and Functions (M2-MM1).",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "f47605d6-5576-4e58-bb7c-dec8e4907f22",
+      "id_prefix": "f47605d6",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M_1bf60554-Easy-440040df51",
+      "schema_id": "M_1bf60554",
+      "subject": "Math 2",
+      "test_type": "ESAT",
+      "primary_tag": "M2-MM7",
+      "secondary_tags": [
+        "M2-MM1"
+      ],
+      "difficulty": "Easy",
+      "status": "pending",
+      "question_stem": "A curve passes through the origin.\n\nThe gradient, $m$, of the curve at a point $(x, y)$ is given by $m = kx^2$, where $k$ is a positive constant.\n\nWhich of the following expressions gives $y$ in terms of $m$ and $k$?",
+      "options": {
+        "A": "$\\frac{1}{3}\\sqrt{\\frac{m^3}{k}}$",
+        "B": "$\\sqrt{\\frac{m^3}{k}}$",
+        "C": "$\\frac{m^3}{3k^2}$",
+        "D": "$2\\sqrt{km}$",
+        "E": "$\\frac{\\sqrt{km^3}}{3}$",
+        "F": "$3\\sqrt{\\frac{m^3}{k}}$"
+      },
+      "correct_option": "A",
+      "solution_reasoning": "The gradient of the curve is given by $\\frac{dy}{dx} = kx^2$.\n\nTo find the equation of the curve, we integrate this expression with respect to $x$:\n\n\n\n$$\ny = \\int kx^2 \\, dx = \\frac{k}{3}x^3 + C\n$$\n\n\n\n\nWe are given that the curve passes through the origin, $(0, 0)$. We can use this to find the constant of integration, $C$.\n\n\n\n$$\n0 = \\frac{k}{3}(0)^3 + C \\implies C = 0\n$$\n\n\n\n\nSo the equation of the curve is $y = \\frac{k}{3}x^3$.\n\nWe need to express $y$ in terms of $m$ and $k$. We are given the relationship between the gradient $m$ and $x$: $m = kx^2$.\n\nWe can rearrange this equation to make $x$ the subject:\n\n\n\n$$\nx^2 = \\frac{m}{k} \\implies x = \\sqrt{\\frac{m}{k}} = \\left(\\frac{m}{k}\\right)^{1/2}\n$$\n\n\n\n\nNow, we substitute this expression for $x$ into the equation for $y$:\n\n\n\n$$\ny = \\frac{k}{3}x^3 = \\frac{k}{3} \\left( \\left(\\frac{m}{k}\\right)^{1/2} \\right)^3 = \\frac{k}{3} \\left(\\frac{m}{k}\\right)^{3/2}\n$$\n\n\n\n\nUsing the laws of indices, we can simplify this expression:\n\n\n\n$$\ny = \\frac{k}{3} \\frac{m^{3/2}}{k^{3/2}} = \\frac{1}{3} k^{1 - 3/2} m^{3/2} = \\frac{1}{3} k^{-1/2} m^{3/2}\n$$\n\n\n\n\nThis can be written using square root notation:\n\n\n\n$$\ny = \\frac{1}{3} \\frac{m^{3/2}}{\\sqrt{k}} = \\frac{1}{3} \\frac{\\sqrt{m^3}}{\\sqrt{k}} = \\frac{1}{3}\\sqrt{\\frac{m^3}{k}}\n$$\n\n\n\n\nTherefore the correct answer is A.",
+      "solution_key_insight": "Integrate the expression for the gradient to find the equation of the curve, $y(x)$. Then, rearrange the gradient equation to express $x$ in terms of $m$ and substitute this into the curve's equation.",
+      "distractor_map": {
+        "A": "Matches the worked solution.",
+        "B": "This results from forgetting the factor of $\\frac{1}{3}$ when integrating $kx^2$, leading to $y=kx^3$.",
+        "C": "This results from incorrectly rearranging $m=kx^2$ to $x=m/k$ (forgetting the square root) before substituting into $y = \\frac{k}{3}x^3$.",
+        "D": "This results from differentiating $kx^2$ to get $2kx$ and setting this equal to $y$, instead of integrating.",
+        "E": "This results from an index law error when simplifying $\\frac{k}{k^{3/2}}$, yielding $k^{1/2}$ instead of the correct $k^{-1/2}$.",
+        "F": "This results from incorrectly integrating $kx^2$ to get $3kx^3$ (multiplying by the new power instead of dividing)."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T19:20:55.656313+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is well-constructed, clearly tests relevant Math 2 concepts (differentiation, integration, algebraic manipulation, and laws of indices), has a correct solution, and excellent distractors. The pacing is appropriate for an 'Easy' question, fitting within the typical ESAT time constraints.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The question directly assesses the ability to integrate a given gradient function to find the equation of a curve, use initial conditions to determine the constant of integration, and then perform algebraic manipulation using laws of indices to express the result in the required form. These are fundamental skills in Math 2 calculus and algebra.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 5
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "f60ad2ea-f4f5-4c49-b047-15987a6fa3a7",
+      "id_prefix": "f60ad2ea",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M53-Easy-dd175dd7be",
+      "schema_id": "M53",
+      "subject": "Math 1",
+      "test_type": "ESAT",
+      "primary_tag": "M1-M4",
+      "secondary_tags": [],
+      "difficulty": "Easy",
+      "status": "pending",
+      "question_stem": "Which of the following describes the complete set of values of $x$ for which $(x^2 - 9)(x^2 - 2x + 1) < 0$?\n",
+      "options": {
+        "A": "$x < -3$ or $x > 3$",
+        "B": "$x < -3$ or $1 < x < 3$",
+        "C": "$-3 < x < 3$",
+        "D": "$-3 < x < 1$ or $1 < x < 3$",
+        "E": "$-3 < x < 1$"
+      },
+      "correct_option": "D",
+      "solution_reasoning": "First, we factorise the expression completely:\n\n$$ \n(x^2 - 9)(x^2 - 2x + 1) = (x-3)(x+3)(x-1)^2 \n$$ \n\nSo we need to solve $(x-3)(x+3)(x-1)^2 < 0$.\n\nThe term $(x-1)^2$ is non-negative for all real $x$. For the inequality to be strictly less than zero, the expression cannot be equal to zero. This means $(x-1)^2 \neq 0$, which implies $x \neq 1$.\n\nSince $(x-1)^2$ is positive for all $x \neq 1$, the sign of the expression is determined by the sign of the other factor, $(x-3)(x+3)$. We require this to be negative:\n\n$$ \n(x-3)(x+3) < 0 \n$$ \n\nThis is a U-shaped quadratic with roots at $x=-3$ and $x=3$. It is negative between the roots, so $-3 < x < 3$.\n\nCombining this interval with the condition $x \neq 1$, we get the complete set of values: $-3 < x < 1$ or $1 < x < 3$.",
+      "solution_key_insight": "Factorise the expression fully. Notice that one of the factors is a squared term, which is always non-negative. This affects the inequality in a specific way.",
+      "distractor_map": {
+        "A": "This is the solution to $(x^2-9) > 0$, which incorrectly reverses the inequality and ignores the $(x-1)^2$ factor.",
+        "B": "This error arises from treating the repeated root at $x=1$ like a simple root, causing an incorrect sign change in the analysis.",
+        "C": "This correctly solves $(x-3)(x+3) < 0$ but fails to exclude the value $x=1$, where the original expression equals zero, violating the strict inequality.",
+        "D": "Correct.",
+        "E": "This is an incomplete solution set, omitting the interval $1 < x < 3$."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T19:27:09.405088+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is well-constructed and directly tests standard algebraic skills within the Math 1 curriculum. The solution path involves factorising a polynomial, identifying critical points, understanding the behavior of squared terms in inequalities, and combining intervals. All these concepts are firmly within M1-M4 (Algebra). The pacing is appropriate for an 'Easy' difficulty item, and the solution provided is clear and correct. The distractor analysis is also insightful.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The question requires factorisation of quadratic expressions (difference of squares, perfect square trinomial) and solving polynomial inequalities, specifically understanding how squared terms affect the sign of the expression. These are core algebraic skills covered under M1-M4 (Algebra) in the Math 1 curriculum.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 5
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "f6866e25-bdf9-4850-a3f7-74ab9a6660c1",
+      "id_prefix": "f6866e25",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M_72682ff8-Easy-a93182a2d2",
+      "schema_id": "M_72682ff8",
+      "subject": "Math 2",
+      "test_type": "ESAT",
+      "primary_tag": "M2-MM1",
+      "secondary_tags": [
+        "M2-MM7"
+      ],
+      "difficulty": "Easy",
+      "status": "pending",
+      "question_stem": "A quadratic function $y = f(x)$ has a minimum point at $(1, -4)$.\n\nWhat is the value of the integral\n\n$$\n\n\\int_{-1}^{3} f(x) \\, \\mathrm{d}x\n\n$$",
+      "options": {
+        "A": "$-16$",
+        "B": "$-\\frac{32}{3}$",
+        "C": "$-8$",
+        "D": "$0$",
+        "E": "$\\frac{16}{3}$",
+        "F": "The value cannot be determined from the information given."
+      },
+      "correct_option": "F",
+      "solution_reasoning": "A quadratic function with a minimum point at $(h, k)$ can be written in the vertex form $f(x) = a(x-h)^2 + k$, where $a$ is a constant and $a > 0$.\n\nGiven that the minimum point is $(1, -4)$, the function must be of the form:\n\n$$\nf(x) = a(x-1)^2 - 4\n$$\n\n\n\nfor some unknown constant $a > 0$. The information given is not sufficient to determine the value of $a$.\n\nNow, we evaluate the definite integral:\n\n$$\n\\int_{-1}^{3} f(x) \\, \\mathrm{d}x = \\int_{-1}^{3} (a(x-1)^2 - 4) \\, \\mathrm{d}x\n$$\n\n\n\nWe find the antiderivative:\n\n$$\n\\int (a(x-1)^2 - 4) \\, \\mathrm{d}x = \\frac{a(x-1)^3}{3} - 4x + C\n$$\n\n\n\nNow apply the limits:\n\n$$\n\\left[ \\frac{a(x-1)^3}{3} - 4x \\right]_{-1}^{3} = \\left( \\frac{a(3-1)^3}{3} - 4(3) \\right) - \\left( \\frac{a(-1-1)^3}{3} - 4(-1) \\right)\n$$\n\n$$\n= \\left( \\frac{a(2)^3}{3} - 12 \\right) - \\left( \\frac{a(-2)^3}{3} + 4 \\right)\n$$\n\n$$\n= \\left( \\frac{8a}{3} - 12 \\right) - \\left( -\\frac{8a}{3} + 4 \\right)\n$$\n\n$$\n= \\frac{8a}{3} - 12 + \\frac{8a}{3} - 4 = \\frac{16a}{3} - 16\n$$\n\n\n\nSince the value of $a$ is not specified (we only know $a > 0$), the value of the integral depends on $a$. For different possible quadratic functions satisfying the condition, we get different values for the integral.\n\nTherefore, the value cannot be determined from the information given.",
+      "solution_key_insight": "Express the quadratic function in vertex form. The leading coefficient remains an unknown parameter, which will carry through the integration.",
+      "distractor_map": {
+        "A": "This is the result of ignoring the term dependent on the unknown leading coefficient $a$. This is equivalent to integrating the constant term from the vertex, $y=-4$, over the interval $[-1, 3]$, which gives $-4 \\times (3 - (-1)) = -16$.",
+        "B": "This is the result of assuming the simplest possible positive integer value for the leading coefficient, $a=1$. The integral becomes $\\frac{16(1)}{3} - 16 = \\frac{16-48}{3} = -\\frac{32}{3}$.",
+        "C": "This is the result of a sign error when applying the limits of integration, specifically adding the results at the upper and lower limits instead of subtracting them: $(\\frac{8a}{3} - 12) + (-\\frac{8a}{3} + 4) = -8$.",
+        "D": "This is the result of assuming a value for $a$ that makes the expression simple, such as $a=3$. The integral becomes $\\frac{16(3)}{3} - 16 = 16 - 16 = 0$.",
+        "E": "This is the result of incorrectly assuming an additional constraint, such as the curve passing through the origin, $f(0)=0$. This would give $a(0-1)^2 - 4 = 0$, so $a=4$. The integral would then be $\\frac{16(4)}{3} - 16 = \\frac{64-48}{3} = \\frac{16}{3}$.",
+        "F": "Correct. The worked solution shows the integral's value is $\\frac{16a}{3} - 16$, which depends on the unknown parameter $a>0$."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T19:28:25.828467+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is well-constructed and directly assesses core Math 2 concepts: forming a quadratic function from its vertex and performing definite integration. The solution is clear, accurate, and provides a thorough explanation for why the value cannot be determined. The distractor analysis is excellent, anticipating common student errors. Pacing is appropriate for an Easy/Medium Math 2 question, requiring a few steps of algebraic manipulation and integration.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The problem involves expressing a quadratic function given its minimum point and then integrating it over a definite interval. Both are fundamental skills in the specified Math 2 curriculum codes.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "fc29e3d7-0e49-44b7-b62a-617d0a3a3181",
+      "id_prefix": "fc29e3d7",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M_25887cc3-Medium-7d5432ce8a",
+      "schema_id": "M_25887cc3",
+      "subject": "Math 2",
+      "test_type": "ESAT",
+      "primary_tag": "M2-MM7",
+      "secondary_tags": [
+        "M2-MM2"
+      ],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "The line $L_1$ has equation $6x+y=12$.\n\nA second line, $L_2$, is parallel to $L_1$ and is tangent to the curve $y=x^2-2x+7$.\n\nWhat is the positive difference between the $x$ -intercepts of $L_1$ and $L_2$?",
+      "options": {
+        "A": "$ \\frac{1}{2} $",
+        "B": "$1$",
+        "C": "$ \\frac{3}{2} $",
+        "D": "$4$",
+        "E": "$9$",
+        "F": "$ \\frac{23}{2} $"
+      },
+      "correct_option": "C",
+      "solution_reasoning": "First, we find the properties of the line $L_1$.\nThe equation is $6x+y=12$, which can be rearranged to $y=-6x+12$. The gradient of $L_1$ is therefore $-6$.\nThe $x$ -intercept of $L_1$ is found by setting $y=0$, which gives $6x=12$, so $x=2$.\n\nNext, we consider the curve $y=x^2-2x+7$. The gradient of the tangent to the curve at any point $x$ is given by the derivative, $\\frac{dy}{dx}$.\n\n$$ \n\n\\frac{dy}{dx} = 2x-2 \n\n$$ \n\nThe line $L_2$ is parallel to $L_1$, so it must have the same gradient, which is $-6$. We set the derivative equal to this gradient to find the $x$ -coordinate of the point of tangency:\n\n$$ \n\n2x-2 = -6 \n\n$$ \n\n$$ \n\n2x = -4 \n\n$$ \n\n$$ \n\nx = -2 \n\n$$ \n\nTo find the equation of the tangent line $L_2$, we need the full coordinates of the point of tangency. We substitute $x=-2$ back into the curve's equation:\n\n$$ \n\ny = (-2)^2 - 2(-2) + 7 = 4 + 4 + 7 = 15 \n\n$$ \n\nSo the point of tangency is $(-2, 15)$.\n\nThe line $L_2$ has gradient $-6$ and passes through $(-2, 15)$. Using the point-gradient form $y-y_1 = m(x-x_1)$:\n\n$$ \n\ny - 15 = -6(x - (-2)) \n\n$$ \n\n$$ \n\ny - 15 = -6(x+2) \n\n$$ \n\n$$ \n\ny - 15 = -6x - 12 \n\n$$ \n\n$$ \n\ny = -6x + 3 \n\n$$ \n\nNow we find the $x$ -intercept of $L_2$ by setting $y=0$:\n\n$$ \n\n0 = -6x + 3 \n\n$$ \n\n$$ \n\n6x = 3 \n\n$$ \n\n$$ \n\nx = \\frac{3}{6} = \\frac{1}{2} \n\n$$ \n\nThe $x$ -intercepts of $L_1$ and $L_2$ are $2$ and $\\frac{1}{2}$ respectively.\n\nThe positive difference between them is:\n\n$$ \n\n\\left| 2 - \\frac{1}{2} \\right| = \\left| \\frac{4}{2} - \\frac{1}{2} \\right| = \\frac{3}{2} \n\n$$",
+      "solution_key_insight": "Find the gradient of the first line and set it equal to the derivative of the quadratic function to find the point of tangency. Then find the equation of the tangent and compare its $x$ -intercept to that of the first line.",
+      "distractor_map": {
+        "A": "This is the result of using the wrong sign for the gradient of $L_1$ (using $m=6$ instead of $m=-6$). This leads to a tangent with an $x$ -intercept of $\\frac{3}{2}$, and a difference of $|2 - \\frac{3}{2}| = \\frac{1}{2}$.",
+        "B": "This can result from comparing the $x$ -intercept of $L_1$ (which is $2$) with the $y$ -intercept of $L_2$ (which is $3$), giving $|3-2|=1$.",
+        "C": "This is the correct answer, derived from the difference between the $x$ -intercepts $2$ and $\\frac{1}{2}$.",
+        "D": "This is the result of comparing the $x$ -intercept of $L_1$ (which is $2$) with the $x$ -coordinate of the point of tangency (which is $-2$), giving $|2 - (-2)| = 4$.",
+        "E": "This is the difference between the $y$ -intercepts of the two lines. The $y$ -intercept of $L_1$ is $12$ and the $y$ -intercept of $L_2$ is $3$. The difference is $|12-3|=9$.",
+        "F": "This can result from comparing the $y$ -intercept of $L_1$ (which is $12$) with the $x$ -intercept of $L_2$ (which is $\\frac{1}{2}$), giving $|12 - \\frac{1}{2}| = \\frac{23}{2}$."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T19:33:39.624543+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is well-constructed, correctly solved, and aligns perfectly with the Math 2 curriculum. The solution reasoning is clear and comprehensive, and the distractor analysis is excellent, identifying common misconceptions. Pacing is appropriate for a medium-difficulty Math 2 question requiring multiple steps.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The question requires knowledge of differentiation (M2-MM7) to find the gradient of a tangent, coordinate geometry (M2-MM2) for properties of lines (gradient, intercepts, parallel lines, equation of a line), and algebra (M2-MM1) for solving equations and manipulating expressions. All concepts are firmly within the Math 2 syllabus.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "fc76bcb3-e37c-4219-8c2a-6145161b5209",
+      "id_prefix": "fc76bcb3",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M81-Hard-af7bd1ceda",
+      "schema_id": "M81",
+      "subject": "Math 2",
+      "test_type": "ESAT",
+      "primary_tag": "M2-MM7",
+      "secondary_tags": [
+        "M2-MM1"
+      ],
+      "difficulty": "Hard",
+      "status": "pending",
+      "question_stem": "The polynomial functions $f(x)$ and $g(x)$ satisfy: $$\\int_0^2 (2f(x) - g(x)) \\, \\mathrm{d}x = 5$$ $$\\int_0^5 (2f(x) - g(x)) \\, \\mathrm{d}x = 17$$ $$\\int_2^5 (f(x) + 2g(x)) \\, \\mathrm{d}x = 11$$ What is the value of $\\int_2^5 (f(x) + g(x)) \\, \\mathrm{d}x$?\n",
+      "options": {
+        "A": "7",
+        "B": "9",
+        "C": "11",
+        "D": "12",
+        "E": "23"
+      },
+      "correct_option": "B",
+      "solution_reasoning": "We first use the additive property of definite integrals to find the value of $\\int_2^5 (2f(x) - g(x)) \\, \\mathrm{d}x$. Subtracting the integral over $[0, 2]$ from the integral over $[0, 5]$ gives:\n\n$$\n\\int_2^5 (2f(x) - g(x)) \\, \\mathrm{d}x = 17 - 5 = 12\n$$\n\nLet $F = \\int_2^5 f(x) \\, \\mathrm{d}x$ and $G = \\int_2^5 g(x) \\, \\mathrm{d}x$. We can now write the conditions over the interval $[2, 5]$ as a pair of simultaneous equations:\n\n$$\n2F - G = 12\n$$\n\n$$\nF + 2G = 11\n$$\n\nMultiplying the first equation by $2$ gives $4F - 2G = 24$. Adding this to the second equation eliminates $G$:\n\n$$\n5F = 35 \\implies F = 7\n$$\n\nSubstituting $F=7$ into $F + 2G = 11$ yields $7 + 2G = 11$, so $2G = 4$ and $G = 2$.\n\nThe question asks for $\\int_2^5 (f(x) + g(x)) \\, \\mathrm{d}x$, which is $F + G$:\n\n$$\nF + G = 7 + 2 = 9\n$$",
+      "solution_key_insight": "Use the additivity of integration intervals to isolate the integrals over $[2, 5]$, then solve the resulting simultaneous equations for $\\int f(x)$ and $\\int g(x)$.",
+      "distractor_map": {
+        "A": "Finds the value of $\\int f(x)$ only ( $F=7$) and stops there.",
+        "B": "Correct answer.",
+        "C": "Selects the value of the given integral $\\int_2^5 (f(x) + 2g(x)) \\, \\mathrm{d}x$ without calculation.",
+        "D": "Calculates $\\int_2^5 (2f(x) - g(x)) \\, \\mathrm{d}x$ correctly as $12$ but fails to separate $f$ and $g$.",
+        "E": "Incorrectly sums the values of the two integrals over $[2, 5]$ ( $12 + 11$) without solving for the components."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T19:36:37.68871+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is a well-constructed Math 2 question. It effectively tests the properties of definite integrals, including additivity over intervals and linearity, combined with the ability to set up and solve simultaneous linear equations. All concepts are firmly within the Math 2 curriculum (M2-MM7 for integration properties and M2-MM1 for algebra/simultaneous equations).\n\nThe solution provided is clear, logical, and correct, demonstrating the necessary steps to arrive at the answer. The pacing is appropriate for a 'Hard' difficulty question, requiring multiple steps but not being overly complex or time-consuming for a prepared student. The answer key is correct, and the distractors are plausible.\n\nNo formatting issues were found. The question is a good example of a challenging but fair ESAT item.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The core of the problem involves manipulating definite integrals using their properties (linearity and additivity over intervals) and then solving a system of linear equations, which are fundamental skills in Math 2.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "fdae62e2-2ba9-4c46-964f-f5752de4388a",
+      "id_prefix": "fdae62e2",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M_7ff16a1f-Easy-62447a2b18",
+      "schema_id": "M_7ff16a1f",
+      "subject": "Math 1",
+      "test_type": "ESAT",
+      "primary_tag": "M1-M4",
+      "secondary_tags": [
+        "M1-M5"
+      ],
+      "difficulty": "Easy",
+      "status": "pending",
+      "question_stem": "A quadratic polynomial is denoted by $P(x)$. The graph of $y=P(x)$ passes through the points $(0, 5)$ and $(-1, 10)$. The sum of the coefficients of $P(x)$ is $4$.\\n\\nWhat is the value of $P(2)$?",
+      "options": {
+        "A": "$4$",
+        "B": "$5$",
+        "C": "$7$",
+        "D": "$10$",
+        "E": "$11$",
+        "F": "$19$"
+      },
+      "correct_option": "C",
+      "solution_reasoning": "Let the quadratic polynomial be $P(x) = ax^2 + bx + c$.\\n\\nWe are given three pieces of information to determine the three coefficients $a$, $b$, and $c$.\\n\\n1. The graph of $y=P(x)$ passes through $(0, 5)$. This means $P(0) = 5$.\\n $P(0) = a(0)^2 + b(0) + c = c$. So, $c=5$.\\n\\n2. The sum of the coefficients is 4. For a polynomial $P(x)$, the sum of its coefficients is equal to $P(1)$.\\nSo, $P(1) = a(1)^2 + b(1) + c = a+b+c = 4$.\\nSince we know $c=5$, we have $a+b+5 = 4$, which simplifies to $a+b = -1$.\\n\\n3. The graph of $y=P(x)$ passes through $(-1, 10)$. This means $P(-1) = 10$.\\n $P(-1) = a(-1)^2 + b(-1) + c = a-b+c = 10$.\\nSince we know $c=5$, we have $a-b+5 = 10$, which simplifies to $a-b = 5$.\\n\\nNow we have a system of two simultaneous linear equations for $a$ and $b$:\\n\\n\n\n$$\n\\n\\\\begin{cases}\\na+b = -1 \\\\\\\\\\\\\\\\na-b = 5\\n\\\\end{cases}\\n\n$$\n\n\n\\n\\nAdding the two equations gives:\\n $(a+b) + (a-b) = -1 + 5$ \\n $2a = 4 \\\\implies a = 2$.\\n\\nSubstituting $a=2$ into the first equation ( $a+b=-1$):\\n $2+b = -1 \\\\implies b = -3$.\\n\\nSo the polynomial is $P(x) = 2x^2 - 3x + 5$.\\n\\nThe question asks for the value of $P(2)$.\\n $P(2) = 2(2)^2 - 3(2) + 5$ \\n $P(2) = 2(4) - 6 + 5$ \\n $P(2) = 8 - 6 + 5$ \\n $P(2) = 2 + 5 = 7$.\\n\\nTherefore the correct answer is 7.",
+      "solution_key_insight": "Represent the quadratic as $P(x) = ax^2 + bx + c$. Use the given information to create a system of three linear equations for the coefficients $a$, $b$, and $c$. Note that the sum of the coefficients of a polynomial is equal to its value at $x=1$.",
+      "distractor_map": {
+        "A": "Plausible mistake: misapplies a relation from the stem or slips at one algebraic step (see solution for the correct chain).",
+        "B": "Plausible mistake: misapplies a relation from the stem or slips at one algebraic step (see solution for the correct chain).",
+        "C": "This is the correct answer given the worked reasoning in the solution.",
+        "D": "Plausible mistake: misapplies a relation from the stem or slips at one algebraic step (see solution for the correct chain).",
+        "E": "Plausible mistake: misapplies a relation from the stem or slips at one algebraic step (see solution for the correct chain).",
+        "F": "Plausible mistake: misapplies a relation from the stem or slips at one algebraic step (see solution for the correct chain)."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T19:42:32.037554+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is a well-constructed algebra problem that effectively tests a student's understanding of quadratic polynomials, their properties (like the sum of coefficients being P(1)), and the ability to solve a system of linear equations. All concepts are firmly within the M1-M4 (Algebra) curriculum. The solution is clear, correct, and comprehensive. The pacing is appropriate for an 'Easy' difficulty item, allowing a proficient student to complete it within the typical ESAT timeframe. The answer key is correct, and the distractors are plausible.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The problem aligns perfectly with the 'Algebra' section of Mathematics 1, covering polynomial evaluation and solving simultaneous equations.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    }
+  ]
+}

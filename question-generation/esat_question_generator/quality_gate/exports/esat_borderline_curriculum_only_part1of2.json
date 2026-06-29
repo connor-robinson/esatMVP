@@ -1,0 +1,1173 @@
+{
+  "exported_at": "2026-06-29T15:59:10.762450+00:00",
+  "cohort": "borderline_curriculum_only",
+  "cohort_label": "human_review with borderline curriculum as sole blocker",
+  "part": 1,
+  "parts_total": 2,
+  "questions_in_part": 23,
+  "questions_in_cohort": 45,
+  "questions": [
+    {
+      "id": "3c67d790-a11c-4f19-ad61-0a0bdfde601a",
+      "id_prefix": "3c67d790",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M_0aff7927-Medium-3615c4f133",
+      "schema_id": "M_0aff7927",
+      "subject": "Math 2",
+      "test_type": "ESAT",
+      "primary_tag": "M2-MM4",
+      "secondary_tags": [
+        "M2-MM3",
+        "M2-MM1"
+      ],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "Find the number of solutions to the equation\n$$ \\log_2(\\sin x) + \\log_2(3 \\sin x) = 1 + \\log_2(1 - \\cos x) $$\nfor $0 \\le x \\le 2\\pi$.",
+      "options": {
+        "A": "$0$",
+        "B": "$1$",
+        "C": "$2$",
+        "D": "$3$",
+        "E": "$4$",
+        "F": "$5$"
+      },
+      "correct_option": "B",
+      "solution_reasoning": "Step 1:\n\nIdentify Domain Constraints\n\nFor the logarithms to be defined, their arguments must be strictly positive.\n1. $\\sin x > 0$\n2. $1 - \\cos x > 0 \\implies \\cos x < 1$\n\nThe condition $\\sin x > 0$ means that any solution must be in the interval $(0, \\pi)$.\nThe condition $\\cos x < 1$ excludes $x=0$ and $x=2\\pi$ from the given interval $0 \\le x \\le 2\\pi$.\n\nStep 2:\n\nSimplify the Logarithmic Equation\n\nUsing the logarithm laws $\\log_a M + \\log_a N = \\log_a(MN)$ and $1 = \\log_2(2)$, we can rewrite the equation:\n$$ \\log_2((\\sin x)(3 \\sin x)) = \\log_2(2) + \\log_2(1 - \\cos x) $$\n$$ \\log_2(3 \\sin^2 x) = \\log_2(2(1 - \\cos x)) $$\nEquating the arguments of the logarithms gives:\n$$ 3 \\sin^2 x = 2(1 - \\cos x) $$\n\nStep 3:\n\nForm a Quadratic Equation in $\\cos x$\n\nUsing the Pythagorean identity $\\sin^2 x = 1 - \\cos^2 x$, we substitute to get an equation solely in terms of $\\cos x$:\n$$ 3(1 - \\cos^2 x) = 2 - 2 \\cos x $$\n$$ 3 - 3 \\cos^2 x = 2 - 2 \\cos x $$\nRearranging gives a standard quadratic form:\n$$ 3 \\cos^2 x - 2 \\cos x - 1 = 0 $$\n\nStep 4:\n\nSolve the Quadratic Equation\n\nLet $c = \\cos x$. The equation is $3c^2 - 2c - 1 = 0$. We can factor this quadratic:\n$$ (3c + 1)(c - 1) = 0 $$\nThis gives two possible values for $\\cos x$:\n$$ \\cos x = -\\frac{1}{3} \\quad \\text{or} \\quad \\cos x = 1 $$\n\nStep 5:\n\nVerify Solutions Against Domain Constraints\n\nWe must check these potential solutions against the domain constraints identified in the first step.\n\nCase 1: $\\cos x = 1$\nThis occurs at $x=0$ and $x=2\\pi$ in the given interval. However, our domain requires $\\cos x < 1$. Therefore, these are not valid solutions.\n\nCase 2: $\\cos x = -\\frac{1}{3}$\nIn the interval $0 \\le x \\le 2\\pi$, there are two angles for which $\\cos x = -\\frac{1}{3}$: one in the second quadrant ( $x_1 \\in (\\pi/2, \\pi)$) and one in the third quadrant ( $x_2 \\in (\\pi, 3\\pi/2)$).\nWe must check these against the other domain constraint, $\\sin x > 0$.\n- For the solution $x_1$ in the second quadrant, $\\sin x_1 > 0$. This is a valid solution.\n- For the solution $x_2$ in the third quadrant, $\\sin x_2 < 0$. This is not a valid solution.\n\nThus, only one of the potential solutions is valid.\n\nStep 6:\n\nConclusion\n\nThere is exactly one value of $x$ in the interval $0 \\le x \\le 2\\pi$ that satisfies the original equation.",
+      "solution_key_insight": "The equation can be simplified by applying logarithm laws to form a trigonometric equation. The arguments of the logarithms impose strict domain constraints on the possible solutions.",
+      "distractor_map": {
+        "A": "This could result from an algebraic error, or by correctly finding $\\cos x = -\\frac{1}{3}$ but then incorrectly rejecting it based on the domain constraints.",
+        "C": "This is the number of solutions if one finds $\\cos x = -\\frac{1}{3}$ (which has two solutions in the interval) and correctly rejects $\\cos x = 1$, but fails to apply the domain constraint $\\sin x > 0$, which eliminates one of these two solutions.",
+        "D": "This is the number of solutions if one finds $\\cos x = -\\frac{1}{3}$ (two solutions) and incorrectly includes one solution for $\\cos x = 1$ (e.g., at $x=0$), ignoring the domain constraints.",
+        "E": "This is the number of solutions if one finds $\\cos x = -\\frac{1}{3}$ (two solutions) and incorrectly includes two solutions for $\\cos x = 1$ (at $x=0$ and $x=2\\pi$), ignoring all domain constraints from the logarithms.",
+        "F": "This is likely the result of an algebraic error leading to a different trigonometric equation with more solutions."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-05-24T20:54:00.410994+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "This is a well-designed Math 2 question that effectively tests logarithm properties, trigonometric identities, and the crucial application of domain constraints. The solution is clear, and distractors are plausible.",
+        "job_id": "20260524-172336-0ffd96f8",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The question requires logarithm laws and domain (M2-MM4), trigonometric identities and solving equations (M2-MM3), and solving quadratic equations (M2-MM1), all of which are in the Math 2 syllabus.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "51b879e1-5895-4d16-91c2-81ddea266282",
+      "id_prefix": "51b879e1",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M27-Easy-2bef9df393",
+      "schema_id": "M27",
+      "subject": "Math 1",
+      "test_type": "ESAT",
+      "primary_tag": "M1-M4",
+      "secondary_tags": [
+        "M1-M3"
+      ],
+      "difficulty": "Easy",
+      "status": "pending",
+      "question_stem": "A father is currently three times as old as his son. In 10 years' time, the father will be twice as old as his son.\nWhat is the current age of the father?\n",
+      "options": {
+        "A": "10",
+        "B": "20",
+        "C": "30",
+        "D": "40",
+        "E": "60"
+      },
+      "correct_option": "C",
+      "solution_reasoning": "Let $f$ and $s$ be the current ages of the father and son respectively. We are given that $f = 3s$.\n\nIn 10 years, both individuals will have aged by 10 years. The condition states that the father will then be twice as old as the son:\n\n$$\nf + 10 = 2(s + 10)\n$$\n\nSubstituting $f = 3s$ into this equation:\n\n$$\n3s + 10 = 2s + 20\n$$\n\nRearranging gives $s = 10$. The father's current age is therefore:\n\n$$\nf = 3(10) = 30\n$$",
+      "solution_key_insight": "Ensure you apply the time shift (+10 years) to both the father's and the son's ages in the second equation.",
+      "distractor_map": {
+        "A": "Calculates the son's current age ( $s=10$) instead of the father's.",
+        "B": "Incorrectly interprets \"three times as old\" as \"three times older than\" ( $f = 4s$), leading to $f=20$.",
+        "C": "Correct answer.",
+        "D": "Calculates the father's age in 10 years' time ( $30+10$) rather than his current age.",
+        "E": "Fails to add 10 years to the father's age in the second equation ( $f = 2(s+10)$), leading to $f=60$."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T15:32:07.401656+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is a well-constructed algebra word problem requiring the setup and solution of simultaneous linear equations. It fits perfectly within the M1-M4 Algebra curriculum. The solution is clear, concise, and correct, and the distractors are effective, targeting common student errors. Pacing is appropriate for an 'Easy' item, expected to take a student around 60-90 seconds.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The problem requires setting up and solving simultaneous linear equations from a word problem, which is a core concept of Algebra (M1-M4).",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 5
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "6cc8a1e3-cd24-451c-9bb1-1efa9fd8f859",
+      "id_prefix": "6cc8a1e3",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M_13b28059-Medium-033555b5dd",
+      "schema_id": "M_13b28059",
+      "subject": "Math 2",
+      "test_type": "ESAT",
+      "primary_tag": "M2-MM1",
+      "secondary_tags": [
+        "M2-MM7"
+      ],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "A cubic curve $y = f(x)$ has stationary points at $x=1$ and $x=3$.\n\nWhich one of the following conditions is **not** sufficient to determine the equation of the curve uniquely?",
+      "options": {
+        "A": "The curve passes through the point $(2, 5)$.",
+        "B": "The $y$ -coordinate of the local maximum is 1.",
+        "C": "The point of inflection lies on the line $y=x-1$.",
+        "D": "The value of $\\int_0^1 f(x) \\, \\mathrm{d}x$ is 4.",
+        "E": "The equation $f(x)=0$ has exactly two distinct real roots.",
+        "F": "The tangent to the curve at $x=0$ passes through the point $(1, 5)$."
+      },
+      "correct_option": "E",
+      "solution_reasoning": "",
+      "solution_key_insight": "The problem defines a family of cubic curves, all related by a vertical translation. The task is to identify which condition allows for more than one value for this vertical shift. The condition for a cubic to have exactly two distinct real roots is that one of its two turning points must lie on the $x$ -axis, which provides two possibilities.",
+      "distractor_map": {
+        "A": "This condition specifies a single point on the curve, which uniquely determines the vertical shift constant $C$.",
+        "B": "This condition specifies the $y$ -value of one of the turning points. After correctly identifying which turning point is the maximum, this gives a single equation that uniquely determines $C$.",
+        "C": "This condition relates the coordinates of the point of inflection. Finding this point and substituting into the line's equation uniquely determines $C$.",
+        "D": "This condition provides a value for a definite integral. Evaluating the integral results in an expression involving $C$, leading to a single linear equation that uniquely determines $C$.",
+        "F": "This condition describes a property of a tangent line. Finding the general equation of the tangent at $x=0$ and forcing it to pass through the given point uniquely determines $C$."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T20:07:28.193655+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The question is well-posed and tests a deep understanding of cubic functions, their derivatives, integrals, and properties related to roots and stationary points. The key insight that the problem implies a fixed 'shape' (constant 'k') and only a variable vertical shift ('C') is crucial and correctly identified in the solution. Each option requires a distinct calculation or conceptual understanding to determine if it uniquely fixes the vertical shift. Option E correctly identifies that two distinct values of C would lead to exactly two distinct real roots for a cubic with two stationary points (when either the local max or local min lies on the x-axis). The other options each provide a single constraint that uniquely determines C. The solution and distractor explanations are clear and accurate.",
+        "job_id": "20260626-200555-c30c4146",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The item requires knowledge of differentiation (stationary points, point of inflection, tangent gradients), integration (finding the function from its derivative, definite integrals), and properties of polynomial roots, all of which are covered under M2-MM7 (Differentiation and integration) and M2-MM1 (Algebra and functions). The tangent line also touches on M2-MM2 (Coordinate geometry).",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "725b5860-3876-437b-87d5-1e80aeb9df19",
+      "id_prefix": "725b5860",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M46-Medium-6334a6cbe8",
+      "schema_id": "M46",
+      "subject": "Math 2",
+      "test_type": "ESAT",
+      "primary_tag": "M2-MM4",
+      "secondary_tags": [
+        "M2-MM1"
+      ],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "What is the complete set of real solutions for $x$ that satisfies the equation $$\\log_2(x+1) + \\log_2(x-3) = 5$$",
+      "options": {
+        "A": "$x=4$",
+        "B": "$x=7$",
+        "C": "$x=17$",
+        "D": "$x=4$ and $x=-2$",
+        "E": "$x=5$ and $x=-7$",
+        "F": "$x=7$ and $x=-5$"
+      },
+      "correct_option": "B",
+      "solution_reasoning": "We use the addition law for logarithms, $\\log_a(A) + \\log_a(B) = \\log_a(AB)$, to combine the terms on the left-hand side:\n\n$$\n\\log_2((x+1)(x-3)) = 5\n$$\n\nExponentiating both sides with base $2$ removes the logarithm:\n\n$$\n(x+1)(x-3) = 2^5\n$$\n\nExpanding the brackets and substituting $2^5 = 32$ gives:\n\n$$\nx^2 - 2x - 3 = 32\n$$\n\nRearranging to $x^2 - 2x - 35 = 0$, we factorise the quadratic:\n\n$$\n(x-7)(x+5) = 0\n$$\n\nThis yields potential solutions $x = 7$ and $x = -5$.\n\nFinally, we check validity. The original terms $\\log_2(x+1)$ and $\\log_2(x-3)$ require positive arguments. Since substituting $x = -5$ results in negative arguments (e.g. $-5-3 = -8$), we must reject it.\n\nThus, the only solution is $x = 7$.",
+      "solution_key_insight": "Logarithmic equations are defined only when the arguments are positive. Always check derived solutions against the original domain constraints to identify extraneous roots.",
+      "distractor_map": {
+        "A": "Result of setting the product equal to $5$ instead of $2^5$ (solving $x^2-2x-8=0$) but correctly rejecting the negative root.",
+        "B": "Correct answer.",
+        "C": "Incorrectly applies the log addition law as $\\log(A)+\\log(B) = \\log(A+B)$, leading to a linear equation.",
+        "D": "Result of setting the product equal to $5$ instead of $2^5$ and failing to reject the negative solution.",
+        "E": "Result of a sign error when factorising to $(x+7)(x-5)$, and failing to check the domain.",
+        "F": "Obtains the correct quadratic roots but fails to reject the extraneous solution $x=-5$."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-05-24T22:07:53.247052+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The question effectively tests the application of logarithm laws, solving quadratic equations, and crucially, checking the domain of logarithmic functions to identify extraneous solutions. The distractors are well-designed to catch common errors. All concepts are well within the Math 2 syllabus.",
+        "job_id": "20260524-172336-0ffd96f8",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The solve path requires knowledge of logarithm laws and converting between logarithmic and exponential forms (M2-MM4), as well as solving quadratic equations (M2-MM1, M1-M4). All these topics are explicitly allowed in the Math 2 curriculum.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "73308c65-7c35-492b-baeb-54e1f4d4d11d",
+      "id_prefix": "73308c65",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M_6c393b6b-Medium-b991ddb71c",
+      "schema_id": "M_6c393b6b",
+      "subject": "Math 1",
+      "test_type": "ESAT",
+      "primary_tag": "M1-M4",
+      "secondary_tags": [
+        "M1-M2"
+      ],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "A polynomial $P(x)$ is given by $P(x) = k(x+1)^n$, where $k$ is a real constant and $n$ is a positive integer.\nThe curve $y=P(x)$ passes through the points $(0, 2)$ and $(1, 32)$.\n\nA second polynomial is given by $Q(x) = c(x-2)^n$, using the same integer $n$ and for some real constant $c$.\n\nWhich of the following gives a possible value for the constant $c$ and the corresponding value of $Q(5)$?",
+      "options": {
+        "A": "$c = \\frac{1}{3}, Q(5) = 27$",
+        "B": "$c = 2, Q(5) = 54$",
+        "C": "$c = 3, Q(5) = 27$",
+        "D": "$c = 2, Q(5) = 32$",
+        "E": "$c = \\frac{1}{25}, Q(5) = 25$",
+        "F": "$c = \\frac{1}{3}, Q(5) = 1$"
+      },
+      "correct_option": "A",
+      "solution_reasoning": "The polynomial is given by $P(x) = k(x+1)^n$.\n\nFirst, use the point $(0, 2)$:\n\n\n\n$$\nP(0) = k(0+1)^n = k(1)^n = k\n$$\n\n\n\n\nSince $P(0) = 2$, we have $k=2$.\n\nNow the polynomial is $P(x) = 2(x+1)^n$. Use the point $(1, 32)$:\n\n\n\n$$\nP(1) = 2(1+1)^n = 2(2^n) = 32\n$$\n\n\n\n\nDividing by 2 gives:\n\n\n\n$$\n2^n = 16\n$$\n\n\n\n\nSince $16 = 2^4$, the integer value of $n$ must be $4$.\n\nThe second polynomial is $Q(x) = c(x-2)^n$, so we have $Q(x) = c(x-2)^4$.\n\nWe need to find the value of $Q(5)$:\n\n\n\n$$\nQ(5) = c(5-2)^4 = c(3)^4 = 81c\n$$\n\n\n\n\nThe correct option must satisfy the condition $Q(5) = 81c$. We check each option:\n\n- **A**: If $c = \\frac{1}{3}$, then $Q(5) = 81 \\times \\frac{1}{3} = 27$. This matches the option.\n- **B**: If $c = 2$, then $Q(5)$ should be $81 \\times 2 = 162$. The option gives $54$.\n- **C**: If $c = 3$, then $Q(5)$ should be $81 \\times 3 = 243$. The option gives $27$.\n- **D**: If $c = 2$, then $Q(5)$ should be $81 \\times 2 = 162$. The option gives $32$.\n- **E**: If $c = \\frac{1}{25}$, then $Q(5)$ should be $81 \\times \\frac{1}{25} = \\frac{81}{25}$. The option gives $25$.\n- **F**: If $c = \\frac{1}{3}$, then $Q(5)$ should be $81 \\times \\frac{1}{3} = 27$. The option gives $1$.\n\nTherefore, the only consistent pair of values is given in option A.",
+      "solution_key_insight": "First, use the two given points on the curve $y = P(x)$ to form a system of simultaneous equations to find the unique integer value of $n$ and the constant $k$. Then, apply this value of $n$ to the function $Q(x)$ to find the relationship between $c$ and $Q(5)$.",
+      "distractor_map": {
+        "A": "Correct. Matches the worked solution.",
+        "B": "This implies $Q(5)/c = 54/2 = 27$. This would be correct if $Q(5) = c(5-2)^3 = 27c$, which arises from incorrectly calculating the degree as $n=3$. This error could occur if one misremembered or miscalculated $2(2^n)=32$ as $2^n=8$.",
+        "C": "This implies $Q(5)/c = 27/3 = 9$. This would be correct if $Q(5) = c(5-2)^2 = 9c$, which arises from assuming the polynomial is a quadratic ( $n=2$) without using the second point to determine the true degree.",
+        "D": "This implies $Q(5)/c = 32/2 = 16$. This corresponds to an evaluation of $c(2^4)$, which could arise from an off-by-one error in the base, calculating $c(5-2-1)^4$ instead of $c(5-2)^4$.",
+        "E": "This implies $Q(5)/c = 25 / (1/25) = 625$. This would be correct if $Q(5) = c(5)^4 = 625c$, which arises from ignoring the horizontal shift in $Q(x)$ when evaluating at $x=5$.",
+        "F": "This implies $Q(5)/c = 1 / (1/3) = 3$. This would be correct if $Q(5) = c(5-2)^1 = 3c$, which arises from incorrectly assuming the polynomial is linear ( $n=1$)."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T20:08:42.040033+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item correctly assesses algebraic manipulation, evaluation of functions, and solving simple exponential equations, all of which are firmly within the Math 1 curriculum (M1-M2, M1-M4). The solution is clear, accurate, and easy to follow. The pacing is appropriate for a medium-difficulty ESAT question. Distractors are well-designed, targeting common errors in determining the exponent 'n' or evaluating the function 'Q(x)'. The answer key is correct.",
+        "job_id": "20260626-200555-c30c4146",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "All concepts are well within the Math 1 curriculum.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "7358057e-4b89-4b79-bf8f-168b59417d5f",
+      "id_prefix": "7358057e",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "B15-Hard-b6d49d5db7",
+      "schema_id": "B15",
+      "subject": "Biology",
+      "test_type": "ESAT",
+      "primary_tag": "biology-B4",
+      "secondary_tags": [],
+      "difficulty": "Hard",
+      "status": "pending",
+      "question_stem": "In fruit flies, the allele for a grey body (G) is dominant to the allele for an ebony body (g), and the allele for normal wings (N) is dominant to the allele for vestigial wings (n). The genes are located on different chromosomes.\n\nA male fly that is heterozygous for both traits is crossed with a female fly that has a grey body and normal wings. Both parents of the female fly were heterozygous for both traits.\n\nIn a population of 576 offspring resulting from this cross, what is the expected number of flies with an ebony body and vestigial wings?\n",
+      "options": {
+        "A": "9",
+        "B": "16",
+        "C": "24",
+        "D": "36",
+        "E": "96"
+      },
+      "correct_option": "B",
+      "solution_reasoning": "We first determine the probability of the female parent being heterozygous. She has the dominant phenotype for both traits (grey body, normal wings) and comes from parents who were both heterozygous ( $GgNn$).\n\nFor a single gene (e.g., body colour), a cross of heterozygotes ( $Gg \\times Gg$) produces genotypes in the ratio $1 GG : 2 Gg : 1 gg$. Since the female has a grey body, she cannot be $gg$. The remaining possibilities are $1 GG : 2 Gg$. Therefore, the probability she is heterozygous ( $Gg$) is:\n\n$$\nP(\\text{Female is } Gg) = \\frac{2}{3}\n$$\n\nThe male parent is given as heterozygous ( $Gg$). For their offspring to have an ebony body ( $gg$), the female must be $Gg$ (to provide a $g$ allele) and the offspring must inherit $g$ from both parents. The probability of an ebony offspring is:\n\n$$\nP(gg) = P(\\text{Female is } Gg) \\times P(gg \\mid Gg \\times Gg) = \\frac{2}{3} \\times \\frac{1}{4} = \\frac{1}{6}\n$$\n\nSince the genes are on different chromosomes, inheritance is independent. The probability of vestigial wings ( $nn$) is calculated identically:\n\n$$\nP(nn) = \\frac{1}{6}\n$$\n\nThe probability of an offspring having both recessive traits ( $ggnn$) is:\n\n$$\nP(ggnn) = \\frac{1}{6} \\times \\frac{1}{6} = \\frac{1}{36}\n$$\n\nFinally, the expected number of such flies in a population of 576 is:\n\n$$\n576 \\times \\frac{1}{36} = 16\n$$",
+      "solution_key_insight": "When an individual displays a dominant phenotype but comes from heterozygous parents, the probability they are heterozygous is $\\frac{2}{3}$, not $\\frac{1}{2}$.",
+      "distractor_map": {
+        "A": "Incorrectly assumes the probability of the female being heterozygous is $1/2$, leading to a total probability of $1/64$.",
+        "B": "Correct answer.",
+        "C": "Applies the $2/3$ conditional probability factor only once to the standard $1/16$ dihybrid ratio, ignoring independence.",
+        "D": "Assumes the female is definitely heterozygous ( $GgNn$), applying the standard Mendelian ratio of $1/16$.",
+        "E": "Calculates the expected number for a single recessive trait ( $1/6$ of the population) rather than both."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T20:10:02.11302+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is a challenging but fair genetics problem involving dihybrid crosses and conditional probability. The core biological concepts (dominant/recessive alleles, genotypes, phenotypes, independent assortment) are clearly within biology-B4. The mathematical concepts (probability, conditional probability, expected value) are well within M1-M7. The solution is clear, accurate, and highlights the crucial conditional probability step (the 2/3 rule). Distractors are well-crafted, targeting common misconceptions such as ignoring the conditional probability or misapplying it. Pacing is on the longer side for a 'Hard' item (likely 2-3 minutes), but acceptable given the complexity and the multi-step nature of the problem. The answer key is correct.",
+        "job_id": "20260626-200555-c30c4146",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The item tests understanding of Mendelian genetics (dominant/recessive alleles, genotypes, phenotypes, dihybrid crosses, independent assortment) which falls under biology-B4 (Inheritance). It also requires the application of probability, including conditional probability and calculating expected values, which are covered by M1-M7 (Probability). Basic arithmetic and ratio/proportion are also used (M1-M2, M1-M3). All concepts are explicitly allowed.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "74987ebb-acf6-4d9e-955c-5ddcd2e6c64b",
+      "id_prefix": "74987ebb",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "C_30453dc9-Hard-f56fa341ed",
+      "schema_id": "P_30453dc9",
+      "subject": "Physics",
+      "test_type": "ESAT",
+      "primary_tag": "P-P4",
+      "secondary_tags": [],
+      "difficulty": "Hard",
+      "status": "pending",
+      "question_stem": "Two identical copper spheres, **X** and **Y**, are heated to $500\\text{ K}$.\n\nSphere **X** has a matte black surface.\n\nSphere **Y** has a polished silver surface.\n\nThe initial rate of energy loss, $R$, is determined for each sphere in a **vacuum** and in an atmosphere of **argon** gas at $298\\text{ K}$.\n\nIn the vacuum, it is observed that $R_{\\text{X}} > R_{\\text{Y}}$.\n\nAssume that the rate of heat transfer due to convection depends only on the dimensions of the sphere and the temperature difference.\n\nWhich statement correctly describes the rates in the argon atmosphere compared to the vacuum?",
+      "options": {
+        "A": "The rates $R_{\\text{X}}$ and $R_{\\text{Y}}$ increase by the same amount, and the ratio $\\frac{R_{\\text{X}}}{R_{\\text{Y}}}$ decreases.",
+        "B": "The rates $R_{\\text{X}}$ and $R_{\\text{Y}}$ increase by the same amount, and the ratio $\\frac{R_{\\text{X}}}{R_{\\text{Y}}}$ stays constant.",
+        "C": "The rate $R_{\\text{X}}$ increases more than $R_{\\text{Y}}$ because black surfaces are better thermal conductors, and the ratio $\\frac{R_{\\text{X}}}{R_{\\text{Y}}}$ increases.",
+        "D": "The rate $R_{\\text{Y}}$ increases more than $R_{\\text{X}}$ because the polished surface reflects gas molecules, and the ratio $\\frac{R_{\\text{X}}}{R_{\\text{Y}}}$ decreases."
+      },
+      "correct_option": "A",
+      "solution_reasoning": "In a vacuum, heat loss occurs only by **radiation**. A matte black surface is a better emitter than a polished silver surface, so $R_{\\text{X}} > R_{\\text{Y}}$.\n\nWhen argon is introduced, heat loss occurs by **radiation and convection**.\n\nThe rate of convection depends on the geometry of the object and the temperature difference, not the surface colour (emissivity). Since the spheres are identical in shape and temperature, the convective heat loss term ( $C$) is the same for both.\n\nThe new rates are:\n\n$$\nR''_{\\text{X}} = R_{\\text{X}} + C\n$$\n\n$$\nR''_{\\text{Y}} = R_{\\text{Y}} + C\n$$\n\nSince $R_{\\text{X}} > R_{\\text{Y}}$ and $C > 0$, adding the same positive constant to the numerator and denominator of the ratio $\\frac{R_{\\text{X}}}{R_{\\text{Y}}}$ brings the value closer to $1$. Therefore, the ratio decreases.\n\nExample: If $R_{\\text{X}}=10$, $R_{\\text{Y}}=2$, and $C=6$:\n\nOriginal ratio $= 5$.\n\nNew ratio $= \\frac{16}{8} = 2$.",
+      "solution_key_insight": "Recall that radiation depends on surface emissivity, while convection depends on geometry and temperature. Mathematically, consider how adding a constant term to both the numerator and denominator affects a ratio that is greater than 1.",
+      "distractor_map": {
+        "A": "Correct answer",
+        "B": "Incorrectly assumes that convection scales proportionally with the radiation rate (multiplicative) rather than being an additive term.",
+        "C": "Misconception that surface colour affects the rate of convection (confusing emissivity with convective heat transfer coefficient).",
+        "D": "Plausible-sounding but incorrect physics; reflection of light does not imply 'reflection' of gas molecules in a way that alters convective cooling."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T20:15:40.514693+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The question is well-designed, testing core concepts in thermal physics (radiation, convection, emissivity) and basic mathematical reasoning about ratios. The stem is clear, and the assumptions are explicitly stated. The distractors are plausible and target common misconceptions. The solution is accurate, clear, and provides a helpful numerical example for the ratio analysis. Pacing is appropriate for a 'Hard' item, requiring careful thought but not excessive calculation.",
+        "job_id": "20260626-200555-c30c4146",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The item directly assesses knowledge of thermal radiation (emissivity, surface properties) and convection, and how these modes of heat transfer combine. The mathematical aspect of ratio change is also fundamental and within the scope of basic mathematical skills expected.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "7f9ad9a0-8e16-4610-bae6-8da8a41e62bf",
+      "id_prefix": "7f9ad9a0",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M22-Hard-ad7a666c70",
+      "schema_id": "M22",
+      "subject": "Math 2",
+      "test_type": "ESAT",
+      "primary_tag": "M2-MM7",
+      "secondary_tags": [
+        "M2-MM1"
+      ],
+      "difficulty": "Hard",
+      "status": "pending",
+      "question_stem": "The polynomial $x^3 + ax + b$ is divisible by $(x-2)^2$.\nWhat is the value of $b$?\n",
+      "options": {
+        "A": "-16",
+        "B": "0",
+        "C": "8",
+        "D": "16",
+        "E": "32"
+      },
+      "correct_option": "D",
+      "solution_reasoning": "Let $P(x) = x^3 + ax + b$. Since $(x-2)^2$ is a factor, $x=2$ is a repeated root. This implies that both $P(2) = 0$ and $P'(2) = 0$.\n\nWe first find $a$ by differentiating $P(x)$:\n\n$$\nP'(x) = 3x^2 + a\n$$\n\nSetting $P'(2) = 0$:\n\n$$\n3(2)^2 + a = 0 \\implies 12 + a = 0 \\implies a = -12\n$$\n\nNext, we find $b$ using the condition $P(2) = 0$ with $a = -12$:\n\n$$\n(2)^3 + (-12)(2) + b = 0\n$$\n\n$$\n8 - 24 + b = 0 \\implies b = 16\n$$",
+      "solution_key_insight": "If a polynomial $P(x)$ is divisible by $(x-k)^2$, then $x=k$ is a repeated root, which implies both $P(k)=0$ and $P'(k)=0$.",
+      "distractor_map": {
+        "A": "Results from using $x=-2$ as the repeated root instead of $x=2$, leading to $b=-16$.",
+        "B": "Incorrectly assumes divisibility by $x^2-4$ (roots at $\\pm 2$), which leads to $b=0$.",
+        "C": "Arises from incorrectly expanding $(x-2)^2$ as $x^2-2x+4$, which leads to $b=8$.",
+        "D": "Correct answer.",
+        "E": "Likely results from a sign error in the derivative calculation (finding $a=12$) or an arithmetic slip."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T15:40:37.673712+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "This is a well-constructed Math 2 item. It effectively tests the understanding of repeated roots of polynomials, requiring the application of both the factor theorem (P(k)=0) and differentiation (P'(k)=0). The problem is straightforward but requires conceptual understanding, making it appropriate for a 'Hard' difficulty level in Math 2. The solution is clear and accurate. The distractors are generally plausible, with A and B being particularly strong. The pacing is appropriate for an ESAT question of this type.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The question requires knowledge of polynomials and their roots (M2-MM1: Algebra and functions) and differentiation (M2-MM7: Differentiation and integration), specifically the condition for repeated roots (P(k)=0 and P'(k)=0). All these concepts are explicitly covered in the Math 2 curriculum.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "8708682e-10b1-4db6-b882-63fc648d942d",
+      "id_prefix": "8708682e",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M53-Medium-be7fd7755b",
+      "schema_id": "M53",
+      "subject": "Math 2",
+      "test_type": "ESAT",
+      "primary_tag": "M2-MM1",
+      "secondary_tags": [],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "What is the set of real values of $x$ for which $$\\frac{4}{x-1} \\ge x+2$$",
+      "options": {
+        "A": "$-3 \\le x \\le 2$",
+        "B": "$1 < x \\le 2$",
+        "C": "$x \\le -3$ or $x \\ge 2$",
+        "D": "$-3 \\le x < 1$ or $x \\ge 2$",
+        "E": "$x \\le -3$ or $1 < x \\le 2$",
+        "F": "$x \\le -3$ or $1 \\le x \\le 2$"
+      },
+      "correct_option": "E",
+      "solution_reasoning": "We rearrange the inequality to have zero on one side and combine terms over a common denominator.\n\n$$ \n\\frac{4}{x-1} - (x+2) \\ge 0 \n$$ \n\n$$ \n\\frac{4 - (x+2)(x-1)}{x-1} \\ge 0 \n$$ \n\nSimplifying the numerator gives:\n\n$$ \n\\frac{4 - (x^2 + x - 2)}{x-1} \\ge 0 \\implies \\frac{-x^2 - x + 6}{x-1} \\ge 0 \n$$ \n\nMultiplying by $-1$ reverses the inequality, and we can then factor the numerator:\n\n$$ \n\\frac{x^2 + x - 6}{x-1} \\le 0 \\implies \\frac{(x+3)(x-2)}{x-1} \\le 0 \n$$ \n\nThe critical values are the roots of the numerator ( $x=-3, x=2$) and the root of the denominator ( $x=1$). We examine the sign of the expression in the intervals defined by these points.\n\n- When $x > 2$, all factors $(x+3), (x-2), (x-1)$ are positive, so the expression is positive.\n- When $1 < x < 2$, $(x-2)$ is negative while the other factors are positive, making the expression negative.\n- When $-3 < x < 1$, $(x-2)$ and $(x-1)$ are negative, making the expression positive.\n- When $x < -3$, all three factors are negative, making the expression negative.\n\nWe require the expression to be less than or equal to zero. This is satisfied for $x < -3$ and $1 < x < 2$. We include the roots of the numerator, $x=-3$ and $x=2$, because of the $\\le$ sign. We must exclude $x=1$ as it makes the denominator zero.\n\nThus, the solution is $x \\le -3$ or $1 < x \\le 2$.",
+      "solution_key_insight": "To solve a rational inequality, bring all terms to one side to form a single fraction. The sign of the fraction depends on the signs of its numerator and denominator.",
+      "distractor_map": {
+        "A": "This is the result of multiplying by $(x-1)$ and incorrectly assuming it is always positive, which fails to reverse the inequality when $x<1$.",
+        "B": "This solution correctly analyses the case for $x>1$ but misses the entire solution set where $x \\le -3$.",
+        "C": "This arises from an incorrect rearrangement, equivalent to solving $(x+3)(x-2) \\ge 0$, which neglects the role of the denominator.",
+        "D": "This is the solution to $\\frac{(x+3)(x-2)}{x-1} \\ge 0$, which occurs if one forgets to flip the inequality sign after multiplying the numerator by $-1$.",
+        "E": "Correct answer.",
+        "F": "This solution correctly identifies the intervals but incorrectly includes $x=1$, which is not in the domain of the original expression."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T15:44:44.285211+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The question is a standard and well-posed problem on solving rational inequalities, which is a core topic in Math 2 Algebra and Functions (M2-MM1). The solution is correct and clearly explained, following the standard method of critical points and sign analysis. The distractors are excellent, targeting common errors students make when solving such problems (e.g., incorrect sign reversal, ignoring the denominator, including excluded points), making it a good assessment of understanding. Pacing is reasonable for a medium-difficulty question that requires multiple algebraic steps and careful analysis.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The question directly assesses skills in algebraic manipulation and solving inequalities involving rational functions, which is a key component of the M2-MM1 (Algebra and functions) curriculum.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "90183f48-c498-4711-9760-21ef66022334",
+      "id_prefix": "90183f48",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M_0cc81c22-Easy-0bf6e02c3d",
+      "schema_id": "M_0cc81c22",
+      "subject": "Math 1",
+      "test_type": "ESAT",
+      "primary_tag": "M1-M7",
+      "secondary_tags": [
+        "M1-M4"
+      ],
+      "difficulty": "Easy",
+      "status": "pending",
+      "question_stem": "An event has a constant probability $p$ of occurring in a single trial. Trials are independent.\n\nThe probability that the event occurs at least once in 3 such trials is $\\frac{19}{27}$.\n\nWhat is the value of $p$?",
+      "options": {
+        "A": "$\\frac{1}{3}$",
+        "B": "$\\frac{2}{3}$",
+        "C": "$\\frac{8}{27}$",
+        "D": "$\\frac{19}{81}$",
+        "E": "$\\frac{19}{27}$",
+        "F": "$\\frac{1}{27}$"
+      },
+      "correct_option": "A",
+      "solution_reasoning": "Let $p$ be the probability of the event occurring in a single trial.\nThe probability of the event *not* occurring in a single trial is $1-p$.\n\nSince the trials are independent, the probability of the event not occurring in any of the 3 trials is $(1-p)^3$.\n\nThe event 'occurs at least once' is the complement of the event 'does not occur at all'.\nTherefore, the probability of the event occurring at least once is $1 - (1-p)^3$.\n\nWe are given that this probability is $\\frac{19}{27}$. So we can set up the equation:\n\n$$\n1 - (1-p)^3 = \\frac{19}{27}\n$$\n\n\nRearranging to solve for $p$:\n\n$$\n(1-p)^3 = 1 - \\frac{19}{27}\n$$\n\n$$\n(1-p)^3 = \\frac{27}{27} - \\frac{19}{27}\n$$\n\n$$\n(1-p)^3 = \\frac{8}{27}\n$$\n\n\nTaking the cube root of both sides:\n\n$$\n1-p = \\sqrt[3]{\\frac{8}{27}} = \\frac{2}{3}\n$$\n\n\nFinally, solving for $p$:\n\n$$\np = 1 - \\frac{2}{3} = \\frac{1}{3}\n$$\n\n\nTherefore, the correct answer is A.",
+      "solution_key_insight": "The probability of an event occurring 'at least once' is equal to 1 minus the probability of it never occurring. For independent trials, the probability of it never occurring is the product of the individual probabilities of failure.",
+      "distractor_map": {
+        "A": "Matches the worked solution.",
+        "B": "This is the value of $1-p$. This error arises from correctly finding the probability of failure but forgetting the final step $p = 1 - (1-p)$. It also arises from the incorrect formulation $1 - p^3 = \\frac{19}{27}$, which leads to $p^3 = \\frac{8}{27}$ and so $p = \\frac{2}{3}$.",
+        "C": "This is the probability that the event never occurs, $(1-p)^3 = 1 - \\frac{19}{27} = \\frac{8}{27}$.",
+        "D": "This error comes from incorrectly assuming an additive model for probability, setting $3p = \\frac{19}{27}$, which gives $p = \\frac{19}{81}$.",
+        "E": "This is the probability of 'at least one success' given in the question stem, selected by a candidate who does not know how to proceed.",
+        "F": "This would be the result of correctly finding $p = \\frac{1}{3}$ and then cubing it, possibly confusing the probability $p$ with the probability of success in all three trials, $p^3$."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T15:50:26.087653+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is a well-constructed probability problem suitable for Math 1. It requires understanding of independent events, complementary probability, and solving a basic algebraic equation involving a cube root. All these concepts are firmly within the Math 1 curriculum (M1-M7 for probability, M1-M4 for algebra, M1-M2 for number/roots). The solution is clear, correct, and comprehensive. The distractors are thoughtfully designed to catch common errors. The pacing is appropriate for an 'Easy' difficulty item, allowing a student to solve it within the typical time limit.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The problem directly tests concepts of probability of independent events and complementary events (M1-M7). The algebraic manipulation to solve for 'p' involves basic equation solving and cube roots (M1-M4, M1-M2). All concepts are appropriate for Math 1.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 5
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "a0f0becd-8075-4611-8460-08ffab8ab3da",
+      "id_prefix": "a0f0becd",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M_752d0ebb-Medium-69d56a1809",
+      "schema_id": "M_752d0ebb",
+      "subject": "Math 1",
+      "test_type": "ESAT",
+      "primary_tag": "M1-M4",
+      "secondary_tags": [
+        "M1-M5"
+      ],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "Let $P_k$ be the parabola with equation $y = kx^2$, where $k$ is a positive constant.\n\nThe width of $P_k$ at a height $H > 0$, denoted $W_k(H)$, is the distance between the two points on the parabola with $y$ -coordinate $H$.\n\nWhich of the following statements is correct?",
+      "options": {
+        "A": "For any $H > 0$, $W_1(H) = 4 W_4(H)$.",
+        "B": "For any $H > 0$, $W_1(H) = \\frac{1}{2} W_4(H)$.",
+        "C": "For any $H > 0$, $W_1(H) = 2 W_4(H)$.",
+        "D": "For any $k > 0$, $W_k(4) = 4 W_k(1)$.",
+        "E": "The value of the ratio $\\frac{W_1(H)}{W_4(H)}$ depends on $H$.",
+        "F": "For any $H > 0$, $W_1(H) = \\frac{1}{4} W_4(H)$."
+      },
+      "correct_option": "C",
+      "solution_reasoning": "To find the width $W_k(H)$ of the parabola $y = kx^2$ at height $y=H$, we first find the $x$ -coordinates of the points of intersection.\n\nSet $y=H$ in the equation:\n\n\n\n$$\nH = kx^2\n$$\n\n\n\nSince $k>0$ and $H>0$, we can solve for $x$:\n\n\n\n$$\nx^2 = \\frac{H}{k}\n$$\n\n\n\n\n$$\nx = \\pm\\sqrt{\\frac{H}{k}}\n$$\n\n\n\nThe two points on the parabola are $(-\\sqrt{H/k}, H)$ and $(+\\sqrt{H/k}, H)$.\n\nThe width is the distance between these points, which is the difference in their $x$ -coordinates:\n\n\n\n$$\nW_k(H) = \\sqrt{\\frac{H}{k}} - \\left(-\\sqrt{\\frac{H}{k}}\\right) = 2\\sqrt{\\frac{H}{k}}\n$$\n\n\n\nNow we can evaluate the statements in the options.\n\nLet's test option C: $W_1(H) = 2 W_4(H)$.\n\nFor $k=1$, the width is $W_1(H) = 2\\sqrt{\\frac{H}{1}} = 2\\sqrt{H}$.\n\nFor $k=4$, the width is $W_4(H) = 2\\sqrt{\\frac{H}{4}} = 2\\frac{\\sqrt{H}}{\\sqrt{4}} = 2\\frac{\\sqrt{H}}{2} = \\sqrt{H}$.\n\nComparing the two, we see that $W_1(H) = 2\\sqrt{H}$ and $W_4(H) = \\sqrt{H}$.\nTherefore, $W_1(H) = 2 \\times W_4(H)$.\n\nThis confirms that statement C is correct.\n\nLet's briefly check the other options to see why they are incorrect.\n\nA: $W_1(H) = 4 W_4(H)$ is false; the ratio is 2, not 4.\nB: $W_1(H) = \\frac{1}{2} W_4(H)$ is false; the ratio is 2, not 1/2.\nD: We have $W_k(H) = 2\\sqrt{H/k}$. So $W_k(4) = 2\\sqrt{4/k} = 4/\\sqrt{k}$ and $W_k(1) = 2\\sqrt{1/k} = 2/\\sqrt{k}$. Thus $W_k(4) = 2 W_k(1)$, not $4 W_k(1)$.\nE: The ratio $\\frac{W_1(H)}{W_4(H)} = \\frac{2\\sqrt{H}}{\\sqrt{H}} = 2$. This is a constant and does not depend on $H$.\nF: $W_1(H) = \\frac{1}{4} W_4(H)$ is false; the ratio is 2, not 1/4.",
+      "solution_key_insight": "First, find an algebraic expression for the width of the parabola $y = kx^2$ at a given height $H$. This involves solving for $x$ in terms of $k$ and $H$. Then, use this expression to test the proportionality statements in the options.",
+      "distractor_map": {
+        "A": "This corresponds to the incorrect reasoning that width $W$ is proportional to $1/k$, which ignores the square root. This would give the ratio $W_1/W_4 = 4/1 = 4$.",
+        "B": "This corresponds to the incorrect reasoning that width $W$ is proportional to $\\sqrt{k}$. This would give the ratio $W_1/W_4 = \\sqrt{1}/\\sqrt{4} = 1/2$.",
+        "C": "Correct. The width $W_k(H)$ is proportional to $1/\\sqrt{k}$, so the ratio $W_1(H)/W_4(H)$ is $\\sqrt{4}/\\sqrt{1} = 2$.",
+        "D": "This corresponds to the incorrect reasoning that width $W$ is proportional to $H$. The correct relationship is $W \\propto \\sqrt{H}$, so doubling the height multiplies the width by $\\sqrt{2}$, and quadrupling the height doubles the width.",
+        "E": "This is incorrect because the ratio $W_1(H)/W_4(H) = (2\\sqrt{H/1}) / (2\\sqrt{H/4}) = \\sqrt{4}/\\sqrt{1} = 2$, which is a constant and does not depend on $H$.",
+        "F": "This corresponds to the incorrect reasoning that width $W$ is proportional to $k$. This would give the ratio $W_1/W_4 = 1/4$."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T15:54:33.893667+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is well-constructed and fits perfectly within the Math 1 syllabus. It requires understanding of coordinate geometry, algebraic manipulation, and interpretation of functions. The solution is clear and correct, and the distractors are well-designed, targeting common algebraic errors or misunderstandings of proportionality. Pacing is appropriate for a medium difficulty question, requiring a few steps of derivation and then evaluation of options.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The problem involves understanding and manipulating algebraic expressions for a parabola ($y=kx^2$), solving quadratic equations ($H=kx^2$), calculating distances in coordinate geometry, simplifying surds, and working with ratios. These concepts are all explicitly covered under M1-M4 (Algebra), M1-M5 (Geometry - coordinate geometry), M1-M2 (Number - surds), and M1-M3 (Ratio and proportion).",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "a14d8610-58a0-4125-9002-38dee5d3136b",
+      "id_prefix": "a14d8610",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "C_30453dc9-Medium-1e14ce9d30",
+      "schema_id": "P_30453dc9",
+      "subject": "Physics",
+      "test_type": "ESAT",
+      "primary_tag": "P-P4",
+      "secondary_tags": [],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "Four identical copper calorimeters, labelled 1, 2, 3, and 4, contain equal masses of water at $80\\,^\\circ\\mathrm{C}$. The calorimeters are sealed to prevent evaporation. They have different outer surface finishes and are placed in different environments maintained at $20\\,^\\circ\\mathrm{C}$.\n\nThe conditions for each calorimeter are shown in the table:\n\n| Calorimeter | Surface finish | Environment |\n|---|---|---|\n| 1 | Dull black | Air |\n| 2 | Polished silver | Air |\n| 3 | Dull black | Vacuum |\n| 4 | Polished silver | Vacuum |\n\nWhich calorimeter has the fastest initial rate of cooling?\n",
+      "options": {
+        "A": "Calorimeter 1",
+        "B": "Calorimeter 2",
+        "C": "Calorimeter 3",
+        "D": "Calorimeter 4"
+      },
+      "correct_option": "A",
+      "solution_reasoning": "The rate of cooling depends on the rate of heat transfer from the calorimeter to the surroundings. The three mechanisms of heat transfer are conduction, convection, and radiation.\n\n1.  **Environment:** In air, heat is lost via conduction, convection, and radiation. In a vacuum, conduction and convection cannot occur (they require a medium), so heat is lost only via radiation. Therefore, cooling is faster in air than in a vacuum.\n2.  **Surface finish:** Dull black surfaces are better emitters of thermal radiation than polished silver surfaces. Therefore, the dull black surface will lose heat via radiation faster than the polished silver surface.\n\nTo achieve the **fastest** cooling, we must maximise all heat transfer pathways. Calorimeter 1 is in air (allowing conduction and convection) and has a dull black surface (maximising radiation).\n",
+      "solution_key_insight": "Recall the design of a vacuum flask (Thermos), which keeps liquids hot by using a vacuum and silvered surfaces to minimize heat transfer; the fastest cooling occurs under the opposite conditions.",
+      "distractor_map": {
+        "A": "Correct answer (maximises convection, conduction, and radiation).",
+        "B": "Incorrect. Polished silver is a poor emitter of radiation compared to dull black; this calorimeter cools slower than 1.",
+        "C": "Incorrect. In a vacuum, there is no heat loss via conduction or convection; despite the black surface, the total heat loss is lower than in air.",
+        "D": "Incorrect. This setup minimises heat loss (vacuum eliminates conduction/convection; silver minimises radiation). This is the slowest cooling rate."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T15:56:00.061157+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is a well-designed conceptual question testing understanding of heat transfer mechanisms (conduction, convection, radiation) and factors affecting their rates. It directly aligns with the 'Thermal physics' curriculum code (P-P4). The stem is clear, the table is easy to interpret, and the options are distinct. The solution reasoning is comprehensive and accurate, explaining why each factor contributes to the cooling rate. The pacing is appropriate for an ESAT item, requiring quick recall and application of principles. The answer key is correct.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "All concepts required to solve the problem (conduction, convection, radiation, effect of surface finish, effect of vacuum) are fundamental to thermal physics and are covered under P-P4.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "a16bb41f-bbc5-4105-9ac6-df016219860c",
+      "id_prefix": "a16bb41f",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M_7623e2ea-Easy-fb310d3c62",
+      "schema_id": "M_7623e2ea",
+      "subject": "Math 1",
+      "test_type": "ESAT",
+      "primary_tag": "M1-M5",
+      "secondary_tags": [
+        "M1-M4",
+        "M1-M2"
+      ],
+      "difficulty": "Easy",
+      "status": "pending",
+      "question_stem": "What is the area of the finite region in the $xy$ -plane bounded by the line $y = 4 \\times 10^5 x$, the $y$ -axis, and the line $y = 2 \\times 10^3$?",
+      "options": {
+        "A": "2.5",
+        "B": "5",
+        "C": "10",
+        "D": "50",
+        "E": "$2 \\times 10^6$",
+        "F": "$8 \\times 10^{11}$"
+      },
+      "correct_option": "B",
+      "solution_reasoning": "The region is bounded by three lines:\n1. $y = 4 \\times 10^5 x$\n2. The $y$ -axis, which is the line $x=0$.\n3. The horizontal line $y = 2 \\times 10^3$.\n\nLet's find the vertices of the triangular region.\n- The intersection of the $y$ -axis ( $x=0$) and the line $y = 4 \\times 10^5 x$ is at $(0,0)$.\n- The intersection of the $y$ -axis ( $x=0$) and the line $y = 2 \\times 10^3$ is at $(0, 2 \\times 10^3)$.\n- The intersection of $y = 4 \\times 10^5 x$ and $y = 2 \\times 10^3$ is found by setting the $y$ values equal:\n\n\n\n$$\n4 \\times 10^5 x = 2 \\times 10^3\n$$\n\n\n\nSolving for $x$:\n\n\n\n$$\nx = \\frac{2 \\times 10^3}{4 \\times 10^5} = \\frac{2}{4} \\times 10^{3-5} = 0.5 \\times 10^{-2}\n$$\n\n\n\nSo the third vertex is at $(0.5 \\times 10^{-2}, 2 \\times 10^3)$.\n\nThe region is a right-angled triangle with vertices at $(0,0)$, $(0, 2 \\times 10^3)$, and $(0.5 \\times 10^{-2}, 2 \\times 10^3)$.\n\nWe can consider the base of the triangle to be the vertical segment along the $y$ -axis. Its length is the difference in $y$ -coordinates, which is $(2 \\times 10^3) - 0 = 2 \\times 10^3$.\n\nThe height of the triangle is the horizontal distance from the $y$ -axis to the third vertex. Its length is the $x$ -coordinate, which is $0.5 \\times 10^{-2}$.\n\nThe area of a triangle is given by $\\frac{1}{2} \\times \\text{base} \\times \\text{height}$.\n\n\n\n$$\n\\text{Area} = \\frac{1}{2} \\times (2 \\times 10^3) \\times (0.5 \\times 10^{-2})\n$$\n\n\n\n\n$$\n\\text{Area} = (1 \\times 10^3) \\times (0.5 \\times 10^{-2}) = 0.5 \\times 10^{3-2} = 0.5 \\times 10^1 = 5\n$$\n\n\n\nTherefore the correct answer is 5.",
+      "solution_key_insight": "The region described is a right-angled triangle. Its vertices can be found by solving pairs of linear equations, and its area can be calculated using the formula $\\frac{1}{2} \\times \\text{base} \\times \\text{height}$.",
+      "distractor_map": {
+        "A": "This results from an error when squaring $c = 2 \\times 10^3$. If one calculates $c^2 = 2 \\times 10^6$ instead of $4 \\times 10^6$, the area formula $\\frac{c^2}{2m}$ gives $\\frac{2 \\times 10^6}{8 \\times 10^5} = 2.5$.",
+        "B": "Correct. The area is calculated as $\\frac{1}{2} \\times \\text{base} \\times \\text{height} = \\frac{1}{2} \\times (0.5 \\times 10^{-2}) \\times (2 \\times 10^3) = 5$.",
+        "C": "This results from forgetting the factor of $\\frac{1}{2}$ in the area of a triangle formula. The area of the bounding rectangle is $10$.",
+        "D": "This can result from an arithmetic error when dividing the standard form numbers, such as miscalculating the final power of ten to get $0.5 \\times 10^2 = 50$.",
+        "E": "This results from incorrectly identifying the base of the triangle as $c=2 \\times 10^3$. This leads to an area calculation of $\\frac{1}{2}c^2 = \\frac{1}{2}(2 \\times 10^3)^2 = 2 \\times 10^6$.",
+        "F": "This results from incorrectly finding the intersection point's $x$ -coordinate by computing $x=mc$ instead of $x=c/m$. This gives an area of $\\frac{1}{2} \\times (mc) \\times c = \\frac{1}{2}mc^2 = \\frac{1}{2}(4 \\times 10^5)(2 \\times 10^3)^2 = 8 \\times 10^{11}$."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T15:56:52.47837+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The question is well-posed and clearly asks for the area of a finite region bounded by three lines. The solution correctly identifies the region as a right-angled triangle, finds its vertices, and calculates its area using the standard formula. The arithmetic involving standard form is handled correctly. All concepts (solving linear equations, identifying geometric shapes, calculating area, and working with standard form) are appropriate for Math 1. The pacing is suitable for an 'Easy' difficulty item, allowing sufficient time for calculations. The distractors are well-designed and target common errors.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The question aligns perfectly with the Math 1 curriculum, covering fundamental algebraic and geometric concepts along with number manipulation.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 5
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "a3c8242b-11d6-407a-bca2-df6f47a92354",
+      "id_prefix": "a3c8242b",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M67-Medium-da35f171d2",
+      "schema_id": "M67",
+      "subject": "Math 2",
+      "test_type": "ESAT",
+      "primary_tag": "M2-MM4",
+      "secondary_tags": [
+        "M2-MM1",
+        "M2-MM2"
+      ],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "Variables $x$ and $y$ are related by the equation $y = A x^n$, where $A$ and $n$ are constants.\nA graph of $\\log_2 y$ plotted against $\\log_2 x$ is a straight line with gradient 2 and intercept 4 on the vertical axis.\nWhich of the following expresses $y$ in terms of $x$?\n",
+      "options": {
+        "A": "$y = 4x^2$",
+        "B": "$y = 16x^2$",
+        "C": "$y = 2x^4$",
+        "D": "$y = 4x^4$",
+        "E": "$y = 2^{2x+4}$"
+      },
+      "correct_option": "B",
+      "solution_reasoning": "The relationship is given by $y = Ax^n$. To analyse the graph of $\\log_2 y$ against $\\log_2 x$, we take logarithms to base 2 of this equation:\n\n$$\n\\log_2 y = \\log_2(Ax^n) = \\log_2 A + \\log_2(x^n) = n\\log_2 x + \\log_2 A\n$$\n\nThis equation is in the form of a straight line, $Y = mX + c$, where $Y = \\log_2 y$, $X = \\log_2 x$, the gradient is $m=n$, and the vertical intercept is $c = \\log_2 A$.\n\nFrom the problem description, the gradient is 2 and the intercept is 4.\nTherefore, $n=2$.\nThe intercept gives $\\log_2 A = 4$, which implies $A = 2^4 = 16$.\n\nSubstituting these values for $A$ and $n$ back into the original equation gives $y = 16x^2$.",
+      "solution_key_insight": "Take logarithms to base 2 of the equation $y = Ax^n$ and compare the result to the standard equation of a straight line, $Y=mX+c$.",
+      "distractor_map": {
+        "A": "This results from correctly finding the power $n=2$, but using the intercept value directly for the coefficient, $A=4$, instead of solving $\\log_2 A = 4$.",
+        "B": "This is the correct answer.",
+        "C": "This arises from swapping the gradient and intercept ( $n=4, \\log_2 A=2$) and also using the intercept value directly for $A$.",
+        "D": "This is the result of swapping the roles of the gradient and intercept, taking $n=4$ and $\\log_2 A = 2$, which gives $A=2^2=4$.",
+        "E": "This would be the correct form for an exponential relationship, which would correspond to a graph of $\\log_2 y$ against $x$, not $\\log_2 x$."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T16:02:11.389955+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The question is a standard application of logarithms to linearize a power relationship, which is a core topic in Math 2 (Exponentials and Logarithms). The solution is clear, correct, and concise, demonstrating the transformation of the given equation into a linear form using logarithms and then solving for the constants. Distractors are well-designed, targeting common errors such as confusing the base of the logarithm for the constant A, or swapping the gradient and intercept values. Pacing is appropriate for a medium difficulty question, expected to take a well-prepared student around 60-90 seconds.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The question directly tests the application of logarithm properties to transform a power relationship ($y = Ax^n$) into a linear form ($\\log_2 y = n\\log_2 x + \\log_2 A$), which is covered under M2-MM4 (Exponentials and logarithms). The understanding of linear equations and their graphs falls under M2-MM1 (Algebra and functions) and M2-MM2 (Coordinate geometry). All concepts are well within the Math 2 curriculum.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 5
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "a4260807-8f65-4735-b7f3-c689a1767f56",
+      "id_prefix": "a4260807",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M_1318b323-Medium-5eb2f22185",
+      "schema_id": "M_1318b323",
+      "subject": "Math 1",
+      "test_type": "ESAT",
+      "primary_tag": "M1-M2",
+      "secondary_tags": [],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "A set of 200 quadratic equations is considered. Each equation has exactly two real roots, and none of the roots are zero.\n\nIt is found that:\n- 30% of the equations have two positive roots.\n- 45% of the equations have two negative roots.\n\nThe remaining equations each have one positive and one negative root.\n\nWhat is the total number of positive roots and negative roots, respectively, in the set?",
+      "options": {
+        "A": "$(110, 140)$",
+        "B": "$(110, 230)$",
+        "C": "$(120, 180)$",
+        "D": "$(170, 140)$",
+        "E": "$(170, 230)$",
+        "F": "$(230, 170)$"
+      },
+      "correct_option": "E",
+      "solution_reasoning": "Step 1:\n\nFirst, determine the number of equations in each of the three categories.\n\nTotal number of equations is 200.\n- Number of equations with two positive roots (PP): $0.30 \\times 200 = 60$.\n- Number of equations with two negative roots (NN): $0.45 \\times 200 = 90$.\n- The percentage of equations with one positive and one negative root (PN) is $100\\% - 30\\% - 45\\% = 25\\%$. So, the number of PN equations is $0.25 \\times 200 = 50$.\n\nStep 2:\n\nCalculate the total number of positive roots. Each PP equation contributes 2 positive roots, and each PN equation contributes 1 positive root.\n\nTotal positive roots = $(60 \\times 2) + (90 \\times 0) + (50 \\times 1) = 120 + 0 + 50 = 170$.\n\nStep 3:\n\nCalculate the total number of negative roots. Each NN equation contributes 2 negative roots, and each PN equation contributes 1 negative root.\n\nTotal negative roots = $(60 \\times 0) + (90 \\times 2) + (50 \\times 1) = 0 + 180 + 50 = 230$.\n\nStep 4:\n\nThe total number of positive roots is 170, and the total number of negative roots is 230.\n\nThe answer is $(170, 230)$.",
+      "solution_key_insight": "Recognise that equations with two roots of the same sign contribute two roots to that sign's total, while equations with mixed roots contribute one root to each total.",
+      "distractor_map": {
+        "A": "This result is obtained by incorrectly assuming each equation contributes only one root of the relevant sign, i.e., $(60 \\times 1) + 50 = 110$ positive roots and $(90 \\times 1) + 50 = 140$ negative roots.",
+        "B": "This result is obtained by correctly calculating the number of negative roots (230) but incorrectly calculating the number of positive roots by forgetting the factor of 2 for the PP equations: $(60 \\times 1) + 50 = 110$.",
+        "C": "This result is obtained by completely ignoring the contribution from the 50 equations with mixed roots. Positive roots: $60 \\times 2 = 120$. Negative roots: $90 \\times 2 = 180$.",
+        "D": "This result is obtained by correctly calculating the number of positive roots (170) but incorrectly calculating the number of negative roots by forgetting the factor of 2 for the NN equations: $(90 \\times 1) + 50 = 140$.",
+        "F": "This result is obtained by swapping the percentages for positive and negative roots. Positive roots: $(90 \\times 2) + 50 = 230$. Negative roots: $(60 \\times 2) + 50 = 170$."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T16:04:33.160055+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The question is a well-constructed counting problem involving percentages and basic arithmetic. It clearly falls within the Math 1 curriculum (M1-M2: Number). The solution is accurate and easy to follow, and the distractors are effective, targeting common calculation errors. Pacing is appropriate for a medium-difficulty ESAT item.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The problem involves calculating percentages and performing basic arithmetic operations (multiplication, addition) to count items based on given categories. This aligns perfectly with the 'Number' (M1-M2) topic in the Math 1 curriculum. The mention of 'quadratic equations' is merely context and does not require knowledge of quadratic equation properties beyond the fact that they have two roots.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "a49ef18a-50da-4884-9b8b-4038e9070ea4",
+      "id_prefix": "a49ef18a",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M_72682ff8-Easy-fbae9ac558",
+      "schema_id": "M_72682ff8",
+      "subject": "Math 2",
+      "test_type": "ESAT",
+      "primary_tag": "M2-MM7",
+      "secondary_tags": [
+        "M2-MM1"
+      ],
+      "difficulty": "Easy",
+      "status": "pending",
+      "question_stem": "The curve C has equation\n\n$$\ny = x^3 - 3kx^2 + 5x - 1\n$$\n\n\nwhere $k$ is a real constant such that the curve has two distinct stationary points.\n\nWhat is the x-coordinate of the midpoint of the line segment joining the two stationary points?",
+      "options": {
+        "A": "0",
+        "B": "1",
+        "C": "-1",
+        "D": "$\\frac{5}{3}$",
+        "E": "2",
+        "F": "The value cannot be determined from the information given."
+      },
+      "correct_option": "F",
+      "solution_reasoning": "The equation of the curve is $y = x^3 - 3kx^2 + 5x - 1$.\n\nTo find the stationary points, we differentiate $y$ with respect to $x$:\n\n$$\n\\frac{dy}{dx} = 3x^2 - 6kx + 5\n$$\n\n\nStationary points occur when $\\frac{dy}{dx} = 0$. The x-coordinates of the stationary points, let's call them $x_1$ and $x_2$, are the roots of the quadratic equation $3x^2 - 6kx + 5 = 0$.\n\nThe question asks for the x-coordinate of the midpoint of the line segment joining these two points. This is given by the average of their x-coordinates, $\\frac{x_1 + x_2}{2}$.\n\nFor a quadratic equation $ax^2 + bx + c = 0$, the sum of the roots is given by $-\\frac{b}{a}$.\n\nIn our case, $a=3$, $b=-6k$, and $c=5$. So, the sum of the roots is:\n\n$$\nx_1 + x_2 = -\\frac{-6k}{3} = 2k\n$$\n\n\nThe x-coordinate of the midpoint is:\n\n$$\n\\frac{x_1 + x_2}{2} = \\frac{2k}{2} = k\n$$\n\n\nThe result is $k$. The question states that there are two distinct stationary points, which means the discriminant of the derivative is positive: $(-6k)^2 - 4(3)(5) > 0$, which simplifies to $36k^2 - 60 > 0$, or $k^2 > \\frac{5}{3}$. This confirms that $k$ is not a fixed value.\n\nSince the x-coordinate of the midpoint is equal to $k$, and $k$ is an unspecified constant, a single numerical value for the midpoint's x-coordinate cannot be determined.\n\nTherefore, the correct answer is that the value cannot be determined from the information given.",
+      "solution_key_insight": "Find the derivative of the curve's equation. The x-coordinates of the stationary points are the roots of this derivative. Use the properties of quadratic roots to find the x-coordinate of their midpoint and observe its dependence on the parameter $k$.",
+      "distractor_map": {
+        "A": "This would be the correct answer if $k=0$. However, this contradicts the condition that there are two distinct stationary points, as for $k=0$, the discriminant of the derivative is negative. It also represents a common error of assuming a parameter is zero for simplicity.",
+        "B": "This would be the correct answer if $k=1$. This corresponds to assuming a value for the parameter to get a numerical answer. Note that $k=1$ does not satisfy the condition $k^2 > 5/3$.",
+        "C": "This would be the correct answer if $k=-1$. This corresponds to assuming a value for the parameter to get a numerical answer. Note that $k=-1$ does not satisfy the condition $k^2 > 5/3$.",
+        "D": "This is the value of the product of the roots of the derivative, $x_1 x_2 = \\frac{c}{a} = \\frac{5}{3}$. This results from misremembering or misusing the properties of quadratic roots.",
+        "E": "This is the value of the sum of the roots of the derivative, $x_1+x_2 = 2k$, if one incorrectly assumes $k=1$.",
+        "F": "This is the correct answer. The x-coordinate of the midpoint is $k$, which is not a single determined value."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T16:06:27.870827+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is well-constructed and perfectly aligned with the Math 2 curriculum. It requires differentiation to find stationary points, knowledge of quadratic equations (specifically the sum of roots using Vieta's formulas), and the concept of a midpoint. The condition for distinct stationary points (discriminant) is also correctly considered in the solution, reinforcing the understanding of the parameter 'k'. The pacing is appropriate for an 'Easy' Math 2 item, estimated at 60-80 seconds. The solution reasoning is clear, accurate, and comprehensive, and the distractor analysis is insightful. The correct option is 'F', as the x-coordinate of the midpoint depends on the unspecified constant 'k'.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The item perfectly aligns with the specified Math 2 curriculum codes.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 5
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "a4b82f5c-b5ec-4dc5-ac7f-749198ca1a99",
+      "id_prefix": "a4b82f5c",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "",
+      "schema_id": "P7",
+      "subject": "Physics",
+      "test_type": "ESAT",
+      "primary_tag": "P-P3",
+      "secondary_tags": [],
+      "difficulty": "Easy",
+      "status": "pending",
+      "question_stem": "A uniform beam of weight $W$ and length $L$ rests horizontally on two supports. One support is located at the left-hand end of the beam, and the other is at a distance of $\\frac{5}{8}L$ from the left-hand end.\nA vertical downward load of magnitude $F$ is applied to the right-hand end of the beam.\nWhich of the following gives the maximum value of $F$ for which the beam remains in equilibrium?\n",
+      "options": {
+        "A": "$\\frac{W}{8}$",
+        "B": "$\\frac{W}{5}$",
+        "C": "$\\frac{W}{4}$",
+        "D": "$\\frac{W}{3}$",
+        "E": "$\\frac{3W}{8}$",
+        "F": "$\\frac{W}{2}$"
+      },
+      "correct_option": "D",
+      "solution_reasoning": "The beam is uniform, so its weight $W$ acts at the centre of mass, located at $\\frac{1}{2}L$ from the left-hand end.\n\nWhen the load $F$ is maximum, the beam is on the point of tilting about the support at $\\frac{5}{8}L$. At this instant, the reaction force at the left-hand support becomes zero. We therefore take moments about the pivot at $\\frac{5}{8}L$.\n\nThe distance from the pivot to the centre of mass is:\n\n$$\n\\frac{5}{8}L - \\frac{1}{2}L = \\frac{1}{8}L\n$$\n\nThe distance from the pivot to the load $F$ at the right-hand end ( $L$) is:\n\n$$\nL - \\frac{5}{8}L = \\frac{3}{8}L\n$$\n\nFor equilibrium, the clockwise moment from $F$ must balance the anticlockwise moment from $W$:\n\n$$\nF \\left( \\frac{3}{8}L \\right) = W \\left( \\frac{1}{8}L \\right)\n$$\n\nCancelling $\\frac{1}{8}L$ from both sides gives:\n\n$$\n3F = W \\implies F = \\frac{W}{3}\n$$",
+      "solution_key_insight": "When the beam is on the point of tilting, the reaction force at the support furthest from the applied load becomes zero.",
+      "distractor_map": {
+        "A": "Incorrectly assumes the limiting force is simply the weight scaled by the lever arm factor $\\frac{1}{8}$.",
+        "B": "Incorrectly uses the ratio of the support position ( $\\frac{5}{8}$) to the total length.",
+        "C": "Likely results from a calculation error in the ratio of the distances from the pivot.",
+        "D": "Correct answer.",
+        "E": "Incorrectly assumes the force is proportional to the overhang length $\\frac{3}{8}L$.",
+        "F": "A common guess based on symmetry or incorrect geometry (e.g. assuming the pivot is at $\\frac{2}{3}L$)."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T20:18:37.091078+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is a standard mechanics problem involving moments and equilibrium. The question is clearly phrased, and the solution is accurate and well-explained. The difficulty and pacing are appropriate for an Easy ESAT item. All concepts are well within the P-P3 (Mechanics) curriculum. The distractors are plausible and represent common errors.",
+        "job_id": "20260626-200555-c30c4146",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The question tests the application of the principle of moments for static equilibrium, a core concept in mechanics.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 5
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "a72538ab-81b8-4eb3-aea2-99cba405804f",
+      "id_prefix": "a72538ab",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M81-Hard-438333a9f7",
+      "schema_id": "M81",
+      "subject": "Math 2",
+      "test_type": "ESAT",
+      "primary_tag": "M2-MM7",
+      "secondary_tags": [
+        "M2-MM1"
+      ],
+      "difficulty": "Hard",
+      "status": "pending",
+      "question_stem": "The functions $f(x)$ and $g(x)$ satisfy the equation $$2 \\int_0^3 (f(x) + 1) \\, \\mathrm{d}x + \\int_0^3 (4g(x) - f(x)) \\, \\mathrm{d}x = 15$$ What is the value of the following integral? $$\\int_0^3 (5f(x) + 20g(x) - 2x) \\, \\mathrm{d}x$$",
+      "options": {
+        "A": "36",
+        "B": "39",
+        "C": "45",
+        "D": "51",
+        "E": "54",
+        "F": "56"
+      },
+      "correct_option": "A",
+      "solution_reasoning": "First, we use the linearity of integration on the given equation to establish a relationship between the integrals of $f(x)$ and $g(x)$.\n\n$$ \n2 \\int_0^3 (f(x) + 1) \\, \\mathrm{d}x + \\int_0^3 (4g(x) - f(x)) \\, \\mathrm{d}x = 15 \n$$\n\n$$ \n\\implies 2 \\int_0^3 f(x) \\, \\mathrm{d}x + 2 \\int_0^3 1 \\, \\mathrm{d}x + 4 \\int_0^3 g(x) \\, \\mathrm{d}x - \\int_0^3 f(x) \\, \\mathrm{d}x = 15 \n$$\n\nThe integral of the constant is $\\int_0^3 1 \\, \\mathrm{d}x = [x]_0^3 = 3$. Substituting this and combining the other terms gives:\n\n$$ \n\\int_0^3 f(x) \\, \\mathrm{d}x + 2(3) + 4 \\int_0^3 g(x) \\, \\mathrm{d}x = 15 \n$$\n\n$$ \n\\implies \\int_0^3 (f(x) + 4g(x)) \\, \\mathrm{d}x = 9 \n$$\n\nNow we turn to the integral we need to evaluate. We can split it and factor out constants, revealing a multiple of the expression we just found.\n\n$$ \n\\int_0^3 (5f(x) + 20g(x) - 2x) \\, \\mathrm{d}x = 5 \\int_0^3 (f(x) + 4g(x)) \\, \\mathrm{d}x - \\int_0^3 2x \\, \\mathrm{d}x \n$$\n\nWe can substitute the value of 9 for the first part and evaluate the second part directly.\n\n$$ \n5(9) - [x^2]_0^3 = 45 - (3^2 - 0^2) = 45 - 9 = 36 \n$$",
+      "solution_key_insight": "Use the linearity of integration on the given equation to find the value of a combined integral, $\\int_0^3 (f(x) + 4g(x)) \\, \\mathrm{d}x$. Notice how this expression relates to the integral you need to find.",
+      "distractor_map": {
+        "A": "Correct answer.",
+        "B": "This results from incorrectly evaluating $\\int_0^3 2x \\, \\mathrm{d}x$ as $2 \\times 3 = 6$, by treating the integrand as a constant.",
+        "C": "This is the value of $5 \\int_0^3 (f(x) + 4g(x)) \\, \\mathrm{d}x$, omitting the final term of $- \\int_0^3 2x \\, \\mathrm{d}x$.",
+        "D": "This error arises from not distributing the initial factor of 2 over the constant term, leading to $2(I_f + 3)$ being calculated as $2I_f + 3$.",
+        "E": "This is the result of a sign error, calculating $45+9$ instead of $45-9$.",
+        "F": "This comes from incorrectly evaluating $\\int_0^3 1 \\, \\mathrm{d}x$ as 1 instead of 3."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T16:35:51.736984+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The question is well-designed, testing core concepts of integration linearity and evaluation. It fits the Math 2 syllabus perfectly, specifically M2-MM7 (Differentiation and integration) and M2-MM1 (Algebra and functions). The solution is clear, correct, and detailed, matching the independently derived answer. The distractors are effective and target common errors, which is a hallmark of a good quality item. Pacing is appropriate for a 'Hard' question, requiring careful multi-step algebraic manipulation and integral evaluation within the typical ESAT time limit.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The question directly assesses the properties of definite integrals, including linearity and evaluation using the Fundamental Theorem of Calculus, which are central to M2-MM7. Algebraic manipulation is covered by M2-MM1.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "aa6262cc-be13-4da2-b70c-ad05a25a3def",
+      "id_prefix": "aa6262cc",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "C_1537b1f8-Medium-fb72de4289",
+      "schema_id": "C_1537b1f8",
+      "subject": "Chemistry",
+      "test_type": "ESAT",
+      "primary_tag": "chemistry-C13",
+      "secondary_tags": [
+        "chemistry-C6"
+      ],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "Propan-1-ol is heated with acidified potassium dichromate(VI) solution and the organic product is immediately distilled off. This intermediate product is then treated with a mixture of KCN and dilute acid.\n\nWhich structure represents the final major organic product?",
+      "options": {
+        "A": "$\\\\ce{CH3CH2CH(OH)CN}$",
+        "B": "$\\\\ce{CH3CH2COOH}$",
+        "C": "$\\\\ce{(CH3)2C(OH)CN}$",
+        "D": "$\\\\ce{CH3CH2CHO}$",
+        "E": "$\\\\ce{CH3CH(OH)CH2CN}$",
+        "F": "$\\\\ce{CH3CH2CH2OH}$"
+      },
+      "correct_option": "A",
+      "solution_reasoning": "Step 1: Oxidation of the primary alcohol.\\nPropan-1-ol, $\\\\ce{CH3CH2CH2OH}$, is a primary alcohol. When heated with an oxidising agent like acidified potassium dichromate(VI), it can be oxidised. The condition 'immediately distilled off' is crucial; it means the product is removed from the reaction mixture as it forms, preventing further oxidation. This is partial oxidation.\\nThe product of partial oxidation of a primary alcohol is an aldehyde. So, propan-1-ol is converted to propanal, $\\\\ce{CH3CH2CHO}$.\\n\\nStep 2: Nucleophilic addition to the aldehyde.\\nThe intermediate product, propanal, is treated with KCN and dilute acid. This mixture generates hydrogen cyanide, HCN. The carbonyl group in the aldehyde is susceptible to nucleophilic attack.\\nThe cyanide ion, $\\\\ce{CN-}$, acts as a nucleophile and attacks the electron-deficient carbonyl carbon. The $\\\\ce{C=O}$ double bond breaks, and the oxygen atom subsequently gains a proton from the acid to form a hydroxyl group ( $\\\\ce{-OH}$).\\n\\nThe overall reaction for this step is:\\n\\n\n\n$$\n\\n\\\\ce{CH3CH2CHO + HCN -> CH3CH2CH(OH)CN}\\n\n$$\n\n\n \\n\\nThe final product is 2-hydroxybutanenitrile, which corresponds to option A.",
+      "solution_key_insight": "Recognise that distillation during oxidation of a primary alcohol yields an aldehyde. This aldehyde then undergoes nucleophilic addition with HCN (formed from KCN/acid) to create a hydroxynitrile.",
+      "distractor_map": {
+        "A": "This is the correct answer given the worked reasoning in the solution.",
+        "B": "Plausible mistake: misapplies a relation from the stem or slips at one algebraic step (see solution for the correct chain).",
+        "C": "Plausible mistake: misapplies a relation from the stem or slips at one algebraic step (see solution for the correct chain).",
+        "D": "Plausible mistake: misapplies a relation from the stem or slips at one algebraic step (see solution for the correct chain).",
+        "E": "Plausible mistake: misapplies a relation from the stem or slips at one algebraic step (see solution for the correct chain).",
+        "F": "Plausible mistake: misapplies a relation from the stem or slips at one algebraic step (see solution for the correct chain)."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T16:44:06.499546+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item accurately assesses knowledge of multi-step organic reactions, specifically the partial oxidation of a primary alcohol to an aldehyde, followed by nucleophilic addition of hydrogen cyanide to the aldehyde to form a cyanohydrin. All concepts are clearly within the 'Carbon/Organic chemistry' (chemistry-C13) curriculum.\n\nThe solution reasoning is clear, accurate, and provides a step-by-step explanation of both reactions, including the crucial role of 'immediately distilled off' for the partial oxidation. The key insight correctly identifies the two main reaction types.\n\nThe pacing is appropriate for an ESAT item, requiring two sequential reaction steps but involving standard, well-known organic reactions. The distractors are plausible and target common misconceptions (e.g., full oxidation, intermediate product, incorrect carbon skeleton, or starting material).\n\nThe answer key is correct.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The question directly tests fundamental organic reaction mechanisms and functional group transformations, which are core components of the chemistry-C13 curriculum.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "aec15155-0970-401b-ad53-8f82f557ffb6",
+      "id_prefix": "aec15155",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M_03af253d-Medium-bede4dd7c0",
+      "schema_id": "M_03af253d",
+      "subject": "Math 1",
+      "test_type": "ESAT",
+      "primary_tag": "M1-M3",
+      "secondary_tags": [
+        "M1-M4"
+      ],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "Four variables, $P$, $V$, $r$, and $T$, are related as follows:\n\n- $P$ is inversely proportional to $V$.\n- $V$ is directly proportional to the cube of $r$.\n- $r$ is directly proportional to the square root of $T$.\n\nWhich of the following statements is true?",
+      "options": {
+        "A": "$P^2$ is directly proportional to $T^3$.",
+        "B": "$P^2$ is inversely proportional to $T^3$.",
+        "C": "$P$ is inversely proportional to $T^6$.",
+        "D": "$P^6$ is inversely proportional to $T$.",
+        "E": "$P^2$ is inversely proportional to $T^7$.",
+        "F": "$P$ is inversely proportional to $T^3$."
+      },
+      "correct_option": "B",
+      "solution_reasoning": "Let's express the given relationships using the proportionality symbol $\\propto$.\n\n1.  $P$ is inversely proportional to $V$: $P \\propto \\frac{1}{V}$\n2.  $V$ is directly proportional to the cube of $r$: $V \\propto r^3$\n3.  $r$ is directly proportional to the square root of $T$: $r \\propto \\sqrt{T} = T^{1/2}$\n\nWe can find the relationship between $P$ and $T$ by substitution.\n\nFirst, substitute the third relationship into the second:\n$$ V \\propto r^3 \\implies V \\propto (T^{1/2})^3 $$ \nUsing the laws of indices, $(a^m)^n = a^{mn}$:\n$$ V \\propto T^{(1/2) \\times 3} = T^{3/2} $$ \nNow, substitute this result into the first relationship:\n$$ P \\propto \\frac{1}{V} \\implies P \\propto \\frac{1}{T^{3/2}} $$ \nThis can be written as $P \\propto T^{-3/2}$.\n\nTo express this relationship using integer powers, we can square both sides:\n$$ P^2 \\propto (T^{-3/2})^2 $$ \n$$ P^2 \\propto T^{(-3/2) \\times 2} = T^{-3} $$ \nThis is equivalent to:\n$$ P^2 \\propto \\frac{1}{T^3} $$ \nThis statement means that $P^2$ is inversely proportional to $T^3$.",
+      "solution_key_insight": "The problem requires translating the three proportionality statements into algebraic relationships and then substituting them sequentially to find the final relationship between the first and last variables.",
+      "distractor_map": {
+        "A": "This results from incorrectly treating the first relationship as direct proportion ( $P \\propto V$). This leads to $P \\propto V \\propto r^3 \\propto (T^{1/2})^3 = T^{3/2}$, and squaring gives $P^2 \\propto T^3$.",
+        "C": "This results from misinterpreting 'square root of $T$ ' as 'square of $T$ ' ( $r \\propto T^2$). This leads to $V \\propto (T^2)^3 = T^6$, and therefore $P \\propto \\frac{1}{V} \\propto \\frac{1}{T^6}$.",
+        "D": "This results from misinterpreting 'cube of $r$ ' as 'cube root of $r$ ' ( $V \\propto r^{1/3}$). This leads to $V \\propto (T^{1/2})^{1/3} = T^{1/6}$, so $P \\propto \\frac{1}{V} \\propto \\frac{1}{T^{1/6}}$. Raising both sides to the power of 6 gives $P^6 \\propto \\frac{1}{T}$.",
+        "E": "This results from an index law error when calculating $(T^{1/2})^3$. Instead of multiplying the powers, they are added: $T^{1/2 + 3} = T^{7/2}$. This gives $P \\propto \\frac{1}{T^{7/2}}$, so $P^2 \\propto \\frac{1}{T^7}$.",
+        "F": "This results from an error in the final step. After correctly finding $P \\propto T^{-3/2}$, the fractional part of the exponent is incorrectly dropped, leading to the conclusion that $P \\propto T^{-3}$, or $P$ is inversely proportional to $T^3$."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T20:30:23.479743+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The question is a well-constructed proportionality problem that requires sequential substitution and application of index laws. All concepts tested (direct/inverse proportionality, algebraic substitution, laws of indices) are firmly within the Math 1 curriculum (M1-M3 and M1-M4). The solution is clear, accurate, and provides a good breakdown of the steps. The distractor map effectively identifies common student errors. Pacing is appropriate for a medium-difficulty ESAT question, requiring a few steps of algebraic manipulation but no complex calculations.",
+        "job_id": "20260626-200555-c30c4146",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "All concepts required to solve this problem are explicitly covered by the specified Math 1 curriculum codes.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "b0a26f12-68f2-4fa9-873c-1c1720ff9155",
+      "id_prefix": "b0a26f12",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M77-Hard-735ab21d3f",
+      "schema_id": "M77",
+      "subject": "Math 2",
+      "test_type": "ESAT",
+      "primary_tag": "M2-MM7",
+      "secondary_tags": [
+        "M2-MM1",
+        "M2-MM2"
+      ],
+      "difficulty": "Hard",
+      "status": "pending",
+      "question_stem": "The tangent to the curve $y = (3-x)^2$ at the point $P$ forms a triangle with the coordinate axes in the first quadrant.\nWhat is the maximum area of this triangle?\n",
+      "options": {
+        "A": "27/4",
+        "B": "8",
+        "C": "9",
+        "D": "27/2",
+        "E": "16"
+      },
+      "correct_option": "B",
+      "solution_reasoning": "Let the point of tangency on the curve be $P(p, (3-p)^2)$.\n\nThe gradient of the curve is given by the derivative, $\\frac{dy}{dx} = 2(3-x)(-1) = 2x-6$. At the point $P$, the gradient of the tangent is $m = 2p-6$.\n\nThe equation of the tangent line at $P$ is $y - (3-p)^2 = (2p-6)(x-p)$.\n\nWe find the intercepts of this tangent with the coordinate axes.\nThe y-intercept (setting $x=0$) is:\n$y = (3-p)^2 - p(2p-6) = 9-6p+p^2 - 2p^2+6p = 9-p^2$.\n\nThe x-intercept (setting $y=0$) is found by solving:\n$-(3-p)^2 = (2p-6)(x-p) = -2(3-p)(x-p)$.\nFor $p \\neq 3$, we can divide by $-(3-p)$ to get $3-p = 2(x-p)$, which gives $x = \\frac{3+p}{2}$.\n\nThe triangle is in the first quadrant, so both intercepts must be positive. This requires $9-p^2 > 0$ and $\\frac{3+p}{2} > 0$, which together imply $-3 < p < 3$.\n\nThe area of the triangle, $A$, is a function of $p$:\n\n$$\nA(p) = \\frac{1}{2} \\times (\\text{x-intercept}) \\times (\\text{y-intercept}) = \\frac{1}{2} \\left(\\frac{3+p}{2}\\right) (9-p^2)\n$$\n\nSimplifying this expression gives:\n\n$$\nA(p) = \\frac{1}{4} (3+p)(3-p)(3+p) = \\frac{1}{4} (3+p)^2(3-p)\n$$\n\nTo find the maximum area, we differentiate $A(p)$ with respect to $p$ and set the result to zero. Using the product rule:\n\n$$\nA'(p) = \\frac{1}{4} \\left[ 2(3+p)(3-p) + (3+p)^2(-1) \\right]\n$$\n\nFactoring out the common term $(3+p)$:\n\n$$\nA'(p) = \\frac{1}{4}(3+p) [2(3-p) - (3+p)] = \\frac{1}{4}(3+p)(3-3p)\n$$\n\nSetting $A'(p)=0$ gives $(3+p)(3-3p) = 0$, so the stationary points are $p=-3$ and $p=1$. Within the valid domain $-3 < p < 3$, the only stationary point is $p=1$.\n\nSubstituting $p=1$ into the area formula gives the maximum area:\n\n$$\nA(1) = \\frac{1}{4}(3+1)^2(3-1) = \\frac{1}{4}(4^2)(2) = \\frac{1}{4}(16)(2) = 8\n$$",
+      "solution_key_insight": "The area of the triangle can be expressed as a function of the x-coordinate of the point of tangency. Use calculus to find the maximum value of this function.",
+      "distractor_map": {
+        "A": "This is the area for the tangent at the point where the curve crosses the y-axis ( $p=0$).",
+        "B": "Correct answer.",
+        "C": "This value is the definite integral $\\int_0^3 (3-x)^2 dx$, which is the area under the curve, not the area of the triangle formed by the tangent.",
+        "D": "This is the area of the triangle formed by the curve's own intercepts, $(0,9)$ and $(3,0)$, not the tangent's intercepts.",
+        "E": "This result is double the correct area, likely from forgetting the factor of $\\frac{1}{2}$ in the triangle area formula."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T16:52:18.143797+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "This is an excellent Math 2 item. It requires a solid understanding of differentiation for finding the gradient of a tangent, the equation of a straight line, finding intercepts, formulating an area function, and then using calculus to optimize that function. The problem is multi-step and challenging, fitting the 'Hard' difficulty rating. The solution is clear and accurate, and the distractors are well-designed, targeting common errors or misinterpretations. The pacing is appropriate for a hard Math 2 question, likely requiring 3-4 minutes for a proficient student.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The problem tests core Math 2 concepts in differentiation for optimization, coordinate geometry of lines and curves, and algebraic manipulation.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 4
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "b0e4d67a-935a-4b98-a692-9a25c705b752",
+      "id_prefix": "b0e4d67a",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "P26-Medium-1294551425",
+      "schema_id": "P26",
+      "subject": "Physics",
+      "test_type": "ESAT",
+      "primary_tag": "P-P1",
+      "secondary_tags": [],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "A resistor of constant resistance dissipates $36 \\text{ W}$ when the potential difference across it is $12 \\text{ V}$.\nThe potential difference is changed to $8 \\text{ V}$.\nWhat is the power dissipated by the resistor at this new potential difference?\n",
+      "options": {
+        "A": "$16 \\text{ W}$",
+        "B": "$24 \\text{ W}$",
+        "C": "$36 \\text{ W}$",
+        "D": "$54 \\text{ W}$",
+        "E": "$81 \\text{ W}$"
+      },
+      "correct_option": "A",
+      "solution_reasoning": "The power dissipated by a resistor is given by $P = \\frac{V^2}{R}$.\n\nSince the resistance $R$ is constant, the power is proportional to the square of the potential difference:\n\n$$\nP \\propto V^2\n$$\n\nThe ratio of the new voltage to the old voltage is:\n\n$$\n\\frac{V_{\\text{new}}}{V_{\\text{old}}} = \\frac{8}{12} = \\frac{2}{3}\n$$\n\nTherefore, the new power $P_{\\text{new}}$ is:\n\n$$\nP_{\\text{new}} = P_{\\text{old}} \\times \\left(\\frac{2}{3}\\right)^2 = 36 \\times \\frac{4}{9} = 16 \\text{ W}\n$$\n",
+      "solution_key_insight": "Identify which circuit property remains constant (resistance) and select the power formula that relates power, voltage, and that constant property.\n",
+      "distractor_map": {
+        "A": "Correct answer",
+        "B": "Incorrectly assumed power is linearly proportional to voltage ( $P \\propto V$), or assumed the current remained constant at the initial value ( $P=IV$ with fixed $I$)",
+        "C": "Incorrectly assumed power remains constant, or used $P=I^2R$ assuming the current remained constant",
+        "D": "Incorrectly assumed power is inversely proportional to voltage ( $P \\propto 1/V$)",
+        "E": "Incorrectly assumed power is inversely proportional to the square of voltage ( $P \\propto 1/V^2$)"
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T16:53:18.712324+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "The item is a standard Physics question testing the relationship between power, potential difference, and resistance (P=V²/R) when resistance is constant. The problem requires basic algebraic manipulation and arithmetic. All concepts are well within the P-P1 (Electricity) curriculum for Physics and M1-M2 (Number), M1-M3 (Ratio and proportion), M1-M4 (Algebra) for Mathematics 1. The solution is clear, concise, and uses an efficient ratio method. The distractors are well-chosen, representing common errors such as assuming linear proportionality or inverse proportionality. Pacing is excellent, as a competent student should solve this within 60-90 seconds. The answer key is correct.",
+        "job_id": "20260626-152707-323da66e",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "All concepts are explicitly covered by the allowed curriculum codes.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 5
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    },
+    {
+      "id": "b3284525-5694-421b-8ca5-4bfdb59add96",
+      "id_prefix": "b3284525",
+      "cohort": "borderline_curriculum_only",
+      "generation_id": "M_72682ff8-Medium-68ccda06f3",
+      "schema_id": "M_72682ff8",
+      "subject": "Math 2",
+      "test_type": "ESAT",
+      "primary_tag": "M2-MM5",
+      "secondary_tags": [
+        "M2-MM1"
+      ],
+      "difficulty": "Medium",
+      "status": "pending",
+      "question_stem": "The first three terms of a sequence $u_n$ (for $n=1, 2, 3, \\dots$) are $u_1=2$, $u_2=4$, and $u_3=8$.\n\nWhat is the value of the fourth term, $u_4$?",
+      "options": {
+        "A": "$12$",
+        "B": "$14$",
+        "C": "$16$",
+        "D": "$22$",
+        "E": "$32$",
+        "F": "The value cannot be uniquely determined."
+      },
+      "correct_option": "F",
+      "solution_reasoning": "The problem provides the first three terms of a sequence and asks for the fourth. However, the rule governing the sequence is not specified. We must check if there are multiple possible rules that fit the given terms.\n\n**Possibility 1: Geometric Progression**\n\nA very common type of sequence is a geometric progression, where each term is found by multiplying the previous one by a constant common ratio, $r$. Let's test this.\n\nThe ratio between the second and first terms is $u_2 / u_1 = 4 / 2 = 2$.\nThe ratio between the third and second terms is $u_3 / u_2 = 8 / 4 = 2$.\n\nSince the ratio is constant, the sequence could be a geometric progression with first term $a=2$ and common ratio $r=2$. The general term would be $u_n = a r^{n-1} = 2 \\cdot 2^{n-1} = 2^n$.\n\nUnder this assumption, the fourth term would be:\n\n\n\n$$\nu_4 = 2^4 = 16\n$$\n\n\n\n**Possibility 2: Quadratic Sequence**\n\nAnother common type of sequence is a quadratic sequence, where the general term is a quadratic polynomial in $n$: $u_n = An^2 + Bn + C$.\n\nWe can find the coefficients $A, B, C$ by setting up a system of simultaneous equations for $n=1, 2, 3$:\n\n1.  $n=1: A(1)^2 + B(1) + C = A + B + C = 2$\n2.  $n=2: A(2)^2 + B(2) + C = 4A + 2B + C = 4$\n3.  $n=3: A(3)^2 + B(3) + C = 9A + 3B + C = 8$\n\nSubtracting equation 1 from 2 gives: $(4A+2B+C) - (A+B+C) = 4 - 2 \\implies 3A + B = 2$.\nSubtracting equation 2 from 3 gives: $(9A+3B+C) - (4A+2B+C) = 8 - 4 \\implies 5A + B = 4$.\n\nNow we have a system of two equations:\n\n\n\n$$\n3A + B = 2\n$$\n\n\n\n$$\n5A + B = 4\n$$\n\n\n\nSubtracting the first of these from the second gives: $(5A+B) - (3A+B) = 4-2 \\implies 2A = 2$, so $A=1$.\nSubstituting $A=1$ into $3A+B=2$ gives $3(1)+B=2$, so $B=-1$.\nSubstituting $A=1, B=-1$ into $A+B+C=2$ gives $1-1+C=2$, so $C=2$.\n\nThus, the sequence could be governed by the quadratic rule $u_n = n^2 - n + 2$.\nLet's check the first three terms with this rule:\n$u_1 = 1^2 - 1 + 2 = 2$\n$u_2 = 2^2 - 2 + 2 = 4$\n$u_3 = 3^2 - 3 + 2 = 8$\nThis rule is also consistent with the given terms.\n\nUnder this assumption, the fourth term would be:\n\n\n\n$$\nu_4 = 4^2 - 4 + 2 = 16 - 4 + 2 = 14\n$$\n\n\n\n**Conclusion**\n\nWe have found at least two different, simple rules that produce the given first three terms, but they yield different values for the fourth term ( $16$ and $14$). Since the problem does not specify which rule to use, the value of $u_4$ cannot be uniquely determined.\n\nTherefore, the correct answer is that the value cannot be uniquely determined.",
+      "solution_key_insight": "The first few terms of a sequence do not uniquely define it. One must consider that different plausible rules (e.g. geometric, quadratic) can fit the given terms but produce different results for subsequent terms.",
+      "distractor_map": {
+        "A": "This result ( $12$) is obtained by incorrectly assuming the sequence becomes arithmetic from the third term, using the difference $d = u_3 - u_2 = 8 - 4 = 4$, and calculating $u_4 = u_3 + d = 8 + 4 = 12$.",
+        "B": "This is the value of $u_4$ if the sequence is assumed to follow the quadratic rule $u_n = n^2 - n + 2$, which correctly generates the first three terms.",
+        "C": "This is the value of $u_4$ if the sequence is assumed to be a geometric progression with common ratio $r=2$. This is the most common but unwarranted assumption.",
+        "D": "This is the value of $u_5$ under the quadratic rule $u_n = n^2 - n + 2$, i.e., $u_5 = 5^2 - 5 + 2 = 22$. This results from finding the wrong term.",
+        "E": "This is the value of $u_5$ under the geometric progression rule $u_n = 2^n$, i.e., $u_5 = 2^5 = 32$. This results from finding the wrong term.",
+        "F": "Correct. As shown in the solution, both a geometric progression ( $u_n=2^n$) and a quadratic sequence ( $u_n=n^2-n+2$) fit the first three terms, but give different values for $u_4$ ( $16$ and $14$, respectively). Without a specified rule, the value is not unique."
+      },
+      "quality_gate": {
+        "assessed_at": "2026-06-26T20:38:49.455748+00:00",
+        "verdict": "Pass",
+        "action": "human_review",
+        "reason": "This is an excellent question that tests a crucial conceptual understanding in sequences and series: that a finite number of terms does not uniquely define the rule for a sequence. Students are required to consider multiple plausible sequence types (e.g., geometric and quadratic) that fit the given terms and demonstrate that they lead to different subsequent terms. The solution is comprehensive, clearly outlining the derivation for both a geometric progression and a quadratic sequence, and correctly concluding that the value cannot be uniquely determined.\n\nThe item is well-aligned with the Math 2 curriculum, specifically M2-MM5 (Sequences and series) and M2-MM1 (Algebra and functions) for solving simultaneous equations. While deriving the quadratic sequence rule can be slightly time-consuming, it's a standard method for this type of problem and the conceptual insight is paramount. The pacing is acceptable for a question that requires both conceptual understanding and some algebraic manipulation.",
+        "job_id": "20260626-200555-c30c4146",
+        "curriculum_match": "borderline",
+        "curriculum_reason": "The question is a perfect fit for the Math 2 curriculum, covering key aspects of sequences and series and algebraic problem-solving.",
+        "curriculum_confidence": null,
+        "scores": {
+          "syllabus_fit": 5,
+          "solution_quality": 5,
+          "esat_realism_pacing": 3
+        },
+        "human_blocking_issues": [],
+        "disposition_labels": []
+      }
+    }
+  ]
+}
