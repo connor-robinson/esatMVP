@@ -15,6 +15,8 @@ import { BinaryChoiceInput } from "./BinaryChoiceInput";
 import { PrimeFactorSlotsInput } from "./PrimeFactorSlotsInput";
 import { FeedbackPopup } from "./FeedbackPopup";
 import { KatexInput } from "./KatexInput";
+import { MathSymbolBar } from "./MathSymbolBar";
+import { insertAtCursor } from "./mathInputUtils";
 import { GeneratedQuestion, QuestionAttempt } from "@/types/core";
 import { getTopic } from "@/config/topics";
 import { cn } from "@/lib/utils";
@@ -87,8 +89,10 @@ export function MentalMathSession({
   const [showSuccessFeedback, setShowSuccessFeedback] = useState(false);
   const [answerRevealed, setAnswerRevealed] = useState(false);
   const [useKatexInput, setUseKatexInput] = useState(true);
+  const [activeMultiIndex, setActiveMultiIndex] = useState(0);
   const katexInputRef = useRef<HTMLInputElement>(null);
   const simpleInputRef = useRef<HTMLInputElement>(null);
+  const multiInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const accuracy =
     totalAttempts > 0
@@ -121,6 +125,8 @@ export function MentalMathSession({
     } else if (isMultiAnswer) {
       const partCount = Math.max(2, answerParts.length);
       setMultiAnswers(new Array(partCount).fill(""));
+      setActiveMultiIndex(0);
+      multiInputRefs.current = [];
     } else {
       setMultiAnswers([]);
     }
@@ -228,6 +234,47 @@ export function MentalMathSession({
       handleSubmit();
     }
   };
+
+  const handleSymbolInsert = useCallback(
+    (insert: string, cursorOffset = 0) => {
+      if (showFeedback && lastAttempt?.isCorrect) return;
+
+      if (isMultiAnswer) {
+        const index = activeMultiIndex;
+        const value = multiAnswers[index] ?? "";
+        const el = multiInputRefs.current[index];
+        const start = el?.selectionStart ?? value.length;
+        const end = el?.selectionEnd ?? value.length;
+        const { next, cursor } = insertAtCursor(value, insert, start, end, cursorOffset);
+        const updated = [...multiAnswers];
+        updated[index] = next;
+        setMultiAnswers(updated);
+        requestAnimationFrame(() => {
+          el?.focus();
+          el?.setSelectionRange(cursor, cursor);
+        });
+        return;
+      }
+
+      const el = simpleInputRef.current;
+      const start = el?.selectionStart ?? answer.length;
+      const end = el?.selectionEnd ?? answer.length;
+      const { next, cursor } = insertAtCursor(answer, insert, start, end, cursorOffset);
+      setAnswer(next);
+      requestAnimationFrame(() => {
+        el?.focus();
+        el?.setSelectionRange(cursor, cursor);
+      });
+    },
+    [
+      activeMultiIndex,
+      answer,
+      isMultiAnswer,
+      lastAttempt?.isCorrect,
+      multiAnswers,
+      showFeedback,
+    ],
+  );
 
   const topic = currentQuestion.topicId ? getTopic(currentQuestion.topicId) : null;
   const topicName = topic?.name || "Unknown";
@@ -402,6 +449,11 @@ export function MentalMathSession({
                 />
               ) : isMultiAnswer ? (
                 <>
+                  <MathSymbolBar
+                    onInsert={handleSymbolInsert}
+                    disabled={(showFeedback && lastAttempt?.isCorrect) || answerRevealed}
+                    className="mb-1"
+                  />
                   <div className="flex w-full justify-center gap-4">
                     {multiAnswers.map((value, index) => {
                       const label = answerFieldLabels[index] ?? `Value ${index + 1}`;
@@ -421,9 +473,13 @@ export function MentalMathSession({
                             </span>
                           )}
                           <input
-                            ref={index === 0 ? simpleInputRef : undefined}
+                            ref={(el) => {
+                              multiInputRefs.current[index] = el;
+                              if (index === 0) simpleInputRef.current = el;
+                            }}
                             type="text"
                             value={answerRevealed ? revealedPart : value}
+                            onFocus={() => setActiveMultiIndex(index)}
                             onChange={(e) => {
                               const next = [...multiAnswers];
                               next[index] = e.target.value;
@@ -520,6 +576,11 @@ export function MentalMathSession({
                 </>
               ) : (
                 <>
+                  <MathSymbolBar
+                    onInsert={handleSymbolInsert}
+                    disabled={(showFeedback && lastAttempt?.isCorrect) || answerRevealed}
+                    className="mb-1 w-full max-w-md"
+                  />
                   <div className="relative w-full">
                     <input
                       ref={simpleInputRef}

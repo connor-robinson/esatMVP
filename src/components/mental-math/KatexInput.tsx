@@ -1,14 +1,23 @@
 /**
- * KaTeX-based input component for mathematical expressions
+ * Math answer input: symbol bar, raw text field on top, rendered KaTeX in the main bar
  */
 
 "use client";
 
-import { useState, useRef, useEffect, KeyboardEvent, forwardRef, useImperativeHandle } from "react";
+import {
+  useState,
+  useRef,
+  useEffect,
+  KeyboardEvent,
+  forwardRef,
+  useImperativeHandle,
+  useCallback,
+} from "react";
 import { cn } from "@/lib/utils";
 import { renderMath } from "@/hooks/useKaTeX";
 import { Eye } from "lucide-react";
-import { normalizeSuperscripts, normalizeGreekLetters } from "@/lib/answer-checker/utils";
+import { MathSymbolBar } from "./MathSymbolBar";
+import { insertAtCursor, toMathDisplayFormat } from "./mathInputUtils";
 
 interface KatexInputProps {
   value: string;
@@ -22,88 +31,60 @@ interface KatexInputProps {
   autoFocus?: boolean;
 }
 
-export const KatexInput = forwardRef<HTMLInputElement, KatexInputProps>(function KatexInput({
-  value,
-  onChange,
-  onSubmit,
-  onReveal,
-  placeholder = "Enter answer",
-  disabled = false,
-  showReveal = false,
-  hasError = false,
-  autoFocus = false,
-}, ref) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  
-  // Expose the input ref to parent
-  useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
-  
-  // Auto-focus when requested
+export const KatexInput = forwardRef<HTMLInputElement, KatexInputProps>(function KatexInput(
+  {
+    value,
+    onChange,
+    onSubmit,
+    onReveal,
+    placeholder = "Type your answer",
+    disabled = false,
+    showReveal = false,
+    hasError = false,
+    autoFocus = false,
+  },
+  ref,
+) {
+  const rawInputRef = useRef<HTMLInputElement>(null);
+  const [renderedHtml, setRenderedHtml] = useState("");
+
+  useImperativeHandle(ref, () => rawInputRef.current as HTMLInputElement);
+
   useEffect(() => {
-    if (autoFocus && inputRef.current && !disabled) {
-      inputRef.current.focus();
+    if (autoFocus && rawInputRef.current && !disabled) {
+      rawInputRef.current.focus();
     }
   }, [autoFocus, disabled]);
-  const previewRef = useRef<HTMLDivElement>(null);
-  const [previewHtml, setPreviewHtml] = useState<string>("");
 
-  /**
-   * Transform user input to support superscripts, fractions, and Greek letters
-   */
-  const transformInput = (input: string): string => {
-    let transformed = input;
-    
-    // Convert ^2 to ², ^3 to ³, etc. (but preserve in actual value for easier editing)
-    // We'll show the superscript in preview but keep caret notation in input
-    return transformed;
-  };
-
-  /**
-   * Convert input to display format for KaTeX rendering
-   */
-  const toDisplayFormat = (input: string): string => {
-    if (!input.trim()) return "";
-    
-    let display = input;
-    
-    // Convert superscripts: ^2 → ², ^(-3) → ⁻³, etc.
-    display = normalizeSuperscripts(display);
-    
-    // Convert Greek letters: theta → θ, pi → π, etc.
-    display = normalizeGreekLetters(display);
-    
-    // Handle fractions: 3/5 → \frac{3}{5} for KaTeX
-    display = display.replace(/(\d+)\s*\/\s*(\d+)/g, (_, num, den) => {
-      return `\\frac{${num}}{${den}}`;
-    });
-    
-    return display;
-  };
-
-  // Update preview when value changes
   useEffect(() => {
     if (!value.trim()) {
-      setPreviewHtml("");
+      setRenderedHtml("");
       return;
     }
-
     try {
-      // Convert to display format
-      const displayValue = toDisplayFormat(value.trim());
-      
-      // Try to render as inline math
+      const displayValue = toMathDisplayFormat(value.trim());
       const rendered = renderMath(displayValue, false);
-      if (rendered) {
-        setPreviewHtml(rendered);
-      } else {
-        // Fallback: show raw value
-        setPreviewHtml(value);
-      }
+      setRenderedHtml(rendered ?? value);
     } catch {
-      // On error, show raw value
-      setPreviewHtml(value);
+      setRenderedHtml(value);
     }
   }, [value]);
+
+  const handleInsert = useCallback(
+    (insert: string, cursorOffset = 0) => {
+      if (disabled) return;
+      const el = rawInputRef.current;
+      const start = el?.selectionStart ?? value.length;
+      const end = el?.selectionEnd ?? value.length;
+      const { next, cursor } = insertAtCursor(value, insert, start, end, cursorOffset);
+      onChange(next);
+      requestAnimationFrame(() => {
+        el?.focus();
+        el?.setSelectionRange(cursor, cursor);
+      });
+    },
+    [disabled, onChange, value],
+  );
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !disabled) {
@@ -112,66 +93,84 @@ export const KatexInput = forwardRef<HTMLInputElement, KatexInputProps>(function
     }
   };
 
+  const focusRaw = () => {
+    if (!disabled) rawInputRef.current?.focus();
+  };
+
   return (
-    <div className="relative w-full max-w-md">
-      {/* Preview display */}
-      {previewHtml && (
-        <div
-          ref={previewRef}
-          className="absolute bottom-full mb-2 left-0 px-3 py-1.5 rounded-lg bg-surface-elevated border border-border text-text-muted text-sm"
-          dangerouslySetInnerHTML={{ __html: previewHtml }}
-        />
-      )}
+    <div className="relative flex w-full max-w-md flex-col gap-2">
+      <MathSymbolBar onInsert={handleInsert} disabled={disabled} />
 
-      {/* Input */}
+      <input
+        ref={rawInputRef}
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder={placeholder}
+        disabled={disabled}
+        autoComplete="off"
+        className={cn(
+          "w-full rounded-xl bg-transparent px-3 py-1 text-center text-sm font-mono text-text-muted outline-none",
+          "placeholder:text-text-disabled placeholder:font-sans",
+          disabled && "cursor-not-allowed opacity-50",
+        )}
+      />
+
       <div className="relative">
-        <input
-          ref={inputRef}
-          type="text"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder={placeholder}
-          disabled={disabled}
-          className={cn(
-            "w-full h-16 text-2xl font-semibold rounded-2xl border-0 outline-none transition-all duration-75",
-            hasError
-              ? "bg-error/20 text-error focus:ring-0 focus:outline-none"
-              : "bg-surface-elevated text-text focus:ring-0 focus:outline-none",
-            "placeholder:text-text-disabled placeholder:text-base placeholder:font-medium",
-            disabled && "opacity-50 cursor-not-allowed"
-          )}
-          style={{
-            textAlign: "center",
-            paddingLeft: "4.5rem", // Equal padding to center text properly
-            paddingRight: "4.5rem", // Equal padding (button is absolutely positioned)
-            lineHeight: "4rem", // Match height for vertical centering
-            height: "4rem"
+        <div
+          role="textbox"
+          tabIndex={disabled ? -1 : 0}
+          onClick={focusRaw}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !disabled) {
+              e.preventDefault();
+              onSubmit();
+            } else {
+              focusRaw();
+            }
           }}
-          autoComplete="off"
-        />
+          className={cn(
+            "flex h-16 w-full items-center justify-center rounded-2xl px-14 transition-all duration-75",
+            hasError ? "bg-error/20" : "bg-surface-elevated",
+            disabled ? "cursor-not-allowed opacity-50" : "cursor-text",
+          )}
+        >
+          {renderedHtml ? (
+            <div
+              className={cn(
+                "max-w-full overflow-x-auto text-2xl [&_.katex]:text-[1.35rem]",
+                hasError ? "text-error" : "text-text",
+              )}
+              dangerouslySetInnerHTML={{ __html: renderedHtml }}
+            />
+          ) : (
+            <span className="text-base font-medium text-text-disabled">Preview</span>
+          )}
+        </div>
 
-        {/* Action buttons */}
-        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+        <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
           {showReveal && onReveal && (
             <button
+              type="button"
               onClick={onReveal}
-              className="p-2 rounded-xl bg-surface-elevated text-text-muted hover:bg-surface hover:text-text transition-all"
+              className="rounded-xl bg-surface-elevated p-2 text-text-muted transition-all hover:bg-surface hover:text-text"
               title="Reveal answer"
             >
               <Eye className="h-5 w-5" strokeWidth={2} />
             </button>
           )}
           <button
+            type="button"
             onClick={onSubmit}
             disabled={(!value.trim() && !showReveal) || disabled}
             className={cn(
-              "p-3 rounded-xl transition-all",
+              "rounded-xl p-3 transition-all",
               hasError
                 ? "bg-error/20 text-error hover:bg-error/30"
                 : value.trim() && !disabled
-                ? "bg-primary/20 text-primary hover:bg-primary/30 hover:scale-110"
-                : "bg-surface-elevated text-text-disabled cursor-not-allowed"
+                  ? "bg-primary/20 text-primary hover:scale-110 hover:bg-primary/30"
+                  : "bg-surface-elevated text-text-disabled cursor-not-allowed",
             )}
           >
             <svg
@@ -189,4 +188,3 @@ export const KatexInput = forwardRef<HTMLInputElement, KatexInputProps>(function
     </div>
   );
 });
-
