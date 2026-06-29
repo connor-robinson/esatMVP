@@ -1026,8 +1026,41 @@ export const TOPICS: Record<string, Topic> = {
     name: "Scientific Notation",
     subjectId: "maths",
     category: "transform",
-    description: "Rewrite numbers in scientific notation form",
-    levels: 1,
+    description: "Convert between ordinary numbers and scientific notation",
+    variants: [
+      {
+        id: "mixed",
+        name: "Mixed (Both Ways)",
+        description: "Ordinary → scientific OR scientific → ordinary (random)",
+        difficulty: 1,
+        config: { level: 1 },
+      },
+    ],
+    icon: "Power",
+  },
+
+  sci_calc: {
+    id: "sci_calc",
+    name: "Standard Form Arithmetic",
+    subjectId: "maths",
+    category: "transform",
+    description: "Multiply/divide numbers in standard form",
+    variants: [
+      {
+        id: "multiply",
+        name: "Multiply",
+        description: "Multiply two numbers in scientific notation",
+        difficulty: 2,
+        config: { level: 1 },
+      },
+      {
+        id: "mix",
+        name: "Multiply & Divide",
+        description: "Mix of multiplication and division in standard form",
+        difficulty: 4,
+        config: { level: 2 },
+      },
+    ],
     icon: "Power",
   },
   units_convert: {
@@ -1057,9 +1090,49 @@ export const TOPICS: Record<string, Topic> = {
     name: "Estimate Surds",
     subjectId: "maths",
     category: "estimation",
-    description: "Estimate square roots of non-perfect squares to 2 d.p.",
-    levels: 1,
+    description: "Estimate square roots (surds) to a few decimal places",
+    variants: [
+      {
+        id: "2dp",
+        name: "Estimate (2 d.p.)",
+        description: "Simplify first, then estimate √n to 2 d.p.",
+        difficulty: 1,
+        config: { level: 1 },
+      },
+      {
+        id: "3dp",
+        name: "Estimate (3 d.p.)",
+        description: "More precision: estimate √n to 3 d.p.",
+        difficulty: 2,
+        config: { level: 2 },
+      },
+    ],
     icon: "TrendUp",
+  },
+
+  surds_simplify: {
+    id: "surds_simplify",
+    name: "Simplify Surds",
+    subjectId: "maths",
+    category: "transform",
+    description: "Simplify surds (and occasionally reverse)",
+    variants: [
+      {
+        id: "simplify",
+        name: "Simplify √n",
+        description: "Simplify √n into a√b",
+        difficulty: 2,
+        config: { level: 1 },
+      },
+      {
+        id: "reverse",
+        name: "Reverse (Rare)",
+        description: "Convert a√b into a single root √n (rare)",
+        difficulty: 4,
+        config: { level: 2 },
+      },
+    ],
+    icon: "Power",
   },
 
   // Identities

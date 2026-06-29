@@ -250,7 +250,7 @@ const ARITHMETIC_EXTRA_FOLDERS: FolderDef[] = [
   {
     id: 'arithmetic-notation',
     name: 'Notation & Surds',
-    topicIds: ['sci_rewrite', 'estimate_common_sqrts'],
+    topicIds: ['sci_rewrite', 'sci_calc', 'estimate_common_sqrts', 'surds_simplify'],
     symbol: { kind: 'latex', latex: String.raw`10^n` },
   },
 ];

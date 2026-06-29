@@ -37,6 +37,7 @@ import { generateEstimation } from "./estimation";
 import { generateFriendlyFracDecimals } from "./friendly_frac_decimals";
 import { generateCommonFracToDec2dp } from "./common_frac_to_dec_2dp";
 import { generateSciRewrite } from "./sci_rewrite";
+import { generateSciCalc } from "./sci_calc";
 
 // Arithmetic (continued)
 import { generateSimplifyFraction } from "./simplify_fraction";
@@ -47,6 +48,7 @@ import { generatePrimeFactorise } from "./prime_factorise";
 
 // Test & Estimation
 import { generateEstimateCommonSqrts } from "./estimate_common_sqrts";
+import { generateSurdsSimplify } from "./surds_simplify";
 
 // Identities
 import { generateBinomialExpand } from "./binomial_expand";
@@ -131,9 +133,11 @@ export const GENERATORS: Record<string, GeneratorFunction> = validateGenerators(
   friendly_frac_decimals: generateFriendlyFracDecimals,
   common_frac_to_dec_2dp: generateCommonFracToDec2dp,
   sci_rewrite: generateSciRewrite,
+  sci_calc: generateSciCalc,
   
   // Test & Estimation
   estimate_common_sqrts: generateEstimateCommonSqrts,
+  surds_simplify: generateSurdsSimplify,
   
   // Identities
   binomial_expand: generateBinomialExpand,

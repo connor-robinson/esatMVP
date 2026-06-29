@@ -142,13 +142,34 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'latex', latex: String.raw`8 \times 17` },
     { kind: 'latex', latex: String.raw`7 \times 15` },
   ]),
-  'sci_rewrite-level-1': S([
+  'sci_rewrite-mixed': S([
     { kind: 'latex', latex: String.raw`3.2 \times 10^{4}` },
+    { kind: 'plain', text: '0.0000502' },
     { kind: 'latex', latex: String.raw`7.5 \times 10^{-2}` },
   ]),
-  'estimate_common_sqrts-level-1': S([
+  'sci_calc-multiply': S([
+    { kind: 'latex', latex: String.raw`(3.2 \times 10^{4})(5 \times 10^{-2})` },
+    { kind: 'latex', latex: String.raw`(1.5 \times 10^{3})(4 \times 10^{1})` },
+  ]),
+  'sci_calc-mix': S([
+    { kind: 'latex', latex: String.raw`(6.4 \times 10^{5})\div(3.2 \times 10^{2})` },
+    { kind: 'latex', latex: String.raw`(2.5 \times 10^{-3})(4 \times 10^{6})` },
+  ]),
+  'estimate_common_sqrts-2dp': S([
     { kind: 'latex', latex: String.raw`\sqrt{50} \approx ?` },
     { kind: 'latex', latex: String.raw`\sqrt{18} \approx ?` },
+  ]),
+  'estimate_common_sqrts-3dp': S([
+    { kind: 'latex', latex: String.raw`\sqrt{147} \approx ?` },
+    { kind: 'latex', latex: String.raw`\sqrt{75} \approx ?` },
+  ]),
+  'surds_simplify-simplify': S([
+    { kind: 'latex', latex: String.raw`\sqrt{72}` },
+    { kind: 'latex', latex: String.raw`\sqrt{98}` },
+  ]),
+  'surds_simplify-reverse': S([
+    { kind: 'latex', latex: String.raw`6\sqrt{2}` },
+    { kind: 'latex', latex: String.raw`5\sqrt{3}` },
   ]),
 
   // —— Algebra ——

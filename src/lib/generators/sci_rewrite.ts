@@ -1,6 +1,8 @@
 /**
  * Scientific notation generator
- * Rewrites a number in scientific notation form a×10^n
+ * Mixed practice:
+ * - ordinary → scientific notation (a×10^n)
+ * - scientific notation → ordinary number
  */
 
 import { GeneratedQuestion } from "@/types/core";
@@ -67,30 +69,59 @@ export function generateSciRewrite(
   level: number,
   weights?: Record<string, number>
 ): GeneratedQuestion {
-  const pool = Array.from({ length: 20 }, () => randomSciNumber());
-  const x = pick(pool) * (Math.random() < 0.2 ? -1 : 1);
-
+  const pool = Array.from({ length: 24 }, () => randomSciNumber());
+  const x = pick(pool) * (Math.random() < 0.15 ? -1 : 1);
   const { a, n } = toScientific(x);
   const showA = formatCleanDecimal(a);
-  const prompt = `Rewrite ${x} in the form a×10^n (scientific notation).`;
-  const canonical = `${showA}×10${toSuperscript(n)}`;
-  
-  const acceptable = [
-    canonical,
-    `${showA}*10^${n}`,
-    `${showA}e${n}`,
-    `${showA}×10^${n}`,
-  ];
+  const canonicalSci = `${showA}×10${toSuperscript(n)}`;
+
+  const direction = Math.random() < 0.5 ? "toSci" : "toOrdinary";
+
+  if (direction === "toSci") {
+    const prompt = `Rewrite ${x} in scientific notation (a×10^n).`;
+    const acceptable = [
+      canonicalSci,
+      `${showA}*10^${n}`,
+      `${showA}e${n}`,
+      `${showA}×10^${n}`,
+    ];
+
+    const checker = createAnswerChecker({
+      correctAnswer: canonicalSci,
+      acceptScientific: true,
+      acceptableAnswers: acceptable,
+      customChecker: (user: string) => {
+        const parsed = parseSci(user);
+        if (!parsed) return false;
+        if (parsed.n !== n) return false;
+        return Math.abs(parsed.a - a) <= 1e-3;
+      },
+    });
+
+    return {
+      id: generateId(),
+      topicId: "sci_rewrite",
+      question: prompt,
+      answer: canonicalSci,
+      difficulty: level,
+      checker,
+    };
+  }
+
+  // toOrdinary
+  // Present as scientific and ask for ordinary number (decimal).
+  const trueVal = a * Math.pow(10, n);
+  const ordinary = formatCleanDecimal(parseFloat(trueVal.toPrecision(12)));
+  const prompt = `Convert to an ordinary number: ${showA}×10^${n}`;
 
   const checker = createAnswerChecker({
-    correctAnswer: canonical,
-    acceptScientific: true,
-    acceptableAnswers: acceptable,
+    correctAnswer: ordinary,
+    acceptDecimals: true,
+    tolerance: 1e-9,
     customChecker: (user: string) => {
-      const parsed = parseSci(user);
-      if (!parsed) return false;
-      if (parsed.n !== n) return false;
-      return Math.abs(parsed.a - a) <= 1e-3;
+      const u = Number(String(user).trim().replace(/,/g, ""));
+      if (!Number.isFinite(u)) return false;
+      return Math.abs(u - trueVal) <= 1e-9 * Math.max(1, Math.abs(trueVal));
     },
   });
 
@@ -98,9 +129,13 @@ export function generateSciRewrite(
     id: generateId(),
     topicId: "sci_rewrite",
     question: prompt,
-    answer: canonical,
+    answer: ordinary,
     difficulty: level,
     checker,
+    explanation:
+      `Move the decimal point ${Math.abs(n)} place(s) ` +
+      (n >= 0 ? "to the right" : "to the left") +
+      ` because of the power of 10. So ${showA}×10^${n} = ${ordinary}.`,
   };
 }
 
