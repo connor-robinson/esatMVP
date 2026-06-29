@@ -52,11 +52,13 @@ function latexFrac(n: number, d: number): string {
 }
 
 function formatTwoEquationPrompt(q1: string, q2: string): string {
-  return `$${q1}$\n\n$${q2}$\n\nSolve for $x$ and $y$.`;
+  const aligned = `\\begin{aligned}\n${q1} \\\\\n${q2}\n\\end{aligned}`;
+  return `$$${aligned}$$\n\nSolve for $x$ and $y$.`;
 }
 
 function formatThreeEquationPrompt(q1: string, q2: string, q3: string): string {
-  return `$${q1}$\n\n$${q2}$\n\n$${q3}$\n\nSolve for $x$, $y$, and $z$.`;
+  const aligned = `\\begin{aligned}\n${q1} \\\\\n${q2} \\\\\n${q3}\n\\end{aligned}`;
+  return `$$${aligned}$$\n\nSolve for $x$, $y$, and $z$.`;
 }
 
 function generateLevel1(): GeneratedQuestion {
