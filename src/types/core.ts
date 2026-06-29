@@ -252,12 +252,16 @@ export interface GeometryDiagramData {
     labelX: number;
     labelY: number;
     label: string;
+    /** Pre-built arc path (used for circle theorems) */
+    pathD?: string;
   }[];
   labels: DiagramLabel[];
   /** Full circles (outline only) */
   circles?: { cx: number; cy: number; r: number }[];
   /** Caption below diagram (e.g. not to scale) */
   caption?: string;
+  /** Visual scale — circle theorems use large */
+  size?: "default" | "large";
   /** Point markers (centre dots, etc.) */
   points?: { x: number; y: number; label?: string; emphasis?: boolean }[];
 }

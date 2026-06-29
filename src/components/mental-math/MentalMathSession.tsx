@@ -427,7 +427,12 @@ export function MentalMathSession({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2, ease: "easeInOut" }}
-                  className="w-full flex justify-center mt-[-32px]"
+                  className={cn(
+                    "w-full flex justify-center",
+                    currentQuestion.topicId === "circle_theorems"
+                      ? "my-2"
+                      : "mt-[-32px]",
+                  )}
                 >
                   <DiagramRenderer
                     data={currentQuestion.diagram}

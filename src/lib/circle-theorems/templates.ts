@@ -4,7 +4,6 @@
 
 import type { CircleTheoremResult, LabelledPoint, LineSegment, TemplateId } from "./types";
 import {
-  angleArcLegs,
   centrePoint,
   interiorAngleDeg,
   pickFrom,
@@ -55,8 +54,6 @@ export function templateCentreToCircumference(): CircleTheoremResult {
 
   const actualCentre = interiorAngleDeg(O, A, B);
   const actualRim = interiorAngleDeg(C, A, B);
-  const oLegs = angleArcLegs(O, A, B);
-  const cLegs = angleArcLegs(C, A, B);
 
   return {
     templateId: "CENTRE_TO_CIRCUMFERENCE",
@@ -74,8 +71,8 @@ export function templateCentreToCircumference(): CircleTheoremResult {
         ...linesBetween(points, [["O", "A"], ["O", "B"], ["A", "B"], ["C", "A"], ["C", "B"]]),
       ],
       angles: [
-        { id: "AOB", vertex: O, leg1Deg: oLegs.leg1Deg, leg2Deg: oLegs.leg2Deg, label: `${actualCentre}°` },
-        { id: "ACB", vertex: C, leg1Deg: cLegs.leg1Deg, leg2Deg: cLegs.leg2Deg, label: "x", isTarget: true },
+        { id: "AOB", vertex: O, leg1: A, leg2: B, label: `${actualCentre}°` },
+        { id: "ACB", vertex: C, leg1: A, leg2: B, label: "x", isTarget: true },
       ],
       rightAngles: [],
     },
@@ -97,8 +94,6 @@ export function templateCircumferenceToCentre(): CircleTheoremResult {
 
   const actualCentre = interiorAngleDeg(O, A, B);
   const actualRim = interiorAngleDeg(C, A, B);
-  const oLegs = angleArcLegs(O, A, B);
-  const cLegs = angleArcLegs(C, A, B);
 
   return {
     templateId: "CIRCUMFERENCE_TO_CENTRE",
@@ -114,8 +109,8 @@ export function templateCircumferenceToCentre(): CircleTheoremResult {
       points: [O, A, B, C],
       lines: linesBetween(points, [["O", "A"], ["O", "B"], ["A", "B"], ["C", "A"], ["C", "B"]]),
       angles: [
-        { id: "ACB", vertex: C, leg1Deg: cLegs.leg1Deg, leg2Deg: cLegs.leg2Deg, label: `${actualRim}°` },
-        { id: "AOB", vertex: O, leg1Deg: oLegs.leg1Deg, leg2Deg: oLegs.leg2Deg, label: "x", isTarget: true },
+        { id: "ACB", vertex: C, leg1: A, leg2: B, label: `${actualRim}°` },
+        { id: "AOB", vertex: O, leg1: A, leg2: B, label: "x", isTarget: true },
       ],
       rightAngles: [],
     },
@@ -134,9 +129,6 @@ export function templateSemicircleTriangle(basic = false): CircleTheoremResult {
   const C = pt("C", cDeg, "C");
   const points: Record<string, LabelledPoint> = { O, A, B, C };
 
-  const aLegs = angleArcLegs(A, C, B);
-  const cLegs = angleArcLegs(C, A, B);
-  const bLegs = angleArcLegs(B, C, A);
   const angleAtA = interiorAngleDeg(A, C, B);
   const angleAtC = interiorAngleDeg(C, A, B);
   const answer = interiorAngleDeg(B, C, A);
@@ -163,9 +155,9 @@ export function templateSemicircleTriangle(basic = false): CircleTheoremResult {
       points: [O, A, B, C],
       lines: linesBetween(points, [["O", "A"], ["O", "B"], ["A", "B"], ["A", "C"], ["B", "C"]]),
       angles: [
-        { id: "CAB", vertex: A, leg1Deg: aLegs.leg1Deg, leg2Deg: aLegs.leg2Deg, label: `${angleAtA}°` },
-        { id: "ACB", vertex: C, leg1Deg: cLegs.leg1Deg, leg2Deg: cLegs.leg2Deg, label: `${angleAtC}°` },
-        { id: "CBA", vertex: B, leg1Deg: bLegs.leg1Deg, leg2Deg: bLegs.leg2Deg, label: "x", isTarget: true },
+        { id: "CAB", vertex: A, leg1: C, leg2: B, label: `${angleAtA}°` },
+        { id: "ACB", vertex: C, leg1: A, leg2: B, label: `${angleAtC}°` },
+        { id: "CBA", vertex: B, leg1: C, leg2: A, label: "x", isTarget: true },
       ],
       rightAngles: [{ vertex: C, leg1: A, leg2: B }],
     },
@@ -186,8 +178,6 @@ export function templateSameSegment(): CircleTheoremResult {
   const D = pt("D", dDeg, "D");
   const points: Record<string, LabelledPoint> = { O, A, B, C, D };
 
-  const cLegs = angleArcLegs(C, A, B);
-  const dLegs = angleArcLegs(D, A, B);
   const angleC = interiorAngleDeg(C, A, B);
   const angleD = interiorAngleDeg(D, A, B);
   const findAtD = Math.random() < 0.5;
@@ -210,16 +200,16 @@ export function templateSameSegment(): CircleTheoremResult {
         {
           id: "ACB",
           vertex: C,
-          leg1Deg: cLegs.leg1Deg,
-          leg2Deg: cLegs.leg2Deg,
+          leg1: A,
+          leg2: B,
           label: findAtD ? `${angleC}°` : "x",
           isTarget: !findAtD,
         },
         {
           id: "ADB",
           vertex: D,
-          leg1Deg: dLegs.leg1Deg,
-          leg2Deg: dLegs.leg2Deg,
+          leg1: A,
+          leg2: B,
           label: findAtD ? "x" : `${angleD}°`,
           isTarget: findAtD,
         },
@@ -243,8 +233,6 @@ export function templateAlternateSegment(): CircleTheoremResult {
   const tan = tangentSegment(T, centre, 95);
   const tanFar = { x: tan.x2, y: tan.y2 };
 
-  const tangentLeg = angleArcLegs(T, tanFar, A);
-  const pLegs = angleArcLegs(P, A, T);
   const tangentAngle = interiorAngleDeg(T, tanFar, A);
   const pAngle = interiorAngleDeg(P, A, T);
   const findTangent = Math.random() < 0.5;
@@ -273,16 +261,16 @@ export function templateAlternateSegment(): CircleTheoremResult {
         {
           id: "tangent",
           vertex: T,
-          leg1Deg: tangentLeg.leg1Deg,
-          leg2Deg: tangentLeg.leg2Deg,
+          leg1: tanFar,
+          leg2: A,
           label: findTangent ? "x" : `${pAngle}°`,
           isTarget: findTangent,
         },
         {
           id: "PAT",
           vertex: P,
-          leg1Deg: pLegs.leg1Deg,
-          leg2Deg: pLegs.leg2Deg,
+          leg1: A,
+          leg2: T,
           label: findTangent ? `${tangentAngle}°` : "x",
           isTarget: !findTangent,
         },
@@ -304,9 +292,6 @@ export function templateRadiusTangent(basic = false): CircleTheoremResult {
   const tan = tangentSegment(T, centre, 90);
   const tanFar = { x: tan.x2, y: tan.y2 };
 
-  const otsLegs = angleArcLegs(T, O, tanFar);
-  const ostLegs = angleArcLegs(O, S, T);
-  const sLegs = angleArcLegs(S, O, T);
   const angleAtO = interiorAngleDeg(O, S, T);
   const angleAtT = interiorAngleDeg(T, O, tanFar);
   const angleAtS = interiorAngleDeg(S, O, T);
@@ -341,17 +326,17 @@ export function templateRadiusTangent(basic = false): CircleTheoremResult {
         {
           id: "OTS",
           vertex: T,
-          leg1Deg: otsLegs.leg1Deg,
-          leg2Deg: otsLegs.leg2Deg,
+          leg1: O,
+          leg2: tanFar,
           label: basic ? `${angleAtT}°` : "x",
           isTarget: !basic,
         },
-        { id: "OST", vertex: O, leg1Deg: ostLegs.leg1Deg, leg2Deg: ostLegs.leg2Deg, label: `${angleAtO}°` },
+        { id: "OST", vertex: O, leg1: S, leg2: T, label: `${angleAtO}°` },
         {
           id: "OST2",
           vertex: S,
-          leg1Deg: sLegs.leg1Deg,
-          leg2Deg: sLegs.leg2Deg,
+          leg1: O,
+          leg2: T,
           label: basic ? "x" : `${angleAtS}°`,
           isTarget: basic,
         },
@@ -375,8 +360,6 @@ export function templateCyclicOpposite(): CircleTheoremResult {
   const D = pt("D", dDeg, "D");
   const points: Record<string, LabelledPoint> = { O, A, B, C, D };
 
-  const aLegs = angleArcLegs(A, D, B);
-  const cLegs = angleArcLegs(C, B, D);
   const angleA = interiorAngleDeg(A, D, B);
   const angleC = interiorAngleDeg(C, B, D);
 
@@ -394,8 +377,8 @@ export function templateCyclicOpposite(): CircleTheoremResult {
       points: [O, A, B, C, D],
       lines: linesBetween(points, [["A", "B"], ["B", "C"], ["C", "D"], ["D", "A"]]),
       angles: [
-        { id: "DAB", vertex: A, leg1Deg: aLegs.leg1Deg, leg2Deg: aLegs.leg2Deg, label: `${angleA}°` },
-        { id: "BCD", vertex: C, leg1Deg: cLegs.leg1Deg, leg2Deg: cLegs.leg2Deg, label: "x", isTarget: true },
+        { id: "DAB", vertex: A, leg1: D, leg2: B, label: `${angleA}°` },
+        { id: "BCD", vertex: C, leg1: B, leg2: D, label: "x", isTarget: true },
       ],
       rightAngles: [],
     },
@@ -418,8 +401,6 @@ export function templateCyclicExterior(): CircleTheoremResult {
   const ext = pointOnCircle(bDeg - 18);
   const extPt: LabelledPoint = { id: "E", x: ext.x, y: ext.y, label: "E" };
 
-  const eLegs = angleArcLegs(B, A, extPt);
-  const dLegs = angleArcLegs(D, C, A);
   const extAngle = interiorAngleDeg(B, A, extPt);
   const interior = interiorAngleDeg(D, C, A);
 
@@ -443,8 +424,8 @@ export function templateCyclicExterior(): CircleTheoremResult {
         { x1: A.x, y1: A.y, x2: extPt.x, y2: extPt.y },
       ],
       angles: [
-        { id: "ext", vertex: B, leg1Deg: eLegs.leg1Deg, leg2Deg: eLegs.leg2Deg, label: "x", isTarget: true },
-        { id: "ADC", vertex: D, leg1Deg: dLegs.leg1Deg, leg2Deg: dLegs.leg2Deg, label: `${interior}°` },
+        { id: "ext", vertex: B, leg1: A, leg2: extPt, label: "x", isTarget: true },
+        { id: "ADC", vertex: D, leg1: C, leg2: A, label: `${interior}°` },
       ],
       rightAngles: [],
     },

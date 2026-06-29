@@ -14,14 +14,15 @@ interface GeometryDiagramProps {
 }
 
 export function GeometryDiagram({ data, className }: GeometryDiagramProps) {
-  const { viewBox, paths = [], lines = [], arcs = [], angleArcs = [], labels, circles = [], points = [], caption } = data;
+  const { viewBox, paths = [], lines = [], arcs = [], angleArcs = [], labels, circles = [], points = [], caption, size = "default" } = data;
   const vb = `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`;
+  const isLarge = size === "large";
 
   return (
     <div className={cn("flex flex-col items-center w-full gap-1.5", className)}>
       <svg
         viewBox={vb}
-        className="w-full max-w-[340px] h-auto"
+        className={cn("w-full h-auto", isLarge ? "max-w-[min(100%,520px)]" : "max-w-[340px]")}
         preserveAspectRatio="xMidYMid meet"
       >
         {circles.map((c, i) => (
@@ -78,13 +79,13 @@ export function GeometryDiagram({ data, className }: GeometryDiagramProps) {
         {angleArcs?.map((a, i) => (
           <g key={`angle-${i}`}>
             <path
-              d={arcPath(a.cx, a.cy, a.r, a.startDeg, a.endDeg)}
+              d={a.pathD ?? arcPath(a.cx, a.cy, a.r, a.startDeg, a.endDeg)}
               fill="none"
               stroke="var(--color-text)"
               strokeOpacity={0.5}
-              strokeWidth={1.5}
+              strokeWidth={isLarge ? 1.75 : 1.5}
             />
-            <DiagramLabel x={a.labelX} y={a.labelY} text={a.label} fontSize={13} emphasis={a.label === "x"} />
+            <DiagramLabel x={a.labelX} y={a.labelY} text={a.label} fontSize={isLarge ? 15 : 13} emphasis={a.label === "x"} />
           </g>
         ))}
 

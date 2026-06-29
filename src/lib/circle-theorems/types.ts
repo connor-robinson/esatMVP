@@ -35,9 +35,9 @@ export interface SolutionStep {
 export interface AngleDisplay {
   id: string;
   vertex: Point;
-  /** Compass degrees (0 = east, 90 = north) matching geometryPrimitives */
-  leg1Deg: number;
-  leg2Deg: number;
+  /** Second point on each ray from the vertex */
+  leg1: Point;
+  leg2: Point;
   label: string;
   isTarget?: boolean;
 }

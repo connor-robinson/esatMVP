@@ -4,37 +4,14 @@
 
 import type { GeometryDiagramData } from "@/types/core";
 import type { CircleTheoremDiagram } from "./types";
-import { CT_CX, CT_CY, CT_R } from "./angleUtils";
+import { buildAngleArcDisplay, CT_CX, CT_CY, CT_R } from "./angleUtils";
 import { standardViewBox } from "@/lib/diagrams/diagramLayout";
-
-function angleLabelPosition(
-  vertex: { x: number; y: number },
-  leg1Deg: number,
-  leg2Deg: number,
-  radius: number,
-): { x: number; y: number } {
-  let start = leg1Deg;
-  let end = leg2Deg;
-  let sweep = end - start;
-  if (sweep < 0) sweep += 360;
-  if (sweep > 180) {
-    start = end;
-    end = leg1Deg;
-    sweep = 360 - sweep;
-  }
-  const mid = start + sweep / 2;
-  const rad = (mid * Math.PI) / 180;
-  return {
-    x: vertex.x + radius * 1.55 * Math.cos(rad),
-    y: vertex.y - radius * 1.55 * Math.sin(rad),
-  };
-}
 
 function rightAngleSquarePath(
   vertex: { x: number; y: number },
   leg1: { x: number; y: number },
   leg2: { x: number; y: number },
-  size = 11,
+  size = 13,
 ): string {
   const d1x = leg1.x - vertex.x;
   const d1y = leg1.y - vertex.y;
@@ -64,6 +41,7 @@ export function renderCircleTheorem(diagram: CircleTheoremDiagram): GeometryDiag
     angleArcs: [],
     labels: [],
     caption: diagram.caption ?? "Diagram not to scale",
+    size: "large",
     points: [],
   };
 
@@ -72,16 +50,18 @@ export function renderCircleTheorem(diagram: CircleTheoremDiagram): GeometryDiag
   }
 
   for (const a of diagram.angles) {
-    const arcR = a.isTarget ? 22 : 18;
-    const pos = angleLabelPosition(a.vertex, a.leg1Deg, a.leg2Deg, arcR);
+    const arcR = a.isTarget ? 30 : 24;
+    const labelOffset = arcR + 18;
+    const arc = buildAngleArcDisplay(a.vertex, a.leg1, a.leg2, arcR, labelOffset);
     data.angleArcs!.push({
       cx: a.vertex.x,
       cy: a.vertex.y,
       r: arcR,
-      startDeg: a.leg1Deg,
-      endDeg: a.leg2Deg,
-      labelX: pos.x,
-      labelY: pos.y,
+      startDeg: 0,
+      endDeg: 0,
+      pathD: arc.pathD,
+      labelX: arc.labelX,
+      labelY: arc.labelY,
       label: a.label,
     });
   }
@@ -102,12 +82,12 @@ export function renderCircleTheorem(diagram: CircleTheoremDiagram): GeometryDiag
       const dx = p.x - CT_CX;
       const dy = p.y - CT_CY;
       const len = Math.sqrt(dx * dx + dy * dy) || 1;
-      const offset = p.id === "T" ? 18 : 16;
+      const offset = p.id === "T" ? 20 : 18;
       data.labels.push({
         x: p.x + (dx / len) * offset,
         y: p.y + (dy / len) * offset,
         text: p.label,
-        fontSize: 14,
+        fontSize: 15,
       });
     }
   }

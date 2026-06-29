@@ -6,7 +6,7 @@ import type { CircleTheoremResult } from "./types";
 import { interiorAngleDeg } from "./angleUtils";
 
 const MIN_LABEL_SEP = 12;
-const MIN_ARC_SPAN = 10;
+const MIN_ARC_DEG = 10;
 
 export function validateCircleTheorem(result: CircleTheoremResult): boolean {
   if (!Number.isFinite(result.answer) || result.answer <= 0 || result.answer >= 180) {
@@ -17,9 +17,8 @@ export function validateCircleTheorem(result: CircleTheoremResult): boolean {
   const target = result.diagram.angles.find((a) => a.isTarget);
   if (!target) return false;
 
-  const span = Math.abs(target.leg2Deg - target.leg1Deg);
-  const arcSpan = span > 180 ? 360 - span : span;
-  if (arcSpan < MIN_ARC_SPAN) return false;
+  const span = interiorAngleDeg(target.vertex, target.leg1, target.leg2);
+  if (span < MIN_ARC_DEG) return false;
 
   const pts = result.diagram.points;
   for (let i = 0; i < pts.length; i++) {

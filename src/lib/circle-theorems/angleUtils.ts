@@ -4,11 +4,12 @@
 
 import type { Point } from "./types";
 import { polarPoint } from "@/lib/diagrams/geometryPrimitives";
-import { DIAGRAM_CX, DIAGRAM_CY, FIXED_RADIUS_PX } from "@/lib/diagrams/diagramLayout";
+import { DIAGRAM_CX, DIAGRAM_CY } from "@/lib/diagrams/diagramLayout";
 
 export const CT_CX = DIAGRAM_CX;
 export const CT_CY = DIAGRAM_CY;
-export const CT_R = FIXED_RADIUS_PX;
+/** Larger than area/volume diagrams — circle theorems need readable angle arcs */
+export const CT_R = 128;
 
 export function pointOnCircle(deg: number, r = CT_R): Point {
   return polarPoint(CT_CX, CT_CY, r, deg);
@@ -49,6 +50,42 @@ export function angleArcLegs(vertex: Point, p1: Point, p2: Point): { leg1Deg: nu
     sweep = 360 - sweep;
   }
   return { leg1Deg: start, leg2Deg: end };
+}
+
+/** Cartesian angle arc + interior label position (screen coordinates). */
+export function buildAngleArcDisplay(
+  vertex: Point,
+  leg1: Point,
+  leg2: Point,
+  arcRadius: number,
+  labelOffset: number,
+): { pathD: string; labelX: number; labelY: number } {
+  const v1x = leg1.x - vertex.x;
+  const v1y = leg1.y - vertex.y;
+  const v2x = leg2.x - vertex.x;
+  const v2y = leg2.y - vertex.y;
+  const len1 = Math.hypot(v1x, v1y) || 1;
+  const len2 = Math.hypot(v2x, v2y) || 1;
+  const n1 = { x: v1x / len1, y: v1y / len1 };
+  const n2 = { x: v2x / len2, y: v2y / len2 };
+
+  const arcStartX = vertex.x + n1.x * arcRadius;
+  const arcStartY = vertex.y + n1.y * arcRadius;
+  const arcEndX = vertex.x + n2.x * arcRadius;
+  const arcEndY = vertex.y + n2.y * arcRadius;
+
+  const cross = n1.x * n2.y - n1.y * n2.x;
+  const sweepFlag = cross > 0 ? 1 : 0;
+
+  const bx = n1.x + n2.x;
+  const by = n1.y + n2.y;
+  const bl = Math.hypot(bx, by) || 1;
+
+  return {
+    pathD: `M ${arcStartX} ${arcStartY} A ${arcRadius} ${arcRadius} 0 0 ${sweepFlag} ${arcEndX} ${arcEndY}`,
+    labelX: vertex.x + (bx / bl) * labelOffset,
+    labelY: vertex.y + (by / bl) * labelOffset,
+  };
 }
 
 export function tangentSegment(at: Point, centre: Point, halfLength: number): LineSegment {
