@@ -7,7 +7,7 @@ import { GeneratedQuestion } from "@/types/core";
 import { generateId } from "@/lib/utils";
 import { pick, pickWeighted, randomInt } from "./utils/random";
 import { createAnswerChecker } from "@/lib/answer-checker";
-import { createPiAnswerChecker, formatPiAnswer } from "@/lib/answer-checker/pi-expr";
+import { createPiAnswerChecker, formatPiAnswer, formatPiLatex } from "@/lib/answer-checker/pi-expr";
 import {
   buildConeDiagram,
   buildCuboidDiagram,
@@ -62,7 +62,7 @@ function volCuboid(): GeneratedQuestion {
     difficulty: 1,
     diagram: buildCuboidDiagram(l, w, h),
     checker: createAnswerChecker({ correctAnswer: String(answer) }),
-    explanation: `Volume $= lwh = ${l} \\times ${w} \\times ${h} = ${answer}$.`,
+    explanation: `$\\text{Volume} = lwh = ${l} \\times ${w} \\times ${h} = ${answer}$`,
   };
 }
 
@@ -80,7 +80,7 @@ function volCylinder(): GeneratedQuestion {
     difficulty: 1,
     diagram: buildCylinderDiagram(r, h),
     checker: createPiAnswerChecker(coeff),
-    explanation: `Volume $= πr^2h = π(${r})^2(${h}) = ${answer}$.`,
+    explanation: `$\\text{Volume} = \\pi r^2 h = \\pi \\times ${r}^2 \\times ${h} = ${formatPiLatex(coeff)}$`,
   };
 }
 
@@ -97,7 +97,7 @@ function volPyramid(): GeneratedQuestion {
     difficulty: 2,
     diagram: buildSquarePyramidDiagram(a, h),
     checker: createAnswerChecker({ correctAnswer: String(answer) }),
-    explanation: `Volume $= \\frac{1}{3}a^2h = \\frac{1}{3}(${a})^2(${h}) = ${answer}$.`,
+    explanation: `$\\text{Volume} = \\frac{1}{3}a^2 h = \\frac{1}{3} \\times ${a}^2 \\times ${h} = ${answer}$`,
   };
 }
 
@@ -115,7 +115,7 @@ function volCone(): GeneratedQuestion {
     difficulty: 2,
     diagram: buildConeDiagram(r, h),
     checker: createPiAnswerChecker(coeff),
-    explanation: `Volume $= \\frac{1}{3}πr^2h = \\frac{1}{3}π(${r})^2(${h}) = ${answer}$.`,
+    explanation: `$\\text{Volume} = \\frac{1}{3}\\pi r^2 h = \\frac{1}{3} \\times \\pi \\times ${r}^2 \\times ${h} = ${formatPiLatex(coeff)}$`,
   };
 }
 
@@ -132,7 +132,7 @@ function volSphere(): GeneratedQuestion {
     difficulty: 2,
     diagram: buildSphereDiagram(r),
     checker: createPiAnswerChecker(coeff),
-    explanation: `Volume $= \\frac{4}{3}πr^3 = \\frac{4}{3}π(${r})^3 = ${answer}$.`,
+    explanation: `$\\text{Volume} = \\frac{4}{3}\\pi r^3 = \\frac{4}{3} \\times \\pi \\times ${r}^3 = ${formatPiLatex(coeff)}$`,
   };
 }
 
@@ -149,7 +149,7 @@ function volHemisphere(): GeneratedQuestion {
     difficulty: 2,
     diagram: buildHemisphereDiagram(r),
     checker: createPiAnswerChecker(coeff),
-    explanation: `Volume $= \\frac{2}{3}πr^3 = \\frac{2}{3}π(${r})^3 = ${answer}$.`,
+    explanation: `$\\text{Volume} = \\frac{2}{3}\\pi r^3 = \\frac{2}{3} \\times \\pi \\times ${r}^3 = ${formatPiLatex(coeff)}$`,
   };
 }
 
@@ -187,7 +187,7 @@ function saCuboid(): GeneratedQuestion {
     difficulty: 2,
     diagram: buildCuboidDiagram(l, w, h),
     checker: createAnswerChecker({ correctAnswer: String(answer) }),
-    explanation: `SA $= 2(lw + lh + wh) = 2(${l * w} + ${l * h} + ${w * h}) = ${answer}$.`,
+    explanation: `$\\text{SA} = 2(lw + lh + wh) = 2(${l * w} + ${l * h} + ${w * h}) = ${answer}$`,
   };
 }
 
@@ -215,7 +215,7 @@ function saPrism(): GeneratedQuestion {
       acceptDecimals: true,
       tolerance: 0.5,
     }),
-    explanation: `Two triangular faces ($${b} \\times ${ht}/2$ each) plus three rectangles → ${answer}.`,
+    explanation: `Two triangular faces ($${b} \\times ${ht}/2$ each) plus three rectangles gives $\\text{SA} \\approx ${answer}$.`,
   };
 }
 
@@ -233,7 +233,7 @@ function saCylinder(): GeneratedQuestion {
     difficulty: 2,
     diagram: buildCylinderDiagram(r, h),
     checker: createPiAnswerChecker(coeff),
-    explanation: `SA $= 2πr^2 + 2πrh = 2π(${r})^2 + 2π(${r})(${h}) = ${answer}$.`,
+    explanation: `$\\text{SA} = 2\\pi r^2 + 2\\pi rh = 2\\pi \\times ${r}^2 + 2\\pi \\times ${r} \\times ${h} = ${formatPiLatex(coeff)}$`,
   };
 }
 
@@ -256,7 +256,7 @@ function saCone(): GeneratedQuestion {
     difficulty: 3,
     diagram: buildConeDiagram(r, h, true),
     checker: createPiAnswerChecker(coeff),
-    explanation: `Slant $l = \\sqrt{r^2+h^2} = ${l}$. SA $= πrl + πr^2 = ${answer}$.`,
+    explanation: `$\\text{SA} = \\pi rl + \\pi r^2 = \\pi \\times ${r} \\times ${l} + \\pi \\times ${r}^2 = ${formatPiLatex(coeff)}$`,
   };
 }
 
@@ -273,6 +273,6 @@ function saSphere(): GeneratedQuestion {
     difficulty: 2,
     diagram: buildSphereDiagram(r),
     checker: createPiAnswerChecker(coeff),
-    explanation: `SA $= 4πr^2 = 4π(${r})^2 = ${answer}$.`,
+    explanation: `$\\text{SA} = 4\\pi r^2 = 4\\pi \\times ${r}^2 = ${formatPiLatex(coeff)}$`,
   };
 }

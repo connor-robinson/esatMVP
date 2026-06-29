@@ -7,7 +7,7 @@ import { GeneratedQuestion } from "@/types/core";
 import { generateId } from "@/lib/utils";
 import { pick, pickWeighted, randomInt } from "./utils/random";
 import { createAnswerChecker } from "@/lib/answer-checker";
-import { createPiAnswerChecker, formatPiAnswer } from "@/lib/answer-checker/pi-expr";
+import { createPiAnswerChecker, formatPiAnswer, formatPiLatex } from "@/lib/answer-checker/pi-expr";
 import { buildCircleDiagram } from "@/lib/diagrams/circleDiagram";
 import { buildSectorDiagram } from "@/lib/diagrams/sectorDiagram";
 import { buildTrapeziumDiagram } from "@/lib/diagrams/trapeziumDiagram";
@@ -46,7 +46,7 @@ function generateCircleArea(): GeneratedQuestion {
     difficulty: 1,
     diagram: buildCircleDiagram(r),
     checker: createPiAnswerChecker(coeff),
-    explanation: `Area $= πr^2 = π(${r})^2 = ${answer}$.`,
+    explanation: `$\\text{Area} = \\pi r^2 = \\pi \\times ${r}^2 = ${formatPiLatex(coeff)}$`,
   };
 }
 
@@ -63,7 +63,7 @@ function generateCircumference(): GeneratedQuestion {
     difficulty: 1,
     diagram: buildCircleDiagram(r),
     checker: createPiAnswerChecker(coeff),
-    explanation: `Circumference $= 2πr = 2π(${r}) = ${answer}$.`,
+    explanation: `$\\text{Circumference} = 2\\pi r = 2\\pi \\times ${r} = ${formatPiLatex(coeff)}$`,
   };
 }
 
@@ -81,7 +81,7 @@ function generateSectorArea(): GeneratedQuestion {
     difficulty: 2,
     diagram: buildSectorDiagram(r, angle),
     checker: createPiAnswerChecker(coeff),
-    explanation: `Sector area $= \\frac{${angle}}{360}πr^2 = \\frac{${angle}}{360}π(${r})^2 = ${answer}$.`,
+    explanation: `$\\text{Sector area} = \\frac{${angle}}{360}\\pi r^2 = \\frac{${angle}}{360} \\times \\pi \\times ${r}^2 = ${formatPiLatex(coeff)}$`,
   };
 }
 
@@ -99,6 +99,6 @@ function generateTrapezium(): GeneratedQuestion {
     difficulty: 1,
     diagram: buildTrapeziumDiagram(a, b, h),
     checker: createAnswerChecker({ correctAnswer: String(answer) }),
-    explanation: `Area $= \\frac{1}{2}(a+b)h = \\frac{1}{2}(${a}+${b})(${h}) = ${answer}$.`,
+    explanation: `$\\text{Area} = \\frac{1}{2}(a+b)h = \\frac{1}{2}(${a}+${b})(${h}) = ${answer}$`,
   };
 }

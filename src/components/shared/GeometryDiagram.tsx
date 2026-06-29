@@ -71,41 +71,34 @@ export function GeometryDiagram({ data, className }: GeometryDiagramProps) {
               strokeOpacity={0.5}
               strokeWidth={1.5}
             />
-            <LabelBubble x={a.labelX} y={a.labelY} text={a.label} fontSize={13} />
+            <DiagramLabel x={a.labelX} y={a.labelY} text={a.label} fontSize={13} />
           </g>
         ))}
 
         {labels.map((l, i) => (
-          <LabelBubble key={`label-${i}`} x={l.x} y={l.y} text={l.text} fontSize={l.fontSize ?? 15} />
+          <DiagramLabel key={`label-${i}`} x={l.x} y={l.y} text={l.text} fontSize={l.fontSize ?? 14} />
         ))}
       </svg>
     </div>
   );
 }
 
-function LabelBubble({ x, y, text, fontSize }: { x: number; y: number; text: string; fontSize: number }) {
+function DiagramLabel({ x, y, text, fontSize }: { x: number; y: number; text: string; fontSize: number }) {
   return (
-    <g>
-      <circle
-        cx={x}
-        cy={y}
-        r={Math.max(12, text.length * 4)}
-        fill="var(--color-background)"
-        fillOpacity={0.65}
-        stroke="var(--color-text)"
-        strokeOpacity={0.2}
-        strokeWidth={1}
-      />
-      <text
-        x={x}
-        y={y}
-        textAnchor="middle"
-        dominantBaseline="middle"
-        className="fill-white font-semibold italic"
-        style={{ fontSize: `${fontSize}px` }}
-      >
-        {text}
-      </text>
-    </g>
+    <text
+      x={x}
+      y={y}
+      textAnchor="middle"
+      dominantBaseline="middle"
+      fill="var(--color-text)"
+      fillOpacity={0.9}
+      style={{
+        fontSize: `${fontSize}px`,
+        fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+        fontWeight: 500,
+      }}
+    >
+      {text}
+    </text>
   );
 }

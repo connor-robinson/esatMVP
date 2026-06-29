@@ -63,6 +63,11 @@ export function formatPiAnswer(coeff: number): string {
   return `${sign}${abs}π`;
 }
 
+/** LaTeX form of a π answer (for explanations rendered with KaTeX). */
+export function formatPiLatex(coeff: number): string {
+  return formatPiAnswer(coeff).replace(/π/g, "\\pi");
+}
+
 export function piCoefficientsEqual(a: number, b: number, tolerance = 1e-6): boolean {
   return Math.abs(a - b) < tolerance;
 }

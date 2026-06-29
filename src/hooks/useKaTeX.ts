@@ -272,13 +272,21 @@ export function renderMath(
  * Handles escaping of text content and rendering of math
  */
 function renderMathTextSegment(contentStr: string): string {
-  const escaped = contentStr
+  const withBoldMarkers = contentStr.replace(
+    /\*\*([^*]+)\*\*/g,
+    (_, inner: string) => `__BOLD__${inner}__ENDBOLD__`,
+  );
+
+  const escaped = withBoldMarkers
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
-  return escaped;
+
+  return escaped
+    .replace(/__BOLD__/g, '<strong class="font-semibold text-text">')
+    .replace(/__ENDBOLD__/g, "</strong>");
 }
 
 type RenderedPart = { kind: "text" | "inline" | "display"; html: string };

@@ -49,7 +49,7 @@ export function buildSectorDiagram(r: number, angleDeg: number): GeometryDiagram
     },
   ];
 
-  const radiusLabel = labelOnSegment(cx, cy, rimStart.x, rimStart.y, `r = ${r}`, { x: cx, y: cy - 20 });
+  const radiusLabel = labelOnSegment(cx, cy, rimStart.x, rimStart.y, `r = ${r}`, { x: cx, y: cy - pxR * 0.4 }, 32);
   diagram.labels = [radiusLabel];
   return diagram;
 }

@@ -597,9 +597,12 @@ export function MentalMathSession({
 
           {/* Explanation display (shown when answer is revealed) */}
           {answerRevealed && currentQuestion.explanation && (
-            <div className="mt-6 p-4 rounded-xl bg-surface-elevated border border-border">
-              <p className="text-sm font-medium text-text-muted mb-2">Explanation:</p>
-              <p className="text-sm text-text-subtle whitespace-pre-line">{currentQuestion.explanation}</p>
+            <div className="mt-6 rounded-xl bg-surface-elevated px-4 py-3">
+              <p className="text-sm font-medium text-text-muted mb-2">Explanation</p>
+              <MathContent
+                content={currentQuestion.explanation}
+                className="text-sm leading-relaxed text-text-subtle"
+              />
             </div>
           )}
         </Container>

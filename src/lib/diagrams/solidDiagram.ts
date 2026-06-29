@@ -73,8 +73,8 @@ export function buildCylinderDiagram(r: number, h: number): GeometryDiagramData 
     { x1: cx + R, y1: topY, x2: cx + R, y2: botY },
   ];
   diagram.labels = [
-    { x: cx, y: topY - 22, text: `r = ${r}` },
-    { x: cx + R + 28, y: (topY + botY) / 2, text: `h = ${h}` },
+    { x: cx, y: topY - 28, text: `r = ${r}` },
+    { x: cx + R + 32, y: (topY + botY) / 2, text: `h = ${h}` },
   ];
   return diagram;
 }
@@ -188,7 +188,9 @@ export function buildSphereDiagram(r: number): GeometryDiagramData {
     { d: ellipsePath(cx, cy, R, R * 0.28), fill: "none", stroke: true, strokeDasharray: "5 4" },
   ];
   diagram.lines = [{ x1: cx, y1: cy, x2: cx + R, y2: cy }];
-  diagram.labels = [{ x: cx + R / 2, y: cy - 18, text: `r = ${r}` }];
+  diagram.labels = [
+    labelOnSegment(cx, cy, cx + R, cy, `r = ${r}`, { x: cx, y: cy - R * 0.35 }, 26),
+  ];
   return diagram;
 }
 
@@ -210,6 +212,8 @@ export function buildHemisphereDiagram(r: number): GeometryDiagramData {
     { x1: cx - R, y1: baseY, x2: cx + R, y2: baseY },
     { x1: cx, y1: baseY, x2: cx, y2: baseY - R },
   ];
-  diagram.labels = [{ x: cx + 22, y: baseY - R / 2, text: `r = ${r}` }];
+  diagram.labels = [
+    labelOnSegment(cx, baseY, cx, baseY - R, `r = ${r}`, { x: cx + R * 0.4, y: baseY }, 26),
+  ];
   return diagram;
 }
