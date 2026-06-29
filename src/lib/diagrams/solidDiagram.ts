@@ -41,10 +41,21 @@ export function buildCuboidDiagram(l: number, w: number, h: number): GeometryDia
   const o = centeredIsoOrigin(v);
 
   const diagram = baseDiagram();
+  // Painter's order: back → sides → top (top drawn last)
   diagram.paths = [
+    { d: isoPath([v[3], v[2], v[6], v[7]], o), fill: "var(--color-text)", fillOpacity: 0.03, stroke: true },
+    { d: isoPath([v[0], v[3], v[7], v[4]], o), fill: "var(--color-text)", fillOpacity: 0.05, stroke: true },
     { d: isoPath([v[0], v[1], v[5], v[4]], o), fill: "var(--color-text)", fillOpacity: 0.06, stroke: true },
-    { d: isoPath([v[4], v[5], v[6], v[7]], o), fill: "var(--color-text)", fillOpacity: 0.04, stroke: true },
-    { d: isoPath([v[1], v[2], v[6], v[5]], o), fill: "var(--color-text)", fillOpacity: 0.08, stroke: true },
+    { d: isoPath([v[1], v[2], v[6], v[5]], o), fill: "var(--color-text)", fillOpacity: 0.07, stroke: true },
+    { d: isoPath([v[4], v[5], v[6], v[7]], o), fill: "var(--color-text)", fillOpacity: 0.09, stroke: true },
+  ];
+
+  // Dashed hidden edges (back bottom + back verticals)
+  const backBottom = isoLine(v[2], v[3], o);
+  const backRight = isoLine(v[2], v[6], o);
+  diagram.lines = [
+    { ...backBottom, dashed: true },
+    { ...backRight, dashed: true },
   ];
 
   const p0 = isoProject(0, 0, 0, o);
