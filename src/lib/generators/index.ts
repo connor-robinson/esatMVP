@@ -39,7 +39,6 @@ import { generateSciRewrite } from "./sci_rewrite";
 import { generateSciCalc } from "./sci_calc";
 
 // Arithmetic (continued)
-import { generateSimplifyFraction } from "./simplify_fraction";
 import { generateCommonMultiples } from "./common_multiples";
 
 // Number Theory (continued)
