@@ -91,7 +91,7 @@ export function DrillFolderGrid({
             >
               <div
                 className={cn(
-                  'flex h-12 w-12 items-center justify-center rounded-organic-xl transition-colors',
+                  'flex h-12 w-12 items-center justify-center overflow-hidden rounded-organic-xl transition-colors',
                   isSelected ? 'bg-primary/18' : 'bg-primary/10',
                 )}
               >

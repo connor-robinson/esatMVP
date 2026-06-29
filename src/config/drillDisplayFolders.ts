@@ -83,17 +83,36 @@ function modulesFromTopicIds(topicIds: readonly string[]): DrillModule[] {
       });
     }
   }
+  modules.sort(
+    (a, b) =>
+      a.difficulty - b.difficulty ||
+      a.name.localeCompare(b.name) ||
+      a.variantId.localeCompare(b.variantId),
+  );
   return modules;
 }
 
 function buildFolders(defs: FolderDef[]): DrillDisplayFolder[] {
-  return defs.map((def) => ({
-    id: def.id,
-    name: def.name,
-    topicIds: def.topicIds,
-    modules: modulesFromTopicIds(def.topicIds),
-    symbol: def.symbol,
-  }));
+  const folders = defs.map((def) => {
+    const modules = modulesFromTopicIds(def.topicIds);
+    const minDifficulty =
+      modules.length > 0 ? Math.min(...modules.map((m) => m.difficulty)) : 999;
+    return {
+      id: def.id,
+      name: def.name,
+      topicIds: def.topicIds,
+      modules,
+      symbol: def.symbol,
+      _minDifficulty: minDifficulty,
+    };
+  });
+
+  folders.sort(
+    (a, b) =>
+      a._minDifficulty - b._minDifficulty || a.name.localeCompare(b.name),
+  );
+
+  return folders.map(({ _minDifficulty: _ignored, ...folder }) => folder);
 }
 
 const ALGEBRA_FOLDERS: FolderDef[] = [
@@ -232,7 +251,7 @@ const ARITHMETIC_EXTRA_FOLDERS: FolderDef[] = [
     id: 'arithmetic-notation',
     name: 'Notation & Surds',
     topicIds: ['sci_rewrite', 'estimate_common_sqrts'],
-    symbol: { kind: 'latex', latex: String.raw`3.2 \times 10^4` },
+    symbol: { kind: 'latex', latex: String.raw`10^n` },
   },
 ];
 
@@ -243,7 +262,7 @@ const CATEGORY_FOLDER_BUILDERS: Record<
   arithmetic: () => {
     const legacy = buildLegacyArithmeticFolders();
     const extra = buildFolders(ARITHMETIC_EXTRA_FOLDERS);
-    return [
+    const folders = [
       ...legacy.map((f) => ({
         id: f.id,
         name: f.name,
@@ -253,6 +272,20 @@ const CATEGORY_FOLDER_BUILDERS: Record<
       })),
       ...extra,
     ];
+
+    folders.sort((a, b) => {
+      const aMin =
+        a.modules.length > 0
+          ? Math.min(...a.modules.map((m) => m.difficulty))
+          : 999;
+      const bMin =
+        b.modules.length > 0
+          ? Math.min(...b.modules.map((m) => m.difficulty))
+          : 999;
+      return aMin - bMin || a.name.localeCompare(b.name);
+    });
+
+    return folders;
   },
   algebra: () => buildFolders(ALGEBRA_FOLDERS),
   geometry: () => buildFolders(GEOMETRY_FOLDERS),
@@ -266,9 +299,6 @@ function folderSymbolForArithmeticId(folderId: string): FolderSymbol {
   if (folderId === 'fractions-group') {
     return { kind: 'latex', latex: String.raw`\frac{3}{7}` };
   }
-  if (folderId === 'common_multiples') {
-    return { kind: 'latex', latex: String.raw`a \times b` };
-  }
   const keys: Record<string, string> = {
     addition: 'Plus',
     subtraction: 'Minus',
@@ -281,6 +311,7 @@ function folderSymbolForArithmeticId(folderId: string): FolderSymbol {
 /** Topic ids shown only inside merged folders. */
 const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
   arithmetic: [
+    'common_multiples',
     'friendly_frac_decimals',
     'common_frac_to_dec_2dp',
     'simplify_fraction',

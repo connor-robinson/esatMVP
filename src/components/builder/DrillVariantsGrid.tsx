@@ -222,7 +222,7 @@ export function DrillVariantsGrid({
     panelBody = (
       <div className='flex min-h-0 flex-1 flex-col overflow-y-auto p-6'>
         <div className='mb-6 flex items-center gap-4'>
-          <div className='flex h-12 w-12 shrink-0 items-center justify-center rounded-organic-lg bg-primary/12'>
+          <div className='flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-organic-lg bg-primary/12'>
             <ArithmeticDrillPreview
               preview={folderSymbol}
               size='folder'

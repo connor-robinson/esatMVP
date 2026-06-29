@@ -88,7 +88,7 @@ export function ArithmeticFolderGrid({
             >
               <div
                 className={cn(
-                  'flex h-14 w-14 items-center justify-center rounded-organic-xl transition-colors',
+                  'flex h-14 w-14 items-center justify-center overflow-hidden rounded-organic-xl transition-colors',
                   isSelected ? 'bg-primary/18' : 'bg-primary/10',
                 )}
               >

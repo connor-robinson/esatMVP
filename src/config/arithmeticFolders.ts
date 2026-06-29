@@ -33,6 +33,7 @@ const STANDALONE_HIDDEN_TOPIC_IDS = new Set<string>([
   'friendly_frac_decimals',
   'common_frac_to_dec_2dp',
   'simplify_fraction',
+  'common_multiples',
 ]);
 
 export type ArithmeticDrillModule = {
@@ -67,7 +68,7 @@ const FOLDER_DEFS: {
     id: 'multiplication',
     name: 'Multiplication',
     iconKey: 'X',
-    topicIds: ['multiplication'],
+    topicIds: ['multiplication', 'common_multiples'],
   },
   { id: 'division', name: 'Division', iconKey: 'Divide', topicIds: ['division'] },
   {
@@ -75,12 +76,6 @@ const FOLDER_DEFS: {
     name: 'Fractions',
     iconKey: 'Divide',
     topicIds: FRACTIONS_GROUP_TOPIC_IDS,
-  },
-  {
-    id: 'common_multiples',
-    name: 'Common Multiples',
-    iconKey: 'X',
-    topicIds: ['common_multiples'],
   },
 ];
 
@@ -98,28 +93,53 @@ function modulesFromTopicIds(topicIds: readonly string[]): ArithmeticDrillModule
       });
     }
   }
+  modules.sort(
+    (a, b) =>
+      a.difficulty - b.difficulty ||
+      a.name.localeCompare(b.name) ||
+      a.variantId.localeCompare(b.variantId),
+  );
   return modules;
 }
 
 export function buildArithmeticDisplayFolders(): ArithmeticDisplayFolder[] {
-  return FOLDER_DEFS.map((def) => ({
-    id: def.id,
-    name: def.name,
-    icon: ICON_MAP[def.iconKey] ?? Hash,
-    topicIds: def.topicIds,
-    modules: modulesFromTopicIds(def.topicIds),
-  }));
+  const folders = FOLDER_DEFS.map((def) => {
+    const modules = modulesFromTopicIds(def.topicIds);
+    const minDifficulty =
+      modules.length > 0 ? Math.min(...modules.map((m) => m.difficulty)) : 999;
+
+    return {
+      id: def.id,
+      name: def.name,
+      icon: ICON_MAP[def.iconKey] ?? Hash,
+      topicIds: def.topicIds,
+      modules,
+      _minDifficulty: minDifficulty,
+    };
+  });
+
+  folders.sort(
+    (a, b) =>
+      a._minDifficulty - b._minDifficulty || a.name.localeCompare(b.name),
+  );
+
+  return folders.map(({ _minDifficulty: _ignored, ...folder }) => folder);
 }
 
 export function getArithmeticDisplayFolder(
   folderId: string | null,
 ): ArithmeticDisplayFolder | undefined {
   if (!folderId) return undefined;
-  return buildArithmeticDisplayFolders().find((f) => f.id === folderId);
+  const alias: Record<string, string> = {
+    common_multiples: 'multiplication',
+  };
+  const resolvedId = alias[folderId] ?? folderId;
+  return buildArithmeticDisplayFolders().find((f) => f.id === resolvedId);
 }
 
 export function isArithmeticDisplayFolderId(id: string): boolean {
-  return FOLDER_DEFS.some((f) => f.id === id);
+  if (FOLDER_DEFS.some((f) => f.id === id)) return true;
+  return id === 'common_multiples';
 }
 
 /** Hide merged fraction/decimal topics from the legacy per-topic list. */
