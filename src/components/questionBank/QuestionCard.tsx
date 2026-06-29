@@ -270,7 +270,7 @@ export function QuestionCard({
       return cn("cursor-default", OPTION_ROW_CORRECT);
     }
     if (incorrectAnswers.has(letter) && letter !== correctAnswer) {
-      return "cursor-default bg-error/10";
+      return cn("cursor-default", OPTION_ROW_CORRECT);
     }
     if (isAnswered && !isCorrect && !answerRevealed) {
       if (allowRetry) {
