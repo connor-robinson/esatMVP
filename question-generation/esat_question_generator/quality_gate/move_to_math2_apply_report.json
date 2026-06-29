@@ -1,0 +1,1373 @@
+{
+  "generated_at": "2026-06-29T15:52:06.151074+00:00",
+  "mode": "apply",
+  "candidate_count": 92,
+  "applied": 92,
+  "errors": [],
+  "results": [
+    {
+      "id": "054e7020-be3e-4742-a74e-66dafe80f27e",
+      "id_prefix": "054e7020",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM4",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "0667f81a-6acd-461d-954d-23791048f118",
+      "id_prefix": "0667f81a",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "0ae10909-1c2b-452f-9085-425c94801526",
+      "id_prefix": "0ae10909",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "0b5b4394-9928-40d9-8fc1-b793a6df0e23",
+      "id_prefix": "0b5b4394",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM5",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "0d2a7eae-7af8-4f05-9c96-d2ea60bafd95",
+      "id_prefix": "0d2a7eae",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "0de07f35-f714-46be-9163-22454ed4c11b",
+      "id_prefix": "0de07f35",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM5",
+        "secondary_tags": [
+          "M2-MM3",
+          "M2-MM2"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "112fa52a-6da2-4437-af0d-c5425d99a462",
+      "id_prefix": "112fa52a",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": [
+          "M2-MM2"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "148ef71a-efad-4122-a36c-1681ab2ac45d",
+      "id_prefix": "148ef71a",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM6",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "161aeb40-ae7f-49c7-b14d-68e9c4b86cfb",
+      "id_prefix": "161aeb40",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM6",
+        "secondary_tags": [
+          "M2-MM3"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "16867249-7a92-41c6-9e7b-1067a5a96d5d",
+      "id_prefix": "16867249",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "1cec98ad-39cb-425e-ad7c-a4083ba60325",
+      "id_prefix": "1cec98ad",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM5",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "1d7653c5-ba74-4b42-90d5-bd91bcca596a",
+      "id_prefix": "1d7653c5",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "1e3c0b6e-438e-4850-b795-f184501f252f",
+      "id_prefix": "1e3c0b6e",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM5",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "202655e4-4589-42b7-b7a5-49d473ed0caa",
+      "id_prefix": "202655e4",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM4",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "2458f38b-cb45-4984-92d7-be94d5ffd0f5",
+      "id_prefix": "2458f38b",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M5",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM3",
+        "secondary_tags": [
+          "M2-MM4"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "2514c8b1-9308-4085-8124-d4ca9cf42116",
+      "id_prefix": "2514c8b1",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "2830e33c-3063-420f-a768-db575a0ecdda",
+      "id_prefix": "2830e33c",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM4",
+        "secondary_tags": [
+          "M2-MM2"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "2a5cffb0-e8fe-49ce-95ec-4ad1a92175e0",
+      "id_prefix": "2a5cffb0",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM5",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "30050429-ab73-4f8e-9b90-35db28b7bb91",
+      "id_prefix": "30050429",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM5",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "30fbcabd-4c30-452a-be93-d671476c1f95",
+      "id_prefix": "30fbcabd",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": [
+          "M2-MM3"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "32868e4d-4984-45fe-89e0-f1ec17854692",
+      "id_prefix": "32868e4d",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "357f7355-ac01-4ef9-92fd-af4e66c83ccb",
+      "id_prefix": "357f7355",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM4",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "3796b200-a261-44e8-9ecf-10b47508b12a",
+      "id_prefix": "3796b200",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM4",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "37afb128-236a-4f91-a4f7-72ac3b5216b9",
+      "id_prefix": "37afb128",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "3dd87d23-c45c-4de0-9f0d-22fc70d357f3",
+      "id_prefix": "3dd87d23",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM4",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "3e261d94-9c0f-43dc-82d1-db124608a5f5",
+      "id_prefix": "3e261d94",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": [
+          "M2-MM2"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "3e4b8c88-a2de-410b-95f4-3f2111287bc4",
+      "id_prefix": "3e4b8c88",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM6",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "46720ef9-e64b-428e-93ca-286ca4162190",
+      "id_prefix": "46720ef9",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "4994701b-76a9-4c53-b87e-ff36b7ce1350",
+      "id_prefix": "4994701b",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M2",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM3",
+        "secondary_tags": [
+          "M2-MM5"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "50c54bab-99a4-47bc-8985-7d9a1eef6016",
+      "id_prefix": "50c54bab",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Minor",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM5",
+        "secondary_tags": [
+          "M2-MM3"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "560a5f6a-f26b-4268-aada-51006519b39c",
+      "id_prefix": "560a5f6a",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "57e9f0d5-8066-4be3-9c91-19f9683287c6",
+      "id_prefix": "57e9f0d5",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": [
+          "M2-MM2"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "58b1fde4-b234-4bf5-9059-b5c4de265378",
+      "id_prefix": "58b1fde4",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM5",
+        "secondary_tags": [
+          "M2-MM5"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "5a9e27a7-e032-4eb9-86ef-775490bde034",
+      "id_prefix": "5a9e27a7",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M3",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM3",
+        "secondary_tags": [
+          "M2-MM4",
+          "M2-MM5"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "5b124ca2-7d63-4fee-ad3d-311a1f555c32",
+      "id_prefix": "5b124ca2",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M3",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM3",
+        "secondary_tags": [
+          "M2-MM4",
+          "M2-MM5"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "5eb237db-3290-4deb-9245-b14566224f3c",
+      "id_prefix": "5eb237db",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM1",
+        "secondary_tags": [
+          "M2-MM5"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "6003ee8a-553d-4468-85fc-9ee992ffa1d2",
+      "id_prefix": "6003ee8a",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM4",
+        "secondary_tags": [
+          "M2-MM5"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "606fba71-a475-439a-8ad4-bfa917c60176",
+      "id_prefix": "606fba71",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "60aa15e9-4123-467a-b747-15c091dfa254",
+      "id_prefix": "60aa15e9",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "655980b1-8209-45d0-a733-286473ef9c74",
+      "id_prefix": "655980b1",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM1",
+        "secondary_tags": [
+          "M2-MM2"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "6863237b-05a7-465b-bf6f-5bcd61e8ee61",
+      "id_prefix": "6863237b",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM6",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "6e36836f-e5e2-4d96-8bfd-c5615192c8c2",
+      "id_prefix": "6e36836f",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM4",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "6ee5fa60-be9a-471d-b7d6-3eda488d13d9",
+      "id_prefix": "6ee5fa60",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM3",
+        "secondary_tags": [
+          "M2-MM5"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "6fea1e88-f910-4fc0-ad94-f60e96adb72c",
+      "id_prefix": "6fea1e88",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM4",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "706ae6fa-8ed1-4941-8d0d-23563c11698f",
+      "id_prefix": "706ae6fa",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM3",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "78d38c10-b88a-46df-93c5-9177e5b4c293",
+      "id_prefix": "78d38c10",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "78d887d9-e1a4-4d5f-a1d0-b91f29372f6d",
+      "id_prefix": "78d887d9",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "78ea991d-28f7-4c85-98b7-4ab01aee755a",
+      "id_prefix": "78ea991d",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM6",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "797df0af-5a7d-41c5-8778-b3b707d6c030",
+      "id_prefix": "797df0af",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM4",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "79cd7460-9f63-4767-993c-d4a77f4e92fb",
+      "id_prefix": "79cd7460",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "7d16cf26-0f90-4612-80f6-1437a610b0b1",
+      "id_prefix": "7d16cf26",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM4",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "7d2d3d25-bcd4-41a0-8c22-6c67f5aab465",
+      "id_prefix": "7d2d3d25",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "7e76ec2c-7423-4185-b73a-c895b7e12d08",
+      "id_prefix": "7e76ec2c",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M6",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": [
+          "M2-MM4"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "84058c8b-13ca-4af2-a44c-bfa8e07de4a7",
+      "id_prefix": "84058c8b",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "8421d7f9-bf02-450f-af78-f65dbe5cb0d4",
+      "id_prefix": "8421d7f9",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "8513c612-f3ce-438d-abb5-82ad44b6a516",
+      "id_prefix": "8513c612",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM3",
+        "secondary_tags": [
+          "M2-MM5",
+          "M2-MM3"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "8771679c-b049-436a-8fa7-dc7b0a8f9be9",
+      "id_prefix": "8771679c",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM3",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "8b7060d8-110e-4f39-b2b5-731988a74631",
+      "id_prefix": "8b7060d8",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM4",
+        "secondary_tags": [
+          "M2-MM2"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "8b88ba5c-2e2f-4ddb-8c0e-2881b50e5187",
+      "id_prefix": "8b88ba5c",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "8f89c14e-2848-44d2-8801-08f9b1a36913",
+      "id_prefix": "8f89c14e",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M3",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM3",
+        "secondary_tags": [
+          "M2-MM1",
+          "M2-MM4"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "917d19e0-c365-4606-a2c2-00cac0c18333",
+      "id_prefix": "917d19e0",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "93a15491-76c1-4bab-95d8-49f5f79b7598",
+      "id_prefix": "93a15491",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": [
+          "M2-MM2"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "945c1470-ff21-4ba7-b9d3-795ea1ee8fd5",
+      "id_prefix": "945c1470",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": [
+          "M2-MM3",
+          "M2-MM2"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "96ec2bda-d3b9-4fac-b65d-23010f5d08bb",
+      "id_prefix": "96ec2bda",
+      "from_subject": "Math 1",
+      "from_primary_tag": null,
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM1",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "9a515683-f190-4cce-9252-473ce486a654",
+      "id_prefix": "9a515683",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM6",
+        "secondary_tags": [
+          "M2-MM7"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "9f6c620f-2e2f-4a19-81a7-c8bbcf9c5570",
+      "id_prefix": "9f6c620f",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "a4bffe3d-7a07-46da-8163-c1ca986f2c75",
+      "id_prefix": "a4bffe3d",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M5",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM3",
+        "secondary_tags": [
+          "M2-MM3",
+          "M2-MM4"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "a5400c9e-3b64-4eac-be33-95a5075efe8e",
+      "id_prefix": "a5400c9e",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": [
+          "M2-MM2"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "a8c94eb8-100c-436e-9ee8-d3fcaee6fce9",
+      "id_prefix": "a8c94eb8",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM5",
+        "secondary_tags": [
+          "M2-MM2"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "a9fae171-9b13-4490-a0b8-4ef76a2eef8a",
+      "id_prefix": "a9fae171",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM4",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "b63240be-7af3-414a-bd49-ef0fc70136e1",
+      "id_prefix": "b63240be",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM5",
+        "secondary_tags": [
+          "M2-MM3"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "bb3b5052-bb21-431f-86f4-f3ad83d3b46d",
+      "id_prefix": "bb3b5052",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M5",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM2",
+        "secondary_tags": [
+          "M2-MM3",
+          "M2-MM4"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "bc30d878-72e0-4780-903c-786dfef34214",
+      "id_prefix": "bc30d878",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Pass",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM4",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "c23577f9-4590-46e8-bbf4-9b840ec300d8",
+      "id_prefix": "c23577f9",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM3",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "c34e4326-5d35-4b0e-9d16-580fde69ff95",
+      "id_prefix": "c34e4326",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "c9036996-945e-4c94-8588-1849c0a1bf04",
+      "id_prefix": "c9036996",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM1",
+        "secondary_tags": [
+          "M2-MM5"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "c96d5b16-a806-48d6-a6aa-2daa930b1f32",
+      "id_prefix": "c96d5b16",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Minor",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM4",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "cab1a95d-6c18-4f6d-9810-10084637cf4e",
+      "id_prefix": "cab1a95d",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "cac80f0e-801f-4ad4-af82-55653c5dd0c4",
+      "id_prefix": "cac80f0e",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "d19ed19e-acb9-45fe-8945-4ba38b050722",
+      "id_prefix": "d19ed19e",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "d9260286-3205-430e-88bd-cc01b9046b3e",
+      "id_prefix": "d9260286",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM5",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "de648067-de18-4db5-bc5a-5fbc13eb6950",
+      "id_prefix": "de648067",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "e262f5b0-a521-4207-936e-ccb1c7b660a9",
+      "id_prefix": "e262f5b0",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": [
+          "M2-MM2"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "e48c1ac3-7d66-4e1c-8bb3-ffa923a6b189",
+      "id_prefix": "e48c1ac3",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "e4ccba93-40e9-4ef1-a42a-701b725ed3a3",
+      "id_prefix": "e4ccba93",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM4",
+        "secondary_tags": [
+          "M2-MM3"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "e4f86b9c-6b12-40ea-bef4-d248801e5bbb",
+      "id_prefix": "e4f86b9c",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": [
+          "M2-MM5"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "e7d7e217-50b3-46db-9340-802b652d1d3d",
+      "id_prefix": "e7d7e217",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "f22f3367-6604-4833-bb29-fd6958090de7",
+      "id_prefix": "f22f3367",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "f491c728-fce8-475a-823b-224c63253b35",
+      "id_prefix": "f491c728",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "f69854e4-9708-4076-b87e-6b670627ce20",
+      "id_prefix": "f69854e4",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "fac04aed-e206-4322-9735-3c05db256514",
+      "id_prefix": "fac04aed",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM7",
+        "secondary_tags": [
+          "M2-MM5"
+        ]
+      },
+      "bucket": "applied"
+    },
+    {
+      "id": "fdaaf231-1d32-41f3-a18c-a4e91cf33fbf",
+      "id_prefix": "fdaaf231",
+      "from_subject": "Math 1",
+      "from_primary_tag": "M1-M4",
+      "verdict": "Major",
+      "note": "applied",
+      "patch_summary": {
+        "subjects": "Math 2",
+        "primary_tag": "M2-MM3",
+        "secondary_tags": []
+      },
+      "bucket": "applied"
+    }
+  ]
+}
