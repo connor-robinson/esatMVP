@@ -328,29 +328,18 @@ export function QuestionCard({
       <div className={cn(PANEL_SHELL, "px-5 pb-8 pt-5 sm:px-8 sm:pt-6 sm:pb-10")}>
         <div
           className={cn(
-            "mb-5 flex flex-row flex-wrap items-start gap-3 sm:gap-4",
+            "mb-5 flex flex-row flex-wrap gap-3 sm:gap-4",
+            showSessionNotation ? "items-center" : "items-start",
             headerTrailing && "sm:justify-between",
           )}
         >
           {showSessionNotation && (
             <div
-              className="flex shrink-0 items-start pt-0.5"
+              className="flex shrink-0 items-center"
               aria-label={`Question ${questionNumber}`}
             >
-              <span className="relative inline-block text-[2.5rem] font-semibold leading-none tabular-nums tracking-tight text-text sm:text-5xl">
+              <span className="text-xl font-semibold leading-none tabular-nums tracking-tight text-text sm:text-2xl">
                 {questionNumber}
-                {verified && (
-                  <span
-                    className="pointer-events-auto absolute -right-3 -top-1 sm:-right-3.5 sm:-top-1.5"
-                    title="Verified by ESAT quality gate"
-                  >
-                    <BadgeCheck
-                      className="h-4 w-4 text-secondary sm:h-[1.125rem] sm:w-[1.125rem]"
-                      strokeWidth={2.25}
-                      aria-label="Verified"
-                    />
-                  </span>
-                )}
               </span>
             </div>
           )}

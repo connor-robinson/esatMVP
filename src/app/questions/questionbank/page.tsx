@@ -807,9 +807,9 @@ export default function QuestionBankPage() {
                 {/* Row 2: progress (thin) */}
                 <div className='flex items-center gap-3'>
                   <p className='shrink-0 text-[0.7rem] text-text-muted sm:text-xs'>
-                    Questions remaining{' '}
+                    Questions done{' '}
                     <span className='font-semibold tabular-nums text-text'>
-                      {Math.max(0, sessionQuestions.length - sessionCurrentIndex)}
+                      {sessionCurrentIndex + 1}
                     </span>
                     <span className='text-text-subtle'> / </span>
                     <span className='tabular-nums text-text-muted'>
