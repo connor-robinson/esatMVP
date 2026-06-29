@@ -266,6 +266,8 @@ export interface AnswerChoice {
 export interface BinaryChoiceAnswerInput {
   type: "binary-choice";
   choices: [AnswerChoice, AnswerChoice];
+  /** Show explanation as a teaching hint immediately after a wrong answer */
+  showHintOnIncorrect?: boolean;
 }
 
 export type AnswerInputConfig = BinaryChoiceAnswerInput;

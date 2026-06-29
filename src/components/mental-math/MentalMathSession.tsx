@@ -151,19 +151,24 @@ export function MentalMathSession({
   useEffect(() => {
     if (!isBinaryChoice || (showFeedback && lastAttempt?.isCorrect) || answerRevealed) return;
 
+    const choices = currentQuestion.answerInput?.choices;
     const onKey = (e: globalThis.KeyboardEvent) => {
-      if (e.key === "e" || e.key === "E") {
-        e.preventDefault();
-        handleBinaryChoice("even");
-      } else if (e.key === "o" || e.key === "O") {
-        e.preventDefault();
-        handleBinaryChoice("odd");
+      if (!choices) return;
+      const key = e.key.toLowerCase();
+      for (const choice of choices) {
+        const id = choice.id.toLowerCase();
+        const label = choice.label.toLowerCase();
+        if (key === id || key === label.charAt(0)) {
+          e.preventDefault();
+          handleBinaryChoice(choice.id);
+          return;
+        }
       }
     };
 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [isBinaryChoice, showFeedback, lastAttempt?.isCorrect, answerRevealed, handleBinaryChoice]);
+  }, [isBinaryChoice, showFeedback, lastAttempt?.isCorrect, answerRevealed, handleBinaryChoice, currentQuestion.answerInput]);
 
   // Show success feedback when answer is correct
   useEffect(() => {
@@ -341,6 +346,14 @@ export function MentalMathSession({
                   answerRevealed={answerRevealed}
                   disabled={false}
                   onSelect={handleBinaryChoice}
+                  hint={
+                    currentQuestion.answerInput.showHintOnIncorrect &&
+                    showFeedback &&
+                    lastAttempt?.isCorrect === false &&
+                    !answerRevealed
+                      ? currentQuestion.explanation
+                      : undefined
+                  }
                   onReveal={
                     !answerRevealed && showFeedback && !lastAttempt?.isCorrect
                       ? handleRevealAnswer

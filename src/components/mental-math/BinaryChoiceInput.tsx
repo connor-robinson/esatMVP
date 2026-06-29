@@ -12,6 +12,7 @@ interface BinaryChoiceInputProps {
   isCorrect: boolean | null;
   answerRevealed: boolean;
   disabled: boolean;
+  hint?: string;
   onSelect: (choiceId: string) => void;
   onReveal?: () => void;
   onContinue?: () => void;
@@ -25,6 +26,7 @@ export function BinaryChoiceInput({
   isCorrect,
   answerRevealed,
   disabled,
+  hint,
   onSelect,
   onReveal,
   onContinue,
@@ -65,6 +67,13 @@ export function BinaryChoiceInput({
           );
         })}
       </div>
+
+      {hint && showFeedback && isCorrect === false && !answerRevealed && (
+        <div className="w-full rounded-xl bg-surface-elevated px-4 py-3 text-left">
+          <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">Hint</p>
+          <p className="text-sm leading-relaxed text-text-muted">{hint}</p>
+        </div>
+      )}
 
       {onReveal && showFeedback && isCorrect === false && !answerRevealed && (
         <button

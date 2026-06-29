@@ -5,22 +5,15 @@
  * 2 - Mixed: symbolic + concrete quick checks, including exact division
  */
 
-import { GeneratedQuestion, BinaryChoiceAnswerInput } from "@/types/core";
+import { GeneratedQuestion } from "@/types/core";
 import { generateId } from "@/lib/utils";
 import { pick, randomInt } from "./utils/random";
 import { createAnswerChecker } from "@/lib/answer-checker";
+import { PARITY_BINARY_INPUT } from "./choiceInputs";
 
 type Parity = "even" | "odd";
 
 const PARITIES: Parity[] = ["even", "odd"];
-
-const PARITY_BINARY_INPUT: BinaryChoiceAnswerInput = {
-  type: "binary-choice",
-  choices: [
-    { id: "even", label: "Even" },
-    { id: "odd", label: "Odd" },
-  ],
-};
 
 function withParityInput(
   question: Omit<GeneratedQuestion, "answerInput">,
@@ -84,10 +77,9 @@ function randomWithParity(parity: Parity, min: number, max: number): number {
 }
 
 export function generateEvenOddRules(
-  level: number,
+  _level: number,
   _weights?: Record<string, number>
 ): GeneratedQuestion {
-  if (level === 1) return generateSymbolic();
   return generateMixed();
 }
 
@@ -101,7 +93,7 @@ function generateSymbolic(): GeneratedQuestion {
 
   return withParityInput({
     id: generateId(),
-    topicId: "even_odd_rules",
+    topicId: "divisibility",
     question,
     answer: result,
     difficulty: 1,
@@ -155,7 +147,7 @@ function generateConcrete(): GeneratedQuestion {
 
   return withParityInput({
     id: generateId(),
-    topicId: "even_odd_rules",
+    topicId: "divisibility",
     question,
     answer: result,
     difficulty: 2,
@@ -177,7 +169,7 @@ function generateDivision(): GeneratedQuestion {
 
   return withParityInput({
     id: generateId(),
-    topicId: "even_odd_rules",
+    topicId: "divisibility",
     question,
     answer: result,
     difficulty: 2,
@@ -203,7 +195,7 @@ function generateTriple(): GeneratedQuestion {
 
   return withParityInput({
     id: generateId(),
-    topicId: "even_odd_rules",
+    topicId: "divisibility",
     question,
     answer: acc,
     difficulty: 2,

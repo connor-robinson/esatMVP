@@ -309,21 +309,17 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'plain', text: 'factors of 36' },
     { kind: 'plain', text: 'factors of 48' },
   ]),
-  'divisibility-easy': S([
-    { kind: 'plain', text: '÷ by 3?' },
-    { kind: 'plain', text: '÷ by 5?' },
+  'divisibility-remainders': S([
+    { kind: 'latex', latex: String.raw`47 \div 6` },
+    { kind: 'latex', latex: String.raw`(23 + 15) \div 7` },
   ]),
-  'even_odd_rules-rules': S([
+  'divisibility-parity': S([
     { kind: 'plain', text: 'odd × odd' },
-    { kind: 'plain', text: 'even − odd' },
+    { kind: 'plain', text: 'Is 7 × 14 even or odd?' },
   ]),
-  'even_odd_rules-mixed': S([
-    { kind: 'plain', text: '7 × 14' },
-    { kind: 'plain', text: '24 ÷ 6' },
-  ]),
-  'modular-basic': S([
-    { kind: 'latex', latex: String.raw`17 \bmod 5` },
-    { kind: 'latex', latex: String.raw`23 \bmod 7` },
+  'divisibility-rules': S([
+    { kind: 'plain', text: 'Is 504 divisible by 8?' },
+    { kind: 'plain', text: 'Is 847 divisible by 11?' },
   ]),
   'sequences-arithmetic': S([
     { kind: 'plain', text: '2, 5, 8, …' },
