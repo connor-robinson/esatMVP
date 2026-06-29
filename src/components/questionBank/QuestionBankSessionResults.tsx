@@ -47,6 +47,21 @@ function difficultyLabelClass(d: UiDifficultyLabel): string {
   }
 }
 
+function difficultyProgressFillClass(d: UiDifficultyLabel): string {
+  switch (d) {
+    case 'Easy':
+      return 'bg-difficulty-pill-easy';
+    case 'Medium':
+      return 'bg-difficulty-pill-medium';
+    case 'Hard':
+      return 'bg-difficulty-pill-hard';
+    case 'Extreme':
+      return 'bg-accent';
+    default:
+      return 'bg-surface-neutral';
+  }
+}
+
 const DIFFICULTY_FILL: Record<UiDifficultyLabel, string> = {
   Easy: 'var(--color-difficulty-pill-easy)',
   Medium: 'var(--color-difficulty-pill-medium)',
@@ -308,7 +323,10 @@ export function QuestionBankSessionResults({
                       </div>
                       <div className='h-2 overflow-hidden rounded-organic-sm bg-surface-mid'>
                         <div
-                          className='h-full rounded-organic-sm bg-success transition-all duration-300'
+                          className={cn(
+                            'h-full rounded-organic-sm transition-all duration-300',
+                            difficultyProgressFillClass(d),
+                          )}
                           style={{ width: `${pct}%` }}
                         />
                       </div>

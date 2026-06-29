@@ -29,6 +29,21 @@ function difficultyLabelClass(d: UiDifficultyLabel): string {
   }
 }
 
+function difficultyProgressFillClass(d: UiDifficultyLabel): string {
+  switch (d) {
+    case 'Easy':
+      return 'bg-difficulty-pill-easy';
+    case 'Medium':
+      return 'bg-difficulty-pill-medium';
+    case 'Hard':
+      return 'bg-difficulty-pill-hard';
+    case 'Extreme':
+      return 'bg-accent';
+    default:
+      return 'bg-surface-neutral';
+  }
+}
+
 interface QuestionBankDifficultySectionProps {
   breakdown: DifficultyBreakdown;
   isCollapsed?: boolean;
@@ -86,7 +101,10 @@ export function QuestionBankDifficultySection({
                 </div>
                 <div className='h-2 overflow-hidden rounded-organic-sm bg-surface-elevated'>
                   <div
-                    className='h-full rounded-organic-sm bg-success'
+                    className={cn(
+                      'h-full rounded-organic-sm',
+                      difficultyProgressFillClass(d),
+                    )}
                     style={{ width: `${pct}%` }}
                   />
                 </div>
