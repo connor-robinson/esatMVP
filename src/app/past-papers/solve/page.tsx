@@ -152,15 +152,19 @@ export default function PapersSolvePage() {
       // Don't run timer if paused
       if (state.isPaused) return;
 
-      // Check instruction timer deadline if on instruction page
-      if (isSectionMode && sectionInstructionDeadline) {
-        const now = Date.now();
-        if (now >= sectionInstructionDeadline) {
-          // Instruction timer expired - transition to section
-          setSectionInstructionTimer(0);
-          // Section will start automatically
-          return;
+      // Section instruction pages: never count time toward any question
+      const isOnInstructionPage =
+        state.sectionInstructionTimer !== null && state.sectionInstructionTimer > 0;
+      if (isSectionMode && isOnInstructionPage) {
+        if (state.sectionInstructionDeadline) {
+          const now = Date.now();
+          if (now >= state.sectionInstructionDeadline) {
+            // Instruction timer expired - transition to section
+            setSectionInstructionTimer(0);
+            return;
+          }
         }
+        return;
       }
 
       // Check section deadline if in section mode and not showing intro/marking info
@@ -189,14 +193,9 @@ export default function PapersSolvePage() {
         return;
       }
 
-      // Increment time for current question - exclude instruction pages + marking info
-      const onInstructionPage =
-        isSectionMode &&
-        state.sectionInstructionTimer !== null &&
-        state.sectionInstructionTimer > 0;
-      if (!state.isMarkingInfo && !onInstructionPage) {
-        const currentIdx = state.currentQuestionIndex;
-        incrementTime(currentIdx);
+      // Increment time for current question only while actively answering
+      if (!state.isMarkingInfo) {
+        incrementTime(state.currentQuestionIndex);
       }
     }, 1000);
 
