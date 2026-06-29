@@ -87,8 +87,13 @@ export async function registerQuestionBankSession(params: {
         ui_difficulties: params.uiDifficulties,
       }),
     });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      console.error('[QB Session] register failed:', res.status, body);
+    }
     return res.ok;
-  } catch {
+  } catch (err) {
+    console.error('[QB Session] register error:', err);
     return false;
   }
 }
@@ -113,8 +118,13 @@ export async function completeQuestionBankSession(params: {
         ended_at: new Date().toISOString(),
       }),
     });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      console.error('[QB Session] complete failed:', res.status, body);
+    }
     return res.ok;
-  } catch {
+  } catch (err) {
+    console.error('[QB Session] complete error:', err);
     return false;
   }
 }

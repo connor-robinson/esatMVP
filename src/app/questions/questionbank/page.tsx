@@ -154,6 +154,15 @@ export default function QuestionBankPage() {
   const [sessionCompleting, setSessionCompleting] = useState(false);
   const questionStartedAtRef = useRef<number>(Date.now());
   const sessionAttemptLogRef = useRef<QuestionBankSessionAttempt[]>([]);
+  const sessionRegisteredRef = useRef(false);
+  const pendingSessionMetaRef = useRef<{
+    questionCount: number;
+    timeLimitMinutes?: number | null;
+    source: QuestionBankSessionSource;
+    subjects: string | null;
+    testType: string | null;
+    uiDifficulties: UiDifficultyLabel[];
+  } | null>(null);
   const [sessionQuestions, setSessionQuestions] = useState<
     QuestionBankQuestion[]
   >([]);
@@ -181,6 +190,27 @@ export default function QuestionBankPage() {
   const [communityStatsLoading, setCommunityStatsLoading] = useState(false);
 
   const getTopicTitle = (tagCode: string) => labelForQuestionBankTag(tagCode);
+
+  const ensureSessionRegistered = useCallback(async (sessionId?: string): Promise<boolean> => {
+    const id = sessionId ?? qbSessionId;
+    if (!id || !session?.user || !pendingSessionMetaRef.current) {
+      return false;
+    }
+    if (sessionRegisteredRef.current) return true;
+
+    const meta = pendingSessionMetaRef.current;
+    const ok = await registerQuestionBankSession({
+      id,
+      questionCount: meta.questionCount,
+      timeLimitMinutes: meta.timeLimitMinutes,
+      source: meta.source,
+      subjects: meta.subjects,
+      testType: meta.testType,
+      uiDifficulties: meta.uiDifficulties,
+    });
+    if (ok) sessionRegisteredRef.current = true;
+    return ok;
+  }, [qbSessionId, session?.user]);
 
   const initializeTrackedSession = useCallback(
     async (params: {
@@ -213,20 +243,26 @@ export default function QuestionBankPage() {
       setSessionView('playing');
       questionStartedAtRef.current = startTime;
 
-      if (session?.user) {
-        await registerQuestionBankSession({
-          id,
-          questionCount: params.questions.length,
-          timeLimitMinutes: params.timeLimitMinutes,
-          source: params.source,
-          subjects: subjectLabels || null,
-          testType: params.testType ?? null,
-          uiDifficulties: uiDiffs,
-        });
-      }
+      sessionRegisteredRef.current = false;
+      pendingSessionMetaRef.current = {
+        questionCount: params.questions.length,
+        timeLimitMinutes: params.timeLimitMinutes,
+        source: params.source,
+        subjects: subjectLabels || null,
+        testType: params.testType ?? null,
+        uiDifficulties: uiDiffs,
+      };
+
+      await ensureSessionRegistered(id);
     },
-    [session?.user],
+    [ensureSessionRegistered],
   );
+
+  useEffect(() => {
+    if (qbSessionId && session?.user && sessionView === 'playing') {
+      void ensureSessionRegistered();
+    }
+  }, [qbSessionId, session?.user, sessionView, ensureSessionRegistered]);
 
   const handleSessionAnswerSubmit = useCallback(
     (
@@ -337,6 +373,7 @@ export default function QuestionBankPage() {
     const summary = buildSessionSummary(attempts, labelForQuestionBankTag);
 
     if (qbSessionId) {
+      await ensureSessionRegistered();
       await completeQuestionBankSession({
         id: qbSessionId,
         summary: summary as unknown as Record<string, unknown>,
@@ -351,6 +388,7 @@ export default function QuestionBankPage() {
     setSessionCompleting(false);
   }, [
     ensureCurrentQuestionLogged,
+    ensureSessionRegistered,
     qbSessionId,
     router,
     session?.user,

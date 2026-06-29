@@ -67,13 +67,13 @@ CREATE TRIGGER trigger_qb_sessions_updated_at
 CREATE OR REPLACE FUNCTION update_daily_metrics_on_qb_session_complete()
 RETURNS TRIGGER AS $$
 DECLARE
-  metric_date date;
+  v_metric_date date;
 BEGIN
   IF NEW.ended_at IS NULL OR (OLD.ended_at IS NOT NULL) THEN
     RETURN NEW;
   END IF;
 
-  metric_date := DATE(NEW.ended_at);
+  v_metric_date := DATE(NEW.ended_at);
 
   INSERT INTO user_daily_metrics (
     user_id,
@@ -84,7 +84,7 @@ BEGIN
     sessions_count
   ) VALUES (
     NEW.user_id,
-    metric_date,
+    v_metric_date,
     0,
     0,
     0,
