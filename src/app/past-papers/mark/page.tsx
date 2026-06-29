@@ -1935,8 +1935,8 @@ export default function PapersMarkPage() {
                               )}
                               onClick={() => openQuestionInReview(index)}
                             >
-                  <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2 pl-0">
+                              <div className="flex items-center justify-between">
+                                <div className="flex min-w-0 flex-nowrap items-center gap-2 pl-0">
                                 {/* Left spacer controls alignment for Overview/Part headers and Q labels consistently */}
                                 <span className="inline-block" style={{ width: LEFT_LABEL_WIDTH_PX }} />
                                 {/* Fixed-width question label so Part pill aligns vertically across rows */}
@@ -1944,7 +1944,7 @@ export default function PapersMarkPage() {
                                   {/* Part pill with section color (showing Part X) */}
                                   <div
                                     className={cn(
-                                      "rounded-full px-2 py-0.5 text-[11px] font-medium",
+                                      "shrink-0 whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-medium leading-none",
                                       getSectionSubjectPillClass(sectionName),
                                     )}
                                   >
@@ -1953,7 +1953,7 @@ export default function PapersMarkPage() {
                                   {guessed && (
                                     <div
                                       className={cn(
-                                        "rounded-full px-2 py-0.5 text-[11px] font-medium",
+                                        "shrink-0 whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-medium leading-none",
                                         getMarkAnswerBadgeClass("guess"),
                                       )}
                                     >
