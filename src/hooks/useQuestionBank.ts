@@ -35,6 +35,7 @@ interface UseQuestionBankReturn {
       usedHint?: boolean;
       wrongAnswersBefore?: string[];
       timeUntilCorrectMs?: number | null;
+      sessionId?: string;
     },
   ) => Promise<void>;
   nextQuestion: () => Promise<void>;
