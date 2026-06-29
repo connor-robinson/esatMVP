@@ -7,7 +7,7 @@ import type { SubjectFilter } from "@/types/questionBank";
 import type { QuestionBankHomeLaunchPayload } from "@/lib/questionBank/homeLaunch";
 import type { SubjectTileConfig } from "./QuestionBankHomeScreen";
 import {
-  getSubjectPillActiveClass,
+  getSubjectSessionPillActiveClass,
   SUBJECT_PILL_INACTIVE,
 } from "@/lib/questionBank/subjectColors";
 
@@ -55,17 +55,19 @@ function difficultyPillClass(d: UiDifficultyLabel, active: boolean): string {
   if (!active) return SUBJECT_PILL_INACTIVE;
   switch (d) {
     case "Easy":
-      return "bg-surface-mid text-difficulty-pill-easy dark:bg-surface-neutral";
+      return "bg-difficulty-pill-easy text-text";
     case "Medium":
-      return "bg-surface-mid text-difficulty-pill-medium dark:bg-surface-neutral";
+      return "bg-difficulty-pill-medium text-text";
     case "Hard":
-      return "bg-surface-mid text-difficulty-pill-hard dark:bg-surface-neutral";
+      return "bg-difficulty-pill-hard text-text";
     case "Extreme":
-      return "bg-surface-mid text-accent dark:bg-surface-neutral";
+      return "bg-accent text-text";
     default:
-      return "bg-surface-mid text-text dark:bg-surface-neutral";
+      return "bg-surface-mid text-text";
   }
 }
+
+const DIFFICULTY_AUTO_ACTIVE = "bg-secondary/35 text-text";
 
 function clamp(n: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, n));
@@ -178,11 +180,17 @@ export function QuestionBankSessionSettingsModal({
     } else {
       setSubjectKeys([originTile.key as SubjectFilter]);
     }
-    setMinutes(20);
-    setQuestionCount(30);
+    const initialCount = 30;
+    setQuestionCount(initialCount);
+    setMinutes(autoTimeLimitMinutes(initialCount));
     setDifficultiesUi([]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, originTile?.key, isMixed]);
+
+  const handleQuestionCountChange = (count: number) => {
+    setQuestionCount(count);
+    setMinutes(autoTimeLimitMinutes(count));
+  };
 
   const toggleSubject = (key: SubjectFilter) => {
     setSubjectKeys((prev) => {
@@ -196,10 +204,13 @@ export function QuestionBankSessionSettingsModal({
 
   const toggleDifficulty = (d: UiDifficultyLabel) => {
     setDifficultiesUi((prev) => {
-      if (prev.length === 0) return [d];
       if (prev.includes(d)) return prev.filter((x) => x !== d);
       return [...prev, d];
     });
+  };
+
+  const selectDifficultyAuto = () => {
+    setDifficultiesUi([]);
   };
 
   const applyAutoTimeLimit = () => {
@@ -231,7 +242,7 @@ export function QuestionBankSessionSettingsModal({
   if (!open || !originTile) return null;
 
   const modalTitle = isMixed ? "Mixed Practice" : "Session Settings";
-  const noneDifficultySelected = difficultiesUi.length === 0;
+  const difficultyAuto = difficultiesUi.length === 0;
   const showSubjectToggles = siblingTiles.length > 1;
   const autoMinutes = autoTimeLimitMinutes(questionCount);
 
@@ -244,14 +255,14 @@ export function QuestionBankSessionSettingsModal({
     >
       <button
         type="button"
-        className="absolute inset-0 bg-background/75 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/85 backdrop-blur-sm"
         aria-label="Close"
         onClick={onClose}
       />
       <div
         className={cn(
           "relative z-[101] flex max-h-[min(92vh,880px)] w-full max-w-[960px] flex-col overflow-hidden rounded-organic-xl",
-          "bg-surface p-8 shadow-modal-card sm:p-10",
+          "bg-[#0a0a0c] p-8 shadow-[0_28px_80px_rgba(0,0,0,0.65)] sm:p-10",
         )}
       >
         {/* Header */}
@@ -299,7 +310,7 @@ export function QuestionBankSessionSettingsModal({
                       onClick={() => toggleSubject(key)}
                       className={cn(
                         "rounded-organic-md px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors",
-                        active ? getSubjectPillActiveClass(key) : SUBJECT_PILL_INACTIVE,
+                        active ? getSubjectSessionPillActiveClass(key) : SUBJECT_PILL_INACTIVE,
                       )}
                     >
                       {t.key}
@@ -316,12 +327,22 @@ export function QuestionBankSessionSettingsModal({
                 Difficulty
               </span>
               <span className="text-xs text-text-muted">
-                {noneDifficultySelected
-                  ? "None selected"
+                {difficultyAuto
+                  ? "Auto"
                   : `${difficultiesUi.length} selected`}
               </span>
             </div>
             <div className="flex flex-wrap gap-2.5">
+              <button
+                type="button"
+                onClick={selectDifficultyAuto}
+                className={cn(
+                  "rounded-organic-md px-3.5 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors",
+                  difficultyAuto ? DIFFICULTY_AUTO_ACTIVE : SUBJECT_PILL_INACTIVE,
+                )}
+              >
+                Auto
+              </button>
               {ALL_UI_DIFFICULTIES.map((d) => {
                 const active = difficultiesUi.includes(d);
                 return (
@@ -384,7 +405,7 @@ export function QuestionBankSessionSettingsModal({
               </label>
               <NumericStepper
                 value={questionCount}
-                onChange={setQuestionCount}
+                onChange={handleQuestionCountChange}
                 min={QUESTION_MIN}
                 max={QUESTION_MAX}
                 suffix="Qs"
@@ -403,7 +424,7 @@ export function QuestionBankSessionSettingsModal({
               "inline-flex min-h-[2.75rem] w-full items-center justify-center gap-2 rounded-organic-lg px-8 sm:w-auto",
               "bg-secondary text-background text-sm font-semibold shadow-glow transition-all duration-fast",
               "hover:brightness-110 active:scale-[0.98]",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0c]",
             )}
           >
             Start your session

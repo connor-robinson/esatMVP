@@ -1,7 +1,10 @@
 import type { SubjectFilter } from "@/types/questionBank";
+import { cn } from "@/lib/utils";
 import {
   getSubjectTileBadgeClass,
   getSubjectTileTopicClass,
+  resolveSubjectTileKey,
+  SUBJECT_TILE_STYLES,
 } from "@/lib/questionBank/subjectTileTheme";
 
 export const SUBJECT_PILL_CLASS: Record<SubjectFilter, string> = {
@@ -32,6 +35,13 @@ export const SUBJECT_PILL_INACTIVE =
 
 export function getSubjectPillActiveClass(subject: SubjectFilter): string {
   return SUBJECT_PILL_ACTIVE[subject] ?? SUBJECT_PILL_ACTIVE.All;
+}
+
+/** Session settings — subject hue as pill background, neutral label text. */
+export function getSubjectSessionPillActiveClass(subject: SubjectFilter): string {
+  const key = resolveSubjectTileKey(subject);
+  if (!key) return "bg-surface-mid text-text";
+  return cn(SUBJECT_TILE_STYLES[key].progressFillClass, "text-text");
 }
 
 export function getSubjectPillClass(subject?: string | null): string {
