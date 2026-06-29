@@ -18,7 +18,7 @@ import { AngleInput } from "./unit-circle/AngleInput";
 import { RadianInput } from "./unit-circle/RadianInput";
 import { FeedbackPopup } from "./FeedbackPopup";
 import { KatexInput } from "./KatexInput";
-import { MathSymbolBar } from "./MathSymbolBar";
+import { CollapsibleMathSymbolBar } from "./CollapsibleMathSymbolBar";
 import { insertAtCursor } from "./mathInputUtils";
 import { GeneratedQuestion, QuestionAttempt } from "@/types/core";
 import { getTopic } from "@/config/topics";
@@ -587,11 +587,6 @@ export function MentalMathSession({
                 />
               ) : isMultiAnswer ? (
                 <>
-                  <MathSymbolBar
-                    onInsert={handleSymbolInsert}
-                    disabled={(showFeedback && lastAttempt?.isCorrect) || answerRevealed}
-                    className="mb-1"
-                  />
                   <div className="flex w-full justify-center gap-4">
                     {multiAnswers.map((value, index) => {
                       const label = answerFieldLabels[index] ?? `Value ${index + 1}`;
@@ -685,6 +680,11 @@ export function MentalMathSession({
                       <span>Submit</span>
                     </button>
                   </div>
+                  <CollapsibleMathSymbolBar
+                    onInsert={handleSymbolInsert}
+                    disabled={(showFeedback && lastAttempt?.isCorrect) || answerRevealed}
+                    className="w-full max-w-md"
+                  />
                 </>
               ) : useKatexInput ? (
                 <>
@@ -714,11 +714,6 @@ export function MentalMathSession({
                 </>
               ) : (
                 <>
-                  <MathSymbolBar
-                    onInsert={handleSymbolInsert}
-                    disabled={(showFeedback && lastAttempt?.isCorrect) || answerRevealed}
-                    className="mb-1 w-full max-w-md"
-                  />
                   <div className="relative w-full">
                     <input
                       ref={simpleInputRef}
@@ -781,6 +776,12 @@ export function MentalMathSession({
                         </button>
                       </div>
                     </div>
+
+                  <CollapsibleMathSymbolBar
+                    onInsert={handleSymbolInsert}
+                    disabled={(showFeedback && lastAttempt?.isCorrect) || answerRevealed}
+                    className="w-full max-w-md"
+                  />
 
                   {/* Input mode toggle */}
                   <button

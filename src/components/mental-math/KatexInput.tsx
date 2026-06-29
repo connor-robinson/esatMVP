@@ -1,5 +1,5 @@
 /**
- * Math answer input: symbol bar, raw text field on top, rendered KaTeX in the main bar
+ * Math answer input: raw strip on top, main type bar, KaTeX preview, collapsible symbol bar
  */
 
 "use client";
@@ -16,7 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 import { renderMath } from "@/hooks/useKaTeX";
 import { Eye } from "lucide-react";
-import { MathSymbolBar } from "./MathSymbolBar";
+import { CollapsibleMathSymbolBar } from "./CollapsibleMathSymbolBar";
 import { insertAtCursor, toMathDisplayFormat } from "./mathInputUtils";
 
 interface KatexInputProps {
@@ -45,14 +45,14 @@ export const KatexInput = forwardRef<HTMLInputElement, KatexInputProps>(function
   },
   ref,
 ) {
-  const rawInputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const [renderedHtml, setRenderedHtml] = useState("");
 
-  useImperativeHandle(ref, () => rawInputRef.current as HTMLInputElement);
+  useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
   useEffect(() => {
-    if (autoFocus && rawInputRef.current && !disabled) {
-      rawInputRef.current.focus();
+    if (autoFocus && inputRef.current && !disabled) {
+      inputRef.current.focus();
     }
   }, [autoFocus, disabled]);
 
@@ -73,7 +73,7 @@ export const KatexInput = forwardRef<HTMLInputElement, KatexInputProps>(function
   const handleInsert = useCallback(
     (insert: string, cursorOffset = 0) => {
       if (disabled) return;
-      const el = rawInputRef.current;
+      const el = inputRef.current;
       const start = el?.selectionStart ?? value.length;
       const end = el?.selectionEnd ?? value.length;
       const { next, cursor } = insertAtCursor(value, insert, start, end, cursorOffset);
@@ -93,61 +93,45 @@ export const KatexInput = forwardRef<HTMLInputElement, KatexInputProps>(function
     }
   };
 
-  const focusRaw = () => {
-    if (!disabled) rawInputRef.current?.focus();
-  };
-
   return (
     <div className="relative flex w-full max-w-md flex-col gap-2">
-      <MathSymbolBar onInsert={handleInsert} disabled={disabled} />
-
-      <input
-        ref={rawInputRef}
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder={placeholder}
-        disabled={disabled}
-        autoComplete="off"
-        className={cn(
-          "w-full rounded-xl bg-transparent px-3 py-1 text-center text-sm font-mono text-text-muted outline-none",
-          "placeholder:text-text-disabled placeholder:font-sans",
-          disabled && "cursor-not-allowed opacity-50",
-        )}
-      />
-
-      <div className="relative">
+      {/* Raw text strip */}
+      {value.trim() ? (
         <div
-          role="textbox"
-          tabIndex={disabled ? -1 : 0}
-          onClick={focusRaw}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !disabled) {
-              e.preventDefault();
-              onSubmit();
-            } else {
-              focusRaw();
-            }
-          }}
-          className={cn(
-            "flex h-16 w-full items-center justify-center rounded-2xl px-14 transition-all duration-75",
-            hasError ? "bg-error/20" : "bg-surface-elevated",
-            disabled ? "cursor-not-allowed opacity-50" : "cursor-text",
-          )}
+          className="rounded-lg bg-surface-elevated px-3 py-1.5 text-center text-sm font-mono text-text-muted"
+          aria-live="polite"
         >
-          {renderedHtml ? (
-            <div
-              className={cn(
-                "max-w-full overflow-x-auto text-2xl [&_.katex]:text-[1.35rem]",
-                hasError ? "text-error" : "text-text",
-              )}
-              dangerouslySetInnerHTML={{ __html: renderedHtml }}
-            />
-          ) : (
-            <span className="text-base font-medium text-text-disabled">Preview</span>
-          )}
+          {value}
         </div>
+      ) : null}
+
+      {/* Main type bar — same as original simple/math input */}
+      <div className="relative">
+        <input
+          ref={inputRef}
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={placeholder}
+          disabled={disabled}
+          autoComplete="off"
+          className={cn(
+            "h-16 w-full rounded-2xl border-0 text-2xl font-semibold outline-none transition-all duration-75",
+            hasError
+              ? "bg-error/20 text-error focus:ring-0 focus:outline-none"
+              : "bg-surface-elevated text-text focus:ring-0 focus:outline-none",
+            "placeholder:text-base placeholder:font-medium placeholder:text-text-disabled",
+            disabled && "cursor-not-allowed opacity-50",
+          )}
+          style={{
+            textAlign: "center",
+            paddingLeft: "4.5rem",
+            paddingRight: "4.5rem",
+            lineHeight: "4rem",
+            height: "4rem",
+          }}
+        />
 
         <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
           {showReveal && onReveal && (
@@ -170,7 +154,7 @@ export const KatexInput = forwardRef<HTMLInputElement, KatexInputProps>(function
                 ? "bg-error/20 text-error hover:bg-error/30"
                 : value.trim() && !disabled
                   ? "bg-primary/20 text-primary hover:scale-110 hover:bg-primary/30"
-                  : "bg-surface-elevated text-text-disabled cursor-not-allowed",
+                  : "cursor-not-allowed bg-surface-elevated text-text-disabled",
             )}
           >
             <svg
@@ -185,6 +169,30 @@ export const KatexInput = forwardRef<HTMLInputElement, KatexInputProps>(function
           </button>
         </div>
       </div>
+
+      {/* KaTeX preview — between type bar and symbol bar */}
+      <div
+        className={cn(
+          "flex min-h-[2.75rem] items-center justify-center rounded-xl px-3 py-2",
+          hasError ? "bg-error/10" : "bg-surface-elevated/60",
+        )}
+        aria-hidden={!renderedHtml}
+      >
+        {renderedHtml ? (
+          <div
+            className={cn(
+              "max-w-full overflow-x-auto text-xl [&_.katex]:text-[1.15rem]",
+              hasError ? "text-error" : "text-text",
+            )}
+            dangerouslySetInnerHTML={{ __html: renderedHtml }}
+          />
+        ) : (
+          <span className="text-sm font-medium text-text-disabled">Preview</span>
+        )}
+      </div>
+
+      {/* Collapsible symbol bar */}
+      <CollapsibleMathSymbolBar onInsert={handleInsert} disabled={disabled} />
     </div>
   );
 });
