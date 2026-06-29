@@ -450,7 +450,7 @@ export function QuestionCard({
                   getOptionStyle(letter),
                 )}
               >
-                <div className="flex items-start gap-3 sm:items-center">
+                <div className="flex items-center gap-3">
                   <span
                     className={cn(
                       "w-6 shrink-0 text-sm font-semibold tabular-nums leading-none",
@@ -462,14 +462,16 @@ export function QuestionCard({
 
                   <div
                     className={cn(
-                      "flex min-w-0 flex-1 items-center gap-2.5 text-[0.98rem] leading-relaxed tracking-tight sm:text-[1.02rem]",
+                      "flex min-w-0 flex-1 flex-wrap items-center gap-x-4 gap-y-2 text-[0.98rem] leading-relaxed tracking-tight sm:text-[1.02rem]",
                       "font-sans text-text",
                     )}
                   >
-                    <MathContent
-                      content={question.options[letter]}
-                      className="text-inherit inline"
-                    />
+                    <div className="min-w-0 flex-1">
+                      <MathContent
+                        content={question.options[letter]}
+                        className="text-inherit inline"
+                      />
+                    </div>
                     {incorrectAnswers.has(letter) &&
                       letter !== correctAnswer &&
                       question.distractor_map?.[letter] && (
@@ -483,16 +485,31 @@ export function QuestionCard({
                                   new Set(prev).add(letter),
                                 );
                               }}
-                              className="flex h-10 shrink-0 items-center gap-2 rounded-organic-md bg-surface-mid px-3 text-sm text-text-muted transition-colors hover:bg-surface-neutral hover:text-text"
+                              title="Reveal why it may be wrong"
+                              className={cn(
+                                "ml-auto shrink-0 self-center",
+                                "inline-flex items-center gap-1.5 rounded-full",
+                                "border border-border-subtle/70 bg-surface-elevated/95 px-3 py-1.5",
+                                "text-[11px] font-medium tracking-wide text-text-muted",
+                                "transition-all duration-fast ease-signature",
+                                "hover:border-border hover:bg-surface-mid/80 hover:text-text",
+                              )}
                             >
-                              <HelpCircle className="h-4 w-4" strokeWidth={2.5} />
-                              <span className="hidden sm:inline">Reveal why wrong</span>
+                              <HelpCircle
+                                className="h-3.5 w-3.5 shrink-0 opacity-80"
+                                strokeWidth={2}
+                              />
+                              <span className="whitespace-nowrap">
+                                Why it may be wrong
+                              </span>
                             </button>
                           ) : (
-                            <MathContent
-                              content={question.distractor_map[letter]}
-                              className="text-text-muted"
-                            />
+                            <div className="w-full basis-full border-t border-border-subtle/50 pt-2.5">
+                              <MathContent
+                                content={question.distractor_map[letter]}
+                                className="text-sm text-text-muted"
+                              />
+                            </div>
                           )}
                         </>
                       )}
