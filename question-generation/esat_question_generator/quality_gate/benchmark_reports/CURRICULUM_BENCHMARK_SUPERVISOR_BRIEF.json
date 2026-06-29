@@ -1,0 +1,132 @@
+{
+  "title": "ESAT curriculum validator v3_benchmark — supervisor review pack",
+  "generated_at": "2026-06-29T10:15:00+01:00",
+  "purpose": "External review of blind curriculum-only validator tuned against 228 manual human decisions (186 keep, 42 reject). This pack contains evaluation metrics, the full validator prompt, and pointers to the complete benchmark log.",
+  "benchmark_scope": {
+    "gold_labels_file": "data/manual_overrides/esat_228_manual_keep_reject.json",
+    "gold_labels_sha256": "08346b04a98308d52c8d2ccec6a8343f4d0e3731188323b5104acbf7eafff9b8",
+    "evaluated_subset": "42 manual rejects only (hardest regression slice)",
+    "evaluated_count": 41,
+    "not_evaluated_count": 1,
+    "not_evaluated_reason": "1 question failed with non-JSON model output (ce6ba9e6)",
+    "186_keeps_not_yet_run": "Full 228 benchmark pending; reject slice run first because v2 falsely approved almost all rejects",
+    "mode": "read_only — no DB writes, no changes to manually applied rows"
+  },
+  "validator": {
+    "version": "v3_benchmark",
+    "model": "gemini-2.5-flash",
+    "provider": "Google Vertex AI",
+    "improvements_over_v2": [
+      "Inject structured ESAT_CURRICULUM_RULES.json (forbidden methods per module, derived from all 42 manual reject reasons)",
+      "Stricter system prompt: mandatory solve-path listing, explicit forbidden-rule enforcement, narrow definition of 'supplied in question'",
+      "Invalid/underdetermined stems must not receive high-confidence in_syllabus"
+    ]
+  },
+  "evaluation_summary": {
+    "headline": "Large improvement on rejects vs v2, but not yet benchmark-ready — 4 critical false approvals remain on 41 scored rejects.",
+    "accuracy_on_rejects": 0.8537,
+    "correct": 35,
+    "disagreements": 6,
+    "critical_false_positives": 4,
+    "critical_false_positive_definition": "manual reject classified as in_syllabus + high confidence (would wrongly auto-approve)",
+  "pass_criterion_not_met": "Target is 0 critical false positives on all 42 rejects before deploying to live reassessment or retrying 45 network-failed rows",
+    "confusion_matrix": {
+      "gold=out_of_syllabus|pred=out_of_syllabus": 34,
+      "gold=out_of_syllabus|pred=in_syllabus": 4,
+      "gold=out_of_syllabus|pred=borderline": 1,
+      "gold=invalid_question|pred=in_syllabus": 1,
+      "gold=invalid_question|pred=borderline": 1
+    },
+    "comparison_to_v2": {
+      "v2_validator_version": "v2_borderline_reassessment",
+      "v2_on_same_cohort": "Prior AI reassessment predicted in_syllabus + high for nearly all 228 rows including all 42 manual rejects",
+      "v2_reject_recall_estimate": "~0% (0/42 rejects correctly flagged as out_of_syllabus or non-high in_syllabus)",
+      "v3_reject_recall_on_scored": "34/39 out_of_syllabus gold correctly predicted out_of_syllabus (87%); 2/2 invalid_question gold handled acceptably (borderline/low, not high in_syllabus)",
+      "v3_improvement": "v3 correctly rejects most Math2 calculus/trig/integration, Physics quantitative methods, Chemistry cross-module, and Math1 inequality cases that v2 approved"
+    },
+    "remaining_failure_modes": [
+      {
+        "pattern": "Rules reinterpretation",
+        "description": "Model treats forbidden items as 'fundamental' or 'supplied by experiment' despite explicit curriculum_rules",
+        "examples": ["a5fca3bc epigenetics/methylation", "fcae5686 cotangent", "ddf40f02 polynomial division workaround", "802f6c28 coding-strand→mRNA (medium confidence)"]
+      },
+      {
+        "pattern": "Curriculum-only blind spot on invalid stems",
+        "description": "Validator checks syllabus coverage but not whether stem uniquely determines answer",
+        "examples": ["bbcfdc45 triangle area not unique — model approved syllabus methods without flagging underdetermination"]
+      }
+    ],
+    "critical_false_positives_detail": [
+      {
+        "id_prefix": "a5fca3bc",
+        "subject": "Biology",
+        "manual": "out_of_syllabus — promoter methylation / epigenetics not in spec",
+        "predicted": "in_syllabus + high"
+      },
+      {
+        "id_prefix": "bbcfdc45",
+        "subject": "Math 2",
+        "manual": "invalid_question — area not fixed; solution minimises silently",
+        "predicted": "in_syllabus + high"
+      },
+      {
+        "id_prefix": "ddf40f02",
+        "subject": "Math 1",
+        "manual": "out_of_syllabus — polynomial divisibility by quadratic beyond M1 scope",
+        "predicted": "in_syllabus + high"
+      },
+      {
+        "id_prefix": "fcae5686",
+        "subject": "Math 2",
+        "manual": "out_of_syllabus — cotangent / reciprocal trig identities not specified",
+        "predicted": "in_syllabus + high"
+      }
+    ],
+    "non_critical_disagreements": [
+      {
+        "id_prefix": "73b21b18",
+        "manual": "out_of_syllabus",
+        "predicted": "borderline + low",
+        "note": "Correct direction but should be out_of_syllabus per manual"
+      },
+      {
+        "id_prefix": "802f6c28",
+        "manual": "out_of_syllabus",
+        "predicted": "in_syllabus + medium",
+        "note": "Not critical (not high) but still wrong"
+      }
+    ]
+  },
+  "artifact_paths": {
+    "full_benchmark_json_log": "question-generation/esat_question_generator/quality_gate/benchmark_reports/benchmark_228_rejects_latest.json",
+    "this_supervisor_brief": "question-generation/esat_question_generator/quality_gate/benchmark_reports/CURRICULUM_BENCHMARK_SUPERVISOR_BRIEF.json",
+    "curriculum_rules_json": "question-generation/esat_question_generator/curriculum/ESAT_CURRICULUM_RULES.json",
+    "system_prompt_source": "question-generation/esat_question_generator/quality_gate/curriculum_reassessment/constants.py (CURRICULUM_BENCHMARK_SYSTEM_PROMPT)",
+    "manual_gold_labels": "data/manual_overrides/esat_228_manual_keep_reject.json"
+  },
+  "system_prompt_full": "You are an ESAT curriculum validator performing a narrow, curriculum-only assessment.\n\nYour sole task: decide whether the official curriculum of the assigned ESAT module,\ntogether with permitted Mathematics 1 assumed knowledge and facts explicitly supplied\nin the question, covers every piece of knowledge and every method required to solve\nthe question.\n\nDo NOT assess writing style, answer-key correctness, solution quality, formatting,\ndistractors, difficulty, pacing, or overall question quality.\n\n## Mandatory procedure\n\n1. Solve the question independently using the stem, options and solution_reasoning\n   only to trace the intended solve path.\n2. List every fact, formula, identity, theorem and method required (required_knowledge).\n3. Map each item to curriculum_rules in the input JSON:\n   - permitted for the assigned module,\n   - permitted via Mathematics 1 (if module may assume it), or\n   - explicitly supplied in the question stem/options.\n4. Treat curriculum_rules as authoritative. Do NOT override them with general knowledge\n   like “typically taught in chemistry/biology”.\n5. If any required item appears under forbidden_unless_supplied / forbidden_without_supply /\n   forbidden_cross_module / cannot_assume (or equivalent) and is NOT supplied in the question\n   → out_of_syllabus.\n6. “Supplied in the question” means an explicit usable definition or formula that removes\n   the need for prior knowledge. Merely mentioning a concept, naming a reagent, or showing\n   experimental outcomes is NOT sufficient supply if the solver must already know the concept\n   to interpret it (e.g. promoter methylation as gene regulation; reversible vs irreversible\n   enzyme inhibition; half-life as a decay model).\n7. If any required item is from another science module not assumed → out_of_syllabus.\n6. Use borderline only when permission is genuinely unclear from the rules — not\n   because the question is hard, combines topics, or uses an unfamiliar context.\n7. Use in_syllabus only when EVERY required item is explicitly permitted.\n8. If the question is underdetermined / has multiple valid answers from the stated information,\n   or the solution relies on an unstated optimisation/minimisation, do NOT return high-confidence\n   in_syllabus. Return borderline with confidence=low (curriculum cannot “approve” an invalid stem).\n\n## High-confidence in_syllabus requirements\n\nSet confidence=high only when you can cite explicit permission for every required\nmethod (not merely the topic title). If a standard technique is commonly taught but\nNOT listed in curriculum_rules (e.g. integration by parts, chain rule, double-angle\nidentities, quantitative Archimedes, wave interference) → out_of_syllabus, not\nborderline, unless the question supplies the formula.\n\n## curriculum_match definitions\n\nin_syllabus: Every required fact, formula, theorem, method and subject-specific\nconcept is explicitly allowed by the assigned module, permitted Mathematics 1\nknowledge, or information supplied in the question.\n\nborderline: Probably accessible, but a required term, depth, application or assumed\nfact is genuinely unclear from the official rules. Use sparingly.\n\nout_of_syllabus: The solver must know something forbidden by curriculum_rules without\nit being supplied in the question.\n\n## Cross-module rules\n\n- Science modules may assume Mathematics 1, not Mathematics 2 unless supplied.\n- Biology may not assume Chemistry-specific content unless supplied.\n- Chemistry may not assume Physics (e.g. half-life) unless supplied.\n- Physics may not assume Chemistry content.\n- Mathematics 1 must not require Mathematics 2 content.\n- Mathematics 2 may assume Mathematics 1.\n\nRespond using the required structured JSON schema only.",
+  "user_prompt_template": "Assess curriculum fit only for this ESAT question.\n\nReturn a single JSON object with ALL of these keys (no omissions):\n{\n  \"curriculum_match\": \"in_syllabus\",\n  \"syllabus_fit_score\": 5,\n  \"required_topic_codes\": [\"M2-MM1\"],\n  \"required_knowledge\": [\"example concept\"],\n  \"borderline_or_external_knowledge\": [],\n  \"reason\": \"Brief curriculum justification.\",\n  \"confidence\": \"high\"\n}\n\ncurriculum_match must be exactly: in_syllabus, borderline, or out_of_syllabus.\nconfidence must be exactly: high, medium, or low.\nsyllabus_fit_score must be an integer from 1 to 5.\nList every solve-path requirement in required_knowledge before deciding.\n\nInput JSON:\n<per-question payload: subject, primary_tag, question_stem, options, correct_option, solution_reasoning, curriculum_snapshot, curriculum_rules from ESAT_CURRICULUM_RULES.json>",
+  "per_question_input_fields": [
+    "subject",
+    "primary_tag",
+    "secondary_tags",
+    "question_stem",
+    "options",
+    "correct_option",
+    "solution_reasoning",
+    "curriculum_source",
+    "curriculum_allowed_codes",
+    "curriculum_snapshot",
+    "curriculum_rules",
+    "curriculum_rules_source",
+    "supplied_in_question"
+  ],
+  "how_to_reproduce": {
+    "command": "cd question-generation/esat_question_generator && python scripts/eval_curriculum_benchmark_228.py --only-rejects",
+    "requires": [
+      "SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY",
+      "GOOGLE_CLOUD_PROJECT + ADC (gcloud auth application-default login)",
+      "Vertex AI API enabled"
+    ]
+  }
+}

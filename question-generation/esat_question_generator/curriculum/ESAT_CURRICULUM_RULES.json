@@ -1,0 +1,119 @@
+{
+  "source": "ESAT Content Specification (May 2024) + manual benchmark esat_228_manual_review_v1",
+  "math1": {
+    "permitted_summary": "Units, number, ratio, algebra, geometry, statistics, probability at GCSE/A-level core without Further Maths.",
+    "inequalities": "Linear inequalities only. Rational, quadratic and modulus inequalities are not specified.",
+    "polynomials": "Standard factorisation and expansion. Polynomial division by quadratics beyond stated scope is not specified.",
+    "geometry": "Listed circle theorems only. Tangent-secant and power-of-a-point are not specified.",
+    "forbidden_without_supply": [
+      "logarithms and log laws",
+      "modulus function |x| and modulus inequalities",
+      "rational inequality sign-analysis methods",
+      "Mathematics 2 calculus, radians-heavy methods, or change-of-base logarithms"
+    ]
+  },
+  "math2": {
+    "assumes": "All Mathematics 1 content.",
+    "mm3_trigonometry": {
+      "permitted_identities": [
+        "sin^2 x + cos^2 x = 1",
+        "tan x = sin x / cos x"
+      ],
+      "forbidden_unless_supplied_in_question": [
+        "double-angle identities (sin 2x, cos 2x, tan 2x)",
+        "half-angle identities",
+        "product-to-sum or sum-to-product identities",
+        "angle subtraction or addition beyond supplied relationships",
+        "cotangent and reciprocal-trig identities beyond sin/cos/tan",
+        "change of base for logarithms — official spec excludes change-of-base questions"
+      ]
+    },
+    "mm6_differentiation": {
+      "permitted": [
+        "derivative of x^n for integer n (power rule on polynomials)",
+        "derivatives of expressions reducible to sums of constant multiples of powers of x after algebraic simplification"
+      ],
+      "forbidden_unless_supplied": [
+        "product rule",
+        "quotient rule",
+        "chain rule on non-polynomial compositions (e.g. e^x, ln x, sin x, (x-a)^(-1) after shift)",
+        "differentiation of e^x, ln x, sin x, cos x, tan x as the main move",
+        "implicit differentiation"
+      ]
+    },
+    "mm7_integration": {
+      "permitted": [
+        "integrate k x^n for integer n (including n = -1 only when already in standard power form after simplification)",
+        "definite integrals of polynomials and simple sums/differences of power terms",
+        "area under a curve when antiderivative is a polynomial power rule result"
+      ],
+      "forbidden_unless_supplied": [
+        "integration by parts",
+        "integrate ln x or require ln antiderivative",
+        "integration by substitution for non-trivial substitutions (e.g. shift to integrate (x+a)^(-2))",
+        "antiderivatives arctan(x), ln x, e^x",
+        "treating mass as integral of linear density without supplying the formula",
+        "limits, removable discontinuities, or limit language as the core method"
+      ]
+    }
+  },
+  "physics": {
+    "assumes": "Mathematics 1 only (not Mathematics 2, not Chemistry).",
+    "p1_electricity": {
+      "forbidden_unless_supplied": [
+        "electric volume charge density Q = rho_q V",
+        "formulas not stated in P1"
+      ]
+    },
+    "p3_mechanics": {
+      "upthrust": "Qualitative understanding only. Quantitative Archimedes principle U = rho V g or buoyancy proportional to displaced weight is NOT specified.",
+      "forbidden_unless_supplied": [
+        "F = mu R coefficient of friction law",
+        "principle of moments",
+        "quantitative upthrust / Archimedes calculations"
+      ]
+    },
+    "p6_waves": {
+      "forbidden_unless_supplied": [
+        "wave interference, path difference, phase change calculations",
+        "inverse-distance amplitude laws for sound"
+      ]
+    },
+    "cannot_assume": ["Chemistry content", "radioactive half-life from P7 unless question is Physics radioactivity topic"]
+  },
+  "chemistry": {
+    "assumes": "Mathematics 1 only (not Physics radioactivity).",
+    "forbidden_cross_module": [
+      "Physics half-life and radioactivity",
+      "Biology enzyme inhibition mechanisms not in Chemistry spec"
+    ],
+    "c6_bonding": {
+      "forbidden_unless_supplied": [
+        "branching effects on London forces and saturated vapour pressure beyond stated intermolecular content"
+      ]
+    },
+    "c13_organic": {
+      "forbidden_unless_supplied": [
+        "haloalkane substitution with ammonia to amines / quaternary ammonium",
+        "oxidation of secondary alcohol to ketone with acidified dichromate"
+      ]
+    }
+  },
+  "biology": {
+    "assumes": "Mathematics 1 only (not Chemistry-specific mechanisms).",
+    "forbidden_unless_supplied": [
+      "germline vs somatic mutation, mosaicism, incomplete penetrance",
+      "promoter methylation and epigenetic regulation",
+      "coding-strand to mRNA conversion steps and amino-acid chemical property reasoning unless supplied",
+      "Chemistry-specific or advanced Biology beyond stated topic codes"
+    ]
+  },
+  "decision_procedure": [
+    "1. Solve independently. List every fact, formula, identity, theorem and method required.",
+    "2. For each item, locate explicit permission in assigned module rules, Mathematics 1 (if allowed), or text supplied in the question.",
+    "3. If any required item is forbidden unless supplied and not supplied → out_of_syllabus.",
+    "4. If permission is genuinely unclear → borderline (use sparingly).",
+    "5. Only if every required item is permitted → in_syllabus.",
+    "6. Do not mark in_syllabus merely because the topic title appears in the curriculum snapshot."
+  ]
+}
