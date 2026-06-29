@@ -12,6 +12,7 @@ import { Progress } from "@/components/ui/Progress";
 import { MathContent } from "@/components/shared/MathContent";
 import { DiagramRenderer } from "@/components/shared/DiagramRenderer";
 import { BinaryChoiceInput } from "./BinaryChoiceInput";
+import { FeedbackPopup } from "./FeedbackPopup";
 import { KatexInput } from "./KatexInput";
 import { GeneratedQuestion, QuestionAttempt } from "@/types/core";
 import { getTopic } from "@/config/topics";
