@@ -278,14 +278,15 @@ export default function QuestionBankPage() {
   }, [sessionMode, deadline, timerStartTime, isCorrect]);
 
   // Timer effect - start from 0:00 when new question loads (for count-up mode)
+  const currentQuestionId = currentQuestion?.id;
   useEffect(() => {
-    if (!sessionMode && currentQuestion) {
+    if (!sessionMode && currentQuestionId) {
       // Reset timer to 0:00 and start it
       setElapsedTime(0);
       const newStartTime = Date.now();
       setTimerStartTime(newStartTime);
     }
-  }, [currentQuestion?.id, sessionMode]);
+  }, [currentQuestionId, sessionMode]);
 
   // Get remaining time in seconds for countdown
   const getRemainingTime = (): number => {
@@ -570,7 +571,7 @@ export default function QuestionBankPage() {
   return (
     <Fragment>
       {showSessionLoading ? <LoadingPage variant="session" /> : null}
-      <div className='min-h-[calc(100vh-3.5rem)] py-6 pb-36 sm:py-8 sm:pb-40'>
+      <div className='min-h-[calc(100vh-3.5rem)] py-6 pb-28 sm:py-8 sm:pb-32'>
         <Container size='lg' className='py-2'>
           <div className='space-y-6'>
             {isFreeLimitReached && <UpgradeCTA feature='unlimited questions' />}
@@ -686,32 +687,9 @@ export default function QuestionBankPage() {
         {/* Fixed bottom bar — session progress + actions */}
         {activeSession && currentQuestion && (
           <div className='fixed bottom-0 left-0 right-0 z-40 bg-background/98 shadow-bar-floating backdrop-blur-md'>
-            <Container size='lg' className='py-3 sm:py-4'>
-              <div className='flex flex-col gap-3 sm:gap-4'>
-                <div className='flex min-h-[2.75rem] w-full flex-col justify-center gap-2.5 sm:flex-row sm:items-center sm:gap-4'>
-                  <p className='shrink-0 text-xs text-text-muted sm:text-sm'>
-                    Questions remaining{' '}
-                    <span className='font-semibold tabular-nums text-text'>
-                      {Math.max(
-                        0,
-                        sessionQuestions.length - sessionCurrentIndex,
-                      )}
-                    </span>
-                    <span className='text-text-subtle'> / </span>
-                    <span className='tabular-nums text-text-muted'>
-                      {sessionQuestions.length}
-                    </span>
-                  </p>
-                  <div className='h-2 min-w-0 w-full flex-1 overflow-hidden rounded-organic-sm bg-surface-elevated'>
-                    <div
-                      className='h-full rounded-organic-sm bg-secondary transition-all duration-300 ease-signature'
-                      style={{
-                        width: `${((sessionCurrentIndex + 1) / sessionQuestions.length) * 100}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-
+            <Container size='lg' className='py-2.5 sm:py-3'>
+              <div className='flex flex-col gap-2.5'>
+                {/* Row 1: actions (compact, same baseline) */}
                 <div className='flex shrink-0 flex-wrap items-center justify-end gap-2'>
                   {currentQuestion.solution_key_insight && (
                     <button
@@ -752,7 +730,7 @@ export default function QuestionBankPage() {
                         href='/pricing'
                         className={cn(
                           SESSION_BAR_BTN,
-                          'border border-primary/30 bg-primary/15 px-4 text-primary hover:bg-primary/25',
+                          'bg-primary/15 px-4 text-primary hover:bg-primary/25',
                         )}
                       >
                         <BookOpen className='h-4 w-4 shrink-0' />
@@ -824,6 +802,28 @@ export default function QuestionBankPage() {
                       <ArrowRight className='h-4 w-4 shrink-0' strokeWidth={2.5} />
                     </button>
                   )}
+                </div>
+
+                {/* Row 2: progress (thin) */}
+                <div className='flex items-center gap-3'>
+                  <p className='shrink-0 text-[0.7rem] text-text-muted sm:text-xs'>
+                    Questions remaining{' '}
+                    <span className='font-semibold tabular-nums text-text'>
+                      {Math.max(0, sessionQuestions.length - sessionCurrentIndex)}
+                    </span>
+                    <span className='text-text-subtle'> / </span>
+                    <span className='tabular-nums text-text-muted'>
+                      {sessionQuestions.length}
+                    </span>
+                  </p>
+                  <div className='h-1.5 min-w-0 w-full flex-1 overflow-hidden rounded-organic-sm bg-surface-elevated'>
+                    <div
+                      className='h-full rounded-organic-sm bg-secondary transition-all duration-300 ease-signature'
+                      style={{
+                        width: `${((sessionCurrentIndex + 1) / sessionQuestions.length) * 100}%`,
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             </Container>
