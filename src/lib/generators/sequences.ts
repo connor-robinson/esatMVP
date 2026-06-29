@@ -1,9 +1,8 @@
 /**
  * Number sequences generator
  * Levels:
- * 1 - Arithmetic sequences (find next term, common difference)
- * 2 - Geometric sequences (find next term, common ratio)
- * 3 - Mixed patterns (squares, cubes, Fibonacci-like)
+ * 1 - Geometric sequences (find next term, common ratio)
+ * 2 - Mixed patterns (squares, cubes, Fibonacci-like)
  */
 
 import { GeneratedQuestion } from "@/types/core";
@@ -14,40 +13,11 @@ export function generateSequences(
   level: number,
   weights?: Record<string, number>
 ): GeneratedQuestion {
-  if (level === 1) return generateArithmetic();
-  if (level === 2) return generateGeometric();
-  return generateMixed();
-}
-
-function generateArithmetic(): GeneratedQuestion {
-  const questionType = Math.random() < 0.5 ? "next" : "difference";
-  const first = randomInt(1, 20);
-  const d = pick([-10, -8, -6, -5, -4, -3, -2, 2, 3, 4, 5, 6, 8, 10]);
-  const terms = [first, first + d, first + 2 * d, first + 3 * d];
-  
-  if (questionType === "next") {
-    const question = `Find the next term: $${terms[0]}, ${terms[1]}, ${terms[2]}, ${terms[3]}, \\ldots$`;
-    const answer = String(first + 4 * d);
-    
-    return {
-      id: generateId(),
-      topicId: "sequences",
-      question,
-      answer,
-      difficulty: 1,
-    };
-  } else {
-    const question = `What is the common difference? $${terms[0]}, ${terms[1]}, ${terms[2]}, ${terms[3]}, \\ldots$`;
-    const answer = String(d);
-    
-    return {
-      id: generateId(),
-      topicId: "sequences",
-      question,
-      answer,
-      difficulty: 1,
-    };
-  }
+  if (level === 1) return generateGeometric();
+  if (level === 2) return generateMixed();
+  // Legacy sessions saved with arithmetic at level 1
+  if (level === 3) return generateMixed();
+  return generateGeometric();
 }
 
 function generateGeometric(): GeneratedQuestion {
@@ -65,7 +35,7 @@ function generateGeometric(): GeneratedQuestion {
       topicId: "sequences",
       question,
       answer,
-      difficulty: 2,
+      difficulty: 1,
     };
   } else {
     const question = `What is the common ratio? $${terms[0]}, ${terms[1]}, ${terms[2]}, ${terms[3]}, \\ldots$`;
@@ -76,7 +46,7 @@ function generateGeometric(): GeneratedQuestion {
       topicId: "sequences",
       question,
       answer,
-      difficulty: 2,
+      difficulty: 1,
     };
   }
 }
@@ -95,7 +65,7 @@ function generateMixed(): GeneratedQuestion {
       topicId: "sequences",
       question,
       answer,
-      difficulty: 3,
+      difficulty: 2,
     };
   } else if (patternType === "cubes") {
     const start = randomInt(2, 6);
@@ -108,7 +78,7 @@ function generateMixed(): GeneratedQuestion {
       topicId: "sequences",
       question,
       answer,
-      difficulty: 3,
+      difficulty: 2,
     };
   } else {
     // Fibonacci-like: each term is sum of previous two
@@ -123,7 +93,7 @@ function generateMixed(): GeneratedQuestion {
       topicId: "sequences",
       question,
       answer,
-      difficulty: 3,
+      difficulty: 2,
     };
   }
 }

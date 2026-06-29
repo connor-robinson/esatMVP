@@ -82,6 +82,26 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'plain', text: '2.5 × 4' },
     { kind: 'plain', text: '3.2 × 5' },
   ]),
+  'multiplication-multiply-5-15-25': S([
+    { kind: 'plain', text: '24 × 25' },
+    { kind: 'plain', text: '16 × 15' },
+  ]),
+  'multiplication-perfect-squares': S([
+    { kind: 'plain', text: '13²' },
+    { kind: 'plain', text: '18²' },
+  ]),
+  'multiplication-multiply-11-12': S([
+    { kind: 'plain', text: '47 × 11' },
+    { kind: 'plain', text: '38 × 12' },
+  ]),
+  'multiplication-perfect-cubes': S([
+    { kind: 'plain', text: '7³' },
+    { kind: 'plain', text: '12³' },
+  ]),
+  'multiplication-multiply-9-99': S([
+    { kind: 'plain', text: '47 × 99' },
+    { kind: 'plain', text: '38 × 9' },
+  ]),
   'division-small-divisors': S([
     { kind: 'plain', text: '56 ÷ 7' },
     { kind: 'plain', text: '48 ÷ 6' },
@@ -301,17 +321,21 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'plain', text: 'Is 504 divisible by 8?' },
     { kind: 'plain', text: 'Is 847 divisible by 11?' },
   ]),
-  'sequences-arithmetic': S([
-    { kind: 'plain', text: '2, 5, 8, …' },
-    { kind: 'plain', text: 'next: 11, 14' },
+  'sequences-geometric': S([
+    { kind: 'plain', text: '2, 6, 18, …' },
+    { kind: 'plain', text: 'common ratio: 3' },
   ]),
-  'powers-squares': S([
-    { kind: 'plain', text: '13²' },
-    { kind: 'plain', text: '18²' },
+  'sequences-mixed': S([
+    { kind: 'plain', text: '4, 9, 16, …' },
+    { kind: 'plain', text: '1, 1, 2, 3, 5, …' },
   ]),
-  'multiplication_shortcuts-multiply-5-15-25': S([
-    { kind: 'plain', text: '24 × 25' },
-    { kind: 'plain', text: '16 × 15' },
+  'power_bases-powers-2-4-8': S([
+    { kind: 'plain', text: '2⁶' },
+    { kind: 'plain', text: '8³' },
+  ]),
+  'powers-fractional-exponents': S([
+    { kind: 'latex', latex: String.raw`2^{\frac{5}{2}}` },
+    { kind: 'latex', latex: String.raw`2^{\frac{7}{2}}` },
   ]),
 
   // —— Shortcuts ——

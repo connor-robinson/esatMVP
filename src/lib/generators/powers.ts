@@ -14,15 +14,16 @@ import { createAnswerChecker } from "@/lib/answer-checker";
 
 export function generatePowers(
   level: number,
-  weights?: Record<string, number>
+  _weights?: Record<string, number>
 ): GeneratedQuestion {
+  // Legacy session levels: 1 squares, 2 cubes, 3 powers-2-4-8, 4 fractional
   if (level === 1) return generateSquares();
   if (level === 2) return generateCubes();
   if (level === 3) return generatePowersMixed();
   return generateFractionalExponents();
 }
 
-function generateSquares(): GeneratedQuestion {
+export function generateSquares(): GeneratedQuestion {
   const a = randomInt(2, 35);
   
   return {
@@ -34,7 +35,7 @@ function generateSquares(): GeneratedQuestion {
   };
 }
 
-function generateCubes(): GeneratedQuestion {
+export function generateCubes(): GeneratedQuestion {
   const a = randomInt(2, 15);
   
   return {
@@ -46,7 +47,7 @@ function generateCubes(): GeneratedQuestion {
   };
 }
 
-function generatePowersMixed(): GeneratedQuestion {
+export function generatePowersMixed(): GeneratedQuestion {
   const base = pick([2, 4, 8]);
   const expLimits: Record<number, number> = { 2: 10, 4: 6, 8: 4 };
   const e = randomInt(0, expLimits[base]);

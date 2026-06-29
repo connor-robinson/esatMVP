@@ -23,9 +23,9 @@ import { generateFactors } from "./factors";
 import { generateDivisibility } from "./divisibility";
 import { generateSequences } from "./sequences";
 
-// Patterns
+// Patterns (legacy aliases — variants moved to multiplication / Powers & Surds)
 import { generatePowers } from "./powers";
-import { generateMultiplicationShortcuts } from "./multiplication_shortcuts";
+import { generatePowerBases } from "./power_bases";
 
 // Shortcuts
 import { generatePercentages } from "./percentages";
@@ -118,9 +118,10 @@ export const GENERATORS: Record<string, GeneratorFunction> = validateGenerators(
     generateDivisibility(1, weights),
   sequences: generateSequences,
   
-  // Patterns
   powers: generatePowers,
-  multiplication_shortcuts: generateMultiplicationShortcuts,
+  power_bases: generatePowerBases,
+  multiplication_shortcuts: (level: number, weights?: Record<string, number>) =>
+    generateMultiplication(level === 1 ? 7 : level === 2 ? 9 : 11, weights),
   
   // Shortcuts
   percentages: generatePercentages,

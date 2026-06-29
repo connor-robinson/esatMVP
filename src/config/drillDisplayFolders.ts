@@ -172,8 +172,8 @@ const NUMBER_THEORY_FOLDERS: FolderDef[] = [
   },
   {
     id: 'nt-patterns',
-    name: 'Sequences & Powers',
-    topicIds: ['sequences', 'powers', 'multiplication_shortcuts'],
+    name: 'Sequences',
+    topicIds: ['sequences'],
     symbol: { kind: 'lucide', iconKey: 'Hash' },
   },
 ];
@@ -237,8 +237,8 @@ const PHYSICS_FOLDERS: FolderDef[] = [
 const ARITHMETIC_EXTRA_FOLDERS: FolderDef[] = [
   {
     id: 'arithmetic-notation',
-    name: 'Notation & Surds',
-    topicIds: ['sci_rewrite', 'sci_calc'],
+    name: 'Powers & Surds',
+    topicIds: ['sci_rewrite', 'sci_calc', 'power_bases', 'powers'],
     symbol: { kind: 'latex', latex: String.raw`10^n` },
   },
 ];
@@ -304,6 +304,9 @@ const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
     'common_frac_to_dec_2dp',
     ...FRACTIONS_GROUP_TOPIC_IDS.filter((id) => id !== 'fractions'),
     'sci_rewrite',
+    'sci_calc',
+    'power_bases',
+    'powers',
   ],
   algebra: [
     'linearEquations',
@@ -331,8 +334,6 @@ const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
     'factors',
     'divisibility',
     'sequences',
-    'powers',
-    'multiplication_shortcuts',
   ],
   shortcuts: ['percentages', 'estimation', 'squaring'],
   trigonometry: ['trig_recall', 'trig_inverse', 'trig_applications'],

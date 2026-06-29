@@ -7,12 +7,19 @@
  * 4 → Two digit × two digit (smaller)
  * 5 → Two digit × two digit (full range)
  * 6 → Decimal × whole number
+ * 7 → Multiply by 5, 15, 25
+ * 8 → Perfect squares
+ * 9 → Multiply by 11, 12
+ * 10 → Perfect cubes
+ * 11 → Multiply by 9, 99
  */
 
 import { GeneratedQuestion } from "@/types/core";
 import { generateId, randomInt } from "@/lib/utils";
 import { randomDigit } from "./utils/random";
 import { createAnswerChecker } from "@/lib/answer-checker";
+import { generateMultiplicationShortcuts } from "./multiplication_shortcuts";
+import { generateSquares, generateCubes } from "./powers";
 
 const SINGLE_DIGIT_WEIGHTS = [0, 0, 1, 2, 3, 5, 6, 7, 8, 9];
 
@@ -33,9 +40,23 @@ export function generateMultiplication(
       return generateTwoDigitByTwoDigitHard();
     case 6:
       return generateDecimalMultiplication();
+    case 7:
+      return asMultiplication(generateMultiplicationShortcuts(1, weights));
+    case 8:
+      return asMultiplication(generateSquares());
+    case 9:
+      return asMultiplication(generateMultiplicationShortcuts(2, weights));
+    case 10:
+      return asMultiplication(generateCubes());
+    case 11:
+      return asMultiplication(generateMultiplicationShortcuts(3, weights));
     default:
       return generateSingleDigit();
   }
+}
+
+function asMultiplication(question: GeneratedQuestion): GeneratedQuestion {
+  return { ...question, topicId: "multiplication" };
 }
 
 function generateSingleDigit(): GeneratedQuestion {
