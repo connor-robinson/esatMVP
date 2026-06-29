@@ -94,8 +94,8 @@ export function MentalMathSession({
   const [locateSelectedDegrees, setLocateSelectedDegrees] = useState<number | null>(null);
   const [useKatexInput, setUseKatexInput] = useState(true);
   const [activeMultiIndex, setActiveMultiIndex] = useState(0);
-  const katexInputRef = useRef<HTMLInputElement>(null);
-  const simpleInputRef = useRef<HTMLInputElement>(null);
+  const katexInputRef = useRef<HTMLInputElement | null>(null);
+  const simpleInputRef = useRef<HTMLInputElement | null>(null);
   const multiInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const accuracy =
@@ -200,7 +200,10 @@ export function MentalMathSession({
   useEffect(() => {
     if (!isBinaryChoice || (showFeedback && lastAttempt?.isCorrect) || answerRevealed) return;
 
-    const choices = currentQuestion.answerInput?.choices;
+    const answerInput = currentQuestion.answerInput;
+    if (answerInput?.type !== "binary-choice") return;
+
+    const choices = answerInput.choices;
     const onKey = (e: globalThis.KeyboardEvent) => {
       if (!choices) return;
       const key = e.key.toLowerCase();

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRouteUser } from "@/lib/supabase/auth";
-import { stripe } from "@/lib/stripe/config";
+import { getStripe, isStripeConfigured } from "@/lib/stripe/config";
 import { createOrRetrieveCustomer } from "@/lib/stripe/supabase-admin";
 
 export const dynamic = "force-dynamic";
@@ -12,10 +12,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    if (!isStripeConfigured()) {
+      return NextResponse.json({ error: "Payments not configured" }, { status: 503 });
+    }
+
     const customerId = await createOrRetrieveCustomer(user.id, user.email);
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
-    const session = await stripe.billingPortal.sessions.create({
+    const session = await getStripe().billingPortal.sessions.create({
       customer: customerId,
       return_url: `${siteUrl}/profile`,
     });

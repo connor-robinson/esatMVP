@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRouteUser } from "@/lib/supabase/auth";
-import { stripe } from "@/lib/stripe/config";
+import { getStripe, isStripeConfigured } from "@/lib/stripe/config";
 import { createOrRetrieveCustomer } from "@/lib/stripe/supabase-admin";
 import { getPriceIdForPlan } from "@/lib/stripe/prices";
 
@@ -13,6 +13,10 @@ export async function POST(request: NextRequest) {
     const { user, error } = await requireRouteUser(request);
     if (error || !user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (!isStripeConfigured()) {
+      return NextResponse.json({ error: "Payments not configured" }, { status: 503 });
     }
 
     const body = await request.json().catch(() => ({}));
@@ -34,7 +38,7 @@ export async function POST(request: NextRequest) {
     const cancelUrl = `${siteUrl}/pricing?canceled=true`;
 
     if (isRecurring) {
-      const session = await stripe.checkout.sessions.create({
+      const session = await getStripe().checkout.sessions.create({
         mode: "subscription",
         customer: customerId,
         line_items: [{ price: priceId, quantity: 1 }],
@@ -47,7 +51,7 @@ export async function POST(request: NextRequest) {
     }
 
     // One-time payment (Exam Season Pass)
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       mode: "payment",
       customer: customerId,
       line_items: [{ price: priceId, quantity: 1 }],

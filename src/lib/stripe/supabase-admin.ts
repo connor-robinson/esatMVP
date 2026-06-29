@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
-import { stripe } from "./config";
+import { getStripe } from "./config";
 import { toDateTime } from "./helpers";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -113,15 +113,15 @@ export const createOrRetrieveCustomer = async (uuid: string, email: string) => {
 
   let stripeCustomerId: string | undefined;
   if (existing?.stripe_customer_id) {
-    const cust = await stripe.customers.retrieve(existing.stripe_customer_id);
+    const cust = await getStripe().customers.retrieve(existing.stripe_customer_id);
     stripeCustomerId = cust.id;
   } else {
-    const list = await stripe.customers.list({ email });
+    const list = await getStripe().customers.list({ email });
     stripeCustomerId = list.data[0]?.id;
   }
 
   if (!stripeCustomerId) {
-    const newCustomer = await stripe.customers.create({
+    const newCustomer = await getStripe().customers.create({
       email,
       metadata: { supabaseUUID: uuid },
     });
@@ -149,7 +149,7 @@ export const manageSubscriptionStatusChange = async (
     .single();
   if (custError || !customerData) throw new Error("Customer lookup failed");
 
-  const sub = await stripe.subscriptions.retrieve(subscriptionId, {
+  const sub = await getStripe().subscriptions.retrieve(subscriptionId, {
     expand: ["default_payment_method"],
   });
   const firstItem = sub.items.data[0];
@@ -158,11 +158,11 @@ export const manageSubscriptionStatusChange = async (
 
   // Ensure price (and product) exist before subscription upsert - they may not have been synced yet
   // (e.g. created in Stripe Dashboard before webhook, or subscription event arrived before price event)
-  const priceObj = await stripe.prices.retrieve(priceId, { expand: ["product"] });
+  const priceObj = await getStripe().prices.retrieve(priceId, { expand: ["product"] });
   const productId = typeof priceObj.product === "string" ? priceObj.product : priceObj.product?.id;
   if (productId) {
     const productObj =
-      typeof priceObj.product === "object" ? priceObj.product : await stripe.products.retrieve(productId);
+      typeof priceObj.product === "object" ? priceObj.product : await getStripe().products.retrieve(productId);
     await upsertProductRecord(productObj as Stripe.Product);
   }
   await upsertPriceRecord(priceObj);

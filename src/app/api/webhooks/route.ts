@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-import { stripe } from "@/lib/stripe/config";
+import { getStripe, isStripeConfigured } from "@/lib/stripe/config";
 import {
   upsertProductRecord,
   upsertPriceRecord,
@@ -34,9 +34,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json("Webhook secret not found", { status: 400 });
   }
 
+  if (!isStripeConfigured()) {
+    return NextResponse.json("Stripe not configured", { status: 503 });
+  }
+
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
+    event = getStripe().webhooks.constructEvent(body, sig, webhookSecret);
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json(`Webhook Error: ${msg}`, { status: 400 });
