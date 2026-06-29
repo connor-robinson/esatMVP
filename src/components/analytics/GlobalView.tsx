@@ -209,7 +209,7 @@ export function GlobalView({
             <div className="col-span-2 text-right">Score</div>
             <div className="col-span-2 text-right">Accuracy</div>
             <div className="col-span-2 text-right">Speed</div>
-            <div className="col-span-1 text-right">Q's</div>
+            <div className="col-span-1 text-right">Q&apos;s</div>
           </div>
 
           <div className="max-h-[600px] space-y-1 overflow-y-auto">
