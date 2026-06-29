@@ -406,12 +406,9 @@ export function useBuilderSession() {
     //   return;
     // }
 
-    // Determine mode based on topics (use mental-math for arithmetic topics)
-    const isMentalMath = selectedTopicVariants.every(({ topicId }) => {
-      const topic = getTopic(topicId);
-      return topic?.category === "arithmetic";
-    });
-    setMode(isMentalMath ? "mental-math" : "standard");
+    // All mental-maths drill sessions use the drill results UI and attempt-based stats,
+    // regardless of topic category (algebra, number theory, etc.).
+    setMode("mental-math");
 
     const topicIds = Array.from(
       new Set(selectedTopicVariants.map((tv) => tv.topicId)),
