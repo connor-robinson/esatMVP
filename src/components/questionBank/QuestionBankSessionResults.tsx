@@ -168,14 +168,14 @@ export function QuestionBankSessionResults({
               <div className='mb-4 flex items-center gap-2'>
                 <BookOpen className='h-4 w-4 text-success' aria-hidden />
                 <div className='text-[11px] font-semibold uppercase tracking-wider text-success/90'>
-                  Questions tackled
+                  Questions correct
                 </div>
               </div>
               <div className='mb-2 text-4xl font-bold tabular-nums leading-none text-success sm:text-5xl'>
-                {result.totalQuestions}
+                {result.correctCount}
               </div>
               <div className='text-xs text-text-subtle'>
-                {result.correctCount} correct on first try
+                first try · {result.totalQuestions} attempted
               </div>
             </div>
           </motion.div>
@@ -196,7 +196,7 @@ export function QuestionBankSessionResults({
                 {result.accuracy.toFixed(1)}%
               </div>
               <div className='text-xs text-text-subtle'>
-                {result.correctCount} / {result.totalQuestions} correct
+                {result.correctCount} / {result.totalQuestions} first try
               </div>
             </div>
           </motion.div>
