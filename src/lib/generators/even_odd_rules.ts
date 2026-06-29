@@ -5,7 +5,7 @@
  * 2 - Mixed: symbolic + concrete quick checks, including exact division
  */
 
-import { GeneratedQuestion } from "@/types/core";
+import { GeneratedQuestion, BinaryChoiceAnswerInput } from "@/types/core";
 import { generateId } from "@/lib/utils";
 import { pick, randomInt } from "./utils/random";
 import { createAnswerChecker } from "@/lib/answer-checker";
@@ -13,6 +13,20 @@ import { createAnswerChecker } from "@/lib/answer-checker";
 type Parity = "even" | "odd";
 
 const PARITIES: Parity[] = ["even", "odd"];
+
+const PARITY_BINARY_INPUT: BinaryChoiceAnswerInput = {
+  type: "binary-choice",
+  choices: [
+    { id: "even", label: "Even" },
+    { id: "odd", label: "Odd" },
+  ],
+};
+
+function withParityInput(
+  question: Omit<GeneratedQuestion, "answerInput">,
+): GeneratedQuestion {
+  return { ...question, answerInput: PARITY_BINARY_INPUT };
+}
 
 function parityChecker(correct: Parity) {
   return createAnswerChecker({
@@ -83,9 +97,9 @@ function generateSymbolic(): GeneratedQuestion {
   const b = pick(PARITIES);
   const result = combineParity(op, a, b);
 
-  const question = `${a} ${op} ${b} = ? (even/odd)`;
+  const question = `${a} ${op} ${b} = ?`;
 
-  return {
+  return withParityInput({
     id: generateId(),
     topicId: "even_odd_rules",
     question,
@@ -93,7 +107,7 @@ function generateSymbolic(): GeneratedQuestion {
     difficulty: 1,
     checker: parityChecker(result),
     explanation: explainSymbolic(op, a, b, result),
-  };
+  });
 }
 
 function generateMixed(): GeneratedQuestion {
@@ -139,7 +153,7 @@ function generateConcrete(): GeneratedQuestion {
   const result = parityLabel(value % 2 === 0 ? "even" : "odd");
   const question = `Is $${expr}$ even or odd?`;
 
-  return {
+  return withParityInput({
     id: generateId(),
     topicId: "even_odd_rules",
     question,
@@ -147,7 +161,7 @@ function generateConcrete(): GeneratedQuestion {
     difficulty: 2,
     checker: parityChecker(result),
     explanation: `$${expr} = ${value}$, which is ${result}.`,
-  };
+  });
 }
 
 function generateDivision(): GeneratedQuestion {
@@ -161,7 +175,7 @@ function generateDivision(): GeneratedQuestion {
 
   const question = `Is $${dividend} ÷ ${divisor}$ even or odd? (quotient)`;
 
-  return {
+  return withParityInput({
     id: generateId(),
     topicId: "even_odd_rules",
     question,
@@ -169,7 +183,7 @@ function generateDivision(): GeneratedQuestion {
     difficulty: 2,
     checker: parityChecker(result),
     explanation: `$${dividend} ÷ ${divisor} = ${quotient}$, which is ${result}. Parity of a quotient is not fixed by operand parity alone — compute quickly.`,
-  };
+  });
 }
 
 function generateTriple(): GeneratedQuestion {
@@ -185,9 +199,9 @@ function generateTriple(): GeneratedQuestion {
   acc = combineParity(ops[0], acc, parities[1]);
   acc = combineParity(ops[1], acc, parities[2]);
 
-  const question = `${parities[0]} ${ops[0]} ${parities[1]} ${ops[1]} ${parities[2]} = ? (even/odd)`;
+  const question = `${parities[0]} ${ops[0]} ${parities[1]} ${ops[1]} ${parities[2]} = ?`;
 
-  return {
+  return withParityInput({
     id: generateId(),
     topicId: "even_odd_rules",
     question,
@@ -195,5 +209,5 @@ function generateTriple(): GeneratedQuestion {
     difficulty: 2,
     checker: parityChecker(acc),
     explanation: `Work left to right using parity rules: ${parities[0]} ${ops[0]} ${parities[1]} → ${combineParity(ops[0], parities[0], parities[1])}, then ${ops[1]} ${parities[2]} → ${acc}.`,
-  };
+  });
 }

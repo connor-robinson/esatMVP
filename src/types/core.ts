@@ -258,6 +258,18 @@ export interface GeometryDiagramData {
 
 export type DiagramData = TriangleDiagramData | GeometryDiagramData;
 
+export interface AnswerChoice {
+  id: string;
+  label: string;
+}
+
+export interface BinaryChoiceAnswerInput {
+  type: "binary-choice";
+  choices: [AnswerChoice, AnswerChoice];
+}
+
+export type AnswerInputConfig = BinaryChoiceAnswerInput;
+
 export interface GeneratedQuestion {
   id: string;
   question: string;
@@ -286,6 +298,8 @@ export interface GeneratedQuestion {
   };
   /** Diagram data for visual question types */
   diagram?: DiagramData;
+  /** Custom answer UI (e.g. even/odd buttons instead of text input) */
+  answerInput?: AnswerInputConfig;
 }
 
 export interface QuestionAttempt {

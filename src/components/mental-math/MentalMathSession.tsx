@@ -4,14 +4,14 @@
 
 "use client";
 
-import { useState, useEffect, useRef, KeyboardEvent } from "react";
+import { useState, useEffect, useRef, KeyboardEvent, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LogOut, Eye, ArrowRight, X } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { Progress } from "@/components/ui/Progress";
 import { MathContent } from "@/components/shared/MathContent";
 import { DiagramRenderer } from "@/components/shared/DiagramRenderer";
-import { FeedbackPopup } from "./FeedbackPopup";
+import { BinaryChoiceInput } from "./BinaryChoiceInput";
 import { KatexInput } from "./KatexInput";
 import { GeneratedQuestion, QuestionAttempt } from "@/types/core";
 import { getTopic } from "@/config/topics";
@@ -100,6 +100,7 @@ export function MentalMathSession({
 
   // Detect questions that have multiple parts (e.g. systems, quadratics)
   const isMultiAnswer = answerParts.length >= 2;
+  const isBinaryChoice = currentQuestion.answerInput?.type === "binary-choice";
 
   // Auto-focus and clear input when question changes
   useEffect(() => {
@@ -115,7 +116,7 @@ export function MentalMathSession({
       setMultiAnswers([]);
     }
     
-    if (!showFeedback) {
+    if (!showFeedback && !isBinaryChoice) {
       // Focus the active input based on mode
       if (!isMultiAnswer && useKatexInput && katexInputRef.current) {
         // Small delay to ensure the component is mounted
@@ -128,7 +129,41 @@ export function MentalMathSession({
         }, 0);
       }
     }
-  }, [currentQuestion.id, currentQuestion.answer, showFeedback, useKatexInput, isMultiAnswer]);
+  }, [currentQuestion.id, currentQuestion.answer, showFeedback, useKatexInput, isMultiAnswer, isBinaryChoice]);
+
+  const handleBinaryChoice = useCallback(
+    (choiceId: string) => {
+      if (showFeedback && lastAttempt?.isCorrect) return;
+      if (answerRevealed) return;
+
+      if (!showFeedback) {
+        onSubmitAnswer(choiceId);
+        return;
+      }
+
+      if (!lastAttempt?.isCorrect) {
+        onSubmitAnswer(choiceId);
+      }
+    },
+    [showFeedback, lastAttempt, answerRevealed, onSubmitAnswer],
+  );
+
+  useEffect(() => {
+    if (!isBinaryChoice || (showFeedback && lastAttempt?.isCorrect) || answerRevealed) return;
+
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "e" || e.key === "E") {
+        e.preventDefault();
+        handleBinaryChoice("even");
+      } else if (e.key === "o" || e.key === "O") {
+        e.preventDefault();
+        handleBinaryChoice("odd");
+      }
+    };
+
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isBinaryChoice, showFeedback, lastAttempt?.isCorrect, answerRevealed, handleBinaryChoice]);
 
   // Show success feedback when answer is correct
   useEffect(() => {
@@ -290,7 +325,34 @@ export function MentalMathSession({
 
             {/* Input section */}
             <div className="flex flex-col items-center gap-6 w-full max-w-md">
-              {isMultiAnswer ? (
+              {isBinaryChoice && currentQuestion.answerInput?.type === "binary-choice" ? (
+                <BinaryChoiceInput
+                  config={currentQuestion.answerInput}
+                  selectedId={
+                    answerRevealed
+                      ? String(currentQuestion.answer)
+                      : lastAttempt
+                        ? String(lastAttempt.answer)
+                        : null
+                  }
+                  correctId={String(currentQuestion.answer)}
+                  showFeedback={showFeedback}
+                  isCorrect={lastAttempt?.isCorrect ?? null}
+                  answerRevealed={answerRevealed}
+                  disabled={false}
+                  onSelect={handleBinaryChoice}
+                  onReveal={
+                    !answerRevealed && showFeedback && !lastAttempt?.isCorrect
+                      ? handleRevealAnswer
+                      : undefined
+                  }
+                  onContinue={
+                    answerRevealed && showFeedback && !lastAttempt?.isCorrect
+                      ? onContinueAfterIncorrect
+                      : undefined
+                  }
+                />
+              ) : isMultiAnswer ? (
                 <>
                   <div className="flex w-full justify-center gap-4">
                     {multiAnswers.map((value, index) => {
