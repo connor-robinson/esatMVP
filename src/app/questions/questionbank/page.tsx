@@ -939,10 +939,10 @@ export default function QuestionBankPage() {
         {/* Fixed bottom bar — session progress + actions */}
         {activeSession && currentQuestion && (
           <div className='fixed bottom-0 left-0 right-0 z-40 bg-background/98 shadow-bar-floating backdrop-blur-md'>
-            <Container size='lg' className='py-2.5 sm:py-3'>
+            <Container size='lg' className='py-1.5 sm:py-2'>
               <div className='flex items-center gap-3 sm:gap-4'>
-                <div className='flex min-w-0 flex-1 flex-col gap-1.5'>
-                  <div className='h-1.5 w-full overflow-hidden rounded-organic-sm bg-surface-elevated'>
+                <div className='flex min-w-0 flex-1 flex-col gap-1'>
+                  <div className='h-2.5 w-full overflow-hidden rounded-organic-sm bg-surface-elevated sm:h-3'>
                     <div
                       className='h-full rounded-organic-sm bg-secondary transition-all duration-300 ease-signature'
                       style={{
