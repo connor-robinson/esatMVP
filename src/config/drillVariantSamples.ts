@@ -155,22 +155,6 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'latex', latex: String.raw`(6.4 \times 10^{5})\div(3.2 \times 10^{2})` },
     { kind: 'latex', latex: String.raw`(2.5 \times 10^{-3})(4 \times 10^{6})` },
   ]),
-  'estimate_common_sqrts-2dp': S([
-    { kind: 'latex', latex: String.raw`\sqrt{50} \approx ?` },
-    { kind: 'latex', latex: String.raw`\sqrt{18} \approx ?` },
-  ]),
-  'estimate_common_sqrts-3dp': S([
-    { kind: 'latex', latex: String.raw`\sqrt{147} \approx ?` },
-    { kind: 'latex', latex: String.raw`\sqrt{75} \approx ?` },
-  ]),
-  'surds_simplify-simplify': S([
-    { kind: 'latex', latex: String.raw`\sqrt{72}` },
-    { kind: 'latex', latex: String.raw`\sqrt{98}` },
-  ]),
-  'surds_simplify-reverse': S([
-    { kind: 'latex', latex: String.raw`6\sqrt{2}` },
-    { kind: 'latex', latex: String.raw`5\sqrt{3}` },
-  ]),
 
   // —— Algebra ——
   'linearEquations-core': S([
@@ -205,9 +189,21 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'latex', latex: String.raw`2^3 \times 2^4` },
     { kind: 'latex', latex: String.raw`\frac{3^5 \times 3^2}{3^4}` },
   ]),
-  'exponents-surds': S([
-    { kind: 'latex', latex: String.raw`3^{1/2}` },
-    { kind: 'latex', latex: String.raw`5^{-1/2}` },
+  'surds-simplify': S([
+    { kind: 'latex', latex: String.raw`\sqrt{12}` },
+    { kind: 'latex', latex: String.raw`\sqrt{50}` },
+  ]),
+  'surds-add-subtract': S([
+    { kind: 'latex', latex: String.raw`\sqrt{8} + \sqrt{36}` },
+    { kind: 'latex', latex: String.raw`\sqrt{18} + \sqrt{8}` },
+  ]),
+  'surds-multiply': S([
+    { kind: 'latex', latex: String.raw`\sqrt{2} \times \sqrt{3}` },
+    { kind: 'latex', latex: String.raw`2\sqrt{3} \times \sqrt{5}` },
+  ]),
+  'surds-estimate': S([
+    { kind: 'latex', latex: String.raw`\sqrt{6}` },
+    { kind: 'latex', latex: String.raw`\sqrt{12}` },
   ]),
   'systemsOfEquations-simultaneous': S([
     { kind: 'latex', latex: String.raw`x + y = 10` },

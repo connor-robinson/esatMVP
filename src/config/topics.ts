@@ -334,15 +334,46 @@ export const TOPICS: Record<string, Topic> = {
         difficulty: 1,
         config: { level: 1 },
       },
+    ],
+    icon: "Power",
+  },
+  surds: {
+    id: "surds",
+    name: "Surds",
+    subjectId: "maths",
+    category: "algebra",
+    description: "Simplify, manipulate and estimate square roots",
+    variants: [
       {
-        id: "surds",
-        name: "Surds & Fractional Indices",
-        description: "Rewrite between surds and fractional powers",
+        id: "simplify",
+        name: "Simplify Surds",
+        description: "Write √n in simplest form (e.g. √12 → 2√3)",
+        difficulty: 1,
+        config: { level: 1 },
+      },
+      {
+        id: "add-subtract",
+        name: "Add & Subtract",
+        description: "Simplify sums like √8 + √36",
         difficulty: 2,
         config: { level: 2 },
       },
+      {
+        id: "multiply",
+        name: "Multiply Surds",
+        description: "Products such as √2 × √3 or 2√3 × √5",
+        difficulty: 2,
+        config: { level: 3 },
+      },
+      {
+        id: "estimate",
+        name: "Estimate Surds",
+        description: "Estimate √2, √3 and multiples (e.g. √6, √12) to 2 d.p.",
+        difficulty: 3,
+        config: { level: 4 },
+      },
     ],
-    icon: "Power",
+    icon: "Hash",
   },
   systemsOfEquations: {
     id: "systemsOfEquations",
@@ -1080,57 +1111,6 @@ export const TOPICS: Record<string, Topic> = {
 
   // Test (empty - moved to number_theory)
 
-  // Estimation
-  estimate_common_sqrts: {
-    id: "estimate_common_sqrts",
-    name: "Estimate Surds",
-    subjectId: "maths",
-    category: "estimation",
-    description: "Estimate square roots (surds) to a few decimal places",
-    variants: [
-      {
-        id: "2dp",
-        name: "Estimate (2 d.p.)",
-        description: "Simplify first, then estimate √n to 2 d.p.",
-        difficulty: 1,
-        config: { level: 1 },
-      },
-      {
-        id: "3dp",
-        name: "Estimate (3 d.p.)",
-        description: "More precision: estimate √n to 3 d.p.",
-        difficulty: 2,
-        config: { level: 2 },
-      },
-    ],
-    icon: "TrendUp",
-  },
-
-  surds_simplify: {
-    id: "surds_simplify",
-    name: "Simplify Surds",
-    subjectId: "maths",
-    category: "transform",
-    description: "Simplify surds (and occasionally reverse)",
-    variants: [
-      {
-        id: "simplify",
-        name: "Simplify √n",
-        description: "Simplify √n into a√b",
-        difficulty: 2,
-        config: { level: 1 },
-      },
-      {
-        id: "reverse",
-        name: "Reverse (Rare)",
-        description: "Convert a√b into a single root √n (rare)",
-        difficulty: 4,
-        config: { level: 2 },
-      },
-    ],
-    icon: "Power",
-  },
-
   // Identities
   binomial_expand: {
     id: "binomial_expand",
@@ -1454,6 +1434,7 @@ export const CATEGORIES: Record<TopicCategory, string[]> = {
     "quadraticEquations",
     "polynomials",
     "exponents",
+    "surds",
     "systemsOfEquations",
   ],
   geometry: [
@@ -1480,7 +1461,7 @@ export const CATEGORIES: Record<TopicCategory, string[]> = {
     "sci_rewrite",
   ],
   test: [],
-  estimation: ["estimate_common_sqrts"],
+  estimation: [],
   identities: [
     "binomial_expand",
     "factorise_quadratic",

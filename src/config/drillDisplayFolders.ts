@@ -131,7 +131,7 @@ const ALGEBRA_FOLDERS: FolderDef[] = [
   {
     id: 'algebra-indices',
     name: 'Indices & Surds',
-    topicIds: ['exponents'],
+    topicIds: ['exponents', 'surds'],
     symbol: { kind: 'lucide', iconKey: 'Hash' },
   },
   {
@@ -250,7 +250,7 @@ const ARITHMETIC_EXTRA_FOLDERS: FolderDef[] = [
   {
     id: 'arithmetic-notation',
     name: 'Notation & Surds',
-    topicIds: ['sci_rewrite', 'sci_calc', 'estimate_common_sqrts', 'surds_simplify'],
+    topicIds: ['sci_rewrite', 'sci_calc'],
     symbol: { kind: 'latex', latex: String.raw`10^n` },
   },
 ];
@@ -317,7 +317,6 @@ const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
     'simplify_fraction',
     ...FRACTIONS_GROUP_TOPIC_IDS.filter((id) => id !== 'fractions'),
     'sci_rewrite',
-    'estimate_common_sqrts',
   ],
   algebra: [
     'linearEquations',
@@ -327,6 +326,7 @@ const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
     'binomial_expand',
     'factorise_quadratic',
     'exponents',
+    'surds',
     'complete_square',
     'inequalities',
     'quadratics_eval',

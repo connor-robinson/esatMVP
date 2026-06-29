@@ -1,8 +1,6 @@
 /**
- * Indices & surds generator
- * Levels:
- * 1 - Index laws (mixed: same-base, products, quotients, fractions)
- * 2 - Surds and fractional indices
+ * Indices generator
+ * Level 1 - Index laws (mixed: same-base, products, quotients, fractions)
  */
 
 import { GeneratedQuestion } from "@/types/core";
@@ -11,14 +9,11 @@ import { randomInt, pick } from "./utils/random";
 import { toSuperscript } from "./utils/formatting";
 import { createAnswerChecker } from "@/lib/answer-checker";
 
-export function generateExponents(level: number, weights?: Record<string, number>): GeneratedQuestion {
-  if (level === 1) {
-    const style = pick(["basic", "basic", "mixed", "products"] as const);
-    if (style === "basic") return generateBasic();
-    if (style === "mixed") return generateMixed();
-    return generateProductsQuotients();
-  }
-  return generateSurds();
+export function generateExponents(_level: number, weights?: Record<string, number>): GeneratedQuestion {
+  const style = pick(["basic", "basic", "mixed", "products"] as const);
+  if (style === "basic") return generateBasic();
+  if (style === "mixed") return generateMixed();
+  return generateProductsQuotients();
 }
 
 function generateBasic(): GeneratedQuestion {
@@ -147,35 +142,5 @@ function generateProductsQuotients(): GeneratedQuestion {
       correctAnswer: answerStr,
       acceptableAnswers,
     }),
-  };
-}
-
-function generateSurds(): GeneratedQuestion {
-  const base = pick([2, 3, 5]);
-  const exponent = pick(["1/2", "3/2", "-1/2", "2/3"]);
-
-  const question = `$${base}^{${exponent}}$`;
-  let answer: string;
-
-  switch (exponent) {
-    case "1/2":
-      answer = `$\\sqrt{${base}}$`;
-      break;
-    case "3/2":
-      answer = `$${base}\\sqrt{${base}}$`;
-      break;
-    case "-1/2":
-      answer = `$\\frac{1}{\\sqrt{${base}}}$`;
-      break;
-    default:
-      answer = `$\\sqrt[3]{${base}^{2}}$`;
-  }
-
-  return {
-    id: generateId(),
-    topicId: "exponents",
-    question: `Rewrite using surds: ${question}`,
-    answer,
-    difficulty: 2,
   };
 }

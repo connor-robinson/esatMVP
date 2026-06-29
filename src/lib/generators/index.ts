@@ -48,8 +48,7 @@ import { generateCommonMultiples } from "./common_multiples";
 import { generatePrimeFactorise } from "./prime_factorise";
 
 // Test & Estimation
-import { generateEstimateCommonSqrts } from "./estimate_common_sqrts";
-import { generateSurdsSimplify } from "./surds_simplify";
+import { generateSurds } from "./surds";
 
 // Identities
 import { generateBinomialExpand } from "./binomial_expand";
@@ -107,6 +106,7 @@ export const GENERATORS: Record<string, GeneratorFunction> = validateGenerators(
   quadraticEquations: generateQuadraticEquations,
   polynomials: generatePolynomials,
   exponents: generateExponents,
+  surds: generateSurds,
   systemsOfEquations: generateSystemsOfEquations,
 
   // Mechanics core
@@ -136,9 +136,11 @@ export const GENERATORS: Record<string, GeneratorFunction> = validateGenerators(
   sci_rewrite: generateSciRewrite,
   sci_calc: generateSciCalc,
   
-  // Test & Estimation
-  estimate_common_sqrts: generateEstimateCommonSqrts,
-  surds_simplify: generateSurdsSimplify,
+  // Legacy aliases (merged into surds topic)
+  estimate_common_sqrts: (level: number, weights?: Record<string, number>) =>
+    generateSurds(level <= 1 ? 4 : 5, weights),
+  surds_simplify: (level: number, weights?: Record<string, number>) =>
+    generateSurds(1, weights),
   
   // Identities
   binomial_expand: generateBinomialExpand,
