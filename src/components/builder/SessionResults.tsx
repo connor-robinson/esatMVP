@@ -281,36 +281,36 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
 
     const hlOnGreen = isHighlighted && mentalMathUi;
     const hlText = hlOnGreen
-      ? "text-white dark:text-gray-950"
+      ? "text-white"
       : isHighlighted
         ? "text-background"
         : "text-text";
     const hlMuted = hlOnGreen
-      ? "text-white/90 dark:text-gray-950/75"
+      ? "text-white/85"
       : isHighlighted
         ? "text-background/80"
         : "text-text-muted";
     const hlSubtle = hlOnGreen
-      ? "text-white/75 dark:text-gray-950/65"
+      ? "text-white/70"
       : isHighlighted
         ? "text-background/70"
         : "text-text-subtle";
     const hlRank = hlOnGreen
-      ? "text-white dark:text-gray-950"
+      ? "text-white"
       : isHighlighted
         ? "text-background"
         : mentalMathUi
           ? "text-text-muted"
           : "text-primary";
     const hlAccent = hlOnGreen
-      ? "text-white dark:text-gray-950"
+      ? "text-white"
       : isHighlighted
         ? "text-background"
         : mentalMathUi
           ? "text-success"
           : "text-primary";
     const hlAvatarBg = hlOnGreen
-      ? "bg-white/25 dark:bg-black/15"
+      ? "bg-white/25"
       : "bg-surface-mid";
 
     const scorePercentage = (session.score / SESSION_SCORE_DISPLAY_MAX) * 100;
@@ -1070,7 +1070,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                       "flex items-center gap-2 px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors",
                       mentalMathUi
                         ? rankingView === "personal"
-                          ? "rounded-organic-lg bg-primary px-4 py-2 font-bold text-background shadow-[0_2px_6px_rgba(0,0,0,0.2)] [text-shadow:0_0.5px_1px_rgba(0,0,0,0.2)]"
+                          ? "rounded-organic-lg bg-primary px-4 py-2 font-bold text-white shadow-[0_2px_6px_rgba(0,0,0,0.2)] [text-shadow:0_0.5px_1px_rgba(0,0,0,0.2)]"
                           : "rounded-organic-lg bg-surface-mid/50 px-4 py-2 text-text-muted hover:bg-surface-mid hover:text-text"
                         : rankingView === "personal"
                           ? "-mb-px border-b-2 border-primary text-text"
@@ -1089,7 +1089,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                       "flex items-center gap-2 px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors",
                       mentalMathUi
                         ? rankingView === "global"
-                          ? "rounded-organic-lg bg-primary px-4 py-2 font-bold text-background shadow-[0_2px_6px_rgba(0,0,0,0.2)] [text-shadow:0_0.5px_1px_rgba(0,0,0,0.2)]"
+                          ? "rounded-organic-lg bg-primary px-4 py-2 font-bold text-white shadow-[0_2px_6px_rgba(0,0,0,0.2)] [text-shadow:0_0.5px_1px_rgba(0,0,0,0.2)]"
                           : "rounded-organic-lg bg-surface-mid/50 px-4 py-2 text-text-muted hover:bg-surface-mid hover:text-text"
                         : rankingView === "global"
                           ? "-mb-px border-b-2 border-primary text-text"
@@ -1293,7 +1293,10 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="relative w-full max-w-md rounded-organic-xl border border-border bg-surface-elevated p-8 shadow-[0_20px_60px_rgba(0,0,0,0.55)]"
+                className={cn(
+                  "relative w-full max-w-md rounded-organic-xl bg-surface-elevated p-8 shadow-[0_20px_60px_rgba(0,0,0,0.55)]",
+                  !mentalMathUi && "border border-border",
+                )}
                 onClick={(e) => e.stopPropagation()}
               >
                 <button
