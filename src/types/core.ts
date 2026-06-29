@@ -254,6 +254,12 @@ export interface GeometryDiagramData {
     label: string;
   }[];
   labels: DiagramLabel[];
+  /** Full circles (outline only) */
+  circles?: { cx: number; cy: number; r: number }[];
+  /** Caption below diagram (e.g. not to scale) */
+  caption?: string;
+  /** Point markers (centre dots, etc.) */
+  points?: { x: number; y: number; label?: string; emphasis?: boolean }[];
 }
 
 export type DiagramData = TriangleDiagramData | GeometryDiagramData;
@@ -307,6 +313,11 @@ export interface GeneratedQuestion {
   diagram?: DiagramData;
   /** Custom answer UI (e.g. even/odd buttons instead of text input) */
   answerInput?: AnswerInputConfig;
+  /** Optional generator metadata (theorem tags, template id, etc.) */
+  metadata?: {
+    theorems?: string[];
+    templateId?: string;
+  };
 }
 
 export interface QuestionAttempt {

@@ -149,6 +149,12 @@ const GEOMETRY_FOLDERS: FolderDef[] = [
     topicIds: ['geometry_2d', 'geometry_3d'],
     symbol: { kind: 'lucide', iconKey: 'Box' },
   },
+  {
+    id: 'geometry-circle-theorems',
+    name: 'Circle Theorems',
+    topicIds: ['circle_theorems'],
+    symbol: { kind: 'lucide', iconKey: 'Circle' },
+  },
 ];
 
 const NUMBER_THEORY_FOLDERS: FolderDef[] = [
@@ -312,7 +318,7 @@ const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
   ],
   geometry: [
     'triangles',
-    'circles',
+    'circle_theorems',
     'pythagorean',
     'geometry_2d',
     'geometry_3d',

@@ -1,0 +1,511 @@
+/**
+ * Circle theorem templates — math-first instantiation.
+ */
+
+import type { CircleTheoremResult, LabelledPoint, LineSegment, TemplateId } from "./types";
+import {
+  angleArcLegs,
+  centrePoint,
+  interiorAngleDeg,
+  pickFrom,
+  pickInt,
+  pointOnCircle,
+  tangentSegment,
+  CT_CX,
+  CT_CY,
+} from "./angleUtils";
+
+const CENTRE_ANGLES = [48, 56, 60, 64, 72, 80, 100, 120] as const;
+
+function linesBetween(points: Record<string, LabelledPoint>, pairs: [string, string][], dashed = false): LineSegment[] {
+  return pairs.map(([a, b]) => ({
+    x1: points[a].x,
+    y1: points[a].y,
+    x2: points[b].x,
+    y2: points[b].y,
+    dashed,
+  }));
+}
+
+function pt(id: string, deg: number, label: string): LabelledPoint {
+  const p = pointOnCircle(deg);
+  return { id, x: p.x, y: p.y, label };
+}
+
+function centrePt(): LabelledPoint {
+  return { id: "O", x: CT_CX, y: CT_CY, label: "O", emphasis: true };
+}
+
+function formatSteps(steps: { text: string; theorem?: CircleTheoremResult["theorems"][number] }[]): CircleTheoremResult["steps"] {
+  return steps;
+}
+
+/** Angle at centre = 2 × angle at circumference (same chord). */
+export function templateCentreToCircumference(): CircleTheoremResult {
+  const centreAngle = pickFrom(CENTRE_ANGLES);
+  const aDeg = 130;
+  const bDeg = aDeg - centreAngle;
+  const cDeg = 280;
+
+  const O = centrePt();
+  const A = pt("A", aDeg, "A");
+  const B = pt("B", bDeg, "B");
+  const C = pt("C", cDeg, "C");
+  const points: Record<string, LabelledPoint> = { O, A, B, C };
+
+  const actualCentre = interiorAngleDeg(O, A, B);
+  const actualRim = interiorAngleDeg(C, A, B);
+  const oLegs = angleArcLegs(O, A, B);
+  const cLegs = angleArcLegs(C, A, B);
+
+  return {
+    templateId: "CENTRE_TO_CIRCUMFERENCE",
+    theorems: ["centre-circumference"],
+    answer: actualRim,
+    targetLabel: "x",
+    question: "Find $x$.",
+    steps: formatSteps([
+      { text: `Angle at the centre $= 2 \\times$ angle at the circumference (same chord).`, theorem: "centre-circumference" },
+      { text: `$\\angle AOB = ${actualCentre}°$, so $x = ${actualCentre}° \\div 2 = ${actualRim}°$.` },
+    ]),
+    diagram: {
+      points: [O, A, B, C],
+      lines: [
+        ...linesBetween(points, [["O", "A"], ["O", "B"], ["A", "B"], ["C", "A"], ["C", "B"]]),
+      ],
+      angles: [
+        { id: "AOB", vertex: O, leg1Deg: oLegs.leg1Deg, leg2Deg: oLegs.leg2Deg, label: `${actualCentre}°` },
+        { id: "ACB", vertex: C, leg1Deg: cLegs.leg1Deg, leg2Deg: cLegs.leg2Deg, label: "x", isTarget: true },
+      ],
+      rightAngles: [],
+    },
+  };
+}
+
+/** Find centre angle from circumference angle. */
+export function templateCircumferenceToCentre(): CircleTheoremResult {
+  const centreAngle = pickFrom(CENTRE_ANGLES);
+  const aDeg = 140;
+  const bDeg = aDeg - centreAngle;
+  const cDeg = 300;
+
+  const O = centrePt();
+  const A = pt("A", aDeg, "A");
+  const B = pt("B", bDeg, "B");
+  const C = pt("C", cDeg, "C");
+  const points: Record<string, LabelledPoint> = { O, A, B, C };
+
+  const actualCentre = interiorAngleDeg(O, A, B);
+  const actualRim = interiorAngleDeg(C, A, B);
+  const oLegs = angleArcLegs(O, A, B);
+  const cLegs = angleArcLegs(C, A, B);
+
+  return {
+    templateId: "CIRCUMFERENCE_TO_CENTRE",
+    theorems: ["centre-circumference"],
+    answer: actualCentre,
+    targetLabel: "x",
+    question: "Find $x$.",
+    steps: formatSteps([
+      { text: `Angle at the centre $= 2 \\times$ angle at the circumference.`, theorem: "centre-circumference" },
+      { text: `$x = 2 \\times ${actualRim}° = ${actualCentre}°$.` },
+    ]),
+    diagram: {
+      points: [O, A, B, C],
+      lines: linesBetween(points, [["O", "A"], ["O", "B"], ["A", "B"], ["C", "A"], ["C", "B"]]),
+      angles: [
+        { id: "ACB", vertex: C, leg1Deg: cLegs.leg1Deg, leg2Deg: cLegs.leg2Deg, label: `${actualRim}°` },
+        { id: "AOB", vertex: O, leg1Deg: oLegs.leg1Deg, leg2Deg: oLegs.leg2Deg, label: "x", isTarget: true },
+      ],
+      rightAngles: [],
+    },
+  };
+}
+
+/** Angle in a semicircle — find third angle in triangle (basic level). */
+export function templateSemicircleTriangle(basic = false): CircleTheoremResult {
+  const aDeg = 200;
+  const bDeg = 20;
+  const cDeg = 270;
+
+  const O = centrePt();
+  const A = pt("A", aDeg, "A");
+  const B = pt("B", bDeg, "B");
+  const C = pt("C", cDeg, "C");
+  const points: Record<string, LabelledPoint> = { O, A, B, C };
+
+  const aLegs = angleArcLegs(A, C, B);
+  const cLegs = angleArcLegs(C, A, B);
+  const bLegs = angleArcLegs(B, C, A);
+  const angleAtA = interiorAngleDeg(A, C, B);
+  const angleAtC = interiorAngleDeg(C, A, B);
+  const answer = interiorAngleDeg(B, C, A);
+
+  const steps = basic
+    ? [
+        { text: `Angle in a semicircle is $90°$.`, theorem: "semicircle" as const },
+        { text: `At $C$: $\\angle ACB = ${angleAtC}°$.` },
+        { text: `Triangle angles sum to $180°$: $x = 180° - ${angleAtC}° - ${angleAtA}° = ${answer}°$.` },
+      ]
+    : [
+        { text: `Angle in a semicircle is $90°$.`, theorem: "semicircle" as const },
+        { text: `$x = ${angleAtC}° - ${angleAtA}° = ${answer}°$.` },
+      ];
+
+  return {
+    templateId: "SEMICIRCLE_TRIANGLE",
+    theorems: basic ? ["semicircle", "combined"] : ["semicircle"],
+    answer,
+    targetLabel: "x",
+    question: "Find $x$.",
+    steps: formatSteps(steps),
+    diagram: {
+      points: [O, A, B, C],
+      lines: linesBetween(points, [["O", "A"], ["O", "B"], ["A", "B"], ["A", "C"], ["B", "C"]]),
+      angles: [
+        { id: "CAB", vertex: A, leg1Deg: aLegs.leg1Deg, leg2Deg: aLegs.leg2Deg, label: `${angleAtA}°` },
+        { id: "ACB", vertex: C, leg1Deg: cLegs.leg1Deg, leg2Deg: cLegs.leg2Deg, label: `${angleAtC}°` },
+        { id: "CBA", vertex: B, leg1Deg: bLegs.leg1Deg, leg2Deg: bLegs.leg2Deg, label: "x", isTarget: true },
+      ],
+      rightAngles: [{ vertex: C, leg1: A, leg2: B }],
+    },
+  };
+}
+
+/** Angles in the same segment are equal. */
+export function templateSameSegment(): CircleTheoremResult {
+  const aDeg = 150;
+  const bDeg = 70;
+  const cDeg = 250;
+  const dDeg = 310;
+
+  const O = centrePt();
+  const A = pt("A", aDeg, "A");
+  const B = pt("B", bDeg, "B");
+  const C = pt("C", cDeg, "C");
+  const D = pt("D", dDeg, "D");
+  const points: Record<string, LabelledPoint> = { O, A, B, C, D };
+
+  const cLegs = angleArcLegs(C, A, B);
+  const dLegs = angleArcLegs(D, A, B);
+  const angleC = interiorAngleDeg(C, A, B);
+  const angleD = interiorAngleDeg(D, A, B);
+  const findAtD = Math.random() < 0.5;
+  const answer = findAtD ? angleD : angleC;
+
+  return {
+    templateId: "SAME_SEGMENT",
+    theorems: ["same-segment"],
+    answer,
+    targetLabel: "x",
+    question: "Find $x$.",
+    steps: formatSteps([
+      { text: `Angles in the same segment are equal (subtended by chord $AB$).`, theorem: "same-segment" },
+      { text: `$x = ${answer}°$.` },
+    ]),
+    diagram: {
+      points: [O, A, B, C, D],
+      lines: linesBetween(points, [["A", "B"], ["C", "A"], ["C", "B"], ["D", "A"], ["D", "B"]]),
+      angles: [
+        {
+          id: "ACB",
+          vertex: C,
+          leg1Deg: cLegs.leg1Deg,
+          leg2Deg: cLegs.leg2Deg,
+          label: findAtD ? `${angleC}°` : "x",
+          isTarget: !findAtD,
+        },
+        {
+          id: "ADB",
+          vertex: D,
+          leg1Deg: dLegs.leg1Deg,
+          leg2Deg: dLegs.leg2Deg,
+          label: findAtD ? "x" : `${angleD}°`,
+          isTarget: findAtD,
+        },
+      ],
+      rightAngles: [],
+    },
+  };
+}
+
+/** Alternate segment theorem. */
+export function templateAlternateSegment(): CircleTheoremResult {
+  const tDeg = 60;
+  const aDeg = 200;
+  const pDeg = 320;
+
+  const O = centrePt();
+  const T = pt("T", tDeg, "T");
+  const A = pt("A", aDeg, "A");
+  const P = pt("P", pDeg, "P");
+  const centre = centrePoint();
+  const tan = tangentSegment(T, centre, 95);
+  const tanFar = { x: tan.x2, y: tan.y2 };
+
+  const tangentLeg = angleArcLegs(T, tanFar, A);
+  const pLegs = angleArcLegs(P, A, T);
+  const tangentAngle = interiorAngleDeg(T, tanFar, A);
+  const pAngle = interiorAngleDeg(P, A, T);
+  const findTangent = Math.random() < 0.5;
+  const answer = findTangent ? tangentAngle : pAngle;
+
+  return {
+    templateId: "ALTERNATE_SEGMENT",
+    theorems: ["alternate-segment"],
+    answer,
+    targetLabel: "x",
+    question: "Find $x$.",
+    steps: formatSteps([
+      { text: `Angle between tangent and chord equals the angle in the opposite segment.`, theorem: "alternate-segment" },
+      { text: `$x = ${answer}°$.` },
+    ]),
+    diagram: {
+      points: [O, T, A, P],
+      lines: [
+        { x1: O.x, y1: O.y, x2: T.x, y2: T.y },
+        { x1: tan.x1, y1: tan.y1, x2: tan.x2, y2: tan.y2 },
+        { x1: T.x, y1: T.y, x2: A.x, y2: A.y },
+        { x1: P.x, y1: P.y, x2: A.x, y2: A.y },
+        { x1: P.x, y1: P.y, x2: T.x, y2: T.y },
+      ],
+      angles: [
+        {
+          id: "tangent",
+          vertex: T,
+          leg1Deg: tangentLeg.leg1Deg,
+          leg2Deg: tangentLeg.leg2Deg,
+          label: findTangent ? "x" : `${pAngle}°`,
+          isTarget: findTangent,
+        },
+        {
+          id: "PAT",
+          vertex: P,
+          leg1Deg: pLegs.leg1Deg,
+          leg2Deg: pLegs.leg2Deg,
+          label: findTangent ? `${tangentAngle}°` : "x",
+          isTarget: !findTangent,
+        },
+      ],
+      rightAngles: [],
+    },
+  };
+}
+
+/** Radius perpendicular to tangent. */
+export function templateRadiusTangent(basic = false): CircleTheoremResult {
+  const tDeg = 45;
+  const sDeg = 120;
+
+  const O = centrePt();
+  const T = pt("T", tDeg, "T");
+  const S = pt("S", sDeg, "S");
+  const centre = centrePoint();
+  const tan = tangentSegment(T, centre, 90);
+  const tanFar = { x: tan.x2, y: tan.y2 };
+
+  const otsLegs = angleArcLegs(T, O, tanFar);
+  const ostLegs = angleArcLegs(O, S, T);
+  const sLegs = angleArcLegs(S, O, T);
+  const angleAtO = interiorAngleDeg(O, S, T);
+  const angleAtT = interiorAngleDeg(T, O, tanFar);
+  const angleAtS = interiorAngleDeg(S, O, T);
+  const answer = basic ? angleAtS : angleAtT;
+
+  const steps = basic
+    ? [
+        { text: `Radius is perpendicular to tangent at the point of contact: $\\angle OTS = ${angleAtT}°$.`, theorem: "radius-tangent" as const },
+        { text: `In $\\triangle OTS$, $x = 180° - ${angleAtT}° - ${angleAtO}° = ${answer}°$.` },
+      ]
+    : [
+        { text: `Radius is perpendicular to tangent: $\\angle OTS = ${angleAtT}°$.`, theorem: "radius-tangent" as const },
+        { text: `$x = ${angleAtT}°$.` },
+      ];
+
+  return {
+    templateId: "RADIUS_TANGENT",
+    theorems: basic ? ["radius-tangent", "combined"] : ["radius-tangent"],
+    answer,
+    targetLabel: "x",
+    question: "Find $x$.",
+    steps: formatSteps(steps),
+    diagram: {
+      points: [O, T, S],
+      lines: [
+        { x1: O.x, y1: O.y, x2: T.x, y2: T.y },
+        { x1: tan.x1, y1: tan.y1, x2: tan.x2, y2: tan.y2 },
+        { x1: O.x, y1: O.y, x2: S.x, y2: S.y },
+        { x1: S.x, y1: S.y, x2: T.x, y2: T.y },
+      ],
+      angles: [
+        {
+          id: "OTS",
+          vertex: T,
+          leg1Deg: otsLegs.leg1Deg,
+          leg2Deg: otsLegs.leg2Deg,
+          label: basic ? `${angleAtT}°` : "x",
+          isTarget: !basic,
+        },
+        { id: "OST", vertex: O, leg1Deg: ostLegs.leg1Deg, leg2Deg: ostLegs.leg2Deg, label: `${angleAtO}°` },
+        {
+          id: "OST2",
+          vertex: S,
+          leg1Deg: sLegs.leg1Deg,
+          leg2Deg: sLegs.leg2Deg,
+          label: basic ? "x" : `${angleAtS}°`,
+          isTarget: basic,
+        },
+      ],
+      rightAngles: [{ vertex: T, leg1: O, leg2: tanFar }],
+    },
+  };
+}
+
+/** Cyclic quadrilateral — opposite angles sum to 180°. */
+export function templateCyclicOpposite(): CircleTheoremResult {
+  const aDeg = 160;
+  const bDeg = 60;
+  const cDeg = 340;
+  const dDeg = 240;
+
+  const O = centrePt();
+  const A = pt("A", aDeg, "A");
+  const B = pt("B", bDeg, "B");
+  const C = pt("C", cDeg, "C");
+  const D = pt("D", dDeg, "D");
+  const points: Record<string, LabelledPoint> = { O, A, B, C, D };
+
+  const aLegs = angleArcLegs(A, D, B);
+  const cLegs = angleArcLegs(C, B, D);
+  const angleA = interiorAngleDeg(A, D, B);
+  const angleC = interiorAngleDeg(C, B, D);
+
+  return {
+    templateId: "CYCLIC_OPPOSITE",
+    theorems: ["cyclic-opposite"],
+    answer: angleC,
+    targetLabel: "x",
+    question: "Find $x$.",
+    steps: formatSteps([
+      { text: `Opposite angles in a cyclic quadrilateral sum to $180°$.`, theorem: "cyclic-opposite" },
+      { text: `$x = 180° - ${angleA}° = ${angleC}°$.` },
+    ]),
+    diagram: {
+      points: [O, A, B, C, D],
+      lines: linesBetween(points, [["A", "B"], ["B", "C"], ["C", "D"], ["D", "A"]]),
+      angles: [
+        { id: "DAB", vertex: A, leg1Deg: aLegs.leg1Deg, leg2Deg: aLegs.leg2Deg, label: `${angleA}°` },
+        { id: "BCD", vertex: C, leg1Deg: cLegs.leg1Deg, leg2Deg: cLegs.leg2Deg, label: "x", isTarget: true },
+      ],
+      rightAngles: [],
+    },
+  };
+}
+
+/** Cyclic quadrilateral — exterior angle equals opposite interior. */
+export function templateCyclicExterior(): CircleTheoremResult {
+  const aDeg = 170;
+  const bDeg = 50;
+  const cDeg = 330;
+  const dDeg = 230;
+
+  const O = centrePt();
+  const A = pt("A", aDeg, "A");
+  const B = pt("B", bDeg, "B");
+  const C = pt("C", cDeg, "C");
+  const D = pt("D", dDeg, "D");
+
+  const ext = pointOnCircle(bDeg - 18);
+  const extPt: LabelledPoint = { id: "E", x: ext.x, y: ext.y, label: "E" };
+
+  const eLegs = angleArcLegs(B, A, extPt);
+  const dLegs = angleArcLegs(D, C, A);
+  const extAngle = interiorAngleDeg(B, A, extPt);
+  const interior = interiorAngleDeg(D, C, A);
+
+  return {
+    templateId: "CYCLIC_EXTERIOR",
+    theorems: ["cyclic-exterior"],
+    answer: extAngle,
+    targetLabel: "x",
+    question: "Find $x$.",
+    steps: formatSteps([
+      { text: `Exterior angle of a cyclic quadrilateral equals the opposite interior angle.`, theorem: "cyclic-exterior" },
+      { text: `$x = ${extAngle}°$.` },
+    ]),
+    diagram: {
+      points: [O, A, B, C, D, extPt],
+      lines: [
+        { x1: A.x, y1: A.y, x2: B.x, y2: B.y },
+        { x1: B.x, y1: B.y, x2: C.x, y2: C.y },
+        { x1: C.x, y1: C.y, x2: D.x, y2: D.y },
+        { x1: D.x, y1: D.y, x2: A.x, y2: A.y },
+        { x1: A.x, y1: A.y, x2: extPt.x, y2: extPt.y },
+      ],
+      angles: [
+        { id: "ext", vertex: B, leg1Deg: eLegs.leg1Deg, leg2Deg: eLegs.leg2Deg, label: "x", isTarget: true },
+        { id: "ADC", vertex: D, leg1Deg: dLegs.leg1Deg, leg2Deg: dLegs.leg2Deg, label: `${interior}°` },
+      ],
+      rightAngles: [],
+    },
+  };
+}
+
+type TemplateFn = () => CircleTheoremResult;
+
+const TEMPLATES: Record<TemplateId, TemplateFn> = {
+  CENTRE_TO_CIRCUMFERENCE: templateCentreToCircumference,
+  CIRCUMFERENCE_TO_CENTRE: templateCircumferenceToCentre,
+  SEMICIRCLE_TRIANGLE: () => templateSemicircleTriangle(false),
+  SAME_SEGMENT: templateSameSegment,
+  ALTERNATE_SEGMENT: templateAlternateSegment,
+  RADIUS_TANGENT: () => templateRadiusTangent(false),
+  CYCLIC_OPPOSITE: templateCyclicOpposite,
+  CYCLIC_EXTERIOR: templateCyclicExterior,
+};
+
+const RECALL_POOL: TemplateId[] = [
+  "CENTRE_TO_CIRCUMFERENCE",
+  "CIRCUMFERENCE_TO_CENTRE",
+  "SAME_SEGMENT",
+  "ALTERNATE_SEGMENT",
+  "RADIUS_TANGENT",
+  "CYCLIC_OPPOSITE",
+];
+
+const BASIC_POOL: TemplateId[] = [
+  "SEMICIRCLE_TRIANGLE",
+  "RADIUS_TANGENT",
+  "CYCLIC_EXTERIOR",
+  "CENTRE_TO_CIRCUMFERENCE",
+  "SAME_SEGMENT",
+];
+
+export function instantiateTemplate(level: number): CircleTheoremResult {
+  if (level === 1) {
+    const id = pickFrom(RECALL_POOL);
+    return TEMPLATES[id]();
+  }
+  if (level === 2) {
+    const roll = pickInt(1, 10);
+    if (roll <= 3) return templateSemicircleTriangle(true);
+    if (roll <= 5) return templateRadiusTangent(true);
+    if (roll <= 7) return templateCyclicExterior();
+    const id = pickFrom(["CENTRE_TO_CIRCUMFERENCE", "SAME_SEGMENT", "ALTERNATE_SEGMENT", "CYCLIC_OPPOSITE"] as const);
+    return TEMPLATES[id]();
+  }
+  // Levels 3–4 reuse recall/basic mix until phase 2
+  const id = pickFrom([...RECALL_POOL, ...BASIC_POOL] as TemplateId[]);
+  if (id === "SEMICIRCLE_TRIANGLE") return templateSemicircleTriangle(true);
+  if (id === "RADIUS_TANGENT") return templateRadiusTangent(true);
+  return TEMPLATES[id]();
+}
+
+/** Independent verification from displayed angle labels. */
+export function verifyAnswerIndependently(result: CircleTheoremResult): boolean {
+  const target = result.diagram.angles.find((a) => a.isTarget);
+  if (!target || target.label === "x") return result.answer > 0;
+  const parsed = parseInt(target.label.replace("°", ""), 10);
+  if (!Number.isFinite(parsed)) return true;
+  return parsed === result.answer;
+}

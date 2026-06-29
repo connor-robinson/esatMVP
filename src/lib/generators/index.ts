@@ -65,6 +65,7 @@ import { generateElectricity } from "./physics/electricity";
 // Geometry
 import { generateGeometry2d } from "./geometry_2d";
 import { generateGeometry3d } from "./geometry_3d";
+import { generateCircleTheorems } from "./circle_theorems";
 
 type GeneratorFunction = (level: number, weights?: Record<string, number>) => GeneratedQuestion;
 
@@ -170,6 +171,9 @@ export const GENERATORS: Record<string, GeneratorFunction> = validateGenerators(
   // Geometry
   geometry_2d: generateGeometry2d,
   geometry_3d: generateGeometry3d,
+  circle_theorems: generateCircleTheorems,
+  circles: (level: number, weights?: Record<string, number>) =>
+    generateCircleTheorems(level, weights),
 });
 
 // Re-export mixed generators for builder sessions
