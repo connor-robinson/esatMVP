@@ -54,7 +54,8 @@ export function generateFactoriseQuadratic(
   level: number,
   weights?: Record<string, number>
 ): GeneratedQuestion {
-  const mode = Math.random() < 0.5 ? "easy" : "hard";
+  const hardWeight = level >= 2 ? 0.7 : 0.35;
+  const mode = Math.random() < hardWeight ? "hard" : "easy";
 
   let a: number, b: number, c: number, A: number, B: number, C: number, D: number;
 

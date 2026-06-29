@@ -74,10 +74,13 @@ export function MentalMathSession({
       ? Math.round((correctAttempts / totalAttempts) * 100)
       : 0;
 
-  // Detect questions that have two numeric solutions (e.g. quadratic equations)
-  const isMultiAnswer =
-    typeof currentQuestion.answer === "string" &&
-    currentQuestion.answer.split(",").filter((p) => p.trim().length > 0).length === 2;
+  const answerParts =
+    typeof currentQuestion.answer === "string"
+      ? currentQuestion.answer.split(",").filter((p) => p.trim().length > 0)
+      : [];
+
+  // Detect questions that have multiple parts (e.g. systems, quadratics)
+  const isMultiAnswer = answerParts.length >= 2;
 
   // Auto-focus and clear input when question changes
   useEffect(() => {
@@ -87,11 +90,8 @@ export function MentalMathSession({
 
     // Reset multi-answer inputs based on current question
     if (isMultiAnswer) {
-      const partCount =
-        typeof currentQuestion.answer === "string"
-          ? currentQuestion.answer.split(",").filter((p) => p.trim().length > 0).length
-          : 2;
-      setMultiAnswers(new Array(Math.max(2, partCount)).fill(""));
+      const partCount = Math.max(2, answerParts.length);
+      setMultiAnswers(new Array(partCount).fill(""));
     } else {
       setMultiAnswers([]);
     }
@@ -290,7 +290,13 @@ export function MentalMathSession({
                           setMultiAnswers(next);
                         }}
                         onKeyDown={handleKeyDown}
-                        placeholder={index === 0 ? "First root" : "Second root"}
+                        placeholder={
+                          multiAnswers.length === 3
+                            ? ["x", "y", "z"][index] ?? `Value ${index + 1}`
+                            : multiAnswers.length === 2
+                              ? ["x", "y"][index] ?? `Value ${index + 1}`
+                              : `Value ${index + 1}`
+                        }
                         className={cn(
                           "w-32 h-14 text-xl font-semibold rounded-2xl border-0 outline-none transition-all duration-75",
                           showFeedback && lastAttempt?.isCorrect

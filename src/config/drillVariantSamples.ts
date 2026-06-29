@@ -221,25 +221,17 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'latex', latex: String.raw`\sqrt{12}` },
     { kind: 'latex', latex: String.raw`2\sqrt{3}` },
   ]),
-  'systemsOfEquations-integer-solutions': S([
+  'systemsOfEquations-simultaneous': S([
     { kind: 'latex', latex: String.raw`x + y = 10` },
     { kind: 'latex', latex: String.raw`2x - y = 4` },
   ]),
-  'systemsOfEquations-mixed-coefficients': S([
+  'systemsOfEquations-simultaneous-hard': S([
     { kind: 'latex', latex: String.raw`3x + 2y = 12` },
     { kind: 'latex', latex: String.raw`x - y = 1` },
   ]),
-  'systemsOfEquations-fractional-coefficients': S([
-    { kind: 'latex', latex: String.raw`\frac{x}{2} + y = 5` },
-    { kind: 'latex', latex: String.raw`x + \frac{y}{3} = 4` },
-  ]),
-  'systemsOfEquations-three-equations': S([
+  'systemsOfEquations-three-simultaneous': S([
     { kind: 'latex', latex: String.raw`x + y + z = 6` },
     { kind: 'latex', latex: String.raw`2x - y + z = 4` },
-  ]),
-  'systemsOfEquations-three-equations-hard': S([
-    { kind: 'latex', latex: String.raw`3x - 2y + z = 7` },
-    { kind: 'latex', latex: String.raw`-x + 4y - 2z = -5` },
   ]),
   'binomial_expand-expand': S([
     { kind: 'latex', latex: String.raw`(x + 2)^2` },
@@ -249,17 +241,13 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'latex', latex: String.raw`(x + 1)^3` },
     { kind: 'latex', latex: String.raw`(2x - 1)^2` },
   ]),
-  'factorise_quadratic-monic': S([
+  'factorise_quadratic-mixed': S([
     { kind: 'latex', latex: String.raw`x^2 + 7x + 12` },
     { kind: 'latex', latex: String.raw`x^2 - 16` },
   ]),
-  'factorise_quadratic-non-monic': S([
+  'factorise_quadratic-hard': S([
     { kind: 'latex', latex: String.raw`2x^2 + 5x + 3` },
     { kind: 'latex', latex: String.raw`3x^2 - 12` },
-  ]),
-  'factorise_quadratic-harder-c': S([
-    { kind: 'latex', latex: String.raw`x^2 + 2x - 15` },
-    { kind: 'latex', latex: String.raw`2x^2 - 7x + 3` },
   ]),
   'complete_square-nice-square': S([
     { kind: 'latex', latex: String.raw`x^2 + 6x` },

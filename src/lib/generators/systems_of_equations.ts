@@ -11,6 +11,8 @@
 import { GeneratedQuestion } from "@/types/core";
 import { generateId } from "@/lib/utils";
 import { randomInt, pick } from "./utils/random";
+import { createAnswerChecker } from "@/lib/answer-checker";
+import { expressionsEqual } from "@/lib/answer-checker/math-eval";
 
 export function generateSystemsOfEquations(level: number, weights?: Record<string, number>): GeneratedQuestion {
   if (level === 1) return generateLevel1();
@@ -20,23 +22,74 @@ export function generateSystemsOfEquations(level: number, weights?: Record<strin
   return generateLevel5();
 }
 
+function splitParts(s: string): string[] {
+  return String(s ?? "")
+    .split(",")
+    .map((p) => p.trim())
+    .filter(Boolean);
+}
+
+function multiPartChecker(correctParts: string[]): (userAnswer: string) => boolean {
+  return (userAnswer: string) => {
+    const userParts = splitParts(userAnswer);
+    if (userParts.length !== correctParts.length) return false;
+    for (let i = 0; i < correctParts.length; i++) {
+      if (userParts[i] === correctParts[i]) continue;
+      if (!expressionsEqual(userParts[i], correctParts[i], 0.001)) return false;
+    }
+    return true;
+  };
+}
+
+function frac(n: number, d: number): string {
+  if (d === 1) return String(n);
+  return `${n}/${d}`;
+}
+
+function latexFrac(n: number, d: number): string {
+  if (d === 1) return String(n);
+  return `\\frac{${n}}{${d}}`;
+}
+
 function generateLevel1(): GeneratedQuestion {
-  const x = randomInt(-6, 6) || 1;
-  const y = randomInt(-6, 6) || 2;
+  // Allow integers + simple fractions (halves / thirds) while guaranteeing unique solution.
+  const den = pick([1, 1, 1, 2, 2, 3]);
+  const xNum = randomInt(-6, 6) || 1;
+  const yNum = randomInt(-6, 6) || 2;
+  const x = xNum / den;
+  const y = yNum / den;
 
-  const a1 = pick([-3, -2, -1, 1, 2, 3]);
-  const b1 = pick([-3, -2, -1, 1, 2, 3]);
-  const c1 = a1 * x + b1 * y;
+  let a1 = 0, b1 = 0, c1 = 0;
+  let a2 = 0, b2 = 0, c2 = 0;
 
-  const a2 = pick([-3, -2, -1, 1, 2, 3]);
-  const b2 = pick([-3, -2, -1, 1, 2, 3]);
-  const c2 = a2 * x + b2 * y;
+  // Retry until determinant is non-zero (avoids infinite/no solutions).
+  for (let t = 0; t < 60; t++) {
+    a1 = pick([-3, -2, -1, 1, 2, 3]);
+    b1 = pick([-3, -2, -1, 1, 2, 3]);
+    a2 = pick([-3, -2, -1, 1, 2, 3]);
+    b2 = pick([-3, -2, -1, 1, 2, 3]);
+    const det = a1 * b2 - a2 * b1;
+    if (det === 0) continue;
+    c1 = a1 * x + b1 * y;
+    c2 = a2 * x + b2 * y;
+    break;
+  }
 
-  const q1 = `${a1}x ${b1 >= 0 ? "+" : "-"} ${Math.abs(b1)}y = ${c1}`;
-  const q2 = `${a2}x ${b2 >= 0 ? "+" : "-"} ${Math.abs(b2)}y = ${c2}`;
+  const c1n = a1 * xNum + b1 * yNum;
+  const c2n = a2 * xNum + b2 * yNum;
+  const q1 = `${a1}x ${b1 >= 0 ? "+" : "-"} ${Math.abs(b1)}y = ${latexFrac(c1n, den)}`;
+  const q2 = `${a2}x ${b2 >= 0 ? "+" : "-"} ${Math.abs(b2)}y = ${latexFrac(c2n, den)}`;
 
   const question = `Solve the system: $${q1}$; $${q2}$`;
-  const answer = `x = ${x}, y = ${y}`;
+  const answerParts = [frac(xNum, den), frac(yNum, den)];
+  const answer = answerParts.join(", ");
+  const checker = createAnswerChecker({
+    correctAnswer: answer,
+    acceptFractions: true,
+    acceptDecimals: true,
+    tolerance: 0.001,
+    customChecker: multiPartChecker(answerParts),
+  });
 
   return {
     id: generateId(),
@@ -44,26 +97,47 @@ function generateLevel1(): GeneratedQuestion {
     question,
     answer,
     difficulty: 1,
+    checker,
   };
 }
 
 function generateLevel2(): GeneratedQuestion {
-  const x = randomInt(-8, 8) || 1;
-  const y = randomInt(-8, 8) || 2;
+  const den = pick([1, 1, 2, 2, 3]);
+  const xNum = randomInt(-8, 8) || 1;
+  const yNum = randomInt(-8, 8) || 2;
+  const x = xNum / den;
+  const y = yNum / den;
 
-  const a1 = pick([-5, -4, -3, 2, 3, 4, 5]);
-  const b1 = pick([-5, -4, -3, 2, 3, 4, 5]);
-  const c1 = a1 * x + b1 * y;
+  let a1 = 0, b1 = 0, c1 = 0;
+  let a2 = 0, b2 = 0, c2 = 0;
 
-  const a2 = pick([-5, -4, -3, 2, 3, 4, 5]);
-  const b2 = pick([-5, -4, -3, 2, 3, 4, 5]);
-  const c2 = a2 * x + b2 * y;
+  for (let t = 0; t < 80; t++) {
+    a1 = pick([-6, -5, -4, -3, 2, 3, 4, 5, 6]);
+    b1 = pick([-6, -5, -4, -3, 2, 3, 4, 5, 6]);
+    a2 = pick([-6, -5, -4, -3, 2, 3, 4, 5, 6]);
+    b2 = pick([-6, -5, -4, -3, 2, 3, 4, 5, 6]);
+    const det = a1 * b2 - a2 * b1;
+    if (det === 0) continue;
+    c1 = a1 * x + b1 * y;
+    c2 = a2 * x + b2 * y;
+    break;
+  }
 
-  const q1 = `${a1}x ${b1 >= 0 ? "+" : "-"} ${Math.abs(b1)}y = ${c1}`;
-  const q2 = `${a2}x ${b2 >= 0 ? "+" : "-"} ${Math.abs(b2)}y = ${c2}`;
+  const c1n = a1 * xNum + b1 * yNum;
+  const c2n = a2 * xNum + b2 * yNum;
+  const q1 = `${a1}x ${b1 >= 0 ? "+" : "-"} ${Math.abs(b1)}y = ${latexFrac(c1n, den)}`;
+  const q2 = `${a2}x ${b2 >= 0 ? "+" : "-"} ${Math.abs(b2)}y = ${latexFrac(c2n, den)}`;
 
   const question = `Solve the system: $${q1}$; $${q2}$`;
-  const answer = `x = ${x}, y = ${y}`;
+  const answerParts = [frac(xNum, den), frac(yNum, den)];
+  const answer = answerParts.join(", ");
+  const checker = createAnswerChecker({
+    correctAnswer: answer,
+    acceptFractions: true,
+    acceptDecimals: true,
+    tolerance: 0.001,
+    customChecker: multiPartChecker(answerParts),
+  });
 
   return {
     id: generateId(),
@@ -71,6 +145,7 @@ function generateLevel2(): GeneratedQuestion {
     question,
     answer,
     difficulty: 2,
+    checker,
   };
 }
 
@@ -174,12 +249,21 @@ function generateLevel4(): GeneratedQuestion {
     solutionRange: [-4, 4],
   });
 
+  const checker = createAnswerChecker({
+    correctAnswer: answer,
+    acceptFractions: true,
+    acceptDecimals: true,
+    tolerance: 0.001,
+    customChecker: multiPartChecker(splitParts(answer)),
+  });
+
   return {
     id: generateId(),
     topicId: "systemsOfEquations",
     question,
-    answer,
+    answer: splitParts(answer).join(", "),
     difficulty: 4,
+    checker,
   };
 }
 
@@ -190,12 +274,21 @@ function generateLevel5(): GeneratedQuestion {
     solutionRange: [-6, 6],
   });
 
+  const checker = createAnswerChecker({
+    correctAnswer: answer,
+    acceptFractions: true,
+    acceptDecimals: true,
+    tolerance: 0.001,
+    customChecker: multiPartChecker(splitParts(answer)),
+  });
+
   return {
     id: generateId(),
     topicId: "systemsOfEquations",
     question,
-    answer,
+    answer: splitParts(answer).join(", "),
     difficulty: 5,
+    checker,
   };
 }
 
