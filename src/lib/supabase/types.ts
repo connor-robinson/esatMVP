@@ -408,6 +408,41 @@ export type UserDailyMetricInsert = {
 };
 export type UserDailyMetricUpdate = Partial<UserDailyMetricRow>;
 
+// question_bank_sessions
+export type QuestionBankSessionRow = {
+  id: string;
+  user_id: string;
+  started_at: string;
+  ended_at: string | null;
+  question_count: number;
+  correct_count: number;
+  total_time_ms: number;
+  time_limit_minutes: number | null;
+  source: string;
+  subjects: string | null;
+  test_type: string | null;
+  ui_difficulties: string[] | null;
+  summary: Record<string, unknown> | null;
+  created_at: string;
+  updated_at: string;
+};
+export type QuestionBankSessionInsert = {
+  id?: string;
+  user_id: string;
+  started_at?: string;
+  ended_at?: string | null;
+  question_count?: number;
+  correct_count?: number;
+  total_time_ms?: number;
+  time_limit_minutes?: number | null;
+  source?: string;
+  subjects?: string | null;
+  test_type?: string | null;
+  ui_difficulties?: string[] | null;
+  summary?: Record<string, unknown> | null;
+};
+export type QuestionBankSessionUpdate = Partial<QuestionBankSessionRow>;
+
 // question_bank_attempts
 export type QuestionBankAttemptRow = {
   id: string;
@@ -419,6 +454,11 @@ export type QuestionBankAttemptRow = {
   viewed_solution: boolean;
   attempted_at: string;
   created_at: string;
+  was_revealed: boolean | null;
+  used_hint: boolean | null;
+  wrong_answers_before: string[] | null;
+  time_until_correct_ms: number | null;
+  session_id: string | null;
 };
 export type QuestionBankAttemptInsert = {
   id?: string;
@@ -429,6 +469,11 @@ export type QuestionBankAttemptInsert = {
   time_spent_ms?: number | null;
   viewed_solution?: boolean;
   attempted_at?: string;
+  was_revealed?: boolean;
+  used_hint?: boolean;
+  wrong_answers_before?: string[] | null;
+  time_until_correct_ms?: number | null;
+  session_id?: string | null;
 };
 export type QuestionBankAttemptUpdate = Partial<QuestionBankAttemptRow>;
 
@@ -594,6 +639,11 @@ export type Database = {
         Row: UserDailyMetricRow;
         Insert: UserDailyMetricInsert;
         Update: UserDailyMetricUpdate;
+      };
+      question_bank_sessions: {
+        Row: QuestionBankSessionRow;
+        Insert: QuestionBankSessionInsert;
+        Update: QuestionBankSessionUpdate;
       };
       question_bank_attempts: {
         Row: QuestionBankAttemptRow;

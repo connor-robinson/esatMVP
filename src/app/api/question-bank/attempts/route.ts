@@ -32,6 +32,7 @@ export async function POST(request: NextRequest) {
       used_hint,
       wrong_answers_before,
       time_until_correct_ms,
+      session_id,
     } = body;
 
     // Validate input
@@ -67,6 +68,7 @@ export async function POST(request: NextRequest) {
         used_hint: used_hint ?? false,
         wrong_answers_before: wrong_answers_before ?? [],
         time_until_correct_ms: time_until_correct_ms ?? null,
+        session_id: session_id ?? null,
         attempted_at: new Date().toISOString(),
       } as any)
       .select()

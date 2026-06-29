@@ -214,6 +214,7 @@ export function QuestionBankSessionSettingsModal({
       timeLimitMinutes: minutes,
       questionCount,
       difficulties: resolveDifficultiesForApi(difficultiesUi),
+      uiDifficulties: difficultiesUi,
     });
     onClose();
   };

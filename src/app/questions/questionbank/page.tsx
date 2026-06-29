@@ -19,7 +19,17 @@ import {
   SolutionModal,
 } from '@/components/questionBank/SolutionModal';
 import { CommunityStatsPanel } from '@/components/questionBank/CommunityStatsPanel';
+import { QuestionBankSessionResults } from '@/components/questionBank/QuestionBankSessionResults';
 import { labelForQuestionBankTag } from '@/lib/questionBank/esatCurriculumTopicLabels';
+import { buildSessionSummary } from '@/lib/questionBank/sessionStats';
+import {
+  buildSessionAttemptEntry,
+  completeQuestionBankSession,
+  createSessionId,
+  inferUiDifficultiesFromQuestions,
+  registerQuestionBankSession,
+  subjectsLabelFromList,
+} from '@/lib/questionBank/sessionTracking';
 import { useQuestionBank } from '@/hooks/useQuestionBank';
 import { useQuestionEditor } from '@/hooks/useQuestionEditor';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -38,8 +48,11 @@ import {
 import type {
   QuestionBankQuestion,
   QuestionBankCommunityStats,
+  QuestionBankSessionAttempt,
+  QuestionBankSessionSource,
   SubjectFilter,
   TestTypeFilter,
+  UiDifficultyLabel,
 } from '@/types/questionBank';
 import {
   QUESTION_BANK_HOME_LAUNCH_KEY,
@@ -125,7 +138,22 @@ export default function QuestionBankPage() {
   } = useQuestionBank({ browseMode: false });
 
   const [sessionMode, setSessionMode] = useState(false);
-  const [isDrillSession, setIsDrillSession] = useState(false);
+  const [sessionView, setSessionView] = useState<'playing' | 'complete'>('playing');
+  const [qbSessionId, setQbSessionId] = useState<string | null>(null);
+  const [sessionAttemptLog, setSessionAttemptLog] = useState<
+    QuestionBankSessionAttempt[]
+  >([]);
+  const [sessionStartedAt, setSessionStartedAt] = useState<number>(Date.now());
+  const [sessionSource, setSessionSource] =
+    useState<QuestionBankSessionSource>('home');
+  const [sessionUiDifficulties, setSessionUiDifficulties] = useState<
+    UiDifficultyLabel[]
+  >([]);
+  const [sessionSubjectsLabel, setSessionSubjectsLabel] = useState('');
+  const [sessionTestType, setSessionTestType] = useState<string | null>(null);
+  const [sessionCompleting, setSessionCompleting] = useState(false);
+  const questionStartedAtRef = useRef<number>(Date.now());
+  const sessionAttemptLogRef = useRef<QuestionBankSessionAttempt[]>([]);
   const [sessionQuestions, setSessionQuestions] = useState<
     QuestionBankQuestion[]
   >([]);
@@ -152,6 +180,183 @@ export default function QuestionBankPage() {
   >({});
   const [communityStatsLoading, setCommunityStatsLoading] = useState(false);
 
+  const getTopicTitle = (tagCode: string) => labelForQuestionBankTag(tagCode);
+
+  const initializeTrackedSession = useCallback(
+    async (params: {
+      questions: QuestionBankQuestion[];
+      timeLimitMinutes?: number;
+      source: QuestionBankSessionSource;
+      subjects?: SubjectFilter[];
+      testType?: string | null;
+      uiDifficulties?: UiDifficultyLabel[];
+    }) => {
+      const id = createSessionId();
+      const startTime = Date.now();
+      const uiDiffs =
+        params.uiDifficulties ??
+        inferUiDifficultiesFromQuestions(params.questions);
+      const subjectLabels = params.subjects?.length
+        ? subjectsLabelFromList(params.subjects)
+        : subjectsLabelFromList(
+            [...new Set(params.questions.map((q) => q.subjects).filter(Boolean))],
+          );
+
+      setQbSessionId(id);
+      setSessionStartedAt(startTime);
+      setSessionSource(params.source);
+      setSessionUiDifficulties(uiDiffs);
+      setSessionSubjectsLabel(subjectLabels);
+      setSessionTestType(params.testType ?? null);
+      setSessionAttemptLog([]);
+      sessionAttemptLogRef.current = [];
+      setSessionView('playing');
+      questionStartedAtRef.current = startTime;
+
+      if (session?.user) {
+        await registerQuestionBankSession({
+          id,
+          questionCount: params.questions.length,
+          timeLimitMinutes: params.timeLimitMinutes,
+          source: params.source,
+          subjects: subjectLabels || null,
+          testType: params.testType ?? null,
+          uiDifficulties: uiDiffs,
+        });
+      }
+    },
+    [session?.user],
+  );
+
+  const handleSessionAnswerSubmit = useCallback(
+    (
+      answer: string,
+      correct: boolean,
+      metadata?: {
+        wasRevealed?: boolean;
+        usedHint?: boolean;
+        wrongAnswersBefore?: string[];
+        timeUntilCorrectMs?: number | null;
+      },
+    ) => {
+      if (!currentQuestion) return;
+
+      const revealed = metadata?.wasRevealed ?? answerRevealed;
+
+      void submitAnswer(answer, correct, {
+        ...metadata,
+        sessionId: qbSessionId ?? undefined,
+      });
+
+      if (!correct && !revealed) return;
+
+      const timeSpentMs = Date.now() - questionStartedAtRef.current;
+      const entry = buildSessionAttemptEntry(
+        currentQuestion,
+        sessionCurrentIndex + 1,
+        answer,
+        correct,
+        timeSpentMs,
+        sessionUiDifficulties,
+        {
+          wasRevealed: revealed,
+          usedHint: metadata?.usedHint ?? showHint,
+          wrongAnswersBefore: metadata?.wrongAnswersBefore ?? [],
+        },
+      );
+
+      setSessionAttemptLog((prev) => {
+        const withoutDup = prev.filter((a) => a.questionId !== currentQuestion.id);
+        const next = [...withoutDup, entry];
+        sessionAttemptLogRef.current = next;
+        return next;
+      });
+    },
+    [
+      answerRevealed,
+      currentQuestion,
+      qbSessionId,
+      sessionCurrentIndex,
+      sessionUiDifficulties,
+      showHint,
+      submitAnswer,
+    ],
+  );
+
+  const ensureCurrentQuestionLogged = useCallback(() => {
+    if (!currentQuestion) return;
+    const alreadyLogged = sessionAttemptLogRef.current.some(
+      (a) => a.questionId === currentQuestion.id,
+    );
+    if (alreadyLogged) return;
+
+    const timeSpentMs = Date.now() - questionStartedAtRef.current;
+    const entry = buildSessionAttemptEntry(
+      currentQuestion,
+      sessionCurrentIndex + 1,
+      selectedAnswer ?? '',
+      isCorrect ?? false,
+      timeSpentMs,
+      sessionUiDifficulties,
+      {
+        wasRevealed: answerRevealed,
+        usedHint: showHint,
+        wrongAnswersBefore: Array.from(incorrectAnswers),
+      },
+    );
+
+    const next = [...sessionAttemptLogRef.current, entry];
+    sessionAttemptLogRef.current = next;
+    setSessionAttemptLog(next);
+  }, [
+    answerRevealed,
+    currentQuestion,
+    incorrectAnswers,
+    isCorrect,
+    selectedAnswer,
+    sessionCurrentIndex,
+    sessionUiDifficulties,
+    showHint,
+  ]);
+
+  const completeSession = useCallback(async () => {
+    if (sessionCompleting) return;
+
+    if (!session?.user) {
+      router.push(
+        `/login?redirectTo=${encodeURIComponent('/questions/questionbank')}`,
+      );
+      return;
+    }
+
+    setSessionCompleting(true);
+    ensureCurrentQuestionLogged();
+    incrementFreeAttempts();
+
+    const attempts = sessionAttemptLogRef.current;
+    const summary = buildSessionSummary(attempts, labelForQuestionBankTag);
+
+    if (qbSessionId) {
+      await completeQuestionBankSession({
+        id: qbSessionId,
+        summary: summary as unknown as Record<string, unknown>,
+        questionCount: summary.totalQuestions,
+        correctCount: summary.correctCount,
+        totalTimeMs: summary.totalTimeMs,
+      });
+    }
+
+    setSessionAttemptLog(attempts);
+    setSessionView('complete');
+    setSessionCompleting(false);
+  }, [
+    ensureCurrentQuestionLogged,
+    qbSessionId,
+    router,
+    session?.user,
+    sessionCompleting,
+  ]);
+
   const activeSession = sessionMode && sessionQuestions.length > 0;
   const sessionBootPending =
     isSessionMode ||
@@ -164,42 +369,47 @@ export default function QuestionBankPage() {
         const sessionDataStr = sessionStorage.getItem('questionBankSession');
         if (sessionDataStr) {
           const sessionData = JSON.parse(sessionDataStr);
-          setSessionQuestions(sessionData.questions || []);
+          const questions = sessionData.questions || [];
+          setSessionQuestions(questions);
           setSessionCurrentIndex(0);
           setSessionMode(true);
-          setIsDrillSession(sessionData.source === 'drill');
           setTimeLimitMinutes(
             sessionData.timeLimitMinutes ||
-              Math.ceil((sessionData.questions?.length || 0) * 1.5),
+              Math.ceil((questions.length || 0) * 1.5),
           );
 
-          // Initialize countdown timer
           const startTime = Date.now();
           const timeLimitMs =
             (sessionData.timeLimitMinutes ||
-              Math.ceil((sessionData.questions?.length || 0) * 1.5)) *
+              Math.ceil((questions.length || 0) * 1.5)) *
             60 *
             1000;
           setDeadline(startTime + timeLimitMs);
           setTimerStartTime(startTime);
 
-          // Load first question
-          if (sessionData.questions && sessionData.questions.length > 0) {
-            updateCurrentQuestion(sessionData.questions[0]);
+          void initializeTrackedSession({
+            questions,
+            timeLimitMinutes: sessionData.timeLimitMinutes,
+            source: sessionData.source === 'library' ? 'library' : 'home',
+            uiDifficulties: inferUiDifficultiesFromQuestions(questions),
+          });
+
+          if (questions.length > 0) {
+            updateCurrentQuestion(questions[0]);
           }
 
-          // Clear sessionStorage after loading
           sessionStorage.removeItem('questionBankSession');
         }
       } catch (err) {
         console.error('[Bank] Error loading session:', err);
       }
     }
-  }, [isSessionMode, updateCurrentQuestion]);
+  }, [isSessionMode, updateCurrentQuestion, initializeTrackedSession]);
 
   // Session-only: redirect to home when there is no launch payload or active session
   useEffect(() => {
     if (typeof window === 'undefined') return;
+    if (sessionView === 'complete') return;
     if (sessionStarting || sessionBootPending || activeSession) return;
     router.replace('/questions');
   }, [
@@ -207,6 +417,7 @@ export default function QuestionBankPage() {
     router,
     sessionBootPending,
     sessionStarting,
+    sessionView,
   ]);
 
   // Edit modal state
@@ -256,9 +467,8 @@ export default function QuestionBankPage() {
         setRemainingTime(remaining);
 
         if (remaining <= 0) {
-          // Time's up - auto-submit or end session
           clearInterval(interval);
-          // Could show a modal or auto-submit here
+          void completeSession();
         }
       }, 1000);
 
@@ -275,7 +485,7 @@ export default function QuestionBankPage() {
 
       return () => clearInterval(interval);
     }
-  }, [sessionMode, deadline, timerStartTime, isCorrect]);
+  }, [sessionMode, deadline, timerStartTime, isCorrect, completeSession]);
 
   // Timer effect - start from 0:00 when new question loads (for count-up mode)
   const currentQuestionId = currentQuestion?.id;
@@ -401,8 +611,6 @@ export default function QuestionBankPage() {
     }
   };
 
-  const getTopicTitle = (tagCode: string) => labelForQuestionBankTag(tagCode);
-
   const handleStartSession = useCallback(
     async (
       config: {
@@ -410,10 +618,12 @@ export default function QuestionBankPage() {
         topics: string[];
         difficulties: string[];
         timeLimitMinutes?: number;
+        uiDifficulties?: UiDifficultyLabel[];
       },
       scope?: {
         subjects?: SubjectFilter[];
         testType?: TestTypeFilter;
+        source?: QuestionBankSessionSource;
       },
     ) => {
       const params = new URLSearchParams();
@@ -473,6 +683,22 @@ export default function QuestionBankPage() {
             setSessionMode(true);
             updateCurrentQuestion(sessionQs[0]);
 
+            const source =
+              scope?.source ??
+              (subjectsResolved.length > 1 ? 'mixed' : 'home');
+
+            await initializeTrackedSession({
+              questions: sessionQs,
+              timeLimitMinutes: config.timeLimitMinutes,
+              source,
+              subjects: subjectsResolved,
+              testType:
+                testResolved === 'ESAT' || testResolved === 'TMUA'
+                  ? testResolved
+                  : null,
+              uiDifficulties: config.uiDifficulties,
+            });
+
             if (
               config.timeLimitMinutes != null &&
               config.timeLimitMinutes > 0
@@ -497,7 +723,7 @@ export default function QuestionBankPage() {
         setSessionStarting(false);
       }
     },
-    [filters.subject, filters.testType, router, updateCurrentQuestion],
+    [filters.subject, filters.testType, router, updateCurrentQuestion, initializeTrackedSession],
   );
 
   useEffect(() => {
@@ -541,6 +767,7 @@ export default function QuestionBankPage() {
         topics: [],
         difficulties: data.difficulties,
         timeLimitMinutes: data.timeLimitMinutes,
+        uiDifficulties: data.uiDifficulties,
       },
       { subjects: data.subjects, testType: data.testType },
     );
@@ -548,6 +775,7 @@ export default function QuestionBankPage() {
 
   const handleNextQuestionInSession = async () => {
     if (isFreeLimitReached) return;
+    ensureCurrentQuestionLogged();
     const nextIndex = sessionCurrentIndex + 1;
     if (nextIndex < sessionQuestions.length) {
       setSessionCurrentIndex(nextIndex);
@@ -557,12 +785,27 @@ export default function QuestionBankPage() {
       setIncorrectAnswers(new Set());
       return;
     }
-    incrementFreeAttempts();
-    router.push('/questions');
+    await completeSession();
   };
 
+  useEffect(() => {
+    questionStartedAtRef.current = Date.now();
+  }, [currentQuestion?.id]);
+
   const showSessionLoading =
-    sessionStarting || (!activeSession && sessionBootPending);
+    sessionStarting || (!activeSession && sessionBootPending && sessionView !== 'complete');
+
+  if (sessionView === 'complete') {
+    return (
+      <QuestionBankSessionResults
+        attempts={sessionAttemptLog}
+        sessionSource={sessionSource}
+        subjectsLabel={sessionSubjectsLabel}
+        startedAt={sessionStartedAt}
+        onBack={() => router.push('/questions')}
+      />
+    );
+  }
 
   if (!activeSession && !showSessionLoading) {
     return <LoadingPage variant="session" />;
@@ -599,7 +842,7 @@ export default function QuestionBankPage() {
                 <QuestionCard
                   question={currentQuestion}
                   questionNumber={sessionCurrentIndex + 1}
-                  onAnswerSubmit={submitAnswer}
+                  onAnswerSubmit={handleSessionAnswerSubmit}
                   isAnswered={isAnswered}
                   selectedAnswer={selectedAnswer}
                   correctAnswer={currentQuestion.correct_option}
@@ -778,7 +1021,7 @@ export default function QuestionBankPage() {
                                 : null
                               : elapsedTime
                             : null;
-                          submitAnswer(currentSelection, correct, {
+                          handleSessionAnswerSubmit(currentSelection, correct, {
                             wasRevealed: answerRevealed,
                             usedHint: showHint,
                             wrongAnswersBefore: wrongAnswersArray,

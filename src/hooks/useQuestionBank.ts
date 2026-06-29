@@ -756,6 +756,7 @@ export function useQuestionBank(
         usedHint?: boolean;
         wrongAnswersBefore?: string[];
         timeUntilCorrectMs?: number | null;
+        sessionId?: string;
       },
     ) => {
       if (!currentQuestion) {
@@ -792,6 +793,7 @@ export function useQuestionBank(
                 used_hint: metadata?.usedHint ?? false,
                 wrong_answers_before: metadata?.wrongAnswersBefore ?? [],
                 time_until_correct_ms: metadata?.timeUntilCorrectMs ?? null,
+                session_id: metadata?.sessionId ?? null,
               }),
             });
 

@@ -10,4 +10,6 @@ export interface QuestionBankHomeLaunchPayload {
   questionCount: number;
   /** API difficulty strings; Extreme is mapped to Hard before save */
   difficulties: string[];
+  /** Original UI difficulty pills (includes Extreme when selected) */
+  uiDifficulties?: import("@/types/questionBank").UiDifficultyLabel[];
 }

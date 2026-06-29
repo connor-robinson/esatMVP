@@ -35,6 +35,83 @@ export interface QuestionBankQuestion {
   idea_plan?: any | null; // JSONB field containing generation metadata, including variation_mode (FAR/SIBLINGS)
 }
 
+export type UiDifficultyLabel = 'Easy' | 'Medium' | 'Hard' | 'Extreme';
+
+export type QuestionBankSessionSource = 'home' | 'library' | 'mixed';
+
+export interface QuestionBankSessionAttempt {
+  questionId: string;
+  questionNumber: number;
+  userAnswer: string;
+  isCorrect: boolean;
+  timeSpentMs: number;
+  wasRevealed: boolean;
+  usedHint: boolean;
+  wrongAnswersBefore: string[];
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+  uiDifficulty: UiDifficultyLabel;
+  primaryTag: string | null;
+  secondaryTags: string[] | null;
+  subjects: string;
+  questionStem: string;
+  correctOption: string;
+  options: Record<string, string>;
+  timestamp: number;
+}
+
+export interface QuestionBankSessionSummary {
+  totalQuestions: number;
+  correctCount: number;
+  accuracy: number;
+  totalTimeMs: number;
+  averageTimeMs: number;
+  fastestTimeMs: number;
+  difficultyBreakdown: import('@/lib/questionBank/sessionStats').DifficultyBreakdown;
+  topicStats: import('@/lib/questionBank/sessionStats').TopicStatRow[];
+  weakestTopic: import('@/lib/questionBank/sessionStats').TopicStatRow | null;
+  progressData: import('@/types/analytics').SessionProgressPoint[];
+}
+
+export interface QuestionBankSessionRecord {
+  id: string;
+  user_id: string;
+  started_at: string;
+  ended_at: string | null;
+  question_count: number;
+  correct_count: number;
+  total_time_ms: number;
+  time_limit_minutes: number | null;
+  source: QuestionBankSessionSource;
+  subjects: string | null;
+  test_type: string | null;
+  ui_difficulties: UiDifficultyLabel[];
+  summary: QuestionBankSessionSummary | Record<string, unknown>;
+}
+
+export interface QuestionBankWrongQuestionRow {
+  questionId: string;
+  questionStem: string;
+  userAnswer: string;
+  correctOption: string;
+  topicLabel: string | null;
+  subjects: string;
+  difficulty: string;
+  attemptedAt: string;
+  sessionId: string;
+}
+
+export interface QuestionBankAnalyticsOverview {
+  totalQuestions: number;
+  correctCount: number;
+  accuracy: number;
+  sessionsCompleted: number;
+  currentStreak: number;
+  longestStreak: number;
+  difficultyBreakdown: import('@/lib/questionBank/sessionStats').DifficultyBreakdown;
+  topicStats: import('@/lib/questionBank/sessionStats').TopicStatRow[];
+  weakestTopics: import('@/lib/questionBank/sessionStats').TopicStatRow[];
+}
+
 export interface QuestionAttempt {
   id?: string;
   user_id: string;
@@ -48,6 +125,7 @@ export interface QuestionAttempt {
   used_hint?: boolean;
   wrong_answers_before?: string[];
   time_until_correct_ms?: number | null;
+  session_id?: string | null;
 }
 
 export interface QuestionBankFilters {

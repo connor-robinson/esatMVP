@@ -84,7 +84,7 @@ export default function QuestionsLibraryPage() {
         questions: selectedQuestions,
         timeLimitMinutes:
           timeLimitMinutes || Math.ceil(selectedQuestions.length * 1.5),
-        sessionName: `Practice Session - ${new Date().toLocaleString()}`,
+        source: 'library',
       };
 
       sessionStorage.setItem("questionBankSession", JSON.stringify(sessionData));
