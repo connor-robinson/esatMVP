@@ -53,10 +53,11 @@ export async function PATCH(
       );
     }
 
-    // Update question status to approved
+    // Update question status to approved; golden flags stay in sync (see sync_golden_question_flags migration)
     const updates = {
       status: 'approved' as const,
       is_good_question: isGoodQuestion,
+      quality_gate_calibration_tier: isGoodQuestion ? ('gold' as const) : null,
     };
 
     const { data, error } = await supabase

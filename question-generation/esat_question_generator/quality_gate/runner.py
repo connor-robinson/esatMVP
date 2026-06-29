@@ -214,6 +214,7 @@ def _commit_gate_row(
             "quality_gate_model": model,
             "quality_gate_calibration_tier": result.calibration_tier,
             "quality_gate_calibration_notes": result.calibration_notes,
+            "is_good_question": result.calibration_tier == "gold",
             "quality_gate_graph_candidate": bool(result.graph_candidate),
             "quality_gate_graph_mode": result.graph_mode,
             "quality_gate_graph_notes": graph_notes,

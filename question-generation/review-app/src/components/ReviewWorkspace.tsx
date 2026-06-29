@@ -99,8 +99,15 @@ export function ReviewWorkspace({ initialQuestionId = null }: ReviewWorkspacePro
   }, [pathname, currentQuestion?.id, router]);
 
   useEffect(() => {
-    setIsGoodQuestion(false);
-  }, [currentQuestion?.id]);
+    setIsGoodQuestion(
+      currentQuestion?.is_good_question === true ||
+        currentQuestion?.quality_gate_calibration_tier === "gold"
+    );
+  }, [
+    currentQuestion?.id,
+    currentQuestion?.is_good_question,
+    currentQuestion?.quality_gate_calibration_tier,
+  ]);
 
   useEffect(() => {
     setTimerSeconds(0);

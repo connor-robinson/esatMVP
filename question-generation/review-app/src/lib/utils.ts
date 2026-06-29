@@ -256,7 +256,8 @@ export function normalizeReviewQuestion(data: any): ReviewQuestion {
       const t = coerceOptionalString(data.test_type);
       return t === "ESAT" || t === "TMUA" ? t : null;
     })(),
-    is_good_question: data.is_good_question === true, // Default to false
+    is_good_question:
+      data.is_good_question === true || data.quality_gate_calibration_tier === "gold",
     status: (coerceOptionalString(data.status) as ReviewQuestion["status"]) || "pending",
     created_at: coerceOptionalString(data.created_at) || new Date().toISOString(),
     updated_at: coerceOptionalString(data.updated_at) || new Date().toISOString(),
@@ -300,7 +301,9 @@ export function normalizeReviewQuestion(data: any): ReviewQuestion {
     quality_gate_job_id: coerceOptionalString(data.quality_gate_job_id),
     quality_gate_model: coerceOptionalString(data.quality_gate_model),
     quality_gate_calibration_tier:
-      data.quality_gate_calibration_tier === "gold" ? "gold" : null,
+      data.is_good_question === true || data.quality_gate_calibration_tier === "gold"
+        ? "gold"
+        : null,
     quality_gate_calibration_notes: coerceOptionalString(data.quality_gate_calibration_notes),
     quality_gate_graph_candidate: data.quality_gate_graph_candidate === true,
     quality_gate_graph_notes: coerceOptionalString(data.quality_gate_graph_notes),

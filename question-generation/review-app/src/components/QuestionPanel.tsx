@@ -593,13 +593,15 @@ export function QuestionPanel({
         </div>
       )}
 
-      {(question.quality_gate_calibration_tier === "gold" ||
+      {(question.is_good_question ||
+        question.quality_gate_calibration_tier === "gold" ||
         question.quality_gate_graph_candidate) && (
         <div className="mx-4 mb-2 space-y-2 rounded-lg border border-white/15 bg-white/[0.04] px-3 py-2 text-xs text-white/85">
-          {question.quality_gate_calibration_tier === "gold" && (
+          {(question.is_good_question ||
+            question.quality_gate_calibration_tier === "gold") && (
             <div className="space-y-1">
               <div className="font-mono text-amber-200/95">
-                Calibration: <span className="text-amber-100">gold</span> (elite pool)
+                Golden question <span className="text-amber-100">(elite pool)</span>
               </div>
               {question.quality_gate_calibration_notes ? (
                 <p className="text-white/75 leading-relaxed pl-0.5 border-l-2 border-amber-400/40 pl-2">

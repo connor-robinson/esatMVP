@@ -249,7 +249,7 @@ export async function GET(request: NextRequest) {
       }
 
       if (searchParams.get('qualityGateCalibrationGold') === '1') {
-        query = query.eq('quality_gate_calibration_tier', 'gold');
+        query = query.eq('is_good_question', true);
       }
 
       if (
