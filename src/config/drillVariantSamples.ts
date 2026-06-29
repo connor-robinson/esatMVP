@@ -233,6 +233,14 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'latex', latex: String.raw`\frac{x}{2} + y = 5` },
     { kind: 'latex', latex: String.raw`x + \frac{y}{3} = 4` },
   ]),
+  'systemsOfEquations-three-equations': S([
+    { kind: 'latex', latex: String.raw`x + y + z = 6` },
+    { kind: 'latex', latex: String.raw`2x - y + z = 4` },
+  ]),
+  'systemsOfEquations-three-equations-hard': S([
+    { kind: 'latex', latex: String.raw`3x - 2y + z = 7` },
+    { kind: 'latex', latex: String.raw`-x + 4y - 2z = -5` },
+  ]),
   'binomial_expand-expand': S([
     { kind: 'latex', latex: String.raw`(x + 2)^2` },
     { kind: 'latex', latex: String.raw`(x - 3)^2` },

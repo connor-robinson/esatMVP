@@ -120,25 +120,25 @@ const ALGEBRA_FOLDERS: FolderDef[] = [
     id: 'algebra-equations',
     name: 'Equations',
     topicIds: ['linearEquations', 'quadraticEquations', 'systemsOfEquations'],
-    symbol: { kind: 'latex', latex: String.raw`ax + b = c` },
+    symbol: { kind: 'lucide', iconKey: 'Variable' },
   },
   {
     id: 'algebra-polynomials',
     name: 'Polynomials',
     topicIds: ['polynomials', 'binomial_expand', 'factorise_quadratic'],
-    symbol: { kind: 'latex', latex: String.raw`(x + a)^2` },
+    symbol: { kind: 'lucide', iconKey: 'Function' },
   },
   {
     id: 'algebra-indices',
     name: 'Indices & Surds',
     topicIds: ['exponents', 'indices_simplify'],
-    symbol: { kind: 'latex', latex: String.raw`x^n` },
+    symbol: { kind: 'lucide', iconKey: 'Hash' },
   },
   {
     id: 'algebra-quadratics',
     name: 'Quadratics',
     topicIds: ['complete_square', 'inequalities', 'quadratics_eval'],
-    symbol: { kind: 'latex', latex: String.raw`x^2` },
+    symbol: { kind: 'lucide', iconKey: 'Function' },
   },
 ];
 
