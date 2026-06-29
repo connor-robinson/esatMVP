@@ -13,6 +13,9 @@ import { MathContent } from "@/components/shared/MathContent";
 import { DiagramRenderer } from "@/components/shared/DiagramRenderer";
 import { BinaryChoiceInput } from "./BinaryChoiceInput";
 import { PrimeFactorSlotsInput } from "./PrimeFactorSlotsInput";
+import { AngleLocateInput } from "./unit-circle/AngleLocateInput";
+import { AngleInput } from "./unit-circle/AngleInput";
+import { RadianInput } from "./unit-circle/RadianInput";
 import { FeedbackPopup } from "./FeedbackPopup";
 import { KatexInput } from "./KatexInput";
 import { MathSymbolBar } from "./MathSymbolBar";
@@ -88,6 +91,7 @@ export function MentalMathSession({
   const [multiAnswers, setMultiAnswers] = useState<string[]>([]);
   const [showSuccessFeedback, setShowSuccessFeedback] = useState(false);
   const [answerRevealed, setAnswerRevealed] = useState(false);
+  const [locateSelectedDegrees, setLocateSelectedDegrees] = useState<number | null>(null);
   const [useKatexInput, setUseKatexInput] = useState(true);
   const [activeMultiIndex, setActiveMultiIndex] = useState(0);
   const katexInputRef = useRef<HTMLInputElement>(null);
@@ -108,6 +112,16 @@ export function MentalMathSession({
   const isMultiAnswer = answerParts.length >= 2;
   const isBinaryChoice = currentQuestion.answerInput?.type === "binary-choice";
   const isPrimeFactorSlots = currentQuestion.answerInput?.type === "prime-factor-slots";
+  const isAngleLocate = currentQuestion.answerInput?.type === "angle-locate";
+  const isAngleText = currentQuestion.answerInput?.type === "angle-text";
+  const isAngleTextDegrees =
+    isAngleText && currentQuestion.answerInput?.type === "angle-text"
+      ? currentQuestion.answerInput.format === "degrees"
+      : false;
+  const isAngleTextRadians =
+    isAngleText && currentQuestion.answerInput?.type === "angle-text"
+      ? currentQuestion.answerInput.format === "radians"
+      : false;
   const primeSlotCount =
     isPrimeFactorSlots && currentQuestion.answerInput?.type === "prime-factor-slots"
       ? currentQuestion.answerInput.slotCount
@@ -117,6 +131,7 @@ export function MentalMathSession({
   useEffect(() => {
     setAnswer("");
     setAnswerRevealed(false);
+    setLocateSelectedDegrees(null);
     setShowSuccessFeedback(false);
 
     // Reset multi-answer inputs based on current question
@@ -131,7 +146,7 @@ export function MentalMathSession({
       setMultiAnswers([]);
     }
     
-    if (!showFeedback && !isBinaryChoice && !isPrimeFactorSlots) {
+    if (!showFeedback && !isBinaryChoice && !isPrimeFactorSlots && !isAngleLocate && !isAngleText) {
       // Focus the active input based on mode
       if (!isMultiAnswer && useKatexInput && katexInputRef.current) {
         // Small delay to ensure the component is mounted
@@ -144,7 +159,26 @@ export function MentalMathSession({
         }, 0);
       }
     }
-  }, [currentQuestion.id, currentQuestion.answer, showFeedback, useKatexInput, isMultiAnswer, isBinaryChoice, isPrimeFactorSlots, primeSlotCount]);
+  }, [currentQuestion.id, currentQuestion.answer, showFeedback, useKatexInput, isMultiAnswer, isBinaryChoice, isPrimeFactorSlots, isAngleLocate, isAngleText, primeSlotCount]);
+
+  const handleAngleLocate = useCallback(
+    (degrees: number) => {
+      if (showFeedback && lastAttempt?.isCorrect) return;
+      if (answerRevealed) return;
+
+      setLocateSelectedDegrees(degrees);
+
+      if (!showFeedback) {
+        onSubmitAnswer(String(degrees));
+        return;
+      }
+
+      if (!lastAttempt?.isCorrect) {
+        onSubmitAnswer(String(degrees));
+      }
+    },
+    [showFeedback, lastAttempt, answerRevealed, onSubmitAnswer],
+  );
 
   const handleBinaryChoice = useCallback(
     (choiceId: string) => {
@@ -287,6 +321,17 @@ export function MentalMathSession({
   const answerFieldLabels = multiAnswerLabels(currentQuestion.topicId, answerParts.length);
   const showTopAnswerLabels = showMultiAnswerTopLabels(currentQuestion.topicId);
 
+  const unitCircleFeedback =
+    currentQuestion.diagram?.type === "unit-circle" &&
+    !isAngleLocate &&
+    currentQuestion.metadata?.angleDegrees != null &&
+    ((showFeedback && lastAttempt?.isCorrect === false) || answerRevealed)
+      ? {
+          showCorrect: true,
+          correctDegrees: currentQuestion.metadata.angleDegrees,
+        }
+      : undefined;
+
   return (
     <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-background">
       {/* Header with progress bar and end session — keep above question layer */}
@@ -370,8 +415,8 @@ export function MentalMathSession({
               </motion.div>
             </AnimatePresence>
 
-            {/* Diagram (if present) */}
-            {currentQuestion.diagram && (
+            {/* Diagram (if present; locate mode renders circle in input area) */}
+            {currentQuestion.diagram && !isAngleLocate && (
               <AnimatePresence mode="wait">
                 <motion.div
                   key={`diagram-${currentQuestion.id}`}
@@ -381,10 +426,26 @@ export function MentalMathSession({
                   transition={{ duration: 0.2, ease: "easeInOut" }}
                   className="w-full flex justify-center mt-[-32px]"
                 >
-                  <DiagramRenderer data={currentQuestion.diagram} />
+                  <DiagramRenderer
+                    data={currentQuestion.diagram}
+                    feedback={unitCircleFeedback}
+                  />
                 </motion.div>
               </AnimatePresence>
             )}
+
+            {showFeedback &&
+              !lastAttempt?.isCorrect &&
+              currentQuestion.explanation &&
+              !answerRevealed &&
+              !isAngleLocate && (
+                <div className="w-full max-w-md rounded-xl bg-surface-elevated px-4 py-3 text-center">
+                  <MathContent
+                    content={currentQuestion.explanation}
+                    className="text-sm leading-relaxed text-text-muted"
+                  />
+                </div>
+              )}
 
             {/* Input section */}
             <div className="flex flex-col items-center gap-6 w-full max-w-md">
@@ -423,6 +484,75 @@ export function MentalMathSession({
                       : undefined
                   }
                 />
+              ) : isAngleLocate &&
+                currentQuestion.answerInput?.type === "angle-locate" &&
+                currentQuestion.diagram?.type === "unit-circle" ? (
+                <AngleLocateInput
+                  config={currentQuestion.answerInput}
+                  diagram={currentQuestion.diagram}
+                  correctDegrees={currentQuestion.metadata?.angleDegrees ?? 0}
+                  showFeedback={showFeedback}
+                  isCorrect={lastAttempt?.isCorrect ?? null}
+                  answerRevealed={answerRevealed}
+                  selectedDegrees={locateSelectedDegrees}
+                  explanation={currentQuestion.explanation}
+                  onSelect={handleAngleLocate}
+                  onReveal={
+                    !answerRevealed && showFeedback && !lastAttempt?.isCorrect
+                      ? handleRevealAnswer
+                      : undefined
+                  }
+                  onContinue={
+                    answerRevealed && showFeedback && !lastAttempt?.isCorrect
+                      ? onContinueAfterIncorrect
+                      : undefined
+                  }
+                />
+              ) : isAngleTextDegrees ? (
+                <AngleInput
+                  value={answer}
+                  onChange={setAnswer}
+                  onSubmit={handleSubmit}
+                  showFeedback={showFeedback}
+                  isCorrect={lastAttempt?.isCorrect ?? null}
+                  answerRevealed={answerRevealed}
+                  revealedAnswer={String(currentQuestion.answer)}
+                  onReveal={
+                    !answerRevealed && showFeedback && !lastAttempt?.isCorrect
+                      ? handleRevealAnswer
+                      : undefined
+                  }
+                  onContinue={
+                    answerRevealed && showFeedback && !lastAttempt?.isCorrect
+                      ? onContinueAfterIncorrect
+                      : undefined
+                  }
+                />
+              ) : isAngleTextRadians ? (
+                <>
+                  <RadianInput
+                    value={answerRevealed ? String(currentQuestion.answer) : answer}
+                    onChange={setAnswer}
+                    onSubmit={handleSubmit}
+                    showFeedback={showFeedback}
+                    isCorrect={lastAttempt?.isCorrect ?? null}
+                    answerRevealed={answerRevealed}
+                    onReveal={
+                      !answerRevealed && showFeedback && !lastAttempt?.isCorrect
+                        ? handleRevealAnswer
+                        : undefined
+                    }
+                  />
+                  {answerRevealed && showFeedback && !lastAttempt?.isCorrect && (
+                    <button
+                      type="button"
+                      onClick={onContinueAfterIncorrect}
+                      className="rounded-xl bg-primary/20 px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/30"
+                    >
+                      Continue
+                    </button>
+                  )}
+                </>
               ) : isPrimeFactorSlots && currentQuestion.answerInput?.type === "prime-factor-slots" ? (
                 <PrimeFactorSlotsInput
                   slotCount={currentQuestion.answerInput.slotCount}
@@ -671,7 +801,10 @@ export function MentalMathSession({
 
 
       {/* Success feedback popup */}
-      <FeedbackPopup show={showSuccessFeedback} />
+      <FeedbackPopup
+        show={showSuccessFeedback}
+        message={currentQuestion.metadata?.feedbackMessage ?? "Correct!"}
+      />
 
       <AnimatePresence>
         {showEndConfirm && (

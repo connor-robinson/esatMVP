@@ -393,6 +393,14 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'latex', latex: String.raw`\sin 30°` },
     { kind: 'latex', latex: String.raw`\cos 60°` },
   ]),
+  'angle_recall-degrees': S([
+    { kind: 'plain', text: 'Identify angle on unit circle' },
+    { kind: 'plain', text: '135° = 3π/4' },
+  ]),
+  'angle_recall-radians': S([
+    { kind: 'latex', latex: String.raw`\frac{3\pi}{4}` },
+    { kind: 'plain', text: 'Click position on unit circle' },
+  ]),
   'trig_inverse-basic-inverse': S([
     { kind: 'latex', latex: String.raw`\sin^{-1}(0.5)` },
     { kind: 'latex', latex: String.raw`\tan^{-1}(1)` },

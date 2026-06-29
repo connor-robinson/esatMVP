@@ -262,7 +262,30 @@ export interface GeometryDiagramData {
   points?: { x: number; y: number; label?: string; emphasis?: boolean }[];
 }
 
-export type DiagramData = TriangleDiagramData | GeometryDiagramData;
+export interface UnitCircleLabelConfig {
+  degrees: number;
+  /** Override label text (e.g. "?") */
+  text?: string;
+  hidden?: boolean;
+}
+
+export interface UnitCircleDiagramConfig {
+  cx: number;
+  cy: number;
+  r: number;
+  viewBox: { x: number; y: number; width: number; height: number };
+  highlightDegrees?: number;
+  showHighlightPoint?: boolean;
+  labels?: UnitCircleLabelConfig[];
+  showAxes?: boolean;
+}
+
+export interface UnitCircleDiagramData {
+  type: "unit-circle";
+  config: UnitCircleDiagramConfig;
+}
+
+export type DiagramData = TriangleDiagramData | GeometryDiagramData | UnitCircleDiagramData;
 
 export interface AnswerChoice {
   id: string;
@@ -281,7 +304,21 @@ export interface PrimeFactorSlotsAnswerInput {
   slotCount: number;
 }
 
-export type AnswerInputConfig = BinaryChoiceAnswerInput | PrimeFactorSlotsAnswerInput;
+export interface AngleLocateAnswerInput {
+  type: "angle-locate";
+  toleranceDeg?: number;
+}
+
+export interface AngleTextAnswerInput {
+  type: "angle-text";
+  format: "degrees" | "radians";
+}
+
+export type AnswerInputConfig =
+  | BinaryChoiceAnswerInput
+  | PrimeFactorSlotsAnswerInput
+  | AngleLocateAnswerInput
+  | AngleTextAnswerInput;
 
 export interface GeneratedQuestion {
   id: string;
@@ -317,6 +354,11 @@ export interface GeneratedQuestion {
   metadata?: {
     theorems?: string[];
     templateId?: string;
+    angleDegrees?: number;
+    questionType?: "identify" | "locate" | "convert" | "missing_label";
+    mode?: "degrees" | "radians";
+    feedbackDurationMs?: number;
+    feedbackMessage?: string;
   };
 }
 

@@ -191,7 +191,7 @@ const TRIGONOMETRY_FOLDERS: FolderDef[] = [
   {
     id: 'trigonometry-all',
     name: 'Trigonometry',
-    topicIds: ['trig_recall', 'trig_inverse', 'trig_applications'],
+    topicIds: ['trig_recall', 'trig_inverse', 'trig_applications', 'angle_recall'],
     symbol: { kind: 'latex', latex: String.raw`\sin\theta` },
   },
 ];
@@ -330,7 +330,7 @@ const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
     'sequences',
   ],
   shortcuts: ['percentages'],
-  trigonometry: ['trig_recall', 'trig_inverse', 'trig_applications'],
+  trigonometry: ['trig_recall', 'trig_inverse', 'trig_applications', 'angle_recall'],
   physics: [
     'kinematics',
     'forces_motion',

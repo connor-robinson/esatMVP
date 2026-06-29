@@ -1184,6 +1184,30 @@ export const TOPICS: Record<string, Topic> = {
     ],
     icon: "Triangle",
   },
+  angle_recall: {
+    id: "angle_recall",
+    name: "Angle Recall",
+    subjectId: "maths",
+    category: "trigonometry",
+    description: "Recognise standard unit-circle angles and convert between degrees and radians",
+    variants: [
+      {
+        id: "degrees",
+        name: "Degrees",
+        description: "Identify and locate angles in degrees on the unit circle",
+        difficulty: 1,
+        config: { level: 1 },
+      },
+      {
+        id: "radians",
+        name: "Radians",
+        description: "Identify and locate angles in exact π form on the unit circle",
+        difficulty: 2,
+        config: { level: 2 },
+      },
+    ],
+    icon: "Triangle",
+  },
   trig_inverse: {
     id: "trig_inverse",
     name: "Inverse Trig Functions",
@@ -1328,6 +1352,7 @@ export const CATEGORIES: Record<TopicCategory, string[]> = {
     "trig_recall",
     "trig_inverse",
     "trig_applications",
+    "angle_recall",
   ],
   mechanics: [
     "kinematics",

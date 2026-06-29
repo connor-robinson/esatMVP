@@ -785,10 +785,11 @@ export function useBuilderSession() {
       persistAttempt(currentSession.id, attempt);
 
       if (isCorrect) {
+        const delay = currentQuestion.metadata?.feedbackDurationMs ?? 80;
         setTimeout(() => {
           setShowFeedback(false);
           advanceToNextQuestion();
-        }, 80);
+        }, delay);
       }
     },
     [
