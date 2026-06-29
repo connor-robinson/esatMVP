@@ -22,6 +22,11 @@ export function generateGeometry3d(
   level: number,
   weights?: Record<string, number>,
 ): GeneratedQuestion {
+  if (level === 12) return volCone();
+  if (level === 13) return volPyramid();
+  if (level === 11) return generateVolume({ cuboid: 1, cylinder: 1, pyramid: 0, cone: 0, sphere: 0, hemisphere: 0 });
+  if (level === 14) return generateVolume({ cuboid: 0, cylinder: 0, pyramid: 0, cone: 0, sphere: 1, hemisphere: 1 });
+  if (level === 15) return generateVolume({ cuboid: 0, cylinder: 0, pyramid: 1, cone: 1, sphere: 0, hemisphere: 0 });
   if (level >= 2) return generateSurfaceArea(weights);
   return generateVolume(weights);
 }
@@ -32,10 +37,10 @@ type VolKind = "cuboid" | "cylinder" | "pyramid" | "cone" | "sphere" | "hemisphe
 
 function generateVolume(weights?: Record<string, number>): GeneratedQuestion {
   const kind = pickWeighted<VolKind>([
-    { value: "cuboid", w: weights?.cuboid ?? 25 },
-    { value: "cylinder", w: weights?.cylinder ?? 25 },
-    { value: "pyramid", w: weights?.pyramid ?? 15 },
-    { value: "cone", w: weights?.cone ?? 15 },
+    { value: "cuboid", w: weights?.cuboid ?? 20 },
+    { value: "cylinder", w: weights?.cylinder ?? 20 },
+    { value: "pyramid", w: weights?.pyramid ?? 20 },
+    { value: "cone", w: weights?.cone ?? 20 },
     { value: "sphere", w: weights?.sphere ?? 10 },
     { value: "hemisphere", w: weights?.hemisphere ?? 10 },
   ]);

@@ -291,6 +291,26 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'plain', text: 'Find the volume in terms of π.' },
     { kind: 'plain', text: 'Find the volume.' },
   ]),
+  'geometry_3d-volume-prisms': S([
+    { kind: 'plain', text: 'Cuboid volume' },
+    { kind: 'plain', text: 'Cylinder volume (π)' },
+  ]),
+  'geometry_3d-volume-cone-pyramid': S([
+    { kind: 'plain', text: 'Cone volume (π)' },
+    { kind: 'plain', text: 'Pyramid volume' },
+  ]),
+  'geometry_3d-volume-cone': S([
+    { kind: 'plain', text: 'Cone: V = (1/3) pi r^2 h' },
+    { kind: 'plain', text: 'Find the volume in terms of pi.' },
+  ]),
+  'geometry_3d-volume-pyramid': S([
+    { kind: 'plain', text: 'Pyramid: V = (1/3) a^2 h' },
+    { kind: 'plain', text: 'Find the volume.' },
+  ]),
+  'geometry_3d-volume-spheres': S([
+    { kind: 'plain', text: 'Sphere volume (π)' },
+    { kind: 'plain', text: 'Hemisphere volume (π)' },
+  ]),
   'geometry_3d-surface-area': S([
     { kind: 'plain', text: 'Find the surface area in terms of π.' },
     { kind: 'plain', text: 'Find the surface area.' },
