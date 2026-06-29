@@ -22,11 +22,8 @@ export function generateGeometry3d(
   level: number,
   weights?: Record<string, number>,
 ): GeneratedQuestion {
-  if (level === 12) return volCone();
-  if (level === 13) return volPyramid();
-  if (level === 11) return generateVolume({ cuboid: 1, cylinder: 1, pyramid: 0, cone: 0, sphere: 0, hemisphere: 0 });
-  if (level === 14) return generateVolume({ cuboid: 0, cylinder: 0, pyramid: 0, cone: 0, sphere: 1, hemisphere: 1 });
-  if (level === 15) return generateVolume({ cuboid: 0, cylinder: 0, pyramid: 1, cone: 1, sphere: 0, hemisphere: 0 });
+  // Legacy sub-variants (11–15) → mixed volume
+  if (level >= 11) return generateVolume(weights);
   if (level >= 2) return generateSurfaceArea(weights);
   return generateVolume(weights);
 }
