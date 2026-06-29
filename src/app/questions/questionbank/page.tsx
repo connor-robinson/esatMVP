@@ -357,6 +357,9 @@ export default function QuestionBankPage() {
     sessionCompleting,
   ]);
 
+  const completeSessionRef = useRef(completeSession);
+  completeSessionRef.current = completeSession;
+
   const activeSession = sessionMode && sessionQuestions.length > 0;
   const sessionBootPending =
     isSessionMode ||
@@ -386,6 +389,7 @@ export default function QuestionBankPage() {
             1000;
           setDeadline(startTime + timeLimitMs);
           setTimerStartTime(startTime);
+          setRemainingTime(Math.ceil(timeLimitMs / 1000));
 
           void initializeTrackedSession({
             questions,
@@ -457,35 +461,40 @@ export default function QuestionBankPage() {
       .finally(() => setCommunityStatsLoading(false));
   }, [currentQuestion?.id, isAnswered, isCorrect]);
 
-  // Timer effect - countdown for sessions, count-up for regular practice
+  // Session countdown — stable interval; do not depend on completeSession (it changes every answer)
   useEffect(() => {
-    if (sessionMode && deadline) {
-      // Countdown timer for session mode
-      const interval = setInterval(() => {
-        const now = Date.now();
-        const remaining = Math.max(0, Math.ceil((deadline - now) / 1000));
-        setRemainingTime(remaining);
+    if (!sessionMode || !deadline) return;
 
-        if (remaining <= 0) {
-          clearInterval(interval);
-          void completeSession();
-        }
-      }, 1000);
+    let interval: ReturnType<typeof setInterval> | null = null;
 
-      return () => clearInterval(interval);
-    } else if (!sessionMode && timerStartTime !== null) {
-      // Count-up timer for regular practice mode
-      if (isCorrect === true) {
-        return;
+    const tick = () => {
+      const remaining = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+      setRemainingTime(remaining);
+
+      if (remaining <= 0) {
+        if (interval) clearInterval(interval);
+        void completeSessionRef.current();
       }
+    };
 
-      const interval = setInterval(() => {
-        setElapsedTime(Date.now() - timerStartTime);
-      }, 100); // Update every 100ms for smooth display
+    tick();
+    interval = setInterval(tick, 1000);
 
-      return () => clearInterval(interval);
-    }
-  }, [sessionMode, deadline, timerStartTime, isCorrect, completeSession]);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [sessionMode, deadline]);
+
+  // Count-up timer for regular practice mode
+  useEffect(() => {
+    if (sessionMode || timerStartTime === null || isCorrect === true) return;
+
+    const interval = setInterval(() => {
+      setElapsedTime(Date.now() - timerStartTime);
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [sessionMode, timerStartTime, isCorrect]);
 
   // Timer effect - start from 0:00 when new question loads (for count-up mode)
   const currentQuestionId = currentQuestion?.id;
