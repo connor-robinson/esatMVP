@@ -67,7 +67,9 @@ function difficultyPillClass(d: UiDifficultyLabel, active: boolean): string {
   }
 }
 
-const DIFFICULTY_AUTO_ACTIVE = "bg-secondary/35 text-text";
+const DIFFICULTY_AUTO_ACTIVE =
+  "bg-surface-neutral text-text dark:bg-[#5b5661] dark:text-text";
+const DIFFICULTY_AUTO_INACTIVE = SUBJECT_PILL_INACTIVE;
 
 function clamp(n: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, n));
@@ -332,33 +334,35 @@ export function QuestionBankSessionSettingsModal({
                   : `${difficultiesUi.length} selected`}
               </span>
             </div>
-            <div className="flex flex-wrap gap-2.5">
+            <div className="flex flex-wrap items-center justify-between gap-2.5">
+              <div className="flex flex-wrap gap-2.5">
+                {ALL_UI_DIFFICULTIES.map((d) => {
+                  const active = difficultiesUi.includes(d);
+                  return (
+                    <button
+                      key={d}
+                      type="button"
+                      onClick={() => toggleDifficulty(d)}
+                      className={cn(
+                        "rounded-organic-md px-3.5 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors",
+                        difficultyPillClass(d, active),
+                      )}
+                    >
+                      {d}
+                    </button>
+                  );
+                })}
+              </div>
               <button
                 type="button"
                 onClick={selectDifficultyAuto}
                 className={cn(
-                  "rounded-organic-md px-3.5 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors",
-                  difficultyAuto ? DIFFICULTY_AUTO_ACTIVE : SUBJECT_PILL_INACTIVE,
+                  "ml-4 shrink-0 rounded-organic-md px-3.5 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors",
+                  difficultyAuto ? DIFFICULTY_AUTO_ACTIVE : DIFFICULTY_AUTO_INACTIVE,
                 )}
               >
                 Auto
               </button>
-              {ALL_UI_DIFFICULTIES.map((d) => {
-                const active = difficultiesUi.includes(d);
-                return (
-                  <button
-                    key={d}
-                    type="button"
-                    onClick={() => toggleDifficulty(d)}
-                    className={cn(
-                      "rounded-organic-md px-3.5 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors",
-                      difficultyPillClass(d, active),
-                    )}
-                  >
-                    {d}
-                  </button>
-                );
-              })}
             </div>
           </div>
         </div>
