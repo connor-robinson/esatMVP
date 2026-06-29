@@ -13,8 +13,11 @@ import { toSuperscript } from "./utils/formatting";
 import { createAnswerChecker } from "@/lib/answer-checker";
 
 export function generateQuadraticEquations(level: number, weights?: Record<string, number>): GeneratedQuestion {
-  if (level === 1) return generateMonic();
-  if (level === 2) return generateNonMonic();
+  if (level === 1) {
+    // Factorising mode mixes monic + non-monic (no separate UI modes).
+    return Math.random() < 0.6 ? generateMonic() : generateNonMonic();
+  }
+  // Hard mode: formula-friendly set
   return generateFormulaFriendly();
 }
 

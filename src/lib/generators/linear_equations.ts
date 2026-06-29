@@ -14,8 +14,11 @@ function pick<T>(arr: T[]): T {
 }
 
 export function generateLinearEquations(level: number, weights?: Record<string, number>): GeneratedQuestion {
-  if (level === 1) return generateLevel1();
-  if (level === 2) return generateLevel2();
+  if (level === 1) {
+    // Core mode mixes the two main “styles” without creating duplicate UI modes.
+    return Math.random() < 0.55 ? generateLevel1() : generateLevel2();
+  }
+  // Fractions mode (harder)
   return generateLevel3();
 }
 

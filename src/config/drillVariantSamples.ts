@@ -173,11 +173,11 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
   ]),
 
   // —— Algebra ——
-  'linearEquations-one-two-step': S([
+  'linearEquations-core': S([
     { kind: 'latex', latex: String.raw`2x + 5 = 13` },
-    { kind: 'latex', latex: String.raw`3x - 4 = 11` },
+    { kind: 'latex', latex: String.raw`2(x + 3) = 14` },
   ]),
-  'linearEquations-brackets-and-negatives': S([
+  'linearEquations-fractions': S([
     { kind: 'latex', latex: String.raw`2(x + 3) = 14` },
     { kind: 'latex', latex: String.raw`-(x - 2) = 5` },
   ]),
@@ -185,27 +185,19 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'latex', latex: String.raw`\frac{x}{2} + 1 = 5` },
     { kind: 'latex', latex: String.raw`\frac{2x}{3} = 4` },
   ]),
-  'quadraticEquations-factorise-monic': S([
+  'quadraticEquations-factorise': S([
     { kind: 'latex', latex: String.raw`x^2 + 5x + 6 = 0` },
-    { kind: 'latex', latex: String.raw`x^2 - 9 = 0` },
-  ]),
-  'quadraticEquations-factorise-non-monic': S([
     { kind: 'latex', latex: String.raw`2x^2 + 7x + 3 = 0` },
-    { kind: 'latex', latex: String.raw`3x^2 - 5x - 2 = 0` },
   ]),
-  'quadraticEquations-formula-perfect-square': S([
+  'quadraticEquations-hard': S([
     { kind: 'latex', latex: String.raw`x^2 - 4x + 1 = 0` },
     { kind: 'latex', latex: String.raw`(x - 3)^2 = 0` },
   ]),
-  'polynomials-simplify-like-terms': S([
-    { kind: 'latex', latex: String.raw`3x + 2x` },
-    { kind: 'latex', latex: String.raw`5a - 2a + 4` },
-  ]),
-  'polynomials-expand-brackets': S([
+  'polynomials-expand': S([
     { kind: 'latex', latex: String.raw`2(x + 3)` },
     { kind: 'latex', latex: String.raw`(x + 2)(x - 1)` },
   ]),
-  'polynomials-factor-common': S([
+  'polynomials-factor': S([
     { kind: 'latex', latex: String.raw`6x + 9` },
     { kind: 'latex', latex: String.raw`4x^2 + 8x` },
   ]),

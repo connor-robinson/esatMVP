@@ -1,9 +1,8 @@
 /**
  * Polynomials generator
  * Levels:
- * 1 - Simplify like terms
- * 2 - Expand brackets
- * 3 - Factorise common factor
+ * 1 - Expand brackets
+ * 2 - Factorise common factor
  */
 
 import { GeneratedQuestion } from "@/types/core";
@@ -11,28 +10,8 @@ import { generateId } from "@/lib/utils";
 import { randomInt } from "./utils/random";
 
 export function generatePolynomials(level: number, weights?: Record<string, number>): GeneratedQuestion {
-  if (level === 1) return generateSimplify();
-  if (level === 2) return generateExpand();
+  if (level === 1) return generateExpand();
   return generateFactorCommon();
-}
-
-function generateSimplify(): GeneratedQuestion {
-  const a1 = randomInt(-7, 7);
-  const a2 = randomInt(-7, 7);
-  const b = randomInt(-10, 10);
-
-  const expr = `${a1}x ${a2 >= 0 ? "+" : "-"} ${Math.abs(a2)}x ${b >= 0 ? "+" : "-"} ${Math.abs(b)}`;
-  const coeff = a1 + a2;
-  const question = `Simplify: $${expr}$`;
-  const answer = `${coeff}x ${b >= 0 ? "+" : "-"} ${Math.abs(b)}`;
-
-  return {
-    id: generateId(),
-    topicId: "polynomials",
-    question,
-    answer,
-    difficulty: 1,
-  };
 }
 
 function generateExpand(): GeneratedQuestion {
@@ -74,7 +53,7 @@ function generateExpand(): GeneratedQuestion {
     topicId: "polynomials",
     question,
     answer,
-    difficulty: 2,
+    difficulty: 1,
   };
 }
 
@@ -94,7 +73,7 @@ function generateFactorCommon(): GeneratedQuestion {
     topicId: "polynomials",
     question,
     answer,
-    difficulty: 3,
+    difficulty: 2,
   };
 }
 
