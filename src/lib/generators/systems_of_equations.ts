@@ -51,6 +51,14 @@ function latexFrac(n: number, d: number): string {
   return `\\frac{${n}}{${d}}`;
 }
 
+function formatTwoEquationPrompt(q1: string, q2: string): string {
+  return `$${q1}$\n\n$${q2}$\n\nSolve for $x$ and $y$.`;
+}
+
+function formatThreeEquationPrompt(q1: string, q2: string, q3: string): string {
+  return `$${q1}$\n\n$${q2}$\n\n$${q3}$\n\nSolve for $x$, $y$, and $z$.`;
+}
+
 function generateLevel1(): GeneratedQuestion {
   // Allow integers + simple fractions (halves / thirds) while guaranteeing unique solution.
   const den = pick([1, 1, 1, 2, 2, 3]);
@@ -80,7 +88,7 @@ function generateLevel1(): GeneratedQuestion {
   const q1 = `${a1}x ${b1 >= 0 ? "+" : "-"} ${Math.abs(b1)}y = ${latexFrac(c1n, den)}`;
   const q2 = `${a2}x ${b2 >= 0 ? "+" : "-"} ${Math.abs(b2)}y = ${latexFrac(c2n, den)}`;
 
-  const question = `Solve the system: $${q1}$; $${q2}$`;
+  const question = formatTwoEquationPrompt(q1, q2);
   const answerParts = [frac(xNum, den), frac(yNum, den)];
   const answer = answerParts.join(", ");
   const checker = createAnswerChecker({
@@ -128,7 +136,7 @@ function generateLevel2(): GeneratedQuestion {
   const q1 = `${a1}x ${b1 >= 0 ? "+" : "-"} ${Math.abs(b1)}y = ${latexFrac(c1n, den)}`;
   const q2 = `${a2}x ${b2 >= 0 ? "+" : "-"} ${Math.abs(b2)}y = ${latexFrac(c2n, den)}`;
 
-  const question = `Solve the system: $${q1}$; $${q2}$`;
+  const question = formatTwoEquationPrompt(q1, q2);
   const answerParts = [frac(xNum, den), frac(yNum, den)];
   const answer = answerParts.join(", ");
   const checker = createAnswerChecker({
@@ -150,26 +158,40 @@ function generateLevel2(): GeneratedQuestion {
 }
 
 function generateLevel3(): GeneratedQuestion {
-  // Create fractional coefficients by scaling integer system
   const x = randomInt(-5, 5) || 1;
   const y = randomInt(-5, 5) || 2;
 
-  const a1 = pick([-4, -3, 2, 3, 4]);
-  const b1 = pick([-4, -3, 2, 3, 4]);
-  const c1 = a1 * x + b1 * y;
+  let a1 = 0, b1 = 0, c1 = 0;
+  let a2 = 0, b2 = 0, c2 = 0;
+  let k1 = 1, k2 = 1;
 
-  const a2 = pick([-4, -3, 2, 3, 4]);
-  const b2 = pick([-4, -3, 2, 3, 4]);
-  const c2 = a2 * x + b2 * y;
-
-  const k1 = pick([2, 3, 4]);
-  const k2 = pick([2, 3, 4]);
+  for (let t = 0; t < 60; t++) {
+    a1 = pick([-4, -3, 2, 3, 4]);
+    b1 = pick([-4, -3, 2, 3, 4]);
+    a2 = pick([-4, -3, 2, 3, 4]);
+    b2 = pick([-4, -3, 2, 3, 4]);
+    const det = a1 * b2 - a2 * b1;
+    if (det === 0) continue;
+    c1 = a1 * x + b1 * y;
+    c2 = a2 * x + b2 * y;
+    k1 = pick([2, 3, 4]);
+    k2 = pick([2, 3, 4]);
+    break;
+  }
 
   const q1 = `\\frac{${c1}}{${k1}} = \\frac{${a1}}{${k1}}x + \\frac{${b1}}{${k1}}y`;
   const q2 = `\\frac{${c2}}{${k2}} = \\frac{${a2}}{${k2}}x + \\frac{${b2}}{${k2}}y`;
 
-  const question = `Solve the system: $${q1}$; $${q2}$`;
-  const answer = `x = ${x}, y = ${y}`;
+  const question = formatTwoEquationPrompt(q1, q2);
+  const answerParts = [String(x), String(y)];
+  const answer = answerParts.join(", ");
+  const checker = createAnswerChecker({
+    correctAnswer: answer,
+    acceptFractions: true,
+    acceptDecimals: true,
+    tolerance: 0.001,
+    customChecker: multiPartChecker(answerParts),
+  });
 
   return {
     id: generateId(),
@@ -177,6 +199,7 @@ function generateLevel3(): GeneratedQuestion {
     question,
     answer,
     difficulty: 3,
+    checker,
   };
 }
 
@@ -224,8 +247,8 @@ function generate3x3System(opts: { coeffPool: number[]; solutionRange: [number, 
     const q3 = `${a3}x ${b3 >= 0 ? "+" : "-"} ${Math.abs(b3)}y ${c3 >= 0 ? "+" : "-"} ${Math.abs(c3)}z = ${k3}`;
 
     return {
-      question: `Solve the system: $${q1}$; $${q2}$; $${q3}$`,
-      answer: `x = ${x}, y = ${y}, z = ${z}`,
+      question: formatThreeEquationPrompt(q1, q2, q3),
+      answer: `${x}, ${y}, ${z}`,
       x,
       y,
       z,
@@ -234,8 +257,12 @@ function generate3x3System(opts: { coeffPool: number[]; solutionRange: [number, 
 
   // Fallback (should be rare)
   return {
-    question: `Solve the system: $x + y + z = 6$; $2x - y + z = 4$; $x + 2y - z = 1$`,
-    answer: `x = 1, y = 2, z = 3`,
+    question: formatThreeEquationPrompt(
+      "x + y + z = 6",
+      "2x - y + z = 4",
+      "x + 2y - z = 1",
+    ),
+    answer: "1, 2, 3",
     x: 1,
     y: 2,
     z: 3,

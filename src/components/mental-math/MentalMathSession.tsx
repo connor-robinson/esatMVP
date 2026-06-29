@@ -23,6 +23,18 @@ function formatCountdown(seconds: number): string {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
+function parseMultiAnswerRevealPart(part: string): string {
+  const trimmed = part.trim();
+  const eqMatch = trimmed.match(/^[xyz]\s*=\s*(.+)$/i);
+  return eqMatch ? eqMatch[1].trim() : trimmed;
+}
+
+function multiAnswerLabels(count: number): string[] {
+  if (count === 3) return ["x", "y", "z"];
+  if (count === 2) return ["x", "y"];
+  return Array.from({ length: count }, (_, i) => `Value ${i + 1}`);
+}
+
 interface MentalMathSessionProps {
   currentQuestion: GeneratedQuestion;
   questionNumber: number;
@@ -167,6 +179,7 @@ export function MentalMathSession({
     : topic?.variants?.find((v) => v.difficulty === currentQuestion.difficulty)?.name;
 
   const displayTopicName = variantName ? `${topicName}: ${variantName}` : topicName;
+  const answerFieldLabels = multiAnswerLabels(answerParts.length);
 
   return (
     <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-background">
@@ -245,7 +258,7 @@ export function MentalMathSession({
                 transition={{ duration: 0.1, ease: "easeInOut" }}
                 className="text-center"
               >
-                <div className="text-lg font-semibold tracking-tight leading-tight text-text-muted md:text-xl">
+                <div className="text-lg font-semibold tracking-tight leading-relaxed text-text-muted md:text-xl [&_.math-content]:space-y-4">
                   <MathContent content={currentQuestion.question} />
                 </div>
               </motion.div>
@@ -271,52 +284,58 @@ export function MentalMathSession({
             <div className="flex flex-col items-center gap-6 w-full max-w-md">
               {isMultiAnswer ? (
                 <>
-                  <div className="flex w-full justify-center gap-3">
-                    {multiAnswers.map((value, index) => (
-                      <input
-                        key={index}
-                        ref={index === 0 ? simpleInputRef : undefined}
-                        type="text"
-                        value={
-                          answerRevealed
-                            ? String(currentQuestion.answer)
-                                .split(",")
-                                .filter((p) => p.trim().length > 0)[index] ?? ""
-                            : value
-                        }
-                        onChange={(e) => {
-                          const next = [...multiAnswers];
-                          next[index] = e.target.value;
-                          setMultiAnswers(next);
-                        }}
-                        onKeyDown={handleKeyDown}
-                        placeholder={
-                          multiAnswers.length === 3
-                            ? ["x", "y", "z"][index] ?? `Value ${index + 1}`
-                            : multiAnswers.length === 2
-                              ? ["x", "y"][index] ?? `Value ${index + 1}`
-                              : `Value ${index + 1}`
-                        }
-                        className={cn(
-                          "w-32 h-14 text-xl font-semibold rounded-2xl border-0 outline-none transition-all duration-75",
-                          showFeedback && lastAttempt?.isCorrect
-                            ? "bg-primary/20 text-primary focus:ring-0 focus:outline-none"
-                            : showFeedback && !lastAttempt?.isCorrect
-                            ? "bg-error/20 text-error focus:ring-0 focus:outline-none"
-                            : "bg-surface-elevated text-text focus:ring-0 focus:outline-none",
-                          "placeholder:text-text-disabled placeholder:text-sm placeholder:font-medium",
-                          (showFeedback && lastAttempt?.isCorrect) || answerRevealed ? "cursor-not-allowed" : ""
-                        )}
-                        style={{
-                          textAlign: "center",
-                          lineHeight: "3.5rem",
-                          height: "3.5rem",
-                        }}
-                        autoComplete="off"
-                        disabled={showFeedback && lastAttempt?.isCorrect}
-                        readOnly={answerRevealed}
-                      />
-                    ))}
+                  <div className="flex w-full justify-center gap-4">
+                    {multiAnswers.map((value, index) => {
+                      const label = answerFieldLabels[index] ?? `Value ${index + 1}`;
+                      const revealedPart = answerRevealed
+                        ? parseMultiAnswerRevealPart(
+                            String(currentQuestion.answer)
+                              .split(",")
+                              .filter((p) => p.trim().length > 0)[index] ?? "",
+                          )
+                        : "";
+
+                      return (
+                        <div key={index} className="flex flex-col items-center gap-2">
+                          <span className="text-sm font-bold uppercase tracking-wider text-text">
+                            {label}
+                          </span>
+                          <input
+                            ref={index === 0 ? simpleInputRef : undefined}
+                            type="text"
+                            value={answerRevealed ? revealedPart : value}
+                            onChange={(e) => {
+                              const next = [...multiAnswers];
+                              next[index] = e.target.value;
+                              setMultiAnswers(next);
+                            }}
+                            onKeyDown={handleKeyDown}
+                            placeholder={label}
+                            aria-label={label}
+                            className={cn(
+                              "w-32 h-14 text-xl font-semibold rounded-2xl border-0 outline-none transition-all duration-75",
+                              showFeedback && lastAttempt?.isCorrect
+                                ? "bg-primary/20 text-primary focus:ring-0 focus:outline-none"
+                                : showFeedback && !lastAttempt?.isCorrect
+                                  ? "bg-error/20 text-error focus:ring-0 focus:outline-none"
+                                  : "bg-surface-elevated text-text focus:ring-0 focus:outline-none",
+                              "placeholder:text-text-disabled placeholder:text-base placeholder:font-semibold",
+                              (showFeedback && lastAttempt?.isCorrect) || answerRevealed
+                                ? "cursor-not-allowed"
+                                : "",
+                            )}
+                            style={{
+                              textAlign: "center",
+                              lineHeight: "3.5rem",
+                              height: "3.5rem",
+                            }}
+                            autoComplete="off"
+                            disabled={showFeedback && lastAttempt?.isCorrect}
+                            readOnly={answerRevealed}
+                          />
+                        </div>
+                      );
+                    })}
                   </div>
 
                   {/* Submit / reveal buttons for multi-answer */}
