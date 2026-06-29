@@ -1,0 +1,1012 @@
+{
+  "generated_at": "2026-06-29T17:05:11.071817+00:00",
+  "mode": "apply",
+  "cohort": "part 2",
+  "manual_patch_version": "esat_unassessed_part2_v1_exact_patches",
+  "source_file": "esat_unassessed_part2_manual_decisions_100_v1_exact_patches.json",
+  "source_checksum_sha256": "74260d51c6f30edfb862c80a98dfdd57e7a4aad7f4b78c22558c05ba85a758e9",
+  "manual_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\data\\manual_overrides\\esat_unassessed_part2_manual_decisions_100_v1_exact_patches.json",
+  "summary": {
+    "no_change_approvals": 64,
+    "patched_in_place": 18,
+    "retagged_and_patched": 13,
+    "asset_replacements": 0,
+    "originals_retired": 5,
+    "replacements_created": 5,
+    "answer_keys_changed": 10,
+    "stem_hash_mismatches": 0,
+    "post_check_blocked": 0,
+    "replacement_qg_blocked": 0,
+    "remaining_human_review": 0,
+    "already_applied": 0,
+    "row_missing": 0,
+    "errors": 0,
+    "total_decisions": 100,
+    "accounted_for": 100,
+    "all_accounted": true,
+    "audit_entries_created": 100
+  },
+  "bucket_counts": {
+    "would_approve_no_change": 64,
+    "would_retag_and_approve": 13,
+    "would_patch_and_approve": 18,
+    "would_retire_and_create_replacement": 5
+  },
+  "applied_approve": 95,
+  "applied_retire": 5,
+  "replacements_created": [
+    {
+      "original_id": "d4721b35-3c40-4548-80b1-a4b0ce8b7eb5",
+      "replacement_id": "af988609-76bc-4586-a638-4c55aa26f5ec",
+      "qg_blocked": false
+    },
+    {
+      "original_id": "deefeae9-3560-44ee-9516-5364edb0a25d",
+      "replacement_id": "bc1bbb81-b415-4f09-8112-d3607d6b98df",
+      "qg_blocked": false
+    },
+    {
+      "original_id": "e03392c5-bbd7-430e-8ad0-178a62df1a24",
+      "replacement_id": "eee4c85b-51ea-4e08-841f-08341b7389f7",
+      "qg_blocked": false
+    },
+    {
+      "original_id": "ec01849e-dbe3-4e59-8e34-f65ae1a034a6",
+      "replacement_id": "19d28c12-a7e7-44cf-ab45-f9648f58f6a3",
+      "qg_blocked": false
+    },
+    {
+      "original_id": "f3de23fe-87ba-41da-a6bf-e2bcc44d7b2a",
+      "replacement_id": "b5b97eb7-4a9a-41b6-9a9e-64b7f8e53eec",
+      "qg_blocked": false
+    }
+  ],
+  "apply_errors": [],
+  "results": [
+    {
+      "id": "cdb94f31-0376-4f7f-a6e8-deef81a4309c",
+      "id_prefix": "cdb94f31",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "cdf28d25-7083-48c5-8014-e3225d4dff21",
+      "id_prefix": "cdf28d25",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "would_retag_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "ce2c91a1-b78b-4746-9ca3-5ec6c0f66294",
+      "id_prefix": "ce2c91a1",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "would_retag_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d1ce6805-b11f-416c-9856-e5a889db54fa",
+      "id_prefix": "d1ce6805",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d2045568-a088-4967-a3a5-e99a27539510",
+      "id_prefix": "d2045568",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d236ab08-4795-4951-8ebe-4f0aa9a3ac56",
+      "id_prefix": "d236ab08",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d2432d15-1760-46b1-996c-e2afccd50243",
+      "id_prefix": "d2432d15",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "would_retag_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d24ef7e6-7830-4179-a412-d62029f39a8e",
+      "id_prefix": "d24ef7e6",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d280f047-6de1-44d9-9c60-4b71c9b3c42b",
+      "id_prefix": "d280f047",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d28b9852-88ce-48df-81b9-ad903179ae95",
+      "id_prefix": "d28b9852",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d2ba56da-aaa8-42a9-9f42-5528b9e7bfa0",
+      "id_prefix": "d2ba56da",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d2beb304-7272-4c38-8fd1-1529a0b9917d",
+      "id_prefix": "d2beb304",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d30c7d0c-8aed-4770-9659-c57fd7b55f39",
+      "id_prefix": "d30c7d0c",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d3232c8d-8430-4f40-86a0-87f46a24e3d2",
+      "id_prefix": "d3232c8d",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d33dbaf2-54a1-4b28-a115-d23edc8cf513",
+      "id_prefix": "d33dbaf2",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d3908f06-618a-431d-aae8-3e7a34bab1ed",
+      "id_prefix": "d3908f06",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d395dd49-a6d1-45b9-a7b0-dea460f482fb",
+      "id_prefix": "d395dd49",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d39ced99-2bdb-4f07-933a-f857a06b77b6",
+      "id_prefix": "d39ced99",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d3c2d4b4-4efb-4b85-9c48-6487db3ededf",
+      "id_prefix": "d3c2d4b4",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d4433a92-f5f3-4e64-880b-56490ddd62e1",
+      "id_prefix": "d4433a92",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d4721b35-3c40-4548-80b1-a4b0ce8b7eb5",
+      "id_prefix": "d4721b35",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "would_retire_and_create_replacement",
+      "reasons": [],
+      "replacement_preview": {
+        "stem_preview": "In pea plants, the allele for purple flowers, $P$, is dominant to the allele for white flowers, $p$. A pure-breeding pur"
+      },
+      "replacement_id": "af988609-76bc-4586-a638-4c55aa26f5ec",
+      "replacement_qg": {
+        "verdict": "Pass",
+        "action": "approve",
+        "model": "gemini-2.5-flash"
+      },
+      "applied": true
+    },
+    {
+      "id": "d49805b9-082a-407b-9fb5-7d5bbec0c970",
+      "id_prefix": "d49805b9",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "would_retag_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d4e947e1-55e9-4e2e-ae21-8d2c342bcd2b",
+      "id_prefix": "d4e947e1",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "would_retag_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d527ffe7-99c8-42a1-b5a1-ae80eda50714",
+      "id_prefix": "d527ffe7",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d52efa33-9e4f-4ab5-a6f3-cb3b75beefae",
+      "id_prefix": "d52efa33",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "da85c5d2-79e1-4008-8061-bdeeaf43cff4",
+      "id_prefix": "da85c5d2",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "db4a5727-f011-4c57-9a2d-2ffaa58ac49f",
+      "id_prefix": "db4a5727",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "db5954ff-424f-4b0e-ad3c-639685e81b19",
+      "id_prefix": "db5954ff",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "dbe545df-a0c4-42c4-9f39-6d66c616594c",
+      "id_prefix": "dbe545df",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "de8e3595-b7f6-4b00-8b11-bd75d1a8e588",
+      "id_prefix": "de8e3595",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "de9ee76b-fe88-4d5c-baa5-21c16c6baf5b",
+      "id_prefix": "de9ee76b",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "would_retag_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "dea93dc6-fa54-4935-8b4e-78adeda46b31",
+      "id_prefix": "dea93dc6",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "deb5d83b-5f83-40a6-b9e4-f466863e9606",
+      "id_prefix": "deb5d83b",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "debbe349-0178-4b18-a9fb-448bfd08e5bc",
+      "id_prefix": "debbe349",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "deefeae9-3560-44ee-9516-5364edb0a25d",
+      "id_prefix": "deefeae9",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "would_retire_and_create_replacement",
+      "reasons": [],
+      "replacement_preview": {
+        "stem_preview": "A wave travels $8.4\\ \\text{m}$ in $0.70\\ \\text{s}$. The source produces $2.0$ complete oscillations each second.\n\nWhat i"
+      },
+      "replacement_id": "bc1bbb81-b415-4f09-8112-d3607d6b98df",
+      "replacement_qg": {
+        "verdict": "Pass",
+        "action": "approve",
+        "model": "gemini-2.5-flash"
+      },
+      "applied": true
+    },
+    {
+      "id": "df2f9ee9-b986-44b9-9122-bd476be4202a",
+      "id_prefix": "df2f9ee9",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "df66af5a-5f4f-4a22-8675-e09d1d391cd0",
+      "id_prefix": "df66af5a",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "dfcc4fca-05b6-4d13-8f45-30acef28e31b",
+      "id_prefix": "dfcc4fca",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "would_retag_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "dff38d07-3bbe-47c1-8770-529bcd3e22a8",
+      "id_prefix": "dff38d07",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "would_retag_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "e00a8c14-7d0a-4907-8dee-cb14a0a70851",
+      "id_prefix": "e00a8c14",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "e02cc440-7ef2-4daf-b5cb-55571d25020a",
+      "id_prefix": "e02cc440",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "e03392c5-bbd7-430e-8ad0-178a62df1a24",
+      "id_prefix": "e03392c5",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "would_retire_and_create_replacement",
+      "reasons": [],
+      "replacement_preview": {
+        "stem_preview": "A bat flies directly towards a wall at a constant speed of $5.0\\ \\text{m s}^{-1}$. When it is a distance $d$ from the wa"
+      },
+      "replacement_id": "eee4c85b-51ea-4e08-841f-08341b7389f7",
+      "replacement_qg": {
+        "verdict": "Pass",
+        "action": "approve",
+        "model": "gemini-2.5-flash"
+      },
+      "applied": true
+    },
+    {
+      "id": "e04e1a32-1240-4611-9348-f014639189e4",
+      "id_prefix": "e04e1a32",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "e05ff376-9b7f-4a20-aff2-5e28e3065b06",
+      "id_prefix": "e05ff376",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "e06d3136-15b6-4962-a41d-c705b20643ce",
+      "id_prefix": "e06d3136",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "e087ef65-36e6-4b91-a140-dfaea15c55ba",
+      "id_prefix": "e087ef65",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "e08a1822-9021-4edb-9755-d31bfff37861",
+      "id_prefix": "e08a1822",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "e08f04d4-28ba-40ac-adf2-a1861b00bb72",
+      "id_prefix": "e08f04d4",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "e0992b4d-176d-462a-85f9-39da453eaefc",
+      "id_prefix": "e0992b4d",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "e09c63fe-0450-435b-97fa-67b3208bf43c",
+      "id_prefix": "e09c63fe",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "e6eb2044-c24c-4664-a0f2-bb33a2780d53",
+      "id_prefix": "e6eb2044",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "e6f386f2-ade0-4a21-9090-a8ac45c67350",
+      "id_prefix": "e6f386f2",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "e706a877-9628-4aff-8832-eb5d230258a3",
+      "id_prefix": "e706a877",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "e9e4a5a5-3e20-4bdb-b54a-6ad333519d4c",
+      "id_prefix": "e9e4a5a5",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "would_retag_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "e9f5faf7-bac3-421d-a268-352df125382c",
+      "id_prefix": "e9f5faf7",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "e9f8a4cb-12e1-4a85-ad6a-669c60373902",
+      "id_prefix": "e9f8a4cb",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "e9fa4b86-d6bb-48aa-b944-f371bec17378",
+      "id_prefix": "e9fa4b86",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "e9fba5bc-6017-48c6-9fd9-3782b494245c",
+      "id_prefix": "e9fba5bc",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "ea172eee-ec21-4044-ab0d-2cf8e164f76f",
+      "id_prefix": "ea172eee",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "ea66adac-8a13-4416-ac06-330e9882606f",
+      "id_prefix": "ea66adac",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "ea71cbb3-83fb-4044-8984-297b704d6d64",
+      "id_prefix": "ea71cbb3",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "eabdfd2b-1efa-4706-b136-dcbb675f296a",
+      "id_prefix": "eabdfd2b",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "ead2e83f-bb3f-471f-999e-8948ad6d22d4",
+      "id_prefix": "ead2e83f",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "ead443d3-d7cb-4f70-b2f2-6764819240ac",
+      "id_prefix": "ead443d3",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "eaf66a4a-708b-4c18-b885-0450fc708480",
+      "id_prefix": "eaf66a4a",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "eb41cba2-2d24-4e26-b3c7-ba4accd72a42",
+      "id_prefix": "eb41cba2",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "eb49ce4b-ebb7-4ad0-bac1-6a0d374d6975",
+      "id_prefix": "eb49ce4b",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "eb70e2fc-3ba8-473a-bf21-df91360b5283",
+      "id_prefix": "eb70e2fc",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "eba64585-2e15-4c1f-8b2f-4b443dc9978c",
+      "id_prefix": "eba64585",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "would_retag_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "ec01849e-dbe3-4e59-8e34-f65ae1a034a6",
+      "id_prefix": "ec01849e",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "would_retire_and_create_replacement",
+      "reasons": [],
+      "replacement_preview": {
+        "stem_preview": "Four metals W, X, Y and Z have the following properties.\n\n- W displaces X from aqueous X sulfate.\n- X reacts with dilute"
+      },
+      "replacement_id": "19d28c12-a7e7-44cf-ab45-f9648f58f6a3",
+      "replacement_qg": {
+        "verdict": "Pass",
+        "action": "approve",
+        "model": "gemini-2.5-flash"
+      },
+      "applied": true
+    },
+    {
+      "id": "ec654f24-804f-4c32-b759-f752c9f3daaa",
+      "id_prefix": "ec654f24",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "ec7b13ad-f60b-48c1-92cd-d767b56a7628",
+      "id_prefix": "ec7b13ad",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "ec936fba-bf2a-44c3-8c0f-882802d9808e",
+      "id_prefix": "ec936fba",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "would_retag_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "ecfd58bb-242f-4c10-a35a-5b1a19ee56ea",
+      "id_prefix": "ecfd58bb",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "ecfef3d4-e8a1-4fc7-8c59-a5574865314f",
+      "id_prefix": "ecfef3d4",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f3dce203-b994-4de5-ab28-ae875242f85b",
+      "id_prefix": "f3dce203",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "would_retag_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f3de23fe-87ba-41da-a6bf-e2bcc44d7b2a",
+      "id_prefix": "f3de23fe",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "would_retire_and_create_replacement",
+      "reasons": [],
+      "replacement_preview": {
+        "stem_preview": "An aqueous salt contains one metal ion and one halide ion. A sample gives a brown precipitate when aqueous sodium hydrox"
+      },
+      "replacement_id": "b5b97eb7-4a9a-41b6-9a9e-64b7f8e53eec",
+      "replacement_qg": {
+        "verdict": "Pass",
+        "action": "approve",
+        "model": "gemini-2.5-flash"
+      },
+      "applied": true
+    },
+    {
+      "id": "f4080cfc-9d3d-451c-991a-f761295cfdd7",
+      "id_prefix": "f4080cfc",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "would_retag_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f8159ec8-c3e6-4210-b4c5-b758170fd248",
+      "id_prefix": "f8159ec8",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f815abd1-4b9b-4c27-8f9b-bc76fdb2354f",
+      "id_prefix": "f815abd1",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f83215d4-7575-4980-8c0f-b341320f0d6f",
+      "id_prefix": "f83215d4",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f89cc447-795a-4e43-a790-d4e022ee7e09",
+      "id_prefix": "f89cc447",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f89d0453-cc25-4706-8583-d7e9a5ea7606",
+      "id_prefix": "f89d0453",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f8afdd20-4bc0-4e0c-b169-9c26bd55e776",
+      "id_prefix": "f8afdd20",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f8c2e96c-d3ab-417a-8c34-cbd6cc555bc0",
+      "id_prefix": "f8c2e96c",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f8d7e409-827d-4721-a248-da62adf488ed",
+      "id_prefix": "f8d7e409",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f8d93733-cfae-40d1-af43-826e9ae0cb3c",
+      "id_prefix": "f8d93733",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f8ff122b-c7f2-4633-ba91-6cd8a21b81e6",
+      "id_prefix": "f8ff122b",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f90fbe09-ef5a-4a61-a945-1e023522de6f",
+      "id_prefix": "f90fbe09",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f93c290a-f753-4759-8e65-667f960d72fb",
+      "id_prefix": "f93c290a",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f94f504c-6ec4-4001-a19b-df5c69d83482",
+      "id_prefix": "f94f504c",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f990cf9e-9709-4922-8285-834414bc63f3",
+      "id_prefix": "f990cf9e",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f9b01dc9-f756-4309-82b2-fa84ffe8668a",
+      "id_prefix": "f9b01dc9",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f9e067f3-fbf6-42b8-9ea8-d9778aeffd24",
+      "id_prefix": "f9e067f3",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f9f0fdef-7b31-41e8-8c34-f78693fefc5e",
+      "id_prefix": "f9f0fdef",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f9f581f2-e2d3-4303-95d1-345d1aceae0f",
+      "id_prefix": "f9f581f2",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "fa34732e-2bbc-4841-b8b3-458d58e41aca",
+      "id_prefix": "fa34732e",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "fa5527f1-3482-425c-8534-93b654ea5d58",
+      "id_prefix": "fa5527f1",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "fa95757a-b3be-45cf-9525-2753dc67b066",
+      "id_prefix": "fa95757a",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "fa9765f4-a085-4792-a677-6163ffda6711",
+      "id_prefix": "fa9765f4",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    }
+  ]
+}

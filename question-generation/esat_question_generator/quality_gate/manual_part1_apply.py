@@ -1,4 +1,4 @@
-"""Apply exact manual patches for ESAT unassessed part 1 (100 questions)."""
+"""Apply exact manual patches for ESAT unassessed cohorts (parts 1 and 2)."""
 
 from __future__ import annotations
 
@@ -7,6 +7,7 @@ import json
 import re
 import uuid
 from copy import deepcopy
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional, Tuple
@@ -14,9 +15,56 @@ from typing import Any, Dict, List, Literal, Optional, Tuple
 from quality_gate.curriculum import normalize_subject
 from quality_gate.curriculum_match_parse import CURRICULUM_VALIDATOR_VERSION
 
-MANUAL_PATCH_VERSION = "esat_unassessed_part1_v2_exact_patches"
-SOURCE_FILENAME = "esat_unassessed_part1_manual_decisions_100_v2_exact_patches.json"
-EXPECTED_TOTAL = 100
+
+@dataclass(frozen=True)
+class CohortConfig:
+    manual_patch_version: str
+    source_filename: str
+    expected_total: int
+    audit_key: str
+    decision_source: str
+    job_id_prefix: str
+    gen_id_prefix: str
+    retired_flag: str
+    hash_mismatch_bucket: str = "hash_mismatch"
+    expected_operations: Optional[Dict[str, int]] = None
+    cohort_label: str = "part 1"
+
+
+PART1_CONFIG = CohortConfig(
+    manual_patch_version="esat_unassessed_part1_v2_exact_patches",
+    source_filename="esat_unassessed_part1_manual_decisions_100_v2_exact_patches.json",
+    expected_total=100,
+    audit_key="manual_part1_audits",
+    decision_source="manual_part1_exact_patches",
+    job_id_prefix="manual_part1",
+    gen_id_prefix="manual_part1",
+    retired_flag="retired_by_manual_part1",
+    cohort_label="part 1",
+)
+
+PART2_CONFIG = CohortConfig(
+    manual_patch_version="esat_unassessed_part2_v1_exact_patches",
+    source_filename="esat_unassessed_part2_manual_decisions_100_v1_exact_patches.json",
+    expected_total=100,
+    audit_key="manual_part2_audits",
+    decision_source="manual_part2_exact_patches",
+    job_id_prefix="manual_part2",
+    gen_id_prefix="manual_part2",
+    retired_flag="retired_by_manual_part2",
+    hash_mismatch_bucket="manual_patch_content_mismatch",
+    expected_operations={
+        "no_change": 64,
+        "retag_and_patch_in_place": 13,
+        "patch_in_place": 18,
+        "retire_original_and_create_replacement": 5,
+    },
+    cohort_label="part 2",
+)
+
+MANUAL_PATCH_VERSION = PART1_CONFIG.manual_patch_version
+SOURCE_FILENAME = PART1_CONFIG.source_filename
+EXPECTED_TOTAL = PART1_CONFIG.expected_total
 
 FIGURE_FRAGMENT_RE = re.compile(
     r'<figure\b[^>]*class="qg-diagram"[^>]*>.*?</figure>',
@@ -31,6 +79,7 @@ ApplyBucket = Literal[
     "would_retire_and_create_replacement",
     "already_applied",
     "hash_mismatch",
+    "manual_patch_content_mismatch",
     "row_missing",
     "post_check_blocked",
     "replacement_qg_blocked",
@@ -73,7 +122,11 @@ def stem_sha256(stem: Any) -> str:
     return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
 
 
-def load_manual_decisions(path: Path) -> Tuple[Dict[str, Any], Dict[str, Dict[str, Any]], str]:
+def load_manual_decisions(
+    path: Path,
+    *,
+    config: CohortConfig = PART1_CONFIG,
+) -> Tuple[Dict[str, Any], Dict[str, Dict[str, Any]], str]:
     if not path.is_file():
         raise FileNotFoundError(f"manual file not found: {path}")
     raw_text = path.read_text(encoding="utf-8")
@@ -89,8 +142,19 @@ def load_manual_decisions(path: Path) -> Tuple[Dict[str, Any], Dict[str, Dict[st
         if qid in by_id:
             raise ValueError(f"duplicate decision id: {qid}")
         by_id[qid] = item
-    if len(by_id) != EXPECTED_TOTAL:
-        raise ValueError(f"expected {EXPECTED_TOTAL} decisions, found {len(by_id)}")
+    if len(by_id) != config.expected_total:
+        raise ValueError(f"expected {config.expected_total} decisions, found {len(by_id)}")
+    if config.expected_operations:
+        ops: Dict[str, int] = {}
+        for item in by_id.values():
+            op = str((item.get("implementation") or {}).get("operation") or "").strip()
+            if op:
+                ops[op] = ops.get(op, 0) + 1
+        for op, expected in config.expected_operations.items():
+            if ops.get(op, 0) != expected:
+                raise ValueError(
+                    f"operation count mismatch for {op!r}: expected {expected}, found {ops.get(op, 0)}"
+                )
     checksum = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
     return data, by_id, checksum
 
@@ -111,14 +175,19 @@ def fetch_rows_by_ids(client: Any, ids: List[str]) -> Dict[str, Dict[str, Any]]:
     return out
 
 
-def _already_applied(payload: Dict[str, Any], *, force: bool) -> bool:
+def _already_applied(
+    payload: Dict[str, Any],
+    *,
+    config: CohortConfig,
+    force: bool,
+) -> bool:
     if force:
         return False
-    if payload.get("manual_patch_version") == MANUAL_PATCH_VERSION:
+    if payload.get("manual_patch_version") == config.manual_patch_version:
         return True
-    audits = payload.get("manual_part1_audits") or []
+    audits = payload.get(config.audit_key) or []
     return any(
-        isinstance(a, dict) and a.get("manual_patch_version") == MANUAL_PATCH_VERSION
+        isinstance(a, dict) and a.get("manual_patch_version") == config.manual_patch_version
         for a in audits
     )
 
@@ -227,7 +296,9 @@ def run_post_checks(row: Dict[str, Any], decision: Dict[str, Any]) -> List[str]:
     expected = str(decision.get("corrected_option") or co).strip().upper()[:1]
     if pre.get("mismatch_detected") and pre.get("inferred_option"):
         inferred = str(pre["inferred_option"]).strip().upper()[:1]
-        if inferred != expected:
+        ak_status = str(decision.get("answer_key_status") or "").strip().lower()
+        manual_verified = ak_status == "verified" and co == expected
+        if inferred != expected and not manual_verified:
             failures.append(
                 f"answer_key_reconcile inferred={inferred} expected={expected}"
             )
@@ -254,6 +325,7 @@ def run_post_checks(row: Dict[str, Any], decision: Dict[str, Any]) -> List[str]:
 def _append_manual_audit(
     payload: Dict[str, Any],
     *,
+    config: CohortConfig,
     decision: Dict[str, Any],
     operation: str,
     source_checksum: str,
@@ -262,10 +334,11 @@ def _append_manual_audit(
     out = deepcopy(payload)
     now = _iso_now()
     audit_entry = {
-        "manual_patch_version": MANUAL_PATCH_VERSION,
+        "manual_patch_version": config.manual_patch_version,
         "applied_at": now,
-        "source_file": SOURCE_FILENAME,
+        "source_file": config.source_filename,
         "source_checksum_sha256": source_checksum,
+        "question_id": decision.get("id"),
         "decision": decision.get("decision"),
         "recommended_action": decision.get("recommended_action"),
         "operation": operation,
@@ -274,12 +347,12 @@ def _append_manual_audit(
     }
     if extra:
         audit_entry.update(extra)
-    audits = out.get("manual_part1_audits")
+    audits = out.get(config.audit_key)
     if not isinstance(audits, list):
         audits = []
-    out["manual_part1_audits"] = [*audits, audit_entry]
-    out["manual_patch_version"] = MANUAL_PATCH_VERSION
-    out["decision_source"] = "manual_part1_exact_patches"
+    out[config.audit_key] = [*audits, audit_entry]
+    out["manual_patch_version"] = config.manual_patch_version
+    out["decision_source"] = config.decision_source
     return out
 
 
@@ -287,6 +360,7 @@ def build_approve_payload(
     row: Dict[str, Any],
     decision: Dict[str, Any],
     *,
+    config: CohortConfig,
     operation: str,
     source_checksum: str,
     content_patch: Dict[str, Any],
@@ -304,7 +378,7 @@ def build_approve_payload(
             "curriculum_validation_status": "valid",
             "curriculum_validator_version": CURRICULUM_VALIDATOR_VERSION,
             "curriculum_reason": str(decision.get("reason") or "")[:2000],
-            "curriculum_decision_source": "manual_part1_exact_patches",
+            "curriculum_decision_source": config.decision_source,
         }
     )
     if decision.get("decision") == "accept" or operation == "retag_and_patch_in_place":
@@ -318,7 +392,7 @@ def build_approve_payload(
             "true_option": co,
             "was_wrong": answer_key_changed,
             "apply_fix": False,
-            "reason": "manual_part1_exact_patches",
+            "reason": config.decision_source,
         }
     )
 
@@ -332,21 +406,28 @@ def build_approve_payload(
             "review_disposition": {
                 "outcome": "keep",
                 "labels": [],
-                "notes": "Approved via manual part1 exact patches.",
+                "notes": f"Approved via manual {config.cohort_label} exact patches.",
             },
             "auto_fix_triage": {
                 "human_blocking_issues": [],
                 "recommended_action_after_auto_fix": "approve",
-                "reason": "Manual supervisor review (part 1 unassessed).",
+                "reason": f"Manual supervisor review ({config.cohort_label} unassessed).",
             },
         }
     )
     payload = _append_manual_audit(
         payload,
+        config=config,
         decision=decision,
         operation=operation,
         source_checksum=source_checksum,
-        extra={"post_patch_action": "approve"},
+        extra={
+            "post_patch_action": "approve",
+            "prior_correct_option": row.get("correct_option"),
+            "applied_correct_option": co,
+            "answer_key_changed": answer_key_changed,
+            "post_patch_validation": "pass",
+        },
     )
 
     patch: Dict[str, Any] = {
@@ -355,7 +436,7 @@ def build_approve_payload(
         "quality_gate_action": "approve",
         "quality_gate_reason": str(decision.get("reason") or "")[:8000],
         "quality_gate_payload": payload,
-        "quality_gate_job_id": row.get("quality_gate_job_id") or f"manual_part1_{_iso_now()[:10]}",
+        "quality_gate_job_id": row.get("quality_gate_job_id") or f"{config.job_id_prefix}_{_iso_now()[:10]}",
         "status": "approved",
     }
     if content_patch:
@@ -367,12 +448,14 @@ def build_retire_patch(
     row: Dict[str, Any],
     decision: Dict[str, Any],
     *,
+    config: CohortConfig,
     source_checksum: str,
     replacement_id: Optional[str] = None,
 ) -> Dict[str, Any]:
     payload = _parse_payload(row.get("quality_gate_payload"))
     payload = _append_manual_audit(
         payload,
+        config=config,
         decision=decision,
         operation="retire_original_and_create_replacement",
         source_checksum=source_checksum,
@@ -381,7 +464,7 @@ def build_retire_patch(
             "replacement_question_id": replacement_id,
         },
     )
-    payload["retired_by_manual_part1"] = True
+    payload[config.retired_flag] = True
     payload["replacement_for_question_id"] = None
     if replacement_id:
         payload["replacement_question_id"] = replacement_id
@@ -399,11 +482,12 @@ def build_replacement_record(
     original: Dict[str, Any],
     replacement_question: Dict[str, Any],
     *,
+    config: CohortConfig,
     original_id: str,
     source_checksum: str,
 ) -> Dict[str, Any]:
     new_uuid = str(uuid.uuid4())
-    gen_id = f"manual_part1_{original_id[:8]}_{new_uuid[:8]}"
+    gen_id = f"{config.gen_id_prefix}_{original_id[:8]}_{new_uuid[:8]}"
     rq = replacement_question
     record: Dict[str, Any] = {
         "id": new_uuid,
@@ -423,12 +507,12 @@ def build_replacement_record(
         "distractor_map": rq.get("distractor_map") or {},
         "quality_gate_payload": {
             "replacement_for_question_id": original_id,
-            "manual_patch_version": MANUAL_PATCH_VERSION,
-            "manual_part1_audits": [
+            "manual_patch_version": config.manual_patch_version,
+            config.audit_key: [
                 {
-                    "manual_patch_version": MANUAL_PATCH_VERSION,
+                    "manual_patch_version": config.manual_patch_version,
                     "applied_at": _iso_now(),
-                    "source_file": SOURCE_FILENAME,
+                    "source_file": config.source_filename,
                     "source_checksum_sha256": source_checksum,
                     "operation": "replacement_created",
                     "original_question_id": original_id,
@@ -443,6 +527,7 @@ def analyze_decision(
     row: Optional[Dict[str, Any]],
     decision: Dict[str, Any],
     *,
+    config: CohortConfig = PART1_CONFIG,
     source_checksum: str,
     force: bool = False,
 ) -> Tuple[ApplyBucket, List[str], Optional[Dict[str, Any]]]:
@@ -451,19 +536,20 @@ def analyze_decision(
         return "row_missing", [f"missing row {qid}"], None
 
     payload = _parse_payload(row.get("quality_gate_payload"))
-    if _already_applied(payload, force=force):
-        return "already_applied", ["already esat_unassessed_part1_v2_exact_patches"], None
+    if _already_applied(payload, config=config, force=force):
+        return "already_applied", [f"already {config.manual_patch_version}"], None
 
     hash_err = _verify_stem_hash(row, decision)
     impl = decision.get("implementation") or {}
     operation = str(impl.get("operation") or "").strip()
+    hash_bucket: ApplyBucket = config.hash_mismatch_bucket  # type: ignore[assignment]
 
     if hash_err and operation not in (
         "patch_in_place",
         "retag_and_patch_in_place",
         "replace_missing_asset_with_self_contained_data_and_patch",
     ):
-        return "hash_mismatch", [hash_err], None
+        return hash_bucket, [hash_err], None
 
     plan: Dict[str, Any] = {
         "id": qid,
@@ -476,13 +562,14 @@ def analyze_decision(
         if operation == "no_change":
             post_row = merged_row(row, {})
             if hash_err:
-                return "hash_mismatch", [hash_err], None
+                return hash_bucket, [hash_err], None
             blockers = run_post_checks(post_row, decision)
             if blockers:
                 return "post_check_blocked", blockers, plan
             plan["approve_patch"] = build_approve_payload(
                 row,
                 decision,
+                config=config,
                 operation=operation,
                 source_checksum=source_checksum,
                 content_patch={},
@@ -505,6 +592,7 @@ def analyze_decision(
             plan["approve_patch"] = build_approve_payload(
                 row,
                 decision,
+                config=config,
                 operation=operation,
                 source_checksum=source_checksum,
                 content_patch=content_patch,
@@ -526,6 +614,7 @@ def analyze_decision(
             replacement = build_replacement_record(
                 row,
                 rq,
+                config=config,
                 original_id=qid,
                 source_checksum=source_checksum,
             )
@@ -541,7 +630,10 @@ def analyze_decision(
                 return "post_check_blocked", blockers, plan
             plan["replacement_record"] = replacement
             plan["retire_patch"] = build_retire_patch(
-                row, decision, source_checksum=source_checksum
+                row,
+                decision,
+                config=config,
+                source_checksum=source_checksum,
             )
             return "would_retire_and_create_replacement", [], plan
 
@@ -553,6 +645,7 @@ def analyze_decision(
 def run_replacement_quality_gate(
     row: Dict[str, Any],
     *,
+    config: CohortConfig,
     llm: Any,
     model: str,
     job_id: str,
@@ -569,7 +662,7 @@ def run_replacement_quality_gate(
     payload["replacement_for_question_id"] = (
         _parse_payload(row.get("quality_gate_payload")).get("replacement_for_question_id")
     )
-    payload["manual_patch_version"] = MANUAL_PATCH_VERSION
+    payload["manual_patch_version"] = config.manual_patch_version
 
     patch: Dict[str, Any] = {
         "quality_gate_assessed_at": _iso_now(),

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Apply exact manual patches for ESAT unassessed part 1 (100 questions)."""
+"""Apply exact manual patches for ESAT unassessed part 2 (100 questions)."""
 
 from __future__ import annotations
 
@@ -12,10 +12,10 @@ _REPO = _BASE.parent.parent
 if str(_BASE) not in sys.path:
     sys.path.insert(0, str(_BASE))
 
-from quality_gate.manual_part1_apply import PART1_CONFIG
+from quality_gate.manual_part1_apply import PART2_CONFIG
 
-DEFAULT_MANUAL = _REPO / "data" / "manual_overrides" / PART1_CONFIG.source_filename
-DEFAULT_REPORT = _BASE / "quality_gate" / "esat_unassessed_part1_apply_report.json"
+DEFAULT_MANUAL = _REPO / "data" / "manual_overrides" / PART2_CONFIG.source_filename
+DEFAULT_REPORT = _BASE / "quality_gate" / "esat_unassessed_part2_apply_report.json"
 
 
 def main() -> int:
@@ -40,7 +40,7 @@ def main() -> int:
     if not args.dry_run and not args.apply:
         args.dry_run = True
     return run_cohort_apply(
-        config=PART1_CONFIG,
+        config=PART2_CONFIG,
         manual_path=Path(args.manual),
         dry_run=bool(args.dry_run and not args.apply),
         apply=bool(args.apply),
