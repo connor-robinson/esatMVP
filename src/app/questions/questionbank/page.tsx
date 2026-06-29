@@ -931,8 +931,28 @@ export default function QuestionBankPage() {
         {activeSession && currentQuestion && (
           <div className='fixed bottom-0 left-0 right-0 z-40 bg-background/98 shadow-bar-floating backdrop-blur-md'>
             <Container size='lg' className='py-2.5 sm:py-3'>
-              <div className='flex flex-col gap-2.5'>
-                {/* Row 1: actions (compact, same baseline) */}
+              <div className='flex items-center gap-3 sm:gap-4'>
+                <div className='flex min-w-0 flex-1 flex-col gap-1.5'>
+                  <div className='h-1.5 w-full overflow-hidden rounded-organic-sm bg-surface-elevated'>
+                    <div
+                      className='h-full rounded-organic-sm bg-secondary transition-all duration-300 ease-signature'
+                      style={{
+                        width: `${((sessionCurrentIndex + 1) / sessionQuestions.length) * 100}%`,
+                      }}
+                    />
+                  </div>
+                  <p className='text-xs text-text-muted sm:text-sm'>
+                    Questions done{' '}
+                    <span className='font-semibold tabular-nums text-text'>
+                      {sessionCurrentIndex + 1}
+                    </span>
+                    <span className='text-text-subtle'> / </span>
+                    <span className='tabular-nums text-text-muted'>
+                      {sessionQuestions.length}
+                    </span>
+                  </p>
+                </div>
+
                 <div className='flex shrink-0 flex-wrap items-center justify-end gap-2'>
                   {currentQuestion.solution_key_insight && (
                     <button
@@ -1045,28 +1065,6 @@ export default function QuestionBankPage() {
                       <ArrowRight className='h-4 w-4 shrink-0' strokeWidth={2.5} />
                     </button>
                   )}
-                </div>
-
-                {/* Row 2: progress (thin) */}
-                <div className='flex items-center gap-3'>
-                  <p className='shrink-0 text-[0.7rem] text-text-muted sm:text-xs'>
-                    Questions done{' '}
-                    <span className='font-semibold tabular-nums text-text'>
-                      {sessionCurrentIndex + 1}
-                    </span>
-                    <span className='text-text-subtle'> / </span>
-                    <span className='tabular-nums text-text-muted'>
-                      {sessionQuestions.length}
-                    </span>
-                  </p>
-                  <div className='h-1.5 min-w-0 w-full flex-1 overflow-hidden rounded-organic-sm bg-surface-elevated'>
-                    <div
-                      className='h-full rounded-organic-sm bg-secondary transition-all duration-300 ease-signature'
-                      style={{
-                        width: `${((sessionCurrentIndex + 1) / sessionQuestions.length) * 100}%`,
-                      }}
-                    />
-                  </div>
                 </div>
               </div>
             </Container>
