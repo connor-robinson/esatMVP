@@ -21,6 +21,7 @@ import { generateSystemsOfEquations } from "./systems_of_equations";
 import { generatePrimes } from "./primes";
 import { generateFactors } from "./factors";
 import { generateDivisibility } from "./divisibility";
+import { generateEvenOddRules } from "./even_odd_rules";
 import { generateModular } from "./modular";
 import { generateSequences } from "./sequences";
 
@@ -117,6 +118,7 @@ export const GENERATORS: Record<string, GeneratorFunction> = validateGenerators(
   prime_factorise: generatePrimeFactorise,
   factors: generateFactors,
   divisibility: generateDivisibility,
+  even_odd_rules: generateEvenOddRules,
   modular: generateModular,
   sequences: generateSequences,
   

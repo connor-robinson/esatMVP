@@ -345,6 +345,14 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'plain', text: '÷ by 3?' },
     { kind: 'plain', text: '÷ by 5?' },
   ]),
+  'even_odd_rules-rules': S([
+    { kind: 'plain', text: 'odd × odd' },
+    { kind: 'plain', text: 'even − odd' },
+  ]),
+  'even_odd_rules-mixed': S([
+    { kind: 'plain', text: '7 × 14' },
+    { kind: 'plain', text: '24 ÷ 6' },
+  ]),
   'modular-basic': S([
     { kind: 'latex', latex: String.raw`17 \bmod 5` },
     { kind: 'latex', latex: String.raw`23 \bmod 7` },

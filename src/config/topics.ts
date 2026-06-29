@@ -548,6 +548,30 @@ export const TOPICS: Record<string, Topic> = {
     ],
     icon: "Check",
   },
+  even_odd_rules: {
+    id: "even_odd_rules",
+    name: "Even & Odd Rules",
+    subjectId: "maths",
+    category: "number_theory",
+    description: "Parity of sums, differences, products, and quotients",
+    variants: [
+      {
+        id: "rules",
+        name: "Parity Rules",
+        description: "even ±/× odd — answer even or odd from the rule",
+        difficulty: 1,
+        config: { level: 1 },
+      },
+      {
+        id: "mixed",
+        name: "Parity (Mixed)",
+        description: "Rules plus quick checks with numbers, including division",
+        difficulty: 2,
+        config: { level: 2 },
+      },
+    ],
+    icon: "Divide",
+  },
   modular: {
     id: "modular",
     name: "Modular Arithmetic",
@@ -1475,7 +1499,7 @@ export const CATEGORIES: Record<TopicCategory, string[]> = {
     "cone_sa",
     "square_pyramid_sa",
   ],
-  number_theory: ["primes", "prime_factorise", "factors", "divisibility", "modular", "sequences"],
+  number_theory: ["primes", "prime_factorise", "factors", "divisibility", "even_odd_rules", "modular", "sequences"],
   shortcuts: ["percentages", "squaring", "estimation"],
   patterns: [
     "powers",

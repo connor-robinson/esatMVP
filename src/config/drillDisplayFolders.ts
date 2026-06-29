@@ -179,7 +179,7 @@ const NUMBER_THEORY_FOLDERS: FolderDef[] = [
   {
     id: 'nt-divisibility',
     name: 'Divisibility',
-    topicIds: ['divisibility', 'modular'],
+    topicIds: ['divisibility', 'even_odd_rules', 'modular'],
     symbol: { kind: 'latex', latex: String.raw`n \bmod 7` },
   },
   {
@@ -349,6 +349,7 @@ const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
     'prime_factorise',
     'factors',
     'divisibility',
+    'even_odd_rules',
     'modular',
     'sequences',
     'powers',
