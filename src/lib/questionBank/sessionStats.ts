@@ -9,6 +9,16 @@ const PRIMARY_TOPIC_WEIGHT = 1.0;
 const SECONDARY_TOPIC_WEIGHT = 0.35;
 const MIN_ATTEMPTS_FOR_WEAKNESS = 2;
 
+/** First-try correct only — wrong guesses or reveal disqualify the question. */
+export function countsAsSessionCorrect(
+  attempt: QuestionBankSessionAttempt,
+): boolean {
+  if (!attempt.isCorrect) return false;
+  if (attempt.wasRevealed) return false;
+  if ((attempt.wrongAnswersBefore?.length ?? 0) > 0) return false;
+  return true;
+}
+
 export function resolveUiDifficulty(
   questionDifficulty: 'Easy' | 'Medium' | 'Hard',
   uiDifficulties: UiDifficultyLabel[],
@@ -32,7 +42,7 @@ export function buildQuestionBankProgressData(
   const startMs = attempts[0]?.timestamp ?? Date.now();
 
   return attempts.map((attempt, index) => {
-    if (attempt.isCorrect) correctSoFar += 1;
+    if (countsAsSessionCorrect(attempt)) correctSoFar += 1;
     const elapsedMinutes = Math.max(
       (attempt.timestamp - startMs) / 60000,
       0.01,
@@ -73,7 +83,7 @@ export function computeDifficultyBreakdown(
   for (const attempt of attempts) {
     const bucket = breakdown[attempt.uiDifficulty];
     bucket.attempted += 1;
-    if (attempt.isCorrect) bucket.correct += 1;
+    if (countsAsSessionCorrect(attempt)) bucket.correct += 1;
   }
 
   return breakdown;
@@ -109,7 +119,7 @@ export function computeWeightedTopicStats(
     for (const { tag, weight } of contributions) {
       const row = byTopic.get(tag) ?? { attempted: 0, correct: 0, weight };
       row.attempted += weight;
-      if (attempt.isCorrect) row.correct += weight;
+      if (countsAsSessionCorrect(attempt)) row.correct += weight;
       byTopic.set(tag, row);
     }
   }
@@ -142,7 +152,7 @@ export function buildSessionSummary(
   labelForTag: (tag: string) => string,
 ): QuestionBankSessionSummary {
   const totalQuestions = attempts.length;
-  const correctCount = attempts.filter((a) => a.isCorrect).length;
+  const correctCount = attempts.filter(countsAsSessionCorrect).length;
   const times = attempts
     .map((a) => a.timeSpentMs)
     .filter((t): t is number => t != null && t > 0);

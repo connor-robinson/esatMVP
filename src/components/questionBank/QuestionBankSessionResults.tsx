@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Container } from '@/components/layout/Container';
 import { Button } from '@/components/ui/Button';
 import { SessionMiniChart } from '@/components/analytics/SessionMiniChart';
+import { BreakdownDonutChart } from '@/components/questionBank/BreakdownDonutChart';
 import { labelForQuestionBankTag } from '@/lib/questionBank/esatCurriculumTopicLabels';
 import { buildSessionSummary } from '@/lib/questionBank/sessionStats';
 import type {
@@ -46,6 +47,22 @@ function difficultyLabelClass(d: UiDifficultyLabel): string {
   }
 }
 
+const DIFFICULTY_FILL: Record<UiDifficultyLabel, string> = {
+  Easy: 'var(--color-difficulty-pill-easy)',
+  Medium: 'var(--color-difficulty-pill-medium)',
+  Hard: 'var(--color-difficulty-pill-hard)',
+  Extreme: 'var(--color-accent)',
+};
+
+const TOPIC_SLICE_COLORS = [
+  'var(--color-secondary)',
+  'var(--color-primary)',
+  'var(--color-accent)',
+  'var(--color-warning)',
+  'var(--color-success)',
+  'var(--color-text-muted)',
+];
+
 function formatTimeMs(ms: number) {
   if (ms < 1000) return `${Math.round(ms)}ms`;
   return `${(ms / 1000).toFixed(1)}s`;
@@ -65,6 +82,26 @@ export function QuestionBankSessionResults({
   const result = useMemo(
     () => buildSessionSummary(attempts, labelForQuestionBankTag),
     [attempts],
+  );
+
+  const difficultyPieData = useMemo(
+    () =>
+      DIFFICULTY_ORDER.map((d) => ({
+        name: d,
+        value: result.difficultyBreakdown[d].attempted,
+        fill: DIFFICULTY_FILL[d],
+      })).filter((slice) => slice.value > 0),
+    [result.difficultyBreakdown],
+  );
+
+  const topicPieData = useMemo(
+    () =>
+      result.topicStats.slice(0, 6).map((topic, index) => ({
+        name: topic.label,
+        value: topic.attempted,
+        fill: TOPIC_SLICE_COLORS[index % TOPIC_SLICE_COLORS.length],
+      })),
+    [result.topicStats],
   );
 
   const subtitleParts = [
@@ -123,7 +160,7 @@ export function QuestionBankSessionResults({
                 {result.totalQuestions}
               </div>
               <div className='text-xs text-text-subtle'>
-                {result.correctCount} answered correctly
+                {result.correctCount} correct on first try
               </div>
             </div>
           </motion.div>
@@ -222,9 +259,31 @@ export function QuestionBankSessionResults({
                 By difficulty
               </h2>
               <p className='mb-6 text-sm text-text-muted'>
-                How you performed across difficulty levels
+                How you performed across difficulty levels (first try only)
               </p>
-              <div className='space-y-4'>
+              <div className='grid gap-6 sm:grid-cols-[minmax(0,200px)_1fr] sm:items-start'>
+                <div>
+                  <BreakdownDonutChart
+                    data={difficultyPieData}
+                    centerLabel='Questions'
+                    centerValue={result.totalQuestions}
+                  />
+                  <div className='mt-3 flex flex-wrap justify-center gap-x-3 gap-y-1'>
+                    {difficultyPieData.map((slice) => (
+                      <div
+                        key={slice.name}
+                        className='flex items-center gap-1.5 text-xs text-text-muted'
+                      >
+                        <span
+                          className='h-2 w-2 shrink-0 rounded-full'
+                          style={{ backgroundColor: slice.fill }}
+                        />
+                        {slice.name}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className='space-y-4'>
                 {DIFFICULTY_ORDER.map((d) => {
                   const bucket = result.difficultyBreakdown[d];
                   if (bucket.attempted === 0) return null;
@@ -256,6 +315,7 @@ export function QuestionBankSessionResults({
                     </div>
                   );
                 })}
+                </div>
               </div>
             </div>
           </motion.div>
@@ -270,8 +330,32 @@ export function QuestionBankSessionResults({
                 By topic
               </h2>
               <p className='mb-6 text-sm text-text-muted'>
-                Weighted by primary and secondary tags
+                Weighted by primary and secondary tags (first try only)
               </p>
+
+              {topicPieData.length > 0 && (
+                <div className='mb-6'>
+                  <BreakdownDonutChart
+                    data={topicPieData}
+                    centerLabel='Topics'
+                    centerValue={topicPieData.length}
+                  />
+                  <div className='mt-3 flex flex-wrap justify-center gap-x-3 gap-y-1'>
+                    {topicPieData.map((slice) => (
+                      <div
+                        key={slice.name}
+                        className='flex max-w-[140px] items-center gap-1.5 text-xs text-text-muted'
+                      >
+                        <span
+                          className='h-2 w-2 shrink-0 rounded-full'
+                          style={{ backgroundColor: slice.fill }}
+                        />
+                        <span className='truncate'>{slice.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {result.weakestTopic && (
                 <div className='mb-5 rounded-organic-md bg-surface-mid p-4'>
