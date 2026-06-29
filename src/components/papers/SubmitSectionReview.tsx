@@ -75,7 +75,7 @@ export function SubmitSectionReview({
         className="w-full max-w-2xl rounded-t-organic-lg border border-border bg-surface-elevated shadow-bar-floating md:rounded-organic-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between rounded-t-organic-lg bg-primary px-4 py-4 text-background md:rounded-t-organic-lg">
+        <div className="flex items-center justify-between rounded-t-organic-lg bg-accent px-4 py-4 text-neutral-900 md:rounded-t-organic-lg">
           <div className="flex items-center gap-2">
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -86,7 +86,7 @@ export function SubmitSectionReview({
           </div>
           <button
             onClick={onClose}
-            className="rounded-organic-md p-1 transition-colors hover:bg-background/15"
+            className="rounded-organic-md p-1 transition-colors hover:bg-neutral-900/10"
             type="button"
             aria-label="Close"
           >
@@ -159,7 +159,7 @@ export function SubmitSectionReview({
           <button
             onClick={onSubmit}
             type="button"
-            className="rounded-organic-md bg-primary px-6 py-2 text-sm font-semibold text-background transition-colors hover:bg-primary-hover hover:shadow-glow"
+            className="rounded-organic-md bg-accent px-6 py-2 text-sm font-semibold text-neutral-900 transition-colors hover:opacity-90"
           >
             {isLastSection ? "Submit & Mark" : "Submit & Next Section"}
           </button>

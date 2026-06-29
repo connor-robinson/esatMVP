@@ -12,7 +12,7 @@ import {
   getSectionSubjectPillClass,
 } from "@/config/colors";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/Button";
+import { solveSessionActionBtn } from "@/lib/papers/solveSessionStyles";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 
 interface SectionSummaryProps {
@@ -223,9 +223,13 @@ export function SectionSummary({
         </div>
 
         <div className="flex justify-center">
-          <Button type="button" variant="primary" size="lg" className="min-w-[200px] font-mono" onClick={() => onNext()}>
+          <button
+            type="button"
+            className={cn(solveSessionActionBtn, "min-w-[200px] px-6 py-3.5 text-lg font-mono")}
+            onClick={() => onNext()}
+          >
             Next (N)
-          </Button>
+          </button>
         </div>
       </div>
     </div>

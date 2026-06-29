@@ -6,7 +6,10 @@ import {
   getPastPaperOptionLetters,
   shouldRenderPastPaperAsText,
 } from "@/lib/papers/pastPaperTextMode";
-import { solveSessionLightBlue } from "@/lib/papers/solveSessionStyles";
+import {
+  solveSessionTextChoiceBtn,
+  solveSessionTextChoiceBtnSelected,
+} from "@/lib/papers/solveSessionStyles";
 import type { Letter, Question } from "@/types/papers";
 
 interface PastPaperTextQuestionProps {
@@ -66,13 +69,13 @@ export function PastPaperTextQuestion({
                 disabled={!interactive}
                 onClick={() => onChoiceSelect?.(letter as Letter)}
                 className={cn(
-                  "w-full rounded-organic-md px-3.5 py-2.5 text-left transition-all duration-fast",
+                  "transition-all duration-fast",
                   interactive && "cursor-pointer",
                   selected
-                    ? cn(solveSessionLightBlue, "font-semibold ring-2 ring-maths/50")
+                    ? solveSessionTextChoiceBtnSelected
                     : interactive
-                      ? solveSessionLightBlue
-                      : solveSessionLightBlue,
+                      ? solveSessionTextChoiceBtn
+                      : solveSessionTextChoiceBtn,
                 )}
               >
                 <div className="flex items-start gap-3">
