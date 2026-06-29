@@ -12,6 +12,7 @@ import { Progress } from "@/components/ui/Progress";
 import { MathContent } from "@/components/shared/MathContent";
 import { DiagramRenderer } from "@/components/shared/DiagramRenderer";
 import { BinaryChoiceInput } from "./BinaryChoiceInput";
+import { PrimeFactorSlotsInput } from "./PrimeFactorSlotsInput";
 import { FeedbackPopup } from "./FeedbackPopup";
 import { KatexInput } from "./KatexInput";
 import { GeneratedQuestion, QuestionAttempt } from "@/types/core";
@@ -102,6 +103,11 @@ export function MentalMathSession({
   // Detect questions that have multiple parts (e.g. systems, quadratics)
   const isMultiAnswer = answerParts.length >= 2;
   const isBinaryChoice = currentQuestion.answerInput?.type === "binary-choice";
+  const isPrimeFactorSlots = currentQuestion.answerInput?.type === "prime-factor-slots";
+  const primeSlotCount =
+    isPrimeFactorSlots && currentQuestion.answerInput?.type === "prime-factor-slots"
+      ? currentQuestion.answerInput.slotCount
+      : 0;
 
   // Auto-focus and clear input when question changes
   useEffect(() => {
@@ -110,14 +116,16 @@ export function MentalMathSession({
     setShowSuccessFeedback(false);
 
     // Reset multi-answer inputs based on current question
-    if (isMultiAnswer) {
+    if (isPrimeFactorSlots) {
+      setMultiAnswers(new Array(primeSlotCount).fill(""));
+    } else if (isMultiAnswer) {
       const partCount = Math.max(2, answerParts.length);
       setMultiAnswers(new Array(partCount).fill(""));
     } else {
       setMultiAnswers([]);
     }
     
-    if (!showFeedback && !isBinaryChoice) {
+    if (!showFeedback && !isBinaryChoice && !isPrimeFactorSlots) {
       // Focus the active input based on mode
       if (!isMultiAnswer && useKatexInput && katexInputRef.current) {
         // Small delay to ensure the component is mounted
@@ -130,7 +138,7 @@ export function MentalMathSession({
         }, 0);
       }
     }
-  }, [currentQuestion.id, currentQuestion.answer, showFeedback, useKatexInput, isMultiAnswer, isBinaryChoice]);
+  }, [currentQuestion.id, currentQuestion.answer, showFeedback, useKatexInput, isMultiAnswer, isBinaryChoice, isPrimeFactorSlots, primeSlotCount]);
 
   const handleBinaryChoice = useCallback(
     (choiceId: string) => {
@@ -184,11 +192,13 @@ export function MentalMathSession({
   }, [showFeedback, lastAttempt?.isCorrect]);
 
   const handleSubmit = () => {
-    const hasAnyAnswer = isMultiAnswer
+    const hasAnyAnswer = isPrimeFactorSlots
+      ? multiAnswers.some((part) => part.trim().length > 0)
+      : isMultiAnswer
       ? multiAnswers.some((part) => part.trim().length > 0)
       : answer.trim().length > 0;
 
-    const combinedAnswer = isMultiAnswer
+    const combinedAnswer = isPrimeFactorSlots || isMultiAnswer
       ? multiAnswers
           .map((part) => part.trim())
           .filter((part) => part.length > 0)
@@ -355,6 +365,30 @@ export function MentalMathSession({
                       ? currentQuestion.explanation
                       : undefined
                   }
+                  onReveal={
+                    !answerRevealed && showFeedback && !lastAttempt?.isCorrect
+                      ? handleRevealAnswer
+                      : undefined
+                  }
+                  onContinue={
+                    answerRevealed && showFeedback && !lastAttempt?.isCorrect
+                      ? onContinueAfterIncorrect
+                      : undefined
+                  }
+                />
+              ) : isPrimeFactorSlots && currentQuestion.answerInput?.type === "prime-factor-slots" ? (
+                <PrimeFactorSlotsInput
+                  slotCount={currentQuestion.answerInput.slotCount}
+                  values={multiAnswers}
+                  onChange={setMultiAnswers}
+                  onSubmit={handleSubmit}
+                  showFeedback={showFeedback}
+                  isCorrect={lastAttempt?.isCorrect ?? null}
+                  answerRevealed={answerRevealed}
+                  revealedValues={String(currentQuestion.answer)
+                    .split(",")
+                    .map((p) => p.trim())}
+                  disabled={showFeedback && lastAttempt?.isCorrect === true}
                   onReveal={
                     !answerRevealed && showFeedback && !lastAttempt?.isCorrect
                       ? handleRevealAnswer

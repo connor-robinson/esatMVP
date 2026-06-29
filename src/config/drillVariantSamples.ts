@@ -297,17 +297,13 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
   ]),
 
   // —— Number theory ——
-  'primes-identify': S([
-    { kind: 'plain', text: 'Is 97 prime?' },
-    { kind: 'plain', text: 'Is 91 prime?' },
+  'prime_factorise-mixed': S([
+    { kind: 'latex', latex: String.raw`60 = \_ \times \_ \times \_` },
+    { kind: 'latex', latex: String.raw`180 = \_ \times \_ \times \_ \times \_` },
   ]),
-  'prime_factorise-small': S([
-    { kind: 'latex', latex: String.raw`60 = ?` },
-    { kind: 'latex', latex: String.raw`84 = ?` },
-  ]),
-  'factors-find-factors': S([
-    { kind: 'plain', text: 'factors of 36' },
-    { kind: 'plain', text: 'factors of 48' },
+  'factors-gcf-lcm': S([
+    { kind: 'plain', text: 'GCF of 48 and 72' },
+    { kind: 'plain', text: 'LCM of 12 and 18' },
   ]),
   'divisibility-remainders': S([
     { kind: 'latex', latex: String.raw`47 \div 6` },

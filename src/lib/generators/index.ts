@@ -18,7 +18,7 @@ import { generateExponents } from "./exponents";
 import { generateSystemsOfEquations } from "./systems_of_equations";
 
 // Number Theory
-import { generatePrimes } from "./primes";
+import { generatePrimeFactorise } from "./prime_factorise";
 import { generateFactors } from "./factors";
 import { generateDivisibility } from "./divisibility";
 import { generateSequences } from "./sequences";
@@ -108,9 +108,15 @@ export const GENERATORS: Record<string, GeneratorFunction> = validateGenerators(
   kinematics: generateKinematics,
   
   // Number Theory
-  primes: generatePrimes,
+  primes: (_level: number, weights?: Record<string, number>) =>
+    generatePrimeFactorise(1, weights),
   prime_factorise: generatePrimeFactorise,
-  factors: generateFactors,
+  factors: (level: number, weights?: Record<string, number>) =>
+    level === 3
+      ? generateFactors(1, weights)
+      : level <= 2
+        ? generatePrimeFactorise(1, weights)
+        : generateFactors(1, weights),
   divisibility: generateDivisibility,
   even_odd_rules: (level: number, weights?: Record<string, number>) =>
     generateDivisibility(2, weights),

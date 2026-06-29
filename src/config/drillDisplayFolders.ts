@@ -161,7 +161,7 @@ const NUMBER_THEORY_FOLDERS: FolderDef[] = [
   {
     id: 'nt-primes-factors',
     name: 'Primes & Factors',
-    topicIds: ['primes', 'prime_factorise', 'factors'],
+    topicIds: ['prime_factorise', 'factors'],
     symbol: { kind: 'latex', latex: String.raw`12 = 2^2 \cdot 3` },
   },
   {
@@ -329,7 +329,6 @@ const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
     'geometry_3d',
   ],
   number_theory: [
-    'primes',
     'prime_factorise',
     'factors',
     'divisibility',

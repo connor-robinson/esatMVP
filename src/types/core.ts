@@ -270,7 +270,12 @@ export interface BinaryChoiceAnswerInput {
   showHintOnIncorrect?: boolean;
 }
 
-export type AnswerInputConfig = BinaryChoiceAnswerInput;
+export interface PrimeFactorSlotsAnswerInput {
+  type: "prime-factor-slots";
+  slotCount: number;
+}
+
+export type AnswerInputConfig = BinaryChoiceAnswerInput | PrimeFactorSlotsAnswerInput;
 
 export interface GeneratedQuestion {
   id: string;
