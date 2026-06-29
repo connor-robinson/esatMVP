@@ -144,12 +144,6 @@ const ALGEBRA_FOLDERS: FolderDef[] = [
 
 const GEOMETRY_FOLDERS: FolderDef[] = [
   {
-    id: 'geometry-plane',
-    name: 'Plane Shapes',
-    topicIds: ['triangles', 'circles', 'pythagorean'],
-    symbol: { kind: 'lucide', iconKey: 'Triangle' },
-  },
-  {
     id: 'geometry-area-volume',
     name: 'Area & Volume',
     topicIds: ['geometry_2d', 'geometry_3d'],
