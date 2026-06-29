@@ -1,0 +1,1035 @@
+{
+  "generated_at": "2026-06-29T16:46:54.636713+00:00",
+  "mode": "dry_run",
+  "manual_patch_version": "esat_unassessed_part1_v2_exact_patches",
+  "source_file": "esat_unassessed_part1_manual_decisions_100_v2_exact_patches.json",
+  "source_checksum_sha256": "160b7355d3f416a3866ff35a631c66692bfdd99e91609e64c6224624872be261",
+  "manual_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\data\\manual_overrides\\esat_unassessed_part1_manual_decisions_100_v2_exact_patches.json",
+  "summary": {
+    "no_change_approvals": 0,
+    "patched_in_place": 0,
+    "retagged_and_patched": 0,
+    "asset_replacements": 0,
+    "originals_retired": 0,
+    "replacements_created": 0,
+    "answer_keys_changed": 23,
+    "hash_mismatches": 0,
+    "post_check_blocked": 0,
+    "replacement_qg_blocked": 0,
+    "already_applied": 100,
+    "row_missing": 0,
+    "errors": 0,
+    "total_decisions": 100,
+    "accounted_for": 100,
+    "all_accounted": true
+  },
+  "bucket_counts": {
+    "already_applied": 100
+  },
+  "applied_approve": 0,
+  "applied_retire": 0,
+  "replacements_created": [],
+  "apply_errors": [],
+  "results": [
+    {
+      "id": "8aa89e6c-a1f1-4db1-8fda-221508d85be0",
+      "id_prefix": "8aa89e6c",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "93fbd467-92b9-4df4-9250-73fc03f70416",
+      "id_prefix": "93fbd467",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "940cf0b7-9ff1-4dc3-9e45-7889f6524392",
+      "id_prefix": "940cf0b7",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "9435e371-2170-4ef8-9772-13fb1f6a5f65",
+      "id_prefix": "9435e371",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "9b04792a-9dae-4ce6-bade-61d8441514f6",
+      "id_prefix": "9b04792a",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "9b10ccef-6227-4ee6-a038-d009bdcf7a79",
+      "id_prefix": "9b10ccef",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "9b2ee3ad-d04e-40ca-a56e-056ac237c7dd",
+      "id_prefix": "9b2ee3ad",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "9b303c95-d7fe-4caa-952b-45649d99ab90",
+      "id_prefix": "9b303c95",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "9b365288-9e90-4d9c-ac88-da7e69342ae7",
+      "id_prefix": "9b365288",
+      "operation": "replace_missing_asset_with_self_contained_data_and_patch",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "9bbbc623-0d60-4ac4-9f6a-b464a2b9e8b0",
+      "id_prefix": "9bbbc623",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "9c189230-af39-43ab-a482-54e4daf01b63",
+      "id_prefix": "9c189230",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "9c34c360-b12e-4464-9cd2-eded38551cf3",
+      "id_prefix": "9c34c360",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "9c4487c6-2a21-47da-9807-5a7ab01c0c9b",
+      "id_prefix": "9c4487c6",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "9c7b645f-f83b-4cde-9571-9d91384cf916",
+      "id_prefix": "9c7b645f",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "9cb0e377-4802-462b-add6-b0f04e267a00",
+      "id_prefix": "9cb0e377",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "9cc13498-085b-4740-b034-d45b1339b3e1",
+      "id_prefix": "9cc13498",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "9cdc6710-2c51-4f94-bca1-0337569177c4",
+      "id_prefix": "9cdc6710",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "9ceae74d-4b64-4607-970c-8074334b65bc",
+      "id_prefix": "9ceae74d",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "9d6425ff-e850-4f5e-a7d1-5dccda4bbab9",
+      "id_prefix": "9d6425ff",
+      "operation": "replace_missing_asset_with_self_contained_data_and_patch",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "9ea9983f-1136-4793-b809-97f9939ad652",
+      "id_prefix": "9ea9983f",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "a09c8c87-cbad-4601-8359-f22e2ffd1462",
+      "id_prefix": "a09c8c87",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "a0b6802c-28a0-4b26-88fb-16fe812b5474",
+      "id_prefix": "a0b6802c",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "a0b75897-f41d-41b5-ae66-35b39e5d0caf",
+      "id_prefix": "a0b75897",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "a0da62fb-43c8-42d8-93e7-779172c5d819",
+      "id_prefix": "a0da62fb",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "a0e13e19-00a7-47e3-a3c8-32e1cd8b69ea",
+      "id_prefix": "a0e13e19",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "a5d4b224-43c1-47d7-b57c-bb4dac7b4fd1",
+      "id_prefix": "a5d4b224",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "a5ea65e4-f9a8-420a-bb81-600072449c0a",
+      "id_prefix": "a5ea65e4",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "aa9edc4b-5991-4a75-84e8-38fc465618c1",
+      "id_prefix": "aa9edc4b",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "aaa22f0d-a7dd-4528-aa8c-46787fe2fb82",
+      "id_prefix": "aaa22f0d",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "aab6b6b9-8cdf-474d-a63e-523a674508fc",
+      "id_prefix": "aab6b6b9",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "ab063ed1-8032-490b-ae9e-20f8c6c2745a",
+      "id_prefix": "ab063ed1",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "ab0d22c9-33ac-435f-a916-573ccf991153",
+      "id_prefix": "ab0d22c9",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "ab4239d3-4141-413b-9766-984a5cbc782e",
+      "id_prefix": "ab4239d3",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "abbcfcb7-c8a0-46b9-9f9d-4476f28a0d43",
+      "id_prefix": "abbcfcb7",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "abc6495b-08de-4063-b945-e361224bd189",
+      "id_prefix": "abc6495b",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "ac201e94-c311-49c3-b0db-1db1b8a784b9",
+      "id_prefix": "ac201e94",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "ac20a70c-1941-4221-8059-a9e2b34941b2",
+      "id_prefix": "ac20a70c",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "ac22a611-2d7a-43f3-9987-eaf2caffbf76",
+      "id_prefix": "ac22a611",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "ac4d5501-da25-4274-b4d8-e7001c227c35",
+      "id_prefix": "ac4d5501",
+      "operation": "replace_missing_asset_with_self_contained_data_and_patch",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "ac6ce316-fa88-4c18-834e-04a230eacb0d",
+      "id_prefix": "ac6ce316",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "ac750907-a3ec-44fb-aada-09cd2aa75f1b",
+      "id_prefix": "ac750907",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "ac85f74d-5e85-450c-b182-e361997684e1",
+      "id_prefix": "ac85f74d",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "ac8fa7b1-64d1-424b-abb4-8c6e25dc5ad7",
+      "id_prefix": "ac8fa7b1",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "acdcda67-fc10-4455-9c79-5c54ac952ebe",
+      "id_prefix": "acdcda67",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "ad180203-a08c-4ca4-af7b-3342cfef5bfa",
+      "id_prefix": "ad180203",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "ad4adb9d-1ab3-4a9f-b2fa-0adc6c62c64d",
+      "id_prefix": "ad4adb9d",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "ad63ef86-dd41-475c-b206-69649e7e3a82",
+      "id_prefix": "ad63ef86",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "ad89f7af-ce31-4157-8de2-10346c8ab7f8",
+      "id_prefix": "ad89f7af",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "adf12af2-bdb3-4a65-a9db-c0a7d4cf0f34",
+      "id_prefix": "adf12af2",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "ae300478-f01e-45d6-9837-4a12b92bbaa3",
+      "id_prefix": "ae300478",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "b3bbba57-0145-41bf-b988-3ce4fbb813e3",
+      "id_prefix": "b3bbba57",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "b3c7a2ee-a3ac-49a9-a744-fd1579425ca0",
+      "id_prefix": "b3c7a2ee",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "b4f59b89-77b7-430d-84d4-431d120f6221",
+      "id_prefix": "b4f59b89",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "b620c297-c026-4ab1-a60c-09e2ce41f02f",
+      "id_prefix": "b620c297",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "b790a825-1f32-4d38-adda-3fe25a336ff8",
+      "id_prefix": "b790a825",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "b792a9ab-1b05-42c9-a395-767c7b2649fe",
+      "id_prefix": "b792a9ab",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "b7b202fb-859b-4dc1-844a-3febc269250d",
+      "id_prefix": "b7b202fb",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "b7d07a7a-2c06-4f9a-a91c-bdfbd4e7e512",
+      "id_prefix": "b7d07a7a",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "b81a7a72-5207-496c-894e-2a8754fde72f",
+      "id_prefix": "b81a7a72",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "b8351e4d-c92a-4bbd-8c3b-78f591f7f15e",
+      "id_prefix": "b8351e4d",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "b856f2bd-6e1f-4a07-b6c7-e897f0930edc",
+      "id_prefix": "b856f2bd",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "b8df19e7-0ae4-45bc-8f0d-1c59c1013b72",
+      "id_prefix": "b8df19e7",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "b8df5f4d-5299-494d-a9a5-14f95cde112d",
+      "id_prefix": "b8df5f4d",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "b9066f1c-817a-40d3-94b6-fc4702b29d21",
+      "id_prefix": "b9066f1c",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "b971464a-31a4-4276-8fcb-7e75a7072026",
+      "id_prefix": "b971464a",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "b98390d0-07dd-4fcc-9b92-77a1897fcecb",
+      "id_prefix": "b98390d0",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "b9aeaca5-1f1b-4070-801f-de84b212cd63",
+      "id_prefix": "b9aeaca5",
+      "operation": "replace_missing_asset_with_self_contained_data_and_patch",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "b9af3cd2-9243-433b-a0bc-5e9587eedfac",
+      "id_prefix": "b9af3cd2",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "b9b3f517-326b-40d8-89cd-11d27a02d2b7",
+      "id_prefix": "b9b3f517",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "b9b41563-ad7f-434f-8f45-94ca3e8df713",
+      "id_prefix": "b9b41563",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "b9dd4a2a-9f59-4a16-816d-a5c0c6c1c038",
+      "id_prefix": "b9dd4a2a",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "ba0b6b43-384f-4012-ae00-3ea15db39110",
+      "id_prefix": "ba0b6b43",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "ba40f9b0-f66a-4154-b12d-63f21a209b44",
+      "id_prefix": "ba40f9b0",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "baa978b2-75cb-40ed-bf68-c37e37ce7ca3",
+      "id_prefix": "baa978b2",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "bab71b57-bc19-4be6-9750-c4c7cb72a404",
+      "id_prefix": "bab71b57",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "bfd4029c-b603-4837-a1c2-d0fbe1060931",
+      "id_prefix": "bfd4029c",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c1bf78ad-7152-4f01-869a-ce981abde063",
+      "id_prefix": "c1bf78ad",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c21325c3-3151-4dd1-8329-f4c761bd7b81",
+      "id_prefix": "c21325c3",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c4ad3302-34ae-478e-8c9a-1e0ea8d61ca3",
+      "id_prefix": "c4ad3302",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c4eedc97-da77-44c9-b28f-191b71622429",
+      "id_prefix": "c4eedc97",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c4fc248a-5590-4200-b0fd-e12e313b8455",
+      "id_prefix": "c4fc248a",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c512a07d-9816-410a-82ff-9bf3707b0f89",
+      "id_prefix": "c512a07d",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c525d40b-e51d-4a8c-9ec9-3446e16de5bf",
+      "id_prefix": "c525d40b",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c561618c-ec75-4af7-bb2b-ba60521b2edc",
+      "id_prefix": "c561618c",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c58c430d-70f2-4ef2-92f7-d8d155197d57",
+      "id_prefix": "c58c430d",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c5a1fe69-9d13-4cb7-af0c-c3781dc8946c",
+      "id_prefix": "c5a1fe69",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c5ce70c9-28c1-434a-966a-eb2b5c73f4b5",
+      "id_prefix": "c5ce70c9",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c5d6caf3-df9b-49ed-962a-39f28d7f6f14",
+      "id_prefix": "c5d6caf3",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c5e51717-576b-4e44-894f-a8a3c1df7b15",
+      "id_prefix": "c5e51717",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c66175b7-dbc6-4c2e-9346-30f134975897",
+      "id_prefix": "c66175b7",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c66d9535-0b8a-4053-a54b-2f39740cb9c2",
+      "id_prefix": "c66d9535",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c672c429-014b-4544-ab2f-255f8b8653c9",
+      "id_prefix": "c672c429",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c67aec24-3b0a-4bc5-abf8-3951752d043b",
+      "id_prefix": "c67aec24",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c6af70bb-fd7c-4d06-9f5a-4a4ccc15c7af",
+      "id_prefix": "c6af70bb",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c6db7af1-f32e-4426-92ed-dafff856abd8",
+      "id_prefix": "c6db7af1",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c6f5a8b4-92d5-4115-b9e4-a4e0a792cf9d",
+      "id_prefix": "c6f5a8b4",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c6fcc658-e7f5-46d9-8b11-641f0cbe31a7",
+      "id_prefix": "c6fcc658",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c73241af-5602-49a8-8113-7b8a91df8771",
+      "id_prefix": "c73241af",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c7421954-43b4-49de-afdf-c8d22bd0d1bd",
+      "id_prefix": "c7421954",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    },
+    {
+      "id": "c7504c28-0476-419b-acef-b02f8e250bd5",
+      "id_prefix": "c7504c28",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "already_applied",
+      "reasons": [
+        "already esat_unassessed_part1_v2_exact_patches"
+      ]
+    }
+  ]
+}
