@@ -156,10 +156,9 @@ export function templateSemicircleTriangle(basic = false): CircleTheoremResult {
       lines: linesBetween(points, [["O", "A"], ["O", "B"], ["A", "B"], ["A", "C"], ["B", "C"]]),
       angles: [
         { id: "CAB", vertex: A, leg1: C, leg2: B, label: `${angleAtA}°` },
-        { id: "ACB", vertex: C, leg1: A, leg2: B, label: `${angleAtC}°` },
         { id: "CBA", vertex: B, leg1: C, leg2: A, label: "x", isTarget: true },
       ],
-      rightAngles: [{ vertex: C, leg1: A, leg2: B }],
+      rightAngles: [],
     },
   };
 }
@@ -322,26 +321,37 @@ export function templateRadiusTangent(basic = false): CircleTheoremResult {
         { x1: O.x, y1: O.y, x2: S.x, y2: S.y },
         { x1: S.x, y1: S.y, x2: T.x, y2: T.y },
       ],
-      angles: [
-        {
-          id: "OTS",
-          vertex: T,
-          leg1: O,
-          leg2: tanFar,
-          label: basic ? `${angleAtT}°` : "x",
-          isTarget: !basic,
-        },
-        { id: "OST", vertex: O, leg1: S, leg2: T, label: `${angleAtO}°` },
-        {
-          id: "OST2",
-          vertex: S,
-          leg1: O,
-          leg2: T,
-          label: basic ? "x" : `${angleAtS}°`,
-          isTarget: basic,
-        },
-      ],
-      rightAngles: [{ vertex: T, leg1: O, leg2: tanFar }],
+      angles: basic
+        ? [
+            { id: "OST", vertex: O, leg1: S, leg2: T, label: `${angleAtO}°` },
+            {
+              id: "OST2",
+              vertex: S,
+              leg1: O,
+              leg2: T,
+              label: "x",
+              isTarget: true,
+            },
+          ]
+        : [
+            {
+              id: "OTS",
+              vertex: T,
+              leg1: O,
+              leg2: tanFar,
+              label: "x",
+              isTarget: true,
+            },
+            { id: "OST", vertex: O, leg1: S, leg2: T, label: `${angleAtO}°` },
+            {
+              id: "OST2",
+              vertex: S,
+              leg1: O,
+              leg2: T,
+              label: `${angleAtS}°`,
+            },
+          ],
+      rightAngles: [],
     },
   };
 }
