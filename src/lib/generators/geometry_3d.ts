@@ -120,7 +120,7 @@ function volCone(): GeneratedQuestion {
 }
 
 function volSphere(): GeneratedQuestion {
-  const r = randomInt(2, 7);
+  const r = pick([2, 3, 3, 4]);
   const coeff = (4 * r * r * r) / 3;
   const answer = formatPiAnswer(coeff);
 
@@ -137,7 +137,7 @@ function volSphere(): GeneratedQuestion {
 }
 
 function volHemisphere(): GeneratedQuestion {
-  const r = randomInt(2, 7);
+  const r = pick([2, 3, 3, 4]);
   const coeff = (2 * r * r * r) / 3;
   const answer = formatPiAnswer(coeff);
 

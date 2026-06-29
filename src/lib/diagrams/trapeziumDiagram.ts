@@ -1,18 +1,19 @@
 /**
- * Trapezium diagram with parallel sides a, b and height h
+ * Trapezium diagram with parallel sides a, b and height h — fixed visual size
  */
 
 import type { GeometryDiagramData } from "@/types/core";
 import { emptyGeometryDiagram, labelOnSegment } from "./geometryPrimitives";
+import { DIAGRAM_CX, DIAGRAM_CY, standardViewBox, unitScale } from "./diagramLayout";
 
 export function buildTrapeziumDiagram(a: number, b: number, h: number): GeometryDiagramData {
-  const scale = 14;
-  const topW = a * scale;
-  const botW = b * scale;
-  const heightPx = h * scale;
-  const cx = 200;
+  const k = unitScale(a, b, h);
+  const topW = a * k;
+  const botW = b * k;
+  const heightPx = h * k;
+  const cx = DIAGRAM_CX;
 
-  const topY = 140;
+  const topY = DIAGRAM_CY - heightPx / 2;
   const botY = topY + heightPx;
   const topLeft = { x: cx - topW / 2, y: topY };
   const topRight = { x: cx + topW / 2, y: topY };
@@ -23,7 +24,7 @@ export function buildTrapeziumDiagram(a: number, b: number, h: number): Geometry
     y: (topY + botY) / 2,
   };
 
-  const diagram = emptyGeometryDiagram({ x: 60, y: 100, width: 280, height: heightPx + 120 });
+  const diagram = emptyGeometryDiagram(standardViewBox());
   diagram.paths = [
     {
       d: `M ${topLeft.x} ${topLeft.y} L ${topRight.x} ${topRight.y} L ${botRight.x} ${botRight.y} L ${botLeft.x} ${botLeft.y} Z`,
@@ -33,8 +34,7 @@ export function buildTrapeziumDiagram(a: number, b: number, h: number): Geometry
     },
   ];
 
-  // Height dashed line inside
-  const hx = cx + botW / 2 + 18;
+  const hx = cx + botW / 2 + 20;
   diagram.lines = [
     { x1: hx, y1: topY, x2: hx, y2: botY, dashed: true },
     { x1: hx - 6, y1: topY, x2: hx + 6, y2: topY, dashed: true },

@@ -21,7 +21,7 @@ export function GeometryDiagram({ data, className }: GeometryDiagramProps) {
     <div className={cn("flex justify-center items-center w-full", className)}>
       <svg
         viewBox={vb}
-        className="w-full max-w-[280px] h-auto"
+        className="w-full max-w-[340px] h-auto"
         preserveAspectRatio="xMidYMid meet"
       >
         {paths.map((p, i) => (

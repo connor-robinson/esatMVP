@@ -1,25 +1,34 @@
 /**
- * Isometric 3D solid diagram builders
+ * Isometric 3D solid diagram builders — fixed visual size, centered
  */
 
 import type { GeometryDiagramData } from "@/types/core";
 import { emptyGeometryDiagram, labelOnSegment } from "./geometryPrimitives";
+import {
+  DIAGRAM_CX,
+  DIAGRAM_CY,
+  FIXED_CYLINDER_H_PX,
+  FIXED_CYLINDER_R_PX,
+  FIXED_RADIUS_PX,
+  centeredIsoOrigin,
+  horizontalRadiusDisplay,
+  standardRadiusDisplay,
+  standardViewBox,
+  unitScale,
+} from "./diagramLayout";
 import { ellipsePath, isoLine, isoPath, isoProject } from "./isometric";
 
-const ORIGIN = { x: 200, y: 280 };
-const S = 12;
-
 function baseDiagram(): GeometryDiagramData {
-  return emptyGeometryDiagram({ x: 40, y: 40, width: 320, height: 320 });
+  return emptyGeometryDiagram(standardViewBox());
 }
 
 export function buildCuboidDiagram(l: number, w: number, h: number): GeometryDiagramData {
-  const L = l * S;
-  const W = w * S;
-  const H = h * S;
-  const o = ORIGIN;
+  const k = unitScale(l, w, h);
+  const L = l * k;
+  const W = w * k;
+  const H = h * k;
 
-  const v = [
+  const v: { x: number; y: number; z: number }[] = [
     { x: 0, y: 0, z: 0 },
     { x: L, y: 0, z: 0 },
     { x: L, y: W, z: 0 },
@@ -29,16 +38,13 @@ export function buildCuboidDiagram(l: number, w: number, h: number): GeometryDia
     { x: L, y: W, z: H },
     { x: 0, y: W, z: H },
   ];
+  const o = centeredIsoOrigin(v);
 
   const diagram = baseDiagram();
-  const front = isoPath([v[0], v[1], v[5], v[4]], o);
-  const top = isoPath([v[4], v[5], v[6], v[7]], o);
-  const right = isoPath([v[1], v[2], v[6], v[5]], o);
-
   diagram.paths = [
-    { d: front, fill: "var(--color-text)", fillOpacity: 0.06, stroke: true },
-    { d: top, fill: "var(--color-text)", fillOpacity: 0.04, stroke: true },
-    { d: right, fill: "var(--color-text)", fillOpacity: 0.08, stroke: true },
+    { d: isoPath([v[0], v[1], v[5], v[4]], o), fill: "var(--color-text)", fillOpacity: 0.06, stroke: true },
+    { d: isoPath([v[4], v[5], v[6], v[7]], o), fill: "var(--color-text)", fillOpacity: 0.04, stroke: true },
+    { d: isoPath([v[1], v[2], v[6], v[5]], o), fill: "var(--color-text)", fillOpacity: 0.08, stroke: true },
   ];
 
   const p0 = isoProject(0, 0, 0, o);
@@ -56,10 +62,10 @@ export function buildCuboidDiagram(l: number, w: number, h: number): GeometryDia
 }
 
 export function buildCylinderDiagram(r: number, h: number): GeometryDiagramData {
-  const R = r * S * 1.4;
-  const H = h * S;
-  const cx = 200;
-  const topY = 120;
+  const cx = DIAGRAM_CX;
+  const R = FIXED_CYLINDER_R_PX;
+  const H = FIXED_CYLINDER_H_PX;
+  const topY = DIAGRAM_CY - H / 2;
   const botY = topY + H;
   const ry = R * 0.35;
 
@@ -68,23 +74,33 @@ export function buildCylinderDiagram(r: number, h: number): GeometryDiagramData 
     { d: ellipsePath(cx, topY, R, ry), fill: "var(--color-text)", fillOpacity: 0.06, stroke: true },
     { d: ellipsePath(cx, botY, R, ry), fill: "none", stroke: true, strokeDasharray: "4 3" },
   ];
+
+  const { line: radiusLine, label: radiusLabel } = horizontalRadiusDisplay(
+    cx,
+    topY,
+    cx + R,
+    r,
+    topY + H * 0.35,
+  );
+
   diagram.lines = [
+    radiusLine,
     { x1: cx - R, y1: topY, x2: cx - R, y2: botY },
     { x1: cx + R, y1: topY, x2: cx + R, y2: botY },
   ];
   diagram.labels = [
-    { x: cx, y: topY - 28, text: `r = ${r}` },
-    { x: cx + R + 32, y: (topY + botY) / 2, text: `h = ${h}` },
+    radiusLabel,
+    { x: cx + R + 34, y: (topY + botY) / 2, text: `h = ${h}` },
   ];
   return diagram;
 }
 
 export function buildConeDiagram(r: number, h: number, showSlant = false): GeometryDiagramData {
-  const R = r * S * 1.4;
-  const H = h * S;
-  const cx = 200;
-  const apexY = 100;
-  const baseY = apexY + H;
+  const cx = DIAGRAM_CX;
+  const R = FIXED_CYLINDER_R_PX;
+  const H = FIXED_CYLINDER_H_PX;
+  const baseY = DIAGRAM_CY + H / 2 - 12;
+  const apexY = baseY - H;
   const ry = R * 0.35;
   const l = Math.sqrt(r * r + h * h);
 
@@ -97,14 +113,23 @@ export function buildConeDiagram(r: number, h: number, showSlant = false): Geome
     { x1: cx, y1: apexY, x2: cx + R, y2: baseY },
     { x1: cx - R, y1: baseY, x2: cx + R, y2: baseY, dashed: true },
   ];
+
+  const { line: radiusLine, label: radiusLabel } = horizontalRadiusDisplay(
+    cx,
+    baseY,
+    cx + R,
+    r,
+    baseY + 28,
+  );
+  diagram.lines.push(radiusLine);
   diagram.labels = [
-    { x: cx - R - 24, y: baseY + 8, text: `r = ${r}` },
-    { x: cx + R + 30, y: (apexY + baseY) / 2, text: `h = ${h}` },
+    radiusLabel,
+    { x: cx + R + 34, y: (apexY + baseY) / 2, text: `h = ${h}` },
   ];
   if (showSlant) {
     diagram.labels.push({
-      x: cx + R * 0.35,
-      y: (apexY + baseY) / 2 - 10,
+      x: cx + R * 0.38,
+      y: (apexY + baseY) / 2 - 8,
       text: `l = ${Number.isInteger(l) ? l : l.toFixed(1)}`,
     });
   }
@@ -112,9 +137,9 @@ export function buildConeDiagram(r: number, h: number, showSlant = false): Geome
 }
 
 export function buildSquarePyramidDiagram(base: number, h: number): GeometryDiagramData {
-  const B = base * S;
-  const H = h * S;
-  const o = { x: 200, y: 290 };
+  const k = unitScale(base, base, h);
+  const B = base * k;
+  const H = h * k;
 
   const basePts = [
     { x: 0, y: 0, z: 0 },
@@ -123,6 +148,7 @@ export function buildSquarePyramidDiagram(base: number, h: number): GeometryDiag
     { x: 0, y: B, z: 0 },
   ];
   const apex = { x: B / 2, y: B / 2, z: H };
+  const o = centeredIsoOrigin([...basePts, apex]);
 
   const diagram = baseDiagram();
   diagram.paths = [{ d: isoPath(basePts, o), fill: "var(--color-text)", fillOpacity: 0.08, stroke: true }];
@@ -133,16 +159,16 @@ export function buildSquarePyramidDiagram(base: number, h: number): GeometryDiag
   const front = isoLine({ x: 0, y: 0, z: 0 }, { x: B, y: 0, z: 0 }, o);
   diagram.labels = [
     labelOnSegment(front.x1, front.y1, front.x2, front.y2, `a = ${base}`, ap, 26),
-    { x: ap.x + 30, y: ap.y - 10, text: `h = ${h}` },
+    { x: ap.x + 32, y: ap.y - 8, text: `h = ${h}` },
   ];
   return diagram;
 }
 
 export function buildTriangularPrismDiagram(base: number, height: number, depth: number): GeometryDiagramData {
-  const B = base * S;
-  const H = height * S;
-  const D = depth * S;
-  const o = { x: 180, y: 300 };
+  const k = unitScale(base, height, depth);
+  const B = base * k;
+  const H = height * k;
+  const D = depth * k;
 
   const tri = [
     { x: 0, y: 0, z: 0 },
@@ -150,6 +176,7 @@ export function buildTriangularPrismDiagram(base: number, height: number, depth:
     { x: B / 2, y: 0, z: H },
   ];
   const triBack = tri.map((p) => ({ x: p.x, y: p.y + D, z: p.z }));
+  const o = centeredIsoOrigin([...tri, ...triBack]);
 
   const diagram = baseDiagram();
   diagram.paths = [
@@ -167,15 +194,15 @@ export function buildTriangularPrismDiagram(base: number, height: number, depth:
   diagram.labels = [
     labelOnSegment(baseLine.x1, baseLine.y1, baseLine.x2, baseLine.y2, `b = ${base}`, centroid, 24),
     { x: centroid.x + 36, y: centroid.y, text: `h = ${height}` },
-    { x: centroid.x - 40, y: centroid.y + 30, text: `d = ${depth}` },
+    { x: centroid.x - 42, y: centroid.y + 28, text: `d = ${depth}` },
   ];
   return diagram;
 }
 
 export function buildSphereDiagram(r: number): GeometryDiagramData {
-  const R = r * S * 1.5;
-  const cx = 200;
-  const cy = 200;
+  const cx = DIAGRAM_CX;
+  const cy = DIAGRAM_CY;
+  const R = FIXED_RADIUS_PX;
 
   const diagram = baseDiagram();
   diagram.paths = [
@@ -187,17 +214,17 @@ export function buildSphereDiagram(r: number): GeometryDiagramData {
     },
     { d: ellipsePath(cx, cy, R, R * 0.28), fill: "none", stroke: true, strokeDasharray: "5 4" },
   ];
-  diagram.lines = [{ x1: cx, y1: cy, x2: cx + R, y2: cy }];
-  diagram.labels = [
-    labelOnSegment(cx, cy, cx + R, cy, `r = ${r}`, { x: cx, y: cy - R * 0.35 }, 26),
-  ];
+
+  const { line, label } = standardRadiusDisplay(cx, cy, R, r);
+  diagram.lines = [line];
+  diagram.labels = [label];
   return diagram;
 }
 
 export function buildHemisphereDiagram(r: number): GeometryDiagramData {
-  const R = r * S * 1.5;
-  const cx = 200;
-  const baseY = 250;
+  const cx = DIAGRAM_CX;
+  const R = FIXED_RADIUS_PX;
+  const baseY = DIAGRAM_CY + R * 0.35;
 
   const diagram = baseDiagram();
   diagram.paths = [
@@ -213,7 +240,7 @@ export function buildHemisphereDiagram(r: number): GeometryDiagramData {
     { x1: cx, y1: baseY, x2: cx, y2: baseY - R },
   ];
   diagram.labels = [
-    labelOnSegment(cx, baseY, cx, baseY - R, `r = ${r}`, { x: cx + R * 0.4, y: baseY }, 26),
+    labelOnSegment(cx, baseY, cx, baseY - R, `r = ${r}`, { x: cx + R * 0.5, y: baseY }, 28),
   ];
   return diagram;
 }
