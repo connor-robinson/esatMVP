@@ -1,4 +1,4 @@
-"""Apply exact manual patches for ESAT unassessed cohorts (parts 1 and 2)."""
+"""Apply exact manual patches for ESAT manual review cohorts."""
 
 from __future__ import annotations
 
@@ -29,6 +29,9 @@ class CohortConfig:
     hash_mismatch_bucket: str = "hash_mismatch"
     expected_operations: Optional[Dict[str, int]] = None
     cohort_label: str = "part 1"
+    forbid_in_place_answer_key_changes: bool = False
+    preserve_prior_qg_payload: bool = False
+    check_unrelated_blockers: bool = False
 
 
 PART1_CONFIG = CohortConfig(
@@ -60,6 +63,28 @@ PART2_CONFIG = CohortConfig(
         "retire_original_and_create_replacement": 5,
     },
     cohort_label="part 2",
+)
+
+BORDERLINE_45_CONFIG = CohortConfig(
+    manual_patch_version="esat_borderline_curriculum_45_v1_exact_patches",
+    source_filename="esat_borderline_45_manual_decisions_v1_exact_patches.json",
+    expected_total=45,
+    audit_key="manual_borderline_45_audits",
+    decision_source="manual_borderline_45_exact_patches",
+    job_id_prefix="manual_borderline_45",
+    gen_id_prefix="manual_borderline_45",
+    retired_flag="retired_by_manual_borderline_45",
+    hash_mismatch_bucket="manual_patch_content_mismatch",
+    expected_operations={
+        "no_change": 18,
+        "patch_in_place": 22,
+        "retag_and_patch_in_place": 2,
+        "retire_original_and_create_replacement": 3,
+    },
+    cohort_label="borderline 45",
+    forbid_in_place_answer_key_changes=True,
+    preserve_prior_qg_payload=True,
+    check_unrelated_blockers=True,
 )
 
 MANUAL_PATCH_VERSION = PART1_CONFIG.manual_patch_version
@@ -155,6 +180,14 @@ def load_manual_decisions(
                 raise ValueError(
                     f"operation count mismatch for {op!r}: expected {expected}, found {ops.get(op, 0)}"
                 )
+    if config.forbid_in_place_answer_key_changes:
+        ak_changes = data.get("answer_key_changes") or []
+        if ak_changes:
+            raise ValueError(f"expected 0 answer_key_changes, found {len(ak_changes)}")
+        for qid, item in by_id.items():
+            impl = item.get("implementation") or {}
+            if impl.get("answer_key_patch"):
+                raise ValueError(f"unexpected answer_key_patch on {qid}")
     checksum = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
     return data, by_id, checksum
 
@@ -239,7 +272,12 @@ def _validate_answer_key_patch(row: Dict[str, Any], ak_patch: Optional[Dict[str,
     return errs
 
 
-def build_content_patch(row: Dict[str, Any], decision: Dict[str, Any]) -> Tuple[Dict[str, Any], bool]:
+def build_content_patch(
+    row: Dict[str, Any],
+    decision: Dict[str, Any],
+    *,
+    config: CohortConfig = PART1_CONFIG,
+) -> Tuple[Dict[str, Any], bool]:
     impl = decision.get("implementation") or {}
     set_fields = map_set_fields_to_db(impl.get("set_fields") or {})
     fragments = impl.get("remove_fragments") or []
@@ -251,6 +289,8 @@ def build_content_patch(row: Dict[str, Any], decision: Dict[str, Any]) -> Tuple[
         )
 
     ak_patch = impl.get("answer_key_patch")
+    if config.forbid_in_place_answer_key_changes and ak_patch:
+        raise ValueError("in-place answer_key_patch forbidden for this cohort")
     patch_errs = _validate_answer_key_patch(row, ak_patch)
     if patch_errs:
         raise ValueError("; ".join(patch_errs))
@@ -260,6 +300,12 @@ def build_content_patch(row: Dict[str, Any], decision: Dict[str, Any]) -> Tuple[
         if to_letter:
             set_fields.setdefault("correct_option", to_letter)
             answer_key_changed = True
+
+    if config.forbid_in_place_answer_key_changes:
+        stored = str(row.get("correct_option") or "").strip().upper()[:1]
+        patched = str(set_fields.get("correct_option") or stored).strip().upper()[:1]
+        if patched != stored:
+            raise ValueError(f"forbidden in-place answer key change {stored} -> {patched}")
 
     return set_fields, answer_key_changed
 
@@ -310,7 +356,12 @@ def run_post_checks(row: Dict[str, Any], decision: Dict[str, Any]) -> List[str]:
     if hard:
         failures.append(f"curriculum_hard_fail:{hard[0].get('flag_id')}")
 
-    cm = str(decision.get("curriculum_match") or "").strip()
+    cm = str(
+        decision.get("curriculum_match_after_implementation")
+        or decision.get("curriculum_match_as_written")
+        or decision.get("curriculum_match")
+        or ""
+    ).strip()
     subj = normalize_subject(row.get("subjects"))
     if cm == "out_of_syllabus" and decision.get("decision") == "accept":
         failures.append("decision_accept_but_out_of_syllabus")
@@ -320,6 +371,24 @@ def run_post_checks(row: Dict[str, Any], decision: Dict[str, Any]) -> List[str]:
         failures.append("formatting_errors")
 
     return failures
+
+
+def has_unrelated_blockers(row: Dict[str, Any]) -> List[str]:
+    """Block approval when a non-curriculum issue exists beyond borderline syllabus fit."""
+    from quality_gate.curriculum_reassessment.eligibility import _non_curriculum_blockers, _row_to_result
+
+    payload = _parse_payload(row.get("quality_gate_payload"))
+    try:
+        result = _row_to_result(row, payload)
+    except Exception as exc:
+        return [f"payload_parse_failed: {exc}"]
+    blockers, _ambiguous = _non_curriculum_blockers(result, payload, row)
+    return [
+        b
+        for b in blockers
+        if not b.startswith("stored_action=human_review")
+        and "borderline" not in b.casefold()
+    ]
 
 
 def _append_manual_audit(
@@ -366,8 +435,16 @@ def build_approve_payload(
     content_patch: Dict[str, Any],
     answer_key_changed: bool,
 ) -> Dict[str, Any]:
-    payload = _parse_payload(row.get("quality_gate_payload"))
-    cm = str(decision.get("curriculum_match") or "in_syllabus").strip()
+    payload = deepcopy(_parse_payload(row.get("quality_gate_payload")))
+    if config.preserve_prior_qg_payload and "quality_gate_payload_prior" not in payload:
+        payload["quality_gate_payload_prior"] = deepcopy(payload)
+
+    cm = str(
+        decision.get("curriculum_match_after_implementation")
+        or decision.get("curriculum_match_as_written")
+        or decision.get("curriculum_match")
+        or "in_syllabus"
+    ).strip()
     if cm not in ("in_syllabus", "borderline", "out_of_syllabus"):
         cm = "in_syllabus" if decision.get("decision") == "accept" else "out_of_syllabus"
 
@@ -396,6 +473,21 @@ def build_approve_payload(
         }
     )
 
+    rd = dict(payload.get("review_disposition") or {})
+    labels = [l for l in (rd.get("labels") or []) if l not in ("borderline", "off_syllabus")]
+    rd["labels"] = labels
+    rd["outcome"] = "keep"
+    rd["notes"] = f"Approved via manual {config.cohort_label} exact patches."
+
+    triage = dict(payload.get("auto_fix_triage") or {})
+    triage["human_blocking_issues"] = [
+        i
+        for i in (triage.get("human_blocking_issues") or [])
+        if "borderline" not in str(i).casefold() and "off-syllabus" not in str(i).casefold()
+    ]
+    triage["recommended_action_after_auto_fix"] = "approve"
+    triage["reason"] = f"Manual supervisor review ({config.cohort_label})."
+
     payload.update(
         {
             "verdict": "Pass",
@@ -403,16 +495,8 @@ def build_approve_payload(
             "effective_recommended_action": "approve",
             "curriculum_validation": cv,
             "answer_key_validation": ak,
-            "review_disposition": {
-                "outcome": "keep",
-                "labels": [],
-                "notes": f"Approved via manual {config.cohort_label} exact patches.",
-            },
-            "auto_fix_triage": {
-                "human_blocking_issues": [],
-                "recommended_action_after_auto_fix": "approve",
-                "reason": f"Manual supervisor review ({config.cohort_label} unassessed).",
-            },
+            "review_disposition": rd,
+            "auto_fix_triage": triage,
         }
     )
     payload = _append_manual_audit(
@@ -431,7 +515,7 @@ def build_approve_payload(
     )
 
     patch: Dict[str, Any] = {
-        "quality_gate_assessed_at": _iso_now(),
+        "quality_gate_assessed_at": row.get("quality_gate_assessed_at") or _iso_now(),
         "quality_gate_verdict": "Pass",
         "quality_gate_action": "approve",
         "quality_gate_reason": str(decision.get("reason") or "")[:8000],
@@ -564,6 +648,8 @@ def analyze_decision(
             if hash_err:
                 return hash_bucket, [hash_err], None
             blockers = run_post_checks(post_row, decision)
+            if config.check_unrelated_blockers:
+                blockers.extend(has_unrelated_blockers(post_row))
             if blockers:
                 return "post_check_blocked", blockers, plan
             plan["approve_patch"] = build_approve_payload(
@@ -582,9 +668,11 @@ def analyze_decision(
             "retag_and_patch_in_place",
             "replace_missing_asset_with_self_contained_data_and_patch",
         ):
-            content_patch, answer_key_changed = build_content_patch(row, decision)
+            content_patch, answer_key_changed = build_content_patch(row, decision, config=config)
             post_row = merged_row(row, content_patch)
             blockers = run_post_checks(post_row, decision)
+            if config.check_unrelated_blockers:
+                blockers.extend(has_unrelated_blockers(post_row))
             if blockers:
                 return "post_check_blocked", blockers, plan
             plan["content_patch"] = content_patch

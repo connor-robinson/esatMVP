@@ -1,0 +1,489 @@
+{
+  "generated_at": "2026-06-29T17:22:51.936487+00:00",
+  "mode": "apply",
+  "cohort": "borderline 45",
+  "manual_patch_version": "esat_borderline_curriculum_45_v1_exact_patches",
+  "source_file": "esat_borderline_45_manual_decisions_v1_exact_patches.json",
+  "source_checksum_sha256": "600444b1849e4b38f6fa8fc227bb0a1573dd07db35a641ecde38580b58b53e9e",
+  "manual_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\data\\manual_overrides\\esat_borderline_45_manual_decisions_v1_exact_patches.json",
+  "summary": {
+    "no_change_approvals": 18,
+    "patched_in_place": 22,
+    "retagged_and_patched": 2,
+    "asset_replacements": 0,
+    "originals_retired": 3,
+    "replacements_created": 3,
+    "answer_keys_changed": 0,
+    "stem_hash_mismatches": 0,
+    "post_check_blocked": 0,
+    "replacement_qg_blocked": 0,
+    "remaining_human_review": 0,
+    "already_applied": 0,
+    "row_missing": 0,
+    "errors": 0,
+    "total_decisions": 45,
+    "accounted_for": 45,
+    "all_accounted": true,
+    "audit_entries_created": 45
+  },
+  "bucket_counts": {
+    "would_patch_and_approve": 22,
+    "would_approve_no_change": 18,
+    "would_retire_and_create_replacement": 3,
+    "would_retag_and_approve": 2
+  },
+  "applied_approve": 42,
+  "applied_retire": 3,
+  "replacements_created": [
+    {
+      "original_id": "7358057e-4b89-4b79-bf8f-168b59417d5f",
+      "replacement_id": "0f1451ad-430f-444a-9c27-73ff7aee76a1",
+      "qg_blocked": false
+    },
+    {
+      "original_id": "aa6262cc-be13-4da2-b70c-ad05a25a3def",
+      "replacement_id": "58c687ff-630d-48f8-a6e2-b0b000a71ffa",
+      "qg_blocked": false
+    },
+    {
+      "original_id": "de2975ce-03d4-4733-8582-872067ff6f12",
+      "replacement_id": "6296392a-8463-4b2b-a36f-398e454fd99e",
+      "qg_blocked": false
+    }
+  ],
+  "apply_errors": [],
+  "results": [
+    {
+      "id": "3c67d790-a11c-4f19-ad61-0a0bdfde601a",
+      "id_prefix": "3c67d790",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "51b879e1-5895-4d16-91c2-81ddea266282",
+      "id_prefix": "51b879e1",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "6cc8a1e3-cd24-451c-9bb1-1efa9fd8f859",
+      "id_prefix": "6cc8a1e3",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "725b5860-3876-437b-87d5-1e80aeb9df19",
+      "id_prefix": "725b5860",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "73308c65-7c35-492b-baeb-54e1f4d4d11d",
+      "id_prefix": "73308c65",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "7358057e-4b89-4b79-bf8f-168b59417d5f",
+      "id_prefix": "7358057e",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "would_retire_and_create_replacement",
+      "reasons": [],
+      "replacement_preview": {
+        "stem_preview": "In mice, the allele for black fur, $B$, is dominant to the allele for brown fur, $b$.\n\nTwo heterozygous black mice are c"
+      },
+      "replacement_id": "0f1451ad-430f-444a-9c27-73ff7aee76a1",
+      "replacement_qg": {
+        "verdict": "Pass",
+        "action": "approve",
+        "model": "gemini-2.5-flash"
+      },
+      "applied": true
+    },
+    {
+      "id": "74987ebb-acf6-4d9e-955c-5ddcd2e6c64b",
+      "id_prefix": "74987ebb",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "7f9ad9a0-8e16-4610-bae6-8da8a41e62bf",
+      "id_prefix": "7f9ad9a0",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "8708682e-10b1-4db6-b882-63fc648d942d",
+      "id_prefix": "8708682e",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "90183f48-c498-4711-9760-21ef66022334",
+      "id_prefix": "90183f48",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "a0f0becd-8075-4611-8460-08ffab8ab3da",
+      "id_prefix": "a0f0becd",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "a14d8610-58a0-4125-9002-38dee5d3136b",
+      "id_prefix": "a14d8610",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "a16bb41f-bbc5-4105-9ac6-df016219860c",
+      "id_prefix": "a16bb41f",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "a3c8242b-11d6-407a-bca2-df6f47a92354",
+      "id_prefix": "a3c8242b",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "a4260807-8f65-4735-b7f3-c689a1767f56",
+      "id_prefix": "a4260807",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "a49ef18a-50da-4884-9b8b-4038e9070ea4",
+      "id_prefix": "a49ef18a",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "a4b82f5c-b5ec-4dc5-ac7f-749198ca1a99",
+      "id_prefix": "a4b82f5c",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "a72538ab-81b8-4eb3-aea2-99cba405804f",
+      "id_prefix": "a72538ab",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "aa6262cc-be13-4da2-b70c-ad05a25a3def",
+      "id_prefix": "aa6262cc",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "would_retire_and_create_replacement",
+      "reasons": [],
+      "replacement_preview": {
+        "stem_preview": "Ethene reacts with steam to form compound $X$. Compound $X$ is then warmed with ethanoic acid in the presence of an acid"
+      },
+      "replacement_id": "58c687ff-630d-48f8-a6e2-b0b000a71ffa",
+      "replacement_qg": {
+        "verdict": "Pass",
+        "action": "approve",
+        "model": "gemini-2.5-flash"
+      },
+      "applied": true
+    },
+    {
+      "id": "aec15155-0970-401b-ad53-8f82f557ffb6",
+      "id_prefix": "aec15155",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "b0a26f12-68f2-4fa9-873c-1c1720ff9155",
+      "id_prefix": "b0a26f12",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "b0e4d67a-935a-4b98-a692-9a25c705b752",
+      "id_prefix": "b0e4d67a",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "b3284525-5694-421b-8ca5-4bfdb59add96",
+      "id_prefix": "b3284525",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "b36a75e2-dc03-4e41-8362-45e32e64730e",
+      "id_prefix": "b36a75e2",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "c40d7baf-ff05-4b09-b19e-dc5579376cf2",
+      "id_prefix": "c40d7baf",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "c8811468-ca84-41b2-b31a-ea052b5c08f0",
+      "id_prefix": "c8811468",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "c8d3635c-3285-404d-bf8a-ee79fff75aeb",
+      "id_prefix": "c8d3635c",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "ca9b9880-78ee-433e-ace5-845fae205404",
+      "id_prefix": "ca9b9880",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d64f4e06-7620-4818-97af-1d0f55dbd978",
+      "id_prefix": "d64f4e06",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d76f0ca9-74e1-4a05-8f80-b58eb7ce0759",
+      "id_prefix": "d76f0ca9",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "d77f74ab-c311-433a-8e73-efdc7bf77c60",
+      "id_prefix": "d77f74ab",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "would_retag_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "dcacc5a7-6760-42d9-b0f0-db38e077c11f",
+      "id_prefix": "dcacc5a7",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "ddb28c06-8246-47a1-8532-951d03b8072e",
+      "id_prefix": "ddb28c06",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "de2975ce-03d4-4733-8582-872067ff6f12",
+      "id_prefix": "de2975ce",
+      "operation": "retire_original_and_create_replacement",
+      "decision": "reject",
+      "bucket": "would_retire_and_create_replacement",
+      "reasons": [],
+      "replacement_preview": {
+        "stem_preview": "Two monoprotic acids, $X$ and $Y$, each have concentration $0.010\\ \\text{mol dm}^{-3}$ at the same temperature. The pH o"
+      },
+      "replacement_id": "6296392a-8463-4b2b-a36f-398e454fd99e",
+      "replacement_qg": {
+        "verdict": "Pass",
+        "action": "approve",
+        "model": "gemini-2.5-flash"
+      },
+      "applied": true
+    },
+    {
+      "id": "e3919770-9761-4cf0-93c9-0176a9ca89ca",
+      "id_prefix": "e3919770",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "e7ee9695-a2cf-4bf7-8b02-de401d13fe19",
+      "id_prefix": "e7ee9695",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "ed5ec571-0165-4ab4-a514-c5492394dc2a",
+      "id_prefix": "ed5ec571",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "ee9c113a-ebd2-4bde-8636-670bf74ca051",
+      "id_prefix": "ee9c113a",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "eedf32dc-06b8-46e6-b1d0-f90898e02ee7",
+      "id_prefix": "eedf32dc",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f47605d6-5576-4e58-bb7c-dec8e4907f22",
+      "id_prefix": "f47605d6",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f60ad2ea-f4f5-4c49-b047-15987a6fa3a7",
+      "id_prefix": "f60ad2ea",
+      "operation": "retag_and_patch_in_place",
+      "decision": "reject",
+      "bucket": "would_retag_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "f6866e25-bdf9-4850-a3f7-74ab9a6660c1",
+      "id_prefix": "f6866e25",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "fc29e3d7-0e49-44b7-b62a-617d0a3a3181",
+      "id_prefix": "fc29e3d7",
+      "operation": "patch_in_place",
+      "decision": "accept",
+      "bucket": "would_patch_and_approve",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "fc76bcb3-e37c-4219-8c2a-6145161b5209",
+      "id_prefix": "fc76bcb3",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    },
+    {
+      "id": "fdae62e2-2ba9-4c46-964f-f5752de4388a",
+      "id_prefix": "fdae62e2",
+      "operation": "no_change",
+      "decision": "accept",
+      "bucket": "would_approve_no_change",
+      "reasons": [],
+      "applied": true
+    }
+  ]
+}

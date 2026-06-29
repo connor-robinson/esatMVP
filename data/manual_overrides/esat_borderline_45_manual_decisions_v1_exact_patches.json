@@ -1,0 +1,2247 @@
+{
+  "review_metadata": {
+    "reviewed_at": "2026-06-29T17:08:23.720545+00:00",
+    "manual_map_version": "esat_borderline_curriculum_45_v1_exact_patches",
+    "cohort": "borderline_curriculum_only",
+    "questions_reviewed": 45,
+    "source_files": [
+      {
+        "source_file": "Pasted text (2).txt",
+        "part": 1,
+        "questions": 23,
+        "source_sha256": "926180a430b49de91a0f098160ae504c9f9a7949ef7b8ab7e2f3d2b276b20f68",
+        "exported_at": "2026-06-29T15:59:10.762450+00:00"
+      },
+      {
+        "source_file": "Pasted text(13).txt",
+        "part": 2,
+        "questions": 22,
+        "source_sha256": "252bb0a5cf1c0a3e335bb195c125756bc29c2a630564e8d4e3e4d8bf3f68b7d0",
+        "exported_at": "2026-06-29T15:59:10.766603+00:00"
+      }
+    ],
+    "authority": {
+      "document": "UAT-UK ESAT Content Specification",
+      "assessment_cycle": "October 2026 and January 2027",
+      "local_sha256": "da9e853ec99cc0befcae5c8871e48eedc5776d7b2db07b8d5d9e2492a01452b3",
+      "official_url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/03165424/ESAT_Content_Specification.pdf"
+    },
+    "review_basis": [
+      "Current official UAT-UK ESAT Content Specification for October 2026 and January 2027.",
+      "Official UAT-UK ESAT subject guides and Mathematics 2 notes.",
+      "Independent solution and answer-key verification for every supplied item.",
+      "ESAT format and style: multiple choice, non-calculator, 27 questions in 40 minutes, with concise application of permitted knowledge.",
+      "Closed-world curriculum policy: unlisted subject knowledge was not treated as assumed unless explicitly supplied in the stem."
+    ],
+    "decision_semantics": {
+      "accept": "Keep the question after applying any exact listed patch.",
+      "reject": "Do not approve the current item or current module placement; follow the supplied move or replacement operation."
+    }
+  },
+  "summary": {
+    "total": 45,
+    "accept": 40,
+    "reject": 5,
+    "operations": {
+      "patch_in_place": 22,
+      "no_change": 18,
+      "retire_original_and_create_replacement": 3,
+      "retag_and_patch_in_place": 2
+    },
+    "answer_keys_changed_in_place": 0,
+    "complete_replacement_questions": 3,
+    "module_moves": 2,
+    "by_subject": {
+      "Math 2": {
+        "accept": 22,
+        "reject": 0
+      },
+      "Math 1": {
+        "accept": 12,
+        "reject": 2
+      },
+      "Biology": {
+        "accept": 1,
+        "reject": 1
+      },
+      "Physics": {
+        "accept": 5,
+        "reject": 0
+      },
+      "Chemistry": {
+        "accept": 0,
+        "reject": 2
+      }
+    },
+    "by_answer_key_status": {
+      "verified": 42,
+      "unreliable_as_written": 1,
+      "unreliable": 1,
+      "intended_but_underdetermined": 1
+    }
+  },
+  "double_check_results": {
+    "all_45_full_uuids_present": true,
+    "all_45_source_rows_matched": true,
+    "duplicate_decision_ids": 0,
+    "all_target_answer_letters_exist": true,
+    "all_replacements_have_complete_unique_options": true,
+    "all_replacements_have_full_solutions": true,
+    "exact_duplicate_final_stems_within_batch": 0,
+    "independent_answer_key_changes_required": 0,
+    "manual_invalid_items_repaired_or_replaced": [
+      "6cc8a1e3",
+      "de2975ce",
+      "f47605d6"
+    ],
+    "explicit_curriculum_supply_patches": [
+      "a4b82f5c",
+      "c8d3635c"
+    ],
+    "validation_errors": [],
+    "independent_symbolic_checks_completed_for_all_changed_math_physics_items": true,
+    "replacement_answer_checks_completed": true
+  },
+  "cursor_application_rules": [
+    {
+      "rule": "preflight",
+      "instruction": "Validate expected counts, unique full UUIDs, both source checksums and every question_stem_sha256. Abort before writing on any mismatch."
+    },
+    {
+      "rule": "dry_run",
+      "instruction": "Run a complete dry-run and report every proposed field change, retirement, module move and replacement before applying."
+    },
+    {
+      "rule": "exact_manual_content",
+      "instruction": "Apply implementation.set_fields and replacement_question exactly. Do not call an LLM to rewrite, shorten or reinterpret supplied manual content."
+    },
+    {
+      "rule": "answer_keys",
+      "instruction": "Do not change any existing answer-key letter in this cohort: independent review found zero in-place letter changes. Replacements must use their supplied correct_option. If a deterministic validator disagrees, fail closed and report the row rather than silently changing it."
+    },
+    {
+      "rule": "module_moves",
+      "instruction": "For retag_and_patch_in_place, update subject and tags first, then rerun curriculum validation under the new module before approval."
+    },
+    {
+      "rule": "replacements",
+      "instruction": "For retire_original_and_create_replacement, preserve the original row and audit history, mark it retired/rejected, create a new UUID, copy the complete supplied replacement, and set replacement_for_question_id."
+    },
+    {
+      "rule": "transaction_and_audit",
+      "instruction": "Apply writes transactionally where supported and append an immutable audit entry containing the manual-map version, source checksums, prior values, final values, operation and validation result."
+    },
+    {
+      "rule": "idempotency",
+      "instruction": "Skip rows already carrying manual_patch_version=esat_borderline_curriculum_45_v1_exact_patches unless --force is supplied."
+    },
+    {
+      "rule": "post_checks",
+      "instruction": "After mutation, run schema, render, exactly-one-answer, curriculum, subject/tag, style, pacing, duplicate and near-duplicate checks. Do not approve a row with a newer unrelated blocker."
+    }
+  ],
+  "answer_key_changes": [],
+  "replacement_question_prefixes": [
+    "7358057e",
+    "aa6262cc",
+    "de2975ce"
+  ],
+  "retagged_question_prefixes": [
+    "d77f74ab",
+    "f60ad2ea"
+  ],
+  "decisions": [
+    {
+      "id": "3c67d790-a11c-4f19-ad61-0a0bdfde601a",
+      "id_prefix": "3c67d790",
+      "source_part": 1,
+      "subject": "Math 2",
+      "primary_tag": "M2-MM4",
+      "decision": "accept",
+      "recommended_action": "patch_then_approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "verified",
+      "stored_correct_option": "B",
+      "corrected_option": "B",
+      "manual_confidence": "high",
+      "reason": "The question, solution and key B are correct. Its main content is logarithm laws and logarithmic domain restrictions, so the primary tag should be MM5 rather than MM4.",
+      "issues": [
+        "primary_tag_mismatch"
+      ],
+      "question_stem_sha256": "86289ad39ba849acfac7c7539285bd6849a474f7f68abaae777c7480212aa51f",
+      "question_stem_preview": "Find the number of solutions to the equation $$ \\log_2(\\sin x) + \\log_2(3 \\sin x) = 1 + \\log_2(1 - \\cos x) $$ for $0 \\le x \\le 2\\pi$.",
+      "implementation": {
+        "operation": "patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "primary_tag": "M2-MM5",
+          "secondary_tags": [
+            "M2-MM4",
+            "M2-MM1"
+          ]
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "The question, solution and key B are correct. Its main content is logarithm laws and logarithmic domain restrictions, so the primary tag should be MM5 rather than MM4."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "51b879e1-5895-4d16-91c2-81ddea266282",
+      "id_prefix": "51b879e1",
+      "source_part": 1,
+      "subject": "Math 1",
+      "primary_tag": "M1-M4",
+      "decision": "accept",
+      "recommended_action": "approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "acceptable_easy",
+      "answer_key_status": "verified",
+      "stored_correct_option": "C",
+      "corrected_option": "C",
+      "manual_confidence": "high",
+      "reason": "The age equations give the father as 30, so option C is correct. This is a straightforward but valid easy Math 1 item.",
+      "issues": [],
+      "question_stem_sha256": "6e6942fde14b00bf4464366f773c96901eb9a4d88259383c1d3adee3dda9fb52",
+      "question_stem_preview": "A father is currently three times as old as his son. In 10 years' time, the father will be twice as old as his son. What is the current age of the father?",
+      "implementation": {
+        "operation": "no_change",
+        "post_patch_action": "approve_if_no_newer_blocker",
+        "set_fields": {},
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "No content mutation is required.",
+          "The stored answer key was independently verified."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "6cc8a1e3-cd24-451c-9bb1-1efa9fd8f859",
+      "id_prefix": "6cc8a1e3",
+      "source_part": 1,
+      "subject": "Math 2",
+      "primary_tag": "M2-MM1",
+      "decision": "accept",
+      "recommended_action": "patch_then_approve",
+      "curriculum_match_as_written": "out_of_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "invalid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "unreliable_as_written",
+      "stored_correct_option": "E",
+      "corrected_option": "E",
+      "manual_confidence": "high",
+      "reason": "As written, the stationary-point locations leave both a scale factor and a vertical shift unknown, so several options are not sufficient. The item also examines a point of inflection, which the specification says will not be examined. Making the cubic monic and replacing that option repairs the item; option E then becomes uniquely correct.",
+      "issues": [
+        "invalid_as_written",
+        "multiple_insufficient_options",
+        "point_of_inflexion_not_examined",
+        "missing_solution"
+      ],
+      "question_stem_sha256": "89f767c39169679cc0148a21cb741c269be32e3c4b5bd914fa3db6b0259a9754",
+      "question_stem_preview": "A cubic curve $y = f(x)$ has stationary points at $x=1$ and $x=3$. Which one of the following conditions is **not** sufficient to determine the equation of the curve uniquely?",
+      "implementation": {
+        "operation": "patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "question_stem": "A monic cubic curve $y=f(x)$ has stationary points at $x=1$ and $x=3$.\n\nWhich one of the following conditions is **not** sufficient to determine the equation of the curve uniquely?",
+          "options": {
+            "A": "The curve passes through the point $(2, 5)$.",
+            "B": "The $y$ -coordinate of the local maximum is 1.",
+            "C": "The curve passes through the point $(2,1)$.",
+            "D": "The value of $\\int_0^1 f(x) \\, \\mathrm{d}x$ is 4.",
+            "E": "The equation $f(x)=0$ has exactly two distinct real roots.",
+            "F": "The tangent to the curve at $x=0$ passes through the point $(1, 5)$."
+          },
+          "correct_option": "E",
+          "primary_tag": "M2-MM6",
+          "secondary_tags": [
+            "M2-MM1",
+            "M2-MM7"
+          ],
+          "difficulty": "Hard",
+          "solution_reasoning": "Because the cubic is monic and has stationary points at $x=1$ and $x=3$,\n\n$$\nf'(x)=3(x-1)(x-3)=3x^2-12x+9.\n$$\n\nIntegrating gives\n\n$$\nf(x)=x^3-6x^2+9x+C,\n$$\n\nso only the vertical-shift constant $C$ remains unknown. The stationary point at $x=1$ is a local maximum and the one at $x=3$ is a local minimum.\n\n- A: $f(2)=C+2=5$, so $C=3$ uniquely.\n- B: $f(1)=C+4=1$, so $C=-3$ uniquely.\n- C: $f(2)=C+2=1$, so $C=-1$ uniquely.\n- D: $\\int_0^1 f(x)\\,dx=C+\\frac{11}{4}=4$, so $C=\\frac54$ uniquely.\n- F: the tangent at $x=0$ is $y=9x+C$. Passing through $(1,5)$ gives $C=-4$ uniquely.\n\nFor E, the cubic has exactly two distinct real roots when either stationary point lies on the $x$-axis. This occurs for\n\n$$\nf(1)=C+4=0\\quad\\text{or}\\quad f(3)=C=0,\n$$\n\ngiving two possible values, $C=-4$ and $C=0$. Therefore E is not sufficient, and the correct option is E.",
+          "solution_key_insight": "The word monic fixes the scale of the cubic. Integrate the derivative with roots 1 and 3, then test which condition leaves more than one possible vertical shift.",
+          "distractor_map": {
+            "A": "A point on the curve fixes the remaining constant uniquely.",
+            "B": "The local maximum is at $x=1$, so its stated height fixes the constant.",
+            "C": "The value $f(2)$ fixes the constant uniquely.",
+            "D": "The definite integral is linear in the remaining constant and fixes it uniquely.",
+            "E": "Correct. Either stationary point may lie on the axis, giving two different cubics.",
+            "F": "The tangent condition gives one linear equation for the remaining constant."
+          }
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "As written, the stationary-point locations leave both a scale factor and a vertical shift unknown, so several options are not sufficient. The item also examines a point of inflection, which the specification says will not be examined. Making the cubic monic and replacing that option repairs the item; option E then becomes uniquely correct."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "725b5860-3876-437b-87d5-1e80aeb9df19",
+      "id_prefix": "725b5860",
+      "source_part": 1,
+      "subject": "Math 2",
+      "primary_tag": "M2-MM4",
+      "decision": "accept",
+      "recommended_action": "patch_then_approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "verified",
+      "stored_correct_option": "B",
+      "corrected_option": "B",
+      "manual_confidence": "high",
+      "reason": "The solution and key B are correct; logarithms are MM5, not MM4.",
+      "issues": [
+        "primary_tag_mismatch"
+      ],
+      "question_stem_sha256": "fee3ac965be15d7f35fae7b968ae939b4ce4498f662331f887320e711ea2eee1",
+      "question_stem_preview": "What is the complete set of real solutions for $x$ that satisfies the equation $$\\log_2(x+1) + \\log_2(x-3) = 5$$",
+      "implementation": {
+        "operation": "patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "primary_tag": "M2-MM5",
+          "secondary_tags": [
+            "M2-MM1"
+          ]
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "The solution and key B are correct; logarithms are MM5, not MM4."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "73308c65-7c35-492b-baeb-54e1f4d4d11d",
+      "id_prefix": "73308c65",
+      "source_part": 1,
+      "subject": "Math 1",
+      "primary_tag": "M1-M4",
+      "decision": "accept",
+      "recommended_action": "approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good",
+      "answer_key_status": "verified",
+      "stored_correct_option": "A",
+      "corrected_option": "A",
+      "manual_confidence": "high",
+      "reason": "The two points give $k=2$ and $n=4$, hence $Q(5)=81c$. Only option A is consistent. The item is valid Math 1 algebra.",
+      "issues": [],
+      "question_stem_sha256": "213251adbb3f76987c53850c6b3c396ea68d6082d4ea31f638a4596e919f336b",
+      "question_stem_preview": "A polynomial $P(x)$ is given by $P(x) = k(x+1)^n$, where $k$ is a real constant and $n$ is a positive integer. The curve $y=P(x)$ passes through the points $(0, 2)$ and $(1, 32)$. A second polynomial is given by $Q(x) = c(x-2)^n$, using the",
+      "implementation": {
+        "operation": "no_change",
+        "post_patch_action": "approve_if_no_newer_blocker",
+        "set_fields": {},
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "No content mutation is required.",
+          "The stored answer key was independently verified."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "7358057e-4b89-4b79-bf8f-168b59417d5f",
+      "id_prefix": "7358057e",
+      "source_part": 1,
+      "subject": "Biology",
+      "primary_tag": "biology-B4",
+      "decision": "reject",
+      "recommended_action": "retire_original_and_create_replacement",
+      "curriculum_match_as_written": "out_of_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_replacement_supplied",
+      "answer_key_status": "verified",
+      "stored_correct_option": "B",
+      "corrected_option": "B",
+      "manual_confidence": "high",
+      "reason": "The original requires a dihybrid cross and independent assortment of two genes. The current Biology specification explicitly requires monohybrid crosses, not dihybrid crosses. The stored answer B is mathematically correct but the item is out of syllabus.",
+      "issues": [
+        "dihybrid_cross_out_of_syllabus",
+        "independent_assortment_not_required"
+      ],
+      "question_stem_sha256": "63bce92fd793418ea69114408e4953d768383555dcee40af57e3eb3a64e798cd",
+      "question_stem_preview": "In fruit flies, the allele for a grey body (G) is dominant to the allele for an ebony body (g), and the allele for normal wings (N) is dominant to the allele for vestigial wings (n). The genes are located on different chromosomes. A male fl",
+      "implementation": {
+        "operation": "retire_original_and_create_replacement",
+        "post_patch_action": "run_full_quality_gate_on_new_question",
+        "set_fields": {
+          "status": "retired",
+          "manual_disposition": "rejected_current_item"
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "replacement_question": {
+          "subject": "Biology",
+          "test_type": "ESAT",
+          "primary_tag": "biology-B4",
+          "secondary_tags": [
+            "M1-M7"
+          ],
+          "difficulty": "Hard",
+          "status": "pending",
+          "question_stem": "In mice, the allele for black fur, $B$, is dominant to the allele for brown fur, $b$.\n\nTwo heterozygous black mice are crossed. A black offspring from this cross is selected at random and crossed with a heterozygous black mouse.\n\nWhat is the probability that their first offspring has brown fur?",
+          "options": {
+            "A": "$0$",
+            "B": "$\\frac{1}{12}$",
+            "C": "$\\frac{1}{6}$",
+            "D": "$\\frac{1}{4}$",
+            "E": "$\\frac{1}{3}$",
+            "F": "$\\frac{1}{2}$"
+          },
+          "correct_option": "C",
+          "solution_reasoning": "The first cross is $Bb\\times Bb$, which gives genotype probabilities\n\n$$\nBB:\\ Bb:\\ bb=\\frac14:\\frac12:\\frac14.\n$$\n\nThe selected offspring is known to have black fur, so it is either $BB$ or $Bb$. Conditional on being black,\n\n$$\nP(Bb\\mid\\text{black})=\\frac{1/2}{3/4}=\\frac23.\n$$\n\nIf the selected mouse is $BB$, crossing it with $Bb$ cannot produce a brown offspring. If it is $Bb$, the cross $Bb\\times Bb$ produces a brown $bb$ offspring with probability $1/4$. Therefore,\n\n$$\nP(\\text{brown offspring})=\\frac23\\times\\frac14=\\frac16.\n$$\n\nThe correct option is C.",
+          "solution_key_insight": "Condition on the selected mouse having the dominant phenotype before using the monohybrid cross.",
+          "distractor_map": {
+            "A": "Assumes two black parents cannot produce a brown offspring.",
+            "B": "Uses the correct $2/3$ carrier probability but multiplies by $1/8$ instead of $1/4$.",
+            "C": "Correct.",
+            "D": "Assumes the selected black mouse is definitely heterozygous.",
+            "E": "Finds the probability that the selected black mouse is heterozygous, then divides by 2 incorrectly.",
+            "F": "Uses only the heterozygous probability and ignores the offspring cross."
+          }
+        },
+        "implementation_notes": [
+          "The original requires a dihybrid cross and independent assortment of two genes. The current Biology specification explicitly requires monohybrid crosses, not dihybrid crosses. The stored answer B is mathematically correct but the item is out of syllabus.",
+          "Do not overwrite or approve the original row.",
+          "Create a new UUID and set replacement_for_question_id to the original full UUID."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "74987ebb-acf6-4d9e-955c-5ddcd2e6c64b",
+      "id_prefix": "74987ebb",
+      "source_part": 1,
+      "subject": "Physics",
+      "primary_tag": "P-P4",
+      "decision": "accept",
+      "recommended_action": "approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_hard",
+      "answer_key_status": "verified",
+      "stored_correct_option": "A",
+      "corrected_option": "A",
+      "manual_confidence": "high",
+      "reason": "Adding the same positive convection term to both radiation rates makes both rates increase equally and reduces a ratio initially greater than 1. Option A is correct and the thermal physics is explicitly permitted.",
+      "issues": [],
+      "question_stem_sha256": "213a0ff1f7bb664ed80b06a02b2ecd10440b9b8c1ae500b1ec1a8809bae447b6",
+      "question_stem_preview": "Two identical copper spheres, **X** and **Y**, are heated to $500\\text{ K}$. Sphere **X** has a matte black surface. Sphere **Y** has a polished silver surface. The initial rate of energy loss, $R$, is determined for each sphere in a **vacu",
+      "implementation": {
+        "operation": "no_change",
+        "post_patch_action": "approve_if_no_newer_blocker",
+        "set_fields": {},
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "No content mutation is required.",
+          "The stored answer key was independently verified."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "7f9ad9a0-8e16-4610-bae6-8da8a41e62bf",
+      "id_prefix": "7f9ad9a0",
+      "source_part": 1,
+      "subject": "Math 2",
+      "primary_tag": "M2-MM7",
+      "decision": "accept",
+      "recommended_action": "patch_then_approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "verified",
+      "stored_correct_option": "D",
+      "corrected_option": "D",
+      "manual_confidence": "high",
+      "reason": "The repeated-root argument gives $a=-12$ and $b=16$, so option D is correct. The main assessed content is differentiation and polynomial algebra rather than integration.",
+      "issues": [
+        "primary_tag_mismatch"
+      ],
+      "question_stem_sha256": "6326448850d849c162565cd752ae402c09b6b398b5723f0813837bb434641dd7",
+      "question_stem_preview": "The polynomial $x^3 + ax + b$ is divisible by $(x-2)^2$. What is the value of $b$?",
+      "implementation": {
+        "operation": "patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "primary_tag": "M2-MM6",
+          "secondary_tags": [
+            "M2-MM1"
+          ]
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "The repeated-root argument gives $a=-12$ and $b=16$, so option D is correct. The main assessed content is differentiation and polynomial algebra rather than integration."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "8708682e-10b1-4db6-b882-63fc648d942d",
+      "id_prefix": "8708682e",
+      "source_part": 1,
+      "subject": "Math 2",
+      "primary_tag": "M2-MM1",
+      "decision": "accept",
+      "recommended_action": "approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good",
+      "answer_key_status": "verified",
+      "stored_correct_option": "E",
+      "corrected_option": "E",
+      "manual_confidence": "high",
+      "reason": "Independent sign analysis gives $x\\le -3$ or $1<x\\le2$, option E. The official Mathematics notes explicitly include rational-inequality examples under MM1.5.",
+      "issues": [],
+      "question_stem_sha256": "2c9f2cd2aa3f12cf85ecefac8d1ad38e03a845a2f384d00c0b09cd717b02fd44",
+      "question_stem_preview": "What is the set of real values of $x$ for which $$\\frac{4}{x-1} \\ge x+2$$",
+      "implementation": {
+        "operation": "no_change",
+        "post_patch_action": "approve_if_no_newer_blocker",
+        "set_fields": {},
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "No content mutation is required.",
+          "The stored answer key was independently verified."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "90183f48-c498-4711-9760-21ef66022334",
+      "id_prefix": "90183f48",
+      "source_part": 1,
+      "subject": "Math 1",
+      "primary_tag": "M1-M7",
+      "decision": "accept",
+      "recommended_action": "approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "acceptable_easy",
+      "answer_key_status": "verified",
+      "stored_correct_option": "A",
+      "corrected_option": "A",
+      "manual_confidence": "high",
+      "reason": "Using the complement gives $(1-p)^3=8/27$ and $p=1/3$, option A. This is valid Math 1 probability.",
+      "issues": [],
+      "question_stem_sha256": "d58867a851d2f9f1102f180036e46de8e61e6b44602eb84d17180a6a8ef05111",
+      "question_stem_preview": "An event has a constant probability $p$ of occurring in a single trial. Trials are independent. The probability that the event occurs at least once in 3 such trials is $\\frac{19}{27}$. What is the value of $p$?",
+      "implementation": {
+        "operation": "no_change",
+        "post_patch_action": "approve_if_no_newer_blocker",
+        "set_fields": {},
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "No content mutation is required.",
+          "The stored answer key was independently verified."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "a0f0becd-8075-4611-8460-08ffab8ab3da",
+      "id_prefix": "a0f0becd",
+      "source_part": 1,
+      "subject": "Math 1",
+      "primary_tag": "M1-M4",
+      "decision": "accept",
+      "recommended_action": "approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good",
+      "answer_key_status": "verified",
+      "stored_correct_option": "C",
+      "corrected_option": "C",
+      "manual_confidence": "high",
+      "reason": "$W_k(H)=2\\sqrt{H/k}$, so $W_1(H)=2W_4(H)$. Option C is correct and the route is a concise Math 1 application.",
+      "issues": [],
+      "question_stem_sha256": "fcd42f1d90472571e2879340d573386d254e016f48dc1b2d2193d617e758867b",
+      "question_stem_preview": "Let $P_k$ be the parabola with equation $y = kx^2$, where $k$ is a positive constant. The width of $P_k$ at a height $H > 0$, denoted $W_k(H)$, is the distance between the two points on the parabola with $y$ -coordinate $H$. Which of the fo",
+      "implementation": {
+        "operation": "no_change",
+        "post_patch_action": "approve_if_no_newer_blocker",
+        "set_fields": {},
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "No content mutation is required.",
+          "The stored answer key was independently verified."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "a14d8610-58a0-4125-9002-38dee5d3136b",
+      "id_prefix": "a14d8610",
+      "source_part": 1,
+      "subject": "Physics",
+      "primary_tag": "P-P4",
+      "decision": "accept",
+      "recommended_action": "approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "acceptable",
+      "answer_key_status": "verified",
+      "stored_correct_option": "A",
+      "corrected_option": "A",
+      "manual_confidence": "high",
+      "reason": "Air allows convection while a dull black surface maximises thermal radiation, so calorimeter 1 cools fastest. Option A is correct.",
+      "issues": [],
+      "question_stem_sha256": "e41fc9555a783e2e602bb42cebc6ab638830fe8991467533c054880cc40c5949",
+      "question_stem_preview": "Four identical copper calorimeters, labelled 1, 2, 3, and 4, contain equal masses of water at $80\\,^\\circ\\mathrm{C}$. The calorimeters are sealed to prevent evaporation. They have different outer surface finishes and are placed in different",
+      "implementation": {
+        "operation": "no_change",
+        "post_patch_action": "approve_if_no_newer_blocker",
+        "set_fields": {},
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "No content mutation is required.",
+          "The stored answer key was independently verified."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "a16bb41f-bbc5-4105-9ac6-df016219860c",
+      "id_prefix": "a16bb41f",
+      "source_part": 1,
+      "subject": "Math 1",
+      "primary_tag": "M1-M5",
+      "decision": "accept",
+      "recommended_action": "approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "acceptable_easy",
+      "answer_key_status": "verified",
+      "stored_correct_option": "B",
+      "corrected_option": "B",
+      "manual_confidence": "high",
+      "reason": "The bounded triangle has height $2\\times10^3$ and width $5\\times10^{-3}$, giving area 5. Option B is correct.",
+      "issues": [],
+      "question_stem_sha256": "475f8c62c74200456da320232f7312ccc879beee1bffd286eff65c44ae43a197",
+      "question_stem_preview": "What is the area of the finite region in the $xy$ -plane bounded by the line $y = 4 \\times 10^5 x$, the $y$ -axis, and the line $y = 2 \\times 10^3$?",
+      "implementation": {
+        "operation": "no_change",
+        "post_patch_action": "approve_if_no_newer_blocker",
+        "set_fields": {},
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "No content mutation is required.",
+          "The stored answer key was independently verified."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "a3c8242b-11d6-407a-bca2-df6f47a92354",
+      "id_prefix": "a3c8242b",
+      "source_part": 1,
+      "subject": "Math 2",
+      "primary_tag": "M2-MM4",
+      "decision": "accept",
+      "recommended_action": "patch_then_approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "verified",
+      "stored_correct_option": "B",
+      "corrected_option": "B",
+      "manual_confidence": "high",
+      "reason": "The graph gives $n=2$ and $A=16$, so option B is correct. The primary topic is MM5 logarithms.",
+      "issues": [
+        "primary_tag_mismatch"
+      ],
+      "question_stem_sha256": "03c1412f6108ef4dd30ff0afed5da1e44aa2d97afccb32bae3f934edb7ef7eb3",
+      "question_stem_preview": "Variables $x$ and $y$ are related by the equation $y = A x^n$, where $A$ and $n$ are constants. A graph of $\\log_2 y$ plotted against $\\log_2 x$ is a straight line with gradient 2 and intercept 4 on the vertical axis. Which of the following",
+      "implementation": {
+        "operation": "patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "primary_tag": "M2-MM5",
+          "secondary_tags": [
+            "M2-MM1"
+          ]
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "The graph gives $n=2$ and $A=16$, so option B is correct. The primary topic is MM5 logarithms."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "a4260807-8f65-4735-b7f3-c689a1767f56",
+      "id_prefix": "a4260807",
+      "source_part": 1,
+      "subject": "Math 1",
+      "primary_tag": "M1-M2",
+      "decision": "accept",
+      "recommended_action": "approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "acceptable",
+      "answer_key_status": "verified",
+      "stored_correct_option": "E",
+      "corrected_option": "E",
+      "manual_confidence": "high",
+      "reason": "There are 60 two-positive, 90 two-negative and 50 mixed equations, giving 170 positive and 230 negative roots. Option E is correct.",
+      "issues": [],
+      "question_stem_sha256": "1f18fdf6890670c3977f6e795959a2057100c161bdf3273ee13416272d3b070a",
+      "question_stem_preview": "A set of 200 quadratic equations is considered. Each equation has exactly two real roots, and none of the roots are zero. It is found that: - 30% of the equations have two positive roots. - 45% of the equations have two negative roots. The ",
+      "implementation": {
+        "operation": "no_change",
+        "post_patch_action": "approve_if_no_newer_blocker",
+        "set_fields": {},
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "No content mutation is required.",
+          "The stored answer key was independently verified."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "a49ef18a-50da-4884-9b8b-4038e9070ea4",
+      "id_prefix": "a49ef18a",
+      "source_part": 1,
+      "subject": "Math 2",
+      "primary_tag": "M2-MM7",
+      "decision": "accept",
+      "recommended_action": "patch_then_approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "verified",
+      "stored_correct_option": "F",
+      "corrected_option": "F",
+      "manual_confidence": "high",
+      "reason": "The midpoint x-coordinate is $k$, so no numerical value is fixed and option F is correct. The primary content is differentiation.",
+      "issues": [
+        "primary_tag_mismatch"
+      ],
+      "question_stem_sha256": "f6810072ee31a90fcb3dadfd713772d673ef243cb90c9fef10ea02f25a1bdc47",
+      "question_stem_preview": "The curve C has equation $$ y = x^3 - 3kx^2 + 5x - 1 $$ where $k$ is a real constant such that the curve has two distinct stationary points. What is the x-coordinate of the midpoint of the line segment joining the two stationary points?",
+      "implementation": {
+        "operation": "patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "primary_tag": "M2-MM6",
+          "secondary_tags": [
+            "M2-MM1"
+          ]
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "The midpoint x-coordinate is $k$, so no numerical value is fixed and option F is correct. The primary content is differentiation."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "a4b82f5c-b5ec-4dc5-ac7f-749198ca1a99",
+      "id_prefix": "a4b82f5c",
+      "source_part": 1,
+      "subject": "Physics",
+      "primary_tag": "P-P3",
+      "decision": "accept",
+      "recommended_action": "patch_then_approve",
+      "curriculum_match_as_written": "out_of_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "verified",
+      "stored_correct_option": "D",
+      "corrected_option": "D",
+      "manual_confidence": "high",
+      "reason": "Moments are not listed as assumed Physics knowledge. The numerical answer D is correct, but the moment definition and limiting-equilibrium condition must be supplied explicitly.",
+      "issues": [
+        "moments_not_assumed_in_physics"
+      ],
+      "question_stem_sha256": "3b8dcec587e4bafdb5b3963eb1b7997e4651ada7405edf540469c3b4d880e979",
+      "question_stem_preview": "A uniform beam of weight $W$ and length $L$ rests horizontally on two supports. One support is located at the left-hand end of the beam, and the other is at a distance of $\\frac{5}{8}L$ from the left-hand end. A vertical downward load of ma",
+      "implementation": {
+        "operation": "patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "question_stem": "A uniform beam of weight $W$ and length $L$ rests horizontally on two supports. One support is at the left-hand end and the other is $\\frac58L$ from the left-hand end. A vertical downward load $F$ is applied at the right-hand end.\n\nFor this question, the moment of a force about a point is defined as\n\n$$\n\\text{moment}=\\text{force}\\times\\text{perpendicular distance}.\n$$\n\nAt the largest value of $F$ for which equilibrium is possible, the reaction at the left-hand support is zero, and clockwise and anticlockwise moments about the other support are equal.\n\nWhat is this largest value of $F$?",
+          "solution_reasoning": "At the limiting value, take moments about the support at $\\frac58L$. The beam's weight acts at its centre, $\\frac12L$ from the left end.\n\nIts distance from the pivot is\n\n$$\n\\frac58L-\\frac12L=\\frac18L.\n$$\n\nThe load acts at the right end, a distance\n\n$$\nL-\\frac58L=\\frac38L\n$$\n\nfrom the pivot. Equating moments gives\n\n$$\nW\\left(\\frac18L\\right)=F\\left(\\frac38L\\right),\n$$\n\nso $W=3F$ and\n\n$$\nF=\\frac{W}{3}.\n$$\n\nThe correct option is D.",
+          "solution_key_insight": "Use the supplied limiting condition and balance moments about the support that remains in contact."
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "Moments are not listed as assumed Physics knowledge. The numerical answer D is correct, but the moment definition and limiting-equilibrium condition must be supplied explicitly."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "a72538ab-81b8-4eb3-aea2-99cba405804f",
+      "id_prefix": "a72538ab",
+      "source_part": 1,
+      "subject": "Math 2",
+      "primary_tag": "M2-MM7",
+      "decision": "accept",
+      "recommended_action": "approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good",
+      "answer_key_status": "verified",
+      "stored_correct_option": "A",
+      "corrected_option": "A",
+      "manual_confidence": "high",
+      "reason": "Linearity and interval evaluation give the required integral as 36, option A. The item is fully within MM7.",
+      "issues": [],
+      "question_stem_sha256": "e55a395ab79cc40a59509f71ab48a4d2a24e10cdd9c56484866ea536b74be113",
+      "question_stem_preview": "The functions $f(x)$ and $g(x)$ satisfy the equation $$2 \\int_0^3 (f(x) + 1) \\, \\mathrm{d}x + \\int_0^3 (4g(x) - f(x)) \\, \\mathrm{d}x = 15$$ What is the value of the following integral? $$\\int_0^3 (5f(x) + 20g(x) - 2x) \\, \\mathrm{d}x$$",
+      "implementation": {
+        "operation": "no_change",
+        "post_patch_action": "approve_if_no_newer_blocker",
+        "set_fields": {},
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "No content mutation is required.",
+          "The stored answer key was independently verified."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "aa6262cc-be13-4da2-b70c-ad05a25a3def",
+      "id_prefix": "aa6262cc",
+      "source_part": 1,
+      "subject": "Chemistry",
+      "primary_tag": "chemistry-C13",
+      "decision": "reject",
+      "recommended_action": "retire_original_and_create_replacement",
+      "curriculum_match_as_written": "out_of_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_replacement_supplied",
+      "answer_key_status": "verified",
+      "stored_correct_option": "A",
+      "corrected_option": "A",
+      "manual_confidence": "high",
+      "reason": "The original requires oxidation of a primary alcohol to an aldehyde and nucleophilic addition of HCN to a carbonyl. Neither reaction is listed in the ESAT Chemistry organic specification.",
+      "issues": [
+        "alcohol_oxidation_out_of_syllabus",
+        "carbonyl_chemistry_out_of_syllabus",
+        "cyanohydrin_reaction_out_of_syllabus"
+      ],
+      "question_stem_sha256": "4a669a01fe775e9cce168acd1ab8efb46f7bba1e6989d79ea7cb44f3b1cd300a",
+      "question_stem_preview": "Propan-1-ol is heated with acidified potassium dichromate(VI) solution and the organic product is immediately distilled off. This intermediate product is then treated with a mixture of KCN and dilute acid. Which structure represents the fin",
+      "implementation": {
+        "operation": "retire_original_and_create_replacement",
+        "post_patch_action": "run_full_quality_gate_on_new_question",
+        "set_fields": {
+          "status": "retired",
+          "manual_disposition": "rejected_current_item"
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "replacement_question": {
+          "subject": "Chemistry",
+          "test_type": "ESAT",
+          "primary_tag": "chemistry-C13",
+          "secondary_tags": [],
+          "difficulty": "Medium",
+          "status": "pending",
+          "question_stem": "Ethene reacts with steam to form compound $X$. Compound $X$ is then warmed with ethanoic acid in the presence of an acid catalyst to form compound $Y$.\n\nWhich condensed structural formula represents $Y$?",
+          "options": {
+            "A": "$\\ce{CH3COOCH2CH3}$",
+            "B": "$\\ce{CH3CH2COOCH3}$",
+            "C": "$\\ce{CH3CH2OH}$",
+            "D": "$\\ce{CH3COOH}$",
+            "E": "$\\ce{CH2=CHCOOH}$",
+            "F": "$\\ce{CH3CH2CH2OH}$"
+          },
+          "correct_option": "A",
+          "solution_reasoning": "Addition of steam to ethene forms ethanol:\n\n$$\n\\ce{CH2=CH2 + H2O -> CH3CH2OH}.\n$$\n\nEthanol then reacts with ethanoic acid in the presence of an acid catalyst to form the ester ethyl ethanoate and water:\n\n$$\n\\ce{CH3CH2OH + CH3COOH -> CH3COOCH2CH3 + H2O}.\n$$\n\nTherefore $Y$ is $\\ce{CH3COOCH2CH3}$, option A.",
+          "solution_key_insight": "Identify ethanol as the product of adding steam to ethene, then apply the listed alcohol–carboxylic acid esterification reaction.",
+          "distractor_map": {
+            "A": "Correct.",
+            "B": "Uses propanoic acid and methanol rather than the stated reactants.",
+            "C": "Stops after the first reaction and selects ethanol.",
+            "D": "Selects the carboxylic acid reactant.",
+            "E": "Incorrectly retains a carbon–carbon double bond in the final product.",
+            "F": "Adds a carbon atom when forming the alcohol."
+          }
+        },
+        "implementation_notes": [
+          "The original requires oxidation of a primary alcohol to an aldehyde and nucleophilic addition of HCN to a carbonyl. Neither reaction is listed in the ESAT Chemistry organic specification.",
+          "Do not overwrite or approve the original row.",
+          "Create a new UUID and set replacement_for_question_id to the original full UUID."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "aec15155-0970-401b-ad53-8f82f557ffb6",
+      "id_prefix": "aec15155",
+      "source_part": 1,
+      "subject": "Math 1",
+      "primary_tag": "M1-M3",
+      "decision": "accept",
+      "recommended_action": "approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good",
+      "answer_key_status": "verified",
+      "stored_correct_option": "B",
+      "corrected_option": "B",
+      "manual_confidence": "high",
+      "reason": "Combining the proportionalities gives $P\\propto T^{-3/2}$ and hence $P^2\\propto T^{-3}$, option B. This is valid Math 1 proportion.",
+      "issues": [],
+      "question_stem_sha256": "fb2a0a45c8a9874769b1490ec9d125fb2284e66a27e8ab230bd7ba996cd28a26",
+      "question_stem_preview": "Four variables, $P$, $V$, $r$, and $T$, are related as follows: - $P$ is inversely proportional to $V$. - $V$ is directly proportional to the cube of $r$. - $r$ is directly proportional to the square root of $T$. Which of the following stat",
+      "implementation": {
+        "operation": "no_change",
+        "post_patch_action": "approve_if_no_newer_blocker",
+        "set_fields": {},
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "No content mutation is required.",
+          "The stored answer key was independently verified."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "b0a26f12-68f2-4fa9-873c-1c1720ff9155",
+      "id_prefix": "b0a26f12",
+      "source_part": 1,
+      "subject": "Math 2",
+      "primary_tag": "M2-MM7",
+      "decision": "accept",
+      "recommended_action": "patch_then_approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "verified",
+      "stored_correct_option": "B",
+      "corrected_option": "B",
+      "manual_confidence": "high",
+      "reason": "The question and key B are correct, but the stored solution uses the product rule, which is not required by the specification. Expanding the cubic area expression first gives a fully permitted power-rule route.",
+      "issues": [
+        "stored_solution_uses_product_rule",
+        "primary_tag_mismatch"
+      ],
+      "question_stem_sha256": "a3043c8e5b035c91ef44ba0a6d0f8e79f010190a6340d66d6d442d106a86a7cd",
+      "question_stem_preview": "The tangent to the curve $y = (3-x)^2$ at the point $P$ forms a triangle with the coordinate axes in the first quadrant. What is the maximum area of this triangle?",
+      "implementation": {
+        "operation": "patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "primary_tag": "M2-MM6",
+          "secondary_tags": [
+            "M2-MM3",
+            "M2-MM1"
+          ],
+          "solution_reasoning": "Let the point of tangency be $P(p,(3-p)^2)$. The derivative is $2p-6$, so the tangent has y-intercept $9-p^2$ and x-intercept $\\frac{3+p}{2}$. The triangle lies in the first quadrant when $-3<p<3$.\n\nIts area is\n\n$$\nA(p)=\\frac12\\left(\\frac{3+p}{2}\\right)(9-p^2)\n=\\frac14(3+p)^2(3-p).\n$$\n\nExpand before differentiating:\n\n$$\nA(p)=\\frac14(-p^3-3p^2+9p+27).\n$$\n\nTherefore\n\n$$\nA'(p)=\\frac14(-3p^2-6p+9)\n=-\\frac34(p+3)(p-1).\n$$\n\nThe only stationary point inside $-3<p<3$ is $p=1$. The area tends to zero at the endpoints, so this is the maximum. Hence\n\n$$\nA(1)=\\frac14(4)^2(2)=8.\n$$\n\nThe correct option is B.",
+          "solution_key_insight": "Write the triangle area as a polynomial in the tangency coordinate, expand it, and then differentiate using only the permitted power rule."
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "The question and key B are correct, but the stored solution uses the product rule, which is not required by the specification. Expanding the cubic area expression first gives a fully permitted power-rule route."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "b0e4d67a-935a-4b98-a692-9a25c705b752",
+      "id_prefix": "b0e4d67a",
+      "source_part": 1,
+      "subject": "Physics",
+      "primary_tag": "P-P1",
+      "decision": "accept",
+      "recommended_action": "approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "acceptable_easy",
+      "answer_key_status": "verified",
+      "stored_correct_option": "A",
+      "corrected_option": "A",
+      "manual_confidence": "high",
+      "reason": "For constant resistance, power scales as voltage squared. $36(8/12)^2=16$ W, so option A is correct.",
+      "issues": [],
+      "question_stem_sha256": "0e6a637114f7c720134531a488883e4fcdd912dcc700c3f0044ce42f0b7903a9",
+      "question_stem_preview": "A resistor of constant resistance dissipates $36 \\text{ W}$ when the potential difference across it is $12 \\text{ V}$. The potential difference is changed to $8 \\text{ V}$. What is the power dissipated by the resistor at this new potential ",
+      "implementation": {
+        "operation": "no_change",
+        "post_patch_action": "approve_if_no_newer_blocker",
+        "set_fields": {},
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "No content mutation is required.",
+          "The stored answer key was independently verified."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "b3284525-5694-421b-8ca5-4bfdb59add96",
+      "id_prefix": "b3284525",
+      "source_part": 1,
+      "subject": "Math 2",
+      "primary_tag": "M2-MM5",
+      "decision": "accept",
+      "recommended_action": "patch_then_approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "verified",
+      "stored_correct_option": "F",
+      "corrected_option": "F",
+      "manual_confidence": "high",
+      "reason": "The stored key F is correct because the first three terms do not define a unique rule. The item is about sequences, not logarithms.",
+      "issues": [
+        "primary_tag_mismatch",
+        "difficulty_overstated"
+      ],
+      "question_stem_sha256": "efeee32259ca1495b0ba2ecd893fcf69634d0f26946af262a030938cf29f4ad0",
+      "question_stem_preview": "The first three terms of a sequence $u_n$ (for $n=1, 2, 3, \\dots$) are $u_1=2$, $u_2=4$, and $u_3=8$. What is the value of the fourth term, $u_4$?",
+      "implementation": {
+        "operation": "patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "primary_tag": "M2-MM2",
+          "secondary_tags": [
+            "M1-M4"
+          ],
+          "difficulty": "Easy"
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "The stored key F is correct because the first three terms do not define a unique rule. The item is about sequences, not logarithms."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "b36a75e2-dc03-4e41-8362-45e32e64730e",
+      "id_prefix": "b36a75e2",
+      "source_part": 2,
+      "subject": "Math 2",
+      "primary_tag": "M2-MM7",
+      "decision": "accept",
+      "recommended_action": "patch_then_approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "verified",
+      "stored_correct_option": "A",
+      "corrected_option": "A",
+      "manual_confidence": "high",
+      "reason": "The question, solution and key A are correct. Two option explanations are missing from the distractor map and should be completed.",
+      "issues": [
+        "incomplete_distractor_map"
+      ],
+      "question_stem_sha256": "26aad16c7296a934de87a7e4e0c48dae8fab4484ca3b0463e78378d3da7df022",
+      "question_stem_preview": "The function $F(t)$ is defined for $t > 0$ by $$ F(t) = \\int_0^t (x^2 - 6x) \\, \\mathrm{d}x $$ What is the minimum value of $F(t)$?",
+      "implementation": {
+        "operation": "patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "distractor_map": {
+            "A": "Correct.",
+            "B": "This is the result of an integration error, for example treating $\\int x^2 \\, \\mathrm{d}x$ as $x^3$ and $\\int 6x \\, \\mathrm{d}x$ as $3x^2$. This gives $F(t) = t^3/3 - 3t^2$ but then leads to a different stationary point if the differentiation is also incorrect, or if the stationary point $t=4$ from a different error (e.g. $F(t)=t^3-6t^2$) is used with the correct integral expression.",
+            "C": "This is the value of the integral $F(t)$ evaluated at $t=3$. The value $t=3$ is the location of the minimum of the *integrand* $f(x)=x^2-6x$, not the minimum of the integral function $F(t)$.",
+            "D": "This is the minimum value of the *integrand* $f(x)=x^2-6x$, which occurs at $x=3$ giving $3^2-6(3)=-9$. The question asks for the minimum value of the integral function $F(t)$.",
+            "E": "Uses the value approached as $t\\to0^+$ or assumes the lower limit must give the minimum, without checking the interior stationary point.",
+            "F": "This is the value of $t$ at which the minimum occurs, not the minimum value of the function $F(t)$ itself.",
+            "G": "Finds the magnitude of the correct minimum but loses the negative sign."
+          }
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "The question, solution and key A are correct. Two option explanations are missing from the distractor map and should be completed."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "c40d7baf-ff05-4b09-b19e-dc5579376cf2",
+      "id_prefix": "c40d7baf",
+      "source_part": 2,
+      "subject": "Math 1",
+      "primary_tag": "M1-M5",
+      "decision": "accept",
+      "recommended_action": "patch_then_approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "verified",
+      "stored_correct_option": "D",
+      "corrected_option": "D",
+      "manual_confidence": "high",
+      "reason": "The mass ratio 64 gives a linear scale factor 4, so the required ratio is 1:4, option D. The question is valid but is an easy application, not hard.",
+      "issues": [
+        "difficulty_overstated"
+      ],
+      "question_stem_sha256": "6375013da55f5d1d4e824b2b7fe7ba216432777aa0f46ea58e45a9f9051ca367",
+      "question_stem_preview": "Two solid objects are geometrically similar and made of the same material. The mass of the larger object is 64 times the mass of the smaller object. What is the ratio of the height of the smaller object to the height of the larger object?",
+      "implementation": {
+        "operation": "patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "difficulty": "Easy"
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "The mass ratio 64 gives a linear scale factor 4, so the required ratio is 1:4, option D. The question is valid but is an easy application, not hard."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "c8811468-ca84-41b2-b31a-ea052b5c08f0",
+      "id_prefix": "c8811468",
+      "source_part": 2,
+      "subject": "Math 2",
+      "primary_tag": "M2-MM1",
+      "decision": "accept",
+      "recommended_action": "approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good",
+      "answer_key_status": "verified",
+      "stored_correct_option": "B",
+      "corrected_option": "B",
+      "manual_confidence": "high",
+      "reason": "Writing the expression as $(u-2)^2+6$ with $u=x^2+2x$ gives an attainable minimum of 6. Option B is correct.",
+      "issues": [],
+      "question_stem_sha256": "667585f3e310d19d03564e0cc7a9e9d8aaa688f7976ebee6f0abb472877bf409",
+      "question_stem_preview": "What is the minimum value of the expression $$(x^2 + 2x)^2 - 4x^2 - 8x + 10$$ as $x$ varies over the real numbers?",
+      "implementation": {
+        "operation": "no_change",
+        "post_patch_action": "approve_if_no_newer_blocker",
+        "set_fields": {},
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "No content mutation is required.",
+          "The stored answer key was independently verified."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "c8d3635c-3285-404d-bf8a-ee79fff75aeb",
+      "id_prefix": "c8d3635c",
+      "source_part": 2,
+      "subject": "Physics",
+      "primary_tag": "P-P3",
+      "decision": "accept",
+      "recommended_action": "patch_then_approve",
+      "curriculum_match_as_written": "out_of_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "verified",
+      "stored_correct_option": "A",
+      "corrected_option": "A",
+      "manual_confidence": "high",
+      "reason": "The stored answer A is correct, but quantitative Archimedes' principle is not listed as assumed Physics knowledge. Supplying $U=\\rho Vg$ makes the route self-contained.",
+      "issues": [
+        "quantitative_archimedes_not_assumed"
+      ],
+      "question_stem_sha256": "93e08df9997e92d6ec5f48e2ff275bb4a53592c50e9dc363bcaf4f9f2c81a0ff",
+      "question_stem_preview": "A spherical gas bubble of radius $r$ is produced by a reaction and rises vertically through a liquid of density $\\rho$ at a constant terminal velocity $v$. The density of the gas is negligible compared to the density of the liquid. The drag",
+      "implementation": {
+        "operation": "patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "question_stem": "A spherical gas bubble of radius $r$ rises vertically through a liquid of density $\\rho$ at constant terminal velocity $v$. The density of the gas is negligible.\n\nFor this question, the upthrust is equal to the weight of displaced liquid:\n\n$$\nU=\\rho Vg.\n$$\n\nThe opposing drag force is\n\n$$\nF=krv,\n$$\n\nwhere $k$ is a constant. Assume the volume of a sphere is $V=\\frac43\\pi r^3$.\n\nWhich expression gives $v$?",
+          "solution_reasoning": "At terminal velocity the resultant force is zero. The bubble's weight is negligible, so the supplied upthrust equals the drag force:\n\n$$\n\\rho\\left(\\frac43\\pi r^3\\right)g=krv.\n$$\n\nSolving for $v$ gives\n\n$$\nv=\\frac{4\\pi\\rho g r^2}{3k}.\n$$\n\nThe correct option is A.",
+          "solution_key_insight": "At terminal velocity, equate the supplied upthrust formula to the given drag force."
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "The stored answer A is correct, but quantitative Archimedes' principle is not listed as assumed Physics knowledge. Supplying $U=\\rho Vg$ makes the route self-contained."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "ca9b9880-78ee-433e-ace5-845fae205404",
+      "id_prefix": "ca9b9880",
+      "source_part": 2,
+      "subject": "Math 1",
+      "primary_tag": "M1-M6",
+      "decision": "accept",
+      "recommended_action": "patch_then_approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "verified",
+      "stored_correct_option": "C",
+      "corrected_option": "C",
+      "manual_confidence": "high",
+      "reason": "Statements 1 and 3 must hold and statement 2 need not, so option C is correct. The wording should refer to appending a data value rather than set insertion, which otherwise creates an avoidable duplicate-value ambiguity.",
+      "issues": [
+        "set_versus_data_set_wording_ambiguity"
+      ],
+      "question_stem_sha256": "770aa42ddcb7fb3163b86a223dff659720c67c075bfec458c105df3278d176bc",
+      "question_stem_preview": "A data set $S$ consists of $n$ distinct integers, where $n \\ge 2$. Let $\\mu$ be the mean, $m$ be the median, and $r$ be the range of $S$. A new integer $k$ is added to the set $S$. Which of the following statements **must** be true? 1. If $",
+      "implementation": {
+        "operation": "patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "question_stem": "A data set $S$ contains $n$ distinct integers, where $n\\ge2$. Let $\\mu$ be its mean, $m$ its median and $r$ its range. A further integer data value $k$ is appended to the data set; repeated values are allowed after this addition.\n\nWhich statements must be true?\n\n1. If $k>\\mu$, the new mean is greater than $\\mu$.\n2. If $k>r$, the new range is greater than $r$.\n3. If $k<m$, the new median is less than $m$."
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "Statements 1 and 3 must hold and statement 2 need not, so option C is correct. The wording should refer to appending a data value rather than set insertion, which otherwise creates an avoidable duplicate-value ambiguity."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "d64f4e06-7620-4818-97af-1d0f55dbd978",
+      "id_prefix": "d64f4e06",
+      "source_part": 2,
+      "subject": "Math 2",
+      "primary_tag": "M2-MM1",
+      "decision": "accept",
+      "recommended_action": "patch_then_approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "verified",
+      "stored_correct_option": "B",
+      "corrected_option": "B",
+      "manual_confidence": "high",
+      "reason": "Using $\\sin^2x=1-\\cos^2x$ gives a constrained quadratic whose maximum is 3, option B. The main topic is trigonometry.",
+      "issues": [
+        "primary_tag_mismatch"
+      ],
+      "question_stem_sha256": "a0d2c9b52b9d4d6acf44419278c203cf3ed9b17f24017b05cf856a0dd96c0a80",
+      "question_stem_preview": "What is the maximum value of the expression $\\sin^2 x + 3 \\cos x$ for real values of $x$?",
+      "implementation": {
+        "operation": "patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "primary_tag": "M2-MM4",
+          "secondary_tags": [
+            "M2-MM1"
+          ]
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "Using $\\sin^2x=1-\\cos^2x$ gives a constrained quadratic whose maximum is 3, option B. The main topic is trigonometry."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "d76f0ca9-74e1-4a05-8f80-b58eb7ce0759",
+      "id_prefix": "d76f0ca9",
+      "source_part": 2,
+      "subject": "Math 2",
+      "primary_tag": "M2-MM4",
+      "decision": "accept",
+      "recommended_action": "patch_then_approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "verified",
+      "stored_correct_option": "B",
+      "corrected_option": "B",
+      "manual_confidence": "high",
+      "reason": "The domain leaves only $x=4$, option B. The main topic is MM5 logarithms.",
+      "issues": [
+        "primary_tag_mismatch"
+      ],
+      "question_stem_sha256": "ca4f02baeeacfd34336930de82cfe2b7feb3fb3dbf2af42bffe8da12609747ea",
+      "question_stem_preview": "Find the set of real values of $x$ that satisfy the equation $$\\log_2(x) + \\log_2(x-2) = 3$$",
+      "implementation": {
+        "operation": "patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "primary_tag": "M2-MM5",
+          "secondary_tags": [
+            "M2-MM1"
+          ]
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "The domain leaves only $x=4$, option B. The main topic is MM5 logarithms."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "d77f74ab-c311-433a-8e73-efdc7bf77c60",
+      "id_prefix": "d77f74ab",
+      "source_part": 2,
+      "subject": "Math 1",
+      "primary_tag": "M1-M3",
+      "decision": "reject",
+      "recommended_action": "move_to_chemistry_then_reassess",
+      "curriculum_match_as_written": "out_of_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "verified",
+      "stored_correct_option": "D",
+      "corrected_option": "D",
+      "manual_confidence": "high",
+      "reason": "The weighted-average calculation gives 60%, option D. Relative atomic mass and isotope abundance are Chemistry C1 knowledge and must not be assumed in a Mathematics 1 module.",
+      "issues": [
+        "wrong_subject",
+        "chemistry_knowledge_in_math1"
+      ],
+      "question_stem_sha256": "a8f483c86381bafbe584e9b3c478dabe0987e829d01c662eac134f220e422623",
+      "question_stem_preview": "Element X consists of two naturally occurring isotopes with mass numbers 69 and 71. The relative atomic mass of X is 69.8. What is the percentage abundance of the isotope with mass number 69?",
+      "implementation": {
+        "operation": "retag_and_patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "subject": "Chemistry",
+          "primary_tag": "chemistry-C1",
+          "secondary_tags": [
+            "M1-M3"
+          ],
+          "difficulty": "Easy"
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "The weighted-average calculation gives 60%, option D. Relative atomic mass and isotope abundance are Chemistry C1 knowledge and must not be assumed in a Mathematics 1 module."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "dcacc5a7-6760-42d9-b0f0-db38e077c11f",
+      "id_prefix": "dcacc5a7",
+      "source_part": 2,
+      "subject": "Math 2",
+      "primary_tag": "M2-MM7",
+      "decision": "accept",
+      "recommended_action": "patch_then_approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "verified",
+      "stored_correct_option": "F",
+      "corrected_option": "F",
+      "manual_confidence": "high",
+      "reason": "The independent solve gives $a=10$, $b=-18$ and $a-b=28$, option F. The primary content is differentiation with coordinate geometry.",
+      "issues": [
+        "primary_tag_mismatch"
+      ],
+      "question_stem_sha256": "08630f01fb03da3d612872b871eb643933f98d9495abc4d6448e8d93a78c6340",
+      "question_stem_preview": "The line $L$ is tangent to the circle with equation $x^2 + y^2 = 20$ at the point $(4, -2)$. The line $L$ is also tangent to the curve with equation $y = ax^2 + bx$ at the point where $x=1$. What is the value of $a-b$?",
+      "implementation": {
+        "operation": "patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "primary_tag": "M2-MM6",
+          "secondary_tags": [
+            "M2-MM3",
+            "M2-MM1"
+          ]
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "The independent solve gives $a=10$, $b=-18$ and $a-b=28$, option F. The primary content is differentiation with coordinate geometry."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "ddb28c06-8246-47a1-8532-951d03b8072e",
+      "id_prefix": "ddb28c06",
+      "source_part": 2,
+      "subject": "Math 2",
+      "primary_tag": "M2-MM1",
+      "decision": "accept",
+      "recommended_action": "patch_then_approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "verified",
+      "stored_correct_option": "E",
+      "corrected_option": "E",
+      "manual_confidence": "high",
+      "reason": "One stationary-point condition leaves one free coefficient, so the bounded area is not determined and option E is correct. The item uses differentiation and integration as well as polynomial algebra.",
+      "issues": [
+        "primary_tag_mismatch"
+      ],
+      "question_stem_sha256": "6048a645ee1a92f0168e96b819231d2f8e3aedccc05fcc891fb01af49e08970e",
+      "question_stem_preview": "A curve has the equation $y = x^3 + ax^2 + bx$, where $a$ and $b$ are real constants. The curve has a stationary point at $x = 2$. What is the total area of the finite region or regions bounded by the curve and the $x$ -axis?",
+      "implementation": {
+        "operation": "patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "primary_tag": "M2-MM6",
+          "secondary_tags": [
+            "M2-MM7",
+            "M2-MM1"
+          ]
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "One stationary-point condition leaves one free coefficient, so the bounded area is not determined and option E is correct. The item uses differentiation and integration as well as polynomial algebra."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "de2975ce-03d4-4733-8582-872067ff6f12",
+      "id_prefix": "de2975ce",
+      "source_part": 2,
+      "subject": "Chemistry",
+      "primary_tag": "chemistry-C9",
+      "decision": "reject",
+      "recommended_action": "retire_original_and_create_replacement",
+      "curriculum_match_as_written": "not_applicable_invalid",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "invalid",
+      "esat_style_fit": "good_replacement_supplied",
+      "answer_key_status": "unreliable",
+      "stored_correct_option": "A",
+      "corrected_option": null,
+      "manual_confidence": "high",
+      "reason": "The enzyme-rate data do not isolate acid strength: different anions or direct inhibition could produce the observed rate difference, and the item mixes Biology enzyme behaviour into Chemistry. Option A is not uniquely supported.",
+      "issues": [
+        "invalid",
+        "confounded_experiment",
+        "cross_module_biology",
+        "answer_not_uniquely_supported"
+      ],
+      "question_stem_sha256": "5ab59ab13566ce3ceffa2b9144b75685b410506415ee78c4164760c2e168ddcc",
+      "question_stem_preview": "An enzyme has an optimum pH of 7. The rate of the enzyme-catalysed reaction is measured in three separate mixtures. In each mixture, the final volume is identical. The results are: | Mixture | Substance Added (Final Concentration) | Relativ",
+      "implementation": {
+        "operation": "retire_original_and_create_replacement",
+        "post_patch_action": "run_full_quality_gate_on_new_question",
+        "set_fields": {
+          "status": "retired",
+          "manual_disposition": "rejected_current_item"
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "replacement_question": {
+          "subject": "Chemistry",
+          "test_type": "ESAT",
+          "primary_tag": "chemistry-C9",
+          "secondary_tags": [],
+          "difficulty": "Medium",
+          "status": "pending",
+          "question_stem": "Two monoprotic acids, $X$ and $Y$, each have concentration $0.010\\ \\text{mol dm}^{-3}$ at the same temperature. The pH of acid $X$ is 2 and the pH of acid $Y$ is 3.\n\nWhich conclusion is best supported by this information?",
+          "options": {
+            "A": "Acid $X$ produces ten times the hydrogen-ion concentration of acid $Y$ and is the stronger acid.",
+            "B": "Acid $Y$ produces ten times the hydrogen-ion concentration of acid $X$ and is the stronger acid.",
+            "C": "The acids have the same strength because their molar concentrations are equal.",
+            "D": "Acid $X$ produces twice the hydrogen-ion concentration of acid $Y$.",
+            "E": "Acid $Y$ does not dissociate in water."
+          },
+          "correct_option": "A",
+          "solution_reasoning": "A decrease of 1 pH unit corresponds to a tenfold increase in hydrogen-ion concentration. Acid $X$ has pH 2 while acid $Y$ has pH 3, so\n\n$$\n[\\mathrm{H}^+]_X=10[\\mathrm{H}^+]_Y.\n$$\n\nThe acids are monoprotic and have the same formal concentration. The greater hydrogen-ion concentration therefore shows that acid $X$ dissociates to a greater extent and is the stronger acid. The correct option is A.",
+          "solution_key_insight": "At equal concentration, compare acid strength using the pH difference: one pH unit corresponds to a factor of ten in $[\\mathrm{H}^+]$.",
+          "distractor_map": {
+            "A": "Correct.",
+            "B": "Reverses the meaning of the pH scale.",
+            "C": "Confuses acid concentration with acid strength.",
+            "D": "Treats one pH unit as a factor of two rather than ten.",
+            "E": "A pH of 3 shows that acid $Y$ does produce hydrogen ions."
+          }
+        },
+        "implementation_notes": [
+          "The enzyme-rate data do not isolate acid strength: different anions or direct inhibition could produce the observed rate difference, and the item mixes Biology enzyme behaviour into Chemistry. Option A is not uniquely supported.",
+          "Do not overwrite or approve the original row.",
+          "Create a new UUID and set replacement_for_question_id to the original full UUID."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "e3919770-9761-4cf0-93c9-0176a9ca89ca",
+      "id_prefix": "e3919770",
+      "source_part": 2,
+      "subject": "Math 2",
+      "primary_tag": "M2-MM2",
+      "decision": "accept",
+      "recommended_action": "patch_then_approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "verified",
+      "stored_correct_option": "D",
+      "corrected_option": "D",
+      "manual_confidence": "high",
+      "reason": "The maximum is 21, option D. The stored primary tag is sequences, and the solution relies on a point-to-line distance formula that the official notes say candidates are not expected to know. Use the permitted tangent/discriminant route instead.",
+      "issues": [
+        "primary_tag_mismatch",
+        "stored_solution_uses_unrequired_distance_formula"
+      ],
+      "question_stem_sha256": "81ceac487cef1fedee30c0074448451b9e6fe300b4654724183d34194567ee2d",
+      "question_stem_preview": "Real variables$x$and$y$satisfy the equation$$x^2 + y^2 - 4x - 2y + 1 = 0$$ What is the maximum value of the expression$4x + 3y$?",
+      "implementation": {
+        "operation": "patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "primary_tag": "M2-MM3",
+          "secondary_tags": [
+            "M2-MM1"
+          ],
+          "solution_reasoning": "Complete the square:\n\n$$\n(x-2)^2+(y-1)^2=4,\n$$\n\nso the curve is a circle. Let $4x+3y=k$. This line is tangent to the circle at the maximum or minimum possible value of $k$. Write\n\n$$\ny=\\frac{k-4x}{3}\n$$\n\nand substitute into the circle equation. After simplifying,\n\n$$\n25x^2-(8k+12)x+(k^2-6k+9)=0.\n$$\n\nAt tangency this quadratic has one repeated root, so its discriminant is zero:\n\n$$\n(8k+12)^2-100(k^2-6k+9)=0.\n$$\n\nThis simplifies to\n\n$$\n(k-1)(k-21)=0.\n$$\n\nThe two extreme values are 1 and 21, so the maximum is 21. The correct option is D.",
+          "solution_key_insight": "Represent $4x+3y=k$ as a moving line and impose the repeated-root condition when it is tangent to the circle."
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "The maximum is 21, option D. The stored primary tag is sequences, and the solution relies on a point-to-line distance formula that the official notes say candidates are not expected to know. Use the permitted tangent/discriminant route instead."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "e7ee9695-a2cf-4bf7-8b02-de401d13fe19",
+      "id_prefix": "e7ee9695",
+      "source_part": 2,
+      "subject": "Biology",
+      "primary_tag": "biology-B4",
+      "decision": "accept",
+      "recommended_action": "approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good",
+      "answer_key_status": "verified",
+      "stored_correct_option": "C",
+      "corrected_option": "C",
+      "manual_confidence": "high",
+      "reason": "The woman has probability 1/2 of being a carrier and, if she is, probability 1/4 of an affected child. The answer is 1/8, option C. The required XX/XY and monohybrid inheritance knowledge is permitted.",
+      "issues": [],
+      "question_stem_sha256": "455199534659818f13c385e424c5baf89aa08c6e2aed22641460f02d97892328",
+      "question_stem_preview": "Haemophilia A is a condition caused by a recessive allele on the X chromosome. A woman with a normal phenotype has a brother with haemophilia A. Both of her parents have a normal phenotype. The woman has a child with a man who has a normal ",
+      "implementation": {
+        "operation": "no_change",
+        "post_patch_action": "approve_if_no_newer_blocker",
+        "set_fields": {},
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "No content mutation is required.",
+          "The stored answer key was independently verified."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "ed5ec571-0165-4ab4-a514-c5492394dc2a",
+      "id_prefix": "ed5ec571",
+      "source_part": 2,
+      "subject": "Math 1",
+      "primary_tag": "M1-M7",
+      "decision": "accept",
+      "recommended_action": "approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "acceptable_easy",
+      "answer_key_status": "verified",
+      "stored_correct_option": "F",
+      "corrected_option": "F",
+      "manual_confidence": "high",
+      "reason": "The complement calculation gives $1-(1/3)^3=26/27$, option F. This is valid easy Math 1 probability.",
+      "issues": [],
+      "question_stem_sha256": "895ac068eda380b2e09d6c80e883de3f278fec3f8d27e68525353b728db3348c",
+      "question_stem_preview": "An event has a probability of $\\frac{2}{3}$ of occurring. Three independent trials of the event are performed. What is the probability that the event occurs at least once?",
+      "implementation": {
+        "operation": "no_change",
+        "post_patch_action": "approve_if_no_newer_blocker",
+        "set_fields": {},
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "No content mutation is required.",
+          "The stored answer key was independently verified."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "ee9c113a-ebd2-4bde-8636-670bf74ca051",
+      "id_prefix": "ee9c113a",
+      "source_part": 2,
+      "subject": "Math 1",
+      "primary_tag": "M1-M4",
+      "decision": "accept",
+      "recommended_action": "approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "acceptable",
+      "answer_key_status": "verified",
+      "stored_correct_option": "D",
+      "corrected_option": "D",
+      "manual_confidence": "high",
+      "reason": "The line gradient is 5 and the base area is $9\\pi$, giving $M=5\\times12/(9\\pi)=20/(3\\pi)$, option D.",
+      "issues": [],
+      "question_stem_sha256": "5143b49be0d96427d3cc1595280fac1a0b5c297ce8da979847bc0bd4806eb0b2",
+      "question_stem_preview": "The variables $x$ and $y$ are related such that the graph of $y$ against $x$ is a straight line passing through the origin and the point $(0.4, 2)$. A cylinder has height $h = 12$ and a circular base of diameter $d = 6$ and area $A$. A quan",
+      "implementation": {
+        "operation": "no_change",
+        "post_patch_action": "approve_if_no_newer_blocker",
+        "set_fields": {},
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "No content mutation is required.",
+          "The stored answer key was independently verified."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "eedf32dc-06b8-46e6-b1d0-f90898e02ee7",
+      "id_prefix": "eedf32dc",
+      "source_part": 2,
+      "subject": "Math 2",
+      "primary_tag": "M2-MM7",
+      "decision": "accept",
+      "recommended_action": "patch_then_approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "verified",
+      "stored_correct_option": "C",
+      "corrected_option": "C",
+      "manual_confidence": "high",
+      "reason": "Exactly two distinct roots require the non-zero stationary point to lie on the axis, giving $b=4a^3$, option C. The primary content is differentiation.",
+      "issues": [
+        "primary_tag_mismatch",
+        "stem_spacing_formatting"
+      ],
+      "question_stem_sha256": "c5c1fab6fefc89933e8846853e8f9cafba3f0a9eab6825057163379e837f78c3",
+      "question_stem_preview": "The curve with equation$$y = x^3 - 3ax^2 + b$$where$a$and$b$are non-zero constants, intersects the$x$-axis at exactly two distinct points. Which of the following expresses$b$in terms of$a$?",
+      "implementation": {
+        "operation": "patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "primary_tag": "M2-MM6",
+          "secondary_tags": [
+            "M2-MM1"
+          ],
+          "question_stem": "The curve\n\n$$\ny=x^3-3ax^2+b,\n$$\n\nwhere $a$ and $b$ are non-zero constants, intersects the $x$-axis at exactly two distinct points.\n\nWhich expression gives $b$ in terms of $a$?"
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "Exactly two distinct roots require the non-zero stationary point to lie on the axis, giving $b=4a^3$, option C. The primary content is differentiation."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "f47605d6-5576-4e58-bb7c-dec8e4907f22",
+      "id_prefix": "f47605d6",
+      "source_part": 2,
+      "subject": "Math 2",
+      "primary_tag": "M2-MM7",
+      "decision": "accept",
+      "recommended_action": "patch_then_approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "underdetermined_as_written",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "intended_but_underdetermined",
+      "stored_correct_option": "A",
+      "corrected_option": "A",
+      "manual_confidence": "high",
+      "reason": "As written, $m=kx^2$ does not determine the sign of $x$, so the same gradient magnitude can correspond to positive or negative $y$. Adding $x>0$ makes option A uniquely correct.",
+      "issues": [
+        "invalid_as_written",
+        "missing_sign_condition"
+      ],
+      "question_stem_sha256": "1f25c7297e2bcc4f026ee454fef0ef3f5b478256f7fd62acdd16c83024c27ac1",
+      "question_stem_preview": "A curve passes through the origin. The gradient, $m$, of the curve at a point $(x, y)$ is given by $m = kx^2$, where $k$ is a positive constant. Which of the following expressions gives $y$ in terms of $m$ and $k$?",
+      "implementation": {
+        "operation": "patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "question_stem": "A curve passes through the origin. At a point $(x,y)$ on the curve with $x>0$, its gradient $m$ is given by\n\n$$\nm=kx^2,\n$$\n\nwhere $k$ is a positive constant.\n\nWhich expression gives $y$ in terms of $m$ and $k$?",
+          "solution_reasoning": "The gradient equation is\n\n$$\n\\frac{dy}{dx}=kx^2.\n$$\n\nIntegrating and using the fact that the curve passes through the origin gives\n\n$$\ny=\\frac{kx^3}{3}.\n$$\n\nSince $x>0$ and $m=kx^2$,\n\n$$\nx=\\sqrt{\\frac{m}{k}}.\n$$\n\nSubstituting,\n\n$$\ny=\\frac{k}{3}\\left(\\frac{m}{k}\\right)^{3/2}\n=\\frac13\\sqrt{\\frac{m^3}{k}}.\n$$\n\nThe correct option is A.",
+          "solution_key_insight": "Integrate first, then use the supplied positive-x condition when taking the square root of $m/k$."
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "As written, $m=kx^2$ does not determine the sign of $x$, so the same gradient magnitude can correspond to positive or negative $y$. Adding $x>0$ makes option A uniquely correct."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "f60ad2ea-f4f5-4c49-b047-15987a6fa3a7",
+      "id_prefix": "f60ad2ea",
+      "source_part": 2,
+      "subject": "Math 1",
+      "primary_tag": "M1-M4",
+      "decision": "reject",
+      "recommended_action": "move_to_math2_then_reassess",
+      "curriculum_match_as_written": "out_of_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "verified",
+      "stored_correct_option": "D",
+      "corrected_option": "D",
+      "manual_confidence": "high",
+      "reason": "The sign is negative on $(-3,3)$ except at the repeated zero $x=1$, so option D is correct. Solving this product/quadratic inequality is Mathematics 2 content, not Mathematics 1.",
+      "issues": [
+        "wrong_subject",
+        "quadratic_inequality_not_math1"
+      ],
+      "question_stem_sha256": "e100af9359578f49bb8728624dba6600f83222b9597d70498d927a81a128ff6a",
+      "question_stem_preview": "Which of the following describes the complete set of values of $x$ for which $(x^2 - 9)(x^2 - 2x + 1) < 0$?",
+      "implementation": {
+        "operation": "retag_and_patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "subject": "Math 2",
+          "primary_tag": "M2-MM1",
+          "secondary_tags": [],
+          "difficulty": "Easy"
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "The sign is negative on $(-3,3)$ except at the repeated zero $x=1$, so option D is correct. Solving this product/quadratic inequality is Mathematics 2 content, not Mathematics 1."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "f6866e25-bdf9-4850-a3f7-74ab9a6660c1",
+      "id_prefix": "f6866e25",
+      "source_part": 2,
+      "subject": "Math 2",
+      "primary_tag": "M2-MM1",
+      "decision": "accept",
+      "recommended_action": "patch_then_approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "verified",
+      "stored_correct_option": "F",
+      "corrected_option": "F",
+      "manual_confidence": "high",
+      "reason": "The integral equals $16a/3-16$ and depends on the unknown leading coefficient, so option F is correct. Integration should be the primary tag.",
+      "issues": [
+        "primary_tag_mismatch"
+      ],
+      "question_stem_sha256": "b61611c192706218bf68f4a7fbe75b30d172f8eafa423e5982bf536411b6ca2a",
+      "question_stem_preview": "A quadratic function $y = f(x)$ has a minimum point at $(1, -4)$. What is the value of the integral $$ \\int_{-1}^{3} f(x) \\, \\mathrm{d}x $$",
+      "implementation": {
+        "operation": "patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "primary_tag": "M2-MM7",
+          "secondary_tags": [
+            "M2-MM1"
+          ]
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "The integral equals $16a/3-16$ and depends on the unknown leading coefficient, so option F is correct. Integration should be the primary tag."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "fc29e3d7-0e49-44b7-b62a-617d0a3a3181",
+      "id_prefix": "fc29e3d7",
+      "source_part": 2,
+      "subject": "Math 2",
+      "primary_tag": "M2-MM7",
+      "decision": "accept",
+      "recommended_action": "patch_then_approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good_after_patch",
+      "answer_key_status": "verified",
+      "stored_correct_option": "C",
+      "corrected_option": "C",
+      "manual_confidence": "high",
+      "reason": "The tangent has x-intercept 1/2, so the positive difference is 3/2, option C. The primary topic is differentiation with coordinate geometry.",
+      "issues": [
+        "primary_tag_mismatch"
+      ],
+      "question_stem_sha256": "04aeab5d49c932f1939cd33b9a8628dc33f6335d91c6aab3a25c834ce6e55c4f",
+      "question_stem_preview": "The line $L_1$ has equation $6x+y=12$. A second line, $L_2$, is parallel to $L_1$ and is tangent to the curve $y=x^2-2x+7$. What is the positive difference between the $x$ -intercepts of $L_1$ and $L_2$?",
+      "implementation": {
+        "operation": "patch_in_place",
+        "post_patch_action": "approve_if_checks_pass",
+        "set_fields": {
+          "primary_tag": "M2-MM6",
+          "secondary_tags": [
+            "M2-MM3"
+          ]
+        },
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "The tangent has x-intercept 1/2, so the positive difference is 3/2, option C. The primary topic is differentiation with coordinate geometry."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "fc76bcb3-e37c-4219-8c2a-6145161b5209",
+      "id_prefix": "fc76bcb3",
+      "source_part": 2,
+      "subject": "Math 2",
+      "primary_tag": "M2-MM7",
+      "decision": "accept",
+      "recommended_action": "approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "good",
+      "answer_key_status": "verified",
+      "stored_correct_option": "B",
+      "corrected_option": "B",
+      "manual_confidence": "high",
+      "reason": "Interval subtraction gives $2F-G=12$ and the third equation gives $F+2G=11$, so $F+G=9$, option B. The item is valid MM7.",
+      "issues": [],
+      "question_stem_sha256": "1d3e282f0f7762ab51c192f6e384949366216e0c5c6265cd0179f8c5f6b7e9ea",
+      "question_stem_preview": "The polynomial functions $f(x)$ and $g(x)$ satisfy: $$\\int_0^2 (2f(x) - g(x)) \\, \\mathrm{d}x = 5$$ $$\\int_0^5 (2f(x) - g(x)) \\, \\mathrm{d}x = 17$$ $$\\int_2^5 (f(x) + 2g(x)) \\, \\mathrm{d}x = 11$$ What is the value of $\\int_2^5 (f(x) + g(x)) ",
+      "implementation": {
+        "operation": "no_change",
+        "post_patch_action": "approve_if_no_newer_blocker",
+        "set_fields": {},
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "No content mutation is required.",
+          "The stored answer key was independently verified."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    },
+    {
+      "id": "fdae62e2-2ba9-4c46-964f-f5752de4388a",
+      "id_prefix": "fdae62e2",
+      "source_part": 2,
+      "subject": "Math 1",
+      "primary_tag": "M1-M4",
+      "decision": "accept",
+      "recommended_action": "approve",
+      "curriculum_match_as_written": "in_syllabus",
+      "curriculum_match_after_implementation": "in_syllabus",
+      "item_validity_as_written": "valid",
+      "esat_style_fit": "acceptable_easy",
+      "answer_key_status": "verified",
+      "stored_correct_option": "C",
+      "corrected_option": "C",
+      "manual_confidence": "high",
+      "reason": "The conditions give $P(x)=2x^2-3x+5$ and $P(2)=7$, option C. The item is valid Math 1 algebra.",
+      "issues": [],
+      "question_stem_sha256": "82dfd837dc89b84014aa98ffb166b4c2763ddb2cff1476b9176aa388824b9167",
+      "question_stem_preview": "A quadratic polynomial is denoted by $P(x)$. The graph of $y=P(x)$ passes through the points $(0, 5)$ and $(-1, 10)$. The sum of the coefficients of $P(x)$ is $4$.\\n\\nWhat is the value of $P(2)$?",
+      "implementation": {
+        "operation": "no_change",
+        "post_patch_action": "approve_if_no_newer_blocker",
+        "set_fields": {},
+        "remove_fragments": [],
+        "answer_key_patch": null,
+        "implementation_notes": [
+          "No content mutation is required.",
+          "The stored answer key was independently verified."
+        ],
+        "post_patch_checks": [
+          "Match the full UUID and question_stem_sha256 before writing.",
+          "Validate final schema and rendering.",
+          "Independently solve the final item and confirm exactly one option is correct.",
+          "Run the current ESAT curriculum validator using the final subject and tags.",
+          "Run ESAT style, pacing, duplicate and near-duplicate checks.",
+          "Approve only if no newer independent blocker exists."
+        ]
+      }
+    }
+  ]
+}
