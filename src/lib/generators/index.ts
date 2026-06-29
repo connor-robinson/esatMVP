@@ -56,7 +56,6 @@ import { generateBinomialExpand } from "./binomial_expand";
 import { generateFactoriseQuadratic } from "./factorise_quadratic";
 import { generateCompleteSquare } from "./complete_square";
 import { generateInequalities } from "./inequalities";
-import { generateIndicesSimplify } from "./indices_simplify";
 import { generateQuadraticsEval } from "./quadratics_eval";
 
 // Trigonometry
@@ -146,7 +145,6 @@ export const GENERATORS: Record<string, GeneratorFunction> = validateGenerators(
   factorise_quadratic: generateFactoriseQuadratic,
   complete_square: generateCompleteSquare,
   inequalities: generateInequalities,
-  indices_simplify: generateIndicesSimplify,
   quadratics_eval: generateQuadraticsEval,
   
   // Trigonometry

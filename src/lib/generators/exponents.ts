@@ -1,19 +1,23 @@
 /**
- * Exponents & radicals generator
+ * Indices & surds generator
  * Levels:
- * 1 - Basic index laws
- * 2 - Mixed numerator/denominator
- * 3 - Indices & simple surds
+ * 1 - Index laws (mixed: same-base, products, quotients, fractions)
+ * 2 - Surds and fractional indices
  */
 
 import { GeneratedQuestion } from "@/types/core";
 import { generateId } from "@/lib/utils";
 import { randomInt, pick } from "./utils/random";
 import { toSuperscript } from "./utils/formatting";
+import { createAnswerChecker } from "@/lib/answer-checker";
 
 export function generateExponents(level: number, weights?: Record<string, number>): GeneratedQuestion {
-  if (level === 1) return generateBasic();
-  if (level === 2) return generateMixed();
+  if (level === 1) {
+    const style = pick(["basic", "basic", "mixed", "products"] as const);
+    if (style === "basic") return generateBasic();
+    if (style === "mixed") return generateMixed();
+    return generateProductsQuotients();
+  }
   return generateSurds();
 }
 
@@ -60,7 +64,6 @@ function generateBasic(): GeneratedQuestion {
     };
   }
 
-  // div
   const question = `$\\frac{${base}^{${m}}}{${base}^{${n}}}$`;
   const exp = m - n;
   const answer = `${base}^${exp}`;
@@ -88,7 +91,62 @@ function generateMixed(): GeneratedQuestion {
     topicId: "exponents",
     question,
     answer,
-    difficulty: 2,
+    difficulty: 1,
+  };
+}
+
+function generateProductsQuotients(): GeneratedQuestion {
+  const base = pick([2, 3, 5, 10]);
+  const termCount = pick([2, 3, 3, 4]);
+
+  const numerator: string[] = [];
+  const denominator: string[] = [];
+  let net = 0;
+
+  for (let i = 0; i < termCount; i++) {
+    const exp = pick([-9, -6, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8]);
+    const piece = `${base}^{${exp}}`;
+    if (i === 0 || Math.random() < 0.6) {
+      numerator.push(piece);
+      net += exp;
+    } else {
+      denominator.push(piece);
+      net -= exp;
+    }
+  }
+
+  const exprText =
+    denominator.length > 0
+      ? `\\frac{${numerator.join(" \\times ")}}{${denominator.join(" \\times ")}}`
+      : numerator.join(" \\times ");
+
+  let answerStr: string;
+  if (net === 0) {
+    answerStr = "1";
+  } else if (net > 0) {
+    answerStr = `${base}^${net}`;
+  } else {
+    answerStr = `1/${base}^${-net}`;
+  }
+
+  const value = Math.pow(base, net);
+  const acceptableAnswers = [
+    answerStr,
+    String(value),
+    answerStr.replace(/\^/g, "**"),
+    answerStr.replace(/\^/g, toSuperscript),
+  ];
+
+  return {
+    id: generateId(),
+    topicId: "exponents",
+    question: `Simplify: $${exprText}$`,
+    answer: answerStr,
+    difficulty: 1,
+    checker: createAnswerChecker({
+      correctAnswer: answerStr,
+      acceptableAnswers,
+    }),
   };
 }
 
@@ -110,7 +168,6 @@ function generateSurds(): GeneratedQuestion {
       answer = `$\\frac{1}{\\sqrt{${base}}}$`;
       break;
     default:
-      // 2/3
       answer = `$\\sqrt[3]{${base}^{2}}$`;
   }
 
@@ -119,37 +176,6 @@ function generateSurds(): GeneratedQuestion {
     topicId: "exponents",
     question: `Rewrite using surds: ${question}`,
     answer,
-    difficulty: 3,
+    difficulty: 2,
   };
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

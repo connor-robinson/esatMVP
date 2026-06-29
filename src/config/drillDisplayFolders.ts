@@ -131,7 +131,7 @@ const ALGEBRA_FOLDERS: FolderDef[] = [
   {
     id: 'algebra-indices',
     name: 'Indices & Surds',
-    topicIds: ['exponents', 'indices_simplify'],
+    topicIds: ['exponents'],
     symbol: { kind: 'lucide', iconKey: 'Hash' },
   },
   {
@@ -327,7 +327,6 @@ const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
     'binomial_expand',
     'factorise_quadratic',
     'exponents',
-    'indices_simplify',
     'complete_square',
     'inequalities',
     'quadratics_eval',

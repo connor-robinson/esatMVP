@@ -201,17 +201,13 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'latex', latex: String.raw`6x + 9` },
     { kind: 'latex', latex: String.raw`4x^2 + 8x` },
   ]),
-  'exponents-index-laws-basic': S([
-    { kind: 'latex', latex: String.raw`x^3 \cdot x^4` },
-    { kind: 'latex', latex: String.raw`x^8 \div x^2` },
+  'exponents-index-laws': S([
+    { kind: 'latex', latex: String.raw`2^3 \times 2^4` },
+    { kind: 'latex', latex: String.raw`\frac{3^5 \times 3^2}{3^4}` },
   ]),
-  'exponents-index-laws-fractions': S([
-    { kind: 'latex', latex: String.raw`x^{-2}` },
-    { kind: 'latex', latex: String.raw`x^{1/2}` },
-  ]),
-  'exponents-indices-and-surds': S([
-    { kind: 'latex', latex: String.raw`\sqrt{12}` },
-    { kind: 'latex', latex: String.raw`2\sqrt{3}` },
+  'exponents-surds': S([
+    { kind: 'latex', latex: String.raw`3^{1/2}` },
+    { kind: 'latex', latex: String.raw`5^{-1/2}` },
   ]),
   'systemsOfEquations-simultaneous': S([
     { kind: 'latex', latex: String.raw`x + y = 10` },
@@ -264,14 +260,6 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
   'inequalities-compound': S([
     { kind: 'latex', latex: String.raw`-2 < x \leq 5` },
     { kind: 'latex', latex: String.raw`x < 1 \text{ or } x > 4` },
-  ]),
-  'indices_simplify-same-base': S([
-    { kind: 'latex', latex: String.raw`x^5 \cdot x^{-2}` },
-    { kind: 'latex', latex: String.raw`\frac{a^7}{a^3}` },
-  ]),
-  'indices_simplify-products-quotients': S([
-    { kind: 'latex', latex: String.raw`(2x^2)^3` },
-    { kind: 'latex', latex: String.raw`\frac{(3x)^2}{9x}` },
   ]),
   'quadratics_eval-standard-form': S([
     { kind: 'latex', latex: String.raw`x^2 - 3x + 2,\ x = 2` },
