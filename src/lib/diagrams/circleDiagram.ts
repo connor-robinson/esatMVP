@@ -21,6 +21,7 @@ export function buildCircleDiagram(r: number): GeometryDiagramData {
   const { line, label } = standardRadiusDisplay(cx, cy, pxR, r);
 
   const diagram = emptyGeometryDiagram(standardViewBox());
+  diagram.size = "large";
   diagram.paths = [{ d, fill: "var(--color-text)", fillOpacity: 0.06, stroke: true }];
   diagram.lines = [line];
   diagram.labels = [label];

@@ -19,7 +19,9 @@ import {
 import { ellipsePath, isoLine, isoPath, isoProject } from "./isometric";
 
 function baseDiagram(): GeometryDiagramData {
-  return emptyGeometryDiagram(standardViewBox());
+  const diagram = emptyGeometryDiagram(standardViewBox());
+  diagram.size = "large";
+  return diagram;
 }
 
 export function buildCuboidDiagram(l: number, w: number, h: number): GeometryDiagramData {

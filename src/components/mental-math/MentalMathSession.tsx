@@ -30,6 +30,8 @@ function formatCountdown(seconds: number): string {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
+const PROMINENT_DIAGRAM_TOPICS = new Set(["geometry_2d", "geometry_3d", "circle_theorems"]);
+
 function parseMultiAnswerRevealPart(part: string): string {
   const trimmed = part.trim();
   const eqMatch = trimmed.match(/^[xyz]\s*=\s*(.+)$/i);
@@ -113,6 +115,9 @@ export function MentalMathSession({
   const isBinaryChoice = currentQuestion.answerInput?.type === "binary-choice";
   const isPrimeFactorSlots = currentQuestion.answerInput?.type === "prime-factor-slots";
   const isAngleLocate = currentQuestion.answerInput?.type === "angle-locate";
+  const hasDiagram = Boolean(currentQuestion.diagram && !isAngleLocate);
+  const prominentDiagram =
+    hasDiagram && PROMINENT_DIAGRAM_TOPICS.has(currentQuestion.topicId);
   const isAngleText = currentQuestion.answerInput?.type === "angle-text";
   const isAngleTextDegrees =
     isAngleText && currentQuestion.answerInput?.type === "angle-text"
@@ -393,10 +398,15 @@ export function MentalMathSession({
 
       {/* Question area — no negative margin (was blocking header clicks) */}
       <div className="relative z-0 flex min-h-0 flex-1 items-center justify-center overflow-hidden">
-        <Container size="md" className="w-full flex items-center justify-center">
-          <div className="w-full max-w-2xl flex flex-col items-center gap-12">
+        <Container size="md" className="w-full flex h-full items-center justify-center">
+          <div
+            className={cn(
+              "w-full max-w-2xl flex flex-col items-center",
+              prominentDiagram ? "h-full min-h-0 gap-4 py-2" : "gap-12",
+            )}
+          >
             {/* Topic badge */}
-            <div className="flex justify-center">
+            <div className={cn("flex justify-center", prominentDiagram && "shrink-0")}>
               <span className="text-text-subtle text-xs font-sans uppercase tracking-wider">
                 {displayTopicName}
               </span>
@@ -410,7 +420,7 @@ export function MentalMathSession({
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.1, ease: "easeInOut" }}
-                className="text-center"
+                className={cn("text-center", prominentDiagram && "shrink-0")}
               >
                 <div className="text-lg font-semibold tracking-tight leading-relaxed text-text-muted md:text-xl [&_.math-content]:space-y-4">
                   <MathContent content={currentQuestion.question} />
@@ -419,7 +429,7 @@ export function MentalMathSession({
             </AnimatePresence>
 
             {/* Diagram (if present; locate mode renders circle in input area) */}
-            {currentQuestion.diagram && !isAngleLocate && (
+            {hasDiagram && (
               <AnimatePresence mode="wait">
                 <motion.div
                   key={`diagram-${currentQuestion.id}`}
@@ -429,14 +439,17 @@ export function MentalMathSession({
                   transition={{ duration: 0.2, ease: "easeInOut" }}
                   className={cn(
                     "w-full flex justify-center",
-                    currentQuestion.topicId === "circle_theorems"
-                      ? "my-2"
-                      : "mt-[-32px]",
+                    prominentDiagram
+                      ? "flex-1 items-center min-h-[min(42vh,360px)]"
+                      : currentQuestion.topicId === "circle_theorems"
+                        ? "my-2"
+                        : "mt-[-32px]",
                   )}
                 >
                   <DiagramRenderer
-                    data={currentQuestion.diagram}
+                    data={currentQuestion.diagram!}
                     feedback={unitCircleFeedback}
+                    className={prominentDiagram ? "w-full" : undefined}
                   />
                 </motion.div>
               </AnimatePresence>

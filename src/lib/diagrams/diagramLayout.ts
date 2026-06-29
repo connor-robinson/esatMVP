@@ -11,8 +11,11 @@ export const DIAGRAM_VIEWBOX = { x: 0, y: 0, width: 400, height: 400 };
 export const DIAGRAM_CX = 200;
 export const DIAGRAM_CY = 200;
 
-/** Fixed pixel radius for circles, sectors, spheres (independent of r value). */
+/** Fixed pixel radius for circles, spheres (independent of r value). */
 export const FIXED_RADIUS_PX = 102;
+
+/** Larger radius for sector wedges so the shape fills the display area. */
+export const SECTOR_RADIUS_PX = 175;
 
 /** Fixed isometric extent (max edge length in px). */
 export const ISO_MAX_PX = 100;
@@ -27,6 +30,35 @@ export const RADIUS_LABEL_OFFSET = 26;
 
 export function standardViewBox(): GeometryDiagramData["viewBox"] {
   return { ...DIAGRAM_VIEWBOX };
+}
+
+/** Square viewBox tightly cropped around diagram content so wedges/shapes fill the SVG. */
+export function boundingViewBox(
+  points: { x: number; y: number }[],
+  padding = 32,
+): GeometryDiagramData["viewBox"] {
+  if (points.length === 0) return standardViewBox();
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  for (const p of points) {
+    minX = Math.min(minX, p.x);
+    minY = Math.min(minY, p.y);
+    maxX = Math.max(maxX, p.x);
+    maxY = Math.max(maxY, p.y);
+  }
+  const spanX = maxX - minX + padding * 2;
+  const spanY = maxY - minY + padding * 2;
+  const size = Math.max(spanX, spanY, 80);
+  const midX = (minX + maxX) / 2;
+  const midY = (minY + maxY) / 2;
+  return {
+    x: midX - size / 2,
+    y: midY - size / 2,
+    width: size,
+    height: size,
+  };
 }
 
 export function unitScale(...dims: number[]): number {
