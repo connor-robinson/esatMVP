@@ -142,20 +142,7 @@ const ALGEBRA_FOLDERS: FolderDef[] = [
   },
 ];
 
-const GEOMETRY_FOLDERS: FolderDef[] = [
-  {
-    id: 'geometry-plane',
-    name: 'Plane Shapes',
-    topicIds: ['triangles', 'circles', 'pythagorean'],
-    symbol: { kind: 'lucide', iconKey: 'Triangle' },
-  },
-  {
-    id: 'geometry-area-volume',
-    name: 'Area & Volume',
-    topicIds: ['geometry_2d', 'geometry_3d'],
-    symbol: { kind: 'lucide', iconKey: 'Box' },
-  },
-];
+const GEOMETRY_FOLDERS: FolderDef[] = [];
 
 const NUMBER_THEORY_FOLDERS: FolderDef[] = [
   {
@@ -319,13 +306,7 @@ const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
     'inequalities',
     'quadratics_eval',
   ],
-  geometry: [
-    'triangles',
-    'circles',
-    'pythagorean',
-    'geometry_2d',
-    'geometry_3d',
-  ],
+  geometry: [],
   number_theory: [
     'primes',
     'prime_factorise',

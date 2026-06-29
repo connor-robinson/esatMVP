@@ -1415,13 +1415,7 @@ export const CATEGORIES: Record<TopicCategory, string[]> = {
     "surds",
     "systemsOfEquations",
   ],
-  geometry: [
-    "triangles",
-    "circles",
-    "pythagorean",
-    "geometry_2d",
-    "geometry_3d",
-  ],
+  geometry: [],
   number_theory: ["primes", "prime_factorise", "factors", "divisibility", "even_odd_rules", "modular", "sequences"],
   shortcuts: ["percentages", "squaring", "estimation"],
   patterns: [
