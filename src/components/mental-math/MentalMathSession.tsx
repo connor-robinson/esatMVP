@@ -29,10 +29,17 @@ function parseMultiAnswerRevealPart(part: string): string {
   return eqMatch ? eqMatch[1].trim() : trimmed;
 }
 
-function multiAnswerLabels(count: number): string[] {
+function multiAnswerLabels(topicId: string | undefined, count: number): string[] {
+  if (topicId === "quadraticEquations") {
+    return Array.from({ length: count }, (_, i) => `solution ${i + 1}`);
+  }
   if (count === 3) return ["x", "y", "z"];
   if (count === 2) return ["x", "y"];
   return Array.from({ length: count }, (_, i) => `Value ${i + 1}`);
+}
+
+function showMultiAnswerTopLabels(topicId: string | undefined): boolean {
+  return topicId !== "quadraticEquations";
 }
 
 interface MentalMathSessionProps {
@@ -179,7 +186,8 @@ export function MentalMathSession({
     : topic?.variants?.find((v) => v.difficulty === currentQuestion.difficulty)?.name;
 
   const displayTopicName = variantName ? `${topicName}: ${variantName}` : topicName;
-  const answerFieldLabels = multiAnswerLabels(answerParts.length);
+  const answerFieldLabels = multiAnswerLabels(currentQuestion.topicId, answerParts.length);
+  const showTopAnswerLabels = showMultiAnswerTopLabels(currentQuestion.topicId);
 
   return (
     <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-background">
@@ -297,9 +305,11 @@ export function MentalMathSession({
 
                       return (
                         <div key={index} className="flex flex-col items-center gap-2">
-                          <span className="text-sm font-bold uppercase tracking-wider text-text">
-                            {label}
-                          </span>
+                          {showTopAnswerLabels && (
+                            <span className="text-sm font-bold uppercase tracking-wider text-text">
+                              {label}
+                            </span>
+                          )}
                           <input
                             ref={index === 0 ? simpleInputRef : undefined}
                             type="text"
@@ -313,7 +323,8 @@ export function MentalMathSession({
                             placeholder={label}
                             aria-label={label}
                             className={cn(
-                              "w-32 h-14 text-xl font-semibold rounded-2xl border-0 outline-none transition-all duration-75",
+                              showTopAnswerLabels ? "w-32" : "w-40",
+                              "h-14 text-xl font-semibold rounded-2xl border-0 outline-none transition-all duration-75",
                               showFeedback && lastAttempt?.isCorrect
                                 ? "bg-primary/20 text-primary focus:ring-0 focus:outline-none"
                                 : showFeedback && !lastAttempt?.isCorrect
