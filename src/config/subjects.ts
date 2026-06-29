@@ -11,7 +11,7 @@ export const SUBJECTS: Subject[] = [
     description: "Sharpen your mental math skills across arithmetic, algebra, and geometry.",
     icon: "FunctionSquare",
     color: "var(--subj-maths)",
-    categories: ["arithmetic", "algebra", "number_theory", "shortcuts"],
+    categories: ["arithmetic", "algebra", "geometry", "number_theory", "shortcuts", "trigonometry"],
   },
   {
     id: "physics",
