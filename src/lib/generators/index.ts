@@ -93,7 +93,8 @@ export const GENERATORS: Record<string, GeneratorFunction> = validateGenerators(
   multiplication: generateMultiplication,
   division: generateDivision,
   fractions: generateFractions,
-  simplify_fraction: generateSimplifyFraction,
+  simplify_fraction: (level: number, weights?: Record<string, number>) =>
+    generateFractions(level, weights),
   common_multiples: generateCommonMultiples,
 
   // Algebra

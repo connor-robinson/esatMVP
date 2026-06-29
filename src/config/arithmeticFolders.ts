@@ -26,13 +26,11 @@ export const FRACTIONS_GROUP_TOPIC_IDS = [
   'fractions',
   'friendly_frac_decimals',
   'common_frac_to_dec_2dp',
-  'simplify_fraction',
 ] as const;
 
 const STANDALONE_HIDDEN_TOPIC_IDS = new Set<string>([
   'friendly_frac_decimals',
   'common_frac_to_dec_2dp',
-  'simplify_fraction',
   'common_multiples',
 ]);
 

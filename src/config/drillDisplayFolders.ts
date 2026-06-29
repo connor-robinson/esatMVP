@@ -289,7 +289,6 @@ const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
     'common_multiples',
     'friendly_frac_decimals',
     'common_frac_to_dec_2dp',
-    'simplify_fraction',
     ...FRACTIONS_GROUP_TOPIC_IDS.filter((id) => id !== 'fractions'),
     'sci_rewrite',
   ],

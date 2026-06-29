@@ -106,37 +106,17 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'plain', text: '372 ÷ 4' },
     { kind: 'plain', text: '285 ÷ 5' },
   ]),
-  'fractions-same-denominator': S([
-    { kind: 'latex', latex: String.raw`\frac{2}{7} + \frac{3}{7}` },
-    { kind: 'latex', latex: String.raw`\frac{1}{5} + \frac{2}{5}` },
-  ]),
-  'fractions-different-denominators': S([
+  'fractions-mixed': S([
     { kind: 'latex', latex: String.raw`\frac{1}{3} + \frac{1}{4}` },
-    { kind: 'latex', latex: String.raw`\frac{2}{5} + \frac{1}{2}` },
-  ]),
-  'fractions-multiplication': S([
-    { kind: 'latex', latex: String.raw`\frac{2}{3} \times \frac{5}{7}` },
-    { kind: 'latex', latex: String.raw`\frac{3}{4} \times \frac{2}{5}` },
+    { kind: 'latex', latex: String.raw`\frac{8}{\frac{2}{3} + \frac{1}{5}}` },
   ]),
   'friendly_frac_decimals-level-1': S([
     { kind: 'latex', latex: String.raw`\frac{3}{8}` },
     { kind: 'latex', latex: String.raw`\frac{1}{4}` },
   ]),
   'common_frac_to_dec_2dp-level-1': S([
-    { kind: 'latex', latex: String.raw`\frac{5}{16}` },
-    { kind: 'latex', latex: String.raw`\frac{7}{20}` },
-  ]),
-  'simplify_fraction-nested-fractions': S([
-    { kind: 'latex', latex: String.raw`\frac{\frac{3}{4}}{5}` },
-    { kind: 'latex', latex: String.raw`\frac{\frac{2}{3}}{4}` },
-  ]),
-  'simplify_fraction-complex-expressions': S([
-    { kind: 'latex', latex: String.raw`\frac{2 + 3}{5}` },
-    { kind: 'latex', latex: String.raw`\frac{4 + 1}{6}` },
-  ]),
-  'simplify_fraction-sum-of-fractions': S([
-    { kind: 'latex', latex: String.raw`\frac{1}{2} + \frac{1}{3}` },
-    { kind: 'latex', latex: String.raw`\frac{2}{3} + \frac{1}{4}` },
+    { kind: 'latex', latex: String.raw`\frac{5}{11}` },
+    { kind: 'latex', latex: String.raw`0.\overline{27}` },
   ]),
   'common_multiples-basic': S([
     { kind: 'latex', latex: String.raw`8 \times 17` },
