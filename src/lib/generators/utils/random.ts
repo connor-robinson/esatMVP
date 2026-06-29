@@ -12,7 +12,7 @@ export function randomInt(min: number, max: number): number {
 /**
  * Pick a random element from an array
  */
-export function pick<T>(arr: T[]): T {
+export function pick<T>(arr: readonly T[]): T {
   return arr[randomInt(0, arr.length - 1)];
 }
 
@@ -71,7 +71,7 @@ export function randomEndingIn(ending: number, min: number, max: number): number
 /**
  * Pick two distinct ordered values from an array
  */
-export function pickOrdered<T>(values: T[]): [T, T] {
+export function pickOrdered<T>(values: readonly T[]): [T, T] {
   let a = pick(values);
   let b = pick(values);
   while (b === a) {
