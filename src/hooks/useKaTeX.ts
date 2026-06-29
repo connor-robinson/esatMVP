@@ -7,6 +7,7 @@
 import katex from "katex";
 import "katex/dist/katex.min.css";
 import { normalizeStemWhitespace } from "@/lib/utils/stemWhitespace";
+import { wrapBareLatexFractions } from "@/lib/utils/fixBareLatexFractions";
 // @ts-ignore
 import "katex/dist/contrib/mhchem.min.js";
 
@@ -337,7 +338,8 @@ function joinRenderedParts(parts: RenderedPart[]): string {
 export function renderMathContent(text: string): string {
   if (text == null) return "";
   const textStr = normalizeStemWhitespace(String(text));
-  const textWithSpacing = addSpacingAroundInlineMath(textStr);
+  const textWithFractions = wrapBareLatexFractions(textStr);
+  const textWithSpacing = addSpacingAroundInlineMath(textWithFractions);
   const segments = parseMathContent(textWithSpacing);
   const parts: RenderedPart[] = [];
 

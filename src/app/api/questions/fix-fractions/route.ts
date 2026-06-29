@@ -1,134 +1,11 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import {
+  hasBareLatexFractions,
+  wrapBareLatexFractions,
+} from "@/lib/utils/fixBareLatexFractions";
 
 export const dynamic = 'force-dynamic';
-
-/**
- * Utility function to check if a position in text is inside $...$ or $$...$$ delimiters
- */
-function isPositionInMathDelimiters(text: string, position: number): boolean {
-  // Find all display math ($$...$$) blocks
-  const displayPattern = /\$\$/g;
-  const displayMatches: number[] = [];
-  let match;
-  
-  while ((match = displayPattern.exec(text)) !== null) {
-    displayMatches.push(match.index);
-  }
-  
-  // Pair up $$ delimiters
-  const displayRanges: Array<[number, number]> = [];
-  for (let i = 0; i < displayMatches.length - 1; i += 2) {
-    displayRanges.push([displayMatches[i], displayMatches[i + 1] + 2]);
-  }
-  
-  // Check if position is in any display math range
-  for (const [start, end] of displayRanges) {
-    if (start <= position && position < end) {
-      return true;
-    }
-  }
-  
-  // Find inline math ($...$) that doesn't overlap with display math
-  // We'll manually find $...$ patterns, avoiding those that are part of $$...$$
-  let searchIndex = 0;
-  while (searchIndex < text.length) {
-    const dollarIndex = text.indexOf('$', searchIndex);
-    if (dollarIndex === -1) break;
-    
-    // Check if this is part of a display math block ($$)
-    const isDisplayStart = dollarIndex < text.length - 1 && text[dollarIndex + 1] === '$';
-    if (isDisplayStart) {
-      // Skip to after the display math block
-      const displayEnd = text.indexOf('$$', dollarIndex + 2);
-      if (displayEnd !== -1) {
-        searchIndex = displayEnd + 2;
-        continue;
-      }
-    }
-    
-    // This is a potential inline math start
-    const inlineEnd = text.indexOf('$', dollarIndex + 1);
-    if (inlineEnd !== -1) {
-      // Check if this is not part of a display math block
-      const isPartOfDisplay = displayRanges.some(
-        ([dmStart, dmEnd]) => dollarIndex >= dmStart && dollarIndex < dmEnd
-      );
-      
-      if (!isPartOfDisplay) {
-        const start = dollarIndex;
-        const end = inlineEnd + 1;
-        if (start <= position && position < end) {
-          return true;
-        }
-      }
-      searchIndex = inlineEnd + 1;
-    } else {
-      break;
-    }
-  }
-  
-  return false;
-}
-
-/**
- * Check if text contains \frac{...} that is not wrapped in $ delimiters
- */
-function hasFracWithoutDelimiters(text: string): boolean {
-  if (!text || typeof text !== 'string') {
-    return false;
-  }
-  
-  // Find all \frac{...}{...} occurrences
-  const fracPattern = /\\frac\{[^}]*\}\{[^}]*\}/g;
-  let match;
-  
-  while ((match = fracPattern.exec(text)) !== null) {
-    // Check if the start of this \frac is inside math delimiters
-    if (!isPositionInMathDelimiters(text, match.index)) {
-      return true;
-    }
-  }
-  
-  return false;
-}
-
-/**
- * Wrap any \frac{...} expressions that are not already in $ delimiters
- * with $ delimiters.
- */
-function fixFracFormatting(text: string): string {
-  if (!text || typeof text !== 'string') {
-    return text;
-  }
-  
-  // Find all \frac{...}{...} occurrences
-  const fracPattern = /\\frac\{[^}]*\}\{[^}]*\}/g;
-  const fracMatches: Array<{ start: number; end: number; content: string }> = [];
-  let match;
-  
-  while ((match = fracPattern.exec(text)) !== null) {
-    fracMatches.push({
-      start: match.index,
-      end: match.index + match[0].length,
-      content: match[0],
-    });
-  }
-  
-  // Process matches in reverse order to maintain correct indices
-  let result = text;
-  for (let i = fracMatches.length - 1; i >= 0; i--) {
-    const { start, end, content } = fracMatches[i];
-    
-    // Check if this \frac is inside math delimiters
-    if (!isPositionInMathDelimiters(result, start)) {
-      // Wrap this \frac with $ delimiters
-      result = result.slice(0, start) + '$' + content + '$' + result.slice(end);
-    }
-  }
-  
-  return result;
-}
 
 /**
  * POST /api/questions/fix-fractions
@@ -216,9 +93,9 @@ export async function POST(request: NextRequest) {
           continue;
         }
 
-        if (hasFracWithoutDelimiters(optionValue)) {
+        if (hasBareLatexFractions(optionValue)) {
           needsFix = true;
-          const fixedValue = fixFracFormatting(optionValue);
+          const fixedValue = wrapBareLatexFractions(optionValue);
           updatedOptions[optionKey] = fixedValue;
           fixedOptions.push(optionKey);
           totalOptionsFixed++;
