@@ -152,20 +152,8 @@ const GEOMETRY_FOLDERS: FolderDef[] = [
   {
     id: 'geometry-area-volume',
     name: 'Area & Volume',
-    topicIds: ['area', 'volume'],
+    topicIds: ['geometry_2d', 'geometry_3d'],
     symbol: { kind: 'lucide', iconKey: 'Box' },
-  },
-  {
-    id: 'geometry-surface-area',
-    name: 'Surface Area',
-    topicIds: [
-      'sphere_volume',
-      'sphere_area',
-      'cylinder_sa',
-      'cone_sa',
-      'square_pyramid_sa',
-    ],
-    symbol: { kind: 'latex', latex: String.raw`4\pi r^2` },
   },
 ];
 
@@ -335,13 +323,8 @@ const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
     'triangles',
     'circles',
     'pythagorean',
-    'area',
-    'volume',
-    'sphere_volume',
-    'sphere_area',
-    'cylinder_sa',
-    'cone_sa',
-    'square_pyramid_sa',
+    'geometry_2d',
+    'geometry_3d',
   ],
   number_theory: [
     'primes',

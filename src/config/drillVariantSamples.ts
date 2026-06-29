@@ -283,33 +283,17 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'latex', latex: String.raw`3^2 + 4^2 = c^2` },
     { kind: 'latex', latex: String.raw`5,\ 12,\ c` },
   ]),
-  'area-level-1': S([
-    { kind: 'plain', text: 'rect 6 × 4' },
-    { kind: 'plain', text: '△ base 8, h 5' },
+  'geometry_2d-mixed': S([
+    { kind: 'plain', text: 'Find the area in terms of π.' },
+    { kind: 'plain', text: 'Find the sector area in terms of π.' },
   ]),
-  'volume-level-1': S([
-    { kind: 'latex', latex: String.raw`V = lwh` },
-    { kind: 'latex', latex: String.raw`r = 3,\ h = 10` },
+  'geometry_3d-volume': S([
+    { kind: 'plain', text: 'Find the volume in terms of π.' },
+    { kind: 'plain', text: 'Find the volume.' },
   ]),
-  'sphere_volume-level-1': S([
-    { kind: 'latex', latex: String.raw`V = \frac{4}{3}\pi r^3` },
-    { kind: 'latex', latex: String.raw`r = 3` },
-  ]),
-  'sphere_area-level-1': S([
-    { kind: 'latex', latex: String.raw`A = 4\pi r^2` },
-    { kind: 'latex', latex: String.raw`r = 5` },
-  ]),
-  'cylinder_sa-level-1': S([
-    { kind: 'latex', latex: String.raw`r = 2,\ h = 6` },
-    { kind: 'latex', latex: String.raw`SA_{cyl}` },
-  ]),
-  'cone_sa-level-1': S([
-    { kind: 'latex', latex: String.raw`r = 3,\ l = 5` },
-    { kind: 'latex', latex: String.raw`SA_{cone}` },
-  ]),
-  'square_pyramid_sa-level-1': S([
-    { kind: 'plain', text: 'base 4 × 4' },
-    { kind: 'plain', text: 'slant h = 6' },
+  'geometry_3d-surface-area': S([
+    { kind: 'plain', text: 'Find the surface area in terms of π.' },
+    { kind: 'plain', text: 'Find the surface area.' },
   ]),
 
   // —— Number theory ——

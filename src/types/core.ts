@@ -224,6 +224,40 @@ export interface TriangleDiagramData {
   scale?: number;
 }
 
+export interface DiagramLabel {
+  x: number;
+  y: number;
+  text: string;
+  fontSize?: number;
+}
+
+export interface GeometryDiagramData {
+  type: "geometry";
+  viewBox: { x: number; y: number; width: number; height: number };
+  paths?: {
+    d: string;
+    fill?: string;
+    fillOpacity?: number;
+    stroke?: boolean;
+    strokeDasharray?: string;
+  }[];
+  lines?: { x1: number; y1: number; x2: number; y2: number; dashed?: boolean }[];
+  arcs?: { cx: number; cy: number; r: number; startDeg: number; endDeg: number }[];
+  angleArcs?: {
+    cx: number;
+    cy: number;
+    r: number;
+    startDeg: number;
+    endDeg: number;
+    labelX: number;
+    labelY: number;
+    label: string;
+  }[];
+  labels: DiagramLabel[];
+}
+
+export type DiagramData = TriangleDiagramData | GeometryDiagramData;
+
 export interface GeneratedQuestion {
   id: string;
   question: string;
@@ -250,8 +284,8 @@ export interface GeneratedQuestion {
     tolerance: number; // relative tolerance (e.g., 0.01 for 1%)
     aliases?: Record<string, string>; // maps alias -> canonical unit
   };
-  /** Diagram data for visual question types (e.g., triangles) */
-  diagram?: TriangleDiagramData;
+  /** Diagram data for visual question types */
+  diagram?: DiagramData;
 }
 
 export interface QuestionAttempt {

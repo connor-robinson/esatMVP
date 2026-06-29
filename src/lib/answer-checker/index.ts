@@ -14,6 +14,12 @@ export {
   decimalsEqual,
 } from "./utils";
 export { evaluateExpression, expressionsEqual } from "./math-eval";
+export {
+  parsePiCoefficient,
+  formatPiAnswer,
+  createPiAnswerChecker,
+  piCoefficientsEqual,
+} from "./pi-expr";
 export type { ParsedFraction, ParsedDecimal } from "./types";
 
 

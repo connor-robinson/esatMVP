@@ -10,7 +10,7 @@ import { LogOut, Eye, ArrowRight, X } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { Progress } from "@/components/ui/Progress";
 import { MathContent } from "@/components/shared/MathContent";
-import { TriangleDiagram } from "@/components/shared/TriangleDiagram";
+import { DiagramRenderer } from "@/components/shared/DiagramRenderer";
 import { FeedbackPopup } from "./FeedbackPopup";
 import { KatexInput } from "./KatexInput";
 import { GeneratedQuestion, QuestionAttempt } from "@/types/core";
@@ -283,7 +283,7 @@ export function MentalMathSession({
                   transition={{ duration: 0.2, ease: "easeInOut" }}
                   className="w-full flex justify-center mt-[-32px]"
                 >
-                  <TriangleDiagram data={currentQuestion.diagram} />
+                  <DiagramRenderer data={currentQuestion.diagram} />
                 </motion.div>
               </AnimatePresence>
             )}

@@ -69,11 +69,8 @@ import { generateUnitConversions } from "./physics/unit_conversions";
 import { generateElectricity } from "./physics/electricity";
 
 // Geometry
-import { generateSphereVolume } from "./sphere_volume";
-import { generateSphereArea } from "./sphere_area";
-import { generateCylinderSa } from "./cylinder_sa";
-import { generateConeSa } from "./cone_sa";
-import { generateSquarePyramidSa } from "./square_pyramid_sa";
+import { generateGeometry2d } from "./geometry_2d";
+import { generateGeometry3d } from "./geometry_3d";
 
 type GeneratorFunction = (level: number, weights?: Record<string, number>) => GeneratedQuestion;
 
@@ -161,11 +158,8 @@ export const GENERATORS: Record<string, GeneratorFunction> = validateGenerators(
   electricity: generateElectricity,
   
   // Geometry
-  sphere_volume: generateSphereVolume,
-  sphere_area: generateSphereArea,
-  cylinder_sa: generateCylinderSa,
-  cone_sa: generateConeSa,
-  square_pyramid_sa: generateSquarePyramidSa,
+  geometry_2d: generateGeometry2d,
+  geometry_3d: generateGeometry3d,
 });
 
 // Re-export mixed generators for builder sessions
