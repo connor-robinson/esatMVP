@@ -41,9 +41,6 @@ import { generateSciCalc } from "./sci_calc";
 // Arithmetic (continued)
 import { generateCommonMultiples } from "./common_multiples";
 
-// Number Theory (continued)
-import { generatePrimeFactorise } from "./prime_factorise";
-
 // Test & Estimation
 import { generateSurds } from "./surds";
 
