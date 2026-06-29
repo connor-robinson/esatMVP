@@ -189,8 +189,12 @@ export default function PapersSolvePage() {
         return;
       }
 
-      // Increment time for current question - use currentQuestionIndex from store directly
-      if (!state.isMarkingInfo) {
+      // Increment time for current question - exclude instruction pages + marking info
+      const onInstructionPage =
+        isSectionMode &&
+        state.sectionInstructionTimer !== null &&
+        state.sectionInstructionTimer > 0;
+      if (!state.isMarkingInfo && !onInstructionPage) {
         const currentIdx = state.currentQuestionIndex;
         incrementTime(currentIdx);
       }
