@@ -2385,7 +2385,7 @@ export default function PapersMarkPage() {
                       return (
                         <div className="rounded-lg p-4 bg-neutral-800 overflow-y-auto transition-all duration-300" style={{ maxHeight: '72vh' }}>
                           <div className="flex items-center justify-between mb-3">
-                            <div className="text-sm font-semibold text-maths">Suggested Answer</div>
+                            <div className="text-[15px] font-semibold text-accent">Suggested Answer</div>
                             {currentQuestionTitle && (
                               <div className="ml-3 rounded-full bg-surface-mid px-2 py-0.5 text-xs font-medium text-text-muted">
                                 {currentQuestionTitle}
@@ -2398,7 +2398,7 @@ export default function PapersMarkPage() {
                                 content={formatSolutionTextForDisplay(
                                   question.solutionText || "",
                                 )}
-                                className="text-sm leading-relaxed text-maths"
+                                className="text-sm leading-relaxed text-text"
                               />
                             )}
                             {question?.solutionImage && (
@@ -2440,7 +2440,7 @@ export default function PapersMarkPage() {
                     </div>
                   )}
                             {!question?.solutionText && !question?.solutionImage && (
-                              <div className="text-sm text-maths/70">No solution available</div>
+                              <div className="text-sm text-text-muted">No solution available</div>
                             )}
                           </div>
                         </div>
@@ -2455,12 +2455,12 @@ export default function PapersMarkPage() {
                 <div className="mt-4 rounded-lg bg-neutral-800 p-4">
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
-                      <svg className="h-4 w-4 text-maths" fill="currentColor" viewBox="0 0 20 20" aria-hidden>
+                      <svg className="h-4 w-4 text-accent" fill="currentColor" viewBox="0 0 20 20" aria-hidden>
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                       </svg>
-                      <div className="text-sm font-semibold text-maths">Tip</div>
+                      <div className="text-[15px] font-semibold text-accent">Tip</div>
                     </div>
-                    <MathContent content={currentTip} className="text-sm leading-relaxed text-maths" />
+                    <MathContent content={currentTip} className="text-sm leading-relaxed text-text" />
                   </div>
                 </div>
               )}
