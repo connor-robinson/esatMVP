@@ -34,7 +34,7 @@ function combineParity(op: "+" | "−" | "×", a: Parity, b: Parity): Parity {
   return a === b ? "even" : "odd";
 }
 
-function parityLabel(p: Parity): string {
+function parityLabel(p: Parity): Parity {
   return p;
 }
 
