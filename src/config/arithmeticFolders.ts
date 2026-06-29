@@ -75,6 +75,12 @@ const FOLDER_DEFS: {
     iconKey: 'Divide',
     topicIds: FRACTIONS_GROUP_TOPIC_IDS,
   },
+  {
+    id: 'squaring',
+    name: 'Squaring',
+    iconKey: 'X',
+    topicIds: ['squaring'],
+  },
 ];
 
 function modulesFromTopicIds(topicIds: readonly string[]): ArithmeticDrillModule[] {

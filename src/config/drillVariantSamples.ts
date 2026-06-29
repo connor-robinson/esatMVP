@@ -86,10 +86,6 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'plain', text: '24 × 25' },
     { kind: 'plain', text: '16 × 15' },
   ]),
-  'multiplication-perfect-squares': S([
-    { kind: 'plain', text: '13²' },
-    { kind: 'plain', text: '18²' },
-  ]),
   'multiplication-multiply-11-12': S([
     { kind: 'plain', text: '47 × 11' },
     { kind: 'plain', text: '38 × 12' },
@@ -101,6 +97,18 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
   'multiplication-multiply-9-99': S([
     { kind: 'plain', text: '47 × 99' },
     { kind: 'plain', text: '38 × 9' },
+  ]),
+  'squaring-ending-in-5': S([
+    { kind: 'plain', text: '35²' },
+    { kind: 'plain', text: '65²' },
+  ]),
+  'squaring-perfect-squares': S([
+    { kind: 'plain', text: '13²' },
+    { kind: 'plain', text: '18²' },
+  ]),
+  'squaring-two-digit': S([
+    { kind: 'plain', text: '47²' },
+    { kind: 'plain', text: '83²' },
   ]),
   'division-small-divisors': S([
     { kind: 'plain', text: '56 ÷ 7' },
@@ -359,13 +367,13 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'plain', text: '15% of 80' },
     { kind: 'plain', text: '20% of 150' },
   ]),
-  'squaring-ending-in-5': S([
-    { kind: 'plain', text: '35²' },
-    { kind: 'plain', text: '65²' },
+  'percentages-common': S([
+    { kind: 'plain', text: '12.5% of 80' },
+    { kind: 'plain', text: '15% of 200' },
   ]),
-  'estimation-rounding': S([
-    { kind: 'plain', text: '198 × 4 ≈ ?' },
-    { kind: 'plain', text: '49 × 21 ≈ ?' },
+  'percentages-increase-decrease': S([
+    { kind: 'plain', text: 'Increase 200 by 20%' },
+    { kind: 'plain', text: 'Decrease 500 by 15%' },
   ]),
 
   // —— Trigonometry ——

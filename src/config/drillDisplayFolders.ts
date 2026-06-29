@@ -176,14 +176,8 @@ const SHORTCUTS_FOLDERS: FolderDef[] = [
   {
     id: 'shortcuts-percent',
     name: 'Percentages',
-    topicIds: ['percentages', 'estimation'],
+    topicIds: ['percentages'],
     symbol: { kind: 'lucide', iconKey: 'Percent' },
-  },
-  {
-    id: 'shortcuts-squaring',
-    name: 'Squaring',
-    topicIds: ['squaring'],
-    symbol: { kind: 'latex', latex: String.raw`25^2` },
   },
 ];
 
@@ -301,6 +295,7 @@ const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
     'sci_calc',
     'power_bases',
     'powers',
+    'squaring',
   ],
   algebra: [
     'linearEquations',
@@ -328,7 +323,7 @@ const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
     'divisibility',
     'sequences',
   ],
-  shortcuts: ['percentages', 'estimation', 'squaring'],
+  shortcuts: ['percentages'],
   trigonometry: ['trig_recall', 'trig_inverse', 'trig_applications'],
   physics: [
     'kinematics',

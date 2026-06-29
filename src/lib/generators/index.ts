@@ -86,7 +86,13 @@ export const GENERATORS: Record<string, GeneratorFunction> = validateGenerators(
   // Core arithmetic
   addition: generateAddition,
   subtraction: generateSubtraction,
-  multiplication: generateMultiplication,
+  multiplication: (level: number, weights?: Record<string, number>) => {
+    if (level === 8) return generateSquaring(3, weights);
+    if (level === 9) return generateMultiplication(8, weights);
+    if (level === 10) return generateMultiplication(9, weights);
+    if (level === 11) return generateMultiplication(10, weights);
+    return generateMultiplication(level, weights);
+  },
   division: generateDivision,
   fractions: generateFractions,
   simplify_fraction: (level: number, weights?: Record<string, number>) =>
@@ -124,7 +130,7 @@ export const GENERATORS: Record<string, GeneratorFunction> = validateGenerators(
   powers: generatePowers,
   power_bases: generatePowerBases,
   multiplication_shortcuts: (level: number, weights?: Record<string, number>) =>
-    generateMultiplication(level === 1 ? 7 : level === 2 ? 9 : 11, weights),
+    generateMultiplication(level === 1 ? 7 : level === 2 ? 8 : 10, weights),
   
   // Shortcuts
   percentages: generatePercentages,
