@@ -10,6 +10,7 @@ import {
   FIXED_CYLINDER_H_PX,
   FIXED_CYLINDER_R_PX,
   FIXED_RADIUS_PX,
+  boundingViewBox,
   centeredIsoOrigin,
   horizontalRadiusDisplay,
   standardRadiusDisplay,
@@ -18,8 +19,8 @@ import {
 } from "./diagramLayout";
 import { ellipsePath, isoLine, isoPath, isoProject } from "./isometric";
 
-function baseDiagram(): GeometryDiagramData {
-  const diagram = emptyGeometryDiagram(standardViewBox());
+function baseDiagram(viewBox = standardViewBox()): GeometryDiagramData {
+  const diagram = emptyGeometryDiagram(viewBox);
   diagram.size = "large";
   return diagram;
 }
@@ -42,7 +43,10 @@ export function buildCuboidDiagram(l: number, w: number, h: number): GeometryDia
   ];
   const o = centeredIsoOrigin(v);
 
-  const diagram = baseDiagram();
+  const projected = v.map((p) => isoProject(p.x, p.y, p.z, o));
+  const viewBox = boundingViewBox(projected, 30);
+
+  const diagram = baseDiagram(viewBox);
   // Painter's order: back → sides → top (top drawn last)
   diagram.paths = [
     { d: isoPath([v[3], v[2], v[6], v[7]], o), fill: "var(--color-text)", fillOpacity: 0.03, stroke: true },
@@ -82,7 +86,18 @@ export function buildCylinderDiagram(r: number, h: number): GeometryDiagramData 
   const botY = topY + H;
   const ry = R * 0.35;
 
-  const diagram = baseDiagram();
+  const viewBox = boundingViewBox(
+    [
+      { x: cx - R, y: topY },
+      { x: cx + R, y: topY },
+      { x: cx - R, y: botY },
+      { x: cx + R, y: botY },
+      { x: cx + R + 44, y: (topY + botY) / 2 },
+    ],
+    24,
+  );
+
+  const diagram = baseDiagram(viewBox);
   diagram.paths = [
     { d: ellipsePath(cx, topY, R, ry), fill: "var(--color-text)", fillOpacity: 0.06, stroke: true },
     { d: ellipsePath(cx, botY, R, ry), fill: "none", stroke: true, strokeDasharray: "4 3" },
@@ -112,12 +127,23 @@ export function buildConeDiagram(r: number, h: number, showSlant = false): Geome
   const cx = DIAGRAM_CX;
   const R = FIXED_CYLINDER_R_PX;
   const H = FIXED_CYLINDER_H_PX;
-  const baseY = DIAGRAM_CY + H / 2 - 12;
+  const baseY = DIAGRAM_CY + H / 2 - 8;
   const apexY = baseY - H;
   const ry = R * 0.35;
   const l = Math.sqrt(r * r + h * h);
 
-  const diagram = baseDiagram();
+  const bounds = [
+    { x: cx, y: apexY },
+    { x: cx - R, y: baseY },
+    { x: cx + R, y: baseY },
+    { x: cx + R + 44, y: (apexY + baseY) / 2 },
+  ];
+  if (showSlant) {
+    bounds.push({ x: cx + R * 0.45, y: (apexY + baseY) / 2 - 14 });
+  }
+  const viewBox = boundingViewBox(bounds, 24);
+
+  const diagram = baseDiagram(viewBox);
   diagram.paths = [
     { d: ellipsePath(cx, baseY, R, ry), fill: "var(--color-text)", fillOpacity: 0.06, stroke: true },
   ];
@@ -163,7 +189,10 @@ export function buildSquarePyramidDiagram(base: number, h: number): GeometryDiag
   const apex = { x: B / 2, y: B / 2, z: H };
   const o = centeredIsoOrigin([...basePts, apex]);
 
-  const diagram = baseDiagram();
+  const projected = [...basePts, apex].map((p) => isoProject(p.x, p.y, p.z, o));
+  const viewBox = boundingViewBox(projected, 34);
+
+  const diagram = baseDiagram(viewBox);
   diagram.paths = [{ d: isoPath(basePts, o), fill: "var(--color-text)", fillOpacity: 0.08, stroke: true }];
   const ap = isoProject(apex.x, apex.y, apex.z, o);
   const corners = basePts.map((p) => isoProject(p.x, p.y, p.z, o));
@@ -191,7 +220,10 @@ export function buildTriangularPrismDiagram(base: number, height: number, depth:
   const triBack = tri.map((p) => ({ x: p.x, y: p.y + D, z: p.z }));
   const o = centeredIsoOrigin([...tri, ...triBack]);
 
-  const diagram = baseDiagram();
+  const projected = [...tri, ...triBack].map((p) => isoProject(p.x, p.y, p.z, o));
+  const viewBox = boundingViewBox(projected, 34);
+
+  const diagram = baseDiagram(viewBox);
   diagram.paths = [
     { d: isoPath(tri, o), fill: "var(--color-text)", fillOpacity: 0.08, stroke: true },
     { d: isoPath(triBack, o), fill: "var(--color-text)", fillOpacity: 0.04, stroke: true },
@@ -217,7 +249,19 @@ export function buildSphereDiagram(r: number): GeometryDiagramData {
   const cy = DIAGRAM_CY;
   const R = FIXED_RADIUS_PX;
 
-  const diagram = baseDiagram();
+  const { line, label } = standardRadiusDisplay(cx, cy, R, r);
+  const viewBox = boundingViewBox(
+    [
+      { x: cx - R, y: cy },
+      { x: cx + R, y: cy },
+      { x: cx, y: cy - R },
+      { x: cx, y: cy + R },
+      { x: label.x, y: label.y },
+    ],
+    28,
+  );
+
+  const diagram = baseDiagram(viewBox);
   diagram.paths = [
     {
       d: `M ${cx - R} ${cy} A ${R} ${R} 0 1 1 ${cx + R} ${cy} A ${R} ${R} 0 1 1 ${cx - R} ${cy}`,
@@ -228,7 +272,6 @@ export function buildSphereDiagram(r: number): GeometryDiagramData {
     { d: ellipsePath(cx, cy, R, R * 0.28), fill: "none", stroke: true, strokeDasharray: "5 4" },
   ];
 
-  const { line, label } = standardRadiusDisplay(cx, cy, R, r);
   diagram.lines = [line];
   diagram.labels = [label];
   return diagram;
@@ -239,7 +282,18 @@ export function buildHemisphereDiagram(r: number): GeometryDiagramData {
   const R = FIXED_RADIUS_PX;
   const baseY = DIAGRAM_CY + R * 0.35;
 
-  const diagram = baseDiagram();
+  const radiusLabel = labelOnSegment(cx, baseY, cx, baseY - R, `r = ${r}`, { x: cx + R * 0.5, y: baseY }, 28);
+  const viewBox = boundingViewBox(
+    [
+      { x: cx - R, y: baseY },
+      { x: cx + R, y: baseY },
+      { x: cx, y: baseY - R },
+      { x: radiusLabel.x, y: radiusLabel.y },
+    ],
+    28,
+  );
+
+  const diagram = baseDiagram(viewBox);
   diagram.paths = [
     {
       d: `M ${cx - R} ${baseY} A ${R} ${R} 0 0 0 ${cx + R} ${baseY}`,
@@ -253,7 +307,7 @@ export function buildHemisphereDiagram(r: number): GeometryDiagramData {
     { x1: cx, y1: baseY, x2: cx, y2: baseY - R },
   ];
   diagram.labels = [
-    labelOnSegment(cx, baseY, cx, baseY - R, `r = ${r}`, { x: cx + R * 0.5, y: baseY }, 28),
+    radiusLabel,
   ];
   return diagram;
 }

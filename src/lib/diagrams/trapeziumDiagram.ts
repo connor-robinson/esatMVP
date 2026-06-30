@@ -4,7 +4,7 @@
 
 import type { GeometryDiagramData } from "@/types/core";
 import { emptyGeometryDiagram, labelOnSegment } from "./geometryPrimitives";
-import { DIAGRAM_CX, DIAGRAM_CY, standardViewBox, unitScale } from "./diagramLayout";
+import { DIAGRAM_CX, DIAGRAM_CY, boundingViewBox, unitScale } from "./diagramLayout";
 
 export function buildTrapeziumDiagram(a: number, b: number, h: number): GeometryDiagramData {
   const k = unitScale(a, b, h);
@@ -24,7 +24,17 @@ export function buildTrapeziumDiagram(a: number, b: number, h: number): Geometry
     y: (topY + botY) / 2,
   };
 
-  const diagram = emptyGeometryDiagram(standardViewBox());
+  const hx = cx + botW / 2 + 20;
+  const hLabel = { x: hx + 22, y: (topY + botY) / 2 };
+  const labelA = labelOnSegment(topLeft.x, topLeft.y, topRight.x, topRight.y, `a = ${a}`, centroid, 28);
+  const labelB = labelOnSegment(botLeft.x, botLeft.y, botRight.x, botRight.y, `b = ${b}`, centroid, 28);
+
+  const viewBox = boundingViewBox(
+    [topLeft, topRight, botLeft, botRight, { x: hx, y: topY }, { x: hx, y: botY }, hLabel, labelA, labelB],
+    28,
+  );
+
+  const diagram = emptyGeometryDiagram(viewBox);
   diagram.size = "large";
   diagram.paths = [
     {
@@ -35,17 +45,12 @@ export function buildTrapeziumDiagram(a: number, b: number, h: number): Geometry
     },
   ];
 
-  const hx = cx + botW / 2 + 20;
   diagram.lines = [
     { x1: hx, y1: topY, x2: hx, y2: botY, dashed: true },
     { x1: hx - 6, y1: topY, x2: hx + 6, y2: topY, dashed: true },
     { x1: hx - 6, y1: botY, x2: hx + 6, y2: botY, dashed: true },
   ];
 
-  diagram.labels = [
-    labelOnSegment(topLeft.x, topLeft.y, topRight.x, topRight.y, `a = ${a}`, centroid, 28),
-    labelOnSegment(botLeft.x, botLeft.y, botRight.x, botRight.y, `b = ${b}`, centroid, 28),
-    { x: hx + 22, y: (topY + botY) / 2, text: `h = ${h}` },
-  ];
+  diagram.labels = [labelA, labelB, { ...hLabel, text: `h = ${h}` }];
   return diagram;
 }

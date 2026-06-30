@@ -397,12 +397,17 @@ export function MentalMathSession({
       </div>
 
       {/* Question area — no negative margin (was blocking header clicks) */}
-      <div className="relative z-0 flex min-h-0 flex-1 items-center justify-center overflow-hidden">
+      <div
+        className={cn(
+          "relative z-0 flex min-h-0 flex-1 overflow-hidden",
+          prominentDiagram ? "items-start justify-center pt-2" : "items-center justify-center",
+        )}
+      >
         <Container size="md" className="w-full flex h-full items-center justify-center">
           <div
             className={cn(
               "w-full max-w-2xl flex flex-col items-center",
-              prominentDiagram ? "h-full min-h-0 gap-4 py-2" : "gap-12",
+              prominentDiagram ? "gap-2" : "gap-12",
             )}
           >
             {/* Topic badge */}
@@ -439,17 +444,13 @@ export function MentalMathSession({
                   transition={{ duration: 0.2, ease: "easeInOut" }}
                   className={cn(
                     "w-full flex justify-center",
-                    prominentDiagram
-                      ? "flex-1 items-center min-h-[min(42vh,360px)]"
-                      : currentQuestion.topicId === "circle_theorems"
-                        ? "my-2"
-                        : "mt-[-32px]",
+                    prominentDiagram ? "shrink-0" : currentQuestion.topicId === "circle_theorems" ? "my-2" : "mt-[-32px]",
                   )}
                 >
                   <DiagramRenderer
                     data={currentQuestion.diagram!}
                     feedback={unitCircleFeedback}
-                    className={prominentDiagram ? "w-full" : undefined}
+                    className={prominentDiagram ? "w-full max-w-3xl" : undefined}
                   />
                 </motion.div>
               </AnimatePresence>
@@ -469,7 +470,12 @@ export function MentalMathSession({
               )}
 
             {/* Input section */}
-            <div className="flex flex-col items-center gap-6 w-full max-w-md">
+            <div
+              className={cn(
+                "flex w-full max-w-md flex-col items-center",
+                prominentDiagram ? "shrink-0 gap-3" : "gap-6",
+              )}
+            >
               {isBinaryChoice && currentQuestion.answerInput?.type === "binary-choice" ? (
                 <BinaryChoiceInput
                   config={currentQuestion.answerInput}

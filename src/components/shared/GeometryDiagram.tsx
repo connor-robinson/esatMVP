@@ -22,7 +22,7 @@ export function GeometryDiagram({ data, className }: GeometryDiagramProps) {
     <div className={cn("flex flex-col items-center w-full gap-1.5", className)}>
       <svg
         viewBox={vb}
-        className={cn("w-full h-auto", isLarge ? "max-w-[min(100%,520px)]" : "max-w-[340px]")}
+        className={cn("w-full h-auto", isLarge ? "max-w-[min(90vw,720px)]" : "max-w-[340px]")}
         preserveAspectRatio="xMidYMid meet"
       >
         {circles.map((c, i) => (
@@ -105,7 +105,7 @@ export function GeometryDiagram({ data, className }: GeometryDiagramProps) {
         ))}
 
         {labels.map((l, i) => (
-          <DiagramLabel key={`label-${i}`} x={l.x} y={l.y} text={l.text} fontSize={l.fontSize ?? 14} />
+          <DiagramLabel key={`label-${i}`} x={l.x} y={l.y} text={l.text} fontSize={l.fontSize ?? (isLarge ? 16 : 14)} />
         ))}
       </svg>
       {caption && (

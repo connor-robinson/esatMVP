@@ -8,8 +8,8 @@ import {
   DIAGRAM_CX,
   DIAGRAM_CY,
   FIXED_RADIUS_PX,
+  boundingViewBox,
   standardRadiusDisplay,
-  standardViewBox,
 } from "./diagramLayout";
 
 export function buildCircleDiagram(r: number): GeometryDiagramData {
@@ -20,7 +20,18 @@ export function buildCircleDiagram(r: number): GeometryDiagramData {
 
   const { line, label } = standardRadiusDisplay(cx, cy, pxR, r);
 
-  const diagram = emptyGeometryDiagram(standardViewBox());
+  const viewBox = boundingViewBox(
+    [
+      { x: cx - pxR, y: cy },
+      { x: cx + pxR, y: cy },
+      { x: cx, y: cy - pxR },
+      { x: cx, y: cy + pxR },
+      { x: label.x, y: label.y },
+    ],
+    32,
+  );
+
+  const diagram = emptyGeometryDiagram(viewBox);
   diagram.size = "large";
   diagram.paths = [{ d, fill: "var(--color-text)", fillOpacity: 0.06, stroke: true }];
   diagram.lines = [line];
