@@ -1,13 +1,13 @@
 /**
  * Trig applications generator
  * Levels:
- * 1 - Evaluate trig from triangle sides
- * 2 - Special triangles (30-60-90, 45-45-90)
+ * 1 - Find sides/angles from special right triangles (smaller scale)
+ * 2 - Find sides/angles from special right triangles (larger scale)
  */
 
 import { GeneratedQuestion } from "@/types/core";
 import { generateId } from "@/lib/utils";
-import { pick, randomInt } from "./utils/random";
+import { pick, pickWeighted, randomInt } from "./utils/random";
 import { createAnswerChecker } from "@/lib/answer-checker";
 import { generateTriangleDiagram } from "@/lib/diagrams/triangleGenerator";
 
@@ -15,220 +15,205 @@ export function generateTrigApplications(
   level: number,
   _weights?: Record<string, number>,
 ): GeneratedQuestion {
-  if (level === 1) return generateTriangleSides();
-  return generateSpecialTriangles();
+  return generateTriangleQuestion(
+    level === 1
+      ? { unitMin: 2, unitMax: 12, difficulty: 1 }
+      : { unitMin: 3, unitMax: 20, difficulty: 2 },
+  );
 }
 
-function generateTriangleSides(): GeneratedQuestion {
-  const triples = [
-    [3, 4, 5],
-    [5, 12, 13],
-    [8, 15, 17],
-    [7, 24, 25],
-    [9, 40, 41],
-  ];
-  const [a, b, c] = pick(triples);
-  const which = pick(["sin", "cos", "tan"]);
-  
-  const answers: Record<string, string> = {
-    sin: `${a}/${c}`,
-    cos: `${b}/${c}`,
-    tan: `${a}/${b}`,
-  };
+interface TriangleQuestionOptions {
+  unitMin: number;
+  unitMax: number;
+  difficulty: number;
+}
 
-  const checker = createAnswerChecker({
-    correctAnswer: answers[which],
-    acceptFractions: true,
-    acceptableAnswers: [answers[which]],
+type Triangle306090Side = "short" | "long" | "hyp";
+type Triangle454590Side = "leg" | "hyp";
+
+function formatSurd(coeff: number, radical: 2 | 3): string {
+  const sym = radical === 2 ? "√2" : "√3";
+  return coeff === 1 ? sym : `${coeff}${sym}`;
+}
+
+function surdAnswerForms(display: string): string[] {
+  const forms = new Set<string>([display]);
+  forms.add(display.replace(/√2/g, "sqrt(2)").replace(/√3/g, "sqrt(3)"));
+  forms.add(display.replace(/√(\d)/g, "sqrt($1)"));
+
+  const surdMatch = display.match(/^(\d+)√(\d+)$/);
+  if (surdMatch) {
+    forms.add(`${surdMatch[1]}sqrt(${surdMatch[2]})`);
+    forms.add(`${surdMatch[1]}*sqrt(${surdMatch[2]})`);
+  }
+
+  const plainSurd = display.match(/^√(\d+)$/);
+  if (plainSurd) {
+    forms.add(`sqrt(${plainSurd[1]})`);
+  }
+
+  return [...forms];
+}
+
+function exact306090(side: Triangle306090Side, u: number): string {
+  if (side === "short") return String(u);
+  if (side === "long") return formatSurd(u, 3);
+  return String(2 * u);
+}
+
+function exact454590(side: Triangle454590Side, u: number): string {
+  if (side === "leg") return String(u);
+  return formatSurd(u, 2);
+}
+
+function sideName306090(side: Triangle306090Side): string {
+  if (side === "short") return "shorter leg";
+  if (side === "long") return "longer leg";
+  return "hypotenuse";
+}
+
+function buildSideChecker(answer: string) {
+  const acceptable = surdAnswerForms(answer);
+  return createAnswerChecker({
+    correctAnswer: answer,
+    acceptDecimals: true,
+    tolerance: 0.02,
+    acceptableAnswers: acceptable,
+    customChecker: (user) => {
+      const u = user.trim().toLowerCase().replace(/\s+/g, "");
+      return acceptable.some((a) => a.trim().toLowerCase().replace(/\s+/g, "") === u);
+    },
+  });
+}
+
+function buildAngleChecker(degrees: number) {
+  return createAnswerChecker({
+    correctAnswer: String(degrees),
+    acceptableAnswers: [String(degrees), `${degrees}°`],
+  });
+}
+
+function generate306090SideQuestion(u: number, difficulty: number): GeneratedQuestion {
+  const sides: Triangle306090Side[] = ["short", "long", "hyp"];
+  const unknown = pick(sides);
+  const given = pick(sides.filter((s) => s !== unknown));
+
+  const answer = exact306090(unknown, u);
+  const givenLabel = exact306090(given, u);
+
+  const diagram = generateTriangleDiagram({
+    type: "30-60-90",
+    unit: u,
+    problemType: "side",
+    givenSide: given,
+    unknownSide: unknown,
   });
 
   return {
     id: generateId(),
     topicId: "trig_applications",
-    question: `Right triangle with sides $${a}$-$${b}$-$${c}$. Compute $${which}(\\theta)$ for angle opposite side $${a}$.`,
-    answer: answers[which],
-    difficulty: 1,
-    checker,
+    question: `The ${sideName306090(given)} is $${givenLabel}$. Find the ${sideName306090(unknown)}.`,
+    answer,
+    difficulty,
+    checker: buildSideChecker(answer),
+    acceptableAnswers: surdAnswerForms(answer),
+    diagram,
   };
 }
 
-function generateSpecialTriangles(): GeneratedQuestion {
-  const type = pick(["30-60-90", "45-45-90"]);
-  const mode = pick(["length", "angle"]);
-  const u = randomInt(2, 20);
+function generate306090AngleQuestion(u: number, difficulty: number): GeneratedQuestion {
+  const unknown = pick([30, 60] as const);
+  const given = unknown === 30 ? 60 : 30;
+  const vertex = unknown === 30 ? "B" : "C";
 
-  const makeAns = (exactStr: string, numericVal: number) => {
-    const approx = String(Math.round(numericVal * 1000) / 1000);
-    return {
-      exact: exactStr,
-      acceptable: [
-        exactStr,
-        exactStr.replace("√3", "sqrt(3)").replace("√2", "sqrt(2)").replace(/\s+/g, ""),
-        approx,
-      ],
-    };
+  const diagram = generateTriangleDiagram({
+    type: "30-60-90",
+    unit: u,
+    problemType: "angle",
+    givenSide: "short",
+    givenAngle: given,
+    unknownAngle: unknown,
+  });
+
+  return {
+    id: generateId(),
+    topicId: "trig_applications",
+    question: `In the 30°-60°-90° triangle shown, the shorter leg is $${u}$. Find the angle at vertex $${vertex}$ (in degrees).`,
+    answer: String(unknown),
+    difficulty,
+    checker: buildAngleChecker(unknown),
+    acceptableAnswers: [String(unknown), `${unknown}°`],
+    diagram,
   };
+}
 
-  if (type === "30-60-90") {
-    const exact = { short: `${u}`, long: `${u}√3`, hyp: `${2 * u}` };
-    const numeric = {
-      short: u,
-      long: u * Math.sqrt(3),
-      hyp: 2 * u,
-    };
+function generate454590SideQuestion(u: number, difficulty: number): GeneratedQuestion {
+  const unknown = pick<Triangle454590Side>(["leg", "hyp"]);
+  const given: Triangle454590Side = unknown === "leg" ? "hyp" : "leg";
 
-    if (mode === "length") {
-      const sides = ["short", "long", "hyp"];
-      const given = pick(sides);
-      const unknown = sides.find((s) => s !== given)!;
+  const answer = exact454590(unknown, u);
+  const givenLabel = exact454590(given, u);
 
-      const ans = makeAns(exact[unknown as keyof typeof exact], numeric[unknown as keyof typeof numeric]);
+  const diagram = generateTriangleDiagram({
+    type: "45-45-90",
+    unit: u,
+    problemType: "side",
+    givenSide: given,
+    unknownSide: unknown,
+  });
 
-      let prompt = "";
-      const givenKey = given as keyof typeof exact;
-      if (given === "short") {
-        prompt = `30-60-90 triangle: short side = $${exact[givenKey]}$, find ${unknown === "long" ? "long side" : "hypotenuse"}`;
-      } else if (given === "long") {
-        prompt = `30-60-90 triangle: long side = $${exact[givenKey]}$, find ${unknown === "short" ? "short side" : "hypotenuse"}`;
-      } else {
-        prompt = `30-60-90 triangle: hypotenuse = $${exact[givenKey]}$, find ${unknown === "short" ? "short side" : "long side"}`;
-      }
+  const unknownName = unknown === "leg" ? "leg" : "hypotenuse";
 
-      const checker = createAnswerChecker({
-        correctAnswer: ans.exact,
-        acceptFractions: false,
-        acceptDecimals: true,
-        tolerance: 0.01,
-        acceptableAnswers: ans.acceptable,
-      });
+  return {
+    id: generateId(),
+    topicId: "trig_applications",
+    question: `The ${given === "leg" ? "leg" : "hypotenuse"} is $${givenLabel}$. Find the ${unknownName}.`,
+    answer,
+    difficulty,
+    checker: buildSideChecker(answer),
+    acceptableAnswers: surdAnswerForms(answer),
+    diagram,
+  };
+}
 
-      // Generate diagram
-      const diagram = generateTriangleDiagram({
-        type: "30-60-90",
-        unit: u,
-        givenSide: given as "short" | "long" | "hyp",
-        unknownSide: unknown as "short" | "long" | "hyp",
-      });
+function generate454590AngleQuestion(u: number, difficulty: number): GeneratedQuestion {
+  const diagram = generateTriangleDiagram({
+    type: "45-45-90",
+    unit: u,
+    problemType: "angle",
+    givenSide: "leg",
+    givenAngle: 90,
+    unknownAngle: 45,
+  });
 
-      return {
-        id: generateId(),
-        topicId: "trig_applications",
-        question: prompt,
-        answer: ans.exact,
-        difficulty: 2,
-        checker,
-        acceptableAnswers: ans.acceptable,
-        diagram,
-      };
-    } else {
-      const thetaAt = pick(["B", "C"]);
-      const theta = thetaAt === "B" ? 30 : 60;
+  const vertex = pick(["B", "C"]);
 
-      const prompt = `30-60-90 triangle: short = $${exact.short}$, hyp = $${exact.hyp}$, find angle at $${thetaAt}$ (degrees)`;
+  return {
+    id: generateId(),
+    topicId: "trig_applications",
+    question: `In the 45°-45°-90° triangle shown, each leg is $${u}$. Find the acute angle at vertex $${vertex}$ (in degrees).`,
+    answer: "45",
+    difficulty,
+    checker: buildAngleChecker(45),
+    acceptableAnswers: ["45", "45°"],
+    diagram,
+  };
+}
 
-      // Generate diagram - show given angles and unknown angle
-      // For angle problems, we show the right angle (90°) and one other angle, then ask for the third
-      const givenAngle = theta === 30 ? 60 : 30; // Show the angle that's NOT being asked for
-      const diagram = generateTriangleDiagram({
-        type: "30-60-90",
-        unit: u,
-        givenSide: "short", // Show short side as given
-        givenAngle: givenAngle,
-        unknownAngle: theta,
-      });
+function generateTriangleQuestion(options: TriangleQuestionOptions): GeneratedQuestion {
+  const u = randomInt(options.unitMin, options.unitMax);
+  const triangleType = pick(["30-60-90", "45-45-90"] as const);
+  const findSide = pickWeighted([
+    { value: true, w: 0.85 },
+    { value: false, w: 0.15 },
+  ]);
 
-      return {
-        id: generateId(),
-        topicId: "trig_applications",
-        question: prompt,
-        answer: String(theta),
-        difficulty: 2,
-        acceptableAnswers: [String(theta), `${theta}°`],
-        diagram,
-      };
-    }
-  } else {
-    // 45-45-90
-    const exact = { leg: `${u}`, hyp: `${u}√2` };
-    const numeric = { leg: u, hyp: u * Math.sqrt(2) };
-
-    if (mode === "length") {
-      const sides = ["leg", "hyp"];
-      const given = pick(sides);
-      const unknown = sides.find((s) => s !== given)!;
-
-      const ans = makeAns(
-        unknown === "leg" ? exact.leg : exact.hyp,
-        unknown === "leg" ? numeric.leg : numeric.hyp
-      );
-
-      const givenKey45 = given as keyof typeof exact;
-      const prompt =
-        given === "leg"
-          ? `45-45-90 triangle: leg = $${exact[givenKey45]}$, find hypotenuse`
-          : `45-45-90 triangle: hypotenuse = $${exact[givenKey45]}$, find leg`;
-
-      const checker = createAnswerChecker({
-        correctAnswer: ans.exact,
-        acceptDecimals: true,
-        tolerance: 0.01,
-        acceptableAnswers: ans.acceptable,
-      });
-
-      // Generate diagram
-      const diagram = generateTriangleDiagram({
-        type: "45-45-90",
-        unit: u,
-        givenSide: given as "leg" | "hyp",
-        unknownSide: unknown as "leg" | "hyp",
-      });
-
-      return {
-        id: generateId(),
-        topicId: "trig_applications",
-        question: prompt,
-        answer: ans.exact,
-        difficulty: 2,
-        checker,
-        acceptableAnswers: ans.acceptable,
-        diagram,
-      };
-    } else {
-      const thetaAt = pick(["B", "C"]);
-      const theta = 45;
-
-      const prompt = `45-45-90 triangle: leg = $${exact.leg}$, find angle at $${thetaAt}$ (degrees)`;
-
-      // Generate diagram - show right angle and one 45° angle, ask for the other
-      const diagram = generateTriangleDiagram({
-        type: "45-45-90",
-        unit: u,
-        givenSide: "leg",
-        givenAngle: 90, // Show right angle
-        unknownAngle: 45, // Ask for one of the 45° angles
-      });
-
-      return {
-        id: generateId(),
-        topicId: "trig_applications",
-        question: prompt,
-        answer: "45",
-        difficulty: 2,
-        acceptableAnswers: ["45", "45°"],
-        diagram,
-      };
-    }
+  if (triangleType === "30-60-90") {
+    return findSide
+      ? generate306090SideQuestion(u, options.difficulty)
+      : generate306090AngleQuestion(u, options.difficulty);
   }
+  return findSide
+    ? generate454590SideQuestion(u, options.difficulty)
+    : generate454590AngleQuestion(u, options.difficulty);
 }
-
-
-
-
-
-
-
-
-
-
-
-

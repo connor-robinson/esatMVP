@@ -6,11 +6,35 @@ import { TriangleDiagramData } from "@/types/core";
 
 interface TriangleConfig {
   type: "30-60-90" | "45-45-90";
-  unit: number; // Base unit for scaling
+  unit: number;
+  problemType?: "side" | "angle";
   givenSide?: "short" | "long" | "hyp" | "leg";
-  givenAngle?: number; // Angle in degrees that is given
+  givenAngle?: number;
   unknownSide?: "short" | "long" | "hyp" | "leg";
-  unknownAngle?: number; // Angle in degrees that is unknown
+  unknownAngle?: number;
+}
+
+function sideLabel306090(
+  role: "short" | "long" | "hyp",
+  unit: number,
+  mode: "given" | "unknown" | "hidden",
+): { text?: string; show: boolean } {
+  if (mode === "hidden") return { show: false };
+  if (mode === "unknown") return { text: "?", show: true };
+  if (role === "short") return { text: String(unit), show: true };
+  if (role === "long") return { text: `${unit}√3`, show: true };
+  return { text: String(2 * unit), show: true };
+}
+
+function sideLabel454590(
+  role: "leg" | "hyp",
+  unit: number,
+  mode: "given" | "unknown" | "hidden",
+): { text?: string; show: boolean } {
+  if (mode === "hidden") return { show: false };
+  if (mode === "unknown") return { text: "?", show: true };
+  if (role === "leg") return { text: String(unit), show: true };
+  return { text: `${unit}√2`, show: true };
 }
 
 /**
@@ -41,6 +65,18 @@ function generate30_60_90Triangle(
   const shortSide = unit * scale;
   const longSide = unit * Math.sqrt(3) * scale;
   const hypSide = 2 * unit * scale;
+
+  const isSideProblem = config.problemType === "side" || Boolean(config.unknownSide);
+  const sideMode = (role: "short" | "long" | "hyp") => {
+    if (config.givenSide === role) return "given" as const;
+    if (config.unknownSide === role) return "unknown" as const;
+    if (isSideProblem && role === "hyp") return "hidden" as const;
+    return "hidden" as const;
+  };
+
+  const shortLbl = sideLabel306090("short", unit, sideMode("short"));
+  const longLbl = sideLabel306090("long", unit, sideMode("long"));
+  const hypLbl = sideLabel306090("hyp", unit, sideMode("hyp"));
   
   // Vertices: A (bottom-left, right angle), B (bottom-right), C (top-left)
   const vertices = [
@@ -50,29 +86,28 @@ function generate30_60_90Triangle(
   ];
   
   // Determine which labels to show
-  const showShortLabel = config.givenSide === "short" || config.unknownSide === "short";
-  const showLongLabel = config.givenSide === "long" || config.unknownSide === "long";
-  const showHypLabel = config.givenSide === "hyp" || config.unknownSide === "hyp";
-  
-  // Determine which angles to show
-  const show30Label = config.givenAngle === 30 || config.unknownAngle === 30;
-  const show60Label = config.givenAngle === 60 || config.unknownAngle === 60;
-  const show90Label = config.givenAngle === 90 || config.unknownAngle === 90;
+  const showShortLabel = shortLbl.show;
+  const showLongLabel = longLbl.show;
+  const showHypLabel = hypLbl.show;
+
+  const show30Label = isSideProblem || config.givenAngle === 30 || config.unknownAngle === 30;
+  const show60Label = isSideProblem || config.givenAngle === 60 || config.unknownAngle === 60;
+  const show90Label = true;
   
   // Sides: [A->B (short), B->C (hyp), C->A (long)]
   const sides = [
     {
-      label: config.givenSide === "short" ? `${unit}` : config.unknownSide === "short" ? "?" : undefined,
+      label: shortLbl.text,
       length: shortSide,
       showLabel: showShortLabel,
     },
     {
-      label: config.givenSide === "hyp" ? `${2 * unit}` : config.unknownSide === "hyp" ? "?" : undefined,
+      label: hypLbl.text,
       length: hypSide,
       showLabel: showHypLabel,
     },
     {
-      label: config.givenSide === "long" ? `${unit}√3` : config.unknownSide === "long" ? "?" : undefined,
+      label: longLbl.text,
       length: longSide,
       showLabel: showLongLabel,
     },
@@ -81,22 +116,34 @@ function generate30_60_90Triangle(
   // Angles: [at A (90°), at B (30°), at C (60°)]
   const angles = [
     {
-      label: undefined, // Always use the marker for 90 degrees, not a text label
+      label: undefined,
       degrees: 90,
-      showLabel: show90Label, // This controls the marker
-      showArc: false, // Right angle uses square marker instead
+      showLabel: show90Label,
+      showArc: false,
     },
     {
-      label: config.unknownAngle === 30 ? "?" : (config.givenAngle === 30 ? "30°" : undefined),
+      label: isSideProblem
+        ? "30°"
+        : config.unknownAngle === 30
+          ? "?"
+          : config.givenAngle === 30
+            ? "30°"
+            : undefined,
       degrees: 30,
       showLabel: show30Label,
-      showArc: show30Label,
+      showArc: show30Label && !isSideProblem,
     },
     {
-      label: config.unknownAngle === 60 ? "?" : (config.givenAngle === 60 ? "60°" : undefined),
+      label: isSideProblem
+        ? "60°"
+        : config.unknownAngle === 60
+          ? "?"
+          : config.givenAngle === 60
+            ? "60°"
+            : undefined,
       degrees: 60,
       showLabel: show60Label,
-      showArc: show60Label,
+      showArc: show60Label && !isSideProblem,
     },
   ];
   
@@ -123,6 +170,16 @@ function generate45_45_90Triangle(
   
   const leg = unit * scale;
   const hypSide = unit * Math.sqrt(2) * scale;
+
+  const isSideProblem = config.problemType === "side" || Boolean(config.unknownSide);
+  const sideMode = (role: "leg" | "hyp") => {
+    if (config.givenSide === role) return "given" as const;
+    if (config.unknownSide === role) return "unknown" as const;
+    return "hidden" as const;
+  };
+
+  const legLbl = sideLabel454590("leg", unit, sideMode("leg"));
+  const hypLbl = sideLabel454590("hyp", unit, sideMode("hyp"));
   
   // Vertices: A (bottom-left, right angle), B (bottom-right), C (top-left)
   const vertices = [
@@ -131,54 +188,58 @@ function generate45_45_90Triangle(
     { x: 100, y: 300 - leg }, // C - top-left
   ];
   
-  // Determine which labels to show
-  const showLeg1Label = config.givenSide === "leg" || config.unknownSide === "leg";
-  const showLeg2Label = config.givenSide === "leg" || config.unknownSide === "leg";
-  const showHypLabel = config.givenSide === "hyp" || config.unknownSide === "hyp";
-  
-  // Determine which angles to show
-  const show45Label1 = config.givenAngle === 45 || config.unknownAngle === 45;
-  const show45Label2 = config.givenAngle === 45 || config.unknownAngle === 45;
-  const show90Label = config.givenAngle === 90 || config.unknownAngle === 90;
+  const showBottomLeg = legLbl.show;
+  const showVerticalLeg = false;
+  const showHypLabel = hypLbl.show;
+
+  const show45Label1 = isSideProblem || config.givenAngle === 45 || config.unknownAngle === 45;
+  const show45Label2 = isSideProblem || config.givenAngle === 45 || config.unknownAngle === 45;
+  const show90Label = true;
   
   // Sides: [A->B (leg), B->C (hyp), C->A (leg)]
   const sides = [
     {
-      label: config.givenSide === "leg" ? `${unit}` : config.unknownSide === "leg" ? "?" : undefined,
+      label: legLbl.text,
       length: leg,
-      showLabel: showLeg1Label,
+      showLabel: showBottomLeg,
     },
     {
-      label: config.givenSide === "hyp" ? `${unit}√2` : config.unknownSide === "hyp" ? "?" : undefined,
+      label: hypLbl.text,
       length: hypSide,
       showLabel: showHypLabel,
     },
     {
-      label: config.givenSide === "leg" ? `${unit}` : config.unknownSide === "leg" ? "?" : undefined,
+      label: legLbl.text,
       length: leg,
-      showLabel: showLeg2Label,
+      showLabel: showVerticalLeg,
     },
   ];
   
   // Angles: [at A (90°), at B (45°), at C (45°)]
   const angles = [
     {
-      label: undefined, // Always use the marker for 90 degrees, not a text label
+      label: undefined,
       degrees: 90,
-      showLabel: show90Label, // This controls the marker
-      showArc: false, // Right angle uses square marker instead
+      showLabel: show90Label,
+      showArc: false,
     },
     {
-      label: config.unknownAngle === 45 ? "?" : (config.givenAngle === 45 ? "45°" : undefined),
+      label: isSideProblem
+        ? "45°"
+        : config.unknownAngle === 45
+          ? "?"
+          : config.givenAngle === 45
+            ? "45°"
+            : undefined,
       degrees: 45,
       showLabel: show45Label1,
-      showArc: show45Label1,
+      showArc: show45Label1 && !isSideProblem,
     },
     {
-      label: undefined, // Only one 45 degree can be unknown with '?'
+      label: isSideProblem ? "45°" : undefined,
       degrees: 45,
       showLabel: show45Label2,
-      showArc: show45Label2,
+      showArc: show45Label2 && !isSideProblem,
     },
   ];
   

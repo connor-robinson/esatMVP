@@ -406,12 +406,12 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'latex', latex: String.raw`\sin\frac{5\pi}{6}` },
   ]),
   'trig_applications-triangle-sides': S([
-    { kind: 'latex', latex: String.raw`a = 5,\ \theta = 40°` },
-    { kind: 'latex', latex: String.raw`opp / hyp` },
+    { kind: 'latex', latex: String.raw`\text{leg} = 5,\ \text{find } 5\sqrt{3}` },
+    { kind: 'latex', latex: String.raw`30°\text{-}60°\text{-}90°` },
   ]),
   'trig_applications-special-triangles': S([
-    { kind: 'latex', latex: String.raw`30°\text{-}60°\text{-}90°` },
-    { kind: 'latex', latex: String.raw`45°\text{-}45°\text{-}90°` },
+    { kind: 'latex', latex: String.raw`\text{hyp} = 10,\ \text{find leg}` },
+    { kind: 'latex', latex: String.raw`7\sqrt{2}` },
   ]),
 
   // —— Physics ——

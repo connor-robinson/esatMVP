@@ -34,6 +34,7 @@ const PROMINENT_DIAGRAM_TOPICS = new Set([
   "circle_theorems",
   "unit_circle_degrees",
   "unit_circle_radians",
+  "trig_applications",
 ]);
 
 function parseMultiAnswerRevealPart(part: string): string {
