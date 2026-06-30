@@ -64,9 +64,9 @@ export const KatexInput = forwardRef<HTMLInputElement, KatexInputProps>(function
     try {
       const displayValue = toMathDisplayFormat(value);
       const rendered = renderMath(displayValue, false);
-      setRenderedHtml(rendered ?? displayValue);
+      setRenderedHtml(rendered ?? "");
     } catch {
-      setRenderedHtml(value);
+      setRenderedHtml("");
     }
   }, [value]);
 

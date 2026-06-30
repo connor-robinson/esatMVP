@@ -2,8 +2,6 @@
  * Shared helpers for mental-math answer inputs
  */
 
-import { normalizeGreekLetters } from "@/lib/answer-checker/utils";
-
 export function insertAtCursor(
   value: string,
   insertion: string,
@@ -16,18 +14,30 @@ export function insertAtCursor(
   return { next, cursor };
 }
 
+const GREEK_TO_LATEX: [RegExp, string][] = [
+  [/\btheta\b/gi, "\\theta"],
+  [/\balpha\b/gi, "\\alpha"],
+  [/\bbeta\b/gi, "\\beta"],
+  [/\bgamma\b/gi, "\\gamma"],
+  [/\bdelta\b/gi, "\\delta"],
+  [/\bpi\b/gi, "\\pi"],
+];
+
 /** Convert typed answer to KaTeX-friendly display string */
 export function toMathDisplayFormat(input: string): string {
   if (!input.trim()) return "";
 
   let display = input.trim();
-  display = display.replace(/\bsqrt\s*\(\s*([^)]+)\s*\)/gi, (_, inner) => `\\sqrt{${inner.trim()}}`);
+  display = display.replace(/\bsqrt\s*\(\s*([^)]+)\s*\)/gi, (_, inner: string) => `\\sqrt{${inner.trim()}}`);
   display = display.replace(/(\d+)\s*\/\s*(\d+)/g, (_, num, den) => `\\frac{${num}}{${den}}`);
   display = display.replace(/\^(\d+)/g, "^{$1}");
-  display = display.replace(/\bpi\b/gi, "\\pi");
-  display = display.replace(/\btheta\b/gi, "\\theta");
-  display = display.replace(/\balpha\b/gi, "\\alpha");
-  display = display.replace(/\bbeta\b/gi, "\\beta");
-  display = normalizeGreekLetters(display);
-  return display;
+  display = display.replace(/×/g, " \\times ");
+  display = display.replace(/·/g, " \\cdot ");
+  display = display.replace(/\*/g, " \\cdot ");
+
+  for (const [pattern, latex] of GREEK_TO_LATEX) {
+    display = display.replace(pattern, latex);
+  }
+
+  return display.replace(/\s{2,}/g, " ").trim();
 }
