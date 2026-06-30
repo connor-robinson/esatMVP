@@ -1,5 +1,5 @@
 /**
- * Math answer input: raw strip on top, KaTeX live in the main bar (no separate preview)
+ * Math answer input: KaTeX preview on top, raw text in main bar, collapsible symbol bar
  */
 
 "use client";
@@ -93,83 +93,64 @@ export const KatexInput = forwardRef<HTMLInputElement, KatexInputProps>(function
     }
   };
 
-  const focusInput = () => {
-    if (!disabled) inputRef.current?.focus();
-  };
-
-  const caretColor = hasError ? "var(--color-error)" : "var(--color-text)";
-
   return (
     <div className="relative flex w-full max-w-md flex-col gap-2">
-      {/* Raw source — always above the main bar */}
+      {/* KaTeX preview — above the type bar */}
       <div
         className={cn(
-          "min-h-[1.375rem] rounded-lg bg-surface-elevated/80 px-3 py-1 text-center text-xs font-mono leading-snug text-text-muted/85",
-          !value && "opacity-0",
+          "flex min-h-[2.75rem] items-center justify-center rounded-xl px-3 py-2",
+          hasError ? "bg-error/10" : "bg-surface-elevated/60",
         )}
         aria-live="polite"
-        aria-hidden={!value}
       >
-        <span className="whitespace-pre-wrap break-all">{value || "\u00a0"}</span>
+        {renderedHtml ? (
+          <div
+            className={cn(
+              "max-w-full overflow-x-auto text-xl [&_.katex]:text-[1.15rem]",
+              hasError ? "text-error" : "text-text",
+            )}
+            dangerouslySetInnerHTML={{ __html: renderedHtml }}
+          />
+        ) : (
+          <span className="text-sm font-medium text-text-disabled">Preview</span>
+        )}
       </div>
 
-      {/* Main bar: rendered KaTeX with invisible typing layer on top */}
+      {/* Main type bar — raw text visible while typing */}
       <div className="relative">
-        <div
-          role="presentation"
-          onClick={focusInput}
-          className={cn(
-            "flex h-16 w-full cursor-text items-center justify-center rounded-2xl px-14 transition-all duration-75",
-            hasError ? "bg-error/20" : "bg-surface-elevated",
-            disabled && "cursor-not-allowed opacity-50",
-          )}
-        >
-          {renderedHtml ? (
-            <div
-              className={cn(
-                "pointer-events-none max-w-full overflow-x-auto text-2xl [&_.katex]:text-[1.35rem]",
-                hasError ? "text-error" : "text-text",
-              )}
-              dangerouslySetInnerHTML={{ __html: renderedHtml }}
-            />
-          ) : (
-            <span className="pointer-events-none text-base font-medium text-text-disabled">
-              {placeholder}
-            </span>
-          )}
-        </div>
-
         <input
           ref={inputRef}
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
+          placeholder={placeholder}
           disabled={disabled}
           autoComplete="off"
           spellCheck={false}
-          aria-label={placeholder}
           className={cn(
-            "absolute inset-0 z-10 h-16 w-full rounded-2xl border-0 bg-transparent text-center text-2xl font-semibold outline-none",
-            "focus:ring-0 focus:outline-none selection:bg-primary/15",
-            disabled && "cursor-not-allowed",
+            "h-16 w-full rounded-2xl border-0 text-2xl font-semibold outline-none transition-all duration-75",
+            hasError
+              ? "bg-error/20 text-error focus:ring-0 focus:outline-none"
+              : "bg-surface-elevated text-text focus:ring-0 focus:outline-none",
+            "placeholder:text-base placeholder:font-medium placeholder:text-text-disabled",
+            disabled && "cursor-not-allowed opacity-50",
           )}
           style={{
-            color: "transparent",
-            WebkitTextFillColor: "transparent",
-            caretColor,
+            textAlign: "center",
             paddingLeft: "4.5rem",
             paddingRight: "4.5rem",
             lineHeight: "4rem",
+            height: "4rem",
           }}
         />
 
-        <div className="pointer-events-none absolute right-2 top-1/2 z-20 flex -translate-y-1/2 items-center gap-1">
+        <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
           {showReveal && onReveal && (
             <button
               type="button"
               onClick={onReveal}
-              className="pointer-events-auto rounded-xl bg-surface-elevated p-2 text-text-muted transition-all hover:bg-surface hover:text-text"
+              className="rounded-xl bg-surface-elevated p-2 text-text-muted transition-all hover:bg-surface hover:text-text"
               title="Reveal answer"
             >
               <Eye className="h-5 w-5" strokeWidth={2} />
@@ -180,7 +161,7 @@ export const KatexInput = forwardRef<HTMLInputElement, KatexInputProps>(function
             onClick={onSubmit}
             disabled={(!value.trim() && !showReveal) || disabled}
             className={cn(
-              "pointer-events-auto rounded-xl p-3 transition-all",
+              "rounded-xl p-3 transition-all",
               hasError
                 ? "bg-error/20 text-error hover:bg-error/30"
                 : value.trim() && !disabled
