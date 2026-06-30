@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export type NavSectionId = 'skills' | 'papers' | 'questions' | 'tools';
@@ -12,6 +12,7 @@ export interface NavDropdownItem {
   href: string;
   label: string;
   description?: string;
+  icon: LucideIcon;
 }
 
 export interface NavSectionConfig {
@@ -28,11 +29,44 @@ const sectionActiveClass: Record<NavSectionId, string> = {
   tools: 'font-bold text-text',
 };
 
-const sectionItemActiveClass: Record<NavSectionId, string> = {
-  skills: 'bg-primary/15 text-primary',
-  papers: 'bg-accent/10 text-accent',
-  questions: 'bg-secondary/10 text-secondary',
-  tools: 'bg-surface-elevated text-text',
+const sectionTheme: Record<
+  NavSectionId,
+  {
+    accentBar: string;
+    iconBox: string;
+    iconColor: string;
+    itemActive: string;
+    triggerOpen: string;
+  }
+> = {
+  skills: {
+    accentBar: 'bg-primary',
+    iconBox: 'bg-primary/15',
+    iconColor: 'text-primary',
+    itemActive: 'bg-primary/10',
+    triggerOpen: 'bg-surface-elevated',
+  },
+  papers: {
+    accentBar: 'bg-accent',
+    iconBox: 'bg-accent/15',
+    iconColor: 'text-accent',
+    itemActive: 'bg-accent/10',
+    triggerOpen: 'bg-surface-elevated',
+  },
+  questions: {
+    accentBar: 'bg-secondary',
+    iconBox: 'bg-secondary/15',
+    iconColor: 'text-secondary',
+    itemActive: 'bg-secondary/10',
+    triggerOpen: 'bg-surface-elevated',
+  },
+  tools: {
+    accentBar: 'bg-text-subtle',
+    iconBox: 'bg-surface-mid',
+    iconColor: 'text-text',
+    itemActive: 'bg-surface-mid',
+    triggerOpen: 'bg-surface-elevated',
+  },
 };
 
 const sectionLabelClass =
@@ -42,6 +76,62 @@ interface NavSectionDropdownProps {
   config: NavSectionConfig;
   isActive: boolean;
   onPrefetch: (href: string) => void;
+}
+
+export function NavDropdownMenuItem({
+  item,
+  section,
+  isActive,
+  onPrefetch,
+  onNavigate,
+}: {
+  item: NavDropdownItem;
+  section: NavSectionId;
+  isActive: boolean;
+  onPrefetch: (href: string) => void;
+  onNavigate?: () => void;
+}) {
+  const theme = sectionTheme[section];
+  const Icon = item.icon;
+
+  return (
+    <Link
+      href={item.href}
+      prefetch
+      role='menuitem'
+      onMouseEnter={() => onPrefetch(item.href)}
+      onClick={onNavigate}
+      className={cn(
+        'flex items-start gap-3.5 rounded-organic-md px-3 py-3 transition-colors duration-fast ease-signature',
+        isActive ? theme.itemActive : 'hover:bg-surface-subtle/80',
+      )}
+    >
+      <span
+        className={cn(
+          'mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px]',
+          theme.iconBox,
+        )}
+        aria-hidden
+      >
+        <Icon className={cn('h-[18px] w-[18px]', theme.iconColor)} strokeWidth={2} />
+      </span>
+      <span className='min-w-0 flex-1 pt-0.5'>
+        <span
+          className={cn(
+            'block text-sm font-semibold leading-tight',
+            isActive ? theme.iconColor : 'text-text',
+          )}
+        >
+          {item.label}
+        </span>
+        {item.description ? (
+          <span className='mt-1 block text-xs leading-relaxed text-text-muted'>
+            {item.description}
+          </span>
+        ) : null}
+      </span>
+    </Link>
+  );
 }
 
 export function NavSectionDropdown({
@@ -54,6 +144,7 @@ export function NavSectionDropdown({
   const rootRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const theme = sectionTheme[config.section];
 
   const close = useCallback(() => setOpen(false), []);
 
@@ -93,7 +184,7 @@ export function NavSectionDropdown({
 
   const handleMouseLeave = () => {
     clearHoverTimeout();
-    hoverTimeoutRef.current = setTimeout(() => setOpen(false), 120);
+    hoverTimeoutRef.current = setTimeout(() => setOpen(false), 140);
   };
 
   const toggleMenu = () => {
@@ -108,78 +199,82 @@ export function NavSectionDropdown({
   return (
     <div
       ref={rootRef}
-      className='relative inline-flex items-center'
+      className='relative inline-flex'
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <div className='inline-flex items-center'>
-        <Link
-          href={config.href}
-          prefetch
-          onMouseEnter={() => onPrefetch(config.href)}
-          className={cn(
-            sectionLabelClass,
-            isActive
-              ? sectionActiveClass[config.section]
-              : 'text-text-muted hover:text-text',
-          )}
-        >
-          {config.label}
-        </Link>
-        <button
-          type='button'
-          onClick={toggleMenu}
-          className={cn(
-            'ml-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors duration-fast ease-signature',
-            isActive ? sectionActiveClass[config.section] : 'text-text-muted hover:text-text hover:bg-surface-subtle',
-          )}
-          aria-expanded={open}
-          aria-haspopup='true'
-          aria-label={`${config.label} menu`}
-        >
-          <ChevronDown
-            className={cn(
-              'h-3.5 w-3.5 transition-transform duration-fast ease-signature',
-              open && 'rotate-180',
-            )}
-            aria-hidden
-          />
-        </button>
-      </div>
-
-      {open && (
+      <div
+        className={cn(
+          'inline-flex flex-col transition-[background-color,box-shadow,border-radius] duration-fast ease-signature',
+          open && 'rounded-t-organic-md',
+        )}
+      >
         <div
-          className='absolute left-0 top-full z-50 mt-1 min-w-[220px] rounded-organic-md bg-surface-elevated py-1.5 shadow-lg'
-          role='menu'
+          className={cn(
+            'inline-flex items-center rounded-organic-md px-2 py-1.5 transition-colors duration-fast ease-signature',
+            open && cn(theme.triggerOpen, 'rounded-b-none shadow-sm'),
+          )}
         >
-          {config.items.map((item) => {
-            const itemActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                prefetch
-                role='menuitem'
-                onMouseEnter={() => onPrefetch(item.href)}
-                onClick={() => handleItemClick(item.href)}
-                className={cn(
-                  'block px-3 py-2 transition-colors duration-fast ease-signature',
-                  itemActive
-                    ? sectionItemActiveClass[config.section]
-                    : 'text-text hover:bg-surface-subtle',
-                )}
-              >
-                <span className='block text-sm font-semibold'>{item.label}</span>
-                {item.description ? (
-                  <span className='mt-0.5 block text-xs text-text-muted'>
-                    {item.description}
-                  </span>
-                ) : null}
-              </Link>
-            );
-          })}
+          <Link
+            href={config.href}
+            prefetch
+            onMouseEnter={() => onPrefetch(config.href)}
+            className={cn(
+              sectionLabelClass,
+              isActive
+                ? sectionActiveClass[config.section]
+                : 'text-text-muted hover:text-text',
+            )}
+          >
+            {config.label}
+          </Link>
+          <button
+            type='button'
+            onClick={toggleMenu}
+            className={cn(
+              'ml-1 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors duration-fast ease-signature',
+              isActive || open
+                ? sectionActiveClass[config.section]
+                : 'text-text-muted hover:bg-surface-subtle hover:text-text',
+            )}
+            aria-expanded={open}
+            aria-haspopup='true'
+            aria-label={`${config.label} menu`}
+          >
+            <ChevronDown
+              className={cn(
+                'h-3.5 w-3.5 transition-transform duration-fast ease-signature',
+                open && 'rotate-180',
+              )}
+              aria-hidden
+            />
+          </button>
         </div>
-      )}
+
+        {open && (
+          <div
+            className={cn(
+              'absolute -mt-px left-0 top-full z-50 min-w-[300px] overflow-hidden rounded-b-organic-lg rounded-t-none bg-surface-elevated backdrop-blur-xl shadow-modal-card',
+            )}
+            role='menu'
+          >
+            <div className={cn('h-[3px] w-full shrink-0', theme.accentBar)} aria-hidden />
+
+            <div className='flex flex-col gap-1.5 p-3'>
+              {config.items.map((item) => (
+                <NavDropdownMenuItem
+                  key={item.href}
+                  item={item}
+                  section={config.section}
+                  isActive={pathname === item.href}
+                  onPrefetch={onPrefetch}
+                  onNavigate={() => handleItemClick(item.href)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

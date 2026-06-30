@@ -19,10 +19,29 @@ import { BrandNavLockup } from '@/components/brand/BrandNavLockup';
 import { APP_NAME } from '@/config/brand';
 import {
   NavSectionDropdown,
+  NavDropdownMenuItem,
   type NavSectionConfig,
   type NavSectionId,
 } from '@/components/layout/NavSectionDropdown';
-import { LogIn, LogOut, Menu, Moon, Settings, Sun, X } from 'lucide-react';
+import {
+  ArrowLeftRight,
+  BarChart3,
+  BookOpen,
+  CircleHelp,
+  GraduationCap,
+  Home,
+  Library,
+  LogIn,
+  LogOut,
+  Map,
+  Menu,
+  Moon,
+  Settings,
+  Sun,
+  Trophy,
+  X,
+  Zap,
+} from 'lucide-react';
 
 /** Unified lucide sizing so logout / login glyphs match sun + gear optically */
 const NAV_ICON_PX = 22;
@@ -38,16 +57,19 @@ const navSections: NavSectionConfig[] = [
         href: '/mental-maths/drill',
         label: 'Drill',
         description: 'Start a practice session',
+        icon: Zap,
       },
       {
         href: '/mental-maths/analytics',
         label: 'Analytics',
         description: 'Track your progress',
+        icon: BarChart3,
       },
       {
         href: '/mental-maths/leaderboard',
         label: 'Leaderboard',
         description: 'Compare with others',
+        icon: Trophy,
       },
     ],
   },
@@ -60,16 +82,19 @@ const navSections: NavSectionConfig[] = [
         href: '/past-papers/library',
         label: 'Library',
         description: 'Browse exam papers',
+        icon: Library,
       },
       {
         href: '/past-papers/roadmap',
         label: 'Roadmap',
         description: 'Plan your prep',
+        icon: Map,
       },
       {
         href: '/past-papers/analytics',
         label: 'Analytics',
         description: 'Review your results',
+        icon: BarChart3,
       },
     ],
   },
@@ -82,21 +107,19 @@ const navSections: NavSectionConfig[] = [
         href: '/questions',
         label: 'Home',
         description: 'Overview and mixed practice',
-      },
-      {
-        href: '/questions/questionbank/drill',
-        label: 'Drill',
-        description: 'Topic-focused sessions',
+        icon: Home,
       },
       {
         href: '/questions/library',
         label: 'Library',
         description: 'Browse all questions',
+        icon: BookOpen,
       },
       {
         href: '/questions/questionbank/analytics',
         label: 'Analytics',
         description: 'Track your progress',
+        icon: BarChart3,
       },
     ],
   },
@@ -109,16 +132,19 @@ const navSections: NavSectionConfig[] = [
         href: '/tools/score-converter',
         label: 'Score Converter',
         description: 'Convert raw scores to percentiles',
+        icon: ArrowLeftRight,
       },
       {
         href: '/tools/faqs',
         label: 'FAQs',
         description: 'Common questions answered',
+        icon: CircleHelp,
       },
       {
         href: '/tools/tutorials',
         label: 'Tutorials',
         description: 'Learn how to use the platform',
+        icon: GraduationCap,
       },
     ],
   },
@@ -362,7 +388,7 @@ export function Navbar() {
         <nav className='sticky top-0 z-50 w-full border-b border-border bg-background/98 backdrop-blur-xl'>
           <div className='w-full px-4 sm:px-6 lg:px-10 xl:px-12'>
             <div className='flex h-[65px] items-center justify-between gap-4'>
-              <div className='flex min-w-0 flex-1 items-center gap-4 sm:gap-6 lg:gap-8'>
+              <div className='flex min-w-0 flex-[1.35] items-center gap-5 sm:gap-8 lg:gap-10 xl:gap-12'>
                 <Link
                   href='/'
                   className='group interaction-scale inline-flex shrink-0 items-center'
@@ -372,7 +398,7 @@ export function Navbar() {
                 </Link>
 
                 {!hasActiveSession && (
-                  <div className='hidden min-w-0 items-center gap-x-4 lg:gap-x-5 md:flex'>
+                  <div className='hidden min-w-0 flex-1 items-center gap-x-6 lg:gap-x-8 xl:gap-x-9 md:flex'>
                     {navSections.map((section) => (
                       <NavSectionDropdown
                         key={section.section}
@@ -418,8 +444,8 @@ export function Navbar() {
             </div>
 
             {!hasActiveSession && mobileMenuOpen && (
-              <div className='border-t border-border-subtle pb-4 pt-3 md:hidden'>
-                <div className='flex flex-col gap-5'>
+              <div className='border-t border-border-subtle pb-5 pt-4 md:hidden'>
+                <div className='flex flex-col gap-6'>
                   {navSections.map((section) => (
                     <div key={section.section}>
                       <Link
@@ -441,22 +467,16 @@ export function Navbar() {
                       >
                         {section.label}
                       </Link>
-                      <div className='mt-2 flex flex-col gap-0.5 pl-1'>
+                      <div className='mt-3 flex flex-col gap-1'>
                         {section.items.map((item) => (
-                          <Link
+                          <NavDropdownMenuItem
                             key={item.href}
-                            href={item.href}
-                            prefetch
-                            onClick={() => setMobileMenuOpen(false)}
-                            className={cn(
-                              'rounded-organic-md px-2 py-2 text-sm transition-colors duration-fast ease-signature',
-                              pathname === item.href
-                                ? 'bg-surface-subtle text-text font-semibold'
-                                : 'text-text-muted hover:bg-surface-subtle hover:text-text',
-                            )}
-                          >
-                            {item.label}
-                          </Link>
+                            item={item}
+                            section={section.section}
+                            isActive={pathname === item.href}
+                            onPrefetch={handlePrefetch}
+                            onNavigate={() => setMobileMenuOpen(false)}
+                          />
                         ))}
                       </div>
                     </div>
