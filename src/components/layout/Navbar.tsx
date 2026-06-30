@@ -124,9 +124,10 @@ const navSections: NavSectionConfig[] = [
     ],
   },
   {
-    label: 'Tools',
+    label: 'Exam Tools',
     href: '/tools/score-converter',
     section: 'tools',
+    triggerPadding: 'px-1.5',
     items: [
       {
         href: '/tools/score-converter',

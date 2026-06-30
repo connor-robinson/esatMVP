@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown, type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -19,6 +20,8 @@ export interface NavSectionConfig {
   label: string;
   href: string;
   section: NavSectionId;
+  /** Extra horizontal padding on the trigger label for visual balance. */
+  triggerPadding?: string;
   items: NavDropdownItem[];
 }
 
@@ -70,7 +73,14 @@ const sectionTheme: Record<
 };
 
 const sectionLabelClass =
-  'text-sm font-semibold uppercase tracking-[0.12em] transition-colors duration-fast ease-signature';
+  'whitespace-nowrap text-sm font-semibold uppercase tracking-[0.12em] transition-colors duration-fast ease-signature';
+
+const dropdownMotion = {
+  initial: { opacity: 0, y: -8, scale: 0.97 },
+  animate: { opacity: 1, y: 0, scale: 1 },
+  exit: { opacity: 0, y: -6, scale: 0.98 },
+  transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] as const },
+};
 
 interface NavSectionDropdownProps {
   config: NavSectionConfig;
@@ -84,12 +94,14 @@ export function NavDropdownMenuItem({
   isActive,
   onPrefetch,
   onNavigate,
+  compact = false,
 }: {
   item: NavDropdownItem;
   section: NavSectionId;
   isActive: boolean;
   onPrefetch: (href: string) => void;
   onNavigate?: () => void;
+  compact?: boolean;
 }) {
   const theme = sectionTheme[section];
   const Icon = item.icon;
@@ -102,18 +114,23 @@ export function NavDropdownMenuItem({
       onMouseEnter={() => onPrefetch(item.href)}
       onClick={onNavigate}
       className={cn(
-        'flex items-start gap-3.5 rounded-organic-md px-3 py-3 transition-colors duration-fast ease-signature',
+        'flex items-start gap-2.5 rounded-organic-md transition-colors duration-fast ease-signature',
+        compact ? 'px-2 py-2.5' : 'gap-3.5 px-3 py-3',
         isActive ? theme.itemActive : 'hover:bg-surface-subtle/80',
       )}
     >
       <span
         className={cn(
-          'mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px]',
+          'mt-0.5 inline-flex shrink-0 items-center justify-center rounded-[10px]',
+          compact ? 'h-8 w-8' : 'h-9 w-9',
           theme.iconBox,
         )}
         aria-hidden
       >
-        <Icon className={cn('h-[18px] w-[18px]', theme.iconColor)} strokeWidth={2} />
+        <Icon
+          className={cn(compact ? 'h-4 w-4' : 'h-[18px] w-[18px]', theme.iconColor)}
+          strokeWidth={2}
+        />
       </span>
       <span className='min-w-0 flex-1 pt-0.5'>
         <span
@@ -125,7 +142,12 @@ export function NavDropdownMenuItem({
           {item.label}
         </span>
         {item.description ? (
-          <span className='mt-1 block text-xs leading-relaxed text-text-muted'>
+          <span
+            className={cn(
+              'mt-0.5 block leading-snug text-text-muted',
+              compact ? 'text-[11px]' : 'text-xs leading-relaxed',
+            )}
+          >
             {item.description}
           </span>
         ) : null}
@@ -184,7 +206,7 @@ export function NavSectionDropdown({
 
   const handleMouseLeave = () => {
     clearHoverTimeout();
-    hoverTimeoutRef.current = setTimeout(() => setOpen(false), 140);
+    hoverTimeoutRef.current = setTimeout(() => setOpen(false), 160);
   };
 
   const toggleMenu = () => {
@@ -205,13 +227,13 @@ export function NavSectionDropdown({
     >
       <div
         className={cn(
-          'inline-flex flex-col transition-[background-color,box-shadow,border-radius] duration-fast ease-signature',
+          'inline-flex flex-col transition-[background-color,box-shadow,border-radius] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
           open && 'rounded-t-organic-md',
         )}
       >
         <div
           className={cn(
-            'inline-flex items-center rounded-organic-md px-2 py-1.5 transition-colors duration-fast ease-signature',
+            'inline-flex items-center rounded-organic-md px-3 py-1.5 transition-colors duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
             open && cn(theme.triggerOpen, 'rounded-b-none shadow-sm'),
           )}
         >
@@ -221,6 +243,7 @@ export function NavSectionDropdown({
             onMouseEnter={() => onPrefetch(config.href)}
             className={cn(
               sectionLabelClass,
+              config.triggerPadding,
               isActive
                 ? sectionActiveClass[config.section]
                 : 'text-text-muted hover:text-text',
@@ -243,7 +266,7 @@ export function NavSectionDropdown({
           >
             <ChevronDown
               className={cn(
-                'h-3.5 w-3.5 transition-transform duration-fast ease-signature',
+                'h-3.5 w-3.5 transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
                 open && 'rotate-180',
               )}
               aria-hidden
@@ -251,29 +274,32 @@ export function NavSectionDropdown({
           </button>
         </div>
 
-        {open && (
-          <div
-            className={cn(
-              'absolute -mt-px left-0 top-full z-50 min-w-[300px] overflow-hidden rounded-b-organic-lg rounded-t-none bg-surface-elevated backdrop-blur-xl shadow-modal-card',
-            )}
-            role='menu'
-          >
-            <div className={cn('h-[3px] w-full shrink-0', theme.accentBar)} aria-hidden />
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              {...dropdownMotion}
+              className='absolute -mt-px left-0 top-full z-50 w-full overflow-hidden rounded-b-organic-lg rounded-t-none bg-surface-elevated backdrop-blur-xl shadow-modal-card'
+              role='menu'
+              style={{ transformOrigin: 'top center' }}
+            >
+              <div className={cn('h-[3px] w-full shrink-0', theme.accentBar)} aria-hidden />
 
-            <div className='flex flex-col gap-1.5 p-3'>
-              {config.items.map((item) => (
-                <NavDropdownMenuItem
-                  key={item.href}
-                  item={item}
-                  section={config.section}
-                  isActive={pathname === item.href}
-                  onPrefetch={onPrefetch}
-                  onNavigate={() => handleItemClick(item.href)}
-                />
-              ))}
-            </div>
-          </div>
-        )}
+              <div className='flex flex-col gap-1 p-2'>
+                {config.items.map((item) => (
+                  <NavDropdownMenuItem
+                    key={item.href}
+                    item={item}
+                    section={config.section}
+                    isActive={pathname === item.href}
+                    onPrefetch={onPrefetch}
+                    onNavigate={() => handleItemClick(item.href)}
+                    compact
+                  />
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
