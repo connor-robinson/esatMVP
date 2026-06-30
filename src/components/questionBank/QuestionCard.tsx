@@ -165,7 +165,7 @@ export function QuestionCard({
       letter: selectedAnswer,
       kind: isCorrect ? "correct" : "wrong",
     });
-    const timer = window.setTimeout(() => setFlashLetter(null), 340);
+    const timer = window.setTimeout(() => setFlashLetter(null), 620);
     return () => window.clearTimeout(timer);
   }, [
     showSessionNotation,
