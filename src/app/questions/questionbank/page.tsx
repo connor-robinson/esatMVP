@@ -7,7 +7,6 @@
 
 import { useState, useEffect, useRef, Fragment, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 import { Container } from '@/components/layout/Container';
 import { Button } from '@/components/ui/Button';
 import { QuestionCard } from '@/components/questionBank/QuestionCard';
@@ -20,12 +19,14 @@ import {
 } from '@/components/questionBank/SolutionModal';
 import { CommunityStatsPanel } from '@/components/questionBank/CommunityStatsPanel';
 import { QuestionBankSessionResults } from '@/components/questionBank/QuestionBankSessionResults';
+import { QuestionBankSessionBar } from '@/components/questionBank/QuestionBankSessionBar';
 import { labelForQuestionBankTag } from '@/lib/questionBank/esatCurriculumTopicLabels';
 import { buildSessionSummary } from '@/lib/questionBank/sessionStats';
 import {
   buildSessionAttemptEntry,
   completeQuestionBankSession,
   createSessionId,
+  deleteQuestionBankSession,
   inferUiDifficultiesFromQuestions,
   registerQuestionBankSession,
   subjectsLabelFromList,
@@ -36,14 +37,8 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { useSupabaseSession } from '@/components/auth/SupabaseSessionProvider';
 import { UpgradeCTA } from '@/components/subscription/UpgradeCTA';
 import {
-  ArrowRight,
   RotateCw,
-  BookOpen,
-  ClipboardList,
-  X,
-  Eye,
   AlertCircle,
-  Lightbulb,
 } from 'lucide-react';
 import type {
   QuestionBankQuestion,
@@ -70,23 +65,6 @@ function hasSessionBootPayload(): boolean {
 
 const FREE_QUESTION_LIMIT = 10;
 const STORAGE_KEY = 'qb_free_attempts';
-
-/** Session bar controls — organic-md, shared height/padding */
-const SESSION_BAR_BTN =
-  'inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-organic-md px-4 text-sm font-medium transition-all duration-fast ease-signature focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
-/** One step darker than bar bg (light) / one step lighter (dark) */
-const SESSION_BAR_BTN_SECONDARY = cn(
-  SESSION_BAR_BTN,
-  'bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text',
-  'dark:bg-surface dark:hover:bg-surface-elevated',
-);
-/** Reveal answer — one surface step from bar background */
-const SESSION_BAR_BTN_REVEAL = cn(
-  SESSION_BAR_BTN,
-  'bg-surface-subtle text-text-muted hover:bg-surface-mid hover:text-text',
-  'dark:bg-surface dark:text-text-muted dark:hover:bg-surface-elevated dark:hover:text-text',
-);
-const SESSION_BAR_BTN_PRIMARY = cn(SESSION_BAR_BTN, 'font-semibold');
 
 function getFreeAttemptsKey(userId: string | undefined): string {
   return userId ? `${STORAGE_KEY}_${userId}` : STORAGE_KEY;
@@ -152,6 +130,8 @@ export default function QuestionBankPage() {
   const [sessionSubjectsLabel, setSessionSubjectsLabel] = useState('');
   const [sessionTestType, setSessionTestType] = useState<string | null>(null);
   const [sessionCompleting, setSessionCompleting] = useState(false);
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
+  const [sessionEndedByTimer, setSessionEndedByTimer] = useState(false);
   const questionStartedAtRef = useRef<number>(Date.now());
   const sessionAttemptLogRef = useRef<QuestionBankSessionAttempt[]>([]);
   const sessionRegisteredRef = useRef(false);
@@ -355,48 +335,85 @@ export default function QuestionBankPage() {
     showHint,
   ]);
 
-  const completeSession = useCallback(async () => {
-    if (sessionCompleting) return;
+  const completeSession = useCallback(
+    async (options?: { destination?: 'results' | 'home'; timedOut?: boolean }) => {
+      if (sessionCompleting) return;
 
-    if (!session?.user) {
-      router.push(
-        `/login?redirectTo=${encodeURIComponent('/questions/questionbank')}`,
-      );
-      return;
-    }
+      if (!session?.user) {
+        if (options?.destination === 'home') {
+          router.push('/questions');
+          return;
+        }
+        router.push(
+          `/login?redirectTo=${encodeURIComponent('/questions/questionbank')}`,
+        );
+        return;
+      }
 
-    setSessionCompleting(true);
-    ensureCurrentQuestionLogged();
-    incrementFreeAttempts();
+      setSessionCompleting(true);
+      if (options?.timedOut) {
+        setSessionEndedByTimer(true);
+      }
+      ensureCurrentQuestionLogged();
+      incrementFreeAttempts();
 
-    const attempts = sessionAttemptLogRef.current;
-    const summary = buildSessionSummary(attempts, labelForQuestionBankTag);
+      const attempts = sessionAttemptLogRef.current;
+      const summary = buildSessionSummary(attempts, labelForQuestionBankTag);
 
-    if (qbSessionId) {
-      await ensureSessionRegistered();
-      await completeQuestionBankSession({
-        id: qbSessionId,
-        summary: summary as unknown as Record<string, unknown>,
-        questionCount: summary.totalQuestions,
-        correctCount: summary.correctCount,
-        totalTimeMs: summary.totalTimeMs,
-      });
-    }
+      if (qbSessionId) {
+        await ensureSessionRegistered();
+        await completeQuestionBankSession({
+          id: qbSessionId,
+          summary: summary as unknown as Record<string, unknown>,
+          questionCount: summary.totalQuestions,
+          correctCount: summary.correctCount,
+          totalTimeMs: summary.totalTimeMs,
+        });
+      }
 
-    setSessionAttemptLog(attempts);
-    setSessionView('complete');
-    setSessionCompleting(false);
-  }, [
-    ensureCurrentQuestionLogged,
-    ensureSessionRegistered,
-    qbSessionId,
-    router,
-    session?.user,
-    sessionCompleting,
-  ]);
+      setSessionAttemptLog(attempts);
+      setSessionCompleting(false);
+      setShowLeaveConfirm(false);
+
+      if (options?.destination === 'home') {
+        router.push('/questions');
+        return;
+      }
+
+      setSessionView('complete');
+    },
+    [
+      ensureCurrentQuestionLogged,
+      ensureSessionRegistered,
+      qbSessionId,
+      router,
+      session?.user,
+      sessionCompleting,
+    ],
+  );
 
   const completeSessionRef = useRef(completeSession);
   completeSessionRef.current = completeSession;
+
+  const handleSaveAndLeave = useCallback(() => {
+    void completeSession({ destination: 'home' });
+  }, [completeSession]);
+
+  const handleDiscardSession = useCallback(async () => {
+    setShowLeaveConfirm(false);
+    if (session?.user && qbSessionId) {
+      await deleteQuestionBankSession(qbSessionId);
+    }
+    setSessionMode(false);
+    setSessionQuestions([]);
+    setSessionCurrentIndex(0);
+    setQbSessionId(null);
+    setSessionAttemptLog([]);
+    sessionAttemptLogRef.current = [];
+    sessionRegisteredRef.current = false;
+    pendingSessionMetaRef.current = null;
+    router.push('/questions');
+  }, [qbSessionId, router, session?.user]);
 
   const activeSession = sessionMode && sessionQuestions.length > 0;
   const sessionBootPending =
@@ -511,7 +528,7 @@ export default function QuestionBankPage() {
 
       if (remaining <= 0) {
         if (interval) clearInterval(interval);
-        void completeSessionRef.current();
+        void completeSessionRef.current({ timedOut: true });
       }
     };
 
@@ -746,17 +763,16 @@ export default function QuestionBankPage() {
               uiDifficulties: config.uiDifficulties,
             });
 
-            if (
-              config.timeLimitMinutes != null &&
-              config.timeLimitMinutes > 0
-            ) {
-              const startTime = Date.now();
-              const timeLimitMs = config.timeLimitMinutes * 60 * 1000;
-              setDeadline(startTime + timeLimitMs);
-              setTimerStartTime(startTime);
-              setTimeLimitMinutes(config.timeLimitMinutes);
-              setRemainingTime(Math.ceil(timeLimitMs / 1000));
-            }
+            const limitMinutes =
+              config.timeLimitMinutes != null && config.timeLimitMinutes > 0
+                ? config.timeLimitMinutes
+                : Math.ceil(sessionQs.length * 1.5);
+            const startTime = Date.now();
+            const timeLimitMs = limitMinutes * 60 * 1000;
+            setDeadline(startTime + timeLimitMs);
+            setTimerStartTime(startTime);
+            setTimeLimitMinutes(limitMinutes);
+            setRemainingTime(Math.ceil(timeLimitMs / 1000));
           } else {
             router.replace('/questions');
           }
@@ -849,6 +865,7 @@ export default function QuestionBankPage() {
         sessionSource={sessionSource}
         subjectsLabel={sessionSubjectsLabel}
         startedAt={sessionStartedAt}
+        timedOut={sessionEndedByTimer}
         onBack={() => router.push('/questions')}
       />
     );
@@ -974,148 +991,49 @@ export default function QuestionBankPage() {
           </div>
         </Container>
 
-        {/* Fixed bottom bar — session progress + actions */}
         {activeSession && currentQuestion && (
-          <div className='fixed bottom-0 left-0 right-0 z-40 bg-background/98 shadow-bar-floating backdrop-blur-md'>
-            <Container size='lg' className='py-1.5 sm:py-2'>
-              <div className='flex items-center gap-3 sm:gap-4'>
-                <div className='flex min-w-0 flex-1 flex-col gap-1'>
-                  <div className='h-2.5 w-full overflow-hidden rounded-organic-sm bg-surface-elevated sm:h-3'>
-                    <div
-                      className='h-full rounded-organic-sm bg-secondary transition-all duration-300 ease-signature'
-                      style={{
-                        width: `${((sessionCurrentIndex + 1) / sessionQuestions.length) * 100}%`,
-                      }}
-                    />
-                  </div>
-                  <p className='text-xs text-text-muted sm:text-sm'>
-                    Questions done{' '}
-                    <span className='font-semibold tabular-nums text-text'>
-                      {sessionCurrentIndex + 1}
-                    </span>
-                    <span className='text-text-subtle'> / </span>
-                    <span className='tabular-nums text-text-muted'>
-                      {sessionQuestions.length}
-                    </span>
-                  </p>
-                </div>
-
-                <div className='flex shrink-0 flex-wrap items-center justify-end gap-2'>
-                  {currentQuestion.solution_key_insight && (
-                    <button
-                      type='button'
-                      onClick={() => setShowHint(true)}
-                      className={SESSION_BAR_BTN_SECONDARY}
-                    >
-                      <Lightbulb className='h-4 w-4 shrink-0' />
-                      Hint
-                    </button>
-                  )}
-
-                  {hasFullAccess ? (
-                    answerRevealed || (isAnswered && isCorrect) ? (
-                      <button
-                        type='button'
-                        onClick={() => setShowDetailedExplanation(true)}
-                        className={SESSION_BAR_BTN_SECONDARY}
-                      >
-                        <ClipboardList className='h-4 w-4 shrink-0' />
-                        Detailed explanation
-                      </button>
-                    ) : (
-                      (!isAnswered || (isAnswered && !isCorrect)) && (
-                        <button
-                          type='button'
-                          onClick={() => setAnswerRevealed(true)}
-                          className={SESSION_BAR_BTN_REVEAL}
-                        >
-                          <Eye className='h-4 w-4 shrink-0' />
-                          Reveal answer
-                        </button>
-                      )
-                    )
-                  ) : (
-                    (answerRevealed || isAnswered) && (
-                      <Link
-                        href='/pricing'
-                        className={cn(
-                          SESSION_BAR_BTN,
-                          'bg-primary/15 px-4 text-primary hover:bg-primary/25',
-                        )}
-                      >
-                        <BookOpen className='h-4 w-4 shrink-0' />
-                        Upgrade for solutions
-                      </Link>
-                    )
-                  )}
-
-                  {answerRevealed || (isAnswered && isCorrect) ? (
-                    <button
-                      type='button'
-                      onClick={handleNextQuestionInSession}
-                      disabled={isFreeLimitReached}
-                      className={cn(
-                        SESSION_BAR_BTN_PRIMARY,
-                        'bg-secondary text-background shadow-glow hover:brightness-110',
-                        'disabled:cursor-not-allowed disabled:opacity-45',
-                      )}
-                    >
-                      <span>
-                        {isFreeLimitReached
-                          ? 'Upgrade to continue'
-                          : sessionCurrentIndex < sessionQuestions.length - 1
-                            ? 'Next question'
-                            : 'Finish session'}
-                      </span>
-                      <ArrowRight className='h-4 w-4 shrink-0' strokeWidth={2.5} />
-                    </button>
-                  ) : (
-                    <button
-                      type='button'
-                      onClick={() => {
-                        if (
-                          currentSelection &&
-                          !incorrectAnswers.has(currentSelection)
-                        ) {
-                          const correct =
-                            currentSelection === currentQuestion.correct_option;
-                          const wrongAnswersArray =
-                            Array.from(incorrectAnswers);
-                          const timeUntilCorrect = correct
-                            ? sessionMode
-                              ? deadline
-                                ? Math.max(0, deadline - Date.now())
-                                : null
-                              : elapsedTime
-                            : null;
-                          handleSessionAnswerSubmit(currentSelection, correct, {
-                            wasRevealed: answerRevealed,
-                            usedHint: showHint,
-                            wrongAnswersBefore: wrongAnswersArray,
-                            timeUntilCorrectMs: timeUntilCorrect,
-                          });
-                        }
-                      }}
-                      disabled={
-                        !currentSelection ||
-                        incorrectAnswers.has(currentSelection)
-                      }
-                      className={cn(
-                        SESSION_BAR_BTN_PRIMARY,
-                        currentSelection &&
-                          !incorrectAnswers.has(currentSelection)
-                          ? 'bg-secondary text-background shadow-glow hover:brightness-110'
-                          : 'cursor-not-allowed bg-surface-mid text-text-disabled opacity-70 dark:bg-surface',
-                      )}
-                    >
-                      <span>Submit answer</span>
-                      <ArrowRight className='h-4 w-4 shrink-0' strokeWidth={2.5} />
-                    </button>
-                  )}
-                </div>
-              </div>
-            </Container>
-          </div>
+          <QuestionBankSessionBar
+            currentIndex={sessionCurrentIndex}
+            totalQuestions={sessionQuestions.length}
+            hasHint={!!currentQuestion.solution_key_insight}
+            hasFullAccess={hasFullAccess}
+            answerRevealed={answerRevealed}
+            isAnswered={isAnswered}
+            isCorrect={isCorrect}
+            isFreeLimitReached={isFreeLimitReached}
+            currentSelection={currentSelection}
+            selectionAlreadyWrong={
+              !!currentSelection && incorrectAnswers.has(currentSelection)
+            }
+            showLeaveConfirm={showLeaveConfirm}
+            onOpenLeaveConfirm={() => setShowLeaveConfirm(true)}
+            onCloseLeaveConfirm={() => setShowLeaveConfirm(false)}
+            onSaveAndLeave={handleSaveAndLeave}
+            onDiscardSession={() => void handleDiscardSession()}
+            onShowHint={() => setShowHint(true)}
+            onRevealAnswer={() => setAnswerRevealed(true)}
+            onShowExplanation={() => setShowDetailedExplanation(true)}
+            onSubmitAnswer={() => {
+              if (
+                currentSelection &&
+                !incorrectAnswers.has(currentSelection)
+              ) {
+                const correct =
+                  currentSelection === currentQuestion.correct_option;
+                handleSessionAnswerSubmit(currentSelection, correct, {
+                  wasRevealed: answerRevealed,
+                  usedHint: showHint,
+                  wrongAnswersBefore: Array.from(incorrectAnswers),
+                  timeUntilCorrectMs: correct
+                    ? deadline
+                      ? Math.max(0, deadline - Date.now())
+                      : null
+                    : null,
+                });
+              }
+            }}
+            onNextQuestion={() => void handleNextQuestionInSession()}
+          />
         )}
       </div>
 

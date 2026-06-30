@@ -21,6 +21,7 @@ interface QuestionBankSessionResultsProps {
   sessionSource?: QuestionBankSessionSource;
   subjectsLabel?: string;
   startedAt: number;
+  timedOut?: boolean;
   onBack: () => void;
 }
 
@@ -92,6 +93,7 @@ export function QuestionBankSessionResults({
   sessionSource,
   subjectsLabel,
   startedAt,
+  timedOut = false,
   onBack,
 }: QuestionBankSessionResultsProps) {
   const result = useMemo(
@@ -131,10 +133,11 @@ export function QuestionBankSessionResults({
         <div className='mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end'>
           <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}>
             <h1 className='mb-2 font-heading text-2xl font-bold tracking-tight text-text sm:text-3xl'>
-              Session Complete!
+              {timedOut ? "Time's up!" : 'Session Complete!'}
             </h1>
             <p className='text-sm text-text-muted sm:text-base'>
               Question bank session • {subtitleParts.join(' • ')}
+              {timedOut ? ' • Ended when the timer ran out' : ''}
             </p>
             <p className='mt-1 text-xs text-text-subtle'>
               {new Date(startedAt).toLocaleString()}

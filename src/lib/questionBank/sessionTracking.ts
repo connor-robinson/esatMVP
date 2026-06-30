@@ -128,3 +128,20 @@ export async function completeQuestionBankSession(params: {
     return false;
   }
 }
+
+export async function deleteQuestionBankSession(id: string): Promise<boolean> {
+  try {
+    const res = await fetch(`/api/question-bank/sessions/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      console.error('[QB Session] delete failed:', res.status, body);
+    }
+    return res.ok;
+  } catch (err) {
+    console.error('[QB Session] delete error:', err);
+    return false;
+  }
+}
