@@ -84,21 +84,23 @@ export function QuestionBankSessionBar({
   return (
     <>
       <div className='fixed bottom-0 left-0 right-0 z-40 bg-background/98 shadow-bar-floating backdrop-blur-md'>
-        <Container size='lg' className='pb-2.5 pt-0 sm:pb-3'>
-          <div className='grid grid-cols-[auto_1fr_auto] grid-rows-[auto_auto] items-center gap-x-3 gap-y-2.5 sm:gap-x-4 sm:gap-y-3'>
-            <div className='col-start-2 row-start-1 h-1 overflow-hidden rounded-none bg-surface-elevated sm:h-1.5'>
-              <div
-                className='h-full bg-secondary transition-[width] duration-300 ease-signature'
-                style={{ width: `${progressPct}%` }}
-                role='progressbar'
-                aria-valuenow={currentIndex + 1}
-                aria-valuemin={1}
-                aria-valuemax={totalQuestions}
-                aria-label='Session progress'
-              />
-            </div>
+        <div
+          className='h-2.5 w-full overflow-hidden bg-surface-elevated sm:h-3'
+          role='progressbar'
+          aria-valuenow={currentIndex + 1}
+          aria-valuemin={1}
+          aria-valuemax={totalQuestions}
+          aria-label='Session progress'
+        >
+          <div
+            className='h-full bg-secondary transition-[width] duration-300 ease-signature'
+            style={{ width: `${progressPct}%` }}
+          />
+        </div>
 
-            <p className='col-start-1 row-start-2 shrink-0 text-xs text-text-muted sm:text-sm'>
+        <Container size='lg' className='py-1.5 sm:py-2'>
+          <div className='flex items-center gap-3 sm:gap-4'>
+            <p className='min-w-0 shrink-0 text-xs text-text-muted sm:text-sm'>
               Questions done{' '}
               <span className='font-semibold tabular-nums text-text'>
                 {currentIndex + 1}
@@ -109,7 +111,7 @@ export function QuestionBankSessionBar({
               </span>
             </p>
 
-            <div className='col-start-3 row-start-2 flex shrink-0 flex-wrap items-center justify-end gap-2'>
+            <div className='ml-auto flex shrink-0 flex-wrap items-center justify-end gap-2'>
               <button
                 type='button'
                 onClick={onOpenLeaveConfirm}
