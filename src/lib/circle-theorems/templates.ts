@@ -5,13 +5,17 @@
 import type { CircleTheoremResult, LabelledPoint, LineSegment, TemplateId } from "./types";
 import {
   centrePoint,
+  extendRay,
+  exteriorAngleDeg,
   interiorAngleDeg,
+  normalizeDeg,
   pickFrom,
   pickInt,
   pointOnCircle,
   tangentSegment,
   CT_CX,
   CT_CY,
+  CT_R,
 } from "./angleUtils";
 
 const CENTRE_ANGLES = [48, 56, 60, 64, 72, 80, 100, 120] as const;
@@ -397,10 +401,34 @@ export function templateCyclicOpposite(): CircleTheoremResult {
 
 /** Cyclic quadrilateral — exterior angle equals opposite interior. */
 export function templateCyclicExterior(): CircleTheoremResult {
-  const aDeg = 170;
-  const bDeg = 50;
-  const cDeg = 330;
-  const dDeg = 230;
+  for (let attempt = 0; attempt < 24; attempt++) {
+    const result = buildCyclicExterior();
+    if (result) return result;
+  }
+  return buildCyclicExterior({
+    aDeg: 168,
+    bDeg: 52,
+    cDeg: 328,
+    dDeg: 232,
+    beyondC: 0.42,
+    beyondB: 0.5,
+  });
+}
+
+function buildCyclicExterior(config?: {
+  aDeg: number;
+  bDeg: number;
+  cDeg: number;
+  dDeg: number;
+  beyondC: number;
+  beyondB: number;
+}): CircleTheoremResult | null {
+  const aDeg = config?.aDeg ?? pickInt(130, 210);
+  const bDeg = config?.bDeg ?? normalizeDeg(aDeg - pickInt(52, 88));
+  const cDeg = config?.cDeg ?? normalizeDeg(bDeg - pickInt(52, 88));
+  const dDeg = config?.dDeg ?? normalizeDeg(cDeg - pickInt(52, 88));
+  const beyondC = config?.beyondC ?? 0.3 + Math.random() * 0.55;
+  const beyondB = config?.beyondB ?? 0.4 + Math.random() * 0.35;
 
   const O = centrePt();
   const A = pt("A", aDeg, "A");
@@ -408,21 +436,31 @@ export function templateCyclicExterior(): CircleTheoremResult {
   const C = pt("C", cDeg, "C");
   const D = pt("D", dDeg, "D");
 
-  const ext = pointOnCircle(bDeg - 18);
-  const extPt: LabelledPoint = { id: "E", x: ext.x, y: ext.y, label: "E" };
+  const Epos = extendRay(B, C, beyondC);
+  const extPt: LabelledPoint = { id: "E", x: Epos.x, y: Epos.y, label: "E" };
+  const baExtended = extendRay(A, B, beyondB);
 
-  const extAngle = interiorAngleDeg(B, A, extPt);
-  const interior = interiorAngleDeg(D, C, A);
+  const distE = Math.hypot(Epos.x - CT_CX, Epos.y - CT_CY);
+  if (distE < CT_R + 18) return null;
+
+  const oppositeInterior = interiorAngleDeg(D, A, C);
+  const exteriorAtB = exteriorAngleDeg(B, A, C);
+  const markedExterior = interiorAngleDeg(B, baExtended, C);
+
+  if (oppositeInterior < 28 || oppositeInterior > 152) return null;
+  if (exteriorAtB < 28 || exteriorAtB > 152) return null;
+  if (Math.abs(markedExterior - exteriorAtB) > 1) return null;
+  if (Math.abs(oppositeInterior - exteriorAtB) > 1) return null;
 
   return {
     templateId: "CYCLIC_EXTERIOR",
     theorems: ["cyclic-exterior"],
-    answer: extAngle,
+    answer: oppositeInterior,
     targetLabel: "x",
     question: "Find $x$.",
     steps: formatSteps([
       { text: `Exterior angle of a cyclic quadrilateral equals the opposite interior angle.`, theorem: "cyclic-exterior" },
-      { text: `$x = ${extAngle}°$.` },
+      { text: `$x = ${oppositeInterior}°$.` },
     ]),
     diagram: {
       points: [O, A, B, C, D, extPt],
@@ -431,11 +469,19 @@ export function templateCyclicExterior(): CircleTheoremResult {
         { x1: B.x, y1: B.y, x2: C.x, y2: C.y },
         { x1: C.x, y1: C.y, x2: D.x, y2: D.y },
         { x1: D.x, y1: D.y, x2: A.x, y2: A.y },
-        { x1: A.x, y1: A.y, x2: extPt.x, y2: extPt.y },
+        { x1: B.x, y1: B.y, x2: Epos.x, y2: Epos.y, dashed: true },
+        { x1: B.x, y1: B.y, x2: baExtended.x, y2: baExtended.y, dashed: true },
       ],
       angles: [
-        { id: "ext", vertex: B, leg1: A, leg2: extPt, label: "x", isTarget: true },
-        { id: "ADC", vertex: D, leg1: C, leg2: A, label: `${interior}°` },
+        {
+          id: "ext",
+          vertex: B,
+          leg1: { x: baExtended.x, y: baExtended.y },
+          leg2: C,
+          label: "x",
+          isTarget: true,
+        },
+        { id: "ADC", vertex: D, leg1: A, leg2: C, label: `${oppositeInterior}°` },
       ],
       rightAngles: [],
     },
@@ -495,7 +541,18 @@ export function instantiateTemplate(level: number): CircleTheoremResult {
 /** Independent verification from displayed angle labels. */
 export function verifyAnswerIndependently(result: CircleTheoremResult): boolean {
   const target = result.diagram.angles.find((a) => a.isTarget);
-  if (!target || target.label === "x") return result.answer > 0;
+  if (!target) return false;
+
+  if (result.templateId === "CYCLIC_EXTERIOR") {
+    const given = result.diagram.angles.find((a) => !a.isTarget);
+    if (!given) return false;
+    const markedExterior = interiorAngleDeg(target.vertex, target.leg1, target.leg2);
+    const givenInterior = parseInt(given.label.replace("°", ""), 10);
+    if (!Number.isFinite(givenInterior)) return false;
+    return markedExterior === givenInterior && markedExterior === result.answer;
+  }
+
+  if (target.label === "x") return result.answer > 0;
   const parsed = parseInt(target.label.replace("°", ""), 10);
   if (!Number.isFinite(parsed)) return true;
   return parsed === result.answer;

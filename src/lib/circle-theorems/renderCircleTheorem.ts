@@ -82,10 +82,12 @@ export function renderCircleTheorem(diagram: CircleTheoremDiagram): GeometryDiag
       const dx = p.x - CT_CX;
       const dy = p.y - CT_CY;
       const len = Math.sqrt(dx * dx + dy * dy) || 1;
-      const offset = p.id === "T" ? 20 : 18;
+      const offset = p.id === "T" ? 20 : p.id === "E" ? 16 : 18;
+      const nx = len > CT_R - 4 ? dx / len : dx / (Math.abs(dx) || 1);
+      const ny = len > CT_R - 4 ? dy / len : dy / (Math.abs(dy) || 1);
       data.labels.push({
-        x: p.x + (dx / len) * offset,
-        y: p.y + (dy / len) * offset,
+        x: p.x + nx * offset,
+        y: p.y + ny * offset,
         text: p.label,
         fontSize: 15,
       });

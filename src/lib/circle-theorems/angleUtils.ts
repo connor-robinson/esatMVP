@@ -116,3 +116,22 @@ export function pickFrom<T>(arr: readonly T[]): T {
 export function pickInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+export function normalizeDeg(deg: number): number {
+  return ((deg % 360) + 360) % 360;
+}
+
+/** Point on the ray from `from` through `through`, extended by `extraRatio` × |from→through| past `through`. */
+export function extendRay(from: Point, through: Point, extraRatio: number): Point {
+  const dx = through.x - from.x;
+  const dy = through.y - from.y;
+  return {
+    x: through.x + dx * extraRatio,
+    y: through.y + dy * extraRatio,
+  };
+}
+
+/** Exterior angle at `vertex` between side toward `alongSide` and side toward `otherSide`. */
+export function exteriorAngleDeg(vertex: Point, alongSide: Point, otherSide: Point): number {
+  return 180 - interiorAngleDeg(vertex, alongSide, otherSide);
+}
