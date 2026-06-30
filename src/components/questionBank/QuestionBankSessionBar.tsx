@@ -245,8 +245,8 @@ export function QuestionBankSessionBar({
                 Leave session?
               </h2>
               <p className='mt-3 text-sm leading-relaxed text-text-muted'>
-                Save your progress so far and return to the question bank, or
-                discard this session without recording it.
+                Save your progress and view the session summary, or discard
+                this session without recording it.
               </p>
 
               <div className='mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end'>
@@ -262,7 +262,7 @@ export function QuestionBankSessionBar({
                   onClick={onSaveAndLeave}
                   className='rounded-organic-lg bg-secondary px-4 py-3 text-sm font-bold text-background shadow-glow transition-all hover:brightness-110 active:scale-[0.98]'
                 >
-                  Save & leave
+                  Save & view summary
                 </button>
               </div>
             </motion.div>

@@ -264,7 +264,17 @@ export default function QuestionBankPage() {
         sessionId: qbSessionId ?? undefined,
       });
 
-      if (!correct && !revealed) return;
+      if (!correct && !revealed) {
+        setIncorrectAnswers((prev) => new Set(prev).add(answer));
+        return;
+      }
+
+      const wrongBefore = [
+        ...new Set([
+          ...(metadata?.wrongAnswersBefore ?? []),
+          ...Array.from(incorrectAnswers),
+        ]),
+      ].filter((letter) => letter !== answer);
 
       const timeSpentMs = Date.now() - questionStartedAtRef.current;
       const entry = buildSessionAttemptEntry(
@@ -277,7 +287,7 @@ export default function QuestionBankPage() {
         {
           wasRevealed: revealed,
           usedHint: metadata?.usedHint ?? showHint,
-          wrongAnswersBefore: metadata?.wrongAnswersBefore ?? [],
+          wrongAnswersBefore: wrongBefore,
         },
       );
 
@@ -291,6 +301,7 @@ export default function QuestionBankPage() {
     [
       answerRevealed,
       currentQuestion,
+      incorrectAnswers,
       qbSessionId,
       sessionCurrentIndex,
       sessionUiDifficulties,
@@ -336,14 +347,10 @@ export default function QuestionBankPage() {
   ]);
 
   const completeSession = useCallback(
-    async (options?: { destination?: 'results' | 'home'; timedOut?: boolean }) => {
+    async (options?: { timedOut?: boolean }) => {
       if (sessionCompleting) return;
 
       if (!session?.user) {
-        if (options?.destination === 'home') {
-          router.push('/questions');
-          return;
-        }
         router.push(
           `/login?redirectTo=${encodeURIComponent('/questions/questionbank')}`,
         );
@@ -374,12 +381,6 @@ export default function QuestionBankPage() {
       setSessionAttemptLog(attempts);
       setSessionCompleting(false);
       setShowLeaveConfirm(false);
-
-      if (options?.destination === 'home') {
-        router.push('/questions');
-        return;
-      }
-
       setSessionView('complete');
     },
     [
@@ -396,7 +397,7 @@ export default function QuestionBankPage() {
   completeSessionRef.current = completeSession;
 
   const handleSaveAndLeave = useCallback(() => {
-    void completeSession({ destination: 'home' });
+    void completeSession();
   }, [completeSession]);
 
   const handleDiscardSession = useCallback(async () => {

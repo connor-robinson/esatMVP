@@ -145,16 +145,22 @@ export function QuestionCard({
   const showSessionNotation = questionNumber != null;
 
   useEffect(() => {
-    if (!isAnswered || allowRetry) {
-      setLocalSelectedAnswer(null);
-      onSelectionChange?.(null);
-    }
+    setLocalSelectedAnswer(null);
+    onSelectionChange?.(null);
     setHoveredOption(null);
     setRevealedDistractors(new Set());
     setIncorrectAnswers(new Set());
     lastFlashKeyRef.current = "";
     setFlashLetter(null);
-  }, [question.id, isAnswered, allowRetry, onSelectionChange]);
+  }, [question.id, onSelectionChange]);
+
+  useEffect(() => {
+    if (!isAnswered || allowRetry) {
+      setLocalSelectedAnswer(null);
+      onSelectionChange?.(null);
+    }
+    setHoveredOption(null);
+  }, [isAnswered, allowRetry, onSelectionChange]);
 
   useEffect(() => {
     if (!showSessionNotation || !selectedAnswer || !isAnswered) return;
