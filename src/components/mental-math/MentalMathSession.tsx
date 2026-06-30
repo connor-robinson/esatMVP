@@ -14,8 +14,6 @@ import { DiagramRenderer } from "@/components/shared/DiagramRenderer";
 import { BinaryChoiceInput } from "./BinaryChoiceInput";
 import { PrimeFactorSlotsInput } from "./PrimeFactorSlotsInput";
 import { AngleLocateInput } from "./unit-circle/AngleLocateInput";
-import { AngleInput } from "./unit-circle/AngleInput";
-import { RadianInput } from "./unit-circle/RadianInput";
 import { FeedbackPopup } from "./FeedbackPopup";
 import { KatexInput } from "./KatexInput";
 import { CollapsibleMathSymbolBar } from "./CollapsibleMathSymbolBar";
@@ -30,7 +28,13 @@ function formatCountdown(seconds: number): string {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
-const PROMINENT_DIAGRAM_TOPICS = new Set(["geometry_2d", "geometry_3d", "circle_theorems"]);
+const PROMINENT_DIAGRAM_TOPICS = new Set([
+  "geometry_2d",
+  "geometry_3d",
+  "circle_theorems",
+  "unit_circle_degrees",
+  "unit_circle_radians",
+]);
 
 function parseMultiAnswerRevealPart(part: string): string {
   const trimmed = part.trim();
@@ -118,15 +122,6 @@ export function MentalMathSession({
   const hasDiagram = Boolean(currentQuestion.diagram && !isAngleLocate);
   const prominentDiagram =
     hasDiagram && PROMINENT_DIAGRAM_TOPICS.has(currentQuestion.topicId);
-  const isAngleText = currentQuestion.answerInput?.type === "angle-text";
-  const isAngleTextDegrees =
-    isAngleText && currentQuestion.answerInput?.type === "angle-text"
-      ? currentQuestion.answerInput.format === "degrees"
-      : false;
-  const isAngleTextRadians =
-    isAngleText && currentQuestion.answerInput?.type === "angle-text"
-      ? currentQuestion.answerInput.format === "radians"
-      : false;
   const primeSlotCount =
     isPrimeFactorSlots && currentQuestion.answerInput?.type === "prime-factor-slots"
       ? currentQuestion.answerInput.slotCount
@@ -151,7 +146,7 @@ export function MentalMathSession({
       setMultiAnswers([]);
     }
     
-    if (!showFeedback && !isBinaryChoice && !isPrimeFactorSlots && !isAngleLocate && !isAngleText) {
+    if (!showFeedback && !isBinaryChoice && !isPrimeFactorSlots && !isAngleLocate) {
       // Focus the active input based on mode
       if (!isMultiAnswer && useKatexInput && katexInputRef.current) {
         // Small delay to ensure the component is mounted
@@ -164,7 +159,7 @@ export function MentalMathSession({
         }, 0);
       }
     }
-  }, [currentQuestion.id, currentQuestion.answer, showFeedback, useKatexInput, isMultiAnswer, isBinaryChoice, isPrimeFactorSlots, isAngleLocate, isAngleText, primeSlotCount]);
+  }, [currentQuestion.id, currentQuestion.answer, showFeedback, useKatexInput, isMultiAnswer, isBinaryChoice, isPrimeFactorSlots, isAngleLocate, primeSlotCount]);
 
   const handleAngleLocate = useCallback(
     (degrees: number) => {
@@ -535,51 +530,6 @@ export function MentalMathSession({
                       : undefined
                   }
                 />
-              ) : isAngleTextDegrees ? (
-                <AngleInput
-                  value={answer}
-                  onChange={setAnswer}
-                  onSubmit={handleSubmit}
-                  showFeedback={showFeedback}
-                  isCorrect={lastAttempt?.isCorrect ?? null}
-                  answerRevealed={answerRevealed}
-                  revealedAnswer={String(currentQuestion.answer)}
-                  onReveal={
-                    !answerRevealed && showFeedback && !lastAttempt?.isCorrect
-                      ? handleRevealAnswer
-                      : undefined
-                  }
-                  onContinue={
-                    answerRevealed && showFeedback && !lastAttempt?.isCorrect
-                      ? onContinueAfterIncorrect
-                      : undefined
-                  }
-                />
-              ) : isAngleTextRadians ? (
-                <>
-                  <RadianInput
-                    value={answerRevealed ? String(currentQuestion.answer) : answer}
-                    onChange={setAnswer}
-                    onSubmit={handleSubmit}
-                    showFeedback={showFeedback}
-                    isCorrect={lastAttempt?.isCorrect ?? null}
-                    answerRevealed={answerRevealed}
-                    onReveal={
-                      !answerRevealed && showFeedback && !lastAttempt?.isCorrect
-                        ? handleRevealAnswer
-                        : undefined
-                    }
-                  />
-                  {answerRevealed && showFeedback && !lastAttempt?.isCorrect && (
-                    <button
-                      type="button"
-                      onClick={onContinueAfterIncorrect}
-                      className="rounded-xl bg-primary/20 px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/30"
-                    >
-                      Continue
-                    </button>
-                  )}
-                </>
               ) : isPrimeFactorSlots && currentQuestion.answerInput?.type === "prime-factor-slots" ? (
                 <PrimeFactorSlotsInput
                   slotCount={currentQuestion.answerInput.slotCount}

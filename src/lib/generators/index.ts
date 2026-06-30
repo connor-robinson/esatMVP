@@ -55,7 +55,7 @@ import { generateQuadraticsEval } from "./quadratics_eval";
 import { generateTrigRecall } from "./trig_recall";
 import { generateTrigInverse } from "./trig_inverse";
 import { generateTrigApplications } from "./trig_applications";
-import { generateAngleRecall } from "./angle_recall";
+import { generateAngleRecall, generateUnitCircleDegrees, generateUnitCircleRadians } from "./angle_recall";
 
 // Physics
 import { generateForcesMotion } from "./physics/forces_motion";
@@ -162,6 +162,8 @@ export const GENERATORS: Record<string, GeneratorFunction> = validateGenerators(
   trig_recall: generateTrigRecall,
   trig_inverse: generateTrigInverse,
   trig_applications: generateTrigApplications,
+  unit_circle_degrees: generateUnitCircleDegrees,
+  unit_circle_radians: generateUnitCircleRadians,
   angle_recall: generateAngleRecall,
   
   // Physics

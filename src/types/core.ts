@@ -282,6 +282,8 @@ export interface UnitCircleDiagramConfig {
   showHighlightPoint?: boolean;
   labels?: UnitCircleLabelConfig[];
   showAxes?: boolean;
+  showCoordinateLabels?: boolean;
+  showCoordinateProjections?: boolean;
 }
 
 export interface UnitCircleDiagramData {
@@ -359,7 +361,14 @@ export interface GeneratedQuestion {
     theorems?: string[];
     templateId?: string;
     angleDegrees?: number;
-    questionType?: "identify" | "locate" | "convert" | "missing_label";
+    questionType?:
+      | "identify"
+      | "locate"
+      | "convert"
+      | "missing_label"
+      | "identify_coordinate"
+      | "coord_from_angle"
+      | "angle_from_coord";
     mode?: "degrees" | "radians";
     feedbackDurationMs?: number;
     feedbackMessage?: string;

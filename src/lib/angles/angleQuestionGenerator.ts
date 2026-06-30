@@ -1,5 +1,5 @@
 /**
- * Generate angle-recall questions for degrees and radians modes.
+ * Generate unit-circle questions for degrees and radians modes.
  */
 
 import type {
@@ -24,16 +24,33 @@ import {
   createLocateAngleChecker,
   createRadianAngleChecker,
 } from "./compareAngleAnswers";
+import {
+  coordValueForAxis,
+  createCoordAxisChecker,
+  type CoordAxis,
+} from "./compareCoordAnswers";
 
 export type AngleRecallMode = "degrees" | "radians";
-export type AngleQuestionType = "identify" | "locate" | "convert" | "missing_label";
+export type AngleQuestionType =
+  | "identify"
+  | "locate"
+  | "convert"
+  | "missing_label"
+  | "identify_coordinate"
+  | "coord_from_angle"
+  | "angle_from_coord";
 
 const QUESTION_TYPES: AngleQuestionType[] = [
   "identify",
   "locate",
   "convert",
   "missing_label",
+  "identify_coordinate",
+  "coord_from_angle",
+  "angle_from_coord",
 ];
+
+const COORD_AXES: CoordAxis[] = ["x", "y", "cos", "sin"];
 
 function baseDiagramConfig(
   overrides: Partial<UnitCircleDiagramConfig> = {},
@@ -49,9 +66,7 @@ function baseDiagramConfig(
   };
 }
 
-function unitCircleDiagram(
-  config: UnitCircleDiagramConfig,
-): UnitCircleDiagramData {
+function unitCircleDiagram(config: UnitCircleDiagramConfig): UnitCircleDiagramData {
   return { type: "unit-circle", config };
 }
 
@@ -63,19 +78,28 @@ function dualFormExplanation(angle: StandardAngle): string {
   return `$${angle.degrees}° = ${radLatex}$`;
 }
 
-function dualFormMessage(angle: StandardAngle): string {
-  if (angle.radianCoeff === 0) return "0° = 0";
-  return `${angle.degreeLabel} = ${angle.radianLabel}`;
+function coordExplanation(angle: StandardAngle): string {
+  return `$x = ${angle.cosLabel}$, $y = ${angle.sinLabel}$`;
 }
 
-function textAnswerInput(mode: AngleRecallMode, convertTo?: "degrees" | "radians") {
-  if (convertTo) {
-    return { type: "angle-text" as const, format: convertTo };
-  }
-  return { type: "angle-text" as const, format: mode };
+function baseMetadata(
+  angle: StandardAngle,
+  questionType: AngleQuestionType,
+  mode: AngleRecallMode,
+) {
+  return {
+    angleDegrees: angle.degrees,
+    questionType,
+    mode,
+    feedbackMessage: `${angle.degreeLabel} = ${angle.radianLabel}`,
+  };
 }
 
-function generateIdentify(angle: StandardAngle, mode: AngleRecallMode): GeneratedQuestion {
+function generateIdentify(
+  angle: StandardAngle,
+  mode: AngleRecallMode,
+  topicId: string,
+): GeneratedQuestion {
   const answer = mode === "degrees" ? String(angle.degrees) : angle.radianLabel;
   const checker =
     mode === "degrees"
@@ -84,7 +108,7 @@ function generateIdentify(angle: StandardAngle, mode: AngleRecallMode): Generate
 
   return {
     id: generateId(),
-    topicId: "angle_recall",
+    topicId,
     question: "What angle is shown on the unit circle?",
     answer,
     difficulty: mode === "degrees" ? 1 : 2,
@@ -94,55 +118,50 @@ function generateIdentify(angle: StandardAngle, mode: AngleRecallMode): Generate
       baseDiagramConfig({
         highlightDegrees: angle.degrees,
         showHighlightPoint: true,
+        showCoordinateLabels: true,
       }),
     ),
-    answerInput: textAnswerInput(mode),
-    metadata: {
-      angleDegrees: angle.degrees,
-      questionType: "identify",
-      mode,
-      feedbackDurationMs: 1800,
-      feedbackMessage: dualFormMessage(angle),
-    },
+    metadata: baseMetadata(angle, "identify", mode),
   };
 }
 
-function generateLocate(angle: StandardAngle, mode: AngleRecallMode): GeneratedQuestion {
+function generateLocate(
+  angle: StandardAngle,
+  mode: AngleRecallMode,
+  topicId: string,
+): GeneratedQuestion {
   const prompt =
     mode === "degrees"
       ? `Click the position for $${angle.degrees}°$ on the unit circle.`
       : `Click the position for $${formatPiLatex(angle.radianCoeff)}$ on the unit circle.`;
 
   const answer = mode === "degrees" ? String(angle.degrees) : angle.radianLabel;
-  const checker = createLocateAngleChecker(angle);
 
   return {
     id: generateId(),
-    topicId: "angle_recall",
+    topicId,
     question: prompt,
     answer,
     difficulty: mode === "degrees" ? 1 : 2,
-    checker,
+    checker: createLocateAngleChecker(angle),
     explanation: dualFormExplanation(angle),
     diagram: unitCircleDiagram(
       baseDiagramConfig({
         showHighlightPoint: false,
+        showCoordinateLabels: true,
       }),
     ),
     answerInput: { type: "angle-locate", toleranceDeg: 18 },
-    metadata: {
-      angleDegrees: angle.degrees,
-      questionType: "locate",
-      mode,
-      feedbackDurationMs: 1800,
-      feedbackMessage: dualFormMessage(angle),
-    },
+    metadata: baseMetadata(angle, "locate", mode),
   };
 }
 
-function generateConvert(angle: StandardAngle, mode: AngleRecallMode): GeneratedQuestion {
+function generateConvert(
+  angle: StandardAngle,
+  mode: AngleRecallMode,
+  topicId: string,
+): GeneratedQuestion {
   const toRadians = pick([true, false]);
-  const convertTo: "degrees" | "radians" = toRadians ? "radians" : "degrees";
 
   let question: string;
   let answer: string;
@@ -160,7 +179,7 @@ function generateConvert(angle: StandardAngle, mode: AngleRecallMode): Generated
 
   return {
     id: generateId(),
-    topicId: "angle_recall",
+    topicId,
     question,
     answer,
     difficulty: mode === "degrees" ? 1 : 2,
@@ -169,21 +188,19 @@ function generateConvert(angle: StandardAngle, mode: AngleRecallMode): Generated
     diagram: unitCircleDiagram(
       baseDiagramConfig({
         highlightDegrees: angle.degrees,
-        showHighlightPoint: false,
+        showHighlightPoint: true,
+        showCoordinateLabels: true,
       }),
     ),
-    answerInput: textAnswerInput(mode, convertTo),
-    metadata: {
-      angleDegrees: angle.degrees,
-      questionType: "convert",
-      mode,
-      feedbackDurationMs: 1800,
-      feedbackMessage: dualFormMessage(angle),
-    },
+    metadata: baseMetadata(angle, "convert", mode),
   };
 }
 
-function generateMissingLabel(angle: StandardAngle, mode: AngleRecallMode): GeneratedQuestion {
+function generateMissingLabel(
+  angle: StandardAngle,
+  mode: AngleRecallMode,
+  topicId: string,
+): GeneratedQuestion {
   const answer = mode === "degrees" ? String(angle.degrees) : angle.radianLabel;
   const checker =
     mode === "degrees"
@@ -197,7 +214,7 @@ function generateMissingLabel(angle: StandardAngle, mode: AngleRecallMode): Gene
 
   return {
     id: generateId(),
-    topicId: "angle_recall",
+    topicId,
     question:
       mode === "degrees"
         ? "What is the missing angle in degrees?"
@@ -210,31 +227,140 @@ function generateMissingLabel(angle: StandardAngle, mode: AngleRecallMode): Gene
       baseDiagramConfig({
         labels,
         showHighlightPoint: false,
+        showCoordinateLabels: true,
       }),
     ),
-    answerInput: textAnswerInput(mode),
-    metadata: {
-      angleDegrees: angle.degrees,
-      questionType: "missing_label",
-      mode,
-      feedbackDurationMs: 1800,
-      feedbackMessage: dualFormMessage(angle),
-    },
+    metadata: baseMetadata(angle, "missing_label", mode),
   };
 }
 
-export function generateAngleQuestion(mode: AngleRecallMode): GeneratedQuestion {
+function axisPrompt(axis: CoordAxis): string {
+  if (axis === "x") return "What is the $x$-coordinate of the highlighted point?";
+  if (axis === "y") return "What is the $y$-coordinate of the highlighted point?";
+  if (axis === "cos") return "What is $\\cos\\theta$ for the highlighted angle?";
+  return "What is $\\sin\\theta$ for the highlighted angle?";
+}
+
+function generateIdentifyCoordinate(
+  angle: StandardAngle,
+  topicId: string,
+): GeneratedQuestion {
+  const axis = pick(COORD_AXES);
+  const answer = coordValueForAxis(angle, axis);
+
+  return {
+    id: generateId(),
+    topicId,
+    question: axisPrompt(axis),
+    answer,
+    difficulty: 1,
+    checker: createCoordAxisChecker(angle, axis),
+    explanation: `${coordExplanation(angle)} (${angle.degreeLabel})`,
+    diagram: unitCircleDiagram(
+      baseDiagramConfig({
+        highlightDegrees: angle.degrees,
+        showHighlightPoint: true,
+        showCoordinateLabels: true,
+        showCoordinateProjections: true,
+      }),
+    ),
+    metadata: baseMetadata(angle, "identify_coordinate", "degrees"),
+  };
+}
+
+function generateCoordFromAngle(
+  angle: StandardAngle,
+  mode: AngleRecallMode,
+  topicId: string,
+): GeneratedQuestion {
+  const axis = pick<CoordAxis>(["cos", "sin", "x", "y"]);
+  const answer = coordValueForAxis(angle, axis);
+  const angleLatex =
+    mode === "degrees" ? `${angle.degrees}^\\circ` : formatPiLatex(angle.radianCoeff);
+
+  let question: string;
+  if (axis === "cos") question = `What is $\\cos(${angleLatex})$?`;
+  else if (axis === "sin") question = `What is $\\sin(${angleLatex})$?`;
+  else if (axis === "x") question = `What is the $x$-coordinate at $${angleLatex}$?`;
+  else question = `What is the $y$-coordinate at $${angleLatex}$?`;
+
+  return {
+    id: generateId(),
+    topicId,
+    question,
+    answer,
+    difficulty: mode === "degrees" ? 1 : 2,
+    checker: createCoordAxisChecker(angle, axis),
+    explanation: `${coordExplanation(angle)} (${angle.degreeLabel} = ${angle.radianLabel})`,
+    diagram: unitCircleDiagram(
+      baseDiagramConfig({
+        highlightDegrees: angle.degrees,
+        showHighlightPoint: true,
+        showCoordinateLabels: true,
+        showCoordinateProjections: axis === "x" || axis === "y",
+      }),
+    ),
+    metadata: baseMetadata(angle, "coord_from_angle", mode),
+  };
+}
+
+function generateAngleFromCoord(
+  angle: StandardAngle,
+  mode: AngleRecallMode,
+  topicId: string,
+): GeneratedQuestion {
+  const axis = pick<"x" | "y">(["x", "y"]);
+  const value = coordValueForAxis(angle, axis);
+  const answer = mode === "degrees" ? String(angle.degrees) : angle.radianLabel;
+  const checker =
+    mode === "degrees"
+      ? createDegreeAngleChecker(angle)
+      : createRadianAngleChecker(angle);
+
+  const question =
+    mode === "degrees"
+      ? `Which angle (in degrees) has ${axis} $= ${value}$ on the unit circle?`
+      : `Which angle (in radians) has ${axis} $= ${value}$ on the unit circle? Give your answer in exact form involving $\\pi$.`;
+
+  return {
+    id: generateId(),
+    topicId,
+    question,
+    answer,
+    difficulty: mode === "degrees" ? 1 : 2,
+    checker,
+    explanation: dualFormExplanation(angle),
+    diagram: unitCircleDiagram(
+      baseDiagramConfig({
+        showCoordinateLabels: true,
+        showCoordinateProjections: true,
+      }),
+    ),
+    metadata: baseMetadata(angle, "angle_from_coord", mode),
+  };
+}
+
+export function generateAngleQuestion(
+  mode: AngleRecallMode,
+  topicId: string,
+): GeneratedQuestion {
   const angle = pick(STANDARD_ANGLES);
   const questionType = pick(QUESTION_TYPES);
 
   switch (questionType) {
     case "identify":
-      return generateIdentify(angle, mode);
+      return generateIdentify(angle, mode, topicId);
     case "locate":
-      return generateLocate(angle, mode);
+      return generateLocate(angle, mode, topicId);
     case "convert":
-      return generateConvert(angle, mode);
+      return generateConvert(angle, mode, topicId);
     case "missing_label":
-      return generateMissingLabel(angle, mode);
+      return generateMissingLabel(angle, mode, topicId);
+    case "identify_coordinate":
+      return generateIdentifyCoordinate(angle, topicId);
+    case "coord_from_angle":
+      return generateCoordFromAngle(angle, mode, topicId);
+    case "angle_from_coord":
+      return generateAngleFromCoord(angle, mode, topicId);
   }
 }

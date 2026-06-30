@@ -190,9 +190,21 @@ const SHORTCUTS_FOLDERS: FolderDef[] = [
 const TRIGONOMETRY_FOLDERS: FolderDef[] = [
   {
     id: 'trigonometry-all',
-    name: 'Trigonometry',
-    topicIds: ['trig_recall', 'trig_inverse', 'trig_applications', 'angle_recall'],
+    name: 'Trig Ratios',
+    topicIds: ['trig_recall', 'trig_inverse', 'trig_applications'],
     symbol: { kind: 'latex', latex: String.raw`\sin\theta` },
+  },
+  {
+    id: 'unit-circle-degrees',
+    name: 'Unit Circle — Degrees',
+    topicIds: ['unit_circle_degrees'],
+    symbol: { kind: 'latex', latex: String.raw`45^\circ` },
+  },
+  {
+    id: 'unit-circle-radians',
+    name: 'Unit Circle — Radians',
+    topicIds: ['unit_circle_radians'],
+    symbol: { kind: 'latex', latex: String.raw`\frac{\pi}{4}` },
   },
 ];
 
@@ -330,7 +342,14 @@ const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
     'sequences',
   ],
   shortcuts: ['percentages'],
-  trigonometry: ['trig_recall', 'trig_inverse', 'trig_applications', 'angle_recall'],
+  trigonometry: [
+    'trig_recall',
+    'trig_inverse',
+    'trig_applications',
+    'unit_circle_degrees',
+    'unit_circle_radians',
+    'angle_recall',
+  ],
   physics: [
     'kinematics',
     'forces_motion',

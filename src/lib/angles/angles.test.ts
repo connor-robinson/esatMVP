@@ -12,6 +12,7 @@ import {
   compareRadianAnswer,
   parseDegreeInput,
 } from "./compareAngleAnswers";
+import { compareCoordAnswer } from "./compareCoordAnswers";
 
 describe("angleData", () => {
   it("normalizes degrees to 0–359", () => {
@@ -32,11 +33,17 @@ describe("angleData", () => {
     expect(circularDistanceDeg(358, 0)).toBe(2);
   });
 
-  it("builds 135° with correct radian fraction", () => {
-    const angle = getAngleByDegrees(135);
-    expect(angle?.radianNumerator).toBe(3);
-    expect(angle?.radianDenominator).toBe(4);
-    expect(angle?.radianLabel).toBe("3π/4");
+  it("builds coordinates for 30°", () => {
+    const angle = getAngleByDegrees(30);
+    expect(angle?.cosLabel).toBe("sqrt(3)/2");
+    expect(angle?.sinLabel).toBe("1/2");
+  });
+});
+
+describe("compareCoordAnswers", () => {
+  it("accepts sqrt variants", () => {
+    const angle = getAngleByDegrees(45)!;
+    expect(compareCoordAnswer("sqrt(2)/2", angle.cosLabel)).toBe(true);
   });
 });
 

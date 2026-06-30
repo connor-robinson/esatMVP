@@ -377,6 +377,14 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'plain', text: 'Identify angle on unit circle' },
     { kind: 'plain', text: '135° = 3π/4' },
   ]),
+  'unit_circle_degrees-degrees': S([
+    { kind: 'plain', text: 'x = √3/2 at 30°' },
+    { kind: 'plain', text: 'Click position for 135°' },
+  ]),
+  'unit_circle_radians-radians': S([
+    { kind: 'latex', latex: String.raw`\cos\frac{\pi}{4}` },
+    { kind: 'latex', latex: String.raw`\frac{3\pi}{4}` },
+  ]),
   'angle_recall-radians': S([
     { kind: 'latex', latex: String.raw`\frac{3\pi}{4}` },
     { kind: 'plain', text: 'Click position on unit circle' },

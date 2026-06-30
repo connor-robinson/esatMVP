@@ -43,6 +43,8 @@ export function UnitCircle({
     showHighlightPoint = true,
     labels = [],
     showAxes = true,
+    showCoordinateLabels = false,
+    showCoordinateProjections = false,
   } = config;
 
   const vb = `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`;
@@ -119,6 +121,13 @@ export function UnitCircle({
 
         <circle cx={cx} cy={cy} r={3} fill="var(--color-text)" fillOpacity={0.7} />
 
+        {showAxes && showCoordinateLabels && (
+          <>
+            <DiagramLabel x={cx + axisLen + 8} y={cy + 4} text="x" fontSize={12} />
+            <DiagramLabel x={cx - 6} y={cy - axisLen - 6} text="y" fontSize={12} />
+          </>
+        )}
+
         {labels.map((labelCfg) => {
           if (labelCfg.hidden) return null;
           const angle = getAngleByDegrees(labelCfg.degrees);
@@ -160,6 +169,31 @@ export function UnitCircle({
           </>
         )}
 
+        {highlightAngle && showCoordinateProjections && (
+          <>
+            <line
+              x1={highlightAngle.point.x}
+              y1={highlightAngle.point.y}
+              x2={highlightAngle.point.x}
+              y2={cy}
+              stroke="var(--color-text)"
+              strokeOpacity={0.25}
+              strokeWidth={1.5}
+              strokeDasharray="4 3"
+            />
+            <line
+              x1={highlightAngle.point.x}
+              y1={highlightAngle.point.y}
+              x2={cx}
+              y2={highlightAngle.point.y}
+              stroke="var(--color-text)"
+              strokeOpacity={0.25}
+              strokeWidth={1.5}
+              strokeDasharray="4 3"
+            />
+          </>
+        )}
+
         {highlightAngle && (
           <>
             <line
@@ -186,6 +220,14 @@ export function UnitCircle({
                     : "var(--color-text)"
                 }
                 fillOpacity={0.85}
+              />
+            )}
+            {showCoordinateLabels && (
+              <DiagramLabel
+                x={highlightAngle.point.x + (highlightAngle.x >= 0 ? 14 : -14)}
+                y={highlightAngle.point.y + (highlightAngle.y >= 0 ? -12 : 12)}
+                text={`(${highlightAngle.cosLabel}, ${highlightAngle.sinLabel})`}
+                fontSize={11}
               />
             )}
           </>

@@ -28,9 +28,35 @@ export interface StandardAngle {
   radianCoeff: number;
   degreeLabel: string;
   radianLabel: string;
+  /** cos(θ) = x on the unit circle */
+  cosLabel: string;
+  /** sin(θ) = y on the unit circle */
+  sinLabel: string;
+  x: number;
+  y: number;
   point: { x: number; y: number };
   labelPosition: { x: number; y: number };
 }
+
+/** Exact (cos θ, sin θ) = (x, y) for standard angles. */
+const COORD_TABLE: Record<number, { cos: string; sin: string; x: number; y: number }> = {
+  0: { cos: "1", sin: "0", x: 1, y: 0 },
+  30: { cos: "sqrt(3)/2", sin: "1/2", x: Math.sqrt(3) / 2, y: 0.5 },
+  45: { cos: "sqrt(2)/2", sin: "sqrt(2)/2", x: Math.SQRT2 / 2, y: Math.SQRT2 / 2 },
+  60: { cos: "1/2", sin: "sqrt(3)/2", x: 0.5, y: Math.sqrt(3) / 2 },
+  90: { cos: "0", sin: "1", x: 0, y: 1 },
+  120: { cos: "-1/2", sin: "sqrt(3)/2", x: -0.5, y: Math.sqrt(3) / 2 },
+  135: { cos: "-sqrt(2)/2", sin: "sqrt(2)/2", x: -Math.SQRT2 / 2, y: Math.SQRT2 / 2 },
+  150: { cos: "-sqrt(3)/2", sin: "1/2", x: -Math.sqrt(3) / 2, y: 0.5 },
+  180: { cos: "-1", sin: "0", x: -1, y: 0 },
+  210: { cos: "-sqrt(3)/2", sin: "-1/2", x: -Math.sqrt(3) / 2, y: -0.5 },
+  225: { cos: "-sqrt(2)/2", sin: "-sqrt(2)/2", x: -Math.SQRT2 / 2, y: -Math.SQRT2 / 2 },
+  240: { cos: "-1/2", sin: "-sqrt(3)/2", x: -0.5, y: -Math.sqrt(3) / 2 },
+  270: { cos: "0", sin: "-1", x: 0, y: -1 },
+  300: { cos: "1/2", sin: "-sqrt(3)/2", x: 0.5, y: -Math.sqrt(3) / 2 },
+  315: { cos: "sqrt(2)/2", sin: "-sqrt(2)/2", x: Math.SQRT2 / 2, y: -Math.SQRT2 / 2 },
+  330: { cos: "sqrt(3)/2", sin: "-1/2", x: Math.sqrt(3) / 2, y: -0.5 },
+};
 
 /** Raw degree → simplified π fraction (numerator, denominator). */
 const ANGLE_RADIAN_FRACTIONS: Record<number, [number, number]> = {
@@ -76,6 +102,7 @@ function buildAngle(degrees: number): StandardAngle {
   const cy = UNIT_CIRCLE_CY;
   const r = UNIT_CIRCLE_R;
   const labelR = r + UNIT_CIRCLE_LABEL_OFFSET;
+  const coords = COORD_TABLE[degrees] ?? { cos: "0", sin: "0", x: 0, y: 0 };
 
   return {
     degrees,
@@ -85,6 +112,10 @@ function buildAngle(degrees: number): StandardAngle {
     radianCoeff,
     degreeLabel: `${degrees}°`,
     radianLabel: radianCoeff === 0 ? "0" : formatRadianLabel(rNum, rDen),
+    cosLabel: coords.cos,
+    sinLabel: coords.sin,
+    x: coords.x,
+    y: coords.y,
     point: polarPoint(cx, cy, r, degrees),
     labelPosition: polarPoint(cx, cy, labelR, degrees),
   };
