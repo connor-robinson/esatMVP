@@ -1122,7 +1122,7 @@ export const TOPICS: Record<string, Topic> = {
     id: "trig_recall",
     name: "Trig Ratios Recall",
     subjectId: "maths",
-    category: "trigonometry",
+    category: "geometry",
     description: "Recall trigonometric ratios for special angles",
     variants: [
       {
@@ -1153,7 +1153,7 @@ export const TOPICS: Record<string, Topic> = {
     id: "angle_recall",
     name: "Angle Recall",
     subjectId: "maths",
-    category: "trigonometry",
+    category: "geometry",
     description: "Legacy alias — use Unit Circle drills instead",
     variants: [
       {
@@ -1169,7 +1169,7 @@ export const TOPICS: Record<string, Topic> = {
     id: "unit_circle_degrees",
     name: "Unit Circle",
     subjectId: "maths",
-    category: "trigonometry",
+    category: "geometry",
     description: "Angles, coordinates, and positions on the unit circle in degrees",
     variants: [
       {
@@ -1186,7 +1186,7 @@ export const TOPICS: Record<string, Topic> = {
     id: "unit_circle_radians",
     name: "Unit Circle",
     subjectId: "maths",
-    category: "trigonometry",
+    category: "geometry",
     description: "Angles, coordinates, and positions on the unit circle in radians",
     variants: [
       {
@@ -1203,7 +1203,7 @@ export const TOPICS: Record<string, Topic> = {
     id: "trig_inverse",
     name: "Inverse Trig Functions",
     subjectId: "maths",
-    category: "trigonometry",
+    category: "geometry",
     description: "Inverse trigonometric functions and special values",
     variants: [
       {
@@ -1227,7 +1227,7 @@ export const TOPICS: Record<string, Topic> = {
     id: "trig_applications",
     name: "Trig Applications",
     subjectId: "maths",
-    category: "trigonometry",
+    category: "geometry",
     description: "Apply trigonometry to triangles",
     variants: [
       {
@@ -1311,6 +1311,11 @@ export const CATEGORIES: Record<TopicCategory, string[]> = {
     "pythagorean",
     "geometry_2d",
     "geometry_3d",
+    "trig_recall",
+    "trig_inverse",
+    "trig_applications",
+    "unit_circle_degrees",
+    "unit_circle_radians",
   ],
   number_theory: ["prime_factorise", "factors", "divisibility", "sequences"],
   shortcuts: ["percentages"],
@@ -1332,13 +1337,7 @@ export const CATEGORIES: Record<TopicCategory, string[]> = {
     "inequalities",
     "quadratics_eval",
   ],
-  trigonometry: [
-    "trig_recall",
-    "trig_inverse",
-    "trig_applications",
-    "unit_circle_degrees",
-    "unit_circle_radians",
-  ],
+  trigonometry: [],
   mechanics: [
     "kinematics",
     "forces_motion",

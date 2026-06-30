@@ -19,7 +19,6 @@ export type HighLevelCategory =
   | 'geometry'
   | 'number_theory'
   | 'shortcuts'
-  | 'trigonometry'
   | 'physics';
 
 const CATEGORY_MAP: Record<TopicCategory, HighLevelCategory> = {
@@ -33,7 +32,7 @@ const CATEGORY_MAP: Record<TopicCategory, HighLevelCategory> = {
   test: 'number_theory',
   estimation: 'arithmetic',
   identities: 'algebra',
-  trigonometry: 'trigonometry',
+  trigonometry: 'geometry',
   mechanics: 'physics',
   optics: 'physics',
   electricity: 'physics',
@@ -141,6 +140,5 @@ const categoryLabels: Record<HighLevelCategory, string> = {
   geometry: 'Geometry',
   number_theory: 'Number Theory',
   shortcuts: 'Shortcuts',
-  trigonometry: 'Trigonometry',
   physics: 'Physics',
 };

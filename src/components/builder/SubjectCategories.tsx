@@ -27,7 +27,6 @@ const SIDEBAR_CATEGORY_ORDER: HighLevelCategory[] = [
   'geometry',
   'number_theory',
   'shortcuts',
-  'trigonometry',
   'physics',
 ];
 
@@ -38,7 +37,6 @@ const categorySelectedPillBg: Record<HighLevelCategory, string> = {
   geometry: 'bg-secondary dark:bg-secondary/35',
   number_theory: 'bg-biology dark:bg-biology/35',
   shortcuts: 'bg-advanced dark:bg-advanced/35',
-  trigonometry: 'bg-chemistry dark:bg-chemistry/35',
   physics: 'bg-physics dark:bg-physics/35',
 };
 
@@ -60,7 +58,6 @@ const categoryConfig: Record<
   geometry: { label: 'Geometry', icon: Triangle },
   number_theory: { label: 'Number Theory', icon: Infinity },
   shortcuts: { label: 'Shortcuts', icon: Zap },
-  trigonometry: { label: 'Trigonometry', icon: Triangle },
   physics: { label: 'Physics', icon: Atom },
 };
 

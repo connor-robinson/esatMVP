@@ -14,7 +14,6 @@ export const ANALYTICS_CATEGORY_ORDER: HighLevelCategory[] = [
   'geometry',
   'number_theory',
   'shortcuts',
-  'trigonometry',
   'physics',
 ];
 
@@ -24,7 +23,6 @@ export const ANALYTICS_CATEGORY_LABELS: Record<HighLevelCategory, string> = {
   geometry: 'Geometry',
   number_theory: 'Number Theory',
   shortcuts: 'Shortcuts',
-  trigonometry: 'Trigonometry',
   physics: 'Physics',
 };
 

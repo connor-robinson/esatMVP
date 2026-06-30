@@ -155,6 +155,18 @@ const GEOMETRY_FOLDERS: FolderDef[] = [
     topicIds: ['circle_theorems'],
     symbol: { kind: 'lucide', iconKey: 'Circle' },
   },
+  {
+    id: 'trig-recall',
+    name: 'Trig Recall',
+    topicIds: ['trig_recall', 'trig_inverse'],
+    symbol: { kind: 'latex', latex: String.raw`\sin 30°` },
+  },
+  {
+    id: 'unit-circle-triangles',
+    name: 'Unit Circle & Triangles',
+    topicIds: ['unit_circle_degrees', 'unit_circle_radians', 'trig_applications'],
+    symbol: { kind: 'latex', latex: String.raw`(x,y)` },
+  },
 ];
 
 const NUMBER_THEORY_FOLDERS: FolderDef[] = [
@@ -184,21 +196,6 @@ const SHORTCUTS_FOLDERS: FolderDef[] = [
     name: 'Percentages',
     topicIds: ['percentages'],
     symbol: { kind: 'lucide', iconKey: 'Percent' },
-  },
-];
-
-const TRIGONOMETRY_FOLDERS: FolderDef[] = [
-  {
-    id: 'trig-recall',
-    name: 'Trig Recall',
-    topicIds: ['trig_recall', 'trig_inverse'],
-    symbol: { kind: 'latex', latex: String.raw`\sin 30°` },
-  },
-  {
-    id: 'unit-circle-triangles',
-    name: 'Unit Circle & Triangles',
-    topicIds: ['unit_circle_degrees', 'unit_circle_radians', 'trig_applications'],
-    symbol: { kind: 'latex', latex: String.raw`(x,y)` },
   },
 ];
 
@@ -279,7 +276,6 @@ const CATEGORY_FOLDER_BUILDERS: Record<
   geometry: () => buildFolders(GEOMETRY_FOLDERS),
   number_theory: () => buildFolders(NUMBER_THEORY_FOLDERS),
   shortcuts: () => buildFolders(SHORTCUTS_FOLDERS),
-  trigonometry: () => buildFolders(TRIGONOMETRY_FOLDERS),
   physics: () => buildFolders(PHYSICS_FOLDERS),
 };
 
@@ -328,6 +324,12 @@ const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
     'pythagorean',
     'geometry_2d',
     'geometry_3d',
+    'trig_recall',
+    'trig_inverse',
+    'trig_applications',
+    'unit_circle_degrees',
+    'unit_circle_radians',
+    'angle_recall',
   ],
   number_theory: [
     'prime_factorise',
@@ -336,14 +338,6 @@ const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
     'sequences',
   ],
   shortcuts: ['percentages'],
-  trigonometry: [
-    'trig_recall',
-    'trig_inverse',
-    'trig_applications',
-    'unit_circle_degrees',
-    'unit_circle_radians',
-    'angle_recall',
-  ],
   physics: [
     'kinematics',
     'forces_motion',

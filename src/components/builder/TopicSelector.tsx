@@ -5,7 +5,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { ChevronDown, ChevronRight, Hexagon, FunctionSquare, Calculator, Zap, Atom, FlaskConical, Infinity, Triangle, Plus, Check, BookOpen, Clock, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Hexagon, FunctionSquare, Calculator, Zap, Atom, FlaskConical, Infinity, Plus, Check, BookOpen, Clock, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Topic, TopicCategory, SessionPreset } from "@/types/core";
 import { TopicCard } from "./TopicCard";
@@ -27,7 +27,6 @@ type HighLevelCategory =
   | "geometry"
   | "number_theory"
   | "shortcuts"
-  | "trigonometry"
   | "physics"
   | "other";
 
@@ -43,7 +42,7 @@ const CATEGORY_MAP: Record<TopicCategory, HighLevelCategory> = {
   test: "number_theory",
   estimation: "arithmetic",
   identities: "algebra",
-  trigonometry: "trigonometry",
+  trigonometry: "geometry",
   mechanics: "physics",
   optics: "physics",
   electricity: "physics",
@@ -236,7 +235,6 @@ export function TopicSelector({ topics, selectedTopicIds, onAddTopic, presets = 
     geometry: "Geometry & Shapes",
     number_theory: "Number Theory & Patterns",
     shortcuts: "Shortcuts",
-    trigonometry: "Trigonometry",
     physics: "Physics",
     other: "Other",
   };
@@ -247,7 +245,6 @@ export function TopicSelector({ topics, selectedTopicIds, onAddTopic, presets = 
     geometry: <Hexagon className="h-5 w-5 text-white/60" strokeWidth={2} />,
     number_theory: <Infinity className="h-5 w-5 text-white/60" strokeWidth={2} />,
     shortcuts: <Zap className="h-5 w-5 text-white/60" strokeWidth={2} />,
-    trigonometry: <Triangle className="h-5 w-5 text-white/60" strokeWidth={2} />,
     physics: <Atom className="h-5 w-5 text-white/60" strokeWidth={2} />,
     other: <FlaskConical className="h-5 w-5 text-white/60" strokeWidth={2} />,
   };
