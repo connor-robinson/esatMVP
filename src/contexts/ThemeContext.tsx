@@ -1,7 +1,11 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { applyThemeCssVariables } from "@/config/theme";
+import {
+  applyThemeCssVariables,
+  LIGHT_MODE_STRATEGY_STORAGE_KEY,
+  type LightModeStrategy,
+} from "@/config/theme";
 
 type Theme = "dark" | "light";
 
@@ -9,9 +13,17 @@ interface ThemeContextType {
   theme: Theme;
   toggleTheme: () => void;
   isDark: boolean;
+  lightStrategy: LightModeStrategy;
+  toggleLightStrategy: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+function getInitialLightStrategy(): LightModeStrategy {
+  if (typeof window === "undefined") return "inverted";
+  const saved = localStorage.getItem(LIGHT_MODE_STRATEGY_STORAGE_KEY);
+  return saved === "designed" || saved === "inverted" ? saved : "inverted";
+}
 
 // Get initial theme from localStorage or default to dark
 // This runs on the client side only
@@ -33,12 +45,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const htmlClass = document.documentElement.classList.contains("light") ? "light" : "dark";
     return htmlClass;
   });
+  const [lightStrategy, setLightStrategy] = useState<LightModeStrategy>(() =>
+    getInitialLightStrategy(),
+  );
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     // Sync with what might have been set by the initialization script
     const currentTheme = getInitialTheme();
+    const currentLightStrategy = getInitialLightStrategy();
     setTheme(currentTheme);
+    setLightStrategy(currentLightStrategy);
     
     // Ensure the class is applied (in case script didn't run)
     if (currentTheme === "dark") {
@@ -48,7 +65,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       document.documentElement.classList.add("light");
       document.documentElement.classList.remove("dark");
     }
-    applyThemeCssVariables(currentTheme);
+    applyThemeCssVariables(currentTheme, currentLightStrategy);
     
     setMounted(true);
   }, []);
@@ -56,6 +73,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (mounted) {
       localStorage.setItem("theme", theme);
+      localStorage.setItem(LIGHT_MODE_STRATEGY_STORAGE_KEY, lightStrategy);
       if (theme === "dark") {
         document.documentElement.classList.add("dark");
         document.documentElement.classList.remove("light");
@@ -63,18 +81,24 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         document.documentElement.classList.add("light");
         document.documentElement.classList.remove("dark");
       }
-      applyThemeCssVariables(theme);
+      applyThemeCssVariables(theme, lightStrategy);
     }
-  }, [theme, mounted]);
+  }, [theme, lightStrategy, mounted]);
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === "dark" ? "light" : "dark"));
   };
 
+  const toggleLightStrategy = () => {
+    setLightStrategy((prev) => (prev === "designed" ? "inverted" : "designed"));
+  };
+
   const isDark = theme === "dark";
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, isDark }}>
+    <ThemeContext.Provider
+      value={{ theme, toggleTheme, isDark, lightStrategy, toggleLightStrategy }}
+    >
       {children}
     </ThemeContext.Provider>
   );

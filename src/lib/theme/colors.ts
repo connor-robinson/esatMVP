@@ -3,25 +3,28 @@ import {
   getSurfaceOpacityToken,
   getThemeTokenColor,
   surfaceOpacityTokens,
+  type LightModeStrategy,
   type ThemeMode,
 } from "@/config/theme";
 
-export { type ThemeMode };
+export { type ThemeMode, type LightModeStrategy };
 export const themeColors = colorTokens;
 export const surfaceOpacities = surfaceOpacityTokens;
 
 export function getThemeColor(
   colorKey: keyof typeof themeColors,
   mode: ThemeMode = "dark",
+  lightStrategy: LightModeStrategy = "designed",
 ): string {
-  return getThemeTokenColor(colorKey, mode);
+  return getThemeTokenColor(colorKey, mode, lightStrategy);
 }
 
 export function getSurfaceOpacity(
   opacity: keyof typeof surfaceOpacities,
   mode: ThemeMode = "dark",
+  lightStrategy: LightModeStrategy = "designed",
 ): string {
-  return getSurfaceOpacityToken(opacity, mode);
+  return getSurfaceOpacityToken(opacity, mode, lightStrategy);
 }
 
 /**

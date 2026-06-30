@@ -1,6 +1,113 @@
 export type ThemeMode = "dark" | "light";
 
+/** Designed Figma light tokens vs. naive scale inversion preview. */
+export type LightModeStrategy = "designed" | "inverted";
+
+export const LIGHT_MODE_STRATEGY_STORAGE_KEY = "lightModeStrategy";
+
 type ModeToken<T extends string = string> = Record<ThemeMode, T>;
+
+const EXTRA_PALETTE_HEXES = [
+  "#ffffff",
+  "#17161c",
+  "#5c6540",
+  "#8CABA0",
+  "#BF8C58",
+  "#CA7BB3",
+  "#8B4F7A",
+] as const;
+
+function hexRelativeLuminance(hex: string): number {
+  const normalized = hex.trim().toLowerCase();
+  const match = normalized.match(/^#([0-9a-f]{6})$/);
+  if (!match) return 0;
+
+  const channels = [0, 2, 4].map((offset) => {
+    const channel = parseInt(match[1].slice(offset, offset + 2), 16) / 255;
+    return channel <= 0.03928
+      ? channel / 12.92
+      : ((channel + 0.055) / 1.055) ** 2.4;
+  });
+
+  return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+}
+
+function rgbToHex(r: number, g: number, b: number): string {
+  return `#${[r, g, b]
+    .map((channel) => Math.round(channel).toString(16).padStart(2, "0"))
+    .join("")}`;
+}
+
+/** Darkest palette stop ↔ lightest, using every Figma neutral + brand swatch. */
+export function buildPaletteInversionMap(): Map<string, string> {
+  const unique = [
+    ...new Set([
+      ...Object.values(figmaNeutralScale),
+      ...Object.values(figmaPalette),
+      ...EXTRA_PALETTE_HEXES,
+    ]),
+  ].sort((a, b) => hexRelativeLuminance(a) - hexRelativeLuminance(b));
+
+  const map = new Map<string, string>();
+  for (let i = 0; i < unique.length; i++) {
+    map.set(unique[i].toLowerCase(), unique[unique.length - 1 - i]);
+  }
+  return map;
+}
+
+const paletteInversionMap = (() => {
+  let cached: Map<string, string> | null = null;
+  return () => {
+    if (!cached) cached = buildPaletteInversionMap();
+    return cached;
+  };
+})();
+
+export function invertPaletteColor(color: string): string {
+  const trimmed = color.trim();
+
+  const hexMatch = trimmed.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (hexMatch) {
+    const expanded =
+      hexMatch[1].length === 3
+        ? hexMatch[1]
+            .split("")
+            .map((c) => c + c)
+            .join("")
+        : hexMatch[1];
+    const hex = `#${expanded.toLowerCase()}`;
+    return paletteInversionMap().get(hex) ?? hex;
+  }
+
+  const rgbaMatch = trimmed.match(
+    /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?\s*\)$/i,
+  );
+  if (rgbaMatch) {
+    const [, r, g, b, a] = rgbaMatch;
+    const inverted = invertPaletteColor(rgbToHex(Number(r), Number(g), Number(b)));
+    const parsed = inverted.match(/^#([0-9a-f]{6})$/i);
+    if (!parsed) return trimmed;
+    const ir = parseInt(parsed[1].slice(0, 2), 16);
+    const ig = parseInt(parsed[1].slice(2, 4), 16);
+    const ib = parseInt(parsed[1].slice(4, 6), 16);
+    return a !== undefined ? `rgba(${ir}, ${ig}, ${ib}, ${a})` : `rgb(${ir}, ${ig}, ${ib})`;
+  }
+
+  return trimmed;
+}
+
+function invertSurfaceOpacityRgba(rgba: string): string {
+  const match = rgba.match(
+    /^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([\d.]+)\s*\)$/i,
+  );
+  if (!match) return rgba;
+  const [, r, g, b, a] = match;
+  const isWhiteOverlay = Number(r) === 255 && Number(g) === 255 && Number(b) === 255;
+  const isBlackOverlay = Number(r) === 0 && Number(g) === 0 && Number(b) === 0;
+  if (isWhiteOverlay) return `rgba(0, 0, 0, ${a})`;
+  if (isBlackOverlay) return `rgba(255, 255, 255, ${a})`;
+  return invertPaletteColor(rgba);
+}
 
 /**
  * Figma file "Learn (Copy)" → section **Color System** (node `226:2930`).
@@ -275,64 +382,110 @@ export const themeTokens = {
 export function getThemeTokenColor(
   colorKey: keyof typeof colorTokens,
   mode: ThemeMode = "dark",
+  lightStrategy: LightModeStrategy = "designed",
 ): string {
+  if (mode === "light" && lightStrategy === "inverted") {
+    return invertPaletteColor(colorTokens[colorKey].dark);
+  }
   return colorTokens[colorKey][mode];
 }
 
 export function getSurfaceOpacityToken(
   opacity: keyof typeof surfaceOpacityTokens,
   mode: ThemeMode = "dark",
+  lightStrategy: LightModeStrategy = "designed",
 ): string {
+  if (mode === "light" && lightStrategy === "inverted") {
+    return invertSurfaceOpacityRgba(surfaceOpacityTokens[opacity].dark);
+  }
   return surfaceOpacityTokens[opacity][mode];
 }
 
-export function buildCssVariables(mode: ThemeMode): Record<string, string> {
+function resolveTokenColor(
+  colorKey: keyof typeof colorTokens,
+  mode: ThemeMode,
+  lightStrategy: LightModeStrategy,
+): string {
+  return getThemeTokenColor(colorKey, mode, lightStrategy);
+}
+
+function resolveSurfaceOpacity(
+  opacity: keyof typeof surfaceOpacityTokens,
+  mode: ThemeMode,
+  lightStrategy: LightModeStrategy,
+): string {
+  return getSurfaceOpacityToken(opacity, mode, lightStrategy);
+}
+
+export function buildCssVariables(
+  mode: ThemeMode,
+  lightStrategy: LightModeStrategy = "designed",
+): Record<string, string> {
   return {
-    "--color-primary": colorTokens.primary[mode],
-    "--color-primary-hover": colorTokens.primaryHover[mode],
-    "--color-secondary": colorTokens.secondary[mode],
-    "--color-accent": colorTokens.accent[mode],
-    "--color-background": colorTokens.background[mode],
-    "--color-surface": colorTokens.surface[mode],
-    "--color-surface-elevated": colorTokens.surfaceElevated[mode],
-    "--color-surface-subtle": colorTokens.surfaceSubtle[mode],
-    "--color-surface-mid": colorTokens.surfaceMid[mode],
-    "--color-surface-neutral": colorTokens.surfaceNeutral[mode],
-    "--color-border": colorTokens.border[mode],
-    "--color-border-subtle": colorTokens.borderSubtle[mode],
-    "--color-text": colorTokens.text[mode],
-    "--color-text-muted": colorTokens.textMuted[mode],
-    "--color-text-subtle": colorTokens.textSubtle[mode],
-    "--color-text-disabled": colorTokens.textDisabled[mode],
-    "--color-maths": colorTokens.maths[mode],
-    "--color-physics": colorTokens.physics[mode],
-    "--color-chemistry": colorTokens.chemistry[mode],
-    "--color-biology": colorTokens.biology[mode],
-    "--color-advanced": colorTokens.advanced[mode],
-    "--color-session-green": colorTokens.sessionGreen[mode],
-    "--color-success": colorTokens.success[mode],
-    "--color-error": colorTokens.error[mode],
-    "--color-warning": colorTokens.warning[mode],
-    "--color-difficulty-pill-easy": colorTokens.difficultyPillEasy[mode],
-    "--color-difficulty-pill-medium": colorTokens.difficultyPillMedium[mode],
-    "--color-difficulty-pill-hard": colorTokens.difficultyPillHard[mode],
-    "--color-folder-card": colorTokens.folderCard[mode],
-    "--color-folder-card-selected": colorTokens.folderCardSelected[mode],
-    "--color-surface-dark": colorTokens.surfaceDark[mode],
-    "--color-difficulty-easy": colorTokens.difficultyEasy[mode],
-    "--color-difficulty-medium": colorTokens.difficultyMedium[mode],
-    "--color-tmua-accent": colorTokens.tmuaAccent[mode],
-    "--surface-02": surfaceOpacityTokens["02"][mode],
-    "--surface-05": surfaceOpacityTokens["05"][mode],
-    "--surface-10": surfaceOpacityTokens["10"][mode],
-    "--surface-15": surfaceOpacityTokens["15"][mode],
-    "--surface-20": surfaceOpacityTokens["20"][mode],
+    "--color-primary": resolveTokenColor("primary", mode, lightStrategy),
+    "--color-primary-hover": resolveTokenColor("primaryHover", mode, lightStrategy),
+    "--color-secondary": resolveTokenColor("secondary", mode, lightStrategy),
+    "--color-accent": resolveTokenColor("accent", mode, lightStrategy),
+    "--color-background": resolveTokenColor("background", mode, lightStrategy),
+    "--color-surface": resolveTokenColor("surface", mode, lightStrategy),
+    "--color-surface-elevated": resolveTokenColor("surfaceElevated", mode, lightStrategy),
+    "--color-surface-subtle": resolveTokenColor("surfaceSubtle", mode, lightStrategy),
+    "--color-surface-mid": resolveTokenColor("surfaceMid", mode, lightStrategy),
+    "--color-surface-neutral": resolveTokenColor("surfaceNeutral", mode, lightStrategy),
+    "--color-border": resolveTokenColor("border", mode, lightStrategy),
+    "--color-border-subtle": resolveTokenColor("borderSubtle", mode, lightStrategy),
+    "--color-text": resolveTokenColor("text", mode, lightStrategy),
+    "--color-text-muted": resolveTokenColor("textMuted", mode, lightStrategy),
+    "--color-text-subtle": resolveTokenColor("textSubtle", mode, lightStrategy),
+    "--color-text-disabled": resolveTokenColor("textDisabled", mode, lightStrategy),
+    "--color-maths": resolveTokenColor("maths", mode, lightStrategy),
+    "--color-physics": resolveTokenColor("physics", mode, lightStrategy),
+    "--color-chemistry": resolveTokenColor("chemistry", mode, lightStrategy),
+    "--color-biology": resolveTokenColor("biology", mode, lightStrategy),
+    "--color-advanced": resolveTokenColor("advanced", mode, lightStrategy),
+    "--color-session-green": resolveTokenColor("sessionGreen", mode, lightStrategy),
+    "--color-success": resolveTokenColor("success", mode, lightStrategy),
+    "--color-error": resolveTokenColor("error", mode, lightStrategy),
+    "--color-warning": resolveTokenColor("warning", mode, lightStrategy),
+    "--color-difficulty-pill-easy": resolveTokenColor(
+      "difficultyPillEasy",
+      mode,
+      lightStrategy,
+    ),
+    "--color-difficulty-pill-medium": resolveTokenColor(
+      "difficultyPillMedium",
+      mode,
+      lightStrategy,
+    ),
+    "--color-difficulty-pill-hard": resolveTokenColor(
+      "difficultyPillHard",
+      mode,
+      lightStrategy,
+    ),
+    "--color-folder-card": resolveTokenColor("folderCard", mode, lightStrategy),
+    "--color-folder-card-selected": resolveTokenColor(
+      "folderCardSelected",
+      mode,
+      lightStrategy,
+    ),
+    "--color-surface-dark": resolveTokenColor("surfaceDark", mode, lightStrategy),
+    "--color-difficulty-easy": resolveTokenColor("difficultyEasy", mode, lightStrategy),
+    "--color-difficulty-medium": resolveTokenColor("difficultyMedium", mode, lightStrategy),
+    "--color-tmua-accent": resolveTokenColor("tmuaAccent", mode, lightStrategy),
+    "--surface-02": resolveSurfaceOpacity("02", mode, lightStrategy),
+    "--surface-05": resolveSurfaceOpacity("05", mode, lightStrategy),
+    "--surface-10": resolveSurfaceOpacity("10", mode, lightStrategy),
+    "--surface-15": resolveSurfaceOpacity("15", mode, lightStrategy),
+    "--surface-20": resolveSurfaceOpacity("20", mode, lightStrategy),
   };
 }
 
-export function applyThemeCssVariables(mode: ThemeMode): void {
+export function applyThemeCssVariables(
+  mode: ThemeMode,
+  lightStrategy: LightModeStrategy = "designed",
+): void {
   const html = document.documentElement;
-  const vars = buildCssVariables(mode);
+  const vars = buildCssVariables(mode, lightStrategy);
   Object.entries(vars).forEach(([name, value]) => {
     html.style.setProperty(name, value);
   });

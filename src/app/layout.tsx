@@ -16,7 +16,7 @@ import { SessionRestore } from "@/components/papers/SessionRestore";
 import { SessionPersistenceHandler } from "@/components/papers/SessionPersistenceHandler";
 import { UsernameGate } from "@/components/auth/UsernameGate";
 import { BRAND_CONFIG } from "@/config/brand";
-import { buildCssVariables } from "@/config/theme";
+import { buildCssVariables, LIGHT_MODE_STRATEGY_STORAGE_KEY } from "@/config/theme";
 import "@/styles/globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -58,7 +58,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const darkVars = buildCssVariables("dark");
-  const lightVars = buildCssVariables("light");
+  const lightVarsDesigned = buildCssVariables("light", "designed");
+  const lightVarsInverted = buildCssVariables("light", "inverted");
   const supabase = createServerClient();
   const {
     data: { session },
@@ -77,9 +78,17 @@ export default async function RootLayout({
               (function() {
                 try {
                   var theme = localStorage.getItem('theme');
+                  var lightStrategy = localStorage.getItem('${LIGHT_MODE_STRATEGY_STORAGE_KEY}');
+                  if (lightStrategy !== 'designed' && lightStrategy !== 'inverted') {
+                    lightStrategy = 'inverted';
+                  }
                   var darkVars = ${JSON.stringify(darkVars)};
-                  var lightVars = ${JSON.stringify(lightVars)};
-                  var vars = theme === 'light' ? lightVars : darkVars;
+                  var lightVarsDesigned = ${JSON.stringify(lightVarsDesigned)};
+                  var lightVarsInverted = ${JSON.stringify(lightVarsInverted)};
+                  var vars = darkVars;
+                  if (theme === 'light') {
+                    vars = lightStrategy === 'designed' ? lightVarsDesigned : lightVarsInverted;
+                  }
                   Object.keys(vars).forEach(function(name) {
                     document.documentElement.style.setProperty(name, vars[name]);
                   });

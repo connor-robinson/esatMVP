@@ -152,7 +152,7 @@ export function Navbar() {
     paperFullscreenShowMainNavbar,
   } = usePaperSessionStore();
   const [docFullscreen, setDocFullscreen] = useState(false);
-  const { theme, toggleTheme, isDark } = useTheme();
+  const { theme, toggleTheme, isDark, lightStrategy, toggleLightStrategy } = useTheme();
 
   const isJustQuit =
     justQuitSessionId === sessionId &&
@@ -254,9 +254,26 @@ export function Navbar() {
     >
       <button
         type='button'
-        onClick={toggleTheme}
+        onClick={(event) => {
+          if (!isDark && event.altKey) {
+            toggleLightStrategy();
+            return;
+          }
+          toggleTheme();
+        }}
         className={navIconSlotClass}
-        aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+        aria-label={
+          isDark
+            ? `Switch to light mode (${lightStrategy === "inverted" ? "inverted palette preview" : "designed light theme"})`
+            : `Switch to dark mode${lightStrategy === "inverted" ? " (Alt+click: designed light)" : " (Alt+click: inverted palette preview)"}`
+        }
+        title={
+          isDark
+            ? undefined
+            : lightStrategy === "inverted"
+              ? "Light mode: inverted palette preview. Alt+click for designed light."
+              : "Light mode: designed theme. Alt+click for inverted palette preview."
+        }
       >
         {isDark ? (
           <Sun
