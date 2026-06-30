@@ -26,7 +26,7 @@ export function TriangleDiagram({ data, className }: TriangleDiagramProps) {
     const maxY = Math.max(...ys);
 
     // Add padding for labels
-    const padding = 80;
+    const padding = 56;
     return {
       x: minX - padding,
       y: minY - padding,
@@ -151,7 +151,7 @@ export function TriangleDiagram({ data, className }: TriangleDiagramProps) {
           : { x: 0, y: 0 };
 
       // Label position along bisector
-      const angleOffset = 30; // Offset for inside placement
+      const angleOffset = 38; // Offset for inside placement
       const labelX = vertex.x - bisectorNorm.x * angleOffset; // Negative to point inward
       const labelY = vertex.y - bisectorNorm.y * angleOffset; // Negative to point inward
 
@@ -225,7 +225,7 @@ export function TriangleDiagram({ data, className }: TriangleDiagramProps) {
     <div className={cn('flex justify-center items-center w-full', className)}>
       <svg
         viewBox={`${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`}
-        className='w-full max-w-[240px] h-auto'
+        className='w-full max-w-[200px] h-auto'
         preserveAspectRatio='xMidYMid meet'
       >
         {/* Triangle */}
@@ -265,65 +265,51 @@ export function TriangleDiagram({ data, className }: TriangleDiagramProps) {
           );
         })}
 
-        {/* Side labels with background for readability */}
+        {/* Side labels */}
         {sideLabelPositions.map((label, index) => {
-          if (!label) return null;
+          if (!label?.text) return null;
 
           return (
-            <g key={`side-${index}`}>
-              {/* Background circle for label */}
-              <circle
-                cx={label.x}
-                cy={label.y}
-                r='14'
-                fill='var(--color-background)'
-                fillOpacity='0.6'
-                stroke='var(--color-text)'
-                strokeOpacity='0.2'
-                strokeWidth='1'
-              />
-              <text
-                x={label.x}
-                y={label.y}
-                textAnchor='middle'
-                dominantBaseline='middle'
-                className='fill-white font-semibold'
-                style={{ fontSize: '16px' }}
-              >
-                {label.text}
-              </text>
-            </g>
+            <text
+              key={`side-${index}`}
+              x={label.x}
+              y={label.y}
+              textAnchor='middle'
+              dominantBaseline='middle'
+              fill='var(--color-text)'
+              fillOpacity={0.95}
+              style={{
+                fontSize: '20px',
+                fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+                fontWeight: 600,
+              }}
+            >
+              {label.text}
+            </text>
           );
         })}
 
-        {/* Angle labels with background for readability */}
+        {/* Angle labels */}
         {angleData.map((angle, index) => {
-          if (!angle || !angle.showLabel) return null;
+          if (!angle || !angle.showLabel || !angle.text) return null;
 
           return (
-            <g key={`angle-${index}`}>
-              {/* Background circle for label */}
-              <circle
-                cx={angle.labelX}
-                cy={angle.labelY}
-                r='12'
-                fill='var(--color-background)'
-                fillOpacity='0.6'
-                stroke='var(--color-text)'
-                strokeOpacity='0.2'
-                strokeWidth='1'
-              />
-              <text
-                x={angle.labelX}
-                y={angle.labelY}
-                textAnchor='middle'
-                dominantBaseline='middle'
-                className='fill-white font-semibold'
-                style={{ fontSize: '14px' }}
-              >
-                {angle.text}
-              </text>
-            </g>
+            <text
+              key={`angle-${index}`}
+              x={angle.labelX}
+              y={angle.labelY}
+              textAnchor='middle'
+              dominantBaseline='middle'
+              fill='var(--color-text)'
+              fillOpacity={0.95}
+              style={{
+                fontSize: '26px',
+                fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+                fontWeight: 700,
+              }}
+            >
+              {angle.text}
+            </text>
           );
         })}
       </svg>

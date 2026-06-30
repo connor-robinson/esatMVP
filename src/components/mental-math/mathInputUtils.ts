@@ -28,7 +28,12 @@ export function toMathDisplayFormat(input: string): string {
   if (!input.trim()) return "";
 
   let display = input.trim();
-  display = display.replace(/\bsqrt\s*\(\s*([^)]+)\s*\)/gi, (_, inner: string) => `\\sqrt{${inner.trim()}}`);
+
+  display = display.replace(/\bsqrt\s*\(\s*([^)]+)\s*\)/gi, (_, inner: string) => {
+    return `\\sqrt{${toMathDisplayFormat(inner)}}`;
+  });
+  display = display.replace(/(\d+)\s*√\s*(\d+)/g, (_, left, right) => `${left}\\sqrt{${right}}`);
+  display = display.replace(/√\s*(\d+)/g, (_, n) => `\\sqrt{${n}}`);
   display = display.replace(/(\d+)\s*\/\s*(\d+)/g, (_, num, den) => `\\frac{${num}}{${den}}`);
   display = display.replace(/\^(\d+)/g, "^{$1}");
   display = display.replace(/×/g, " \\times ");

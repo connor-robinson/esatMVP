@@ -42,7 +42,7 @@ function sideLabel454590(
  */
 export function generateTriangleDiagram(config: TriangleConfig): TriangleDiagramData {
   const { type, unit } = config;
-  const scale = 30; // Base scale factor for SVG coordinates
+  const scale = 25; // Base scale factor for SVG coordinates
   
   if (type === "30-60-90") {
     return generate30_60_90Triangle(unit, scale, config);
@@ -92,7 +92,6 @@ function generate30_60_90Triangle(
 
   const show30Label = isSideProblem || config.givenAngle === 30 || config.unknownAngle === 30;
   const show60Label = isSideProblem || config.givenAngle === 60 || config.unknownAngle === 60;
-  const show90Label = true;
   
   // Sides: [A->B (short), B->C (hyp), C->A (long)]
   const sides = [
@@ -118,7 +117,7 @@ function generate30_60_90Triangle(
     {
       label: undefined,
       degrees: 90,
-      showLabel: show90Label,
+      showLabel: false,
       showArc: false,
     },
     {
@@ -194,7 +193,6 @@ function generate45_45_90Triangle(
 
   const show45Label1 = isSideProblem || config.givenAngle === 45 || config.unknownAngle === 45;
   const show45Label2 = isSideProblem || config.givenAngle === 45 || config.unknownAngle === 45;
-  const show90Label = true;
   
   // Sides: [A->B (leg), B->C (hyp), C->A (leg)]
   const sides = [
@@ -220,7 +218,7 @@ function generate45_45_90Triangle(
     {
       label: undefined,
       degrees: 90,
-      showLabel: show90Label,
+      showLabel: false,
       showArc: false,
     },
     {
