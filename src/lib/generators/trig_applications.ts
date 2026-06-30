@@ -3,7 +3,6 @@
  * Levels:
  * 1 - Evaluate trig from triangle sides
  * 2 - Special triangles (30-60-90, 45-45-90)
- * 3 - Trig identities and simplifications
  */
 
 import { GeneratedQuestion } from "@/types/core";
@@ -14,11 +13,10 @@ import { generateTriangleDiagram } from "@/lib/diagrams/triangleGenerator";
 
 export function generateTrigApplications(
   level: number,
-  weights?: Record<string, number>
+  _weights?: Record<string, number>,
 ): GeneratedQuestion {
   if (level === 1) return generateTriangleSides();
-  if (level === 2) return generateSpecialTriangles();
-  return generateIdentities();
+  return generateSpecialTriangles();
 }
 
 function generateTriangleSides(): GeneratedQuestion {
@@ -222,108 +220,6 @@ function generateSpecialTriangles(): GeneratedQuestion {
     }
   }
 }
-
-function generateIdentities(): GeneratedQuestion {
-  const identityType = pick(["pythagorean", "double-angle", "sum"]);
-  
-  if (identityType === "pythagorean") {
-    const angle = pick([30, 45, 60]);
-    const func = pick(["sin", "cos"]);
-    const otherFunc = func === "sin" ? "cos" : "sin";
-    
-    const values: Record<string, Record<number, string>> = {
-      sin: {
-        30: "1/2",
-        45: "√2/2",
-        60: "√3/2",
-      },
-      cos: {
-        30: "√3/2",
-        45: "√2/2",
-        60: "1/2",
-      },
-    };
-    
-    const val = values[func][angle];
-    const question = `If $${func}(${angle}°) = ${val}$, use $\\sin^2(\\theta) + \\cos^2(\\theta) = 1$ to find $${otherFunc}(${angle}°)$`;
-    
-    // For simplicity, just ask to verify the identity holds
-    const answer = "1";
-    
-    return {
-      id: generateId(),
-      topicId: "trig_applications",
-      question: `Verify: $\\sin^2(${angle}°) + \\cos^2(${angle}°) = ?$`,
-      answer,
-      difficulty: 3,
-    };
-  } else if (identityType === "double-angle") {
-    const angle = pick([30, 45, 60]);
-    const func = pick(["sin", "cos"]);
-    
-    const question = `Simplify: $${func}(2 \\times ${angle}°) = ?$`;
-    
-    // For 2*30=60, 2*45=90, 2*60=120
-    const doubleAngle = 2 * angle;
-    const values: Record<string, Record<number, string>> = {
-      sin: {
-        60: "√3/2",
-        90: "1",
-        120: "√3/2",
-      },
-      cos: {
-        60: "1/2",
-        90: "0",
-        120: "-1/2",
-      },
-    };
-    
-    const answer = values[func][doubleAngle] || "0";
-    
-    return {
-      id: generateId(),
-      topicId: "trig_applications",
-      question,
-      answer,
-      difficulty: 3,
-    };
-  } else {
-    // Sum identity: sin(A+B) or cos(A+B)
-    const A = pick([30, 45]);
-    const B = pick([30, 45]);
-    const func = pick(["sin", "cos"]);
-    
-    const question = `Simplify: $${func}(${A}° + ${B}°)$`;
-    
-    // For simplicity, provide the sum angle value
-    const sumAngle = A + B;
-    const values: Record<string, Record<number, string>> = {
-      sin: {
-        60: "√3/2",
-        75: "(√6 + √2)/4",
-        90: "1",
-      },
-      cos: {
-        60: "1/2",
-        75: "(√6 - √2)/4",
-        90: "0",
-      },
-    };
-    
-    const answer = values[func][sumAngle] || "0";
-    
-    return {
-      id: generateId(),
-      topicId: "trig_applications",
-      question,
-      answer,
-      difficulty: 3,
-    };
-  }
-}
-
-
-
 
 
 

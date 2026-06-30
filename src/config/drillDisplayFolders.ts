@@ -189,22 +189,16 @@ const SHORTCUTS_FOLDERS: FolderDef[] = [
 
 const TRIGONOMETRY_FOLDERS: FolderDef[] = [
   {
-    id: 'trigonometry-all',
-    name: 'Trig Ratios',
-    topicIds: ['trig_recall', 'trig_inverse', 'trig_applications'],
-    symbol: { kind: 'latex', latex: String.raw`\sin\theta` },
+    id: 'trig-recall',
+    name: 'Trig Recall',
+    topicIds: ['trig_recall', 'trig_inverse'],
+    symbol: { kind: 'latex', latex: String.raw`\sin 30°` },
   },
   {
-    id: 'unit-circle-degrees',
-    name: 'Unit Circle — Degrees',
-    topicIds: ['unit_circle_degrees'],
-    symbol: { kind: 'latex', latex: String.raw`45^\circ` },
-  },
-  {
-    id: 'unit-circle-radians',
-    name: 'Unit Circle — Radians',
-    topicIds: ['unit_circle_radians'],
-    symbol: { kind: 'latex', latex: String.raw`\frac{\pi}{4}` },
+    id: 'unit-circle-triangles',
+    name: 'Unit Circle & Triangles',
+    topicIds: ['unit_circle_degrees', 'unit_circle_radians', 'trig_applications'],
+    symbol: { kind: 'latex', latex: String.raw`(x,y)` },
   },
 ];
 

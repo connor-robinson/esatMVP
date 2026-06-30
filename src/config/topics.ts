@@ -1228,7 +1228,7 @@ export const TOPICS: Record<string, Topic> = {
     name: "Trig Applications",
     subjectId: "maths",
     category: "trigonometry",
-    description: "Apply trigonometry to triangles and identities",
+    description: "Apply trigonometry to triangles",
     variants: [
       {
         id: "triangle-sides",
@@ -1243,13 +1243,6 @@ export const TOPICS: Record<string, Topic> = {
         description: "30-60-90 and 45-45-90 right triangles",
         difficulty: 2,
         config: { level: 2 },
-      },
-      {
-        id: "identities",
-        name: "Trig Identities",
-        description: "Trigonometric identities and simplifications",
-        difficulty: 3,
-        config: { level: 3 },
       },
     ],
     icon: "Triangle",

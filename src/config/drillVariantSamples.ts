@@ -393,9 +393,25 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'latex', latex: String.raw`\sin^{-1}(0.5)` },
     { kind: 'latex', latex: String.raw`\tan^{-1}(1)` },
   ]),
+  'trig_inverse-special-angles': S([
+    { kind: 'latex', latex: String.raw`\cos^{-1}\left(-\frac{1}{2}\right)` },
+    { kind: 'latex', latex: String.raw`\sin^{-1}\frac{\sqrt{3}}{2}` },
+  ]),
+  'trig_recall-extended-angles': S([
+    { kind: 'latex', latex: String.raw`\sin 135°` },
+    { kind: 'latex', latex: String.raw`\tan 210°` },
+  ]),
+  'trig_recall-radians': S([
+    { kind: 'latex', latex: String.raw`\cos\frac{\pi}{3}` },
+    { kind: 'latex', latex: String.raw`\sin\frac{5\pi}{6}` },
+  ]),
   'trig_applications-triangle-sides': S([
     { kind: 'latex', latex: String.raw`a = 5,\ \theta = 40°` },
     { kind: 'latex', latex: String.raw`opp / hyp` },
+  ]),
+  'trig_applications-special-triangles': S([
+    { kind: 'latex', latex: String.raw`30°\text{-}60°\text{-}90°` },
+    { kind: 'latex', latex: String.raw`45°\text{-}45°\text{-}90°` },
   ]),
 
   // —— Physics ——
