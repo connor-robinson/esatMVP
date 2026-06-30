@@ -166,6 +166,49 @@
   }
 }
 
+@layer utilities {
+  .animate-qb-wrong-flash {
+    animation: qbWrongFlash 320ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  }
+
+  .animate-qb-correct-flash {
+    animation: qbCorrectFlash 320ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  }
+}
+
+@keyframes qbWrongFlash {
+  0%,
+  100% {
+    background-color: transparent;
+    transform: translateX(0);
+  }
+  18% {
+    background-color: color-mix(in srgb, var(--color-error) 16%, transparent);
+    transform: translateX(-1.5px);
+  }
+  36% {
+    background-color: color-mix(in srgb, var(--color-error) 10%, transparent);
+    transform: translateX(1px);
+  }
+  54% {
+    background-color: color-mix(in srgb, var(--color-error) 5%, transparent);
+    transform: translateX(0);
+  }
+}
+
+@keyframes qbCorrectFlash {
+  0%,
+  100% {
+    background-color: transparent;
+  }
+  35% {
+    background-color: color-mix(in srgb, var(--color-primary) 18%, transparent);
+  }
+  70% {
+    background-color: color-mix(in srgb, var(--color-primary) 6%, transparent);
+  }
+}
+
 /* Past Papers: signature blue (`maths`) for session CTAs only — exam labels keep roadmap colors */
 .past-papers-theme {
   --color-primary: var(--color-maths);

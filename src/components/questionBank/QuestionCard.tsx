@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MathContent } from "@/components/shared/MathContent";
 import { QuestionWithGraph } from "@/components/shared/QuestionWithGraph";
 import type { QuestionBankQuestion } from "@/types/questionBank";
@@ -14,6 +14,7 @@ import {
   Star,
 } from "lucide-react";
 import { isQualityGateVerified } from "@/lib/questionBank/qualityGate";
+import { coerceFieldText } from "@/lib/utils/coerceFieldText";
 import { QuestionReportPopover } from "@/components/questionBank/QuestionReportPopover";
 import type {
   QuestionRatingResponse,
@@ -86,6 +87,15 @@ function subjectBadgeClass(subjects: string | null | undefined): string {
   return cn(PILL_SURFACE, "text-text-muted");
 }
 
+function distractorTextFor(
+  distractorMap: QuestionBankQuestion["distractor_map"],
+  letter: string,
+): string | null {
+  if (!distractorMap) return null;
+  const text = coerceFieldText(distractorMap[letter], "").trim();
+  return text || null;
+}
+
 export function QuestionCard({
   question,
   onAnswerSubmit,
@@ -125,8 +135,14 @@ export function QuestionCard({
   const [feedbackLoading, setFeedbackLoading] = useState(true);
   const [ratingSubmitting, setRatingSubmitting] = useState(false);
   const [hoverStar, setHoverStar] = useState<number | null>(null);
+  const [flashLetter, setFlashLetter] = useState<{
+    letter: string;
+    kind: "correct" | "wrong";
+  } | null>(null);
+  const lastFlashKeyRef = useRef("");
 
   const optionLetters = Object.keys(question.options).sort();
+  const showSessionNotation = questionNumber != null;
 
   useEffect(() => {
     if (!isAnswered || allowRetry) {
@@ -136,7 +152,28 @@ export function QuestionCard({
     setHoveredOption(null);
     setRevealedDistractors(new Set());
     setIncorrectAnswers(new Set());
+    lastFlashKeyRef.current = "";
+    setFlashLetter(null);
   }, [question.id, isAnswered, allowRetry, onSelectionChange]);
+
+  useEffect(() => {
+    if (!showSessionNotation || !selectedAnswer || !isAnswered) return;
+    const key = `${question.id}:${selectedAnswer}:${isCorrect}`;
+    if (lastFlashKeyRef.current === key) return;
+    lastFlashKeyRef.current = key;
+    setFlashLetter({
+      letter: selectedAnswer,
+      kind: isCorrect ? "correct" : "wrong",
+    });
+    const timer = window.setTimeout(() => setFlashLetter(null), 340);
+    return () => window.clearTimeout(timer);
+  }, [
+    showSessionNotation,
+    question.id,
+    selectedAnswer,
+    isAnswered,
+    isCorrect,
+  ]);
 
   useEffect(() => {
     onSelectionChange?.(localSelectedAnswer);
@@ -321,8 +358,6 @@ export function QuestionCard({
     "font-sans",
   );
 
-  const showSessionNotation = questionNumber != null;
-
   return (
     <div className="space-y-5">
       <div className={cn(PANEL_SHELL, "px-5 pb-8 pt-5 sm:px-8 sm:pt-6 sm:pb-10")}>
@@ -435,7 +470,11 @@ export function QuestionCard({
 
       <div className={cn(PANEL_SHELL, "p-4 sm:p-5")}>
         <div className="flex flex-col gap-2.5">
-          {optionLetters.map((letter) => (
+          {optionLetters.map((letter) => {
+            const distractor = distractorTextFor(question.distractor_map, letter);
+            const isFlashing = flashLetter?.letter === letter;
+
+            return (
             <div key={letter} className="relative">
               <button
                 type="button"
@@ -446,8 +485,13 @@ export function QuestionCard({
                 onMouseLeave={() => setHoveredOption(null)}
                 disabled={isAnswered && !allowRetry && !answerRevealed}
                 className={cn(
-                  "relative w-full rounded-organic-md px-3.5 py-2.5 text-left transition-all duration-fast ease-signature sm:px-4 sm:py-3",
+                  "relative w-full rounded-organic-md px-3.5 py-2.5 text-left sm:px-4 sm:py-3",
                   getOptionStyle(letter),
+                  isFlashing
+                    ? flashLetter.kind === "wrong"
+                      ? "animate-qb-wrong-flash"
+                      : "animate-qb-correct-flash"
+                    : "transition-[background-color,opacity] duration-fast ease-signature",
                 )}
               >
                 <div className="flex items-center gap-3">
@@ -462,7 +506,7 @@ export function QuestionCard({
 
                   <div
                     className={cn(
-                      "flex min-w-0 flex-1 flex-wrap items-center gap-x-4 gap-y-2 text-[0.98rem] leading-relaxed tracking-tight sm:text-[1.02rem]",
+                      "flex min-w-0 flex-1 items-center gap-x-3 text-[0.98rem] leading-relaxed tracking-tight sm:text-[1.02rem]",
                       "font-sans text-text",
                     )}
                   >
@@ -474,7 +518,7 @@ export function QuestionCard({
                     </div>
                     {incorrectAnswers.has(letter) &&
                       letter !== correctAnswer &&
-                      question.distractor_map?.[letter] && (
+                      distractor && (
                         <>
                           {!revealedDistractors.has(letter) ? (
                             <button
@@ -487,7 +531,7 @@ export function QuestionCard({
                               }}
                               title="Reveal why it may be wrong"
                               className={cn(
-                                "ml-auto shrink-0 self-center",
+                                "ml-auto shrink-0",
                                 "inline-flex items-center gap-1.5 rounded-full",
                                 "border border-border-subtle/70 bg-surface-elevated/95 px-3 py-1.5",
                                 "text-[11px] font-medium tracking-wide text-text-muted",
@@ -504,10 +548,10 @@ export function QuestionCard({
                               </span>
                             </button>
                           ) : (
-                            <div className="w-full basis-full border-t border-border-subtle/50 pt-2.5">
+                            <div className="ml-auto min-w-0 max-w-[min(100%,24rem)] shrink border-l border-border-subtle/50 pl-3">
                               <MathContent
-                                content={question.distractor_map[letter]}
-                                className="text-sm text-text-muted"
+                                content={distractor}
+                                className="text-xs sm:text-sm text-text-muted inline"
                               />
                             </div>
                           )}
@@ -580,7 +624,8 @@ export function QuestionCard({
 
               </button>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 px-1 py-1 sm:px-0">

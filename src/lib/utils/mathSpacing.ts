@@ -1,3 +1,5 @@
+import { coerceFieldText } from "@/lib/utils/coerceFieldText";
+
 /**
  * Normalizes spacing around math delimiters ($ and $$) in text.
  * Adds spaces before and after math blocks unless:
@@ -151,11 +153,8 @@ export function normalizeQuestionMathSpacing<T extends {
   if (normalized.distractor_map && typeof normalized.distractor_map === 'object' && normalized.distractor_map !== null) {
     const normalizedDistractorMap: Record<string, string> = {};
     for (const [key, value] of Object.entries(normalized.distractor_map)) {
-      if (typeof value === 'string') {
-        normalizedDistractorMap[key] = normalizeMathSpacing(value);
-      } else {
-        normalizedDistractorMap[key] = value as string;
-      }
+      const text = coerceFieldText(value);
+      normalizedDistractorMap[key] = text ? normalizeMathSpacing(text) : text;
     }
     normalized.distractor_map = normalizedDistractorMap as any;
   }

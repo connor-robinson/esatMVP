@@ -7,6 +7,7 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { cn } from "@/lib/utils";
 import { renderMathContent } from "@/hooks/useKaTeX";
+import { coerceFieldText } from "@/lib/utils/coerceFieldText";
 
 interface MathContentProps {
   content: string | null | undefined;
@@ -18,8 +19,7 @@ export function MathContent({ content, className }: MathContentProps) {
   const [renderedHtml, setRenderedHtml] = useState<string>("");
 
   useEffect(() => {
-    // Convert content to string, handling null/undefined/non-string values
-    const contentStr = content != null ? String(content) : "";
+    const contentStr = coerceFieldText(content, "");
     
     if (!contentStr) {
       setRenderedHtml("");
@@ -44,7 +44,7 @@ export function MathContent({ content, className }: MathContentProps) {
     }
   }, [content]);
 
-  if (content == null || String(content).length === 0) {
+  if (coerceFieldText(content, "").length === 0) {
     return null;
   }
 
