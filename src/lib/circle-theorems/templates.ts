@@ -4,6 +4,7 @@
 
 import type { CircleTheoremResult, LabelledPoint, LineSegment, TemplateId } from "./types";
 import {
+  alternateSegmentAngles,
   centrePoint,
   extendRay,
   exteriorAngleDeg,
@@ -222,24 +223,39 @@ export function templateSameSegment(): CircleTheoremResult {
   };
 }
 
-/** Alternate segment theorem. */
+/** Alternate segment theorem — tangent/chord angle equals angle in the alternate segment. */
 export function templateAlternateSegment(): CircleTheoremResult {
-  const tDeg = 60;
-  const aDeg = 200;
-  const pDeg = 320;
+  for (let attempt = 0; attempt < 24; attempt++) {
+    const result = buildAlternateSegment();
+    if (result) return result;
+  }
+  return buildAlternateSegment({ tDeg: 72, aDeg: 208, pDeg: 318 })!;
+}
+
+function buildAlternateSegment(config?: { tDeg: number; aDeg: number; pDeg: number }): CircleTheoremResult | null {
+  const tDeg = config?.tDeg ?? pickInt(58, 122);
+  const aDeg = config?.aDeg ?? pickInt(175, 235);
+  const pDeg = config?.pDeg ?? normalizeDeg(tDeg - pickInt(145, 195));
 
   const O = centrePt();
   const T = pt("T", tDeg, "T");
   const A = pt("A", aDeg, "A");
   const P = pt("P", pDeg, "P");
   const centre = centrePoint();
-  const tan = tangentSegment(T, centre, 95);
-  const tanFar = { x: tan.x2, y: tan.y2 };
 
-  const tangentAngle = interiorAngleDeg(T, tanFar, A);
-  const pAngle = interiorAngleDeg(P, A, T);
+  const { tan, tanFar, tangentAngle, alternateAngle } = alternateSegmentAngles(
+    T,
+    centre,
+    P,
+    A,
+    100,
+  );
+
+  if (tangentAngle < 22 || tangentAngle > 88) return null;
+  if (Math.abs(tangentAngle - alternateAngle) > 1) return null;
+
   const findTangent = Math.random() < 0.5;
-  const answer = findTangent ? tangentAngle : pAngle;
+  const answer = tangentAngle;
 
   return {
     templateId: "ALTERNATE_SEGMENT",
@@ -248,32 +264,31 @@ export function templateAlternateSegment(): CircleTheoremResult {
     targetLabel: "x",
     question: "Find $x$.",
     steps: formatSteps([
-      { text: `Angle between tangent and chord equals the angle in the opposite segment.`, theorem: "alternate-segment" },
+      { text: `Angle between tangent and chord equals the angle in the alternate segment.`, theorem: "alternate-segment" },
       { text: `$x = ${answer}°$.` },
     ]),
     diagram: {
       points: [O, T, A, P],
       lines: [
-        { x1: O.x, y1: O.y, x2: T.x, y2: T.y },
         { x1: tan.x1, y1: tan.y1, x2: tan.x2, y2: tan.y2 },
+        { x1: T.x, y1: T.y, x2: P.x, y2: P.y },
         { x1: T.x, y1: T.y, x2: A.x, y2: A.y },
         { x1: P.x, y1: P.y, x2: A.x, y2: A.y },
-        { x1: P.x, y1: P.y, x2: T.x, y2: T.y },
       ],
       angles: [
         {
           id: "tangent",
           vertex: T,
           leg1: tanFar,
-          leg2: A,
-          label: findTangent ? "x" : `${pAngle}°`,
+          leg2: P,
+          label: findTangent ? "x" : `${alternateAngle}°`,
           isTarget: findTangent,
         },
         {
-          id: "PAT",
-          vertex: P,
-          leg1: A,
-          leg2: T,
+          id: "TAP",
+          vertex: A,
+          leg1: T,
+          leg2: P,
           label: findTangent ? `${tangentAngle}°` : "x",
           isTarget: !findTangent,
         },
@@ -550,6 +565,15 @@ export function verifyAnswerIndependently(result: CircleTheoremResult): boolean 
     const givenInterior = parseInt(given.label.replace("°", ""), 10);
     if (!Number.isFinite(givenInterior)) return false;
     return markedExterior === givenInterior && markedExterior === result.answer;
+  }
+
+  if (result.templateId === "ALTERNATE_SEGMENT") {
+    const given = result.diagram.angles.find((a) => !a.isTarget);
+    if (!given) return false;
+    const marked = interiorAngleDeg(target.vertex, target.leg1, target.leg2);
+    const givenVal = parseInt(given.label.replace("°", ""), 10);
+    if (!Number.isFinite(givenVal)) return false;
+    return marked === givenVal && marked === result.answer;
   }
 
   if (target.label === "x") return result.answer > 0;

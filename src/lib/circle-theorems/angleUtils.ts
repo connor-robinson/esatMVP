@@ -135,3 +135,27 @@ export function extendRay(from: Point, through: Point, extraRatio: number): Poin
 export function exteriorAngleDeg(vertex: Point, alongSide: Point, otherSide: Point): number {
   return 180 - interiorAngleDeg(vertex, alongSide, otherSide);
 }
+
+/** Tangent ray + angles for alternate segment theorem (chord TP, angle TAP). */
+export function alternateSegmentAngles(
+  tangency: Point,
+  centre: Point,
+  chordEnd: Point,
+  alternateVertex: Point,
+  halfLength: number,
+): {
+  tan: LineSegment;
+  tanFar: Point;
+  tangentAngle: number;
+  alternateAngle: number;
+} {
+  const tan = tangentSegment(tangency, centre, halfLength);
+  const cand1 = { x: tan.x1, y: tan.y1 };
+  const cand2 = { x: tan.x2, y: tan.y2 };
+  const alternateAngle = interiorAngleDeg(alternateVertex, tangency, chordEnd);
+  const ang1 = interiorAngleDeg(tangency, cand1, chordEnd);
+  const ang2 = interiorAngleDeg(tangency, cand2, chordEnd);
+  const tanFar = Math.abs(ang1 - alternateAngle) <= Math.abs(ang2 - alternateAngle) ? cand1 : cand2;
+  const tangentAngle = interiorAngleDeg(tangency, tanFar, chordEnd);
+  return { tan, tanFar, tangentAngle, alternateAngle };
+}
