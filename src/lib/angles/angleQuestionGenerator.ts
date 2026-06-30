@@ -79,7 +79,7 @@ function dualFormExplanation(angle: StandardAngle): string {
 }
 
 function coordExplanation(angle: StandardAngle): string {
-  return `$x = ${angle.cosLabel}$, $y = ${angle.sinLabel}$`;
+  return `$x = ${angle.cosLatex}$, $y = ${angle.sinLatex}$`;
 }
 
 function baseMetadata(
@@ -310,17 +310,20 @@ function generateAngleFromCoord(
   topicId: string,
 ): GeneratedQuestion {
   const axis = pick<"x" | "y">(["x", "y"]);
-  const value = coordValueForAxis(angle, axis);
+  const valueLatex = axis === "x" ? angle.cosLatex : angle.sinLatex;
   const answer = mode === "degrees" ? String(angle.degrees) : angle.radianLabel;
   const checker =
     mode === "degrees"
       ? createDegreeAngleChecker(angle)
       : createRadianAngleChecker(angle);
 
+  const quadrantNames = ["", "I", "II", "III", "IV"] as const;
+  const quadrantHint = ` in quadrant ${quadrantNames[angle.quadrant]}`;
+
   const question =
     mode === "degrees"
-      ? `Which angle (in degrees) has ${axis} $= ${value}$ on the unit circle?`
-      : `Which angle (in radians) has ${axis} $= ${value}$ on the unit circle? Give your answer in exact form involving $\\pi$.`;
+      ? `What is the angle (in degrees) of the highlighted point${quadrantHint}, given that its $${axis}$-coordinate is $${valueLatex}$?`
+      : `What is the angle (in radians) of the highlighted point${quadrantHint}, given that its $${axis}$-coordinate is $${valueLatex}$? Give your answer in exact form involving $\\pi$.`;
 
   return {
     id: generateId(),
@@ -332,6 +335,8 @@ function generateAngleFromCoord(
     explanation: dualFormExplanation(angle),
     diagram: unitCircleDiagram(
       baseDiagramConfig({
+        highlightDegrees: angle.degrees,
+        showHighlightPoint: true,
         showCoordinateLabels: true,
         showCoordinateProjections: true,
       }),

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useMemo } from "react";
 import type { UnitCircleDiagramConfig } from "@/types/core";
 import {
   getAngleByDegrees,
@@ -8,6 +8,8 @@ import {
   UNIT_CIRCLE_CY,
   svgClickToDegrees,
 } from "@/lib/angles/angleData";
+import { coordPairToLatex } from "@/lib/angles/coordLatex";
+import { renderMath } from "@/hooks/useKaTeX";
 import { cn } from "@/lib/utils";
 
 export interface UnitCircleFeedback {
@@ -223,17 +225,48 @@ export function UnitCircle({
               />
             )}
             {showCoordinateLabels && (
-              <DiagramLabel
-                x={highlightAngle.point.x + (highlightAngle.x >= 0 ? 14 : -14)}
-                y={highlightAngle.point.y + (highlightAngle.y >= 0 ? -12 : 12)}
-                text={`(${highlightAngle.cosLabel}, ${highlightAngle.sinLabel})`}
-                fontSize={11}
+              <MathDiagramLabel
+                x={highlightAngle.point.x + (highlightAngle.x >= 0 ? 22 : -22)}
+                y={highlightAngle.point.y + (highlightAngle.y >= 0 ? -14 : 14)}
+                latex={coordPairToLatex(highlightAngle.cosLabel, highlightAngle.sinLabel)}
+                width={highlightAngle.x >= 0 ? 92 : 98}
               />
             )}
           </>
         )}
       </svg>
     </div>
+  );
+}
+
+function MathDiagramLabel({
+  x,
+  y,
+  latex,
+  width = 88,
+}: {
+  x: number;
+  y: number;
+  latex: string;
+  width?: number;
+}) {
+  const html = useMemo(() => renderMath(latex, false) ?? "", [latex]);
+  const height = 28;
+
+  return (
+    <foreignObject
+      x={x - width / 2}
+      y={y - height / 2}
+      width={width}
+      height={height}
+      className="overflow-visible"
+    >
+      <div
+        xmlns="http://www.w3.org/1999/xhtml"
+        className="flex h-full w-full items-center justify-center text-text [&_.katex]:text-[11px]"
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+    </foreignObject>
   );
 }
 

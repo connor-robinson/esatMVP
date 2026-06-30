@@ -4,6 +4,7 @@
 
 import { polarPoint } from "@/lib/diagrams/geometryPrimitives";
 import { formatRadianLabel } from "./simplifyRadian";
+import { coordLabelToLatex } from "./coordLatex";
 import { gcd } from "@/lib/generators/utils/math";
 
 export const UNIT_CIRCLE_CX = 150;
@@ -32,6 +33,8 @@ export interface StandardAngle {
   cosLabel: string;
   /** sin(θ) = y on the unit circle */
   sinLabel: string;
+  cosLatex: string;
+  sinLatex: string;
   x: number;
   y: number;
   point: { x: number; y: number };
@@ -114,6 +117,8 @@ function buildAngle(degrees: number): StandardAngle {
     radianLabel: radianCoeff === 0 ? "0" : formatRadianLabel(rNum, rDen),
     cosLabel: coords.cos,
     sinLabel: coords.sin,
+    cosLatex: coordLabelToLatex(coords.cos),
+    sinLatex: coordLabelToLatex(coords.sin),
     x: coords.x,
     y: coords.y,
     point: polarPoint(cx, cy, r, degrees),
