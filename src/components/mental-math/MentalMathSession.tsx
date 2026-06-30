@@ -15,6 +15,7 @@ import { BinaryChoiceInput } from "./BinaryChoiceInput";
 import { PrimeFactorSlotsInput } from "./PrimeFactorSlotsInput";
 import { AngleLocateInput } from "./unit-circle/AngleLocateInput";
 import { FeedbackPopup } from "./FeedbackPopup";
+import { ExplanationModal } from "./ExplanationModal";
 import { KatexInput } from "./KatexInput";
 import { CollapsibleMathSymbolBar } from "./CollapsibleMathSymbolBar";
 import { insertAtCursor } from "./mathInputUtils";
@@ -94,6 +95,7 @@ export function MentalMathSession({
   onDiscardSession,
 }: MentalMathSessionProps) {
   const [showEndConfirm, setShowEndConfirm] = useState(false);
+  const [showExplanationModal, setShowExplanationModal] = useState(false);
   const [answer, setAnswer] = useState("");
   const [multiAnswers, setMultiAnswers] = useState<string[]>([]);
   const [showSuccessFeedback, setShowSuccessFeedback] = useState(false);
@@ -134,6 +136,7 @@ export function MentalMathSession({
   useEffect(() => {
     setAnswer("");
     setAnswerRevealed(false);
+    setShowExplanationModal(false);
     setLocateSelectedDegrees(null);
     setShowSuccessFeedback(false);
 
@@ -331,12 +334,18 @@ export function MentalMathSession({
     currentQuestion.diagram?.type === "unit-circle" &&
     !isAngleLocate &&
     currentQuestion.metadata?.angleDegrees != null &&
-    ((showFeedback && lastAttempt?.isCorrect === false) || answerRevealed)
+    ((showFeedback && lastAttempt?.isCorrect === true) || answerRevealed)
       ? {
           showCorrect: true,
           correctDegrees: currentQuestion.metadata.angleDegrees,
         }
       : undefined;
+
+  const showExplanationButton =
+    answerRevealed &&
+    showFeedback &&
+    !lastAttempt?.isCorrect &&
+    Boolean(currentQuestion.explanation);
 
   return (
     <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-background">
@@ -460,19 +469,6 @@ export function MentalMathSession({
               </AnimatePresence>
             )}
 
-            {showFeedback &&
-              !lastAttempt?.isCorrect &&
-              currentQuestion.explanation &&
-              !answerRevealed &&
-              !isAngleLocate && (
-                <div className="w-full max-w-md rounded-xl bg-surface-elevated px-4 py-3 text-center">
-                  <MathContent
-                    content={currentQuestion.explanation}
-                    className="text-sm leading-relaxed text-text-muted"
-                  />
-                </div>
-              )}
-
             {/* Input section */}
             <div
               className={cn(
@@ -496,14 +492,6 @@ export function MentalMathSession({
                   answerRevealed={answerRevealed}
                   disabled={false}
                   onSelect={handleBinaryChoice}
-                  hint={
-                    currentQuestion.answerInput.showHintOnIncorrect &&
-                    showFeedback &&
-                    lastAttempt?.isCorrect === false &&
-                    !answerRevealed
-                      ? currentQuestion.explanation
-                      : undefined
-                  }
                   onReveal={
                     !answerRevealed && showFeedback && !lastAttempt?.isCorrect
                       ? handleRevealAnswer
@@ -526,7 +514,6 @@ export function MentalMathSession({
                   isCorrect={lastAttempt?.isCorrect ?? null}
                   answerRevealed={answerRevealed}
                   selectedDegrees={locateSelectedDegrees}
-                  explanation={currentQuestion.explanation}
                   onSelect={handleAngleLocate}
                   onReveal={
                     !answerRevealed && showFeedback && !lastAttempt?.isCorrect
@@ -770,19 +757,17 @@ export function MentalMathSession({
                   </button>
                 </>
               )}
+              {showExplanationButton && (
+                <button
+                  type="button"
+                  onClick={() => setShowExplanationModal(true)}
+                  className="rounded-xl bg-surface-elevated px-4 py-2 text-sm font-medium text-text-muted transition-colors hover:bg-surface hover:text-text"
+                >
+                  View explanation
+                </button>
+              )}
             </div>
           </div>
-
-          {/* Explanation display (shown when answer is revealed) */}
-          {answerRevealed && currentQuestion.explanation && (
-            <div className="mt-6 rounded-xl bg-surface-elevated px-4 py-3">
-              <p className="text-sm font-medium text-text-muted mb-2">Explanation</p>
-              <MathContent
-                content={currentQuestion.explanation}
-                className="text-sm leading-relaxed text-text-subtle"
-              />
-            </div>
-          )}
         </Container>
       </div>
 
@@ -791,6 +776,12 @@ export function MentalMathSession({
       <FeedbackPopup
         show={showSuccessFeedback}
         message={currentQuestion.metadata?.feedbackMessage ?? "Correct!"}
+      />
+
+      <ExplanationModal
+        show={showExplanationModal}
+        content={currentQuestion.explanation ?? ""}
+        onClose={() => setShowExplanationModal(false)}
       />
 
       <AnimatePresence>

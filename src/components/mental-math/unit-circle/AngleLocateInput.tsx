@@ -5,7 +5,6 @@ import { Eye } from "lucide-react";
 import type { AngleLocateAnswerInput, UnitCircleDiagramData } from "@/types/core";
 import { nearestStandardAngle } from "@/lib/angles/angleData";
 import { UnitCircle } from "./UnitCircle";
-import { MathContent } from "@/components/shared/MathContent";
 import { cn } from "@/lib/utils";
 
 interface AngleLocateInputProps {
@@ -16,7 +15,6 @@ interface AngleLocateInputProps {
   isCorrect: boolean | null;
   answerRevealed: boolean;
   selectedDegrees: number | null;
-  explanation?: string;
   onSelect: (degrees: number) => void;
   onReveal?: () => void;
   onContinue?: () => void;
@@ -30,7 +28,6 @@ export function AngleLocateInput({
   isCorrect,
   answerRevealed,
   selectedDegrees,
-  explanation,
   onSelect,
   onReveal,
   onContinue,
@@ -53,19 +50,13 @@ export function AngleLocateInput({
   const displaySelected = selectedDegrees ?? localSelected;
 
   const feedback =
-    showFeedback && isCorrect === false
+    (showFeedback && isCorrect === true) || answerRevealed
       ? {
           showCorrect: true,
           correctDegrees,
           selectedDegrees: displaySelected ?? undefined,
         }
-      : answerRevealed
-        ? {
-            showCorrect: true,
-            correctDegrees,
-            selectedDegrees: displaySelected ?? undefined,
-          }
-        : undefined;
+      : undefined;
 
   return (
     <div className="flex w-full max-w-lg flex-col items-center gap-4">
@@ -81,15 +72,6 @@ export function AngleLocateInput({
       <p className="text-xs text-text-subtle text-center">
         Tap a position on the circle (within ~{tolerance}° of a standard angle)
       </p>
-
-      {showFeedback && isCorrect === false && explanation && !answerRevealed && (
-        <div className="w-full rounded-xl bg-surface-elevated px-4 py-3 text-center">
-          <MathContent
-            content={explanation}
-            className="text-sm leading-relaxed text-text-muted"
-          />
-        </div>
-      )}
 
       {onReveal && showFeedback && isCorrect === false && !answerRevealed && (
         <button
