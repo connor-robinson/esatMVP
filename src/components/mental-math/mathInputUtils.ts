@@ -2,7 +2,7 @@
  * Shared helpers for mental-math answer inputs
  */
 
-import { normalizeSuperscripts, normalizeGreekLetters } from "@/lib/answer-checker/utils";
+import { normalizeGreekLetters } from "@/lib/answer-checker/utils";
 
 export function insertAtCursor(
   value: string,
@@ -20,10 +20,14 @@ export function insertAtCursor(
 export function toMathDisplayFormat(input: string): string {
   if (!input.trim()) return "";
 
-  let display = input;
-  display = normalizeSuperscripts(display);
-  display = normalizeGreekLetters(display);
-  display = display.replace(/(\d+)\s*\/\s*(\d+)/g, (_, num, den) => `\\frac{${num}}{${den}}`);
+  let display = input.trim();
   display = display.replace(/\bsqrt\s*\(\s*([^)]+)\s*\)/gi, (_, inner) => `\\sqrt{${inner.trim()}}`);
+  display = display.replace(/(\d+)\s*\/\s*(\d+)/g, (_, num, den) => `\\frac{${num}}{${den}}`);
+  display = display.replace(/\^(\d+)/g, "^{$1}");
+  display = display.replace(/\bpi\b/gi, "\\pi");
+  display = display.replace(/\btheta\b/gi, "\\theta");
+  display = display.replace(/\balpha\b/gi, "\\alpha");
+  display = display.replace(/\bbeta\b/gi, "\\beta");
+  display = normalizeGreekLetters(display);
   return display;
 }

@@ -1,5 +1,5 @@
 /**
- * Math answer input: compact raw strip on top, KaTeX preview inside main bar, collapsible symbols
+ * Math answer input: raw strip on top, KaTeX live in the main bar (no separate preview)
  */
 
 "use client";
@@ -62,11 +62,11 @@ export const KatexInput = forwardRef<HTMLInputElement, KatexInputProps>(function
       return;
     }
     try {
-      const displayValue = toMathDisplayFormat(value.trim());
+      const displayValue = toMathDisplayFormat(value);
       const rendered = renderMath(displayValue, false);
-      setRenderedHtml(rendered ?? value);
+      setRenderedHtml(rendered ?? displayValue);
     } catch {
-      setRenderedHtml("");
+      setRenderedHtml(value);
     }
   }, [value]);
 
@@ -97,19 +97,23 @@ export const KatexInput = forwardRef<HTMLInputElement, KatexInputProps>(function
     if (!disabled) inputRef.current?.focus();
   };
 
-  return (
-    <div className="relative flex w-full max-w-md flex-col gap-1.5">
-      {/* Compact raw source — grows with content */}
-      {value ? (
-        <div
-          className="max-h-20 overflow-y-auto rounded-md bg-surface-elevated/80 px-2 py-0.5 text-center text-[11px] leading-snug font-mono text-text-muted/80"
-          aria-live="polite"
-        >
-          <span className="whitespace-pre-wrap break-all">{value}</span>
-        </div>
-      ) : null}
+  const caretColor = hasError ? "var(--color-error)" : "var(--color-text)";
 
-      {/* Main bar: KaTeX preview underneath, transparent input on top */}
+  return (
+    <div className="relative flex w-full max-w-md flex-col gap-2">
+      {/* Raw source — always above the main bar */}
+      <div
+        className={cn(
+          "min-h-[1.375rem] rounded-lg bg-surface-elevated/80 px-3 py-1 text-center text-xs font-mono leading-snug text-text-muted/85",
+          !value && "opacity-0",
+        )}
+        aria-live="polite"
+        aria-hidden={!value}
+      >
+        <span className="whitespace-pre-wrap break-all">{value || "\u00a0"}</span>
+      </div>
+
+      {/* Main bar: rendered KaTeX with invisible typing layer on top */}
       <div className="relative">
         <div
           role="presentation"
@@ -143,21 +147,24 @@ export const KatexInput = forwardRef<HTMLInputElement, KatexInputProps>(function
           onKeyDown={handleKeyDown}
           disabled={disabled}
           autoComplete="off"
+          spellCheck={false}
           aria-label={placeholder}
           className={cn(
-            "absolute inset-0 h-16 w-full rounded-2xl border-0 bg-transparent text-center text-2xl font-semibold text-transparent outline-none",
-            "caret-text focus:ring-0 focus:outline-none",
+            "absolute inset-0 z-10 h-16 w-full rounded-2xl border-0 bg-transparent text-center text-2xl font-semibold outline-none",
+            "focus:ring-0 focus:outline-none selection:bg-primary/15",
             disabled && "cursor-not-allowed",
           )}
           style={{
+            color: "transparent",
+            WebkitTextFillColor: "transparent",
+            caretColor,
             paddingLeft: "4.5rem",
             paddingRight: "4.5rem",
             lineHeight: "4rem",
-            caretColor: hasError ? "var(--color-error)" : "var(--color-text)",
           }}
         />
 
-        <div className="pointer-events-none absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
+        <div className="pointer-events-none absolute right-2 top-1/2 z-20 flex -translate-y-1/2 items-center gap-1">
           {showReveal && onReveal && (
             <button
               type="button"
