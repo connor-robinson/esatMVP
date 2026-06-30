@@ -427,7 +427,7 @@ export function templateCyclicExterior(): CircleTheoremResult {
     dDeg: 232,
     beyondC: 0.42,
     beyondB: 0.5,
-  });
+  })!;
 }
 
 function buildCyclicExterior(config?: {
