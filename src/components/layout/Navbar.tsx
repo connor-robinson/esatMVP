@@ -1,12 +1,12 @@
 /**
- * Navigation bar component with section detection and switching
+ * Navigation bar with section dropdowns and mobile menu
  */
 
 'use client';
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   useSupabaseClient,
   useSupabaseSession,
@@ -17,60 +17,130 @@ import { usePaperSessionStore } from '@/store/paperSessionStore';
 import { useTheme } from '@/contexts/ThemeContext';
 import { BrandNavLockup } from '@/components/brand/BrandNavLockup';
 import { APP_NAME } from '@/config/brand';
-import { LogIn, LogOut, Moon, Settings, Sun } from 'lucide-react';
+import {
+  NavSectionDropdown,
+  type NavSectionConfig,
+  type NavSectionId,
+} from '@/components/layout/NavSectionDropdown';
+import { LogIn, LogOut, Menu, Moon, Settings, Sun, X } from 'lucide-react';
 
 /** Unified lucide sizing so logout / login glyphs match sun + gear optically */
 const NAV_ICON_PX = 22;
 const NAV_ICON_STROKE = 2;
 
-const skillsNavItems = [
-  { href: '/mental-maths/drill', label: 'Drill' },
-  { href: '/mental-maths/analytics', label: 'Analytics' },
-  { href: '/mental-maths/leaderboard', label: 'Leaderboard' },
-];
-
-const papersNavItems = [
-  { href: '/past-papers/roadmap', label: 'Roadmap' },
-  { href: '/past-papers/library', label: 'Library' },
-  { href: '/past-papers/analytics', label: 'Analytics' },
-];
-
-const questionsNavItems = [
-  { href: '/questions', label: 'Home' },
-  { href: '/questions/library', label: 'Library' },
-  { href: '/questions/questionbank/analytics', label: 'Analytics' },
-];
-
-const sectionNavItems = [
+const navSections: NavSectionConfig[] = [
   {
-    href: '/mental-maths/drill',
     label: 'Mental Maths',
-    section: 'skills' as const,
+    href: '/mental-maths/drill',
+    section: 'skills',
+    items: [
+      {
+        href: '/mental-maths/drill',
+        label: 'Drill',
+        description: 'Start a practice session',
+      },
+      {
+        href: '/mental-maths/analytics',
+        label: 'Analytics',
+        description: 'Track your progress',
+      },
+      {
+        href: '/mental-maths/leaderboard',
+        label: 'Leaderboard',
+        description: 'Compare with others',
+      },
+    ],
   },
   {
-    href: '/past-papers/library',
     label: 'Past Papers',
-    section: 'papers' as const,
+    href: '/past-papers/library',
+    section: 'papers',
+    items: [
+      {
+        href: '/past-papers/library',
+        label: 'Library',
+        description: 'Browse exam papers',
+      },
+      {
+        href: '/past-papers/roadmap',
+        label: 'Roadmap',
+        description: 'Plan your prep',
+      },
+      {
+        href: '/past-papers/analytics',
+        label: 'Analytics',
+        description: 'Review your results',
+      },
+    ],
   },
   {
-    href: '/questions',
     label: 'Question Bank',
-    section: 'questions' as const,
+    href: '/questions',
+    section: 'questions',
+    items: [
+      {
+        href: '/questions',
+        label: 'Home',
+        description: 'Overview and mixed practice',
+      },
+      {
+        href: '/questions/questionbank/drill',
+        label: 'Drill',
+        description: 'Topic-focused sessions',
+      },
+      {
+        href: '/questions/library',
+        label: 'Library',
+        description: 'Browse all questions',
+      },
+      {
+        href: '/questions/questionbank/analytics',
+        label: 'Analytics',
+        description: 'Track your progress',
+      },
+    ],
+  },
+  {
+    label: 'Tools',
+    href: '/tools/score-converter',
+    section: 'tools',
+    items: [
+      {
+        href: '/tools/score-converter',
+        label: 'Score Converter',
+        description: 'Convert raw scores to percentiles',
+      },
+      {
+        href: '/tools/faqs',
+        label: 'FAQs',
+        description: 'Common questions answered',
+      },
+      {
+        href: '/tools/tutorials',
+        label: 'Tutorials',
+        description: 'Learn how to use the platform',
+      },
+    ],
   },
 ];
 
-const sectionNavLinkClass =
-  'text-sm font-semibold uppercase tracking-[0.12em] transition-colors duration-fast ease-signature';
+const ALL_NAV_ROUTES = navSections.flatMap((section) => [
+  section.href,
+  ...section.items.map((item) => item.href),
+]);
 
-const navPillClass =
-  'px-3 py-2 rounded-organic-md text-sm font-semibold uppercase tracking-[0.12em] transition-all duration-instant ease-signature will-change-transform active:scale-[0.97]';
-
-const navGroupGapClass = 'flex min-w-0 items-center gap-1 sm:gap-2';
+function resolveSection(pathname: string): NavSectionId | 'home' {
+  if (pathname.startsWith('/mental-maths')) return 'skills';
+  if (pathname.startsWith('/past-papers')) return 'papers';
+  if (pathname.startsWith('/questions')) return 'questions';
+  if (pathname.startsWith('/tools')) return 'tools';
+  return 'home';
+}
 
 export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const [activePress, setActivePress] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const session = useSupabaseSession();
   const supabase = useSupabaseClient();
   const {
@@ -84,8 +154,6 @@ export function Navbar() {
   const [docFullscreen, setDocFullscreen] = useState(false);
   const { theme, toggleTheme, isDark } = useTheme();
 
-  // Show progress bar if there's an active session
-  // Don't show if this session was just quit (within last 5 seconds)
   const isJustQuit =
     justQuitSessionId === sessionId &&
     justQuitTimestamp &&
@@ -123,60 +191,33 @@ export function Navbar() {
     !hasActiveSession ||
     (docFullscreen && paperFullscreenShowMainNavbar);
 
-  const currentSection = pathname.startsWith('/mental-maths')
-    ? 'skills'
-    : pathname.startsWith('/past-papers')
-      ? 'papers'
-      : pathname.startsWith('/questions')
-        ? 'questions'
-        : 'home';
-
-  const currentNavItems =
-    currentSection === 'skills'
-      ? skillsNavItems
-      : currentSection === 'papers'
-        ? papersNavItems
-        : currentSection === 'questions'
-          ? questionsNavItems
-          : [];
+  const currentSection = resolveSection(pathname);
 
   useEffect(() => {
-    const allRoutes = [
-      '/',
-      '/mental-maths/drill',
-      '/mental-maths/analytics',
-      '/past-papers/roadmap',
-      '/past-papers/library',
-      '/past-papers/analytics',
-      '/questions',
-      '/questions/questionbank',
-      '/questions/library',
-      '/questions/questionbank/analytics',
-    ];
+    setMobileMenuOpen(false);
+  }, [pathname]);
 
-    allRoutes.forEach((route, index) => {
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMobileMenuOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    ALL_NAV_ROUTES.forEach((route, index) => {
       setTimeout(() => router.prefetch(route), index * 5);
     });
   }, [router]);
 
-  const handleMouseDown = useCallback(
-    (href: string) => {
-      setActivePress(href);
-      router.prefetch(href);
-    },
-    [router],
-  );
-
-  const handleMouseEnter = useCallback(
+  const handlePrefetch = useCallback(
     (href: string) => {
       router.prefetch(href);
     },
     [router],
   );
-
-  const handleMouseUp = useCallback(() => {
-    setTimeout(() => setActivePress(null), 120);
-  }, []);
 
   const handleSignOut = useCallback(async () => {
     await supabase.auth.signOut();
@@ -185,7 +226,6 @@ export function Navbar() {
   }, [supabase, router]);
 
   const loginHref = useMemo(() => {
-    // Default to /papers/library if on home page or login page
     const redirectTo =
       pathname && pathname !== '/login' && pathname !== '/'
         ? pathname
@@ -207,195 +247,208 @@ export function Navbar() {
   const navIconSlotClass =
     'inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-all duration-fast ease-signature hover:bg-surface-subtle interaction-scale';
 
+  const accountControls = (
+    <div
+      className='flex shrink-0 items-center gap-1 border-l border-border-subtle pl-3 sm:pl-4'
+      aria-label='Account and preferences'
+    >
+      <button
+        type='button'
+        onClick={toggleTheme}
+        className={navIconSlotClass}
+        aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+      >
+        {isDark ? (
+          <Sun
+            className='text-text'
+            aria-hidden
+            size={NAV_ICON_PX}
+            strokeWidth={NAV_ICON_STROKE}
+          />
+        ) : (
+          <Moon
+            className='text-text'
+            aria-hidden
+            size={NAV_ICON_PX}
+            strokeWidth={NAV_ICON_STROKE}
+          />
+        )}
+      </button>
+
+      {session?.user ? (
+        <>
+          <button
+            type='button'
+            onClick={() => void handleSignOut()}
+            className={navIconSlotClass}
+            aria-label='Sign out'
+          >
+            <LogOut
+              className='text-text'
+              aria-hidden
+              size={NAV_ICON_PX}
+              strokeWidth={NAV_ICON_STROKE}
+            />
+          </button>
+          <Link
+            href={settingsHref}
+            className={cn(
+              navIconSlotClass,
+              isSettingsActive && 'bg-secondary/15',
+            )}
+            aria-label='Settings'
+          >
+            <Settings
+              aria-hidden
+              className={cn(
+                isSettingsActive ? 'text-secondary' : 'text-text',
+              )}
+              size={NAV_ICON_PX}
+              strokeWidth={NAV_ICON_STROKE}
+            />
+          </Link>
+        </>
+      ) : (
+        <>
+          <Link
+            href={loginHref}
+            className={navIconSlotClass}
+            aria-label='Sign in'
+          >
+            <LogIn
+              aria-hidden
+              className='text-text'
+              size={NAV_ICON_PX}
+              strokeWidth={NAV_ICON_STROKE}
+            />
+          </Link>
+          <Link
+            href={loginHrefWithSettingsRedirect}
+            className={cn(navIconSlotClass)}
+            aria-label='Settings'
+          >
+            <Settings
+              aria-hidden
+              className='text-text'
+              size={NAV_ICON_PX}
+              strokeWidth={NAV_ICON_STROKE}
+            />
+          </Link>
+        </>
+      )}
+    </div>
+  );
+
   return (
     <>
       {showMainNavStrip && (
-      <nav className='sticky top-0 z-50 w-full border-b border-border bg-background/98 backdrop-blur-xl'>
-        <div className='w-full px-4 sm:px-6 lg:px-10 xl:px-12'>
-          <div className='flex h-[65px] items-center justify-between gap-4'>
-            <div className='flex min-w-0 flex-1 items-center gap-4 sm:gap-6 lg:gap-8'>
-              <Link
-                href='/'
-                className='group interaction-scale inline-flex shrink-0 items-center'
-                aria-label={APP_NAME}
-              >
-                <BrandNavLockup />
-              </Link>
+        <nav className='sticky top-0 z-50 w-full border-b border-border bg-background/98 backdrop-blur-xl'>
+          <div className='w-full px-4 sm:px-6 lg:px-10 xl:px-12'>
+            <div className='flex h-[65px] items-center justify-between gap-4'>
+              <div className='flex min-w-0 flex-1 items-center gap-4 sm:gap-6 lg:gap-8'>
+                <Link
+                  href='/'
+                  className='group interaction-scale inline-flex shrink-0 items-center'
+                  aria-label={APP_NAME}
+                >
+                  <BrandNavLockup />
+                </Link>
 
-              {!hasActiveSession && (
-                <div className='flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1'>
-                  {sectionNavItems.map((item, index) => {
-                    const isActive = currentSection === item.section;
+                {!hasActiveSession && (
+                  <div className='hidden min-w-0 items-center gap-x-4 lg:gap-x-5 md:flex'>
+                    {navSections.map((section) => (
+                      <NavSectionDropdown
+                        key={section.section}
+                        config={section}
+                        isActive={currentSection === section.section}
+                        onPrefetch={handlePrefetch}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
 
-                    return (
-                      <span key={item.href} className='inline-flex items-center gap-x-3'>
-                        {index > 0 && (
-                          <span
-                            className='text-sm text-text-subtle select-none'
-                            aria-hidden
-                          >
-                            /
-                          </span>
-                        )}
-                        <Link
-                          href={item.href}
-                          prefetch={true}
-                          onMouseEnter={() => handleMouseEnter(item.href)}
-                          className={cn(
-                            sectionNavLinkClass,
-                            isActive
-                              ? item.section === 'skills'
-                                ? 'font-bold text-primary'
-                                : item.section === 'papers'
-                                  ? 'font-bold text-accent'
-                                  : 'font-bold text-secondary'
-                              : 'text-text-muted hover:text-text',
-                          )}
-                        >
-                          {item.label}
-                        </Link>
-                      </span>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-            <div className='flex min-w-0 shrink-0 items-center gap-2 sm:gap-3'>
-              {!hasActiveSession && currentSection !== 'home' && (
-                <div className={navGroupGapClass}>
-                  {currentNavItems.map((item) => {
-                    const isActive = pathname === item.href;
-                    const isPressed = activePress === item.href;
-
-                    return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        prefetch={true}
-                        onMouseEnter={() => handleMouseEnter(item.href)}
-                        onMouseDown={() => handleMouseDown(item.href)}
-                        onMouseUp={handleMouseUp}
-                        onMouseLeave={handleMouseUp}
-                        className={cn(
-                          navPillClass,
-                          isActive
-                            ? currentSection === 'skills'
-                              ? 'bg-primary/15 text-primary'
-                              : currentSection === 'papers'
-                                ? 'bg-accent/10 text-accent'
-                                : 'bg-secondary/10 text-secondary'
-                            : 'text-text hover:bg-surface-subtle hover:text-text',
-                          isPressed &&
-                            !isActive &&
-                            'bg-surface-elevated scale-[0.97]',
-                        )}
-                        style={{
-                          transform: isPressed ? 'scale(0.97)' : undefined,
-                        }}
-                      >
-                        {item.label}
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
-
-              {!hasActiveSession && (
-                  <div
-                    className='flex shrink-0 items-center gap-1 border-l border-border-subtle pl-3 sm:pl-4'
-                    aria-label='Account and preferences'
-                  >
+              <div className='flex min-w-0 shrink-0 items-center gap-2 sm:gap-3'>
+                {!hasActiveSession && (
+                  <>
                     <button
                       type='button'
-                      onClick={toggleTheme}
-                      className={navIconSlotClass}
-                      aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+                      className={cn(navIconSlotClass, 'md:hidden')}
+                      aria-expanded={mobileMenuOpen}
+                      aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+                      onClick={() => setMobileMenuOpen((prev) => !prev)}
                     >
-                      {isDark ? (
-                        <Sun
-                          className='text-text'
+                      {mobileMenuOpen ? (
+                        <X
                           aria-hidden
+                          className='text-text'
                           size={NAV_ICON_PX}
                           strokeWidth={NAV_ICON_STROKE}
                         />
                       ) : (
-                        <Moon
-                          className='text-text'
+                        <Menu
                           aria-hidden
+                          className='text-text'
                           size={NAV_ICON_PX}
                           strokeWidth={NAV_ICON_STROKE}
                         />
                       )}
                     </button>
-
-                    {session?.user ? (
-                      <>
-                        <button
-                          type='button'
-                          onClick={() => void handleSignOut()}
-                          className={navIconSlotClass}
-                          aria-label='Sign out'
-                        >
-                          <LogOut
-                            className='text-text'
-                            aria-hidden
-                            size={NAV_ICON_PX}
-                            strokeWidth={NAV_ICON_STROKE}
-                          />
-                        </button>
-                        <Link
-                          href={settingsHref}
-                          className={cn(
-                            navIconSlotClass,
-                            isSettingsActive && 'bg-secondary/15',
-                          )}
-                          aria-label='Settings'
-                        >
-                          <Settings
-                            aria-hidden
-                            className={cn(
-                              isSettingsActive ? 'text-secondary' : 'text-text',
-                            )}
-                            size={NAV_ICON_PX}
-                            strokeWidth={NAV_ICON_STROKE}
-                          />
-                        </Link>
-                      </>
-                    ) : (
-                      <>
-                        <Link
-                          href={loginHref}
-                          className={navIconSlotClass}
-                          aria-label='Sign in'
-                        >
-                          <LogIn
-                            aria-hidden
-                            className='text-text'
-                            size={NAV_ICON_PX}
-                            strokeWidth={NAV_ICON_STROKE}
-                          />
-                        </Link>
-                        <Link
-                          href={loginHrefWithSettingsRedirect}
-                          className={cn(navIconSlotClass)}
-                          aria-label='Settings'
-                        >
-                          <Settings
-                            aria-hidden
-                            className='text-text'
-                            size={NAV_ICON_PX}
-                            strokeWidth={NAV_ICON_STROKE}
-                          />
-                        </Link>
-                      </>
-                    )}
-                  </div>
-              )}
+                    {accountControls}
+                  </>
+                )}
+              </div>
             </div>
+
+            {!hasActiveSession && mobileMenuOpen && (
+              <div className='border-t border-border-subtle pb-4 pt-3 md:hidden'>
+                <div className='flex flex-col gap-5'>
+                  {navSections.map((section) => (
+                    <div key={section.section}>
+                      <Link
+                        href={section.href}
+                        prefetch
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={cn(
+                          'text-sm font-semibold uppercase tracking-[0.12em]',
+                          currentSection === section.section
+                            ? section.section === 'skills'
+                              ? 'text-primary'
+                              : section.section === 'papers'
+                                ? 'text-accent'
+                                : section.section === 'questions'
+                                  ? 'text-secondary'
+                                  : 'text-text'
+                            : 'text-text-muted',
+                        )}
+                      >
+                        {section.label}
+                      </Link>
+                      <div className='mt-2 flex flex-col gap-0.5 pl-1'>
+                        {section.items.map((item) => (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            prefetch
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={cn(
+                              'rounded-organic-md px-2 py-2 text-sm transition-colors duration-fast ease-signature',
+                              pathname === item.href
+                                ? 'bg-surface-subtle text-text font-semibold'
+                                : 'text-text-muted hover:bg-surface-subtle hover:text-text',
+                            )}
+                          >
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-      </nav>
+        </nav>
       )}
       {hasActiveSession && <SessionProgressBar embedded />}
     </>
