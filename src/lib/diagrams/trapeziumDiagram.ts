@@ -35,7 +35,6 @@ export function buildTrapeziumDiagram(a: number, b: number, h: number): Geometry
   );
 
   const diagram = emptyGeometryDiagram(viewBox);
-  diagram.size = "large";
   diagram.paths = [
     {
       d: `M ${topLeft.x} ${topLeft.y} L ${topRight.x} ${topRight.y} L ${botRight.x} ${botRight.y} L ${botLeft.x} ${botLeft.y} Z`,

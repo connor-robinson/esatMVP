@@ -12,17 +12,17 @@ export const DIAGRAM_CX = 200;
 export const DIAGRAM_CY = 200;
 
 /** Fixed pixel radius for circles, spheres (independent of r value). */
-export const FIXED_RADIUS_PX = 140;
+export const FIXED_RADIUS_PX = 108;
 
-/** Larger radius for sector wedges so the shape fills the display area. */
-export const SECTOR_RADIUS_PX = 175;
+/** Radius for sector wedges — cropped viewBox keeps them readable without dominating the page. */
+export const SECTOR_RADIUS_PX = 125;
 
 /** Fixed isometric extent (max edge length in px). */
-export const ISO_MAX_PX = 165;
+export const ISO_MAX_PX = 115;
 
 /** Fixed cylinder / cone footprint and height in px. */
-export const FIXED_CYLINDER_R_PX = 118;
-export const FIXED_CYLINDER_H_PX = 162;
+export const FIXED_CYLINDER_R_PX = 80;
+export const FIXED_CYLINDER_H_PX = 108;
 
 /** Angle for the standard radius line (degrees, 0 = east). */
 export const RADIUS_LINE_DEG = 38;

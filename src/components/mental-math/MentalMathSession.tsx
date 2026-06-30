@@ -121,6 +121,8 @@ export function MentalMathSession({
   const isPrimeFactorSlots = currentQuestion.answerInput?.type === "prime-factor-slots";
   const isAngleLocate = currentQuestion.answerInput?.type === "angle-locate";
   const hasDiagram = Boolean(currentQuestion.diagram && !isAngleLocate);
+  const isAreaVolumeDiagram =
+    currentQuestion.topicId === "geometry_2d" || currentQuestion.topicId === "geometry_3d";
   const prominentDiagram =
     hasDiagram && PROMINENT_DIAGRAM_TOPICS.has(currentQuestion.topicId);
   const primeSlotCount =
@@ -446,7 +448,13 @@ export function MentalMathSession({
                   <DiagramRenderer
                     data={currentQuestion.diagram!}
                     feedback={unitCircleFeedback}
-                    className={prominentDiagram ? "w-full max-w-3xl" : undefined}
+                    className={
+                      prominentDiagram
+                        ? isAreaVolumeDiagram
+                          ? "w-full max-w-sm"
+                          : "w-full max-w-3xl"
+                        : undefined
+                    }
                   />
                 </motion.div>
               </AnimatePresence>

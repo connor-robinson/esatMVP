@@ -54,7 +54,6 @@ export function buildSectorDiagram(r: number, angleDeg: number): GeometryDiagram
   );
 
   const diagram = emptyGeometryDiagram(viewBox);
-  diagram.size = "large";
   diagram.paths = [
     {
       d: sectorPath(cx, cy, pxR, startDeg, endDeg),
