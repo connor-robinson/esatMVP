@@ -27,7 +27,7 @@ import {
   ArrowLeftRight,
   BarChart3,
   BookOpen,
-  CircleHelp,
+  HelpCircle,
   GraduationCap,
   Home,
   Library,
@@ -138,7 +138,7 @@ const navSections: NavSectionConfig[] = [
         href: '/tools/faqs',
         label: 'FAQs',
         description: 'Common questions answered',
-        icon: CircleHelp,
+        icon: HelpCircle,
       },
       {
         href: '/tools/tutorials',
