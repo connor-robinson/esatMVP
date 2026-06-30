@@ -7,108 +7,6 @@ export const LIGHT_MODE_STRATEGY_STORAGE_KEY = "lightModeStrategy";
 
 type ModeToken<T extends string = string> = Record<ThemeMode, T>;
 
-const EXTRA_PALETTE_HEXES = [
-  "#ffffff",
-  "#17161c",
-  "#5c6540",
-  "#8CABA0",
-  "#BF8C58",
-  "#CA7BB3",
-  "#8B4F7A",
-] as const;
-
-function hexRelativeLuminance(hex: string): number {
-  const normalized = hex.trim().toLowerCase();
-  const match = normalized.match(/^#([0-9a-f]{6})$/);
-  if (!match) return 0;
-
-  const channels = [0, 2, 4].map((offset) => {
-    const channel = parseInt(match[1].slice(offset, offset + 2), 16) / 255;
-    return channel <= 0.03928
-      ? channel / 12.92
-      : ((channel + 0.055) / 1.055) ** 2.4;
-  });
-
-  return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
-}
-
-function rgbToHex(r: number, g: number, b: number): string {
-  return `#${[r, g, b]
-    .map((channel) => Math.round(channel).toString(16).padStart(2, "0"))
-    .join("")}`;
-}
-
-/** Darkest palette stop ↔ lightest, using every Figma neutral + brand swatch. */
-export function buildPaletteInversionMap(): Map<string, string> {
-  const unique = [
-    ...new Set([
-      ...Object.values(figmaNeutralScale),
-      ...Object.values(figmaPalette),
-      ...EXTRA_PALETTE_HEXES,
-    ]),
-  ].sort((a, b) => hexRelativeLuminance(a) - hexRelativeLuminance(b));
-
-  const map = new Map<string, string>();
-  for (let i = 0; i < unique.length; i++) {
-    map.set(unique[i].toLowerCase(), unique[unique.length - 1 - i]);
-  }
-  return map;
-}
-
-const paletteInversionMap = (() => {
-  let cached: Map<string, string> | null = null;
-  return () => {
-    if (!cached) cached = buildPaletteInversionMap();
-    return cached;
-  };
-})();
-
-export function invertPaletteColor(color: string): string {
-  const trimmed = color.trim();
-
-  const hexMatch = trimmed.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
-  if (hexMatch) {
-    const expanded =
-      hexMatch[1].length === 3
-        ? hexMatch[1]
-            .split("")
-            .map((c) => c + c)
-            .join("")
-        : hexMatch[1];
-    const hex = `#${expanded.toLowerCase()}`;
-    return paletteInversionMap().get(hex) ?? hex;
-  }
-
-  const rgbaMatch = trimmed.match(
-    /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?\s*\)$/i,
-  );
-  if (rgbaMatch) {
-    const [, r, g, b, a] = rgbaMatch;
-    const inverted = invertPaletteColor(rgbToHex(Number(r), Number(g), Number(b)));
-    const parsed = inverted.match(/^#([0-9a-f]{6})$/i);
-    if (!parsed) return trimmed;
-    const ir = parseInt(parsed[1].slice(0, 2), 16);
-    const ig = parseInt(parsed[1].slice(2, 4), 16);
-    const ib = parseInt(parsed[1].slice(4, 6), 16);
-    return a !== undefined ? `rgba(${ir}, ${ig}, ${ib}, ${a})` : `rgb(${ir}, ${ig}, ${ib})`;
-  }
-
-  return trimmed;
-}
-
-function invertSurfaceOpacityRgba(rgba: string): string {
-  const match = rgba.match(
-    /^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([\d.]+)\s*\)$/i,
-  );
-  if (!match) return rgba;
-  const [, r, g, b, a] = match;
-  const isWhiteOverlay = Number(r) === 255 && Number(g) === 255 && Number(b) === 255;
-  const isBlackOverlay = Number(r) === 0 && Number(g) === 0 && Number(b) === 0;
-  if (isWhiteOverlay) return `rgba(0, 0, 0, ${a})`;
-  if (isBlackOverlay) return `rgba(255, 255, 255, ${a})`;
-  return invertPaletteColor(rgba);
-}
-
 /**
  * Figma file "Learn (Copy)" → section **Color System** (node `226:2930`).
  * Channel values are the exact `color.r/g/b` from metadata (0–1), converted to #RRGGBB.
@@ -146,6 +44,236 @@ export const figmaPalette = {
   purpleLight: "#af6da1",
   purpleDark: "#623e56",
 } as const;
+
+function hexRelativeLuminance(hex: string): number {
+  const normalized = hex.trim().toLowerCase();
+  const match = normalized.match(/^#([0-9a-f]{6})$/);
+  if (!match) return 0;
+
+  const channels = [0, 2, 4].map((offset) => {
+    const channel = parseInt(match[1].slice(offset, offset + 2), 16) / 255;
+    return channel <= 0.03928
+      ? channel / 12.92
+      : ((channel + 0.055) / 1.055) ** 2.4;
+  });
+
+  return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+}
+
+function rgbToHex(r: number, g: number, b: number): string {
+  return `#${[r, g, b]
+    .map((channel) => Math.round(channel).toString(16).padStart(2, "0"))
+    .join("")}`;
+}
+
+function normalizeHex(hex: string): string | null {
+  const match = hex.trim().match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (!match) return null;
+  const expanded =
+    match[1].length === 3
+      ? match[1]
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : match[1];
+  return `#${expanded.toLowerCase()}`;
+}
+
+/** Darkest neutral stop ↔ lightest — canonical Figma scale only (no demo swatches). */
+function buildNeutralInversionMap(): Map<string, string> {
+  const unique = [
+    figmaNeutralScale.n50,
+    figmaNeutralScale.n100,
+    figmaNeutralScale.n200,
+    figmaNeutralScale.n300,
+    figmaNeutralScale.n400,
+    figmaNeutralScale.n500,
+    figmaNeutralScale.n600,
+    figmaNeutralScale.n700,
+    figmaNeutralScale.n800,
+    figmaNeutralScale.n850,
+    figmaNeutralScale.n900,
+    "#ffffff",
+    "#17161c",
+  ].sort((a, b) => hexRelativeLuminance(a) - hexRelativeLuminance(b));
+
+  const map = new Map<string, string>();
+  for (let i = 0; i < unique.length; i++) {
+    map.set(unique[i].toLowerCase(), unique[unique.length - 1 - i]);
+  }
+  return map;
+}
+
+function buildBrandSwapMap(): Map<string, string> {
+  const pairs: [string, string][] = [
+    [figmaPalette.greenLight, figmaPalette.greenDark],
+    [figmaPalette.yellowLight, figmaPalette.yellowDark],
+    [figmaPalette.blueLight, figmaPalette.blueDark],
+    [figmaPalette.redLight, figmaPalette.redDark],
+    [figmaPalette.purpleLight, figmaPalette.purpleDark],
+    ["#5c6540", figmaPalette.greenDark],
+    ["#CA7BB3", "#8B4F7A"],
+  ];
+
+  const map = new Map<string, string>();
+  for (const [a, b] of pairs) {
+    map.set(a.toLowerCase(), b);
+    map.set(b.toLowerCase(), a);
+  }
+  return map;
+}
+
+const neutralInversionMap = (() => {
+  let cached: Map<string, string> | null = null;
+  return () => {
+    if (!cached) cached = buildNeutralInversionMap();
+    return cached;
+  };
+})();
+
+const brandSwapMap = (() => {
+  let cached: Map<string, string> | null = null;
+  return () => {
+    if (!cached) cached = buildBrandSwapMap();
+    return cached;
+  };
+})();
+
+/** Invert within site palette: brand hues swap pairs; greys swap on the neutral scale. */
+export function invertSiteColor(color: string): string {
+  const trimmed = color.trim();
+  const hex = normalizeHex(trimmed);
+  if (hex) {
+    const brandSwapped = brandSwapMap().get(hex);
+    if (brandSwapped) return brandSwapped;
+
+    const neutralSwapped = neutralInversionMap().get(hex);
+    if (neutralSwapped) return neutralSwapped;
+
+    const canonical = snapToCanonicalNeutral(hex);
+    return neutralInversionMap().get(canonical) ?? hex;
+  }
+
+  const rgbaMatch = trimmed.match(
+    /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?\s*\)$/i,
+  );
+  if (rgbaMatch) {
+    const [, r, g, b, a] = rgbaMatch;
+    const inverted = invertSiteColor(rgbToHex(Number(r), Number(g), Number(b)));
+    const parsed = inverted.match(/^#([0-9a-f]{6})$/i);
+    if (!parsed) return trimmed;
+    const ir = parseInt(parsed[1].slice(0, 2), 16);
+    const ig = parseInt(parsed[1].slice(2, 4), 16);
+    const ib = parseInt(parsed[1].slice(4, 6), 16);
+    return a !== undefined ? `rgba(${ir}, ${ig}, ${ib}, ${a})` : `rgb(${ir}, ${ig}, ${ib})`;
+  }
+
+  return trimmed;
+}
+
+function invertSurfaceOpacityRgba(rgba: string): string {
+  const match = rgba.match(
+    /^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([\d.]+)\s*\)$/i,
+  );
+  if (!match) return rgba;
+  const [, r, g, b, a] = match;
+  const isWhiteOverlay = Number(r) === 255 && Number(g) === 255 && Number(b) === 255;
+  const isBlackOverlay = Number(r) === 0 && Number(g) === 0 && Number(b) === 0;
+  if (isWhiteOverlay) return `rgba(0, 0, 0, ${a})`;
+  if (isBlackOverlay) return `rgba(255, 255, 255, ${a})`;
+  return invertSiteColor(rgba);
+}
+
+const CANONICAL_NEUTRALS = [
+  figmaNeutralScale.n50,
+  figmaNeutralScale.n100,
+  figmaNeutralScale.n200,
+  figmaNeutralScale.n300,
+  figmaNeutralScale.n400,
+  figmaNeutralScale.n500,
+  figmaNeutralScale.n600,
+  figmaNeutralScale.n700,
+  figmaNeutralScale.n800,
+  figmaNeutralScale.n850,
+  figmaNeutralScale.n900,
+  "#ffffff",
+  "#17161c",
+] as const;
+
+const CANONICAL_NEUTRALS_BY_LUMINANCE = [...CANONICAL_NEUTRALS].sort((a, b) =>
+  hexRelativeLuminance(a) - hexRelativeLuminance(b),
+);
+
+function snapToCanonicalNeutral(hex: string): string {
+  let nearest: string = CANONICAL_NEUTRALS[0];
+  let nearestDistance = Number.POSITIVE_INFINITY;
+  for (const candidate of CANONICAL_NEUTRALS) {
+    const distance = Math.abs(hexRelativeLuminance(hex) - hexRelativeLuminance(candidate));
+    if (distance < nearestDistance) {
+      nearest = candidate;
+      nearestDistance = distance;
+    }
+  }
+  return nearest.toLowerCase();
+}
+
+function lightenNeutralOneStep(hex: string): string {
+  const normalized = normalizeHex(hex);
+  if (!normalized) return hex;
+  const idx = CANONICAL_NEUTRALS_BY_LUMINANCE.findIndex(
+    (stop) => stop.toLowerCase() === normalized,
+  );
+  if (idx >= 0 && idx < CANONICAL_NEUTRALS_BY_LUMINANCE.length - 1) {
+    return CANONICAL_NEUTRALS_BY_LUMINANCE[idx + 1];
+  }
+  return hex;
+}
+
+const IDENTITY_SITE_COLORS = new Set(["#8caba0", "#bf8c58"]);
+
+/** Tokens that keep the same saturated hue in both themes — no brand swap. */
+const SATURATED_BOTH_MODES = new Set<string>([
+  "sessionGreen",
+  "difficultyPillEasy",
+  "difficultyPillMedium",
+  "difficultyPillHard",
+  "difficultyEasy",
+  "maths",
+  "chemistry",
+]);
+
+const SURFACE_TOKEN_KEYS = new Set<string>([
+  "background",
+  "surface",
+  "surfaceElevated",
+  "surfaceSubtle",
+  "surfaceMid",
+  "surfaceNeutral",
+  "folderCard",
+  "folderCardSelected",
+  "surfaceDark",
+]);
+
+/** Light-mode preview: swap each token's dark assignment using site-palette rules. */
+function getSwappedLightToken(
+  colorKey: keyof typeof colorTokens,
+  token: ModeToken,
+): string {
+  if (SATURATED_BOTH_MODES.has(colorKey)) {
+    return token.dark;
+  }
+
+  const darkHex = normalizeHex(token.dark);
+  if (darkHex && IDENTITY_SITE_COLORS.has(darkHex)) {
+    return token.dark;
+  }
+
+  let swapped = invertSiteColor(token.dark);
+  if (SURFACE_TOKEN_KEYS.has(colorKey)) {
+    swapped = lightenNeutralOneStep(swapped);
+  }
+  return swapped;
+}
 
 export const colorTokens = {
   /** Green / Light & Green / Dark */
@@ -385,7 +513,7 @@ export function getThemeTokenColor(
   lightStrategy: LightModeStrategy = "designed",
 ): string {
   if (mode === "light" && lightStrategy === "inverted") {
-    return invertPaletteColor(colorTokens[colorKey].dark);
+    return getSwappedLightToken(colorKey, colorTokens[colorKey]);
   }
   return colorTokens[colorKey][mode];
 }
