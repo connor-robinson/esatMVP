@@ -26,7 +26,11 @@ import {
   logError,
   type FermiVerdict,
 } from "@/lib/fermi/scoring";
-import { utcDateKey } from "@/lib/fermi/dates";
+import {
+  formatDailyResetCountdown,
+  msUntilNextUtcReset,
+  utcDateKey,
+} from "@/lib/fermi/dates";
 import {
   FERMI_GUESSR_NAME,
   FERMI_GUESSR_STATS_PATH,
@@ -56,6 +60,19 @@ type DailyRoundPayload =
       playedDate: string;
       questions: FermiQuestion[];
     };
+
+function DailyResetSubtext() {
+  const [label, setLabel] = useState(() => formatDailyResetCountdown(msUntilNextUtcReset()));
+
+  useEffect(() => {
+    const tick = () => setLabel(formatDailyResetCountdown(msUntilNextUtcReset()));
+    tick();
+    const id = window.setInterval(tick, 60_000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  return <p className="text-xs font-medium text-text-muted">{label}</p>;
+}
 
 const toneClasses: Record<FermiVerdict["tone"], { text: string; bg: string; ring: string }> = {
   perfect: { text: "text-primary", bg: "bg-primary/15", ring: "ring-primary/30" },
@@ -336,6 +353,7 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
             <h1 className="text-lg font-bold leading-tight text-text">
               {FERMI_GUESSR_NAME} #{puzzleNumber}
             </h1>
+            {displayPhase === "summary" && <DailyResetSubtext />}
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -795,14 +813,9 @@ function SummaryView({
         >
           {copied ? "Copied!" : "Share result"}
         </button>
-        <p className="text-center text-sm font-medium text-text-muted">
-          {isLoggedIn
-            ? "Come back tomorrow for a new set of questions."
-            : "Progress saved on this device. Log in to sync stats and see rankings."}
-        </p>
         {!isLoggedIn && (
           <p className="text-center text-xs font-medium text-text-muted">
-            One puzzle per day — come back tomorrow for the next one.
+            Progress saved on this device. Log in to sync stats and see rankings.
           </p>
         )}
       </div>
