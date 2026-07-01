@@ -10,6 +10,8 @@ from PIL import Image, ImageDraw
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "assets" / "source" / "esat-camp-icon.png"
 OUT = ROOT / "public" / "brand"
+APP_DIR = ROOT / "src" / "app"
+PUBLIC_DIR = ROOT / "public"
 
 
 def black_to_white_transparent(img: Image.Image) -> Image.Image:
@@ -86,7 +88,29 @@ def main() -> None:
         OUT / "apple-icon-light.png"
     )
 
+    # Browsers often request /favicon.ico directly (bypasses metadata).
+    APP_DIR.mkdir(parents=True, exist_ok=True)
+    PUBLIC_DIR.mkdir(parents=True, exist_ok=True)
+
+    favicon_32 = favicon_512.resize((32, 32), Image.Resampling.LANCZOS)
+    favicon_16 = favicon_512.resize((16, 16), Image.Resampling.LANCZOS)
+    favicon_ico_path = PUBLIC_DIR / "favicon.ico"
+    favicon_32.save(
+        favicon_ico_path,
+        format="ICO",
+        sizes=[(16, 16), (32, 32)],
+        append_images=[favicon_16],
+    )
+    # Next.js App Router file conventions (auto-injected into <head>).
+    favicon_32.save(APP_DIR / "icon.png", format="PNG")
+    favicon_512.resize((180, 180), Image.Resampling.LANCZOS).save(
+        APP_DIR / "apple-icon.png",
+        format="PNG",
+    )
+    favicon_32.save(APP_DIR / "favicon.ico", format="ICO")
+
     print(f"Wrote brand assets to {OUT}")
+    print(f"Wrote favicon.ico + app icons to {PUBLIC_DIR} and {APP_DIR}")
 
 
 if __name__ == "__main__":
