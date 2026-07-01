@@ -13,8 +13,10 @@ export interface PricingTier {
   priceNote?: string;
   features: string[];
   ctaLabel: string;
-  /** Crown / “Best value” pill above card */
+  /** Crown / “Best value” badge on card */
   featured?: boolean;
+  /** Primary green CTA — recommended plan */
+  highlighted?: boolean;
 }
 
 interface PricingTableProps {
@@ -25,7 +27,7 @@ interface PricingTableProps {
 }
 
 const CARD_SHELL =
-  "relative flex h-full flex-col rounded-organic-xl bg-surface-elevated p-6 sm:p-7";
+  "relative flex h-full flex-col rounded-organic-xl bg-surface-elevated p-6 shadow-[0_12px_40px_-24px_rgba(0,0,0,0.55)] sm:p-7";
 
 export function PricingTable({
   tiers,
@@ -48,19 +50,31 @@ export function PricingTable({
               key={tier.id}
               className={cn(
                 CARD_SHELL,
-                tier.featured && "pt-10",
+                tier.featured && "overflow-hidden",
+                tier.highlighted &&
+                  "ring-1 ring-primary/30 shadow-[0_16px_48px_-20px_rgba(0,0,0,0.65)]",
               )}
             >
               {tier.featured ? (
-                <div className="absolute left-1/2 top-0 z-10 -translate-x-1/2 -translate-y-1/2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-background shadow-glow">
-                    <Crown className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                    Best value
-                  </span>
-                </div>
+                <>
+                  <div
+                    className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/45 to-transparent"
+                    aria-hidden
+                  />
+                  <div className="absolute right-5 top-5">
+                    <span className="inline-flex items-center gap-1.5 rounded-organic-md bg-surface-mid px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-text">
+                      <Crown
+                        className="h-3 w-3 shrink-0 text-primary"
+                        strokeWidth={2.5}
+                        aria-hidden
+                      />
+                      Best value
+                    </span>
+                  </div>
+                </>
               ) : null}
 
-              <div className="mb-5 space-y-2">
+              <div className={cn("mb-5 space-y-2", tier.featured && "pr-24")}>
                 <h3 className="text-lg font-semibold tracking-tight text-text">
                   {tier.name}
                 </h3>
@@ -93,13 +107,18 @@ export function PricingTable({
               </ul>
 
               <Button
-                variant={showPrimaryCta ? "wide" : "secondary"}
+                variant={
+                  showPrimaryCta && tier.highlighted ? "wide" : "secondary"
+                }
                 size="md"
                 disabled={isCurrentPlan || isLoading}
                 className={cn(
-                  "w-full rounded-organic-lg",
+                  "w-full rounded-organic-lg font-semibold",
+                  showPrimaryCta &&
+                    !tier.highlighted &&
+                    "border-0 bg-surface-mid text-text shadow-sm hover:bg-surface-neutral hover:text-text",
                   !showPrimaryCta &&
-                    "bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text",
+                    "border-0 bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text",
                 )}
                 onClick={() => onSelect(tier.id)}
               >
