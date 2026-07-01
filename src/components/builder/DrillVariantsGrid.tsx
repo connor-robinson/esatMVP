@@ -7,7 +7,7 @@
 import { useState } from 'react';
 import { Check, Plus, Home, Info, X } from 'lucide-react';
 import type { HighLevelCategory } from '@/components/builder/TopicFolders';
-import { getDisplayFolder } from '@/config/drillDisplayFolders';
+import { getDisplayFolder, isFolderComingSoon } from '@/config/drillDisplayFolders';
 import { getFolderSymbol, getVariantSamples } from '@/config/drillPreviews';
 import {
   ArithmeticDrillPreview,
@@ -211,6 +211,17 @@ export function DrillVariantsGrid({
 
   if (isHome) {
     panelBody = <DrillBuilderHome onShowHelp={() => setHelpOpen(true)} />;
+  } else if (topicId && isFolderComingSoon(topicId)) {
+    panelBody = (
+      <div className='flex flex-1 flex-col items-center justify-center gap-2 p-8 text-center'>
+        <span className='rounded-full bg-warning/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-warning'>
+          Coming soon
+        </span>
+        <p className='max-w-xs text-sm font-medium text-text-muted'>
+          {displayFolder?.name ?? 'This folder'} drills are on the way.
+        </p>
+      </div>
+    );
   } else if (!displayFolder || displayFolder.modules.length === 0) {
     panelBody = (
       <div className='flex flex-1 items-center justify-center p-8 text-sm text-text-muted'>

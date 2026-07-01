@@ -359,6 +359,17 @@ export function buildDisplayFolders(
   return CATEGORY_FOLDER_BUILDERS[category]();
 }
 
+/** Physics drill folders temporarily unavailable in the builder. */
+export const COMING_SOON_FOLDER_IDS = new Set<string>([
+  'physics-motion',
+  'physics-waves-units',
+  'physics-electricity',
+]);
+
+export function isFolderComingSoon(folderId: string): boolean {
+  return COMING_SOON_FOLDER_IDS.has(folderId);
+}
+
 export function getDisplayFolder(
   category: HighLevelCategory,
   folderId: string | null,

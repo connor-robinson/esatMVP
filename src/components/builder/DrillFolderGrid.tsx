@@ -5,6 +5,7 @@ import type { HighLevelCategory } from '@/components/builder/TopicFolders';
 import {
   buildDisplayFolders,
   folderHasAccessibleModule,
+  isFolderComingSoon,
   type DrillDisplayFolder,
 } from '@/config/drillDisplayFolders';
 import { getFolderSymbol } from '@/config/drillPreviews';
@@ -50,6 +51,31 @@ export function DrillFolderGrid({
           const isSelected = selectedFolderId === folder.id;
           const selectedCount = selectedCountInFolder(folder, selectedTopicIds);
           const symbol = getFolderSymbol(category, folder.id);
+          const comingSoon = isFolderComingSoon(folder.id);
+
+          if (comingSoon) {
+            return (
+              <div
+                key={folder.id}
+                className='relative flex min-h-[6.5rem] flex-col items-center justify-center gap-1.5 rounded-organic-lg bg-surface-elevated/50 p-3 opacity-75'
+                aria-disabled
+              >
+                <div className='flex h-12 w-12 items-center justify-center rounded-organic-xl bg-surface-mid'>
+                  <ArithmeticDrillPreview
+                    preview={symbol}
+                    size='folder'
+                    className='opacity-45'
+                  />
+                </div>
+                <span className='text-center text-[13px] font-bold text-text-muted'>
+                  {folder.name}
+                </span>
+                <span className='rounded-full bg-warning/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.1em] text-warning'>
+                  Coming soon
+                </span>
+              </div>
+            );
+          }
 
           if (!unlocked) {
             return (
