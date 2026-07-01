@@ -56,6 +56,8 @@ import { MarkSectionNav,
   type MarkSection,
 } from "@/components/papers/mark/MarkSectionNav";
 import { PercentileMiniChart } from "@/components/papers/mark/PercentileMiniChart";
+import { DrillUpgradeBanner } from "@/components/builder/DrillUpgradeBanner";
+import { useSubscription } from "@/hooks/useSubscription";
 
 const LETTERS: Letter[] = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
@@ -97,6 +99,9 @@ export default function PapersMarkPage() {
     questions,
     selectedPartIds,
   } = usePaperSessionStore();
+
+  const { hasFullAccess, isLoading: subscriptionLoading } = useSubscription();
+  const treatAsFullAccess = subscriptionLoading || hasFullAccess;
   
   const [markSection, setMarkSection] = useState<MarkSection>("overview");
   const [reviewReturnSection, setReviewReturnSection] = useState<MarkSection | null>(null);
@@ -235,12 +240,12 @@ export default function PapersMarkPage() {
     };
   }, [paperId, questions]);
 
-  // Fetch community stats for all questions in session
+  // Fetch community stats for all questions in session (paid only)
   useEffect(() => {
     let mounted = true;
     (async () => {
       try {
-        if (!sessionId || totalQuestions === 0) return;
+        if (!treatAsFullAccess || !sessionId || totalQuestions === 0) return;
         
         const qs = usePaperSessionStore.getState().questions;
         const questionIds = qs.map((q) => q.id).filter((id) => id != null);
@@ -282,7 +287,7 @@ export default function PapersMarkPage() {
     return () => {
       mounted = false;
     };
-  }, [sessionId, totalQuestions]);
+  }, [treatAsFullAccess, sessionId, totalQuestions]);
   
   // Shared bubble utility (analytics-style)
   const bubbleClass =
@@ -1484,6 +1489,33 @@ export default function PapersMarkPage() {
               )}
               {markSection === "stats" && (
                 <div className="h-full min-h-0 overflow-y-auto p-4 sm:p-6" style={{ scrollbarGutter: "stable" }}>
+                  {!treatAsFullAccess ? (
+                    <div className="space-y-6">
+                      <div className={cn(bubbleClass, "relative overflow-hidden")}>
+                        <div className="mb-4 text-base font-semibold text-neutral-100">
+                          Pacing Profile
+                        </div>
+                        <div
+                          className="pointer-events-none select-none blur-[3px] opacity-40 saturate-50"
+                          aria-hidden
+                        >
+                          <TimeScatterChart
+                            questionNumbers={questionNumbers}
+                            perQuestionSec={perQuestionSec}
+                            correctFlags={derivedCorrectFlags}
+                            guessedFlags={guessedFlags}
+                          />
+                        </div>
+                        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-surface-elevated/40" />
+                      </div>
+                      <DrillUpgradeBanner
+                        variant="panel"
+                        headline="Unlock detailed session stats"
+                        subtext="Upgrade for pacing profiles, time management analysis, guessing behaviour, and accuracy trends."
+                        ctaLabel="View plans"
+                      />
+                    </div>
+                  ) : (
                   <div className="space-y-6">
 
                     {/* Pacing Profile */}
@@ -1867,7 +1899,7 @@ export default function PapersMarkPage() {
                   {/* Time vs Question Chart - Full Width (already placed above). Duplicate removed. */}
 
                   </div>
-                </div>
+                  )}
                 </div>
               )}
               {markSection === "review" && (
@@ -2097,7 +2129,17 @@ export default function PapersMarkPage() {
               </div>
 
               {/* Community Stats */}
-              {(() => {
+              {!treatAsFullAccess ? (
+                <div className="mb-4">
+                  <DrillUpgradeBanner
+                    variant="panel"
+                    headline="Unlock community stats"
+                    subtext="See how other candidates answered each question — average time and answer distribution."
+                    ctaLabel="View plans"
+                  />
+                </div>
+              ) : (
+              (() => {
                 const question = usePaperSessionStore.getState().questions[selectedIndex];
                 const stats = question ? questionStats[question.id] : null;
                 
@@ -2170,7 +2212,8 @@ export default function PapersMarkPage() {
                     )}
                   </div>
                 );
-              })()}
+              })()
+              )}
 
               {/* Question and Answer - Side by Side (normal) or Stacked (TMUA) */}
               {(() => {
@@ -2274,7 +2317,14 @@ export default function PapersMarkPage() {
                     </div>
 
                     {/* Answer/Solution section */}
-                    {(() => {
+                    {!treatAsFullAccess ? (
+                      <DrillUpgradeBanner
+                        variant="panel"
+                        headline="Unlock suggested answers"
+                        subtext="Upgrade to view official solutions and worked answers for every question."
+                        ctaLabel="View plans"
+                      />
+                    ) : (() => {
                       const question = usePaperSessionStore.getState().questions[selectedIndex];
                       const isTMUA = question?.questionImage && question?.solutionImage && !question?.solutionText;
                       const answerImgSrc = (isTMUA && croppedAnswerImage) ? croppedAnswerImage : question?.solutionImage;
@@ -2451,18 +2501,31 @@ export default function PapersMarkPage() {
               })()}
 
               {/* Tip Section - Full Width Below Question/Answer */}
-              {currentTip && (
-                <div className="mt-4 rounded-lg bg-neutral-800 p-4">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <svg className="h-4 w-4 text-accent" fill="currentColor" viewBox="0 0 20 20" aria-hidden>
-                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                      </svg>
-                      <div className="text-[15px] font-semibold text-accent">Tip</div>
-                    </div>
-                    <MathContent content={currentTip} className="text-sm leading-relaxed text-text" />
+              {!treatAsFullAccess ? (
+                currentTip ? (
+                  <div className="mt-4">
+                    <DrillUpgradeBanner
+                      variant="panel"
+                      headline="Unlock question tips"
+                      subtext="Upgrade for expert tips and shortcuts on tricky past-paper questions."
+                      ctaLabel="View plans"
+                    />
                   </div>
-                </div>
+                ) : null
+              ) : (
+                currentTip && (
+                  <div className="mt-4 rounded-lg bg-neutral-800 p-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <svg className="h-4 w-4 text-accent" fill="currentColor" viewBox="0 0 20 20" aria-hidden>
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                        </svg>
+                        <div className="text-[15px] font-semibold text-accent">Tip</div>
+                      </div>
+                      <MathContent content={currentTip} className="text-sm leading-relaxed text-text" />
+                    </div>
+                  </div>
+                )
               )}
               </div>
               ) : (
@@ -2545,6 +2608,14 @@ export default function PapersMarkPage() {
               )}
               {markSection === "mistakes" && (
               <div className="h-full min-h-0 overflow-y-auto p-4 sm:p-6">
+                {!treatAsFullAccess ? (
+                  <DrillUpgradeBanner
+                    variant="panel"
+                    headline="Unlock mistake analysis"
+                    subtext="Upgrade to tag mistakes, review patterns, and build a personalised fix list for your next paper."
+                    ctaLabel="View plans"
+                  />
+                ) : (
                 <MarkSessionMistakesSection
                   mistakeTags={mistakeTags}
                   wrongQuestions={wrongQuestions}
@@ -2555,6 +2626,7 @@ export default function PapersMarkPage() {
                     openQuestionInReview(index, "mistakes")
                   }
                 />
+                )}
               </div>
               )}
               {markSection === "notes" && (
