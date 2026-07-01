@@ -11,6 +11,7 @@ import {
   Atom,
   Zap,
   Infinity,
+  Target,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -19,6 +20,8 @@ import type { HighLevelCategory } from '@/components/builder/TopicFolders';
 interface SubjectCategoriesProps {
   selectedCategory: HighLevelCategory | null;
   onSelectCategory: (category: HighLevelCategory) => void;
+  /** Launches the Fermi Estimation minigame (a mode separate from the drills). */
+  onLaunchFermi?: () => void;
 }
 
 const SIDEBAR_CATEGORY_ORDER: HighLevelCategory[] = [
@@ -64,6 +67,7 @@ const categoryConfig: Record<
 export function SubjectCategories({
   selectedCategory,
   onSelectCategory,
+  onLaunchFermi,
 }: SubjectCategoriesProps) {
   return (
     <aside className='scrollbar-hide hidden h-full min-h-0 w-20 shrink-0 flex-col overflow-hidden rounded-organic-xl bg-surface lg:flex xl:w-24'>
@@ -111,6 +115,29 @@ export function SubjectCategories({
               </button>
             );
           })}
+
+          {/* Fermi Estimation minigame — separate from the drills, pinned below Physics */}
+          {onLaunchFermi && (
+            <>
+              <div className='my-1 h-px w-8 rounded-full bg-surface-mid' aria-hidden='true' />
+              <button
+                type='button'
+                onClick={onLaunchFermi}
+                className='group flex w-full flex-col items-center gap-1.5 px-1.5 opacity-80 transition-all hover:opacity-100'
+                title='Fermi Estimation — order-of-magnitude minigame'
+              >
+                <div className='flex h-12 w-12 items-center justify-center rounded-organic-lg bg-secondary/20 transition-colors duration-150 ease-out group-hover:bg-secondary/30 xl:h-14 xl:w-14'>
+                  <Target
+                    className='h-5 w-5 text-secondary xl:h-6 xl:w-6'
+                    strokeWidth={2.25}
+                  />
+                </div>
+                <span className='text-center text-[10px] font-medium leading-tight tracking-[0.06em] text-secondary'>
+                  Fermi
+                </span>
+              </button>
+            </>
+          )}
         </div>
       </div>
     </aside>

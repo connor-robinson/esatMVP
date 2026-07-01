@@ -37,6 +37,11 @@ const SessionResults = lazy(() =>
     default: mod.SessionResults,
   })),
 );
+const FermiGame = lazy(() =>
+  import("@/components/fermi/FermiGame").then((mod) => ({
+    default: mod.FermiGame,
+  })),
+);
 
 // Loading skeleton components
 const BuilderLoadingSkeleton = () => (
@@ -73,6 +78,7 @@ export default function BuilderPage() {
   const [selectedCategory, setSelectedCategory] = useState<HighLevelCategory | null>("arithmetic");
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [fermiOpen, setFermiOpen] = useState(false);
 
   const categoryTopics = useMemo(
     () => getTopicsForHighLevelCategory(allTopics, selectedCategory),
@@ -84,6 +90,15 @@ export default function BuilderPage() {
       setReviewModalOpen(false);
     }
   }, [reviewModalOpen, builder.selectedTopicVariants.length]);
+
+  // Fermi Estimation minigame — takes over the screen while open
+  if (fermiOpen) {
+    return (
+      <Suspense fallback={<QuizLoadingSkeleton />}>
+        <FermiGame onExit={() => setFermiOpen(false)} />
+      </Suspense>
+    );
+  }
 
   // Builder view
   if (builder.view === "builder") {
@@ -97,6 +112,7 @@ export default function BuilderPage() {
               setSelectedCategory(cat);
               setSelectedTopicId(null); // Reset topic selection when category changes
             }}
+            onLaunchFermi={() => setFermiOpen(true)}
           />
 
           {/* Columns 2 & 3: Topic Folders + Drill Variants — share remaining width */}
