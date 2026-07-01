@@ -317,7 +317,14 @@ export function Navbar() {
       {!hasFullAccess ? (
         <Link
           href='/pricing'
-          className='inline-flex h-9 shrink-0 items-center justify-center rounded-organic-md bg-primary px-3.5 text-xs font-bold uppercase tracking-[0.14em] text-black transition-opacity hover:opacity-90 sm:h-10 sm:px-4 sm:text-sm'
+          className={cn(
+            'inline-flex h-9 shrink-0 items-center justify-center rounded-organic-md bg-primary px-4',
+            'text-xs font-bold uppercase tracking-[0.14em] text-black sm:h-10 sm:px-5 sm:text-sm',
+            'shadow-[0_0_18px_-4px_rgba(169,177,103,0.5)]',
+            'transition-[opacity,box-shadow,transform] duration-fast ease-signature',
+            'hover:scale-[1.02] hover:opacity-95 hover:shadow-[0_0_22px_-2px_rgba(169,177,103,0.65)]',
+            'focus-visible:outline-none focus-visible:shadow-glow-focus',
+          )}
         >
           Upgrade
         </Link>
