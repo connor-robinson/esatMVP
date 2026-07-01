@@ -54,10 +54,10 @@ export function BrandLogo({
   }
 
   return (
-    <EsatCampIcon
-      className={cn(MARK_SIZE_CLASS[size], "text-text", className)}
-      role="img"
-      aria-label={alt}
-    />
+    <span role="img" aria-label={alt} className="inline-flex">
+      <EsatCampIcon
+        className={cn(MARK_SIZE_CLASS[size], "text-text", className)}
+      />
+    </span>
   );
 }
