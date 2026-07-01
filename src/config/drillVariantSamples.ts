@@ -283,21 +283,13 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'plain', text: 'isosceles △' },
     { kind: 'plain', text: 'ext. angle = 110°' },
   ]),
-  'circle_theorems-recall': S([
-    { kind: 'plain', text: 'Find x.' },
-    { kind: 'plain', text: 'Angle at centre = 2× circumference' },
-  ]),
   'circle_theorems-basic': S([
-    { kind: 'plain', text: 'Semicircle + triangle angles' },
-    { kind: 'plain', text: 'Radius ⊥ tangent' },
+    { kind: 'plain', text: 'Diagram · find x' },
+    { kind: 'plain', text: 'Diagram · one theorem' },
   ]),
   'circle_theorems-intermediate': S([
-    { kind: 'plain', text: 'Two theorems combined' },
-    { kind: 'plain', text: 'Cyclic quadrilateral chase' },
-  ]),
-  'circle_theorems-esat': S([
-    { kind: 'plain', text: 'Multi-step angle chase' },
-    { kind: 'plain', text: 'Tangent + segment theorem' },
+    { kind: 'plain', text: 'Diagram · 2 theorems' },
+    { kind: 'plain', text: 'Diagram · multi-step' },
   ]),
   'pythagorean-level-1': S([
     { kind: 'latex', latex: String.raw`3^2 + 4^2 = c^2` },

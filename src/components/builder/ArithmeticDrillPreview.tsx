@@ -101,7 +101,7 @@ export function ArithmeticDrillPreview({
           selected ? 'text-primary' : 'text-text',
         )
       : cn(
-          'font-mono text-[1.05rem] font-medium tabular-nums tracking-tight',
+          'max-w-full truncate px-1 text-center text-[0.95rem] font-medium tabular-nums tracking-tight',
           selected ? 'text-text' : 'text-text-muted',
         );
 

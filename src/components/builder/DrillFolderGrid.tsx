@@ -3,6 +3,7 @@
 import type { HighLevelCategory } from '@/components/builder/TopicFolders';
 import {
   buildDisplayFolders,
+  isFolderBeta,
   isFolderComingSoon,
   type DrillDisplayFolder,
 } from '@/config/drillDisplayFolders';
@@ -41,6 +42,7 @@ export function DrillFolderGrid({
         const selectedCount = selectedCountInFolder(folder, selectedTopicIds);
         const symbol = getFolderSymbol(category, folder.id);
         const comingSoon = isFolderComingSoon(folder.id);
+        const isBeta = isFolderBeta(folder.id);
 
         return (
           <button
@@ -55,6 +57,11 @@ export function DrillFolderGrid({
                 : 'bg-folder-card hover:bg-surface-neutral',
             )}
           >
+            {isBeta ? (
+              <span className='absolute left-2 top-2 rounded-organic-sm bg-surface-neutral/55 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[0.14em] text-text-muted/75 backdrop-blur-sm'>
+                Beta
+              </span>
+            ) : null}
             <div
               className={cn(
                 'flex h-12 w-12 items-center justify-center overflow-hidden rounded-organic-xl transition-colors',

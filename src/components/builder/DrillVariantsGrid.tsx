@@ -7,7 +7,7 @@
 import { useState } from 'react';
 import { Check, Plus, Home, Info, X, Lock } from 'lucide-react';
 import type { HighLevelCategory } from '@/components/builder/TopicFolders';
-import { getDisplayFolder, isFolderComingSoon } from '@/config/drillDisplayFolders';
+import { getDisplayFolder, isFolderBeta, isFolderComingSoon } from '@/config/drillDisplayFolders';
 import { getFolderSymbol, getVariantSamples } from '@/config/drillPreviews';
 import {
   ArithmeticDrillPreview,
@@ -223,6 +223,8 @@ export function DrillVariantsGrid({
 
   const panelKey = `${drillCategory ?? 'none'}-${topicId ?? 'home'}`;
   const isHome = !topicId || !drillCategory;
+  const showBetaBadge =
+    Boolean(topicId && isFolderBeta(topicId));
   const shellClass = isHome
     ? 'bg-background'
     : 'bg-surface';
@@ -320,6 +322,12 @@ export function DrillVariantsGrid({
         >
           <Info className='h-4 w-4' strokeWidth={2} />
         </button>
+
+        {showBetaBadge ? (
+          <span className='absolute left-3 top-3 z-10 rounded-organic-sm bg-surface-neutral/55 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em] text-text-muted/75 backdrop-blur-sm'>
+            Beta
+          </span>
+        ) : null}
 
         <DrillPanelTransition
           panelKey={panelKey}

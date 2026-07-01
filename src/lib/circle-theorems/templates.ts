@@ -546,10 +546,13 @@ export function instantiateTemplate(level: number): CircleTheoremResult {
     const id = pickFrom(["CENTRE_TO_CIRCUMFERENCE", "SAME_SEGMENT", "ALTERNATE_SEGMENT", "CYCLIC_OPPOSITE"] as const);
     return TEMPLATES[id]();
   }
-  // Levels 3–4 reuse recall/basic mix until phase 2
-  const id = pickFrom([...RECALL_POOL, ...BASIC_POOL] as TemplateId[]);
-  if (id === "SEMICIRCLE_TRIANGLE") return templateSemicircleTriangle(true);
-  if (id === "RADIUS_TANGENT") return templateRadiusTangent(true);
+  // Levels 3–4: combined / multi-step templates
+  const roll = pickInt(1, 10);
+  if (roll <= 3) return templateSemicircleTriangle(true);
+  if (roll <= 5) return templateRadiusTangent(true);
+  if (roll <= 7) return templateCyclicExterior();
+  if (roll <= 8) return templateAlternateSegment();
+  const id = pickFrom(["CENTRE_TO_CIRCUMFERENCE", "SAME_SEGMENT", "CYCLIC_OPPOSITE"] as const);
   return TEMPLATES[id]();
 }
 

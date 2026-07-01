@@ -382,6 +382,13 @@ export function isFolderComingSoon(folderId: string): boolean {
   return COMING_SOON_FOLDER_IDS.has(folderId);
 }
 
+/** Folders still in active development — show a subtle beta badge. */
+export const BETA_FOLDER_IDS = new Set<string>(['geometry-circle-theorems']);
+
+export function isFolderBeta(folderId: string): boolean {
+  return BETA_FOLDER_IDS.has(folderId);
+}
+
 export function getDisplayFolder(
   category: HighLevelCategory,
   folderId: string | null,
