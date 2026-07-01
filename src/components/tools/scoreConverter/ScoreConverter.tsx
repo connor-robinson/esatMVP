@@ -641,6 +641,13 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
         )}
       </div>
 
+      <ScoreConverterQuestionBankPromo
+        open={showQuestionBankPromo}
+        exam={exam}
+        onDismiss={() => setShowQuestionBankPromo(false)}
+        className="mb-5"
+      />
+
       {/* Inputs */}
       <div className="rounded-organic-xl bg-surface-elevated p-5 shadow-modal-card sm:p-6">
         {/* Row 1: exam, year, section, calculate */}
@@ -920,12 +927,6 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
       </p>
 
       <ScoreConverterFaq />
-
-      <ScoreConverterQuestionBankPromo
-        open={showQuestionBankPromo}
-        exam={exam}
-        onDismiss={() => setShowQuestionBankPromo(false)}
-      />
     </Container>
   );
 }
