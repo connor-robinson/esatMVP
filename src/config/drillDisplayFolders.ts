@@ -132,7 +132,7 @@ const ALGEBRA_FOLDERS: FolderDef[] = [
     id: 'algebra-indices',
     name: 'Indices & Surds',
     topicIds: ['exponents', 'surds'],
-    symbol: { kind: 'latex', latex: String.raw`2^3\sqrt{5}` },
+    symbol: { kind: 'latex', latex: String.raw`x^{n}\sqrt{a}` },
   },
   {
     id: 'algebra-quadratics',
@@ -159,19 +159,19 @@ const GEOMETRY_FOLDERS: FolderDef[] = [
     id: 'trig-recall',
     name: 'Trig Recall',
     topicIds: ['trig_recall', 'trig_inverse'],
-    symbol: { kind: 'latex', latex: String.raw`\sin\theta` },
+    symbol: { kind: 'latex', latex: String.raw`\sin\theta,\cos\theta` },
   },
   {
     id: 'unit-circle',
     name: 'Unit Circle',
     topicIds: ['unit_circle_degrees', 'unit_circle_radians'],
-    symbol: { kind: 'latex', latex: String.raw`(\cos\theta,\sin\theta)` },
+    symbol: { kind: 'latex', latex: String.raw`x^2+y^2=1` },
   },
   {
     id: 'triangles-trig',
     name: 'Triangles',
     topicIds: ['trig_applications'],
-    symbol: { kind: 'latex', latex: String.raw`30°\text{-}60°\text{-}90°` },
+    symbol: { kind: 'latex', latex: String.raw`1:\sqrt{3}:2` },
   },
 ];
 
@@ -294,7 +294,7 @@ function folderSymbolForArithmeticId(folderId: string): FolderSymbol {
     return { kind: 'latex', latex: String.raw`\frac{3}{7}` };
   }
   if (folderId === 'squaring') {
-    return { kind: 'latex', latex: String.raw`n^2` };
+    return { kind: 'latex', latex: String.raw`n^{2},\,n^{3}` };
   }
   const keys: Record<string, string> = {
     addition: 'Plus',

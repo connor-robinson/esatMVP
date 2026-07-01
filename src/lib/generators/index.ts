@@ -21,7 +21,6 @@ import { generateSystemsOfEquations } from "./systems_of_equations";
 import { generatePrimeFactorise } from "./prime_factorise";
 import { generateFactors } from "./factors";
 import { generateDivisibility } from "./divisibility";
-import { generateSequences } from "./sequences";
 
 // Patterns (legacy aliases — variants moved to multiplication / Powers & Surds)
 import { generatePowers } from "./powers";
@@ -128,7 +127,6 @@ export const GENERATORS: Record<string, GeneratorFunction> = validateGenerators(
     generateDivisibility(2, weights),
   modular: (level: number, weights?: Record<string, number>) =>
     generateDivisibility(1, weights),
-  sequences: generateSequences,
   
   powers: generatePowers,
   power_bases: generatePowerBases,

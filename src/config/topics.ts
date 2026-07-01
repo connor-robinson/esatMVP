@@ -588,30 +588,6 @@ export const TOPICS: Record<string, Topic> = {
     ],
     icon: "Check",
   },
-  sequences: {
-    id: "sequences",
-    name: "Number Sequences",
-    subjectId: "maths",
-    category: "number_theory",
-    description: "Identify patterns in geometric sequences and mixed number patterns",
-    variants: [
-      {
-        id: "geometric",
-        name: "Geometric Sequences",
-        description: "Find next term or common ratio",
-        difficulty: 1,
-        config: { level: 1 },
-      },
-      {
-        id: "mixed",
-        name: "Mixed Patterns",
-        description: "Squares, cubes, Fibonacci-like patterns",
-        difficulty: 2,
-        config: { level: 2 },
-      },
-    ],
-    icon: "List",
-  },
 
   // Shortcuts
   percentages: {
