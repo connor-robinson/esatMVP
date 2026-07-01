@@ -173,17 +173,12 @@ export function FermiDistributionChart({
           </p>
           <p className="mt-1 text-sm font-medium text-text-muted">
             You beat ~{percentile}% of players
-            {playerCount >= 3
-              ? ` (${playerCount} played that day)`
-              : " (estimated from the curve — more players = sharper ranking)"}
+            {percentileIsEstimate ? " (est.)" : ""}
           </p>
         </div>
       )}
 
       <div className="relative rounded-organic-lg bg-surface-mid/30 p-2 sm:p-3">
-        <p className="mb-2 px-1 text-[11px] font-medium text-text-muted">
-          Hover the chart to explore scores · tap your dot for details
-        </p>
         <svg
           ref={svgRef}
           width="100%"
@@ -338,31 +333,6 @@ export function FermiDistributionChart({
               {activeBeat.isEstimate ? " (est.)" : ""}
             </div>
           </div>
-        )}
-      </div>
-
-      <div className="mt-4 space-y-2 rounded-organic-md bg-surface-mid/40 px-4 py-3 text-sm leading-relaxed text-text-muted">
-        <p>
-          <span className="font-semibold text-text">What this shows:</span> the bell curve is
-          how everyone scored on this puzzle. Higher closeness = better estimates (log-scale
-          accuracy averaged across all five questions).
-        </p>
-        <p>
-          The shaded area to the left of your dot is everyone you outperformed. If your score
-          is {hasUser ? `${clampedUser}/100` : "—"}, about{" "}
-          <span className="font-semibold text-secondary">
-            {percentile != null ? `${percentile}%` : "—"}
-          </span>{" "}
-          of players did worse{percentileIsEstimate ? " (estimated until more people play)" : ""}.
-        </p>
-        {hasUser && topPct != null && (
-          <p>
-            Put differently: you ranked in the{" "}
-            <span className="font-semibold text-text">top {topPct}%</span> for that day
-            {playerCount >= 3
-              ? ` among ${playerCount} players.`
-              : " — this will sharpen as more people complete the puzzle."}
-          </p>
         )}
       </div>
     </div>

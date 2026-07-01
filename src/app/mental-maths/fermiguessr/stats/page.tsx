@@ -162,8 +162,6 @@ export default function FermiGuessrStatsPage() {
                 </h2>
                 <p className="text-sm font-medium text-text-muted">
                   {stats.focus.playedDate}
-                  {stats.focus.playerCount > 0 &&
-                    ` · ${stats.focus.playerCount} player${stats.focus.playerCount === 1 ? "" : "s"} that day`}
                 </p>
               </div>
 
