@@ -224,9 +224,18 @@ export function buildSectionOptions(
   year: number,
   rawParts: RawSectionPart[],
 ): SectionOption[] {
+  // ENGAA 2019: the "General" overall table already represents Section 1, so the
+  // split 1A/1B rows (which live on the Section 2 table) are redundant. Collapse
+  // the picker to the single "General" option rather than surfacing near-duplicate
+  // chips for a rare edge case.
+  const parts =
+    exam === "ENGAA" && year === 2019
+      ? rawParts.filter((p) => p.partName.trim().toLowerCase() === "general")
+      : rawParts;
+
   // Group duplicates by logical (partName) and pick the preferred paper.
   const byPart = new Map<string, RawSectionPart[]>();
-  for (const part of rawParts) {
+  for (const part of parts) {
     const list = byPart.get(part.partName) ?? [];
     list.push(part);
     byPart.set(part.partName, list);
