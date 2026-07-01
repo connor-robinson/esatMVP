@@ -262,7 +262,6 @@ function MathDiagramLabel({
       className="overflow-visible"
     >
       <div
-        xmlns="http://www.w3.org/1999/xhtml"
         className="flex h-full w-full items-center justify-center text-text [&_.katex]:text-[11px]"
         dangerouslySetInnerHTML={{ __html: html }}
       />
