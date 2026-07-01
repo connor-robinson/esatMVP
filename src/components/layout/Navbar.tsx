@@ -17,6 +17,7 @@ import { usePaperSessionStore } from '@/store/paperSessionStore';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useSubscription } from '@/hooks/useSubscription';
 import { BrandNavLockup } from '@/components/brand/BrandNavLockup';
+import { SignOutConfirmModal } from '@/components/auth/SignOutConfirmModal';
 import { APP_NAME } from '@/config/brand';
 import {
   NavSectionDropdown,
@@ -193,6 +194,8 @@ export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
   const session = useSupabaseSession();
   const supabase = useSupabaseClient();
   const {
@@ -273,9 +276,15 @@ export function Navbar() {
   );
 
   const handleSignOut = useCallback(async () => {
-    await supabase.auth.signOut();
-    router.push('/');
-    router.refresh();
+    setIsSigningOut(true);
+    try {
+      await supabase.auth.signOut();
+      setShowSignOutConfirm(false);
+      router.push('/');
+      router.refresh();
+    } finally {
+      setIsSigningOut(false);
+    }
   }, [supabase, router]);
 
   const loginHref = useMemo(() => {
@@ -358,7 +367,7 @@ export function Navbar() {
         <>
           <button
             type='button'
-            onClick={() => void handleSignOut()}
+            onClick={() => setShowSignOutConfirm(true)}
             className={navIconSlotClass}
             aria-label='Sign out'
           >
@@ -549,6 +558,14 @@ export function Navbar() {
         </nav>
       )}
       {hasActiveSession && <SessionProgressBar embedded />}
+      <SignOutConfirmModal
+        open={showSignOutConfirm}
+        isLoading={isSigningOut}
+        onClose={() => {
+          if (!isSigningOut) setShowSignOutConfirm(false);
+        }}
+        onConfirm={handleSignOut}
+      />
     </>
   );
 }
