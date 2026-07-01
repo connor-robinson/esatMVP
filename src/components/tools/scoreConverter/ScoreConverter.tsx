@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
-import { AlertTriangle, Check, ChevronDown, Loader2 } from "lucide-react";
+import { AlertTriangle, ArrowRight, Check, ChevronDown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { cssVar } from "@/config/colors";
 import { Container } from "@/components/layout/Container";
@@ -11,6 +11,7 @@ import {
   TmuaDualCurveExplainer,
 } from "@/components/tools/scoreConverter/TmuaDualCurveChart";
 import { ScoreConverterFaq } from "@/components/tools/scoreConverter/ScoreConverterFaq";
+import { ScoreConverterQuestionBankPromo } from "@/components/tools/scoreConverter/ScoreConverterQuestionBankPromo";
 import { fetchEsatTable, type EsatRow } from "@/lib/esat/percentiles";
 import {
   CONVERTER_EXAMS,
@@ -203,6 +204,7 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
   const [activeChartKey, setActiveChartKey] = useState<string | null>(null);
   const [chartRows, setChartRows] = useState<EsatRow[]>([]);
   const [chartLoading, setChartLoading] = useState(false);
+  const [showQuestionBankPromo, setShowQuestionBankPromo] = useState(false);
 
   const isScaledMode = year?.mode === "scaled";
 
@@ -244,6 +246,7 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
     setResultError(null);
     setActiveChartKey(null);
     setChartRows([]);
+    setShowQuestionBankPromo(false);
   }, []);
 
   useEffect(() => {
@@ -386,8 +389,10 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
       setActiveChartKey(
         isMultiEsat ? OVERALL_CHART_KEY : (data.sections[0]?.key ?? null),
       );
+      setShowQuestionBankPromo(true);
     } catch (e: unknown) {
       setResult(null);
+      setShowQuestionBankPromo(false);
       setResultError(e instanceof Error ? e.message : "Something went wrong.");
     } finally {
       setResultLoading(false);
@@ -573,17 +578,20 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
             onClick={() => void runConvert()}
             disabled={!canCalculate || resultLoading}
             className={cn(
-              "ml-auto inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-organic-lg bg-secondary px-5 text-sm font-semibold text-background transition-all duration-fast",
+              "ml-auto inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-organic-lg bg-secondary px-6 text-sm font-semibold text-background transition-all duration-fast",
               "hover:brightness-110 active:scale-[0.98] disabled:opacity-40 disabled:hover:brightness-100",
             )}
           >
             {resultLoading ? (
               <>
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
                 <span className="sr-only">Calculating</span>
               </>
             ) : (
-              "Calculate"
+              <>
+                <span>Calculate</span>
+                <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
+              </>
             )}
           </button>
         </div>
@@ -672,6 +680,12 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
       </p>
 
       <ScoreConverterFaq />
+
+      <ScoreConverterQuestionBankPromo
+        open={showQuestionBankPromo}
+        exam={exam}
+        onDismiss={() => setShowQuestionBankPromo(false)}
+      />
     </Container>
   );
 }
