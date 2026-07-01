@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { BrandLogo } from "@/components/brand/BrandLogo";
+import { BrandMarkImage } from "@/components/brand/BrandMarkImage";
 import { BrandWordmark } from "@/components/brand/BrandWordmark";
 
 interface BrandNavLockupProps {
@@ -11,11 +11,11 @@ export function BrandNavLockup({ className }: BrandNavLockupProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-2.5 text-text",
+        "inline-flex items-center gap-2 text-text",
         className,
       )}
     >
-      <BrandLogo variant="mark" size="nav" alt="" />
+      <BrandMarkImage className="h-5 w-auto translate-y-px" alt="" />
       <BrandWordmark size="sm" />
     </span>
   );
