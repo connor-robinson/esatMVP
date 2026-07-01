@@ -1828,6 +1828,7 @@ export default function PapersMarkPage() {
                   {/* Time vs Question Chart - Full Width (already placed above). Duplicate removed. */}
 
                   </div>
+                  </div>
                   )}
                 </div>
               )}
