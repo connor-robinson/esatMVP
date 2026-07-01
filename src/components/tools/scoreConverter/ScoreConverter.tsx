@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AlertTriangle, ChevronDown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { cssVar } from "@/config/colors";
 import { Container } from "@/components/layout/Container";
 import { PercentileMiniChart } from "@/components/papers/mark/PercentileMiniChart";
 import { fetchEsatTable, type EsatRow } from "@/lib/esat/percentiles";
@@ -355,24 +356,18 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
           )}
         </div>
 
-        {!hasCalculated && !resultLoading && (
-          <div className="flex min-h-[160px] flex-col items-center justify-center text-center sm:min-h-[180px]">
-            <p className="text-sm text-text-muted">
-              Results will show here after you fill in the details and calculate.
-            </p>
-          </div>
+        {!hasCalculated && !resultLoading && !resultError && (
+          <ResultsPreviewPlaceholder exam={exam} year={year?.year} />
         )}
 
         {resultLoading && (
-          <div className="flex min-h-[160px] flex-col items-center justify-center gap-2 sm:min-h-[180px]">
-            <Loader2 className="h-5 w-5 animate-spin text-secondary" />
-            <p className="text-xs text-text-muted">Calculating…</p>
-          </div>
+          <ResultsPreviewPlaceholder exam={exam} year={year?.year} loading />
         )}
 
         {resultError && hasCalculated && !resultLoading && (
-          <div className="flex min-h-[160px] items-center justify-center sm:min-h-[180px]">
-            <p className="text-sm text-error">{resultError}</p>
+          <div className="space-y-4">
+            <ResultsPreviewPlaceholder exam={exam} year={year?.year} />
+            <p className="text-center text-sm text-error">{resultError}</p>
           </div>
         )}
 
@@ -751,6 +746,159 @@ function NoteRow({
         <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
       )}
       {children}
+    </div>
+  );
+}
+
+/** Mirrors the real results layout before Calculate — ??? scores + ghost chart. */
+function ResultsPreviewPlaceholder({
+  exam,
+  year,
+  loading = false,
+}: {
+  exam: ConverterExam;
+  year?: number;
+  loading?: boolean;
+}) {
+  const accent =
+    exam === "TMUA" ? COLOR_TEXT["tmua-accent"] : "text-text-subtle";
+
+  return (
+    <div className={cn("relative space-y-5", loading && "opacity-70")}>
+      {loading && (
+        <div className="absolute right-0 top-0 flex items-center gap-2 text-xs text-text-muted">
+          <Loader2 className="h-3.5 w-3.5 animate-spin text-secondary" />
+          Calculating…
+        </div>
+      )}
+
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-xs text-text-subtle">
+            {year ? `${exam} ${year}` : `${exam} › ${examTargetLabel(exam)}`}
+            <span className="text-text-muted"> · —</span>
+          </p>
+          <p
+            className={cn(
+              "mt-1 text-4xl font-bold tracking-widest tabular-nums sm:text-5xl",
+              accent,
+              loading ? "animate-pulse opacity-50" : "opacity-40",
+            )}
+          >
+            ???
+          </p>
+        </div>
+        <div className="text-right">
+          <p className="text-xs text-text-subtle">Top</p>
+          <p
+            className={cn(
+              "text-3xl font-bold tracking-wider tabular-nums sm:text-4xl",
+              loading ? "animate-pulse text-text-subtle/50" : "text-text-subtle/40",
+            )}
+          >
+            ??%
+          </p>
+        </div>
+      </div>
+
+      <GhostPercentileChart />
+    </div>
+  );
+}
+
+/** Fuzzy stand-in for the distribution chart — same footprint, no real data. */
+function GhostPercentileChart() {
+  const w = 720;
+  const h = 220;
+  const pad = 32;
+  const minX = 1;
+  const maxX = 9;
+  const densities = [
+    { score: 1, d: 0.4 },
+    { score: 2, d: 1.2 },
+    { score: 3, d: 3.5 },
+    { score: 4, d: 6.8 },
+    { score: 5, d: 9.2 },
+    { score: 6, d: 8.5 },
+    { score: 7, d: 5.2 },
+    { score: 8, d: 2.1 },
+    { score: 9, d: 0.5 },
+  ];
+  const maxY = 10;
+
+  const toX = (x: number) =>
+    pad + ((x - minX) / (maxX - minX)) * (w - 2 * pad);
+  const toY = (y: number) => h - pad - (y / maxY) * (h - 2 * pad);
+
+  const linePoints = densities.map((p) => `${toX(p.score)},${toY(p.d)}`).join(" ");
+  const areaPoints = [
+    `${toX(minX)},${h - pad}`,
+    ...densities.map((p) => `${toX(p.score)},${toY(p.d)}`),
+    `${toX(maxX)},${h - pad}`,
+  ].join(" ");
+
+  const ghostScore = 5.5;
+  const ghostX = toX(ghostScore);
+  const ghostY = toY(6.2);
+
+  return (
+    <div className="relative" aria-hidden>
+      <svg
+        width="100%"
+        height={h}
+        viewBox={`0 0 ${w} ${h}`}
+        preserveAspectRatio="xMidYMid meet"
+        className="block blur-[2px] opacity-40 saturate-50"
+      >
+        <line x1={pad} y1={h - pad} x2={w - pad} y2={h - pad} stroke={cssVar.borderSubtle} />
+        <line x1={pad} y1={pad} x2={pad} y2={h - pad} stroke={cssVar.borderSubtle} />
+        <polygon
+          points={areaPoints}
+          fill="color-mix(in srgb, var(--color-maths) 12%, transparent)"
+        />
+        <polyline
+          points={linePoints}
+          fill="none"
+          stroke={cssVar.textSubtle}
+          strokeWidth="2"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+        />
+        {[2, 4, 6, 8].map((t) => (
+          <text
+            key={t}
+            x={toX(t)}
+            y={h - pad + 14}
+            fill={cssVar.textMuted}
+            fontSize="9"
+            textAnchor="middle"
+            opacity={0.6}
+          >
+            {t}
+          </text>
+        ))}
+        <line
+          x1={ghostX}
+          y1={pad}
+          x2={ghostX}
+          y2={h - pad}
+          stroke="color-mix(in srgb, var(--color-maths) 25%, transparent)"
+          strokeDasharray="4 4"
+        />
+        <circle
+          cx={ghostX}
+          cy={ghostY}
+          r="4"
+          fill={cssVar.maths}
+          fillOpacity={0.35}
+          stroke={cssVar.background}
+          strokeWidth="2"
+        />
+        <text x={w / 2} y={h - 4} fill={cssVar.textMuted} fontSize="10" textAnchor="middle" opacity={0.5}>
+          Scaled score
+        </text>
+      </svg>
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-surface-elevated/30" />
     </div>
   );
 }
