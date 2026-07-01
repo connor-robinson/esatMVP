@@ -28,14 +28,20 @@ function examTargetLabel(exam: ConverterExam): "ESAT" | "TMUA" {
 
 const fieldLabel = "mb-1 block text-[10px] font-semibold uppercase tracking-[0.12em] text-text-subtle";
 
+const controlBase = "border-0 shadow-none outline-none focus:outline-none focus:ring-0 focus:border-0";
+
 const selectWrap =
-  "relative min-w-[5.5rem] rounded-organic-lg bg-surface-mid transition-colors hover:bg-surface-subtle";
+  "relative min-w-[5.5rem] rounded-organic-lg bg-surface-mid transition-colors hover:bg-surface-subtle border-0";
 
-const selectClass =
-  "h-9 w-full cursor-pointer appearance-none rounded-organic-lg bg-transparent py-0 pl-3 pr-8 text-sm font-medium text-text outline-none focus:outline-none focus:ring-0";
+const selectClass = cn(
+  "h-9 w-full cursor-pointer appearance-none rounded-organic-lg bg-transparent py-0 pl-3 pr-8 text-sm font-medium text-text [color-scheme:dark]",
+  controlBase,
+);
 
-const markInputClass =
-  "h-8 w-11 rounded-organic-md bg-surface-mid text-center text-sm font-semibold tabular-nums text-text outline-none focus:outline-none focus:ring-0 disabled:opacity-35";
+const markInputClass = cn(
+  "h-8 w-11 rounded-organic-md bg-surface-mid text-center text-sm font-semibold tabular-nums text-text disabled:opacity-35",
+  controlBase,
+);
 
 const COLOR_TEXT: Record<ModuleColor, string> = {
   maths: "text-maths",
@@ -46,9 +52,44 @@ const COLOR_TEXT: Record<ModuleColor, string> = {
   "tmua-accent": "text-tmua-accent",
 };
 
-function shortSectionLabel(label: string): string {
-  const part = label.split("—")[0]?.trim() ?? label;
-  return part.length > 22 ? `${part.slice(0, 20)}…` : part;
+function displaySubject(opt: SectionOption): string {
+  if (opt.moduleLabel) return opt.moduleLabel;
+  const tail = opt.legacyLabel.split("—")[1]?.trim();
+  if (tail) return tail;
+  return opt.legacyLabel.split("—")[0]?.trim() ?? opt.partName;
+}
+
+function SelectField({
+  label,
+  value,
+  onChange,
+  disabled,
+  children,
+  minWidth = "5rem",
+}: {
+  label: string;
+  value: string | number;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  disabled?: boolean;
+  children: React.ReactNode;
+  minWidth?: string;
+}) {
+  return (
+    <label className="block shrink-0">
+      <span className={fieldLabel}>{label}</span>
+      <div className={selectWrap} style={{ minWidth }}>
+        <select
+          value={value}
+          onChange={onChange}
+          disabled={disabled}
+          className={cn(selectClass, disabled && "opacity-40")}
+        >
+          {children}
+        </select>
+        <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-subtle" />
+      </div>
+    </label>
+  );
 }
 
 export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam }) {
@@ -64,6 +105,7 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
 
   const [sections, setSections] = useState<SectionOption[]>([]);
   const [sectionsLoading, setSectionsLoading] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState("");
   const [checkedKeys, setCheckedKeys] = useState<string[]>([]);
   const [rawByKey, setRawByKey] = useState<Record<string, number>>({});
   const [scaledInput, setScaledInput] = useState("");
@@ -78,6 +120,23 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
   const [chartLoading, setChartLoading] = useState(false);
 
   const isScaledMode = year?.mode === "scaled";
+
+  const isNsaaEngaa = exam === "NSAA" || exam === "ENGAA";
+
+  const sectionGroups = useMemo(() => {
+    const map = new Map<string, SectionOption[]>();
+    for (const s of sections) {
+      const list = map.get(s.group) ?? [];
+      list.push(s);
+      map.set(s.group, list);
+    }
+    return Array.from(map.entries());
+  }, [sections]);
+
+  const partsInGroup = useMemo(() => {
+    if (!isNsaaEngaa) return sections;
+    return sectionGroups.find(([g]) => g === selectedGroup)?.[1] ?? [];
+  }, [sections, sectionGroups, selectedGroup, isNsaaEngaa]);
 
   const checkedSections = useMemo(
     () => sections.filter((s) => checkedKeys.includes(s.key)),
@@ -105,6 +164,7 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
     setYearsLoading(true);
     setYear(null);
     setSections([]);
+    setSelectedGroup("");
     setCheckedKeys([]);
     setRawByKey({});
     setScaledInput("");
@@ -161,6 +221,24 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
       cancelled = true;
     };
   }, [exam, year, invalidateResults]);
+
+  useEffect(() => {
+    if (sectionGroups.length === 0) {
+      setSelectedGroup("");
+      return;
+    }
+    setSelectedGroup((prev) =>
+      sectionGroups.some(([g]) => g === prev) ? prev : sectionGroups[0][0],
+    );
+  }, [sectionGroups]);
+
+  const handleGroupChange = (group: string) => {
+    invalidateResults();
+    setSelectedGroup(group);
+    setCheckedKeys((prev) =>
+      prev.filter((k) => sections.some((s) => s.key === k && s.group === group)),
+    );
+  };
 
   const toggleSection = (opt: SectionOption) => {
     invalidateResults();
@@ -312,21 +390,14 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
         )}
       </div>
 
-      {/* Inputs — bottom row */}
+      {/* Inputs */}
       <div className="rounded-organic-xl bg-surface-elevated p-4 shadow-modal-card sm:p-5">
-        <div className="flex flex-wrap items-end gap-x-4 gap-y-4">
-          <div className="shrink-0">
+        {/* Row 1: exam, year, section, calculate */}
+        <div className="flex flex-wrap items-end gap-x-4 gap-y-3">
+          <label className="block shrink-0">
             <span className={fieldLabel}>Exam</span>
             <div className="flex items-center gap-2">
-              <span
-                className={cn(
-                  "text-sm font-bold tracking-tight",
-                  exam === "TMUA" ? "text-tmua-accent" : "text-secondary",
-                )}
-              >
-                {examTargetLabel(exam)}
-              </span>
-              <div className={cn(selectWrap, "min-w-[5rem]")}>
+              <div className={cn(selectWrap, "min-w-[5.5rem]")}>
                 <select
                   value={exam}
                   onChange={(e) => {
@@ -337,49 +408,69 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                   className={selectClass}
                 >
                   {CONVERTER_EXAMS.map((e) => (
-                    <option key={e} value={e}>
+                    <option key={e} value={e} className="bg-surface-elevated text-text">
                       {e}
                     </option>
                   ))}
                 </select>
                 <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-subtle" />
               </div>
-            </div>
-          </div>
-
-          <div className="shrink-0">
-            <span className={fieldLabel}>Year</span>
-            <div className={cn(selectWrap, "min-w-[4.5rem]")}>
-              <select
-                value={year?.year ?? ""}
-                onChange={(e) => {
-                  const opt = years.find((y) => y.year === Number(e.target.value)) ?? null;
-                  setYear(opt);
-                  setScaledInput("");
-                  setCheckedKeys([]);
-                  setRawByKey({});
-                  invalidateResults();
-                }}
-                disabled={yearsLoading || years.length === 0}
-                className={cn(selectClass, "disabled:opacity-40")}
+              <span className="text-sm text-text-subtle">›</span>
+              <span
+                className={cn(
+                  "text-sm font-bold tracking-tight",
+                  exam === "TMUA" ? "text-tmua-accent" : "text-secondary",
+                )}
               >
-                <option value="" disabled>
-                  {yearsLoading ? "…" : "—"}
-                </option>
-                {years.map((y) => (
-                  <option key={y.year} value={y.year}>
-                    {y.year}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-subtle" />
+                {examTargetLabel(exam)}
+              </span>
             </div>
-          </div>
+          </label>
+
+          <SelectField
+            label="Year"
+            value={year?.year ?? ""}
+            minWidth="4.5rem"
+            disabled={yearsLoading || years.length === 0}
+            onChange={(e) => {
+              const opt = years.find((y) => y.year === Number(e.target.value)) ?? null;
+              setYear(opt);
+              setScaledInput("");
+              setCheckedKeys([]);
+              setRawByKey({});
+              invalidateResults();
+            }}
+          >
+            <option value="" disabled className="bg-surface-elevated text-text">
+              {yearsLoading ? "…" : "—"}
+            </option>
+            {years.map((y) => (
+              <option key={y.year} value={y.year} className="bg-surface-elevated text-text">
+                {y.year}
+              </option>
+            ))}
+          </SelectField>
+
+          {year && isNsaaEngaa && !isScaledMode && sectionGroups.length > 0 && (
+            <SelectField
+              label="Section"
+              value={selectedGroup}
+              minWidth="7rem"
+              disabled={sectionsLoading}
+              onChange={(e) => handleGroupChange(e.target.value)}
+            >
+              {sectionGroups.map(([group]) => (
+                <option key={group} value={group} className="bg-surface-elevated text-text">
+                  {group}
+                </option>
+              ))}
+            </SelectField>
+          )}
 
           {year && isScaledMode && (
-            <div className="shrink-0">
+            <label className="block shrink-0">
               <span className={fieldLabel}>Scaled</span>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
                 <input
                   type="text"
                   inputMode="decimal"
@@ -393,59 +484,7 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                 />
                 <span className="text-xs font-medium text-text-subtle">/9</span>
               </div>
-            </div>
-          )}
-
-          {year && !isScaledMode && (
-            <div className="flex min-w-0 flex-1 flex-wrap items-end gap-x-4 gap-y-3">
-              {sectionsLoading && (
-                <span className="pb-2 text-xs text-text-muted">Loading sections…</span>
-              )}
-              {!sectionsLoading && sections.length === 0 && year && (
-                <span className="pb-2 text-xs text-text-muted">No sections</span>
-              )}
-              {sections.map((s) => {
-                const checked = checkedKeys.includes(s.key);
-                const disabled = !checked && checkedKeys.length >= MAX_SECTIONS;
-                const c = COLOR_TEXT[s.color];
-                return (
-                  <label
-                    key={s.key}
-                    className={cn(
-                      "flex cursor-pointer items-center gap-2 rounded-organic-lg px-2 py-1.5 transition-colors",
-                      checked ? "bg-surface-mid" : "hover:bg-surface-subtle/80",
-                      disabled && "cursor-not-allowed opacity-40",
-                    )}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      disabled={disabled}
-                      onChange={() => toggleSection(s)}
-                      className="h-3.5 w-3.5 shrink-0 cursor-pointer rounded accent-secondary"
-                    />
-                    <span className={cn("max-w-[7rem] truncate text-xs font-medium", c)}>
-                      {shortSectionLabel(s.legacyLabel)}
-                    </span>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      disabled={!checked}
-                      value={checked ? String(rawByKey[s.key] ?? 0) : ""}
-                      placeholder="—"
-                      onChange={(e) => {
-                        const n = parseInt(e.target.value.replace(/\D/g, ""), 10);
-                        if (Number.isNaN(n)) setRaw(s.key, 0);
-                        else setRaw(s.key, Math.max(0, Math.min(s.maxRaw, n)));
-                      }}
-                      onClick={(e) => e.stopPropagation()}
-                      className={markInputClass}
-                    />
-                    <span className="text-xs font-medium text-text-subtle">/{s.maxRaw}</span>
-                  </label>
-                );
-              })}
-            </div>
+            </label>
           )}
 
           <button
@@ -467,6 +506,61 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
             )}
           </button>
         </div>
+
+        {/* Row 2: subject marks */}
+        {year && !isScaledMode && (
+          <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-3 pt-2">
+            {sectionsLoading && (
+              <span className="text-xs text-text-muted">Loading…</span>
+            )}
+            {!sectionsLoading && partsInGroup.length === 0 && (
+              <span className="text-xs text-text-muted">No subjects for this section.</span>
+            )}
+            {!sectionsLoading &&
+              partsInGroup.map((s) => {
+                const checked = checkedKeys.includes(s.key);
+                const disabled = !checked && checkedKeys.length >= MAX_SECTIONS;
+                const c = COLOR_TEXT[s.color];
+                return (
+                  <label
+                    key={s.key}
+                    className={cn(
+                      "flex cursor-pointer items-center gap-2",
+                      disabled && "cursor-not-allowed opacity-40",
+                    )}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      disabled={disabled}
+                      onChange={() => toggleSection(s)}
+                      className={cn(
+                        "h-3.5 w-3.5 shrink-0 cursor-pointer rounded accent-secondary",
+                        controlBase,
+                      )}
+                    />
+                    <span className={cn("text-xs font-medium", c)}>
+                      {displaySubject(s)}
+                    </span>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      disabled={!checked}
+                      value={checked ? String(rawByKey[s.key] ?? 0) : ""}
+                      placeholder="—"
+                      onChange={(e) => {
+                        const n = parseInt(e.target.value.replace(/\D/g, ""), 10);
+                        if (Number.isNaN(n)) setRaw(s.key, 0);
+                        else setRaw(s.key, Math.max(0, Math.min(s.maxRaw, n)));
+                      }}
+                      className={markInputClass}
+                    />
+                    <span className="text-xs font-medium text-text-subtle">/{s.maxRaw}</span>
+                  </label>
+                );
+              })}
+          </div>
+        )}
       </div>
 
       <p className="mt-6 text-center text-[11px] text-text-subtle">
@@ -514,7 +608,11 @@ function ResultsPanel({
                   active ? "bg-surface-mid text-text" : "text-text-muted hover:bg-surface-subtle",
                 )}
               >
-                <span className={c}>{s.legacyLabel.split("—")[0]?.trim()}</span>
+                <span className={c}>
+                  {s.moduleLabel ??
+                    s.legacyLabel.split("—")[1]?.trim() ??
+                    s.legacyLabel.split("—")[0]?.trim()}
+                </span>
                 {s.scaledScore != null && (
                   <span className="ml-1.5 tabular-nums text-text">
                     {s.scaledScore.toFixed(1)}
