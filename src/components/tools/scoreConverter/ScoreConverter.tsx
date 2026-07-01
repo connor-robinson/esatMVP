@@ -812,7 +812,7 @@ function SectionResult({
             {dual.student.estimatedScaled != null && (
               <div>
                 <p className="text-[10px] font-semibold uppercase tracking-wide text-text-subtle">
-                  Est. 2026 scale
+                  Post-2024 TMUA (est.)
                 </p>
                 <p className="text-3xl font-bold tabular-nums text-secondary sm:text-4xl">
                   {dual.student.estimatedScaled.toFixed(1)}

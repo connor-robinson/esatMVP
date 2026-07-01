@@ -8,6 +8,15 @@ import type { ConversionRow } from "@/types/papers";
 
 const round1 = (v: number) => Math.round(v * 10) / 10;
 
+export const TMUA_POST_2024_EXPLAINER = {
+  title: "Why is there a post-2024 score?",
+  paragraphs: [
+    "The TMUA changed hands in 2024 — Cambridge Assessment handed administration to UAT-UK and Pearson VUE. The test content stayed similar, but candidates now sit different versions on different dates, and scores are calculated per-candidate using a statistical model (Rasch) rather than one fixed table. That's why nobody — including UAT-UK — publishes a raw-marks-to-score table for 2024 onward.",
+    "This also moved where the 1.0–9.0 scale sits: a typical candidate's score dropped from around 5.1 to around 3.8. University requirements were lowered by a similar amount, so this isn't the test getting harder — it's the ruler being recalibrated.",
+    "The solid line is what this paper would actually have earned under the old system. The dashed line is an estimate of the equivalent on today's scale, based on matching percentile rank between the two systems. It's an estimate, not an official conversion. Treat scores of 7.0+ as fairly reliable across this comparison; treat the middle of the range with more caution, since that's where the two systems diverge most.",
+  ],
+} as const;
+
 export interface TmuaDualCurvePoint {
   raw: number;
   actualScaled: number;

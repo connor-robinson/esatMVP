@@ -99,6 +99,48 @@
     animation: questionAppear 0.3s ease-out;
   }
 
+  @keyframes tmuaCurveDraw {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes tmuaFadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .tmua-curve-draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: tmuaCurveDraw 1.35s ease-out forwards;
+  }
+
+  .tmua-curve-draw-delayed {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: tmuaCurveDraw 1.35s ease-out 0.45s forwards;
+  }
+
+  .tmua-fade-up {
+    opacity: 0;
+    animation: tmuaFadeUp 0.5s ease-out forwards;
+  }
+
+  .tmua-fade-up-delayed {
+    opacity: 0;
+    animation: tmuaFadeUp 0.55s ease-out 1.1s forwards;
+  }
+
   /* Hide scrollbar utility */
   .scrollbar-hide {
     -ms-overflow-style: none;  /* IE and Edge */

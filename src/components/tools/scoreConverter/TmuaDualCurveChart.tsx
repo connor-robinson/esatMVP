@@ -1,10 +1,13 @@
 "use client";
 
-import { useMemo } from "react";
-import { ChevronDown } from "lucide-react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { Info, X } from "lucide-react";
 import { cssVar } from "@/config/colors";
 import { cn } from "@/lib/utils";
-import type { TmuaDualCurveData } from "@/lib/scoreConverter/tmuaDualCurve";
+import {
+  TMUA_POST_2024_EXPLAINER,
+  type TmuaDualCurveData,
+} from "@/lib/scoreConverter/tmuaDualCurve";
 
 const LOW_BAND_Y_MIN = 4.0;
 const LOW_BAND_Y_MAX = 6.5;
@@ -15,6 +18,34 @@ type TmuaDualCurveChartProps = {
 };
 
 export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps) {
+  const [infoOpen, setInfoOpen] = useState(false);
+  const [animateKey, setAnimateKey] = useState(0);
+  const infoRef = useRef<HTMLDivElement>(null);
+  const infoButtonId = useId();
+  const infoPanelId = useId();
+
+  useEffect(() => {
+    setAnimateKey((k) => k + 1);
+  }, [data]);
+
+  useEffect(() => {
+    if (!infoOpen) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (infoRef.current && !infoRef.current.contains(e.target as Node)) {
+        setInfoOpen(false);
+      }
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setInfoOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [infoOpen]);
+
   const chart = useMemo(() => {
     const w = 720;
     const h = 300;
@@ -107,39 +138,88 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
     yTicks,
   } = chart;
 
+  const hasPostCurve = curveBSegments.length > 0;
+  const hasPostStudent = studentYB != null && data.student.estimatedScaled != null;
+
   return (
     <div className={cn("space-y-3", className)}>
-      <div className="flex flex-wrap gap-x-5 gap-y-1 text-xs text-text-muted">
-        <span className="inline-flex items-center gap-2">
-          <span
-            className="inline-block h-0.5 w-5 rounded-full"
-            style={{ background: "var(--color-tmua-accent)" }}
-          />
-          Actual {data.year} grade
-        </span>
-        <span className="inline-flex items-center gap-2">
-          <span
-            className="inline-block h-0.5 w-5 rounded-full border-b border-dashed"
-            style={{ borderColor: "var(--color-secondary)" }}
-          />
-          Estimated 2026-equivalent
-        </span>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="flex flex-wrap gap-x-5 gap-y-1 text-xs text-text-muted">
+          <span className="inline-flex items-center gap-2">
+            <span
+              className="inline-block h-0.5 w-5 rounded-full"
+              style={{ background: "var(--color-tmua-accent)" }}
+            />
+            Actual {data.year} grade
+          </span>
+          {hasPostCurve && (
+            <span className="inline-flex items-center gap-2">
+              <span
+                className="inline-block h-0.5 w-5 rounded-full"
+                style={{ background: "var(--color-secondary)" }}
+              />
+              Post-2024 TMUA score (est.)
+            </span>
+          )}
+        </div>
+
+        <div ref={infoRef} className="relative shrink-0">
+          <button
+            type="button"
+            id={infoButtonId}
+            aria-expanded={infoOpen}
+            aria-controls={infoPanelId}
+            onClick={() => setInfoOpen((v) => !v)}
+            className="inline-flex items-center gap-1.5 rounded-organic-md px-2.5 py-1.5 text-xs font-medium text-text-muted transition-colors hover:bg-surface-subtle hover:text-text"
+          >
+            <Info className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            Why two scores?
+          </button>
+
+          {infoOpen && (
+            <div
+              id={infoPanelId}
+              role="dialog"
+              aria-labelledby={infoButtonId}
+              className="absolute right-0 top-full z-20 mt-2 w-[min(100vw-2rem,22rem)] rounded-organic-lg bg-surface-elevated p-4 shadow-modal-card"
+            >
+              <div className="mb-3 flex items-start justify-between gap-2">
+                <p className="text-sm font-semibold text-text">
+                  {TMUA_POST_2024_EXPLAINER.title}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setInfoOpen(false)}
+                  className="rounded-organic-sm p-1 text-text-muted transition-colors hover:bg-surface-subtle hover:text-text"
+                  aria-label="Close"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+              <div className="space-y-2.5 text-xs leading-relaxed text-text-muted">
+                {TMUA_POST_2024_EXPLAINER.paragraphs.map((p, i) => (
+                  <p key={i}>{p}</p>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="relative">
         <svg
+          key={animateKey}
           width="100%"
           height={h}
           viewBox={`0 0 ${w} ${h}`}
           preserveAspectRatio="xMidYMid meet"
           className="block"
           role="img"
-          aria-label={`TMUA ${data.year} raw marks vs scaled score dual curve`}
+          aria-label={`TMUA ${data.year} raw marks vs scaled score, with post-2024 equivalent curve`}
         >
           <line x1={padL} y1={h - padB} x2={chartRight} y2={h - padB} stroke={cssVar.borderSubtle} />
           <line x1={padL} y1={padT} x2={padL} y2={h - padB} stroke={cssVar.borderSubtle} />
 
-          {/* Lower-confidence band on the new-scale y-axis */}
           <rect
             x={padL}
             y={bandTop}
@@ -154,7 +234,7 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
             fontSize="9"
             opacity={0.85}
           >
-            Less reliable here (≈4.0–6.5 on 2026 scale)
+            Less reliable here (≈4.0–6.5 on post-2024 scale)
           </text>
 
           {yTicks.map((t) => (
@@ -199,7 +279,7 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
             </g>
           ))}
 
-          {/* Curve A — official */}
+          {/* Curve A — official pre-2024 */}
           <polyline
             points={curveA}
             fill="none"
@@ -207,24 +287,26 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
             strokeWidth="2.5"
             strokeLinejoin="round"
             strokeLinecap="round"
+            pathLength={1}
+            className="tmua-curve-draw"
           />
 
-          {/* Curve B — estimated (gaps where out of post-table range) */}
+          {/* Curve B — post-2024 equivalent (animated second line) */}
           {curveBSegments.map((seg, i) => (
             <polyline
               key={`b-${i}`}
               points={seg}
               fill="none"
               stroke="var(--color-secondary)"
-              strokeWidth="2"
-              strokeDasharray="6 4"
+              strokeWidth="2.25"
               strokeLinejoin="round"
               strokeLinecap="round"
-              opacity={0.9}
+              pathLength={1}
+              className="tmua-curve-draw-delayed"
+              style={{ animationDelay: `${0.45 + i * 0.12}s` }}
             />
           ))}
 
-          {/* Student raw guide */}
           <line
             x1={studentX}
             y1={padT}
@@ -234,6 +316,22 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
             strokeDasharray="4 3"
           />
 
+          {/* Vertical link at student's raw score between the two scales */}
+          {hasPostStudent && (
+            <line
+              x1={studentX}
+              y1={studentYA}
+              x2={studentX}
+              y2={studentYB!}
+              stroke="var(--color-secondary)"
+              strokeWidth="2"
+              strokeDasharray="5 4"
+              opacity={0.85}
+              pathLength={1}
+              className="tmua-fade-up-delayed"
+            />
+          )}
+
           <circle
             cx={studentX}
             cy={studentYA}
@@ -241,6 +339,8 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
             fill="var(--color-tmua-accent)"
             stroke={cssVar.background}
             strokeWidth="2"
+            className="tmua-fade-up"
+            style={{ animationDelay: "0.2s" }}
           />
           <text
             x={studentX + 8}
@@ -248,26 +348,30 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
             fill="var(--color-tmua-accent)"
             fontSize="10"
             fontWeight="600"
+            className="tmua-fade-up"
+            style={{ animationDelay: "0.25s" }}
           >
             {data.student.actualScaled.toFixed(1)}
           </text>
 
-          {studentYB != null && (
+          {hasPostStudent && (
             <>
               <circle
                 cx={studentX}
-                cy={studentYB}
+                cy={studentYB!}
                 r="5"
                 fill="var(--color-secondary)"
                 stroke={cssVar.background}
                 strokeWidth="2"
+                className="tmua-fade-up-delayed"
               />
               <text
                 x={studentX + 8}
-                y={studentYB + 14}
+                y={studentYB! + 14}
                 fill="var(--color-secondary)"
                 fontSize="10"
                 fontWeight="600"
+                className="tmua-fade-up-delayed"
               >
                 {data.student.estimatedScaled!.toFixed(1)}
               </text>
@@ -283,12 +387,7 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
           >
             Raw marks
           </text>
-          <text
-            x={12}
-            y={padT - 6}
-            fill={cssVar.textMuted}
-            fontSize="10"
-          >
+          <text x={12} y={padT - 6} fill={cssVar.textMuted} fontSize="10">
             Scaled score
           </text>
         </svg>
@@ -305,39 +404,8 @@ export function TmuaDualCurveExplainer({
   className?: string;
 }) {
   return (
-    <div className={cn("space-y-3", className)}>
-      <p className="text-sm leading-relaxed text-text">{summary}</p>
-
-      <details className="group rounded-organic-md bg-surface-subtle/80">
-        <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3 text-sm font-medium text-text">
-          Why two scores?
-          <ChevronDown className="h-4 w-4 shrink-0 text-text-muted transition-transform group-open:rotate-180" />
-        </summary>
-        <div className="space-y-3 px-4 pb-4 text-xs leading-relaxed text-text-muted">
-          <p>
-            The TMUA changed hands in 2024 — Cambridge Assessment handed administration
-            to UAT-UK and Pearson VUE. The test content stayed similar, but candidates
-            now sit different versions on different dates, and scores are calculated
-            per-candidate using a statistical model (Rasch) rather than one fixed table.
-            That&apos;s why nobody — including UAT-UK — publishes a raw-marks-to-score
-            table for 2024 onward.
-          </p>
-          <p>
-            This also moved where the 1.0–9.0 scale sits: a typical candidate&apos;s score
-            dropped from around 5.1 to around 3.8. University requirements were lowered
-            by a similar amount, so this isn&apos;t the test getting harder — it&apos;s the ruler
-            being recalibrated.
-          </p>
-          <p>
-            The score on the left is what this paper would actually have earned under
-            the old system. The score on the right is an estimate of the equivalent on
-            today&apos;s scale, based on matching percentile rank between the two systems.
-            It&apos;s an estimate, not an official conversion. Treat scores of 7.0+ as fairly
-            reliable across this comparison; treat the middle of the range with more
-            caution, since that&apos;s where the two systems diverge most.
-          </p>
-        </div>
-      </details>
-    </div>
+    <p className={cn("text-sm leading-relaxed text-text-muted", className)}>
+      {summary}
+    </p>
   );
 }
