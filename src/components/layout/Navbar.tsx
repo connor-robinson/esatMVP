@@ -90,6 +90,8 @@ const navSections: NavSectionConfig[] = [
             description: 'Daily estimation game',
             icon: FermiGuessrIcon,
             badge: 'NEW',
+            iconBoxClassName: 'bg-surface-elevated',
+            badgeClassName: 'text-sm',
           },
         ],
       },

@@ -123,20 +123,18 @@ export function SubjectCategories({
               <button
                 type='button'
                 onClick={onLaunchFermiGuessr}
-                className='group relative flex w-full flex-col items-center px-1.5 outline-none'
+                className='group flex w-full flex-col items-center gap-1.5 px-1.5 outline-none opacity-90 transition-opacity hover:opacity-100'
                 title={`${FERMI_GUESSR_NAME} — daily estimation game`}
               >
-                <div className='relative flex w-full flex-col items-center gap-1.5 rounded-organic-lg bg-surface-elevated px-1 py-2.5 transition-opacity duration-150 group-hover:opacity-90 group-active:opacity-80'>
-                  <span className='absolute -right-0.5 -top-1 text-[7px] font-bold uppercase tracking-[0.1em] text-error'>
+                <div className='relative flex h-12 w-12 items-center justify-center rounded-organic-lg bg-surface-elevated xl:h-14 xl:w-14'>
+                  <span className='absolute -right-1 -top-1.5 text-[10px] font-bold uppercase tracking-[0.08em] text-error'>
                     New
                   </span>
-                  <div className='flex h-11 w-11 items-center justify-center xl:h-12 xl:w-12'>
-                    <FermiGuessrIcon className='h-6 w-6 text-secondary xl:h-[1.65rem] xl:w-[1.65rem]' />
-                  </div>
-                  <span className='max-w-full text-center text-[9px] font-bold leading-tight tracking-[0.04em] text-secondary xl:text-[10px]'>
-                    {FERMI_GUESSR_NAME}
-                  </span>
+                  <FermiGuessrIcon className='h-5 w-5 text-secondary xl:h-6 xl:w-6' strokeWidth={2} />
                 </div>
+                <span className='text-center text-[10px] font-medium leading-tight tracking-[0.06em] text-secondary'>
+                  {FERMI_GUESSR_NAME}
+                </span>
               </button>
             </>
           )}

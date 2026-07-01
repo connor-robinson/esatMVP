@@ -18,6 +18,10 @@ export interface NavDropdownItem {
   icon: NavDropdownIcon;
   /** Uppercase label beside the title (e.g. NEW). */
   badge?: string;
+  /** Optional override for the icon container background. */
+  iconBoxClassName?: string;
+  /** Optional override for badge typography. */
+  badgeClassName?: string;
 }
 
 export interface NavDropdownGroup {
@@ -142,7 +146,7 @@ export function NavDropdownMenuItem({
         className={cn(
           'mt-0.5 inline-flex shrink-0 items-center justify-center rounded-[10px]',
           compact ? 'h-8 w-8' : 'h-9 w-9',
-          theme.iconBox,
+          item.iconBoxClassName ?? theme.iconBox,
         )}
         aria-hidden
       >
@@ -161,7 +165,13 @@ export function NavDropdownMenuItem({
           <span className="inline-flex items-center gap-2">
             {item.label}
             {item.badge ? (
-              <span className='text-[10px] font-bold uppercase tracking-[0.08em] text-error'>
+              <span
+                className={cn(
+                  'font-bold uppercase tracking-[0.08em] text-error',
+                  item.badgeClassName ??
+                    (compact ? 'text-xs' : 'text-sm'),
+                )}
+              >
                 {item.badge}
               </span>
             ) : null}
