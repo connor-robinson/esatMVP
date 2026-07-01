@@ -20,9 +20,14 @@ import { APP_NAME } from '@/config/brand';
 import {
   NavSectionDropdown,
   NavDropdownMenuItem,
+  getNavSectionItems,
   type NavSectionConfig,
   type NavSectionId,
 } from '@/components/layout/NavSectionDropdown';
+import {
+  FERMI_GUESSR_NAME,
+  FERMI_GUESSR_PLAY_PATH,
+} from '@/config/fermiGuessr';
 import {
   ArrowLeftRight,
   BarChart3,
@@ -38,6 +43,7 @@ import {
   Moon,
   Settings,
   Sun,
+  Target,
   Trophy,
   X,
   Zap,
@@ -52,24 +58,40 @@ const navSections: NavSectionConfig[] = [
     label: 'Mental Maths',
     href: '/mental-maths/drill',
     section: 'skills',
-    items: [
+    groups: [
       {
-        href: '/mental-maths/drill',
-        label: 'Drill',
-        description: 'Start a practice session',
-        icon: Zap,
+        items: [
+          {
+            href: '/mental-maths/drill',
+            label: 'Drill',
+            description: 'Start a practice session',
+            icon: Zap,
+          },
+          {
+            href: '/mental-maths/analytics',
+            label: 'Analytics',
+            description: 'Track your progress',
+            icon: BarChart3,
+          },
+          {
+            href: '/mental-maths/leaderboard',
+            label: 'Leaderboard',
+            description: 'Compare with others',
+            icon: Trophy,
+          },
+        ],
       },
       {
-        href: '/mental-maths/analytics',
-        label: 'Analytics',
-        description: 'Track your progress',
-        icon: BarChart3,
-      },
-      {
-        href: '/mental-maths/leaderboard',
-        label: 'Leaderboard',
-        description: 'Compare with others',
-        icon: Trophy,
+        title: FERMI_GUESSR_NAME,
+        items: [
+          {
+            href: FERMI_GUESSR_PLAY_PATH,
+            label: FERMI_GUESSR_NAME,
+            description: 'Daily estimation game — how close can you get?',
+            icon: Target,
+            badge: 'NEW',
+          },
+        ],
       },
     ],
   },
@@ -153,7 +175,7 @@ const navSections: NavSectionConfig[] = [
 
 const ALL_NAV_ROUTES = navSections.flatMap((section) => [
   section.href,
-  ...section.items.map((item) => item.href),
+  ...getNavSectionItems(section).map((item) => item.href),
 ]);
 
 function resolveSection(pathname: string): NavSectionId | 'home' {
@@ -469,16 +491,41 @@ export function Navbar() {
                         {section.label}
                       </Link>
                       <div className='mt-3 flex flex-col gap-1'>
-                        {section.items.map((item) => (
-                          <NavDropdownMenuItem
-                            key={item.href}
-                            item={item}
-                            section={section.section}
-                            isActive={pathname === item.href}
-                            onPrefetch={handlePrefetch}
-                            onNavigate={() => setMobileMenuOpen(false)}
-                          />
-                        ))}
+                        {section.groups?.length
+                          ? section.groups.map((group, groupIndex) => (
+                              <div
+                                key={group.title ?? `mobile-group-${groupIndex}`}
+                                className={cn(groupIndex > 0 && 'mt-3 border-t border-border-subtle pt-3')}
+                              >
+                                {group.title ? (
+                                  <p className='mb-2 px-2 text-[10px] font-bold uppercase tracking-[0.14em] text-text-muted'>
+                                    {group.title}
+                                  </p>
+                                ) : null}
+                                <div className='flex flex-col gap-1'>
+                                  {group.items.map((item) => (
+                                    <NavDropdownMenuItem
+                                      key={item.href}
+                                      item={item}
+                                      section={section.section}
+                                      isActive={pathname === item.href}
+                                      onPrefetch={handlePrefetch}
+                                      onNavigate={() => setMobileMenuOpen(false)}
+                                    />
+                                  ))}
+                                </div>
+                              </div>
+                            ))
+                          : (section.items ?? []).map((item) => (
+                              <NavDropdownMenuItem
+                                key={item.href}
+                                item={item}
+                                section={section.section}
+                                isActive={pathname === item.href}
+                                onPrefetch={handlePrefetch}
+                                onNavigate={() => setMobileMenuOpen(false)}
+                              />
+                            ))}
                       </div>
                     </div>
                   ))}

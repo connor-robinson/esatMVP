@@ -1,5 +1,5 @@
 /**
- * Fermi Estimation — daily mental-maths minigame.
+ * FermiGuessr — daily mental-maths estimation minigame.
  *
  * Everyone gets the same five questions each UTC day. Questions cycle through
  * the bank without repeating until the pool is exhausted, then restart.
@@ -26,10 +26,13 @@ import {
 } from "@/lib/fermi/scoring";
 import { utcDateKey } from "@/lib/fermi/dates";
 import {
-  FERMI_DAILY_ROUND_SIZE,
   getDailyFermiQuestions,
   getDailyPuzzleNumber,
 } from "@/lib/fermi/dailyQuestions";
+import {
+  FERMI_GUESSR_NAME,
+  FERMI_GUESSR_STATS_PATH,
+} from "@/config/fermiGuessr";
 
 const BEST_SCORE_KEY = "fermiBestScore";
 const DAILY_STATE_KEY = "fermiDailyState";
@@ -260,7 +263,7 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
     });
   }, [phase, results, authSession?.user, puzzleNumber, todayKey, averageScore]);
 
-  const statsHref = "/mental-maths/fermi/stats";
+  const statsHref = FERMI_GUESSR_STATS_PATH;
   const loginStatsHref = `/login?redirectTo=${encodeURIComponent(statsHref)}`;
 
   const handleViewStats = useCallback(() => {
@@ -273,7 +276,7 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
 
   const shareText = useMemo(() => {
     const lines = results.map((r) => `${r.score}/100 — ${r.verdict.label}`);
-    return `Fermi Daily #${puzzleNumber} 🎯\n${lines.join("\n")}\nAverage: ${averageScore}/100\nThe ESAT Guide · Mental Maths`;
+    return `${FERMI_GUESSR_NAME} #${puzzleNumber} 🎯\n${lines.join("\n")}\nAverage: ${averageScore}/100\nThe ESAT Guide · Mental Maths`;
   }, [results, averageScore, puzzleNumber]);
 
   const handleCopyShare = useCallback(async () => {
@@ -304,10 +307,10 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
           </div>
           <div>
             <h1 className="text-lg font-bold leading-tight text-text">
-              Fermi Daily #{puzzleNumber}
+              {FERMI_GUESSR_NAME} #{puzzleNumber}
             </h1>
             <p className="text-xs font-medium text-text-muted">
-              {FERMI_DAILY_ROUND_SIZE} questions · same for everyone today
+              Daily estimation game · same puzzle for everyone
             </p>
           </div>
         </div>
@@ -609,7 +612,7 @@ function SummaryView({
   return (
     <div className="animate-scale-in flex flex-col items-center gap-5 pt-2 sm:pt-4">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-text">Fermi Daily #{puzzleNumber}</h2>
+        <h2 className="text-2xl font-bold text-text">{FERMI_GUESSR_NAME} #{puzzleNumber}</h2>
         <p className="text-sm font-medium text-text-muted">Today&apos;s average closeness</p>
       </div>
 

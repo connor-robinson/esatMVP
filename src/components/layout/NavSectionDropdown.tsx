@@ -14,6 +14,14 @@ export interface NavDropdownItem {
   label: string;
   description?: string;
   icon: LucideIcon;
+  /** Small pill shown beside the label (e.g. NEW). */
+  badge?: string;
+}
+
+export interface NavDropdownGroup {
+  /** Optional group heading inside the dropdown. */
+  title?: string;
+  items: NavDropdownItem[];
 }
 
 export interface NavSectionConfig {
@@ -22,7 +30,16 @@ export interface NavSectionConfig {
   section: NavSectionId;
   /** Extra horizontal padding on the trigger label for visual balance. */
   triggerPadding?: string;
-  items: NavDropdownItem[];
+  items?: NavDropdownItem[];
+  /** When set, renders labelled sections inside the dropdown. */
+  groups?: NavDropdownGroup[];
+}
+
+export function getNavSectionItems(config: NavSectionConfig): NavDropdownItem[] {
+  if (config.groups?.length) {
+    return config.groups.flatMap((group) => group.items);
+  }
+  return config.items ?? [];
 }
 
 const sectionActiveClass: Record<NavSectionId, string> = {
@@ -139,7 +156,14 @@ export function NavDropdownMenuItem({
             isActive ? theme.iconColor : 'text-text',
           )}
         >
-          {item.label}
+          <span className="inline-flex items-center gap-2">
+            {item.label}
+            {item.badge ? (
+              <span className="rounded-full bg-session-green px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white">
+                {item.badge}
+              </span>
+            ) : null}
+          </span>
         </span>
         {item.description ? (
           <span
@@ -285,17 +309,43 @@ export function NavSectionDropdown({
               <div className={cn('h-[3px] w-full shrink-0', theme.accentBar)} aria-hidden />
 
               <div className='flex flex-col gap-1 p-2'>
-                {config.items.map((item) => (
-                  <NavDropdownMenuItem
-                    key={item.href}
-                    item={item}
-                    section={config.section}
-                    isActive={pathname === item.href}
-                    onPrefetch={onPrefetch}
-                    onNavigate={() => handleItemClick(item.href)}
-                    compact
-                  />
-                ))}
+                {config.groups?.length
+                  ? config.groups.map((group, groupIndex) => (
+                      <div
+                        key={group.title ?? `group-${groupIndex}`}
+                        className={cn(groupIndex > 0 && 'mt-2 border-t border-border-subtle pt-2')}
+                      >
+                        {group.title ? (
+                          <p className='mb-1.5 px-2 text-[10px] font-bold uppercase tracking-[0.14em] text-text-muted'>
+                            {group.title}
+                          </p>
+                        ) : null}
+                        <div className='flex flex-col gap-1'>
+                          {group.items.map((item) => (
+                            <NavDropdownMenuItem
+                              key={item.href}
+                              item={item}
+                              section={config.section}
+                              isActive={pathname === item.href}
+                              onPrefetch={onPrefetch}
+                              onNavigate={() => handleItemClick(item.href)}
+                              compact
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    ))
+                  : (config.items ?? []).map((item) => (
+                      <NavDropdownMenuItem
+                        key={item.href}
+                        item={item}
+                        section={config.section}
+                        isActive={pathname === item.href}
+                        onPrefetch={onPrefetch}
+                        onNavigate={() => handleItemClick(item.href)}
+                        compact
+                      />
+                    ))}
               </div>
             </motion.div>
           )}

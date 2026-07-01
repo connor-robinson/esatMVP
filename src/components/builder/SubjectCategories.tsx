@@ -16,12 +16,13 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { HighLevelCategory } from '@/components/builder/TopicFolders';
+import { FERMI_GUESSR_NAME } from '@/config/fermiGuessr';
 
 interface SubjectCategoriesProps {
   selectedCategory: HighLevelCategory | null;
   onSelectCategory: (category: HighLevelCategory) => void;
-  /** Launches the Fermi Estimation minigame (a mode separate from the drills). */
-  onLaunchFermi?: () => void;
+  /** Opens FermiGuessr — a daily estimation minigame, separate from drills. */
+  onLaunchFermiGuessr?: () => void;
 }
 
 const SIDEBAR_CATEGORY_ORDER: HighLevelCategory[] = [
@@ -67,7 +68,7 @@ const categoryConfig: Record<
 export function SubjectCategories({
   selectedCategory,
   onSelectCategory,
-  onLaunchFermi,
+  onLaunchFermiGuessr,
 }: SubjectCategoriesProps) {
   return (
     <aside className='scrollbar-hide hidden h-full min-h-0 w-20 shrink-0 flex-col overflow-hidden rounded-organic-xl bg-surface lg:flex xl:w-24'>
@@ -116,25 +117,35 @@ export function SubjectCategories({
             );
           })}
 
-          {/* Fermi Estimation minigame — separate from the drills, pinned below Physics */}
-          {onLaunchFermi && (
+          {onLaunchFermiGuessr && (
             <>
-              <div className='my-1 h-px w-8 rounded-full bg-surface-mid' aria-hidden='true' />
+              <div className='my-1 h-px w-10 rounded-full bg-surface-mid' aria-hidden='true' />
               <button
                 type='button'
-                onClick={onLaunchFermi}
-                className='group flex w-full flex-col items-center gap-1.5 px-1.5 opacity-80 transition-all hover:opacity-100'
-                title='Fermi Estimation — order-of-magnitude minigame'
+                onClick={onLaunchFermiGuessr}
+                className='group relative flex w-full flex-col items-center px-1 pb-1 pt-2 outline-none'
+                title={`${FERMI_GUESSR_NAME} — daily estimation game`}
               >
-                <div className='flex h-12 w-12 items-center justify-center rounded-organic-lg bg-secondary/20 transition-colors duration-150 ease-out group-hover:bg-secondary/30 xl:h-14 xl:w-14'>
-                  <Target
-                    className='h-5 w-5 text-secondary xl:h-6 xl:w-6'
-                    strokeWidth={2.25}
-                  />
-                </div>
-                <span className='text-center text-[10px] font-medium leading-tight tracking-[0.06em] text-secondary'>
-                  Fermi
+                <span className='absolute -top-0.5 right-0 z-10 rounded-full bg-session-green px-1.5 py-0.5 text-[7px] font-bold uppercase tracking-[0.12em] text-white shadow-badge-mint'>
+                  New
                 </span>
+                <div
+                  className={cn(
+                    'flex w-full flex-col items-center gap-1 rounded-organic-lg px-1 py-2.5 transition-all duration-200 ease-signature',
+                    'bg-gradient-to-b from-secondary/35 to-secondary/10',
+                    'shadow-sm group-hover:scale-[1.04] group-hover:shadow-glow group-active:scale-[0.98]',
+                  )}
+                >
+                  <div className='flex h-11 w-11 items-center justify-center rounded-organic-md bg-secondary/25 xl:h-12 xl:w-12'>
+                    <Target
+                      className='h-5 w-5 text-white [filter:drop-shadow(0_0.5px_1.5px_rgb(0_0_0_/_0.45))] xl:h-6 xl:w-6'
+                      strokeWidth={2.35}
+                    />
+                  </div>
+                  <span className='max-w-full text-center text-[9px] font-bold leading-tight tracking-[0.04em] text-secondary xl:text-[10px]'>
+                    {FERMI_GUESSR_NAME}
+                  </span>
+                </div>
               </button>
             </>
           )}

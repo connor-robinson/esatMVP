@@ -11,6 +11,7 @@ import {
   YAxis,
 } from "recharts";
 import { cn } from "@/lib/utils";
+import { FERMI_GUESSR_NAME } from "@/config/fermiGuessr";
 
 export type FermiTrendPoint = {
   playedDate: string;
@@ -45,7 +46,7 @@ export function FermiTrendChart({ sessions, className }: FermiTrendChartProps) {
   if (data.length === 0) {
     return (
       <div className={cn("rounded-organic-xl bg-surface p-6 text-center text-sm text-text-muted", className)}>
-        Complete a Fermi Daily round while logged in to start tracking your trend.
+        Complete a {FERMI_GUESSR_NAME} round while logged in to start tracking your trend.
       </div>
     );
   }
