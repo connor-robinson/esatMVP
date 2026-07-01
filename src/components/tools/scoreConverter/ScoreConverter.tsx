@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { AlertTriangle, ChevronDown, Loader2 } from "lucide-react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { AlertTriangle, Check, ChevronDown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { cssVar } from "@/config/colors";
 import { Container } from "@/components/layout/Container";
@@ -37,14 +37,6 @@ const fieldLabel = "mb-1 block text-[10px] font-semibold uppercase tracking-[0.1
 
 const controlBase = "border-0 shadow-none outline-none focus:outline-none focus:ring-0 focus:border-0";
 
-const selectWrap =
-  "relative min-w-[5.5rem] rounded-organic-lg bg-surface-mid transition-colors hover:bg-surface-subtle border-0";
-
-const selectClass = cn(
-  "h-9 w-full cursor-pointer appearance-none rounded-organic-lg bg-transparent py-0 pl-3 pr-8 text-sm font-medium text-text [color-scheme:dark]",
-  controlBase,
-);
-
 const markInputClass = cn(
   "h-8 w-11 rounded-organic-md bg-surface-mid text-center text-sm font-semibold tabular-nums text-text disabled:opacity-35",
   controlBase,
@@ -69,36 +61,118 @@ function displaySubject(opt: SectionOption): string {
   return opt.legacyLabel.split("—")[0]?.trim() ?? opt.partName;
 }
 
-function SelectField({
+type ModernSelectOption = { value: string; label: string };
+
+function ModernSelect({
   label,
   value,
   onChange,
+  options,
   disabled,
-  children,
+  placeholder = "—",
   minWidth = "5rem",
 }: {
   label: string;
-  value: string | number;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  value: string;
+  onChange: (value: string) => void;
+  options: ModernSelectOption[];
   disabled?: boolean;
-  children: React.ReactNode;
+  placeholder?: string;
   minWidth?: string;
 }) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const listId = useId();
+
+  const selected = options.find((o) => o.value === value);
+  const displayLabel = selected?.label ?? placeholder;
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
   return (
-    <label className="block shrink-0">
+    <div ref={rootRef} className="relative shrink-0" style={{ minWidth }}>
       <span className={fieldLabel}>{label}</span>
-      <div className={selectWrap} style={{ minWidth }}>
-        <select
-          value={value}
-          onChange={onChange}
-          disabled={disabled}
-          className={cn(selectClass, disabled && "opacity-40")}
+      <button
+        type="button"
+        disabled={disabled}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={listId}
+        onClick={() => !disabled && setOpen((v) => !v)}
+        className={cn(
+          "flex h-9 w-full items-center justify-between gap-2 rounded-organic-lg px-3 text-sm font-medium transition-all duration-fast",
+          "bg-surface-mid/90 text-text hover:bg-surface-subtle active:scale-[0.99]",
+          "disabled:cursor-not-allowed disabled:opacity-40",
+          open && "bg-surface-subtle",
+          controlBase,
+        )}
+      >
+        <span className={cn("truncate", !selected && "text-text-muted")}>
+          {displayLabel}
+        </span>
+        <ChevronDown
+          className={cn(
+            "h-4 w-4 shrink-0 text-text-subtle transition-transform duration-fast",
+            open && "rotate-180",
+          )}
+          aria-hidden
+        />
+      </button>
+
+      {open && options.length > 0 && (
+        <ul
+          id={listId}
+          role="listbox"
+          aria-label={label}
+          className="absolute left-0 top-full z-40 mt-1.5 w-full min-w-[8rem] overflow-hidden rounded-organic-lg bg-surface-elevated/95 py-1 shadow-modal-card backdrop-blur-md"
         >
-          {children}
-        </select>
-        <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-subtle" />
-      </div>
-    </label>
+          {options.map((opt) => {
+            const isSelected = opt.value === value;
+            return (
+              <li key={opt.value} role="presentation">
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={isSelected}
+                  onClick={() => {
+                    onChange(opt.value);
+                    setOpen(false);
+                  }}
+                  className={cn(
+                    "flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm transition-colors duration-fast",
+                    isSelected
+                      ? "bg-surface-mid font-semibold text-text"
+                      : "text-text-muted hover:bg-surface-subtle/90 hover:text-text",
+                    controlBase,
+                  )}
+                >
+                  <span className="truncate">{opt.label}</span>
+                  {isSelected && (
+                    <Check className="h-3.5 w-3.5 shrink-0 text-secondary" strokeWidth={2.5} />
+                  )}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
   );
 }
 
@@ -416,77 +490,61 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
       <div className="rounded-organic-xl bg-surface-elevated p-4 shadow-modal-card sm:p-5">
         {/* Row 1: exam, year, section, calculate */}
         <div className="flex flex-wrap items-end gap-x-4 gap-y-3">
-          <label className="block shrink-0">
-            <span className={fieldLabel}>Exam</span>
-            <div className="flex items-center gap-2">
-              <div className={cn(selectWrap, "min-w-[5.5rem]")}>
-                <select
-                  value={exam}
-                  onChange={(e) => {
-                    setExam(e.target.value as ConverterExam);
-                    setYear(null);
-                    invalidateResults();
-                  }}
-                  className={selectClass}
-                >
-                  {CONVERTER_EXAMS.map((e) => (
-                    <option key={e} value={e} className="bg-surface-elevated text-text">
-                      {e}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-subtle" />
-              </div>
-              <span className="text-sm text-text-subtle">›</span>
-              <span
-                className={cn(
-                  "text-sm font-bold tracking-tight",
-                  exam === "TMUA" ? "text-tmua-accent" : "text-secondary",
-                )}
-              >
-                {examTargetLabel(exam)}
-              </span>
-            </div>
-          </label>
+          <div className="flex shrink-0 items-end gap-2">
+            <ModernSelect
+              label="Exam"
+              value={exam}
+              minWidth="5.5rem"
+              options={CONVERTER_EXAMS.map((e) => ({ value: e, label: e }))}
+              onChange={(next) => {
+                setExam(next as ConverterExam);
+                setYear(null);
+                invalidateResults();
+              }}
+            />
+            <span className="mb-2 text-sm text-text-subtle">›</span>
+            <span
+              className={cn(
+                "mb-2 text-sm font-bold tracking-tight",
+                exam === "TMUA" ? "text-tmua-accent" : "text-secondary",
+              )}
+            >
+              {examTargetLabel(exam)}
+            </span>
+          </div>
 
-          <SelectField
+          <ModernSelect
             label="Year"
-            value={year?.year ?? ""}
+            value={year ? String(year.year) : ""}
             minWidth="4.5rem"
             disabled={yearsLoading || years.length === 0}
-            onChange={(e) => {
-              const opt = years.find((y) => y.year === Number(e.target.value)) ?? null;
+            placeholder={yearsLoading ? "…" : "—"}
+            options={years.map((y) => ({
+              value: String(y.year),
+              label: String(y.year),
+            }))}
+            onChange={(next) => {
+              const opt = years.find((y) => y.year === Number(next)) ?? null;
               setYear(opt);
               setScaledInput("");
               setCheckedKeys([]);
               setRawByKey({});
               invalidateResults();
             }}
-          >
-            <option value="" disabled className="bg-surface-elevated text-text">
-              {yearsLoading ? "…" : "—"}
-            </option>
-            {years.map((y) => (
-              <option key={y.year} value={y.year} className="bg-surface-elevated text-text">
-                {y.year}
-              </option>
-            ))}
-          </SelectField>
+          />
 
           {year && isNsaaEngaa && !isScaledMode && sectionGroups.length > 0 && (
-            <SelectField
+            <ModernSelect
               label="Section"
               value={selectedGroup}
               minWidth="7rem"
               disabled={sectionsLoading}
-              onChange={(e) => handleGroupChange(e.target.value)}
-            >
-              {sectionGroups.map(([group]) => (
-                <option key={group} value={group} className="bg-surface-elevated text-text">
-                  {group}
-                </option>
-              ))}
-            </SelectField>
+              options={sectionGroups.map(([group]) => ({
+                value: group,
+                label: group,
+              }))}
+              onChange={handleGroupChange}
+            />
           )}
 
           {year && isScaledMode && (
