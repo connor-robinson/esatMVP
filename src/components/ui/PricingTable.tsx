@@ -26,8 +26,11 @@ interface PricingTableProps {
   footer?: ReactNode;
 }
 
-const CARD_SHELL =
-  "relative flex h-full flex-col rounded-organic-xl bg-surface-elevated p-6 shadow-[0_12px_40px_-24px_rgba(0,0,0,0.55)] sm:p-7";
+const CARD_BASE =
+  "relative flex h-full flex-col rounded-organic-xl p-6 shadow-[0_12px_40px_-24px_rgba(0,0,0,0.55)] sm:p-7";
+
+const CARD_NEUTRAL = `${CARD_BASE} bg-surface-elevated`;
+const CARD_HIGHLIGHTED = `${CARD_BASE} bg-primary shadow-[0_16px_48px_-20px_rgba(0,0,0,0.45)]`;
 
 export function PricingTable({
   tiers,
@@ -50,9 +53,7 @@ export function PricingTable({
             <div
               key={tier.id}
               className={cn(
-                CARD_SHELL,
-                isHighlighted &&
-                  "bg-primary text-black shadow-[0_16px_48px_-20px_rgba(0,0,0,0.45)]",
+                isHighlighted ? CARD_HIGHLIGHTED : CARD_NEUTRAL,
                 tier.featured && !isHighlighted && "overflow-hidden",
               )}
             >
@@ -138,25 +139,23 @@ export function PricingTable({
               </ul>
 
               <Button
-                variant={
-                  showPrimaryCta && isHighlighted ? "wide" : "secondary"
-                }
+                variant="secondary"
                 size="md"
                 disabled={isCurrentPlan || isLoading}
                 className={cn(
-                  "w-full rounded-organic-lg font-semibold",
+                  "w-full rounded-organic-lg border-0 font-semibold",
                   isHighlighted &&
                     showPrimaryCta &&
-                    "animate-pricing-bulge border-0 bg-black text-white hover:bg-black/90 hover:shadow-none",
+                    "bg-black text-white hover:bg-black/90 hover:shadow-none",
                   isHighlighted &&
                     !showPrimaryCta &&
-                    "border-0 bg-black/15 text-black hover:bg-black/20",
+                    "bg-black/15 text-black hover:bg-black/20",
                   !isHighlighted &&
                     showPrimaryCta &&
-                    "border-0 bg-surface-mid text-text shadow-sm hover:bg-surface-neutral hover:text-text",
+                    "bg-surface-mid text-text shadow-sm hover:bg-surface-neutral hover:text-text",
                   !isHighlighted &&
                     !showPrimaryCta &&
-                    "border-0 bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text",
+                    "bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text",
                 )}
                 onClick={() => onSelect(tier.id)}
               >
