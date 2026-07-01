@@ -35,32 +35,17 @@ import {
   FERMI_GUESSR_NAME,
   FERMI_GUESSR_STATS_PATH,
 } from "@/config/fermiGuessr";
+import {
+  isFermiDailyComplete,
+  loadFermiDailyState,
+  readFermiBestScore,
+  saveFermiDailyState,
+  writeFermiBestScore,
+  type FermiPhase,
+  type HydratedFermiResult,
+} from "@/lib/fermi/dailyState";
 
-const BEST_SCORE_KEY = "fermiBestScore";
-const DAILY_STATE_KEY = "fermiDailyState";
-
-interface FermiResult {
-  question: FermiQuestion;
-  guess: number;
-  logErr: number;
-  score: number;
-  verdict: FermiVerdict;
-}
-
-type Phase = "playing" | "revealed" | "summary";
-
-interface StoredDailyState {
-  dateKey: string;
-  results: Array<{
-    questionId: string;
-    guess: number;
-    logErr: number;
-    score: number;
-    verdict: FermiVerdict;
-  }>;
-  index: number;
-  phase: Phase;
-}
+interface FermiResult extends HydratedFermiResult {}
 
 const toneClasses: Record<FermiVerdict["tone"], { text: string; bg: string; ring: string }> = {
   perfect: { text: "text-primary", bg: "bg-primary/15", ring: "ring-primary/30" },
@@ -69,71 +54,6 @@ const toneClasses: Record<FermiVerdict["tone"], { text: string; bg: string; ring
   ok: { text: "text-warning", bg: "bg-warning/15", ring: "ring-warning/30" },
   poor: { text: "text-error", bg: "bg-error/15", ring: "ring-error/30" },
 };
-
-function hydrateResults(
-  round: FermiQuestion[],
-  stored: StoredDailyState["results"],
-): FermiResult[] {
-  const byId = new Map(round.map((q) => [q.id, q]));
-  return stored
-    .map((r) => {
-      const question = byId.get(r.questionId);
-      if (!question) return null;
-      return {
-        question,
-        guess: r.guess,
-        logErr: r.logErr,
-        score: r.score,
-        verdict: r.verdict,
-      };
-    })
-    .filter((r): r is FermiResult => r != null);
-}
-
-function loadDailyState(todayKey: string, round: FermiQuestion[]): {
-  index: number;
-  phase: Phase;
-  results: FermiResult[];
-} | null {
-  try {
-    const raw = window.localStorage.getItem(DAILY_STATE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as StoredDailyState;
-    if (parsed.dateKey !== todayKey) return null;
-    return {
-      index: parsed.index,
-      phase: parsed.phase,
-      results: hydrateResults(round, parsed.results),
-    };
-  } catch {
-    return null;
-  }
-}
-
-function saveDailyState(
-  todayKey: string,
-  index: number,
-  phase: Phase,
-  results: FermiResult[],
-) {
-  try {
-    const payload: StoredDailyState = {
-      dateKey: todayKey,
-      index,
-      phase,
-      results: results.map((r) => ({
-        questionId: r.question.id,
-        guess: r.guess,
-        logErr: r.logErr,
-        score: r.score,
-        verdict: r.verdict,
-      })),
-    };
-    window.localStorage.setItem(DAILY_STATE_KEY, JSON.stringify(payload));
-  } catch {
-    /* ignore */
-  }
-}
 
 export function FermiGame({ onExit }: { onExit: () => void }) {
   const router = useRouter();
@@ -144,13 +64,14 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
   const round = useMemo(() => getDailyFermiQuestions(), []);
 
   const [index, setIndex] = useState(0);
-  const [phase, setPhase] = useState<Phase>("playing");
+  const [phase, setPhase] = useState<FermiPhase>("playing");
   const [input, setInput] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<FermiResult[]>([]);
   const [bestScore, setBestScore] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const [completedToday, setCompletedToday] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -158,25 +79,31 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
   const parsedPreview = useMemo(() => parseFermiInput(input), [input]);
 
   useEffect(() => {
-    try {
-      const stored = window.localStorage.getItem(BEST_SCORE_KEY);
-      if (stored != null) setBestScore(Number(stored));
-    } catch {
-      /* ignore */
-    }
+    setBestScore(readFermiBestScore());
 
-    const saved = loadDailyState(todayKey, round);
+    const saved = loadFermiDailyState(todayKey, round);
     if (saved) {
       setIndex(saved.index);
       setPhase(saved.phase);
       setResults(saved.results);
+      if (isFermiDailyComplete(saved, round.length)) {
+        setCompletedToday(true);
+        setPhase("summary");
+        setIndex(round.length - 1);
+      }
     }
     setHydrated(true);
+
+    try {
+      window.sessionStorage.removeItem("app-chunk-reload");
+    } catch {
+      /* ignore */
+    }
   }, [todayKey, round]);
 
   useEffect(() => {
     if (!hydrated) return;
-    saveDailyState(todayKey, index, phase, results);
+    saveFermiDailyState(todayKey, index, phase, results);
   }, [hydrated, todayKey, index, phase, results]);
 
   useEffect(() => {
@@ -188,9 +115,10 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
 
   const currentResult = phase === "revealed" ? results[results.length - 1] : null;
   const isLastQuestion = index + 1 >= round.length;
+  const displayPhase: FermiPhase = completedToday ? "summary" : phase;
 
   const handleSubmit = useCallback(() => {
-    if (phase !== "playing" || !current) return;
+    if (phase !== "playing" || !current || completedToday) return;
     const guess = parseFermiInput(input);
     if (guess == null) {
       setError("Couldn't read that number. Try 7 million, 8e7, or 7*10^10.");
@@ -207,10 +135,11 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
     setResults((prev) => [...prev, result]);
     setError(null);
     setPhase("revealed");
-  }, [phase, current, input]);
+  }, [phase, current, input, completedToday]);
 
   const handleNext = useCallback(() => {
     if (index + 1 >= round.length) {
+      setCompletedToday(true);
       setPhase("summary");
       return;
     }
@@ -229,11 +158,7 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
     if (phase !== "summary" || results.length === 0) return;
     if (bestScore == null || averageScore > bestScore) {
       setBestScore(averageScore);
-      try {
-        window.localStorage.setItem(BEST_SCORE_KEY, String(averageScore));
-      } catch {
-        /* ignore */
-      }
+      writeFermiBestScore(averageScore);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
@@ -305,7 +230,7 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
       <header className="flex shrink-0 items-center justify-between px-4 py-4 sm:px-6">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-organic-lg bg-secondary/20 text-secondary">
-            <Target className="h-5 w-5" strokeWidth={2.25} />
+            <FermiGuessrIcon className="h-5 w-5" strokeWidth={2.25} />
           </div>
           <div>
             <h1 className="text-lg font-bold leading-tight text-text">
@@ -314,7 +239,7 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          {phase !== "summary" && (
+          {displayPhase !== "summary" && (
             <span className="text-sm font-semibold text-text-muted">
               {index + 1} / {round.length}
             </span>
@@ -331,7 +256,7 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
       </header>
 
       {/* Next question — above progress bar */}
-      {phase === "revealed" && (
+      {displayPhase === "revealed" && (
         <div className="flex shrink-0 justify-center px-4 pb-3 sm:px-6">
           <button
             type="button"
@@ -345,12 +270,12 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
       )}
 
       {/* Progress bar */}
-      {phase !== "summary" && (
+      {displayPhase !== "summary" && (
         <div className="mx-4 mb-2 h-1.5 shrink-0 overflow-hidden rounded-full bg-surface sm:mx-6">
           <div
             className="h-full rounded-full bg-secondary transition-all duration-normal ease-signature"
             style={{
-              width: `${((index + (phase === "revealed" ? 1 : 0)) / round.length) * 100}%`,
+              width: `${((index + (displayPhase === "revealed" ? 1 : 0)) / round.length) * 100}%`,
             }}
           />
         </div>
@@ -360,11 +285,11 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
       <div
         className={cn(
           "flex min-h-0 flex-1 justify-center overflow-y-auto px-4 py-4 sm:px-6",
-          phase === "playing" ? "items-center" : "items-start",
+          displayPhase === "playing" ? "items-center" : "items-start",
         )}
       >
         <div className="w-full max-w-2xl">
-          {phase === "playing" && current && (
+          {displayPhase === "playing" && current && !completedToday && (
             <PlayingView
               question={current}
               input={input}
@@ -379,11 +304,11 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
             />
           )}
 
-          {phase === "revealed" && currentResult && (
+          {displayPhase === "revealed" && currentResult && (
             <RevealedView result={currentResult} />
           )}
 
-          {phase === "summary" && (
+          {displayPhase === "summary" && (
             <SummaryView
               results={results}
               averageScore={averageScore}
@@ -770,8 +695,13 @@ function SummaryView({
         <p className="text-center text-sm font-medium text-text-muted">
           {isLoggedIn
             ? "Come back tomorrow for a new set of questions."
-            : "Log in to save your stats and see how you rank."}
+            : "Progress saved on this device. Log in to sync stats and see rankings."}
         </p>
+        {!isLoggedIn && (
+          <p className="text-center text-xs font-medium text-text-muted">
+            One puzzle per day — come back tomorrow for the next one.
+          </p>
+        )}
       </div>
       <button
         type="button"

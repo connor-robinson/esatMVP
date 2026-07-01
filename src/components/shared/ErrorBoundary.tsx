@@ -25,6 +25,20 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    const isChunkError =
+      error.name === "ChunkLoadError" ||
+      /loading chunk \d+ failed/i.test(error.message);
+
+    if (isChunkError && typeof window !== "undefined") {
+      const reloadKey = "app-chunk-reload";
+      if (!window.sessionStorage.getItem(reloadKey)) {
+        window.sessionStorage.setItem(reloadKey, "1");
+        window.location.reload();
+        return;
+      }
+      window.sessionStorage.removeItem(reloadKey);
+    }
+
     console.error("ErrorBoundary caught an error:", error, errorInfo);
     this.setState({ error, errorInfo });
   }
