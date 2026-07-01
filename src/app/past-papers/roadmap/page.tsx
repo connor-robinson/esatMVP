@@ -54,6 +54,36 @@ function buildDefaultCompletion(stages: RoadmapStage[]): Map<string, StageComple
   return map;
 }
 
+function isStageFullyCompleted(
+  stage: RoadmapStage,
+  data: StageCompletionEntry | undefined,
+): boolean {
+  const total = data?.total ?? stage.parts.length;
+  const completed = data?.completed ?? 0;
+  return total > 0 && completed === total;
+}
+
+/** Stages visible in the roadmap: up to and including the first gate after an incomplete stage. */
+function getSequentialVisibleStages(
+  stages: RoadmapStage[],
+  completionMap: Map<string, StageCompletionEntry>,
+): RoadmapStage[] {
+  if (stages.length === 0) return [];
+
+  const visible: RoadmapStage[] = [stages[0]];
+
+  for (let i = 1; i < stages.length; i++) {
+    const prevStage = stages[i - 1];
+    const prevData = completionMap.get(prevStage.id);
+    visible.push(stages[i]);
+    if (!isStageFullyCompleted(prevStage, prevData)) {
+      break;
+    }
+  }
+
+  return visible;
+}
+
 function computeUnlockState(
   stages: RoadmapStage[],
   completionMap: Map<string, StageCompletionEntry>,
@@ -64,28 +94,19 @@ function computeUnlockState(
   for (let i = 0; i < stages.length; i++) {
     const stage = stages[i];
     const data = completionMap.get(stage.id);
-    const isCompleted =
-      (data?.completed || 0) === (data?.total || stage.parts.length) &&
-      (data?.total || 0) > 0;
+    const isCompleted = isStageFullyCompleted(stage, data);
 
-    let isUnlocked = false;
-    if (i === 0) {
-      isUnlocked = true;
-    } else {
+    if (i > 0) {
       const prevStage = stages[i - 1];
       const prevData = completionMap.get(prevStage.id);
-      const isPrevCompleted =
-        (prevData?.completed || 0) ===
-          (prevData?.total || prevStage.parts.length) &&
-        (prevData?.total || 0) > 0;
-      isUnlocked = isPrevCompleted || isCompleted;
+      if (!isStageFullyCompleted(prevStage, prevData)) {
+        break;
+      }
     }
 
-    if (isUnlocked) {
-      unlocked.add(stage.id);
-      if (!isCompleted && currentIndex === null) {
-        currentIndex = i;
-      }
+    unlocked.add(stage.id);
+    if (!isCompleted && currentIndex === null) {
+      currentIndex = i;
     }
   }
 
@@ -649,9 +670,10 @@ export default function PapersRoadmapPage() {
 
   const timelineAnchorRef = useRef<HTMLDivElement>(null);
 
+  const sequentialStages = getSequentialVisibleStages(stages, completionData);
   const visibleStages = hasFullAccess
-    ? stages
-    : stages.slice(0, FREE_ROADMAP_ITEMS);
+    ? sequentialStages
+    : sequentialStages.slice(0, FREE_ROADMAP_ITEMS);
   const visibleUnlocked = new Set(
     visibleStages.map((s) => s.id).filter((id) => unlockedStages.has(id)),
   );
