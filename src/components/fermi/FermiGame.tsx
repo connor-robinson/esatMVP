@@ -9,6 +9,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, BarChart3, Target, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
@@ -583,17 +584,23 @@ function LogScaleBar({ guess, answer, tone }: { guess: number; answer: number; t
 
 /* --------------------------- Results score grid -------------------------- */
 
-function FermiResultsScoreGrid({ results }: { results: FermiResult[] }) {
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const active = activeIndex != null ? results[activeIndex] : null;
-  const activeTone = active ? toneClasses[active.verdict.tone] : null;
-
+function FermiResultsScoreGrid({
+  results,
+  activeIndex,
+  onActiveChange,
+}: {
+  results: FermiResult[];
+  activeIndex: number | null;
+  onActiveChange: (index: number | null) => void;
+}) {
   return (
-    <div className="w-full max-w-lg">
+    <div
+      className="w-full max-w-lg"
+      onMouseLeave={() => onActiveChange(null)}
+    >
       <div
         className="grid gap-1.5 sm:gap-2"
         style={{ gridTemplateColumns: `repeat(${results.length}, minmax(0, 1fr))` }}
-        onMouseLeave={() => setActiveIndex(null)}
       >
         {results.map((r, i) => {
           const tone = toneClasses[r.verdict.tone];
@@ -604,21 +611,22 @@ function FermiResultsScoreGrid({ results }: { results: FermiResult[] }) {
               key={r.question.id}
               type="button"
               className={cn(
-                "flex flex-col items-center gap-1 rounded-organic-lg py-3 outline-none transition-colors",
+                "flex flex-col items-center gap-1 rounded-organic-lg py-3 outline-none transition-colors duration-150",
                 isActive ? "bg-surface" : "bg-transparent hover:bg-surface/70",
               )}
-              onMouseEnter={() => setActiveIndex(i)}
-              onFocus={() => setActiveIndex(i)}
-              onClick={() => setActiveIndex(i)}
+              onMouseEnter={() => onActiveChange(i)}
+              onFocus={() => onActiveChange(i)}
+              onClick={() => onActiveChange(i)}
               onBlur={(e) => {
                 if (!e.currentTarget.contains(e.relatedTarget as Node)) {
-                  setActiveIndex(null);
+                  onActiveChange(null);
                 }
               }}
-              aria-label={`Question ${i + 1}, score ${r.score} out of 100`}
+              aria-label={`Q${i + 1}, score ${r.score} out of 100`}
+              aria-expanded={isActive}
             >
-              <span className="text-xs font-semibold tabular-nums text-text-muted">
-                {i + 1}
+              <span className="text-[10px] font-semibold tracking-wide text-text-muted sm:text-xs">
+                Q{i + 1}
               </span>
               <span className={cn("text-xl font-bold tabular-nums sm:text-2xl", tone.text)}>
                 {r.score}
@@ -627,53 +635,47 @@ function FermiResultsScoreGrid({ results }: { results: FermiResult[] }) {
           );
         })}
       </div>
+    </div>
+  );
+}
 
-      <div
-        className={cn(
-          "mt-3 min-h-[7.5rem] rounded-organic-lg p-4 transition-colors duration-150",
-          active && activeTone ? activeTone.bg : "bg-surface",
-        )}
-        aria-live="polite"
-      >
-        {active && activeTone ? (
-          <div className="flex flex-col gap-3">
-            <p className="text-balance text-sm font-medium leading-snug text-text sm:text-base">
-              {active.question.question}
+function FermiResultDetailPanel({ result }: { result: FermiResult }) {
+  const tone = toneClasses[result.verdict.tone];
+
+  return (
+    <div className={cn("rounded-organic-lg p-4", tone.bg)}>
+      <div className="flex flex-col gap-3">
+        <p className="text-balance text-sm font-medium leading-snug text-text sm:text-base">
+          {result.question.question}
+        </p>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-text-muted">
+              Your guess
             </p>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-wide text-text-muted">
-                  Your guess
-                </p>
-                <p className="mt-0.5 text-sm font-bold text-text">
-                  {formatFullNumber(active.guess)}
-                </p>
-                <p className="text-xs font-medium text-text-muted">
-                  {formatFermiNumber(active.guess)}
-                </p>
-              </div>
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-wide text-text-muted">
-                  Answer
-                </p>
-                <p className="mt-0.5 text-sm font-bold text-primary">
-                  {formatFullNumber(active.question.answer)}
-                </p>
-                <p className="text-xs font-medium text-text-muted">
-                  {formatFermiNumber(active.question.answer)}
-                  {active.question.unit ? ` ${active.question.unit}` : ""}
-                </p>
-              </div>
-            </div>
-            <p className={cn("text-xs font-bold uppercase tracking-wide", activeTone.text)}>
-              {active.verdict.label} · {active.score}/100
+            <p className="mt-0.5 text-sm font-bold text-text">
+              {formatFullNumber(result.guess)}
+            </p>
+            <p className="text-xs font-medium text-text-muted">
+              {formatFermiNumber(result.guess)}
             </p>
           </div>
-        ) : (
-          <p className="flex min-h-[5.5rem] items-center justify-center text-center text-sm font-medium text-text-muted">
-            Hover a question for the full prompt and answer
-          </p>
-        )}
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-text-muted">
+              Answer
+            </p>
+            <p className="mt-0.5 text-sm font-bold text-primary">
+              {formatFullNumber(result.question.answer)}
+            </p>
+            <p className="text-xs font-medium text-text-muted">
+              {formatFermiNumber(result.question.answer)}
+              {result.question.unit ? ` ${result.question.unit}` : ""}
+            </p>
+          </div>
+        </div>
+        <p className={cn("text-xs font-bold uppercase tracking-wide", tone.text)}>
+          {result.verdict.label} · {result.score}/100
+        </p>
       </div>
     </div>
   );
@@ -703,6 +705,8 @@ function SummaryView({
   onExit: () => void;
 }) {
   const isNewBest = bestScore != null && averageScore >= bestScore;
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const activeResult = activeIndex != null ? results[activeIndex] : null;
 
   return (
     <div className="animate-scale-in flex flex-col items-center gap-5 pt-2 sm:pt-4">
@@ -722,7 +726,29 @@ function SummaryView({
         </p>
       )}
 
-      <FermiResultsScoreGrid results={results} />
+      <div className="flex w-full max-w-lg flex-col">
+        <FermiResultsScoreGrid
+          results={results}
+          activeIndex={activeIndex}
+          onActiveChange={setActiveIndex}
+        />
+
+        <AnimatePresence initial={false}>
+          {activeResult && (
+            <motion.div
+              key="fermi-detail-panel"
+              initial={{ height: 0, opacity: 0, marginTop: 0 }}
+              animate={{ height: "auto", opacity: 1, marginTop: 12 }}
+              exit={{ height: 0, opacity: 0, marginTop: 0 }}
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              className="overflow-hidden"
+              aria-live="polite"
+            >
+              <FermiResultDetailPanel result={activeResult} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       <div className="flex w-full max-w-md flex-col gap-2 pt-1">
         <button
