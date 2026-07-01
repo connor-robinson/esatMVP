@@ -595,30 +595,12 @@ export default function QuestionBankPage() {
     return 'text-text';
   };
 
-  const handleEditKeyInsight = () => {
-    if (!currentQuestion) return;
-    setEditModalTitle('Edit Key Insight');
-    setEditModalContent(currentQuestion.solution_key_insight || '');
-    setEditModalField('solution_key_insight');
-    setEditModalOptionLetter(null);
-    setEditModalOpen(true);
-  };
-
   const handleEditReasoning = () => {
     if (!currentQuestion) return;
     setEditModalTitle('Edit Solution');
     setEditModalContent(currentQuestion.solution_reasoning || '');
     setEditModalField('solution_reasoning');
     setEditModalOptionLetter(null);
-    setEditModalOpen(true);
-  };
-
-  const handleEditDistractor = (optionLetter: string) => {
-    if (!currentQuestion || !currentQuestion.distractor_map) return;
-    setEditModalTitle(`Edit Distractor Analysis for Option ${optionLetter}`);
-    setEditModalContent(currentQuestion.distractor_map[optionLetter] || '');
-    setEditModalField('distractor_map');
-    setEditModalOptionLetter(optionLetter);
     setEditModalOpen(true);
   };
 
@@ -956,17 +938,7 @@ export default function QuestionBankPage() {
                       isOpen={showDetailedExplanation}
                       onClose={() => setShowDetailedExplanation(false)}
                       solution_reasoning={currentQuestion.solution_reasoning}
-                      solution_key_insight={
-                        currentQuestion.solution_key_insight
-                      }
-                      distractor_map={currentQuestion.distractor_map}
-                      correct_option={currentQuestion.correct_option}
-                      options={currentQuestion.options}
-                      isCorrect={isCorrect ?? false}
-                      selectedAnswer={selectedAnswer}
-                      onEditKeyInsight={handleEditKeyInsight}
                       onEditReasoning={handleEditReasoning}
-                      onEditDistractor={handleEditDistractor}
                       graphSpecs={currentQuestion.graph_specs}
                     />
 
