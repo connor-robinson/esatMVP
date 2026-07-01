@@ -309,9 +309,6 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
             <h1 className="text-lg font-bold leading-tight text-text">
               {FERMI_GUESSR_NAME} #{puzzleNumber}
             </h1>
-            <p className="text-xs font-medium text-text-muted">
-              Daily estimation game · same puzzle for everyone
-            </p>
           </div>
         </div>
         <div className="flex items-center gap-3">
