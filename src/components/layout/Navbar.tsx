@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { SessionProgressBar } from '@/components/papers/SessionProgressBar';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useSubscription } from '@/hooks/useSubscription';
 import { BrandNavLockup } from '@/components/brand/BrandNavLockup';
 import { APP_NAME } from '@/config/brand';
 import {
@@ -204,6 +205,7 @@ export function Navbar() {
   } = usePaperSessionStore();
   const [docFullscreen, setDocFullscreen] = useState(false);
   const { theme, toggleTheme, isDark, lightStrategy, toggleLightStrategy } = useTheme();
+  const { hasFullAccess } = useSubscription();
 
   const isJustQuit =
     justQuitSessionId === sessionId &&
@@ -300,9 +302,18 @@ export function Navbar() {
 
   const accountControls = (
     <div
-      className='flex shrink-0 items-center gap-1 border-l border-border-subtle pl-3 sm:pl-4'
+      className='flex shrink-0 items-center gap-2 border-l border-border-subtle pl-3 sm:gap-3 sm:pl-4'
       aria-label='Account and preferences'
     >
+      {!hasFullAccess ? (
+        <Link
+          href='/pricing'
+          className='inline-flex h-9 shrink-0 items-center justify-center rounded-organic-md bg-primary px-3.5 text-xs font-bold uppercase tracking-[0.14em] text-black transition-opacity hover:opacity-90 sm:h-10 sm:px-4 sm:text-sm'
+        >
+          Upgrade
+        </Link>
+      ) : null}
+
       <button
         type='button'
         onClick={(event) => {
