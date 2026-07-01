@@ -132,7 +132,7 @@ const ALGEBRA_FOLDERS: FolderDef[] = [
     id: 'algebra-indices',
     name: 'Indices & Surds',
     topicIds: ['exponents', 'surds'],
-    symbol: { kind: 'latex', latex: String.raw`x^{n}\sqrt{a}` },
+    symbol: { kind: 'latex', latex: String.raw`2^{3}\cdot\sqrt{5}` },
   },
   {
     id: 'algebra-quadratics',
@@ -159,19 +159,19 @@ const GEOMETRY_FOLDERS: FolderDef[] = [
     id: 'trig-recall',
     name: 'Trig Recall',
     topicIds: ['trig_recall', 'trig_inverse'],
-    symbol: { kind: 'latex', latex: String.raw`\sin\theta,\cos\theta` },
+    symbol: { kind: 'latex', latex: String.raw`\sin,\cos,\tan` },
   },
   {
     id: 'unit-circle',
     name: 'Unit Circle',
     topicIds: ['unit_circle_degrees', 'unit_circle_radians'],
-    symbol: { kind: 'latex', latex: String.raw`x^2+y^2=1` },
+    symbol: { kind: 'latex', latex: String.raw`\cos,\sin` },
   },
   {
     id: 'triangles-trig',
     name: 'Triangles',
     topicIds: ['trig_applications'],
-    symbol: { kind: 'latex', latex: String.raw`1:\sqrt{3}:2` },
+    symbol: { kind: 'lucide', iconKey: 'Triangle' },
   },
 ];
 
@@ -234,9 +234,9 @@ const PHYSICS_FOLDERS: FolderDef[] = [
 const ARITHMETIC_EXTRA_FOLDERS: FolderDef[] = [
   {
     id: 'arithmetic-notation',
-    name: 'Powers & Surds',
+    name: 'Powers',
     topicIds: ['sci_rewrite', 'sci_calc', 'power_bases', 'powers'],
-    symbol: { kind: 'latex', latex: String.raw`10^n` },
+    symbol: { kind: 'latex', latex: String.raw`2^{n}` },
   },
 ];
 
@@ -294,7 +294,7 @@ function folderSymbolForArithmeticId(folderId: string): FolderSymbol {
     return { kind: 'latex', latex: String.raw`\frac{3}{7}` };
   }
   if (folderId === 'squaring') {
-    return { kind: 'latex', latex: String.raw`n^{2},\,n^{3}` };
+    return { kind: 'latex', latex: String.raw`7^{2}\;3^{3}` };
   }
   const keys: Record<string, string> = {
     addition: 'Plus',
