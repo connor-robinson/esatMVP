@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Container } from "@/components/layout/Container";
 import { DeleteAccountModal } from "@/components/profile/DeleteAccountModal";
-import { SettingsPricingPanel } from "@/components/profile/SettingsPricingPanel";
 import {
   ESAT_SUBJECTS,
   esatSubjectPillClass,
@@ -53,7 +52,6 @@ type SettingSection = {
 const SETTING_SECTIONS: SettingSection[] = [
   { id: "account", title: "Account" },
   { id: "exam", title: "Exam & Practice" },
-  { id: "pricing", title: "Pricing" },
   { id: "data", title: "Data Management" },
   { id: "appearance", title: "Appearance" },
 ];
@@ -122,10 +120,14 @@ export default function ProfilePage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const section = params.get("section");
+    if (section === "pricing") {
+      router.replace("/pricing?from=settings");
+      return;
+    }
     if (section && SETTING_SECTIONS.some((s) => s.id === section)) {
       setActiveSection(section);
     }
-  }, []);
+  }, [router]);
 
   // Load preferences
   useEffect(() => {
@@ -953,7 +955,7 @@ export default function ProfilePage() {
                         <>
                           <SettingsButton
                             type="button"
-                            onClick={() => setActiveSection("pricing")}
+                            onClick={() => router.push("/pricing?from=settings")}
                           >
                             View plans
                           </SettingsButton>
@@ -1188,19 +1190,6 @@ export default function ProfilePage() {
                         </div>
                       </div>
                     </div>
-                  </div>
-                </>
-              )}
-
-              {/* Pricing Section */}
-              {activeSection === 'pricing' && (
-                <>
-                  <SettingsSectionHeader
-                    title="Pricing"
-                    description="Choose a plan that fits your exam timeline."
-                  />
-                  <div className="px-5 py-5 sm:px-7">
-                    <SettingsPricingPanel />
                   </div>
                 </>
               )}

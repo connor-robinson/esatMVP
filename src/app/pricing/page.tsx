@@ -8,7 +8,7 @@ import { PricingTable, type PricingTier } from "@/components/ui";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { useSubscription } from "@/hooks/useSubscription";
 import { getSeasonPassPrice, getWeeksUntilExam, type PlanId } from "@/lib/stripe/best-value";
-import { ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 const FEATURES = {
   free: [
@@ -89,6 +89,8 @@ export default function PricingPage() {
     },
   ];
 
+  const fromSettings = searchParams.get("from") === "settings";
+
   useEffect(() => {
     if (searchParams.get("success") === "true") {
       router.replace("/pricing");
@@ -127,6 +129,18 @@ export default function PricingPage() {
       </div>
 
       <Container size="xl" className="relative pb-16 pt-12 sm:pb-24 sm:pt-16">
+        {fromSettings ? (
+          <div className="mb-8 sm:mb-10">
+            <Link
+              href="/profile"
+              className="inline-flex items-center gap-2 text-sm font-medium text-text-muted transition-colors hover:text-text"
+            >
+              <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden />
+              Back to settings
+            </Link>
+          </div>
+        ) : null}
+
         <div className="mb-10 text-center sm:mb-12">
           <h1 className="text-3xl font-bold tracking-tight text-text sm:text-4xl md:text-[2.5rem] md:leading-tight">
             Choose your plan

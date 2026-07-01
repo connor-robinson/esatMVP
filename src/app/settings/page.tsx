@@ -9,6 +9,9 @@ type SettingsPageProps = {
  */
 export default function SettingsPage({ searchParams }: SettingsPageProps) {
   const section = searchParams?.section;
+  if (section === "pricing") {
+    redirect("/pricing?from=settings");
+  }
   if (section) {
     redirect(`/profile?section=${encodeURIComponent(section)}`);
   }
