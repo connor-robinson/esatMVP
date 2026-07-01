@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { requireRouteUser } from "@/lib/supabase/auth";
 import {
   buildNormalCurve,
-  computePercentile,
   meanAndStd,
+  resolveBeatPercentile,
 } from "@/lib/fermi/percentile";
 
 export const runtime = "nodejs";
@@ -75,10 +75,14 @@ export async function GET(request: Request) {
   const dayScores = (dayRows ?? []).map((r: any) => r.average_score as number);
   const myDaySession = sessions.find((s) => s.playedDate === targetDate);
   const myScore = myDaySession?.averageScore ?? null;
-  const percentile =
-    myScore != null ? computePercentile(myScore, dayScores) : null;
-
   const { mean, std } = meanAndStd(dayScores.length > 0 ? dayScores : [50]);
+
+  const percentileResult =
+    myScore != null
+      ? resolveBeatPercentile(myScore, dayScores, mean, std)
+      : { percentile: null as number | null, isEstimate: dayScores.length < 3 };
+  const percentile = percentileResult.percentile;
+
   const distribution = buildNormalCurve(
     mean,
     std,
@@ -93,7 +97,10 @@ export async function GET(request: Request) {
       playerCount: dayScores.length,
       averageScore: myScore,
       percentile,
+      percentileIsEstimate: percentileResult.isEstimate,
       populationMean: Math.round(mean * 10) / 10,
+      populationStd: Math.round(std * 10) / 10,
+      populationScores: dayScores,
       distribution,
     },
   });

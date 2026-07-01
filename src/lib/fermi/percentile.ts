@@ -6,6 +6,47 @@ export function computePercentile(score: number, allScores: number[]): number {
   return Math.round((worseThanMe / allScores.length) * 100);
 }
 
+/** Approximate erf for normal CDF (Abramowitz & Stegun). */
+function erf(x: number): number {
+  const sign = x < 0 ? -1 : 1;
+  const ax = Math.abs(x);
+  const t = 1 / (1 + 0.3275911 * ax);
+  const y =
+    1 -
+    (((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t +
+      0.254829592) *
+      t *
+      Math.exp(-ax * ax));
+  return sign * y;
+}
+
+/** Beat-percentile from a normal approximation when sample size is small. */
+export function estimateBeatPercentile(
+  score: number,
+  mean: number,
+  std: number,
+): number {
+  const z = (score - mean) / Math.max(std, 1e-6);
+  const cdf = 0.5 * (1 + erf(z / Math.SQRT2));
+  return Math.round(Math.min(100, Math.max(0, cdf * 100)));
+}
+
+/**
+ * Beat-percentile for a score — empirical when enough players played,
+ * otherwise a normal-curve estimate (marked as approximate in the UI).
+ */
+export function resolveBeatPercentile(
+  score: number,
+  populationScores: number[],
+  mean: number,
+  std: number,
+): { percentile: number; isEstimate: boolean } {
+  if (populationScores.length >= 3) {
+    return { percentile: computePercentile(score, populationScores), isEstimate: false };
+  }
+  return { percentile: estimateBeatPercentile(score, mean, std), isEstimate: true };
+}
+
 export function meanAndStd(values: number[]): { mean: number; std: number } {
   if (values.length === 0) return { mean: 50, std: 20 };
   const mean = values.reduce((a, b) => a + b, 0) / values.length;

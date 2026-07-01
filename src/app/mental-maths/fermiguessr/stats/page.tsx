@@ -28,7 +28,10 @@ type StatsResponse = {
     playerCount: number;
     averageScore: number | null;
     percentile: number | null;
+    percentileIsEstimate?: boolean;
     populationMean: number;
+    populationStd?: number;
+    populationScores?: number[];
     distribution: DistributionPoint[];
   };
 };
@@ -151,38 +154,35 @@ export default function FermiGuessrStatsPage() {
         {!loading && !error && stats && (
           <div className="flex flex-col gap-6">
             <section className="rounded-organic-xl bg-surface p-5 sm:p-6">
-              <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-                <div>
-                  <h2 className="text-lg font-bold text-text">
-                    {stats.focus.puzzleNumber != null
-                      ? `${FERMI_GUESSR_NAME} #${stats.focus.puzzleNumber}`
-                      : "Today's puzzle"}
-                  </h2>
-                  <p className="text-sm font-medium text-text-muted">
-                    {stats.focus.playedDate}
-                    {stats.focus.playerCount > 0 &&
-                      ` · ${stats.focus.playerCount} player${stats.focus.playerCount === 1 ? "" : "s"}`}
-                  </p>
-                </div>
-                {stats.focus.averageScore != null && (
-                  <div className="text-right">
-                    <p className="text-3xl font-bold text-secondary">
-                      {stats.focus.averageScore}
-                      <span className="text-lg font-semibold text-text-muted">/100</span>
-                    </p>
-                    {stats.focus.percentile != null && (
-                      <p className="text-sm font-semibold text-text-muted">
-                        Beat {stats.focus.percentile}% of players
-                      </p>
-                    )}
-                  </div>
-                )}
+              <div className="mb-2">
+                <h2 className="text-lg font-bold text-text">
+                  {stats.focus.puzzleNumber != null
+                    ? `${FERMI_GUESSR_NAME} #${stats.focus.puzzleNumber}`
+                    : "Today's puzzle"}
+                </h2>
+                <p className="text-sm font-medium text-text-muted">
+                  {stats.focus.playedDate}
+                  {stats.focus.playerCount > 0 &&
+                    ` · ${stats.focus.playerCount} player${stats.focus.playerCount === 1 ? "" : "s"} that day`}
+                </p>
               </div>
+
+              {stats.focus.averageScore == null && (
+                <p className="mb-4 rounded-organic-md bg-surface-mid/50 px-4 py-3 text-sm text-text-muted">
+                  You haven&apos;t completed this day&apos;s puzzle yet. Play{" "}
+                  {FERMI_GUESSR_NAME} to see your position on the curve.
+                </p>
+              )}
 
               <FermiDistributionChart
                 curve={stats.focus.distribution}
                 userScore={stats.focus.averageScore}
                 percentile={stats.focus.percentile}
+                percentileIsEstimate={stats.focus.percentileIsEstimate}
+                playerCount={stats.focus.playerCount}
+                populationMean={stats.focus.populationMean}
+                populationStd={stats.focus.populationStd}
+                populationScores={stats.focus.populationScores}
               />
 
               {stats.sessions.length > 1 && (
