@@ -1,16 +1,17 @@
 import { APP_NAME } from "@/config/brand";
 import { cn } from "@/lib/utils";
+import { BrandMarkImage } from "@/components/brand/BrandMarkImage";
 import { BrandWordmark } from "@/components/brand/BrandWordmark";
-import { EsatCampIcon } from "@/components/brand/EsatCampIcon";
 
 export type BrandLogoVariant = "full" | "mark";
 
 export type BrandLogoSize = "nav" | "md" | "lg";
 
-const MARK_SIZE_CLASS: Record<BrandLogoSize, string> = {
-  nav: "h-7 w-7",
-  md: "h-8 w-8",
-  lg: "h-12 w-12 sm:h-14 sm:w-14",
+/** Height only — width follows native 687×583 aspect ratio. */
+const MARK_HEIGHT_CLASS: Record<BrandLogoSize, string> = {
+  nav: "h-7",
+  md: "h-8",
+  lg: "h-12 sm:h-14",
 };
 
 const WORDMARK_SIZE: Record<BrandLogoSize, "sm" | "md" | "lg" | "xl"> = {
@@ -28,8 +29,7 @@ interface BrandLogoProps {
 }
 
 /**
- * ESAT CAMP mark (teepee) or full lockup (icon + wordmark).
- * Icon uses currentColor — white on dark backgrounds, dark on light.
+ * ESAT CAMP mark (teepee PNG) or full lockup (icon + wordmark).
  */
 export function BrandLogo({
   variant = "mark",
@@ -37,17 +37,21 @@ export function BrandLogo({
   className,
   alt = APP_NAME,
 }: BrandLogoProps) {
+  const mark = (
+    <BrandMarkImage
+      className={cn(MARK_HEIGHT_CLASS[size], className)}
+      alt={variant === "mark" ? alt : ""}
+    />
+  );
+
   if (variant === "full") {
     return (
       <span
-        className={cn(
-          "inline-flex items-center gap-3 text-text",
-          className,
-        )}
+        className="inline-flex items-center gap-3 text-text"
         role="img"
         aria-label={alt}
       >
-        <EsatCampIcon className={MARK_SIZE_CLASS[size]} />
+        {mark}
         <BrandWordmark size={WORDMARK_SIZE[size]} />
       </span>
     );
@@ -55,9 +59,7 @@ export function BrandLogo({
 
   return (
     <span role="img" aria-label={alt} className="inline-flex">
-      <EsatCampIcon
-        className={cn(MARK_SIZE_CLASS[size], "text-text", className)}
-      />
+      {mark}
     </span>
   );
 }

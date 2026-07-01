@@ -16,7 +16,7 @@ export const BRAND_CONFIG = {
 
   navWordmark: "ESAT CAMP",
 
-  /** Raster mark (white on transparent) — optional; UI uses SVG components. */
+  /** Raster mark (white on transparent PNG at /public/brand/logo-mark.png). */
   logoMarkSrc: "/brand/logo-mark.png",
 
   copyright: "© 2024 ESAT CAMP. Not affiliated with any university.",

@@ -1,12 +1,12 @@
 import { cn } from "@/lib/utils";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { BrandWordmark } from "@/components/brand/BrandWordmark";
-import { EsatCampIcon } from "@/components/brand/EsatCampIcon";
 
 interface BrandNavLockupProps {
   className?: string;
 }
 
-/** Navbar lockup — teepee icon + ESAT CAMP wordmark. */
+/** Navbar lockup — teepee PNG + ESAT CAMP wordmark. */
 export function BrandNavLockup({ className }: BrandNavLockupProps) {
   return (
     <span
@@ -15,7 +15,7 @@ export function BrandNavLockup({ className }: BrandNavLockupProps) {
         className,
       )}
     >
-      <EsatCampIcon className="h-7 w-7 shrink-0" />
+      <BrandLogo variant="mark" size="nav" alt="" />
       <BrandWordmark size="sm" />
     </span>
   );
