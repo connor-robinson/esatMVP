@@ -119,9 +119,9 @@ function ModernSelect({
         onClick={() => !disabled && setOpen((v) => !v)}
         className={cn(
           "flex h-9 w-full items-center justify-between gap-2 rounded-organic-lg px-3 text-sm font-medium transition-all duration-fast",
-          "bg-surface-mid/90 text-text hover:bg-surface-subtle active:scale-[0.99]",
+          "bg-background text-text shadow-sm hover:bg-surface-mid active:scale-[0.99]",
           "disabled:cursor-not-allowed disabled:opacity-40",
-          open && "bg-surface-subtle",
+          open && "bg-surface-mid",
           controlBase,
         )}
       >
@@ -142,7 +142,7 @@ function ModernSelect({
           id={listId}
           role="listbox"
           aria-label={label}
-          className="absolute left-0 top-full z-40 mt-1.5 w-full min-w-[8rem] overflow-hidden rounded-organic-lg bg-surface-elevated/95 py-1 shadow-modal-card backdrop-blur-md"
+          className="absolute left-0 top-full z-40 mt-1.5 w-full min-w-[8rem] overflow-hidden rounded-organic-lg bg-surface-elevated py-1 shadow-modal-card"
         >
           {options.map((opt) => {
             const isSelected = opt.value === value;
@@ -508,7 +508,11 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                 invalidateResults();
               }}
             />
-            <span className="mb-2 text-sm text-text-subtle">›</span>
+            <ArrowRight
+              className="mb-2 h-4 w-4 shrink-0 text-text-muted"
+              strokeWidth={2}
+              aria-hidden
+            />
             <span
               className={cn(
                 "mb-2 text-sm font-bold tracking-tight",
