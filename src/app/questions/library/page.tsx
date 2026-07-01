@@ -8,6 +8,8 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/layout/Container";
+import { useSubscription } from "@/hooks/useSubscription";
+import { DrillUpgradeBanner } from "@/components/builder/DrillUpgradeBanner";
 import type {
   QuestionBankQuestion,
   SubjectFilter,
@@ -20,8 +22,11 @@ import { QuestionSessionSummary } from "@/components/questionBank/library/Questi
 
 export default function QuestionsLibraryPage() {
   const router = useRouter();
+  const { hasFullAccess, isLoading: subscriptionLoading } = useSubscription();
+  const treatAsFullAccess = subscriptionLoading || hasFullAccess;
 
   const [error, setError] = useState<string | null>(null);
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
 
   // Library filters
   const [searchQuery, setSearchQuery] = useState("");
@@ -76,6 +81,14 @@ export default function QuestionsLibraryPage() {
   const handleStartSession = async () => {
     if (isStartingSession || selectedQuestions.length === 0) return;
 
+    if (!treatAsFullAccess) {
+      setShowUpgradePrompt(true);
+      setError(
+        "Custom library sessions require a subscription. Start the free preview from the question bank home.",
+      );
+      return;
+    }
+
     try {
       setIsStartingSession(true);
       setError(null);
@@ -101,6 +114,17 @@ export default function QuestionsLibraryPage() {
 
   return (
     <Container size="lg" className="py-7 sm:py-9">
+      {!treatAsFullAccess && showUpgradePrompt ? (
+        <div className="mb-6">
+          <DrillUpgradeBanner
+            variant="panel"
+            headline="Unlock the full question bank"
+            subtext="Free users get 10 curated gold questions from the home page. Upgrade to build custom sessions from the library."
+            ctaLabel="View plans"
+          />
+        </div>
+      ) : null}
+
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_min(100%,30rem)] lg:items-start lg:gap-6 xl:grid-cols-[minmax(0,1fr)_31rem]">
         <div>
           <QuestionLibraryGrid

@@ -34,8 +34,9 @@ import {
 import { useQuestionBank } from '@/hooks/useQuestionBank';
 import { useQuestionEditor } from '@/hooks/useQuestionEditor';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useQuestionBankFreeTier } from '@/hooks/useQuestionBankFreeTier';
 import { useSupabaseSession } from '@/components/auth/SupabaseSessionProvider';
-import { UpgradeCTA } from '@/components/subscription/UpgradeCTA';
+import { DrillUpgradeBanner } from '@/components/builder/DrillUpgradeBanner';
 import {
   RotateCw,
   AlertCircle,
@@ -53,21 +54,17 @@ import {
   QUESTION_BANK_HOME_LAUNCH_KEY,
   type QuestionBankHomeLaunchPayload,
 } from '@/lib/questionBank/homeLaunch';
+import { QUESTION_BANK_FREE_TIER_LAUNCH_KEY } from '@/lib/questionBank/freeTierLaunch';
+import { FREE_TIER_QUESTION_LIMIT } from '@/lib/questionBank/freeTierQuestions';
 import { cn, formatTime } from '@/lib/utils';
 
 function hasSessionBootPayload(): boolean {
   if (typeof window === 'undefined') return false;
   return (
     !!sessionStorage.getItem(QUESTION_BANK_HOME_LAUNCH_KEY) ||
+    !!sessionStorage.getItem(QUESTION_BANK_FREE_TIER_LAUNCH_KEY) ||
     !!sessionStorage.getItem('questionBankSession')
   );
-}
-
-const FREE_QUESTION_LIMIT = 10;
-const STORAGE_KEY = 'qb_free_attempts';
-
-function getFreeAttemptsKey(userId: string | undefined): string {
-  return userId ? `${STORAGE_KEY}_${userId}` : STORAGE_KEY;
 }
 
 export default function QuestionBankPage() {
@@ -75,32 +72,14 @@ export default function QuestionBankPage() {
   const searchParams = useSearchParams();
   const session = useSupabaseSession();
   const isSessionMode = searchParams.get('session') === 'true';
-  const { hasFullAccess } = useSubscription();
-  const [freeAttemptsUsed, setFreeAttemptsUsed] = useState(() => {
-    if (typeof window === 'undefined') return 0;
-    const key = getFreeAttemptsKey(session?.user?.id);
-    const stored = localStorage.getItem(key);
-    return stored ? parseInt(stored, 10) : 0;
-  });
-
-  const isFreeLimitReached =
-    !hasFullAccess && freeAttemptsUsed >= FREE_QUESTION_LIMIT;
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const key = getFreeAttemptsKey(session?.user?.id);
-    const stored = localStorage.getItem(key);
-    setFreeAttemptsUsed(stored ? parseInt(stored, 10) : 0);
-  }, [session?.user?.id]);
-
-  const incrementFreeAttempts = () => {
-    if (!hasFullAccess) {
-      const next = freeAttemptsUsed + 1;
-      setFreeAttemptsUsed(next);
-      const key = getFreeAttemptsKey(session?.user?.id);
-      localStorage.setItem(key, String(next));
-    }
-  };
+  const { hasFullAccess, isLoading: subscriptionLoading } = useSubscription();
+  const treatAsFullAccess = subscriptionLoading || hasFullAccess;
+  const {
+    refresh: refreshFreeTier,
+    isExhausted: freeTierExhausted,
+  } = useQuestionBankFreeTier(treatAsFullAccess);
+  const [freeTierBlocked, setFreeTierBlocked] = useState(false);
+  const [wasFreeTierSession, setWasFreeTierSession] = useState(false);
 
   const {
     currentQuestion,
@@ -362,7 +341,9 @@ export default function QuestionBankPage() {
         setSessionEndedByTimer(true);
       }
       ensureCurrentQuestionLogged();
-      incrementFreeAttempts();
+      if (!hasFullAccess) {
+        void refreshFreeTier();
+      }
 
       const attempts = sessionAttemptLogRef.current;
       const summary = buildSessionSummary(attempts, labelForQuestionBankTag);
@@ -390,6 +371,97 @@ export default function QuestionBankPage() {
       router,
       session?.user,
       sessionCompleting,
+      hasFullAccess,
+      refreshFreeTier,
+    ],
+  );
+
+  const startFreeTierSession = useCallback(
+    async (options?: { requestedCount?: number }) => {
+      if (treatAsFullAccess) return false;
+
+      setSessionStarting(true);
+      setFreeTierBlocked(false);
+
+      try {
+        const res = await fetch('/api/question-bank/free-tier', {
+          credentials: 'include',
+        });
+        if (!res.ok) throw new Error('Failed to load free tier');
+
+        const data = await res.json();
+        if (data.hasFullAccess) return false;
+
+        if (data.requiresAuth) {
+          router.push(
+            `/login?redirectTo=${encodeURIComponent('/questions/questionbank')}`,
+          );
+          return true;
+        }
+
+        const remainingQs = (data.remainingQuestions ??
+          []) as QuestionBankQuestion[];
+        const remaining = data.remaining ?? 0;
+
+        if (
+          data.isExhausted ||
+          remaining <= 0 ||
+          remainingQs.length === 0
+        ) {
+          setFreeTierBlocked(true);
+          router.replace('/questions');
+          return true;
+        }
+
+        const requested = options?.requestedCount ?? remainingQs.length;
+        if (requested > remaining || requested > FREE_TIER_QUESTION_LIMIT) {
+          setFreeTierBlocked(true);
+          router.replace('/questions');
+          return true;
+        }
+
+        const sessionQs = remainingQs.slice(0, requested);
+        if (sessionQs.length === 0) {
+          setFreeTierBlocked(true);
+          router.replace('/questions');
+          return true;
+        }
+
+        setWasFreeTierSession(true);
+        setSessionQuestions(sessionQs);
+        setSessionCurrentIndex(0);
+        setSessionMode(true);
+        updateCurrentQuestion(sessionQs[0]);
+
+        const limitMinutes = Math.ceil(sessionQs.length * 1.5);
+        const startTime = Date.now();
+        const timeLimitMs = limitMinutes * 60 * 1000;
+        setDeadline(startTime + timeLimitMs);
+        setTimerStartTime(startTime);
+        setTimeLimitMinutes(limitMinutes);
+        setRemainingTime(Math.ceil(timeLimitMs / 1000));
+
+        await initializeTrackedSession({
+          questions: sessionQs,
+          timeLimitMinutes: limitMinutes,
+          source: 'home',
+          uiDifficulties: inferUiDifficultiesFromQuestions(sessionQs),
+        });
+
+        return true;
+      } catch (err) {
+        console.error('Failed to start free tier session:', err);
+        router.replace('/questions');
+        return true;
+      } finally {
+        setSessionStarting(false);
+      }
+    },
+    [
+      initializeTrackedSession,
+      router,
+      treatAsFullAccess,
+      updateCurrentQuestion,
     ],
   );
 
@@ -423,10 +495,18 @@ export default function QuestionBankPage() {
 
   // Load session data from sessionStorage if in session mode
   useEffect(() => {
-    if (isSessionMode) {
-      try {
-        const sessionDataStr = sessionStorage.getItem('questionBankSession');
-        if (sessionDataStr) {
+    if (!isSessionMode) return;
+
+    if (!treatAsFullAccess) {
+      sessionStorage.removeItem('questionBankSession');
+      setFreeTierBlocked(true);
+      router.replace('/questions');
+      return;
+    }
+
+    try {
+      const sessionDataStr = sessionStorage.getItem('questionBankSession');
+      if (sessionDataStr) {
           const sessionData = JSON.parse(sessionDataStr);
           const questions = sessionData.questions || [];
           setSessionQuestions(questions);
@@ -463,8 +543,13 @@ export default function QuestionBankPage() {
       } catch (err) {
         console.error('[Bank] Error loading session:', err);
       }
-    }
-  }, [isSessionMode, updateCurrentQuestion, initializeTrackedSession]);
+  }, [
+    isSessionMode,
+    router,
+    treatAsFullAccess,
+    updateCurrentQuestion,
+    initializeTrackedSession,
+  ]);
 
   // Session-only: redirect to home when there is no launch payload or active session
   useEffect(() => {
@@ -774,6 +859,18 @@ export default function QuestionBankPage() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+    if (treatAsFullAccess) return;
+
+    const freeTierFlag = sessionStorage.getItem(QUESTION_BANK_FREE_TIER_LAUNCH_KEY);
+    if (!freeTierFlag) return;
+
+    sessionStorage.removeItem(QUESTION_BANK_FREE_TIER_LAUNCH_KEY);
+    void startFreeTierSession();
+  }, [startFreeTierSession, treatAsFullAccess]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!treatAsFullAccess) return;
 
     const raw = sessionStorage.getItem(QUESTION_BANK_HOME_LAUNCH_KEY);
     if (!raw) return;
@@ -817,10 +914,9 @@ export default function QuestionBankPage() {
       },
       { subjects: data.subjects, testType: data.testType },
     );
-  }, [handleStartSession, setFilters]);
+  }, [handleStartSession, setFilters, treatAsFullAccess]);
 
   const handleNextQuestionInSession = async () => {
-    if (isFreeLimitReached) return;
     ensureCurrentQuestionLogged();
     const nextIndex = sessionCurrentIndex + 1;
     if (nextIndex < sessionQuestions.length) {
@@ -850,7 +946,28 @@ export default function QuestionBankPage() {
         startedAt={sessionStartedAt}
         timedOut={sessionEndedByTimer}
         onBack={() => router.push('/questions')}
+        showUpgradeBanner={!hasFullAccess && (wasFreeTierSession || freeTierExhausted)}
       />
+    );
+  }
+
+  if (!activeSession && !showSessionLoading && freeTierBlocked) {
+    return (
+      <div className="min-h-[calc(100vh-3.5rem)] py-10">
+        <Container size="lg">
+          <DrillUpgradeBanner
+            variant="panel"
+            headline="You've used your free questions"
+            subtext="Upgrade for unlimited practice sessions across every subject and difficulty."
+            ctaLabel="View plans"
+          />
+          <div className="mt-6">
+            <Button variant="secondary" onClick={() => router.push('/questions')}>
+              Back to Question Bank
+            </Button>
+          </div>
+        </Container>
+      </div>
     );
   }
 
@@ -864,7 +981,6 @@ export default function QuestionBankPage() {
       <div className='min-h-[calc(100vh-3.5rem)] py-6 pb-28 sm:py-8 sm:pb-32'>
         <Container size='lg' className='py-2'>
           <div className='space-y-6'>
-            {isFreeLimitReached && <UpgradeCTA feature='unlimited questions' />}
 
             {/* Error State */}
             {error && activeSession && (
@@ -973,7 +1089,7 @@ export default function QuestionBankPage() {
             answerRevealed={answerRevealed}
             isAnswered={isAnswered}
             isCorrect={isCorrect}
-            isFreeLimitReached={isFreeLimitReached}
+            isFreeLimitReached={false}
             currentSelection={currentSelection}
             selectionAlreadyWrong={
               !!currentSelection && incorrectAnswers.has(currentSelection)

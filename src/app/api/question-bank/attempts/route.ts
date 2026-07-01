@@ -1,7 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
+import { createClient } from '@supabase/supabase-js';
+import { userHasFullAccess } from '@/lib/subscription/serverAccess';
+import {
+  FREE_TIER_QUESTION_ID_SET,
+  FREE_TIER_QUESTION_IDS,
+  FREE_TIER_QUESTION_LIMIT,
+} from '@/lib/questionBank/freeTierQuestions';
 
 export const dynamic = 'force-dynamic';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 /**
  * POST /api/question-bank/attempts
@@ -41,6 +51,37 @@ export async function POST(request: NextRequest) {
         { error: 'Missing required fields' },
         { status: 400 }
       );
+    }
+
+    const hasFullAccess = await userHasFullAccess(session.user.id);
+    if (!hasFullAccess) {
+      if (!FREE_TIER_QUESTION_ID_SET.has(question_id)) {
+        return NextResponse.json(
+          { error: 'Upgrade required to attempt this question' },
+          { status: 403 },
+        );
+      }
+
+      const admin = createClient(supabaseUrl, supabaseServiceKey);
+      const { data: priorAttempts } = await admin
+        .from('question_bank_attempts')
+        .select('question_id')
+        .eq('user_id', session.user.id)
+        .in('question_id', [...FREE_TIER_QUESTION_IDS]);
+
+      const attemptedIds = new Set(
+        (priorAttempts ?? []).map((row) => row.question_id as string),
+      );
+
+      if (
+        !attemptedIds.has(question_id) &&
+        attemptedIds.size >= FREE_TIER_QUESTION_LIMIT
+      ) {
+        return NextResponse.json(
+          { error: 'Free question limit reached. Upgrade for unlimited access.' },
+          { status: 403 },
+        );
+      }
     }
 
     // Insert the attempt

@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Container } from '@/components/layout/Container';
 import { Button } from '@/components/ui/Button';
+import { DrillUpgradeBanner } from '@/components/builder/DrillUpgradeBanner';
 import { SessionMiniChart } from '@/components/analytics/SessionMiniChart';
 import { BreakdownDonutChart } from '@/components/questionBank/BreakdownDonutChart';
 import { labelForQuestionBankTag } from '@/lib/questionBank/esatCurriculumTopicLabels';
@@ -23,6 +24,7 @@ interface QuestionBankSessionResultsProps {
   startedAt: number;
   timedOut?: boolean;
   onBack: () => void;
+  showUpgradeBanner?: boolean;
 }
 
 const resultsCard = 'rounded-organic-lg bg-surface-elevated';
@@ -95,6 +97,7 @@ export function QuestionBankSessionResults({
   startedAt,
   timedOut = false,
   onBack,
+  showUpgradeBanner = false,
 }: QuestionBankSessionResultsProps) {
   const result = useMemo(
     () => buildSessionSummary(attempts, labelForQuestionBankTag),
@@ -160,6 +163,22 @@ export function QuestionBankSessionResults({
             </Button>
           </motion.div>
         </div>
+
+        {showUpgradeBanner ? (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+            className="mb-8"
+          >
+            <DrillUpgradeBanner
+              variant="panel"
+              headline="Want more questions?"
+              subtext="You've finished your free preview. Upgrade for unlimited sessions across every subject."
+              ctaLabel="View plans"
+            />
+          </motion.div>
+        ) : null}
 
         <div className='mb-8 grid grid-cols-1 gap-4 lg:grid-cols-4'>
           <motion.div

@@ -6,9 +6,14 @@ import { useRouter } from "next/navigation";
 import { ChevronDown, Search } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { LoadingEllipsis } from "@/components/shared/LoadingEllipsis";
+import { DrillUpgradeBanner } from "@/components/builder/DrillUpgradeBanner";
 import { QUESTION_BANK_HOME_LAUNCH_KEY } from "@/lib/questionBank/homeLaunch";
 import type { QuestionBankHomeLaunchPayload } from "@/lib/questionBank/homeLaunch";
+import { QUESTION_BANK_FREE_TIER_LAUNCH_KEY } from "@/lib/questionBank/freeTierLaunch";
+import { FREE_TIER_QUESTION_LIMIT } from "@/lib/questionBank/freeTierQuestions";
 import { QuestionBankSessionSettingsModal } from "@/components/questionBank/QuestionBankSessionSettingsModal";
+import { useSubscription } from "@/hooks/useSubscription";
+import { useQuestionBankFreeTier } from "@/hooks/useQuestionBankFreeTier";
 import { cn } from "@/lib/utils";
 import { SUBJECT_TILE_STYLES } from "@/lib/questionBank/subjectTileTheme";
 
@@ -105,7 +110,17 @@ type ProgressApiResponse = {
 
 export function QuestionBankHomeScreen() {
   const router = useRouter();
+  const { hasFullAccess, isLoading: subscriptionLoading } = useSubscription();
+  const treatAsFullAccess = subscriptionLoading || hasFullAccess;
+  const {
+    status: freeTierStatus,
+    isLoading: freeTierLoading,
+    isExhausted: freeTierExhausted,
+    attemptedCount: freeTierAttempted,
+    remaining: freeTierRemaining,
+  } = useQuestionBankFreeTier(treatAsFullAccess);
   const [sessionModalOpen, setSessionModalOpen] = useState(false);
+  const [showFreeTierBlocked, setShowFreeTierBlocked] = useState(false);
   const [modalTile, setModalTile] = useState<SubjectTileConfig | null>(null);
   const [mixedModalOpen, setMixedModalOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -192,7 +207,25 @@ export function QuestionBankHomeScreen() {
     [modalTile],
   );
 
+  const launchFreeTierPreview = () => {
+    if (freeTierExhausted || freeTierRemaining <= 0) {
+      setShowFreeTierBlocked(true);
+      return;
+    }
+    setShowFreeTierBlocked(false);
+    try {
+      sessionStorage.setItem(QUESTION_BANK_FREE_TIER_LAUNCH_KEY, "1");
+    } catch {
+      /* quota / private mode */
+    }
+    router.push("/questions/questionbank");
+  };
+
   const openSessionModal = (tile: SubjectTileConfig) => {
+    if (!treatAsFullAccess) {
+      launchFreeTierPreview();
+      return;
+    }
     setModalTile(tile);
     setSessionModalOpen(true);
   };
@@ -331,13 +364,18 @@ export function QuestionBankHomeScreen() {
                       <button
                         type="button"
                         onClick={() => openSessionModal(tile)}
+                        disabled={
+                          !treatAsFullAccess &&
+                          !freeTierLoading &&
+                          (freeTierExhausted || freeTierRemaining <= 0)
+                        }
                         className={cn(
                           "shrink-0 rounded px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-opacity",
                           "disabled:cursor-not-allowed disabled:opacity-40",
                           tile.startBtnClass,
                         )}
                       >
-                        Start
+                        {treatAsFullAccess ? "Start" : "Preview"}
                       </button>
                     </div>
 
@@ -371,18 +409,58 @@ export function QuestionBankHomeScreen() {
           </div>
         </section>
 
+        {!treatAsFullAccess && !freeTierLoading ? (
+          <section className="space-y-4">
+            <p className="text-center text-sm text-text-muted">
+              Free preview: {freeTierAttempted} / {FREE_TIER_QUESTION_LIMIT} curated
+              questions attempted
+              {freeTierRemaining > 0
+                ? ` · ${freeTierRemaining} remaining`
+                : ""}
+            </p>
+            {(showFreeTierBlocked || freeTierExhausted) && (
+              <DrillUpgradeBanner
+                variant="panel"
+                headline="You've used your free questions"
+                subtext="Upgrade for unlimited practice sessions across every subject and difficulty."
+                ctaLabel="View plans"
+              />
+            )}
+            {!freeTierExhausted && freeTierRemaining > 0 ? (
+              <DrillUpgradeBanner
+                variant="panel"
+                headline="Try 10 hand-picked questions free"
+                subtext="Everyone gets the same curated gold questions. Upgrade for the full question bank."
+                ctaLabel="View plans"
+              />
+            ) : null}
+          </section>
+        ) : null}
+
         {/* Mixed */}
         <div className="flex justify-center pb-8">
           <button
             type="button"
-            onClick={() => setMixedModalOpen(true)}
+            onClick={() => {
+              if (!treatAsFullAccess) {
+                launchFreeTierPreview();
+                return;
+              }
+              setMixedModalOpen(true);
+            }}
+            disabled={
+              !treatAsFullAccess &&
+              !freeTierLoading &&
+              (freeTierExhausted || freeTierRemaining <= 0)
+            }
             className={cn(
               "inline-flex items-center gap-2 rounded-full px-10 py-3.5 text-sm font-semibold",
               "bg-secondary text-background shadow-glow transition-all duration-fast",
               "hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/40",
+              "disabled:cursor-not-allowed disabled:opacity-45",
             )}
           >
-            Start mixed practice
+            {treatAsFullAccess ? "Start mixed practice" : "Start free preview"}
             <ChevronDown className="h-4 w-4" aria-hidden strokeWidth={2.5} />
           </button>
         </div>
