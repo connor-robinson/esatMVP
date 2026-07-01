@@ -25,6 +25,11 @@ import { getExamAccentFillClass } from "@/config/colors";
 import { CheckCircle2, AlertCircle, Check } from "lucide-react";
 import type { ExamType } from "@/lib/profile/countdown";
 import { useTheme } from "@/contexts/ThemeContext";
+import {
+  formatAuthProviderLabel,
+  getOAuthProvider,
+  hasEmailPasswordIdentity,
+} from "@/lib/supabase/auth";
 
 type Preferences = {
   username: string | null;
@@ -105,6 +110,14 @@ export default function ProfilePage() {
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showChangeEmail, setShowChangeEmail] = useState(false);
   const [showResetData, setShowResetData] = useState(false);
+
+  const usesEmailPassword = session?.user
+    ? hasEmailPasswordIdentity(session.user)
+    : false;
+  const oauthProvider = session?.user ? getOAuthProvider(session.user) : null;
+  const oauthProviderLabel = oauthProvider
+    ? formatAuthProviderLabel(oauthProvider)
+    : null;
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -891,30 +904,45 @@ export default function ProfilePage() {
                     <SettingsRow
                       label="Email"
                       value={email}
+                      description={
+                        oauthProviderLabel
+                          ? `Managed by your ${oauthProviderLabel} account`
+                          : undefined
+                      }
                       action={
-                        <SettingsButton
-                          type="button"
-                          onClick={() => setShowChangeEmail(true)}
-                        >
-                          Change
-                        </SettingsButton>
+                        usesEmailPassword ? (
+                          <SettingsButton
+                            type="button"
+                            onClick={() => setShowChangeEmail(true)}
+                          >
+                            Change
+                          </SettingsButton>
+                        ) : undefined
                       }
                     />
                   </SettingsGroup>
 
                   <SettingsGroup title="Security">
-                    <SettingsRow
-                      label="Password"
-                      value="••••••••"
-                      action={
-                        <SettingsButton
-                          type="button"
-                          onClick={() => setShowChangePassword(true)}
-                        >
-                          Update
-                        </SettingsButton>
-                      }
-                    />
+                    {usesEmailPassword ? (
+                      <SettingsRow
+                        label="Password"
+                        value="••••••••"
+                        action={
+                          <SettingsButton
+                            type="button"
+                            onClick={() => setShowChangePassword(true)}
+                          >
+                            Update
+                          </SettingsButton>
+                        }
+                      />
+                    ) : oauthProviderLabel ? (
+                      <SettingsRow
+                        label="Sign-in method"
+                        value={oauthProviderLabel}
+                        description={`You sign in with ${oauthProviderLabel}. Password and email are managed in your ${oauthProviderLabel} account.`}
+                      />
+                    ) : null}
                   </SettingsGroup>
 
                   <SettingsGroup title="Billing">
@@ -1267,17 +1295,21 @@ export default function ProfilePage() {
         onClose={() => setShowDeleteAccount(false)}
         onConfirm={handleDeleteAccount}
       />
-      <ChangePasswordModal
-        isOpen={showChangePassword}
-        onClose={() => setShowChangePassword(false)}
-        onConfirm={handleChangePassword}
-      />
-      <ChangeEmailModal
-        isOpen={showChangeEmail}
-        onClose={() => setShowChangeEmail(false)}
-        currentEmail={email}
-        onConfirm={handleChangeEmail}
-      />
+      {usesEmailPassword && (
+        <>
+          <ChangePasswordModal
+            isOpen={showChangePassword}
+            onClose={() => setShowChangePassword(false)}
+            onConfirm={handleChangePassword}
+          />
+          <ChangeEmailModal
+            isOpen={showChangeEmail}
+            onClose={() => setShowChangeEmail(false)}
+            currentEmail={email}
+            onConfirm={handleChangeEmail}
+          />
+        </>
+      )}
       <ResetDataModal
         isOpen={showResetData}
         onClose={() => setShowResetData(false)}
