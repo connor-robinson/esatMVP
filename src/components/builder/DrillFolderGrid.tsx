@@ -57,22 +57,21 @@ export function DrillFolderGrid({
             return (
               <div
                 key={folder.id}
-                className='relative flex min-h-[6.5rem] flex-col items-center justify-center gap-1.5 rounded-organic-lg bg-surface-elevated/50 p-3 opacity-75'
+                className='relative flex min-h-[6.5rem] flex-col items-center justify-center gap-1.5 rounded-organic-lg bg-folder-card p-3 opacity-50 saturate-0'
                 aria-disabled
               >
-                <div className='flex h-12 w-12 items-center justify-center rounded-organic-xl bg-surface-mid'>
-                  <ArithmeticDrillPreview
-                    preview={symbol}
-                    size='folder'
-                    className='opacity-45'
-                  />
+                <div className='flex h-12 w-12 items-center justify-center rounded-organic-xl bg-primary/10'>
+                  <ArithmeticDrillPreview preview={symbol} size='folder' />
                 </div>
-                <span className='text-center text-[13px] font-bold text-text-muted'>
+                <span className='text-center text-[13px] font-bold leading-tight text-text'>
                   {folder.name}
                 </span>
-                <span className='rounded-full bg-warning/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.1em] text-warning'>
+                <span className='text-[9px] font-bold uppercase tracking-[0.1em] text-text-muted'>
                   Coming soon
                 </span>
+                <div className='pointer-events-none absolute inset-0 flex items-center justify-center'>
+                  <Lock className='h-7 w-7 text-text-muted/45' aria-hidden />
+                </div>
               </div>
             );
           }

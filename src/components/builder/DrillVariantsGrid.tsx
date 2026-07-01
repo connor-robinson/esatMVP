@@ -214,7 +214,7 @@ export function DrillVariantsGrid({
   } else if (topicId && isFolderComingSoon(topicId)) {
     panelBody = (
       <div className='flex flex-1 flex-col items-center justify-center gap-2 p-8 text-center'>
-        <span className='rounded-full bg-warning/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-warning'>
+        <span className='text-[10px] font-bold uppercase tracking-[0.12em] text-text-muted'>
           Coming soon
         </span>
         <p className='max-w-xs text-sm font-medium text-text-muted'>
