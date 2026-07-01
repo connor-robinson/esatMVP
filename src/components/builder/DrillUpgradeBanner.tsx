@@ -30,6 +30,16 @@ export function DrillUpgradeBanner({
       )}
     >
       <div
+        aria-hidden
+        className={cn(
+          'pointer-events-none absolute inset-0 rounded-[inherit]',
+          'bg-[radial-gradient(circle,rgba(255,255,255,0.07)_1px,transparent_1px)]',
+          'bg-[length:11px_11px]',
+          'dark:bg-[radial-gradient(circle,rgba(255,255,255,0.055)_1px,transparent_1px)]',
+        )}
+      />
+
+      <div
         className={cn(
           'relative z-10 flex gap-4',
           isPanel
@@ -58,7 +68,7 @@ export function DrillUpgradeBanner({
         <Link
           href='/pricing'
           className={cn(
-            'shrink-0 rounded-full bg-text font-bold text-background transition-opacity hover:opacity-90',
+            'relative z-10 shrink-0 rounded-full bg-text font-bold text-background transition-opacity hover:opacity-90',
             isPanel
               ? 'self-start px-6 py-2.5 text-sm sm:self-auto'
               : 'px-4 py-2 text-xs',
@@ -67,12 +77,13 @@ export function DrillUpgradeBanner({
           {ctaLabel}
         </Link>
       </div>
+
       <div
         className={cn(
-          'pointer-events-none absolute bottom-0 top-0 flex items-center justify-center text-primary opacity-[0.12]',
+          'pointer-events-none absolute inset-y-0 flex items-center justify-center text-primary opacity-[0.14]',
           isPanel
-            ? '-right-4 w-[8rem] sm:-right-2 sm:w-[10rem]'
-            : '-right-2 w-[5.5rem]',
+            ? 'right-[14%] w-[11rem] sm:right-[20%] sm:w-[13rem]'
+            : 'right-[26%] w-[8.5rem] sm:right-[28%] sm:w-[9.5rem]',
         )}
         aria-hidden
       >
@@ -80,7 +91,7 @@ export function DrillUpgradeBanner({
           variant='mark'
           size='lg'
           className={cn(
-            isPanel ? '!h-[5.5rem] sm:!h-[7rem]' : '!h-[4.5rem]',
+            isPanel ? '!h-[7.5rem] sm:!h-[9.5rem]' : '!h-[6.25rem] sm:!h-[7.25rem]',
           )}
           alt=''
         />
