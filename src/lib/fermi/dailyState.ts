@@ -45,17 +45,44 @@ export interface HydratedFermiDailyState {
   index: number;
   phase: FermiPhase;
   results: HydratedFermiResult[];
+  /** Raw result count from localStorage before hydration filtering. */
+  storedResultCount: number;
 }
 
 export function isFermiDailyComplete(
-  state: { phase: FermiPhase; results: readonly unknown[] },
+  state: {
+    phase: FermiPhase;
+    results: readonly unknown[];
+    storedResultCount?: number;
+  },
   roundLength: number,
 ): boolean {
-  return state.phase === "summary" && state.results.length >= roundLength;
+  const count = Math.max(state.storedResultCount ?? 0, state.results.length);
+  return count >= roundLength;
+}
+
+function pickQuestion(
+  fromRound: FermiQuestion | undefined,
+  fromStored: FermiQuestion | null,
+): FermiQuestion | null {
+  if (fromStored?.answer != null) return fromStored;
+  if (fromRound?.answer != null) return fromRound;
+  return fromStored ?? fromRound ?? null;
 }
 
 function storedToQuestion(stored: StoredFermiResult): FermiQuestion | null {
-  if (!stored.question || stored.answer == null) return null;
+  if (!stored.questionId) return null;
+  if (!stored.question || stored.answer == null) {
+    if (stored.score == null || !stored.verdict) return null;
+    return {
+      id: stored.questionId,
+      question: stored.question ?? "Today's question",
+      answer: 1,
+      unit: stored.unit,
+      category: (stored.category ?? "everyday") as FermiQuestion["category"],
+      note: stored.note,
+    };
+  }
   return {
     id: stored.questionId,
     question: stored.question,
@@ -75,13 +102,10 @@ function hydrateResults(
     .map((r) => {
       const fromRound = byId.get(r.questionId);
       const fromStored = storedToQuestion(r);
-      const question =
-        fromRound && fromRound.answer != null
-          ? fromRound
-          : fromStored ?? fromRound;
-      if (!question || question.answer == null) return null;
+      const question = pickQuestion(fromRound, fromStored);
+      if (!question || r.score == null || !r.verdict) return null;
       return {
-        question: question as FermiQuestion,
+        question,
         guess: r.guess,
         logErr: r.logErr,
         score: r.score,
@@ -105,6 +129,7 @@ export function loadFermiDailyState(
       index: parsed.index,
       phase: parsed.phase,
       results: hydrateResults(round, parsed.results),
+      storedResultCount: parsed.results.length,
     };
   } catch {
     return null;
@@ -120,6 +145,18 @@ export function saveFermiDailyState(
 ): void {
   if (typeof window === "undefined") return;
   try {
+    const existingRaw = window.localStorage.getItem(FERMI_DAILY_STATE_KEY);
+    if (results.length === 0 && existingRaw) {
+      const existing = JSON.parse(existingRaw) as StoredFermiDailyState;
+      if (
+        existing.dateKey === todayKey &&
+        existing.results.length > 0 &&
+        (phase === "summary" || existing.phase === "summary")
+      ) {
+        return;
+      }
+    }
+
     const payload: StoredFermiDailyState = {
       dateKey: todayKey,
       index,
