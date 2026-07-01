@@ -974,7 +974,9 @@ function ResultsPanel({
                   : "text-text-muted hover:bg-surface-subtle",
               )}
             >
-              <span className="text-secondary">Overall</span>
+              <span className={cn(showingOverall ? "text-text" : "text-text-muted")}>
+                Overall
+              </span>
               <span className="ml-1.5 tabular-nums text-text">
                 {result.averageScaled!.toFixed(1)}
               </span>
@@ -1048,7 +1050,7 @@ function OverallResult({
           <p className="text-xs text-text-subtle">
             {exam} {year} · Overall
           </p>
-          <p className="mt-1 text-4xl font-bold tabular-nums text-secondary sm:text-5xl">
+          <p className="mt-1 text-4xl font-bold tabular-nums text-text sm:text-5xl">
             {result.averageScaled!.toFixed(1)}
           </p>
           <p className="mt-0.5 text-xs text-text-muted">
@@ -1057,8 +1059,10 @@ function OverallResult({
         </div>
         {topPct != null && (
           <div className="text-right">
-            <p className="text-xs text-text-subtle">Top</p>
-            <p className="text-3xl font-bold tabular-nums text-text sm:text-4xl">
+            <p className="text-[11px] font-medium uppercase tracking-wide text-text-subtle/70">
+              Top
+            </p>
+            <p className="text-2xl font-semibold tabular-nums text-text-muted sm:text-3xl">
               {topPct}%
             </p>
           </div>
@@ -1176,8 +1180,10 @@ function SectionResult({
         </div>
         {topPct != null && (
           <div className="text-right">
-            <p className="text-xs text-text-subtle">Top</p>
-            <p className="text-3xl font-bold tabular-nums text-text sm:text-4xl">
+            <p className="text-[11px] font-medium uppercase tracking-wide text-text-subtle/70">
+              Top
+            </p>
+            <p className="text-2xl font-semibold tabular-nums text-text-muted sm:text-3xl">
               {topPct}%
             </p>
           </div>
