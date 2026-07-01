@@ -29,7 +29,7 @@ import {
   formatAuthProviderLabel,
   getOAuthProvider,
   hasEmailPasswordIdentity,
-} from "@/lib/supabase/auth";
+} from "@/lib/supabase/auth-utils";
 
 type Preferences = {
   username: string | null;
