@@ -306,7 +306,12 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
       )}
 
       {/* Body */}
-      <div className="flex min-h-0 flex-1 items-start justify-center overflow-y-auto px-4 py-4 sm:px-6">
+      <div
+        className={cn(
+          "flex min-h-0 flex-1 justify-center overflow-y-auto px-4 py-4 sm:px-6",
+          phase === "playing" ? "items-center" : "items-start",
+        )}
+      >
         <div className="w-full max-w-2xl">
           {phase === "playing" && current && (
             <PlayingView
@@ -364,7 +369,7 @@ function PlayingView({
   inputRef: React.RefObject<HTMLInputElement>;
 }) {
   return (
-    <div className="animate-fade-in flex flex-col items-center gap-6 pt-4 sm:pt-10">
+    <div className="animate-fade-in flex w-full flex-col items-center gap-6">
       <h2 className="text-balance text-center font-serif text-2xl leading-snug text-text sm:text-3xl">
         {question.question}
       </h2>
@@ -437,9 +442,9 @@ function PlayingView({
           </button>
         </div>
 
-        <p className="text-center text-xs font-medium text-text-muted">
-          {error ?? "Accepts 7 million · 80000000 · 7*10^10 · 8e7"}
-        </p>
+        {error && (
+          <p className="text-center text-xs font-medium text-error">{error}</p>
+        )}
       </div>
     </div>
   );
