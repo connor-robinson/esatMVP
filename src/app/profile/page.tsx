@@ -19,6 +19,7 @@ import { ChangePasswordModal } from "@/components/profile/ChangePasswordModal";
 import { ChangeEmailModal } from "@/components/profile/ChangeEmailModal";
 import { ResetDataModal } from "@/components/profile/ResetDataModal";
 import { UsernameSetupModal } from "@/components/profile/UsernameSetupModal";
+import { BugReportPanel } from "@/components/profile/BugReportPanel";
 import { cn } from "@/lib/utils";
 import { getExamAccentFillClass } from "@/config/colors";
 import { CheckCircle2, AlertCircle, Check } from "lucide-react";
@@ -54,6 +55,7 @@ const SETTING_SECTIONS: SettingSection[] = [
   { id: "exam", title: "Exam & Practice" },
   { id: "data", title: "Data Management" },
   { id: "appearance", title: "Appearance" },
+  { id: "support", title: "Support" },
 ];
 
 function getDisplayInitials(
@@ -1224,6 +1226,19 @@ export default function ProfilePage() {
                         </SettingsButton>
                       </SettingItem>
                     </div>
+                  </div>
+                </>
+              )}
+
+              {/* Support Section */}
+              {activeSection === 'support' && (
+                <>
+                  <SettingsSectionHeader
+                    title="Report a Bug"
+                    description="Help us improve by letting us know when something isn't working"
+                  />
+                  <div className="px-5 py-5 sm:px-7">
+                    <BugReportPanel />
                   </div>
                 </>
               )}

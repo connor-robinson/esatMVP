@@ -577,6 +577,25 @@ export type QuestionBankDislikeInsert = {
 };
 export type QuestionBankDislikeUpdate = Partial<QuestionBankDislikeRow>;
 
+// app_bug_reports
+export type AppBugReportRow = {
+  id: string;
+  user_id: string;
+  description: string;
+  page_url: string | null;
+  user_agent: string | null;
+  created_at: string;
+};
+export type AppBugReportInsert = {
+  id?: string;
+  user_id: string;
+  description: string;
+  page_url?: string | null;
+  user_agent?: string | null;
+  created_at?: string;
+};
+export type AppBugReportUpdate = Partial<AppBugReportRow>;
+
 export type Database = {
   public: {
     Tables: {
@@ -669,6 +688,11 @@ export type Database = {
         Row: QuestionBankDislikeRow;
         Insert: QuestionBankDislikeInsert;
         Update: QuestionBankDislikeUpdate;
+      };
+      app_bug_reports: {
+        Row: AppBugReportRow;
+        Insert: AppBugReportInsert;
+        Update: AppBugReportUpdate;
       };
     };
     Views: {
