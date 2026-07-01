@@ -305,51 +305,80 @@ export function QuestionBankHomeScreen() {
     router.push("/questions/questionbank");
   };
 
+  const isLoggedIn = Boolean(session?.user);
+
+  const freeTierPromoBanner =
+    freeTierExhausted || showFreeTierBlocked ? (
+      <DrillUpgradeBanner
+        variant="panel"
+        headline="You've used your free questions"
+        subtext="Upgrade for unlimited practice sessions across every subject and difficulty."
+        ctaLabel="View plans"
+      />
+    ) : (
+      <DrillUpgradeBanner
+        variant="panel"
+        headline="Try 10 hand-picked questions free"
+        subtext="Everyone gets the same curated gold questions. Upgrade for the full question bank."
+        ctaLabel="View plans"
+      />
+    );
+
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-background pb-16 pt-8 sm:pt-10">
       <Container size="xl" className="space-y-10">
-        {/* Progress */}
-        <section className="rounded-organic-xl bg-surface px-5 py-6 sm:px-7 sm:py-8">
-          <div>
-            <h1 className="text-base font-semibold text-text sm:text-lg">
-              Question Bank Progress
-            </h1>
-            <p className="mt-1 text-xs text-text-muted">
-              {progressDescription}
-            </p>
-          </div>
+        {/* Progress (logged in) or free preview promo (logged out) */}
+        {isLoggedIn ? (
+          <section className="rounded-organic-xl bg-surface px-5 py-6 sm:px-7 sm:py-8">
+            <div>
+              <h1 className="text-base font-semibold text-text sm:text-lg">
+                Question Bank Progress
+              </h1>
+              <p className="mt-1 text-xs text-text-muted">
+                {progressDescription}
+              </p>
+            </div>
 
-          <div className="mt-6">
-            {isLoadingProgress ? (
-              <div className="flex h-9 items-center text-xs text-text-muted">
-                <LoadingEllipsis />
-              </div>
-            ) : (
-              <>
-                <div className="h-3 w-full overflow-hidden rounded-full bg-surface-elevated">
-                  <div
-                    className="h-full rounded-full bg-secondary transition-[width] duration-500 ease-out"
-                    style={{
-                      width: `${aggregatePct}%`,
-                    }}
-                  />
+            <div className="mt-6">
+              {isLoadingProgress ? (
+                <div className="flex h-9 items-center text-xs text-text-muted">
+                  <LoadingEllipsis />
                 </div>
-                <div className="relative mt-2.5 h-4 text-xs text-text-muted">
-                  <span className="absolute left-0">0%</span>
-                  {aggregatePct > 0 && aggregatePct < 100 && (
-                    <span
-                      className="absolute -translate-x-1/2 tabular-nums font-medium text-text"
-                      style={{ left: `${aggregatePct}%` }}
-                    >
-                      {aggregatePct}%
-                    </span>
-                  )}
-                  <span className="absolute right-0">100%</span>
-                </div>
-              </>
-            )}
-          </div>
-        </section>
+              ) : (
+                <>
+                  <div className="h-3 w-full overflow-hidden rounded-full bg-surface-elevated">
+                    <div
+                      className="h-full rounded-full bg-secondary transition-[width] duration-500 ease-out"
+                      style={{
+                        width: `${aggregatePct}%`,
+                      }}
+                    />
+                  </div>
+                  <div className="relative mt-2.5 h-4 text-xs text-text-muted">
+                    <span className="absolute left-0">0%</span>
+                    {aggregatePct > 0 && aggregatePct < 100 && (
+                      <span
+                        className="absolute -translate-x-1/2 tabular-nums font-medium text-text"
+                        style={{ left: `${aggregatePct}%` }}
+                      >
+                        {aggregatePct}%
+                      </span>
+                    )}
+                    <span className="absolute right-0">100%</span>
+                  </div>
+                </>
+              )}
+            </div>
+          </section>
+        ) : freeTierLoading ? (
+          <section className="rounded-organic-xl bg-surface px-5 py-8 sm:px-7">
+            <div className="flex h-9 items-center text-xs text-text-muted">
+              <LoadingEllipsis />
+            </div>
+          </section>
+        ) : (
+          freeTierPromoBanner
+        )}
 
         {/* Browse by subjects + cards */}
         <section className="rounded-organic-xl bg-surface px-5 py-5 sm:px-7 sm:py-6">
@@ -463,7 +492,7 @@ export function QuestionBankHomeScreen() {
           </div>
         </section>
 
-        {!treatAsFullAccess && !freeTierLoading ? (
+        {!treatAsFullAccess && !freeTierLoading && isLoggedIn ? (
           <section className="space-y-4">
             <p className="text-center text-sm text-text-muted">
               Free preview: {freeTierAttempted} / {FREE_TIER_QUESTION_LIMIT} curated
@@ -472,22 +501,8 @@ export function QuestionBankHomeScreen() {
                 ? ` · ${freeTierRemaining} remaining`
                 : ""}
             </p>
-            {(showFreeTierBlocked || freeTierExhausted) && (
-              <DrillUpgradeBanner
-                variant="panel"
-                headline="You've used your free questions"
-                subtext="Upgrade for unlimited practice sessions across every subject and difficulty."
-                ctaLabel="View plans"
-              />
-            )}
-            {!freeTierExhausted && freeTierRemaining > 0 ? (
-              <DrillUpgradeBanner
-                variant="panel"
-                headline="Try 10 hand-picked questions free"
-                subtext="Everyone gets the same curated gold questions. Upgrade for the full question bank."
-                ctaLabel="View plans"
-              />
-            ) : null}
+            {(showFreeTierBlocked || freeTierExhausted) && freeTierPromoBanner}
+            {!freeTierExhausted && freeTierRemaining > 0 ? freeTierPromoBanner : null}
           </section>
         ) : null}
 
