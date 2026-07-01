@@ -3,6 +3,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { scaleScore, resolveTmuaPercentileTableKey } from "@/lib/papers/markScoring";
 import { interpolatePercentile, interpolateScore } from "@/lib/esat/percentiles";
 import { readEsatTableRows } from "@/lib/esat/serverTables";
+import { buildTmuaDualCurve } from "@/lib/scoreConverter/tmuaDualCurve";
 import {
   describeModule,
   isConverterExam,
@@ -228,6 +229,9 @@ export async function POST(request: Request) {
 
   const supabase = createServerClient();
   const isTmuaPreChange = exam === "TMUA" && year <= 2023;
+  const preChangeRows = isTmuaPreChange
+    ? await readEsatTableRows("tmua_pre_change_cumulative_2023").catch(() => [])
+    : [];
   const postChangeRows = isTmuaPreChange
     ? await readEsatTableRows("tmua_post_change_cumulative_2024_2025").catch(() => [])
     : [];
@@ -255,6 +259,7 @@ export async function POST(request: Request) {
         reliabilityNote: "No conversion data is available for this section.",
         fallbackFromYear: null,
         newScaleEquivalent: null,
+        tmuaDualCurve: null,
       });
       continue;
     }
@@ -304,6 +309,21 @@ export async function POST(request: Request) {
       reliabilityNote,
       fallbackFromYear,
       newScaleEquivalent,
+      tmuaDualCurve:
+        isTmuaPreChange &&
+        scaledScore != null &&
+        Number.isFinite(clampedRaw) &&
+        preChangeRows.length > 0 &&
+        postChangeRows.length > 0
+          ? buildTmuaDualCurve(rows, preChangeRows, postChangeRows, {
+              year,
+              raw: clampedRaw,
+              maxRaw,
+              partLabel: sel.legacyLabel ?? partName,
+              studentActualScaled: scaledScore,
+              studentEstimatedScaled: newScaleEquivalent,
+            })
+          : null,
     });
   }
 

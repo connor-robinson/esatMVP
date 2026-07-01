@@ -9,6 +9,7 @@
 
 import { mapSectionToTable } from "@/lib/esat/percentiles";
 import { resolveTmuaPercentileTableKey } from "@/lib/papers/markScoring";
+import type { TmuaDualCurveData } from "./tmuaDualCurve";
 
 export type ConverterExam = "NSAA" | "ENGAA" | "TMUA";
 
@@ -375,7 +376,11 @@ export interface ConvertedSection {
   fallbackFromYear: number | null;
   /** TMUA ≤2023 only: equivalent score on the post-2024 scale. */
   newScaleEquivalent: number | null;
+  /** TMUA ≤2023 only: dual-curve chart data (raw vs scaled, old + estimated new). */
+  tmuaDualCurve?: TmuaDualCurveData | null;
 }
+
+export type { TmuaDualCurveData, TmuaDualCurvePoint } from "./tmuaDualCurve";
 
 export interface ConvertResponse {
   exam: ConverterExam;

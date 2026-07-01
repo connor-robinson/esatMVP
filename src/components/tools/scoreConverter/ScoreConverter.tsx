@@ -6,9 +6,14 @@ import { cn } from "@/lib/utils";
 import { cssVar } from "@/config/colors";
 import { Container } from "@/components/layout/Container";
 import { PercentileMiniChart } from "@/components/papers/mark/PercentileMiniChart";
+import {
+  TmuaDualCurveChart,
+  TmuaDualCurveExplainer,
+} from "@/components/tools/scoreConverter/TmuaDualCurveChart";
 import { fetchEsatTable, type EsatRow } from "@/lib/esat/percentiles";
 import {
   CONVERTER_EXAMS,
+  TMUA_IRT_FROM_YEAR,
   resolvePercentileTableKey,
   type ConverterExam,
   type ConvertResponse,
@@ -308,7 +313,15 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
   );
 
   useEffect(() => {
-    if (!result || !year || activeSection?.scaledScore == null) {
+    const isTmuaLegacy =
+      exam === "TMUA" && year && year.year < TMUA_IRT_FROM_YEAR;
+    if (
+      !result ||
+      !year ||
+      activeSection?.scaledScore == null ||
+      activeSection.tmuaDualCurve ||
+      isTmuaLegacy
+    ) {
       setChartRows([]);
       return;
     }
@@ -655,6 +668,7 @@ function SectionResult({
   chartLoading: boolean;
 }) {
   const colorClass = COLOR_TEXT[section.color];
+  const dual = section.tmuaDualCurve;
   const topPct =
     section.percentile != null
       ? Math.max(0, 100 - section.percentile).toFixed(1)
@@ -663,6 +677,60 @@ function SectionResult({
   if (section.scaledScore == null) {
     return (
       <p className="text-sm text-text-muted">No conversion data for this section.</p>
+    );
+  }
+
+  if (dual) {
+    return (
+      <div className="space-y-5">
+        <div>
+          <p className="text-xs text-text-subtle">
+            {exam} {year}
+            {section.legacyLabel ? ` · ${section.legacyLabel}` : ""}
+          </p>
+          <div className="mt-3 flex flex-wrap gap-8">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-text-subtle">
+                Actual {year}
+              </p>
+              <p className={cn("text-3xl font-bold tabular-nums sm:text-4xl", colorClass)}>
+                {dual.student.actualScaled.toFixed(1)}
+              </p>
+              {section.raw != null && section.maxRaw != null && (
+                <p className="mt-0.5 text-xs text-text-muted">
+                  {section.raw}/{section.maxRaw} raw
+                </p>
+              )}
+            </div>
+            {dual.student.estimatedScaled != null && (
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-text-subtle">
+                  Est. 2026 scale
+                </p>
+                <p className="text-3xl font-bold tabular-nums text-secondary sm:text-4xl">
+                  {dual.student.estimatedScaled.toFixed(1)}
+                </p>
+                {topPct != null && (
+                  <p className="mt-0.5 text-xs text-text-muted">Top {topPct}%</p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <TmuaDualCurveChart data={dual} />
+        <TmuaDualCurveExplainer summary={dual.summary} />
+
+        {section.fallbackFromYear != null && (
+          <NoteRow>
+            {year} table unavailable — using {section.fallbackFromYear} as approximation.
+          </NoteRow>
+        )}
+
+        {section.confidence !== "high" && section.reliabilityNote && (
+          <NoteRow warning>{section.reliabilityNote}</NoteRow>
+        )}
+      </div>
     );
   }
 
