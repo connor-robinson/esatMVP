@@ -40,5 +40,5 @@ export default function ExamScoreConverterPage({
   const raw = params.exam ?? "";
   if (!isConverterExam(raw)) notFound();
   const exam = raw.toUpperCase() as ConverterExam;
-  return <ScoreConverter exam={exam} />;
+  return <ScoreConverter initialExam={exam} />;
 }
