@@ -11,7 +11,7 @@ export function BrandNavLockup({ className }: BrandNavLockupProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-2 text-text",
+        "inline-flex items-center gap-3.5 text-text",
         className,
       )}
     >

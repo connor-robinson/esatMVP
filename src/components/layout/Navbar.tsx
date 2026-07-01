@@ -307,23 +307,21 @@ export function Navbar() {
     pathname === '/settings' || pathname.startsWith('/profile');
 
   const navIconSlotClass =
-    'inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-all duration-fast ease-signature hover:bg-surface-subtle interaction-scale';
+    'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors duration-fast ease-signature hover:bg-surface-subtle interaction-scale';
 
   const accountControls = (
     <div
-      className='flex shrink-0 items-center gap-2 border-l border-border-subtle pl-3 sm:gap-3 sm:pl-4'
+      className='flex shrink-0 items-center gap-1.5 border-l border-border-subtle pl-3 sm:gap-2 sm:pl-4'
       aria-label='Account and preferences'
     >
       {!hasFullAccess ? (
         <Link
           href='/pricing'
           className={cn(
-            'inline-flex h-9 shrink-0 items-center justify-center rounded-organic-md bg-primary px-4',
-            'text-xs font-bold uppercase tracking-[0.14em] text-black sm:h-10 sm:px-5 sm:text-sm',
-            'shadow-[0_0_18px_-4px_rgba(169,177,103,0.5)]',
-            'transition-[opacity,box-shadow,transform] duration-fast ease-signature',
-            'hover:scale-[1.02] hover:opacity-95 hover:shadow-[0_0_22px_-2px_rgba(169,177,103,0.65)]',
-            'focus-visible:outline-none focus-visible:shadow-glow-focus',
+            'mr-0.5 inline-flex h-7 shrink-0 items-center justify-center rounded-organic-md bg-primary px-3',
+            'text-[11px] font-semibold uppercase tracking-[0.12em] text-black',
+            'transition-opacity duration-fast ease-signature hover:opacity-90',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
           )}
         >
           Upgrade
@@ -463,7 +461,7 @@ export function Navbar() {
                 )}
               </div>
 
-              <div className='flex min-w-0 shrink-0 items-center gap-2 sm:gap-3'>
+              <div className='flex min-w-0 shrink-0 items-center gap-1.5 sm:gap-2'>
                 {!hasActiveSession && (
                   <>
                     <button
