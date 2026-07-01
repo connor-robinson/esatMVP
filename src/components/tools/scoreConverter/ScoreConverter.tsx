@@ -10,6 +10,7 @@ import {
   TmuaDualCurveChart,
   TmuaDualCurveExplainer,
 } from "@/components/tools/scoreConverter/TmuaDualCurveChart";
+import { ScoreConverterFaq } from "@/components/tools/scoreConverter/ScoreConverterFaq";
 import { fetchEsatTable, type EsatRow } from "@/lib/esat/percentiles";
 import {
   CONVERTER_EXAMS,
@@ -669,6 +670,8 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
       <p className="mt-6 text-center text-[11px] text-text-subtle">
         Historical proxy from official data — not an ESAT score.
       </p>
+
+      <ScoreConverterFaq />
     </Container>
   );
 }
