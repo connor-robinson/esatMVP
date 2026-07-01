@@ -10,7 +10,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, BarChart3, Target, X } from "lucide-react";
+import { ArrowRight, BarChart3, X } from "lucide-react";
+import { FermiGuessrIcon } from "@/components/icons/FermiGuessrIcon";
 import { cn } from "@/lib/utils";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import type { FermiQuestion } from "@/config/fermiQuestions";
