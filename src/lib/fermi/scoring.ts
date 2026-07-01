@@ -44,10 +44,10 @@ export function getVerdict(guess: number, answer: number): FermiVerdict {
       : `about ${formatFactor(factor)} ${direction}`;
 
   if (logErr < 0.05) {
-    return { label: "Bullseye", detail: "Essentially exact — incredible estimate.", tone: "perfect", stars: 5 };
+    return { label: "Bang on", detail: "Essentially exact — incredible estimate.", tone: "perfect", stars: 5 };
   }
   if (logErr < 0.18) {
-    return { label: "Spot on", detail: `Within ~50% (${factorText}).`, tone: "perfect", stars: 5 };
+    return { label: "Bang on", detail: `Within ~50% (${factorText}).`, tone: "perfect", stars: 5 };
   }
   if (logErr < 0.35) {
     return { label: "Very close", detail: `Within a factor of ~2 (${factorText}).`, tone: "great", stars: 4 };
