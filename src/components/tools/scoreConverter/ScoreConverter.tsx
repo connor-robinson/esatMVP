@@ -35,12 +35,20 @@ function examTargetLabel(exam: ConverterExam): "ESAT" | "TMUA" {
   return exam === "TMUA" ? "TMUA" : "ESAT";
 }
 
-const fieldLabel = "mb-1 block text-[10px] font-semibold uppercase tracking-[0.12em] text-text-subtle";
+const fieldLabel =
+  "mb-2 block text-xs font-semibold uppercase tracking-[0.1em] text-text-muted";
 
 const controlBase = "border-0 shadow-none outline-none focus:outline-none focus:ring-0 focus:border-0";
 
+const selectTriggerClass = cn(
+  "flex h-10 w-full items-center justify-between gap-2 rounded-organic-lg px-3.5 text-base font-medium transition-all duration-fast",
+  "bg-surface-mid text-text hover:bg-surface-subtle active:scale-[0.99]",
+  "disabled:cursor-not-allowed disabled:opacity-45",
+  controlBase,
+);
+
 const markInputClass = cn(
-  "h-8 w-11 rounded-organic-md bg-surface-mid text-center text-sm font-semibold tabular-nums text-text disabled:opacity-35",
+  "h-9 w-12 rounded-organic-md bg-background text-center text-base font-semibold tabular-nums text-text disabled:opacity-35",
   controlBase,
 );
 
@@ -90,6 +98,10 @@ function ModernSelect({
   const displayLabel = selected?.label ?? placeholder;
 
   useEffect(() => {
+    if (disabled) setOpen(false);
+  }, [disabled]);
+
+  useEffect(() => {
     if (!open) return;
     const onPointerDown = (e: PointerEvent) => {
       if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
@@ -117,13 +129,7 @@ function ModernSelect({
         aria-expanded={open}
         aria-controls={listId}
         onClick={() => !disabled && setOpen((v) => !v)}
-        className={cn(
-          "flex h-9 w-full items-center justify-between gap-2 rounded-organic-lg px-3 text-sm font-medium transition-all duration-fast",
-          "bg-background text-text shadow-sm hover:bg-surface-mid active:scale-[0.99]",
-          "disabled:cursor-not-allowed disabled:opacity-40",
-          open && "bg-surface-mid",
-          controlBase,
-        )}
+        className={cn(selectTriggerClass, open && "bg-surface-subtle")}
       >
         <span className={cn("truncate", !selected && "text-text-muted")}>
           {displayLabel}
@@ -142,7 +148,7 @@ function ModernSelect({
           id={listId}
           role="listbox"
           aria-label={label}
-          className="absolute left-0 top-full z-40 mt-1.5 w-full min-w-[8rem] overflow-hidden rounded-organic-lg bg-surface-elevated py-1 shadow-modal-card"
+          className="absolute left-0 top-full z-40 mt-2 w-full min-w-[9rem] overflow-hidden rounded-organic-lg bg-surface-subtle py-1.5 shadow-modal-card"
         >
           {options.map((opt) => {
             const isSelected = opt.value === value;
@@ -157,10 +163,10 @@ function ModernSelect({
                     setOpen(false);
                   }}
                   className={cn(
-                    "flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm transition-colors duration-fast",
+                    "flex w-full items-center justify-between gap-2 px-3.5 py-2.5 text-left text-base transition-colors duration-fast",
                     isSelected
                       ? "bg-surface-mid font-semibold text-text"
-                      : "text-text-muted hover:bg-surface-subtle/90 hover:text-text",
+                      : "text-text-muted hover:bg-surface-mid/80 hover:text-text",
                     controlBase,
                   )}
                 >
@@ -493,14 +499,14 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
       </div>
 
       {/* Inputs */}
-      <div className="rounded-organic-xl bg-surface-elevated p-4 shadow-modal-card sm:p-5">
+      <div className="rounded-organic-xl bg-surface-elevated p-5 shadow-modal-card sm:p-6">
         {/* Row 1: exam, year, section, calculate */}
-        <div className="flex flex-wrap items-end gap-x-4 gap-y-3">
-          <div className="flex shrink-0 items-end gap-2">
+        <div className="flex flex-wrap items-end gap-x-5 gap-y-5 sm:gap-x-6">
+          <div className="flex shrink-0 items-end gap-2.5">
             <ModernSelect
               label="Exam"
               value={exam}
-              minWidth="5.5rem"
+              minWidth="6.5rem"
               options={CONVERTER_EXAMS.map((e) => ({ value: e, label: e }))}
               onChange={(next) => {
                 setExam(next as ConverterExam);
@@ -508,25 +514,29 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                 invalidateResults();
               }}
             />
-            <ArrowRight
-              className="mb-2 h-4 w-4 shrink-0 text-text-muted"
-              strokeWidth={2}
-              aria-hidden
-            />
-            <span
-              className={cn(
-                "mb-2 text-sm font-bold tracking-tight",
-                exam === "TMUA" ? "text-tmua-accent" : "text-secondary",
-              )}
-            >
-              {examTargetLabel(exam)}
-            </span>
+            <div className="flex h-10 items-center">
+              <ArrowRight
+                className="h-4 w-4 shrink-0 text-text-muted"
+                strokeWidth={2}
+                aria-hidden
+              />
+            </div>
+            <div className="flex h-10 items-center">
+              <span
+                className={cn(
+                  "text-base font-bold tracking-tight",
+                  exam === "TMUA" ? "text-tmua-accent" : "text-secondary",
+                )}
+              >
+                {examTargetLabel(exam)}
+              </span>
+            </div>
           </div>
 
           <ModernSelect
             label="Year"
             value={year ? String(year.year) : ""}
-            minWidth="4.5rem"
+            minWidth="5.5rem"
             disabled={yearsLoading || years.length === 0}
             placeholder={yearsLoading ? "…" : "—"}
             options={years.map((y) => ({
@@ -543,12 +553,19 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
             }}
           />
 
-          {year && isNsaaEngaa && !isScaledMode && sectionGroups.length > 0 && (
+          {isNsaaEngaa && !isScaledMode && (
             <ModernSelect
               label="Section"
-              value={selectedGroup}
-              minWidth="7rem"
-              disabled={sectionsLoading}
+              value={year ? selectedGroup : ""}
+              minWidth="8.5rem"
+              disabled={!year || sectionsLoading || sectionGroups.length === 0}
+              placeholder={
+                !year
+                  ? "Select year"
+                  : sectionsLoading
+                    ? "…"
+                    : "—"
+              }
               options={sectionGroups.map(([group]) => ({
                 value: group,
                 label: group,
@@ -560,7 +577,7 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
           {year && isScaledMode && (
             <label className="block shrink-0">
               <span className={fieldLabel}>Scaled</span>
-              <div className="flex items-center gap-1.5">
+              <div className="flex h-10 items-center gap-2">
                 <input
                   type="text"
                   inputMode="decimal"
@@ -570,9 +587,9 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                     setScaledInput(e.target.value.replace(/[^0-9.]/g, ""));
                   }}
                   placeholder="6.8"
-                  className={cn(markInputClass, "w-14")}
+                  className={cn(markInputClass, "w-14 bg-surface-mid")}
                 />
-                <span className="text-xs font-medium text-text-subtle">/9</span>
+                <span className="text-sm font-medium text-text-muted">/9</span>
               </div>
             </label>
           )}
@@ -602,18 +619,18 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
 
         {/* Row 2: subject marks */}
         {year && !isScaledMode && (
-          <div className="mt-4 pt-2">
+          <div className="mt-6 pt-2">
             {sectionsLoading && (
-              <span className="text-xs text-text-muted">Loading…</span>
+              <span className="text-sm text-text-muted">Loading subjects…</span>
             )}
             {!sectionsLoading && partsInGroup.length === 0 && (
-              <span className="text-xs text-text-muted">No subjects for this section.</span>
+              <span className="text-sm text-text-muted">No subjects for this section.</span>
             )}
             {!sectionsLoading && partsInGroup.length > 0 && (
               <div
                 className={cn(
-                  "grid gap-2",
-                  isTmuaRaw ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-2 sm:grid-cols-4",
+                  "grid gap-3",
+                  isTmuaRaw ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
                 )}
               >
                 {partsInGroup.map((s) => {
@@ -625,14 +642,14 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                     <div
                       key={s.key}
                       className={cn(
-                        "rounded-organic-lg bg-surface-mid/40 px-3 py-2.5 transition-opacity",
-                        !checked && "opacity-55",
+                        "rounded-organic-lg bg-surface-mid px-4 py-3 transition-opacity",
+                        !checked && "opacity-60",
                         disabled && "opacity-35",
                       )}
                     >
                       <label
                         className={cn(
-                          "flex cursor-pointer items-center gap-2",
+                          "flex cursor-pointer items-center gap-2.5",
                           disabled && "cursor-not-allowed",
                         )}
                       >
@@ -643,16 +660,16 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                           disabled={disabled}
                           onChange={() => toggleSection(s)}
                           className={cn(
-                            "h-3.5 w-3.5 shrink-0 cursor-pointer accent-secondary",
+                            "h-4 w-4 shrink-0 cursor-pointer accent-secondary",
                             isTmuaRaw ? "rounded-full" : "rounded",
                             controlBase,
                           )}
                         />
-                        <span className={cn("truncate text-xs font-semibold", c)}>
+                        <span className={cn("truncate text-sm font-semibold", c)}>
                           {displaySubject(s)}
                         </span>
                       </label>
-                      <div className="mt-2 flex items-baseline gap-1">
+                      <div className="mt-2.5 flex items-baseline gap-1.5">
                         <input
                           type="text"
                           inputMode="numeric"
@@ -664,9 +681,9 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                             if (Number.isNaN(n)) setRaw(s.key, 0);
                             else setRaw(s.key, Math.max(0, Math.min(s.maxRaw, n)));
                           }}
-                          className={cn(markInputClass, "w-12")}
+                          className={markInputClass}
                         />
-                        <span className="text-[11px] font-medium text-text-subtle">
+                        <span className="text-sm font-medium text-text-muted">
                           /{s.maxRaw}
                         </span>
                       </div>
