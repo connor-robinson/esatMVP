@@ -11,6 +11,7 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith('/auth') ||
     request.nextUrl.pathname === '/login' ||
     request.nextUrl.pathname === '/signup' ||
+    request.nextUrl.pathname.startsWith('/dev') ||
     request.nextUrl.pathname.startsWith('/static')
   ) {
     return NextResponse.next();
