@@ -21,6 +21,11 @@ import {
 
 const MAX_SECTIONS = 3;
 
+/** What the selected past paper proxies for in current admissions. */
+function examTargetLabel(exam: ConverterExam): "ESAT" | "TMUA" {
+  return exam === "TMUA" ? "TMUA" : "ESAT";
+}
+
 const fieldLabel = "mb-1 block text-[10px] font-semibold uppercase tracking-[0.12em] text-text-subtle";
 
 const selectWrap =
@@ -258,19 +263,22 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
 
   return (
     <Container size="lg" className="py-10 sm:py-14">
-      <header className="mb-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-text-subtle">
-          Score converter
-        </p>
-        <h1 className="mt-1 text-2xl font-bold text-text sm:text-3xl">
-          Raw marks → scaled score
-        </h1>
-      </header>
-
       {/* Results — top */}
       <div className="mb-5 min-h-[280px] rounded-organic-xl bg-surface-elevated p-6 shadow-modal-card sm:min-h-[320px] sm:p-8">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl font-bold tracking-tight text-text sm:text-4xl">
+            ESAT Score Converter
+          </h1>
+          {exam !== "TMUA" && (
+            <p className="mt-2 text-sm text-text-muted">
+              Take TMUA instead? Switch using the{" "}
+              <span className="font-medium text-text">Exam</span> selector below.
+            </p>
+          )}
+        </div>
+
         {!hasCalculated && !resultLoading && (
-          <div className="flex h-full min-h-[220px] flex-col items-center justify-center text-center">
+          <div className="flex min-h-[160px] flex-col items-center justify-center text-center sm:min-h-[180px]">
             <p className="text-sm text-text-muted">
               Results will show here after you fill in the details and calculate.
             </p>
@@ -278,14 +286,14 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
         )}
 
         {resultLoading && (
-          <div className="flex min-h-[220px] flex-col items-center justify-center gap-2">
+          <div className="flex min-h-[160px] flex-col items-center justify-center gap-2 sm:min-h-[180px]">
             <Loader2 className="h-5 w-5 animate-spin text-secondary" />
             <p className="text-xs text-text-muted">Calculating…</p>
           </div>
         )}
 
         {resultError && hasCalculated && !resultLoading && (
-          <div className="flex min-h-[220px] items-center justify-center">
+          <div className="flex min-h-[160px] items-center justify-center sm:min-h-[180px]">
             <p className="text-sm text-error">{resultError}</p>
           </div>
         )}
@@ -309,23 +317,33 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
         <div className="flex flex-wrap items-end gap-x-4 gap-y-4">
           <div className="shrink-0">
             <span className={fieldLabel}>Exam</span>
-            <div className={selectWrap}>
-              <select
-                value={exam}
-                onChange={(e) => {
-                  setExam(e.target.value as ConverterExam);
-                  setYear(null);
-                  invalidateResults();
-                }}
-                className={selectClass}
+            <div className="flex items-center gap-2">
+              <span
+                className={cn(
+                  "text-sm font-bold tracking-tight",
+                  exam === "TMUA" ? "text-tmua-accent" : "text-secondary",
+                )}
               >
-                {CONVERTER_EXAMS.map((e) => (
-                  <option key={e} value={e}>
-                    {e}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-subtle" />
+                {examTargetLabel(exam)}
+              </span>
+              <div className={cn(selectWrap, "min-w-[5rem]")}>
+                <select
+                  value={exam}
+                  onChange={(e) => {
+                    setExam(e.target.value as ConverterExam);
+                    setYear(null);
+                    invalidateResults();
+                  }}
+                  className={selectClass}
+                >
+                  {CONVERTER_EXAMS.map((e) => (
+                    <option key={e} value={e}>
+                      {e}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-subtle" />
+              </div>
             </div>
           </div>
 
