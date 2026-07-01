@@ -15,7 +15,7 @@ export interface PricingTier {
   ctaLabel: string;
   /** Crown / “Best value” badge on card */
   featured?: boolean;
-  /** Primary green CTA — recommended plan */
+  /** Primary green card — recommended plan (monthly) */
   highlighted?: boolean;
 }
 
@@ -42,6 +42,7 @@ export function PricingTable({
           const isFree = tier.id === "free";
           const isLoading = tier.ctaLabel.startsWith("Loading");
           const isCurrentPlan = tier.ctaLabel === "Current plan";
+          const isHighlighted = tier.highlighted === true;
           const showPrimaryCta =
             !isFree && !isCurrentPlan && !isLoading;
 
@@ -50,9 +51,9 @@ export function PricingTable({
               key={tier.id}
               className={cn(
                 CARD_SHELL,
-                tier.featured && "overflow-hidden",
-                tier.highlighted &&
-                  "ring-1 ring-primary/30 shadow-[0_16px_48px_-20px_rgba(0,0,0,0.65)]",
+                isHighlighted &&
+                  "bg-primary text-black shadow-[0_16px_48px_-20px_rgba(0,0,0,0.45)]",
+                tier.featured && !isHighlighted && "overflow-hidden",
               )}
             >
               {tier.featured ? (
@@ -75,29 +76,59 @@ export function PricingTable({
               ) : null}
 
               <div className={cn("mb-5 space-y-2", tier.featured && "pr-24")}>
-                <h3 className="text-lg font-semibold tracking-tight text-text">
+                <h3
+                  className={cn(
+                    "text-lg font-semibold tracking-tight",
+                    isHighlighted ? "text-black" : "text-text",
+                  )}
+                >
                   {tier.name}
                 </h3>
                 <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                  <span className="text-2xl font-bold tracking-tight text-text sm:text-3xl">
+                  <span
+                    className={cn(
+                      "text-2xl font-bold tracking-tight sm:text-3xl",
+                      isHighlighted ? "text-black" : "text-text",
+                    )}
+                  >
                     {tier.price}
                   </span>
                   {tier.caption ? (
-                    <span className="text-sm text-text-muted">{tier.caption}</span>
+                    <span
+                      className={cn(
+                        "text-sm",
+                        isHighlighted ? "text-black/75" : "text-text-muted",
+                      )}
+                    >
+                      {tier.caption}
+                    </span>
                   ) : null}
                 </div>
                 {tier.priceNote ? (
-                  <p className="text-xs leading-snug text-text-subtle">
+                  <p
+                    className={cn(
+                      "text-xs leading-snug",
+                      isHighlighted ? "text-black/70" : "text-text-subtle",
+                    )}
+                  >
                     {tier.priceNote}
                   </p>
                 ) : null}
               </div>
 
-              <ul className="mb-6 flex-1 space-y-3 text-sm text-text-muted">
+              <ul
+                className={cn(
+                  "mb-6 flex-1 space-y-3 text-sm",
+                  isHighlighted ? "text-black/85" : "text-text-muted",
+                )}
+              >
                 {tier.features.map((feature) => (
                   <li key={feature} className="flex gap-3">
                     <Check
-                      className="mt-0.5 h-4 w-4 shrink-0 text-primary"
+                      className={cn(
+                        "mt-0.5 h-4 w-4 shrink-0",
+                        isHighlighted ? "text-black" : "text-primary",
+                      )}
                       strokeWidth={2.5}
                       aria-hidden
                     />
@@ -108,16 +139,23 @@ export function PricingTable({
 
               <Button
                 variant={
-                  showPrimaryCta && tier.highlighted ? "wide" : "secondary"
+                  showPrimaryCta && isHighlighted ? "wide" : "secondary"
                 }
                 size="md"
                 disabled={isCurrentPlan || isLoading}
                 className={cn(
                   "w-full rounded-organic-lg font-semibold",
-                  showPrimaryCta &&
-                    !tier.highlighted &&
+                  isHighlighted &&
+                    showPrimaryCta &&
+                    "animate-pricing-bulge border-0 bg-black text-white hover:bg-black/90 hover:shadow-none",
+                  isHighlighted &&
+                    !showPrimaryCta &&
+                    "border-0 bg-black/15 text-black hover:bg-black/20",
+                  !isHighlighted &&
+                    showPrimaryCta &&
                     "border-0 bg-surface-mid text-text shadow-sm hover:bg-surface-neutral hover:text-text",
-                  !showPrimaryCta &&
+                  !isHighlighted &&
+                    !showPrimaryCta &&
                     "border-0 bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text",
                 )}
                 onClick={() => onSelect(tier.id)}
