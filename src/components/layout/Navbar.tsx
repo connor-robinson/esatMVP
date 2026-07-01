@@ -28,6 +28,7 @@ import {
   FERMI_GUESSR_NAME,
   FERMI_GUESSR_PLAY_PATH,
 } from '@/config/fermiGuessr';
+import { FermiGuessrIcon } from '@/components/icons/FermiGuessrIcon';
 import {
   ArrowLeftRight,
   BarChart3,
@@ -43,7 +44,6 @@ import {
   Moon,
   Settings,
   Sun,
-  Target,
   Trophy,
   X,
   Zap,
@@ -87,8 +87,8 @@ const navSections: NavSectionConfig[] = [
           {
             href: FERMI_GUESSR_PLAY_PATH,
             label: FERMI_GUESSR_NAME,
-            description: 'Daily estimation game — how close can you get?',
-            icon: Target,
+            description: 'Daily estimation game',
+            icon: FermiGuessrIcon,
             badge: 'NEW',
           },
         ],

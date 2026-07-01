@@ -11,12 +11,12 @@ import {
   Atom,
   Zap,
   Infinity,
-  Target,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { HighLevelCategory } from '@/components/builder/TopicFolders';
 import { FERMI_GUESSR_NAME } from '@/config/fermiGuessr';
+import { FermiGuessrIcon } from '@/components/icons/FermiGuessrIcon';
 
 interface SubjectCategoriesProps {
   selectedCategory: HighLevelCategory | null;
@@ -123,24 +123,15 @@ export function SubjectCategories({
               <button
                 type='button'
                 onClick={onLaunchFermiGuessr}
-                className='group relative flex w-full flex-col items-center px-1 pb-1 pt-2 outline-none'
+                className='group relative flex w-full flex-col items-center px-1.5 outline-none'
                 title={`${FERMI_GUESSR_NAME} — daily estimation game`}
               >
-                <span className='absolute -top-0.5 right-0 z-10 rounded-full bg-session-green px-1.5 py-0.5 text-[7px] font-bold uppercase tracking-[0.12em] text-white shadow-badge-mint'>
-                  New
-                </span>
-                <div
-                  className={cn(
-                    'flex w-full flex-col items-center gap-1 rounded-organic-lg px-1 py-2.5 transition-all duration-200 ease-signature',
-                    'bg-gradient-to-b from-secondary/35 to-secondary/10',
-                    'shadow-sm group-hover:scale-[1.04] group-hover:shadow-glow group-active:scale-[0.98]',
-                  )}
-                >
-                  <div className='flex h-11 w-11 items-center justify-center rounded-organic-md bg-secondary/25 xl:h-12 xl:w-12'>
-                    <Target
-                      className='h-5 w-5 text-white [filter:drop-shadow(0_0.5px_1.5px_rgb(0_0_0_/_0.45))] xl:h-6 xl:w-6'
-                      strokeWidth={2.35}
-                    />
+                <div className='relative flex w-full flex-col items-center gap-1.5 rounded-organic-lg bg-surface-elevated px-1 py-2.5 transition-opacity duration-150 group-hover:opacity-90 group-active:opacity-80'>
+                  <span className='absolute -right-0.5 -top-1 text-[7px] font-bold uppercase tracking-[0.1em] text-error'>
+                    New
+                  </span>
+                  <div className='flex h-11 w-11 items-center justify-center xl:h-12 xl:w-12'>
+                    <FermiGuessrIcon className='h-6 w-6 text-secondary xl:h-[1.65rem] xl:w-[1.65rem]' />
                   </div>
                   <span className='max-w-full text-center text-[9px] font-bold leading-tight tracking-[0.04em] text-secondary xl:text-[10px]'>
                     {FERMI_GUESSR_NAME}

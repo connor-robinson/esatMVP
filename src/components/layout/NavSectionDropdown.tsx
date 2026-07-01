@@ -2,9 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type ComponentType } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronDown, type LucideIcon } from 'lucide-react';
+import { ChevronDown, type LucideIcon, type LucideProps } from 'lucide-react';
+
+export type NavDropdownIcon = LucideIcon | ComponentType<LucideProps>;
 import { cn } from '@/lib/utils';
 
 export type NavSectionId = 'skills' | 'papers' | 'questions' | 'tools';
@@ -13,8 +15,8 @@ export interface NavDropdownItem {
   href: string;
   label: string;
   description?: string;
-  icon: LucideIcon;
-  /** Small pill shown beside the label (e.g. NEW). */
+  icon: NavDropdownIcon;
+  /** Uppercase label beside the title (e.g. NEW). */
   badge?: string;
 }
 
@@ -159,7 +161,7 @@ export function NavDropdownMenuItem({
           <span className="inline-flex items-center gap-2">
             {item.label}
             {item.badge ? (
-              <span className="rounded-full bg-session-green px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white">
+              <span className='text-[10px] font-bold uppercase tracking-[0.08em] text-error'>
                 {item.badge}
               </span>
             ) : null}
@@ -302,7 +304,7 @@ export function NavSectionDropdown({
           {open && (
             <motion.div
               {...dropdownMotion}
-              className='absolute -mt-px left-0 top-full z-50 w-full overflow-hidden rounded-b-organic-lg rounded-t-none bg-surface-elevated backdrop-blur-xl shadow-modal-card'
+              className='absolute -mt-px left-0 top-full z-50 min-w-[19rem] w-max overflow-hidden rounded-b-organic-lg rounded-t-none bg-surface-elevated backdrop-blur-xl shadow-modal-card'
               role='menu'
               style={{ transformOrigin: 'top center' }}
             >
