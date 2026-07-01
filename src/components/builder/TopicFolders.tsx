@@ -60,8 +60,6 @@ export function getTopicsForHighLevelCategory(
 
 interface TopicFoldersProps {
   categoryTopics: Topic[];
-  accessibleTopicIds: ReadonlySet<string>;
-  showUpgradeCard?: boolean;
   selectedCategory: HighLevelCategory | null;
   selectedTopicId: string | null;
   onSelectTopic: (topicId: string) => void;
@@ -70,8 +68,6 @@ interface TopicFoldersProps {
 
 export function TopicFolders({
   categoryTopics,
-  accessibleTopicIds,
-  showUpgradeCard = false,
   selectedCategory,
   selectedTopicId,
   onSelectTopic,
@@ -116,11 +112,9 @@ export function TopicFolders({
             >
               <DrillFolderGrid
                 category={selectedCategory}
-                accessibleTopicIds={accessibleTopicIds}
                 selectedFolderId={selectedTopicId}
                 onSelectFolder={onSelectTopic}
                 selectedTopicIds={selectedTopicIds}
-                showUpgradeCard={showUpgradeCard}
               />
             </DrillPanelTransition>
           )

@@ -113,8 +113,6 @@ export default function BuilderPage() {
             >
               <TopicFolders
                 categoryTopics={categoryTopics}
-                accessibleTopicIds={accessibleTopicIds}
-                showUpgradeCard={!subscriptionLoading && !hasFullAccess}
                 selectedCategory={selectedCategory}
                 selectedTopicId={selectedTopicId}
                 onSelectTopic={setSelectedTopicId}
@@ -131,6 +129,8 @@ export default function BuilderPage() {
               <DrillVariantsGrid
                 topicId={selectedTopicId}
                 drillCategory={selectedCategory}
+                accessibleTopicIds={accessibleTopicIds}
+                showUpgradeBanner={!subscriptionLoading && !hasFullAccess}
                 selectedTopicIds={builder.selectedTopicVariants.map((tv) => `${tv.topicId}-${tv.variantId}`)}
                 onAddVariant={builder.addTopic}
                 onRemoveVariant={builder.removeTopicVariant}

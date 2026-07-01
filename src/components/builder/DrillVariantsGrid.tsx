@@ -5,7 +5,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Check, Plus, Home, Info, X } from 'lucide-react';
+import { Check, Plus, Home, Info, X, Lock } from 'lucide-react';
 import type { HighLevelCategory } from '@/components/builder/TopicFolders';
 import { getDisplayFolder, isFolderComingSoon } from '@/config/drillDisplayFolders';
 import { getFolderSymbol, getVariantSamples } from '@/config/drillPreviews';
@@ -14,6 +14,7 @@ import {
   ArithmeticVariantExample,
 } from '@/components/builder/ArithmeticDrillPreview';
 import { DrillPanelTransition } from '@/components/builder/DrillPanelTransition';
+import { DrillUpgradeBanner } from '@/components/builder/DrillUpgradeBanner';
 import { cn } from '@/lib/utils';
 import { primaryButtonLabelClasses } from '@/config/theme';
 import { getDifficultyLabel } from '@/lib/drill-difficulty';
@@ -22,6 +23,8 @@ interface DrillVariantsGridProps {
   topicId: string | null;
   selectedTopicIds: string[];
   drillCategory: HighLevelCategory | null;
+  accessibleTopicIds: ReadonlySet<string>;
+  showUpgradeBanner?: boolean;
   onAddVariant: (
     topicVariantId: string,
     topicId: string,
@@ -36,6 +39,7 @@ function DrillModuleCard({
   name,
   difficulty,
   isSelected,
+  locked,
   onAdd,
   onRemove,
 }: {
@@ -44,6 +48,7 @@ function DrillModuleCard({
   name: string;
   difficulty: number;
   isSelected: boolean;
+  locked?: boolean;
   onAdd: () => void;
   onRemove: () => void;
 }) {
@@ -54,9 +59,11 @@ function DrillModuleCard({
     <div
       className={cn(
         'relative flex min-h-[7.5rem] flex-col rounded-organic-md p-3.5 transition-all',
-        isSelected
-          ? 'bg-folder-card-selected shadow-sm'
-          : 'bg-surface-elevated hover:bg-surface-neutral',
+        locked
+          ? 'bg-surface-elevated'
+          : isSelected
+            ? 'bg-folder-card-selected shadow-sm'
+            : 'bg-surface-elevated hover:bg-surface-neutral',
       )}
     >
       <div className='mb-2.5 flex items-start justify-between gap-2'>
@@ -68,7 +75,13 @@ function DrillModuleCard({
         >
           {diff.label}
         </span>
-        {isSelected ? (
+        {locked ? (
+          <Lock
+            className='h-4 w-4 shrink-0 text-text-muted/70'
+            strokeWidth={2}
+            aria-hidden
+          />
+        ) : isSelected ? (
           <Check className='h-4 w-4 shrink-0 text-primary' strokeWidth={2.5} />
         ) : null}
       </div>
@@ -78,10 +91,15 @@ function DrillModuleCard({
       <ArithmeticVariantExample
         samples={samples}
         cycleSeed={`${topicId}-${variantId}`}
-        selected={isSelected}
+        selected={isSelected && !locked}
       />
       <div className='mt-3 flex justify-end'>
-        {isSelected ? (
+        {locked ? (
+          <span className='flex items-center gap-1.5 rounded-organic-sm bg-surface-dark px-3 py-2 text-xs font-bold text-text-muted'>
+            <Lock className='h-3.5 w-3.5 shrink-0' aria-hidden />
+            Locked
+          </span>
+        ) : isSelected ? (
           <button
             type='button'
             onClick={onRemove}
@@ -192,6 +210,8 @@ export function DrillVariantsGrid({
   topicId,
   selectedTopicIds,
   drillCategory,
+  accessibleTopicIds,
+  showUpgradeBanner = false,
   onAddVariant,
   onRemoveVariant,
 }: DrillVariantsGridProps) {
@@ -230,6 +250,10 @@ export function DrillVariantsGrid({
     );
   } else {
     const folderSymbol = getFolderSymbol(drillCategory, displayFolder.id);
+    const hasLockedModules = displayFolder.modules.some(
+      (mod) => !accessibleTopicIds.has(mod.topicId),
+    );
+
     panelBody = (
       <div className='flex min-h-0 flex-1 flex-col overflow-y-auto p-6'>
         <div className='mb-6 flex items-center gap-4'>
@@ -249,6 +273,7 @@ export function DrillVariantsGrid({
           {displayFolder.modules.map((mod) => {
             const compositeId = `${mod.topicId}-${mod.variantId}`;
             const isSelected = selectedTopicIds.includes(compositeId);
+            const locked = !accessibleTopicIds.has(mod.topicId);
             return (
               <DrillModuleCard
                 key={compositeId}
@@ -257,6 +282,7 @@ export function DrillVariantsGrid({
                 name={mod.name}
                 difficulty={mod.difficulty}
                 isSelected={isSelected}
+                locked={locked}
                 onAdd={() =>
                   onAddVariant(compositeId, mod.topicId, mod.variantId)
                 }
@@ -265,6 +291,15 @@ export function DrillVariantsGrid({
             );
           })}
         </div>
+
+        {showUpgradeBanner && hasLockedModules ? (
+          <DrillUpgradeBanner
+            variant='panel'
+            className='mt-8'
+            headline='Unlock every drill'
+            subtext={`Upgrade to add all ${displayFolder.name.toLowerCase()} drills to your session.`}
+          />
+        ) : null}
       </div>
     );
   }
