@@ -1,18 +1,40 @@
 /**
- * Login page - Google OAuth authentication
+ * Login / sign-up — Google OAuth (same flow; Supabase creates account on first sign-in).
  */
 
 "use client";
 
-import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
-
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import {
+  GoogleAuthButton,
+  type GoogleAuthMode,
+} from "@/components/auth/GoogleAuthButton";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { Container } from "@/components/layout/Container";
-import { PageHeader } from "@/components/shared/PageHeader";
+import { cn } from "@/lib/utils";
+
+type AuthMode = GoogleAuthMode;
+
+const COPY: Record<
+  AuthMode,
+  { title: string; subtitle: string; switchPrompt: string; switchLabel: string }
+> = {
+  signin: {
+    title: "Welcome back",
+    subtitle: "Sign in to save progress and sync across devices.",
+    switchPrompt: "New here?",
+    switchLabel: "Create an account",
+  },
+  signup: {
+    title: "Create your account",
+    subtitle: "Free to start — save sessions, track scores, and pick up where you left off.",
+    switchPrompt: "Already have an account?",
+    switchLabel: "Sign in",
+  },
+};
 
 export default function LoginPage() {
   const router = useRouter();
@@ -23,14 +45,29 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [isChecking, setIsChecking] = useState(true);
 
-  // Check session state on mount and when session changes
-  // This ensures we properly detect if user is already logged in
+  const mode: AuthMode = useMemo(() => {
+    const fromUrl = searchParams.get("mode");
+    return fromUrl === "signup" ? "signup" : "signin";
+  }, [searchParams]);
+
+  const redirectTo = searchParams.get("redirectTo") || "/past-papers/library";
+  const copy = COPY[mode];
+
+  useEffect(() => {
+    const urlError = searchParams.get("error");
+    if (urlError) {
+      setError(decodeURIComponent(urlError));
+    }
+  }, [searchParams]);
+
   useEffect(() => {
     const checkSession = async () => {
       try {
-        // Always check directly from Supabase to avoid stale state
-        const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
-        
+        const {
+          data: { session: currentSession },
+          error: sessionError,
+        } = await supabase.auth.getSession();
+
         if (sessionError) {
           console.error("[login] Session check error:", sessionError);
           setIsChecking(false);
@@ -38,7 +75,6 @@ export default function LoginPage() {
         }
 
         if (currentSession?.user) {
-          const redirectTo = searchParams.get("redirectTo") || "/past-papers/library";
           router.push(redirectTo);
         } else {
           setIsChecking(false);
@@ -49,25 +85,30 @@ export default function LoginPage() {
       }
     };
 
-    checkSession();
-  }, [supabase, searchParams, router]);
+    void checkSession();
+  }, [supabase, redirectTo, router]);
 
-  // Also check when session from context changes
   useEffect(() => {
     if (session?.user && !isChecking) {
-      const redirectTo = searchParams.get("redirectTo") || "/past-papers/library";
       router.push(redirectTo);
     }
-  }, [session, searchParams, router, isChecking]);
+  }, [session, redirectTo, router, isChecking]);
 
-  const handleGoogleLogin = async () => {
+  const buildAuthUrl = (nextMode: AuthMode) => {
+    const params = new URLSearchParams();
+    params.set("mode", nextMode);
+    if (redirectTo !== "/past-papers/library") {
+      params.set("redirectTo", redirectTo);
+    }
+    const qs = params.toString();
+    return qs ? `/login?${qs}` : "/login";
+  };
+
+  const handleGoogleAuth = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const redirectTo = searchParams.get("redirectTo") || "/past-papers/library";
-      // Use absolute URL for redirectTo - Supabase will redirect here after OAuth
-      // The redirect URL must be whitelisted in Supabase dashboard
       const redirectUrl = `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`;
 
       const { error: signInError } = await supabase.auth.signInWithOAuth({
@@ -75,7 +116,7 @@ export default function LoginPage() {
         options: {
           redirectTo: redirectUrl,
           queryParams: {
-            redirectTo: redirectTo,
+            redirectTo,
           },
         },
       });
@@ -84,66 +125,87 @@ export default function LoginPage() {
         setError(signInError.message);
         setLoading(false);
       }
-      // Note: signInWithOAuth redirects the page automatically, so we don't need to handle success here
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : "Something went wrong");
       setLoading(false);
     }
   };
 
-  // Show nothing while checking session (prevents flash)
   if (session?.user || isChecking) {
     return null;
   }
 
+  const alternateMode: AuthMode = mode === "signin" ? "signup" : "signin";
+
   return (
     <Container size="lg">
-      <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center py-12">
-        <div className="w-full max-w-md space-y-8">
-          <PageHeader
-            title="Sign In"
-            description="Sign in with Google to save your paper sessions and track your progress."
-          />
+      <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center py-12">
+        <div className="w-full max-w-[400px]">
+          <div className="overflow-hidden rounded-organic-xl border border-border-subtle bg-surface">
+            <div className="flex border-b border-border-subtle">
+              {(["signin", "signup"] as const).map((tab) => (
+                <Link
+                  key={tab}
+                  href={buildAuthUrl(tab)}
+                  className={cn(
+                    "flex-1 py-3.5 text-center text-sm font-medium transition-colors",
+                    mode === tab
+                      ? "bg-surface-mid text-text"
+                      : "text-text-muted hover:bg-surface-subtle hover:text-text",
+                  )}
+                  aria-current={mode === tab ? "page" : undefined}
+                >
+                  {tab === "signin" ? "Sign in" : "Sign up"}
+                </Link>
+              ))}
+            </div>
 
-          <Card variant="default" className="p-8 space-y-6">
-            {error && (
-              <div className="p-4 rounded-organic-md bg-error/10 border border-error/20 text-error text-sm">
-                {error}
+            <div className="space-y-6 px-6 py-8 sm:px-8">
+              <div className="flex flex-col items-center gap-4 text-center">
+                <BrandLogo variant="mark" size="lg" />
+                <div className="space-y-1.5">
+                  <h1 className="text-xl font-semibold tracking-tight text-text">
+                    {copy.title}
+                  </h1>
+                  <p className="text-sm leading-relaxed text-text-muted">
+                    {copy.subtitle}
+                  </p>
+                </div>
               </div>
-            )}
 
-            <div className="space-y-4">
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={handleGoogleLogin}
-                disabled={loading}
-                className="w-full uppercase tracking-wide"
-              >
-                {loading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <LoadingSpinner size="sm" />
-                    Signing in...
-                  </span>
-                ) : (
-                  "Sign in with Google"
-                )}
-              </Button>
+              {error && (
+                <div
+                  role="alert"
+                  className="rounded-organic-md border border-error/25 bg-error/10 px-4 py-3 text-sm text-error"
+                >
+                  {error}
+                </div>
+              )}
 
-              <p className="text-xs text-white/40 text-center">
-                By signing in, you agree to save your progress and session data.
+              <GoogleAuthButton
+                mode={mode}
+                loading={loading}
+                onClick={handleGoogleAuth}
+              />
+
+              <p className="text-center text-sm text-text-muted">
+                {copy.switchPrompt}{" "}
+                <Link
+                  href={buildAuthUrl(alternateMode)}
+                  className="font-medium text-text underline-offset-2 hover:underline"
+                >
+                  {copy.switchLabel}
+                </Link>
               </p>
             </div>
-          </Card>
-
-          <div className="text-center">
-            <p className="text-sm text-white/50">
-              You can browse papers without signing in, but you&apos;ll need to sign in to save your sessions.
-            </p>
           </div>
+
+          <p className="mt-6 text-center text-xs text-text-subtle">
+            By continuing, you agree to our use of Google sign-in to authenticate
+            your account.
+          </p>
         </div>
       </div>
     </Container>
   );
 }
-
