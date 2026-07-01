@@ -203,7 +203,7 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
 
   const shareText = useMemo(() => {
     const lines = results.map((r) => `${r.score}/100 — ${r.verdict.label}`);
-    return `${FERMI_GUESSR_NAME} #${puzzleNumber} 🎯\n${lines.join("\n")}\nAverage: ${averageScore}/100\nThe ESAT Guide · Mental Maths`;
+    return `${FERMI_GUESSR_NAME} #${puzzleNumber} 🎯\n${lines.join("\n")}\nAverage: ${averageScore}/100\nESAT CAMP · Mental Maths`;
   }, [results, averageScore, puzzleNumber]);
 
   const handleCopyShare = useCallback(async () => {

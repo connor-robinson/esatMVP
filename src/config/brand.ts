@@ -6,46 +6,35 @@
  */
 
 export const BRAND_CONFIG = {
-  // Main brand/app name
-  appName: "The ESAT Guide",
+  appName: "ESAT CAMP",
 
-  // Display name (can be different from appName for display purposes)
-  displayName: "The ESAT Guide",
+  displayName: "ESAT CAMP",
 
-  // Full title for pages
-  fullTitle: "The ESAT Guide | ESAT & TMUA Preparation",
+  fullTitle: "ESAT CAMP | ESAT & TMUA Preparation",
 
-  // Short title (navbar fallback / aria)
-  shortTitle: "The ESAT Guide",
+  shortTitle: "ESAT CAMP",
 
-  // Navbar wordmark — TheEsatGuide
-  navWordmark: "TheEsatGuide",
+  navWordmark: "ESAT CAMP",
 
-  // Logo assets in /public/brand (transparent PNG; inverted in light mode via BrandLogo)
-  logoFullSrc: "/brand/logo-full.png",
+  /** Raster mark (white on transparent) — optional; UI uses SVG components. */
   logoMarkSrc: "/brand/logo-mark.png",
 
-  // Copyright text
-  copyright: "© 2024 The ESAT Guide. Not affiliated with any university.",
+  copyright: "© 2024 ESAT CAMP. Not affiliated with any university.",
 
-  // Company/Organization name (if different from app name)
-  companyName: "The ESAT Guide",
+  companyName: "ESAT CAMP",
 
-  // Tagline or description
   tagline: "ESAT & TMUA preparation",
 
-  // SEO keywords (includes brand name)
   keywords: [
     "ESAT",
     "TMUA",
     "entrance exams",
     "ESAT preparation",
     "TMUA preparation",
-    "The ESAT Guide",
+    "ESAT CAMP",
   ],
 };
 
-// Export individual values for convenience
 export const APP_NAME = BRAND_CONFIG.appName;
 export const DISPLAY_NAME = BRAND_CONFIG.displayName;
 export const FULL_TITLE = BRAND_CONFIG.fullTitle;

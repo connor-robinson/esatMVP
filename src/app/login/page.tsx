@@ -162,7 +162,7 @@ export default function LoginPage() {
 
             <div className="space-y-6 px-6 py-8 sm:px-8">
               <div className="flex flex-col items-center gap-4 text-center">
-                <BrandLogo variant="mark" size="lg" />
+                <BrandLogo variant="full" size="lg" />
                 <div className="space-y-1.5">
                   <h1 className="text-xl font-semibold tracking-tight text-text">
                     {copy.title}

@@ -1,27 +1,22 @@
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
+import { BrandWordmark } from "@/components/brand/BrandWordmark";
+import { EsatCampIcon } from "@/components/brand/EsatCampIcon";
 
 interface BrandNavLockupProps {
   className?: string;
 }
 
-/** Matches section nav link typography (text-sm, semibold, tracking). */
-const navWordClass =
-  'text-sm font-semibold uppercase tracking-[0.12em] leading-none';
-
-/** Navbar wordmark — TheEsatGuide (no logo). */
+/** Navbar lockup — teepee icon + ESAT CAMP wordmark. */
 export function BrandNavLockup({ className }: BrandNavLockupProps) {
   return (
     <span
       className={cn(
-        'inline-flex items-center text-text',
-        navWordClass,
-        'whitespace-nowrap normal-case',
+        "inline-flex items-center gap-2.5 text-text",
         className,
       )}
     >
-      <span className='font-semibold'>The</span>
-      <span className='font-semibold'>Esat</span>
-      <span className='font-semibold'>Guide</span>
+      <EsatCampIcon className="h-7 w-7 shrink-0" />
+      <BrandWordmark size="sm" />
     </span>
   );
 }

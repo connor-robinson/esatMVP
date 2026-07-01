@@ -7,6 +7,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { BrandLogo } from "@/components/brand/BrandLogo";
+import { TAGLINE } from "@/config/brand";
 import { pickRandomSessionLoadingHint } from "@/lib/questionBank/sessionLoadingHints";
 
 export type LoadingPageVariant = "app" | "session";
@@ -79,7 +80,7 @@ export function LoadingPage({
               <BrandLogo variant="full" size="lg" />
             </div>
             <div className="text-sm uppercase tracking-wider text-text-muted">
-              ESAT &amp; TMUA Preparation
+              {TAGLINE}
             </div>
           </motion.div>
         ) : (

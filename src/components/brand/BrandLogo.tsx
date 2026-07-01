@@ -1,26 +1,22 @@
-import { APP_NAME, BRAND_CONFIG } from '@/config/brand';
-import { cn } from '@/lib/utils';
+import { APP_NAME } from "@/config/brand";
+import { cn } from "@/lib/utils";
+import { BrandWordmark } from "@/components/brand/BrandWordmark";
+import { EsatCampIcon } from "@/components/brand/EsatCampIcon";
 
-export type BrandLogoVariant = 'full' | 'mark';
+export type BrandLogoVariant = "full" | "mark";
 
-const LOGO_SRC: Record<BrandLogoVariant, string> = {
-  full: BRAND_CONFIG.logoFullSrc,
-  mark: BRAND_CONFIG.logoMarkSrc,
-};
-
-export type BrandLogoSize = 'nav' | 'md' | 'lg';
-
-const FULL_SIZE_CLASS: Record<BrandLogoSize, string> = {
-  nav: 'h-[0.875rem] w-auto',
-  md: 'h-8 w-auto',
-  lg: 'h-12 w-auto sm:h-14',
-};
+export type BrandLogoSize = "nav" | "md" | "lg";
 
 const MARK_SIZE_CLASS: Record<BrandLogoSize, string> = {
-  /** Aligns with `text-sm` nav link cap height. */
-  nav: 'h-7 w-7',
-  md: 'h-8 w-8',
-  lg: 'h-12 w-12 sm:h-14 sm:w-14',
+  nav: "h-7 w-7",
+  md: "h-8 w-8",
+  lg: "h-12 w-12 sm:h-14 sm:w-14",
+};
+
+const WORDMARK_SIZE: Record<BrandLogoSize, "sm" | "md" | "lg" | "xl"> = {
+  nav: "sm",
+  md: "md",
+  lg: "lg",
 };
 
 interface BrandLogoProps {
@@ -32,28 +28,36 @@ interface BrandLogoProps {
 }
 
 /**
- * Transparent PNG logos (white glyph). Inverted in light mode for dark-on-light UI.
+ * ESAT CAMP mark (teepee) or full lockup (icon + wordmark).
+ * Icon uses currentColor — white on dark backgrounds, dark on light.
  */
 export function BrandLogo({
-  variant = 'full',
-  size = 'md',
+  variant = "mark",
+  size = "md",
   className,
   alt = APP_NAME,
 }: BrandLogoProps) {
+  if (variant === "full") {
+    return (
+      <span
+        className={cn(
+          "inline-flex items-center gap-3 text-text",
+          className,
+        )}
+        role="img"
+        aria-label={alt}
+      >
+        <EsatCampIcon className={MARK_SIZE_CLASS[size]} />
+        <BrandWordmark size={WORDMARK_SIZE[size]} />
+      </span>
+    );
+  }
+
   return (
-    // eslint-disable-next-line @next/next/no-img-element -- theme invert on raster brand assets
-    <img
-      src={LOGO_SRC[variant]}
-      alt={alt}
-      draggable={false}
-      className={cn(
-        'block shrink-0 select-none object-contain',
-        variant === 'mark'
-          ? 'brightness-0 invert dark:brightness-100 dark:invert-0 dark:mix-blend-screen'
-          : 'brightness-0 dark:brightness-100 dark:invert-0',
-        variant === 'full' ? FULL_SIZE_CLASS[size] : MARK_SIZE_CLASS[size],
-        className,
-      )}
+    <EsatCampIcon
+      className={cn(MARK_SIZE_CLASS[size], "text-text", className)}
+      role="img"
+      aria-label={alt}
     />
   );
 }

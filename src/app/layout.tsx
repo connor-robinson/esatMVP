@@ -38,16 +38,14 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: BRAND_CONFIG.fullTitle,
   description:
-    "Prepare for the ESAT and TMUA with past papers, question banks, and structured practice. The ESAT Guide helps you build speed and strategy for admissions exams.",
+    "Prepare for the ESAT and TMUA with past papers, question banks, and structured practice. ESAT CAMP helps you build speed and strategy for admissions exams.",
   keywords: [...BRAND_CONFIG.keywords],
   icons: {
     icon: [
-      { url: "/brand/favicon-light.png", media: "(prefers-color-scheme: light)" },
-      { url: "/brand/favicon-dark.png", media: "(prefers-color-scheme: dark)" },
+      { url: "/brand/favicon-dark.png", type: "image/png" },
     ],
     apple: [
-      { url: "/brand/apple-icon-light.png", media: "(prefers-color-scheme: light)" },
-      { url: "/brand/apple-icon-dark.png", media: "(prefers-color-scheme: dark)" },
+      { url: "/brand/apple-icon-dark.png", type: "image/png" },
     ],
   },
 };
@@ -144,7 +142,7 @@ export default async function RootLayout({
           name="viewport"
           content="width=device-width, initial-scale=1, viewport-fit=cover"
         />
-        <meta name="theme-color" content="#0a0a0a" />
+        <meta name="theme-color" content="#000000" />
       </head>
       <body className="min-h-screen bg-background text-text antialiased font-sans">
         <SupabaseSessionProvider initialSession={session}>
