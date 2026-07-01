@@ -39,7 +39,6 @@ export async function getScheduledRowsForDate(
     .order("batch_item_id", { ascending: true });
 
   if (error) {
-    console.error("[fermi/daily] scheduled fetch failed", error);
     return [];
   }
 
@@ -62,7 +61,6 @@ export async function getScheduledRowByPublicId(
     .maybeSingle();
 
   if (error) {
-    console.error("[fermi/evaluate] lookup failed", error);
     return null;
   }
 
@@ -85,9 +83,6 @@ export async function resolveDailyRound(
         questions: rows.slice(0, FERMI_DAILY_ROUND_SIZE).map(toPublicQuestion),
       };
     }
-    console.warn(
-      `[fermi/daily] scheduled batch incomplete for ${playedDate} (${rows.length} rows); falling back to bank`,
-    );
   }
 
   return {

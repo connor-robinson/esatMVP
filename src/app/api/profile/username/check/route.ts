@@ -52,7 +52,6 @@ export async function GET(request: NextRequest) {
       .maybeSingle() as { data: { id: string; username: string } | null; error: any };
 
     if (checkError && checkError.code !== 'PGRST116') {
-      console.error('[Username Check API] Error checking username:', checkError);
       return NextResponse.json(
         { error: 'Failed to check username availability' },
         { status: 500 }
@@ -73,7 +72,6 @@ export async function GET(request: NextRequest) {
         : 'Username is available'
     });
   } catch (error) {
-    console.error('[Username Check API] Unexpected error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

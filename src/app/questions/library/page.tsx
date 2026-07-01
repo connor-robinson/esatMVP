@@ -103,7 +103,6 @@ export default function QuestionsLibraryPage() {
       sessionStorage.setItem("questionBankSession", JSON.stringify(sessionData));
       router.push("/questions/questionbank?session=true");
     } catch (err) {
-      console.error("[library] Error starting session:", err);
       setError(err instanceof Error ? err.message : "Failed to start session");
     } finally {
       setIsStartingSession(false);

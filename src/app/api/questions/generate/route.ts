@@ -35,7 +35,6 @@ function getGeminiApiKeyFromFile(): string | null {
       }
     }
   } catch (error) {
-    console.error("[API] Error reading GEMINI_API_KEY from .env.local:", error);
   }
   return null;
 }
@@ -66,7 +65,6 @@ function readStatus(): GenerationStatus {
       return JSON.parse(content);
     }
   } catch (error) {
-    console.error("Error reading status file:", error);
   }
   return {
     status: "idle",
@@ -81,19 +79,15 @@ function writeStatus(status: GenerationStatus) {
   try {
     fs.writeFileSync(STATUS_FILE, JSON.stringify(status, null, 2));
   } catch (error) {
-    console.error("Error writing status file:", error);
   }
 }
 
 export async function POST(request: Request) {
-  console.log("[API] POST /api/questions/generate called");
   
   // Check if feature is enabled
   const isEnabled = isQuestionGenerationEnabled();
-  console.log("[API] Feature enabled:", isEnabled);
   
   if (!isEnabled) {
-    console.log("[API] Feature disabled, returning 403");
     return NextResponse.json(
       { error: "Question generation is not enabled in this environment" },
       { status: 403 }
@@ -103,14 +97,11 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { count = 10, workers = 2 } = body;
-    console.log("[API] Generation request:", { count, workers });
 
     // Check if already running
     const currentStatus = readStatus();
-    console.log("[API] Current status:", currentStatus);
     
     if (currentStatus.status === "running") {
-      console.log("[API] Generation already in progress");
       return NextResponse.json(
         { error: "Generation already in progress" },
         { status: 400 }
@@ -127,15 +118,11 @@ export async function POST(request: Request) {
       message: "Starting question generation...",
     };
     writeStatus(status);
-    console.log("[API] Status initialized:", status);
 
     // Start generation in background
     const scriptPath = path.join(ESAT_GEN_DIR, "generate_with_progress.py");
-    console.log("[API] Script path:", scriptPath);
-    console.log("[API] Script exists:", fs.existsSync(scriptPath));
     
     if (!fs.existsSync(scriptPath)) {
-      console.error("[API] Script file not found:", scriptPath);
       return NextResponse.json(
         { error: `Script file not found: ${scriptPath}` },
         { status: 500 }
@@ -151,10 +138,8 @@ export async function POST(request: Request) {
       // Fallback to process.env if file reading fails
       geminiApiKey = process.env.GEMINI_API_KEY || null;
       if (geminiApiKey) {
-        console.log("[API] Using GEMINI_API_KEY from process.env (fallback)");
       }
     } else {
-      console.log("[API] Loaded GEMINI_API_KEY from .env.local file directly");
       // Also update process.env so other parts of the code can use it
       process.env.GEMINI_API_KEY = geminiApiKey;
     }
@@ -169,12 +154,10 @@ export async function POST(request: Request) {
     
     // Minimal logging - only log if key is missing
     if (!env.GEMINI_API_KEY) {
-      console.error("[API] ERROR: GEMINI_API_KEY not found!");
     }
     
     // Verify GEMINI_API_KEY is available
     if (!env.GEMINI_API_KEY) {
-      console.error("[API] ERROR: GEMINI_API_KEY not found in environment variables!");
       return NextResponse.json(
         { error: "GEMINI_API_KEY environment variable is not set. Please check your .env.local file." },
         { status: 500 }
@@ -184,8 +167,6 @@ export async function POST(request: Request) {
     // Run the script asynchronously (use python3 on Unix, python on Windows)
     const pythonCmd = process.platform === "win32" ? "python" : "python3";
     const command = `${pythonCmd} "${scriptPath}"`;
-    console.log("[API] Executing command:", command);
-    console.log("[API] Working directory:", ESAT_GEN_DIR);
 
     execAsync(
       command,
@@ -197,28 +178,17 @@ export async function POST(request: Request) {
       }
     )
       .then((result) => {
-        console.log("[API] Script execution completed:", result);
         // Script completed - read the final status from the file
         const finalStatus = readStatus();
-        console.log("[API] Final status from file:", finalStatus);
         // Ensure status is marked as completed
         finalStatus.status = "completed";
         writeStatus(finalStatus);
       })
       .catch((error) => {
-        console.error("[API] Script execution error:", error);
-        console.error("[API] Error details:", {
-          message: error.message,
-          code: (error as any).code,
-          signal: (error as any).signal,
-          stdout: (error as any).stdout,
-          stderr: (error as any).stderr,
-        });
         
         // Only treat as error if we can't read the status file
         // The script may exit with code 1 if all questions failed, but that's OK
         const currentStatus = readStatus();
-        console.log("[API] Status after error:", currentStatus);
         
         if (currentStatus.status === "running") {
           // Script crashed unexpectedly
@@ -232,13 +202,11 @@ export async function POST(request: Request) {
             message: `Generation failed: ${error.message || "Unknown error"}`,
           };
           writeStatus(errorStatus);
-          console.log("[API] Wrote error status:", errorStatus);
         } else {
           // Script completed but may have had failures - that's OK
           const finalStatus = readStatus();
           finalStatus.status = "completed";
           writeStatus(finalStatus);
-          console.log("[API] Wrote completed status:", finalStatus);
         }
       });
 
@@ -247,7 +215,6 @@ export async function POST(request: Request) {
       status: "running",
     });
   } catch (error) {
-    console.error("Error starting generation:", error);
     return NextResponse.json(
       { error: "Failed to start generation" },
       { status: 500 }
@@ -258,7 +225,6 @@ export async function POST(request: Request) {
 export async function GET() {
   // Return current generation status
   const status = readStatus();
-  console.log("[API] GET /api/questions/generate - Current status:", status);
   return NextResponse.json(status);
 }
 

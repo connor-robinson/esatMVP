@@ -333,10 +333,6 @@ export function PaperSessionSummary({
               return next;
             });
           } catch (error) {
-            console.error(
-              `[PaperSessionSummary] Error loading data for paper ${paper.id}:`,
-              error,
-            );
             setPaperData((prev) => {
               const next = new Map(prev);
               next.set(paper.id, {

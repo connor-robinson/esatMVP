@@ -38,7 +38,6 @@ export async function POST(request: NextRequest) {
     if (deleteError) {
       // If admin API is not available, try alternative method
       // For client-side, we'll need to use a different approach
-      console.error('[Delete Account API] Error deleting account:', deleteError);
       
       // Alternative: Sign out and let user know they need to contact support
       // Or use RPC function if available
@@ -50,7 +49,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('[Delete Account API] Unexpected error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -87,7 +87,6 @@ export async function GET(request: NextRequest) {
       .in("paper_id", paperIds);
 
     if (questionsError) {
-      console.error("[past-papers/library-sections]", questionsError);
       return NextResponse.json(
         { error: "Failed to load sections" },
         { status: 500 },
@@ -119,7 +118,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ ...outline, partRows });
   } catch (e) {
-    console.error("[past-papers/library-sections]", e);
     return NextResponse.json(
       { error: "Failed to load sections" },
       { status: 500 },

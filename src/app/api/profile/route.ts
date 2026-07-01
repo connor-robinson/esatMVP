@@ -35,7 +35,6 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ profile: null });
       }
       
-      console.error('[Profile API] Error fetching profile:', profileError);
       return NextResponse.json(
         { error: 'Failed to fetch profile' },
         { status: 500 }
@@ -44,7 +43,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ profile });
   } catch (error) {
-    console.error('[Profile API] Unexpected error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -88,7 +86,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (profileError) {
-      console.error('[Profile API] Error creating profile:', profileError);
       return NextResponse.json(
         { error: 'Failed to create profile' },
         { status: 500 }
@@ -97,7 +94,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ profile }, { status: 201 });
   } catch (error) {
-    console.error('[Profile API] Unexpected error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -148,7 +144,6 @@ export async function PATCH(request: NextRequest) {
       .single();
 
     if (profileError) {
-      console.error('[Profile API] Error updating profile:', profileError);
       return NextResponse.json(
         { error: 'Failed to update profile' },
         { status: 500 }
@@ -157,7 +152,6 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ profile });
   } catch (error) {
-    console.error('[Profile API] Unexpected error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

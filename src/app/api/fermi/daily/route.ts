@@ -9,7 +9,6 @@ export async function GET() {
     const round = await resolveDailyRound();
     return NextResponse.json(round);
   } catch (error) {
-    console.error("[fermi/daily] GET failed", error);
     return NextResponse.json({ error: "Failed to load daily puzzle" }, { status: 500 });
   }
 }

@@ -80,7 +80,6 @@ export default function ReviewPage() {
           }
         }
       } catch (error) {
-        console.error("Error fetching initial status:", error);
       }
     };
     fetchInitialStatus();
@@ -104,7 +103,6 @@ export default function ReviewPage() {
               window.location.href = "/";
             }
           } catch (error) {
-            console.error("Redirect error:", error);
             window.location.href = "/";
           }
         }, 0);
@@ -139,7 +137,6 @@ export default function ReviewPage() {
       setQuestions(data.questions || []);
       setTotalPages(data.pagination?.totalPages || 1);
     } catch (error) {
-      console.error("Error fetching questions:", error);
       setQuestions([]);
     } finally {
       setLoading(false);
@@ -155,7 +152,6 @@ export default function ReviewPage() {
       const data = await response.json();
       setStats(data);
     } catch (error) {
-      console.error("Error fetching stats:", error);
     }
   }, []);
 
@@ -168,7 +164,6 @@ export default function ReviewPage() {
       const data = await response.json();
       setSelectedQuestion(data.question);
     } catch (error) {
-      console.error("Error fetching question detail:", error);
     }
   }, []);
 
@@ -200,7 +195,6 @@ export default function ReviewPage() {
       // Update selected question
       await fetchQuestionDetail(selectedQuestion.id);
     } catch (error) {
-      console.error("Error updating status:", error);
       throw error;
     }
   };
@@ -261,7 +255,6 @@ export default function ReviewPage() {
         }
       }, 200);
     } catch (error) {
-      console.error("Error updating question:", error);
       throw error;
     }
   };
@@ -297,7 +290,6 @@ export default function ReviewPage() {
         }
       }, 100);
     } catch (error) {
-      console.error("Error approving question:", error);
       // Show error to user
       alert(`Failed to approve question: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
@@ -334,7 +326,6 @@ export default function ReviewPage() {
         }
       }, 100);
     } catch (error) {
-      console.error("Error rejecting question:", error);
       // Show error to user
       alert(`Failed to reject question: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
@@ -354,10 +345,8 @@ export default function ReviewPage() {
           failed: 0,
         });
         setIsGenerating(false);
-        console.log("Generation status reset");
       }
     } catch (error) {
-      console.error("Error resetting generation:", error);
     }
   };
 
@@ -373,19 +362,16 @@ export default function ReviewPage() {
           status: "stopped",
           message: "Generation stopped",
         }));
-        console.log("Generation stop requested");
         // Refresh questions after stopping
         await fetchQuestions();
         await fetchStats();
       }
     } catch (error) {
-      console.error("Error stopping generation:", error);
     }
   };
 
   const startGeneration = async () => {
     if (isGenerating) {
-      console.log("Generation already in progress");
       // Show current status even if already running
       const response = await fetch("/api/questions/generate");
       if (response.ok) {
@@ -396,7 +382,6 @@ export default function ReviewPage() {
       return;
     }
 
-    console.log("Starting generation...", { count: generationCount, workers: 2 });
     setIsGenerating(true);
     
     try {
@@ -411,11 +396,9 @@ export default function ReviewPage() {
         }),
       });
 
-      console.log("Response status:", response.status, response.statusText);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
-        console.error("API error:", errorData);
         
         // If it's "already in progress", fetch the current status
         if (errorData.error?.includes("already in progress")) {
@@ -432,7 +415,6 @@ export default function ReviewPage() {
       }
 
       const data = await response.json();
-      console.log("Generation started:", data);
 
       // Initialize status
       setGenerationStatus({
@@ -446,7 +428,6 @@ export default function ReviewPage() {
 
       // Polling will start automatically via useEffect
     } catch (error) {
-      console.error("Error starting generation:", error);
       setIsGenerating(false);
       setGenerationStatus({
         status: "error",
@@ -474,7 +455,6 @@ export default function ReviewPage() {
           throw new Error("Failed to fetch status");
         }
         const status: GenerationStatus = await response.json();
-        console.log("Polled status:", status);
         setGenerationStatus(status);
 
         if (status.status === "completed" || status.status === "error" || status.status === "stopped") {
@@ -487,7 +467,6 @@ export default function ReviewPage() {
           setIsGenerating(false);
         }
       } catch (error) {
-        console.error("Error polling status:", error);
         setIsGenerating(false);
       }
     };
@@ -500,7 +479,6 @@ export default function ReviewPage() {
       // Reduces polling calls from 30/min to 6/min (80% reduction)
       interval = setInterval(pollStatus, 10000); // Poll every 10 seconds
     } catch (error) {
-      console.error("Error setting up polling:", error);
     }
 
     return () => {
@@ -567,7 +545,6 @@ export default function ReviewPage() {
             <Button
               onClick={(e) => {
                 e.preventDefault();
-                console.log("Button clicked, isGenerating:", isGenerating);
                 startGeneration();
               }}
               disabled={isGenerating}

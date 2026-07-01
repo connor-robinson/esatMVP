@@ -46,7 +46,6 @@ export async function GET(request: NextRequest) {
       .in("id", [...FREE_TIER_QUESTION_IDS]);
 
     if (queryError) {
-      console.error("[free-tier] query error:", queryError);
       return NextResponse.json(
         { error: "Failed to load free tier questions" },
         { status: 500 },
@@ -97,7 +96,6 @@ export async function GET(request: NextRequest) {
       requiresAuth: !user,
     });
   } catch (err) {
-    console.error("[free-tier]", err);
     return NextResponse.json(
       { error: "Failed to load free tier status" },
       { status: 500 },

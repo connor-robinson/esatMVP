@@ -62,7 +62,6 @@ export function getCachedCompletedIds(userId: string): Set<string> | null {
 
     return new Set(entry.completedIds);
   } catch (error) {
-    console.error('[completionCache] Error reading cache:', error);
     return null;
   }
 }
@@ -88,7 +87,6 @@ export function setCachedCompletedIds(userId: string, completedIds: Set<string>)
 
     localStorage.setItem(cacheKey, JSON.stringify(entry));
   } catch (error) {
-    console.error('[completionCache] Error writing cache:', error);
     // localStorage might be full or unavailable, ignore
   }
 }
@@ -107,7 +105,6 @@ export function invalidateCache(userId: string): void {
     const cacheKey = getCacheKey(userId);
     localStorage.removeItem(cacheKey);
   } catch (error) {
-    console.error('[completionCache] Error invalidating cache:', error);
   }
 }
 
@@ -122,7 +119,6 @@ export async function syncWithDatabase(userId: string): Promise<Set<string>> {
   try {
     const response = await fetch('/api/past-papers/sessions');
     if (!response.ok) {
-      console.error('[completionCache] Failed to fetch sessions:', response.status, response.statusText);
       throw new Error(`Failed to fetch sessions: ${response.statusText}`);
     }
 
@@ -148,10 +144,6 @@ export async function syncWithDatabase(userId: string): Promise<Set<string>> {
           completedIds.add(id);
         });
       } else {
-        console.warn('[completionCache] Session has no part IDs:', {
-          sessionId: session.id,
-          selectedSections: session.selected_sections
-        });
       }
     }
 
@@ -160,7 +152,6 @@ export async function syncWithDatabase(userId: string): Promise<Set<string>> {
 
     return completedIds;
   } catch (error) {
-    console.error('[completionCache] Error syncing with database:', error);
     return new Set<string>();
   }
 }

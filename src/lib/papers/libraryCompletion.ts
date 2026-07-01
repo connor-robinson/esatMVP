@@ -100,7 +100,6 @@ export async function isSectionCompleted(
     // All parts are completed
     return true;
   } catch (error) {
-    console.error('[libraryCompletion] Error in isSectionCompleted:', error);
     return false;
   }
 }
@@ -198,7 +197,6 @@ export async function getPaperSectionCompletion(
       completionMap.set(section, allPartsCompleted);
     }
   } catch (error) {
-    console.error('[libraryCompletion] Error in getPaperSectionCompletion:', error);
     // On error, set all to false
     for (const section of sections) {
       completionMap.set(section, false);

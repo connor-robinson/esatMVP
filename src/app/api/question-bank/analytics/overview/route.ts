@@ -99,7 +99,6 @@ export async function GET() {
       .limit(200);
 
     if (sessionsError) {
-      console.error('[QB Analytics] sessions error:', sessionsError);
       return NextResponse.json(
         { error: 'Failed to load analytics' },
         { status: 500 },
@@ -155,7 +154,6 @@ export async function GET() {
 
     return NextResponse.json({ overview });
   } catch (err) {
-    console.error('[QB Analytics] GET error:', err);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },

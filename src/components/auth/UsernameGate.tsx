@@ -38,7 +38,6 @@ export function UsernameGate({ children }: { children: React.ReactNode }) {
           setNeedsUsername(false);
         }
       } catch (error) {
-        console.error("[UsernameGate] Error checking username:", error);
         // Fail open - allow access if check fails
         setNeedsUsername(false);
       } finally {

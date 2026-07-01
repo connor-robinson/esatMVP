@@ -9,12 +9,6 @@ function getSupabaseEnv() {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.error("[Supabase] Missing environment variables:", {
-      hasUrl: !!supabaseUrl,
-      hasKey: !!supabaseAnonKey,
-      urlLength: supabaseUrl?.length || 0,
-      keyLength: supabaseAnonKey?.length || 0,
-    });
     throw new Error(
       `Missing Supabase environment variables. URL: ${supabaseUrl ? 'set' : 'missing'}, Key: ${supabaseAnonKey ? 'set' : 'missing'}`
     );
@@ -54,7 +48,6 @@ export function createServerClient() {
   } catch (error) {
     // If cookies() fails (e.g., during build), create a client without cookie handling
     // This will only work for read operations during build
-    console.warn("[Supabase] cookies() unavailable, using fallback client:", error);
     return createServerClientSSR<Database>(supabaseUrl, supabaseAnonKey, {
       cookies: {
         getAll: () => [],

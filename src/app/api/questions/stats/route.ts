@@ -14,7 +14,6 @@ export async function GET() {
       .select("status");
 
     if (statusError) {
-      console.error("Error fetching status stats:", statusError);
       return NextResponse.json(
         { error: "Failed to fetch statistics" },
         { status: 500 }
@@ -33,7 +32,6 @@ export async function GET() {
       .select("schema_id");
 
     if (schemaError) {
-      console.error("Error fetching schema stats:", schemaError);
     }
 
     const bySchema: Record<string, number> = {};
@@ -47,7 +45,6 @@ export async function GET() {
       .select("difficulty");
 
     if (difficultyError) {
-      console.error("Error fetching difficulty stats:", difficultyError);
     }
 
     const byDifficulty: Record<string, number> = {};
@@ -67,7 +64,6 @@ export async function GET() {
       byDifficulty,
     });
   } catch (error) {
-    console.error("Unexpected error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

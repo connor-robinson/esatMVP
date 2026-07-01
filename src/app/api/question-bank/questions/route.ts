@@ -40,7 +40,6 @@ export async function GET(request: NextRequest) {
         )
         .join(' ');
       debugLogs.push(logMsg);
-      console.log(...args);
     };
 
     debug(
@@ -902,7 +901,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(body);
   } catch (error) {
     const errorMsg = `[Question Bank API] ❌ Unexpected error: ${error}`;
-    console.error(errorMsg, error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },

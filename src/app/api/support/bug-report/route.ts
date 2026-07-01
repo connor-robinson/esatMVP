@@ -53,7 +53,6 @@ export async function POST(request: NextRequest) {
       });
 
     if (insertError) {
-      console.error('[Bug report API] INSERT error:', insertError);
       return NextResponse.json(
         { error: 'Failed to submit report' },
         { status: 500 },
@@ -62,7 +61,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error('[Bug report API] POST error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

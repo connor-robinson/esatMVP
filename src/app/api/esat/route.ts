@@ -27,7 +27,6 @@ export async function GET(request: Request) {
       },
     );
   } catch (error: any) {
-    console.error(`[esat-api] Failed to load table ${tableKey}:`, error);
     if (error?.code === "ENOENT") {
       return NextResponse.json(
         { error: `Table file not found: ${tableKey}` },

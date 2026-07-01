@@ -23,12 +23,10 @@ function writeStatus(status: GenerationStatus) {
   try {
     fs.writeFileSync(STATUS_FILE, JSON.stringify(status, null, 2));
   } catch (error) {
-    console.error("Error writing status file:", error);
   }
 }
 
 export async function POST() {
-  console.log("[API] POST /api/questions/generate/reset - Resetting status");
   
   const resetStatus: GenerationStatus = {
     status: "idle",
@@ -40,7 +38,6 @@ export async function POST() {
   };
   
   writeStatus(resetStatus);
-  console.log("[API] Status reset to:", resetStatus);
   
   return NextResponse.json({ 
     message: "Status reset successfully", 

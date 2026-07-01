@@ -27,7 +27,6 @@ export async function POST(request: Request) {
     const { session, supabase, error: authError } = await requireRouteUser(request);
     
     if (authError || !session?.user || !supabase) {
-      console.error("[drill-items] Auth error:", authError);
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -56,13 +55,11 @@ const rows = items.map((item) => ({
     .upsert(rows, { onConflict: "user_id,paper_name,question_number" });
 
   if (error) {
-    console.error("[drill] failed syncing drill items", error);
     return NextResponse.json({ error: "Failed to sync drill items" }, { status: 500 });
   }
 
     return NextResponse.json({ ok: true });
   } catch (error: any) {
-    console.error("[drill-items] Unexpected error:", error);
     return NextResponse.json(
       { error: error.message || "Internal server error" },
       { status: 500 }

@@ -39,7 +39,6 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
       window.sessionStorage.removeItem(reloadKey);
     }
 
-    console.error("ErrorBoundary caught an error:", error, errorInfo);
     this.setState({ error, errorInfo });
   }
 

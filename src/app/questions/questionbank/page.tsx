@@ -450,7 +450,6 @@ export default function QuestionBankPage() {
 
         return true;
       } catch (err) {
-        console.error('Failed to start free tier session:', err);
         router.replace('/questions');
         return true;
       } finally {
@@ -541,7 +540,6 @@ export default function QuestionBankPage() {
           sessionStorage.removeItem('questionBankSession');
         }
       } catch (err) {
-        console.error('[Bank] Error loading session:', err);
       }
   }, [
     isSessionMode,
@@ -706,7 +704,6 @@ export default function QuestionBankPage() {
           'options',
           updatedOptions,
         );
-        console.log('[Questions Page] Updated options:', updatedQuestion);
       } else if (editModalField === 'distractor_map' && editModalOptionLetter) {
         // Update a specific distractor
         const updatedDistractors = {
@@ -718,18 +715,12 @@ export default function QuestionBankPage() {
           'distractor_map',
           updatedDistractors,
         );
-        console.log('[Questions Page] Updated distractor:', updatedQuestion);
       } else {
         // Update a regular field
         updatedQuestion = await updateQuestion(
           currentQuestion.id,
           editModalField as any,
           newContent,
-        );
-        console.log(
-          '[Questions Page] Updated field:',
-          editModalField,
-          updatedQuestion,
         );
       }
 
@@ -738,7 +729,6 @@ export default function QuestionBankPage() {
         updateCurrentQuestion(updatedQuestion);
       }
     } catch (error) {
-      console.error('[Questions Page] Failed to save edit:', error);
       throw error; // Re-throw so EditModal can show the error
     }
   };
@@ -848,7 +838,6 @@ export default function QuestionBankPage() {
           router.replace('/questions');
         }
       } catch (err) {
-        console.error('Failed to start session:', err);
         router.replace('/questions');
       } finally {
         setSessionStarting(false);

@@ -56,6 +56,8 @@ import { MarkSectionNav,
   type MarkSection,
 } from "@/components/papers/mark/MarkSectionNav";
 import { PercentileMiniChart } from "@/components/papers/mark/PercentileMiniChart";
+import { DrillUpgradeBanner } from "@/components/builder/DrillUpgradeBanner";
+import { useSubscription } from "@/hooks/useSubscription";
 
 const LETTERS: Letter[] = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
@@ -97,6 +99,8 @@ export default function PapersMarkPage() {
     questions,
     selectedPartIds,
   } = usePaperSessionStore();
+  const { hasFullAccess, isLoading: subscriptionLoading } = useSubscription();
+  const treatAsFullAccess = subscriptionLoading || hasFullAccess;
   
   const [markSection, setMarkSection] = useState<MarkSection>("overview");
   const [reviewReturnSection, setReviewReturnSection] = useState<MarkSection | null>(null);
@@ -210,10 +214,6 @@ export default function PapersMarkPage() {
             );
           });
           if (mismatched.length > 0) {
-            console.error("[mark] Rejecting conversion tables from wrong exam", {
-              currentExamName,
-              mismatchedPaperIds: mismatched.map(([pid]) => pid),
-            });
             rowsByPaper = new Map();
           }
         }
@@ -224,7 +224,6 @@ export default function PapersMarkPage() {
         setHasConversion(merged.length > 0);
       } catch {
         if (!mounted) return;
-        console.warn("[mark] Conversion load failed, falling back to none");
         setConversionRowsByPaperId(new Map());
         setConversionRows([]);
         setHasConversion(false);
@@ -240,7 +239,7 @@ export default function PapersMarkPage() {
     let mounted = true;
     (async () => {
       try {
-        if (!sessionId || totalQuestions === 0) return;
+        if (!treatAsFullAccess || !sessionId || totalQuestions === 0) return;
         
         const qs = usePaperSessionStore.getState().questions;
         const questionIds = qs.map((q) => q.id).filter((id) => id != null);
@@ -257,7 +256,6 @@ export default function PapersMarkPage() {
         if (!mounted) return;
         
         if (!response.ok) {
-          console.warn("[mark] Failed to fetch question stats:", response.statusText);
           return;
         }
         
@@ -272,7 +270,6 @@ export default function PapersMarkPage() {
         
         setQuestionStats(statsMap);
       } catch (error) {
-        console.error("[mark] Error fetching question stats:", error);
       } finally {
         if (mounted) {
           setStatsLoading(false);
@@ -282,7 +279,7 @@ export default function PapersMarkPage() {
     return () => {
       mounted = false;
     };
-  }, [sessionId, totalQuestions]);
+  }, [treatAsFullAccess, sessionId, totalQuestions]);
   
   // Shared bubble utility (analytics-style)
   const bubbleClass =
@@ -552,59 +549,13 @@ export default function PapersMarkPage() {
     const isNSAA2019 = examName === 'NSAA' && examYear === 2019;
     const isTMUA = examName === 'TMUA';
     
-    // DEEP DEBUG: Log all questions with their partLetters to find the source of "SECTION"
-    const allQuestionParts = qs.slice(0, totalQuestions).map((q, idx) => ({
-      index: idx,
-      questionNumber: q.questionNumber,
-      partLetter: q.partLetter,
-      partName: q.partName,
-      examType: q.examType,
-      partLetterUpper: (q.partLetter || '').toUpperCase(),
-      partLetterTrimmed: (q.partLetter || '').trim(),
-      isEmpty: !q.partLetter || q.partLetter.trim() === ''
-    }));
-    
-    // Check for empty/null partLetters that might become "Section"
-    const emptyPartLetters = allQuestionParts.filter(q => q.isEmpty);
-    if (emptyPartLetters.length > 0) {
-      console.warn(`[mark:sectionAnalytics] ⚠️ Found ${emptyPartLetters.length} questions with empty/null partLetter (will become "Section"):`, 
-        emptyPartLetters.map(q => ({
-          questionNumber: q.questionNumber,
-          partName: q.partName
-        }))
-      );
-    }
-    
-    // Find all questions with "SECTION" partLetter
-    const sectionQuestions = (qs || []).filter((q, idx) => {
-      const partUpper = (q.partLetter || '').toUpperCase();
-      return partUpper === 'SECTION' || partUpper.startsWith('SECTION ');
-    });
-    
-    if (sectionQuestions.length > 0) {
-      console.error(`[mark:sectionAnalytics] ⚠️⚠️⚠️ FOUND ${sectionQuestions.length} QUESTIONS WITH "SECTION" PARTLETTER:`, 
-        sectionQuestions.map(q => ({
-          questionNumber: q.questionNumber,
-          partLetter: q.partLetter,
-          partName: q.partName,
-          examType: q.examType,
-          id: q.id
-        }))
-      );
-    }
-    
-    // Track questions with invalid parts
-    const invalidParts: Array<{ index: number; questionNumber: number; partLetter: string; partName: string }> = [];
-    
     if (!qs || qs.length === 0) {
-      console.warn('[mark:sectionAnalytics] No questions available');
       return analytics;
     }
     
     for (let i = 0; i < totalQuestions; i++) {
       const question = qs[i];
       if (!question) {
-        console.warn(`[mark:sectionAnalytics] Question ${i} is undefined`);
         continue;
       }
       
@@ -625,12 +576,6 @@ export default function PapersMarkPage() {
       }
       
       if (part.toUpperCase() === "SECTION") {
-        invalidParts.push({
-          index: i,
-          questionNumber: question.questionNumber,
-          partLetter: part,
-          partName,
-        });
         continue;
       }
 
@@ -645,12 +590,6 @@ export default function PapersMarkPage() {
           (partNameLower.includes("advanced mathematics") &&
             partNameLower.includes("advanced physics"));
         if (!allowed) {
-          invalidParts.push({
-            index: i,
-            questionNumber: question.questionNumber,
-            partLetter: part || "empty",
-            partName,
-          });
           continue;
         }
       }
@@ -662,10 +601,6 @@ export default function PapersMarkPage() {
       if (derivedCorrectFlags[i] === true) analytics[key].correct++;
       if (guessedFlags[i]) analytics[key].guessed++;
       analytics[key].totalTime += perQuestionSec[i] || 0;
-    }
-    
-    if (invalidParts.length > 0) {
-      console.error(`[mark:sectionAnalytics] ⚠️ Found ${invalidParts.length} questions with invalid parts:`, invalidParts);
     }
     
     // Calculate averages
@@ -905,7 +840,6 @@ export default function PapersMarkPage() {
           // CRITICAL: Skip "SECTION" entries - they're invalid
           const sectionUpper = section.toUpperCase();
           if (sectionUpper === "SECTION") {
-            console.error(`[mark:percentiles] ⚠️ Skipping invalid "SECTION" entry in percentile calculation:`, { section, data });
             continue;
           }
           
@@ -1019,7 +953,6 @@ export default function PapersMarkPage() {
         setPercentileTables(keyToRows as any);
       } catch (e) {
         // fail-soft
-        console.error('[mark] Error calculating section percentiles', e);
       }
     })();
   }, [
@@ -1484,6 +1417,34 @@ export default function PapersMarkPage() {
               )}
               {markSection === "stats" && (
                 <div className="h-full min-h-0 overflow-y-auto p-4 sm:p-6" style={{ scrollbarGutter: "stable" }}>
+                  {!treatAsFullAccess && (
+                    <div className="space-y-6">
+                      <div className={cn(bubbleClass, "relative overflow-hidden")}>
+                        <div className="mb-4 text-base font-semibold text-neutral-100">
+                          Pacing Profile
+                        </div>
+                        <div
+                          className="pointer-events-none select-none blur-[3px] opacity-40 saturate-50"
+                          aria-hidden
+                        >
+                          <TimeScatterChart
+                            questionNumbers={questionNumbers}
+                            perQuestionSec={perQuestionSec}
+                            correctFlags={derivedCorrectFlags}
+                            guessedFlags={guessedFlags}
+                          />
+                        </div>
+                        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-surface-elevated/40" />
+                      </div>
+                      <DrillUpgradeBanner
+                        variant="panel"
+                        headline="Unlock detailed session stats"
+                        subtext="Upgrade for pacing profiles, time management analysis, guessing behaviour, and accuracy trends."
+                        ctaLabel="View plans"
+                      />
+                    </div>
+                  )}
+                  {treatAsFullAccess && (
                   <div className="space-y-6">
 
                     {/* Pacing Profile */}
@@ -1867,7 +1828,7 @@ export default function PapersMarkPage() {
                   {/* Time vs Question Chart - Full Width (already placed above). Duplicate removed. */}
 
                   </div>
-                </div>
+                  )}
                 </div>
               )}
               {markSection === "review" && (
@@ -2097,7 +2058,17 @@ export default function PapersMarkPage() {
               </div>
 
               {/* Community Stats */}
-              {(() => {
+              {!treatAsFullAccess && (
+                <div className="mb-4">
+                  <DrillUpgradeBanner
+                    variant="panel"
+                    headline="Unlock community stats"
+                    subtext="See how other candidates answered each question — average time and answer distribution."
+                    ctaLabel="View plans"
+                  />
+                </div>
+              )}
+              {treatAsFullAccess && (() => {
                 const question = usePaperSessionStore.getState().questions[selectedIndex];
                 const stats = question ? questionStats[question.id] : null;
                 
@@ -2274,7 +2245,15 @@ export default function PapersMarkPage() {
                     </div>
 
                     {/* Answer/Solution section */}
-                    {(() => {
+                    {!treatAsFullAccess && (
+                      <DrillUpgradeBanner
+                        variant="panel"
+                        headline="Unlock suggested answers"
+                        subtext="Upgrade to view official solutions and worked answers for every question."
+                        ctaLabel="View plans"
+                      />
+                    )}
+                    {treatAsFullAccess && (() => {
                       const question = usePaperSessionStore.getState().questions[selectedIndex];
                       const isTMUA = question?.questionImage && question?.solutionImage && !question?.solutionText;
                       const answerImgSrc = (isTMUA && croppedAnswerImage) ? croppedAnswerImage : question?.solutionImage;
@@ -2451,7 +2430,17 @@ export default function PapersMarkPage() {
               })()}
 
               {/* Tip Section - Full Width Below Question/Answer */}
-              {currentTip && (
+              {!treatAsFullAccess && currentTip && (
+                <div className="mt-4">
+                  <DrillUpgradeBanner
+                    variant="panel"
+                    headline="Unlock question tips"
+                    subtext="Upgrade for expert tips and shortcuts on tricky past-paper questions."
+                    ctaLabel="View plans"
+                  />
+                </div>
+              )}
+              {treatAsFullAccess && currentTip && (
                 <div className="mt-4 rounded-lg bg-neutral-800 p-4">
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
@@ -2545,6 +2534,14 @@ export default function PapersMarkPage() {
               )}
               {markSection === "mistakes" && (
               <div className="h-full min-h-0 overflow-y-auto p-4 sm:p-6">
+                {!treatAsFullAccess ? (
+                  <DrillUpgradeBanner
+                    variant="panel"
+                    headline="Unlock mistake analysis"
+                    subtext="Upgrade to tag mistakes, review patterns, and build a personalised fix list for your next paper."
+                    ctaLabel="View plans"
+                  />
+                ) : (
                 <MarkSessionMistakesSection
                   mistakeTags={mistakeTags}
                   wrongQuestions={wrongQuestions}
@@ -2555,6 +2552,7 @@ export default function PapersMarkPage() {
                     openQuestionInReview(index, "mistakes")
                   }
                 />
+                )}
               </div>
               )}
               {markSection === "notes" && (

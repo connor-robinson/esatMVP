@@ -57,7 +57,6 @@ export async function POST(request: Request) {
       .in("question_id", questionIds);
 
     if (error) {
-      console.error("Error fetching question stats:", error);
       return NextResponse.json(
         { error: "Failed to fetch statistics" },
         { status: 500 }
@@ -79,14 +78,11 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ stats: result });
   } catch (error) {
-    console.error("Unexpected error fetching question stats:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
     );
   }
 }
-
-
 
 

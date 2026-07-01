@@ -25,7 +25,6 @@ export function MathJaxLoader() {
         },
         startup: {
           ready: () => {
-            console.log('[MathJax] MathJax is ready');
             (window as any).MathJax.startup.defaultReady();
             window.dispatchEvent(new Event("mathjax-ready"));
           },

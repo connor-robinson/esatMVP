@@ -114,7 +114,6 @@ export async function getAvailablePapers() {
     .order('exam_year', { ascending: false });
 
   if (error) {
-    console.error('[getAvailablePapers]', error);
     throw new Error(error.message || 'Failed to load papers from database');
   }
 
@@ -198,18 +197,15 @@ export async function getPaper(examName: ExamName, examYear: number, paperName: 
           .single();
 
         if (!variantError && variantData) {
-          console.log(`[getPaper] Found paper using variation: "${variant}" (requested: "${paperName}")`);
           return mapPaperRow(variantData as Record<string, unknown>);
         }
       }
     }
 
     // If all variations fail, log and return null
-    console.warn(`[getPaper] Paper not found: ${examName} ${examYear} "${paperName}" (${examType})`);
     handleSupabaseError(error);
     return null;
   } catch (error) {
-    console.error(`[getPaper] Error looking up paper: ${examName} ${examYear} "${paperName}" (${examType})`, error);
     handleSupabaseError(error);
     return null;
   }
@@ -228,8 +224,6 @@ export async function getPaper(examName: ExamName, examYear: number, paperName: 
  */
 export async function getQuestions(paperId: number) {
   try {
-    console.log('=== DEBUG getQuestions ===');
-    console.log('paperId:', paperId);
     
     // CRITICAL: Only query 'questions' table - these are real past paper questions
     // Do NOT query 'ai_generated_questions' - those are simulated/AI-generated
@@ -239,20 +233,10 @@ export async function getQuestions(paperId: number) {
       .eq('paper_id', paperId)
       .order('question_number');
 
-    console.log('Supabase query result:');
-    console.log('data length:', data?.length);
-    console.log('error:', error);
     
     // Log exam info from first question to verify paper type
     if (data && data.length > 0) {
       const firstQ = data[0];
-      console.log('[getQuestions] Paper info from questions:', {
-        examName: firstQ.exam_name,
-        examYear: firstQ.exam_year,
-        paperName: firstQ.paper_name,
-        examType: firstQ.exam_type,
-        samplePartLetters: data.slice(0, 10).map((q: any) => ({ num: q.question_number, partLetter: q.part_letter, partName: q.part_name }))
-      });
     }
 
     if (error) throw error;
@@ -260,10 +244,8 @@ export async function getQuestions(paperId: number) {
     // Convert database format to TypeScript interface format
     const questions: Question[] = (data || []).map((row: any) => mapQuestionRow(row));
     
-    console.log('Converted questions:', questions);
     return questions;
   } catch (error) {
-    console.error('Error in getQuestions:', error);
     handleSupabaseError(error);
     return [];
   }
@@ -302,17 +284,9 @@ export async function getConversionTable(paperId: number) {
       .single();
 
     if (paperError) {
-      console.error('[conversion] Paper not found', { paperId, error: paperError });
       throw paperError;
     }
 
-    console.log('[conversion] Looking up conversion table for paper', { 
-      paperId, 
-      examName: paperData.exam_name, 
-      examYear: paperData.exam_year, 
-      paperName: paperData.paper_name,
-      examType: paperData.exam_type
-    });
 
     // Now get the conversion table
     const { data, error } = await supabase
@@ -325,11 +299,6 @@ export async function getConversionTable(paperId: number) {
 
     // Verify the conversion table's paper_id matches the paper we're looking for
     if (data.paper_id !== paperId) {
-      console.error('[conversion] Mismatch: conversion table paper_id does not match requested paperId', {
-        requestedPaperId: paperId,
-        tablePaperId: data.paper_id,
-        examName: paperData.exam_name
-      });
       return null;
     }
 
@@ -344,23 +313,14 @@ export async function getConversionTable(paperId: number) {
       updatedAt: data.updated_at,
     };
 
-    console.log('[conversion] Found conversion table', { 
-      tableId: conversionTable.id, 
-      paperId: conversionTable.paperId,
-      examName: paperData.exam_name,
-      examYear: paperData.exam_year,
-      paperName: paperData.paper_name
-    });
     
     return conversionTable;
   } catch (error: any) {
     // Swallow "no rows" so callers can attempt fallbacks; log others
     const code = error?.code || error?.status || '';
     if (code === 'PGRST116' || /single/i.test(error?.message || '')) {
-      console.warn('[conversion] No conversion table for paperId', paperId);
       return null;
     }
-    console.warn('[conversion] getConversionTable failed', { paperId, error });
     return null;
   }
 }
@@ -416,7 +376,6 @@ export async function loadConversionRowsByPaperIds(
 // Find a fallback conversion table for the same exam, year, and exam type when the current paper lacks one
 export async function findFallbackConversionTable(examName: ExamName, examYear: number, examType?: ExamType) {
   try {
-    console.log('[conversion:fallback] Looking for fallback table', { examName, examYear, examType });
     
     // Build query: same exam and year, and optionally same exam type
     let query = supabase
@@ -436,27 +395,13 @@ export async function findFallbackConversionTable(examName: ExamName, examYear: 
     const { data: papers, error } = await query;
 
     if (error) throw error;
-    console.log('[conversion:fallback] Candidate papers', papers?.map((p: any) => ({ 
-      id: p.id, 
-      paperName: p.paper_name, 
-      examType: p.exam_type 
-    })));
     if (!papers || papers.length === 0) {
-      console.log('[conversion:fallback] No candidate papers found', { examName, examYear, examType });
       return null;
     }
 
     // Return the first actual conversion table we can load
     for (const p of papers) {
       const table = await getConversionTable(p.id);
-      console.log('[conversion:fallback] Checked paper', { 
-        paperId: p.id, 
-        paperName: p.paper_name,
-        examType: p.exam_type,
-        hasTable: !!table, 
-        examName, 
-        examYear 
-      });
       if (table) {
         // Double-check: verify the table's paper belongs to the correct exam
         const { data: paperVerify } = await supabase
@@ -469,28 +414,12 @@ export async function findFallbackConversionTable(examName: ExamName, examYear: 
           const tableExamName = (paperVerify.exam_name || '').toUpperCase();
           const requestedExamName = (examName || '').toUpperCase();
           if (tableExamName !== requestedExamName) {
-            console.error('[conversion:fallback] Rejected table - wrong exam', {
-              tableId: table.id,
-              tablePaperId: table.paperId,
-              tableExamName,
-              requestedExamName,
-              paperData: paperVerify
-            });
             continue; // Skip this table, it's for the wrong exam
           }
-          console.log('[conversion:fallback] ✅ Verified fallback table', {
-            tableId: table.id,
-            tablePaperId: table.paperId,
-            examName: tableExamName,
-            paperName: paperVerify.paper_name,
-            examType: paperVerify.exam_type,
-            requestedExamType: examType
-          });
         }
         return table;
       }
     }
-    console.log('[conversion:fallback] No valid conversion table found for', { examName, examYear, examType });
     return null;
   } catch (error) {
     handleSupabaseError(error);
@@ -512,7 +441,6 @@ export async function getAvailableExamNames() {
     const uniqueNames = [...new Set((data || []).map((row: any) => row.exam_name))];
     return uniqueNames as ExamName[];
   } catch (error) {
-    console.error('Error getting available exam names:', error);
     handleSupabaseError(error);
     throw error;
   }
@@ -533,7 +461,6 @@ export async function getAvailableYears(examName: ExamName) {
     const uniqueYears = [...new Set((data || []).map((row: any) => row.exam_year))];
     return uniqueYears;
   } catch (error) {
-    console.error(`Error getting available years for ${examName}:`, error);
     handleSupabaseError(error);
     throw error;
   }
@@ -555,7 +482,6 @@ export async function getAvailablePaperNames(examName: ExamName, examYear: numbe
     const uniqueNames = [...new Set((data || []).map((row: any) => row.paper_name))];
     return uniqueNames;
   } catch (error) {
-    console.error(`Error getting available paper names for ${examName} ${examYear}:`, error);
     handleSupabaseError(error);
     throw error;
   }
@@ -578,7 +504,6 @@ export async function getAvailableExamTypes(examName: ExamName, examYear: number
     const uniqueTypes = [...new Set((data || []).map((row: any) => row.exam_type))];
     return uniqueTypes as ExamType[];
   } catch (error) {
-    console.error(`Error getting available exam types for ${examName} ${examYear} ${paperName}:`, error);
     handleSupabaseError(error);
     throw error;
   }

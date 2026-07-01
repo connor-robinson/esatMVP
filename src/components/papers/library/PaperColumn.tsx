@@ -113,7 +113,6 @@ export function PaperColumn({
       })
       .catch((error) => {
         if (!cancelled) {
-          console.error(`[PaperColumn] Error loading sections for paper ${paper.id}:`, error);
           setSectionsError("Failed to load sections");
         }
       })
@@ -159,7 +158,6 @@ export function PaperColumn({
         setPaperCompletionStatus(status);
         setSectionCompletionMap(sectionMap);
       } catch (error) {
-        console.error("[PaperColumn] Error loading completion status:", error);
       }
     })();
 
@@ -234,7 +232,6 @@ export function PaperColumn({
         setSectionsError("No sections available for this paper");
       }
     } catch (error) {
-      console.error(`[PaperColumn] Error adding paper ${paper.id}:`, error);
       setSectionsError("Failed to load sections");
     } finally {
       setIsAddingPaper(false);

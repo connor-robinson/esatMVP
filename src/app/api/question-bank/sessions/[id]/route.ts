@@ -63,7 +63,6 @@ export async function GET(_request: NextRequest, context: RouteContext) {
       .order('attempted_at', { ascending: true });
 
     if (attemptsError) {
-      console.error('[QB Session] attempts error:', attemptsError);
       return NextResponse.json(
         { error: 'Failed to load session attempts' },
         { status: 500 },
@@ -114,7 +113,6 @@ export async function GET(_request: NextRequest, context: RouteContext) {
       wrongQuestions,
     });
   } catch (err) {
-    console.error('[QB Session] GET error:', err);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },
@@ -159,7 +157,6 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       .single();
 
     if (error) {
-      console.error('[QB Session] complete error:', error);
       return NextResponse.json(
         { error: 'Failed to complete session' },
         { status: 500 },
@@ -168,7 +165,6 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
 
     return NextResponse.json({ session: data });
   } catch (err) {
-    console.error('[QB Session] PATCH error:', err);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },
@@ -196,7 +192,6 @@ export async function DELETE(_request: NextRequest, context: RouteContext) {
       .eq('user_id', session.user.id);
 
     if (error) {
-      console.error('[QB Session] delete error:', error);
       return NextResponse.json(
         { error: 'Failed to delete session' },
         { status: 500 },
@@ -205,7 +200,6 @@ export async function DELETE(_request: NextRequest, context: RouteContext) {
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error('[QB Session] DELETE error:', err);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },

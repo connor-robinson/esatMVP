@@ -43,7 +43,6 @@ export async function GET(request: Request) {
     .order("played_date", { ascending: true });
 
   if (myError) {
-    console.error("[fermi/stats] my sessions failed", myError);
     return NextResponse.json({ error: "Failed to load stats" }, { status: 500 });
   }
 
@@ -68,7 +67,6 @@ export async function GET(request: Request) {
     .eq("played_date", targetDate);
 
   if (dayError) {
-    console.error("[fermi/stats] day scores failed", dayError);
     return NextResponse.json({ error: "Failed to load distribution" }, { status: 500 });
   }
 

@@ -30,6 +30,7 @@ import {
   getOAuthProvider,
   hasEmailPasswordIdentity,
 } from "@/lib/supabase/auth-utils";
+import type { ExamType } from "@/lib/profile/countdown";
 
 type Preferences = {
   username: string | null;
@@ -178,7 +179,6 @@ export default function ProfilePage() {
           }
         }
       } catch (error) {
-        console.error("[profile] Error loading preferences:", error);
       } finally {
         setLoading(false);
       }
@@ -219,7 +219,6 @@ export default function ProfilePage() {
         router.refresh();
       }
     } catch (error: any) {
-      console.error("[profile] Error saving preferences:", error);
       alert(error.message || "Failed to save preferences");
     } finally {
       setSaving(null);
@@ -231,7 +230,6 @@ export default function ProfilePage() {
       setLoading(true);
       const { error } = await supabase.auth.signOut();
       if (error) {
-        console.error("[profile] Logout error:", error);
         alert("Failed to logout. Please try again.");
         setLoading(false);
         return;
@@ -241,7 +239,6 @@ export default function ProfilePage() {
       // Force a hard redirect to ensure session is cleared
       window.location.href = "/login";
     } catch (err) {
-      console.error("[profile] Logout error:", err);
       alert("Failed to logout. Please try again.");
       setLoading(false);
     }
@@ -262,14 +259,12 @@ export default function ProfilePage() {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) {
-        console.error("[profile] Logout error after delete:", error);
       }
       // Wait a moment for the session state to update
       await new Promise(resolve => setTimeout(resolve, 100));
       // Force a hard redirect to ensure session is cleared
       window.location.href = "/login";
     } catch (err) {
-      console.error("[profile] Logout error after delete:", err);
       // Still redirect even if signOut fails
       window.location.href = "/login";
     }
@@ -318,7 +313,6 @@ export default function ProfilePage() {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
     } catch (error: any) {
-      console.error("[profile] Error exporting data:", error);
       alert(error.message || "Failed to export data");
     }
   };
@@ -973,7 +967,6 @@ export default function ProfilePage() {
                                 if (data.url) window.location.href = data.url;
                                 else throw new Error(data.error ?? "Failed");
                               } catch (err: unknown) {
-                                console.error(err);
                                 alert("Failed to open billing portal");
                               }
                             }}

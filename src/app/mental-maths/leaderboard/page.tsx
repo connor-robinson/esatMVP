@@ -16,6 +16,10 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
 import { getPublicDisplayName } from "@/lib/profile/publicDisplayName";
 import { leaderboardCache } from "@/lib/leaderboard/cache";
+import {
+  getAnalyticsFolderOptions,
+  topicIdsForFolderQuery,
+} from "@/lib/display-folder-registry";
 
 const GlobalView = lazy(() =>
   import("@/components/analytics/GlobalView").then((mod) => ({ default: mod.GlobalView })),
@@ -41,7 +45,6 @@ async function fetchLeaderboard(
   const { data, error } = await query.limit(300);
 
   if (error) {
-    console.error("[leaderboard] failed to load leaderboard base", error);
     return [];
   }
 
@@ -59,9 +62,6 @@ async function fetchLeaderboard(
         .in("id", slice);
 
       if (profilesError && profilesError.code === "42P01") {
-        console.warn(
-          "[leaderboard] profiles table does not exist, using anonymous names",
-        );
         break;
       }
       if (profilesData) {

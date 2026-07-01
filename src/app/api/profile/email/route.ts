@@ -59,7 +59,6 @@ export async function POST(request: NextRequest) {
     });
 
     if (updateError) {
-      console.error('[Email API] Error updating email:', updateError);
       return NextResponse.json(
         { error: updateError.message || 'Failed to update email' },
         { status: 500 }
@@ -68,7 +67,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, email: newEmail });
   } catch (error) {
-    console.error('[Email API] Unexpected error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

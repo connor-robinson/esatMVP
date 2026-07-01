@@ -74,7 +74,6 @@ function validateGenerators(generators: Record<string, GeneratorFunction>): Reco
   const validated: Record<string, GeneratorFunction> = {};
   for (const [topicId, generator] of Object.entries(generators)) {
     if (typeof generator !== 'function') {
-      console.error(`[GENERATORS] Generator for topic "${topicId}" is not a function:`, typeof generator, generator);
       // Don't include invalid generators
       continue;
     }
@@ -201,7 +200,6 @@ export function generateQuestion(
   }
   
   if (typeof generator !== 'function') {
-    console.error(`Generator for topic ${topicId} is not a function:`, typeof generator, generator);
     throw new Error(`Generator for topic ${topicId} is not a function`);
   }
   

@@ -44,7 +44,6 @@ export async function GET() {
       .eq('is_correct', false);
 
     if (attemptsError) {
-      console.error('[Drill API] Error fetching wrong attempts:', attemptsError);
       return NextResponse.json({ error: 'Failed to load drill data' }, { status: 500 });
     }
 
@@ -61,7 +60,6 @@ export async function GET() {
       .in('id', wrongIds);
 
     if (questionsError) {
-      console.error('[Drill API] Error fetching questions:', questionsError);
       return NextResponse.json({ error: 'Failed to load questions' }, { status: 500 });
     }
 
@@ -70,14 +68,12 @@ export async function GET() {
       try {
         return normalizeQuestionRow(q);
       } catch (parseError) {
-        console.error('[Drill API] Error parsing question:', parseError, q);
         return q as unknown as QuestionBankQuestion;
       }
     });
 
     return NextResponse.json({ questions, count: questions.length });
   } catch (error) {
-    console.error('[Drill API] Unexpected error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

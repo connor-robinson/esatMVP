@@ -52,7 +52,6 @@ export async function GET() {
         .range(offset, offset + PAGE_SIZE - 1);
 
       if (error) {
-        console.error('[topic-tags] Error:', error);
         return NextResponse.json(
           { tags: [] as string[], options: [] as TopicOption[] },
           { status: 200 },
@@ -91,7 +90,6 @@ export async function GET() {
 
     return NextResponse.json({ tags, options });
   } catch (e) {
-    console.error('[topic-tags]', e);
     return NextResponse.json(
       { tags: [] as string[], options: [] as TopicOption[] },
       { status: 200 },

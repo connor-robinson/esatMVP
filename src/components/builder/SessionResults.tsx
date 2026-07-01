@@ -146,61 +146,10 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       setIsLoadingRankings(true);
       const newRankings: Record<string, any> = {};
       const userId = authSession?.user?.id || "anonymous";
-      
-      console.log("[SessionResults] DEBUG: Loading rankings", {
-        topics: result.topicBreakdown.map(t => t.topicId),
-        userId,
-        sessionId: session.id,
-        topicCount: result.topicBreakdown.length,
-      });
-      
-      // Expose debug function to window for console access
-      (window as any).debugDrillSessions = async (topicId?: string) => {
-        const topicsToCheck = topicId ? [topicId] : result.topicBreakdown.map(t => t.topicId);
-        
-        for (const tid of topicsToCheck) {
-          console.log(`\n=== Debugging topic: ${tid} ===`);
-          
-          // Check all sessions for this topic
-          const { data: allSessions, error } = await supabase
-            .from("drill_sessions")
-            .select("id, user_id, topic_id, summary, completed_at, created_at, accuracy, average_time_ms, question_count")
-            .eq("topic_id", tid)
-            .order("created_at", { ascending: false })
-            .limit(100);
-          
-          if (error) {
-            console.error(`Error fetching sessions for ${tid}:`, error);
-          } else {
-            console.log(`Found ${allSessions?.length || 0} total sessions for topic ${tid}`);
-            console.log("Sample sessions:", allSessions?.slice(0, 5));
-          }
-          
-          // Check personal sessions if logged in
-          if (userId !== "anonymous") {
-            const { data: personalSessions } = await supabase
-              .from("drill_sessions")
-              .select("id, summary, completed_at")
-              .eq("user_id", userId)
-              .eq("topic_id", tid)
-              .order("created_at", { ascending: false });
-            
-            console.log(`Found ${personalSessions?.length || 0} personal sessions for user ${userId}`);
-          }
-        }
-      };
-      
+
       for (const topic of result.topicBreakdown) {
         try {
           // Log the exact values being passed to ensure consistency
-          console.log(`[SessionResults] DEBUG: Fetching rankings for topic ${topic.topicId}`, {
-            topicId: topic.topicId,
-            score: topic.score,
-            correctAnswers: topic.correct,
-            totalQuestions: topic.total,
-            avgTimeMs: topic.avgTimeMs,
-            accuracy: topic.accuracy,
-          });
           
           const rankings = await fetchTopicRankings(
             supabase,
@@ -215,22 +164,9 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             }
           );
           
-          console.log(`[SessionResults] DEBUG: Rankings loaded for ${topic.topicId}`, {
-            personalCount: rankings.personal?.allRankings?.length || 0,
-            globalCount: rankings.global?.allRankings?.length || 0,
-            personalCurrentRank: rankings.personal?.currentRank,
-            globalCurrentRank: rankings.global?.currentRank,
-            personalTop3Count: rankings.personal?.top3?.length || 0,
-            globalTop3Count: rankings.global?.top3?.length || 0,
-          });
           
           newRankings[topic.topicId] = rankings;
         } catch (error) {
-          console.error(`[SessionResults] ERROR: Failed to load rankings for ${topic.topicId}:`, {
-            error,
-            errorMessage: error instanceof Error ? error.message : String(error),
-            topicId: topic.topicId,
-          });
         }
       }
       
@@ -268,7 +204,6 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
   const renderSingleCard = (session: any, isGlobalView: boolean, idx: number, topicName: string, currentSessionId?: string) => {
     // Validate session data
     if (!session || typeof session.score !== 'number') {
-      console.error('[renderSingleCard] Invalid session data:', session);
       return null;
     }
     
@@ -669,18 +604,6 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
   const renderSessionCards = (topicId: string, topicName: string) => {
     const data = rankingsData[topicId]?.[rankingView];
     
-    console.log(`[renderSessionCards] DEBUG: Rendering cards`, {
-      topicId,
-      topicName,
-      view: rankingView,
-      hasData: !!data,
-      dataStructure: data ? {
-        displayWindowCount: data.displayWindow?.length || 0,
-        currentRank: data.currentRank,
-        allRankingsCount: data.allRankings?.length || 0,
-      } : null,
-      currentSessionId: session.id,
-    });
     
     const isGlobalView = rankingView === "global";
     
@@ -751,11 +674,6 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       });
 
       if (cards.length === 0) {
-        console.warn("[renderSessionCards] WARNING: Empty display window", {
-          topicId,
-          view: rankingView,
-          currentRank,
-        });
         // Fallback to showing current attempt
         // IMPORTANT: Use SESSION-LEVEL stats, not topic-level stats
         // This ensures consistency with the top cards
@@ -794,11 +712,6 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
 
     // Fallback for old array format (shouldn't happen, but handle gracefully)
     if (Array.isArray(data)) {
-      console.warn("[renderSessionCards] WARNING: Received old array format, converting...", {
-        topicId,
-        view: rankingView,
-        arrayLength: data.length,
-      });
       return (
         <div className="space-y-4">
           {data.slice(0, 10).map((sessionData: any, idx: number) =>

@@ -30,7 +30,6 @@ export async function GET(request: Request) {
     .eq("has_conversion", true);
 
   if (error) {
-    console.error("[score-converter/years]", error);
     return NextResponse.json({ error: "Failed to load years" }, { status: 500 });
   }
 

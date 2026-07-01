@@ -41,7 +41,6 @@ export function waitForMathJax(timeout = 10000): Promise<boolean> {
         clearInterval(checkInterval);
         resolve(true);
       } else if (Date.now() - startTime > timeout) {
-        console.warn('[MathJax] Timeout waiting for MathJax to load after', timeout, 'ms');
         window.removeEventListener('mathjax-ready', handleReady);
         clearInterval(checkInterval);
         resolve(false);
@@ -56,14 +55,12 @@ export function waitForMathJax(timeout = 10000): Promise<boolean> {
 export async function typesetMath(element?: HTMLElement | null): Promise<void> {
   const isReady = await waitForMathJax();
   if (!isReady) {
-    console.warn('[MathJax] Cannot typeset - MathJax not ready');
     return;
   }
 
   try {
     const MathJax = window.MathJax;
     if (!MathJax?.typesetPromise) {
-      console.warn('[MathJax] MathJax not available');
       return;
     }
     
@@ -91,7 +88,6 @@ export async function typesetMath(element?: HTMLElement | null): Promise<void> {
       await MathJax.typesetPromise();
     }
   } catch (error) {
-    console.error('[MathJax] Typesetting error:', error);
     // Retry once after a short delay
     setTimeout(async () => {
       try {
@@ -105,7 +101,6 @@ export async function typesetMath(element?: HTMLElement | null): Promise<void> {
           await MathJax.typesetPromise();
         }
       } catch (retryError) {
-        console.error('[MathJax] Retry typesetting error:', retryError);
       }
     }, 300);
   }

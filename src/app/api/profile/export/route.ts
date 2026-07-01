@@ -164,7 +164,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('[Export API] Unexpected error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

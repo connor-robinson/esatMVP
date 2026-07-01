@@ -167,7 +167,6 @@ export async function fetchUserSessions(): Promise<PaperSession[]> {
     
     return sessions.map(convertSessionRow);
   } catch (error) {
-    console.error('[analytics] Failed to fetch sessions', error);
     return [];
   }
 }
@@ -193,7 +192,6 @@ export async function fetchInProgressSessions(): Promise<PaperSession[]> {
     
     return sessions.map(convertSessionRow);
   } catch (error) {
-    console.error('[analytics] Failed to fetch in-progress sessions', error);
     return [];
   }
 }

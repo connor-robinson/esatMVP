@@ -79,7 +79,6 @@ export function SimplifiedQuestionDetailView({
       await onUpdate(question.id, editedContent);
       setEditingSection(null);
     } catch (error) {
-      console.error("Error saving edit:", error);
     } finally {
       setIsSaving(false);
     }
@@ -476,7 +475,6 @@ export function SimplifiedQuestionDetailView({
                       });
                       setEditingSection(null);
                     } catch (error) {
-                      console.error("Error saving tags:", error);
                     } finally {
                       setIsSaving(false);
                     }

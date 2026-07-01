@@ -155,7 +155,6 @@ export default function PapersRoadmapPage() {
           setExamPreference(data.exam_preference || null);
         }
       } catch (error) {
-        console.error('[roadmap] Error loading exam preference:', error);
       }
     }
     loadExamPreference();
@@ -185,7 +184,6 @@ export default function PapersRoadmapPage() {
           return next;
         });
       } catch (error) {
-        console.error('[roadmap] Error loading stages:', error);
       }
     }
 
@@ -249,7 +247,6 @@ export default function PapersRoadmapPage() {
         setUnlockedStages(unlocked);
         setCurrentStageIndex(currentIndex);
       } catch (error) {
-        console.error('[roadmap] Error loading completion data:', error);
         if (cancelled) return;
 
         const fallback = buildDefaultCompletion(stages);
@@ -272,7 +269,6 @@ export default function PapersRoadmapPage() {
     async (stage: RoadmapStage, selectedParts: RoadmapPart[]) => {
       try {
         if (selectedParts.length === 0) {
-          console.error('[roadmap] No parts selected');
           return;
         }
 
@@ -325,11 +321,6 @@ export default function PapersRoadmapPage() {
         const allPapers = new Map<string, Paper>();
         const allQuestionsByPaper = new Map<number, Question[]>();
 
-        console.log('[roadmap] Loading papers for selected parts:', {
-          selectedPartsCount: selectedParts.length,
-          papersCount: partsByPaper.size,
-          paperKeys: Array.from(partsByPaper.keys()),
-        });
 
         for (const [paperKey, parts] of partsByPaper.entries()) {
           const firstPartInPaper = parts[0];
@@ -341,13 +332,6 @@ export default function PapersRoadmapPage() {
           );
 
           if (!paper) {
-            console.error('[roadmap] Paper not found for stage', {
-              examName: stage.examName,
-              year: stage.year,
-              paperName: firstPartInPaper.paperName,
-              examType: firstPartInPaper.examType,
-              stageId: stage.id,
-            });
 
             // Show user-friendly error message
             alert(
@@ -356,38 +340,21 @@ export default function PapersRoadmapPage() {
             return;
           }
 
-          console.log('[roadmap] Loaded paper:', {
-            paperKey,
-            paperId: paper.id,
-            paperName: paper.paperName,
-            partsCount: parts.length,
-            parts: parts.map((p) => `${p.partLetter}: ${p.partName}`),
-          });
 
           allPapers.set(paperKey, paper);
           const questions = await getQuestions(paper.id);
-          console.log('[roadmap] Loaded questions from paper:', {
-            paperId: paper.id,
-            questionsCount: questions.length,
-          });
           allQuestionsByPaper.set(paper.id, questions);
         }
 
         // Get primary paper for session metadata
         const primaryPaper = allPapers.get(primaryPaperKey);
         if (!primaryPaper) {
-          console.error('[roadmap] Primary paper not found');
           return;
         }
 
         // Combine questions from all papers and filter to match ALL selected parts
         let matchingQuestions: Question[] = [];
 
-        console.log('[roadmap] Filtering questions:', {
-          allSections: Array.from(allSections),
-          paperType,
-          totalPapers: allQuestionsByPaper.size,
-        });
 
         if (paperType === 'TMUA') {
           // For TMUA, combine questions from all papers and filter by section
@@ -416,26 +383,9 @@ export default function PapersRoadmapPage() {
             if (!paper) continue;
 
             const questions = allQuestionsByPaper.get(paper.id) || [];
-            console.log('[roadmap] Filtering questions for paper:', {
-              paperKey,
-              paperId: paper.id,
-              paperName: paper.paperName,
-              questionsCount: questions.length,
-              partsToMatch: parts.map(
-                (p) => `${p.partLetter}: ${p.partName} (${p.paperName})`,
-              ),
-            });
 
             // Log sample questions for debugging Section 2
             if (paper.paperName === 'Section 2' && questions.length > 0) {
-              console.log(
-                '[roadmap] Sample Section 2 questions:',
-                questions.slice(0, 3).map((q) => ({
-                  questionNumber: q.questionNumber,
-                  partLetter: q.partLetter,
-                  partName: q.partName,
-                })),
-              );
             }
 
             const filtered = questions.filter((q: Question) => {
@@ -473,17 +423,6 @@ export default function PapersRoadmapPage() {
                     paper.paperName === 'Section 2' &&
                     questions.indexOf(q) < 3
                   ) {
-                    console.log('[roadmap] Section 2 question not matching:', {
-                      questionNumber: q.questionNumber,
-                      qPartLetter: q.partLetter,
-                      qPartName: q.partName,
-                      partToMatch: {
-                        partLetter: part.partLetter,
-                        partName: part.partName,
-                      },
-                      partLetterMatches,
-                      partNameMatches,
-                    });
                   }
                   return false;
                 }
@@ -505,23 +444,13 @@ export default function PapersRoadmapPage() {
               });
             });
 
-            console.log('[roadmap] Filtered questions for paper:', {
-              paperKey,
-              beforeCount: questions.length,
-              afterCount: filtered.length,
-            });
 
             matchingQuestions = [...matchingQuestions, ...filtered];
           }
         }
 
-        console.log(
-          '[roadmap] Total matching questions:',
-          matchingQuestions.length,
-        );
 
         if (matchingQuestions.length === 0) {
-          console.error('[roadmap] No matching questions found for stage');
           return;
         }
 
@@ -560,25 +489,15 @@ export default function PapersRoadmapPage() {
         // If we have questions from multiple papers, set them directly
         // Otherwise, use the standard loadQuestions
         if (allPapers.size > 1) {
-          console.log(
-            '[roadmap] Multiple papers detected, setting questions directly:',
-            {
-              papersCount: allPapers.size,
-              totalQuestions: matchingQuestions.length,
-              sections: Array.from(allSections),
-            },
-          );
           // Set questions directly since we've already loaded and filtered from all papers
           setQuestions(matchingQuestions);
         } else {
           // Single paper - use standard loading
-          console.log('[roadmap] Single paper, using standard loadQuestions');
           await loadQuestions(primaryPaper.id);
         }
 
         router.push('/past-papers/solve');
       } catch (error) {
-        console.error('[roadmap] Error starting stage:', error);
       }
     },
     [router, startSession, loadQuestions, setQuestions],
@@ -655,7 +574,6 @@ export default function PapersRoadmapPage() {
 
       setCompletionData(completionMap);
     } catch (error) {
-      console.error('[roadmap] Error refreshing completion data:', error);
     }
 
     setCompletionLoading(false);

@@ -45,7 +45,6 @@ export async function GET(request: NextRequest) {
 
       const { data, error } = await query;
       if (error) {
-        console.error("[library-subject-counts] query error:", error);
         return NextResponse.json(
           { error: "Failed to load counts" },
           { status: 500 },
@@ -76,7 +75,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ counts, total: filtered.length });
   } catch (e) {
-    console.error("[library-subject-counts]", e);
     return NextResponse.json(
       { error: "Failed to load counts" },
       { status: 500 },

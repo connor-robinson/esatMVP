@@ -69,7 +69,6 @@ export default function LoginPage() {
         } = await supabase.auth.getSession();
 
         if (sessionError) {
-          console.error("[login] Session check error:", sessionError);
           setIsChecking(false);
           return;
         }
@@ -80,7 +79,6 @@ export default function LoginPage() {
           setIsChecking(false);
         }
       } catch (err) {
-        console.error("[login] Error checking session:", err);
         setIsChecking(false);
       }
     };

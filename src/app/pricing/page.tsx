@@ -115,7 +115,6 @@ export default function PricingPage() {
       if (data.url) window.location.href = data.url;
       else throw new Error(data.error ?? "Failed");
     } catch (err) {
-      console.error(err);
       setLoading(null);
     }
   };

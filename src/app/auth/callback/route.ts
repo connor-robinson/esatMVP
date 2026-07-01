@@ -19,7 +19,6 @@ export async function GET(request: Request) {
 
   // Handle OAuth errors
   if (error) {
-    console.error("[auth] OAuth error:", error, errorDescription);
     return NextResponse.redirect(
       new URL(`/login?error=${encodeURIComponent(errorDescription || error)}`, requestUrl.origin)
     );
@@ -39,7 +38,6 @@ export async function GET(request: Request) {
     const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
 
     if (exchangeError) {
-      console.error("[auth] Exchange error:", exchangeError);
       return NextResponse.redirect(
         new URL(`/login?error=${encodeURIComponent(exchangeError.message)}`, requestUrl.origin)
       );
@@ -55,7 +53,6 @@ export async function GET(request: Request) {
     // The session is now stored in cookies and will be available on the next page
     return NextResponse.redirect(new URL(redirectTo, requestUrl.origin));
   } catch (err) {
-    console.error("[auth] Callback error:", err);
     return NextResponse.redirect(
       new URL(
         `/login?error=${encodeURIComponent(err instanceof Error ? err.message : "Unknown error")}`,

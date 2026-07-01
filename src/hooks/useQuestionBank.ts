@@ -138,7 +138,6 @@ export function useQuestionBank(
 
         return null;
       } catch (error) {
-        console.error('[useQuestionBank] Error fetching preferences:', error);
         return null;
       }
     }, [sessionUserId]);
@@ -205,7 +204,6 @@ export function useQuestionBank(
             const parsedFilters = JSON.parse(storedFilters);
             setFilters(parsedFilters);
           } catch (e) {
-            console.error('[useQuestionBank] Error restoring filters:', e);
           }
           filtersInitialized.current = true;
           setFiltersReady(true);
@@ -225,13 +223,11 @@ export function useQuestionBank(
             const parsedFilters = JSON.parse(storedFilters);
             setFilters(parsedFilters);
           } catch (e) {
-            console.error('[useQuestionBank] Error restoring filters:', e);
           }
         }
         filtersInitialized.current = true;
         setFiltersReady(true);
       } catch (err) {
-        console.error('[useQuestionBank] Error initializing filters:', err);
         filtersInitialized.current = true;
         setFiltersReady(true);
       }
@@ -274,10 +270,6 @@ export function useQuestionBank(
         }
       }
     } catch (err) {
-      console.error(
-        '[useQuestionBank] Error restoring from localStorage:',
-        err,
-      );
       // If restoration fails, continue to fetch a new question
     }
 
@@ -314,10 +306,6 @@ export function useQuestionBank(
             }
           }
         } catch (err) {
-          console.error(
-            '[useQuestionBank] Error restoring on visibility change:',
-            err,
-          );
         }
       }
     };
@@ -343,14 +331,12 @@ export function useQuestionBank(
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
       } catch (err) {
-        console.error('[useQuestionBank] Error saving to localStorage:', err);
       }
     } else if (isAnswered && currentQuestion) {
       // Clear stored question when answered
       try {
         localStorage.removeItem(STORAGE_KEY);
       } catch (err) {
-        console.error('[useQuestionBank] Error clearing localStorage:', err);
       }
     }
   }, [
@@ -375,10 +361,6 @@ export function useQuestionBank(
         }
       }
     } catch (err) {
-      console.error(
-        '[useQuestionBank] Error saving filters to localStorage:',
-        err,
-      );
     }
   }, [filters]);
 
@@ -453,10 +435,6 @@ export function useQuestionBank(
           );
         }
       } catch (error) {
-        console.error(
-          '[useQuestionBank] Error checking preferences update:',
-          error,
-        );
       }
     };
 
@@ -542,7 +520,6 @@ export function useQuestionBank(
           }
         }
       } catch (err) {
-        console.error('[useQuestionBank] Error prefetching questions:', err);
       } finally {
         isFetching.current = false;
       }
@@ -732,7 +709,6 @@ export function useQuestionBank(
           setCurrentQuestion(null);
         }
       } catch (err) {
-        console.error('[useQuestionBank] Error fetching question:', err);
         setError('Failed to load question. Please try again.');
       } finally {
         setIsLoading(false);
@@ -761,7 +737,6 @@ export function useQuestionBank(
       },
     ) => {
       if (!currentQuestion) {
-        console.error('[useQuestionBank] No current question');
         return;
       }
 
@@ -800,13 +775,6 @@ export function useQuestionBank(
 
             if (!response.ok) {
               const errorData = await response.json().catch(() => ({}));
-              console.error('[useQuestionBank] Failed to save attempt:', {
-                status: response.status,
-                statusText: response.statusText,
-                error: errorData.error,
-                questionId: currentQuestion.id,
-                retryCount,
-              });
 
               // Retry once if it's a server error (5xx) or network error
               if (
@@ -823,10 +791,6 @@ export function useQuestionBank(
             const data = await response.json();
             return true;
           } catch (err) {
-            console.error('[useQuestionBank] Error saving attempt:', err, {
-              questionId: currentQuestion.id,
-              retryCount,
-            });
 
             // Retry once on network errors
             if (retryCount === 0) {
@@ -840,15 +804,8 @@ export function useQuestionBank(
 
         // Save attempt (with retry logic)
         saveAttempt().catch((err) => {
-          console.error(
-            '[useQuestionBank] Final error saving attempt after retries:',
-            err,
-          );
         });
       } else {
-        console.warn(
-          '[useQuestionBank] Cannot save attempt - user not logged in',
-        );
       }
     },
     [currentQuestion, session, questionStartTime, viewedSolution],
@@ -865,7 +822,6 @@ export function useQuestionBank(
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch (err) {
-      console.error('[useQuestionBank] Error clearing localStorage:', err);
     }
     // Use cache for faster switching
     await fetchQuestion(true);

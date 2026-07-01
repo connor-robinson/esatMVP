@@ -49,7 +49,6 @@ export async function GET(request: Request) {
     .eq("has_conversion", true);
 
   if (papersError) {
-    console.error("[score-converter/sections] papers", papersError);
     return NextResponse.json({ error: "Failed to load sections" }, { status: 500 });
   }
 
@@ -70,7 +69,6 @@ export async function GET(request: Request) {
     .in("paper_id", paperIds);
 
   if (tablesError) {
-    console.error("[score-converter/sections] tables", tablesError);
     return NextResponse.json({ error: "Failed to load sections" }, { status: 500 });
   }
 
@@ -95,7 +93,6 @@ export async function GET(request: Request) {
     .in("table_id", tableIds);
 
   if (rowsError) {
-    console.error("[score-converter/sections] rows", rowsError);
     return NextResponse.json({ error: "Failed to load sections" }, { status: 500 });
   }
 

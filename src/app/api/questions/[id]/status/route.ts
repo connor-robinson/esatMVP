@@ -44,7 +44,6 @@ export async function PATCH(
       .maybeSingle();
 
     if (checkError) {
-      console.error("Error checking question existence:", checkError);
       return NextResponse.json(
         { error: `Failed to check question: ${checkError.message || checkError.code || 'Unknown error'}` },
         { status: 500 }
@@ -66,7 +65,6 @@ export async function PATCH(
       .eq("id", id);
 
     if (updateError) {
-      console.error("Error updating question status:", updateError);
       return NextResponse.json(
         { error: `Failed to update question status: ${updateError.message || updateError.code || 'Unknown error'}` },
         { status: 500 }
@@ -82,7 +80,6 @@ export async function PATCH(
       .maybeSingle();
 
     if (fetchError) {
-      console.error("Error fetching updated question:", fetchError);
       return NextResponse.json(
         { error: `Failed to fetch updated question: ${fetchError.message || fetchError.code || 'Unknown error'}` },
         { status: 500 }
@@ -98,7 +95,6 @@ export async function PATCH(
 
     return NextResponse.json({ question: updatedQuestion });
   } catch (error: any) {
-    console.error("Unexpected error:", error);
     return NextResponse.json(
       { error: error?.message || "Internal server error" },
       { status: 500 }

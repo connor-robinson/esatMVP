@@ -14,7 +14,6 @@ export function KaTeXLoader() {
     // and can be used for any future KaTeX-specific initialization
     if (typeof window !== "undefined") {
       // KaTeX is ready immediately - no async loading needed
-      console.log("[KaTeX] KaTeX is ready");
     }
   }, []);
 

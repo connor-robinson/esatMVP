@@ -39,7 +39,6 @@ export async function PATCH(
       .single();
 
     if (error) {
-      console.error("Error updating question tags:", error);
       return NextResponse.json(
         { error: `Failed to update question tags: ${error.message || error.code || 'Unknown error'}` },
         { status: 500 }
@@ -48,13 +47,11 @@ export async function PATCH(
 
     return NextResponse.json({ question: data });
   } catch (error: any) {
-    console.error("Unexpected error:", error);
     return NextResponse.json(
       { error: error?.message || "Internal server error" },
       { status: 500 }
     );
   }
 }
-
 
 

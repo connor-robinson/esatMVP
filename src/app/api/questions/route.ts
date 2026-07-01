@@ -18,7 +18,6 @@ export async function GET(request: Request) {
     const supabase = createServerClient();
     
     // Debug logging
-    console.log("[API] Fetching questions:", { status, page, limit, schema, difficulty });
 
     // Build query
     let query = supabase
@@ -52,31 +51,16 @@ export async function GET(request: Request) {
     const { data, error, count } = await query;
 
     if (error) {
-      console.error("[API] Error fetching questions:", error);
-      console.error("[API] Error details:", JSON.stringify(error, null, 2));
       return NextResponse.json(
         { error: "Failed to fetch questions", details: error.message },
         { status: 500 }
       );
     }
 
-    console.log("[API] Questions fetched:", {
-      count: data?.length || 0,
-      total: count || 0,
-      status,
-    });
 
     // Debug: Log tag information for first few questions
     if (data && data.length > 0) {
       const sampleQuestions = data.slice(0, 3);
-      console.log("[API] Sample question tags:", sampleQuestions.map((q: any) => ({
-        id: q.id,
-        schema_id: q.schema_id,
-        primary_tag: q.primary_tag,
-        secondary_tags: q.secondary_tags,
-        subjects: q.subjects,
-        tags_labeled_by: q.tags_labeled_by,
-      })));
     }
 
     return NextResponse.json({
@@ -89,7 +73,6 @@ export async function GET(request: Request) {
       },
     });
   } catch (error) {
-    console.error("Unexpected error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

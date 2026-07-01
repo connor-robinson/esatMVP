@@ -60,7 +60,6 @@ export async function POST(request: Request) {
   try {
     payload = (await request.json()) as SessionPayload;
   } catch (parseError) {
-    console.error('[papers:POST] Failed to parse request body', parseError);
     return NextResponse.json(
       { error: 'Invalid request body' },
       { status: 400 },
@@ -68,12 +67,6 @@ export async function POST(request: Request) {
   }
 
   if (!payload?.id || !payload.paperName || !payload.sessionName) {
-    console.error('[papers:POST] Missing required fields', {
-      hasId: !!payload?.id,
-      hasPaperName: !!payload?.paperName,
-      hasSessionName: !!payload?.sessionName,
-      payload: payload,
-    });
     return NextResponse.json(
       {
         error: 'Missing required fields',
@@ -89,10 +82,6 @@ export async function POST(request: Request) {
     typeof payload.questionRange.start !== 'number' ||
     typeof payload.questionRange.end !== 'number'
   ) {
-    console.error('[papers:POST] Invalid questionRange', {
-      questionRange: payload.questionRange,
-      payload: payload,
-    });
     return NextResponse.json(
       {
         error: 'Invalid questionRange',
@@ -107,10 +96,6 @@ export async function POST(request: Request) {
     payload.questionRange.start < 1 ||
     payload.questionRange.end < payload.questionRange.start
   ) {
-    console.error('[papers:POST] Invalid questionRange values', {
-      start: payload.questionRange.start,
-      end: payload.questionRange.end,
-    });
     return NextResponse.json(
       {
         error: 'Invalid questionRange',
@@ -154,24 +139,6 @@ export async function POST(request: Request) {
       .single();
 
     if (error) {
-      console.error('[papers:POST] failed creating session', {
-        error,
-        errorCode: error.code,
-        errorMessage: error.message,
-        errorDetails: error.details,
-        errorHint: error.hint,
-        sessionId: payload.id,
-        userId: session.user.id,
-        paperName: payload.paperName,
-        payloadKeys: Object.keys(payload),
-        payloadSizes: {
-          answers: payload.answers?.length,
-          correctFlags: payload.correctFlags?.length,
-          guessedFlags: payload.guessedFlags?.length,
-          mistakeTags: payload.mistakeTags?.length,
-          perQuestionSec: payload.perQuestionSec?.length,
-        },
-      });
       return NextResponse.json(
         {
           error: 'Failed to create session',
@@ -190,15 +157,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ session: data });
   } catch (insertError: any) {
-    console.error('[papers:POST] Exception during session creation', {
-      error: insertError,
-      errorMessage: insertError?.message,
-      errorStack: insertError?.stack,
-      errorName: insertError?.name,
-      sessionId: payload.id,
-      userId: session.user.id,
-      paperName: payload.paperName,
-    });
     return NextResponse.json(
       {
         error: 'Failed to create session',
@@ -286,14 +244,6 @@ export async function PATCH(request: Request) {
     .maybeSingle();
 
   if (error) {
-    console.error('[papers:PATCH] failed updating session', {
-      error,
-      errorCode: error.code,
-      errorMessage: error.message,
-      errorDetails: error.details,
-      sessionId: payload.id,
-      userId: session.user.id,
-    });
     return NextResponse.json(
       { error: 'Failed to update session', details: error.message },
       { status: 500 },
@@ -327,7 +277,6 @@ export async function GET(request: Request) {
       .maybeSingle();
 
     if (error) {
-      console.error('[papers] failed retrieving session', error);
       return NextResponse.json(
         { error: 'Failed to load session' },
         { status: 500 },
@@ -353,13 +302,6 @@ export async function GET(request: Request) {
   const { data, error } = await query;
 
   if (error) {
-    console.error('[papers:GET] failed listing sessions', {
-      error,
-      errorCode: error.code,
-      errorMessage: error.message,
-      userId: session.user.id,
-      inProgress,
-    });
     return NextResponse.json(
       { error: 'Failed to load sessions' },
       { status: 500 },
@@ -387,7 +329,6 @@ export async function DELETE(request: Request) {
     .eq('user_id', session.user.id);
 
   if (error) {
-    console.error('[papers] failed deleting all sessions', error);
     return NextResponse.json(
       { error: 'Failed to delete sessions' },
       { status: 500 },

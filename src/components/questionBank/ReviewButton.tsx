@@ -14,9 +14,6 @@ export function ReviewButton({ questionId, onReviewed }: ReviewButtonProps) {
   const [error, setError] = useState<string | null>(null);
 
   const handleMarkAsReviewed = async () => {
-    console.log('[ReviewButton] Starting review for question ID:', questionId);
-    console.log('[ReviewButton] Question ID type:', typeof questionId);
-    console.log('[ReviewButton] Question ID length:', questionId?.length);
     
     setIsSubmitting(true);
     setError(null);
@@ -27,7 +24,6 @@ export function ReviewButton({ questionId, onReviewed }: ReviewButtonProps) {
     // Update in background
     try {
       const url = `/api/question-bank/questions/${questionId}`;
-      console.log('[ReviewButton] Fetching URL:', url);
       
       const response = await fetch(url, {
         method: 'PATCH',
@@ -37,21 +33,14 @@ export function ReviewButton({ questionId, onReviewed }: ReviewButtonProps) {
         body: JSON.stringify({ status: 'approved' }),
       });
       
-      console.log('[ReviewButton] Response status:', response.status);
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('[ReviewButton] Failed to update:', errorData);
-        console.error('[ReviewButton] Response status:', response.status);
-        console.error('[ReviewButton] Response headers:', response.headers);
         throw new Error(errorData.error || 'Failed to mark as reviewed');
       }
 
       const successData = await response.json();
-      console.log('[ReviewButton] Successfully approved question:', questionId);
-      console.log('[ReviewButton] Response data:', successData);
     } catch (err) {
-      console.error('[ReviewButton] Error:', err);
       setError(err instanceof Error ? err.message : 'Failed to mark as reviewed');
       setTimeout(() => setError(null), 3000);
     } finally {

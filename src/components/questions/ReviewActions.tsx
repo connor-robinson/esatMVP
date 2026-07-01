@@ -27,7 +27,6 @@ export function ReviewActions({
       setStatus(newStatus);
       setNotes("");
     } catch (error) {
-      console.error("Error updating status:", error);
       alert("Failed to update status. Please try again.");
     } finally {
       setIsUpdating(false);

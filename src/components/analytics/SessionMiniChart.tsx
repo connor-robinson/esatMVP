@@ -37,7 +37,7 @@ const CustomTooltip = ({ active, payload }: any) => {
         <div className="space-y-1.5">
           <div className="flex items-center justify-between gap-4">
             <span className="text-xs text-text-muted">Accuracy:</span>
-            <span className="text-xs font-bold text-accent">{payload[0].value.toFixed(1)}%</span>
+            <span className="text-xs font-bold text-success">{payload[0].value.toFixed(1)}%</span>
           </div>
           <div className="flex items-center justify-between gap-4">
             <span className="text-xs text-text-muted">Speed:</span>

@@ -80,7 +80,6 @@ export async function POST(request: NextRequest) {
       .map(result => result.reason);
 
     if (errors.length > 0) {
-      console.error('[Reset API] Errors during deletion:', errors);
       // Continue anyway - some deletions may have succeeded
     }
 
@@ -92,7 +91,6 @@ export async function POST(request: NextRequest) {
       .map(response => response.error);
 
     if (dbErrors.length > 0) {
-      console.error('[Reset API] Database errors:', dbErrors);
       return NextResponse.json(
         { error: 'Some data could not be deleted. Please try again or contact support.' },
         { status: 500 }
@@ -101,7 +99,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, message: 'All user data has been reset' });
   } catch (error) {
-    console.error('[Reset API] Unexpected error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

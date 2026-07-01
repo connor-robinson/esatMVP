@@ -32,16 +32,6 @@ export function SectionSelector({
 }: SectionSelectorProps) {
   const showWarning = maxSelections && selectedSections.length > maxSelections;
   try {
-    console.debug('[SectionSelector] props', {
-      sections,
-      selectedSections,
-      completedSections,
-      multiSelect,
-      maxSelections,
-      warningMessage,
-      showPartInfo,
-      partInfoKeys: Object.keys(partInfo || {})
-    });
   } catch {}
   
   return (

@@ -46,7 +46,6 @@ export async function GET(request: NextRequest) {
         });
       }
       
-      console.error('[Preferences API] Error fetching preferences:', profileError);
       return NextResponse.json(
         { error: 'Failed to fetch preferences' },
         { status: 500 }
@@ -55,7 +54,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(profile);
   } catch (error) {
-    console.error('[Preferences API] Unexpected error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -240,7 +238,6 @@ export async function PATCH(request: NextRequest) {
       .single();
 
     if (profileError) {
-      console.error('[Preferences API] Error updating preferences:', profileError);
       
       // Provide more specific error messages
       let errorMessage = 'Failed to update preferences';
@@ -258,7 +255,6 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json(profile);
   } catch (error) {
-    console.error('[Preferences API] Unexpected error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

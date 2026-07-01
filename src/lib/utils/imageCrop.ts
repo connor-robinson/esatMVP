@@ -137,7 +137,6 @@ export async function cropImageToContent(
         const croppedDataUrl = croppedCanvas.toDataURL('image/png');
         resolve(croppedDataUrl);
       } catch (error) {
-        console.warn('Image cropping failed:', error);
         resolve(imageSrc); // Return original on error
       }
     };

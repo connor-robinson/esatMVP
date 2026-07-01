@@ -22,7 +22,6 @@ export async function POST(request: NextRequest) {
     const limitParam = searchParams.get('limit');
     const limit = limitParam ? parseInt(limitParam, 10) : undefined;
 
-    console.log(`[Fix Fractions] Starting ${dryRun ? 'DRY RUN' : 'FIX'} mode`);
 
     // Fetch all questions
     let query = supabase
@@ -36,7 +35,6 @@ export async function POST(request: NextRequest) {
     const { data: questions, error: queryError } = await query;
 
     if (queryError) {
-      console.error('[Fix Fractions] Error fetching questions:', queryError);
       return NextResponse.json(
         { error: 'Failed to fetch questions from database' },
         { status: 500 }
@@ -52,7 +50,6 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    console.log(`[Fix Fractions] Found ${(questions as any[]).length} questions to check`);
 
     // Check each question
     const questionsNeedingFix: Array<{
@@ -76,7 +73,6 @@ export async function POST(request: NextRequest) {
         try {
           parsedOptions = JSON.parse(options);
         } catch {
-          console.warn(`[Fix Fractions] Could not parse options for question ${question.id}`);
           continue;
         }
       } else {
@@ -115,7 +111,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    console.log(`[Fix Fractions] Found ${questionsNeedingFix.length} questions needing fix`);
 
     const result = {
       totalQuestions: (questions as any[]).length,
@@ -138,7 +133,6 @@ export async function POST(request: NextRequest) {
 
     // Apply fixes
     if (questionsNeedingFix.length > 0) {
-      console.log(`[Fix Fractions] Applying fixes to ${questionsNeedingFix.length} questions...`);
 
       for (const questionData of questionsNeedingFix) {
         try {
@@ -148,20 +142,11 @@ export async function POST(request: NextRequest) {
             .eq('id', questionData.id);
 
           if (updateError) {
-            console.error(
-              `[Fix Fractions] Error updating question ${questionData.generation_id}:`,
-              updateError
-            );
           }
         } catch (error) {
-          console.error(
-            `[Fix Fractions] Unexpected error updating question ${questionData.generation_id}:`,
-            error
-          );
         }
       }
 
-      console.log(`[Fix Fractions] Done! Fixed ${questionsNeedingFix.length} questions`);
     }
 
     return NextResponse.json({
@@ -169,7 +154,6 @@ export async function POST(request: NextRequest) {
       message: `Successfully fixed ${questionsNeedingFix.length} questions`,
     });
   } catch (error) {
-    console.error('[Fix Fractions] Unexpected error:', error);
     return NextResponse.json(
       { error: 'Internal server error', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }

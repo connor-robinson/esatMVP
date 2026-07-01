@@ -58,7 +58,6 @@ export async function POST(request: Request) {
     .single();
 
   if (sessionError || !sessionRow) {
-    console.error("[fermi/sessions] upsert failed", sessionError);
     return NextResponse.json({ error: "Failed to save session" }, { status: 500 });
   }
 
@@ -81,7 +80,6 @@ export async function POST(request: Request) {
     .insert(guessRows);
 
   if (guessesError) {
-    console.error("[fermi/sessions] guesses insert failed", guessesError);
     return NextResponse.json({ error: "Failed to save guesses" }, { status: 500 });
   }
 

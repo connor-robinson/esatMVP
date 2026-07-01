@@ -72,7 +72,6 @@ export function SessionPersistenceHandler() {
     // Process retry queue every 30 seconds
     const retryInterval = setInterval(() => {
       processPendingPersists().catch((error) => {
-        console.error('[SessionPersistenceHandler] Failed to process retry queue:', error);
       });
     }, 30000); // 30 seconds
 

@@ -73,7 +73,6 @@ export default function PapersAnalyticsPage() {
       await loadSessionFromDatabase(sessionId);
       router.push('/past-papers/mark');
     } catch (error) {
-      console.error('Failed to load session:', error);
     }
   };
 
@@ -89,20 +88,19 @@ export default function PapersAnalyticsPage() {
       await deletePaperSession(sessionId);
       setSessions((prev) => prev.filter((s) => s.id !== sessionId));
     } catch (error) {
-      console.error('Failed to delete session:', error);
       alert('Failed to delete session. Please try again.');
     }
   };
 
   const handleClearAllSessions = async () => {
     if (!session?.user) return;
-    const response = await fetch('/api/past-papers/sessions', {
-      method: 'DELETE',
-    });
-    if (!response.ok) {
-      throw new Error('Failed to clear sessions');
-    }
-    setSessions([]);
+      const response = await fetch('/api/past-papers/sessions', {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error('Failed to clear sessions');
+      }
+      setSessions([]);
   };
 
   if (loading) {

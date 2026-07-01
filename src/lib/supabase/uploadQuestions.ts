@@ -25,7 +25,6 @@ export async function uploadQuestionsToSupabase({
   solutions = {}
 }: UploadQuestionsParams) {
   try {
-    console.log(`Starting upload for ${paperType} ${sectionName}...`);
     
     const uploadedQuestions = [];
     
@@ -36,11 +35,9 @@ export async function uploadQuestionsToSupabase({
       const page = pages[crop.pageNumber - 1];
       
       if (!answer || !page) {
-        console.warn(`Skipping question ${crop.questionNumber} - missing data`);
         continue;
       }
       
-      console.log(`Uploading question ${crop.questionNumber}...`);
       
       try {
         // 1. Crop the question image from the PDF page
@@ -110,15 +107,12 @@ export async function uploadQuestionsToSupabase({
         const question = null; // await createQuestion(questionData);
         uploadedQuestions.push(question);
         
-        console.log(`✓ Question ${crop.questionNumber} uploaded successfully`);
         
       } catch (error) {
-        console.error(`Error uploading question ${crop.questionNumber}:`, error);
         // Continue with other questions
       }
     }
     
-    console.log(`✓ Upload complete! ${uploadedQuestions.length} questions uploaded`);
     
     return {
       success: true,
@@ -127,7 +121,6 @@ export async function uploadQuestionsToSupabase({
     };
     
   } catch (error) {
-    console.error('Upload failed:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error'

@@ -85,16 +85,6 @@ export async function POST(request: NextRequest) {
     }
 
     // Insert the attempt
-    console.log('[Attempt API] Saving attempt:', {
-      userId: session.user.id,
-      questionId: question_id,
-      userAnswer: user_answer,
-      isCorrect: is_correct,
-      timeSpentMs: time_spent_ms,
-      wasRevealed: was_revealed,
-      usedHint: used_hint,
-      wrongAnswersBefore: wrong_answers_before
-    });
     
     const { data: attempt, error: insertError } = await supabase
       .from('question_bank_attempts')
@@ -116,15 +106,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (insertError) {
-      console.error('[Attempt API] Error inserting attempt:', {
-        error: insertError,
-        code: insertError.code,
-        message: insertError.message,
-        details: insertError.details,
-        hint: insertError.hint,
-        userId: session.user.id,
-        questionId: question_id
-      });
       return NextResponse.json(
         { 
           error: 'Failed to save attempt',
@@ -134,11 +115,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('[Attempt API] Successfully saved attempt:', {
-      attemptId: attempt ? (attempt as any).id : null,
-      questionId: question_id,
-      userId: session.user.id
-    });
 
     // Fetch updated stats for today
     const today = new Date().toISOString().split('T')[0];
@@ -150,7 +126,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (metricsError && metricsError.code !== 'PGRST116') {
-      console.error('[Attempt API] Error fetching metrics:', metricsError);
     }
 
     return NextResponse.json({
@@ -163,7 +138,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('[Attempt API] Unexpected error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -207,7 +181,6 @@ export async function GET(request: NextRequest) {
     const { data, error } = await query;
 
     if (error) {
-      console.error('[Attempt API] Error fetching attempts:', error);
       return NextResponse.json(
         { error: 'Failed to fetch attempts' },
         { status: 500 }
@@ -219,7 +192,6 @@ export async function GET(request: NextRequest) {
       count: data?.length || 0,
     });
   } catch (error) {
-    console.error('[Attempt API] Unexpected error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

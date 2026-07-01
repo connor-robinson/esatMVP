@@ -61,7 +61,6 @@ export async function middleware(request: NextRequest) {
 
     return NextResponse.next();
   } catch (error) {
-    console.error('[Middleware] Error:', error);
     return NextResponse.next();
   }
 }

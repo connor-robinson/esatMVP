@@ -292,7 +292,6 @@ export default function PapersPlanPage() {
         await loadQuestions(paper.id);
         router.push('/past-papers/solve');
       } catch (err) {
-        console.error('[plan] Error starting session:', err);
         setError(
           err instanceof Error ? err.message : 'Failed to start session',
         );

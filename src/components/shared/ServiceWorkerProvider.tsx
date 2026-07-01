@@ -45,13 +45,11 @@ export function ServiceWorkerProvider() {
         if ("caches" in window) {
           caches.keys().then((keys) => keys.forEach((k) => caches.delete(k)));
         }
-        console.info("[SW] Disabled in development. Cleared registrations and caches.");
       }
     }
   }, []);
 
   return null;
 }
-
 
 

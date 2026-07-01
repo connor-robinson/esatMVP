@@ -72,10 +72,6 @@ export function PaperSessionFolder({
         return next;
       });
     } catch (error) {
-      console.error(
-        `[PaperSessionFolder] Error loading sections for paper ${paper.id}:`,
-        error
-      );
     } finally {
       setLoadingSections((prev) => {
         const next = new Set(prev);

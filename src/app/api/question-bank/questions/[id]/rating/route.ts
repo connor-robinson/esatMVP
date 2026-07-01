@@ -47,7 +47,6 @@ export async function GET(
     const body: QuestionRatingResponse = { average, count, ...(userRating !== undefined && { userRating }) };
     return NextResponse.json(body);
   } catch (error) {
-    console.error('[Rating API] GET error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -90,7 +89,6 @@ export async function POST(
       );
 
     if (upsertError) {
-      console.error('[Rating API] POST upsert error:', upsertError);
       return NextResponse.json({ error: 'Failed to save rating' }, { status: 500 });
     }
 
@@ -112,7 +110,6 @@ export async function POST(
       userRating: rating,
     } as QuestionRatingResponse);
   } catch (error) {
-    console.error('[Rating API] POST error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

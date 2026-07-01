@@ -247,7 +247,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       startSession: async (config) => {
         // Validate questionRange
         if (!config.questionRange || config.questionRange.end < config.questionRange.start || config.questionRange.start < 1) {
-          console.error('[startSession] Invalid questionRange', config.questionRange);
           return;
         }
         
@@ -271,18 +270,12 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                       id: session.id,
                       endedAt: now,
                     }),
-                  }).catch(err => {
-                    console.error('[startSession] Failed to end existing session:', err);
-                  })
+                  }).catch(() => {})
                 )
-              );
-              console.log(
-                `[startSession] Ended ${inProgressSessions.length} existing in-progress session(s) before starting new one`,
               );
             }
           }
         } catch (error) {
-          console.warn('[startSession] Failed to check/end existing sessions:', error);
           // Continue with starting new session even if cleanup fails
         }
         
@@ -408,33 +401,9 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               const errorData = await response.json().catch(() => ({}));
               if (response.status === 401) {
                 // User not authenticated - session will work locally but won't be saved to server
-                console.warn("[papers] Session creation skipped: User not authenticated. Session will work locally.");
                 return;
               }
               // Enhanced error logging
-              console.error("[papers] Failed to create session - API Error:", {
-                status: response.status,
-                statusText: response.statusText,
-                errorData: errorData,
-                errorCode: errorData.code,
-                errorDetails: errorData.details,
-                errorHint: errorData.hint,
-                payload: {
-                  id: payload.id,
-                  paperName: payload.paperName,
-                  paperVariant: payload.paperVariant,
-                  sessionName: payload.sessionName,
-                  timeLimitMinutes: payload.timeLimitMinutes,
-                  questionRange: payload.questionRange,
-                  arrayLengths: {
-                    answers: payload.answers?.length,
-                    correctFlags: payload.correctFlags?.length,
-                    guessedFlags: payload.guessedFlags?.length,
-                    mistakeTags: payload.mistakeTags?.length,
-                    perQuestionSec: payload.perQuestionSec?.length,
-                  }
-                }
-              });
               throw new Error(errorData.error || "Failed to create paper session");
             }
             const result = await response.json().catch(() => ({}));
@@ -443,8 +412,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           .catch((error) => {
             // Only log non-401 errors as errors, 401 is expected for unauthenticated users
             if (!error.message?.includes("401") && !error.message?.includes("not authenticated")) {
-              console.error("[papers] failed to create session", error);
-              console.error("[papers] Error stack:", error.stack);
             }
           })
           .finally(() => {
@@ -498,10 +465,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                           try {
                             return await getQuestions(paper.id);
                           } catch (error) {
-                            console.warn(
-                              `[loadQuestions] Failed to load sibling paper questions for paper ${paper.id}`,
-                              error,
-                            );
                             return [];
                           }
                         }),
@@ -514,7 +477,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                       allQuestions = Array.from(mergedById.values());
                     }
                   } catch (error) {
-                    console.warn('[loadQuestions] Failed to merge sibling papers', error);
                   }
                 }
               }
@@ -535,12 +497,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                 const examYear = allQuestions[0].examYear;
                 
                 if (examType === 'specimen') {
-                  console.warn('[loadQuestions] ⚠️ WARNING: Loading Specimen paper instead of Official!', {
-                    examName,
-                    examYear,
-                    paperId,
-                    paperName: state.paperName
-                  });
                 }
               }
               
@@ -635,14 +591,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                   return isBogusPartLetter(q.partLetter) && (q.partLetter ?? '').trim().toUpperCase() === 'SECTION';
                 });
                 if (sectionQuestions.length > 0) {
-                  console.error(`[loadQuestions] ⚠️⚠️⚠️ CRITICAL: Found ${sectionQuestions.length} questions with "SECTION" after filtering!`, 
-                    sectionQuestions.map(q => ({
-                      questionNumber: q.questionNumber,
-                      partLetter: q.partLetter,
-                      partName: q.partName,
-                      id: q.id
-                    }))
-                  );
                 }
               } else {
                 // For other papers, still filter out "SECTION" parts as they're invalid
@@ -709,7 +657,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                 filteredQuestions = filteredQuestions.filter((q) => {
                   const section = sectionByQuestionId.get(q.id);
                   if (!section) {
-                    console.warn(`[loadQuestions] Question ${q.questionNumber} has no section mapping`);
                     return false;
                   }
                   const normalizedSection = String(section).trim();
@@ -731,11 +678,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                   const filteredHasPaper2 = filteredSectionCounts.has('Paper 2');
                   
                   if (hasPaper1 && hasPaper2 && (!filteredHasPaper1 || !filteredHasPaper2)) {
-                    console.error('[loadQuestions] ⚠️ BUG DETECTED: Both Paper 1 and Paper 2 selected, but filtered results missing one!', {
-                      selected: { hasPaper1, hasPaper2 },
-                      filtered: { hasPaper1: filteredHasPaper1, hasPaper2: filteredHasPaper2 },
-                      counts: Object.fromEntries(filteredSectionCounts)
-                    });
                   }
                 }
               }
@@ -782,10 +724,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                         ? question
                         : { ...question, questionImage: trimmedImage };
                     } catch (error) {
-                      console.warn('[loadQuestions] TMUA 2017 footer trim failed', {
-                        questionNumber: question.questionNumber,
-                        error,
-                      });
                       return question;
                     }
                   })
@@ -866,14 +804,12 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                   // Warn if any section has no questions
                   groupedInfo.forEach((info) => {
                     if (info.count === 0) {
-                      console.warn(`[loadQuestions] Section "${info.section}" has no questions!`);
                     }
                   });
                   
                   // Verify total questions match
                   const totalGrouped = allSectionsQuestions.reduce((sum, qs) => sum + qs.length, 0);
                   if (totalGrouped !== processedQuestions.length) {
-                    console.error(`[loadQuestions] Question count mismatch: grouped ${totalGrouped}, total ${processedQuestions.length}`);
                   }
                 } else {
                   // If no selected sections, put all questions in one section
@@ -963,10 +899,8 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                   finalState.setSectionInstructionTimer(60);
                 }
               } else if (finalState.selectedSections.length > 0) {
-                console.warn('[loadQuestions] Section mode active but allSectionsQuestions is empty. Questions may not be properly grouped.');
               }
             } catch (error) {
-              console.error('Error loading questions:', error);
               set({
                 questionsError: error instanceof Error ? error.message : 'Failed to load questions',
                 questionsLoading: false
@@ -1172,7 +1106,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           try {
             await deleteSession(state.sessionId);
           } catch (error) {
-            console.error('[paperSessionStore] Failed to delete session from IndexedDB:', error);
           }
         }
         
@@ -1207,17 +1140,9 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             
             if (!response.ok) {
               const errorText = await response.text();
-              console.error('[resetSession] Failed to mark session as ended:', {
-                status: response.status,
-                statusText: response.statusText,
-                errorText,
-                sessionId: sessionIdToQuit
-              });
             } else {
-              console.log('[resetSession] Successfully marked session as ended:', sessionIdToQuit);
             }
           } catch (error) {
-            console.error('[resetSession] Failed to end session in database:', error);
             // Continue with reset even if database update fails
           }
         }
@@ -1226,9 +1151,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         if (sessionIdToQuit) {
           try {
             await deleteSession(sessionIdToQuit);
-            console.log('[resetSession] Successfully deleted session from IndexedDB:', sessionIdToQuit);
           } catch (error) {
-            console.error('[paperSessionStore] Failed to delete session from IndexedDB on reset:', error);
             // Continue with reset even if IndexedDB deletion fails
           }
         }
@@ -1307,7 +1230,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         const timer = setTimeout(() => {
           get()
             .persistSessionToServer()
-            .catch((error) => console.error("[papers] scheduled persist failed", error));
+            .catch(() => {});
           set({ persistTimer: null });
         }, 800);
         set({ persistTimer: timer });
@@ -1335,7 +1258,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           // Validate questionRange from database
           let validQuestionRange = questionRange;
           if (questionRange.end < questionRange.start || questionRange.start < 1) {
-            console.error('[loadSessionFromDatabase] Invalid questionRange from database', questionRange);
+            
             validQuestionRange = { start: 1, end: 1 };
           }
           const totalQuestions = validQuestionRange.end - validQuestionRange.start + 1;
@@ -1463,7 +1386,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             }
           }
         } catch (error) {
-          console.error('[paperSessionStore] Failed to load session from database', error);
+          
           throw error;
         }
       },
@@ -1507,7 +1430,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
 
         // Validate questionRange before calculating totalQuestions
         if (!state.questionRange || state.questionRange.end < state.questionRange.start || state.questionRange.start < 1) {
-          console.error('[persistSessionToServer] Invalid questionRange', state.questionRange);
+          
           return;
         }
 
@@ -1552,18 +1475,12 @@ export const usePaperSessionStore = create<PaperSessionState>()(
 
             if (!response.ok) {
               const errorText = await response.text();
-              console.error('[persistSessionToServer] Persist failed', {
-                status: response.status,
-                statusText: response.statusText,
-                errorText,
-                retry
-              });
+              
               
               // Retry logic: exponential backoff (max 3 retries)
               if (retry < 3 && response.status >= 500) {
                 // Only retry on server errors (5xx), not client errors (4xx)
                 const delay = Math.min(1000 * Math.pow(2, retry), 5000); // 1s, 2s, 4s, max 5s
-                console.log(`[persistSessionToServer] Retrying in ${delay}ms (attempt ${retry + 1}/3)`);
                 await new Promise(resolve => setTimeout(resolve, delay));
                 return get().persistSessionToServer({ immediate: true, retry: retry + 1 });
               } else if (retry < 3) {
@@ -1572,7 +1489,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                 const queue = [...currentState.pendingPersistQueue];
                 queue.push({ payload, retries: retry + 1, timestamp: Date.now() });
                 set({ pendingPersistQueue: queue });
-                console.log('[persistSessionToServer] Queued for retry', { queueLength: queue.length });
               } else {
                 throw new Error(`Persist failed with status ${response.status}: ${errorText}`);
               }
@@ -1593,9 +1509,8 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               const queue = [...currentState.pendingPersistQueue];
               queue.push({ payload, retries: retry + 1, timestamp: Date.now() });
               set({ pendingPersistQueue: queue });
-              console.log('[persistSessionToServer] Network error, queued for retry', error);
             } else {
-              console.error('[persistSessionToServer] Max retries exceeded', error);
+              
               throw error;
             }
           }
@@ -1645,15 +1560,15 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                 });
                 
                 if (!drillResponse.ok) {
-                  console.error("[papers] failed creating drill items", await drillResponse.text());
+                  
                 }
               } catch (drillError) {
-                console.error("[papers] failed creating drill items", drillError);
+                
               }
             }
           }
         } catch (error) {
-          console.error("[papers] failed updating session", error);
+          
         }
       },
       
@@ -1706,7 +1621,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               set({ pendingPersistQueue: updated });
             }
           } catch (error) {
-            console.error('[processPendingPersists] Failed to retry persist:', error);
+            
             // Increment retries
             const currentState = get();
             const updated = currentState.pendingPersistQueue.map(q =>
@@ -2033,7 +1948,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         
         // Persist immediately to ensure state is saved
         get().persistSessionToServer({ immediate: true }).catch((error) => {
-          console.error("[paperSessionStore] Failed to persist on resume:", error);
+          
         });
       },
       
@@ -2127,10 +2042,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               invalidateCache(supabaseSession.user.id);
             }
           } catch (error) {
-            console.warn(
-              "[finishMarkSession] completion cache update failed",
-              error,
-            );
           }
         }
 
@@ -2193,7 +2104,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             pausedAt: updatedState.pausedAt,
           });
         } catch (error) {
-          console.error('[paperSessionStore] Failed to save session to IndexedDB:', error);
+          
         }
       },
       
@@ -2357,7 +2268,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             finalState.navigateToQuestion(targetIndex);
           }
         } catch (error) {
-          console.error('[paperSessionStore] Failed to load session from IndexedDB:', error);
+          
           throw error;
         }
       },

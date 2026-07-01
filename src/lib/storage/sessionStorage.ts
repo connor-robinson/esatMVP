@@ -91,7 +91,6 @@ export async function saveSession(sessionId: string, state: any, metadata: {
       request.onerror = () => reject(request.error);
     });
   } catch (error) {
-    console.error('[sessionStorage] Failed to save session:', error);
     throw error;
   }
 }
@@ -115,7 +114,6 @@ export async function loadSession(sessionId: string): Promise<SessionData | null
       };
     });
   } catch (error) {
-    console.error('[sessionStorage] Failed to load session:', error);
     return null;
   }
 }
@@ -135,7 +133,6 @@ export async function deleteSession(sessionId: string): Promise<void> {
       request.onerror = () => reject(request.error);
     });
   } catch (error) {
-    console.error('[sessionStorage] Failed to delete session:', error);
     throw error;
   }
 }
@@ -179,7 +176,6 @@ export async function hasActiveSession(): Promise<string | null> {
       };
     });
   } catch (error) {
-    console.error('[sessionStorage] Failed to check for active session:', error);
     return null;
   }
 }
@@ -216,7 +212,6 @@ export async function findActiveSession(): Promise<{ sessionId: string; source: 
         }
       }
     } catch (dbError) {
-      console.warn('[findActiveSession] Failed to check database:', dbError);
       // Continue with IndexedDB result if database check fails
     }
     
@@ -240,7 +235,6 @@ export async function findActiveSession(): Promise<{ sessionId: string; source: 
             }
           }
         } catch (checkError) {
-          console.warn('[findActiveSession] Failed to verify session status:', checkError);
         }
         // Prefer IndexedDB when same session: it has full UI state (currentSectionIndex,
         // sectionInstructionTimer, etc.). Database doesn't store section/instruction position,
@@ -249,15 +243,10 @@ export async function findActiveSession(): Promise<{ sessionId: string; source: 
         return { sessionId: databaseSessionId, source: 'indexeddb' };
       } else {
         // Different sessions - prefer database (more authoritative)
-        console.warn('[findActiveSession] Session mismatch:', {
-          indexedDB: indexedDBSessionId,
-          database: databaseSessionId
-        });
         // Clean up IndexedDB session if it doesn't exist in database
         try {
           await deleteSession(indexedDBSessionId);
         } catch (deleteError) {
-          console.error('[findActiveSession] Failed to clean up IndexedDB session:', deleteError);
         }
         // Verify database session is not ended
         try {
@@ -272,7 +261,6 @@ export async function findActiveSession(): Promise<{ sessionId: string; source: 
             }
           }
         } catch (checkError) {
-          console.warn('[findActiveSession] Failed to verify database session:', checkError);
         }
         return { sessionId: databaseSessionId, source: 'database' };
       }
@@ -291,7 +279,6 @@ export async function findActiveSession(): Promise<{ sessionId: string; source: 
           }
         }
       } catch (checkError) {
-        console.warn('[findActiveSession] Failed to verify database session:', checkError);
       }
       return { sessionId: databaseSessionId, source: 'database' };
     } else if (indexedDBSessionId) {
@@ -315,7 +302,6 @@ export async function findActiveSession(): Promise<{ sessionId: string; source: 
           return null;
         }
       } catch (checkError) {
-        console.warn('[findActiveSession] Failed to verify IndexedDB session:', checkError);
         // If we can't verify, don't restore it (safer to not restore than to restore incorrectly)
         return null;
       }
@@ -324,7 +310,6 @@ export async function findActiveSession(): Promise<{ sessionId: string; source: 
     
     return null;
   } catch (error) {
-    console.error('[findActiveSession] Failed to find active session:', error);
     return null;
   }
 }
@@ -348,7 +333,6 @@ export async function getAllSessions(): Promise<SessionData[]> {
       };
     });
   } catch (error) {
-    console.error('[sessionStorage] Failed to get all sessions:', error);
     return [];
   }
 }

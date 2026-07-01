@@ -130,7 +130,6 @@ async function fetchTopicProgress(
     .eq("user_id", userId);
 
   if (error) {
-    console.error("[analytics] failed to load topic progress", error);
     return null;
   }
 
@@ -249,7 +248,6 @@ async function fetchDailyMetrics(
     .order("metric_date", { ascending: true });
 
   if (error) {
-    console.error("[analytics] failed to load daily metrics", error);
     // Generate fake data if there's an error or no data
     return generateFakePerformanceData(days);
   }
@@ -329,7 +327,6 @@ async function fetchTodayYesterdayMetrics(
     .order("metric_date", { ascending: false });
 
   if (error) {
-    console.error("[analytics] failed to load today/yesterday metrics", error);
     return { today: null, yesterday: null };
   }
 
@@ -381,7 +378,6 @@ async function fetchRecentSessions(
     .limit(limit);
 
   if (error) {
-    console.error("[fetchRecentSessions] Error fetching sessions:", error);
     return [];
   }
 
@@ -423,7 +419,6 @@ async function fetchRecentSessions(
   const typedDrillSessionsData = (drillSessionsData || []) as DrillSessionData[];
 
   if (attemptsError) {
-    console.error("[fetchRecentSessions] Error fetching attempts:", attemptsError);
   }
 
   // Create a map of builder_session_id -> drill_session data
@@ -704,7 +699,6 @@ export default function AnalyticsPage() {
         .eq("id", sessionId)
         .eq("user_id", uid);
       if (error) {
-        console.error("[analytics] delete session:", error);
         alert(error.message || "Could not delete session.");
         throw error;
       }
@@ -722,7 +716,6 @@ export default function AnalyticsPage() {
       .eq("user_id", uid)
       .not("ended_at", "is", null);
     if (error) {
-      console.error("[analytics] clear sessions:", error);
       alert(error.message || "Could not clear history.");
       throw error;
     }

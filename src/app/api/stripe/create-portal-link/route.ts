@@ -26,7 +26,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ url: session.url });
   } catch (err) {
-    console.error("[create-portal-link]", err);
     return NextResponse.json(
       { error: "Failed to create portal session" },
       { status: 500 }

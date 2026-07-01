@@ -195,7 +195,6 @@ export async function GET(request: NextRequest) {
 
       const { data, error } = await query;
       if (error) {
-        console.error("[library-outline] query error:", error);
         return NextResponse.json(
           { error: "Failed to load outline" },
           { status: 500 },
@@ -249,7 +248,6 @@ export async function GET(request: NextRequest) {
       tags,
     });
   } catch (e) {
-    console.error("[library-outline]", e);
     return NextResponse.json(
       { error: "Failed to load outline" },
       { status: 500 },

@@ -81,7 +81,6 @@ export async function POST(
           .eq('question_id', questionId)
           .eq('user_id', user.id);
         if (delError) {
-          console.error('[Dislike API] DELETE error:', delError);
           return NextResponse.json(
             { error: 'Failed to remove report' },
             { status: 500 },
@@ -100,7 +99,6 @@ export async function POST(
         .eq('question_id', questionId)
         .eq('user_id', user.id);
       if (updError) {
-        console.error('[Dislike API] UPDATE error:', updError);
         return NextResponse.json(
           { error: 'Failed to update report' },
           { status: 500 },
@@ -115,7 +113,6 @@ export async function POST(
           reason,
         });
       if (insError) {
-        console.error('[Dislike API] INSERT error:', insError);
         return NextResponse.json(
           { error: 'Failed to submit report' },
           { status: 500 },
@@ -126,7 +123,6 @@ export async function POST(
     const responseBody = await buildFeedbackResponse(supabase, questionId, user.id);
     return NextResponse.json(responseBody);
   } catch (error) {
-    console.error('[Dislike API] POST error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

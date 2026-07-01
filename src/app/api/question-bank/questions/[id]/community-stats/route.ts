@@ -48,7 +48,6 @@ export async function GET(
       .eq("question_id", questionId);
 
     if (error) {
-      console.error("[Community-stats API] Error:", error);
       return NextResponse.json(
         { error: "Failed to fetch community stats" },
         { status: 500 }
@@ -98,7 +97,6 @@ export async function GET(
     };
     return NextResponse.json(stats);
   } catch (err) {
-    console.error("[Community-stats API] Unexpected error:", err);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

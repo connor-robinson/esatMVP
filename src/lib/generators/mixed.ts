@@ -26,7 +26,6 @@ export function generateQuestionForTopic(
   const generator = GENERATORS[topicId];
 
   if (!generator) {
-    console.warn(`[generateQuestionForTopic] No generator found for topic: ${topicId}`);
     return {
       id: cryptoRandomId(),
       topicId,
@@ -38,7 +37,6 @@ export function generateQuestionForTopic(
   }
 
   if (typeof generator !== "function") {
-    console.error(`[generateQuestionForTopic] Generator for topic ${topicId} is not a function`);
     return {
       id: cryptoRandomId(),
       topicId,
@@ -58,7 +56,6 @@ export function generateQuestionForTopic(
       difficulty: level,
     };
   } catch (error) {
-    console.error(`[generateQuestionForTopic] Error generating question for topic ${topicId}:`, error);
     return {
       id: cryptoRandomId(),
       topicId,

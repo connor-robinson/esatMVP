@@ -124,32 +124,3 @@ export function generateFactoriseQuadratic(
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -36,11 +36,7 @@ export async function cleanupStaleSessions(daysInactive: number = 7): Promise<nu
 
     if (fetchError) {
       if (isBenignSchemaError(fetchError)) {
-        console.warn(
-          '[sessionCleanup] Skipping cleanup — database schema not fully migrated',
-        );
       } else {
-        console.error('[sessionCleanup] Failed to fetch stale sessions:', fetchError);
       }
       return 0;
     }
@@ -60,19 +56,13 @@ export async function cleanupStaleSessions(daysInactive: number = 7): Promise<nu
 
     if (updateError) {
       if (isBenignSchemaError(updateError)) {
-        console.warn(
-          '[sessionCleanup] Skipping cleanup — database schema not fully migrated',
-        );
       } else {
-        console.error('[sessionCleanup] Failed to mark sessions as ended:', updateError);
       }
       return 0;
     }
 
-    console.log(`[sessionCleanup] Marked ${sessionIds.length} stale sessions as ended`);
     return sessionIds.length;
   } catch (error) {
-    console.error('[sessionCleanup] Error during cleanup:', error);
     return 0;
   }
 }
@@ -88,10 +78,8 @@ export async function runCleanupOnLoad(): Promise<void> {
   try {
     // Run cleanup in background (don't block)
     cleanupStaleSessions(7).catch((error) => {
-      console.error('[sessionCleanup] Background cleanup failed:', error);
     });
   } catch (error) {
-    console.error('[sessionCleanup] Failed to run cleanup:', error);
   }
 }
 

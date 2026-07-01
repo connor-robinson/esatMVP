@@ -33,7 +33,6 @@ export async function GET(request: NextRequest) {
       .limit(limit);
 
     if (error) {
-      console.error('[QB Sessions] list error:', error);
       return NextResponse.json(
         { error: 'Failed to load sessions' },
         { status: 500 },
@@ -42,7 +41,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ sessions: data ?? [] });
   } catch (err) {
-    console.error('[QB Sessions] GET error:', err);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },
@@ -92,7 +90,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('[QB Sessions] create error:', error);
       return NextResponse.json(
         { error: 'Failed to create session' },
         { status: 500 },
@@ -101,7 +98,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ session: data });
   } catch (err) {
-    console.error('[QB Sessions] POST error:', err);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },

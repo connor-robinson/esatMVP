@@ -22,7 +22,6 @@ async function fetchTopicProgress(
     .eq("user_id", userId);
 
   if (error) {
-    console.error("[topics-overview] failed to load topic progress", error);
     return null;
   }
 

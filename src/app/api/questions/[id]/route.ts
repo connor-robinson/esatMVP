@@ -24,7 +24,6 @@ export async function GET(
           { status: 404 }
         );
       }
-      console.error("Error fetching question:", error);
       return NextResponse.json(
         { error: "Failed to fetch question" },
         { status: 500 }
@@ -33,7 +32,6 @@ export async function GET(
 
     return NextResponse.json({ question: data });
   } catch (error) {
-    console.error("Unexpected error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

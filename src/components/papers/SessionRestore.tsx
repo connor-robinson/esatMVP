@@ -45,7 +45,6 @@ export function SessionRestore() {
       const timeSinceQuit = Date.now() - justQuitTimestamp;
       if (timeSinceQuit < 5000) {
         // Session was just quit, don't restore it
-        console.log('[SessionRestore] Skipping restoration - session was just quit:', justQuitSessionId);
         return;
       }
     }
@@ -65,7 +64,6 @@ export function SessionRestore() {
           if (currentState.justQuitSessionId === activeSessionId) {
             const timeSinceQuit = currentState.justQuitTimestamp ? Date.now() - currentState.justQuitTimestamp : Infinity;
             if (timeSinceQuit < 5000) {
-              console.log('[SessionRestore] Skipping restoration - this session was just quit:', activeSessionId);
               return;
             }
           }
@@ -92,7 +90,6 @@ export function SessionRestore() {
           }
         }
       } catch (error) {
-        console.error('[SessionRestore] Failed to restore session:', error);
       } finally {
         // Clear restoring flag
         usePaperSessionStore.setState({ isRestoring: false });

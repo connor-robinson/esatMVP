@@ -1,13 +1,5 @@
 /**
- * NEW VERSION - Drill builder page - Custom multi-topic session builder
- * 
- * This is the new three-column layout (Subject Categories | Topic Folders | Drill Variants Grid)
- * 
- * TO RESTORE OLD VERSION:
- * 1. Rename page.old.tsx to page.tsx
- * 2. Rename this file to page.new.tsx
- * 
- * The old version uses: TopicSelector | TopicsOverview + SessionFolder (two-column layout)
+ * Drill builder page - Custom multi-topic session builder
  */
 
 "use client";
@@ -234,7 +226,6 @@ export default function BuilderPage() {
     );
   }
 
-  // Fallback / Debug
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">

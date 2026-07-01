@@ -56,7 +56,6 @@ export function mapPartToSection(partInfo: PartInfo, paperType: PaperType): Pape
   const partKey = `${partLetter}:${partName}`.toLowerCase();
   try {
     // Debug: mapping input
-    console.debug('[sectionMapping.mapPartToSection] input', { paperType, partInfo, partKey });
   } catch {}
   
   // Define mapping rules for each paper type
@@ -129,7 +128,6 @@ export function mapPartToSection(partInfo: PartInfo, paperType: PaperType): Pape
   // Try exact match first
   if (paperMappings[partKey]) {
     const mapped = paperMappings[partKey];
-    try { console.debug('[sectionMapping.mapPartToSection] exactMatch', { partKey, mapped }); } catch {}
     return mapped;
   }
   
@@ -151,7 +149,6 @@ export function mapPartToSection(partInfo: PartInfo, paperType: PaperType): Pape
       /\bs1\b/.test(combined) ||
       /\bfirst\b/.test(combined) ||
       /math/.test(combined);
-    try { console.debug('[sectionMapping.mapPartToSection] TMUA heuristic', { partLetter, partName, combined, isPaper2, isPaper1 }); } catch {}
     if (isPaper2) {
       return 'Paper 2';
     }
@@ -166,36 +163,29 @@ export function mapPartToSection(partInfo: PartInfo, paperType: PaperType): Pape
   
   if (lowerPartName.includes('mathematics') && lowerPartName.includes('physics')) {
     if (lowerPartName.includes('advanced')) {
-      try { console.debug('[sectionMapping.mapPartToSection] heuristic advanced math+physics'); } catch {}
       return 'Advanced Mathematics and Advanced Physics';
     } else {
-      try { console.debug('[sectionMapping.mapPartToSection] heuristic math+physics'); } catch {}
       return 'Mathematics and Physics';
     }
   }
   
   if (lowerPartName.includes('mathematics')) {
-    try { console.debug('[sectionMapping.mapPartToSection] heuristic math'); } catch {}
     return 'Mathematics';
   }
   
   if (lowerPartName.includes('physics')) {
-    try { console.debug('[sectionMapping.mapPartToSection] heuristic physics'); } catch {}
     return 'Physics';
   }
   
   if (lowerPartName.includes('chemistry')) {
-    try { console.debug('[sectionMapping.mapPartToSection] heuristic chemistry'); } catch {}
     return 'Chemistry';
   }
   
   if (lowerPartName.includes('biology')) {
-    try { console.debug('[sectionMapping.mapPartToSection] heuristic biology'); } catch {}
     return 'Biology';
   }
   
   // Default fallback
-  try { console.debug('[sectionMapping.mapPartToSection] fallback Mathematics'); } catch {}
   return 'Mathematics';
 }
 
@@ -209,9 +199,7 @@ export function getAvailableSectionsFromParts(
   examType?: ExamType | string
 ): PaperSection[] {
   const SCIENCE_SECTIONS: PaperSection[] = ['Physics', 'Chemistry', 'Biology'];
-  try {
-    console.debug('[sectionMapping.getAvailableSectionsFromParts] start', { paperType, examYear, examType, partsCount: parts.length, sample: parts.slice(0,5) });
-  } catch {}
+  try {  } catch {}
   // Special handling for NSAA based on year
   if (paperType === 'NSAA') {
     // Normalize examType for robust matching
@@ -219,7 +207,6 @@ export function getAvailableSectionsFromParts(
     const isSectionTwo = /(^|\s)(section|paper)\s*2\b/.test(examTypeNorm) || examTypeNorm === 's2' || examTypeNorm.includes('sec 2');
     // Section-specific rules: NSAA Section 2 has no Mathematics, only three sciences
     if (isSectionTwo) {
-      try { console.debug('[sectionMapping.getAvailableSectionsFromParts] NSAA Section 2 shortcut => sciences', { examType, examTypeNorm }); } catch {}
       return SCIENCE_SECTIONS;
     }
 
@@ -229,12 +216,10 @@ export function getAvailableSectionsFromParts(
     if (isPre2020) {
       // 2019 and before: 5 sections including Advanced Mathematics and Advanced Physics
       const res = ['Mathematics', 'Physics', 'Chemistry', 'Biology', 'Advanced Mathematics and Advanced Physics'] as PaperSection[];
-      try { console.debug('[sectionMapping.getAvailableSectionsFromParts] NSAA <=2019', { result: res }); } catch {}
       return res;
     } else {
       // 2020+: 4 sections, no Advanced Mathematics and Advanced Physics
       const res = ['Mathematics', 'Physics', 'Chemistry', 'Biology'] as PaperSection[];
-      try { console.debug('[sectionMapping.getAvailableSectionsFromParts] NSAA >=2020', { result: res }); } catch {}
       return res;
     }
   }
@@ -250,10 +235,8 @@ export function getAvailableSectionsFromParts(
     }
     if (fromPapers.size > 0) {
       const derived = tmuaSections.filter((section) => fromPapers.has(section as TmuaSection));
-      try { console.debug('[sectionMapping.getAvailableSectionsFromParts] TMUA from paper names', { derived }); } catch {}
       return derived;
     }
-    try { console.debug('[sectionMapping.getAvailableSectionsFromParts] TMUA fallback to both papers'); } catch {}
     return tmuaSections;
   }
 
@@ -278,18 +261,16 @@ export function getAvailableSectionsFromParts(
           sections.push(r);
         }
       }
-      try { console.debug('[sectionMapping.getAvailableSectionsFromParts] NSAA Section 2 guard applied', { before: Array.from(sectionSet), after: sections }); } catch {}
+
     } else {
       // Heuristic: if parts clearly indicate only sciences, respect that and drop Mathematics
       const hasMath = sections.includes('Mathematics');
       const hasSciencesOnly = SCIENCE_SECTIONS.every((s: PaperSection) => sections.includes(s));
       if (!examType && hasSciencesOnly && hasMath) {
         sections = [...SCIENCE_SECTIONS];
-        try { console.debug('[sectionMapping.getAvailableSectionsFromParts] NSAA heuristic enforced sciences-only'); } catch {}
       }
     }
   }
-  try { console.debug('[sectionMapping.getAvailableSectionsFromParts] end', { paperType, examYear, examType, sections }); } catch {}
   return sections;
 }
 

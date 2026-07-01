@@ -533,7 +533,6 @@ export default function PapersLibraryPage() {
 
         router.push('/past-papers/solve');
       } catch (err) {
-        console.error('[library] Error starting session:', err);
         setError(
           err instanceof Error
             ? err.message

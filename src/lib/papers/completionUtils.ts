@@ -123,12 +123,9 @@ export async function queryCompletedSessions(
     // Check for table/relation doesn't exist error
     if (err.code === '42P01') {
       if (err.message?.includes('user_profiles')) {
-        console.warn('[completionUtils] user_profiles table missing (likely from trigger), continuing without it');
       } else {
-        console.warn('[completionUtils] Table does not exist:', err.message);
       }
     } else {
-      console.error('[completionUtils] Error querying completed sessions:', err);
     }
   };
   
@@ -248,7 +245,6 @@ export async function loadAllCompletedSessionsByPaperName(
       .order('paper_variant');
 
     if (error) {
-      console.error('[completionUtils] Error loading all sessions:', error);
       return new Map();
     }
     
@@ -271,7 +267,6 @@ export async function loadAllCompletedSessionsByPaperName(
 
     return sessionsByPaperName;
   } catch (error) {
-    console.error('[completionUtils] Error in loadAllCompletedSessionsByPaperName:', error);
     return new Map();
   }
 }
@@ -347,7 +342,6 @@ export async function getQuestionsInRange(
       partName: q.partName,
     }));
   } catch (error) {
-    console.error('[completionUtils] Error getting questions in range:', error);
     return [];
   }
 }
@@ -470,7 +464,6 @@ export async function checkMultiplePartsCompleted(
         partName: q.partName,
       })));
     } catch (error) {
-      console.error(`[completionUtils] Error loading questions for paper ${paperId}:`, error);
       questionsByPaperId.set(paperId, []);
     }
   }

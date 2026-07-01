@@ -310,7 +310,6 @@ export function SessionProgressBar({
       await persistSessionToServer({ immediate: true });
       router.push('/past-papers/library');
     } catch (error) {
-      console.error('[SessionProgressBar] Failed to save session:', error);
       alert('Failed to save session. Please try again.');
     } finally {
       setIsSaving(false);

@@ -63,7 +63,6 @@ export function PaperRow({
           );
           setAvailableSections(sections);
         } catch (error) {
-          console.error(`[PaperRow] Error loading sections for paper ${paper.id}:`, error);
         } finally {
           setLoadingSections(false);
         }
@@ -87,7 +86,6 @@ export function PaperRow({
           setPaperCompletionStatus(status);
           setSectionCompletionMap(sectionMap);
         } catch (error) {
-          console.error('[PaperRow] Error loading completion status:', error);
         } finally {
           setLoadingCompletion(false);
         }

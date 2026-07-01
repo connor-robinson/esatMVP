@@ -136,7 +136,6 @@ export function useBuilderSession() {
       .order("created_at", { ascending: false })
       .then(({ data, error }) => {
         if (error) {
-          console.error("[builder] failed to load presets", error);
           return;
         }
         setPresets((data ?? []).map(mapPresetRow));
@@ -315,7 +314,6 @@ export function useBuilderSession() {
         .upsert(presetData)
         .then(({ error }: { error: any }) => {
           if (error) {
-            console.error("[builder] failed to save preset", error);
             return;
           }
           setPresets((prev) => [preset, ...prev.filter((p) => p.id !== preset.id)]);
@@ -357,7 +355,6 @@ export function useBuilderSession() {
         .eq("user_id", authSession.user.id)
         .then(({ error }) => {
           if (error) {
-            console.error("[builder] failed to delete preset", error);
             return;
           }
           setPresets((prev) => prev.filter((preset) => preset.id !== presetId));
@@ -394,14 +391,12 @@ export function useBuilderSession() {
 
   const startSession = useCallback(() => {
     if (selectedTopicVariants.length === 0) {
-      console.warn("[startSession] No topics selected, cannot start");
       alert("Please add at least one topic to start a session.");
       return;
     }
     
     // Note: Allow starting session without auth for testing
     // if (!authSession?.user) {
-    //   console.warn("[startSession] No user session, cannot start");
     //   alert("Please log in to start a session.");
     //   return;
     // }
@@ -437,7 +432,6 @@ export function useBuilderSession() {
     );
 
     if (questions.length === 0) {
-      console.error("[startSession] No questions generated!");
       alert("Failed to generate questions. Please try again.");
       return;
     }
@@ -489,14 +483,6 @@ export function useBuilderSession() {
             .single();
 
           if (sessionError) {
-            console.error("[startSession] ERROR: Failed to create builder_session", {
-              error: sessionError,
-              errorCode: sessionError.code,
-              errorMessage: sessionError.message,
-              errorDetails: sessionError.details,
-              sessionId,
-              userId: authSession.user.id,
-            });
             return; // Don't try to insert questions if session creation failed
           }
 
@@ -520,22 +506,9 @@ export function useBuilderSession() {
               .select("id");
 
             if (questionsError) {
-              console.error("[startSession] ERROR: Failed to insert session questions", {
-                error: questionsError,
-                errorCode: questionsError.code,
-                errorMessage: questionsError.message,
-                errorDetails: questionsError.details,
-                sessionId,
-                questionCount: rows.length,
-              });
             }
           }
         } catch (error) {
-          console.error("[startSession] ERROR: Unexpected error during session creation", {
-            error,
-            errorMessage: error instanceof Error ? error.message : String(error),
-            sessionId,
-          });
         }
       })();
     }
@@ -575,7 +548,6 @@ export function useBuilderSession() {
   const finalizeSession = useCallback(
     async (sessionId: string, attempts: number) => {
       if (!authSession?.user || !currentSession) {
-        console.warn("[finalizeSession] WARNING: Skipping - no user session or current session");
         return;
       }
       
@@ -590,13 +562,6 @@ export function useBuilderSession() {
         .eq("user_id", authSession.user.id);
 
       if (updateError) {
-        console.error("[finalizeSession] ERROR: Failed to update builder_sessions", {
-          error: updateError,
-          errorCode: updateError.code,
-          errorMessage: updateError.message,
-          sessionId,
-          userId: authSession.user.id,
-        });
         return;
       }
 
@@ -634,12 +599,6 @@ export function useBuilderSession() {
           sessionMode: mode,
         });
       } catch (error) {
-        console.error("[finalizeSession] ERROR: Failed to save analytics", {
-          error,
-          errorMessage: error instanceof Error ? error.message : String(error),
-          sessionId,
-          userId: authSession.user.id,
-        });
         // Don't throw - we still want to show results even if analytics save fails
       }
     },

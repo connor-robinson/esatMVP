@@ -25,7 +25,6 @@ export async function POST() {
         const content = fs.readFileSync(STATUS_FILE, "utf-8");
         currentStatus = JSON.parse(content);
       } catch (error) {
-        console.error("Error reading status file:", error);
       }
     }
 
@@ -40,7 +39,6 @@ export async function POST() {
     try {
       fs.writeFileSync(STATUS_FILE, JSON.stringify(stoppedStatus, null, 2));
     } catch (error) {
-      console.error("Error writing status file:", error);
     }
 
     // Note: We can't actually kill the Python process from here,
@@ -53,43 +51,11 @@ export async function POST() {
       status: "stopped",
     });
   } catch (error) {
-    console.error("Error stopping generation:", error);
     return NextResponse.json(
       { error: "Failed to stop generation" },
       { status: 500 }
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

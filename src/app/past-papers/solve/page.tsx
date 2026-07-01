@@ -354,7 +354,6 @@ export default function PapersSolvePage() {
           cacheName: 'paper-assets-v1',
           warmDecodeCount: 5,
         }).catch((err) => {
-          console.warn('[solve] Error prefetching images:', err);
         });
       }
     }
@@ -388,10 +387,6 @@ export default function PapersSolvePage() {
             cacheName: 'paper-assets-v1',
             warmDecodeCount: 5,
           }).catch((err) => {
-            console.warn(
-              '[solve] Error prefetching first section images:',
-              err,
-            );
           });
         }
       }
@@ -474,12 +469,6 @@ export default function PapersSolvePage() {
     questions.length > 0 &&
     !questionsLoading
   ) {
-    console.error(
-      '[solve] Section mode active but questions not grouped. selectedSections:',
-      selectedSections,
-      'allSectionsQuestions.length:',
-      allSectionsQuestions.length,
-    );
   }
 
   // Get current section questions - if using section-based flow, use filtered questions
@@ -561,18 +550,6 @@ export default function PapersSolvePage() {
         (q) => q.id === currentQuestion.id,
       );
       if (!isInCurrentSection) {
-        console.warn(
-          '[solve] Current question not in current section. Recovering to first question of section.',
-          {
-            currentQuestionId: currentQuestion.id,
-            currentQuestionNumber: currentQuestion.questionNumber,
-            currentSectionIndex,
-            currentSectionQuestions: currentSectionQuestions.map((q) => ({
-              id: q.id,
-              number: q.questionNumber,
-            })),
-          },
-        );
         // Current question is not in current section - navigate to first question of current section
         const firstQuestionOfSection = currentSectionQuestions[0];
         if (firstQuestionOfSection) {
@@ -699,18 +676,12 @@ export default function PapersSolvePage() {
       if (globalIndex >= 0) {
         navigateToQuestion(globalIndex);
       } else {
-        console.error(
-          '[solve] Failed to find global index for target question in current section',
-        );
       }
     } else if (
       selectedSections.length > 0 &&
       allSectionsQuestions.length === 0
     ) {
       // Section mode should be active but grouping failed - prevent navigation
-      console.error(
-        '[solve] Section mode active but questions not grouped. Cannot navigate.',
-      );
       return;
     } else {
       // Fallback for non-section flow
@@ -740,18 +711,12 @@ export default function PapersSolvePage() {
       if (globalIndex >= 0) {
         navigateToQuestion(globalIndex);
       } else {
-        console.error(
-          '[solve] Failed to find global index for jumped question',
-        );
       }
     } else if (
       selectedSections.length > 0 &&
       allSectionsQuestions.length === 0
     ) {
       // Section mode should be active but grouping failed - prevent navigation
-      console.error(
-        '[solve] Section mode active but questions not grouped. Cannot jump.',
-      );
       return;
     } else {
       // Fallback for non-section flow
@@ -783,18 +748,12 @@ export default function PapersSolvePage() {
       if (globalIndex >= 0) {
         navigateToQuestion(globalIndex);
       } else {
-        console.error(
-          '[solve] Failed to find global index for jumped question',
-        );
       }
     } else if (
       selectedSections.length > 0 &&
       allSectionsQuestions.length === 0
     ) {
       // Section mode should be active but grouping failed - prevent navigation
-      console.error(
-        '[solve] Section mode active but questions not grouped. Cannot jump to question.',
-      );
       return;
     } else {
       // Fallback for non-section flow
@@ -829,9 +788,6 @@ export default function PapersSolvePage() {
     // Fallback: if section-based navigation fails, try first question
     if (targetIndex < 0 && questions.length > 0) {
       targetIndex = 0;
-      console.warn(
-        '[solve] Section-based navigation failed, using fallback to first question',
-      );
     }
 
     if (targetIndex >= 0) {
@@ -844,7 +800,6 @@ export default function PapersSolvePage() {
       navigateToQuestion(targetIndex);
       setSectionInstructionTimer(0); // Set to 0 to indicate timer is done
     } else {
-      console.error('[solve] Cannot navigate: no valid question index found');
     }
   };
 
@@ -852,9 +807,6 @@ export default function PapersSolvePage() {
   const handleSectionSummaryTimerExpire = () => {
     // Use same navigation logic as handleSectionSummaryNext
     if (!isSectionMode) {
-      console.error(
-        '[solve] Section mode not active, cannot navigate from timer expiry',
-      );
       setSectionInstructionTimer(0);
       return;
     }
@@ -863,22 +815,12 @@ export default function PapersSolvePage() {
       allSectionsQuestions.length === 0 ||
       currentSectionIndex >= allSectionsQuestions.length
     ) {
-      console.error(
-        '[solve] Invalid section state for timer expiry navigation',
-        {
-          currentSectionIndex,
-          allSectionsQuestionsLength: allSectionsQuestions.length,
-        },
-      );
       setSectionInstructionTimer(0);
       return;
     }
 
     const sectionQuestions = allSectionsQuestions[currentSectionIndex] || [];
     if (sectionQuestions.length === 0) {
-      console.error('[solve] Section has no questions for timer expiry', {
-        currentSectionIndex,
-      });
       setSectionInstructionTimer(0);
       return;
     }
@@ -889,14 +831,6 @@ export default function PapersSolvePage() {
     );
 
     if (fullIndex < 0) {
-      console.error(
-        '[solve] First question not found in questions array (timer expiry)',
-        {
-          questionId: firstQuestionOfSection.id,
-          questionNumber: firstQuestionOfSection.questionNumber,
-          questionsLength: questions.length,
-        },
-      );
       setSectionInstructionTimer(0);
       return;
     }
@@ -932,12 +866,7 @@ export default function PapersSolvePage() {
       // Show section summary for next section (60 second timer)
       setSectionInstructionTimer(60);
       // Persist to IndexedDB immediately so refresh on instruction page restores to this section
-      saveSessionToIndexedDB().catch((err) =>
-        console.warn(
-          '[solve] Failed to save session to IndexedDB after section transition',
-          err,
-        ),
-      );
+      saveSessionToIndexedDB().catch(() => {});
       // Reset current question index to prepare for next section
       // The section summary will handle navigation to first question when user clicks Next
     }

@@ -18,14 +18,12 @@ export async function PATCH(
     const { user, supabase, error: authError } = await requireRouteUser(request);
     
     if (authError || !user) {
-      console.error('[Question Update API] Unauthorized access attempt');
       return NextResponse.json(
         { error: 'Unauthorized - authentication required' },
         { status: 401 }
       );
     }
     
-    console.log('[Question Update API] Authenticated user:', user.id);
 
     // Use authenticated client (respects RLS policies)
     // No longer using service role key
@@ -33,13 +31,9 @@ export async function PATCH(
     const questionId = params.id;
     const updates = await request.json();
 
-    console.log('[Question Update API] ===== START UPDATE =====');
-    console.log('[Question Update API] Question ID:', questionId);
-    console.log('[Question Update API] Updates:', Object.keys(updates));
 
     // Validate that we have updates to make
     if (!updates || Object.keys(updates).length === 0) {
-      console.error('[Question Update API] No updates provided');
       return NextResponse.json(
         { error: 'No updates provided' },
         { status: 400 }
@@ -70,7 +64,6 @@ export async function PATCH(
     }
 
     if (Object.keys(filteredUpdates).length === 0) {
-      console.error('[Question Update API] No valid fields to update');
       return NextResponse.json(
         { error: 'No valid fields to update' },
         { status: 400 }
@@ -82,7 +75,6 @@ export async function PATCH(
       const validStatuses = ['pending_review', 'approved', 'rejected', 'needs_revision'];
       
       if (!validStatuses.includes(filteredUpdates.status)) {
-        console.error('[Question Update API] Invalid status value:', filteredUpdates.status);
         return NextResponse.json(
           { error: `Invalid status "${filteredUpdates.status}". Must be one of: ${validStatuses.join(', ')}` },
           { status: 400 }
@@ -98,7 +90,6 @@ export async function PATCH(
       .maybeSingle();
 
     if (checkError) {
-      console.error('[Question Update API] Error checking question:', checkError);
       return NextResponse.json(
         { error: `Error checking question: ${checkError.message}` },
         { status: 500 }
@@ -106,14 +97,12 @@ export async function PATCH(
     }
 
     if (!existingQuestion) {
-      console.error('[Question Update API] Question not found with ID:', questionId);
       return NextResponse.json(
         { error: `Question not found with ID: ${questionId}` },
         { status: 404 }
       );
     }
 
-    console.log('[Question Update API] Question exists, proceeding with update');
 
     // Update the question (RLS policies will control access)
     const { data, error } = await supabase
@@ -124,7 +113,6 @@ export async function PATCH(
       .select();
 
     if (error) {
-      console.error('[Question Update API] Supabase error:', error);
       // RLS policy might block this - that's expected if user doesn't have permission
       if (error.code === '42501' || error.message.includes('permission denied')) {
         return NextResponse.json(
@@ -139,20 +127,17 @@ export async function PATCH(
     }
 
     if (!data || data.length === 0) {
-      console.error('[Question Update API] No question found with id:', questionId);
       return NextResponse.json(
         { error: 'Question not found' },
         { status: 404 }
       );
     }
 
-    console.log('[Question Update API] Successfully updated question:', questionId);
 
     // Get the first (and should be only) result
     const updatedQuestion: AiGeneratedQuestionRow | null = Array.isArray(data) ? (data[0] as AiGeneratedQuestionRow) : (data as AiGeneratedQuestionRow);
     
     if (!updatedQuestion) {
-      console.error('[Question Update API] No question data returned');
       return NextResponse.json(
         { error: 'Question not found' },
         { status: 404 }
@@ -170,7 +155,6 @@ export async function PATCH(
 
     return NextResponse.json({ question });
   } catch (error) {
-    console.error('[Question Update API] Unexpected error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

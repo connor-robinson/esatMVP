@@ -65,7 +65,6 @@ export function useSessionActivity() {
         }
         await saveSessionToIndexedDB();
       } catch (error) {
-        console.error('[useSessionActivity] Failed to save session:', error);
       }
     }, 800); // 800ms debounce, same as server persistence
   }, [sessionId, isPaused, saveSessionToIndexedDB, updateTimerState]);

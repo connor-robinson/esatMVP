@@ -28,7 +28,6 @@ async function countQuestionsForSubject(
 
   const { count, error } = await countQuery;
   if (error) {
-    console.error('[Progress API] Count error:', subject, error);
     return 0;
   }
   return count ?? 0;
@@ -109,7 +108,6 @@ async function getPerSubjectProgress(
       .in('question_id', chunk);
 
     if (attemptsError) {
-      console.error('[Progress API] Attempts chunk error:', attemptsError);
       break;
     }
     for (const a of (attempts ?? []) as { question_id: string }[]) {
@@ -201,7 +199,6 @@ export async function GET(request: NextRequest) {
     const { count: total, error: countError } = await countQuery;
 
     if (countError) {
-      console.error('[Progress API] Error counting questions:', countError);
       return NextResponse.json(
         { error: 'Failed to fetch questions' },
         { status: 500 }
@@ -243,7 +240,6 @@ export async function GET(request: NextRequest) {
             .in('question_id', chunk);
 
           if (attemptsError) {
-            console.error('[Progress API] Attempts chunk error:', attemptsError);
             break;
           }
           if (attempts) {
@@ -256,13 +252,6 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    console.log('[Progress API] Progress stats:', {
-      subjects: subjects.join(', '),
-      testType: testType || 'All',
-      total: total ?? 0,
-      attempted,
-      isAuthenticated,
-    });
 
     const body = { attempted, total: total ?? 0 };
     return new NextResponse(JSON.stringify(body), {
@@ -274,7 +263,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('[Progress API] Unexpected error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

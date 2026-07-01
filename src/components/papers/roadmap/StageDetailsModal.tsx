@@ -85,7 +85,6 @@ export function StageDetailsModal({
             .not("ended_at", "is", null);
           
           if (variantError) {
-            console.error("[StageDetailsModal] Error loading stats for variant:", variant, variantError);
             continue;
           }
           
@@ -125,7 +124,6 @@ export function StageDetailsModal({
           averageScore: avgScore,
         });
       } catch (error) {
-        console.error("[StageDetailsModal] Error in loadStats:", error);
       }
     }
 
@@ -198,7 +196,6 @@ export function StageDetailsModal({
         onCompletionUpdate();
       }
     } catch (error) {
-      console.error("[StageDetailsModal] Error marking part:", error);
     } finally {
       setIsMarking(null);
     }

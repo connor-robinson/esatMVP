@@ -43,7 +43,6 @@ export default function PapersSubmitPage() {
           setIsSaving(false);
         })
         .catch((error) => {
-          console.error("Failed to save session:", error);
           setIsSaving(false);
         });
     }

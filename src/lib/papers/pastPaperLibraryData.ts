@@ -86,13 +86,7 @@ export async function fetchPastPaperLibraryOutline(): Promise<Paper[]> {
         outlineCache.set(key, data.papers);
         return data.papers;
       }
-      console.warn(
-        "[pastPaperLibrary] library-outline API failed:",
-        response.status,
-        response.statusText,
-      );
     } catch (error) {
-      console.warn("[pastPaperLibrary] library-outline API unreachable:", error);
     }
 
     const papers = await fetchPastPaperLibraryOutlineFromClient();
@@ -133,13 +127,7 @@ export async function fetchPaperSectionsOutline(
         sectionsCache.set(paperId, data);
         return data;
       }
-      console.warn(
-        "[pastPaperLibrary] library-sections API failed:",
-        response.status,
-        response.statusText,
-      );
     } catch (error) {
-      console.warn("[pastPaperLibrary] library-sections API unreachable:", error);
     }
 
     const catalog = outlineCache.get("all") ?? (await fetchPastPaperLibraryOutline());

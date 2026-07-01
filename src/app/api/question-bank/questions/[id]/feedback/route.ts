@@ -25,7 +25,6 @@ export async function GET(
       .eq('question_id', questionId);
 
     if (countError) {
-      console.error('[Feedback API] GET count error:', countError);
       return NextResponse.json({ error: 'Failed to load feedback' }, { status: 500 });
     }
 
@@ -51,7 +50,6 @@ export async function GET(
     };
     return NextResponse.json(body);
   } catch (error) {
-    console.error('[Feedback API] GET error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

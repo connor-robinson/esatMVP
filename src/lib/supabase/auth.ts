@@ -42,7 +42,6 @@ export async function requireRouteUser(request: Request) {
   try {
     const supabase = createRouteClient();
     if (!supabase) {
-      console.error("[auth] Failed to create Supabase client");
       return { session: null, supabase: null as any, user: null as null, error: "unauthorized" as const };
     }
 
@@ -52,7 +51,6 @@ export async function requireRouteUser(request: Request) {
     } = await supabase.auth.getSession();
 
     if (sessionError) {
-      console.error("[auth] Session error:", sessionError);
       return { session: null, supabase, user: null as null, error: "unauthorized" as const };
     }
 
@@ -62,7 +60,6 @@ export async function requireRouteUser(request: Request) {
 
     return { session, supabase, user: session.user };
   } catch (error: any) {
-    console.error("[auth] requireRouteUser error:", error);
     return { session: null, supabase: null as any, user: null as null, error: "unauthorized" as const };
   }
 }
@@ -79,7 +76,6 @@ export async function isAuthenticated(): Promise<boolean> {
     } = await supabase.auth.getSession();
     return !!session?.user;
   } catch (error) {
-    console.error("[auth] isAuthenticated error:", error);
     return false;
   }
 }
@@ -96,7 +92,6 @@ export async function getOptionalSession(): Promise<Session | null> {
     } = await supabase.auth.getSession();
     return session;
   } catch (error) {
-    console.error("[auth] getOptionalSession error:", error);
     return null;
   }
 }

@@ -48,7 +48,6 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
 
 // Helper function to handle Supabase errors
 export function handleSupabaseError(error: any) {
-  console.error('Supabase error:', error);
   
   // Provide more helpful error messages
   if (error?.message?.includes('Failed to fetch') || error?.message?.includes('fetch')) {

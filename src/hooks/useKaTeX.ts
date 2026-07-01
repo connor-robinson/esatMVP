@@ -262,7 +262,6 @@ export function renderMath(
       strict: false,
     });
   } catch (error) {
-    console.error("[KaTeX] Rendering error:", error, "for math:", mathStr);
     return null;
   }
 }
@@ -391,11 +390,5 @@ export function renderMathContent(text: string): string {
 
   return joinRenderedParts(parts);
 }
-
-
-
-
-
-
 
 

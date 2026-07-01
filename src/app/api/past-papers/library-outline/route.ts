@@ -20,7 +20,6 @@ export async function GET() {
       .order("exam_year", { ascending: false });
 
     if (error) {
-      console.error("[past-papers/library-outline]", error);
       return NextResponse.json(
         { error: "Failed to load papers" },
         { status: 500 },
@@ -42,7 +41,6 @@ export async function GET() {
 
     return NextResponse.json({ papers, total: papers.length });
   } catch (e) {
-    console.error("[past-papers/library-outline]", e);
     return NextResponse.json(
       { error: "Failed to load papers" },
       { status: 500 },

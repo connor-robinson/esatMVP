@@ -41,5 +41,3 @@ export function hasLesson(topicId: string, level: number): boolean {
 }
 
 
-
-

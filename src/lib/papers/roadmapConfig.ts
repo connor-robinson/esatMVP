@@ -631,7 +631,6 @@ async function validateStagePapers(stage: RoadmapStage): Promise<boolean> {
     
     return false; // No papers found
   } catch (error) {
-    console.error(`[roadmapConfig] Error validating papers for stage ${stage.id}:`, error);
     return false;
   }
 }
@@ -713,7 +712,6 @@ export async function getRoadmapStages(): Promise<RoadmapStage[]> {
       
       // Log duplicates only once if any were found
       if (duplicateIds.size > 0) {
-        console.warn(`[roadmapConfig] Duplicate stage(s) detected and removed: ${Array.from(duplicateIds).join(', ')}`);
       }
       
       cachedStages = uniqueStages;

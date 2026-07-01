@@ -31,7 +31,6 @@ export function MathContent({ content, className }: MathContentProps) {
       const html = renderMathContent(contentStr);
       setRenderedHtml(html);
     } catch (error) {
-      console.error("[MathContent] Error rendering math:", error);
       // Fallback: escape HTML and show raw content, preserving newlines
       const escaped = contentStr
         .replace(/&/g, "&amp;")

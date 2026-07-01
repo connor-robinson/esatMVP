@@ -51,7 +51,6 @@ export async function isPartCompleted(
     
     return completed;
   } catch (error) {
-    console.error('[roadmapCompletion] Error in isPartCompleted:', error);
     return false;
   }
 }
@@ -310,13 +309,11 @@ export async function markPartAsCompleted(
 
     if (!response.ok) {
       const error = await response.json();
-      console.error('[roadmapCompletion] Error marking part as completed:', error);
       return false;
     }
 
     return true;
   } catch (error) {
-    console.error('[roadmapCompletion] Error in markPartAsCompleted:', error);
     return false;
   }
 }

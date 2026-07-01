@@ -66,7 +66,6 @@ export async function GET(request: NextRequest) {
       hasFullAccess: false,
     });
   } catch (err) {
-    console.error("[subscription/status]", err);
     return NextResponse.json({ tier: "free", hasFullAccess: false }, { status: 200 });
   }
 }

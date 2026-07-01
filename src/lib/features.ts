@@ -27,7 +27,6 @@ export function isQuestionGenerationEnabled(): boolean {
     return value === "true";
   } catch (error) {
     // If there's any error, default based on environment
-    console.warn("Error checking feature flag:", error);
     // In development, default to true; in production, default to false
     return process.env.NODE_ENV === "development";
   }

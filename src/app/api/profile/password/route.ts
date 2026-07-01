@@ -57,7 +57,6 @@ export async function POST(request: NextRequest) {
     });
 
     if (updateError) {
-      console.error('[Password API] Error updating password:', updateError);
       return NextResponse.json(
         { error: 'Failed to update password' },
         { status: 500 }
@@ -66,7 +65,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('[Password API] Unexpected error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

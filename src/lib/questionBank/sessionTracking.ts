@@ -89,11 +89,9 @@ export async function registerQuestionBankSession(params: {
     });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
-      console.error('[QB Session] register failed:', res.status, body);
     }
     return res.ok;
   } catch (err) {
-    console.error('[QB Session] register error:', err);
     return false;
   }
 }
@@ -120,11 +118,9 @@ export async function completeQuestionBankSession(params: {
     });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
-      console.error('[QB Session] complete failed:', res.status, body);
     }
     return res.ok;
   } catch (err) {
-    console.error('[QB Session] complete error:', err);
     return false;
   }
 }
@@ -137,11 +133,9 @@ export async function deleteQuestionBankSession(id: string): Promise<boolean> {
     });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
-      console.error('[QB Session] delete failed:', res.status, body);
     }
     return res.ok;
   } catch (err) {
-    console.error('[QB Session] delete error:', err);
     return false;
   }
 }

@@ -22,7 +22,6 @@ export function readConversionStatus(): ConversionRunStatus {
       return JSON.parse(fs.readFileSync(CONVERSION_STATUS_FILE, "utf-8"));
     }
   } catch (error) {
-    console.error("[conversionStatus] read error:", error);
   }
   return {
     status: "idle",
@@ -37,6 +36,5 @@ export function writeConversionStatus(status: ConversionRunStatus): void {
   try {
     fs.writeFileSync(CONVERSION_STATUS_FILE, JSON.stringify(status, null, 2));
   } catch (error) {
-    console.error("[conversionStatus] write error:", error);
   }
 }
