@@ -23,8 +23,19 @@ export function isKnownEsatTable(tableKey: string): boolean {
   return tableKey in ESAT_TABLE_FILE_MAP;
 }
 
+const tableCache = new Map<string, Promise<EsatRow[]>>();
+
 /** Read + parse one distribution table. Throws ENOENT if the file is missing. */
 export async function readEsatTableRows(tableKey: string): Promise<EsatRow[]> {
+  let pending = tableCache.get(tableKey);
+  if (!pending) {
+    pending = readEsatTableRowsUncached(tableKey);
+    tableCache.set(tableKey, pending);
+  }
+  return pending;
+}
+
+async function readEsatTableRowsUncached(tableKey: string): Promise<EsatRow[]> {
   const fileName = ESAT_TABLE_FILE_MAP[tableKey];
   if (!fileName) throw new Error(`Unknown ESAT table: ${tableKey}`);
 

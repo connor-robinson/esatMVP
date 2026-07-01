@@ -26,6 +26,7 @@ import {
 } from "@/lib/scoreConverter/esatModules";
 
 const MAX_SECTIONS = 3;
+const OVERALL_CHART_KEY = "__overall__";
 
 /** What the selected past paper proxies for in current admissions. */
 function examTargetLabel(exam: ConverterExam): "ESAT" | "TMUA" {
@@ -297,8 +298,10 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
       }
       const data = (await res.json()) as ConvertResponse;
       setResult(data);
-      const firstKey = data.sections[0]?.key ?? null;
-      setActiveChartKey(firstKey);
+      const isMultiEsat = data.sections.length > 1 && exam !== "TMUA";
+      setActiveChartKey(
+        isMultiEsat ? OVERALL_CHART_KEY : (data.sections[0]?.key ?? null),
+      );
     } catch (e: unknown) {
       setResult(null);
       setResultError(e instanceof Error ? e.message : "Something went wrong.");
@@ -318,8 +321,10 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
     if (
       !result ||
       !year ||
+      activeChartKey === OVERALL_CHART_KEY ||
       activeSection?.scaledScore == null ||
       activeSection.tmuaDualCurve ||
+      activeSection.chartRows ||
       isTmuaLegacy
     ) {
       setChartRows([]);
@@ -500,7 +505,7 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
             onClick={() => void runConvert()}
             disabled={!canCalculate || resultLoading}
             className={cn(
-              "ml-auto inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-organic-lg bg-secondary px-5 text-sm font-semibold text-background shadow-glow transition-all duration-fast",
+              "ml-auto inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-organic-lg bg-secondary px-5 text-sm font-semibold text-background transition-all duration-fast",
               "hover:brightness-110 active:scale-[0.98] disabled:opacity-40 disabled:hover:brightness-100",
             )}
           >
@@ -517,56 +522,71 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
 
         {/* Row 2: subject marks */}
         {year && !isScaledMode && (
-          <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-3 pt-2">
+          <div className="mt-4 pt-2">
             {sectionsLoading && (
               <span className="text-xs text-text-muted">Loading…</span>
             )}
             {!sectionsLoading && partsInGroup.length === 0 && (
               <span className="text-xs text-text-muted">No subjects for this section.</span>
             )}
-            {!sectionsLoading &&
-              partsInGroup.map((s) => {
-                const checked = checkedKeys.includes(s.key);
-                const disabled = !checked && checkedKeys.length >= MAX_SECTIONS;
-                const c = COLOR_TEXT[s.color];
-                return (
-                  <label
-                    key={s.key}
-                    className={cn(
-                      "flex cursor-pointer items-center gap-2",
-                      disabled && "cursor-not-allowed opacity-40",
-                    )}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      disabled={disabled}
-                      onChange={() => toggleSection(s)}
+            {!sectionsLoading && partsInGroup.length > 0 && (
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {partsInGroup.map((s) => {
+                  const checked = checkedKeys.includes(s.key);
+                  const disabled = !checked && checkedKeys.length >= MAX_SECTIONS;
+                  const c = COLOR_TEXT[s.color];
+                  return (
+                    <div
+                      key={s.key}
                       className={cn(
-                        "h-3.5 w-3.5 shrink-0 cursor-pointer rounded accent-secondary",
-                        controlBase,
+                        "rounded-organic-lg bg-surface-mid/40 px-3 py-2.5 transition-opacity",
+                        !checked && "opacity-55",
+                        disabled && "opacity-35",
                       )}
-                    />
-                    <span className={cn("text-xs font-medium", c)}>
-                      {displaySubject(s)}
-                    </span>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      disabled={!checked}
-                      value={checked ? String(rawByKey[s.key] ?? 0) : ""}
-                      placeholder="—"
-                      onChange={(e) => {
-                        const n = parseInt(e.target.value.replace(/\D/g, ""), 10);
-                        if (Number.isNaN(n)) setRaw(s.key, 0);
-                        else setRaw(s.key, Math.max(0, Math.min(s.maxRaw, n)));
-                      }}
-                      className={markInputClass}
-                    />
-                    <span className="text-xs font-medium text-text-subtle">/{s.maxRaw}</span>
-                  </label>
-                );
-              })}
+                    >
+                      <label
+                        className={cn(
+                          "flex cursor-pointer items-center gap-2",
+                          disabled && "cursor-not-allowed",
+                        )}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          disabled={disabled}
+                          onChange={() => toggleSection(s)}
+                          className={cn(
+                            "h-3.5 w-3.5 shrink-0 cursor-pointer rounded accent-secondary",
+                            controlBase,
+                          )}
+                        />
+                        <span className={cn("truncate text-xs font-semibold", c)}>
+                          {displaySubject(s)}
+                        </span>
+                      </label>
+                      <div className="mt-2 flex items-baseline gap-1">
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          disabled={!checked}
+                          value={checked ? String(rawByKey[s.key] ?? 0) : ""}
+                          placeholder="—"
+                          onChange={(e) => {
+                            const n = parseInt(e.target.value.replace(/\D/g, ""), 10);
+                            if (Number.isNaN(n)) setRaw(s.key, 0);
+                            else setRaw(s.key, Math.max(0, Math.min(s.maxRaw, n)));
+                          }}
+                          className={cn(markInputClass, "w-12")}
+                        />
+                        <span className="text-[11px] font-medium text-text-subtle">
+                          /{s.maxRaw}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -598,11 +618,35 @@ function ResultsPanel({
   chartLoading: boolean;
 }) {
   const multi = result.sections.length > 1;
+  const showOverall = multi && exam !== "TMUA" && result.averageScaled != null;
+  const showingOverall = activeChartKey === OVERALL_CHART_KEY;
+
+  const sectionChartRows =
+    activeSection?.chartRows && activeSection.chartRows.length > 1
+      ? activeSection.chartRows
+      : chartRows;
 
   return (
     <div className="space-y-5">
       {multi && (
         <div className="flex flex-wrap gap-2">
+          {showOverall && (
+            <button
+              type="button"
+              onClick={() => onSelectChart(OVERALL_CHART_KEY)}
+              className={cn(
+                "rounded-organic-md px-3 py-1.5 text-xs font-semibold transition-colors",
+                showingOverall
+                  ? "bg-surface-mid text-text"
+                  : "text-text-muted hover:bg-surface-subtle",
+              )}
+            >
+              <span className="text-secondary">Overall</span>
+              <span className="ml-1.5 tabular-nums text-text">
+                {result.averageScaled!.toFixed(1)}
+              </span>
+            </button>
+          )}
           {result.sections.map((s) => {
             const active = s.key === activeChartKey;
             const c = COLOR_TEXT[s.color];
@@ -632,23 +676,69 @@ function ResultsPanel({
         </div>
       )}
 
-      {activeSection ? (
+      {showingOverall && showOverall ? (
+        <OverallResult result={result} exam={exam} year={year} />
+      ) : activeSection ? (
         <SectionResult
           section={activeSection}
           exam={exam}
           year={year}
-          chartRows={chartRows}
-          chartLoading={chartLoading}
+          chartRows={sectionChartRows}
+          chartLoading={chartLoading && sectionChartRows.length === 0}
         />
       ) : (
         <p className="text-sm text-text-muted">No results.</p>
       )}
+    </div>
+  );
+}
 
-      {multi && result.averageScaled != null && (
-        <p className="text-xs text-text-muted">
-          Average across sections:{" "}
-          <span className="font-semibold text-text">{result.averageScaled.toFixed(1)}</span>
-        </p>
+function OverallResult({
+  result,
+  exam,
+  year,
+}: {
+  result: ConvertResponse;
+  exam: ConverterExam;
+  year: number;
+}) {
+  const topPct =
+    result.averagePercentile != null
+      ? Math.max(0, 100 - result.averagePercentile).toFixed(1)
+      : null;
+  const chartRows = result.overallChartRows ?? [];
+
+  return (
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-xs text-text-subtle">
+            {exam} {year} · Overall
+          </p>
+          <p className="mt-1 text-4xl font-bold tabular-nums text-secondary sm:text-5xl">
+            {result.averageScaled!.toFixed(1)}
+          </p>
+          <p className="mt-0.5 text-xs text-text-muted">
+            Average across {result.sections.length} subjects
+          </p>
+        </div>
+        {topPct != null && (
+          <div className="text-right">
+            <p className="text-xs text-text-subtle">Top</p>
+            <p className="text-3xl font-bold tabular-nums text-text sm:text-4xl">
+              {topPct}%
+            </p>
+          </div>
+        )}
+      </div>
+
+      {chartRows.length > 1 && result.averageScaled != null && (
+        <PercentileMiniChart
+          rows={chartRows}
+          score={result.averageScaled}
+          percentile={result.averagePercentile}
+          xLabel="Scaled score"
+        />
       )}
     </div>
   );

@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase/server";
 import { scaleScore, resolveTmuaPercentileTableKey } from "@/lib/papers/markScoring";
-import { interpolatePercentile, interpolateScore } from "@/lib/esat/percentiles";
+import {
+  averageEsatDistributionTables,
+  interpolatePercentile,
+  interpolateScore,
+  type EsatRow,
+} from "@/lib/esat/percentiles";
 import { readEsatTableRows } from "@/lib/esat/serverTables";
 import { buildTmuaDualCurve } from "@/lib/scoreConverter/tmuaDualCurve";
 import {
@@ -38,97 +43,90 @@ type TableMeta = {
   reliabilityNote: string | null;
 };
 
-/** Load conversion rows for a scoring unit, falling back to the nearest year if needed. */
-async function resolveRows(
+type PaperRow = { id: number; exam_year: number; paper_name: string };
+type DbTableRow = {
+  id: number;
+  paper_id: number;
+  format_type: FormatType;
+  confidence: Confidence;
+  reliability_note: string | null;
+};
+type DbConvRow = {
+  table_id: number;
+  part_name: string;
+  raw_score: number;
+  scaled_score: number;
+};
+
+type ConversionContext = {
+  papers: PaperRow[];
+  tables: DbTableRow[];
+  convRows: DbConvRow[];
+};
+
+/** One bulk load per request instead of per-section round trips. */
+async function buildConversionContext(
   supabase: ReturnType<typeof createServerClient>,
   exam: ConverterExam,
-  year: number,
-  paperName: string,
-  partName: string,
-): Promise<{ rows: ConversionRow[]; meta: TableMeta; fallbackFromYear: number | null } | null> {
-  const exact = await loadRowsForYear(supabase, exam, year, paperName, partName);
-  if (exact && exact.rows.length > 0) {
-    return { ...exact, fallbackFromYear: null };
-  }
-
-  // Fallback: nearest other year of the same exam carrying this part.
+): Promise<ConversionContext> {
   const { data: papers } = await supabase
     .from("papers")
     .select("id, exam_year, paper_name")
     .eq("exam_name", exam)
     .eq("has_conversion", true);
 
-  const paperRows = (papers ?? []) as Array<{
-    id: number;
-    exam_year: number;
-    paper_name: string;
-  }>;
-  const candidateYears = [...new Set(paperRows.map((p) => p.exam_year))]
-    .filter((y) => y !== year)
-    .sort((a, b) => Math.abs(a - year) - Math.abs(b - year));
-
-  for (const y of candidateYears) {
-    const alt = await loadRowsForYear(supabase, exam, y, paperName, partName);
-    if (alt && alt.rows.length > 0) {
-      return { ...alt, fallbackFromYear: y };
-    }
+  const paperRows = (papers ?? []) as PaperRow[];
+  if (paperRows.length === 0) {
+    return { papers: [], tables: [], convRows: [] };
   }
-  return null;
-}
 
-async function loadRowsForYear(
-  supabase: ReturnType<typeof createServerClient>,
-  exam: ConverterExam,
-  year: number,
-  paperName: string,
-  partName: string,
-): Promise<{ rows: ConversionRow[]; meta: TableMeta } | null> {
-  const { data: papers } = await supabase
-    .from("papers")
-    .select("id, paper_name")
-    .eq("exam_name", exam)
-    .eq("exam_year", year)
-    .eq("has_conversion", true);
-
-  const paperRows = (papers ?? []) as Array<{ id: number; paper_name: string }>;
-  if (paperRows.length === 0) return null;
-
-  // Prefer the requested paper; otherwise any paper that carries this part.
-  const orderedIds = [
-    ...paperRows.filter((p) => p.paper_name === paperName).map((p) => p.id),
-    ...paperRows.filter((p) => p.paper_name !== paperName).map((p) => p.id),
-  ];
-
+  const paperIds = paperRows.map((p) => p.id);
   const { data: tables } = await supabase
     .from("conversion_tables")
     .select("id, paper_id, format_type, confidence, reliability_note")
-    .in("paper_id", orderedIds);
+    .in("paper_id", paperIds);
 
-  const tableRows = (tables ?? []) as Array<{
-    id: number;
-    paper_id: number;
-    format_type: FormatType;
-    confidence: Confidence;
-    reliability_note: string | null;
-  }>;
-  if (tableRows.length === 0) return null;
+  const tableRows = (tables ?? []) as DbTableRow[];
+  if (tableRows.length === 0) {
+    return { papers: paperRows, tables: [], convRows: [] };
+  }
 
   const tableIds = tableRows.map((t) => t.id);
   const { data: convRows } = await supabase
     .from("conversion_rows")
     .select("table_id, part_name, raw_score, scaled_score")
-    .in("table_id", tableIds)
-    .eq("part_name", partName);
+    .in("table_id", tableIds);
 
-  const all = (convRows ?? []) as Array<{
-    table_id: number;
-    part_name: string;
-    raw_score: number;
-    scaled_score: number;
-  }>;
+  return {
+    papers: paperRows,
+    tables: tableRows,
+    convRows: (convRows ?? []) as DbConvRow[],
+  };
+}
+
+function loadRowsForYearFromContext(
+  ctx: ConversionContext,
+  year: number,
+  paperName: string,
+  partName: string,
+): { rows: ConversionRow[]; meta: TableMeta } | null {
+  const paperRows = ctx.papers.filter((p) => p.exam_year === year);
+  if (paperRows.length === 0) return null;
+
+  const orderedIds = [
+    ...paperRows.filter((p) => p.paper_name === paperName).map((p) => p.id),
+    ...paperRows.filter((p) => p.paper_name !== paperName).map((p) => p.id),
+  ];
+
+  const tableRows = ctx.tables.filter((t) => orderedIds.includes(t.paper_id));
+  if (tableRows.length === 0) return null;
+
+  const tableIds = tableRows.map((t) => t.id);
+  const all = ctx.convRows.filter(
+    (r) => tableIds.includes(r.table_id) && r.part_name === partName,
+  );
   if (all.length === 0) return null;
 
-  // Pick the table belonging to the most-preferred paper that has rows.
   const tableIdByPref = orderedIds
     .flatMap((pid) => tableRows.filter((t) => t.paper_id === pid).map((t) => t.id))
     .find((tid) => all.some((r) => r.table_id === tid));
@@ -157,19 +155,148 @@ async function loadRowsForYear(
   };
 }
 
-async function percentileFor(
-  tableKey: string | null,
-  scaled: number,
-): Promise<number | null> {
-  if (!tableKey) return null;
-  try {
-    const rows = await readEsatTableRows(tableKey);
-    if (rows.length === 0) return null;
-    const p = interpolatePercentile(rows, scaled);
-    return Number.isFinite(p) ? round1(clampPct(p)) : null;
-  } catch {
-    return null;
+function resolveRowsFromContext(
+  ctx: ConversionContext,
+  year: number,
+  paperName: string,
+  partName: string,
+): { rows: ConversionRow[]; meta: TableMeta; fallbackFromYear: number | null } | null {
+  const exact = loadRowsForYearFromContext(ctx, year, paperName, partName);
+  if (exact && exact.rows.length > 0) {
+    return { ...exact, fallbackFromYear: null };
   }
+
+  const candidateYears = [...new Set(ctx.papers.map((p) => p.exam_year))]
+    .filter((y) => y !== year)
+    .sort((a, b) => Math.abs(a - year) - Math.abs(b - year));
+
+  for (const y of candidateYears) {
+    const alt = loadRowsForYearFromContext(ctx, y, paperName, partName);
+    if (alt && alt.rows.length > 0) {
+      return { ...alt, fallbackFromYear: y };
+    }
+  }
+  return null;
+}
+
+function percentileFromRows(rows: EsatRow[], scaled: number): number | null {
+  if (rows.length === 0) return null;
+  const p = interpolatePercentile(rows, scaled);
+  return Number.isFinite(p) ? round1(clampPct(p)) : null;
+}
+
+async function preloadEsatTables(keys: Iterable<string>): Promise<Map<string, EsatRow[]>> {
+  const unique = [...new Set(keys)];
+  const map = new Map<string, EsatRow[]>();
+  await Promise.all(
+    unique.map(async (key) => {
+      try {
+        map.set(key, await readEsatTableRows(key));
+      } catch {
+        map.set(key, []);
+      }
+    }),
+  );
+  return map;
+}
+
+async function convertOneSection(
+  ctx: ConversionContext,
+  esatTables: Map<string, EsatRow[]>,
+  exam: ConverterExam,
+  year: number,
+  sel: RawSelectionInput,
+  isTmuaPreChange: boolean,
+  preChangeRows: EsatRow[],
+  postChangeRows: EsatRow[],
+): Promise<ConvertedSection> {
+  const partName = String(sel.partName ?? "");
+  const paperName = String(sel.paperName ?? "");
+  const raw = Number(sel.raw);
+  const { color } = describeModule(exam, partName);
+
+  const resolved = resolveRowsFromContext(ctx, year, paperName, partName);
+  if (!resolved) {
+    return {
+      key: `${exam}:${year}:${paperName}:${partName}`,
+      legacyLabel: sel.legacyLabel ?? partName,
+      moduleLabel: describeModule(exam, partName).module,
+      color,
+      raw: Number.isFinite(raw) ? raw : null,
+      maxRaw: null,
+      scaledScore: null,
+      percentile: null,
+      confidence: "unavailable",
+      formatType: "no_data",
+      reliabilityNote: "No conversion data is available for this section.",
+      fallbackFromYear: null,
+      newScaleEquivalent: null,
+      tmuaDualCurve: null,
+      chartRows: null,
+    };
+  }
+
+  const { rows, meta, fallbackFromYear } = resolved;
+  const maxRaw = rows.reduce((m, r) => Math.max(m, r.rawScore), 0);
+  const clampedRaw = Number.isFinite(raw) ? Math.max(0, Math.min(maxRaw, raw)) : NaN;
+
+  const scaledRaw = Number.isFinite(clampedRaw)
+    ? scaleScore(rows, partName, clampedRaw, "nearest")
+    : null;
+  const scaledScore = typeof scaledRaw === "number" ? round1(scaledRaw) : null;
+
+  const tableKey =
+    scaledScore != null ? resolvePercentileTableKey(exam, year, partName) : null;
+  const chartRows = tableKey ? (esatTables.get(tableKey) ?? []) : [];
+  const percentile =
+    scaledScore != null && chartRows.length > 0
+      ? percentileFromRows(chartRows, scaledScore)
+      : null;
+
+  let newScaleEquivalent: number | null = null;
+  let confidence = meta.confidence;
+  let reliabilityNote = meta.reliabilityNote;
+  if (isTmuaPreChange && percentile != null && postChangeRows.length > 0) {
+    const eq = interpolateScore(postChangeRows, percentile);
+    newScaleEquivalent = Number.isFinite(eq) ? round1(eq) : null;
+    const cross = tmuaCrossScaleConfidence(newScaleEquivalent);
+    confidence = worse(confidence, cross.confidence);
+    if (cross.note) {
+      reliabilityNote = reliabilityNote ? `${reliabilityNote} ${cross.note}` : cross.note;
+    }
+  }
+
+  return {
+    key: `${exam}:${year}:${paperName}:${partName}`,
+    legacyLabel: sel.legacyLabel ?? partName,
+    moduleLabel: describeModule(exam, partName).module,
+    color,
+    raw: Number.isFinite(clampedRaw) ? clampedRaw : null,
+    maxRaw,
+    scaledScore,
+    percentile,
+    confidence,
+    formatType: meta.formatType,
+    reliabilityNote,
+    fallbackFromYear,
+    newScaleEquivalent,
+    tmuaDualCurve:
+      isTmuaPreChange &&
+      scaledScore != null &&
+      Number.isFinite(clampedRaw) &&
+      preChangeRows.length > 0 &&
+      postChangeRows.length > 0
+        ? buildTmuaDualCurve(rows, preChangeRows, postChangeRows, {
+            year,
+            raw: clampedRaw,
+            maxRaw,
+            partLabel: sel.legacyLabel ?? partName,
+            studentActualScaled: scaledScore,
+            studentEstimatedScaled: newScaleEquivalent,
+          })
+        : null,
+    chartRows: chartRows.length > 1 ? chartRows : null,
+  };
 }
 
 export async function POST(request: Request) {
@@ -195,7 +322,10 @@ export async function POST(request: Request) {
     }
     const rounded = round1(scaled);
     const tableKey = resolveTmuaPercentileTableKey(year);
-    const percentile = await percentileFor(tableKey, rounded);
+    const esatTables = await preloadEsatTables(tableKey ? [tableKey] : []);
+    const chartRows = tableKey ? (esatTables.get(tableKey) ?? []) : [];
+    const percentile =
+      chartRows.length > 0 ? percentileFromRows(chartRows, rounded) : null;
     const section: ConvertedSection = {
       key: `${exam}:${year}:scaled`,
       legacyLabel: "Reported scaled score",
@@ -211,6 +341,7 @@ export async function POST(request: Request) {
         "From 2024 TMUA uses Rasch IRT scoring with no published raw→scaled table, so this uses your reported scaled score directly against the current-scale distribution.",
       fallbackFromYear: null,
       newScaleEquivalent: null,
+      chartRows: chartRows.length > 1 ? chartRows : null,
     };
     const resp: ConvertResponse = {
       exam,
@@ -218,6 +349,7 @@ export async function POST(request: Request) {
       mode: "scaled",
       sections: [section],
       averageScaled: rounded,
+      averagePercentile: percentile,
     };
     return NextResponse.json(resp);
   }
@@ -229,103 +361,44 @@ export async function POST(request: Request) {
 
   const supabase = createServerClient();
   const isTmuaPreChange = exam === "TMUA" && year <= 2023;
+  const trimmed = selections.slice(0, 3);
+
+  const percentileKeys = new Set<string>();
+  for (const sel of trimmed) {
+    const key = resolvePercentileTableKey(exam, year, String(sel.partName ?? ""));
+    if (key) percentileKeys.add(key);
+  }
+  if (isTmuaPreChange) {
+    percentileKeys.add("tmua_pre_change_cumulative_2023");
+    percentileKeys.add("tmua_post_change_cumulative_2024_2025");
+  }
+
+  const [ctx, esatTables] = await Promise.all([
+    buildConversionContext(supabase, exam),
+    preloadEsatTables(percentileKeys),
+  ]);
+
   const preChangeRows = isTmuaPreChange
-    ? await readEsatTableRows("tmua_pre_change_cumulative_2023").catch(() => [])
+    ? (esatTables.get("tmua_pre_change_cumulative_2023") ?? [])
     : [];
   const postChangeRows = isTmuaPreChange
-    ? await readEsatTableRows("tmua_post_change_cumulative_2024_2025").catch(() => [])
+    ? (esatTables.get("tmua_post_change_cumulative_2024_2025") ?? [])
     : [];
 
-  const sections: ConvertedSection[] = [];
-  for (const sel of selections.slice(0, 3)) {
-    const partName = String(sel.partName ?? "");
-    const paperName = String(sel.paperName ?? "");
-    const raw = Number(sel.raw);
-    const { color } = describeModule(exam, partName);
-
-    const resolved = await resolveRows(supabase, exam, year, paperName, partName);
-    if (!resolved) {
-      sections.push({
-        key: `${exam}:${year}:${paperName}:${partName}`,
-        legacyLabel: sel.legacyLabel ?? partName,
-        moduleLabel: describeModule(exam, partName).module,
-        color,
-        raw: Number.isFinite(raw) ? raw : null,
-        maxRaw: null,
-        scaledScore: null,
-        percentile: null,
-        confidence: "unavailable",
-        formatType: "no_data",
-        reliabilityNote: "No conversion data is available for this section.",
-        fallbackFromYear: null,
-        newScaleEquivalent: null,
-        tmuaDualCurve: null,
-      });
-      continue;
-    }
-
-    const { rows, meta, fallbackFromYear } = resolved;
-    const maxRaw = rows.reduce((m, r) => Math.max(m, r.rawScore), 0);
-    const clampedRaw = Number.isFinite(raw)
-      ? Math.max(0, Math.min(maxRaw, raw))
-      : NaN;
-
-    const scaledRaw = Number.isFinite(clampedRaw)
-      ? scaleScore(rows, partName, clampedRaw, "nearest")
-      : null;
-    const scaledScore = typeof scaledRaw === "number" ? round1(scaledRaw) : null;
-
-    const tableKey =
-      scaledScore != null ? resolvePercentileTableKey(exam, year, partName) : null;
-    const percentile = scaledScore != null ? await percentileFor(tableKey, scaledScore) : null;
-
-    // TMUA old→new cross-scale equivalent (percentile-anchored).
-    let newScaleEquivalent: number | null = null;
-    let confidence = meta.confidence;
-    let reliabilityNote = meta.reliabilityNote;
-    if (isTmuaPreChange && percentile != null && postChangeRows.length > 0) {
-      const eq = interpolateScore(postChangeRows, percentile);
-      newScaleEquivalent = Number.isFinite(eq) ? round1(eq) : null;
-      const cross = tmuaCrossScaleConfidence(newScaleEquivalent);
-      confidence = worse(confidence, cross.confidence);
-      if (cross.note) {
-        reliabilityNote = reliabilityNote
-          ? `${reliabilityNote} ${cross.note}`
-          : cross.note;
-      }
-    }
-
-    sections.push({
-      key: `${exam}:${year}:${paperName}:${partName}`,
-      legacyLabel: sel.legacyLabel ?? partName,
-      moduleLabel: describeModule(exam, partName).module,
-      color,
-      raw: Number.isFinite(clampedRaw) ? clampedRaw : null,
-      maxRaw,
-      scaledScore,
-      percentile,
-      confidence,
-      formatType: meta.formatType,
-      reliabilityNote,
-      fallbackFromYear,
-      newScaleEquivalent,
-      tmuaDualCurve:
-        isTmuaPreChange &&
-        scaledScore != null &&
-        Number.isFinite(clampedRaw) &&
-        preChangeRows.length > 0 &&
-        postChangeRows.length > 0
-          ? buildTmuaDualCurve(rows, preChangeRows, postChangeRows, {
-              year,
-              raw: clampedRaw,
-              maxRaw,
-              partLabel: sel.legacyLabel ?? partName,
-              studentActualScaled: scaledScore,
-              studentEstimatedScaled: newScaleEquivalent,
-            })
-          : null,
-    });
-  }
+  const sections = await Promise.all(
+    trimmed.map((sel) =>
+      convertOneSection(
+        ctx,
+        esatTables,
+        exam,
+        year,
+        sel,
+        isTmuaPreChange,
+        preChangeRows,
+        postChangeRows,
+      ),
+    ),
+  );
 
   const scaledValues = sections
     .map((s) => s.scaledScore)
@@ -335,12 +408,28 @@ export async function POST(request: Request) {
       ? round1(scaledValues.reduce((a, b) => a + b, 0) / scaledValues.length)
       : null;
 
+  const percentileValues = sections
+    .map((s) => s.percentile)
+    .filter((v): v is number => v != null);
+  const averagePercentile =
+    percentileValues.length > 0
+      ? round1(percentileValues.reduce((a, b) => a + b, 0) / percentileValues.length)
+      : null;
+
+  const sectionCharts = sections
+    .map((s) => s.chartRows)
+    .filter((r): r is EsatRow[] => r != null && r.length > 1);
+  const overallChartRows =
+    sectionCharts.length > 1 ? averageEsatDistributionTables(sectionCharts) : null;
+
   const resp: ConvertResponse = {
     exam,
     year,
     mode: "raw",
     sections,
     averageScaled,
+    averagePercentile,
+    overallChartRows: overallChartRows && overallChartRows.length > 1 ? overallChartRows : null,
   };
   return NextResponse.json(resp);
 }

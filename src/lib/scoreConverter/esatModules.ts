@@ -378,6 +378,8 @@ export interface ConvertedSection {
   newScaleEquivalent: number | null;
   /** TMUA ≤2023 only: dual-curve chart data (raw vs scaled, old + estimated new). */
   tmuaDualCurve?: TmuaDualCurveData | null;
+  /** Preloaded percentile distribution for the chart (avoids a second client fetch). */
+  chartRows?: import("@/lib/esat/percentiles").EsatRow[] | null;
 }
 
 export type { TmuaDualCurveData, TmuaDualCurvePoint } from "./tmuaDualCurve";
@@ -389,4 +391,8 @@ export interface ConvertResponse {
   sections: ConvertedSection[];
   /** Mean scaled score across selected sections (never labelled an ESAT score). */
   averageScaled: number | null;
+  /** Mean percentile across selected sections (NSAA/ENGAA multi-subject overall). */
+  averagePercentile: number | null;
+  /** Averaged distribution for multi-subject overall chart. */
+  overallChartRows?: import("@/lib/esat/percentiles").EsatRow[] | null;
 }
