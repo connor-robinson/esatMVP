@@ -89,10 +89,11 @@ export const GENERATORS: Record<string, GeneratorFunction> = validateGenerators(
   addition: generateAddition,
   subtraction: generateSubtraction,
   multiplication: (level: number, weights?: Record<string, number>) => {
-    if (level === 8) return generateSquaring(3, weights);
+    // Legacy saved sessions before folder reorganisation.
+    if (level === 11) return generateMultiplication(9, weights);
+    if (level === 10) return generateSquaring(4, weights);
     if (level === 9) return generateMultiplication(8, weights);
-    if (level === 10) return generateMultiplication(9, weights);
-    if (level === 11) return generateMultiplication(10, weights);
+    if (level === 8) return generateSquaring(3, weights);
     return generateMultiplication(level, weights);
   },
   division: generateDivision,
@@ -132,7 +133,7 @@ export const GENERATORS: Record<string, GeneratorFunction> = validateGenerators(
   powers: generatePowers,
   power_bases: generatePowerBases,
   multiplication_shortcuts: (level: number, weights?: Record<string, number>) =>
-    generateMultiplication(level === 1 ? 7 : level === 2 ? 8 : 10, weights),
+    generateMultiplication(level === 1 ? 7 : level === 2 ? 8 : 9, weights),
   
   // Shortcuts
   percentages: generatePercentages,

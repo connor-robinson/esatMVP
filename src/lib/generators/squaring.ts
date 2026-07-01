@@ -4,12 +4,13 @@
  * 1 - Square numbers ending in 5 (15², 25², 35², etc.)
  * 2 - Square two-digit numbers using algebraic identities
  * 3 - Perfect squares (2–35)
+ * 4 - Perfect cubes (2–15)
  */
 
 import { GeneratedQuestion } from "@/types/core";
 import { generateId } from "@/lib/utils";
 import { pick, randomInt } from "./utils/random";
-import { generateSquares } from "./powers";
+import { generateSquares, generateCubes } from "./powers";
 
 export function generateSquaring(
   level: number,
@@ -17,6 +18,7 @@ export function generateSquaring(
 ): GeneratedQuestion {
   if (level === 1) return generateEndingIn5();
   if (level === 3) return asSquaring(generateSquares());
+  if (level === 4) return asSquaring(generateCubes());
   // Legacy near-round was level 2; route to two-digit
   return generateTwoDigit();
 }

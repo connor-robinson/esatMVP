@@ -9,8 +9,7 @@
  * 6 → Decimal × whole number
  * 7 → Multiply by 5, 15, 25
  * 8 → Multiply by 11, 12
- * 9 → Perfect cubes
- * 10 → Multiply by 9, 99
+ * 9 → Multiply by 9, 99
  */
 
 import { GeneratedQuestion } from "@/types/core";
@@ -18,7 +17,6 @@ import { generateId, randomInt } from "@/lib/utils";
 import { randomDigit } from "./utils/random";
 import { createAnswerChecker } from "@/lib/answer-checker";
 import { generateMultiplicationShortcuts } from "./multiplication_shortcuts";
-import { generateCubes } from "./powers";
 
 const SINGLE_DIGIT_WEIGHTS = [0, 0, 1, 2, 3, 5, 6, 7, 8, 9];
 
@@ -44,8 +42,6 @@ export function generateMultiplication(
     case 8:
       return asMultiplication(generateMultiplicationShortcuts(2, weights));
     case 9:
-      return asMultiplication(generateCubes());
-    case 10:
       return asMultiplication(generateMultiplicationShortcuts(3, weights));
     default:
       return generateSingleDigit();

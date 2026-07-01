@@ -132,7 +132,7 @@ const ALGEBRA_FOLDERS: FolderDef[] = [
     id: 'algebra-indices',
     name: 'Indices & Surds',
     topicIds: ['exponents', 'surds'],
-    symbol: { kind: 'lucide', iconKey: 'Hash' },
+    symbol: { kind: 'latex', latex: String.raw`2^3\sqrt{5}` },
   },
   {
     id: 'algebra-quadratics',
@@ -159,13 +159,19 @@ const GEOMETRY_FOLDERS: FolderDef[] = [
     id: 'trig-recall',
     name: 'Trig Recall',
     topicIds: ['trig_recall', 'trig_inverse'],
-    symbol: { kind: 'latex', latex: String.raw`\sin 30°` },
+    symbol: { kind: 'latex', latex: String.raw`\sin\theta` },
   },
   {
-    id: 'unit-circle-triangles',
-    name: 'Unit Circle & Triangles',
-    topicIds: ['unit_circle_degrees', 'unit_circle_radians', 'trig_applications'],
-    symbol: { kind: 'latex', latex: String.raw`(x,y)` },
+    id: 'unit-circle',
+    name: 'Unit Circle',
+    topicIds: ['unit_circle_degrees', 'unit_circle_radians'],
+    symbol: { kind: 'latex', latex: String.raw`(\cos\theta,\sin\theta)` },
+  },
+  {
+    id: 'triangles-trig',
+    name: 'Triangles',
+    topicIds: ['trig_applications'],
+    symbol: { kind: 'latex', latex: String.raw`30°\text{-}60°\text{-}90°` },
   },
 ];
 
@@ -181,12 +187,6 @@ const NUMBER_THEORY_FOLDERS: FolderDef[] = [
     name: 'Divisibility',
     topicIds: ['divisibility'],
     symbol: { kind: 'latex', latex: String.raw`n \bmod 7` },
-  },
-  {
-    id: 'nt-patterns',
-    name: 'Sequences',
-    topicIds: ['sequences'],
-    symbol: { kind: 'lucide', iconKey: 'Hash' },
   },
 ];
 
@@ -240,6 +240,24 @@ const ARITHMETIC_EXTRA_FOLDERS: FolderDef[] = [
   },
 ];
 
+/** Fixed drill-builder order for arithmetic folders. */
+const ARITHMETIC_FOLDER_ORDER = [
+  'addition',
+  'subtraction',
+  'multiplication',
+  'division',
+  'fractions-group',
+  'arithmetic-notation',
+  'squaring',
+] as const;
+
+function arithmeticFolderSortIndex(folderId: string): number {
+  const index = ARITHMETIC_FOLDER_ORDER.indexOf(
+    folderId as (typeof ARITHMETIC_FOLDER_ORDER)[number],
+  );
+  return index === -1 ? 999 : index;
+}
+
 const CATEGORY_FOLDER_BUILDERS: Record<
   HighLevelCategory,
   () => DrillDisplayFolder[]
@@ -258,17 +276,9 @@ const CATEGORY_FOLDER_BUILDERS: Record<
       ...extra,
     ];
 
-    folders.sort((a, b) => {
-      const aMin =
-        a.modules.length > 0
-          ? Math.min(...a.modules.map((m) => m.difficulty))
-          : 999;
-      const bMin =
-        b.modules.length > 0
-          ? Math.min(...b.modules.map((m) => m.difficulty))
-          : 999;
-      return aMin - bMin || a.name.localeCompare(b.name);
-    });
+    folders.sort(
+      (a, b) => arithmeticFolderSortIndex(a.id) - arithmeticFolderSortIndex(b.id),
+    );
 
     return folders;
   },
@@ -282,6 +292,9 @@ const CATEGORY_FOLDER_BUILDERS: Record<
 function folderSymbolForArithmeticId(folderId: string): FolderSymbol {
   if (folderId === 'fractions-group') {
     return { kind: 'latex', latex: String.raw`\frac{3}{7}` };
+  }
+  if (folderId === 'squaring') {
+    return { kind: 'latex', latex: String.raw`n^2` };
   }
   const keys: Record<string, string> = {
     addition: 'Plus',
@@ -335,7 +348,6 @@ const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
     'prime_factorise',
     'factors',
     'divisibility',
-    'sequences',
   ],
   shortcuts: ['percentages'],
   physics: [

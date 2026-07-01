@@ -8,6 +8,7 @@ import {
   X,
   Divide,
   Hash,
+  Square,
   type LucideIcon,
 } from 'lucide-react';
 import { getTopic } from '@/config/topics';
@@ -19,6 +20,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   X,
   Divide,
   Hash,
+  Square,
 };
 
 /** Topic ids folded into the Fractions folder (still separate generators). */
@@ -77,8 +79,8 @@ const FOLDER_DEFS: {
   },
   {
     id: 'squaring',
-    name: 'Squaring',
-    iconKey: 'X',
+    name: 'Squares & Cubes',
+    iconKey: 'Square',
     topicIds: ['squaring'],
   },
 ];
@@ -107,10 +109,8 @@ function modulesFromTopicIds(topicIds: readonly string[]): ArithmeticDrillModule
 }
 
 export function buildArithmeticDisplayFolders(): ArithmeticDisplayFolder[] {
-  const folders = FOLDER_DEFS.map((def) => {
+  return FOLDER_DEFS.map((def) => {
     const modules = modulesFromTopicIds(def.topicIds);
-    const minDifficulty =
-      modules.length > 0 ? Math.min(...modules.map((m) => m.difficulty)) : 999;
 
     return {
       id: def.id,
@@ -118,16 +118,8 @@ export function buildArithmeticDisplayFolders(): ArithmeticDisplayFolder[] {
       icon: ICON_MAP[def.iconKey] ?? Hash,
       topicIds: def.topicIds,
       modules,
-      _minDifficulty: minDifficulty,
     };
   });
-
-  folders.sort(
-    (a, b) =>
-      a._minDifficulty - b._minDifficulty || a.name.localeCompare(b.name),
-  );
-
-  return folders.map(({ _minDifficulty: _ignored, ...folder }) => folder);
 }
 
 export function getArithmeticDisplayFolder(

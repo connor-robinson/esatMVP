@@ -90,13 +90,13 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'plain', text: '47 × 11' },
     { kind: 'plain', text: '38 × 12' },
   ]),
-  'multiplication-perfect-cubes': S([
-    { kind: 'plain', text: '7³' },
-    { kind: 'plain', text: '12³' },
-  ]),
   'multiplication-multiply-9-99': S([
     { kind: 'plain', text: '47 × 99' },
     { kind: 'plain', text: '38 × 9' },
+  ]),
+  'squaring-perfect-cubes': S([
+    { kind: 'plain', text: '7³' },
+    { kind: 'plain', text: '12³' },
   ]),
   'squaring-ending-in-5': S([
     { kind: 'plain', text: '35²' },
@@ -336,14 +336,6 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
   'divisibility-rules': S([
     { kind: 'plain', text: 'Is 504 divisible by 8?' },
     { kind: 'plain', text: 'Is 847 divisible by 11?' },
-  ]),
-  'sequences-geometric': S([
-    { kind: 'plain', text: '2, 6, 18, …' },
-    { kind: 'plain', text: 'common ratio: 3' },
-  ]),
-  'sequences-mixed': S([
-    { kind: 'plain', text: '4, 9, 16, …' },
-    { kind: 'plain', text: '1, 1, 2, 3, 5, …' },
   ]),
   'power_bases-powers-2-4-8': S([
     { kind: 'plain', text: '2⁶' },

@@ -123,18 +123,11 @@ export const TOPICS: Record<string, Topic> = {
         config: { level: 8 },
       },
       {
-        id: "perfect-cubes",
-        name: "Perfect Cubes",
-        description: "Calculate cubes of numbers 2–15",
-        difficulty: 6,
-        config: { level: 9 },
-      },
-      {
         id: "multiply-9-99",
         name: "×9 & ×99",
         description: "Multiply by 9 or 99",
         difficulty: 6,
-        config: { level: 10 },
+        config: { level: 9 },
       },
     ],
     icon: "X",
@@ -654,10 +647,10 @@ export const TOPICS: Record<string, Topic> = {
   },
   squaring: {
     id: "squaring",
-    name: "Squaring",
+    name: "Squares & Cubes",
     subjectId: "maths",
     category: "arithmetic",
-    description: "Square numbers quickly using mental shortcuts",
+    description: "Square and cube numbers quickly using mental shortcuts",
     variants: [
       {
         id: "ending-in-5",
@@ -680,8 +673,15 @@ export const TOPICS: Record<string, Topic> = {
         difficulty: 3,
         config: { level: 2 },
       },
+      {
+        id: "perfect-cubes",
+        name: "Perfect Cubes",
+        description: "Calculate cubes of numbers 2–15",
+        difficulty: 4,
+        config: { level: 4 },
+      },
     ],
-    icon: "X",
+    icon: "Square",
   },
   // Physics - Mechanics
   kinematics: {
@@ -1317,7 +1317,7 @@ export const CATEGORIES: Record<TopicCategory, string[]> = {
     "unit_circle_degrees",
     "unit_circle_radians",
   ],
-  number_theory: ["prime_factorise", "factors", "divisibility", "sequences"],
+  number_theory: ["prime_factorise", "factors", "divisibility"],
   shortcuts: ["percentages"],
   patterns: [],
   transform: [
