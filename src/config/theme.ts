@@ -79,6 +79,22 @@ function normalizeHex(hex: string): string | null {
   return `#${expanded.toLowerCase()}`;
 }
 
+/**
+ * Backdrop for mix-blend-difference on white exam-paper scans so inverted
+ * paper areas match `backgroundHex` (assumes scan paper is #ffffff).
+ */
+export function paperDifferenceBackdropForBackground(
+  backgroundHex: string,
+): string {
+  const hex = normalizeHex(backgroundHex);
+  if (!hex) return "#ffffff";
+
+  const channels = [0, 2, 4].map((offset) =>
+    255 - parseInt(hex.slice(1 + offset, 3 + offset), 16),
+  );
+  return rgbToHex(channels[0], channels[1], channels[2]);
+}
+
 /** Darkest neutral stop ↔ lightest — canonical Figma scale only (no demo swatches). */
 function buildNeutralInversionMap(): Map<string, string> {
   const unique = [

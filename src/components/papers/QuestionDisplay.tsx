@@ -9,6 +9,7 @@ import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
+import { colorTokens, paperDifferenceBackdropForBackground } from "@/config/theme";
 import type { Question } from "@/types/papers";
 import { shouldRenderPastPaperAsText } from "@/lib/papers/pastPaperTextMode";
 import { PastPaperTextQuestion } from "@/components/papers/PastPaperTextQuestion";
@@ -53,6 +54,13 @@ export function QuestionDisplay({
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { isDark } = useTheme();
+
+  const pageBackgroundHex = isDark
+    ? colorTokens.background.dark
+    : colorTokens.background.light;
+  const paperInvertBackdrop = paperDifferenceBackdropForBackground(
+    pageBackgroundHex,
+  );
 
   // Discrete clock display values (update once per second/minute)
   const [displaySeconds, setDisplaySeconds] = useState(Math.floor(remainingTime % 60));
@@ -238,7 +246,9 @@ export function QuestionDisplay({
                             position: 'relative',
                             display: 'inline-block',
                             lineHeight: 0,
-                            backgroundColor: isDarkMode ? 'var(--color-text)' : 'transparent'
+                            backgroundColor: isDarkMode
+                              ? paperInvertBackdrop
+                              : "transparent",
                           }}
                         >
                           <img
@@ -440,7 +450,9 @@ export function QuestionDisplay({
                       position: 'relative',
                       display: 'inline-block',
                       lineHeight: 0,
-                      backgroundColor: isDarkMode ? 'var(--color-text)' : 'transparent'
+                      backgroundColor: isDarkMode
+                        ? paperInvertBackdrop
+                        : "transparent",
                     }}
                   >
                     <img
