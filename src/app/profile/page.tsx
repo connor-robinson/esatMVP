@@ -23,7 +23,7 @@ import { BugReportPanel } from "@/components/profile/BugReportPanel";
 import { cn } from "@/lib/utils";
 import { getExamAccentFillClass } from "@/config/colors";
 import { CheckCircle2, AlertCircle, Check } from "lucide-react";
-import type { ExamType } from "@/lib/profile/countdown";
+import { clearLeaderboardCache } from "@/lib/leaderboard/cache";
 import { useTheme } from "@/contexts/ThemeContext";
 import {
   formatAuthProviderLabel,
@@ -448,6 +448,7 @@ export default function ProfilePage() {
 
     try {
       await savePreferences({ username: usernameInput.trim() }, "username");
+      clearLeaderboardCache();
       setUsernameInput("");
       setIsEditingUsername(false);
     } catch (err: any) {

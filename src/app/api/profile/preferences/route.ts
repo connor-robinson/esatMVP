@@ -200,8 +200,8 @@ export async function PATCH(request: NextRequest) {
     const updateData: Record<string, any> = {};
     if (username !== undefined) {
       updateData.username = username;
-      // If username is being set or changed, update last_username_change timestamp
       if (username) {
+        updateData.display_name = username;
         const { data: currentProfile } = await supabase
           .from('profiles')
           .select('username')

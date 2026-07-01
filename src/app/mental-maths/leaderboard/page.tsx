@@ -14,7 +14,8 @@ import { calculateLeaderboardScore } from "@/lib/analytics";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
-import { getAnalyticsFolderOptions, topicIdsForFolderQuery } from "@/lib/display-folder-registry";
+import { getPublicDisplayName } from "@/lib/profile/publicDisplayName";
+import { leaderboardCache } from "@/lib/leaderboard/cache";
 
 const GlobalView = lazy(() =>
   import("@/components/analytics/GlobalView").then((mod) => ({ default: mod.GlobalView })),
@@ -54,7 +55,7 @@ async function fetchLeaderboard(
       const slice = userIds.slice(i, i + CHUNK);
       const { data: profilesData, error: profilesError } = await supabase
         .from("profiles")
-        .select("id, display_name")
+        .select("id, username, display_name")
         .in("id", slice);
 
       if (profilesError && profilesError.code === "42P01") {
@@ -65,7 +66,7 @@ async function fetchLeaderboard(
       }
       if (profilesData) {
         profilesData.forEach((profile: any) => {
-          profilesMap.set(profile.id, profile.display_name || "Anonymous User");
+          profilesMap.set(profile.id, getPublicDisplayName(profile));
         });
       }
     }
@@ -122,8 +123,6 @@ async function fetchLeaderboard(
     })
     .filter((entry) => entry.questionsAnswered > 0); // Only show users with activity
 }
-
-const leaderboardCache = new Map<string, LeaderboardEntry[]>();
 
 function sortAndRank(entries: LeaderboardEntry[]): LeaderboardEntry[] {
   return entries

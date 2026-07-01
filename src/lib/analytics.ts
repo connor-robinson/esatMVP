@@ -19,6 +19,7 @@ import {
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
 import { topicIdsForFolderQuery } from "@/lib/display-folder-registry";
+import { getPublicDisplayName } from "@/lib/profile/publicDisplayName";
 import {
   buildSessionForStats,
   buildSessionProgressByQuestion,
@@ -236,7 +237,7 @@ export async function fetchTopicRankings(
 
   let profilesMap: Record<
     string,
-    { display_name: string | null; avatar_url: string | null }
+    { username: string | null; display_name: string | null; avatar_url: string | null }
   > = {};
 
   if (!globalError && globalData) {
@@ -250,13 +251,14 @@ export async function fetchTopicRankings(
     if (userIds.length > 0) {
       const { data: profilesData, error: profilesError } = await supabase
         .from("profiles")
-        .select("id, display_name, avatar_url")
+        .select("id, username, display_name, avatar_url")
         .in("id", userIds);
 
       if (!profilesError && profilesData) {
         profilesMap = profilesData.reduce(
           (acc: typeof profilesMap, p: any) => {
             acc[p.id] = {
+              username: p.username,
               display_name: p.display_name,
               avatar_url: p.avatar_url,
             };
@@ -277,11 +279,11 @@ export async function fetchTopicRankings(
   const resolveLeaderboardName = (
     userId: string,
     isGlobal: boolean,
-    profile?: { display_name: string | null } | null,
+    profile?: { username?: string | null; display_name?: string | null } | null,
   ): string => {
-    const fromProfile = profile?.display_name?.trim();
+    const fromProfile = getPublicDisplayName(profile, "");
     if (fromProfile) return fromProfile;
-    const fromMap = profilesMap[userId]?.display_name?.trim();
+    const fromMap = getPublicDisplayName(profilesMap[userId], "");
     if (fromMap) return fromMap;
     return isGlobal ? "Anonymous User" : "You";
   };
