@@ -14,6 +14,12 @@ import { FREE_TIER_QUESTION_LIMIT } from "@/lib/questionBank/freeTierQuestions";
 import { QuestionBankSessionSettingsModal } from "@/components/questionBank/QuestionBankSessionSettingsModal";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useQuestionBankFreeTier } from "@/hooks/useQuestionBankFreeTier";
+import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
+import {
+  subjectsForExamProgress,
+  progressSubtext,
+  type ExamPreference,
+} from "@/lib/questionBank/userProgressSubjects";
 import { cn } from "@/lib/utils";
 import { SUBJECT_TILE_STYLES } from "@/lib/questionBank/subjectTileTheme";
 
@@ -110,6 +116,7 @@ type ProgressApiResponse = {
 
 export function QuestionBankHomeScreen() {
   const router = useRouter();
+  const session = useSupabaseSession();
   const { hasFullAccess, isLoading: subscriptionLoading } = useSubscription();
   const treatAsFullAccess = subscriptionLoading || hasFullAccess;
   const {
@@ -125,6 +132,8 @@ export function QuestionBankHomeScreen() {
   const [mixedModalOpen, setMixedModalOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [aggregate, setAggregate] = useState<{ attempted: number; total: number } | null>(null);
+  const [examPreference, setExamPreference] = useState<ExamPreference>(null);
+  const [esatSubjects, setEsatSubjects] = useState<string[]>([]);
   const [isLoadingProgress, setIsLoadingProgress] = useState(true);
   const [tiles, setTiles] = useState<
     Record<SubjectKey, { attempted: number; total: number; loading: boolean }>
@@ -141,6 +150,35 @@ export function QuestionBankHomeScreen() {
   const loadStats = useCallback(async () => {
     setIsLoadingProgress(true);
     try {
+      let preference: ExamPreference = null;
+      let userEsatSubjects: string[] = [];
+
+      if (session?.user) {
+        try {
+          const prefRes = await fetch("/api/profile/preferences", {
+            credentials: "include",
+          });
+          if (prefRes.ok) {
+            const prefJson = await prefRes.json();
+            preference =
+              prefJson.exam_preference === "ESAT" ||
+              prefJson.exam_preference === "TMUA"
+                ? prefJson.exam_preference
+                : null;
+            userEsatSubjects = Array.isArray(prefJson.esat_subjects)
+              ? prefJson.esat_subjects
+              : [];
+            setExamPreference(preference);
+            setEsatSubjects(userEsatSubjects);
+          }
+        } catch {
+          /* preferences optional */
+        }
+      } else {
+        setExamPreference(null);
+        setEsatSubjects([]);
+      }
+
       const res = await fetch(
         progressUrlSubjects(ALL_SUBJECT_KEYS, { perSubject: true }),
         { credentials: "include" },
@@ -149,10 +187,19 @@ export function QuestionBankHomeScreen() {
         ? await res.json()
         : { attempted: 0, total: 0, bySubject: {} };
 
-      setAggregate({
-        attempted: json.attempted ?? 0,
-        total: json.total ?? 0,
-      });
+      const progressSubjects = subjectsForExamProgress(
+        preference,
+        userEsatSubjects,
+      );
+      let attempted = 0;
+      let total = 0;
+      for (const subject of progressSubjects) {
+        const row = json.bySubject?.[subject];
+        attempted += row?.attempted ?? 0;
+        total += row?.total ?? 0;
+      }
+
+      setAggregate({ attempted, total });
       setTiles((prev) => {
         const next = { ...prev };
         ALL_SUBJECT_KEYS.forEach((k) => {
@@ -177,7 +224,7 @@ export function QuestionBankHomeScreen() {
     } finally {
       setIsLoadingProgress(false);
     }
-  }, []);
+  }, [session?.user]);
 
   useEffect(() => {
     void loadStats();
@@ -198,6 +245,13 @@ export function QuestionBankHomeScreen() {
     aggregate && aggregate.total > 0
       ? Math.min(100, Math.round((aggregate.attempted / aggregate.total) * 100))
       : 0;
+
+  const progressDescription = progressSubtext(
+    examPreference,
+    esatSubjects,
+    aggregate?.attempted ?? 0,
+    aggregate?.total ?? 0,
+  );
 
   const siblingTilesForModal = useMemo(
     () =>
@@ -261,7 +315,7 @@ export function QuestionBankHomeScreen() {
               Question Bank Progress
             </h1>
             <p className="mt-1 text-xs text-text-muted">
-              Number of questions attempted
+              {progressDescription}
             </p>
           </div>
 
