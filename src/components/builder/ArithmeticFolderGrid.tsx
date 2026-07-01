@@ -1,6 +1,5 @@
 'use client';
 
-import { Lock } from 'lucide-react';
 import {
   buildArithmeticDisplayFolders,
   folderHasAccessibleModule,
@@ -8,6 +7,8 @@ import {
 } from '@/config/arithmeticFolders';
 import { getArithmeticFolderSymbol } from '@/config/arithmeticDrillPreviews';
 import { ArithmeticDrillPreview } from '@/components/builder/ArithmeticDrillPreview';
+import { DisabledFolderCard } from '@/components/builder/DisabledFolderCard';
+import { DrillUpgradeBanner } from '@/components/builder/DrillUpgradeBanner';
 import { cn } from '@/lib/utils';
 
 interface ArithmeticFolderGridProps {
@@ -50,26 +51,12 @@ export function ArithmeticFolderGrid({
 
           if (!unlocked) {
             return (
-              <div
+              <DisabledFolderCard
                 key={folder.id}
-                className='relative flex min-h-[7.5rem] flex-col items-center justify-center gap-2 rounded-organic-lg bg-surface-elevated/50 p-4 opacity-70'
-                aria-disabled
-              >
-                <div className='flex h-14 w-14 items-center justify-center rounded-organic-xl bg-surface-mid'>
-                  <ArithmeticDrillPreview
-                    preview={symbol}
-                    size='folder'
-                    className='opacity-50'
-                  />
-                </div>
-                <span className='text-center text-sm font-bold text-text-muted'>
-                  {folder.name}
-                </span>
-                <Lock
-                  className='absolute right-2.5 top-2.5 h-4 w-4 text-text-muted'
-                  aria-hidden
-                />
-              </div>
+                name={folder.name}
+                symbol={symbol}
+                size='comfortable'
+              />
             );
           }
 
@@ -112,17 +99,10 @@ export function ArithmeticFolderGrid({
       </div>
 
       {showUpgradeCard && (
-        <div className='mt-6 flex flex-col gap-3 rounded-organic-xl bg-surface-elevated p-4 text-center shadow-md'>
-          <p className='text-xs font-medium leading-snug text-text'>
-            Upgrade for full access to all arithmetic folders
-          </p>
-          <a
-            href='/pricing'
-            className='inline-flex items-center justify-center rounded-organic-md bg-primary px-3 py-2 text-xs font-bold text-background transition-colors hover:bg-primary-hover'
-          >
-            View plans
-          </a>
-        </div>
+        <DrillUpgradeBanner
+          className='mt-6'
+          subtext='Upgrade for full access to all arithmetic folders'
+        />
       )}
     </>
   );
