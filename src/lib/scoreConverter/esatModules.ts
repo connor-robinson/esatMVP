@@ -188,30 +188,48 @@ function labelForPart(
   return { legacyLabel: "Paper 1 — Mathematical Thinking", group: "Papers", order: 1 };
 }
 
-/** TMUA picker: one paper, or overall (both papers) — never a mix. */
+/** TMUA picker: Paper 1 + Paper 2 together, or overall — never a mix or single paper alone. */
 export function isTmuaOverallPart(partName: string): boolean {
   return /overall/i.test(partName.trim());
 }
 
+export function isTmuaPaper1Part(partName: string): boolean {
+  return /^paper\s*1$/i.test(partName.trim());
+}
+
+export function isTmuaPaper2Part(partName: string): boolean {
+  return /^paper\s*2$/i.test(partName.trim());
+}
+
 export function isTmuaSinglePaperPart(partName: string): boolean {
-  return /paper\s*[12]/i.test(partName.trim());
+  return isTmuaPaper1Part(partName) || isTmuaPaper2Part(partName);
 }
 
 export function validateTmuaSelections(
   selections: Array<{ partName: string }>,
 ): string | null {
   if (selections.length === 0) return "No sections selected";
-  if (selections.length === 1) return null;
 
   const hasOverall = selections.some((s) => isTmuaOverallPart(s.partName));
-  const paperCount = selections.filter((s) => isTmuaSinglePaperPart(s.partName)).length;
+  const hasP1 = selections.some((s) => isTmuaPaper1Part(s.partName));
+  const hasP2 = selections.some((s) => isTmuaPaper2Part(s.partName));
+
   if (hasOverall) {
-    return "Select either one TMUA paper or both papers overall — not a mix.";
+    if (selections.length > 1) {
+      return "Select either both papers separately or both papers overall — not a mix.";
+    }
+    return null;
   }
-  if (paperCount > 1) {
-    return "Select one TMUA paper, or use both papers overall — not Paper 1 and Paper 2 together.";
+
+  if (hasP1 && hasP2 && selections.length === 2) return null;
+  if (hasP1 && !hasP2) {
+    return "Select both Mathematical Thinking and Mathematical Reasoning, or use both papers overall.";
   }
-  return "Select one TMUA paper or both papers overall.";
+  if (hasP2 && !hasP1) {
+    return "Select both Mathematical Thinking and Mathematical Reasoning, or use both papers overall.";
+  }
+
+  return "Select both papers separately or both papers overall.";
 }
 
 /**

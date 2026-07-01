@@ -16,6 +16,9 @@ import { fetchEsatTable, type EsatRow } from "@/lib/esat/percentiles";
 import {
   CONVERTER_EXAMS,
   TMUA_IRT_FROM_YEAR,
+  isTmuaPaper1Part,
+  isTmuaPaper2Part,
+  isTmuaOverallPart,
   resolvePercentileTableKey,
   type ConverterExam,
   type ConvertResponse,
@@ -184,6 +187,39 @@ function ModernSelect({
   );
 }
 
+type TmuaPickMode = "split" | "overall";
+
+function TmuaMarkField({
+  section,
+  raw,
+  onRawChange,
+}: {
+  section: SectionOption;
+  raw: number;
+  onRawChange: (value: number) => void;
+}) {
+  const c = COLOR_TEXT[section.color];
+  return (
+    <div className="rounded-organic-lg bg-surface-mid px-4 py-3">
+      <p className={cn("text-sm font-semibold", c)}>{displaySubject(section)}</p>
+      <div className="mt-2.5 flex items-baseline gap-1.5">
+        <input
+          type="text"
+          inputMode="numeric"
+          value={String(raw)}
+          onChange={(e) => {
+            const n = parseInt(e.target.value.replace(/\D/g, ""), 10);
+            if (Number.isNaN(n)) onRawChange(0);
+            else onRawChange(Math.max(0, Math.min(section.maxRaw, n)));
+          }}
+          className={markInputClass}
+        />
+        <span className="text-sm font-medium text-text-muted">/{section.maxRaw}</span>
+      </div>
+    </div>
+  );
+}
+
 export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam }) {
   const [exam, setExam] = useState<ConverterExam>(initialExam ?? "NSAA");
 
@@ -201,6 +237,7 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
   const [checkedKeys, setCheckedKeys] = useState<string[]>([]);
   const [rawByKey, setRawByKey] = useState<Record<string, number>>({});
   const [scaledInput, setScaledInput] = useState("");
+  const [tmuaPickMode, setTmuaPickMode] = useState<TmuaPickMode | null>(null);
 
   const [result, setResult] = useState<ConvertResponse | null>(null);
   const [resultLoading, setResultLoading] = useState(false);
@@ -232,6 +269,32 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
     return sectionGroups.find(([g]) => g === selectedGroup)?.[1] ?? [];
   }, [sections, sectionGroups, selectedGroup, isNsaaEngaa]);
 
+  const tmuaSections = useMemo(() => {
+    if (!isTmuaRaw) {
+      return { paper1: null, paper2: null, overall: null };
+    }
+    return {
+      paper1: sections.find((s) => isTmuaPaper1Part(s.partName)) ?? null,
+      paper2: sections.find((s) => isTmuaPaper2Part(s.partName)) ?? null,
+      overall: sections.find((s) => isTmuaOverallPart(s.partName)) ?? null,
+    };
+  }, [sections, isTmuaRaw]);
+
+  const tmuaReady = useMemo(() => {
+    if (!isTmuaRaw || !tmuaPickMode) return false;
+    if (tmuaPickMode === "overall") {
+      const o = tmuaSections.overall;
+      return o != null && checkedKeys.includes(o.key);
+    }
+    const { paper1, paper2 } = tmuaSections;
+    return (
+      paper1 != null &&
+      paper2 != null &&
+      checkedKeys.includes(paper1.key) &&
+      checkedKeys.includes(paper2.key)
+    );
+  }, [isTmuaRaw, tmuaPickMode, tmuaSections, checkedKeys]);
+
   const checkedSections = useMemo(
     () => sections.filter((s) => checkedKeys.includes(s.key)),
     [sections, checkedKeys],
@@ -244,7 +307,7 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
 
   const canCalculate = isScaledMode
     ? year != null && scaledValid
-    : year != null && checkedSections.length > 0;
+    : year != null && (isTmuaRaw ? tmuaReady : checkedSections.length > 0);
 
   const invalidateResults = useCallback(() => {
     setHasCalculated(false);
@@ -263,6 +326,7 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
     setCheckedKeys([]);
     setRawByKey({});
     setScaledInput("");
+    setTmuaPickMode(null);
     invalidateResults();
 
     let cancelled = false;
@@ -295,6 +359,7 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
     setSectionsLoading(true);
     setCheckedKeys([]);
     setRawByKey({});
+    setTmuaPickMode(null);
     invalidateResults();
 
     let cancelled = false;
@@ -335,13 +400,27 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
     );
   };
 
-  const toggleSection = (opt: SectionOption) => {
+  const selectTmuaMode = (mode: TmuaPickMode) => {
     invalidateResults();
-    if (isTmuaRaw) {
-      setCheckedKeys([opt.key]);
-      setRawByKey((r) => ({ ...r, [opt.key]: r[opt.key] ?? 0 }));
+    setTmuaPickMode(mode);
+    const { paper1, paper2, overall } = tmuaSections;
+    if (mode === "split" && paper1 && paper2) {
+      setCheckedKeys([paper1.key, paper2.key]);
+      setRawByKey((r) => ({
+        ...r,
+        [paper1.key]: r[paper1.key] ?? 0,
+        [paper2.key]: r[paper2.key] ?? 0,
+      }));
       return;
     }
+    if (mode === "overall" && overall) {
+      setCheckedKeys([overall.key]);
+      setRawByKey((r) => ({ ...r, [overall.key]: r[overall.key] ?? 0 }));
+    }
+  };
+
+  const toggleSection = (opt: SectionOption) => {
+    invalidateResults();
     setCheckedKeys((prev) => {
       if (prev.includes(opt.key)) {
         return prev.filter((k) => k !== opt.key);
@@ -549,6 +628,7 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
               setScaledInput("");
               setCheckedKeys([]);
               setRawByKey({});
+              setTmuaPickMode(null);
               invalidateResults();
             }}
           />
@@ -623,20 +703,99 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
             {sectionsLoading && (
               <span className="text-sm text-text-muted">Loading subjects…</span>
             )}
-            {!sectionsLoading && partsInGroup.length === 0 && (
+
+            {isTmuaRaw && !sectionsLoading && (
+              <div className="space-y-4">
+                <p className="text-sm font-medium text-text-muted">How are you scoring?</p>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    onClick={() => selectTmuaMode("split")}
+                    disabled={!tmuaSections.paper1 || !tmuaSections.paper2}
+                    className={cn(
+                      "flex items-start gap-3 rounded-organic-lg bg-surface-mid px-4 py-3.5 text-left transition-all duration-fast",
+                      "hover:bg-surface-subtle disabled:cursor-not-allowed disabled:opacity-40",
+                      tmuaPickMode === "split" && "bg-surface-subtle",
+                      controlBase,
+                    )}
+                  >
+                    <input
+                      type="radio"
+                      name="tmua-mode"
+                      checked={tmuaPickMode === "split"}
+                      onChange={() => selectTmuaMode("split")}
+                      className={cn("mt-0.5 h-4 w-4 shrink-0 accent-secondary", controlBase)}
+                    />
+                    <span>
+                      <span className="block text-sm font-semibold text-text">
+                        Thinking + Reasoning
+                      </span>
+                      <span className="mt-0.5 block text-xs text-text-muted">
+                        Separate marks for Paper 1 and Paper 2
+                      </span>
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => selectTmuaMode("overall")}
+                    disabled={!tmuaSections.overall}
+                    className={cn(
+                      "flex items-start gap-3 rounded-organic-lg bg-surface-mid px-4 py-3.5 text-left transition-all duration-fast",
+                      "hover:bg-surface-subtle disabled:cursor-not-allowed disabled:opacity-40",
+                      tmuaPickMode === "overall" && "bg-surface-subtle",
+                      controlBase,
+                    )}
+                  >
+                    <input
+                      type="radio"
+                      name="tmua-mode"
+                      checked={tmuaPickMode === "overall"}
+                      onChange={() => selectTmuaMode("overall")}
+                      className={cn("mt-0.5 h-4 w-4 shrink-0 accent-secondary", controlBase)}
+                    />
+                    <span>
+                      <span className="block text-sm font-semibold text-text">Both papers</span>
+                      <span className="mt-0.5 block text-xs text-text-muted">
+                        One combined overall score (0–40 raw)
+                      </span>
+                    </span>
+                  </button>
+                </div>
+
+                {tmuaPickMode === "split" && tmuaSections.paper1 && tmuaSections.paper2 && (
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <TmuaMarkField
+                      section={tmuaSections.paper1}
+                      raw={rawByKey[tmuaSections.paper1.key] ?? 0}
+                      onRawChange={(v) => setRaw(tmuaSections.paper1!.key, v)}
+                    />
+                    <TmuaMarkField
+                      section={tmuaSections.paper2}
+                      raw={rawByKey[tmuaSections.paper2.key] ?? 0}
+                      onRawChange={(v) => setRaw(tmuaSections.paper2!.key, v)}
+                    />
+                  </div>
+                )}
+
+                {tmuaPickMode === "overall" && tmuaSections.overall && (
+                  <TmuaMarkField
+                    section={tmuaSections.overall}
+                    raw={rawByKey[tmuaSections.overall.key] ?? 0}
+                    onRawChange={(v) => setRaw(tmuaSections.overall!.key, v)}
+                  />
+                )}
+              </div>
+            )}
+
+            {!isTmuaRaw && !sectionsLoading && partsInGroup.length === 0 && (
               <span className="text-sm text-text-muted">No subjects for this section.</span>
             )}
-            {!sectionsLoading && partsInGroup.length > 0 && (
-              <div
-                className={cn(
-                  "grid gap-3",
-                  isTmuaRaw ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
-                )}
-              >
+            {!isTmuaRaw && !sectionsLoading && partsInGroup.length > 0 && (
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {partsInGroup.map((s) => {
                   const checked = checkedKeys.includes(s.key);
-                  const disabled =
-                    !isTmuaRaw && !checked && checkedKeys.length >= MAX_SECTIONS;
+                  const disabled = !checked && checkedKeys.length >= MAX_SECTIONS;
                   const c = COLOR_TEXT[s.color];
                   return (
                     <div
@@ -654,14 +813,12 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                         )}
                       >
                         <input
-                          type={isTmuaRaw ? "radio" : "checkbox"}
-                          name={isTmuaRaw ? "tmua-section" : undefined}
+                          type="checkbox"
                           checked={checked}
                           disabled={disabled}
                           onChange={() => toggleSection(s)}
                           className={cn(
-                            "h-4 w-4 shrink-0 cursor-pointer accent-secondary",
-                            isTmuaRaw ? "rounded-full" : "rounded",
+                            "h-4 w-4 shrink-0 cursor-pointer rounded accent-secondary",
                             controlBase,
                           )}
                         />
