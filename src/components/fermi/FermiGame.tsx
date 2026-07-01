@@ -8,8 +8,10 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight, Sparkles, Target, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowRight, BarChart3, Target, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import type { FermiQuestion } from "@/config/fermiQuestions";
 import {
   formatFermiNumber,
@@ -123,6 +125,9 @@ function saveDailyState(
 }
 
 export function FermiGame({ onExit }: { onExit: () => void }) {
+  const router = useRouter();
+  const authSession = useSupabaseSession();
+  const sessionSavedRef = useRef(false);
   const todayKey = useMemo(() => utcDateKey(), []);
   const puzzleNumber = useMemo(() => getDailyPuzzleNumber(), []);
   const round = useMemo(() => getDailyFermiQuestions(), []);
@@ -221,6 +226,44 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
+
+  useEffect(() => {
+    if (
+      phase !== "summary" ||
+      results.length === 0 ||
+      !authSession?.user ||
+      sessionSavedRef.current
+    ) {
+      return;
+    }
+    sessionSavedRef.current = true;
+    void fetch("/api/fermi/sessions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        puzzleNumber,
+        playedDate: todayKey,
+        averageScore,
+        results: results.map((r) => ({
+          questionId: r.question.id,
+          guess: r.guess,
+          logError: r.logErr,
+          closenessScore: r.score,
+        })),
+      }),
+    });
+  }, [phase, results, authSession?.user, puzzleNumber, todayKey, averageScore]);
+
+  const statsHref = "/mental-maths/fermi/stats";
+  const loginStatsHref = `/login?redirectTo=${encodeURIComponent(statsHref)}`;
+
+  const handleViewStats = useCallback(() => {
+    if (!authSession?.user) {
+      router.push(loginStatsHref);
+      return;
+    }
+    router.push(statsHref);
+  }, [authSession?.user, router, loginStatsHref]);
 
   const shareText = useMemo(() => {
     const lines = results.map((r) => `${r.score}/100 — ${r.verdict.label}`);
@@ -340,6 +383,8 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
               puzzleNumber={puzzleNumber}
               copied={copied}
               onCopyShare={handleCopyShare}
+              onViewStats={handleViewStats}
+              isLoggedIn={!!authSession?.user}
               onExit={onExit}
             />
           )}
@@ -539,6 +584,8 @@ function SummaryView({
   puzzleNumber,
   copied,
   onCopyShare,
+  onViewStats,
+  isLoggedIn,
   onExit,
 }: {
   results: FermiResult[];
@@ -547,16 +594,14 @@ function SummaryView({
   puzzleNumber: number;
   copied: boolean;
   onCopyShare: () => void;
+  onViewStats: () => void;
+  isLoggedIn: boolean;
   onExit: () => void;
 }) {
   const isNewBest = bestScore != null && averageScore >= bestScore;
 
   return (
-    <div className="animate-scale-in flex flex-col items-center gap-5 pt-4 sm:pt-8">
-      <div className="flex h-14 w-14 items-center justify-center rounded-organic-xl bg-secondary/20 text-secondary">
-        <Sparkles className="h-7 w-7" strokeWidth={2} />
-      </div>
-
+    <div className="animate-scale-in flex flex-col items-center gap-5 pt-2 sm:pt-4">
       <div className="text-center">
         <h2 className="text-2xl font-bold text-text">Fermi Daily #{puzzleNumber}</h2>
         <p className="text-sm font-medium text-text-muted">Today&apos;s average closeness</p>
@@ -598,13 +643,23 @@ function SummaryView({
       <div className="flex w-full max-w-md flex-col gap-2 pt-1">
         <button
           type="button"
-          onClick={onCopyShare}
+          onClick={onViewStats}
           className="flex w-full items-center justify-center gap-2 rounded-organic-lg bg-secondary px-4 py-3 text-sm font-bold text-white outline-none transition-all hover:scale-[1.02] active:scale-[0.98]"
+        >
+          <BarChart3 className="h-4 w-4" strokeWidth={2.25} />
+          View stats
+        </button>
+        <button
+          type="button"
+          onClick={onCopyShare}
+          className="flex w-full items-center justify-center gap-2 rounded-organic-lg bg-surface px-4 py-3 text-sm font-bold text-text outline-none transition-colors hover:bg-surface-mid"
         >
           {copied ? "Copied!" : "Share result"}
         </button>
         <p className="text-center text-sm font-medium text-text-muted">
-          Come back tomorrow for a new set of questions.
+          {isLoggedIn
+            ? "Come back tomorrow for a new set of questions."
+            : "Log in to save your stats and see how you rank."}
         </p>
       </div>
       <button
