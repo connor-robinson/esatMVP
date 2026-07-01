@@ -9,6 +9,24 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+type FermiSessionRow = {
+  id: string;
+  puzzle_number: number;
+  played_date: string;
+  average_score: number;
+  question_count: number;
+  created_at: string;
+};
+
+type FermiSessionSummary = {
+  id: string;
+  puzzleNumber: number;
+  playedDate: string;
+  averageScore: number;
+  questionCount: number;
+  createdAt: string;
+};
+
 export async function GET(request: Request) {
   const { user, supabase, error } = await requireRouteUser(request);
   if (error || !user) {
@@ -29,14 +47,16 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Failed to load stats" }, { status: 500 });
   }
 
-  const sessions = (mySessions ?? []).map((row: any) => ({
-    id: row.id,
-    puzzleNumber: row.puzzle_number,
-    playedDate: row.played_date,
-    averageScore: row.average_score,
-    questionCount: row.question_count,
-    createdAt: row.created_at,
-  }));
+  const sessions: FermiSessionSummary[] = ((mySessions ?? []) as FermiSessionRow[]).map(
+    (row) => ({
+      id: row.id,
+      puzzleNumber: row.puzzle_number,
+      playedDate: row.played_date,
+      averageScore: row.average_score,
+      questionCount: row.question_count,
+      createdAt: row.created_at,
+    }),
+  );
 
   const latestSession = sessions.length > 0 ? sessions[sessions.length - 1] : null;
   const targetDate =

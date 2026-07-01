@@ -94,7 +94,7 @@ export function FermiDistributionChart({
       >
         {hasUser && (
           <polygon
-            points={shadedPoints}
+            points={shadedPoints.join(" ")}
             className="fill-secondary/25"
           />
         )}

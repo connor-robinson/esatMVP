@@ -76,7 +76,7 @@ export function FermiTrendChart({ sessions, className }: FermiTrendChartProps) {
               color: "var(--color-text)",
               fontSize: "12px",
             }}
-            formatter={(value: number) => [`${value}/100`, "Closeness"]}
+            formatter={(value) => [`${value ?? 0}/100`, "Closeness"]}
             labelFormatter={(_, payload) => {
               const row = payload?.[0]?.payload;
               if (!row) return "";

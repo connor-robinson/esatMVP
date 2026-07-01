@@ -74,7 +74,13 @@ function hydrateResults(
     .map((r) => {
       const question = byId.get(r.questionId);
       if (!question) return null;
-      return { ...r, question };
+      return {
+        question,
+        guess: r.guess,
+        logErr: r.logErr,
+        score: r.score,
+        verdict: r.verdict,
+      };
     })
     .filter((r): r is FermiResult => r != null);
 }
