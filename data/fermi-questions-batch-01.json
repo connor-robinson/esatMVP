@@ -1,0 +1,411 @@
+[
+  {
+    "id": 1, "scheduledDate": "2026-07-01", "isSeasonal": true, "seasonalNote": "2026 FIFA World Cup in progress",
+    "category": "sports", "difficulty": "surprising", "exact": true,
+    "question": "How many total matches are being played across the entire 2026 FIFA World Cup tournament?",
+    "answer": 104, "unit": "matches",
+    "sourceUrl": "https://worldcupwiki.com/schedule/",
+    "sourceNote": "First 48-team World Cup format; 104 matches across 16 stadiums in the US, Mexico, and Canada."
+  },
+  {
+    "id": 2, "scheduledDate": "2026-07-01", "isSeasonal": false,
+    "category": "human_body", "difficulty": "standard", "exact": true,
+    "question": "How many bones are in an adult human skeleton?",
+    "answer": 206, "unit": "bones",
+    "sourceUrl": "https://www.ncbi.nlm.nih.gov/books/NBK526094/",
+    "sourceNote": "Standard anatomical reference figure."
+  },
+  {
+    "id": 3, "scheduledDate": "2026-07-01", "isSeasonal": false,
+    "category": "nature", "difficulty": "hard", "exact": false,
+    "question": "Roughly how many ants are alive on Earth right now?",
+    "answer": 20000000000000000, "unit": "ants",
+    "sourceUrl": "https://www.pnas.org/doi/10.1073/pnas.2201550119",
+    "sourceNote": "~20 quadrillion (2×10^16), from a 2022 PNAS global synthesis study — widely reported estimate, order-of-magnitude figure."
+  },
+  {
+    "id": 4, "scheduledDate": "2026-07-01", "isSeasonal": false,
+    "category": "geography", "difficulty": "standard", "exact": true,
+    "question": "How many countries are official member states of the United Nations?",
+    "answer": 193, "unit": "countries",
+    "sourceUrl": "https://www.un.org/en/about-us/member-states",
+    "sourceNote": "Stable figure; changes only on rare admission of a new state."
+  },
+  {
+    "id": 5, "scheduledDate": "2026-07-01", "isSeasonal": false,
+    "category": "economy", "difficulty": "surprising", "exact": false,
+    "question": "Roughly how many LEGO bricks does the LEGO Group manufacture in a single year?",
+    "answer": 36000000000, "unit": "bricks",
+    "sourceUrl": "https://www.legolanddiscoverycenter.com/michigan/post/lego-facts/",
+    "sourceNote": "~36 billion/year is the most consistently cited figure; some sources range up to 60B, so treat as approximate."
+  },
+
+  {
+    "id": 6, "scheduledDate": "2026-07-02", "isSeasonal": false,
+    "category": "astronomy", "difficulty": "standard", "exact": true,
+    "question": "What is the average distance from the Earth to the Moon, in kilometers?",
+    "answer": 384400, "unit": "km",
+    "sourceUrl": "https://science.nasa.gov/moon/facts/",
+    "sourceNote": "Standard astronomical constant (average, since the orbit is elliptical)."
+  },
+  {
+    "id": 7, "scheduledDate": "2026-07-02", "isSeasonal": false,
+    "category": "landmarks", "difficulty": "hard", "exact": true,
+    "question": "How many rivets hold the Eiffel Tower together?",
+    "answer": 2500000, "unit": "rivets",
+    "sourceUrl": "https://www.toureiffel.paris/en/the-monument/history",
+    "sourceNote": "Confirmed on the Eiffel Tower's own official site."
+  },
+  {
+    "id": 8, "scheduledDate": "2026-07-02", "isSeasonal": false,
+    "category": "human_body", "difficulty": "standard", "exact": false,
+    "question": "Roughly how many times does an average adult heart beat in one day?",
+    "answer": 100000, "unit": "beats",
+    "sourceUrl": "https://www.heart.org/",
+    "sourceNote": "Standard cardiology reference range (~60-100 bpm average)."
+  },
+  {
+    "id": 9, "scheduledDate": "2026-07-02", "isSeasonal": false,
+    "category": "geography", "difficulty": "surprising", "exact": true,
+    "question": "What is the officially surveyed total length of the Great Wall of China, in kilometers?",
+    "answer": 21196.18, "unit": "km",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Great_Wall_of_China",
+    "sourceNote": "From the 2012 official survey by China's State Administration of Cultural Heritage."
+  },
+  {
+    "id": 10, "scheduledDate": "2026-07-02", "isSeasonal": false,
+    "category": "science", "difficulty": "hard", "exact": true,
+    "question": "Roughly how many liters of water fill an Olympic-sized swimming pool?",
+    "answer": 2500000, "unit": "liters",
+    "sourceUrl": "https://www.worldaquatics.com/",
+    "sourceNote": "Official FINA/World Aquatics pool specification (50m x 25m x 2m)."
+  },
+
+  {
+    "id": 11, "scheduledDate": "2026-07-03", "isSeasonal": false,
+    "category": "science", "difficulty": "surprising", "exact": false,
+    "question": "Roughly how many DNA base pairs make up the human genome?",
+    "answer": 3200000000, "unit": "base pairs",
+    "sourceUrl": "https://www.genome.gov/",
+    "sourceNote": "Standard genomics reference figure (~3.2 billion)."
+  },
+  {
+    "id": 12, "scheduledDate": "2026-07-03", "isSeasonal": false,
+    "category": "geography", "difficulty": "standard", "exact": true,
+    "question": "How tall is Mount Everest, in meters?",
+    "answer": 8848.86, "unit": "meters",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Mount_Everest",
+    "sourceNote": "Official 2020 joint China-Nepal survey figure."
+  },
+  {
+    "id": 13, "scheduledDate": "2026-07-03", "isSeasonal": false,
+    "category": "physics", "difficulty": "hard", "exact": true,
+    "question": "How fast does light travel in a vacuum, in kilometers per second?",
+    "answer": 299792.458, "unit": "km/s",
+    "sourceUrl": "https://physics.nist.gov/",
+    "sourceNote": "Defined physical constant, exact by definition."
+  },
+  {
+    "id": 14, "scheduledDate": "2026-07-03", "isSeasonal": false,
+    "category": "history", "difficulty": "surprising", "exact": false,
+    "question": "Roughly how many people are estimated to have ever lived throughout human history?",
+    "answer": 117000000000, "unit": "people",
+    "sourceUrl": "https://www.prb.org/",
+    "sourceNote": "Population Reference Bureau estimate — inherently rough by nature of the question, treat as order-of-magnitude."
+  },
+  {
+    "id": 15, "scheduledDate": "2026-07-03", "isSeasonal": false,
+    "category": "human_body", "difficulty": "standard", "exact": false,
+    "question": "Roughly how many neurons are in the average adult human brain?",
+    "answer": 86000000000, "unit": "neurons",
+    "sourceUrl": "https://pubmed.ncbi.nlm.nih.gov/19226510/",
+    "sourceNote": "Herculano-Houzel 2009 peer-reviewed estimate — replaced the older, less accurate '100 billion' figure."
+  },
+
+  {
+    "id": 16, "scheduledDate": "2026-07-04", "isSeasonal": true, "seasonalNote": "US Independence Day",
+    "category": "economy", "difficulty": "surprising", "exact": true,
+    "question": "How many hot dogs will Americans eat today, on July 4th?",
+    "answer": 150000000, "unit": "hot dogs",
+    "sourceUrl": "https://www.cnn.com/2024/07/03/us/american-history-nathans-hot-dog-eating-contest-dg/index.html",
+    "sourceNote": "National Hot Dog and Sausage Council annual estimate, repeated consistently year over year."
+  },
+  {
+    "id": 17, "scheduledDate": "2026-07-04", "isSeasonal": true, "seasonalNote": "US Independence Day",
+    "category": "economy", "difficulty": "standard", "exact": false,
+    "question": "Roughly how many hot dogs do Americans eat in total across an entire year?",
+    "answer": 20000000000, "unit": "hot dogs",
+    "sourceUrl": "https://www.cnn.com/2024/07/03/us/american-history-nathans-hot-dog-eating-contest-dg/index.html",
+    "sourceNote": "National Hot Dog and Sausage Council; 'more than 20 billion' per year."
+  },
+  {
+    "id": 18, "scheduledDate": "2026-07-04", "isSeasonal": false,
+    "category": "space", "difficulty": "standard", "exact": true,
+    "question": "How many astronauts in history have walked on the surface of the Moon?",
+    "answer": 12, "unit": "astronauts",
+    "sourceUrl": "https://www.nasa.gov/",
+    "sourceNote": "Apollo missions 11-17 (excluding Apollo 13); fixed historical fact."
+  },
+  {
+    "id": 19, "scheduledDate": "2026-07-04", "isSeasonal": false,
+    "category": "geography", "difficulty": "hard", "exact": false,
+    "question": "Roughly how long is the coastline of the continental United States, in kilometers?",
+    "answer": 19924, "unit": "km",
+    "sourceUrl": "https://oceanservice.noaa.gov/",
+    "sourceNote": "NOAA 'general coastline' measure — coastline length is famously scale-dependent (the 'coastline paradox'), so treat as approximate."
+  },
+  {
+    "id": 20, "scheduledDate": "2026-07-04", "isSeasonal": false,
+    "category": "astronomy", "difficulty": "surprising", "exact": false,
+    "question": "Roughly how many stars are visible to the naked eye across the entire night sky, under perfect conditions?",
+    "answer": 9096, "unit": "stars",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Naked-eye_star",
+    "sourceNote": "Standard astronomy reference based on magnitude-6 visibility limit, both hemispheres combined."
+  },
+
+  {
+    "id": 21, "scheduledDate": "2026-07-05", "isSeasonal": false,
+    "category": "human_body", "difficulty": "standard", "exact": false,
+    "question": "Roughly how many taste buds does the average human tongue have?",
+    "answer": 10000, "unit": "taste buds",
+    "sourceUrl": "https://www.ncbi.nlm.nih.gov/",
+    "sourceNote": "Standard physiology reference range."
+  },
+  {
+    "id": 22, "scheduledDate": "2026-07-05", "isSeasonal": false,
+    "category": "geography", "difficulty": "hard", "exact": false,
+    "question": "What is the surface area of the Sahara Desert, in square kilometers?",
+    "answer": 9200000, "unit": "km2",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Sahara",
+    "sourceNote": "Roughly the size of the contiguous United States."
+  },
+  {
+    "id": 23, "scheduledDate": "2026-07-05", "isSeasonal": false,
+    "category": "astronomy", "difficulty": "surprising", "exact": false,
+    "question": "Roughly how many Earths could fit inside the Sun by volume?",
+    "answer": 1300000, "unit": "Earths",
+    "sourceUrl": "https://science.nasa.gov/sun/facts/",
+    "sourceNote": "Standard volume-ratio calculation cited by NASA."
+  },
+  {
+    "id": 24, "scheduledDate": "2026-07-05", "isSeasonal": false,
+    "category": "science", "difficulty": "standard", "exact": true,
+    "question": "How many chromosomes are in a typical human cell?",
+    "answer": 46, "unit": "chromosomes",
+    "sourceUrl": "https://www.genome.gov/",
+    "sourceNote": "Standard genetics reference (23 pairs)."
+  },
+  {
+    "id": 25, "scheduledDate": "2026-07-05", "isSeasonal": false,
+    "category": "everyday", "difficulty": "hard", "exact": false,
+    "question": "Roughly how many individual grains of rice are in a typical 1kg bag of rice?",
+    "answer": 50000, "unit": "grains",
+    "sourceUrl": null,
+    "sourceNote": "Calculated estimate (~50 grains/gram for long-grain rice) — good genuine Fermi-style puzzle, not a single official source."
+  },
+
+  {
+    "id": 26, "scheduledDate": "2026-07-06", "isSeasonal": false,
+    "category": "history", "difficulty": "standard", "exact": false,
+    "question": "Roughly how many stone blocks make up the Great Pyramid of Giza?",
+    "answer": 2300000, "unit": "blocks",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Great_Pyramid_of_Giza",
+    "sourceNote": "Commonly cited estimate originating from Egyptologist Flinders Petrie's survey."
+  },
+  {
+    "id": 27, "scheduledDate": "2026-07-06", "isSeasonal": false,
+    "category": "geography", "difficulty": "surprising", "exact": false,
+    "question": "What is the depth of the Mariana Trench at its deepest point (Challenger Deep), in meters?",
+    "answer": 10935, "unit": "meters",
+    "sourceUrl": "https://oceanexplorer.noaa.gov/",
+    "sourceNote": "Recent sonar measurements cluster between ~10,900-10,994m; treat as approximate."
+  },
+  {
+    "id": 28, "scheduledDate": "2026-07-06", "isSeasonal": false,
+    "category": "physics", "difficulty": "hard", "exact": false,
+    "question": "Roughly how many years does it take light from the nearest star beyond our Sun (Proxima Centauri) to reach Earth?",
+    "answer": 4.24, "unit": "years",
+    "sourceUrl": "https://science.nasa.gov/",
+    "sourceNote": "Standard astronomy reference figure."
+  },
+  {
+    "id": 29, "scheduledDate": "2026-07-06", "isSeasonal": false,
+    "category": "geography", "difficulty": "standard", "exact": false,
+    "question": "What is the length of the Nile River, generally considered the longest river on Earth, in kilometers?",
+    "answer": 6650, "unit": "km",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Nile",
+    "sourceNote": "Commonly cited figure; Nile vs. Amazon 'longest river' is genuinely disputed among geographers."
+  },
+  {
+    "id": 30, "scheduledDate": "2026-07-06", "isSeasonal": false,
+    "category": "human_body", "difficulty": "surprising", "exact": false,
+    "question": "Roughly how many muscles are in the human body?",
+    "answer": 600, "unit": "muscles",
+    "sourceUrl": "https://www.ncbi.nlm.nih.gov/",
+    "sourceNote": "Commonly cited anatomical estimate (~600-650 depending on counting method)."
+  },
+
+  {
+    "id": 31, "scheduledDate": "2026-07-07", "isSeasonal": false,
+    "category": "science", "difficulty": "standard", "exact": true,
+    "question": "How many elements are currently recognized on the periodic table?",
+    "answer": 118, "unit": "elements",
+    "sourceUrl": "https://iupac.org/",
+    "sourceNote": "Officially confirmed by IUPAC; stable as of 2026."
+  },
+  {
+    "id": 32, "scheduledDate": "2026-07-07", "isSeasonal": false,
+    "category": "astronomy", "difficulty": "hard", "exact": false,
+    "question": "What is the average distance from the Earth to the Sun, in millions of kilometers?",
+    "answer": 149.6, "unit": "million km",
+    "sourceUrl": "https://science.nasa.gov/sun/facts/",
+    "sourceNote": "1 astronomical unit (AU) — standard, well-defined average."
+  },
+  {
+    "id": 33, "scheduledDate": "2026-07-07", "isSeasonal": false,
+    "category": "landmarks", "difficulty": "surprising", "exact": true,
+    "question": "Roughly how many individually designed metal parts make up the structure of the Eiffel Tower?",
+    "answer": 18038, "unit": "parts",
+    "sourceUrl": "https://www.toureiffel.paris/en/the-monument/history",
+    "sourceNote": "Official Eiffel Tower figure — each piece traced to a tenth of a millimeter."
+  },
+  {
+    "id": 34, "scheduledDate": "2026-07-07", "isSeasonal": false,
+    "category": "geography", "difficulty": "standard", "exact": true,
+    "question": "What is the equatorial circumference of the Earth, in kilometers?",
+    "answer": 40075, "unit": "km",
+    "sourceUrl": "https://www.nasa.gov/",
+    "sourceNote": "Standard geodesic constant."
+  },
+  {
+    "id": 35, "scheduledDate": "2026-07-07", "isSeasonal": false,
+    "category": "everyday", "difficulty": "hard", "exact": true,
+    "question": "Roughly how many seconds are there in a full (365-day) year?",
+    "answer": 31536000, "unit": "seconds",
+    "sourceUrl": null,
+    "sourceNote": "Simple calculation: 365 x 24 x 60 x 60."
+  },
+
+  {
+    "id": 36, "scheduledDate": "2026-07-08", "isSeasonal": false,
+    "category": "human_body", "difficulty": "standard", "exact": true,
+    "question": "How many bones are in a single human hand?",
+    "answer": 27, "unit": "bones",
+    "sourceUrl": "https://www.ncbi.nlm.nih.gov/",
+    "sourceNote": "Standard anatomical reference."
+  },
+  {
+    "id": 37, "scheduledDate": "2026-07-08", "isSeasonal": false,
+    "category": "landmarks", "difficulty": "surprising", "exact": true,
+    "question": "What is the weight of Big Ben's main bell in London, in tonnes?",
+    "answer": 13.76, "unit": "tonnes",
+    "sourceUrl": "https://www.parliament.uk/",
+    "sourceNote": "Official Parliament of the UK figure for the Great Bell."
+  },
+  {
+    "id": 38, "scheduledDate": "2026-07-08", "isSeasonal": false,
+    "category": "astronomy", "difficulty": "hard", "exact": false,
+    "question": "Roughly how old is the universe, in billions of years?",
+    "answer": 13.8, "unit": "billion years",
+    "sourceUrl": "https://science.nasa.gov/",
+    "sourceNote": "Standard cosmological estimate from cosmic microwave background data."
+  },
+  {
+    "id": 39, "scheduledDate": "2026-07-08", "isSeasonal": false,
+    "category": "landmarks", "difficulty": "standard", "exact": false,
+    "question": "How tall is the Statue of Liberty, from ground level to the tip of the torch, in meters?",
+    "answer": 93, "unit": "meters",
+    "sourceUrl": "https://www.nps.gov/stli/",
+    "sourceNote": "National Park Service figure (base to torch)."
+  },
+  {
+    "id": 40, "scheduledDate": "2026-07-08", "isSeasonal": false,
+    "category": "economy", "difficulty": "surprising", "exact": true,
+    "question": "What is the current record for most hot dogs eaten in Nathan's 10-minute contest?",
+    "answer": 76, "unit": "hot dogs",
+    "sourceUrl": "https://abc7.com/post/americas-favorite-fourth-july-tradition-nathans-famous-hot/15023968/",
+    "sourceNote": "Joey Chestnut's record, set at the annual Coney Island contest."
+  },
+
+  {
+    "id": 41, "scheduledDate": "2026-07-09", "isSeasonal": false,
+    "category": "science", "difficulty": "standard", "exact": true,
+    "question": "How many amino acids combine to build the proteins in living organisms?",
+    "answer": 20, "unit": "amino acids",
+    "sourceUrl": "https://www.genome.gov/",
+    "sourceNote": "Standard biochemistry reference (the 20 standard proteinogenic amino acids)."
+  },
+  {
+    "id": 42, "scheduledDate": "2026-07-09", "isSeasonal": false,
+    "category": "astronomy", "difficulty": "hard", "exact": false,
+    "question": "Roughly how far away is the edge of the observable universe, in billions of light-years?",
+    "answer": 46.5, "unit": "billion light-years",
+    "sourceUrl": "https://science.nasa.gov/",
+    "sourceNote": "Standard cosmology figure, accounting for the universe's expansion."
+  },
+  {
+    "id": 43, "scheduledDate": "2026-07-09", "isSeasonal": false,
+    "category": "geography", "difficulty": "surprising", "exact": false,
+    "question": "What is the total land area of Antarctica, in square kilometers?",
+    "answer": 14200000, "unit": "km2",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Antarctica",
+    "sourceNote": "Standard geographic reference, roughly 1.5x the size of the United States."
+  },
+  {
+    "id": 44, "scheduledDate": "2026-07-09", "isSeasonal": false,
+    "category": "human_body", "difficulty": "standard", "exact": false,
+    "question": "Roughly how much does the average adult human brain weigh, in grams?",
+    "answer": 1350, "unit": "grams",
+    "sourceUrl": "https://www.ncbi.nlm.nih.gov/",
+    "sourceNote": "Standard reference range, ~1,300-1,400g."
+  },
+  {
+    "id": 45, "scheduledDate": "2026-07-09", "isSeasonal": false,
+    "category": "nature", "difficulty": "hard", "exact": false,
+    "question": "Roughly how many liters of water flow over Niagara Falls every second?",
+    "answer": 2400000, "unit": "liters/second",
+    "sourceUrl": "https://www.niagaraparks.com/",
+    "sourceNote": "Average combined flow (American + Horseshoe Falls); flow is managed and varies seasonally."
+  },
+
+  {
+    "id": 46, "scheduledDate": "2026-07-10", "isSeasonal": false,
+    "category": "geography", "difficulty": "standard", "exact": false,
+    "question": "What is the length of the Amazon River, in kilometers?",
+    "answer": 6400, "unit": "km",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Amazon_River",
+    "sourceNote": "Commonly cited figure; exact length disputed vs. the Nile depending on measurement method."
+  },
+  {
+    "id": 47, "scheduledDate": "2026-07-10", "isSeasonal": false,
+    "category": "physics", "difficulty": "surprising", "exact": false,
+    "question": "Roughly how many atoms are estimated to exist in the entire observable universe (as a power of 10)?",
+    "answer": 1e80, "unit": "atoms",
+    "sourceUrl": "https://www.nasa.gov/",
+    "sourceNote": "Widely cited order-of-magnitude estimate (~10^80); genuinely uncertain by design, good 'hard' question."
+  },
+  {
+    "id": 48, "scheduledDate": "2026-07-10", "isSeasonal": false,
+    "category": "geography", "difficulty": "standard", "exact": false,
+    "question": "Roughly how many people are alive on Earth right now, as of mid-2026?",
+    "answer": 8300000000, "unit": "people",
+    "sourceUrl": "https://www.worldometers.info/world-population/",
+    "sourceNote": "UN-derived estimate as of July 2026; this number increases continuously, so pin the 'as of' date in the UI."
+  },
+  {
+    "id": 49, "scheduledDate": "2026-07-10", "isSeasonal": false,
+    "category": "nature", "difficulty": "hard", "exact": false,
+    "question": "Roughly how many known living species of mammals are there on Earth?",
+    "answer": 6400, "unit": "species",
+    "sourceUrl": "https://www.iucnredlist.org/",
+    "sourceNote": "Standard mammal-diversity reference figure, continually revised slightly as taxonomy updates."
+  },
+  {
+    "id": 50, "scheduledDate": "2026-07-10", "isSeasonal": true, "seasonalNote": "2026 FIFA World Cup in progress",
+    "category": "sports", "difficulty": "surprising", "exact": true,
+    "question": "How many national teams are competing in the 2026 FIFA World Cup, the first tournament ever at this expanded size?",
+    "answer": 48, "unit": "teams",
+    "sourceUrl": "https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/articles/match-schedule-fixtures-results-teams-stadiums",
+    "sourceNote": "Expanded from 32 teams in previous tournaments."
+  }
+]

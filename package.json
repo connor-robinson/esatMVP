@@ -9,6 +9,7 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
+    "seed:fermi": "npx tsx scripts/seed-fermi-questions.ts",
     "build:check": "npm run type-check && npm run lint && npm run build",
     "postinstall": "patch-package"
   },

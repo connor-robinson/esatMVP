@@ -14,7 +14,13 @@ export type FermiCategory =
   | "economy"
   | "tech"
   | "human body"
-  | "everyday";
+  | "everyday"
+  | "sports"
+  | "astronomy"
+  | "landmarks"
+  | "physics"
+  | "space"
+  | (string & {});
 
 export interface FermiQuestion {
   id: string;
@@ -25,6 +31,11 @@ export interface FermiQuestion {
   /** One-line context shown after guessing. */
   note?: string;
 }
+
+/** In-play question — answer omitted for server-scheduled rounds. */
+export type PlayableFermiQuestion = Omit<FermiQuestion, "answer"> & {
+  answer?: number;
+};
 
 export const FERMI_QUESTIONS: FermiQuestion[] = [
   {

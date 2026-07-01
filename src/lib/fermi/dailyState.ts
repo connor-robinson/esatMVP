@@ -13,6 +13,12 @@ export type FermiPhase = "playing" | "revealed" | "summary";
 
 export interface StoredFermiResult {
   questionId: string;
+  /** Snapshot so scheduled answers survive refresh without client bundle. */
+  question?: string;
+  answer?: number;
+  unit?: string;
+  category?: string;
+  note?: string;
   guess: number;
   logErr: number;
   score: number;
@@ -24,6 +30,7 @@ export interface StoredFermiDailyState {
   results: StoredFermiResult[];
   index: number;
   phase: FermiPhase;
+  roundMode?: "scheduled" | "bank";
 }
 
 export interface HydratedFermiResult {
@@ -47,6 +54,18 @@ export function isFermiDailyComplete(
   return state.phase === "summary" && state.results.length >= roundLength;
 }
 
+function storedToQuestion(stored: StoredFermiResult): FermiQuestion | null {
+  if (!stored.question || stored.answer == null) return null;
+  return {
+    id: stored.questionId,
+    question: stored.question,
+    answer: stored.answer,
+    unit: stored.unit,
+    category: (stored.category ?? "everyday") as FermiQuestion["category"],
+    note: stored.note,
+  };
+}
+
 function hydrateResults(
   round: FermiQuestion[],
   stored: StoredFermiResult[],
@@ -54,10 +73,15 @@ function hydrateResults(
   const byId = new Map(round.map((q) => [q.id, q]));
   return stored
     .map((r) => {
-      const question = byId.get(r.questionId);
-      if (!question) return null;
+      const fromRound = byId.get(r.questionId);
+      const fromStored = storedToQuestion(r);
+      const question =
+        fromRound && fromRound.answer != null
+          ? fromRound
+          : fromStored ?? fromRound;
+      if (!question || question.answer == null) return null;
       return {
-        question,
+        question: question as FermiQuestion,
         guess: r.guess,
         logErr: r.logErr,
         score: r.score,
@@ -92,6 +116,7 @@ export function saveFermiDailyState(
   index: number,
   phase: FermiPhase,
   results: HydratedFermiResult[],
+  roundMode?: "scheduled" | "bank",
 ): void {
   if (typeof window === "undefined") return;
   try {
@@ -99,8 +124,14 @@ export function saveFermiDailyState(
       dateKey: todayKey,
       index,
       phase,
+      roundMode,
       results: results.map((r) => ({
         questionId: r.question.id,
+        question: r.question.question,
+        answer: r.question.answer,
+        unit: r.question.unit,
+        category: r.question.category,
+        note: r.question.note,
         guess: r.guess,
         logErr: r.logErr,
         score: r.score,

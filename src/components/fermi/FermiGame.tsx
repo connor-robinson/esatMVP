@@ -14,7 +14,7 @@ import { ArrowRight, BarChart3, X } from "lucide-react";
 import { FermiGuessrIcon } from "@/components/icons/FermiGuessrIcon";
 import { cn } from "@/lib/utils";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
-import type { FermiQuestion } from "@/config/fermiQuestions";
+import type { FermiQuestion, PlayableFermiQuestion } from "@/config/fermiQuestions";
 import {
   formatFermiNumber,
   formatFullNumber,
@@ -27,10 +27,6 @@ import {
   type FermiVerdict,
 } from "@/lib/fermi/scoring";
 import { utcDateKey } from "@/lib/fermi/dates";
-import {
-  getDailyFermiQuestions,
-  getDailyPuzzleNumber,
-} from "@/lib/fermi/dailyQuestions";
 import {
   FERMI_GUESSR_NAME,
   FERMI_GUESSR_STATS_PATH,
@@ -47,6 +43,20 @@ import {
 
 interface FermiResult extends HydratedFermiResult {}
 
+type DailyRoundPayload =
+  | {
+      mode: "scheduled";
+      puzzleNumber: number;
+      playedDate: string;
+      questions: PlayableFermiQuestion[];
+    }
+  | {
+      mode: "bank";
+      puzzleNumber: number;
+      playedDate: string;
+      questions: FermiQuestion[];
+    };
+
 const toneClasses: Record<FermiVerdict["tone"], { text: string; bg: string; ring: string }> = {
   perfect: { text: "text-primary", bg: "bg-primary/15", ring: "ring-primary/30" },
   great: { text: "text-primary", bg: "bg-primary/15", ring: "ring-primary/30" },
@@ -60,13 +70,18 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
   const authSession = useSupabaseSession();
   const sessionSavedRef = useRef(false);
   const todayKey = useMemo(() => utcDateKey(), []);
-  const puzzleNumber = useMemo(() => getDailyPuzzleNumber(), []);
-  const round = useMemo(() => getDailyFermiQuestions(), []);
+
+  const [roundMode, setRoundMode] = useState<"scheduled" | "bank">("bank");
+  const [round, setRound] = useState<PlayableFermiQuestion[]>([]);
+  const [puzzleNumber, setPuzzleNumber] = useState(0);
+  const [roundError, setRoundError] = useState<string | null>(null);
+  const [roundReady, setRoundReady] = useState(false);
 
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<FermiPhase>("playing");
   const [input, setInput] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const [results, setResults] = useState<FermiResult[]>([]);
   const [bestScore, setBestScore] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
@@ -79,32 +94,60 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
   const parsedPreview = useMemo(() => parseFermiInput(input), [input]);
 
   useEffect(() => {
-    setBestScore(readFermiBestScore());
+    let cancelled = false;
 
-    const saved = loadFermiDailyState(todayKey, round);
-    if (saved) {
-      setIndex(saved.index);
-      setPhase(saved.phase);
-      setResults(saved.results);
-      if (isFermiDailyComplete(saved, round.length)) {
-        setCompletedToday(true);
-        setPhase("summary");
-        setIndex(round.length - 1);
+    async function loadRound() {
+      setRoundError(null);
+      try {
+        const res = await fetch("/api/fermi/daily");
+        if (!res.ok) throw new Error("Failed to load daily puzzle");
+        const data = (await res.json()) as DailyRoundPayload;
+        if (cancelled) return;
+
+        setRoundMode(data.mode);
+        setPuzzleNumber(data.puzzleNumber);
+        setRound(data.questions);
+
+        setBestScore(readFermiBestScore());
+
+        const saved = loadFermiDailyState(todayKey, data.questions as FermiQuestion[]);
+        if (saved) {
+          setIndex(saved.index);
+          setPhase(saved.phase);
+          setResults(saved.results);
+          if (isFermiDailyComplete(saved, data.questions.length)) {
+            setCompletedToday(true);
+            setPhase("summary");
+            setIndex(data.questions.length - 1);
+          }
+        }
+        setHydrated(true);
+      } catch {
+        if (!cancelled) {
+          setRoundError("Could not load today's puzzle. Please refresh and try again.");
+        }
+      } finally {
+        if (!cancelled) setRoundReady(true);
       }
     }
-    setHydrated(true);
+
+    void loadRound();
 
     try {
       window.sessionStorage.removeItem("app-chunk-reload");
     } catch {
       /* ignore */
     }
-  }, [todayKey, round]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [todayKey]);
 
   useEffect(() => {
-    if (!hydrated) return;
-    saveFermiDailyState(todayKey, index, phase, results);
-  }, [hydrated, todayKey, index, phase, results]);
+    if (!hydrated || !roundReady) return;
+    saveFermiDailyState(todayKey, index, phase, results, roundMode);
+  }, [hydrated, roundReady, todayKey, index, phase, results, roundMode]);
 
   useEffect(() => {
     if (phase === "playing") {
@@ -117,25 +160,65 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
   const isLastQuestion = index + 1 >= round.length;
   const displayPhase: FermiPhase = completedToday ? "summary" : phase;
 
-  const handleSubmit = useCallback(() => {
-    if (phase !== "playing" || !current || completedToday) return;
+  const handleSubmit = useCallback(async () => {
+    if (phase !== "playing" || !current || completedToday || submitting) return;
     const guess = parseFermiInput(input);
     if (guess == null) {
       setError("Couldn't read that number. Try 7 million, 8e7, or 7*10^10.");
       return;
     }
-    const logErr = logError(guess, current.answer);
-    const result: FermiResult = {
-      question: current,
-      guess,
-      logErr,
-      score: closenessScore(logErr),
-      verdict: getVerdict(guess, current.answer),
-    };
-    setResults((prev) => [...prev, result]);
+
+    setSubmitting(true);
     setError(null);
-    setPhase("revealed");
-  }, [phase, current, input, completedToday]);
+
+    try {
+      let result: FermiResult;
+
+      if (roundMode === "scheduled") {
+        const res = await fetch("/api/fermi/evaluate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ questionId: current.id, guess }),
+        });
+        if (!res.ok) {
+          setError("Could not score that guess. Try again.");
+          return;
+        }
+        const data = (await res.json()) as {
+          question: FermiQuestion;
+          logErr: number;
+          score: number;
+          verdict: FermiVerdict;
+          guess: number;
+        };
+        result = {
+          question: data.question,
+          guess: data.guess,
+          logErr: data.logErr,
+          score: data.score,
+          verdict: data.verdict,
+        };
+      } else {
+        if (current.answer == null) {
+          setError("Something went wrong loading this question.");
+          return;
+        }
+        const logErr = logError(guess, current.answer);
+        result = {
+          question: current as FermiQuestion,
+          guess,
+          logErr,
+          score: closenessScore(logErr),
+          verdict: getVerdict(guess, current.answer),
+        };
+      }
+
+      setResults((prev) => [...prev, result]);
+      setPhase("revealed");
+    } finally {
+      setSubmitting(false);
+    }
+  }, [phase, current, input, completedToday, submitting, roundMode]);
 
   const handleNext = useCallback(() => {
     if (index + 1 >= round.length) {
@@ -216,10 +299,27 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
     }
   }, [shareText]);
 
-  if (!hydrated) {
+  if (!hydrated || !roundReady) {
     return (
       <div className="flex h-[calc(100vh-65px)] items-center justify-center bg-background">
         <p className="text-sm font-medium text-text-muted">Loading today&apos;s puzzle…</p>
+      </div>
+    );
+  }
+
+  if (roundError || round.length === 0) {
+    return (
+      <div className="flex h-[calc(100vh-65px)] flex-col items-center justify-center gap-4 bg-background px-6 text-center">
+        <p className="text-sm font-medium text-text-muted">
+          {roundError ?? "Today's puzzle is unavailable."}
+        </p>
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className="rounded-organic-lg bg-secondary px-5 py-2.5 text-sm font-bold text-white"
+        >
+          Retry
+        </button>
       </div>
     );
   }
@@ -297,9 +397,10 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
                 setInput(v);
                 if (error) setError(null);
               }}
-              onSubmit={handleSubmit}
+              onSubmit={() => void handleSubmit()}
               parsedPreview={parsedPreview}
               error={error}
+              submitting={submitting}
               inputRef={inputRef}
             />
           )}
@@ -336,14 +437,16 @@ function PlayingView({
   onSubmit,
   parsedPreview,
   error,
+  submitting,
   inputRef,
 }: {
-  question: FermiQuestion;
+  question: PlayableFermiQuestion;
   input: string;
   onInputChange: (v: string) => void;
   onSubmit: () => void;
   parsedPreview: number | null;
   error: string | null;
+  submitting: boolean;
   inputRef: React.RefObject<HTMLInputElement>;
 }) {
   return (
@@ -407,7 +510,7 @@ function PlayingView({
           <button
             type="button"
             onClick={onSubmit}
-            disabled={!input.trim()}
+            disabled={!input.trim() || submitting}
             className={cn(
               "absolute right-2 top-1/2 -translate-y-1/2 rounded-xl p-3 outline-none transition-all",
               input.trim()
