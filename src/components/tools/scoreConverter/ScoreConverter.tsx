@@ -62,7 +62,10 @@ const COLOR_TEXT: Record<ModuleColor, string> = {
 function displaySubject(opt: SectionOption): string {
   if (opt.moduleLabel) return opt.moduleLabel;
   const tail = opt.legacyLabel.split("—")[1]?.trim();
-  if (tail) return tail;
+  if (tail) {
+    if (/both papers/i.test(tail)) return "Both papers";
+    return tail;
+  }
   return opt.legacyLabel.split("—")[0]?.trim() ?? opt.partName;
 }
 
@@ -129,6 +132,7 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
   const isScaledMode = year?.mode === "scaled";
 
   const isNsaaEngaa = exam === "NSAA" || exam === "ENGAA";
+  const isTmuaRaw = exam === "TMUA" && !isScaledMode;
 
   const sectionGroups = useMemo(() => {
     const map = new Map<string, SectionOption[]>();
@@ -249,6 +253,11 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
 
   const toggleSection = (opt: SectionOption) => {
     invalidateResults();
+    if (isTmuaRaw) {
+      setCheckedKeys([opt.key]);
+      setRawByKey((r) => ({ ...r, [opt.key]: r[opt.key] ?? 0 }));
+      return;
+    }
     setCheckedKeys((prev) => {
       if (prev.includes(opt.key)) {
         return prev.filter((k) => k !== opt.key);
@@ -530,10 +539,16 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
               <span className="text-xs text-text-muted">No subjects for this section.</span>
             )}
             {!sectionsLoading && partsInGroup.length > 0 && (
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              <div
+                className={cn(
+                  "grid gap-2",
+                  isTmuaRaw ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-2 sm:grid-cols-4",
+                )}
+              >
                 {partsInGroup.map((s) => {
                   const checked = checkedKeys.includes(s.key);
-                  const disabled = !checked && checkedKeys.length >= MAX_SECTIONS;
+                  const disabled =
+                    !isTmuaRaw && !checked && checkedKeys.length >= MAX_SECTIONS;
                   const c = COLOR_TEXT[s.color];
                   return (
                     <div
@@ -551,12 +566,14 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                         )}
                       >
                         <input
-                          type="checkbox"
+                          type={isTmuaRaw ? "radio" : "checkbox"}
+                          name={isTmuaRaw ? "tmua-section" : undefined}
                           checked={checked}
                           disabled={disabled}
                           onChange={() => toggleSection(s)}
                           className={cn(
-                            "h-3.5 w-3.5 shrink-0 cursor-pointer rounded accent-secondary",
+                            "h-3.5 w-3.5 shrink-0 cursor-pointer accent-secondary",
+                            isTmuaRaw ? "rounded-full" : "rounded",
                             controlBase,
                           )}
                         />

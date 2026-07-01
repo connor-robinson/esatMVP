@@ -13,6 +13,7 @@ import {
   describeModule,
   isConverterExam,
   resolvePercentileTableKey,
+  validateTmuaSelections,
   tmuaCrossScaleConfidence,
   TMUA_IRT_FROM_YEAR,
   type Confidence,
@@ -359,9 +360,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "No sections selected" }, { status: 400 });
   }
 
+  const trimmed = selections.slice(0, 3);
+  if (exam === "TMUA") {
+    const tmuaError = validateTmuaSelections(trimmed);
+    if (tmuaError) {
+      return NextResponse.json({ error: tmuaError }, { status: 400 });
+    }
+  }
+
   const supabase = createServerClient();
   const isTmuaPreChange = exam === "TMUA" && year <= 2023;
-  const trimmed = selections.slice(0, 3);
 
   const percentileKeys = new Set<string>();
   for (const sel of trimmed) {

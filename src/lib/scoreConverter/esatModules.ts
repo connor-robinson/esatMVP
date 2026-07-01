@@ -188,6 +188,32 @@ function labelForPart(
   return { legacyLabel: "Paper 1 — Mathematical Thinking", group: "Papers", order: 1 };
 }
 
+/** TMUA picker: one paper, or overall (both papers) — never a mix. */
+export function isTmuaOverallPart(partName: string): boolean {
+  return /overall/i.test(partName.trim());
+}
+
+export function isTmuaSinglePaperPart(partName: string): boolean {
+  return /paper\s*[12]/i.test(partName.trim());
+}
+
+export function validateTmuaSelections(
+  selections: Array<{ partName: string }>,
+): string | null {
+  if (selections.length === 0) return "No sections selected";
+  if (selections.length === 1) return null;
+
+  const hasOverall = selections.some((s) => isTmuaOverallPart(s.partName));
+  const paperCount = selections.filter((s) => isTmuaSinglePaperPart(s.partName)).length;
+  if (hasOverall) {
+    return "Select either one TMUA paper or both papers overall — not a mix.";
+  }
+  if (paperCount > 1) {
+    return "Select one TMUA paper, or use both papers overall — not Paper 1 and Paper 2 together.";
+  }
+  return "Select one TMUA paper or both papers overall.";
+}
+
 /**
  * Decide which conversion `part_name` should be exposed for a logical section,
  * and from which paper. The DB stores redundant / cross-listed parts (e.g. an
