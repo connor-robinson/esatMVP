@@ -64,6 +64,70 @@ const COLOR_TEXT: Record<ModuleColor, string> = {
   "tmua-accent": "text-tmua-accent",
 };
 
+const COLOR_FILL: Record<ModuleColor, string> = {
+  maths: "bg-maths",
+  physics: "bg-physics",
+  chemistry: "bg-chemistry",
+  biology: "bg-biology",
+  advanced: "bg-advanced",
+  "tmua-accent": "bg-tmua-accent",
+};
+
+const COLOR_FILL_MUTED: Record<ModuleColor, string> = {
+  maths: "bg-maths/25",
+  physics: "bg-physics/25",
+  chemistry: "bg-chemistry/25",
+  biology: "bg-biology/25",
+  advanced: "bg-advanced/25",
+  "tmua-accent": "bg-tmua-accent/25",
+};
+
+const COLOR_CARD_ACTIVE: Record<ModuleColor, string> = {
+  maths: "bg-maths/10",
+  physics: "bg-physics/10",
+  chemistry: "bg-chemistry/10",
+  biology: "bg-biology/10",
+  advanced: "bg-advanced/10",
+  "tmua-accent": "bg-tmua-accent/10",
+};
+
+function SubjectCheckbox({
+  checked,
+  disabled,
+  color,
+  onChange,
+}: {
+  checked: boolean;
+  disabled?: boolean;
+  color: ModuleColor;
+  onChange: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      role="checkbox"
+      aria-checked={checked}
+      disabled={disabled}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!disabled) onChange();
+      }}
+      className={cn(
+        "flex h-[1.125rem] w-[1.125rem] shrink-0 items-center justify-center rounded-[5px] transition-all duration-fast",
+        checked ? COLOR_FILL[color] : COLOR_FILL_MUTED[color],
+        disabled && "cursor-not-allowed opacity-35",
+        !disabled && "cursor-pointer hover:brightness-110",
+        controlBase,
+      )}
+    >
+      {checked && (
+        <Check className="h-3 w-3 text-background" strokeWidth={3} aria-hidden />
+      )}
+    </button>
+  );
+}
+
 function displaySubject(opt: SectionOption): string {
   if (opt.moduleLabel) return opt.moduleLabel;
   const tail = opt.legacyLabel.split("—")[1]?.trim();
@@ -801,31 +865,29 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                     <div
                       key={s.key}
                       className={cn(
-                        "rounded-organic-lg bg-surface-mid px-4 py-3 transition-opacity",
-                        !checked && "opacity-60",
+                        "rounded-organic-lg px-4 py-3 transition-all duration-fast",
+                        checked ? COLOR_CARD_ACTIVE[s.color] : "bg-surface-mid",
+                        !checked && "opacity-70",
                         disabled && "opacity-35",
                       )}
                     >
-                      <label
+                      <div
                         className={cn(
                           "flex cursor-pointer items-center gap-2.5",
                           disabled && "cursor-not-allowed",
                         )}
+                        onClick={() => !disabled && toggleSection(s)}
                       >
-                        <input
-                          type="checkbox"
+                        <SubjectCheckbox
                           checked={checked}
                           disabled={disabled}
+                          color={s.color}
                           onChange={() => toggleSection(s)}
-                          className={cn(
-                            "h-4 w-4 shrink-0 cursor-pointer rounded accent-secondary",
-                            controlBase,
-                          )}
                         />
                         <span className={cn("truncate text-sm font-semibold", c)}>
                           {displaySubject(s)}
                         </span>
-                      </label>
+                      </div>
                       <div className="mt-2.5 flex items-baseline gap-1.5">
                         <input
                           type="text"
