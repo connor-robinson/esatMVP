@@ -1,156 +1,71 @@
 /**
- * Full-screen loading overlay — spinner, status message, and a random study hint.
+ * Full-screen loading overlay — logo, spinner, status, and tip.
  */
 
 "use client";
 
-import { motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { BrandLogo } from "@/components/brand/BrandLogo";
-import { TAGLINE } from "@/config/brand";
+import { DISPLAY_NAME } from "@/config/brand";
 import { pickRandomSessionLoadingHint } from "@/lib/questionBank/sessionLoadingHints";
+import { cn } from "@/lib/utils";
 
 export type LoadingPageVariant = "app" | "session";
 
 interface LoadingPageProps {
   message?: string;
+  /** @deprecated Progress bar removed — kept for API compatibility. */
   showProgress?: boolean;
+  /** @deprecated Progress bar removed — kept for API compatibility. */
   progress?: number;
   /** Fixed hint; if omitted, a random tip is chosen once on mount. */
   hint?: string;
   variant?: LoadingPageVariant;
 }
 
-const APP_LOADING_STEPS = [
-  "Initializing math engines...",
-  "Loading practice sessions...",
-  "Optimizing algorithms...",
-  "Preparing analytics...",
-  "Almost ready...",
-];
-
 export function LoadingPage({
   message,
-  showProgress = false,
-  progress = 0,
   hint: hintProp,
   variant = "app",
 }: LoadingPageProps) {
-  const [dots, setDots] = useState("");
-  const [loadingStep, setLoadingStep] = useState(0);
-
   const hint = useMemo(
     () => hintProp ?? pickRandomSessionLoadingHint(),
     [hintProp],
   );
 
-  const isSession = variant === "session";
   const statusMessage =
     message ??
-    (isSession
-      ? "Preparing your session"
-      : "Compiling your math training experience");
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setDots((prev) => (prev.length >= 3 ? "" : prev + "."));
-    }, 500);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    if (isSession) return;
-    const interval = setInterval(() => {
-      setLoadingStep((prev) => (prev + 1) % APP_LOADING_STEPS.length);
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [isSession]);
+    (variant === "session" ? "Preparing your session" : "Initializing");
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center bg-background">
-      <div className="mx-auto max-w-md space-y-8 px-6 text-center">
-        {!isSession ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="space-y-4"
-          >
-            <div className="flex justify-center">
-              <BrandLogo variant="full" size="lg" />
-            </div>
-            <div className="text-sm uppercase tracking-wider text-text-muted">
-              {TAGLINE}
-            </div>
-          </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-          >
-            <div className="font-heading text-2xl font-semibold tracking-tight text-text sm:text-3xl">
-              Question Bank
-            </div>
-          </motion.div>
-        )}
+    <div className="fixed inset-0 z-[110] flex items-center justify-center bg-background px-6">
+      <div className="flex w-full max-w-sm flex-col items-center gap-12">
+        <div className="flex flex-col items-center gap-4">
+          <BrandLogo variant="mark" size="lg" />
+          <p className="font-heading text-xl font-semibold tracking-tight text-text sm:text-2xl">
+            {DISPLAY_NAME}
+          </p>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.92 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: isSession ? 0 : 0.15 }}
-          className="space-y-6"
+        <div className="flex flex-col items-center gap-5">
+          <div
+            className="h-12 w-12 animate-spin rounded-full border-2 border-border-subtle border-t-primary"
+            role="status"
+            aria-label="Loading"
+          />
+          <p className="min-h-[1.25rem] text-sm text-text-muted">{statusMessage}</p>
+        </div>
+
+        <div
+          className={cn(
+            "w-full max-w-xs border-t border-border-subtle/60 pt-8 text-center",
+          )}
         >
-          <div className="flex justify-center">
-            <div className="relative">
-              <div className="h-16 w-16 rounded-full border-4 border-border-subtle" />
-              <motion.div
-                className="absolute left-0 top-0 h-16 w-16 rounded-full border-4 border-primary border-r-transparent"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-              />
-            </div>
-          </div>
-
-          {showProgress ? (
-            <div className="h-2 w-full overflow-hidden rounded-full bg-surface-elevated">
-              <motion.div
-                className="h-full rounded-full bg-primary"
-                initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.3 }}
-              />
-            </div>
-          ) : null}
-
-          {!isSession ? (
-            <motion.div
-              key={loadingStep}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.5 }}
-              className="min-h-[20px] text-sm font-medium text-text-muted"
-            >
-              {APP_LOADING_STEPS[loadingStep]}
-            </motion.div>
-          ) : null}
-
-          <div className="text-sm text-text-muted">
-            {statusMessage}
-            <span className="text-primary">{dots}</span>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.35 }}
-          className="space-y-2 text-xs text-text-subtle"
-        >
-          <div>💡 Did you know?</div>
-          <p className="text-sm italic leading-relaxed text-text-muted">{hint}</p>
-        </motion.div>
+          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-text-subtle">
+            Tip
+          </p>
+          <p className="mt-2.5 text-sm leading-relaxed text-text-muted">{hint}</p>
+        </div>
       </div>
     </div>
   );

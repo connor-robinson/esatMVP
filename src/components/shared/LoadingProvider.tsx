@@ -31,11 +31,7 @@ export function LoadingProvider({ children }: LoadingProviderProps) {
   return (
     <LoadingContext.Provider value={loadingState}>
       {loadingState.isCompiling && (
-        <LoadingPage
-          message={loadingState.message}
-          showProgress={true}
-          progress={loadingState.progress}
-        />
+        <LoadingPage message={loadingState.message} />
       )}
       {children}
     </LoadingContext.Provider>
