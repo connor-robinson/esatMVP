@@ -67,6 +67,8 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
 
     const curveBSegments: string[] = [];
     let segment: string[] = [];
+    let bFirstRaw: number | null = null;
+    let bLastRaw: number | null = null;
     for (const p of data.points) {
       if (p.estimatedScaled == null) {
         if (segment.length > 0) {
@@ -75,9 +77,22 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
         }
         continue;
       }
+      if (bFirstRaw == null) bFirstRaw = p.raw;
+      bLastRaw = p.raw;
       segment.push(`${toX(p.raw)},${toY(p.estimatedScaled)}`);
     }
     if (segment.length > 0) curveBSegments.push(segment.join(" "));
+
+    const chartRight = w - padRight;
+
+    const bUnavailableLeft =
+      bFirstRaw != null && bFirstRaw > minX
+        ? { x: padL, width: toX(bFirstRaw) - padL, boundaryX: toX(bFirstRaw) }
+        : null;
+    const bUnavailableRight =
+      bLastRaw != null && bLastRaw < maxX
+        ? { x: toX(bLastRaw), width: chartRight - toX(bLastRaw), boundaryX: toX(bLastRaw) }
+        : null;
 
     const bandTop = toY(LOW_BAND_Y_MAX);
     const bandBottom = toY(LOW_BAND_Y_MIN);
@@ -107,9 +122,11 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
       toY,
       curveA,
       curveBSegments,
+      bUnavailableLeft,
+      bUnavailableRight,
       bandTop,
       bandHeight,
-      chartRight: w - padRight,
+      chartRight,
       studentX,
       studentYA,
       studentYB,
@@ -129,6 +146,8 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
     toY,
     curveA,
     curveBSegments,
+    bUnavailableLeft,
+    bUnavailableRight,
     bandTop,
     bandHeight,
     studentX,
@@ -155,8 +174,8 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
           {hasPostCurve && (
             <span className="inline-flex items-center gap-2">
               <span
-                className="inline-block h-0.5 w-5 rounded-full"
-                style={{ background: "var(--color-secondary)" }}
+                className="inline-block h-0 w-5 border-t-2 border-dashed"
+                style={{ borderColor: cssVar.textMuted }}
               />
               Post-2024 TMUA score (est.)
             </span>
@@ -219,6 +238,56 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
         >
           <line x1={padL} y1={h - padB} x2={chartRight} y2={h - padB} stroke={cssVar.borderSubtle} />
           <line x1={padL} y1={padT} x2={padL} y2={h - padB} stroke={cssVar.borderSubtle} />
+
+          {/* Shaded regions where post-2024 estimate is unavailable */}
+          {bUnavailableLeft && (
+            <g>
+              <rect
+                x={bUnavailableLeft.x}
+                y={padT}
+                width={bUnavailableLeft.width}
+                height={h - padB - padT}
+                fill="color-mix(in srgb, var(--color-text-muted) 7%, transparent)"
+              />
+              <line
+                x1={bUnavailableLeft.boundaryX}
+                y1={padT}
+                x2={bUnavailableLeft.boundaryX}
+                y2={h - padB}
+                stroke="color-mix(in srgb, var(--color-text-muted) 22%, transparent)"
+                strokeDasharray="3 4"
+              />
+              <text
+                x={bUnavailableLeft.x + bUnavailableLeft.width / 2}
+                y={(padT + h - padB) / 2 + 3}
+                fill={cssVar.textMuted}
+                fontSize="8.5"
+                textAnchor="middle"
+                opacity={0.75}
+              >
+                No post-2024 estimate
+              </text>
+            </g>
+          )}
+          {bUnavailableRight && (
+            <g>
+              <rect
+                x={bUnavailableRight.x}
+                y={padT}
+                width={bUnavailableRight.width}
+                height={h - padB - padT}
+                fill="color-mix(in srgb, var(--color-text-muted) 7%, transparent)"
+              />
+              <line
+                x1={bUnavailableRight.boundaryX}
+                y1={padT}
+                x2={bUnavailableRight.boundaryX}
+                y2={h - padB}
+                stroke="color-mix(in srgb, var(--color-text-muted) 22%, transparent)"
+                strokeDasharray="3 4"
+              />
+            </g>
+          )}
 
           <rect
             x={padL}
@@ -291,19 +360,20 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
             className="tmua-curve-draw"
           />
 
-          {/* Curve B — post-2024 equivalent (animated second line) */}
+          {/* Curve B — post-2024 equivalent (dashed neutral) */}
           {curveBSegments.map((seg, i) => (
             <polyline
               key={`b-${i}`}
               points={seg}
               fill="none"
-              stroke="var(--color-secondary)"
-              strokeWidth="2.25"
+              stroke={cssVar.textMuted}
+              strokeWidth="2"
               strokeLinejoin="round"
               strokeLinecap="round"
-              pathLength={1}
-              className="tmua-curve-draw-delayed"
-              style={{ animationDelay: `${0.45 + i * 0.12}s` }}
+              strokeDasharray="7 5"
+              opacity={0.9}
+              className="tmua-fade-up-delayed"
+              style={{ animationDelay: `${0.35 + i * 0.1}s` }}
             />
           ))}
 
@@ -323,11 +393,10 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
               y1={studentYA}
               x2={studentX}
               y2={studentYB!}
-              stroke="var(--color-secondary)"
-              strokeWidth="2"
-              strokeDasharray="5 4"
-              opacity={0.85}
-              pathLength={1}
+              stroke={cssVar.textMuted}
+              strokeWidth="1.5"
+              strokeDasharray="4 4"
+              opacity={0.65}
               className="tmua-fade-up-delayed"
             />
           )}
@@ -360,7 +429,7 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
                 cx={studentX}
                 cy={studentYB!}
                 r="5"
-                fill="var(--color-secondary)"
+                fill={cssVar.textMuted}
                 stroke={cssVar.background}
                 strokeWidth="2"
                 className="tmua-fade-up-delayed"
@@ -368,7 +437,7 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
               <text
                 x={studentX + 8}
                 y={studentYB! + 14}
-                fill="var(--color-secondary)"
+                fill={cssVar.textMuted}
                 fontSize="10"
                 fontWeight="600"
                 className="tmua-fade-up-delayed"
