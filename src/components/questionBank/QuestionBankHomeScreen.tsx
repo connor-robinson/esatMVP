@@ -311,7 +311,7 @@ export function QuestionBankHomeScreen() {
     freeTierExhausted || showFreeTierBlocked ? (
       <DrillUpgradeBanner
         variant="panel"
-        headline="You've used your free questions"
+        headline="You've used your 10 free questions"
         subtext="Upgrade for unlimited practice sessions across every subject and difficulty."
         ctaLabel="View plans"
       />
@@ -329,7 +329,18 @@ export function QuestionBankHomeScreen() {
       <Container size="xl" className="space-y-10">
         {/* Progress (logged in) or free preview promo (logged out) */}
         {isLoggedIn ? (
-          <section className="rounded-organic-xl bg-surface px-5 py-6 sm:px-7 sm:py-8">
+          <section className="space-y-4">
+            {!treatAsFullAccess &&
+            !freeTierLoading &&
+            (freeTierExhausted || showFreeTierBlocked) ? (
+              <DrillUpgradeBanner
+                variant="panel"
+                headline="You've used your 10 free questions"
+                subtext="Upgrade for unlimited practice sessions across every subject and difficulty."
+                ctaLabel="View plans"
+              />
+            ) : null}
+            <div className="rounded-organic-xl bg-surface px-5 py-6 sm:px-7 sm:py-8">
             <div>
               <h1 className="text-base font-semibold text-text sm:text-lg">
                 Question Bank Progress
@@ -368,6 +379,7 @@ export function QuestionBankHomeScreen() {
                   </div>
                 </>
               )}
+            </div>
             </div>
           </section>
         ) : freeTierLoading ? (

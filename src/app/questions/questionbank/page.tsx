@@ -114,6 +114,8 @@ export default function QuestionBankPage() {
   const questionStartedAtRef = useRef<number>(Date.now());
   const sessionAttemptLogRef = useRef<QuestionBankSessionAttempt[]>([]);
   const sessionRegisteredRef = useRef(false);
+  /** Set synchronously when consuming the free-tier launch flag (before React re-renders). */
+  const freeTierLaunchInProgressRef = useRef(false);
   const pendingSessionMetaRef = useRef<{
     questionCount: number;
     timeLimitMinutes?: number | null;
@@ -392,13 +394,6 @@ export default function QuestionBankPage() {
         const data = await res.json();
         if (data.hasFullAccess) return false;
 
-        if (data.requiresAuth) {
-          router.push(
-            `/login?redirectTo=${encodeURIComponent('/questions/questionbank')}`,
-          );
-          return true;
-        }
-
         const remainingQs = (data.remainingQuestions ??
           []) as QuestionBankQuestion[];
         const remaining = data.remaining ?? 0;
@@ -409,21 +404,18 @@ export default function QuestionBankPage() {
           remainingQs.length === 0
         ) {
           setFreeTierBlocked(true);
-          router.replace('/questions');
           return true;
         }
 
         const requested = options?.requestedCount ?? remainingQs.length;
         if (requested > remaining || requested > FREE_TIER_QUESTION_LIMIT) {
           setFreeTierBlocked(true);
-          router.replace('/questions');
           return true;
         }
 
         const sessionQs = remainingQs.slice(0, requested);
         if (sessionQs.length === 0) {
           setFreeTierBlocked(true);
-          router.replace('/questions');
           return true;
         }
 
@@ -449,10 +441,11 @@ export default function QuestionBankPage() {
         });
 
         return true;
-      } catch (err) {
-        router.replace('/questions');
+      } catch {
+        setFreeTierBlocked(true);
         return true;
       } finally {
+        freeTierLaunchInProgressRef.current = false;
         setSessionStarting(false);
       }
     },
@@ -553,10 +546,19 @@ export default function QuestionBankPage() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (sessionView === 'complete') return;
-    if (sessionStarting || sessionBootPending || activeSession) return;
+    if (freeTierBlocked) return;
+    if (
+      freeTierLaunchInProgressRef.current ||
+      sessionStarting ||
+      sessionBootPending ||
+      activeSession
+    ) {
+      return;
+    }
     router.replace('/questions');
   }, [
     activeSession,
+    freeTierBlocked,
     router,
     sessionBootPending,
     sessionStarting,
@@ -853,6 +855,8 @@ export default function QuestionBankPage() {
     const freeTierFlag = sessionStorage.getItem(QUESTION_BANK_FREE_TIER_LAUNCH_KEY);
     if (!freeTierFlag) return;
 
+    freeTierLaunchInProgressRef.current = true;
+    setSessionStarting(true);
     sessionStorage.removeItem(QUESTION_BANK_FREE_TIER_LAUNCH_KEY);
     void startFreeTierSession();
   }, [startFreeTierSession, treatAsFullAccess]);
@@ -946,7 +950,7 @@ export default function QuestionBankPage() {
         <Container size="lg">
           <DrillUpgradeBanner
             variant="panel"
-            headline="You've used your free questions"
+            headline="You've used your 10 free questions"
             subtext="Upgrade for unlimited practice sessions across every subject and difficulty."
             ctaLabel="View plans"
           />
