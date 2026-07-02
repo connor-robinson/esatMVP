@@ -13,16 +13,15 @@ export const ANALYTICS_CATEGORY_ORDER: HighLevelCategory[] = [
   'algebra',
   'geometry',
   'number_theory',
-  'shortcuts',
   'physics',
 ];
 
 export const ANALYTICS_CATEGORY_LABELS: Record<HighLevelCategory, string> = {
+  most_useful: 'Most Useful',
   arithmetic: 'Arithmetic',
   algebra: 'Algebra',
   geometry: 'Geometry',
   number_theory: 'Number Theory',
-  shortcuts: 'Shortcuts',
   physics: 'Physics',
 };
 
@@ -152,7 +151,10 @@ export function getDisplayFoldersGroupedByCategory(): Record<
 > {
   ensureRegistry();
   const grouped = Object.fromEntries(
-    ANALYTICS_CATEGORY_ORDER.map((c) => [c, [] as DisplayFolderRef[]]),
+    (Object.keys(ANALYTICS_CATEGORY_LABELS) as HighLevelCategory[]).map((c) => [
+      c,
+      [] as DisplayFolderRef[],
+    ]),
   ) as Record<HighLevelCategory, DisplayFolderRef[]>;
 
   for (const folder of folders!) {

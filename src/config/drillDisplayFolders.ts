@@ -190,15 +190,6 @@ const NUMBER_THEORY_FOLDERS: FolderDef[] = [
   },
 ];
 
-const SHORTCUTS_FOLDERS: FolderDef[] = [
-  {
-    id: 'shortcuts-percent',
-    name: 'Percentages',
-    topicIds: ['percentages'],
-    symbol: { kind: 'lucide', iconKey: 'Percent' },
-  },
-];
-
 const PHYSICS_FOLDERS: FolderDef[] = [
   {
     id: 'physics-motion',
@@ -233,6 +224,12 @@ const PHYSICS_FOLDERS: FolderDef[] = [
 
 const ARITHMETIC_EXTRA_FOLDERS: FolderDef[] = [
   {
+    id: 'arithmetic-percentages',
+    name: 'Percentages',
+    topicIds: ['percentages'],
+    symbol: { kind: 'lucide', iconKey: 'Percent' },
+  },
+  {
     id: 'arithmetic-notation',
     name: 'Powers',
     topicIds: ['sci_rewrite', 'sci_calc', 'power_bases', 'powers'],
@@ -247,6 +244,7 @@ const ARITHMETIC_FOLDER_ORDER = [
   'multiplication',
   'division',
   'fractions-group',
+  'arithmetic-percentages',
   'arithmetic-notation',
   'squaring',
 ] as const;
@@ -262,6 +260,7 @@ const CATEGORY_FOLDER_BUILDERS: Record<
   HighLevelCategory,
   () => DrillDisplayFolder[]
 > = {
+  most_useful: () => [],
   arithmetic: () => {
     const legacy = buildLegacyArithmeticFolders();
     const extra = buildFolders(ARITHMETIC_EXTRA_FOLDERS);
@@ -285,7 +284,6 @@ const CATEGORY_FOLDER_BUILDERS: Record<
   algebra: () => buildFolders(ALGEBRA_FOLDERS),
   geometry: () => buildFolders(GEOMETRY_FOLDERS),
   number_theory: () => buildFolders(NUMBER_THEORY_FOLDERS),
-  shortcuts: () => buildFolders(SHORTCUTS_FOLDERS),
   physics: () => buildFolders(PHYSICS_FOLDERS),
 };
 
@@ -307,6 +305,7 @@ function folderSymbolForArithmeticId(folderId: string): FolderSymbol {
 
 /** Topic ids shown only inside merged folders. */
 const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
+  most_useful: [],
   arithmetic: [
     'common_multiples',
     'friendly_frac_decimals',
@@ -317,6 +316,7 @@ const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
     'power_bases',
     'powers',
     'squaring',
+    'percentages',
   ],
   algebra: [
     'linearEquations',
@@ -349,7 +349,6 @@ const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
     'factors',
     'divisibility',
   ],
-  shortcuts: ['percentages'],
   physics: [
     'kinematics',
     'forces_motion',
@@ -423,7 +422,7 @@ export function folderHasAccessibleModule(
 }
 
 export function usesCompactFolderGrid(
-  _category: HighLevelCategory | null,
+  category: HighLevelCategory | null,
 ): boolean {
-  return _category != null;
+  return category != null && category !== 'most_useful';
 }

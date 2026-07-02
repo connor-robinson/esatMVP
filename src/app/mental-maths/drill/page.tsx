@@ -65,7 +65,7 @@ export default function BuilderPage() {
     [treatAsFullAccess, allTopics],
   );
   const builder = useBuilderSession();
-  const [selectedCategory, setSelectedCategory] = useState<HighLevelCategory | null>("arithmetic");
+  const [selectedCategory, setSelectedCategory] = useState<HighLevelCategory | null>("most_useful");
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
 
@@ -97,7 +97,7 @@ export default function BuilderPage() {
 
           {/* Columns 2 & 3: Topic Folders + Drill Variants — share remaining width */}
           <div className="flex min-h-0 min-w-0 flex-1 items-stretch gap-4 overflow-hidden sm:gap-6 lg:gap-8">
-            {/* Column 2: Topic Folders (Operations-style) */}
+            {selectedCategory !== 'most_useful' && (
             <Suspense
               fallback={
                 <div className="h-full min-h-0 w-[clamp(13.5rem,24vw,21.25rem)] shrink-0 animate-pulse rounded-organic-xl bg-surface" />
@@ -111,6 +111,7 @@ export default function BuilderPage() {
                 selectedTopicIds={builder.selectedTopicVariants.map((tv) => `${tv.topicId}-${tv.variantId}`)}
               />
             </Suspense>
+            )}
 
             {/* Column 3: Drill Variants Grid */}
             <Suspense

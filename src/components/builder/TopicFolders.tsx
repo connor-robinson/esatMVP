@@ -14,11 +14,11 @@ import { DrillPanelTransition } from '@/components/builder/DrillPanelTransition'
 import { cn } from '@/lib/utils';
 
 export type HighLevelCategory =
+  | 'most_useful'
   | 'arithmetic'
   | 'algebra'
   | 'geometry'
   | 'number_theory'
-  | 'shortcuts'
   | 'physics';
 
 const CATEGORY_MAP: Record<TopicCategory, HighLevelCategory> = {
@@ -26,7 +26,7 @@ const CATEGORY_MAP: Record<TopicCategory, HighLevelCategory> = {
   algebra: 'algebra',
   geometry: 'geometry',
   number_theory: 'number_theory',
-  shortcuts: 'shortcuts',
+  shortcuts: 'arithmetic',
   patterns: 'number_theory',
   transform: 'arithmetic',
   test: 'number_theory',
@@ -129,10 +129,10 @@ export function TopicFolders({
 }
 
 const categoryLabels: Record<HighLevelCategory, string> = {
+  most_useful: 'Most Useful',
   arithmetic: 'Arithmetic',
   algebra: 'Algebra',
   geometry: 'Geometry',
   number_theory: 'Number Theory',
-  shortcuts: 'Shortcuts',
   physics: 'Physics',
 };

@@ -575,12 +575,12 @@ export const TOPICS: Record<string, Topic> = {
     icon: "Check",
   },
 
-  // Shortcuts
+  // Arithmetic
   percentages: {
     id: "percentages",
     name: "Percentage Calculations",
     subjectId: "maths",
-    category: "shortcuts",
+    category: "arithmetic",
     description: "Calculate percentages mentally in seconds",
     variants: [
       {
@@ -1022,8 +1022,8 @@ export const TOPICS: Record<string, Topic> = {
       },
       {
         id: "vertex-form",
-        name: "Vertex Form",
-        description: "Convert between expanded and vertex form",
+        name: "Complete the Square",
+        description: "Convert between expanded and completed square form",
         difficulty: 4,
         config: { level: 4 },
       },
@@ -1258,6 +1258,7 @@ export const CATEGORIES: Record<TopicCategory, string[]> = {
     "fractions",
     "common_multiples",
     "squaring",
+    "percentages",
   ],
   algebra: [
     "linearEquations",
@@ -1280,7 +1281,7 @@ export const CATEGORIES: Record<TopicCategory, string[]> = {
     "unit_circle_radians",
   ],
   number_theory: ["prime_factorise", "factors", "divisibility"],
-  shortcuts: ["percentages"],
+  shortcuts: [],
   patterns: [],
   transform: [
     "friendly_frac_decimals",

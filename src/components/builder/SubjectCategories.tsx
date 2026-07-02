@@ -9,8 +9,8 @@ import {
   FunctionSquare,
   Triangle,
   Atom,
-  Zap,
   Infinity,
+  Sparkles,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -26,21 +26,21 @@ interface SubjectCategoriesProps {
 }
 
 const SIDEBAR_CATEGORY_ORDER: HighLevelCategory[] = [
+  'most_useful',
   'arithmetic',
   'algebra',
   'geometry',
   'number_theory',
-  'shortcuts',
   'physics',
 ];
 
 /** Selected pill fills only; icon stays white, caption is dark in light / white in dark. */
 const categorySelectedPillBg: Record<HighLevelCategory, string> = {
+  most_useful: 'bg-primary dark:bg-primary/35',
   arithmetic: 'bg-primary dark:bg-primary/35',
   algebra: 'bg-accent dark:bg-accent/35',
   geometry: 'bg-secondary dark:bg-secondary/35',
   number_theory: 'bg-biology dark:bg-biology/35',
-  shortcuts: 'bg-advanced dark:bg-advanced/35',
   physics: 'bg-physics dark:bg-physics/35',
 };
 
@@ -57,11 +57,11 @@ const categoryConfig: Record<
     icon: LucideIcon;
   }
 > = {
+  most_useful: { label: 'Most Useful', icon: Sparkles },
   arithmetic: { label: 'Arithmetic', icon: Calculator },
   algebra: { label: 'Algebra', icon: FunctionSquare },
   geometry: { label: 'Geometry', icon: Triangle },
   number_theory: { label: 'Number Theory', icon: Infinity },
-  shortcuts: { label: 'Shortcuts', icon: Zap },
   physics: { label: 'Physics', icon: Atom },
 };
 
