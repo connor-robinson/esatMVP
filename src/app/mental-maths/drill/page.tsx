@@ -94,84 +94,87 @@ export default function BuilderPage() {
   if (builder.view === "builder") {
     return (
       <div className="relative h-[calc(100vh-65px)] max-h-[calc(100vh-65px)] overflow-hidden bg-background">
-        <div className="flex h-full min-h-0 w-full items-stretch gap-3 overflow-hidden px-4 py-4 sm:gap-5 sm:px-5 lg:gap-6">
-          {/* Column 1: Subject Categories */}
-          <SubjectCategories
-            selectedCategory={selectedCategory}
-            onSelectCategory={(cat) => {
-              setSelectedCategory(cat);
-              setSelectedTopicId(null); // Reset topic selection when category changes
-            }}
-            onLaunchFermiGuessr={() => router.push(FERMI_GUESSR_PLAY_PATH)}
-          />
-
-          {/* Columns 2 & 3: Topic Folders + Drill Variants — share remaining width */}
-          <div className="flex min-h-0 min-w-0 flex-1 items-stretch gap-4 overflow-hidden sm:gap-6 lg:gap-8">
-            {selectedCategory !== 'most_useful' && (
-            <Suspense
-              fallback={
-                <div className="h-full min-h-0 w-[clamp(13.5rem,24vw,21.25rem)] shrink-0 animate-pulse rounded-organic-xl bg-surface" />
-              }
-            >
-              <TopicFolders
-                categoryTopics={categoryTopics}
-                selectedCategory={selectedCategory}
-                selectedTopicId={selectedTopicId}
-                onSelectTopic={setSelectedTopicId}
-                selectedTopicIds={builder.selectedTopicVariants.map((tv) => `${tv.topicId}-${tv.variantId}`)}
-              />
-            </Suspense>
-            )}
-
-            {/* Column 3: Drill Variants Grid */}
-            <Suspense
-              fallback={
-                <div className="min-h-0 min-w-0 flex-1 animate-pulse rounded-organic-xl bg-background" />
-              }
-            >
-              <DrillVariantsGrid
-                topicId={selectedTopicId}
-                drillCategory={selectedCategory}
-                accessibleTopicIds={accessibleTopicIds}
-                showUpgradeBanner={!subscriptionLoading && !hasFullAccess}
-                isLoggedIn={isLoggedIn}
-                showGuestTryHint={showGuestOnboarding && !hasFeaturedDrillSelected}
-                selectedTopicIds={builder.selectedTopicVariants.map((tv) => `${tv.topicId}-${tv.variantId}`)}
-                onAddVariant={builder.addTopic}
-                onRemoveVariant={builder.removeTopicVariant}
-              />
-            </Suspense>
-          </div>
-        </div>
-
-        {/* Compact floating chip — bottom-right (new UI). Pass density="full" for wide centered bar. */}
-        <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-center p-4 pb-7 pr-5 sm:justify-end sm:pb-9 sm:pr-9 md:pb-10 md:pr-10">
-          <div className="pointer-events-auto w-full max-w-[min(100%,28rem)] sm:w-auto sm:max-w-none">
-            <SessionSelectionBar
-              density="compact"
-              compactVariant="figma"
-              showQuestionInput={false}
-              showClearAll={false}
-              showStartHint={showGuestOnboarding && hasFeaturedDrillSelected}
-              startHintLabel="Review selection"
-              questionCount={builder.questionCount}
-              onQuestionCountChange={(n) => builder.setQuestionCount(n)}
-              questionCountMin={0}
-              questionCountMax={100}
-              sessionLengthMode={builder.sessionLengthMode}
-              onSessionLengthModeChange={(m) => builder.setSessionLengthMode(m)}
-              timeLimitMinutes={builder.timeLimitMinutes}
-              onTimeLimitChange={(n) => builder.setTimeLimitMinutes(n)}
-              timeLimitMin={0}
-              timeLimitMax={180}
-              canStartSession={builder.canStart}
-              onClearAll={builder.clearTopics}
-              onStart={() => setReviewModalOpen(true)}
-              clearDisabled={builder.selectedTopicVariants.length === 0}
-              startLabel="Review selection"
-              selectedDrills={builder.selectedTopicVariants}
-              onRemoveDrill={builder.removeTopicVariant}
+        {/* ~90% visual density: render slightly larger then scale down to fit the viewport. */}
+        <div className="flex h-[111.111%] w-[111.111%] min-h-0 origin-top-left scale-90 flex-col bg-background">
+          <div className="flex min-h-0 flex-1 items-stretch gap-2.5 overflow-hidden px-3 py-3 sm:gap-3.5 sm:px-4 lg:gap-5">
+            {/* Column 1: Subject Categories */}
+            <SubjectCategories
+              selectedCategory={selectedCategory}
+              onSelectCategory={(cat) => {
+                setSelectedCategory(cat);
+                setSelectedTopicId(null); // Reset topic selection when category changes
+              }}
+              onLaunchFermiGuessr={() => router.push(FERMI_GUESSR_PLAY_PATH)}
             />
+
+            {/* Columns 2 & 3: Topic Folders + Drill Variants — share remaining width */}
+            <div className="flex min-h-0 min-w-0 flex-1 items-stretch gap-3 overflow-hidden sm:gap-4 lg:gap-6">
+              {selectedCategory !== 'most_useful' && (
+              <Suspense
+                fallback={
+                  <div className="h-full min-h-0 w-[clamp(12rem,22vw,19rem)] shrink-0 animate-pulse rounded-organic-xl bg-surface" />
+                }
+              >
+                <TopicFolders
+                  categoryTopics={categoryTopics}
+                  selectedCategory={selectedCategory}
+                  selectedTopicId={selectedTopicId}
+                  onSelectTopic={setSelectedTopicId}
+                  selectedTopicIds={builder.selectedTopicVariants.map((tv) => `${tv.topicId}-${tv.variantId}`)}
+                />
+              </Suspense>
+              )}
+
+              {/* Column 3: Drill Variants Grid */}
+              <Suspense
+                fallback={
+                  <div className="min-h-0 min-w-0 flex-1 animate-pulse rounded-organic-xl bg-background" />
+                }
+              >
+                <DrillVariantsGrid
+                  topicId={selectedTopicId}
+                  drillCategory={selectedCategory}
+                  accessibleTopicIds={accessibleTopicIds}
+                  showUpgradeBanner={!subscriptionLoading && !hasFullAccess}
+                  isLoggedIn={isLoggedIn}
+                  showGuestTryHint={showGuestOnboarding && !hasFeaturedDrillSelected}
+                  selectedTopicIds={builder.selectedTopicVariants.map((tv) => `${tv.topicId}-${tv.variantId}`)}
+                  onAddVariant={builder.addTopic}
+                  onRemoveVariant={builder.removeTopicVariant}
+                />
+              </Suspense>
+            </div>
+          </div>
+
+          {/* Session bar in document flow so scroll content (incl. upgrade banner) is not covered. */}
+          <div className="pointer-events-none z-10 flex shrink-0 justify-center px-3 pb-3 pt-1 sm:justify-end sm:px-4 sm:pb-3.5">
+            <div className="pointer-events-auto w-full max-w-[min(100%,26rem)] sm:w-auto sm:max-w-none">
+              <SessionSelectionBar
+                density="compact"
+                compactVariant="figma"
+                showQuestionInput={false}
+                showClearAll={false}
+                showStartHint={showGuestOnboarding && hasFeaturedDrillSelected}
+                startHintLabel="Review selection"
+                questionCount={builder.questionCount}
+                onQuestionCountChange={(n) => builder.setQuestionCount(n)}
+                questionCountMin={0}
+                questionCountMax={100}
+                sessionLengthMode={builder.sessionLengthMode}
+                onSessionLengthModeChange={(m) => builder.setSessionLengthMode(m)}
+                timeLimitMinutes={builder.timeLimitMinutes}
+                onTimeLimitChange={(n) => builder.setTimeLimitMinutes(n)}
+                timeLimitMin={0}
+                timeLimitMax={180}
+                canStartSession={builder.canStart}
+                onClearAll={builder.clearTopics}
+                onStart={() => setReviewModalOpen(true)}
+                clearDisabled={builder.selectedTopicVariants.length === 0}
+                startLabel="Review selection"
+                selectedDrills={builder.selectedTopicVariants}
+                onRemoveDrill={builder.removeTopicVariant}
+              />
+            </div>
           </div>
         </div>
 

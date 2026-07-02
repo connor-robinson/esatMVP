@@ -10,6 +10,8 @@ interface DrillUpgradeBannerProps {
   ctaLabel?: string;
   className?: string;
   variant?: 'compact' | 'panel';
+  /** Tighter panel layout for drill builder scroll areas. */
+  density?: 'default' | 'compact';
 }
 
 export function DrillUpgradeBanner({
@@ -18,14 +20,20 @@ export function DrillUpgradeBanner({
   ctaLabel = 'View plans',
   className,
   variant = 'compact',
+  density = 'default',
 }: DrillUpgradeBannerProps) {
   const isPanel = variant === 'panel';
+  const isCompactPanel = isPanel && density === 'compact';
 
   return (
     <div
       className={cn(
         'relative overflow-hidden rounded-organic-xl bg-surface-elevated',
-        isPanel ? 'px-6 py-6 sm:px-8 sm:py-7' : 'mt-3 px-4 py-3.5',
+        isPanel
+          ? isCompactPanel
+            ? 'px-4 py-4 sm:px-5 sm:py-4'
+            : 'px-6 py-6 sm:px-8 sm:py-7'
+          : 'mt-3 px-4 py-3.5',
         className,
       )}
     >
@@ -51,7 +59,11 @@ export function DrillUpgradeBanner({
           <p
             className={cn(
               'font-bold leading-snug text-text',
-              isPanel ? 'text-lg sm:text-xl' : 'text-sm',
+              isPanel
+                ? isCompactPanel
+                  ? 'text-base sm:text-lg'
+                  : 'text-lg sm:text-xl'
+                : 'text-sm',
             )}
           >
             {headline}
@@ -59,7 +71,11 @@ export function DrillUpgradeBanner({
           <p
             className={cn(
               'leading-snug text-text-muted',
-              isPanel ? 'mt-1.5 text-sm sm:text-base' : 'mt-0.5 text-xs',
+              isPanel
+                ? isCompactPanel
+                  ? 'mt-1 text-xs sm:text-sm'
+                  : 'mt-1.5 text-sm sm:text-base'
+                : 'mt-0.5 text-xs',
             )}
           >
             {subtext}
@@ -70,7 +86,9 @@ export function DrillUpgradeBanner({
           className={cn(
             'relative z-10 shrink-0 rounded-full bg-text font-bold text-background transition-opacity hover:opacity-90',
             isPanel
-              ? 'self-start px-6 py-2.5 text-sm sm:self-auto'
+              ? isCompactPanel
+                ? 'self-start px-5 py-2 text-xs sm:self-auto sm:text-sm'
+                : 'self-start px-6 py-2.5 text-sm sm:self-auto'
               : 'px-4 py-2 text-xs',
           )}
         >
@@ -82,7 +100,9 @@ export function DrillUpgradeBanner({
         className={cn(
           'pointer-events-none absolute inset-y-0 flex items-center justify-center text-primary opacity-[0.13]',
           isPanel
-            ? 'right-[18%] w-[12rem] sm:right-[24%] sm:w-[14rem]'
+            ? isCompactPanel
+              ? 'right-[16%] w-[9rem] sm:right-[22%] sm:w-[10.5rem]'
+              : 'right-[18%] w-[12rem] sm:right-[24%] sm:w-[14rem]'
             : 'right-[34%] w-[9.5rem] sm:right-[36%] sm:w-[10.5rem]',
         )}
         aria-hidden
@@ -91,7 +111,11 @@ export function DrillUpgradeBanner({
           variant='mark'
           size='lg'
           className={cn(
-            isPanel ? '!h-[8.5rem] sm:!h-[10.5rem]' : '!h-[7rem] sm:!h-[8.25rem]',
+            isPanel
+              ? isCompactPanel
+                ? '!h-[6.5rem] sm:!h-[7.5rem]'
+                : '!h-[8.5rem] sm:!h-[10.5rem]'
+              : '!h-[7rem] sm:!h-[8.25rem]',
           )}
           alt=''
         />

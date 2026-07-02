@@ -67,7 +67,7 @@ function DrillModuleCard({
   return (
     <div
       className={cn(
-        'relative flex min-h-[7.5rem] flex-col rounded-organic-md p-3.5 transition-all',
+        'relative flex min-h-[6.5rem] flex-col rounded-organic-md p-3 transition-all',
         locked
           ? 'bg-surface-elevated'
           : isSelected
@@ -76,7 +76,7 @@ function DrillModuleCard({
         hintVisible && 'overflow-visible',
       )}
     >
-      <div className='mb-2.5 flex items-start justify-between gap-2'>
+      <div className='mb-2 flex items-start justify-between gap-2'>
         <span
           className={cn(
             'text-[10px] font-bold uppercase tracking-wide',
@@ -95,7 +95,7 @@ function DrillModuleCard({
           <Check className='h-4 w-4 shrink-0 text-primary' strokeWidth={2.5} />
         ) : null}
       </div>
-      <h4 className='mb-1 text-center text-sm font-bold leading-snug text-text'>
+      <h4 className='mb-0.5 text-center text-[13px] font-bold leading-snug text-text'>
         {name}
       </h4>
       <ArithmeticVariantExample
@@ -103,7 +103,7 @@ function DrillModuleCard({
         cycleSeed={`${topicId}-${variantId}`}
         selected={isSelected && !locked}
       />
-      <div className='relative mt-3 flex justify-end'>
+      <div className='relative mt-2 flex justify-end'>
         {hintVisible ? (
           <GuestDrillHint
             label='Try this mode'
@@ -259,17 +259,17 @@ export function DrillVariantsGrid({
     );
 
     panelBody = (
-      <div className='flex min-h-0 flex-1 flex-col overflow-y-auto p-6 pb-28'>
-        <div className='mb-6'>
-          <h2 className='font-heading text-2xl font-bold tracking-tight text-text'>
+      <div className='flex min-h-0 flex-1 flex-col overflow-y-auto p-4 pb-3'>
+        <div className='mb-4'>
+          <h2 className='font-heading text-xl font-bold tracking-tight text-text'>
             Most Useful
           </h2>
-          <p className='mt-1.5 max-w-lg text-sm leading-relaxed text-text-muted'>
+          <p className='mt-1 max-w-lg text-xs leading-relaxed text-text-muted sm:text-[13px]'>
             Hand-picked drills for ESAT prep — add any combination to your session.
           </p>
         </div>
 
-        <div className='grid grid-cols-2 gap-3 overflow-visible pt-1 md:grid-cols-3 2xl:grid-cols-4'>
+        <div className='grid grid-cols-2 gap-2.5 overflow-visible pt-0.5 md:grid-cols-3 2xl:grid-cols-4'>
           {modules.map((mod) => {
             const compositeId = `${mod.topicId}-${mod.variantId}`;
             const isSelected = selectedTopicIds.includes(compositeId);
@@ -297,7 +297,8 @@ export function DrillVariantsGrid({
         {showUpgradeBanner && hasLockedModules ? (
           <DrillUpgradeBanner
             variant='panel'
-            className='mt-8 shrink-0 scroll-mt-4'
+            density='compact'
+            className='mt-5 shrink-0 scroll-mt-3'
             headline='Unlock every drill'
             subtext='Upgrade to add all most useful drills to your session.'
           />
@@ -328,21 +329,21 @@ export function DrillVariantsGrid({
     );
 
     panelBody = (
-      <div className='flex min-h-0 flex-1 flex-col overflow-y-auto p-6'>
-        <div className='mb-6 flex items-center gap-4'>
-          <div className='flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-organic-lg bg-primary/12'>
+      <div className='flex min-h-0 flex-1 flex-col overflow-y-auto p-4 pb-3'>
+        <div className='mb-4 flex items-center gap-3'>
+          <div className='flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-organic-lg bg-primary/12'>
             <ArithmeticDrillPreview
               preview={folderSymbol}
               size='folder'
               selected
             />
           </div>
-          <h2 className='font-heading text-2xl font-bold tracking-tight text-text'>
+          <h2 className='font-heading text-xl font-bold tracking-tight text-text'>
             {displayFolder.name}
           </h2>
         </div>
 
-        <div className='grid grid-cols-2 gap-3 md:grid-cols-3 2xl:grid-cols-4'>
+        <div className='grid grid-cols-2 gap-2.5 md:grid-cols-3 2xl:grid-cols-4'>
           {displayFolder.modules.map((mod) => {
             const compositeId = `${mod.topicId}-${mod.variantId}`;
             const isSelected = selectedTopicIds.includes(compositeId);
@@ -368,7 +369,8 @@ export function DrillVariantsGrid({
         {showUpgradeBanner && hasLockedModules ? (
           <DrillUpgradeBanner
             variant='panel'
-            className='mt-8'
+            density='compact'
+            className='mt-5 shrink-0'
             headline='Unlock every drill'
             subtext={`Upgrade to add all ${displayFolder.name.toLowerCase()} drills to your session.`}
           />

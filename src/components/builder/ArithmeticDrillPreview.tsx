@@ -165,7 +165,7 @@ export function ArithmeticVariantExample({
       aria-label='Sample question formats'
       aria-live={canCycle ? 'polite' : undefined}
     >
-      <div className='relative flex h-8 w-full items-center justify-center overflow-hidden'>
+      <div className='relative flex h-7 w-full items-center justify-center overflow-hidden'>
         {canCycle ? (
           <AnimatePresence mode='wait' initial={false}>
             <motion.div
