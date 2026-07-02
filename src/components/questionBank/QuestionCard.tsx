@@ -10,6 +10,7 @@ import {
   ArrowRight,
   BadgeCheck,
   BookOpen,
+  HelpCircle,
   Star,
 } from "lucide-react";
 import { isQualityGateVerified } from "@/lib/questionBank/qualityGate";
@@ -119,6 +120,9 @@ export function QuestionCard({
   const [localSelectedAnswer, setLocalSelectedAnswer] = useState<string | null>(
     null,
   );
+  const [revealedDistractors, setRevealedDistractors] = useState<Set<string>>(
+    new Set(),
+  );
   const [incorrectAnswers, setIncorrectAnswers] = useState<Set<string>>(
     new Set(),
   );
@@ -144,6 +148,7 @@ export function QuestionCard({
     setLocalSelectedAnswer(null);
     onSelectionChange?.(null);
     setHoveredOption(null);
+    setRevealedDistractors(new Set());
     setIncorrectAnswers(new Set());
     lastFlashKeyRef.current = "";
     setFlashLetter(null);
@@ -479,9 +484,24 @@ export function QuestionCard({
           {optionLetters.map((letter) => {
             const distractor = distractorTextFor(question.distractor_map, letter);
             const isFlashing = flashLetter?.letter === letter;
+            const isWrongAttempt =
+              incorrectAnswers.has(letter) && letter !== correctAnswer;
+            const showDistractorControl = isWrongAttempt && Boolean(distractor);
+            const distractorRevealed = revealedDistractors.has(letter);
 
             return (
-            <div key={letter} className="relative">
+            <div
+              key={letter}
+              className={cn(
+                "relative flex w-full flex-col justify-center overflow-hidden rounded-organic-md",
+                getOptionStyle(letter),
+                isFlashing
+                  ? flashLetter.kind === "wrong"
+                    ? "animate-qb-wrong-flash"
+                    : "animate-qb-correct-flash"
+                  : "transition-[background-color,opacity] duration-fast ease-signature",
+              )}
+            >
               <button
                 type="button"
                 onClick={() => handleOptionClick(letter)}
@@ -490,20 +510,12 @@ export function QuestionCard({
                 }
                 onMouseLeave={() => setHoveredOption(null)}
                 disabled={isAnswered && !allowRetry && !answerRevealed}
-                className={cn(
-                  "relative w-full rounded-organic-md px-3.5 py-2.5 text-left sm:px-4 sm:py-3",
-                  getOptionStyle(letter),
-                  isFlashing
-                    ? flashLetter.kind === "wrong"
-                      ? "animate-qb-wrong-flash"
-                      : "animate-qb-correct-flash"
-                    : "transition-[background-color,opacity] duration-fast ease-signature",
-                )}
+                className="w-full px-3.5 py-2.5 text-left sm:px-4 sm:py-3"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex min-h-[2.25rem] items-center gap-3 sm:min-h-[2.5rem]">
                   <span
                     className={cn(
-                      "w-6 shrink-0 text-sm font-semibold tabular-nums leading-none",
+                      "flex w-6 shrink-0 items-center self-center text-sm font-semibold tabular-nums leading-none",
                       letterLabelClass(letter),
                     )}
                   >
@@ -512,7 +524,7 @@ export function QuestionCard({
 
                   <div
                     className={cn(
-                      "min-w-0 flex-1 text-[0.98rem] leading-relaxed tracking-tight sm:text-[1.02rem]",
+                      "flex min-w-0 flex-1 items-center self-center text-[0.98rem] leading-relaxed tracking-tight sm:text-[1.02rem]",
                       "font-sans text-text",
                     )}
                   >
@@ -522,7 +534,7 @@ export function QuestionCard({
                     />
                   </div>
 
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center sm:h-10 sm:w-10">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center self-center sm:h-10 sm:w-10">
                     {((!isAnswered || (isAnswered && allowRetry)) &&
                       localSelectedAnswer === letter &&
                       !incorrectAnswers.has(letter)) && (
@@ -584,22 +596,45 @@ export function QuestionCard({
                     )}
                   </div>
                 </div>
-
-                {incorrectAnswers.has(letter) &&
-                  letter !== correctAnswer &&
-                  distractor && (
-                    <div className="mt-3 border-t border-border-subtle/50 pt-3 text-center">
-                      <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-text-muted">
-                        Why it may be wrong
-                      </p>
-                      <StemContent
-                        content={distractor}
-                        className="text-xs leading-relaxed text-text-muted sm:text-sm"
-                      />
-                    </div>
-                  )}
-
               </button>
+
+              {showDistractorControl && !distractorRevealed ? (
+                <div className="flex justify-center px-3.5 pb-2.5 sm:px-4">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setRevealedDistractors((prev) => new Set(prev).add(letter))
+                    }
+                    title="Reveal why it may be wrong"
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded-full",
+                      "border border-border-subtle/70 bg-surface-elevated/95 px-3 py-1.5",
+                      "text-[11px] font-medium tracking-wide text-text-muted",
+                      "transition-all duration-fast ease-signature",
+                      "hover:border-border hover:bg-surface-mid/80 hover:text-text",
+                    )}
+                  >
+                    <HelpCircle
+                      className="h-3.5 w-3.5 shrink-0 opacity-80"
+                      strokeWidth={2}
+                      aria-hidden
+                    />
+                    Why it may be wrong
+                  </button>
+                </div>
+              ) : null}
+
+              {showDistractorControl && distractorRevealed ? (
+                <div className="flex flex-col items-center justify-center border-t border-border-subtle/50 px-3.5 pb-3 pt-3 text-center sm:px-4">
+                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-text-muted">
+                    Why it may be wrong
+                  </p>
+                  <StemContent
+                    content={distractor!}
+                    className="text-xs leading-relaxed text-text-muted sm:text-sm"
+                  />
+                </div>
+              ) : null}
             </div>
             );
           })}
