@@ -6,13 +6,25 @@ import DOMPurify from "dompurify";
 function normalizeSvgVisibilityColors(svg: string): string {
   if (!svg) return svg;
   let out = svg
-    .replace(/(["'\s=:])(#[0]{3,8}|#[1]{3,8})(?=["'\s;>])/gi, "$1#e5e7eb")
-    .replace(/(["'\s=:])(black)(?=["'\s;>])/gi, "$1#e5e7eb")
-    .replace(/(["'\s=:])(rgb\(\s*0\s*,\s*0\s*,\s*0\s*\))(?=["'\s;>])/gi, "$1#e5e7eb")
+    .replace(/(["'\s=:])(#[0]{3,8}|#[1]{3,8})(?=["'\s;>}/])/gi, "$1#e5e7eb")
+    .replace(/(["'\s=:])(black)(?=["'\s;>}/])/gi, "$1#e5e7eb")
+    .replace(/(["'\s=:])(rgb\(\s*0\s*,\s*0\s*,\s*0\s*\))(?=["'\s;>}/])/gi, "$1#e5e7eb")
     .replace(
-      /(["'\s=:])(rgb\(\s*1[0-9]\s*,\s*1[0-9]\s*,\s*1[0-9]\s*\))(?=["'\s;>])/gi,
+      /(["'\s=:])(rgb\(\s*1[0-9]\s*,\s*1[0-9]\s*,\s*1[0-9]\s*\))(?=["'\s;>}/])/gi,
       "$1#e5e7eb",
-    );
+    )
+    .replace(/\bfill:\s*#111\b/gi, "fill:currentColor")
+    .replace(/\bstroke:\s*#111\b/gi, "stroke:currentColor")
+    .replace(/\bfill:\s*#222\b/gi, "fill:currentColor")
+    .replace(/\bstroke:\s*#222\b/gi, "stroke:currentColor");
+
+  // Hook-set M1 Q6: right-angle mark was misplaced; labels were black in <style>.
+  out = out
+    .replace(
+      /M185 75 L198 84 L189 97/g,
+      "M188 71 L203.4 83.7 L215.4 67.7",
+    )
+    .replace(/x="123" y="104">90°/g, 'x="196" y="78">90°');
 
   if (!/\bstroke\s*=/.test(out) && !/\bfill\s*=/.test(out) && out.includes("<svg")) {
     out = out.replace(/<svg\b/i, '<svg style="color:#e5e7eb"');

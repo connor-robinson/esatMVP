@@ -282,6 +282,10 @@
   vertical-align: top;
 }
 
+.stem-diagram {
+  color: inherit;
+}
+
 .stem-diagram svg {
   display: block;
   max-width: 100%;
