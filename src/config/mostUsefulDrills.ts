@@ -41,19 +41,9 @@ export const MOST_USEFUL_DRILLS: readonly MostUsefulDrillDef[] = [
     name: 'Trig Recall',
   },
   {
-    topicId: 'trig_inverse',
-    variantId: 'basic-inverse',
-    name: 'Inverse Trig',
-  },
-  {
     topicId: 'unit_circle_radians',
     variantId: 'radians',
     name: 'Unit Circle (Radians)',
-  },
-  {
-    topicId: 'factorise_quadratic',
-    variantId: 'mixed',
-    name: 'Factorise Quadratics',
   },
   {
     topicId: 'systemsOfEquations',

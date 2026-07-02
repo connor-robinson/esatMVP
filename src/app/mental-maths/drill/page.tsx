@@ -20,6 +20,7 @@ import {
 import { DrillVariantsGrid } from "@/components/builder/DrillVariantsGrid";
 import { DrillsSelectedModal } from "@/components/builder/DrillsSelectedModal";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 // Lazy load session components
 const MentalMathSession = lazy(() =>
   import("@/components/mental-math/MentalMathSession").then((mod) => ({
@@ -55,6 +56,8 @@ export default function BuilderPage() {
   const router = useRouter();
   const allTopics = useMemo(() => getAllTopics(), []);
   const { hasFullAccess, isLoading: subscriptionLoading } = useSubscription();
+  const authSession = useSupabaseSession();
+  const isLoggedIn = Boolean(authSession?.user);
   /** Avoid lock flash while subscription status is still loading (or cached). */
   const treatAsFullAccess = subscriptionLoading || hasFullAccess;
   const accessibleTopicIds = useMemo(
@@ -124,6 +127,7 @@ export default function BuilderPage() {
                 drillCategory={selectedCategory}
                 accessibleTopicIds={accessibleTopicIds}
                 showUpgradeBanner={!subscriptionLoading && !hasFullAccess}
+                isLoggedIn={isLoggedIn}
                 selectedTopicIds={builder.selectedTopicVariants.map((tv) => `${tv.topicId}-${tv.variantId}`)}
                 onAddVariant={builder.addTopic}
                 onRemoveVariant={builder.removeTopicVariant}

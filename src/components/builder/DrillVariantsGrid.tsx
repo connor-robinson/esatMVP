@@ -5,7 +5,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Check, Plus, Home, Info, X, Lock } from 'lucide-react';
+import { Check, Plus, Home, Info, X, Lock, MousePointerClick } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
 import type { HighLevelCategory } from '@/components/builder/TopicFolders';
 import { getDisplayFolder, isFolderBeta, isFolderComingSoon } from '@/config/drillDisplayFolders';
 import { getMostUsefulDrillModules } from '@/config/mostUsefulDrills';
@@ -26,6 +27,7 @@ interface DrillVariantsGridProps {
   drillCategory: HighLevelCategory | null;
   accessibleTopicIds: ReadonlySet<string>;
   showUpgradeBanner?: boolean;
+  isLoggedIn?: boolean;
   onAddVariant: (
     topicVariantId: string,
     topicId: string,
@@ -42,6 +44,7 @@ function DrillModuleCard({
   isSelected,
   locked,
   featured,
+  showTryHint,
   onAdd,
   onRemove,
 }: {
@@ -52,32 +55,27 @@ function DrillModuleCard({
   isSelected: boolean;
   locked?: boolean;
   featured?: boolean;
+  showTryHint?: boolean;
   onAdd: () => void;
   onRemove: () => void;
 }) {
+  const reduceMotion = useReducedMotion();
   const diff = getDifficultyLabel(difficulty);
   const samples = getVariantSamples(topicId, variantId);
+  const hintVisible = Boolean(showTryHint && featured && !locked && !isSelected);
 
   return (
     <div
       className={cn(
         'relative flex min-h-[7.5rem] flex-col rounded-organic-md p-3.5 transition-all',
-        featured && !locked
-          ? isSelected
-            ? 'bg-folder-card-selected shadow-sm ring-1 ring-primary/35'
-            : 'bg-primary/8 ring-1 ring-primary/20 hover:bg-primary/12'
-          : locked
-            ? 'bg-surface-elevated'
-            : isSelected
-              ? 'bg-folder-card-selected shadow-sm'
-              : 'bg-surface-elevated hover:bg-surface-neutral',
+        locked
+          ? 'bg-surface-elevated'
+          : isSelected
+            ? 'bg-folder-card-selected shadow-sm'
+            : 'bg-surface-elevated hover:bg-surface-neutral',
+        hintVisible && 'overflow-visible',
       )}
     >
-      {featured && !locked ? (
-        <span className='absolute -top-px left-1/2 z-[1] -translate-x-1/2 rounded-b-organic-sm bg-primary/85 px-2.5 py-0.5 text-[8px] font-bold uppercase tracking-[0.16em] text-background shadow-sm'>
-          Try me
-        </span>
-      ) : null}
       <div className='mb-2.5 flex items-start justify-between gap-2'>
         <span
           className={cn(
@@ -105,7 +103,28 @@ function DrillModuleCard({
         cycleSeed={`${topicId}-${variantId}`}
         selected={isSelected && !locked}
       />
-      <div className='mt-3 flex justify-end'>
+      <div className='relative mt-3 flex justify-end'>
+        {hintVisible ? (
+          <motion.div
+            className='pointer-events-none absolute bottom-[calc(100%+0.15rem)] right-1 z-20 flex flex-col items-end gap-0.5'
+            animate={reduceMotion ? undefined : { y: [0, -5, 0] }}
+            transition={
+              reduceMotion
+                ? undefined
+                : { duration: 2.2, repeat: Infinity, ease: 'easeInOut' }
+            }
+            aria-hidden
+          >
+            <div className='relative rounded-organic-sm bg-primary px-2.5 py-1.5 text-[11px] font-semibold leading-tight text-background shadow-md shadow-primary/25'>
+              Try this mode
+            </div>
+            <MousePointerClick
+              className='h-4 w-4 text-primary drop-shadow-sm'
+              strokeWidth={2}
+              aria-hidden
+            />
+          </motion.div>
+        ) : null}
         {locked ? (
           <span className='flex items-center gap-1.5 rounded-organic-sm bg-surface-dark px-3 py-2 text-xs font-bold text-text-muted'>
             <Lock className='h-3.5 w-3.5 shrink-0' aria-hidden />
@@ -224,6 +243,7 @@ export function DrillVariantsGrid({
   drillCategory,
   accessibleTopicIds,
   showUpgradeBanner = false,
+  isLoggedIn = true,
   onAddVariant,
   onRemoveVariant,
 }: DrillVariantsGridProps) {
@@ -253,7 +273,7 @@ export function DrillVariantsGrid({
     );
 
     panelBody = (
-      <div className='flex min-h-0 flex-1 flex-col overflow-y-auto p-6'>
+      <div className='flex min-h-0 flex-1 flex-col overflow-y-auto p-6 pb-28'>
         <div className='mb-6'>
           <h2 className='font-heading text-2xl font-bold tracking-tight text-text'>
             Most Useful
@@ -263,7 +283,7 @@ export function DrillVariantsGrid({
           </p>
         </div>
 
-        <div className='grid grid-cols-2 gap-3 md:grid-cols-3 2xl:grid-cols-4'>
+        <div className='grid grid-cols-2 gap-3 overflow-visible pt-1 md:grid-cols-3 2xl:grid-cols-4'>
           {modules.map((mod) => {
             const compositeId = `${mod.topicId}-${mod.variantId}`;
             const isSelected = selectedTopicIds.includes(compositeId);
@@ -278,6 +298,7 @@ export function DrillVariantsGrid({
                 isSelected={isSelected}
                 locked={locked}
                 featured={mod.featured}
+                showTryHint={!isLoggedIn}
                 onAdd={() =>
                   onAddVariant(compositeId, mod.topicId, mod.variantId)
                 }
@@ -290,7 +311,7 @@ export function DrillVariantsGrid({
         {showUpgradeBanner && hasLockedModules ? (
           <DrillUpgradeBanner
             variant='panel'
-            className='mt-8'
+            className='mt-8 shrink-0 scroll-mt-4'
             headline='Unlock every drill'
             subtext='Upgrade to add all most useful drills to your session.'
           />
