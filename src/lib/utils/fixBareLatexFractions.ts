@@ -1,5 +1,5 @@
 /**
- * Wrap bare \frac{...}{...} expressions in $ delimiters so KaTeX can render them.
+ * Wrap bare LaTeX expressions in $ delimiters so KaTeX can render them.
  * Used at display time when question data omits math delimiters in options.
  */
 
@@ -56,7 +56,64 @@ function isPositionInMathDelimiters(text: string, position: number): boolean {
   return false;
 }
 
+function isFullyWrappedInMath(text: string): boolean {
+  const trimmed = text.trim();
+  if (trimmed.startsWith("$$") && trimmed.endsWith("$$") && trimmed.length >= 4) {
+    return true;
+  }
+  if (
+    trimmed.startsWith("$") &&
+    trimmed.endsWith("$") &&
+    trimmed.length >= 2 &&
+    !trimmed.startsWith("$$")
+  ) {
+    return !trimmed.slice(1, -1).includes("$");
+  }
+  return false;
+}
+
+function hasBareLatexOutsideDelimiters(text: string): boolean {
+  const pattern = /\\[a-zA-Z]+/g;
+  let match: RegExpExecArray | null;
+  while ((match = pattern.exec(text)) !== null) {
+    if (!isPositionInMathDelimiters(text, match.index)) return true;
+  }
+  return false;
+}
+
+/** MCQ-style math strings: numbers, operators, and LaTeX commands only. */
+const MATH_ONLY_EXPRESSION = /^[\d\s+\-*/().=<>|^{}[\],;:%'\\a-zA-Z]+$/;
+
+function wrapBareLatexPattern(text: string, pattern: RegExp): string {
+  if (!text) return text;
+
+  const matches: Array<{ start: number; end: number; content: string }> = [];
+  let match: RegExpExecArray | null;
+  const flags = pattern.flags.includes("g") ? pattern.flags : `${pattern.flags}g`;
+  const globalPattern = new RegExp(pattern.source, flags);
+  globalPattern.lastIndex = 0;
+
+  while ((match = globalPattern.exec(text)) !== null) {
+    matches.push({
+      start: match.index,
+      end: match.index + match[0].length,
+      content: match[0],
+    });
+  }
+
+  let result = text;
+  for (let i = matches.length - 1; i >= 0; i--) {
+    const { start, end, content } = matches[i];
+    if (!isPositionInMathDelimiters(result, start)) {
+      result = `${result.slice(0, start)}$${content}$${result.slice(end)}`;
+    }
+  }
+
+  return result;
+}
+
 const BARE_FRAC_PATTERN = /\\frac\{[^}]*\}\{[^}]*\}/g;
+const BARE_SQRT_PATTERN = /(?:\d+)?\\sqrt(?:\[[^\]]*\])?\{[^}]*\}/g;
 
 /** True when text has \frac not already inside $...$ or $$...$$. */
 export function hasBareLatexFractions(text: string): boolean {
@@ -69,30 +126,38 @@ export function hasBareLatexFractions(text: string): boolean {
   return false;
 }
 
+/** True when text has bare LaTeX commands outside math delimiters. */
+export function hasBareLatex(text: string): boolean {
+  return hasBareLatexOutsideDelimiters(text);
+}
+
 /** Wrap bare \frac{...}{...} in $ delimiters for KaTeX parsing. */
 export function wrapBareLatexFractions(text: string): string {
+  return wrapBareLatexPattern(text, BARE_FRAC_PATTERN);
+}
+
+/** Wrap bare \sqrt{...} (and optional numeric prefix) in $ delimiters. */
+export function wrapBareLatexSqrt(text: string): string {
+  return wrapBareLatexPattern(text, BARE_SQRT_PATTERN);
+}
+
+/**
+ * Wrap bare LaTeX in $ delimiters for KaTeX.
+ * Handles full math expressions (e.g. `3 + 2\sqrt{2}`) and embedded commands.
+ */
+export function wrapBareLatex(text: string): string {
   if (!text) return text;
+  if (!text.includes("\\")) return text;
 
-  const fracMatches: Array<{ start: number; end: number; content: string }> =
-    [];
-  let match: RegExpExecArray | null;
-  BARE_FRAC_PATTERN.lastIndex = 0;
+  const trimmed = text.trim();
+  if (isFullyWrappedInMath(trimmed)) return text;
+  if (!hasBareLatexOutsideDelimiters(text)) return text;
 
-  while ((match = BARE_FRAC_PATTERN.exec(text)) !== null) {
-    fracMatches.push({
-      start: match.index,
-      end: match.index + match[0].length,
-      content: match[0],
-    });
+  if (MATH_ONLY_EXPRESSION.test(trimmed)) {
+    return `$${trimmed}$`;
   }
 
-  let result = text;
-  for (let i = fracMatches.length - 1; i >= 0; i--) {
-    const { start, end, content } = fracMatches[i];
-    if (!isPositionInMathDelimiters(result, start)) {
-      result = `${result.slice(0, start)}$${content}$${result.slice(end)}`;
-    }
-  }
-
+  let result = wrapBareLatexFractions(text);
+  result = wrapBareLatexSqrt(result);
   return result;
 }

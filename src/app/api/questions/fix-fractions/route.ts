@@ -1,8 +1,8 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import {
-  hasBareLatexFractions,
-  wrapBareLatexFractions,
+  hasBareLatex,
+  wrapBareLatex,
 } from "@/lib/utils/fixBareLatexFractions";
 
 export const dynamic = 'force-dynamic';
@@ -89,9 +89,9 @@ export async function POST(request: NextRequest) {
           continue;
         }
 
-        if (hasBareLatexFractions(optionValue)) {
+        if (hasBareLatex(optionValue)) {
           needsFix = true;
-          const fixedValue = wrapBareLatexFractions(optionValue);
+          const fixedValue = wrapBareLatex(optionValue);
           updatedOptions[optionKey] = fixedValue;
           fixedOptions.push(optionKey);
           totalOptionsFixed++;
