@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MathContent } from "@/components/shared/MathContent";
+import { StemContent } from "@/components/shared/StemContent";
 import { QuestionWithGraph } from "@/components/shared/QuestionWithGraph";
 import type { TMUAGraphSpec } from "@/components/shared/TMUAGraph";
 import { X, Pencil, Lightbulb } from "lucide-react";
@@ -95,7 +95,7 @@ export function SolutionModal({
                     className="text-inherit"
                   />
                 ) : (
-                  <MathContent
+                  <StemContent
                     content={solution_reasoning}
                     className="text-inherit"
                   />
@@ -179,7 +179,7 @@ export function HintModal({ isOpen, onClose, content }: HintModalProps) {
 
             <div className="px-5 py-5 sm:px-6 sm:py-6">
               <div className={bodyPanelClass}>
-                <MathContent content={content!} className="text-inherit" />
+                <StemContent content={content!} className="text-inherit" />
               </div>
             </div>
           </motion.div>

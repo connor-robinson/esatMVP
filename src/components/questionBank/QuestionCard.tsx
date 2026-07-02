@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useState, useEffect, useRef } from "react";
-import { MathContent } from "@/components/shared/MathContent";
+import { StemContent } from "@/components/shared/StemContent";
 import { QuestionWithGraph } from "@/components/shared/QuestionWithGraph";
 import type { QuestionBankQuestion } from "@/types/questionBank";
 import { cn } from "@/lib/utils";
@@ -469,7 +469,7 @@ export function QuestionCard({
               className="text-text inline"
             />
           ) : (
-            <MathContent content={question.question_stem} className="text-inherit inline" />
+            <StemContent content={question.question_stem} className="text-inherit inline" />
           )}
         </div>
       </div>
@@ -516,7 +516,7 @@ export function QuestionCard({
                       "font-sans text-text",
                     )}
                   >
-                    <MathContent
+                    <StemContent
                       content={question.options[letter]}
                       className="text-inherit inline"
                     />
@@ -592,7 +592,7 @@ export function QuestionCard({
                       <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-text-muted">
                         Why it may be wrong
                       </p>
-                      <MathContent
+                      <StemContent
                         content={distractor}
                         className="text-xs leading-relaxed text-text-muted sm:text-sm"
                       />
@@ -616,7 +616,7 @@ export function QuestionCard({
                 <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-secondary">
                   Key insight
                 </p>
-                <MathContent
+                <StemContent
                   content={question.solution_key_insight}
                   className="text-sm leading-relaxed text-text"
                 />
@@ -631,7 +631,7 @@ export function QuestionCard({
                     className="text-sm leading-relaxed text-text"
                   />
                 ) : (
-                  <MathContent
+                  <StemContent
                     content={question.solution_reasoning}
                     className="text-sm leading-relaxed text-text"
                   />

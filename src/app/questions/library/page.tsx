@@ -118,7 +118,7 @@ export default function QuestionsLibraryPage() {
           <DrillUpgradeBanner
             variant="panel"
             headline="Unlock the full question bank"
-            subtext="Free users get 10 curated gold questions from the home page. Upgrade to build custom sessions from the library."
+            subtext="Free users get 10 curated ESAT Math 1 preview questions from the home page. Upgrade to build custom sessions from the library."
             ctaLabel="View plans"
           />
         </div>
