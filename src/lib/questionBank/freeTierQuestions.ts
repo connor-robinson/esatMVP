@@ -1,15 +1,12 @@
-/** Max questions unpaid users can attempt in the question bank. */
+/** Max questions unpaid users can attempt in the question bank per preview cycle. */
 export const FREE_TIER_QUESTION_LIMIT = 10;
 
 /**
- * ESAT Math 1 free preview — fixed hook set (order 1–10).
- * DB UUIDs are deterministic from generation_id via hookQuestionDbId().
+ * ESAT free preview pool: Math 1 + Math 2 + Physics hook sets (30 questions, order preserved).
+ * Legacy gold questions remain in the database for the full bank.
  */
-import {
-  ESAT_M1_HOOK_QUESTION_DB_IDS,
-} from "@/lib/questionBank/esatM1HookSet";
+import { ESAT_HOOK_PREVIEW_DB_IDS } from "@/lib/questionBank/esatHookSets";
 
-export const FREE_TIER_QUESTION_IDS: readonly string[] =
-  ESAT_M1_HOOK_QUESTION_DB_IDS;
+export const FREE_TIER_QUESTION_IDS: readonly string[] = ESAT_HOOK_PREVIEW_DB_IDS;
 
 export const FREE_TIER_QUESTION_ID_SET = new Set<string>(FREE_TIER_QUESTION_IDS);

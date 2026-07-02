@@ -1,0 +1,921 @@
+{
+  "set": {
+    "id": "esat-physics-hook-set-01",
+    "title": "ESAT Physics — First 10",
+    "module": "Physics",
+    "questionCount": 10,
+    "suggestedTimeSeconds": 960,
+    "calculatorAllowed": false,
+    "version": 1,
+    "status": "ready_for_review",
+    "authorship": "Original questions. Informed by the official ESAT Physics specification and guide, together with the style of historic ENGAA and NSAA papers; no question has been copied.",
+    "researchBasis": [
+      "Official ESAT format: 27 questions in 40 minutes, computer-based and non-calculator.",
+      "Historic papers regularly mix direct calculations, proportional reasoning, diagrams, graph interpretation and eight-option three-statement questions.",
+      "Questions are intentionally short. Most require one useful physical insight followed by limited arithmetic.",
+      "Coverage is restricted to the official Physics and Mathematics 1 knowledge assumed for ESAT Physics."
+    ],
+    "designIntent": [
+      "A high-quality first-use set with realistic pacing and no throwaway recall questions.",
+      "Four questions use the authentic three-statement, eight-option structure.",
+      "Distractors are generated from specific conceptual or arithmetic errors rather than arbitrary nearby values.",
+      "Solutions are concise, visually light and focused on the decisive step."
+    ],
+    "difficultyMix": {
+      "accessible": 2,
+      "medium": 4,
+      "hard": 4
+    }
+  },
+  "questions": [
+    {
+      "id": "esat-physics-hook-01",
+      "order": 1,
+      "questionType": "single_choice",
+      "difficulty": "medium",
+      "difficultyScore": 3,
+      "estimatedSeconds": 90,
+      "topics": [
+        "Electric circuits",
+        "Parallel resistance",
+        "Electrical power"
+      ],
+      "specRefs": [
+        "P1.2i",
+        "P1.2j",
+        "P1.2k",
+        "P1.2m"
+      ],
+      "stemMarkdown": "The ideal battery in the circuit has a fixed voltage. All three resistors have resistance \\(R\\). The switch \\(S\\) is initially open.\\n\\nThe switch is closed. By what factor does the **total power supplied by the battery** change?",
+      "diagramSvg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 640 330\" role=\"img\" aria-label=\"A fixed-voltage battery connected to one resistor R in series with two parallel branches. Each branch contains a resistor R, and the lower branch also contains an open switch S.\">\n  <style>\n    .wire{stroke:#111;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}\n    .component{stroke:#111;stroke-width:3;fill:white}\n    .label{font:22px serif;fill:#111}\n    .small{font:18px serif;fill:#111}\n  </style>\n  <!-- outer wiring and battery -->\n  <path class=\"wire\" d=\"M85 245 H165\"/>\n  <path class=\"wire\" d=\"M85 85 V245\"/>\n  <path class=\"wire\" d=\"M85 85 H155\"/>\n  <path class=\"wire\" d=\"M155 65 V105\"/>\n  <path class=\"wire\" d=\"M173 55 V115\"/>\n  <path class=\"wire\" d=\"M173 85 H245\"/>\n  <text class=\"small\" x=\"143\" y=\"48\">battery</text>\n  <text class=\"small\" x=\"145\" y=\"137\">fixed voltage V</text>\n\n  <!-- series resistor -->\n  <path class=\"wire\" d=\"M245 85 H275\"/>\n  <rect class=\"component\" x=\"275\" y=\"65\" width=\"105\" height=\"40\" rx=\"2\"/>\n  <path class=\"wire\" d=\"M380 85 H470\"/>\n  <text class=\"label\" x=\"321\" y=\"94\">R</text>\n\n  <!-- parallel network -->\n  <path class=\"wire\" d=\"M470 85 V245\"/>\n  <path class=\"wire\" d=\"M165 245 H470\"/>\n  <path class=\"wire\" d=\"M165 85 V245\"/>\n\n  <!-- upper branch resistor -->\n  <path class=\"wire\" d=\"M165 145 H230\"/>\n  <rect class=\"component\" x=\"230\" y=\"125\" width=\"105\" height=\"40\" rx=\"2\"/>\n  <path class=\"wire\" d=\"M335 145 H470\"/>\n  <text class=\"label\" x=\"276\" y=\"154\">R</text>\n\n  <!-- lower branch resistor and switch -->\n  <path class=\"wire\" d=\"M165 210 H210\"/>\n  <rect class=\"component\" x=\"210\" y=\"190\" width=\"105\" height=\"40\" rx=\"2\"/>\n  <path class=\"wire\" d=\"M315 210 H365\"/>\n  <circle cx=\"365\" cy=\"210\" r=\"5\" fill=\"#111\"/>\n  <circle cx=\"425\" cy=\"210\" r=\"5\" fill=\"#111\"/>\n  <path class=\"wire\" d=\"M365 210 L416 184\"/>\n  <path class=\"wire\" d=\"M425 210 H470\"/>\n  <text class=\"label\" x=\"256\" y=\"219\">R</text>\n  <text class=\"label\" x=\"385\" y=\"174\">S</text>\n  <text class=\"small\" x=\"205\" y=\"292\">switch S is initially open</text>\n</svg>",
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(\\dfrac12\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(\\dfrac23\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(\\dfrac34\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(1\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(\\dfrac43\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(\\dfrac32\\)"
+        }
+      ],
+      "correctOptionId": "E",
+      "solution": {
+        "title": "Compare the total resistance before and after the switch closes.",
+        "stepsMarkdown": [
+          "Switch open: the two conducting resistors are in series, so \\(R_{\\text{open}}=2R\\).",
+          "Switch closed: the two branch resistors are in parallel, so \\(R_{\\text{closed}}=R+\\dfrac{R}{2}=\\dfrac{3R}{2}\\).",
+          "For fixed voltage, \\(P=\\dfrac{V^2}{R_{\\text{total}}}\\).",
+          "Therefore \\(\\dfrac{P_{\\text{closed}}}{P_{\\text{open}}}=\\dfrac{2R}{3R/2}=\\dfrac43\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{\\dfrac43}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Uses the two equal branch resistors but ignores the series resistor."
+        },
+        {
+          "optionId": "B",
+          "reason": "Uses the ratio of the new resistance to the old resistance; power varies inversely with resistance."
+        },
+        {
+          "optionId": "C",
+          "reason": "Uses \\(R/(R+R/2)\\) instead of comparing the two complete circuits."
+        },
+        {
+          "optionId": "D",
+          "reason": "Assumes an ideal battery supplies constant power rather than constant voltage."
+        },
+        {
+          "optionId": "E",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "F",
+          "reason": "Treats the new total resistance as \\(4R/3\\) rather than \\(3R/2\\)."
+        }
+      ]
+    },
+    {
+      "id": "esat-physics-hook-02",
+      "order": 2,
+      "questionType": "multi_statement_single_choice",
+      "difficulty": "medium",
+      "difficultyScore": 3,
+      "estimatedSeconds": 80,
+      "topics": [
+        "Forces",
+        "Terminal velocity",
+        "Newton's laws"
+      ],
+      "specRefs": [
+        "P3.2",
+        "P3.4",
+        "P3.5e",
+        "P3.5f"
+      ],
+      "stemMarkdown": "A parachutist is falling vertically at terminal velocity. The parachute is then opened.\\n\\nWhich of the following statements is/are correct?\\n\\n1. Immediately after the parachute opens, the parachutist's weight is unchanged.\\n\\n2. Immediately after the parachute opens, the resultant force on the parachutist is upwards.\\n\\n3. At the new, lower terminal velocity, the air resistance is less than the parachutist's weight.",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "none of them"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "1 only"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "2 only"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "3 only"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "1 and 2 only"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "1 and 3 only"
+        },
+        {
+          "id": "G",
+          "textMarkdown": "2 and 3 only"
+        },
+        {
+          "id": "H",
+          "textMarkdown": "1, 2 and 3"
+        }
+      ],
+      "correctOptionId": "E",
+      "solution": {
+        "title": "Separate what changes immediately from what is true at terminal speed.",
+        "stepsMarkdown": [
+          "1 is true: opening the parachute does not change the parachutist's mass or weight.",
+          "2 is true: the enlarged parachute produces air resistance greater than the weight, so the resultant is upwards.",
+          "3 is false: at any terminal velocity the resultant force is zero, so air resistance equals weight."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{\\text{1 and 2 only}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Statements 1 and 2 are both true."
+        },
+        {
+          "optionId": "B",
+          "reason": "Misses the upward resultant force immediately after the parachute opens."
+        },
+        {
+          "optionId": "C",
+          "reason": "Misses that the weight remains unchanged."
+        },
+        {
+          "optionId": "D",
+          "reason": "Statement 3 is false: drag equals weight at the new terminal speed."
+        },
+        {
+          "optionId": "E",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "F",
+          "reason": "Includes statement 3 and misses statement 2."
+        },
+        {
+          "optionId": "G",
+          "reason": "Includes the false statement 3 and misses the true statement 1."
+        },
+        {
+          "optionId": "H",
+          "reason": "Statement 3 is false."
+        }
+      ]
+    },
+    {
+      "id": "esat-physics-hook-03",
+      "order": 3,
+      "questionType": "single_choice",
+      "difficulty": "hard",
+      "difficultyScore": 4,
+      "estimatedSeconds": 105,
+      "topics": [
+        "Kinematics",
+        "Kinetic energy",
+        "Work done",
+        "Proportional reasoning"
+      ],
+      "specRefs": [
+        "P3.1",
+        "P3.7a",
+        "P3.7d",
+        "P3.7f"
+      ],
+      "stemMarkdown": "At speed \\(v\\), a car has a reaction distance of \\(12\\text{ m}\\) and a braking distance of \\(24\\text{ m}\\).\\n\\nThe car's speed is increased to \\(\\dfrac32v\\). The driver's reaction time and the braking force are unchanged.\\n\\nWhat is the new stopping distance?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(36\\text{ m}\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(54\\text{ m}\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(60\\text{ m}\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(66\\text{ m}\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(72\\text{ m}\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(81\\text{ m}\\)"
+        }
+      ],
+      "correctOptionId": "E",
+      "solution": {
+        "title": "Reaction distance scales with speed; braking distance scales with speed squared.",
+        "stepsMarkdown": [
+          "New reaction distance: \\(12\\times\\dfrac32=18\\text{ m}\\).",
+          "With the same braking force, work done removes the kinetic energy, so braking distance is proportional to \\(v^2\\).",
+          "New braking distance: \\(24\\times\\left(\\dfrac32\\right)^2=54\\text{ m}\\).",
+          "Total stopping distance: \\(18+54=72\\text{ m}\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{72\\text{ m}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Assumes the stopping distance is unchanged."
+        },
+        {
+          "optionId": "B",
+          "reason": "Scales the entire original stopping distance only in proportion to speed."
+        },
+        {
+          "optionId": "C",
+          "reason": "Uses an incorrect linear increase for the braking distance."
+        },
+        {
+          "optionId": "D",
+          "reason": "Scales the braking distance correctly but leaves the reaction distance at 12 m."
+        },
+        {
+          "optionId": "E",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "F",
+          "reason": "Scales the whole stopping distance with the square of the speed."
+        }
+      ]
+    },
+    {
+      "id": "esat-physics-hook-04",
+      "order": 4,
+      "questionType": "single_choice",
+      "difficulty": "accessible",
+      "difficultyScore": 2,
+      "estimatedSeconds": 75,
+      "topics": [
+        "Thermal energy",
+        "Specific heat capacity",
+        "Power"
+      ],
+      "specRefs": [
+        "P4.4",
+        "P3.7e"
+      ],
+      "stemMarkdown": "A \\(0.25\\text{ kg}\\) metal block is heated by a \\(60\\text{ W}\\) heater for \\(100\\text{ s}\\). Its temperature increases by \\(40\\,^{\\circ}\\text{C}\\).\\n\\nThe specific heat capacity of the metal is \\(400\\text{ J kg}^{-1}\\,^{\\circ}\\text{C}^{-1}\\).\\n\\nWhat is the **average rate** at which energy is transferred from the block to the surroundings during the heating?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(10\\text{ W}\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(16\\text{ W}\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(20\\text{ W}\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(24\\text{ W}\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(40\\text{ W}\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(60\\text{ W}\\)"
+        }
+      ],
+      "correctOptionId": "C",
+      "solution": {
+        "title": "Input energy is split between the block and the surroundings.",
+        "stepsMarkdown": [
+          "Heater input: \\(60\\times100=6000\\text{ J}\\).",
+          "Increase in the block's thermal energy: \\(mc\\Delta T=0.25\\times400\\times40=4000\\text{ J}\\).",
+          "Energy transferred to the surroundings: \\(6000-4000=2000\\text{ J}\\).",
+          "Average rate: \\(2000\\div100=20\\text{ W}\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{20\\text{ W}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Halves the energy loss before dividing by time."
+        },
+        {
+          "optionId": "B",
+          "reason": "Uses an incorrect temperature rise of 44 °C in the stored-energy calculation."
+        },
+        {
+          "optionId": "C",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "D",
+          "reason": "Treats the stored energy as 3600 J."
+        },
+        {
+          "optionId": "E",
+          "reason": "Gives the rate at which the block gains thermal energy, not the loss rate."
+        },
+        {
+          "optionId": "F",
+          "reason": "Gives the heater's input power and ignores the block's energy gain."
+        }
+      ]
+    },
+    {
+      "id": "esat-physics-hook-05",
+      "order": 5,
+      "questionType": "multi_statement_single_choice",
+      "difficulty": "medium",
+      "difficultyScore": 3,
+      "estimatedSeconds": 80,
+      "topics": [
+        "Ideal gases",
+        "Density",
+        "Particle model"
+      ],
+      "specRefs": [
+        "P5.1",
+        "P5.2",
+        "P5.4"
+      ],
+      "stemMarkdown": "A fixed mass of ideal gas is compressed slowly at constant temperature until its volume is half its original value.\\n\\nWhich of the following statements is/are correct?\\n\\n1. The pressure of the gas doubles.\\n\\n2. The density of the gas halves.\\n\\n3. The average kinetic energy of the gas particles remains unchanged.",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "none of them"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "1 only"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "2 only"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "3 only"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "1 and 2 only"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "1 and 3 only"
+        },
+        {
+          "id": "G",
+          "textMarkdown": "2 and 3 only"
+        },
+        {
+          "id": "H",
+          "textMarkdown": "1, 2 and 3"
+        }
+      ],
+      "correctOptionId": "F",
+      "solution": {
+        "title": "Use constant-temperature gas behaviour and the definition of density.",
+        "stepsMarkdown": [
+          "1 is true: \\(PV\\) is constant, so halving \\(V\\) doubles \\(P\\).",
+          "2 is false: the mass is fixed, so halving the volume doubles the density.",
+          "3 is true: the temperature is unchanged, so the particles' average kinetic energy is unchanged."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{\\text{1 and 3 only}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Statements 1 and 3 are true."
+        },
+        {
+          "optionId": "B",
+          "reason": "Misses that constant temperature means unchanged average kinetic energy."
+        },
+        {
+          "optionId": "C",
+          "reason": "Statement 2 has the density change backwards."
+        },
+        {
+          "optionId": "D",
+          "reason": "Misses the pressure change."
+        },
+        {
+          "optionId": "E",
+          "reason": "Includes the false density statement and misses statement 3."
+        },
+        {
+          "optionId": "F",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "G",
+          "reason": "Includes the false density statement and misses statement 1."
+        },
+        {
+          "optionId": "H",
+          "reason": "Statement 2 is false."
+        }
+      ]
+    },
+    {
+      "id": "esat-physics-hook-06",
+      "order": 6,
+      "questionType": "single_choice",
+      "difficulty": "hard",
+      "difficultyScore": 4,
+      "estimatedSeconds": 95,
+      "topics": [
+        "Plane mirrors",
+        "Relative motion",
+        "Images"
+      ],
+      "specRefs": [
+        "P6.3a",
+        "M3.7"
+      ],
+      "stemMarkdown": "An object and a plane mirror move directly towards each other. The object moves at \\(3.0\\text{ m s}^{-1}\\) and the mirror moves at \\(1.0\\text{ m s}^{-1}\\), both relative to the ground.\\n\\nAt what rate does the distance between the object and its image decrease?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(2.0\\text{ m s}^{-1}\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(3.0\\text{ m s}^{-1}\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(4.0\\text{ m s}^{-1}\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(6.0\\text{ m s}^{-1}\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(8.0\\text{ m s}^{-1}\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(10\\text{ m s}^{-1}\\)"
+        }
+      ],
+      "correctOptionId": "E",
+      "solution": {
+        "title": "The image is always the same distance behind the mirror as the object is in front.",
+        "stepsMarkdown": [
+          "The object–mirror distance decreases at \\(3.0+1.0=4.0\\text{ m s}^{-1}\\).",
+          "The object–image distance is twice the object–mirror distance.",
+          "It therefore decreases at \\(2\\times4.0=8.0\\text{ m s}^{-1}\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{8.0\\text{ m s}^{-1}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Subtracts the two speeds and does not account for the image."
+        },
+        {
+          "optionId": "B",
+          "reason": "Uses only the object's speed."
+        },
+        {
+          "optionId": "C",
+          "reason": "Finds the rate at which the object–mirror distance decreases."
+        },
+        {
+          "optionId": "D",
+          "reason": "Doubles only the object's speed."
+        },
+        {
+          "optionId": "E",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "F",
+          "reason": "Doubles the object speed and then adds both mirror-speed contributions again."
+        }
+      ]
+    },
+    {
+      "id": "esat-physics-hook-07",
+      "order": 7,
+      "questionType": "multi_statement_single_choice",
+      "difficulty": "medium",
+      "difficultyScore": 3,
+      "estimatedSeconds": 80,
+      "topics": [
+        "Motor effect",
+        "Magnetic force",
+        "Direction of force"
+      ],
+      "specRefs": [
+        "P2.3"
+      ],
+      "stemMarkdown": "A straight wire carrying a current is at right angles to a uniform magnetic field. It experiences a magnetic force.\\n\\nWhich of the following statements is/are correct?\\n\\n1. Reversing both the current and the magnetic field reverses the direction of the force.\\n\\n2. Reversing the current only reverses the direction of the force.\\n\\n3. Doubling the magnetic field strength and halving the current leaves the magnitude of the force unchanged.",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "none of them"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "1 only"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "2 only"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "3 only"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "1 and 2 only"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "1 and 3 only"
+        },
+        {
+          "id": "G",
+          "textMarkdown": "2 and 3 only"
+        },
+        {
+          "id": "H",
+          "textMarkdown": "1, 2 and 3"
+        }
+      ],
+      "correctOptionId": "G",
+      "solution": {
+        "title": "Treat direction and magnitude separately.",
+        "stepsMarkdown": [
+          "1 is false: reversing both the current and the field reverses the direction twice, so the force direction is unchanged.",
+          "2 is true: reversing either the current or the field reverses the force.",
+          "3 is true: \\(F=BIL\\), so \\((2B)(I/2)L=BIL\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{\\text{2 and 3 only}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Statements 2 and 3 are true."
+        },
+        {
+          "optionId": "B",
+          "reason": "Statement 1 is false and misses both true statements."
+        },
+        {
+          "optionId": "C",
+          "reason": "Misses the unchanged magnitude in statement 3."
+        },
+        {
+          "optionId": "D",
+          "reason": "Misses the force reversal in statement 2."
+        },
+        {
+          "optionId": "E",
+          "reason": "Includes the false statement 1 and misses statement 3."
+        },
+        {
+          "optionId": "F",
+          "reason": "Includes the false statement 1 and misses statement 2."
+        },
+        {
+          "optionId": "G",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "H",
+          "reason": "Statement 1 is false."
+        }
+      ]
+    },
+    {
+      "id": "esat-physics-hook-08",
+      "order": 8,
+      "questionType": "single_choice",
+      "difficulty": "hard",
+      "difficultyScore": 4,
+      "estimatedSeconds": 105,
+      "topics": [
+        "Force-extension graphs",
+        "Elastic energy",
+        "Kinetic energy"
+      ],
+      "specRefs": [
+        "P3.3",
+        "P3.7d",
+        "P3.7f"
+      ],
+      "stemMarkdown": "The graph shows the force needed to extend a spring. The spring obeys Hooke's law.\\n\\nThe spring is extended by \\(4.0\\text{ cm}\\) and used to launch a \\(0.060\\text{ kg}\\) object along a smooth horizontal surface. Assume that all the elastic energy becomes kinetic energy.\\n\\nWhat is the launch speed of the object?",
+      "diagramSvg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 560 360\" role=\"img\" aria-label=\"Force-extension graph for a spring. A straight line runs from the origin to extension 4 centimetres and force 12 newtons.\">\n  <style>\n    .axis{stroke:#111;stroke-width:3;fill:none;stroke-linecap:round}\n    .line{stroke:#111;stroke-width:3;fill:none;stroke-linecap:round}\n    .guide{stroke:#666;stroke-width:1.5;stroke-dasharray:7 7;fill:none}\n    .point{fill:#111}\n    .label{font:21px serif;fill:#111}\n    .small{font:18px serif;fill:#111}\n  </style>\n  <path class=\"axis\" d=\"M80 295 H505\"/>\n  <path class=\"axis\" d=\"M80 295 V45\"/>\n  <path class=\"axis\" d=\"M505 295 l-12 -7 M505 295 l-12 7\"/>\n  <path class=\"axis\" d=\"M80 45 l-7 12 M80 45 l7 12\"/>\n  <path class=\"line\" d=\"M80 295 L420 75\"/>\n  <path class=\"guide\" d=\"M420 75 V295 M80 75 H420\"/>\n  <circle class=\"point\" cx=\"420\" cy=\"75\" r=\"5\"/>\n  <text class=\"label\" x=\"440\" y=\"83\">12 N</text>\n  <text class=\"label\" x=\"397\" y=\"325\">4 cm</text>\n  <text class=\"label\" x=\"242\" y=\"348\">extension</text>\n  <text class=\"label\" x=\"18\" y=\"52\">force</text>\n  <text class=\"small\" x=\"62\" y=\"319\">0</text>\n</svg>",
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(1\\text{ m s}^{-1}\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(\\sqrt2\\text{ m s}^{-1}\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(2\\text{ m s}^{-1}\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(2\\sqrt2\\text{ m s}^{-1}\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(4\\text{ m s}^{-1}\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(4\\sqrt2\\text{ m s}^{-1}\\)"
+        }
+      ],
+      "correctOptionId": "D",
+      "solution": {
+        "title": "The area under the force–extension graph is the stored energy.",
+        "stepsMarkdown": [
+          "Elastic energy: \\(E=\\dfrac12Fx=\\dfrac12\\times12\\times0.040=0.24\\text{ J}\\).",
+          "Set this equal to kinetic energy: \\(\\dfrac12(0.060)v^2=0.24\\).",
+          "So \\(v^2=8\\), giving \\(v=2\\sqrt2\\text{ m s}^{-1}\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{2\\sqrt2\\text{ m s}^{-1}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Uses the extension in centimetres inconsistently and loses the energy scale."
+        },
+        {
+          "optionId": "B",
+          "reason": "Finds half the correct value of \\(v^2\\)."
+        },
+        {
+          "optionId": "C",
+          "reason": "Uses \\(E=Fx/2\\) correctly but mishandles the factor \\(1/2\\) in kinetic energy."
+        },
+        {
+          "optionId": "D",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "E",
+          "reason": "Uses \\(E=Fx\\), doubling the stored energy."
+        },
+        {
+          "optionId": "F",
+          "reason": "Uses centimetres as metres, then partially compensates elsewhere."
+        }
+      ]
+    },
+    {
+      "id": "esat-physics-hook-09",
+      "order": 9,
+      "questionType": "multi_statement_single_choice",
+      "difficulty": "accessible",
+      "difficultyScore": 2,
+      "estimatedSeconds": 80,
+      "topics": [
+        "Alpha decay",
+        "Nuclide notation",
+        "Half-life"
+      ],
+      "specRefs": [
+        "P7.1",
+        "P7.2",
+        "P7.4"
+      ],
+      "stemMarkdown": "A pure sample initially contains only the radioactive nuclide \\({}^{226}_{88}X\\). Each nucleus of \\(X\\) emits one alpha particle to form the stable nuclide \\(Y\\). The half-life of \\(X\\) is 4 days.\\n\\nWhich of the following statements is/are correct?\\n\\n1. A nucleus of \\(Y\\) contains 136 neutrons.\\n\\n2. After 12 days, \\(87.5\\%\\) of the original nuclei of \\(X\\) remain.\\n\\n3. After 12 days, the ratio of the number of nuclei of \\(Y\\) to the number of nuclei of \\(X\\) is \\(7:1\\).",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "none of them"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "1 only"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "2 only"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "3 only"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "1 and 2 only"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "1 and 3 only"
+        },
+        {
+          "id": "G",
+          "textMarkdown": "2 and 3 only"
+        },
+        {
+          "id": "H",
+          "textMarkdown": "1, 2 and 3"
+        }
+      ],
+      "correctOptionId": "F",
+      "solution": {
+        "title": "Track the daughter nuclide and then apply three half-lives.",
+        "stepsMarkdown": [
+          "Alpha decay gives \\({}^{222}_{86}Y\\), which has \\(222-86=136\\) neutrons. Statement 1 is true.",
+          "Twelve days is three half-lives, so the fraction of \\(X\\) remaining is \\((1/2)^3=1/8=12.5\\%\\). Statement 2 is false.",
+          "The remaining fraction is \\(1/8\\) and the fraction converted to \\(Y\\) is \\(7/8\\), so \\(Y:X=7:1\\). Statement 3 is true."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{\\text{1 and 3 only}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Statements 1 and 3 are true."
+        },
+        {
+          "optionId": "B",
+          "reason": "Misses the correct daughter-to-parent ratio."
+        },
+        {
+          "optionId": "C",
+          "reason": "Statement 2 confuses the fraction decayed with the fraction remaining."
+        },
+        {
+          "optionId": "D",
+          "reason": "Misses the neutron count in the daughter nucleus."
+        },
+        {
+          "optionId": "E",
+          "reason": "Includes the false statement 2 and misses statement 3."
+        },
+        {
+          "optionId": "F",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "G",
+          "reason": "Includes the false statement 2 and misses statement 1."
+        },
+        {
+          "optionId": "H",
+          "reason": "Statement 2 is false."
+        }
+      ]
+    },
+    {
+      "id": "esat-physics-hook-10",
+      "order": 10,
+      "questionType": "single_choice",
+      "difficulty": "hard",
+      "difficultyScore": 4,
+      "estimatedSeconds": 110,
+      "topics": [
+        "Transformers",
+        "Power transmission",
+        "Cable losses"
+      ],
+      "specRefs": [
+        "P2.5b",
+        "P2.5c",
+        "P2.5d",
+        "P1.2m"
+      ],
+      "stemMarkdown": "An ideal transformer has 200 turns on its primary coil and 1000 turns on its secondary coil. The primary voltage is \\(240\\text{ V}\\) and the primary current is \\(5.0\\text{ A}\\).\\n\\nThe secondary coil supplies a load through cables with a total resistance of \\(20\\,\\Omega\\).\\n\\nWhat power is received by the load?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(20\\text{ W}\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(200\\text{ W}\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(1000\\text{ W}\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(1160\\text{ W}\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(1180\\text{ W}\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(1200\\text{ W}\\)"
+        }
+      ],
+      "correctOptionId": "E",
+      "solution": {
+        "title": "Find the secondary current, then subtract the cable loss.",
+        "stepsMarkdown": [
+          "The ideal transformer input and output powers are equal: \\(P=240\\times5.0=1200\\text{ W}\\).",
+          "The secondary voltage is \\(240\\times\\dfrac{1000}{200}=1200\\text{ V}\\), so the secondary current is \\(1200/1200=1.0\\text{ A}\\).",
+          "Cable loss: \\(I^2R=1.0^2\\times20=20\\text{ W}\\).",
+          "Power received by the load: \\(1200-20=1180\\text{ W}\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{1180\\text{ W}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Gives only the power lost in the cables."
+        },
+        {
+          "optionId": "B",
+          "reason": "Uses the turns ratio as though it were the delivered power."
+        },
+        {
+          "optionId": "C",
+          "reason": "Subtracts the cable resistance numerically from the secondary voltage, then treats the result as power."
+        },
+        {
+          "optionId": "D",
+          "reason": "Subtracts the 20 W cable loss twice."
+        },
+        {
+          "optionId": "E",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "F",
+          "reason": "Gives the transformer output power and ignores cable losses."
+        }
+      ]
+    }
+  ]
+}

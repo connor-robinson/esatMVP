@@ -1,0 +1,829 @@
+{
+  "set": {
+    "id": "esat-m2-hook-set-01",
+    "title": "ESAT Mathematics 2 — First 10",
+    "module": "Mathematics 2",
+    "questionCount": 10,
+    "suggestedTimeSeconds": 1020,
+    "calculatorAllowed": false,
+    "version": 1,
+    "status": "ready_for_review",
+    "authorship": "Original questions. Informed by the 2026 ESAT Mathematics 2 specification, the official Notes on Mathematics, historic ENGAA/NSAA advanced mathematics questions, and TMUA Paper 1 style; no question has been copied.",
+    "designIntent": [
+      "Slightly harder than the Mathematics 1 hook set, while remaining realistic under ESAT time pressure.",
+      "Questions reward a short insight or representation change rather than long routine calculation.",
+      "The set samples algebra, recurrence relations, coordinate geometry, trigonometry, logarithms, calculus, transformations and binomial expansion.",
+      "Every distractor corresponds to a recognisable error and can support targeted feedback."
+    ],
+    "difficultyMix": {
+      "accessible": 2,
+      "medium": 4,
+      "hard": 4
+    }
+  },
+  "questions": [
+    {
+      "id": "esat-m2-hook-01",
+      "order": 1,
+      "difficulty": "medium",
+      "difficultyScore": 3,
+      "estimatedSeconds": 90,
+      "topics": [
+        "Quadratic graphs",
+        "Simultaneous equations",
+        "Completing the square"
+      ],
+      "specRefs": [
+        "MM1.3",
+        "MM1.4"
+      ],
+      "stemMarkdown": "The line \\(y=2x+k\\) meets the curve \\(y=x^2-4x+7\\) at two points.\\n\\nThe \\(x\\)-coordinates of the two points differ by \\(4\\).\\n\\nWhat is the value of \\(k\\)?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(-2\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(-1\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(0\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(2\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(4\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(14\\)"
+        }
+      ],
+      "correctOptionId": "D",
+      "solution": {
+        "title": "Complete the square before finding the intersections.",
+        "stepsMarkdown": [
+          "Equating the two expressions for \\(y\\) gives \\(x^2-6x+7-k=0\\).",
+          "So \\((x-3)^2=k+2\\), and the two roots are \\(3\\pm\\sqrt{k+2}\\).",
+          "Their difference is \\(2\\sqrt{k+2}=4\\). Hence \\(k+2=4\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{k=2}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "This makes the line tangent to the curve, so the two x-coordinates are equal."
+        },
+        {
+          "optionId": "B",
+          "reason": "Sets the discriminant equal to 4; the root separation is the square root of the discriminant."
+        },
+        {
+          "optionId": "C",
+          "reason": "Drops the square root while keeping the factor of 2."
+        },
+        {
+          "optionId": "D",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "E",
+          "reason": "Finds \\(k+2=4\\) but forgets to subtract 2."
+        },
+        {
+          "optionId": "F",
+          "reason": "Sets \\(\\sqrt{k+2}=4\\), forgetting that 4 is the full gap between the roots."
+        }
+      ]
+    },
+    {
+      "id": "esat-m2-hook-02",
+      "order": 2,
+      "difficulty": "medium",
+      "difficultyScore": 3,
+      "estimatedSeconds": 95,
+      "topics": [
+        "Recurrence relations",
+        "Sequences"
+      ],
+      "specRefs": [
+        "MM2.1"
+      ],
+      "stemMarkdown": "A sequence is defined by\\n\\n\\[u_1=\\frac32,\\qquad u_{n+1}=2-\\frac1{u_n}.\\]\\n\\nWhat is \\(u_{20}\\)?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(\\dfrac{20}{21}\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(\\dfrac{21}{20}\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(\\dfrac{21}{22}\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(\\dfrac{22}{21}\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(\\dfrac{23}{22}\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(\\dfrac32\\)"
+        }
+      ],
+      "correctOptionId": "D",
+      "solution": {
+        "title": "Generate a few terms, then confirm the pattern.",
+        "stepsMarkdown": [
+          "\\(u_2=\\dfrac43\\), \\(u_3=\\dfrac54\\), and \\(u_4=\\dfrac65\\).",
+          "This suggests \\(u_n=\\dfrac{n+2}{n+1}\\).",
+          "Indeed, \\(2-\\dfrac{n+1}{n+2}=\\dfrac{n+3}{n+2}\\), so the pattern continues.",
+          "Therefore \\(u_{20}=\\dfrac{22}{21}\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{\\dfrac{22}{21}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Uses \\(u_n=\\dfrac{n}{n+1}\\), missing the shift in the pattern."
+        },
+        {
+          "optionId": "B",
+          "reason": "Uses \\(u_n=\\dfrac{n+1}{n}\\)."
+        },
+        {
+          "optionId": "C",
+          "reason": "Takes the reciprocal of the correct term."
+        },
+        {
+          "optionId": "D",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "E",
+          "reason": "Substitutes \\(n=21\\) instead of \\(n=20\\)."
+        },
+        {
+          "optionId": "F",
+          "reason": "Assumes the recurrence leaves the starting value unchanged."
+        }
+      ]
+    },
+    {
+      "id": "esat-m2-hook-03",
+      "order": 3,
+      "difficulty": "accessible",
+      "difficultyScore": 2,
+      "estimatedSeconds": 75,
+      "topics": [
+        "Coordinate geometry",
+        "Circles",
+        "Maximum distance"
+      ],
+      "specRefs": [
+        "MM3.2"
+      ],
+      "stemMarkdown": "Point \\(P\\) lies on the circle\\n\\n\\[(x-1)^2+(y+2)^2=9,\\]\\n\\nand point \\(Q\\) lies on the circle\\n\\n\\[(x+5)^2+(y-6)^2=25.\\]\\n\\nWhat is the greatest possible value of \\(PQ\\)?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(2\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(8\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(10\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(12\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(15\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(18\\)"
+        }
+      ],
+      "correctOptionId": "F",
+      "solution": {
+        "title": "Use the line through the two centres.",
+        "stepsMarkdown": [
+          "The centres are \\((1,-2)\\) and \\((-5,6)\\), with radii \\(3\\) and \\(5\\).",
+          "The distance between the centres is \\(\\sqrt{6^2+8^2}=10\\).",
+          "The greatest distance occurs at the two outermost points on the line of centres.",
+          "Hence \\(PQ=3+10+5=18\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{18}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Subtracts both radii from the distance between the centres; this gives the minimum gap."
+        },
+        {
+          "optionId": "B",
+          "reason": "Adds the two radii but ignores the separation of the centres."
+        },
+        {
+          "optionId": "C",
+          "reason": "Finds only the distance between the centres."
+        },
+        {
+          "optionId": "D",
+          "reason": "Adds the difference of the radii to the centre distance."
+        },
+        {
+          "optionId": "E",
+          "reason": "Adds only the larger radius to the centre distance."
+        },
+        {
+          "optionId": "F",
+          "reason": "Correct."
+        }
+      ]
+    },
+    {
+      "id": "esat-m2-hook-04",
+      "order": 4,
+      "difficulty": "medium",
+      "difficultyScore": 3,
+      "estimatedSeconds": 100,
+      "topics": [
+        "Trigonometric equations",
+        "Exact values",
+        "Radian measure"
+      ],
+      "specRefs": [
+        "MM4.3",
+        "MM4.5",
+        "MM4.6"
+      ],
+      "stemMarkdown": "The equation\\n\\n\\[2\\sin^2x=1+\\cos x\\]\\n\\nhas several solutions in the interval \\(0\\le x<2\\pi\\).\\n\\nWhat is the sum of all these solutions?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(\\pi\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(\\dfrac{4\\pi}{3}\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(2\\pi\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(\\dfrac{8\\pi}{3}\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(3\\pi\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(4\\pi\\)"
+        }
+      ],
+      "correctOptionId": "E",
+      "solution": {
+        "title": "Turn the equation into a quadratic in \\(\\cos x\\).",
+        "stepsMarkdown": [
+          "Using \\(\\sin^2x=1-\\cos^2x\\): \\(2\\cos^2x+\\cos x-1=0\\).",
+          "So \\((2\\cos x-1)(\\cos x+1)=0\\).",
+          "The solutions are \\(x=\\dfrac\\pi3,\\ \\pi,\\ \\dfrac{5\\pi}{3}\\).",
+          "Their sum is \\(3\\pi\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{3\\pi}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Counts only the solution from \\(\\cos x=-1\\)."
+        },
+        {
+          "optionId": "B",
+          "reason": "Includes \\(\\pi/3\\) and \\(\\pi\\), but misses \\(5\\pi/3\\)."
+        },
+        {
+          "optionId": "C",
+          "reason": "Includes the two solutions from \\(\\cos x=1/2\\), but misses \\(x=\\pi\\)."
+        },
+        {
+          "optionId": "D",
+          "reason": "Includes \\(\\pi\\) and \\(5\\pi/3\\), but misses \\(\\pi/3\\)."
+        },
+        {
+          "optionId": "E",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "F",
+          "reason": "Treats the upper endpoint \\(2\\pi\\) as an additional solution."
+        }
+      ]
+    },
+    {
+      "id": "esat-m2-hook-05",
+      "order": 5,
+      "difficulty": "accessible",
+      "difficultyScore": 2,
+      "estimatedSeconds": 85,
+      "topics": [
+        "Logarithms",
+        "Domain restrictions",
+        "Quadratic equations"
+      ],
+      "specRefs": [
+        "MM5.2"
+      ],
+      "stemMarkdown": "Solve\\n\\n\\[\\log_2(x-1)+\\log_2(x-3)=\\log_2(2x+3).\\]",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(0\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(1\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(3\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(4\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(5\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(6\\)"
+        }
+      ],
+      "correctOptionId": "F",
+      "solution": {
+        "title": "Combine the logarithms, then check the domain.",
+        "stepsMarkdown": [
+          "The logarithms require \\(x>3\\).",
+          "\\((x-1)(x-3)=2x+3\\).",
+          "This simplifies to \\(x^2-6x=0\\), so \\(x=0\\) or \\(x=6\\).",
+          "Only \\(x=6\\) is in the domain."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{6}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "This is an algebraic root, but the logarithms are not defined there."
+        },
+        {
+          "optionId": "B",
+          "reason": "Makes \\(x-1=0\\), and \\(\\log 0\\) is undefined."
+        },
+        {
+          "optionId": "C",
+          "reason": "Makes \\(x-3=0\\), and \\(\\log 0\\) is undefined."
+        },
+        {
+          "optionId": "D",
+          "reason": "It is in the domain, but it does not satisfy the equation."
+        },
+        {
+          "optionId": "E",
+          "reason": "Comes from a one-step arithmetic slip after expanding the product."
+        },
+        {
+          "optionId": "F",
+          "reason": "Correct."
+        }
+      ]
+    },
+    {
+      "id": "esat-m2-hook-06",
+      "order": 6,
+      "difficulty": "hard",
+      "difficultyScore": 4,
+      "estimatedSeconds": 105,
+      "topics": [
+        "Differentiation",
+        "Stationary points",
+        "Parameter inequalities"
+      ],
+      "specRefs": [
+        "MM6.1",
+        "MM6.3"
+      ],
+      "stemMarkdown": "The function\\n\\n\\[f(x)=x^3-3x^2+k\\]\\n\\nhas two stationary points.\\n\\nFor which values of \\(k\\) do the stationary points lie on opposite sides of the \\(x\\)-axis?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(k<0\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(k>4\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(0<k<4\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(k\\le0\\text{ or }k\\ge4\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(0\\le k\\le4\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "all real values of \\(k\\)"
+        }
+      ],
+      "correctOptionId": "C",
+      "solution": {
+        "title": "Compare the heights of the two stationary points.",
+        "stepsMarkdown": [
+          "\\(f'(x)=3x(x-2)\\), so the stationary points occur at \\(x=0\\) and \\(x=2\\).",
+          "Their \\(y\\)-coordinates are \\(k\\) and \\(k-4\\).",
+          "They are on opposite sides of the axis when \\(k(k-4)<0\\).",
+          "Therefore \\(0<k<4\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{0<k<4}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "When \\(k<0\\), both stationary points are below the axis."
+        },
+        {
+          "optionId": "B",
+          "reason": "When \\(k>4\\), both stationary points are above the axis."
+        },
+        {
+          "optionId": "C",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "D",
+          "reason": "This is the range in which the two stationary points are on the same side, or on the axis."
+        },
+        {
+          "optionId": "E",
+          "reason": "At \\(k=0\\) or \\(k=4\\), one stationary point lies on the axis, not on the opposite side."
+        },
+        {
+          "optionId": "F",
+          "reason": "The vertical shift \\(k\\) directly controls the two stationary-point heights."
+        }
+      ]
+    },
+    {
+      "id": "esat-m2-hook-07",
+      "order": 7,
+      "difficulty": "hard",
+      "difficultyScore": 4,
+      "estimatedSeconds": 115,
+      "topics": [
+        "Differential equations",
+        "Integration",
+        "Minimum points"
+      ],
+      "specRefs": [
+        "MM7.2",
+        "MM7.6",
+        "MM6.3"
+      ],
+      "stemMarkdown": "A curve satisfies\\n\\n\\[\\frac{dy}{dx}=6x-4\\]\\n\\nand passes through the point \\((1,3)\\).\\n\\nWhat is the minimum value of \\(y\\)?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(\\dfrac23\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(\\dfrac43\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(2\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(\\dfrac83\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(3\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(4\\)"
+        }
+      ],
+      "correctOptionId": "D",
+      "solution": {
+        "title": "Recover the curve, then locate its vertex.",
+        "stepsMarkdown": [
+          "Integrating gives \\(y=3x^2-4x+C\\).",
+          "Using \\((1,3)\\): \\(3=3-4+C\\), so \\(C=4\\).",
+          "The minimum occurs where \\(6x-4=0\\), giving \\(x=\\dfrac23\\).",
+          "Substitution gives \\(y=\\dfrac83\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{\\dfrac83}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "This is the x-coordinate of the minimum, not its y-value."
+        },
+        {
+          "optionId": "B",
+          "reason": "Uses only the \\(3x^2\\) term at \\(x=2/3\\)."
+        },
+        {
+          "optionId": "C",
+          "reason": "Uses the correct minimum point but an incorrect integration constant."
+        },
+        {
+          "optionId": "D",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "E",
+          "reason": "Assumes the given point is the minimum point."
+        },
+        {
+          "optionId": "F",
+          "reason": "This is the integration constant, not the minimum value."
+        }
+      ]
+    },
+    {
+      "id": "esat-m2-hook-08",
+      "order": 8,
+      "difficulty": "medium",
+      "difficultyScore": 3,
+      "estimatedSeconds": 100,
+      "topics": [
+        "Graph transformations",
+        "Functions",
+        "Extrema"
+      ],
+      "specRefs": [
+        "MM8.2"
+      ],
+      "stemMarkdown": "The graph of \\(y=f(x)\\) has a maximum point at \\((-2,5)\\) and a minimum point at \\((4,-1)\\).\\n\\nDefine\\n\\n\\[g(x)=3-f(2x-1).\\]\\n\\nWhat is the maximum point of the graph of \\(y=g(x)\\)?",
+      "diagramSvg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 560 340\" role=\"img\" aria-label=\"Sketch of a function with a maximum at negative two comma five and a minimum at four comma negative one.\">\n  <style>\n    .axis{stroke:#222;stroke-width:2;fill:none}\n    .curve{stroke:#111;stroke-width:3;fill:none;stroke-linecap:round}\n    .guide{stroke:#777;stroke-width:1.5;stroke-dasharray:6 6;fill:none}\n    .point{fill:#111}\n    .label{font:20px serif;fill:#111}\n    .small{font:17px serif;fill:#333}\n  </style>\n  <path class=\"axis\" d=\"M45 265 H525\"/>\n  <path class=\"axis\" d=\"M235 315 V30\"/>\n  <path class=\"axis\" d=\"M525 265 l-12 -7 M525 265 l-12 7\"/>\n  <path class=\"axis\" d=\"M235 30 l-7 12 M235 30 l7 12\"/>\n  <path class=\"curve\" d=\"M65 250 C120 230,135 80,175 75 C225 68,245 225,365 245 C430 256,470 190,510 135\"/>\n  <path class=\"guide\" d=\"M175 75 V265 M175 75 H235\"/>\n  <path class=\"guide\" d=\"M365 245 V265 M235 245 H365\"/>\n  <circle class=\"point\" cx=\"175\" cy=\"75\" r=\"5\"/>\n  <circle class=\"point\" cx=\"365\" cy=\"245\" r=\"5\"/>\n  <text class=\"label\" x=\"145\" y=\"55\">(-2, 5)</text>\n  <text class=\"label\" x=\"374\" y=\"238\">(4, -1)</text>\n  <text class=\"label\" x=\"530\" y=\"273\">x</text>\n  <text class=\"label\" x=\"245\" y=\"38\">y</text>\n  <text class=\"small\" x=\"378\" y=\"322\">diagram not to scale</text>\n</svg>",
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(\\left(-\\dfrac12,-2\\right)\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(\\left(-\\dfrac12,4\\right)\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(\\left(\\dfrac32,4\\right)\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(\\left(\\dfrac52,-2\\right)\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(\\left(\\dfrac52,4\\right)\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\((7,4)\\)"
+        }
+      ],
+      "correctOptionId": "E",
+      "solution": {
+        "title": "The minus sign swaps maxima and minima.",
+        "stepsMarkdown": [
+          "The maximum of \\(g\\) comes from the minimum value of \\(f\\), which occurs when its input is \\(4\\).",
+          "So \\(2x-1=4\\), giving \\(x=\\dfrac52\\).",
+          "The new height is \\(3-(-1)=4\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{\\left(\\dfrac52,4\\right)}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "This is the transformed original maximum, which becomes the new minimum."
+        },
+        {
+          "optionId": "B",
+          "reason": "Uses the x-position from the original maximum but the height from the new maximum."
+        },
+        {
+          "optionId": "C",
+          "reason": "Solves the horizontal transformation with the shift in the wrong direction."
+        },
+        {
+          "optionId": "D",
+          "reason": "Finds the correct x-coordinate but uses the transformed height of the original maximum."
+        },
+        {
+          "optionId": "E",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "F",
+          "reason": "Applies \\(2x-1\\) to the old x-coordinate instead of reversing the transformation."
+        }
+      ]
+    },
+    {
+      "id": "esat-m2-hook-09",
+      "order": 9,
+      "difficulty": "hard",
+      "difficultyScore": 4,
+      "estimatedSeconds": 110,
+      "topics": [
+        "Binomial expansion",
+        "Coefficients",
+        "Polynomial products"
+      ],
+      "specRefs": [
+        "MM2.4"
+      ],
+      "stemMarkdown": "What is the coefficient of \\(x^3\\) in the expansion of\\n\\n\\[(1+2x)^5(1-x)^2\\,?\\]",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(-80\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(0\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(10\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(40\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(80\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(170\\)"
+        }
+      ],
+      "correctOptionId": "C",
+      "solution": {
+        "title": "Only three pairs of terms can produce \\(x^3\\).",
+        "stepsMarkdown": [
+          "From \\((1+2x)^5\\), the coefficients of \\(x\\), \\(x^2\\), and \\(x^3\\) are \\(10\\), \\(40\\), and \\(80\\).",
+          "Since \\((1-x)^2=1-2x+x^2\\), the required coefficient is",
+          "\\[80(1)+40(-2)+10(1)=10.\\]"
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{10}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Keeps only the middle contribution \\(40(-2)\\)."
+        },
+        {
+          "optionId": "B",
+          "reason": "Cancels \\(80-80\\) but forgets the final contribution of \\(10\\)."
+        },
+        {
+          "optionId": "C",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "D",
+          "reason": "Uses only the coefficient of \\(x^2\\) from the first factor."
+        },
+        {
+          "optionId": "E",
+          "reason": "Uses only the coefficient of \\(x^3\\) from \\((1+2x)^5\\)."
+        },
+        {
+          "optionId": "F",
+          "reason": "Adds the magnitudes of all three contributions and ignores the negative sign."
+        }
+      ]
+    },
+    {
+      "id": "esat-m2-hook-10",
+      "order": 10,
+      "difficulty": "hard",
+      "difficultyScore": 4,
+      "estimatedSeconds": 90,
+      "topics": [
+        "Differentiation",
+        "Increasing functions",
+        "Stationary points",
+        "Mathematical statements"
+      ],
+      "specRefs": [
+        "MM6.1",
+        "MM6.3"
+      ],
+      "stemMarkdown": "The function \\(f\\) is differentiable for every real value of \\(x\\). Consider the statements:\\n\\n1. If \\(f'(x)>0\\) for every real \\(x\\), then \\(f\\) is strictly increasing.\\n\\n2. If \\(f'(a)=0\\), then \\(f\\) has a local maximum or a local minimum at \\(x=a\\).\\n\\n3. If \\(f\\) has a local maximum at \\(x=a\\), then \\(f'(a)=0\\).\\n\\nWhich statements must be true?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "1 only"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "2 only"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "3 only"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "1 and 2 only"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "1 and 3 only"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "1, 2 and 3"
+        }
+      ],
+      "correctOptionId": "E",
+      "solution": {
+        "title": "A zero derivative is necessary at an interior extremum, but not sufficient.",
+        "stepsMarkdown": [
+          "Statement 1 is true: a positive derivative means the function is strictly increasing.",
+          "Statement 2 is false. For example, \\(f(x)=x^3\\) has \\(f'(0)=0\\), but no maximum or minimum at \\(0\\).",
+          "Statement 3 is true because \\(f\\) is differentiable at the local maximum."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{\\text{1 and 3 only}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Misses the necessary derivative condition at a differentiable local maximum."
+        },
+        {
+          "optionId": "B",
+          "reason": "Statement 2 is false, while statements 1 and 3 are true."
+        },
+        {
+          "optionId": "C",
+          "reason": "Misses the fact that a positive derivative gives a strictly increasing function."
+        },
+        {
+          "optionId": "D",
+          "reason": "Treats every stationary point as a turning point and misses statement 3."
+        },
+        {
+          "optionId": "E",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "F",
+          "reason": "Incorrectly assumes that \\(f'(a)=0\\) is enough to guarantee an extremum."
+        }
+      ]
+    }
+  ]
+}

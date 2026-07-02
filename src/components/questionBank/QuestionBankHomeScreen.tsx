@@ -318,8 +318,8 @@ export function QuestionBankHomeScreen() {
     ) : (
       <DrillUpgradeBanner
         variant="panel"
-        headline="Try 10 ESAT Math 1 questions free"
-        subtext="Everyone gets the same curated Mathematics 1 preview set. Upgrade for the full question bank."
+        headline="Try 30 ESAT preview questions free"
+        subtext="Curated Math 1, Math 2 and Physics hook sets. Upgrade for the full question bank."
         ctaLabel="View plans"
       />
     );
