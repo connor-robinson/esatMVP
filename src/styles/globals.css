@@ -206,6 +206,12 @@
   .math-content p.stem-para:last-child {
     margin-bottom: 0 !important;
   }
+
+  /* Question bank solutions: plain final answers, no KaTeX box border */
+  .stem-content .katex .boxed {
+    border: none !important;
+    padding: 0 !important;
+  }
 }
 
 @layer utilities {

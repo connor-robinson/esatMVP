@@ -72,5 +72,19 @@ export function normalizeStemNewlines(text: string): string {
 }
 
 export function prepareQuestionBankMathText(text: string): string {
-  return convertLatexDelimiters(normalizeStemNewlines(text));
+  return unwrapLatexBoxed(convertLatexDelimiters(normalizeStemNewlines(text)));
+}
+
+/** Remove \\boxed{…} so final answers render without a bordered box. */
+export function unwrapLatexBoxed(text: string): string {
+  let result = text;
+  let prev = "";
+  while (prev !== result) {
+    prev = result;
+    result = result.replace(
+      /\\boxed\{((?:[^{}]|\{[^{}]*\})*)\}/g,
+      "$1",
+    );
+  }
+  return result;
 }

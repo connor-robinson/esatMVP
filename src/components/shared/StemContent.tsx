@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { renderMathContent } from "@/hooks/useKaTeX";
 import { normalizeStemWhitespace } from "@/lib/utils/stemWhitespace";
+import { unwrapLatexBoxed } from "@/lib/utils/convertLatexDelimiters";
 import { splitStemWithSvg } from "@/lib/utils/stemSegments";
 import {
   ensureSvgResponsiveMarkup,
@@ -138,7 +139,7 @@ export function StemContent({ content, className }: StemContentProps) {
     }
 
     try {
-      const parts = splitStemWithSvg(s);
+      const parts = splitStemWithSvg(unwrapLatexBoxed(s));
       let out = "";
       for (const p of parts) {
         if (p.type === "text") {

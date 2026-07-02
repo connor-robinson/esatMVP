@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils";
 import {
   ArrowRight,
   BadgeCheck,
-  BookOpen,
   HelpCircle,
   Star,
 } from "lucide-react";
@@ -364,11 +363,6 @@ export function QuestionCard({
     "font-sans",
   );
 
-  const showSolution = (isAnswered && isCorrect) || answerRevealed;
-  const hasSolutionContent = Boolean(
-    question.solution_reasoning?.trim() || question.solution_key_insight?.trim(),
-  );
-
   return (
     <div className="space-y-5">
       <div className={cn(PANEL_SHELL, "px-5 pb-8 pt-5 sm:px-8 sm:pt-6 sm:pb-10")}>
@@ -639,42 +633,6 @@ export function QuestionCard({
             );
           })}
         </div>
-
-        {showSolution && hasSolutionContent ? (
-          <div className="mt-5 rounded-organic-md bg-surface-mid px-4 py-4 sm:px-5 sm:py-5">
-            <div className="mb-3 flex items-center justify-center gap-2 sm:justify-start">
-              <BookOpen className="h-4 w-4 shrink-0 text-secondary" aria-hidden />
-              <h3 className="text-sm font-semibold text-text">Explanation</h3>
-            </div>
-            {question.solution_key_insight?.trim() ? (
-              <div className="mb-4 rounded-organic-md bg-surface-elevated/80 px-4 py-3 text-center sm:text-left">
-                <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-secondary">
-                  Key insight
-                </p>
-                <StemContent
-                  content={question.solution_key_insight}
-                  className="text-sm leading-relaxed text-text"
-                />
-              </div>
-            ) : null}
-            {question.solution_reasoning?.trim() ? (
-              <div className="text-center sm:text-left">
-                {question.graph_specs ? (
-                  <QuestionWithGraph
-                    questionText={question.solution_reasoning}
-                    graphSpecs={question.graph_specs}
-                    className="text-sm leading-relaxed text-text"
-                  />
-                ) : (
-                  <StemContent
-                    content={question.solution_reasoning}
-                    className="text-sm leading-relaxed text-text"
-                  />
-                )}
-              </div>
-            ) : null}
-          </div>
-        ) : null}
 
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 px-1 py-1 sm:px-0">
           <div className="flex flex-wrap items-center gap-2">
