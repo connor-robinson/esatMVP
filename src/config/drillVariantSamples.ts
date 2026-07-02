@@ -273,6 +273,14 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'latex', latex: String.raw`y = (x - 1)^2 + 2` },
     { kind: 'latex', latex: String.raw`y = -(x + 2)^2 + 4` },
   ]),
+  'polynomial_calculus-differentiate': S([
+    { kind: 'latex', latex: String.raw`3x^{-1}` },
+    { kind: 'latex', latex: String.raw`x^{3/2}` },
+  ]),
+  'polynomial_calculus-integrate': S([
+    { kind: 'latex', latex: String.raw`3x^2` },
+    { kind: 'latex', latex: String.raw`2x^{1/2}` },
+  ]),
 
   // —— Geometry ——
   'triangles-level-1': S([

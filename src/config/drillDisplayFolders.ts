@@ -135,6 +135,12 @@ const ALGEBRA_FOLDERS: FolderDef[] = [
     symbol: { kind: 'latex', latex: String.raw`2^{3}\cdot\sqrt{5}` },
   },
   {
+    id: 'algebra-calculus',
+    name: 'Calculus',
+    topicIds: ['polynomial_calculus'],
+    symbol: { kind: 'latex', latex: String.raw`\frac{d}{dx}x^{n}` },
+  },
+  {
     id: 'algebra-quadratics',
     name: 'Quadratics',
     topicIds: ['complete_square', 'inequalities', 'quadratics_eval'],
@@ -330,6 +336,7 @@ const HIDDEN_TOPIC_IDS: Record<HighLevelCategory, readonly string[]> = {
     'complete_square',
     'inequalities',
     'quadratics_eval',
+    'polynomial_calculus',
   ],
   geometry: [
     'triangles',

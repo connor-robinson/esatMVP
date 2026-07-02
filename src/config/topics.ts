@@ -1078,6 +1078,30 @@ export const TOPICS: Record<string, Topic> = {
     ],
     icon: "Function",
   },
+  polynomial_calculus: {
+    id: "polynomial_calculus",
+    name: "Polynomial Calculus",
+    subjectId: "maths",
+    category: "identities",
+    description: "ESAT power-rule calculus on polynomial terms only (no ln, sin, cos)",
+    variants: [
+      {
+        id: "differentiate",
+        name: "Differentiate",
+        description: "Power rule — integer & fractional powers, single terms and sums",
+        difficulty: 2,
+        config: { level: 1 },
+      },
+      {
+        id: "integrate",
+        name: "Integrate",
+        description: "Reverse power rule with + C (excludes 1/x and trig)",
+        difficulty: 3,
+        config: { level: 2 },
+      },
+    ],
+    icon: "Function",
+  },
 
   // Trigonometry
   trig_recall: {
@@ -1299,6 +1323,7 @@ export const CATEGORIES: Record<TopicCategory, string[]> = {
     "complete_square",
     "inequalities",
     "quadratics_eval",
+    "polynomial_calculus",
   ],
   trigonometry: [],
   mechanics: [

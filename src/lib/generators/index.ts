@@ -49,6 +49,7 @@ import { generateFactoriseQuadratic } from "./factorise_quadratic";
 import { generateCompleteSquare } from "./complete_square";
 import { generateInequalities } from "./inequalities";
 import { generateQuadraticsEval } from "./quadratics_eval";
+import { generatePolynomialCalculus } from "./polynomial_calculus";
 
 // Trigonometry
 import { generateTrigRecall } from "./trig_recall";
@@ -155,6 +156,7 @@ export const GENERATORS: Record<string, GeneratorFunction> = validateGenerators(
   complete_square: generateCompleteSquare,
   inequalities: generateInequalities,
   quadratics_eval: generateQuadraticsEval,
+  polynomial_calculus: generatePolynomialCalculus,
   
   // Trigonometry
   trig_recall: generateTrigRecall,
