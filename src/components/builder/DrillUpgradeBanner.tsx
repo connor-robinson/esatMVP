@@ -47,7 +47,7 @@ export function DrillUpgradeBanner({
             : 'items-center',
         )}
       >
-        <div className='min-w-0 flex-1'>
+        <div className={cn('min-w-0 flex-1', !isPanel && 'pr-14 sm:pr-20')}>
           <p
             className={cn(
               'font-bold leading-snug text-text',
@@ -80,10 +80,10 @@ export function DrillUpgradeBanner({
 
       <div
         className={cn(
-          'pointer-events-none absolute inset-y-0 flex items-center justify-center text-primary opacity-[0.14]',
+          'pointer-events-none absolute inset-y-0 flex items-center justify-center text-primary opacity-[0.13]',
           isPanel
-            ? 'right-[14%] w-[11rem] sm:right-[20%] sm:w-[13rem]'
-            : 'right-[26%] w-[8.5rem] sm:right-[28%] sm:w-[9.5rem]',
+            ? 'right-[18%] w-[12rem] sm:right-[24%] sm:w-[14rem]'
+            : 'right-[34%] w-[9.5rem] sm:right-[36%] sm:w-[10.5rem]',
         )}
         aria-hidden
       >
@@ -91,7 +91,7 @@ export function DrillUpgradeBanner({
           variant='mark'
           size='lg'
           className={cn(
-            isPanel ? '!h-[7.5rem] sm:!h-[9.5rem]' : '!h-[6.25rem] sm:!h-[7.25rem]',
+            isPanel ? '!h-[8.5rem] sm:!h-[10.5rem]' : '!h-[7rem] sm:!h-[8.25rem]',
           )}
           alt=''
         />
