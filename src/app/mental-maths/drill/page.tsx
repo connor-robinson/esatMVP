@@ -18,6 +18,7 @@ import {
   type HighLevelCategory,
 } from "@/components/builder/TopicFolders";
 import { DrillVariantsGrid } from "@/components/builder/DrillVariantsGrid";
+import { FEATURED_FREE_DRILL_KEY } from "@/components/builder/GuestDrillHint";
 import { DrillsSelectedModal } from "@/components/builder/DrillsSelectedModal";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
@@ -77,6 +78,12 @@ export default function BuilderPage() {
     [allTopics, selectedCategory],
   );
 
+  const showGuestOnboarding =
+    !isLoggedIn && selectedCategory === "most_useful";
+  const hasFeaturedDrillSelected = builder.selectedTopicVariants.some(
+    (tv) => `${tv.topicId}-${tv.variantId}` === FEATURED_FREE_DRILL_KEY,
+  );
+
   useEffect(() => {
     if (reviewModalOpen && builder.selectedTopicVariants.length === 0) {
       setReviewModalOpen(false);
@@ -128,6 +135,7 @@ export default function BuilderPage() {
                 accessibleTopicIds={accessibleTopicIds}
                 showUpgradeBanner={!subscriptionLoading && !hasFullAccess}
                 isLoggedIn={isLoggedIn}
+                showGuestTryHint={showGuestOnboarding && !hasFeaturedDrillSelected}
                 selectedTopicIds={builder.selectedTopicVariants.map((tv) => `${tv.topicId}-${tv.variantId}`)}
                 onAddVariant={builder.addTopic}
                 onRemoveVariant={builder.removeTopicVariant}
@@ -144,6 +152,8 @@ export default function BuilderPage() {
               compactVariant="figma"
               showQuestionInput={false}
               showClearAll={false}
+              showStartHint={showGuestOnboarding && hasFeaturedDrillSelected}
+              startHintLabel="Review selection"
               questionCount={builder.questionCount}
               onQuestionCountChange={(n) => builder.setQuestionCount(n)}
               questionCountMin={0}

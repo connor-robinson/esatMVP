@@ -5,8 +5,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Check, Plus, Home, Info, X, Lock, MousePointerClick } from 'lucide-react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { Check, Plus, Home, Info, X, Lock } from 'lucide-react';
+import { GuestDrillHint } from '@/components/builder/GuestDrillHint';
 import type { HighLevelCategory } from '@/components/builder/TopicFolders';
 import { getDisplayFolder, isFolderBeta, isFolderComingSoon } from '@/config/drillDisplayFolders';
 import { getMostUsefulDrillModules } from '@/config/mostUsefulDrills';
@@ -28,6 +28,7 @@ interface DrillVariantsGridProps {
   accessibleTopicIds: ReadonlySet<string>;
   showUpgradeBanner?: boolean;
   isLoggedIn?: boolean;
+  showGuestTryHint?: boolean;
   onAddVariant: (
     topicVariantId: string,
     topicId: string,
@@ -59,7 +60,6 @@ function DrillModuleCard({
   onAdd: () => void;
   onRemove: () => void;
 }) {
-  const reduceMotion = useReducedMotion();
   const diff = getDifficultyLabel(difficulty);
   const samples = getVariantSamples(topicId, variantId);
   const hintVisible = Boolean(showTryHint && featured && !locked && !isSelected);
@@ -105,25 +105,10 @@ function DrillModuleCard({
       />
       <div className='relative mt-3 flex justify-end'>
         {hintVisible ? (
-          <motion.div
-            className='pointer-events-none absolute bottom-[calc(100%+0.15rem)] right-1 z-20 flex flex-col items-end gap-0.5'
-            animate={reduceMotion ? undefined : { y: [0, -5, 0] }}
-            transition={
-              reduceMotion
-                ? undefined
-                : { duration: 2.2, repeat: Infinity, ease: 'easeInOut' }
-            }
-            aria-hidden
-          >
-            <div className='relative rounded-organic-sm bg-primary px-2.5 py-1.5 text-[11px] font-semibold leading-tight text-background shadow-md shadow-primary/25'>
-              Try this mode
-            </div>
-            <MousePointerClick
-              className='h-4 w-4 text-primary drop-shadow-sm'
-              strokeWidth={2}
-              aria-hidden
-            />
-          </motion.div>
+          <GuestDrillHint
+            label='Try this mode'
+            className='absolute bottom-[calc(100%+0.1rem)] right-2 z-20 items-end'
+          />
         ) : null}
         {locked ? (
           <span className='flex items-center gap-1.5 rounded-organic-sm bg-surface-dark px-3 py-2 text-xs font-bold text-text-muted'>
@@ -244,6 +229,7 @@ export function DrillVariantsGrid({
   accessibleTopicIds,
   showUpgradeBanner = false,
   isLoggedIn = true,
+  showGuestTryHint = false,
   onAddVariant,
   onRemoveVariant,
 }: DrillVariantsGridProps) {
@@ -298,7 +284,7 @@ export function DrillVariantsGrid({
                 isSelected={isSelected}
                 locked={locked}
                 featured={mod.featured}
-                showTryHint={!isLoggedIn}
+                showTryHint={showGuestTryHint}
                 onAdd={() =>
                   onAddVariant(compositeId, mod.topicId, mod.variantId)
                 }

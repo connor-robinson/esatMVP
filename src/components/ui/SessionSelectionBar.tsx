@@ -19,6 +19,7 @@ import type { SessionLengthMode, TopicVariantSelection } from "@/types/core";
 import { cn } from "@/lib/utils";
 import { primaryButtonLabelClasses, removeButtonLabelClasses } from "@/config/theme";
 import { SessionLengthControl } from "@/components/ui/SessionLengthControl";
+import { GuestDrillHint } from "@/components/builder/GuestDrillHint";
 
 /** Session length + “questions” — session green in light, inverted text in dark. */
 const FIGMA_SESSION_LABEL = "text-session-green dark:text-text";
@@ -64,6 +65,9 @@ export interface SessionSelectionBarProps {
   onRemoveDrill?: (topicVariantId: string) => void;
   /** When false, hides the “Clear all” control (compact figma island). */
   showClearAll?: boolean;
+  /** Guest onboarding: floating hint above the start CTA. */
+  showStartHint?: boolean;
+  startHintLabel?: string;
   className?: string;
 }
 
@@ -94,6 +98,8 @@ export function SessionSelectionBar({
   selectedDrills,
   onRemoveDrill,
   showClearAll = true,
+  showStartHint = false,
+  startHintLabel = "Next step",
   className,
 }: SessionSelectionBarProps) {
   const clearVisuallyMuted = clearDimmedWhenReady && canStartSession;
@@ -184,6 +190,12 @@ export function SessionSelectionBar({
           className,
         )}
       >
+        {showStartHint && canStartSession ? (
+          <GuestDrillHint
+            label={startHintLabel}
+            className="absolute bottom-[calc(100%+0.35rem)] right-3 z-30 items-end"
+          />
+        ) : null}
         <div
           className={cn(
             "flex flex-col overflow-hidden rounded-organic-xl bg-surface-elevated dark:bg-surface-elevated",
