@@ -21,6 +21,7 @@ import { CommunityStatsPanel } from '@/components/questionBank/CommunityStatsPan
 import { QuestionBankSessionResults } from '@/components/questionBank/QuestionBankSessionResults';
 import { QuestionBankSessionBar } from '@/components/questionBank/QuestionBankSessionBar';
 import { labelForQuestionBankTag } from '@/lib/questionBank/esatCurriculumTopicLabels';
+import { labelTopicTagsForQuestion } from "@/lib/questionBank/questionTopicDisplay";
 import { buildSessionSummary } from '@/lib/questionBank/sessionStats';
 import {
   buildSessionAttemptEntry,
@@ -150,7 +151,9 @@ export default function QuestionBankPage() {
   >({});
   const [communityStatsLoading, setCommunityStatsLoading] = useState(false);
 
-  const getTopicTitle = (tagCode: string) => labelForQuestionBankTag(tagCode);
+  const topicLabels = currentQuestion
+    ? labelTopicTagsForQuestion(currentQuestion)
+    : [];
 
   const ensureSessionRegistered = useCallback(async (sessionId?: string): Promise<boolean> => {
     const id = sessionId ?? qbSessionId;
@@ -1006,7 +1009,7 @@ export default function QuestionBankPage() {
                   answerRevealed={answerRevealed}
                   onRevealAnswer={() => setAnswerRevealed(true)}
                   allowRetry={isAnswered && !isCorrect && !answerRevealed}
-                  getTopicTitle={getTopicTitle}
+                  topicLabels={topicLabels}
                   onSelectionChange={setCurrentSelection}
                   onIncorrectAnswersChange={setIncorrectAnswers}
                   isAuthenticated={!!session?.user}

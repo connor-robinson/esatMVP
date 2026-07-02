@@ -27,6 +27,18 @@ const SUBJECT_TO_PAPER_ID: Record<string, string> = {
 
 const PREFIXED_TAG_RE = /^(M1-|M2-|P-|chemistry-|biology-)(.+)$/i;
 
+/** ESAT content-spec sub-item refs, e.g. M4.18 → parent topic M4. */
+const SPEC_SUBITEM_REF_RE = /^(MM\d+|M\d+|P\d+|C\d+|B\d+)\.\d+/i;
+
+export function parentTopicCodeFromSpecRef(tag: string): string | null {
+  const m = tag.trim().match(SPEC_SUBITEM_REF_RE);
+  return m ? m[1].toUpperCase() : null;
+}
+
+export function isEsatSpecSubitemRef(tag: string): boolean {
+  return SPEC_SUBITEM_REF_RE.test(tag.trim());
+}
+
 const codeToTitle = new Map<string, string>();
 const titleToPrefixed = new Map<string, string>();
 const rawCodeToPrefixed = new Map<string, string>();
@@ -201,6 +213,12 @@ export function labelForEsatTag(
 
   const direct = codeToTitle.get(raw.trim().toUpperCase());
   if (direct) return direct;
+
+  const parentFromSpec = parentTopicCodeFromSpecRef(raw);
+  if (parentFromSpec) {
+    const parentTitle = codeToTitle.get(parentFromSpec);
+    if (parentTitle) return parentTitle;
+  }
 
   return canonical;
 }

@@ -99,8 +99,13 @@ function mapQuestionRow(
     distractor_map[entry.optionId] = prepareQuestionBankMathText(entry.reason);
   }
 
-  const primaryTag = q.specRefs[0] ?? null;
-  const secondaryTags = q.specRefs.slice(1);
+  const primaryTag = q.topics[0] ?? q.specRefs[0] ?? null;
+  const secondaryTags =
+    q.topics.length > 1
+      ? q.topics.slice(1)
+      : q.specRefs.length > 1
+        ? q.specRefs.slice(1)
+        : [];
   const schemaFallback = `${subject.replace(/\s+/g, "")}-hook-${String(q.order).padStart(2, "0")}`;
 
   return {

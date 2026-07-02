@@ -32,6 +32,8 @@ interface QuestionCardProps {
   answerRevealed?: boolean;
   onRevealAnswer?: () => void;
   allowRetry?: boolean;
+  /** Pre-resolved human-readable topic labels for header pills */
+  topicLabels?: string[];
   getTopicTitle?: (tag: string) => string;
   onSelectionChange?: (selectedAnswer: string | null) => void;
   onIncorrectAnswersChange?: (incorrectAnswers: Set<string>) => void;
@@ -106,6 +108,7 @@ export function QuestionCard({
   onEditOption,
   answerRevealed = false,
   allowRetry = false,
+  topicLabels,
   getTopicTitle,
   onSelectionChange,
   onIncorrectAnswersChange,
@@ -431,24 +434,38 @@ export function QuestionCard({
                   {question.idea_plan.variation_mode}
                 </span>
               )}
-            {(question.primary_tag ||
+            {(topicLabels?.length ||
+              question.primary_tag ||
               (question.secondary_tags &&
                 question.secondary_tags.length > 0)) &&
-              getTopicTitle && (
+              (topicLabels?.length || getTopicTitle) && (
                 <div className="flex max-w-full flex-wrap items-center gap-2">
-                  {question.primary_tag && (
-                    <span className={cn(PILL_BASE, PILL_SURFACE, "text-secondary")}>
-                      {getTopicTitle(question.primary_tag)}
-                    </span>
-                  )}
-                  {question.secondary_tags?.map((tag) => (
-                    <span
-                      key={tag}
-                      className={cn(PILL_BASE, PILL_SURFACE, "text-text-muted")}
-                    >
-                      {getTopicTitle(tag)}
-                    </span>
-                  ))}
+                  {topicLabels?.length
+                    ? topicLabels.map((label) => (
+                        <span
+                          key={label}
+                          className={cn(PILL_BASE, PILL_SURFACE, "text-secondary")}
+                        >
+                          {label}
+                        </span>
+                      ))
+                    : (
+                      <>
+                        {question.primary_tag && (
+                          <span className={cn(PILL_BASE, PILL_SURFACE, "text-secondary")}>
+                            {getTopicTitle!(question.primary_tag)}
+                          </span>
+                        )}
+                        {question.secondary_tags?.map((tag) => (
+                          <span
+                            key={tag}
+                            className={cn(PILL_BASE, PILL_SURFACE, "text-text-muted")}
+                          >
+                            {getTopicTitle!(tag)}
+                          </span>
+                        ))}
+                      </>
+                    )}
                 </div>
               )}
           </div>
