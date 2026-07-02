@@ -535,9 +535,9 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
       }
       const data = (await res.json()) as ConvertResponse;
       setResult(data);
-      const isMultiEsat = data.sections.length > 1 && exam !== "TMUA";
+      const isMulti = data.sections.length > 1;
       setActiveChartKey(
-        isMultiEsat ? OVERALL_CHART_KEY : (data.sections[0]?.key ?? null),
+        isMulti ? OVERALL_CHART_KEY : (data.sections[0]?.key ?? null),
       );
       setShowQuestionBankPromo(true);
     } catch (e: unknown) {
@@ -951,8 +951,10 @@ function ResultsPanel({
   chartLoading: boolean;
 }) {
   const multi = result.sections.length > 1;
-  const showOverall = multi && exam !== "TMUA" && result.averageScaled != null;
+  const showOverall = multi && result.averageScaled != null;
   const showingOverall = activeChartKey === OVERALL_CHART_KEY;
+  const tmuaHasDual = result.sections.some((s) => s.tmuaDualCurve != null);
+  const tmuaOverallEstimated = tmuaHasDual ? tmuaAverageEstimated(result.sections) : null;
 
   const sectionChartRows =
     activeSection?.chartRows && activeSection.chartRows.length > 1
@@ -979,6 +981,12 @@ function ResultsPanel({
               </span>
               <span className="ml-1.5 tabular-nums text-text">
                 {result.averageScaled!.toFixed(1)}
+                {tmuaOverallEstimated != null && (
+                  <span className="text-text-muted">
+                    {" → "}
+                    {tmuaOverallEstimated.toFixed(1)}
+                  </span>
+                )}
               </span>
             </button>
           )}
@@ -1012,7 +1020,11 @@ function ResultsPanel({
       )}
 
       {showingOverall && showOverall ? (
-        <OverallResult result={result} exam={exam} year={year} />
+        exam === "TMUA" && tmuaHasDual ? (
+          <TmuaOverallResult result={result} year={year} />
+        ) : (
+          <OverallResult result={result} exam={exam} year={year} />
+        )
       ) : activeSection ? (
         <SectionResult
           section={activeSection}
@@ -1023,6 +1035,116 @@ function ResultsPanel({
         />
       ) : (
         <p className="text-sm text-text-muted">No results.</p>
+      )}
+    </div>
+  );
+}
+
+function tmuaAverageEstimated(sections: ConvertedSection[]): number | null {
+  const vals = sections
+    .map((s) => s.tmuaDualCurve?.student.estimatedScaled ?? s.newScaleEquivalent)
+    .filter((v): v is number => v != null);
+  if (vals.length === 0 || vals.length !== sections.length) return null;
+  return Math.round((vals.reduce((a, b) => a + b, 0) / vals.length) * 10) / 10;
+}
+
+function TmuaPercentileBlock({ topPct }: { topPct: string }) {
+  return (
+    <div className="text-right">
+      <p className="text-[11px] font-medium uppercase tracking-wide text-text-subtle/70">
+        Top
+      </p>
+      <p className="text-2xl font-semibold tabular-nums text-text-muted sm:text-3xl">
+        {topPct}%
+      </p>
+    </div>
+  );
+}
+
+function TmuaDualScoreRow({
+  actual,
+  estimated,
+  raw,
+  maxRaw,
+  topPct,
+  colorClass,
+}: {
+  actual: number;
+  estimated: number | null;
+  raw: number | null;
+  maxRaw: number | null;
+  topPct: string | null;
+  colorClass: string;
+}) {
+  return (
+    <div className="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+          <span className={cn("text-3xl font-bold tabular-nums sm:text-4xl", colorClass)}>
+            {actual.toFixed(1)}
+          </span>
+          {estimated != null && (
+            <>
+              <ArrowRight
+                className="h-5 w-5 shrink-0 text-text-muted sm:h-6 sm:w-6"
+                strokeWidth={2.5}
+                aria-hidden
+              />
+              <span className="text-3xl font-bold tabular-nums text-text-muted sm:text-4xl">
+                {estimated.toFixed(1)}
+              </span>
+            </>
+          )}
+        </div>
+        {raw != null && maxRaw != null && (
+          <p className="mt-1 text-xs text-text-muted">
+            {raw}/{maxRaw} raw
+          </p>
+        )}
+      </div>
+      {topPct != null && <TmuaPercentileBlock topPct={topPct} />}
+    </div>
+  );
+}
+
+function TmuaOverallResult({
+  result,
+  year,
+}: {
+  result: ConvertResponse;
+  year: number;
+}) {
+  const actualAvg = result.averageScaled!;
+  const estimatedAvg = tmuaAverageEstimated(result.sections);
+  const topPct =
+    result.averagePercentile != null
+      ? Math.max(0, 100 - result.averagePercentile).toFixed(1)
+      : null;
+  const chartRows = result.overallChartRows ?? [];
+  const totalRaw = result.sections.reduce((sum, s) => sum + (s.raw ?? 0), 0);
+  const totalMaxRaw = result.sections.reduce((sum, s) => sum + (s.maxRaw ?? 0), 0);
+
+  return (
+    <div className="space-y-5">
+      <TmuaDualScoreRow
+        actual={actualAvg}
+        estimated={estimatedAvg}
+        raw={totalMaxRaw > 0 ? totalRaw : null}
+        maxRaw={totalMaxRaw > 0 ? totalMaxRaw : null}
+        topPct={topPct}
+        colorClass="text-tmua-accent"
+      />
+      <p className="text-xs text-text-muted">
+        Overall average across {result.sections.length} papers · {year} actual → post-2024 est.
+      </p>
+
+      {chartRows.length > 1 && (
+        <PercentileMiniChart
+          rows={chartRows}
+          score={actualAvg}
+          percentile={result.averagePercentile}
+          xLabel="Scaled score"
+        />
       )}
     </div>
   );
@@ -1110,40 +1232,14 @@ function SectionResult({
   if (dual) {
     return (
       <div className="space-y-5">
-        <div>
-          <p className="text-xs text-text-subtle">
-            {exam} {year}
-            {section.legacyLabel ? ` · ${section.legacyLabel}` : ""}
-          </p>
-          <div className="mt-3 flex flex-wrap gap-8">
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-text-subtle">
-                Actual {year}
-              </p>
-              <p className={cn("text-3xl font-bold tabular-nums sm:text-4xl", colorClass)}>
-                {dual.student.actualScaled.toFixed(1)}
-              </p>
-              {section.raw != null && section.maxRaw != null && (
-                <p className="mt-0.5 text-xs text-text-muted">
-                  {section.raw}/{section.maxRaw} raw
-                </p>
-              )}
-            </div>
-            {dual.student.estimatedScaled != null && (
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-wide text-text-subtle">
-                  Post-2024 TMUA (est.)
-                </p>
-                <p className="text-3xl font-bold tabular-nums text-secondary sm:text-4xl">
-                  {dual.student.estimatedScaled.toFixed(1)}
-                </p>
-                {topPct != null && (
-                  <p className="mt-0.5 text-xs text-text-muted">Top {topPct}%</p>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
+        <TmuaDualScoreRow
+          actual={dual.student.actualScaled}
+          estimated={dual.student.estimatedScaled}
+          raw={section.raw}
+          maxRaw={section.maxRaw}
+          topPct={topPct}
+          colorClass={colorClass}
+        />
 
         <TmuaDualCurveChart data={dual} />
         <TmuaDualCurveExplainer summary={dual.summary} />

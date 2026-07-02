@@ -94,6 +94,19 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
         ? { x: toX(bLastRaw), width: chartRight - toX(bLastRaw), boundaryX: toX(bLastRaw) }
         : null;
 
+    let curveBLeftExtension: string | null = null;
+    if (bFirstRaw != null && bFirstRaw > minX) {
+      const first = data.points.find(
+        (p) => p.raw === bFirstRaw && p.estimatedScaled != null,
+      );
+      if (first?.estimatedScaled != null) {
+        curveBLeftExtension = `${toX(minX)},${toY(first.estimatedScaled)} ${toX(bFirstRaw)},${toY(first.estimatedScaled)}`;
+      }
+    }
+
+    const chartTop = padT - 6;
+    const chartBottom = h - padB + 4;
+
     const bandTop = toY(LOW_BAND_Y_MAX);
     const bandBottom = toY(LOW_BAND_Y_MIN);
     const bandHeight = bandBottom - bandTop;
@@ -124,6 +137,9 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
       curveBSegments,
       bUnavailableLeft,
       bUnavailableRight,
+      curveBLeftExtension,
+      chartTop,
+      chartBottom,
       bandTop,
       bandHeight,
       chartRight,
@@ -148,6 +164,9 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
     curveBSegments,
     bUnavailableLeft,
     bUnavailableRight,
+    curveBLeftExtension,
+    chartTop,
+    chartBottom,
     bandTop,
     bandHeight,
     studentX,
@@ -251,9 +270,9 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
               />
               <line
                 x1={bUnavailableLeft.boundaryX}
-                y1={padT}
+                y1={chartTop}
                 x2={bUnavailableLeft.boundaryX}
-                y2={h - padB}
+                y2={chartBottom}
                 stroke="color-mix(in srgb, var(--color-text-muted) 22%, transparent)"
                 strokeDasharray="3 4"
               />
@@ -280,9 +299,9 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
               />
               <line
                 x1={bUnavailableRight.boundaryX}
-                y1={padT}
+                y1={chartTop}
                 x2={bUnavailableRight.boundaryX}
-                y2={h - padB}
+                y2={chartBottom}
                 stroke="color-mix(in srgb, var(--color-text-muted) 22%, transparent)"
                 strokeDasharray="3 4"
               />
@@ -361,6 +380,18 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
           />
 
           {/* Curve B — post-2024 equivalent (dashed neutral) */}
+          {curveBLeftExtension && (
+            <polyline
+              points={curveBLeftExtension}
+              fill="none"
+              stroke={cssVar.textMuted}
+              strokeWidth="2"
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              strokeDasharray="4 6"
+              opacity={0.4}
+            />
+          )}
           {curveBSegments.map((seg, i) => (
             <polyline
               key={`b-${i}`}
@@ -379,9 +410,9 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
 
           <line
             x1={studentX}
-            y1={padT}
+            y1={chartTop}
             x2={studentX}
-            y2={h - padB}
+            y2={chartBottom}
             stroke="color-mix(in srgb, var(--color-text) 25%, transparent)"
             strokeDasharray="4 3"
           />
@@ -411,40 +442,17 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
             className="tmua-fade-up"
             style={{ animationDelay: "0.2s" }}
           />
-          <text
-            x={studentX + 8}
-            y={studentYA - 8}
-            fill="var(--color-tmua-accent)"
-            fontSize="10"
-            fontWeight="600"
-            className="tmua-fade-up"
-            style={{ animationDelay: "0.25s" }}
-          >
-            {data.student.actualScaled.toFixed(1)}
-          </text>
 
           {hasPostStudent && (
-            <>
-              <circle
-                cx={studentX}
-                cy={studentYB!}
-                r="5"
-                fill={cssVar.textMuted}
-                stroke={cssVar.background}
-                strokeWidth="2"
-                className="tmua-fade-up-delayed"
-              />
-              <text
-                x={studentX + 8}
-                y={studentYB! + 14}
-                fill={cssVar.textMuted}
-                fontSize="10"
-                fontWeight="600"
-                className="tmua-fade-up-delayed"
-              >
-                {data.student.estimatedScaled!.toFixed(1)}
-              </text>
-            </>
+            <circle
+              cx={studentX}
+              cy={studentYB!}
+              r="5"
+              fill={cssVar.textMuted}
+              stroke={cssVar.background}
+              strokeWidth="2"
+              className="tmua-fade-up-delayed"
+            />
           )}
 
           <text
