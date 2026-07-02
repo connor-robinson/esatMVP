@@ -64,22 +64,22 @@ const COLOR_TEXT: Record<ModuleColor, string> = {
   "tmua-accent": "text-tmua-accent",
 };
 
-const COLOR_FILL: Record<ModuleColor, string> = {
-  maths: "bg-maths",
-  physics: "bg-physics",
-  chemistry: "bg-chemistry",
-  biology: "bg-biology",
-  advanced: "bg-advanced",
-  "tmua-accent": "bg-tmua-accent",
+const COLOR_FILL_MUTED: Record<ModuleColor, string> = {
+  maths: "border-2 border-maths/60 bg-surface-subtle",
+  physics: "border-2 border-physics/60 bg-surface-subtle",
+  chemistry: "border-2 border-chemistry/60 bg-surface-subtle",
+  biology: "border-2 border-biology/60 bg-surface-subtle",
+  advanced: "border-2 border-advanced/60 bg-surface-subtle",
+  "tmua-accent": "border-2 border-tmua-accent/60 bg-surface-subtle",
 };
 
-const COLOR_FILL_MUTED: Record<ModuleColor, string> = {
-  maths: "bg-maths/25",
-  physics: "bg-physics/25",
-  chemistry: "bg-chemistry/25",
-  biology: "bg-biology/25",
-  advanced: "bg-advanced/25",
-  "tmua-accent": "bg-tmua-accent/25",
+const COLOR_FILL_CHECKED: Record<ModuleColor, string> = {
+  maths: "border-2 border-maths bg-maths",
+  physics: "border-2 border-physics bg-physics",
+  chemistry: "border-2 border-chemistry bg-chemistry",
+  biology: "border-2 border-biology bg-biology",
+  advanced: "border-2 border-advanced bg-advanced",
+  "tmua-accent": "border-2 border-tmua-accent bg-tmua-accent",
 };
 
 const COLOR_CARD_ACTIVE: Record<ModuleColor, string> = {
@@ -115,9 +115,10 @@ function SubjectCheckbox({
       }}
       className={cn(
         "flex h-[1.125rem] w-[1.125rem] shrink-0 items-center justify-center rounded-[5px] transition-all duration-fast",
-        checked ? COLOR_FILL[color] : COLOR_FILL_MUTED[color],
+        checked ? COLOR_FILL_CHECKED[color] : COLOR_FILL_MUTED[color],
         disabled && "cursor-not-allowed opacity-35",
-        !disabled && "cursor-pointer hover:brightness-110",
+        !disabled && !checked && "cursor-pointer hover:bg-surface-mid",
+        !disabled && checked && "cursor-pointer hover:brightness-110",
         controlBase,
       )}
     >
@@ -874,7 +875,6 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                       className={cn(
                         "rounded-organic-lg px-4 py-3 transition-all duration-fast",
                         checked ? COLOR_CARD_ACTIVE[s.color] : "bg-surface-mid",
-                        !checked && "opacity-70",
                         disabled && "opacity-35",
                       )}
                     >
