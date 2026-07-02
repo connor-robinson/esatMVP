@@ -1,11 +1,9 @@
 'use client';
 
-import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Container } from '@/components/layout/Container';
 import {
   ArrowRight,
-  BookOpen,
   ClipboardList,
   Eye,
   Lightbulb,
@@ -132,40 +130,25 @@ export function QuestionBankSessionBar({
                 </button>
               )}
 
-              {hasFullAccess ? (
-                canProceed ? (
+              {canProceed ? (
+                <button
+                  type='button'
+                  onClick={onShowExplanation}
+                  className={SESSION_BAR_BTN_SECONDARY}
+                >
+                  <ClipboardList className='h-4 w-4 shrink-0' />
+                  Detailed explanation
+                </button>
+              ) : (
+                (!isAnswered || (isAnswered && !isCorrect)) && (
                   <button
                     type='button'
-                    onClick={onShowExplanation}
-                    className={SESSION_BAR_BTN_SECONDARY}
+                    onClick={onRevealAnswer}
+                    className={SESSION_BAR_BTN_REVEAL}
                   >
-                    <ClipboardList className='h-4 w-4 shrink-0' />
-                    Detailed explanation
+                    <Eye className='h-4 w-4 shrink-0' />
+                    Reveal answer
                   </button>
-                ) : (
-                  (!isAnswered || (isAnswered && !isCorrect)) && (
-                    <button
-                      type='button'
-                      onClick={onRevealAnswer}
-                      className={SESSION_BAR_BTN_REVEAL}
-                    >
-                      <Eye className='h-4 w-4 shrink-0' />
-                      Reveal answer
-                    </button>
-                  )
-                )
-              ) : (
-                (answerRevealed || isAnswered) && (
-                  <Link
-                    href='/pricing'
-                    className={cn(
-                      SESSION_BAR_BTN,
-                      'bg-primary/15 px-4 text-primary hover:bg-primary/25',
-                    )}
-                  >
-                    <BookOpen className='h-4 w-4 shrink-0' />
-                    Upgrade for solutions
-                  </Link>
                 )
               )}
 

@@ -9,8 +9,7 @@ import { cn } from "@/lib/utils";
 import {
   ArrowRight,
   BadgeCheck,
-  Eye,
-  HelpCircle,
+  BookOpen,
   Star,
 } from "lucide-react";
 import { isQualityGateVerified } from "@/lib/questionBank/qualityGate";
@@ -120,9 +119,6 @@ export function QuestionCard({
   const [localSelectedAnswer, setLocalSelectedAnswer] = useState<string | null>(
     null,
   );
-  const [revealedDistractors, setRevealedDistractors] = useState<Set<string>>(
-    new Set(),
-  );
   const [incorrectAnswers, setIncorrectAnswers] = useState<Set<string>>(
     new Set(),
   );
@@ -148,7 +144,6 @@ export function QuestionCard({
     setLocalSelectedAnswer(null);
     onSelectionChange?.(null);
     setHoveredOption(null);
-    setRevealedDistractors(new Set());
     setIncorrectAnswers(new Set());
     lastFlashKeyRef.current = "";
     setFlashLetter(null);
@@ -364,6 +359,11 @@ export function QuestionCard({
     "font-sans",
   );
 
+  const showSolution = (isAnswered && isCorrect) || answerRevealed;
+  const hasSolutionContent = Boolean(
+    question.solution_reasoning?.trim() || question.solution_key_insight?.trim(),
+  );
+
   return (
     <div className="space-y-5">
       <div className={cn(PANEL_SHELL, "px-5 pb-8 pt-5 sm:px-8 sm:pt-6 sm:pb-10")}>
@@ -512,57 +512,14 @@ export function QuestionCard({
 
                   <div
                     className={cn(
-                      "flex min-w-0 flex-1 items-center gap-x-3 text-[0.98rem] leading-relaxed tracking-tight sm:text-[1.02rem]",
+                      "min-w-0 flex-1 text-[0.98rem] leading-relaxed tracking-tight sm:text-[1.02rem]",
                       "font-sans text-text",
                     )}
                   >
-                    <div className="min-w-0 flex-1">
-                      <MathContent
-                        content={question.options[letter]}
-                        className="text-inherit inline"
-                      />
-                    </div>
-                    {incorrectAnswers.has(letter) &&
-                      letter !== correctAnswer &&
-                      distractor && (
-                        <>
-                          {!revealedDistractors.has(letter) ? (
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setRevealedDistractors((prev) =>
-                                  new Set(prev).add(letter),
-                                );
-                              }}
-                              title="Reveal why it may be wrong"
-                              className={cn(
-                                "ml-auto shrink-0",
-                                "inline-flex items-center gap-1.5 rounded-full",
-                                "border border-border-subtle/70 bg-surface-elevated/95 px-3 py-1.5",
-                                "text-[11px] font-medium tracking-wide text-text-muted",
-                                "transition-all duration-fast ease-signature",
-                                "hover:border-border hover:bg-surface-mid/80 hover:text-text",
-                              )}
-                            >
-                              <HelpCircle
-                                className="h-3.5 w-3.5 shrink-0 opacity-80"
-                                strokeWidth={2}
-                              />
-                              <span className="whitespace-nowrap">
-                                Why it may be wrong
-                              </span>
-                            </button>
-                          ) : (
-                            <div className="ml-auto min-w-0 max-w-[min(100%,24rem)] shrink border-l border-border-subtle/50 pl-3">
-                              <MathContent
-                                content={distractor}
-                                className="text-xs sm:text-sm text-text-muted inline"
-                              />
-                            </div>
-                          )}
-                        </>
-                      )}
+                    <MathContent
+                      content={question.options[letter]}
+                      className="text-inherit inline"
+                    />
                   </div>
 
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center sm:h-10 sm:w-10">
@@ -628,11 +585,61 @@ export function QuestionCard({
                   </div>
                 </div>
 
+                {incorrectAnswers.has(letter) &&
+                  letter !== correctAnswer &&
+                  distractor && (
+                    <div className="mt-3 border-t border-border-subtle/50 pt-3 text-center">
+                      <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-text-muted">
+                        Why it may be wrong
+                      </p>
+                      <MathContent
+                        content={distractor}
+                        className="text-xs leading-relaxed text-text-muted sm:text-sm"
+                      />
+                    </div>
+                  )}
+
               </button>
             </div>
             );
           })}
         </div>
+
+        {showSolution && hasSolutionContent ? (
+          <div className="mt-5 rounded-organic-md bg-surface-mid px-4 py-4 sm:px-5 sm:py-5">
+            <div className="mb-3 flex items-center justify-center gap-2 sm:justify-start">
+              <BookOpen className="h-4 w-4 shrink-0 text-secondary" aria-hidden />
+              <h3 className="text-sm font-semibold text-text">Explanation</h3>
+            </div>
+            {question.solution_key_insight?.trim() ? (
+              <div className="mb-4 rounded-organic-md bg-surface-elevated/80 px-4 py-3 text-center sm:text-left">
+                <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-secondary">
+                  Key insight
+                </p>
+                <MathContent
+                  content={question.solution_key_insight}
+                  className="text-sm leading-relaxed text-text"
+                />
+              </div>
+            ) : null}
+            {question.solution_reasoning?.trim() ? (
+              <div className="text-center sm:text-left">
+                {question.graph_specs ? (
+                  <QuestionWithGraph
+                    questionText={question.solution_reasoning}
+                    graphSpecs={question.graph_specs}
+                    className="text-sm leading-relaxed text-text"
+                  />
+                ) : (
+                  <MathContent
+                    content={question.solution_reasoning}
+                    className="text-sm leading-relaxed text-text"
+                  />
+                )}
+              </div>
+            ) : null}
+          </div>
+        ) : null}
 
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 px-1 py-1 sm:px-0">
           <div className="flex flex-wrap items-center gap-2">
