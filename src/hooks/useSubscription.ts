@@ -2,7 +2,19 @@
 
 import { useState, useEffect } from "react";
 
-export type SubscriptionTier = "free" | "weekly" | "monthly" | "season_pass";
+export type SubscriptionTier =
+  | "free"
+  | "weekly"
+  | "monthly"
+  | "season_pass"
+  | "tester";
+
+export interface TesterAccessSummary {
+  isMember: boolean;
+  status: string;
+  premiumActive: boolean;
+  accessExpiresAt: string | null;
+}
 
 export interface SubscriptionStatus {
   tier: SubscriptionTier;
@@ -11,6 +23,7 @@ export interface SubscriptionStatus {
   subscriptionStatus?: string;
   currentPeriodEnd?: string;
   accessUntil?: string;
+  tester?: TesterAccessSummary;
 }
 
 const SUBSCRIPTION_ACCESS_CACHE_KEY = "nocalc:subscriptionHasFullAccess";
@@ -60,6 +73,7 @@ export function useSubscription(): SubscriptionStatus {
           subscriptionStatus: data.subscriptionStatus,
           currentPeriodEnd: data.currentPeriodEnd,
           accessUntil: data.accessUntil,
+          tester: data.tester,
         });
       } catch {
         if (mounted) {

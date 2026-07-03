@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRouteUser } from "@/lib/supabase/auth";
 import { createClient } from "@supabase/supabase-js";
+import { syncTesterProgramme } from "@/lib/tester/access";
 
 export const dynamic = "force-dynamic";
 
@@ -61,10 +62,27 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({
-      tier: "free",
-      hasFullAccess: false,
-    });
+    // No paid access — check the Founding Tester Programme (server-side).
+    try {
+      const { state } = await syncTesterProgramme(supabase as never, user.id);
+      const tester = {
+        isMember: state.isMember,
+        status: state.status,
+        premiumActive: state.premiumActive,
+        accessExpiresAt: state.accessExpiresAt,
+      };
+      if (state.premiumActive) {
+        return NextResponse.json({
+          tier: "tester",
+          hasFullAccess: true,
+          accessUntil: state.accessExpiresAt,
+          tester,
+        });
+      }
+      return NextResponse.json({ tier: "free", hasFullAccess: false, tester });
+    } catch {
+      return NextResponse.json({ tier: "free", hasFullAccess: false });
+    }
   } catch (err) {
     return NextResponse.json({ tier: "free", hasFullAccess: false }, { status: 200 });
   }

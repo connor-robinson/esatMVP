@@ -316,7 +316,7 @@ export function Navbar() {
     >
       {!hasFullAccess ? (
         <Link
-          href='/pricing'
+          href='/founding-tester'
           className={cn(
             'mr-0.5 inline-flex h-7 shrink-0 items-center justify-center rounded-organic-md bg-primary px-3',
             'text-[11px] font-semibold uppercase tracking-[0.12em] text-black',
@@ -324,7 +324,7 @@ export function Navbar() {
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
           )}
         >
-          Upgrade
+          Upgrade for free
         </Link>
       ) : null}
 
