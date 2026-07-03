@@ -21,6 +21,8 @@ import {
 interface TesterProgrammeContextValue {
   state: TesterState | null;
   isLoading: boolean;
+  loadError: string | null;
+  loadWarning: string | null;
   refresh: () => Promise<void>;
   /** True while a checkpoint is pending (even if modal was dismissed). */
   actionPending: boolean;
@@ -54,26 +56,44 @@ export function TesterProgrammeProvider({
   const pathname = usePathname();
   const [state, setState] = useState<TesterState | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadWarning, setLoadWarning] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [dismissedLocally, setDismissedLocally] = useState(false);
 
   const refresh = useCallback(async () => {
     if (!session?.user) {
       setState(null);
+      setLoadError(null);
+      setLoadWarning(null);
       setIsLoading(false);
       return;
     }
     setIsLoading(true);
+    setLoadError(null);
     try {
       const res = await fetch("/api/tester/status", { cache: "no-store" });
+      const data = await res.json().catch(() => ({}));
       if (res.status === 401) {
         setState(null);
         return;
       }
-      const data = await res.json();
-      if (data?.state) setState(data.state as TesterState);
+      if (data?.state) {
+        setState(data.state as TesterState);
+        setLoadWarning(
+          typeof data.warning === "string" ? data.warning : null,
+        );
+        if (!res.ok) {
+          setLoadError(data.error ?? "Could not fully load programme status");
+        }
+        return;
+      }
+      setLoadError(
+        data?.error ??
+          "Could not load the Founding Tester Programme. Try signing in again.",
+      );
     } catch {
-      /* keep previous state */
+      setLoadError("Could not load the Founding Tester Programme.");
     } finally {
       setIsLoading(false);
     }
@@ -108,11 +128,13 @@ export function TesterProgrammeProvider({
     () => ({
       state,
       isLoading,
+      loadError,
+      loadWarning,
       refresh,
       actionPending,
       dismissModal,
     }),
-    [state, isLoading, refresh, actionPending, dismissModal],
+    [state, isLoading, loadError, loadWarning, refresh, actionPending, dismissModal],
   );
 
   return (

@@ -91,9 +91,29 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (insertError || !inserted) {
+      const msg = insertError?.message ?? "";
+      if (
+        insertError?.code === "42P01" ||
+        msg.includes("does not exist") ||
+        msg.includes("tester_programmes")
+      ) {
+        return NextResponse.json(
+          {
+            error:
+              "The Founding Tester Programme is not set up in the database yet. Apply migration 20260703000000_founding_tester_programme.sql in Supabase.",
+          },
+          { status: 503 },
+        );
+      }
       // Unique violation (race) — someone just enrolled; return current state.
       const { state } = await syncTesterProgramme(service, user.id);
-      return NextResponse.json({ state });
+      if (state.isMember) {
+        return NextResponse.json({ state, alreadyMember: true });
+      }
+      return NextResponse.json(
+        { error: "Could not join the programme. Please try again." },
+        { status: 500 },
+      );
     }
 
     const row = inserted as TesterProgrammeRow;

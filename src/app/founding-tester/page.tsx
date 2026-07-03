@@ -14,7 +14,8 @@ import type { SurveyKey, TesterState } from "@/lib/tester/types";
 
 export default function FoundingTesterPage() {
   const session = useSupabaseSession();
-  const { state, isLoading, refresh } = useTesterProgramme();
+  const { state, isLoading, loadError, loadWarning, refresh } =
+    useTesterProgramme();
   const [activeSurvey, setActiveSurvey] = useState<SurveyKey | null>(null);
 
   useEffect(() => {
@@ -22,6 +23,17 @@ export default function FoundingTesterPage() {
       trackTesterEvent("tester_programme_viewed");
     }
   }, [state?.isMember, state?.eligibleToJoin]);
+
+  // Resume the initial survey if the user joined but didn't finish it.
+  useEffect(() => {
+    if (
+      state?.status === "stage_1_survey_pending" &&
+      state.nextAction === "complete_initial_survey" &&
+      !activeSurvey
+    ) {
+      setActiveSurvey("initial");
+    }
+  }, [state?.status, state?.nextAction, activeSurvey]);
 
   if (!session?.user) {
     return (
@@ -42,7 +54,7 @@ export default function FoundingTesterPage() {
     );
   }
 
-  if (isLoading || !state) {
+  if (isLoading && !state) {
     return (
       <Container className="py-16">
         <div className="mx-auto max-w-2xl">
@@ -50,6 +62,30 @@ export default function FoundingTesterPage() {
         </div>
       </Container>
     );
+  }
+
+  if (loadError && !state) {
+    return (
+      <Container className="py-16">
+        <div className="mx-auto max-w-lg rounded-organic-xl bg-surface-elevated p-8">
+          <h1 className="text-xl font-bold text-text">
+            Could not load programme
+          </h1>
+          <p className="mt-3 text-sm text-text-muted">{loadError}</p>
+          <button
+            type="button"
+            onClick={() => void refresh()}
+            className="mt-6 inline-flex rounded-full bg-text px-6 py-2.5 text-sm font-bold text-background"
+          >
+            Try again
+          </button>
+        </div>
+      </Container>
+    );
+  }
+
+  if (!state) {
+    return null;
   }
 
   if (activeSurvey) {
@@ -71,6 +107,11 @@ export default function FoundingTesterPage() {
   return (
     <Container className="py-12">
       <div className="mx-auto max-w-2xl">
+        {loadWarning ? (
+          <p className="mb-4 rounded-organic-md bg-warning/10 px-4 py-3 text-sm text-text-muted">
+            {loadWarning}
+          </p>
+        ) : null}
         <TesterFlow
           state={state}
           onRefresh={refresh}
@@ -365,14 +406,19 @@ function JoinForm({
       const data = await res.json();
       if (!res.ok) {
         setError(data?.error ?? "Could not join. Please try again.");
-        setSubmitting(false);
         return;
       }
-      await onJoined();
-      // Immediately continue into the initial survey (activates Stage 1).
+      if (!data.state?.isMember) {
+        setError("Join did not complete. Please try again.");
+        return;
+      }
+      // Open survey immediately — don't wait for refresh (avoids loading flash).
       onStartSurvey("initial");
+      setSubmitting(false);
+      void onJoined();
     } catch {
       setError("Network error. Please try again.");
+    } finally {
       setSubmitting(false);
     }
   };
@@ -419,10 +465,16 @@ function JoinForm({
       >
         {submitting ? "Joining…" : "Join and start the survey"}
       </button>
-      <p className="mt-2 text-xs text-text-muted">
-        You’ll complete a one-minute survey next, which activates your{" "}
-        {formatDuration(state.config.stage_1_hours)} of premium access.
-      </p>
+      {!canJoin ? (
+        <p className="mt-2 text-xs text-text-muted">
+          Tick all three required agreements above to continue.
+        </p>
+      ) : (
+        <p className="mt-2 text-xs text-text-muted">
+          You’ll complete a one-minute survey next, which activates your{" "}
+          {formatDuration(state.config.stage_1_hours)} of premium access.
+        </p>
+      )}
     </div>
   );
 }
