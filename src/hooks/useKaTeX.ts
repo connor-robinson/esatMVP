@@ -8,6 +8,7 @@ import katex from "katex";
 import "katex/dist/katex.min.css";
 import { normalizeStemWhitespace } from "@/lib/utils/stemWhitespace";
 import { wrapBareLatex } from "@/lib/utils/fixBareLatexFractions";
+import { prepareQuestionBankMathText } from "@/lib/utils/convertLatexDelimiters";
 // @ts-ignore
 import "katex/dist/contrib/mhchem.min.js";
 
@@ -344,7 +345,7 @@ function joinRenderedParts(parts: RenderedPart[]): string {
 
 export function renderMathContent(text: string): string {
   if (text == null) return "";
-  const textStr = normalizeStemWhitespace(String(text));
+  const textStr = normalizeStemWhitespace(prepareQuestionBankMathText(String(text)));
   const textWithFractions = wrapBareLatex(textStr);
   const textWithSpacing = addSpacingAroundInlineMath(textWithFractions);
   const segments = parseMathContent(textWithSpacing);
