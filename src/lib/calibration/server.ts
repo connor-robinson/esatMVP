@@ -22,49 +22,80 @@ function isMissingTableError(error: { code?: string; message?: string } | null):
   );
 }
 
-async function fetchInProgressSession(
-  supabase: SupabaseClient,
-  userId: string,
-) {
-  const { data, error } = await supabase
-    .from("calibration_sessions")
-    .select("id, questions_total, questions_completed, status")
-    .eq("user_id", userId)
-    .eq("status", "in_progress")
-    .order("started_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  if (error && isMissingTableError(error)) return null;
-  return data;
+interface LatestAttemptSummary {
+  result: CalibrationResult | null;
+  latestAttemptId: string | null;
+  inProgressId: string | null;
+  questionsCompleted: number;
 }
 
-async function fetchLatestResult(
+async function fetchLatestAttempt(
   supabase: SupabaseClient,
   userId: string,
-): Promise<CalibrationResult | null> {
-  const { data, error } = await supabase
-    .from("calibration_results")
-    .select(
-      "completed_at, strongest_skill, weakest_skill, accuracy, avg_response_ms, speed_profile, recommended_topic_id, summary_text",
-    )
-    .eq("user_id", userId)
-    .order("completed_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+): Promise<LatestAttemptSummary> {
+  const empty: LatestAttemptSummary = {
+    result: null,
+    latestAttemptId: null,
+    inProgressId: null,
+    questionsCompleted: 0,
+  };
 
-  if (error && isMissingTableError(error)) return null;
-  if (!data) return null;
+  const { data, error } = await supabase
+    .from("calibration_attempts")
+    .select("id, status, result, raw, correct_count, attempted_count, submitted_at")
+    .eq("user_id", userId)
+    .order("updated_at", { ascending: false })
+    .limit(10);
+
+  if (error && isMissingTableError(error)) return empty;
+  if (!data || data.length === 0) return empty;
+
+  const inProgress = data.find((r) => r.status === "in_progress");
+  const completed = data.find((r) => r.status === "completed");
+
+  let result: CalibrationResult | null = null;
+  if (completed?.result) {
+    const res = completed.result as {
+      strengths?: { label: string }[];
+      weaknesses?: { label: string; targetSkillKey?: string }[];
+      weightedAccuracy?: number;
+      totalTimeSeconds?: number;
+      attemptedCount?: number;
+      recommendedSession?: { curriculumTags?: string[] };
+      generatedAt?: string;
+      headline?: string;
+      speedAccuracy?: { quadrant?: string };
+    };
+    const speed =
+      res.speedAccuracy?.quadrant === "accurate_slow"
+        ? "speed_focus"
+        : res.speedAccuracy?.quadrant === "fast_inaccurate"
+          ? "accuracy_focus"
+          : "balanced";
+    result = {
+      completedAt: (completed.submitted_at as string) ?? res.generatedAt ?? new Date().toISOString(),
+      strongestSkill: res.strengths?.[0]?.label ?? null,
+      weakestSkill: res.weaknesses?.[0]?.label ?? null,
+      accuracy: res.weightedAccuracy ?? null,
+      avgResponseMs:
+        res.totalTimeSeconds && res.attemptedCount
+          ? Math.round((res.totalTimeSeconds * 1000) / Math.max(1, res.attemptedCount))
+          : null,
+      speedProfile: speed as CalibrationResult["speedProfile"],
+      recommendedTopicId: null,
+      summaryText: res.headline ?? null,
+    };
+  }
 
   return {
-    completedAt: data.completed_at,
-    strongestSkill: data.strongest_skill,
-    weakestSkill: data.weakest_skill,
-    accuracy: data.accuracy != null ? Number(data.accuracy) : null,
-    avgResponseMs: data.avg_response_ms,
-    speedProfile: data.speed_profile as CalibrationResult["speedProfile"],
-    recommendedTopicId: data.recommended_topic_id,
-    summaryText: data.summary_text,
+    result,
+    latestAttemptId: (completed?.id as string) ?? null,
+    inProgressId: (inProgress?.id as string) ?? null,
+    questionsCompleted: inProgress
+      ? Object.values((inProgress.raw as { questions?: Record<string, { finalSelectedOption: string | null }> })?.questions ?? {}).filter(
+          (q) => q.finalSelectedOption != null,
+        ).length
+      : 0,
   };
 }
 
@@ -86,29 +117,35 @@ export async function getCalibrationSummary(
   userId: string,
   sessionsSinceCompletion = 0,
 ): Promise<CalibrationSummary> {
-  const inProgress = await fetchInProgressSession(supabase, userId);
-  if (inProgress) {
+  const latest = await fetchLatestAttempt(supabase, userId);
+
+  if (latest.inProgressId) {
     return {
       status: "in_progress",
       progress: {
-        sessionId: inProgress.id,
-        questionsTotal: inProgress.questions_total ?? CALIBRATION_TOTAL_QUESTIONS,
-        questionsCompleted: inProgress.questions_completed ?? 0,
+        sessionId: latest.inProgressId,
+        questionsTotal: CALIBRATION_TOTAL_QUESTIONS,
+        questionsCompleted: latest.questionsCompleted,
       },
-      result: null,
+      result: latest.result,
+      latestAttemptId: latest.latestAttemptId,
     };
   }
 
-  const result = await fetchLatestResult(supabase, userId);
-  if (!result) {
-    return { status: "none", progress: null, result: null };
+  if (!latest.result) {
+    return { status: "none", progress: null, result: null, latestAttemptId: null };
   }
 
-  const status: CalibrationStatus = isOutdated(result, sessionsSinceCompletion)
+  const status: CalibrationStatus = isOutdated(latest.result, sessionsSinceCompletion)
     ? "outdated"
     : "completed";
 
-  return { status, progress: null, result };
+  return {
+    status,
+    progress: null,
+    result: latest.result,
+    latestAttemptId: latest.latestAttemptId,
+  };
 }
 
 export function buildTopicStatsFromRows(

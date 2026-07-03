@@ -8,6 +8,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Container } from '@/components/layout/Container';
+import { CalibrationPromo } from '@/components/calibration/CalibrationPromo';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
 import { fetchPastPaperLibraryOutline } from "@/lib/papers/pastPaperLibraryData";
 import { examNameToPaperType } from '@/lib/papers/paperConfig';
@@ -588,6 +589,7 @@ export default function PapersLibraryPage() {
 
   return (
     <Container size='lg' className='py-7 sm:py-9'>
+      <CalibrationPromo placement="past_papers_library" className="mb-5 p-4" />
       <div className='grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_min(100%,30rem)] lg:items-start lg:gap-6 xl:grid-cols-[minmax(0,1fr)_31rem]'>
         <div>
           <PaperLibraryGrid

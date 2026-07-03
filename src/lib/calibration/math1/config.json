@@ -1,0 +1,2270 @@
+{
+  "test": {
+    "id": "esat_math1_calibration_v1",
+    "title": "ESAT Mathematics 1 Calibration Test",
+    "version": 1,
+    "module": "maths_1",
+    "question_count": 15,
+    "estimated_duration_minutes": 22.5,
+    "recommended_time_limit_minutes": 23,
+    "calculator_allowed": false,
+    "dictionary_allowed": false,
+    "negative_marking": false,
+    "option_count_policy": "variable_6_to_8",
+    "difficulty_distribution": {
+      "accessible": 4,
+      "medium": 7,
+      "difficult": 4
+    },
+    "curriculum_tags_covered": [
+      "M1-M1",
+      "M1-M2",
+      "M1-M3",
+      "M1-M4",
+      "M1-M5",
+      "M1-M6",
+      "M1-M7"
+    ],
+    "behavioural_data_expected": [
+      "selected_answer",
+      "correctness",
+      "time_spent_seconds",
+      "answer_changed",
+      "answer_change_count",
+      "skipped",
+      "returned_later",
+      "confidence_rating",
+      "total_test_time_seconds"
+    ],
+    "research_design_notes": [
+      "Original questions only.",
+      "The order alternates accessible, visual, direct and unfamiliar items rather than forming an obvious difficulty ladder.",
+      "Six question pairs compare the same underlying skill across different presentations.",
+      "Option counts vary from 6 to 8 to support realistic distractors."
+    ],
+    "questions": [
+      {
+        "id": "m1cal-q01",
+        "order": 1,
+        "module": "maths_1",
+        "curriculum_tags": [
+          "M1-M3"
+        ],
+        "question_type": "multiple_choice",
+        "question_text_markdown": "A drink contains syrup and water in the ratio \\(2:3\\). \\(150\\text{ mL}\\) of water is added to \\(250\\text{ mL}\\) of the drink.\n\nWhat is the new ratio of syrup to water?",
+        "diagram_svg": null,
+        "options": [
+          {
+            "label": "A",
+            "text_markdown": "\\(1:1\\)"
+          },
+          {
+            "label": "B",
+            "text_markdown": "\\(1:2\\)"
+          },
+          {
+            "label": "C",
+            "text_markdown": "\\(1:3\\)"
+          },
+          {
+            "label": "D",
+            "text_markdown": "\\(2:3\\)"
+          },
+          {
+            "label": "E",
+            "text_markdown": "\\(2:5\\)"
+          },
+          {
+            "label": "F",
+            "text_markdown": "\\(3:4\\)"
+          }
+        ],
+        "correct_option": "C",
+        "solution": {
+          "title": "Turn the original ratio into actual volumes.",
+          "steps_markdown": [
+            "The \\(250\\text{ mL}\\) drink contains \\(100\\text{ mL}\\) syrup and \\(150\\text{ mL}\\) water.",
+            "After adding water, the volumes are \\(100\\text{ mL}\\) syrup and \\(300\\text{ mL}\\) water.",
+            "So the ratio is \\(100:300=1:3\\)."
+          ],
+          "final_answer_markdown": "\\(\\boxed{1:3}\\)"
+        },
+        "difficulty": "accessible",
+        "difficulty_weight": 1.0,
+        "expected_time_seconds": 75,
+        "fast_threshold_seconds": 40,
+        "slow_threshold_seconds": 110,
+        "primary_topic": "ratio_and_mixing",
+        "secondary_topic": "fractions_of_a_quantity",
+        "primary_skill": "ratio_reasoning",
+        "secondary_skills": [
+          "arithmetic_fluency",
+          "modelling",
+          "information_filtering"
+        ],
+        "prerequisite_skills": [
+          "fraction_manipulation",
+          "basic_arithmetic"
+        ],
+        "reasoning_steps": [
+          "convert_ratio_to_amounts",
+          "update_one_component",
+          "simplify_ratio"
+        ],
+        "common_error_types": [
+          "incorrect_proportionality",
+          "arithmetic_error",
+          "misread_question",
+          "distractor_trap"
+        ],
+        "diagnostic_value": "Tests whether the student treats ratios as quantities rather than adding directly to ratio parts.",
+        "distractor_analysis": {
+          "A": "Adds the water but treats the original syrup amount as 200 mL.",
+          "B": "Uses the original total as though it were all water after dilution.",
+          "D": "Leaves the ratio unchanged.",
+          "E": "Adds 150 to the water-side ratio number rather than converting to volumes.",
+          "F": "Reverses or incompletely simplifies the updated quantities."
+        },
+        "diagnostic_interpretation": {
+          "fast_wrong": "Likely added to the ratio directly or ignored that 2:3 describes five equal parts.",
+          "slow_wrong": "Likely weak ratio-to-quantity modelling rather than a simple arithmetic slip.",
+          "slow_correct": "Understands ratios but converts between parts and quantities inefficiently.",
+          "high_confidence_wrong": "Suggests a stable misconception about changing one part of a mixture.",
+          "changed_to_correct": "Likely caught an initial failure to convert the ratio into actual volumes."
+        },
+        "recommended_practice_modes": [
+          "ratio_mixtures",
+          "parts_to_quantities",
+          "short_timed_ratio_drills"
+        ],
+        "paired_question_id": "m1cal-q09",
+        "pair_interpretation": "Q1 is familiar linear ratio reasoning; Q9 uses proportional powers in an unfamiliar algebraic context."
+      },
+      {
+        "id": "m1cal-q04",
+        "order": 2,
+        "module": "maths_1",
+        "curriculum_tags": [
+          "M1-M5"
+        ],
+        "question_type": "multiple_choice",
+        "question_text_markdown": "The diagram shows a circle with centre \\(O\\). \\(PA\\) and \\(PB\\) are tangents to the circle, and \\(\\angle APB=50^\\circ\\). Point \\(C\\) lies on the major arc \\(AB\\).\n\nWhat is \\(\\angle ACB\\)?",
+        "diagram_svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 380\" role=\"img\" aria-label=\"Circle with centre O. PA and PB are tangents from external point P. Angle APB is 50 degrees. Point C lies on the major arc AB.\">\n  <style>\n    .line{stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}\n    .guide{stroke:currentColor;stroke-width:1.4;fill:none;stroke-dasharray:6 6}\n    .label{font:22px serif;fill:currentColor}\n    .small{font:18px serif;fill:currentColor}\n  </style>\n  <circle class=\"line\" cx=\"300\" cy=\"190\" r=\"120\"/>\n  <path class=\"line\" d=\"M525 190 L365 88\"/>\n  <path class=\"line\" d=\"M525 190 L365 292\"/>\n  <path class=\"line\" d=\"M300 190 L365 88\"/>\n  <path class=\"line\" d=\"M300 190 L365 292\"/>\n  <path class=\"line\" d=\"M365 88 L205 190 L365 292\"/>\n  <path class=\"guide\" d=\"M365 88 L365 292\"/>\n  <path class=\"line\" d=\"M493 171 A40 40 0 0 0 493 209\"/>\n  <path class=\"line\" d=\"M350 98 L360 105 L367 94\"/>\n  <path class=\"line\" d=\"M350 282 L360 275 L367 286\"/>\n  <text class=\"label\" x=\"288\" y=\"198\">O</text>\n  <text class=\"label\" x=\"360\" y=\"75\">A</text>\n  <text class=\"label\" x=\"360\" y=\"320\">B</text>\n  <text class=\"label\" x=\"180\" y=\"198\">C</text>\n  <text class=\"label\" x=\"536\" y=\"198\">P</text>\n  <text class=\"small\" x=\"466\" y=\"194\">50°</text>\n  <text class=\"small\" x=\"205\" y=\"355\">diagram not to scale</text>\n</svg>",
+        "options": [
+          {
+            "label": "A",
+            "text_markdown": "\\(25^\\circ\\)"
+          },
+          {
+            "label": "B",
+            "text_markdown": "\\(40^\\circ\\)"
+          },
+          {
+            "label": "C",
+            "text_markdown": "\\(50^\\circ\\)"
+          },
+          {
+            "label": "D",
+            "text_markdown": "\\(65^\\circ\\)"
+          },
+          {
+            "label": "E",
+            "text_markdown": "\\(80^\\circ\\)"
+          },
+          {
+            "label": "F",
+            "text_markdown": "\\(130^\\circ\\)"
+          }
+        ],
+        "correct_option": "D",
+        "solution": {
+          "title": "Find the angle at the centre first.",
+          "steps_markdown": [
+            "Radii are perpendicular to tangents, so the angles at \\(A\\) and \\(B\\) in quadrilateral \\(OAPB\\) are both \\(90^\\circ\\).",
+            "\\(\\angle AOB=360^\\circ-90^\\circ-90^\\circ-50^\\circ=130^\\circ\\).",
+            "The angle at the circumference subtending the same minor arc is half the angle at the centre.",
+            "So \\(\\angle ACB=65^\\circ\\)."
+          ],
+          "final_answer_markdown": "\\(\\boxed{65^\\circ}\\)"
+        },
+        "difficulty": "medium",
+        "difficulty_weight": 1.25,
+        "expected_time_seconds": 90,
+        "fast_threshold_seconds": 50,
+        "slow_threshold_seconds": 130,
+        "primary_topic": "circle_theorems",
+        "secondary_topic": "angle_geometry",
+        "primary_skill": "geometry",
+        "secondary_skills": [
+          "method_selection",
+          "multi_step_reasoning",
+          "diagram_interpretation"
+        ],
+        "prerequisite_skills": [
+          "radius_tangent_perpendicularity",
+          "quadrilateral_angle_sum",
+          "angle_at_centre_theorem"
+        ],
+        "reasoning_steps": [
+          "identify_right_angles",
+          "use_quadrilateral_sum",
+          "halve_central_angle"
+        ],
+        "common_error_types": [
+          "concept_gap",
+          "wrong_method",
+          "misread_question",
+          "distractor_trap"
+        ],
+        "diagnostic_value": "Tests whether the student can chain two circle facts rather than applying one theorem directly.",
+        "distractor_analysis": {
+          "A": "Halves the given tangent angle.",
+          "B": "Subtracts the tangent angle from 90 degrees.",
+          "C": "Assumes the angle at the circumference equals the angle between tangents.",
+          "E": "Uses half of \\(180-20\\) or misidentifies the subtended arc.",
+          "F": "Finds the correct central angle but does not halve it."
+        },
+        "diagnostic_interpretation": {
+          "fast_wrong": "Likely applied a single familiar angle rule to the wrong angle.",
+          "slow_wrong": "Likely lacks a connected map of tangent and circle theorems.",
+          "slow_correct": "Understands the facts but takes time to decide which auxiliary lines and angle sums matter.",
+          "high_confidence_wrong": "Suggests confusion between central, circumference and tangent angles.",
+          "changed_to_correct": "May indicate the student initially used the major arc and then corrected the subtended arc."
+        },
+        "recommended_practice_modes": [
+          "circle_theorem_chains",
+          "diagram_annotation",
+          "timed_geometry_recognition"
+        ],
+        "paired_question_id": "m1cal-q11",
+        "pair_interpretation": "Q4 tests 2D theorem selection; Q11 tests spatial Pythagoras plus algebra."
+      },
+      {
+        "id": "m1cal-q02",
+        "order": 3,
+        "module": "maths_1",
+        "curriculum_tags": [
+          "M1-M2"
+        ],
+        "question_type": "multiple_choice",
+        "question_text_markdown": "Simplify\n\n\\[\\frac{1}{2-\\sqrt3}-\\frac{1}{2+\\sqrt3}.\\]",
+        "diagram_svg": null,
+        "options": [
+          {
+            "label": "A",
+            "text_markdown": "\\(2\\)"
+          },
+          {
+            "label": "B",
+            "text_markdown": "\\(\\sqrt3\\)"
+          },
+          {
+            "label": "C",
+            "text_markdown": "\\(2\\sqrt3\\)"
+          },
+          {
+            "label": "D",
+            "text_markdown": "\\(4\\sqrt3\\)"
+          },
+          {
+            "label": "E",
+            "text_markdown": "\\(4\\)"
+          },
+          {
+            "label": "F",
+            "text_markdown": "\\(\\dfrac{1}{2\\sqrt3}\\)"
+          }
+        ],
+        "correct_option": "C",
+        "solution": {
+          "title": "The two denominators are conjugates.",
+          "steps_markdown": [
+            "Use a common denominator: \\((2-\\sqrt3)(2+\\sqrt3)=4-3=1\\).",
+            "The numerator is \\((2+\\sqrt3)-(2-\\sqrt3)=2\\sqrt3\\)."
+          ],
+          "final_answer_markdown": "\\(\\boxed{2\\sqrt3}\\)"
+        },
+        "difficulty": "accessible",
+        "difficulty_weight": 1.0,
+        "expected_time_seconds": 70,
+        "fast_threshold_seconds": 35,
+        "slow_threshold_seconds": 100,
+        "primary_topic": "exact_number",
+        "secondary_topic": "surds",
+        "primary_skill": "powers_and_roots",
+        "secondary_skills": [
+          "fraction_manipulation",
+          "arithmetic_fluency",
+          "method_selection"
+        ],
+        "prerequisite_skills": [
+          "difference_of_squares",
+          "common_denominators"
+        ],
+        "reasoning_steps": [
+          "recognise_conjugates",
+          "combine_fractions",
+          "simplify_exactly"
+        ],
+        "common_error_types": [
+          "sign_error",
+          "algebra_error",
+          "wrong_method",
+          "overcomplication"
+        ],
+        "diagnostic_value": "Tests exact manipulation and whether the student recognises a conjugate shortcut.",
+        "distractor_analysis": {
+          "A": "Cancels the surd terms incorrectly.",
+          "B": "Finds only half of the numerator difference.",
+          "D": "Doubles the correct result after rationalising both fractions separately.",
+          "E": "Treats \\(\\sqrt3\\) as though it were 1.",
+          "F": "Takes the reciprocal of the numerator difference."
+        },
+        "diagnostic_interpretation": {
+          "fast_wrong": "Likely a sign or conjugate-recognition error.",
+          "slow_wrong": "Likely lacks a reliable exact-surds method.",
+          "slow_correct": "Can manipulate surds but may be rationalising each term separately and creating excess work.",
+          "high_confidence_wrong": "Suggests an entrenched misconception about conjugates or subtracting surds.",
+          "changed_to_correct": "Often indicates a recovered sign error."
+        },
+        "recommended_practice_modes": [
+          "surds_exact_arithmetic",
+          "conjugate_recognition",
+          "timed_exact_number_drills"
+        ],
+        "paired_question_id": "m1cal-q10",
+        "pair_interpretation": "Q2 tests exact calculation; Q10 tests whether the student can abandon exact calculation and estimate efficiently."
+      },
+      {
+        "id": "m1cal-q03",
+        "order": 4,
+        "module": "maths_1",
+        "curriculum_tags": [
+          "M1-M4"
+        ],
+        "question_type": "multiple_choice",
+        "question_text_markdown": "The variables \\(p,q\\) and \\(r\\) satisfy\n\n\\[p=\\frac{3q-r}{2q+r}.\\]\n\nWhich expression gives \\(q\\) in terms of \\(p\\) and \\(r\\)?",
+        "diagram_svg": null,
+        "options": [
+          {
+            "label": "A",
+            "text_markdown": "\\(\\dfrac{r(p+1)}{3-2p}\\)"
+          },
+          {
+            "label": "B",
+            "text_markdown": "\\(\\dfrac{r(p+1)}{2p-3}\\)"
+          },
+          {
+            "label": "C",
+            "text_markdown": "\\(\\dfrac{r(p-1)}{3-2p}\\)"
+          },
+          {
+            "label": "D",
+            "text_markdown": "\\(\\dfrac{r(1-p)}{3+2p}\\)"
+          },
+          {
+            "label": "E",
+            "text_markdown": "\\(\\dfrac{r(1+p)}{3+2p}\\)"
+          },
+          {
+            "label": "F",
+            "text_markdown": "\\(\\dfrac{r(p-1)}{2p-3}\\)"
+          },
+          {
+            "label": "G",
+            "text_markdown": "\\(\\dfrac{r}{3-2p}\\)"
+          }
+        ],
+        "correct_option": "A",
+        "solution": {
+          "title": "Clear the fraction before collecting the terms containing q.",
+          "steps_markdown": [
+            "\\(p(2q+r)=3q-r\\).",
+            "\\(2pq+pr=3q-r\\).",
+            "\\(q(2p-3)=-r(1+p)\\).",
+            "Therefore \\(q=\\dfrac{r(1+p)}{3-2p}\\)."
+          ],
+          "final_answer_markdown": "\\(\\boxed{\\dfrac{r(p+1)}{3-2p}}\\)"
+        },
+        "difficulty": "medium",
+        "difficulty_weight": 1.25,
+        "expected_time_seconds": 85,
+        "fast_threshold_seconds": 45,
+        "slow_threshold_seconds": 125,
+        "primary_topic": "formula_rearrangement",
+        "secondary_topic": "algebraic_fractions",
+        "primary_skill": "formula_rearrangement",
+        "secondary_skills": [
+          "algebraic_manipulation",
+          "sign_control",
+          "checking_and_verification"
+        ],
+        "prerequisite_skills": [
+          "expanding_brackets",
+          "collecting_terms",
+          "factorising_common_factors"
+        ],
+        "reasoning_steps": [
+          "clear_denominator",
+          "collect_target_variable",
+          "factorise",
+          "divide"
+        ],
+        "common_error_types": [
+          "algebra_error",
+          "sign_error",
+          "skipped_step",
+          "distractor_trap"
+        ],
+        "diagnostic_value": "Separates basic symbolic fluency from later, harder rational-equation work.",
+        "distractor_analysis": {
+          "B": "Stops with the denominator \\(2p-3\\) but loses the required negative sign.",
+          "C": "Changes \\(p+1\\) to \\(p-1\\).",
+          "D": "Changes both signs while collecting terms.",
+          "E": "Adds rather than subtracts the coefficient of \\(q\\).",
+          "F": "Combines two independent sign errors.",
+          "G": "Drops the factor \\(p+1\\)."
+        },
+        "diagnostic_interpretation": {
+          "fast_wrong": "Likely selected a visually similar sign pattern without checking by substitution.",
+          "slow_wrong": "Likely has difficulty collecting a variable appearing in both numerator and denominator.",
+          "slow_correct": "Understands rearrangement but lacks a compact line-by-line method.",
+          "high_confidence_wrong": "Suggests a systematic sign or transposition misconception.",
+          "changed_to_correct": "Often shows successful checking by substituting the chosen form back into the original equation."
+        },
+        "recommended_practice_modes": [
+          "formula_rearrangement",
+          "sign_control_drills",
+          "algebra_checking_by_substitution"
+        ],
+        "paired_question_id": "m1cal-q12",
+        "pair_interpretation": "Q3 is direct rearrangement; Q12 uses similar manipulation inside a rational equation with domain restrictions."
+      },
+      {
+        "id": "m1cal-q05",
+        "order": 5,
+        "module": "maths_1",
+        "curriculum_tags": [
+          "M1-M6"
+        ],
+        "question_type": "multiple_choice",
+        "question_text_markdown": "The table shows the scores obtained by a group of students.\n\n| Score | 1 | 2 | 3 | 4 |\n|---:|---:|---:|---:|---:|\n| Frequency | 2 | 5 | \\(x\\) | 1 |\n\nThe mean score is \\(2.5\\).\n\nWhat is \\(x\\)?",
+        "diagram_svg": null,
+        "options": [
+          {
+            "label": "A",
+            "text_markdown": "\\(2\\)"
+          },
+          {
+            "label": "B",
+            "text_markdown": "\\(4\\)"
+          },
+          {
+            "label": "C",
+            "text_markdown": "\\(5\\)"
+          },
+          {
+            "label": "D",
+            "text_markdown": "\\(6\\)"
+          },
+          {
+            "label": "E",
+            "text_markdown": "\\(8\\)"
+          },
+          {
+            "label": "F",
+            "text_markdown": "\\(10\\)"
+          }
+        ],
+        "correct_option": "E",
+        "solution": {
+          "title": "Write total score divided by total frequency.",
+          "steps_markdown": [
+            "Total score is \\(2(1)+5(2)+3x+1(4)=16+3x\\).",
+            "Total frequency is \\(8+x\\).",
+            "\\(\\dfrac{16+3x}{8+x}=2.5\\).",
+            "So \\(16+3x=20+2.5x\\), giving \\(x=8\\)."
+          ],
+          "final_answer_markdown": "\\(\\boxed{8}\\)"
+        },
+        "difficulty": "accessible",
+        "difficulty_weight": 1.0,
+        "expected_time_seconds": 75,
+        "fast_threshold_seconds": 40,
+        "slow_threshold_seconds": 110,
+        "primary_topic": "mean_from_frequency_table",
+        "secondary_topic": "linear_equations",
+        "primary_skill": "data_interpretation",
+        "secondary_skills": [
+          "arithmetic_fluency",
+          "equation_solving",
+          "modelling"
+        ],
+        "prerequisite_skills": [
+          "weighted_totals",
+          "mean_definition",
+          "linear_equations"
+        ],
+        "reasoning_steps": [
+          "form_weighted_total",
+          "form_total_frequency",
+          "build_mean_equation",
+          "solve"
+        ],
+        "common_error_types": [
+          "concept_gap",
+          "arithmetic_error",
+          "algebra_error",
+          "skipped_step"
+        ],
+        "diagnostic_value": "Tests whether the student can convert a small data table into an equation.",
+        "distractor_analysis": {
+          "A": "Treats the mean as the missing frequency.",
+          "B": "Uses only the known frequencies in the denominator.",
+          "C": "Uses the middle score as the missing frequency.",
+          "D": "Makes a small error in the weighted total.",
+          "F": "Uses \\(2.5(8+x)=16+2x\\) rather than \\(16+3x\\)."
+        },
+        "diagnostic_interpretation": {
+          "fast_wrong": "Likely used an unweighted mean or ignored that x affects both numerator and denominator.",
+          "slow_wrong": "Likely a genuine gap in constructing means from frequency tables.",
+          "slow_correct": "Can model the table but equation setup is not automatic.",
+          "high_confidence_wrong": "Suggests confusion between values and frequencies.",
+          "changed_to_correct": "Often indicates the student noticed x belongs in both total score and total frequency."
+        },
+        "recommended_practice_modes": [
+          "frequency_table_means",
+          "weighted_average_drills",
+          "data_to_equation_translation"
+        ],
+        "paired_question_id": "m1cal-q13",
+        "pair_interpretation": "Q5 is direct table modelling; Q13 requires reconstructing a histogram before estimating a mean."
+      },
+      {
+        "id": "m1cal-q08",
+        "order": 6,
+        "module": "maths_1",
+        "curriculum_tags": [
+          "M1-M4"
+        ],
+        "question_type": "multiple_choice",
+        "question_text_markdown": "The line \\(y=2x+5\\) touches the curve \\(y=x^2-4x+k\\) at exactly one point.\n\nWhat is the value of \\(k\\)?",
+        "diagram_svg": null,
+        "options": [
+          {
+            "label": "A",
+            "text_markdown": "\\(0\\)"
+          },
+          {
+            "label": "B",
+            "text_markdown": "\\(5\\)"
+          },
+          {
+            "label": "C",
+            "text_markdown": "\\(9\\)"
+          },
+          {
+            "label": "D",
+            "text_markdown": "\\(12\\)"
+          },
+          {
+            "label": "E",
+            "text_markdown": "\\(14\\)"
+          },
+          {
+            "label": "F",
+            "text_markdown": "\\(16\\)"
+          },
+          {
+            "label": "G",
+            "text_markdown": "\\(20\\)"
+          },
+          {
+            "label": "H",
+            "text_markdown": "\\(28\\)"
+          }
+        ],
+        "correct_option": "E",
+        "solution": {
+          "title": "A tangent gives one repeated solution.",
+          "steps_markdown": [
+            "At an intersection, \\(x^2-4x+k=2x+5\\), so \\(x^2-6x+k-5=0\\).",
+            "For exactly one solution, the discriminant is zero.",
+            "\\((-6)^2-4(k-5)=0\\).",
+            "\\(36-4k+20=0\\), so \\(k=14\\)."
+          ],
+          "final_answer_markdown": "\\(\\boxed{14}\\)"
+        },
+        "difficulty": "medium",
+        "difficulty_weight": 1.25,
+        "expected_time_seconds": 95,
+        "fast_threshold_seconds": 50,
+        "slow_threshold_seconds": 140,
+        "primary_topic": "quadratic_intersections",
+        "secondary_topic": "tangency",
+        "primary_skill": "method_selection",
+        "secondary_skills": [
+          "equation_solving",
+          "algebraic_manipulation",
+          "graph_interpretation"
+        ],
+        "prerequisite_skills": [
+          "quadratic_discriminant",
+          "simultaneous_equations",
+          "rearranging_equations"
+        ],
+        "reasoning_steps": [
+          "equate_functions",
+          "form_quadratic",
+          "translate_tangent_to_repeated_root",
+          "solve_parameter"
+        ],
+        "common_error_types": [
+          "wrong_method",
+          "algebra_error",
+          "concept_gap",
+          "sign_error"
+        ],
+        "diagnostic_value": "Tests whether the student translates geometric language into an algebraic condition.",
+        "distractor_analysis": {
+          "A": "Assumes tangency occurs when k is zero.",
+          "B": "Sets only the constant term to zero.",
+          "C": "Uses the turning-point x-coordinate as k.",
+          "D": "Makes an arithmetic error in the discriminant.",
+          "F": "Uses \\(36-4(k+5)=0\\).",
+          "G": "Drops the coefficient 4 in the discriminant.",
+          "H": "Finds \\(2k\\) rather than k."
+        },
+        "diagnostic_interpretation": {
+          "fast_wrong": "Likely did not translate 'touches' into a repeated-root condition.",
+          "slow_wrong": "Could indicate either a discriminant concept gap or weak simultaneous-equation setup.",
+          "slow_correct": "Understands the model but method selection is not automatic.",
+          "high_confidence_wrong": "Suggests a misconception about tangency or quadratic roots.",
+          "changed_to_correct": "Often indicates a recovered sign error in moving the line equation."
+        },
+        "recommended_practice_modes": [
+          "quadratic_graph_links",
+          "parameter_discriminant_questions",
+          "method_selection_drills"
+        ],
+        "paired_question_id": null,
+        "pair_interpretation": null
+      },
+      {
+        "id": "m1cal-q07",
+        "order": 7,
+        "module": "maths_1",
+        "curriculum_tags": [
+          "M1-M1",
+          "M1-M3"
+        ],
+        "question_type": "multiple_choice",
+        "question_text_markdown": "A machine produces \\(18\\) components every \\(12\\text{ s}\\). Each component has mass \\(25\\text{ g}\\).\n\nAt what rate does the machine produce mass, in kilograms per minute?",
+        "diagram_svg": null,
+        "options": [
+          {
+            "label": "A",
+            "text_markdown": "\\(0.375\\text{ kg min}^{-1}\\)"
+          },
+          {
+            "label": "B",
+            "text_markdown": "\\(0.75\\text{ kg min}^{-1}\\)"
+          },
+          {
+            "label": "C",
+            "text_markdown": "\\(1.5\\text{ kg min}^{-1}\\)"
+          },
+          {
+            "label": "D",
+            "text_markdown": "\\(2.25\\text{ kg min}^{-1}\\)"
+          },
+          {
+            "label": "E",
+            "text_markdown": "\\(3.0\\text{ kg min}^{-1}\\)"
+          },
+          {
+            "label": "F",
+            "text_markdown": "\\(4.5\\text{ kg min}^{-1}\\)"
+          }
+        ],
+        "correct_option": "D",
+        "solution": {
+          "title": "Convert the production rate to one minute.",
+          "steps_markdown": [
+            "In \\(60\\text{ s}\\), the machine completes \\(60/12=5\\) batches.",
+            "It therefore makes \\(5\\times18=90\\) components.",
+            "Their mass is \\(90\\times25=2250\\text{ g}=2.25\\text{ kg}\\)."
+          ],
+          "final_answer_markdown": "\\(\\boxed{2.25\\text{ kg min}^{-1}}\\)"
+        },
+        "difficulty": "medium",
+        "difficulty_weight": 1.25,
+        "expected_time_seconds": 80,
+        "fast_threshold_seconds": 40,
+        "slow_threshold_seconds": 115,
+        "primary_topic": "compound_units",
+        "secondary_topic": "rates",
+        "primary_skill": "unit_reasoning",
+        "secondary_skills": [
+          "proportional_reasoning",
+          "arithmetic_fluency",
+          "checking_and_verification"
+        ],
+        "prerequisite_skills": [
+          "time_conversion",
+          "mass_conversion",
+          "rate_scaling"
+        ],
+        "reasoning_steps": [
+          "scale_to_one_minute",
+          "multiply_by_mass_per_item",
+          "convert_grams_to_kilograms"
+        ],
+        "common_error_types": [
+          "unit_error",
+          "arithmetic_error",
+          "incorrect_proportionality",
+          "time_pressure"
+        ],
+        "diagnostic_value": "Provides isolated evidence on unit conversion and rate fluency.",
+        "distractor_analysis": {
+          "A": "Uses the mass of one 12-second batch and labels it per minute.",
+          "B": "Scales the number of components incorrectly.",
+          "C": "Converts grams to kilograms incorrectly or misses part of the minute scaling.",
+          "E": "Rounds or treats 25 g as 0.025 kg but uses 120 components.",
+          "F": "Doubles the correct production rate."
+        },
+        "diagnostic_interpretation": {
+          "fast_wrong": "Likely omitted one conversion or multiplied by 60 rather than dividing by 12.",
+          "slow_wrong": "Likely weak compound-unit organisation.",
+          "slow_correct": "Accurate but unit conversion is not fluent.",
+          "high_confidence_wrong": "Suggests a systematic seconds-to-minutes or grams-to-kilograms error.",
+          "changed_to_correct": "Often indicates a final unit check caught an otherwise correct numerical method."
+        },
+        "recommended_practice_modes": [
+          "compound_unit_drills",
+          "rate_conversion",
+          "dimensional_checking"
+        ],
+        "paired_question_id": null,
+        "pair_interpretation": null
+      },
+      {
+        "id": "m1cal-q06",
+        "order": 8,
+        "module": "maths_1",
+        "curriculum_tags": [
+          "M1-M7"
+        ],
+        "question_type": "multiple_choice",
+        "question_text_markdown": "Two different numbers are chosen at random from\n\n\\[1,2,3,4,5,6.\\]\n\nWhat is the probability that their product is divisible by \\(6\\)?",
+        "diagram_svg": null,
+        "options": [
+          {
+            "label": "A",
+            "text_markdown": "\\(\\dfrac13\\)"
+          },
+          {
+            "label": "B",
+            "text_markdown": "\\(\\dfrac25\\)"
+          },
+          {
+            "label": "C",
+            "text_markdown": "\\(\\dfrac7{15}\\)"
+          },
+          {
+            "label": "D",
+            "text_markdown": "\\(\\dfrac12\\)"
+          },
+          {
+            "label": "E",
+            "text_markdown": "\\(\\dfrac8{15}\\)"
+          },
+          {
+            "label": "F",
+            "text_markdown": "\\(\\dfrac35\\)"
+          },
+          {
+            "label": "G",
+            "text_markdown": "\\(\\dfrac23\\)"
+          }
+        ],
+        "correct_option": "C",
+        "solution": {
+          "title": "Count unordered pairs systematically.",
+          "steps_markdown": [
+            "There are \\(\\binom62=15\\) possible pairs.",
+            "The successful pairs are \\((1,6),(2,3),(2,6),(3,4),(3,6),(4,6),(5,6)\\).",
+            "So the probability is \\(7/15\\)."
+          ],
+          "final_answer_markdown": "\\(\\boxed{\\dfrac7{15}}\\)"
+        },
+        "difficulty": "medium",
+        "difficulty_weight": 1.25,
+        "expected_time_seconds": 85,
+        "fast_threshold_seconds": 45,
+        "slow_threshold_seconds": 125,
+        "primary_topic": "systematic_probability",
+        "secondary_topic": "factors_and_multiples",
+        "primary_skill": "probability_reasoning",
+        "secondary_skills": [
+          "systematic_listing",
+          "number_properties",
+          "checking_and_verification"
+        ],
+        "prerequisite_skills": [
+          "divisibility",
+          "counting_pairs",
+          "equally_likely_outcomes"
+        ],
+        "reasoning_steps": [
+          "count_total_pairs",
+          "identify_success_conditions",
+          "list_without_duplication"
+        ],
+        "common_error_types": [
+          "concept_gap",
+          "skipped_step",
+          "double_counting",
+          "distractor_trap"
+        ],
+        "diagnostic_value": "Tests systematic enumeration and whether unordered choices are counted correctly.",
+        "distractor_analysis": {
+          "A": "Counts only pairs containing 6.",
+          "B": "Misses some products containing separate factors 2 and 3.",
+          "D": "Assumes roughly half without listing.",
+          "E": "Includes one unsuccessful pair.",
+          "F": "Double-counts or includes repeated selections.",
+          "G": "Counts ordered pairs inconsistently."
+        },
+        "diagnostic_interpretation": {
+          "fast_wrong": "Likely guessed from divisibility intuition without building the sample space.",
+          "slow_wrong": "Likely weak systematic listing or confusion over ordered versus unordered outcomes.",
+          "slow_correct": "Accurate but listing method may be inefficient or poorly organised.",
+          "high_confidence_wrong": "Suggests a stable probability-space misconception.",
+          "changed_to_correct": "Often means a duplicated or omitted pair was found during checking."
+        },
+        "recommended_practice_modes": [
+          "systematic_listing",
+          "unordered_pair_probability",
+          "sample_space_checks"
+        ],
+        "paired_question_id": "m1cal-q14",
+        "pair_interpretation": "Q6 tests an unconditional sample space; Q14 tests conditioning the same style of pair-counting."
+      },
+      {
+        "id": "m1cal-q09",
+        "order": 9,
+        "module": "maths_1",
+        "curriculum_tags": [
+          "M1-M3",
+          "M1-M2"
+        ],
+        "question_type": "multiple_choice",
+        "question_text_markdown": "A quantity \\(T\\) is directly proportional to \\(m^{3/2}\\) and inversely proportional to \\(\\sqrt p\\).\n\nThe value of \\(m\\) is increased by \\(44\\%\\), while the value of \\(p\\) is decreased by \\(19\\%\\).\n\nBy what factor is \\(T\\) multiplied?",
+        "diagram_svg": null,
+        "options": [
+          {
+            "label": "A",
+            "text_markdown": "\\(\\dfrac65\\)"
+          },
+          {
+            "label": "B",
+            "text_markdown": "\\(\\dfrac{36}{25}\\)"
+          },
+          {
+            "label": "C",
+            "text_markdown": "\\(\\dfrac85\\)"
+          },
+          {
+            "label": "D",
+            "text_markdown": "\\(\\dfrac95\\)"
+          },
+          {
+            "label": "E",
+            "text_markdown": "\\(\\dfrac{48}{25}\\)"
+          },
+          {
+            "label": "F",
+            "text_markdown": "\\(\\dfrac{12}{5}\\)"
+          }
+        ],
+        "correct_option": "E",
+        "solution": {
+          "title": "Write both percentage changes as convenient squares.",
+          "steps_markdown": [
+            "\\(1.44=(6/5)^2\\), so \\(m^{3/2}\\) is multiplied by \\((6/5)^3=216/125\\).",
+            "\\(0.81=(9/10)^2\\), so \\(\\sqrt p\\) is multiplied by \\(9/10\\).",
+            "Because \\(\\sqrt p\\) is in the denominator, the total factor is",
+            "\\[\\frac{216}{125}\\div\\frac9{10}=\\frac{48}{25}.\\]"
+          ],
+          "final_answer_markdown": "\\(\\boxed{\\dfrac{48}{25}}\\)"
+        },
+        "difficulty": "difficult",
+        "difficulty_weight": 1.55,
+        "expected_time_seconds": 110,
+        "fast_threshold_seconds": 60,
+        "slow_threshold_seconds": 160,
+        "primary_topic": "direct_and_inverse_proportion",
+        "secondary_topic": "fractional_powers",
+        "primary_skill": "proportional_reasoning",
+        "secondary_skills": [
+          "powers_and_roots",
+          "percentage_change",
+          "multi_step_reasoning"
+        ],
+        "prerequisite_skills": [
+          "multiplicative_percentages",
+          "index_laws",
+          "direct_inverse_proportion"
+        ],
+        "reasoning_steps": [
+          "convert_percentages_to_multipliers",
+          "apply_fractional_power",
+          "invert_denominator_change",
+          "simplify_factor"
+        ],
+        "common_error_types": [
+          "incorrect_proportionality",
+          "concept_gap",
+          "powers_error",
+          "arithmetic_error"
+        ],
+        "diagnostic_value": "Tests transfer of ratio reasoning into a compact unfamiliar power-law model.",
+        "distractor_analysis": {
+          "A": "Uses only the square root of the increase in m.",
+          "B": "Uses the 44% multiplier directly and ignores p.",
+          "C": "Handles the m power incompletely.",
+          "D": "Applies the decrease in p in the wrong direction.",
+          "F": "Overcompensates for the inverse square-root factor."
+        },
+        "diagnostic_interpretation": {
+          "fast_wrong": "Likely treated percentage changes additively or ignored the fractional powers.",
+          "slow_wrong": "Likely a genuine gap in direct/inverse proportion with powers.",
+          "slow_correct": "Can reason through the structure but lacks fluency with convenient percentage squares.",
+          "high_confidence_wrong": "Suggests a stable misconception about how powers affect proportional changes.",
+          "changed_to_correct": "May indicate the student initially multiplied by 0.9 instead of dividing by it."
+        },
+        "recommended_practice_modes": [
+          "power_law_scaling",
+          "percentage_multiplier_drills",
+          "direct_inverse_proportion"
+        ],
+        "paired_question_id": "m1cal-q01",
+        "pair_interpretation": "Correct Q1 but wrong Q9 suggests transfer or powers difficulty rather than basic ratio weakness."
+      },
+      {
+        "id": "m1cal-q10",
+        "order": 10,
+        "module": "maths_1",
+        "curriculum_tags": [
+          "M1-M2"
+        ],
+        "question_type": "multiple_choice",
+        "question_text_markdown": "Which is the best estimate of\n\n\\[\\frac{(3.98)^2\\times0.051}{0.198}?\\]",
+        "diagram_svg": null,
+        "options": [
+          {
+            "label": "A",
+            "text_markdown": "\\(0.4\\)"
+          },
+          {
+            "label": "B",
+            "text_markdown": "\\(1\\)"
+          },
+          {
+            "label": "C",
+            "text_markdown": "\\(2\\)"
+          },
+          {
+            "label": "D",
+            "text_markdown": "\\(4\\)"
+          },
+          {
+            "label": "E",
+            "text_markdown": "\\(8\\)"
+          },
+          {
+            "label": "F",
+            "text_markdown": "\\(40\\)"
+          }
+        ],
+        "correct_option": "D",
+        "solution": {
+          "title": "Round to numbers that preserve the scale.",
+          "steps_markdown": [
+            "\\(3.98\\approx4\\), \\(0.051\\approx0.05\\), and \\(0.198\\approx0.2\\).",
+            "\\[\\frac{4^2\\times0.05}{0.2}=16\\times\\frac14=4.\\]"
+          ],
+          "final_answer_markdown": "\\(\\boxed{4}\\)"
+        },
+        "difficulty": "accessible",
+        "difficulty_weight": 1.0,
+        "expected_time_seconds": 70,
+        "fast_threshold_seconds": 35,
+        "slow_threshold_seconds": 105,
+        "primary_topic": "estimation",
+        "secondary_topic": "decimal_scale",
+        "primary_skill": "estimation",
+        "secondary_skills": [
+          "powers_and_roots",
+          "arithmetic_fluency",
+          "checking_and_verification"
+        ],
+        "prerequisite_skills": [
+          "rounding",
+          "decimal_place_value",
+          "order_of_magnitude"
+        ],
+        "reasoning_steps": [
+          "choose_convenient_roundings",
+          "preserve_order_of_magnitude",
+          "evaluate_simple_expression"
+        ],
+        "common_error_types": [
+          "decimal_place_error",
+          "wrong_method",
+          "overcomplication",
+          "premature_rounding"
+        ],
+        "diagnostic_value": "Tests whether the student can choose an efficient approximation instead of attempting exact multiplication.",
+        "distractor_analysis": {
+          "A": "Loses a factor of ten.",
+          "B": "Treats the square and denominator cancellation incorrectly.",
+          "C": "Uses \\(4\\) rather than \\(4^2\\).",
+          "E": "Doubles after the correct estimate.",
+          "F": "Introduces an extra factor of ten."
+        },
+        "diagnostic_interpretation": {
+          "fast_wrong": "Likely a decimal-scale error.",
+          "slow_wrong": "Likely tried exact arithmetic and lost control of decimal places.",
+          "slow_correct": "Numerical judgement is sound, but the student may not recognise when estimation is the intended method.",
+          "high_confidence_wrong": "Suggests weak order-of-magnitude checking.",
+          "changed_to_correct": "Likely caught a factor-of-ten error by comparing magnitudes."
+        },
+        "recommended_practice_modes": [
+          "estimation_sprints",
+          "order_of_magnitude_checks",
+          "decimal_scale_drills"
+        ],
+        "paired_question_id": "m1cal-q02",
+        "pair_interpretation": "Correct Q2 but slow or wrong Q10 suggests over-reliance on exact methods rather than weak arithmetic."
+      },
+      {
+        "id": "m1cal-q11",
+        "order": 11,
+        "module": "maths_1",
+        "curriculum_tags": [
+          "M1-M5",
+          "M1-M4"
+        ],
+        "question_type": "multiple_choice",
+        "question_text_markdown": "A cuboid has side lengths \\(x\\), \\(x+1\\) and \\(x+2\\). Its space diagonal has length \\(\\sqrt{50}\\).\n\nWhat is the volume of the cuboid?",
+        "diagram_svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 640 390\" role=\"img\" aria-label=\"Cuboid with side lengths x, x plus 1, and x plus 2. The space diagonal has length square root 50.\">\n  <style>\n    .line{stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}\n    .hidden{stroke:currentColor;stroke-width:1.5;fill:none;stroke-dasharray:7 7;opacity:.7}\n    .diag{stroke:currentColor;stroke-width:2.4;fill:none}\n    .label{font:22px serif;fill:currentColor}\n    .small{font:18px serif;fill:currentColor}\n  </style>\n  <path class=\"line\" d=\"M130 275 L395 275 L520 195 L255 195 Z\"/>\n  <path class=\"line\" d=\"M130 275 V105 L395 105 V275\"/>\n  <path class=\"line\" d=\"M395 105 L520 35 V195\"/>\n  <path class=\"line\" d=\"M130 105 L255 35 L520 35\"/>\n  <path class=\"hidden\" d=\"M255 35 V195\"/>\n  <path class=\"hidden\" d=\"M130 105 L520 195\"/>\n  <path class=\"diag\" d=\"M130 275 L520 35\"/>\n  <text class=\"label\" x=\"250\" y=\"306\">x + 1</text>\n  <text class=\"label\" x=\"64\" y=\"200\">x</text>\n  <text class=\"label\" x=\"450\" y=\"252\">x + 2</text>\n  <text class=\"label\" x=\"298\" y=\"135\">√50</text>\n  <text class=\"small\" x=\"220\" y=\"362\">diagram not to scale</text>\n</svg>",
+        "options": [
+          {
+            "label": "A",
+            "text_markdown": "\\(24\\)"
+          },
+          {
+            "label": "B",
+            "text_markdown": "\\(36\\)"
+          },
+          {
+            "label": "C",
+            "text_markdown": "\\(48\\)"
+          },
+          {
+            "label": "D",
+            "text_markdown": "\\(60\\)"
+          },
+          {
+            "label": "E",
+            "text_markdown": "\\(72\\)"
+          },
+          {
+            "label": "F",
+            "text_markdown": "\\(90\\)"
+          },
+          {
+            "label": "G",
+            "text_markdown": "\\(120\\)"
+          }
+        ],
+        "correct_option": "D",
+        "solution": {
+          "title": "Use Pythagoras in three dimensions.",
+          "steps_markdown": [
+            "\\[x^2+(x+1)^2+(x+2)^2=50.\\]",
+            "This simplifies to \\(3x^2+6x-45=0\\), or \\(x^2+2x-15=0\\).",
+            "\\((x+5)(x-3)=0\\), so the positive length is \\(x=3\\).",
+            "The volume is \\(3\\times4\\times5=60\\)."
+          ],
+          "final_answer_markdown": "\\(\\boxed{60}\\)"
+        },
+        "difficulty": "difficult",
+        "difficulty_weight": 1.55,
+        "expected_time_seconds": 105,
+        "fast_threshold_seconds": 55,
+        "slow_threshold_seconds": 155,
+        "primary_topic": "three_dimensional_pythagoras",
+        "secondary_topic": "quadratic_modelling",
+        "primary_skill": "geometry",
+        "secondary_skills": [
+          "algebraic_manipulation",
+          "equation_solving",
+          "multi_step_reasoning"
+        ],
+        "prerequisite_skills": [
+          "pythagoras",
+          "expanding_quadratics",
+          "factorising_quadratics",
+          "volume"
+        ],
+        "reasoning_steps": [
+          "form_space_diagonal_equation",
+          "expand_and_simplify",
+          "reject_negative_length",
+          "calculate_volume"
+        ],
+        "common_error_types": [
+          "wrong_method",
+          "algebra_error",
+          "concept_gap",
+          "skipped_step"
+        ],
+        "diagnostic_value": "Tests whether 2D Pythagoras knowledge transfers to a 3D algebraic model.",
+        "distractor_analysis": {
+          "A": "Uses the diagonal as though it were one edge.",
+          "B": "Finds an incorrect value of x and multiplies consecutive sides.",
+          "C": "Uses \\(x=2\\) without satisfying the diagonal.",
+          "E": "Adds rather than multiplies one stage of the dimensions.",
+          "F": "Uses dimensions 3,5,6.",
+          "G": "Doubles the correct volume."
+        },
+        "diagnostic_interpretation": {
+          "fast_wrong": "Likely guessed a familiar 3-4-5 result without forming the 3D equation correctly.",
+          "slow_wrong": "Could indicate difficulty integrating geometry and algebra rather than either skill alone.",
+          "slow_correct": "Strong method but low fluency in expanding or solving the quadratic.",
+          "high_confidence_wrong": "Suggests a misconception about the space-diagonal formula.",
+          "changed_to_correct": "Often indicates the negative root or volume calculation was checked."
+        },
+        "recommended_practice_modes": [
+          "3d_pythagoras",
+          "geometry_to_equation",
+          "mixed_geometry_algebra"
+        ],
+        "paired_question_id": "m1cal-q04",
+        "pair_interpretation": "Correct Q4 but wrong Q11 suggests difficulty transferring geometry into algebra or 3D, not a broad geometry gap."
+      },
+      {
+        "id": "m1cal-q14",
+        "order": 12,
+        "module": "maths_1",
+        "curriculum_tags": [
+          "M1-M7"
+        ],
+        "question_type": "multiple_choice",
+        "question_text_markdown": "A bag contains \\(4\\) red, \\(3\\) blue and \\(2\\) green counters. Two counters are selected at random without replacement.\n\nGiven that at least one selected counter is red, what is the probability that both are red?",
+        "diagram_svg": null,
+        "options": [
+          {
+            "label": "A",
+            "text_markdown": "\\(\\dfrac16\\)"
+          },
+          {
+            "label": "B",
+            "text_markdown": "\\(\\dfrac2{11}\\)"
+          },
+          {
+            "label": "C",
+            "text_markdown": "\\(\\dfrac14\\)"
+          },
+          {
+            "label": "D",
+            "text_markdown": "\\(\\dfrac3{13}\\)"
+          },
+          {
+            "label": "E",
+            "text_markdown": "\\(\\dfrac13\\)"
+          },
+          {
+            "label": "F",
+            "text_markdown": "\\(\\dfrac6{13}\\)"
+          }
+        ],
+        "correct_option": "D",
+        "solution": {
+          "title": "Restrict the sample space to pairs containing at least one red.",
+          "steps_markdown": [
+            "There are \\(\\binom92=36\\) total pairs.",
+            "Pairs with no red counter: \\(\\binom52=10\\).",
+            "So \\(26\\) pairs contain at least one red.",
+            "Both-red pairs: \\(\\binom42=6\\).",
+            "The conditional probability is \\(6/26=3/13\\)."
+          ],
+          "final_answer_markdown": "\\(\\boxed{\\dfrac3{13}}\\)"
+        },
+        "difficulty": "medium",
+        "difficulty_weight": 1.25,
+        "expected_time_seconds": 90,
+        "fast_threshold_seconds": 45,
+        "slow_threshold_seconds": 135,
+        "primary_topic": "conditional_probability",
+        "secondary_topic": "combinatorial_counting",
+        "primary_skill": "probability_reasoning",
+        "secondary_skills": [
+          "systematic_listing",
+          "fraction_manipulation",
+          "method_selection"
+        ],
+        "prerequisite_skills": [
+          "without_replacement",
+          "counting_pairs",
+          "conditional_sample_space"
+        ],
+        "reasoning_steps": [
+          "count_conditioned_space",
+          "count_target_event",
+          "form_conditional_ratio"
+        ],
+        "common_error_types": [
+          "concept_gap",
+          "wrong_method",
+          "double_counting",
+          "distractor_trap"
+        ],
+        "diagnostic_value": "Separates sample-space counting from understanding of conditional probability.",
+        "distractor_analysis": {
+          "A": "Uses the unconditional probability of two red counters.",
+          "B": "Uses an incorrect conditioned denominator.",
+          "C": "Treats the condition as if the first counter is definitely red.",
+          "E": "Approximates from the red proportion without conditioning exactly.",
+          "F": "Uses the number of both-red pairs over 13 rather than 26."
+        },
+        "diagnostic_interpretation": {
+          "fast_wrong": "Likely computed the ordinary probability of two reds and ignored the condition.",
+          "slow_wrong": "Likely a conceptual conditional-probability gap.",
+          "slow_correct": "Understands conditioning but sample-space counting is inefficient.",
+          "high_confidence_wrong": "Suggests the phrase 'given that' is not changing the student's denominator.",
+          "changed_to_correct": "Often indicates the denominator was successfully restricted after an initial unconditional calculation."
+        },
+        "recommended_practice_modes": [
+          "conditional_probability",
+          "complement_counting",
+          "two_stage_sample_spaces"
+        ],
+        "paired_question_id": "m1cal-q06",
+        "pair_interpretation": "Correct Q6 but wrong Q14 isolates conditional probability as the issue."
+      },
+      {
+        "id": "m1cal-q12",
+        "order": 13,
+        "module": "maths_1",
+        "curriculum_tags": [
+          "M1-M4"
+        ],
+        "question_type": "multiple_choice",
+        "question_text_markdown": "Solve\n\n\\[\\frac{x+1}{x-2}+\\frac{x-2}{x+1}=\\frac{10}{3}.\\]",
+        "diagram_svg": null,
+        "options": [
+          {
+            "label": "A",
+            "text_markdown": "\\(x=-\\dfrac52\\text{ or }x=\\dfrac72\\)"
+          },
+          {
+            "label": "B",
+            "text_markdown": "\\(x=-\\dfrac72\\text{ or }x=\\dfrac52\\)"
+          },
+          {
+            "label": "C",
+            "text_markdown": "\\(x=-\\dfrac52\\text{ only}\\)"
+          },
+          {
+            "label": "D",
+            "text_markdown": "\\(x=\\dfrac72\\text{ only}\\)"
+          },
+          {
+            "label": "E",
+            "text_markdown": "\\(x=-1\\text{ or }x=2\\)"
+          },
+          {
+            "label": "F",
+            "text_markdown": "\\(x=-2\\text{ or }x=1\\)"
+          },
+          {
+            "label": "G",
+            "text_markdown": "\\(x=-5\\text{ or }x=7\\)"
+          },
+          {
+            "label": "H",
+            "text_markdown": "there are no real solutions"
+          }
+        ],
+        "correct_option": "A",
+        "solution": {
+          "title": "Combine the fractions after noting the excluded values.",
+          "steps_markdown": [
+            "\\(x\\neq2,-1\\).",
+            "\\[\\frac{(x+1)^2+(x-2)^2}{(x-2)(x+1)}=\\frac{10}{3}.\\]",
+            "\\[3(2x^2-2x+5)=10(x^2-x-2).\\]",
+            "This gives \\(4x^2-4x-35=0\\).",
+            "\\((2x-7)(2x+5)=0\\), so \\(x=7/2\\) or \\(x=-5/2\\)."
+          ],
+          "final_answer_markdown": "\\(\\boxed{x=-\\dfrac52\\text{ or }x=\\dfrac72}\\)"
+        },
+        "difficulty": "difficult",
+        "difficulty_weight": 1.55,
+        "expected_time_seconds": 110,
+        "fast_threshold_seconds": 60,
+        "slow_threshold_seconds": 165,
+        "primary_topic": "algebraic_rational_equations",
+        "secondary_topic": "quadratics",
+        "primary_skill": "algebraic_manipulation",
+        "secondary_skills": [
+          "equation_solving",
+          "fraction_manipulation",
+          "checking_and_verification"
+        ],
+        "prerequisite_skills": [
+          "common_denominators",
+          "expanding_brackets",
+          "factorising_quadratics",
+          "domain_restrictions"
+        ],
+        "reasoning_steps": [
+          "record_excluded_values",
+          "combine_rational_terms",
+          "clear_denominators",
+          "solve_quadratic",
+          "check_roots"
+        ],
+        "common_error_types": [
+          "algebra_error",
+          "sign_error",
+          "skipped_step",
+          "wrong_method"
+        ],
+        "diagnostic_value": "Provides harder evidence on algebraic fluency after the direct rearrangement in Q3.",
+        "distractor_analysis": {
+          "B": "Reverses the signs of both roots.",
+          "C": "Finds both roots but discards the positive one without reason.",
+          "D": "Finds both roots but discards the negative one without reason.",
+          "E": "Returns the excluded denominator values.",
+          "F": "Factorises the wrong quadratic.",
+          "G": "Misses the factors of 2 in both roots.",
+          "H": "Assumes the rational form prevents real roots."
+        },
+        "diagnostic_interpretation": {
+          "fast_wrong": "Likely cancelled across a sum or chose denominator restrictions as solutions.",
+          "slow_wrong": "Likely a substantive rational-algebra weakness.",
+          "slow_correct": "Conceptually secure but manipulation speed is below admissions-test pace.",
+          "high_confidence_wrong": "Suggests an entrenched invalid-cancellation or factorisation habit.",
+          "changed_to_correct": "Often indicates the student checked roots against the original denominators or recovered a sign error."
+        },
+        "recommended_practice_modes": [
+          "algebraic_fraction_equations",
+          "factorisation_under_time",
+          "domain_checking"
+        ],
+        "paired_question_id": "m1cal-q03",
+        "pair_interpretation": "Correct Q3 but wrong Q12 points to complexity tolerance or fraction manipulation, not basic rearrangement."
+      },
+      {
+        "id": "m1cal-q15",
+        "order": 14,
+        "module": "maths_1",
+        "curriculum_tags": [
+          "M1-M5",
+          "M1-M4"
+        ],
+        "question_type": "multiple_choice",
+        "question_text_markdown": "From point \\(A\\), the angle of elevation of the top of a vertical tower is \\(30^\\circ\\). After moving \\(20\\text{ m}\\) directly towards the tower to point \\(B\\), the angle of elevation is \\(60^\\circ\\).\n\nThe ground is horizontal. What is the height of the tower?",
+        "diagram_svg": null,
+        "options": [
+          {
+            "label": "A",
+            "text_markdown": "\\(5\\sqrt3\\text{ m}\\)"
+          },
+          {
+            "label": "B",
+            "text_markdown": "\\(10\\text{ m}\\)"
+          },
+          {
+            "label": "C",
+            "text_markdown": "\\(10\\sqrt3\\text{ m}\\)"
+          },
+          {
+            "label": "D",
+            "text_markdown": "\\(20\\text{ m}\\)"
+          },
+          {
+            "label": "E",
+            "text_markdown": "\\(20\\sqrt3\\text{ m}\\)"
+          },
+          {
+            "label": "F",
+            "text_markdown": "\\(30\\text{ m}\\)"
+          },
+          {
+            "label": "G",
+            "text_markdown": "\\(30\\sqrt3\\text{ m}\\)"
+          }
+        ],
+        "correct_option": "C",
+        "solution": {
+          "title": "Use the same height in two tangent equations.",
+          "steps_markdown": [
+            "Let the distance from \\(B\\) to the tower be \\(x\\) and the height be \\(h\\).",
+            "From \\(B\\): \\(h=x\\tan60^\\circ=x\\sqrt3\\).",
+            "From \\(A\\): \\(h=(x+20)\\tan30^\\circ=(x+20)/\\sqrt3\\).",
+            "So \\(3x=x+20\\), giving \\(x=10\\).",
+            "Therefore \\(h=10\\sqrt3\\text{ m}\\)."
+          ],
+          "final_answer_markdown": "\\(\\boxed{10\\sqrt3\\text{ m}}\\)"
+        },
+        "difficulty": "medium",
+        "difficulty_weight": 1.25,
+        "expected_time_seconds": 95,
+        "fast_threshold_seconds": 50,
+        "slow_threshold_seconds": 140,
+        "primary_topic": "right_triangle_trigonometry",
+        "secondary_topic": "simultaneous_modelling",
+        "primary_skill": "modelling",
+        "secondary_skills": [
+          "trigonometry",
+          "equation_solving",
+          "geometry",
+          "multi_step_reasoning"
+        ],
+        "prerequisite_skills": [
+          "exact_tangent_values",
+          "right_triangle_trigonometry",
+          "linear_equations"
+        ],
+        "reasoning_steps": [
+          "define_shared_unknowns",
+          "write_two_tangent_relations",
+          "equate_heights",
+          "solve"
+        ],
+        "common_error_types": [
+          "wrong_method",
+          "trigonometry_error",
+          "algebra_error",
+          "misread_question"
+        ],
+        "diagnostic_value": "Tests integrated modelling after isolated algebra, ratio and geometry evidence has already been collected.",
+        "distractor_analysis": {
+          "A": "Halves the correct height.",
+          "B": "Returns the distance from B to the tower.",
+          "D": "Uses the movement distance as the height.",
+          "E": "Uses 20 m as the nearer horizontal distance.",
+          "F": "Adds distances without applying tangent.",
+          "G": "Uses the original distance as 30 m but multiplies by \\(\\sqrt3\\)."
+        },
+        "diagnostic_interpretation": {
+          "fast_wrong": "Likely used only one observation point or confused tan 30 with tan 60.",
+          "slow_wrong": "Likely struggles to turn a verbal geometry context into simultaneous relations.",
+          "slow_correct": "Good integrated reasoning but model construction is not yet automatic.",
+          "high_confidence_wrong": "Suggests a stable exact-trig or diagram-modelling misconception.",
+          "changed_to_correct": "Often means the student corrected which distance is x versus x+20."
+        },
+        "recommended_practice_modes": [
+          "trigonometric_modelling",
+          "two_position_elevation_questions",
+          "exact_trig_under_time"
+        ],
+        "paired_question_id": null,
+        "pair_interpretation": null
+      },
+      {
+        "id": "m1cal-q13",
+        "order": 15,
+        "module": "maths_1",
+        "curriculum_tags": [
+          "M1-M6",
+          "M1-M4"
+        ],
+        "question_type": "multiple_choice",
+        "question_text_markdown": "The histogram represents the times taken by a group to complete a task. The frequency density in the interval \\(10<t\\le20\\) is \\(h\\).\n\nThe estimated median time is \\(18\\) minutes.\n\nWhat is the estimated mean time?",
+        "diagram_svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 430\" role=\"img\" aria-label=\"Histogram with class intervals 0 to 10, 10 to 20, 20 to 30, and 30 to 50. The frequency densities are 1.2, h, 2.0, and 0.8 respectively.\">\n  <style>\n    .axis{stroke:currentColor;stroke-width:2.3;fill:none;stroke-linecap:round}\n    .bar{stroke:currentColor;stroke-width:2;fill:currentColor;fill-opacity:.08}\n    .label{font:20px serif;fill:currentColor}\n    .small{font:17px serif;fill:currentColor}\n  </style>\n  <path class=\"axis\" d=\"M90 335 H660\"/>\n  <path class=\"axis\" d=\"M90 335 V45\"/>\n  <path class=\"axis\" d=\"M660 335 l-12 -7 M660 335 l-12 7\"/>\n  <path class=\"axis\" d=\"M90 45 l-7 12 M90 45 l7 12\"/>\n\n  <rect class=\"bar\" x=\"90\" y=\"245\" width=\"100\" height=\"90\"/>\n  <rect class=\"bar\" x=\"190\" y=\"105\" width=\"100\" height=\"230\"/>\n  <rect class=\"bar\" x=\"290\" y=\"185\" width=\"100\" height=\"150\"/>\n  <rect class=\"bar\" x=\"390\" y=\"275\" width=\"200\" height=\"60\"/>\n\n  <text class=\"label\" x=\"130\" y=\"232\">1.2</text>\n  <text class=\"label\" x=\"235\" y=\"92\">h</text>\n  <text class=\"label\" x=\"330\" y=\"172\">2.0</text>\n  <text class=\"label\" x=\"475\" y=\"262\">0.8</text>\n\n  <text class=\"small\" x=\"84\" y=\"360\">0</text>\n  <text class=\"small\" x=\"177\" y=\"360\">10</text>\n  <text class=\"small\" x=\"277\" y=\"360\">20</text>\n  <text class=\"small\" x=\"377\" y=\"360\">30</text>\n  <text class=\"small\" x=\"577\" y=\"360\">50</text>\n  <text class=\"label\" x=\"300\" y=\"405\">time, t / minutes</text>\n  <text class=\"label\" x=\"16\" y=\"30\">frequency density</text>\n  <text class=\"small\" x=\"475\" y=\"395\">bar heights not to scale</text>\n</svg>",
+        "options": [
+          {
+            "label": "A",
+            "text_markdown": "\\(18\\text{ min}\\)"
+          },
+          {
+            "label": "B",
+            "text_markdown": "\\(20\\text{ min}\\)"
+          },
+          {
+            "label": "C",
+            "text_markdown": "\\(\\dfrac{225}{11}\\text{ min}\\)"
+          },
+          {
+            "label": "D",
+            "text_markdown": "\\(21\\text{ min}\\)"
+          },
+          {
+            "label": "E",
+            "text_markdown": "\\(\\dfrac{45}{2}\\text{ min}\\)"
+          },
+          {
+            "label": "F",
+            "text_markdown": "\\(25\\text{ min}\\)"
+          }
+        ],
+        "correct_option": "C",
+        "solution": {
+          "title": "Use the median to reconstruct the missing bar, then estimate the mean.",
+          "steps_markdown": [
+            "The class frequencies are \\(12,10h,20,16\\), so the total is \\(48+10h\\).",
+            "At \\(t=18\\), \\(8/10\\) of the second class has been included, so cumulative frequency is \\(12+8h\\).",
+            "The median condition gives \\(12+8h=(48+10h)/2\\), hence \\(h=4\\).",
+            "The frequencies are therefore \\(12,40,20,16\\).",
+            "Using class midpoints \\(5,15,25,40\\),",
+            "\\[\\bar t=\\frac{12(5)+40(15)+20(25)+16(40)}{88}=\\frac{225}{11}.\\]"
+          ],
+          "final_answer_markdown": "\\(\\boxed{\\dfrac{225}{11}\\text{ min}}\\)"
+        },
+        "difficulty": "difficult",
+        "difficulty_weight": 1.55,
+        "expected_time_seconds": 115,
+        "fast_threshold_seconds": 65,
+        "slow_threshold_seconds": 170,
+        "primary_topic": "histograms",
+        "secondary_topic": "estimated_mean_and_median",
+        "primary_skill": "data_interpretation",
+        "secondary_skills": [
+          "statistics_reasoning",
+          "equation_solving",
+          "multi_step_reasoning"
+        ],
+        "prerequisite_skills": [
+          "frequency_density",
+          "grouped_median_interpolation",
+          "estimated_mean"
+        ],
+        "reasoning_steps": [
+          "convert_density_to_frequency",
+          "use_median_position",
+          "solve_for_missing_density",
+          "calculate_grouped_mean"
+        ],
+        "common_error_types": [
+          "concept_gap",
+          "wrong_method",
+          "algebra_error",
+          "skipped_step"
+        ],
+        "diagnostic_value": "Capstone data question that distinguishes simple table fluency from reverse inference and grouped-data reasoning.",
+        "distractor_analysis": {
+          "A": "Returns the given median as the mean.",
+          "B": "Uses the midpoint of the overall range or rounds too early.",
+          "D": "Uses an incorrect value of h or class midpoint.",
+          "E": "Uses total frequency 80 rather than 88.",
+          "F": "Averages class midpoints without weighting."
+        },
+        "diagnostic_interpretation": {
+          "fast_wrong": "Likely skipped the median reconstruction and guessed from the visual centre.",
+          "slow_wrong": "Likely a true gap in frequency density, interpolation or grouped means.",
+          "slow_correct": "Strong statistical reasoning but insufficient speed for a layered data item.",
+          "high_confidence_wrong": "Suggests a stable misconception such as treating bar height as frequency.",
+          "changed_to_correct": "Often indicates the student noticed unequal class widths or corrected the total frequency."
+        },
+        "recommended_practice_modes": [
+          "histogram_frequency_density",
+          "reverse_grouped_data",
+          "timed_statistics_chains"
+        ],
+        "paired_question_id": "m1cal-q05",
+        "pair_interpretation": "Correct Q5 but wrong Q13 indicates difficulty with grouped continuous data or multi-step inference, not basic averages."
+      }
+    ]
+  },
+  "paired_diagnostic_design": [
+    {
+      "pair": [
+        "m1cal-q01",
+        "m1cal-q09"
+      ],
+      "comparison": "familiar ratio mixing versus unfamiliar direct/inverse power scaling",
+      "interpretation": {
+        "both_correct": "strong proportional reasoning across contexts",
+        "q01_only": "basic ratio secure; transfer to powers or unfamiliar contexts weak",
+        "q09_only": "possible careless or reading error on the simple item",
+        "both_wrong": "broad proportional-reasoning weakness"
+      }
+    },
+    {
+      "pair": [
+        "m1cal-q02",
+        "m1cal-q10"
+      ],
+      "comparison": "exact arithmetic versus estimation",
+      "interpretation": {
+        "both_correct": "flexible numerical method selection",
+        "q02_only": "over-reliance on exact methods or weak numerical judgement",
+        "q10_only": "approximation sense stronger than exact surd manipulation",
+        "both_wrong": "broad number fluency weakness"
+      }
+    },
+    {
+      "pair": [
+        "m1cal-q03",
+        "m1cal-q12"
+      ],
+      "comparison": "direct formula rearrangement versus a rational equation",
+      "interpretation": {
+        "both_correct": "strong algebraic manipulation",
+        "q03_only": "basic rearrangement secure; algebraic fractions or complexity tolerance weak",
+        "q12_only": "possible careless sign error on the direct item",
+        "both_wrong": "clear algebraic-fluency concern"
+      }
+    },
+    {
+      "pair": [
+        "m1cal-q04",
+        "m1cal-q11"
+      ],
+      "comparison": "2D theorem selection versus 3D geometry translated into algebra",
+      "interpretation": {
+        "both_correct": "strong geometry and transfer",
+        "q04_only": "3D modelling or algebra integration weak",
+        "q11_only": "circle-theorem knowledge gap rather than broad geometry weakness",
+        "both_wrong": "broad geometry weakness"
+      }
+    },
+    {
+      "pair": [
+        "m1cal-q05",
+        "m1cal-q13"
+      ],
+      "comparison": "direct frequency-table mean versus reverse histogram inference",
+      "interpretation": {
+        "both_correct": "strong data and statistics reasoning",
+        "q05_only": "grouped data, frequency density or multi-step inference weak",
+        "q13_only": "possible careless setup error on the direct table item",
+        "both_wrong": "statistics foundations need work"
+      }
+    },
+    {
+      "pair": [
+        "m1cal-q06",
+        "m1cal-q14"
+      ],
+      "comparison": "unconditional counting versus conditional probability",
+      "interpretation": {
+        "both_correct": "strong sample-space reasoning",
+        "q06_only": "conditional denominator is the likely gap",
+        "q14_only": "systematic listing or divisibility counting issue",
+        "both_wrong": "broad probability weakness"
+      }
+    }
+  ],
+  "diagnostic_model": {
+    "scope_note": "This calibration diagnoses Mathematics 1 only. Physical reasoning is not scored; it should be reported as not_applicable rather than inferred from mathematical performance.",
+    "difficulty_weights": {
+      "accessible": 1.0,
+      "medium": 1.25,
+      "difficult": 1.55
+    },
+    "response_time_ratio": "time_spent_seconds / expected_time_seconds",
+    "weighted_accuracy_formula": "100 * sum(difficulty_weight * correct) / sum(difficulty_weight) over the score's evidence questions",
+    "correct_time_efficiency_per_question": {
+      "if_incorrect_or_skipped": 0,
+      "if_time_lte_expected": 100,
+      "if_expected_lt_time_lte_slow": "100 - 60 * (time - expected) / (slow - expected)",
+      "if_time_gt_slow": "max(10, 40 * slow / time)"
+    },
+    "pace_score_per_question": {
+      "if_skipped": 0,
+      "if_time_lte_expected": 100,
+      "if_expected_lt_time_lte_slow": "100 - 55 * (time - expected) / (slow - expected)",
+      "if_time_gt_slow": "max(10, 45 * slow / time)"
+    },
+    "confidence_encoding": {
+      "scale": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "meaning": {
+        "1": "guessing",
+        "2": "low",
+        "3": "moderate",
+        "4": "high",
+        "5": "very_high"
+      }
+    },
+    "confidence_calibration_formula": "100 - 25 * mean(abs(predicted_probability - correctness)), where confidence 1..5 maps to probabilities 0.2,0.4,0.6,0.8,0.95; clamp to 0..100",
+    "scores": {
+      "knowledge": {
+        "evidence_question_ids": [
+          "m1cal-q02",
+          "m1cal-q03",
+          "m1cal-q04",
+          "m1cal-q05",
+          "m1cal-q06",
+          "m1cal-q07",
+          "m1cal-q10",
+          "m1cal-q14"
+        ],
+        "calculation": "weighted_accuracy_formula",
+        "reliability": "high"
+      },
+      "reasoning": {
+        "evidence_question_ids": [
+          "m1cal-q01",
+          "m1cal-q04",
+          "m1cal-q08",
+          "m1cal-q09",
+          "m1cal-q11",
+          "m1cal-q12",
+          "m1cal-q13",
+          "m1cal-q14",
+          "m1cal-q15"
+        ],
+        "calculation": "weighted_accuracy_formula",
+        "reliability": "high"
+      },
+      "calculation_accuracy": {
+        "evidence_question_ids": [
+          "m1cal-q01",
+          "m1cal-q02",
+          "m1cal-q03",
+          "m1cal-q04",
+          "m1cal-q05",
+          "m1cal-q06",
+          "m1cal-q07",
+          "m1cal-q08",
+          "m1cal-q09",
+          "m1cal-q10",
+          "m1cal-q11",
+          "m1cal-q12",
+          "m1cal-q13",
+          "m1cal-q14",
+          "m1cal-q15"
+        ],
+        "calculation": "100 * (weighted correct answers not tagged as concept_gap or wrong_method) / weighted attempted answers; use observed error attribution when available, otherwise weighted accuracy",
+        "reliability": "high"
+      },
+      "calculation_speed": {
+        "evidence_question_ids": [
+          "m1cal-q01",
+          "m1cal-q02",
+          "m1cal-q03",
+          "m1cal-q05",
+          "m1cal-q07",
+          "m1cal-q10",
+          "m1cal-q12"
+        ],
+        "calculation": "difficulty-weighted mean of correct_time_efficiency_per_question",
+        "reliability": "high"
+      },
+      "algebraic_fluency": {
+        "evidence_question_ids": [
+          "m1cal-q03",
+          "m1cal-q08",
+          "m1cal-q11",
+          "m1cal-q12",
+          "m1cal-q15"
+        ],
+        "calculation": "70% weighted accuracy + 30% correct-time efficiency",
+        "reliability": "high"
+      },
+      "ratio_and_proportion": {
+        "evidence_question_ids": [
+          "m1cal-q01",
+          "m1cal-q07",
+          "m1cal-q09"
+        ],
+        "calculation": "75% weighted accuracy + 25% correct-time efficiency",
+        "reliability": "medium"
+      },
+      "geometry_and_modelling": {
+        "evidence_question_ids": [
+          "m1cal-q04",
+          "m1cal-q11",
+          "m1cal-q15"
+        ],
+        "calculation": "75% weighted accuracy + 25% correct-time efficiency",
+        "reliability": "medium"
+      },
+      "probability": {
+        "evidence_question_ids": [
+          "m1cal-q06",
+          "m1cal-q14"
+        ],
+        "calculation": "80% weighted accuracy + 20% correct-time efficiency",
+        "reliability": "medium"
+      },
+      "statistics": {
+        "evidence_question_ids": [
+          "m1cal-q05",
+          "m1cal-q13"
+        ],
+        "calculation": "80% weighted accuracy + 20% correct-time efficiency",
+        "reliability": "medium"
+      },
+      "estimation": {
+        "evidence_question_ids": [
+          "m1cal-q10"
+        ],
+        "calculation": "80% correctness + 20% pace if correct",
+        "reliability": "low"
+      },
+      "data_and_graph_skills": {
+        "evidence_question_ids": [
+          "m1cal-q05",
+          "m1cal-q08",
+          "m1cal-q13"
+        ],
+        "calculation": "75% weighted accuracy + 25% correct-time efficiency",
+        "reliability": "medium"
+      },
+      "unit_reasoning": {
+        "evidence_question_ids": [
+          "m1cal-q07"
+        ],
+        "calculation": "80% correctness + 20% pace if correct",
+        "reliability": "low"
+      },
+      "time_management": {
+        "evidence_question_ids": [
+          "m1cal-q01",
+          "m1cal-q02",
+          "m1cal-q03",
+          "m1cal-q04",
+          "m1cal-q05",
+          "m1cal-q06",
+          "m1cal-q07",
+          "m1cal-q08",
+          "m1cal-q09",
+          "m1cal-q10",
+          "m1cal-q11",
+          "m1cal-q12",
+          "m1cal-q13",
+          "m1cal-q14",
+          "m1cal-q15"
+        ],
+        "calculation": "0.65 * mean pace_score_per_question + 0.20 * completion_rate + 0.15 * end_section_completion_rate, where end_section is questions 11-15",
+        "reliability": "high"
+      },
+      "consistency": {
+        "paired_question_ids": [
+          [
+            "m1cal-q01",
+            "m1cal-q09"
+          ],
+          [
+            "m1cal-q02",
+            "m1cal-q10"
+          ],
+          [
+            "m1cal-q03",
+            "m1cal-q12"
+          ],
+          [
+            "m1cal-q04",
+            "m1cal-q11"
+          ],
+          [
+            "m1cal-q05",
+            "m1cal-q13"
+          ],
+          [
+            "m1cal-q06",
+            "m1cal-q14"
+          ]
+        ],
+        "calculation": "100 - 12.5 * unexplained_pair_disagreements - 5 * high_confidence_reversals; clamp to 0..100. A disagreement is not penalised when the harder item is wrong and the pair interpretation identifies a narrower skill.",
+        "reliability": "high"
+      },
+      "confidence_calibration": {
+        "evidence_question_ids": [
+          "m1cal-q01",
+          "m1cal-q02",
+          "m1cal-q03",
+          "m1cal-q04",
+          "m1cal-q05",
+          "m1cal-q06",
+          "m1cal-q07",
+          "m1cal-q08",
+          "m1cal-q09",
+          "m1cal-q10",
+          "m1cal-q11",
+          "m1cal-q12",
+          "m1cal-q13",
+          "m1cal-q14",
+          "m1cal-q15"
+        ],
+        "calculation": "confidence_calibration_formula",
+        "reliability": "high if at least 12 confidence ratings, medium if 7-11, low if 1-6"
+      },
+      "physical_reasoning": {
+        "evidence_question_ids": [],
+        "calculation": null,
+        "reliability": "not_applicable"
+      }
+    },
+    "overall_readiness_formula": "0.22*knowledge + 0.23*reasoning + 0.15*calculation_accuracy + 0.10*calculation_speed + 0.10*algebraic_fluency + 0.07*ratio_and_proportion + 0.05*data_and_graph_skills + 0.05*time_management + 0.03*consistency",
+    "readiness_bands": [
+      {
+        "min": 80,
+        "max": 100,
+        "label": "strongly_ready"
+      },
+      {
+        "min": 68,
+        "max": 79.99,
+        "label": "ready_with_targeted_gaps"
+      },
+      {
+        "min": 55,
+        "max": 67.99,
+        "label": "developing_readiness"
+      },
+      {
+        "min": 40,
+        "max": 54.99,
+        "label": "substantial_gaps"
+      },
+      {
+        "min": 0,
+        "max": 39.99,
+        "label": "foundational_work_needed"
+      }
+    ],
+    "reliability_rule": {
+      "high": "at least 4 relevant questions or at least 3 relevant questions with one deliberate pair",
+      "medium": "2-3 relevant questions",
+      "low": "1 relevant question",
+      "insufficient": "0 relevant questions or more than half the relevant questions skipped"
+    },
+    "overclaiming_guardrail": "Never describe a low-reliability score as a stable weakness. Use 'possible weakness' and recommend confirmation with additional questions."
+  },
+  "skill_classification_rules": {
+    "minimum_evidence": 2,
+    "rules_in_priority_order": [
+      {
+        "label": "insufficient_evidence",
+        "condition": "relevant_attempted_questions < 2 or relevant_skipped_fraction > 0.5"
+      },
+      {
+        "label": "strong_and_fast",
+        "condition": "weighted_accuracy >= 80 and median_time_ratio <= 1.0"
+      },
+      {
+        "label": "strong_but_slow",
+        "condition": "weighted_accuracy >= 80 and median_time_ratio > 1.15"
+      },
+      {
+        "label": "fast_but_inaccurate",
+        "condition": "weighted_accuracy < 60 and median_time_ratio <= 0.75 and fast_wrong_count >= 1"
+      },
+      {
+        "label": "clear_knowledge_gap",
+        "condition": "weighted_accuracy <= 40 and relevant_attempted_questions >= 2 and (slow_wrong_count >= 1 or high_confidence_wrong_count >= 1)"
+      },
+      {
+        "label": "inconsistent",
+        "condition": "weighted_accuracy between 40 and 79.99 and pair_disagreement_rate >= 0.5"
+      },
+      {
+        "label": "developing",
+        "condition": "weighted_accuracy between 50 and 79.99"
+      },
+      {
+        "label": "inconsistent",
+        "condition": "all remaining cases with at least 2 evidence questions"
+      }
+    ]
+  },
+  "profile_classification_rules": [
+    {
+      "label": "Broadly ready",
+      "condition": "overall_readiness >= 75 and completion_rate >= 0.9 and no high-reliability skill score < 60"
+    },
+    {
+      "label": "Accurate but too slow",
+      "condition": "calculation_accuracy >= 80 and (calculation_speed < 55 or median_time_ratio > 1.2)"
+    },
+    {
+      "label": "Fast but careless",
+      "condition": "median_time_ratio <= 0.85 and calculation_accuracy < 65 and fast_wrong_count >= 3"
+    },
+    {
+      "label": "Strong fundamentals, weak applications",
+      "condition": "direct_question_accuracy >= 80 and unfamiliar_multistep_accuracy < 55"
+    },
+    {
+      "label": "Good reasoning, weak calculation fluency",
+      "condition": "reasoning >= 70 and calculation_accuracy < 60 and arithmetic_or_algebra_error_count >= 3"
+    },
+    {
+      "label": "Strong in familiar problems, weaker in unfamiliar contexts",
+      "condition": "familiar_context_accuracy >= 75 and unfamiliar_context_accuracy < 55"
+    },
+    {
+      "label": "Uneven topic profile",
+      "condition": "highest_medium_or_high_reliability_skill - lowest_medium_or_high_reliability_skill >= 30"
+    },
+    {
+      "label": "Needs foundational work",
+      "condition": "overall_readiness < 45 and knowledge < 50 and at least 4 curriculum tags have weighted_accuracy < 50"
+    }
+  ],
+  "recommendation_rules": {
+    "skill_practice_catalog": {
+      "ratio_reasoning": [
+        "ratio_mixtures",
+        "parts_to_quantities",
+        "proportion_word_problems"
+      ],
+      "powers_and_roots": [
+        "surds_exact_arithmetic",
+        "index_law_drills",
+        "exact_value_checks"
+      ],
+      "formula_rearrangement": [
+        "formula_rearrangement",
+        "sign_control_drills",
+        "substitution_checks"
+      ],
+      "geometry": [
+        "diagram_annotation",
+        "circle_theorem_chains",
+        "3d_pythagoras"
+      ],
+      "data_interpretation": [
+        "frequency_tables",
+        "histogram_frequency_density",
+        "reverse_grouped_data"
+      ],
+      "probability_reasoning": [
+        "systematic_listing",
+        "conditional_probability",
+        "sample_space_checks"
+      ],
+      "unit_reasoning": [
+        "compound_unit_drills",
+        "rate_conversion",
+        "dimensional_checking"
+      ],
+      "method_selection": [
+        "mixed_method_identification",
+        "quadratic_graph_links",
+        "one_step_plan_before_working"
+      ],
+      "proportional_reasoning": [
+        "direct_inverse_proportion",
+        "power_law_scaling",
+        "percentage_multiplier_drills"
+      ],
+      "estimation": [
+        "estimation_sprints",
+        "order_of_magnitude_checks",
+        "decimal_scale_drills"
+      ],
+      "algebraic_manipulation": [
+        "algebraic_fraction_equations",
+        "factorisation_under_time",
+        "sign_control_drills"
+      ],
+      "modelling": [
+        "trigonometric_modelling",
+        "geometry_to_equation",
+        "context_to_equation"
+      ]
+    },
+    "diagnosis_actions": {
+      "strong_but_slow": {
+        "practice_type": "isolated_timed_drills_then_mixed_questions",
+        "recommended_frequency": "3 sessions per week",
+        "recommended_session_length_minutes": 8,
+        "reason_template": "Accuracy is secure, but median response time is above the target range.",
+        "reassessment_condition": "after 50 attempts or 7 days"
+      },
+      "fast_but_inaccurate": {
+        "practice_type": "accuracy_first_drills_with_mandatory_check",
+        "recommended_frequency": "4 sessions per week",
+        "recommended_session_length_minutes": 10,
+        "reason_template": "Responses are faster than target but error rate is too high.",
+        "reassessment_condition": "after 40 attempts with at least 80% accuracy"
+      },
+      "developing": {
+        "practice_type": "worked_examples_then_untimed_then_timed",
+        "recommended_frequency": "3 sessions per week",
+        "recommended_session_length_minutes": 15,
+        "reason_template": "Understanding is partial but not yet reliable across contexts.",
+        "reassessment_condition": "after 30 focused questions or 10 days"
+      },
+      "clear_knowledge_gap": {
+        "practice_type": "concept_learning_then_isolated_skill_drills",
+        "recommended_frequency": "4 sessions per week",
+        "recommended_session_length_minutes": 20,
+        "reason_template": "Repeated errors indicate a concept or method gap rather than pace alone.",
+        "reassessment_condition": "after completing the topic lesson and 30 practice questions"
+      },
+      "inconsistent": {
+        "practice_type": "mixed_esat_questions_with_error_log",
+        "recommended_frequency": "3 sessions per week",
+        "recommended_session_length_minutes": 15,
+        "reason_template": "Performance changes substantially across closely related questions.",
+        "reassessment_condition": "after 2 mixed sets with no repeated error pattern"
+      },
+      "insufficient_evidence": {
+        "practice_type": "short_targeted_diagnostic",
+        "recommended_frequency": "one additional diagnostic",
+        "recommended_session_length_minutes": 8,
+        "reason_template": "The calibration did not collect enough relevant evidence.",
+        "reassessment_condition": "after at least 5 additional questions in this skill"
+      },
+      "strong_and_fast": {
+        "practice_type": "maintenance_and_harder_multistep_questions",
+        "recommended_frequency": "1 session per week",
+        "recommended_session_length_minutes": 10,
+        "reason_template": "Accuracy and speed are both currently strong.",
+        "reassessment_condition": "reassess in 21 days or after a performance drop"
+      }
+    },
+    "seven_day_plan_template": [
+      {
+        "day": 1,
+        "focus": "highest-confidence weakness",
+        "minutes": 20
+      },
+      {
+        "day": 2,
+        "focus": "calculation fluency and units",
+        "minutes": 10
+      },
+      {
+        "day": 3,
+        "focus": "second-highest-confidence weakness",
+        "minutes": 20
+      },
+      {
+        "day": 4,
+        "focus": "mixed timed set",
+        "minutes": 15
+      },
+      {
+        "day": 5,
+        "focus": "error-log corrections and reattempts",
+        "minutes": 15
+      },
+      {
+        "day": 6,
+        "focus": "harder multi-step questions",
+        "minutes": 20
+      },
+      {
+        "day": 7,
+        "focus": "short reassessment set",
+        "minutes": 12
+      }
+    ]
+  },
+  "result_page_schema": {
+    "overall_calibration_score": {
+      "type": "number",
+      "range": [
+        0,
+        100
+      ]
+    },
+    "readiness_band": {
+      "type": "string"
+    },
+    "overall_reliability": {
+      "type": "string",
+      "allowed": [
+        "high",
+        "medium",
+        "low"
+      ]
+    },
+    "top_three_strengths": {
+      "type": "array",
+      "item_fields": [
+        "skill",
+        "score",
+        "classification",
+        "evidence",
+        "reliability"
+      ]
+    },
+    "top_three_weaknesses": {
+      "type": "array",
+      "item_fields": [
+        "skill",
+        "score",
+        "classification",
+        "evidence",
+        "reliability"
+      ]
+    },
+    "speed_versus_accuracy_profile": {
+      "fields": [
+        "median_time_ratio",
+        "weighted_accuracy",
+        "fast_wrong_count",
+        "slow_correct_count",
+        "summary"
+      ]
+    },
+    "module_specific_performance": {
+      "maths_1": {
+        "fields": [
+          "score",
+          "topic_breakdown",
+          "completion_rate",
+          "reliability"
+        ]
+      }
+    },
+    "skill_breakdown": {
+      "item_fields": [
+        "skill",
+        "score",
+        "classification",
+        "reliability",
+        "question_ids",
+        "evidence_sentence"
+      ]
+    },
+    "paired_evidence": {
+      "item_fields": [
+        "question_pair",
+        "outcomes",
+        "interpretation"
+      ]
+    },
+    "confidence_analysis": {
+      "fields": [
+        "confidence_calibration_score",
+        "high_confidence_wrong_count",
+        "low_confidence_correct_count",
+        "summary"
+      ]
+    },
+    "recommended_first_practice_session": {
+      "fields": [
+        "practice_mode",
+        "minutes",
+        "target_skill",
+        "reason"
+      ]
+    },
+    "recommended_seven_day_plan": {
+      "type": "array"
+    },
+    "suggested_retest_date_rule": "7 days for fast-but-inaccurate or strong-but-slow profiles; 10-14 days for developing or clear knowledge gaps; 21 days for broadly ready profiles",
+    "precision_warning": "This 15-question calibration provides directional evidence. Low-reliability conclusions must be confirmed with more questions."
+  }
+}

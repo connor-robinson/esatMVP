@@ -49,6 +49,7 @@ import {
   Moon,
   Settings,
   Sun,
+  Target,
   Trophy,
   X,
   Zap,
@@ -154,10 +155,17 @@ const navSections: NavSectionConfig[] = [
   },
   {
     label: 'Exam Tools',
-    href: '/tools/score-converter',
+    href: '/exam-tools/calibration/math-1',
     section: 'tools',
     triggerPadding: 'px-1',
     items: [
+      {
+        href: '/exam-tools/calibration/math-1',
+        label: 'Calibration Test',
+        description: 'Diagnose your Math 1 weak spots',
+        icon: Target,
+        badge: 'NEW',
+      },
       {
         href: '/tools/score-converter',
         label: 'Score Converter',
@@ -189,7 +197,7 @@ function resolveSection(pathname: string): NavSectionId | 'home' {
   if (pathname.startsWith('/mental-maths')) return 'skills';
   if (pathname.startsWith('/past-papers')) return 'papers';
   if (pathname.startsWith('/questions')) return 'questions';
-  if (pathname.startsWith('/tools')) return 'tools';
+  if (pathname.startsWith('/tools') || pathname.startsWith('/exam-tools')) return 'tools';
   return 'home';
 }
 
