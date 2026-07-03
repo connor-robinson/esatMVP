@@ -1,4 +1,4 @@
-/** Max free preview questions per subject (Math 1, Math 2, Physics). */
+/** Max free preview questions per subject (each ESAT hook set). */
 export const FREE_TIER_LIMIT_PER_SUBJECT = 10;
 
 /** @deprecated Use FREE_TIER_LIMIT_PER_SUBJECT */

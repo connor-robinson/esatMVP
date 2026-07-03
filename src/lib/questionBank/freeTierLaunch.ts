@@ -1,4 +1,7 @@
-import type { FreeTierPreviewSubject } from "@/lib/questionBank/freeTierQuestions";
+import {
+  isFreeTierPreviewSubject,
+  type FreeTierPreviewSubject,
+} from "@/lib/questionBank/freeTierQuestions";
 
 /** sessionStorage key: launch a subject-scoped free-tier session on the practice page */
 export const QUESTION_BANK_FREE_TIER_LAUNCH_KEY = "questionBankFreeTierLaunch";
@@ -23,11 +26,7 @@ export function readFreeTierLaunch(): QuestionBankFreeTierLaunchPayload | null {
   }
   try {
     const data = JSON.parse(raw) as QuestionBankFreeTierLaunchPayload;
-    if (
-      data?.subject === "Math 1" ||
-      data?.subject === "Math 2" ||
-      data?.subject === "Physics"
-    ) {
+    if (data?.subject && isFreeTierPreviewSubject(data.subject)) {
       return data;
     }
   } catch {

@@ -80,7 +80,7 @@ export const ESAT_BIOLOGY_HOOK_GENERATION_IDS = [
   "esat-biology-hook-10",
 ] as const;
 
-/** Free-tier preview hook sets (Math 1, Math 2, Physics). */
+/** Free-tier preview hook sets (all five ESAT subject hook sets). */
 export const ESAT_HOOK_SETS = [
   {
     setId: ESAT_M1_HOOK_SET_ID,
@@ -100,11 +100,6 @@ export const ESAT_HOOK_SETS = [
     dataFile: "esat_physics_hook_set_10_questions.json",
     generationIds: ESAT_PHYSICS_HOOK_GENERATION_IDS,
   },
-] as const;
-
-/** All hook sets imported into the question bank (includes bank-only sets). */
-export const ESAT_HOOK_IMPORT_SETS = [
-  ...ESAT_HOOK_SETS,
   {
     setId: ESAT_CHEMISTRY_HOOK_SET_ID,
     subject: "Chemistry" as const,
@@ -119,6 +114,9 @@ export const ESAT_HOOK_IMPORT_SETS = [
   },
 ] as const;
 
+/** All hook sets imported into the question bank (same as preview sets). */
+export const ESAT_HOOK_IMPORT_SETS = ESAT_HOOK_SETS;
+
 /** Stable DB primary key for a hook question generation_id. */
 export function hookQuestionDbId(generationId: string): string {
   const hash = createHash("sha256")
@@ -131,7 +129,7 @@ export function hookQuestionDbId(generationId: string): string {
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20, 32)}`;
 }
 
-/** All hook preview questions: Math 1, then Math 2, then Physics (30 total). */
+/** All hook preview questions across ESAT subjects (50 total). */
 export const ESAT_HOOK_PREVIEW_DB_IDS: readonly string[] = ESAT_HOOK_SETS.flatMap(
   (set) => set.generationIds.map(hookQuestionDbId),
 );

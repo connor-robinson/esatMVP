@@ -12,6 +12,7 @@ import type { QuestionBankHomeLaunchPayload } from "@/lib/questionBank/homeLaunc
 import { writeFreeTierLaunch } from "@/lib/questionBank/freeTierLaunch";
 import {
   FREE_TIER_LIMIT_PER_SUBJECT,
+  FREE_TIER_PREVIEW_SUBJECTS,
   isFreeTierPreviewSubject,
   type FreeTierPreviewSubject,
 } from "@/lib/questionBank/freeTierQuestions";
@@ -309,8 +310,8 @@ export function QuestionBankHomeScreen() {
   };
 
   const launchMixedFreePreview = () => {
-    const firstAvailable = (["Math 1", "Math 2", "Physics"] as const).find(
-      (subject) => previewAvailableFor(subject),
+    const firstAvailable = FREE_TIER_PREVIEW_SUBJECTS.find((subject) =>
+      previewAvailableFor(subject),
     );
     if (!firstAvailable) {
       setBlockedSubject(null);
@@ -381,7 +382,7 @@ export function QuestionBankHomeScreen() {
       <DrillUpgradeBanner
         variant="panel"
         headline="Try 10 free questions per subject"
-        subtext="Math 1, Math 2 and Physics preview sets. Upgrade for the full question bank."
+        subtext="Preview sets for Math 1, Math 2, Physics, Chemistry and Biology. Upgrade for the full question bank."
         ctaLabel="View plans"
       />
     );
@@ -575,7 +576,7 @@ export function QuestionBankHomeScreen() {
           <section className="space-y-4">
             <p className="text-center text-sm text-text-muted">
               Free preview limits (per subject):{" "}
-              {(["Math 1", "Math 2", "Physics"] as const).map((subject, index) => {
+              {FREE_TIER_PREVIEW_SUBJECTS.map((subject, index) => {
                 const row = subjectStatus(subject);
                 return (
                   <span key={subject}>
