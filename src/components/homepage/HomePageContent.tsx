@@ -2,8 +2,8 @@
 
 import { useHomepageState } from "@/hooks/useHomepageState";
 import { HomepageLoadingState } from "@/components/homepage/LoadingState";
-import { LoggedOutHomepage } from "@/components/homepage/LoggedOutHomepage";
 import { LoggedInHomepage } from "@/components/homepage/LoggedInHomepage";
+import { MarketingHomepage } from "@/components/home/MarketingHomepage";
 
 export function HomePageContent() {
   const state = useHomepageState();
@@ -13,12 +13,7 @@ export function HomePageContent() {
   }
 
   if (!state.isLoggedIn) {
-    return (
-      <LoggedOutHomepage
-        primaryAction={state.primaryAction}
-        premiumOverview={state.upgradePrompt}
-      />
-    );
+    return <MarketingHomepage />;
   }
 
   return <LoggedInHomepage state={state} />;

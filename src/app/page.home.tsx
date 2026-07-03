@@ -1,17 +1,13 @@
 /**
- * Saved homepage layout (landing page)
+ * Saved homepage layout reference
  *
- * This preserves the original marketing homepage while we temporarily
- * redirect `/` to the mental maths drill page.
+ * The original marketing homepage lives at:
+ *   src/components/home/MarketingHomepage.tsx
  *
- * To restore this as the main homepage:
- * 1. Rename `page.tsx` to `page.redirect.tsx`
- * 2. Rename this file to `page.tsx`
+ * Logged-in users see the dashboard at:
+ *   src/components/homepage/LoggedInHomepage.tsx
+ *
+ * Both are wired through src/components/homepage/HomePageContent.tsx
  */
 
-"use client";
-
-import HomePage from "./page";
-
-export default HomePage;
-
+export {};
