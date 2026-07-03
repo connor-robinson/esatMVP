@@ -6,7 +6,10 @@
 
 import { useState } from 'react';
 import { Check, Plus, Home, Info, X, Lock } from 'lucide-react';
-import { GuestDrillHint } from '@/components/builder/GuestDrillHint';
+import {
+  GuestDrillDimOverlay,
+  GuestDrillHintCallout,
+} from '@/components/builder/GuestDrillHint';
 import type { HighLevelCategory } from '@/components/builder/TopicFolders';
 import { getDisplayFolder, isFolderBeta, isFolderComingSoon } from '@/config/drillDisplayFolders';
 import { getMostUsefulDrillModules } from '@/config/mostUsefulDrills';
@@ -105,6 +108,12 @@ function DrillModuleCard({
         selected={isSelected && !locked}
       />
       <div className='relative mt-2 flex justify-end'>
+        {hintVisible ? (
+          <GuestDrillHintCallout
+            label='Try this mode'
+            className='absolute bottom-[calc(100%+0.35rem)] right-0 z-[60] items-end'
+          />
+        ) : null}
         {locked ? (
           <span className='flex items-center gap-1.5 rounded-organic-sm bg-surface-dark px-3 py-2 text-xs font-bold text-text-muted'>
             <Lock className='h-3.5 w-3.5 shrink-0' aria-hidden />
@@ -290,9 +299,7 @@ export function DrillVariantsGrid({
             })}
           </div>
 
-          {showGuestTryHint ? (
-            <GuestDrillHint variant='spotlight' label='Try this mode' />
-          ) : null}
+          {showGuestTryHint ? <GuestDrillDimOverlay /> : null}
         </div>
 
         {showUpgradeBanner && hasLockedModules ? (

@@ -19,7 +19,7 @@ import type { SessionLengthMode, TopicVariantSelection } from "@/types/core";
 import { cn } from "@/lib/utils";
 import { primaryButtonLabelClasses, removeButtonLabelClasses } from "@/config/theme";
 import { SessionLengthControl } from "@/components/ui/SessionLengthControl";
-import { GuestDrillHint } from "@/components/builder/GuestDrillHint";
+import { GuestDrillHintCallout } from "@/components/builder/GuestDrillHint";
 
 /** Session length + “questions” — session green in light, inverted text in dark. */
 const FIGMA_SESSION_LABEL = "text-session-green dark:text-text";
@@ -190,15 +190,10 @@ export function SessionSelectionBar({
           className,
         )}
       >
-        {showStartHint && canStartSession ? (
-          <GuestDrillHint
-            label={startHintLabel}
-            className="absolute bottom-[calc(100%+0.35rem)] right-3 z-30 items-end"
-          />
-        ) : null}
         <div
           className={cn(
-            "flex flex-col overflow-hidden rounded-organic-xl bg-surface-elevated dark:bg-surface-elevated",
+            "relative flex flex-col overflow-hidden rounded-organic-xl bg-surface-elevated dark:bg-surface-elevated",
+            showStartHint && canStartSession && "z-50",
             /** Solid “stamp” shadow (no soft multi-layer blur). */
             "shadow-[0_5px_0_0_rgba(0,0,0,0.12)] dark:shadow-[0_7px_0_0_rgba(0,0,0,0.38)]",
             "transition-[box-shadow,transform] duration-200 ease-signature",
@@ -375,26 +370,37 @@ export function SessionSelectionBar({
                   {clearLabel}
                 </button>
               ) : null}
-              <button
-                type="button"
-                onClick={onStart}
-                disabled={!canStartSession}
-                className={cn(
-                  "inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-organic-lg px-5 text-sm font-bold transition-all duration-200 ease-signature",
-                  showClearAll ? "flex-1 sm:flex-initial" : "w-full min-w-0 flex-1 sm:w-auto sm:min-w-[12rem]",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated dark:focus-visible:ring-offset-surface-elevated",
-                  "disabled:cursor-not-allowed",
-                  canStartSession
-                    ? cn(
-                        "bg-primary shadow-md shadow-primary/20 hover:bg-primary-hover active:scale-[0.97]",
-                        primaryButtonLabelClasses,
-                      )
-                    : "bg-surface-mid text-text-disabled dark:bg-surface-neutral [&_svg]:opacity-40",
-                )}
-              >
-                {startLabel}
-                <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
-              </button>
+              <div className="relative min-w-0 flex-1 sm:flex-initial">
+                {showStartHint && canStartSession ? (
+                  <GuestDrillHintCallout
+                    label={startHintLabel}
+                    className="absolute bottom-[calc(100%+0.45rem)] right-0 z-50 items-end"
+                  />
+                ) : null}
+                <button
+                  type="button"
+                  onClick={onStart}
+                  disabled={!canStartSession}
+                  className={cn(
+                    "inline-flex min-h-[2.75rem] w-full items-center justify-center gap-2 rounded-organic-lg px-5 text-sm font-bold transition-all duration-200 ease-signature",
+                    showClearAll ? "sm:w-auto" : "sm:min-w-[12rem]",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated dark:focus-visible:ring-offset-surface-elevated",
+                    "disabled:cursor-not-allowed",
+                    showStartHint &&
+                      canStartSession &&
+                      "relative z-50 shadow-[0_0_0_2px_var(--color-primary)]",
+                    canStartSession
+                      ? cn(
+                          "bg-primary shadow-md shadow-primary/20 hover:bg-primary-hover active:scale-[0.97]",
+                          primaryButtonLabelClasses,
+                        )
+                      : "bg-surface-mid text-text-disabled dark:bg-surface-neutral [&_svg]:opacity-40",
+                  )}
+                >
+                  {startLabel}
+                  <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
+                </button>
+              </div>
             </div>
           </div>
         </div>

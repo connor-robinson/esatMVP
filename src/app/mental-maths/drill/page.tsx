@@ -18,8 +18,12 @@ import {
   type HighLevelCategory,
 } from "@/components/builder/TopicFolders";
 import { DrillVariantsGrid } from "@/components/builder/DrillVariantsGrid";
-import { FEATURED_FREE_DRILL_KEY } from "@/components/builder/GuestDrillHint";
+import {
+  FEATURED_FREE_DRILL_KEY,
+  GuestDrillDimOverlay,
+} from "@/components/builder/GuestDrillHint";
 import { DrillsSelectedModal } from "@/components/builder/DrillsSelectedModal";
+import { cn } from "@/lib/utils";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 // Lazy load session components
@@ -83,6 +87,8 @@ export default function BuilderPage() {
   const hasFeaturedDrillSelected = builder.selectedTopicVariants.some(
     (tv) => `${tv.topicId}-${tv.variantId}` === FEATURED_FREE_DRILL_KEY,
   );
+  const showGuestTryHint = showGuestOnboarding && !hasFeaturedDrillSelected;
+  const showGuestReviewHint = showGuestOnboarding && hasFeaturedDrillSelected;
 
   useEffect(() => {
     if (reviewModalOpen && builder.selectedTopicVariants.length === 0) {
@@ -96,7 +102,8 @@ export default function BuilderPage() {
       <div className="relative h-[calc(100vh-65px)] max-h-[calc(100vh-65px)] overflow-hidden bg-background">
         {/* ~90% visual density: render slightly larger then scale down to fit the viewport. */}
         <div className="flex h-[111.111%] w-[111.111%] min-h-0 origin-top-left scale-90 flex-col bg-background">
-          <div className="flex min-h-0 flex-1 items-stretch gap-2.5 overflow-hidden px-3 py-3 sm:gap-3.5 sm:px-4 lg:gap-5">
+          <div className="relative flex min-h-0 flex-1 items-stretch gap-2.5 overflow-hidden px-3 py-3 sm:gap-3.5 sm:px-4 lg:gap-5">
+            {showGuestReviewHint ? <GuestDrillDimOverlay /> : null}
             {/* Column 1: Subject Categories */}
             <SubjectCategories
               selectedCategory={selectedCategory}
@@ -137,7 +144,7 @@ export default function BuilderPage() {
                   accessibleTopicIds={accessibleTopicIds}
                   showUpgradeBanner={!subscriptionLoading && !hasFullAccess}
                   isLoggedIn={isLoggedIn}
-                  showGuestTryHint={showGuestOnboarding && !hasFeaturedDrillSelected}
+                  showGuestTryHint={showGuestTryHint}
                   selectedTopicIds={builder.selectedTopicVariants.map((tv) => `${tv.topicId}-${tv.variantId}`)}
                   onAddVariant={builder.addTopic}
                   onRemoveVariant={builder.removeTopicVariant}
@@ -147,7 +154,12 @@ export default function BuilderPage() {
           </div>
 
           {/* Session bar in document flow so scroll content (incl. upgrade banner) is not covered. */}
-          <div className="pointer-events-none z-10 flex shrink-0 justify-center px-3 pb-3 pt-1 sm:justify-end sm:px-4 sm:pb-3.5">
+          <div
+            className={cn(
+              "pointer-events-none flex shrink-0 justify-center px-3 pb-3 pt-1 sm:justify-end sm:px-4 sm:pb-3.5",
+              showGuestReviewHint ? "relative z-50" : "z-10",
+            )}
+          >
             <div className="pointer-events-auto w-full max-w-[min(100%,26rem)] sm:w-auto sm:max-w-none">
               <SessionSelectionBar
                 density="compact"
