@@ -8,41 +8,41 @@ export const ESAT_M2_HOOK_SET_ID = "esat-m2-hook-set-01";
 export const ESAT_PHYSICS_HOOK_SET_ID = "esat-physics-hook-set-01";
 
 export const ESAT_M1_HOOK_GENERATION_IDS = [
-  "esat-m1-hook-01",
-  "esat-m1-hook-02",
   "esat-m1-hook-03",
-  "esat-m1-hook-04",
-  "esat-m1-hook-05",
   "esat-m1-hook-06",
-  "esat-m1-hook-07",
-  "esat-m1-hook-08",
-  "esat-m1-hook-09",
+  "esat-m1-hook-05",
   "esat-m1-hook-10",
+  "esat-m1-hook-08",
+  "esat-m1-hook-02",
+  "esat-m1-hook-01",
+  "esat-m1-hook-07",
+  "esat-m1-hook-04",
+  "esat-m1-hook-09",
 ] as const;
 
 export const ESAT_M2_HOOK_GENERATION_IDS = [
   "esat-m2-hook-01",
-  "esat-m2-hook-02",
   "esat-m2-hook-03",
-  "esat-m2-hook-04",
+  "esat-m2-hook-08",
+  "esat-m2-hook-10",
+  "esat-m2-hook-02",
   "esat-m2-hook-05",
   "esat-m2-hook-06",
+  "esat-m2-hook-04",
   "esat-m2-hook-07",
-  "esat-m2-hook-08",
   "esat-m2-hook-09",
-  "esat-m2-hook-10",
 ] as const;
 
 export const ESAT_PHYSICS_HOOK_GENERATION_IDS = [
-  "esat-physics-hook-01",
-  "esat-physics-hook-02",
-  "esat-physics-hook-03",
   "esat-physics-hook-04",
-  "esat-physics-hook-05",
-  "esat-physics-hook-06",
-  "esat-physics-hook-07",
-  "esat-physics-hook-08",
+  "esat-physics-hook-02",
+  "esat-physics-hook-01",
   "esat-physics-hook-09",
+  "esat-physics-hook-06",
+  "esat-physics-hook-08",
+  "esat-physics-hook-05",
+  "esat-physics-hook-03",
+  "esat-physics-hook-07",
   "esat-physics-hook-10",
 ] as const;
 

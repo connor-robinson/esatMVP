@@ -22,168 +22,8 @@
   },
   "questions": [
     {
-      "id": "esat-m1-hook-01",
-      "order": 1,
-      "difficulty": "accessible",
-      "difficultyScore": 2,
-      "estimatedSeconds": 75,
-      "topics": [
-        "Units",
-        "Volume",
-        "Percentage",
-        "Rate"
-      ],
-      "specRefs": [
-        "M1.2",
-        "M3.8"
-      ],
-      "stemMarkdown": "A rectangular tank measures \\(0.8\\text{ m}\\) by \\(0.5\\text{ m}\\) by \\(0.45\\text{ m}\\). It is \\(80\\%\\) full of water.\\n\\nWater is removed at a constant rate of \\(12\\) litres per minute.\\n\\nHow long does it take to empty the tank?",
-      "diagramSvg": null,
-      "options": [
-        {
-          "id": "A",
-          "textMarkdown": "\\(180\\text{ s}\\)"
-        },
-        {
-          "id": "B",
-          "textMarkdown": "\\(12\\text{ s}\\)"
-        },
-        {
-          "id": "C",
-          "textMarkdown": "\\(576\\text{ s}\\)"
-        },
-        {
-          "id": "D",
-          "textMarkdown": "\\(900\\text{ s}\\)"
-        },
-        {
-          "id": "E",
-          "textMarkdown": "\\(720\\text{ s}\\)"
-        },
-        {
-          "id": "F",
-          "textMarkdown": "\\(144\\text{ s}\\)"
-        }
-      ],
-      "correctOptionId": "E",
-      "solution": {
-        "title": "Use the amount of water actually in the tank.",
-        "stepsMarkdown": [
-          "Full volume: \\(0.8\\times0.5\\times0.45=0.18\\text{ m}^3=180\\) litres.",
-          "Water present: \\(0.8\\times180=144\\) litres.",
-          "Time: \\(144\\div12=12\\) minutes \\(=720\\) seconds."
-        ],
-        "finalAnswerMarkdown": "\\(\\boxed{720\\text{ s}}\\)"
-      },
-      "distractorMap": [
-        {
-          "optionId": "A",
-          "reason": "Uses the empty 20% of the tank instead of the water present."
-        },
-        {
-          "optionId": "B",
-          "reason": "Finds 12 minutes, then labels it as seconds."
-        },
-        {
-          "optionId": "C",
-          "reason": "Applies the 80% factor twice."
-        },
-        {
-          "optionId": "D",
-          "reason": "Calculates the time for a completely full tank."
-        },
-        {
-          "optionId": "E",
-          "reason": "Correct."
-        },
-        {
-          "optionId": "F",
-          "reason": "Treats the 144 litres as a time in seconds."
-        }
-      ]
-    },
-    {
-      "id": "esat-m1-hook-02",
-      "order": 2,
-      "difficulty": "accessible",
-      "difficultyScore": 2,
-      "estimatedSeconds": 70,
-      "topics": [
-        "Surds",
-        "Rationalising denominators"
-      ],
-      "specRefs": [
-        "M2.11"
-      ],
-      "stemMarkdown": "Which of the following is equal to\\n\\n\\[\\frac{3+\\sqrt5}{\\sqrt5-1}\\,?\\]",
-      "diagramSvg": null,
-      "options": [
-        {
-          "id": "A",
-          "textMarkdown": "\\(\\dfrac{1+\\sqrt5}{2}\\)"
-        },
-        {
-          "id": "B",
-          "textMarkdown": "\\(2-\\sqrt5\\)"
-        },
-        {
-          "id": "C",
-          "textMarkdown": "\\(4+2\\sqrt5\\)"
-        },
-        {
-          "id": "D",
-          "textMarkdown": "\\(2+\\sqrt5\\)"
-        },
-        {
-          "id": "E",
-          "textMarkdown": "\\(1+\\sqrt5\\)"
-        },
-        {
-          "id": "F",
-          "textMarkdown": "\\(\\dfrac{3+\\sqrt5}{4}\\)"
-        }
-      ],
-      "correctOptionId": "D",
-      "solution": {
-        "title": "Multiply by the conjugate.",
-        "stepsMarkdown": [
-          "\\[\\frac{3+\\sqrt5}{\\sqrt5-1}\\times\\frac{\\sqrt5+1}{\\sqrt5+1}\\]",
-          "The denominator is \\(5-1=4\\).",
-          "The numerator is \\((3+\\sqrt5)(\\sqrt5+1)=8+4\\sqrt5\\).",
-          "So the value is \\(\\dfrac{8+4\\sqrt5}{4}=2+\\sqrt5\\)."
-        ],
-        "finalAnswerMarkdown": "\\(\\boxed{2+\\sqrt5}\\)"
-      },
-      "distractorMap": [
-        {
-          "optionId": "A",
-          "reason": "A familiar surd value, but it does not come from this fraction."
-        },
-        {
-          "optionId": "B",
-          "reason": "Uses the wrong sign after multiplying by the conjugate."
-        },
-        {
-          "optionId": "C",
-          "reason": "Stops before dividing the numerator by 4."
-        },
-        {
-          "optionId": "D",
-          "reason": "Correct."
-        },
-        {
-          "optionId": "E",
-          "reason": "Divides the constant term incorrectly."
-        },
-        {
-          "optionId": "F",
-          "reason": "Changes the denominator but leaves the numerator untouched."
-        }
-      ]
-    },
-    {
       "id": "esat-m1-hook-03",
-      "order": 3,
+      "order": 1,
       "difficulty": "accessible",
       "difficultyScore": 2,
       "estimatedSeconds": 70,
@@ -261,88 +101,89 @@
       ]
     },
     {
-      "id": "esat-m1-hook-04",
-      "order": 4,
-      "difficulty": "medium",
-      "difficultyScore": 3,
-      "estimatedSeconds": 90,
+      "id": "esat-m1-hook-06",
+      "order": 2,
+      "difficulty": "hard",
+      "difficultyScore": 4,
+      "estimatedSeconds": 100,
       "topics": [
-        "Algebraic fractions",
-        "Factorisation"
+        "Similarity",
+        "Right-angled triangles"
       ],
       "specRefs": [
-        "M4.5",
-        "M4.7"
+        "M5.5",
+        "M5.6",
+        "M5.8"
       ],
-      "stemMarkdown": "For values of \\(x\\) for which the expression is defined, simplify\\n\\n\\[\\frac{2x^2-5x-3}{4x^2-9}\\div\\frac{x-3}{2x+3}.\\]",
-      "diagramSvg": null,
+      "stemMarkdown": "Triangle \\(ABC\\) is right-angled at \\(A\\). The perpendicular from \\(A\\) meets \\(BC\\) at \\(D\\).\\n\\nGiven \\(BD=9\\text{ cm}\\) and \\(DC=16\\text{ cm}\\), find \\(AD\\).",
+      "diagramSvg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 460 270\" role=\"img\" aria-label=\"Right-angled triangle ABC with altitude AD to hypotenuse BC. BD is 9 centimetres and DC is 16 centimetres.\">\n  <style>\n    .line{stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}\n    .thin{stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}\n    .label{font:20px serif;fill:currentColor}\n    .small{font:18px serif;fill:currentColor}\n  </style>\n  <path class=\"line\" d=\"M75 220 L200 55 L400 220 Z\"/>\n  <path class=\"line\" d=\"M200 55 L200 220\"/>\n  <path class=\"thin\" d=\"M200 203 L217 203 L217 220\"/>\n  <path class=\"thin\" d=\"M192.2 65.4 L202.2 73.6 L210.0 63.3\"/>\n  <text class=\"label\" x=\"184\" y=\"42\">A</text>\n  <text class=\"label\" x=\"52\" y=\"244\">B</text>\n  <text class=\"label\" x=\"405\" y=\"244\">C</text>\n  <text class=\"label\" x=\"190\" y=\"246\">D</text>\n  <text class=\"small\" x=\"122\" y=\"247\">9 cm</text>\n  <text class=\"small\" x=\"278\" y=\"247\">16 cm</text>\n  <text class=\"small\" x=\"215\" y=\"128\">?</text>\n  <text class=\"small\" x=\"168\" y=\"112\">90°</text>\n</svg>",
       "options": [
         {
           "id": "A",
-          "textMarkdown": "\\(\\dfrac{2x+1}{2x+3}\\)"
+          "textMarkdown": "\\(7\\text{ cm}\\)"
         },
         {
           "id": "B",
-          "textMarkdown": "\\(\\dfrac{x-3}{2x-3}\\)"
+          "textMarkdown": "\\(9\\text{ cm}\\)"
         },
         {
           "id": "C",
-          "textMarkdown": "\\(\\dfrac{2x-3}{2x+1}\\)"
+          "textMarkdown": "\\(12.5\\text{ cm}\\)"
         },
         {
           "id": "D",
-          "textMarkdown": "\\(\\dfrac{2x+1}{4x^2-9}\\)"
+          "textMarkdown": "\\(12\\text{ cm}\\)"
         },
         {
           "id": "E",
-          "textMarkdown": "\\(\\dfrac{2x+1}{x-3}\\)"
+          "textMarkdown": "\\(15\\text{ cm}\\)"
         },
         {
           "id": "F",
-          "textMarkdown": "\\(\\dfrac{2x+1}{2x-3}\\)"
+          "textMarkdown": "\\(25\\text{ cm}\\)"
         }
       ],
-      "correctOptionId": "F",
+      "correctOptionId": "D",
       "solution": {
-        "title": "Factor first, then turn the division into multiplication.",
+        "title": "Use the two smaller similar triangles.",
         "stepsMarkdown": [
-          "\\(2x^2-5x-3=(2x+1)(x-3)\\).",
-          "\\(4x^2-9=(2x-3)(2x+3)\\).",
-          "\\[\\frac{(2x+1)(x-3)}{(2x-3)(2x+3)}\\times\\frac{2x+3}{x-3}\\]",
-          "Cancel the common factors to get \\(\\dfrac{2x+1}{2x-3}\\)."
+          "Triangles \\(ABD\\) and \\(ACD\\) are similar.",
+          "Matching sides give \\(\\dfrac{AD}{BD}=\\dfrac{DC}{AD}\\).",
+          "So \\(AD^2=BD\\times DC=9\\times16=144\\).",
+          "Therefore \\(AD=12\\text{ cm}\\)."
         ],
-        "finalAnswerMarkdown": "\\(\\boxed{\\dfrac{2x+1}{2x-3}}\\)"
+        "finalAnswerMarkdown": "\\(\\boxed{12\\text{ cm}}\\)"
       },
       "distractorMap": [
         {
           "optionId": "A",
-          "reason": "Does not fully invert the second fraction before multiplying."
+          "reason": "Subtracts the two hypotenuse segments."
         },
         {
           "optionId": "B",
-          "reason": "Cancels the wrong factor from the first numerator."
+          "reason": "Copies the shorter hypotenuse segment."
         },
         {
           "optionId": "C",
-          "reason": "Takes the reciprocal of the final answer."
+          "reason": "Takes the arithmetic mean of 9 and 16; similarity requires a geometric mean."
         },
         {
           "optionId": "D",
-          "reason": "Cancels \\(x-3\\) but does not use the reciprocal correctly."
+          "reason": "Correct."
         },
         {
           "optionId": "E",
-          "reason": "Cancels factors across the division sign before rewriting it as multiplication."
+          "reason": "This is the other leg of the 9–12–15 triangle, not the altitude."
         },
         {
           "optionId": "F",
-          "reason": "Correct."
+          "reason": "Adds the two parts of the hypotenuse."
         }
       ]
     },
     {
       "id": "esat-m1-hook-05",
-      "order": 5,
+      "order": 3,
       "difficulty": "medium",
       "difficultyScore": 3,
       "estimatedSeconds": 90,
@@ -421,167 +262,90 @@
       ]
     },
     {
-      "id": "esat-m1-hook-06",
-      "order": 6,
+      "id": "esat-m1-hook-10",
+      "order": 4,
       "difficulty": "hard",
       "difficultyScore": 4,
-      "estimatedSeconds": 100,
-      "topics": [
-        "Similarity",
-        "Right-angled triangles"
-      ],
-      "specRefs": [
-        "M5.5",
-        "M5.6",
-        "M5.8"
-      ],
-      "stemMarkdown": "Triangle \\(ABC\\) is right-angled at \\(A\\). The perpendicular from \\(A\\) meets \\(BC\\) at \\(D\\).\\n\\nGiven \\(BD=9\\text{ cm}\\) and \\(DC=16\\text{ cm}\\), find \\(AD\\).",
-      "diagramSvg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 460 270\" role=\"img\" aria-label=\"Right-angled triangle ABC with altitude AD to hypotenuse BC. BD is 9 centimetres and DC is 16 centimetres.\">\n  <style>\n    .line{stroke:currentColor;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}\n    .thin{stroke:currentColor;stroke-width:2;fill:none}\n    .label{font:20px serif;fill:currentColor}\n    .small{font:18px serif;fill:currentColor}\n  </style>\n  <path class=\"line\" d=\"M75 220 L200 55 L400 220 Z\"/>\n  <path class=\"line\" d=\"M200 55 L200 220\"/>\n  <path class=\"thin\" d=\"M200 203 L217 203 L217 220\"/>\n  <path class=\"thin\" d=\"M188 71 L203.4 83.7 L215.4 67.7\"/>\n  <text class=\"label\" x=\"184\" y=\"42\">A</text>\n  <text class=\"label\" x=\"52\" y=\"244\">B</text>\n  <text class=\"label\" x=\"405\" y=\"244\">C</text>\n  <text class=\"label\" x=\"190\" y=\"246\">D</text>\n  <text class=\"small\" x=\"122\" y=\"247\">9 cm</text>\n  <text class=\"small\" x=\"278\" y=\"247\">16 cm</text>\n  <text class=\"small\" x=\"215\" y=\"128\">?</text>\n  <text class=\"small\" x=\"196\" y=\"78\">90°</text>\n</svg>",
-      "options": [
-        {
-          "id": "A",
-          "textMarkdown": "\\(7\\text{ cm}\\)"
-        },
-        {
-          "id": "B",
-          "textMarkdown": "\\(9\\text{ cm}\\)"
-        },
-        {
-          "id": "C",
-          "textMarkdown": "\\(12.5\\text{ cm}\\)"
-        },
-        {
-          "id": "D",
-          "textMarkdown": "\\(12\\text{ cm}\\)"
-        },
-        {
-          "id": "E",
-          "textMarkdown": "\\(15\\text{ cm}\\)"
-        },
-        {
-          "id": "F",
-          "textMarkdown": "\\(25\\text{ cm}\\)"
-        }
-      ],
-      "correctOptionId": "D",
-      "solution": {
-        "title": "Use the two smaller similar triangles.",
-        "stepsMarkdown": [
-          "Triangles \\(ABD\\) and \\(ACD\\) are similar.",
-          "Matching sides give \\(\\dfrac{AD}{BD}=\\dfrac{DC}{AD}\\).",
-          "So \\(AD^2=BD\\times DC=9\\times16=144\\).",
-          "Therefore \\(AD=12\\text{ cm}\\)."
-        ],
-        "finalAnswerMarkdown": "\\(\\boxed{12\\text{ cm}}\\)"
-      },
-      "distractorMap": [
-        {
-          "optionId": "A",
-          "reason": "Subtracts the two hypotenuse segments."
-        },
-        {
-          "optionId": "B",
-          "reason": "Copies the shorter hypotenuse segment."
-        },
-        {
-          "optionId": "C",
-          "reason": "Takes the arithmetic mean of 9 and 16; similarity requires a geometric mean."
-        },
-        {
-          "optionId": "D",
-          "reason": "Correct."
-        },
-        {
-          "optionId": "E",
-          "reason": "This is the other leg of the 9–12–15 triangle, not the altitude."
-        },
-        {
-          "optionId": "F",
-          "reason": "Adds the two parts of the hypotenuse."
-        }
-      ]
-    },
-    {
-      "id": "esat-m1-hook-07",
-      "order": 7,
-      "difficulty": "medium",
-      "difficultyScore": 3,
       "estimatedSeconds": 90,
       "topics": [
-        "Exact trigonometry",
-        "Composite geometry"
+        "Pythagoras",
+        "Algebraic identities",
+        "Area"
       ],
       "specRefs": [
-        "M5.18"
+        "M4.5",
+        "M5.8",
+        "M5.16"
       ],
-      "stemMarkdown": "In trapezium \\(ABCD\\), \\(AD\\parallel BC\\). The perpendicular height is \\(6\\text{ cm}\\), \\(BC=4\\text{ cm}\\), \\(\\angle A=30^\\circ\\), and \\(\\angle D=45^\\circ\\).\\n\\nFind \\(AD\\).",
-      "diagramSvg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 520 300\" role=\"img\" aria-label=\"Trapezium ABCD with parallel horizontal sides. The top side is 4 centimetres, the perpendicular height is 6 centimetres, and the lower left and lower right angles are 30 degrees and 45 degrees.\">\n  <style>\n    .line{stroke:#111;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}\n    .dash{stroke:#555;stroke-width:2;stroke-dasharray:7 7;fill:none}\n    .thin{stroke:#111;stroke-width:2;fill:none}\n    .label{font:20px serif;fill:#111}\n    .small{font:18px serif;fill:#111}\n  </style>\n  <path class=\"line\" d=\"M45 245 L180 70 L330 70 L455 245 Z\"/>\n  <path class=\"dash\" d=\"M180 70 L180 245\"/>\n  <path class=\"thin\" d=\"M180 228 L197 228 L197 245\"/>\n  <path class=\"thin\" d=\"M75 245 A32 32 0 0 1 95 220\"/>\n  <path class=\"thin\" d=\"M420 245 A35 35 0 0 0 435 218\"/>\n  <text class=\"label\" x=\"28\" y=\"268\">A</text>\n  <text class=\"label\" x=\"166\" y=\"54\">B</text>\n  <text class=\"label\" x=\"332\" y=\"54\">C</text>\n  <text class=\"label\" x=\"459\" y=\"268\">D</text>\n  <text class=\"small\" x=\"239\" y=\"57\">4 cm</text>\n  <text class=\"small\" x=\"190\" y=\"164\">6 cm</text>\n  <text class=\"small\" x=\"72\" y=\"220\">30°</text>\n  <text class=\"small\" x=\"411\" y=\"218\">45°</text>\n  <text class=\"small\" x=\"195\" y=\"287\">diagram not to scale</text>\n</svg>",
+      "stemMarkdown": "A rectangle has perimeter \\(34\\text{ cm}\\) and diagonal length \\(13\\text{ cm}\\).\\n\\nWhat is its area?",
+      "diagramSvg": null,
       "options": [
         {
           "id": "A",
-          "textMarkdown": "\\(10+6\\sqrt3\\text{ cm}\\)"
+          "textMarkdown": "\\(30\\text{ cm}^2\\)"
         },
         {
           "id": "B",
-          "textMarkdown": "\\(4+6\\sqrt3\\text{ cm}\\)"
+          "textMarkdown": "\\(60\\text{ cm}^2\\)"
         },
         {
           "id": "C",
-          "textMarkdown": "\\(10+3\\sqrt3\\text{ cm}\\)"
+          "textMarkdown": "\\(84.5\\text{ cm}^2\\)"
         },
         {
           "id": "D",
-          "textMarkdown": "\\(16+6\\sqrt3\\text{ cm}\\)"
+          "textMarkdown": "\\(120\\text{ cm}^2\\)"
         },
         {
           "id": "E",
-          "textMarkdown": "\\(10+\\dfrac{6}{\\sqrt3}\\text{ cm}\\)"
+          "textMarkdown": "\\(169\\text{ cm}^2\\)"
         },
         {
           "id": "F",
-          "textMarkdown": "\\(4+6\\sqrt3+6\\sqrt2\\text{ cm}\\)"
+          "textMarkdown": "\\(289\\text{ cm}^2\\)"
         }
       ],
-      "correctOptionId": "A",
+      "correctOptionId": "B",
       "solution": {
-        "title": "Split the bottom side into three horizontal pieces.",
+        "title": "Use the sum of the side lengths and the diagonal together.",
         "stepsMarkdown": [
-          "Left-hand run: \\(6\\div\\tan30^\\circ=6\\sqrt3\\).",
-          "Right-hand run: \\(6\\div\\tan45^\\circ=6\\).",
-          "Add both runs and the top side: \\(AD=6\\sqrt3+4+6\\)."
+          "Let the side lengths be \\(a\\) and \\(b\\). From the perimeter, \\(a+b=17\\).",
+          "From Pythagoras, \\(a^2+b^2=13^2=169\\).",
+          "\\((a+b)^2=a^2+b^2+2ab\\), so \\(17^2=169+2ab\\).",
+          "Thus \\(2ab=120\\), giving area \\(ab=60\\text{ cm}^2\\)."
         ],
-        "finalAnswerMarkdown": "\\(\\boxed{10+6\\sqrt3\\text{ cm}}\\)"
+        "finalAnswerMarkdown": "\\(\\boxed{60\\text{ cm}^2}\\)"
       },
       "distractorMap": [
         {
           "optionId": "A",
-          "reason": "Correct."
+          "reason": "Finds \\(2ab=120\\), then divides by 4 rather than 2."
         },
         {
           "optionId": "B",
-          "reason": "Omits the 6 cm horizontal run on the right."
+          "reason": "Correct."
         },
         {
           "optionId": "C",
-          "reason": "Halves the left-hand horizontal run."
+          "reason": "Takes half of the diagonal squared."
         },
         {
           "optionId": "D",
-          "reason": "Adds the perpendicular height as an extra horizontal length."
+          "reason": "Finds \\(2ab\\) but forgets the final division by 2."
         },
         {
           "optionId": "E",
-          "reason": "Uses \\(6\\tan30^\\circ\\) instead of \\(6\\div\\tan30^\\circ\\)."
+          "reason": "Uses the diagonal squared as the rectangle's area."
         },
         {
           "optionId": "F",
-          "reason": "Uses the 45° triangle's hypotenuse instead of its horizontal side."
+          "reason": "Uses \\((a+b)^2\\) as the area."
         }
       ]
     },
     {
       "id": "esat-m1-hook-08",
-      "order": 8,
+      "order": 5,
       "difficulty": "hard",
       "difficultyScore": 4,
       "estimatedSeconds": 100,
@@ -662,67 +426,388 @@
       ]
     },
     {
-      "id": "esat-m1-hook-09",
+      "id": "esat-m1-hook-02",
+      "order": 6,
+      "difficulty": "accessible",
+      "difficultyScore": 2,
+      "estimatedSeconds": 70,
+      "topics": [
+        "Surds",
+        "Rationalising denominators"
+      ],
+      "specRefs": [
+        "M2.11"
+      ],
+      "stemMarkdown": "Which of the following is equal to\\n\\n\\[\\frac{3+\\sqrt5}{\\sqrt5-1}\\,?\\]",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(\\dfrac{1+\\sqrt5}{2}\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(2-\\sqrt5\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(4+2\\sqrt5\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(2+\\sqrt5\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(1+\\sqrt5\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(\\dfrac{3+\\sqrt5}{4}\\)"
+        }
+      ],
+      "correctOptionId": "D",
+      "solution": {
+        "title": "Multiply by the conjugate.",
+        "stepsMarkdown": [
+          "\\[\\frac{3+\\sqrt5}{\\sqrt5-1}\\times\\frac{\\sqrt5+1}{\\sqrt5+1}\\]",
+          "The denominator is \\(5-1=4\\).",
+          "The numerator is \\((3+\\sqrt5)(\\sqrt5+1)=8+4\\sqrt5\\).",
+          "So the value is \\(\\dfrac{8+4\\sqrt5}{4}=2+\\sqrt5\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{2+\\sqrt5}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "A familiar surd value, but it does not come from this fraction."
+        },
+        {
+          "optionId": "B",
+          "reason": "Uses the wrong sign after multiplying by the conjugate."
+        },
+        {
+          "optionId": "C",
+          "reason": "Stops before dividing the numerator by 4."
+        },
+        {
+          "optionId": "D",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "E",
+          "reason": "Divides the constant term incorrectly."
+        },
+        {
+          "optionId": "F",
+          "reason": "Changes the denominator but leaves the numerator untouched."
+        }
+      ]
+    },
+    {
+      "id": "esat-m1-hook-01",
+      "order": 7,
+      "difficulty": "accessible",
+      "difficultyScore": 2,
+      "estimatedSeconds": 75,
+      "topics": [
+        "Units",
+        "Volume",
+        "Percentage",
+        "Rate"
+      ],
+      "specRefs": [
+        "M1.2",
+        "M3.8"
+      ],
+      "stemMarkdown": "A rectangular tank measures \\(0.8\\text{ m}\\) by \\(0.5\\text{ m}\\) by \\(0.45\\text{ m}\\). It is \\(80\\%\\) full of water.\\n\\nWater is removed at a constant rate of \\(12\\) litres per minute.\\n\\nHow long does it take to empty the tank?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(180\\text{ s}\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(12\\text{ s}\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(576\\text{ s}\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(900\\text{ s}\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(720\\text{ s}\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(144\\text{ s}\\)"
+        }
+      ],
+      "correctOptionId": "E",
+      "solution": {
+        "title": "Use the amount of water actually in the tank.",
+        "stepsMarkdown": [
+          "Full volume: \\(0.8\\times0.5\\times0.45=0.18\\text{ m}^3=180\\) litres.",
+          "Water present: \\(0.8\\times180=144\\) litres.",
+          "Time: \\(144\\div12=12\\) minutes \\(=720\\) seconds."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{720\\text{ s}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Uses the empty 20% of the tank instead of the water present."
+        },
+        {
+          "optionId": "B",
+          "reason": "Finds 12 minutes, then labels it as seconds."
+        },
+        {
+          "optionId": "C",
+          "reason": "Applies the 80% factor twice."
+        },
+        {
+          "optionId": "D",
+          "reason": "Calculates the time for a completely full tank."
+        },
+        {
+          "optionId": "E",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "F",
+          "reason": "Treats the 144 litres as a time in seconds."
+        }
+      ]
+    },
+    {
+      "id": "esat-m1-hook-07",
+      "order": 8,
+      "difficulty": "medium",
+      "difficultyScore": 3,
+      "estimatedSeconds": 90,
+      "topics": [
+        "Exact trigonometry",
+        "Composite geometry"
+      ],
+      "specRefs": [
+        "M5.18"
+      ],
+      "stemMarkdown": "In trapezium \\(ABCD\\), \\(AD\\parallel BC\\). The perpendicular height is \\(6\\text{ cm}\\), \\(BC=4\\text{ cm}\\), \\(\\angle A=30^\\circ\\), and \\(\\angle D=45^\\circ\\).\\n\\nFind \\(AD\\).",
+      "diagramSvg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 600 300\" role=\"img\" aria-label=\"Trapezium ABCD with parallel horizontal sides. The top side is 4 centimetres, the perpendicular height is 6 centimetres, and the lower left and lower right angles are 30 degrees and 45 degrees.\">\n  <style>\n    .line{stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}\n    .dash{stroke:currentColor;stroke-width:1.5;stroke-dasharray:7 7;fill:none;opacity:0.55}\n    .thin{stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}\n    .label{font:20px serif;fill:currentColor}\n    .small{font:18px serif;fill:currentColor}\n  </style>\n  <path class=\"line\" d=\"M50 240 L310 90 L410 90 L560 240 Z\"/>\n  <path class=\"dash\" d=\"M310 90 L310 240\"/>\n  <path class=\"thin\" d=\"M310 223 L327 223 L327 240\"/>\n  <path class=\"thin\" d=\"M82 240 A32 32 0 0 1 72 218\"/>\n  <path class=\"thin\" d=\"M528 240 A32 32 0 0 0 538 218\"/>\n  <text class=\"label\" x=\"34\" y=\"262\">A</text>\n  <text class=\"label\" x=\"296\" y=\"74\">B</text>\n  <text class=\"label\" x=\"402\" y=\"74\">C</text>\n  <text class=\"label\" x=\"565\" y=\"262\">D</text>\n  <text class=\"small\" x=\"345\" y=\"72\">4 cm</text>\n  <text class=\"small\" x=\"318\" y=\"168\">6 cm</text>\n  <text class=\"small\" x=\"78\" y=\"228\">30°</text>\n  <text class=\"small\" x=\"498\" y=\"228\">45°</text>\n  <text class=\"small\" x=\"205\" y=\"287\">diagram not to scale</text>\n</svg>",
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(10+6\\sqrt3\\text{ cm}\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(4+6\\sqrt3\\text{ cm}\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(10+3\\sqrt3\\text{ cm}\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(16+6\\sqrt3\\text{ cm}\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(10+\\dfrac{6}{\\sqrt3}\\text{ cm}\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(4+6\\sqrt3+6\\sqrt2\\text{ cm}\\)"
+        }
+      ],
+      "correctOptionId": "A",
+      "solution": {
+        "title": "Split the bottom side into three horizontal pieces.",
+        "stepsMarkdown": [
+          "Left-hand run: \\(6\\div\\tan30^\\circ=6\\sqrt3\\).",
+          "Right-hand run: \\(6\\div\\tan45^\\circ=6\\).",
+          "Add both runs and the top side: \\(AD=6\\sqrt3+4+6\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{10+6\\sqrt3\\text{ cm}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "B",
+          "reason": "Omits the 6 cm horizontal run on the right."
+        },
+        {
+          "optionId": "C",
+          "reason": "Halves the left-hand horizontal run."
+        },
+        {
+          "optionId": "D",
+          "reason": "Adds the perpendicular height as an extra horizontal length."
+        },
+        {
+          "optionId": "E",
+          "reason": "Uses \\(6\\tan30^\\circ\\) instead of \\(6\\div\\tan30^\\circ\\)."
+        },
+        {
+          "optionId": "F",
+          "reason": "Uses the 45° triangle's hypotenuse instead of its horizontal side."
+        }
+      ]
+    },
+    {
+      "id": "esat-m1-hook-04",
       "order": 9,
       "difficulty": "medium",
       "difficultyScore": 3,
-      "estimatedSeconds": 95,
+      "estimatedSeconds": 90,
+      "topics": [
+        "Algebraic fractions",
+        "Factorisation"
+      ],
+      "specRefs": [
+        "M4.5",
+        "M4.7"
+      ],
+      "stemMarkdown": "For values of \\(x\\) for which the expression is defined, simplify\\n\\n\\[\\frac{2x^2-5x-3}{4x^2-9}\\div\\frac{x-3}{2x+3}.\\]",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(\\dfrac{2x+1}{2x+3}\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(\\dfrac{x-3}{2x-3}\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(\\dfrac{2x-3}{2x+1}\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(\\dfrac{2x+1}{4x^2-9}\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(\\dfrac{2x+1}{x-3}\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(\\dfrac{2x+1}{2x-3}\\)"
+        }
+      ],
+      "correctOptionId": "F",
+      "solution": {
+        "title": "Factor first, then turn the division into multiplication.",
+        "stepsMarkdown": [
+          "\\(2x^2-5x-3=(2x+1)(x-3)\\).",
+          "\\(4x^2-9=(2x-3)(2x+3)\\).",
+          "\\[\\frac{(2x+1)(x-3)}{(2x-3)(2x+3)}\\times\\frac{2x+3}{x-3}\\]",
+          "Cancel the common factors to get \\(\\dfrac{2x+1}{2x-3}\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{\\dfrac{2x+1}{2x-3}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Does not fully invert the second fraction before multiplying."
+        },
+        {
+          "optionId": "B",
+          "reason": "Cancels the wrong factor from the first numerator."
+        },
+        {
+          "optionId": "C",
+          "reason": "Takes the reciprocal of the final answer."
+        },
+        {
+          "optionId": "D",
+          "reason": "Cancels \\(x-3\\) but does not use the reciprocal correctly."
+        },
+        {
+          "optionId": "E",
+          "reason": "Cancels factors across the division sign before rewriting it as multiplication."
+        },
+        {
+          "optionId": "F",
+          "reason": "Correct."
+        }
+      ]
+    },
+    {
+      "id": "esat-m1-hook-09",
+      "order": 10,
+      "difficulty": "hard",
+      "difficultyScore": 4,
+      "estimatedSeconds": 115,
       "topics": [
         "Histograms",
         "Frequency density",
-        "Estimated median"
+        "Estimated median",
+        "Estimated mean"
       ],
       "specRefs": [
         "M6.2",
         "M6.3"
       ],
-      "stemMarkdown": "The table describes a histogram of the times, \\(t\\) minutes, taken by 50 students to finish a task.\\n\\n| Time \\(t\\) (minutes) | Frequency density |\\n|---|---:|\\n| \\(0<t\\le10\\) | \\(1.2\\) |\\n| \\(10<t\\le20\\) | \\(2.0\\) |\\n| \\(20<t\\le40\\) | \\(0.9\\) |\\n\\nWhat is the estimated median time?",
-      "diagramSvg": null,
+      "stemMarkdown": "The histogram shows the times, \\(t\\) minutes, taken by a group of students to complete a task. The frequency density for \\(10<t\\le20\\) is \\(h\\).\\n\\nUsing linear interpolation, the estimated median time is \\(18\\) minutes.\\n\\nWhat is the estimated mean time?",
+      "diagramSvg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 390\" role=\"img\" aria-label=\"Histogram with class intervals zero to ten, ten to twenty, twenty to thirty, and thirty to fifty minutes. The respective frequency densities are 1.2, h, 1.8, and 0.6.\">\n  <style>\n    .axis{stroke:#111;stroke-width:3;fill:none;stroke-linecap:round}\n    .bar{stroke:#111;stroke-width:3;fill:#f4f4f4}\n    .guide{stroke:#777;stroke-width:1.5;stroke-dasharray:6 7;fill:none}\n    .label{font:21px serif;fill:#111}\n    .small{font:18px serif;fill:#111}\n    .height{font:22px serif;font-style:italic;fill:#111}\n  </style>\n  <path class=\"axis\" d=\"M90 315 H665\"/>\n  <path class=\"axis\" d=\"M90 315 V45\"/>\n  <path class=\"axis\" d=\"M665 315 l-12 -7 M665 315 l-12 7\"/>\n  <path class=\"axis\" d=\"M90 45 l-7 12 M90 45 l7 12\"/>\n\n  <rect class=\"bar\" x=\"90\" y=\"195\" width=\"110\" height=\"120\"/>\n  <rect class=\"bar\" x=\"200\" y=\"95\" width=\"110\" height=\"220\"/>\n  <rect class=\"bar\" x=\"310\" y=\"135\" width=\"110\" height=\"180\"/>\n  <rect class=\"bar\" x=\"420\" y=\"255\" width=\"220\" height=\"60\"/>\n\n  <text class=\"small\" x=\"81\" y=\"342\">0</text>\n  <text class=\"small\" x=\"188\" y=\"342\">10</text>\n  <text class=\"small\" x=\"298\" y=\"342\">20</text>\n  <text class=\"small\" x=\"408\" y=\"342\">30</text>\n  <text class=\"small\" x=\"628\" y=\"342\">50</text>\n\n  <text class=\"small\" x=\"70\" y=\"260\">0.6</text>\n  <text class=\"small\" x=\"70\" y=\"200\">1.2</text>\n  <text class=\"small\" x=\"70\" y=\"140\">1.8</text>\n\n  <path class=\"guide\" d=\"M90 255 H640\"/>\n  <path class=\"guide\" d=\"M90 195 H200\"/>\n  <path class=\"guide\" d=\"M90 135 H420\"/>\n\n  <text class=\"small\" x=\"121\" y=\"188\">1.2</text>\n  <text class=\"height\" x=\"249\" y=\"86\">h</text>\n  <text class=\"small\" x=\"351\" y=\"128\">1.8</text>\n  <text class=\"small\" x=\"517\" y=\"248\">0.6</text>\n\n  <text class=\"label\" x=\"286\" y=\"378\">time, t / minutes</text>\n  <text class=\"label\" transform=\"translate(27 238) rotate(-90)\">frequency density</text>\n</svg>",
       "options": [
         {
           "id": "A",
-          "textMarkdown": "\\(12.5\\text{ min}\\)"
+          "textMarkdown": "\\(18\\text{ min}\\)"
         },
         {
           "id": "B",
-          "textMarkdown": "\\(15\\text{ min}\\)"
+          "textMarkdown": "\\(18.75\\text{ min}\\)"
         },
         {
           "id": "C",
-          "textMarkdown": "\\(16.5\\text{ min}\\)"
-        },
-        {
-          "id": "D",
-          "textMarkdown": "\\(17.5\\text{ min}\\)"
-        },
-        {
-          "id": "E",
           "textMarkdown": "\\(20\\text{ min}\\)"
         },
         {
+          "id": "D",
+          "textMarkdown": "\\(20.8\\text{ min}\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(24\\text{ min}\\)"
+        },
+        {
           "id": "F",
-          "textMarkdown": "\\(25\\text{ min}\\)"
+          "textMarkdown": "\\(25.8\\text{ min}\\)"
         }
       ],
       "correctOptionId": "C",
       "solution": {
-        "title": "Turn density into frequency before locating the median.",
+        "title": "Use the median to find the missing bar before calculating the mean.",
         "stepsMarkdown": [
-          "Frequencies are area: \\(10\\times1.2=12\\), \\(10\\times2=20\\), and \\(20\\times0.9=18\\).",
-          "The median is the 25th value, so it lies in \\(10<t\\le20\\).",
-          "It is the \\(25-12=13\\)th of the 20 values in that class.",
-          "Estimate: \\(10+\\dfrac{13}{20}\\times10=16.5\\) minutes."
+          "The class frequencies are \\(12,\\ 10h,\\ 18,\\ 12\\).",
+          "The median, \\(18\\), is \\(8/10\\) of the way through the second class. Therefore",
+          "\\[12+8h=\\frac12(42+10h).\\]",
+          "This gives \\(h=3\\), so the frequencies are \\(12,30,18,12\\), with total \\(72\\).",
+          "Using class midpoints \\(5,15,25,40\\),",
+          "\\[\\text{estimated mean}=\\frac{12(5)+30(15)+18(25)+12(40)}{72}=20.\\]"
         ],
-        "finalAnswerMarkdown": "\\(\\boxed{16.5\\text{ min}}\\)"
+        "finalAnswerMarkdown": "\\(\\boxed{20\\text{ min}}\\)"
       },
       "distractorMap": [
         {
           "optionId": "A",
-          "reason": "Uses half the median position as though it were a time."
+          "reason": "Uses the estimated median as though it were also the estimated mean."
         },
         {
           "optionId": "B",
-          "reason": "Takes the midpoint of the median class without using the frequencies."
+          "reason": "Treats the final class as having width 10 rather than 20."
         },
         {
           "optionId": "C",
@@ -730,97 +815,15 @@
         },
         {
           "optionId": "D",
-          "reason": "Places 15 rather than 13 of the class's 20 values below the median."
+          "reason": "Uses \\(h=2\\), which comes from locating the median halfway through its class."
         },
         {
           "optionId": "E",
-          "reason": "Uses the upper boundary of the median class."
+          "reason": "Uses the class boundaries rather than the class midpoints when estimating the mean."
         },
         {
           "optionId": "F",
-          "reason": "Confuses the median's position in the ordered list with its time value."
-        }
-      ]
-    },
-    {
-      "id": "esat-m1-hook-10",
-      "order": 10,
-      "difficulty": "hard",
-      "difficultyScore": 4,
-      "estimatedSeconds": 90,
-      "topics": [
-        "Pythagoras",
-        "Algebraic identities",
-        "Area"
-      ],
-      "specRefs": [
-        "M4.5",
-        "M5.8",
-        "M5.16"
-      ],
-      "stemMarkdown": "A rectangle has perimeter \\(34\\text{ cm}\\) and diagonal length \\(13\\text{ cm}\\).\\n\\nWhat is its area?",
-      "diagramSvg": null,
-      "options": [
-        {
-          "id": "A",
-          "textMarkdown": "\\(30\\text{ cm}^2\\)"
-        },
-        {
-          "id": "B",
-          "textMarkdown": "\\(60\\text{ cm}^2\\)"
-        },
-        {
-          "id": "C",
-          "textMarkdown": "\\(84.5\\text{ cm}^2\\)"
-        },
-        {
-          "id": "D",
-          "textMarkdown": "\\(120\\text{ cm}^2\\)"
-        },
-        {
-          "id": "E",
-          "textMarkdown": "\\(169\\text{ cm}^2\\)"
-        },
-        {
-          "id": "F",
-          "textMarkdown": "\\(289\\text{ cm}^2\\)"
-        }
-      ],
-      "correctOptionId": "B",
-      "solution": {
-        "title": "Use the sum of the side lengths and the diagonal together.",
-        "stepsMarkdown": [
-          "Let the side lengths be \\(a\\) and \\(b\\). From the perimeter, \\(a+b=17\\).",
-          "From Pythagoras, \\(a^2+b^2=13^2=169\\).",
-          "\\((a+b)^2=a^2+b^2+2ab\\), so \\(17^2=169+2ab\\).",
-          "Thus \\(2ab=120\\), giving area \\(ab=60\\text{ cm}^2\\)."
-        ],
-        "finalAnswerMarkdown": "\\(\\boxed{60\\text{ cm}^2}\\)"
-      },
-      "distractorMap": [
-        {
-          "optionId": "A",
-          "reason": "Finds \\(2ab=120\\), then divides by 4 rather than 2."
-        },
-        {
-          "optionId": "B",
-          "reason": "Correct."
-        },
-        {
-          "optionId": "C",
-          "reason": "Takes half of the diagonal squared."
-        },
-        {
-          "optionId": "D",
-          "reason": "Finds \\(2ab\\) but forgets the final division by 2."
-        },
-        {
-          "optionId": "E",
-          "reason": "Uses the diagonal squared as the rectangle's area."
-        },
-        {
-          "optionId": "F",
-          "reason": "Uses \\((a+b)^2\\) as the area."
+          "reason": "Uses the upper class boundaries instead of the midpoints."
         }
       ]
     }

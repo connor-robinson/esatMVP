@@ -103,87 +103,8 @@
       ]
     },
     {
-      "id": "esat-m2-hook-02",
-      "order": 2,
-      "difficulty": "medium",
-      "difficultyScore": 3,
-      "estimatedSeconds": 95,
-      "topics": [
-        "Recurrence relations",
-        "Sequences"
-      ],
-      "specRefs": [
-        "MM2.1"
-      ],
-      "stemMarkdown": "A sequence is defined by\\n\\n\\[u_1=\\frac32,\\qquad u_{n+1}=2-\\frac1{u_n}.\\]\\n\\nWhat is \\(u_{20}\\)?",
-      "diagramSvg": null,
-      "options": [
-        {
-          "id": "A",
-          "textMarkdown": "\\(\\dfrac{20}{21}\\)"
-        },
-        {
-          "id": "B",
-          "textMarkdown": "\\(\\dfrac{21}{20}\\)"
-        },
-        {
-          "id": "C",
-          "textMarkdown": "\\(\\dfrac{21}{22}\\)"
-        },
-        {
-          "id": "D",
-          "textMarkdown": "\\(\\dfrac{22}{21}\\)"
-        },
-        {
-          "id": "E",
-          "textMarkdown": "\\(\\dfrac{23}{22}\\)"
-        },
-        {
-          "id": "F",
-          "textMarkdown": "\\(\\dfrac32\\)"
-        }
-      ],
-      "correctOptionId": "D",
-      "solution": {
-        "title": "Generate a few terms, then confirm the pattern.",
-        "stepsMarkdown": [
-          "\\(u_2=\\dfrac43\\), \\(u_3=\\dfrac54\\), and \\(u_4=\\dfrac65\\).",
-          "This suggests \\(u_n=\\dfrac{n+2}{n+1}\\).",
-          "Indeed, \\(2-\\dfrac{n+1}{n+2}=\\dfrac{n+3}{n+2}\\), so the pattern continues.",
-          "Therefore \\(u_{20}=\\dfrac{22}{21}\\)."
-        ],
-        "finalAnswerMarkdown": "\\(\\boxed{\\dfrac{22}{21}}\\)"
-      },
-      "distractorMap": [
-        {
-          "optionId": "A",
-          "reason": "Uses \\(u_n=\\dfrac{n}{n+1}\\), missing the shift in the pattern."
-        },
-        {
-          "optionId": "B",
-          "reason": "Uses \\(u_n=\\dfrac{n+1}{n}\\)."
-        },
-        {
-          "optionId": "C",
-          "reason": "Takes the reciprocal of the correct term."
-        },
-        {
-          "optionId": "D",
-          "reason": "Correct."
-        },
-        {
-          "optionId": "E",
-          "reason": "Substitutes \\(n=21\\) instead of \\(n=20\\)."
-        },
-        {
-          "optionId": "F",
-          "reason": "Assumes the recurrence leaves the starting value unchanged."
-        }
-      ]
-    },
-    {
       "id": "esat-m2-hook-03",
-      "order": 3,
+      "order": 2,
       "difficulty": "accessible",
       "difficultyScore": 2,
       "estimatedSeconds": 75,
@@ -262,8 +183,408 @@
       ]
     },
     {
-      "id": "esat-m2-hook-04",
+      "id": "esat-m2-hook-08",
+      "order": 3,
+      "difficulty": "medium",
+      "difficultyScore": 3,
+      "estimatedSeconds": 100,
+      "topics": [
+        "Graph transformations",
+        "Functions",
+        "Extrema"
+      ],
+      "specRefs": [
+        "MM8.2"
+      ],
+      "stemMarkdown": "The graph of \\(y=f(x)\\) has a maximum point at \\((-2,5)\\) and a minimum point at \\((4,-1)\\).\\n\\nDefine\\n\\n\\[g(x)=3-f(2x-1).\\]\\n\\nWhat is the maximum point of the graph of \\(y=g(x)\\)?",
+      "diagramSvg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 560 340\" role=\"img\" aria-label=\"Sketch of a function with a maximum at negative two comma five and a minimum at four comma negative one.\">\n  <style>\n    .axis{stroke:#222;stroke-width:2;fill:none}\n    .curve{stroke:#111;stroke-width:3;fill:none;stroke-linecap:round}\n    .guide{stroke:#777;stroke-width:1.5;stroke-dasharray:6 6;fill:none}\n    .point{fill:#111}\n    .label{font:20px serif;fill:#111}\n    .small{font:17px serif;fill:#333}\n  </style>\n  <path class=\"axis\" d=\"M45 265 H525\"/>\n  <path class=\"axis\" d=\"M235 315 V30\"/>\n  <path class=\"axis\" d=\"M525 265 l-12 -7 M525 265 l-12 7\"/>\n  <path class=\"axis\" d=\"M235 30 l-7 12 M235 30 l7 12\"/>\n  <path class=\"curve\" d=\"M65 250 C120 230,135 80,175 75 C225 68,245 225,365 245 C430 256,470 190,510 135\"/>\n  <path class=\"guide\" d=\"M175 75 V265 M175 75 H235\"/>\n  <path class=\"guide\" d=\"M365 245 V265 M235 245 H365\"/>\n  <circle class=\"point\" cx=\"175\" cy=\"75\" r=\"5\"/>\n  <circle class=\"point\" cx=\"365\" cy=\"245\" r=\"5\"/>\n  <text class=\"label\" x=\"145\" y=\"55\">(-2, 5)</text>\n  <text class=\"label\" x=\"374\" y=\"238\">(4, -1)</text>\n  <text class=\"label\" x=\"530\" y=\"273\">x</text>\n  <text class=\"label\" x=\"245\" y=\"38\">y</text>\n  <text class=\"small\" x=\"378\" y=\"322\">diagram not to scale</text>\n</svg>",
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(\\left(-\\dfrac12,-2\\right)\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(\\left(-\\dfrac12,4\\right)\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(\\left(\\dfrac32,4\\right)\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(\\left(\\dfrac52,-2\\right)\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(\\left(\\dfrac52,4\\right)\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\((7,4)\\)"
+        }
+      ],
+      "correctOptionId": "E",
+      "solution": {
+        "title": "The minus sign swaps maxima and minima.",
+        "stepsMarkdown": [
+          "The maximum of \\(g\\) comes from the minimum value of \\(f\\), which occurs when its input is \\(4\\).",
+          "So \\(2x-1=4\\), giving \\(x=\\dfrac52\\).",
+          "The new height is \\(3-(-1)=4\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{\\left(\\dfrac52,4\\right)}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "This is the transformed original maximum, which becomes the new minimum."
+        },
+        {
+          "optionId": "B",
+          "reason": "Uses the x-position from the original maximum but the height from the new maximum."
+        },
+        {
+          "optionId": "C",
+          "reason": "Solves the horizontal transformation with the shift in the wrong direction."
+        },
+        {
+          "optionId": "D",
+          "reason": "Finds the correct x-coordinate but uses the transformed height of the original maximum."
+        },
+        {
+          "optionId": "E",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "F",
+          "reason": "Applies \\(2x-1\\) to the old x-coordinate instead of reversing the transformation."
+        }
+      ]
+    },
+    {
+      "id": "esat-m2-hook-10",
       "order": 4,
+      "difficulty": "hard",
+      "difficultyScore": 4,
+      "estimatedSeconds": 90,
+      "topics": [
+        "Differentiation",
+        "Increasing functions",
+        "Stationary points",
+        "Mathematical statements"
+      ],
+      "specRefs": [
+        "MM6.1",
+        "MM6.3"
+      ],
+      "stemMarkdown": "The function \\(f\\) is differentiable for every real value of \\(x\\). Consider the statements:\\n\\n1. If \\(f'(x)>0\\) for every real \\(x\\), then \\(f\\) is strictly increasing.\\n\\n2. If \\(f'(a)=0\\), then \\(f\\) has a local maximum or a local minimum at \\(x=a\\).\\n\\n3. If \\(f\\) has a local maximum at \\(x=a\\), then \\(f'(a)=0\\).\\n\\nWhich statements must be true?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "1 only"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "2 only"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "3 only"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "1 and 2 only"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "1 and 3 only"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "1, 2 and 3"
+        }
+      ],
+      "correctOptionId": "E",
+      "solution": {
+        "title": "A zero derivative is necessary at an interior extremum, but not sufficient.",
+        "stepsMarkdown": [
+          "Statement 1 is true: a positive derivative means the function is strictly increasing.",
+          "Statement 2 is false. For example, \\(f(x)=x^3\\) has \\(f'(0)=0\\), but no maximum or minimum at \\(0\\).",
+          "Statement 3 is true because \\(f\\) is differentiable at the local maximum."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{\\text{1 and 3 only}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Misses the necessary derivative condition at a differentiable local maximum."
+        },
+        {
+          "optionId": "B",
+          "reason": "Statement 2 is false, while statements 1 and 3 are true."
+        },
+        {
+          "optionId": "C",
+          "reason": "Misses the fact that a positive derivative gives a strictly increasing function."
+        },
+        {
+          "optionId": "D",
+          "reason": "Treats every stationary point as a turning point and misses statement 3."
+        },
+        {
+          "optionId": "E",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "F",
+          "reason": "Incorrectly assumes that \\(f'(a)=0\\) is enough to guarantee an extremum."
+        }
+      ]
+    },
+    {
+      "id": "esat-m2-hook-02",
+      "order": 5,
+      "difficulty": "medium",
+      "difficultyScore": 3,
+      "estimatedSeconds": 95,
+      "topics": [
+        "Recurrence relations",
+        "Sequences"
+      ],
+      "specRefs": [
+        "MM2.1"
+      ],
+      "stemMarkdown": "A sequence is defined by\\n\\n\\[u_1=\\frac32,\\qquad u_{n+1}=2-\\frac1{u_n}.\\]\\n\\nWhat is \\(u_{20}\\)?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(\\dfrac{20}{21}\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(\\dfrac{21}{20}\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(\\dfrac{21}{22}\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(\\dfrac{22}{21}\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(\\dfrac{23}{22}\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(\\dfrac32\\)"
+        }
+      ],
+      "correctOptionId": "D",
+      "solution": {
+        "title": "Generate a few terms, then confirm the pattern.",
+        "stepsMarkdown": [
+          "\\(u_2=\\dfrac43\\), \\(u_3=\\dfrac54\\), and \\(u_4=\\dfrac65\\).",
+          "This suggests \\(u_n=\\dfrac{n+2}{n+1}\\).",
+          "Indeed, \\(2-\\dfrac{n+1}{n+2}=\\dfrac{n+3}{n+2}\\), so the pattern continues.",
+          "Therefore \\(u_{20}=\\dfrac{22}{21}\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{\\dfrac{22}{21}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Uses \\(u_n=\\dfrac{n}{n+1}\\), missing the shift in the pattern."
+        },
+        {
+          "optionId": "B",
+          "reason": "Uses \\(u_n=\\dfrac{n+1}{n}\\)."
+        },
+        {
+          "optionId": "C",
+          "reason": "Takes the reciprocal of the correct term."
+        },
+        {
+          "optionId": "D",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "E",
+          "reason": "Substitutes \\(n=21\\) instead of \\(n=20\\)."
+        },
+        {
+          "optionId": "F",
+          "reason": "Assumes the recurrence leaves the starting value unchanged."
+        }
+      ]
+    },
+    {
+      "id": "esat-m2-hook-05",
+      "order": 6,
+      "difficulty": "accessible",
+      "difficultyScore": 2,
+      "estimatedSeconds": 85,
+      "topics": [
+        "Logarithms",
+        "Domain restrictions",
+        "Quadratic equations"
+      ],
+      "specRefs": [
+        "MM5.2"
+      ],
+      "stemMarkdown": "Solve\\n\\n\\[\\log_2(x-1)+\\log_2(x-3)=\\log_2(2x+3).\\]",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(0\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(1\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(3\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(4\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(5\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(6\\)"
+        }
+      ],
+      "correctOptionId": "F",
+      "solution": {
+        "title": "Combine the logarithms, then check the domain.",
+        "stepsMarkdown": [
+          "The logarithms require \\(x>3\\).",
+          "\\((x-1)(x-3)=2x+3\\).",
+          "This simplifies to \\(x^2-6x=0\\), so \\(x=0\\) or \\(x=6\\).",
+          "Only \\(x=6\\) is in the domain."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{6}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "This is an algebraic root, but the logarithms are not defined there."
+        },
+        {
+          "optionId": "B",
+          "reason": "Makes \\(x-1=0\\), and \\(\\log 0\\) is undefined."
+        },
+        {
+          "optionId": "C",
+          "reason": "Makes \\(x-3=0\\), and \\(\\log 0\\) is undefined."
+        },
+        {
+          "optionId": "D",
+          "reason": "It is in the domain, but it does not satisfy the equation."
+        },
+        {
+          "optionId": "E",
+          "reason": "Comes from a one-step arithmetic slip after expanding the product."
+        },
+        {
+          "optionId": "F",
+          "reason": "Correct."
+        }
+      ]
+    },
+    {
+      "id": "esat-m2-hook-06",
+      "order": 7,
+      "difficulty": "hard",
+      "difficultyScore": 4,
+      "estimatedSeconds": 105,
+      "topics": [
+        "Differentiation",
+        "Stationary points",
+        "Parameter inequalities"
+      ],
+      "specRefs": [
+        "MM6.1",
+        "MM6.3"
+      ],
+      "stemMarkdown": "The function\\n\\n\\[f(x)=x^3-3x^2+k\\]\\n\\nhas two stationary points.\\n\\nFor which values of \\(k\\) do the stationary points lie on opposite sides of the \\(x\\)-axis?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(k<0\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(k>4\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(0<k<4\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(k\\le0\\text{ or }k\\ge4\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(0\\le k\\le4\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "all real values of \\(k\\)"
+        }
+      ],
+      "correctOptionId": "C",
+      "solution": {
+        "title": "Compare the heights of the two stationary points.",
+        "stepsMarkdown": [
+          "\\(f'(x)=3x(x-2)\\), so the stationary points occur at \\(x=0\\) and \\(x=2\\).",
+          "Their \\(y\\)-coordinates are \\(k\\) and \\(k-4\\).",
+          "They are on opposite sides of the axis when \\(k(k-4)<0\\).",
+          "Therefore \\(0<k<4\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{0<k<4}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "When \\(k<0\\), both stationary points are below the axis."
+        },
+        {
+          "optionId": "B",
+          "reason": "When \\(k>4\\), both stationary points are above the axis."
+        },
+        {
+          "optionId": "C",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "D",
+          "reason": "This is the range in which the two stationary points are on the same side, or on the axis."
+        },
+        {
+          "optionId": "E",
+          "reason": "At \\(k=0\\) or \\(k=4\\), one stationary point lies on the axis, not on the opposite side."
+        },
+        {
+          "optionId": "F",
+          "reason": "The vertical shift \\(k\\) directly controls the two stationary-point heights."
+        }
+      ]
+    },
+    {
+      "id": "esat-m2-hook-04",
+      "order": 8,
       "difficulty": "medium",
       "difficultyScore": 3,
       "estimatedSeconds": 100,
@@ -344,169 +665,8 @@
       ]
     },
     {
-      "id": "esat-m2-hook-05",
-      "order": 5,
-      "difficulty": "accessible",
-      "difficultyScore": 2,
-      "estimatedSeconds": 85,
-      "topics": [
-        "Logarithms",
-        "Domain restrictions",
-        "Quadratic equations"
-      ],
-      "specRefs": [
-        "MM5.2"
-      ],
-      "stemMarkdown": "Solve\\n\\n\\[\\log_2(x-1)+\\log_2(x-3)=\\log_2(2x+3).\\]",
-      "diagramSvg": null,
-      "options": [
-        {
-          "id": "A",
-          "textMarkdown": "\\(0\\)"
-        },
-        {
-          "id": "B",
-          "textMarkdown": "\\(1\\)"
-        },
-        {
-          "id": "C",
-          "textMarkdown": "\\(3\\)"
-        },
-        {
-          "id": "D",
-          "textMarkdown": "\\(4\\)"
-        },
-        {
-          "id": "E",
-          "textMarkdown": "\\(5\\)"
-        },
-        {
-          "id": "F",
-          "textMarkdown": "\\(6\\)"
-        }
-      ],
-      "correctOptionId": "F",
-      "solution": {
-        "title": "Combine the logarithms, then check the domain.",
-        "stepsMarkdown": [
-          "The logarithms require \\(x>3\\).",
-          "\\((x-1)(x-3)=2x+3\\).",
-          "This simplifies to \\(x^2-6x=0\\), so \\(x=0\\) or \\(x=6\\).",
-          "Only \\(x=6\\) is in the domain."
-        ],
-        "finalAnswerMarkdown": "\\(\\boxed{6}\\)"
-      },
-      "distractorMap": [
-        {
-          "optionId": "A",
-          "reason": "This is an algebraic root, but the logarithms are not defined there."
-        },
-        {
-          "optionId": "B",
-          "reason": "Makes \\(x-1=0\\), and \\(\\log 0\\) is undefined."
-        },
-        {
-          "optionId": "C",
-          "reason": "Makes \\(x-3=0\\), and \\(\\log 0\\) is undefined."
-        },
-        {
-          "optionId": "D",
-          "reason": "It is in the domain, but it does not satisfy the equation."
-        },
-        {
-          "optionId": "E",
-          "reason": "Comes from a one-step arithmetic slip after expanding the product."
-        },
-        {
-          "optionId": "F",
-          "reason": "Correct."
-        }
-      ]
-    },
-    {
-      "id": "esat-m2-hook-06",
-      "order": 6,
-      "difficulty": "hard",
-      "difficultyScore": 4,
-      "estimatedSeconds": 105,
-      "topics": [
-        "Differentiation",
-        "Stationary points",
-        "Parameter inequalities"
-      ],
-      "specRefs": [
-        "MM6.1",
-        "MM6.3"
-      ],
-      "stemMarkdown": "The function\\n\\n\\[f(x)=x^3-3x^2+k\\]\\n\\nhas two stationary points.\\n\\nFor which values of \\(k\\) do the stationary points lie on opposite sides of the \\(x\\)-axis?",
-      "diagramSvg": null,
-      "options": [
-        {
-          "id": "A",
-          "textMarkdown": "\\(k<0\\)"
-        },
-        {
-          "id": "B",
-          "textMarkdown": "\\(k>4\\)"
-        },
-        {
-          "id": "C",
-          "textMarkdown": "\\(0<k<4\\)"
-        },
-        {
-          "id": "D",
-          "textMarkdown": "\\(k\\le0\\text{ or }k\\ge4\\)"
-        },
-        {
-          "id": "E",
-          "textMarkdown": "\\(0\\le k\\le4\\)"
-        },
-        {
-          "id": "F",
-          "textMarkdown": "all real values of \\(k\\)"
-        }
-      ],
-      "correctOptionId": "C",
-      "solution": {
-        "title": "Compare the heights of the two stationary points.",
-        "stepsMarkdown": [
-          "\\(f'(x)=3x(x-2)\\), so the stationary points occur at \\(x=0\\) and \\(x=2\\).",
-          "Their \\(y\\)-coordinates are \\(k\\) and \\(k-4\\).",
-          "They are on opposite sides of the axis when \\(k(k-4)<0\\).",
-          "Therefore \\(0<k<4\\)."
-        ],
-        "finalAnswerMarkdown": "\\(\\boxed{0<k<4}\\)"
-      },
-      "distractorMap": [
-        {
-          "optionId": "A",
-          "reason": "When \\(k<0\\), both stationary points are below the axis."
-        },
-        {
-          "optionId": "B",
-          "reason": "When \\(k>4\\), both stationary points are above the axis."
-        },
-        {
-          "optionId": "C",
-          "reason": "Correct."
-        },
-        {
-          "optionId": "D",
-          "reason": "This is the range in which the two stationary points are on the same side, or on the axis."
-        },
-        {
-          "optionId": "E",
-          "reason": "At \\(k=0\\) or \\(k=4\\), one stationary point lies on the axis, not on the opposite side."
-        },
-        {
-          "optionId": "F",
-          "reason": "The vertical shift \\(k\\) directly controls the two stationary-point heights."
-        }
-      ]
-    },
-    {
       "id": "esat-m2-hook-07",
-      "order": 7,
+      "order": 9,
       "difficulty": "hard",
       "difficultyScore": 4,
       "estimatedSeconds": 115,
@@ -587,87 +747,8 @@
       ]
     },
     {
-      "id": "esat-m2-hook-08",
-      "order": 8,
-      "difficulty": "medium",
-      "difficultyScore": 3,
-      "estimatedSeconds": 100,
-      "topics": [
-        "Graph transformations",
-        "Functions",
-        "Extrema"
-      ],
-      "specRefs": [
-        "MM8.2"
-      ],
-      "stemMarkdown": "The graph of \\(y=f(x)\\) has a maximum point at \\((-2,5)\\) and a minimum point at \\((4,-1)\\).\\n\\nDefine\\n\\n\\[g(x)=3-f(2x-1).\\]\\n\\nWhat is the maximum point of the graph of \\(y=g(x)\\)?",
-      "diagramSvg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 560 340\" role=\"img\" aria-label=\"Sketch of a function with a maximum at negative two comma five and a minimum at four comma negative one.\">\n  <style>\n    .axis{stroke:#222;stroke-width:2;fill:none}\n    .curve{stroke:#111;stroke-width:3;fill:none;stroke-linecap:round}\n    .guide{stroke:#777;stroke-width:1.5;stroke-dasharray:6 6;fill:none}\n    .point{fill:#111}\n    .label{font:20px serif;fill:#111}\n    .small{font:17px serif;fill:#333}\n  </style>\n  <path class=\"axis\" d=\"M45 265 H525\"/>\n  <path class=\"axis\" d=\"M235 315 V30\"/>\n  <path class=\"axis\" d=\"M525 265 l-12 -7 M525 265 l-12 7\"/>\n  <path class=\"axis\" d=\"M235 30 l-7 12 M235 30 l7 12\"/>\n  <path class=\"curve\" d=\"M65 250 C120 230,135 80,175 75 C225 68,245 225,365 245 C430 256,470 190,510 135\"/>\n  <path class=\"guide\" d=\"M175 75 V265 M175 75 H235\"/>\n  <path class=\"guide\" d=\"M365 245 V265 M235 245 H365\"/>\n  <circle class=\"point\" cx=\"175\" cy=\"75\" r=\"5\"/>\n  <circle class=\"point\" cx=\"365\" cy=\"245\" r=\"5\"/>\n  <text class=\"label\" x=\"145\" y=\"55\">(-2, 5)</text>\n  <text class=\"label\" x=\"374\" y=\"238\">(4, -1)</text>\n  <text class=\"label\" x=\"530\" y=\"273\">x</text>\n  <text class=\"label\" x=\"245\" y=\"38\">y</text>\n  <text class=\"small\" x=\"378\" y=\"322\">diagram not to scale</text>\n</svg>",
-      "options": [
-        {
-          "id": "A",
-          "textMarkdown": "\\(\\left(-\\dfrac12,-2\\right)\\)"
-        },
-        {
-          "id": "B",
-          "textMarkdown": "\\(\\left(-\\dfrac12,4\\right)\\)"
-        },
-        {
-          "id": "C",
-          "textMarkdown": "\\(\\left(\\dfrac32,4\\right)\\)"
-        },
-        {
-          "id": "D",
-          "textMarkdown": "\\(\\left(\\dfrac52,-2\\right)\\)"
-        },
-        {
-          "id": "E",
-          "textMarkdown": "\\(\\left(\\dfrac52,4\\right)\\)"
-        },
-        {
-          "id": "F",
-          "textMarkdown": "\\((7,4)\\)"
-        }
-      ],
-      "correctOptionId": "E",
-      "solution": {
-        "title": "The minus sign swaps maxima and minima.",
-        "stepsMarkdown": [
-          "The maximum of \\(g\\) comes from the minimum value of \\(f\\), which occurs when its input is \\(4\\).",
-          "So \\(2x-1=4\\), giving \\(x=\\dfrac52\\).",
-          "The new height is \\(3-(-1)=4\\)."
-        ],
-        "finalAnswerMarkdown": "\\(\\boxed{\\left(\\dfrac52,4\\right)}\\)"
-      },
-      "distractorMap": [
-        {
-          "optionId": "A",
-          "reason": "This is the transformed original maximum, which becomes the new minimum."
-        },
-        {
-          "optionId": "B",
-          "reason": "Uses the x-position from the original maximum but the height from the new maximum."
-        },
-        {
-          "optionId": "C",
-          "reason": "Solves the horizontal transformation with the shift in the wrong direction."
-        },
-        {
-          "optionId": "D",
-          "reason": "Finds the correct x-coordinate but uses the transformed height of the original maximum."
-        },
-        {
-          "optionId": "E",
-          "reason": "Correct."
-        },
-        {
-          "optionId": "F",
-          "reason": "Applies \\(2x-1\\) to the old x-coordinate instead of reversing the transformation."
-        }
-      ]
-    },
-    {
       "id": "esat-m2-hook-09",
-      "order": 9,
+      "order": 10,
       "difficulty": "hard",
       "difficultyScore": 4,
       "estimatedSeconds": 110,
@@ -741,87 +822,6 @@
         {
           "optionId": "F",
           "reason": "Adds the magnitudes of all three contributions and ignores the negative sign."
-        }
-      ]
-    },
-    {
-      "id": "esat-m2-hook-10",
-      "order": 10,
-      "difficulty": "hard",
-      "difficultyScore": 4,
-      "estimatedSeconds": 90,
-      "topics": [
-        "Differentiation",
-        "Increasing functions",
-        "Stationary points",
-        "Mathematical statements"
-      ],
-      "specRefs": [
-        "MM6.1",
-        "MM6.3"
-      ],
-      "stemMarkdown": "The function \\(f\\) is differentiable for every real value of \\(x\\). Consider the statements:\\n\\n1. If \\(f'(x)>0\\) for every real \\(x\\), then \\(f\\) is strictly increasing.\\n\\n2. If \\(f'(a)=0\\), then \\(f\\) has a local maximum or a local minimum at \\(x=a\\).\\n\\n3. If \\(f\\) has a local maximum at \\(x=a\\), then \\(f'(a)=0\\).\\n\\nWhich statements must be true?",
-      "diagramSvg": null,
-      "options": [
-        {
-          "id": "A",
-          "textMarkdown": "1 only"
-        },
-        {
-          "id": "B",
-          "textMarkdown": "2 only"
-        },
-        {
-          "id": "C",
-          "textMarkdown": "3 only"
-        },
-        {
-          "id": "D",
-          "textMarkdown": "1 and 2 only"
-        },
-        {
-          "id": "E",
-          "textMarkdown": "1 and 3 only"
-        },
-        {
-          "id": "F",
-          "textMarkdown": "1, 2 and 3"
-        }
-      ],
-      "correctOptionId": "E",
-      "solution": {
-        "title": "A zero derivative is necessary at an interior extremum, but not sufficient.",
-        "stepsMarkdown": [
-          "Statement 1 is true: a positive derivative means the function is strictly increasing.",
-          "Statement 2 is false. For example, \\(f(x)=x^3\\) has \\(f'(0)=0\\), but no maximum or minimum at \\(0\\).",
-          "Statement 3 is true because \\(f\\) is differentiable at the local maximum."
-        ],
-        "finalAnswerMarkdown": "\\(\\boxed{\\text{1 and 3 only}}\\)"
-      },
-      "distractorMap": [
-        {
-          "optionId": "A",
-          "reason": "Misses the necessary derivative condition at a differentiable local maximum."
-        },
-        {
-          "optionId": "B",
-          "reason": "Statement 2 is false, while statements 1 and 3 are true."
-        },
-        {
-          "optionId": "C",
-          "reason": "Misses the fact that a positive derivative gives a strictly increasing function."
-        },
-        {
-          "optionId": "D",
-          "reason": "Treats every stationary point as a turning point and misses statement 3."
-        },
-        {
-          "optionId": "E",
-          "reason": "Correct."
-        },
-        {
-          "optionId": "F",
-          "reason": "Incorrectly assumes that \\(f'(a)=0\\) is enough to guarantee an extremum."
         }
       ]
     }
