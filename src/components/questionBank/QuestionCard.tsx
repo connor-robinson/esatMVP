@@ -521,23 +521,20 @@ export function QuestionCard({
                   : "transition-[background-color,opacity] duration-fast ease-signature",
               )}
             >
-              <button
-                type="button"
-                onClick={() => handleOptionClick(letter)}
-                onMouseEnter={() =>
-                  (!isAnswered || allowRetry) && setHoveredOption(letter)
-                }
-                onMouseLeave={() => setHoveredOption(null)}
-                disabled={isAnswered && !allowRetry && !answerRevealed}
-                className={cn(
-                  "w-full px-3.5 text-left sm:px-4",
-                  showDistractorControl ? "pb-1 pt-2.5 sm:pb-1.5 sm:pt-3" : "py-2.5 sm:py-3",
-                )}
-              >
-                <div className="flex min-h-[2.25rem] items-center gap-3 sm:min-h-[2.5rem]">
+              <div className="relative flex w-full items-center gap-2 px-3.5 py-2.5 sm:gap-3 sm:px-4 sm:py-3">
+                <button
+                  type="button"
+                  onClick={() => handleOptionClick(letter)}
+                  onMouseEnter={() =>
+                    (!isAnswered || allowRetry) && setHoveredOption(letter)
+                  }
+                  onMouseLeave={() => setHoveredOption(null)}
+                  disabled={isAnswered && !allowRetry && !answerRevealed}
+                  className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                >
                   <span
                     className={cn(
-                      "flex w-6 shrink-0 items-center self-center text-sm font-semibold tabular-nums leading-none",
+                      "flex w-6 shrink-0 items-center text-sm font-semibold tabular-nums leading-none",
                       letterLabelClass(letter),
                     )}
                   >
@@ -546,8 +543,11 @@ export function QuestionCard({
 
                   <div
                     className={cn(
-                      "flex min-w-0 flex-1 items-center self-center text-[0.98rem] leading-relaxed tracking-tight sm:text-[1.02rem]",
+                      "flex min-w-0 flex-1 items-center text-[0.98rem] leading-relaxed tracking-tight sm:text-[1.02rem]",
                       "font-sans text-text",
+                      showDistractorControl && !distractorRevealed
+                        ? "pr-28 sm:pr-36"
+                        : undefined,
                     )}
                   >
                     <StemContent
@@ -555,113 +555,114 @@ export function QuestionCard({
                       className="text-inherit inline"
                     />
                   </div>
+                </button>
 
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center self-center sm:h-10 sm:w-10">
-                    {((!isAnswered || (isAnswered && allowRetry)) &&
-                      localSelectedAnswer === letter &&
-                      !incorrectAnswers.has(letter)) && (
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleSubmit();
-                        }}
-                        className={cn(
-                          "flex h-9 w-9 items-center justify-center rounded-organic-md sm:h-10 sm:w-10",
-                          "bg-secondary text-background",
-                          "shadow-[0_4px_0_0_#623e56] dark:shadow-[0_4px_0_0_#8a5a7a]",
-                          "transition-all duration-150 ease-out",
-                          "hover:brightness-110",
-                          "active:translate-y-0.5 active:shadow-[0_2px_0_0_#623e56] dark:active:shadow-[0_2px_0_0_#8a5a7a]",
-                        )}
-                        title="Submit answer"
-                        aria-label="Submit answer"
-                      >
-                        <ArrowRight className="h-4 w-4 sm:h-[1.125rem] sm:w-[1.125rem]" strokeWidth={2.5} />
-                      </button>
+                {showDistractorControl && !distractorRevealed ? (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setRevealedDistractors((prev) => new Set(prev).add(letter))
+                    }
+                    title="Reveal why it may be wrong"
+                    className={cn(
+                      "absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2",
+                      "inline-flex items-center gap-1.5 rounded-full",
+                      "border border-border-subtle/70 bg-surface-elevated/95 px-3 py-1.5",
+                      "text-[11px] font-medium tracking-wide text-text-muted",
+                      "transition-all duration-fast ease-signature",
+                      "hover:border-border hover:bg-surface-mid/80 hover:text-text",
                     )}
-                    {isAnswered && (
-                      <>
-                        {(isCorrect && letter === correctAnswer) ||
-                        (answerRevealed && letter === correctAnswer) ? (
-                          <svg
-                            className="text-primary"
-                            width="22"
-                            height="22"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="3"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        ) : incorrectAnswers.has(letter) &&
-                          letter !== correctAnswer ? (
-                          <svg
-                            className="text-error"
-                            width="22"
-                            height="22"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="3"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <line x1="18" y1="6" x2="6" y2="18" />
-                            <line x1="6" y1="6" x2="18" y2="18" />
-                          </svg>
-                        ) : null}
-                      </>
-                    )}
-                  </div>
-                </div>
-              </button>
+                  >
+                    <HelpCircle
+                      className="h-3.5 w-3.5 shrink-0 opacity-80"
+                      strokeWidth={2}
+                      aria-hidden
+                    />
+                    Why it may be wrong
+                  </button>
+                ) : null}
 
-              {showDistractorControl ? (
-                <div className="px-3.5 pb-2.5 sm:px-4 sm:pb-3">
-                  {!distractorRevealed ? (
+                <div className="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center sm:h-10 sm:w-10">
+                  {((!isAnswered || (isAnswered && allowRetry)) &&
+                    localSelectedAnswer === letter &&
+                    !incorrectAnswers.has(letter)) && (
                     <button
                       type="button"
-                      onClick={() =>
-                        setRevealedDistractors((prev) => new Set(prev).add(letter))
-                      }
-                      title="Reveal why it may be wrong"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSubmit();
+                      }}
                       className={cn(
-                        "inline-flex items-center gap-1.5 rounded-full",
-                        "border border-border-subtle/70 bg-surface-elevated/95 px-3 py-1.5",
-                        "text-[11px] font-medium tracking-wide text-text-muted",
-                        "transition-all duration-fast ease-signature",
-                        "hover:border-border hover:bg-surface-mid/80 hover:text-text",
+                        "flex h-9 w-9 items-center justify-center rounded-organic-md sm:h-10 sm:w-10",
+                        "bg-secondary text-background",
+                        "shadow-[0_4px_0_0_#623e56] dark:shadow-[0_4px_0_0_#8a5a7a]",
+                        "transition-all duration-150 ease-out",
+                        "hover:brightness-110",
+                        "active:translate-y-0.5 active:shadow-[0_2px_0_0_#623e56] dark:active:shadow-[0_2px_0_0_#8a5a7a]",
                       )}
+                      title="Submit answer"
+                      aria-label="Submit answer"
                     >
-                      <HelpCircle
-                        className="h-3.5 w-3.5 shrink-0 opacity-80"
-                        strokeWidth={2}
-                        aria-hidden
-                      />
-                      Why it may be wrong
+                      <ArrowRight className="h-4 w-4 sm:h-[1.125rem] sm:w-[1.125rem]" strokeWidth={2.5} />
                     </button>
-                  ) : (
-                    <div className="flex items-start gap-2 border-l-2 border-border-subtle/60 pl-3">
-                      <HelpCircle
-                        className="mt-0.5 h-3.5 w-3.5 shrink-0 text-text-muted opacity-80"
-                        strokeWidth={2}
-                        aria-hidden
-                      />
-                      <div className="min-w-0 flex-1 space-y-1">
-                        <p className="text-[10px] font-semibold uppercase tracking-wide text-text-muted">
-                          Why it may be wrong
-                        </p>
-                        <StemContent
-                          content={distractor!}
-                          className="text-xs leading-snug text-text-muted sm:text-sm"
-                        />
-                      </div>
-                    </div>
                   )}
+                  {isAnswered && (
+                    <>
+                      {(isCorrect && letter === correctAnswer) ||
+                      (answerRevealed && letter === correctAnswer) ? (
+                        <svg
+                          className="text-primary"
+                          width="22"
+                          height="22"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      ) : incorrectAnswers.has(letter) &&
+                        letter !== correctAnswer ? (
+                        <svg
+                          className="text-error"
+                          width="22"
+                          height="22"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <line x1="18" y1="6" x2="6" y2="18" />
+                          <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                      ) : null}
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {showDistractorControl && distractorRevealed ? (
+                <div className="border-t border-border-subtle/40 px-3.5 pb-2.5 pt-2 sm:px-4 sm:pb-3">
+                  <div className="flex items-start gap-2 border-l-2 border-border-subtle/60 pl-3">
+                    <HelpCircle
+                      className="mt-0.5 h-3.5 w-3.5 shrink-0 text-text-muted opacity-80"
+                      strokeWidth={2}
+                      aria-hidden
+                    />
+                    <div className="min-w-0 flex-1 space-y-1">
+                      <p className="text-[10px] font-semibold uppercase tracking-wide text-text-muted">
+                        Why it may be wrong
+                      </p>
+                      <StemContent
+                        content={distractor!}
+                        className="text-xs leading-snug text-text-muted sm:text-sm"
+                      />
+                    </div>
+                  </div>
                 </div>
               ) : null}
             </div>
