@@ -4,8 +4,12 @@ import { requireRouteUser } from "@/lib/supabase/auth";
 import { userHasFullAccess } from "@/lib/subscription/serverAccess";
 import { QUESTION_BANK_PUBLISH_STATUS } from "@/lib/questionBank/qualityGate";
 import {
+  FREE_TIER_LIMIT_PER_SUBJECT,
+  FREE_TIER_PREVIEW_SUBJECTS,
   FREE_TIER_QUESTION_IDS,
-  FREE_TIER_QUESTION_LIMIT,
+  freeTierQuestionIdsForSubject,
+  isFreeTierPreviewSubject,
+  type FreeTierPreviewSubject,
 } from "@/lib/questionBank/freeTierQuestions";
 
 export const dynamic = "force-dynamic";
@@ -13,7 +17,9 @@ export const dynamic = "force-dynamic";
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
-function parseQuestionRow(q: Record<string, unknown>) {
+type ParsedQuestion = Record<string, unknown> & { id: string; subjects?: string };
+
+function parseQuestionRow(q: Record<string, unknown>): ParsedQuestion {
   return {
     ...q,
     id: q.id as string,
@@ -26,18 +32,63 @@ function parseQuestionRow(q: Record<string, unknown>) {
   };
 }
 
+type SubjectFreeTierStatus = {
+  subject: FreeTierPreviewSubject;
+  limit: number;
+  attemptedCount: number;
+  remaining: number;
+  isExhausted: boolean;
+  attemptedQuestionIds: string[];
+  questions: ParsedQuestion[];
+  remainingQuestions: ParsedQuestion[];
+};
+
+function buildSubjectStatus(
+  subject: FreeTierPreviewSubject,
+  byId: Map<string, ParsedQuestion>,
+  attemptedSet: Set<string>,
+): SubjectFreeTierStatus {
+  const ids = freeTierQuestionIdsForSubject(subject);
+  const questions = ids
+    .map((id) => byId.get(id))
+    .filter((q): q is ParsedQuestion => q != null);
+  const attemptedQuestionIds = ids.filter((id) => attemptedSet.has(id));
+  const attemptedCount = attemptedQuestionIds.length;
+  const remaining = Math.max(0, FREE_TIER_LIMIT_PER_SUBJECT - attemptedCount);
+  const isExhausted = attemptedCount >= FREE_TIER_LIMIT_PER_SUBJECT;
+  const remainingQuestions = questions.filter(
+    (q) => !attemptedSet.has(String(q.id)),
+  );
+
+  return {
+    subject,
+    limit: FREE_TIER_LIMIT_PER_SUBJECT,
+    attemptedCount,
+    remaining,
+    isExhausted,
+    attemptedQuestionIds,
+    questions,
+    remainingQuestions,
+  };
+}
+
 /**
  * GET /api/question-bank/free-tier
- * Returns the fixed free-tier question set and usage for unpaid users.
+ * Returns hook-set preview usage. Optional ?subject=Math+1 scopes the session payload.
  */
 export async function GET(request: NextRequest) {
   try {
-    const { user, error } = await requireRouteUser(request);
+    const { user } = await requireRouteUser(request);
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     if (user && (await userHasFullAccess(user.id))) {
       return NextResponse.json({ hasFullAccess: true });
     }
+
+    const subjectParam = request.nextUrl.searchParams.get("subject");
+    const scopedSubject = isFreeTierPreviewSubject(subjectParam ?? "")
+      ? (subjectParam as FreeTierPreviewSubject)
+      : null;
 
     const { data: rows, error: queryError } = await supabase
       .from("ai_generated_questions")
@@ -52,17 +103,14 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const byId = new Map<string, ReturnType<typeof parseQuestionRow>>(
+    const byId = new Map<string, ParsedQuestion>(
       (rows ?? []).map((row) => [
         row.id as string,
         parseQuestionRow(row as Record<string, unknown>),
       ]),
     );
-    const questions = FREE_TIER_QUESTION_IDS.map((id) => byId.get(id)).filter(
-      (q): q is ReturnType<typeof parseQuestionRow> => q != null,
-    );
 
-    let attemptedQuestionIds: string[] = [];
+    let attemptedSet = new Set<string>();
     if (user) {
       const { data: attempts } = await supabase
         .from("question_bank_attempts")
@@ -70,32 +118,51 @@ export async function GET(request: NextRequest) {
         .eq("user_id", user.id)
         .in("question_id", [...FREE_TIER_QUESTION_IDS]);
 
-      attemptedQuestionIds = [
-        ...new Set(
-          (attempts ?? []).map((a) => a.question_id as string),
-        ),
-      ];
+      attemptedSet = new Set(
+        (attempts ?? []).map((a) => a.question_id as string),
+      );
     }
 
-    const attemptedCount = attemptedQuestionIds.length;
-    const remaining = Math.max(0, FREE_TIER_QUESTION_LIMIT - attemptedCount);
-    const isExhausted = attemptedCount >= FREE_TIER_QUESTION_LIMIT;
-    const remainingQuestions = questions.filter(
-      (q) => !attemptedQuestionIds.includes(String(q.id)),
+    const bySubject = Object.fromEntries(
+      FREE_TIER_PREVIEW_SUBJECTS.map((subject) => [
+        subject,
+        buildSubjectStatus(subject, byId, attemptedSet),
+      ]),
+    ) as Record<FreeTierPreviewSubject, SubjectFreeTierStatus>;
+
+    const active = scopedSubject ?? "Math 1";
+    const activeStatus = bySubject[active];
+
+    const totalAttempted = FREE_TIER_PREVIEW_SUBJECTS.reduce(
+      (sum, s) => sum + bySubject[s].attemptedCount,
+      0,
+    );
+    const totalRemaining = FREE_TIER_PREVIEW_SUBJECTS.reduce(
+      (sum, s) => sum + bySubject[s].remaining,
+      0,
+    );
+    const anyPreviewAvailable = FREE_TIER_PREVIEW_SUBJECTS.some(
+      (s) => bySubject[s].remainingQuestions.length > 0 && !bySubject[s].isExhausted,
     );
 
     return NextResponse.json({
       hasFullAccess: false,
-      limit: FREE_TIER_QUESTION_LIMIT,
-      attemptedCount,
-      remaining,
-      isExhausted,
-      attemptedQuestionIds,
-      questions,
-      remainingQuestions,
+      subject: active,
+      limit: FREE_TIER_LIMIT_PER_SUBJECT,
+      limitPerSubject: FREE_TIER_LIMIT_PER_SUBJECT,
+      attemptedCount: activeStatus.attemptedCount,
+      remaining: activeStatus.remaining,
+      isExhausted: activeStatus.isExhausted,
+      attemptedQuestionIds: activeStatus.attemptedQuestionIds,
+      questions: activeStatus.questions,
+      remainingQuestions: activeStatus.remainingQuestions,
+      bySubject,
+      totalAttempted,
+      totalRemaining,
+      anyPreviewAvailable,
       requiresAuth: !user,
     });
-  } catch (err) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to load free tier status" },
       { status: 500 },

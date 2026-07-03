@@ -2,9 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { QuestionBankQuestion } from "@/types/questionBank";
+import type { FreeTierPreviewSubject } from "@/lib/questionBank/freeTierQuestions";
 
-export type QuestionBankFreeTierStatus = {
-  hasFullAccess: false;
+export type SubjectFreeTierStatus = {
+  subject: FreeTierPreviewSubject;
   limit: number;
   attemptedCount: number;
   remaining: number;
@@ -12,6 +13,23 @@ export type QuestionBankFreeTierStatus = {
   attemptedQuestionIds: string[];
   questions: QuestionBankQuestion[];
   remainingQuestions: QuestionBankQuestion[];
+};
+
+export type QuestionBankFreeTierStatus = {
+  hasFullAccess: false;
+  subject: FreeTierPreviewSubject;
+  limit: number;
+  limitPerSubject: number;
+  attemptedCount: number;
+  remaining: number;
+  isExhausted: boolean;
+  attemptedQuestionIds: string[];
+  questions: QuestionBankQuestion[];
+  remainingQuestions: QuestionBankQuestion[];
+  bySubject: Record<FreeTierPreviewSubject, SubjectFreeTierStatus>;
+  totalAttempted: number;
+  totalRemaining: number;
+  anyPreviewAvailable: boolean;
   requiresAuth: boolean;
 };
 
@@ -53,13 +71,21 @@ export function useQuestionBankFreeTier(hasFullAccess: boolean) {
     void refresh();
   }, [refresh]);
 
+  const subjectStatus = useCallback(
+    (subject: FreeTierPreviewSubject) => status?.bySubject?.[subject] ?? null,
+    [status],
+  );
+
   return {
     status,
     isLoading,
     refresh,
+    subjectStatus,
     isExhausted: status?.isExhausted ?? false,
-    remaining: status?.remaining ?? 0,
+    remaining: status?.remaining ?? null,
     attemptedCount: status?.attemptedCount ?? 0,
-    limit: status?.limit ?? 10,
+    limit: status?.limitPerSubject ?? 10,
+    anyPreviewAvailable: status?.anyPreviewAvailable ?? null,
+    bySubject: status?.bySubject ?? null,
   };
 }

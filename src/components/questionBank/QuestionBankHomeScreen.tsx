@@ -9,8 +9,12 @@ import { LoadingEllipsis } from "@/components/shared/LoadingEllipsis";
 import { DrillUpgradeBanner } from "@/components/builder/DrillUpgradeBanner";
 import { QUESTION_BANK_HOME_LAUNCH_KEY } from "@/lib/questionBank/homeLaunch";
 import type { QuestionBankHomeLaunchPayload } from "@/lib/questionBank/homeLaunch";
-import { QUESTION_BANK_FREE_TIER_LAUNCH_KEY } from "@/lib/questionBank/freeTierLaunch";
-import { FREE_TIER_QUESTION_LIMIT } from "@/lib/questionBank/freeTierQuestions";
+import { writeFreeTierLaunch } from "@/lib/questionBank/freeTierLaunch";
+import {
+  FREE_TIER_LIMIT_PER_SUBJECT,
+  isFreeTierPreviewSubject,
+  type FreeTierPreviewSubject,
+} from "@/lib/questionBank/freeTierQuestions";
 import { QuestionBankSessionSettingsModal } from "@/components/questionBank/QuestionBankSessionSettingsModal";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useQuestionBankFreeTier } from "@/hooks/useQuestionBankFreeTier";
@@ -120,14 +124,15 @@ export function QuestionBankHomeScreen() {
   const { hasFullAccess, isLoading: subscriptionLoading } = useSubscription();
   const treatAsFullAccess = subscriptionLoading || hasFullAccess;
   const {
-    status: freeTierStatus,
     isLoading: freeTierLoading,
-    isExhausted: freeTierExhausted,
-    attemptedCount: freeTierAttempted,
-    remaining: freeTierRemaining,
+    subjectStatus,
+    anyPreviewAvailable,
   } = useQuestionBankFreeTier(treatAsFullAccess);
   const [sessionModalOpen, setSessionModalOpen] = useState(false);
   const [showFreeTierBlocked, setShowFreeTierBlocked] = useState(false);
+  const [blockedSubject, setBlockedSubject] = useState<FreeTierPreviewSubject | null>(
+    null,
+  );
   const [modalTile, setModalTile] = useState<SubjectTileConfig | null>(null);
   const [mixedModalOpen, setMixedModalOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -261,23 +266,68 @@ export function QuestionBankHomeScreen() {
     [modalTile],
   );
 
-  const launchFreeTierPreview = () => {
-    if (freeTierExhausted || freeTierRemaining <= 0) {
+  const previewAvailableFor = useCallback(
+    (subject: FreeTierPreviewSubject) => {
+      const stats = subjectStatus(subject);
+      return (
+        !!stats &&
+        !stats.isExhausted &&
+        stats.remaining > 0 &&
+        stats.remainingQuestions.length > 0
+      );
+    },
+    [subjectStatus],
+  );
+
+  const launchFreeTierPreview = (subject: FreeTierPreviewSubject) => {
+    if (freeTierLoading) return;
+
+    const stats = subjectStatus(subject);
+    if (!stats) {
+      setBlockedSubject(null);
+      setShowFreeTierBlocked(true);
+      return;
+    }
+    if (stats.isExhausted || stats.remaining <= 0) {
+      setBlockedSubject(subject);
+      setShowFreeTierBlocked(true);
+      return;
+    }
+    if (stats.remainingQuestions.length === 0) {
+      setBlockedSubject(null);
       setShowFreeTierBlocked(true);
       return;
     }
     setShowFreeTierBlocked(false);
+    setBlockedSubject(null);
     try {
-      sessionStorage.setItem(QUESTION_BANK_FREE_TIER_LAUNCH_KEY, "1");
+      writeFreeTierLaunch(subject);
     } catch {
       /* quota / private mode */
     }
     router.push("/questions/questionbank");
   };
 
+  const launchMixedFreePreview = () => {
+    const firstAvailable = (["Math 1", "Math 2", "Physics"] as const).find(
+      (subject) => previewAvailableFor(subject),
+    );
+    if (!firstAvailable) {
+      setBlockedSubject(null);
+      setShowFreeTierBlocked(true);
+      return;
+    }
+    launchFreeTierPreview(firstAvailable);
+  };
+
   const openSessionModal = (tile: SubjectTileConfig) => {
     if (!treatAsFullAccess) {
-      launchFreeTierPreview();
+      if (isFreeTierPreviewSubject(tile.key)) {
+        launchFreeTierPreview(tile.key);
+      } else {
+        setBlockedSubject(null);
+        setShowFreeTierBlocked(true);
+      }
       return;
     }
     setModalTile(tile);
@@ -307,19 +357,31 @@ export function QuestionBankHomeScreen() {
 
   const isLoggedIn = Boolean(session?.user);
 
+  const freeTierBlockedHeadline = blockedSubject
+    ? `You've used your ${FREE_TIER_LIMIT_PER_SUBJECT} free ${blockedSubject} questions`
+    : anyPreviewAvailable === false
+      ? "Free preview unavailable"
+      : "Upgrade to unlock this subject";
+
+  const freeTierBlockedSubtext = blockedSubject
+    ? `Upgrade for unlimited ${blockedSubject} practice and every other subject.`
+    : anyPreviewAvailable === false
+      ? "Preview questions are not available right now. Try again shortly or upgrade for full access."
+      : 'Upgrade for unlimited practice sessions across every subject and difficulty.';
+
   const freeTierPromoBanner =
-    freeTierExhausted || showFreeTierBlocked ? (
+    showFreeTierBlocked ? (
       <DrillUpgradeBanner
         variant="panel"
-        headline="You've used your 10 free questions"
-        subtext="Upgrade for unlimited practice sessions across every subject and difficulty."
+        headline={freeTierBlockedHeadline}
+        subtext={freeTierBlockedSubtext}
         ctaLabel="View plans"
       />
     ) : (
       <DrillUpgradeBanner
         variant="panel"
-        headline="Try 30 ESAT preview questions free"
-        subtext="Curated Math 1, Math 2 and Physics hook sets. Upgrade for the full question bank."
+        headline="Try 10 free questions per subject"
+        subtext="Math 1, Math 2 and Physics preview sets. Upgrade for the full question bank."
         ctaLabel="View plans"
       />
     );
@@ -330,16 +392,6 @@ export function QuestionBankHomeScreen() {
         {/* Progress (logged in) or free preview promo (logged out) */}
         {isLoggedIn ? (
           <section className="space-y-4">
-            {!treatAsFullAccess &&
-            !freeTierLoading &&
-            (freeTierExhausted || showFreeTierBlocked) ? (
-              <DrillUpgradeBanner
-                variant="panel"
-                headline="You've used your 10 free questions"
-                subtext="Upgrade for unlimited practice sessions across every subject and difficulty."
-                ctaLabel="View plans"
-              />
-            ) : null}
             <div className="rounded-organic-xl bg-surface px-5 py-6 sm:px-7 sm:py-8">
             <div>
               <h1 className="text-base font-semibold text-text sm:text-lg">
@@ -423,6 +475,15 @@ export function QuestionBankHomeScreen() {
           <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {filteredTiles.map((tile) => {
               const stats = tiles[tile.key];
+              const previewSubject = isFreeTierPreviewSubject(tile.key)
+                ? tile.key
+                : null;
+              const subjectFree = previewSubject
+                ? subjectStatus(previewSubject)
+                : null;
+              const previewAvailable =
+                treatAsFullAccess ||
+                (previewSubject != null && previewAvailableFor(previewSubject));
               const pct =
                 stats.total > 0
                   ? Math.min(100, Math.round((stats.attempted / stats.total) * 100))
@@ -462,7 +523,7 @@ export function QuestionBankHomeScreen() {
                         disabled={
                           !treatAsFullAccess &&
                           !freeTierLoading &&
-                          (freeTierExhausted || freeTierRemaining <= 0)
+                          !previewAvailable
                         }
                         className={cn(
                           "shrink-0 rounded px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-opacity",
@@ -470,7 +531,13 @@ export function QuestionBankHomeScreen() {
                           tile.startBtnClass,
                         )}
                       >
-                        {treatAsFullAccess ? "Start" : "Preview"}
+                        {treatAsFullAccess
+                          ? "Start"
+                          : previewSubject
+                            ? subjectFree?.isExhausted
+                              ? "Limit reached"
+                              : "Preview"
+                            : "Upgrade"}
                       </button>
                     </div>
 
@@ -507,14 +574,18 @@ export function QuestionBankHomeScreen() {
         {!treatAsFullAccess && !freeTierLoading && isLoggedIn ? (
           <section className="space-y-4">
             <p className="text-center text-sm text-text-muted">
-              Free preview: {freeTierAttempted} / {FREE_TIER_QUESTION_LIMIT} curated
-              questions attempted
-              {freeTierRemaining > 0
-                ? ` · ${freeTierRemaining} remaining`
-                : ""}
+              Free preview limits (per subject):{" "}
+              {(["Math 1", "Math 2", "Physics"] as const).map((subject, index) => {
+                const row = subjectStatus(subject);
+                return (
+                  <span key={subject}>
+                    {index > 0 ? " · " : ""}
+                    {subject} {row?.attemptedCount ?? 0}/{FREE_TIER_LIMIT_PER_SUBJECT}
+                  </span>
+                );
+              })}
             </p>
-            {(showFreeTierBlocked || freeTierExhausted) && freeTierPromoBanner}
-            {!freeTierExhausted && freeTierRemaining > 0 ? freeTierPromoBanner : null}
+            {freeTierPromoBanner}
           </section>
         ) : null}
 
@@ -524,7 +595,7 @@ export function QuestionBankHomeScreen() {
             type="button"
             onClick={() => {
               if (!treatAsFullAccess) {
-                launchFreeTierPreview();
+                launchMixedFreePreview();
                 return;
               }
               setMixedModalOpen(true);
@@ -532,7 +603,7 @@ export function QuestionBankHomeScreen() {
             disabled={
               !treatAsFullAccess &&
               !freeTierLoading &&
-              (freeTierExhausted || freeTierRemaining <= 0)
+              anyPreviewAvailable !== true
             }
             className={cn(
               "inline-flex items-center gap-2 rounded-full px-10 py-3.5 text-sm font-semibold",

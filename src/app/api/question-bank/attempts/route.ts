@@ -4,8 +4,9 @@ import { createClient } from '@supabase/supabase-js';
 import { userHasFullAccess } from '@/lib/subscription/serverAccess';
 import {
   FREE_TIER_QUESTION_ID_SET,
-  FREE_TIER_QUESTION_IDS,
-  FREE_TIER_QUESTION_LIMIT,
+  FREE_TIER_LIMIT_PER_SUBJECT,
+  freeTierQuestionIdsForSubject,
+  freeTierSubjectForQuestionId,
 } from '@/lib/questionBank/freeTierQuestions';
 
 export const dynamic = 'force-dynamic';
@@ -62,12 +63,21 @@ export async function POST(request: NextRequest) {
         );
       }
 
+      const subject = freeTierSubjectForQuestionId(question_id);
+      if (!subject) {
+        return NextResponse.json(
+          { error: 'Upgrade required to attempt this question' },
+          { status: 403 },
+        );
+      }
+
       const admin = createClient(supabaseUrl, supabaseServiceKey);
+      const subjectIds = [...freeTierQuestionIdsForSubject(subject)];
       const { data: priorAttempts } = await admin
         .from('question_bank_attempts')
         .select('question_id')
         .eq('user_id', session.user.id)
-        .in('question_id', [...FREE_TIER_QUESTION_IDS]);
+        .in('question_id', subjectIds);
 
       const attemptedIds = new Set(
         (priorAttempts ?? []).map((row) => row.question_id as string),
@@ -75,10 +85,10 @@ export async function POST(request: NextRequest) {
 
       if (
         !attemptedIds.has(question_id) &&
-        attemptedIds.size >= FREE_TIER_QUESTION_LIMIT
+        attemptedIds.size >= FREE_TIER_LIMIT_PER_SUBJECT
       ) {
         return NextResponse.json(
-          { error: 'Free question limit reached. Upgrade for unlimited access.' },
+          { error: 'Free question limit reached for this subject. Upgrade for unlimited access.' },
           { status: 403 },
         );
       }

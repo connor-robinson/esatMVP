@@ -55,15 +55,22 @@ import {
   QUESTION_BANK_HOME_LAUNCH_KEY,
   type QuestionBankHomeLaunchPayload,
 } from '@/lib/questionBank/homeLaunch';
-import { QUESTION_BANK_FREE_TIER_LAUNCH_KEY } from '@/lib/questionBank/freeTierLaunch';
-import { FREE_TIER_QUESTION_LIMIT } from '@/lib/questionBank/freeTierQuestions';
+import {
+  readFreeTierLaunch,
+  clearFreeTierLaunch,
+  hasFreeTierLaunchPayload,
+} from '@/lib/questionBank/freeTierLaunch';
+import {
+  FREE_TIER_LIMIT_PER_SUBJECT,
+  type FreeTierPreviewSubject,
+} from '@/lib/questionBank/freeTierQuestions';
 import { cn, formatTime } from '@/lib/utils';
 
 function hasSessionBootPayload(): boolean {
   if (typeof window === 'undefined') return false;
   return (
     !!sessionStorage.getItem(QUESTION_BANK_HOME_LAUNCH_KEY) ||
-    !!sessionStorage.getItem(QUESTION_BANK_FREE_TIER_LAUNCH_KEY) ||
+    hasFreeTierLaunchPayload() ||
     !!sessionStorage.getItem('questionBankSession')
   );
 }
@@ -77,9 +84,15 @@ export default function QuestionBankPage() {
   const treatAsFullAccess = subscriptionLoading || hasFullAccess;
   const {
     refresh: refreshFreeTier,
-    isExhausted: freeTierExhausted,
+    subjectStatus,
+    anyPreviewAvailable,
   } = useQuestionBankFreeTier(treatAsFullAccess);
   const [freeTierBlocked, setFreeTierBlocked] = useState(false);
+  const [freeTierBlockedSubject, setFreeTierBlockedSubject] =
+    useState<FreeTierPreviewSubject | null>(null);
+  const [freeTierBlockedReason, setFreeTierBlockedReason] = useState<
+    'exhausted' | 'unavailable' | null
+  >(null);
   const [wasFreeTierSession, setWasFreeTierSession] = useState(false);
 
   const {
@@ -382,16 +395,21 @@ export default function QuestionBankPage() {
   );
 
   const startFreeTierSession = useCallback(
-    async (options?: { requestedCount?: number }) => {
+    async (options?: { subject?: FreeTierPreviewSubject; requestedCount?: number }) => {
       if (treatAsFullAccess) return false;
+
+      const subject = options?.subject ?? 'Math 1';
 
       setSessionStarting(true);
       setFreeTierBlocked(false);
+      setFreeTierBlockedSubject(null);
+      setFreeTierBlockedReason(null);
 
       try {
-        const res = await fetch('/api/question-bank/free-tier', {
-          credentials: 'include',
-        });
+        const res = await fetch(
+          `/api/question-bank/free-tier?subject=${encodeURIComponent(subject)}`,
+          { credentials: 'include' },
+        );
         if (!res.ok) throw new Error('Failed to load free tier');
 
         const data = await res.json();
@@ -401,23 +419,32 @@ export default function QuestionBankPage() {
           []) as QuestionBankQuestion[];
         const remaining = data.remaining ?? 0;
 
-        if (
-          data.isExhausted ||
-          remaining <= 0 ||
-          remainingQs.length === 0
-        ) {
+        if (data.isExhausted || remaining <= 0) {
+          setFreeTierBlockedSubject(subject);
+          setFreeTierBlockedReason('exhausted');
+          setFreeTierBlocked(true);
+          return true;
+        }
+
+        if (remainingQs.length === 0) {
+          setFreeTierBlockedSubject(null);
+          setFreeTierBlockedReason('unavailable');
           setFreeTierBlocked(true);
           return true;
         }
 
         const requested = options?.requestedCount ?? remainingQs.length;
-        if (requested > remaining || requested > FREE_TIER_QUESTION_LIMIT) {
+        if (requested > remaining || requested > FREE_TIER_LIMIT_PER_SUBJECT) {
+          setFreeTierBlockedSubject(subject);
+          setFreeTierBlockedReason('exhausted');
           setFreeTierBlocked(true);
           return true;
         }
 
         const sessionQs = remainingQs.slice(0, requested);
         if (sessionQs.length === 0) {
+          setFreeTierBlockedSubject(subject);
+          setFreeTierBlockedReason('exhausted');
           setFreeTierBlocked(true);
           return true;
         }
@@ -445,6 +472,8 @@ export default function QuestionBankPage() {
 
         return true;
       } catch {
+        setFreeTierBlockedSubject(null);
+        setFreeTierBlockedReason('unavailable');
         setFreeTierBlocked(true);
         return true;
       } finally {
@@ -855,13 +884,13 @@ export default function QuestionBankPage() {
     if (typeof window === 'undefined') return;
     if (treatAsFullAccess) return;
 
-    const freeTierFlag = sessionStorage.getItem(QUESTION_BANK_FREE_TIER_LAUNCH_KEY);
-    if (!freeTierFlag) return;
+    const launch = readFreeTierLaunch();
+    if (!launch) return;
 
+    clearFreeTierLaunch();
     freeTierLaunchInProgressRef.current = true;
     setSessionStarting(true);
-    sessionStorage.removeItem(QUESTION_BANK_FREE_TIER_LAUNCH_KEY);
-    void startFreeTierSession();
+    void startFreeTierSession({ subject: launch.subject });
   }, [startFreeTierSession, treatAsFullAccess]);
 
   useEffect(() => {
@@ -942,10 +971,24 @@ export default function QuestionBankPage() {
         startedAt={sessionStartedAt}
         timedOut={sessionEndedByTimer}
         onBack={() => router.push('/questions')}
-        showUpgradeBanner={!hasFullAccess && (wasFreeTierSession || freeTierExhausted)}
+        showUpgradeBanner={!hasFullAccess && wasFreeTierSession}
       />
     );
   }
+
+  const freeTierBlockedHeadline =
+    freeTierBlockedReason === 'exhausted' && freeTierBlockedSubject
+      ? `You've used your ${FREE_TIER_LIMIT_PER_SUBJECT} free ${freeTierBlockedSubject} questions`
+      : freeTierBlockedReason === 'unavailable' || anyPreviewAvailable === false
+        ? 'Free preview unavailable'
+        : "You've used your free preview questions";
+
+  const freeTierBlockedSubtext =
+    freeTierBlockedReason === 'exhausted' && freeTierBlockedSubject
+      ? `Upgrade for unlimited ${freeTierBlockedSubject} practice and every other subject.`
+      : freeTierBlockedReason === 'unavailable' || anyPreviewAvailable === false
+        ? 'Preview questions are not available right now. Try again shortly or upgrade for full access.'
+        : 'Upgrade for unlimited practice sessions across every subject and difficulty.';
 
   if (!activeSession && !showSessionLoading && freeTierBlocked) {
     return (
@@ -953,8 +996,8 @@ export default function QuestionBankPage() {
         <Container size="lg">
           <DrillUpgradeBanner
             variant="panel"
-            headline="You've used your 10 free questions"
-            subtext="Upgrade for unlimited practice sessions across every subject and difficulty."
+            headline={freeTierBlockedHeadline}
+            subtext={freeTierBlockedSubtext}
             ctaLabel="View plans"
           />
           <div className="mt-6">
