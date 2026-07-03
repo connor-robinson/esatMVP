@@ -286,7 +286,7 @@ function validateChemistryHookQuestions(questions: HookQuestion[]): string[] {
 }
 
 async function archiveRemovedHookQuestions(
-  supabase: ReturnType<typeof createClient>,
+  supabase: ReturnType<typeof createClient<any>>,
   generationIds: readonly string[],
   setId: string,
 ): Promise<{ archived: string[]; attemptCounts: Record<string, number> }> {
