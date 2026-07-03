@@ -73,7 +73,8 @@ function DrillModuleCard({
           : isSelected
             ? 'bg-folder-card-selected shadow-sm'
             : 'bg-surface-elevated hover:bg-surface-neutral',
-        hintVisible && 'overflow-visible',
+        hintVisible &&
+          'z-50 bg-surface-elevated shadow-[0_0_0_2px_var(--color-primary)]',
       )}
     >
       <div className='mb-2 flex items-start justify-between gap-2'>
@@ -104,12 +105,6 @@ function DrillModuleCard({
         selected={isSelected && !locked}
       />
       <div className='relative mt-2 flex justify-end'>
-        {hintVisible ? (
-          <GuestDrillHint
-            label='Try this mode'
-            className='absolute bottom-[calc(100%+0.1rem)] right-2 z-20 items-end'
-          />
-        ) : null}
         {locked ? (
           <span className='flex items-center gap-1.5 rounded-organic-sm bg-surface-dark px-3 py-2 text-xs font-bold text-text-muted'>
             <Lock className='h-3.5 w-3.5 shrink-0' aria-hidden />
@@ -269,29 +264,35 @@ export function DrillVariantsGrid({
           </p>
         </div>
 
-        <div className='grid grid-cols-2 gap-2.5 overflow-visible pt-0.5 md:grid-cols-3 2xl:grid-cols-4'>
-          {modules.map((mod) => {
-            const compositeId = `${mod.topicId}-${mod.variantId}`;
-            const isSelected = selectedTopicIds.includes(compositeId);
-            const locked = !accessibleTopicIds.has(mod.topicId);
-            return (
-              <DrillModuleCard
-                key={compositeId}
-                topicId={mod.topicId}
-                variantId={mod.variantId}
-                name={mod.name}
-                difficulty={mod.difficulty}
-                isSelected={isSelected}
-                locked={locked}
-                featured={mod.featured}
-                showTryHint={showGuestTryHint}
-                onAdd={() =>
-                  onAddVariant(compositeId, mod.topicId, mod.variantId)
-                }
-                onRemove={() => onRemoveVariant(compositeId)}
-              />
-            );
-          })}
+        <div className='relative min-h-[12rem] flex-1'>
+          <div className='grid grid-cols-2 gap-2.5 overflow-visible pt-0.5 md:grid-cols-3 2xl:grid-cols-4'>
+            {modules.map((mod) => {
+              const compositeId = `${mod.topicId}-${mod.variantId}`;
+              const isSelected = selectedTopicIds.includes(compositeId);
+              const locked = !accessibleTopicIds.has(mod.topicId);
+              return (
+                <DrillModuleCard
+                  key={compositeId}
+                  topicId={mod.topicId}
+                  variantId={mod.variantId}
+                  name={mod.name}
+                  difficulty={mod.difficulty}
+                  isSelected={isSelected}
+                  locked={locked}
+                  featured={mod.featured}
+                  showTryHint={showGuestTryHint}
+                  onAdd={() =>
+                    onAddVariant(compositeId, mod.topicId, mod.variantId)
+                  }
+                  onRemove={() => onRemoveVariant(compositeId)}
+                />
+              );
+            })}
+          </div>
+
+          {showGuestTryHint ? (
+            <GuestDrillHint variant='spotlight' label='Try this mode' />
+          ) : null}
         </div>
 
         {showUpgradeBanner && hasLockedModules ? (
