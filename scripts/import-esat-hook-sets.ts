@@ -1,29 +1,36 @@
 /**
- * Import ESAT hook preview sets (Math 1, Math 2, Physics) into ai_generated_questions.
+ * Import ESAT hook sets into ai_generated_questions (preview + Chemistry bank set).
  *
  * Run: npx tsx scripts/import-esat-hook-sets.ts
- *      npx tsx scripts/import-esat-hook-sets.ts --only math2,physics
+ *      npx tsx scripts/import-esat-hook-sets.ts --only chemistry
  * Requires: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
  */
 import fs from "fs";
 import path from "path";
 import { createClient } from "@supabase/supabase-js";
 import {
-  ESAT_HOOK_SETS,
+  ESAT_HOOK_IMPORT_SETS,
+  ESAT_PHYSICS_HOOK_ARCHIVED_GENERATION_IDS,
   hookQuestionDbId,
 } from "../src/lib/questionBank/esatHookSets";
 import { prepareQuestionBankMathText } from "../src/lib/utils/convertLatexDelimiters";
 
+type HookStatementItem = { number: number; textMarkdown: string };
 type HookOption = { id: string; textMarkdown: string };
 type HookDistractor = { optionId: string; reason: string };
 type HookQuestion = {
   id: string;
   order: number;
+  questionType?: "single_choice" | "multi_statement_single_choice";
   difficulty: "accessible" | "medium" | "hard";
+  difficultyScore?: number;
   estimatedSeconds: number;
   topics: string[];
   specRefs: string[];
   stemMarkdown: string;
+  statementItems?: HookStatementItem[];
+  statementLayout?: string;
+  statementSpacing?: string;
   diagramSvg: string | null;
   options: HookOption[];
   correctOptionId: string;
@@ -133,6 +140,10 @@ function mapQuestionRow(
       hook_set_title: setMeta.title,
       hook_order: q.order,
       hook_generation_id: q.id,
+      question_type: q.questionType ?? "single_choice",
+      statement_items: q.statementItems ?? null,
+      statement_layout: q.statementLayout ?? null,
+      statement_spacing: q.statementSpacing ?? null,
       topics: q.topics,
       spec_refs: q.specRefs,
       estimated_seconds: q.estimatedSeconds,
@@ -159,6 +170,19 @@ function validateHookQuestions(
   }
 
   for (const q of questions) {
+    const questionType = q.questionType ?? "single_choice";
+
+    if (questionType === "multi_statement_single_choice") {
+      if (q.options.length !== 8) {
+        errors.push(`${q.id}: statement questions must have 8 options, found ${q.options.length}`);
+      }
+      if (!q.statementItems || q.statementItems.length !== 3) {
+        errors.push(`${q.id}: statement questions must include exactly 3 statementItems`);
+      }
+    } else if (q.options.length !== 6) {
+      errors.push(`${q.id}: expected 6 options for single_choice, found ${q.options.length}`);
+    }
+
     if (q.options.length < 4) {
       errors.push(`${q.id}: expected at least 4 options, found ${q.options.length}`);
     }
@@ -195,6 +219,126 @@ function validateHookQuestions(
   return errors;
 }
 
+function validatePhysicsFormatCounts(questions: HookQuestion[]): string[] {
+  const errors: string[] = [];
+  const single = questions.filter(
+    (q) => (q.questionType ?? "single_choice") === "single_choice",
+  ).length;
+  const multi = questions.filter(
+    (q) => q.questionType === "multi_statement_single_choice",
+  ).length;
+
+  if (single !== 8) {
+    errors.push(`Physics: expected 8 single_choice questions, found ${single}`);
+  }
+  if (multi !== 2) {
+    errors.push(
+      `Physics: expected 2 multi_statement_single_choice questions, found ${multi}`,
+    );
+  }
+
+  const statementOrders = questions
+    .filter((q) => q.questionType === "multi_statement_single_choice")
+    .map((q) => q.order)
+    .sort((a, b) => a - b);
+  if (JSON.stringify(statementOrders) !== JSON.stringify([2, 9])) {
+    errors.push(
+      `Physics: statement questions must be at positions 2 and 9; got orders ${statementOrders.join(", ")}`,
+    );
+  }
+
+  return errors;
+}
+
+function validateChemistryHookQuestions(questions: HookQuestion[]): string[] {
+  const errors: string[] = [];
+  const single = questions.filter(
+    (q) => (q.questionType ?? "single_choice") === "single_choice",
+  ).length;
+  const multi = questions.filter(
+    (q) => q.questionType === "multi_statement_single_choice",
+  ).length;
+
+  if (single !== 9) {
+    errors.push(`Chemistry: expected 9 single_choice questions, found ${single}`);
+  }
+  if (multi !== 1) {
+    errors.push(
+      `Chemistry: expected 1 multi_statement_single_choice question, found ${multi}`,
+    );
+  }
+
+  const multiQ = questions.find(
+    (q) => q.questionType === "multi_statement_single_choice",
+  );
+  if (multiQ && multiQ.id !== "esat-chemistry-hook-07") {
+    errors.push(
+      `Chemistry: multi_statement question must be esat-chemistry-hook-07, found ${multiQ.id}`,
+    );
+  }
+
+  const svgCount = questions.filter((q) => q.diagramSvg?.trim()).length;
+  if (svgCount !== 2) {
+    errors.push(`Chemistry: expected 2 SVG diagram questions, found ${svgCount}`);
+  }
+
+  return errors;
+}
+
+async function archiveRemovedHookQuestions(
+  supabase: ReturnType<typeof createClient>,
+  generationIds: readonly string[],
+  setId: string,
+): Promise<{ archived: string[]; attemptCounts: Record<string, number> }> {
+  const archived: string[] = [];
+  const attemptCounts: Record<string, number> = {};
+
+  for (const generationId of generationIds) {
+    const dbId = hookQuestionDbId(generationId);
+    const { data: existing } = await supabase
+      .from("ai_generated_questions")
+      .select("id, idea_plan")
+      .eq("generation_id", generationId)
+      .maybeSingle();
+
+    if (!existing) continue;
+
+    const { count } = await supabase
+      .from("question_bank_attempts")
+      .select("id", { count: "exact", head: true })
+      .eq("question_id", dbId);
+
+    attemptCounts[generationId] = count ?? 0;
+
+    const priorPlan =
+      existing.idea_plan != null && typeof existing.idea_plan === "object"
+        ? (existing.idea_plan as Record<string, unknown>)
+        : {};
+
+    const { error } = await supabase
+      .from("ai_generated_questions")
+      .update({
+        status: "deleted",
+        idea_plan: {
+          ...priorPlan,
+          hook_set_archived: true,
+          archived_from_set: setId,
+          archived_at: new Date().toISOString(),
+          archived_reason: "replaced_in_hook_set",
+        },
+      })
+      .eq("generation_id", generationId);
+
+    if (error) {
+      throw new Error(`Archive failed for ${generationId}: ${error.message}`);
+    }
+
+    archived.push(generationId);
+  }
+
+  return { archived, attemptCounts };
+}
+
 function parseOnlyFilter(argv: string[]): Set<string> | null {
   const onlyArg = argv.find((a) => a.startsWith("--only="));
   if (!onlyArg) return null;
@@ -206,6 +350,7 @@ function setKeyFromSubject(subject: string): string {
   if (subject === "Math 1") return "math1";
   if (subject === "Math 2") return "math2";
   if (subject === "Physics") return "physics";
+  if (subject === "Chemistry") return "chemistry";
   return subject.toLowerCase().replace(/\s+/g, "");
 }
 
@@ -219,7 +364,7 @@ async function main() {
   }
 
   const onlyFilter = parseOnlyFilter(process.argv.slice(2));
-  const setsToImport = ESAT_HOOK_SETS.filter((set) => {
+  const setsToImport = ESAT_HOOK_IMPORT_SETS.filter((set) => {
     if (!onlyFilter) return true;
     return onlyFilter.has(setKeyFromSubject(set.subject));
   });
@@ -260,6 +405,14 @@ async function main() {
       ),
     );
 
+    if (setConfig.subject === "Chemistry") {
+      fileErrors.push(...validateChemistryHookQuestions(payload.questions));
+    }
+
+    if (setConfig.subject === "Physics") {
+      fileErrors.push(...validatePhysicsFormatCounts(payload.questions));
+    }
+
     const rows = payload.questions
       .sort((a, b) => a.order - b.order)
       .map((q) =>
@@ -288,6 +441,20 @@ async function main() {
     }
 
     console.log(`Imported ${setConfig.subject}: ${rows.length} questions`);
+
+    if (setConfig.subject === "Physics") {
+      const { archived, attemptCounts } = await archiveRemovedHookQuestions(
+        supabase,
+        ESAT_PHYSICS_HOOK_ARCHIVED_GENERATION_IDS,
+        setConfig.setId,
+      );
+      if (archived.length > 0) {
+        console.log(`  Archived removed Physics hook questions: ${archived.join(", ")}`);
+        for (const id of archived) {
+          console.log(`    ${id}: ${attemptCounts[id] ?? 0} attempt(s) preserved`);
+        }
+      }
+    }
   }
 
   if (fileErrors.length > 0) {

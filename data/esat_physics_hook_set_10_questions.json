@@ -17,7 +17,7 @@
     ],
     "designIntent": [
       "A high-quality first-use set with realistic pacing and no throwaway recall questions.",
-      "Four questions use the authentic three-statement, eight-option structure.",
+      "Two questions use the authentic three-statement, eight-option structure.",
       "Distractors are generated from specific conceptual or arithmetic errors rather than arbitrary nearby values.",
       "Solutions are concise, visually light and focused on the decisive step."
     ],
@@ -128,7 +128,23 @@
         "P3.5e",
         "P3.5f"
       ],
-      "stemMarkdown": "A parachutist is falling vertically at terminal velocity. The parachute is then opened.\\n\\nWhich of the following statements is/are correct?\\n\\n1. Immediately after the parachute opens, the parachutist's weight is unchanged.\\n\\n2. Immediately after the parachute opens, the resultant force on the parachutist is upwards.\\n\\n3. At the new, lower terminal velocity, the air resistance is less than the parachutist's weight.",
+      "stemMarkdown": "A parachutist is falling vertically at terminal velocity. The parachute is then opened.\\n\\nWhich of the following statements is/are correct?",
+      "statementItems": [
+        {
+          "number": 1,
+          "textMarkdown": "Immediately after the parachute opens, the parachutist's weight is unchanged."
+        },
+        {
+          "number": 2,
+          "textMarkdown": "Immediately after the parachute opens, the resultant force on the parachutist is upwards."
+        },
+        {
+          "number": 3,
+          "textMarkdown": "At the new, lower terminal velocity, the air resistance is less than the parachutist's weight."
+        }
+      ],
+      "statementLayout": "stacked",
+      "statementSpacing": "comfortable",
       "diagramSvg": null,
       "options": [
         {
@@ -294,100 +310,86 @@
       ]
     },
     {
-      "id": "esat-physics-hook-09",
+      "id": "esat-physics-hook-09r",
       "order": 4,
-      "questionType": "multi_statement_single_choice",
-      "difficulty": "accessible",
-      "difficultyScore": 2,
-      "estimatedSeconds": 80,
+      "questionType": "single_choice",
+      "difficulty": "medium",
+      "difficultyScore": 3,
+      "estimatedSeconds": 95,
       "topics": [
-        "Alpha decay",
-        "Nuclide notation",
-        "Half-life"
+        "Radioactive decay",
+        "Half-life",
+        "Background radiation",
+        "Data interpretation"
       ],
       "specRefs": [
-        "P7.1",
-        "P7.2",
+        "P7.3",
         "P7.4"
       ],
-      "stemMarkdown": "A pure sample initially contains only the radioactive nuclide \\({}^{226}_{88}X\\). Each nucleus of \\(X\\) emits one alpha particle to form the stable nuclide \\(Y\\). The half-life of \\(X\\) is 4 days.\\n\\nWhich of the following statements is/are correct?\\n\\n1. A nucleus of \\(Y\\) contains 136 neutrons.\\n\\n2. After 12 days, \\(87.5\\%\\) of the original nuclei of \\(X\\) remain.\\n\\n3. After 12 days, the ratio of the number of nuclei of \\(Y\\) to the number of nuclei of \\(X\\) is \\(7:1\\).",
+      "stemMarkdown": "A radiation detector records a background count rate of \\(40\\text{ counts per minute}\\).\\n\\nWith a radioactive source in a fixed position beside the detector, the **total** count rate is \\(680\\text{ counts per minute}\\) at \\(t=0\\), and \\(120\\text{ counts per minute}\\) at \\(t=12\\text{ h}\\).\\n\\nAssume the background count rate is constant.\\n\\nWhat total count rate should be recorded at \\(t=20\\text{ h}\\)?",
       "diagramSvg": null,
       "options": [
         {
           "id": "A",
-          "textMarkdown": "none of them"
+          "textMarkdown": "\\(20\\text{ counts per minute}\\)"
         },
         {
           "id": "B",
-          "textMarkdown": "1 only"
+          "textMarkdown": "\\(40\\text{ counts per minute}\\)"
         },
         {
           "id": "C",
-          "textMarkdown": "2 only"
+          "textMarkdown": "\\(60\\text{ counts per minute}\\)"
         },
         {
           "id": "D",
-          "textMarkdown": "3 only"
+          "textMarkdown": "\\(80\\text{ counts per minute}\\)"
         },
         {
           "id": "E",
-          "textMarkdown": "1 and 2 only"
+          "textMarkdown": "\\(100\\text{ counts per minute}\\)"
         },
         {
           "id": "F",
-          "textMarkdown": "1 and 3 only"
-        },
-        {
-          "id": "G",
-          "textMarkdown": "2 and 3 only"
-        },
-        {
-          "id": "H",
-          "textMarkdown": "1, 2 and 3"
+          "textMarkdown": "\\(120\\text{ counts per minute}\\)"
         }
       ],
-      "correctOptionId": "F",
+      "correctOptionId": "C",
       "solution": {
-        "title": "Track the daughter nuclide and then apply three half-lives.",
+        "title": "Subtract the background before using half-life.",
         "stepsMarkdown": [
-          "Alpha decay gives \\({}^{222}_{86}Y\\), which has \\(222-86=136\\) neutrons. Statement 1 is true.",
-          "Twelve days is three half-lives, so the fraction of \\(X\\) remaining is \\((1/2)^3=1/8=12.5\\%\\). Statement 2 is false.",
-          "The remaining fraction is \\(1/8\\) and the fraction converted to \\(Y\\) is \\(7/8\\), so \\(Y:X=7:1\\). Statement 3 is true."
+          "At \\(t=0\\), the source alone gives \\(680-40=640\\) counts per minute.",
+          "At \\(t=12\\text{ h}\\), the source alone gives \\(120-40=80\\) counts per minute.",
+          "The source count has fallen by a factor of \\(8\\), so 12 hours is three half-lives. The half-life is therefore \\(4\\text{ h}\\).",
+          "At \\(t=20\\text{ h}\\), five half-lives have passed, so the source gives \\(640/2^5=20\\) counts per minute.",
+          "Adding the background gives \\(20+40=60\\) counts per minute."
         ],
-        "finalAnswerMarkdown": "\\(\\boxed{\\text{1 and 3 only}}\\)"
+        "finalAnswerMarkdown": "\\(\\boxed{60\\text{ counts per minute}}\\)"
       },
       "distractorMap": [
         {
           "optionId": "A",
-          "reason": "Statements 1 and 3 are true."
+          "reason": "This is the source count after 20 hours, before the background is added."
         },
         {
           "optionId": "B",
-          "reason": "Misses the correct daughter-to-parent ratio."
+          "reason": "Assumes the radioactive source has already fallen to zero."
         },
         {
           "optionId": "C",
-          "reason": "Statement 2 confuses the fraction decayed with the fraction remaining."
-        },
-        {
-          "optionId": "D",
-          "reason": "Misses the neutron count in the daughter nucleus."
-        },
-        {
-          "optionId": "E",
-          "reason": "Includes the false statement 2 and misses statement 3."
-        },
-        {
-          "optionId": "F",
           "reason": "Correct."
         },
         {
-          "optionId": "G",
-          "reason": "Includes the false statement 2 and misses statement 1."
+          "optionId": "D",
+          "reason": "Treats the eight hours from 12 h to 20 h as only one half-life."
         },
         {
-          "optionId": "H",
-          "reason": "Statement 2 is false."
+          "optionId": "E",
+          "reason": "Halves the measured total count at 12 h, then adds the background again."
+        },
+        {
+          "optionId": "F",
+          "reason": "Assumes the count rate does not fall after 12 hours."
         }
       ]
     },
@@ -555,100 +557,86 @@
       ]
     },
     {
-      "id": "esat-physics-hook-05",
+      "id": "esat-physics-hook-05r",
       "order": 7,
-      "questionType": "multi_statement_single_choice",
+      "questionType": "single_choice",
       "difficulty": "medium",
       "difficultyScore": 3,
-      "estimatedSeconds": 80,
+      "estimatedSeconds": 100,
       "topics": [
         "Ideal gases",
+        "Pressure",
         "Density",
-        "Particle model"
+        "Forces"
       ],
       "specRefs": [
         "P5.1",
         "P5.2",
-        "P5.4"
+        "P3.2"
       ],
-      "stemMarkdown": "A fixed mass of ideal gas is compressed slowly at constant temperature until its volume is half its original value.\\n\\nWhich of the following statements is/are correct?\\n\\n1. The pressure of the gas doubles.\\n\\n2. The density of the gas halves.\\n\\n3. The average kinetic energy of the gas particles remains unchanged.",
+      "stemMarkdown": "A vertical cylinder contains a fixed mass of ideal gas at atmospheric pressure \\(1.00\\times10^5\\text{ Pa}\\). The gas density is initially \\(1.20\\text{ kg m}^{-3}\\).\\n\\nA frictionless piston of mass \\(80\\text{ kg}\\) and cross-sectional area \\(0.040\\text{ m}^2\\) is placed on top of the gas. Atmospheric pressure acts on the upper surface of the piston. The piston settles slowly and the gas returns to its original temperature.\\n\\nTake \\(g=10\\text{ N kg}^{-1}\\).\\n\\nWhat is the final density of the gas?",
       "diagramSvg": null,
       "options": [
         {
           "id": "A",
-          "textMarkdown": "none of them"
+          "textMarkdown": "\\(0.96\\text{ kg m}^{-3}\\)"
         },
         {
           "id": "B",
-          "textMarkdown": "1 only"
+          "textMarkdown": "\\(1.20\\text{ kg m}^{-3}\\)"
         },
         {
           "id": "C",
-          "textMarkdown": "2 only"
+          "textMarkdown": "\\(1.24\\text{ kg m}^{-3}\\)"
         },
         {
           "id": "D",
-          "textMarkdown": "3 only"
+          "textMarkdown": "\\(1.40\\text{ kg m}^{-3}\\)"
         },
         {
           "id": "E",
-          "textMarkdown": "1 and 2 only"
+          "textMarkdown": "\\(1.44\\text{ kg m}^{-3}\\)"
         },
         {
           "id": "F",
-          "textMarkdown": "1 and 3 only"
-        },
-        {
-          "id": "G",
-          "textMarkdown": "2 and 3 only"
-        },
-        {
-          "id": "H",
-          "textMarkdown": "1, 2 and 3"
+          "textMarkdown": "\\(2.40\\text{ kg m}^{-3}\\)"
         }
       ],
-      "correctOptionId": "F",
+      "correctOptionId": "E",
       "solution": {
-        "title": "Use constant-temperature gas behaviour and the definition of density.",
+        "title": "First find the new gas pressure.",
         "stepsMarkdown": [
-          "1 is true: \\(PV\\) is constant, so halving \\(V\\) doubles \\(P\\).",
-          "2 is false: the mass is fixed, so halving the volume doubles the density.",
-          "3 is true: the temperature is unchanged, so the particles' average kinetic energy is unchanged."
+          "The piston adds a pressure \\(mg/A=(80\\times10)/0.040=2.00\\times10^4\\text{ Pa}\\).",
+          "So the final gas pressure is \\(1.20\\times10^5\\text{ Pa}\\).",
+          "At constant temperature, pressure is proportional to density for a fixed mass of gas.",
+          "Therefore \\(\\rho_2=1.20\\times\\dfrac{1.20\\times10^5}{1.00\\times10^5}=1.44\\text{ kg m}^{-3}\\)."
         ],
-        "finalAnswerMarkdown": "\\(\\boxed{\\text{1 and 3 only}}\\)"
+        "finalAnswerMarkdown": "\\(\\boxed{1.44\\text{ kg m}^{-3}}\\)"
       },
       "distractorMap": [
         {
           "optionId": "A",
-          "reason": "Statements 1 and 3 are true."
+          "reason": "Uses an inverse pressure–density relationship."
         },
         {
           "optionId": "B",
-          "reason": "Misses that constant temperature means unchanged average kinetic energy."
+          "reason": "Ignores the pressure produced by the piston's weight."
         },
         {
           "optionId": "C",
-          "reason": "Statement 2 has the density change backwards."
+          "reason": "Adds the pressure increase as though it were \\(0.04\\text{ kg m}^{-3}\\)."
         },
         {
           "optionId": "D",
-          "reason": "Misses the pressure change."
+          "reason": "Adds 20% of one unit instead of increasing the original density by 20%."
         },
         {
           "optionId": "E",
-          "reason": "Includes the false density statement and misses statement 3."
-        },
-        {
-          "optionId": "F",
           "reason": "Correct."
         },
         {
-          "optionId": "G",
-          "reason": "Includes the false density statement and misses statement 1."
-        },
-        {
-          "optionId": "H",
-          "reason": "Statement 2 is false."
+          "optionId": "F",
+          "reason": "Assumes the piston doubles the gas pressure."
         }
       ]
     },
@@ -752,7 +740,23 @@
       "specRefs": [
         "P2.3"
       ],
-      "stemMarkdown": "A straight wire carrying a current is at right angles to a uniform magnetic field. It experiences a magnetic force.\\n\\nWhich of the following statements is/are correct?\\n\\n1. Reversing both the current and the magnetic field reverses the direction of the force.\\n\\n2. Reversing the current only reverses the direction of the force.\\n\\n3. Doubling the magnetic field strength and halving the current leaves the magnitude of the force unchanged.",
+      "stemMarkdown": "A straight wire carrying a current is at right angles to a uniform magnetic field. It experiences a magnetic force.\\n\\nWhich of the following statements is/are correct?",
+      "statementItems": [
+        {
+          "number": 1,
+          "textMarkdown": "Reversing both the current and the magnetic field reverses the direction of the force."
+        },
+        {
+          "number": 2,
+          "textMarkdown": "Reversing the current only reverses the direction of the force."
+        },
+        {
+          "number": 3,
+          "textMarkdown": "Doubling the magnetic field strength and halving the current leaves the magnitude of the force unchanged."
+        }
+      ],
+      "statementLayout": "stacked",
+      "statementSpacing": "comfortable",
       "diagramSvg": null,
       "options": [
         {

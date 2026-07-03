@@ -1,0 +1,916 @@
+{
+  "set": {
+    "id": "esat-chemistry-hook-set-01",
+    "title": "ESAT Chemistry — First 10",
+    "module": "Chemistry",
+    "questionCount": 10,
+    "suggestedTimeSeconds": 1020,
+    "calculatorAllowed": false,
+    "periodicTableRequired": false,
+    "externalReferenceRequired": false,
+    "version": 1,
+    "status": "ready_for_review",
+    "authorship": "Original questions informed by the official 2026–27 ESAT Chemistry specification, the official Chemistry guide, and the style of historic NSAA Chemistry papers. No question has been copied.",
+    "providedDataPolicy": [
+      "Every relative atomic mass needed for a calculation is supplied in the question.",
+      "Atomic numbers, electron counts, molar gas volumes and specific heat capacities are supplied whenever required.",
+      "No question requires the user to consult a periodic table.",
+      "Questions may still test specification knowledge such as ionic bonding, electrolysis products and common chemical formulae."
+    ],
+    "researchBasis": [
+      "Official format: 27 multiple-choice questions in 40 minutes, computer-based and non-calculator.",
+      "Chemistry assumes the Chemistry specification plus Mathematics 1 knowledge.",
+      "Historic NSAA Chemistry sections repeatedly use short multi-stage calculations, data tables, graphs, chromatography, balanced equations, equilibrium and occasional statement-combination questions.",
+      "Only one of these ten questions uses the statement-combination format to preserve variety."
+    ],
+    "displayOrderPurpose": "Retention-optimised order: a solvable but non-trivial opening, early visual variety, alternating conceptual and quantitative styles, then three increasingly layered capstone questions.",
+    "difficultyMix": {
+      "accessible": 2,
+      "medium": 5,
+      "hard": 3
+    },
+    "formatMix": {
+      "singleChoice": 9,
+      "multiStatementSingleChoice": 1,
+      "svgDiagramQuestions": 2
+    }
+  },
+  "questions": [
+    {
+      "id": "esat-chemistry-hook-01",
+      "order": 1,
+      "questionType": "single_choice",
+      "difficulty": "medium",
+      "difficultyScore": 3,
+      "estimatedSeconds": 90,
+      "topics": [
+        "Amounts of substance",
+        "Limiting reactants",
+        "Ionic equations",
+        "Solutions"
+      ],
+      "specRefs": [
+        "C3.4",
+        "C4.3",
+        "C4.6",
+        "C4.9"
+      ],
+      "stemMarkdown": "\\(20.0\\text{ cm}^3\\) of \\(0.50\\text{ mol dm}^{-3}\\) calcium chloride solution is mixed with \\(30.0\\text{ cm}^3\\) of \\(0.40\\text{ mol dm}^{-3}\\) silver nitrate solution.\n\nSilver ions and chloride ions react completely according to\n\n\\[\\mathrm{Ag^+(aq)+Cl^-(aq)\\rightarrow AgCl(s)}.\\]\n\nHow many moles of chloride ions remain in the mixture?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(0.002\\text{ mol}\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(0.004\\text{ mol}\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(0.008\\text{ mol}\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(0.010\\text{ mol}\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(0.012\\text{ mol}\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(0.020\\text{ mol}\\)"
+        }
+      ],
+      "correctOptionId": "C",
+      "solution": {
+        "title": "Count chloride ions before comparing them with silver ions.",
+        "stepsMarkdown": [
+          "Moles of \\(\\mathrm{CaCl_2}=0.0200\\times0.50=0.0100\\).",
+          "Each mole of \\(\\mathrm{CaCl_2}\\) supplies two moles of \\(\\mathrm{Cl^-}\\), so there are \\(0.0200\\) mol of chloride ions.",
+          "Moles of \\(\\mathrm{Ag^+}=0.0300\\times0.40=0.0120\\).",
+          "The reaction is 1:1, so chloride remaining is \\(0.0200-0.0120=0.0080\\) mol."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{0.008\\text{ mol}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Subtracts the moles of calcium chloride from the moles of silver ions."
+        },
+        {
+          "optionId": "B",
+          "reason": "Halves the correct excess chloride amount."
+        },
+        {
+          "optionId": "C",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "D",
+          "reason": "Uses the moles of calcium chloride without accounting for two chloride ions per formula unit."
+        },
+        {
+          "optionId": "E",
+          "reason": "Gives the initial amount of silver ions rather than the chloride left over."
+        },
+        {
+          "optionId": "F",
+          "reason": "Gives the initial amount of chloride and ignores the precipitation reaction."
+        }
+      ]
+    },
+    {
+      "id": "esat-chemistry-hook-02",
+      "order": 2,
+      "questionType": "single_choice",
+      "difficulty": "accessible",
+      "difficultyScore": 2,
+      "estimatedSeconds": 75,
+      "topics": [
+        "Paper chromatography",
+        "Rf values",
+        "Data interpretation"
+      ],
+      "specRefs": [
+        "C8.3",
+        "C8.4"
+      ],
+      "stemMarkdown": "A sample containing exactly two substances is separated by paper chromatography. The ruler readings are shown in the diagram.\n\nThe possible substances have the following \\(R_f\\) values:\n\n| Substance | P | Q | R | S | T |\n|---|---:|---:|---:|---:|---:|\n| \\(R_f\\) | 0.25 | 0.40 | 0.50 | 0.70 | 0.75 |\n\nWhich two substances are present in the sample?",
+      "diagramSvg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 360\" role=\"img\" aria-label=\"Paper chromatogram shown beside a ruler. The baseline is at ruler reading 1.0 centimetres, the solvent front is at 11.0 centimetres, and two spot centres are at 5.0 and 8.5 centimetres.\">\n  <style>\n    .line{stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}\n    .fine{stroke:currentColor;stroke-width:1.4;fill:none}\n    .dash{stroke:currentColor;stroke-width:1.7;stroke-dasharray:7 7;fill:none}\n    .spot{fill:currentColor}\n    .label{font:20px serif;fill:currentColor}\n    .small{font:17px serif;fill:currentColor}\n  </style>\n\n  <!-- chromatography paper -->\n  <rect class=\"line\" x=\"170\" y=\"35\" width=\"270\" height=\"285\" rx=\"2\"/>\n  <path class=\"line\" d=\"M170 285 H440\"/>\n  <path class=\"dash\" d=\"M170 65 H440\"/>\n  <circle class=\"spot\" cx=\"305\" cy=\"181\" r=\"9\"/>\n  <circle class=\"spot\" cx=\"305\" cy=\"100\" r=\"9\"/>\n\n  <text class=\"small\" x=\"452\" y=\"71\">solvent front</text>\n  <text class=\"small\" x=\"452\" y=\"291\">baseline</text>\n  <text class=\"label\" x=\"292\" y=\"342\">sample</text>\n\n  <!-- ruler -->\n  <path class=\"line\" d=\"M95 35 V320\"/>\n  <g class=\"fine\">\n    <path d=\"M95 285 H130\"/><path d=\"M95 263 H117\"/><path d=\"M95 241 H117\"/>\n    <path d=\"M95 219 H117\"/><path d=\"M95 197 H117\"/><path d=\"M95 175 H130\"/>\n    <path d=\"M95 153 H117\"/><path d=\"M95 131 H117\"/><path d=\"M95 109 H117\"/>\n    <path d=\"M95 87 H117\"/><path d=\"M95 65 H130\"/>\n  </g>\n  <text class=\"small\" x=\"58\" y=\"291\">1.0</text>\n  <text class=\"small\" x=\"58\" y=\"181\">6.0</text>\n  <text class=\"small\" x=\"48\" y=\"71\">11.0</text>\n  <text class=\"small\" x=\"36\" y=\"334\">ruler / cm</text>\n\n  <!-- exact reading guides -->\n  <path class=\"dash\" d=\"M130 181 H296\"/>\n  <path class=\"dash\" d=\"M130 100 H296\"/>\n  <text class=\"small\" x=\"132\" y=\"174\">5.0 cm</text>\n  <text class=\"small\" x=\"132\" y=\"93\">8.5 cm</text>\n</svg>",
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "P and Q"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "P and T"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "Q and R"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "Q and T"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "R and S"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "S and T"
+        }
+      ],
+      "correctOptionId": "D",
+      "solution": {
+        "title": "Measure every distance from the baseline, not from zero on the ruler.",
+        "stepsMarkdown": [
+          "The solvent moves from \\(1.0\\) cm to \\(11.0\\) cm, so its distance is \\(10.0\\) cm.",
+          "The lower spot moves \\(5.0-1.0=4.0\\) cm, giving \\(R_f=4.0/10.0=0.40\\).",
+          "The upper spot moves \\(8.5-1.0=7.5\\) cm, giving \\(R_f=7.5/10.0=0.75\\).",
+          "These correspond to Q and T."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{\\text{Q and T}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Uses the lower spot correctly but treats the upper ruler reading as its travel distance."
+        },
+        {
+          "optionId": "B",
+          "reason": "Uses an incorrect lower-spot distance but identifies the upper spot correctly."
+        },
+        {
+          "optionId": "C",
+          "reason": "Uses the lower ruler reading directly and rounds the upper result down."
+        },
+        {
+          "optionId": "D",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "E",
+          "reason": "Measures both spot positions from zero on the ruler."
+        },
+        {
+          "optionId": "F",
+          "reason": "Rounds both calculated values upward to nearby table entries."
+        }
+      ]
+    },
+    {
+      "id": "esat-chemistry-hook-03",
+      "order": 3,
+      "questionType": "single_choice",
+      "difficulty": "medium",
+      "difficultyScore": 3,
+      "estimatedSeconds": 90,
+      "topics": [
+        "Atomic structure",
+        "Ions",
+        "Electron configuration",
+        "Isotopes"
+      ],
+      "specRefs": [
+        "C1.3",
+        "C1.4",
+        "C1.5",
+        "C1.6"
+      ],
+      "stemMarkdown": "A monatomic ion \\(X^{2-}\\) contains 18 electrons.\n\nElement \\(X\\) has two isotopes, \\(^{32}X\\) and \\(^{34}X\\). The abundance of \\(^{32}X\\) is \\(90\\%\\).\n\nWhich row gives the electron configuration of an atom of \\(X\\) and the relative atomic mass of \\(X\\)?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(2,8,4\\quad;\\quad 32.2\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(2,8,6\\quad;\\quad 32.2\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(2,8,8\\quad;\\quad 32.2\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(2,8,6\\quad;\\quad 33.8\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(2,8,8\\quad;\\quad 33.8\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(2,8,6\\quad;\\quad 34.0\\)"
+        }
+      ],
+      "correctOptionId": "B",
+      "solution": {
+        "title": "Remove the two extra electrons before finding the atomic configuration.",
+        "stepsMarkdown": [
+          "The \\(2-\\) ion has gained two electrons, so a neutral atom has \\(18-2=16\\) electrons.",
+          "Its electron configuration is therefore \\(2,8,6\\).",
+          "The weighted mean is \\((32\\times0.90)+(34\\times0.10)=32.2\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{2,8,6\\text{ and }32.2}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Removes four electrons from the ion instead of two."
+        },
+        {
+          "optionId": "B",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "C",
+          "reason": "Uses the electron configuration of the ion rather than the atom."
+        },
+        {
+          "optionId": "D",
+          "reason": "Reverses the isotope abundances."
+        },
+        {
+          "optionId": "E",
+          "reason": "Uses both the ion configuration and reversed abundances."
+        },
+        {
+          "optionId": "F",
+          "reason": "Uses the mass number of the heavier isotope as the relative atomic mass."
+        }
+      ]
+    },
+    {
+      "id": "esat-chemistry-hook-04",
+      "order": 4,
+      "questionType": "single_choice",
+      "difficulty": "medium",
+      "difficultyScore": 3,
+      "estimatedSeconds": 100,
+      "topics": [
+        "Energetics",
+        "Calorimetry",
+        "Efficiency",
+        "Moles"
+      ],
+      "specRefs": [
+        "C4.3",
+        "C11.1",
+        "C11.4"
+      ],
+      "stemMarkdown": "\\(0.800\\text{ g}\\) of a fuel is burned beneath \\(200\\text{ g}\\) of water. The water temperature rises by \\(12.0\\,^{\\circ}\\text{C}\\).\n\nOnly \\(75\\%\\) of the energy released by the fuel is transferred to the water.\n\nThe relative molar mass of the fuel is \\(32.0\\), and the specific heat capacity of water is \\(4.0\\text{ J g}^{-1}\\,^{\\circ}\\text{C}^{-1}\\).\n\nWhat is the magnitude of the energy released per mole of fuel?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(288\\text{ kJ mol}^{-1}\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(384\\text{ kJ mol}^{-1}\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(480\\text{ kJ mol}^{-1}\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(512\\text{ kJ mol}^{-1}\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(600\\text{ kJ mol}^{-1}\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(720\\text{ kJ mol}^{-1}\\)"
+        }
+      ],
+      "correctOptionId": "D",
+      "solution": {
+        "title": "The water receives only three quarters of the released energy.",
+        "stepsMarkdown": [
+          "Energy gained by water: \\(q=mc\\Delta T=200\\times4.0\\times12.0=9600\\text{ J}=9.6\\text{ kJ}\\).",
+          "Energy released by the fuel sample: \\(9.6/0.75=12.8\\text{ kJ}\\).",
+          "Moles of fuel: \\(0.800/32.0=0.0250\\text{ mol}\\).",
+          "Energy per mole: \\(12.8/0.0250=512\\text{ kJ mol}^{-1}\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{512\\text{ kJ mol}^{-1}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Multiplies the water's energy gain by 75% instead of correcting for the lost energy."
+        },
+        {
+          "optionId": "B",
+          "reason": "Treats the water's energy gain as the full energy released."
+        },
+        {
+          "optionId": "C",
+          "reason": "Uses an incorrect fuel amount of \\(0.020\\) mol."
+        },
+        {
+          "optionId": "D",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "E",
+          "reason": "Uses the efficiency correction in the wrong place and rounds prematurely."
+        },
+        {
+          "optionId": "F",
+          "reason": "Treats the 75% transfer as though only half the released energy reached the water."
+        }
+      ]
+    },
+    {
+      "id": "esat-chemistry-hook-05",
+      "order": 5,
+      "questionType": "single_choice",
+      "difficulty": "medium",
+      "difficultyScore": 3,
+      "estimatedSeconds": 100,
+      "topics": [
+        "Rates of reaction",
+        "Gas volumes",
+        "Stoichiometry",
+        "Graph interpretation"
+      ],
+      "specRefs": [
+        "C4.8",
+        "C10.2",
+        "C10.3"
+      ],
+      "stemMarkdown": "Magnesium reacts with excess hydrochloric acid according to\n\n\\[\\mathrm{Mg(s)+2HCl(aq)\\rightarrow MgCl_2(aq)+H_2(g)}.\\]\n\nThe graph shows the volume of hydrogen collected.\n\nAt the conditions used, one mole of gas occupies \\(24\\text{ dm}^3\\).\n\nWhat is the average rate of consumption of hydrochloric acid during the first \\(20\\text{ s}\\)?",
+      "diagramSvg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 380\" role=\"img\" aria-label=\"Graph of hydrogen volume against time. The curve passes through 20 seconds, 96 cubic centimetres, and approaches a plateau of 120 cubic centimetres.\">\n  <style>\n    .axis{stroke:currentColor;stroke-width:2.4;fill:none;stroke-linecap:round}\n    .curve{stroke:currentColor;stroke-width:2.8;fill:none;stroke-linecap:round}\n    .guide{stroke:currentColor;stroke-width:1.5;stroke-dasharray:7 7;fill:none;opacity:.75}\n    .point{fill:currentColor}\n    .label{font:20px serif;fill:currentColor}\n    .small{font:17px serif;fill:currentColor}\n  </style>\n\n  <path class=\"axis\" d=\"M85 310 H555\"/>\n  <path class=\"axis\" d=\"M85 310 V45\"/>\n  <path class=\"axis\" d=\"M555 310 l-12 -7 M555 310 l-12 7\"/>\n  <path class=\"axis\" d=\"M85 45 l-7 12 M85 45 l7 12\"/>\n\n  <!-- curve deliberately passes through (20,96) -->\n  <path class=\"curve\" d=\"M85 310 C135 220,170 125,230 99 C315 62,420 60,520 60\"/>\n  <path class=\"guide\" d=\"M230 99 V310 M85 99 H230\"/>\n  <path class=\"guide\" d=\"M85 60 H520\"/>\n  <circle class=\"point\" cx=\"230\" cy=\"99\" r=\"5\"/>\n\n  <text class=\"small\" x=\"213\" y=\"335\">20</text>\n  <text class=\"small\" x=\"48\" y=\"105\">96</text>\n  <text class=\"small\" x=\"39\" y=\"66\">120</text>\n  <text class=\"label\" x=\"275\" y=\"365\">time / s</text>\n  <text class=\"label\" x=\"8\" y=\"28\">volume of H₂ / cm³</text>\n  <text class=\"small\" x=\"238\" y=\"91\">(20, 96)</text>\n</svg>",
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(2.0\\times10^{-4}\\text{ mol s}^{-1}\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(4.0\\times10^{-4}\\text{ mol s}^{-1}\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(8.0\\times10^{-4}\\text{ mol s}^{-1}\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(4.0\\times10^{-3}\\text{ mol s}^{-1}\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(8.0\\times10^{-3}\\text{ mol s}^{-1}\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(4.0\\times10^{-2}\\text{ mol s}^{-1}\\)"
+        }
+      ],
+      "correctOptionId": "B",
+      "solution": {
+        "title": "Convert the gas volume to moles, then use the reaction ratio.",
+        "stepsMarkdown": [
+          "At \\(20\\text{ s}\\), \\(96\\text{ cm}^3=0.096\\text{ dm}^3\\) of hydrogen has formed.",
+          "Moles of \\(\\mathrm{H_2}=0.096/24=0.0040\\).",
+          "Twice as many moles of HCl are consumed, so \\(0.0080\\) mol of HCl reacts.",
+          "Average rate: \\(0.0080/20=4.0\\times10^{-4}\\text{ mol s}^{-1}\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{4.0\\times10^{-4}\\text{ mol s}^{-1}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Calculates the hydrogen-production rate but does not apply the 2:1 HCl-to-hydrogen ratio."
+        },
+        {
+          "optionId": "B",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "C",
+          "reason": "Applies the 2:1 ratio twice."
+        },
+        {
+          "optionId": "D",
+          "reason": "Converts cubic centimetres to cubic decimetres by a factor of 100 rather than 1000."
+        },
+        {
+          "optionId": "E",
+          "reason": "Combines the unit-conversion error with an extra factor of two."
+        },
+        {
+          "optionId": "F",
+          "reason": "Uses the gas volume directly as though it were an amount in moles."
+        }
+      ]
+    },
+    {
+      "id": "esat-chemistry-hook-06",
+      "order": 6,
+      "questionType": "single_choice",
+      "difficulty": "medium",
+      "difficultyScore": 3,
+      "estimatedSeconds": 90,
+      "topics": [
+        "Electrolysis",
+        "Moles",
+        "Gas volumes",
+        "Balanced equations"
+      ],
+      "specRefs": [
+        "C4.3",
+        "C4.8",
+        "C12.3",
+        "C12.4",
+        "C12.5"
+      ],
+      "stemMarkdown": "Molten aluminium oxide is electrolysed using inert electrodes. \\(5.4\\text{ g}\\) of aluminium is produced.\n\nWhat volume of oxygen is produced at room temperature and pressure?\n\n\\[A_r(\\mathrm{Al})=27\\]\nOne mole of gas occupies \\(24\\text{ dm}^3\\) at room temperature and pressure.",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(1.2\\text{ dm}^3\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(2.4\\text{ dm}^3\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(3.6\\text{ dm}^3\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(4.8\\text{ dm}^3\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(7.2\\text{ dm}^3\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(9.6\\text{ dm}^3\\)"
+        }
+      ],
+      "correctOptionId": "C",
+      "solution": {
+        "title": "Use the aluminium-to-oxygen ratio from aluminium oxide.",
+        "stepsMarkdown": [
+          "The overall change is \\(2\\mathrm{Al_2O_3}\\rightarrow4\\mathrm{Al}+3\\mathrm{O_2}\\).",
+          "Moles of aluminium: \\(5.4/27=0.20\\).",
+          "Moles of oxygen: \\(0.20\\times\\dfrac34=0.15\\).",
+          "Volume: \\(0.15\\times24=3.6\\text{ dm}^3\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{3.6\\text{ dm}^3}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Uses an oxygen-to-aluminium ratio of 1:4."
+        },
+        {
+          "optionId": "B",
+          "reason": "Uses an oxygen-to-aluminium ratio of 1:2."
+        },
+        {
+          "optionId": "C",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "D",
+          "reason": "Assumes equal moles of aluminium and oxygen."
+        },
+        {
+          "optionId": "E",
+          "reason": "Uses the formula subscripts as a 3:2 oxygen-to-aluminium ratio."
+        },
+        {
+          "optionId": "F",
+          "reason": "Uses twice as many moles of oxygen as aluminium."
+        }
+      ]
+    },
+    {
+      "id": "esat-chemistry-hook-07",
+      "order": 7,
+      "questionType": "multi_statement_single_choice",
+      "difficulty": "accessible",
+      "difficultyScore": 2,
+      "estimatedSeconds": 75,
+      "topics": [
+        "Bonding",
+        "Structure",
+        "Electrical conductivity",
+        "Intermolecular forces"
+      ],
+      "specRefs": [
+        "C6.3",
+        "C6.4",
+        "C6.6",
+        "C6.7",
+        "C15.2"
+      ],
+      "stemMarkdown": "Which of the following statements is/are correct?",
+      "statementItems": [
+        {
+          "number": 1,
+          "textMarkdown": "Molten sodium chloride conducts electricity because its ions are free to move."
+        },
+        {
+          "number": 2,
+          "textMarkdown": "Graphite conducts electricity because it contains delocalised electrons that can move through the structure."
+        },
+        {
+          "number": 3,
+          "textMarkdown": "When bromine boils, the covalent bonds within \\(\\mathrm{Br_2}\\) molecules are broken."
+        }
+      ],
+      "statementLayout": "stacked",
+      "statementSpacing": "comfortable",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "none of them"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "1 only"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "2 only"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "3 only"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "1 and 2 only"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "1 and 3 only"
+        },
+        {
+          "id": "G",
+          "textMarkdown": "2 and 3 only"
+        },
+        {
+          "id": "H",
+          "textMarkdown": "1, 2 and 3"
+        }
+      ],
+      "correctOptionId": "E",
+      "solution": {
+        "title": "Distinguish mobile charged particles from bonds inside molecules.",
+        "stepsMarkdown": [
+          "1 is true: molten ionic compounds contain mobile ions.",
+          "2 is true: graphite has mobile delocalised electrons.",
+          "3 is false: boiling overcomes intermolecular forces between bromine molecules, not the covalent bond inside each molecule."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{\\text{1 and 2 only}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Statements 1 and 2 are both true."
+        },
+        {
+          "optionId": "B",
+          "reason": "Misses the mobile electrons in graphite."
+        },
+        {
+          "optionId": "C",
+          "reason": "Misses the mobile ions in molten sodium chloride."
+        },
+        {
+          "optionId": "D",
+          "reason": "Statement 3 confuses intermolecular forces with covalent bonds."
+        },
+        {
+          "optionId": "E",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "F",
+          "reason": "Includes the false statement 3 and misses statement 2."
+        },
+        {
+          "optionId": "G",
+          "reason": "Includes the false statement 3 and misses statement 1."
+        },
+        {
+          "optionId": "H",
+          "reason": "Statement 3 is false."
+        }
+      ]
+    },
+    {
+      "id": "esat-chemistry-hook-08",
+      "order": 8,
+      "questionType": "single_choice",
+      "difficulty": "hard",
+      "difficultyScore": 4,
+      "estimatedSeconds": 105,
+      "topics": [
+        "Equilibrium",
+        "Gas volumes",
+        "Stoichiometry"
+      ],
+      "specRefs": [
+        "C3.5",
+        "C4.7",
+        "C4.8"
+      ],
+      "stemMarkdown": "Sulfur dioxide and oxygen reach equilibrium according to\n\n\\[\\mathrm{2SO_2(g)+O_2(g)\\rightleftharpoons2SO_3(g)}.\\]\n\nInitially, the mixture contains \\(4.0\\text{ mol}\\) of \\(\\mathrm{SO_2}\\) and \\(3.0\\text{ mol}\\) of \\(\\mathrm{O_2}\\), with no \\(\\mathrm{SO_3}\\).\n\nAt equilibrium, \\(75\\%\\) of the original sulfur dioxide has been converted into sulfur trioxide. At this temperature and pressure, one mole of gas occupies \\(30.0\\text{ dm}^3\\).\n\nWhat is the total volume of the equilibrium mixture?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(90\\text{ dm}^3\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(120\\text{ dm}^3\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(150\\text{ dm}^3\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(165\\text{ dm}^3\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(180\\text{ dm}^3\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(210\\text{ dm}^3\\)"
+        }
+      ],
+      "correctOptionId": "D",
+      "solution": {
+        "title": "Find every equilibrium amount before adding the gas moles.",
+        "stepsMarkdown": [
+          "\\(75\\%\\) of \\(4.0\\) mol means \\(3.0\\) mol of \\(\\mathrm{SO_2}\\) reacts.",
+          "This consumes \\(1.5\\) mol of \\(\\mathrm{O_2}\\) and forms \\(3.0\\) mol of \\(\\mathrm{SO_3}\\).",
+          "Equilibrium amounts are \\(1.0\\), \\(1.5\\), and \\(3.0\\) mol, giving \\(5.5\\) mol in total.",
+          "Volume: \\(5.5\\times30.0=165\\text{ dm}^3\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{165\\text{ dm}^3}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Counts only the sulfur trioxide formed."
+        },
+        {
+          "optionId": "B",
+          "reason": "Counts the unreacted gases but omits the sulfur trioxide."
+        },
+        {
+          "optionId": "C",
+          "reason": "Rounds the total amount to 5 mol."
+        },
+        {
+          "optionId": "D",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "E",
+          "reason": "Assumes the equilibrium mixture contains 6 mol in total."
+        },
+        {
+          "optionId": "F",
+          "reason": "Uses the initial total amount of 7 mol and ignores the reduction in gas moles."
+        }
+      ]
+    },
+    {
+      "id": "esat-chemistry-hook-09",
+      "order": 9,
+      "questionType": "single_choice",
+      "difficulty": "hard",
+      "difficultyScore": 4,
+      "estimatedSeconds": 110,
+      "topics": [
+        "Organic chemistry",
+        "Combustion",
+        "Gas volumes",
+        "Molecular formula"
+      ],
+      "specRefs": [
+        "C4.7",
+        "C13.1",
+        "C13.2"
+      ],
+      "stemMarkdown": "\\(100\\text{ cm}^3\\) of a gaseous hydrocarbon \\(X\\) is mixed with \\(700\\text{ cm}^3\\) of oxygen and burned completely.\n\nAfter the products are cooled to the original temperature, all the water is liquid and the remaining gases occupy \\(500\\text{ cm}^3\\).\n\nThe carbon dioxide is then completely removed. The gas left occupies \\(200\\text{ cm}^3\\) and is oxygen.\n\nAll gas volumes are measured at the same temperature and pressure.\n\nWhat is the molecular formula of \\(X\\)?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(\\mathrm{C_2H_4}\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(\\mathrm{C_2H_6}\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(\\mathrm{C_3H_6}\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(\\mathrm{C_3H_8}\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(\\mathrm{C_4H_8}\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(\\mathrm{C_4H_{10}}\\)"
+        }
+      ],
+      "correctOptionId": "D",
+      "solution": {
+        "title": "Use the carbon dioxide volume first, then the oxygen consumed.",
+        "stepsMarkdown": [
+          "The carbon dioxide volume is \\(500-200=300\\text{ cm}^3\\).",
+          "So each volume of hydrocarbon forms three equal volumes of carbon dioxide: \\(X\\) contains three carbon atoms.",
+          "Oxygen consumed is \\(700-200=500\\text{ cm}^3\\), or five volumes per volume of hydrocarbon.",
+          "For \\(\\mathrm{C_3H_y}\\), complete combustion needs \\(3+y/4=5\\) moles of oxygen, so \\(y=8\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{\\mathrm{C_3H_8}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Uses the final oxygen volume to infer the carbon count."
+        },
+        {
+          "optionId": "B",
+          "reason": "Finds two carbon atoms by ignoring the carbon dioxide removed."
+        },
+        {
+          "optionId": "C",
+          "reason": "Finds three carbon atoms but assumes the hydrocarbon is an alkene."
+        },
+        {
+          "optionId": "D",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "E",
+          "reason": "Treats the total gas remaining after cooling as carbon dioxide."
+        },
+        {
+          "optionId": "F",
+          "reason": "Infers four carbon atoms and then assumes an alkane."
+        }
+      ]
+    },
+    {
+      "id": "esat-chemistry-hook-10",
+      "order": 10,
+      "questionType": "single_choice",
+      "difficulty": "hard",
+      "difficultyScore": 4,
+      "estimatedSeconds": 115,
+      "topics": [
+        "Acids and bases",
+        "Back titration",
+        "Stoichiometry",
+        "Amounts of substance"
+      ],
+      "specRefs": [
+        "C4.3",
+        "C4.6",
+        "C4.9",
+        "C4.10",
+        "C9.3"
+      ],
+      "stemMarkdown": "An antacid tablet contains magnesium hydroxide and an inert filler.\n\nThe tablet is added to \\(30.0\\text{ cm}^3\\) of \\(0.500\\text{ mol dm}^{-3}\\) hydrochloric acid, which is in excess. After the reaction is complete, the excess hydrochloric acid is exactly neutralised by \\(10.0\\text{ cm}^3\\) of \\(0.300\\text{ mol dm}^{-3}\\) sodium hydroxide.\n\n\\[\\mathrm{Mg(OH)_2+2HCl\\rightarrow MgCl_2+2H_2O}\\]\n\nThe relative molar mass of \\(\\mathrm{Mg(OH)_2}\\) is \\(58.0\\).\n\nWhat mass of magnesium hydroxide was present in the tablet?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(0.087\\text{ g}\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(0.174\\text{ g}\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(0.348\\text{ g}\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(0.435\\text{ g}\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(0.696\\text{ g}\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(0.870\\text{ g}\\)"
+        }
+      ],
+      "correctOptionId": "C",
+      "solution": {
+        "title": "Use the second titration to find how much acid was left over.",
+        "stepsMarkdown": [
+          "Initial HCl: \\(0.0300\\times0.500=0.0150\\) mol.",
+          "Excess HCl: \\(0.0100\\times0.300=0.0030\\) mol, because HCl and NaOH react 1:1.",
+          "HCl that reacted with the tablet: \\(0.0150-0.0030=0.0120\\) mol.",
+          "Moles of \\(\\mathrm{Mg(OH)_2}=0.0120/2=0.0060\\).",
+          "Mass: \\(0.0060\\times58.0=0.348\\text{ g}\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{0.348\\text{ g}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Uses only the excess acid and then applies the 2:1 ratio."
+        },
+        {
+          "optionId": "B",
+          "reason": "Divides the acid consumed by four instead of two."
+        },
+        {
+          "optionId": "C",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "D",
+          "reason": "Assumes all the original acid reacted with magnesium hydroxide but otherwise uses the correct 2:1 ratio."
+        },
+        {
+          "optionId": "E",
+          "reason": "Uses a 1:1 ratio between HCl and magnesium hydroxide."
+        },
+        {
+          "optionId": "F",
+          "reason": "Uses all the initial acid and also assumes a 1:1 ratio."
+        }
+      ]
+    }
+  ]
+}

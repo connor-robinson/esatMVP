@@ -6,6 +6,7 @@ const HOOK_ID_NAMESPACE = "esat-m1-hook-set-v1";
 export const ESAT_M1_HOOK_SET_ID = "esat-m1-hook-set-01";
 export const ESAT_M2_HOOK_SET_ID = "esat-m2-hook-set-01";
 export const ESAT_PHYSICS_HOOK_SET_ID = "esat-physics-hook-set-01";
+export const ESAT_CHEMISTRY_HOOK_SET_ID = "esat-chemistry-hook-set-01";
 
 export const ESAT_M1_HOOK_GENERATION_IDS = [
   "esat-m1-hook-03",
@@ -37,15 +38,35 @@ export const ESAT_PHYSICS_HOOK_GENERATION_IDS = [
   "esat-physics-hook-04",
   "esat-physics-hook-02",
   "esat-physics-hook-01",
-  "esat-physics-hook-09",
+  "esat-physics-hook-09r",
   "esat-physics-hook-06",
   "esat-physics-hook-08",
-  "esat-physics-hook-05",
+  "esat-physics-hook-05r",
   "esat-physics-hook-03",
   "esat-physics-hook-07",
   "esat-physics-hook-10",
 ] as const;
 
+/** Retired from the active Physics hook set; kept in DB for attempt history. */
+export const ESAT_PHYSICS_HOOK_ARCHIVED_GENERATION_IDS = [
+  "esat-physics-hook-09",
+  "esat-physics-hook-05",
+] as const;
+
+export const ESAT_CHEMISTRY_HOOK_GENERATION_IDS = [
+  "esat-chemistry-hook-01",
+  "esat-chemistry-hook-02",
+  "esat-chemistry-hook-03",
+  "esat-chemistry-hook-04",
+  "esat-chemistry-hook-05",
+  "esat-chemistry-hook-06",
+  "esat-chemistry-hook-07",
+  "esat-chemistry-hook-08",
+  "esat-chemistry-hook-09",
+  "esat-chemistry-hook-10",
+] as const;
+
+/** Free-tier preview hook sets (Math 1, Math 2, Physics). */
 export const ESAT_HOOK_SETS = [
   {
     setId: ESAT_M1_HOOK_SET_ID,
@@ -64,6 +85,17 @@ export const ESAT_HOOK_SETS = [
     subject: "Physics" as const,
     dataFile: "esat_physics_hook_set_10_questions.json",
     generationIds: ESAT_PHYSICS_HOOK_GENERATION_IDS,
+  },
+] as const;
+
+/** All hook sets imported into the question bank (includes bank-only sets). */
+export const ESAT_HOOK_IMPORT_SETS = [
+  ...ESAT_HOOK_SETS,
+  {
+    setId: ESAT_CHEMISTRY_HOOK_SET_ID,
+    subject: "Chemistry" as const,
+    dataFile: "esat_chemistry_hook_set_10_questions.json",
+    generationIds: ESAT_CHEMISTRY_HOOK_GENERATION_IDS,
   },
 ] as const;
 

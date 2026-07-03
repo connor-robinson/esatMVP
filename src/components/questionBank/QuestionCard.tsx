@@ -3,6 +3,8 @@
 import type { ReactNode } from "react";
 import { useState, useEffect, useRef } from "react";
 import { StemContent } from "@/components/shared/StemContent";
+import { StatementItemsList } from "@/components/shared/StatementItemsList";
+import { getQuestionStatementItems } from "@/lib/questionBank/statementItems";
 import { QuestionWithGraph } from "@/components/shared/QuestionWithGraph";
 import type { QuestionBankQuestion } from "@/types/questionBank";
 import { cn } from "@/lib/utils";
@@ -144,6 +146,7 @@ export function QuestionCard({
   const lastFlashKeyRef = useRef("");
 
   const optionLetters = Object.keys(question.options).sort();
+  const statementItems = getQuestionStatementItems(question);
   const showSessionNotation = questionNumber != null;
 
   useEffect(() => {
@@ -485,7 +488,12 @@ export function QuestionCard({
               className="text-text inline"
             />
           ) : (
-            <StemContent content={question.question_stem} className="text-inherit inline" />
+            <>
+              <StemContent content={question.question_stem} className="text-inherit inline" />
+              {statementItems ? (
+                <StatementItemsList items={statementItems} className="mt-4 block" />
+              ) : null}
+            </>
           )}
         </div>
       </div>
@@ -504,7 +512,7 @@ export function QuestionCard({
             <div
               key={letter}
               className={cn(
-                "relative flex w-full flex-col justify-center overflow-hidden rounded-organic-md",
+                "relative flex w-full flex-col overflow-hidden rounded-organic-md",
                 getOptionStyle(letter),
                 isFlashing
                   ? flashLetter.kind === "wrong"
@@ -521,7 +529,10 @@ export function QuestionCard({
                 }
                 onMouseLeave={() => setHoveredOption(null)}
                 disabled={isAnswered && !allowRetry && !answerRevealed}
-                className="w-full px-3.5 py-2.5 text-left sm:px-4 sm:py-3"
+                className={cn(
+                  "w-full px-3.5 text-left sm:px-4",
+                  showDistractorControl ? "pb-1 pt-2.5 sm:pb-1.5 sm:pt-3" : "py-2.5 sm:py-3",
+                )}
               >
                 <div className="flex min-h-[2.25rem] items-center gap-3 sm:min-h-[2.5rem]">
                   <span
@@ -609,41 +620,48 @@ export function QuestionCard({
                 </div>
               </button>
 
-              {showDistractorControl && !distractorRevealed ? (
-                <div className="flex justify-center px-3.5 pb-2.5 sm:px-4">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setRevealedDistractors((prev) => new Set(prev).add(letter))
-                    }
-                    title="Reveal why it may be wrong"
-                    className={cn(
-                      "inline-flex items-center gap-1.5 rounded-full",
-                      "border border-border-subtle/70 bg-surface-elevated/95 px-3 py-1.5",
-                      "text-[11px] font-medium tracking-wide text-text-muted",
-                      "transition-all duration-fast ease-signature",
-                      "hover:border-border hover:bg-surface-mid/80 hover:text-text",
-                    )}
-                  >
-                    <HelpCircle
-                      className="h-3.5 w-3.5 shrink-0 opacity-80"
-                      strokeWidth={2}
-                      aria-hidden
-                    />
-                    Why it may be wrong
-                  </button>
-                </div>
-              ) : null}
-
-              {showDistractorControl && distractorRevealed ? (
-                <div className="flex flex-col items-center justify-center border-t border-border-subtle/50 px-3.5 pb-3 pt-3 text-center sm:px-4">
-                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-text-muted">
-                    Why it may be wrong
-                  </p>
-                  <StemContent
-                    content={distractor!}
-                    className="text-xs leading-relaxed text-text-muted sm:text-sm"
-                  />
+              {showDistractorControl ? (
+                <div className="px-3.5 pb-2.5 sm:px-4 sm:pb-3">
+                  {!distractorRevealed ? (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setRevealedDistractors((prev) => new Set(prev).add(letter))
+                      }
+                      title="Reveal why it may be wrong"
+                      className={cn(
+                        "inline-flex items-center gap-1.5 rounded-full",
+                        "border border-border-subtle/70 bg-surface-elevated/95 px-3 py-1.5",
+                        "text-[11px] font-medium tracking-wide text-text-muted",
+                        "transition-all duration-fast ease-signature",
+                        "hover:border-border hover:bg-surface-mid/80 hover:text-text",
+                      )}
+                    >
+                      <HelpCircle
+                        className="h-3.5 w-3.5 shrink-0 opacity-80"
+                        strokeWidth={2}
+                        aria-hidden
+                      />
+                      Why it may be wrong
+                    </button>
+                  ) : (
+                    <div className="flex items-start gap-2 border-l-2 border-border-subtle/60 pl-3">
+                      <HelpCircle
+                        className="mt-0.5 h-3.5 w-3.5 shrink-0 text-text-muted opacity-80"
+                        strokeWidth={2}
+                        aria-hidden
+                      />
+                      <div className="min-w-0 flex-1 space-y-1">
+                        <p className="text-[10px] font-semibold uppercase tracking-wide text-text-muted">
+                          Why it may be wrong
+                        </p>
+                        <StemContent
+                          content={distractor!}
+                          className="text-xs leading-snug text-text-muted sm:text-sm"
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
               ) : null}
             </div>
