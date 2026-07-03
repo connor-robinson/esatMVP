@@ -347,10 +347,10 @@ export function QuestionCard({
 
   const letterLabelClass = (letter: string) => {
     if (isAnswered && isCorrect && letter === correctAnswer) {
-      return "text-primary";
+      return "text-success";
     }
     if (answerRevealed && letter === correctAnswer) {
-      return "text-primary";
+      return "text-success";
     }
     if (incorrectAnswers.has(letter) && letter !== correctAnswer) {
       return "text-error";
@@ -545,9 +545,10 @@ export function QuestionCard({
                     className={cn(
                       "flex min-w-0 flex-1 items-center text-[0.98rem] leading-relaxed tracking-tight sm:text-[1.02rem]",
                       "font-sans text-text",
-                      showDistractorControl && !distractorRevealed
-                        ? "pr-28 sm:pr-36"
-                        : undefined,
+                      showDistractorControl &&
+                        (distractorRevealed
+                          ? "line-clamp-1 pr-[36%] sm:pr-[32%]"
+                          : "pr-28 sm:pr-36"),
                     )}
                   >
                     <StemContent
@@ -580,6 +581,20 @@ export function QuestionCard({
                     />
                     Why it may be wrong
                   </button>
+                ) : null}
+
+                {showDistractorControl && distractorRevealed ? (
+                  <div
+                    className={cn(
+                      "pointer-events-none absolute left-1/2 top-1/2 z-10",
+                      "w-[min(54%,22rem)] -translate-x-1/2 -translate-y-1/2 px-2 text-center",
+                    )}
+                  >
+                    <StemContent
+                      content={distractor!}
+                      className="text-xs leading-snug text-text-muted sm:text-sm"
+                    />
+                  </div>
                 ) : null}
 
                 <div className="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center sm:h-10 sm:w-10">
@@ -654,27 +669,6 @@ export function QuestionCard({
                   )}
                 </div>
               </div>
-
-              {showDistractorControl && distractorRevealed ? (
-                <div className="border-t border-border-subtle/40 px-3.5 pb-2.5 pt-2 sm:px-4 sm:pb-3">
-                  <div className="flex items-start gap-2 border-l-2 border-border-subtle/60 pl-3">
-                    <HelpCircle
-                      className="mt-0.5 h-3.5 w-3.5 shrink-0 text-text-muted opacity-80"
-                      strokeWidth={2}
-                      aria-hidden
-                    />
-                    <div className="min-w-0 flex-1 space-y-1">
-                      <p className="text-[10px] font-semibold uppercase tracking-wide text-text-muted">
-                        Why it may be wrong
-                      </p>
-                      <StemContent
-                        content={distractor!}
-                        className="text-xs leading-snug text-text-muted sm:text-sm"
-                      />
-                    </div>
-                  </div>
-                </div>
-              ) : null}
             </div>
             );
           })}
