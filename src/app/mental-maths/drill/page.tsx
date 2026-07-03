@@ -156,7 +156,7 @@ export default function BuilderPage() {
           {/* Session bar in document flow so scroll content (incl. upgrade banner) is not covered. */}
           <div
             className={cn(
-              "pointer-events-none flex shrink-0 justify-center px-3 pb-3 pt-1 sm:justify-end sm:px-4 sm:pb-3.5",
+              "pointer-events-none flex shrink-0 justify-center overflow-visible px-3 pb-3 pt-1 sm:justify-end sm:px-4 sm:pb-3.5",
               showGuestReviewHint ? "relative z-50" : "z-10",
             )}
           >

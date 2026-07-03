@@ -44,7 +44,7 @@ export function GuestDrillHintCallout({
   return (
     <motion.div
       className={cn(
-        'pointer-events-none flex flex-col items-center gap-1',
+        'pointer-events-none flex flex-col items-center gap-1 text-center',
         className,
       )}
       animate={reduceMotion ? undefined : { y: [0, -5, 0] }}
