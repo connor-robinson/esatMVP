@@ -176,7 +176,7 @@ export function QuestionCard({
       letter: selectedAnswer,
       kind: isCorrect ? "correct" : "wrong",
     });
-    const timer = window.setTimeout(() => setFlashLetter(null), 620);
+    const timer = window.setTimeout(() => setFlashLetter(null), 1200);
     return () => window.clearTimeout(timer);
   }, [
     showSessionNotation,
@@ -611,7 +611,12 @@ export function QuestionCard({
                       {(isCorrect && letter === correctAnswer) ||
                       (answerRevealed && letter === correctAnswer) ? (
                         <svg
-                          className="text-primary"
+                          className={cn(
+                            "text-success",
+                            isFlashing &&
+                              flashLetter?.kind === "correct" &&
+                              "animate-qb-correct-check",
+                          )}
                           width="22"
                           height="22"
                           viewBox="0 0 24 24"
@@ -626,7 +631,12 @@ export function QuestionCard({
                       ) : incorrectAnswers.has(letter) &&
                         letter !== correctAnswer ? (
                         <svg
-                          className="text-error"
+                          className={cn(
+                            "text-error",
+                            isFlashing &&
+                              flashLetter?.kind === "wrong" &&
+                              "animate-qb-wrong-mark",
+                          )}
                           width="22"
                           height="22"
                           viewBox="0 0 24 24"
