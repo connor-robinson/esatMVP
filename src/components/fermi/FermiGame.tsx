@@ -318,7 +318,7 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
 
   if (!hydrated || !roundReady) {
     return (
-      <div className="flex h-[calc(100vh-65px)] items-center justify-center bg-background">
+      <div className="flex h-[calc(100vh-58px)] items-center justify-center bg-background">
         <p className="text-sm font-medium text-text-muted">Loading today&apos;s puzzle…</p>
       </div>
     );
@@ -326,7 +326,7 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
 
   if (roundError || round.length === 0) {
     return (
-      <div className="flex h-[calc(100vh-65px)] flex-col items-center justify-center gap-4 bg-background px-6 text-center">
+      <div className="flex h-[calc(100vh-58px)] flex-col items-center justify-center gap-4 bg-background px-6 text-center">
         <p className="text-sm font-medium text-text-muted">
           {roundError ?? "Today's puzzle is unavailable."}
         </p>
@@ -342,7 +342,7 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
   }
 
   return (
-    <div className="relative flex h-[calc(100vh-65px)] max-h-[calc(100vh-65px)] flex-col overflow-hidden bg-background">
+    <div className="relative flex h-[calc(100vh-58px)] max-h-[calc(100vh-58px)] flex-col overflow-hidden bg-background">
       {/* Header */}
       <header className="flex shrink-0 items-center justify-between px-4 py-4 sm:px-6">
         <div className="flex items-center gap-3">

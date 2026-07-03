@@ -91,7 +91,7 @@ export default function FermiGuessrStatsPage() {
 
   if (!session?.user) {
     return (
-      <div className="flex min-h-[calc(100vh-65px)] items-center justify-center bg-background px-4">
+      <div className="flex min-h-[calc(100vh-58px)] items-center justify-center bg-background px-4">
         <div className="max-w-md text-center">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-organic-xl bg-secondary/20 text-secondary">
             <BarChart3 className="h-7 w-7" strokeWidth={2} />
@@ -120,7 +120,7 @@ export default function FermiGuessrStatsPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-65px)] bg-background py-6 sm:py-8">
+    <div className="min-h-[calc(100vh-58px)] bg-background py-6 sm:py-8">
       <Container size="md">
         <div className="mb-6 flex items-center gap-3">
           <button

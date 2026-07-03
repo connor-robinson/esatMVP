@@ -21,6 +21,7 @@ import { getTesterNavAction } from '@/lib/tester/checkpoint';
 import { BrandNavLockup } from '@/components/brand/BrandNavLockup';
 import { SignOutConfirmModal } from '@/components/auth/SignOutConfirmModal';
 import { APP_NAME } from '@/config/brand';
+import { NAVBAR_HEIGHT_PX } from '@/config/layout';
 import {
   NavSectionDropdown,
   NavDropdownMenuItem,
@@ -54,7 +55,7 @@ import {
 } from 'lucide-react';
 
 /** Unified lucide sizing so logout / login glyphs match sun + gear optically */
-const NAV_ICON_PX = 22;
+const NAV_ICON_PX = 20;
 const NAV_ICON_STROKE = 2;
 
 const navSections: NavSectionConfig[] = [
@@ -155,7 +156,7 @@ const navSections: NavSectionConfig[] = [
     label: 'Exam Tools',
     href: '/tools/score-converter',
     section: 'tools',
-    triggerPadding: 'px-1.5',
+    triggerPadding: 'px-1',
     items: [
       {
         href: '/tools/score-converter',
@@ -311,19 +312,19 @@ export function Navbar() {
     pathname === '/settings' || pathname.startsWith('/profile');
 
   const navIconSlotClass =
-    'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors duration-fast ease-signature hover:bg-surface-subtle interaction-scale';
+    'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors duration-fast ease-signature hover:bg-surface-subtle interaction-scale';
 
   const accountControls = (
     <div
-      className='flex shrink-0 items-center gap-1.5 border-l border-border-subtle pl-3 sm:gap-2 sm:pl-4'
+      className='flex shrink-0 items-center gap-1 border-l border-border-subtle pl-2 sm:gap-1.5 sm:pl-3'
       aria-label='Account and preferences'
     >
       {testerNav.show ? (
         <Link
           href={testerNav.href}
           className={cn(
-            'mr-0.5 inline-flex h-7 shrink-0 items-center justify-center rounded-organic-md px-3',
-            'text-[11px] font-semibold uppercase tracking-[0.12em]',
+            'mr-0.5 inline-flex h-6 shrink-0 items-center justify-center rounded-organic-md px-2.5',
+            'text-[10px] font-semibold uppercase tracking-[0.1em]',
             'transition-opacity duration-fast ease-signature hover:opacity-90',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
             testerNav.variant === 'continue'
@@ -443,9 +444,12 @@ export function Navbar() {
     <>
       {showMainNavStrip && (
         <nav className='sticky top-0 z-50 w-full border-b border-border bg-background/98 backdrop-blur-xl'>
-          <div className='w-full px-4 sm:px-6 lg:px-10 xl:px-12'>
-            <div className='flex h-[65px] items-center justify-between gap-4'>
-              <div className='flex min-w-0 flex-[1.35] items-center gap-5 sm:gap-8 lg:gap-10 xl:gap-12'>
+          <div className='w-full px-3 sm:px-5 lg:px-8 xl:px-10'>
+            <div
+              className='flex items-center justify-between gap-2.5'
+              style={{ height: NAVBAR_HEIGHT_PX }}
+            >
+              <div className='flex min-w-0 flex-[1.35] items-center gap-4 sm:gap-6 lg:gap-8 xl:gap-9'>
                 <Link
                   href='/'
                   className='group interaction-scale inline-flex shrink-0 items-center'
@@ -455,7 +459,7 @@ export function Navbar() {
                 </Link>
 
                 {!hasActiveSession && (
-                  <div className='hidden min-w-0 flex-1 items-center gap-x-6 lg:gap-x-8 xl:gap-x-9 md:flex'>
+                  <div className='hidden min-w-0 flex-1 items-center gap-x-4 lg:gap-x-6 xl:gap-x-7 md:flex'>
                     {navSections.map((section) => (
                       <NavSectionDropdown
                         key={section.section}
@@ -468,7 +472,7 @@ export function Navbar() {
                 )}
               </div>
 
-              <div className='flex min-w-0 shrink-0 items-center gap-1.5 sm:gap-2'>
+              <div className='flex min-w-0 shrink-0 items-center gap-1 sm:gap-1.5'>
                 {!hasActiveSession && (
                   <>
                     <button

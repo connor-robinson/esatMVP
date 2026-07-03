@@ -120,7 +120,7 @@ export default function PricingPage() {
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-65px)] overflow-hidden bg-background">
+    <div className="relative min-h-[calc(100vh-58px)] overflow-hidden bg-background">
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         <div className="absolute left-1/2 top-0 h-[28rem] w-[min(100%,56rem)] -translate-x-1/2 rounded-full bg-primary/[0.05] blur-3xl" />
         <div className="absolute bottom-0 right-0 h-[20rem] w-[28rem] rounded-full bg-white/[0.02] blur-3xl" />

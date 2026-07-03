@@ -11,12 +11,12 @@ export function BrandNavLockup({ className }: BrandNavLockupProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-3.5 text-text",
+        "inline-flex items-center gap-2.5 text-text",
         className,
       )}
     >
-      <BrandMarkImage className="h-5 w-auto translate-y-px" alt="" />
-      <BrandWordmark size="sm" />
+      <BrandMarkImage className="h-[1.125rem] w-auto translate-y-px" alt="" />
+      <BrandWordmark size="sm" className="text-[13px] tracking-[0.11em]" />
     </span>
   );
 }

@@ -96,7 +96,7 @@ const sectionTheme: Record<
 };
 
 const sectionLabelClass =
-  'whitespace-nowrap text-sm font-semibold uppercase tracking-[0.12em] transition-colors duration-fast ease-signature';
+  'whitespace-nowrap text-[13px] font-semibold uppercase tracking-[0.11em] transition-colors duration-fast ease-signature';
 
 const dropdownMotion = {
   initial: { opacity: 0, y: -8, scale: 0.97 },
@@ -269,7 +269,7 @@ export function NavSectionDropdown({
       >
         <div
           className={cn(
-            'inline-flex items-center rounded-organic-md px-3 py-1.5 transition-colors duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
+            'inline-flex items-center rounded-organic-md px-2 py-1 transition-colors duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
             open && cn(theme.triggerOpen, 'rounded-b-none shadow-sm'),
           )}
         >
@@ -291,7 +291,7 @@ export function NavSectionDropdown({
             type='button'
             onClick={toggleMenu}
             className={cn(
-              'ml-1 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors duration-fast ease-signature',
+              'ml-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-colors duration-fast ease-signature',
               isActive || open
                 ? sectionActiveClass[config.section]
                 : 'text-text-muted hover:bg-surface-subtle hover:text-text',
@@ -302,7 +302,7 @@ export function NavSectionDropdown({
           >
             <ChevronDown
               className={cn(
-                'h-3.5 w-3.5 transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
+                'h-3 w-3 transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
                 open && 'rotate-180',
               )}
               aria-hidden

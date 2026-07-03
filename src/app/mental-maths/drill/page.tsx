@@ -99,7 +99,7 @@ export default function BuilderPage() {
   // Builder view
   if (builder.view === "builder") {
     return (
-      <div className="relative h-[calc(100vh-65px)] max-h-[calc(100vh-65px)] overflow-hidden bg-background">
+      <div className="relative h-[calc(100vh-58px)] max-h-[calc(100vh-58px)] overflow-hidden bg-background">
         {/* ~90% visual density: render slightly larger then scale down to fit the viewport. */}
         <div className="flex h-[111.111%] w-[111.111%] min-h-0 origin-top-left scale-90 flex-col bg-background">
           <div className="relative flex min-h-0 flex-1 items-stretch gap-2.5 overflow-hidden px-3 py-3 sm:gap-3.5 sm:px-4 lg:gap-5">
@@ -166,7 +166,7 @@ export default function BuilderPage() {
                 compactVariant="figma"
                 showQuestionInput={false}
                 showClearAll={false}
-                showStartHint={showGuestOnboarding && hasFeaturedDrillSelected}
+                showStartHint={showGuestReviewHint}
                 startHintLabel="Review selection"
                 questionCount={builder.questionCount}
                 onQuestionCountChange={(n) => builder.setQuestionCount(n)}
