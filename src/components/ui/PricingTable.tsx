@@ -27,7 +27,7 @@ interface PricingTableProps {
 }
 
 const CARD_SHELL =
-  "relative flex h-full flex-col rounded-organic-xl bg-surface-elevated p-6 shadow-[0_12px_40px_-24px_rgba(0,0,0,0.55)] sm:p-7";
+  "relative flex h-full flex-col rounded-organic-xl p-6 shadow-[0_12px_40px_-24px_rgba(0,0,0,0.55)] sm:p-7";
 
 export function PricingTable({
   tiers,
@@ -51,8 +51,9 @@ export function PricingTable({
               key={tier.id}
               className={cn(
                 CARD_SHELL,
-                isHighlighted &&
-                  "bg-primary text-black shadow-[0_16px_48px_-20px_rgba(0,0,0,0.45)]",
+                isHighlighted
+                  ? "bg-primary text-black shadow-[0_16px_48px_-20px_rgba(0,0,0,0.45)]"
+                  : "bg-surface-elevated",
                 tier.featured && !isHighlighted && "overflow-hidden",
               )}
             >
@@ -138,16 +139,14 @@ export function PricingTable({
               </ul>
 
               <Button
-                variant={
-                  showPrimaryCta && isHighlighted ? "wide" : "secondary"
-                }
+                variant="secondary"
                 size="md"
                 disabled={isCurrentPlan || isLoading}
                 className={cn(
                   "w-full rounded-organic-lg font-semibold",
                   isHighlighted &&
                     showPrimaryCta &&
-                    "animate-pricing-bulge border-0 bg-black text-white hover:bg-black/90 hover:shadow-none",
+                    "animate-pricing-bulge border-0 !bg-black !text-white hover:!bg-black/90 hover:!text-white hover:shadow-none",
                   isHighlighted &&
                     !showPrimaryCta &&
                     "border-0 bg-black/15 text-black hover:bg-black/20",
