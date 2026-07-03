@@ -1,8 +1,8 @@
 /**
- * Import ESAT hook sets into ai_generated_questions (preview + Chemistry bank set).
+ * Import ESAT hook sets into ai_generated_questions (preview + Chemistry/Biology bank sets).
  *
  * Run: npx tsx scripts/import-esat-hook-sets.ts
- *      npx tsx scripts/import-esat-hook-sets.ts --only chemistry
+ *      npx tsx scripts/import-esat-hook-sets.ts --only biology
  * Requires: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
  */
 import fs from "fs";
@@ -285,6 +285,44 @@ function validateChemistryHookQuestions(questions: HookQuestion[]): string[] {
   return errors;
 }
 
+function validateBiologyHookQuestions(questions: HookQuestion[]): string[] {
+  const errors: string[] = [];
+  const single = questions.filter(
+    (q) => (q.questionType ?? "single_choice") === "single_choice",
+  ).length;
+  const multi = questions.filter(
+    (q) => q.questionType === "multi_statement_single_choice",
+  ).length;
+
+  if (single !== 9) {
+    errors.push(`Biology: expected 9 single_choice questions, found ${single}`);
+  }
+  if (multi !== 1) {
+    errors.push(
+      `Biology: expected 1 multi_statement_single_choice question, found ${multi}`,
+    );
+  }
+
+  const multiQ = questions.find(
+    (q) => q.questionType === "multi_statement_single_choice",
+  );
+  if (multiQ && multiQ.id !== "esat-biology-hook-06") {
+    errors.push(
+      `Biology: multi_statement question must be esat-biology-hook-06, found ${multiQ.id}`,
+    );
+  }
+  if (multiQ && (!multiQ.statementItems || multiQ.statementItems.length !== 3)) {
+    errors.push(`Biology: esat-biology-hook-06 must include exactly 3 statementItems`);
+  }
+
+  const svgCount = questions.filter((q) => q.diagramSvg?.trim()).length;
+  if (svgCount !== 3) {
+    errors.push(`Biology: expected 3 SVG diagram questions, found ${svgCount}`);
+  }
+
+  return errors;
+}
+
 async function archiveRemovedHookQuestions(
   supabase: ReturnType<typeof createClient<any>>,
   generationIds: readonly string[],
@@ -351,6 +389,7 @@ function setKeyFromSubject(subject: string): string {
   if (subject === "Math 2") return "math2";
   if (subject === "Physics") return "physics";
   if (subject === "Chemistry") return "chemistry";
+  if (subject === "Biology") return "biology";
   return subject.toLowerCase().replace(/\s+/g, "");
 }
 
@@ -407,6 +446,10 @@ async function main() {
 
     if (setConfig.subject === "Chemistry") {
       fileErrors.push(...validateChemistryHookQuestions(payload.questions));
+    }
+
+    if (setConfig.subject === "Biology") {
+      fileErrors.push(...validateBiologyHookQuestions(payload.questions));
     }
 
     if (setConfig.subject === "Physics") {

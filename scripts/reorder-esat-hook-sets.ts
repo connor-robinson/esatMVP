@@ -42,6 +42,18 @@ const REORDER: Record<string, readonly string[]> = {
     "esat-physics-hook-07",
     "esat-physics-hook-10",
   ],
+  "esat_biology_hook_set_10_questions.json": [
+    "esat-biology-hook-01",
+    "esat-biology-hook-02",
+    "esat-biology-hook-03",
+    "esat-biology-hook-04",
+    "esat-biology-hook-05",
+    "esat-biology-hook-06",
+    "esat-biology-hook-07",
+    "esat-biology-hook-08",
+    "esat-biology-hook-09",
+    "esat-biology-hook-10",
+  ],
 };
 
 type HookQuestion = { id: string; order: number; [key: string]: unknown };

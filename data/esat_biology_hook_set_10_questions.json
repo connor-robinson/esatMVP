@@ -1,0 +1,897 @@
+{
+  "set": {
+    "id": "esat-biology-hook-set-01",
+    "title": "ESAT Biology — First 10",
+    "module": "Biology",
+    "questionCount": 10,
+    "suggestedTimeSeconds": 1020,
+    "calculatorAllowed": false,
+    "dictionaryAllowed": false,
+    "formulaSheetRequired": false,
+    "geneticCodeTableRequired": false,
+    "externalReferenceRequired": false,
+    "version": 1,
+    "status": "ready_for_review",
+    "authorship": "Original questions informed by the official ESAT Biology guide and specification and the styles used in historic NSAA Biology papers. No question has been copied.",
+    "providedDataPolicy": [
+      "Every numerical value, relationship and conversion needed beyond ordinary Mathematics 1 knowledge is supplied.",
+      "No question requires a genetic-code table, formula sheet, microscope scale reference or external biological data.",
+      "Any specialised experimental setup is explained in the stem or diagram.",
+      "The set tests application of the official Biology content rather than recall of facts outside the specification."
+    ],
+    "researchBasis": [
+      "Official format: 27 multiple-choice questions in 40 minutes, without a calculator or dictionary.",
+      "Historic NSAA Biology questions frequently combine short biological scenarios with tables, graphs, diagrams, conditional genetics and concise calculations.",
+      "The set deliberately uses only one statement-combination question to avoid repetitive formatting.",
+      "Questions cover membranes, enzymes, DNA, gene technology, photosynthesis, homeostasis, ecosystems, meiosis, respiration and inheritance."
+    ],
+    "displayOrderPurpose": "Retention-optimised order: a data-based but achievable opener, an early visual question, a strong reasoning question in position 3, varied formats through the middle, and three layered closing problems.",
+    "difficultyMix": {
+      "accessible": 2,
+      "medium": 4,
+      "hard": 4
+    },
+    "formatMix": {
+      "singleChoice": 9,
+      "multiStatementSingleChoice": 1,
+      "svgDiagramQuestions": 3
+    }
+  },
+  "questions": [
+    {
+      "id": "esat-biology-hook-01",
+      "order": 1,
+      "questionType": "single_choice",
+      "difficulty": "medium",
+      "difficultyScore": 3,
+      "estimatedSeconds": 85,
+      "topics": [
+        "Osmosis",
+        "Water potential",
+        "Experimental data",
+        "Interpolation"
+      ],
+      "specRefs": [
+        "B2.1"
+      ],
+      "stemMarkdown": "Identical potato cylinders were placed in sucrose solutions for the same length of time.\n\n| Sucrose concentration / mol dm⁻³ | Percentage change in mass |\n|---:|---:|\n| 0.20 | +8% |\n| 0.30 | +2% |\n| 0.40 | −4% |\n\nAssume that the relationship is linear between \\(0.30\\) and \\(0.40\\text{ mol dm}^{-3}\\).\n\nAt which sucrose concentration would there be no net movement of water into or out of the potato cells?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(0.20\\text{ mol dm}^{-3}\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(0.25\\text{ mol dm}^{-3}\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(0.30\\text{ mol dm}^{-3}\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(0.33\\text{ mol dm}^{-3}\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(0.35\\text{ mol dm}^{-3}\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(0.40\\text{ mol dm}^{-3}\\)"
+        }
+      ],
+      "correctOptionId": "D",
+      "solution": {
+        "title": "Find where the percentage change crosses zero.",
+        "stepsMarkdown": [
+          "From \\(0.30\\) to \\(0.40\\), the change falls from \\(+2\\%\\) to \\(-4\\%\\): a fall of 6 percentage points.",
+          "Zero is one third of the way from \\(+2\\) to \\(-4\\).",
+          "One third of the \\(0.10\\) concentration interval is about \\(0.033\\).",
+          "So the concentration is approximately \\(0.30+0.033=0.33\\text{ mol dm}^{-3}\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{0.33\\text{ mol dm}^{-3}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Uses the most dilute solution, where the cylinders gain the most water."
+        },
+        {
+          "optionId": "B",
+          "reason": "Takes the midpoint of the first two concentrations rather than locating the zero crossing."
+        },
+        {
+          "optionId": "C",
+          "reason": "Chooses the nearest measured concentration with a small positive mass change."
+        },
+        {
+          "optionId": "D",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "E",
+          "reason": "Takes the midpoint between 0.30 and 0.40, ignoring that the changes are not equal in magnitude."
+        },
+        {
+          "optionId": "F",
+          "reason": "Chooses the first solution in which the potato loses water."
+        }
+      ]
+    },
+    {
+      "id": "esat-biology-hook-02",
+      "order": 2,
+      "questionType": "single_choice",
+      "difficulty": "medium",
+      "difficultyScore": 3,
+      "estimatedSeconds": 95,
+      "topics": [
+        "Enzymes",
+        "Starch digestion",
+        "Area",
+        "Experimental interpretation"
+      ],
+      "specRefs": [
+        "B8.1",
+        "B8.2",
+        "B8.3",
+        "B8.4"
+      ],
+      "stemMarkdown": "Equal volumes of two amylase solutions, P and Q, were placed into circular wells in starch agar. Both wells had radius \\(1\\text{ mm}\\). After the same time, the circular clear zones shown had formed.\n\nAssume the amount of starch digested is proportional to the clear area **excluding the well**.\n\nHow many times as much starch was digested around Q as around P?",
+      "diagramSvg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 680 340\" role=\"img\" aria-label=\"Two circular clear zones in starch agar. Each contains a circular well of radius 1 millimetre. The outer clear-zone radii are 5 millimetres for P and 7 millimetres for Q.\">\n  <style>\n    .outline{stroke:currentColor;stroke-width:2.2;fill:none}\n    .dash{stroke:currentColor;stroke-width:1.7;stroke-dasharray:7 7;fill:none}\n    .guide{stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round}\n    .fill{fill:currentColor;fill-opacity:.09;stroke:currentColor;stroke-width:2}\n    .well{fill:currentColor}\n    .label{font:22px serif;fill:currentColor}\n    .small{font:18px serif;fill:currentColor}\n  </style>\n\n  <rect class=\"outline\" x=\"35\" y=\"30\" width=\"610\" height=\"270\" rx=\"18\"/>\n  <text class=\"small\" x=\"48\" y=\"325\">starch agar; clear circles show starch digested after the same time</text>\n\n  <!-- P: scale 12 px per mm -->\n  <circle class=\"fill\" cx=\"205\" cy=\"160\" r=\"60\"/>\n  <circle class=\"well\" cx=\"205\" cy=\"160\" r=\"12\"/>\n  <path class=\"guide\" d=\"M205 160 H265\"/>\n  <path class=\"guide\" d=\"M257 153 L265 160 L257 167\"/>\n  <text class=\"small\" x=\"220\" y=\"148\">5 mm</text>\n  <text class=\"label\" x=\"195\" y=\"248\">P</text>\n\n  <!-- Q -->\n  <circle class=\"fill\" cx=\"485\" cy=\"160\" r=\"84\"/>\n  <circle class=\"well\" cx=\"485\" cy=\"160\" r=\"12\"/>\n  <path class=\"guide\" d=\"M485 160 H569\"/>\n  <path class=\"guide\" d=\"M561 153 L569 160 L561 167\"/>\n  <text class=\"small\" x=\"510\" y=\"148\">7 mm</text>\n  <text class=\"label\" x=\"475\" y=\"268\">Q</text>\n\n  <text class=\"small\" x=\"132\" y=\"70\">both wells have radius 1 mm</text>\n</svg>",
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(1.4\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(1.5\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(1.96\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(2.0\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(2.4\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(4.0\\)"
+        }
+      ],
+      "correctOptionId": "D",
+      "solution": {
+        "title": "Compare areas, and remove the area of each well.",
+        "stepsMarkdown": [
+          "Area digested around P: \\(\\pi(5^2-1^2)=24\\pi\\text{ mm}^2\\).",
+          "Area digested around Q: \\(\\pi(7^2-1^2)=48\\pi\\text{ mm}^2\\).",
+          "The factor is \\(48\\pi/24\\pi=2\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{2.0}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Compares the outer radii: \\(7/5\\)."
+        },
+        {
+          "optionId": "B",
+          "reason": "Compares the clear-zone widths: \\((7-1)/(5-1)\\)."
+        },
+        {
+          "optionId": "C",
+          "reason": "Compares the total circular areas but does not remove the wells."
+        },
+        {
+          "optionId": "D",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "E",
+          "reason": "Removes the well area from only one of the two zones."
+        },
+        {
+          "optionId": "F",
+          "reason": "Squares the ratio of the clear-zone widths."
+        }
+      ]
+    },
+    {
+      "id": "esat-biology-hook-03",
+      "order": 3,
+      "questionType": "single_choice",
+      "difficulty": "hard",
+      "difficultyScore": 4,
+      "estimatedSeconds": 105,
+      "topics": [
+        "DNA",
+        "Complementary base pairing",
+        "Percentages"
+      ],
+      "specRefs": [
+        "B5.1",
+        "B5.2"
+      ],
+      "stemMarkdown": "A double-stranded DNA molecule contains \\(1200\\) nucleotides in total. \\(30\\%\\) of all the nucleotides are adenine.\n\nOne of the two strands contains \\(210\\) adenine nucleotides and \\(150\\) guanine nucleotides.\n\nHow many cytosine nucleotides are present on this same strand?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(30\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(60\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(90\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(150\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(210\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(240\\)"
+        }
+      ],
+      "correctOptionId": "C",
+      "solution": {
+        "title": "Use totals across both strands before focusing on one strand.",
+        "stepsMarkdown": [
+          "Total adenine is \\(0.30\\times1200=360\\), so total thymine is also \\(360\\).",
+          "The remaining \\(480\\) nucleotides are split equally between guanine and cytosine, giving \\(240\\) of each.",
+          "Across both strands, every guanine is paired with a cytosine.",
+          "Therefore, guanine on strand 1 plus cytosine on strand 1 totals \\(240\\).",
+          "So the number of cytosine nucleotides is \\(240-150=90\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{90}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Subtracts the strand's adenine count from the total guanine count."
+        },
+        {
+          "optionId": "B",
+          "reason": "Uses the difference between the strand's adenine and guanine counts."
+        },
+        {
+          "optionId": "C",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "D",
+          "reason": "Assumes guanine and cytosine must be equal on each individual strand."
+        },
+        {
+          "optionId": "E",
+          "reason": "Assumes cytosine on the strand equals adenine on that strand."
+        },
+        {
+          "optionId": "F",
+          "reason": "Gives the total number of cytosine nucleotides across both strands."
+        }
+      ]
+    },
+    {
+      "id": "esat-biology-hook-04",
+      "order": 4,
+      "questionType": "single_choice",
+      "difficulty": "medium",
+      "difficultyScore": 3,
+      "estimatedSeconds": 90,
+      "topics": [
+        "Genetic engineering",
+        "Plasmids",
+        "Antibiotic selection",
+        "Bacteria"
+      ],
+      "specRefs": [
+        "B1.2",
+        "B6.1"
+      ],
+      "stemMarkdown": "A plasmid contains genes giving resistance to antibiotics A and B. A useful gene is inserted into the middle of the resistance gene for antibiotic B, so resistance to B is lost. The resistance gene for antibiotic A is unaffected.\n\nThe plasmid is placed into bacteria that were initially sensitive to both antibiotics.\n\nWhich growth pattern identifies bacteria containing the **recombinant plasmid**?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "growth on A and growth on B"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "growth on A but no growth on B"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "no growth on A but growth on B"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "no growth on either A or B"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "growth only when both A and B are present together"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "the growth pattern cannot distinguish recombinant bacteria"
+        }
+      ],
+      "correctOptionId": "B",
+      "solution": {
+        "title": "Track which resistance gene still works.",
+        "stepsMarkdown": [
+          "The plasmid still provides resistance to antibiotic A, so recombinant bacteria can grow on A.",
+          "Insertion of the useful gene disrupts resistance to B, so those bacteria cannot grow on B.",
+          "The identifying pattern is therefore growth on A but not on B."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{\\text{growth on A but no growth on B}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "This indicates an intact plasmid with both resistance genes still functioning."
+        },
+        {
+          "optionId": "B",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "C",
+          "reason": "Reverses which resistance gene was disrupted."
+        },
+        {
+          "optionId": "D",
+          "reason": "This is expected for bacteria that did not receive the plasmid."
+        },
+        {
+          "optionId": "E",
+          "reason": "The antibiotics do not combine to activate resistance."
+        },
+        {
+          "optionId": "F",
+          "reason": "The disrupted resistance gene provides a clear way to distinguish the recombinant plasmid."
+        }
+      ]
+    },
+    {
+      "id": "esat-biology-hook-05",
+      "order": 5,
+      "questionType": "single_choice",
+      "difficulty": "accessible",
+      "difficultyScore": 2,
+      "estimatedSeconds": 75,
+      "topics": [
+        "Photosynthesis",
+        "Limiting factors",
+        "Light intensity",
+        "Inverse-square relationship"
+      ],
+      "specRefs": [
+        "B11.1"
+      ],
+      "stemMarkdown": "A pondweed produces oxygen at a rate of \\(8\\text{ mm}^3\\text{ min}^{-1}\\) when a lamp is \\(30\\text{ cm}\\) away.\n\nThe lamp is moved to \\(20\\text{ cm}\\) away. In this range, light is the only limiting factor, the rate of photosynthesis is directly proportional to light intensity, and\n\n\\[\\text{light intensity}\\propto\\frac{1}{(\\text{distance})^2}.\\]\n\nWhat is the new rate of oxygen production?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(12\\text{ mm}^3\\text{ min}^{-1}\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(16\\text{ mm}^3\\text{ min}^{-1}\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(18\\text{ mm}^3\\text{ min}^{-1}\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(20\\text{ mm}^3\\text{ min}^{-1}\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(24\\text{ mm}^3\\text{ min}^{-1}\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(32\\text{ mm}^3\\text{ min}^{-1}\\)"
+        }
+      ],
+      "correctOptionId": "C",
+      "solution": {
+        "title": "Compare the inverse squares of the distances.",
+        "stepsMarkdown": [
+          "The intensity increases by \\(\\left(\\dfrac{30}{20}\\right)^2=\\left(\\dfrac32\\right)^2=\\dfrac94\\).",
+          "So the rate becomes \\(8\\times\\dfrac94=18\\text{ mm}^3\\text{ min}^{-1}\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{18\\text{ mm}^3\\text{ min}^{-1}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Scales the rate directly with \\(30/20\\), ignoring the square."
+        },
+        {
+          "optionId": "B",
+          "reason": "Assumes reducing the distance by one third doubles the intensity."
+        },
+        {
+          "optionId": "C",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "D",
+          "reason": "Adds the distance change numerically to the original rate."
+        },
+        {
+          "optionId": "E",
+          "reason": "Multiplies the rate by 3 rather than by \\(9/4\\)."
+        },
+        {
+          "optionId": "F",
+          "reason": "Assumes the light intensity becomes four times larger."
+        }
+      ]
+    },
+    {
+      "id": "esat-biology-hook-06",
+      "order": 6,
+      "questionType": "multi_statement_single_choice",
+      "difficulty": "accessible",
+      "difficultyScore": 2,
+      "estimatedSeconds": 75,
+      "topics": [
+        "Homeostasis",
+        "Insulin",
+        "ADH",
+        "Thermoregulation"
+      ],
+      "specRefs": [
+        "B9.3"
+      ],
+      "stemMarkdown": "Which of the following statements is/are correct?",
+      "statementItems": [
+        {
+          "number": 1,
+          "textMarkdown": "After a carbohydrate-rich meal, insulin can stimulate liver cells to convert glucose into glycogen."
+        },
+        {
+          "number": 2,
+          "textMarkdown": "When the water content of the blood is low, increased ADH causes more water to be reabsorbed by the kidneys."
+        },
+        {
+          "number": 3,
+          "textMarkdown": "When core body temperature is too high, vasodilation reduces blood flow near the skin and decreases heat loss."
+        }
+      ],
+      "statementLayout": "stacked",
+      "statementSpacing": "comfortable",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "none of them"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "1 only"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "2 only"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "3 only"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "1 and 2 only"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "1 and 3 only"
+        },
+        {
+          "id": "G",
+          "textMarkdown": "2 and 3 only"
+        },
+        {
+          "id": "H",
+          "textMarkdown": "1, 2 and 3"
+        }
+      ],
+      "correctOptionId": "E",
+      "solution": {
+        "title": "Statements 1 and 2 describe negative-feedback responses correctly.",
+        "stepsMarkdown": [
+          "1 is true: insulin promotes removal of glucose from the blood and its storage as glycogen.",
+          "2 is true: more ADH makes kidney collecting ducts more permeable to water, increasing reabsorption.",
+          "3 is false: vasodilation increases blood flow near the skin and increases heat loss."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{\\text{1 and 2 only}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Statements 1 and 2 are both true."
+        },
+        {
+          "optionId": "B",
+          "reason": "Misses the correct role of ADH."
+        },
+        {
+          "optionId": "C",
+          "reason": "Misses the correct role of insulin."
+        },
+        {
+          "optionId": "D",
+          "reason": "Statement 3 describes vasodilation backwards."
+        },
+        {
+          "optionId": "E",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "F",
+          "reason": "Includes the false statement 3 and misses statement 2."
+        },
+        {
+          "optionId": "G",
+          "reason": "Includes the false statement 3 and misses statement 1."
+        },
+        {
+          "optionId": "H",
+          "reason": "Statement 3 is false."
+        }
+      ]
+    },
+    {
+      "id": "esat-biology-hook-07",
+      "order": 7,
+      "questionType": "single_choice",
+      "difficulty": "medium",
+      "difficultyScore": 3,
+      "estimatedSeconds": 100,
+      "topics": [
+        "Ecosystems",
+        "Energy transfer",
+        "Food chains",
+        "Biomass"
+      ],
+      "specRefs": [
+        "B10.1"
+      ],
+      "stemMarkdown": "During one year, grass in an area stores \\(48\\,000\\text{ kJ}\\) of energy as new biomass.\n\n- rabbits eat \\(25\\%\\) of this biomass energy;\n- they absorb \\(60\\%\\) of the energy they eat;\n- \\(20\\%\\) of the absorbed energy becomes new rabbit biomass;\n- foxes eat \\(75\\%\\) of this new rabbit biomass;\n- \\(10\\%\\) of the energy eaten by foxes becomes new fox biomass.\n\nHow much energy becomes new fox biomass?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(72\\text{ kJ}\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(108\\text{ kJ}\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(144\\text{ kJ}\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(360\\text{ kJ}\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(1080\\text{ kJ}\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(1440\\text{ kJ}\\)"
+        }
+      ],
+      "correctOptionId": "B",
+      "solution": {
+        "title": "Apply each transfer efficiency in sequence.",
+        "stepsMarkdown": [
+          "Energy eaten by rabbits: \\(48\\,000\\times0.25=12\\,000\\text{ kJ}\\).",
+          "Energy absorbed: \\(12\\,000\\times0.60=7200\\text{ kJ}\\).",
+          "New rabbit biomass: \\(7200\\times0.20=1440\\text{ kJ}\\).",
+          "Energy eaten by foxes: \\(1440\\times0.75=1080\\text{ kJ}\\).",
+          "New fox biomass: \\(1080\\times0.10=108\\text{ kJ}\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{108\\text{ kJ}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Uses 5% rather than 10% for the final conversion into fox biomass."
+        },
+        {
+          "optionId": "B",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "C",
+          "reason": "Applies the fox growth percentage directly to all rabbit biomass, ignoring that foxes eat only 75%."
+        },
+        {
+          "optionId": "D",
+          "reason": "Omits one of the two consumer growth efficiencies."
+        },
+        {
+          "optionId": "E",
+          "reason": "Stops after finding the energy eaten by foxes."
+        },
+        {
+          "optionId": "F",
+          "reason": "Stops after finding the new rabbit biomass."
+        }
+      ]
+    },
+    {
+      "id": "esat-biology-hook-08",
+      "order": 8,
+      "questionType": "single_choice",
+      "difficulty": "hard",
+      "difficultyScore": 4,
+      "estimatedSeconds": 105,
+      "topics": [
+        "Meiosis",
+        "DNA replication",
+        "Chromosome number",
+        "DNA quantity"
+      ],
+      "specRefs": [
+        "B3.2"
+      ],
+      "stemMarkdown": "A diploid cell of a species contains \\(10\\) chromosomes. Before DNA replication, its nucleus contains \\(8\\text{ pg}\\) of DNA.\n\nWhich row gives the chromosome number and DNA mass in **one cell immediately after meiosis I**, and in **one gamete immediately after meiosis II**?",
+      "diagramSvg": null,
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "after meiosis I: \\(10\\) chromosomes, \\(8\\text{ pg}\\); gamete: \\(5\\) chromosomes, \\(4\\text{ pg}\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "after meiosis I: \\(5\\) chromosomes, \\(8\\text{ pg}\\); gamete: \\(5\\) chromosomes, \\(4\\text{ pg}\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "after meiosis I: \\(5\\) chromosomes, \\(4\\text{ pg}\\); gamete: \\(5\\) chromosomes, \\(2\\text{ pg}\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "after meiosis I: \\(10\\) chromosomes, \\(16\\text{ pg}\\); gamete: \\(5\\) chromosomes, \\(8\\text{ pg}\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "after meiosis I: \\(5\\) chromosomes, \\(8\\text{ pg}\\); gamete: \\(10\\) chromosomes, \\(4\\text{ pg}\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "after meiosis I: \\(10\\) chromosomes, \\(8\\text{ pg}\\); gamete: \\(10\\) chromosomes, \\(4\\text{ pg}\\)"
+        }
+      ],
+      "correctOptionId": "B",
+      "solution": {
+        "title": "DNA doubles before meiosis, then is divided in each of the two divisions.",
+        "stepsMarkdown": [
+          "DNA replication increases the total DNA from \\(8\\) pg to \\(16\\) pg before meiosis begins.",
+          "Meiosis I separates homologous chromosomes. Each cell is haploid with \\(5\\) chromosomes and receives half of the replicated DNA: \\(8\\) pg.",
+          "Meiosis II divides this DNA again without another replication.",
+          "Each gamete therefore has \\(5\\) chromosomes and \\(4\\) pg of DNA."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{\\text{after meiosis I: }5,8\\text{ pg; gamete: }5,4\\text{ pg}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Keeps the diploid chromosome number after meiosis I."
+        },
+        {
+          "optionId": "B",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "C",
+          "reason": "Forgets that DNA replicated before meiosis."
+        },
+        {
+          "optionId": "D",
+          "reason": "Does not divide the replicated DNA or chromosome number correctly."
+        },
+        {
+          "optionId": "E",
+          "reason": "Doubles the chromosome number again during meiosis II."
+        },
+        {
+          "optionId": "F",
+          "reason": "Keeps the diploid chromosome number throughout both meiotic divisions."
+        }
+      ]
+    },
+    {
+      "id": "esat-biology-hook-09",
+      "order": 9,
+      "questionType": "single_choice",
+      "difficulty": "hard",
+      "difficultyScore": 4,
+      "estimatedSeconds": 110,
+      "topics": [
+        "Respiration",
+        "Exercise",
+        "Oxygen debt",
+        "Graph area"
+      ],
+      "specRefs": [
+        "B9.1"
+      ],
+      "stemMarkdown": "A person's resting oxygen uptake is \\(0.5\\text{ dm}^3\\text{ min}^{-1}\\). During five minutes of exercise, the oxygen uptake required for fully aerobic respiration is \\(2.5\\text{ dm}^3\\text{ min}^{-1}\\).\n\nThe graph shows the person's actual oxygen uptake. During recovery it remains at \\(1.5\\text{ dm}^3\\text{ min}^{-1}\\) for time \\(t\\), then returns to the resting value.\n\nAssume the extra oxygen taken in after exercise exactly equals the oxygen deficit accumulated during exercise.\n\nWhat is \\(t\\)?",
+      "diagramSvg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 420\" role=\"img\" aria-label=\"Graph of oxygen uptake against time. Resting uptake is 0.5 cubic decimetres per minute. During five minutes of exercise the oxygen requirement is 2.5 cubic decimetres per minute. Actual uptake rises linearly from 0.5 to 2.5 during the first two minutes and remains at 2.5 until five minutes. During recovery it remains at 1.5 for time t and then returns to 0.5.\">\n  <style>\n    .axis{stroke:currentColor;stroke-width:2.3;fill:none;stroke-linecap:round}\n    .actual{stroke:currentColor;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}\n    .required{stroke:currentColor;stroke-width:1.8;stroke-dasharray:8 7;fill:none}\n    .guide{stroke:currentColor;stroke-width:1.3;stroke-dasharray:5 6;fill:none;opacity:.7}\n    .label{font:20px serif;fill:currentColor}\n    .small{font:17px serif;fill:currentColor}\n  </style>\n\n  <path class=\"axis\" d=\"M85 340 H665\"/>\n  <path class=\"axis\" d=\"M85 340 V45\"/>\n  <path class=\"axis\" d=\"M665 340 l-12 -7 M665 340 l-12 7\"/>\n  <path class=\"axis\" d=\"M85 45 l-7 12 M85 45 l7 12\"/>\n\n  <!-- y guides: 0.5, 1.5, 2.5 -->\n  <path class=\"guide\" d=\"M85 290 H650\"/>\n  <path class=\"guide\" d=\"M85 190 H650\"/>\n  <path class=\"guide\" d=\"M85 90 H650\"/>\n\n  <!-- required oxygen during exercise -->\n  <path class=\"required\" d=\"M85 90 H410\"/>\n  <text class=\"small\" x=\"160\" y=\"77\">oxygen required for fully aerobic respiration</text>\n\n  <!-- actual oxygen uptake -->\n  <path class=\"actual\" d=\"M85 290 L215 90 H410 V190 H560 V290 H650\"/>\n  <text class=\"small\" x=\"242\" y=\"117\">actual uptake</text>\n\n  <!-- exercise end -->\n  <path class=\"guide\" d=\"M410 55 V340\"/>\n  <text class=\"small\" x=\"385\" y=\"365\">5</text>\n  <text class=\"small\" x=\"397\" y=\"42\">exercise ends</text>\n\n  <!-- t bracket -->\n  <path class=\"axis\" d=\"M410 315 V325 M410 320 H560 M560 315 V325\"/>\n  <text class=\"label\" x=\"480\" y=\"312\">t</text>\n\n  <text class=\"small\" x=\"55\" y=\"296\">0.5</text>\n  <text class=\"small\" x=\"55\" y=\"196\">1.5</text>\n  <text class=\"small\" x=\"55\" y=\"96\">2.5</text>\n  <text class=\"small\" x=\"202\" y=\"365\">2</text>\n  <text class=\"label\" x=\"318\" y=\"402\">time / min</text>\n  <text class=\"label\" x=\"12\" y=\"26\">oxygen uptake / dm³ min⁻¹</text>\n</svg>",
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(0.5\\text{ min}\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(1.0\\text{ min}\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(1.5\\text{ min}\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(2.0\\text{ min}\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(2.5\\text{ min}\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(4.0\\text{ min}\\)"
+        }
+      ],
+      "correctOptionId": "D",
+      "solution": {
+        "title": "Compare the missing oxygen area with the extra recovery area.",
+        "stepsMarkdown": [
+          "During the first two minutes, the deficit is a triangle with base \\(2\\) min and height \\(2.5-0.5=2.0\\text{ dm}^3\\text{ min}^{-1}\\).",
+          "Deficit: \\(\\dfrac12\\times2\\times2.0=2.0\\text{ dm}^3\\).",
+          "During recovery, oxygen uptake is \\(1.5-0.5=1.0\\text{ dm}^3\\text{ min}^{-1}\\) above rest.",
+          "So \\(1.0\\times t=2.0\\), giving \\(t=2.0\\text{ min}\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{2.0\\text{ min}}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Uses only one quarter of the triangular oxygen deficit."
+        },
+        {
+          "optionId": "B",
+          "reason": "Uses the triangle's height but misses its base."
+        },
+        {
+          "optionId": "C",
+          "reason": "Uses the total recovery uptake rather than the amount above resting uptake."
+        },
+        {
+          "optionId": "D",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "E",
+          "reason": "Uses the full aerobic oxygen requirement as the deficit height."
+        },
+        {
+          "optionId": "F",
+          "reason": "Treats the first two minutes as a rectangle rather than a triangle."
+        }
+      ]
+    },
+    {
+      "id": "esat-biology-hook-10",
+      "order": 10,
+      "questionType": "single_choice",
+      "difficulty": "hard",
+      "difficultyScore": 4,
+      "estimatedSeconds": 115,
+      "topics": [
+        "Inheritance",
+        "Pedigrees",
+        "Conditional probability",
+        "Autosomal recessive conditions"
+      ],
+      "specRefs": [
+        "B4.2",
+        "B4.3"
+      ],
+      "stemMarkdown": "The pedigree shows an autosomal recessive condition. The two unaffected parents have an affected son and an unaffected daughter. The unaffected daughter later has a child with an affected man.\n\nAssume no new mutations occur.\n\nWhat is the probability that their first child is an **affected female**?",
+      "diagramSvg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 360\" role=\"img\" aria-label=\"Pedigree for an autosomal recessive condition. Two unaffected parents have one affected son and one unaffected daughter. The unaffected daughter has a child with an affected man. The sex and condition of the child are unknown.\">\n  <style>\n    .line{stroke:currentColor;stroke-width:2.3;fill:none;stroke-linecap:round}\n    .person{stroke:currentColor;stroke-width:2.3;fill:none}\n    .affected{stroke:currentColor;stroke-width:2.3;fill:currentColor}\n    .label{font:19px serif;fill:currentColor}\n    .small{font:17px serif;fill:currentColor}\n  </style>\n\n  <!-- generation I -->\n  <rect class=\"person\" x=\"235\" y=\"45\" width=\"42\" height=\"42\"/>\n  <circle class=\"person\" cx=\"355\" cy=\"66\" r=\"21\"/>\n  <path class=\"line\" d=\"M277 66 H334\"/>\n  <path class=\"line\" d=\"M305 66 V125\"/>\n  <path class=\"line\" d=\"M190 125 H420\"/>\n\n  <!-- children -->\n  <path class=\"line\" d=\"M220 125 V170\"/>\n  <rect class=\"affected\" x=\"199\" y=\"170\" width=\"42\" height=\"42\"/>\n  <path class=\"line\" d=\"M390 125 V170\"/>\n  <circle class=\"person\" cx=\"390\" cy=\"191\" r=\"21\"/>\n\n  <!-- daughter and affected partner -->\n  <rect class=\"affected\" x=\"505\" y=\"170\" width=\"42\" height=\"42\"/>\n  <path class=\"line\" d=\"M411 191 H505\"/>\n  <path class=\"line\" d=\"M458 191 V255\"/>\n\n  <!-- unknown child -->\n  <path class=\"line\" d=\"M458 255 V275\"/>\n  <polygon class=\"person\" points=\"458,275 482,304 458,333 434,304\"/>\n  <text class=\"label\" x=\"452\" y=\"311\">?</text>\n\n  <text class=\"small\" x=\"248\" y=\"31\">unaffected parents</text>\n  <text class=\"small\" x=\"156\" y=\"235\">affected son</text>\n  <text class=\"small\" x=\"332\" y=\"235\">unaffected daughter</text>\n  <text class=\"small\" x=\"495\" y=\"235\">affected man</text>\n\n  <!-- key -->\n  <rect class=\"person\" x=\"40\" y=\"282\" width=\"25\" height=\"25\"/>\n  <text class=\"small\" x=\"75\" y=\"301\">unaffected</text>\n  <rect class=\"affected\" x=\"180\" y=\"282\" width=\"25\" height=\"25\"/>\n  <text class=\"small\" x=\"215\" y=\"301\">affected</text>\n</svg>",
+      "options": [
+        {
+          "id": "A",
+          "textMarkdown": "\\(\\dfrac{1}{12}\\)"
+        },
+        {
+          "id": "B",
+          "textMarkdown": "\\(\\dfrac18\\)"
+        },
+        {
+          "id": "C",
+          "textMarkdown": "\\(\\dfrac16\\)"
+        },
+        {
+          "id": "D",
+          "textMarkdown": "\\(\\dfrac14\\)"
+        },
+        {
+          "id": "E",
+          "textMarkdown": "\\(\\dfrac13\\)"
+        },
+        {
+          "id": "F",
+          "textMarkdown": "\\(\\dfrac12\\)"
+        }
+      ],
+      "correctOptionId": "C",
+      "solution": {
+        "title": "First find the daughter's conditional probability of being a carrier.",
+        "stepsMarkdown": [
+          "Because the unaffected parents produced an affected child, both parents must be carriers.",
+          "For a carrier × carrier cross, an unaffected child has probability \\(2/3\\) of being a carrier.",
+          "If the daughter is a carrier and the man is affected, the probability of an affected child is \\(1/2\\).",
+          "The probability that the child is female is \\(1/2\\).",
+          "Overall: \\(\\dfrac23\\times\\dfrac12\\times\\dfrac12=\\dfrac16\\)."
+        ],
+        "finalAnswerMarkdown": "\\(\\boxed{\\dfrac16}\\)"
+      },
+      "distractorMap": [
+        {
+          "optionId": "A",
+          "reason": "Uses a \\(1/3\\) carrier probability for the unaffected daughter instead of \\(2/3\\)."
+        },
+        {
+          "optionId": "B",
+          "reason": "Treats the daughter as having a \\(1/2\\) carrier probability."
+        },
+        {
+          "optionId": "C",
+          "reason": "Correct."
+        },
+        {
+          "optionId": "D",
+          "reason": "Assumes the unaffected daughter is definitely a carrier."
+        },
+        {
+          "optionId": "E",
+          "reason": "Finds the probability of an affected child but does not include the probability of being female."
+        },
+        {
+          "optionId": "F",
+          "reason": "Uses only the probability that a carrier mother and affected father produce an affected child."
+        }
+      ]
+    }
+  ]
+}

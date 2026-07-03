@@ -7,6 +7,7 @@ export const ESAT_M1_HOOK_SET_ID = "esat-m1-hook-set-01";
 export const ESAT_M2_HOOK_SET_ID = "esat-m2-hook-set-01";
 export const ESAT_PHYSICS_HOOK_SET_ID = "esat-physics-hook-set-01";
 export const ESAT_CHEMISTRY_HOOK_SET_ID = "esat-chemistry-hook-set-01";
+export const ESAT_BIOLOGY_HOOK_SET_ID = "esat-biology-hook-set-01";
 
 export const ESAT_M1_HOOK_GENERATION_IDS = [
   "esat-m1-hook-03",
@@ -66,6 +67,19 @@ export const ESAT_CHEMISTRY_HOOK_GENERATION_IDS = [
   "esat-chemistry-hook-10",
 ] as const;
 
+export const ESAT_BIOLOGY_HOOK_GENERATION_IDS = [
+  "esat-biology-hook-01",
+  "esat-biology-hook-02",
+  "esat-biology-hook-03",
+  "esat-biology-hook-04",
+  "esat-biology-hook-05",
+  "esat-biology-hook-06",
+  "esat-biology-hook-07",
+  "esat-biology-hook-08",
+  "esat-biology-hook-09",
+  "esat-biology-hook-10",
+] as const;
+
 /** Free-tier preview hook sets (Math 1, Math 2, Physics). */
 export const ESAT_HOOK_SETS = [
   {
@@ -96,6 +110,12 @@ export const ESAT_HOOK_IMPORT_SETS = [
     subject: "Chemistry" as const,
     dataFile: "esat_chemistry_hook_set_10_questions.json",
     generationIds: ESAT_CHEMISTRY_HOOK_GENERATION_IDS,
+  },
+  {
+    setId: ESAT_BIOLOGY_HOOK_SET_ID,
+    subject: "Biology" as const,
+    dataFile: "esat_biology_hook_set_10_questions.json",
+    generationIds: ESAT_BIOLOGY_HOOK_GENERATION_IDS,
   },
 ] as const;
 
