@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
-import { useTesterStatus, trackTesterEvent } from "@/hooks/useTesterStatus";
+import { useTesterProgramme } from "@/contexts/TesterProgrammeContext";
+import { trackTesterEvent } from "@/hooks/useTesterStatus";
 import { SurveyRunner } from "@/components/tester/SurveyRunner";
 import { AccessStatusCard } from "@/components/tester/AccessStatusCard";
 import { formatExpiry, formatDuration } from "@/lib/tester/format";
@@ -13,7 +14,7 @@ import type { SurveyKey, TesterState } from "@/lib/tester/types";
 
 export default function FoundingTesterPage() {
   const session = useSupabaseSession();
-  const { state, isLoading, error, refresh } = useTesterStatus();
+  const { state, isLoading, refresh } = useTesterProgramme();
   const [activeSurvey, setActiveSurvey] = useState<SurveyKey | null>(null);
 
   useEffect(() => {
@@ -41,7 +42,7 @@ export default function FoundingTesterPage() {
     );
   }
 
-  if (isLoading || (!state && !error)) {
+  if (isLoading || !state) {
     return (
       <Container className="py-16">
         <div className="mx-auto max-w-2xl">

@@ -16,6 +16,8 @@ import { SessionProgressBar } from '@/components/papers/SessionProgressBar';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useTesterProgrammeOptional } from '@/contexts/TesterProgrammeContext';
+import { getTesterNavAction } from '@/lib/tester/checkpoint';
 import { BrandNavLockup } from '@/components/brand/BrandNavLockup';
 import { SignOutConfirmModal } from '@/components/auth/SignOutConfirmModal';
 import { APP_NAME } from '@/config/brand';
@@ -209,6 +211,8 @@ export function Navbar() {
   const [docFullscreen, setDocFullscreen] = useState(false);
   const { theme, toggleTheme, isDark, lightStrategy, toggleLightStrategy } = useTheme();
   const { hasFullAccess } = useSubscription();
+  const testerCtx = useTesterProgrammeOptional();
+  const testerNav = getTesterNavAction(testerCtx?.state ?? null, hasFullAccess);
 
   const isJustQuit =
     justQuitSessionId === sessionId &&
@@ -314,17 +318,20 @@ export function Navbar() {
       className='flex shrink-0 items-center gap-1.5 border-l border-border-subtle pl-3 sm:gap-2 sm:pl-4'
       aria-label='Account and preferences'
     >
-      {!hasFullAccess ? (
+      {testerNav.show ? (
         <Link
-          href='/founding-tester'
+          href={testerNav.href}
           className={cn(
-            'mr-0.5 inline-flex h-7 shrink-0 items-center justify-center rounded-organic-md bg-primary px-3',
-            'text-[11px] font-semibold uppercase tracking-[0.12em] text-black',
+            'mr-0.5 inline-flex h-7 shrink-0 items-center justify-center rounded-organic-md px-3',
+            'text-[11px] font-semibold uppercase tracking-[0.12em]',
             'transition-opacity duration-fast ease-signature hover:opacity-90',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+            testerNav.variant === 'continue'
+              ? 'bg-surface-mid text-text'
+              : 'bg-primary text-black',
           )}
         >
-          Upgrade for free
+          {testerNav.label}
         </Link>
       ) : null}
 

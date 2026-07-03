@@ -15,6 +15,8 @@ import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { SessionRestore } from "@/components/papers/SessionRestore";
 import { SessionPersistenceHandler } from "@/components/papers/SessionPersistenceHandler";
 import { UsernameGate } from "@/components/auth/UsernameGate";
+import { TesterProgrammeProvider } from "@/contexts/TesterProgrammeContext";
+import { TesterProgrammeBanner } from "@/components/tester/TesterProgrammeBanner";
 import { BRAND_CONFIG } from "@/config/brand";
 import { buildCssVariables, LIGHT_MODE_STRATEGY_STORAGE_KEY } from "@/config/theme";
 import "@/styles/globals.css";
@@ -148,20 +150,23 @@ export default async function RootLayout({
                   <KaTeXLoader />
                   <SessionRestore />
                   <SessionPersistenceHandler />
-                  <Navbar />
-                  <main className="min-h-full">
-                    <UsernameGate>
-                      <Suspense
-                        fallback={
-                          <div className="min-h-screen flex items-center justify-center">
-                            <LoadingSpinner size="md" />
-                          </div>
-                        }
-                      >
-                        {children}
-                      </Suspense>
-                    </UsernameGate>
-                  </main>
+                  <TesterProgrammeProvider>
+                    <Navbar />
+                    <TesterProgrammeBanner />
+                    <main className="min-h-full">
+                      <UsernameGate>
+                        <Suspense
+                          fallback={
+                            <div className="min-h-screen flex items-center justify-center">
+                              <LoadingSpinner size="md" />
+                            </div>
+                          }
+                        >
+                          {children}
+                        </Suspense>
+                      </UsernameGate>
+                    </main>
+                  </TesterProgrammeProvider>
                 </QuicklinkProvider>
               </LoadingProvider>
             </ThemeProvider>

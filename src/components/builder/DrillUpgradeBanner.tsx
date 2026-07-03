@@ -8,6 +8,7 @@ interface DrillUpgradeBannerProps {
   headline?: string;
   subtext?: string;
   ctaLabel?: string;
+  href?: string;
   className?: string;
   variant?: 'compact' | 'panel';
   /** Tighter panel layout for drill builder scroll areas. */
@@ -18,6 +19,7 @@ export function DrillUpgradeBanner({
   headline = 'Unlock every drill',
   subtext = 'Upgrade for full access to all drills in this category',
   ctaLabel = 'View plans',
+  href = '/pricing',
   className,
   variant = 'compact',
   density = 'default',
@@ -82,7 +84,7 @@ export function DrillUpgradeBanner({
           </p>
         </div>
         <Link
-          href='/pricing'
+          href={href}
           className={cn(
             'relative z-10 shrink-0 rounded-full bg-text font-bold text-background transition-opacity hover:opacity-90',
             isPanel
