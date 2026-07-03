@@ -1,10 +1,12 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Container } from '@/components/layout/Container';
 import { Button } from '@/components/ui/Button';
 import { DrillUpgradeBanner } from '@/components/builder/DrillUpgradeBanner';
+import { GoogleAuthButton } from '@/components/auth/GoogleAuthButton';
+import { useSupabaseClient } from '@/components/auth/SupabaseSessionProvider';
 import { SessionMiniChart } from '@/components/analytics/SessionMiniChart';
 import { BreakdownDonutChart } from '@/components/questionBank/BreakdownDonutChart';
 import { labelForQuestionBankTag } from '@/lib/questionBank/esatCurriculumTopicLabels';
@@ -25,6 +27,8 @@ interface QuestionBankSessionResultsProps {
   timedOut?: boolean;
   onBack: () => void;
   showUpgradeBanner?: boolean;
+  showSignInBanner?: boolean;
+  signInRedirectTo?: string;
 }
 
 const resultsCard = 'rounded-organic-lg bg-surface-elevated';
@@ -98,7 +102,29 @@ export function QuestionBankSessionResults({
   timedOut = false,
   onBack,
   showUpgradeBanner = false,
+  showSignInBanner = false,
+  signInRedirectTo = '/questions',
 }: QuestionBankSessionResultsProps) {
+  const supabase = useSupabaseClient();
+  const [signInLoading, setSignInLoading] = useState(false);
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setSignInLoading(true);
+      const redirectUrl = `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent(signInRedirectTo)}`;
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: redirectUrl,
+          queryParams: { redirectTo: signInRedirectTo },
+        },
+      });
+      if (error) throw error;
+    } catch {
+      setSignInLoading(false);
+    }
+  };
+
   const result = useMemo(
     () => buildSessionSummary(attempts, labelForQuestionBankTag),
     [attempts],
@@ -163,6 +189,37 @@ export function QuestionBankSessionResults({
             </Button>
           </motion.div>
         </div>
+
+        {showSignInBanner ? (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+            className="mb-8"
+          >
+            <div className={cn('p-6 sm:p-8', resultsCard)}>
+              <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0 flex-1">
+                  <p className="font-heading text-lg font-bold tracking-tight text-text sm:text-xl">
+                    Sign in to save your progress
+                  </p>
+                  <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-text-muted sm:text-base">
+                    Your session results are below. Sign in to track attempts,
+                    resume where you left off, and keep your preview progress
+                    across devices.
+                  </p>
+                </div>
+                <div className="w-full shrink-0 sm:max-w-[17.5rem]">
+                  <GoogleAuthButton
+                    mode="signin"
+                    loading={signInLoading}
+                    onClick={() => void handleGoogleSignIn()}
+                  />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        ) : null}
 
         {showUpgradeBanner ? (
           <motion.div

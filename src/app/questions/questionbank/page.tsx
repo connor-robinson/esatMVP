@@ -347,7 +347,9 @@ export default function QuestionBankPage() {
     async (options?: { timedOut?: boolean }) => {
       if (sessionCompleting) return;
 
-      if (!session?.user) {
+      const guestPreview = !session?.user && wasFreeTierSession;
+
+      if (!session?.user && !guestPreview) {
         router.push(
           `/login?redirectTo=${encodeURIComponent('/questions/questionbank')}`,
         );
@@ -359,14 +361,14 @@ export default function QuestionBankPage() {
         setSessionEndedByTimer(true);
       }
       ensureCurrentQuestionLogged();
-      if (!hasFullAccess) {
+      if (!hasFullAccess && session?.user) {
         void refreshFreeTier();
       }
 
       const attempts = sessionAttemptLogRef.current;
       const summary = buildSessionSummary(attempts, labelForQuestionBankTag);
 
-      if (qbSessionId) {
+      if (session?.user && qbSessionId) {
         await ensureSessionRegistered();
         await completeQuestionBankSession({
           id: qbSessionId,
@@ -391,6 +393,7 @@ export default function QuestionBankPage() {
       sessionCompleting,
       hasFullAccess,
       refreshFreeTier,
+      wasFreeTierSession,
     ],
   );
 
@@ -712,15 +715,6 @@ export default function QuestionBankPage() {
     return 'text-text';
   };
 
-  const handleEditReasoning = () => {
-    if (!currentQuestion) return;
-    setEditModalTitle('Edit Solution');
-    setEditModalContent(currentQuestion.solution_reasoning || '');
-    setEditModalField('solution_reasoning');
-    setEditModalOptionLetter(null);
-    setEditModalOpen(true);
-  };
-
   const handleSaveEdit = async (newContent: string) => {
     if (!currentQuestion) return;
 
@@ -971,7 +965,9 @@ export default function QuestionBankPage() {
         startedAt={sessionStartedAt}
         timedOut={sessionEndedByTimer}
         onBack={() => router.push('/questions')}
-        showUpgradeBanner={!hasFullAccess && wasFreeTierSession}
+        showSignInBanner={!session?.user && wasFreeTierSession}
+        signInRedirectTo="/questions"
+        showUpgradeBanner={!!session?.user && !hasFullAccess && wasFreeTierSession}
       />
     );
   }
@@ -1093,7 +1089,6 @@ export default function QuestionBankPage() {
                       isOpen={showDetailedExplanation}
                       onClose={() => setShowDetailedExplanation(false)}
                       solution_reasoning={currentQuestion.solution_reasoning}
-                      onEditReasoning={handleEditReasoning}
                       graphSpecs={currentQuestion.graph_specs}
                     />
 
