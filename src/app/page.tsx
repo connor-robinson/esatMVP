@@ -1,14 +1,7 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import { HomePageContent } from "@/components/homepage/HomePageContent";
 
-/**
- * Temporary homepage redirect
- *
- * We want users to land directly in the mental maths drill builder.
- * The previous marketing homepage layout has been archived separately.
- */
-export default function IndexRedirect() {
-  redirect("/mental-maths/drill");
+export default function HomePage() {
+  return <HomePageContent />;
 }
-
