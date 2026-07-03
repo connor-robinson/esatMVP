@@ -31,6 +31,19 @@ export function dismissCheckpoint(state: TesterState): void {
   }
 }
 
+/** Clear all session dismiss flags (dev / re-test checkpoints). */
+export function clearAllCheckpointDismissals(): void {
+  if (typeof window === "undefined") return;
+  try {
+    for (let i = sessionStorage.length - 1; i >= 0; i--) {
+      const key = sessionStorage.key(i);
+      if (key?.startsWith(DISMISS_PREFIX)) sessionStorage.removeItem(key);
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
 /** User still has programme actions pending (survey, sessions, approval). */
 export function testerActionPending(state: TesterState | null): boolean {
   if (!state?.isMember) return false;
