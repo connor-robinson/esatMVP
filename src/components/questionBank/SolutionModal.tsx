@@ -1,20 +1,81 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { StemContent } from "@/components/shared/StemContent";
 import { QuestionWithGraph } from "@/components/shared/QuestionWithGraph";
 import type { TMUAGraphSpec } from "@/components/shared/TMUAGraph";
-import { X, Pencil, Lightbulb } from "lucide-react";
+import { X, Lightbulb, ListOrdered } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-const bodyPanelClass =
-  "rounded-organic-lg bg-surface-mid px-4 py-4 text-sm leading-relaxed text-text sm:text-base [&_.katex]:text-text";
+function splitSolutionSteps(content: string): string[] {
+  return content
+    .split(/\n{2,}/)
+    .map((block) => block.trim())
+    .filter(Boolean);
+}
+
+function SolutionBody({
+  solution_reasoning,
+  graphSpecs,
+}: {
+  solution_reasoning: string;
+  graphSpecs?: Record<string, TMUAGraphSpec> | null;
+}) {
+  const steps = useMemo(
+    () => splitSolutionSteps(solution_reasoning),
+    [solution_reasoning],
+  );
+  const useStepLayout = !graphSpecs && steps.length > 1;
+
+  if (graphSpecs) {
+    return (
+      <QuestionWithGraph
+        questionText={solution_reasoning}
+        graphSpecs={graphSpecs}
+        className="text-[0.9375rem] leading-[1.75] text-text sm:text-base [&_.katex]:text-text"
+      />
+    );
+  }
+
+  if (!useStepLayout) {
+    return (
+      <StemContent
+        content={solution_reasoning}
+        className="text-[0.9375rem] leading-[1.75] text-text sm:text-base [&_.katex]:text-text"
+      />
+    );
+  }
+
+  return (
+    <ol className="space-y-5 sm:space-y-6">
+      {steps.map((step, index) => (
+        <li key={index} className="flex gap-3.5 sm:gap-4">
+          <span
+            className={cn(
+              "mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full",
+              "bg-surface-mid text-[11px] font-semibold tabular-nums text-text-muted",
+            )}
+            aria-hidden
+          >
+            {index + 1}
+          </span>
+          <div className="min-w-0 flex-1">
+            <StemContent
+              content={step}
+              className="text-[0.9375rem] leading-[1.75] text-text sm:text-base [&_.katex]:text-text"
+            />
+          </div>
+        </li>
+      ))}
+    </ol>
+  );
+}
 
 interface SolutionModalProps {
   isOpen: boolean;
   onClose: () => void;
   solution_reasoning: string | null;
-  onEditReasoning?: () => void;
   graphSpecs?: Record<string, TMUAGraphSpec> | null;
 }
 
@@ -22,11 +83,14 @@ export function SolutionModal({
   isOpen,
   onClose,
   solution_reasoning,
-  onEditReasoning,
   graphSpecs,
 }: SolutionModalProps) {
+  const hasContent =
+    solution_reasoning != null && String(solution_reasoning).trim() !== "";
+  const visible = isOpen && hasContent;
+
   useEffect(() => {
-    if (isOpen) {
+    if (visible) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
@@ -34,78 +98,70 @@ export function SolutionModal({
     return () => {
       document.body.style.overflow = "unset";
     };
-  }, [isOpen]);
-
-  if (!isOpen) return null;
+  }, [visible]);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 lg:p-8">
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-        aria-hidden
-      />
-
-      <div
-        className="relative flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-organic-xl bg-surface-elevated shadow-modal-card"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="detailed-explanation-title"
-      >
-        <div className="flex items-center justify-between px-5 py-4 sm:px-6">
-          <h2
-            id="detailed-explanation-title"
-            className="text-lg font-semibold tracking-tight text-text"
-          >
-            Detailed Explanation
-          </h2>
-          <button
-            type="button"
+    <AnimatePresence>
+      {visible && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 lg:p-8">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-organic-md bg-surface-mid text-text-muted transition-colors duration-fast ease-signature hover:bg-surface-neutral hover:text-text"
-            aria-label="Close"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
+            aria-hidden
+          />
 
-        <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-5 py-5 sm:px-6 sm:py-6">
-          {solution_reasoning && (
-            <div className="group space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-medium text-text-subtle">
-                  Step-by-step solution
-                </span>
-                {onEditReasoning && (
-                  <button
-                    type="button"
-                    onClick={onEditReasoning}
-                    className="flex h-8 w-8 items-center justify-center rounded-organic-sm border border-border-subtle bg-surface-elevated text-text-muted opacity-0 transition-all duration-fast ease-signature group-hover:opacity-100 hover:bg-surface-mid hover:text-text"
-                    title="Edit solution"
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 12, scale: 0.98 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-organic-xl bg-surface-elevated shadow-modal-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="detailed-explanation-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-4 px-5 py-4 sm:px-6 sm:py-5">
+              <div className="flex min-w-0 items-start gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md bg-surface-mid text-secondary">
+                  <ListOrdered className="h-5 w-5" aria-hidden />
+                </div>
+                <div className="min-w-0 pt-0.5">
+                  <h2
+                    id="detailed-explanation-title"
+                    className="text-lg font-semibold tracking-tight text-text"
                   >
-                    <Pencil className="h-3.5 w-3.5" />
-                  </button>
-                )}
+                    Detailed explanation
+                  </h2>
+                  <p className="mt-0.5 text-sm text-text-muted">
+                    Step-by-step solution
+                  </p>
+                </div>
               </div>
-              <div className={bodyPanelClass}>
-                {graphSpecs ? (
-                  <QuestionWithGraph
-                    questionText={solution_reasoning}
-                    graphSpecs={graphSpecs}
-                    className="text-inherit"
-                  />
-                ) : (
-                  <StemContent
-                    content={solution_reasoning}
-                    className="text-inherit"
-                  />
-                )}
-              </div>
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-organic-md bg-surface-mid text-text-muted transition-colors duration-fast ease-signature hover:bg-surface-neutral hover:text-text"
+                aria-label="Close"
+              >
+                <X className="h-4 w-4" />
+              </button>
             </div>
-          )}
+
+            <div className="min-h-0 flex-1 overflow-y-auto border-t border-border-subtle/40 px-5 py-5 sm:px-6 sm:py-6">
+              <SolutionBody
+                solution_reasoning={solution_reasoning!}
+                graphSpecs={graphSpecs}
+              />
+            </div>
+          </motion.div>
         </div>
-      </div>
-    </div>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -177,10 +233,11 @@ export function HintModal({ isOpen, onClose, content }: HintModalProps) {
               </button>
             </div>
 
-            <div className="px-5 py-5 sm:px-6 sm:py-6">
-              <div className={bodyPanelClass}>
-                <StemContent content={content!} className="text-inherit" />
-              </div>
+            <div className="border-t border-border-subtle/40 px-5 py-5 sm:px-6 sm:py-6">
+              <StemContent
+                content={content!}
+                className="text-[0.9375rem] leading-[1.75] text-text sm:text-base [&_.katex]:text-text"
+              />
             </div>
           </motion.div>
         </div>
