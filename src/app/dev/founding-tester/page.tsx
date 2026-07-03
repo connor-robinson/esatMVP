@@ -91,8 +91,8 @@ export default function DevFoundingTesterPage() {
         <div className="mx-auto max-w-lg rounded-organic-xl bg-surface-elevated p-8 text-center">
           <h1 className="text-xl font-bold text-text">Dev tools disabled</h1>
           <p className="mt-3 text-sm text-text-muted">
-            Available in local development, for admin accounts, or when{" "}
-            <code className="text-text">ENABLE_TESTER_DEV_TOOLS=true</code> is set.
+            Sign in to use the workflow simulator. (Dev tools are currently
+            enabled for all authenticated users.)
           </p>
         </div>
       </Container>

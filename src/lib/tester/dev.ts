@@ -7,10 +7,8 @@ import type { ProgrammeStatus, TesterProgrammeRow } from "./types";
 export const DEV_STAGE_MINUTES = 2;
 
 export function isTesterDevEnabled(): boolean {
-  if (process.env.NODE_ENV === "development") return true;
-  if (process.env.ENABLE_TESTER_DEV_TOOLS === "true") return true;
-  if (process.env.NEXT_PUBLIC_ENABLE_TESTER_DEV_TOOLS === "true") return true;
-  return false;
+  // Temporarily enabled for QA — revert before public launch.
+  return true;
 }
 
 export function addMinutes(base: Date, minutes: number): Date {
