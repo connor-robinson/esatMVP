@@ -1,0 +1,665 @@
+{
+  "exam": "ESAT",
+  "source": "ESAT Content Specification (May 2024)",
+  "exportedAt": "2026-07-03",
+  "tagFormatNotes": {
+    "math1": "M1-{code} e.g. M1-M4",
+    "math2": "M2-{code} e.g. M2-MM7",
+    "physics": "P-{code} e.g. P-P3",
+    "chemistry": "chemistry-{code} e.g. chemistry-C1",
+    "biology": "biology-{code} e.g. biology-B1"
+  },
+  "summary": {
+    "subjectCount": 5,
+    "totalTags": 49,
+    "tagsBySubject": {
+      "Math 1": 7,
+      "Math 2": 7,
+      "Physics": 7,
+      "Chemistry": 17,
+      "Biology": 11
+    }
+  },
+  "subjects": [
+    {
+      "paperId": "math1",
+      "subject": "Mathematics 1",
+      "displaySubject": "Math 1",
+      "tagCount": 7,
+      "tags": [
+        {
+          "order": 1,
+          "curriculumTag": "M1-M1",
+          "rawCode": "M1",
+          "title": "Units"
+        },
+        {
+          "order": 2,
+          "curriculumTag": "M1-M2",
+          "rawCode": "M2",
+          "title": "Number"
+        },
+        {
+          "order": 3,
+          "curriculumTag": "M1-M3",
+          "rawCode": "M3",
+          "title": "Ratio and proportion"
+        },
+        {
+          "order": 4,
+          "curriculumTag": "M1-M4",
+          "rawCode": "M4",
+          "title": "Algebra"
+        },
+        {
+          "order": 5,
+          "curriculumTag": "M1-M5",
+          "rawCode": "M5",
+          "title": "Geometry"
+        },
+        {
+          "order": 6,
+          "curriculumTag": "M1-M6",
+          "rawCode": "M6",
+          "title": "Statistics"
+        },
+        {
+          "order": 7,
+          "curriculumTag": "M1-M7",
+          "rawCode": "M7",
+          "title": "Probability"
+        }
+      ],
+      "curriculumTags": [
+        "M1-M1",
+        "M1-M2",
+        "M1-M3",
+        "M1-M4",
+        "M1-M5",
+        "M1-M6",
+        "M1-M7"
+      ]
+    },
+    {
+      "paperId": "math2",
+      "subject": "Mathematics 2",
+      "displaySubject": "Math 2",
+      "tagCount": 7,
+      "tags": [
+        {
+          "order": 1,
+          "curriculumTag": "M2-MM1",
+          "rawCode": "MM1",
+          "title": "Algebra and functions"
+        },
+        {
+          "order": 2,
+          "curriculumTag": "M2-MM2",
+          "rawCode": "MM2",
+          "title": "Coordinate geometry"
+        },
+        {
+          "order": 3,
+          "curriculumTag": "M2-MM3",
+          "rawCode": "MM3",
+          "title": "Trigonometry"
+        },
+        {
+          "order": 4,
+          "curriculumTag": "M2-MM4",
+          "rawCode": "MM4",
+          "title": "Exponentials and logarithms"
+        },
+        {
+          "order": 5,
+          "curriculumTag": "M2-MM5",
+          "rawCode": "MM5",
+          "title": "Sequences and series"
+        },
+        {
+          "order": 6,
+          "curriculumTag": "M2-MM6",
+          "rawCode": "MM6",
+          "title": "Binomial expansion"
+        },
+        {
+          "order": 7,
+          "curriculumTag": "M2-MM7",
+          "rawCode": "MM7",
+          "title": "Differentiation and integration"
+        }
+      ],
+      "curriculumTags": [
+        "M2-MM1",
+        "M2-MM2",
+        "M2-MM3",
+        "M2-MM4",
+        "M2-MM5",
+        "M2-MM6",
+        "M2-MM7"
+      ]
+    },
+    {
+      "paperId": "physics",
+      "subject": "Physics",
+      "displaySubject": "Physics",
+      "tagCount": 7,
+      "tags": [
+        {
+          "order": 1,
+          "curriculumTag": "P-P1",
+          "rawCode": "P1",
+          "title": "Electricity"
+        },
+        {
+          "order": 2,
+          "curriculumTag": "P-P2",
+          "rawCode": "P2",
+          "title": "Magnetism"
+        },
+        {
+          "order": 3,
+          "curriculumTag": "P-P3",
+          "rawCode": "P3",
+          "title": "Mechanics"
+        },
+        {
+          "order": 4,
+          "curriculumTag": "P-P4",
+          "rawCode": "P4",
+          "title": "Thermal physics"
+        },
+        {
+          "order": 5,
+          "curriculumTag": "P-P5",
+          "rawCode": "P5",
+          "title": "Matter"
+        },
+        {
+          "order": 6,
+          "curriculumTag": "P-P6",
+          "rawCode": "P6",
+          "title": "Waves"
+        },
+        {
+          "order": 7,
+          "curriculumTag": "P-P7",
+          "rawCode": "P7",
+          "title": "Radioactivity"
+        }
+      ],
+      "curriculumTags": [
+        "P-P1",
+        "P-P2",
+        "P-P3",
+        "P-P4",
+        "P-P5",
+        "P-P6",
+        "P-P7"
+      ]
+    },
+    {
+      "paperId": "chemistry",
+      "subject": "Chemistry",
+      "displaySubject": "Chemistry",
+      "tagCount": 17,
+      "tags": [
+        {
+          "order": 1,
+          "curriculumTag": "chemistry-C1",
+          "rawCode": "C1",
+          "title": "Atomic structure"
+        },
+        {
+          "order": 2,
+          "curriculumTag": "chemistry-C2",
+          "rawCode": "C2",
+          "title": "The Periodic Table"
+        },
+        {
+          "order": 3,
+          "curriculumTag": "chemistry-C3",
+          "rawCode": "C3",
+          "title": "Chemical reactions, formulae and equations"
+        },
+        {
+          "order": 4,
+          "curriculumTag": "chemistry-C4",
+          "rawCode": "C4",
+          "title": "Quantitative chemistry"
+        },
+        {
+          "order": 5,
+          "curriculumTag": "chemistry-C5",
+          "rawCode": "C5",
+          "title": "Oxidation, reduction and redox"
+        },
+        {
+          "order": 6,
+          "curriculumTag": "chemistry-C6",
+          "rawCode": "C6",
+          "title": "Chemical bonding, structure and properties"
+        },
+        {
+          "order": 7,
+          "curriculumTag": "chemistry-C7",
+          "rawCode": "C7",
+          "title": "Group chemistry"
+        },
+        {
+          "order": 8,
+          "curriculumTag": "chemistry-C8",
+          "rawCode": "C8",
+          "title": "Separation techniques"
+        },
+        {
+          "order": 9,
+          "curriculumTag": "chemistry-C9",
+          "rawCode": "C9",
+          "title": "Acids, bases and salts"
+        },
+        {
+          "order": 10,
+          "curriculumTag": "chemistry-C10",
+          "rawCode": "C10",
+          "title": "Rates of reaction"
+        },
+        {
+          "order": 11,
+          "curriculumTag": "chemistry-C11",
+          "rawCode": "C11",
+          "title": "Energetics"
+        },
+        {
+          "order": 12,
+          "curriculumTag": "chemistry-C12",
+          "rawCode": "C12",
+          "title": "Electrolysis"
+        },
+        {
+          "order": 13,
+          "curriculumTag": "chemistry-C13",
+          "rawCode": "C13",
+          "title": "Carbon/Organic chemistry"
+        },
+        {
+          "order": 14,
+          "curriculumTag": "chemistry-C14",
+          "rawCode": "C14",
+          "title": "Metals"
+        },
+        {
+          "order": 15,
+          "curriculumTag": "chemistry-C15",
+          "rawCode": "C15",
+          "title": "Kinetic/Particle theory"
+        },
+        {
+          "order": 16,
+          "curriculumTag": "chemistry-C16",
+          "rawCode": "C16",
+          "title": "Chemical tests"
+        },
+        {
+          "order": 17,
+          "curriculumTag": "chemistry-C17",
+          "rawCode": "C17",
+          "title": "Air and water"
+        }
+      ],
+      "curriculumTags": [
+        "chemistry-C1",
+        "chemistry-C2",
+        "chemistry-C3",
+        "chemistry-C4",
+        "chemistry-C5",
+        "chemistry-C6",
+        "chemistry-C7",
+        "chemistry-C8",
+        "chemistry-C9",
+        "chemistry-C10",
+        "chemistry-C11",
+        "chemistry-C12",
+        "chemistry-C13",
+        "chemistry-C14",
+        "chemistry-C15",
+        "chemistry-C16",
+        "chemistry-C17"
+      ]
+    },
+    {
+      "paperId": "biology",
+      "subject": "Biology",
+      "displaySubject": "Biology",
+      "tagCount": 11,
+      "tags": [
+        {
+          "order": 1,
+          "curriculumTag": "biology-B1",
+          "rawCode": "B1",
+          "title": "Cells"
+        },
+        {
+          "order": 2,
+          "curriculumTag": "biology-B2",
+          "rawCode": "B2",
+          "title": "Movement across membranes"
+        },
+        {
+          "order": 3,
+          "curriculumTag": "biology-B3",
+          "rawCode": "B3",
+          "title": "Cell division and sex determination"
+        },
+        {
+          "order": 4,
+          "curriculumTag": "biology-B4",
+          "rawCode": "B4",
+          "title": "Inheritance"
+        },
+        {
+          "order": 5,
+          "curriculumTag": "biology-B5",
+          "rawCode": "B5",
+          "title": "DNA"
+        },
+        {
+          "order": 6,
+          "curriculumTag": "biology-B6",
+          "rawCode": "B6",
+          "title": "Gene technologies"
+        },
+        {
+          "order": 7,
+          "curriculumTag": "biology-B7",
+          "rawCode": "B7",
+          "title": "Variation"
+        },
+        {
+          "order": 8,
+          "curriculumTag": "biology-B8",
+          "rawCode": "B8",
+          "title": "Enzymes"
+        },
+        {
+          "order": 9,
+          "curriculumTag": "biology-B9",
+          "rawCode": "B9",
+          "title": "Animal physiology"
+        },
+        {
+          "order": 10,
+          "curriculumTag": "biology-B10",
+          "rawCode": "B10",
+          "title": "Ecosystems"
+        },
+        {
+          "order": 11,
+          "curriculumTag": "biology-B11",
+          "rawCode": "B11",
+          "title": "Plant physiology"
+        }
+      ],
+      "curriculumTags": [
+        "biology-B1",
+        "biology-B2",
+        "biology-B3",
+        "biology-B4",
+        "biology-B5",
+        "biology-B6",
+        "biology-B7",
+        "biology-B8",
+        "biology-B9",
+        "biology-B10",
+        "biology-B11"
+      ]
+    }
+  ],
+  "allCurriculumTags": [
+    {
+      "curriculumTag": "M1-M1",
+      "subject": "Math 1",
+      "title": "Units"
+    },
+    {
+      "curriculumTag": "M1-M2",
+      "subject": "Math 1",
+      "title": "Number"
+    },
+    {
+      "curriculumTag": "M1-M3",
+      "subject": "Math 1",
+      "title": "Ratio and proportion"
+    },
+    {
+      "curriculumTag": "M1-M4",
+      "subject": "Math 1",
+      "title": "Algebra"
+    },
+    {
+      "curriculumTag": "M1-M5",
+      "subject": "Math 1",
+      "title": "Geometry"
+    },
+    {
+      "curriculumTag": "M1-M6",
+      "subject": "Math 1",
+      "title": "Statistics"
+    },
+    {
+      "curriculumTag": "M1-M7",
+      "subject": "Math 1",
+      "title": "Probability"
+    },
+    {
+      "curriculumTag": "M2-MM1",
+      "subject": "Math 2",
+      "title": "Algebra and functions"
+    },
+    {
+      "curriculumTag": "M2-MM2",
+      "subject": "Math 2",
+      "title": "Coordinate geometry"
+    },
+    {
+      "curriculumTag": "M2-MM3",
+      "subject": "Math 2",
+      "title": "Trigonometry"
+    },
+    {
+      "curriculumTag": "M2-MM4",
+      "subject": "Math 2",
+      "title": "Exponentials and logarithms"
+    },
+    {
+      "curriculumTag": "M2-MM5",
+      "subject": "Math 2",
+      "title": "Sequences and series"
+    },
+    {
+      "curriculumTag": "M2-MM6",
+      "subject": "Math 2",
+      "title": "Binomial expansion"
+    },
+    {
+      "curriculumTag": "M2-MM7",
+      "subject": "Math 2",
+      "title": "Differentiation and integration"
+    },
+    {
+      "curriculumTag": "P-P1",
+      "subject": "Physics",
+      "title": "Electricity"
+    },
+    {
+      "curriculumTag": "P-P2",
+      "subject": "Physics",
+      "title": "Magnetism"
+    },
+    {
+      "curriculumTag": "P-P3",
+      "subject": "Physics",
+      "title": "Mechanics"
+    },
+    {
+      "curriculumTag": "P-P4",
+      "subject": "Physics",
+      "title": "Thermal physics"
+    },
+    {
+      "curriculumTag": "P-P5",
+      "subject": "Physics",
+      "title": "Matter"
+    },
+    {
+      "curriculumTag": "P-P6",
+      "subject": "Physics",
+      "title": "Waves"
+    },
+    {
+      "curriculumTag": "P-P7",
+      "subject": "Physics",
+      "title": "Radioactivity"
+    },
+    {
+      "curriculumTag": "chemistry-C1",
+      "subject": "Chemistry",
+      "title": "Atomic structure"
+    },
+    {
+      "curriculumTag": "chemistry-C2",
+      "subject": "Chemistry",
+      "title": "The Periodic Table"
+    },
+    {
+      "curriculumTag": "chemistry-C3",
+      "subject": "Chemistry",
+      "title": "Chemical reactions, formulae and equations"
+    },
+    {
+      "curriculumTag": "chemistry-C4",
+      "subject": "Chemistry",
+      "title": "Quantitative chemistry"
+    },
+    {
+      "curriculumTag": "chemistry-C5",
+      "subject": "Chemistry",
+      "title": "Oxidation, reduction and redox"
+    },
+    {
+      "curriculumTag": "chemistry-C6",
+      "subject": "Chemistry",
+      "title": "Chemical bonding, structure and properties"
+    },
+    {
+      "curriculumTag": "chemistry-C7",
+      "subject": "Chemistry",
+      "title": "Group chemistry"
+    },
+    {
+      "curriculumTag": "chemistry-C8",
+      "subject": "Chemistry",
+      "title": "Separation techniques"
+    },
+    {
+      "curriculumTag": "chemistry-C9",
+      "subject": "Chemistry",
+      "title": "Acids, bases and salts"
+    },
+    {
+      "curriculumTag": "chemistry-C10",
+      "subject": "Chemistry",
+      "title": "Rates of reaction"
+    },
+    {
+      "curriculumTag": "chemistry-C11",
+      "subject": "Chemistry",
+      "title": "Energetics"
+    },
+    {
+      "curriculumTag": "chemistry-C12",
+      "subject": "Chemistry",
+      "title": "Electrolysis"
+    },
+    {
+      "curriculumTag": "chemistry-C13",
+      "subject": "Chemistry",
+      "title": "Carbon/Organic chemistry"
+    },
+    {
+      "curriculumTag": "chemistry-C14",
+      "subject": "Chemistry",
+      "title": "Metals"
+    },
+    {
+      "curriculumTag": "chemistry-C15",
+      "subject": "Chemistry",
+      "title": "Kinetic/Particle theory"
+    },
+    {
+      "curriculumTag": "chemistry-C16",
+      "subject": "Chemistry",
+      "title": "Chemical tests"
+    },
+    {
+      "curriculumTag": "chemistry-C17",
+      "subject": "Chemistry",
+      "title": "Air and water"
+    },
+    {
+      "curriculumTag": "biology-B1",
+      "subject": "Biology",
+      "title": "Cells"
+    },
+    {
+      "curriculumTag": "biology-B2",
+      "subject": "Biology",
+      "title": "Movement across membranes"
+    },
+    {
+      "curriculumTag": "biology-B3",
+      "subject": "Biology",
+      "title": "Cell division and sex determination"
+    },
+    {
+      "curriculumTag": "biology-B4",
+      "subject": "Biology",
+      "title": "Inheritance"
+    },
+    {
+      "curriculumTag": "biology-B5",
+      "subject": "Biology",
+      "title": "DNA"
+    },
+    {
+      "curriculumTag": "biology-B6",
+      "subject": "Biology",
+      "title": "Gene technologies"
+    },
+    {
+      "curriculumTag": "biology-B7",
+      "subject": "Biology",
+      "title": "Variation"
+    },
+    {
+      "curriculumTag": "biology-B8",
+      "subject": "Biology",
+      "title": "Enzymes"
+    },
+    {
+      "curriculumTag": "biology-B9",
+      "subject": "Biology",
+      "title": "Animal physiology"
+    },
+    {
+      "curriculumTag": "biology-B10",
+      "subject": "Biology",
+      "title": "Ecosystems"
+    },
+    {
+      "curriculumTag": "biology-B11",
+      "subject": "Biology",
+      "title": "Plant physiology"
+    }
+  ]
+}
