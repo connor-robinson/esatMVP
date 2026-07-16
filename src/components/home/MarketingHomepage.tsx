@@ -727,12 +727,11 @@ export function MarketingHomepage() {
                 </span>
               </div>
               <p className="text-[#94A3B8] max-w-sm leading-relaxed">
-                The ultimate training ground for Cambridge Natural Sciences and
-                Mathematics applicants. Developed by high-scoring scholars to
-                help you bridge the gap.
+                ESAT & TMUA preparation — built for speed, accuracy and exam
+                pressure.
               </p>
               <div className="flex items-center gap-3">
-                <div className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider flex items-center gap-2">
+                <div className="px-3 py-1 bg-white/5 rounded-full text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#3B82F6]" />{" "}
                   Cambridge Approved Credentials
                 </div>
@@ -767,14 +766,6 @@ export function MarketingHomepage() {
                     Past Papers
                   </Link>
                 </li>
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-[#3B82F6] transition-colors"
-                  >
-                    Scholarships
-                  </a>
-                </li>
               </ul>
             </div>
             <div>
@@ -783,28 +774,20 @@ export function MarketingHomepage() {
               </h4>
               <ul className="space-y-4 text-sm text-[#94A3B8]">
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    href="/help"
                     className="hover:text-[#3B82F6] transition-colors"
                   >
                     Help Center
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="#"
-                    className="hover:text-[#3B82F6] transition-colors"
-                  >
-                    Privacy Policy
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
+                  <Link
+                    href="/help"
                     className="hover:text-[#3B82F6] transition-colors"
                   >
                     Contact Us
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>

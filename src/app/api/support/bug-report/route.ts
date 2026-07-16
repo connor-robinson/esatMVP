@@ -5,6 +5,8 @@ export const dynamic = 'force-dynamic';
 
 const MIN_LENGTH = 3;
 const MAX_LENGTH = 2000;
+const MAX_SUBJECT = 120;
+const MAX_EMAIL = 254;
 
 function normalizeDescription(value: unknown): string | null {
   if (typeof value !== 'string') return null;
@@ -13,9 +15,23 @@ function normalizeDescription(value: unknown): string | null {
   return trimmed.slice(0, MAX_LENGTH);
 }
 
+function normalizeSubject(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  if (trimmed.length < 2) return null;
+  return trimmed.slice(0, MAX_SUBJECT);
+}
+
+function normalizeEmail(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim().slice(0, MAX_EMAIL);
+  if (!trimmed.includes('@') || trimmed.length < 5) return null;
+  return trimmed;
+}
+
 /**
  * POST /api/support/bug-report
- * Submit a bug report from settings. Requires auth.
+ * Submit a bug / help / contact message. Requires auth.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -24,7 +40,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    let body: { description?: unknown; pageUrl?: unknown } = {};
+    let body: {
+      description?: unknown;
+      pageUrl?: unknown;
+      subject?: unknown;
+      email?: unknown;
+    } = {};
     try {
       body = await request.json();
     } catch {
@@ -39,15 +60,35 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const subject = normalizeSubject(body.subject);
+    const email = normalizeEmail(body.email) ?? user.email ?? null;
+
+    if (body.email != null && !normalizeEmail(body.email)) {
+      return NextResponse.json(
+        { error: 'Please enter a valid email' },
+        { status: 400 },
+      );
+    }
+
     const pageUrl =
       typeof body.pageUrl === 'string' ? body.pageUrl.slice(0, 500) : null;
     const userAgent = request.headers.get('user-agent')?.slice(0, 500) ?? null;
+
+    const composed = [
+      subject ? `Subject: ${subject}` : null,
+      email ? `Contact: ${email}` : null,
+      subject || email ? '' : null,
+      description,
+    ]
+      .filter((line) => line !== null)
+      .join('\n')
+      .slice(0, MAX_LENGTH);
 
     const { error: insertError } = await (supabase as any)
       .from('app_bug_reports')
       .insert({
         user_id: user.id,
-        description,
+        description: composed,
         page_url: pageUrl,
         user_agent: userAgent,
       });
