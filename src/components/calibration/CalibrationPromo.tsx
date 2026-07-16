@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { trackCalibrationEvent } from "@/lib/calibration/analytics";
 import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
+import { cn } from "@/lib/utils";
 
 interface CalibrationPromoProps {
   placement: string;
@@ -16,7 +17,10 @@ interface CalibrationPromoProps {
  */
 export function CalibrationPromo({ placement, className }: CalibrationPromoProps) {
   return (
-    <Card variant="subtle" className={className ?? "p-5"}>
+    <Card
+      variant="flat"
+      className={cn("rounded-organic-lg bg-surface-subtle p-5", className)}
+    >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-sm font-semibold text-text">
