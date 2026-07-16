@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { cssVar } from "@/config/colors";
 import {
   getRowDensity,
@@ -14,6 +14,8 @@ type PercentileMiniChartProps = {
   percentile: number | null | undefined;
   xLabel?: string;
   className?: string;
+  /** Draw the distribution line / fill in when the chart mounts. */
+  animate?: boolean;
 };
 
 export function PercentileMiniChart({
@@ -22,8 +24,20 @@ export function PercentileMiniChart({
   percentile,
   xLabel = "Score",
   className,
+  animate = false,
 }: PercentileMiniChartProps) {
   const [dotHovered, setDotHovered] = useState(false);
+  const [drawn, setDrawn] = useState(!animate);
+
+  useEffect(() => {
+    if (!animate) {
+      setDrawn(true);
+      return;
+    }
+    setDrawn(false);
+    const frame = requestAnimationFrame(() => setDrawn(true));
+    return () => cancelAnimationFrame(frame);
+  }, [animate, rows, score, percentile]);
 
   const chart = useMemo(() => {
     if (!rows || rows.length < 2) return null;
@@ -143,12 +157,20 @@ export function PercentileMiniChart({
             points={areaPoints}
             fill="color-mix(in srgb, var(--color-maths) 10%, transparent)"
             stroke="none"
+            style={{
+              opacity: drawn ? 1 : 0,
+              transition: animate ? "opacity 0.55s ease-out 0.35s" : undefined,
+            }}
           />
           {hasUser && (
             <polygon
               points={shadedPoints.join(" ")}
               fill="color-mix(in srgb, var(--color-maths) 22%, transparent)"
               stroke="none"
+              style={{
+                opacity: drawn ? 1 : 0,
+                transition: animate ? "opacity 0.55s ease-out 0.5s" : undefined,
+              }}
             />
           )}
 
@@ -176,10 +198,23 @@ export function PercentileMiniChart({
             strokeWidth="2"
             strokeLinejoin="round"
             strokeLinecap="round"
+            pathLength={1}
+            style={{
+              strokeDasharray: 1,
+              strokeDashoffset: drawn ? 0 : 1,
+              transition: animate
+                ? "stroke-dashoffset 0.85s ease-out"
+                : undefined,
+            }}
           />
 
           {hasUser && (
-            <g>
+            <g
+              style={{
+                opacity: drawn ? 1 : 0,
+                transition: animate ? "opacity 0.35s ease-out 0.7s" : undefined,
+              }}
+            >
               <line
                 x1={userX}
                 y1={pad}

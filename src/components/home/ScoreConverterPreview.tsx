@@ -16,13 +16,12 @@ type DemoExam = {
   year: number;
   mapsTo: "ESAT" | "TMUA";
   table: string;
-  sections: Array<{
+  section: {
     label: string;
     raw: number;
     max: number;
     scaled: number;
-  }>;
-  overallScaled: number;
+  };
 };
 
 /** Fixed sample conversions — click Try me to enter your own year and marks. */
@@ -33,11 +32,7 @@ const DEMOS: DemoExam[] = [
     year: 2023,
     mapsTo: "ESAT",
     table: "esat_math1_cumulative",
-    sections: [
-      { label: "Mathematics 1", raw: 18, max: 40, scaled: 6.4 },
-      { label: "Physics", raw: 14, max: 40, scaled: 5.8 },
-    ],
-    overallScaled: 6.1,
+    section: { label: "Mathematics 1", raw: 18, max: 40, scaled: 6.1 },
   },
   {
     id: "engaa",
@@ -45,10 +40,7 @@ const DEMOS: DemoExam[] = [
     year: 2022,
     mapsTo: "ESAT",
     table: "esat_combined_math_phys_cumulative",
-    sections: [
-      { label: "Section 1", raw: 24, max: 40, scaled: 6.7 },
-    ],
-    overallScaled: 6.7,
+    section: { label: "Section 1", raw: 24, max: 40, scaled: 6.7 },
   },
   {
     id: "tmua",
@@ -56,11 +48,7 @@ const DEMOS: DemoExam[] = [
     year: 2023,
     mapsTo: "TMUA",
     table: "esat_math1_cumulative",
-    sections: [
-      { label: "Paper 1", raw: 12, max: 20, scaled: 6.5 },
-      { label: "Paper 2", raw: 11, max: 20, scaled: 6.2 },
-    ],
-    overallScaled: 6.4,
+    section: { label: "Paper 1", raw: 12, max: 20, scaled: 6.4 },
   },
 ];
 
@@ -103,14 +91,14 @@ export function ScoreConverterPreview() {
   }, []);
 
   const rows = rowsByTable[demo.table] ?? [];
+  const score = demo.section.scaled;
   const percentile = useMemo(() => {
     if (rows.length < 2) return null;
-    const pct = interpolatePercentile(rows, demo.overallScaled);
+    const pct = interpolatePercentile(rows, score);
     return Number.isFinite(pct) ? pct : null;
-  }, [rows, demo.overallScaled]);
+  }, [rows, score]);
 
-  const topPct =
-    percentile != null ? Math.max(0, 100 - percentile) : null;
+  const topPct = percentile != null ? Math.max(0, 100 - percentile) : null;
 
   return (
     <div className="relative overflow-hidden rounded-3xl bg-[#161D2F] p-5 sm:p-6 lg:p-7">
@@ -123,7 +111,7 @@ export function ScoreConverterPreview() {
             {demo.exam} {demo.year} → {demo.mapsTo}
           </p>
         </div>
-        <span className="rounded-lg bg-[#3B82F6]/15 px-2.5 py-1 text-[11px] font-semibold text-[#93C5FD]">
+        <span className="rounded-full bg-white/[0.06] px-3.5 py-1.5 text-[11px] font-medium text-[#94A3B8]">
           Sample result
         </span>
       </div>
@@ -149,39 +137,32 @@ export function ScoreConverterPreview() {
         })}
       </div>
 
-      <div className="mt-4 space-y-2">
-        {demo.sections.map((section) => (
-          <div
-            key={section.label}
-            className="flex items-center justify-between gap-3 rounded-xl bg-[#0A0F1D]/70 px-4 py-3"
-          >
-            <div>
-              <p className="text-sm font-semibold text-white">{section.label}</p>
-              <p className="mt-0.5 text-xs tabular-nums text-[#94A3B8]">
-                {section.raw} / {section.max} raw
-              </p>
-            </div>
-            <p className="text-lg font-bold tabular-nums text-[#93C5FD]">
-              {section.scaled.toFixed(1)}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-4 flex items-end justify-between gap-4 rounded-xl bg-[#3B82F6]/10 px-4 py-4">
+      <div className="mt-4 flex items-center justify-between gap-3 rounded-xl bg-[#0A0F1D]/70 px-4 py-3">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#93C5FD]">
-            Predicted {demo.mapsTo}
-          </p>
-          <p className="mt-1 text-4xl font-display font-bold tabular-nums text-white">
-            {demo.overallScaled.toFixed(1)}
+          <p className="text-sm font-semibold text-white">{demo.section.label}</p>
+          <p className="mt-0.5 text-xs tabular-nums text-[#94A3B8]">
+            {demo.section.raw} / {demo.section.max} raw
           </p>
         </div>
-        <div className="text-right">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#93C5FD]">
+        <p className="text-lg font-bold tabular-nums text-[#93C5FD]">
+          {demo.section.scaled.toFixed(1)}
+        </p>
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-2.5">
+        <div className="rounded-2xl bg-[#0A0F1D]/80 px-4 py-3.5 text-center sm:px-5">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#94A3B8]">
+            Predicted {demo.mapsTo}
+          </p>
+          <p className="mt-1 text-2xl font-display font-bold tabular-nums text-white sm:text-3xl">
+            {score.toFixed(1)}
+          </p>
+        </div>
+        <div className="rounded-2xl bg-[#0A0F1D]/80 px-4 py-3.5 text-center sm:px-5">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#94A3B8]">
             Percentile
           </p>
-          <p className="mt-1 text-2xl font-bold tabular-nums text-white">
+          <p className="mt-1 text-2xl font-display font-bold tabular-nums text-white sm:text-3xl">
             {topPct != null ? `Top ${topPct.toFixed(0)}%` : "—"}
           </p>
         </div>
@@ -194,10 +175,12 @@ export function ScoreConverterPreview() {
           </div>
         ) : rows.length > 1 && percentile != null ? (
           <PercentileMiniChart
+            key={demo.id}
             rows={rows}
-            score={demo.overallScaled}
+            score={score}
             percentile={percentile}
             xLabel="Scaled score"
+            animate
             className="[&_svg]:h-[180px]"
           />
         ) : (
