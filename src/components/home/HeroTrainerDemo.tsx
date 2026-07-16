@@ -260,25 +260,14 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
             {question.topic}
           </p>
 
-          <div className="mt-6 flex h-[11.5rem] w-full flex-col items-center justify-center gap-2 px-2 sm:mt-8 sm:h-[12rem]">
+          <div className="mt-5 flex h-[14rem] w-full flex-col items-center justify-center gap-1 px-2 sm:mt-6 sm:h-[14.5rem]">
             {question.showTriangle ? (
-              <HeroTriangleSvg className="max-h-[7.25rem] max-w-[9.5rem]" />
+              <HeroTriangleSvg className="max-h-[10.75rem] max-w-[14rem]" />
             ) : null}
             {question.prompt}
           </div>
 
-          <div className="mt-8 h-1.5 w-full max-w-[14rem] overflow-hidden rounded-full bg-white/10 sm:mt-10">
-            <div
-              className="h-full rounded-full bg-[#3B82F6] transition-[width] duration-500 ease-out"
-              style={{ width: `${Math.max(12, progress)}%` }}
-            />
-          </div>
-
-          <p className="mt-3 text-xs font-medium tabular-nums text-[#94A3B8]">
-            {index + 1} / {QUESTIONS.length}
-          </p>
-
-          <div className="mt-8 grid w-full grid-cols-2 gap-4 sm:mt-10">
+          <div className="mt-5 grid w-full grid-cols-2 gap-4 sm:mt-6">
             {question.options.map((option, optionIndex) => {
               const selected = picked === optionIndex;
               const isCorrectOption = optionIndex === question.correctIndex;
@@ -309,9 +298,20 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
             })}
           </div>
 
+          <div className="mt-7 h-1.5 w-full max-w-[14rem] overflow-hidden rounded-full bg-white/10">
+            <div
+              className="h-full rounded-full bg-[#3B82F6] transition-[width] duration-500 ease-out"
+              style={{ width: `${Math.max(12, progress)}%` }}
+            />
+          </div>
+
+          <p className="mt-3 text-xs font-medium tabular-nums text-[#94A3B8]">
+            {index + 1} / {QUESTIONS.length}
+          </p>
+
           <p
             className={cn(
-              "mt-6 h-5 text-xs font-semibold transition-opacity",
+              "mt-3 h-5 text-xs font-semibold transition-opacity",
               flash === "correct" && "text-[#3B82F6] opacity-100",
               flash === "wrong" && "text-red-300 opacity-100",
               !flash && "opacity-0",
