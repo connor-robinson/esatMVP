@@ -5,17 +5,53 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { BRAND_CONFIG } from "@/config/brand";
 import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
+import { CALIBRATION_QUESTIONS } from "@/lib/calibration/config";
 import { FERMI_GUESSR_PLAY_PATH } from "@/config/fermiGuessr";
 import { trackHomepageEvent } from "@/lib/homepage/analytics";
+import { StemContent } from "@/components/shared/StemContent";
+import { SlotMachineCount } from "@/components/home/SlotMachineCount";
+
+const EXAMPLE_QUESTION = CALIBRATION_QUESTIONS[0];
+const QUESTION_BANK_SUBJECTS = [
+  "Math 1",
+  "Math 2",
+  "Physics",
+  "Chemistry",
+  "Biology",
+].join(",");
 
 export function MarketingHomepage() {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
+  const [questionBankCount, setQuestionBankCount] = useState<number | null>(null);
 
   useEffect(() => {
     void trackHomepageEvent("homepage_viewed", {
       user_state: "logged_out",
       calibration_status: "none",
     });
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void (async () => {
+      try {
+        const res = await fetch(
+          `/api/question-bank/progress?subjects=${encodeURIComponent(QUESTION_BANK_SUBJECTS)}&testType=ESAT`,
+        );
+        if (!res.ok) return;
+        const data = (await res.json()) as { total?: number };
+        if (!cancelled && typeof data.total === "number" && data.total > 0) {
+          setQuestionBankCount(data.total);
+        }
+      } catch {
+        // Keep null — slot machine stays in a light spin until we have a real total.
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const toggleFaq = (index: number) => {
@@ -103,7 +139,11 @@ export function MarketingHomepage() {
               </div>
               <div className="flex gap-12 pt-8">
                 <div>
-                  <div className="text-3xl font-bold">3000+</div>
+                  <div className="text-3xl font-bold tabular-nums">
+                    {questionBankCount != null
+                      ? `${questionBankCount.toLocaleString()}+`
+                      : "—"}
+                  </div>
                   <div className="text-xs uppercase tracking-widest text-[#94A3B8] mt-1 font-semibold">
                     Questions
                   </div>
@@ -195,25 +235,28 @@ export function MarketingHomepage() {
       {/* Calibration preview */}
       <section className="py-16 bg-[#161D2F] border-y border-white/5">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
-          <div className="grid lg:grid-cols-2 gap-10 items-center">
-            <div>
-              <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6] mb-4">
-                Free calibration
-              </h2>
-              <h3 className="text-3xl font-display font-bold mb-4">
-                Know what to practise first
-              </h3>
-              <p className="text-[#94A3B8] leading-relaxed mb-6">
-                The calibration identifies weak ESAT skills, speed problems, accuracy
-                issues, and recommended training areas — so you spend time on what
-                matters instead of random questions.
-              </p>
-              <ol className="space-y-3 text-sm text-[#94A3B8]">
-                <li>1. Complete the calibration</li>
-                <li>2. See your weaknesses</li>
-                <li>3. Receive recommended training</li>
-                <li>4. Track improvement</li>
-              </ol>
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6] mb-4">
+                  Free calibration
+                </h2>
+                <h3 className="text-3xl font-display font-bold mb-4">
+                  Know what to practise first
+                </h3>
+                <p className="text-[#94A3B8] leading-relaxed max-w-lg">
+                  A short diagnostic shows your weak spots — then practise from our
+                  question bank.
+                </p>
+              </div>
+
+              <div>
+                <SlotMachineCount value={questionBankCount} />
+                <p className="mt-3 text-sm font-semibold uppercase tracking-[0.18em] text-[#94A3B8]">
+                  Practice questions in the bank
+                </p>
+              </div>
+
               <Link
                 href={CALIBRATION_ROUTES.hub}
                 onClick={() =>
@@ -222,22 +265,38 @@ export function MarketingHomepage() {
                     destination: CALIBRATION_ROUTES.hub,
                   })
                 }
-                className="mt-8 inline-flex rounded-xl border border-[#3B82F6] px-6 py-3 font-bold text-[#3B82F6] transition-all hover:bg-[#3B82F6] hover:text-white"
+                className="inline-flex rounded-xl bg-[#3B82F6] px-6 py-3 font-bold text-white transition-all hover:bg-[#2563EB]"
               >
                 Start free calibration
               </Link>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-[#0A0F1D]/60 p-8">
+
+            <div className="rounded-2xl bg-[#0A0F1D]/60 p-6 sm:p-8">
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#94A3B8]">
-                Example result preview
+                Example question
               </p>
-              <p className="mt-4 text-lg font-medium text-white leading-relaxed">
-                Strong in algebraic reasoning, but slower than target on fractions
-                and ratio calculations.
-              </p>
-              <p className="mt-3 text-sm text-[#94A3B8]">
-                Illustrative only — your profile is based on your actual responses.
-              </p>
+              <div className="mt-5 text-base leading-relaxed text-white sm:text-lg">
+                <StemContent
+                  content={EXAMPLE_QUESTION.question_text_markdown}
+                  className="text-inherit"
+                />
+              </div>
+              <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                {EXAMPLE_QUESTION.options.map((option) => (
+                  <div
+                    key={option.label}
+                    className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2.5 text-sm text-[#94A3B8]"
+                  >
+                    <span className="font-semibold text-white/70">
+                      {option.label}
+                    </span>
+                    <StemContent
+                      content={option.text_markdown}
+                      className="text-inherit inline"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>

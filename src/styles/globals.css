@@ -82,6 +82,15 @@
     }
   }
 
+  @keyframes slot-spin {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(-11em);
+    }
+  }
+
   /* Smooth appearing animation for questions in expanded parts */
   @keyframes questionAppear {
     from {
