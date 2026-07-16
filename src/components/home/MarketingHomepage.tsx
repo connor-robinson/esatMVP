@@ -44,24 +44,10 @@ const FAQ_ITEMS = [
     ],
   },
   {
-    question: "Are your questions the same as real ESAT questions?",
-    answer: [
-      "They are not copied from official papers. They are original questions designed to test the same mathematical and scientific skills.",
-      "Our aim is not to imitate the wording of one specific paper. It is to prepare you for unfamiliar problems that require the same reasoning, speed and precision as the real test.",
-    ],
-  },
-  {
     question: "How difficult are the questions?",
     answer: [
       "The question bank includes a range of difficulties, from essential foundation questions to problems intended to challenge high-scoring candidates.",
       "Some questions may initially feel harder than expected. This is deliberate. It is better to encounter difficult problems during preparation, where you can learn from them, than for the first time under exam conditions.",
-    ],
-  },
-  {
-    question: "Is knowing the syllabus enough to score well?",
-    answer: [
-      "No. Most strong ESAT candidates already understand the underlying school content.",
-      "The difficulty comes from applying that knowledge quickly, recognising unfamiliar problem structures and avoiding mistakes under pressure. Our programme is designed to train these skills rather than simply reteach the syllabus.",
     ],
   },
   {
@@ -86,20 +72,6 @@ const FAQ_ITEMS = [
     ],
   },
   {
-    question: "Will memorising methods be enough?",
-    answer: [
-      "Not on its own. Memorised methods help with routine questions, but the ESAT often presents familiar concepts in unfamiliar ways.",
-      "You need to understand why a method works, recognise when it applies and adapt it quickly. Our questions are designed to expose shallow understanding before it costs you marks in the real test.",
-    ],
-  },
-  {
-    question: "What should I do when I get a question wrong?",
-    answer: [
-      "Do not simply read the answer and move on.",
-      "Work out whether the mistake came from missing knowledge, incorrect reasoning, slow calculation or carelessness. Then attempt the question again without looking at the solution. The students who improve fastest are usually the ones who treat every mistake as useful evidence.",
-    ],
-  },
-  {
     question: "Can I prepare using past papers alone?",
     answer: [
       "Past papers are essential, but they are limited in number and should be used carefully.",
@@ -107,37 +79,9 @@ const FAQ_ITEMS = [
     ],
   },
   {
-    question: "How important is speed?",
+    question: "What happens if I find an error or bug?",
     answer: [
-      "Extremely important. A student may understand every topic and still underperform because they cannot reach enough questions within the time limit.",
-      "Speed should not come from rushing. It comes from recognising patterns quickly, using efficient methods and making fewer unnecessary calculations. This is why timed practice is built throughout the platform.",
-    ],
-  },
-  {
-    question: "Is ESAT Camp suitable for students aiming for the highest scores?",
-    answer: [
-      "Yes. The platform is designed for ambitious applicants, including students applying to highly competitive courses.",
-      "However, simply having access to difficult questions will not guarantee a strong score. The value comes from completing the work consistently, reviewing mistakes properly and being honest about weaknesses.",
-    ],
-  },
-  {
-    question: "Can ESAT Camp guarantee that I will receive an offer?",
-    answer: [
-      "No responsible preparation platform can guarantee an admissions-test score or university offer.",
-      "What we can provide is a structured, carefully designed programme that gives you the opportunity to prepare thoroughly. Your result will still depend on your starting level, consistency, test-day performance and the strength of the wider applicant cohort.",
-    ],
-  },
-  {
-    question: "Who created ESAT Camp?",
-    answer: [
-      "ESAT Camp was created by students and tutors who understand how frustrating admissions-test preparation can be when resources are scattered, outdated or poorly explained.",
-      "A significant amount of time has gone into researching the test, designing original questions, reviewing solutions and building tools that make preparation more organised and effective. The platform will continue to improve as the ESAT develops.",
-    ],
-  },
-  {
-    question: "What happens if I find an error?",
-    answer: [
-      "You can report it directly through the platform. Every report is reviewed, and genuine issues are corrected as quickly as possible.",
+      "We try our best, but with a platform this size the odd mistake or bug can still slip through. You can report it directly through the platform. Every report is reviewed, and genuine issues are corrected as quickly as possible.",
       "We take accuracy seriously. A trustworthy preparation resource should be willing to investigate mistakes rather than pretend they never happen.",
     ],
   },
@@ -695,7 +639,7 @@ export function MarketingHomepage() {
                       {item.question}
                     </span>
                     <span
-                      className={`material-symbols-outlined shrink-0 text-[#94A3B8] transition-transform ${
+                      className={`material-symbols-outlined shrink-0 text-[#94A3B8] transition-transform duration-300 ease-out ${
                         open ? "rotate-180 text-[#3B82F6]" : ""
                       }`}
                       aria-hidden
@@ -703,13 +647,23 @@ export function MarketingHomepage() {
                       expand_more
                     </span>
                   </button>
-                  {open ? (
-                    <div className="space-y-4 px-5 pb-6 text-sm leading-relaxed text-[#94A3B8] sm:px-6 sm:text-[15px]">
-                      {item.answer.map((paragraph) => (
-                        <p key={paragraph}>{paragraph}</p>
-                      ))}
+                  <div
+                    className={`grid transition-[grid-template-rows] duration-300 ease-out ${
+                      open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                    }`}
+                  >
+                    <div className="min-h-0 overflow-hidden">
+                      <div
+                        className={`space-y-4 px-5 pb-6 text-sm leading-relaxed text-[#94A3B8] transition-opacity duration-300 ease-out sm:px-6 sm:text-[15px] ${
+                          open ? "opacity-100" : "opacity-0"
+                        }`}
+                      >
+                        {item.answer.map((paragraph) => (
+                          <p key={paragraph}>{paragraph}</p>
+                        ))}
+                      </div>
                     </div>
-                  ) : null}
+                  </div>
                 </div>
               );
             })}
