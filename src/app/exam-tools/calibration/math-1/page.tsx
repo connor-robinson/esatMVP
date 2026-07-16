@@ -18,14 +18,15 @@ import {
 } from "@/lib/calibration/constants";
 import type { CalibrationAttempt } from "@/lib/calibration/types";
 import { cn } from "@/lib/utils";
-import { solveSessionActionBtn } from "@/lib/papers/solveSessionStyles";
 
 export default function Math1CalibrationLanding() {
   const router = useRouter();
   const session = useSupabaseSession();
   const [inProgress, setInProgress] = useState<CalibrationAttempt | null>(null);
   const [completed, setCompleted] = useState<CalibrationAttempt[]>([]);
-  const [accountLatestAttemptId, setAccountLatestAttemptId] = useState<string | null>(null);
+  const [accountLatestAttemptId, setAccountLatestAttemptId] = useState<
+    string | null
+  >(null);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -84,45 +85,60 @@ export default function Math1CalibrationLanding() {
         : "Start";
 
   return (
-    <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center bg-background p-6 sm:p-8">
-      <div className="w-full max-w-2xl space-y-6">
-        <div className="w-full">
-          <p className="text-center text-xs font-mono uppercase tracking-wide text-text-muted">
-            Exam Tools · Calibration
+    <div className="relative min-h-[calc(100vh-3.5rem)] overflow-hidden bg-background">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.35]"
+        style={{
+          backgroundImage:
+            "radial-gradient(rgba(147, 197, 253, 0.18) 1px, transparent 1px)",
+          backgroundSize: "22px 22px",
+        }}
+      />
+
+      <div className="relative mx-auto flex min-h-[calc(100vh-3.5rem)] w-full max-w-5xl flex-col justify-center px-5 py-12 sm:px-8 sm:py-16 lg:px-10">
+        <header className="mx-auto max-w-3xl text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-maths">
+            Exam tools · Calibration
           </p>
-          <h1 className="mt-3 py-2 text-center text-xl font-mono font-semibold text-text sm:text-2xl">
+          <h1 className="mt-4 text-3xl font-display font-bold leading-[1.15] tracking-tight text-text sm:text-4xl lg:text-5xl">
             This is the{" "}
-            <span className="font-semibold text-maths">Mathematics 1</span>{" "}
+            <span className="text-maths">Mathematics 1</span>
+            <br className="hidden sm:block" />{" "}
             calibration test
           </h1>
-        </div>
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-text-muted sm:text-lg">
+            A short diagnostic to show your weak spots — then a clear next step
+            for practice.
+          </p>
+        </header>
 
         {loaded && (latest || accountLatestAttemptId) ? (
-          <div className="rounded-organic-lg border border-border-subtle bg-surface-subtle/60 px-4 py-3">
-            <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="mx-auto mt-8 w-full max-w-4xl rounded-2xl bg-surface-elevated/80 px-5 py-4 sm:px-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
-                <p className="text-[11px] font-mono uppercase tracking-wide text-text-muted">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-text-muted">
                   Latest result
                 </p>
                 {latest && latestResults ? (
-                  <p className="mt-0.5 font-mono text-lg font-semibold tabular-nums text-text">
+                  <p className="mt-1 text-xl font-semibold tabular-nums text-text">
                     {latestResults.overallScore}
                     <span className="text-sm text-text-muted">/100</span>
-                    <span className="ml-2 text-xs font-normal text-text-muted">
+                    <span className="ml-2 text-sm font-normal text-text-muted">
                       {latestResults.readinessBandLabel}
                     </span>
                   </p>
                 ) : (
-                  <p className="mt-0.5 font-mono text-sm font-semibold text-text">
+                  <p className="mt-1 text-sm font-semibold text-text">
                     Saved to your account
                   </p>
                 )}
               </div>
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center gap-3">
                 {latest && scoreDelta != null ? (
                   <span
                     className={cn(
-                      "font-mono text-sm font-semibold tabular-nums",
+                      "text-sm font-semibold tabular-nums",
                       scoreDelta >= 0 ? "text-success" : "text-warning",
                     )}
                   >
@@ -134,10 +150,12 @@ export default function Math1CalibrationLanding() {
                   type="button"
                   onClick={() =>
                     router.push(
-                      calibrationResultsRoute(latest?.attemptId ?? accountLatestAttemptId!),
+                      calibrationResultsRoute(
+                        latest?.attemptId ?? accountLatestAttemptId!,
+                      ),
                     )
                   }
-                  className="rounded-organic-md bg-surface-mid px-3 py-1.5 text-xs font-mono font-medium text-text hover:bg-surface-neutral"
+                  className="rounded-xl bg-surface-mid px-4 py-2 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
                 >
                   View results
                 </button>
@@ -147,86 +165,68 @@ export default function Math1CalibrationLanding() {
         ) : null}
 
         {loaded && inProgress ? (
-          <div className="flex items-center justify-center gap-3 py-1">
-            <svg
-              className="h-4 w-4 text-text-muted"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              strokeWidth={2.5}
-              aria-hidden
-            >
-              <circle cx="12" cy="12" r="10" strokeWidth="2" />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 6v6l4 2"
-              />
-            </svg>
-            <span className="text-sm font-mono text-text-muted">
-              You have an unfinished attempt — resume to continue
-            </span>
-          </div>
+          <p className="mx-auto mt-5 max-w-4xl text-center text-sm text-text-muted">
+            You have an unfinished attempt — resume to continue where you left
+            off.
+          </p>
         ) : null}
 
-        <div className="space-y-4 rounded-organic-lg border border-border bg-surface-mid/40 p-6">
-          <div className="space-y-3">
-            <div className="flex items-center justify-between border-b border-border-subtle py-2">
-              <span className="text-sm font-mono uppercase tracking-wide text-text-muted">
-                Number of questions
-              </span>
-              <span className="text-base font-mono font-semibold text-text">
+        <section className="mx-auto mt-8 w-full max-w-4xl rounded-3xl bg-surface-elevated/70 px-6 py-7 sm:px-10 sm:py-9">
+          <div className="grid gap-6 sm:grid-cols-3 sm:gap-8">
+            <div className="text-center sm:text-left">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-text-muted">
+                Questions
+              </p>
+              <p className="mt-2 text-3xl font-display font-bold tabular-nums text-text">
                 {CALIBRATION_TOTAL_QUESTIONS}
-              </span>
+              </p>
             </div>
-            <div className="flex items-center justify-between border-b border-border-subtle py-2">
-              <span className="text-sm font-mono uppercase tracking-wide text-text-muted">
+            <div className="text-center sm:text-left">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-text-muted">
                 Time
-              </span>
-              <span className="text-base font-mono font-semibold text-text">
-                {timeLimitMinutes} minutes
-              </span>
+              </p>
+              <p className="mt-2 text-3xl font-display font-bold tabular-nums text-text">
+                {timeLimitMinutes}
+                <span className="ml-1 text-base font-semibold text-text-muted">
+                  min
+                </span>
+              </p>
             </div>
-            <div className="flex items-center justify-between py-2">
-              <span className="text-sm font-mono uppercase tracking-wide text-text-muted">
+            <div className="text-center sm:text-left">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-text-muted">
                 Calculator
-              </span>
-              <span className="text-base font-mono font-semibold text-text">
-                Not allowed
-              </span>
+              </p>
+              <p className="mt-2 text-3xl font-display font-bold text-text">
+                Off
+              </p>
             </div>
           </div>
 
-          <div className="space-y-3 border-t border-border-subtle pt-4">
-            <p className="text-sm font-mono leading-relaxed text-text-muted">
-              For each question, choose the one answer you consider correct. If
-              you are mainly eliminating options, mark it as a guess.
+          <div className="mt-8 grid gap-5 border-t border-border-subtle/50 pt-8 sm:grid-cols-2 sm:gap-8">
+            <p className="text-sm leading-relaxed text-text-muted sm:text-[15px]">
+              Choose one answer for each question. If you are mainly eliminating
+              options, mark it as a guess.
             </p>
-            <p className="text-sm font-mono leading-relaxed text-text-muted">
-              There are no penalties for incorrect responses. Attempt every question
-              if you can — your timing, accuracy and guesses help build a more
-              useful diagnosis.
+            <p className="text-sm leading-relaxed text-text-muted sm:text-[15px]">
+              No penalties for wrong answers. Attempt every question you can —
+              timing and guesses help the diagnosis.
             </p>
-            <p className="text-sm font-mono leading-relaxed text-text-muted">
-              You will receive a readiness score, topic breakdown, speed-versus-accuracy
+            <p className="text-sm leading-relaxed text-text-muted sm:col-span-2 sm:text-[15px]">
+              You will get a readiness score, topic breakdown, speed-versus-accuracy
               profile, and a personalised first practice session.
             </p>
-            <p className="text-sm font-mono font-semibold leading-relaxed text-text">
-              Please click {primaryLabel} to proceed.
-            </p>
           </div>
-        </div>
+        </section>
 
-        <div className="flex flex-col items-center gap-3">
+        <div className="mx-auto mt-8 flex w-full max-w-4xl flex-col items-center gap-3 sm:mt-10">
           <button
             type="button"
-            className={cn(
-              solveSessionActionBtn,
-              "min-w-[200px] px-6 py-3.5 text-lg font-mono",
-            )}
             onClick={start}
             disabled={!loaded}
+            className={cn(
+              "inline-flex min-w-[14rem] items-center justify-center rounded-xl bg-maths px-8 py-3.5 text-base font-bold text-background transition-all hover:brightness-110",
+              !loaded && "cursor-not-allowed opacity-60",
+            )}
           >
             {primaryLabel}
           </button>
@@ -240,16 +240,12 @@ export default function Math1CalibrationLanding() {
                   user_state: "signed_out",
                 })
               }
-              className="text-xs font-mono text-text-muted hover:text-text"
+              className="text-sm text-text-muted transition-colors hover:text-text"
             >
               Sign in first to save progress
             </Link>
           ) : null}
         </div>
-
-        <p className="text-center text-[11px] font-mono leading-relaxed text-text-muted">
-          This is an original diagnostic tool, not an official ESAT paper.
-        </p>
       </div>
     </div>
   );
