@@ -1,9 +1,9 @@
-import type { MistakeTag, PaperSession } from "@/types/papers";
+import type { Answer, Letter, MistakeTag, PaperSession } from "@/types/papers";
 
 const DAY = 24 * 60 * 60 * 1000;
 
 function buildAnswers(total: number, correctCount: number) {
-  const answers = [];
+  const answers: Answer[] = [];
   const correctFlags: (boolean | null)[] = [];
   const guessedFlags: boolean[] = [];
   const perQuestionSec: number[] = [];
@@ -14,10 +14,11 @@ function buildAnswers(total: number, correctCount: number) {
     correctFlags.push(correct);
     guessedFlags.push(!correct && i % 3 === 0);
     perQuestionSec.push(45 + ((i * 17) % 140));
+    const choice: Letter = correct ? "A" : "C";
     answers.push({
-      choice: (correct ? "A" : "C") as const,
+      choice,
       other: "",
-      correctChoice: "A" as const,
+      correctChoice: "A",
       explanation: "",
       addToDrill: !correct,
     });
