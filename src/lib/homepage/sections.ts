@@ -1,4 +1,96 @@
-import type { MainSectionGroup } from "./types";
+import {
+  FERMI_GUESSR_NAME,
+  FERMI_GUESSR_PLAY_PATH,
+  FERMI_GUESSR_STATS_PATH,
+} from "@/config/fermiGuessr";
+import type { DashboardTopic, MainSectionGroup } from "./types";
+
+/** Logged-in dashboard: four color-coded topic hubs with submodes. */
+export const DASHBOARD_TOPICS: DashboardTopic[] = [
+  {
+    id: "mental-maths",
+    title: "Mental Maths",
+    accent: "primary",
+    items: [
+      {
+        label: "Drill",
+        href: "/mental-maths/drill",
+        analyticsDestination: "mental_maths",
+      },
+      {
+        label: "Analytics",
+        href: "/mental-maths/analytics",
+        analyticsDestination: "progress",
+      },
+      {
+        label: "Leaderboard",
+        href: "/mental-maths/leaderboard",
+        analyticsDestination: "mental_maths_leaderboard",
+      },
+    ],
+  },
+  {
+    id: "past-papers",
+    title: "Past Papers",
+    accent: "accent",
+    items: [
+      {
+        label: "Library",
+        href: "/past-papers/library",
+        analyticsDestination: "past_papers",
+      },
+      {
+        label: "Roadmap",
+        href: "/past-papers/roadmap",
+        analyticsDestination: "past_papers_roadmap",
+      },
+      {
+        label: "Analytics",
+        href: "/past-papers/analytics",
+        analyticsDestination: "past_papers_analytics",
+      },
+    ],
+  },
+  {
+    id: "question-bank",
+    title: "Question Bank",
+    accent: "secondary",
+    items: [
+      {
+        label: "Home",
+        href: "/questions",
+        analyticsDestination: "question_bank",
+      },
+      {
+        label: "Library",
+        href: "/questions/library",
+        analyticsDestination: "question_bank_library",
+      },
+      {
+        label: "Analytics",
+        href: "/questions/questionbank/analytics",
+        analyticsDestination: "question_bank_analytics",
+      },
+    ],
+  },
+  {
+    id: "fermiguessr",
+    title: FERMI_GUESSR_NAME,
+    accent: "warning",
+    items: [
+      {
+        label: "Play",
+        href: FERMI_GUESSR_PLAY_PATH,
+        analyticsDestination: "fermi_game",
+      },
+      {
+        label: "Stats",
+        href: FERMI_GUESSR_STATS_PATH,
+        analyticsDestination: "fermi_game",
+      },
+    ],
+  },
+];
 
 export const HOMEPAGE_SECTIONS: MainSectionGroup[] = [
   {

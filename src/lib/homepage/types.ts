@@ -107,3 +107,23 @@ export interface MainSectionGroup {
   title: string;
   items: MainSectionItem[];
 }
+
+/** Accent key for logged-in dashboard topic hubs. */
+export type DashboardTopicAccent =
+  | "primary"
+  | "accent"
+  | "secondary"
+  | "warning";
+
+export interface DashboardTopicLink {
+  label: string;
+  href: string;
+  analyticsDestination: string;
+}
+
+export interface DashboardTopic {
+  id: string;
+  title: string;
+  accent: DashboardTopicAccent;
+  items: DashboardTopicLink[];
+}
