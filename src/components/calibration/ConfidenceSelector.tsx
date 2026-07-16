@@ -18,10 +18,12 @@ interface ConfidenceSelectorProps {
 /** Compact five-point confidence selector shown once an answer is chosen. */
 export function ConfidenceSelector({ value, onChange }: ConfidenceSelectorProps) {
   return (
-    <div className="mt-5" role="group" aria-label="How confident are you in this answer?">
-      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">
-        How confident are you?
-      </p>
+    <div
+      className="mt-4 border-t border-border-subtle pt-4"
+      role="group"
+      aria-label="How confident are you in this answer?"
+    >
+      <p className="text-xs font-medium text-text-muted">How confident are you?</p>
       <div className="mt-2 flex flex-wrap gap-2">
         {LEVELS.map((level) => {
           const active = value === level.value;
@@ -34,10 +36,10 @@ export function ConfidenceSelector({ value, onChange }: ConfidenceSelectorProps)
               aria-label={level.label}
               className={cn(
                 "rounded-organic-md px-3 py-2 text-sm font-medium transition-colors duration-fast ease-signature",
-                "focus-visible:outline-none focus-visible:shadow-glow-focus",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35",
                 active
-                  ? "bg-primary text-background"
-                  : "bg-surface-subtle text-text-muted hover:bg-surface hover:text-text",
+                  ? "bg-secondary text-background"
+                  : "bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text dark:bg-surface dark:hover:bg-surface-elevated",
               )}
             >
               <span className="hidden sm:inline">{level.label}</span>

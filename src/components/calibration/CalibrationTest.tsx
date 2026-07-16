@@ -2,10 +2,8 @@
 
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/layout/Container";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { MathContent } from "@/components/shared/MathContent";
 import { StemContent } from "@/components/shared/StemContent";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { cn } from "@/lib/utils";
@@ -17,11 +15,37 @@ import {
   clearActiveAttemptPointer,
 } from "@/lib/calibration/attempt";
 import { computeResults } from "@/lib/calibration/scoring";
-import { trackCalibrationEvent, type CalibrationUserState } from "@/lib/calibration/analytics";
-import { calibrationResultsRoute } from "@/lib/calibration/constants";
+import {
+  trackCalibrationEvent,
+  type CalibrationUserState,
+} from "@/lib/calibration/analytics";
+import { calibrationResultsRoute, CALIBRATION_ROUTES } from "@/lib/calibration/constants";
 import type { CalibrationAttempt } from "@/lib/calibration/types";
 import { ConfidenceSelector } from "./ConfidenceSelector";
 import { QuestionNavigator } from "./QuestionNavigator";
+import {
+  ArrowRight,
+  Flag,
+  Grid3X3,
+  LogOut,
+  X,
+} from "lucide-react";
+
+const PANEL_SHELL = "rounded-organic-xl bg-surface-elevated";
+
+const SESSION_BAR_BTN =
+  "inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-organic-md px-4 text-sm font-medium transition-all duration-fast ease-signature focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+
+const SESSION_BAR_BTN_SECONDARY = cn(
+  SESSION_BAR_BTN,
+  "bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text",
+  "dark:bg-surface dark:hover:bg-surface-elevated",
+);
+
+const SESSION_BAR_BTN_PRIMARY = cn(
+  SESSION_BAR_BTN,
+  "font-semibold bg-secondary text-background shadow-glow hover:brightness-110",
+);
 
 function formatClock(seconds: number): string {
   const s = Math.max(0, seconds);
@@ -43,6 +67,8 @@ export function CalibrationTest() {
   const [ready, setReady] = useState(false);
   const [phase, setPhase] = useState<"test" | "review">("test");
   const [remaining, setRemaining] = useState(0);
+  const [showNavigator, setShowNavigator] = useState(false);
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
 
   const total = CALIBRATION_QUESTIONS.length;
 
@@ -104,7 +130,9 @@ export function CalibrationTest() {
       const a = attemptRef.current;
       if (!a) return;
       for (const qid of a.order) {
-        if (a.questions[qid].finalSelectedOption == null) a.questions[qid].skipped = true;
+        if (a.questions[qid].finalSelectedOption == null) {
+          a.questions[qid].skipped = true;
+        }
       }
       a.submittedAt = Date.now();
       a.status = "completed";
@@ -126,15 +154,15 @@ export function CalibrationTest() {
     [commitTime, persistAndFinish, userState],
   );
 
-  // Initialise / resume attempt.
   useEffect(() => {
     let a = getActiveAttempt();
     const resumed = !!a;
     if (!a) a = createAttempt();
     attemptRef.current = a;
 
-    // Resume at the first unanswered question, else the first question.
-    let idx = a.order.findIndex((qid) => a!.questions[qid].finalSelectedOption == null);
+    let idx = a.order.findIndex(
+      (qid) => a!.questions[qid].finalSelectedOption == null,
+    );
     if (idx < 0) idx = 0;
     currentIndexRef.current = idx;
     markPresented(a, a.order[idx]);
@@ -143,10 +171,13 @@ export function CalibrationTest() {
     saveAttempt(a);
     setReady(true);
 
-    void trackCalibrationEvent(resumed ? "calibration_resumed" : "calibration_started", {
-      user_state: session?.user ? "free" : "signed_out",
-      attempt_id: a.attemptId,
-    });
+    void trackCalibrationEvent(
+      resumed ? "calibration_resumed" : "calibration_started",
+      {
+        user_state: session?.user ? "free" : "signed_out",
+        attempt_id: a.attemptId,
+      },
+    );
     void trackCalibrationEvent("calibration_question_viewed", {
       attempt_id: a.attemptId,
       question_number: idx + 1,
@@ -154,7 +185,6 @@ export function CalibrationTest() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Global countdown timer.
   useEffect(() => {
     if (!ready) return;
     const timer = setInterval(() => {
@@ -174,7 +204,6 @@ export function CalibrationTest() {
     return () => clearInterval(timer);
   }, [ready, handleSubmit]);
 
-  // Autosave on tab hide / navigation away.
   useEffect(() => {
     const save = () => {
       const a = attemptRef.current;
@@ -203,6 +232,7 @@ export function CalibrationTest() {
         saveAttempt(a);
       }
       setPhase("test");
+      setShowNavigator(false);
       bump();
       void trackCalibrationEvent("calibration_question_viewed", {
         attempt_id: a?.attemptId,
@@ -242,13 +272,19 @@ export function CalibrationTest() {
         q.firstSelectedOption = label;
       } else if (q.finalSelectedOption !== label) {
         q.answerChangeCount += 1;
-        q.answerChangeEvents.push({ from: q.finalSelectedOption, to: label, at: now });
+        q.answerChangeEvents.push({
+          from: q.finalSelectedOption,
+          to: label,
+          at: now,
+        });
       }
       q.finalSelectedOption = label;
       q.skipped = false;
     });
     void trackCalibrationEvent(
-      before && before !== label ? "calibration_answer_changed" : "calibration_answer_selected",
+      before && before !== label
+        ? "calibration_answer_changed"
+        : "calibration_answer_selected",
       { attempt_id: attempt.attemptId, question_number: currentIndex + 1 },
     );
   };
@@ -295,108 +331,166 @@ export function CalibrationTest() {
     }
   };
 
-  const elapsed = attempt.timeLimitSeconds - remaining;
-  const lowTime = remaining <= 120;
+  const progressPct = ((currentIndex + 1) / total) * 100;
+  const timePct = remaining / attempt.timeLimitSeconds;
+  const timerColor =
+    timePct <= 0.1
+      ? "text-error"
+      : timePct <= 0.5
+        ? "text-warning"
+        : "text-text";
+
+  const leaveAndSave = () => {
+    commitTime();
+    const a = attemptRef.current;
+    if (a) saveAttempt(a);
+    void trackCalibrationEvent("calibration_abandoned", {
+      user_state: userState,
+      attempt_id: a?.attemptId,
+      cta_placement: "leave_save",
+      question_number: currentIndex + 1,
+    });
+    router.push(CALIBRATION_ROUTES.math1);
+  };
 
   /* ----------------------------- Review screen ----------------------------- */
   if (phase === "review") {
     return (
-      <Container size="md" className="py-8">
-        <div className="mx-auto max-w-2xl space-y-6">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-primary">
-              Almost done
-            </p>
-            <h1 className="mt-1 text-2xl font-bold text-text">Review your answers</h1>
-            <p className="mt-2 text-sm text-text-muted">
-              Check anything you marked for review, then submit to see your diagnosis.
-            </p>
+      <div className="min-h-[calc(100vh-3.5rem)] py-8 pb-28 sm:py-10 sm:pb-32">
+        <Container size="md">
+          <div className="mx-auto max-w-2xl space-y-6">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-secondary">
+                Almost done
+              </p>
+              <h1 className="mt-1 font-heading text-2xl font-bold text-text">
+                Review your answers
+              </h1>
+              <p className="mt-2 text-sm text-text-muted">
+                Check anything you marked for review, then submit to see your
+                diagnosis.
+              </p>
+            </div>
+
+            <div className={cn(PANEL_SHELL, "p-5")}>
+              <dl className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                <div>
+                  <dt className="text-xs uppercase text-text-muted">Answered</dt>
+                  <dd className="mt-1 text-xl font-bold tabular-nums text-text">
+                    {answeredCount}/{total}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs uppercase text-text-muted">
+                    Unanswered
+                  </dt>
+                  <dd className="mt-1 text-xl font-bold tabular-nums text-text">
+                    {total - answeredCount}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs uppercase text-text-muted">
+                    For review
+                  </dt>
+                  <dd className="mt-1 text-xl font-bold tabular-nums text-text">
+                    {markedCount}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs uppercase text-text-muted">Time left</dt>
+                  <dd className="mt-1 text-xl font-bold tabular-nums text-text">
+                    {formatClock(remaining)}
+                  </dd>
+                </div>
+              </dl>
+            </div>
+
+            <div className={cn(PANEL_SHELL, "p-5")}>
+              <QuestionNavigator
+                items={attempt.order.map((qid, index) => ({
+                  index,
+                  answered: attempt.questions[qid].finalSelectedOption != null,
+                  markedForReview: attempt.questions[qid].markedForReview,
+                  current: false,
+                }))}
+                onJump={goTo}
+              />
+            </div>
           </div>
+        </Container>
 
-          <Card variant="subtle" className="p-5">
-            <dl className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-              <div>
-                <dt className="text-xs uppercase text-text-muted">Answered</dt>
-                <dd className="mt-1 text-xl font-bold text-text">
-                  {answeredCount}/{total}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-xs uppercase text-text-muted">Unanswered</dt>
-                <dd className="mt-1 text-xl font-bold text-text">{total - answeredCount}</dd>
-              </div>
-              <div>
-                <dt className="text-xs uppercase text-text-muted">For review</dt>
-                <dd className="mt-1 text-xl font-bold text-text">{markedCount}</dd>
-              </div>
-              <div>
-                <dt className="text-xs uppercase text-text-muted">Time left</dt>
-                <dd className="mt-1 text-xl font-bold text-text">{formatClock(remaining)}</dd>
-              </div>
-            </dl>
-          </Card>
-
-          <QuestionNavigator
-            items={attempt.order.map((qid, index) => ({
-              index,
-              answered: attempt.questions[qid].finalSelectedOption != null,
-              markedForReview: attempt.questions[qid].markedForReview,
-              current: false,
-            }))}
-            onJump={goTo}
-          />
-
-          <div className="flex flex-wrap gap-3">
-            <Button variant="primary" size="lg" onClick={() => handleSubmit(false)}>
-              Submit and see my diagnosis
-            </Button>
-            <Button variant="ghost" onClick={() => goTo(currentIndex)}>
-              Back to questions
-            </Button>
-          </div>
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-background/98 shadow-bar-floating backdrop-blur-md">
+          <Container size="lg" className="py-2 sm:py-2.5">
+            <div className="flex flex-wrap items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => goTo(currentIndex)}
+                className={SESSION_BAR_BTN_SECONDARY}
+              >
+                Back to questions
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSubmit(false)}
+                className={SESSION_BAR_BTN_PRIMARY}
+              >
+                <span>Submit and see my diagnosis</span>
+                <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
+              </button>
+            </div>
+          </Container>
         </div>
-      </Container>
+      </div>
     );
   }
 
   /* ------------------------------ Test screen ------------------------------ */
   return (
-    <Container size="lg" className="py-6">
-      <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1fr_260px]">
-        <div className="space-y-5">
-          {/* Header: progress + timer */}
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">
-                Question {currentIndex + 1} of {total}
-              </p>
-              <div className="mt-2 h-1.5 w-40 overflow-hidden rounded-full bg-surface-subtle">
-                <div
-                  className="h-full rounded-full bg-primary transition-all duration-fast"
-                  style={{ width: `${((currentIndex + 1) / total) * 100}%` }}
-                />
+    <div className="min-h-[calc(100vh-3.5rem)] py-6 pb-28 sm:py-8 sm:pb-32">
+      <Container size="lg">
+        <div className="space-y-6">
+          {/* Stem panel — QuestionCard style */}
+          <div className={cn(PANEL_SHELL, "px-5 pb-8 pt-5 sm:px-8 sm:pb-10 sm:pt-6")}>
+            <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xl font-semibold tabular-nums text-text sm:text-2xl">
+                  {currentIndex + 1}.
+                </span>
+                <span className="rounded-organic-md bg-surface-mid px-3.5 py-1.5 text-xs font-semibold tracking-wide text-maths sm:px-4 sm:py-2 sm:text-sm">
+                  Math 1
+                </span>
+                <span className="rounded-organic-md bg-surface-mid px-3.5 py-1.5 text-xs font-semibold tracking-wide text-text-muted sm:px-4 sm:py-2 sm:text-sm">
+                  Calibration
+                </span>
+              </div>
+              <div
+                className={cn(
+                  "rounded-organic-lg bg-surface-mid px-3 py-2 sm:px-4",
+                  "tabular-nums text-lg font-semibold tracking-tight",
+                  timerColor,
+                )}
+                aria-live="polite"
+                aria-label={`Time remaining ${formatClock(remaining)}`}
+              >
+                {formatClock(remaining)}
               </div>
             </div>
-            <div
-              className={cn(
-                "text-right text-sm font-semibold tabular-nums",
-                lowTime ? "text-warning" : "text-text-muted",
-              )}
-              aria-live="polite"
-              aria-label={`Time remaining ${formatClock(remaining)}`}
-            >
-              {formatClock(remaining)}
+
+            <div className="text-[1.05rem] font-sans leading-relaxed tracking-tight text-text sm:text-[1.125rem]">
+              <StemContent
+                content={question.question_text_markdown}
+                className="text-inherit"
+              />
+              {question.diagram_svg ? (
+                <StemContent content={question.diagram_svg} className="mt-4" />
+              ) : null}
             </div>
           </div>
 
-          <Card variant="elevated" className="p-6">
-            <StemContent content={question.question_text_markdown} className="text-base text-text" />
-            {question.diagram_svg ? (
-              <StemContent content={question.diagram_svg} className="mt-4" />
-            ) : null}
-
+          {/* Options panel */}
+          <div className={cn(PANEL_SHELL, "p-4 sm:p-5")}>
             <div
-              className="mt-6 space-y-2.5"
+              className="flex flex-col gap-2.5"
               role="radiogroup"
               aria-label="Answer options"
             >
@@ -410,98 +504,242 @@ export function CalibrationTest() {
                     aria-checked={selected}
                     onClick={() => selectOption(option.label)}
                     className={cn(
-                      "flex w-full items-center gap-3 rounded-organic-md px-4 py-3 text-left transition-colors duration-fast ease-signature",
-                      "focus-visible:outline-none focus-visible:shadow-glow-focus",
+                      "relative flex w-full items-center gap-3 overflow-hidden rounded-organic-md px-3.5 py-2.5 text-left sm:px-4 sm:py-3",
+                      "transition-[background-color] duration-fast ease-signature",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35",
                       selected
-                        ? "bg-primary/15 text-text ring-2 ring-primary"
-                        : "bg-surface-subtle text-text hover:bg-surface",
+                        ? "bg-surface-mid dark:bg-folder-card-selected"
+                        : "bg-surface-subtle hover:bg-surface-mid/70 dark:bg-surface-mid dark:hover:bg-surface-neutral",
                     )}
                   >
                     <span
                       className={cn(
-                        "flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold",
-                        selected ? "bg-primary text-background" : "bg-surface text-text-muted",
+                        "flex w-6 shrink-0 items-center text-sm font-semibold tabular-nums leading-none",
+                        selected ? "text-text" : "text-text-muted",
                       )}
-                      aria-hidden
                     >
                       {option.label}
                     </span>
-                    <MathContent content={option.text_markdown} className="text-sm" />
+                    <div className="min-w-0 flex-1 text-[0.98rem] font-sans leading-relaxed tracking-tight text-text sm:text-[1.02rem]">
+                      <StemContent
+                        content={option.text_markdown}
+                        className="text-inherit inline"
+                      />
+                    </div>
                   </button>
                 );
               })}
             </div>
 
             {qAttempt.finalSelectedOption != null ? (
-              <ConfidenceSelector value={qAttempt.finalConfidence} onChange={setConfidence} />
+              <ConfidenceSelector
+                value={qAttempt.finalConfidence}
+                onChange={setConfidence}
+              />
             ) : null}
-          </Card>
+          </div>
+        </div>
+      </Container>
 
-          {/* Controls */}
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <Button
-              variant="secondary"
-              onClick={() => goTo(currentIndex - 1)}
-              disabled={currentIndex === 0}
-            >
-              Previous
-            </Button>
-            <div className="flex flex-wrap items-center gap-3">
+      {/* Bottom session bar — QuestionBankSessionBar style */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-background/98 shadow-bar-floating backdrop-blur-md">
+        <div
+          className="h-2.5 w-full overflow-hidden bg-surface-elevated sm:h-3"
+          role="progressbar"
+          aria-valuenow={currentIndex + 1}
+          aria-valuemin={1}
+          aria-valuemax={total}
+          aria-label="Session progress"
+        >
+          <div
+            className="h-full bg-secondary transition-[width] duration-300 ease-signature"
+            style={{ width: `${progressPct}%` }}
+          />
+        </div>
+
+        <Container size="lg" className="py-1.5 sm:py-2">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <p className="min-w-0 shrink-0 text-xs text-text-muted sm:text-sm">
+              Questions done{" "}
+              <span className="font-semibold tabular-nums text-text">
+                {answeredCount}
+              </span>
+              <span className="text-text-subtle"> / </span>
+              <span className="tabular-nums text-text-muted">{total}</span>
+            </p>
+
+            <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setShowLeaveConfirm(true)}
+                className={SESSION_BAR_BTN_SECONDARY}
+              >
+                <LogOut className="h-4 w-4 shrink-0" />
+                <span className="hidden sm:inline">Leave</span>
+              </button>
+
               <button
                 type="button"
                 onClick={toggleReview}
                 className={cn(
-                  "rounded-organic-md px-3 py-2 text-sm font-medium transition-colors duration-fast",
-                  qAttempt.markedForReview
-                    ? "bg-warning/15 text-warning"
-                    : "text-text-muted hover:bg-surface-subtle hover:text-text",
+                  SESSION_BAR_BTN_SECONDARY,
+                  qAttempt.markedForReview && "text-warning hover:text-warning",
                 )}
                 aria-pressed={qAttempt.markedForReview}
               >
-                {qAttempt.markedForReview ? "Marked for review" : "Mark for review"}
+                <Flag className="h-4 w-4 shrink-0" />
+                <span className="hidden sm:inline">
+                  {qAttempt.markedForReview ? "Marked" : "Mark"}
+                </span>
               </button>
-              <Button variant="primary" onClick={skipForward}>
-                {currentIndex === total - 1 ? "Review & submit" : "Next"}
-              </Button>
+
+              <button
+                type="button"
+                onClick={() => setShowNavigator(true)}
+                className={SESSION_BAR_BTN_SECONDARY}
+              >
+                <Grid3X3 className="h-4 w-4 shrink-0" />
+                <span className="hidden sm:inline">Navigator</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={skipForward}
+                className={SESSION_BAR_BTN_PRIMARY}
+              >
+                <span>
+                  {currentIndex === total - 1
+                    ? "Review & submit"
+                    : "Next question"}
+                </span>
+                <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
+              </button>
             </div>
           </div>
-
-          <p className="text-center text-xs text-text-muted">
-            Your progress is saved on this device. You can resume later.
-          </p>
-        </div>
-
-        {/* Navigator sidebar */}
-        <aside className="lg:sticky lg:top-20 lg:self-start">
-          <Card variant="subtle" className="p-4">
-            <h2 className="text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">
-              Question navigator
-            </h2>
-            <div className="mt-3">
-              <QuestionNavigator
-                items={attempt.order.map((qid, index) => ({
-                  index,
-                  answered: attempt.questions[qid].finalSelectedOption != null,
-                  markedForReview: attempt.questions[qid].markedForReview,
-                  current: index === currentIndex,
-                }))}
-                onJump={goTo}
-              />
-            </div>
-            <Button
-              variant="ghost"
-              className="mt-4 w-full"
-              onClick={() => {
-                commitTime();
-                setPhase("review");
-                bump();
-              }}
-            >
-              Review &amp; submit
-            </Button>
-          </Card>
-        </aside>
+        </Container>
       </div>
-    </Container>
+
+      {/* Navigator modal */}
+      <AnimatePresence>
+        {showNavigator ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[80] flex items-end justify-center bg-background/75 p-4 backdrop-blur-sm sm:items-center"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="navigator-title"
+            onClick={() => setShowNavigator(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 12 }}
+              className="relative w-full max-w-md rounded-organic-xl bg-surface-elevated p-6 shadow-modal-card"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={() => setShowNavigator(false)}
+                className="absolute right-4 top-4 rounded-organic-md p-1.5 text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
+                aria-label="Close"
+              >
+                <X className="h-4 w-4" aria-hidden />
+              </button>
+              <h2
+                id="navigator-title"
+                className="pr-8 font-heading text-xl font-bold text-text"
+              >
+                Question navigator
+              </h2>
+              <div className="mt-4">
+                <QuestionNavigator
+                  items={attempt.order.map((qid, index) => ({
+                    index,
+                    answered:
+                      attempt.questions[qid].finalSelectedOption != null,
+                    markedForReview: attempt.questions[qid].markedForReview,
+                    current: index === currentIndex,
+                  }))}
+                  onJump={goTo}
+                />
+              </div>
+              <button
+                type="button"
+                className={cn(SESSION_BAR_BTN_PRIMARY, "mt-5 w-full")}
+                onClick={() => {
+                  commitTime();
+                  setShowNavigator(false);
+                  setPhase("review");
+                  bump();
+                }}
+              >
+                Review &amp; submit
+              </button>
+            </motion.div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+
+      {/* Leave confirm */}
+      <AnimatePresence>
+        {showLeaveConfirm ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[80] flex items-center justify-center bg-background/75 p-4 backdrop-blur-sm"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="leave-calibration-title"
+            onClick={() => setShowLeaveConfirm(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 12 }}
+              className="relative w-full max-w-md rounded-organic-xl bg-surface-elevated p-6 shadow-modal-card"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={() => setShowLeaveConfirm(false)}
+                className="absolute right-4 top-4 rounded-organic-md p-1.5 text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
+                aria-label="Close"
+              >
+                <X className="h-4 w-4" aria-hidden />
+              </button>
+              <h2
+                id="leave-calibration-title"
+                className="pr-8 font-heading text-xl font-bold text-text"
+              >
+                Leave calibration?
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed text-text-muted">
+                Your progress is saved on this device. You can resume from the
+                calibration intro page.
+              </p>
+              <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                <button
+                  type="button"
+                  onClick={() => setShowLeaveConfirm(false)}
+                  className="rounded-organic-lg px-4 py-3 text-sm font-semibold text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
+                >
+                  Keep going
+                </button>
+                <button
+                  type="button"
+                  onClick={leaveAndSave}
+                  className="rounded-organic-lg bg-secondary px-4 py-3 text-sm font-bold text-background shadow-glow transition-all hover:brightness-110 active:scale-[0.98]"
+                >
+                  Leave &amp; save
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+    </div>
   );
 }
