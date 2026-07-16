@@ -27,6 +27,7 @@ import {
 } from "@/lib/session-stats";
 import { getDisplayFolderName } from "@/lib/display-folder-registry";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
+import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
 import { 
   ArrowLeft, 
   Clock, 
@@ -54,6 +55,7 @@ type RankingView = "personal" | "global";
 export function SessionResults({ session, attempts, onBackToBuilder, mode = "standard" }: SessionResultsProps) {
   const supabase = useSupabaseClient();
   const authSession = useSupabaseSession();
+  const isLoggedIn = Boolean(authSession?.user);
   const mentalMathUi = mode === "mental-math";
   /** Topic breakdown + leaderboard rows: Space Grotesk for drill, mono elsewhere */
   const topicStatsFontClass = mentalMathUi ? "font-sans tabular-nums tracking-tight" : "font-mono";
@@ -61,6 +63,25 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
   const [rankingView, setRankingView] = useState<RankingView>("personal");
   const [rankingsData, setRankingsData] = useState<Record<string, any>>({});
   const [isLoadingRankings, setIsLoadingRankings] = useState(false);
+  const [signInLoading, setSignInLoading] = useState(false);
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setSignInLoading(true);
+      const redirectTo = "/mental-maths/drill";
+      const redirectUrl = `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`;
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: redirectUrl,
+          queryParams: { redirectTo },
+        },
+      });
+      if (error) throw error;
+    } catch {
+      setSignInLoading(false);
+    }
+  };
 
   // CENTRAL CALCULATION: All session-level stats calculated here from attempts
   // This ensures consistency across all displays (top cards, highlighted cards, etc.)
@@ -1016,7 +1037,41 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
               </div>
 
               <div className={cn(mentalMathUi ? "space-y-12" : "space-y-8")}>
-                {result.topicBreakdown.map((topic, idx) => {
+                {rankingView === "global" && !isLoggedIn ? (
+                  <div
+                    className={cn(
+                      "flex flex-col gap-5 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8",
+                      mentalMathUi
+                        ? "rounded-organic-xl bg-surface-mid/20 shadow-sm dark:bg-surface-mid/15"
+                        : "rounded-organic-lg bg-surface-subtle",
+                    )}
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p
+                        className={cn(
+                          "font-bold tracking-tight text-text",
+                          mentalMathUi
+                            ? "font-sans text-lg sm:text-xl"
+                            : "font-heading text-lg sm:text-xl",
+                        )}
+                      >
+                        Sign in to view the global leaderboard
+                      </p>
+                      <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-text-muted sm:text-base">
+                        Compare your score with other players and save your
+                        progress across sessions.
+                      </p>
+                    </div>
+                    <div className="w-full shrink-0 sm:max-w-[17.5rem]">
+                      <GoogleAuthButton
+                        mode="signin"
+                        loading={signInLoading}
+                        onClick={() => void handleGoogleSignIn()}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  result.topicBreakdown.map((topic, idx) => {
                   const topicName = getDisplayFolderName(topic.topicId);
                   const isGlobalView = rankingView === "global";
 
@@ -1186,7 +1241,8 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                       )}
                     </motion.div>
                   );
-                })}
+                })
+                )}
               </div>
             </div>
           </motion.div>
