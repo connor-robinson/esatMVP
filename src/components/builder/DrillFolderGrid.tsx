@@ -50,7 +50,7 @@ export function DrillFolderGrid({
             type='button'
             onClick={() => onSelectFolder(folder.id)}
             className={cn(
-              'relative flex min-h-[6.5rem] flex-col items-center justify-center gap-1.5 rounded-organic-lg p-3 transition-all',
+              'relative flex min-h-[7.75rem] flex-col items-center justify-center gap-2 rounded-organic-lg p-3.5 transition-all',
               'outline-none focus-visible:ring-2 focus-visible:ring-primary/35',
               isSelected
                 ? 'bg-folder-card-selected shadow-sm'

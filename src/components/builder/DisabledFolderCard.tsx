@@ -16,11 +16,11 @@ interface DisabledFolderCardProps {
 
 const SIZE = {
   compact: {
-    root: 'min-h-[6.5rem] gap-1.5 p-3',
+    root: 'min-h-[7.75rem] gap-2 p-3.5',
     iconBox: 'h-12 w-12',
     title: 'text-[13px] leading-tight',
     label: 'text-[9px] tracking-[0.1em]',
-    contentGap: 'gap-1.5',
+    contentGap: 'gap-2',
   },
   comfortable: {
     root: 'min-h-[7.5rem] gap-2 p-4',

@@ -72,8 +72,8 @@ function DrillModuleCard({
   return (
     <div
       className={cn(
-        'relative flex flex-col rounded-organic-md p-3 transition-all',
-        mostUseful ? 'min-h-[7.5rem]' : 'min-h-[7.25rem]',
+        'relative flex flex-col rounded-organic-md transition-all',
+        mostUseful ? 'min-h-[9.5rem] p-4' : 'min-h-[8.75rem] p-3.5',
         locked
           ? 'bg-surface-elevated'
           : isSelected
@@ -82,7 +82,7 @@ function DrillModuleCard({
         hintVisible && 'z-50 overflow-visible bg-surface-elevated',
       )}
     >
-      <div className='mb-2 flex items-start justify-between gap-2'>
+      <div className='mb-2.5 flex items-start justify-between gap-2'>
         <span
           className={cn(
             'text-[10px] font-bold uppercase tracking-wide',
@@ -101,15 +101,17 @@ function DrillModuleCard({
           <Check className='h-4 w-4 shrink-0 text-primary' strokeWidth={2.5} />
         ) : null}
       </div>
-      <h4 className='mb-0.5 text-center text-[13px] font-bold leading-snug text-text'>
+      <h4 className='mb-1 text-center text-[13px] font-bold leading-snug text-text'>
         {name}
       </h4>
-      <ArithmeticVariantExample
-        samples={samples}
-        cycleSeed={`${topicId}-${variantId}`}
-        selected={isSelected && !locked}
-      />
-      <div className='relative mt-2 flex justify-end'>
+      <div className='flex flex-1 flex-col justify-center'>
+        <ArithmeticVariantExample
+          samples={samples}
+          cycleSeed={`${topicId}-${variantId}`}
+          selected={isSelected && !locked}
+        />
+      </div>
+      <div className='relative mt-3 flex justify-end'>
         {locked ? (
           <span className='flex items-center gap-1.5 rounded-organic-sm bg-surface-dark px-3 py-2 text-xs font-bold text-text-muted'>
             <Lock className='h-3.5 w-3.5 shrink-0' aria-hidden />
