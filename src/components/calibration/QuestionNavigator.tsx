@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 export interface NavigatorItem {
   index: number;
   answered: boolean;
-  markedForReview: boolean;
+  guessed: boolean;
   current: boolean;
 }
 
@@ -25,7 +25,7 @@ export function QuestionNavigator({ items, onJump }: QuestionNavigatorProps) {
             onClick={() => onJump(item.index)}
             aria-label={`Go to question ${item.index + 1}${
               item.answered ? ", answered" : ", not answered"
-            }${item.markedForReview ? ", marked for review" : ""}`}
+            }${item.guessed ? ", marked as guess" : ""}`}
             aria-current={item.current ? "true" : undefined}
             className={cn(
               "relative flex h-10 w-full items-center justify-center rounded-organic-md text-sm font-semibold transition-colors duration-fast ease-signature",
@@ -38,7 +38,7 @@ export function QuestionNavigator({ items, onJump }: QuestionNavigatorProps) {
             )}
           >
             {item.index + 1}
-            {item.markedForReview ? (
+            {item.guessed ? (
               <span
                 className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-warning"
                 aria-hidden
@@ -55,7 +55,7 @@ export function QuestionNavigator({ items, onJump }: QuestionNavigatorProps) {
           <span className="h-2.5 w-2.5 rounded-full bg-surface-subtle" aria-hidden /> Unanswered
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-warning" aria-hidden /> Marked for review
+          <span className="h-2.5 w-2.5 rounded-full bg-warning" aria-hidden /> Marked as guess
         </span>
       </div>
     </div>

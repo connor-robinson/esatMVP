@@ -24,11 +24,9 @@ import type { CalibrationAttempt } from "@/lib/calibration/types";
 import { QuestionNavigator } from "./QuestionNavigator";
 import {
   ArrowRight,
-  Flag,
   Grid3X3,
   HelpCircle,
   LogOut,
-  Sparkles,
   X,
 } from "lucide-react";
 
@@ -70,6 +68,7 @@ export function CalibrationTest() {
   const [remaining, setRemaining] = useState(0);
   const [showNavigator, setShowNavigator] = useState(false);
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
+  const [guessHintDismissed, setGuessHintDismissed] = useState(false);
 
   const total = CALIBRATION_QUESTIONS.length;
 
@@ -259,8 +258,8 @@ export function CalibrationTest() {
   const answeredCount = attempt.order.filter(
     (qid) => attempt.questions[qid].finalSelectedOption != null,
   ).length;
-  const markedCount = attempt.order.filter(
-    (qid) => attempt.questions[qid].markedForReview,
+  const guessedCount = attempt.order.filter(
+    (qid) => attempt.questions[qid].markedAsGuess,
   ).length;
 
   const selectOption = (label: string) => {
@@ -291,6 +290,7 @@ export function CalibrationTest() {
   };
 
   const toggleGuess = () => {
+    setGuessHintDismissed(true);
     const willMark = !qAttempt.markedAsGuess;
     mutate((a) => {
       const q = a.questions[question.id];
@@ -308,19 +308,6 @@ export function CalibrationTest() {
       question_number: currentIndex + 1,
       cta_placement: willMark ? "marked_guess" : "unmarked_guess",
     });
-  };
-
-  const toggleReview = () => {
-    const willMark = !qAttempt.markedForReview;
-    mutate((a) => {
-      a.questions[question.id].markedForReview = willMark;
-    });
-    if (willMark) {
-      void trackCalibrationEvent("calibration_marked_for_review", {
-        attempt_id: attempt.attemptId,
-        question_number: currentIndex + 1,
-      });
-    }
   };
 
   const skipForward = () => {
@@ -363,6 +350,18 @@ export function CalibrationTest() {
 
   /* ----------------------------- Review screen ----------------------------- */
   if (phase === "review") {
+    const reviewRows = attempt.order.map((qid, index) => {
+      const q = attempt.questions[qid];
+      const answered = q.finalSelectedOption != null;
+      const visited = q.presentedAt != null;
+      const status: "Complete" | "Incomplete" | "Unseen" = answered
+        ? "Complete"
+        : visited
+          ? "Incomplete"
+          : "Unseen";
+      return { index, questionNumber: index + 1, status, guessed: q.markedAsGuess };
+    });
+
     return (
       <div className="min-h-[calc(100vh-3.5rem)] py-8 pb-28 sm:py-10 sm:pb-32">
         <Container size="md">
@@ -375,8 +374,8 @@ export function CalibrationTest() {
                 Review your answers
               </h1>
               <p className="mt-2 text-sm text-text-muted">
-                Check anything you marked for review, then submit to see your
-                diagnosis.
+                Go back to anything unfinished or marked as a guess, then submit
+                to see your diagnosis.
               </p>
             </div>
 
@@ -397,11 +396,9 @@ export function CalibrationTest() {
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs uppercase text-text-muted">
-                    For review
-                  </dt>
+                  <dt className="text-xs uppercase text-text-muted">Guessed</dt>
                   <dd className="mt-1 text-xl font-bold tabular-nums text-text">
-                    {markedCount}
+                    {guessedCount}
                   </dd>
                 </div>
                 <div>
@@ -413,16 +410,57 @@ export function CalibrationTest() {
               </dl>
             </div>
 
-            <div className={cn(PANEL_SHELL, "p-5")}>
-              <QuestionNavigator
-                items={attempt.order.map((qid, index) => ({
-                  index,
-                  answered: attempt.questions[qid].finalSelectedOption != null,
-                  markedForReview: attempt.questions[qid].markedForReview,
-                  current: false,
-                }))}
-                onJump={goTo}
-              />
+            <div className={cn(PANEL_SHELL, "overflow-hidden")}>
+              <table className="w-full">
+                <thead>
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-text-muted">
+                      Question
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-text-muted">
+                      Status
+                    </th>
+                    <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-text-muted">
+                      Guessed
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {reviewRows.map((row) => (
+                    <tr
+                      key={row.index}
+                      onClick={() => goTo(row.index)}
+                      className="cursor-pointer transition-colors hover:bg-surface-mid/60"
+                    >
+                      <td className="px-4 py-3 text-sm text-text">
+                        Question {row.questionNumber}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={cn(
+                            "inline-block rounded-organic-sm px-2 py-1 text-xs font-semibold",
+                            row.status === "Complete"
+                              ? "bg-success/15 text-success"
+                              : "bg-error/10 text-error",
+                          )}
+                        >
+                          {row.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center justify-center">
+                          {row.guessed ? (
+                            <HelpCircle
+                              className="h-5 w-5 text-warning"
+                              aria-label="Marked as guess"
+                            />
+                          ) : null}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </Container>
@@ -483,19 +521,6 @@ export function CalibrationTest() {
                 {formatClock(remaining)}
               </div>
             </div>
-
-            {currentIndex === 0 ? (
-              <div className="mb-5 max-w-2xl rounded-organic-lg bg-secondary/12 px-4 py-3 text-sm text-text shadow-glow">
-                <div className="flex gap-3">
-                  <HelpCircle className="mt-0.5 h-4 w-4 shrink-0 text-secondary" />
-                  <p>
-                    This calibration estimates your Math 1 level from accuracy,
-                    timing, and which answers you mark as guesses. Mark a guess
-                    when you are choosing mainly by elimination.
-                  </p>
-                </div>
-              </div>
-            ) : null}
 
             <div className="text-[1.05rem] font-sans leading-relaxed tracking-tight text-text sm:text-[1.125rem]">
               <StemContent
@@ -592,35 +617,28 @@ export function CalibrationTest() {
                 <span className="hidden sm:inline">Leave</span>
               </button>
 
-              <button
-                type="button"
-                onClick={toggleGuess}
-                className={cn(
-                  SESSION_BAR_BTN_SECONDARY,
-                  qAttempt.markedAsGuess && "text-warning hover:text-warning",
-                )}
-                aria-pressed={qAttempt.markedAsGuess}
-              >
-                <Sparkles className="h-4 w-4 shrink-0" />
-                <span className="hidden sm:inline">
-                  {qAttempt.markedAsGuess ? "Guessed" : "Mark guess"}
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={toggleReview}
-                className={cn(
-                  SESSION_BAR_BTN_SECONDARY,
-                  qAttempt.markedForReview && "text-warning hover:text-warning",
-                )}
-                aria-pressed={qAttempt.markedForReview}
-              >
-                <Flag className="h-4 w-4 shrink-0" />
-                <span className="hidden sm:inline">
-                  {qAttempt.markedForReview ? "Marked" : "Mark"}
-                </span>
-              </button>
+              <div className="relative">
+                {currentIndex === 0 && !guessHintDismissed && !qAttempt.markedAsGuess ? (
+                  <div className="absolute bottom-full left-1/2 z-10 mb-2 w-56 -translate-x-1/2 rounded-organic-lg bg-secondary px-3 py-2 text-xs font-medium leading-snug text-background shadow-glow">
+                    Choosing mainly by elimination? Mark it as a guess.
+                    <span className="absolute left-1/2 top-full h-2 w-2 -translate-x-1/2 -translate-y-1 rotate-45 bg-secondary" />
+                  </div>
+                ) : null}
+                <button
+                  type="button"
+                  onClick={toggleGuess}
+                  className={cn(
+                    SESSION_BAR_BTN_SECONDARY,
+                    qAttempt.markedAsGuess && "text-warning hover:text-warning",
+                  )}
+                  aria-pressed={qAttempt.markedAsGuess}
+                >
+                  <HelpCircle className="h-4 w-4 shrink-0" />
+                  <span className="hidden sm:inline">
+                    {qAttempt.markedAsGuess ? "Marked As Guess" : "Mark As Guess"}
+                  </span>
+                </button>
+              </div>
 
               <button
                 type="button"
@@ -688,7 +706,7 @@ export function CalibrationTest() {
                     index,
                     answered:
                       attempt.questions[qid].finalSelectedOption != null,
-                    markedForReview: attempt.questions[qid].markedForReview,
+                    guessed: attempt.questions[qid].markedAsGuess,
                     current: index === currentIndex,
                   }))}
                   onJump={goTo}
