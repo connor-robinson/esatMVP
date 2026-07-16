@@ -82,7 +82,7 @@ export function TopicHub({ topics, analyticsProps, className }: TopicHubProps) {
           <section
             key={topic.id}
             className={cn(
-              "flex flex-col rounded-organic-xl p-5 sm:p-6",
+              "flex flex-col rounded-organic-xl p-5 transition-[background-color] duration-normal ease-signature sm:p-6",
               styles.panel,
             )}
           >
@@ -113,14 +113,23 @@ export function TopicHub({ topics, analyticsProps, className }: TopicHubProps) {
 
             <div
               id={panelId}
-              hidden={!isOpen}
-              className={cn(isOpen ? "mt-4" : undefined)}
+              aria-hidden={!isOpen}
+              className={cn(
+                "grid transition-[grid-template-rows,opacity,margin] duration-normal ease-signature",
+                isOpen
+                  ? "mt-4 grid-rows-[1fr] opacity-100"
+                  : "mt-0 grid-rows-[0fr] opacity-0",
+              )}
             >
-              <nav className="flex flex-col gap-1.5" aria-label={topic.title}>
+              <nav
+                className="flex min-h-0 flex-col gap-1.5 overflow-hidden"
+                aria-label={topic.title}
+              >
                 {topic.items.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
+                    tabIndex={isOpen ? undefined : -1}
                     onClick={() =>
                       void trackHomepageEvent(
                         mapSectionEvent(item.analyticsDestination),
