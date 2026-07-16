@@ -11,17 +11,19 @@ import {
 
 type Phase = "idle" | "submitted";
 
+const HIDDEN_LABELS = new Set(["C"]);
+
 export function ExampleQuestionDemo() {
   const [selected, setSelected] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
 
-  const selectedOption = useMemo(
-    () => HOMEPAGE_EXAMPLE_QUESTION.options.find((o) => o.label === selected) ?? null,
-    [selected],
+  const options = useMemo(
+    () =>
+      HOMEPAGE_EXAMPLE_QUESTION.options.filter(
+        (o) => !HIDDEN_LABELS.has(o.label),
+      ),
+    [],
   );
-
-  const isCorrect =
-    phase === "submitted" && selected === HOMEPAGE_EXAMPLE_QUESTION.correctLabel;
 
   const handleSubmit = () => {
     if (!selected) return;
@@ -46,7 +48,7 @@ export function ExampleQuestionDemo() {
         role="radiogroup"
         aria-label="Answer options"
       >
-        {HOMEPAGE_EXAMPLE_QUESTION.options.map((option) => {
+        {options.map((option) => {
           const active = selected === option.label;
           return (
             <button
@@ -70,57 +72,60 @@ export function ExampleQuestionDemo() {
             </button>
           );
         })}
-      </div>
-
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-        <button
-          type="button"
-          onClick={handleSubmit}
-          disabled={!selected}
-          className={cn(
-            "inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-bold transition-all",
-            selected
-              ? "bg-white text-[#0A0F1D] hover:bg-slate-200"
-              : "cursor-not-allowed bg-white/10 text-white/40",
-          )}
+        <div
+          aria-hidden
+          className="flex items-center justify-center rounded-xl bg-white/[0.03] px-3 py-2.5 text-lg text-white/25"
         >
-          Submit
-        </button>
-
-        <Link
-          href="/login?mode=signup&redirectTo=%2F%3Freveal_example%3D1"
-          onClick={() => markHomepageExampleRevealPending()}
-          className="inline-flex items-center justify-center rounded-xl bg-[#3B82F6] px-5 py-3 text-sm font-bold text-white transition-all hover:bg-[#2563EB]"
-        >
-          Sign up to find out
-        </Link>
+          →
+        </div>
       </div>
 
       {phase === "submitted" ? (
-        <div className="mt-5 rounded-xl bg-white/5 px-4 py-3 text-sm text-[#94A3B8]">
-          {isCorrect ? (
-            <p className="font-semibold text-[#3B82F6]">
-              Correct — you picked {selectedOption?.label} ({selectedOption?.text}).
-            </p>
-          ) : (
-            <p>
-              Nice try
-              {selectedOption
-                ? ` — you picked ${selectedOption.label} (${selectedOption.text})`
-                : ""}
-              . Sign up to reveal the answer and explanation.
-            </p>
-          )}
-          {!isCorrect ? (
-            <p className="mt-2 text-xs text-white/50">
-              The full solution unlocks after you create an account.
-            </p>
-          ) : null}
+        <div className="mt-6 rounded-xl bg-[#3B82F6]/10 p-4 sm:p-5">
+          <p className="text-sm font-semibold text-white">
+            Answer locked in.
+          </p>
+          <p className="mt-1 text-sm text-[#94A3B8]">
+            Sign up to reveal whether you got it right, plus the full worked
+            solution.
+          </p>
+          <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center">
+            <Link
+              href="/login?mode=signup&redirectTo=%2F%3Freveal_example%3D1"
+              onClick={() => markHomepageExampleRevealPending()}
+              className="inline-flex items-center justify-center rounded-xl bg-[#3B82F6] px-5 py-3 text-sm font-bold text-white transition-all hover:bg-[#2563EB]"
+            >
+              Sign up to find out
+            </Link>
+            <Link
+              href="/login?redirectTo=%2F%3Freveal_example%3D1"
+              onClick={() => markHomepageExampleRevealPending()}
+              className="inline-flex items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold text-[#94A3B8] transition-colors hover:text-white"
+            >
+              Log in
+            </Link>
+          </div>
         </div>
       ) : (
-        <p className="mt-4 text-xs text-white/45">
-          Choose an option, submit your answer, or sign up to reveal the solution.
-        </p>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={!selected}
+            className={cn(
+              "inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-bold transition-all",
+              selected
+                ? "bg-white text-[#0A0F1D] hover:bg-slate-200"
+                : "cursor-not-allowed bg-white/10 text-white/40",
+            )}
+          >
+            Submit
+          </button>
+          <p className="text-xs text-white/45">
+            Pick an option and submit — we&apos;ll reveal the answer after you
+            sign up.
+          </p>
+        </div>
       )}
     </div>
   );

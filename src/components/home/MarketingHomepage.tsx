@@ -154,7 +154,7 @@ export function MarketingHomepage() {
       {/* Calibration preview */}
       <section className="py-16 bg-[#161D2F] border-y border-white/5">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+          <div className="grid lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] gap-10 lg:gap-14 items-center">
             <div className="space-y-8">
               <div>
                 <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6] mb-4">
