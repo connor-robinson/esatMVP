@@ -664,22 +664,17 @@ export function MarketingHomepage() {
       <footer className="pt-24 pb-12 border-t border-white/5 bg-[#0A0F1D]">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
           <div className="grid md:grid-cols-4 gap-12 mb-16">
-            <div className="col-span-2 space-y-8">
+            <div className="col-span-2 space-y-6">
               <div className="flex items-center gap-2">
                 <span className="font-display font-bold text-xl tracking-tight uppercase">
                   {BRAND_CONFIG.displayName}
                 </span>
               </div>
-              <p className="text-[#94A3B8] max-w-sm leading-relaxed">
-                ESAT & TMUA preparation — built for speed, accuracy and exam
-                pressure.
+              <p className="text-[#94A3B8] max-w-md leading-relaxed">
+                Practice for the ESAT and TMUA with past papers, a curated
+                question bank, and timed mental maths drills — so you can prepare
+                with the speed and precision the exams demand.
               </p>
-              <div className="flex items-center gap-3">
-                <div className="px-3 py-1 bg-white/5 rounded-full text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#3B82F6]" />{" "}
-                  Cambridge Approved Credentials
-                </div>
-              </div>
             </div>
             <div>
               <h4 className="font-bold text-white mb-6 uppercase text-[10px] tracking-widest">
