@@ -37,8 +37,8 @@ function StatPill({
     <div
       className={
         highlight
-          ? "rounded-organic-xl bg-secondary px-5 py-4 text-neutral-950"
-          : "rounded-organic-xl bg-surface-elevated px-5 py-4"
+          ? "rounded-organic-xl bg-secondary px-5 py-6 text-neutral-950"
+          : "rounded-organic-xl bg-surface-elevated px-5 py-6"
       }
     >
       <div className="flex items-center gap-1.5">
