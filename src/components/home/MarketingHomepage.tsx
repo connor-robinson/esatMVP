@@ -136,45 +136,43 @@ export function MarketingHomepage() {
                 </div>
               </div>
 
-              <div className="lg:col-span-5 flex flex-col justify-center gap-6 lg:pl-4">
-                <div className="flex -space-x-3">
-                  <Image
-                    alt="Tutor"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9f3UOvm5kRvUKf-I9vO0XaI-50lP95_w_x_oDmj2YBSBlG-kg7K15gniuaDbk-CanmjwgxbAtwq4cVB7aaUXudb7Sq5RhadVTOdvxrV3tpIQu4mp4cd2CB-mmTrz3WTc8jNY4YKlHeHRL4qCGoqAGnYtsYMmZrI2OM7nc3XW-oLvHxCVaPExTcAVZO59r-bI1J3uEZTtZSRGfDGM6T8MkDDyVrFrmfEOQh5QDCII8mcCtKMwGogYqK0ygplTehIBa6p62ZEUsvrYo"
-                    width={44}
-                    height={44}
-                    className="rounded-full ring-2 ring-[#0A0F1D]"
-                  />
-                  <Image
-                    alt="Tutor"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqIPwQGM58zx4ffenKxTfp-r-5O6h9YHat2ZbJIa0YPgu9Va3tRXt7GKC6E8SEB_ZWDAdJG-mKfvrz9ciVjk3BPFwIXlefvVDLZhKaIvQXpxxnqpph3Y5Zgltd_2lGzplLrAVWVNtiSALb6tjrZ486EJjLVsOqfSIGvD-5v2dCYZF9AMZnSy6iGGlnfIRKgeaWaJOqN1nNWBzuKHYIfAD5_ntvUZl1HmsaaHKofbsaefXiL1RrPL9djQcF2GiC3AFf-sqdeHtpuVG1"
-                    width={44}
-                    height={44}
-                    className="rounded-full ring-2 ring-[#0A0F1D]"
-                  />
-                  <Image
-                    alt="Tutor"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUuxqj5-_OUeVQ2x-qG1flk3kawsv5vUwMmr1bJlmG_6014F8NUTfZCm3jVNxIhWZzNlP6SBMc2K5L45fr98I8qB_ZsxNhtRUV73srurAkWJ5TFmAjO5PCd9QjcEznnfQSQvLH8e2tNjSi807kZZ6dP88l8zJJkqqZLAlai2-8iuz6AwdnBtnx3cN7UPpVEjkE48FSUOIG4Uqgi59lbXOsljBYpzVHuCTgV_qB7C3da21lxk373jgrlVyfOMd1y81rvnZsHund57Fe"
-                    width={44}
-                    height={44}
-                    className="rounded-full ring-2 ring-[#0A0F1D]"
-                  />
-                </div>
-                <div>
-                  <p className="text-white font-bold text-lg sm:text-xl">
-                    Made by experienced Oxbridge tutors
-                  </p>
-                  <p className="mt-2 text-white/75 text-sm leading-relaxed">
-                    Join 5,000+ applicants this cycle
-                  </p>
-                </div>
-                <div>
-                  <p className="text-3xl sm:text-4xl font-display font-bold tabular-nums text-white">
-                    {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+
-                  </p>
-                  <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#94A3B8]">
-                    Practice questions
-                  </p>
+              <div className="lg:col-span-5 flex items-center lg:pl-4">
+                <div className="flex w-full flex-col gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+                  <div className="flex min-w-0 items-center gap-4">
+                    <div className="flex shrink-0 -space-x-3">
+                      {[
+                        { src: "/home/tutors/tutor-1.png", alt: "Oxbridge tutor" },
+                        { src: "/home/tutors/tutor-2.png", alt: "Oxbridge tutor" },
+                        { src: "/home/tutors/tutor-3.png", alt: "Oxbridge tutor" },
+                      ].map((tutor) => (
+                        <Image
+                          key={tutor.src}
+                          alt={tutor.alt}
+                          src={tutor.src}
+                          width={48}
+                          height={48}
+                          className="h-12 w-12 rounded-full object-cover ring-2 ring-[#0A0F1D]"
+                        />
+                      ))}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-white font-bold text-lg sm:text-xl leading-snug">
+                        Made by experienced Oxbridge tutors
+                      </p>
+                      <p className="mt-1 text-white/75 text-sm leading-relaxed">
+                        Join 5,000+ applicants this cycle
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="shrink-0 text-left sm:text-right">
+                    <p className="text-3xl sm:text-4xl font-display font-bold tabular-nums text-white">
+                      {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+
+                    </p>
+                    <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#94A3B8]">
+                      Practice questions
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
