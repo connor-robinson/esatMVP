@@ -35,7 +35,7 @@ export function DrillUpgradeBanner({
           ? isCompactPanel
             ? 'min-h-[7.75rem] px-5 py-7 sm:min-h-[8.5rem] sm:px-7 sm:py-8'
             : 'px-6 py-6 sm:px-8 sm:py-7'
-          : 'mt-3 px-4 py-3.5',
+          : 'mt-3 min-h-[8.5rem] px-5 py-7 sm:min-h-[9.75rem] sm:px-7 sm:py-8',
         className,
       )}
     >
@@ -44,7 +44,7 @@ export function DrillUpgradeBanner({
         className={cn(
           'pointer-events-none absolute inset-0 rounded-[inherit]',
           'bg-[radial-gradient(circle,rgba(255,255,255,0.07)_1px,transparent_1px)]',
-          'bg-[length:11px_11px]',
+          isPanel ? 'bg-[length:11px_11px]' : 'bg-[length:18px_18px]',
           'dark:bg-[radial-gradient(circle,rgba(255,255,255,0.055)_1px,transparent_1px)]',
         )}
       />
@@ -65,7 +65,7 @@ export function DrillUpgradeBanner({
                 ? isCompactPanel
                   ? 'text-lg sm:text-xl'
                   : 'text-lg sm:text-xl'
-                : 'text-sm',
+                : 'text-xl sm:text-2xl',
             )}
           >
             {headline}
@@ -77,7 +77,7 @@ export function DrillUpgradeBanner({
                 ? isCompactPanel
                   ? 'mt-1.5 text-sm sm:text-[15px]'
                   : 'mt-1.5 text-sm sm:text-base'
-                : 'mt-0.5 text-xs',
+                : 'mt-2 max-w-2xl text-sm sm:text-base',
             )}
           >
             {subtext}
@@ -91,7 +91,7 @@ export function DrillUpgradeBanner({
               ? isCompactPanel
                 ? 'self-start px-6 py-2.5 text-sm sm:self-auto sm:px-7 sm:py-3 sm:text-[15px]'
                 : 'self-start px-6 py-2.5 text-sm sm:self-auto'
-              : 'px-4 py-2 text-xs',
+              : 'px-7 py-3 text-sm sm:px-8 sm:py-3.5 sm:text-base',
           )}
         >
           {ctaLabel}
@@ -105,7 +105,7 @@ export function DrillUpgradeBanner({
             ? isCompactPanel
               ? 'right-[16%] w-[9rem] sm:right-[22%] sm:w-[10.5rem]'
               : 'right-[18%] w-[12rem] sm:right-[24%] sm:w-[14rem]'
-            : 'right-[34%] w-[9.5rem] sm:right-[36%] sm:w-[10.5rem]',
+            : '-right-8 w-[16rem] sm:-right-5 sm:w-[19rem]',
         )}
         aria-hidden
       >
@@ -117,7 +117,7 @@ export function DrillUpgradeBanner({
               ? isCompactPanel
                 ? '!h-[8.25rem] sm:!h-[9.5rem]'
                 : '!h-[8.5rem] sm:!h-[10.5rem]'
-              : '!h-[7rem] sm:!h-[8.25rem]',
+              : '!h-[12rem] sm:!h-[14rem]',
           )}
           alt=''
         />
