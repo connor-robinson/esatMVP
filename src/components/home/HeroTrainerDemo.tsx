@@ -17,7 +17,7 @@ function HeroTriangleSvg({ className }: { className?: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 240 190"
+      viewBox="55 24 130 138"
       role="img"
       aria-label="45-45-90 right triangle with base length 5 and unknown hypotenuse"
       preserveAspectRatio="xMidYMid meet"
@@ -137,8 +137,8 @@ const QUESTIONS: TrainerQuestion[] = [
     topic: "Complete the square",
     prompt: (
       <span className="flex flex-col items-center gap-2 font-mono text-xl font-medium leading-snug tracking-tight sm:text-2xl">
-        <span className="whitespace-nowrap text-[#3B82F6]">
-          x² + 6x + 2 → (x + a)² + b
+        <span className="whitespace-nowrap tracking-tighter text-[#3B82F6]">
+          {"x²\u2009+\u20096x\u2009+\u20092\u2009→\u2009(x\u2009+\u2009a)²\u2009+\u2009b"}
         </span>
         <span className="whitespace-nowrap tracking-normal text-white">
           What is <span className="text-[#3B82F6]">a</span>?
