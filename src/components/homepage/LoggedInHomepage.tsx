@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo } from "react";
 import { Container } from "@/components/layout/Container";
+import { PrimaryActionCard } from "@/components/homepage/PrimaryActionCard";
 import { TopicHub } from "@/components/homepage/TopicHub";
 import {
   TesterAccessStatus,
@@ -73,6 +74,11 @@ export function LoggedInHomepage({ state }: LoggedInHomepageProps) {
             ) : null}
           </div>
         ) : null}
+
+        <PrimaryActionCard
+          action={state.primaryAction}
+          analyticsProps={analyticsProps}
+        />
 
         {showTesterStatus && state.tester ? (
           <div className="space-y-3">
