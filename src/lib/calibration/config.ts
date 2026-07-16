@@ -5,6 +5,10 @@
  * classification rules and recommendation rules) is stored as immutable JSON and
  * treated as versioned configuration. UI and scoring code must read from here
  * rather than hard-coding question IDs or formulas.
+ *
+ * Canonical source: `math1/esat_math1_full_calibration_test_v1_diagramsfixed.json`
+ * (synced into `math1/config.json` for the app bundle). Diagram SVG patches live
+ * in `math1/diagrams/`.
  */
 
 import rawConfig from "./math1/config.json";

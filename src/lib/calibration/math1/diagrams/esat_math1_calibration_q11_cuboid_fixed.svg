@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 760 430"
+  preserveAspectRatio="xMidYMid meet"
+  role="img"
+  aria-label="Cuboid with side lengths x, x plus 1, and x plus 2. The space diagonal has length square root 50.">
+  <style>
+    .line, .diag, .hidden {
+      fill: none;
+      stroke: currentColor;
+      vector-effect: non-scaling-stroke;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .line { stroke-width: 1.8; }
+    .diag { stroke-width: 1.95; }
+    .hidden { stroke-width: 1.35; opacity: 0.55; stroke-dasharray: 6 6; }
+    .label {
+      fill: currentColor;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+    }
+    .caption {
+      fill: currentColor;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 16px;
+      opacity: 0.85;
+    }
+  </style>
+
+  <!-- Front face -->
+  <path class="line" d="M 180 110 L 450 110 L 450 280 L 180 280 Z"/>
+
+  <!-- Back/top/right visible edges -->
+  <path class="line" d="M 180 110 L 300 35 L 570 35 L 450 110"/>
+  <path class="line" d="M 450 280 L 570 205 L 570 35"/>
+  <path class="line" d="M 300 205 L 570 205"/>
+
+  <!-- Hidden structural edge to help depth -->
+  <path class="hidden" d="M 300 35 L 300 205"/>
+
+  <!-- Space diagonal -->
+  <path class="diag" d="M 180 280 L 570 35"/>
+
+  <!-- Labels -->
+  <text class="label" x="115" y="203.0">x</text>
+  <text class="label" x="290.0" y="325">x + 1</text>
+  <text class="label" x="520" y="262">x + 2</text>
+  <text class="label" x="333.0" y="165">√50</text>
+
+  <text class="caption" x="380" y="408" text-anchor="middle">diagram not to scale</text>
+</svg>

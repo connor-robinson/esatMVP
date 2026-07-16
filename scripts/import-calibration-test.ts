@@ -4,6 +4,9 @@
  * Run: npx tsx scripts/import-calibration-test.ts
  * Requires: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
  *
+ * Before importing, sync the bundle from the canonical source:
+ *   npx tsx scripts/sync-calibration-config.ts
+ *
  * Idempotent: rerunning upserts the same row by primary key (no duplicates).
  * Also validates the config against the import checklist before writing.
  */

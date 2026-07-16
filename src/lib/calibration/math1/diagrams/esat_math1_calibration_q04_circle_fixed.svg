@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Circle with centre O. PA and PB are tangents from P. Angle APB is 50 degrees. C lies on the major arc AB.">
+<style>
+.g{fill:none;stroke:currentColor;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round}
+.circle{stroke-width:1.8} .main{stroke-width:1.8} .radius{stroke-width:1.55} .fine{stroke-width:1.35}
+.label{fill:currentColor;font-family:Georgia,"Times New Roman",serif;font-size:23px}
+.angle{fill:currentColor;font-family:Georgia,"Times New Roman",serif;font-size:19px}
+.caption{fill:currentColor;font-family:Georgia,"Times New Roman",serif;font-size:16px;opacity:.85}
+</style>
+<circle class="g circle" cx="300.00" cy="210.00" r="125.00"/>
+<path class="g main" d="M 595.78 210.00 L 352.83 96.71"/>
+<path class="g main" d="M 595.78 210.00 L 352.83 323.29"/>
+<path class="g radius" d="M 300.00 210.00 L 352.83 96.71"/>
+<path class="g radius" d="M 300.00 210.00 L 352.83 323.29"/>
+<path class="g main" d="M 175.00 210.00 L 352.83 96.71"/>
+<path class="g main" d="M 175.00 210.00 L 352.83 323.29"/>
+<path class="g fine" d="M 347.76 107.59 L 358.63 112.66 L 363.70 101.78"/>
+<path class="g fine" d="M 347.76 312.41 L 358.63 307.34 L 363.70 318.22"/>
+<path class="g fine" d="M 555.90 228.60 A 44 44 0 0 1 555.90 191.40"/>
+<text class="label" x="355.83" y="78.71">A</text>
+<text class="label" x="355.83" y="355.29">B</text>
+<text class="label" x="276.00" y="218.00">O</text>
+<text class="label" x="138.00" y="218.00">C</text>
+<text class="label" x="613.78" y="218.00">P</text>
+<text class="angle" x="520.78" y="217.00">50°</text>
+<text class="caption" x="300" y="398" text-anchor="middle">diagram not to scale</text>
+</svg>

@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { requireRouteUser } from "@/lib/supabase/auth";
 import { CALIBRATION_TEST_ID } from "@/lib/calibration/constants";
+import {
+  CALIBRATION_CONTENT_VERSION,
+  CALIBRATION_TEST,
+  calibrationConfig,
+} from "@/lib/calibration/config";
 import type { CalibrationAttempt, CalibrationResults } from "@/lib/calibration/types";
 
 export const dynamic = "force-dynamic";
@@ -30,20 +35,19 @@ export async function POST(request: NextRequest) {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Ensure the test row exists (idempotent guard for fresh environments).
-    await supabase
-      .from("calibration_tests")
-      .upsert(
-        {
-          id: CALIBRATION_TEST_ID,
-          version: attempt.contentVersion,
-          title: "ESAT Mathematics 1 Calibration Test",
-          module: "maths_1",
-          content_version: attempt.contentVersion,
-          config: {},
-        },
-        { onConflict: "id", ignoreDuplicates: true },
-      );
+    // Ensure the test row exists with the bundled config (never an empty stub).
+    await supabase.from("calibration_tests").upsert(
+      {
+        id: CALIBRATION_TEST_ID,
+        version: CALIBRATION_CONTENT_VERSION,
+        title: CALIBRATION_TEST.title,
+        module: CALIBRATION_TEST.module,
+        content_version: CALIBRATION_CONTENT_VERSION,
+        config: calibrationConfig,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "id" },
+    );
 
     const row = {
       id: attempt.attemptId,
