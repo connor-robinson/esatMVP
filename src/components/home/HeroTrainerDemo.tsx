@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { TriangleDiagram } from "@/components/shared/TriangleDiagram";
 import { generateTriangleDiagram } from "@/lib/diagrams/triangleGenerator";
@@ -51,38 +52,57 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
   const [index, setIndex] = useState(0);
   const [picked, setPicked] = useState<0 | 1 | null>(null);
   const [flash, setFlash] = useState<"correct" | "wrong" | null>(null);
+  const [finished, setFinished] = useState(false);
 
   const question = QUESTIONS[index];
-  const progress = ((index + (picked !== null ? 1 : 0)) / QUESTIONS.length) * 100;
+  const progress = finished
+    ? 100
+    : ((index + (picked !== null ? 1 : 0)) / QUESTIONS.length) * 100;
   const triangleDiagram = useMemo(
-    () => (question.showTriangleDiagram ? SPECIAL_TRIANGLE_DIAGRAM : null),
-    [question.showTriangleDiagram],
+    () =>
+      !finished && question.showTriangleDiagram
+        ? SPECIAL_TRIANGLE_DIAGRAM
+        : null,
+    [finished, question.showTriangleDiagram],
   );
 
   const advance = useCallback(() => {
     setPicked(null);
     setFlash(null);
-    setIndex((prev) => (prev + 1) % QUESTIONS.length);
+    setIndex((prev) => {
+      if (prev >= QUESTIONS.length - 1) {
+        setFinished(true);
+        return prev;
+      }
+      return prev + 1;
+    });
   }, []);
 
   useEffect(() => {
-    if (picked === null) return;
+    if (picked === null || finished) return;
     const delay = flash === "correct" ? 900 : 1100;
     const timer = window.setTimeout(advance, delay);
     return () => window.clearTimeout(timer);
-  }, [picked, flash, advance]);
+  }, [picked, flash, advance, finished]);
 
   const handlePick = (optionIndex: 0 | 1) => {
-    if (picked !== null) return;
+    if (picked !== null || finished) return;
     const isCorrect = optionIndex === question.correctIndex;
     setPicked(optionIndex);
     setFlash(isCorrect ? "correct" : "wrong");
   };
 
+  const handleReplay = () => {
+    setFinished(false);
+    setIndex(0);
+    setPicked(null);
+    setFlash(null);
+  };
+
   return (
     <div
       className={cn(
-        "flex w-full max-w-[26rem] flex-col justify-self-end rounded-3xl bg-white/[0.08] p-7 backdrop-blur-xl sm:max-w-[28rem] sm:p-9 lg:min-h-[34rem] lg:p-10",
+        "relative flex w-full max-w-[26rem] flex-col justify-self-end overflow-hidden rounded-3xl bg-white/[0.08] p-7 backdrop-blur-xl sm:max-w-[28rem] sm:p-9 lg:min-h-[34rem] lg:p-10",
         className,
       )}
     >
@@ -97,89 +117,120 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
         </div>
       </div>
 
-      <div className="mt-8 flex flex-1 flex-col items-center justify-center text-center sm:mt-10">
-        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#3B82F6]">
-          {question.topic}
-        </p>
+      {finished ? (
+        <div className="mt-8 flex flex-1 flex-col items-center justify-center text-center sm:mt-10">
+          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#3B82F6]">
+            Demo complete
+          </p>
+          <h3 className="mt-5 max-w-xs text-2xl font-display font-bold leading-snug text-white sm:text-3xl">
+            Nice work — there&apos;s a lot more where that came from
+          </h3>
+          <p className="mt-4 max-w-sm text-sm leading-relaxed text-[#94A3B8] sm:text-base">
+            Sign up free to unlock every practice mode, track your speed, and
+            keep training across topics.
+          </p>
 
-        <div
-          className={cn(
-            "mt-6 flex w-full flex-col items-center justify-center px-2 sm:mt-8",
-            triangleDiagram
-              ? "min-h-[13rem] gap-4 sm:min-h-[14rem]"
-              : "min-h-[7.5rem] sm:min-h-[8.5rem]",
-          )}
-        >
-          {triangleDiagram ? (
-            <div className="w-full max-w-[13.5rem] rounded-2xl bg-white/[0.04] px-3 py-2">
-              <TriangleDiagram
-                data={triangleDiagram}
-                className="[&_svg]:max-w-[180px] [&_text]:fill-white"
-              />
-            </div>
-          ) : null}
-          <p className="whitespace-pre-line font-mono text-2xl font-medium leading-snug text-[#3B82F6] sm:text-3xl">
-            {question.prompt}
+          <div className="mt-8 flex w-full flex-col gap-3">
+            <Link
+              href="/login?mode=signup&redirectTo=%2Fmental-maths%2Fdrill"
+              className="inline-flex w-full items-center justify-center rounded-xl bg-[#3B82F6] px-5 py-3.5 text-sm font-bold text-white transition-all hover:bg-[#2563EB]"
+            >
+              Sign up to try more modes
+            </Link>
+            <button
+              type="button"
+              onClick={handleReplay}
+              className="inline-flex w-full items-center justify-center rounded-xl bg-white/10 px-5 py-3 text-sm font-semibold text-white transition-all hover:bg-white/15"
+            >
+              Replay demo
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="mt-8 flex flex-1 flex-col items-center justify-center text-center sm:mt-10">
+          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#3B82F6]">
+            {question.topic}
+          </p>
+
+          <div
+            className={cn(
+              "mt-6 flex w-full flex-col items-center justify-center px-2 sm:mt-8",
+              triangleDiagram
+                ? "min-h-[13rem] gap-4 sm:min-h-[14rem]"
+                : "min-h-[7.5rem] sm:min-h-[8.5rem]",
+            )}
+          >
+            {triangleDiagram ? (
+              <div className="w-full max-w-[13.5rem] rounded-2xl bg-white/[0.04] px-3 py-2">
+                <TriangleDiagram
+                  data={triangleDiagram}
+                  className="[&_svg]:max-w-[180px] [&_text]:fill-white"
+                />
+              </div>
+            ) : null}
+            <p className="whitespace-pre-line font-mono text-2xl font-medium leading-snug text-[#3B82F6] sm:text-3xl">
+              {question.prompt}
+            </p>
+          </div>
+
+          <div className="mt-8 h-1.5 w-full max-w-[14rem] overflow-hidden rounded-full bg-white/10 sm:mt-10">
+            <div
+              className="h-full rounded-full bg-[#3B82F6] transition-[width] duration-500 ease-out"
+              style={{ width: `${Math.max(12, progress)}%` }}
+            />
+          </div>
+
+          <p className="mt-3 text-xs font-medium tabular-nums text-[#94A3B8]">
+            {index + 1} / {QUESTIONS.length}
+          </p>
+
+          <div className="mt-8 grid w-full grid-cols-2 gap-4 sm:mt-10">
+            {question.options.map((option, optionIndex) => {
+              const selected = picked === optionIndex;
+              const isCorrectOption = optionIndex === question.correctIndex;
+              const showCorrect = picked !== null && isCorrectOption;
+              const showWrong = selected && flash === "wrong";
+
+              return (
+                <button
+                  key={`${question.id}-${option}`}
+                  type="button"
+                  onClick={() => handlePick(optionIndex as 0 | 1)}
+                  disabled={picked !== null}
+                  className={cn(
+                    "rounded-xl px-4 py-5 font-mono text-xl font-bold transition-all duration-200 sm:py-6 sm:text-2xl",
+                    picked === null &&
+                      "bg-white/5 text-white hover:bg-white/10 active:scale-[0.98]",
+                    showCorrect && "bg-[#3B82F6] text-white",
+                    showWrong && "bg-red-500/25 text-red-200",
+                    picked !== null &&
+                      !showCorrect &&
+                      !showWrong &&
+                      "bg-white/5 text-white/40",
+                  )}
+                >
+                  {option}
+                </button>
+              );
+            })}
+          </div>
+
+          <p
+            className={cn(
+              "mt-6 h-5 text-xs font-semibold transition-opacity",
+              flash === "correct" && "text-[#3B82F6] opacity-100",
+              flash === "wrong" && "text-red-300 opacity-100",
+              !flash && "opacity-0",
+            )}
+          >
+            {flash === "correct"
+              ? "Nice — next question"
+              : flash === "wrong"
+                ? "Not quite — try the next one"
+                : "placeholder"}
           </p>
         </div>
-
-        <div className="mt-8 h-1.5 w-full max-w-[14rem] overflow-hidden rounded-full bg-white/10 sm:mt-10">
-          <div
-            className="h-full rounded-full bg-[#3B82F6] transition-[width] duration-500 ease-out"
-            style={{ width: `${Math.max(12, progress)}%` }}
-          />
-        </div>
-
-        <p className="mt-3 text-xs font-medium tabular-nums text-[#94A3B8]">
-          {index + 1} / {QUESTIONS.length}
-        </p>
-
-        <div className="mt-8 grid w-full grid-cols-2 gap-4 sm:mt-10">
-          {question.options.map((option, optionIndex) => {
-            const selected = picked === optionIndex;
-            const isCorrectOption = optionIndex === question.correctIndex;
-            const showCorrect = picked !== null && isCorrectOption;
-            const showWrong = selected && flash === "wrong";
-
-            return (
-              <button
-                key={`${question.id}-${option}`}
-                type="button"
-                onClick={() => handlePick(optionIndex as 0 | 1)}
-                disabled={picked !== null}
-                className={cn(
-                  "rounded-xl px-4 py-5 font-mono text-xl font-bold transition-all duration-200 sm:py-6 sm:text-2xl",
-                  picked === null &&
-                    "bg-white/5 text-white hover:bg-white/10 active:scale-[0.98]",
-                  showCorrect && "bg-[#3B82F6] text-white",
-                  showWrong && "bg-red-500/25 text-red-200",
-                  picked !== null &&
-                    !showCorrect &&
-                    !showWrong &&
-                    "bg-white/5 text-white/40",
-                )}
-              >
-                {option}
-              </button>
-            );
-          })}
-        </div>
-
-        <p
-          className={cn(
-            "mt-6 h-5 text-xs font-semibold transition-opacity",
-            flash === "correct" && "text-[#3B82F6] opacity-100",
-            flash === "wrong" && "text-red-300 opacity-100",
-            !flash && "opacity-0",
-          )}
-        >
-          {flash === "correct"
-            ? "Nice — next question"
-            : flash === "wrong"
-              ? "Not quite — try the next one"
-              : "placeholder"}
-        </p>
-      </div>
+      )}
     </div>
   );
 }
