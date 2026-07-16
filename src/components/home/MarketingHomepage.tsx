@@ -11,6 +11,7 @@ import { FERMI_GUESSR_PLAY_PATH } from "@/config/fermiGuessr";
 import { trackHomepageEvent } from "@/lib/homepage/analytics";
 import { StemContent } from "@/components/shared/StemContent";
 import { SlotMachineCount } from "@/components/home/SlotMachineCount";
+import { HeroTrainerDemo } from "@/components/home/HeroTrainerDemo";
 
 const EXAMPLE_QUESTION = CALIBRATION_QUESTIONS[0];
 
@@ -67,12 +68,14 @@ export function MarketingHomepage() {
         </div>
 
         <div className="relative max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6 space-y-12 lg:space-y-16">
-          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12">
+          <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-10 xl:gap-12">
             <div className="max-w-2xl space-y-8">
-              <h1 className="text-6xl lg:text-8xl font-display font-bold leading-[1.05] tracking-tight">
+              <h1 className="text-5xl font-display font-bold leading-[1.08] tracking-tight sm:text-6xl lg:text-7xl">
                 Master the <span className="text-underline-accent">ESAT</span>.
                 <br />
-                Secure your Oxbridge offer.
+                Secure your Oxbridge
+                <br />
+                offer.
               </h1>
               <p className="text-xl text-[#94A3B8] max-w-2xl leading-relaxed">
                 The ESAT is the admissions test for many university courses at
@@ -106,34 +109,7 @@ export function MarketingHomepage() {
               </div>
             </div>
 
-            <div className="rounded-3xl bg-white/[0.08] p-6 backdrop-blur-xl sm:p-8">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500/50" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
-                  <div className="w-3 h-3 rounded-full bg-green-500/50" />
-                </div>
-                <div className="text-[10px] uppercase tracking-widest font-bold text-[#94A3B8]">
-                  Mental Maths Trainer
-                </div>
-              </div>
-              <div className="flex flex-col items-center justify-center text-center space-y-8 py-6 sm:py-10">
-                <div className="text-4xl sm:text-5xl font-mono text-[#3B82F6]">
-                  √(144 * 25) / 5
-                </div>
-                <div className="w-full max-w-[220px] h-1 bg-white/10 rounded-full overflow-hidden">
-                  <div className="w-2/3 h-full bg-[#3B82F6]" />
-                </div>
-                <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
-                  <div className="p-4 rounded-xl bg-white/5 text-2xl font-bold">
-                    12
-                  </div>
-                  <div className="p-4 rounded-xl bg-[#3B82F6] text-white text-2xl font-bold">
-                    60
-                  </div>
-                </div>
-              </div>
-            </div>
+            <HeroTrainerDemo />
           </div>
 
           <div className="rounded-3xl bg-white/[0.08] p-6 backdrop-blur-xl sm:p-8">
