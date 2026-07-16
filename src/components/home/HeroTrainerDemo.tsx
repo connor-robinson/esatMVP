@@ -152,7 +152,7 @@ const QUESTIONS: TrainerQuestion[] = [
     id: "special-triangles",
     topic: "Special triangles",
     prompt: (
-      <span className="whitespace-nowrap font-sans text-xl font-medium sm:text-2xl">
+      <span className="whitespace-nowrap font-sans text-lg font-medium sm:text-xl">
         <span className="text-white">Find the </span>
         <span className="text-[#3B82F6]">hypotenuse</span>
       </span>
@@ -260,9 +260,9 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
             {question.topic}
           </p>
 
-          <div className="mt-5 flex h-[14rem] w-full flex-col items-center justify-center gap-1 px-2 sm:mt-6 sm:h-[14.5rem]">
+          <div className="mt-4 flex h-[14rem] w-full flex-col items-center justify-center gap-0.5 px-1 sm:mt-5 sm:h-[14.5rem]">
             {question.showTriangle ? (
-              <HeroTriangleSvg className="max-h-[10.75rem] max-w-[14rem]" />
+              <HeroTriangleSvg className="max-h-[12.75rem] max-w-[17.5rem]" />
             ) : null}
             {question.prompt}
           </div>
