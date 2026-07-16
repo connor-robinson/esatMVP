@@ -21,6 +21,13 @@ const PAID_FEATURES = [
   "Drills & flashcard mode",
 ];
 
+const FREE_FEATURES = [
+  "Mental maths: Addition module only",
+  "Past papers: first 3 roadmap items",
+  "Question bank: 10 free questions",
+  "Free calibration & score converter",
+];
+
 export function MarketingHomepage() {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
   const seasonPrice = getSeasonPassPrice();
@@ -400,14 +407,43 @@ export function MarketingHomepage() {
               Invest in your future
             </h3>
             <p className="mt-4 text-[#94A3B8]">
-              Same full access on every paid plan — pick the billing that fits
+              Same full access on every paid plan. Pick the billing that fits
               your prep timeline.
             </p>
           </div>
 
-          <div className="mx-auto grid max-w-5xl items-stretch gap-6 md:grid-cols-3 md:gap-5 lg:gap-8">
+          <div className="mx-auto grid max-w-6xl items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-4 xl:gap-6">
+            {/* Free */}
+            <div className="flex flex-col rounded-3xl bg-[#0A0F1D]/70 p-7 xl:my-8 xl:p-8">
+              <h4 className="text-lg font-bold text-white">Free</h4>
+              <div className="mt-4 flex items-baseline gap-1">
+                <span className="text-4xl font-display font-bold text-white">
+                  £0
+                </span>
+              </div>
+              <p className="mt-2 text-sm text-[#94A3B8]">Try the basics</p>
+              <ul className="mt-8 flex-1 space-y-3 text-sm text-[#94A3B8]">
+                {FREE_FEATURES.map((feature) => (
+                  <li key={feature} className="flex items-start gap-2">
+                    <span
+                      aria-hidden
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
+                    />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/login?mode=signup"
+                className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white/10 py-3.5 font-bold text-white transition-colors hover:bg-white/15"
+              >
+                Get started
+                <span aria-hidden>→</span>
+              </Link>
+            </div>
+
             {/* Weekly */}
-            <div className="flex flex-col rounded-3xl bg-[#0A0F1D]/70 p-8 md:my-6">
+            <div className="flex flex-col rounded-3xl bg-[#0A0F1D]/70 p-7 xl:my-8 xl:p-8">
               <h4 className="text-lg font-bold text-white">Weekly</h4>
               <div className="mt-4 flex items-baseline gap-1">
                 <span className="text-4xl font-display font-bold text-white">
@@ -437,7 +473,7 @@ export function MarketingHomepage() {
             </div>
 
             {/* Monthly — most common */}
-            <div className="relative z-10 flex flex-col rounded-3xl bg-[#3B82F6] p-9 shadow-[0_24px_60px_rgba(59,130,246,0.28)] md:scale-110 md:p-10">
+            <div className="relative z-10 flex flex-col rounded-3xl bg-[#3B82F6] p-8 sm:p-9 xl:scale-110 xl:p-10">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-white px-3.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#3B82F6]">
                 Most popular
               </div>
@@ -472,7 +508,7 @@ export function MarketingHomepage() {
             </div>
 
             {/* Exam Season Pass */}
-            <div className="flex flex-col rounded-3xl bg-[#0A0F1D]/70 p-8 md:my-6">
+            <div className="flex flex-col rounded-3xl bg-[#0A0F1D]/70 p-7 xl:my-8 xl:p-8">
               <h4 className="text-lg font-bold text-white">Exam Season Pass</h4>
               <div className="mt-4 flex items-baseline gap-1">
                 <span className="text-4xl font-display font-bold text-white">
