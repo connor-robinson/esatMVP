@@ -16,6 +16,7 @@ import {
   type CalibrationQuestion,
   type ReliabilityLevel,
 } from "./config";
+import { computeEsatPrediction } from "./esatScoring";
 import type {
   CalibrationAttempt,
   CalibrationResults,
@@ -90,6 +91,9 @@ function buildDerived(attempt: CalibrationAttempt): Map<string, QDerived> {
         answerChangeEvents: [],
         skipped: true,
         markedAsGuess: false,
+        guessMarkedAt: null,
+        guessChanged: false,
+        guessChangeCount: 0,
         markedForReview: false,
         returnedLater: false,
         initialConfidence: null,
@@ -738,6 +742,8 @@ export function computeResults(attempt: CalibrationAttempt): CalibrationResults 
     mistakes,
     profileLabel,
     retestRecommendationDays,
+
+    prediction: computeEsatPrediction(attempt),
   };
 }
 

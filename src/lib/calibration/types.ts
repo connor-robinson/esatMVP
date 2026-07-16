@@ -59,6 +59,12 @@ export interface QuestionAttempt {
   answerChangeEvents: AnswerChangeEvent[];
   skipped: boolean;
   markedAsGuess: boolean;
+  /** ISO timestamp when the answer was first marked as a guess (null if never). */
+  guessMarkedAt: string | null;
+  /** True once the guess flag has been toggled at least once after first set. */
+  guessChanged: boolean;
+  /** Number of times the guess flag was toggled. */
+  guessChangeCount: number;
   markedForReview: boolean;
   returnedLater: boolean;
   initialConfidence: number | null; // 1..5
@@ -191,6 +197,101 @@ export interface MistakeReviewItem {
   curriculumTags: string[];
 }
 
+/* ------------------------------------------------------------------ *
+ * ESAT prediction model (versioned; math1_calibration_score_v1).
+ * Fully reproducible from the raw attempt + the versioned scoring config.
+ * ------------------------------------------------------------------ */
+
+export type EsatBand =
+  | "exceptional"
+  | "very_strong"
+  | "strong"
+  | "developing_competitive"
+  | "around_middle"
+  | "below_target"
+  | "foundational_work_needed";
+
+export interface EsatQuestionContribution {
+  questionId: string;
+  order: number;
+  topic: string;
+  difficulty: "accessible" | "medium" | "difficult";
+  points: number;
+  correct: boolean;
+  skipped: boolean;
+  guessed: boolean;
+  observedCredit: number;
+  abilityCredit: number;
+  /** points * abilityCredit, rounded to one decimal. */
+  scoreContribution: number;
+}
+
+export interface EsatRecommendation {
+  topicTag: string;
+  topicTitle: string;
+  title: string;
+  reason: string;
+  priority: number;
+  difficulty: string;
+  practiceHref: string;
+  curriculumTags: string[];
+}
+
+export interface EsatPrediction {
+  scoringModelVersion: string;
+  testContentVersion: number;
+
+  /** Raw calibration result (out of 15). */
+  rawCorrect15: number;
+  rawPercent15: number;
+
+  /** Weighted points (max 214). */
+  maxWeightedPoints: number;
+  observedWeightedPoints: number;
+  abilityWeightedPoints: number;
+  observedWeightedPercent: number;
+  abilityWeightedPercent: number;
+
+  /** Projected raw score out of the real 27-question section. */
+  projectedRaw27: number;
+  observedProjectedRaw27: number;
+
+  /** Estimated ESAT score (1.0–9.0). */
+  estimatedEsatScore: number;
+  observedEsatScore: number;
+  estimatedScoreLow: number;
+  estimatedScoreHigh: number;
+  scoreUncertainty: number;
+
+  band: EsatBand;
+  bandLabel: string;
+  bandMessage: string;
+
+  /** Guessing / certainty. */
+  guessedCount: number;
+  correctGuessCount: number;
+  incorrectGuessCount: number;
+  nonGuessedAccuracy: number | null; // 0..1
+  guessNote: string | null;
+  guessingInterpretation: string;
+
+  /** Timing. */
+  totalTimeSeconds: number;
+  completedWithinTimeLimit: boolean;
+  overtimeSeconds: number;
+
+  /** Internal ranking (0–100) for percentile. */
+  rankingIndex: number;
+  hardWeightedPercent: number;
+  nonGuessedAccuracyIndex: number;
+  consistencyScore: number;
+  completionFactor: number;
+  pairDisagreementCount: number;
+
+  contributions: EsatQuestionContribution[];
+  recommendation: EsatRecommendation | null;
+}
+
 export interface CalibrationResults {
   attemptId: string;
   testId: string;
@@ -229,4 +330,7 @@ export interface CalibrationResults {
   mistakes: MistakeReviewItem[];
   profileLabel: string;
   retestRecommendationDays: number;
+
+  /** Versioned ESAT-score prediction (math1_calibration_score_v1). */
+  prediction: EsatPrediction;
 }

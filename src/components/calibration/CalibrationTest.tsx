@@ -295,6 +295,13 @@ export function CalibrationTest() {
     mutate((a) => {
       const q = a.questions[question.id];
       q.markedAsGuess = willMark;
+      if (willMark && q.guessMarkedAt == null) {
+        q.guessMarkedAt = new Date().toISOString();
+      }
+      if (q.guessChangeCount > 0 || q.guessMarkedAt != null) {
+        q.guessChanged = true;
+      }
+      q.guessChangeCount += 1;
     });
     void trackCalibrationEvent("calibration_marked_for_review", {
       attempt_id: attempt.attemptId,
