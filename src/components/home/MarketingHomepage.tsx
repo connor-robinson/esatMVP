@@ -10,6 +10,7 @@ import { trackHomepageEvent } from "@/lib/homepage/analytics";
 import { SlotMachineCount } from "@/components/home/SlotMachineCount";
 import { HeroTrainerDemo } from "@/components/home/HeroTrainerDemo";
 import { ExampleQuestionDemo } from "@/components/home/ExampleQuestionDemo";
+import { ScoreConverterPreview } from "@/components/home/ScoreConverterPreview";
 
 export function MarketingHomepage() {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
@@ -322,95 +323,57 @@ export function MarketingHomepage() {
         </div>
       </section>
 
-      {/* Process Clarification Section */}
+      {/* Free tools — score converter */}
       <section className="py-24 bg-[#0A0F1D]">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
-            <div className="relative rounded-3xl overflow-hidden border border-white/10 group aspect-video">
-              <div className="relative w-full h-full">
-                  <Image
-                    alt="Cambridge University"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4XjyPtm2LZdqfaRrb0lGUc6DW6Ud6m3nZ52SX_w4ZxW5PteQ_UcU-NsvafF5Jfkleq_HuJf8uofvW0qrbf8kuQaVb6cu8TxxzP92dQ8YtzLfc6nBgEXHjEjG_3-lVVFNql7ilgu8uxp3GN8QuJgeiwelPu6KE8G2op5OHDFKxlywSoWW4t2c2-WG8wuUqT9y74M7kWDKO4LIjIiHw-U47Z9jfj4F8HhiO5gGGTzgtgkrjNSAA1LOSXoYa4JWNcdd1hg9V26amlFpP"
-                    fill
-                    className="object-cover grayscale opacity-50 group-hover:grayscale-0 transition-all duration-700"
-                  />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <button
-                    type="button"
-                    className="w-20 h-20 bg-white text-[#0A0F1D] rounded-full flex items-center justify-center hover:scale-110 transition-transform"
-                  >
-                    <span className="material-symbols-outlined text-4xl fill-current">
-                      play_arrow
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="space-y-12">
+          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+            <ScoreConverterPreview />
+
+            <div className="space-y-8">
               <div>
-                <h2 className="text-4xl lg:text-5xl font-display font-bold mb-8">
-                  We clarify the process
+                <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
+                  Free tools
+                </p>
+                <h2 className="mt-4 text-4xl font-display font-bold lg:text-5xl">
+                  Try our free tools
                 </h2>
-                <ul className="space-y-6">
-                  <li className="flex items-start gap-4">
-                    <span className="material-symbols-outlined text-[#3B82F6]">
-                      check_circle
-                    </span>
-                    <p className="text-[#94A3B8] text-lg">
-                      We know that the application process can be overwhelming
-                      and competitive. Our step-by-step framework removes the
-                      guesswork.
-                    </p>
-                  </li>
-                  <li className="flex items-start gap-4">
-                    <span className="material-symbols-outlined text-[#3B82F6]">
-                      check_circle
-                    </span>
-                    <p className="text-[#94A3B8] text-lg">
-                      You can spend more time focusing on your revision while we
-                      handle the planning and logistical tracking of your
-                      progress.
-                    </p>
-                  </li>
-                </ul>
+                <p className="mt-5 text-lg leading-relaxed text-[#94A3B8]">
+                  Turn a past-paper raw mark into a scaled score and percentile —
+                  so you know where you stand before the real ESAT or TMUA.
+                </p>
               </div>
-              <div className="pt-8 border-t border-white/10">
-                <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
-                  Free resources
-                </h3>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <a
-                    href="#"
-                    className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5 hover:border-white/20 transition-all"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="material-symbols-outlined text-[#3B82F6]">
-                        description
-                      </span>
-                      <span className="font-semibold text-sm">Exam Guide</span>
-                    </div>
-                    <span className="material-symbols-outlined text-sm">
-                      arrow_downward
-                    </span>
-                  </a>
-                  <a
-                    href="#"
-                    className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5 hover:border-white/20 transition-all"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="material-symbols-outlined text-[#3B82F6]">
-                        timeline
-                      </span>
-                      <span className="font-semibold text-sm">
-                        Prep Timeline
-                      </span>
-                    </div>
-                    <span className="material-symbols-outlined text-sm">
-                      arrow_downward
-                    </span>
-                  </a>
-                </div>
-              </div>
+
+              <ul className="space-y-5">
+                <li className="flex items-start gap-3">
+                  <span
+                    aria-hidden
+                    className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
+                  />
+                  <p className="text-lg text-[#94A3B8]">
+                    Convert NSAA, ENGAA and TMUA marks using official score
+                    distributions.
+                  </p>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span
+                    aria-hidden
+                    className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
+                  />
+                  <p className="text-lg text-[#94A3B8]">
+                    See subject-level and overall estimates — no account needed.
+                  </p>
+                </li>
+              </ul>
+
+              <Link
+                href="/tools/score-converter"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#3B82F6] px-7 py-3.5 font-bold text-white transition-colors hover:bg-[#2563EB]"
+              >
+                Open score converter
+                <span aria-hidden className="text-lg leading-none">
+                  →
+                </span>
+              </Link>
             </div>
           </div>
         </div>
