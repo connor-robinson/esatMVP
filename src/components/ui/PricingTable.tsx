@@ -66,9 +66,9 @@ export function PricingTable({
               }}
               className={cn(
                 CARD_SHELL,
-                "origin-center transition-[transform,background-color,box-shadow,color] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]",
+                "origin-center transition-[transform,background-color,box-shadow,color] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
                 isActive
-                  ? "z-10 scale-[1.25] bg-primary text-black shadow-[0_24px_60px_-16px_rgba(0,0,0,0.55)]"
+                  ? "z-10 scale-[1.13] bg-primary text-black shadow-[0_24px_60px_-16px_rgba(0,0,0,0.55)]"
                   : "z-0 scale-100 bg-surface-elevated",
                 isFree && "cursor-default",
               )}

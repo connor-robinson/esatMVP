@@ -124,30 +124,38 @@ export default function PricingPage() {
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         {/* Green dot field — same pattern as homepage, green tint */}
         <div
-          className="absolute inset-0 opacity-[0.4]"
+          className="absolute inset-0 opacity-[0.55]"
           style={{
             backgroundImage:
-              "radial-gradient(rgba(169, 177, 103, 0.32) 1px, transparent 1px)",
+              "radial-gradient(rgba(169, 177, 103, 0.42) 1px, transparent 1px)",
             backgroundSize: "22px 22px",
           }}
         />
         {/* Soft professional rays — lightweight CSS, no blur */}
         <div
-          className="absolute inset-0 opacity-70"
+          className="absolute inset-0 opacity-80"
           style={{
             backgroundImage: [
-              "linear-gradient(118deg, transparent 42%, rgba(169, 177, 103, 0.07) 50%, transparent 58%)",
-              "linear-gradient(98deg, transparent 36%, rgba(169, 177, 103, 0.055) 47%, transparent 57%)",
-              "linear-gradient(138deg, transparent 28%, rgba(169, 177, 103, 0.08) 52%, transparent 68%)",
+              "linear-gradient(118deg, transparent 40%, rgba(169, 177, 103, 0.10) 50%, transparent 60%)",
+              "linear-gradient(98deg, transparent 34%, rgba(169, 177, 103, 0.075) 47%, transparent 58%)",
+              "linear-gradient(138deg, transparent 26%, rgba(169, 177, 103, 0.11) 52%, transparent 70%)",
             ].join(", "),
+          }}
+        />
+        {/* Central overhead ray */}
+        <div
+          className="absolute left-1/2 top-0 h-[60%] w-[min(94vw,44rem)] -translate-x-1/2 opacity-70"
+          style={{
+            background:
+              "conic-gradient(from 180deg at 50% -8%, transparent 156deg, rgba(169, 177, 103, 0.12) 174deg, rgba(169, 177, 103, 0.18) 180deg, rgba(169, 177, 103, 0.12) 186deg, transparent 204deg)",
           }}
         />
         {/* Gentle top wash */}
         <div
-          className="absolute left-1/2 top-[-6rem] h-[26rem] w-[min(90vw,36rem)] -translate-x-1/2 opacity-35"
+          className="absolute left-1/2 top-[-6rem] h-[26rem] w-[min(90vw,36rem)] -translate-x-1/2 opacity-45"
           style={{
             background:
-              "radial-gradient(circle at center, rgba(169, 177, 103, 0.16) 0%, transparent 68%)",
+              "radial-gradient(circle at center, rgba(169, 177, 103, 0.2) 0%, transparent 68%)",
           }}
         />
       </div>
