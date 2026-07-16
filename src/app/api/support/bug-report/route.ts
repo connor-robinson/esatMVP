@@ -29,9 +29,82 @@ function normalizeEmail(value: unknown): string | null {
   return trimmed;
 }
 
+async function sendSupportEmail(params: {
+  subject: string | null;
+  contactEmail: string | null;
+  description: string;
+  pageUrl: string | null;
+  userId: string;
+  userAgent: string | null;
+}): Promise<{ ok: boolean; skipped?: boolean; error?: string }> {
+  const resendApiKey = process.env.RESEND_API_KEY;
+  // Server-only inbox — never returned to the client or shown in UI.
+  const recipientEmail =
+    process.env.SUPPORT_INBOX_EMAIL || process.env.BUG_REPORT_EMAIL;
+  const fromEmail =
+    process.env.SUPPORT_FROM_EMAIL ||
+    'ESAT CAMP Support <onboarding@resend.dev>';
+
+  if (!resendApiKey || !recipientEmail) {
+    console.warn(
+      '[support/bug-report] Email not configured (RESEND_API_KEY / SUPPORT_INBOX_EMAIL|BUG_REPORT_EMAIL)',
+    );
+    return { ok: false, skipped: true, error: 'Email not configured' };
+  }
+
+  const subjectLine = params.subject?.trim()
+    ? `[IMPORTANT] ${params.subject.trim()}`
+    : '[IMPORTANT] Help & contact message';
+
+  const emailBody = [
+    'Help & contact message from ESAT CAMP',
+    '',
+    params.subject ? `Subject: ${params.subject}` : null,
+    params.contactEmail ? `Reply-to / contact: ${params.contactEmail}` : null,
+    `User ID: ${params.userId}`,
+    params.pageUrl ? `Page: ${params.pageUrl}` : null,
+    params.userAgent ? `User-Agent: ${params.userAgent}` : null,
+    `Timestamp: ${new Date().toISOString()}`,
+    '',
+    'Message:',
+    params.description,
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  const emailResponse = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${resendApiKey}`,
+    },
+    body: JSON.stringify({
+      from: fromEmail,
+      to: [recipientEmail],
+      ...(params.contactEmail ? { reply_to: params.contactEmail } : {}),
+      subject: subjectLine,
+      text: emailBody,
+      headers: {
+        Importance: 'high',
+        'X-Priority': '1',
+        Priority: 'urgent',
+      },
+    }),
+  });
+
+  if (!emailResponse.ok) {
+    const errorData = await emailResponse.json().catch(() => ({}));
+    console.error('[support/bug-report] Resend API error:', errorData);
+    return { ok: false, error: 'Failed to send email' };
+  }
+
+  return { ok: true };
+}
+
 /**
  * POST /api/support/bug-report
  * Submit a bug / help / contact message. Requires auth.
+ * Persists to app_bug_reports and emails the server-configured inbox.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -100,6 +173,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const emailResult = await sendSupportEmail({
+      subject,
+      contactEmail: email,
+      description,
+      pageUrl,
+      userId: user.id,
+      userAgent,
+    });
+
+    if (!emailResult.ok && !emailResult.skipped) {
+      return NextResponse.json(
+        { error: 'Message saved, but email delivery failed. Please try again.' },
+        { status: 502 },
+      );
+    }
+
+    if (emailResult.skipped) {
+      return NextResponse.json(
+        { error: 'Support email is not configured on the server.' },
+        { status: 503 },
+      );
+    }
+
+    // Never include the destination inbox in the response.
     return NextResponse.json({ ok: true });
   } catch (error) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
