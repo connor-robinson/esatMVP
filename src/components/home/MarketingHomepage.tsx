@@ -62,7 +62,41 @@ export function MarketingHomepage() {
     <div className="scroll-smooth">
       {/* Hero Section */}
       <section className="relative pt-20 pb-16 lg:pt-32 lg:pb-32 overflow-hidden bg-[#0A0F1D]">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+        >
+          {/* Light blue dot field */}
+          <div
+            className="absolute inset-0 opacity-[0.45]"
+            style={{
+              backgroundImage:
+                "radial-gradient(rgba(147, 197, 253, 0.35) 1px, transparent 1px)",
+              backgroundSize: "22px 22px",
+            }}
+          />
+          {/* Soft professional rays */}
+          <div
+            className="absolute inset-0 opacity-70"
+            style={{
+              backgroundImage: [
+                "linear-gradient(118deg, transparent 42%, rgba(147, 197, 253, 0.07) 50%, transparent 58%)",
+                "linear-gradient(98deg, transparent 36%, rgba(96, 165, 250, 0.06) 47%, transparent 57%)",
+                "linear-gradient(138deg, transparent 28%, rgba(59, 130, 246, 0.08) 52%, transparent 68%)",
+              ].join(", "),
+            }}
+          />
+          {/* Gentle top-right wash — no blur/glow */}
+          <div
+            className="absolute -right-24 -top-32 h-[28rem] w-[28rem] opacity-40"
+            style={{
+              background:
+                "radial-gradient(circle at center, rgba(147, 197, 253, 0.14) 0%, transparent 68%)",
+            }}
+          />
+        </div>
+
+        <div className="relative max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
           <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
             <div className="lg:col-span-7 space-y-10">
               <h1 className="text-6xl lg:text-8xl font-display font-bold leading-[1.05] tracking-tight">
@@ -163,7 +197,7 @@ export function MarketingHomepage() {
               </div>
             </div>
             <div className="lg:col-span-5 relative">
-              <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border border-white/10 bg-[#161D2F]">
+              <div className="relative z-10 rounded-3xl overflow-hidden bg-[#161D2F]">
                 <div className="p-6 bg-white/5 border-b border-white/10 flex items-center justify-between">
                   <div className="flex gap-2">
                     <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
@@ -182,16 +216,16 @@ export function MarketingHomepage() {
                     <div className="w-2/3 h-full bg-[#3B82F6]"></div>
                   </div>
                   <div className="grid grid-cols-2 gap-4 w-full">
-                    <div className="p-4 rounded-xl bg-white/5 border border-white/5 text-2xl font-bold">
+                    <div className="p-4 rounded-xl bg-white/5 text-2xl font-bold">
                       12
                     </div>
-                    <div className="p-4 rounded-xl bg-[#3B82F6] text-white text-2xl font-bold shadow-lg shadow-[#3B82F6]/20">
+                    <div className="p-4 rounded-xl bg-[#3B82F6] text-white text-2xl font-bold">
                       60
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="mt-6 p-6 backdrop-blur-md bg-white/10 rounded-xl border border-white/20">
+              <div className="mt-6 p-6 bg-white/5 rounded-xl">
                 <div className="flex items-center gap-4">
                   <div className="flex -space-x-3">
                     <Image
@@ -226,7 +260,6 @@ export function MarketingHomepage() {
                   </div>
                 </div>
               </div>
-              <div className="absolute -top-20 -right-20 w-80 h-80 bg-[#3B82F6]/20 rounded-full blur-[100px]" />
             </div>
           </div>
         </div>
