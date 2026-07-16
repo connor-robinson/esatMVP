@@ -1,7 +1,9 @@
-"use client";
+﻿"use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
+import { TriangleDiagram } from "@/components/shared/TriangleDiagram";
+import { generateTriangleDiagram } from "@/lib/diagrams/triangleGenerator";
 
 type TrainerQuestion = {
   id: string;
@@ -9,6 +11,7 @@ type TrainerQuestion = {
   prompt: string;
   options: [string, string];
   correctIndex: 0 | 1;
+  showTriangleDiagram?: boolean;
 };
 
 const QUESTIONS: TrainerQuestion[] = [
@@ -29,11 +32,20 @@ const QUESTIONS: TrainerQuestion[] = [
   {
     id: "special-triangles",
     topic: "Special triangles",
-    prompt: "45-45-90 · leg = 5\nHypotenuse?",
+    prompt: "Find the hypotenuse",
     options: ["5√2", "5√3"],
     correctIndex: 0,
+    showTriangleDiagram: true,
   },
 ];
+
+const SPECIAL_TRIANGLE_DIAGRAM = generateTriangleDiagram({
+  type: "45-45-90",
+  unit: 5,
+  problemType: "side",
+  givenSide: "leg",
+  unknownSide: "hyp",
+});
 
 export function HeroTrainerDemo({ className }: { className?: string }) {
   const [index, setIndex] = useState(0);
@@ -42,6 +54,10 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
 
   const question = QUESTIONS[index];
   const progress = ((index + (picked !== null ? 1 : 0)) / QUESTIONS.length) * 100;
+  const triangleDiagram = useMemo(
+    () => (question.showTriangleDiagram ? SPECIAL_TRIANGLE_DIAGRAM : null),
+    [question.showTriangleDiagram],
+  );
 
   const advance = useCallback(() => {
     setPicked(null);
@@ -66,7 +82,7 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex w-full max-w-[26rem] flex-col justify-self-end rounded-3xl bg-white/[0.08] p-7 backdrop-blur-xl sm:max-w-[28rem] sm:p-9 lg:min-h-[32rem] lg:p-10",
+        "flex w-full max-w-[26rem] flex-col justify-self-end rounded-3xl bg-white/[0.08] p-7 backdrop-blur-xl sm:max-w-[28rem] sm:p-9 lg:min-h-[34rem] lg:p-10",
         className,
       )}
     >
@@ -86,8 +102,23 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
           {question.topic}
         </p>
 
-        <div className="mt-8 flex min-h-[7.5rem] items-center justify-center px-2 sm:mt-10 sm:min-h-[8.5rem]">
-          <p className="whitespace-pre-line font-mono text-3xl font-medium leading-snug text-[#3B82F6] sm:text-4xl">
+        <div
+          className={cn(
+            "mt-6 flex w-full flex-col items-center justify-center px-2 sm:mt-8",
+            triangleDiagram
+              ? "min-h-[13rem] gap-4 sm:min-h-[14rem]"
+              : "min-h-[7.5rem] sm:min-h-[8.5rem]",
+          )}
+        >
+          {triangleDiagram ? (
+            <div className="w-full max-w-[13.5rem] rounded-2xl bg-white/[0.04] px-3 py-2">
+              <TriangleDiagram
+                data={triangleDiagram}
+                className="[&_svg]:max-w-[180px] [&_text]:fill-white"
+              />
+            </div>
+          ) : null}
+          <p className="whitespace-pre-line font-mono text-2xl font-medium leading-snug text-[#3B82F6] sm:text-3xl">
             {question.prompt}
           </p>
         </div>
