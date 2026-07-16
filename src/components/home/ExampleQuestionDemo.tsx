@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { StemContent } from "@/components/shared/StemContent";
@@ -11,19 +11,9 @@ import {
 
 type Phase = "idle" | "submitted";
 
-const HIDDEN_LABELS = new Set(["C"]);
-
 export function ExampleQuestionDemo() {
   const [selected, setSelected] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
-
-  const options = useMemo(
-    () =>
-      HOMEPAGE_EXAMPLE_QUESTION.options.filter(
-        (o) => !HIDDEN_LABELS.has(o.label),
-      ),
-    [],
-  );
 
   const handleSubmit = () => {
     if (!selected) return;
@@ -48,7 +38,7 @@ export function ExampleQuestionDemo() {
         role="radiogroup"
         aria-label="Answer options"
       >
-        {options.map((option) => {
+        {HOMEPAGE_EXAMPLE_QUESTION.options.map((option) => {
           const active = selected === option.label;
           return (
             <button
@@ -72,12 +62,6 @@ export function ExampleQuestionDemo() {
             </button>
           );
         })}
-        <div
-          aria-hidden
-          className="flex items-center justify-center rounded-xl bg-white/[0.03] px-3 py-2.5 text-lg text-white/25"
-        >
-          →
-        </div>
       </div>
 
       {phase === "submitted" ? (
