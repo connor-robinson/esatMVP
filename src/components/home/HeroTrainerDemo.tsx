@@ -71,23 +71,23 @@ function HeroTriangleSvg({ className }: { className?: string }) {
         opacity="0.9"
       />
 
-      {/* Angle labels — inset so they clear the arcs */}
+      {/* Angle labels — tucked near each arc */}
       <text
-        x="98"
-        y="88"
+        x="82"
+        y="58"
         textAnchor="middle"
         fill="currentColor"
-        className="font-sans text-[13px] font-semibold tracking-tight"
+        className="font-sans text-[12px] font-semibold tracking-tight"
         opacity="0.95"
       >
         45°
       </text>
       <text
-        x="114"
-        y="110"
+        x="150"
+        y="122"
         textAnchor="middle"
         fill="currentColor"
-        className="font-sans text-[13px] font-semibold tracking-tight"
+        className="font-sans text-[12px] font-semibold tracking-tight"
         opacity="0.95"
       >
         45°
@@ -260,9 +260,16 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
             {question.topic}
           </p>
 
-          <div className="mt-4 flex h-[14rem] w-full flex-col items-center justify-center gap-0.5 px-1 sm:mt-5 sm:h-[14.5rem]">
+          <div
+            className={cn(
+              "mt-3 flex w-full flex-col items-center justify-center sm:mt-4",
+              question.showTriangle
+                ? "gap-1"
+                : "h-[14rem] gap-0.5 px-1 sm:h-[14.5rem]",
+            )}
+          >
             {question.showTriangle ? (
-              <HeroTriangleSvg className="max-h-[12.75rem] max-w-[17.5rem]" />
+              <HeroTriangleSvg className="max-h-[19rem] w-full max-w-[26rem] sm:max-h-[20rem]" />
             ) : null}
             {question.prompt}
           </div>
