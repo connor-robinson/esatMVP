@@ -477,8 +477,9 @@ export function MarketingHomepage() {
                   Try our free tools
                 </h2>
                 <p className="mt-5 text-lg leading-relaxed text-[#94A3B8]">
-                  Turn a past-paper raw mark into a scaled score and percentile —
-                  so you know where you stand before the real ESAT or TMUA.
+                  Enter a past-paper raw mark from NSAA, ENGAA or TMUA — see the
+                  predicted ESAT or TMUA score and where that sits on the
+                  official distribution.
                 </p>
               </div>
 
@@ -489,8 +490,8 @@ export function MarketingHomepage() {
                     className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
                   />
                   <p className="text-lg text-[#94A3B8]">
-                    Convert NSAA, ENGAA and TMUA marks using official score
-                    distributions.
+                    Pick an exam and year, then convert section scores in one
+                    place.
                   </p>
                 </li>
                 <li className="flex items-start gap-3">
@@ -499,7 +500,7 @@ export function MarketingHomepage() {
                     className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
                   />
                   <p className="text-lg text-[#94A3B8]">
-                    See subject-level and overall estimates — no account needed.
+                    Get a predicted score and percentile — no account needed.
                   </p>
                 </li>
               </ul>
