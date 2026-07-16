@@ -95,14 +95,14 @@ export function ExampleQuestionDemo() {
               onClick={() => markHomepageExampleRevealPending()}
               className="inline-flex items-center justify-center rounded-xl bg-[#3B82F6] px-5 py-3 text-sm font-bold text-white transition-all hover:bg-[#2563EB]"
             >
-              Sign up to find out
+              Sign up for free
             </Link>
             <Link
               href="/login?redirectTo=%2F%3Freveal_example%3D1"
               onClick={() => markHomepageExampleRevealPending()}
               className="inline-flex items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold text-[#94A3B8] transition-colors hover:text-white"
             >
-              Log in
+              I already have an account
             </Link>
           </div>
         </div>

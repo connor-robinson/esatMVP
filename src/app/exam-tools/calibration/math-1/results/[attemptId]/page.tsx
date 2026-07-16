@@ -7,7 +7,11 @@ import { Container } from "@/components/layout/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
-import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
+import {
+  useSupabaseClient,
+  useSupabaseSession,
+} from "@/components/auth/SupabaseSessionProvider";
+import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
 import { CalibrationResultsView } from "@/components/calibration/CalibrationResultsView";
 import { loadAttempt, saveAttempt } from "@/lib/calibration/attempt";
 import { computeResults } from "@/lib/calibration/scoring";
@@ -17,8 +21,11 @@ import type { CalibrationAttempt } from "@/lib/calibration/types";
 export default function CalibrationResultsPage() {
   const params = useParams<{ attemptId: string }>();
   const attemptId = params.attemptId;
+  const supabase = useSupabaseClient();
   const session = useSupabaseSession();
   const [attempt, setAttempt] = useState<CalibrationAttempt | null>(null);
+  const [authLoading, setAuthLoading] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
   const [status, setStatus] = useState<
     "analyzing" | "sign_in_required" | "ready" | "not_found"
   >("analyzing");
@@ -121,29 +128,69 @@ export default function CalibrationResultsPage() {
 
   if (status === "sign_in_required" && attempt) {
     const redirectTo = `${CALIBRATION_ROUTES.math1}/results/${attemptId}`;
+
+    const handleGoogleSignUp = async () => {
+      try {
+        setAuthLoading(true);
+        setAuthError(null);
+        const redirectUrl = `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`;
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: {
+            redirectTo: redirectUrl,
+            queryParams: { redirectTo },
+          },
+        });
+        if (error) {
+          setAuthError(error.message);
+          setAuthLoading(false);
+        }
+      } catch (err) {
+        setAuthError(err instanceof Error ? err.message : "Something went wrong");
+        setAuthLoading(false);
+      }
+    };
+
     return (
       <Container className="flex min-h-[70vh] items-center justify-center py-16">
-        <Card variant="elevated" className="mx-auto max-w-lg p-8 text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-success">
+        <div className="mx-auto w-full max-w-[420px] rounded-organic-xl bg-surface-elevated px-6 py-9 text-center sm:px-8">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-maths">
             Results ready
           </p>
-          <h1 className="mt-3 font-heading text-2xl font-bold text-text">
-            Create a free account to view your results
+          <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-text">
+            Sign up for free
           </h1>
-          <p className="mt-3 text-sm leading-relaxed text-text-muted">
-            Your calibration is saved on this device. Sign up for free to unlock
-            the result, save it to your account and see it whenever you return to
-            calibration.
+          <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-text-muted">
+            Unlock your calibration score, save it to your account, and come back
+            anytime.
           </p>
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <Link href={`/signup?redirectTo=${encodeURIComponent(redirectTo)}`}>
-              <Button variant="primary" size="lg">Sign up free</Button>
-            </Link>
-            <Link href={`/login?redirectTo=${encodeURIComponent(redirectTo)}`}>
-              <Button variant="secondary" size="lg">I already have an account</Button>
-            </Link>
+
+          {authError ? (
+            <p
+              role="alert"
+              className="mt-5 rounded-organic-md bg-error/10 px-4 py-3 text-sm text-error"
+            >
+              {authError}
+            </p>
+          ) : null}
+
+          <div className="mt-7">
+            <GoogleAuthButton
+              mode="signup"
+              loading={authLoading}
+              onClick={handleGoogleSignUp}
+            />
           </div>
-        </Card>
+
+          <p className="mt-6 text-sm text-text-muted">
+            <Link
+              href={`/login?redirectTo=${encodeURIComponent(redirectTo)}`}
+              className="font-medium text-text-muted underline-offset-2 transition-colors hover:text-text hover:underline"
+            >
+              I already have an account
+            </Link>
+          </p>
+        </div>
       </Container>
     );
   }

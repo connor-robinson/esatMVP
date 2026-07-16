@@ -29,9 +29,10 @@ const COPY: Record<
     switchLabel: "Create an account",
   },
   signup: {
-    title: "Create your account",
-    subtitle: "Free to start — save sessions, track scores, and pick up where you left off.",
-    switchPrompt: "Already have an account?",
+    title: "Sign up for free",
+    subtitle:
+      "Create an account to save sessions, unlock results, and pick up where you left off.",
+    switchPrompt: "I already have an account.",
     switchLabel: "Sign in",
   },
 };
@@ -187,13 +188,24 @@ export default function LoginPage() {
               />
 
               <p className="text-center text-sm text-text-muted">
-                {copy.switchPrompt}{" "}
-                <Link
-                  href={buildAuthUrl(alternateMode)}
-                  className="font-medium text-text underline-offset-2 hover:underline"
-                >
-                  {copy.switchLabel}
-                </Link>
+                {mode === "signup" ? (
+                  <Link
+                    href={buildAuthUrl("signin")}
+                    className="font-medium text-text-muted underline-offset-2 transition-colors hover:text-text hover:underline"
+                  >
+                    I already have an account
+                  </Link>
+                ) : (
+                  <>
+                    {copy.switchPrompt}{" "}
+                    <Link
+                      href={buildAuthUrl(alternateMode)}
+                      className="font-medium text-text underline-offset-2 hover:underline"
+                    >
+                      {copy.switchLabel}
+                    </Link>
+                  </>
+                )}
               </p>
             </div>
           </div>

@@ -15,6 +15,7 @@ import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { SessionRestore } from "@/components/papers/SessionRestore";
 import { SessionPersistenceHandler } from "@/components/papers/SessionPersistenceHandler";
 import { UsernameGate } from "@/components/auth/UsernameGate";
+import { GoogleOneTap } from "@/components/auth/GoogleOneTap";
 import { TesterProgrammeProvider } from "@/contexts/TesterProgrammeContext";
 import { TesterProgrammeBanner } from "@/components/tester/TesterProgrammeBanner";
 import { BRAND_CONFIG } from "@/config/brand";
@@ -141,6 +142,7 @@ export default async function RootLayout({
       </head>
       <body className="min-h-screen bg-background text-text antialiased font-sans">
         <SupabaseSessionProvider initialSession={session}>
+          <GoogleOneTap />
           <ErrorBoundary>
             <ThemeProvider>
               <LoadingProvider>
