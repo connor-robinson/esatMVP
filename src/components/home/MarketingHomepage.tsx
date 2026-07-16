@@ -6,14 +6,11 @@ import { useEffect, useState } from "react";
 import { BRAND_CONFIG } from "@/config/brand";
 import { QUESTION_BANK_TOTAL_COUNT } from "@/config/questionBankMarketing";
 import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
-import { CALIBRATION_QUESTIONS } from "@/lib/calibration/config";
 import { FERMI_GUESSR_PLAY_PATH } from "@/config/fermiGuessr";
 import { trackHomepageEvent } from "@/lib/homepage/analytics";
-import { StemContent } from "@/components/shared/StemContent";
 import { SlotMachineCount } from "@/components/home/SlotMachineCount";
 import { HeroTrainerDemo } from "@/components/home/HeroTrainerDemo";
-
-const EXAMPLE_QUESTION = CALIBRATION_QUESTIONS[0];
+import { ExampleQuestionDemo } from "@/components/home/ExampleQuestionDemo";
 
 export function MarketingHomepage() {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
@@ -193,33 +190,7 @@ export function MarketingHomepage() {
               </Link>
             </div>
 
-            <div className="rounded-2xl bg-[#0A0F1D]/60 p-6 sm:p-8">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#94A3B8]">
-                Example question
-              </p>
-              <div className="mt-5 text-base leading-relaxed text-white sm:text-lg">
-                <StemContent
-                  content={EXAMPLE_QUESTION.question_text_markdown}
-                  className="text-inherit"
-                />
-              </div>
-              <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3">
-                {EXAMPLE_QUESTION.options.map((option) => (
-                  <div
-                    key={option.label}
-                    className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2.5 text-sm text-[#94A3B8]"
-                  >
-                    <span className="font-semibold text-white/70">
-                      {option.label}
-                    </span>
-                    <StemContent
-                      content={option.text_markdown}
-                      className="text-inherit inline"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
+            <ExampleQuestionDemo />
           </div>
         </div>
       </section>
