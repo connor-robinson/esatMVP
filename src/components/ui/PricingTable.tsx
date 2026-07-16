@@ -70,7 +70,6 @@ export function PricingTable({
                 isActive
                   ? "z-10 scale-[1.055] bg-primary text-black shadow-[0_20px_56px_-18px_rgba(0,0,0,0.55)]"
                   : "z-0 scale-100 bg-surface-elevated",
-                tier.featured && !isActive && "overflow-hidden",
                 isFree && "cursor-default",
               )}
             >
@@ -83,7 +82,7 @@ export function PricingTable({
                     )}
                     aria-hidden
                   />
-                  <div className="absolute right-5 top-5">
+                  <div className="absolute right-5 top-0 z-20 -translate-y-1/2">
                     <span
                       className={cn(
                         "inline-flex items-center gap-1.5 rounded-organic-md px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] transition-colors duration-300",
@@ -106,7 +105,7 @@ export function PricingTable({
                 </>
               ) : null}
 
-              <div className={cn("mb-5 space-y-2", tier.featured && "pr-24")}>
+              <div className="mb-5 space-y-2">
                 <h3
                   className={cn(
                     "text-lg font-semibold tracking-tight transition-colors duration-300",
