@@ -7,13 +7,23 @@ import { BRAND_CONFIG } from "@/config/brand";
 import { QUESTION_BANK_TOTAL_COUNT } from "@/config/questionBankMarketing";
 import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
 import { trackHomepageEvent } from "@/lib/homepage/analytics";
+import { getSeasonPassPrice } from "@/lib/stripe/best-value";
 import { SlotMachineCount } from "@/components/home/SlotMachineCount";
 import { HeroTrainerDemo } from "@/components/home/HeroTrainerDemo";
 import { ExampleQuestionDemo } from "@/components/home/ExampleQuestionDemo";
 import { ScoreConverterPreview } from "@/components/home/ScoreConverterPreview";
 
+const PAID_FEATURES = [
+  "Full mental maths access",
+  "Full roadmap & past papers",
+  `Unlimited question bank (${QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+)`,
+  "Solutions & stats overview",
+  "Drills & flashcard mode",
+];
+
 export function MarketingHomepage() {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
+  const seasonPrice = getSeasonPassPrice();
 
   useEffect(() => {
     void trackHomepageEvent("homepage_viewed", {
@@ -382,116 +392,115 @@ export function MarketingHomepage() {
       {/* Pricing Section */}
       <section className="py-24 bg-[#161D2F]/50">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
-          <div className="text-center max-w-2xl mx-auto mb-20">
-            <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6] mb-4">
+          <div className="mx-auto mb-16 max-w-2xl text-center sm:mb-20">
+            <h2 className="mb-4 text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
               Pricing
             </h2>
             <h3 className="text-4xl font-display font-bold">
               Invest in your future
             </h3>
+            <p className="mt-4 text-[#94A3B8]">
+              Same full access on every paid plan — pick the billing that fits
+              your prep timeline.
+            </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Basic Plan */}
-            <div className="p-10 rounded-3xl bg-[#0A0F1D] border border-white/10 flex flex-col">
-              <h4 className="text-xl font-bold mb-2">Basic</h4>
-              <div className="text-4xl font-bold mb-8">
-                £49<span className="text-sm text-[#94A3B8] font-normal">/year</span>
+
+          <div className="mx-auto grid max-w-5xl items-stretch gap-6 md:grid-cols-3 md:gap-5 lg:gap-8">
+            {/* Weekly */}
+            <div className="flex flex-col rounded-3xl bg-[#0A0F1D]/70 p-8 md:my-6">
+              <h4 className="text-lg font-bold text-white">Weekly</h4>
+              <div className="mt-4 flex items-baseline gap-1">
+                <span className="text-4xl font-display font-bold text-white">
+                  £8
+                </span>
+                <span className="text-sm text-[#94A3B8]">/week</span>
               </div>
-              <ul className="space-y-4 mb-10 flex-1 text-[#94A3B8] text-sm">
-                <li className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[#3B82F6] text-lg">
-                    check
-                  </span>{" "}
-                  Mental Maths Trainer
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[#3B82F6] text-lg">
-                    check
-                  </span>{" "}
-                  Past Paper Tracker
-                </li>
-                <li className="flex items-center gap-2 opacity-30">
-                  <span className="material-symbols-outlined text-lg">close</span>{" "}
-                  Advanced Question Bank
-                </li>
+              <p className="mt-2 text-sm text-[#94A3B8]">Flexible short-term access</p>
+              <ul className="mt-8 flex-1 space-y-3 text-sm text-[#94A3B8]">
+                {PAID_FEATURES.map((feature) => (
+                  <li key={feature} className="flex items-start gap-2">
+                    <span
+                      aria-hidden
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
+                    />
+                    {feature}
+                  </li>
+                ))}
               </ul>
-              <button
-                type="button"
-                className="w-full py-4 border border-white/20 rounded-xl font-bold hover:bg-white/5 transition-all"
+              <Link
+                href="/pricing"
+                className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white/10 py-3.5 font-bold text-white transition-colors hover:bg-white/15"
               >
-                Select Plan
-              </button>
+                Choose weekly
+                <span aria-hidden>→</span>
+              </Link>
             </div>
 
-            {/* Scholar Plan */}
-            <div className="p-10 rounded-3xl bg-[#3B82F6] flex flex-col relative scale-105">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-white text-[#3B82F6] px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
-                Most Popular
+            {/* Monthly — most common */}
+            <div className="relative z-10 flex flex-col rounded-3xl bg-[#3B82F6] p-9 shadow-[0_24px_60px_rgba(59,130,246,0.28)] md:scale-110 md:p-10">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-white px-3.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#3B82F6]">
+                Most popular
               </div>
-              <h4 className="text-xl font-bold mb-2 text-white">Scholar</h4>
-              <div className="text-4xl font-bold mb-8 text-white">
-                £129<span className="text-sm text-white/70 font-normal">/year</span>
+              <h4 className="text-xl font-bold text-white">Monthly</h4>
+              <div className="mt-4 flex items-baseline gap-1">
+                <span className="text-5xl font-display font-bold text-white">
+                  £25
+                </span>
+                <span className="text-sm text-white/75">/month</span>
               </div>
-              <ul className="space-y-4 mb-10 flex-1 text-white text-sm">
-                <li className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-white text-lg">
-                    check
-                  </span>{" "}
-                  Full Question Bank ({QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+)
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-white text-lg">
-                    check
-                  </span>{" "}
-                  Detailed Video Solutions
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-white text-lg">
-                    check
-                  </span>{" "}
-                  Priority Scholar Support
-                </li>
+              <p className="mt-2 text-sm font-medium text-white/80">
+                £6.25/week · best everyday option
+              </p>
+              <ul className="mt-8 flex-1 space-y-3 text-sm text-white">
+                {PAID_FEATURES.map((feature) => (
+                  <li key={feature} className="flex items-start gap-2">
+                    <span
+                      aria-hidden
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-white"
+                    />
+                    {feature}
+                  </li>
+                ))}
               </ul>
-              <button
-                type="button"
-                className="w-full py-4 bg-white text-[#3B82F6] rounded-xl font-bold hover:bg-slate-100 transition-all"
+              <Link
+                href="/pricing"
+                className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white py-4 text-base font-bold text-[#3B82F6] transition-colors hover:bg-slate-100"
               >
-                Join as Scholar
-              </button>
+                Choose monthly
+                <span aria-hidden>→</span>
+              </Link>
             </div>
 
-            {/* Ultimate Plan */}
-            <div className="p-10 rounded-3xl bg-[#0A0F1D] border border-white/10 flex flex-col">
-              <h4 className="text-xl font-bold mb-2">Ultimate</h4>
-              <div className="text-4xl font-bold mb-8">
-                £249<span className="text-sm text-[#94A3B8] font-normal">/year</span>
+            {/* Exam Season Pass */}
+            <div className="flex flex-col rounded-3xl bg-[#0A0F1D]/70 p-8 md:my-6">
+              <h4 className="text-lg font-bold text-white">Exam Season Pass</h4>
+              <div className="mt-4 flex items-baseline gap-1">
+                <span className="text-4xl font-display font-bold text-white">
+                  £{seasonPrice}
+                </span>
+                <span className="text-sm text-[#94A3B8]">once</span>
               </div>
-              <ul className="space-y-4 mb-10 flex-1 text-[#94A3B8] text-sm">
-                <li className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[#3B82F6] text-lg">
-                    check
-                  </span>{" "}
-                  Everything in Scholar
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[#3B82F6] text-lg">
-                    check
-                  </span>{" "}
-                  1-on-1 Mentoring Session
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[#3B82F6] text-lg">
-                    check
-                  </span>{" "}
-                  Personalized Study Plan
-                </li>
+              <p className="mt-2 text-sm text-[#94A3B8]">
+                One-time · access until 1 Oct 2026
+              </p>
+              <ul className="mt-8 flex-1 space-y-3 text-sm text-[#94A3B8]">
+                {PAID_FEATURES.map((feature) => (
+                  <li key={feature} className="flex items-start gap-2">
+                    <span
+                      aria-hidden
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
+                    />
+                    {feature}
+                  </li>
+                ))}
               </ul>
-              <button
-                type="button"
-                className="w-full py-4 border border-white/20 rounded-xl font-bold hover:bg-white/5 transition-all"
+              <Link
+                href="/pricing"
+                className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white/10 py-3.5 font-bold text-white transition-colors hover:bg-white/15"
               >
-                Choose Ultimate
-              </button>
+                Choose season pass
+                <span aria-hidden>→</span>
+              </Link>
             </div>
           </div>
         </div>
