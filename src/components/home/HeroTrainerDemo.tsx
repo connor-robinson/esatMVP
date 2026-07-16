@@ -255,7 +255,12 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
           </div>
         </div>
       ) : (
-        <div className="mt-8 flex flex-1 flex-col items-center justify-center text-center sm:mt-10">
+        <div
+          className={cn(
+            "mt-8 flex flex-1 flex-col items-center text-center sm:mt-10",
+            question.showTriangle ? "justify-start" : "justify-center",
+          )}
+        >
           <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#3B82F6]">
             {question.topic}
           </p>
@@ -264,17 +269,24 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
             className={cn(
               "mt-3 flex w-full flex-col items-center justify-center sm:mt-4",
               question.showTriangle
-                ? "gap-1"
+                ? "min-h-0 flex-1 gap-1"
                 : "h-[14rem] gap-0.5 px-1 sm:h-[14.5rem]",
             )}
           >
             {question.showTriangle ? (
-              <HeroTriangleSvg className="max-h-[19rem] w-full max-w-[26rem] sm:max-h-[20rem]" />
+              <HeroTriangleSvg className="max-h-[22.8rem] w-full max-w-[31rem] sm:max-h-[24rem]" />
             ) : null}
             {question.prompt}
           </div>
 
-          <div className="mt-5 grid w-full grid-cols-2 gap-4 sm:mt-6">
+          <div
+            className={cn(
+              "grid w-full grid-cols-2 gap-4",
+              question.showTriangle
+                ? "mt-auto pt-8 sm:pt-10"
+                : "mt-5 sm:mt-6",
+            )}
+          >
             {question.options.map((option, optionIndex) => {
               const selected = picked === optionIndex;
               const isCorrectOption = optionIndex === question.correctIndex;
