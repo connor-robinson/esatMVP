@@ -74,7 +74,6 @@ export function StageListCard({
   }, [stage, completionData]);
 
   const handleCardClick = () => {
-    if (!isUnlocked) return;
     onToggleExpand();
   };
 
@@ -121,7 +120,7 @@ export function StageListCard({
           "relative flex flex-col overflow-hidden rounded-organic-lg transition-colors duration-fast ease-signature",
           isUnlocked
             ? "cursor-pointer bg-surface-elevated"
-            : "cursor-not-allowed bg-surface-mid opacity-70",
+            : "cursor-pointer bg-surface-mid opacity-70",
         )}
         onClick={handleCardClick}
       >
@@ -204,17 +203,18 @@ export function StageListCard({
           </div>
 
           <div className="flex shrink-0 items-center">
-            {isUnlocked ? (
-              <motion.div
-                animate={{ rotate: isExpanded ? 180 : 0 }}
-                transition={{ duration: 0.25, ease: "easeOut" }}
-              >
-                <ChevronDown
-                  className="h-5 w-5 text-text-muted"
-                  aria-hidden
-                />
-              </motion.div>
-            ) : null}
+            <motion.div
+              animate={{ rotate: isExpanded ? 180 : 0 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+            >
+              <ChevronDown
+                className={cn(
+                  "h-5 w-5",
+                  isUnlocked ? "text-text-muted" : "text-text-disabled",
+                )}
+                aria-hidden
+              />
+            </motion.div>
           </div>
         </div>
 
@@ -222,8 +222,8 @@ export function StageListCard({
           className={cn(
             "grid transition-[grid-template-rows] border-t border-border-subtle/40",
             ROADMAP_EXPAND_TRANSITION_CLASS,
-            isExpanded && isUnlocked ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
-            isExpanded && isUnlocked ? "border-t" : "border-t-transparent",
+            isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+            isExpanded ? "border-t" : "border-t-transparent",
           )}
         >
           <div className="overflow-hidden">
@@ -231,7 +231,7 @@ export function StageListCard({
               className={cn(
                 "space-y-4 px-4 py-4 transition-opacity sm:px-5",
                 ROADMAP_EXPAND_TRANSITION_CLASS,
-                isExpanded && isUnlocked ? "opacity-100" : "opacity-0",
+                isExpanded ? "opacity-100" : "opacity-0",
               )}
             >
                 <div className="flex items-center justify-between gap-2">
@@ -395,10 +395,10 @@ export function StageListCard({
                   <button
                     type="button"
                     onClick={handleStartSession}
-                    disabled={selectedParts.size === 0}
+                    disabled={!isUnlocked || selectedParts.size === 0}
                     className={cn(
                       "flex w-full items-center justify-center gap-2 rounded-organic-md px-4 py-3 text-sm font-semibold transition-all duration-fast ease-signature",
-                      selectedParts.size === 0
+                      !isUnlocked || selectedParts.size === 0
                         ? "cursor-not-allowed bg-surface-neutral text-text-disabled"
                         : cn(
                             getExamAccentFillClass(stage.examName),
@@ -406,7 +406,7 @@ export function StageListCard({
                           ),
                     )}
                   >
-                    <span>Start session</span>
+                    <span>{isUnlocked ? "Start session" : "Locked"}</span>
                     <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
                   </button>
             </div>

@@ -63,27 +63,6 @@ function isStageFullyCompleted(
   return total > 0 && completed === total;
 }
 
-/** Stages visible in the roadmap: up to and including the first gate after an incomplete stage. */
-function getSequentialVisibleStages(
-  stages: RoadmapStage[],
-  completionMap: Map<string, StageCompletionEntry>,
-): RoadmapStage[] {
-  if (stages.length === 0) return [];
-
-  const visible: RoadmapStage[] = [stages[0]];
-
-  for (let i = 1; i < stages.length; i++) {
-    const prevStage = stages[i - 1];
-    const prevData = completionMap.get(prevStage.id);
-    visible.push(stages[i]);
-    if (!isStageFullyCompleted(prevStage, prevData)) {
-      break;
-    }
-  }
-
-  return visible;
-}
-
 function computeUnlockState(
   stages: RoadmapStage[],
   completionMap: Map<string, StageCompletionEntry>,
@@ -588,10 +567,11 @@ export default function PapersRoadmapPage() {
 
   const timelineAnchorRef = useRef<HTMLDivElement>(null);
 
-  const sequentialStages = getSequentialVisibleStages(stages, completionData);
+  // Full-access users see the entire track (locked stages stay greyed/previewable).
+  // Free users still get a short preview of the start of the path.
   const visibleStages = hasFullAccess
-    ? sequentialStages
-    : sequentialStages.slice(0, FREE_ROADMAP_ITEMS);
+    ? stages
+    : stages.slice(0, FREE_ROADMAP_ITEMS);
   const visibleUnlocked = new Set(
     visibleStages.map((s) => s.id).filter((id) => unlockedStages.has(id)),
   );
