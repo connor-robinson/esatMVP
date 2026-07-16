@@ -158,8 +158,8 @@ export function PricingTable({
                 size="md"
                 disabled={isCurrentPlan || isLoading}
                 className={cn(
-                  "w-full rounded-organic-lg border-0 font-semibold transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]",
-                  showPrimaryCta && "hover:scale-[1.06] active:scale-[1.02]",
+                  "w-full rounded-organic-lg border-0 font-semibold transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                  showPrimaryCta && "hover:scale-[1.025] active:scale-[1.01]",
                   isActive &&
                     showPrimaryCta &&
                     "!bg-black !text-white hover:!bg-black/90 hover:!text-white hover:shadow-none",
