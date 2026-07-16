@@ -26,20 +26,18 @@ export function MarketingHomepage() {
     <div className="scroll-smooth">
       {/* Hero Section */}
       <section className="relative pt-20 pb-16 lg:pt-32 lg:pb-32 overflow-hidden bg-[#0A0F1D]">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
             <div className="lg:col-span-7 space-y-10">
               <h1 className="text-6xl lg:text-8xl font-display font-bold leading-[1.05] tracking-tight">
-                Master the <span className="text-underline-accent">ESAT</span> &{" "}
+                Master the <span className="text-underline-accent">ESAT</span>.
                 <br />
-                <span className="text-underline-accent">TMUA</span>. Secure your{" "}
-                <br />
-                Cambridge offer.
+                Secure your Oxbridge offer.
               </h1>
-              <p className="text-xl text-[#94A3B8] max-w-xl leading-relaxed">
-                The non-calculator, high-pressure entrance exams demand more than
-                just knowledge. Start with a free calibration to find weak skills,
-                speed gaps, and recommended practice areas.
+              <p className="text-xl text-[#94A3B8] max-w-2xl leading-relaxed">
+                The ESAT is the admissions test for many university courses at
+                Cambridge, Oxford, Imperial and UCL. Practise with our past-paper
+                tools, question bank, and targeted no-calculator drills.
               </p>
               <div className="space-y-5 max-w-xl">
                 <div className="flex flex-col sm:flex-row gap-3">
@@ -196,7 +194,7 @@ export function MarketingHomepage() {
 
       {/* Calibration preview */}
       <section className="py-16 bg-[#161D2F] border-y border-white/5">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
           <div className="grid lg:grid-cols-2 gap-10 items-center">
             <div>
               <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6] mb-4">
@@ -247,7 +245,7 @@ export function MarketingHomepage() {
 
       {/* Why Choose Us Section */}
       <section className="py-24 bg-[#161D2F] border-y border-white/5">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
             <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6] mb-4">
               Why choose us
@@ -389,7 +387,7 @@ export function MarketingHomepage() {
 
       {/* Process Clarification Section */}
       <section className="py-24 bg-[#0A0F1D]">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
             <div className="relative rounded-3xl overflow-hidden border border-white/10 group aspect-video">
               <div className="relative w-full h-full">
@@ -483,7 +481,7 @@ export function MarketingHomepage() {
 
       {/* Pricing Section */}
       <section className="py-24 bg-[#161D2F]/50">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
           <div className="text-center max-w-2xl mx-auto mb-20">
             <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6] mb-4">
               Pricing
@@ -601,7 +599,7 @@ export function MarketingHomepage() {
 
       {/* FAQ Section */}
       <section className="py-24 bg-[#0A0F1D]">
-        <div className="max-w-3xl mx-auto px-6 lg:px-12">
+        <div className="max-w-3xl mx-auto px-4 sm:px-5 lg:px-6">
           <h2 className="text-3xl font-display font-bold text-center mb-16">
             Common Questions
           </h2>
@@ -693,7 +691,7 @@ export function MarketingHomepage() {
 
       {/* Footer */}
       <footer className="pt-24 pb-12 border-t border-white/5 bg-[#0A0F1D]">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
           <div className="grid md:grid-cols-4 gap-12 mb-16">
             <div className="col-span-2 space-y-8">
               <div className="flex items-center gap-2">
