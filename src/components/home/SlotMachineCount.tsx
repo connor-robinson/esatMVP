@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface SlotMachineCountProps {
@@ -17,6 +17,11 @@ function scramble(length: number, lockedPrefix: string): string {
   return out;
 }
 
+/** Ease-out cubic: fast start, gradual slowdown into the final value. */
+function easeOutCubic(t: number): number {
+  return 1 - (1 - t) ** 3;
+}
+
 export function SlotMachineCount({
   value,
   className,
@@ -25,14 +30,39 @@ export function SlotMachineCount({
   const safeValue = Math.max(0, Math.floor(value));
   const length = Math.max(4, String(safeValue).length);
   const finalText = String(safeValue).padStart(length, "0");
+  const rootRef = useRef<HTMLSpanElement>(null);
+  const [inView, setInView] = useState(false);
+  const [hasPlayed, setHasPlayed] = useState(false);
   const [display, setDisplay] = useState(() => scramble(length, ""));
   const [settled, setSettled] = useState(false);
 
   useEffect(() => {
+    const node = rootRef.current;
+    if (!node || hasPlayed) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.45, rootMargin: "0px 0px -8% 0px" },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [hasPlayed]);
+
+  useEffect(() => {
+    if (!inView || hasPlayed) return;
+
     let cancelled = false;
     let raf = 0;
+    let timeout = 0;
     const startedAt = performance.now();
-    const durationMs = 1100;
+    const durationMs = 2200;
+    let lastFrameAt = 0;
 
     setSettled(false);
     setDisplay(scramble(length, ""));
@@ -40,9 +70,22 @@ export function SlotMachineCount({
     const tick = (now: number) => {
       if (cancelled) return;
 
-      const progress = Math.min(1, (now - startedAt) / durationMs);
-      if (progress < 1) {
-        const locked = Math.floor(progress * length);
+      const linear = Math.min(1, (now - startedAt) / durationMs);
+      const eased = easeOutCubic(linear);
+
+      // Frame spacing grows as we ease out — scramble slows near the end.
+      const minGap = 28;
+      const maxGap = 160;
+      const frameGap = minGap + (maxGap - minGap) * eased;
+
+      if (now - lastFrameAt < frameGap && linear < 1) {
+        raf = window.requestAnimationFrame(tick);
+        return;
+      }
+      lastFrameAt = now;
+
+      if (linear < 1) {
+        const locked = Math.min(length, Math.floor(eased * length));
         setDisplay(scramble(length, finalText.slice(0, locked)));
         raf = window.requestAnimationFrame(tick);
         return;
@@ -50,17 +93,24 @@ export function SlotMachineCount({
 
       setDisplay(finalText);
       setSettled(true);
+      setHasPlayed(true);
     };
 
-    raf = window.requestAnimationFrame(tick);
+    // Small delay so the section is settled before the scramble kicks off.
+    timeout = window.setTimeout(() => {
+      raf = window.requestAnimationFrame(tick);
+    }, 120);
+
     return () => {
       cancelled = true;
+      window.clearTimeout(timeout);
       window.cancelAnimationFrame(raf);
     };
-  }, [finalText, length]);
+  }, [inView, hasPlayed, finalText, length]);
 
   return (
     <span
+      ref={rootRef}
       className={cn(
         "inline-flex items-end gap-1.5 text-5xl text-white sm:text-6xl lg:text-7xl",
         className,
