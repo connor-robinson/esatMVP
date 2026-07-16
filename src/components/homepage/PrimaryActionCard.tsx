@@ -28,10 +28,7 @@ export function PrimaryActionCard({
     : null;
 
   return (
-    <Card
-      variant="flat"
-      className="relative overflow-hidden bg-surface-elevated p-6 shadow-lg sm:p-8"
-    >
+    <Card variant="elevated" className="relative overflow-hidden p-6 sm:p-8">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(var(--color-primary-rgb,34,197,94),0.08),transparent_55%)]"

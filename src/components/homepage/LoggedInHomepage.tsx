@@ -56,7 +56,7 @@ export function LoggedInHomepage({ state }: LoggedInHomepageProps) {
 
   return (
     <Container className="py-10 sm:py-14">
-      <div className="mx-auto max-w-4xl space-y-6">
+      <div className="mx-auto max-w-4xl space-y-5">
         {state.isPartial && state.error ? (
           <ErrorState message={state.error} onRetry={() => void state.refresh()} />
         ) : null}
@@ -75,23 +75,29 @@ export function LoggedInHomepage({ state }: LoggedInHomepageProps) {
           </div>
         ) : null}
 
-        <PrimaryActionCard
-          action={state.primaryAction}
-          analyticsProps={analyticsProps}
-        />
+        <div className="space-y-4 rounded-organic-2xl bg-surface-subtle/70 p-3 sm:p-4">
+          <PrimaryActionCard
+            action={state.primaryAction}
+            analyticsProps={analyticsProps}
+          />
 
-        {showTesterStatus && state.tester ? (
-          <div className="space-y-3">
-            <TesterAccessStatus state={state.tester} />
-            <TesterProgrammeLink />
+          {showTesterStatus && state.tester ? (
+            <div className="space-y-3 px-1">
+              <TesterAccessStatus state={state.tester} />
+              <TesterProgrammeLink />
+            </div>
+          ) : null}
+
+          <div className="space-y-3 px-1 pb-1 pt-1">
+            <h2 className="text-xl font-bold tracking-tight text-text sm:text-2xl">
+              Dashboard
+            </h2>
+            <TopicHub
+              topics={DASHBOARD_TOPICS}
+              analyticsProps={analyticsProps}
+              className="gap-3 sm:gap-3.5"
+            />
           </div>
-        ) : null}
-
-        <div className="space-y-4">
-          <h2 className="text-xl font-bold tracking-tight text-text sm:text-2xl">
-            Dashboard
-          </h2>
-          <TopicHub topics={DASHBOARD_TOPICS} analyticsProps={analyticsProps} />
         </div>
 
         {showUpgrade && state.upgradePrompt ? (
