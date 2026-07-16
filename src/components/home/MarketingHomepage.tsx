@@ -44,13 +44,6 @@ const FAQ_ITEMS = [
     ],
   },
   {
-    question: "How difficult are the questions?",
-    answer: [
-      "The question bank includes a range of difficulties, from essential foundation questions to problems intended to challenge high-scoring candidates.",
-      "Some questions may initially feel harder than expected. This is deliberate. It is better to encounter difficult problems during preparation, where you can learn from them, than for the first time under exam conditions.",
-    ],
-  },
-  {
     question: "How much preparation do I actually need?",
     answer: [
       "This depends on your current level, target universities and weakest modules. However, completing a few practice papers is rarely enough.",
