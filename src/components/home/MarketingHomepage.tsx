@@ -535,9 +535,9 @@ export function MarketingHomepage() {
             </p>
           </div>
 
-          <div className="mx-auto grid max-w-6xl items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-4 xl:gap-6">
-            {/* Free */}
-            <div className="flex flex-col rounded-3xl bg-[#0A0F1D]/70 p-7 xl:my-8 xl:p-8">
+          <div className="mx-auto grid max-w-6xl items-stretch gap-5 sm:grid-cols-2 xl:flex xl:max-w-7xl xl:items-stretch xl:justify-center xl:gap-0">
+            {/* Free — partly tucked under Monthly on xl */}
+            <div className="relative z-[1] flex flex-col rounded-3xl bg-[#0A0F1D]/70 p-7 sm:col-start-1 xl:my-8 xl:w-[min(19rem,28%)] xl:shrink-0 xl:p-8">
               <h4 className="text-lg font-bold text-white">Free</h4>
               <div className="mt-4 flex items-baseline gap-1">
                 <span className="text-4xl font-display font-bold text-white">
@@ -565,38 +565,8 @@ export function MarketingHomepage() {
               </Link>
             </div>
 
-            {/* Weekly */}
-            <div className="flex flex-col rounded-3xl bg-[#0A0F1D]/70 p-7 xl:my-8 xl:p-8">
-              <h4 className="text-lg font-bold text-white">Weekly</h4>
-              <div className="mt-4 flex items-baseline gap-1">
-                <span className="text-4xl font-display font-bold text-white">
-                  £8
-                </span>
-                <span className="text-sm text-[#94A3B8]">/week</span>
-              </div>
-              <p className="mt-2 text-sm text-[#94A3B8]">Flexible short-term access</p>
-              <ul className="mt-8 flex-1 space-y-3 text-sm text-[#94A3B8]">
-                {PAID_FEATURES.map((feature) => (
-                  <li key={feature} className="flex items-start gap-2">
-                    <span
-                      aria-hidden
-                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
-                    />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/pricing"
-                className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white/10 py-3.5 font-bold text-white transition-colors hover:bg-white/15"
-              >
-                Choose weekly
-                <span aria-hidden>→</span>
-              </Link>
-            </div>
-
-            {/* Monthly — most common */}
-            <div className="relative z-10 flex flex-col rounded-3xl bg-[#3B82F6] p-8 sm:p-9 xl:scale-110 xl:p-10">
+            {/* Monthly — overlaps Free by ~half on xl so every card can be wider */}
+            <div className="relative z-20 flex flex-col rounded-3xl bg-[#3B82F6] p-8 sm:col-span-2 sm:max-w-md sm:justify-self-center sm:p-9 xl:col-auto xl:-ml-[14%] xl:max-w-none xl:w-[min(22rem,32%)] xl:shrink-0 xl:p-10">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-white px-3.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#3B82F6]">
                 Most popular
               </div>
@@ -630,8 +600,38 @@ export function MarketingHomepage() {
               </Link>
             </div>
 
+            {/* Weekly */}
+            <div className="relative z-[1] flex flex-col rounded-3xl bg-[#0A0F1D]/70 p-7 sm:col-start-2 sm:row-start-1 xl:my-8 xl:-ml-5 xl:w-[min(19rem,28%)] xl:shrink-0 xl:p-8">
+              <h4 className="text-lg font-bold text-white">Weekly</h4>
+              <div className="mt-4 flex items-baseline gap-1">
+                <span className="text-4xl font-display font-bold text-white">
+                  £8
+                </span>
+                <span className="text-sm text-[#94A3B8]">/week</span>
+              </div>
+              <p className="mt-2 text-sm text-[#94A3B8]">Flexible short-term access</p>
+              <ul className="mt-8 flex-1 space-y-3 text-sm text-[#94A3B8]">
+                {PAID_FEATURES.map((feature) => (
+                  <li key={feature} className="flex items-start gap-2">
+                    <span
+                      aria-hidden
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
+                    />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/pricing"
+                className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white/10 py-3.5 font-bold text-white transition-colors hover:bg-white/15"
+              >
+                Choose weekly
+                <span aria-hidden>→</span>
+              </Link>
+            </div>
+
             {/* Exam Season Pass */}
-            <div className="flex flex-col rounded-3xl bg-[#0A0F1D]/70 p-7 xl:my-8 xl:p-8">
+            <div className="relative z-[1] flex flex-col rounded-3xl bg-[#0A0F1D]/70 p-7 xl:my-8 xl:-ml-5 xl:w-[min(19rem,28%)] xl:shrink-0 xl:p-8">
               <h4 className="text-lg font-bold text-white">Exam Season Pass</h4>
               <div className="mt-4 flex items-baseline gap-1">
                 <span className="text-4xl font-display font-bold text-white">
