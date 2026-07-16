@@ -509,8 +509,8 @@ export function MarketingHomepage() {
               </Link>
             </div>
 
-            {/* Weekly — partly tucked under Monthly on xl */}
-            <div className="relative z-[1] flex flex-col rounded-3xl bg-[#0A0F1D]/70 p-7 sm:col-start-2 xl:my-8 xl:-ml-5 xl:w-[min(19rem,28%)] xl:shrink-0 xl:p-8">
+            {/* Weekly — overlaps Free on xl */}
+            <div className="relative z-10 flex flex-col rounded-3xl bg-[#0A0F1D]/70 p-7 sm:col-start-2 xl:my-8 xl:-ml-[14%] xl:w-[min(19rem,28%)] xl:shrink-0 xl:p-8">
               <h4 className="text-lg font-bold text-white">Weekly</h4>
               <div className="mt-4 flex items-baseline gap-1">
                 <span className="text-4xl font-display font-bold text-white">
@@ -539,8 +539,8 @@ export function MarketingHomepage() {
               </Link>
             </div>
 
-            {/* Monthly — overlaps Weekly by ~half on xl so every card can be wider */}
-            <div className="relative z-20 flex flex-col rounded-3xl bg-[#3B82F6] p-8 sm:col-span-2 sm:max-w-md sm:justify-self-center sm:p-9 xl:col-auto xl:-ml-[14%] xl:max-w-none xl:w-[min(22rem,32%)] xl:shrink-0 xl:p-10">
+            {/* Monthly — sits beside Weekly without covering it */}
+            <div className="relative z-20 flex flex-col rounded-3xl bg-[#3B82F6] p-8 sm:col-span-2 sm:max-w-md sm:justify-self-center sm:p-9 xl:col-auto xl:max-w-none xl:w-[min(22rem,32%)] xl:shrink-0 xl:p-10">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-white px-3.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#3B82F6]">
                 Most popular
               </div>
