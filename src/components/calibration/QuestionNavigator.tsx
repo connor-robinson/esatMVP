@@ -52,7 +52,7 @@ export function QuestionNavigator({ items, onJump }: QuestionNavigatorProps) {
           <span className="h-2.5 w-2.5 rounded-full bg-primary/40" aria-hidden /> Answered
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-surface-subtle" aria-hidden /> Unanswered
+          <span className="h-2.5 w-2.5 rounded-full bg-error" aria-hidden /> Unanswered
         </span>
         <span className="flex items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full bg-warning" aria-hidden /> Marked as guess

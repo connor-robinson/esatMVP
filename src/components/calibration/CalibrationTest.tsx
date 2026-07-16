@@ -714,7 +714,10 @@ export function CalibrationTest() {
               </div>
               <button
                 type="button"
-                className={cn(SESSION_BAR_BTN_PRIMARY, "mt-5 w-full")}
+                className={cn(
+                  SESSION_BAR_BTN,
+                  "mt-5 w-full font-semibold bg-secondary text-background hover:brightness-110",
+                )}
                 onClick={() => {
                   commitTime();
                   setShowNavigator(false);
