@@ -117,9 +117,9 @@ export function MarketingHomepage() {
               <div className="flex min-w-0 items-center gap-4">
                 <div className="flex shrink-0 -space-x-3">
                   {[
-                    { src: "/home/tutors/tutor-1.png", alt: "Oxbridge tutor" },
-                    { src: "/home/tutors/tutor-2.png", alt: "Oxbridge tutor" },
-                    { src: "/home/tutors/tutor-3.png", alt: "Oxbridge tutor" },
+                    { src: "/home/tutors/tutor-1.png", alt: "Tutor portrait" },
+                    { src: "/home/tutors/tutor-2.png", alt: "Tutor portrait" },
+                    { src: "/home/tutors/tutor-3.png", alt: "Tutor portrait" },
                   ].map((tutor) => (
                     <Image
                       key={tutor.src}
@@ -242,7 +242,19 @@ export function MarketingHomepage() {
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#94A3B8] mb-3">
                 Try without signing up
               </p>
-              <div className="flex flex-wrap justify-center gap-2">
+              <div className="flex flex-wrap justify-center gap-3">
+                <Link
+                  href="/mental-maths/drill"
+                  className="rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-[#0A0F1D] shadow-[0_10px_30px_rgba(0,0,0,0.18)] transition-all hover:bg-slate-200"
+                >
+                  Try trainer
+                </Link>
+                <Link
+                  href="/questions"
+                  className="rounded-xl bg-[#3B82F6] px-5 py-2.5 text-sm font-bold text-white shadow-[0_10px_30px_rgba(59,130,246,0.25)] transition-all hover:bg-[#2563EB]"
+                >
+                  Try question bank
+                </Link>
                 <Link
                   href={FERMI_GUESSR_PLAY_PATH}
                   onClick={() =>
@@ -251,27 +263,9 @@ export function MarketingHomepage() {
                       destination: FERMI_GUESSR_PLAY_PATH,
                     })
                   }
-                  className="rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                  className="rounded-xl bg-white/10 px-5 py-2.5 text-sm font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_10px_30px_rgba(0,0,0,0.16)] backdrop-blur transition-all hover:bg-white/15"
                 >
-                  FermiGuessr
-                </Link>
-                <Link
-                  href="/tools/score-converter"
-                  onClick={() =>
-                    void trackHomepageEvent("score_converter_clicked", {
-                      user_state: "logged_out",
-                      destination: "/tools/score-converter",
-                    })
-                  }
-                  className="rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/10"
-                >
-                  Score converter
-                </Link>
-                <Link
-                  href="/mental-maths/drill"
-                  className="rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/10"
-                >
-                  Practice modes
+                  Try FermiGuessr
                 </Link>
               </div>
             </div>
@@ -308,9 +302,9 @@ export function MarketingHomepage() {
               </div>
               <Link
                 href="/mental-maths/drill"
-                className="w-full py-3 border border-[#3B82F6] text-[#3B82F6] hover:bg-[#3B82F6] hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#3B82F6] py-3 font-bold text-white shadow-[0_12px_30px_rgba(59,130,246,0.22)] transition-all hover:bg-[#2563EB]"
               >
-                Try Trainer{" "}
+                Try trainer{" "}
                 <span className="material-symbols-outlined text-sm">bolt</span>
               </Link>
             </div>
@@ -328,8 +322,8 @@ export function MarketingHomepage() {
                 Past Papers
               </h4>
               <p className="text-[#94A3B8] mb-6">
-                Every single paper, planned & tracked. Know exactly where you
-                stand with your percentile progress.
+                All official past papers plus our own targeted practice, planned
+                into a roadmap that fits your revision schedule.
               </p>
               <div className="mt-auto space-y-3 mb-6">
                 <div className="flex items-center gap-3 bg-white/5 p-3 rounded-lg border border-white/10">
@@ -358,10 +352,10 @@ export function MarketingHomepage() {
                 </div>
               </div>
               <Link
-                href="/past-papers/library"
-                className="w-full py-3 border border-[#3B82F6] text-[#3B82F6] hover:bg-[#3B82F6] hover:text-white font-bold rounded-xl transition-all"
+                href="/past-papers/roadmap"
+                className="flex w-full items-center justify-center rounded-xl bg-[#3B82F6] py-3 font-bold text-white shadow-[0_12px_30px_rgba(59,130,246,0.22)] transition-all hover:bg-[#2563EB]"
               >
-                View Planner
+                View roadmap
               </Link>
             </div>
 
@@ -378,8 +372,8 @@ export function MarketingHomepage() {
                 {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ Practice Questions
               </h4>
               <p className="text-[#94A3B8] mb-6">
-                Never run out of practice questions. Catered & created by
-                Cambridge tutors specifically for these exams.
+                Practise by subject, difficulty, and topic with instant
+                feedback and analytics.
               </p>
               <div className="mt-auto relative rounded-xl border border-dashed border-white/20 p-6 mb-6 text-center">
                 <span className="material-symbols-outlined text-4xl text-white/10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -393,10 +387,10 @@ export function MarketingHomepage() {
                 </p>
               </div>
               <Link
-                href="/questions/questionbank"
-                className="w-full py-3 border border-[#3B82F6] text-[#3B82F6] hover:bg-[#3B82F6] hover:text-white font-bold rounded-xl transition-all"
+                href="/questions"
+                className="flex w-full items-center justify-center rounded-xl bg-[#3B82F6] py-3 font-bold text-white shadow-[0_12px_30px_rgba(59,130,246,0.22)] transition-all hover:bg-[#2563EB]"
               >
-                Start Question Bank
+                Try question bank
               </Link>
             </div>
           </div>
@@ -669,9 +663,8 @@ export function MarketingHomepage() {
               </button>
               {expandedFaq === 1 && (
                 <div className="px-6 pb-6 text-[#94A3B8] leading-relaxed text-sm">
-                  Yes, all our practice questions are created specifically for
-                  the 2024 syllabus requirements by Cambridge tutors who are
-                  familiar with the latest exam formats and content.
+                  Yes, the question bank is built around the current syllabus
+                  and updated as exam formats change.
                 </div>
               )}
             </div>
