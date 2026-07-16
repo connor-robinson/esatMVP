@@ -42,30 +42,34 @@ export function GuestDrillHintCallout({
   const reduceMotion = useReducedMotion();
 
   return (
-    <motion.div
+    <div
       className={cn(
         'pointer-events-none flex flex-col items-center gap-1 text-center',
         className,
       )}
-      animate={reduceMotion ? undefined : { y: [0, -5, 0] }}
-      transition={
-        reduceMotion
-          ? undefined
-          : { duration: 2.2, repeat: Infinity, ease: 'easeInOut' }
-      }
       aria-hidden
     >
-      <span className='whitespace-nowrap rounded-organic-md border border-primary/25 bg-surface-elevated px-3 py-1.5 font-heading text-base font-bold leading-tight text-text shadow-sm sm:text-lg'>
-        {label}
-      </span>
-      {arrowDown ? (
-        <ArrowDown
-          className='h-5 w-5 text-primary sm:h-6 sm:w-6'
-          strokeWidth={2.25}
-          aria-hidden
-        />
-      ) : null}
-    </motion.div>
+      <motion.div
+        className='flex flex-col items-center gap-1'
+        animate={reduceMotion ? undefined : { y: [0, -5, 0] }}
+        transition={
+          reduceMotion
+            ? undefined
+            : { duration: 2.2, repeat: Infinity, ease: 'easeInOut' }
+        }
+      >
+        <span className='whitespace-nowrap rounded-organic-md bg-surface-elevated px-3 py-1.5 font-heading text-base font-bold leading-tight text-text shadow-sm sm:text-lg'>
+          {label}
+        </span>
+        {arrowDown ? (
+          <ArrowDown
+            className='h-5 w-5 text-primary sm:h-6 sm:w-6'
+            strokeWidth={2.25}
+            aria-hidden
+          />
+        ) : null}
+      </motion.div>
+    </div>
   );
 }
 

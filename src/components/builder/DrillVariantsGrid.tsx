@@ -48,6 +48,7 @@ function DrillModuleCard({
   isSelected,
   locked,
   featured,
+  mostUseful,
   showTryHint,
   onAdd,
   onRemove,
@@ -59,6 +60,7 @@ function DrillModuleCard({
   isSelected: boolean;
   locked?: boolean;
   featured?: boolean;
+  mostUseful?: boolean;
   showTryHint?: boolean;
   onAdd: () => void;
   onRemove: () => void;
@@ -70,14 +72,14 @@ function DrillModuleCard({
   return (
     <div
       className={cn(
-        'relative flex min-h-[6.5rem] flex-col rounded-organic-md p-3 transition-all',
+        'relative flex flex-col rounded-organic-md p-3 transition-all',
+        mostUseful ? 'min-h-[7.5rem]' : 'min-h-[7.25rem]',
         locked
           ? 'bg-surface-elevated'
           : isSelected
             ? 'bg-folder-card-selected shadow-sm'
             : 'bg-surface-elevated hover:bg-surface-neutral',
-        hintVisible &&
-          'z-50 bg-surface-elevated shadow-[0_0_0_2px_var(--color-primary)]',
+        hintVisible && 'z-50 overflow-visible bg-surface-elevated',
       )}
     >
       <div className='mb-2 flex items-start justify-between gap-2'>
@@ -137,7 +139,7 @@ function DrillModuleCard({
               onClick={onAdd}
               className={cn(
                 'relative flex items-center gap-1 rounded-organic-sm bg-surface-dark px-3 py-2 text-xs font-bold text-[#9a939f] transition-colors hover:bg-surface-mid hover:text-text dark:text-[#c4bec9]',
-                hintVisible && 'z-[60] shadow-[0_0_0_2px_var(--color-primary)]',
+                hintVisible && 'z-[60]',
               )}
             >
               <Plus className='h-3.5 w-3.5 shrink-0' />
@@ -294,6 +296,7 @@ export function DrillVariantsGrid({
                   isSelected={isSelected}
                   locked={locked}
                   featured={mod.featured}
+                  mostUseful
                   showTryHint={showGuestTryHint}
                   onAdd={() =>
                     onAddVariant(compositeId, mod.topicId, mod.variantId)

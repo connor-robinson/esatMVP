@@ -390,8 +390,7 @@ export function SessionSelectionBar({
                     showClearAll ? "sm:w-auto" : "sm:min-w-[12rem]",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated dark:focus-visible:ring-offset-surface-elevated",
                     "disabled:cursor-not-allowed",
-                    showReviewCallout &&
-                      "z-[60] shadow-[0_0_0_2px_var(--color-primary)]",
+                    showReviewCallout && "z-[60]",
                     canStartSession
                       ? cn(
                           "bg-primary shadow-md shadow-primary/20 hover:bg-primary-hover active:scale-[0.97]",
