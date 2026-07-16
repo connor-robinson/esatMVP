@@ -37,7 +37,7 @@ function StatPill({
     <div
       className={
         highlight
-          ? "rounded-organic-xl bg-success px-5 py-4 text-neutral-950 shadow-glow"
+          ? "rounded-organic-xl bg-secondary px-5 py-4 text-neutral-950"
           : "rounded-organic-xl bg-surface-elevated px-5 py-4"
       }
     >
@@ -80,13 +80,16 @@ function SuggestedNextSteps({
   onQuestionBankClick: () => void;
 }) {
   return (
-    <section className="relative overflow-hidden rounded-organic-xl bg-surface-elevated px-5 py-5 sm:px-7 sm:py-6">
+    <section className="relative overflow-hidden rounded-organic-xl bg-surface-mid px-5 py-5 sm:px-7 sm:py-6">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle,rgba(255,255,255,0.07)_1px,transparent_1px)] bg-[length:11px_11px] dark:bg-[radial-gradient(circle,rgba(255,255,255,0.055)_1px,transparent_1px)]"
       />
-      <div className="pointer-events-none absolute inset-y-0 right-[18%] flex w-40 items-center justify-center text-primary opacity-[0.13] sm:right-[24%] sm:w-56" aria-hidden>
-        <BrandLogo variant="mark" size="lg" className="!h-32 sm:!h-40" alt="" />
+      <div
+        className="pointer-events-none absolute -bottom-24 -right-12 flex h-[22rem] w-[26rem] items-center justify-center opacity-[0.14] sm:-bottom-32 sm:-right-10 sm:h-[30rem] sm:w-[34rem]"
+        aria-hidden
+      >
+        <BrandLogo variant="mark" size="lg" className="!h-[22rem] sm:!h-[30rem]" alt="" />
       </div>
 
       <div className="relative z-10 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
@@ -95,7 +98,8 @@ function SuggestedNextSteps({
             Your suggested next steps
           </p>
           <h2 className="mt-2 font-heading text-xl font-bold text-text sm:text-2xl">
-            We spotted that you were weakest at {weakness}.
+            We spotted that you were weakest at{" "}
+            <span className="text-secondary">{weakness}</span>.
           </h2>
           <p className="mt-1.5 text-sm text-text-muted">
             Build this skill with focused questions, or sharpen your core speed first.
@@ -274,7 +278,7 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
 
       {/* Charts */}
       <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(22rem,1fr)]">
-        <Card variant="elevated" className="p-5 sm:p-6">
+        <Card variant="elevated" className="border-0 p-5 shadow-none sm:p-6">
           <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
             <div>
               <h2 className="font-heading text-xl font-bold text-text">Accuracy and time</h2>
@@ -294,7 +298,7 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
           />
         </Card>
 
-        <Card variant="elevated" className="p-5 sm:p-6">
+        <Card variant="elevated" className="border-0 p-5 shadow-none sm:p-6">
           <h2 className="font-heading text-xl font-bold text-text">Topics and weaknesses</h2>
           <p className="mt-1 text-sm text-text-muted">How the calibration was split by topic.</p>
           <div className="mt-4">
@@ -315,20 +319,11 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
               </div>
             ))}
           </div>
-          <div className="mt-5 rounded-organic-lg bg-surface-mid/50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-text-muted">
-              Weakest area
-            </p>
-            <p className="mt-1 font-heading text-lg font-bold text-text">{weakestTopic}</p>
-            <p className="mt-1 text-sm text-text-muted">
-              {recommendation?.reason ?? results.recommendedSession.reason}
-            </p>
-          </div>
         </Card>
       </div>
 
       {/* Guessing and certainty */}
-      <Card variant="elevated" className="p-5 sm:p-6">
+      <Card variant="elevated" className="border-0 p-5 shadow-none sm:p-6">
         <h2 className="font-heading text-xl font-bold text-text">Guessing and certainty</h2>
         <dl className="mt-4 grid gap-x-8 gap-y-4 sm:grid-cols-4">
           {[
