@@ -288,11 +288,7 @@ export function MarketingHomepage() {
             <h3 className="text-4xl font-display font-bold">
               What do we offer?
             </h3>
-            <p className="text-[#94A3B8]">
-              Everything you need to master the rigorous assessment process of
-              the world&apos;s most prestigious university.
-            </p>
-            <p className="pt-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#94A3B8]">
+            <p className="text-lg text-[#94A3B8] sm:text-xl">
               Try without signing up
             </p>
           </div>
