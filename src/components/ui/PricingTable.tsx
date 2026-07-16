@@ -47,7 +47,7 @@ export function PricingTable({
   return (
     <div className={cn("space-y-6", className)}>
       <div
-        className="mx-auto grid max-w-7xl items-stretch gap-5 py-5 sm:grid-cols-2 xl:grid-cols-4"
+        className="mx-auto grid max-w-7xl items-stretch gap-5 py-10 sm:grid-cols-2 xl:grid-cols-4 xl:gap-8"
         onMouseLeave={() => setHoveredId(null)}
       >
         {tiers.map((tier) => {
@@ -68,7 +68,7 @@ export function PricingTable({
                 CARD_SHELL,
                 "origin-center transition-[transform,background-color,box-shadow,color] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]",
                 isActive
-                  ? "z-10 scale-[1.055] bg-primary text-black shadow-[0_20px_56px_-18px_rgba(0,0,0,0.55)]"
+                  ? "z-10 scale-[1.25] bg-primary text-black shadow-[0_24px_60px_-16px_rgba(0,0,0,0.55)]"
                   : "z-0 scale-100 bg-surface-elevated",
                 isFree && "cursor-default",
               )}
