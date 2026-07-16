@@ -1,4 +1,6 @@
-import { ReactNode } from "react";
+"use client";
+
+import { ReactNode, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Check, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -35,38 +37,66 @@ export function PricingTable({
   className,
   footer,
 }: PricingTableProps) {
+  const defaultActiveId =
+    tiers.find((tier) => tier.highlighted)?.id ?? null;
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+
+  const activeId =
+    hoveredId && hoveredId !== "free" ? hoveredId : defaultActiveId;
+
   return (
     <div className={cn("space-y-6", className)}>
-      <div className="mx-auto grid max-w-7xl gap-5 sm:grid-cols-2 xl:grid-cols-4">
+      <div
+        className="mx-auto grid max-w-7xl items-stretch gap-5 py-5 sm:grid-cols-2 xl:grid-cols-4"
+        onMouseLeave={() => setHoveredId(null)}
+      >
         {tiers.map((tier) => {
           const isFree = tier.id === "free";
           const isLoading = tier.ctaLabel.startsWith("Loading");
           const isCurrentPlan = tier.ctaLabel === "Current plan";
-          const isHighlighted = tier.highlighted === true;
-          const showPrimaryCta =
-            !isFree && !isCurrentPlan && !isLoading;
+          const isActive = activeId === tier.id;
+          const showPrimaryCta = !isFree && !isCurrentPlan && !isLoading;
 
           return (
             <div
               key={tier.id}
+              onMouseEnter={() => {
+                if (isFree) setHoveredId(null);
+                else setHoveredId(tier.id);
+              }}
               className={cn(
                 CARD_SHELL,
-                isHighlighted
-                  ? "bg-primary text-black shadow-[0_16px_48px_-20px_rgba(0,0,0,0.45)]"
-                  : "bg-surface-elevated",
-                tier.featured && !isHighlighted && "overflow-hidden",
+                "origin-center transition-[transform,background-color,box-shadow,color] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]",
+                isActive
+                  ? "z-10 scale-[1.055] bg-primary text-black shadow-[0_20px_56px_-18px_rgba(0,0,0,0.55)]"
+                  : "z-0 scale-100 bg-surface-elevated",
+                tier.featured && !isActive && "overflow-hidden",
+                isFree && "cursor-default",
               )}
             >
               {tier.featured ? (
                 <>
                   <div
-                    className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/45 to-transparent"
+                    className={cn(
+                      "pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent to-transparent",
+                      isActive ? "via-black/25" : "via-primary/45",
+                    )}
                     aria-hidden
                   />
                   <div className="absolute right-5 top-5">
-                    <span className="inline-flex items-center gap-1.5 rounded-organic-md bg-surface-mid px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-text">
+                    <span
+                      className={cn(
+                        "inline-flex items-center gap-1.5 rounded-organic-md px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] transition-colors duration-300",
+                        isActive
+                          ? "bg-black/15 text-black"
+                          : "bg-surface-mid text-text",
+                      )}
+                    >
                       <Crown
-                        className="h-3 w-3 shrink-0 text-primary"
+                        className={cn(
+                          "h-3 w-3 shrink-0 transition-colors duration-300",
+                          isActive ? "text-black" : "text-primary",
+                        )}
                         strokeWidth={2.5}
                         aria-hidden
                       />
@@ -79,8 +109,8 @@ export function PricingTable({
               <div className={cn("mb-5 space-y-2", tier.featured && "pr-24")}>
                 <h3
                   className={cn(
-                    "text-lg font-semibold tracking-tight",
-                    isHighlighted ? "text-black" : "text-text",
+                    "text-lg font-semibold tracking-tight transition-colors duration-300",
+                    isActive ? "text-black" : "text-text",
                   )}
                 >
                   {tier.name}
@@ -88,8 +118,8 @@ export function PricingTable({
                 <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
                   <span
                     className={cn(
-                      "text-2xl font-bold tracking-tight sm:text-3xl",
-                      isHighlighted ? "text-black" : "text-text",
+                      "text-2xl font-bold tracking-tight transition-colors duration-300 sm:text-3xl",
+                      isActive ? "text-black" : "text-text",
                     )}
                   >
                     {tier.price}
@@ -97,8 +127,8 @@ export function PricingTable({
                   {tier.caption ? (
                     <span
                       className={cn(
-                        "text-sm",
-                        isHighlighted ? "text-black/75" : "text-text-muted",
+                        "text-sm transition-colors duration-300",
+                        isActive ? "text-black/75" : "text-text-muted",
                       )}
                     >
                       {tier.caption}
@@ -108,8 +138,8 @@ export function PricingTable({
                 {tier.priceNote ? (
                   <p
                     className={cn(
-                      "text-xs leading-snug",
-                      isHighlighted ? "text-black/70" : "text-text-subtle",
+                      "text-xs leading-snug transition-colors duration-300",
+                      isActive ? "text-black/70" : "text-text-subtle",
                     )}
                   >
                     {tier.priceNote}
@@ -119,16 +149,16 @@ export function PricingTable({
 
               <ul
                 className={cn(
-                  "mb-6 flex-1 space-y-3 text-sm",
-                  isHighlighted ? "text-black/85" : "text-text-muted",
+                  "mb-6 flex-1 space-y-3 text-sm transition-colors duration-300",
+                  isActive ? "text-black/85" : "text-text-muted",
                 )}
               >
                 {tier.features.map((feature) => (
                   <li key={feature} className="flex gap-3">
                     <Check
                       className={cn(
-                        "mt-0.5 h-4 w-4 shrink-0",
-                        isHighlighted ? "text-black" : "text-primary",
+                        "mt-0.5 h-4 w-4 shrink-0 transition-colors duration-300",
+                        isActive ? "text-black" : "text-primary",
                       )}
                       strokeWidth={2.5}
                       aria-hidden
@@ -143,19 +173,20 @@ export function PricingTable({
                 size="md"
                 disabled={isCurrentPlan || isLoading}
                 className={cn(
-                  "w-full rounded-organic-lg font-semibold",
-                  isHighlighted &&
+                  "w-full rounded-organic-lg border-0 font-semibold transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]",
+                  showPrimaryCta && "hover:scale-[1.06] active:scale-[1.02]",
+                  isActive &&
                     showPrimaryCta &&
-                    "animate-pricing-bulge border-0 !bg-black !text-white hover:!bg-black/90 hover:!text-white hover:shadow-none",
-                  isHighlighted &&
+                    "!bg-black !text-white hover:!bg-black/90 hover:!text-white hover:shadow-none",
+                  isActive &&
                     !showPrimaryCta &&
-                    "border-0 bg-black/15 text-black hover:bg-black/20",
-                  !isHighlighted &&
+                    "bg-black/15 text-black hover:bg-black/20",
+                  !isActive &&
                     showPrimaryCta &&
-                    "border-0 bg-surface-mid text-text shadow-sm hover:bg-surface-neutral hover:text-text",
-                  !isHighlighted &&
+                    "bg-surface-mid text-text shadow-sm hover:bg-surface-neutral hover:text-text",
+                  !isActive &&
                     !showPrimaryCta &&
-                    "border-0 bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text",
+                    "bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text",
                 )}
                 onClick={() => onSelect(tier.id)}
               >

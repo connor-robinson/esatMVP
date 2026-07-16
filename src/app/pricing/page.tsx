@@ -122,9 +122,36 @@ export default function PricingPage() {
   return (
     <div className="relative min-h-[calc(100vh-58px)] overflow-hidden bg-background">
       <div className="pointer-events-none absolute inset-0" aria-hidden>
-        <div className="absolute left-1/2 top-0 h-[28rem] w-[min(100%,56rem)] -translate-x-1/2 rounded-full bg-primary/[0.05] blur-3xl" />
-        <div className="absolute bottom-0 right-0 h-[20rem] w-[28rem] rounded-full bg-white/[0.02] blur-3xl" />
-        <div className="absolute inset-0 opacity-[0.025] [background-image:linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] [background-size:56px_56px]" />
+        {/* Soft green ray from above */}
+        <div className="absolute left-1/2 top-[-18%] h-[70vh] w-[min(100%,48rem)] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,color-mix(in_srgb,var(--color-primary)_28%,transparent)_0%,color-mix(in_srgb,var(--color-primary)_10%,transparent)_38%,transparent_72%)] blur-2xl" />
+        <div className="absolute left-1/2 top-0 h-[52%] w-[min(92vw,42rem)] -translate-x-1/2 bg-[conic-gradient(from_210deg_at_50%_0%,transparent_0deg,color-mix(in_srgb,var(--color-primary)_14%,transparent)_28deg,transparent_62deg,transparent_298deg,color-mix(in_srgb,var(--color-primary)_14%,transparent)_332deg,transparent_360deg)] opacity-80" />
+        <div className="absolute left-1/2 top-0 h-[42%] w-px -translate-x-1/2 bg-gradient-to-b from-primary/35 via-primary/12 to-transparent blur-[1px]" />
+
+        {/* Green dot field, strongest under the ray */}
+        <div
+          className="absolute inset-0 opacity-[0.55]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, color-mix(in srgb, var(--color-primary) 55%, transparent) 1px, transparent 1.15px)",
+            backgroundSize: "22px 22px",
+            maskImage:
+              "radial-gradient(ellipse 75% 65% at 50% 28%, black 15%, transparent 78%)",
+            WebkitMaskImage:
+              "radial-gradient(ellipse 75% 65% at 50% 28%, black 15%, transparent 78%)",
+          }}
+        />
+        <div
+          className="absolute inset-0 opacity-[0.22]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, color-mix(in srgb, var(--color-primary) 40%, transparent) 0.7px, transparent 1px)",
+            backgroundSize: "11px 11px",
+            maskImage:
+              "radial-gradient(ellipse 55% 45% at 50% 18%, black 10%, transparent 70%)",
+            WebkitMaskImage:
+              "radial-gradient(ellipse 55% 45% at 50% 18%, black 10%, transparent 70%)",
+          }}
+        />
       </div>
 
       <Container size="xl" className="relative pb-16 pt-12 sm:pb-24 sm:pt-16">
