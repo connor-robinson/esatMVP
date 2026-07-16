@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { StemContent } from "@/components/shared/StemContent";
 
 type TrainerQuestion = {
   id: string;
@@ -16,22 +15,22 @@ const QUESTIONS: TrainerQuestion[] = [
   {
     id: "arithmetic",
     topic: "Arithmetic",
-    prompt: "$48 \\times 25$",
+    prompt: "48 × 25",
     options: ["1,200", "960"],
     correctIndex: 0,
   },
   {
     id: "complete-square",
     topic: "Complete the square",
-    prompt: "Rewrite $x^2 + 6x + 2$ as $(x + a)^2 + b$. What is $a$?",
+    prompt: "x² + 6x + 2 → (x + a)² + b\nWhat is a?",
     options: ["3", "6"],
     correctIndex: 0,
   },
   {
     id: "special-triangles",
     topic: "Special triangles",
-    prompt: "In a $45$-$45$-$90$ triangle, a leg is $5$. What is the hypotenuse?",
-    options: ["$5\\sqrt{2}$", "$5\\sqrt{3}$"],
+    prompt: "45-45-90 · leg = 5\nHypotenuse?",
+    options: ["5√2", "5√3"],
     correctIndex: 0,
   },
 ];
@@ -67,7 +66,7 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "w-full max-w-[26rem] justify-self-end rounded-3xl bg-white/[0.08] p-5 backdrop-blur-xl sm:p-6 lg:max-w-[28rem]",
+        "flex w-full max-w-[26rem] flex-col justify-self-end rounded-3xl bg-white/[0.08] p-7 backdrop-blur-xl sm:max-w-[28rem] sm:p-9 lg:min-h-[32rem] lg:p-10",
         className,
       )}
     >
@@ -82,27 +81,29 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
         </div>
       </div>
 
-      <div className="mt-5 flex flex-col items-center text-center">
+      <div className="mt-8 flex flex-1 flex-col items-center justify-center text-center sm:mt-10">
         <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#3B82F6]">
           {question.topic}
         </p>
 
-        <div className="mt-4 flex min-h-[5.5rem] items-center justify-center px-1 text-xl font-semibold leading-snug text-white sm:min-h-[6rem] sm:text-2xl">
-          <StemContent content={question.prompt} className="text-inherit [&_.katex]:text-[#3B82F6]" />
+        <div className="mt-8 flex min-h-[7.5rem] items-center justify-center px-2 sm:mt-10 sm:min-h-[8.5rem]">
+          <p className="whitespace-pre-line font-mono text-3xl font-medium leading-snug text-[#3B82F6] sm:text-4xl">
+            {question.prompt}
+          </p>
         </div>
 
-        <div className="mt-5 h-1 w-full max-w-[12rem] overflow-hidden rounded-full bg-white/10">
+        <div className="mt-8 h-1.5 w-full max-w-[14rem] overflow-hidden rounded-full bg-white/10 sm:mt-10">
           <div
             className="h-full rounded-full bg-[#3B82F6] transition-[width] duration-500 ease-out"
             style={{ width: `${Math.max(12, progress)}%` }}
           />
         </div>
 
-        <p className="mt-2 text-[11px] font-medium tabular-nums text-[#94A3B8]">
+        <p className="mt-3 text-xs font-medium tabular-nums text-[#94A3B8]">
           {index + 1} / {QUESTIONS.length}
         </p>
 
-        <div className="mt-6 grid w-full grid-cols-2 gap-3">
+        <div className="mt-8 grid w-full grid-cols-2 gap-4 sm:mt-10">
           {question.options.map((option, optionIndex) => {
             const selected = picked === optionIndex;
             const isCorrectOption = optionIndex === question.correctIndex;
@@ -116,7 +117,7 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
                 onClick={() => handlePick(optionIndex as 0 | 1)}
                 disabled={picked !== null}
                 className={cn(
-                  "rounded-xl px-3 py-3.5 text-lg font-bold transition-all duration-200",
+                  "rounded-xl px-4 py-5 font-mono text-xl font-bold transition-all duration-200 sm:py-6 sm:text-2xl",
                   picked === null &&
                     "bg-white/5 text-white hover:bg-white/10 active:scale-[0.98]",
                   showCorrect && "bg-[#3B82F6] text-white",
@@ -127,7 +128,7 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
                     "bg-white/5 text-white/40",
                 )}
               >
-                <StemContent content={option} className="text-inherit" />
+                {option}
               </button>
             );
           })}
@@ -135,7 +136,7 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
 
         <p
           className={cn(
-            "mt-4 h-5 text-xs font-semibold transition-opacity",
+            "mt-6 h-5 text-xs font-semibold transition-opacity",
             flash === "correct" && "text-[#3B82F6] opacity-100",
             flash === "wrong" && "text-red-300 opacity-100",
             !flash && "opacity-0",

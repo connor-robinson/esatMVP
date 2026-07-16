@@ -67,12 +67,12 @@ export function MarketingHomepage() {
         <div className="relative max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6 space-y-12 lg:space-y-16">
           <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-10 xl:gap-12">
             <div className="max-w-2xl space-y-8">
-              <h1 className="text-5xl font-display font-bold leading-[1.08] tracking-tight sm:text-6xl lg:text-7xl">
+              <h1 className="text-5xl font-display font-bold leading-[1.08] tracking-tight sm:text-6xl lg:text-[4.25rem] xl:text-7xl">
                 Master the <span className="text-underline-accent">ESAT</span>.
                 <br />
-                Secure your Oxbridge
+                Secure your
                 <br />
-                offer.
+                <span className="whitespace-nowrap">Oxbridge offer.</span>
               </h1>
               <p className="text-xl text-[#94A3B8] max-w-2xl leading-relaxed">
                 The ESAT is the admissions test for many university courses at
