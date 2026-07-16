@@ -19,34 +19,51 @@ export default function CalibrationResultsPage() {
   const attemptId = params.attemptId;
   const session = useSupabaseSession();
   const [attempt, setAttempt] = useState<CalibrationAttempt | null>(null);
-  const [status, setStatus] = useState<"loading" | "ready" | "not_found">("loading");
+  const [status, setStatus] = useState<
+    "analyzing" | "sign_in_required" | "ready" | "not_found"
+  >("analyzing");
 
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
+      const startedAt = Date.now();
+      const finishAfterMinimumLoading = async () => {
+        const elapsed = Date.now() - startedAt;
+        if (elapsed < 1400) {
+          await new Promise((resolve) => setTimeout(resolve, 1400 - elapsed));
+        }
+      };
+
       // 1. Prefer the local copy (works for anonymous users immediately, and
       //    survives sign-in so results are never lost).
       const local = loadAttempt(attemptId);
       if (local) {
+        await finishAfterMinimumLoading();
+        if (cancelled) return;
+
+        if (!session?.user) {
+          setAttempt(local);
+          setStatus("sign_in_required");
+          return;
+        }
+
         if (!cancelled) {
           setAttempt(local);
           setStatus("ready");
         }
         // 2. If signed in, merge the local attempt into the account (idempotent upsert).
-        if (session?.user) {
-          const owned: CalibrationAttempt = { ...local };
-          const results = computeResults(owned);
-          try {
-            await fetch("/api/calibration/attempts", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ attempt: owned, result: results }),
-            });
-            saveAttempt(owned);
-          } catch {
-            /* best-effort merge */
-          }
+        const owned: CalibrationAttempt = { ...local };
+        const results = computeResults(owned);
+        try {
+          await fetch("/api/calibration/attempts", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ attempt: owned, result: results }),
+          });
+          saveAttempt(owned);
+        } catch {
+          /* best-effort merge */
         }
         return;
       }
@@ -58,6 +75,8 @@ export default function CalibrationResultsPage() {
           if (res.ok) {
             const data = await res.json();
             if (data.attempt && !cancelled) {
+              await finishAfterMinimumLoading();
+              if (cancelled) return;
               setAttempt(data.attempt as CalibrationAttempt);
               setStatus("ready");
               return;
@@ -68,6 +87,7 @@ export default function CalibrationResultsPage() {
         }
       }
 
+      await finishAfterMinimumLoading();
       if (!cancelled) setStatus("not_found");
     }
 
@@ -82,10 +102,48 @@ export default function CalibrationResultsPage() {
     [attempt],
   );
 
-  if (status === "loading") {
+  if (status === "analyzing") {
     return (
-      <Container className="flex min-h-[50vh] items-center justify-center py-16">
-        <LoadingSpinner size="md" />
+      <Container className="flex min-h-[70vh] items-center justify-center py-16">
+        <div className="max-w-md text-center">
+          <LoadingSpinner size="lg" />
+          <h1 className="mt-6 font-heading text-2xl font-bold text-text">
+            Analysing your calibration
+          </h1>
+          <p className="mt-3 text-sm leading-relaxed text-text-muted">
+            We are checking your accuracy, timing and guessed answers to build a
+            concise Math 1 result.
+          </p>
+        </div>
+      </Container>
+    );
+  }
+
+  if (status === "sign_in_required" && attempt) {
+    const redirectTo = `${CALIBRATION_ROUTES.math1}/results/${attemptId}`;
+    return (
+      <Container className="flex min-h-[70vh] items-center justify-center py-16">
+        <Card variant="elevated" className="mx-auto max-w-lg p-8 text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-success">
+            Results ready
+          </p>
+          <h1 className="mt-3 font-heading text-2xl font-bold text-text">
+            Create a free account to view your results
+          </h1>
+          <p className="mt-3 text-sm leading-relaxed text-text-muted">
+            Your calibration is saved on this device. Sign up for free to unlock
+            the result, save it to your account and see it whenever you return to
+            calibration.
+          </p>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <Link href={`/signup?redirectTo=${encodeURIComponent(redirectTo)}`}>
+              <Button variant="primary" size="lg">Sign up free</Button>
+            </Link>
+            <Link href={`/login?redirectTo=${encodeURIComponent(redirectTo)}`}>
+              <Button variant="secondary" size="lg">I already have an account</Button>
+            </Link>
+          </div>
+        </Card>
       </Container>
     );
   }
@@ -115,7 +173,7 @@ export default function CalibrationResultsPage() {
   }
 
   return (
-    <Container size="md">
+    <Container size="xl">
       <CalibrationResultsView
         results={results}
         isSignedIn={!!session?.user}

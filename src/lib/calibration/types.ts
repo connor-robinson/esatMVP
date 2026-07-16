@@ -58,6 +58,7 @@ export interface QuestionAttempt {
   answerChangeCount: number;
   answerChangeEvents: AnswerChangeEvent[];
   skipped: boolean;
+  markedAsGuess: boolean;
   markedForReview: boolean;
   returnedLater: boolean;
   initialConfidence: number | null; // 1..5
@@ -183,6 +184,7 @@ export interface MistakeReviewItem {
   correctOption: string;
   correct: boolean;
   skipped: boolean;
+  guessed: boolean;
   confident: boolean | null;
   timeSeconds: number | null;
   errorCategory: string | null;

@@ -21,13 +21,14 @@ import {
 } from "@/lib/calibration/analytics";
 import { calibrationResultsRoute, CALIBRATION_ROUTES } from "@/lib/calibration/constants";
 import type { CalibrationAttempt } from "@/lib/calibration/types";
-import { ConfidenceSelector } from "./ConfidenceSelector";
 import { QuestionNavigator } from "./QuestionNavigator";
 import {
   ArrowRight,
   Flag,
   Grid3X3,
+  HelpCircle,
   LogOut,
+  Sparkles,
   X,
 } from "lucide-react";
 
@@ -289,16 +290,16 @@ export function CalibrationTest() {
     );
   };
 
-  const setConfidence = (value: number) => {
+  const toggleGuess = () => {
+    const willMark = !qAttempt.markedAsGuess;
     mutate((a) => {
       const q = a.questions[question.id];
-      q.confidenceEvents.push({ value, at: Date.now() });
-      if (q.initialConfidence == null) q.initialConfidence = value;
-      q.finalConfidence = value;
+      q.markedAsGuess = willMark;
     });
-    void trackCalibrationEvent("calibration_confidence_submitted", {
+    void trackCalibrationEvent("calibration_marked_for_review", {
       attempt_id: attempt.attemptId,
       question_number: currentIndex + 1,
+      cta_placement: willMark ? "marked_guess" : "unmarked_guess",
     });
   };
 
@@ -476,6 +477,19 @@ export function CalibrationTest() {
               </div>
             </div>
 
+            {currentIndex === 0 ? (
+              <div className="mb-5 max-w-2xl rounded-organic-lg bg-secondary/12 px-4 py-3 text-sm text-text shadow-glow">
+                <div className="flex gap-3">
+                  <HelpCircle className="mt-0.5 h-4 w-4 shrink-0 text-secondary" />
+                  <p>
+                    This calibration estimates your Math 1 level from accuracy,
+                    timing, and which answers you mark as guesses. Mark a guess
+                    when you are choosing mainly by elimination.
+                  </p>
+                </div>
+              </div>
+            ) : null}
+
             <div className="text-[1.05rem] font-sans leading-relaxed tracking-tight text-text sm:text-[1.125rem]">
               <StemContent
                 content={question.question_text_markdown}
@@ -530,13 +544,6 @@ export function CalibrationTest() {
                 );
               })}
             </div>
-
-            {qAttempt.finalSelectedOption != null ? (
-              <ConfidenceSelector
-                value={qAttempt.finalConfidence}
-                onChange={setConfidence}
-              />
-            ) : null}
           </div>
         </div>
       </Container>
@@ -576,6 +583,21 @@ export function CalibrationTest() {
               >
                 <LogOut className="h-4 w-4 shrink-0" />
                 <span className="hidden sm:inline">Leave</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={toggleGuess}
+                className={cn(
+                  SESSION_BAR_BTN_SECONDARY,
+                  qAttempt.markedAsGuess && "text-warning hover:text-warning",
+                )}
+                aria-pressed={qAttempt.markedAsGuess}
+              >
+                <Sparkles className="h-4 w-4 shrink-0" />
+                <span className="hidden sm:inline">
+                  {qAttempt.markedAsGuess ? "Guessed" : "Mark guess"}
+                </span>
               </button>
 
               <button

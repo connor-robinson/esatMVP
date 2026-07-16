@@ -48,6 +48,7 @@ function initialQuestionAttempt(questionId: string, order: number): QuestionAtte
     answerChangeCount: 0,
     answerChangeEvents: [],
     skipped: false,
+    markedAsGuess: false,
     markedForReview: false,
     returnedLater: false,
     initialConfidence: null,

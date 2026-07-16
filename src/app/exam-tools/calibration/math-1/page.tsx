@@ -25,6 +25,7 @@ export default function Math1CalibrationLanding() {
   const session = useSupabaseSession();
   const [inProgress, setInProgress] = useState<CalibrationAttempt | null>(null);
   const [completed, setCompleted] = useState<CalibrationAttempt[]>([]);
+  const [accountLatestAttemptId, setAccountLatestAttemptId] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -34,6 +35,20 @@ export default function Math1CalibrationLanding() {
     void trackCalibrationEvent("calibration_landing_viewed", {
       user_state: session?.user ? "free" : "signed_out",
     });
+
+    if (session?.user) {
+      fetch("/api/calibration/attempts")
+        .then((res) => res.json())
+        .then((data) => {
+          const latest = (data.attempts ?? []).find(
+            (a: { status: string; id: string }) => a.status === "completed",
+          );
+          setAccountLatestAttemptId(latest?.id ?? null);
+        })
+        .catch(() => setAccountLatestAttemptId(null));
+    } else {
+      setAccountLatestAttemptId(null);
+    }
   }, [session?.user]);
 
   const latest = completed[0] ?? null;
@@ -64,7 +79,7 @@ export default function Math1CalibrationLanding() {
     ? "Start"
     : inProgress
       ? "Resume"
-      : latest
+      : latest || accountLatestAttemptId
         ? "Retake"
         : "Start";
 
@@ -82,23 +97,29 @@ export default function Math1CalibrationLanding() {
           </h1>
         </div>
 
-        {loaded && latest && latestResults ? (
+        {loaded && (latest || accountLatestAttemptId) ? (
           <div className="rounded-organic-lg border border-border-subtle bg-surface-subtle/60 px-4 py-3">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="text-[11px] font-mono uppercase tracking-wide text-text-muted">
-                  Last score
+                  Latest result
                 </p>
-                <p className="mt-0.5 font-mono text-lg font-semibold tabular-nums text-text">
-                  {latestResults.overallScore}
-                  <span className="text-sm text-text-muted">/100</span>
-                  <span className="ml-2 text-xs font-normal text-text-muted">
-                    {latestResults.readinessBandLabel}
-                  </span>
-                </p>
+                {latest && latestResults ? (
+                  <p className="mt-0.5 font-mono text-lg font-semibold tabular-nums text-text">
+                    {latestResults.overallScore}
+                    <span className="text-sm text-text-muted">/100</span>
+                    <span className="ml-2 text-xs font-normal text-text-muted">
+                      {latestResults.readinessBandLabel}
+                    </span>
+                  </p>
+                ) : (
+                  <p className="mt-0.5 font-mono text-sm font-semibold text-text">
+                    Saved to your account
+                  </p>
+                )}
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                {scoreDelta != null ? (
+                {latest && scoreDelta != null ? (
                   <span
                     className={cn(
                       "font-mono text-sm font-semibold tabular-nums",
@@ -112,7 +133,9 @@ export default function Math1CalibrationLanding() {
                 <button
                   type="button"
                   onClick={() =>
-                    router.push(calibrationResultsRoute(latest.attemptId))
+                    router.push(
+                      calibrationResultsRoute(latest?.attemptId ?? accountLatestAttemptId!),
+                    )
                   }
                   className="rounded-organic-md bg-surface-mid px-3 py-1.5 text-xs font-mono font-medium text-text hover:bg-surface-neutral"
                 >
@@ -177,13 +200,13 @@ export default function Math1CalibrationLanding() {
 
           <div className="space-y-3 border-t border-border-subtle pt-4">
             <p className="text-sm font-mono leading-relaxed text-text-muted">
-              For each question, choose the one answer you consider correct. After
-              selecting, rate your confidence.
+              For each question, choose the one answer you consider correct. If
+              you are mainly eliminating options, mark it as a guess.
             </p>
             <p className="text-sm font-mono leading-relaxed text-text-muted">
               There are no penalties for incorrect responses. Attempt every question
-              if you can — your timing and confidence help build a more accurate
-              diagnosis.
+              if you can — your timing, accuracy and guesses help build a more
+              useful diagnosis.
             </p>
             <p className="text-sm font-mono leading-relaxed text-text-muted">
               You will receive a readiness score, topic breakdown, speed-versus-accuracy
