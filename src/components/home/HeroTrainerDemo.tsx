@@ -17,6 +17,14 @@ type TrainerQuestion = {
 
 const QUESTIONS: TrainerQuestion[] = [
   {
+    id: "special-triangles",
+    topic: "Special triangles",
+    prompt: "Find the hypotenuse",
+    options: ["5√2", "5√3"],
+    correctIndex: 0,
+    showTriangleDiagram: true,
+  },
+  {
     id: "arithmetic",
     topic: "Arithmetic",
     prompt: "48 × 25",
@@ -29,14 +37,6 @@ const QUESTIONS: TrainerQuestion[] = [
     prompt: "x² + 6x + 2 → (x + a)² + b\nWhat is a?",
     options: ["3", "6"],
     correctIndex: 0,
-  },
-  {
-    id: "special-triangles",
-    topic: "Special triangles",
-    prompt: "Find the hypotenuse",
-    options: ["5√2", "5√3"],
-    correctIndex: 0,
-    showTriangleDiagram: true,
   },
 ];
 
