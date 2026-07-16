@@ -28,6 +28,128 @@ const FREE_FEATURES = [
   "Free calibration & score converter",
 ];
 
+const FAQ_ITEMS = [
+  {
+    question: "When is the best time to start preparing for the ESAT?",
+    answer: [
+      "We recommend starting around four to six months before your test. This gives you enough time to identify weak topics, improve your speed and complete several rounds of timed practice.",
+      "That said, we have also seen students make significant progress in one to two months. The difference is usually how consistently they work. A shorter preparation period can still be effective, but there is far less room for missed sessions, unfinished topics or repeated mistakes.",
+    ],
+  },
+  {
+    question: "Are the practice questions reflective of the current ESAT syllabus?",
+    answer: [
+      "Yes. Every question is designed around the content and skills assessed by the current ESAT specification.",
+      "We also study official ESAT materials and relevant past ENGAA, NSAA and admissions-test questions to reproduce the expected style, difficulty and time pressure. Questions are reviewed for syllabus relevance, clarity and accuracy before being added to the platform.",
+    ],
+  },
+  {
+    question: "Are your questions the same as real ESAT questions?",
+    answer: [
+      "They are not copied from official papers. They are original questions designed to test the same mathematical and scientific skills.",
+      "Our aim is not to imitate the wording of one specific paper. It is to prepare you for unfamiliar problems that require the same reasoning, speed and precision as the real test.",
+    ],
+  },
+  {
+    question: "How difficult are the questions?",
+    answer: [
+      "The question bank includes a range of difficulties, from essential foundation questions to problems intended to challenge high-scoring candidates.",
+      "Some questions may initially feel harder than expected. This is deliberate. It is better to encounter difficult problems during preparation, where you can learn from them, than for the first time under exam conditions.",
+    ],
+  },
+  {
+    question: "Is knowing the syllabus enough to score well?",
+    answer: [
+      "No. Most strong ESAT candidates already understand the underlying school content.",
+      "The difficulty comes from applying that knowledge quickly, recognising unfamiliar problem structures and avoiding mistakes under pressure. Our programme is designed to train these skills rather than simply reteach the syllabus.",
+    ],
+  },
+  {
+    question: "How much preparation do I actually need?",
+    answer: [
+      "This depends on your current level, target universities and weakest modules. However, completing a few practice papers is rarely enough.",
+      "Meaningful improvement normally requires targeted topic practice, reviewing mistakes and gradually introducing strict time limits. Students often underestimate how long it takes to turn understanding into reliable speed.",
+    ],
+  },
+  {
+    question: "What makes ESAT Camp different from a normal question bank?",
+    answer: [
+      "ESAT Camp is built as a complete preparation system rather than a folder of questions.",
+      "The platform helps you practise individual skills, identify weak areas, complete exam-style questions and develop the speed needed for the real test. Each feature has been designed around a specific problem students face when preparing for the ESAT.",
+    ],
+  },
+  {
+    question: "How do you ensure the questions and answers are accurate?",
+    answer: [
+      "Questions are checked for mathematical correctness, syllabus relevance, clarity and answer consistency before publication. We also continue reviewing questions after they are released and investigate any issue reported by a student.",
+      "Admissions-test questions require careful construction. We would rather publish fewer strong questions than fill the platform with large amounts of unreliable content.",
+    ],
+  },
+  {
+    question: "Will memorising methods be enough?",
+    answer: [
+      "Not on its own. Memorised methods help with routine questions, but the ESAT often presents familiar concepts in unfamiliar ways.",
+      "You need to understand why a method works, recognise when it applies and adapt it quickly. Our questions are designed to expose shallow understanding before it costs you marks in the real test.",
+    ],
+  },
+  {
+    question: "What should I do when I get a question wrong?",
+    answer: [
+      "Do not simply read the answer and move on.",
+      "Work out whether the mistake came from missing knowledge, incorrect reasoning, slow calculation or carelessness. Then attempt the question again without looking at the solution. The students who improve fastest are usually the ones who treat every mistake as useful evidence.",
+    ],
+  },
+  {
+    question: "Can I prepare using past papers alone?",
+    answer: [
+      "Past papers are essential, but they are limited in number and should be used carefully.",
+      "Using them too early can waste your most valuable timed resources. Topic practice and original exam-style questions allow you to build the necessary skills first, so official papers can later be used as accurate tests of your progress.",
+    ],
+  },
+  {
+    question: "How important is speed?",
+    answer: [
+      "Extremely important. A student may understand every topic and still underperform because they cannot reach enough questions within the time limit.",
+      "Speed should not come from rushing. It comes from recognising patterns quickly, using efficient methods and making fewer unnecessary calculations. This is why timed practice is built throughout the platform.",
+    ],
+  },
+  {
+    question: "Is ESAT Camp suitable for students aiming for the highest scores?",
+    answer: [
+      "Yes. The platform is designed for ambitious applicants, including students applying to highly competitive courses.",
+      "However, simply having access to difficult questions will not guarantee a strong score. The value comes from completing the work consistently, reviewing mistakes properly and being honest about weaknesses.",
+    ],
+  },
+  {
+    question: "Can ESAT Camp guarantee that I will receive an offer?",
+    answer: [
+      "No responsible preparation platform can guarantee an admissions-test score or university offer.",
+      "What we can provide is a structured, carefully designed programme that gives you the opportunity to prepare thoroughly. Your result will still depend on your starting level, consistency, test-day performance and the strength of the wider applicant cohort.",
+    ],
+  },
+  {
+    question: "Who created ESAT Camp?",
+    answer: [
+      "ESAT Camp was created by students and tutors who understand how frustrating admissions-test preparation can be when resources are scattered, outdated or poorly explained.",
+      "A significant amount of time has gone into researching the test, designing original questions, reviewing solutions and building tools that make preparation more organised and effective. The platform will continue to improve as the ESAT develops.",
+    ],
+  },
+  {
+    question: "What happens if I find an error?",
+    answer: [
+      "You can report it directly through the platform. Every report is reviewed, and genuine issues are corrected as quickly as possible.",
+      "We take accuracy seriously. A trustworthy preparation resource should be willing to investigate mistakes rather than pretend they never happen.",
+    ],
+  },
+  {
+    question: "When should I begin completing timed papers?",
+    answer: [
+      "You should first build enough topic knowledge to make the paper useful, but you should not leave timed practice until the final week.",
+      "Start with individual timed questions and shorter sets. Then move towards complete papers as your preparation develops. The first time you experience full ESAT time pressure should not be on test day.",
+    ],
+  },
+] as const;
+
 export function MarketingHomepage() {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
   const seasonPrice = getSeasonPassPrice();
@@ -544,91 +666,52 @@ export function MarketingHomepage() {
 
       {/* FAQ Section */}
       <section className="py-24 bg-[#0A0F1D]">
-        <div className="max-w-3xl mx-auto px-4 sm:px-5 lg:px-6">
-          <h2 className="text-3xl font-display font-bold text-center mb-16">
-            Common Questions
-          </h2>
-          <div className="space-y-4">
-            {/* FAQ Item 1 */}
-            <div className="border border-white/10 rounded-2xl overflow-hidden bg-white/2">
-              <button
-                type="button"
-                onClick={() => toggleFaq(0)}
-                className="w-full flex items-center justify-between p-6 text-left hover:bg-white/5 transition-colors"
-              >
-                <span className="font-bold">
-                  When is the best time to start preparing?
-                </span>
-                <span
-                  className={`material-symbols-outlined transition-transform ${
-                    expandedFaq === 0 ? "rotate-180" : ""
-                  }`}
+        <div className="max-w-4xl mx-auto px-4 sm:px-5 lg:px-6">
+          <div className="mb-12 text-center">
+            <h2 className="text-3xl font-display font-bold sm:text-4xl">
+              Frequently Asked Questions
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-[#94A3B8] sm:text-base">
+              Clear answers about ESAT preparation, question quality and how to
+              use the platform well.
+            </p>
+          </div>
+          <div className="space-y-3">
+            {FAQ_ITEMS.map((item, index) => {
+              const open = expandedFaq === index;
+              return (
+                <div
+                  key={item.question}
+                  className="overflow-hidden rounded-2xl bg-white/[0.035] transition-colors hover:bg-white/[0.055]"
                 >
-                  expand_more
-                </span>
-              </button>
-              {expandedFaq === 0 && (
-                <div className="px-6 pb-6 text-[#94A3B8] leading-relaxed text-sm">
-                  We recommend starting at least 4-6 months before the exam
-                  date. This allows ample time to master the content and
-                  significantly improve your mental arithmetic speed.
+                  <button
+                    type="button"
+                    onClick={() => toggleFaq(index)}
+                    className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left transition-colors focus-visible:outline-none sm:px-6"
+                    aria-expanded={open}
+                  >
+                    <span className="text-base font-bold leading-snug text-white sm:text-lg">
+                      {item.question}
+                    </span>
+                    <span
+                      className={`material-symbols-outlined shrink-0 text-[#94A3B8] transition-transform ${
+                        open ? "rotate-180 text-[#3B82F6]" : ""
+                      }`}
+                      aria-hidden
+                    >
+                      expand_more
+                    </span>
+                  </button>
+                  {open ? (
+                    <div className="space-y-4 px-5 pb-6 text-sm leading-relaxed text-[#94A3B8] sm:px-6 sm:text-[15px]">
+                      {item.answer.map((paragraph) => (
+                        <p key={paragraph}>{paragraph}</p>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
-              )}
-            </div>
-
-            {/* FAQ Item 2 */}
-            <div className="border border-white/10 rounded-2xl overflow-hidden bg-white/2">
-              <button
-                type="button"
-                onClick={() => toggleFaq(1)}
-                className="w-full flex items-center justify-between p-6 text-left hover:bg-white/5 transition-colors"
-              >
-                <span className="font-bold">
-                  Are the practice questions reflective of the 2024 syllabus?
-                </span>
-                <span
-                  className={`material-symbols-outlined transition-transform ${
-                    expandedFaq === 1 ? "rotate-180" : ""
-                  }`}
-                >
-                  expand_more
-                </span>
-              </button>
-              {expandedFaq === 1 && (
-                <div className="px-6 pb-6 text-[#94A3B8] leading-relaxed text-sm">
-                  Yes, the question bank is built around the current syllabus
-                  and updated as exam formats change.
-                </div>
-              )}
-            </div>
-
-            {/* FAQ Item 3 */}
-            <div className="border border-white/10 rounded-2xl overflow-hidden bg-white/2">
-              <button
-                type="button"
-                onClick={() => toggleFaq(2)}
-                className="w-full flex items-center justify-between p-6 text-left hover:bg-white/5 transition-colors"
-              >
-                <span className="font-bold">
-                  How often is the content updated?
-                </span>
-                <span
-                  className={`material-symbols-outlined transition-transform ${
-                    expandedFaq === 2 ? "rotate-180" : ""
-                  }`}
-                >
-                  expand_more
-                </span>
-              </button>
-              {expandedFaq === 2 && (
-                <div className="px-6 pb-6 text-[#94A3B8] leading-relaxed text-sm">
-                  Our content is regularly updated to reflect changes in the
-                  exam syllabus and format. We typically update questions and
-                  materials quarterly, with major updates before each exam
-                  cycle.
-                </div>
-              )}
-            </div>
+              );
+            })}
           </div>
         </div>
       </section>
