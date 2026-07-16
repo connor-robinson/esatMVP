@@ -74,35 +74,26 @@ export function PricingTable({
               )}
             >
               {tier.featured ? (
-                <>
-                  <div
+                <div className="absolute right-4 top-0 z-20 -translate-y-1/2">
+                  <span
                     className={cn(
-                      "pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent to-transparent",
-                      isActive ? "via-black/25" : "via-primary/45",
+                      "inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] shadow-[0_8px_20px_-10px_rgba(0,0,0,0.55)] transition-colors duration-300",
+                      isActive
+                        ? "bg-black text-white"
+                        : "bg-primary text-black",
                     )}
-                    aria-hidden
-                  />
-                  <div className="absolute right-5 top-0 z-20 -translate-y-1/2">
-                    <span
+                  >
+                    <Crown
                       className={cn(
-                        "inline-flex items-center gap-1.5 rounded-organic-md px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] transition-colors duration-300",
-                        isActive
-                          ? "bg-black/15 text-black"
-                          : "bg-surface-mid text-text",
+                        "h-3.5 w-3.5 shrink-0",
+                        isActive ? "text-primary" : "text-black",
                       )}
-                    >
-                      <Crown
-                        className={cn(
-                          "h-3 w-3 shrink-0 transition-colors duration-300",
-                          isActive ? "text-black" : "text-primary",
-                        )}
-                        strokeWidth={2.5}
-                        aria-hidden
-                      />
-                      Best value
-                    </span>
-                  </div>
-                </>
+                      strokeWidth={2.25}
+                      aria-hidden
+                    />
+                    Best value
+                  </span>
+                </div>
               ) : null}
 
               <div className="mb-5 space-y-2">
