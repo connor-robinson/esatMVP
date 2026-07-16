@@ -22,6 +22,7 @@ import { PaperLibraryGrid } from '@/components/papers/library/PaperLibraryGrid';
 import { PaperSessionSummary } from '@/components/papers/library/PaperSessionSummary';
 import { ReplaceActivePaperModal } from '@/components/papers/ReplaceActivePaperModal';
 import { shouldConfirmReplacePaperSession } from '@/lib/papers/activePaperSessionClient';
+import { isPastPaperLibraryLocked } from '@/lib/papers/freePreviewPapers';
 
 interface SelectedPaper {
   paper: Paper;
@@ -113,7 +114,11 @@ export default function PapersLibraryPage() {
   const router = useRouter();
   const { hasFullAccess, isLoading: subscriptionLoading } = useSubscription();
   const libraryLocked = !subscriptionLoading && !hasFullAccess;
+  const treatAsFullAccess = subscriptionLoading || hasFullAccess;
   const { startSession, loadQuestions } = usePaperSessionStore();
+
+  const paperIsLocked = (paper: Paper) =>
+    isPastPaperLibraryLocked(paper, treatAsFullAccess);
 
   // Papers data
   const [papers, setPapers] = useState<Paper[]>([]);
@@ -184,6 +189,7 @@ export default function PapersLibraryPage() {
 
   // Add paper to selection
   const handleAddPaper = (paper: Paper) => {
+    if (paperIsLocked(paper)) return;
     if (selectedPaperIds.has(paper.id)) {
       // Already selected, remove it
       setSelectedPapers((prev) =>
@@ -203,6 +209,7 @@ export default function PapersLibraryPage() {
     paper: Paper,
     sectionsByMain: Map<string, Set<PaperSection>>,
   ) => {
+    if (paperIsLocked(paper)) return;
     const existingPaper = selectedPapers.find((sp) => sp.paper.id === paper.id);
     if (existingPaper) {
       handleUpdateSections(
@@ -223,6 +230,7 @@ export default function PapersLibraryPage() {
     sectionName: string,
     subjectParts: PaperSection[],
   ) => {
+    if (paperIsLocked(paper)) return;
     const existingPaper = selectedPapers.find((sp) => sp.paper.id === paper.id);
 
     if (existingPaper) {
@@ -257,7 +265,7 @@ export default function PapersLibraryPage() {
 
     if (!selectedPaper) {
       const paper = papers.find((p) => p.id === paperId);
-      if (!paper || !mainSectionName) return;
+      if (!paper || !mainSectionName || paperIsLocked(paper)) return;
 
       const newSections = new Map<string, Set<PaperSection>>();
       newSections.set(mainSectionName, new Set([section]));
@@ -388,6 +396,11 @@ export default function PapersLibraryPage() {
 
     if (validPapers.length === 0) {
       alert('Please select at least one paper with at least one section.');
+      return;
+    }
+
+    if (validPapers.some((sp) => paperIsLocked(sp.paper))) {
+      alert('Upgrade to unlock the selected papers, or choose NSAA 2016 / 2017 to try for free.');
       return;
     }
 
@@ -596,7 +609,7 @@ export default function PapersLibraryPage() {
         <DrillUpgradeBanner
           className="mb-5"
           headline="Unlock every past paper"
-          subtext="Upgrade for full access to the paper library, session builder, and analytics"
+          subtext="NSAA 2016 and 2017 are free to try. Upgrade for the full paper library, session builder, and analytics"
           ctaLabel="View plans"
           href="/pricing"
         />
@@ -622,6 +635,7 @@ export default function PapersLibraryPage() {
             onAddPaper={handleAddPaper}
             onAddSection={handleAddSection}
             locked={libraryLocked}
+            isPaperLocked={paperIsLocked}
           />
         </div>
 
