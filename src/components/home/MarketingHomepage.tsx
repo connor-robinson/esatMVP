@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { BRAND_CONFIG } from "@/config/brand";
+import { QUESTION_BANK_TOTAL_COUNT } from "@/config/questionBankMarketing";
 import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
 import { CALIBRATION_QUESTIONS } from "@/lib/calibration/config";
 import { FERMI_GUESSR_PLAY_PATH } from "@/config/fermiGuessr";
@@ -12,46 +13,15 @@ import { StemContent } from "@/components/shared/StemContent";
 import { SlotMachineCount } from "@/components/home/SlotMachineCount";
 
 const EXAMPLE_QUESTION = CALIBRATION_QUESTIONS[0];
-const QUESTION_BANK_SUBJECTS = [
-  "Math 1",
-  "Math 2",
-  "Physics",
-  "Chemistry",
-  "Biology",
-].join(",");
 
 export function MarketingHomepage() {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
-  const [questionBankCount, setQuestionBankCount] = useState<number | null>(null);
 
   useEffect(() => {
     void trackHomepageEvent("homepage_viewed", {
       user_state: "logged_out",
       calibration_status: "none",
     });
-  }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    void (async () => {
-      try {
-        const res = await fetch(
-          `/api/question-bank/progress?subjects=${encodeURIComponent(QUESTION_BANK_SUBJECTS)}&testType=ESAT`,
-        );
-        if (!res.ok) return;
-        const data = (await res.json()) as { total?: number };
-        if (!cancelled && typeof data.total === "number" && data.total > 0) {
-          setQuestionBankCount(data.total);
-        }
-      } catch {
-        // Keep null — slot machine stays in a light spin until we have a real total.
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
   }, []);
 
   const toggleFaq = (index: number) => {
@@ -200,9 +170,7 @@ export function MarketingHomepage() {
                 </div>
                 <div>
                   <p className="text-3xl sm:text-4xl font-display font-bold tabular-nums text-white">
-                    {questionBankCount != null
-                      ? `${questionBankCount.toLocaleString()}+`
-                      : "—"}
+                    {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+
                   </p>
                   <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#94A3B8]">
                     Practice questions
@@ -233,7 +201,7 @@ export function MarketingHomepage() {
               </div>
 
               <div>
-                <SlotMachineCount value={questionBankCount} />
+                <SlotMachineCount value={QUESTION_BANK_TOTAL_COUNT} />
                 <p className="mt-3 text-sm font-semibold uppercase tracking-[0.18em] text-[#94A3B8]">
                   Practice questions in the bank
                 </p>
@@ -287,7 +255,7 @@ export function MarketingHomepage() {
       {/* Why Choose Us Section */}
       <section className="py-24 bg-[#161D2F] border-y border-white/5">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+          <div className="text-center max-w-3xl mx-auto mb-12 space-y-4">
             <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6] mb-4">
               Why choose us
             </h2>
@@ -298,6 +266,43 @@ export function MarketingHomepage() {
               Everything you need to master the rigorous assessment process of
               the world&apos;s most prestigious university.
             </p>
+            <div className="pt-4">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#94A3B8] mb-3">
+                Try without signing up
+              </p>
+              <div className="flex flex-wrap justify-center gap-2">
+                <Link
+                  href={FERMI_GUESSR_PLAY_PATH}
+                  onClick={() =>
+                    void trackHomepageEvent("fermi_game_clicked", {
+                      user_state: "logged_out",
+                      destination: FERMI_GUESSR_PLAY_PATH,
+                    })
+                  }
+                  className="rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                >
+                  FermiGuessr
+                </Link>
+                <Link
+                  href="/tools/score-converter"
+                  onClick={() =>
+                    void trackHomepageEvent("score_converter_clicked", {
+                      user_state: "logged_out",
+                      destination: "/tools/score-converter",
+                    })
+                  }
+                  className="rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                >
+                  Score converter
+                </Link>
+                <Link
+                  href="/mental-maths/drill"
+                  className="rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                >
+                  Practice modes
+                </Link>
+              </div>
+            </div>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {/* Mental Maths Trainer Card */}
@@ -398,7 +403,7 @@ export function MarketingHomepage() {
                 </div>
               </div>
               <h4 className="text-2xl font-display font-bold mb-3">
-                3000+ Practice Questions
+                {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ Practice Questions
               </h4>
               <p className="text-[#94A3B8] mb-6">
                 Never run out of practice questions. Catered & created by
@@ -409,7 +414,7 @@ export function MarketingHomepage() {
                   all_inclusive
                 </span>
                 <p className="text-4xl font-bold text-white relative z-10">
-                  3,492
+                  {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}
                 </p>
                 <p className="text-xs text-[#94A3B8] font-medium uppercase tracking-tighter">
                   Questions in Bank
@@ -578,7 +583,7 @@ export function MarketingHomepage() {
                   <span className="material-symbols-outlined text-white text-lg">
                     check
                   </span>{" "}
-                  Full Question Bank (3000+)
+                  Full Question Bank ({QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+)
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-white text-lg">
