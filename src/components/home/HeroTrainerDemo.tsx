@@ -136,12 +136,12 @@ const QUESTIONS: TrainerQuestion[] = [
     id: "complete-square",
     topic: "Complete the square",
     prompt: (
-      <span className="flex flex-col items-center gap-3">
-        <span className="font-mono text-xl font-medium leading-snug text-[#3B82F6] sm:text-2xl">
+      <span className="flex flex-col items-center gap-2 font-mono text-xl font-medium leading-snug sm:text-2xl">
+        <span className="whitespace-nowrap text-[#3B82F6]">
           x² + 6x + 2 → (x + a)² + b
         </span>
-        <span className="font-sans text-base font-medium text-white sm:text-lg">
-          What is <span className="font-mono text-[#3B82F6]">a</span>?
+        <span className="whitespace-nowrap text-white">
+          What is <span className="text-[#3B82F6]">a</span>?
         </span>
       </span>
     ),
