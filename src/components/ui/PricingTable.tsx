@@ -41,8 +41,7 @@ export function PricingTable({
     tiers.find((tier) => tier.highlighted)?.id ?? null;
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
-  const activeId =
-    hoveredId && hoveredId !== "free" ? hoveredId : defaultActiveId;
+  const activeId = hoveredId ?? defaultActiveId;
 
   return (
     <div className={cn("space-y-6", className)}>
@@ -60,17 +59,13 @@ export function PricingTable({
           return (
             <div
               key={tier.id}
-              onMouseEnter={() => {
-                if (isFree) setHoveredId(null);
-                else setHoveredId(tier.id);
-              }}
+              onMouseEnter={() => setHoveredId(tier.id)}
               className={cn(
                 CARD_SHELL,
                 "origin-center transition-[transform,background-color,box-shadow,color] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
                 isActive
                   ? "z-10 scale-[1.13] bg-primary text-black shadow-[0_24px_60px_-16px_rgba(0,0,0,0.55)]"
                   : "z-0 scale-100 bg-surface-elevated",
-                isFree && "cursor-default",
               )}
             >
               {tier.featured ? (

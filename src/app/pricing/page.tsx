@@ -133,29 +133,29 @@ export default function PricingPage() {
         />
         {/* Soft professional rays — lightweight CSS, no blur */}
         <div
-          className="absolute inset-0 opacity-80"
+          className="absolute inset-0 opacity-45"
           style={{
             backgroundImage: [
-              "linear-gradient(118deg, transparent 40%, rgba(169, 177, 103, 0.10) 50%, transparent 60%)",
-              "linear-gradient(98deg, transparent 34%, rgba(169, 177, 103, 0.075) 47%, transparent 58%)",
-              "linear-gradient(138deg, transparent 26%, rgba(169, 177, 103, 0.11) 52%, transparent 70%)",
+              "linear-gradient(118deg, transparent 42%, rgba(169, 177, 103, 0.06) 50%, transparent 58%)",
+              "linear-gradient(98deg, transparent 36%, rgba(169, 177, 103, 0.045) 47%, transparent 57%)",
+              "linear-gradient(138deg, transparent 28%, rgba(169, 177, 103, 0.065) 52%, transparent 68%)",
             ].join(", "),
           }}
         />
         {/* Central overhead ray */}
         <div
-          className="absolute left-1/2 top-0 h-[60%] w-[min(94vw,44rem)] -translate-x-1/2 opacity-70"
+          className="absolute left-1/2 top-0 h-[55%] w-[min(90vw,40rem)] -translate-x-1/2 opacity-35"
           style={{
             background:
-              "conic-gradient(from 180deg at 50% -8%, transparent 156deg, rgba(169, 177, 103, 0.12) 174deg, rgba(169, 177, 103, 0.18) 180deg, rgba(169, 177, 103, 0.12) 186deg, transparent 204deg)",
+              "conic-gradient(from 180deg at 50% -8%, transparent 160deg, rgba(169, 177, 103, 0.07) 174deg, rgba(169, 177, 103, 0.1) 180deg, rgba(169, 177, 103, 0.07) 186deg, transparent 200deg)",
           }}
         />
         {/* Gentle top wash */}
         <div
-          className="absolute left-1/2 top-[-6rem] h-[26rem] w-[min(90vw,36rem)] -translate-x-1/2 opacity-45"
+          className="absolute left-1/2 top-[-6rem] h-[26rem] w-[min(90vw,36rem)] -translate-x-1/2 opacity-28"
           style={{
             background:
-              "radial-gradient(circle at center, rgba(169, 177, 103, 0.2) 0%, transparent 68%)",
+              "radial-gradient(circle at center, rgba(169, 177, 103, 0.14) 0%, transparent 68%)",
           }}
         />
       </div>
