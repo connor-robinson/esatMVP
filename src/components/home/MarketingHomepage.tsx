@@ -67,113 +67,111 @@ export function MarketingHomepage() {
         </div>
 
         <div className="relative max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6 space-y-12 lg:space-y-16">
-          <div className="max-w-4xl space-y-8">
-            <h1 className="text-6xl lg:text-8xl font-display font-bold leading-[1.05] tracking-tight">
-              Master the <span className="text-underline-accent">ESAT</span>.
-              <br />
-              Secure your Oxbridge offer.
-            </h1>
-            <p className="text-xl text-[#94A3B8] max-w-2xl leading-relaxed">
-              The ESAT is the admissions test for many university courses at
-              Cambridge, Oxford, Imperial and UCL. Practise with our past-paper
-              tools, question bank, and targeted no-calculator drills.
-            </p>
-            <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Link
-                  href={CALIBRATION_ROUTES.hub}
-                  onClick={() =>
-                    void trackHomepageEvent("calibration_cta_clicked", {
-                      user_state: "logged_out",
-                      destination: CALIBRATION_ROUTES.hub,
-                    })
-                  }
-                  className="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3.5 text-base font-bold text-[#0A0F1D] transition-all hover:bg-slate-200"
-                >
-                  Start free calibration
-                </Link>
-                <Link
-                  href="/login"
-                  className="inline-flex items-center justify-center rounded-xl border border-white/20 px-6 py-3.5 text-base font-bold text-white transition-all hover:bg-white/5"
-                >
-                  Sign in
-                </Link>
-              </div>
-              <p className="text-sm text-[#94A3B8]">
-                15-question diagnostic · no account required to begin
+          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12">
+            <div className="max-w-2xl space-y-8">
+              <h1 className="text-6xl lg:text-8xl font-display font-bold leading-[1.05] tracking-tight">
+                Master the <span className="text-underline-accent">ESAT</span>.
+                <br />
+                Secure your Oxbridge offer.
+              </h1>
+              <p className="text-xl text-[#94A3B8] max-w-2xl leading-relaxed">
+                The ESAT is the admissions test for many university courses at
+                Cambridge, Oxford, Imperial and UCL. Practise with our past-paper
+                tools, question bank, and targeted no-calculator drills.
               </p>
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Link
+                    href={CALIBRATION_ROUTES.hub}
+                    onClick={() =>
+                      void trackHomepageEvent("calibration_cta_clicked", {
+                        user_state: "logged_out",
+                        destination: CALIBRATION_ROUTES.hub,
+                      })
+                    }
+                    className="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3.5 text-base font-bold text-[#0A0F1D] transition-all hover:bg-slate-200"
+                  >
+                    Start free calibration
+                  </Link>
+                  <Link
+                    href="/login"
+                    className="inline-flex items-center justify-center rounded-xl border border-white/20 px-6 py-3.5 text-base font-bold text-white transition-all hover:bg-white/5"
+                  >
+                    Sign in
+                  </Link>
+                </div>
+                <p className="text-sm text-[#94A3B8]">
+                  15-question diagnostic · no account required to begin
+                </p>
+              </div>
+            </div>
+
+            <div className="rounded-3xl bg-white/[0.08] p-6 backdrop-blur-xl sm:p-8">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500/50" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
+                  <div className="w-3 h-3 rounded-full bg-green-500/50" />
+                </div>
+                <div className="text-[10px] uppercase tracking-widest font-bold text-[#94A3B8]">
+                  Mental Maths Trainer
+                </div>
+              </div>
+              <div className="flex flex-col items-center justify-center text-center space-y-8 py-6 sm:py-10">
+                <div className="text-4xl sm:text-5xl font-mono text-[#3B82F6]">
+                  √(144 * 25) / 5
+                </div>
+                <div className="w-full max-w-[220px] h-1 bg-white/10 rounded-full overflow-hidden">
+                  <div className="w-2/3 h-full bg-[#3B82F6]" />
+                </div>
+                <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
+                  <div className="p-4 rounded-xl bg-white/5 text-2xl font-bold">
+                    12
+                  </div>
+                  <div className="p-4 rounded-xl bg-[#3B82F6] text-white text-2xl font-bold">
+                    60
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="rounded-3xl bg-white/[0.08] backdrop-blur-xl">
-            <div className="grid lg:grid-cols-12 gap-8 lg:gap-10 p-6 sm:p-8 lg:p-10">
-              <div className="lg:col-span-7 space-y-6">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex gap-2">
-                    <div className="w-3 h-3 rounded-full bg-red-500/50" />
-                    <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
-                    <div className="w-3 h-3 rounded-full bg-green-500/50" />
-                  </div>
-                  <div className="text-[10px] uppercase tracking-widest font-bold text-[#94A3B8]">
-                    Mental Maths Trainer
-                  </div>
+          <div className="rounded-3xl bg-white/[0.08] p-6 backdrop-blur-xl sm:p-8">
+            <div className="flex w-full flex-col gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+              <div className="flex min-w-0 items-center gap-4">
+                <div className="flex shrink-0 -space-x-3">
+                  {[
+                    { src: "/home/tutors/tutor-1.png", alt: "Oxbridge tutor" },
+                    { src: "/home/tutors/tutor-2.png", alt: "Oxbridge tutor" },
+                    { src: "/home/tutors/tutor-3.png", alt: "Oxbridge tutor" },
+                  ].map((tutor) => (
+                    <Image
+                      key={tutor.src}
+                      alt={tutor.alt}
+                      src={tutor.src}
+                      width={48}
+                      height={48}
+                      className="h-12 w-12 rounded-full object-cover ring-2 ring-[#0A0F1D]"
+                    />
+                  ))}
                 </div>
-                <div className="flex flex-col items-center justify-center text-center space-y-8 py-6 sm:py-10">
-                  <div className="text-4xl sm:text-5xl font-mono text-[#3B82F6]">
-                    √(144 * 25) / 5
-                  </div>
-                  <div className="w-full max-w-[220px] h-1 bg-white/10 rounded-full overflow-hidden">
-                    <div className="w-2/3 h-full bg-[#3B82F6]" />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
-                    <div className="p-4 rounded-xl bg-white/5 text-2xl font-bold">
-                      12
-                    </div>
-                    <div className="p-4 rounded-xl bg-[#3B82F6] text-white text-2xl font-bold">
-                      60
-                    </div>
-                  </div>
+                <div className="min-w-0">
+                  <p className="text-white font-bold text-lg sm:text-xl leading-snug">
+                    Made by experienced Oxbridge tutors
+                  </p>
+                  <p className="mt-1 text-white/75 text-sm leading-relaxed">
+                    Join 5,000+ applicants this cycle
+                  </p>
                 </div>
               </div>
 
-              <div className="lg:col-span-5 flex items-center lg:pl-4">
-                <div className="flex w-full flex-col gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
-                  <div className="flex min-w-0 items-center gap-4">
-                    <div className="flex shrink-0 -space-x-3">
-                      {[
-                        { src: "/home/tutors/tutor-1.png", alt: "Oxbridge tutor" },
-                        { src: "/home/tutors/tutor-2.png", alt: "Oxbridge tutor" },
-                        { src: "/home/tutors/tutor-3.png", alt: "Oxbridge tutor" },
-                      ].map((tutor) => (
-                        <Image
-                          key={tutor.src}
-                          alt={tutor.alt}
-                          src={tutor.src}
-                          width={48}
-                          height={48}
-                          className="h-12 w-12 rounded-full object-cover ring-2 ring-[#0A0F1D]"
-                        />
-                      ))}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-white font-bold text-lg sm:text-xl leading-snug">
-                        Made by experienced Oxbridge tutors
-                      </p>
-                      <p className="mt-1 text-white/75 text-sm leading-relaxed">
-                        Join 5,000+ applicants this cycle
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="shrink-0 text-left sm:text-right">
-                    <p className="text-3xl sm:text-4xl font-display font-bold tabular-nums text-white">
-                      {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+
-                    </p>
-                    <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#94A3B8]">
-                      Practice questions
-                    </p>
-                  </div>
-                </div>
+              <div className="shrink-0 text-left sm:text-right">
+                <p className="text-3xl sm:text-4xl font-display font-bold tabular-nums text-white">
+                  {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+
+                </p>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#94A3B8]">
+                  Practice questions
+                </p>
               </div>
             </div>
           </div>
