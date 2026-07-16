@@ -12,7 +12,7 @@ interface GoogleAuthButtonProps
 }
 
 /** Official multicolor Google "G" mark (brand guidelines). */
-function GoogleLogo({ className }: { className?: string }) {
+export function GoogleLogo({ className }: { className?: string }) {
   return (
     <svg
       aria-hidden

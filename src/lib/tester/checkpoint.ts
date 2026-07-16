@@ -180,6 +180,7 @@ export interface TesterNavAction {
 export function getTesterNavAction(
   state: TesterState | null,
   hasFullAccess: boolean,
+  isSignedIn = false,
 ): TesterNavAction {
   if (state?.isMember && testerActionPending(state)) {
     return {
@@ -190,7 +191,8 @@ export function getTesterNavAction(
     };
   }
 
-  if (!hasFullAccess) {
+  // Upgrade CTA is only for signed-in users without full access.
+  if (isSignedIn && !hasFullAccess) {
     return {
       show: true,
       label: "Upgrade for free",

@@ -20,6 +20,7 @@ import { useTesterProgrammeOptional } from '@/contexts/TesterProgrammeContext';
 import { getTesterNavAction } from '@/lib/tester/checkpoint';
 import { BrandNavLockup } from '@/components/brand/BrandNavLockup';
 import { SignOutConfirmModal } from '@/components/auth/SignOutConfirmModal';
+import { GoogleLogo } from '@/components/auth/GoogleAuthButton';
 import { APP_NAME } from '@/config/brand';
 import { NAVBAR_HEIGHT_PX } from '@/config/layout';
 import {
@@ -42,7 +43,6 @@ import {
   GraduationCap,
   Home,
   Library,
-  LogIn,
   LogOut,
   Map,
   Menu,
@@ -221,7 +221,29 @@ export function Navbar() {
   const { theme, toggleTheme, isDark, lightStrategy, toggleLightStrategy } = useTheme();
   const { hasFullAccess } = useSubscription();
   const testerCtx = useTesterProgrammeOptional();
-  const testerNav = getTesterNavAction(testerCtx?.state ?? null, hasFullAccess);
+  const testerNav = getTesterNavAction(
+    testerCtx?.state ?? null,
+    hasFullAccess,
+    !!session?.user,
+  );
+
+  const signupHref = useMemo(() => {
+    const redirectTo =
+      pathname && pathname !== '/login' && pathname !== '/'
+        ? pathname
+        : '/past-papers/library';
+    return `/login?mode=signup&redirectTo=${encodeURIComponent(redirectTo)}`;
+  }, [pathname]);
+
+  /** Shared pill style for Sign up / Sign in and Upgrade for free */
+  const navCtaClass = cn(
+    'inline-flex h-8 shrink-0 items-center justify-center gap-2 rounded-md px-3',
+    'bg-white text-[12px] font-medium text-[#1f1f1f]',
+    'shadow-[0_1px_2px_rgba(60,64,67,0.15)]',
+    'transition-[box-shadow,background-color,opacity] duration-150',
+    'hover:bg-[#f8f9fa] hover:shadow-[0_1px_3px_rgba(60,64,67,0.2)]',
+    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4285f4]',
+  );
 
   const isJustQuit =
     justQuitSessionId === sessionId &&
@@ -300,14 +322,6 @@ export function Navbar() {
     }
   }, [supabase, router]);
 
-  const loginHref = useMemo(() => {
-    const redirectTo =
-      pathname && pathname !== '/login' && pathname !== '/'
-        ? pathname
-        : '/past-papers/library';
-    return `/login?redirectTo=${encodeURIComponent(redirectTo)}`;
-  }, [pathname]);
-
   const settingsHref = '/settings';
 
   const loginHrefWithSettingsRedirect = useMemo(
@@ -327,20 +341,31 @@ export function Navbar() {
       className='flex shrink-0 items-center gap-1 border-l border-border-subtle pl-2 sm:gap-1.5 sm:pl-3'
       aria-label='Account and preferences'
     >
-      {testerNav.show ? (
+      {testerNav.show && testerNav.variant === 'continue' ? (
         <Link
           href={testerNav.href}
           className={cn(
-            'mr-0.5 inline-flex h-6 shrink-0 items-center justify-center rounded-organic-md px-2.5',
-            'text-[10px] font-semibold uppercase tracking-[0.1em]',
+            'mr-0.5 inline-flex h-8 shrink-0 items-center justify-center rounded-md px-3',
+            'bg-surface-mid text-[12px] font-semibold text-text',
             'transition-opacity duration-fast ease-signature hover:opacity-90',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-            testerNav.variant === 'continue'
-              ? 'bg-surface-mid text-text'
-              : 'bg-primary text-black',
           )}
         >
           {testerNav.label}
+        </Link>
+      ) : null}
+
+      {testerNav.show && testerNav.variant === 'join' ? (
+        <Link href={testerNav.href} className={cn(navCtaClass, 'mr-0.5')}>
+          {testerNav.label}
+        </Link>
+      ) : null}
+
+      {!session?.user ? (
+        <Link href={signupHref} className={cn(navCtaClass, 'mr-0.5')}>
+          <GoogleLogo className='h-4 w-4 shrink-0' />
+          <span className='hidden sm:inline'>Sign up / Sign in</span>
+          <span className='sm:hidden'>Sign up</span>
         </Link>
       ) : null}
 
@@ -418,32 +443,18 @@ export function Navbar() {
           </Link>
         </>
       ) : (
-        <>
-          <Link
-            href={loginHref}
-            className={navIconSlotClass}
-            aria-label='Sign in'
-          >
-            <LogIn
-              aria-hidden
-              className='text-text'
-              size={NAV_ICON_PX}
-              strokeWidth={NAV_ICON_STROKE}
-            />
-          </Link>
-          <Link
-            href={loginHrefWithSettingsRedirect}
-            className={cn(navIconSlotClass)}
-            aria-label='Settings'
-          >
-            <Settings
-              aria-hidden
-              className='text-text'
-              size={NAV_ICON_PX}
-              strokeWidth={NAV_ICON_STROKE}
-            />
-          </Link>
-        </>
+        <Link
+          href={loginHrefWithSettingsRedirect}
+          className={cn(navIconSlotClass)}
+          aria-label='Settings'
+        >
+          <Settings
+            aria-hidden
+            className='text-text'
+            size={NAV_ICON_PX}
+            strokeWidth={NAV_ICON_STROKE}
+          />
+        </Link>
       )}
     </div>
   );
