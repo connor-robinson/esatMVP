@@ -87,7 +87,12 @@ export function LoggedInHomepage({ state }: LoggedInHomepageProps) {
           </div>
         ) : null}
 
-        <TopicHub topics={DASHBOARD_TOPICS} analyticsProps={analyticsProps} />
+        <div className="space-y-4">
+          <h2 className="text-xl font-bold tracking-tight text-text sm:text-2xl">
+            Dashboard
+          </h2>
+          <TopicHub topics={DASHBOARD_TOPICS} analyticsProps={analyticsProps} />
+        </div>
 
         {showUpgrade && state.upgradePrompt ? (
           <UpgradePrompt
