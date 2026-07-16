@@ -96,126 +96,66 @@ export function MarketingHomepage() {
           />
         </div>
 
-        <div className="relative max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
-          <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-            <div className="lg:col-span-7 space-y-10">
-              <h1 className="text-6xl lg:text-8xl font-display font-bold leading-[1.05] tracking-tight">
-                Master the <span className="text-underline-accent">ESAT</span>.
-                <br />
-                Secure your Oxbridge offer.
-              </h1>
-              <p className="text-xl text-[#94A3B8] max-w-2xl leading-relaxed">
-                The ESAT is the admissions test for many university courses at
-                Cambridge, Oxford, Imperial and UCL. Practise with our past-paper
-                tools, question bank, and targeted no-calculator drills.
+        <div className="relative max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6 space-y-12 lg:space-y-16">
+          <div className="max-w-4xl space-y-8">
+            <h1 className="text-6xl lg:text-8xl font-display font-bold leading-[1.05] tracking-tight">
+              Master the <span className="text-underline-accent">ESAT</span>.
+              <br />
+              Secure your Oxbridge offer.
+            </h1>
+            <p className="text-xl text-[#94A3B8] max-w-2xl leading-relaxed">
+              The ESAT is the admissions test for many university courses at
+              Cambridge, Oxford, Imperial and UCL. Practise with our past-paper
+              tools, question bank, and targeted no-calculator drills.
+            </p>
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link
+                  href={CALIBRATION_ROUTES.hub}
+                  onClick={() =>
+                    void trackHomepageEvent("calibration_cta_clicked", {
+                      user_state: "logged_out",
+                      destination: CALIBRATION_ROUTES.hub,
+                    })
+                  }
+                  className="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3.5 text-base font-bold text-[#0A0F1D] transition-all hover:bg-slate-200"
+                >
+                  Start free calibration
+                </Link>
+                <Link
+                  href="/login"
+                  className="inline-flex items-center justify-center rounded-xl border border-white/20 px-6 py-3.5 text-base font-bold text-white transition-all hover:bg-white/5"
+                >
+                  Sign in
+                </Link>
+              </div>
+              <p className="text-sm text-[#94A3B8]">
+                15-question diagnostic · no account required to begin
               </p>
-              <div className="space-y-5 max-w-xl">
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Link
-                    href={CALIBRATION_ROUTES.hub}
-                    onClick={() =>
-                      void trackHomepageEvent("calibration_cta_clicked", {
-                        user_state: "logged_out",
-                        destination: CALIBRATION_ROUTES.hub,
-                      })
-                    }
-                    className="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3.5 text-base font-bold text-[#0A0F1D] transition-all hover:bg-slate-200"
-                  >
-                    Start free calibration
-                  </Link>
-                  <Link
-                    href="/login"
-                    className="inline-flex items-center justify-center rounded-xl border border-white/20 px-6 py-3.5 text-base font-bold text-white transition-all hover:bg-white/5"
-                  >
-                    Sign in
-                  </Link>
-                </div>
-                <p className="text-sm text-[#94A3B8]">
-                  15-question diagnostic · no account required to begin
-                </p>
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#94A3B8] mb-3">
-                    Try without signing up
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    <Link
-                      href={FERMI_GUESSR_PLAY_PATH}
-                      onClick={() =>
-                        void trackHomepageEvent("fermi_game_clicked", {
-                          user_state: "logged_out",
-                          destination: FERMI_GUESSR_PLAY_PATH,
-                        })
-                      }
-                      className="rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/10"
-                    >
-                      FermiGuessr
-                    </Link>
-                    <Link
-                      href="/tools/score-converter"
-                      onClick={() =>
-                        void trackHomepageEvent("score_converter_clicked", {
-                          user_state: "logged_out",
-                          destination: "/tools/score-converter",
-                        })
-                      }
-                      className="rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/10"
-                    >
-                      Score converter
-                    </Link>
-                    <Link
-                      href="/mental-maths/drill"
-                      className="rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/10"
-                    >
-                      Practice modes
-                    </Link>
-                  </div>
-                </div>
-              </div>
-              <div className="flex gap-12 pt-8">
-                <div>
-                  <div className="text-3xl font-bold tabular-nums">
-                    {questionBankCount != null
-                      ? `${questionBankCount.toLocaleString()}+`
-                      : "—"}
-                  </div>
-                  <div className="text-xs uppercase tracking-widest text-[#94A3B8] mt-1 font-semibold">
-                    Questions
-                  </div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold">98%</div>
-                  <div className="text-xs uppercase tracking-widest text-[#94A3B8] mt-1 font-semibold">
-                    Success Rate
-                  </div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold">Expert</div>
-                  <div className="text-xs uppercase tracking-widest text-[#94A3B8] mt-1 font-semibold">
-                    Tutors
-                  </div>
-                </div>
-              </div>
             </div>
-            <div className="lg:col-span-5 relative">
-              <div className="relative z-10 rounded-3xl overflow-hidden bg-[#161D2F]">
-                <div className="p-6 bg-white/5 border-b border-white/10 flex items-center justify-between">
+          </div>
+
+          <div className="rounded-3xl bg-white/[0.08] backdrop-blur-xl">
+            <div className="grid lg:grid-cols-12 gap-8 lg:gap-10 p-6 sm:p-8 lg:p-10">
+              <div className="lg:col-span-7 space-y-6">
+                <div className="flex items-center justify-between gap-4">
                   <div className="flex gap-2">
-                    <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
-                    <div className="w-3 h-3 rounded-full bg-yellow-500/50"></div>
-                    <div className="w-3 h-3 rounded-full bg-green-500/50"></div>
+                    <div className="w-3 h-3 rounded-full bg-red-500/50" />
+                    <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
+                    <div className="w-3 h-3 rounded-full bg-green-500/50" />
                   </div>
                   <div className="text-[10px] uppercase tracking-widest font-bold text-[#94A3B8]">
                     Mental Maths Trainer
                   </div>
                 </div>
-                <div className="p-8 aspect-square flex flex-col justify-center items-center text-center space-y-8">
-                  <div className="text-5xl font-mono text-[#3B82F6]">
+                <div className="flex flex-col items-center justify-center text-center space-y-8 py-6 sm:py-10">
+                  <div className="text-4xl sm:text-5xl font-mono text-[#3B82F6]">
                     √(144 * 25) / 5
                   </div>
-                  <div className="w-full max-w-[200px] h-1 bg-white/10 rounded-full overflow-hidden">
-                    <div className="w-2/3 h-full bg-[#3B82F6]"></div>
+                  <div className="w-full max-w-[220px] h-1 bg-white/10 rounded-full overflow-hidden">
+                    <div className="w-2/3 h-full bg-[#3B82F6]" />
                   </div>
-                  <div className="grid grid-cols-2 gap-4 w-full">
+                  <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
                     <div className="p-4 rounded-xl bg-white/5 text-2xl font-bold">
                       12
                     </div>
@@ -225,39 +165,48 @@ export function MarketingHomepage() {
                   </div>
                 </div>
               </div>
-              <div className="mt-6 p-6 bg-white/5 rounded-xl">
-                <div className="flex items-center gap-4">
-                  <div className="flex -space-x-3">
-                    <Image
-                      alt="Student"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9f3UOvm5kRvUKf-I9vO0XaI-50lP95_w_x_oDmj2YBSBlG-kg7K15gniuaDbk-CanmjwgxbAtwq4cVB7aaUXudb7Sq5RhadVTOdvxrV3tpIQu4mp4cd2CB-mmTrz3WTc8jNY4YKlHeHRL4qCGoqAGnYtsYMmZrI2OM7nc3XW-oLvHxCVaPExTcAVZO59r-bI1J3uEZTtZSRGfDGM6T8MkDDyVrFrmfEOQh5QDCII8mcCtKMwGogYqK0ygplTehIBa6p62ZEUsvrYo"
-                      width={40}
-                      height={40}
-                      className="rounded-full border-2 border-white"
-                    />
-                    <Image
-                      alt="Student"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqIPwQGM58zx4ffenKxTfp-r-5O6h9YHat2ZbJIa0YPgu9Va3tRXt7GKC6E8SEB_ZWDAdJG-mKfvrz9ciVjk3BPFwIXlefvVDLZhKaIvQXpxxnqpph3Y5Zgltd_2lGzplLrAVWVNtiSALb6tjrZ486EJjLVsOqfSIGvD-5v2dCYZF9AMZnSy6iGGlnfIRKgeaWaJOqN1nNWBzuKHYIfAD5_ntvUZl1HmsaaHKofbsaefXiL1RrPL9djQcF2GiC3AFf-sqdeHtpuVG1"
-                      width={40}
-                      height={40}
-                      className="rounded-full border-2 border-white"
-                    />
-                    <Image
-                      alt="Student"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUuxqj5-_OUeVQ2x-qG1flk3kawsv5vUwMmr1bJlmG_6014F8NUTfZCm3jVNxIhWZzNlP6SBMc2K5L45fr98I8qB_ZsxNhtRUV73srurAkWJ5TFmAjO5PCd9QjcEznnfQSQvLH8e2tNjSi807kZZ6dP88l8zJJkqqZLAlai2-8iuz6AwdnBtnx3cN7UPpVEjkE48FSUOIG4Uqgi59lbXOsljBYpzVHuCTgV_qB7C3da21lxk373jgrlVyfOMd1y81rvnZsHund57Fe"
-                      width={40}
-                      height={40}
-                      className="rounded-full border-2 border-white"
-                    />
-                  </div>
-                  <div>
-                    <p className="text-white font-bold text-sm">
-                      Made by Cambridge students
-                    </p>
-                    <p className="text-white/80 text-xs">
-                      Join 5,000+ applicants this cycle
-                    </p>
-                  </div>
+
+              <div className="lg:col-span-5 flex flex-col justify-center gap-6 lg:pl-4">
+                <div className="flex -space-x-3">
+                  <Image
+                    alt="Tutor"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9f3UOvm5kRvUKf-I9vO0XaI-50lP95_w_x_oDmj2YBSBlG-kg7K15gniuaDbk-CanmjwgxbAtwq4cVB7aaUXudb7Sq5RhadVTOdvxrV3tpIQu4mp4cd2CB-mmTrz3WTc8jNY4YKlHeHRL4qCGoqAGnYtsYMmZrI2OM7nc3XW-oLvHxCVaPExTcAVZO59r-bI1J3uEZTtZSRGfDGM6T8MkDDyVrFrmfEOQh5QDCII8mcCtKMwGogYqK0ygplTehIBa6p62ZEUsvrYo"
+                    width={44}
+                    height={44}
+                    className="rounded-full ring-2 ring-[#0A0F1D]"
+                  />
+                  <Image
+                    alt="Tutor"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqIPwQGM58zx4ffenKxTfp-r-5O6h9YHat2ZbJIa0YPgu9Va3tRXt7GKC6E8SEB_ZWDAdJG-mKfvrz9ciVjk3BPFwIXlefvVDLZhKaIvQXpxxnqpph3Y5Zgltd_2lGzplLrAVWVNtiSALb6tjrZ486EJjLVsOqfSIGvD-5v2dCYZF9AMZnSy6iGGlnfIRKgeaWaJOqN1nNWBzuKHYIfAD5_ntvUZl1HmsaaHKofbsaefXiL1RrPL9djQcF2GiC3AFf-sqdeHtpuVG1"
+                    width={44}
+                    height={44}
+                    className="rounded-full ring-2 ring-[#0A0F1D]"
+                  />
+                  <Image
+                    alt="Tutor"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUuxqj5-_OUeVQ2x-qG1flk3kawsv5vUwMmr1bJlmG_6014F8NUTfZCm3jVNxIhWZzNlP6SBMc2K5L45fr98I8qB_ZsxNhtRUV73srurAkWJ5TFmAjO5PCd9QjcEznnfQSQvLH8e2tNjSi807kZZ6dP88l8zJJkqqZLAlai2-8iuz6AwdnBtnx3cN7UPpVEjkE48FSUOIG4Uqgi59lbXOsljBYpzVHuCTgV_qB7C3da21lxk373jgrlVyfOMd1y81rvnZsHund57Fe"
+                    width={44}
+                    height={44}
+                    className="rounded-full ring-2 ring-[#0A0F1D]"
+                  />
+                </div>
+                <div>
+                  <p className="text-white font-bold text-lg sm:text-xl">
+                    Made by experienced Oxbridge tutors
+                  </p>
+                  <p className="mt-2 text-white/75 text-sm leading-relaxed">
+                    Join 5,000+ applicants this cycle
+                  </p>
+                </div>
+                <div>
+                  <p className="text-3xl sm:text-4xl font-display font-bold tabular-nums text-white">
+                    {questionBankCount != null
+                      ? `${questionBankCount.toLocaleString()}+`
+                      : "—"}
+                  </p>
+                  <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#94A3B8]">
+                    Practice questions
+                  </p>
                 </div>
               </div>
             </div>
@@ -616,7 +565,7 @@ export function MarketingHomepage() {
             </div>
 
             {/* Scholar Plan */}
-            <div className="p-10 rounded-3xl bg-[#3B82F6] flex flex-col relative scale-105 shadow-2xl shadow-[#3B82F6]/20">
+            <div className="p-10 rounded-3xl bg-[#3B82F6] flex flex-col relative scale-105">
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-white text-[#3B82F6] px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
                 Most Popular
               </div>
