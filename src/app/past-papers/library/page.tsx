@@ -8,8 +8,8 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Container } from '@/components/layout/Container';
-import { CalibrationPromo } from '@/components/calibration/CalibrationPromo';
-import { useSupabaseSession } from '@/components/auth/SupabaseSessionProvider';
+import { DrillUpgradeBanner } from '@/components/builder/DrillUpgradeBanner';
+import { useSubscription } from '@/hooks/useSubscription';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
 import { fetchPastPaperLibraryOutline } from "@/lib/papers/pastPaperLibraryData";
 import { examNameToPaperType } from '@/lib/papers/paperConfig';
@@ -111,8 +111,8 @@ function buildSessionPaperVariant(
 
 export default function PapersLibraryPage() {
   const router = useRouter();
-  const session = useSupabaseSession();
-  const isLoggedIn = Boolean(session?.user);
+  const { hasFullAccess, isLoading: subscriptionLoading } = useSubscription();
+  const libraryLocked = !subscriptionLoading && !hasFullAccess;
   const { startSession, loadQuestions } = usePaperSessionStore();
 
   // Papers data
@@ -592,8 +592,14 @@ export default function PapersLibraryPage() {
 
   return (
     <Container size='lg' className='py-7 sm:py-9'>
-      {!isLoggedIn ? (
-        <CalibrationPromo placement="past_papers_library" className="mb-5 p-4" />
+      {libraryLocked ? (
+        <DrillUpgradeBanner
+          className="mb-5"
+          headline="Unlock every past paper"
+          subtext="Upgrade for full access to the paper library, session builder, and analytics"
+          ctaLabel="View plans"
+          href="/pricing"
+        />
       ) : null}
       <div className='grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_min(100%,30rem)] lg:items-start lg:gap-6 xl:grid-cols-[minmax(0,1fr)_31rem]'>
         <div>
@@ -615,6 +621,7 @@ export default function PapersLibraryPage() {
             onAddFullPaper={handleAddFullPaper}
             onAddPaper={handleAddPaper}
             onAddSection={handleAddSection}
+            locked={libraryLocked}
           />
         </div>
 

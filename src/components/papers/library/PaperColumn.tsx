@@ -5,8 +5,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChevronDown, Check, Loader2, Plus } from "lucide-react";
+import { ChevronDown, Check, Loader2, Plus, Lock } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import {
   getExamAccentLibraryPaperRowClass,
@@ -34,6 +35,7 @@ interface PaperColumnProps {
   onAddFullPaper: (paper: Paper, sectionsByMain: Map<string, Set<PaperSection>>) => void;
   onAddPaper: (paper: Paper) => void;
   onAddSection?: (paper: Paper, sectionName: string, sections: PaperSection[]) => void;
+  locked?: boolean;
 }
 
 function PaperAttemptTick({
@@ -80,6 +82,7 @@ export function PaperColumn({
   onAddFullPaper,
   onAddPaper,
   onAddSection,
+  locked = false,
 }: PaperColumnProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [outline, setOutline] = useState<PaperSectionsOutline | null>(null);
@@ -200,7 +203,7 @@ export function PaperColumn({
     ]);
 
   const handleAddPaperClick = async () => {
-    if (isAddingPaper) return;
+    if (locked || isAddingPaper) return;
 
     if (mainSections.length > 0) {
       onAddFullPaper(paper, buildSectionsByMain(mainSections));
@@ -242,6 +245,7 @@ export function PaperColumn({
     sectionName: string,
     subjectParts: PaperSection[],
   ) => {
+    if (locked) return;
     if (onAddSection) {
       onAddSection(paper, sectionName, subjectParts);
     } else {
@@ -252,11 +256,11 @@ export function PaperColumn({
   };
 
   return (
-    <div className="space-y-1">
+    <div className={cn("space-y-1", locked && "opacity-70")}>
       <div
         className={cn(
           "flex h-14 items-center gap-2.5 rounded-lg px-3 transition-colors",
-          getExamAccentLibraryPaperRowClass(paper.examName, isSelected),
+          getExamAccentLibraryPaperRowClass(paper.examName, isSelected && !locked),
         )}
       >
         <button
@@ -275,7 +279,12 @@ export function PaperColumn({
         </button>
 
         <div className="flex min-w-0 flex-1 items-center gap-2">
-          <span className="truncate text-sm font-semibold text-text">
+          <span
+            className={cn(
+              "truncate text-sm font-semibold",
+              locked ? "text-text-muted" : "text-text",
+            )}
+          >
             {paper.examName} {paper.examYear}
           </span>
           {paper.examType && (
@@ -286,7 +295,7 @@ export function PaperColumn({
         </div>
 
         <div className="flex w-[4.75rem] shrink-0 items-center justify-end gap-1.5">
-          {paperCompletionStatus !== "none" ? (
+          {!locked && paperCompletionStatus !== "none" ? (
             <PaperAttemptTick
               examName={paper.examName}
               scope="paper"
@@ -296,23 +305,33 @@ export function PaperColumn({
             <span className="h-5 w-5 shrink-0" aria-hidden />
           )}
 
-          <button
-            type="button"
-            onClick={() => void handleAddPaperClick()}
-            disabled={isAddingPaper}
-            className={cn(
-              "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-dark text-text-muted transition-colors hover:bg-surface-neutral hover:text-text",
-              isAddingPaper && "cursor-wait opacity-70",
-            )}
-            aria-label="Add paper to session"
-            aria-busy={isAddingPaper}
-          >
-            {isAddingPaper ? (
-              <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2} />
-            ) : (
-              <Plus className="h-4 w-4" strokeWidth={2} />
-            )}
-          </button>
+          {locked ? (
+            <Link
+              href="/pricing"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-dark text-text-disabled"
+              aria-label="Upgrade to unlock this paper"
+            >
+              <Lock className="h-4 w-4" strokeWidth={2} />
+            </Link>
+          ) : (
+            <button
+              type="button"
+              onClick={() => void handleAddPaperClick()}
+              disabled={isAddingPaper}
+              className={cn(
+                "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-dark text-text-muted transition-colors hover:bg-surface-neutral hover:text-text",
+                isAddingPaper && "cursor-wait opacity-70",
+              )}
+              aria-label="Add paper to session"
+              aria-busy={isAddingPaper}
+            >
+              {isAddingPaper ? (
+                <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2} />
+              ) : (
+                <Plus className="h-4 w-4" strokeWidth={2} />
+              )}
+            </button>
+          )}
         </div>
       </div>
 
@@ -389,10 +408,24 @@ export function PaperColumn({
                               mainSection.subjectParts,
                             )
                           }
-                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
-                          aria-label={`Add ${mainSection.name}`}
+                          disabled={locked}
+                          className={cn(
+                            "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-text-muted transition-colors",
+                            locked
+                              ? "cursor-not-allowed text-text-disabled"
+                              : "hover:bg-surface-mid hover:text-text",
+                          )}
+                          aria-label={
+                            locked
+                              ? `Upgrade to unlock ${mainSection.name}`
+                              : `Add ${mainSection.name}`
+                          }
                         >
-                          <Plus className="h-4 w-4" strokeWidth={2} />
+                          {locked ? (
+                            <Lock className="h-4 w-4" strokeWidth={2} />
+                          ) : (
+                            <Plus className="h-4 w-4" strokeWidth={2} />
+                          )}
                         </button>
                       </div>
                     </div>

@@ -30,6 +30,8 @@ interface PaperLibraryGridProps {
   onAddFullPaper: (paper: Paper, sectionsByMain: Map<string, Set<PaperSection>>) => void;
   onAddPaper: (paper: Paper) => void;
   onAddSection?: (paper: Paper, sectionName: string, sections: PaperSection[]) => void;
+  /** When true, papers are preview-only — add actions are locked behind upgrade. */
+  locked?: boolean;
 }
 
 function representativePaperScore(paper: Paper): number {
@@ -58,6 +60,7 @@ export function PaperLibraryGrid({
   onAddFullPaper,
   onAddPaper,
   onAddSection,
+  locked = false,
 }: PaperLibraryGridProps) {
   const [collapsedExams, setCollapsedExams] = useState<Set<string>>(new Set());
 
@@ -93,7 +96,7 @@ export function PaperLibraryGrid({
 
     Object.keys(grouped).forEach((examName) => {
       grouped[examName].sort((a, b) => {
-        if (b.examYear !== a.examYear) return b.examYear - a.examYear;
+        if (a.examYear !== b.examYear) return a.examYear - b.examYear;
         const typeA = (a.examType ?? "").toLowerCase();
         const typeB = (b.examType ?? "").toLowerCase();
         if (typeA === "official" && typeB !== "official") return -1;
@@ -207,6 +210,7 @@ export function PaperLibraryGrid({
                             onAddFullPaper={onAddFullPaper}
                             onAddPaper={onAddPaper}
                             onAddSection={onAddSection}
+                            locked={locked}
                           />
                         ))}
                       </div>
