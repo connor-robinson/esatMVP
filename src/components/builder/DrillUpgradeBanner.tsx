@@ -33,7 +33,7 @@ export function DrillUpgradeBanner({
         'relative overflow-hidden rounded-organic-xl bg-surface-elevated',
         isPanel
           ? isCompactPanel
-            ? 'min-h-[6.5rem] px-5 py-6 sm:min-h-[7.25rem] sm:px-6 sm:py-7'
+            ? 'min-h-[7.75rem] px-5 py-7 sm:min-h-[8.5rem] sm:px-7 sm:py-8'
             : 'px-6 py-6 sm:px-8 sm:py-7'
           : 'mt-3 px-4 py-3.5',
         className,
@@ -63,7 +63,7 @@ export function DrillUpgradeBanner({
               'font-bold leading-snug text-text',
               isPanel
                 ? isCompactPanel
-                  ? 'text-base sm:text-lg'
+                  ? 'text-lg sm:text-xl'
                   : 'text-lg sm:text-xl'
                 : 'text-sm',
             )}
@@ -75,7 +75,7 @@ export function DrillUpgradeBanner({
               'leading-snug text-text-muted',
               isPanel
                 ? isCompactPanel
-                  ? 'mt-1 text-xs sm:text-sm'
+                  ? 'mt-1.5 text-sm sm:text-[15px]'
                   : 'mt-1.5 text-sm sm:text-base'
                 : 'mt-0.5 text-xs',
             )}
@@ -89,7 +89,7 @@ export function DrillUpgradeBanner({
             'relative z-10 shrink-0 rounded-full bg-text font-bold text-background transition-opacity hover:opacity-90',
             isPanel
               ? isCompactPanel
-                ? 'self-start px-5 py-2 text-xs sm:self-auto sm:text-sm'
+                ? 'self-start px-6 py-2.5 text-sm sm:self-auto sm:px-7 sm:py-3 sm:text-[15px]'
                 : 'self-start px-6 py-2.5 text-sm sm:self-auto'
               : 'px-4 py-2 text-xs',
           )}
@@ -115,7 +115,7 @@ export function DrillUpgradeBanner({
           className={cn(
             isPanel
               ? isCompactPanel
-                ? '!h-[7.5rem] sm:!h-[8.5rem]'
+                ? '!h-[8.25rem] sm:!h-[9.5rem]'
                 : '!h-[8.5rem] sm:!h-[10.5rem]'
               : '!h-[7rem] sm:!h-[8.25rem]',
           )}

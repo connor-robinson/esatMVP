@@ -73,7 +73,7 @@ function DrillModuleCard({
     <div
       className={cn(
         'relative flex flex-col rounded-organic-md transition-all',
-        mostUseful ? 'min-h-[9.5rem] p-4' : 'min-h-[8.75rem] p-3.5',
+        mostUseful ? 'min-h-[11.4rem] p-4' : 'min-h-[8.75rem] p-3.5',
         locked
           ? 'bg-surface-elevated'
           : isSelected
