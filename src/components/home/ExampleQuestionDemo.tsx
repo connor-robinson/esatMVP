@@ -106,8 +106,7 @@ export function ExampleQuestionDemo() {
             Submit
           </button>
           <p className="text-xs text-white/45">
-            Pick an option and submit — we&apos;ll reveal the answer after you
-            sign up.
+            Pick an option and submit.
           </p>
         </div>
       )}
