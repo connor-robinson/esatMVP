@@ -1,52 +1,167 @@
 ﻿"use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { TriangleDiagram } from "@/components/shared/TriangleDiagram";
-import { generateTriangleDiagram } from "@/lib/diagrams/triangleGenerator";
 
 type TrainerQuestion = {
   id: string;
   topic: string;
-  prompt: string;
+  prompt: ReactNode;
   options: [string, string];
   correctIndex: 0 | 1;
-  showTriangleDiagram?: boolean;
+  showTriangle?: boolean;
 };
+
+function HeroTriangleSvg({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 240 190"
+      role="img"
+      aria-label="45-45-90 right triangle with base length 5 and unknown hypotenuse"
+      preserveAspectRatio="xMidYMid meet"
+      className={cn("h-auto w-full text-white", className)}
+    >
+      {/* Triangle */}
+      <path
+        d="M 68 34 L 68 132 L 166 132 Z"
+        fill="rgba(59, 130, 246, 0.045)"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        vectorEffect="non-scaling-stroke"
+        opacity="0.92"
+      />
+
+      {/* Right-angle marker */}
+      <path
+        d="M 68 114 L 86 114 L 86 132"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.15"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        vectorEffect="non-scaling-stroke"
+        opacity="0.9"
+      />
+
+      {/* Top-left angle arc */}
+      <path
+        d="M 68 61 A 27 27 0 0 0 87.1 53.9"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.15"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        vectorEffect="non-scaling-stroke"
+        opacity="0.9"
+      />
+
+      {/* Bottom-right angle arc */}
+      <path
+        d="M 139 132 A 27 27 0 0 1 146.9 112.9"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.15"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        vectorEffect="non-scaling-stroke"
+        opacity="0.9"
+      />
+
+      {/* Angle labels — inset so they clear the arcs */}
+      <text
+        x="98"
+        y="88"
+        textAnchor="middle"
+        fill="currentColor"
+        className="font-sans text-[13px] font-semibold tracking-tight"
+        opacity="0.95"
+      >
+        45°
+      </text>
+      <text
+        x="114"
+        y="110"
+        textAnchor="middle"
+        fill="currentColor"
+        className="font-sans text-[13px] font-semibold tracking-tight"
+        opacity="0.95"
+      >
+        45°
+      </text>
+
+      {/* Hypotenuse unknown */}
+      <text
+        x="140"
+        y="72"
+        textAnchor="middle"
+        fill="currentColor"
+        className="font-sans text-[16px] font-semibold"
+        opacity="0.98"
+      >
+        ?
+      </text>
+
+      {/* Base label */}
+      <text
+        x="117"
+        y="150"
+        textAnchor="middle"
+        fill="currentColor"
+        className="font-sans text-[14px] font-semibold"
+        opacity="0.94"
+      >
+        5
+      </text>
+    </svg>
+  );
+}
 
 const QUESTIONS: TrainerQuestion[] = [
   {
-    id: "special-triangles",
-    topic: "Special triangles",
-    prompt: "Find the hypotenuse",
-    options: ["5√2", "5√3"],
-    correctIndex: 0,
-    showTriangleDiagram: true,
-  },
-  {
     id: "arithmetic",
     topic: "Arithmetic",
-    prompt: "48 × 25",
+    prompt: (
+      <span className="font-mono text-3xl font-medium text-[#3B82F6] sm:text-4xl">
+        48 × 25
+      </span>
+    ),
     options: ["1,200", "960"],
     correctIndex: 0,
   },
   {
     id: "complete-square",
     topic: "Complete the square",
-    prompt: "x² + 6x + 2 → (x + a)² + b\nWhat is a?",
+    prompt: (
+      <span className="flex flex-col items-center gap-3">
+        <span className="font-mono text-xl font-medium leading-snug text-[#3B82F6] sm:text-2xl">
+          x² + 6x + 2 → (x + a)² + b
+        </span>
+        <span className="font-sans text-base font-medium text-white sm:text-lg">
+          What is <span className="font-mono text-[#3B82F6]">a</span>?
+        </span>
+      </span>
+    ),
     options: ["3", "6"],
     correctIndex: 0,
   },
+  {
+    id: "special-triangles",
+    topic: "Special triangles",
+    prompt: (
+      <span className="whitespace-nowrap font-sans text-xl font-medium sm:text-2xl">
+        <span className="text-white">Find the </span>
+        <span className="text-[#3B82F6]">hypotenuse</span>
+      </span>
+    ),
+    options: ["5√2", "5√3"],
+    correctIndex: 0,
+    showTriangle: true,
+  },
 ];
-
-const SPECIAL_TRIANGLE_DIAGRAM = generateTriangleDiagram({
-  type: "45-45-90",
-  unit: 5,
-  problemType: "side",
-  givenSide: "leg",
-  unknownSide: "hyp",
-});
 
 export function HeroTrainerDemo({ className }: { className?: string }) {
   const [index, setIndex] = useState(0);
@@ -58,13 +173,6 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
   const progress = finished
     ? 100
     : ((index + (picked !== null ? 1 : 0)) / QUESTIONS.length) * 100;
-  const triangleDiagram = useMemo(
-    () =>
-      !finished && question.showTriangleDiagram
-        ? SPECIAL_TRIANGLE_DIAGRAM
-        : null,
-    [finished, question.showTriangleDiagram],
-  );
 
   const advance = useCallback(() => {
     setPicked(null);
@@ -152,25 +260,11 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
             {question.topic}
           </p>
 
-          <div
-            className={cn(
-              "mt-6 flex w-full flex-col items-center justify-center px-2 sm:mt-8",
-              triangleDiagram
-                ? "min-h-[13rem] gap-4 sm:min-h-[14rem]"
-                : "min-h-[7.5rem] sm:min-h-[8.5rem]",
-            )}
-          >
-            {triangleDiagram ? (
-              <div className="w-full max-w-[13.5rem] rounded-2xl bg-white/[0.04] px-3 py-2">
-                <TriangleDiagram
-                  data={triangleDiagram}
-                  className="[&_svg]:max-w-[180px] [&_text]:fill-white"
-                />
-              </div>
+          <div className="mt-6 flex h-[11.5rem] w-full flex-col items-center justify-center gap-2 px-2 sm:mt-8 sm:h-[12rem]">
+            {question.showTriangle ? (
+              <HeroTriangleSvg className="max-h-[7.25rem] max-w-[9.5rem]" />
             ) : null}
-            <p className="whitespace-pre-line font-mono text-2xl font-medium leading-snug text-[#3B82F6] sm:text-3xl">
-              {question.prompt}
-            </p>
+            {question.prompt}
           </div>
 
           <div className="mt-8 h-1.5 w-full max-w-[14rem] overflow-hidden rounded-full bg-white/10 sm:mt-10">
