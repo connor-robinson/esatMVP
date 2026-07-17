@@ -376,27 +376,35 @@ export function Navbar() {
           }
           toggleTheme();
         }}
-        className={navIconSlotClass}
+        className={cn(
+          navIconSlotClass,
+          isDark && 'w-auto gap-1 px-1.5',
+        )}
         aria-label={
           isDark
-            ? `Switch to light mode (${lightStrategy === "inverted" ? "inverted palette preview" : "designed light theme"})`
+            ? `Switch to light mode (beta) (${lightStrategy === "inverted" ? "inverted palette preview" : "designed light theme"})`
             : `Switch to dark mode${lightStrategy === "inverted" ? " (Alt+click: designed light)" : " (Alt+click: inverted palette preview)"}`
         }
         title={
           isDark
-            ? undefined
+            ? "Light mode (beta)"
             : lightStrategy === "inverted"
               ? "Light mode: inverted palette preview. Alt+click for designed light."
               : "Light mode: designed theme. Alt+click for inverted palette preview."
         }
       >
         {isDark ? (
-          <Sun
-            className='text-text'
-            aria-hidden
-            size={NAV_ICON_PX}
-            strokeWidth={NAV_ICON_STROKE}
-          />
+          <>
+            <Sun
+              className='text-text'
+              aria-hidden
+              size={NAV_ICON_PX}
+              strokeWidth={NAV_ICON_STROKE}
+            />
+            <span className='text-[9px] font-semibold uppercase tracking-[0.08em] text-text-muted'>
+              Beta
+            </span>
+          </>
         ) : (
           <Moon
             className='text-text'
