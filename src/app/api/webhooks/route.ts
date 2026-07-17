@@ -96,7 +96,10 @@ export async function POST(request: NextRequest) {
             await finalizeSeasonPassSubscription(sub);
           }
         } else if (session.mode === "payment" && session.metadata?.planType === "season_pass") {
-          await upsertOneTimePurchase(session, EXAM_DATE);
+          const fullSession = await getStripe().checkout.sessions.retrieve(session.id, {
+            expand: ["line_items.data.price.product"],
+          });
+          await upsertOneTimePurchase(fullSession, EXAM_DATE);
         }
         break;
       }

@@ -16,8 +16,8 @@ export function UpgradeCTA({ feature, className }: UpgradeCTAProps) {
       headline="Upgrade for full access"
       subtext={
         feature
-          ? `Unlock ${feature} with a 7-day free trial on Monthly or Exam Season Pass.`
-          : "Try Monthly or Exam Season Pass free for 7 days — cancel anytime during the trial."
+          ? `Unlock ${feature} with a 7-day free trial on Monthly, or buy the Exam Season Pass once.`
+          : "Start a 7-day free trial on Monthly, or get the Exam Season Pass as a one-time purchase."
       }
       href="/pricing"
       ctaLabel="Upgrade for free"

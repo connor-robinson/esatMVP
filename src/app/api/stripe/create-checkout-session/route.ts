@@ -10,7 +10,6 @@ export const dynamic = "force-dynamic";
 type PlanType = "weekly" | "monthly" | "season_pass";
 
 const TRIAL_DAYS = 7;
-const EXAM_ACCESS_UNTIL = "2026-10-01";
 
 /** First-time customers only — avoid stacking free trials. */
 async function isEligibleForTrial(customerId: string): Promise<boolean> {
@@ -44,25 +43,21 @@ export async function POST(request: NextRequest) {
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
     const successUrl = `${siteUrl}/pricing?success=true`;
     const cancelUrl = `${siteUrl}/pricing?canceled=true`;
-    const offerTrial =
-      (planType === "monthly" || planType === "season_pass") &&
-      (await isEligibleForTrial(customerId));
 
-    // Exam Season Pass — subscription + trial, then one charge; access recorded until exam date
+    // Exam Season Pass — true one-time payment (no yearly subscription)
     if (planType === "season_pass") {
       const amountPence = Math.round(getSeasonPassPrice() * 100);
       const session = await getStripe().checkout.sessions.create({
-        mode: "subscription",
+        mode: "payment",
         customer: customerId,
         line_items: [
           {
             price_data: {
               currency: "gbp",
               unit_amount: amountPence,
-              recurring: { interval: "year" },
               product_data: {
                 name: "Exam Season Pass",
-                description: "Full access until 1 Oct 2026",
+                description: "One-time — full access until 1 Oct 2026",
               },
             },
             quantity: 1,
@@ -71,14 +66,6 @@ export async function POST(request: NextRequest) {
         success_url: successUrl,
         cancel_url: cancelUrl,
         metadata: { userId: user.id, planType: "season_pass" },
-        subscription_data: {
-          ...(offerTrial ? { trial_period_days: TRIAL_DAYS } : {}),
-          metadata: {
-            userId: user.id,
-            planType: "season_pass",
-            access_until: EXAM_ACCESS_UNTIL,
-          },
-        },
       });
       return NextResponse.json({ url: session.url });
     }
@@ -91,6 +78,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const offerTrial =
+      planType === "monthly" && (await isEligibleForTrial(customerId));
+
     const session = await getStripe().checkout.sessions.create({
       mode: "subscription",
       customer: customerId,
@@ -99,9 +89,7 @@ export async function POST(request: NextRequest) {
       cancel_url: cancelUrl,
       metadata: { userId: user.id, planType },
       subscription_data: {
-        ...(offerTrial && planType === "monthly"
-          ? { trial_period_days: TRIAL_DAYS }
-          : {}),
+        ...(offerTrial ? { trial_period_days: TRIAL_DAYS } : {}),
         metadata: { userId: user.id, planType },
       },
     });

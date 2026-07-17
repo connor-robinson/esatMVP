@@ -573,7 +573,7 @@ export function MarketingHomepage() {
                 <span className="text-sm text-[#94A3B8]">once</span>
               </div>
               <p className="mt-2 text-sm text-[#94A3B8]">
-                7-day free trial · then access until 1 Oct 2026
+                One-time · access until 1 Oct 2026 · beats weekly rate
               </p>
               <ul className="mt-8 flex-1 space-y-3 text-sm text-[#94A3B8]">
                 {PAID_FEATURES.map((feature) => (
