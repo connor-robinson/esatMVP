@@ -22,11 +22,10 @@ export async function signInWithGoogle(
     provider: "google",
     options: {
       redirectTo: redirectUrl,
-      // Explicit email-only; do not include profile / userinfo.profile
-      scopes: "openid email https://www.googleapis.com/auth/userinfo.email",
+      // Email only — never request profile / name / picture
+      scopes: "openid email",
       queryParams: {
         redirectTo,
-        // Do not inherit previously granted profile access
         include_granted_scopes: "false",
       },
     },
