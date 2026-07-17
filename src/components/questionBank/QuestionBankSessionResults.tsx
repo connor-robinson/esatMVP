@@ -6,6 +6,7 @@ import { Container } from '@/components/layout/Container';
 import { Button } from '@/components/ui/Button';
 import { DrillUpgradeBanner } from '@/components/builder/DrillUpgradeBanner';
 import { GoogleAuthButton } from '@/components/auth/GoogleAuthButton';
+import { signInWithGoogle } from '@/lib/auth/googleOAuth';
 import { useSupabaseClient } from '@/components/auth/SupabaseSessionProvider';
 import { SessionMiniChart } from '@/components/analytics/SessionMiniChart';
 import { BreakdownDonutChart } from '@/components/questionBank/BreakdownDonutChart';
@@ -111,14 +112,7 @@ export function QuestionBankSessionResults({
   const handleGoogleSignIn = async () => {
     try {
       setSignInLoading(true);
-      const redirectUrl = `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent(signInRedirectTo)}`;
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: redirectUrl,
-          queryParams: { redirectTo: signInRedirectTo },
-        },
-      });
+      const { error } = await signInWithGoogle(supabase, signInRedirectTo);
       if (error) throw error;
     } catch {
       setSignInLoading(false);

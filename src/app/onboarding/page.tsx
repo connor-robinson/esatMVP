@@ -16,9 +16,9 @@ import { Check, Loader2, Sparkles } from "lucide-react";
 import type { SubjectTileKey } from "@/lib/questionBank/subjectTileTheme";
 
 type ExamPref = "ESAT" | "TMUA";
-type Step = "exam" | "applicant" | "arrangements" | "calibration" | "offer";
+type Step = "exam" | "applicant" | "arrangements" | "emails" | "calibration" | "offer";
 
-const STEPS: Step[] = ["exam", "applicant", "arrangements", "calibration", "offer"];
+const STEPS: Step[] = ["exam", "applicant", "arrangements", "emails", "calibration", "offer"];
 
 function StepDots({ current }: { current: Step }) {
   const idx = STEPS.indexOf(current);
@@ -90,6 +90,7 @@ function OnboardingContent() {
   const [extraTime, setExtraTime] = useState(false);
   const [extraTimePct, setExtraTimePct] = useState(25);
   const [restBreaks, setRestBreaks] = useState(false);
+  const [marketingEmails, setMarketingEmails] = useState<boolean | null>(null);
 
   const toggleSubject = (subject: SubjectTileKey) => {
     setSubjects((prev) => {
@@ -120,6 +121,7 @@ function OnboardingContent() {
         has_extra_time: extraTime,
         extra_time_percentage: extraTime ? extraTimePct : 25,
         has_rest_breaks: restBreaks,
+        marketing_emails_consent: marketingEmails,
         onboarding_completed: true,
       });
       router.replace(nextHref);
@@ -171,6 +173,23 @@ function OnboardingContent() {
         extra_time_percentage: extraTime ? extraTimePct : 25,
         has_rest_breaks: restBreaks,
       });
+      setStep("emails");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not save");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const goNextFromEmails = async () => {
+    if (marketingEmails === null) {
+      setError("Please choose whether we can email you");
+      return;
+    }
+    setSaving(true);
+    setError(null);
+    try {
+      await savePrefs({ marketing_emails_consent: marketingEmails });
       setStep("calibration");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save");
@@ -385,6 +404,54 @@ function OnboardingContent() {
               </div>
             ) : null}
 
+            {step === "emails" ? (
+              <div className="space-y-5">
+                <h2 className="text-lg font-semibold text-text">
+                  Can we send you emails?
+                </h2>
+                <p className="text-sm text-text-muted">
+                  Occasional study tips, exam reminders, and product updates. No
+                  spam — and you can change this anytime in Settings.
+                </p>
+                <div className="space-y-3">
+                  <ChoiceCard
+                    selected={marketingEmails === true}
+                    title="Yes, keep me updated"
+                    description="Study tips, exam reminders, and product news"
+                    onClick={() => {
+                      setMarketingEmails(true);
+                      setError(null);
+                    }}
+                  />
+                  <ChoiceCard
+                    selected={marketingEmails === false}
+                    title="No thanks"
+                    description="Only essential account emails (e.g. password reset)"
+                    onClick={() => {
+                      setMarketingEmails(false);
+                      setError(null);
+                    }}
+                  />
+                </div>
+                <div className="flex gap-3">
+                  <Button
+                    variant="secondary"
+                    className="flex-1 border-0"
+                    onClick={() => setStep("arrangements")}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    className="flex-1 border-0 bg-primary font-semibold text-black hover:bg-primary-hover"
+                    disabled={saving || marketingEmails === null}
+                    onClick={() => void goNextFromEmails()}
+                  >
+                    {saving ? "Saving…" : "Continue"}
+                  </Button>
+                </div>
+              </div>
+            ) : null}
+
             {step === "calibration" ? (
               <div className="space-y-5">
                 <h2 className="text-lg font-semibold text-text">
@@ -417,7 +484,7 @@ function OnboardingContent() {
                   <button
                     type="button"
                     className="text-sm text-text-muted hover:text-text"
-                    onClick={() => setStep("arrangements")}
+                    onClick={() => setStep("emails")}
                   >
                     Back
                   </button>

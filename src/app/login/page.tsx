@@ -14,7 +14,7 @@ import {
 } from "@/components/auth/GoogleAuthButton";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 import { Container } from "@/components/layout/Container";
-import { cn } from "@/lib/utils";
+import { signInWithGoogle } from "@/lib/auth/googleOAuth";
 
 type AuthMode = GoogleAuthMode;
 
@@ -144,17 +144,7 @@ export default function LoginPage() {
       setLoading(true);
       setError(null);
 
-      const redirectUrl = `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`;
-
-      const { error: signInError } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: redirectUrl,
-          queryParams: {
-            redirectTo,
-          },
-        },
-      });
+      const { error: signInError } = await signInWithGoogle(supabase, redirectTo);
 
       if (signInError) {
         setError(signInError.message);

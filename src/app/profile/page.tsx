@@ -45,6 +45,7 @@ type Preferences = {
   font_size: 'small' | 'medium' | 'large';
   reduced_motion: boolean;
   dark_mode: boolean;
+  marketing_emails_consent: boolean;
 };
 
 type SettingSection = {
@@ -130,6 +131,7 @@ export default function ProfilePage() {
     font_size: 'medium',
     reduced_motion: false,
     dark_mode: false,
+    marketing_emails_consent: false,
   });
   const [showUsernameSetup, setShowUsernameSetup] = useState(false);
   const [isEditingUsername, setIsEditingUsername] = useState(false);
@@ -201,6 +203,7 @@ export default function ProfilePage() {
             font_size: data.font_size || "medium",
             reduced_motion: data.reduced_motion ?? false,
             dark_mode: data.dark_mode ?? false,
+            marketing_emails_consent: data.marketing_emails_consent ?? false,
           });
 
           if (!data.exam_preference) {
@@ -957,6 +960,24 @@ export default function ProfilePage() {
                         ) : undefined
                       }
                     />
+
+                    <div className="px-5 py-4 sm:px-7">
+                      <Toggle
+                        checked={preferences.marketing_emails_consent}
+                        onChange={(checked) => {
+                          setPreferences((prev) => ({
+                            ...prev,
+                            marketing_emails_consent: checked,
+                          }));
+                          savePreferences(
+                            { marketing_emails_consent: checked },
+                            "marketing_emails",
+                          );
+                        }}
+                        label="Product emails"
+                        description="Study tips, exam reminders, and occasional product updates"
+                      />
+                    </div>
                   </SettingsGroup>
 
                   <SettingsGroup title="Security">

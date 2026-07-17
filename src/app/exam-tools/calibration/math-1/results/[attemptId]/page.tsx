@@ -12,6 +12,7 @@ import {
   useSupabaseSession,
 } from "@/components/auth/SupabaseSessionProvider";
 import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
+import { signInWithGoogle } from "@/lib/auth/googleOAuth";
 import { CalibrationResultsView } from "@/components/calibration/CalibrationResultsView";
 import { loadAttempt, saveAttempt } from "@/lib/calibration/attempt";
 import { computeResults } from "@/lib/calibration/scoring";
@@ -133,14 +134,7 @@ export default function CalibrationResultsPage() {
       try {
         setAuthLoading(true);
         setAuthError(null);
-        const redirectUrl = `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`;
-        const { error } = await supabase.auth.signInWithOAuth({
-          provider: "google",
-          options: {
-            redirectTo: redirectUrl,
-            queryParams: { redirectTo },
-          },
-        });
+        const { error } = await signInWithGoogle(supabase, redirectTo);
         if (error) {
           setAuthError(error.message);
           setAuthLoading(false);

@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     // Fetch user profile with preferences
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode, onboarding_completed')
+      .select('username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode, onboarding_completed, marketing_emails_consent')
       .eq('id', session.user.id)
       .single();
 
@@ -44,6 +44,7 @@ export async function GET(request: NextRequest) {
           reduced_motion: false,
           dark_mode: false,
           onboarding_completed: false,
+          marketing_emails_consent: null,
         });
       }
       
@@ -93,6 +94,7 @@ export async function PATCH(request: NextRequest) {
       reduced_motion,
       dark_mode,
       onboarding_completed,
+      marketing_emails_consent,
     } = body;
 
     // Validate username if it's being updated
@@ -226,6 +228,15 @@ export async function PATCH(request: NextRequest) {
     if (onboarding_completed !== undefined) {
       updateData.onboarding_completed = Boolean(onboarding_completed);
     }
+    if (marketing_emails_consent !== undefined) {
+      if (marketing_emails_consent !== null && typeof marketing_emails_consent !== 'boolean') {
+        return NextResponse.json(
+          { error: 'marketing_emails_consent must be a boolean or null' },
+          { status: 400 }
+        );
+      }
+      updateData.marketing_emails_consent = marketing_emails_consent;
+    }
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
@@ -239,7 +250,7 @@ export async function PATCH(request: NextRequest) {
       .from('profiles') as any)
       .update(updateData)
       .eq('id', session.user.id)
-      .select('username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode, onboarding_completed')
+      .select('username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode, onboarding_completed, marketing_emails_consent')
       .single();
 
     if (profileError) {

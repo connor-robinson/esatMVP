@@ -28,6 +28,7 @@ import {
 import { getDisplayFolderName } from "@/lib/display-folder-registry";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
+import { signInWithGoogle } from "@/lib/auth/googleOAuth";
 import { 
   ArrowLeft, 
   Clock, 
@@ -69,14 +70,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     try {
       setSignInLoading(true);
       const redirectTo = "/mental-maths/drill";
-      const redirectUrl = `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`;
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: redirectUrl,
-          queryParams: { redirectTo },
-        },
-      });
+      const { error } = await signInWithGoogle(supabase, redirectTo);
       if (error) throw error;
     } catch {
       setSignInLoading(false);

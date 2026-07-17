@@ -363,6 +363,7 @@ export type UserProfileRow = {
   reduced_motion: boolean | null;
   dark_mode: boolean | null;
   onboarding_completed: boolean | null;
+  marketing_emails_consent: boolean | null;
   created_at: string;
   updated_at: string;
 };
@@ -384,6 +385,7 @@ export type UserProfileInsert = {
   reduced_motion?: boolean | null;
   dark_mode?: boolean | null;
   onboarding_completed?: boolean | null;
+  marketing_emails_consent?: boolean | null;
 };
 export type UserProfileUpdate = Partial<UserProfileRow>;
 
