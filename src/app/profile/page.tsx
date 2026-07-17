@@ -1258,8 +1258,8 @@ export default function ProfilePage() {
 
                     <div className="pt-6">
                       <SettingItem
-                        label="Application Type"
-                        description="Cambridge and Oxford usually need an early mid-October UCAS deadline. Choose early for that cycle, or later for a gap year / future year."
+                        label="Application timing"
+                        description="October sitting for Oxbridge / most 2027 entry; January or later for other deadlines and future cycles."
                       >
                         <ChoicePillGroup
                           value={preferences.is_early_applicant ? "early" : "late"}
@@ -1277,12 +1277,12 @@ export default function ProfilePage() {
                           options={[
                             {
                               value: "early",
-                              label: "Early (Oxbridge cycle)",
+                              label: "October sitting",
                               selectedClass: "bg-accent text-background hover:opacity-90",
                             },
                             {
                               value: "late",
-                              label: "Later / gap year",
+                              label: "January / future",
                               selectedClass: "bg-biology text-background hover:opacity-90",
                             },
                           ]}

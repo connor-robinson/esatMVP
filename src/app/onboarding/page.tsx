@@ -13,8 +13,43 @@ import type { SubjectTileKey } from "@/lib/questionBank/subjectTileTheme";
 
 type ExamPref = "ESAT" | "TMUA";
 type Step = "username" | "exam" | "applicant" | "arrangements";
+type SittingChoice = "october_2026" | "january_2027" | "not_sure" | "future";
 
 const USERNAME_REGEX = /^[a-zA-Z0-9_-]{2,20}$/;
+
+const SITTING_OPTIONS: {
+  id: SittingChoice;
+  title: string;
+  description: string;
+  isEarly: boolean;
+}[] = [
+  {
+    id: "october_2026",
+    title: "October 2026 sitting",
+    description:
+      "Required for Oxford/Cambridge applicants and suitable for most 2027-entry applicants.",
+    isEarly: true,
+  },
+  {
+    id: "january_2027",
+    title: "January 2027 sitting",
+    description:
+      "Usually for Imperial/UCL/other later-deadline applicants, not standard Oxford/Cambridge.",
+    isEarly: false,
+  },
+  {
+    id: "not_sure",
+    title: "Not sure yet",
+    description: "We’ll start with a flexible plan.",
+    isEarly: true,
+  },
+  {
+    id: "future",
+    title: "Future cycle",
+    description: "I’m preparing early, not applying this year.",
+    isEarly: false,
+  },
+];
 
 /** Account-setup accent — clear blue, independent of olive primary. */
 const ACCENT = {
@@ -100,7 +135,7 @@ function OnboardingContent() {
 
   const [exam, setExam] = useState<ExamPref>("ESAT");
   const [subjects, setSubjects] = useState<SubjectTileKey[]>([]);
-  const [earlyApplicant, setEarlyApplicant] = useState(true);
+  const [sitting, setSitting] = useState<SittingChoice>("october_2026");
   const [extraTime, setExtraTime] = useState(false);
   const [extraTimePct, setExtraTimePct] = useState(25);
 
@@ -136,7 +171,7 @@ function OnboardingContent() {
           setSubjects(data.esat_subjects as SubjectTileKey[]);
         }
         if (typeof data.is_early_applicant === "boolean") {
-          setEarlyApplicant(data.is_early_applicant);
+          setSitting(data.is_early_applicant ? "october_2026" : "january_2027");
         }
         if (typeof data.has_extra_time === "boolean") {
           setExtraTime(data.has_extra_time);
@@ -249,7 +284,8 @@ function OnboardingContent() {
       await savePrefs({
         exam_preference: exam,
         esat_subjects: exam === "ESAT" ? subjects : [],
-        is_early_applicant: earlyApplicant,
+        is_early_applicant:
+          SITTING_OPTIONS.find((o) => o.id === sitting)?.isEarly ?? true,
         has_extra_time: extraTime,
         extra_time_percentage: extraTime ? extraTimePct : 25,
         onboarding_completed: true,
@@ -307,7 +343,10 @@ function OnboardingContent() {
     setSaving(true);
     setError(null);
     try {
-      await savePrefs({ is_early_applicant: earlyApplicant });
+      await savePrefs({
+        is_early_applicant:
+          SITTING_OPTIONS.find((o) => o.id === sitting)?.isEarly ?? true,
+      });
       goNext("applicant");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save");
@@ -357,16 +396,18 @@ function OnboardingContent() {
           <div
             className={cn(
               "flex w-full max-w-[52rem] flex-col overflow-hidden rounded-[1.75rem] bg-surface-elevated",
-              "h-[min(40rem,calc(100vh-7rem))] sm:h-[min(42rem,calc(100vh-6rem))]",
+              "h-[min(44rem,calc(100vh-6rem))] sm:h-[min(46rem,calc(100vh-5rem))]",
               "px-8 pb-8 pt-7 sm:px-14 sm:pb-10 sm:pt-9",
             )}
           >
             <ProgressBar stepIndex={stepIndex} total={steps.length} />
 
             <div className="mx-auto mt-9 flex min-h-0 w-full max-w-xl flex-1 flex-col">
-              <h1 className="shrink-0 text-3xl font-bold tracking-tight text-text sm:text-4xl">
-                Set up your account
-              </h1>
+              {step !== "applicant" ? (
+                <h1 className="shrink-0 text-3xl font-bold tracking-tight text-text sm:text-4xl">
+                  Set up your account
+                </h1>
+              ) : null}
 
               <div className="mt-7 min-h-0 flex-1 space-y-6 overflow-y-auto pr-1">
                 {step === "username" ? (
@@ -517,20 +558,24 @@ function OnboardingContent() {
                 {step === "applicant" ? (
                   <>
                     <div>
-                      <h2 className="text-xl font-semibold text-text">Application timing</h2>
+                      <h1 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">
+                        Application timing
+                      </h1>
+                      <p className="mt-2 text-sm text-text-muted">
+                        When are you planning to take the {exam}?
+                      </p>
                     </div>
 
                     <div className="space-y-3">
-                      <ChoiceCard
-                        selected={earlyApplicant}
-                        title="Early"
-                        onClick={() => setEarlyApplicant(true)}
-                      />
-                      <ChoiceCard
-                        selected={!earlyApplicant}
-                        title="Later"
-                        onClick={() => setEarlyApplicant(false)}
-                      />
+                      {SITTING_OPTIONS.map((option) => (
+                        <ChoiceCard
+                          key={option.id}
+                          selected={sitting === option.id}
+                          title={option.title}
+                          description={option.description}
+                          onClick={() => setSitting(option.id)}
+                        />
+                      ))}
                     </div>
 
                     <div className="flex gap-3">
