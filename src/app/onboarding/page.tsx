@@ -8,14 +8,23 @@ import {
 } from "@/components/profile/settingsSubjectPills";
 import { cn } from "@/lib/utils";
 import { sanitizeRedirectTo } from "@/lib/onboarding/redirect";
+import {
+  REFERRAL_SOURCES,
+  TARGET_UNIVERSITIES,
+  type ReferralSource,
+  type TargetUniversity,
+} from "@/lib/onboarding/options";
 import { AlertCircle, Check, CheckCircle2, Loader2 } from "lucide-react";
 import type { SubjectTileKey } from "@/lib/questionBank/subjectTileTheme";
 
 type ExamPref = "ESAT" | "TMUA";
-type Step = "username" | "exam" | "applicant" | "arrangements";
+type Step = "username" | "exam" | "applicant" | "universities" | "referral";
 type SittingChoice = "october_2026" | "january_2027" | "not_sure" | "future";
 
 const USERNAME_REGEX = /^[a-zA-Z0-9_-]{2,20}$/;
+
+const ALL_STEPS: Step[] = ["username", "exam", "applicant", "universities", "referral"];
+const STEPS_WITHOUT_USERNAME: Step[] = ["exam", "applicant", "universities", "referral"];
 
 const SITTING_OPTIONS: {
   id: SittingChoice;
@@ -81,11 +90,13 @@ function ChoiceCard({
   title,
   description,
   onClick,
+  checkbox = false,
 }: {
   selected: boolean;
   title: string;
   description?: string;
   onClick: () => void;
+  checkbox?: boolean;
 }) {
   return (
     <button
@@ -105,7 +116,19 @@ function ChoiceCard({
             </p>
           ) : null}
         </div>
-        {selected ? <Check className="h-5 w-5 shrink-0" aria-hidden /> : null}
+        {checkbox ? (
+          <span
+            className={cn(
+              "flex h-5 w-5 shrink-0 items-center justify-center rounded-md",
+              selected ? "bg-white text-[#4C8BF5]" : "bg-white/10",
+            )}
+            aria-hidden
+          >
+            {selected ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : null}
+          </span>
+        ) : selected ? (
+          <Check className="h-5 w-5 shrink-0" aria-hidden />
+        ) : null}
       </div>
     </button>
   );
@@ -120,7 +143,7 @@ function OnboardingContent() {
     [searchParams],
   );
 
-  const [steps, setSteps] = useState<Step[]>(["username", "exam", "applicant", "arrangements"]);
+  const [steps, setSteps] = useState<Step[]>(ALL_STEPS);
   const [step, setStep] = useState<Step>("username");
   const [booting, setBooting] = useState(!isPreview);
   const [saving, setSaving] = useState(false);
@@ -136,14 +159,16 @@ function OnboardingContent() {
   const [exam, setExam] = useState<ExamPref>("ESAT");
   const [subjects, setSubjects] = useState<SubjectTileKey[]>([]);
   const [sitting, setSitting] = useState<SittingChoice>("october_2026");
-  const [extraTime, setExtraTime] = useState(false);
-  const [extraTimePct, setExtraTimePct] = useState(25);
+  const [universities, setUniversities] = useState<TargetUniversity[]>([]);
+  const [referral, setReferral] = useState<ReferralSource | null>(null);
 
   const stepIndex = Math.max(0, steps.indexOf(step));
+  const usesStepTitle =
+    step === "applicant" || step === "universities" || step === "referral";
 
   useEffect(() => {
     if (isPreview) {
-      setSteps(["username", "exam", "applicant", "arrangements"]);
+      setSteps(ALL_STEPS);
       setStep("username");
       setBooting(false);
       return;
@@ -158,9 +183,7 @@ function OnboardingContent() {
         if (cancelled) return;
 
         const needsUsername = !data.username;
-        const nextSteps: Step[] = needsUsername
-          ? ["username", "exam", "applicant", "arrangements"]
-          : ["exam", "applicant", "arrangements"];
+        const nextSteps = needsUsername ? ALL_STEPS : STEPS_WITHOUT_USERNAME;
         setSteps(nextSteps);
         setStep(nextSteps[0]);
 
@@ -173,11 +196,18 @@ function OnboardingContent() {
         if (typeof data.is_early_applicant === "boolean") {
           setSitting(data.is_early_applicant ? "october_2026" : "january_2027");
         }
-        if (typeof data.has_extra_time === "boolean") {
-          setExtraTime(data.has_extra_time);
+        if (Array.isArray(data.target_universities)) {
+          setUniversities(
+            data.target_universities.filter((u: string): u is TargetUniversity =>
+              (TARGET_UNIVERSITIES as readonly string[]).includes(u),
+            ),
+          );
         }
-        if (typeof data.extra_time_percentage === "number") {
-          setExtraTimePct(data.extra_time_percentage);
+        if (
+          typeof data.referral_source === "string" &&
+          (REFERRAL_SOURCES as readonly string[]).includes(data.referral_source)
+        ) {
+          setReferral(data.referral_source as ReferralSource);
         }
       } finally {
         if (!cancelled) setBooting(false);
@@ -250,6 +280,19 @@ function OnboardingContent() {
     });
   };
 
+  const toggleUniversity = (uni: TargetUniversity) => {
+    setUniversities((prev) => {
+      if (uni === "Not sure yet") {
+        return prev.includes(uni) ? [] : ["Not sure yet"];
+      }
+      const withoutNotSure = prev.filter((u) => u !== "Not sure yet");
+      if (withoutNotSure.includes(uni)) {
+        return withoutNotSure.filter((u) => u !== uni);
+      }
+      return [...withoutNotSure, uni];
+    });
+  };
+
   const savePrefs = async (payload: Record<string, unknown>) => {
     if (isPreview) return;
     const res = await fetch("/api/profile/preferences", {
@@ -274,6 +317,10 @@ function OnboardingContent() {
   };
 
   const finish = async () => {
+    if (!referral) {
+      setError("Please choose an option");
+      return;
+    }
     setSaving(true);
     setError(null);
     try {
@@ -286,8 +333,8 @@ function OnboardingContent() {
         esat_subjects: exam === "ESAT" ? subjects : [],
         is_early_applicant:
           SITTING_OPTIONS.find((o) => o.id === sitting)?.isEarly ?? true,
-        has_extra_time: extraTime,
-        extra_time_percentage: extraTime ? extraTimePct : 25,
+        target_universities: universities,
+        referral_source: referral,
         onboarding_completed: true,
       });
       router.replace(redirectTo);
@@ -355,6 +402,23 @@ function OnboardingContent() {
     }
   };
 
+  const submitUniversities = async () => {
+    if (universities.length === 0) {
+      setError("Select at least one option");
+      return;
+    }
+    setSaving(true);
+    setError(null);
+    try {
+      await savePrefs({ target_universities: universities });
+      goNext("universities");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not save");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (booting) {
     return (
       <div className="flex min-h-[calc(100vh-58px)] items-center justify-center bg-background">
@@ -403,7 +467,7 @@ function OnboardingContent() {
             <ProgressBar stepIndex={stepIndex} total={steps.length} />
 
             <div className="mx-auto mt-9 flex min-h-0 w-full max-w-xl flex-1 flex-col">
-              {step !== "applicant" ? (
+              {!usesStepTitle ? (
                 <h1 className="shrink-0 text-3xl font-bold tracking-tight text-text sm:text-4xl">
                   Set up your account
                 </h1>
@@ -601,40 +665,28 @@ function OnboardingContent() {
                   </>
                 ) : null}
 
-                {step === "arrangements" ? (
+                {step === "universities" ? (
                   <>
                     <div>
-                      <h2 className="text-xl font-semibold text-text">Access arrangements</h2>
+                      <h1 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">
+                        Target universities
+                      </h1>
+                      <p className="mt-2 text-sm text-text-muted">
+                        Which universities are you applying to?
+                      </p>
                     </div>
 
                     <div className="space-y-3">
-                      <ChoiceCard
-                        selected={!extraTime}
-                        title="No extra time"
-                        onClick={() => setExtraTime(false)}
-                      />
-                      <ChoiceCard
-                        selected={extraTime}
-                        title="I get extra time"
-                        onClick={() => setExtraTime(true)}
-                      />
-                    </div>
-
-                    {extraTime ? (
-                      <div className="flex items-center gap-3 pl-1">
-                        <input
-                          type="number"
-                          min={0}
-                          max={100}
-                          value={extraTimePct}
-                          onChange={(e) =>
-                            setExtraTimePct(parseInt(e.target.value, 10) || 25)
-                          }
-                          className="w-20 rounded-xl border-0 bg-surface-mid px-3 py-2.5 text-sm text-text outline-none"
+                      {TARGET_UNIVERSITIES.map((uni) => (
+                        <ChoiceCard
+                          key={uni}
+                          selected={universities.includes(uni)}
+                          title={uni}
+                          checkbox
+                          onClick={() => toggleUniversity(uni)}
                         />
-                        <span className="text-sm text-text-muted">% extra</span>
-                      </div>
-                    ) : null}
+                      ))}
+                    </div>
 
                     <div className="flex gap-3">
                       <button
@@ -646,7 +698,55 @@ function OnboardingContent() {
                       </button>
                       <button
                         type="button"
-                        disabled={saving}
+                        disabled={saving || universities.length === 0}
+                        onClick={() => void submitUniversities()}
+                        className={cn(
+                          "flex-1 rounded-2xl py-3.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
+                          ACCENT.btn,
+                        )}
+                      >
+                        {saving ? "Saving…" : "Continue"}
+                      </button>
+                    </div>
+                  </>
+                ) : null}
+
+                {step === "referral" ? (
+                  <>
+                    <div>
+                      <h1 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">
+                        How did you hear about us?
+                      </h1>
+                      <p className="mt-2 text-sm text-text-muted">
+                        This helps us improve the app.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                      {REFERRAL_SOURCES.map((source) => (
+                        <ChoiceCard
+                          key={source}
+                          selected={referral === source}
+                          title={source}
+                          onClick={() => {
+                            setReferral(source);
+                            setError(null);
+                          }}
+                        />
+                      ))}
+                    </div>
+
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        onClick={goBack}
+                        className="flex-1 rounded-2xl bg-surface-mid py-3.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
+                      >
+                        Back
+                      </button>
+                      <button
+                        type="button"
+                        disabled={saving || !referral}
                         onClick={() => void finish()}
                         className={cn(
                           "flex-1 rounded-2xl py-3.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
@@ -664,9 +764,13 @@ function OnboardingContent() {
                 ) : null}
               </div>
 
-              <p className="mt-6 shrink-0 text-center text-sm text-text-muted">
-                You can change this in settings later.
-              </p>
+              {step !== "referral" ? (
+                <p className="mt-6 shrink-0 text-center text-sm text-text-muted">
+                  You can change this in settings later.
+                </p>
+              ) : (
+                <div className="mt-6 shrink-0" aria-hidden />
+              )}
             </div>
           </div>
         </div>

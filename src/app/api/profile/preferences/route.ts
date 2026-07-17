@@ -1,7 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
+import {
+  isReferralSource,
+  isTargetUniversity,
+} from '@/lib/onboarding/options';
 
 export const dynamic = 'force-dynamic';
+
+const PREFS_SELECT_FULL =
+  'username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode, onboarding_completed, marketing_emails_consent, target_universities, referral_source';
+
+const PREFS_SELECT_CORE =
+  'username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode, onboarding_completed';
+
+const OPTIONAL_DEFAULTS = {
+  marketing_emails_consent: null,
+  target_universities: [] as string[],
+  referral_source: null,
+};
+
+async function selectPreferences(supabase: ReturnType<typeof createServerClient>, userId: string) {
+  let { data, error } = await (supabase.from('profiles') as any)
+    .select(PREFS_SELECT_FULL)
+    .eq('id', userId)
+    .single();
+
+  if (
+    error?.message?.includes('marketing_emails_consent') ||
+    error?.message?.includes('target_universities') ||
+    error?.message?.includes('referral_source')
+  ) {
+    const retry = await (supabase.from('profiles') as any)
+      .select(PREFS_SELECT_CORE)
+      .eq('id', userId)
+      .single();
+    data = retry.data ? { ...OPTIONAL_DEFAULTS, ...retry.data } : null;
+    error = retry.error;
+  }
+
+  return { data, error };
+}
 
 /**
  * GET /api/profile/preferences
@@ -21,28 +59,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const prefsSelect =
-      'username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode, onboarding_completed, marketing_emails_consent';
-    const prefsSelectFallback =
-      'username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode, onboarding_completed';
-
-    // Untyped selects: marketing_emails_consent may not exist in generated DB types yet
-    let { data: profile, error: profileError } = await (supabase
-      .from('profiles') as any)
-      .select(prefsSelect)
-      .eq('id', session.user.id)
-      .single();
-
-    if (profileError?.message?.includes('marketing_emails_consent')) {
-      const retry = await (supabase.from('profiles') as any)
-        .select(prefsSelectFallback)
-        .eq('id', session.user.id)
-        .single();
-      profile = retry.data
-        ? { ...retry.data, marketing_emails_consent: null }
-        : null;
-      profileError = retry.error;
-    }
+    const { data: profile, error: profileError } = await selectPreferences(
+      supabase,
+      session.user.id,
+    );
 
     if (profileError) {
       // If profile doesn't exist, return defaults
@@ -60,7 +80,7 @@ export async function GET(request: NextRequest) {
           reduced_motion: false,
           dark_mode: false,
           onboarding_completed: false,
-          marketing_emails_consent: null,
+          ...OPTIONAL_DEFAULTS,
         });
       }
       
@@ -70,7 +90,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(profile);
+    return NextResponse.json({
+      ...OPTIONAL_DEFAULTS,
+      ...profile,
+      target_universities: Array.isArray(profile?.target_universities)
+        ? profile.target_universities
+        : [],
+    });
   } catch (error) {
     return NextResponse.json(
       { error: 'Internal server error' },
@@ -111,6 +137,8 @@ export async function PATCH(request: NextRequest) {
       dark_mode,
       onboarding_completed,
       marketing_emails_consent,
+      target_universities,
+      referral_source,
     } = body;
 
     // Validate username if it's being updated
@@ -214,6 +242,33 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+    if (target_universities !== undefined) {
+      if (!Array.isArray(target_universities)) {
+        return NextResponse.json(
+          { error: 'target_universities must be an array' },
+          { status: 400 }
+        );
+      }
+      const invalid = target_universities.filter(
+        (u: string) => typeof u !== 'string' || !isTargetUniversity(u),
+      );
+      if (invalid.length > 0) {
+        return NextResponse.json(
+          { error: `Invalid universities: ${invalid.join(', ')}` },
+          { status: 400 }
+        );
+      }
+    }
+
+    if (referral_source !== undefined && referral_source !== null) {
+      if (typeof referral_source !== 'string' || !isReferralSource(referral_source)) {
+        return NextResponse.json(
+          { error: 'Invalid referral_source' },
+          { status: 400 }
+        );
+      }
+    }
+
     // Build update object with only provided fields
     const updateData: Record<string, any> = {};
     if (username !== undefined) {
@@ -253,6 +308,12 @@ export async function PATCH(request: NextRequest) {
       }
       updateData.marketing_emails_consent = marketing_emails_consent;
     }
+    if (target_universities !== undefined) {
+      updateData.target_universities = target_universities;
+    }
+    if (referral_source !== undefined) {
+      updateData.referral_source = referral_source;
+    }
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
@@ -261,39 +322,42 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const prefsSelect =
-      'username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode, onboarding_completed, marketing_emails_consent';
-    const prefsSelectFallback =
-      'username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode, onboarding_completed';
-
     // Update profile
     let { data: profile, error: profileError } = await (supabase
       .from('profiles') as any)
       .update(updateData)
       .eq('id', session.user.id)
-      .select(prefsSelect)
+      .select(PREFS_SELECT_FULL)
       .single();
 
-    // Column may not exist yet — retry without marketing_emails_consent
-    if (profileError?.message?.includes('marketing_emails_consent')) {
-      const { marketing_emails_consent: _drop, ...safeUpdate } = updateData;
+    // Newer columns may not exist yet — strip optional fields and retry
+    if (
+      profileError?.message?.includes('marketing_emails_consent') ||
+      profileError?.message?.includes('target_universities') ||
+      profileError?.message?.includes('referral_source')
+    ) {
+      const {
+        marketing_emails_consent: _m,
+        target_universities: _t,
+        referral_source: _r,
+        ...safeUpdate
+      } = updateData;
+
       if (Object.keys(safeUpdate).length === 0) {
-        const current = await (supabase.from('profiles') as any)
-          .select(prefsSelectFallback)
-          .eq('id', session.user.id)
-          .single();
+        const current = await selectPreferences(supabase, session.user.id);
         return NextResponse.json({
+          ...OPTIONAL_DEFAULTS,
           ...(current.data ?? {}),
-          marketing_emails_consent: null,
         });
       }
+
       const retry = await (supabase.from('profiles') as any)
         .update(safeUpdate)
         .eq('id', session.user.id)
-        .select(prefsSelectFallback)
+        .select(PREFS_SELECT_CORE)
         .single();
       profile = retry.data
-        ? { ...retry.data, marketing_emails_consent: null }
+        ? { ...OPTIONAL_DEFAULTS, ...retry.data }
         : null;
       profileError = retry.error;
     }
@@ -313,7 +377,13 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(profile);
+    return NextResponse.json({
+      ...OPTIONAL_DEFAULTS,
+      ...profile,
+      target_universities: Array.isArray(profile?.target_universities)
+        ? profile.target_universities
+        : [],
+    });
   } catch (error) {
     return NextResponse.json(
       { error: 'Internal server error' },
@@ -321,4 +391,3 @@ export async function PATCH(request: NextRequest) {
     );
   }
 }
-

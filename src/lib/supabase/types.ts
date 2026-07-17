@@ -364,6 +364,8 @@ export type UserProfileRow = {
   dark_mode: boolean | null;
   onboarding_completed: boolean | null;
   marketing_emails_consent: boolean | null;
+  target_universities: string[] | null;
+  referral_source: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -386,6 +388,8 @@ export type UserProfileInsert = {
   dark_mode?: boolean | null;
   onboarding_completed?: boolean | null;
   marketing_emails_consent?: boolean | null;
+  target_universities?: string[] | null;
+  referral_source?: string | null;
 };
 export type UserProfileUpdate = Partial<UserProfileRow>;
 
