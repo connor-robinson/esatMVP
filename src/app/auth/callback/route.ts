@@ -51,6 +51,16 @@ export async function GET(request: Request) {
       );
     }
 
+    // Never keep Google name / picture on the app profile
+    const isGoogle = data.session.user.app_metadata?.provider === "google"
+      || data.session.user.identities?.some((i) => i.provider === "google");
+    if (isGoogle) {
+      await supabase
+        .from("profiles")
+        .update({ full_name: null, avatar_url: null } as never)
+        .eq("id", data.session.user.id);
+    }
+
     const { data: profile } = await supabase
       .from("profiles")
       .select("username, onboarding_completed")

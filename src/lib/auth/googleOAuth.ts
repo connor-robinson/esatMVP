@@ -7,8 +7,11 @@ export function getGoogleOAuthRedirectUrl(redirectTo: string): string {
 }
 
 /**
- * Google sign-in requesting email only (no profile/name scope).
- * Users choose their own username during onboarding.
+ * Google sign-in requesting email only — no profile/name/picture scopes.
+ * Users pick their own username; we never use Google display name or avatar.
+ *
+ * Also remove `…/auth/userinfo.profile` from the Google Cloud OAuth consent
+ * screen (Data Access) so the consent UI does not ask for name/photo.
  */
 export async function signInWithGoogle(
   supabase: SupabaseClient,
@@ -19,9 +22,12 @@ export async function signInWithGoogle(
     provider: "google",
     options: {
       redirectTo: redirectUrl,
-      scopes: "openid email",
+      // Explicit email-only; do not include profile / userinfo.profile
+      scopes: "openid email https://www.googleapis.com/auth/userinfo.email",
       queryParams: {
         redirectTo,
+        // Do not inherit previously granted profile access
+        include_granted_scopes: "false",
       },
     },
   });

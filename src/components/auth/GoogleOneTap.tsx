@@ -88,6 +88,17 @@ export function GoogleOneTap() {
         return;
       }
 
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user?.id) {
+        // Do not keep Google name / picture on the app profile
+        await supabase
+          .from("profiles")
+          .update({ full_name: null, avatar_url: null } as never)
+          .eq("id", user.id);
+      }
+
       router.refresh();
     },
     [router, supabase.auth],
