@@ -353,16 +353,22 @@ function OnboardingContent() {
           </div>
         ) : null}
 
-        <div className="flex min-h-0 flex-1 flex-col justify-center">
-          <div className="w-full rounded-[1.75rem] bg-surface-elevated px-6 pb-10 pt-6 sm:px-12 sm:pb-12 sm:pt-8">
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
+          <div
+            className={cn(
+              "flex w-full max-w-[52rem] flex-col overflow-hidden rounded-[1.75rem] bg-surface-elevated",
+              "h-[min(40rem,calc(100vh-7rem))] sm:h-[min(42rem,calc(100vh-6rem))]",
+              "px-8 pb-8 pt-7 sm:px-14 sm:pb-10 sm:pt-9",
+            )}
+          >
             <ProgressBar stepIndex={stepIndex} total={steps.length} />
 
-            <div className="mx-auto mt-10 max-w-xl">
-              <h1 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">
+            <div className="mx-auto mt-9 flex min-h-0 w-full max-w-xl flex-1 flex-col">
+              <h1 className="shrink-0 text-3xl font-bold tracking-tight text-text sm:text-4xl">
                 Set up your account
               </h1>
 
-              <div className="mt-8 space-y-6">
+              <div className="mt-7 min-h-0 flex-1 space-y-6 overflow-y-auto pr-1">
                 {step === "username" ? (
                   <>
                     <div>
@@ -612,6 +618,10 @@ function OnboardingContent() {
                   <p className="text-center text-sm text-error">{error}</p>
                 ) : null}
               </div>
+
+              <p className="mt-6 shrink-0 text-center text-sm text-text-muted">
+                You can change this in settings later.
+              </p>
             </div>
           </div>
         </div>
