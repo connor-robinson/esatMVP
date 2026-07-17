@@ -25,6 +25,7 @@ import { getExamAccentFillClass } from "@/config/colors";
 import { CheckCircle2, AlertCircle, Check } from "lucide-react";
 import { clearLeaderboardCache } from "@/lib/leaderboard/cache";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useSubscription } from "@/hooks/useSubscription";
 import {
   formatAuthProviderLabel,
   getOAuthProvider,
@@ -72,11 +73,48 @@ function getDisplayInitials(
   return source.substring(0, 2).toUpperCase();
 }
 
+function planLabel(tier: string): string {
+  switch (tier) {
+    case "weekly":
+      return "Weekly";
+    case "monthly":
+      return "Monthly";
+    case "season_pass":
+      return "Exam Season Pass";
+    case "tester":
+      return "Founding Tester";
+    default:
+      return "Free";
+  }
+}
+
+function formatBillingDate(iso?: string | null): string | null {
+  if (!iso) return null;
+  const d = new Date(iso.length <= 10 ? `${iso}T12:00:00` : iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
 export default function ProfilePage() {
   const router = useRouter();
   const supabase = useSupabaseClient();
   const session = useSupabaseSession();
   const { theme, toggleTheme, isDark } = useTheme();
+  const {
+    tier,
+    hasFullAccess,
+    isLoading: subscriptionLoading,
+    subscriptionStatus,
+    currentPeriodEnd,
+    accessUntil,
+    cancelAtPeriodEnd,
+    pendingPlan,
+  } = useSubscription();
+  const [portalLoading, setPortalLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<string>('account');
@@ -944,38 +982,99 @@ export default function ProfilePage() {
                     ) : null}
                   </SettingsGroup>
 
-                  <SettingsGroup title="Billing">
-                    <SettingsRow
-                      label="Plan"
-                      value="Manage subscription"
-                      action={
-                        <>
+                  <SettingsGroup title="Subscription">
+                    <div className="space-y-4 px-5 py-5 sm:px-7">
+                      <div className="rounded-organic-xl bg-surface-mid/60 px-5 py-5">
+                        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">
+                          Current plan
+                        </p>
+                        <p className="mt-2 text-2xl font-semibold tracking-tight text-text">
+                          {subscriptionLoading ? "…" : planLabel(tier)}
+                        </p>
+                        <p className="mt-2 text-sm text-text-muted">
+                          {subscriptionLoading
+                            ? "Loading billing status…"
+                            : !hasFullAccess
+                              ? "You’re on the free plan. Upgrade anytime for full access."
+                              : tier === "season_pass"
+                                ? accessUntil
+                                  ? `One-time access until ${formatBillingDate(accessUntil)}.`
+                                  : "One-time Exam Season Pass access is active."
+                                : subscriptionStatus === "trialing"
+                                  ? currentPeriodEnd
+                                    ? `Free trial active — first charge on ${formatBillingDate(currentPeriodEnd)}.`
+                                    : "Free trial is active."
+                                  : cancelAtPeriodEnd
+                                    ? currentPeriodEnd
+                                      ? `Cancels at period end (${formatBillingDate(currentPeriodEnd)}). You’ll keep access until then.`
+                                      : "Set to cancel at the end of this billing period."
+                                    : currentPeriodEnd
+                                      ? `Renews on ${formatBillingDate(currentPeriodEnd)}.`
+                                      : "Paid access is active."}
+                        </p>
+                        {pendingPlan === "season_pass" && cancelAtPeriodEnd ? (
+                          <p className="mt-2 text-sm text-primary">
+                            After this period ends, you can buy the Exam Season Pass from Pricing.
+                          </p>
+                        ) : null}
+                      </div>
+
+                      <div className="flex flex-wrap gap-2">
+                        <SettingsButton
+                          type="button"
+                          onClick={() => router.push("/pricing?from=settings")}
+                        >
+                          {hasFullAccess ? "Change plan" : "Upgrade"}
+                        </SettingsButton>
+
+                        {hasFullAccess &&
+                        (tier === "weekly" || tier === "monthly") ? (
                           <SettingsButton
                             type="button"
-                            onClick={() => router.push("/pricing?from=settings")}
-                          >
-                            View plans
-                          </SettingsButton>
-                          <SettingsButton
-                            type="button"
+                            disabled={portalLoading}
                             onClick={async () => {
+                              setPortalLoading(true);
                               try {
-                                const res = await fetch("/api/stripe/create-portal-link", {
-                                  method: "POST",
-                                });
+                                const res = await fetch(
+                                  "/api/stripe/create-portal-link",
+                                  { method: "POST" },
+                                );
                                 const data = await res.json();
                                 if (data.url) window.location.href = data.url;
                                 else throw new Error(data.error ?? "Failed");
-                              } catch (err: unknown) {
-                                alert("Failed to open billing portal");
+                              } catch {
+                                alert(
+                                  "Could not open the billing portal. Try again in a moment.",
+                                );
+                                setPortalLoading(false);
                               }
                             }}
                           >
-                            Billing
+                            {portalLoading
+                              ? "Opening…"
+                              : cancelAtPeriodEnd
+                                ? "Manage / resume"
+                                : "Cancel subscription"}
                           </SettingsButton>
-                        </>
-                      }
-                    />
+                        ) : null}
+                      </div>
+
+                      {hasFullAccess &&
+                      (tier === "weekly" || tier === "monthly") ? (
+                        <p className="text-xs text-text-subtle">
+                          Cancel opens Stripe’s secure billing portal — choose
+                          Cancel plan there. You’ll keep access until the end of
+                          the current period.
+                        </p>
+                      ) : null}
+
+                      {tier === "season_pass" ? (
+                        <p className="text-xs text-text-subtle">
+                          Season Pass is a one-time purchase, so there’s nothing
+                          to cancel. Access lasts until the date above.
+                        </p>
+                      ) : null}
+                    </div>
                   </SettingsGroup>
 
                   <SettingsGroup title="Session">
