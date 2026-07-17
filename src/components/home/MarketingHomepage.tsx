@@ -144,16 +144,17 @@ export function MarketingHomepage() {
           <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-10 xl:gap-12">
             <div className="max-w-2xl space-y-8">
               <h1 className="text-5xl font-display font-bold leading-[1.08] tracking-tight sm:text-6xl lg:text-[4.25rem] xl:text-7xl">
-                <span className="text-underline-accent">ESAT</span> Trainer
-                with Practice Questions.
-                <br />
-                Secure your{" "}
-                <span className="whitespace-nowrap">Oxbridge offer.</span>
+                <span className="text-underline-accent">ESAT</span> trainer to
+                help secure your Oxbridge offers.
               </h1>
               <p className="text-xl text-[#94A3B8] max-w-2xl leading-relaxed">
                 The ESAT is the admissions test for many university courses at
-                Cambridge, Oxford, Imperial and UCL. Practise with our
-                tutor-written practice questions, and mental math drills.
+                Cambridge, Oxford, Imperial and UCL. Practise with our{" "}
+                <span className="text-underline-accent text-white">
+                  {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ practice
+                  questions
+                </span>
+                , and mental math drills.
               </p>
               <div className="space-y-4">
                 <div className="flex flex-col sm:flex-row gap-3">
