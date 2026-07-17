@@ -41,8 +41,8 @@ async function fetchLeaderboard(
     query = query.in("topic_id", topicIdsForFolderQuery(topicId));
   }
 
-  // OPTIMIZED: Reduced from 500 to 300 for egress optimization (top 300 leaderboard entries)
-  const { data, error } = await query.limit(300);
+  // OPTIMIZED: enough rows for ~1000+ users across topics (was 300)
+  const { data, error } = await query.limit(8000);
 
   if (error) {
     return [];
