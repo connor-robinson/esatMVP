@@ -112,10 +112,22 @@ export const createOrRetrieveCustomer = async (uuid: string, email: string) => {
   if (queryError) throw new Error(`Customer lookup failed: ${queryError.message}`);
 
   let stripeCustomerId: string | undefined;
+
+  // Verify any stored customer still exists in the CURRENT Stripe account.
+  // (After switching Stripe accounts, old IDs will 404 — fall back to create.)
   if (existing?.stripe_customer_id) {
-    const cust = await getStripe().customers.retrieve(existing.stripe_customer_id);
-    stripeCustomerId = cust.id;
-  } else {
+    try {
+      const cust = await getStripe().customers.retrieve(existing.stripe_customer_id);
+      const isDeleted = (cust as Stripe.DeletedCustomer).deleted === true;
+      if (!isDeleted) {
+        stripeCustomerId = cust.id;
+      }
+    } catch {
+      stripeCustomerId = undefined;
+    }
+  }
+
+  if (!stripeCustomerId) {
     const list = await getStripe().customers.list({ email });
     stripeCustomerId = list.data[0]?.id;
   }
