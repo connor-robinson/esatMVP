@@ -260,12 +260,11 @@ function pairDisagreementCount(rows: Map<string, QRow>): number {
 
 function practiceHref(tags: string[], difficulty: string): string {
   const params = new URLSearchParams();
-  params.set("subject", "Math 1");
-  params.set("testType", "ESAT");
+  params.set("startSubject", "Math 1");
+  params.set("source", "calibration");
   if (difficulty && difficulty !== "All") params.set("difficulty", difficulty);
   if (tags.length > 0) params.set("tags", tags.join(","));
-  params.set("source", "calibration");
-  return `/questions/library?${params.toString()}`;
+  return `/questions?${params.toString()}`;
 }
 
 function difficultyLabel(difficulty: CalibrationDifficulty): string {

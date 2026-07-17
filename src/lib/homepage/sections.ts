@@ -62,11 +62,6 @@ export const DASHBOARD_TOPICS: DashboardTopic[] = [
         analyticsDestination: "question_bank",
       },
       {
-        label: "Library",
-        href: "/questions/library",
-        analyticsDestination: "question_bank_library",
-      },
-      {
         label: "Analytics",
         href: "/questions/questionbank/analytics",
         analyticsDestination: "question_bank_analytics",

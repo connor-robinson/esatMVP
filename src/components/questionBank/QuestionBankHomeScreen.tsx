@@ -1,7 +1,6 @@
 ﻿"use client";
 
-import { useEffect, useMemo, useState, useCallback } from "react";
-import Link from "next/link";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown, Search } from "lucide-react";
 import { Container } from "@/components/layout/Container";
@@ -335,6 +334,21 @@ export function QuestionBankHomeScreen() {
     setSessionModalOpen(true);
   };
 
+  // Calibration "Try curated questions" → home + start Math 1
+  const calibrationLaunchHandled = useRef(false);
+  useEffect(() => {
+    if (calibrationLaunchHandled.current) return;
+    if (subscriptionLoading || freeTierLoading) return;
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("startSubject") !== "Math 1") return;
+    calibrationLaunchHandled.current = true;
+    const tile = SUBJECT_TILES.find((t) => t.key === "Math 1");
+    if (tile) openSessionModal(tile);
+    router.replace("/questions", { scroll: false });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- calibration deep-link once ready
+  }, [subscriptionLoading, freeTierLoading, treatAsFullAccess]);
+
   const handleSessionConfirm = (payload: QuestionBankHomeLaunchPayload) => {
     try {
       sessionStorage.setItem(
@@ -617,13 +631,6 @@ export function QuestionBankHomeScreen() {
             <ChevronDown className="h-4 w-4" aria-hidden strokeWidth={2.5} />
           </button>
         </div>
-
-        <p className="pb-8 text-center text-xs text-text-muted">
-          Prefer picking individual questions?{" "}
-          <Link href="/questions/library" className="font-medium text-secondary hover:underline">
-            Open library
-          </Link>
-        </p>
       </Container>
 
       <QuestionBankSessionSettingsModal

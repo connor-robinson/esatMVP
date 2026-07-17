@@ -38,7 +38,6 @@ import { FermiGuessrIcon } from '@/components/icons/FermiGuessrIcon';
 import {
   ArrowLeftRight,
   BarChart3,
-  BookOpen,
   HelpCircle,
   GraduationCap,
   Home,
@@ -138,12 +137,6 @@ const navSections: NavSectionConfig[] = [
         label: 'Home',
         description: 'Overview and mixed practice',
         icon: Home,
-      },
-      {
-        href: '/questions/library',
-        label: 'Library',
-        description: 'Browse all questions',
-        icon: BookOpen,
       },
       {
         href: '/questions/questionbank/analytics',
