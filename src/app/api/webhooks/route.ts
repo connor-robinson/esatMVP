@@ -8,6 +8,7 @@ import {
   deletePriceRecord,
   manageSubscriptionStatusChange,
   upsertOneTimePurchase,
+  finalizeSeasonPassSubscription,
 } from "@/lib/stripe/supabase-admin";
 
 const RELEVANT_EVENTS = new Set([
@@ -75,6 +76,9 @@ export async function POST(request: NextRequest) {
           sub.customer as string,
           event.type === "customer.subscription.created"
         );
+        if (event.type !== "customer.subscription.deleted") {
+          await finalizeSeasonPassSubscription(sub);
+        }
         break;
       }
       case "checkout.session.completed": {
@@ -85,6 +89,12 @@ export async function POST(request: NextRequest) {
             session.customer as string,
             true
           );
+          if (session.metadata?.planType === "season_pass") {
+            const sub = await getStripe().subscriptions.retrieve(
+              session.subscription as string
+            );
+            await finalizeSeasonPassSubscription(sub);
+          }
         } else if (session.mode === "payment" && session.metadata?.planType === "season_pass") {
           await upsertOneTimePurchase(session, EXAM_DATE);
         }

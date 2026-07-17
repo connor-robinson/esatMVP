@@ -226,3 +226,82 @@ export const upsertOneTimePurchase = async (
     metadata: session.metadata as Record<string, unknown> | null,
   });
 };
+
+/**
+ * After a season-pass trial converts to paid, record exam-dated access and
+ * stop the yearly subscription from renewing.
+ */
+export const finalizeSeasonPassSubscription = async (
+  subscription: Stripe.Subscription
+) => {
+  if (subscription.metadata?.planType !== "season_pass") return;
+  if (subscription.status !== "active") return;
+
+  const customerId =
+    typeof subscription.customer === "string"
+      ? subscription.customer
+      : subscription.customer?.id;
+  if (!customerId) return;
+
+  const { data: customerData, error: custError } = await supabaseAdmin
+    .from("customers")
+    .select("id")
+    .eq("stripe_customer_id", customerId)
+    .single();
+  if (custError || !customerData) return;
+
+  const accessUntilRaw = subscription.metadata?.access_until;
+  const accessUntil =
+    typeof accessUntilRaw === "string" && accessUntilRaw.length > 0
+      ? accessUntilRaw
+      : EXAM_DATE.toISOString().slice(0, 10);
+
+  const firstItem = subscription.items.data[0];
+  const price = firstItem?.price;
+  const priceId = typeof price === "string" ? price : price?.id ?? null;
+  const productId =
+    price && typeof price !== "string"
+      ? typeof price.product === "string"
+        ? price.product
+        : price.product?.id ?? null
+      : null;
+  const amountPaid =
+    price && typeof price !== "string" ? price.unit_amount ?? 0 : 0;
+  const currency =
+    price && typeof price !== "string"
+      ? (price.currency ?? "gbp").toLowerCase()
+      : "gbp";
+
+  const { data: existingPurchases } = await supabaseAdmin
+    .from("one_time_purchases")
+    .select("id, metadata")
+    .eq("user_id", customerData.id);
+
+  const alreadyRecorded = (existingPurchases ?? []).some((row) => {
+    const meta = row.metadata as Record<string, unknown> | null;
+    return meta?.subscriptionId === subscription.id;
+  });
+
+  if (!alreadyRecorded) {
+    await supabaseAdmin.from("one_time_purchases").insert({
+      user_id: customerData.id,
+      stripe_payment_intent_id: null,
+      price_id: priceId,
+      product_id: productId,
+      amount_paid: amountPaid,
+      currency,
+      access_until: accessUntil,
+      metadata: {
+        ...subscription.metadata,
+        subscriptionId: subscription.id,
+        source: "season_pass_trial_conversion",
+      },
+    });
+  }
+
+  if (!subscription.cancel_at_period_end) {
+    await getStripe().subscriptions.update(subscription.id, {
+      cancel_at_period_end: true,
+    });
+  }
+};

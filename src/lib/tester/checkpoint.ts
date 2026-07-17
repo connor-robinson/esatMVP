@@ -196,10 +196,10 @@ export function getTesterNavAction(
     return {
       show: true,
       label: "Upgrade for free",
-      href: "/founding-tester",
+      href: "/pricing",
       variant: "join",
     };
   }
 
-  return { show: false, label: "", href: "/founding-tester", variant: "join" };
+  return { show: false, label: "", href: "/pricing", variant: "join" };
 }

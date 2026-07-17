@@ -63,6 +63,7 @@ export default function PricingPage() {
       name: "Monthly",
       price: "£25",
       caption: "£6.25/week",
+      priceNote: "7-day free trial — cancel anytime",
       features: FEATURES.paid,
       highlighted: true,
       ctaLabel:
@@ -70,14 +71,14 @@ export default function PricingPage() {
           ? "Loading…"
           : tier === "monthly"
             ? "Current plan"
-            : "Upgrade",
+            : "Start free trial",
     },
     {
       id: "season_pass",
       name: "Exam Season Pass",
       price: `£${seasonPrice}`,
       caption: `~ £${perWeekSeason.toFixed(1)}/week`,
-      priceNote: "One-time — access until 1 Oct 2026",
+      priceNote: "7-day free trial · then one-time access until 1 Oct 2026",
       features: FEATURES.paid,
       featured: true,
       ctaLabel:
@@ -85,7 +86,7 @@ export default function PricingPage() {
           ? "Loading…"
           : tier === "season_pass"
             ? "Current plan"
-            : "Upgrade",
+            : "Start free trial",
     },
   ];
 

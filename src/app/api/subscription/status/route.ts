@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     // Check active subscription
     const { data: subs } = await supabase
       .from("subscriptions")
-      .select("id, status, current_period_end, price_id")
+      .select("id, status, current_period_end, price_id, metadata")
       .eq("user_id", user.id)
       .in("status", ["active", "trialing"])
       .order("current_period_end", { ascending: false })
@@ -30,7 +30,14 @@ export async function GET(request: NextRequest) {
     if (activeSub) {
       const periodEnd = new Date(activeSub.current_period_end);
       if (periodEnd > new Date()) {
-        const tier = inferTierFromPriceId(activeSub.price_id);
+        const meta = activeSub.metadata as Record<string, unknown> | null;
+        const metaPlan = meta?.planType;
+        const tier =
+          metaPlan === "weekly" ||
+          metaPlan === "monthly" ||
+          metaPlan === "season_pass"
+            ? metaPlan
+            : inferTierFromPriceId(activeSub.price_id);
         return NextResponse.json({
           tier,
           hasFullAccess: true,

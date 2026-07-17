@@ -3,10 +3,24 @@ import { requireRouteUser } from "@/lib/supabase/auth";
 import { getStripe, isStripeConfigured } from "@/lib/stripe/config";
 import { createOrRetrieveCustomer } from "@/lib/stripe/supabase-admin";
 import { getPriceIdForPlan } from "@/lib/stripe/prices";
+import { getSeasonPassPrice } from "@/lib/stripe/best-value";
 
 export const dynamic = "force-dynamic";
 
 type PlanType = "weekly" | "monthly" | "season_pass";
+
+const TRIAL_DAYS = 7;
+const EXAM_ACCESS_UNTIL = "2026-10-01";
+
+/** First-time customers only — avoid stacking free trials. */
+async function isEligibleForTrial(customerId: string): Promise<boolean> {
+  const existing = await getStripe().subscriptions.list({
+    customer: customerId,
+    status: "all",
+    limit: 10,
+  });
+  return existing.data.length === 0;
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,6 +36,53 @@ export async function POST(request: NextRequest) {
     const body = await request.json().catch(() => ({}));
     const planType = (body.planType ?? "monthly") as PlanType;
 
+    if (planType !== "weekly" && planType !== "monthly" && planType !== "season_pass") {
+      return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
+    }
+
+    const customerId = await createOrRetrieveCustomer(user.id, user.email);
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+    const successUrl = `${siteUrl}/pricing?success=true`;
+    const cancelUrl = `${siteUrl}/pricing?canceled=true`;
+    const offerTrial =
+      (planType === "monthly" || planType === "season_pass") &&
+      (await isEligibleForTrial(customerId));
+
+    // Exam Season Pass — subscription + trial, then one charge; access recorded until exam date
+    if (planType === "season_pass") {
+      const amountPence = Math.round(getSeasonPassPrice() * 100);
+      const session = await getStripe().checkout.sessions.create({
+        mode: "subscription",
+        customer: customerId,
+        line_items: [
+          {
+            price_data: {
+              currency: "gbp",
+              unit_amount: amountPence,
+              recurring: { interval: "year" },
+              product_data: {
+                name: "Exam Season Pass",
+                description: "Full access until 1 Oct 2026",
+              },
+            },
+            quantity: 1,
+          },
+        ],
+        success_url: successUrl,
+        cancel_url: cancelUrl,
+        metadata: { userId: user.id, planType: "season_pass" },
+        subscription_data: {
+          ...(offerTrial ? { trial_period_days: TRIAL_DAYS } : {}),
+          metadata: {
+            userId: user.id,
+            planType: "season_pass",
+            access_until: EXAM_ACCESS_UNTIL,
+          },
+        },
+      });
+      return NextResponse.json({ url: session.url });
+    }
+
     const priceId = getPriceIdForPlan(planType);
     if (!priceId) {
       return NextResponse.json(
@@ -30,37 +91,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const customerId = await createOrRetrieveCustomer(user.id, user.email);
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-
-    const isRecurring = planType !== "season_pass";
-    const successUrl = `${siteUrl}/pricing?success=true`;
-    const cancelUrl = `${siteUrl}/pricing?canceled=true`;
-
-    if (isRecurring) {
-      const session = await getStripe().checkout.sessions.create({
-        mode: "subscription",
-        customer: customerId,
-        line_items: [{ price: priceId, quantity: 1 }],
-        success_url: successUrl,
-        cancel_url: cancelUrl,
-        metadata: { userId: user.id, planType },
-        subscription_data: { metadata: { userId: user.id, planType } },
-      });
-      return NextResponse.json({ url: session.url });
-    }
-
-    // One-time payment (Exam Season Pass)
     const session = await getStripe().checkout.sessions.create({
-      mode: "payment",
+      mode: "subscription",
       customer: customerId,
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: successUrl,
       cancel_url: cancelUrl,
-      metadata: { userId: user.id, planType: "season_pass" },
+      metadata: { userId: user.id, planType },
+      subscription_data: {
+        ...(offerTrial && planType === "monthly"
+          ? { trial_period_days: TRIAL_DAYS }
+          : {}),
+        metadata: { userId: user.id, planType },
+      },
     });
     return NextResponse.json({ url: session.url });
   } catch (err) {
+    console.error("[create-checkout-session]", err);
     return NextResponse.json(
       { error: "Failed to create checkout session" },
       { status: 500 }
