@@ -161,6 +161,7 @@ function OnboardingContent() {
   const [sitting, setSitting] = useState<SittingChoice>("october_2026");
   const [universities, setUniversities] = useState<TargetUniversity[]>([]);
   const [referral, setReferral] = useState<ReferralSource | null>(null);
+  const [marketingEmails, setMarketingEmails] = useState(false);
 
   const stepIndex = Math.max(0, steps.indexOf(step));
   const usesStepTitle =
@@ -208,6 +209,9 @@ function OnboardingContent() {
           (REFERRAL_SOURCES as readonly string[]).includes(data.referral_source)
         ) {
           setReferral(data.referral_source as ReferralSource);
+        }
+        if (typeof data.marketing_emails_consent === "boolean") {
+          setMarketingEmails(data.marketing_emails_consent);
         }
       } finally {
         if (!cancelled) setBooting(false);
