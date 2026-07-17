@@ -219,24 +219,44 @@ export const upsertOneTimePurchase = async (
     .single();
   if (custError || !customerData) return;
 
-  const lineItem = session.line_items?.data?.[0];
-  const priceId = lineItem?.price?.id;
-  const productId = typeof lineItem?.price?.product === "string"
-    ? lineItem.price.product
-    : lineItem?.price?.product?.id;
-  const amount = lineItem?.amount_total ?? 0;
-  const currency = (lineItem?.currency ?? "gbp").toLowerCase();
+  // Prefer payment intent for dedupe; fall back to session id in metadata
+  const paymentIntentId =
+    typeof session.payment_intent === "string"
+      ? session.payment_intent
+      : session.payment_intent?.id ?? null;
 
-  await supabaseAdmin.from("one_time_purchases").insert({
+  if (paymentIntentId) {
+    const { data: existingByPi } = await supabaseAdmin
+      .from("one_time_purchases")
+      .select("id")
+      .eq("stripe_payment_intent_id", paymentIntentId)
+      .maybeSingle();
+    if (existingByPi) return;
+  }
+
+  const amount =
+    session.amount_total ??
+    session.line_items?.data?.[0]?.amount_total ??
+    0;
+  const currency = (session.currency ?? "gbp").toLowerCase();
+
+  // Dynamic Checkout price_data IDs are not synced into our prices/products
+  // tables — leave FKs null and store details in metadata instead.
+  const { error } = await supabaseAdmin.from("one_time_purchases").insert({
     user_id: customerData.id,
-    stripe_payment_intent_id: session.payment_intent as string | null,
-    price_id: priceId ?? null,
-    product_id: productId ?? null,
+    stripe_payment_intent_id: paymentIntentId,
+    price_id: null,
+    product_id: null,
     amount_paid: amount,
     currency,
     access_until: accessUntil.toISOString().slice(0, 10),
-    metadata: session.metadata as Record<string, unknown> | null,
+    metadata: {
+      ...(session.metadata as Record<string, unknown> | null),
+      checkoutSessionId: session.id,
+      planType: session.metadata?.planType ?? "season_pass",
+    },
   });
+  if (error) throw new Error(`One-time purchase insert failed: ${error.message}`);
 };
 
 /**
