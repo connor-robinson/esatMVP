@@ -26,22 +26,21 @@ export async function GET(request: NextRequest) {
     const prefsSelectFallback =
       'username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode, onboarding_completed';
 
-    // Fetch user profile with preferences (fallback if marketing_emails_consent column missing)
-    let { data: profile, error: profileError } = await supabase
-      .from('profiles')
+    // Untyped selects: marketing_emails_consent may not exist in generated DB types yet
+    let { data: profile, error: profileError } = await (supabase
+      .from('profiles') as any)
       .select(prefsSelect)
       .eq('id', session.user.id)
       .single();
 
     if (profileError?.message?.includes('marketing_emails_consent')) {
-      const retry = await supabase
-        .from('profiles')
+      const retry = await (supabase.from('profiles') as any)
         .select(prefsSelectFallback)
         .eq('id', session.user.id)
         .single();
-      profile = (retry.data
+      profile = retry.data
         ? { ...retry.data, marketing_emails_consent: null }
-        : null) as typeof profile;
+        : null;
       profileError = retry.error;
     }
 
@@ -279,8 +278,7 @@ export async function PATCH(request: NextRequest) {
     if (profileError?.message?.includes('marketing_emails_consent')) {
       const { marketing_emails_consent: _drop, ...safeUpdate } = updateData;
       if (Object.keys(safeUpdate).length === 0) {
-        const current = await supabase
-          .from('profiles')
+        const current = await (supabase.from('profiles') as any)
           .select(prefsSelectFallback)
           .eq('id', session.user.id)
           .single();
