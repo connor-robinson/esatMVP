@@ -144,30 +144,21 @@ export function MarketingHomepage() {
           <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-10 xl:gap-12">
             <div className="max-w-2xl space-y-8">
               <h1 className="text-5xl font-display font-bold leading-[1.08] tracking-tight sm:text-6xl lg:text-[4.25rem] xl:text-7xl">
-                Master the <span className="text-underline-accent">ESAT</span>.
-                <br />
-                Secure your
-                <br />
-                <span className="whitespace-nowrap">Oxbridge offer.</span>
+                <span className="text-underline-accent">ESAT</span> practice
+                with Practice Questions.
               </h1>
               <p className="text-xl text-[#94A3B8] max-w-2xl leading-relaxed">
                 The ESAT is the admissions test for many university courses at
-                Cambridge, Oxford, Imperial and UCL. Practise with our past-paper
-                tools, question bank, and targeted no-calculator drills.
+                Cambridge, Oxford, Imperial and UCL. Practise with our
+                tutor-written practice questions, and mental math drills.
               </p>
               <div className="space-y-4">
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Link
-                    href={CALIBRATION_ROUTES.hub}
-                    onClick={() =>
-                      void trackHomepageEvent("calibration_cta_clicked", {
-                        user_state: "logged_out",
-                        destination: CALIBRATION_ROUTES.hub,
-                      })
-                    }
+                    href="/login?mode=signup"
                     className="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3.5 text-base font-bold text-[#0A0F1D] transition-all hover:bg-slate-200"
                   >
-                    Start free calibration
+                    Sign up free
                   </Link>
                   <Link
                     href="/login"
@@ -177,7 +168,7 @@ export function MarketingHomepage() {
                   </Link>
                 </div>
                 <p className="text-sm text-[#94A3B8]">
-                  15-question diagnostic · no account required to begin
+                  Sign up to start using for free, upgrade later.
                 </p>
               </div>
             </div>
