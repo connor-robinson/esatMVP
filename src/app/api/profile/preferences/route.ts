@@ -39,7 +39,9 @@ export async function GET(request: NextRequest) {
         .select(prefsSelectFallback)
         .eq('id', session.user.id)
         .single();
-      profile = retry.data ? { ...retry.data, marketing_emails_consent: null } : null;
+      profile = (retry.data
+        ? { ...retry.data, marketing_emails_consent: null }
+        : null) as typeof profile;
       profileError = retry.error;
     }
 
