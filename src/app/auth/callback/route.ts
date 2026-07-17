@@ -6,6 +6,10 @@
 
 import { NextResponse } from "next/server";
 import { createRouteClient } from "@/lib/supabase/server";
+import {
+  resolvePostAuthPath,
+  sanitizeRedirectTo,
+} from "@/lib/onboarding/redirect";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -13,18 +17,18 @@ export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
-  const redirectTo = requestUrl.searchParams.get("redirectTo") || "/past-papers/library";
+  const redirectTo = sanitizeRedirectTo(
+    requestUrl.searchParams.get("redirectTo"),
+  );
   const error = requestUrl.searchParams.get("error");
   const errorDescription = requestUrl.searchParams.get("error_description");
 
-  // Handle OAuth errors
   if (error) {
     return NextResponse.redirect(
       new URL(`/login?error=${encodeURIComponent(errorDescription || error)}`, requestUrl.origin)
     );
   }
 
-  // Handle missing code
   if (!code) {
     return NextResponse.redirect(
       new URL("/login?error=missing_code", requestUrl.origin)
@@ -33,8 +37,6 @@ export async function GET(request: Request) {
 
   try {
     const supabase = createRouteClient();
-    
-    // Exchange code for session - this sets cookies automatically with SSR
     const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
 
     if (exchangeError) {
@@ -49,9 +51,23 @@ export async function GET(request: Request) {
       );
     }
 
-    // Success - redirect to intended page
-    // The session is now stored in cookies and will be available on the next page
-    return NextResponse.redirect(new URL(redirectTo, requestUrl.origin));
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("username, onboarding_completed")
+      .eq("id", data.session.user.id)
+      .maybeSingle();
+
+    const nextPath = resolvePostAuthPath(
+      profile
+        ? {
+            username: profile.username,
+            onboarding_completed: profile.onboarding_completed,
+          }
+        : null,
+      redirectTo,
+    );
+
+    return NextResponse.redirect(new URL(nextPath, requestUrl.origin));
   } catch (err) {
     return NextResponse.redirect(
       new URL(
@@ -61,4 +77,3 @@ export async function GET(request: Request) {
     );
   }
 }
-

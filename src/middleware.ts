@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { createServerClient as createServerClientSSR } from '@supabase/ssr';
 import type { Database } from '@/lib/supabase/types';
+import { buildOnboardingUrl, sanitizeRedirectTo } from '@/lib/onboarding/redirect';
 
 export async function middleware(request: NextRequest) {
-  // Skip middleware for API routes, static files, and auth routes
   if (
     request.nextUrl.pathname.startsWith('/api') ||
     request.nextUrl.pathname.startsWith('/_next') ||
@@ -25,7 +25,6 @@ export async function middleware(request: NextRequest) {
       return NextResponse.next();
     }
 
-    // Create Supabase client for middleware with proper cookie handling
     const supabase = createServerClientSSR<Database>(supabaseUrl, supabaseAnonKey, {
       cookies: {
         getAll() {
@@ -44,18 +43,36 @@ export async function middleware(request: NextRequest) {
 
     const { data: { session } } = await supabase.auth.getSession();
 
-    // If user is logged in, check if they have a username
     if (session?.user) {
       const { data: profile } = await supabase
         .from('profiles')
-        .select('username')
+        .select('username, onboarding_completed')
         .eq('id', session.user.id)
-        .single() as { data: { username: string | null } | null };
+        .maybeSingle() as {
+          data: { username: string | null; onboarding_completed: boolean | null } | null;
+        };
 
-      // If no username and not already on profile page, redirect to profile
-      if (!profile?.username && !request.nextUrl.pathname.startsWith('/profile')) {
-        const response = NextResponse.redirect(new URL('/profile', request.url));
-        return response;
+      const path = request.nextUrl.pathname;
+      const onOnboarding = path.startsWith('/onboarding');
+      const onProfile = path.startsWith('/profile');
+
+      // Username still required; allow onboarding + profile while setting it up.
+      if (!profile?.username && !onProfile && !onOnboarding) {
+        return NextResponse.redirect(new URL('/profile', request.url));
+      }
+
+      // Personalisation questionnaire for new accounts.
+      if (
+        profile?.username &&
+        profile.onboarding_completed === false &&
+        !onOnboarding
+      ) {
+        const intended = sanitizeRedirectTo(
+          `${path}${request.nextUrl.search}`,
+        );
+        return NextResponse.redirect(
+          new URL(buildOnboardingUrl(intended), request.url),
+        );
       }
     }
 
@@ -67,14 +84,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };
-

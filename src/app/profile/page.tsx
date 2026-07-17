@@ -1197,7 +1197,10 @@ export default function ProfilePage() {
                     )}
 
                     <div className="pt-6">
-                      <SettingItem label="Application Type">
+                      <SettingItem
+                        label="Application Type"
+                        description="Cambridge and Oxford usually need an early mid-October UCAS deadline. Choose early for that cycle, or later for a gap year / future year."
+                      >
                         <ChoicePillGroup
                           value={preferences.is_early_applicant ? "early" : "late"}
                           onChange={(value) => {
@@ -1214,12 +1217,12 @@ export default function ProfilePage() {
                           options={[
                             {
                               value: "early",
-                              label: "Early Applicant",
+                              label: "Early (Oxbridge cycle)",
                               selectedClass: "bg-accent text-background hover:opacity-90",
                             },
                             {
                               value: "late",
-                              label: "Late Applicant",
+                              label: "Later / gap year",
                               selectedClass: "bg-biology text-background hover:opacity-90",
                             },
                           ]}
@@ -1239,7 +1242,7 @@ export default function ProfilePage() {
                               setPreferences((prev) => ({ ...prev, has_extra_time: checked }));
                               savePreferences({ has_extra_time: checked }, "extra_time");
                             }}
-                            label="Exam Time"
+                            label="Extra Time"
                             description="Standard award: 25% additional time on top of normal test duration"
                           />
 
@@ -1416,8 +1419,13 @@ export default function ProfilePage() {
         isOpen={showUsernameSetup}
         onComplete={() => {
           setShowUsernameSetup(false);
-          // Reload preferences
-          window.location.reload();
+          const params = new URLSearchParams(window.location.search);
+          const next = params.get("redirectTo");
+          if (next?.startsWith("/onboarding")) {
+            window.location.href = next;
+            return;
+          }
+          window.location.href = `/onboarding?redirectTo=${encodeURIComponent(next || "/past-papers/library")}`;
         }}
       />
     </Container>

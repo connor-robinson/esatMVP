@@ -362,6 +362,7 @@ export type UserProfileRow = {
   font_size: 'small' | 'medium' | 'large' | null;
   reduced_motion: boolean | null;
   dark_mode: boolean | null;
+  onboarding_completed: boolean | null;
   created_at: string;
   updated_at: string;
 };
@@ -382,6 +383,7 @@ export type UserProfileInsert = {
   font_size?: 'small' | 'medium' | 'large' | null;
   reduced_motion?: boolean | null;
   dark_mode?: boolean | null;
+  onboarding_completed?: boolean | null;
 };
 export type UserProfileUpdate = Partial<UserProfileRow>;
 

@@ -6,11 +6,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { UsernameRequiredModal } from "./UsernameRequiredModal";
+import {
+  buildOnboardingUrl,
+  sanitizeRedirectTo,
+} from "@/lib/onboarding/redirect";
 
 export function UsernameGate({ children }: { children: React.ReactNode }) {
   const session = useSupabaseSession();
+  const pathname = usePathname();
+  const router = useRouter();
   const [checking, setChecking] = useState(true);
   const [needsUsername, setNeedsUsername] = useState(false);
   const [usernameSet, setUsernameSet] = useState(false);
@@ -18,6 +25,12 @@ export function UsernameGate({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     async function checkUsername() {
       if (!session?.user) {
+        setChecking(false);
+        setNeedsUsername(false);
+        return;
+      }
+
+      if (pathname?.startsWith("/onboarding")) {
         setChecking(false);
         setNeedsUsername(false);
         return;
@@ -32,52 +45,61 @@ export function UsernameGate({ children }: { children: React.ReactNode }) {
           } else {
             setNeedsUsername(false);
             setUsernameSet(true);
+            if (data.onboarding_completed !== true) {
+              const params = new URLSearchParams(window.location.search);
+              const intended = sanitizeRedirectTo(
+                params.get("redirectTo") ||
+                  `${pathname ?? "/"}${window.location.search}`,
+              );
+              router.replace(buildOnboardingUrl(intended));
+            }
           }
         } else {
-          // If we can't fetch preferences, allow access (fail open)
           setNeedsUsername(false);
         }
-      } catch (error) {
-        // Fail open - allow access if check fails
+      } catch {
         setNeedsUsername(false);
       } finally {
         setChecking(false);
       }
     }
 
-    checkUsername();
-  }, [session]);
+    void checkUsername();
+  }, [session, pathname, router]);
 
   const handleComplete = () => {
     setNeedsUsername(false);
     setUsernameSet(true);
+    const params = new URLSearchParams(window.location.search);
+    const intended = sanitizeRedirectTo(
+      params.get("redirectTo") || "/past-papers/library",
+    );
+    if (intended.startsWith("/onboarding")) {
+      router.replace(intended);
+    } else {
+      router.replace(buildOnboardingUrl(intended));
+    }
   };
 
-  // Show loading state while checking
   if (checking) {
     return (
       <>
         {children}
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
         </div>
       </>
     );
   }
 
-  // If user needs username, show modal and block access
   if (needsUsername && !usernameSet) {
     return (
       <>
-        <div className="pointer-events-none opacity-30">
-          {children}
-        </div>
+        <div className="pointer-events-none opacity-30">{children}</div>
         <UsernameRequiredModal isOpen={true} onComplete={handleComplete} />
       </>
     );
   }
 
-  // User has username or is not authenticated - allow access
   return <>{children}</>;
 }
-

@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     // Fetch user profile with preferences
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode')
+      .select('username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode, onboarding_completed')
       .eq('id', session.user.id)
       .single();
 
@@ -43,6 +43,7 @@ export async function GET(request: NextRequest) {
           font_size: 'medium',
           reduced_motion: false,
           dark_mode: false,
+          onboarding_completed: false,
         });
       }
       
@@ -91,6 +92,7 @@ export async function PATCH(request: NextRequest) {
       font_size,
       reduced_motion,
       dark_mode,
+      onboarding_completed,
     } = body;
 
     // Validate username if it's being updated
@@ -221,6 +223,9 @@ export async function PATCH(request: NextRequest) {
     if (font_size !== undefined) updateData.font_size = font_size;
     if (reduced_motion !== undefined) updateData.reduced_motion = reduced_motion;
     if (dark_mode !== undefined) updateData.dark_mode = dark_mode;
+    if (onboarding_completed !== undefined) {
+      updateData.onboarding_completed = Boolean(onboarding_completed);
+    }
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
@@ -234,7 +239,7 @@ export async function PATCH(request: NextRequest) {
       .from('profiles') as any)
       .update(updateData)
       .eq('id', session.user.id)
-      .select('username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode')
+      .select('username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode, onboarding_completed')
       .single();
 
     if (profileError) {

@@ -75,7 +75,24 @@ export default function LoginPage() {
         }
 
         if (currentSession?.user) {
-          router.push(redirectTo);
+          try {
+            const prefsRes = await fetch("/api/profile/preferences");
+            const prefs = prefsRes.ok ? await prefsRes.json() : null;
+            const { resolvePostAuthPath } = await import("@/lib/onboarding/redirect");
+            router.push(
+              resolvePostAuthPath(
+                prefs
+                  ? {
+                      username: prefs.username ?? null,
+                      onboarding_completed: prefs.onboarding_completed ?? null,
+                    }
+                  : null,
+                redirectTo,
+              ),
+            );
+          } catch {
+            router.push(redirectTo);
+          }
         } else {
           setIsChecking(false);
         }
@@ -89,7 +106,26 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (session?.user && !isChecking) {
-      router.push(redirectTo);
+      void (async () => {
+        try {
+          const prefsRes = await fetch("/api/profile/preferences");
+          const prefs = prefsRes.ok ? await prefsRes.json() : null;
+          const { resolvePostAuthPath } = await import("@/lib/onboarding/redirect");
+          router.push(
+            resolvePostAuthPath(
+              prefs
+                ? {
+                    username: prefs.username ?? null,
+                    onboarding_completed: prefs.onboarding_completed ?? null,
+                  }
+                : null,
+              redirectTo,
+            ),
+          );
+        } catch {
+          router.push(redirectTo);
+        }
+      })();
     }
   }, [session, redirectTo, router, isChecking]);
 
