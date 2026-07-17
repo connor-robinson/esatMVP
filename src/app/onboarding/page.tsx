@@ -2,7 +2,6 @@
 
 import { Suspense, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
 import {
@@ -554,10 +553,7 @@ function OnboardingContent() {
           </div>
 
           <p className="mt-6 text-center text-xs text-text-subtle">
-            Prefer to edit later?{" "}
-            <Link href="/profile" className="text-primary hover:underline">
-              Open Settings
-            </Link>
+            Finish these questions to start practising. You can change answers later in Settings.
           </p>
         </div>
       </Container>

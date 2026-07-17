@@ -61,10 +61,11 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/profile', request.url));
       }
 
-      // Personalisation questionnaire for new accounts.
+      // Personalisation questionnaire is required before using the site.
+      // Survives close/reopen: any logged-in visit redirects here until finished.
       if (
         profile?.username &&
-        profile.onboarding_completed === false &&
+        profile.onboarding_completed !== true &&
         !onOnboarding
       ) {
         const intended = sanitizeRedirectTo(
