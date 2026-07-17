@@ -1,6 +1,6 @@
 /**
- * Username Gate - Checks if user has username and blocks access if not
- * This component should be rendered in the root layout
+ * Account setup gate — redirects incomplete profiles to /onboarding.
+ * Username and questionnaire are collected in one full-page flow.
  */
 
 "use client";
@@ -8,7 +8,6 @@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
-import { UsernameRequiredModal } from "./UsernameRequiredModal";
 import {
   buildOnboardingUrl,
   sanitizeRedirectTo,
@@ -19,20 +18,16 @@ export function UsernameGate({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [checking, setChecking] = useState(true);
-  const [needsUsername, setNeedsUsername] = useState(false);
-  const [usernameSet, setUsernameSet] = useState(false);
 
   useEffect(() => {
-    async function checkUsername() {
+    async function checkSetup() {
       if (!session?.user) {
         setChecking(false);
-        setNeedsUsername(false);
         return;
       }
 
       if (pathname?.startsWith("/onboarding")) {
         setChecking(false);
-        setNeedsUsername(false);
         return;
       }
 
@@ -40,63 +35,35 @@ export function UsernameGate({ children }: { children: React.ReactNode }) {
         const response = await fetch("/api/profile/preferences");
         if (response.ok) {
           const data = await response.json();
-          if (!data.username) {
-            setNeedsUsername(true);
-          } else {
-            setNeedsUsername(false);
-            setUsernameSet(true);
-            if (data.onboarding_completed !== true) {
-              const params = new URLSearchParams(window.location.search);
-              const intended = sanitizeRedirectTo(
-                params.get("redirectTo") ||
-                  `${pathname ?? "/"}${window.location.search}`,
-              );
-              router.replace(buildOnboardingUrl(intended));
-            }
+          const needsSetup =
+            !data.username || data.onboarding_completed !== true;
+          if (needsSetup) {
+            const params = new URLSearchParams(window.location.search);
+            const intended = sanitizeRedirectTo(
+              params.get("redirectTo") ||
+                `${pathname ?? "/"}${window.location.search}`,
+            );
+            router.replace(buildOnboardingUrl(intended));
+            return;
           }
-        } else {
-          setNeedsUsername(false);
         }
       } catch {
-        setNeedsUsername(false);
+        /* allow through on network errors */
       } finally {
         setChecking(false);
       }
     }
 
-    void checkUsername();
+    void checkSetup();
   }, [session, pathname, router]);
 
-  const handleComplete = () => {
-    setNeedsUsername(false);
-    setUsernameSet(true);
-    const params = new URLSearchParams(window.location.search);
-    const intended = sanitizeRedirectTo(
-      params.get("redirectTo") || "/past-papers/library",
-    );
-    if (intended.startsWith("/onboarding")) {
-      router.replace(intended);
-    } else {
-      router.replace(buildOnboardingUrl(intended));
-    }
-  };
-
-  if (checking) {
+  if (checking && session?.user && !pathname?.startsWith("/onboarding")) {
     return (
       <>
         {children}
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md">
           <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
         </div>
-      </>
-    );
-  }
-
-  if (needsUsername && !usernameSet) {
-    return (
-      <>
-        <div className="pointer-events-none opacity-30">{children}</div>
-        <UsernameRequiredModal isOpen={true} onComplete={handleComplete} />
       </>
     );
   }

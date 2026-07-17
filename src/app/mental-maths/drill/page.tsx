@@ -77,6 +77,32 @@ export default function BuilderPage() {
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
 
+  // Deep-link: /mental-maths/drill?topic=addition → open Addition drills
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const topic = new URLSearchParams(window.location.search).get("topic");
+    if (!topic || !allTopics.some((t) => t.id === topic)) return;
+    const matched = allTopics.find((t) => t.id === topic);
+    if (!matched) return;
+    const highLevel =
+      matched.category === "arithmetic" ||
+      matched.category === "shortcuts" ||
+      matched.category === "transform" ||
+      matched.category === "estimation"
+        ? "arithmetic"
+        : matched.category === "algebra" || matched.category === "identities"
+          ? "algebra"
+          : matched.category === "geometry" || matched.category === "trigonometry"
+            ? "geometry"
+            : matched.category === "number_theory" ||
+                matched.category === "patterns" ||
+                matched.category === "test"
+              ? "number_theory"
+              : "most_useful";
+    setSelectedCategory(highLevel);
+    setSelectedTopicId(topic);
+  }, [allTopics]);
+
   const categoryTopics = useMemo(
     () => getTopicsForHighLevelCategory(allTopics, selectedCategory),
     [allTopics, selectedCategory],

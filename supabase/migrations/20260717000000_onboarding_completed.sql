@@ -9,4 +9,4 @@ SET onboarding_completed = true
 WHERE onboarding_completed = false;
 
 COMMENT ON COLUMN public.profiles.onboarding_completed IS
-  'True after the user finishes (or skips) the post-signup personalisation questionnaire.';
+  'True after the user finishes the post-signup personalisation questionnaire. Required before using the site.';

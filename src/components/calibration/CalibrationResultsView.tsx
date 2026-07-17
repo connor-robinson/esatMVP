@@ -105,7 +105,7 @@ function SuggestedNextSteps({
             Build this skill with focused questions, or sharpen your core speed first.
           </p>
         </div>
-        <div className="flex shrink-0 flex-wrap gap-2">
+        <div className="flex shrink-0 flex-wrap items-center gap-4">
           <Link
             href={questionBankHref}
             onClick={onQuestionBankClick}
@@ -114,8 +114,8 @@ function SuggestedNextSteps({
             Try curated questions
           </Link>
           <Link
-            href="/mental-maths/drill"
-            className="rounded-full bg-surface-mid px-5 py-2.5 text-sm font-bold text-text transition-colors hover:bg-surface-neutral"
+            href="/mental-maths/drill?topic=addition"
+            className="text-sm font-bold text-text transition-opacity hover:opacity-80"
           >
             Try mental maths
           </Link>
@@ -192,8 +192,8 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
     recommendation?.topicTitle ??
     topWeaknesses[0]?.label ??
     results.recommendedSession.targetSkill;
-  const questionBankHref =
-    recommendation?.practiceHref ?? results.recommendedSession.practiceHref;
+  // Free-tier sample: open Math 1’s 10 preview questions from the question bank home.
+  const questionBankHref = "/questions?startSubject=Math%201";
 
   const topicCounts = p.contributions.reduce<Record<string, number>>((counts, question) => {
     counts[question.topic] = (counts[question.topic] ?? 0) + 1;

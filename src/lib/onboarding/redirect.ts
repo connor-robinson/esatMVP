@@ -1,6 +1,7 @@
 /**
  * Resolve where to send a user right after auth.
- * Order: username → onboarding → original destination.
+ * Incomplete accounts (no username and/or unfinished questionnaire) go to
+ * /onboarding, which collects everything in one flow.
  */
 export function buildOnboardingUrl(redirectTo: string): string {
   const safe =
@@ -31,11 +32,9 @@ export function resolvePostAuthPath(
   redirectTo: string,
 ): string {
   const safe = sanitizeRedirectTo(redirectTo);
-  if (!profile?.username) {
-    // UsernameGate / middleware will collect a username, then send them to onboarding.
-    return `/profile?redirectTo=${encodeURIComponent(buildOnboardingUrl(safe))}`;
-  }
-  if (profile.onboarding_completed !== true) {
+  const needsSetup =
+    !profile?.username || profile.onboarding_completed !== true;
+  if (needsSetup) {
     return buildOnboardingUrl(safe);
   }
   return safe;

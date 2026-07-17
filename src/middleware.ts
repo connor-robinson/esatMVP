@@ -54,20 +54,11 @@ export async function middleware(request: NextRequest) {
 
       const path = request.nextUrl.pathname;
       const onOnboarding = path.startsWith('/onboarding');
-      const onProfile = path.startsWith('/profile');
 
-      // Username still required; allow onboarding + profile while setting it up.
-      if (!profile?.username && !onProfile && !onOnboarding) {
-        return NextResponse.redirect(new URL('/profile', request.url));
-      }
-
-      // Personalisation questionnaire is required before using the site.
-      // Survives close/reopen: any logged-in visit redirects here until finished.
-      if (
-        profile?.username &&
-        profile.onboarding_completed !== true &&
-        !onOnboarding
-      ) {
+      // Lock the app until username + questionnaire are done (single /onboarding flow).
+      const needsSetup =
+        !profile?.username || profile.onboarding_completed !== true;
+      if (needsSetup && !onOnboarding) {
         const intended = sanitizeRedirectTo(
           `${path}${request.nextUrl.search}`,
         );

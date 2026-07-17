@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
@@ -8,7 +8,6 @@ import {
   getActiveAttempt,
   getCompletedAttempts,
 } from "@/lib/calibration/attempt";
-import { computeResults } from "@/lib/calibration/scoring";
 import { trackCalibrationEvent } from "@/lib/calibration/analytics";
 import {
   CALIBRATION_ROUTES,
@@ -18,53 +17,66 @@ import {
 } from "@/lib/calibration/constants";
 import type { CalibrationAttempt } from "@/lib/calibration/types";
 import { cn } from "@/lib/utils";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 
 export default function Math1CalibrationLanding() {
   const router = useRouter();
   const session = useSupabaseSession();
   const [inProgress, setInProgress] = useState<CalibrationAttempt | null>(null);
-  const [completed, setCompleted] = useState<CalibrationAttempt[]>([]);
-  const [accountLatestAttemptId, setAccountLatestAttemptId] = useState<
-    string | null
-  >(null);
-  const [loaded, setLoaded] = useState(false);
+  const [resolving, setResolving] = useState(true);
 
   useEffect(() => {
-    setInProgress(getActiveAttempt());
-    setCompleted(getCompletedAttempts());
-    setLoaded(true);
-    void trackCalibrationEvent("calibration_landing_viewed", {
-      user_state: session?.user ? "free" : "signed_out",
-    });
+    let cancelled = false;
 
-    if (session?.user) {
-      fetch("/api/calibration/attempts")
-        .then((res) => res.json())
-        .then((data) => {
+    async function resolve() {
+      const active = getActiveAttempt();
+      const completed = getCompletedAttempts();
+      const localLatest = completed[0] ?? null;
+
+      void trackCalibrationEvent("calibration_landing_viewed", {
+        user_state: session?.user ? "free" : "signed_out",
+      });
+
+      // Unfinished attempt → stay on landing to resume.
+      if (active) {
+        if (!cancelled) {
+          setInProgress(active);
+          setResolving(false);
+        }
+        return;
+      }
+
+      // Completed locally → results are the main view.
+      if (localLatest) {
+        router.replace(calibrationResultsRoute(localLatest.attemptId));
+        return;
+      }
+
+      // Completed on account → results are the main view.
+      if (session?.user) {
+        try {
+          const res = await fetch("/api/calibration/attempts");
+          const data = await res.json();
           const latest = (data.attempts ?? []).find(
             (a: { status: string; id: string }) => a.status === "completed",
           );
-          setAccountLatestAttemptId(latest?.id ?? null);
-        })
-        .catch(() => setAccountLatestAttemptId(null));
-    } else {
-      setAccountLatestAttemptId(null);
-    }
-  }, [session?.user]);
+          if (latest?.id && !cancelled) {
+            router.replace(calibrationResultsRoute(latest.id));
+            return;
+          }
+        } catch {
+          /* fall through to start landing */
+        }
+      }
 
-  const latest = completed[0] ?? null;
-  const latestResults = useMemo(
-    () => (latest ? computeResults(latest) : null),
-    [latest],
-  );
-  const previousResults = useMemo(
-    () => (completed[1] ? computeResults(completed[1]) : null),
-    [completed],
-  );
-  const scoreDelta =
-    latestResults && previousResults
-      ? latestResults.overallScore - previousResults.overallScore
-      : null;
+      if (!cancelled) setResolving(false);
+    }
+
+    void resolve();
+    return () => {
+      cancelled = true;
+    };
+  }, [router, session?.user]);
 
   const timeLimitMinutes = Math.round(CALIBRATION_TIME_LIMIT_SECONDS / 60);
 
@@ -76,13 +88,13 @@ export default function Math1CalibrationLanding() {
     router.push(CALIBRATION_ROUTES.test);
   };
 
-  const primaryLabel = !loaded
-    ? "Start"
-    : inProgress
-      ? "Resume"
-      : latest || accountLatestAttemptId
-        ? "Retake"
-        : "Start";
+  if (resolving) {
+    return (
+      <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center bg-background">
+        <LoadingSpinner size="md" />
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-[calc(100vh-3.5rem)] overflow-hidden bg-background">
@@ -113,58 +125,7 @@ export default function Math1CalibrationLanding() {
           </p>
         </header>
 
-        {loaded && (latest || accountLatestAttemptId) ? (
-          <div className="mx-auto mt-8 w-full max-w-4xl rounded-2xl bg-surface-elevated/80 px-5 py-4 sm:px-6">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-text-muted">
-                  Latest result
-                </p>
-                {latest && latestResults ? (
-                  <p className="mt-1 text-xl font-semibold tabular-nums text-text">
-                    {latestResults.overallScore}
-                    <span className="text-sm text-text-muted">/100</span>
-                    <span className="ml-2 text-sm font-normal text-text-muted">
-                      {latestResults.readinessBandLabel}
-                    </span>
-                  </p>
-                ) : (
-                  <p className="mt-1 text-sm font-semibold text-text">
-                    Saved to your account
-                  </p>
-                )}
-              </div>
-              <div className="flex flex-wrap items-center gap-3">
-                {latest && scoreDelta != null ? (
-                  <span
-                    className={cn(
-                      "text-sm font-semibold tabular-nums",
-                      scoreDelta >= 0 ? "text-success" : "text-warning",
-                    )}
-                  >
-                    {scoreDelta >= 0 ? "+" : ""}
-                    {scoreDelta} since last
-                  </span>
-                ) : null}
-                <button
-                  type="button"
-                  onClick={() =>
-                    router.push(
-                      calibrationResultsRoute(
-                        latest?.attemptId ?? accountLatestAttemptId!,
-                      ),
-                    )
-                  }
-                  className="rounded-xl bg-surface-mid px-4 py-2 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
-                >
-                  View results
-                </button>
-              </div>
-            </div>
-          </div>
-        ) : null}
-
-        {loaded && inProgress ? (
+        {inProgress ? (
           <p className="mx-auto mt-5 max-w-4xl text-center text-sm text-text-muted">
             You have an unfinished attempt — resume to continue where you left
             off.
@@ -211,10 +172,6 @@ export default function Math1CalibrationLanding() {
               No penalties for wrong answers. Attempt every question you can —
               timing and guesses help the diagnosis.
             </p>
-            <p className="text-sm leading-relaxed text-text-muted sm:col-span-2 sm:text-[15px]">
-              You will get a readiness score, topic breakdown, speed-versus-accuracy
-              profile, and a personalised first practice session.
-            </p>
           </div>
         </section>
 
@@ -222,13 +179,11 @@ export default function Math1CalibrationLanding() {
           <button
             type="button"
             onClick={start}
-            disabled={!loaded}
             className={cn(
               "inline-flex min-w-[14rem] items-center justify-center rounded-xl bg-maths px-8 py-3.5 text-base font-bold text-background transition-all hover:brightness-110",
-              !loaded && "cursor-not-allowed opacity-60",
             )}
           >
-            {primaryLabel}
+            {inProgress ? "Resume" : "Start"}
           </button>
 
           {!session?.user ? (

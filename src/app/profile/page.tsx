@@ -1101,7 +1101,7 @@ export default function ProfilePage() {
                   <SettingsGroup title="Session">
                     <SettingsRow
                       label="Preview first-time setup"
-                      description="Walk through the post-signup questionnaire without changing your account"
+                      description="Walk through account setup (username, exam, subjects, timing, access arrangements) without saving"
                       action={
                         <SettingsButton
                           type="button"
@@ -1111,6 +1111,30 @@ export default function ProfilePage() {
                           }}
                         >
                           Preview
+                        </SettingsButton>
+                      }
+                    />
+                    <SettingsRow
+                      label="Replay account setup"
+                      description="Reset the setup flag and walk through the real lock screen again (saves when you finish)"
+                      action={
+                        <SettingsButton
+                          type="button"
+                          onClick={async () => {
+                            try {
+                              await fetch("/api/profile/preferences", {
+                                method: "PATCH",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ onboarding_completed: false }),
+                              });
+                              window.location.href =
+                                "/onboarding?redirectTo=%2Fprofile%3Fsection%3Daccount";
+                            } catch {
+                              /* ignore */
+                            }
+                          }}
+                        >
+                          Replay
                         </SettingsButton>
                       }
                     />
@@ -1269,7 +1293,7 @@ export default function ProfilePage() {
                     <div className="pt-6 border-t border-border-subtle space-y-6">
                       <div>
                         <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.12em] text-text">
-                          Exam Arrangements
+                          Access arrangements
                         </h3>
                         <div className="space-y-5">
                           <Toggle
@@ -1278,13 +1302,13 @@ export default function ProfilePage() {
                               setPreferences((prev) => ({ ...prev, has_extra_time: checked }));
                               savePreferences({ has_extra_time: checked }, "extra_time");
                             }}
-                            label="Extra Time"
-                            description="Standard award: 25% additional time on top of normal test duration"
+                            label="Extra time"
+                            description="Lengthens timed practice to match your access arrangement (not your official exam booking)"
                           />
 
                           {preferences.has_extra_time && (
                             <div className="ml-14 space-y-3">
-                              <SettingItem label="Extra Time Percentage">
+                              <SettingItem label="Extra time percentage">
                                 <div className="flex gap-3 items-center">
                                   <Input
                                     type="number"
@@ -1304,8 +1328,8 @@ export default function ProfilePage() {
                               {getTimeWithExtraTime() && (
                                 <div className="text-xs text-text-muted bg-surface-subtle p-3 rounded-lg">
                                   {preferences.exam_preference === 'TMUA' 
-                                    ? `TMUA: ~${getTimeWithExtraTime()} with +${preferences.extra_time_percentage}%`
-                                    : `ESAT: ~${getTimeWithExtraTime()} per module with +${preferences.extra_time_percentage}%`
+                                    ? `Practice length: ~${getTimeWithExtraTime()} with +${preferences.extra_time_percentage}%`
+                                    : `Practice length: ~${getTimeWithExtraTime()} per module with +${preferences.extra_time_percentage}%`
                                   }
                                 </div>
                               )}
@@ -1318,8 +1342,8 @@ export default function ProfilePage() {
                               setPreferences((prev) => ({ ...prev, has_rest_breaks: checked }));
                               savePreferences({ has_rest_breaks: checked }, "rest_breaks");
                             }}
-                            label="Rest Breaks"
-                            description='Request rest breaks / "pause-the-clock" breaks during the exam'
+                            label="Rest breaks"
+                            description='Pause-the-clock style breaks during timed practice'
                           />
                         </div>
                       </div>
