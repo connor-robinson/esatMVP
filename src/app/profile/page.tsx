@@ -1100,6 +1100,21 @@ export default function ProfilePage() {
 
                   <SettingsGroup title="Session">
                     <SettingsRow
+                      label="Preview first-time setup"
+                      description="Walk through the post-signup questionnaire without changing your account"
+                      action={
+                        <SettingsButton
+                          type="button"
+                          onClick={() => {
+                            window.location.href =
+                              "/onboarding?preview=1&redirectTo=%2Fprofile%3Fsection%3Daccount";
+                          }}
+                        >
+                          Preview
+                        </SettingsButton>
+                      }
+                    />
+                    <SettingsRow
                       label="Sign out"
                       description="Log out of this device"
                       action={
