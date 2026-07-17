@@ -21,12 +21,27 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Fetch user profile with preferences
-    const { data: profile, error: profileError } = await supabase
+    const prefsSelect =
+      'username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode, onboarding_completed, marketing_emails_consent';
+    const prefsSelectFallback =
+      'username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode, onboarding_completed';
+
+    // Fetch user profile with preferences (fallback if marketing_emails_consent column missing)
+    let { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode, onboarding_completed, marketing_emails_consent')
+      .select(prefsSelect)
       .eq('id', session.user.id)
       .single();
+
+    if (profileError?.message?.includes('marketing_emails_consent')) {
+      const retry = await supabase
+        .from('profiles')
+        .select(prefsSelectFallback)
+        .eq('id', session.user.id)
+        .single();
+      profile = retry.data ? { ...retry.data, marketing_emails_consent: null } : null;
+      profileError = retry.error;
+    }
 
     if (profileError) {
       // If profile doesn't exist, return defaults
@@ -245,16 +260,45 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+    const prefsSelect =
+      'username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode, onboarding_completed, marketing_emails_consent';
+    const prefsSelectFallback =
+      'username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode, onboarding_completed';
+
     // Update profile
-    const { data: profile, error: profileError } = await (supabase
+    let { data: profile, error: profileError } = await (supabase
       .from('profiles') as any)
       .update(updateData)
       .eq('id', session.user.id)
-      .select('username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode, onboarding_completed, marketing_emails_consent')
+      .select(prefsSelect)
       .single();
 
+    // Column may not exist yet — retry without marketing_emails_consent
+    if (profileError?.message?.includes('marketing_emails_consent')) {
+      const { marketing_emails_consent: _drop, ...safeUpdate } = updateData;
+      if (Object.keys(safeUpdate).length === 0) {
+        const current = await supabase
+          .from('profiles')
+          .select(prefsSelectFallback)
+          .eq('id', session.user.id)
+          .single();
+        return NextResponse.json({
+          ...(current.data ?? {}),
+          marketing_emails_consent: null,
+        });
+      }
+      const retry = await (supabase.from('profiles') as any)
+        .update(safeUpdate)
+        .eq('id', session.user.id)
+        .select(prefsSelectFallback)
+        .single();
+      profile = retry.data
+        ? { ...retry.data, marketing_emails_consent: null }
+        : null;
+      profileError = retry.error;
+    }
+
     if (profileError) {
-      
       // Provide more specific error messages
       let errorMessage = 'Failed to update preferences';
       if (profileError.code === '23505') {

@@ -16,19 +16,24 @@ type Step = "username" | "exam" | "applicant" | "arrangements";
 
 const USERNAME_REGEX = /^[a-zA-Z0-9_-]{2,20}$/;
 
+/** Account-setup accent — clear blue, independent of olive primary. */
+const ACCENT = {
+  bar: "bg-[#4C8BF5]",
+  btn: "bg-[#4C8BF5] text-white hover:bg-[#3B7AE0]",
+  selected: "bg-[#4C8BF5] text-white",
+  selectedMuted: "text-white/70",
+  check: "text-[#4C8BF5]",
+  available: "text-[#4C8BF5]",
+  dots: "rgba(76, 139, 245, 0.35)",
+} as const;
+
 function ProgressBar({ stepIndex, total }: { stepIndex: number; total: number }) {
   const pct = Math.round(((stepIndex + 1) / total) * 100);
   return (
     <div className="w-full" aria-hidden>
-      <div className="mb-2 flex items-center justify-between text-[11px] font-medium uppercase tracking-[0.14em] text-text-muted">
-        <span>
-          Step {stepIndex + 1} of {total}
-        </span>
-        <span>{pct}%</span>
-      </div>
-      <div className="h-1 w-full overflow-hidden rounded-full bg-surface-mid">
+      <div className="h-2 w-full overflow-hidden rounded-full bg-white/10">
         <div
-          className="h-full rounded-full bg-primary transition-[width] duration-500 ease-out"
+          className={cn("h-full rounded-full transition-[width] duration-500 ease-out", ACCENT.bar)}
           style={{ width: `${pct}%` }}
         />
       </div>
@@ -53,16 +58,14 @@ function ChoiceCard({
       onClick={onClick}
       className={cn(
         "w-full rounded-2xl px-5 py-4 text-left transition-colors duration-200",
-        selected
-          ? "bg-primary text-black"
-          : "bg-surface-mid text-text hover:bg-surface-neutral",
+        selected ? ACCENT.selected : "bg-surface-mid text-text hover:bg-surface-neutral",
       )}
     >
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-base font-semibold">{title}</p>
           {description ? (
-            <p className={cn("mt-1 text-sm", selected ? "text-black/65" : "text-text-muted")}>
+            <p className={cn("mt-1 text-sm", selected ? ACCENT.selectedMuted : "text-text-muted")}>
               {description}
             </p>
           ) : null}
@@ -105,6 +108,8 @@ function OnboardingContent() {
 
   useEffect(() => {
     if (isPreview) {
+      setSteps(["username", "exam", "applicant", "arrangements"]);
+      setStep("username");
       setBooting(false);
       return;
     }
@@ -166,6 +171,14 @@ function OnboardingContent() {
       return;
     }
 
+    if (isPreview) {
+      setUsernameAvailability({
+        available: true,
+        message: "Looks good (preview — nothing is saved)",
+      });
+      return;
+    }
+
     const timeoutId = setTimeout(async () => {
       setCheckingUsername(true);
       setError(null);
@@ -192,7 +205,7 @@ function OnboardingContent() {
     }, 450);
 
     return () => clearTimeout(timeoutId);
-  }, [username, step]);
+  }, [username, step, isPreview]);
 
   const toggleSubject = (subject: SubjectTileKey) => {
     setSubjects((prev) => {
@@ -217,7 +230,6 @@ function OnboardingContent() {
     const idx = steps.indexOf(from);
     if (idx >= 0 && idx < steps.length - 1) {
       setStep(steps[idx + 1]);
-      return;
     }
   };
 
@@ -307,7 +319,7 @@ function OnboardingContent() {
   if (booting) {
     return (
       <div className="flex min-h-[calc(100vh-58px)] items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" aria-hidden />
+        <Loader2 className={cn("h-8 w-8 animate-spin", ACCENT.check)} aria-hidden />
       </div>
     );
   }
@@ -316,168 +328,206 @@ function OnboardingContent() {
     <div className="relative min-h-[calc(100vh-58px)] bg-background">
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         <div
-          className="absolute inset-0 opacity-[0.28]"
+          className="absolute inset-0 opacity-[0.3]"
           style={{
-            backgroundImage:
-              "radial-gradient(rgba(169, 177, 103, 0.4) 1px, transparent 1px)",
+            backgroundImage: `radial-gradient(${ACCENT.dots} 1px, transparent 1px)`,
             backgroundSize: "24px 24px",
           }}
         />
       </div>
 
-      <div className="relative mx-auto flex min-h-[calc(100vh-58px)] w-full max-w-3xl flex-col justify-center px-5 py-10 sm:px-8 sm:py-14">
+      <div className="relative mx-auto flex min-h-[calc(100vh-58px)] w-full max-w-4xl flex-col px-5 py-8 sm:px-8 sm:py-10">
         {isPreview ? (
-          <div className="mb-6 rounded-2xl bg-warning/15 px-4 py-3 text-center text-sm text-text">
-            <p className="font-semibold">Preview mode</p>
-            <p className="mt-0.5 text-text-muted">Nothing is saved. Exit anytime.</p>
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[#4C8BF5]/15 px-4 py-3 text-sm text-text">
+            <p>
+              <span className="font-semibold">Preview</span>
+              <span className="text-text-muted"> — nothing is saved</span>
+            </p>
             <button
               type="button"
-              className="mt-2 text-sm font-medium text-primary"
+              className={cn("font-semibold", ACCENT.check)}
               onClick={() => router.replace("/profile?section=account")}
             >
-              Exit preview
+              Exit
             </button>
           </div>
         ) : null}
 
-        <div className="w-full rounded-[1.75rem] bg-surface-elevated px-6 py-8 sm:px-10 sm:py-10">
-          <div className="mx-auto max-w-xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-              Account setup
-            </p>
-            <h1 className="mt-3 text-3xl font-bold tracking-tight text-text sm:text-4xl">
-              Set up your account
-            </h1>
+        <div className="flex min-h-0 flex-1 flex-col justify-center">
+          <div className="w-full rounded-[1.75rem] bg-surface-elevated px-6 pb-10 pt-6 sm:px-12 sm:pb-12 sm:pt-8">
+            <ProgressBar stepIndex={stepIndex} total={steps.length} />
 
-            <div className="mt-8">
-              <ProgressBar stepIndex={stepIndex} total={steps.length} />
-            </div>
+            <div className="mx-auto mt-10 max-w-xl">
+              <h1 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">
+                Set up your account
+              </h1>
 
-            <div className="mt-8 space-y-6">
-              {step === "username" ? (
-                <>
-                  <div>
-                    <h2 className="text-xl font-semibold text-text">Choose a username</h2>
-                    <p className="mt-1.5 text-sm text-text-muted">
-                      Your unique name on the platform.
-                    </p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-text" htmlFor="setup-username">
-                      Username
-                    </label>
-                    <div className="relative">
-                      <input
-                        id="setup-username"
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder="Enter username"
-                        autoFocus
-                        disabled={saving}
-                        autoComplete="username"
-                        className={cn(
-                          "w-full rounded-2xl bg-surface-mid px-4 py-3.5 pr-11 text-text outline-none placeholder:text-text-subtle",
-                          "ring-0 border-0",
-                        )}
-                      />
-                      <div className="absolute right-3.5 top-1/2 -translate-y-1/2">
-                        {checkingUsername ? (
-                          <Loader2 className="h-4 w-4 animate-spin text-text-muted" />
-                        ) : null}
-                        {!checkingUsername && usernameAvailability.available === true ? (
-                          <CheckCircle2 className="h-4 w-4 text-success" />
-                        ) : null}
-                        {!checkingUsername && usernameAvailability.available === false ? (
-                          <AlertCircle className="h-4 w-4 text-error" />
-                        ) : null}
-                      </div>
+              <div className="mt-8 space-y-6">
+                {step === "username" ? (
+                  <>
+                    <div>
+                      <h2 className="text-xl font-semibold text-text">Choose a username</h2>
                     </div>
-                    {usernameAvailability.message ? (
-                      <p
+
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-text" htmlFor="setup-username">
+                        Username
+                      </label>
+                      <div className="relative">
+                        <input
+                          id="setup-username"
+                          type="text"
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value)}
+                          placeholder="Enter username"
+                          autoFocus
+                          disabled={saving}
+                          autoComplete="username"
+                          className="w-full rounded-2xl border-0 bg-surface-mid px-4 py-3.5 pr-11 text-text outline-none ring-0 placeholder:text-text-subtle"
+                        />
+                        <div className="absolute right-3.5 top-1/2 -translate-y-1/2">
+                          {checkingUsername ? (
+                            <Loader2 className="h-4 w-4 animate-spin text-text-muted" />
+                          ) : null}
+                          {!checkingUsername && usernameAvailability.available === true ? (
+                            <CheckCircle2 className={cn("h-4 w-4", ACCENT.check)} />
+                          ) : null}
+                          {!checkingUsername && usernameAvailability.available === false ? (
+                            <AlertCircle className="h-4 w-4 text-error" />
+                          ) : null}
+                        </div>
+                      </div>
+                      {usernameAvailability.message ? (
+                        <p
+                          className={cn(
+                            "text-xs",
+                            usernameAvailability.available === true
+                              ? ACCENT.available
+                              : "text-error",
+                          )}
+                        >
+                          {usernameAvailability.message}
+                        </p>
+                      ) : (
+                        <p className="text-xs text-text-muted">
+                          2–20 characters. Letters, numbers, underscores, and hyphens.
+                        </p>
+                      )}
+                    </div>
+
+                    <button
+                      type="button"
+                      disabled={
+                        saving ||
+                        checkingUsername ||
+                        (!isPreview && usernameAvailability.available !== true) ||
+                        (isPreview && !USERNAME_REGEX.test(username))
+                      }
+                      onClick={() => void submitUsername()}
+                      className={cn(
+                        "w-full rounded-2xl py-3.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
+                        ACCENT.btn,
+                      )}
+                    >
+                      {saving ? "Saving…" : "Continue"}
+                    </button>
+                  </>
+                ) : null}
+
+                {step === "exam" ? (
+                  <>
+                    <div>
+                      <h2 className="text-xl font-semibold text-text">Which exam?</h2>
+                    </div>
+
+                    <div className="space-y-3">
+                      <ChoiceCard
+                        selected={exam === "ESAT"}
+                        title="ESAT"
+                        description="Engineering & Science Admissions Test"
+                        onClick={() => setExam("ESAT")}
+                      />
+                      <ChoiceCard
+                        selected={exam === "TMUA"}
+                        title="TMUA"
+                        description="Test of Mathematics for University Admission"
+                        onClick={() => {
+                          setExam("TMUA");
+                          setSubjects([]);
+                        }}
+                      />
+                    </div>
+
+                    {exam === "ESAT" ? (
+                      <div className="space-y-3">
+                        <p className="text-sm font-medium text-text">Your 3 subjects</p>
+                        <div className="flex flex-wrap gap-2">
+                          {ESAT_SUBJECTS.map((subject) => {
+                            const selected = subjects.includes(subject);
+                            return (
+                              <button
+                                key={subject}
+                                type="button"
+                                onClick={() => toggleSubject(subject)}
+                                className={cn(
+                                  "rounded-xl px-3.5 py-2 text-sm transition-colors",
+                                  esatSubjectPillClass(subject, selected),
+                                )}
+                              >
+                                {subject}
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <p className="text-xs text-text-muted">{subjects.length}/3 selected</p>
+                      </div>
+                    ) : null}
+
+                    <div className="flex gap-3">
+                      {stepIndex > 0 ? (
+                        <button
+                          type="button"
+                          onClick={goBack}
+                          className="flex-1 rounded-2xl bg-surface-mid py-3.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
+                        >
+                          Back
+                        </button>
+                      ) : null}
+                      <button
+                        type="button"
+                        disabled={saving || (exam === "ESAT" && subjects.length !== 3)}
+                        onClick={() => void submitExam()}
                         className={cn(
-                          "text-xs",
-                          usernameAvailability.available === true
-                            ? "text-success"
-                            : "text-error",
+                          "flex-1 rounded-2xl py-3.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
+                          ACCENT.btn,
                         )}
                       >
-                        {usernameAvailability.message}
-                      </p>
-                    ) : (
-                      <p className="text-xs text-text-muted">
-                        2–20 characters. Letters, numbers, underscores, and hyphens.
-                      </p>
-                    )}
-                  </div>
-
-                  <button
-                    type="button"
-                    disabled={
-                      saving ||
-                      checkingUsername ||
-                      (!isPreview && usernameAvailability.available !== true)
-                    }
-                    onClick={() => void submitUsername()}
-                    className="w-full rounded-2xl bg-primary py-3.5 text-sm font-bold text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {saving ? "Saving…" : "Continue"}
-                  </button>
-                </>
-              ) : null}
-
-              {step === "exam" ? (
-                <>
-                  <div>
-                    <h2 className="text-xl font-semibold text-text">Which exam?</h2>
-                  </div>
-
-                  <div className="space-y-3">
-                    <ChoiceCard
-                      selected={exam === "ESAT"}
-                      title="ESAT"
-                      description="Engineering & Science Admissions Test"
-                      onClick={() => setExam("ESAT")}
-                    />
-                    <ChoiceCard
-                      selected={exam === "TMUA"}
-                      title="TMUA"
-                      description="Test of Mathematics for University Admission"
-                      onClick={() => {
-                        setExam("TMUA");
-                        setSubjects([]);
-                      }}
-                    />
-                  </div>
-
-                  {exam === "ESAT" ? (
-                    <div className="space-y-3">
-                      <p className="text-sm font-medium text-text">Your 3 subjects</p>
-                      <div className="flex flex-wrap gap-2">
-                        {ESAT_SUBJECTS.map((subject) => {
-                          const selected = subjects.includes(subject);
-                          return (
-                            <button
-                              key={subject}
-                              type="button"
-                              onClick={() => toggleSubject(subject)}
-                              className={cn(
-                                "rounded-xl px-3.5 py-2 text-sm transition-colors",
-                                esatSubjectPillClass(subject, selected),
-                              )}
-                            >
-                              {subject}
-                            </button>
-                          );
-                        })}
-                      </div>
-                      <p className="text-xs text-text-muted">{subjects.length}/3 selected</p>
+                        {saving ? "Saving…" : "Continue"}
+                      </button>
                     </div>
-                  ) : null}
+                  </>
+                ) : null}
 
-                  <div className="flex gap-3">
-                    {stepIndex > 0 ? (
+                {step === "applicant" ? (
+                  <>
+                    <div>
+                      <h2 className="text-xl font-semibold text-text">Application timing</h2>
+                    </div>
+
+                    <div className="space-y-3">
+                      <ChoiceCard
+                        selected={earlyApplicant}
+                        title="Early"
+                        onClick={() => setEarlyApplicant(true)}
+                      />
+                      <ChoiceCard
+                        selected={!earlyApplicant}
+                        title="Later"
+                        onClick={() => setEarlyApplicant(false)}
+                      />
+                    </div>
+
+                    <div className="flex gap-3">
                       <button
                         type="button"
                         onClick={goBack}
@@ -485,123 +535,83 @@ function OnboardingContent() {
                       >
                         Back
                       </button>
-                    ) : null}
-                    <button
-                      type="button"
-                      disabled={saving || (exam === "ESAT" && subjects.length !== 3)}
-                      onClick={() => void submitExam()}
-                      className="flex-1 rounded-2xl bg-primary py-3.5 text-sm font-bold text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      {saving ? "Saving…" : "Continue"}
-                    </button>
-                  </div>
-                </>
-              ) : null}
-
-              {step === "applicant" ? (
-                <>
-                  <div>
-                    <h2 className="text-xl font-semibold text-text">Application timing</h2>
-                    <p className="mt-1.5 text-sm text-text-muted">
-                      Early = Oxbridge cycle this year. Later = gap year or a future cycle.
-                    </p>
-                  </div>
-
-                  <div className="space-y-3">
-                    <ChoiceCard
-                      selected={earlyApplicant}
-                      title="Early"
-                      onClick={() => setEarlyApplicant(true)}
-                    />
-                    <ChoiceCard
-                      selected={!earlyApplicant}
-                      title="Later"
-                      onClick={() => setEarlyApplicant(false)}
-                    />
-                  </div>
-
-                  <div className="flex gap-3">
-                    <button
-                      type="button"
-                      onClick={goBack}
-                      className="flex-1 rounded-2xl bg-surface-mid py-3.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
-                    >
-                      Back
-                    </button>
-                    <button
-                      type="button"
-                      disabled={saving}
-                      onClick={() => void submitApplicant()}
-                      className="flex-1 rounded-2xl bg-primary py-3.5 text-sm font-bold text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      {saving ? "Saving…" : "Continue"}
-                    </button>
-                  </div>
-                </>
-              ) : null}
-
-              {step === "arrangements" ? (
-                <>
-                  <div>
-                    <h2 className="text-xl font-semibold text-text">Access arrangements</h2>
-                    <p className="mt-1.5 text-sm text-text-muted">
-                      For timed practice only — not your official exam booking.
-                    </p>
-                  </div>
-
-                  <div className="space-y-3">
-                    <ChoiceCard
-                      selected={!extraTime}
-                      title="No extra time"
-                      onClick={() => setExtraTime(false)}
-                    />
-                    <ChoiceCard
-                      selected={extraTime}
-                      title="I get extra time"
-                      description="We’ll lengthen timed practice to match your arrangement"
-                      onClick={() => setExtraTime(true)}
-                    />
-                  </div>
-
-                  {extraTime ? (
-                    <div className="flex items-center gap-3 pl-1">
-                      <input
-                        type="number"
-                        min={0}
-                        max={100}
-                        value={extraTimePct}
-                        onChange={(e) =>
-                          setExtraTimePct(parseInt(e.target.value, 10) || 25)
-                        }
-                        className="w-20 rounded-xl bg-surface-mid px-3 py-2.5 text-sm text-text outline-none border-0"
-                      />
-                      <span className="text-sm text-text-muted">% extra</span>
+                      <button
+                        type="button"
+                        disabled={saving}
+                        onClick={() => void submitApplicant()}
+                        className={cn(
+                          "flex-1 rounded-2xl py-3.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
+                          ACCENT.btn,
+                        )}
+                      >
+                        {saving ? "Saving…" : "Continue"}
+                      </button>
                     </div>
-                  ) : null}
+                  </>
+                ) : null}
 
-                  <div className="flex gap-3">
-                    <button
-                      type="button"
-                      onClick={goBack}
-                      className="flex-1 rounded-2xl bg-surface-mid py-3.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
-                    >
-                      Back
-                    </button>
-                    <button
-                      type="button"
-                      disabled={saving}
-                      onClick={() => void finish()}
-                      className="flex-1 rounded-2xl bg-primary py-3.5 text-sm font-bold text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      {saving ? "Saving…" : "Finish"}
-                    </button>
-                  </div>
-                </>
-              ) : null}
+                {step === "arrangements" ? (
+                  <>
+                    <div>
+                      <h2 className="text-xl font-semibold text-text">Access arrangements</h2>
+                    </div>
 
-              {error ? (
-                <p className="text-center text-sm text-error">{error}</p>
-              ) : null}
+                    <div className="space-y-3">
+                      <ChoiceCard
+                        selected={!extraTime}
+                        title="No extra time"
+                        onClick={() => setExtraTime(false)}
+                      />
+                      <ChoiceCard
+                        selected={extraTime}
+                        title="I get extra time"
+                        onClick={() => setExtraTime(true)}
+                      />
+                    </div>
+
+                    {extraTime ? (
+                      <div className="flex items-center gap-3 pl-1">
+                        <input
+                          type="number"
+                          min={0}
+                          max={100}
+                          value={extraTimePct}
+                          onChange={(e) =>
+                            setExtraTimePct(parseInt(e.target.value, 10) || 25)
+                          }
+                          className="w-20 rounded-xl border-0 bg-surface-mid px-3 py-2.5 text-sm text-text outline-none"
+                        />
+                        <span className="text-sm text-text-muted">% extra</span>
+                      </div>
+                    ) : null}
+
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        onClick={goBack}
+                        className="flex-1 rounded-2xl bg-surface-mid py-3.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
+                      >
+                        Back
+                      </button>
+                      <button
+                        type="button"
+                        disabled={saving}
+                        onClick={() => void finish()}
+                        className={cn(
+                          "flex-1 rounded-2xl py-3.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
+                          ACCENT.btn,
+                        )}
+                      >
+                        {saving ? "Saving…" : "Finish"}
+                      </button>
+                    </div>
+                  </>
+                ) : null}
+
+                {error ? (
+                  <p className="text-center text-sm text-error">{error}</p>
+                ) : null}
+              </div>
             </div>
           </div>
         </div>
@@ -615,7 +625,7 @@ export default function OnboardingPage() {
     <Suspense
       fallback={
         <div className="flex min-h-[calc(100vh-58px)] items-center justify-center bg-background">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" aria-hidden />
+          <Loader2 className="h-8 w-8 animate-spin text-[#4C8BF5]" aria-hidden />
         </div>
       }
     >
