@@ -1,10 +1,11 @@
 /**
- * Leaderboard page - Global rankings
+ * Leaderboard page - Global rankings (signed-in users only)
  */
 
 "use client";
 
 import { useEffect, useState, Suspense, lazy, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { Container } from "@/components/layout/Container";
 import type {
   TimeRange,
@@ -20,6 +21,7 @@ import {
   getAnalyticsFolderOptions,
   topicIdsForFolderQuery,
 } from "@/lib/display-folder-registry";
+import { Trophy } from "lucide-react";
 
 const GlobalView = lazy(() =>
   import("@/components/analytics/GlobalView").then((mod) => ({ default: mod.GlobalView })),
@@ -133,6 +135,7 @@ function sortAndRank(entries: LeaderboardEntry[]): LeaderboardEntry[] {
 export default function LeaderboardPage() {
   const session = useSupabaseSession();
   const supabase = useSupabaseClient();
+  const router = useRouter();
 
   const [timeRange, setTimeRange] = useState<TimeRange>("30d");
   const [selectedTopic, setSelectedTopic] = useState<string>("all");
@@ -185,6 +188,37 @@ export default function LeaderboardPage() {
     };
   }, [session?.user, supabase, selectedTopic]);
 
+  if (!session?.user) {
+    const loginHref = `/login?redirectTo=${encodeURIComponent("/mental-maths/leaderboard")}`;
+    return (
+      <div className="flex min-h-[calc(100vh-58px)] items-center justify-center bg-background px-4">
+        <div className="max-w-md text-center">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-organic-xl bg-primary/20 text-primary">
+            <Trophy className="h-7 w-7" strokeWidth={2} />
+          </div>
+          <h1 className="text-2xl font-bold text-text">Leaderboard</h1>
+          <p className="mt-2 text-sm font-medium text-text-muted">
+            You must be signed in to view drill rankings.
+          </p>
+          <button
+            type="button"
+            onClick={() => router.push(loginHref)}
+            className="mt-6 rounded-organic-lg bg-primary px-6 py-3 text-sm font-bold text-black outline-none transition-all hover:scale-[1.02] active:scale-[0.98]"
+          >
+            Sign in to continue
+          </button>
+          <button
+            type="button"
+            onClick={() => router.push("/mental-maths/drill")}
+            className="mt-4 block w-full text-sm font-semibold text-text-muted outline-none hover:text-text"
+          >
+            Back to drills
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Container size="lg" className="space-y-8 py-10 sm:py-12">
       {leaderboardLoading && leaderboardData.length === 0 && (
@@ -193,7 +227,7 @@ export default function LeaderboardPage() {
       <Suspense fallback={<div className="h-96 bg-surface-elevated rounded-lg animate-pulse" />}>
         <GlobalView
           leaderboardData={leaderboardData}
-          currentUserId={session?.user?.id || ""}
+          currentUserId={session.user.id}
           availableTopics={AVAILABLE_TOPICS}
           selectedTopic={selectedTopic}
           onTopicChange={setSelectedTopic}
