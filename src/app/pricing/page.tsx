@@ -27,15 +27,56 @@ const FEATURES = {
   ],
 };
 
+const PAID_RECURRING = new Set(["weekly", "monthly"]);
+
+function formatPeriodEnd(iso?: string): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
 export default function PricingPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const session = useSupabaseSession();
-  const { tier } = useSubscription();
+  const {
+    tier,
+    hasFullAccess,
+    currentPeriodEnd,
+    cancelAtPeriodEnd,
+    pendingPlan,
+  } = useSubscription();
   const [loading, setLoading] = useState<string | null>(null);
+  const [banner, setBanner] = useState<string | null>(null);
 
   const seasonPrice = getSeasonPassPrice();
   const perWeekSeason = seasonPrice / getWeeksUntilExam();
+  const periodEndLabel = formatPeriodEnd(currentPeriodEnd);
+  const isRecurringPaid = PAID_RECURRING.has(tier);
+  const isSeasonPass = tier === "season_pass";
+
+  const paidCta = (planId: "weekly" | "monthly" | "season_pass", loadingLabel: string) => {
+    if (loading === planId) return "Loading…";
+    if (tier === planId) return "Current plan";
+
+    if (isSeasonPass) {
+      return "Available after pass ends";
+    }
+
+    if (isRecurringPaid) {
+      if (planId === "season_pass" && cancelAtPeriodEnd && pendingPlan === "season_pass") {
+        return periodEndLabel ? `Ends ${periodEndLabel}` : "Ending soon";
+      }
+      return "Switch";
+    }
+
+    return loadingLabel;
+  };
 
   const tiers: PricingTier[] = [
     {
@@ -50,43 +91,40 @@ export default function PricingPage() {
       name: "Weekly",
       price: "£8",
       caption: "per week",
+      priceNote: isRecurringPaid && tier !== "weekly"
+        ? "Switch at next billing date — no charge today"
+        : undefined,
       features: FEATURES.paid,
-      ctaLabel:
-        loading === "weekly"
-          ? "Loading…"
-          : tier === "weekly"
-            ? "Current plan"
-            : "Upgrade",
+      ctaLabel: paidCta("weekly", "Upgrade"),
     },
     {
       id: "monthly",
       name: "Monthly",
       price: "£25",
       caption: "£6.25/week",
-      priceNote: "7-day free trial — cancel anytime",
+      priceNote: isRecurringPaid && tier !== "monthly"
+        ? "Switch at next billing date — no charge today"
+        : "7-day free trial — cancel anytime",
       features: FEATURES.paid,
       highlighted: true,
-      ctaLabel:
-        loading === "monthly"
-          ? "Loading…"
-          : tier === "monthly"
-            ? "Current plan"
-            : "Start free trial",
+      ctaLabel: paidCta("monthly", "Start free trial"),
     },
     {
       id: "season_pass",
       name: "Exam Season Pass",
       price: `£${seasonPrice}`,
       caption: `~ £${perWeekSeason.toFixed(1)}/week`,
-      priceNote: "One-time — access until 1 Oct 2026",
+      priceNote:
+        isRecurringPaid && cancelAtPeriodEnd && pendingPlan === "season_pass"
+          ? periodEndLabel
+            ? `Current plan ends ${periodEndLabel} — then buy Season Pass`
+            : "Current plan ending — then buy Season Pass"
+          : isRecurringPaid
+            ? "Finish your current plan first — no overlap charge"
+            : "One-time — access until 1 Oct 2026",
       features: FEATURES.paid,
       featured: true,
-      ctaLabel:
-        loading === "season_pass"
-          ? "Loading…"
-          : tier === "season_pass"
-            ? "Current plan"
-            : "Upgrade",
+      ctaLabel: paidCta("season_pass", "Upgrade"),
     },
   ];
 
@@ -99,6 +137,7 @@ export default function PricingPage() {
       return;
     }
     setLoading(planType);
+    setBanner(null);
     try {
       const res = await fetch("/api/stripe/create-checkout-session", {
         method: "POST",
@@ -108,7 +147,33 @@ export default function PricingPage() {
       const data = await res.json();
       if (data.url) window.location.href = data.url;
       else throw new Error(data.error ?? "Failed");
+    } catch {
+      setLoading(null);
+      setBanner("Could not start checkout. Try again.");
+    }
+  };
+
+  const handleSwitch = async (planType: PlanId) => {
+    if (planType === "free") return;
+    if (!session?.user) {
+      router.push("/login?redirect=/pricing");
+      return;
+    }
+    setLoading(planType);
+    setBanner(null);
+    try {
+      const res = await fetch("/api/stripe/switch-plan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planType }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Switch failed");
+      setBanner(data.message ?? "Plan switch scheduled.");
+      // Refresh so CTAs update
+      window.location.reload();
     } catch (err) {
+      setBanner(err instanceof Error ? err.message : "Could not switch plan.");
       setLoading(null);
     }
   };
@@ -116,7 +181,6 @@ export default function PricingPage() {
   return (
     <div className="relative min-h-[calc(100vh-58px)] overflow-hidden bg-background">
       <div className="pointer-events-none absolute inset-0" aria-hidden>
-        {/* Green dot field — same pattern as homepage, green tint */}
         <div
           className="absolute inset-0 opacity-[0.55]"
           style={{
@@ -125,7 +189,6 @@ export default function PricingPage() {
             backgroundSize: "22px 22px",
           }}
         />
-        {/* Soft professional rays — lightweight CSS, no blur */}
         <div
           className="absolute inset-0 opacity-45"
           style={{
@@ -136,7 +199,6 @@ export default function PricingPage() {
             ].join(", "),
           }}
         />
-        {/* Central overhead ray */}
         <div
           className="absolute left-1/2 top-0 h-[55%] w-[min(90vw,40rem)] -translate-x-1/2 opacity-35"
           style={{
@@ -144,7 +206,6 @@ export default function PricingPage() {
               "conic-gradient(from 180deg at 50% -8%, transparent 160deg, rgba(169, 177, 103, 0.07) 174deg, rgba(169, 177, 103, 0.1) 180deg, rgba(169, 177, 103, 0.07) 186deg, transparent 200deg)",
           }}
         />
-        {/* Gentle top wash */}
         <div
           className="absolute left-1/2 top-[-6rem] h-[26rem] w-[min(90vw,36rem)] -translate-x-1/2 opacity-28"
           style={{
@@ -171,6 +232,17 @@ export default function PricingPage() {
           <h1 className="text-3xl font-bold tracking-tight text-text sm:text-4xl md:text-[2.5rem] md:leading-tight">
             Choose your plan
           </h1>
+          {hasFullAccess && periodEndLabel && isRecurringPaid ? (
+            <p className="mt-3 text-sm text-text-muted">
+              Current plan renews / ends {periodEndLabel}
+              {cancelAtPeriodEnd ? " (set to end — no further renewals)" : ""}.
+            </p>
+          ) : null}
+          {banner ? (
+            <p className="mx-auto mt-4 max-w-xl rounded-organic-lg bg-primary/15 px-4 py-3 text-sm text-text">
+              {banner}
+            </p>
+          ) : null}
         </div>
 
         <PricingTable
@@ -180,9 +252,26 @@ export default function PricingPage() {
               if (tier !== "free") router.push("/profile");
               return;
             }
-            if (id === "weekly" || id === "monthly" || id === "season_pass") {
-              handleCheckout(id);
+            if (id !== "weekly" && id !== "monthly" && id !== "season_pass") return;
+
+            // Season-pass holders keep prepaid access until Oct — no mid-pass switch
+            if (isSeasonPass) return;
+
+            // Already scheduled season-pass end — don't re-fire
+            if (
+              id === "season_pass" &&
+              cancelAtPeriodEnd &&
+              pendingPlan === "season_pass"
+            ) {
+              return;
             }
+
+            if (isRecurringPaid) {
+              handleSwitch(id);
+              return;
+            }
+
+            handleCheckout(id);
           }}
         />
 

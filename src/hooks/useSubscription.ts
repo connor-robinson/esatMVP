@@ -23,6 +23,8 @@ export interface SubscriptionStatus {
   subscriptionStatus?: string;
   currentPeriodEnd?: string;
   accessUntil?: string;
+  cancelAtPeriodEnd?: boolean;
+  pendingPlan?: "weekly" | "monthly" | "season_pass" | null;
   tester?: TesterAccessSummary;
 }
 
@@ -73,6 +75,8 @@ export function useSubscription(): SubscriptionStatus {
           subscriptionStatus: data.subscriptionStatus,
           currentPeriodEnd: data.currentPeriodEnd,
           accessUntil: data.accessUntil,
+          cancelAtPeriodEnd: data.cancelAtPeriodEnd === true,
+          pendingPlan: data.pendingPlan ?? null,
           tester: data.tester,
         });
       } catch {

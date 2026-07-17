@@ -53,8 +53,14 @@ export function PricingTable({
           const isFree = tier.id === "free";
           const isLoading = tier.ctaLabel.startsWith("Loading");
           const isCurrentPlan = tier.ctaLabel === "Current plan";
+          const isDisabledCta =
+            isCurrentPlan ||
+            isLoading ||
+            tier.ctaLabel.startsWith("Available after") ||
+            tier.ctaLabel.startsWith("Ends ") ||
+            tier.ctaLabel === "Downgrade via profile";
           const isActive = activeId === tier.id;
-          const showPrimaryCta = !isFree && !isCurrentPlan && !isLoading;
+          const showPrimaryCta = !isFree && !isDisabledCta;
 
           return (
             <div
@@ -156,7 +162,7 @@ export function PricingTable({
               <Button
                 variant="secondary"
                 size="md"
-                disabled={isCurrentPlan || isLoading}
+                disabled={isDisabledCta}
                 className={cn(
                   "w-full rounded-organic-lg border-0 font-semibold transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
                   showPrimaryCta && "hover:scale-[1.025] active:scale-[1.01]",

@@ -191,7 +191,7 @@ export function getTesterNavAction(
     };
   }
 
-  // Upgrade CTA is only for signed-in users without full access.
+  // Never show Upgrade for free when the user already has paid/full access.
   if (isSignedIn && !hasFullAccess) {
     return {
       show: true,
