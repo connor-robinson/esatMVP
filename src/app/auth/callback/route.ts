@@ -55,7 +55,12 @@ export async function GET(request: Request) {
       .from("profiles")
       .select("username, onboarding_completed")
       .eq("id", data.session.user.id)
-      .maybeSingle();
+      .maybeSingle() as {
+        data: {
+          username: string | null;
+          onboarding_completed: boolean | null;
+        } | null;
+      };
 
     const nextPath = resolvePostAuthPath(
       profile
