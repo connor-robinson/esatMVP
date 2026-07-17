@@ -161,7 +161,7 @@ function OnboardingContent() {
   const [sitting, setSitting] = useState<SittingChoice>("october_2026");
   const [universities, setUniversities] = useState<TargetUniversity[]>([]);
   const [referral, setReferral] = useState<ReferralSource | null>(null);
-  const [marketingEmails, setMarketingEmails] = useState(false);
+  const [marketingEmails, setMarketingEmails] = useState(true);
 
   const stepIndex = Math.max(0, steps.indexOf(step));
   const usesStepTitle =
@@ -764,10 +764,11 @@ function OnboardingContent() {
                       </span>
                       <span>
                         <span className="block text-sm font-semibold">
-                          Tips and tricks for {exam}
+                          Send me Tips and Tricks for {exam}.
                         </span>
                         <span className="mt-0.5 block text-xs text-text-muted">
-                          Occasional study tips. Minimal marketing — unsubscribe anytime.
+                          Email study tips for the {exam}, with minimal marketing.
+                          Unsubscribe anytime.
                         </span>
                       </span>
                     </button>
