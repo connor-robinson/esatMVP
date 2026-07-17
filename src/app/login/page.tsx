@@ -14,6 +14,7 @@ import {
 } from "@/components/auth/GoogleAuthButton";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 import { Container } from "@/components/layout/Container";
+import { cn } from "@/lib/utils";
 import { signInWithGoogle } from "@/lib/auth/googleOAuth";
 
 type AuthMode = GoogleAuthMode;
