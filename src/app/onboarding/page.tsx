@@ -499,7 +499,7 @@ function OnboardingContent() {
                           autoFocus
                           disabled={saving}
                           autoComplete="username"
-                          className="w-full rounded-2xl border-0 bg-surface-mid px-4 py-3.5 pr-11 text-text outline-none ring-0 placeholder:text-text-subtle"
+                          className="w-full rounded-lg border-0 bg-surface-mid px-4 py-3.5 pr-11 text-text outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 placeholder:text-text-subtle"
                         />
                         <div className="absolute right-3.5 top-1/2 -translate-y-1/2">
                           {checkingUsername ? (
