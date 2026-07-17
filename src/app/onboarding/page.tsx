@@ -339,6 +339,7 @@ function OnboardingContent() {
           SITTING_OPTIONS.find((o) => o.id === sitting)?.isEarly ?? true,
         target_universities: universities,
         referral_source: referral,
+        marketing_emails_consent: marketingEmails,
         onboarding_completed: true,
       });
       router.replace(redirectTo);
@@ -739,6 +740,37 @@ function OnboardingContent() {
                         />
                       ))}
                     </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setMarketingEmails((v) => !v)}
+                      className={cn(
+                        "flex w-full items-start gap-3 rounded-2xl px-4 py-3.5 text-left transition-colors",
+                        marketingEmails
+                          ? "bg-[#4C8BF5]/15 text-text"
+                          : "bg-surface-mid text-text hover:bg-surface-neutral",
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md",
+                          marketingEmails ? "bg-[#4C8BF5] text-white" : "bg-white/10",
+                        )}
+                        aria-hidden
+                      >
+                        {marketingEmails ? (
+                          <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                        ) : null}
+                      </span>
+                      <span>
+                        <span className="block text-sm font-semibold">
+                          Tips and tricks for {exam}
+                        </span>
+                        <span className="mt-0.5 block text-xs text-text-muted">
+                          Occasional study tips. Minimal marketing — unsubscribe anytime.
+                        </span>
+                      </span>
+                    </button>
 
                     <div className="flex gap-3">
                       <button
