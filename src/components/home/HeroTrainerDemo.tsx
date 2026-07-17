@@ -71,36 +71,36 @@ function HeroTriangleSvg({ className }: { className?: string }) {
         opacity="0.9"
       />
 
-      {/* Angle labels — tucked near each arc */}
+      {/* Angle labels — inside the triangle, clear of the arcs */}
       <text
-        x="82"
-        y="58"
+        x="94"
+        y="72"
         textAnchor="middle"
         fill="currentColor"
-        className="font-sans text-[12px] font-semibold tracking-tight"
-        opacity="0.95"
+        className="font-sans text-[10px] font-medium tracking-tight"
+        opacity="0.9"
       >
         45°
       </text>
       <text
-        x="150"
-        y="122"
+        x="134"
+        y="116"
         textAnchor="middle"
         fill="currentColor"
-        className="font-sans text-[12px] font-semibold tracking-tight"
-        opacity="0.95"
+        className="font-sans text-[10px] font-medium tracking-tight"
+        opacity="0.9"
       >
         45°
       </text>
 
       {/* Hypotenuse unknown */}
       <text
-        x="140"
-        y="72"
+        x="132"
+        y="76"
         textAnchor="middle"
         fill="currentColor"
-        className="font-sans text-[16px] font-semibold"
-        opacity="0.98"
+        className="font-sans text-[11px] font-medium"
+        opacity="0.92"
       >
         ?
       </text>
@@ -108,11 +108,11 @@ function HeroTriangleSvg({ className }: { className?: string }) {
       {/* Base label */}
       <text
         x="117"
-        y="150"
+        y="152"
         textAnchor="middle"
         fill="currentColor"
-        className="font-sans text-[14px] font-semibold"
-        opacity="0.94"
+        className="font-sans text-[11px] font-medium"
+        opacity="0.9"
       >
         5
       </text>
@@ -255,38 +255,19 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
           </div>
         </div>
       ) : (
-        <div
-          className={cn(
-            "mt-8 flex flex-1 flex-col items-center text-center sm:mt-10",
-            question.showTriangle ? "justify-start" : "justify-center",
-          )}
-        >
+        <div className="mt-8 flex flex-1 flex-col items-center justify-center text-center sm:mt-10">
           <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#3B82F6]">
             {question.topic}
           </p>
 
-          <div
-            className={cn(
-              "mt-3 flex w-full flex-col items-center justify-center sm:mt-4",
-              question.showTriangle
-                ? "min-h-0 flex-1 gap-1"
-                : "h-[14rem] gap-0.5 px-1 sm:h-[14.5rem]",
-            )}
-          >
+          <div className="mt-3 flex h-[14rem] w-full flex-col items-center justify-center gap-0.5 px-1 sm:mt-4 sm:h-[14.5rem]">
             {question.showTriangle ? (
-              <HeroTriangleSvg className="max-h-[22.8rem] w-full max-w-[31rem] sm:max-h-[24rem]" />
+              <HeroTriangleSvg className="max-h-[10rem] w-full max-w-[13.5rem] sm:max-h-[10.5rem]" />
             ) : null}
             {question.prompt}
           </div>
 
-          <div
-            className={cn(
-              "grid w-full grid-cols-2 gap-4",
-              question.showTriangle
-                ? "mt-auto pt-8 sm:pt-10"
-                : "mt-5 sm:mt-6",
-            )}
-          >
+          <div className="mt-5 grid w-full grid-cols-2 gap-4 sm:mt-6">
             {question.options.map((option, optionIndex) => {
               const selected = picked === optionIndex;
               const isCorrectOption = optionIndex === question.correctIndex;
