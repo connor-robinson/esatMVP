@@ -144,12 +144,27 @@ export function MarketingHomepage() {
           <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-10 xl:gap-12">
             <div className="max-w-2xl space-y-8">
               <h1 className="text-5xl font-display font-bold leading-[1.08] tracking-tight sm:text-6xl lg:text-[4.25rem] xl:text-7xl">
-                <span className="text-underline-accent">ESAT</span> trainer to
-                help secure your Oxbridge offers.
+                <span
+                  className="group relative inline-block cursor-help"
+                  tabIndex={0}
+                  aria-describedby="esat-definition"
+                >
+                  <span className="text-underline-accent">ESAT</span>
+                  <span
+                    id="esat-definition"
+                    role="tooltip"
+                    className="pointer-events-none absolute left-0 top-full z-20 mt-3 w-[min(22rem,calc(100vw-2rem))] rounded-xl bg-[#161D2F] px-4 py-3 text-left text-sm font-normal leading-relaxed tracking-normal text-[#94A3B8] opacity-0 shadow-xl transition-opacity duration-150 group-hover:opacity-100 group-focus:opacity-100 sm:w-[24rem]"
+                  >
+                    The ESAT is the Engineering and Science Admissions Test for
+                    undergraduate STEM applicants. It is a mandatory entrance
+                    exam for engineering, science, and medical courses at
+                    Cambridge, Oxford, Imperial College London, and UCL.
+                  </span>
+                </span>{" "}
+                trainer to help secure your Oxbridge offers.
               </h1>
               <p className="text-xl text-[#94A3B8] max-w-2xl leading-relaxed">
-                The ESAT is the admissions test for many university courses at
-                Cambridge, Oxford, Imperial and UCL. Practise with our{" "}
+                Practise with our{" "}
                 <span className="text-underline-accent text-white">
                   {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ practice
                   questions
