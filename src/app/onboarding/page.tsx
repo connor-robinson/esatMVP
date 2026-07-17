@@ -74,6 +74,7 @@ function ChoiceCard({
 function OnboardingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const isPreview = searchParams.get("preview") === "1";
   const redirectTo = useMemo(
     () => sanitizeRedirectTo(searchParams.get("redirectTo")),
     [searchParams],
@@ -100,6 +101,7 @@ function OnboardingContent() {
   };
 
   const savePrefs = async (payload: Record<string, unknown>) => {
+    if (isPreview) return;
     const res = await fetch("/api/profile/preferences", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -113,6 +115,10 @@ function OnboardingContent() {
     setSaving(true);
     setError(null);
     try {
+      if (isPreview) {
+        router.replace(sanitizeRedirectTo(searchParams.get("redirectTo")) || "/profile");
+        return;
+      }
       await savePrefs({
         exam_preference: exam,
         esat_subjects: exam === "ESAT" ? subjects : [],
@@ -212,6 +218,22 @@ function OnboardingContent() {
 
       <Container size="md" className="relative py-12 sm:py-16">
         <div className="mx-auto max-w-lg">
+          {isPreview ? (
+            <div className="mb-6 rounded-organic-xl bg-warning/15 px-4 py-3 text-center text-sm text-text">
+              <p className="font-semibold">Preview mode</p>
+              <p className="mt-0.5 text-text-muted">
+                Nothing is saved. Walk through the first-time signup flow, then exit anytime.
+              </p>
+              <button
+                type="button"
+                className="mt-2 text-sm font-medium text-primary hover:underline"
+                onClick={() => router.replace("/profile?section=account")}
+              >
+                Exit preview
+              </button>
+            </div>
+          ) : null}
+
           <p className="text-center text-xs font-semibold uppercase tracking-[0.16em] text-primary">
             Personalise your experience
           </p>
