@@ -190,9 +190,9 @@ export function MarketingHomepage() {
               <div className="flex min-w-0 items-center gap-4">
                 <div className="flex shrink-0 -space-x-3">
                   {[
-                    { src: "/home/tutors/tutor-1.png", alt: "Tutor portrait" },
-                    { src: "/home/tutors/tutor-2.png", alt: "Tutor portrait" },
-                    { src: "/home/tutors/tutor-3.png", alt: "Tutor portrait" },
+                    { src: "/home/tutors/tutor-1.png", alt: "Ajeet, ESAT tutor" },
+                    { src: "/home/tutors/tutor-2.png", alt: "Annie, ESAT tutor" },
+                    { src: "/home/tutors/tutor-3.png", alt: "Song, ESAT tutor" },
                   ].map((tutor) => (
                     <Image
                       key={tutor.src}
