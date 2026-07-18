@@ -330,6 +330,8 @@ export function Navbar() {
 
   const isSettingsActive =
     pathname === '/settings' || pathname.startsWith('/profile');
+  const isHomeScreen = pathname === '/';
+  const showLightModeBeta = isDark && !isHomeScreen;
 
   const navIconSlotClass =
     'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors duration-fast ease-signature hover:bg-surface-subtle interaction-scale';
@@ -376,35 +378,29 @@ export function Navbar() {
           }
           toggleTheme();
         }}
-        className={cn(
-          navIconSlotClass,
-          isDark && 'w-auto gap-1 px-1.5',
-        )}
+        className={cn(navIconSlotClass, 'relative')}
         aria-label={
           isDark
-            ? `Switch to light mode (beta) (${lightStrategy === "inverted" ? "inverted palette preview" : "designed light theme"})`
+            ? `Switch to light mode${showLightModeBeta ? ' (beta)' : ''} (${lightStrategy === "inverted" ? "inverted palette preview" : "designed light theme"})`
             : `Switch to dark mode${lightStrategy === "inverted" ? " (Alt+click: designed light)" : " (Alt+click: inverted palette preview)"}`
         }
         title={
           isDark
-            ? "Light mode (beta)"
+            ? showLightModeBeta
+              ? "Light mode (beta)"
+              : "Switch to light mode"
             : lightStrategy === "inverted"
               ? "Light mode: inverted palette preview. Alt+click for designed light."
               : "Light mode: designed theme. Alt+click for inverted palette preview."
         }
       >
         {isDark ? (
-          <>
-            <Sun
-              className='text-text'
-              aria-hidden
-              size={NAV_ICON_PX}
-              strokeWidth={NAV_ICON_STROKE}
-            />
-            <span className='text-[9px] font-semibold uppercase tracking-[0.08em] text-text-muted'>
-              Beta
-            </span>
-          </>
+          <Sun
+            className='text-text'
+            aria-hidden
+            size={NAV_ICON_PX}
+            strokeWidth={NAV_ICON_STROKE}
+          />
         ) : (
           <Moon
             className='text-text'
@@ -413,6 +409,11 @@ export function Navbar() {
             strokeWidth={NAV_ICON_STROKE}
           />
         )}
+        {showLightModeBeta ? (
+          <span className='pointer-events-none absolute -right-1 -top-1 rounded-[3px] bg-surface-mid px-1 py-px text-[7px] font-bold uppercase leading-none tracking-[0.06em] text-text-muted'>
+            Beta
+          </span>
+        ) : null}
       </button>
 
       {session?.user ? (
