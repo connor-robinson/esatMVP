@@ -1,7 +1,6 @@
 ﻿"use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { BRAND_CONFIG } from "@/config/brand";
 import { QUESTION_BANK_TOTAL_COUNT } from "@/config/questionBankMarketing";
@@ -161,7 +160,7 @@ export function MarketingHomepage() {
                     Cambridge, Oxford, Imperial College London, and UCL.
                   </span>
                 </span>{" "}
-                trainer to help secure your Oxbridge offers.
+                Trainer To Secure your Oxbridge offers.
               </h1>
               <p className="text-xl text-[#94A3B8] max-w-2xl leading-relaxed">
                 Practise with our{" "}
@@ -198,20 +197,27 @@ export function MarketingHomepage() {
           <div className="rounded-3xl bg-white/[0.08] p-6 backdrop-blur-xl sm:p-8">
             <div className="flex w-full flex-col gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
               <div className="flex min-w-0 items-center gap-4">
-                <div className="flex shrink-0 -space-x-3">
+                <div className="flex shrink-0 -space-x-3" aria-hidden>
                   {[
-                    { src: "/home/tutors/tutor-1.png", alt: "Ajeet, ESAT tutor" },
-                    { src: "/home/tutors/tutor-2.png", alt: "Annie, ESAT tutor" },
-                    { src: "/home/tutors/tutor-3.png", alt: "Song, ESAT tutor" },
-                  ].map((tutor) => (
-                    <Image
-                      key={tutor.src}
-                      alt={tutor.alt}
-                      src={tutor.src}
+                    { bg: "#3B82F6", fill: "#BFDBFE" },
+                    { bg: "#6366F1", fill: "#C7D2FE" },
+                    { bg: "#0EA5E9", fill: "#BAE6FD" },
+                  ].map((avatar) => (
+                    <svg
+                      key={avatar.bg}
+                      viewBox="0 0 48 48"
                       width={48}
                       height={48}
-                      className="h-12 w-12 rounded-full object-cover ring-2 ring-[#0A0F1D]"
-                    />
+                      className="h-12 w-12 rounded-full ring-2 ring-[#0A0F1D]"
+                      aria-hidden
+                    >
+                      <circle cx="24" cy="24" r="24" fill={avatar.bg} />
+                      <circle cx="24" cy="19" r="8" fill={avatar.fill} />
+                      <path
+                        d="M8 42c2.5-9 10-14 16-14s13.5 5 16 14"
+                        fill={avatar.fill}
+                      />
+                    </svg>
                   ))}
                 </div>
                 <div className="min-w-0">
