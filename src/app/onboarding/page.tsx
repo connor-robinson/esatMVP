@@ -18,13 +18,26 @@ import { AlertCircle, Check, CheckCircle2, Loader2 } from "lucide-react";
 import type { SubjectTileKey } from "@/lib/questionBank/subjectTileTheme";
 
 type ExamPref = "ESAT" | "TMUA";
-type Step = "username" | "exam" | "applicant" | "universities" | "referral";
+type Step = "username" | "exam" | "applicant" | "universities" | "referral" | "emails";
 type SittingChoice = "october_2026" | "january_2027" | "not_sure" | "future";
 
 const USERNAME_REGEX = /^[a-zA-Z0-9_-]{2,20}$/;
 
-const ALL_STEPS: Step[] = ["username", "exam", "applicant", "universities", "referral"];
-const STEPS_WITHOUT_USERNAME: Step[] = ["exam", "applicant", "universities", "referral"];
+const ALL_STEPS: Step[] = [
+  "username",
+  "exam",
+  "applicant",
+  "universities",
+  "referral",
+  "emails",
+];
+const STEPS_WITHOUT_USERNAME: Step[] = [
+  "exam",
+  "applicant",
+  "universities",
+  "referral",
+  "emails",
+];
 
 const SITTING_OPTIONS: {
   id: SittingChoice;
@@ -161,11 +174,15 @@ function OnboardingContent() {
   const [sitting, setSitting] = useState<SittingChoice>("october_2026");
   const [universities, setUniversities] = useState<TargetUniversity[]>([]);
   const [referral, setReferral] = useState<ReferralSource | null>(null);
-  const [marketingEmails, setMarketingEmails] = useState(true);
+  const [marketingEmails, setMarketingEmails] = useState(false);
 
   const stepIndex = Math.max(0, steps.indexOf(step));
   const usesStepTitle =
-    step === "applicant" || step === "universities" || step === "referral";
+    step === "applicant" ||
+    step === "universities" ||
+    step === "referral" ||
+    step === "emails";
+  const isLastStep = step === "emails";
 
   useEffect(() => {
     if (isPreview) {
@@ -320,11 +337,24 @@ function OnboardingContent() {
     if (idx > 0) setStep(steps[idx - 1]);
   };
 
-  const finish = async () => {
+  const submitReferral = async () => {
     if (!referral) {
       setError("Please choose an option");
       return;
     }
+    setSaving(true);
+    setError(null);
+    try {
+      await savePrefs({ referral_source: referral });
+      goNext("referral");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not save");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const finish = async () => {
     setSaving(true);
     setError(null);
     try {
@@ -741,6 +771,40 @@ function OnboardingContent() {
                       ))}
                     </div>
 
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        onClick={goBack}
+                        className="flex-1 rounded-2xl bg-surface-mid py-3.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
+                      >
+                        Back
+                      </button>
+                      <button
+                        type="button"
+                        disabled={saving || !referral}
+                        onClick={() => void submitReferral()}
+                        className={cn(
+                          "flex-1 rounded-2xl py-3.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
+                          ACCENT.btn,
+                        )}
+                      >
+                        {saving ? "Saving…" : "Continue"}
+                      </button>
+                    </div>
+                  </>
+                ) : null}
+
+                {step === "emails" ? (
+                  <>
+                    <div>
+                      <h1 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">
+                        Email tips?
+                      </h1>
+                      <p className="mt-2 text-sm text-text-muted">
+                        Optional — you can change this anytime in settings.
+                      </p>
+                    </div>
+
                     <button
                       type="button"
                       onClick={() => setMarketingEmails((v) => !v)}
@@ -783,7 +847,7 @@ function OnboardingContent() {
                       </button>
                       <button
                         type="button"
-                        disabled={saving || !referral}
+                        disabled={saving}
                         onClick={() => void finish()}
                         className={cn(
                           "flex-1 rounded-2xl py-3.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
@@ -801,7 +865,7 @@ function OnboardingContent() {
                 ) : null}
               </div>
 
-              {step !== "referral" ? (
+              {!isLastStep ? (
                 <p className="mt-6 shrink-0 text-center text-sm text-text-muted">
                   You can change this in settings later.
                 </p>
