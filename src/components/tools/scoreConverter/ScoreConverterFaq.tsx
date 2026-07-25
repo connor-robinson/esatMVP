@@ -3,7 +3,26 @@ import { cn } from "@/lib/utils";
 
 type FaqItem = { question: string; answer: string };
 
-const FAQ_ITEMS: FaqItem[] = [
+/**
+ * Rendered on `/tools/score-converter` and mirrored into FAQPage structured
+ * data by that page, so both must stay in sync.
+ */
+export const SCORE_CONVERTER_FAQ_ITEMS: FaqItem[] = [
+  {
+    question: "Is the ESAT scored out of 9?",
+    answer:
+      "ESAT module results are reported on a 1.0 to 9.0 scale to one decimal place. You receive a separate score for each module you sit.",
+  },
+  {
+    question: "Why does the same raw mark not always mean the same score?",
+    answer:
+      "The scale depends on the ability distribution of the cohort and the test version. That is also why official sample tests do not award a scaled score.",
+  },
+  {
+    question: "Should I use the converter before or after practice?",
+    answer:
+      "Both. Use it after timed sets to understand your approximate position, then use the calibration test to decide what to practise next.",
+  },
   {
     question: "What changed with TMUA in 2024?",
     answer:
@@ -58,7 +77,7 @@ export function ScoreConverterFaq({ className }: { className?: string }) {
         </p>
 
         <div className="mt-5 space-y-2">
-          {FAQ_ITEMS.map((item) => (
+          {SCORE_CONVERTER_FAQ_ITEMS.map((item) => (
             <details
               key={item.question}
               className="group rounded-organic-lg bg-surface-mid/40"

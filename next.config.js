@@ -37,6 +37,34 @@ const nextConfig = {
 
   trailingSlash: false,
 
+  // The SEO content brief refers to tool pages by marketing slug. The tools
+  // themselves live on their product routes, so point the slugs at the real
+  // pages rather than duplicating content across two URLs.
+  async redirects() {
+    return [
+      {
+        source: "/esat-calibration-test",
+        destination: "/exam-tools/calibration/math-1",
+        permanent: true,
+      },
+      {
+        source: "/esat-score-converter",
+        destination: "/tools/score-converter",
+        permanent: true,
+      },
+      {
+        source: "/fermi-estimation-game",
+        destination: "/mental-maths/fermiguessr",
+        permanent: true,
+      },
+      {
+        source: "/esat-timing",
+        destination: "/esat-test-day",
+        permanent: true,
+      },
+    ];
+  },
+
   images: {
     unoptimized: false,
     formats: ["image/webp", "image/avif"],

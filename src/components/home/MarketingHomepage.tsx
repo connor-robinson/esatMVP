@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { BRAND_CONFIG } from "@/config/brand";
 import { QUESTION_BANK_TOTAL_COUNT } from "@/config/questionBankMarketing";
 import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
+import { SEO_LINKS, type SeoLinkKey } from "@/lib/seo/links";
 import { trackHomepageEvent } from "@/lib/homepage/analytics";
 import { getSeasonPassPrice } from "@/lib/stripe/best-value";
 import { SlotMachineCount } from "@/components/home/SlotMachineCount";
@@ -25,6 +26,15 @@ const FREE_FEATURES = [
   "Past papers: first 3 roadmap items",
   "Question bank: 10 free questions",
   "Free calibration & score converter",
+];
+
+/** Highest-intent guide pages, surfaced in the footer for crawlability. */
+const FOOTER_GUIDE_KEYS: SeoLinkKey[] = [
+  "preparation",
+  "testDates",
+  "pastPapers",
+  "goodScore",
+  "calculatorRules",
 ];
 
 const FAQ_ITEMS = [
@@ -679,8 +689,8 @@ export function MarketingHomepage() {
       {/* Footer */}
       <footer className="pt-24 pb-12 border-t border-white/5 bg-[#0A0F1D]">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
-          <div className="grid md:grid-cols-4 gap-12 mb-16">
-            <div className="col-span-2 space-y-6">
+          <div className="grid md:grid-cols-5 gap-12 mb-16">
+            <div className="md:col-span-2 space-y-6">
               <div className="flex items-center gap-2">
                 <span className="font-display font-bold text-xl tracking-tight uppercase">
                   {BRAND_CONFIG.displayName}
@@ -721,6 +731,23 @@ export function MarketingHomepage() {
                     Past Papers
                   </Link>
                 </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-bold text-white mb-6 uppercase text-[10px] tracking-widest">
+                ESAT guides
+              </h4>
+              <ul className="space-y-4 text-sm text-[#94A3B8]">
+                {FOOTER_GUIDE_KEYS.map((key) => (
+                  <li key={key}>
+                    <Link
+                      href={SEO_LINKS[key].href}
+                      className="hover:text-[#3B82F6] transition-colors"
+                    >
+                      {SEO_LINKS[key].label}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
             <div>

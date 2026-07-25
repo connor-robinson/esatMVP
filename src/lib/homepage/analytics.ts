@@ -11,7 +11,8 @@ export type HomepageAnalyticsEvent =
   | "upgrade_cta_clicked"
   | "tester_reward_cta_clicked"
   | "fermi_game_clicked"
-  | "score_converter_clicked";
+  | "score_converter_clicked"
+  | "seo_cta_clicked";
 
 export interface HomepageAnalyticsProperties {
   user_state?: HomepageUserState;
