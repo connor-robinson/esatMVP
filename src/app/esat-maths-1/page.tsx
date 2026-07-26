@@ -168,8 +168,8 @@ export default function EsatMaths1Page() {
         />
         <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
           Which questions overlap and which to skip:{" "}
-          <SeoTextLink href={SEO_ROUTES.oldPapers}>
-            ENGAA, NSAA and TMUA for ESAT
+          <SeoTextLink href={SEO_ROUTES.engaaNsaaPapers}>
+            ENGAA and NSAA papers for ESAT
           </SeoTextLink>
           .
         </p>

@@ -10,19 +10,26 @@ import {
 import { seoLinks } from "@/lib/seo/links";
 import { SeoPageLayout } from "@/components/seo/SeoPageLayout";
 import {
-  HighlightBox,
   NumberedSteps,
   ResponsiveTable,
-  SeoProse,
   SeoSection,
   SeoTextLink,
 } from "@/components/seo/SeoSections";
+import {
+  DuplicateWarning,
+  OfficialSourceDisclaimer,
+  PaperUseGuide,
+  PastPaperCTA,
+  PastPaperLibrary,
+  type PastPaperSection,
+} from "@/components/pastPapers";
+import { PAST_PAPERS } from "@/content/pastPapers";
 
 const PATH = SEO_ROUTES.pastPapers;
 
-const TITLE = "ESAT Past Papers Guide | ENGAA, NSAA and TMUA Practice Map";
+const TITLE = "ESAT Past Papers | Official ENGAA, NSAA and TMUA Paper Library";
 const DESCRIPTION =
-  "How to use ENGAA, NSAA and TMUA papers for ESAT preparation, avoid overlap, skip out-of-spec questions and build a smarter practice plan.";
+  "Every official ENGAA, NSAA and TMUA past paper that helps with ESAT preparation, filterable by module, with answer keys and a verified duplicate list.";
 
 export const metadata: Metadata = buildSeoMetadata({
   title: TITLE,
@@ -30,30 +37,116 @@ export const metadata: Metadata = buildSeoMetadata({
   path: PATH,
   keywords: [
     "ESAT past papers",
-    "ENGAA for ESAT",
-    "NSAA for ESAT",
-    "TMUA for ESAT",
-    "ESAT practice papers",
-    "ESAT papers",
+    "ENGAA past papers",
+    "NSAA past papers",
+    "TMUA past papers",
+    "ESAT practice materials",
+    "ESAT past paper answers",
     "ENGAA NSAA overlap",
   ],
 });
 
+const OFFICIAL_GUIDES = [
+  SOURCES.esatGuideMaths1,
+  SOURCES.esatGuideMaths2,
+  SOURCES.esatGuidePhysics,
+  SOURCES.esatGuideChemistry,
+  SOURCES.esatGuideBiology,
+];
+
+const SECTIONS: readonly PastPaperSection[] = [
+  {
+    exam: "ENGAA",
+    heading: "ENGAA papers (2016–2023)",
+    guide: (
+      <PaperUseGuide
+        summary={[
+          "The closest legacy paper to the ESAT. Part A is Mathematics and Physics; Part B is Advanced Mathematics and Advanced Physics.",
+        ]}
+        goodFor={[
+          "Maths 1 timing and no-calculator fluency.",
+          "Physics formula choice and proportional reasoning.",
+          "Maths 2 stretch via Part B advanced questions.",
+        ]}
+        weakFor={[
+          "Chemistry and Biology — ENGAA never covered them.",
+          "Questions marked outside the ESAT specification.",
+        ]}
+      />
+    ),
+  },
+  {
+    exam: "NSAA",
+    heading: "NSAA papers (2016–2023)",
+    guide: (
+      <PaperUseGuide
+        summary={[
+          "Split into Mathematics, Physics, Chemistry and Biology. The only public archive covering Chemistry and Biology. Maths and Physics overlap heavily with the same year's ENGAA paper.",
+        ]}
+        goodFor={[
+          "Chemistry and Biology practice.",
+          "Maths 1 from Part A.",
+          "Physics from Part B.",
+        ]}
+        weakFor={[
+          "Maths 2 — use ENGAA Part B instead.",
+          "Fresh practice if you already did that year's ENGAA paper.",
+        ]}
+      />
+    ),
+  },
+  {
+    exam: "TMUA",
+    heading: "TMUA papers (2016–2023 and specimen)",
+    guide: (
+      <PaperUseGuide
+        summary={[
+          "A separate maths test, not an ESAT paper. The only archive with full worked answers. Paper 1 helps Maths 2; Paper 2 is logic and proof and is less useful.",
+        ]}
+        goodFor={[
+          "Non-calculator algebra, functions and logarithms.",
+          "Maths 2 problem solving once fundamentals are secure.",
+          "Learning method from the worked answers.",
+        ]}
+        weakFor={[
+          "Physics, Chemistry and Biology.",
+          "Timing practice — TMUA allows far longer per question.",
+        ]}
+      />
+    ),
+  },
+];
+
 const FAQ: readonly FaqItem[] = [
+  {
+    question: "Are there any real ESAT past papers?",
+    answer:
+      "No full ESAT past papers are published. UAT-UK provides the ESAT Guide for each module plus the historic ENGAA and NSAA archives, and says those papers contain questions of the type found in the ESAT. That archive is what everyone means by ESAT past papers.",
+  },
   {
     question: "Are ENGAA and NSAA papers useful for ESAT?",
     answer:
-      "Yes. UAT-UK includes them as preparation materials and says they contain questions of the type found in ESAT. Use them selectively and check the out-of-spec markings.",
+      "Yes. UAT-UK publishes them as ESAT preparation material and marks where a question falls outside the ESAT specification. ENGAA is the closest match for Maths 1, Maths 2 and Physics; NSAA is the only source for Chemistry and Biology.",
   },
   {
-    question: "Should I do both ENGAA and NSAA from the same year?",
+    question: "Should I do both the ENGAA and NSAA paper for the same year?",
     answer:
-      "Not blindly. There is overlap between the Mathematics and Physics questions, so you may repeat questions without realising.",
+      "Usually not. We compared the official PDFs and found many questions repeated between the two papers in every year from 2016 to 2023. Pick one paper per year as your practice source and use the other only for the parts it uniquely covers, such as NSAA Chemistry and Biology.",
+  },
+  {
+    question: "Do the papers come with answers?",
+    answer:
+      "Every ENGAA and NSAA paper has an official answer key, which gives the correct option but not the method. TMUA papers additionally have full worked answers, so they are the best archive for learning how a question should be attacked.",
   },
   {
     question: "Does TMUA help for ESAT?",
     answer:
-      "TMUA Paper 1 can help with Maths 2-style problem solving and mathematical fluency. TMUA Paper 2 is more logic and proof heavy, so use it selectively.",
+      "Only for maths, and only as a supplement. TMUA Paper 1 is decent Maths 2 style practice and good non-calculator training. Paper 2 is logic and proof, which is not an ESAT skill. TMUA does not help with Physics, Chemistry or Biology.",
+  },
+  {
+    question: "Can I download the papers from this site?",
+    answer:
+      "No. We link to the official UAT-UK files rather than hosting copies, so you always get the current version including any updated out-of-spec markings. The papers are the copyright of Cambridge University Press and Assessment.",
   },
 ];
 
@@ -61,203 +154,160 @@ export default function EsatPastPapersPage() {
   return (
     <SeoPageLayout
       path={PATH}
-      eyebrow="Past papers"
-      title="ESAT Past Papers Guide"
+      eyebrow="Past paper library"
+      title="ESAT Past Papers and Practice Materials"
       intro={[
-        "There are not many live ESAT past papers available publicly, so most students use official specimen and practice tests plus historic ENGAA and NSAA questions. That is sensible, but only if you avoid two traps: out-of-spec questions and duplicated ENGAA/NSAA overlap.",
+        "There are no published ESAT past papers. Use the official ESAT Guides below, then practise with historic ENGAA, NSAA and TMUA papers from UAT-UK.",
       ]}
       lastChecked={{
         detail:
-          "Official paper archives and out-of-spec markings can change. Check the UAT-UK preparation materials page for the current versions.",
-      }}
-      primaryCta={{ href: APP_ROUTES.calibration, label: "Find my weak ESAT skills" }}
-      secondaryCta={{
-        href: SEO_ROUTES.oldPapers,
-        label: "See the old-paper map",
+          "Every link on this page was confirmed to resolve. UAT-UK occasionally reorganises its archive, so the official source pages are listed under each paper.",
       }}
       faq={FAQ}
       finalCta={{
-        heading: "Practise the skill, then use the paper as the test",
-        body: "Papers measure progress well and repair skills badly. Start with a short diagnostic, fix the specific weakness it finds, then spend your limited supply of clean papers on measuring whether it worked.",
-        primary: { href: APP_ROUTES.calibration, label: "Start free calibration" },
+        heading: "Papers measure progress. They do not repair it",
+        body: "A paper tells you that ratio questions cost you four marks. It will not fix ratio questions. Spend a short session drilling the specific skill, then spend one of your limited clean papers checking whether it worked.",
+        primary: {
+          href: APP_ROUTES.noCalcPractice,
+          label: "Practise my weak skills",
+        },
         secondary: {
-          href: APP_ROUTES.pastPaperRoadmap,
-          label: "Open the past-paper roadmap",
+          href: APP_ROUTES.calibration,
+          label: "Start free calibration",
         },
       }}
       related={seoLinks(
-        "oldPapers",
+        "engaaNsaaPapers",
+        "tmuaForEsat",
         "maths1",
         "maths2",
         "physics",
-        "calibration",
         "preparation",
       )}
       sources={[
         SOURCES.esatPrepMaterials,
-        SOURCES.engaa2023,
-        SOURCES.nsaa2023,
+        SOURCES.tmuaPrepMaterials,
         SOURCES.contentSpec,
+        SOURCES.esatGuideMaths1,
+        SOURCES.esatGuidePhysics,
       ]}
       showDisclaimer
       schema={articleSchema({
-        headline: "ESAT Past Papers Guide",
+        headline: "ESAT Past Papers and Practice Materials",
         description: DESCRIPTION,
         path: PATH,
       })}
     >
-      <SeoSection heading="What official resources exist?">
-        <SeoProse
-          paragraphs={[
-            "Start with UAT-UK's ESAT preparation materials. They include the ESAT Guide and the historic ENGAA and NSAA archives, which cover question papers and answer keys from 2016 to 2023.",
-            "UAT-UK states that these historic papers contain questions of the type found in ESAT, and that the papers indicate where questions are not in the ESAT specification. That second point matters: the marking is what lets you filter a 2016 paper down to material that still counts.",
-          ]}
-        />
-        <HighlightBox className="mt-5" tone="neutral" title="On copyright">
-          <p>
-            We do not host the official PDFs. Every paper linked from this site
-            goes to the UAT-UK source so you always get the current version,
-            including the latest out-of-spec markings.
-          </p>
-        </HighlightBox>
+      <SeoSection
+        heading="1. Official ESAT Guides"
+        lead="Read the guide for each module you are sitting before opening any past paper. It describes the current test."
+      >
+        <ul className="grid gap-2.5 sm:grid-cols-2">
+          {OFFICIAL_GUIDES.map((guide) => (
+            <li key={guide.url}>
+              <a
+                href={guide.url}
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                className="block rounded-2xl bg-white/[0.04] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/[0.07]"
+              >
+                {guide.label.replace("UAT-UK — ", "")}
+              </a>
+            </li>
+          ))}
+        </ul>
       </SeoSection>
 
       <SeoSection
-        heading="How ENGAA and NSAA map to ESAT"
-        lead="Old papers are not interchangeable. Each section is strong for a specific ESAT module."
+        heading="2. Which papers for each module?"
+        lead="Pick by the module you are sitting, not by working backwards through the years."
       >
         <ResponsiveTable
-          columns={["Old resource", "Best ESAT use", "Notes"]}
+          columns={["ESAT module", "Best source", "Second choice", "What to skip"]}
           rows={[
             [
+              "Mathematics 1",
+              "ENGAA Section 1 Part A maths questions",
               "NSAA Section 1 Part A Mathematics",
-              "Maths 1 practice",
-              "Good for core maths fluency. Many questions overlap with ENGAA in the same year.",
+              "NSAA copies of questions you already did in ENGAA",
             ],
             [
-              "NSAA Section 1 Physics",
-              "Physics practice",
-              "Useful for mechanics, electricity, waves, units and proportional reasoning.",
-            ],
-            [
-              "NSAA Chemistry / Biology",
-              "Chemistry / Biology practice",
-              "Useful only for students taking those modules. Check crossed-out and out-of-spec items.",
-            ],
-            [
-              "ENGAA Section 1 Part A Mathematics and Physics",
-              "Maths 1 + Physics practice",
-              "Often overlaps with NSAA maths and physics questions in the same year.",
-            ],
-            [
-              "ENGAA Section 1 Part B Advanced Mathematics and Advanced Physics",
-              "Maths 2 and stretch practice",
-              "Use selectively. Skip questions marked outside the ESAT specification.",
-            ],
-            [
+              "Mathematics 2",
+              "ENGAA Section 1 Part B Advanced Mathematics",
               "TMUA Paper 1",
-              "Maths 2 enrichment",
-              "Good for mathematical problem solving; not a direct ESAT paper.",
+              "TMUA Paper 2 logic and proof questions",
             ],
             [
-              "TMUA Paper 2",
-              "Selective reasoning practice",
-              "Logic and proof-heavy questions are less directly relevant to ESAT.",
+              "Physics",
+              "NSAA Section 1 Part B Physics",
+              "ENGAA Part A and Part B physics questions",
+              "Questions marked outside the ESAT specification",
+            ],
+            [
+              "Chemistry",
+              "NSAA Section 1 Part C Chemistry",
+              "No second public source",
+              "—",
+            ],
+            [
+              "Biology",
+              "NSAA Section 1 Part D Biology",
+              "—",
+              "Out-of-spec topics flagged in the PDF",
             ],
           ]}
+          caption="ENGAA never tested Chemistry or Biology, so NSAA is required if you sit either."
         />
+      </SeoSection>
+
+      <SeoSection
+        heading="3. ENGAA and NSAA overlap"
+        lead="The two archives share many identical questions. Do not treat them as separate banks."
+      >
+        <DuplicateWarning />
         <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
-          The{" "}
-          <SeoTextLink href={SEO_ROUTES.oldPapers}>
-            ENGAA, NSAA and TMUA guide
-          </SeoTextLink>{" "}
-          goes through each source in more detail, including where TMUA stops
-          being a useful substitute.
+          Full verified list and which copy to solve:{" "}
+          <SeoTextLink href={SEO_ROUTES.engaaNsaaPapers}>
+            ENGAA and NSAA papers for ESAT
+          </SeoTextLink>
+          .
         </p>
       </SeoSection>
 
-      <SeoSection heading="The overlap problem">
-        <SeoProse
-          paragraphs={[
-            "ENGAA and NSAA share many Mathematics and Physics questions in the same year. For example, the 2023 sphere-and-cylinder surface-area question appears as ENGAA 2023 Section 1 Q1 and NSAA 2023 Part A Q1. The 2023 spaceship mechanics question appears as ENGAA 2023 Section 1 Q2 and NSAA 2023 Physics Q22.",
-            "That means doing both full papers can waste time and make your scores look more stable than they really are, because you may be recognising questions rather than solving fresh ones.",
-          ]}
-        />
-        <HighlightBox
-          className="mt-5"
-          tone="warning"
-          title="Do not double-count repeated questions"
-        >
-          <p>
-            If a question appears in both papers, count it once. Two scores built
-            from the same questions is one data point, not two.
-          </p>
-        </HighlightBox>
+      <SeoSection
+        id="library"
+        heading="4. Paper library"
+        lead="Filter by exam, year, module, relevance or what the paper comes with. All links go to official UAT-UK PDFs."
+      >
+        <PastPaperLibrary papers={PAST_PAPERS} sections={SECTIONS} />
       </SeoSection>
 
-      <SeoSection heading="A safer practice order">
+      <SeoSection heading="5. How to use this archive">
         <NumberedSteps
           steps={[
-            "Read the ESAT specification or guide for your modules.",
-            "Take one official sample or specimen test under timed conditions.",
-            "Use NSAA and ENGAA by topic or section, not blindly by full paper.",
-            "Skip questions clearly marked outside the ESAT specification.",
-            "Avoid duplicate questions within the same year.",
-            "Use TMUA Paper 1 after Maths 2 fundamentals are secure.",
-            "Save some official-style material for timed mocks close to the exam.",
+            "Read the ESAT Guide for each module you are sitting.",
+            "Pick one exam per year: ENGAA if you need Maths 2, NSAA if you need Chemistry or Biology.",
+            "Work by section, not by whole paper.",
+            "Skip anything the PDF marks as outside the ESAT specification.",
+            "Check the duplicate list before starting the second paper from a year.",
+            "Use TMUA Paper 1 only once Maths 2 fundamentals are secure.",
+            "Keep two or three unseen papers for timed mocks in the final fortnight.",
           ]}
         />
       </SeoSection>
 
-      <SeoSection
-        heading="Past-paper selection table"
-        lead="Pick the source by the goal you have this week, not by chronological order."
-      >
-        <ResponsiveTable
-          columns={["Goal", "Recommended source", "Time setting", "What to skip"]}
-          rows={[
-            [
-              "Maths 1 baseline",
-              "NSAA Section 1 Part A, or ENGAA Section 1 Part A maths questions",
-              "90 seconds per question",
-              "Duplicates; anything marked out of spec",
-            ],
-            [
-              "Physics baseline",
-              "NSAA Physics, or ENGAA Part A physics questions",
-              "90 seconds per question",
-              "Questions outside the current ESAT Physics spec",
-            ],
-            [
-              "Maths 2 stretch",
-              "ENGAA advanced maths, or selected TMUA Paper 1",
-              "90–120 seconds per question",
-              "Pure logic and proof, or topics not in spec",
-            ],
-            [
-              "Full pressure practice",
-              "Mixed 27-question set",
-              "40 minutes",
-              "Repeated questions you have already seen",
-            ],
-            [
-              "Weak-topic repair",
-              "Topic-filtered questions",
-              "Untimed first, then timed",
-              "Full-paper score obsession",
-            ],
-          ]}
-        />
-      </SeoSection>
+      <PastPaperCTA
+        heading="Work out which module is costing you marks"
+        body="Most people pick papers by year and discover halfway through that the problem was arithmetic speed, not physics. The calibration test takes about twenty minutes and tells you whether speed or accuracy is the thing to fix first."
+        primary={{ href: APP_ROUTES.calibration, label: "Start free calibration" }}
+        secondary={{
+          href: SEO_ROUTES.engaaNsaaPapers,
+          label: "See the duplicate list",
+        }}
+        placement="library_calibration"
+      />
 
-      <SeoSection heading="A cleaner overlap map is still being built">
-        <SeoProse
-          paragraphs={[
-            "We are building a past-paper map that tags each historic question by ESAT module, topic, difficulty and duplicate status. It is not finished. Until it is, use the official PDFs carefully and check the crossed-out questions yourself.",
-            "We would rather say that plainly than publish a \"skip question 14\" list that has not been checked against every current official PDF.",
-          ]}
-        />
-      </SeoSection>
+      <OfficialSourceDisclaimer />
     </SeoPageLayout>
   );
 }

@@ -62,6 +62,13 @@ const nextConfig = {
         destination: "/esat-test-day",
         permanent: true,
       },
+      // The combined old-paper guide was split into one page per exam family so
+      // the two topics stop competing for the same queries.
+      {
+        source: "/engaa-nsaa-tmua-for-esat",
+        destination: "/engaa-nsaa-papers-for-esat",
+        permanent: true,
+      },
     ];
   },
 

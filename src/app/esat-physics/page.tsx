@@ -154,8 +154,8 @@ export default function EsatPhysicsPage() {
         <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
           Note that ENGAA and NSAA share physics questions within the same year —
           see{" "}
-          <SeoTextLink href={SEO_ROUTES.oldPapers}>
-            the overlap examples
+          <SeoTextLink href={SEO_ROUTES.engaaNsaaPapers}>
+            the verified overlap list
           </SeoTextLink>{" "}
           before working through both.
         </p>

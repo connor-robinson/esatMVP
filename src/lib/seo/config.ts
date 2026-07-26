@@ -32,7 +32,8 @@ export const SEO_ROUTES = {
   testDates: "/esat-test-dates",
   testDay: "/esat-test-day",
   pastPapers: "/esat-past-papers",
-  oldPapers: "/engaa-nsaa-tmua-for-esat",
+  engaaNsaaPapers: "/engaa-nsaa-papers-for-esat",
+  tmuaForEsat: "/tmua-for-esat",
   maths1: "/esat-maths-1",
   maths2: "/esat-maths-2",
   physics: "/esat-physics",
@@ -102,6 +103,26 @@ export const SOURCES = {
   tmuaPrepMaterials: {
     label: "UAT-UK — TMUA preparation materials",
     url: "https://esat-tmua.ac.uk/tmua-preparation-materials/",
+  },
+  esatGuideMaths1: {
+    label: "UAT-UK — ESAT Guide: Mathematics 1 (PDF)",
+    url: "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103534/ESAT_Guide_Mathematics_1.pdf",
+  },
+  esatGuideMaths2: {
+    label: "UAT-UK — Notes on Mathematics for TMUA and ESAT Mathematics 2 (PDF)",
+    url: "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103537/Notes_on_Mathematics_-for_TMUA_and_ESAT_M2.pdf",
+  },
+  esatGuidePhysics: {
+    label: "UAT-UK — ESAT Guide: Physics (PDF)",
+    url: "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103558/ESAT_Guide_Physics.pdf",
+  },
+  esatGuideChemistry: {
+    label: "UAT-UK — ESAT Guide: Chemistry (PDF, June 2025)",
+    url: "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2025/06/25103142/ESAT_GUIDE_Chemistry_June2025.pdf",
+  },
+  esatGuideBiology: {
+    label: "UAT-UK — ESAT Guide: Biology (PDF, June 2025)",
+    url: "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2025/07/06120052/ESAT_Guide_Biology_June_2025.pdf",
   },
 } as const satisfies Record<string, SourceLink>;
 

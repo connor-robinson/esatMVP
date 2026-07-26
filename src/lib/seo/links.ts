@@ -30,13 +30,18 @@ export const SEO_LINKS = {
   },
   pastPapers: {
     href: SEO_ROUTES.pastPapers,
-    label: "ESAT past papers guide",
-    blurb: "Which papers to use, what to skip and how to avoid duplicates.",
+    label: "ESAT past papers library",
+    blurb: "Every official ENGAA, NSAA and TMUA paper, filterable by module.",
   },
-  oldPapers: {
-    href: SEO_ROUTES.oldPapers,
-    label: "ENGAA, NSAA and TMUA for ESAT",
-    blurb: "Old-paper mapping by module, with the overlap problem explained.",
+  engaaNsaaPapers: {
+    href: SEO_ROUTES.engaaNsaaPapers,
+    label: "ENGAA and NSAA papers for ESAT",
+    blurb: "The two archives overlap heavily. Here is which copy to solve.",
+  },
+  tmuaForEsat: {
+    href: SEO_ROUTES.tmuaForEsat,
+    label: "TMUA for ESAT preparation",
+    blurb: "Where TMUA genuinely helps Maths 2, and where it is a detour.",
   },
   maths1: {
     href: SEO_ROUTES.maths1,
@@ -117,7 +122,8 @@ export const SEO_GUIDE_KEYS: SeoLinkKey[] = [
   "testDates",
   "testDay",
   "pastPapers",
-  "oldPapers",
+  "engaaNsaaPapers",
+  "tmuaForEsat",
   "maths1",
   "maths2",
   "physics",

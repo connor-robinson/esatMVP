@@ -71,7 +71,7 @@ export default function EsatMaths2Page() {
         primary: { href: APP_ROUTES.calibration, label: "Start free calibration" },
         secondary: { href: APP_ROUTES.questionBank, label: "Open the question bank" },
       }}
-      related={seoLinks("maths1", "oldPapers", "pastPapers", "calibration")}
+      related={seoLinks("maths1", "tmuaForEsat", "pastPapers", "calibration")}
       sources={[SOURCES.contentSpec, SOURCES.tmuaTest]}
       schema={articleSchema({
         headline: "ESAT Maths 2 Preparation",
@@ -144,9 +144,9 @@ export default function EsatMaths2Page() {
           </div>
         </div>
         <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
-          Full breakdown of which questions to take from where:{" "}
-          <SeoTextLink href={SEO_ROUTES.oldPapers}>
-            ENGAA, NSAA and TMUA for ESAT
+          Full breakdown of where TMUA helps and where it stops:{" "}
+          <SeoTextLink href={SEO_ROUTES.tmuaForEsat}>
+            TMUA for ESAT preparation
           </SeoTextLink>
           .
         </p>

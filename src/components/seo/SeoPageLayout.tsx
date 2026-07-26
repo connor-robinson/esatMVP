@@ -20,7 +20,8 @@ type SeoPageLayoutProps = {
   title: React.ReactNode;
   /** Intro paragraphs. The first one should answer the search query directly. */
   intro: readonly string[];
-  primaryCta: Cta;
+  /** Optional hero CTAs — omit when the page should open with content first. */
+  primaryCta?: Cta;
   secondaryCta?: Cta;
   /** Set on pages carrying official dates or rules. */
   lastChecked?: { detail?: string } | true;
@@ -104,20 +105,22 @@ export function SeoPageLayout({
             </div>
           ) : null}
 
-          <SeoCtaRow className="mt-8">
-            <SeoCta href={primaryCta.href} placement="hero">
-              {primaryCta.label}
-            </SeoCta>
-            {secondaryCta ? (
-              <SeoCta
-                href={secondaryCta.href}
-                variant="quiet"
-                placement="hero_secondary"
-              >
-                {secondaryCta.label}
+          {primaryCta ? (
+            <SeoCtaRow className="mt-8">
+              <SeoCta href={primaryCta.href} placement="hero">
+                {primaryCta.label}
               </SeoCta>
-            ) : null}
-          </SeoCtaRow>
+              {secondaryCta ? (
+                <SeoCta
+                  href={secondaryCta.href}
+                  variant="quiet"
+                  placement="hero_secondary"
+                >
+                  {secondaryCta.label}
+                </SeoCta>
+              ) : null}
+            </SeoCtaRow>
+          ) : null}
         </div>
       </header>
 
