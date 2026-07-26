@@ -9,9 +9,37 @@
 import type { Metadata } from "next";
 import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
 
-export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://esatcamp.com"
-).replace(/\/+$/, "");
+/**
+ * Official production origin. Always the non-www host.
+ *
+ * Canonical tags, sitemap entries, Open Graph / Twitter URLs and JSON-LD all
+ * derive from this. `NEXT_PUBLIC_SITE_URL` may still be used elsewhere (Stripe
+ * return URLs, local/preview hosts), but SEO output never emits www.
+ */
+export const PRODUCTION_SITE_URL = "https://esatcamp.com";
+
+function normalizeSiteUrl(raw: string | undefined): string {
+  const fallback = PRODUCTION_SITE_URL;
+  if (!raw) return fallback;
+
+  try {
+    const url = new URL(raw.trim());
+    const host = url.hostname.toLowerCase().replace(/^www\./, "");
+    if (host === "esatcamp.com") {
+      return PRODUCTION_SITE_URL;
+    }
+    // Preview / localhost: still publish production canonicals so drafts never
+    // index under a temporary host.
+    return PRODUCTION_SITE_URL;
+  } catch {
+    return fallback;
+  }
+}
+
+export const SITE_URL = normalizeSiteUrl(process.env.NEXT_PUBLIC_SITE_URL);
+
+/** Hostname only — used for robots.txt Host. */
+export const SITE_HOST = "esatcamp.com";
 
 /** Real in-app destinations. SEO page CTAs must point at these, not at slugs. */
 export const APP_ROUTES = {
@@ -140,7 +168,7 @@ export function buildSeoMetadata({
   path,
   keywords,
 }: SeoMetadataInput): Metadata {
-  const url = `${SITE_URL}${path}`;
+  const url = `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 
   return {
     title,

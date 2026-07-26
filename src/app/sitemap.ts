@@ -1,7 +1,13 @@
 import type { MetadataRoute } from "next";
 import { APP_ROUTES, LAST_CHECKED, SEO_ROUTES, SITE_URL } from "@/lib/seo/config";
 
-/** Public pages that should be crawled, with a rough relative importance. */
+/**
+ * Indexable public URLs only.
+ *
+ * Do not list redirect-only marketing slugs (e.g. /esat-calibration-test,
+ * /engaa-nsaa-tmua-for-esat) — those 301 to real pages and must not appear here.
+ * Every path below is a real App Router page that returns 200.
+ */
 const ENTRIES: readonly { path: string; priority: number }[] = [
   { path: "/", priority: 1 },
 
