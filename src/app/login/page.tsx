@@ -145,6 +145,14 @@ export default function LoginPage() {
       setLoading(true);
       setError(null);
 
+      if (mode === "signup") {
+        try {
+          sessionStorage.setItem("ga_pending_signup", "1");
+        } catch {
+          /* ignore */
+        }
+      }
+
       const { error: signInError } = await signInWithGoogle(supabase, redirectTo);
 
       if (signInError) {

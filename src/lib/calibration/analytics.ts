@@ -1,3 +1,5 @@
+import { trackEvent } from "@/lib/ga";
+
 /**
  * Structured calibration funnel analytics.
  *
@@ -53,6 +55,14 @@ export async function trackCalibrationEvent(
   event: CalibrationAnalyticsEvent,
   properties: CalibrationAnalyticsProps = {},
 ): Promise<void> {
+  if (event === "calibration_started") {
+    trackEvent("calibration_started", {
+      user_state: properties.user_state,
+      attempt_id: properties.attempt_id,
+      cta_placement: properties.cta_placement,
+    });
+  }
+
   try {
     await fetch("/api/calibration/events", {
       method: "POST",

@@ -9,6 +9,7 @@ import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { useSubscription } from "@/hooks/useSubscription";
 import { getSeasonPassPrice, getWeeksUntilExam, type PlanId } from "@/lib/stripe/best-value";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { trackEvent } from "@/lib/ga";
 
 const FEATURES = {
   free: [
@@ -138,6 +139,7 @@ export default function PricingPage() {
     }
     setLoading(planType);
     setBanner(null);
+    trackEvent("checkout_started", { plan_type: planType });
     try {
       const res = await fetch("/api/stripe/create-checkout-session", {
         method: "POST",

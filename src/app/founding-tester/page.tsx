@@ -6,6 +6,7 @@ import { Container } from "@/components/layout/Container";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { useTesterProgramme } from "@/contexts/TesterProgrammeContext";
 import { trackTesterEvent } from "@/hooks/useTesterStatus";
+import { trackEvent } from "@/lib/ga";
 import { SurveyRunner } from "@/components/tester/SurveyRunner";
 import { AccessStatusCard } from "@/components/tester/AccessStatusCard";
 import { formatExpiry, formatDuration } from "@/lib/tester/format";
@@ -639,7 +640,13 @@ function Completion({ state }: { state: TesterState }) {
       </div>
       <Link
         href="/pricing"
-        onClick={() => trackTesterEvent("checkout_started")}
+        onClick={() => {
+          trackTesterEvent("checkout_started");
+          trackEvent("checkout_started", {
+            plan_type: "founding_tester",
+            surface: "founding_tester",
+          });
+        }}
         className="inline-flex justify-center rounded-full bg-text px-6 py-3 text-sm font-bold text-background transition-opacity hover:opacity-90"
       >
         See your founding-member offer

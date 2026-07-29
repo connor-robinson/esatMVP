@@ -6,6 +6,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
+import { trackEvent } from "@/lib/ga";
 
 interface SupabaseSessionProviderProps {
   children: ReactNode;
@@ -18,6 +19,43 @@ interface SupabaseContextValue {
 }
 
 const SupabaseContext = createContext<SupabaseContextValue | undefined>(undefined);
+
+function maybeTrackSignup(session: Session | null) {
+  if (!session?.user) return;
+
+  let pending = false;
+  try {
+    pending = sessionStorage.getItem("ga_pending_signup") === "1";
+    if (pending) sessionStorage.removeItem("ga_pending_signup");
+  } catch {
+    /* ignore */
+  }
+
+  const createdAt = session.user.created_at
+    ? Date.parse(session.user.created_at)
+    : NaN;
+  const isNewAccount =
+    Number.isFinite(createdAt) && Date.now() - createdAt < 10 * 60 * 1000;
+
+  if (!pending && !isNewAccount) return;
+
+  let alreadyTracked = false;
+  try {
+    const key = `ga_signup_${session.user.id}`;
+    alreadyTracked = sessionStorage.getItem(key) === "1";
+    if (!alreadyTracked) sessionStorage.setItem(key, "1");
+  } catch {
+    /* ignore */
+  }
+  if (alreadyTracked) return;
+
+  const provider =
+    typeof session.user.app_metadata?.provider === "string"
+      ? session.user.app_metadata.provider
+      : "unknown";
+
+  trackEvent("signup_completed", { method: provider });
+}
 
 export function SupabaseSessionProvider({ children, initialSession }: SupabaseSessionProviderProps) {
   const [supabase] = useState(() => createSupabaseBrowserClient());
@@ -34,8 +72,11 @@ export function SupabaseSessionProvider({ children, initialSession }: SupabaseSe
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    } = supabase.auth.onAuthStateChange((event, newSession) => {
       setSession(newSession);
+      if (event === "SIGNED_IN") {
+        maybeTrackSignup(newSession);
+      }
     });
 
     return () => {

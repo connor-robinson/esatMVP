@@ -1,16 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { CheckCircle2, Loader2, AlertCircle } from "lucide-react";
+import { trackEvent } from "@/lib/ga";
 
 type SyncState = "syncing" | "unlocked" | "pending" | "error";
 
 const ACCESS_CACHE_KEY = "nocalc:subscriptionHasFullAccess";
 
-export default function PricingSuccessPage() {
+function PricingSuccessContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
@@ -32,7 +33,6 @@ export default function PricingSuccessPage() {
       }
 
       try {
-        // 1) Sync this Checkout Session into Supabase (works even if webhooks lag)
         const syncRes = await fetch("/api/stripe/sync-checkout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -46,7 +46,10 @@ export default function PricingSuccessPage() {
 
         if (cancelled) return;
 
-        if (syncData.paymentStatus === "paid" || syncData.paymentStatus === "no_payment_required") {
+        if (
+          syncData.paymentStatus === "paid" ||
+          syncData.paymentStatus === "no_payment_required"
+        ) {
           setDetails(
             syncData.planType
               ? `Plan: ${String(syncData.planType).replace("_", " ")}`
@@ -54,7 +57,6 @@ export default function PricingSuccessPage() {
           );
         }
 
-        // 2) Poll subscription status until access unlocks
         setMessage("Payment confirmed — unlocking your account…");
 
         while (attempts < 12 && !cancelled) {
@@ -73,6 +75,28 @@ export default function PricingSuccessPage() {
             setTier(status.tier ?? null);
             setState("unlocked");
             setMessage("You're all set — full access is active.");
+
+            try {
+              const purchaseKey = `ga_purchase_${sessionId}`;
+              if (sessionStorage.getItem(purchaseKey) !== "1") {
+                sessionStorage.setItem(purchaseKey, "1");
+                trackEvent("purchase", {
+                  plan_type: syncData.planType
+                    ? String(syncData.planType)
+                    : status.tier
+                      ? String(status.tier)
+                      : undefined,
+                  currency: "GBP",
+                });
+              }
+            } catch {
+              trackEvent("purchase", {
+                plan_type: syncData.planType
+                  ? String(syncData.planType)
+                  : undefined,
+                currency: "GBP",
+              });
+            }
             return;
           }
 
@@ -101,7 +125,10 @@ export default function PricingSuccessPage() {
 
   return (
     <div className="relative min-h-[calc(100vh-58px)] overflow-hidden bg-background">
-      <Container size="md" className="relative flex min-h-[calc(100vh-58px)] items-center justify-center py-16">
+      <Container
+        size="md"
+        className="relative flex min-h-[calc(100vh-58px)] items-center justify-center py-16"
+      >
         <div className="w-full max-w-md rounded-organic-xl bg-surface-elevated p-8 text-center shadow-[0_20px_60px_-28px_rgba(0,0,0,0.55)]">
           {state === "syncing" ? (
             <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" aria-hidden />
@@ -198,5 +225,19 @@ export default function PricingSuccessPage() {
         </div>
       </Container>
     </div>
+  );
+}
+
+export default function PricingSuccessPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-[calc(100vh-58px)] items-center justify-center bg-background">
+          <Loader2 className="h-10 w-10 animate-spin text-primary" aria-hidden />
+        </div>
+      }
+    >
+      <PricingSuccessContent />
+    </Suspense>
   );
 }

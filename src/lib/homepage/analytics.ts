@@ -1,6 +1,7 @@
 import type { HomepageUserState } from "./types";
 import type { CalibrationStatus } from "@/lib/calibration/types";
 import type { SubscriptionTier } from "@/hooks/useSubscription";
+import { trackEvent } from "@/lib/ga";
 
 export type HomepageAnalyticsEvent =
   | "homepage_viewed"
@@ -29,6 +30,21 @@ export async function trackHomepageEvent(
   event: HomepageAnalyticsEvent,
   properties?: HomepageAnalyticsProperties,
 ): Promise<void> {
+  if (
+    event === "homepage_primary_cta_clicked" ||
+    event === "calibration_cta_clicked" ||
+    event === "upgrade_cta_clicked" ||
+    event === "seo_cta_clicked" ||
+    event === "recommended_practice_clicked"
+  ) {
+    trackEvent("cta_clicked", {
+      destination: properties?.destination,
+      placement: properties?.section ?? properties?.primary_cta_type,
+      surface: "homepage",
+      cta_event: event,
+    });
+  }
+
   try {
     await fetch("/api/homepage/analytics", {
       method: "POST",

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { trackHomepageEvent } from "@/lib/homepage/analytics";
+import { trackEvent } from "@/lib/ga";
 
 type SeoCtaProps = {
   href: string;
@@ -35,12 +36,17 @@ export function SeoCta({
   return (
     <Link
       href={href}
-      onClick={() =>
+      onClick={() => {
+        trackEvent("cta_clicked", {
+          destination: href,
+          placement: placement ?? "seo",
+          surface: "seo_guide",
+        });
         void trackHomepageEvent("seo_cta_clicked", {
           destination: href,
           section: placement,
-        })
-      }
+        });
+      }}
       className={cn(
         "inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-base font-bold transition-colors",
         VARIANTS[variant],

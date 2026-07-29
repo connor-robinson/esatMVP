@@ -21,6 +21,7 @@ import { TesterProgrammeBanner } from "@/components/tester/TesterProgrammeBanner
 import { BRAND_CONFIG } from "@/config/brand";
 import { buildCssVariables, LIGHT_MODE_STRATEGY_STORAGE_KEY } from "@/config/theme";
 import { SITE_URL } from "@/lib/seo/config";
+import { GoogleAnalytics, PageViewTracker } from "@/components/ga";
 import "@/styles/globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -158,6 +159,7 @@ export default async function RootLayout({
         <meta name="theme-color" content="#000000" />
       </head>
       <body className="min-h-screen bg-background text-text antialiased font-sans">
+        <GoogleAnalytics />
         <SupabaseSessionProvider initialSession={session}>
           <GoogleOneTap />
           <ErrorBoundary>
@@ -169,6 +171,9 @@ export default async function RootLayout({
                   <KaTeXLoader />
                   <SessionRestore />
                   <SessionPersistenceHandler />
+                  <Suspense fallback={null}>
+                    <PageViewTracker />
+                  </Suspense>
                   <TesterProgrammeProvider>
                     <Navbar />
                     <TesterProgrammeBanner />
