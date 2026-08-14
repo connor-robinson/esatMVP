@@ -8,6 +8,12 @@ export const FREE_PREVIEW_PAST_PAPERS = [
   { examName: "NSAA", examYear: 2023 },
 ] as const;
 
+/** Roadmap free stages — earlier NSAA only (2022/2023 stay library-only previews). */
+export const FREE_PREVIEW_ROADMAP_PAST_PAPERS = [
+  { examName: "NSAA", examYear: 2016 },
+  { examName: "NSAA", examYear: 2017 },
+] as const;
+
 export function isFreePreviewPastPaper(
   paper: Pick<Paper, "examName" | "examYear">,
 ): boolean {
@@ -15,6 +21,16 @@ export function isFreePreviewPastPaper(
     (preview) =>
       paper.examName === preview.examName &&
       paper.examYear === preview.examYear,
+  );
+}
+
+export function isFreePreviewRoadmapStage(stage: {
+  examName: string;
+  year: number;
+}): boolean {
+  return FREE_PREVIEW_ROADMAP_PAST_PAPERS.some(
+    (preview) =>
+      stage.examName === preview.examName && stage.year === preview.examYear,
   );
 }
 

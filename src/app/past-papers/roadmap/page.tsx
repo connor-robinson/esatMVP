@@ -32,7 +32,7 @@ import type { PaperSection, Question, Paper } from '@/types/papers';
 import type { RoadmapPart } from '@/lib/papers/roadmapConfig';
 import { ReplaceActivePaperModal } from '@/components/papers/ReplaceActivePaperModal';
 import { shouldConfirmReplacePaperSession } from '@/lib/papers/activePaperSessionClient';
-import { isFreePreviewPastPaper } from '@/lib/papers/freePreviewPapers';
+import { isFreePreviewRoadmapStage } from '@/lib/papers/freePreviewPapers';
 import { cn } from '@/lib/utils';
 
 type StageCompletionEntry = {
@@ -485,9 +485,9 @@ export default function PapersRoadmapPage() {
     async (stage: RoadmapStage, selectedParts: RoadmapPart[]) => {
       if (
         !hasFullAccess &&
-        !isFreePreviewPastPaper({
+        !isFreePreviewRoadmapStage({
           examName: stage.examName,
-          examYear: stage.year,
+          year: stage.year,
         })
       ) {
         return;
@@ -583,9 +583,9 @@ export default function PapersRoadmapPage() {
       ? unlockedStages
       : visibleStages
           .filter((stage) =>
-            isFreePreviewPastPaper({
+            isFreePreviewRoadmapStage({
               examName: stage.examName,
-              examYear: stage.year,
+              year: stage.year,
             }),
           )
           .map((stage) => stage.id),
