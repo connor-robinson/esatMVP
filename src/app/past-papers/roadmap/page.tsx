@@ -32,9 +32,8 @@ import type { PaperSection, Question, Paper } from '@/types/papers';
 import type { RoadmapPart } from '@/lib/papers/roadmapConfig';
 import { ReplaceActivePaperModal } from '@/components/papers/ReplaceActivePaperModal';
 import { shouldConfirmReplacePaperSession } from '@/lib/papers/activePaperSessionClient';
+import { isFreePreviewPastPaper } from '@/lib/papers/freePreviewPapers';
 import { cn } from '@/lib/utils';
-
-const FREE_ROADMAP_ITEMS = 3;
 
 type StageCompletionEntry = {
   completed: number;
@@ -484,11 +483,14 @@ export default function PapersRoadmapPage() {
 
   const handleStartStage = useCallback(
     async (stage: RoadmapStage, selectedParts: RoadmapPart[]) => {
-      if (!hasFullAccess) {
-        const stageIndex = stages.findIndex((s) => s.id === stage.id);
-        if (stageIndex < 0 || stageIndex >= FREE_ROADMAP_ITEMS) {
-          return;
-        }
+      if (
+        !hasFullAccess &&
+        !isFreePreviewPastPaper({
+          examName: stage.examName,
+          examYear: stage.year,
+        })
+      ) {
+        return;
       }
       if (await shouldConfirmReplacePaperSession()) {
         pendingRoadmapStartRef.current = { stage, selectedParts };
@@ -497,7 +499,7 @@ export default function PapersRoadmapPage() {
       }
       await executeStartStage(stage, selectedParts);
     },
-    [executeStartStage, hasFullAccess, stages],
+    [executeStartStage, hasFullAccess],
   );
 
   const handleCancelReplaceSession = useCallback(() => {
@@ -573,25 +575,36 @@ export default function PapersRoadmapPage() {
 
   const timelineAnchorRef = useRef<HTMLDivElement>(null);
 
-  // Everyone sees the full track. Free users can browse every stage, but
-  // anything past the free preview stays greyed/locked (paywall still below).
+  // Everyone sees the full track. Free users can start free-preview papers;
+  // everything else stays greyed/locked (paywall still below).
   const visibleStages = stages;
-  const freePreviewLimit = hasFullAccess ? stages.length : FREE_ROADMAP_ITEMS;
   const visibleUnlocked = new Set(
-    visibleStages
-      .map((s, index) => ({ id: s.id, index }))
-      .filter(
-        ({ id, index }) =>
-          unlockedStages.has(id) && index < freePreviewLimit,
-      )
-      .map(({ id }) => id),
+    hasFullAccess
+      ? unlockedStages
+      : visibleStages
+          .filter((stage) =>
+            isFreePreviewPastPaper({
+              examName: stage.examName,
+              examYear: stage.year,
+            }),
+          )
+          .map((stage) => stage.id),
   );
+
+  const firstIncompleteVisibleIndex = visibleStages.findIndex((stage) => {
+    if (!visibleUnlocked.has(stage.id)) return false;
+    const data = completionData.get(stage.id);
+    const total = data?.total ?? stage.parts.length;
+    const completed = data?.completed ?? 0;
+    return !(total > 0 && completed === total);
+  });
+
   const visibleCurrentIndex =
-    currentStageIndex !== null && currentStageIndex < freePreviewLimit
-      ? currentStageIndex
-      : hasFullAccess
-        ? currentStageIndex ?? 0
-        : Math.min(currentStageIndex ?? 0, Math.max(freePreviewLimit - 1, 0));
+    firstIncompleteVisibleIndex >= 0
+      ? firstIncompleteVisibleIndex
+      : currentStageIndex !== null && currentStageIndex < visibleStages.length
+        ? currentStageIndex
+        : 0;
 
   const timelineNodes = visibleStages.map((stage, index) => {
     const data = completionData.get(stage.id);
@@ -599,7 +612,7 @@ export default function PapersRoadmapPage() {
     const totalCount = data?.total || stage.parts.length;
     const isUnlocked = visibleUnlocked.has(stage.id);
     const isCompleted = completedCount === totalCount && totalCount > 0;
-    const isCurrent = isUnlocked && visibleCurrentIndex === index;
+    const isCurrent = isUnlocked && !isCompleted && visibleCurrentIndex === index;
 
     return {
       stage,

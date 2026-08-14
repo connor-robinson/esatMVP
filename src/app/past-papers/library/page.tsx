@@ -22,7 +22,7 @@ import { PaperLibraryGrid } from '@/components/papers/library/PaperLibraryGrid';
 import { PaperSessionSummary } from '@/components/papers/library/PaperSessionSummary';
 import { ReplaceActivePaperModal } from '@/components/papers/ReplaceActivePaperModal';
 import { shouldConfirmReplacePaperSession } from '@/lib/papers/activePaperSessionClient';
-import { isPastPaperLibraryLocked } from '@/lib/papers/freePreviewPapers';
+import { isPastPaperLibraryLocked, freePreviewPastPapersLabel } from '@/lib/papers/freePreviewPapers';
 import {
   filterSectionsByEsatSubjects,
   filterSubjectPartsByEsatSubjects,
@@ -456,7 +456,7 @@ export default function PapersLibraryPage() {
     }
 
     if (validPapers.some((sp) => paperIsLocked(sp.paper))) {
-      alert('Upgrade to unlock the selected papers, or choose NSAA 2016 / 2017 to try for free.');
+      alert(`Upgrade to unlock the selected papers, or choose ${freePreviewPastPapersLabel()} to try for free.`);
       return;
     }
 
@@ -687,7 +687,7 @@ export default function PapersLibraryPage() {
         <DrillUpgradeBanner
           className="mb-5"
           headline="Unlock every past paper"
-          subtext="NSAA 2016 and 2017 are free to try. Upgrade for the full paper library, session builder, and analytics"
+          subtext={`${freePreviewPastPapersLabel()} are free to try. Upgrade for the full paper library, session builder, and analytics`}
           ctaLabel="View plans"
           href="/pricing"
         />
