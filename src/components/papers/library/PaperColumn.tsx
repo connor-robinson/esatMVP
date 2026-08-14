@@ -36,6 +36,7 @@ interface PaperColumnProps {
   onAddPaper: (paper: Paper) => void;
   onAddSection?: (paper: Paper, sectionName: string, sections: PaperSection[]) => void;
   locked?: boolean;
+  highlightAdd?: boolean;
 }
 
 function PaperAttemptTick({
@@ -83,6 +84,7 @@ export function PaperColumn({
   onAddPaper,
   onAddSection,
   locked = false,
+  highlightAdd = false,
 }: PaperColumnProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [outline, setOutline] = useState<PaperSectionsOutline | null>(null);
@@ -261,6 +263,7 @@ export function PaperColumn({
         className={cn(
           "flex h-14 items-center gap-2.5 rounded-lg px-3 transition-colors",
           getExamAccentLibraryPaperRowClass(paper.examName, isSelected && !locked),
+          highlightAdd && !locked && "ring-2 ring-primary/40 ring-offset-2 ring-offset-surface",
         )}
       >
         <button
@@ -278,7 +281,23 @@ export function PaperColumn({
           />
         </button>
 
-        <div className="flex min-w-0 flex-1 items-center gap-2">
+        <button
+          type="button"
+          onClick={() => void handleAddPaperClick()}
+          disabled={locked || isAddingPaper}
+          className={cn(
+            "flex min-w-0 flex-1 items-center gap-2 text-left transition-opacity",
+            locked || isAddingPaper
+              ? "cursor-default"
+              : "cursor-pointer hover:opacity-80",
+          )}
+          aria-label={
+            locked
+              ? `${paper.examName} ${paper.examYear} — upgrade to unlock`
+              : `Add ${paper.examName} ${paper.examYear} to session`
+          }
+          aria-busy={isAddingPaper}
+        >
           <span
             className={cn(
               "truncate text-sm font-semibold",
@@ -292,7 +311,7 @@ export function PaperColumn({
               {paper.examType}
             </span>
           )}
-        </div>
+        </button>
 
         <div className="flex w-[4.75rem] shrink-0 items-center justify-end gap-1.5">
           {!locked && paperCompletionStatus !== "none" ? (

@@ -55,6 +55,7 @@ interface PaperSessionSummaryProps {
   canStart: boolean;
   onStartSession: () => void;
   allPapers?: Paper[]; // All papers to find sibling sections
+  highlightStart?: boolean;
 }
 
 interface PaperData {
@@ -259,6 +260,7 @@ export function PaperSessionSummary({
   canStart,
   onStartSession,
   allPapers = [],
+  highlightStart = false,
 }: PaperSessionSummaryProps) {
   const [sessionName, setSessionName] = useState("Practice Session");
   const [isEditingName, setIsEditingName] = useState(false);
@@ -542,7 +544,7 @@ export function PaperSessionSummary({
               </div>
               <p className="font-heading text-sm font-medium text-text">Basket is empty</p>
               <p className="max-w-[13rem] text-xs leading-relaxed text-text-muted">
-                Add papers from the library to build your session.
+                Click a paper on the left to add it here.
               </p>
             </div>
           ) : (
@@ -643,6 +645,7 @@ export function PaperSessionSummary({
               ? "cursor-pointer bg-maths text-background hover:bg-maths/85 dark:text-white"
               : "cursor-not-allowed bg-surface-neutral text-text-disabled shadow-none hover:bg-surface-neutral",
             "disabled:cursor-not-allowed disabled:bg-surface-neutral disabled:text-text-disabled disabled:hover:bg-surface-neutral",
+            highlightStart && canStart && "ring-2 ring-primary/50 ring-offset-2 ring-offset-surface",
           )}
         >
           Start Practice Session

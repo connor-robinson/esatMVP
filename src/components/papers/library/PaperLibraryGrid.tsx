@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { Paper, PaperSection } from "@/types/papers";
 import { PaperColumn } from "./PaperColumn";
 import { PaperLibraryFilters } from "./PaperLibraryFilters";
+import { PaperLibraryTutorial } from "./PaperLibraryTutorial";
 import { getExamAccentTextClass } from "@/config/colors";
 import { LibrarySectionLoading } from "@/components/questionBank/library/LibrarySectionLoading";
 import { compareLibraryExamGroupNames } from "@/lib/papers/paperConfig";
@@ -34,6 +35,9 @@ interface PaperLibraryGridProps {
   locked?: boolean;
   /** Per-paper lock override (e.g. free preview years stay unlocked). */
   isPaperLocked?: (paper: Paper) => boolean;
+  showTutorial?: boolean;
+  onDismissTutorial?: () => void;
+  hasBasketItems?: boolean;
 }
 
 function representativePaperScore(paper: Paper): number {
@@ -64,8 +68,22 @@ export function PaperLibraryGrid({
   onAddSection,
   locked = false,
   isPaperLocked,
+  showTutorial = false,
+  onDismissTutorial,
+  hasBasketItems = false,
 }: PaperLibraryGridProps) {
   const [collapsedExams, setCollapsedExams] = useState<Set<string>>(new Set());
+
+  const resolveLocked = (paper: Paper) =>
+    isPaperLocked ? isPaperLocked(paper) : locked;
+
+  const highlightPaperId = useMemo(() => {
+    if (!showTutorial || hasBasketItems) return null;
+    const firstUnlocked = papers.find((paper) =>
+      isPaperLocked ? !isPaperLocked(paper) : !locked,
+    );
+    return firstUnlocked?.id ?? null;
+  }, [showTutorial, hasBasketItems, papers, isPaperLocked, locked]);
 
   const toggleExam = (examName: string) =>
     setCollapsedExams((prev) => {
@@ -138,6 +156,13 @@ export function PaperLibraryGrid({
           typeFilter={typeFilter}
           onTypeFilterChange={onTypeFilterChange}
         />
+
+        {showTutorial && onDismissTutorial ? (
+          <PaperLibraryTutorial
+            hasBasketItems={hasBasketItems}
+            onDismiss={onDismissTutorial}
+          />
+        ) : null}
       </div>
 
       {papersLoading ? (
@@ -213,11 +238,8 @@ export function PaperLibraryGrid({
                             onAddFullPaper={onAddFullPaper}
                             onAddPaper={onAddPaper}
                             onAddSection={onAddSection}
-                            locked={
-                              isPaperLocked
-                                ? isPaperLocked(paper)
-                                : locked
-                            }
+                            locked={resolveLocked(paper)}
+                            highlightAdd={highlightPaperId === paper.id}
                           />
                         ))}
                       </div>

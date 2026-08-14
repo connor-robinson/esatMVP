@@ -23,6 +23,10 @@ import { PaperSessionSummary } from '@/components/papers/library/PaperSessionSum
 import { ReplaceActivePaperModal } from '@/components/papers/ReplaceActivePaperModal';
 import { shouldConfirmReplacePaperSession } from '@/lib/papers/activePaperSessionClient';
 import { isPastPaperLibraryLocked } from '@/lib/papers/freePreviewPapers';
+import {
+  hasSeenLibraryTutorial,
+  markLibraryTutorialSeen,
+} from '@/lib/papers/libraryTutorial';
 
 interface SelectedPaper {
   paper: Paper;
@@ -163,6 +167,16 @@ export default function PapersLibraryPage() {
   const [replaceModalOpen, setReplaceModalOpen] = useState(false);
   const [replaceConfirming, setReplaceConfirming] = useState(false);
   const pendingStartRef = useRef<(() => Promise<void>) | null>(null);
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  useEffect(() => {
+    setShowTutorial(!hasSeenLibraryTutorial());
+  }, []);
+
+  const dismissTutorial = () => {
+    markLibraryTutorialSeen();
+    setShowTutorial(false);
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -384,6 +398,8 @@ export default function PapersLibraryPage() {
   // Start session (optionally after replace confirmation)
   const handleStartSession = async () => {
     if (isStartingSession) return;
+
+    dismissTutorial();
 
     // Validate: at least one paper with at least one section
     const validPapers = selectedPapers.filter((sp) => {
@@ -636,6 +652,9 @@ export default function PapersLibraryPage() {
             onAddSection={handleAddSection}
             locked={libraryLocked}
             isPaperLocked={paperIsLocked}
+            showTutorial={showTutorial}
+            onDismissTutorial={dismissTutorial}
+            hasBasketItems={canStart}
           />
         </div>
 
@@ -659,6 +678,7 @@ export default function PapersLibraryPage() {
             canStart={canStart && !isStartingSession}
             onStartSession={handleStartSession}
             allPapers={papers}
+            highlightStart={showTutorial && canStart}
           />
         </div>
       </div>
