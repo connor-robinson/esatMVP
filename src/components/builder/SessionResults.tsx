@@ -793,14 +793,14 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
               size="sm"
               onClick={onBackToBuilder}
               className={cn(
-                "min-h-[2.875rem] rounded-organic-md px-5 py-3.5 text-sm font-semibold text-text",
+                "min-h-[2.875rem] rounded-organic-md px-5 py-3.5 text-sm font-semibold",
                 mentalMathUi
-                  ? "border-0 bg-surface-mid shadow-none hover:bg-surface-neutral focus-visible:ring-success/35"
-                  : "border-border bg-surface-mid shadow-sm hover:bg-surface-neutral",
+                  ? "border-0 bg-success text-background shadow-none hover:bg-success/85 hover:shadow-none focus-visible:ring-success/35 dark:text-white"
+                  : "border-border bg-surface-mid text-text shadow-sm hover:bg-surface-neutral",
               )}
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Start new session
+              {mentalMathUi ? "Back to Home" : "Start new session"}
             </Button>
           </motion.div>
         </div>
