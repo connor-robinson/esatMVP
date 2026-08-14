@@ -20,9 +20,15 @@ export function BrandMarkImage({ className, alt = "" }: BrandMarkImageProps) {
       width={BRAND_MARK_WIDTH}
       height={BRAND_MARK_HEIGHT}
       draggable={false}
+      loading="eager"
+      fetchPriority="high"
+      decoding="sync"
       className={cn(
         "block shrink-0 w-auto max-w-none object-contain object-left",
-        "brightness-0 invert dark:brightness-100 dark:invert-0",
+        // Default white mark — app defaults to dark theme (incl. SSR before theme script runs).
+        "brightness-100 invert-0",
+        // Light theme — dark mark on light backgrounds.
+        "[.light_&]:brightness-0 [.light_&]:invert",
         className,
       )}
     />
