@@ -20,6 +20,10 @@ import {
 import { CommunityStatsPanel } from '@/components/questionBank/CommunityStatsPanel';
 import { QuestionBankSessionResults } from '@/components/questionBank/QuestionBankSessionResults';
 import { QuestionBankSessionBar } from '@/components/questionBank/QuestionBankSessionBar';
+import {
+  QuestionBankTimeUpModal,
+  QUESTION_BANK_TIME_EXTENSION_MINUTES,
+} from '@/components/questionBank/QuestionBankTimeUpModal';
 import { labelForQuestionBankTag } from '@/lib/questionBank/esatCurriculumTopicLabels';
 import { labelTopicTagsForQuestion } from "@/lib/questionBank/questionTopicDisplay";
 import { buildSessionSummary } from '@/lib/questionBank/sessionStats';
@@ -124,7 +128,9 @@ export default function QuestionBankPage() {
   const [sessionTestType, setSessionTestType] = useState<string | null>(null);
   const [sessionCompleting, setSessionCompleting] = useState(false);
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
+  const [showTimeUpModal, setShowTimeUpModal] = useState(false);
   const [sessionEndedByTimer, setSessionEndedByTimer] = useState(false);
+  const showTimeUpModalRef = useRef(false);
   const questionStartedAtRef = useRef<number>(Date.now());
   const sessionAttemptLogRef = useRef<QuestionBankSessionAttempt[]>([]);
   const sessionRegisteredRef = useRef(false);
@@ -495,6 +501,47 @@ export default function QuestionBankPage() {
   const completeSessionRef = useRef(completeSession);
   completeSessionRef.current = completeSession;
 
+  const isSessionIncomplete = useCallback(() => {
+    const onLastQuestion = sessionCurrentIndex >= sessionQuestions.length - 1;
+    const currentDone =
+      answerRevealed || (isAnswered && isCorrect === true);
+    if (!onLastQuestion) return true;
+    return !currentDone;
+  }, [
+    sessionCurrentIndex,
+    sessionQuestions.length,
+    answerRevealed,
+    isAnswered,
+    isCorrect,
+  ]);
+
+  const isSessionIncompleteRef = useRef(isSessionIncomplete);
+  isSessionIncompleteRef.current = isSessionIncomplete;
+
+  useEffect(() => {
+    showTimeUpModalRef.current = showTimeUpModal;
+  }, [showTimeUpModal]);
+
+  const remainingSessionQuestions = Math.max(
+    0,
+    sessionQuestions.length - sessionCurrentIndex - 1,
+  );
+
+  const handleContinueToReviewAfterTimeout = useCallback(() => {
+    setShowTimeUpModal(false);
+    void completeSession({ timedOut: true });
+  }, [completeSession]);
+
+  const handleExtendSessionTime = useCallback(() => {
+    const extensionMs = QUESTION_BANK_TIME_EXTENSION_MINUTES * 60 * 1000;
+    setDeadline(Date.now() + extensionMs);
+    setRemainingTime(QUESTION_BANK_TIME_EXTENSION_MINUTES * 60);
+    setTimeLimitMinutes(
+      (prev) => prev + QUESTION_BANK_TIME_EXTENSION_MINUTES,
+    );
+    setShowTimeUpModal(false);
+  }, []);
+
   const handleSaveAndLeave = useCallback(() => {
     void completeSession();
   }, [completeSession]);
@@ -649,6 +696,11 @@ export default function QuestionBankPage() {
 
       if (remaining <= 0) {
         if (interval) clearInterval(interval);
+        if (showTimeUpModalRef.current) return;
+        if (isSessionIncompleteRef.current()) {
+          setShowTimeUpModal(true);
+          return;
+        }
         void completeSessionRef.current({ timedOut: true });
       }
     };
@@ -1053,16 +1105,21 @@ export default function QuestionBankPage() {
                   onIncorrectAnswersChange={setIncorrectAnswers}
                   isAuthenticated={!!session?.user}
                   headerTrailing={
-                    <div className='flex items-center gap-2 rounded-organic-lg bg-surface-mid px-3 py-2 sm:gap-3 sm:px-4'>
-                      <span
-                        className={cn(
-                          'tabular-nums text-lg font-semibold tracking-tight',
-                          getTimerColor(),
-                        )}
-                      >
-                        {formatTimerDisplay()}
-                      </span>
-                    </div>
+                    sessionMode && remainingTime !== null && deadline ? (
+                      <div className="flex flex-col items-end gap-0.5 rounded-organic-lg bg-surface-mid px-3 py-2 sm:px-4">
+                        <span className="text-[10px] font-medium uppercase tracking-wide text-text-muted">
+                          Total time
+                        </span>
+                        <span
+                          className={cn(
+                            'tabular-nums text-lg font-semibold tracking-tight',
+                            getTimerColor(),
+                          )}
+                        >
+                          {formatTimerDisplay()}
+                        </span>
+                      </div>
+                    ) : null
                   }
                   belowOptionsSlot={
                     isAnswered &&
@@ -1159,6 +1216,14 @@ export default function QuestionBankPage() {
           />
         )}
       </div>
+
+      <QuestionBankTimeUpModal
+        open={showTimeUpModal}
+        remainingQuestions={remainingSessionQuestions}
+        extendMinutes={QUESTION_BANK_TIME_EXTENSION_MINUTES}
+        onContinueToReview={handleContinueToReviewAfterTimeout}
+        onExtendTime={handleExtendSessionTime}
+      />
 
     </Fragment>
   );
