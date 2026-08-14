@@ -2249,7 +2249,7 @@ export default function PapersMarkPage() {
                     {!treatAsFullAccess && (
                       <DrillUpgradeBanner
                         variant="panel"
-                        headline="Unlock suggested answers"
+                        headline="Unlock Written Solutions"
                         subtext="Upgrade to view official solutions and worked answers for every question."
                         ctaLabel="View plans"
                       />
