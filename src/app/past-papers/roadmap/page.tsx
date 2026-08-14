@@ -664,7 +664,7 @@ export default function PapersRoadmapPage() {
               timelineAnchorRef={timelineAnchorRef}
             />
             {!hasFullAccess && (
-              <div className="mt-10">
+              <div className="mt-4 -translate-y-2 sm:mt-5 sm:-translate-y-3">
                 <UpgradeCTA feature="the full roadmap" />
               </div>
             )}
