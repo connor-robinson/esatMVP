@@ -69,52 +69,48 @@ async function getPerSubjectProgress(
     return { bySubject, attempted: 0, total };
   }
 
-  const { data: questions, error: questionsError } = await applyPublishedQuestionBankFilter(
-    supabase.from('ai_generated_questions').select('id, subjects, test_type'),
-  )
-    .in('subjects', subjects)
-    .limit(5000);
+  const { data: attempts, error: attemptsError } = await supabase
+    .from('question_bank_attempts')
+    .select('question_id')
+    .eq('user_id', sessionUserId);
 
-  if (questionsError || !questions?.length) {
+  if (attemptsError || !attempts?.length) {
     return { bySubject, attempted: 0, total };
   }
 
-  const questionIdToSubject = new Map<string, string>();
-  for (const row of questions as {
-    id: string;
-    subjects: string;
-    test_type: string | null;
-  }[]) {
-    const subject = row.subjects;
-    if (!subjects.includes(subject)) continue;
-    if (!subjectMatchesTestType(subject, row.test_type)) continue;
-    questionIdToSubject.set(String(row.id), subject);
-  }
-
-  const questionIdArray = [...questionIdToSubject.keys()];
-  if (questionIdArray.length === 0) {
-    return { bySubject, attempted: 0, total };
-  }
+  const uniqueQuestionIds = [
+    ...new Set(
+      (attempts as { question_id: string }[]).map((a) => String(a.question_id)),
+    ),
+  ];
 
   const attemptedBySubject = new Map<string, Set<string>>();
   subjects.forEach((s) => attemptedBySubject.set(s, new Set()));
 
-  for (let i = 0; i < questionIdArray.length; i += ATTEMPT_ID_CHUNK) {
-    const chunk = questionIdArray.slice(i, i + ATTEMPT_ID_CHUNK);
-    const { data: attempts, error: attemptsError } = await supabase
-      .from('question_bank_attempts')
-      .select('question_id')
-      .eq('user_id', sessionUserId)
-      .in('question_id', chunk);
+  for (let i = 0; i < uniqueQuestionIds.length; i += ATTEMPT_ID_CHUNK) {
+    const chunk = uniqueQuestionIds.slice(i, i + ATTEMPT_ID_CHUNK);
+    const { data: questionRows, error: questionError } =
+      await applyPublishedQuestionBankFilter(
+        supabase
+          .from('ai_generated_questions')
+          .select('id, subjects, test_type'),
+      )
+        .in('id', chunk)
+        .in('subjects', subjects);
 
-    if (attemptsError) {
+    if (questionError) {
       break;
     }
-    for (const a of (attempts ?? []) as { question_id: string }[]) {
-      const subject = questionIdToSubject.get(String(a.question_id));
-      if (subject) {
-        attemptedBySubject.get(subject)?.add(String(a.question_id));
-      }
+
+    for (const row of (questionRows ?? []) as {
+      id: string;
+      subjects: string;
+      test_type: string | null;
+    }[]) {
+      const subject = row.subjects;
+      if (!subjects.includes(subject)) continue;
+      if (!subjectMatchesTestType(subject, row.test_type)) continue;
+      attemptedBySubject.get(subject)?.add(String(row.id));
     }
   }
 

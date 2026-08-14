@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useEffect, useMemo, useState, useCallback, useRef } from "react";
+import { useEffect, useMemo, useState, useCallback, useRef, useLayoutEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown, Search } from "lucide-react";
 import { Container } from "@/components/layout/Container";
@@ -20,10 +20,16 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { useQuestionBankFreeTier } from "@/hooks/useQuestionBankFreeTier";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import {
-  subjectsForExamProgress,
   progressSubtext,
   type ExamPreference,
 } from "@/lib/questionBank/userProgressSubjects";
+import {
+  aggregateProgressForSubjects,
+  readCachedUserPrefs,
+  readHomeProgressCache,
+  writeCachedUserPrefs,
+  writeHomeProgressCache,
+} from "@/lib/questionBank/homeProgressCache";
 import { cn } from "@/lib/utils";
 import { SUBJECT_TILE_STYLES } from "@/lib/questionBank/subjectTileTheme";
 
@@ -118,6 +124,24 @@ type ProgressApiResponse = {
   bySubject?: Record<string, { attempted: number; total: number }>;
 };
 
+function tilesFromProgress(
+  bySubject: Record<string, { attempted: number; total: number }> | undefined,
+  loading: boolean,
+): Record<SubjectKey, { attempted: number; total: number; loading: boolean }> {
+  return ALL_SUBJECT_KEYS.reduce(
+    (acc, k) => {
+      const row = bySubject?.[k];
+      acc[k] = {
+        attempted: row?.attempted ?? 0,
+        total: row?.total ?? 0,
+        loading,
+      };
+      return acc;
+    },
+    {} as Record<SubjectKey, { attempted: number; total: number; loading: boolean }>,
+  );
+}
+
 export function QuestionBankHomeScreen() {
   const router = useRouter();
   const session = useSupabaseSession();
@@ -136,89 +160,110 @@ export function QuestionBankHomeScreen() {
   const [modalTile, setModalTile] = useState<SubjectTileConfig | null>(null);
   const [mixedModalOpen, setMixedModalOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [aggregate, setAggregate] = useState<{ attempted: number; total: number } | null>(null);
+  const [aggregate, setAggregate] = useState<{ attempted: number; total: number } | null>(
+    null,
+  );
   const [examPreference, setExamPreference] = useState<ExamPreference>(null);
   const [esatSubjects, setEsatSubjects] = useState<string[]>([]);
   const [isLoadingProgress, setIsLoadingProgress] = useState(true);
   const [tiles, setTiles] = useState<
     Record<SubjectKey, { attempted: number; total: number; loading: boolean }>
-  >(() =>
-    ALL_SUBJECT_KEYS.reduce(
-      (acc, k) => {
-        acc[k] = { attempted: 0, total: 0, loading: true };
-        return acc;
-      },
-      {} as Record<SubjectKey, { attempted: number; total: number; loading: boolean }>,
-    ),
-  );
+  >(() => tilesFromProgress(undefined, true));
+  const progressHydratedRef = useRef(false);
+  const hasAggregateRef = useRef(false);
+
+  useLayoutEffect(() => {
+    if (progressHydratedRef.current) return;
+    progressHydratedRef.current = true;
+
+    const cachedPrefs = readCachedUserPrefs();
+    const cachedProgress = readHomeProgressCache();
+    const preference = cachedPrefs?.exam_preference ?? null;
+    const userEsatSubjects = cachedPrefs?.esat_subjects ?? [];
+
+    if (cachedPrefs) {
+      setExamPreference(preference);
+      setEsatSubjects(userEsatSubjects);
+    }
+
+    if (cachedProgress?.bySubject) {
+      setAggregate(
+        aggregateProgressForSubjects(
+          cachedProgress.bySubject,
+          preference,
+          userEsatSubjects,
+        ),
+      );
+      setTiles(tilesFromProgress(cachedProgress.bySubject, false));
+      hasAggregateRef.current = true;
+      setIsLoadingProgress(false);
+    }
+  }, []);
 
   const loadStats = useCallback(async () => {
-    setIsLoadingProgress(true);
-    try {
-      let preference: ExamPreference = null;
-      let userEsatSubjects: string[] = [];
+    if (!hasAggregateRef.current) {
+      setIsLoadingProgress(true);
+    }
 
-      if (session?.user) {
-        try {
-          const prefRes = await fetch("/api/profile/preferences", {
-            credentials: "include",
+    try {
+      const prefsPromise = session?.user
+        ? fetch("/api/profile/preferences", { credentials: "include" })
+        : Promise.resolve(null);
+      const progressPromise = fetch(
+        progressUrlSubjects(ALL_SUBJECT_KEYS, { perSubject: true }),
+        { credentials: "include" },
+      );
+
+      const [prefRes, progressRes] = await Promise.all([
+        prefsPromise,
+        progressPromise,
+      ]);
+
+      let preference: ExamPreference = readCachedUserPrefs()?.exam_preference ?? null;
+      let userEsatSubjects: string[] = readCachedUserPrefs()?.esat_subjects ?? [];
+
+      if (prefRes?.ok) {
+        const prefJson = await prefRes.json();
+        preference =
+          prefJson.exam_preference === "ESAT" ||
+          prefJson.exam_preference === "TMUA"
+            ? prefJson.exam_preference
+            : null;
+        userEsatSubjects = Array.isArray(prefJson.esat_subjects)
+          ? prefJson.esat_subjects
+          : [];
+        setExamPreference(preference);
+        setEsatSubjects(userEsatSubjects);
+        if (session?.user) {
+          writeCachedUserPrefs({
+            exam_preference: preference,
+            esat_subjects: userEsatSubjects,
           });
-          if (prefRes.ok) {
-            const prefJson = await prefRes.json();
-            preference =
-              prefJson.exam_preference === "ESAT" ||
-              prefJson.exam_preference === "TMUA"
-                ? prefJson.exam_preference
-                : null;
-            userEsatSubjects = Array.isArray(prefJson.esat_subjects)
-              ? prefJson.esat_subjects
-              : [];
-            setExamPreference(preference);
-            setEsatSubjects(userEsatSubjects);
-          }
-        } catch {
-          /* preferences optional */
         }
-      } else {
+      } else if (!session?.user) {
         setExamPreference(null);
         setEsatSubjects([]);
       }
 
-      const res = await fetch(
-        progressUrlSubjects(ALL_SUBJECT_KEYS, { perSubject: true }),
-        { credentials: "include" },
-      );
-      const json: ProgressApiResponse = res.ok
-        ? await res.json()
+      const json: ProgressApiResponse = progressRes.ok
+        ? await progressRes.json()
         : { attempted: 0, total: 0, bySubject: {} };
 
-      const progressSubjects = subjectsForExamProgress(
-        preference,
-        userEsatSubjects,
-      );
-      let attempted = 0;
-      let total = 0;
-      for (const subject of progressSubjects) {
-        const row = json.bySubject?.[subject];
-        attempted += row?.attempted ?? 0;
-        total += row?.total ?? 0;
+      if (json.bySubject) {
+        writeHomeProgressCache({
+          attempted: json.attempted,
+          total: json.total,
+          bySubject: json.bySubject,
+        });
       }
 
-      setAggregate({ attempted, total });
-      setTiles((prev) => {
-        const next = { ...prev };
-        ALL_SUBJECT_KEYS.forEach((k) => {
-          const row = json.bySubject?.[k];
-          next[k] = {
-            attempted: row?.attempted ?? 0,
-            total: row?.total ?? 0,
-            loading: false,
-          };
-        });
-        return next;
-      });
+      setAggregate(
+        aggregateProgressForSubjects(json.bySubject, preference, userEsatSubjects),
+      );
+      setTiles(tilesFromProgress(json.bySubject, false));
+      hasAggregateRef.current = true;
     } catch {
-      setAggregate({ attempted: 0, total: 0 });
+      setAggregate((prev) => prev ?? { attempted: 0, total: 0 });
       setTiles((prev) => {
         const next = { ...prev };
         ALL_SUBJECT_KEYS.forEach((k) => {
