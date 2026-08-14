@@ -6,10 +6,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { Paper, PaperSection } from "@/types/papers";
 import { PaperColumn } from "./PaperColumn";
 import { PaperLibraryFilters } from "./PaperLibraryFilters";
-import { PaperLibraryTutorial } from "./PaperLibraryTutorial";
+import { LibraryTutorialSkip } from "./PaperLibraryTutorial";
+import { GuestDrillDimOverlay } from "@/components/builder/GuestDrillHint";
 import { getExamAccentTextClass } from "@/config/colors";
 import { LibrarySectionLoading } from "@/components/questionBank/library/LibrarySectionLoading";
 import { compareLibraryExamGroupNames } from "@/lib/papers/paperConfig";
+import type { LibraryTutorialStep } from "@/lib/papers/libraryTutorial";
 import { cn } from "@/lib/utils";
 
 interface PaperLibraryGridProps {
@@ -36,8 +38,9 @@ interface PaperLibraryGridProps {
   /** Per-paper lock override (e.g. free preview years stay unlocked). */
   isPaperLocked?: (paper: Paper) => boolean;
   showTutorial?: boolean;
+  tutorialStep?: LibraryTutorialStep | null;
   onDismissTutorial?: () => void;
-  hasBasketItems?: boolean;
+  firstEsatSubject?: string | null;
 }
 
 function representativePaperScore(paper: Paper): number {
@@ -69,8 +72,9 @@ export function PaperLibraryGrid({
   locked = false,
   isPaperLocked,
   showTutorial = false,
+  tutorialStep = null,
   onDismissTutorial,
-  hasBasketItems = false,
+  firstEsatSubject = null,
 }: PaperLibraryGridProps) {
   const [collapsedExams, setCollapsedExams] = useState<Set<string>>(new Set());
 
@@ -78,12 +82,16 @@ export function PaperLibraryGrid({
     isPaperLocked ? isPaperLocked(paper) : locked;
 
   const highlightPaperId = useMemo(() => {
-    if (!showTutorial || hasBasketItems) return null;
+    if (tutorialStep !== "add_paper") return null;
     const firstUnlocked = papers.find((paper) =>
       isPaperLocked ? !isPaperLocked(paper) : !locked,
     );
     return firstUnlocked?.id ?? null;
-  }, [showTutorial, hasBasketItems, papers, isPaperLocked, locked]);
+  }, [tutorialStep, papers, isPaperLocked, locked]);
+
+  const addHintLabel = firstEsatSubject
+    ? `Click to add — starts with ${firstEsatSubject}`
+    : "Click to add this paper";
 
   const toggleExam = (examName: string) =>
     setCollapsedExams((prev) => {
@@ -158,10 +166,9 @@ export function PaperLibraryGrid({
         />
 
         {showTutorial && onDismissTutorial ? (
-          <PaperLibraryTutorial
-            hasBasketItems={hasBasketItems}
-            onDismiss={onDismissTutorial}
-          />
+          <div className="flex justify-end">
+            <LibraryTutorialSkip onSkip={onDismissTutorial} />
+          </div>
         ) : null}
       </div>
 
@@ -174,7 +181,10 @@ export function PaperLibraryGrid({
           No papers match the current filters.
         </div>
       ) : (
-        <div className="mt-5 space-y-4 border-t border-border-subtle/40 pt-5">
+        <div className="relative mt-5 space-y-4 border-t border-border-subtle/40 pt-5">
+          {tutorialStep === "add_paper" ? (
+            <GuestDrillDimOverlay className="absolute inset-0 z-30 rounded-organic-md" />
+          ) : null}
           {papersByExam.sortedExams.map((examName) => {
             const examPapers = papersByExam.grouped[examName];
             if (!examPapers?.length) return null;
@@ -240,6 +250,11 @@ export function PaperLibraryGrid({
                             onAddSection={onAddSection}
                             locked={resolveLocked(paper)}
                             highlightAdd={highlightPaperId === paper.id}
+                            showAddHint={
+                              highlightPaperId === paper.id &&
+                              tutorialStep === "add_paper"
+                            }
+                            addHintLabel={addHintLabel}
                           />
                         ))}
                       </div>

@@ -26,10 +26,12 @@ import { isPastPaperLibraryLocked } from '@/lib/papers/freePreviewPapers';
 import {
   filterSectionsByEsatSubjects,
   filterSubjectPartsByEsatSubjects,
+  esatSubjectsForPaperAdd,
 } from '@/lib/papers/esatSubjectSectionMapping';
 import {
   hasSeenLibraryTutorial,
   markLibraryTutorialSeen,
+  resolveLibraryTutorialStep,
 } from '@/lib/papers/libraryTutorial';
 
 interface SelectedPaper {
@@ -172,6 +174,7 @@ export default function PapersLibraryPage() {
   const [replaceConfirming, setReplaceConfirming] = useState(false);
   const pendingStartRef = useRef<(() => Promise<void>) | null>(null);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [customizeAcknowledged, setCustomizeAcknowledged] = useState(false);
   const [userEsatSubjects, setUserEsatSubjects] = useState<string[] | null>(null);
 
   useEffect(() => {
@@ -254,7 +257,7 @@ export default function PapersLibraryPage() {
     const sectionsToAdd = filterSectionsByEsatSubjects(
       sectionsByMain,
       paper,
-      userEsatSubjects,
+      subjectsForAdd,
     );
     const existingPaper = selectedPapers.find((sp) => sp.paper.id === paper.id);
     if (existingPaper) {
@@ -280,7 +283,7 @@ export default function PapersLibraryPage() {
     const filteredParts = filterSubjectPartsByEsatSubjects(
       subjectParts,
       paper,
-      userEsatSubjects,
+      subjectsForAdd,
     );
     const existingPaper = selectedPapers.find((sp) => sp.paper.id === paper.id);
 
@@ -648,6 +651,28 @@ export default function PapersLibraryPage() {
     paperHasSelectedSubjects(sp.selectedSections),
   );
 
+  const subjectsForAdd = useMemo(
+    () =>
+      esatSubjectsForPaperAdd(userEsatSubjects, {
+        firstPaperOnly: showTutorial && selectedPapers.length === 0,
+      }),
+    [userEsatSubjects, showTutorial, selectedPapers.length],
+  );
+
+  const tutorialStep = useMemo(
+    () =>
+      resolveLibraryTutorialStep({
+        showTutorial,
+        hasBasketItems: canStart,
+        canStart,
+        multipleEsatSubjects: (userEsatSubjects?.length ?? 0) > 1,
+        customizeAcknowledged,
+      }),
+    [showTutorial, canStart, userEsatSubjects, customizeAcknowledged],
+  );
+
+  const firstEsatSubject = userEsatSubjects?.[0] ?? null;
+
   if (error && papers.length === 0 && !papersLoading) {
     return (
       <Container size='lg'>
@@ -690,8 +715,9 @@ export default function PapersLibraryPage() {
             locked={libraryLocked}
             isPaperLocked={paperIsLocked}
             showTutorial={showTutorial}
+            tutorialStep={tutorialStep}
             onDismissTutorial={dismissTutorial}
-            hasBasketItems={canStart}
+            firstEsatSubject={firstEsatSubject}
           />
         </div>
 
@@ -708,6 +734,9 @@ export default function PapersLibraryPage() {
                 registerAvailableSections(paperId, candidate);
               }
               handleToggleSection(paperId, section, mainSectionName);
+              if (tutorialStep === "customize") {
+                setCustomizeAcknowledged(true);
+              }
             }}
             onClearMainSection={handleClearMainSection}
             onReorderPaper={handleReorderPaper}
@@ -715,7 +744,9 @@ export default function PapersLibraryPage() {
             canStart={canStart && !isStartingSession}
             onStartSession={handleStartSession}
             allPapers={papers}
-            highlightStart={showTutorial && canStart}
+            highlightStart={tutorialStep === "start"}
+            tutorialStep={tutorialStep}
+            onTutorialCustomizeAck={() => setCustomizeAcknowledged(true)}
           />
         </div>
       </div>

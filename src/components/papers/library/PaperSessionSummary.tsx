@@ -28,6 +28,8 @@ import type { PaperMainSection } from "@/lib/papers/paperLibrarySections";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import type { Paper, PaperSection, ExamName } from "@/types/papers";
 import { SectionsLoadingState } from "./SectionsLoadingState";
+import { GuestDrillHintCallout } from "@/components/builder/GuestDrillHint";
+import type { LibraryTutorialStep } from "@/lib/papers/libraryTutorial";
 
 function paperHasSelectedSubjects(
   sections: Map<string, Set<PaperSection>>,
@@ -56,6 +58,8 @@ interface PaperSessionSummaryProps {
   onStartSession: () => void;
   allPapers?: Paper[]; // All papers to find sibling sections
   highlightStart?: boolean;
+  tutorialStep?: LibraryTutorialStep | null;
+  onTutorialCustomizeAck?: () => void;
 }
 
 interface PaperData {
@@ -75,6 +79,7 @@ interface PaperItemProps {
   onToggleSection: (paperId: number, section: PaperSection, mainSectionName?: string) => void;
   onClearMainSection: (paperId: number, mainSectionName: string) => void;
   onToggleSectionExpanded: (paperId: number, sectionName: string) => void;
+  showExpandHint?: boolean;
 }
 
 function PaperItemComponent({
@@ -86,6 +91,7 @@ function PaperItemComponent({
   onToggleSection,
   onClearMainSection,
   onToggleSectionExpanded,
+  showExpandHint = false,
 }: PaperItemProps) {
   const loading = !paperData || paperData.loading;
   const mainSections = paperData?.mainSections || [];
@@ -137,7 +143,7 @@ function PaperItemComponent({
           <SectionsLoadingState />
         </div>
       ) : visibleSections.length === 0 ? null : (
-        visibleSections.map((mainSection) => {
+        visibleSections.map((mainSection, sectionIndex) => {
           const isExpanded =
             !isTmuaPaper && paperExpandedSections.has(mainSection.name);
           const sectionSubjects = selectedSections.get(mainSection.name) || new Set<PaperSection>();
@@ -146,6 +152,8 @@ function PaperItemComponent({
           ).length;
           const showSubjectRows =
             !isTmuaPaper && isExpanded && mainSection.subjectParts.length > 0;
+          const sectionShowExpandHint =
+            showExpandHint && sectionIndex === 0 && !isTmuaPaper;
 
           return (
             <div
@@ -156,25 +164,37 @@ function PaperItemComponent({
                 {isTmuaPaper ? (
                   <div className="h-8 w-8 shrink-0" aria-hidden />
                 ) : (
-                  <button
-                    type="button"
-                    onClick={() => onToggleSectionExpanded(paper.id, mainSection.name)}
-                    className="flex h-8 w-8 shrink-0 items-center justify-center text-text-muted transition-colors hover:text-text"
-                    aria-expanded={isExpanded}
-                    aria-label={
-                      isExpanded
-                        ? `Collapse ${mainSection.name}`
-                        : `Expand ${mainSection.name}`
-                    }
-                  >
-                    <ChevronDown
+                  <div className="relative shrink-0">
+                    {sectionShowExpandHint ? (
+                      <GuestDrillHintCallout
+                        label="Expand to add more subjects"
+                        className="absolute bottom-[calc(100%+0.35rem)] left-1/2 z-[60] -translate-x-1/2"
+                      />
+                    ) : null}
+                    <button
+                      type="button"
+                      onClick={() => onToggleSectionExpanded(paper.id, mainSection.name)}
                       className={cn(
-                        "h-4 w-4 transition-transform duration-200",
-                        isExpanded ? "rotate-0" : "-rotate-90",
+                        "relative flex h-8 w-8 shrink-0 items-center justify-center text-text-muted transition-colors hover:text-text",
+                        sectionShowExpandHint && "z-[50]",
                       )}
-                      strokeWidth={3}
-                    />
-                  </button>
+                      aria-expanded={isExpanded}
+                      aria-label={
+                        isExpanded
+                          ? `Collapse ${mainSection.name}`
+                          : `Expand ${mainSection.name}`
+                      }
+                    >
+                      <ChevronDown
+                        className={cn(
+                          "h-4 w-4 transition-transform duration-200",
+                          isExpanded ? "rotate-0" : "-rotate-90",
+                          sectionShowExpandHint && "text-primary",
+                        )}
+                        strokeWidth={3}
+                      />
+                    </button>
+                  </div>
                 )}
 
                 <div className="min-w-0 flex-1">
@@ -261,6 +281,8 @@ export function PaperSessionSummary({
   onStartSession,
   allPapers = [],
   highlightStart = false,
+  tutorialStep = null,
+  onTutorialCustomizeAck,
 }: PaperSessionSummaryProps) {
   const [sessionName, setSessionName] = useState("Practice Session");
   const [isEditingName, setIsEditingName] = useState(false);
@@ -415,13 +437,17 @@ export function PaperSessionSummary({
       const next = new Map(prev);
       const paperSections = next.get(paperId) || new Set<string>();
       const newPaperSections = new Set(paperSections);
-      
-      if (newPaperSections.has(sectionName)) {
+      const wasExpanded = newPaperSections.has(sectionName);
+
+      if (wasExpanded) {
         newPaperSections.delete(sectionName);
       } else {
         newPaperSections.add(sectionName);
+        if (tutorialStep === "customize") {
+          onTutorialCustomizeAck?.();
+        }
       }
-      
+
       next.set(paperId, newPaperSections);
       return next;
     });
@@ -548,7 +574,7 @@ export function PaperSessionSummary({
               </p>
             </div>
           ) : (
-            basketPapers.map(({ paper, selectedSections }) => (
+            basketPapers.map(({ paper, selectedSections }, index) => (
               <PaperItem
                 key={paper.id}
                 paper={paper}
@@ -559,6 +585,7 @@ export function PaperSessionSummary({
                 onToggleSection={onToggleSection}
                 onClearMainSection={onClearMainSection}
                 onToggleSectionExpanded={toggleSectionExpanded}
+                showExpandHint={tutorialStep === "customize" && index === 0}
               />
             ))
           )}
@@ -634,27 +661,37 @@ export function PaperSessionSummary({
           </p>
         )}
 
-        <button
-          type="button"
-          onClick={onStartSession}
-          disabled={!canStart}
-          aria-disabled={!canStart}
-          className={cn(
-            "flex w-full items-center justify-center gap-2 rounded-organic-md py-3 font-heading text-sm font-semibold transition-colors duration-fast focus-visible:outline-none",
-            canStart
-              ? "cursor-pointer bg-maths text-background hover:bg-maths/85 dark:text-white"
-              : "cursor-not-allowed bg-surface-neutral text-text-disabled shadow-none hover:bg-surface-neutral",
-            "disabled:cursor-not-allowed disabled:bg-surface-neutral disabled:text-text-disabled disabled:hover:bg-surface-neutral",
-            highlightStart && canStart && "ring-2 ring-primary/50 ring-offset-2 ring-offset-surface",
-          )}
-        >
-          Start Practice Session
-          <ArrowRight
-            className={cn("h-4 w-4 shrink-0", !canStart && "opacity-70")}
-            strokeWidth={2.5}
-            aria-hidden
-          />
-        </button>
+        <div className="relative">
+          {tutorialStep === "start" && canStart ? (
+            <GuestDrillHintCallout
+              label="Start when you're ready"
+              className="absolute bottom-[calc(100%+0.5rem)] left-1/2 z-[60] -translate-x-1/2"
+            />
+          ) : null}
+          <button
+            type="button"
+            onClick={onStartSession}
+            disabled={!canStart}
+            aria-disabled={!canStart}
+            className={cn(
+              "relative flex w-full items-center justify-center gap-2 rounded-organic-md py-3 font-heading text-sm font-semibold transition-colors duration-fast focus-visible:outline-none",
+              canStart
+                ? "cursor-pointer bg-maths text-background hover:bg-maths/85 dark:text-white"
+                : "cursor-not-allowed bg-surface-neutral text-text-disabled shadow-none hover:bg-surface-neutral",
+              "disabled:cursor-not-allowed disabled:bg-surface-neutral disabled:text-text-disabled disabled:hover:bg-surface-neutral",
+              (highlightStart || tutorialStep === "start") &&
+                canStart &&
+                "z-[50] ring-2 ring-primary/50 ring-offset-2 ring-offset-surface",
+            )}
+          >
+            Start Practice Session
+            <ArrowRight
+              className={cn("h-4 w-4 shrink-0", !canStart && "opacity-70")}
+              strokeWidth={2.5}
+              aria-hidden
+            />
+          </button>
+        </div>
       </footer>
     </aside>
   );

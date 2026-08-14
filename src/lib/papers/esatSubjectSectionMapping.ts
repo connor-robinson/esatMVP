@@ -46,6 +46,16 @@ function paperSectionsForEngaa(esatSubjects: SubjectTileKey[]): PaperSection[] {
   return Array.from(sections);
 }
 
+/** Limit ESAT subjects used when adding a paper (e.g. first tutorial add). */
+export function esatSubjectsForPaperAdd(
+  esatSubjects: string[] | null | undefined,
+  options?: { firstPaperOnly?: boolean },
+): string[] | null {
+  if (!esatSubjects?.length) return null;
+  if (options?.firstPaperOnly) return [esatSubjects[0]!];
+  return esatSubjects;
+}
+
 /** Resolve which past-paper subject parts match the user's ESAT modules. */
 export function paperSectionsForEsatSubjects(
   esatSubjects: string[] | null | undefined,

@@ -26,6 +26,7 @@ import type {
   PaperMainSection,
   PaperSectionsOutline,
 } from "@/lib/papers/paperLibrarySections";
+import { GuestDrillHintCallout } from "@/components/builder/GuestDrillHint";
 
 interface PaperColumnProps {
   paper: Paper;
@@ -37,6 +38,8 @@ interface PaperColumnProps {
   onAddSection?: (paper: Paper, sectionName: string, sections: PaperSection[]) => void;
   locked?: boolean;
   highlightAdd?: boolean;
+  showAddHint?: boolean;
+  addHintLabel?: string;
 }
 
 function PaperAttemptTick({
@@ -85,6 +88,8 @@ export function PaperColumn({
   onAddSection,
   locked = false,
   highlightAdd = false,
+  showAddHint = false,
+  addHintLabel = "Click to add this paper",
 }: PaperColumnProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [outline, setOutline] = useState<PaperSectionsOutline | null>(null);
@@ -258,12 +263,18 @@ export function PaperColumn({
   };
 
   return (
-    <div className={cn("space-y-1", locked && "opacity-70")}>
+    <div className={cn("relative space-y-1", locked && "opacity-70")}>
+      {showAddHint && !locked ? (
+        <GuestDrillHintCallout
+          label={addHintLabel}
+          className="absolute bottom-[calc(100%+0.35rem)] left-1/2 z-[60] -translate-x-1/2"
+        />
+      ) : null}
       <div
         className={cn(
-          "flex h-14 items-center gap-2.5 rounded-lg px-3 transition-colors",
+          "relative flex h-14 items-center gap-2.5 rounded-lg px-3 transition-colors",
           getExamAccentLibraryPaperRowClass(paper.examName, isSelected && !locked),
-          highlightAdd && !locked && "ring-2 ring-primary/40 ring-offset-2 ring-offset-surface",
+          highlightAdd && !locked && "z-[50] ring-2 ring-primary/40 ring-offset-2 ring-offset-surface",
         )}
       >
         <button
