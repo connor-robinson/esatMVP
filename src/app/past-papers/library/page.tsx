@@ -24,6 +24,10 @@ import { ReplaceActivePaperModal } from '@/components/papers/ReplaceActivePaperM
 import { shouldConfirmReplacePaperSession } from '@/lib/papers/activePaperSessionClient';
 import { isPastPaperLibraryLocked } from '@/lib/papers/freePreviewPapers';
 import {
+  filterSectionsByEsatSubjects,
+  filterSubjectPartsByEsatSubjects,
+} from '@/lib/papers/esatSubjectSectionMapping';
+import {
   hasSeenLibraryTutorial,
   markLibraryTutorialSeen,
 } from '@/lib/papers/libraryTutorial';
@@ -168,9 +172,32 @@ export default function PapersLibraryPage() {
   const [replaceConfirming, setReplaceConfirming] = useState(false);
   const pendingStartRef = useRef<(() => Promise<void>) | null>(null);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [userEsatSubjects, setUserEsatSubjects] = useState<string[] | null>(null);
 
   useEffect(() => {
     setShowTutorial(!hasSeenLibraryTutorial());
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetch('/api/profile/preferences')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (cancelled || !data) return;
+        if (
+          data.exam_preference === 'ESAT' &&
+          Array.isArray(data.esat_subjects) &&
+          data.esat_subjects.length > 0
+        ) {
+          setUserEsatSubjects(data.esat_subjects);
+        }
+      })
+      .catch(() => {
+        /* optional — fall back to adding all sections */
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const dismissTutorial = () => {
@@ -224,16 +251,21 @@ export default function PapersLibraryPage() {
     sectionsByMain: Map<string, Set<PaperSection>>,
   ) => {
     if (paperIsLocked(paper)) return;
+    const sectionsToAdd = filterSectionsByEsatSubjects(
+      sectionsByMain,
+      paper,
+      userEsatSubjects,
+    );
     const existingPaper = selectedPapers.find((sp) => sp.paper.id === paper.id);
     if (existingPaper) {
       handleUpdateSections(
         paper.id,
-        mergeMainSectionMaps(existingPaper.selectedSections, sectionsByMain),
+        mergeMainSectionMaps(existingPaper.selectedSections, sectionsToAdd),
       );
     } else {
       setSelectedPapers((prev) => [
         ...prev,
-        { paper, selectedSections: cloneMainSectionMap(sectionsByMain) },
+        { paper, selectedSections: cloneMainSectionMap(sectionsToAdd) },
       ]);
     }
   };
@@ -245,23 +277,28 @@ export default function PapersLibraryPage() {
     subjectParts: PaperSection[],
   ) => {
     if (paperIsLocked(paper)) return;
+    const filteredParts = filterSubjectPartsByEsatSubjects(
+      subjectParts,
+      paper,
+      userEsatSubjects,
+    );
     const existingPaper = selectedPapers.find((sp) => sp.paper.id === paper.id);
 
     if (existingPaper) {
       // Paper already selected, add all subjects from this section
-      if (subjectParts.length > 0) {
+      if (filteredParts.length > 0) {
         const newSections = new Map(existingPaper.selectedSections);
         const sectionSubjects =
           newSections.get(sectionName) || new Set<PaperSection>();
-        subjectParts.forEach((subject) => sectionSubjects.add(subject));
+        filteredParts.forEach((subject) => sectionSubjects.add(subject));
         newSections.set(sectionName, sectionSubjects);
         handleUpdateSections(paper.id, newSections);
       }
     } else {
       // Add paper with all subjects from this section
       const newSections = new Map<string, Set<PaperSection>>();
-      if (subjectParts.length > 0) {
-        newSections.set(sectionName, new Set(subjectParts));
+      if (filteredParts.length > 0) {
+        newSections.set(sectionName, new Set(filteredParts));
       }
       setSelectedPapers((prev) => [
         ...prev,
