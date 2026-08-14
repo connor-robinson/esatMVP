@@ -52,7 +52,7 @@ export default function LoginPage() {
     return fromUrl === "signup" ? "signup" : "signin";
   }, [searchParams]);
 
-  const redirectTo = searchParams.get("redirectTo") || "/past-papers/library";
+  const redirectTo = searchParams.get("redirectTo") || "/";
   const copy = COPY[mode];
 
   useEffect(() => {
@@ -133,7 +133,7 @@ export default function LoginPage() {
   const buildAuthUrl = (nextMode: AuthMode) => {
     const params = new URLSearchParams();
     params.set("mode", nextMode);
-    if (redirectTo !== "/past-papers/library") {
+    if (redirectTo !== "/") {
       params.set("redirectTo", redirectTo);
     }
     const qs = params.toString();

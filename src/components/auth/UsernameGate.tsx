@@ -6,7 +6,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import {
   buildOnboardingUrl,
@@ -16,7 +16,6 @@ import {
 export function UsernameGate({ children }: { children: React.ReactNode }) {
   const session = useSupabaseSession();
   const pathname = usePathname();
-  const router = useRouter();
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
@@ -43,7 +42,7 @@ export function UsernameGate({ children }: { children: React.ReactNode }) {
               params.get("redirectTo") ||
                 `${pathname ?? "/"}${window.location.search}`,
             );
-            router.replace(buildOnboardingUrl(intended));
+            window.location.replace(buildOnboardingUrl(intended));
             return;
           }
         }
@@ -55,7 +54,7 @@ export function UsernameGate({ children }: { children: React.ReactNode }) {
     }
 
     void checkSetup();
-  }, [session, pathname, router]);
+  }, [session, pathname]);
 
   if (checking && session?.user && !pathname?.startsWith("/onboarding")) {
     return (

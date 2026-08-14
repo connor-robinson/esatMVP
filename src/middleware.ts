@@ -54,6 +54,8 @@ export async function middleware(request: NextRequest) {
 
       const path = request.nextUrl.pathname;
       const onOnboarding = path.startsWith('/onboarding');
+      const isOnboardingPreview =
+        onOnboarding && request.nextUrl.searchParams.get('preview') === '1';
 
       // Lock the app until username + questionnaire are done (single /onboarding flow).
       const needsSetup =
@@ -65,6 +67,13 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(
           new URL(buildOnboardingUrl(intended), request.url),
         );
+      }
+
+      if (!needsSetup && onOnboarding && !isOnboardingPreview) {
+        const nextPath = sanitizeRedirectTo(
+          request.nextUrl.searchParams.get('redirectTo'),
+        );
+        return NextResponse.redirect(new URL(nextPath, request.url));
       }
     }
 

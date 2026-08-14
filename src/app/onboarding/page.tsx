@@ -230,6 +230,11 @@ function OnboardingContent() {
         if (typeof data.marketing_emails_consent === "boolean") {
           setMarketingEmails(data.marketing_emails_consent);
         }
+
+        if (data.username && data.onboarding_completed === true) {
+          window.location.replace(redirectTo);
+          return;
+        }
       } finally {
         if (!cancelled) setBooting(false);
       }
@@ -239,7 +244,7 @@ function OnboardingContent() {
     return () => {
       cancelled = true;
     };
-  }, [isPreview]);
+  }, [isPreview, redirectTo]);
 
   useEffect(() => {
     if (step !== "username") return;
@@ -372,7 +377,7 @@ function OnboardingContent() {
         marketing_emails_consent: marketingEmails,
         onboarding_completed: true,
       });
-      router.replace(redirectTo);
+      window.location.replace(redirectTo);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setSaving(false);

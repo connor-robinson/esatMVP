@@ -7,17 +7,17 @@ export function buildOnboardingUrl(redirectTo: string): string {
   const safe =
     redirectTo.startsWith("/") && !redirectTo.startsWith("//")
       ? redirectTo
-      : "/past-papers/library";
+      : "/";
   return `/onboarding?redirectTo=${encodeURIComponent(safe)}`;
 }
 
 export function sanitizeRedirectTo(redirectTo: string | null | undefined): string {
-  if (!redirectTo) return "/past-papers/library";
+  if (!redirectTo) return "/";
   if (!redirectTo.startsWith("/") || redirectTo.startsWith("//")) {
-    return "/past-papers/library";
+    return "/";
   }
   if (redirectTo.startsWith("/login") || redirectTo.startsWith("/signup") || redirectTo.startsWith("/onboarding")) {
-    return "/past-papers/library";
+    return "/";
   }
   return redirectTo;
 }
