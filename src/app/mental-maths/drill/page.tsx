@@ -7,6 +7,7 @@
 import { useState, Suspense, lazy, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getAllTopics } from "@/config/topics";
+import { FREE_MENTAL_MATHS_TOPIC_IDS } from "@/config/mostUsefulDrills";
 import { FERMI_GUESSR_PLAY_PATH } from "@/config/fermiGuessr";
 import { useBuilderSession } from "@/hooks/useBuilderSession";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
@@ -70,7 +71,9 @@ export default function BuilderPage() {
   const accessibleTopicIds = useMemo(
     () =>
       new Set(
-        treatAsFullAccess ? allTopics.map((t) => t.id) : ["addition"],
+        treatAsFullAccess
+          ? allTopics.map((t) => t.id)
+          : [...FREE_MENTAL_MATHS_TOPIC_IDS],
       ),
     [treatAsFullAccess, allTopics],
   );

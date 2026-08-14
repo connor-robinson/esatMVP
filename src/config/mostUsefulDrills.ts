@@ -13,7 +13,24 @@ export type MostUsefulDrillDef = {
   featured?: boolean;
 };
 
+/** Topics free (non-paying) members can practice without upgrading. */
+export const FREE_MENTAL_MATHS_TOPIC_IDS = [
+  'addition',
+  'trig_applications',
+  'trig_recall',
+] as const;
+
 export const MOST_USEFUL_DRILLS: readonly MostUsefulDrillDef[] = [
+  {
+    topicId: 'trig_applications',
+    variantId: 'special-triangles',
+    name: 'Special Triangles',
+  },
+  {
+    topicId: 'trig_recall',
+    variantId: 'basic-angles',
+    name: 'Trig Recall',
+  },
   {
     topicId: 'addition',
     variantId: 'single-digit',
@@ -29,16 +46,6 @@ export const MOST_USEFUL_DRILLS: readonly MostUsefulDrillDef[] = [
     topicId: 'circle_theorems',
     variantId: 'basic',
     name: 'Circle Theorems',
-  },
-  {
-    topicId: 'trig_applications',
-    variantId: 'special-triangles',
-    name: 'Special Triangles',
-  },
-  {
-    topicId: 'trig_recall',
-    variantId: 'basic-angles',
-    name: 'Trig Recall',
   },
   {
     topicId: 'unit_circle_radians',

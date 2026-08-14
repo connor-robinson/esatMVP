@@ -21,7 +21,7 @@ export function buildUpgradePrompt(input: {
     return {
       headline: `Unlock unlimited practice for ${weakest.toLowerCase()} and your other weak areas`,
       subtext:
-        "Free access includes addition drills only. Upgrade for full mental maths, question bank, and personalised recommendations.",
+        "Free access includes addition plus selected Most Useful drills. Upgrade for full mental maths, question bank, and personalised recommendations.",
       ctaLabel: "View plans",
       href: "/pricing",
     };

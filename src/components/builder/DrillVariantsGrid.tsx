@@ -267,9 +267,18 @@ export function DrillVariantsGrid({
     panelBody = <DrillBuilderHome onShowHelp={() => setHelpOpen(true)} />;
   } else if (isMostUseful) {
     const modules = getMostUsefulDrillModules();
-    const hasLockedModules = modules.some(
+    const unlockedModules = modules.filter((mod) =>
+      accessibleTopicIds.has(mod.topicId),
+    );
+    const lockedModules = modules.filter(
       (mod) => !accessibleTopicIds.has(mod.topicId),
     );
+    const showBannerInGrid =
+      showUpgradeBanner && lockedModules.length > 0;
+    const visibleModules = showBannerInGrid ? unlockedModules : modules;
+    /** Match two Most Useful card rows (min-h + gap). */
+    const bannerTwoRowMinHeight =
+      'min-h-[calc(13.7rem*2+0.875rem)]';
 
     panelBody = (
       <div className='flex min-h-0 flex-1 flex-col overflow-y-auto p-4 pb-3'>
@@ -283,8 +292,8 @@ export function DrillVariantsGrid({
         </div>
 
         <div className='relative min-h-[12rem] flex-1'>
-          <div className='grid grid-cols-2 gap-2.5 overflow-visible pt-0.5 md:grid-cols-3 2xl:grid-cols-4'>
-            {modules.map((mod) => {
+          <div className='grid auto-rows-fr grid-cols-2 gap-3.5 overflow-visible pt-0.5 md:grid-cols-3 2xl:grid-cols-4'>
+            {visibleModules.map((mod) => {
               const compositeId = `${mod.topicId}-${mod.variantId}`;
               const isSelected = selectedTopicIds.includes(compositeId);
               const locked = !accessibleTopicIds.has(mod.topicId);
@@ -307,20 +316,27 @@ export function DrillVariantsGrid({
                 />
               );
             })}
+
+            {showBannerInGrid ? (
+              <div
+                className={cn(
+                  'col-span-2 row-span-2 md:col-span-3 2xl:col-span-4',
+                  bannerTwoRowMinHeight,
+                )}
+              >
+                <DrillUpgradeBanner
+                  variant='panel'
+                  density='default'
+                  className='h-full min-h-0'
+                  headline='Unlock every drill'
+                  subtext='Upgrade to add all most useful drills to your session.'
+                />
+              </div>
+            ) : null}
           </div>
 
           {showGuestTryHint ? <GuestDrillDimOverlay /> : null}
         </div>
-
-        {showUpgradeBanner && hasLockedModules ? (
-          <DrillUpgradeBanner
-            variant='panel'
-            density='compact'
-            className='mt-5 shrink-0 scroll-mt-3'
-            headline='Unlock every drill'
-            subtext='Upgrade to add all most useful drills to your session.'
-          />
-        ) : null}
       </div>
     );
   } else if (topicId && isFolderComingSoon(topicId)) {
@@ -361,7 +377,7 @@ export function DrillVariantsGrid({
           </h2>
         </div>
 
-        <div className='grid grid-cols-2 gap-2.5 md:grid-cols-3 2xl:grid-cols-4'>
+        <div className='grid grid-cols-2 gap-3.5 md:grid-cols-3 2xl:grid-cols-4'>
           {displayFolder.modules.map((mod) => {
             const compositeId = `${mod.topicId}-${mod.variantId}`;
             const isSelected = selectedTopicIds.includes(compositeId);
