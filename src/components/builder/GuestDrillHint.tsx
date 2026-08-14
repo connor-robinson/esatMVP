@@ -31,6 +31,8 @@ type GuestDrillHintCalloutProps = {
   className?: string;
   /** Arrow below label (points at control below). Default true. */
   arrowDown?: boolean;
+  /** Quieter suggestion styling — no heavy motion or bold callout. */
+  subtle?: boolean;
 };
 
 /** Label + arrow callout anchored near a target control. */
@@ -38,8 +40,10 @@ export function GuestDrillHintCallout({
   label,
   className,
   arrowDown = true,
+  subtle = false,
 }: GuestDrillHintCalloutProps) {
   const reduceMotion = useReducedMotion();
+  const animate = !reduceMotion && !subtle;
 
   return (
     <div
@@ -50,20 +54,31 @@ export function GuestDrillHintCallout({
       aria-hidden
     >
       <motion.div
-        className='flex flex-col items-center gap-1'
-        animate={reduceMotion ? undefined : { y: [0, -5, 0] }}
+        className='flex flex-col items-center gap-0.5'
+        animate={animate ? { y: [0, -4, 0] } : undefined}
         transition={
-          reduceMotion
-            ? undefined
-            : { duration: 2.2, repeat: Infinity, ease: 'easeInOut' }
+          animate
+            ? { duration: 2.6, repeat: Infinity, ease: 'easeInOut' }
+            : undefined
         }
       >
-        <span className='whitespace-nowrap rounded-organic-md bg-surface-elevated px-3 py-1.5 font-heading text-base font-bold leading-tight text-text shadow-sm sm:text-lg'>
+        <span
+          className={cn(
+            'whitespace-nowrap rounded-organic-md font-heading leading-tight text-text',
+            subtle
+              ? 'bg-surface-elevated/90 px-2.5 py-1 text-xs font-semibold text-text-muted shadow-none sm:text-sm'
+              : 'bg-surface-elevated px-3 py-1.5 text-base font-bold shadow-sm sm:text-lg',
+          )}
+        >
           {label}
         </span>
         {arrowDown ? (
           <ArrowDown
-            className='h-5 w-5 text-primary sm:h-6 sm:w-6'
+            className={cn(
+              subtle
+                ? 'h-3.5 w-3.5 text-text-muted sm:h-4 sm:w-4'
+                : 'h-5 w-5 text-primary sm:h-6 sm:w-6',
+            )}
             strokeWidth={2.25}
             aria-hidden
           />

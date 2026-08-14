@@ -7,7 +7,6 @@
 import { useState } from 'react';
 import { Check, Plus, Home, Info, X, Lock } from 'lucide-react';
 import {
-  GuestDrillDimOverlay,
   GuestDrillHintCallout,
 } from '@/components/builder/GuestDrillHint';
 import type { HighLevelCategory } from '@/components/builder/TopicFolders';
@@ -79,14 +78,14 @@ function DrillModuleCard({
           : isSelected
             ? 'bg-folder-card-selected shadow-sm'
             : 'bg-surface-elevated hover:bg-surface-neutral',
-        hintVisible && 'z-50 overflow-visible bg-surface-elevated',
+        hintVisible && 'z-20 overflow-visible',
       )}
     >
       <div className='mb-2.5 flex items-start justify-between gap-2'>
         <span
           className={cn(
             'text-[10px] font-bold uppercase tracking-wide',
-            diff.color,
+            locked ? 'text-text-muted' : diff.color,
           )}
         >
           {diff.label}
@@ -101,7 +100,12 @@ function DrillModuleCard({
           <Check className='h-4 w-4 shrink-0 text-primary' strokeWidth={2.5} />
         ) : null}
       </div>
-      <h4 className='mb-1 text-center text-[13px] font-bold leading-snug text-text'>
+      <h4
+        className={cn(
+          'mb-1 text-center text-[13px] font-bold leading-snug',
+          locked ? 'text-text-muted' : 'text-text',
+        )}
+      >
         {name}
       </h4>
       <div className='flex flex-1 flex-col justify-center'>
@@ -133,7 +137,8 @@ function DrillModuleCard({
             {hintVisible ? (
               <GuestDrillHintCallout
                 label='Try this mode'
-                className='absolute bottom-[calc(100%+0.35rem)] left-1/2 z-[60] -translate-x-1/2'
+                subtle
+                className='absolute bottom-[calc(100%+0.35rem)] left-1/2 z-30 -translate-x-1/2'
               />
             ) : null}
             <button
@@ -141,7 +146,7 @@ function DrillModuleCard({
               onClick={onAdd}
               className={cn(
                 'relative flex items-center gap-1 rounded-organic-sm bg-surface-dark px-3 py-2 text-xs font-bold text-[#9a939f] transition-colors hover:bg-surface-mid hover:text-text dark:text-[#c4bec9]',
-                hintVisible && 'z-[60]',
+                hintVisible && 'z-30',
               )}
             >
               <Plus className='h-3.5 w-3.5 shrink-0' />
@@ -273,12 +278,32 @@ export function DrillVariantsGrid({
     const lockedModules = modules.filter(
       (mod) => !accessibleTopicIds.has(mod.topicId),
     );
-    const showBannerInGrid =
+    const showLockedPreviewBanner =
       showUpgradeBanner && lockedModules.length > 0;
-    const visibleModules = showBannerInGrid ? unlockedModules : modules;
-    /** Match two Most Useful card rows (min-h + gap). */
-    const bannerTwoRowMinHeight =
-      'min-h-[calc(13.7rem*2+0.875rem)]';
+
+    const renderModuleCard = (mod: (typeof modules)[number]) => {
+      const compositeId = `${mod.topicId}-${mod.variantId}`;
+      const isSelected = selectedTopicIds.includes(compositeId);
+      const locked = !accessibleTopicIds.has(mod.topicId);
+      return (
+        <DrillModuleCard
+          key={compositeId}
+          topicId={mod.topicId}
+          variantId={mod.variantId}
+          name={mod.name}
+          difficulty={mod.difficulty}
+          isSelected={isSelected}
+          locked={locked}
+          featured={mod.featured}
+          mostUseful
+          showTryHint={showGuestTryHint}
+          onAdd={() =>
+            onAddVariant(compositeId, mod.topicId, mod.variantId)
+          }
+          onRemove={() => onRemoveVariant(compositeId)}
+        />
+      );
+    };
 
     panelBody = (
       <div className='flex min-h-0 flex-1 flex-col overflow-y-auto p-4 pb-3'>
@@ -292,50 +317,31 @@ export function DrillVariantsGrid({
         </div>
 
         <div className='relative min-h-[12rem] flex-1'>
-          <div className='grid auto-rows-fr grid-cols-2 gap-3.5 overflow-visible pt-0.5 md:grid-cols-3 2xl:grid-cols-4'>
-            {visibleModules.map((mod) => {
-              const compositeId = `${mod.topicId}-${mod.variantId}`;
-              const isSelected = selectedTopicIds.includes(compositeId);
-              const locked = !accessibleTopicIds.has(mod.topicId);
-              return (
-                <DrillModuleCard
-                  key={compositeId}
-                  topicId={mod.topicId}
-                  variantId={mod.variantId}
-                  name={mod.name}
-                  difficulty={mod.difficulty}
-                  isSelected={isSelected}
-                  locked={locked}
-                  featured={mod.featured}
-                  mostUseful
-                  showTryHint={showGuestTryHint}
-                  onAdd={() =>
-                    onAddVariant(compositeId, mod.topicId, mod.variantId)
-                  }
-                  onRemove={() => onRemoveVariant(compositeId)}
-                />
-              );
-            })}
-
-            {showBannerInGrid ? (
-              <div
-                className={cn(
-                  'col-span-2 row-span-2 md:col-span-3 2xl:col-span-4',
-                  bannerTwoRowMinHeight,
-                )}
-              >
-                <DrillUpgradeBanner
-                  variant='panel'
-                  density='default'
-                  className='h-full min-h-0'
-                  headline='Unlock every drill'
-                  subtext='Upgrade to add all most useful drills to your session.'
-                />
-              </div>
-            ) : null}
+          <div className='grid grid-cols-2 gap-3.5 overflow-visible pt-0.5 md:grid-cols-3 2xl:grid-cols-4'>
+            {unlockedModules.map(renderModuleCard)}
           </div>
 
-          {showGuestTryHint ? <GuestDrillDimOverlay /> : null}
+          {lockedModules.length > 0 ? (
+            <div className='relative mt-3.5'>
+              <div className='grid grid-cols-2 gap-3.5 md:grid-cols-3 2xl:grid-cols-4'>
+                {lockedModules.map(renderModuleCard)}
+              </div>
+
+              {showLockedPreviewBanner ? (
+                <div className='pointer-events-none absolute inset-0 z-10 flex items-center justify-center p-3 sm:p-4'>
+                  <div className='pointer-events-auto w-full max-w-xl'>
+                    <DrillUpgradeBanner
+                      variant='panel'
+                      density='compact'
+                      className='border-0 bg-surface-elevated/55 shadow-sm'
+                      headline='Unlock every drill'
+                      subtext='Upgrade to add the rest of these modes to your session.'
+                    />
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
         </div>
       </div>
     );

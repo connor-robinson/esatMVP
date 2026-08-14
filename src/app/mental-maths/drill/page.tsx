@@ -21,7 +21,6 @@ import {
 import { DrillVariantsGrid } from "@/components/builder/DrillVariantsGrid";
 import {
   FEATURED_FREE_DRILL_KEY,
-  GuestDrillDimOverlay,
   hasSeenDrillTutorial,
   markDrillTutorialSeen,
 } from "@/components/builder/GuestDrillHint";
@@ -147,7 +146,6 @@ export default function BuilderPage() {
         {/* ~90% visual density: render slightly larger then scale down to fit the viewport. */}
         <div className="flex h-[111.111%] w-[111.111%] min-h-0 origin-top-left scale-90 flex-col bg-background">
           <div className="relative flex min-h-0 flex-1 items-stretch gap-2.5 overflow-hidden px-3 py-3 sm:gap-3.5 sm:px-4 lg:gap-5">
-            {showGuestReviewHint ? <GuestDrillDimOverlay /> : null}
             {/* Column 1: Subject Categories */}
             <SubjectCategories
               selectedCategory={selectedCategory}
@@ -201,7 +199,7 @@ export default function BuilderPage() {
           <div
             className={cn(
               "pointer-events-none flex shrink-0 justify-center overflow-visible px-3 pb-3 pt-1 sm:justify-end sm:px-4 sm:pb-3.5",
-              showGuestReviewHint ? "relative z-50" : "z-10",
+              "z-10",
             )}
           >
             <div className="pointer-events-auto w-full max-w-[min(100%,26rem)] sm:w-auto sm:max-w-none">

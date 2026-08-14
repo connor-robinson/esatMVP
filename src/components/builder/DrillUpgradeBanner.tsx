@@ -33,7 +33,7 @@ export function DrillUpgradeBanner({
         'relative overflow-hidden rounded-organic-xl bg-surface-elevated',
         isPanel
           ? isCompactPanel
-            ? 'min-h-[7.75rem] px-5 py-7 sm:min-h-[8.5rem] sm:px-7 sm:py-8'
+            ? 'min-h-[7.75rem] px-5 py-5 sm:min-h-[8rem] sm:px-7 sm:py-6'
             : 'flex flex-col justify-center px-6 py-6 sm:px-8 sm:py-7'
           : 'mt-3 min-h-[8.5rem] px-5 py-7 sm:min-h-[9.75rem] sm:px-7 sm:py-8',
         className,

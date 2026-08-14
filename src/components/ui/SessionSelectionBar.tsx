@@ -378,7 +378,8 @@ export function SessionSelectionBar({
                 {showReviewCallout ? (
                   <GuestDrillHintCallout
                     label={startHintLabel}
-                    className="absolute bottom-[calc(100%+0.5rem)] left-1/2 z-[70] -translate-x-1/2"
+                    subtle
+                    className="absolute bottom-[calc(100%+0.5rem)] left-1/2 z-20 -translate-x-1/2"
                   />
                 ) : null}
                 <button
@@ -390,7 +391,7 @@ export function SessionSelectionBar({
                     showClearAll ? "sm:w-auto" : "sm:min-w-[12rem]",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated dark:focus-visible:ring-offset-surface-elevated",
                     "disabled:cursor-not-allowed",
-                    showReviewCallout && "z-[60]",
+                    showReviewCallout && "z-20",
                     canStartSession
                       ? cn(
                           "bg-primary shadow-md shadow-primary/20 hover:bg-primary-hover active:scale-[0.97]",
