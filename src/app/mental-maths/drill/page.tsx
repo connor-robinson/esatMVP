@@ -21,6 +21,8 @@ import { DrillVariantsGrid } from "@/components/builder/DrillVariantsGrid";
 import {
   FEATURED_FREE_DRILL_KEY,
   GuestDrillDimOverlay,
+  hasSeenDrillTutorial,
+  markDrillTutorialSeen,
 } from "@/components/builder/GuestDrillHint";
 import { DrillsSelectedModal } from "@/components/builder/DrillsSelectedModal";
 import { cn } from "@/lib/utils";
@@ -76,6 +78,7 @@ export default function BuilderPage() {
   const [selectedCategory, setSelectedCategory] = useState<HighLevelCategory | null>("most_useful");
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [drillTutorialSeen, setDrillTutorialSeen] = useState(true);
 
   // Deep-link: /mental-maths/drill?topic=addition → open Addition drills
   useEffect(() => {
@@ -108,8 +111,20 @@ export default function BuilderPage() {
     [allTopics, selectedCategory],
   );
 
+  useEffect(() => {
+    setDrillTutorialSeen(hasSeenDrillTutorial());
+  }, []);
+
+  useEffect(() => {
+    if (builder.view !== "running" && builder.view !== "results") return;
+    markDrillTutorialSeen();
+    setDrillTutorialSeen(true);
+  }, [builder.view]);
+
   const showGuestOnboarding =
-    !isLoggedIn && selectedCategory === "most_useful";
+    !isLoggedIn &&
+    !drillTutorialSeen &&
+    selectedCategory === "most_useful";
   const hasFeaturedDrillSelected = builder.selectedTopicVariants.some(
     (tv) => `${tv.topicId}-${tv.variantId}` === FEATURED_FREE_DRILL_KEY,
   );
@@ -230,6 +245,8 @@ export default function BuilderPage() {
           onTimeLimitChange={(n) => builder.setTimeLimitMinutes(n)}
           onRemoveVariant={builder.removeTopicVariant}
           onStartSession={() => {
+            markDrillTutorialSeen();
+            setDrillTutorialSeen(true);
             setReviewModalOpen(false);
             builder.startSession();
           }}

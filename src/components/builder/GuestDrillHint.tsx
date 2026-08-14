@@ -74,3 +74,23 @@ export function GuestDrillHintCallout({
 }
 
 export const FEATURED_FREE_DRILL_KEY = 'addition-single-digit';
+
+export const DRILL_TUTORIAL_KEY = 'mentalMaths.drill.tutorialSeen.v1';
+
+export function hasSeenDrillTutorial(): boolean {
+  if (typeof window === 'undefined') return true;
+  try {
+    return localStorage.getItem(DRILL_TUTORIAL_KEY) === '1';
+  } catch {
+    return true;
+  }
+}
+
+export function markDrillTutorialSeen(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(DRILL_TUTORIAL_KEY, '1');
+  } catch {
+    /* ignore */
+  }
+}
