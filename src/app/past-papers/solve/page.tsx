@@ -516,6 +516,11 @@ export default function PapersSolvePage() {
 
   const currentSectionQuestion = currentSectionQuestions[sectionQuestionIndex];
 
+  const isLastQuestionInSection =
+    isSectionMode &&
+    currentSectionQuestions.length > 0 &&
+    sectionQuestionIndex >= currentSectionQuestions.length - 1;
+
   /** Prefer section-scoped question so the first visible item matches section mode grouping */
   const displayQuestion = currentSectionQuestion ?? currentQuestion;
   const useTextMode = displayQuestion
@@ -1115,30 +1120,31 @@ export default function PapersSolvePage() {
 
             {/* Second Row: Navigation Buttons */}
             <div className='flex items-center justify-between w-full'>
-              {/* Left Group: Submit Section */}
+              {/* Left Group: Submit Section (mid-section early submit) */}
               <div className='flex items-center gap-2'>
-                {/* Submit Section Button */}
-                <button
-                  type="button"
-                  onClick={handleSubmitSection}
-                  className={solveSessionNavBtn}
-                  title='Submit section'
-                >
-                  <svg
-                    className='w-5 h-5'
-                    fill='none'
-                    stroke='currentColor'
-                    viewBox='0 0 24 24'
+                {!isLastQuestionInSection ? (
+                  <button
+                    type="button"
+                    onClick={handleSubmitSection}
+                    className={solveSessionNavBtn}
+                    title='Submit section'
                   >
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      strokeWidth={2}
-                      d='M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1'
-                    />
-                  </svg>
-                  <span>Submit Section</span>
-                </button>
+                    <svg
+                      className='w-5 h-5'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1'
+                      />
+                    </svg>
+                    <span>Submit Section</span>
+                  </button>
+                ) : null}
               </div>
 
               {/* Right Group: Prev + Navigator + Next */}
@@ -1190,33 +1196,60 @@ export default function PapersSolvePage() {
                   <span>Navigator</span>
                 </button>
 
-                {/* Next Button */}
+                {/* Next / Submit Section Button */}
                 <button
                   type="button"
-                  onClick={() => handleNavigation(1)}
+                  onClick={
+                    isLastQuestionInSection
+                      ? handleSubmitSection
+                      : () => handleNavigation(1)
+                  }
                   disabled={
-                    allSectionsQuestions.length > 0
+                    !isLastQuestionInSection &&
+                    (allSectionsQuestions.length > 0
                       ? sectionQuestionIndex >=
                         currentSectionQuestions.length - 1
-                      : sectionQuestionIndex >= actualQuestionCount - 1
+                      : sectionQuestionIndex >= actualQuestionCount - 1)
                   }
                   className={solveSessionNavBtn}
-                  title='Next question'
+                  title={
+                    isLastQuestionInSection
+                      ? 'Submit section'
+                      : 'Next question'
+                  }
                 >
-                  <span>Next</span>
-                  <svg
-                    className='w-5 h-5'
-                    fill='none'
-                    stroke='currentColor'
-                    viewBox='0 0 24 24'
-                  >
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      strokeWidth={2}
-                      d='M9 5l7 7-7 7'
-                    />
-                  </svg>
+                  <span>
+                    {isLastQuestionInSection ? 'Submit Section' : 'Next'}
+                  </span>
+                  {isLastQuestionInSection ? (
+                    <svg
+                      className='w-5 h-5'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1'
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className='w-5 h-5'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M9 5l7 7-7 7'
+                      />
+                    </svg>
+                  )}
                 </button>
               </div>
             </div>
