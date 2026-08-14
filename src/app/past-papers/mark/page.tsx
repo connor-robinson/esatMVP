@@ -1417,35 +1417,15 @@ export default function PapersMarkPage() {
               )}
               {markSection === "stats" && (
                 <div className="h-full min-h-0 overflow-y-auto p-4 sm:p-6" style={{ scrollbarGutter: "stable" }}>
-                  {!treatAsFullAccess && (
-                    <div className="space-y-6">
-                      <div className={cn(bubbleClass, "relative overflow-hidden")}>
-                        <div className="mb-4 text-base font-semibold text-neutral-100">
-                          Pacing Profile
-                        </div>
-                        <div
-                          className="pointer-events-none select-none blur-[3px] opacity-40 saturate-50"
-                          aria-hidden
-                        >
-                          <TimeScatterChart
-                            questionNumbers={questionNumbers}
-                            perQuestionSec={perQuestionSec}
-                            correctFlags={derivedCorrectFlags}
-                            guessedFlags={guessedFlags}
-                          />
-                        </div>
-                        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-surface-elevated/40" />
-                      </div>
-                      <DrillUpgradeBanner
-                        variant="panel"
-                        headline="Unlock detailed session stats"
-                        subtext="Upgrade for pacing profiles, time management analysis, guessing behaviour, and accuracy trends."
-                        ctaLabel="View plans"
-                      />
-                    </div>
-                  )}
-                  {treatAsFullAccess && (
-                  <div className="space-y-6">
+                  <div className="relative">
+                  <div
+                    className={cn(
+                      "space-y-6",
+                      !treatAsFullAccess &&
+                        "pointer-events-none select-none blur-[1.5px] opacity-75 saturate-[0.85]",
+                    )}
+                    aria-hidden={!treatAsFullAccess}
+                  >
 
                     {/* Pacing Profile */}
                     <div className={`${bubbleClass}`}>
@@ -1829,7 +1809,22 @@ export default function PapersMarkPage() {
 
                   </div>
                   </div>
-                  )}
+
+                  {!treatAsFullAccess ? (
+                    <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-center px-3 pt-16 sm:pt-24">
+                      <div className="pointer-events-auto w-full max-w-xl">
+                        <DrillUpgradeBanner
+                          variant="panel"
+                          density="compact"
+                          className="bg-surface-elevated/80 shadow-md"
+                          headline="Unlock detailed session stats"
+                          subtext="Upgrade for pacing profiles, time management analysis, guessing behaviour, and accuracy trends."
+                          ctaLabel="View plans"
+                        />
+                      </div>
+                    </div>
+                  ) : null}
+                  </div>
                 </div>
               )}
               {markSection === "review" && (
