@@ -1,8 +1,9 @@
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
-import type { SubjectTileKey } from "@/lib/questionBank/subjectTileTheme";
 import type { ExamName, Paper, PaperSection } from "@/types/papers";
 
-const ESAT_SUBJECT_KEYS: SubjectTileKey[] = [
+type EsatSubjectKey = "Math 1" | "Math 2" | "Physics" | "Chemistry" | "Biology";
+
+const ESAT_SUBJECT_KEYS: EsatSubjectKey[] = [
   "Math 1",
   "Math 2",
   "Chemistry",
@@ -10,7 +11,7 @@ const ESAT_SUBJECT_KEYS: SubjectTileKey[] = [
   "Physics",
 ];
 
-function isEsatSubjectKey(value: string): value is SubjectTileKey {
+function isEsatSubjectKey(value: string): value is EsatSubjectKey {
   return (ESAT_SUBJECT_KEYS as readonly string[]).includes(value);
 }
 
@@ -18,10 +19,7 @@ function isEsatSubjectKey(value: string): value is SubjectTileKey {
  * Past-paper section names implied by each ESAT module choice.
  * Math 1 also includes advanced math sections when the paper offers them (e.g. NSAA ≤2019).
  */
-const ESAT_SUBJECT_TO_PAPER_SECTIONS: Record<
-  SubjectTileKey,
-  PaperSection[]
-> = {
+const ESAT_SUBJECT_TO_PAPER_SECTIONS: Record<EsatSubjectKey, PaperSection[]> = {
   "Math 1": ["Mathematics", "Advanced Mathematics and Advanced Physics"],
   "Math 2": ["Advanced Mathematics and Advanced Physics"],
   Physics: ["Physics"],
@@ -30,7 +28,7 @@ const ESAT_SUBJECT_TO_PAPER_SECTIONS: Record<
 };
 
 /** ENGAA uses combined section names instead of separate science parts. */
-function paperSectionsForEngaa(esatSubjects: SubjectTileKey[]): PaperSection[] {
+function paperSectionsForEngaa(esatSubjects: EsatSubjectKey[]): PaperSection[] {
   const sections = new Set<PaperSection>();
   const hasMath =
     esatSubjects.includes("Math 1") || esatSubjects.includes("Math 2");
