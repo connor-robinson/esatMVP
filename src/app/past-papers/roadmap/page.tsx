@@ -484,6 +484,12 @@ export default function PapersRoadmapPage() {
 
   const handleStartStage = useCallback(
     async (stage: RoadmapStage, selectedParts: RoadmapPart[]) => {
+      if (!hasFullAccess) {
+        const stageIndex = stages.findIndex((s) => s.id === stage.id);
+        if (stageIndex < 0 || stageIndex >= FREE_ROADMAP_ITEMS) {
+          return;
+        }
+      }
       if (await shouldConfirmReplacePaperSession()) {
         pendingRoadmapStartRef.current = { stage, selectedParts };
         setReplaceModalOpen(true);
@@ -491,7 +497,7 @@ export default function PapersRoadmapPage() {
       }
       await executeStartStage(stage, selectedParts);
     },
-    [executeStartStage],
+    [executeStartStage, hasFullAccess, stages],
   );
 
   const handleCancelReplaceSession = useCallback(() => {
@@ -567,18 +573,25 @@ export default function PapersRoadmapPage() {
 
   const timelineAnchorRef = useRef<HTMLDivElement>(null);
 
-  // Full-access users see the entire track (locked stages stay greyed/previewable).
-  // Free users still get a short preview of the start of the path.
-  const visibleStages = hasFullAccess
-    ? stages
-    : stages.slice(0, FREE_ROADMAP_ITEMS);
+  // Everyone sees the full track. Free users can browse every stage, but
+  // anything past the free preview stays greyed/locked (paywall still below).
+  const visibleStages = stages;
+  const freePreviewLimit = hasFullAccess ? stages.length : FREE_ROADMAP_ITEMS;
   const visibleUnlocked = new Set(
-    visibleStages.map((s) => s.id).filter((id) => unlockedStages.has(id)),
+    visibleStages
+      .map((s, index) => ({ id: s.id, index }))
+      .filter(
+        ({ id, index }) =>
+          unlockedStages.has(id) && index < freePreviewLimit,
+      )
+      .map(({ id }) => id),
   );
   const visibleCurrentIndex =
-    currentStageIndex !== null && currentStageIndex < visibleStages.length
+    currentStageIndex !== null && currentStageIndex < freePreviewLimit
       ? currentStageIndex
-      : 0;
+      : hasFullAccess
+        ? currentStageIndex ?? 0
+        : Math.min(currentStageIndex ?? 0, Math.max(freePreviewLimit - 1, 0));
 
   const timelineNodes = visibleStages.map((stage, index) => {
     const data = completionData.get(stage.id);
@@ -586,7 +599,7 @@ export default function PapersRoadmapPage() {
     const totalCount = data?.total || stage.parts.length;
     const isUnlocked = visibleUnlocked.has(stage.id);
     const isCompleted = completedCount === totalCount && totalCount > 0;
-    const isCurrent = visibleCurrentIndex === index;
+    const isCurrent = isUnlocked && visibleCurrentIndex === index;
 
     return {
       stage,
