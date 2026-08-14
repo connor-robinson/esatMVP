@@ -22,7 +22,12 @@ import { PaperLibraryGrid } from '@/components/papers/library/PaperLibraryGrid';
 import { PaperSessionSummary } from '@/components/papers/library/PaperSessionSummary';
 import { ReplaceActivePaperModal } from '@/components/papers/ReplaceActivePaperModal';
 import { shouldConfirmReplacePaperSession } from '@/lib/papers/activePaperSessionClient';
-import { isPastPaperLibraryLocked, freePreviewPastPapersLabel } from '@/lib/papers/freePreviewPapers';
+import {
+  isPastPaperLibraryLocked,
+  freePreviewPastPapersLabel,
+  applyFreePreviewPaperSectionDefaults,
+  filterFreePreviewSubjectParts,
+} from '@/lib/papers/freePreviewPapers';
 import {
   filterSectionsByEsatSubjects,
   filterSubjectPartsByEsatSubjects,
@@ -254,11 +259,14 @@ export default function PapersLibraryPage() {
     sectionsByMain: Map<string, Set<PaperSection>>,
   ) => {
     if (paperIsLocked(paper)) return;
-    const sectionsToAdd = filterSectionsByEsatSubjects(
+    const esatFiltered = filterSectionsByEsatSubjects(
       sectionsByMain,
       paper,
       subjectsForAdd,
     );
+    const sectionsToAdd = libraryLocked
+      ? applyFreePreviewPaperSectionDefaults(esatFiltered, paper)
+      : esatFiltered;
     const existingPaper = selectedPapers.find((sp) => sp.paper.id === paper.id);
     if (existingPaper) {
       handleUpdateSections(
@@ -280,11 +288,14 @@ export default function PapersLibraryPage() {
     subjectParts: PaperSection[],
   ) => {
     if (paperIsLocked(paper)) return;
-    const filteredParts = filterSubjectPartsByEsatSubjects(
+    const esatFiltered = filterSubjectPartsByEsatSubjects(
       subjectParts,
       paper,
       subjectsForAdd,
     );
+    const filteredParts = libraryLocked
+      ? filterFreePreviewSubjectParts(esatFiltered, paper, sectionName)
+      : esatFiltered;
     const existingPaper = selectedPapers.find((sp) => sp.paper.id === paper.id);
 
     if (existingPaper) {

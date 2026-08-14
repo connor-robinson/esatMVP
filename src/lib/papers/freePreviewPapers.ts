@@ -1,4 +1,4 @@
-import type { Paper } from "@/types/papers";
+import type { Paper, PaperSection } from "@/types/papers";
 
 /** Past papers unpaid users can try without a subscription. */
 export const FREE_PREVIEW_PAST_PAPERS = [
@@ -45,4 +45,51 @@ export function freePreviewPastPapersLabel(): string {
       return `${examName} ${head} and ${sorted[sorted.length - 1]}`;
     })
     .join("; ");
+}
+
+/**
+ * Free-preview NSAA 2023: auto-select Section 1 Mathematics + Section 2 Physics only.
+ * Falls back to the incoming map if those parts are missing.
+ */
+export function applyFreePreviewPaperSectionDefaults(
+  sectionsByMain: Map<string, Set<PaperSection>>,
+  paper: Pick<Paper, "examName" | "examYear">,
+): Map<string, Set<PaperSection>> {
+  if (paper.examName !== "NSAA" || paper.examYear !== 2023) {
+    return sectionsByMain;
+  }
+
+  const next = new Map<string, Set<PaperSection>>();
+  const section1 = sectionsByMain.get("Section 1");
+  if (section1?.has("Mathematics")) {
+    next.set("Section 1", new Set<PaperSection>(["Mathematics"]));
+  }
+  const section2 = sectionsByMain.get("Section 2");
+  if (section2?.has("Physics")) {
+    next.set("Section 2", new Set<PaperSection>(["Physics"]));
+  }
+
+  return next.size > 0 ? next : sectionsByMain;
+}
+
+/** Same NSAA 2023 preview rule for a single main-section add. */
+export function filterFreePreviewSubjectParts(
+  subjectParts: PaperSection[],
+  paper: Pick<Paper, "examName" | "examYear">,
+  mainSectionName: string,
+): PaperSection[] {
+  if (paper.examName !== "NSAA" || paper.examYear !== 2023) {
+    return subjectParts;
+  }
+
+  const allowed: PaperSection | null =
+    mainSectionName === "Section 1"
+      ? "Mathematics"
+      : mainSectionName === "Section 2"
+        ? "Physics"
+        : null;
+
+  if (!allowed) return subjectParts;
+  const kept = subjectParts.filter((part) => part === allowed);
+  return kept.length > 0 ? kept : subjectParts;
 }
