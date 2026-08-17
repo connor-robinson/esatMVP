@@ -66,7 +66,7 @@ export const SEO_LINKS = {
   goodScore: {
     href: SEO_ROUTES.goodScore,
     label: "What is a good ESAT score?",
-    blurb: "How the 1.0–9.0 module scale works and what to do with an estimate.",
+    blurb: "How the 1.0 to 9.0 scale works, where 7.0 sits, and what universities publish.",
   },
   commonMistakes: {
     href: SEO_ROUTES.commonMistakes,
@@ -143,6 +143,26 @@ export const SEO_LINKS = {
     label: "UCL ESAT requirements",
     blurb: "Electronic and Electrical Engineering modules and sitting options.",
   },
+  testDate: {
+    href: SEO_ROUTES.testDate,
+    label: "When is the ESAT 2027?",
+    blurb: "October and January sittings, booking windows, centres and a live countdown.",
+  },
+  esatBreaks: {
+    href: SEO_ROUTES.esatBreaks,
+    label: "Does the ESAT have breaks?",
+    blurb: "Toilet breaks, module timing and access arrangements.",
+  },
+  whiteboard: {
+    href: SEO_ROUTES.whiteboard,
+    label: "ESAT whiteboard rules",
+    blurb: "What you get for rough working, what you cannot bring, and what to practise with.",
+  },
+  questionBankGuide: {
+    href: SEO_ROUTES.questionBankGuide,
+    label: "Is the ESAT a question bank?",
+    blurb: "What is known about test versions, overlap and October vs January.",
+  },
 } as const satisfies Record<string, SeoLink>;
 
 export type SeoLinkKey = keyof typeof SEO_LINKS;
@@ -173,6 +193,10 @@ export const SEO_GUIDE_KEYS: SeoLinkKey[] = [
   "oxfordRequirements",
   "imperialRequirements",
   "uclRequirements",
+  "testDate",
+  "esatBreaks",
+  "whiteboard",
+  "questionBankGuide",
 ];
 
 export type FaqGuideSection = {
@@ -188,7 +212,7 @@ export const FAQ_GUIDE_SECTIONS: readonly FaqGuideSection[] = [
     id: "getting-started",
     title: "Getting started",
     description: "How to prepare, when the test is, and what the day looks like.",
-    keys: ["preparation", "testDates", "testDay", "commonMistakes"],
+    keys: ["preparation", "testDate", "testDates", "testDay", "esatBreaks", "whiteboard", "commonMistakes"],
   },
   {
     id: "modules",
@@ -206,7 +230,7 @@ export const FAQ_GUIDE_SECTIONS: readonly FaqGuideSection[] = [
     id: "rules-and-scores",
     title: "Rules, scores and practice",
     description: "Calculator rules, what a good score looks like, and no-calculator training.",
-    keys: ["calculatorRules", "goodScore", "noCalcPractice"],
+    keys: ["calculatorRules", "goodScore", "noCalcPractice", "questionBankGuide"],
   },
   {
     id: "universities",

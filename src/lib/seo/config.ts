@@ -67,7 +67,11 @@ export const SEO_ROUTES = {
   maths2: "/esat-maths-2",
   physics: "/esat-physics",
   calculatorRules: "/esat-calculator-rules",
-  goodScore: "/what-is-a-good-esat-score",
+  goodScore: "/good-esat-score",
+  testDate: "/esat-test-date",
+  esatBreaks: "/esat-breaks",
+  whiteboard: "/esat-whiteboard",
+  questionBankGuide: "/is-esat-a-question-bank",
   commonMistakes: "/esat-common-mistakes",
   noCalcPractice: "/esat-no-calculator-practice",
   universityRequirements: "/esat-university-requirements",
@@ -115,6 +119,26 @@ export const SOURCES = {
   deadlines: {
     label: "UAT-UK: Key dates and deadlines",
     url: "https://esat-tmua.ac.uk/deadlines/",
+  },
+  testDayOfficial: {
+    label: "UAT-UK: Test day",
+    url: "https://esat-tmua.ac.uk/test-day/",
+  },
+  accessArrangements: {
+    label: "UAT-UK: Access arrangements",
+    url: "https://esat-tmua.ac.uk/access-arrangements/",
+  },
+  testCentres: {
+    label: "UAT-UK: Test centres",
+    url: "https://esat-tmua.ac.uk/test-centres/",
+  },
+  roughWorkings: {
+    label: "UAT-UK: Can I use pen and paper for rough workings?",
+    url: "https://esat-tmua.ac.uk/faqs/can-i-use-pen-and-paper-for-my-rough-workings/",
+  },
+  cambridgeAppDates: {
+    label: "Cambridge: application dates and deadlines",
+    url: "https://www.undergraduate.study.cam.ac.uk/apply/application-dates-deadlines",
   },
   candidateHandbook: {
     label: "UAT-UK: Candidate Handbook 2027 Entry (PDF)",

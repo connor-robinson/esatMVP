@@ -80,7 +80,7 @@ export default function EsatTestDayPage() {
         primary: { href: APP_ROUTES.calibration, label: "Start free calibration" },
         secondary: { href: SEO_ROUTES.calculatorRules, label: "Read the calculator rules" },
       }}
-      related={seoLinks("calculatorRules", "preparation", "calibration", "testDates")}
+      related={seoLinks("calculatorRules", "preparation", "calibration", "testDates", "esatBreaks", "whiteboard")}
       sources={[SOURCES.candidateHandbook, SOURCES.esatTest]}
       showDisclaimer
       schema={articleSchema({

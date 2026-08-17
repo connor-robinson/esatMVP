@@ -32,6 +32,10 @@ const ENTRIES: readonly { path: string; priority: number }[] = [
   { path: SEO_ROUTES.oxfordRequirements, priority: 0.8 },
   { path: SEO_ROUTES.imperialRequirements, priority: 0.8 },
   { path: SEO_ROUTES.uclRequirements, priority: 0.8 },
+  { path: SEO_ROUTES.testDate, priority: 0.9 },
+  { path: SEO_ROUTES.esatBreaks, priority: 0.7 },
+  { path: SEO_ROUTES.whiteboard, priority: 0.7 },
+  { path: SEO_ROUTES.questionBankGuide, priority: 0.7 },
 
   // Free tools that do not require an account.
   { path: APP_ROUTES.calibration, priority: 0.8 },

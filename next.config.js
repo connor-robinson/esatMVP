@@ -62,6 +62,11 @@ const nextConfig = {
         destination: "/esat-test-day",
         permanent: true,
       },
+      {
+        source: "/what-is-a-good-esat-score",
+        destination: "/good-esat-score",
+        permanent: true,
+      },
       // The combined old-paper guide was split into one page per exam family so
       // the two topics stop competing for the same queries.
       {

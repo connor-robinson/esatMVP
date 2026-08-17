@@ -89,7 +89,7 @@ export default function EsatTestDatesPage() {
         primary: { href: APP_ROUTES.calibration, label: "Start free calibration" },
         secondary: { href: SEO_ROUTES.preparation, label: "See the preparation order" },
       }}
-      related={seoLinks("preparation", "testDay", "calibration", "pastPapers")}
+      related={seoLinks("preparation", "testDay", "calibration", "pastPapers", "testDate")}
       sources={[SOURCES.deadlines, SOURCES.esatTest]}
       showDisclaimer
       schema={articleSchema({
