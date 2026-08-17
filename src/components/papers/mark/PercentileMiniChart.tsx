@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cssVar } from "@/config/colors";
 import {
-  getRowDensity,
   interpolateDensity,
+  interpolatePercentile,
   type EsatRow,
 } from "@/lib/esat/percentiles";
 
@@ -14,9 +14,51 @@ type PercentileMiniChartProps = {
   percentile: number | null | undefined;
   xLabel?: string;
   className?: string;
-  /** Draw the distribution line / fill in when the chart mounts. */
+  /** Draw the distribution line / fill when the chart mounts. */
   animate?: boolean;
+  /** Enable hover crosshair and tooltips along the curve. */
+  interactive?: boolean;
 };
+
+type HoverPoint = {
+  score: number;
+  density: number;
+  cumulativePct: number;
+  topPct: number;
+  x: number;
+  y: number;
+};
+
+function buildSmoothPath(
+  points: { x: number; y: number }[],
+  closeBottomY: number,
+): { line: string; area: string } {
+  if (points.length === 0) return { line: "", area: "" };
+  if (points.length === 1) {
+    const p = points[0];
+    return {
+      line: `M ${p.x} ${p.y}`,
+      area: `M ${p.x} ${closeBottomY} L ${p.x} ${p.y} Z`,
+    };
+  }
+
+  const lineParts: string[] = [`M ${points[0].x} ${points[0].y}`];
+  for (let i = 0; i < points.length - 1; i++) {
+    const p0 = points[Math.max(0, i - 1)];
+    const p1 = points[i];
+    const p2 = points[i + 1];
+    const p3 = points[Math.min(points.length - 1, i + 2)];
+    const cp1x = p1.x + (p2.x - p0.x) / 6;
+    const cp1y = p1.y + (p2.y - p0.y) / 6;
+    const cp2x = p2.x - (p3.x - p1.x) / 6;
+    const cp2y = p2.y - (p3.y - p1.y) / 6;
+    lineParts.push(`C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`);
+  }
+
+  const line = lineParts.join(" ");
+  const area = `${line} L ${points[points.length - 1].x} ${closeBottomY} L ${points[0].x} ${closeBottomY} Z`;
+  return { line, area };
+}
 
 export function PercentileMiniChart({
   rows,
@@ -25,9 +67,11 @@ export function PercentileMiniChart({
   xLabel = "Score",
   className,
   animate = false,
+  interactive = true,
 }: PercentileMiniChartProps) {
-  const [dotHovered, setDotHovered] = useState(false);
+  const svgRef = useRef<SVGSVGElement>(null);
   const [drawn, setDrawn] = useState(!animate);
+  const [hover, setHover] = useState<HoverPoint | null>(null);
 
   useEffect(() => {
     if (!animate) {
@@ -43,32 +87,40 @@ export function PercentileMiniChart({
     if (!rows || rows.length < 2) return null;
 
     const sorted = [...rows].sort((a, b) => a.score - b.score);
-    const densityPoints = sorted.map((r, i) => ({
-      score: r.score,
-      density: getRowDensity(r, i > 0 ? sorted[i - 1].cumulativePct : undefined),
+    const minX = sorted[0].score;
+    const maxX = sorted[sorted.length - 1].score;
+
+    const sampleScores: number[] = [];
+    for (let s = minX; s <= maxX + 0.001; s += 0.1) {
+      sampleScores.push(Math.round(s * 10) / 10);
+    }
+
+    const densityPoints = sampleScores.map((s) => ({
+      score: s,
+      density: interpolateDensity(sorted, s),
     }));
 
     const w = 720;
-    const h = 220;
-    const pad = 32;
-    const minX = densityPoints[0].score;
-    const maxX = densityPoints[densityPoints.length - 1].score;
-    const maxY = Math.max(...densityPoints.map((p) => p.density), 1) * 1.12;
+    const h = 260;
+    const padL = 40;
+    const padR = 16;
+    const padT = 24;
+    const padB = 36;
+    const maxY = Math.max(...densityPoints.map((p) => p.density), 1) * 1.15;
 
     const toX = (x: number) =>
-      pad + ((x - minX) / Math.max(1e-9, maxX - minX)) * (w - 2 * pad);
+      padL + ((x - minX) / Math.max(1e-9, maxX - minX)) * (w - padL - padR);
     const toY = (y: number) =>
-      h - pad - (y / Math.max(1e-9, maxY)) * (h - 2 * pad);
+      h - padB - (y / Math.max(1e-9, maxY)) * (h - padT - padB);
+    const fromX = (px: number) =>
+      minX + ((px - padL) / Math.max(1e-9, w - padL - padR)) * (maxX - minX);
 
-    const linePoints = densityPoints
-      .map((p) => `${toX(p.score)},${toY(p.density)}`)
-      .join(" ");
+    const curvePoints = densityPoints.map((p) => ({
+      x: toX(p.score),
+      y: toY(p.density),
+    }));
 
-    const areaPoints = [
-      `${toX(densityPoints[0].score)},${h - pad}`,
-      ...densityPoints.map((p) => `${toX(p.score)},${toY(p.density)}`),
-      `${toX(densityPoints[densityPoints.length - 1].score)},${h - pad}`,
-    ].join(" ");
+    const { line: smoothLine, area: smoothArea } = buildSmoothPath(curvePoints, h - padB);
 
     const hasUser = Number.isFinite(score) && Number.isFinite(percentile);
     const userScore = score as number;
@@ -76,38 +128,26 @@ export function PercentileMiniChart({
     const userX = toX(hasUser ? userScore : minX);
     const userY = toY(hasUser ? userDensity : 0);
 
-    const shadedPoints: string[] = [`${pad},${h - pad}`];
-    densityPoints.forEach((p) => {
-      if (!hasUser || p.score <= userScore) {
-        shadedPoints.push(`${toX(p.score)},${toY(p.density)}`);
-      }
-    });
-    if (hasUser) {
-      shadedPoints.push(`${userX},${userY}`, `${userX},${h - pad}`, `${pad},${h - pad}`);
-    }
-
     const xTicks: number[] = [];
     for (let s = Math.ceil(minX); s <= Math.floor(maxX); s += 1) xTicks.push(s);
-
-    const yTicks = [0, maxY * 0.25, maxY * 0.5, maxY * 0.75, maxY].map((v) =>
-      Math.round(v * 10) / 10,
-    );
-    const uniqueYTicks = [...new Set(yTicks)];
 
     return {
       w,
       h,
-      pad,
+      padL,
+      padR,
+      padT,
+      padB,
       minX,
       maxX,
       maxY,
       toX,
       toY,
-      linePoints,
-      areaPoints,
-      shadedPoints,
+      fromX,
+      smoothLine,
+      smoothArea,
+      sorted,
       xTicks,
-      yTicks: uniqueYTicks,
       hasUser,
       userScore,
       userDensity,
@@ -117,31 +157,58 @@ export function PercentileMiniChart({
     };
   }, [rows, score, percentile]);
 
+  const resolveHover = useCallback(
+    (clientX: number) => {
+      if (!chart || !svgRef.current || !interactive) return;
+      const rect = svgRef.current.getBoundingClientRect();
+      const svgX = ((clientX - rect.left) / rect.width) * chart.w;
+      if (svgX < chart.padL || svgX > chart.w - chart.padR) {
+        setHover(null);
+        return;
+      }
+      const scoreAt = chart.fromX(svgX);
+      const clamped = Math.max(chart.minX, Math.min(chart.maxX, scoreAt));
+      const density = interpolateDensity(chart.sorted, clamped);
+      const cumulativePct = interpolatePercentile(chart.sorted, clamped);
+      setHover({
+        score: clamped,
+        density,
+        cumulativePct,
+        topPct: Math.max(0, 100 - cumulativePct),
+        x: chart.toX(clamped),
+        y: chart.toY(density),
+      });
+    },
+    [chart, interactive],
+  );
+
   if (!chart) return null;
 
   const {
     w,
     h,
-    pad,
+    padL,
+    padB,
     toX,
     toY,
-    linePoints,
-    areaPoints,
-    shadedPoints,
+    smoothLine,
+    smoothArea,
     xTicks,
-    yTicks,
     hasUser,
     userScore,
-    userDensity,
     userX,
     userY,
     topPct,
   } = chart;
 
+  const active = hover;
+  const showUserMarker = hasUser && (!active || Math.abs(active.score - userScore) > 0.15);
+
   return (
     <div className={className}>
       <div className="relative">
         <svg
+          ref={svgRef}
           width="100%"
           height={h}
           viewBox={`0 0 ${w} ${h}`}
@@ -149,67 +216,110 @@ export function PercentileMiniChart({
           className="block"
           role="img"
           aria-label={`${xLabel} score distribution`}
+          onMouseMove={(e) => resolveHover(e.clientX)}
+          onMouseLeave={() => setHover(null)}
         >
-          <line x1={pad} y1={h - pad} x2={w - pad} y2={h - pad} stroke={cssVar.borderSubtle} />
-          <line x1={pad} y1={pad} x2={pad} y2={h - pad} stroke={cssVar.borderSubtle} />
+          <defs>
+            <linearGradient id="pct-area-gradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={cssVar.maths} stopOpacity="0.28" />
+              <stop offset="100%" stopColor={cssVar.maths} stopOpacity="0.02" />
+            </linearGradient>
+            <linearGradient id="pct-line-gradient" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="color-mix(in srgb, var(--color-maths) 70%, var(--color-text-subtle))" />
+              <stop offset="100%" stopColor={cssVar.maths} />
+            </linearGradient>
+          </defs>
 
-          <polygon
-            points={areaPoints}
-            fill="color-mix(in srgb, var(--color-maths) 10%, transparent)"
+          {[0.25, 0.5, 0.75].map((frac) => {
+            const y = padB + (h - padB - 24) * (1 - frac);
+            return (
+              <line
+                key={frac}
+                x1={padL}
+                y1={y}
+                x2={w - 16}
+                y2={y}
+                stroke={cssVar.borderSubtle}
+                strokeOpacity={0.35}
+                strokeDasharray="3 6"
+              />
+            );
+          })}
+
+          <line x1={padL} y1={h - padB} x2={w - 16} y2={h - padB} stroke={cssVar.borderSubtle} />
+          <line x1={padL} y1={24} x2={padL} y2={h - padB} stroke={cssVar.borderSubtle} />
+
+          <path
+            d={smoothArea}
+            fill="url(#pct-area-gradient)"
             stroke="none"
             style={{
               opacity: drawn ? 1 : 0,
               transition: animate ? "opacity 0.55s ease-out 0.35s" : undefined,
             }}
           />
-          {hasUser && (
-            <polygon
-              points={shadedPoints.join(" ")}
-              fill="color-mix(in srgb, var(--color-maths) 22%, transparent)"
-              stroke="none"
-              style={{
-                opacity: drawn ? 1 : 0,
-                transition: animate ? "opacity 0.55s ease-out 0.5s" : undefined,
-              }}
-            />
-          )}
 
-          {xTicks.map((t, i) => (
-            <g key={`xt-${i}`}>
-              <line x1={toX(t)} y1={h - pad} x2={toX(t)} y2={h - pad + 4} stroke={cssVar.borderSubtle} />
-              <text x={toX(t)} y={h - pad + 12} fill={cssVar.textMuted} fontSize="9" textAnchor="middle">
+          {xTicks.map((t) => (
+            <g key={`xt-${t}`}>
+              <line
+                x1={toX(t)}
+                y1={h - padB}
+                x2={toX(t)}
+                y2={h - padB + 4}
+                stroke={cssVar.borderSubtle}
+                strokeOpacity={0.6}
+              />
+              <text
+                x={toX(t)}
+                y={h - padB + 14}
+                fill={cssVar.textMuted}
+                fontSize="10"
+                textAnchor="middle"
+              >
                 {t}
               </text>
             </g>
           ))}
-          {yTicks.map((t, i) => (
-            <g key={`yt-${i}`}>
-              <line x1={pad - 4} y1={toY(t)} x2={pad} y2={toY(t)} stroke={cssVar.borderSubtle} />
-              <text x={pad - 6} y={toY(t) + 3} fill={cssVar.textMuted} fontSize="9" textAnchor="end">
-                {t}%
-              </text>
-            </g>
-          ))}
 
-          <polyline
-            points={linePoints}
+          <path
+            d={smoothLine}
             fill="none"
-            stroke={cssVar.textSubtle}
-            strokeWidth="2"
-            strokeLinejoin="round"
+            stroke="url(#pct-line-gradient)"
+            strokeWidth="2.5"
             strokeLinecap="round"
+            strokeLinejoin="round"
             pathLength={1}
             style={{
               strokeDasharray: 1,
               strokeDashoffset: drawn ? 0 : 1,
-              transition: animate
-                ? "stroke-dashoffset 0.85s ease-out"
-                : undefined,
+              transition: animate ? "stroke-dashoffset 0.85s ease-out" : undefined,
             }}
           />
 
-          {hasUser && (
+          {interactive && active && (
+            <g pointerEvents="none">
+              <line
+                x1={active.x}
+                y1={24}
+                x2={active.x}
+                y2={h - padB}
+                stroke={cssVar.textMuted}
+                strokeOpacity={0.35}
+              />
+              <circle
+                cx={active.x}
+                cy={active.y}
+                r="5"
+                fill={cssVar.maths}
+                stroke={cssVar.background}
+                strokeWidth="2"
+              />
+            </g>
+          )}
+
+          {hasUser && showUserMarker && (
             <g
+              pointerEvents="none"
               style={{
                 opacity: drawn ? 1 : 0,
                 transition: animate ? "opacity 0.35s ease-out 0.7s" : undefined,
@@ -217,34 +327,20 @@ export function PercentileMiniChart({
             >
               <line
                 x1={userX}
-                y1={pad}
+                y1={24}
                 x2={userX}
-                y2={h - pad}
-                stroke="color-mix(in srgb, var(--color-maths) 35%, transparent)"
+                y2={h - padB}
+                stroke={cssVar.maths}
+                strokeOpacity={0.45}
                 strokeDasharray="4 4"
               />
               <circle
                 cx={userX}
                 cy={userY}
-                r="14"
-                fill="transparent"
-                className="cursor-pointer"
-                onMouseEnter={() => setDotHovered(true)}
-                onMouseLeave={() => setDotHovered(false)}
-                onFocus={() => setDotHovered(true)}
-                onBlur={() => setDotHovered(false)}
-                tabIndex={0}
-                role="button"
-                aria-label={`Your score ${userScore.toFixed(1)}, top ${topPct?.toFixed(1)}%`}
-              />
-              <circle
-                cx={userX}
-                cy={userY}
-                r={dotHovered ? 5.5 : 4}
+                r="5.5"
                 fill={cssVar.maths}
                 stroke={cssVar.background}
-                strokeWidth="2"
-                className="pointer-events-none transition-all duration-150"
+                strokeWidth="2.5"
               />
             </g>
           )}
@@ -252,24 +348,28 @@ export function PercentileMiniChart({
           <text x={w / 2} y={h - 4} fill={cssVar.textMuted} fontSize="10" textAnchor="middle">
             {xLabel}
           </text>
-          <text x={10} y={pad - 8} fill={cssVar.textMuted} fontSize="10">
-            % candidates
-          </text>
+          {interactive && (
+            <text x={padL} y={16} fill={cssVar.textMuted} fontSize="10">
+              Hover to explore scores
+            </text>
+          )}
         </svg>
 
-        {hasUser && dotHovered && (
+        {active && (
           <div
-            className="pointer-events-none absolute z-10 -translate-x-1/2 rounded-organic-md border border-border bg-surface-elevated px-2.5 py-1.5 text-[11px] text-text shadow-bar-floating"
+            className="pointer-events-none absolute z-10 -translate-x-1/2 rounded-organic-md bg-surface-elevated px-3 py-2 text-[11px] text-text shadow-modal-card"
             style={{
-              left: `${(userX / w) * 100}%`,
-              top: Math.max(0, (userY / h) * 100 - 18),
+              left: `${(active.x / w) * 100}%`,
+              top: Math.max(0, (active.y / h) * 100 - 22),
             }}
           >
-            <div className="font-medium text-neutral-100">
-              Score {userScore.toFixed(1)}
+            <div className="font-semibold tabular-nums">
+              {hasUser && Math.abs(active.score - userScore) < 0.15
+                ? `Your score ${active.score.toFixed(1)}`
+                : `Score ${active.score.toFixed(1)}`}
             </div>
             <div className="text-text-muted">
-              Top {topPct?.toFixed(1)}%
+              Top {active.topPct.toFixed(1)}%
             </div>
           </div>
         )}

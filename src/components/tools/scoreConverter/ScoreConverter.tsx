@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { AlertTriangle, ArrowRight, Check, ChevronDown, Info, Loader2, X } from "lucide-react";
+import { AlertTriangle, ArrowRight, Check, ChevronDown, Info, Layers, Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { cssVar } from "@/config/colors";
 import { Container } from "@/components/layout/Container";
@@ -429,8 +429,8 @@ function InputHelperHint({
   if (!open) return null;
 
   return (
-    <div className="pointer-events-none absolute left-4 top-0 z-30 sm:left-[18%]">
-      <div className="pointer-events-auto relative max-w-[15rem] rounded-organic-lg bg-secondary px-3.5 py-2.5 text-xs font-medium leading-snug text-background shadow-modal-card">
+    <div className="pointer-events-none absolute left-[28%] top-0 z-30 sm:left-[22%]">
+      <div className="pointer-events-auto relative max-w-[14rem] rounded-organic-lg bg-secondary px-3 py-2 text-[11px] font-medium leading-snug text-background shadow-modal-card">
         Choose the year, or click here to change papers.
         <button
           type="button"
@@ -478,6 +478,7 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
   const [chartLoading, setChartLoading] = useState(false);
   const [showQuestionBankPromo, setShowQuestionBankPromo] = useState(false);
   const [showInputHint, setShowInputHint] = useState(true);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   const isScaledMode = year?.mode === "scaled";
 
@@ -709,6 +710,9 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
         isMulti ? OVERALL_CHART_KEY : (data.sections[0]?.key ?? null),
       );
       setShowQuestionBankPromo(true);
+      requestAnimationFrame(() => {
+        resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
     } catch (e: unknown) {
       setResult(null);
       setShowQuestionBankPromo(false);
@@ -767,169 +771,141 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
   }, [result, exam, year, isScaledMode, activeSection, sections]);
 
   return (
-    <Container size="lg" className="py-10 sm:py-14">
-      <div className="mb-5 rounded-organic-xl bg-surface-elevated p-5 shadow-modal-card sm:p-6">
-        <div className="mb-5 flex items-start justify-between gap-4 sm:mb-6">
-          <h1 className="text-2xl font-bold tracking-tight text-text sm:text-4xl">
+    <Container size="lg" className="py-8 sm:py-10">
+      <div className="mb-4 rounded-organic-xl bg-surface-elevated p-4 shadow-modal-card sm:p-5">
+        <div className="mb-3 flex items-start justify-between gap-3">
+          <h1 className="text-xl font-bold tracking-tight text-text sm:text-3xl">
             ESAT Score Converter
           </h1>
           <ConverterInfoButton exam={exam} />
         </div>
 
-        <div className="relative overflow-visible rounded-organic-xl bg-surface-mid/40 p-4 pt-8 sm:p-5 sm:pt-10">
+        <div className="relative overflow-visible rounded-organic-lg bg-surface-mid/30 p-3 pt-7 sm:p-4 sm:pt-8">
           <InputHelperHint open={showInputHint} onDismiss={dismissInputHint} />
 
-          <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-            <div className="grid gap-4 overflow-visible sm:grid-cols-2 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)_minmax(0,1fr)]">
-              <div
-                className="relative overflow-visible rounded-organic-lg bg-surface-mid px-4 py-4"
-                onPointerDown={dismissInputHint}
-              >
-                <div className="flex items-end gap-2.5">
-                  <ModernSelect
-                    label="Exam"
-                    value={exam}
-                    minWidth="6.5rem"
-                    options={CONVERTER_EXAMS.map((e) => ({ value: e, label: e }))}
-                    onChange={(next) => {
-                      dismissInputHint();
-                      setExam(next as ConverterExam);
-                      setYear(null);
-                      invalidateResults();
-                    }}
-                  />
-                  <div className="flex h-10 items-center">
-                    <ArrowRight
-                      className="h-4 w-4 shrink-0 text-text-muted"
-                      strokeWidth={2}
-                      aria-hidden
-                    />
-                  </div>
-                  <div className="flex h-10 items-center">
-                    <span
-                      className={cn(
-                        "text-base font-bold tracking-tight",
-                        exam === "TMUA" ? "text-tmua-accent" : "text-secondary",
-                      )}
-                    >
-                      {examTargetLabel(exam)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className="relative overflow-visible rounded-organic-lg bg-surface-mid px-4 py-4"
-                onPointerDown={dismissInputHint}
-              >
-                <ModernSelect
-                  label="Year"
-                  value={year ? String(year.year) : ""}
-                  minWidth="5.5rem"
-                  disabled={yearsLoading || years.length === 0}
-                  placeholder={yearsLoading ? "…" : "Choose year"}
-                  options={years.map((y) => ({
-                    value: String(y.year),
-                    label: String(y.year),
-                  }))}
-                  onChange={(next) => {
-                    dismissInputHint();
-                    const opt = years.find((y) => y.year === Number(next)) ?? null;
-                    setYear(opt);
-                    setScaledInput("");
-                    setCheckedKeys([]);
-                    setRawByKey({});
-                    setTmuaPickMode(null);
-                    invalidateResults();
-                  }}
-                />
-              </div>
-
-              <div className="relative overflow-visible rounded-organic-lg bg-surface-mid px-4 py-4">
-                {isNsaaEngaa && !isScaledMode ? (
-                  <ModernSelect
-                    label="Section"
-                    value={year ? selectedGroup : ""}
-                    minWidth="8.5rem"
-                    disabled={!year || sectionsLoading || sectionGroups.length === 0}
-                    placeholder={!year ? "Choose year first" : sectionsLoading ? "…" : "Choose section"}
-                    options={sectionGroups.map(([group]) => ({
-                      value: group,
-                      label: group,
-                    }))}
-                    onChange={handleGroupChange}
-                  />
-                ) : year && isScaledMode ? (
-                  <label className="block shrink-0">
-                    <span className={fieldLabel}>Official scaled score</span>
-                    <div className="flex h-10 items-center gap-2">
-                      <input
-                        type="text"
-                        inputMode="decimal"
-                        value={scaledInput}
-                        onChange={(e) => {
-                          invalidateResults();
-                          setScaledInput(e.target.value.replace(/[^0-9.]/g, ""));
-                        }}
-                        placeholder="6.8"
-                        className={cn(markInputClass, "w-14 bg-background")}
-                      />
-                      <span className="text-sm font-medium text-text-muted">/9</span>
-                    </div>
-                  </label>
-                ) : (
-                  <div className="flex h-full flex-col justify-end">
-                    <span className={fieldLabel}>Section</span>
-                    <p className="h-10 rounded-organic-lg bg-surface-subtle px-3.5 py-2.5 text-base text-text-muted">
-                      Choose year first
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-2 lg:items-end">
-              <p className="text-xs text-text-muted">
-                Enter your details, then calculate your estimate.
-              </p>
-              <button
-                type="button"
-                onClick={() => void runConvert()}
-                disabled={!canCalculate || resultLoading}
+          <div className="flex flex-wrap items-end gap-3 sm:gap-4">
+            <div className="flex min-w-[10rem] flex-1 items-end gap-2" onPointerDown={dismissInputHint}>
+              <ModernSelect
+                label="Exam"
+                value={exam}
+                minWidth="5.5rem"
+                options={CONVERTER_EXAMS.map((e) => ({ value: e, label: e }))}
+                onChange={(next) => {
+                  dismissInputHint();
+                  setExam(next as ConverterExam);
+                  setYear(null);
+                  invalidateResults();
+                }}
+              />
+              <ArrowRight className="mb-2.5 h-4 w-4 shrink-0 text-text-muted" strokeWidth={2} aria-hidden />
+              <span
                 className={cn(
-                  "inline-flex h-11 items-center justify-center gap-2 rounded-organic-lg bg-secondary px-6 text-sm font-semibold text-background transition-all duration-fast",
-                  "hover:brightness-110 active:scale-[0.98] disabled:opacity-40 disabled:hover:brightness-100",
+                  "mb-2 text-sm font-bold tracking-tight sm:text-base",
+                  exam === "TMUA" ? "text-tmua-accent" : "text-secondary",
                 )}
               >
-                {resultLoading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    <span className="sr-only">Calculating</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Calculate score</span>
-                    <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
-                  </>
-                )}
-              </button>
+                {examTargetLabel(exam)}
+              </span>
             </div>
+
+            <div className="min-w-[6rem] flex-1" onPointerDown={dismissInputHint}>
+              <ModernSelect
+                label="Year"
+                value={year ? String(year.year) : ""}
+                minWidth="5rem"
+                disabled={yearsLoading || years.length === 0}
+                placeholder={yearsLoading ? "…" : "Choose year"}
+                options={years.map((y) => ({
+                  value: String(y.year),
+                  label: String(y.year),
+                }))}
+                onChange={(next) => {
+                  dismissInputHint();
+                  const opt = years.find((y) => y.year === Number(next)) ?? null;
+                  setYear(opt);
+                  setScaledInput("");
+                  setCheckedKeys([]);
+                  setRawByKey({});
+                  setTmuaPickMode(null);
+                  invalidateResults();
+                }}
+              />
+            </div>
+
+            <div className="min-w-[7rem] flex-1">
+              {isNsaaEngaa && !isScaledMode ? (
+                <ModernSelect
+                  label="Section"
+                  value={year ? selectedGroup : ""}
+                  minWidth="7rem"
+                  disabled={!year || sectionsLoading || sectionGroups.length === 0}
+                  placeholder={!year ? "Choose year first" : sectionsLoading ? "…" : "Choose section"}
+                  options={sectionGroups.map(([group]) => ({
+                    value: group,
+                    label: group,
+                  }))}
+                  onChange={handleGroupChange}
+                />
+              ) : year && isScaledMode ? (
+                <label className="block">
+                  <span className={fieldLabel}>Official scaled score</span>
+                  <div className="flex h-10 items-center gap-2">
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={scaledInput}
+                      onChange={(e) => {
+                        invalidateResults();
+                        setScaledInput(e.target.value.replace(/[^0-9.]/g, ""));
+                      }}
+                      placeholder="6.8"
+                      className={cn(markInputClass, "w-14 bg-background")}
+                    />
+                    <span className="text-sm font-medium text-text-muted">/9</span>
+                  </div>
+                </label>
+              ) : (
+                <div>
+                  <span className={fieldLabel}>Section</span>
+                  <p className="flex h-10 items-center rounded-organic-lg bg-surface-subtle px-3 text-sm text-text-muted">
+                    Choose year first
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => void runConvert()}
+              disabled={!canCalculate || resultLoading}
+              className={cn(
+                "inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-organic-lg bg-secondary px-5 text-sm font-semibold text-background transition-all duration-fast",
+                "hover:brightness-110 active:scale-[0.98] disabled:opacity-40 disabled:hover:brightness-100",
+              )}
+            >
+              {resultLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span className="sr-only">Calculating</span>
+                </>
+              ) : (
+                <>
+                  <span>Calculate</span>
+                  <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
+                </>
+              )}
+            </button>
           </div>
 
           {year && !isScaledMode && (
-            <div className="mt-5 border-t border-border-subtle/70 pt-5">
+            <div className="mt-4 border-t border-border-subtle/60 pt-4">
               {sectionsLoading && (
                 <span className="text-sm text-text-muted">Loading subjects…</span>
               )}
 
               {isTmuaRaw && !sectionsLoading && (
-                <div className="space-y-4">
-                  <div className="space-y-1">
-                    <p className="text-sm font-semibold text-text">Enter your raw marks</p>
-                    <p className="text-xs text-text-muted">
-                      Choose whether you have separate paper marks or one combined score.
-                    </p>
-                  </div>
+                <div className="space-y-3">
+                  <p className="text-xs font-medium text-text-muted">How are you scoring?</p>
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <button
                       type="button"
@@ -1035,13 +1011,10 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                 <span className="text-sm text-text-muted">No subjects for this section.</span>
               )}
               {!isTmuaRaw && !sectionsLoading && partsInGroup.length > 0 && (
-                <div className="space-y-3">
-                  <div className="space-y-1">
-                    <p className="text-sm font-semibold text-text">Enter your raw marks</p>
-                    <p className="text-xs text-text-muted">
-                      Choose up to {MAX_SECTIONS} subjects, then type the marks you got.
-                    </p>
-                  </div>
+                <div className="space-y-2">
+                  <p className="text-xs font-medium text-text-muted">
+                    Select subjects and enter raw marks (up to {MAX_SECTIONS})
+                  </p>
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                     {partsInGroup.map((s) => {
                       const checked = checkedKeys.includes(s.key);
@@ -1111,7 +1084,10 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
         className="mb-5"
       />
 
-      <div className="mb-5 min-h-[280px] rounded-organic-xl bg-surface-elevated p-6 shadow-modal-card sm:min-h-[320px] sm:p-8">
+      <div
+        ref={resultsRef}
+        className="mb-5 min-h-[240px] scroll-mt-24 rounded-organic-xl bg-surface-elevated p-5 shadow-modal-card sm:min-h-[280px] sm:p-6"
+      >
         {!hasCalculated && !resultLoading && !resultError && (
           <ResultsPreviewPlaceholder exam={exam} year={year?.year} />
         )}
@@ -1179,20 +1155,21 @@ function ResultsPanel({
   return (
     <div className="space-y-5">
       {multi && (
-        <div className="space-y-2">
-          <p className="text-xs font-medium text-text-muted">
-            Click a subject to switch view
-          </p>
-          <div className="flex flex-wrap gap-2">
+        <div className="space-y-2.5">
+          <div className="flex items-center gap-2 text-xs text-text-muted">
+            <Layers className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            <span>Switch subject view — tap a tab below to compare scores</span>
+          </div>
+          <div className="flex flex-wrap gap-1.5 rounded-organic-lg bg-surface-mid/50 p-1.5">
           {showOverall && (
             <button
               type="button"
               onClick={() => onSelectChart(OVERALL_CHART_KEY)}
               className={cn(
-                "cursor-pointer rounded-organic-lg px-3.5 py-2 text-sm font-semibold transition-all duration-fast",
+                "cursor-pointer rounded-organic-md px-3.5 py-2 text-sm font-semibold transition-all duration-fast",
                 showingOverall
-                  ? "bg-surface-mid text-text shadow-sm ring-2 ring-secondary/25"
-                  : "bg-surface-subtle/70 text-text-muted hover:bg-surface-subtle hover:text-text hover:ring-1 hover:ring-border-subtle",
+                  ? "bg-surface-elevated text-text shadow-sm"
+                  : "text-text-muted hover:bg-surface-subtle/80 hover:text-text",
               )}
             >
               <span className={cn(showingOverall ? "text-text" : "text-text-muted")}>
@@ -1218,13 +1195,13 @@ function ResultsPanel({
                 type="button"
                 onClick={() => onSelectChart(s.key)}
                 className={cn(
-                  "cursor-pointer rounded-organic-lg px-3.5 py-2 text-sm font-semibold transition-all duration-fast",
+                  "cursor-pointer rounded-organic-md px-3.5 py-2 text-sm font-semibold transition-all duration-fast",
                   active
-                    ? cn("bg-surface-mid text-text shadow-sm ring-2", COLOR_RING_ACTIVE[s.color])
-                    : "bg-surface-subtle/70 text-text-muted hover:bg-surface-subtle hover:text-text hover:ring-1 hover:ring-border-subtle",
+                    ? cn("bg-surface-elevated text-text shadow-sm", COLOR_CARD_ACTIVE[s.color])
+                    : "text-text-muted hover:bg-surface-subtle/80 hover:text-text",
                 )}
               >
-                <span className={c}>
+                <span className={active ? c : cn(c, "opacity-80")}>
                   {s.moduleLabel ??
                     s.legacyLabel.split("—")[1]?.trim() ??
                     s.legacyLabel.split("—")[0]?.trim()}
