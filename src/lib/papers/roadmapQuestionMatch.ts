@@ -6,6 +6,14 @@ export function questionMatchesRoadmapPart(
   q: Question,
   part: RoadmapPart,
 ): boolean {
+  if (
+    part.paperName &&
+    q.paperName &&
+    part.paperName.trim().toLowerCase() !== q.paperName.trim().toLowerCase()
+  ) {
+    return false;
+  }
+
   if (part.filterByQuestionNumbersOnly) {
     if (!part.questionFilter?.length) return false;
     return part.questionFilter.includes(q.questionNumber);

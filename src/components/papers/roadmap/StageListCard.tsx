@@ -113,6 +113,23 @@ export function StageListCard({
       return;
     }
 
+    if (stage.examName === "ENGAA") {
+      const keys = new Set<string>();
+      for (const group of displayGroups) {
+        const startsSelected = group.internalParts.some(
+          (part) => part.defaultSelected !== false,
+        );
+        if (
+          startsSelected &&
+          !isDisplayGroupCompleted(group, completionData, getPartKey)
+        ) {
+          keys.add(group.key);
+        }
+      }
+      setSelectedGroups(keys);
+      return;
+    }
+
     const incompleteGroups = displayGroups.filter(
       (group) => !isDisplayGroupCompleted(group, completionData, getPartKey),
     );
@@ -546,14 +563,13 @@ export function StageListCard({
                           align="left"
                         >
                           <p>
-                            ENGAA Section 1 Part A (2016 to 2019) repeats the NSAA
-                            question bank, so those parts are omitted here.
+                            Some ENGAA parts overlap with NSAA, so those start
+                            unchecked. Tick them if you still want to sit the
+                            full paper.
                           </p>
                           <p>
-                            2016 to 2019: only the extra Section 1 questions remain,
-                            plus all of Section 2 physics. 2020 to 2023: Section 1 is
-                            split into maths and physics; Part B is fully new. Section 2
-                            from 2020 overlaps NSAA and is skipped.
+                            2016 to 2019: Section 1 Part A overlaps NSAA.
+                            2020 to 2023: Section 2 overlaps NSAA.
                           </p>
                         </RoadmapInfoPopover>
                       </div>

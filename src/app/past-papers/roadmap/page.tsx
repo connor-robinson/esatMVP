@@ -122,7 +122,7 @@ export default function PapersRoadmapPage() {
   const router = useRouter();
   const session = useSupabaseSession();
   const { hasFullAccess } = useSubscription();
-  const { startSession, loadQuestions, setQuestions } = usePaperSessionStore();
+  const { startSession, setQuestions } = usePaperSessionStore();
   const [stages, setStages] = useState<RoadmapStage[]>(INITIAL_STAGES);
   const [unlockedStages, setUnlockedStages] = useState<Set<string>>(
     () => new Set(INITIAL_UNLOCK.unlocked),
@@ -502,17 +502,19 @@ export default function PapersRoadmapPage() {
           return;
         }
 
+        matchingQuestions.sort((a, b) => {
+          if (a.paperName !== b.paperName) {
+            return a.paperName.localeCompare(b.paperName);
+          }
+          return a.questionNumber - b.questionNumber;
+        });
+
         const selectedPartIds = selectedParts.map((part) =>
           generatePartIdFromRoadmapPart(stage.examName, stage.year, part),
         );
 
         // Get question number range
-        const questionNumbers = matchingQuestions
-          .map((q: Question) => q.questionNumber)
-          .sort((a: number, b: number) => a - b);
-        const questionStart = questionNumbers[0];
-        const questionEnd = questionNumbers[questionNumbers.length - 1];
-        const totalQuestions = questionNumbers.length;
+        const totalQuestions = matchingQuestions.length;
 
         // Calculate time (1.48 min per question, or 75 min per section for TMUA)
         let timeLimitMinutes: number;
@@ -532,28 +534,22 @@ export default function PapersRoadmapPage() {
           sessionName: `${stage.examName} ${stage.year} - ${new Date().toLocaleString()}`,
           timeLimitMinutes,
           questionRange: {
-            start: questionStart,
-            end: questionEnd,
+            start: 1,
+            end: totalQuestions,
           },
           selectedSections: Array.from(allSections),
           selectedPartIds,
         });
 
-        // If we have questions from multiple papers, set them directly
-        // Otherwise, use the standard loadQuestions
-        if (allPapers.size > 1) {
-          // Set questions directly since we've already loaded and filtered from all papers
-          setQuestions(matchingQuestions);
-        } else {
-          // Single paper - use standard loading
-          await loadQuestions(primaryPaper.id);
-        }
+        // Keep the already-filtered set. Reloading by paperId would drop
+        // multi-paper ENGAA/NSAA sessions and question-number filters.
+        setQuestions(matchingQuestions);
 
         router.push('/past-papers/solve');
       } catch (error) {
       }
     },
-    [router, startSession, loadQuestions, setQuestions],
+    [router, startSession, setQuestions],
   );
 
   const handleStartStage = useCallback(

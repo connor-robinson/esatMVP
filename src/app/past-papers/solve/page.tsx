@@ -237,16 +237,14 @@ export default function PapersSolvePage() {
     // Don't load if paused (will be handled by resume page)
     if (isPaused) return;
 
-    // Load questions if:
-    // 1. We have sessionId and paperId
-    // 2. Either no questions loaded yet, OR questions don't match current paperId
-    // 3. Not currently loading
-    // 4. We haven't already loaded questions for this paperId (prevent reload loops)
+    // Load questions if we have a session but none in memory yet.
+    // Do not reload when questions already exist: roadmap sessions may span
+    // multiple papers, and a paperId mismatch would wipe the filtered set.
     const shouldLoad =
       sessionId &&
       paperId &&
       !questionsLoading &&
-      (questions.length === 0 || questions[0]?.paperId !== paperId) &&
+      questions.length === 0 &&
       loadedPaperIdRef.current !== paperId;
 
     if (shouldLoad) {

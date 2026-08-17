@@ -2,7 +2,7 @@ import type { ExamType } from "@/types/papers";
 import type { RoadmapPart } from "./roadmapConfig";
 
 /** ENGAA Section 1 extras after doing the matching NSAA year (2016–2019). */
-const ENGAA_S1_EXTRAS: Record<
+export const ENGAA_S1_EXTRAS: Record<
   number,
   { maths: readonly number[]; physics: readonly number[] }
 > = {
@@ -42,11 +42,31 @@ export function engaaSection1PhysicsQuestions(year: number): number[] {
   return evenUpTo(40);
 }
 
+/**
+ * Parts that overlap the matching NSAA year start unchecked.
+ * 2016 to 2019: Section 1 Part A. 2020 to 2023: Section 2.
+ */
+export function engaaPartDefaultSelected(
+  year: number,
+  paperName: string,
+  partLetter: string,
+): boolean {
+  const letter = partLetter.trim().toLowerCase();
+  if (year >= 2016 && year <= 2019) {
+    return !(paperName === "Section 1" && letter === "part a");
+  }
+  if (year >= 2020 && year <= 2023) {
+    return paperName !== "Section 2";
+  }
+  return true;
+}
+
 function part(
   partKey: string,
   paperName: string,
   partLetter: string,
   partName: string,
+  year: number,
   options?: {
     displayGroupKey?: string;
     internalTrack?: "maths" | "physics";
@@ -64,55 +84,30 @@ function part(
     examType: "Official" as ExamType,
     questionFilter: options?.questionFilter,
     filterByQuestionNumbersOnly: options?.filterByQuestionNumbersOnly,
+    defaultSelected: engaaPartDefaultSelected(year, paperName, partLetter),
   };
 }
 
 /** Build ENGAA roadmap parts for one year following NSAA-overlap rules. */
 export function buildEngaaPartsForYear(year: number): RoadmapPart[] {
-  if (year >= 2016 && year <= 2019) {
-    const extras = ENGAA_S1_EXTRAS[year];
-    if (!extras) return [];
+  if (year < 2016 || year > 2023) return [];
 
-    const s1PartBGroup = `s1-part-b-${year}`;
+  const s1PartAGroup = `s1-part-a-${year}`;
 
-    return [
-      part("s1-extra-maths", "Section 1", "Part B", S1_PART_A, {
-        displayGroupKey: s1PartBGroup,
-        internalTrack: "maths",
-        questionFilter: [...extras.maths],
-        filterByQuestionNumbersOnly: true,
-      }),
-      part("s1-extra-physics", "Section 1", "Part B", S1_PART_A, {
-        displayGroupKey: s1PartBGroup,
-        internalTrack: "physics",
-        questionFilter: [...extras.physics],
-        filterByQuestionNumbersOnly: true,
-      }),
-      part("s2-physics", "Section 2", "Part A", "Physics"),
-    ];
-  }
-
-  if (year >= 2020 && year <= 2023) {
-    const s1PartAGroup = `s1-part-a-${year}`;
-
-    return [
-      part("s1-maths", "Section 1", "Part A", S1_PART_A, {
-        displayGroupKey: s1PartAGroup,
-        internalTrack: "maths",
-        questionFilter: engaaSection1MathsQuestions(year),
-        filterByQuestionNumbersOnly: true,
-      }),
-      part("s1-physics", "Section 1", "Part A", S1_PART_A, {
-        displayGroupKey: s1PartAGroup,
-        internalTrack: "physics",
-        questionFilter: engaaSection1PhysicsQuestions(year),
-        filterByQuestionNumbersOnly: true,
-      }),
-      part("s1-advanced", "Section 1", "Part B", S1_PART_B),
-    ];
-  }
-
-  return [];
+  return [
+    part("s1-maths", "Section 1", "Part A", S1_PART_A, year, {
+      displayGroupKey: s1PartAGroup,
+      internalTrack: "maths",
+      questionFilter: engaaSection1MathsQuestions(year),
+    }),
+    part("s1-physics", "Section 1", "Part A", S1_PART_A, year, {
+      displayGroupKey: s1PartAGroup,
+      internalTrack: "physics",
+      questionFilter: engaaSection1PhysicsQuestions(year),
+    }),
+    part("s1-advanced", "Section 1", "Part B", S1_PART_B, year),
+    part("s2-physics", "Section 2", "Part A", "Physics", year),
+  ];
 }
 
 export function buildEngaaRoadmapStages(): Array<{

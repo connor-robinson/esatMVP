@@ -23,6 +23,8 @@ export interface RoadmapPart {
   questionRange?: { start: number; end: number }; // Alternative: range of questions
   /** When true, match questions by number list only (skip part letter/name). */
   filterByQuestionNumbersOnly?: boolean;
+  /** When false, the part is shown but starts unchecked (e.g. ENGAA/NSAA overlap). */
+  defaultSelected?: boolean;
 }
 
 export interface RoadmapStage {
@@ -56,8 +58,8 @@ function getSectionForPart(part: RoadmapPart, examName: ExamName): PaperSection 
  * Structure:
  * - NSAA 2016-2019: Section 1 (Parts A, B, E), Section 2 (empty)
  * - NSAA 2020-2023: Section 1 (Parts A, B), Section 2 (Part B Physics)
- * - ENGAA 2016-2019: Section 1 extras (filtered Q numbers), Section 2 Physics
- * - ENGAA 2020-2023: Section 1 Maths/Physics split + Part B Advanced (no Section 2)
+ * - ENGAA 2016-2019: Section 1 Part A (unchecked, NSAA overlap), Part B, Section 2 Physics
+ * - ENGAA 2020-2023: Section 1 Part A/B, Section 2 Physics (unchecked, NSAA overlap)
  * - TMUA: Generated dynamically (Paper 1 and Paper 2)
  */
 export const ROADMAP_STAGES: RoadmapStage[] = [
