@@ -64,7 +64,7 @@ export default function ForgotPasswordPage() {
         footer="Didn't get it? Check spam, then try again from this page."
       >
         <Link
-          href="/login"
+          href="/login?method=email"
           className="block text-center text-sm font-medium text-text underline-offset-2 hover:underline"
         >
           Back to sign in
@@ -116,7 +116,7 @@ export default function ForgotPasswordPage() {
 
       <p className="text-center text-sm text-text-muted">
         <Link
-          href="/login"
+          href="/login?method=email"
           className="font-medium text-text underline-offset-2 hover:underline"
         >
           Back to sign in

@@ -7,6 +7,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { ChevronDown } from "lucide-react";
 import {
   useSupabaseClient,
   useSupabaseSession,
@@ -24,22 +25,15 @@ import { mapAuthError } from "@/lib/auth/errors";
 
 type AuthMode = GoogleAuthMode;
 
-const COPY: Record<
-  AuthMode,
-  { title: string; subtitle: string; switchPrompt: string; switchLabel: string }
-> = {
+const COPY: Record<AuthMode, { title: string; subtitle: string }> = {
   signin: {
     title: "Welcome back",
     subtitle: "Sign in to save progress and sync across devices.",
-    switchPrompt: "New here?",
-    switchLabel: "Create an account",
   },
   signup: {
     title: "Sign up for free",
     subtitle:
       "Create an account to save sessions, unlock results, and pick up where you left off.",
-    switchPrompt: "I already have an account.",
-    switchLabel: "Sign in",
   },
 };
 
@@ -54,6 +48,7 @@ export default function LoginPage() {
   const [pendingEmail, setPendingEmail] = useState<string | null>(null);
   const [resendBusy, setResendBusy] = useState(false);
   const [resendMessage, setResendMessage] = useState<string | null>(null);
+  const [emailOpen, setEmailOpen] = useState(false);
 
   const mode: AuthMode = useMemo(() => {
     const fromUrl = searchParams.get("mode");
@@ -67,6 +62,9 @@ export default function LoginPage() {
     const urlError = searchParams.get("error");
     if (urlError) {
       setError(decodeURIComponent(urlError));
+    }
+    if (searchParams.get("method") === "email") {
+      setEmailOpen(true);
     }
   }, [searchParams]);
 
@@ -142,14 +140,24 @@ export default function LoginPage() {
     }
   }, [session, redirectTo, router, isChecking, pendingEmail]);
 
-  const buildAuthUrl = (nextMode: AuthMode) => {
+  const buildAuthUrl = (nextMode: AuthMode, withEmail = emailOpen) => {
     const params = new URLSearchParams();
     params.set("mode", nextMode);
     if (redirectTo !== "/") {
       params.set("redirectTo", redirectTo);
     }
+    if (withEmail) {
+      params.set("method", "email");
+    }
     const qs = params.toString();
     return qs ? `/login?${qs}` : "/login";
+  };
+
+  const toggleEmail = () => {
+    const next = !emailOpen;
+    setEmailOpen(next);
+    setError(null);
+    router.replace(buildAuthUrl(mode, next), { scroll: false });
   };
 
   const handleGoogleAuth = async () => {
@@ -204,8 +212,6 @@ export default function LoginPage() {
   if ((session?.user && !pendingEmail) || isChecking) {
     return null;
   }
-
-  const alternateMode: AuthMode = mode === "signin" ? "signup" : "signin";
 
   if (pendingEmail) {
     return (
@@ -273,7 +279,7 @@ export default function LoginPage() {
       }
       footer="By continuing, you create or access an ESAT CAMP account."
     >
-      {error ? (
+      {error && !emailOpen ? (
         <div
           role="alert"
           className="rounded-organic-md bg-error/10 px-4 py-3 text-sm text-error"
@@ -282,49 +288,64 @@ export default function LoginPage() {
         </div>
       ) : null}
 
-      <EmailPasswordForm
-        mode={mode}
-        redirectTo={redirectTo}
-        disabled={googleLoading}
-        onError={setError}
-        onCheckEmail={setPendingEmail}
-      />
-
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-border-subtle" />
-        </div>
-        <div className="relative flex justify-center text-xs">
-          <span className="bg-surface px-3 text-text-subtle">or</span>
-        </div>
-      </div>
-
       <GoogleAuthButton
         mode={mode}
         loading={googleLoading}
         onClick={handleGoogleAuth}
       />
 
-      <p className="text-center text-sm text-text-muted">
-        {mode === "signup" ? (
-          <Link
-            href={buildAuthUrl("signin")}
-            className="font-medium text-text-muted underline-offset-2 transition-colors hover:text-text hover:underline"
-          >
-            I already have an account
-          </Link>
-        ) : (
-          <>
-            {copy.switchPrompt}{" "}
-            <Link
-              href={buildAuthUrl(alternateMode)}
-              className="font-medium text-text underline-offset-2 hover:underline"
+      <div className="space-y-3">
+        <button
+          type="button"
+          onClick={toggleEmail}
+          aria-expanded={emailOpen}
+          aria-controls="email-auth-panel"
+          className="flex w-full items-center justify-center gap-1.5 py-1 text-sm text-text-muted transition-colors hover:text-text"
+        >
+          <span>
+            {mode === "signup" ? "Or sign up with email" : "Or sign in with email"}
+          </span>
+          <ChevronDown
+            aria-hidden
+            className={cn(
+              "h-4 w-4 transition-transform duration-200",
+              emailOpen && "rotate-180",
+            )}
+          />
+        </button>
+
+        <div
+          id="email-auth-panel"
+          className={cn(
+            "grid transition-[grid-template-rows] duration-200 ease-out",
+            emailOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+          )}
+        >
+          <div className="overflow-hidden">
+            <div
+              className="space-y-4 pt-1"
+              inert={!emailOpen ? true : undefined}
+              aria-hidden={!emailOpen}
             >
-              {copy.switchLabel}
-            </Link>
-          </>
-        )}
-      </p>
+              {error && emailOpen ? (
+                <div
+                  role="alert"
+                  className="rounded-organic-md bg-error/10 px-4 py-3 text-sm text-error"
+                >
+                  {error}
+                </div>
+              ) : null}
+              <EmailPasswordForm
+                mode={mode}
+                redirectTo={redirectTo}
+                disabled={googleLoading || !emailOpen}
+                onError={setError}
+                onCheckEmail={setPendingEmail}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </AuthPageShell>
   );
 }
