@@ -419,6 +419,43 @@ function TmuaMarkField({
   );
 }
 
+function InputHelperHint({
+  open,
+  onDismiss,
+}: {
+  open: boolean;
+  onDismiss: () => void;
+}) {
+  if (!open) return null;
+
+  return (
+    <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex justify-center px-4 pt-3 sm:justify-end sm:px-6">
+      <div className="pointer-events-auto max-w-sm rounded-organic-lg bg-surface-subtle/95 p-3 shadow-modal-card backdrop-blur">
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5 rounded-full bg-secondary/12 p-1.5 text-secondary">
+            <Info className="h-3.5 w-3.5" aria-hidden />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-text">How to use this</p>
+            <p className="mt-1 text-xs leading-relaxed text-text-muted">
+              Choose the year first, then pick a section, then enter your raw marks.
+              This tip disappears as soon as you start.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onDismiss}
+            className="rounded-organic-sm p-1 text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
+            aria-label="Dismiss help"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam }) {
   const [exam, setExam] = useState<ConverterExam>(initialExam ?? "NSAA");
 
@@ -447,6 +484,7 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
   const [chartRows, setChartRows] = useState<EsatRow[]>([]);
   const [chartLoading, setChartLoading] = useState(false);
   const [showQuestionBankPromo, setShowQuestionBankPromo] = useState(false);
+  const [showInputHint, setShowInputHint] = useState(true);
 
   const isScaledMode = year?.mode === "scaled";
 
@@ -635,6 +673,10 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
     setRawByKey((prev) => ({ ...prev, [key]: value }));
   };
 
+  const dismissInputHint = useCallback(() => {
+    setShowInputHint(false);
+  }, []);
+
   const runConvert = async () => {
     if (!year || !canCalculate) return;
     setResultLoading(true);
@@ -733,15 +775,374 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
 
   return (
     <Container size="lg" className="py-10 sm:py-14">
-      {/* Results — top */}
-      <div className="mb-5 min-h-[280px] rounded-organic-xl bg-surface-elevated p-6 shadow-modal-card sm:min-h-[320px] sm:p-8">
-        <div className="mb-6 flex items-start justify-between gap-4 sm:mb-8">
+      <div className="mb-5 rounded-organic-xl bg-surface-elevated p-5 shadow-modal-card sm:p-6">
+        <div className="mb-5 flex items-start justify-between gap-4 sm:mb-6">
           <h1 className="text-2xl font-bold tracking-tight text-text sm:text-4xl">
             ESAT Score Converter
           </h1>
           <ConverterInfoButton exam={exam} />
         </div>
 
+        <div className="relative overflow-hidden rounded-organic-xl bg-surface-mid/40 p-4 sm:p-5">
+          <InputHelperHint open={showInputHint} onDismiss={dismissInputHint} />
+
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)_minmax(0,1fr)]">
+              <div
+                className="rounded-organic-lg bg-surface-mid px-4 py-4"
+                onPointerDown={dismissInputHint}
+              >
+                <div className="flex items-end gap-2.5">
+                  <ModernSelect
+                    label="Exam"
+                    value={exam}
+                    minWidth="6.5rem"
+                    options={CONVERTER_EXAMS.map((e) => ({ value: e, label: e }))}
+                    onChange={(next) => {
+                      dismissInputHint();
+                      setExam(next as ConverterExam);
+                      setYear(null);
+                      invalidateResults();
+                    }}
+                  />
+                  <div className="flex h-10 items-center">
+                    <ArrowRight
+                      className="h-4 w-4 shrink-0 text-text-muted"
+                      strokeWidth={2}
+                      aria-hidden
+                    />
+                  </div>
+                  <div className="flex h-10 items-center">
+                    <span
+                      className={cn(
+                        "text-base font-bold tracking-tight",
+                        exam === "TMUA" ? "text-tmua-accent" : "text-secondary",
+                      )}
+                    >
+                      {examTargetLabel(exam)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="rounded-organic-lg bg-surface-mid px-4 py-4"
+                onPointerDown={dismissInputHint}
+              >
+                <ModernSelect
+                  label="Year"
+                  value={year ? String(year.year) : ""}
+                  minWidth="5.5rem"
+                  disabled={yearsLoading || years.length === 0}
+                  placeholder={yearsLoading ? "…" : "Choose year"}
+                  options={years.map((y) => ({
+                    value: String(y.year),
+                    label: String(y.year),
+                  }))}
+                  onChange={(next) => {
+                    dismissInputHint();
+                    const opt = years.find((y) => y.year === Number(next)) ?? null;
+                    setYear(opt);
+                    setScaledInput("");
+                    setCheckedKeys([]);
+                    setRawByKey({});
+                    setTmuaPickMode(null);
+                    invalidateResults();
+                  }}
+                />
+              </div>
+
+              <div
+                className="rounded-organic-lg bg-surface-mid px-4 py-4"
+                onPointerDown={dismissInputHint}
+              >
+                {isNsaaEngaa && !isScaledMode ? (
+                  <ModernSelect
+                    label="Section"
+                    value={year ? selectedGroup : ""}
+                    minWidth="8.5rem"
+                    disabled={!year || sectionsLoading || sectionGroups.length === 0}
+                    placeholder={!year ? "Choose year first" : sectionsLoading ? "…" : "Choose section"}
+                    options={sectionGroups.map(([group]) => ({
+                      value: group,
+                      label: group,
+                    }))}
+                    onChange={(next) => {
+                      dismissInputHint();
+                      handleGroupChange(next);
+                    }}
+                  />
+                ) : year && isScaledMode ? (
+                  <label className="block shrink-0">
+                    <span className={fieldLabel}>Official scaled score</span>
+                    <div className="flex h-10 items-center gap-2">
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        value={scaledInput}
+                        onChange={(e) => {
+                          dismissInputHint();
+                          invalidateResults();
+                          setScaledInput(e.target.value.replace(/[^0-9.]/g, ""));
+                        }}
+                        onFocus={dismissInputHint}
+                        placeholder="6.8"
+                        className={cn(markInputClass, "w-14 bg-background")}
+                      />
+                      <span className="text-sm font-medium text-text-muted">/9</span>
+                    </div>
+                  </label>
+                ) : (
+                  <div className="flex h-full flex-col justify-end">
+                    <span className={fieldLabel}>Section</span>
+                    <p className="h-10 rounded-organic-lg bg-surface-subtle px-3.5 py-2.5 text-base text-text-muted">
+                      Choose year first
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2 lg:items-end">
+              <p className="text-xs text-text-muted">
+                Enter your details, then calculate your estimate.
+              </p>
+              <button
+                type="button"
+                onClick={() => void runConvert()}
+                disabled={!canCalculate || resultLoading}
+                className={cn(
+                  "inline-flex h-11 items-center justify-center gap-2 rounded-organic-lg bg-secondary px-6 text-sm font-semibold text-background transition-all duration-fast",
+                  "hover:brightness-110 active:scale-[0.98] disabled:opacity-40 disabled:hover:brightness-100",
+                )}
+              >
+                {resultLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span className="sr-only">Calculating</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Calculate score</span>
+                    <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {year && !isScaledMode && (
+            <div className="mt-5 border-t border-border-subtle/70 pt-5">
+              {sectionsLoading && (
+                <span className="text-sm text-text-muted">Loading subjects…</span>
+              )}
+
+              {isTmuaRaw && !sectionsLoading && (
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <p className="text-sm font-semibold text-text">Enter your raw marks</p>
+                    <p className="text-xs text-text-muted">
+                      Choose whether you have separate paper marks or one combined score.
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        dismissInputHint();
+                        selectTmuaMode("split");
+                      }}
+                      onFocus={dismissInputHint}
+                      disabled={!tmuaSections.paper1 || !tmuaSections.paper2}
+                      className={cn(
+                        "flex items-start gap-3 rounded-organic-lg bg-surface-mid px-4 py-3.5 text-left transition-all duration-fast",
+                        "hover:bg-surface-subtle disabled:cursor-not-allowed disabled:opacity-40",
+                        tmuaPickMode === "split" && "bg-surface-subtle ring-1 ring-secondary/20",
+                        controlBase,
+                      )}
+                    >
+                      <input
+                        type="radio"
+                        name="tmua-mode"
+                        checked={tmuaPickMode === "split"}
+                        onChange={() => {
+                          dismissInputHint();
+                          selectTmuaMode("split");
+                        }}
+                        className={cn("mt-0.5 h-4 w-4 shrink-0 accent-secondary", controlBase)}
+                      />
+                      <span>
+                        <span className="block text-sm font-semibold text-text">
+                          Thinking + Reasoning
+                        </span>
+                        <span className="mt-0.5 block text-xs text-text-muted">
+                          Separate marks for Paper 1 and Paper 2
+                        </span>
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        dismissInputHint();
+                        selectTmuaMode("overall");
+                      }}
+                      onFocus={dismissInputHint}
+                      disabled={!tmuaSections.overall}
+                      className={cn(
+                        "flex items-start gap-3 rounded-organic-lg bg-surface-mid px-4 py-3.5 text-left transition-all duration-fast",
+                        "hover:bg-surface-subtle disabled:cursor-not-allowed disabled:opacity-40",
+                        tmuaPickMode === "overall" && "bg-surface-subtle ring-1 ring-secondary/20",
+                        controlBase,
+                      )}
+                    >
+                      <input
+                        type="radio"
+                        name="tmua-mode"
+                        checked={tmuaPickMode === "overall"}
+                        onChange={() => {
+                          dismissInputHint();
+                          selectTmuaMode("overall");
+                        }}
+                        className={cn("mt-0.5 h-4 w-4 shrink-0 accent-secondary", controlBase)}
+                      />
+                      <span>
+                        <span className="block text-sm font-semibold text-text">Both papers</span>
+                        <span className="mt-0.5 block text-xs text-text-muted">
+                          One combined overall score (0-40 raw)
+                        </span>
+                      </span>
+                    </button>
+                  </div>
+
+                  {tmuaPickMode === "split" && tmuaSections.paper1 && tmuaSections.paper2 && (
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      <div onPointerDown={dismissInputHint}>
+                        <TmuaMarkField
+                          section={tmuaSections.paper1}
+                          raw={rawByKey[tmuaSections.paper1.key] ?? 0}
+                          onRawChange={(v) => setRaw(tmuaSections.paper1!.key, v)}
+                        />
+                      </div>
+                      <div onPointerDown={dismissInputHint}>
+                        <TmuaMarkField
+                          section={tmuaSections.paper2}
+                          raw={rawByKey[tmuaSections.paper2.key] ?? 0}
+                          onRawChange={(v) => setRaw(tmuaSections.paper2!.key, v)}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {tmuaPickMode === "overall" && tmuaSections.overall && (
+                    <div onPointerDown={dismissInputHint}>
+                      <TmuaMarkField
+                        section={tmuaSections.overall}
+                        raw={rawByKey[tmuaSections.overall.key] ?? 0}
+                        onRawChange={(v) => setRaw(tmuaSections.overall!.key, v)}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {!isTmuaRaw && !sectionsLoading && partsInGroup.length === 0 && (
+                <span className="text-sm text-text-muted">No subjects for this section.</span>
+              )}
+              {!isTmuaRaw && !sectionsLoading && partsInGroup.length > 0 && (
+                <div className="space-y-3">
+                  <div className="space-y-1">
+                    <p className="text-sm font-semibold text-text">Enter your raw marks</p>
+                    <p className="text-xs text-text-muted">
+                      Choose up to {MAX_SECTIONS} subjects, then type the marks you got.
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    {partsInGroup.map((s) => {
+                      const checked = checkedKeys.includes(s.key);
+                      const disabled = !checked && checkedKeys.length >= MAX_SECTIONS;
+                      const c = COLOR_TEXT[s.color];
+                      return (
+                        <div
+                          key={s.key}
+                          role="button"
+                          tabIndex={disabled ? -1 : 0}
+                          onPointerDown={dismissInputHint}
+                          onKeyDown={(e) => {
+                            if (!disabled && (e.key === "Enter" || e.key === " ")) {
+                              e.preventDefault();
+                              dismissInputHint();
+                              toggleSection(s);
+                            }
+                          }}
+                          className={cn(
+                            "rounded-organic-lg px-4 py-3 transition-all duration-fast",
+                            checked
+                              ? cn(COLOR_CARD_ACTIVE[s.color], "ring-1", COLOR_RING_ACTIVE[s.color])
+                              : "bg-surface-mid hover:bg-surface-subtle",
+                            disabled && "opacity-35",
+                            !disabled && "cursor-pointer",
+                          )}
+                          onClick={() => {
+                            if (!disabled) {
+                              dismissInputHint();
+                              toggleSection(s);
+                            }
+                          }}
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <SubjectCheckbox
+                              checked={checked}
+                              disabled={disabled}
+                              color={s.color}
+                              onChange={() => {
+                                dismissInputHint();
+                                toggleSection(s);
+                              }}
+                            />
+                            <span className={cn("truncate text-sm font-semibold", c)}>
+                              {displaySubject(s)}
+                            </span>
+                          </div>
+                          <div className="mt-2.5 flex items-baseline gap-1.5">
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              disabled={!checked}
+                              value={checked ? String(rawByKey[s.key] ?? 0) : ""}
+                              placeholder="—"
+                              onFocus={dismissInputHint}
+                              onChange={(e) => {
+                                dismissInputHint();
+                                const n = parseInt(e.target.value.replace(/\D/g, ""), 10);
+                                if (Number.isNaN(n)) setRaw(s.key, 0);
+                                else setRaw(s.key, Math.max(0, Math.min(s.maxRaw, n)));
+                              }}
+                              className={markInputClass}
+                            />
+                            <span className="text-sm font-medium text-text-muted">
+                              /{s.maxRaw}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <ScoreConverterQuestionBankPromo
+        open={showQuestionBankPromo}
+        exam={exam}
+        onDismiss={() => setShowQuestionBankPromo(false)}
+        className="mb-5"
+      />
+
+      <div className="mb-5 min-h-[280px] rounded-organic-xl bg-surface-elevated p-6 shadow-modal-card sm:min-h-[320px] sm:p-8">
         {!hasCalculated && !resultLoading && !resultError && (
           <ResultsPreviewPlaceholder exam={exam} year={year?.year} />
         )}
@@ -768,295 +1169,6 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
             chartRows={chartRows}
             chartLoading={chartLoading}
           />
-        )}
-      </div>
-
-      <ScoreConverterQuestionBankPromo
-        open={showQuestionBankPromo}
-        exam={exam}
-        onDismiss={() => setShowQuestionBankPromo(false)}
-        className="mb-5"
-      />
-
-      {/* Inputs */}
-      <div className="rounded-organic-xl bg-surface-elevated p-5 shadow-modal-card sm:p-6">
-        {/* Row 1: exam, year, section, calculate */}
-        <div className="flex flex-wrap items-end gap-x-5 gap-y-5 sm:gap-x-6">
-          <div className="flex shrink-0 items-end gap-2.5">
-            <ModernSelect
-              label="Exam"
-              value={exam}
-              minWidth="6.5rem"
-              options={CONVERTER_EXAMS.map((e) => ({ value: e, label: e }))}
-              onChange={(next) => {
-                setExam(next as ConverterExam);
-                setYear(null);
-                invalidateResults();
-              }}
-            />
-            <div className="flex h-10 items-center">
-              <ArrowRight
-                className="h-4 w-4 shrink-0 text-text-muted"
-                strokeWidth={2}
-                aria-hidden
-              />
-            </div>
-            <div className="flex h-10 items-center">
-              <span
-                className={cn(
-                  "text-base font-bold tracking-tight",
-                  exam === "TMUA" ? "text-tmua-accent" : "text-secondary",
-                )}
-              >
-                {examTargetLabel(exam)}
-              </span>
-            </div>
-          </div>
-
-          <ModernSelect
-            label="Year"
-            value={year ? String(year.year) : ""}
-            minWidth="5.5rem"
-            disabled={yearsLoading || years.length === 0}
-            placeholder={yearsLoading ? "…" : "—"}
-            options={years.map((y) => ({
-              value: String(y.year),
-              label: String(y.year),
-            }))}
-            onChange={(next) => {
-              const opt = years.find((y) => y.year === Number(next)) ?? null;
-              setYear(opt);
-              setScaledInput("");
-              setCheckedKeys([]);
-              setRawByKey({});
-              setTmuaPickMode(null);
-              invalidateResults();
-            }}
-          />
-
-          {isNsaaEngaa && !isScaledMode && (
-            <ModernSelect
-              label="Section"
-              value={year ? selectedGroup : ""}
-              minWidth="8.5rem"
-              disabled={!year || sectionsLoading || sectionGroups.length === 0}
-              placeholder={
-                !year
-                  ? "Select year"
-                  : sectionsLoading
-                    ? "…"
-                    : "—"
-              }
-              options={sectionGroups.map(([group]) => ({
-                value: group,
-                label: group,
-              }))}
-              onChange={handleGroupChange}
-            />
-          )}
-
-          {year && isScaledMode && (
-            <label className="block shrink-0">
-              <span className={fieldLabel}>Scaled</span>
-              <div className="flex h-10 items-center gap-2">
-                <input
-                  type="text"
-                  inputMode="decimal"
-                  value={scaledInput}
-                  onChange={(e) => {
-                    invalidateResults();
-                    setScaledInput(e.target.value.replace(/[^0-9.]/g, ""));
-                  }}
-                  placeholder="6.8"
-                  className={cn(markInputClass, "w-14 bg-surface-mid")}
-                />
-                <span className="text-sm font-medium text-text-muted">/9</span>
-              </div>
-            </label>
-          )}
-
-          <button
-            type="button"
-            onClick={() => void runConvert()}
-            disabled={!canCalculate || resultLoading}
-            className={cn(
-              "ml-auto inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-organic-lg bg-secondary px-6 text-sm font-semibold text-background transition-all duration-fast",
-              "hover:brightness-110 active:scale-[0.98] disabled:opacity-40 disabled:hover:brightness-100",
-            )}
-          >
-            {resultLoading ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span className="sr-only">Calculating</span>
-              </>
-            ) : (
-              <>
-                <span>Calculate</span>
-                <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
-              </>
-            )}
-          </button>
-        </div>
-
-        {/* Row 2: subject marks */}
-        {year && !isScaledMode && (
-          <div className="mt-6 pt-2">
-            {sectionsLoading && (
-              <span className="text-sm text-text-muted">Loading subjects…</span>
-            )}
-
-            {isTmuaRaw && !sectionsLoading && (
-              <div className="space-y-4">
-                <p className="text-sm font-medium text-text-muted">How are you scoring?</p>
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <button
-                    type="button"
-                    onClick={() => selectTmuaMode("split")}
-                    disabled={!tmuaSections.paper1 || !tmuaSections.paper2}
-                    className={cn(
-                      "flex items-start gap-3 rounded-organic-lg bg-surface-mid px-4 py-3.5 text-left transition-all duration-fast",
-                      "hover:bg-surface-subtle disabled:cursor-not-allowed disabled:opacity-40",
-                      tmuaPickMode === "split" && "bg-surface-subtle",
-                      controlBase,
-                    )}
-                  >
-                    <input
-                      type="radio"
-                      name="tmua-mode"
-                      checked={tmuaPickMode === "split"}
-                      onChange={() => selectTmuaMode("split")}
-                      className={cn("mt-0.5 h-4 w-4 shrink-0 accent-secondary", controlBase)}
-                    />
-                    <span>
-                      <span className="block text-sm font-semibold text-text">
-                        Thinking + Reasoning
-                      </span>
-                      <span className="mt-0.5 block text-xs text-text-muted">
-                        Separate marks for Paper 1 and Paper 2
-                      </span>
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => selectTmuaMode("overall")}
-                    disabled={!tmuaSections.overall}
-                    className={cn(
-                      "flex items-start gap-3 rounded-organic-lg bg-surface-mid px-4 py-3.5 text-left transition-all duration-fast",
-                      "hover:bg-surface-subtle disabled:cursor-not-allowed disabled:opacity-40",
-                      tmuaPickMode === "overall" && "bg-surface-subtle",
-                      controlBase,
-                    )}
-                  >
-                    <input
-                      type="radio"
-                      name="tmua-mode"
-                      checked={tmuaPickMode === "overall"}
-                      onChange={() => selectTmuaMode("overall")}
-                      className={cn("mt-0.5 h-4 w-4 shrink-0 accent-secondary", controlBase)}
-                    />
-                    <span>
-                      <span className="block text-sm font-semibold text-text">Both papers</span>
-                      <span className="mt-0.5 block text-xs text-text-muted">
-                        One combined overall score (0–40 raw)
-                      </span>
-                    </span>
-                  </button>
-                </div>
-
-                {tmuaPickMode === "split" && tmuaSections.paper1 && tmuaSections.paper2 && (
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <TmuaMarkField
-                      section={tmuaSections.paper1}
-                      raw={rawByKey[tmuaSections.paper1.key] ?? 0}
-                      onRawChange={(v) => setRaw(tmuaSections.paper1!.key, v)}
-                    />
-                    <TmuaMarkField
-                      section={tmuaSections.paper2}
-                      raw={rawByKey[tmuaSections.paper2.key] ?? 0}
-                      onRawChange={(v) => setRaw(tmuaSections.paper2!.key, v)}
-                    />
-                  </div>
-                )}
-
-                {tmuaPickMode === "overall" && tmuaSections.overall && (
-                  <TmuaMarkField
-                    section={tmuaSections.overall}
-                    raw={rawByKey[tmuaSections.overall.key] ?? 0}
-                    onRawChange={(v) => setRaw(tmuaSections.overall!.key, v)}
-                  />
-                )}
-              </div>
-            )}
-
-            {!isTmuaRaw && !sectionsLoading && partsInGroup.length === 0 && (
-              <span className="text-sm text-text-muted">No subjects for this section.</span>
-            )}
-            {!isTmuaRaw && !sectionsLoading && partsInGroup.length > 0 && (
-              <div className="space-y-3">
-                <p className="text-xs font-medium text-text-muted">
-                  Select subjects and enter your raw marks
-                </p>
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                {partsInGroup.map((s) => {
-                  const checked = checkedKeys.includes(s.key);
-                  const disabled = !checked && checkedKeys.length >= MAX_SECTIONS;
-                  const c = COLOR_TEXT[s.color];
-                  return (
-                    <div
-                      key={s.key}
-                      role="button"
-                      tabIndex={disabled ? -1 : 0}
-                      onKeyDown={(e) => {
-                        if (!disabled && (e.key === "Enter" || e.key === " ")) {
-                          e.preventDefault();
-                          toggleSection(s);
-                        }
-                      }}
-                      className={cn(
-                        "rounded-organic-lg px-4 py-3 transition-all duration-fast",
-                        checked ? COLOR_CARD_ACTIVE[s.color] : "bg-surface-mid hover:bg-surface-subtle",
-                        disabled && "opacity-35",
-                        !disabled && "cursor-pointer",
-                      )}
-                      onClick={() => !disabled && toggleSection(s)}
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <SubjectCheckbox
-                          checked={checked}
-                          disabled={disabled}
-                          color={s.color}
-                          onChange={() => toggleSection(s)}
-                        />
-                        <span className={cn("truncate text-sm font-semibold", c)}>
-                          {displaySubject(s)}
-                        </span>
-                      </div>
-                      <div className="mt-2.5 flex items-baseline gap-1.5">
-                        <input
-                          type="text"
-                          inputMode="numeric"
-                          disabled={!checked}
-                          value={checked ? String(rawByKey[s.key] ?? 0) : ""}
-                          placeholder="—"
-                          onChange={(e) => {
-                            const n = parseInt(e.target.value.replace(/\D/g, ""), 10);
-                            if (Number.isNaN(n)) setRaw(s.key, 0);
-                            else setRaw(s.key, Math.max(0, Math.min(s.maxRaw, n)));
-                          }}
-                          className={markInputClass}
-                        />
-                        <span className="text-sm font-medium text-text-muted">
-                          /{s.maxRaw}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-                </div>
-              </div>
-            )}
-          </div>
         )}
       </div>
 
