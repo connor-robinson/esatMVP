@@ -118,17 +118,8 @@ const CHART_ACCENT: Record<ModuleColor, string> = {
 
 const CHART_ACCENT_OVERALL = "var(--color-text)";
 
-const COLOR_TAB_ACTIVE: Record<ModuleColor, string> = {
-  maths: "bg-maths/22 shadow-sm",
-  physics: "bg-physics/22 shadow-sm",
-  chemistry: "bg-chemistry/22 shadow-sm",
-  biology: "bg-biology/22 shadow-sm",
-  advanced: "bg-advanced/22 shadow-sm",
-  "tmua-accent": "bg-tmua-accent/22 shadow-sm",
-};
-
 const TAB_INACTIVE = "bg-surface-mid hover:bg-surface-mid/80";
-const TAB_ACTIVE_OVERALL = "bg-surface-subtle shadow-sm";
+const TAB_ACTIVE = "bg-surface-subtle";
 
 function SubjectCheckbox({
   checked,
@@ -360,7 +351,7 @@ function ConverterInfoButton({ exam }: { exam: ConverterExam }) {
               estimate a percentile.
             </p>
             <p>
-              That historical mapping is from published data. It is not an official
+              That historical mapping is from published data. It is not an official{" "}
               {target} result from UAT-UK or a university.
             </p>
           </div>
@@ -1180,7 +1171,7 @@ function SubjectViewPills({
           onClick={() => onSelectChart(OVERALL_CHART_KEY)}
           className={cn(
             "rounded-organic-lg px-4 py-2.5 text-left transition-all duration-fast active:scale-[0.98]",
-            showingOverall ? TAB_ACTIVE_OVERALL : TAB_INACTIVE,
+            showingOverall ? TAB_ACTIVE : TAB_INACTIVE,
           )}
         >
           <span
@@ -1216,7 +1207,7 @@ function SubjectViewPills({
             onClick={() => onSelectChart(s.key)}
             className={cn(
               "rounded-organic-lg px-4 py-2.5 text-left transition-all duration-fast active:scale-[0.98]",
-              active ? COLOR_TAB_ACTIVE[s.color] : TAB_INACTIVE,
+              active ? TAB_ACTIVE : TAB_INACTIVE,
             )}
           >
             <span
