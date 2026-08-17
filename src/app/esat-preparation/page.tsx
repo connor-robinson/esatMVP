@@ -89,6 +89,7 @@ export default function EsatPreparationPage() {
         "physics",
         "pastPapers",
         "testDates",
+        "universityRequirements",
         "calibration",
       )}
       sources={[SOURCES.esatTest, SOURCES.prepare, SOURCES.contentSpec]}

@@ -70,6 +70,13 @@ export const SEO_ROUTES = {
   goodScore: "/what-is-a-good-esat-score",
   commonMistakes: "/esat-common-mistakes",
   noCalcPractice: "/esat-no-calculator-practice",
+  universityRequirements: "/esat-university-requirements",
+  cambridgeRequirements: "/cambridge-esat-requirements",
+  cambridgeNaturalSciences: "/cambridge-natural-sciences-esat",
+  cambridgeEngineering: "/cambridge-engineering-esat",
+  oxfordRequirements: "/oxford-esat-requirements",
+  imperialRequirements: "/imperial-esat-requirements",
+  uclRequirements: "/ucl-esat-requirements",
 } as const;
 
 /**
@@ -152,6 +159,70 @@ export const SOURCES = {
   esatGuideBiology: {
     label: "UAT-UK: ESAT Guide: Biology (PDF, June 2025)",
     url: "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2025/07/06120052/ESAT_Guide_Biology_June_2025.pdf",
+  },
+  cambridgeEsat: {
+    label: "Cambridge: Science and Engineering Admission Test (ESAT)",
+    url: "https://www.undergraduate.study.cam.ac.uk/apply/how/science-engineering-admission-test",
+  },
+  cambridgeAdmissionsStats: {
+    label: "Cambridge: application statistics dashboard",
+    url: "https://www.undergraduate.study.cam.ac.uk/apply/before/application-statistics",
+  },
+  cambridgeEngineeringCourse: {
+    label: "Cambridge: Engineering BA (Hons) / MEng",
+    url: "https://www.undergraduate.study.cam.ac.uk/courses/engineering-ba-hons-meng",
+  },
+  cambridgeNatSciCourse: {
+    label: "Cambridge: Natural Sciences BA (Hons) / MSci",
+    url: "https://www.undergraduate.study.cam.ac.uk/courses/natural-sciences-ba-hons-msci",
+  },
+  cambridgeNatSciTripos: {
+    label: "Cambridge Natural Sciences Tripos: admissions",
+    url: "https://www.natsci.tripos.cam.ac.uk/admissions",
+  },
+  oxfordAdmissionsTests: {
+    label: "Oxford: admissions tests",
+    url: "https://www.ox.ac.uk/admissions/undergraduate/applying/guide-for-applicants/admissions-tests",
+  },
+  oxfordEngineering: {
+    label: "Oxford: Engineering Science",
+    url: "https://www.ox.ac.uk/admissions/undergraduate/courses/course-listing/engineering-science",
+  },
+  oxfordPhysics: {
+    label: "Oxford: Physics",
+    url: "https://www.ox.ac.uk/admissions/undergraduate/courses/course-listing/physics",
+  },
+  oxfordPhysicsPhilosophy: {
+    label: "Oxford: Physics and Philosophy",
+    url: "https://www.ox.ac.uk/admissions/undergraduate/courses/course-listing/physics-and-philosophy",
+  },
+  oxfordBiomedical: {
+    label: "Oxford: Biomedical Sciences",
+    url: "https://www.ox.ac.uk/admissions/undergraduate/courses/course-listing/biomedical-sciences",
+  },
+  oxfordPhysicsAdmissions: {
+    label: "Oxford Physics: admissions procedures",
+    url: "https://www.physics.ox.ac.uk/study/undergraduates/how-apply/admissions-procedures-physics-courses",
+  },
+  oxfordPhysicsEsat: {
+    label: "Oxford Physics: ESAT admissions",
+    url: "https://www.physics.ox.ac.uk/study/undergraduates/how-apply/engineering-and-science-admissions-test-esat/physics-admissions",
+  },
+  oxfordEngineeringEsat: {
+    label: "Oxford Engineering Science: ESAT",
+    url: "https://eng.ox.ac.uk/virtualopenday/applications/engineering-and-science-admissions-test",
+  },
+  imperialEsat: {
+    label: "Imperial: ESAT",
+    url: "https://www.imperial.ac.uk/study/apply/undergraduate/process/admissions-tests/esat/",
+  },
+  imperialEsatScores: {
+    label: "Imperial: understanding your ESAT and TMUA scores",
+    url: "https://www.imperial.ac.uk/study/apply/undergraduate/process/admissions-tests/understanding-your-esat-and-tmua-scores/",
+  },
+  uclTests: {
+    label: "UCL: tests, tasks and interviews",
+    url: "https://www.ucl.ac.uk/study/prospective-students/school-teachers-and-counsellors/tests-tasks-and-interviews",
   },
 } as const satisfies Record<string, SourceLink>;
 

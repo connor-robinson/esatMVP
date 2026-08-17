@@ -34,6 +34,7 @@ const FOOTER_GUIDE_KEYS: SeoLinkKey[] = [
   "preparation",
   "testDates",
   "pastPapers",
+  "universityRequirements",
   "goodScore",
   "calculatorRules",
 ];

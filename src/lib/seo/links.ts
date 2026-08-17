@@ -108,6 +108,41 @@ export const SEO_LINKS = {
     label: "Past-paper roadmap",
     blurb: "Official papers scheduled into an order you can actually follow.",
   },
+  universityRequirements: {
+    href: SEO_ROUTES.universityRequirements,
+    label: "ESAT university requirements",
+    blurb: "Cambridge, Oxford, Imperial and UCL modules, sittings and published data for 2027.",
+  },
+  cambridgeRequirements: {
+    href: SEO_ROUTES.cambridgeRequirements,
+    label: "Cambridge ESAT requirements",
+    blurb: "Courses, modules, sitting rules and published 2027 entry requirements.",
+  },
+  cambridgeNaturalSciences: {
+    href: SEO_ROUTES.cambridgeNaturalSciences,
+    label: "Cambridge Natural Sciences ESAT",
+    blurb: "Maths 1 plus two science modules, and how to choose them.",
+  },
+  cambridgeEngineering: {
+    href: SEO_ROUTES.cambridgeEngineering,
+    label: "Cambridge Engineering ESAT",
+    blurb: "Maths 1, Maths 2 and Physics, plus 2025 college and Home/international averages.",
+  },
+  oxfordRequirements: {
+    href: SEO_ROUTES.oxfordRequirements,
+    label: "Oxford ESAT requirements",
+    blurb: "Engineering, Physics, Physics and Philosophy, and Biomedical Sciences.",
+  },
+  imperialRequirements: {
+    href: SEO_ROUTES.imperialRequirements,
+    label: "Imperial ESAT requirements",
+    blurb: "Course-by-course modules and Imperial's historical 2025 score dashboard.",
+  },
+  uclRequirements: {
+    href: SEO_ROUTES.uclRequirements,
+    label: "UCL ESAT requirements",
+    blurb: "Electronic and Electrical Engineering modules and sitting options.",
+  },
 } as const satisfies Record<string, SeoLink>;
 
 export type SeoLinkKey = keyof typeof SEO_LINKS;
@@ -131,6 +166,13 @@ export const SEO_GUIDE_KEYS: SeoLinkKey[] = [
   "goodScore",
   "commonMistakes",
   "noCalcPractice",
+  "universityRequirements",
+  "cambridgeRequirements",
+  "cambridgeNaturalSciences",
+  "cambridgeEngineering",
+  "oxfordRequirements",
+  "imperialRequirements",
+  "uclRequirements",
 ];
 
 export type FaqGuideSection = {
@@ -165,5 +207,19 @@ export const FAQ_GUIDE_SECTIONS: readonly FaqGuideSection[] = [
     title: "Rules, scores and practice",
     description: "Calculator rules, what a good score looks like, and no-calculator training.",
     keys: ["calculatorRules", "goodScore", "noCalcPractice"],
+  },
+  {
+    id: "universities",
+    title: "Universities",
+    description: "2027 ESAT modules, sittings and published admissions data.",
+    keys: [
+      "universityRequirements",
+      "cambridgeRequirements",
+      "cambridgeEngineering",
+      "cambridgeNaturalSciences",
+      "oxfordRequirements",
+      "imperialRequirements",
+      "uclRequirements",
+    ],
   },
 ];

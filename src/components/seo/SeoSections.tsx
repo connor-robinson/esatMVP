@@ -310,16 +310,18 @@ export function ResponsiveTable({
   rows,
   caption,
   className,
+  minWidthClass = "min-w-[36rem]",
 }: {
   columns: readonly string[];
   rows: readonly (readonly React.ReactNode[])[];
   caption?: string;
   className?: string;
+  minWidthClass?: string;
 }) {
   return (
     <figure className={cn("m-0", className)}>
       <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
-        <div className="min-w-[36rem] overflow-hidden rounded-2xl bg-white/[0.04]">
+        <div className={cn("overflow-hidden rounded-2xl bg-white/[0.04]", minWidthClass)}>
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="bg-white/[0.04]">
