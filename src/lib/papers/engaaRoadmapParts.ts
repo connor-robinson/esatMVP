@@ -12,6 +12,9 @@ const ENGAA_S1_EXTRAS: Record<
   2019: { maths: [25, 39], physics: [38] },
 };
 
+const S1_PART_A = "Mathematics and Physics";
+const S1_PART_B = "Advanced Mathematics and Advanced Physics";
+
 function oddUpTo(max: number): number[] {
   const out: number[] = [];
   for (let n = 1; n <= max; n += 2) out.push(n);
@@ -40,18 +43,21 @@ export function engaaSection1PhysicsQuestions(year: number): number[] {
 }
 
 function part(
-  year: number,
   partKey: string,
   paperName: string,
   partLetter: string,
   partName: string,
   options?: {
+    displayGroupKey?: string;
+    internalTrack?: "maths" | "physics";
     questionFilter?: number[];
     filterByQuestionNumbersOnly?: boolean;
   },
 ): RoadmapPart {
   return {
     partKey,
+    displayGroupKey: options?.displayGroupKey,
+    internalTrack: options?.internalTrack,
     partLetter,
     partName,
     paperName,
@@ -67,30 +73,42 @@ export function buildEngaaPartsForYear(year: number): RoadmapPart[] {
     const extras = ENGAA_S1_EXTRAS[year];
     if (!extras) return [];
 
+    const s1PartBGroup = `s1-part-b-${year}`;
+
     return [
-      part(year, "s1-extra-maths", "Section 1", "Part B", "Mathematics", {
+      part("s1-extra-maths", "Section 1", "Part B", S1_PART_A, {
+        displayGroupKey: s1PartBGroup,
+        internalTrack: "maths",
         questionFilter: [...extras.maths],
         filterByQuestionNumbersOnly: true,
       }),
-      part(year, "s1-extra-physics", "Section 1", "Part B", "Physics", {
+      part("s1-extra-physics", "Section 1", "Part B", S1_PART_A, {
+        displayGroupKey: s1PartBGroup,
+        internalTrack: "physics",
         questionFilter: [...extras.physics],
         filterByQuestionNumbersOnly: true,
       }),
-      part(year, "s2-physics", "Section 2", "Part A", "Physics"),
+      part("s2-physics", "Section 2", "Part A", "Physics"),
     ];
   }
 
   if (year >= 2020 && year <= 2023) {
+    const s1PartAGroup = `s1-part-a-${year}`;
+
     return [
-      part(year, "s1-maths", "Section 1", "Part A", "Mathematics", {
+      part("s1-maths", "Section 1", "Part A", S1_PART_A, {
+        displayGroupKey: s1PartAGroup,
+        internalTrack: "maths",
         questionFilter: engaaSection1MathsQuestions(year),
         filterByQuestionNumbersOnly: true,
       }),
-      part(year, "s1-physics", "Section 1", "Part A", "Physics", {
+      part("s1-physics", "Section 1", "Part A", S1_PART_A, {
+        displayGroupKey: s1PartAGroup,
+        internalTrack: "physics",
         questionFilter: engaaSection1PhysicsQuestions(year),
         filterByQuestionNumbersOnly: true,
       }),
-      part(year, "s1-advanced", "Section 1", "Part B", "Advanced Mathematics and Advanced Physics"),
+      part("s1-advanced", "Section 1", "Part B", S1_PART_B),
     ];
   }
 

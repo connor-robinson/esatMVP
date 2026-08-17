@@ -16,6 +16,7 @@ import { examNameToPaperType } from '@/lib/papers/paperConfig';
 import { getQuestions } from '@/lib/supabase/questions';
 import { deriveTmuaSectionFromQuestion } from "@/lib/papers/sectionMapping";
 import { questionMatchesSelectedSections, parseMainSectionFromLabel } from "@/lib/papers/paperLibrarySections";
+import { filterEngaaQuestionsByEsatSubjects } from "@/lib/papers/engaaQuestionFilter";
 import { generateSectionId } from '@/lib/papers/partIdUtils';
 import type { Paper, PaperSection, Question, ExamName } from '@/types/papers';
 import { PaperLibraryGrid } from '@/components/papers/library/PaperLibraryGrid';
@@ -526,6 +527,14 @@ export default function PapersLibraryPage() {
               paper,
               catalog,
             ),
+          );
+        }
+
+        if (paperType === "ENGAA") {
+          filteredQuestions = filterEngaaQuestionsByEsatSubjects(
+            filteredQuestions,
+            paper.examYear,
+            userEsatSubjects,
           );
         }
 

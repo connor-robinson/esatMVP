@@ -11,6 +11,10 @@ import { buildTmuaRoadmapStagesShell } from './tmuaRoadmapParts';
 export interface RoadmapPart {
   /** Stable key for completion tracking and UI selection. */
   partKey?: string;
+  /** Groups internal splits under one visible roadmap row. */
+  displayGroupKey?: string;
+  /** Internal maths/physics track (not shown in UI). */
+  internalTrack?: "maths" | "physics";
   partLetter: string;
   partName: string;
   paperName: string; // "Section 1" or "Section 2"

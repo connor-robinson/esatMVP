@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -22,6 +22,12 @@ import {
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
 import { getRoadmapPartKey } from "@/lib/papers/roadmapPartKey";
 import { defaultTmuaSelectedParts } from "@/lib/papers/tmuaRoadmapParts";
+import {
+  groupRoadmapPartsForDisplay,
+  expandDisplayGroupsToParts,
+  isDisplayGroupCompleted,
+  displayLabelForGroup,
+} from "@/lib/papers/roadmapDisplayGroups";
 import { RoadmapInfoPopover } from "./RoadmapInfoPopover";
 import {
   ROADMAP_EXPAND_TRANSITION_CLASS,
@@ -76,38 +82,61 @@ export function StageListCard({
   isStageCompleted = false,
   anchorRef,
 }: StageListCardProps) {
-  const [selectedParts, setSelectedParts] = useState<Set<string>>(new Set());
+  const [selectedGroups, setSelectedGroups] = useState<Set<string>>(new Set());
 
   const getPartKey = getRoadmapPartKey;
+  const displayGroups = useMemo(
+    () => groupRoadmapPartsForDisplay(stage.parts),
+    [stage.parts],
+  );
 
   useEffect(() => {
-    const defaultParts =
-      stage.examName === "TMUA"
-        ? defaultTmuaSelectedParts(stage, completionData, getPartKey)
-        : stage.parts.filter(
-            (part) => !completionData.get(getPartKey(part)),
-          );
+    if (stage.examName === "TMUA") {
+      const defaultParts = defaultTmuaSelectedParts(
+        stage,
+        completionData,
+        getPartKey,
+      );
+      const keys = new Set<string>();
+      for (const group of displayGroups) {
+        if (
+          group.internalParts.some((part) =>
+            defaultParts.some(
+              (selected) => getPartKey(selected) === getPartKey(part),
+            ),
+          )
+        ) {
+          keys.add(group.key);
+        }
+      }
+      setSelectedGroups(keys);
+      return;
+    }
 
-    setSelectedParts(new Set(defaultParts.map((part) => getPartKey(part))));
-  }, [stage, completionData]);
+    const incompleteGroups = displayGroups.filter(
+      (group) => !isDisplayGroupCompleted(group, completionData, getPartKey),
+    );
+    setSelectedGroups(new Set(incompleteGroups.map((group) => group.key)));
+  }, [stage, completionData, displayGroups]);
 
   const handleCardClick = () => {
     onToggleExpand();
   };
 
-  const handlePartToggle = (partKey: string, e: React.MouseEvent) => {
+  const handleGroupToggle = (groupKey: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    const next = new Set(selectedParts);
-    if (next.has(partKey)) next.delete(partKey);
-    else next.add(partKey);
-    setSelectedParts(next);
+    const next = new Set(selectedGroups);
+    if (next.has(groupKey)) next.delete(groupKey);
+    else next.add(groupKey);
+    setSelectedGroups(next);
   };
 
   const handleStartSession = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (isUnlocked && selectedParts.size > 0) {
-      const selectedPartsList = stage.parts.filter((part) =>
-        selectedParts.has(getPartKey(part)),
+    if (isUnlocked && selectedGroups.size > 0) {
+      const selectedPartsList = expandDisplayGroupsToParts(
+        stage.parts,
+        selectedGroups,
       );
       onStartSession(stage, selectedPartsList, { newQuestionsOnly });
     }
@@ -115,19 +144,17 @@ export function StageListCard({
 
   const handleSelectAll = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const incompleteParts = stage.parts.filter(
-      (part) => !completionData.get(getPartKey(part)),
+    const incompleteGroups = displayGroups.filter(
+      (group) => !isDisplayGroupCompleted(group, completionData, getPartKey),
     );
 
     if (
-      selectedParts.size === incompleteParts.length &&
-      incompleteParts.length > 0
+      selectedGroups.size === incompleteGroups.length &&
+      incompleteGroups.length > 0
     ) {
-      setSelectedParts(new Set());
+      setSelectedGroups(new Set());
     } else {
-      setSelectedParts(
-        new Set(incompleteParts.map((part) => getPartKey(part))),
-      );
+      setSelectedGroups(new Set(incompleteGroups.map((group) => group.key)));
     }
   };
 
@@ -300,12 +327,16 @@ export function StageListCard({
                       className="text-xs font-medium text-text-subtle underline-offset-2 transition-colors hover:text-text hover:underline"
                     >
                       {(() => {
-                        const incompleteCount = stage.parts.filter(
-                          (part) =>
-                            !(completionData.get(getPartKey(part)) || false),
-                        ).length;
-                        return selectedParts.size === incompleteCount &&
-                          incompleteCount > 0
+                        const incompleteGroups = displayGroups.filter(
+                          (group) =>
+                            !isDisplayGroupCompleted(
+                              group,
+                              completionData,
+                              getPartKey,
+                            ),
+                        );
+                        return selectedGroups.size === incompleteGroups.length &&
+                          incompleteGroups.length > 0
                           ? "Deselect All"
                           : "Select All Incomplete";
                       })()}
@@ -314,13 +345,16 @@ export function StageListCard({
 
                   <div className="space-y-3">
                     {(() => {
-                      const partsBySection = new Map<string, RoadmapPart[]>();
-                      stage.parts.forEach((part) => {
-                        const sectionKey = part.paperName;
-                        if (!partsBySection.has(sectionKey)) {
-                          partsBySection.set(sectionKey, []);
+                      const groupsBySection = new Map<
+                        string,
+                        typeof displayGroups
+                      >();
+                      displayGroups.forEach((group) => {
+                        const sectionKey = group.paperName;
+                        if (!groupsBySection.has(sectionKey)) {
+                          groupsBySection.set(sectionKey, []);
                         }
-                        partsBySection.get(sectionKey)!.push(part);
+                        groupsBySection.get(sectionKey)!.push(group);
                       });
 
                       const order = [
@@ -329,7 +363,7 @@ export function StageListCard({
                         "Paper 1",
                         "Paper 2",
                       ];
-                      const sections = Array.from(partsBySection.keys()).sort(
+                      const sections = Array.from(groupsBySection.keys()).sort(
                         (a, b) => {
                           const aIndex = order.indexOf(a);
                           const bIndex = order.indexOf(b);
@@ -342,8 +376,8 @@ export function StageListCard({
                       );
 
                       return sections.map((sectionName) => {
-                        const sectionParts =
-                          partsBySection.get(sectionName) || [];
+                        const sectionGroups =
+                          groupsBySection.get(sectionName) || [];
                         return (
                           <div key={sectionName} className="space-y-2">
                             <div className="flex items-center gap-2 px-1 py-1">
@@ -356,50 +390,49 @@ export function StageListCard({
                               </span>
                             </div>
 
-                            {sectionParts.length > 0 ? (
+                            {sectionGroups.length > 0 ? (
                               <div className="space-y-2 pl-1 sm:pl-3">
-                                {sectionParts.map((part) => {
-                                  const partKey = getPartKey(part);
-                                  const isPartCompleted =
-                                    completionData.get(partKey) || false;
-                                  const isSelected = selectedParts.has(partKey);
-
-                                  let displayLabel = "";
-                                  if (stage.examName === "TMUA") {
-                                    displayLabel = part.paperName;
-                                  } else if (part.questionFilter?.length) {
-                                    const qList = part.questionFilter
-                                      .map((n) => `Q${n}`)
-                                      .join(", ");
-                                    displayLabel = `${part.partName} (${qList})`;
-                                  } else if (part.questionRange) {
-                                    displayLabel = `${part.partLetter}: ${part.partName} (Q${part.questionRange.start}-${part.questionRange.end})`;
-                                  } else {
-                                    displayLabel = `${part.partLetter}: ${part.partName}`;
-                                  }
+                                {sectionGroups.map((group) => {
+                                  const isGroupCompleted =
+                                    isDisplayGroupCompleted(
+                                      group,
+                                      completionData,
+                                      getPartKey,
+                                    );
+                                  const isSelected = selectedGroups.has(
+                                    group.key,
+                                  );
+                                  const displayLabel =
+                                    stage.examName === "TMUA"
+                                      ? group.paperName
+                                      : displayLabelForGroup(group);
 
                                   return (
                                     <div
-                                      key={partKey}
+                                      key={group.key}
                                       role="button"
                                       tabIndex={0}
                                       onKeyDown={(e) => {
                                         if (e.key === "Enter" || e.key === " ") {
                                           e.preventDefault();
-                                          handlePartToggle(partKey, {
+                                          handleGroupToggle(group.key, {
                                             stopPropagation: () =>
                                               e.stopPropagation(),
                                           } as React.MouseEvent);
                                         }
                                       }}
                                       className="flex cursor-pointer items-center gap-3 rounded-organic-md bg-surface-mid px-3 py-2.5 text-sm transition-colors duration-fast ease-signature hover:bg-surface-neutral"
-                                      onClick={(e) => handlePartToggle(partKey, e)}
+                                      onClick={(e) =>
+                                        handleGroupToggle(group.key, e)
+                                      }
                                     >
                                       <div
                                         className={cn(
                                           "flex h-5 w-5 shrink-0 items-center justify-center rounded transition-colors duration-fast ease-signature",
                                           isSelected
-                                            ? getExamAccentFillClass(stage.examName)
+                                            ? getExamAccentFillClass(
+                                                stage.examName,
+                                              )
                                             : "bg-surface-elevated",
                                         )}
                                       >
@@ -415,15 +448,17 @@ export function StageListCard({
                                           {displayLabel}
                                         </div>
                                         <div className="mt-0.5 text-xs text-text-muted">
-                                          {part.examType}
+                                          {group.examType}
                                         </div>
                                       </div>
-                                      {isPartCompleted ? (
+                                      {isGroupCompleted ? (
                                         <div className="flex shrink-0 items-center gap-1.5">
                                           <span
                                             className={cn(
                                               "flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
-                                              getExamAccentFillClass(stage.examName),
+                                              getExamAccentFillClass(
+                                                stage.examName,
+                                              ),
                                             )}
                                             aria-hidden
                                           >
@@ -530,10 +565,10 @@ export function StageListCard({
                   <button
                     type="button"
                     onClick={handleStartSession}
-                    disabled={!isUnlocked || selectedParts.size === 0}
+                    disabled={!isUnlocked || selectedGroups.size === 0}
                     className={cn(
                       "flex w-full items-center justify-center gap-2 rounded-organic-md px-4 py-3 text-sm font-semibold transition-all duration-fast ease-signature",
-                      !isUnlocked || selectedParts.size === 0
+                      !isUnlocked || selectedGroups.size === 0
                         ? "cursor-not-allowed bg-surface-neutral text-text-disabled"
                         : cn(
                             getExamAccentFillClass(stage.examName),

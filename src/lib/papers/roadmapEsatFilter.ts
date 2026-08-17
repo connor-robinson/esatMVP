@@ -33,14 +33,20 @@ export function roadmapPartMatchesEsatSubjects(
     const hasMath2 = subjects.includes("Math 2");
     const hasPhysics = subjects.includes("Physics");
 
-    if (part.partName === "Mathematics") {
+    if (part.internalTrack === "maths") {
       return hasMath1 || hasMath2;
     }
-    if (part.partName === "Physics") {
+    if (part.internalTrack === "physics") {
       return hasPhysics;
     }
     if (part.partName === "Advanced Mathematics and Advanced Physics") {
       return hasMath2 || hasPhysics || hasMath1;
+    }
+    if (part.partName === "Mathematics and Physics") {
+      return hasMath1 || hasMath2 || hasPhysics;
+    }
+    if (part.partName === "Physics") {
+      return hasPhysics;
     }
   }
 

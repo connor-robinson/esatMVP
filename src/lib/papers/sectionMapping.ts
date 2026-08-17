@@ -130,6 +130,43 @@ export function mapPartToSection(partInfo: PartInfo, paperType: PaperType): Pape
     const mapped = paperMappings[partKey];
     return mapped;
   }
+
+  // ENGAA Part A/B: collapsed maths+physics share one UI section name
+  if (paperType === "ENGAA") {
+    const letter = partLetter.toLowerCase().replace(/^part\s*/, "");
+    const lowerName = partName.toLowerCase();
+
+    if (
+      letter === "a" ||
+      letter === "1" ||
+      (lowerName.includes("mathematics") &&
+        lowerName.includes("physics") &&
+        !lowerName.includes("advanced"))
+    ) {
+      return "Mathematics and Physics";
+    }
+
+    if (
+      letter === "b" ||
+      letter === "2" ||
+      (lowerName.includes("advanced") &&
+        lowerName.includes("mathematics") &&
+        lowerName.includes("physics"))
+    ) {
+      return "Advanced Mathematics and Advanced Physics";
+    }
+
+    if (letter === "a" && lowerName === "physics") {
+      return "Physics";
+    }
+
+    if (
+      (lowerName === "mathematics" || lowerName === "physics") &&
+      !lowerName.includes("advanced")
+    ) {
+      return "Mathematics and Physics";
+    }
+  }
   
   // Special handling for TMUA where sections map to Paper 1 / Paper 2
   if (paperType === 'TMUA') {

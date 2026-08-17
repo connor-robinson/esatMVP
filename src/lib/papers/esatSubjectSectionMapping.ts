@@ -27,19 +27,17 @@ const ESAT_SUBJECT_TO_PAPER_SECTIONS: Record<EsatSubjectKey, PaperSection[]> = {
   Biology: ["Biology"],
 };
 
-/** ENGAA roadmap parts use split Maths / Physics / Advanced section names. */
+/** ENGAA uses combined Part A / Part B section names in the library and roadmap UI. */
 function paperSectionsForEngaa(esatSubjects: EsatSubjectKey[]): PaperSection[] {
   const sections = new Set<PaperSection>();
   const hasMath =
     esatSubjects.includes("Math 1") || esatSubjects.includes("Math 2");
   const hasPhysics = esatSubjects.includes("Physics");
 
-  if (hasMath) {
-    sections.add("Mathematics");
-    sections.add("Advanced Mathematics and Advanced Physics");
+  if (hasMath || hasPhysics) {
+    sections.add("Mathematics and Physics");
   }
-  if (hasPhysics) {
-    sections.add("Physics");
+  if (hasMath || hasPhysics) {
     sections.add("Advanced Mathematics and Advanced Physics");
   }
 

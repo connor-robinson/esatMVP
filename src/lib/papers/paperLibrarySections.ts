@@ -1,4 +1,5 @@
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
+import { normalizeEngaaPaperSections } from "@/lib/papers/engaaQuestionFilter";
 import { mapPartToSection, mapTmuaPaperNameToSection } from "@/lib/papers/sectionMapping";
 import { generateSectionId } from "./partIdUtils";
 import type { ExamName, Paper, PaperSection, PaperType, Question } from "@/types/papers";
@@ -180,21 +181,33 @@ export function groupSectionsIntoMainSections(
     });
 
     if (section1Parts.size > 0) {
+      const subjectParts =
+        paperType === "ENGAA"
+          ? normalizeEngaaPaperSections(section1Parts)
+          : Array.from(section1Parts);
       mainSections.push({
         name: "Section 1",
-        subjectParts: Array.from(section1Parts),
+        subjectParts,
       });
     }
 
     if (section2Parts.size > 0) {
+      const subjectParts =
+        paperType === "ENGAA"
+          ? normalizeEngaaPaperSections(section2Parts)
+          : Array.from(section2Parts);
       mainSections.push({
         name: "Section 2",
-        subjectParts: Array.from(section2Parts),
+        subjectParts,
       });
     }
 
     if (mainSections.length === 0 && sections.length > 0) {
-      mainSections.push({ name: "Section 1", subjectParts: sections });
+      const subjectParts =
+        paperType === "ENGAA"
+          ? normalizeEngaaPaperSections(sections)
+          : sections;
+      mainSections.push({ name: "Section 1", subjectParts });
     }
   } else if (sections.length > 0) {
     mainSections.push({ name: "Sections", subjectParts: sections });
@@ -241,7 +254,10 @@ export function buildPaperSectionsOutline(
     });
   }
 
-  const sections = Array.from(sectionSet);
+  const sections =
+    paperType === "ENGAA"
+      ? normalizeEngaaPaperSections(sectionSet)
+      : Array.from(sectionSet);
   const mainSections = groupSectionsIntoMainSections(
     sections,
     paperType,
@@ -292,7 +308,19 @@ export function questionMatchesSelectedSections(
     { partLetter: question.partLetter, partName: question.partName },
     paperType,
   );
-  return selectedSections.get(mainSection)?.has(subject) ?? false;
+  const selected = selectedSections.get(mainSection);
+  if (!selected?.has(subject)) {
+    if (
+      paperType === "ENGAA" &&
+      subject === "Mathematics and Physics" &&
+      (selected?.has("Mathematics" as PaperSection) ||
+        selected?.has("Physics" as PaperSection))
+    ) {
+      return true;
+    }
+    return false;
+  }
+  return true;
 }
 
 /** Stable section ID for a question (matches library `generateSectionId`). */

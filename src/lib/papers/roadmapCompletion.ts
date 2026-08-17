@@ -23,6 +23,7 @@ import {
 import { getPaper } from '@/lib/supabase/questions';
 import { generatePartIdFromRoadmapPart } from './partIdUtils';
 import { getRoadmapPartKey } from './roadmapPartKey';
+import { countDisplayGroupCompletion } from './roadmapDisplayGroups';
 import { isPartIdCompleted, getCompletedPartIds } from './completionCache';
 
 export { getCompletedPartIds } from './completionCache';
@@ -234,18 +235,7 @@ export async function getStageCompletionCount(
   stage: RoadmapStage
 ): Promise<{ completed: number; total: number }> {
   const completion = await getStageCompletion(userId, stage);
-  
-  let completed = 0;
-  for (const [_, isCompleted] of completion) {
-    if (isCompleted) {
-      completed++;
-    }
-  }
-
-  return {
-    completed,
-    total: completion.size,
-  };
+  return countDisplayGroupCompletion(stage.parts, completion, getRoadmapPartKey);
 }
 
 /**

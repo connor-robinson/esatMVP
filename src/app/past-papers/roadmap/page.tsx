@@ -52,6 +52,10 @@ import {
   writeNewQuestionsOnlyPreference,
 } from '@/lib/papers/roadmapNewQuestionsPreference';
 import { RoadmapInfoPopover } from '@/components/papers/roadmap/RoadmapInfoPopover';
+import {
+  countDisplayGroupCompletion,
+  groupRoadmapPartsForDisplay,
+} from '@/lib/papers/roadmapDisplayGroups';
 
 type StageCompletionEntry = {
   completed: number;
@@ -64,7 +68,7 @@ function buildDefaultCompletion(stages: RoadmapStage[]): Map<string, StageComple
   for (const stage of stages) {
     map.set(stage.id, {
       completed: 0,
-      total: stage.parts.length,
+      total: groupRoadmapPartsForDisplay(stage.parts).length,
       parts: new Map<string, boolean>(),
     });
   }
@@ -75,7 +79,8 @@ function isStageFullyCompleted(
   stage: RoadmapStage,
   data: StageCompletionEntry | undefined,
 ): boolean {
-  const total = data?.total ?? stage.parts.length;
+  const total =
+    data?.total ?? groupRoadmapPartsForDisplay(stage.parts).length;
   const completed = data?.completed ?? 0;
   return total > 0 && completed === total;
 }
@@ -238,7 +243,7 @@ export default function PapersRoadmapPage() {
             if (!next.has(stage.id)) {
               next.set(stage.id, {
                 completed: 0,
-                total: stage.parts.length,
+                total: groupRoadmapPartsForDisplay(stage.parts).length,
                 parts: new Map<string, boolean>(),
               });
             }
@@ -283,9 +288,11 @@ export default function PapersRoadmapPage() {
               if (isCompleted) completed++;
             }
 
+            const groupCounts = countDisplayGroupCompletion(stage.parts, parts);
+
             completionMap.set(stage.id, {
-              completed,
-              total: parts.size,
+              completed: groupCounts.completed,
+              total: groupCounts.total,
               parts,
             });
           }
@@ -293,7 +300,7 @@ export default function PapersRoadmapPage() {
           for (const stage of subjectFilteredStages) {
             completionMap.set(stage.id, {
               completed: 0,
-              total: stage.parts.length,
+              total: groupRoadmapPartsForDisplay(stage.parts).length,
               parts: new Map<string, boolean>(),
             });
           }
@@ -478,6 +485,13 @@ export default function PapersRoadmapPage() {
           );
         }
 
+        const seenQuestionIds = new Set<number>();
+        matchingQuestions = matchingQuestions.filter((q) => {
+          if (seenQuestionIds.has(q.id)) return false;
+          seenQuestionIds.add(q.id);
+          return true;
+        });
+
         if (matchingQuestions.length === 0) {
           alert(
             options.newQuestionsOnly
@@ -621,7 +635,7 @@ export default function PapersRoadmapPage() {
         for (const stage of subjectFilteredStages) {
           completionMap.set(stage.id, {
             completed: 0,
-            total: stage.parts.length,
+            total: groupRoadmapPartsForDisplay(stage.parts).length,
             parts: new Map(),
           });
         }
@@ -685,7 +699,8 @@ export default function PapersRoadmapPage() {
   const firstIncompleteVisibleIndex = visibleStages.findIndex((stage) => {
     if (!visibleUnlocked.has(stage.id)) return false;
     const data = completionData.get(stage.id);
-    const total = data?.total ?? stage.parts.length;
+    const total =
+      data?.total ?? groupRoadmapPartsForDisplay(stage.parts).length;
     const completed = data?.completed ?? 0;
     return !(total > 0 && completed === total);
   });
@@ -700,7 +715,8 @@ export default function PapersRoadmapPage() {
   const timelineNodes = visibleStages.map((stage, index) => {
     const data = completionData.get(stage.id);
     const completedCount = data?.completed || 0;
-    const totalCount = data?.total || stage.parts.length;
+    const totalCount =
+      data?.total ?? groupRoadmapPartsForDisplay(stage.parts).length;
     const isUnlocked = visibleUnlocked.has(stage.id);
     const isCompleted = completedCount === totalCount && totalCount > 0;
     const isCurrent = isUnlocked && !isCompleted && visibleCurrentIndex === index;
