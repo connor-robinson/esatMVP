@@ -495,36 +495,29 @@ export function StageListCard({
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5">
                         <span className="text-sm font-medium text-text">
-                          New questions only
+                          Unique questions only
                         </span>
-                        <RoadmapInfoPopover title="New questions only">
+                        <RoadmapInfoPopover title="Unique questions only">
                           <p>
-                            When on, your session skips questions you have
-                            already completed in any past-paper session, and
-                            skips verified NSAA/ENGAA duplicates (same question
-                            appearing in both exams).
-                          </p>
-                          <p>
-                            Turn off to practise the full selected parts again,
-                            including repeats.
+                            When on, your session only includes questions you
+                            have not attempted before, including verified
+                            NSAA/ENGAA duplicates.
                           </p>
                         </RoadmapInfoPopover>
                       </div>
-                      <p className="mt-0.5 text-xs text-text-muted">
-                        Recommended after doing the matching NSAA year first.
-                      </p>
                     </div>
                     <button
                       type="button"
                       role="switch"
                       aria-checked={newQuestionsOnly}
+                      aria-label="Unique questions only"
                       onClick={() =>
                         onNewQuestionsOnlyChange(!newQuestionsOnly)
                       }
                       className={cn(
                         "relative h-7 w-12 shrink-0 rounded-full transition-colors duration-fast ease-signature",
                         newQuestionsOnly
-                          ? getExamAccentFillClass(stage.examName)
+                          ? "bg-accent"
                           : "bg-surface-neutral",
                       )}
                     >

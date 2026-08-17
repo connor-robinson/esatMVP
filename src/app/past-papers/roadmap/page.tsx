@@ -43,7 +43,7 @@ import { cn } from '@/lib/utils';
 import { questionMatchesRoadmapPart } from '@/lib/papers/roadmapQuestionMatch';
 import { generatePartIdFromRoadmapPart } from '@/lib/papers/partIdUtils';
 import {
-  filterToNewQuestionsOnly,
+  filterToUniqueQuestionsOnly,
   loadAttemptedQuestionsContext,
   type AttemptedQuestionsContext,
 } from '@/lib/papers/roadmapAttemptedQuestions';
@@ -480,7 +480,7 @@ export default function PapersRoadmapPage() {
 
 
         if (options.newQuestionsOnly) {
-          matchingQuestions = filterToNewQuestionsOnly(
+          matchingQuestions = filterToUniqueQuestionsOnly(
             matchingQuestions,
             attemptedQuestionsRef.current,
           );
@@ -496,7 +496,7 @@ export default function PapersRoadmapPage() {
         if (matchingQuestions.length === 0) {
           alert(
             options.newQuestionsOnly
-              ? 'No new questions left in the selected parts. Turn off "New questions only" to repeat questions you have already done.'
+              ? 'No unique questions left in the selected parts. Turn off "Unique questions only" to repeat questions you have already done.'
               : 'No questions matched the selected parts.',
           );
           return;
@@ -779,26 +779,24 @@ export default function PapersRoadmapPage() {
 
           <div className="min-w-0 flex-1">
             <div className="mb-4 flex items-center justify-end gap-2 px-1">
-              <span className="text-xs text-text-muted">Session default</span>
-              <RoadmapInfoPopover title="New questions only (default)">
+              <span className="text-xs font-medium text-text-subtle">
+                Unique questions only
+              </span>
+              <RoadmapInfoPopover title="Unique questions only">
                 <p>
-                  This default applies when you expand any roadmap stage. Each
-                  stage also has its own toggle before you start.
-                </p>
-                <p>
-                  When on, sessions skip questions you have already completed
-                  and verified cross-exam duplicates between NSAA and ENGAA.
+                  When on, sessions only include questions you have not
+                  attempted before, including verified NSAA/ENGAA duplicates.
                 </p>
               </RoadmapInfoPopover>
               <button
                 type="button"
                 role="switch"
                 aria-checked={newQuestionsOnly}
-                aria-label="New questions only default"
+                aria-label="Unique questions only"
                 onClick={() => handleNewQuestionsOnlyChange(!newQuestionsOnly)}
                 className={cn(
                   'relative h-6 w-10 shrink-0 rounded-full transition-colors duration-fast ease-signature',
-                  newQuestionsOnly ? 'bg-secondary' : 'bg-surface-neutral',
+                  newQuestionsOnly ? 'bg-accent' : 'bg-surface-neutral',
                 )}
               >
                 <span
@@ -808,9 +806,6 @@ export default function PapersRoadmapPage() {
                   )}
                 />
               </button>
-              <span className="text-xs font-medium text-text-subtle">
-                New questions only
-              </span>
             </div>
             <RoadmapList
               nodes={timelineNodes}

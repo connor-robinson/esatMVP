@@ -102,7 +102,7 @@ export async function loadAttemptedQuestionsContext(
 }
 
 /** Keep only questions the user has not attempted (and whose duplicate group is unused). */
-export function filterToNewQuestionsOnly(
+export function filterToUniqueQuestionsOnly(
   questions: Question[],
   ctx: AttemptedQuestionsContext,
 ): Question[] {

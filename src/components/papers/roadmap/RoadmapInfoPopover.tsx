@@ -53,10 +53,10 @@ export function RoadmapInfoPopover({
           e.stopPropagation();
           setOpen((v) => !v);
         }}
-        className="inline-flex items-center gap-1 rounded-organic-md px-1.5 py-1 text-xs font-medium text-text-muted transition-colors hover:bg-surface-subtle hover:text-text"
+        className="inline-flex items-center rounded-organic-md p-1 text-text-muted transition-colors hover:bg-surface-subtle hover:text-text"
       >
         <Info className="h-3.5 w-3.5 shrink-0" aria-hidden />
-        <span className="sr-only sm:not-sr-only">{label}</span>
+        <span className="sr-only">{label}</span>
       </button>
 
       {open ? (
