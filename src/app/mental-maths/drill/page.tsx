@@ -10,6 +10,7 @@ import { getAllTopics } from "@/config/topics";
 import { FREE_MENTAL_MATHS_TOPIC_IDS } from "@/config/mostUsefulDrills";
 import { FERMI_GUESSR_PLAY_PATH } from "@/config/fermiGuessr";
 import { useBuilderSession } from "@/hooks/useBuilderSession";
+import { MENTAL_MATHS_DRILL_HOME_EVENT } from "@/lib/mentalMathsNav";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { SessionSelectionBar } from "@/components/ui/SessionSelectionBar";
 import { SubjectCategories } from "@/components/builder/SubjectCategories";
@@ -81,6 +82,12 @@ export default function BuilderPage() {
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [drillTutorialSeen, setDrillTutorialSeen] = useState(true);
+
+  useEffect(() => {
+    const goHome = () => builder.exitSession();
+    window.addEventListener(MENTAL_MATHS_DRILL_HOME_EVENT, goHome);
+    return () => window.removeEventListener(MENTAL_MATHS_DRILL_HOME_EVENT, goHome);
+  }, [builder.exitSession]);
 
   // Deep-link: /mental-maths/drill?topic=addition → open Addition drills
   useEffect(() => {

@@ -8,6 +8,7 @@ import { Suspense, lazy, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useBuilderSession } from "@/hooks/useBuilderSession";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
+import { MENTAL_MATHS_DRILL_HOME_EVENT } from "@/lib/mentalMathsNav";
 
 // Lazy load heavy components
 const MentalMathSession = lazy(() => import("@/components/mental-math/MentalMathSession").then(mod => ({ default: mod.MentalMathSession })));
@@ -25,6 +26,15 @@ const QuizLoadingSkeleton = () => (
 export default function SessionPage() {
   const router = useRouter();
   const builder = useBuilderSession();
+
+  useEffect(() => {
+    const goHome = () => {
+      builder.exitSession();
+      router.push("/mental-maths/drill");
+    };
+    window.addEventListener(MENTAL_MATHS_DRILL_HOME_EVENT, goHome);
+    return () => window.removeEventListener(MENTAL_MATHS_DRILL_HOME_EVENT, goHome);
+  }, [builder.exitSession, router]);
 
   // Redirect to builder if no active session (but give it a moment for state to update)
   useEffect(() => {

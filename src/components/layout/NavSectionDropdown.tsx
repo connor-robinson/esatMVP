@@ -8,6 +8,11 @@ import { ChevronDown, type LucideIcon, type LucideProps } from 'lucide-react';
 
 export type NavDropdownIcon = LucideIcon | ComponentType<LucideProps>;
 import { cn } from '@/lib/utils';
+import {
+  MENTAL_MATHS_DRILL_HREF,
+  isMentalMathsDrillPath,
+  requestMentalMathsDrillHome,
+} from '@/lib/mentalMathsNav';
 
 export type NavSectionId = 'skills' | 'papers' | 'questions' | 'tools';
 
@@ -128,6 +133,7 @@ export function NavDropdownMenuItem({
 }) {
   const theme = sectionTheme[section];
   const Icon = item.icon;
+  const pathname = usePathname();
 
   return (
     <Link
@@ -135,7 +141,15 @@ export function NavDropdownMenuItem({
       prefetch
       role='menuitem'
       onMouseEnter={() => onPrefetch(item.href)}
-      onClick={onNavigate}
+      onClick={() => {
+        if (
+          item.href === MENTAL_MATHS_DRILL_HREF &&
+          isMentalMathsDrillPath(pathname)
+        ) {
+          requestMentalMathsDrillHome();
+        }
+        onNavigate?.();
+      }}
       className={cn(
         'flex items-start gap-2.5 rounded-organic-md transition-colors duration-fast ease-signature',
         compact ? 'px-2 py-2.5' : 'gap-3.5 px-3 py-3',
@@ -277,6 +291,14 @@ export function NavSectionDropdown({
             href={config.href}
             prefetch
             onMouseEnter={() => onPrefetch(config.href)}
+            onClick={() => {
+              if (
+                config.href === MENTAL_MATHS_DRILL_HREF &&
+                isMentalMathsDrillPath(pathname)
+              ) {
+                requestMentalMathsDrillHome();
+              }
+            }}
             className={cn(
               sectionLabelClass,
               config.triggerPadding,

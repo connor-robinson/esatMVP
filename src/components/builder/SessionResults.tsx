@@ -789,13 +789,13 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             className="shrink-0"
           >
             <Button
-              variant="secondary"
+              variant={mentalMathUi ? "primary" : "secondary"}
               size="sm"
               onClick={onBackToBuilder}
               className={cn(
                 "min-h-[2.875rem] rounded-organic-md px-5 py-3.5 text-sm font-semibold",
                 mentalMathUi
-                  ? "border-0 bg-success text-background shadow-none hover:bg-success/85 hover:shadow-none focus-visible:ring-success/35 dark:text-white"
+                  ? "border-0 shadow-none hover:shadow-none"
                   : "border-border bg-surface-mid text-text shadow-sm hover:bg-surface-neutral",
               )}
             >

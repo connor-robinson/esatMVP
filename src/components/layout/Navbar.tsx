@@ -24,6 +24,11 @@ import { GoogleLogo } from '@/components/auth/GoogleAuthButton';
 import { APP_NAME } from '@/config/brand';
 import { NAVBAR_HEIGHT_PX } from '@/config/layout';
 import {
+  MENTAL_MATHS_DRILL_HREF,
+  isMentalMathsDrillPath,
+  requestMentalMathsDrillHome,
+} from '@/lib/mentalMathsNav';
+import {
   NavSectionDropdown,
   NavDropdownMenuItem,
   getNavSectionItems,
@@ -538,7 +543,15 @@ export function Navbar() {
                       <Link
                         href={section.href}
                         prefetch
-                        onClick={() => setMobileMenuOpen(false)}
+                        onClick={() => {
+                          if (
+                            section.href === MENTAL_MATHS_DRILL_HREF &&
+                            isMentalMathsDrillPath(pathname)
+                          ) {
+                            requestMentalMathsDrillHome();
+                          }
+                          setMobileMenuOpen(false);
+                        }}
                         className={cn(
                           'text-sm font-semibold uppercase tracking-[0.12em]',
                           currentSection === section.section
