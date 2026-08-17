@@ -21,6 +21,7 @@ import {
 } from "@/config/colors";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
 import { getRoadmapPartKey } from "@/lib/papers/roadmapPartKey";
+import { defaultTmuaSelectedParts } from "@/lib/papers/tmuaRoadmapParts";
 import { RoadmapInfoPopover } from "./RoadmapInfoPopover";
 import {
   ROADMAP_EXPAND_TRANSITION_CLASS,
@@ -80,12 +81,14 @@ export function StageListCard({
   const getPartKey = getRoadmapPartKey;
 
   useEffect(() => {
-    const incompletePartKeys = new Set(
-      stage.parts
-        .filter((part) => !completionData.get(getPartKey(part)))
-        .map((part) => getPartKey(part)),
-    );
-    setSelectedParts(incompletePartKeys);
+    const defaultParts =
+      stage.examName === "TMUA"
+        ? defaultTmuaSelectedParts(stage, completionData, getPartKey)
+        : stage.parts.filter(
+            (part) => !completionData.get(getPartKey(part)),
+          );
+
+    setSelectedParts(new Set(defaultParts.map((part) => getPartKey(part))));
   }, [stage, completionData]);
 
   const handleCardClick = () => {

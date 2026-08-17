@@ -6,6 +6,7 @@
 import type { ExamName, ExamType, PaperSection } from '@/types/papers';
 import { mapPartToSection } from './sectionMapping';
 import { buildEngaaRoadmapStages } from './engaaRoadmapParts';
+import { buildTmuaRoadmapStagesShell } from './tmuaRoadmapParts';
 
 export interface RoadmapPart {
   /** Stable key for completion tracking and UI selection. */
@@ -341,18 +342,21 @@ async function generateTmuaStages(): Promise<RoadmapStage[]> {
     if (p.paperName === 'Paper 2') row.paper2 = true;
   }
 
-  const years = [...byYear.keys()].sort((a, b) => a - b);
+  const shellYears = buildTmuaRoadmapStagesShell().map((s) => s.year);
+  const dbYears = [...byYear.keys()];
+  const years = [...new Set([...shellYears, ...dbYears])].sort((a, b) => a - b);
   const stages: RoadmapStage[] = [];
 
   for (const year of years) {
     const flags = byYear.get(year);
-    if (!flags) continue;
-    const { paper1: paper1Exists, paper2: paper2Exists } = flags;
+    const paper1Exists = flags?.paper1 ?? true;
+    const paper2Exists = flags?.paper2 ?? true;
     if (!paper1Exists && !paper2Exists) continue;
 
     const parts: RoadmapPart[] = [];
     if (paper1Exists) {
       parts.push({
+        partKey: 'paper-1',
         partLetter: '',
         partName: '',
         paperName: 'Paper 1',
@@ -361,6 +365,7 @@ async function generateTmuaStages(): Promise<RoadmapStage[]> {
     }
     if (paper2Exists) {
       parts.push({
+        partKey: 'paper-2',
         partLetter: '',
         partName: '',
         paperName: 'Paper 2',
@@ -372,7 +377,7 @@ async function generateTmuaStages(): Promise<RoadmapStage[]> {
       id: `tmua-${year}`,
       year,
       examName: 'TMUA' as ExamName,
-      label: 'Advanced Practice',
+      label: 'Math 2 Practice',
       parts,
     });
   }
@@ -418,8 +423,13 @@ export function getRoadmapStagesShell(): RoadmapStage[] {
     (s) => s.examName === "NSAA" && s.year === 2023,
   );
   const engaaStages = ROADMAP_STAGES.filter((s) => s.examName === "ENGAA");
+  const tmuaStages = buildTmuaRoadmapStagesShell();
 
-  const ordered: RoadmapStage[] = [...nsaaStages, ...engaaStages];
+  const ordered: RoadmapStage[] = [
+    ...nsaaStages,
+    ...engaaStages,
+    ...tmuaStages,
+  ];
   if (nsaa2023) ordered.push(nsaa2023);
   return ordered;
 }

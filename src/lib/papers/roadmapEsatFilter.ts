@@ -1,5 +1,6 @@
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import { paperSectionsForEsatSubjects } from "@/lib/papers/esatSubjectSectionMapping";
+import { shouldShowTmuaOnRoadmap } from "@/lib/papers/tmuaRoadmapParts";
 import type { RoadmapPart, RoadmapStage } from "@/lib/papers/roadmapConfig";
 import type { ExamName, PaperSection } from "@/types/papers";
 
@@ -52,7 +53,9 @@ export function filterRoadmapStageByEsatSubjects(
   examPreference: "ESAT" | "TMUA" | null,
 ): RoadmapStage | null {
   if (stage.examName === "TMUA") {
-    if (examPreference === "ESAT") return null;
+    if (!shouldShowTmuaOnRoadmap(esatSubjects, examPreference)) {
+      return null;
+    }
     return stage;
   }
 

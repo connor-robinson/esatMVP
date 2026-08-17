@@ -48,8 +48,12 @@ const STAGE_COMMENTARY: Record<string, StageCommentary> = {
     text: "The last ENGAA papers. Fast and calculation heavy. Section 1 only; good extra maths and physics once you have done NSAA for the same year.",
   },
   "nsaa-2023": {
-    title: "2024 onwards",
-    text: "ESAT replaces NSAA and ENGAA. Same broad skills, but split into 40 minute modules and all multiple choice.",
+    title: "End of roadmap",
+    text: "ESAT replaces NSAA and ENGAA from 2024. More practice papers coming soon.",
+  },
+  "tmua-intro": {
+    title: "TMUA",
+    text: "Extra maths papers, mainly for Math 2. We default to Paper 1; add Paper 2 if you want more challenge.",
   },
 };
 
@@ -59,8 +63,23 @@ export function getStageCommentary(stageId: string): StageCommentary | null {
 
 export function buildRoadmapTimelineMarkers(stages: RoadmapStage[]): TimelineMarker[] {
   const markers: TimelineMarker[] = [];
+  let tmuaIntroAdded = false;
 
   stages.forEach((stage, index) => {
+    if (stage.examName === "TMUA" && !tmuaIntroAdded) {
+      const intro = STAGE_COMMENTARY["tmua-intro"];
+      if (intro) {
+        tmuaIntroAdded = true;
+        markers.push({
+          stageIndex: index,
+          examName: stage.examName,
+          title: intro.title,
+          text: intro.text,
+        });
+      }
+      return;
+    }
+
     const copy = STAGE_COMMENTARY[stage.id];
     if (!copy) return;
 
