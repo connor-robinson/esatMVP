@@ -57,42 +57,8 @@ export function MarketingHomepage() {
   return (
     <div className="scroll-smooth">
       {/* Hero Section */}
-      <section className="relative pt-20 pb-16 lg:pt-32 lg:pb-32 overflow-hidden bg-[#0A0F1D]">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0"
-        >
-          {/* Light blue dot field */}
-          <div
-            className="absolute inset-0 opacity-[0.45]"
-            style={{
-              backgroundImage:
-                "radial-gradient(rgba(147, 197, 253, 0.35) 1px, transparent 1px)",
-              backgroundSize: "22px 22px",
-            }}
-          />
-          {/* Soft professional rays */}
-          <div
-            className="absolute inset-0 opacity-70"
-            style={{
-              backgroundImage: [
-                "linear-gradient(118deg, transparent 42%, rgba(147, 197, 253, 0.07) 50%, transparent 58%)",
-                "linear-gradient(98deg, transparent 36%, rgba(96, 165, 250, 0.06) 47%, transparent 57%)",
-                "linear-gradient(138deg, transparent 28%, rgba(59, 130, 246, 0.08) 52%, transparent 68%)",
-              ].join(", "),
-            }}
-          />
-          {/* Gentle top-right wash — no blur/glow */}
-          <div
-            className="absolute -right-24 -top-32 h-[28rem] w-[28rem] opacity-40"
-            style={{
-              background:
-                "radial-gradient(circle at center, rgba(147, 197, 253, 0.14) 0%, transparent 68%)",
-            }}
-          />
-        </div>
-
-        <div className="relative max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6 space-y-12 lg:space-y-16">
+      <section className="pt-20 pb-16 lg:pt-32 lg:pb-32 bg-[#0A0F1D]">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6 space-y-12 lg:space-y-16">
           <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-10 xl:gap-12">
             <div className="max-w-2xl space-y-8">
               <h1 className="text-5xl font-display font-bold leading-[1.08] tracking-tight sm:text-6xl lg:text-[4.25rem] xl:text-7xl">
