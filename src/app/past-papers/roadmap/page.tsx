@@ -31,7 +31,7 @@ import { examNameToPaperType } from '@/lib/papers/paperConfig';
 import type { PaperSection, Question, Paper } from '@/types/papers';
 import type { RoadmapPart } from '@/lib/papers/roadmapConfig';
 import { ReplaceActivePaperModal } from '@/components/papers/ReplaceActivePaperModal';
-import { shouldConfirmReplacePaperSession } from '@/lib/papers/activePaperSessionClient';
+import { shouldConfirmReplacePaperSession, resumeInProgressPaperSession } from '@/lib/papers/activePaperSessionClient';
 import { isFreePreviewRoadmapStage } from '@/lib/papers/freePreviewPapers';
 import { applyEsatSubjectsToRoadmapStages } from '@/lib/papers/roadmapEsatFilter';
 import {
@@ -133,6 +133,7 @@ export default function PapersRoadmapPage() {
   const [completionLoading, setCompletionLoading] = useState(true);
   const [replaceModalOpen, setReplaceModalOpen] = useState(false);
   const [replaceConfirming, setReplaceConfirming] = useState(false);
+  const [replaceResuming, setReplaceResuming] = useState(false);
   const pendingRoadmapStartRef = useRef<{
     stage: RoadmapStage;
     selectedParts: RoadmapPart[];
@@ -606,6 +607,20 @@ export default function PapersRoadmapPage() {
     }
   }, [executeStartStage]);
 
+  const handleResumeSession = useCallback(async () => {
+    setReplaceResuming(true);
+    try {
+      pendingRoadmapStartRef.current = null;
+      const resumed = await resumeInProgressPaperSession();
+      if (resumed) {
+        setReplaceModalOpen(false);
+        router.push('/past-papers/solve/resume');
+      }
+    } finally {
+      setReplaceResuming(false);
+    }
+  }, [router]);
+
   // Refresh completion data
   const refreshCompletionData = useCallback(async () => {
     try {
@@ -822,7 +837,9 @@ export default function PapersRoadmapPage() {
         open={replaceModalOpen}
         onCancel={handleCancelReplaceSession}
         onConfirm={handleConfirmReplaceSession}
+        onResume={handleResumeSession}
         isConfirming={replaceConfirming}
+        isResuming={replaceResuming}
       />
     </Container>
   );

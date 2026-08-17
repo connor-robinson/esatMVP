@@ -19,6 +19,50 @@ interface SessionData {
   isPaused: boolean;
   pausedAt: number | null;
   savedAt: number; // When this save occurred
+  /** User saved & left — do not auto-restore into the global progress bar */
+  detachedFromNavbar?: boolean;
+}
+
+const DETACHED_SESSIONS_KEY = 'paper-session-detached-ids';
+
+function readDetachedSessionIds(): Set<string> {
+  if (typeof window === 'undefined') return new Set();
+  try {
+    const raw = localStorage.getItem(DETACHED_SESSIONS_KEY);
+    if (!raw) return new Set();
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) return new Set();
+    return new Set(parsed.filter((id): id is string => typeof id === 'string'));
+  } catch {
+    return new Set();
+  }
+}
+
+function writeDetachedSessionIds(ids: Set<string>): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(DETACHED_SESSIONS_KEY, JSON.stringify([...ids]));
+  } catch {
+    // ignore storage errors
+  }
+}
+
+/** Mark a session as save-and-left (skip auto-restore to navbar progress bar). */
+export function markSessionDetached(sessionId: string): void {
+  const ids = readDetachedSessionIds();
+  ids.add(sessionId);
+  writeDetachedSessionIds(ids);
+}
+
+/** Clear detached flag when user explicitly resumes. */
+export function clearSessionDetached(sessionId: string): void {
+  const ids = readDetachedSessionIds();
+  ids.delete(sessionId);
+  writeDetachedSessionIds(ids);
+}
+
+export function isSessionDetached(sessionId: string): boolean {
+  return readDetachedSessionIds().has(sessionId);
 }
 
 let dbPromise: Promise<IDBDatabase> | null = null;
@@ -69,8 +113,21 @@ export async function saveSession(sessionId: string, state: any, metadata: {
   sectionElapsedTimes: number[];
   isPaused: boolean;
   pausedAt: number | null;
+  detachedFromNavbar?: boolean;
 }): Promise<void> {
   try {
+    const existing = await loadSession(sessionId);
+    const detachedFromNavbar =
+      metadata.detachedFromNavbar ??
+      existing?.detachedFromNavbar ??
+      false;
+
+    if (detachedFromNavbar) {
+      markSessionDetached(sessionId);
+    } else if (metadata.detachedFromNavbar === false) {
+      clearSessionDetached(sessionId);
+    }
+
     const db = await initDB();
     const transaction = db.transaction([STORE_NAME], 'readwrite');
     const store = transaction.objectStore(STORE_NAME);
@@ -83,6 +140,7 @@ export async function saveSession(sessionId: string, state: any, metadata: {
       isPaused: metadata.isPaused,
       pausedAt: metadata.pausedAt,
       savedAt: Date.now(),
+      detachedFromNavbar,
     };
 
     await new Promise<void>((resolve, reject) => {
@@ -155,8 +213,13 @@ export async function hasActiveSession(): Promise<string | null> {
         const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
         if (cursor) {
           const data = cursor.value as SessionData;
-          // Only consider sessions that are not ended
-          if (data.state && !data.state.endedAt) {
+          // Only consider sessions that are not ended and not save-and-left
+          if (
+            data.state &&
+            !data.state.endedAt &&
+            !data.detachedFromNavbar &&
+            !isSessionDetached(data.sessionId)
+          ) {
             sessions.push(data);
           }
           cursor.continue();
@@ -180,15 +243,65 @@ export async function hasActiveSession(): Promise<string | null> {
   }
 }
 
+function shouldSkipSessionForAutoRestore(sessionId: string, detachedFromNavbar?: boolean): boolean {
+  return detachedFromNavbar === true || isSessionDetached(sessionId);
+}
+
+/**
+ * Most recent save-and-left session (for explicit resume).
+ */
+export async function findDetachedSession(): Promise<{ sessionId: string } | null> {
+  try {
+    const db = await initDB();
+    const transaction = db.transaction([STORE_NAME], 'readonly');
+    const store = transaction.objectStore(STORE_NAME);
+
+    return new Promise<{ sessionId: string } | null>((resolve, reject) => {
+      const request = store.openCursor();
+      const sessions: SessionData[] = [];
+
+      request.onsuccess = (event) => {
+        const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
+        if (cursor) {
+          const data = cursor.value as SessionData;
+          if (
+            data.state &&
+            !data.state.endedAt &&
+            (data.detachedFromNavbar === true || isSessionDetached(data.sessionId))
+          ) {
+            sessions.push(data);
+          }
+          cursor.continue();
+        } else {
+          if (sessions.length > 0) {
+            sessions.sort((a, b) => b.savedAt - a.savedAt);
+            resolve({ sessionId: sessions[0].sessionId });
+          } else {
+            resolve(null);
+          }
+        }
+      };
+
+      request.onerror = () => {
+        reject(request.error);
+      };
+    });
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Unified session detection - checks both IndexedDB and database
  * Returns the most recent active session ID, or null if none found
  * Also reconciles differences (database is source of truth for ended_at)
+ *
+ * Skips save-and-left sessions (detached) — those resume only when the user asks.
  */
 export async function findActiveSession(): Promise<{ sessionId: string; source: 'indexeddb' | 'database' } | null> {
   try {
     // Check IndexedDB first (faster, local)
-    const indexedDBSessionId = await hasActiveSession();
+    let indexedDBSessionId = await hasActiveSession();
     
     // Check database for in-progress sessions
     let databaseSessionId: string | null = null;
@@ -215,6 +328,23 @@ export async function findActiveSession(): Promise<{ sessionId: string; source: 
       // Continue with IndexedDB result if database check fails
     }
     
+    // Skip save-and-left sessions stored locally
+    if (indexedDBSessionId) {
+      const localData = await loadSession(indexedDBSessionId);
+      if (
+        localData &&
+        shouldSkipSessionForAutoRestore(
+          indexedDBSessionId,
+          localData.detachedFromNavbar,
+        )
+      ) {
+        indexedDBSessionId = null;
+      }
+    }
+    if (databaseSessionId && isSessionDetached(databaseSessionId)) {
+      databaseSessionId = null;
+    }
+
     // Reconcile differences
     if (indexedDBSessionId && databaseSessionId) {
       // Both have sessions - check if they match

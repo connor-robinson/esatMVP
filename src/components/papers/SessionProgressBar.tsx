@@ -55,14 +55,12 @@ export function SessionProgressBar({
     currentSectionIndex,
     currentQuestionIndex,
     sectionInstructionTimer,
-    isPaused,
     allSectionsQuestions,
     questions,
     isMarkingInfo,
     paperFullscreenShowMainNavbar,
     finishMarkSession,
-    persistSessionToServer,
-    pauseSession,
+    saveAndLeaveSession,
   } = usePaperSessionStore();
 
   const isOnMarkPage = pathname.startsWith('/past-papers/mark');
@@ -306,8 +304,7 @@ export function SessionProgressBar({
         return;
       }
 
-      if (!isPaused) pauseSession();
-      await persistSessionToServer({ immediate: true });
+      await saveAndLeaveSession();
       router.push('/past-papers/library');
     } catch (error) {
       alert('Failed to save session. Please try again.');

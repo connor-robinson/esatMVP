@@ -22,7 +22,7 @@ import type { Paper, PaperSection, Question, ExamName } from '@/types/papers';
 import { PaperLibraryGrid } from '@/components/papers/library/PaperLibraryGrid';
 import { PaperSessionSummary } from '@/components/papers/library/PaperSessionSummary';
 import { ReplaceActivePaperModal } from '@/components/papers/ReplaceActivePaperModal';
-import { shouldConfirmReplacePaperSession } from '@/lib/papers/activePaperSessionClient';
+import { shouldConfirmReplacePaperSession, resumeInProgressPaperSession } from '@/lib/papers/activePaperSessionClient';
 import {
   isPastPaperLibraryLocked,
   freePreviewPastPapersLabel,
@@ -179,6 +179,7 @@ export default function PapersLibraryPage() {
   const [isStartingSession, setIsStartingSession] = useState(false);
   const [replaceModalOpen, setReplaceModalOpen] = useState(false);
   const [replaceConfirming, setReplaceConfirming] = useState(false);
+  const [replaceResuming, setReplaceResuming] = useState(false);
   const pendingStartRef = useRef<(() => Promise<void>) | null>(null);
   const [showTutorial, setShowTutorial] = useState(false);
   const [customizeAcknowledged, setCustomizeAcknowledged] = useState(false);
@@ -669,6 +670,20 @@ export default function PapersLibraryPage() {
     }
   };
 
+  const handleResumeSession = async () => {
+    setReplaceResuming(true);
+    try {
+      pendingStartRef.current = null;
+      const resumed = await resumeInProgressPaperSession();
+      if (resumed) {
+        setReplaceModalOpen(false);
+        router.push('/past-papers/solve/resume');
+      }
+    } finally {
+      setReplaceResuming(false);
+    }
+  };
+
   const canStart = selectedPapers.some((sp) =>
     paperHasSelectedSubjects(sp.selectedSections),
   );
@@ -794,7 +809,9 @@ export default function PapersLibraryPage() {
         open={replaceModalOpen}
         onCancel={handleCancelReplaceSession}
         onConfirm={handleConfirmReplaceSession}
+        onResume={handleResumeSession}
         isConfirming={replaceConfirming}
+        isResuming={replaceResuming}
       />
     </Container>
   );

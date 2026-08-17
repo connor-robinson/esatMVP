@@ -22,7 +22,7 @@ import { PaperLibraryFilters } from '@/components/papers/plan/PaperLibraryFilter
 import { PaperLibraryGrid } from '@/components/papers/plan/PaperLibraryGrid';
 import { PaperSessionSummary } from '@/components/papers/plan/PaperSessionSummary';
 import { ReplaceActivePaperModal } from '@/components/papers/ReplaceActivePaperModal';
-import { shouldConfirmReplacePaperSession } from '@/lib/papers/activePaperSessionClient';
+import { shouldConfirmReplacePaperSession, resumeInProgressPaperSession } from '@/lib/papers/activePaperSessionClient';
 
 interface SelectedPaper {
   paper: Paper;
@@ -63,6 +63,7 @@ export default function PapersPlanPage() {
   const [isStartingSession, setIsStartingSession] = useState(false);
   const [replaceModalOpen, setReplaceModalOpen] = useState(false);
   const [replaceConfirming, setReplaceConfirming] = useState(false);
+  const [replaceResuming, setReplaceResuming] = useState(false);
   const pendingStartRef = useRef<(() => Promise<void>) | null>(null);
 
   // Load available papers on mount
@@ -331,6 +332,20 @@ export default function PapersPlanPage() {
     }
   };
 
+  const handleResumeSession = async () => {
+    setReplaceResuming(true);
+    try {
+      pendingStartRef.current = null;
+      const resumed = await resumeInProgressPaperSession();
+      if (resumed) {
+        setReplaceModalOpen(false);
+        router.push('/past-papers/solve/resume');
+      }
+    } finally {
+      setReplaceResuming(false);
+    }
+  };
+
   const canStart =
     selectedPapers.length > 0 &&
     selectedPapers.some((sp) => sp.selectedSections.size > 0);
@@ -420,7 +435,9 @@ export default function PapersPlanPage() {
         open={replaceModalOpen}
         onCancel={handleCancelReplaceSession}
         onConfirm={handleConfirmReplaceSession}
+        onResume={handleResumeSession}
         isConfirming={replaceConfirming}
+        isResuming={replaceResuming}
       />
     </Container>
   );

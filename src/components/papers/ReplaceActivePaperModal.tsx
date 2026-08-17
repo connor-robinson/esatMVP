@@ -7,16 +7,22 @@ type ReplaceActivePaperModalProps = {
   open: boolean;
   onCancel: () => void;
   onConfirm: () => void;
+  onResume?: () => void;
   isConfirming?: boolean;
+  isResuming?: boolean;
 };
 
 export function ReplaceActivePaperModal({
   open,
   onCancel,
   onConfirm,
+  onResume,
   isConfirming = false,
+  isResuming = false,
 }: ReplaceActivePaperModalProps) {
   if (!open || typeof window === 'undefined') return null;
+
+  const busy = isConfirming || isResuming;
 
   return createPortal(
     <div
@@ -46,7 +52,7 @@ export function ReplaceActivePaperModal({
           <button
             type="button"
             onClick={onCancel}
-            disabled={isConfirming}
+            disabled={busy}
             className="rounded-lg p-2 text-white/50 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-40"
             aria-label="Close"
           >
@@ -64,23 +70,33 @@ export function ReplaceActivePaperModal({
             on the current paper.
           </p>
           <p className="text-white/50 text-xs">
-            If you meant to continue, go back to the solve screen or use the
-            progress bar to resume.
+            To continue where you left off, resume your saved session — the
+            progress bar will reappear when you return to the paper.
           </p>
         </div>
-        <div className="flex justify-end gap-2 border-t border-white/10 p-5">
+        <div className="flex flex-col-reverse gap-2 border-t border-white/10 p-5 sm:flex-row sm:justify-end">
           <button
             type="button"
             onClick={onCancel}
-            disabled={isConfirming}
+            disabled={busy}
             className="rounded-organic-md px-4 py-2 text-sm font-medium text-white/80 transition-colors hover:bg-white/10 disabled:opacity-40"
           >
             Cancel
           </button>
+          {onResume && (
+            <button
+              type="button"
+              onClick={onResume}
+              disabled={busy}
+              className="rounded-organic-md bg-accent px-4 py-2 text-sm font-semibold text-background transition-colors hover:bg-accent/90 disabled:opacity-50"
+            >
+              {isResuming ? 'Resuming…' : 'Resume session'}
+            </button>
+          )}
           <button
             type="button"
             onClick={onConfirm}
-            disabled={isConfirming}
+            disabled={busy}
             className="rounded-organic-md bg-amber-600/90 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-600 disabled:opacity-50"
           >
             {isConfirming ? 'Starting…' : 'Start anyway'}

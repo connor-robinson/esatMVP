@@ -30,7 +30,7 @@ import { questionMatchesPartId } from '@/lib/papers/paperLibrarySections';
 import { isBogusPartLetter } from '@/lib/papers/markQuestionUtils';
 import { cropImageToContent } from '@/lib/utils/imageCrop';
 import type { Answer, Letter, MistakeTag, Paper, PaperSection, Question, ExamName, ExamType } from '@/types/papers';
-import { saveSession, loadSession, deleteSession } from '@/lib/storage/sessionStorage';
+import { saveSession, loadSession, deleteSession, findDetachedSession, clearSessionDetached, markSessionDetached } from '@/lib/storage/sessionStorage';
 import { generatePartIdsFromSections, generatePartIdFromRoadmapPart } from '@/lib/papers/partIdUtils';
 import { examNameToPaperType } from '@/lib/papers/paperConfig';
 
@@ -157,8 +157,14 @@ interface PaperSessionState {
   updateTimerState: () => void;
   pauseSession: () => void;
   resumeSession: () => void;
-  saveSessionToIndexedDB: () => Promise<void>;
+  saveSessionToIndexedDB: (options?: { detachedFromNavbar?: boolean }) => Promise<void>;
   loadSessionFromIndexedDB: (sessionId: string) => Promise<void>;
+  /** Save progress, detach from navbar progress bar, keep session resumable */
+  saveAndLeaveSession: () => Promise<void>;
+  /** Load a save-and-left session back into the client (shows progress bar again) */
+  resumeSavedSession: () => Promise<boolean>;
+  /** Remove session from client memory without ending the server session */
+  clearClientSession: () => void;
   setIsMarkingInfo: (isMarkingInfo: boolean) => void;
   finishMarkSession: () => Promise<string | null>;
 
@@ -174,6 +180,54 @@ const initialAnswer = (): Answer => ({
   explanation: '',
   addToDrill: false,
 });
+
+/** Cleared client session fields (session may still exist in IndexedDB / DB). */
+const EMPTY_CLIENT_SESSION = {
+  sessionId: null,
+  paperId: null,
+  paperName: '',
+  paperVariant: '',
+  sessionName: '',
+  timeLimitMinutes: 60,
+  questionRange: { start: 1, end: 20 },
+  selectedSections: [] as PaperSection[],
+  selectedPartIds: [] as string[],
+  questions: [] as Question[],
+  questionsLoading: false,
+  questionsError: null as string | null,
+  questionOrder: [] as number[],
+  currentQuestionIndex: 0,
+  answers: [] as Answer[],
+  perQuestionSec: [] as number[],
+  correctFlags: [] as (boolean | null)[],
+  guessedFlags: [] as boolean[],
+  reviewFlags: [] as boolean[],
+  mistakeTags: [] as MistakeTag[],
+  visitedQuestions: [] as boolean[],
+  sectionStarts: {} as Record<number, string>,
+  currentSectionIndex: 0,
+  sectionTimeLimits: [] as number[],
+  sectionInstructionTimer: null as number | null,
+  sectionInstructionDeadline: null as number | null,
+  instructionTimerStartedAt: null as number | null,
+  currentPipelineState: 'section' as 'instruction' | 'section',
+  allSectionsQuestions: [] as Question[][],
+  sectionDeadlines: [] as number[],
+  sectionStartTimes: [] as number[],
+  startedAt: null as number | null,
+  endedAt: null as number | null,
+  deadline: null as number | null,
+  lastActiveTimestamp: null as number | null,
+  sectionElapsedTimes: [] as number[],
+  isPaused: false,
+  pausedAt: null as number | null,
+  notes: '',
+  persistTimer: null as ReturnType<typeof setTimeout> | null,
+  sessionPersistPromise: null as Promise<unknown> | null,
+  pendingPersistQueue: [] as Array<{ payload: any; retries: number; timestamp: number }>,
+  isMarkingInfo: false,
+  paperFullscreenShowMainNavbar: true,
+};
 
 export const usePaperSessionStore = create<PaperSessionState>()(
   persist(
@@ -1164,50 +1218,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         });
         
         // Clear all session state
-        set({
-          sessionId: null,
-          paperId: null,
-          paperName: '',
-          paperVariant: '',
-          sessionName: '',
-          timeLimitMinutes: 60,
-          questionRange: { start: 1, end: 20 },
-          selectedSections: [],
-          selectedPartIds: [],
-          questions: [],
-          questionsLoading: false,
-          questionsError: null,
-          questionOrder: [],
-          currentQuestionIndex: 0,
-          answers: [],
-          perQuestionSec: [],
-          correctFlags: [],
-          guessedFlags: [],
-          reviewFlags: [],
-          mistakeTags: [],
-          visitedQuestions: [],
-          sectionStarts: {},
-          currentSectionIndex: 0,
-          sectionTimeLimits: [],
-          sectionInstructionTimer: null,
-          sectionInstructionDeadline: null,
-          allSectionsQuestions: [],
-          sectionDeadlines: [],
-          sectionStartTimes: [],
-          startedAt: null,
-          endedAt: null,
-          deadline: null,
-          lastActiveTimestamp: null,
-          sectionElapsedTimes: [],
-          isPaused: false,
-          pausedAt: null,
-          notes: '',
-          persistTimer: null,
-          sessionPersistPromise: null,
-          pendingPersistQueue: [],
-          isMarkingInfo: false,
-          paperFullscreenShowMainNavbar: true,
-        });
+        set({ ...EMPTY_CLIENT_SESSION });
         
         // Clear quit flag after a delay (5 seconds) to allow for any delayed restoration attempts
         setTimeout(() => {
@@ -1219,6 +1230,60 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             });
           }
         }, 5000);
+      },
+
+      saveAndLeaveSession: async () => {
+        const state = get();
+        const sessionIdToLeave = state.sessionId;
+        if (!sessionIdToLeave) return;
+
+        if (state.persistTimer) {
+          clearTimeout(state.persistTimer);
+        }
+
+        if (!state.isPaused) {
+          get().pauseSession();
+        }
+        get().updateTimerState();
+        await get().saveSessionToIndexedDB({ detachedFromNavbar: true });
+        await get().persistSessionToServer({ immediate: true });
+
+        markSessionDetached(sessionIdToLeave);
+
+        const now = Date.now();
+        set({
+          justQuitSessionId: sessionIdToLeave,
+          justQuitTimestamp: now,
+        });
+        set({ ...EMPTY_CLIENT_SESSION });
+
+        setTimeout(() => {
+          const currentState = get();
+          if (currentState.justQuitSessionId === sessionIdToLeave) {
+            set({
+              justQuitSessionId: null,
+              justQuitTimestamp: null,
+            });
+          }
+        }, 5000);
+      },
+
+      resumeSavedSession: async () => {
+        const detached = await findDetachedSession();
+        if (!detached) return false;
+
+        clearSessionDetached(detached.sessionId);
+        await get().loadSessionFromIndexedDB(detached.sessionId);
+        await get().saveSessionToIndexedDB({ detachedFromNavbar: false });
+        return true;
+      },
+
+      clearClientSession: () => {
+        const state = get();
+        if (state.persistTimer) {
+          clearTimeout(state.persistTimer);
+        }
+        set({ ...EMPTY_CLIENT_SESSION });
       },
 
       schedulePersist: () => {
@@ -2046,10 +2111,22 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         }
 
         set({ isMarkingInfo: false });
-        return get().sessionId;
+
+        const completedSessionId = get().sessionId;
+        if (completedSessionId) {
+          try {
+            await deleteSession(completedSessionId);
+            clearSessionDetached(completedSessionId);
+          } catch {
+            // ignore cleanup errors
+          }
+        }
+        get().clearClientSession();
+
+        return completedSessionId;
       },
 
-      saveSessionToIndexedDB: async () => {
+      saveSessionToIndexedDB: async (options?: { detachedFromNavbar?: boolean }) => {
         const state = get();
         if (!state.sessionId) return;
         
@@ -2102,6 +2179,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             sectionElapsedTimes: updatedState.sectionElapsedTimes,
             isPaused: updatedState.isPaused,
             pausedAt: updatedState.pausedAt,
+            detachedFromNavbar: options?.detachedFromNavbar,
           });
         } catch (error) {
           

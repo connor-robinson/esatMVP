@@ -1,8 +1,8 @@
 /**
  * Component to restore active session from IndexedDB on page load
- * 
- * Checks for active sessions when the app loads and restores them
- * if found, showing the paused progress bar.
+ *
+ * Only auto-restores sessions that are still attached to the navbar
+ * (not save-and-left). Detached sessions resume when the user explicitly asks.
  */
 
 "use client";
