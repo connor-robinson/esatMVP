@@ -784,8 +784,13 @@ export default function PapersRoadmapPage() {
               </span>
               <RoadmapInfoPopover title="Unique questions only">
                 <p>
-                  When on, sessions only include questions you have not
-                  attempted before, including verified NSAA/ENGAA duplicates.
+                  When on, sessions only include questions you have not tried
+                  before.
+                </p>
+                <p>
+                  Some ENGAA papers overlap with NSAA because certain years
+                  used the same question banks. If you have already done the
+                  matching NSAA question, we skip it here too.
                 </p>
               </RoadmapInfoPopover>
               <button

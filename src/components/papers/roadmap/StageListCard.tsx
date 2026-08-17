@@ -500,8 +500,13 @@ export function StageListCard({
                         <RoadmapInfoPopover title="Unique questions only">
                           <p>
                             When on, your session only includes questions you
-                            have not attempted before, including verified
-                            NSAA/ENGAA duplicates.
+                            have not tried before.
+                          </p>
+                          <p>
+                            Some ENGAA papers overlap with NSAA because certain
+                            years used the same question banks. If you have
+                            already done the matching NSAA question, we skip it
+                            here too.
                           </p>
                         </RoadmapInfoPopover>
                       </div>
