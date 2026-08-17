@@ -68,31 +68,31 @@ export function MarketingHomepage() {
             backgroundSize: "22px 22px",
           }}
         />
-        <div className="relative max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6 space-y-10 lg:space-y-14">
-          <h1 className="max-w-[18ch] font-display text-6xl font-bold leading-[0.92] tracking-[-0.04em] sm:max-w-none sm:text-7xl lg:text-8xl xl:text-[7.25rem]">
-            The leading{" "}
-            <span
-              className="group relative inline-block cursor-help"
-              tabIndex={0}
-              aria-describedby="esat-definition"
-            >
-              <span className="text-underline-accent">ESAT</span>
-              <span
-                id="esat-definition"
-                role="tooltip"
-                className="pointer-events-none absolute left-0 top-full z-20 mt-3 w-[min(22rem,calc(100vw-2rem))] rounded-xl bg-[#161D2F] px-4 py-3 text-left text-sm font-normal leading-relaxed tracking-normal text-[#94A3B8] opacity-0 shadow-xl transition-opacity duration-150 group-hover:opacity-100 group-focus:opacity-100 sm:w-[24rem]"
-              >
-                The ESAT is the Engineering and Science Admissions Test for
-                undergraduate STEM applicants. It is a mandatory entrance exam
-                for engineering, science, and medical courses at Cambridge,
-                Oxford, Imperial College London, and UCL.
-              </span>
-            </span>{" "}
-            question bank
-          </h1>
-          <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-10 xl:gap-12">
-            <div className="max-w-2xl space-y-8">
-              <p className="text-xl text-[#94A3B8] max-w-2xl leading-relaxed">
+        <div className="relative mx-auto max-w-[1400px] space-y-10 px-4 sm:px-5 lg:space-y-14 lg:px-6">
+          <div className="grid grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] items-center gap-4 sm:gap-8 lg:gap-10 xl:gap-12">
+            <div className="min-w-0 space-y-5 sm:space-y-7 lg:space-y-8">
+              <h1 className="font-display text-[clamp(1.5rem,0.55rem+3.6vw,4.5rem)] font-bold leading-[0.95] tracking-[-0.04em]">
+                The leading{" "}
+                <span
+                  className="group relative inline-block cursor-help"
+                  tabIndex={0}
+                  aria-describedby="esat-definition"
+                >
+                  <span className="text-underline-accent">ESAT</span>
+                  <span
+                    id="esat-definition"
+                    role="tooltip"
+                    className="pointer-events-none absolute left-0 top-full z-20 mt-3 w-[min(22rem,calc(100vw-2rem))] rounded-xl bg-[#161D2F] px-4 py-3 text-left text-sm font-normal leading-relaxed tracking-normal text-[#94A3B8] opacity-0 shadow-xl transition-opacity duration-150 group-hover:opacity-100 group-focus:opacity-100 sm:w-[24rem]"
+                  >
+                    The ESAT is the Engineering and Science Admissions Test for
+                    undergraduate STEM applicants. It is a mandatory entrance
+                    exam for engineering, science, and medical courses at
+                    Cambridge, Oxford, Imperial College London, and UCL.
+                  </span>
+                </span>{" "}
+                question bank
+              </h1>
+              <p className="max-w-2xl text-sm leading-relaxed text-[#94A3B8] sm:text-lg lg:text-xl">
                 Secure your Oxbridge offers with our{" "}
                 <span className="text-underline-accent text-white">
                   {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ practice
@@ -125,7 +125,9 @@ export function MarketingHomepage() {
               </div>
             </div>
 
-            <HeroTrainerDemo />
+            <div className="min-w-0">
+              <HeroTrainerDemo className="max-w-none p-4 sm:max-w-[28rem] sm:p-9 lg:min-h-[34rem] lg:p-10" />
+            </div>
           </div>
 
           <div className="rounded-3xl bg-white/[0.08] p-6 backdrop-blur-xl sm:p-8">
