@@ -33,6 +33,7 @@ const ENTRIES: readonly { path: string; priority: number }[] = [
   { path: "/tools/score-converter/engaa", priority: 0.6 },
   { path: "/tools/score-converter/tmua", priority: 0.6 },
   { path: APP_ROUTES.fermiGame, priority: 0.5 },
+  { path: APP_ROUTES.faqs, priority: 0.6 },
 
   { path: "/pricing", priority: 0.6 },
   { path: "/help", priority: 0.3 },

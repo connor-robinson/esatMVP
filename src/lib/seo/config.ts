@@ -51,6 +51,7 @@ export const APP_ROUTES = {
   questionBank: "/questions",
   pastPaperLibrary: "/past-papers/library",
   pastPaperRoadmap: "/past-papers/roadmap",
+  faqs: "/tools/faqs",
   signUp: "/login?mode=signup",
 } as const;
 

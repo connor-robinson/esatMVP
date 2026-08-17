@@ -132,3 +132,38 @@ export const SEO_GUIDE_KEYS: SeoLinkKey[] = [
   "commonMistakes",
   "noCalcPractice",
 ];
+
+export type FaqGuideSection = {
+  id: string;
+  title: string;
+  description: string;
+  keys: readonly SeoLinkKey[];
+};
+
+/** Grouped guide pages for the Exam Tools FAQ hub. */
+export const FAQ_GUIDE_SECTIONS: readonly FaqGuideSection[] = [
+  {
+    id: "getting-started",
+    title: "Getting started",
+    description: "How to prepare, when the test is, and what the day looks like.",
+    keys: ["preparation", "testDates", "testDay", "commonMistakes"],
+  },
+  {
+    id: "modules",
+    title: "Modules",
+    description: "What each ESAT module actually tests, and how to practise it.",
+    keys: ["maths1", "maths2", "physics"],
+  },
+  {
+    id: "past-papers",
+    title: "Past papers",
+    description: "Official papers and how to use older ENGAA, NSAA and TMUA material.",
+    keys: ["pastPapers", "engaaNsaaPapers", "tmuaForEsat"],
+  },
+  {
+    id: "rules-and-scores",
+    title: "Rules, scores and practice",
+    description: "Calculator rules, what a good score looks like, and no-calculator training.",
+    keys: ["calculatorRules", "goodScore", "noCalcPractice"],
+  },
+];

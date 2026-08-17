@@ -168,7 +168,7 @@ const navSections: NavSectionConfig[] = [
       {
         href: '/tools/faqs',
         label: 'FAQs',
-        description: 'Common questions answered',
+        description: 'ESAT guides and articles',
         icon: HelpCircle,
       },
       {
