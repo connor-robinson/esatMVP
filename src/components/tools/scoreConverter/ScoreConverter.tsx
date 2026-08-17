@@ -232,7 +232,7 @@ function ModernSelect({
           id={listId}
           role="listbox"
           aria-label={label}
-          className="absolute left-0 top-full z-40 mt-2 w-full min-w-[9rem] overflow-hidden rounded-organic-lg bg-surface-subtle py-1.5 shadow-modal-card"
+          className="absolute left-0 top-full z-50 mt-2 w-full min-w-[9rem] overflow-hidden rounded-organic-lg bg-surface-subtle py-1.5 shadow-modal-card"
         >
           {options.map((opt) => {
             const isSelected = opt.value === value;
@@ -429,28 +429,21 @@ function InputHelperHint({
   if (!open) return null;
 
   return (
-    <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex justify-center px-4 pt-3 sm:justify-end sm:px-6">
-      <div className="pointer-events-auto max-w-sm rounded-organic-lg bg-surface-subtle/95 p-3 shadow-modal-card backdrop-blur">
-        <div className="flex items-start gap-3">
-          <div className="mt-0.5 rounded-full bg-secondary/12 p-1.5 text-secondary">
-            <Info className="h-3.5 w-3.5" aria-hidden />
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm font-semibold text-text">How to use this</p>
-            <p className="mt-1 text-xs leading-relaxed text-text-muted">
-              Choose the year first, then pick a section, then enter your raw marks.
-              This tip disappears as soon as you start.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onDismiss}
-            className="rounded-organic-sm p-1 text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
-            aria-label="Dismiss help"
-          >
-            <X className="h-3.5 w-3.5" />
-          </button>
-        </div>
+    <div className="pointer-events-none absolute left-4 top-0 z-30 sm:left-[18%]">
+      <div className="pointer-events-auto relative max-w-[15rem] rounded-organic-lg bg-secondary px-3.5 py-2.5 text-xs font-medium leading-snug text-background shadow-modal-card">
+        Choose the year, or click here to change papers.
+        <button
+          type="button"
+          onClick={onDismiss}
+          className="absolute -right-1.5 -top-1.5 rounded-full bg-background/90 p-0.5 text-text-muted transition-colors hover:text-text"
+          aria-label="Dismiss help"
+        >
+          <X className="h-3 w-3" />
+        </button>
+        <span
+          className="absolute -bottom-1.5 left-8 h-3 w-3 rotate-45 bg-secondary"
+          aria-hidden
+        />
       </div>
     </div>
   );
@@ -783,13 +776,13 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
           <ConverterInfoButton exam={exam} />
         </div>
 
-        <div className="relative overflow-hidden rounded-organic-xl bg-surface-mid/40 p-4 sm:p-5">
+        <div className="relative overflow-visible rounded-organic-xl bg-surface-mid/40 p-4 pt-8 sm:p-5 sm:pt-10">
           <InputHelperHint open={showInputHint} onDismiss={dismissInputHint} />
 
           <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)_minmax(0,1fr)]">
+            <div className="grid gap-4 overflow-visible sm:grid-cols-2 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)_minmax(0,1fr)]">
               <div
-                className="rounded-organic-lg bg-surface-mid px-4 py-4"
+                className="relative overflow-visible rounded-organic-lg bg-surface-mid px-4 py-4"
                 onPointerDown={dismissInputHint}
               >
                 <div className="flex items-end gap-2.5">
@@ -826,7 +819,7 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
               </div>
 
               <div
-                className="rounded-organic-lg bg-surface-mid px-4 py-4"
+                className="relative overflow-visible rounded-organic-lg bg-surface-mid px-4 py-4"
                 onPointerDown={dismissInputHint}
               >
                 <ModernSelect
@@ -852,10 +845,7 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                 />
               </div>
 
-              <div
-                className="rounded-organic-lg bg-surface-mid px-4 py-4"
-                onPointerDown={dismissInputHint}
-              >
+              <div className="relative overflow-visible rounded-organic-lg bg-surface-mid px-4 py-4">
                 {isNsaaEngaa && !isScaledMode ? (
                   <ModernSelect
                     label="Section"
@@ -867,10 +857,7 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                       value: group,
                       label: group,
                     }))}
-                    onChange={(next) => {
-                      dismissInputHint();
-                      handleGroupChange(next);
-                    }}
+                    onChange={handleGroupChange}
                   />
                 ) : year && isScaledMode ? (
                   <label className="block shrink-0">
@@ -881,11 +868,9 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                         inputMode="decimal"
                         value={scaledInput}
                         onChange={(e) => {
-                          dismissInputHint();
                           invalidateResults();
                           setScaledInput(e.target.value.replace(/[^0-9.]/g, ""));
                         }}
-                        onFocus={dismissInputHint}
                         placeholder="6.8"
                         className={cn(markInputClass, "w-14 bg-background")}
                       />
@@ -1065,40 +1050,26 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                       return (
                         <div
                           key={s.key}
-                          role="button"
-                          tabIndex={disabled ? -1 : 0}
-                          onPointerDown={dismissInputHint}
-                          onKeyDown={(e) => {
-                            if (!disabled && (e.key === "Enter" || e.key === " ")) {
-                              e.preventDefault();
-                              dismissInputHint();
-                              toggleSection(s);
-                            }
-                          }}
                           className={cn(
                             "rounded-organic-lg px-4 py-3 transition-all duration-fast",
                             checked
                               ? cn(COLOR_CARD_ACTIVE[s.color], "ring-1", COLOR_RING_ACTIVE[s.color])
-                              : "bg-surface-mid hover:bg-surface-subtle",
+                              : "bg-surface-mid",
                             disabled && "opacity-35",
-                            !disabled && "cursor-pointer",
                           )}
-                          onClick={() => {
-                            if (!disabled) {
-                              dismissInputHint();
-                              toggleSection(s);
-                            }
-                          }}
                         >
-                          <div className="flex items-center gap-2.5">
+                          <div
+                            className={cn(
+                              "flex w-full items-center gap-2.5",
+                              disabled ? "cursor-not-allowed" : "cursor-pointer",
+                            )}
+                            onClick={() => !disabled && toggleSection(s)}
+                          >
                             <SubjectCheckbox
                               checked={checked}
                               disabled={disabled}
                               color={s.color}
-                              onChange={() => {
-                                dismissInputHint();
-                                toggleSection(s);
-                              }}
+                              onChange={() => toggleSection(s)}
                             />
                             <span className={cn("truncate text-sm font-semibold", c)}>
                               {displaySubject(s)}
@@ -1111,9 +1082,7 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                               disabled={!checked}
                               value={checked ? String(rawByKey[s.key] ?? 0) : ""}
                               placeholder="—"
-                              onFocus={dismissInputHint}
                               onChange={(e) => {
-                                dismissInputHint();
                                 const n = parseInt(e.target.value.replace(/\D/g, ""), 10);
                                 if (Number.isNaN(n)) setRaw(s.key, 0);
                                 else setRaw(s.key, Math.max(0, Math.min(s.maxRaw, n)));
