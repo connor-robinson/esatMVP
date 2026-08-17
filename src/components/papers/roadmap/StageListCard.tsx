@@ -20,6 +20,7 @@ import {
   getExamAccentFillClass,
 } from "@/config/colors";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
+import { getStageCommentary } from "./roadmapTimelineMarkers";
 import {
   ROADMAP_EXPAND_TRANSITION_CLASS,
   ROADMAP_TIMELINE_CONNECTOR_WIDTH,
@@ -62,6 +63,7 @@ export function StageListCard({
   anchorRef,
 }: StageListCardProps) {
   const [selectedParts, setSelectedParts] = useState<Set<string>>(new Set());
+  const commentary = getStageCommentary(stage.id);
 
   const getPartKey = (part: RoadmapPart): string => {
     const baseKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
@@ -275,6 +277,22 @@ export function StageListCard({
                 isExpanded ? "opacity-100" : "opacity-0",
               )}
             >
+                {commentary ? (
+                  <div className="rounded-organic-md bg-surface-mid/80 px-3 py-3">
+                    <p
+                      className={cn(
+                        "text-xs font-semibold",
+                        getExamAccentTextClass(stage.examName),
+                      )}
+                    >
+                      {commentary.title}
+                    </p>
+                    <p className="mt-1.5 text-xs leading-relaxed text-text-muted">
+                      {commentary.text}
+                    </p>
+                  </div>
+                ) : null}
+
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-xs text-text-muted">
                     Select parts

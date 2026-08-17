@@ -121,6 +121,7 @@ function TimelineTipMarker({
 }) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [anchor, setAnchor] = useState<DOMRect | null>(null);
+  const [pinned, setPinned] = useState(false);
 
   const showTip = useCallback(() => {
     const rect = buttonRef.current?.getBoundingClientRect();
@@ -128,7 +129,20 @@ function TimelineTipMarker({
   }, []);
 
   const hideTip = useCallback(() => {
-    setAnchor(null);
+    if (!pinned) setAnchor(null);
+  }, [pinned]);
+
+  const toggleTip = useCallback(() => {
+    setPinned((prev) => {
+      const next = !prev;
+      if (next) {
+        const rect = buttonRef.current?.getBoundingClientRect();
+        if (rect) setAnchor(rect);
+      } else {
+        setAnchor(null);
+      }
+      return next;
+    });
   }, []);
 
   return (
@@ -144,6 +158,7 @@ function TimelineTipMarker({
           onMouseLeave={hideTip}
           onFocus={showTip}
           onBlur={hideTip}
+          onClick={toggleTip}
           className={cn(
             "relative flex items-center justify-center rounded-full transition-transform duration-fast ease-signature",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35",
