@@ -104,20 +104,20 @@ const navSections: NavSectionConfig[] = [
   },
   {
     label: 'Past Papers',
-    href: '/past-papers/library',
+    href: '/past-papers/roadmap',
     section: 'papers',
     items: [
-      {
-        href: '/past-papers/library',
-        label: 'Library',
-        description: 'Browse exam papers',
-        icon: Library,
-      },
       {
         href: '/past-papers/roadmap',
         label: 'Roadmap',
         description: 'Plan your prep',
         icon: Map,
+      },
+      {
+        href: '/past-papers/library',
+        label: 'Library',
+        description: 'Browse exam papers',
+        icon: Library,
       },
       {
         href: '/past-papers/analytics',

@@ -11,6 +11,7 @@ import { GuestDrillDimOverlay } from "@/components/builder/GuestDrillHint";
 import { getExamAccentTextClass } from "@/config/colors";
 import { LibrarySectionLoading } from "@/components/questionBank/library/LibrarySectionLoading";
 import { compareLibraryExamGroupNames } from "@/lib/papers/paperConfig";
+import { findTutorialHighlightPaper } from "@/lib/papers/freePreviewPapers";
 import type { LibraryTutorialStep } from "@/lib/papers/libraryTutorial";
 import { cn } from "@/lib/utils";
 
@@ -83,10 +84,8 @@ export function PaperLibraryGrid({
 
   const highlightPaperId = useMemo(() => {
     if (tutorialStep !== "add_paper") return null;
-    const firstUnlocked = papers.find((paper) =>
-      isPaperLocked ? !isPaperLocked(paper) : !locked,
-    );
-    return firstUnlocked?.id ?? null;
+    const paper = findTutorialHighlightPaper(papers, (p) => resolveLocked(p));
+    return paper?.id ?? null;
   }, [tutorialStep, papers, isPaperLocked, locked]);
 
   const addHintLabel = firstEsatSubject

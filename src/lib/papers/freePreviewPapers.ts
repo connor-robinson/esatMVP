@@ -4,11 +4,15 @@ import type { Paper, PaperSection } from "@/types/papers";
 export const FREE_PREVIEW_PAST_PAPERS = [
   { examName: "NSAA", examYear: 2016 },
   { examName: "NSAA", examYear: 2017 },
-  { examName: "NSAA", examYear: 2022 },
-  { examName: "NSAA", examYear: 2023 },
 ] as const;
 
-/** Roadmap free stages — earlier NSAA only (2022/2023 stay library-only previews). */
+/** Primary paper highlighted in the library tutorial for free users. */
+export const PRIMARY_FREE_PREVIEW_PAPER = {
+  examName: "NSAA",
+  examYear: 2016,
+} as const;
+
+/** Roadmap free stages — same early NSAA papers as the library preview. */
 export const FREE_PREVIEW_ROADMAP_PAST_PAPERS = [
   { examName: "NSAA", examYear: 2016 },
   { examName: "NSAA", examYear: 2017 },
@@ -43,7 +47,36 @@ export function isPastPaperLibraryLocked(
   return !isFreePreviewPastPaper(paper);
 }
 
-/** Short label for upgrade copy, e.g. "NSAA 2016, 2017, 2022 and 2023". */
+/** Paper to highlight during the library add-paper tutorial. */
+export function findTutorialHighlightPaper(
+  papers: Paper[],
+  isPaperLocked?: (paper: Paper) => boolean,
+): Paper | null {
+  const isUnlocked = (paper: Paper) =>
+    isPaperLocked ? !isPaperLocked(paper) : true;
+
+  const primary = papers.find(
+    (paper) =>
+      paper.examName === PRIMARY_FREE_PREVIEW_PAPER.examName &&
+      paper.examYear === PRIMARY_FREE_PREVIEW_PAPER.examYear &&
+      isUnlocked(paper),
+  );
+  if (primary) return primary;
+
+  for (const preview of FREE_PREVIEW_PAST_PAPERS) {
+    const match = papers.find(
+      (paper) =>
+        paper.examName === preview.examName &&
+        paper.examYear === preview.examYear &&
+        isUnlocked(paper),
+    );
+    if (match) return match;
+  }
+
+  return papers.find(isUnlocked) ?? null;
+}
+
+/** Short label for upgrade copy, e.g. "NSAA 2016 and 2017". */
 export function freePreviewPastPapersLabel(): string {
   const byExam = new Map<string, number[]>();
   for (const paper of FREE_PREVIEW_PAST_PAPERS) {
@@ -64,14 +97,17 @@ export function freePreviewPastPapersLabel(): string {
 }
 
 /**
- * Free-preview NSAA 2023: auto-select Section 1 Mathematics + Section 2 Physics only.
+ * Free-preview NSAA 2016: auto-select Section 1 Mathematics only for the tutorial add.
  * Falls back to the incoming map if those parts are missing.
  */
 export function applyFreePreviewPaperSectionDefaults(
   sectionsByMain: Map<string, Set<PaperSection>>,
   paper: Pick<Paper, "examName" | "examYear">,
 ): Map<string, Set<PaperSection>> {
-  if (paper.examName !== "NSAA" || paper.examYear !== 2023) {
+  if (
+    paper.examName !== PRIMARY_FREE_PREVIEW_PAPER.examName ||
+    paper.examYear !== PRIMARY_FREE_PREVIEW_PAPER.examYear
+  ) {
     return sectionsByMain;
   }
 
@@ -80,32 +116,25 @@ export function applyFreePreviewPaperSectionDefaults(
   if (section1?.has("Mathematics")) {
     next.set("Section 1", new Set<PaperSection>(["Mathematics"]));
   }
-  const section2 = sectionsByMain.get("Section 2");
-  if (section2?.has("Physics")) {
-    next.set("Section 2", new Set<PaperSection>(["Physics"]));
-  }
 
   return next.size > 0 ? next : sectionsByMain;
 }
 
-/** Same NSAA 2023 preview rule for a single main-section add. */
+/** Same NSAA 2016 preview rule for a single main-section add. */
 export function filterFreePreviewSubjectParts(
   subjectParts: PaperSection[],
   paper: Pick<Paper, "examName" | "examYear">,
   mainSectionName: string,
 ): PaperSection[] {
-  if (paper.examName !== "NSAA" || paper.examYear !== 2023) {
+  if (
+    paper.examName !== PRIMARY_FREE_PREVIEW_PAPER.examName ||
+    paper.examYear !== PRIMARY_FREE_PREVIEW_PAPER.examYear
+  ) {
     return subjectParts;
   }
 
-  const allowed: PaperSection | null =
-    mainSectionName === "Section 1"
-      ? "Mathematics"
-      : mainSectionName === "Section 2"
-        ? "Physics"
-        : null;
+  if (mainSectionName !== "Section 1") return subjectParts;
 
-  if (!allowed) return subjectParts;
-  const kept = subjectParts.filter((part) => part === allowed);
+  const kept = subjectParts.filter((part) => part === "Mathematics");
   return kept.length > 0 ? kept : subjectParts;
 }
