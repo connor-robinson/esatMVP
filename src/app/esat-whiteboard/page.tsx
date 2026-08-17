@@ -82,8 +82,7 @@ export default function EsatWhiteboardPage() {
       eyebrow="Test day"
       title="ESAT Whiteboard Rules"
       intro={[
-        "Because the ESAT is computer based, you do not take a normal notebook into the exam.",
-        "UAT-UK says the test centre provides rough-work materials. Candidates cannot bring their own pen and paper into the test.",
+        "The ESAT is computer based, so you do not take a notebook in. The test centre provides rough-work materials. You cannot bring your own pen and paper.",
       ]}
       lastChecked
       primaryCta={{ href: SEO_ROUTES.testDay, label: "Test-day guide" }}

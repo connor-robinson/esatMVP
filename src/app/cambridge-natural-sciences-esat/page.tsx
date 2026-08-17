@@ -62,8 +62,7 @@ export default function CambridgeNaturalSciencesEsatPage() {
       eyebrow="Cambridge Natural Sciences"
       title="Cambridge Natural Sciences ESAT Requirements 2027"
       intro={[
-        "Natural Sciences requires Mathematics 1 and then any two of Biology, Chemistry, Physics and Mathematics 2.",
-        "The Natural Sciences Tripos says the choice of modules is not uniquely advantageous for the Biological or Physical route. Select the modules that best match your current studies.",
+        "Mathematics 1 is required, plus any two of Biology, Chemistry, Physics and Mathematics 2. Cambridge says the choice is not uniquely advantageous for the Biological or Physical route, so pick the modules that match what you already study.",
       ]}
       lastChecked
       primaryCta={{ href: APP_ROUTES.calibration, label: "Start free calibration" }}

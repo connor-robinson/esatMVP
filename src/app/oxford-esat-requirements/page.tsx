@@ -76,7 +76,7 @@ export default function OxfordEsatRequirementsPage() {
       eyebrow="Oxford"
       title="Oxford ESAT Requirements 2027"
       intro={[
-        "Oxford now uses ESAT for several science and engineering courses. Standard undergraduate applicants with the 15 October UCAS deadline must use the October sitting.",
+        "Oxford uses ESAT for several science and engineering courses. Standard applicants with the 15 October UCAS deadline must take the October sitting.",
       ]}
       lastChecked
       primaryCta={{ href: APP_ROUTES.calibration, label: "Start free calibration" }}

@@ -67,7 +67,7 @@ export default function ImperialEsatRequirementsPage() {
       eyebrow="Imperial"
       title="Imperial ESAT Requirements 2027"
       intro={[
-        "Imperial's ESAT modules are course dependent. Check the exact course before you book, because Chemistry or Biology can replace Physics on some routes, and Design Engineering does not use a third science module.",
+        "Imperial modules are course dependent, so check the exact course before you book. Chemistry or Biology can replace Physics on some routes, and Design Engineering does not use a third science module.",
       ]}
       lastChecked
       primaryCta={{ href: APP_ROUTES.calibration, label: "Start free calibration" }}

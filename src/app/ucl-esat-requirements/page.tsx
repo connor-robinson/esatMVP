@@ -61,8 +61,7 @@ export default function UclEsatRequirementsPage() {
       eyebrow="UCL"
       title="UCL ESAT Requirements 2027"
       intro={[
-        "UCL currently uses ESAT for Electronic and Electrical Engineering. The modules are Mathematics 1 plus any two of Physics, Mathematics 2, Chemistry and Biology.",
-        "UCL can allow the October or January sitting where the course permits it. If Cambridge or Oxford is also on your list, plan for October.",
+        "UCL currently uses ESAT for Electronic and Electrical Engineering: Mathematics 1 plus any two of Physics, Mathematics 2, Chemistry and Biology. October or January can be allowed, but if Cambridge or Oxford is also on your list, plan for October.",
       ]}
       lastChecked
       primaryCta={{ href: APP_ROUTES.calibration, label: "Start free calibration" }}

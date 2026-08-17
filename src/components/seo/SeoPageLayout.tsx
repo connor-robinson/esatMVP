@@ -69,7 +69,7 @@ export function SeoPageLayout({
     <div className="bg-[#0A0F1D] text-white">
       {schemas.length ? <JsonLd schema={schemas} /> : null}
 
-      <header className="relative overflow-hidden pt-14 pb-12 sm:pt-20 sm:pb-16">
+      <header className="relative overflow-hidden pt-12 pb-8 sm:pt-16 sm:pb-12">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 opacity-[0.4]"
@@ -83,14 +83,14 @@ export function SeoPageLayout({
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
             {eyebrow}
           </p>
-          <h1 className="mt-5 text-4xl font-display font-bold leading-[1.1] tracking-tight sm:text-5xl lg:text-[3.5rem]">
+          <h1 className="mt-4 text-4xl font-display font-bold leading-[1.1] tracking-tight sm:text-5xl lg:text-[3.5rem]">
             {title}
           </h1>
-          <div className="mt-6 space-y-4">
+          <div className="mt-4 max-w-2xl space-y-2.5">
             {intro.map((paragraph) => (
               <p
                 key={paragraph}
-                className="text-lg leading-relaxed text-[#94A3B8]"
+                className="text-base leading-snug text-[#94A3B8] sm:text-[1.05rem] sm:leading-relaxed"
               >
                 {paragraph}
               </p>

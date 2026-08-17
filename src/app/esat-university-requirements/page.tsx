@@ -86,9 +86,7 @@ export default function EsatUniversityRequirementsPage() {
       eyebrow="University requirements"
       title="ESAT University Requirements 2027"
       intro={[
-        "The ESAT is now used by several of the most competitive science and engineering courses in the UK, but the exact modules you need depend on the university and course.",
-        "This is one of the easiest parts of the application to get wrong. Before booking your ESAT, check the exact course you are applying for and make sure you are taking the right modules.",
-        "I've put the main 2027 requirements in one place below, along with admissions statistics and historical score data where universities publish it. The score data is there to give you a realistic target, not a guaranteed cut-off.",
+        "ESAT modules depend on the university and course, so check the exact course before you book. The 2027 requirements and any published score data are below. Historical averages are a benchmark, not a cut-off.",
       ]}
       lastChecked
       primaryCta={{

@@ -62,8 +62,7 @@ export default function EsatBreaksPage() {
       eyebrow="Test day"
       title="Does the ESAT Have Breaks?"
       intro={[
-        "There is no scheduled break between standard ESAT modules. The modules are taken back-to-back.",
-        "For a three-module test, that means 120 minutes of testing. A normal toilet trip is not a free break. Unless you have approved pause-the-clock arrangements, the test clock continues while you are away.",
+        "There is no scheduled break between modules. A three-module test is 120 minutes back-to-back. A toilet trip is not a free break unless you have approved pause-the-clock arrangements.",
       ]}
       lastChecked
       primaryCta={{ href: SEO_ROUTES.testDay, label: "Full test-day guide" }}

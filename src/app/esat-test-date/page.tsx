@@ -63,7 +63,7 @@ export default function EsatTestDatePage() {
       eyebrow="Test dates"
       title="When Is the ESAT 2027?"
       intro={[
-        "The October 2026 ESAT is the main sitting for 2027-entry applicants. If you are applying to Cambridge or Oxford through the normal October UCAS deadline, this is the sitting you need.",
+        "The October 2026 sitting is the one Cambridge and Oxford need for the normal October UCAS deadline. That is the main date for 2027-entry applicants.",
       ]}
       lastChecked
       primaryCta={{ href: SEO_ROUTES.testDates, label: "Full date table" }}

@@ -17,23 +17,38 @@ export function HomeInternationalChart() {
   const gap = 18;
   const groupGap = 36;
   const chartHeight = 180;
-  const left = 36;
+  const viewWidth = 420;
+  const clusterWidth = barWidth * 2 + gap;
+  const chartWidth =
+    modules.length * clusterWidth + (modules.length - 1) * groupGap;
+  const left = (viewWidth - chartWidth) / 2;
 
   return (
-    <figure className="m-0">
+    <figure className="mx-auto m-0 flex max-w-[26rem] flex-col items-center">
+      <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-[#CBD5E1]">
+        {groups.map((group) => (
+          <span key={group.label} className="inline-flex items-center gap-2">
+            <span
+              className="inline-block h-2.5 w-2.5 rounded-sm"
+              style={{ backgroundColor: group.color }}
+              aria-hidden
+            />
+            {group.label}
+          </span>
+        ))}
+      </div>
       <svg
-        viewBox="0 0 520 250"
+        viewBox={`0 0 ${viewWidth} 236`}
         role="img"
-        aria-label="2025 Cambridge Engineering ESAT applicant and offer-holder averages for Home and international applicants"
-        className="h-auto w-full"
+        aria-label="2025 Cambridge Engineering ESAT offer-holder averages. Darker blue is Home, lighter blue is international."
+        className="mt-4 h-auto w-full"
       >
         <title>
           2025 Cambridge Engineering ESAT Home and international offer-holder
           averages
         </title>
         {modules.map((module, index) => {
-          const clusterX =
-            left + index * (barWidth * 2 + gap + groupGap);
+          const clusterX = left + index * (clusterWidth + groupGap);
           return (
             <g key={module}>
               {groups.map((group, groupIndex) => {
@@ -76,13 +91,10 @@ export function HomeInternationalChart() {
             </g>
           );
         })}
-        <text x={left} y={244} fill="#94A3B8" fontSize="11">
-          Scale 1.0 to 9.0. Offer-holder averages only.
-        </text>
       </svg>
-      <figcaption className="mt-3 text-sm text-[#94A3B8]">
-        2025 Cambridge Engineering ESAT average scores for Home and
-        international offer holders. Historical average, not a cut-off.
+      <figcaption className="mt-3 text-center text-sm text-[#94A3B8]">
+        Darker blue is Home offer holders. Lighter blue is international offer
+        holders. Scale 1.0 to 9.0. Historical average, not a cut-off.
       </figcaption>
     </figure>
   );

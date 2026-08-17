@@ -69,9 +69,7 @@ export default function GoodEsatScorePage() {
       eyebrow="Scores"
       title="What Is a Good ESAT Score?"
       intro={[
-        "There is no single ESAT score that guarantees an offer from Cambridge, Oxford or Imperial.",
-        "The ESAT is scored from 1.0 to 9.0 for each module, and UAT-UK does not set a pass mark. The most useful way to think about your result is where it sits within the wider cohort.",
-        "UAT-UK's published preparation material anchors the scale around a median of 4.5 and a 90th percentile of 7.0.",
+        "There is no single ESAT score that guarantees an offer. Each module is scored from 1.0 to 9.0, with no pass mark. UAT-UK material anchors the scale around a median of 4.5 and a 90th percentile of 7.0.",
       ]}
       primaryCta={{ href: APP_ROUTES.scoreConverter, label: "Open the score converter" }}
       secondaryCta={{

@@ -78,8 +78,7 @@ export default function CambridgeEsatRequirementsPage() {
       eyebrow="Cambridge"
       title="Cambridge ESAT Requirements 2027"
       intro={[
-        "For 2027 entry, Cambridge requires the ESAT for Chemical Engineering and Biotechnology, Engineering, Natural Sciences and Veterinary Medicine.",
-        "For the normal 15 October UCAS deadline, you must take the October ESAT sitting. Cambridge currently lists 12 to 16 October 2026 for the October sitting. Applicants from China, Hong Kong and Macau must take 12 or 13 October.",
+        "Cambridge requires ESAT for Chemical Engineering and Biotechnology, Engineering, Natural Sciences and Veterinary Medicine. Standard applicants must take the October 2026 sitting (12 to 16 October; 12 or 13 October if you are in China, Hong Kong or Macau).",
       ]}
       lastChecked
       primaryCta={{

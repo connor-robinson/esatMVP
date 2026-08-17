@@ -11,7 +11,6 @@ import { seoLinks } from "@/lib/seo/links";
 import { SeoPageLayout } from "@/components/seo/SeoPageLayout";
 import { SeoCta, SeoCtaRow } from "@/components/seo/SeoCta";
 import {
-  HighlightBox,
   ResponsiveTable,
   SeoProse,
   SeoSection,
@@ -75,8 +74,7 @@ export default function CambridgeEngineeringEsatPage() {
       eyebrow="Cambridge Engineering"
       title="Cambridge Engineering ESAT Requirements 2027"
       intro={[
-        "Cambridge Engineering is straightforward on the test side. Everyone takes Mathematics 1, Mathematics 2 and Physics.",
-        "Cambridge lists A*A*A as the standard minimum offer level, with Mathematics and Physics required and Further Mathematics to AS or A level if your school offers it.",
+        "Everyone takes Mathematics 1, Mathematics 2 and Physics. The standard offer is A*A*A, with Mathematics and Physics required and Further Mathematics to AS or A level if your school offers it.",
       ]}
       lastChecked
       primaryCta={{ href: APP_ROUTES.calibration, label: "Start free calibration" }}
@@ -114,22 +112,6 @@ export default function CambridgeEngineeringEsatPage() {
         path: PATH,
       })}
     >
-      <SeoSection heading="2025 ESAT score data">
-        <HighlightBox title="Important data note" tone="warning">
-          <p>
-            The detailed table below is 2025 Cambridge Engineering H100 data from
-            a Freedom of Information release. These are averages, not cut-offs.
-            Use them to understand the profile of one historical cohort, not to
-            decide that a college is "easy" or "hard".
-          </p>
-        </HighlightBox>
-        <SeoCtaRow className="mt-6">
-          <SeoCta href={CAMBRIDGE_DASHBOARD_HREF} placement="engineering_dashboard">
-            Explore Cambridge's official admissions data
-          </SeoCta>
-        </SeoCtaRow>
-      </SeoSection>
-
       <SeoSection heading="2025 average ESAT scores by college">
         <ResponsiveTable
           columns={ENGINEERING_COLLEGE_COLUMNS}
@@ -137,6 +119,11 @@ export default function CambridgeEngineeringEsatPage() {
           minWidthClass="min-w-[56rem]"
           caption={HISTORICAL_AVERAGE_NOTE}
         />
+        <SeoCtaRow className="mt-6">
+          <SeoCta href={CAMBRIDGE_DASHBOARD_HREF} placement="engineering_dashboard">
+            Explore Cambridge's official admissions data
+          </SeoCta>
+        </SeoCtaRow>
       </SeoSection>
 
       <SeoSection heading="Home vs international averages">
@@ -147,12 +134,6 @@ export default function CambridgeEngineeringEsatPage() {
           rows={ENGINEERING_HOME_INTL_ROWS}
           minWidthClass="min-w-[52rem]"
           caption={HISTORICAL_AVERAGE_NOTE}
-        />
-        <SeoProse
-          className="mt-6"
-          paragraphs={[
-            "Do not say international applicants need 7.2. The data is an average from one historical Engineering cohort. It is useful as a realistic benchmark, especially for international applicants, but admissions also use qualifications, references, context and interview performance.",
-          ]}
         />
       </SeoSection>
 

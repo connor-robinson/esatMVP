@@ -62,8 +62,7 @@ export default function IsEsatAQuestionBankPage() {
       eyebrow="Test security"
       title="Is the ESAT a Question Bank?"
       intro={[
-        "There is a lot of speculation about whether different ESAT candidates get different questions, and whether the later sitting gives students a chance to hear what came up earlier.",
-        "The honest answer is that UAT-UK does not publicly describe the ESAT as a fixed, published question bank, and it does not publish enough information for us to quantify how much live-question overlap exists.",
+        "UAT-UK does not describe the ESAT as a fixed, published question bank, and it does not publish enough information to say how much live-question overlap exists between sittings.",
       ]}
       lastChecked
       primaryCta={{ href: SEO_ROUTES.pastPapers, label: "Official past papers" }}
