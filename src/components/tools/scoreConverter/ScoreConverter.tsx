@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
-import { AlertTriangle, ArrowRight, Check, ChevronDown, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { AlertTriangle, ArrowRight, Check, ChevronDown, Info, Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { cssVar } from "@/config/colors";
 import { Container } from "@/components/layout/Container";
@@ -29,6 +30,8 @@ import {
   type YearOption,
   type YearsResponse,
 } from "@/lib/scoreConverter/esatModules";
+import { APP_ROUTES, SOURCES } from "@/lib/seo/config";
+import { SEO_LINKS } from "@/lib/seo/links";
 
 const MAX_SECTIONS = 3;
 const OVERALL_CHART_KEY = "__overall__";
@@ -36,6 +39,10 @@ const OVERALL_CHART_KEY = "__overall__";
 /** What the selected past paper proxies for in current admissions. */
 function examTargetLabel(exam: ConverterExam): "ESAT" | "TMUA" {
   return exam === "TMUA" ? "TMUA" : "ESAT";
+}
+
+function predictedScoreLabel(exam: ConverterExam): string {
+  return exam === "TMUA" ? "Predicted TMUA score" : "Predicted ESAT score";
 }
 
 const fieldLabel =
@@ -89,6 +96,15 @@ const COLOR_CARD_ACTIVE: Record<ModuleColor, string> = {
   biology: "bg-biology/10",
   advanced: "bg-advanced/10",
   "tmua-accent": "bg-tmua-accent/10",
+};
+
+const COLOR_RING_ACTIVE: Record<ModuleColor, string> = {
+  maths: "ring-maths/30",
+  physics: "ring-physics/30",
+  chemistry: "ring-chemistry/30",
+  biology: "ring-biology/30",
+  advanced: "ring-advanced/30",
+  "tmua-accent": "ring-tmua-accent/30",
 };
 
 function SubjectCheckbox({
@@ -253,6 +269,124 @@ function ModernSelect({
 }
 
 type TmuaPickMode = "split" | "overall";
+
+function ConverterInfoButton({ exam }: { exam: ConverterExam }) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const buttonId = useId();
+  const panelId = useId();
+  const target = examTargetLabel(exam);
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
+  return (
+    <div ref={rootRef} className="relative shrink-0">
+      <button
+        type="button"
+        id={buttonId}
+        aria-expanded={open}
+        aria-controls={panelId}
+        onClick={() => setOpen((v) => !v)}
+        className="inline-flex items-center gap-1.5 rounded-organic-md px-2.5 py-1.5 text-xs font-medium text-text-muted transition-colors hover:bg-surface-subtle hover:text-text"
+      >
+        <Info className="h-3.5 w-3.5 shrink-0" aria-hidden />
+        How it works
+      </button>
+
+      {open && (
+        <div
+          id={panelId}
+          role="dialog"
+          aria-labelledby={buttonId}
+          className="absolute right-0 top-full z-30 mt-2 w-[min(100vw-2rem,22rem)] rounded-organic-lg bg-surface-elevated p-4 shadow-modal-card"
+        >
+          <div className="mb-3 flex items-start justify-between gap-2">
+            <p className="text-sm font-semibold text-text">How we convert scores</p>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="rounded-organic-sm p-1 text-text-muted transition-colors hover:bg-surface-subtle hover:text-text"
+              aria-label="Close"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+
+          <div className="space-y-2.5 text-xs leading-relaxed text-text-muted">
+            <p>
+              Enter raw marks from a past {exam} paper. We look them up in official
+              conversion tables and map them onto today&apos;s {target} 1.0–9.0 scale,
+              then estimate your percentile from published distributions.
+            </p>
+            <p>
+              This is a historical proxy for preparation — not an official score from
+              UAT-UK or any university.
+            </p>
+          </div>
+
+          <div className="mt-4 space-y-1.5 border-t border-border-subtle pt-3">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-text-subtle">
+              Learn more
+            </p>
+            <Link
+              href={SEO_LINKS.goodScore.href}
+              className="block text-xs font-medium text-secondary hover:underline"
+              onClick={() => setOpen(false)}
+            >
+              {SEO_LINKS.goodScore.label}
+            </Link>
+            <Link
+              href={SEO_LINKS.pastPapers.href}
+              className="block text-xs font-medium text-secondary hover:underline"
+              onClick={() => setOpen(false)}
+            >
+              {SEO_LINKS.pastPapers.label}
+            </Link>
+            <Link
+              href={`${APP_ROUTES.scoreConverter}#faq`}
+              className="block text-xs font-medium text-secondary hover:underline"
+              onClick={() => setOpen(false)}
+            >
+              Full FAQ
+            </Link>
+            <a
+              href={SOURCES.results.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block text-xs font-medium text-secondary hover:underline"
+            >
+              {SOURCES.results.label}
+            </a>
+            <a
+              href={SOURCES.esatTest.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block text-xs font-medium text-secondary hover:underline"
+            >
+              {SOURCES.esatTest.label}
+            </a>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function TmuaMarkField({
   section,
@@ -601,16 +735,11 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
     <Container size="lg" className="py-10 sm:py-14">
       {/* Results — top */}
       <div className="mb-5 min-h-[280px] rounded-organic-xl bg-surface-elevated p-6 shadow-modal-card sm:min-h-[320px] sm:p-8">
-        <div className="mb-6 sm:mb-8">
+        <div className="mb-6 flex items-start justify-between gap-4 sm:mb-8">
           <h1 className="text-2xl font-bold tracking-tight text-text sm:text-4xl">
             ESAT Score Converter
           </h1>
-          {exam !== "TMUA" && (
-            <p className="mt-2 text-sm text-text-muted">
-              Take TMUA instead? Switch using the{" "}
-              <span className="font-medium text-text">Exam</span> selector below.
-            </p>
-          )}
+          <ConverterInfoButton exam={exam} />
         </div>
 
         {!hasCalculated && !resultLoading && !resultError && (
@@ -864,7 +993,11 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
               <span className="text-sm text-text-muted">No subjects for this section.</span>
             )}
             {!isTmuaRaw && !sectionsLoading && partsInGroup.length > 0 && (
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="space-y-3">
+                <p className="text-xs font-medium text-text-muted">
+                  Select subjects and enter your raw marks
+                </p>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {partsInGroup.map((s) => {
                   const checked = checkedKeys.includes(s.key);
                   const disabled = !checked && checkedKeys.length >= MAX_SECTIONS;
@@ -872,19 +1005,23 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                   return (
                     <div
                       key={s.key}
+                      role="button"
+                      tabIndex={disabled ? -1 : 0}
+                      onKeyDown={(e) => {
+                        if (!disabled && (e.key === "Enter" || e.key === " ")) {
+                          e.preventDefault();
+                          toggleSection(s);
+                        }
+                      }}
                       className={cn(
                         "rounded-organic-lg px-4 py-3 transition-all duration-fast",
-                        checked ? COLOR_CARD_ACTIVE[s.color] : "bg-surface-mid",
+                        checked ? COLOR_CARD_ACTIVE[s.color] : "bg-surface-mid hover:bg-surface-subtle",
                         disabled && "opacity-35",
+                        !disabled && "cursor-pointer",
                       )}
+                      onClick={() => !disabled && toggleSection(s)}
                     >
-                      <div
-                        className={cn(
-                          "flex cursor-pointer items-center gap-2.5",
-                          disabled && "cursor-not-allowed",
-                        )}
-                        onClick={() => !disabled && toggleSection(s)}
-                      >
+                      <div className="flex items-center gap-2.5">
                         <SubjectCheckbox
                           checked={checked}
                           disabled={disabled}
@@ -916,17 +1053,14 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                     </div>
                   );
                 })}
+                </div>
               </div>
             )}
           </div>
         )}
       </div>
 
-      <p className="mt-6 text-center text-[11px] text-text-subtle">
-        Historical proxy from official data — not an ESAT score.
-      </p>
-
-      <ScoreConverterFaq />
+      <ScoreConverterFaq id="faq" />
     </Container>
   );
 }
@@ -964,20 +1098,24 @@ function ResultsPanel({
   return (
     <div className="space-y-5">
       {multi && (
-        <div className="flex flex-wrap gap-2">
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-text-muted">
+            Click a subject to switch view
+          </p>
+          <div className="flex flex-wrap gap-2">
           {showOverall && (
             <button
               type="button"
               onClick={() => onSelectChart(OVERALL_CHART_KEY)}
               className={cn(
-                "rounded-organic-md px-3 py-1.5 text-xs font-semibold transition-colors",
+                "cursor-pointer rounded-organic-lg px-3.5 py-2 text-sm font-semibold transition-all duration-fast",
                 showingOverall
-                  ? "bg-surface-mid text-text"
-                  : "text-text-muted hover:bg-surface-subtle",
+                  ? "bg-surface-mid text-text shadow-sm ring-2 ring-secondary/25"
+                  : "bg-surface-subtle/70 text-text-muted hover:bg-surface-subtle hover:text-text hover:ring-1 hover:ring-border-subtle",
               )}
             >
               <span className={cn(showingOverall ? "text-text" : "text-text-muted")}>
-                Overall
+                {predictedScoreLabel(exam)}
               </span>
               <span className="ml-1.5 tabular-nums text-text">
                 {result.averageScaled!.toFixed(1)}
@@ -999,8 +1137,10 @@ function ResultsPanel({
                 type="button"
                 onClick={() => onSelectChart(s.key)}
                 className={cn(
-                  "rounded-organic-md px-3 py-1.5 text-xs font-semibold transition-colors",
-                  active ? "bg-surface-mid text-text" : "text-text-muted hover:bg-surface-subtle",
+                  "cursor-pointer rounded-organic-lg px-3.5 py-2 text-sm font-semibold transition-all duration-fast",
+                  active
+                    ? cn("bg-surface-mid text-text shadow-sm ring-2", COLOR_RING_ACTIVE[s.color])
+                    : "bg-surface-subtle/70 text-text-muted hover:bg-surface-subtle hover:text-text hover:ring-1 hover:ring-border-subtle",
                 )}
               >
                 <span className={c}>
@@ -1016,6 +1156,7 @@ function ResultsPanel({
               </button>
             );
           })}
+          </div>
         </div>
       )}
 
@@ -1135,7 +1276,7 @@ function TmuaOverallResult({
         colorClass="text-tmua-accent"
       />
       <p className="text-xs text-text-muted">
-        Overall average across {result.sections.length} papers · {year} actual → post-2024 est.
+        {predictedScoreLabel("TMUA")} · average across {result.sections.length} papers · {year}
       </p>
 
       {chartRows.length > 1 && (
@@ -1169,14 +1310,14 @@ function OverallResult({
     <div className="space-y-5">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs text-text-subtle">
-            {exam} {year} · Overall
+          <p className="text-xs font-medium uppercase tracking-wide text-text-subtle">
+            {predictedScoreLabel(exam)}
           </p>
           <p className="mt-1 text-4xl font-bold tabular-nums text-text sm:text-5xl">
             {result.averageScaled!.toFixed(1)}
           </p>
           <p className="mt-0.5 text-xs text-text-muted">
-            Average across {result.sections.length} subjects
+            Average across {result.sections.length} subjects · {exam} {year}
           </p>
         </div>
         {topPct != null && (
@@ -1261,13 +1402,19 @@ function SectionResult({
     <div className="space-y-5">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs text-text-subtle">
-            {exam} {year}
-            {section.legacyLabel ? ` · ${section.legacyLabel}` : ""}
+          <p className="text-xs font-medium uppercase tracking-wide text-text-subtle">
+            {predictedScoreLabel(exam)}
           </p>
           <p className={cn("mt-1 text-4xl font-bold tabular-nums sm:text-5xl", colorClass)}>
             {section.scaledScore.toFixed(1)}
           </p>
+          {(section.moduleLabel || section.legacyLabel) && (
+            <p className="mt-0.5 text-xs text-text-muted">
+              {section.moduleLabel ?? section.legacyLabel}
+              {" · "}
+              {exam} {year}
+            </p>
+          )}
           {section.raw != null && section.maxRaw != null && (
             <p className="mt-0.5 text-xs text-text-muted">
               {section.raw}/{section.maxRaw} correct
@@ -1367,9 +1514,8 @@ function ResultsPreviewPlaceholder({
 
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs text-text-subtle">
-            {year ? `${exam} ${year}` : `${exam} › ${examTargetLabel(exam)}`}
-            <span className="text-text-muted"> · —</span>
+          <p className="text-xs font-medium uppercase tracking-wide text-text-subtle">
+            {predictedScoreLabel(exam)}
           </p>
           <p
             className={cn(

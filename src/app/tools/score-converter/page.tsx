@@ -49,21 +49,6 @@ export default function ScoreConverterPage() {
         ]}
       />
 
-      <Container size="lg" className="pt-10 sm:pt-14">
-        <div className="rounded-organic-xl bg-surface-elevated p-6 sm:p-8">
-          <p className="text-sm leading-relaxed text-text-muted sm:text-[15px]">
-            Use this converter to estimate how a raw mark from a past NSAA, ENGAA
-            or TMUA paper might translate to the ESAT 1.0–9.0 score scale. Treat
-            the result as a guide, not an official score.
-          </p>
-          <p className="mt-3 text-sm leading-relaxed text-text-muted sm:text-[15px]">
-            Official ESAT scaling depends on the cohort and the test version. Use
-            the estimate to guide preparation, not to make final admissions
-            assumptions.
-          </p>
-        </div>
-      </Container>
-
       <ScoreConverter />
 
       <Container size="lg" className="space-y-5 pb-16">

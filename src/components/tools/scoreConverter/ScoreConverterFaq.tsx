@@ -9,6 +9,16 @@ type FaqItem = { question: string; answer: string };
  */
 export const SCORE_CONVERTER_FAQ_ITEMS: FaqItem[] = [
   {
+    question: "What does this converter do?",
+    answer:
+      "Use it to estimate how a raw mark from a past NSAA, ENGAA or TMUA paper might translate to the 1.0–9.0 score scale used today. Treat the result as a guide for preparation, not an official score.",
+  },
+  {
+    question: "Can I rely on this score for admissions?",
+    answer:
+      "No. Official ESAT and TMUA scaling depends on the cohort and the test version. Use the estimate to guide preparation and compare mock performance, not to make final admissions assumptions.",
+  },
+  {
     question: "Is the ESAT scored out of 9?",
     answer:
       "ESAT module results are reported on a 1.0 to 9.0 scale to one decimal place. You receive a separate score for each module you sit.",
@@ -65,9 +75,15 @@ export const SCORE_CONVERTER_FAQ_ITEMS: FaqItem[] = [
   },
 ];
 
-export function ScoreConverterFaq({ className }: { className?: string }) {
+export function ScoreConverterFaq({
+  className,
+  id,
+}: {
+  className?: string;
+  id?: string;
+}) {
   return (
-    <section className={cn("mt-10", className)}>
+    <section id={id} className={cn("mt-10", className)}>
       <div className="rounded-organic-xl bg-surface-elevated p-5 shadow-modal-card sm:p-6">
         <h2 className="text-lg font-bold tracking-tight text-text sm:text-xl">
           Frequently asked questions
