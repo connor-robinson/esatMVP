@@ -61,7 +61,7 @@ export const SCORE_CONVERTER_FAQ_ITEMS: FaqItem[] = [
   {
     question: "How are percentiles calculated?",
     answer:
-      'We use official cumulative score distributions — CSV tables of scaled score versus "% of candidates at or below this score". Your scaled score is interpolated between the nearest published points to estimate your cumulative percentile. "Top X%" is simply 100 minus that cumulative percentile (e.g. 85th percentile → top 15%). NSAA and ENGAA use subject-specific ESAT distributions; TMUA uses separate pre- and post-2024 cumulative tables.',
+      'We use official cumulative score distributions — CSV tables of scaled score versus "% of candidates at or below this score". Your scaled score is interpolated between the nearest published points to estimate your percentile (e.g. 72.4th percentile means you scored at or above 27.6% of candidates). NSAA and ENGAA use subject-specific ESAT distributions; TMUA uses separate pre- and post-2024 cumulative tables.',
   },
   {
     question: "Where does the data come from?",

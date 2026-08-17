@@ -1032,10 +1032,11 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                             }
                           }}
                           className={cn(
-                            "rounded-organic-lg px-4 py-3 transition-all duration-fast",
+                            "rounded-organic-lg px-4 py-3 transition-all duration-fast outline-none",
                             checked ? COLOR_CARD_ACTIVE[s.color] : "bg-surface-mid hover:bg-surface-subtle/60",
                             disabled && "opacity-35",
                             !disabled && "cursor-pointer",
+                            controlBase,
                           )}
                         >
                           <div className="flex items-center gap-2.5">
@@ -1254,14 +1255,20 @@ function tmuaAverageEstimated(sections: ConvertedSection[]): number | null {
   return Math.round((vals.reduce((a, b) => a + b, 0) / vals.length) * 10) / 10;
 }
 
-function TmuaPercentileBlock({ topPct }: { topPct: string }) {
+function formatPercentileDisplay(pct: number | null | undefined): string | null {
+  if (pct == null || !Number.isFinite(pct)) return null;
+  return pct.toFixed(1);
+}
+
+function PercentileBlock({ percentile }: { percentile: string }) {
   return (
     <div className="text-right">
       <p className="text-[11px] font-medium uppercase tracking-wide text-text-subtle/70">
-        Top
+        Percentile
       </p>
       <p className="text-2xl font-semibold tabular-nums text-text-muted sm:text-3xl">
-        {topPct}%
+        {percentile}
+        <span className="text-base font-medium text-text-subtle sm:text-lg">th</span>
       </p>
     </div>
   );
@@ -1272,14 +1279,14 @@ function TmuaDualScoreRow({
   estimated,
   raw,
   maxRaw,
-  topPct,
+  percentileLabel,
   colorClass,
 }: {
   actual: number;
   estimated: number | null;
   raw: number | null;
   maxRaw: number | null;
-  topPct: string | null;
+  percentileLabel: string | null;
   colorClass: string;
 }) {
   return (
@@ -1308,7 +1315,7 @@ function TmuaDualScoreRow({
           </p>
         )}
       </div>
-      {topPct != null && <TmuaPercentileBlock topPct={topPct} />}
+      {percentileLabel != null && <PercentileBlock percentile={percentileLabel} />}
     </div>
   );
 }
@@ -1322,10 +1329,7 @@ function TmuaOverallResult({
 }) {
   const actualAvg = result.averageScaled!;
   const estimatedAvg = tmuaAverageEstimated(result.sections);
-  const topPct =
-    result.averagePercentile != null
-      ? Math.max(0, 100 - result.averagePercentile).toFixed(1)
-      : null;
+  const percentileLabel = formatPercentileDisplay(result.averagePercentile);
   const chartRows = result.overallChartRows ?? [];
   const totalRaw = result.sections.reduce((sum, s) => sum + (s.raw ?? 0), 0);
   const totalMaxRaw = result.sections.reduce((sum, s) => sum + (s.maxRaw ?? 0), 0);
@@ -1337,7 +1341,7 @@ function TmuaOverallResult({
         estimated={estimatedAvg}
         raw={totalMaxRaw > 0 ? totalRaw : null}
         maxRaw={totalMaxRaw > 0 ? totalMaxRaw : null}
-        topPct={topPct}
+        percentileLabel={percentileLabel}
         colorClass="text-tmua-accent"
       />
       <p className="text-xs text-text-muted">
@@ -1365,10 +1369,7 @@ function OverallResult({
   exam: ConverterExam;
   year: number;
 }) {
-  const topPct =
-    result.averagePercentile != null
-      ? Math.max(0, 100 - result.averagePercentile).toFixed(1)
-      : null;
+  const percentileLabel = formatPercentileDisplay(result.averagePercentile);
   const chartRows = result.overallChartRows ?? [];
 
   return (
@@ -1385,16 +1386,7 @@ function OverallResult({
             Average across {result.sections.length} subjects · {exam} {year}
           </p>
         </div>
-        {topPct != null && (
-          <div className="text-right">
-            <p className="text-[11px] font-medium uppercase tracking-wide text-text-subtle/70">
-              Top
-            </p>
-            <p className="text-2xl font-semibold tabular-nums text-text-muted sm:text-3xl">
-              {topPct}%
-            </p>
-          </div>
-        )}
+        {percentileLabel != null && <PercentileBlock percentile={percentileLabel} />}
       </div>
 
       {chartRows.length > 1 && result.averageScaled != null && (
@@ -1424,10 +1416,7 @@ function SectionResult({
 }) {
   const colorClass = COLOR_TEXT[section.color];
   const dual = section.tmuaDualCurve;
-  const topPct =
-    section.percentile != null
-      ? Math.max(0, 100 - section.percentile).toFixed(1)
-      : null;
+  const percentileLabel = formatPercentileDisplay(section.percentile);
 
   if (section.scaledScore == null) {
     return (
@@ -1443,7 +1432,7 @@ function SectionResult({
           estimated={dual.student.estimatedScaled}
           raw={section.raw}
           maxRaw={section.maxRaw}
-          topPct={topPct}
+          percentileLabel={percentileLabel}
           colorClass={colorClass}
         />
 
@@ -1486,16 +1475,7 @@ function SectionResult({
             </p>
           )}
         </div>
-        {topPct != null && (
-          <div className="text-right">
-            <p className="text-[11px] font-medium uppercase tracking-wide text-text-subtle/70">
-              Top
-            </p>
-            <p className="text-2xl font-semibold tabular-nums text-text-muted sm:text-3xl">
-              {topPct}%
-            </p>
-          </div>
-        )}
+        {percentileLabel != null && <PercentileBlock percentile={percentileLabel} />}
       </div>
 
       {chartLoading && (
@@ -1593,14 +1573,14 @@ function ResultsPreviewPlaceholder({
           </p>
         </div>
         <div className="text-right">
-          <p className="text-xs text-text-subtle">Top</p>
+          <p className="text-xs text-text-subtle">Percentile</p>
           <p
             className={cn(
               "text-3xl font-bold tracking-wider tabular-nums sm:text-4xl",
               loading ? "animate-pulse text-text-subtle/50" : "text-text-subtle/40",
             )}
           >
-            ??%
+            ??
           </p>
         </div>
       </div>

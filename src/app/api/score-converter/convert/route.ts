@@ -419,16 +419,26 @@ export async function POST(request: Request) {
   const percentileValues = sections
     .map((s) => s.percentile)
     .filter((v): v is number => v != null);
-  const averagePercentile =
-    percentileValues.length > 0
-      ? round1(percentileValues.reduce((a, b) => a + b, 0) / percentileValues.length)
-      : null;
 
   const sectionCharts = sections
     .map((s) => s.chartRows)
     .filter((r): r is EsatRow[] => r != null && r.length > 1);
   const overallChartRows =
     sectionCharts.length > 1 ? averageEsatDistributionTables(sectionCharts) : null;
+
+  // Match header percentile to the combined distribution chart (not avg of section percentiles).
+  let averagePercentile: number | null = null;
+  if (
+    overallChartRows &&
+    overallChartRows.length > 1 &&
+    averageScaled != null
+  ) {
+    averagePercentile = round1(interpolatePercentile(overallChartRows, averageScaled));
+  } else if (percentileValues.length > 0) {
+    averagePercentile = round1(
+      percentileValues.reduce((a, b) => a + b, 0) / percentileValues.length,
+    );
+  }
 
   const resp: ConvertResponse = {
     exam,
