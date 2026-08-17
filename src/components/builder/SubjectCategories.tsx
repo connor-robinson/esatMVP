@@ -133,7 +133,7 @@ export function SubjectCategories({
               type='button'
               onClick={onLaunchFermiGuessr}
               className='group flex w-full flex-col items-center justify-center gap-0.5 px-1 outline-none opacity-90 transition-opacity hover:opacity-100'
-              title={`${FERMI_GUESSR_NAME} — daily estimation game`}
+              title={`${FERMI_GUESSR_NAME}: daily estimation game`}
             >
               <div
                 className={cn(iconPillClass, 'relative bg-surface-elevated')}

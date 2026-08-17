@@ -312,7 +312,7 @@ export function DrillVariantsGrid({
             Most Useful
           </h2>
           <p className='mt-1 max-w-lg text-xs leading-relaxed text-text-muted sm:text-[13px]'>
-            Hand-picked drills for ESAT prep — add any combination to your session.
+            Hand-picked drills for ESAT prep. Mix any combination into your session.
           </p>
         </div>
 

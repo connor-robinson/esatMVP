@@ -208,7 +208,7 @@ export function MarketingHomepage() {
                   Know what to practise first
                 </h3>
                 <p className="text-[#94A3B8] leading-relaxed max-w-lg">
-                  A short diagnostic shows your weak spots — then practise from our
+                  A short diagnostic shows your weak spots, then you practise from our
                   question bank.
                 </p>
               </div>
@@ -378,7 +378,7 @@ export function MarketingHomepage() {
                   Try our free tools
                 </h2>
                 <p className="mt-5 text-lg leading-relaxed text-[#94A3B8]">
-                  Enter a past-paper raw mark from NSAA, ENGAA or TMUA — see the
+                  Enter a past-paper raw mark from NSAA, ENGAA or TMUA. See the
                   predicted ESAT or TMUA score and where that sits on the
                   official distribution.
                 </p>
@@ -401,7 +401,7 @@ export function MarketingHomepage() {
                     className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
                   />
                   <p className="text-lg text-[#94A3B8]">
-                    Get a predicted score and percentile — no account needed.
+                    Get a predicted score and percentile. No account needed.
                   </p>
                 </li>
               </ul>
@@ -640,7 +640,7 @@ export function MarketingHomepage() {
               </div>
               <p className="text-[#94A3B8] max-w-md leading-relaxed">
                 Practice for the ESAT and TMUA with past papers, a curated
-                question bank, and timed mental maths drills — so you can prepare
+                question bank, and timed mental maths drills, so you can prepare
                 with the speed and precision the exams demand.
               </p>
             </div>

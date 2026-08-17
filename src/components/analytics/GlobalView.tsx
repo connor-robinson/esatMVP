@@ -217,7 +217,7 @@ export function GlobalView({
               <div className="rounded-organic-lg border border-dashed border-border-subtle bg-surface-subtle py-14 text-center text-sm text-text-muted">
                 {searchQuery.trim()
                   ? "No players match your search."
-                  : "No scores yet — complete a drill session to join the leaderboard."}
+                  : "No scores yet. Complete a drill session to join the leaderboard."}
               </div>
             ) : (
               <>

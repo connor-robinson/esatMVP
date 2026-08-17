@@ -107,7 +107,7 @@ export default function DevFoundingTesterPage() {
             Dev only
           </p>
           <h1 className="mt-1 text-2xl font-bold text-text">
-            Founding Tester — workflow simulator
+            Founding Tester: workflow simulator
           </h1>
           <p className="mt-2 text-sm text-text-muted">
             Jump to any stage instantly. Active stages use short expiry windows
@@ -137,7 +137,7 @@ export default function DevFoundingTesterPage() {
             type="button"
             onClick={() => {
               clearAllCheckpointDismissals();
-              setMessage("Checkpoint dismiss flags cleared — modal will show again.");
+              setMessage("Checkpoint dismiss flags cleared. The modal will show again.");
             }}
             className="rounded-full bg-surface-mid px-4 py-2 text-sm font-semibold text-text"
           >

@@ -429,7 +429,7 @@ export const TOPICS: Record<string, Topic> = {
     name: "Circles",
     subjectId: "maths",
     category: "geometry",
-    description: "Legacy alias — use Circle Theorems",
+    description: "Legacy alias. Use Circle Theorems",
     levels: 4,
     icon: "Circle",
   },
@@ -1088,7 +1088,7 @@ export const TOPICS: Record<string, Topic> = {
       {
         id: "differentiate",
         name: "Differentiate",
-        description: "Power rule — integer & fractional powers, single terms and sums",
+        description: "Power rule: integer and fractional powers, single terms and sums",
         difficulty: 2,
         config: { level: 1 },
       },
@@ -1140,7 +1140,7 @@ export const TOPICS: Record<string, Topic> = {
     name: "Angle Recall",
     subjectId: "maths",
     category: "geometry",
-    description: "Legacy alias — use Unit Circle drills instead",
+    description: "Legacy alias. Use Unit Circle drills instead",
     variants: [
       {
         id: "degrees",
@@ -1161,7 +1161,7 @@ export const TOPICS: Record<string, Topic> = {
       {
         id: "degrees",
         name: "Degrees",
-        description: "Angles, x/y coordinates, cos/sin values — all in degrees",
+        description: "Angles, x/y coordinates, cos/sin values, all in degrees",
         difficulty: 1,
         config: { level: 1 },
       },
@@ -1178,7 +1178,7 @@ export const TOPICS: Record<string, Topic> = {
       {
         id: "radians",
         name: "Radians",
-        description: "Angles, x/y coordinates, cos/sin values — radians and exact π form",
+        description: "Angles, x/y coordinates, cos/sin values in radians and exact π form",
         difficulty: 2,
         config: { level: 2 },
       },

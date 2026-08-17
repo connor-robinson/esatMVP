@@ -100,7 +100,7 @@ export function CalibrationLandingClient() {
         <br className="hidden sm:block" /> calibration test
       </h1>
       <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-text-muted sm:text-lg">
-        A short diagnostic to show your weak spots — then a clear next step for
+        A short diagnostic to show your weak spots, then a clear next step for
         practice.
       </p>
     </header>
@@ -141,7 +141,7 @@ export function CalibrationLandingClient() {
 
         {inProgress ? (
           <p className="mx-auto mt-5 max-w-4xl text-center text-sm text-text-muted">
-            You have an unfinished attempt — resume to continue where you left
+            You have an unfinished attempt. Resume to continue where you left
             off.
           </p>
         ) : null}
@@ -183,8 +183,8 @@ export function CalibrationLandingClient() {
               options, mark it as a guess.
             </p>
             <p className="text-sm leading-relaxed text-text-muted sm:text-[15px]">
-              No penalties for wrong answers. Attempt every question you can —
-              timing and guesses help the diagnosis.
+              No penalties for wrong answers. Attempt every question you can.
+              Timing and guesses help the diagnosis.
             </p>
           </div>
         </section>

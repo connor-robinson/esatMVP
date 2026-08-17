@@ -161,12 +161,12 @@ function SubjectCheckbox({
 
 function displaySubject(opt: SectionOption): string {
   if (opt.moduleLabel) return opt.moduleLabel;
-  const tail = opt.legacyLabel.split("—")[1]?.trim();
+  const tail = opt.legacyLabel.split(":")[1]?.trim();
   if (tail) {
     if (/both papers/i.test(tail)) return "Both papers";
     return tail;
   }
-  return opt.legacyLabel.split("—")[0]?.trim() ?? opt.partName;
+  return opt.legacyLabel.split(":")[0]?.trim() ?? opt.partName;
 }
 
 type ModernSelectOption = { value: string; label: string };
@@ -1198,8 +1198,8 @@ function SubjectViewPills({
         const c = COLOR_TEXT[s.color];
         const label =
           s.moduleLabel ??
-          s.legacyLabel.split("—")[1]?.trim() ??
-          s.legacyLabel.split("—")[0]?.trim();
+          s.legacyLabel.split(":")[1]?.trim() ??
+          s.legacyLabel.split(":")[0]?.trim();
         return (
           <button
             key={s.key}
@@ -1492,7 +1492,7 @@ function SectionResult({
 
         {section.fallbackFromYear != null && (
           <NoteRow>
-            {year} table unavailable — using {section.fallbackFromYear} as approximation.
+            {year} table unavailable. Using {section.fallbackFromYear} as an approximation.
           </NoteRow>
         )}
 
@@ -1554,7 +1554,7 @@ function SectionResult({
 
       {section.fallbackFromYear != null && (
         <NoteRow>
-          {year} table unavailable — using {section.fallbackFromYear} as approximation.
+          {year} table unavailable. Using {section.fallbackFromYear} as an approximation.
         </NoteRow>
       )}
 

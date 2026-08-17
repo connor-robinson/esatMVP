@@ -498,7 +498,7 @@ export function SessionProgressBar({
                 isSaving
                   ? 'Saving session'
                   : showSaveHint
-                    ? 'Save and leave — keeps your results'
+                    ? 'Save and leave. Keeps your results'
                     : 'Save and leave'
               }
             >

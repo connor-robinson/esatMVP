@@ -174,7 +174,7 @@ function generateDivision(): GeneratedQuestion {
     answer: result,
     difficulty: 2,
     checker: parityChecker(result),
-    explanation: `$${dividend} ÷ ${divisor} = ${quotient}$, which is ${result}. Parity of a quotient is not fixed by operand parity alone — compute quickly.`,
+    explanation: `$${dividend} ÷ ${divisor} = ${quotient}$, which is ${result}. Parity of a quotient is not fixed by operand parity alone, so compute quickly.`,
   });
 }
 

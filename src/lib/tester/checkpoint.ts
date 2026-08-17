@@ -102,7 +102,7 @@ export function getCheckpointModalContent(
     return {
       title: "Final survey received",
       body:
-        "Thank you — your Founding Tester access is pending a quick manual review. We’ll email you when it’s approved.",
+        "Thank you. Your Founding Tester access is pending a quick manual review. We’ll email you when it’s approved.",
       bullets: [
         "Free features remain available while you wait.",
         "You can return here anytime for an update.",
@@ -124,7 +124,7 @@ export function getCheckpointModalContent(
       bullets: [
         "Your answers help us improve the product.",
         "You do not need to reply to every email.",
-        "Free features remain available — only premium areas need the extension.",
+        "Free features remain available. Only premium areas need the extension.",
         state.meaningfulSessionsCompleted >= sessionsNeeded
           ? "You’ve completed the required practice session."
           : `Sessions completed: ${state.meaningfulSessionsCompleted} of ${sessionsNeeded}.`,
@@ -150,7 +150,7 @@ export function getCheckpointModalContent(
         "The final survey takes about five minutes.",
         "Free features remain available while you decide.",
         hasSessions
-          ? "You’ve met the session requirement — the final survey is ready."
+          ? "You’ve met the session requirement. The final survey is ready."
           : `${sessionsNeeded - state.meaningfulSessionsCompleted} more session${sessionsNeeded - state.meaningfulSessionsCompleted === 1 ? "" : "s"} needed before the final survey.`,
       ],
       primaryLabel: hasSessions

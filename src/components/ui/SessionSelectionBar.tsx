@@ -225,7 +225,7 @@ export function SessionSelectionBar({
                 <ul className="scrollbar-hide max-h-[min(44vh,15rem)] min-h-0 flex-1 overflow-y-auto px-2 pb-3">
                   {(selectedDrills ?? []).length === 0 ? (
                     <li className="rounded-organic-md px-3 py-8 text-center text-xs leading-relaxed text-text-muted">
-                      No drills yet — add from the grid.
+                      No drills yet. Add some from the grid.
                     </li>
                   ) : (
                     (selectedDrills ?? []).map((sel, index) => {

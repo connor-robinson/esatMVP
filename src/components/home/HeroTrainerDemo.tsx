@@ -231,7 +231,7 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
             Demo complete
           </p>
           <h3 className="mt-5 max-w-xs text-2xl font-display font-bold leading-snug text-white sm:text-3xl">
-            Nice work — there&apos;s a lot more where that came from
+            Nice work. There&apos;s a lot more where that came from
           </h3>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-[#94A3B8] sm:text-base">
             Sign up free to unlock every practice mode, track your speed, and
@@ -318,9 +318,9 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
             )}
           >
             {flash === "correct"
-              ? "Nice — next question"
+              ? "Nice. Next question"
               : flash === "wrong"
-                ? "Not quite — try the next one"
+                ? "Not quite. Try the next one"
                 : "placeholder"}
           </p>
         </div>

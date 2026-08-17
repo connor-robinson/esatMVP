@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
         mode: "end_then_season_pass",
         effectiveAt: periodEndLabel,
         message: periodEndLabel
-          ? `Your current plan stays active until ${periodEndLabel}. After that, return here to buy the Exam Season Pass — no overlap charge.`
+          ? `Your current plan stays active until ${periodEndLabel}. After that, return here to buy the Exam Season Pass. No overlap charge.`
           : "Your current plan will end at the close of this billing period. Then buy the Exam Season Pass.",
       });
     }
@@ -135,8 +135,8 @@ export async function POST(request: NextRequest) {
       planType,
       effectiveAt: periodEndLabel,
       message: periodEndLabel
-        ? `Switched to ${planType}. You keep your current access until ${periodEndLabel}; the new price starts on your next bill — no refund or extra charge today.`
-        : `Switched to ${planType}. The new price starts on your next bill — no charge today.`,
+        ? `Switched to ${planType}. You keep your current access until ${periodEndLabel}; the new price starts on your next bill. No refund or extra charge today.`
+        : `Switched to ${planType}. The new price starts on your next bill. No charge today.`,
     });
   } catch (err) {
     console.error("[switch-plan]", err);

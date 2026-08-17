@@ -70,7 +70,7 @@ export function ReplaceActivePaperModal({
             on the current paper.
           </p>
           <p className="text-white/50 text-xs">
-            To continue where you left off, resume your saved session — the
+            To continue where you left off, resume your saved session. The
             progress bar will reappear when you return to the paper.
           </p>
         </div>

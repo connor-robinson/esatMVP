@@ -3,11 +3,11 @@ import { INDEPENDENT_DISCLAIMER, LAST_CHECKED } from "@/lib/seo/config";
 
 const OFFICIAL_PAGES = [
   {
-    label: "UAT-UK — ESAT preparation materials (ENGAA and NSAA archives)",
+    label: "UAT-UK: ESAT preparation materials (ENGAA and NSAA archives)",
     url: "https://esat-tmua.ac.uk/esat-preparation-materials/",
   },
   {
-    label: "UAT-UK — TMUA preparation materials",
+    label: "UAT-UK: TMUA preparation materials",
     url: "https://esat-tmua.ac.uk/tmua-preparation-materials/",
   },
 ];
@@ -30,7 +30,7 @@ export function OfficialSourceDisclaimer({
         <p>
           Every paper below is a public document published by UAT-UK. We link to
           the official file and never host a copy, so you always open the current
-          version — including the markings UAT-UK adds where a question falls
+          version, including the markings UAT-UK adds where a question falls
           outside the ESAT specification.
         </p>
         <p>

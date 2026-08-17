@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
 
   if (legacyLive && mainKey && activeSource === "STRIPE_SECRET_KEY") {
     warnings.push(
-      "STRIPE_SECRET_KEY_LIVE is set but ignored — STRIPE_SECRET_KEY takes precedence. Remove _LIVE if unused to avoid confusion."
+      "STRIPE_SECRET_KEY_LIVE is set but ignored. STRIPE_SECRET_KEY takes precedence. Remove _LIVE if unused to avoid confusion."
     );
   } else if (legacyLive && !mainKey) {
     warnings.push(
@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
   }
 
   if (keyMeta.mode === "test") {
-    warnings.push("Stripe secret key is in test mode — checkout will show TEST MODE.");
+    warnings.push("Stripe secret key is in test mode. Checkout will show TEST MODE.");
   }
 
   return NextResponse.json({

@@ -79,7 +79,7 @@ export default function HelpContactPage() {
           Help &amp; contact
         </h1>
         <p className="mt-3 text-sm leading-relaxed text-text-muted">
-          Bugs, complaints, help, or other issues — send us a message and we
+          Bugs, complaints, help, or other issues. Send us a message and we
           will get back to you.
         </p>
 
@@ -99,7 +99,7 @@ export default function HelpContactPage() {
           <div className="mt-10 space-y-3">
             <p className="text-base font-semibold text-text">Message sent.</p>
             <p className="text-sm text-text-muted">
-              Thanks — we will get back to you.
+              Thanks. We will get back to you.
             </p>
             <button
               type="button"

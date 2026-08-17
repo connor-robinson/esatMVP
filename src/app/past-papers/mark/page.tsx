@@ -783,7 +783,7 @@ export default function PapersMarkPage() {
 
   const percentileInfoText = useMemo(() => {
     const yearLabel = paperExamYear ? `${paperExamYear} ` : "";
-    return `We use official ${yearLabel}${displayExamLabel} score distributions from that exam year. The curve shows how candidates actually scored — real data, not an estimate. Your dot is your result; Top% is the share of candidates you would have beaten that year.`;
+    return `We use official ${yearLabel}${displayExamLabel} score distributions from that exam year. The curve shows how candidates actually scored. This is real data, not an estimate. Your dot is your result; Top% is the share of candidates you would have beaten that year.`;
   }, [paperExamYear, displayExamLabel]);
 
   useEffect(() => {
@@ -2059,7 +2059,7 @@ export default function PapersMarkPage() {
                   <DrillUpgradeBanner
                     variant="panel"
                     headline="Unlock community stats"
-                    subtext="See how other candidates answered each question — average time and answer distribution."
+                    subtext="See how other candidates answered each question: average time and answer distribution."
                     ctaLabel="View plans"
                   />
                 </div>

@@ -89,7 +89,7 @@ export function PastPaperLibrary({
       {visible.length === 0 ? (
         <p className="rounded-2xl bg-white/[0.04] p-6 text-sm leading-relaxed text-[#94A3B8]">
           No official resource matches that combination. The most common cause is
-          asking for worked answers on an ENGAA or NSAA paper — UAT-UK publishes
+          asking for worked answers on an ENGAA or NSAA paper. UAT-UK publishes
           answer keys for those, and full worked answers only for TMUA.
         </p>
       ) : null}

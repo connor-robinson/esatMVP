@@ -97,7 +97,7 @@ export function PaperLibraryGrid({
   const addHintLabel =
     tutorialAddHint ??
     (firstEsatSubject
-      ? `Click to add — starts with ${firstEsatSubject}`
+      ? `Click to add. Starts with ${firstEsatSubject}`
       : "Click to add this paper");
 
   const toggleExam = (examName: string) =>

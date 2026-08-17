@@ -135,7 +135,7 @@ function calibrationAction(
     return {
       type: "retake_calibration",
       title: "Retake calibration",
-      description: "Your skills have changed — update your profile for better recommendations.",
+      description: "Your skills have changed. Update your profile for better recommendations.",
       buttonLabel: "Retake calibration",
       href: CALIBRATION_ROUTES.hub,
       reason: "calibration_outdated",

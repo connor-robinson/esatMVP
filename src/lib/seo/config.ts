@@ -90,31 +90,31 @@ export type SourceLink = { label: string; url: string };
 /** Official source documents cited across the guide pages. */
 export const SOURCES = {
   esatTest: {
-    label: "UAT-UK — About the ESAT test",
+    label: "UAT-UK: About the ESAT test",
     url: "https://esat-tmua.ac.uk/about-the-tests/esat-test/",
   },
   prepare: {
-    label: "UAT-UK — Prepare for the tests",
+    label: "UAT-UK: Prepare for the tests",
     url: "https://esat-tmua.ac.uk/prepare/",
   },
   results: {
-    label: "UAT-UK — Test results",
+    label: "UAT-UK: Test results",
     url: "https://esat-tmua.ac.uk/test-results/",
   },
   contentSpec: {
-    label: "UAT-UK — ESAT Content Specification (PDF, July 2024)",
+    label: "UAT-UK: ESAT Content Specification (PDF, July 2024)",
     url: "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/07/19142858/ESAT_Content_Specification_July2024.pdf",
   },
   deadlines: {
-    label: "UAT-UK — Key dates and deadlines",
+    label: "UAT-UK: Key dates and deadlines",
     url: "https://esat-tmua.ac.uk/deadlines/",
   },
   candidateHandbook: {
-    label: "UAT-UK — Candidate Handbook 2027 Entry (PDF)",
+    label: "UAT-UK: Candidate Handbook 2027 Entry (PDF)",
     url: "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/26111813/Candidate-Handbook-2027-Entry.pdf",
   },
   esatPrepMaterials: {
-    label: "UAT-UK — ESAT preparation materials",
+    label: "UAT-UK: ESAT preparation materials",
     url: "https://esat-tmua.ac.uk/esat-preparation-materials/",
   },
   engaa2023: {
@@ -126,31 +126,31 @@ export const SOURCES = {
     url: "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07120523/NSAA_2023_S1_QuestionPaper.pdf",
   },
   tmuaTest: {
-    label: "UAT-UK — About the TMUA test",
+    label: "UAT-UK: About the TMUA test",
     url: "https://esat-tmua.ac.uk/about-the-tests/tmua-test/",
   },
   tmuaPrepMaterials: {
-    label: "UAT-UK — TMUA preparation materials",
+    label: "UAT-UK: TMUA preparation materials",
     url: "https://esat-tmua.ac.uk/tmua-preparation-materials/",
   },
   esatGuideMaths1: {
-    label: "UAT-UK — ESAT Guide: Mathematics 1 (PDF)",
+    label: "UAT-UK: ESAT Guide: Mathematics 1 (PDF)",
     url: "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103534/ESAT_Guide_Mathematics_1.pdf",
   },
   esatGuideMaths2: {
-    label: "UAT-UK — Notes on Mathematics for TMUA and ESAT Mathematics 2 (PDF)",
+    label: "UAT-UK: Notes on Mathematics for TMUA and ESAT Mathematics 2 (PDF)",
     url: "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103537/Notes_on_Mathematics_-for_TMUA_and_ESAT_M2.pdf",
   },
   esatGuidePhysics: {
-    label: "UAT-UK — ESAT Guide: Physics (PDF)",
+    label: "UAT-UK: ESAT Guide: Physics (PDF)",
     url: "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103558/ESAT_Guide_Physics.pdf",
   },
   esatGuideChemistry: {
-    label: "UAT-UK — ESAT Guide: Chemistry (PDF, June 2025)",
+    label: "UAT-UK: ESAT Guide: Chemistry (PDF, June 2025)",
     url: "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2025/06/25103142/ESAT_GUIDE_Chemistry_June2025.pdf",
   },
   esatGuideBiology: {
-    label: "UAT-UK — ESAT Guide: Biology (PDF, June 2025)",
+    label: "UAT-UK: ESAT Guide: Biology (PDF, June 2025)",
     url: "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2025/07/06120052/ESAT_Guide_Biology_June_2025.pdf",
   },
 } as const satisfies Record<string, SourceLink>;

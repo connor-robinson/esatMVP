@@ -61,7 +61,7 @@ export function TesterCheckpointModal({
         ) : null}
 
         <p className="mt-4 text-xs text-text-muted">
-          Closing this does not cancel anything — free features stay available.
+          Closing this does not cancel anything. Free features stay available.
           Use &ldquo;Continue programme&rdquo; in the navigation anytime.
         </p>
 

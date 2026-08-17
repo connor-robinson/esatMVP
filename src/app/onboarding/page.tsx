@@ -265,7 +265,7 @@ function OnboardingContent() {
     if (isPreview) {
       setUsernameAvailability({
         available: true,
-        message: "Looks good (preview — nothing is saved)",
+        message: "Looks good (preview, nothing is saved)",
       });
       return;
     }
@@ -484,7 +484,7 @@ function OnboardingContent() {
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[#4C8BF5]/15 px-4 py-3 text-sm text-text">
             <p>
               <span className="font-semibold">Preview</span>
-              <span className="text-text-muted"> — nothing is saved</span>
+              <span className="text-text-muted"> (nothing is saved)</span>
             </p>
             <button
               type="button"
@@ -806,7 +806,7 @@ function OnboardingContent() {
                         Email tips?
                       </h1>
                       <p className="mt-2 text-sm text-text-muted">
-                        Optional — you can change this anytime in settings.
+                        Optional. You can change this anytime in settings.
                       </p>
                     </div>
 

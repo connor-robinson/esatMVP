@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
               unit_amount: amountPence,
               product_data: {
                 name: "Exam Season Pass",
-                description: "One-time — full access until 1 Oct 2026",
+                description: "One-time payment. Full access until 1 Oct 2026",
               },
             },
             quantity: 1,

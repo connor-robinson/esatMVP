@@ -234,7 +234,7 @@ function TesterFlow({
     case "awaiting_manual_approval":
       return (
         <ActionCard
-          title="Final survey received — thank you"
+          title="Final survey received. Thank you"
           body="Your Founding Tester access is pending a quick manual review. You’ll be notified by email once it’s approved."
         />
       );
@@ -254,7 +254,7 @@ function TesterFlow({
                 ? ` (${state.foundingDiscountPercent}% off)`
                 : ""}
               , which stays associated with your account. Access does not renew
-              automatically — when these {state.config.stage_3_days} days end
+              automatically. When these {state.config.stage_3_days} days end
               you’ll see your founding-member offer.
             </p>
           </div>
@@ -324,7 +324,7 @@ function Explainer({
         </h1>
         <p className="mt-3 text-sm text-text-muted">
           Get premium access for free in exchange for genuinely useful feedback.
-          Access is earned in stages by completing short feedback surveys — the
+          Access is earned in stages by completing short feedback surveys. The
           more you help, the more free access you unlock (up to roughly{" "}
           {totalDays} days in total).
         </p>

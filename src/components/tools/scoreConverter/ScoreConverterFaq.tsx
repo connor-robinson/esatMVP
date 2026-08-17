@@ -11,12 +11,12 @@ export const SCORE_CONVERTER_FAQ_ITEMS: FaqItem[] = [
   {
     question: "What does this converter do?",
     answer:
-      "It converts a raw mark from a past NSAA, ENGAA or TMUA paper using the official Cambridge conversion table for that exam, year and section. Those tables — published year by year — map each raw mark onto the 1.0–9.0 scaled score used on that sitting. We look up your mark in the matching table; we do not invent conversion numbers. For NSAA and ENGAA we then place that scaled score on the official ESAT distribution for the equivalent module (for example NSAA Mathematics → ESAT Mathematics 1), interpolating between published score points to estimate your percentile. For TMUA before 2024 we use that year's official raw-to-scaled table, then match your percentile onto the post-2024 TMUA distribution so you can compare with today's scale. If a year's table is missing for a section, we fall back to the nearest published year and flag it in the results.",
+      "It converts a raw mark from a past NSAA, ENGAA or TMUA paper using the official Cambridge conversion table for that exam, year and section. Those tables, published year by year, map each raw mark onto the 1.0–9.0 scaled score used on that sitting. We look up your mark in the matching table; we do not invent conversion numbers. For NSAA and ENGAA we then place that scaled score on the official ESAT distribution for the equivalent module (for example NSAA Mathematics → ESAT Mathematics 1), interpolating between published score points to estimate your percentile. For TMUA before 2024 we use that year's official raw-to-scaled table, then match your percentile onto the post-2024 TMUA distribution so you can compare with today's scale. If a year's table is missing for a section, we fall back to the nearest published year and flag it in the results.",
   },
   {
     question: "Can I rely on this score for admissions?",
     answer:
-      "The conversion for a given past paper is as reliable as Cambridge's published tables: for that year and section, the scaled score we show is the official mapping from that sitting. What you cannot treat as official is using that figure as your ESAT or TMUA result for an application. Today's papers are different tests, scored on different cohorts, and TMUA from 2024 uses an IRT model rather than a published raw-mark table. Use this to interpret mock performance against the published historical scale — not as a score a university will accept.",
+      "The conversion for a given past paper is as reliable as Cambridge's published tables: for that year and section, the scaled score we show is the official mapping from that sitting. What you cannot treat as official is using that figure as your ESAT or TMUA result for an application. Today's papers are different tests, scored on different cohorts, and TMUA from 2024 uses an IRT model rather than a published raw-mark table. Use this to interpret mock performance against the published historical scale, not as a score a university will accept.",
   },
   {
     question: "Is the ESAT scored out of 9?",
@@ -36,7 +36,7 @@ export const SCORE_CONVERTER_FAQ_ITEMS: FaqItem[] = [
   {
     question: "What changed with TMUA in 2024?",
     answer:
-      "From 2024, TMUA administration moved to UAT-UK and Pearson VUE. Candidates sit different test versions on different dates, and each person's score is calculated with a Rasch IRT statistical model rather than a single published raw-marks-to-score table. The 1.0–9.0 scale was also recalibrated — a typical score dropped from around 5.1 to around 3.8, and university grade boundaries moved down by a similar amount. The test did not suddenly get harder; the ruler changed.",
+      "From 2024, TMUA administration moved to UAT-UK and Pearson VUE. Candidates sit different test versions on different dates, and each person's score is calculated with a Rasch IRT statistical model rather than a single published raw-marks-to-score table. The 1.0–9.0 scale was also recalibrated: a typical score dropped from around 5.1 to around 3.8, and university grade boundaries moved down by a similar amount. The test did not suddenly get harder; the ruler changed.",
   },
   {
     question: "Why can't I convert TMUA 2024+ from raw marks?",
@@ -51,7 +51,7 @@ export const SCORE_CONVERTER_FAQ_ITEMS: FaqItem[] = [
   {
     question: "How do you convert TMUA marks before 2024?",
     answer:
-      "For TMUA 2023 and earlier, we use the same official raw-to-scaled tables (sourced from Cambridge FOI disclosures and cross-checked against independent republications). Enter separate marks for Mathematical Thinking and Mathematical Reasoning together, or one combined overall score across both papers — but not a mix of those modes, because they use different scoring units.",
+      "For TMUA 2023 and earlier, we use the same official raw-to-scaled tables (sourced from Cambridge FOI disclosures and cross-checked against independent republications). Enter separate marks for Mathematical Thinking and Mathematical Reasoning together, or one combined overall score across both papers, but not a mix of those modes, because they use different scoring units.",
   },
   {
     question: "What is the estimated post-2024 TMUA score?",
@@ -61,12 +61,12 @@ export const SCORE_CONVERTER_FAQ_ITEMS: FaqItem[] = [
   {
     question: "How are percentiles calculated?",
     answer:
-      'We use official cumulative score distributions — CSV tables of scaled score versus "% of candidates at or below this score". Your scaled score is interpolated between the nearest published points to estimate your percentile (e.g. 72.4th percentile means you scored at or above 27.6% of candidates). NSAA and ENGAA use subject-specific ESAT distributions; TMUA uses separate pre- and post-2024 cumulative tables.',
+      'We use official cumulative score distributions: CSV tables of scaled score versus "% of candidates at or below this score". Your scaled score is interpolated between the nearest published points to estimate your percentile (e.g. 72.4th percentile means you scored at or above 27.6% of candidates). NSAA and ENGAA use subject-specific ESAT distributions; TMUA uses separate pre- and post-2024 cumulative tables.',
   },
   {
     question: "Where does the data come from?",
     answer:
-      "Raw-to-scaled conversion tables come from Cambridge Assessment admissions data (and FOI disclosures for TMUA). Percentile distributions come from official ESAT and TMUA cumulative tables. We do not invent conversion numbers — everything is traced to published or disclosed source material, with gaps filled from the nearest reliable year when necessary.",
+      "Raw-to-scaled conversion tables come from Cambridge Assessment admissions data (and FOI disclosures for TMUA). Percentile distributions come from official ESAT and TMUA cumulative tables. We do not invent conversion numbers. Everything is traced to published or disclosed source material, with gaps filled from the nearest reliable year when necessary.",
   },
   {
     question: "Is this an official ESAT or TMUA score?",

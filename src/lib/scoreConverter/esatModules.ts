@@ -152,40 +152,40 @@ function labelForPart(
     const order = "ABCDE".includes(letter)
       ? "ABCDE".indexOf(letter)
       : 10 + "XYZ".indexOf(letter);
-    return { legacyLabel: `${p} — ${subject}`, group: paperName, order };
+    return { legacyLabel: `${p}: ${subject}`, group: paperName, order };
   }
   if (exam === "ENGAA") {
     if (/general/i.test(p)) {
-      return { legacyLabel: "Section 1 — overall", group: "Section 1", order: 0 };
+      return { legacyLabel: "Section 1: overall", group: "Section 1", order: 0 };
     }
     if (/1a/i.test(p)) {
       return {
-        legacyLabel: "Section 1 — Part A (Maths & Physics)",
+        legacyLabel: "Section 1: Part A (Maths & Physics)",
         group: "Section 1",
         order: 1,
       };
     }
     if (/1b/i.test(p)) {
       return {
-        legacyLabel: "Section 1 — Part B (Advanced)",
+        legacyLabel: "Section 1: Part B (Advanced)",
         group: "Section 1",
         order: 2,
       };
     }
     return {
-      legacyLabel: "Section 2 — Advanced (applied)",
+      legacyLabel: "Section 2: Advanced (applied)",
       group: "Section 2",
       order: 3,
     };
   }
   // TMUA
   if (/overall/i.test(p)) {
-    return { legacyLabel: "Overall — both papers", group: "Papers", order: 3 };
+    return { legacyLabel: "Overall: both papers", group: "Papers", order: 3 };
   }
   if (/paper\s*2/i.test(p)) {
-    return { legacyLabel: "Paper 2 — Mathematical Reasoning", group: "Papers", order: 2 };
+    return { legacyLabel: "Paper 2: Mathematical Reasoning", group: "Papers", order: 2 };
   }
-  return { legacyLabel: "Paper 1 — Mathematical Thinking", group: "Papers", order: 1 };
+  return { legacyLabel: "Paper 1: Mathematical Thinking", group: "Papers", order: 1 };
 }
 
 /** TMUA picker: Paper 1 + Paper 2 together, or overall — never a mix or single paper alone. */
@@ -216,7 +216,7 @@ export function validateTmuaSelections(
 
   if (hasOverall) {
     if (selections.length > 1) {
-      return "Select either both papers separately or both papers overall — not a mix.";
+      return "Select either both papers separately or both papers overall, not a mix.";
     }
     return null;
   }

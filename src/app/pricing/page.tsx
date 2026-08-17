@@ -93,7 +93,7 @@ export default function PricingPage() {
       price: "£8",
       caption: "per week",
       priceNote: isRecurringPaid && tier !== "weekly"
-        ? "Switch at next billing date — no charge today"
+        ? "Switch at next billing date. No charge today"
         : undefined,
       features: FEATURES.paid,
       ctaLabel: paidCta("weekly", "Upgrade"),
@@ -104,8 +104,8 @@ export default function PricingPage() {
       price: "£25",
       caption: "£6.25/week",
       priceNote: isRecurringPaid && tier !== "monthly"
-        ? "Switch at next billing date — no charge today"
-        : "7-day free trial — cancel anytime",
+        ? "Switch at next billing date. No charge today"
+        : "7-day free trial. Cancel anytime",
       features: FEATURES.paid,
       highlighted: true,
       ctaLabel: paidCta("monthly", "Start free trial"),
@@ -118,11 +118,11 @@ export default function PricingPage() {
       priceNote:
         isRecurringPaid && cancelAtPeriodEnd && pendingPlan === "season_pass"
           ? periodEndLabel
-            ? `Current plan ends ${periodEndLabel} — then buy Season Pass`
-            : "Current plan ending — then buy Season Pass"
+            ? `Current plan ends ${periodEndLabel}, then buy Season Pass`
+            : "Current plan ending, then buy Season Pass"
           : isRecurringPaid
-            ? "Finish your current plan first — no overlap charge"
-            : "One-time — access until 1 Oct 2026",
+            ? "Finish your current plan first. No overlap charge"
+            : "One-time payment. Access until 1 Oct 2026",
       features: FEATURES.paid,
       featured: true,
       ctaLabel: paidCta("season_pass", "Upgrade"),
@@ -240,7 +240,7 @@ export default function PricingPage() {
           {hasFullAccess && periodEndLabel && isRecurringPaid ? (
             <p className="mt-3 text-sm text-text-muted">
               Current plan renews / ends {periodEndLabel}
-              {cancelAtPeriodEnd ? " (set to end — no further renewals)" : ""}.
+              {cancelAtPeriodEnd ? " (set to end, no further renewals)" : ""}.
             </p>
           ) : null}
           {banner ? (

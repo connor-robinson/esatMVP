@@ -76,7 +76,7 @@ export function ConversionReportButton({
             <p className="text-xs text-error mt-1">Could not submit report.</p>
           )}
           {status === "sent" && (
-            <p className="text-xs text-success mt-1">Thanks — we&apos;ll review this.</p>
+            <p className="text-xs text-success mt-1">Thanks. We&apos;ll review this.</p>
           )}
         </div>
       )}

@@ -46,11 +46,11 @@ export function LoggedOutHomepage({
             ESAT no-calculator preparation
           </p>
           <h1 className="mt-3 text-3xl font-bold text-text sm:text-4xl lg:text-5xl">
-            Know what to practise — and get faster at it
+            Know what to practise, and get faster at it
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base text-text-muted sm:mx-0">
-            Personalised ESAT preparation that identifies weak skills, speed problems,
-            and accuracy gaps — then recommends structured practice instead of random questions.
+            Personalised ESAT preparation that finds weak skills, speed problems,
+            and accuracy gaps, then points you to structured practice instead of random questions.
           </p>
         </section>
 
@@ -66,8 +66,8 @@ export function LoggedOutHomepage({
               ratio calculations.
             </p>
             <p className="mt-2 text-sm text-text-muted">
-              Your calibration produces a summary like this — based on your actual
-              responses, not generic advice.
+              Your calibration produces a summary like this, based on your actual
+              responses rather than generic advice.
             </p>
           </div>
 

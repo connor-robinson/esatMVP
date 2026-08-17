@@ -558,8 +558,8 @@ export function computeResults(attempt: CalibrationAttempt): CalibrationResults 
       pairDisagreeRate,
     });
     let recommendation: string;
-    if (attempted === 0) recommendation = "Not attempted — take more questions in this area to diagnose.";
-    else if (reliability === "low") recommendation = `Single-question signal only — confirm with a short ${title.toLowerCase()} set.`;
+    if (attempted === 0) recommendation = "Not attempted. Take more questions in this area to diagnose.";
+    else if (reliability === "low") recommendation = `Single-question signal only. Confirm with a short ${title.toLowerCase()} set.`;
     else if ((score ?? 0) >= 75) recommendation = `Maintain with occasional mixed ${title.toLowerCase()} questions.`;
     else recommendation = `Prioritise a timed ${title.toLowerCase()} drill.`;
 

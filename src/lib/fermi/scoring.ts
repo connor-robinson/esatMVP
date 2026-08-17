@@ -44,7 +44,7 @@ export function getVerdict(guess: number, answer: number): FermiVerdict {
       : `about ${formatFactor(factor)} ${direction}`;
 
   if (logErr < 0.05) {
-    return { label: "Bang on", detail: "Essentially exact — incredible estimate.", tone: "perfect", stars: 5 };
+    return { label: "Bang on", detail: "Essentially exact. Incredible estimate.", tone: "perfect", stars: 5 };
   }
   if (logErr < 0.18) {
     return { label: "Bang on", detail: `Within ~50% (${factorText}).`, tone: "perfect", stars: 5 };

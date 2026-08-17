@@ -68,7 +68,7 @@ export const FERMI_QUESTIONS: FermiQuestion[] = [
     answer: 4.0075e7,
     unit: "m",
     category: "geography",
-    note: "About 40,075 km — the metre was originally defined from this.",
+    note: "About 40,075 km. The metre was originally defined from this.",
   },
   {
     id: "grains-of-sand",

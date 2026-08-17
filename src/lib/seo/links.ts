@@ -61,7 +61,7 @@ export const SEO_LINKS = {
   calculatorRules: {
     href: SEO_ROUTES.calculatorRules,
     label: "ESAT calculator rules",
-    blurb: "Calculators are not permitted — what you can use for working.",
+    blurb: "Calculators are not permitted. Here's what you can use for working.",
   },
   goodScore: {
     href: SEO_ROUTES.goodScore,

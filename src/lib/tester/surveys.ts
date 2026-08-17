@@ -118,7 +118,7 @@ export function validateSurveySubmission(
 const INITIAL_SURVEY: SurveyDefinition = {
   key: "initial",
   version: 1,
-  title: "First Look — quick start survey",
+  title: "First Look: quick start survey",
   intro:
     "A one-minute survey so we understand who you are. Submitting it activates your First Look premium access.",
   estimatedTime: "About 1 minute",
@@ -211,7 +211,7 @@ const STAGE_1_FEEDBACK_SURVEY: SurveyDefinition = {
   version: 1,
   title: "First Look feedback",
   intro:
-    "Two to three minutes of feedback. Your answers help us improve the product — and unlock 7 more days of premium access.",
+    "Two to three minutes of feedback. Your answers help us improve the product, and unlock 7 more days of premium access.",
   estimatedTime: "About 2–3 minutes",
   questions: [
     {
@@ -336,9 +336,9 @@ const STAGE_1_FEEDBACK_SURVEY: SurveyDefinition = {
 const FINAL_SURVEY: SurveyDefinition = {
   key: "final",
   version: 1,
-  title: "Founding Tester — final survey",
+  title: "Founding Tester: final survey",
   intro:
-    "About five minutes. This is the most important feedback of the programme — completing it unlocks 30 more days and your founding-member discount.",
+    "About five minutes. This is the most important feedback of the programme. Completing it unlocks 30 more days and your founding-member discount.",
   estimatedTime: "About 5 minutes",
   questions: [
     {

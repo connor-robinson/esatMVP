@@ -57,7 +57,7 @@ function PricingSuccessContent() {
           );
         }
 
-        setMessage("Payment confirmed — unlocking your account…");
+        setMessage("Payment confirmed. Unlocking your account…");
 
         while (attempts < 12 && !cancelled) {
           attempts += 1;
@@ -74,7 +74,7 @@ function PricingSuccessContent() {
             }
             setTier(status.tier ?? null);
             setState("unlocked");
-            setMessage("You're all set — full access is active.");
+            setMessage("You're all set. Full access is active.");
 
             try {
               const purchaseKey = `ga_purchase_${sessionId}`;

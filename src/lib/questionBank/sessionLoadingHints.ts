@@ -4,10 +4,10 @@ export const SESSION_LOADING_HINTS = [
   "Under timed conditions, read the question once for gist, then again for the exact target.",
   "If two options look close, estimate or bound the answer before checking algebra.",
   "Binomial and series questions often simplify when you identify the general term early.",
-  "Mark questions you are unsure about mentally — come back only if time allows.",
+  "Mark questions you are unsure about mentally. Come back only if time allows.",
   "For ESAT Math, comfort with quadratics and graphs saves minutes across many items.",
   "TMUA rewards spotting structure: symmetry, monotonicity, and special cases.",
-  "When stuck, write down given quantities with units — it clarifies what can be combined.",
+  "When stuck, write down given quantities with units. It clarifies what can be combined.",
   "Eliminate one or two options using magnitude or sign before doing full working.",
   "A steady pace beats rushing early questions and panicking at the end.",
 ] as const;

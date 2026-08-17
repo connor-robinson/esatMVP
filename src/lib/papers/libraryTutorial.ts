@@ -58,10 +58,10 @@ export function markLibraryTutorialSeen(hasFullAccess: boolean): void {
 export function libraryTutorialAddHint(hasFullAccess: boolean, esatSubject: string | null): string {
   if (hasFullAccess) {
     return esatSubject
-      ? `Click to add — we pre-select ${esatSubject} for your modules`
+      ? `Click to add. We pre-select ${esatSubject} for your modules`
       : "Click to add this paper";
   }
   return esatSubject
-    ? `Click to add — starts with ${esatSubject}`
+    ? `Click to add. Starts with ${esatSubject}`
     : "Click to add this paper";
 }

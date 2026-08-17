@@ -15,7 +15,7 @@ export function buildQuestionNote(
   seasonalNote?: string | null,
 ): string | undefined {
   const parts = [seasonalNote, sourceNote].filter(Boolean) as string[];
-  return parts.length > 0 ? parts.join(" — ") : undefined;
+  return parts.length > 0 ? parts.join(". ") : undefined;
 }
 
 export type ScheduledBatchRow = {

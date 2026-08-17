@@ -1023,7 +1023,7 @@ export default function ProfilePage() {
                                   : "One-time Exam Season Pass access is active."
                                 : subscriptionStatus === "trialing"
                                   ? currentPeriodEnd
-                                    ? `Free trial active — first charge on ${formatBillingDate(currentPeriodEnd)}.`
+                                    ? `Free trial active. First charge on ${formatBillingDate(currentPeriodEnd)}.`
                                     : "Free trial is active."
                                   : cancelAtPeriodEnd
                                     ? currentPeriodEnd
@@ -1083,7 +1083,7 @@ export default function ProfilePage() {
                       {hasFullAccess &&
                       (tier === "weekly" || tier === "monthly") ? (
                         <p className="text-xs text-text-subtle">
-                          Cancel opens Stripe’s secure billing portal — choose
+                          Cancel opens Stripe’s secure billing portal. Choose
                           Cancel plan there. You’ll keep access until the end of
                           the current period.
                         </p>

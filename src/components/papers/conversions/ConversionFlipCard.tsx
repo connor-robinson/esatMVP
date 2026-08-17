@@ -61,7 +61,7 @@ export function ConversionFlipCard({ row }: ConversionFlipCardProps) {
                 className="h-full w-full object-contain"
               />
               <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-3 py-2">
-                <span className="text-xs text-white/80">Click to flip — compare image vs text</span>
+                <span className="text-xs text-white/80">Click to flip. Compare image vs text</span>
               </div>
             </div>
 

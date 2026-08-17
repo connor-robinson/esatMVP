@@ -107,7 +107,7 @@ export function MistakeAnalysisSection({
           >
             {totalWrong === 0 ? (
               <p className="rounded-organic-lg bg-surface-mid/50 px-4 py-10 text-center text-sm text-text-muted">
-                No wrong answers in stored session attempts yet — keep practising to
+                No wrong answers in stored session attempts yet. Keep practising to
                 populate this breakdown.
               </p>
             ) : (
