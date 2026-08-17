@@ -398,9 +398,27 @@ export function PaperColumn({
                     );
 
                   return (
-                    <div
+                    <button
+                      type="button"
                       key={mainSection.name}
-                      className="flex h-11 items-center gap-2.5 rounded-lg bg-surface-elevated px-3 transition-colors hover:bg-surface-mid"
+                      onClick={() =>
+                        handleAddSectionClick(
+                          mainSection.name,
+                          mainSection.subjectParts,
+                        )
+                      }
+                      disabled={locked}
+                      className={cn(
+                        "flex h-11 w-full items-center gap-2.5 rounded-lg bg-surface-elevated px-3 text-left transition-colors",
+                        locked
+                          ? "cursor-not-allowed opacity-70"
+                          : "cursor-pointer hover:bg-surface-mid",
+                      )}
+                      aria-label={
+                        locked
+                          ? `Upgrade to unlock ${mainSection.name}`
+                          : `Add ${mainSection.name} to session`
+                      }
                     >
                       {sectionNum ? (
                         <div
@@ -430,35 +448,21 @@ export function PaperColumn({
                           <span className="h-5 w-5 shrink-0" aria-hidden />
                         )}
 
-                        <button
-                          type="button"
-                          onClick={() =>
-                            handleAddSectionClick(
-                              mainSection.name,
-                              mainSection.subjectParts,
-                            )
-                          }
-                          disabled={locked}
+                        <span
                           className={cn(
-                            "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-text-muted transition-colors",
-                            locked
-                              ? "cursor-not-allowed text-text-disabled"
-                              : "hover:bg-surface-mid hover:text-text",
+                            "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-text-muted",
+                            !locked && "group-hover:text-text",
                           )}
-                          aria-label={
-                            locked
-                              ? `Upgrade to unlock ${mainSection.name}`
-                              : `Add ${mainSection.name}`
-                          }
+                          aria-hidden
                         >
                           {locked ? (
                             <Lock className="h-4 w-4" strokeWidth={2} />
                           ) : (
                             <Plus className="h-4 w-4" strokeWidth={2} />
                           )}
-                        </button>
+                        </span>
                       </div>
-                    </div>
+                    </button>
                   );
                 })
               )}
