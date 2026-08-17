@@ -31,8 +31,30 @@ type HoverPoint = {
   isUserScore: boolean;
 };
 
-const SNAP_PX = 22;
 const USER_SNAP_PX = 36;
+
+function resolveHoverScore(
+  svgX: number,
+  chart: {
+    fromX: (px: number) => number;
+    toX: (x: number) => number;
+    minX: number;
+    maxX: number;
+    hasUser: boolean;
+    userScore: number;
+  },
+): { score: number; isUserScore: boolean } {
+  const raw = Math.max(chart.minX, Math.min(chart.maxX, chart.fromX(svgX)));
+
+  if (chart.hasUser) {
+    const nearUser = Math.abs(chart.toX(chart.userScore) - svgX) <= USER_SNAP_PX;
+    if (nearUser) {
+      return { score: chart.userScore, isUserScore: true };
+    }
+  }
+
+  return { score: raw, isUserScore: false };
+}
 
 function buildSmoothPath(
   points: { x: number; y: number }[],
@@ -63,35 +85,6 @@ function buildSmoothPath(
   const line = lineParts.join(" ");
   const area = `${line} L ${points[points.length - 1].x} ${closeBottomY} L ${points[0].x} ${closeBottomY} Z`;
   return { line, area };
-}
-
-function resolveSnapScore(
-  svgX: number,
-  chart: {
-    sorted: EsatRow[];
-    toX: (x: number) => number;
-    hasUser: boolean;
-    userScore: number;
-  },
-): number | null {
-  const candidates = chart.sorted.map((r) => r.score);
-  if (chart.hasUser) candidates.push(chart.userScore);
-
-  let bestScore = candidates[0];
-  let bestPx = Infinity;
-  for (const s of candidates) {
-    const px = Math.abs(chart.toX(s) - svgX);
-    if (px < bestPx) {
-      bestPx = px;
-      bestScore = s;
-    }
-  }
-
-  const isUser =
-    chart.hasUser && Math.abs(bestScore - chart.userScore) < 0.05;
-  const threshold = isUser ? USER_SNAP_PX : SNAP_PX;
-  if (bestPx > threshold) return null;
-  return bestScore;
 }
 
 export function PercentileMiniChart({
@@ -205,24 +198,17 @@ export function PercentileMiniChart({
         return;
       }
 
-      const snapped = resolveSnapScore(svgX, chart);
-      if (snapped == null) {
-        setHover(null);
-        return;
-      }
-
-      const isUserScore =
-        chart.hasUser && Math.abs(snapped - chart.userScore) < 0.05;
+      const { score: hoverScore, isUserScore } = resolveHoverScore(svgX, chart);
       const cumulativePct = isUserScore
         ? (chart.userPercentile as number)
-        : interpolatePercentile(chart.sorted, snapped);
-      const density = interpolateDensity(chart.sorted, snapped);
+        : interpolatePercentile(chart.sorted, hoverScore);
+      const density = interpolateDensity(chart.sorted, hoverScore);
 
       setHover({
-        score: snapped,
+        score: hoverScore,
         density,
         cumulativePct,
-        x: chart.toX(snapped),
+        x: chart.toX(hoverScore),
         y: chart.toY(density),
         isUserScore,
       });

@@ -118,15 +118,6 @@ const CHART_ACCENT: Record<ModuleColor, string> = {
 
 const CHART_ACCENT_OVERALL = "var(--color-text)";
 
-const COLOR_TAB_INACTIVE: Record<ModuleColor, string> = {
-  maths: "bg-maths/10 hover:bg-maths/16",
-  physics: "bg-physics/10 hover:bg-physics/16",
-  chemistry: "bg-chemistry/10 hover:bg-chemistry/16",
-  biology: "bg-biology/10 hover:bg-biology/16",
-  advanced: "bg-advanced/10 hover:bg-advanced/16",
-  "tmua-accent": "bg-tmua-accent/10 hover:bg-tmua-accent/16",
-};
-
 const COLOR_TAB_ACTIVE: Record<ModuleColor, string> = {
   maths: "bg-maths/22 shadow-sm",
   physics: "bg-physics/22 shadow-sm",
@@ -135,6 +126,9 @@ const COLOR_TAB_ACTIVE: Record<ModuleColor, string> = {
   advanced: "bg-advanced/22 shadow-sm",
   "tmua-accent": "bg-tmua-accent/22 shadow-sm",
 };
+
+const TAB_INACTIVE = "bg-surface-mid hover:bg-surface-mid/80";
+const TAB_ACTIVE_OVERALL = "bg-surface-subtle shadow-sm";
 
 function SubjectCheckbox({
   checked,
@@ -1159,7 +1153,7 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
   );
 }
 
-function SubjectViewConveyor({
+function SubjectViewPills({
   result,
   exam,
   showOverall,
@@ -1176,101 +1170,70 @@ function SubjectViewConveyor({
   tmuaOverallEstimated: number | null;
   onSelectChart: (key: string) => void;
 }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
-
-  useEffect(() => {
-    if (!activeChartKey) return;
-    tabRefs.current.get(activeChartKey)?.scrollIntoView({
-      inline: "center",
-      block: "nearest",
-      behavior: "smooth",
-    });
-  }, [activeChartKey]);
-
   return (
-    <div className="relative -mx-1">
-      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-background to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-background to-transparent" />
-      <div
-        ref={scrollRef}
-        className="overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
-        <div className="flex min-w-min snap-x snap-mandatory gap-2">
-          {showOverall && (
-            <button
-              ref={(el) => {
-                if (el) tabRefs.current.set(OVERALL_CHART_KEY, el);
-                else tabRefs.current.delete(OVERALL_CHART_KEY);
-              }}
-              type="button"
-              onClick={() => onSelectChart(OVERALL_CHART_KEY)}
+    <div className="flex flex-wrap gap-2">
+      {showOverall && (
+        <button
+          type="button"
+          onClick={() => onSelectChart(OVERALL_CHART_KEY)}
+          className={cn(
+            "rounded-organic-lg px-4 py-2.5 text-left transition-all duration-fast active:scale-[0.98]",
+            showingOverall ? TAB_ACTIVE_OVERALL : TAB_INACTIVE,
+          )}
+        >
+          <span
+            className={cn(
+              "block text-[10px] font-semibold uppercase tracking-wide",
+              showingOverall ? "text-text" : "text-text-muted",
+            )}
+          >
+            {convertedScoreLabel(exam)}
+          </span>
+          <span className="mt-0.5 block text-lg font-bold tabular-nums text-text">
+            {result.averageScaled!.toFixed(1)}
+            {tmuaOverallEstimated != null && (
+              <span className="text-sm font-semibold text-text-muted">
+                {" → "}
+                {tmuaOverallEstimated.toFixed(1)}
+              </span>
+            )}
+          </span>
+        </button>
+      )}
+      {result.sections.map((s) => {
+        const active = s.key === activeChartKey;
+        const c = COLOR_TEXT[s.color];
+        const label =
+          s.moduleLabel ??
+          s.legacyLabel.split("—")[1]?.trim() ??
+          s.legacyLabel.split("—")[0]?.trim();
+        return (
+          <button
+            key={s.key}
+            type="button"
+            onClick={() => onSelectChart(s.key)}
+            className={cn(
+              "rounded-organic-lg px-4 py-2.5 text-left transition-all duration-fast active:scale-[0.98]",
+              active ? COLOR_TAB_ACTIVE[s.color] : TAB_INACTIVE,
+            )}
+          >
+            <span
               className={cn(
-                "snap-center shrink-0 rounded-organic-lg px-4 py-2.5 text-left transition-all duration-fast active:scale-[0.98]",
-                showingOverall
-                  ? "bg-surface-elevated shadow-sm"
-                  : "bg-surface-mid hover:bg-surface-subtle",
+                "block text-[10px] font-semibold uppercase tracking-wide",
+                c,
+                !active && "opacity-80",
               )}
             >
-              <span
-                className={cn(
-                  "block text-[10px] font-semibold uppercase tracking-wide",
-                  showingOverall ? "text-text" : "text-text-muted",
-                )}
-              >
-                {convertedScoreLabel(exam)}
+              {label}
+            </span>
+            {s.scaledScore != null && (
+              <span className={cn("mt-0.5 block text-lg font-bold tabular-nums", c)}>
+                {s.scaledScore.toFixed(1)}
               </span>
-              <span className="mt-0.5 block text-lg font-bold tabular-nums text-text">
-                {result.averageScaled!.toFixed(1)}
-                {tmuaOverallEstimated != null && (
-                  <span className="text-sm font-semibold text-text-muted">
-                    {" → "}
-                    {tmuaOverallEstimated.toFixed(1)}
-                  </span>
-                )}
-              </span>
-            </button>
-          )}
-          {result.sections.map((s) => {
-            const active = s.key === activeChartKey;
-            const c = COLOR_TEXT[s.color];
-            const label =
-              s.moduleLabel ??
-              s.legacyLabel.split("—")[1]?.trim() ??
-              s.legacyLabel.split("—")[0]?.trim();
-            return (
-              <button
-                key={s.key}
-                ref={(el) => {
-                  if (el) tabRefs.current.set(s.key, el);
-                  else tabRefs.current.delete(s.key);
-                }}
-                type="button"
-                onClick={() => onSelectChart(s.key)}
-                className={cn(
-                  "snap-center shrink-0 rounded-organic-lg px-4 py-2.5 text-left transition-all duration-fast active:scale-[0.98]",
-                  active ? COLOR_TAB_ACTIVE[s.color] : COLOR_TAB_INACTIVE[s.color],
-                )}
-              >
-                <span
-                  className={cn(
-                    "block text-[10px] font-semibold uppercase tracking-wide",
-                    c,
-                    !active && "opacity-80",
-                  )}
-                >
-                  {label}
-                </span>
-                {s.scaledScore != null && (
-                  <span className={cn("mt-0.5 block text-lg font-bold tabular-nums", c)}>
-                    {s.scaledScore.toFixed(1)}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+            )}
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -1308,7 +1271,7 @@ function ResultsPanel({
   return (
     <div className="space-y-5">
       {multi && (
-        <SubjectViewConveyor
+        <SubjectViewPills
           result={result}
           exam={exam}
           showOverall={showOverall}
