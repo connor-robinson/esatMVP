@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRouteUser } from "@/lib/supabase/auth";
-import { getStripe, isStripeConfigured } from "@/lib/stripe/config";
+import { getStripe, getStripeKeyMeta, isStripeConfigured } from "@/lib/stripe/config";
 import { createOrRetrieveCustomer } from "@/lib/stripe/supabase-admin";
 import { getPriceIdForPlan } from "@/lib/stripe/prices";
 import { getSeasonPassPrice } from "@/lib/stripe/best-value";
@@ -76,6 +76,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: "Price not configured for this plan" },
         { status: 400 }
+      );
+    }
+
+    try {
+      await getStripe().prices.retrieve(priceId);
+    } catch {
+      const keyMeta = getStripeKeyMeta();
+      return NextResponse.json(
+        {
+          error: `No such price: '${priceId}'. Server is using ${keyMeta.source} (${keyMeta.mode} mode). If Vercel has STRIPE_SECRET_KEY_LIVE set to a different account/mode, remove it or align all keys and price IDs.`,
+        },
+        { status: 500 }
       );
     }
 
