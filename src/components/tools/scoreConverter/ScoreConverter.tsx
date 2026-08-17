@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { AlertTriangle, ArrowRight, Check, ChevronDown, Info, Layers, Loader2, X } from "lucide-react";
+import { AlertTriangle, ArrowRight, Check, ChevronDown, Info, Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { cssVar } from "@/config/colors";
 import { Container } from "@/components/layout/Container";
@@ -41,8 +41,8 @@ function examTargetLabel(exam: ConverterExam): "ESAT" | "TMUA" {
   return exam === "TMUA" ? "TMUA" : "ESAT";
 }
 
-function predictedScoreLabel(exam: ConverterExam): string {
-  return exam === "TMUA" ? "Predicted TMUA score" : "Predicted ESAT score";
+function convertedScoreLabel(exam: ConverterExam): string {
+  return exam === "TMUA" ? "Converted TMUA score" : "Converted ESAT score";
 }
 
 const fieldLabel =
@@ -105,6 +105,35 @@ const COLOR_RING_ACTIVE: Record<ModuleColor, string> = {
   biology: "ring-biology/30",
   advanced: "ring-advanced/30",
   "tmua-accent": "ring-tmua-accent/30",
+};
+
+const CHART_ACCENT: Record<ModuleColor, string> = {
+  maths: "var(--color-maths)",
+  physics: "var(--color-physics)",
+  chemistry: "var(--color-chemistry)",
+  biology: "var(--color-biology)",
+  advanced: "var(--color-advanced)",
+  "tmua-accent": "var(--color-tmua-accent)",
+};
+
+const CHART_ACCENT_OVERALL = "var(--color-text)";
+
+const COLOR_TAB_INACTIVE: Record<ModuleColor, string> = {
+  maths: "bg-maths/10 hover:bg-maths/16",
+  physics: "bg-physics/10 hover:bg-physics/16",
+  chemistry: "bg-chemistry/10 hover:bg-chemistry/16",
+  biology: "bg-biology/10 hover:bg-biology/16",
+  advanced: "bg-advanced/10 hover:bg-advanced/16",
+  "tmua-accent": "bg-tmua-accent/10 hover:bg-tmua-accent/16",
+};
+
+const COLOR_TAB_ACTIVE: Record<ModuleColor, string> = {
+  maths: "bg-maths/22 shadow-sm",
+  physics: "bg-physics/22 shadow-sm",
+  chemistry: "bg-chemistry/22 shadow-sm",
+  biology: "bg-biology/22 shadow-sm",
+  advanced: "bg-advanced/22 shadow-sm",
+  "tmua-accent": "bg-tmua-accent/22 shadow-sm",
 };
 
 function SubjectCheckbox({
@@ -1130,6 +1159,122 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
   );
 }
 
+function SubjectViewConveyor({
+  result,
+  exam,
+  showOverall,
+  showingOverall,
+  activeChartKey,
+  tmuaOverallEstimated,
+  onSelectChart,
+}: {
+  result: ConvertResponse;
+  exam: ConverterExam;
+  showOverall: boolean;
+  showingOverall: boolean;
+  activeChartKey: string | null;
+  tmuaOverallEstimated: number | null;
+  onSelectChart: (key: string) => void;
+}) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+
+  useEffect(() => {
+    if (!activeChartKey) return;
+    tabRefs.current.get(activeChartKey)?.scrollIntoView({
+      inline: "center",
+      block: "nearest",
+      behavior: "smooth",
+    });
+  }, [activeChartKey]);
+
+  return (
+    <div className="relative -mx-1">
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-background to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-background to-transparent" />
+      <div
+        ref={scrollRef}
+        className="overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        <div className="flex min-w-min snap-x snap-mandatory gap-2">
+          {showOverall && (
+            <button
+              ref={(el) => {
+                if (el) tabRefs.current.set(OVERALL_CHART_KEY, el);
+                else tabRefs.current.delete(OVERALL_CHART_KEY);
+              }}
+              type="button"
+              onClick={() => onSelectChart(OVERALL_CHART_KEY)}
+              className={cn(
+                "snap-center shrink-0 rounded-organic-lg px-4 py-2.5 text-left transition-all duration-fast active:scale-[0.98]",
+                showingOverall
+                  ? "bg-surface-elevated shadow-sm"
+                  : "bg-surface-mid hover:bg-surface-subtle",
+              )}
+            >
+              <span
+                className={cn(
+                  "block text-[10px] font-semibold uppercase tracking-wide",
+                  showingOverall ? "text-text" : "text-text-muted",
+                )}
+              >
+                {convertedScoreLabel(exam)}
+              </span>
+              <span className="mt-0.5 block text-lg font-bold tabular-nums text-text">
+                {result.averageScaled!.toFixed(1)}
+                {tmuaOverallEstimated != null && (
+                  <span className="text-sm font-semibold text-text-muted">
+                    {" → "}
+                    {tmuaOverallEstimated.toFixed(1)}
+                  </span>
+                )}
+              </span>
+            </button>
+          )}
+          {result.sections.map((s) => {
+            const active = s.key === activeChartKey;
+            const c = COLOR_TEXT[s.color];
+            const label =
+              s.moduleLabel ??
+              s.legacyLabel.split("—")[1]?.trim() ??
+              s.legacyLabel.split("—")[0]?.trim();
+            return (
+              <button
+                key={s.key}
+                ref={(el) => {
+                  if (el) tabRefs.current.set(s.key, el);
+                  else tabRefs.current.delete(s.key);
+                }}
+                type="button"
+                onClick={() => onSelectChart(s.key)}
+                className={cn(
+                  "snap-center shrink-0 rounded-organic-lg px-4 py-2.5 text-left transition-all duration-fast active:scale-[0.98]",
+                  active ? COLOR_TAB_ACTIVE[s.color] : COLOR_TAB_INACTIVE[s.color],
+                )}
+              >
+                <span
+                  className={cn(
+                    "block text-[10px] font-semibold uppercase tracking-wide",
+                    c,
+                    !active && "opacity-80",
+                  )}
+                >
+                  {label}
+                </span>
+                {s.scaledScore != null && (
+                  <span className={cn("mt-0.5 block text-lg font-bold tabular-nums", c)}>
+                    {s.scaledScore.toFixed(1)}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ResultsPanel({
   result,
   exam,
@@ -1163,67 +1308,15 @@ function ResultsPanel({
   return (
     <div className="space-y-5">
       {multi && (
-        <div className="space-y-2.5">
-          <div className="flex items-center gap-2 text-xs text-text-muted">
-            <Layers className="h-3.5 w-3.5 shrink-0" aria-hidden />
-            <span>Switch subject view — tap a tab below to compare scores</span>
-          </div>
-          <div className="flex flex-wrap gap-1.5 rounded-organic-lg bg-surface-mid/50 p-1.5">
-          {showOverall && (
-            <button
-              type="button"
-              onClick={() => onSelectChart(OVERALL_CHART_KEY)}
-              className={cn(
-                "cursor-pointer rounded-organic-md px-3.5 py-2 text-sm font-semibold transition-all duration-fast",
-                showingOverall
-                  ? "bg-surface-elevated text-text shadow-sm"
-                  : "text-text-muted hover:bg-surface-subtle/80 hover:text-text",
-              )}
-            >
-              <span className={cn(showingOverall ? "text-text" : "text-text-muted")}>
-                {predictedScoreLabel(exam)}
-              </span>
-              <span className="ml-1.5 tabular-nums text-text">
-                {result.averageScaled!.toFixed(1)}
-                {tmuaOverallEstimated != null && (
-                  <span className="text-text-muted">
-                    {" → "}
-                    {tmuaOverallEstimated.toFixed(1)}
-                  </span>
-                )}
-              </span>
-            </button>
-          )}
-          {result.sections.map((s) => {
-            const active = s.key === activeChartKey;
-            const c = COLOR_TEXT[s.color];
-            return (
-              <button
-                key={s.key}
-                type="button"
-                onClick={() => onSelectChart(s.key)}
-                className={cn(
-                  "cursor-pointer rounded-organic-md px-3.5 py-2 text-sm font-semibold transition-all duration-fast",
-                  active
-                    ? cn("bg-surface-elevated text-text shadow-sm", COLOR_CARD_ACTIVE[s.color])
-                    : "text-text-muted hover:bg-surface-subtle/80 hover:text-text",
-                )}
-              >
-                <span className={active ? c : cn(c, "opacity-80")}>
-                  {s.moduleLabel ??
-                    s.legacyLabel.split("—")[1]?.trim() ??
-                    s.legacyLabel.split("—")[0]?.trim()}
-                </span>
-                {s.scaledScore != null && (
-                  <span className="ml-1.5 tabular-nums text-text">
-                    {s.scaledScore.toFixed(1)}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-          </div>
-        </div>
+        <SubjectViewConveyor
+          result={result}
+          exam={exam}
+          showOverall={showOverall}
+          showingOverall={showingOverall}
+          activeChartKey={activeChartKey}
+          tmuaOverallEstimated={tmuaOverallEstimated}
+          onSelectChart={onSelectChart}
+        />
       )}
 
       {showingOverall && showOverall ? (
@@ -1345,7 +1438,7 @@ function TmuaOverallResult({
         colorClass="text-tmua-accent"
       />
       <p className="text-xs text-text-muted">
-        {predictedScoreLabel("TMUA")} · average across {result.sections.length} papers · {year}
+        {convertedScoreLabel("TMUA")} · average across {result.sections.length} papers · {year}
       </p>
 
       {chartRows.length > 1 && (
@@ -1353,6 +1446,7 @@ function TmuaOverallResult({
           rows={chartRows}
           score={actualAvg}
           percentile={result.averagePercentile}
+          accentColor={CHART_ACCENT["tmua-accent"]}
           xLabel="Scaled score"
         />
       )}
@@ -1377,7 +1471,7 @@ function OverallResult({
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-text-subtle">
-            {predictedScoreLabel(exam)}
+            {convertedScoreLabel(exam)}
           </p>
           <p className="mt-1 text-4xl font-bold tabular-nums text-text sm:text-5xl">
             {result.averageScaled!.toFixed(1)}
@@ -1394,6 +1488,7 @@ function OverallResult({
           rows={chartRows}
           score={result.averageScaled}
           percentile={result.averagePercentile}
+          accentColor={CHART_ACCENT_OVERALL}
           xLabel="Scaled score"
         />
       )}
@@ -1457,7 +1552,7 @@ function SectionResult({
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-text-subtle">
-            {predictedScoreLabel(exam)}
+            {convertedScoreLabel(exam)}
           </p>
           <p className={cn("mt-1 text-4xl font-bold tabular-nums sm:text-5xl", colorClass)}>
             {section.scaledScore.toFixed(1)}
@@ -1490,6 +1585,7 @@ function SectionResult({
           rows={chartRows}
           score={section.scaledScore}
           percentile={section.percentile}
+          accentColor={CHART_ACCENT[section.color]}
           xLabel="Scaled score"
         />
       )}
@@ -1560,7 +1656,7 @@ function ResultsPreviewPlaceholder({
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-text-subtle">
-            {predictedScoreLabel(exam)}
+            {convertedScoreLabel(exam)}
           </p>
           <p
             className={cn(
