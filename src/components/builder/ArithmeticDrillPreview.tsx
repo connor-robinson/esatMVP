@@ -13,7 +13,21 @@ import {
 import { cn } from '@/lib/utils';
 
 const katexInherit =
-  '[&_.katex]:!text-[inherit] [&_.katex-html]:!text-[inherit]';
+  '[&_.katex]:!text-[inherit] [&_.katex-html]:!text-[inherit] [&_.katex]:!text-[0.95rem] [&_.katex-html]:!text-[0.95rem]';
+
+function cardPreviewClass(selected: boolean) {
+  return cn(
+    'max-w-full text-center text-[0.95rem] font-medium tabular-nums tracking-tight leading-tight',
+    selected ? 'text-text' : 'text-text-muted',
+  );
+}
+
+function folderPreviewClass(selected: boolean) {
+  return cn(
+    'whitespace-nowrap font-mono text-xl font-semibold tabular-nums tracking-tight leading-none',
+    selected ? 'text-primary' : 'text-text',
+  );
+}
 
 type ArithmeticDrillPreviewProps = {
   preview: DrillPreview | FolderSymbol;
@@ -76,14 +90,8 @@ export function ArithmeticDrillPreview({
   if (preview.kind === 'latex') {
     const textClass =
       size === 'folder'
-        ? cn(
-            'max-w-full text-[1.2rem] font-normal leading-none',
-            selected ? 'text-primary' : 'text-primary/90',
-          )
-        : cn(
-            'text-[1.05rem] font-normal leading-tight',
-            selected ? 'text-text' : 'text-text-muted',
-          );
+        ? folderPreviewClass(selected)
+        : cardPreviewClass(selected);
 
     return (
       <KatexGlyph
@@ -95,18 +103,10 @@ export function ArithmeticDrillPreview({
   }
 
   const plainClass =
-    size === 'folder'
-      ? cn(
-          'whitespace-nowrap font-mono text-xl font-semibold tabular-nums tracking-tight',
-          selected ? 'text-primary' : 'text-text',
-        )
-      : cn(
-          'max-w-full truncate px-1 text-center text-[0.95rem] font-medium tabular-nums tracking-tight',
-          selected ? 'text-text' : 'text-text-muted',
-        );
+    size === 'folder' ? folderPreviewClass(selected) : cardPreviewClass(selected);
 
   return (
-    <span className={cn(plainClass, className)} aria-hidden>
+    <span className={cn(plainClass, size === 'card' && 'px-1', className)} aria-hidden>
       {preview.text}
     </span>
   );

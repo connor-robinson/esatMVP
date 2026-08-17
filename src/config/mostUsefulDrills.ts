@@ -22,6 +22,12 @@ export const FREE_MENTAL_MATHS_TOPIC_IDS = [
 
 export const MOST_USEFUL_DRILLS: readonly MostUsefulDrillDef[] = [
   {
+    topicId: 'addition',
+    variantId: 'single-digit',
+    name: 'Single Digit Addition',
+    featured: true,
+  },
+  {
     topicId: 'trig_applications',
     variantId: 'special-triangles',
     name: 'Special Triangles',
@@ -30,12 +36,6 @@ export const MOST_USEFUL_DRILLS: readonly MostUsefulDrillDef[] = [
     topicId: 'trig_recall',
     variantId: 'basic-angles',
     name: 'Trig Recall',
-  },
-  {
-    topicId: 'addition',
-    variantId: 'single-digit',
-    name: 'Single Digit Addition',
-    featured: true,
   },
   {
     topicId: 'squaring',
