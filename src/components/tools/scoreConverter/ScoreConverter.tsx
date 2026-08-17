@@ -90,12 +90,12 @@ const COLOR_FILL_CHECKED: Record<ModuleColor, string> = {
 };
 
 const COLOR_CARD_ACTIVE: Record<ModuleColor, string> = {
-  maths: "bg-maths/10",
-  physics: "bg-physics/10",
-  chemistry: "bg-chemistry/10",
-  biology: "bg-biology/10",
-  advanced: "bg-advanced/10",
-  "tmua-accent": "bg-tmua-accent/10",
+  maths: "bg-maths/5",
+  physics: "bg-physics/5",
+  chemistry: "bg-chemistry/5",
+  biology: "bg-biology/5",
+  advanced: "bg-advanced/5",
+  "tmua-accent": "bg-tmua-accent/5",
 };
 
 const COLOR_RING_ACTIVE: Record<ModuleColor, string> = {
@@ -429,7 +429,7 @@ function InputHelperHint({
   if (!open) return null;
 
   return (
-    <div className="pointer-events-none absolute left-[28%] top-0 z-30 sm:left-[22%]">
+    <div className="pointer-events-none absolute bottom-[calc(100%+0.5rem)] left-1/2 z-30 -translate-x-1/2">
       <div className="pointer-events-auto relative max-w-[14rem] rounded-organic-lg bg-secondary px-3 py-2 text-[11px] font-medium leading-snug text-background shadow-modal-card">
         Choose the year, or click here to change papers.
         <button
@@ -441,7 +441,7 @@ function InputHelperHint({
           <X className="h-3 w-3" />
         </button>
         <span
-          className="absolute -bottom-1.5 left-8 h-3 w-3 rotate-45 bg-secondary"
+          className="absolute -bottom-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 bg-secondary"
           aria-hidden
         />
       </div>
@@ -780,9 +780,7 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
           <ConverterInfoButton exam={exam} />
         </div>
 
-        <div className="relative overflow-visible rounded-organic-lg bg-surface-mid/30 p-3 pt-7 sm:p-4 sm:pt-8">
-          <InputHelperHint open={showInputHint} onDismiss={dismissInputHint} />
-
+        <div className="relative overflow-visible rounded-organic-lg bg-surface-mid/30 p-3 sm:p-4">
           <div className="flex flex-wrap items-end gap-3 sm:gap-4">
             <div className="flex min-w-[10rem] flex-1 items-end gap-2" onPointerDown={dismissInputHint}>
               <ModernSelect
@@ -808,7 +806,8 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
               </span>
             </div>
 
-            <div className="min-w-[6rem] flex-1" onPointerDown={dismissInputHint}>
+            <div className="relative min-w-[6rem] flex-1" onPointerDown={dismissInputHint}>
+              <InputHelperHint open={showInputHint} onDismiss={dismissInputHint} />
               <ModernSelect
                 label="Year"
                 value={year ? String(year.year) : ""}
@@ -1023,21 +1022,23 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                       return (
                         <div
                           key={s.key}
+                          role="button"
+                          tabIndex={disabled ? -1 : 0}
+                          onClick={() => !disabled && toggleSection(s)}
+                          onKeyDown={(e) => {
+                            if (!disabled && (e.key === "Enter" || e.key === " ")) {
+                              e.preventDefault();
+                              toggleSection(s);
+                            }
+                          }}
                           className={cn(
                             "rounded-organic-lg px-4 py-3 transition-all duration-fast",
-                            checked
-                              ? cn(COLOR_CARD_ACTIVE[s.color], "ring-1", COLOR_RING_ACTIVE[s.color])
-                              : "bg-surface-mid",
+                            checked ? COLOR_CARD_ACTIVE[s.color] : "bg-surface-mid hover:bg-surface-subtle/60",
                             disabled && "opacity-35",
+                            !disabled && "cursor-pointer",
                           )}
                         >
-                          <div
-                            className={cn(
-                              "flex w-full items-center gap-2.5",
-                              disabled ? "cursor-not-allowed" : "cursor-pointer",
-                            )}
-                            onClick={() => !disabled && toggleSection(s)}
-                          >
+                          <div className="flex items-center gap-2.5">
                             <SubjectCheckbox
                               checked={checked}
                               disabled={disabled}
@@ -1048,13 +1049,19 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                               {displaySubject(s)}
                             </span>
                           </div>
-                          <div className="mt-2.5 flex items-baseline gap-1.5">
+                          <div
+                            className="mt-2.5 flex items-baseline gap-1.5"
+                            onClick={(e) => e.stopPropagation()}
+                            onPointerDown={(e) => e.stopPropagation()}
+                          >
                             <input
                               type="text"
                               inputMode="numeric"
                               disabled={!checked}
                               value={checked ? String(rawByKey[s.key] ?? 0) : ""}
                               placeholder="—"
+                              onClick={(e) => e.stopPropagation()}
+                              onFocus={(e) => e.stopPropagation()}
                               onChange={(e) => {
                                 const n = parseInt(e.target.value.replace(/\D/g, ""), 10);
                                 if (Number.isNaN(n)) setRaw(s.key, 0);
