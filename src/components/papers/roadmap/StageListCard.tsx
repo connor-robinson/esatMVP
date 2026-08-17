@@ -21,7 +21,6 @@ import {
 } from "@/config/colors";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
 import { getRoadmapPartKey } from "@/lib/papers/roadmapPartKey";
-import { getStageCommentary } from "./roadmapTimelineMarkers";
 import { RoadmapInfoPopover } from "./RoadmapInfoPopover";
 import {
   ROADMAP_EXPAND_TRANSITION_CLASS,
@@ -77,7 +76,6 @@ export function StageListCard({
   anchorRef,
 }: StageListCardProps) {
   const [selectedParts, setSelectedParts] = useState<Set<string>>(new Set());
-  const commentary = getStageCommentary(stage.id);
 
   const getPartKey = getRoadmapPartKey;
 
@@ -218,40 +216,44 @@ export function StageListCard({
               ) : null}
             </div>
 
-            {!isUnlocked && lockReason === "progression" ? (
+            {!isUnlocked && lockReason === "progression" && onUnlockNow ? (
+              <p className="mt-1 text-xs leading-relaxed text-text-muted">
+                Finish above papers to unlock, or{" "}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onUnlockNow();
+                  }}
+                  className={cn(
+                    "font-semibold underline-offset-2 transition-opacity hover:underline",
+                    getExamAccentTextClass(stage.examName),
+                  )}
+                >
+                  unlock now
+                </button>
+              </p>
+            ) : null}
+            {!isUnlocked && lockReason === "progression" && !onUnlockNow ? (
               <p className="mt-1 text-xs text-text-muted">
-                Finish above paper to unlock
+                Finish above papers to unlock
               </p>
             ) : null}
             {!isUnlocked && lockReason === "paywall" ? (
-              <p className="mt-1 text-xs text-text-muted">
-                Upgrade to unlock this paper
+              <p className="mt-1 text-xs leading-relaxed text-text-muted">
+                <Link
+                  href="/pricing"
+                  onClick={(e) => e.stopPropagation()}
+                  className={cn(
+                    "font-semibold underline-offset-2 transition-opacity hover:underline",
+                    getExamAccentTextClass(stage.examName),
+                  )}
+                >
+                  Upgrade to unlock
+                </Link>
               </p>
             ) : null}
           </div>
-
-          {!isUnlocked && lockReason === "progression" && onUnlockNow ? (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onUnlockNow();
-              }}
-              className="shrink-0 rounded-organic-md bg-primary/15 px-3 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-primary/25"
-            >
-              Unlock now
-            </button>
-          ) : null}
-
-          {!isUnlocked && lockReason === "paywall" ? (
-            <Link
-              href="/pricing"
-              onClick={(e) => e.stopPropagation()}
-              className="shrink-0 rounded-organic-md bg-primary/15 px-3 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-primary/25"
-            >
-              Upgrade
-            </Link>
-          ) : null}
 
           <div className="flex shrink-0 items-center">
             <motion.div
@@ -285,22 +287,6 @@ export function StageListCard({
                 isExpanded ? "opacity-100" : "opacity-0",
               )}
             >
-                {commentary ? (
-                  <div className="rounded-organic-md bg-surface-mid/80 px-3 py-3">
-                    <p
-                      className={cn(
-                        "text-xs font-semibold",
-                        getExamAccentTextClass(stage.examName),
-                      )}
-                    >
-                      {commentary.title}
-                    </p>
-                    <p className="mt-1.5 text-xs leading-relaxed text-text-muted">
-                      {commentary.text}
-                    </p>
-                  </div>
-                ) : null}
-
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-xs text-text-muted">
                     Select parts
@@ -524,16 +510,14 @@ export function StageListCard({
                           align="left"
                         >
                           <p>
-                            ENGAA Section 1 Part A (2016–2019) repeats the NSAA
-                            question bank — those parts are omitted here.
+                            ENGAA Section 1 Part A (2016 to 2019) repeats the NSAA
+                            question bank, so those parts are omitted here.
                           </p>
                           <p>
-                            2016–2019: only the published &quot;extra&quot;
-                            Section 1 questions remain, plus all of Section 2
-                            (physics). 2020–2023: Section 1 is split into
-                            maths and physics by question number; Part B is
-                            fully new. Section 2 from 2020 overlaps NSAA and is
-                            skipped.
+                            2016 to 2019: only the extra Section 1 questions remain,
+                            plus all of Section 2 physics. 2020 to 2023: Section 1 is
+                            split into maths and physics; Part B is fully new. Section 2
+                            from 2020 overlaps NSAA and is skipped.
                           </p>
                         </RoadmapInfoPopover>
                       </div>

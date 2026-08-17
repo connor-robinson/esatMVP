@@ -82,7 +82,7 @@ function TimelineTipTooltip({
 
   return createPortal(
     <div
-      className="pointer-events-none fixed z-[200] w-[17rem] max-w-[calc(100vw-2rem)]"
+      className="pointer-events-none fixed z-[200] w-[21rem] max-w-[calc(100vw-2rem)]"
       style={{
         top: anchor.top + anchor.height / 2,
         left: anchor.right + 14,
@@ -99,7 +99,7 @@ function TimelineTipTooltip({
         >
           {marker.title}
         </p>
-        <p className="mt-2 text-sm leading-relaxed text-text-muted">
+        <p className="mt-2.5 text-sm leading-[1.55] text-text-muted">
           {marker.text}
         </p>
       </div>
