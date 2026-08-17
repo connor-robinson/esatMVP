@@ -353,13 +353,15 @@ function ConverterInfoButton({ exam }: { exam: ConverterExam }) {
 
           <div className="space-y-2.5 text-xs leading-relaxed text-text-muted">
             <p>
-              Enter raw marks from a past {exam} paper. We look them up in official
-              conversion tables and map them onto today&apos;s {target} 1.0–9.0 scale,
-              then estimate your percentile from published distributions.
+              We use official Cambridge conversion tables published year by year for
+              each {exam} paper and section. Your raw mark is looked up in that
+              year&apos;s table to get the official 1.0–9.0 scaled score for that
+              sitting, then placed on the matching {target} score distribution to
+              estimate a percentile.
             </p>
             <p>
-              This is a historical proxy for preparation — not an official score from
-              UAT-UK or any university.
+              That historical mapping is from published data. It is not an official
+              {target} result from UAT-UK or a university.
             </p>
           </div>
 

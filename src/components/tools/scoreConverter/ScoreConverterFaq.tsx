@@ -11,12 +11,12 @@ export const SCORE_CONVERTER_FAQ_ITEMS: FaqItem[] = [
   {
     question: "What does this converter do?",
     answer:
-      "Use it to estimate how a raw mark from a past NSAA, ENGAA or TMUA paper might translate to the 1.0–9.0 score scale used today. Treat the result as a guide for preparation, not an official score.",
+      "It converts a raw mark from a past NSAA, ENGAA or TMUA paper using the official Cambridge conversion table for that exam, year and section. Those tables — published year by year — map each raw mark onto the 1.0–9.0 scaled score used on that sitting. We look up your mark in the matching table; we do not invent conversion numbers. For NSAA and ENGAA we then place that scaled score on the official ESAT distribution for the equivalent module (for example NSAA Mathematics → ESAT Mathematics 1), interpolating between published score points to estimate your percentile. For TMUA before 2024 we use that year's official raw-to-scaled table, then match your percentile onto the post-2024 TMUA distribution so you can compare with today's scale. If a year's table is missing for a section, we fall back to the nearest published year and flag it in the results.",
   },
   {
     question: "Can I rely on this score for admissions?",
     answer:
-      "No. Official ESAT and TMUA scaling depends on the cohort and the test version. Use the estimate to guide preparation and compare mock performance, not to make final admissions assumptions.",
+      "The conversion for a given past paper is as reliable as Cambridge's published tables: for that year and section, the scaled score we show is the official mapping from that sitting. What you cannot treat as official is using that figure as your ESAT or TMUA result for an application. Today's papers are different tests, scored on different cohorts, and TMUA from 2024 uses an IRT model rather than a published raw-mark table. Use this to interpret mock performance against the published historical scale — not as a score a university will accept.",
   },
   {
     question: "Is the ESAT scored out of 9?",
@@ -89,7 +89,7 @@ export function ScoreConverterFaq({
           Frequently asked questions
         </h2>
         <p className="mt-1.5 text-sm text-text-muted">
-          How the new TMUA system works, how we convert scores, and where percentiles come from.
+          Official Cambridge tables, year-by-year conversion, and how percentiles are estimated.
         </p>
 
         <div className="mt-5 space-y-2">
