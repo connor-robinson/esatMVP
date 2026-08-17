@@ -31,16 +31,6 @@ function matches(paper: PastPaperResource, filters: PastPaperFilterState) {
   if (filters.module !== "all" && !paper.bestForModules.includes(filters.module)) {
     return false;
   }
-  if (filters.relevance !== "all" && paper.relevanceLevel !== filters.relevance) {
-    return false;
-  }
-  if (
-    filters.mappingStatus !== "all" &&
-    paper.mappingStatus !== filters.mappingStatus
-  ) {
-    return false;
-  }
-  if (filters.hasAnswerKey && !paper.answerKeyUrl) return false;
   if (filters.hasWorkedSolutions && !paper.workedSolutionsUrl) return false;
 
   return true;
@@ -87,10 +77,9 @@ export function PastPaperLibrary({
       />
 
       {visible.length === 0 ? (
-        <p className="rounded-2xl bg-white/[0.04] p-6 text-sm leading-relaxed text-[#94A3B8]">
-          No official resource matches that combination. The most common cause is
-          asking for worked answers on an ENGAA or NSAA paper. UAT-UK publishes
-          answer keys for those, and full worked answers only for TMUA.
+        <p className="text-sm leading-relaxed text-[#64748B]">
+          Nothing matches that. Worked answers only exist for TMUA. ENGAA and NSAA
+          just have an answer key.
         </p>
       ) : null}
 
@@ -106,11 +95,13 @@ export function PastPaperLibrary({
             id={`${section.exam.toLowerCase()}-papers`}
             className="scroll-mt-24"
           >
-            <h2 className="text-2xl font-display font-bold tracking-tight text-white sm:text-3xl">
+            <h3 className="text-xl font-display font-bold tracking-tight text-white sm:text-2xl">
               {section.heading}
-            </h2>
-            {section.guide ? <div className="mt-5">{section.guide}</div> : null}
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            </h3>
+            {section.guide ? (
+              <div className="mt-2">{section.guide}</div>
+            ) : null}
+            <div className="mt-4 divide-y divide-white/[0.06]">
               {group.map((paper) => (
                 <PastPaperCard key={paper.id} paper={paper} />
               ))}
