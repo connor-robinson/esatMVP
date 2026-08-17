@@ -4,6 +4,7 @@ import { getStripe, isStripeConfigured } from "@/lib/stripe/config";
 import { createOrRetrieveCustomer } from "@/lib/stripe/supabase-admin";
 import { getPriceIdForPlan } from "@/lib/stripe/prices";
 import { getSeasonPassPrice } from "@/lib/stripe/best-value";
+import { stripeErrorMessage } from "@/lib/stripe/helpers";
 
 export const dynamic = "force-dynamic";
 
@@ -95,10 +96,8 @@ export async function POST(request: NextRequest) {
     });
     return NextResponse.json({ url: session.url });
   } catch (err) {
+    const message = stripeErrorMessage(err);
     console.error("[create-checkout-session]", err);
-    return NextResponse.json(
-      { error: "Failed to create checkout session" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

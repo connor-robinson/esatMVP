@@ -146,12 +146,21 @@ export default function PricingPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ planType }),
       });
-      const data = await res.json();
-      if (data.url) window.location.href = data.url;
-      else throw new Error(data.error ?? "Failed");
-    } catch {
+      const data = await res.json().catch(() => ({}));
+      if (data.url) {
+        window.location.href = data.url;
+        return;
+      }
+      throw new Error(
+        data.error ?? `Could not start checkout (${res.status}). Try again.`
+      );
+    } catch (err) {
       setLoading(null);
-      setBanner("Could not start checkout. Try again.");
+      setBanner(
+        err instanceof Error
+          ? err.message
+          : "Could not start checkout. Try again."
+      );
     }
   };
 
