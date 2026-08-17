@@ -11,7 +11,6 @@ import { seoLinks } from "@/lib/seo/links";
 import { SeoPageLayout } from "@/components/seo/SeoPageLayout";
 import { SeoCta, SeoCtaRow } from "@/components/seo/SeoCta";
 import {
-  HighlightBox,
   ResponsiveTable,
   SeoProse,
   SeoSection,
@@ -120,20 +119,13 @@ export default function GoodEsatScorePage() {
           ]}
           caption="This is a guide to the score scale, not an admissions prediction."
         />
-        <HighlightBox className="mt-6" title="Not an ESAT score required table">
-          <p>
-            Universities do not publish a single mark that makes an application
-            safe. Treat the bands above as a reading of the UAT-UK scale, then
-            check what each university actually says.
-          </p>
-        </HighlightBox>
       </SeoSection>
 
       <SeoSection heading="Cambridge">
         <SeoProse
           paragraphs={[
             "Cambridge says there is no pass or fail ESAT and students should aim to do the best they can.",
-            "The 2025 Engineering FOI release gives offer-holder averages for one historical cohort. Do not write these down as the score you need, especially not as 'international applicants need 7.2'.",
+            "The 2025 Engineering FOI release gives offer-holder averages for one historical cohort, not a required score.",
           ]}
         />
         <ResponsiveTable

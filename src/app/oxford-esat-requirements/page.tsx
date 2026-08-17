@@ -10,7 +10,6 @@ import {
 import { seoLinks } from "@/lib/seo/links";
 import { SeoPageLayout } from "@/components/seo/SeoPageLayout";
 import {
-  HighlightBox,
   ResponsiveTable,
   SeoList,
   SeoProse,
@@ -65,7 +64,7 @@ const FAQ: readonly FaqItem[] = [
   {
     question: "Does Oxford publish college-level ESAT data?",
     answer:
-      "Not in a public Cambridge-style college-by-college current-ESAT table. Historical Physics reports concern PAT, not the current ESAT.",
+      "Oxford has not published a college-by-college ESAT score table. Older Physics admissions reports are about the PAT, which ESAT replaced.",
   },
 ];
 
@@ -128,7 +127,7 @@ export default function OxfordEsatRequirementsPage() {
       <SeoSection heading="What ESAT score do you need for Oxford?">
         <SeoProse
           paragraphs={[
-            "Do not treat any number on this page as an Oxford ESAT cut-off. Current Oxford course statistics give useful competition figures, not a required module score.",
+            "Oxford does not publish an ESAT cut-off. The course statistics below show how competitive the courses are, not a required module score.",
           ]}
         />
         <ResponsiveTable
@@ -152,15 +151,14 @@ export default function OxfordEsatRequirementsPage() {
         />
       </SeoSection>
 
-      <SeoSection heading="Why there is no Oxford college ESAT score table here">
-        <HighlightBox title="Oxford does not currently publish a public Cambridge-style college-by-college ESAT score table for the current ESAT.">
-          <p>
-            Oxford's Physics admissions reports are useful, but they are
-            historical PAT reports. Oxford explicitly says the current ESAT is
-            now required and the historical reports concern PAT data. Do not
-            turn old PAT averages into ESAT averages.
-          </p>
-        </HighlightBox>
+      <SeoSection heading="Does Oxford college choice change the ESAT you need?">
+        <SeoProse
+          paragraphs={[
+            "Your college matters to the admissions process, but there is no published official ESAT score required by a named college.",
+            "Applications are collegiate. Oxford Physics also says candidates can be interviewed at a second college after first-college interviews have concluded.",
+            "Older Oxford Physics admissions reports are about the PAT, which ESAT replaced.",
+          ]}
+        />
         <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
           Oxford Physics ESAT page:{" "}
           <SeoTextLink href={SOURCES.oxfordPhysicsEsat.url}>
@@ -170,29 +168,12 @@ export default function OxfordEsatRequirementsPage() {
         </p>
       </SeoSection>
 
-      <SeoSection heading="Does Oxford college choice change the ESAT you need?">
-        <SeoProse
-          paragraphs={[
-            "Your college matters to the admissions process, but there is no published official ESAT score required by a named college.",
-            "Applications are collegiate. Oxford Physics also says candidates can be interviewed at a second college after first-college interviews have concluded.",
-          ]}
-        />
-        <HighlightBox className="mt-5" title="No college ranking">
-          <p>
-            This page does not rank colleges by an invented ESAT score. A
-            college table only belongs here if each college actually publishes
-            the intake or notes being shown.
-          </p>
-        </HighlightBox>
-      </SeoSection>
-
       <SeoSection heading="International applicants">
         <SeoList
           items={[
-            "Oxford does not currently publish international ESAT averages equivalent to the Cambridge 2025 Engineering FOI table.",
+            "Oxford has not published separate Home and international ESAT averages.",
             "Use the official course statistics above.",
             "Oxford says contextual information is used in shortlisting and final decisions.",
-            "Do not copy Cambridge international averages across as an Oxford target.",
           ]}
         />
         <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">

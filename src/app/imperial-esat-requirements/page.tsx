@@ -112,8 +112,7 @@ export default function ImperialEsatRequirementsPage() {
           <p>
             Imperial publishes anonymous 2025-entry ESAT data by department,
             domicile and application outcome. Imperial calls this historical
-            data and warns that distributions and outcomes vary by year. This
-            page does not copy dashboard numbers into static prose.
+            data and warns that distributions and outcomes vary by year.
           </p>
         </HighlightBox>
         <SeoCtaRow className="mt-6">
@@ -127,7 +126,7 @@ export default function ImperialEsatRequirementsPage() {
         <SeoProse
           className="mt-6"
           paragraphs={[
-            "Use the dashboard to see how scores sat next to outcomes in that cycle. Do not treat a department average as the score Imperial will require this year.",
+            "Use the dashboard to see how scores sat next to outcomes in that cycle. A department average is not the score Imperial will require this year.",
           ]}
         />
       </SeoSection>

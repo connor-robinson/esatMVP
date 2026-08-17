@@ -11,7 +11,6 @@ import { seoLinks } from "@/lib/seo/links";
 import { SeoPageLayout } from "@/components/seo/SeoPageLayout";
 import { SeoCta, SeoCtaRow } from "@/components/seo/SeoCta";
 import {
-  HighlightBox,
   ResponsiveTable,
   SeoProse,
   SeoSection,
@@ -51,7 +50,7 @@ const FAQ: readonly FaqItem[] = [
   {
     question: "Does Cambridge publish a Natural Sciences college ESAT table?",
     answer:
-      "This page does not invent one. Use Cambridge's official admissions dashboard and filter by course if you want the latest published view.",
+      "Cambridge has not published a Natural Sciences college-by-college ESAT score table. The official admissions dashboard can be filtered by course.",
   },
 ];
 
@@ -127,13 +126,6 @@ export default function CambridgeNaturalSciencesEsatPage() {
             "Cambridge's current Natural Sciences course page lists 5 applications per place and 576 accepted in the 2025 cycle. That is a course-level figure, not a personal probability.",
           ]}
         />
-        <HighlightBox className="mt-5" title="No invented college ESAT table">
-          <p>
-            This page does not invent a Natural Sciences college ESAT score
-            table. Use Cambridge's official dashboard and filter it by course
-            if you want the latest published view.
-          </p>
-        </HighlightBox>
         <SeoCtaRow className="mt-6">
           <SeoCta href={CAMBRIDGE_DASHBOARD_HREF} placement="natsci_dashboard">
             Explore Cambridge's official admissions data

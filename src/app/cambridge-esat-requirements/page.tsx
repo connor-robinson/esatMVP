@@ -149,7 +149,7 @@ export default function CambridgeEsatRequirementsPage() {
       <SeoSection heading="Cambridge admissions statistics">
         <SeoProse
           paragraphs={[
-            "Cambridge's official dashboard can be filtered by course, College, domicile, qualifications and admissions-test scores. Use that dashboard for the latest view. Do not turn a published ratio into a personal acceptance probability.",
+            "Cambridge's official dashboard can be filtered by course, College, domicile, qualifications and admissions-test scores. Use that dashboard for the latest view. Published ratios describe one cycle, not an individual chance of getting in.",
           ]}
         />
         <SeoCtaRow className="mt-6">
