@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { BRAND_CONFIG } from "@/config/brand";
 import { QUESTION_BANK_TOTAL_COUNT } from "@/config/questionBankMarketing";
+import { MENTAL_MATHS_MODULE_COUNT } from "@/config/drillDisplayFolders";
 import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
 import { SEO_LINKS, type SeoLinkKey } from "@/lib/seo/links";
 import { MARKETING_HOMEPAGE_FAQ } from "@/lib/homepage/marketingFaq";
@@ -57,11 +58,20 @@ export function MarketingHomepage() {
   return (
     <div className="scroll-smooth">
       {/* Hero Section */}
-      <section className="pt-20 pb-16 lg:pt-32 lg:pb-32 bg-[#0A0F1D]">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6 space-y-12 lg:space-y-16">
+      <section className="relative overflow-hidden pt-20 pb-16 lg:pt-32 lg:pb-32 bg-[#0A0F1D]">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.45]"
+          style={{
+            backgroundImage:
+              "radial-gradient(rgba(147, 197, 253, 0.35) 1px, transparent 1px)",
+            backgroundSize: "22px 22px",
+          }}
+        />
+        <div className="relative max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6 space-y-12 lg:space-y-16">
           <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-10 xl:gap-12">
             <div className="max-w-2xl space-y-8">
-              <h1 className="text-5xl font-display font-bold leading-[1.08] tracking-tight sm:text-6xl lg:text-[4.25rem] xl:text-7xl">
+              <h1 className="text-4xl font-display font-bold leading-[1.12] tracking-tight sm:text-5xl lg:text-6xl">
                 <span
                   className="group relative inline-block cursor-help"
                   tabIndex={0}
@@ -79,15 +89,20 @@ export function MarketingHomepage() {
                     Cambridge, Oxford, Imperial College London, and UCL.
                   </span>
                 </span>{" "}
-                Trainer To Secure your Oxbridge offers.
+                Question Bank
+                <span className="mt-1 block">and Mental Maths Trainer</span>
               </h1>
               <p className="text-xl text-[#94A3B8] max-w-2xl leading-relaxed">
-                Practise with our{" "}
+                Secure your Oxbridge offers with our{" "}
                 <span className="text-underline-accent text-white">
                   {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ practice
                   questions
+                </span>{" "}
+                and{" "}
+                <span className="text-underline-accent text-white">
+                  {MENTAL_MATHS_MODULE_COUNT}+ mental maths courses
                 </span>
-                , and mental math drills.
+                .
               </p>
               <div className="space-y-4">
                 <div className="flex flex-col sm:flex-row gap-3">

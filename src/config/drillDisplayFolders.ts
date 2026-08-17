@@ -433,3 +433,28 @@ export function usesCompactFolderGrid(
 ): boolean {
   return category != null && category !== 'most_useful';
 }
+
+const LIVE_DRILL_CATEGORIES: HighLevelCategory[] = [
+  'arithmetic',
+  'algebra',
+  'geometry',
+  'number_theory',
+  'physics',
+];
+
+/** Live mental-maths modules shown in the trainer (excludes coming-soon folders). */
+export function countLiveDrillModules(): number {
+  const seen = new Set<string>();
+  for (const category of LIVE_DRILL_CATEGORIES) {
+    for (const folder of buildDisplayFolders(category)) {
+      if (COMING_SOON_FOLDER_IDS.has(folder.id)) continue;
+      for (const module of folder.modules) {
+        seen.add(`${module.topicId}:${module.variantId}`);
+      }
+    }
+  }
+  return seen.size;
+}
+
+export const MENTAL_MATHS_MODULE_COUNT = countLiveDrillModules();
+
