@@ -27,17 +27,20 @@ export function roadmapPartMatchesEsatSubjects(
 
   const desiredSet = new Set<PaperSection>(desired);
 
-  // ENGAA Section 1 Part A is split into Math 1 (Q1–20) and Math 2 (Q21–40).
-  if (
-    examName === "ENGAA" &&
-    part.partName === "Mathematics and Physics" &&
-    part.questionRange
-  ) {
+  if (examName === "ENGAA") {
     const hasMath1 = subjects.includes("Math 1");
     const hasMath2 = subjects.includes("Math 2");
-    const isFirstHalf = part.questionRange.end <= 20;
-    if (isFirstHalf) return hasMath1;
-    return hasMath2;
+    const hasPhysics = subjects.includes("Physics");
+
+    if (part.partName === "Mathematics") {
+      return hasMath1 || hasMath2;
+    }
+    if (part.partName === "Physics") {
+      return hasPhysics;
+    }
+    if (part.partName === "Advanced Mathematics and Advanced Physics") {
+      return hasMath2 || hasPhysics || hasMath1;
+    }
   }
 
   return desiredSet.has(part.partName as PaperSection);

@@ -38,8 +38,20 @@ import {
   addManualRoadmapUnlock,
   readManualRoadmapUnlocks,
 } from '@/lib/papers/roadmapManualUnlock';
-import type { RoadmapLockReason } from '@/components/papers/roadmap/StageListCard';
+import type { RoadmapLockReason, RoadmapStartOptions } from '@/components/papers/roadmap/StageListCard';
 import { cn } from '@/lib/utils';
+import { questionMatchesRoadmapPart } from '@/lib/papers/roadmapQuestionMatch';
+import { generatePartIdFromRoadmapPart } from '@/lib/papers/partIdUtils';
+import {
+  filterToNewQuestionsOnly,
+  loadAttemptedQuestionsContext,
+  type AttemptedQuestionsContext,
+} from '@/lib/papers/roadmapAttemptedQuestions';
+import {
+  readNewQuestionsOnlyPreference,
+  writeNewQuestionsOnlyPreference,
+} from '@/lib/papers/roadmapNewQuestionsPreference';
+import { RoadmapInfoPopover } from '@/components/papers/roadmap/RoadmapInfoPopover';
 
 type StageCompletionEntry = {
   completed: number;
@@ -119,7 +131,15 @@ export default function PapersRoadmapPage() {
   const pendingRoadmapStartRef = useRef<{
     stage: RoadmapStage;
     selectedParts: RoadmapPart[];
+    options: RoadmapStartOptions;
   } | null>(null);
+  const [newQuestionsOnly, setNewQuestionsOnly] = useState(
+    readNewQuestionsOnlyPreference,
+  );
+  const attemptedQuestionsRef = useRef<AttemptedQuestionsContext>({
+    attemptedKeys: new Set(),
+    attemptedDuplicateGroups: new Set(),
+  });
   const [currentStageIndex, setCurrentStageIndex] = useState<number | null>(
     INITIAL_UNLOCK.currentIndex,
   );
@@ -173,7 +193,36 @@ export default function PapersRoadmapPage() {
     loadExamPreference();
   }, [session]);
 
-  // Hydrate full stage list (includes TMUA from DB) without blocking first paint
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadAttempted() {
+      if (!session?.user?.id) {
+        attemptedQuestionsRef.current = {
+          attemptedKeys: new Set(),
+          attemptedDuplicateGroups: new Set(),
+        };
+        return;
+      }
+
+      const ctx = await loadAttemptedQuestionsContext(session.user.id);
+      if (!cancelled) {
+        attemptedQuestionsRef.current = ctx;
+      }
+    }
+
+    void loadAttempted();
+    return () => {
+      cancelled = true;
+    };
+  }, [session?.user?.id]);
+
+  const handleNewQuestionsOnlyChange = useCallback((enabled: boolean) => {
+    setNewQuestionsOnly(enabled);
+    writeNewQuestionsOnlyPreference(enabled);
+  }, []);
+
+  // Hydrate full stage list
   useEffect(() => {
     let cancelled = false;
 
@@ -286,7 +335,11 @@ export default function PapersRoadmapPage() {
   }, []);
 
   const executeStartStage = useCallback(
-    async (stage: RoadmapStage, selectedParts: RoadmapPart[]) => {
+    async (
+      stage: RoadmapStage,
+      selectedParts: RoadmapPart[],
+      options: RoadmapStartOptions,
+    ) => {
       try {
         if (selectedParts.length === 0) {
           return;
@@ -409,59 +462,7 @@ export default function PapersRoadmapPage() {
             }
 
             const filtered = questions.filter((q: Question) => {
-              return parts.some((part) => {
-                // Normalize strings for comparison (case-insensitive, trimmed)
-                const qPartLetter = (q.partLetter || '')
-                  .toString()
-                  .trim()
-                  .toLowerCase();
-                const qPartName = (q.partName || '')
-                  .toString()
-                  .trim()
-                  .toLowerCase();
-                const partLetter = part.partLetter.trim().toLowerCase();
-                const partName = part.partName.trim().toLowerCase();
-
-                // Check if question matches this part (case-insensitive)
-                // Since Section 1 and Section 2 are separate papers, all questions in a paper
-                // belong to that section, so we just need to match partLetter/partName
-                const partLetterMatches =
-                  qPartLetter === partLetter ||
-                  qPartLetter.includes(partLetter) ||
-                  partLetter.includes(qPartLetter);
-
-                const partNameMatches =
-                  qPartName === partName ||
-                  qPartName.includes(partName) ||
-                  partName.includes(qPartName);
-
-                const partMatches = partLetterMatches && partNameMatches;
-
-                if (!partMatches) {
-                  // Debug logging for first few non-matching questions
-                  if (
-                    paper.paperName === 'Section 2' &&
-                    questions.indexOf(q) < 3
-                  ) {
-                  }
-                  return false;
-                }
-
-                // Apply question range filter if specified (for ENGAA Section 1 Part A split)
-                if (part.questionRange) {
-                  const inRange =
-                    q.questionNumber >= part.questionRange.start &&
-                    q.questionNumber <= part.questionRange.end;
-                  if (!inRange) return false;
-                }
-
-                // Apply question filter if specified (for ENGAA Section 1 Part B)
-                if (part.questionFilter && part.questionFilter.length > 0) {
-                  return part.questionFilter.includes(q.questionNumber);
-                }
-
-                return true;
-              });
+              return parts.some((part) => questionMatchesRoadmapPart(q, part));
             });
 
 
@@ -470,9 +471,25 @@ export default function PapersRoadmapPage() {
         }
 
 
+        if (options.newQuestionsOnly) {
+          matchingQuestions = filterToNewQuestionsOnly(
+            matchingQuestions,
+            attemptedQuestionsRef.current,
+          );
+        }
+
         if (matchingQuestions.length === 0) {
+          alert(
+            options.newQuestionsOnly
+              ? 'No new questions left in the selected parts. Turn off "New questions only" to repeat questions you have already done.'
+              : 'No questions matched the selected parts.',
+          );
           return;
         }
+
+        const selectedPartIds = selectedParts.map((part) =>
+          generatePartIdFromRoadmapPart(stage.examName, stage.year, part),
+        );
 
         // Get question number range
         const questionNumbers = matchingQuestions
@@ -504,6 +521,7 @@ export default function PapersRoadmapPage() {
             end: questionEnd,
           },
           selectedSections: Array.from(allSections),
+          selectedPartIds,
         });
 
         // If we have questions from multiple papers, set them directly
@@ -524,7 +542,11 @@ export default function PapersRoadmapPage() {
   );
 
   const handleStartStage = useCallback(
-    async (stage: RoadmapStage, selectedParts: RoadmapPart[]) => {
+    async (
+      stage: RoadmapStage,
+      selectedParts: RoadmapPart[],
+      options: RoadmapStartOptions,
+    ) => {
       if (
         !hasFullAccess &&
         !isFreePreviewRoadmapStage({
@@ -535,11 +557,11 @@ export default function PapersRoadmapPage() {
         return;
       }
       if (await shouldConfirmReplacePaperSession()) {
-        pendingRoadmapStartRef.current = { stage, selectedParts };
+        pendingRoadmapStartRef.current = { stage, selectedParts, options };
         setReplaceModalOpen(true);
         return;
       }
-      await executeStartStage(stage, selectedParts);
+      await executeStartStage(stage, selectedParts, options);
     },
     [executeStartStage, hasFullAccess],
   );
@@ -559,7 +581,11 @@ export default function PapersRoadmapPage() {
     }
     setReplaceConfirming(true);
     try {
-      await executeStartStage(pending.stage, pending.selectedParts);
+      await executeStartStage(
+        pending.stage,
+        pending.selectedParts,
+        pending.options,
+      );
     } finally {
       setReplaceConfirming(false);
       setReplaceModalOpen(false);
@@ -721,11 +747,47 @@ export default function PapersRoadmapPage() {
           </div>
 
           <div className="min-w-0 flex-1">
+            <div className="mb-4 flex items-center justify-end gap-2 px-1">
+              <span className="text-xs text-text-muted">Session default</span>
+              <RoadmapInfoPopover title="New questions only (default)">
+                <p>
+                  This default applies when you expand any roadmap stage. Each
+                  stage also has its own toggle before you start.
+                </p>
+                <p>
+                  When on, sessions skip questions you have already completed
+                  and verified cross-exam duplicates between NSAA and ENGAA.
+                </p>
+              </RoadmapInfoPopover>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={newQuestionsOnly}
+                aria-label="New questions only default"
+                onClick={() => handleNewQuestionsOnlyChange(!newQuestionsOnly)}
+                className={cn(
+                  'relative h-6 w-10 shrink-0 rounded-full transition-colors duration-fast ease-signature',
+                  newQuestionsOnly ? 'bg-secondary' : 'bg-surface-neutral',
+                )}
+              >
+                <span
+                  className={cn(
+                    'absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-fast ease-signature',
+                    newQuestionsOnly ? 'left-[18px]' : 'left-0.5',
+                  )}
+                />
+              </button>
+              <span className="text-xs font-medium text-text-subtle">
+                New questions only
+              </span>
+            </div>
             <RoadmapList
               nodes={timelineNodes}
               completionData={completionData}
               completionLoading={completionLoading}
               onStartSession={handleStartStage}
+              newQuestionsOnly={newQuestionsOnly}
+              onNewQuestionsOnlyChange={handleNewQuestionsOnlyChange}
               onUnlockStage={hasFullAccess ? handleUnlockStage : undefined}
               onNodePositionsUpdate={handleNodePositionsUpdate}
               timelineNodePositions={nodePositions}

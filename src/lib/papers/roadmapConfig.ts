@@ -5,14 +5,19 @@
 
 import type { ExamName, ExamType, PaperSection } from '@/types/papers';
 import { mapPartToSection } from './sectionMapping';
+import { buildEngaaRoadmapStages } from './engaaRoadmapParts';
 
 export interface RoadmapPart {
+  /** Stable key for completion tracking and UI selection. */
+  partKey?: string;
   partLetter: string;
   partName: string;
   paperName: string; // "Section 1" or "Section 2"
   examType: ExamType;
   questionFilter?: number[]; // Specific question numbers to include (for ENGAA)
   questionRange?: { start: number; end: number }; // Alternative: range of questions
+  /** When true, match questions by number list only (skip part letter/name). */
+  filterByQuestionNumbersOnly?: boolean;
 }
 
 export interface RoadmapStage {
@@ -22,17 +27,6 @@ export interface RoadmapStage {
   label: string; // e.g., "Core Practice" or "Advanced Practice"
   parts: RoadmapPart[];
 }
-
-/**
- * ENGAA Section 1 Part B question filters by year
- */
-const ENGAA_SECTION1_PARTB_FILTERS: Record<number, number[]> = {
-  2016: [29, 30, 36, 42, 43, 44, 49, 51, 52], // Specimen
-  2017: [32, 35, 36, 37, 41, 50, 51, 54],
-  2018: [35, 38, 39, 42, 44, 45, 50, 51, 52],
-  2019: [25, 38, 39],
-  // 2020-2023: All questions (no filter)
-};
 
 /**
  * Get the mapped section for a part
@@ -57,8 +51,8 @@ function getSectionForPart(part: RoadmapPart, examName: ExamName): PaperSection 
  * Structure:
  * - NSAA 2016-2019: Section 1 (Parts A, B, E), Section 2 (empty)
  * - NSAA 2020-2023: Section 1 (Parts A, B), Section 2 (Part B Physics)
- * - ENGAA 2016-2018: Section 1 (Part A split into Math 1/Math 2, Part B), Section 2 (Part A)
- * - ENGAA 2019-2023: Section 1 (Part A, Part B), Section 2 (Part A)
+ * - ENGAA 2016-2019: Section 1 extras (filtered Q numbers), Section 2 Physics
+ * - ENGAA 2020-2023: Section 1 Maths/Physics split + Part B Advanced (no Section 2)
  * - TMUA: Generated dynamically (Paper 1 and Paper 2)
  */
 export const ROADMAP_STAGES: RoadmapStage[] = [
@@ -321,278 +315,7 @@ export const ROADMAP_STAGES: RoadmapStage[] = [
       },
     ],
   },
-  // ENGAA stages
-  // ENGAA 2016-2018: Section 1 Part A split into Math 1 (first half) and Math 2 (second half)
-  // Section 1 Part B (Advanced), Section 2 Part A (Physics)
-  {
-    id: 'engaa-2016',
-    year: 2016,
-    examName: 'ENGAA',
-    label: 'Advanced Practice',
-    parts: [
-      // Section 1: Part A split - Math 1 (first half)
-      {
-        partLetter: 'Part A',
-        partName: 'Mathematics and Physics',
-        paperName: 'Section 1',
-        examType: 'Official',
-        questionRange: { start: 1, end: 20 }, // First half for Math 1
-      },
-      // Section 1: Part A split - Math 2 (second half)
-      {
-        partLetter: 'Part A',
-        partName: 'Mathematics and Physics',
-        paperName: 'Section 1',
-        examType: 'Official',
-        questionRange: { start: 21, end: 40 }, // Second half for Math 2
-      },
-      // Section 1: Part B (Advanced Mathematics and Advanced Physics)
-      {
-        partLetter: 'Part B',
-        partName: 'Advanced Mathematics and Advanced Physics',
-        paperName: 'Section 1',
-        examType: 'Official',
-        questionFilter: ENGAA_SECTION1_PARTB_FILTERS[2016],
-      },
-      // Section 2: Part A (Physics)
-      {
-        partLetter: 'Part A',
-        partName: 'Physics',
-        paperName: 'Section 2',
-        examType: 'Official',
-      },
-    ],
-  },
-  {
-    id: 'engaa-2017',
-    year: 2017,
-    examName: 'ENGAA',
-    label: 'Advanced Practice',
-    parts: [
-      // Section 1: Part A split - Math 1 (first half)
-      {
-        partLetter: 'Part A',
-        partName: 'Mathematics and Physics',
-        paperName: 'Section 1',
-        examType: 'Official',
-        questionRange: { start: 1, end: 20 }, // First half for Math 1
-      },
-      // Section 1: Part A split - Math 2 (second half)
-      {
-        partLetter: 'Part A',
-        partName: 'Mathematics and Physics',
-        paperName: 'Section 1',
-        examType: 'Official',
-        questionRange: { start: 21, end: 40 }, // Second half for Math 2
-      },
-      // Section 1: Part B (Advanced Mathematics and Advanced Physics)
-      {
-        partLetter: 'Part B',
-        partName: 'Advanced Mathematics and Advanced Physics',
-        paperName: 'Section 1',
-        examType: 'Official',
-        questionFilter: ENGAA_SECTION1_PARTB_FILTERS[2017],
-      },
-      // Section 2: Part A (Physics)
-      {
-        partLetter: 'Part A',
-        partName: 'Physics',
-        paperName: 'Section 2',
-        examType: 'Official',
-      },
-    ],
-  },
-  {
-    id: 'engaa-2018',
-    year: 2018,
-    examName: 'ENGAA',
-    label: 'Advanced Practice',
-    parts: [
-      // Section 1: Part A split - Math 1 (first half)
-      {
-        partLetter: 'Part A',
-        partName: 'Mathematics and Physics',
-        paperName: 'Section 1',
-        examType: 'Official',
-        questionRange: { start: 1, end: 20 }, // First half for Math 1
-      },
-      // Section 1: Part A split - Math 2 (second half)
-      {
-        partLetter: 'Part A',
-        partName: 'Mathematics and Physics',
-        paperName: 'Section 1',
-        examType: 'Official',
-        questionRange: { start: 21, end: 40 }, // Second half for Math 2
-      },
-      // Section 1: Part B (Advanced Mathematics and Advanced Physics)
-      {
-        partLetter: 'Part B',
-        partName: 'Advanced Mathematics and Advanced Physics',
-        paperName: 'Section 1',
-        examType: 'Official',
-        questionFilter: ENGAA_SECTION1_PARTB_FILTERS[2018],
-      },
-      // Section 2: Part A (Physics)
-      {
-        partLetter: 'Part A',
-        partName: 'Physics',
-        paperName: 'Section 2',
-        examType: 'Official',
-      },
-    ],
-  },
-  // ENGAA 2019-2023: Section 1 Part A (Maths), Part B (Advanced), Section 2 Part A (Physics)
-  {
-    id: 'engaa-2019',
-    year: 2019,
-    examName: 'ENGAA',
-    label: 'Advanced Practice',
-    parts: [
-      // Section 1: Part A (Mathematics and Physics) - extract Maths portion
-      {
-        partLetter: 'Part A',
-        partName: 'Mathematics and Physics',
-        paperName: 'Section 1',
-        examType: 'Official',
-        // Note: This will match all Part A questions, filtering by section mapping will handle Maths vs Physics
-      },
-      // Section 1: Part B (Advanced Mathematics and Advanced Physics)
-      {
-        partLetter: 'Part B',
-        partName: 'Advanced Mathematics and Advanced Physics',
-        paperName: 'Section 1',
-        examType: 'Official',
-        questionFilter: ENGAA_SECTION1_PARTB_FILTERS[2019],
-      },
-      // Section 2: Part A (Physics)
-      {
-        partLetter: 'Part A',
-        partName: 'Physics',
-        paperName: 'Section 2',
-        examType: 'Official',
-      },
-    ],
-  },
-  {
-    id: 'engaa-2020',
-    year: 2020,
-    examName: 'ENGAA',
-    label: 'Advanced Practice',
-    parts: [
-      // Section 1: Part A (Mathematics and Physics) - extract Maths portion
-      {
-        partLetter: 'Part A',
-        partName: 'Mathematics and Physics',
-        paperName: 'Section 1',
-        examType: 'Official',
-      },
-      // Section 1: Part B (Advanced Mathematics and Advanced Physics)
-      {
-        partLetter: 'Part B',
-        partName: 'Advanced Mathematics and Advanced Physics',
-        paperName: 'Section 1',
-        examType: 'Official',
-        // All questions (no filter)
-      },
-      // Section 2: Part A (Physics)
-      {
-        partLetter: 'Part A',
-        partName: 'Physics',
-        paperName: 'Section 2',
-        examType: 'Official',
-      },
-    ],
-  },
-  {
-    id: 'engaa-2021',
-    year: 2021,
-    examName: 'ENGAA',
-    label: 'Advanced Practice',
-    parts: [
-      // Section 1: Part A (Mathematics and Physics) - extract Maths portion
-      {
-        partLetter: 'Part A',
-        partName: 'Mathematics and Physics',
-        paperName: 'Section 1',
-        examType: 'Official',
-      },
-      // Section 1: Part B (Advanced Mathematics and Advanced Physics)
-      {
-        partLetter: 'Part B',
-        partName: 'Advanced Mathematics and Advanced Physics',
-        paperName: 'Section 1',
-        examType: 'Official',
-        // All questions (no filter)
-      },
-      // Section 2: Part A (Physics)
-      {
-        partLetter: 'Part A',
-        partName: 'Physics',
-        paperName: 'Section 2',
-        examType: 'Official',
-      },
-    ],
-  },
-  {
-    id: 'engaa-2022',
-    year: 2022,
-    examName: 'ENGAA',
-    label: 'Advanced Practice',
-    parts: [
-      // Section 1: Part A (Mathematics and Physics) - extract Maths portion
-      {
-        partLetter: 'Part A',
-        partName: 'Mathematics and Physics',
-        paperName: 'Section 1',
-        examType: 'Official',
-      },
-      // Section 1: Part B (Advanced Mathematics and Advanced Physics)
-      {
-        partLetter: 'Part B',
-        partName: 'Advanced Mathematics and Advanced Physics',
-        paperName: 'Section 1',
-        examType: 'Official',
-        // All questions (no filter)
-      },
-      // Section 2: Part A (Physics)
-      {
-        partLetter: 'Part A',
-        partName: 'Physics',
-        paperName: 'Section 2',
-        examType: 'Official',
-      },
-    ],
-  },
-  {
-    id: 'engaa-2023',
-    year: 2023,
-    examName: 'ENGAA',
-    label: 'Advanced Practice',
-    parts: [
-      // Section 1: Part A (Mathematics and Physics) - extract Maths portion
-      {
-        partLetter: 'Part A',
-        partName: 'Mathematics and Physics',
-        paperName: 'Section 1',
-        examType: 'Official',
-      },
-      // Section 1: Part B (Advanced Mathematics and Advanced Physics)
-      {
-        partLetter: 'Part B',
-        partName: 'Advanced Mathematics and Advanced Physics',
-        paperName: 'Section 1',
-        examType: 'Official',
-        // All questions (no filter)
-      },
-      // Section 2: Part A (Physics)
-      {
-        partLetter: 'Part A',
-        partName: 'Physics',
-        paperName: 'Section 2',
-        examType: 'Official',
-      },
-    ],
-  },
+  ...buildEngaaRoadmapStages(),
 ];
 
 /**

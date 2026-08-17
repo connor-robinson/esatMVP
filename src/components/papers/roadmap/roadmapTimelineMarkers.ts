@@ -41,11 +41,11 @@ const STAGE_COMMENTARY: Record<string, StageCommentary> = {
   },
   "engaa-2020": {
     title: "ENGAA 2020",
-    text: "New ENGAA format is established: 40-question Section 1 + 20-question Section 2. Overlap with NSAA is less straightforward — use mainly as extra Maths 2 and Physics.",
+    text: "First year of the 40-question Section 1 format. Roadmap uses all Section 1 parts (maths and physics by question number, plus Part B advanced). Section 2 overlaps NSAA and is omitted.",
   },
   "engaa-2021": {
     title: "ENGAA 2021–2023",
-    text: "Final ENGAA generation — fast, compact, calculation-heavy. Strong Maths 2 and Physics practice; some questions sit outside the current ESAT spec. Prioritise parts that match your modules.",
+    text: "Final ENGAA papers — fast, calculation-heavy Section 1 only. Section 2 repeats NSAA so it is skipped. Strong extra Maths and Physics after NSAA for the same year.",
   },
   "nsaa-2023": {
     title: "2024 onwards",

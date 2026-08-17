@@ -158,16 +158,26 @@ export function normalizePartId(id: string): string {
 export function generatePartIdFromRoadmapPart(
   examName: ExamName,
   year: number,
-  part: { partLetter: string; partName: string; paperName: string; examType: ExamType }
+  part: {
+    partKey?: string;
+    partLetter: string;
+    partName: string;
+    paperName: string;
+    examType: ExamType;
+  },
 ): string {
-  return generatePartId(
+  const base = generatePartId(
     examName,
     year,
     part.paperName,
     part.partLetter,
     part.partName,
-    part.examType
+    part.examType,
   );
+  if (part.partKey) {
+    return `${base}-${normalizeForId(part.partKey)}`;
+  }
+  return base;
 }
 
 /**

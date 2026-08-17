@@ -22,6 +22,7 @@ import {
 } from './completionUtils';
 import { getPaper } from '@/lib/supabase/questions';
 import { generatePartIdFromRoadmapPart } from './partIdUtils';
+import { getRoadmapPartKey } from './roadmapPartKey';
 import { isPartIdCompleted, getCompletedPartIds } from './completionCache';
 
 export { getCompletedPartIds } from './completionCache';
@@ -121,7 +122,7 @@ export async function getStageCompletion(
   const completionMap = new Map<string, boolean>();
 
   for (const part of stage.parts) {
-    const partKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
+    const partKey = getRoadmapPartKey(part);
     const completed = await isPartCompleted(
       userId,
       stage.examName,
@@ -150,7 +151,7 @@ export async function getStageCompletionFromSessions(
   
   for (const part of stage.parts) {
     const partId = generatePartIdFromRoadmapPart(stage.examName, stage.year, part);
-    const partKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
+    const partKey = getRoadmapPartKey(part);
     const isCompleted = ids.has(partId);
     
     completionMap.set(partKey, isCompleted);

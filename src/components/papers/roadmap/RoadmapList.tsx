@@ -8,7 +8,7 @@
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import { motion } from "framer-motion";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
-import type { RoadmapLockReason } from "./StageListCard";
+import type { RoadmapLockReason, RoadmapStartOptions } from "./StageListCard";
 import { StageListCard } from "./StageListCard";
 import { ROADMAP_EXPAND_MS } from "./roadmapTimelineLayout";
 
@@ -29,7 +29,13 @@ interface RoadmapListProps {
     { completed: number; total: number; parts: Map<string, boolean> }
   >;
   completionLoading: boolean;
-  onStartSession: (stage: RoadmapStage, selectedParts: RoadmapPart[]) => void;
+  onStartSession: (
+    stage: RoadmapStage,
+    selectedParts: RoadmapPart[],
+    options: RoadmapStartOptions,
+  ) => void;
+  newQuestionsOnly: boolean;
+  onNewQuestionsOnlyChange: (enabled: boolean) => void;
   onUnlockStage?: (stageId: string) => void;
   onNodePositionsUpdate?: (positions: number[]) => void;
   timelineNodePositions?: number[];
@@ -59,6 +65,8 @@ export function RoadmapList({
   completionData,
   completionLoading,
   onStartSession,
+  newQuestionsOnly,
+  onNewQuestionsOnlyChange,
   onUnlockStage,
   onNodePositionsUpdate,
   timelineNodePositions = [],
@@ -360,6 +368,8 @@ export function RoadmapList({
               }
               completionData={stageCompletionData}
               onStartSession={onStartSession}
+              newQuestionsOnly={newQuestionsOnly}
+              onNewQuestionsOnlyChange={onNewQuestionsOnlyChange}
               timelineNodeY={timelineNodeY}
               isStageCompleted={node.isCompleted}
               anchorRef={(el) => {

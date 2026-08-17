@@ -20,13 +20,19 @@ import {
   getExamAccentFillClass,
 } from "@/config/colors";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
+import { getRoadmapPartKey } from "@/lib/papers/roadmapPartKey";
 import { getStageCommentary } from "./roadmapTimelineMarkers";
+import { RoadmapInfoPopover } from "./RoadmapInfoPopover";
 import {
   ROADMAP_EXPAND_TRANSITION_CLASS,
   ROADMAP_TIMELINE_CONNECTOR_WIDTH,
 } from "./roadmapTimelineLayout";
 
 export type RoadmapLockReason = "progression" | "paywall";
+
+export type RoadmapStartOptions = {
+  newQuestionsOnly: boolean;
+};
 
 interface StageListCardProps {
   stage: RoadmapStage;
@@ -39,7 +45,13 @@ interface StageListCardProps {
   isExpanded: boolean;
   onToggleExpand: () => void;
   completionData: Map<string, boolean>;
-  onStartSession: (stage: RoadmapStage, selectedParts: RoadmapPart[]) => void;
+  onStartSession: (
+    stage: RoadmapStage,
+    selectedParts: RoadmapPart[],
+    options: RoadmapStartOptions,
+  ) => void;
+  newQuestionsOnly: boolean;
+  onNewQuestionsOnlyChange: (enabled: boolean) => void;
   timelineNodeY?: number;
   isStageCompleted?: boolean;
   /** Header row anchor — timeline nodes track this, not expanded body height. */
@@ -58,6 +70,8 @@ export function StageListCard({
   onToggleExpand,
   completionData,
   onStartSession,
+  newQuestionsOnly,
+  onNewQuestionsOnlyChange,
   timelineNodeY,
   isStageCompleted = false,
   anchorRef,
@@ -65,13 +79,7 @@ export function StageListCard({
   const [selectedParts, setSelectedParts] = useState<Set<string>>(new Set());
   const commentary = getStageCommentary(stage.id);
 
-  const getPartKey = (part: RoadmapPart): string => {
-    const baseKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
-    if (part.questionRange) {
-      return `${baseKey}-${part.questionRange.start}-${part.questionRange.end}`;
-    }
-    return baseKey;
-  };
+  const getPartKey = getRoadmapPartKey;
 
   useEffect(() => {
     const incompletePartKeys = new Set(
@@ -100,7 +108,7 @@ export function StageListCard({
       const selectedPartsList = stage.parts.filter((part) =>
         selectedParts.has(getPartKey(part)),
       );
-      onStartSession(stage, selectedPartsList);
+      onStartSession(stage, selectedPartsList, { newQuestionsOnly });
     }
   };
 
@@ -370,6 +378,11 @@ export function StageListCard({
                                   let displayLabel = "";
                                   if (stage.examName === "TMUA") {
                                     displayLabel = part.paperName;
+                                  } else if (part.questionFilter?.length) {
+                                    const qList = part.questionFilter
+                                      .map((n) => `Q${n}`)
+                                      .join(", ");
+                                    displayLabel = `${part.partName} (${qList})`;
                                   } else if (part.questionRange) {
                                     displayLabel = `${part.partLetter}: ${part.partName} (Q${part.questionRange.start}-${part.questionRange.end})`;
                                   } else {
@@ -450,6 +463,82 @@ export function StageListCard({
                       });
                     })()}
                   </div>
+
+                  <div
+                    className="flex items-center justify-between gap-3 rounded-organic-md bg-surface-mid px-3 py-2.5"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm font-medium text-text">
+                          New questions only
+                        </span>
+                        <RoadmapInfoPopover title="New questions only">
+                          <p>
+                            When on, your session skips questions you have
+                            already completed in any past-paper session, and
+                            skips verified NSAA/ENGAA duplicates (same question
+                            appearing in both exams).
+                          </p>
+                          <p>
+                            Turn off to practise the full selected parts again,
+                            including repeats.
+                          </p>
+                        </RoadmapInfoPopover>
+                      </div>
+                      <p className="mt-0.5 text-xs text-text-muted">
+                        Recommended after doing the matching NSAA year first.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={newQuestionsOnly}
+                      onClick={() =>
+                        onNewQuestionsOnlyChange(!newQuestionsOnly)
+                      }
+                      className={cn(
+                        "relative h-7 w-12 shrink-0 rounded-full transition-colors duration-fast ease-signature",
+                        newQuestionsOnly
+                          ? getExamAccentFillClass(stage.examName)
+                          : "bg-surface-neutral",
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "absolute top-1 h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-fast ease-signature",
+                          newQuestionsOnly ? "left-6" : "left-1",
+                        )}
+                      />
+                    </button>
+                  </div>
+
+                  {stage.examName === "ENGAA" ? (
+                    <div className="rounded-organic-md bg-surface-mid/60 px-3 py-2.5">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-medium text-text-subtle">
+                          ENGAA overlap with NSAA
+                        </span>
+                        <RoadmapInfoPopover
+                          title="How ENGAA fits the roadmap"
+                          align="left"
+                        >
+                          <p>
+                            ENGAA Section 1 Part A (2016–2019) repeats the NSAA
+                            question bank — those parts are omitted here.
+                          </p>
+                          <p>
+                            2016–2019: only the published &quot;extra&quot;
+                            Section 1 questions remain, plus all of Section 2
+                            (physics). 2020–2023: Section 1 is split into
+                            maths and physics by question number; Part B is
+                            fully new. Section 2 from 2020 overlaps NSAA and is
+                            skipped.
+                          </p>
+                        </RoadmapInfoPopover>
+                      </div>
+                    </div>
+                  ) : null}
 
                   <button
                     type="button"
