@@ -5,6 +5,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Lock,
@@ -24,12 +25,16 @@ import {
   ROADMAP_TIMELINE_CONNECTOR_WIDTH,
 } from "./roadmapTimelineLayout";
 
+export type RoadmapLockReason = "progression" | "paywall";
+
 interface StageListCardProps {
   stage: RoadmapStage;
   index: number;
   completedCount: number;
   totalCount: number;
   isUnlocked: boolean;
+  lockReason?: RoadmapLockReason | null;
+  onUnlockNow?: () => void;
   isExpanded: boolean;
   onToggleExpand: () => void;
   completionData: Map<string, boolean>;
@@ -46,6 +51,8 @@ export function StageListCard({
   completedCount,
   totalCount,
   isUnlocked,
+  lockReason = null,
+  onUnlockNow,
   isExpanded,
   onToggleExpand,
   completionData,
@@ -200,7 +207,41 @@ export function StageListCard({
                 </span>
               ) : null}
             </div>
+
+            {!isUnlocked && lockReason === "progression" ? (
+              <p className="mt-1 text-xs text-text-muted">
+                Finish above paper to unlock
+              </p>
+            ) : null}
+            {!isUnlocked && lockReason === "paywall" ? (
+              <p className="mt-1 text-xs text-text-muted">
+                Upgrade to unlock this paper
+              </p>
+            ) : null}
           </div>
+
+          {!isUnlocked && lockReason === "progression" && onUnlockNow ? (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onUnlockNow();
+              }}
+              className="shrink-0 rounded-organic-md bg-primary/15 px-3 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-primary/25"
+            >
+              Unlock now
+            </button>
+          ) : null}
+
+          {!isUnlocked && lockReason === "paywall" ? (
+            <Link
+              href="/pricing"
+              onClick={(e) => e.stopPropagation()}
+              className="shrink-0 rounded-organic-md bg-primary/15 px-3 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-primary/25"
+            >
+              Upgrade
+            </Link>
+          ) : null}
 
           <div className="flex shrink-0 items-center">
             <motion.div
@@ -406,7 +447,13 @@ export function StageListCard({
                           ),
                     )}
                   >
-                    <span>{isUnlocked ? "Start session" : "Locked"}</span>
+                    <span>
+                      {isUnlocked
+                        ? "Start session"
+                        : lockReason === "paywall"
+                          ? "Upgrade to unlock"
+                          : "Locked"}
+                    </span>
                     <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
                   </button>
             </div>

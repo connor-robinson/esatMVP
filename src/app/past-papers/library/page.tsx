@@ -37,6 +37,7 @@ import {
   hasSeenLibraryTutorial,
   markLibraryTutorialSeen,
   resolveLibraryTutorialStep,
+  libraryTutorialAddHint,
 } from '@/lib/papers/libraryTutorial';
 
 interface SelectedPaper {
@@ -183,8 +184,9 @@ export default function PapersLibraryPage() {
   const [userEsatSubjects, setUserEsatSubjects] = useState<string[] | null>(null);
 
   useEffect(() => {
-    setShowTutorial(!hasSeenLibraryTutorial());
-  }, []);
+    if (subscriptionLoading) return;
+    setShowTutorial(!hasSeenLibraryTutorial(treatAsFullAccess));
+  }, [subscriptionLoading, treatAsFullAccess]);
 
   useEffect(() => {
     let cancelled = false;
@@ -209,7 +211,7 @@ export default function PapersLibraryPage() {
   }, []);
 
   const dismissTutorial = () => {
-    markLibraryTutorialSeen();
+    markLibraryTutorialSeen(treatAsFullAccess);
     setShowTutorial(false);
   };
 
@@ -665,21 +667,23 @@ export default function PapersLibraryPage() {
   const subjectsForAdd = useMemo(
     () =>
       esatSubjectsForPaperAdd(userEsatSubjects, {
-        firstPaperOnly: showTutorial && selectedPapers.length === 0,
+        firstPaperOnly:
+          !treatAsFullAccess && showTutorial && selectedPapers.length === 0,
       }),
-    [userEsatSubjects, showTutorial, selectedPapers.length],
+    [userEsatSubjects, showTutorial, selectedPapers.length, treatAsFullAccess],
   );
 
   const tutorialStep = useMemo(
     () =>
       resolveLibraryTutorialStep({
         showTutorial,
+        hasFullAccess: treatAsFullAccess,
         hasBasketItems: canStart,
         canStart,
         multipleEsatSubjects: (userEsatSubjects?.length ?? 0) > 1,
         customizeAcknowledged,
       }),
-    [showTutorial, canStart, userEsatSubjects, customizeAcknowledged],
+    [showTutorial, treatAsFullAccess, canStart, userEsatSubjects, customizeAcknowledged],
   );
 
   const firstEsatSubject = userEsatSubjects?.[0] ?? null;
@@ -729,6 +733,11 @@ export default function PapersLibraryPage() {
             tutorialStep={tutorialStep}
             onDismissTutorial={dismissTutorial}
             firstEsatSubject={firstEsatSubject}
+            hasFullAccess={treatAsFullAccess}
+            tutorialAddHint={libraryTutorialAddHint(
+              treatAsFullAccess,
+              firstEsatSubject,
+            )}
           />
         </div>
 

@@ -188,6 +188,18 @@ export const ROADMAP_STAGES: RoadmapStage[] = [
         examType: 'Official',
       },
       {
+        partLetter: 'Part C',
+        partName: 'Chemistry',
+        paperName: 'Section 1',
+        examType: 'Official',
+      },
+      {
+        partLetter: 'Part D',
+        partName: 'Biology',
+        paperName: 'Section 1',
+        examType: 'Official',
+      },
+      {
         partLetter: 'Part B',
         partName: 'Physics',
         paperName: 'Section 2',
@@ -210,6 +222,18 @@ export const ROADMAP_STAGES: RoadmapStage[] = [
       {
         partLetter: 'Part B',
         partName: 'Physics',
+        paperName: 'Section 1',
+        examType: 'Official',
+      },
+      {
+        partLetter: 'Part C',
+        partName: 'Chemistry',
+        paperName: 'Section 1',
+        examType: 'Official',
+      },
+      {
+        partLetter: 'Part D',
+        partName: 'Biology',
         paperName: 'Section 1',
         examType: 'Official',
       },
@@ -240,6 +264,18 @@ export const ROADMAP_STAGES: RoadmapStage[] = [
         examType: 'Official',
       },
       {
+        partLetter: 'Part C',
+        partName: 'Chemistry',
+        paperName: 'Section 1',
+        examType: 'Official',
+      },
+      {
+        partLetter: 'Part D',
+        partName: 'Biology',
+        paperName: 'Section 1',
+        examType: 'Official',
+      },
+      {
         partLetter: 'Part B',
         partName: 'Physics',
         paperName: 'Section 2',
@@ -262,6 +298,18 @@ export const ROADMAP_STAGES: RoadmapStage[] = [
       {
         partLetter: 'Part B',
         partName: 'Physics',
+        paperName: 'Section 1',
+        examType: 'Official',
+      },
+      {
+        partLetter: 'Part C',
+        partName: 'Chemistry',
+        paperName: 'Section 1',
+        examType: 'Official',
+      },
+      {
+        partLetter: 'Part D',
+        partName: 'Biology',
         paperName: 'Section 1',
         examType: 'Official',
       },

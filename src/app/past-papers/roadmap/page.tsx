@@ -4,7 +4,7 @@
 
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Container } from '@/components/layout/Container';
 import { useSupabaseSession } from '@/components/auth/SupabaseSessionProvider';
@@ -33,6 +33,12 @@ import type { RoadmapPart } from '@/lib/papers/roadmapConfig';
 import { ReplaceActivePaperModal } from '@/components/papers/ReplaceActivePaperModal';
 import { shouldConfirmReplacePaperSession } from '@/lib/papers/activePaperSessionClient';
 import { isFreePreviewRoadmapStage } from '@/lib/papers/freePreviewPapers';
+import { applyEsatSubjectsToRoadmapStages } from '@/lib/papers/roadmapEsatFilter';
+import {
+  addManualRoadmapUnlock,
+  readManualRoadmapUnlocks,
+} from '@/lib/papers/roadmapManualUnlock';
+import type { RoadmapLockReason } from '@/components/papers/roadmap/StageListCard';
 import { cn } from '@/lib/utils';
 
 type StageCompletionEntry = {
@@ -120,8 +126,30 @@ export default function PapersRoadmapPage() {
   const [examPreference, setExamPreference] = useState<'ESAT' | 'TMUA' | null>(
     null,
   );
+  const [userEsatSubjects, setUserEsatSubjects] = useState<string[] | null>(
+    null,
+  );
+  const [manualUnlocks, setManualUnlocks] = useState<Set<string>>(() =>
+    readManualRoadmapUnlocks(),
+  );
 
-  // Load user exam preference
+  const effectiveExamPreference = useMemo((): "ESAT" | "TMUA" | null => {
+    if (examPreference) return examPreference;
+    if (userEsatSubjects?.length) return "ESAT";
+    return null;
+  }, [examPreference, userEsatSubjects]);
+
+  const subjectFilteredStages = useMemo(
+    () =>
+      applyEsatSubjectsToRoadmapStages(
+        stages,
+        userEsatSubjects,
+        effectiveExamPreference,
+      ),
+    [stages, userEsatSubjects, effectiveExamPreference],
+  );
+
+  // Load user exam preference + ESAT subjects
   useEffect(() => {
     async function loadExamPreference() {
       if (!session?.user?.id) return;
@@ -131,6 +159,13 @@ export default function PapersRoadmapPage() {
         if (response.ok) {
           const data = await response.json();
           setExamPreference(data.exam_preference || null);
+          if (
+            data.exam_preference === 'ESAT' &&
+            Array.isArray(data.esat_subjects) &&
+            data.esat_subjects.length > 0
+          ) {
+            setUserEsatSubjects(data.esat_subjects);
+          }
         }
       } catch (error) {
       }
@@ -173,7 +208,7 @@ export default function PapersRoadmapPage() {
 
   // Load completion in background (progress rings, unlock state)
   useEffect(() => {
-    if (stages.length === 0) return;
+    if (subjectFilteredStages.length === 0) return;
 
     let cancelled = false;
 
@@ -187,7 +222,7 @@ export default function PapersRoadmapPage() {
             await import('@/lib/papers/roadmapCompletion');
           const completedPartIds = await getCompletedPartIds(session.user.id);
 
-          for (const stage of stages) {
+          for (const stage of subjectFilteredStages) {
             const parts = await getStageCompletionFromSessions(
               session.user.id,
               stage,
@@ -206,7 +241,7 @@ export default function PapersRoadmapPage() {
             });
           }
         } else {
-          for (const stage of stages) {
+          for (const stage of subjectFilteredStages) {
             completionMap.set(stage.id, {
               completed: 0,
               total: stage.parts.length,
@@ -219,7 +254,7 @@ export default function PapersRoadmapPage() {
 
         setCompletionData(completionMap);
         const { unlocked, currentIndex } = computeUnlockState(
-          stages,
+          subjectFilteredStages,
           completionMap,
         );
         setUnlockedStages(unlocked);
@@ -227,9 +262,12 @@ export default function PapersRoadmapPage() {
       } catch (error) {
         if (cancelled) return;
 
-        const fallback = buildDefaultCompletion(stages);
+        const fallback = buildDefaultCompletion(subjectFilteredStages);
         setCompletionData(fallback);
-        const { unlocked, currentIndex } = computeUnlockState(stages, fallback);
+        const { unlocked, currentIndex } = computeUnlockState(
+          subjectFilteredStages,
+          fallback,
+        );
         setUnlockedStages(unlocked);
         setCurrentStageIndex(currentIndex);
       } finally {
@@ -241,7 +279,11 @@ export default function PapersRoadmapPage() {
     return () => {
       cancelled = true;
     };
-  }, [session?.user?.id, stages]);
+  }, [session?.user?.id, subjectFilteredStages]);
+
+  const handleUnlockStage = useCallback((stageId: string) => {
+    setManualUnlocks(addManualRoadmapUnlock(stageId));
+  }, []);
 
   const executeStartStage = useCallback(
     async (stage: RoadmapStage, selectedParts: RoadmapPart[]) => {
@@ -538,7 +580,7 @@ export default function PapersRoadmapPage() {
           await import('@/lib/papers/completionCache');
         const completedIds = await syncWithDatabase(session.user.id);
 
-        for (const stage of stages) {
+        for (const stage of subjectFilteredStages) {
           const count = await getStageCompletionCount(session.user.id, stage);
           const parts = await getStageCompletion(session.user.id, stage);
 
@@ -550,7 +592,7 @@ export default function PapersRoadmapPage() {
         }
       } else {
         // If no user, set all to 0 completion
-        for (const stage of stages) {
+        for (const stage of subjectFilteredStages) {
           completionMap.set(stage.id, {
             completed: 0,
             total: stage.parts.length,
@@ -564,7 +606,7 @@ export default function PapersRoadmapPage() {
     }
 
     setCompletionLoading(false);
-  }, [session?.user?.id, stages]);
+  }, [session?.user?.id, subjectFilteredStages]);
 
   // Track actual node positions for timeline alignment - MUST be before conditional return
   const [nodePositions, setNodePositions] = useState<number[]>([]);
@@ -577,19 +619,42 @@ export default function PapersRoadmapPage() {
 
   // Everyone sees the full track. Free users can start free-preview papers;
   // everything else stays greyed/locked (paywall still below).
-  const visibleStages = stages;
-  const visibleUnlocked = new Set(
-    hasFullAccess
-      ? unlockedStages
-      : visibleStages
-          .filter((stage) =>
-            isFreePreviewRoadmapStage({
-              examName: stage.examName,
-              year: stage.year,
-            }),
-          )
-          .map((stage) => stage.id),
-  );
+  const visibleStages = subjectFilteredStages;
+
+  const progressionUnlocked = unlockedStages;
+  const visibleUnlocked = new Set<string>();
+
+  for (const stage of visibleStages) {
+    const isPreview = isFreePreviewRoadmapStage({
+      examName: stage.examName,
+      year: stage.year,
+    });
+
+    if (hasFullAccess) {
+      if (progressionUnlocked.has(stage.id) || manualUnlocks.has(stage.id)) {
+        visibleUnlocked.add(stage.id);
+      }
+    } else if (isPreview) {
+      visibleUnlocked.add(stage.id);
+    }
+  }
+
+  const resolveLockReason = (
+    stage: RoadmapStage,
+    isUnlocked: boolean,
+  ): RoadmapLockReason | null => {
+    if (isUnlocked) return null;
+    if (
+      !hasFullAccess &&
+      !isFreePreviewRoadmapStage({
+        examName: stage.examName,
+        year: stage.year,
+      })
+    ) {
+      return "paywall";
+    }
+    return "progression";
+  };
 
   const firstIncompleteVisibleIndex = visibleStages.findIndex((stage) => {
     if (!visibleUnlocked.has(stage.id)) return false;
@@ -613,6 +678,7 @@ export default function PapersRoadmapPage() {
     const isUnlocked = visibleUnlocked.has(stage.id);
     const isCompleted = completedCount === totalCount && totalCount > 0;
     const isCurrent = isUnlocked && !isCompleted && visibleCurrentIndex === index;
+    const lockReason = resolveLockReason(stage, isUnlocked);
 
     return {
       stage,
@@ -621,6 +687,7 @@ export default function PapersRoadmapPage() {
       isCurrent,
       completedCount,
       totalCount,
+      lockReason,
     };
   });
 
@@ -659,6 +726,7 @@ export default function PapersRoadmapPage() {
               completionData={completionData}
               completionLoading={completionLoading}
               onStartSession={handleStartStage}
+              onUnlockStage={hasFullAccess ? handleUnlockStage : undefined}
               onNodePositionsUpdate={handleNodePositionsUpdate}
               timelineNodePositions={nodePositions}
               timelineAnchorRef={timelineAnchorRef}

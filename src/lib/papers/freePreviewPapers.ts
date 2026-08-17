@@ -47,7 +47,7 @@ export function isPastPaperLibraryLocked(
   return !isFreePreviewPastPaper(paper);
 }
 
-/** Paper to highlight during the library add-paper tutorial. */
+/** Paper to highlight during the library add-paper tutorial (free users). */
 export function findTutorialHighlightPaper(
   papers: Paper[],
   isPaperLocked?: (paper: Paper) => boolean,
@@ -74,6 +74,13 @@ export function findTutorialHighlightPaper(
   }
 
   return papers.find(isUnlocked) ?? null;
+}
+
+/** Paid users: highlight the first paper in the list (typically earliest NSAA). */
+export function findPaidTutorialHighlightPaper(papers: Paper[]): Paper | null {
+  if (papers.length === 0) return null;
+  const nsaa = papers.find((paper) => paper.examName === "NSAA");
+  return nsaa ?? papers[0] ?? null;
 }
 
 /** Short label for upgrade copy, e.g. "NSAA 2016 and 2017". */

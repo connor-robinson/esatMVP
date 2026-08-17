@@ -8,6 +8,7 @@
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import { motion } from "framer-motion";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
+import type { RoadmapLockReason } from "./StageListCard";
 import { StageListCard } from "./StageListCard";
 import { ROADMAP_EXPAND_MS } from "./roadmapTimelineLayout";
 
@@ -18,6 +19,7 @@ interface TimelineNode {
   isCurrent: boolean;
   completedCount: number;
   totalCount: number;
+  lockReason?: RoadmapLockReason | null;
 }
 
 interface RoadmapListProps {
@@ -28,6 +30,7 @@ interface RoadmapListProps {
   >;
   completionLoading: boolean;
   onStartSession: (stage: RoadmapStage, selectedParts: RoadmapPart[]) => void;
+  onUnlockStage?: (stageId: string) => void;
   onNodePositionsUpdate?: (positions: number[]) => void;
   timelineNodePositions?: number[];
   /** Sticky timeline column — node Y is measured relative to this while scrolling. */
@@ -56,6 +59,7 @@ export function RoadmapList({
   completionData,
   completionLoading,
   onStartSession,
+  onUnlockStage,
   onNodePositionsUpdate,
   timelineNodePositions = [],
   timelineAnchorRef,
@@ -342,6 +346,12 @@ export function RoadmapList({
               completedCount={node.completedCount}
               totalCount={node.totalCount}
               isUnlocked={node.isUnlocked}
+              lockReason={node.lockReason}
+              onUnlockNow={
+                node.lockReason === "progression"
+                  ? () => onUnlockStage?.(node.stage.id)
+                  : undefined
+              }
               isExpanded={expandedStageId === node.stage.id}
               onToggleExpand={() =>
                 setExpandedStageId(

@@ -11,7 +11,7 @@ import { GuestDrillDimOverlay } from "@/components/builder/GuestDrillHint";
 import { getExamAccentTextClass } from "@/config/colors";
 import { LibrarySectionLoading } from "@/components/questionBank/library/LibrarySectionLoading";
 import { compareLibraryExamGroupNames } from "@/lib/papers/paperConfig";
-import { findTutorialHighlightPaper } from "@/lib/papers/freePreviewPapers";
+import { findTutorialHighlightPaper, findPaidTutorialHighlightPaper } from "@/lib/papers/freePreviewPapers";
 import type { LibraryTutorialStep } from "@/lib/papers/libraryTutorial";
 import { cn } from "@/lib/utils";
 
@@ -42,6 +42,8 @@ interface PaperLibraryGridProps {
   tutorialStep?: LibraryTutorialStep | null;
   onDismissTutorial?: () => void;
   firstEsatSubject?: string | null;
+  hasFullAccess?: boolean;
+  tutorialAddHint?: string;
 }
 
 function representativePaperScore(paper: Paper): number {
@@ -76,6 +78,8 @@ export function PaperLibraryGrid({
   tutorialStep = null,
   onDismissTutorial,
   firstEsatSubject = null,
+  hasFullAccess = false,
+  tutorialAddHint,
 }: PaperLibraryGridProps) {
   const [collapsedExams, setCollapsedExams] = useState<Set<string>>(new Set());
 
@@ -84,13 +88,17 @@ export function PaperLibraryGrid({
 
   const highlightPaperId = useMemo(() => {
     if (tutorialStep !== "add_paper") return null;
-    const paper = findTutorialHighlightPaper(papers, (p) => resolveLocked(p));
+    const paper = hasFullAccess
+      ? findPaidTutorialHighlightPaper(papers)
+      : findTutorialHighlightPaper(papers, (p) => resolveLocked(p));
     return paper?.id ?? null;
-  }, [tutorialStep, papers, isPaperLocked, locked]);
+  }, [tutorialStep, papers, isPaperLocked, locked, hasFullAccess]);
 
-  const addHintLabel = firstEsatSubject
-    ? `Click to add — starts with ${firstEsatSubject}`
-    : "Click to add this paper";
+  const addHintLabel =
+    tutorialAddHint ??
+    (firstEsatSubject
+      ? `Click to add — starts with ${firstEsatSubject}`
+      : "Click to add this paper");
 
   const toggleExam = (examName: string) =>
     setCollapsedExams((prev) => {
@@ -181,7 +189,7 @@ export function PaperLibraryGrid({
         </div>
       ) : (
         <div className="relative mt-5 space-y-4 border-t border-border-subtle/40 pt-5">
-          {tutorialStep === "add_paper" ? (
+          {tutorialStep === "add_paper" && !hasFullAccess ? (
             <GuestDrillDimOverlay className="absolute inset-0 z-30 rounded-organic-md" />
           ) : null}
           {papersByExam.sortedExams.map((examName) => {
