@@ -99,10 +99,13 @@ export function useHomepageState(): HomepageState {
     return buildUpgradePrompt({ userState, hasFullAccess, summary });
   }, [userState, hasFullAccess, summary]);
 
+  // Subscription status is only needed for logged-in dashboard content.
+  // Public visitors and crawlers must not wait on /api/subscription/status.
   const isLoading = Boolean(
-    subscription.isLoading ||
-      (isLoggedIn && summaryLoading && !summary) ||
-      (isLoggedIn && testerCtx?.isLoading && !tester),
+    isLoggedIn &&
+      (subscription.isLoading ||
+        (summaryLoading && !summary) ||
+        (testerCtx?.isLoading && !tester)),
   );
 
   const isPartial =
