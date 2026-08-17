@@ -109,10 +109,10 @@ function PricingSuccessContent() {
             "Payment went through, but access is still updating. Refresh in a moment or open Pricing again."
           );
         }
-      } catch (err) {
+      } catch {
         if (!cancelled) {
           setState("error");
-          setMessage(err instanceof Error ? err.message : "Something went wrong");
+          setMessage("Something went wrong confirming your payment. Please try again.");
         }
       }
     }
@@ -216,12 +216,6 @@ function PricingSuccessContent() {
               </>
             ) : null}
           </div>
-
-          {sessionId ? (
-            <p className="mt-6 break-all text-[10px] text-text-subtle">
-              Session {sessionId}
-            </p>
-          ) : null}
         </div>
       </Container>
     </div>

@@ -151,16 +151,10 @@ export default function PricingPage() {
         window.location.href = data.url;
         return;
       }
-      throw new Error(
-        data.error ?? `Could not start checkout (${res.status}). Try again.`
-      );
-    } catch (err) {
+      throw new Error("checkout_failed");
+    } catch {
       setLoading(null);
-      setBanner(
-        err instanceof Error
-          ? err.message
-          : "Could not start checkout. Try again."
-      );
+      setBanner("Could not start checkout. Try again.");
     }
   };
 

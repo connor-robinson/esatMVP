@@ -4,7 +4,6 @@ import { getStripe, getStripeKeyMeta, isStripeConfigured } from "@/lib/stripe/co
 import { createOrRetrieveCustomer } from "@/lib/stripe/supabase-admin";
 import { getPriceIdForPlan } from "@/lib/stripe/prices";
 import { getSeasonPassPrice } from "@/lib/stripe/best-value";
-import { stripeErrorMessage } from "@/lib/stripe/helpers";
 
 export const dynamic = "force-dynamic";
 
@@ -81,12 +80,14 @@ export async function POST(request: NextRequest) {
 
     try {
       await getStripe().prices.retrieve(priceId);
-    } catch {
-      const keyMeta = getStripeKeyMeta();
+    } catch (err) {
+      console.error("[create-checkout-session] price lookup failed", {
+        priceId,
+        key: getStripeKeyMeta(),
+        err,
+      });
       return NextResponse.json(
-        {
-          error: `No such price: '${priceId}'. Server is using ${keyMeta.source} (${keyMeta.mode} mode). If Vercel has STRIPE_SECRET_KEY_LIVE set to a different account/mode, remove it or align all keys and price IDs.`,
-        },
+        { error: "Failed to create checkout session" },
         { status: 500 }
       );
     }
@@ -108,8 +109,10 @@ export async function POST(request: NextRequest) {
     });
     return NextResponse.json({ url: session.url });
   } catch (err) {
-    const message = stripeErrorMessage(err);
     console.error("[create-checkout-session]", err);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to create checkout session" },
+      { status: 500 }
+    );
   }
 }
