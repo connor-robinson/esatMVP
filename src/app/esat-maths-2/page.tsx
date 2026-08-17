@@ -23,7 +23,7 @@ import {
 
 const PATH = SEO_ROUTES.maths2;
 
-const TITLE = "ESAT Maths 2 Preparation | Topics, Strategy and Practice";
+const TITLE = "ESAT Maths 2 Preparation | Syllabus, Topics & Practice";
 const DESCRIPTION =
   "Prepare for ESAT Mathematics 2 with a focused plan for algebra, functions, trigonometry, sequences, logs, calculus and timed problem solving.";
 

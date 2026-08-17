@@ -19,7 +19,7 @@ import {
 
 const PATH = SEO_ROUTES.goodScore;
 
-const TITLE = "What Is a Good ESAT Score? Score Scale and Next Steps";
+const TITLE = "What Is a Good ESAT Score? | The 1.0–9.0 Scale";
 const DESCRIPTION =
   "Understand ESAT scores, the 1.0–9.0 scale, module scores and how to use your score estimate to plan preparation.";
 

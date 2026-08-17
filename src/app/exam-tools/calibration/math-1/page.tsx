@@ -20,7 +20,7 @@ import {
 
 const PATH = APP_ROUTES.calibration;
 
-const TITLE = "Free ESAT Calibration Test | Find Your Weakest Skills";
+const TITLE = "ESAT Calibration Test 2026/27 | Find Your Weak Spots";
 const DESCRIPTION =
   "Take a free ESAT calibration test to identify your weak skills, speed problems, accuracy issues and recommended practice areas.";
 

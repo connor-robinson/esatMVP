@@ -13,7 +13,7 @@ import { SeoSection, SeoTextLink } from "@/components/seo/SeoSections";
 
 const PATH = SEO_ROUTES.commonMistakes;
 
-const TITLE = "Common ESAT Preparation Mistakes | What to Avoid";
+const TITLE = "Common ESAT Mistakes | What to Avoid in Prep";
 const DESCRIPTION =
   "Avoid the most common ESAT preparation mistakes: random practice, poor timing, weak no-calculator skills, bad review habits and full mocks too early.";
 

@@ -22,7 +22,7 @@ import {
 
 const PATH = SEO_ROUTES.physics;
 
-const TITLE = "ESAT Physics Preparation | Topics, Strategy and Practice";
+const TITLE = "ESAT Physics Preparation | Syllabus, Topics & Practice";
 const DESCRIPTION =
   "Prepare for ESAT Physics with a focused guide to mechanics, electricity, waves, units, graphs, formula choice and timed numerical reasoning.";
 
@@ -95,7 +95,7 @@ export default function EsatPhysicsPage() {
             { title: "Matter, density and pressure", body: "Solids, fluids and pressure relationships." },
             { title: "Thermal physics", body: "Heat transfer, specific heat capacity and changes of state." },
             { title: "Fields and magnetism", body: "Where specified for your module combination." },
-            { title: "Radioactivity and nuclear", body: "Where specified — decay, half-life and nuclear equations." },
+            { title: "Radioactivity and nuclear", body: "Where specified: decay, half-life and nuclear equations." },
             { title: "Graphs, units and proportion", body: "Reading gradients and areas, compound units, scaling." },
           ]}
         />
@@ -152,8 +152,8 @@ export default function EsatPhysicsPage() {
           ]}
         />
         <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
-          Note that ENGAA and NSAA share physics questions within the same year —
-          see{" "}
+          Note that ENGAA and NSAA share physics questions within the same year.
+          See{" "}
           <SeoTextLink href={SEO_ROUTES.engaaNsaaPapers}>
             the verified overlap list
           </SeoTextLink>{" "}

@@ -27,7 +27,7 @@ import { PAST_PAPERS } from "@/content/pastPapers";
 
 const PATH = SEO_ROUTES.pastPapers;
 
-const TITLE = "ESAT Past Papers | Official ENGAA, NSAA and TMUA Paper Library";
+const TITLE = "ESAT Past Papers | ENGAA, NSAA & TMUA Papers for ESAT";
 const DESCRIPTION =
   "Every official ENGAA, NSAA and TMUA past paper that helps with ESAT preparation, filterable by module, with answer keys and a verified duplicate list.";
 
@@ -69,7 +69,7 @@ const SECTIONS: readonly PastPaperSection[] = [
           "Maths 2 stretch via Part B advanced questions.",
         ]}
         weakFor={[
-          "Chemistry and Biology — ENGAA never covered them.",
+          "Chemistry and Biology. ENGAA never covered them.",
           "Questions marked outside the ESAT specification.",
         ]}
       />
@@ -89,7 +89,7 @@ const SECTIONS: readonly PastPaperSection[] = [
           "Physics from Part B.",
         ]}
         weakFor={[
-          "Maths 2 — use ENGAA Part B instead.",
+          "Maths 2. Use ENGAA Part B instead.",
           "Fresh practice if you already did that year's ENGAA paper.",
         ]}
       />
@@ -110,7 +110,7 @@ const SECTIONS: readonly PastPaperSection[] = [
         ]}
         weakFor={[
           "Physics, Chemistry and Biology.",
-          "Timing practice — TMUA allows far longer per question.",
+          "Timing practice. TMUA allows far longer per question.",
         ]}
       />
     ),
@@ -211,7 +211,7 @@ export default function EsatPastPapersPage() {
                 rel="noopener noreferrer nofollow"
                 className="block rounded-2xl bg-white/[0.04] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/[0.07]"
               >
-                {guide.label.replace("UAT-UK — ", "")}
+                {guide.label.replace("UAT-UK: ", "")}
               </a>
             </li>
           ))}

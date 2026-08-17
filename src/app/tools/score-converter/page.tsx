@@ -18,7 +18,7 @@ import {
 
 const PATH = APP_ROUTES.scoreConverter;
 
-const TITLE = "ESAT Score Converter | Estimate Your ESAT Module Score";
+const TITLE = "ESAT Score Converter 2026/27 | Raw Marks to 1.0–9.0";
 const DESCRIPTION =
   "Estimate your ESAT module score from raw marks and understand what your score might mean for preparation. Estimate only, not official scoring.";
 

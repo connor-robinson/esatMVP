@@ -20,7 +20,7 @@ import {
 
 const PATH = SEO_ROUTES.testDates;
 
-const TITLE = "ESAT Test Dates 2026–2027 | October and January Sittings";
+const TITLE = "ESAT Test Dates 2026/27 | October & January Sittings";
 const DESCRIPTION =
   "Key ESAT dates for 2027 entry, including booking deadlines, October and January test windows, bursary deadlines and results dates.";
 
@@ -84,7 +84,7 @@ export default function EsatTestDatesPage() {
       secondaryCta={{ href: SEO_ROUTES.preparation, label: "Read the prep guide" }}
       faq={FAQ}
       finalCta={{
-        heading: "Dates booked — now build the plan",
+        heading: "Dates booked. Now build the plan",
         body: "Once the sitting is fixed, the useful question is what to practise between now and then. Calibration gives a starting point based on your actual speed and accuracy rather than a guess.",
         primary: { href: APP_ROUTES.calibration, label: "Start free calibration" },
         secondary: { href: SEO_ROUTES.preparation, label: "See the preparation order" },
@@ -102,7 +102,7 @@ export default function EsatTestDatesPage() {
         <ResponsiveTable
           columns={["Stage", "October 2026 sitting", "January 2027 sitting"]}
           rows={KEY_DATES}
-          caption="All times as published by UAT-UK. Deadlines are hard cut-offs — booking does not reopen afterwards."
+          caption="All times as published by UAT-UK. Deadlines are hard cut-offs. Booking does not reopen afterwards."
         />
       </SeoSection>
 
@@ -145,7 +145,7 @@ export default function EsatTestDatesPage() {
           items={[
             "Confirm your required modules on the university course pages.",
             "Create your UAT-UK account.",
-            "Apply early for access arrangements or a bursary if relevant — those deadlines fall before booking closes.",
+            "Apply early for access arrangements or a bursary if relevant. Those deadlines fall before booking closes.",
             "Book before the deadline.",
             "Start calibration and build a preparation plan.",
           ]}

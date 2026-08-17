@@ -27,7 +27,7 @@ import { papersByExam } from "@/content/pastPapers";
 
 const PATH = SEO_ROUTES.tmuaForEsat;
 
-const TITLE = "TMUA for ESAT | When It Helps Your Maths and When It Does Not";
+const TITLE = "TMUA for ESAT | When It Helps Maths 2";
 const DESCRIPTION =
   "TMUA is supplementary practice for ESAT Mathematics 2, not a substitute exam. Where it genuinely helps, where it wastes time, and every official paper.";
 
@@ -252,7 +252,7 @@ export default function TmuaForEsatPage() {
         lead="All published by UAT-UK, linked directly. Paper 1 first, since it is the one worth your time."
       >
         <h3 className="text-xl font-display font-bold text-white">
-          Paper 1 — Applications of Mathematical Knowledge
+          Paper 1: Applications of Mathematical Knowledge
         </h3>
         <PastPaperTable
           className="mt-4"
@@ -261,7 +261,7 @@ export default function TmuaForEsatPage() {
         />
 
         <h3 className="mt-10 text-xl font-display font-bold text-white">
-          Paper 2 — Mathematical Reasoning
+          Paper 2: Mathematical Reasoning
         </h3>
         <PastPaperTable
           className="mt-4"

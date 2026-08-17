@@ -23,7 +23,7 @@ import {
 
 const PATH = SEO_ROUTES.maths1;
 
-const TITLE = "ESAT Maths 1 Preparation | Topics, Practice and Timing";
+const TITLE = "ESAT Maths 1 Preparation | Syllabus, Topics & Practice";
 const DESCRIPTION =
   "Prepare for ESAT Mathematics 1 with a focused guide to topics, timing, no-calculator skills, common mistakes and practice order.";
 

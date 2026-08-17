@@ -22,7 +22,7 @@ export function generateMetadata({
   }
   const exam = raw.toUpperCase() as ConverterExam;
   const full = EXAM_FULL_NAME[exam];
-  const title = `${exam} Score Converter — raw marks to scaled score & percentile`;
+  const title = `${exam} Score Converter | Raw Marks to 1.0–9.0`;
   const description = `Convert your ${exam} (${full}) past-paper raw marks into an estimated scaled score (1.0–9.0) and percentile. A historical proxy for ESAT-style performance, built from official ${exam} conversion data.`;
   return {
     title,

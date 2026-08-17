@@ -19,7 +19,7 @@ import {
 
 const PATH = SEO_ROUTES.noCalcPractice;
 
-const TITLE = "ESAT No-Calculator Practice | Speed and Accuracy Training";
+const TITLE = "ESAT No-Calculator Practice | Speed & Accuracy Training";
 const DESCRIPTION =
   "Improve ESAT no-calculator speed with targeted practice for fractions, ratios, algebra, estimation, units and formula rearrangement.";
 

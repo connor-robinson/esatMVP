@@ -22,7 +22,7 @@ import {
 
 const PATH = SEO_ROUTES.preparation;
 
-const TITLE = "ESAT Preparation Guide 2027 Entry | Study Plan, Practice and Timing";
+const TITLE = "ESAT Preparation 2026/27 | Study Plan, Practice & Timing";
 const DESCRIPTION =
   "Prepare for the ESAT with a clear plan for no-calculator speed, module practice, past papers, timing and mistake review. Start with a free calibration test.";
 
@@ -111,7 +111,7 @@ export default function EsatPreparationPage() {
             },
             {
               title: "Tight timing",
-              body: "Each module gives 40 minutes for 27 questions — roughly 90 seconds each.",
+              body: "Each module gives 40 minutes for 27 questions, roughly 90 seconds each.",
             },
             {
               title: "Mixed reasoning",

@@ -35,7 +35,7 @@ import {
 
 const PATH = SEO_ROUTES.engaaNsaaPapers;
 
-const TITLE = "ENGAA and NSAA Papers for ESAT | Which Questions Repeat";
+const TITLE = "ENGAA & NSAA Papers for ESAT | Which Ones to Use";
 const DESCRIPTION =
   "ENGAA and NSAA are the best legacy papers for ESAT practice, but they share many identical questions. Here is the verified duplicate list and which copy to solve.";
 

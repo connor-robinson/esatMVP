@@ -20,7 +20,7 @@ import {
 
 const PATH = SEO_ROUTES.calculatorRules;
 
-const TITLE = "Are Calculators Allowed in ESAT? No-Calculator Rules and Practice";
+const TITLE = "ESAT Calculator Rules 2026/27 | No Calculators Allowed";
 const DESCRIPTION =
   "Calculators are not allowed in ESAT. Learn what that means for preparation and how to practise no-calculator speed for maths and science questions.";
 
@@ -119,7 +119,7 @@ export default function EsatCalculatorRulesPage() {
         <ul className="space-y-4">
           <li className="rounded-2xl bg-white/[0.04] p-5">
             <p className="leading-relaxed text-[#94A3B8]">
-              <Expr>48 × 25 = 48 × 100 ÷ 4 = 1200</Expr> — multiply by 100 and
+              <Expr>48 × 25 = 48 × 100 ÷ 4 = 1200</Expr>. Multiply by 100 and
               divide by 4 rather than doing long multiplication.
             </p>
           </li>

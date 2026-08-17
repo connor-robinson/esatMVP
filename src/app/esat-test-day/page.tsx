@@ -21,7 +21,7 @@ import {
 
 const PATH = SEO_ROUTES.testDay;
 
-const TITLE = "What Is ESAT Test Day Like? Timing, Breaks, Whiteboards and Tips";
+const TITLE = "ESAT Test Day 2026/27 | Timing, Breaks & What to Expect";
 const DESCRIPTION =
   "A practical guide to ESAT test day: module timing, no automatic breaks, whiteboard rules, review screens, flagging questions and last-minute tips.";
 
@@ -108,7 +108,7 @@ export default function EsatTestDayPage() {
       <SeoSection heading="Breaks and timing">
         <SeoProse
           paragraphs={[
-            "Do not plan on a normal break between modules. UAT-UK says modules are taken one after another, with no automatic breaks. If you stop the test for any reason, the timer does not stop — and that includes going to the toilet.",
+            "Do not plan on a normal break between modules. UAT-UK says modules are taken one after another, with no automatic breaks. If you stop the test for any reason, the timer does not stop, and that includes going to the toilet.",
           ]}
         />
         <HighlightBox className="mt-5" title="Before the test starts">
@@ -129,7 +129,7 @@ export default function EsatTestDayPage() {
         <SeoList
           className="mt-6"
           items={[
-            "Keep working compact — board space runs out faster than you expect.",
+            "Keep working compact. Board space runs out faster than you expect.",
             "Write only the important intermediate step.",
             "Avoid filling the board with long algebra unless it is genuinely necessary.",
             "Mark questions where your working is incomplete, so the review screen is useful.",
@@ -157,7 +157,7 @@ export default function EsatTestDayPage() {
             ],
             [
               "Final 8 min",
-              "Fill every blank, check arithmetic traps, and leave nothing empty — there is no negative marking.",
+              "Fill every blank, check arithmetic traps, and leave nothing empty. There is no negative marking.",
             ],
           ]}
           caption="A pacing suggestion, not an official instruction. Adjust it to how your own first pass usually goes."
@@ -168,7 +168,7 @@ export default function EsatTestDayPage() {
         <SeoProse
           paragraphs={[
             "Your selected modules are taken one after another, and each module is separately timed.",
-            "We do not publish a fixed universal module order. Public UAT-UK material confirms the modules are separate and consecutive, but we have not found an official statement guaranteeing one order for every possible module combination — so treat any specific ordering you read online with caution.",
+            "We do not publish a fixed universal module order. Public UAT-UK material confirms the modules are separate and consecutive, but we have not found an official statement guaranteeing one order for every possible module combination, so treat any specific ordering you read online with caution.",
           ]}
         />
       </SeoSection>

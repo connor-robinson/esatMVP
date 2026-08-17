@@ -9,7 +9,7 @@ import {
 import { FAQ_GUIDE_SECTIONS, SEO_LINKS } from "@/lib/seo/links";
 
 const PATH = APP_ROUTES.faqs;
-const TITLE = "ESAT Guides & FAQs | Dates, Modules, Papers and Scoring";
+const TITLE = "ESAT Guides 2026/27 | Dates, Modules, Papers & Scoring";
 const DESCRIPTION =
   "Browse ESAT CAMP guides on test dates, Maths 1 and 2, Physics, past papers, calculator rules and what a good score looks like.";
 
