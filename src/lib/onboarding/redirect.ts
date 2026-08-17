@@ -16,7 +16,12 @@ export function sanitizeRedirectTo(redirectTo: string | null | undefined): strin
   if (!redirectTo.startsWith("/") || redirectTo.startsWith("//")) {
     return "/";
   }
-  if (redirectTo.startsWith("/login") || redirectTo.startsWith("/signup") || redirectTo.startsWith("/onboarding")) {
+  if (
+    redirectTo.startsWith("/login") ||
+    redirectTo.startsWith("/signup") ||
+    redirectTo.startsWith("/onboarding") ||
+    redirectTo.startsWith("/auth")
+  ) {
     return "/";
   }
   return redirectTo;

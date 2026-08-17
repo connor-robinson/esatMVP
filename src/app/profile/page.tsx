@@ -151,6 +151,8 @@ export default function ProfilePage() {
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showChangeEmail, setShowChangeEmail] = useState(false);
   const [showResetData, setShowResetData] = useState(false);
+  const [passwordLinkSent, setPasswordLinkSent] = useState(false);
+  const [passwordLinkSending, setPasswordLinkSending] = useState(false);
 
   const usesEmailPassword = session?.user
     ? hasEmailPasswordIdentity(session.user)
@@ -321,6 +323,25 @@ export default function ProfilePage() {
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.error || "Failed to change password");
+    }
+  };
+
+  const handleAddPassword = async () => {
+    if (!email || passwordLinkSending) return;
+    setPasswordLinkSending(true);
+    try {
+      const { getPasswordResetCallbackUrl } = await import("@/lib/auth/urls");
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: getPasswordResetCallbackUrl(),
+      });
+      if (error) {
+        throw error;
+      }
+      setPasswordLinkSent(true);
+    } catch {
+      setPasswordLinkSent(false);
+    } finally {
+      setPasswordLinkSending(false);
     }
   };
 
@@ -996,9 +1017,26 @@ export default function ProfilePage() {
                       />
                     ) : oauthProviderLabel ? (
                       <SettingsRow
-                        label="Sign-in method"
-                        value={oauthProviderLabel}
-                        description={`You sign in with ${oauthProviderLabel}. Password and email are managed in your ${oauthProviderLabel} account.`}
+                        label="Password"
+                        value={passwordLinkSent ? "Reset email sent" : oauthProviderLabel}
+                        description={
+                          passwordLinkSent
+                            ? `Check ${email} for a link to set a password. You can keep signing in with ${oauthProviderLabel}.`
+                            : `You currently sign in with ${oauthProviderLabel}. Add a password to also sign in with email.`
+                        }
+                        action={
+                          <SettingsButton
+                            type="button"
+                            onClick={() => void handleAddPassword()}
+                            disabled={passwordLinkSending || passwordLinkSent}
+                          >
+                            {passwordLinkSending
+                              ? "Sending…"
+                              : passwordLinkSent
+                                ? "Sent"
+                                : "Add password"}
+                          </SettingsButton>
+                        }
                       />
                     ) : null}
                   </SettingsGroup>

@@ -20,7 +20,6 @@ import { useTesterProgrammeOptional } from '@/contexts/TesterProgrammeContext';
 import { getTesterNavAction } from '@/lib/tester/checkpoint';
 import { BrandNavLockup } from '@/components/brand/BrandNavLockup';
 import { SignOutConfirmModal } from '@/components/auth/SignOutConfirmModal';
-import { GoogleLogo } from '@/components/auth/GoogleAuthButton';
 import { APP_NAME } from '@/config/brand';
 import { NAVBAR_HEIGHT_PX } from '@/config/layout';
 import {
@@ -368,7 +367,6 @@ export function Navbar() {
 
       {!session?.user ? (
         <Link href={signupHref} className={cn(navCtaClass, 'mr-0.5')}>
-          <GoogleLogo className='h-4 w-4 shrink-0' />
           <span className='hidden sm:inline'>Sign up / Sign in</span>
           <span className='sm:hidden'>Sign up</span>
         </Link>

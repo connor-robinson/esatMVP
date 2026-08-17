@@ -3,16 +3,27 @@ import type { NextRequest } from 'next/server';
 import { createServerClient as createServerClientSSR } from '@supabase/ssr';
 import type { Database } from '@/lib/supabase/types';
 import { buildOnboardingUrl, sanitizeRedirectTo } from '@/lib/onboarding/redirect';
+import {
+  PASSWORD_RECOVERY_COOKIE,
+  isRecoveryAllowedPath,
+} from '@/lib/auth/recovery';
+import { RESET_PASSWORD_PATH } from '@/lib/auth/urls';
 
 export async function middleware(request: NextRequest) {
+  const path = request.nextUrl.pathname;
+  const recovering = request.cookies.get(PASSWORD_RECOVERY_COOKIE)?.value === '1';
+  if (recovering && !isRecoveryAllowedPath(path)) {
+    return NextResponse.redirect(new URL(RESET_PASSWORD_PATH, request.url));
+  }
+
   if (
-    request.nextUrl.pathname.startsWith('/api') ||
-    request.nextUrl.pathname.startsWith('/_next') ||
-    request.nextUrl.pathname.startsWith('/auth') ||
-    request.nextUrl.pathname === '/login' ||
-    request.nextUrl.pathname === '/signup' ||
-    request.nextUrl.pathname.startsWith('/dev') ||
-    request.nextUrl.pathname.startsWith('/static')
+    path.startsWith('/api') ||
+    path.startsWith('/_next') ||
+    path.startsWith('/auth') ||
+    path.startsWith('/login') ||
+    path === '/signup' ||
+    path.startsWith('/dev') ||
+    path.startsWith('/static')
   ) {
     return NextResponse.next();
   }

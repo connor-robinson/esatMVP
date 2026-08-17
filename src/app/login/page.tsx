@@ -1,5 +1,5 @@
 /**
- * Login / sign-up — Google OAuth (same flow; Supabase creates account on first sign-in).
+ * Login / sign-up — email + password, or Google OAuth.
  */
 
 "use client";
@@ -7,15 +7,20 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
+import {
+  useSupabaseClient,
+  useSupabaseSession,
+} from "@/components/auth/SupabaseSessionProvider";
+import { AuthPageShell } from "@/components/auth/AuthPageShell";
+import { EmailPasswordForm } from "@/components/auth/EmailPasswordForm";
 import {
   GoogleAuthButton,
   type GoogleAuthMode,
 } from "@/components/auth/GoogleAuthButton";
-import { BrandLogo } from "@/components/brand/BrandLogo";
-import { Container } from "@/components/layout/Container";
+import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { signInWithGoogle } from "@/lib/auth/googleOAuth";
+import { mapAuthError } from "@/lib/auth/errors";
 
 type AuthMode = GoogleAuthMode;
 
@@ -43,9 +48,12 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
   const supabase = useSupabaseClient();
   const session = useSupabaseSession();
-  const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isChecking, setIsChecking] = useState(true);
+  const [pendingEmail, setPendingEmail] = useState<string | null>(null);
+  const [resendBusy, setResendBusy] = useState(false);
+  const [resendMessage, setResendMessage] = useState<string | null>(null);
 
   const mode: AuthMode = useMemo(() => {
     const fromUrl = searchParams.get("mode");
@@ -79,7 +87,9 @@ export default function LoginPage() {
           try {
             const prefsRes = await fetch("/api/profile/preferences");
             const prefs = prefsRes.ok ? await prefsRes.json() : null;
-            const { resolvePostAuthPath } = await import("@/lib/onboarding/redirect");
+            const { resolvePostAuthPath } = await import(
+              "@/lib/onboarding/redirect"
+            );
             router.push(
               resolvePostAuthPath(
                 prefs
@@ -97,7 +107,7 @@ export default function LoginPage() {
         } else {
           setIsChecking(false);
         }
-      } catch (err) {
+      } catch {
         setIsChecking(false);
       }
     };
@@ -106,12 +116,14 @@ export default function LoginPage() {
   }, [supabase, redirectTo, router]);
 
   useEffect(() => {
-    if (session?.user && !isChecking) {
+    if (session?.user && !isChecking && !pendingEmail) {
       void (async () => {
         try {
           const prefsRes = await fetch("/api/profile/preferences");
           const prefs = prefsRes.ok ? await prefsRes.json() : null;
-          const { resolvePostAuthPath } = await import("@/lib/onboarding/redirect");
+          const { resolvePostAuthPath } = await import(
+            "@/lib/onboarding/redirect"
+          );
           router.push(
             resolvePostAuthPath(
               prefs
@@ -128,7 +140,7 @@ export default function LoginPage() {
         }
       })();
     }
-  }, [session, redirectTo, router, isChecking]);
+  }, [session, redirectTo, router, isChecking, pendingEmail]);
 
   const buildAuthUrl = (nextMode: AuthMode) => {
     const params = new URLSearchParams();
@@ -142,7 +154,7 @@ export default function LoginPage() {
 
   const handleGoogleAuth = async () => {
     try {
-      setLoading(true);
+      setGoogleLoading(true);
       setError(null);
 
       if (mode === "signup") {
@@ -153,104 +165,166 @@ export default function LoginPage() {
         }
       }
 
-      const { error: signInError } = await signInWithGoogle(supabase, redirectTo);
+      const { error: signInError } = await signInWithGoogle(
+        supabase,
+        redirectTo,
+      );
 
       if (signInError) {
-        setError(signInError.message);
-        setLoading(false);
+        setError(mapAuthError(signInError, signInError.message));
+        setGoogleLoading(false);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-      setLoading(false);
+      setError(mapAuthError(err, "Something went wrong"));
+      setGoogleLoading(false);
     }
   };
 
-  if (session?.user || isChecking) {
+  const handleResend = async () => {
+    if (!pendingEmail) return;
+    setResendBusy(true);
+    setResendMessage(null);
+    try {
+      const { error: resendError } = await supabase.auth.resend({
+        type: "signup",
+        email: pendingEmail,
+      });
+      if (resendError) {
+        setResendMessage(mapAuthError(resendError, resendError.message));
+      } else {
+        setResendMessage("Another email is on its way.");
+      }
+    } catch (err) {
+      setResendMessage(mapAuthError(err, "Could not resend the email."));
+    } finally {
+      setResendBusy(false);
+    }
+  };
+
+  if ((session?.user && !pendingEmail) || isChecking) {
     return null;
   }
 
   const alternateMode: AuthMode = mode === "signin" ? "signup" : "signin";
 
+  if (pendingEmail) {
+    return (
+      <AuthPageShell
+        title="Check your email"
+        subtitle={`We sent a confirmation link to ${pendingEmail}. Open it to finish creating your account.`}
+        footer="Didn't get it? Check spam, or resend the email."
+      >
+        <div className="space-y-3">
+          {resendMessage ? (
+            <p className="text-center text-sm text-text-muted">{resendMessage}</p>
+          ) : null}
+          <Button
+            type="button"
+            variant="primary"
+            className="h-11 w-full"
+            onClick={() => void handleResend()}
+            disabled={resendBusy}
+          >
+            {resendBusy ? "Sending…" : "Resend email"}
+          </Button>
+          <button
+            type="button"
+            className="w-full text-center text-sm text-text-muted hover:text-text"
+            onClick={() => {
+              setPendingEmail(null);
+              setResendMessage(null);
+            }}
+          >
+            Use a different email
+          </button>
+          <Link
+            href={buildAuthUrl("signin")}
+            className="block w-full text-center text-sm text-text-muted hover:text-text"
+          >
+            Already have an account? Sign in
+          </Link>
+        </div>
+      </AuthPageShell>
+    );
+  }
+
   return (
-    <Container size="lg">
-      <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center py-12">
-        <div className="w-full max-w-[400px]">
-          <div className="overflow-hidden rounded-organic-xl border border-border-subtle bg-surface">
-            <div className="flex border-b border-border-subtle">
-              {(["signin", "signup"] as const).map((tab) => (
-                <Link
-                  key={tab}
-                  href={buildAuthUrl(tab)}
-                  className={cn(
-                    "flex-1 py-3.5 text-center text-sm font-medium transition-colors",
-                    mode === tab
-                      ? "bg-surface-mid text-text"
-                      : "text-text-muted hover:bg-surface-subtle hover:text-text",
-                  )}
-                  aria-current={mode === tab ? "page" : undefined}
-                >
-                  {tab === "signin" ? "Sign in" : "Sign up"}
-                </Link>
-              ))}
-            </div>
-
-            <div className="space-y-6 px-6 py-8 sm:px-8">
-              <div className="flex flex-col items-center gap-4 text-center">
-                <BrandLogo variant="full" size="lg" />
-                <div className="space-y-1.5">
-                  <h1 className="text-xl font-semibold tracking-tight text-text">
-                    {copy.title}
-                  </h1>
-                  <p className="text-sm leading-relaxed text-text-muted">
-                    {copy.subtitle}
-                  </p>
-                </div>
-              </div>
-
-              {error && (
-                <div
-                  role="alert"
-                  className="rounded-organic-md border border-error/25 bg-error/10 px-4 py-3 text-sm text-error"
-                >
-                  {error}
-                </div>
+    <AuthPageShell
+      title={copy.title}
+      subtitle={copy.subtitle}
+      tabs={
+        <div className="flex bg-surface-subtle">
+          {(["signin", "signup"] as const).map((tab) => (
+            <Link
+              key={tab}
+              href={buildAuthUrl(tab)}
+              className={cn(
+                "flex-1 py-3.5 text-center text-sm font-medium transition-colors",
+                mode === tab
+                  ? "bg-surface text-text"
+                  : "text-text-muted hover:text-text",
               )}
+              aria-current={mode === tab ? "page" : undefined}
+            >
+              {tab === "signin" ? "Sign in" : "Sign up"}
+            </Link>
+          ))}
+        </div>
+      }
+      footer="By continuing, you create or access an ESAT CAMP account."
+    >
+      {error ? (
+        <div
+          role="alert"
+          className="rounded-organic-md bg-error/10 px-4 py-3 text-sm text-error"
+        >
+          {error}
+        </div>
+      ) : null}
 
-              <GoogleAuthButton
-                mode={mode}
-                loading={loading}
-                onClick={handleGoogleAuth}
-              />
+      <EmailPasswordForm
+        mode={mode}
+        redirectTo={redirectTo}
+        disabled={googleLoading}
+        onError={setError}
+        onCheckEmail={setPendingEmail}
+      />
 
-              <p className="text-center text-sm text-text-muted">
-                {mode === "signup" ? (
-                  <Link
-                    href={buildAuthUrl("signin")}
-                    className="font-medium text-text-muted underline-offset-2 transition-colors hover:text-text hover:underline"
-                  >
-                    I already have an account
-                  </Link>
-                ) : (
-                  <>
-                    {copy.switchPrompt}{" "}
-                    <Link
-                      href={buildAuthUrl(alternateMode)}
-                      className="font-medium text-text underline-offset-2 hover:underline"
-                    >
-                      {copy.switchLabel}
-                    </Link>
-                  </>
-                )}
-              </p>
-            </div>
-          </div>
-
-          <p className="mt-6 text-center text-xs text-text-subtle">
-            By continuing, you agree to our use of Google sign-in to authenticate
-            your account.
-          </p>
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-border-subtle" />
+        </div>
+        <div className="relative flex justify-center text-xs">
+          <span className="bg-surface px-3 text-text-subtle">or</span>
         </div>
       </div>
-    </Container>
+
+      <GoogleAuthButton
+        mode={mode}
+        loading={googleLoading}
+        onClick={handleGoogleAuth}
+      />
+
+      <p className="text-center text-sm text-text-muted">
+        {mode === "signup" ? (
+          <Link
+            href={buildAuthUrl("signin")}
+            className="font-medium text-text-muted underline-offset-2 transition-colors hover:text-text hover:underline"
+          >
+            I already have an account
+          </Link>
+        ) : (
+          <>
+            {copy.switchPrompt}{" "}
+            <Link
+              href={buildAuthUrl(alternateMode)}
+              className="font-medium text-text underline-offset-2 hover:underline"
+            >
+              {copy.switchLabel}
+            </Link>
+          </>
+        )}
+      </p>
+    </AuthPageShell>
   );
 }

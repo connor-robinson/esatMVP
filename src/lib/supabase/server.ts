@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import {
   createServerClient as createServerClientSSR,
 } from "@supabase/ssr";
+import type { NextRequest, NextResponse } from "next/server";
 import type { Database } from "./types";
 
 function getSupabaseEnv() {
@@ -60,6 +61,24 @@ export function createServerClient() {
 // Alias for route handlers - uses the same server client
 export function createRouteClient() {
   return createServerClient();
+}
+
+/** Cookie-aware client for auth callback / confirm redirects. */
+export function createCallbackClient(request: NextRequest, response: NextResponse) {
+  const { supabaseUrl, supabaseAnonKey } = getSupabaseEnv();
+  return createServerClientSSR<Database>(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
+      },
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value, options }) => {
+          request.cookies.set(name, value);
+          response.cookies.set(name, value, options);
+        });
+      },
+    },
+  });
 }
 
 

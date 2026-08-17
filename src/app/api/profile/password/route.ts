@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
+import { validatePassword } from '@/lib/auth/password';
+import { mapAuthError } from '@/lib/auth/errors';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,11 +12,10 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: NextRequest) {
   try {
     const supabase = createServerClient();
-    
-    // Get current user
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    
-    if (sessionError || !session) {
+
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !user?.email) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -31,16 +32,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (newPassword.length < 6) {
+    const check = validatePassword(newPassword);
+    if (!check.ok) {
       return NextResponse.json(
-        { error: 'New password must be at least 6 characters' },
+        { error: check.error },
         { status: 400 }
       );
     }
 
-    // Verify current password by attempting to sign in
     const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: session.user.email!,
+      email: user.email,
       password: currentPassword,
     });
 
@@ -51,14 +52,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Update password
     const { error: updateError } = await supabase.auth.updateUser({
       password: newPassword,
     });
 
     if (updateError) {
       return NextResponse.json(
-        { error: 'Failed to update password' },
+        { error: mapAuthError(updateError, 'Failed to update password') },
         { status: 500 }
       );
     }
@@ -71,4 +71,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

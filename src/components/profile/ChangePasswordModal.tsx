@@ -3,6 +3,10 @@
 import { useState } from "react";
 import { X, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  MIN_PASSWORD_LENGTH,
+  validatePasswordConfirmation,
+} from "@/lib/auth/password";
 
 interface ChangePasswordModalProps {
   isOpen: boolean;
@@ -27,13 +31,9 @@ export function ChangePasswordModal({ isOpen, onClose, onConfirm }: ChangePasswo
       return;
     }
 
-    if (newPassword.length < 6) {
-      setError("New password must be at least 6 characters");
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      setError("New passwords do not match");
+    const check = validatePasswordConfirmation(newPassword, confirmPassword);
+    if (!check.ok) {
+      setError(check.error || "Invalid password");
       return;
     }
 
@@ -119,7 +119,7 @@ export function ChangePasswordModal({ isOpen, onClose, onConfirm }: ChangePasswo
                   "disabled:opacity-50 disabled:cursor-not-allowed",
                   error ? "border-error/50" : "border-border"
                 )}
-                placeholder="Enter new password (min 6 characters)"
+                placeholder={`Enter new password (min ${MIN_PASSWORD_LENGTH} characters)`}
               />
             </div>
 

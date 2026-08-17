@@ -25,7 +25,12 @@ export function UsernameGate({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      if (pathname?.startsWith("/onboarding")) {
+      if (
+        pathname?.startsWith("/onboarding") ||
+        pathname?.startsWith("/login") ||
+        pathname?.startsWith("/auth") ||
+        pathname === "/signup"
+      ) {
         setChecking(false);
         return;
       }
@@ -56,7 +61,7 @@ export function UsernameGate({ children }: { children: React.ReactNode }) {
     void checkSetup();
   }, [session, pathname]);
 
-  if (checking && session?.user && !pathname?.startsWith("/onboarding")) {
+  if (checking && session?.user && !pathname?.startsWith("/onboarding") && !pathname?.startsWith("/login") && !pathname?.startsWith("/auth")) {
     return (
       <>
         {children}

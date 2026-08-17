@@ -107,6 +107,13 @@ export function GoogleOneTap() {
   const startOneTap = useCallback(async () => {
     if (!GOOGLE_CLIENT_ID || !window.google?.accounts?.id) return;
     if (session?.user || initializingRef.current) return;
+    if (
+      pathname?.startsWith("/login") ||
+      pathname?.startsWith("/auth") ||
+      pathname === "/signup"
+    ) {
+      return;
+    }
 
     initializingRef.current = true;
     try {
@@ -134,10 +141,18 @@ export function GoogleOneTap() {
     } finally {
       initializingRef.current = false;
     }
-  }, [handleCredential, session?.user, supabase.auth]);
+  }, [handleCredential, pathname, session?.user, supabase.auth]);
 
   useEffect(() => {
     if (session?.user) {
+      window.google?.accounts?.id?.cancel();
+      return;
+    }
+    if (
+      pathname?.startsWith("/login") ||
+      pathname?.startsWith("/auth") ||
+      pathname === "/signup"
+    ) {
       window.google?.accounts?.id?.cancel();
       return;
     }
@@ -147,6 +162,13 @@ export function GoogleOneTap() {
   }, [pathname, session?.user, startOneTap]);
 
   if (!GOOGLE_CLIENT_ID || session?.user) {
+    return null;
+  }
+  if (
+    pathname?.startsWith("/login") ||
+    pathname?.startsWith("/auth") ||
+    pathname === "/signup"
+  ) {
     return null;
   }
 
