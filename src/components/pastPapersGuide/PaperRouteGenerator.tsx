@@ -2,7 +2,9 @@
 
 import {
   Suspense,
+  startTransition,
   useCallback,
+  useDeferredValue,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -402,34 +404,56 @@ function PaperRouteGeneratorInner() {
   const searchParams = useSearchParams();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showModuleTip, setShowModuleTip] = useState(true);
-
-  const modules = useMemo(
-    () => parseModulesParam(searchParams.get("modules")),
-    [searchParams],
+  const [modules, setModules] = useState<GuideModuleId[]>(() =>
+    parseModulesParam(searchParams.get("modules")),
   );
+  const deferredModules = useDeferredValue(modules);
+  const route = useMemo(
+    () => buildPaperRoute({ modules: deferredModules }),
+    [deferredModules],
+  );
+  const syncingRef = useRef(false);
 
-  const route = useMemo(() => buildPaperRoute({ modules }), [modules]);
+  // Keep the shareable URL in sync without blocking pill clicks.
+  useEffect(() => {
+    const nextParam = modulesToParam(modules);
+    if (searchParams.get("modules") === nextParam) return;
 
-  const updateQuery = useCallback(
-    (nextModules: GuideModuleId[]) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set("modules", modulesToParam(nextModules));
-      params.delete("progress");
+    syncingRef.current = true;
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("modules", nextParam);
+    params.delete("progress");
+    startTransition(() => {
       router.replace(`?${params.toString()}`, { scroll: false });
-    },
-    [router, searchParams],
-  );
+    });
+  }, [modules, router, searchParams]);
+
+  useEffect(() => {
+    if (syncingRef.current) {
+      syncingRef.current = false;
+      return;
+    }
+    const fromUrl = parseModulesParam(searchParams.get("modules"));
+    setModules((current) =>
+      current.join() === fromUrl.join() ? current : fromUrl,
+    );
+  }, [searchParams]);
 
   const onModuleToggle = (id: GuideModuleId) => {
     setShowModuleTip(false);
-    const next = toggleModule(modules, id);
-    if (next === modules || next.join() === modules.join()) return;
-    updateQuery(next);
-    trackEvent("past_paper_plan_module_changed", {
-      module: id,
-      selected: next.includes(id),
-      surface: "past_papers_guide",
+    setModules((current) => {
+      const next = toggleModule(current, id);
+      if (next.join() === current.join()) return current;
+      queueMicrotask(() => {
+        trackEvent("past_paper_plan_module_changed", {
+          module: id,
+          selected: next.includes(id),
+          surface: "past_papers_guide",
+        });
+      });
+      return next;
     });
+    setExpandedId(null);
   };
 
   return (
@@ -465,19 +489,22 @@ function PaperRouteGeneratorInner() {
                   key={module.id}
                   type="button"
                   aria-pressed={active}
-                  disabled={atCap}
+                  aria-disabled={atCap}
                   title={
                     atCap
                       ? `Maximum ${MAX_GUIDE_MODULES} subjects`
                       : module.label
                   }
-                  onClick={() => onModuleToggle(module.id)}
+                  onClick={() => {
+                    if (atCap) return;
+                    onModuleToggle(module.id);
+                  }}
                   className={cn(
                     "min-h-10 w-full rounded-full px-1 py-2 text-center text-[11px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6] sm:min-h-11 sm:px-2 sm:text-sm",
                     active
                       ? "bg-[#3B82F6] text-white"
                       : atCap
-                        ? "bg-white/[0.03] text-[#475569]"
+                        ? "cursor-not-allowed bg-white/[0.03] text-[#475569]"
                         : "bg-white/5 text-[#94A3B8] hover:bg-white/10 hover:text-white",
                   )}
                 >
@@ -489,7 +516,13 @@ function PaperRouteGeneratorInner() {
         </div>
       </div>
 
-      <div className="w-full" aria-live="polite">
+      <div
+        className={cn(
+          "w-full transition-opacity",
+          modules !== deferredModules && "opacity-70",
+        )}
+        aria-live="polite"
+      >
         <CurvyRouteTimeline
           route={route}
           expandedId={expandedId}
