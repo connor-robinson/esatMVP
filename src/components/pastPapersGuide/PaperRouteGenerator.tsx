@@ -250,39 +250,52 @@ function CurvyRouteTimeline({
   onToggle: (id: string) => void;
 }) {
   const trackRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLElement | null)[]>([]);
   const [centers, setCenters] = useState<number[]>([]);
-  const [trackHeight, setTrackHeight] = useState(0);
 
   const itemCount = route.length + 1;
+  const routeKey = route.map((node) => node.id).join("|");
 
   const measure = useCallback(() => {
     const track = trackRef.current;
     if (!track) return;
     const trackTop = track.getBoundingClientRect().top;
-    const next = cardRefs.current.slice(0, itemCount).map((el) => {
+
+    // Drop stale refs when the route shortens so old nodes cannot inflate the spine.
+    if (cardRefs.current.length > itemCount) {
+      cardRefs.current = cardRefs.current.slice(0, itemCount);
+    }
+
+    const next = Array.from({ length: itemCount }, (_, index) => {
+      const el = cardRefs.current[index];
       if (!el) return 0;
       const rect = el.getBoundingClientRect();
       return rect.top - trackTop + rect.height / 2;
     });
     setCenters(next);
-    setTrackHeight(track.scrollHeight);
   }, [itemCount]);
 
   useLayoutEffect(() => {
     measure();
-  }, [measure, route, expandedId]);
+  }, [measure, routeKey, expandedId]);
 
   useEffect(() => {
-    const timer = window.setTimeout(measure, 430);
-    return () => window.clearTimeout(timer);
-  }, [expandedId, measure]);
+    const timer = window.setTimeout(measure, 50);
+    const settle = window.setTimeout(measure, 430);
+    return () => {
+      window.clearTimeout(timer);
+      window.clearTimeout(settle);
+    };
+  }, [expandedId, measure, routeKey]);
 
   useEffect(() => {
     const track = trackRef.current;
+    const cards = cardsRef.current;
     if (!track) return;
     const observer = new ResizeObserver(() => measure());
     observer.observe(track);
+    if (cards) observer.observe(cards);
     cardRefs.current.forEach((el) => {
       if (el) observer.observe(el);
     });
@@ -291,13 +304,10 @@ function CurvyRouteTimeline({
       observer.disconnect();
       window.removeEventListener("resize", measure);
     };
-  }, [measure, itemCount]);
+  }, [measure, itemCount, routeKey]);
 
-  const endY =
-    centers.length > 0
-      ? Math.max(...centers, trackHeight - 8)
-      : Math.max(trackHeight - 8, 0);
-  const spinePath = generateSpinePath(0, endY);
+  const endY = centers.length > 0 ? (centers[centers.length - 1] ?? 0) : 0;
+  const spinePath = generateSpinePath(0, Math.max(endY, 1));
   const expandedIndex =
     expandedId === null
       ? -1
@@ -307,15 +317,11 @@ function CurvyRouteTimeline({
       ? centers[expandedIndex]
       : centers[0] ?? 0;
   const progressPath =
-    centers.length > 0 ? generateSpinePath(0, progressY) : "";
+    centers.length > 0 ? generateSpinePath(0, Math.max(progressY, 1)) : "";
 
   return (
     <div ref={trackRef} className="relative flex gap-3 sm:gap-5">
-      <div
-        className="relative w-12 shrink-0 sm:w-[4.5rem]"
-        style={{ minHeight: trackHeight || undefined }}
-        aria-hidden
-      >
+      <div className="relative w-12 shrink-0 self-stretch sm:w-[4.5rem]" aria-hidden>
         <svg
           className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 overflow-visible"
           width={SPINE_WIDTH}
@@ -340,14 +346,13 @@ function CurvyRouteTimeline({
               strokeWidth={6}
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="transition-[d] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
             />
           ) : null}
         </svg>
 
         {route.map((node, index) => {
           const y = centers[index];
-          if (y === undefined) return null;
+          if (y === undefined || y === 0) return null;
           const accent = statusAccent(node.status);
           const expanded = expandedId === node.id;
           return (
@@ -363,11 +368,11 @@ function CurvyRouteTimeline({
           );
         })}
 
-        {centers[route.length] !== undefined ? (
+        {centers.length === itemCount ? (
           <span
             className="absolute z-[1] flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/[0.06] text-[#94A3B8] ring-4 ring-[#0A0F1D]"
             style={{
-              left: getNodeX(centers[route.length]),
+              left: getNodeX(centers[route.length]!),
               top: centers[route.length],
             }}
             title="End of roadmap"
@@ -377,7 +382,7 @@ function CurvyRouteTimeline({
         ) : null}
       </div>
 
-      <div className="min-w-0 flex-1">
+      <div ref={cardsRef} className="min-w-0 flex-1">
         {route.map((node, index) => (
           <RouteCard
             key={node.id}

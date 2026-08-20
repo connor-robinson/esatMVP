@@ -164,13 +164,6 @@ export function buildPaperRoute({ modules }: BuildRouteInput): RouteNode[] {
     });
   }
 
-  push({
-    id: "full-mocks",
-    title: "Full ESAT-format mocks",
-    body: "Build 40-minute, 27-question modules. Then practise all required modules back-to-back so speed and concentration still hold in the final module.",
-    status: "active",
-  });
-
   return nodes;
 }
 

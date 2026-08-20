@@ -6,12 +6,12 @@ import {
 } from "@/lib/pastPapersGuide/recommendations";
 
 describe("buildPaperRoute", () => {
-  it("always starts with ESAT samples and ends with full mocks", () => {
+  it("always starts with ESAT samples", () => {
     const route = buildPaperRoute({
       modules: ["maths1", "physics"],
     });
     expect(route[0]?.id).toBe("esat-samples");
-    expect(route.at(-1)?.id).toBe("full-mocks");
+    expect(route.some((node) => node.id === "full-mocks")).toBe(false);
   });
 
   it("includes NSAA Part A for Mathematics 1", () => {
