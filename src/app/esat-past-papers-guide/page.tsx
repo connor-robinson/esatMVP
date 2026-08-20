@@ -168,7 +168,7 @@ export default function EsatPastPapersGuidePage() {
         <SeoSection
           id="roadmap"
           heading="Your shortest useful route"
-          lead="Choose your ESAT modules. We hide irrelevant sections and mark the Skip / Unique only steps that appear if you follow this order from the start, matching the past papers roadmap."
+          lead="Choose your ESAT modules. We hide irrelevant sections and mark the Skip / Unique only steps that appear if you follow this order from the start."
         >
           <PaperRouteGenerator />
         </SeoSection>

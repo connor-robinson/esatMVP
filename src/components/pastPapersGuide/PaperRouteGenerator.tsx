@@ -1,8 +1,9 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useCallback, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { trackEvent } from "@/lib/ga/trackEvent";
 import { APP_ROUTES } from "@/lib/seo/config";
@@ -12,21 +13,9 @@ import {
   buildPaperRoute,
   modulesToParam,
   parseModulesParam,
-  routeToPlainText,
   type RouteNode,
 } from "@/lib/pastPapersGuide/recommendations";
-
-function useReducedMotion() {
-  const [reduced, setReduced] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setReduced(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-  return reduced;
-}
+import { ROADMAP_EXPAND_TRANSITION_CLASS } from "@/components/papers/roadmap/roadmapTimelineLayout";
 
 function toggleModule(
   current: readonly GuideModuleId[],
@@ -38,85 +27,160 @@ function toggleModule(
   return [...current, id];
 }
 
-function RouteNodeCard({
+function statusAccent(status: RouteNode["status"]) {
+  if (status === "skipped") {
+    return {
+      node: "bg-red-400/80 ring-red-400/30",
+      badge: "bg-red-500/15 text-red-300",
+      label: "Skip",
+      bar: "bg-red-400/50",
+    };
+  }
+  if (status === "partial") {
+    return {
+      node: "bg-[#C9A227] ring-[#C9A227]/30",
+      badge: "bg-[#C9A227]/15 text-[#E8D5A3]",
+      label: "Unique only",
+      bar: "bg-[#C9A227]/60",
+    };
+  }
+  return {
+    node: "bg-[#3B82F6] ring-[#3B82F6]/30",
+    badge: "bg-[#3B82F6]/15 text-[#93C5FD]",
+    label: "Do",
+    bar: "bg-[#3B82F6]/50",
+  };
+}
+
+function RouteTimelineCard({
   node,
   expanded,
+  isLast,
+  onToggle,
 }: {
   node: RouteNode;
   expanded: boolean;
+  isLast: boolean;
+  onToggle: () => void;
 }) {
+  const accent = statusAccent(node.status);
+
   return (
-    <article
-      className={cn(
-        "rounded-2xl border px-5 py-4 transition-all duration-300 motion-reduce:transition-none",
-        node.status === "skipped"
-          ? "border-red-500/30 bg-red-500/5 opacity-75"
-          : node.status === "partial"
-            ? "border-[#C9A227]/40 bg-[#C9A227]/5"
-            : "border-white/10 bg-white/[0.03]",
-        expanded ? "shadow-sm" : "",
-      )}
-    >
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="font-mono text-xs uppercase tracking-widest text-[#64748B]">
-            Step {node.step}
-          </p>
-          <h3
+    <div className="relative flex gap-4 sm:gap-5">
+      <div className="relative flex w-10 shrink-0 flex-col items-center sm:w-12">
+        <span
+          className={cn(
+            "z-[1] mt-5 h-3.5 w-3.5 rounded-full ring-4 ring-[#0A0F1D] transition-transform duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
+            accent.node,
+            expanded && "scale-125",
+          )}
+          aria-hidden
+        />
+        {!isLast ? (
+          <span
+            aria-hidden
             className={cn(
-              "mt-1 font-display text-lg font-bold text-white",
-              node.status === "skipped" && "line-through decoration-red-400/70",
+              "absolute top-9 bottom-0 w-[3px] rounded-full bg-white/10",
+              expanded && accent.bar,
+            )}
+          />
+        ) : null}
+      </div>
+
+      <article className="min-w-0 flex-1 pb-4">
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-expanded={expanded}
+          className={cn(
+            "w-full rounded-2xl bg-white/[0.035] px-4 py-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6] sm:px-5",
+            expanded ? "bg-white/[0.06]" : "hover:bg-white/[0.05]",
+            node.status === "skipped" && "opacity-80",
+          )}
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-mono text-xs uppercase tracking-widest text-[#64748B]">
+                  Step {node.step}
+                </span>
+                <span
+                  className={cn(
+                    "rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
+                    accent.badge,
+                  )}
+                >
+                  {accent.label}
+                </span>
+              </div>
+              <h3
+                className={cn(
+                  "mt-1.5 font-display text-lg font-bold text-white sm:text-xl",
+                  node.status === "skipped" &&
+                    "line-through decoration-red-400/70",
+                )}
+              >
+                {node.title}
+              </h3>
+            </div>
+            <ChevronDown
+              aria-hidden
+              className={cn(
+                "mt-1 h-5 w-5 shrink-0 text-[#94A3B8] transition-transform duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
+                expanded && "rotate-180 text-[#3B82F6]",
+              )}
+            />
+          </div>
+
+          <div
+            className={cn(
+              "grid motion-reduce:transition-none",
+              ROADMAP_EXPAND_TRANSITION_CLASS,
+              expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
             )}
           >
-            {node.title}
-          </h3>
-        </div>
-        {node.status === "skipped" ? (
-          <span className="rounded-full bg-red-500/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-red-300">
-            Skip
-          </span>
-        ) : node.status === "partial" ? (
-          <span className="rounded-full bg-[#C9A227]/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#E8D5A3]">
-            Unique only
-          </span>
-        ) : (
-          <span className="rounded-full bg-[#3B82F6]/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#93C5FD]">
-            Do
-          </span>
-        )}
-      </div>
-      {(expanded || node.status === "skipped" || node.status === "partial") && (
-        <div className="mt-3 space-y-2">
-          {node.skipReason ? (
-            <p
-              className={cn(
-                "text-sm font-medium",
-                node.status === "skipped" ? "text-red-300" : "text-[#E8D5A3]",
-              )}
-            >
-              {node.skipReason}
-            </p>
-          ) : null}
-          <p className="text-sm leading-relaxed text-[#94A3B8]">{node.body}</p>
-          {node.detail ? (
-            <p className="rounded-xl bg-black/20 px-3 py-2 font-mono text-xs leading-relaxed text-[#CBD5E1]">
-              {node.detail}
-            </p>
-          ) : null}
-        </div>
-      )}
-    </article>
+            <div className="min-h-0 overflow-hidden">
+              <div
+                className={cn(
+                  "space-y-3 border-t border-white/10 pt-4 mt-4 transition-opacity",
+                  ROADMAP_EXPAND_TRANSITION_CLASS,
+                  expanded ? "opacity-100" : "opacity-0",
+                )}
+              >
+                {node.skipReason ? (
+                  <p
+                    className={cn(
+                      "text-sm font-medium",
+                      node.status === "skipped"
+                        ? "text-red-300"
+                        : "text-[#E8D5A3]",
+                    )}
+                  >
+                    {node.skipReason}
+                  </p>
+                ) : null}
+                <p className="text-sm leading-relaxed text-[#94A3B8]">
+                  {node.body}
+                </p>
+                {node.detail ? (
+                  <p className="rounded-xl bg-black/20 px-3 py-2 font-mono text-xs leading-relaxed text-[#CBD5E1]">
+                    {node.detail}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        </button>
+      </article>
+    </div>
   );
 }
 
 function PaperRouteGeneratorInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const reducedMotion = useReducedMotion();
-  const [copyStatus, setCopyStatus] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showModuleTip, setShowModuleTip] = useState(true);
-  const nodeRefs = useRef<Map<string, HTMLElement>>(new Map());
 
   const modules = useMemo(
     () => parseModulesParam(searchParams.get("modules")),
@@ -146,143 +210,62 @@ function PaperRouteGeneratorInner() {
     });
   };
 
-  const onReset = () => {
-    setShowModuleTip(false);
-    updateQuery(["maths1", "maths2", "physics"]);
-  };
-
-  const onCopy = async () => {
-    const text = routeToPlainText(route);
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopyStatus("Plan copied");
-      trackEvent("past_paper_plan_copied", { surface: "past_papers_guide" });
-    } catch {
-      setCopyStatus("Could not copy");
-    }
-    window.setTimeout(() => setCopyStatus(null), 2500);
-  };
-
-  useEffect(() => {
-    if (reducedMotion) {
-      setExpandedId(route[0]?.id ?? null);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setExpandedId(entry.target.id.replace("route-", ""));
-          }
-        });
-      },
-      { rootMargin: "-45% 0px -35% 0px", threshold: 0.2 },
-    );
-
-    route.forEach((node) => {
-      const el = nodeRefs.current.get(node.id);
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, [route, reducedMotion]);
-
   return (
     <div className="space-y-8">
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
-        <div className="space-y-6">
-          <div>
-            <p className="text-sm font-semibold text-white">
-              Which modules are you taking?
-            </p>
-            <div className="relative mt-3 inline-block max-w-full">
-              {showModuleTip ? (
-                <div
-                  role="status"
-                  className="absolute -top-14 left-0 z-10 max-w-[16rem] rounded-2xl bg-[#161D2F] px-3 py-2 text-xs leading-snug text-[#CBD5E1] shadow-lg"
-                >
-                  Change these to match your course. Defaults are Maths 1,
-                  Maths 2 and Physics.
-                  <span
-                    aria-hidden
-                    className="absolute -bottom-1.5 left-6 h-3 w-3 rotate-45 bg-[#161D2F]"
-                  />
-                </div>
-              ) : null}
-              <div className="flex flex-wrap gap-2">
-                {GUIDE_MODULES.map((module) => {
-                  const active = modules.includes(module.id);
-                  return (
-                    <button
-                      key={module.id}
-                      type="button"
-                      aria-pressed={active}
-                      onClick={() => onModuleToggle(module.id)}
-                      className={cn(
-                        "min-h-11 rounded-full px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]",
-                        active
-                          ? "bg-[#3B82F6] text-white"
-                          : "bg-white/5 text-[#94A3B8] hover:bg-white/10 hover:text-white",
-                      )}
-                    >
-                      {module.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          <p className="text-sm leading-relaxed text-[#94A3B8]">
-            This order matches the in-app{" "}
-            <Link
-              href={APP_ROUTES.pastPaperRoadmap}
-              className="text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#3B82F6]"
-            >
-              past papers roadmap
-            </Link>
-            . Skip and Unique only labels assume you work through the steps in
-            this sequence from the start.
-          </p>
-
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={onCopy}
-              className="min-h-11 rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-[#0A0F1D] transition-colors hover:bg-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]"
-            >
-              Copy plan
-            </button>
-            <button
-              type="button"
-              onClick={onReset}
-              className="min-h-11 rounded-xl bg-white/5 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]"
-            >
-              Reset
-            </button>
-            <p role="status" className="self-center text-sm text-[#94A3B8]">
-              {copyStatus}
-            </p>
-          </div>
-        </div>
-
-        <div className="space-y-3" aria-live="polite" aria-relevant="additions">
-          {route.map((node) => (
+      <div className="w-full">
+        <p className="text-sm font-semibold text-white">
+          Which modules are you taking?
+        </p>
+        <div className="relative mt-3 w-full">
+          {showModuleTip ? (
             <div
-              key={node.id}
-              id={`route-${node.id}`}
-              ref={(el) => {
-                if (el) nodeRefs.current.set(node.id, el);
-              }}
+              role="status"
+              className="absolute -top-14 left-0 z-10 max-w-[16rem] rounded-2xl bg-[#161D2F] px-3 py-2 text-xs leading-snug text-[#CBD5E1] shadow-lg"
             >
-              <RouteNodeCard
-                node={node}
-                expanded={reducedMotion || expandedId === node.id}
+              Change these to match your course. Defaults are Maths 1, Maths 2
+              and Physics.
+              <span
+                aria-hidden
+                className="absolute -bottom-1.5 left-6 h-3 w-3 rotate-45 bg-[#161D2F]"
               />
             </div>
-          ))}
+          ) : null}
+          <div className="flex w-full flex-wrap gap-2">
+            {GUIDE_MODULES.map((module) => {
+              const active = modules.includes(module.id);
+              return (
+                <button
+                  key={module.id}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => onModuleToggle(module.id)}
+                  className={cn(
+                    "min-h-11 rounded-full px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]",
+                    active
+                      ? "bg-[#3B82F6] text-white"
+                      : "bg-white/5 text-[#94A3B8] hover:bg-white/10 hover:text-white",
+                  )}
+                >
+                  {module.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
+      </div>
+
+      <div className="w-full" aria-live="polite">
+        {route.map((node, index) => (
+          <RouteTimelineCard
+            key={node.id}
+            node={node}
+            isLast={index === route.length - 1}
+            expanded={expandedId === node.id}
+            onToggle={() =>
+              setExpandedId((current) => (current === node.id ? null : node.id))
+            }
+          />
+        ))}
       </div>
 
       <p className="text-sm leading-relaxed text-[#94A3B8]">
