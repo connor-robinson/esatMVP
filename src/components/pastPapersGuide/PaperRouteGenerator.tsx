@@ -3,7 +3,7 @@
 import { Suspense, useCallback, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Flag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { trackEvent } from "@/lib/ga/trackEvent";
 import { APP_ROUTES } from "@/lib/seo/config";
@@ -55,12 +55,10 @@ function statusAccent(status: RouteNode["status"]) {
 function RouteTimelineCard({
   node,
   expanded,
-  isLast,
   onToggle,
 }: {
   node: RouteNode;
   expanded: boolean;
-  isLast: boolean;
   onToggle: () => void;
 }) {
   const accent = statusAccent(node.status);
@@ -76,15 +74,13 @@ function RouteTimelineCard({
           )}
           aria-hidden
         />
-        {!isLast ? (
-          <span
-            aria-hidden
-            className={cn(
-              "absolute top-9 bottom-0 w-[3px] rounded-full bg-white/10",
-              expanded && accent.bar,
-            )}
-          />
-        ) : null}
+        <span
+          aria-hidden
+          className={cn(
+            "absolute top-9 bottom-0 w-[3px] rounded-full bg-white/10",
+            expanded && accent.bar,
+          )}
+        />
       </div>
 
       <article className="min-w-0 flex-1 pb-4">
@@ -176,6 +172,40 @@ function RouteTimelineCard({
   );
 }
 
+function RouteEndFlagCard() {
+  return (
+    <div className="relative flex gap-4 sm:gap-5">
+      <div className="relative flex w-10 shrink-0 flex-col items-center sm:w-12">
+        <span
+          className="z-[1] mt-5 flex h-8 w-8 items-center justify-center rounded-full bg-white/[0.06] text-[#94A3B8] ring-4 ring-[#0A0F1D]"
+          title="End of roadmap"
+          aria-hidden
+        >
+          <Flag className="h-4 w-4" strokeWidth={2} />
+        </span>
+      </div>
+
+      <article className="min-w-0 flex-1 pb-1">
+        <div className="w-full rounded-2xl bg-white/[0.04] px-4 py-4 sm:px-5 sm:py-5">
+          <p className="font-display text-lg font-bold text-white sm:text-xl">
+            Run out of questions?
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-[#94A3B8]">
+            Check out our{" "}
+            <Link
+              href={APP_ROUTES.questionBank}
+              className="font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#3B82F6]"
+            >
+              {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ written questions
+            </Link>{" "}
+            in the ESAT CAMP question bank.
+          </p>
+        </div>
+      </article>
+    </div>
+  );
+}
+
 function PaperRouteGeneratorInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -255,39 +285,23 @@ function PaperRouteGeneratorInner() {
       </div>
 
       <div className="w-full" aria-live="polite">
-        {route.map((node, index) => (
+        {route.map((node) => (
           <RouteTimelineCard
             key={node.id}
             node={node}
-            isLast={index === route.length - 1}
             expanded={expandedId === node.id}
             onToggle={() =>
               setExpandedId((current) => (current === node.id ? null : node.id))
             }
           />
         ))}
+        <RouteEndFlagCard />
       </div>
 
       <p className="text-sm leading-relaxed text-[#94A3B8]">
         You do not need to finish everything on this page. Quality of review
         matters more than the number of papers completed.
       </p>
-
-      <div className="rounded-2xl bg-white/[0.04] p-5 sm:p-6">
-        <p className="font-display text-xl font-bold text-white">
-          Run out of questions?
-        </p>
-        <p className="mt-2 text-sm leading-relaxed text-[#94A3B8]">
-          Check out our{" "}
-          <Link
-            href={APP_ROUTES.questionBank}
-            className="font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#3B82F6]"
-          >
-            {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ written questions
-          </Link>{" "}
-          in the ESAT CAMP question bank.
-        </p>
-      </div>
     </div>
   );
 }
