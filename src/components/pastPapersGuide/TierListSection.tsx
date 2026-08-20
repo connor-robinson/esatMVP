@@ -56,7 +56,6 @@ export function TierListSection() {
   const personalisedText = useMemo(() => {
     const route = buildPaperRoute({
       modules: ["maths1", "maths2", "physics"],
-      progress: "nothing",
     });
     const tiers = TIER_LIST.map(
       (group) => `${group.title}\n${group.items.map((item) => `- ${item.title}`).join("\n")}`,

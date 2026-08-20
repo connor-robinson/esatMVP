@@ -41,7 +41,11 @@ export const GUIDE_PROGRESS_OPTIONS: readonly {
   { id: "nsaa_s2", label: "NSAA Section 2" },
 ] as const;
 
-export const DEFAULT_GUIDE_MODULES: readonly GuideModuleId[] = ["maths1"];
+export const DEFAULT_GUIDE_MODULES: readonly GuideModuleId[] = [
+  "maths1",
+  "maths2",
+  "physics",
+];
 
 /** Exact unique ENGAA Section 1 Part B question numbers, by year (2016–2019). */
 export const UNIQUE_ENGAA_PART_B_BY_YEAR: Readonly<

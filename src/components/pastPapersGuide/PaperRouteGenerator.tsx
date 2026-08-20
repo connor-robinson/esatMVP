@@ -1,21 +1,17 @@
 "use client";
 
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { trackEvent } from "@/lib/ga/trackEvent";
-import {
-  GUIDE_MODULES,
-  GUIDE_PROGRESS_OPTIONS,
-  SHORT_ANSWER_CARD,
-  type GuideModuleId,
-  type GuideProgressId,
-} from "@/content/pastPapersGuide";
+import { APP_ROUTES } from "@/lib/seo/config";
+import { QUESTION_BANK_TOTAL_COUNT } from "@/config/questionBankMarketing";
+import { GUIDE_MODULES, type GuideModuleId } from "@/content/pastPapersGuide";
 import {
   buildPaperRoute,
   modulesToParam,
   parseModulesParam,
-  parseProgressParam,
   routeToPlainText,
   type RouteNode,
 } from "@/lib/pastPapersGuide/recommendations";
@@ -89,10 +85,17 @@ function RouteNodeCard({
           </span>
         )}
       </div>
-      {(expanded || node.status === "skipped") && (
+      {(expanded || node.status === "skipped" || node.status === "partial") && (
         <div className="mt-3 space-y-2">
           {node.skipReason ? (
-            <p className="text-sm font-medium text-red-300">{node.skipReason}</p>
+            <p
+              className={cn(
+                "text-sm font-medium",
+                node.status === "skipped" ? "text-red-300" : "text-[#E8D5A3]",
+              )}
+            >
+              {node.skipReason}
+            </p>
           ) : null}
           <p className="text-sm leading-relaxed text-[#94A3B8]">{node.body}</p>
           {node.detail ? (
@@ -112,35 +115,30 @@ function PaperRouteGeneratorInner() {
   const reducedMotion = useReducedMotion();
   const [copyStatus, setCopyStatus] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [showModuleTip, setShowModuleTip] = useState(true);
   const nodeRefs = useRef<Map<string, HTMLElement>>(new Map());
 
   const modules = useMemo(
     () => parseModulesParam(searchParams.get("modules")),
     [searchParams],
   );
-  const progress = useMemo(
-    () => parseProgressParam(searchParams.get("progress")),
-    [searchParams],
-  );
 
-  const route = useMemo(
-    () => buildPaperRoute({ modules, progress }),
-    [modules, progress],
-  );
+  const route = useMemo(() => buildPaperRoute({ modules }), [modules]);
 
   const updateQuery = useCallback(
-    (nextModules: GuideModuleId[], nextProgress: GuideProgressId) => {
+    (nextModules: GuideModuleId[]) => {
       const params = new URLSearchParams(searchParams.toString());
       params.set("modules", modulesToParam(nextModules));
-      params.set("progress", nextProgress);
+      params.delete("progress");
       router.replace(`?${params.toString()}`, { scroll: false });
     },
     [router, searchParams],
   );
 
   const onModuleToggle = (id: GuideModuleId) => {
+    setShowModuleTip(false);
     const next = toggleModule(modules, id);
-    updateQuery(next, progress);
+    updateQuery(next.length ? next : [...modules]);
     trackEvent("past_paper_plan_module_changed", {
       module: id,
       selected: next.includes(id),
@@ -148,16 +146,9 @@ function PaperRouteGeneratorInner() {
     });
   };
 
-  const onProgressChange = (id: GuideProgressId) => {
-    updateQuery(modules, id);
-    trackEvent("past_paper_plan_progress_changed", {
-      progress: id,
-      surface: "past_papers_guide",
-    });
-  };
-
   const onReset = () => {
-    updateQuery(["maths1"], "nothing");
+    setShowModuleTip(false);
+    updateQuery(["maths1", "maths2", "physics"]);
   };
 
   const onCopy = async () => {
@@ -205,56 +196,55 @@ function PaperRouteGeneratorInner() {
             <p className="text-sm font-semibold text-white">
               Which modules are you taking?
             </p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {GUIDE_MODULES.map((module) => {
-                const active = modules.includes(module.id);
-                return (
-                  <button
-                    key={module.id}
-                    type="button"
-                    aria-pressed={active}
-                    onClick={() => onModuleToggle(module.id)}
-                    className={cn(
-                      "min-h-11 rounded-full px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]",
-                      active
-                        ? "bg-[#3B82F6] text-white"
-                        : "bg-white/5 text-[#94A3B8] hover:bg-white/10 hover:text-white",
-                    )}
-                  >
-                    {module.label}
-                  </button>
-                );
-              })}
+            <div className="relative mt-3 inline-block max-w-full">
+              {showModuleTip ? (
+                <div
+                  role="status"
+                  className="absolute -top-14 left-0 z-10 max-w-[16rem] rounded-2xl bg-[#161D2F] px-3 py-2 text-xs leading-snug text-[#CBD5E1] shadow-lg"
+                >
+                  Change these to match your course. Defaults are Maths 1,
+                  Maths 2 and Physics.
+                  <span
+                    aria-hidden
+                    className="absolute -bottom-1.5 left-6 h-3 w-3 rotate-45 bg-[#161D2F]"
+                  />
+                </div>
+              ) : null}
+              <div className="flex flex-wrap gap-2">
+                {GUIDE_MODULES.map((module) => {
+                  const active = modules.includes(module.id);
+                  return (
+                    <button
+                      key={module.id}
+                      type="button"
+                      aria-pressed={active}
+                      onClick={() => onModuleToggle(module.id)}
+                      className={cn(
+                        "min-h-11 rounded-full px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]",
+                        active
+                          ? "bg-[#3B82F6] text-white"
+                          : "bg-white/5 text-[#94A3B8] hover:bg-white/10 hover:text-white",
+                      )}
+                    >
+                      {module.label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
-          <div>
-            <p className="text-sm font-semibold text-white">
-              What have you already done?
-            </p>
-            <div className="mt-3 flex flex-col gap-2">
-              {GUIDE_PROGRESS_OPTIONS.map((option) => (
-                <label
-                  key={option.id}
-                  className={cn(
-                    "flex min-h-11 cursor-pointer items-center gap-3 rounded-xl px-4 py-3 transition-colors",
-                    progress === option.id
-                      ? "bg-white/10 text-white"
-                      : "bg-white/[0.03] text-[#94A3B8] hover:bg-white/[0.06]",
-                  )}
-                >
-                  <input
-                    type="radio"
-                    name="guide-progress"
-                    checked={progress === option.id}
-                    onChange={() => onProgressChange(option.id)}
-                    className="h-4 w-4 accent-[#3B82F6]"
-                  />
-                  <span className="text-sm">{option.label}</span>
-                </label>
-              ))}
-            </div>
-          </div>
+          <p className="text-sm leading-relaxed text-[#94A3B8]">
+            This order matches the in-app{" "}
+            <Link
+              href={APP_ROUTES.pastPaperRoadmap}
+              className="text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#3B82F6]"
+            >
+              past papers roadmap
+            </Link>
+            . Skip and Unique only labels assume you work through the steps in
+            this sequence from the start.
+          </p>
 
           <div className="flex flex-wrap gap-3">
             <button
@@ -295,24 +285,26 @@ function PaperRouteGeneratorInner() {
         </div>
       </div>
 
-      <div className="rounded-2xl bg-white/[0.04] p-5 sm:p-6">
-        <h3 className="font-display text-xl font-bold text-white">
-          {SHORT_ANSWER_CARD.title}
-        </h3>
-        <dl className="mt-4 space-y-3">
-          {SHORT_ANSWER_CARD.rows.map((row) => (
-            <div key={row.module} className="grid gap-1 sm:grid-cols-[10rem_1fr]">
-              <dt className="text-sm font-semibold text-white">{row.module}</dt>
-              <dd className="text-sm text-[#94A3B8]">{row.route}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
-
       <p className="text-sm leading-relaxed text-[#94A3B8]">
         You do not need to finish everything on this page. Quality of review
         matters more than the number of papers completed.
       </p>
+
+      <div className="rounded-2xl bg-white/[0.04] p-5 sm:p-6">
+        <p className="font-display text-xl font-bold text-white">
+          Run out of questions?
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-[#94A3B8]">
+          Check out our{" "}
+          <Link
+            href={APP_ROUTES.questionBank}
+            className="font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#3B82F6]"
+          >
+            {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ written questions
+          </Link>{" "}
+          in the ESAT CAMP question bank.
+        </p>
+      </div>
     </div>
   );
 }
