@@ -80,29 +80,42 @@ function toggleModule(
   return [...current, id];
 }
 
+/** Match question-bank session difficulty pills: solid fill + white label. */
 function statusAccent(status: RouteNode["status"]) {
   if (status === "skipped") {
     return {
-      node: "bg-red-400/80",
-      badge: "bg-red-500/15 text-red-300",
-      label: "Skip",
-      stroke: "#F87171",
+      node: "bg-[#EF4444]",
+      badge: "bg-[#EF4444] text-white",
+      label: "Skip" as const,
     };
   }
   if (status === "partial") {
     return {
-      node: "bg-[#C9A227]",
-      badge: "bg-[#C9A227]/15 text-[#E8D5A3]",
-      label: "Unique only",
-      stroke: "#C9A227",
+      node: "bg-[#EAB308]",
+      badge: "bg-[#EAB308] text-white",
+      label: "Unique only" as const,
     };
   }
   return {
     node: "bg-[#3B82F6]",
-    badge: "bg-[#3B82F6]/15 text-[#93C5FD]",
-    label: "Do",
-    stroke: "#3B82F6",
+    badge: null,
+    label: null,
   };
+}
+
+function RouteStatusPill({ status }: { status: RouteNode["status"] }) {
+  const accent = statusAccent(status);
+  if (!accent.label || !accent.badge) return null;
+  return (
+    <span
+      className={cn(
+        "inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-xs font-bold",
+        accent.badge,
+      )}
+    >
+      {accent.label}
+    </span>
+  );
 }
 
 function RouteCard({
@@ -116,8 +129,6 @@ function RouteCard({
   onToggle: () => void;
   cardRef: (el: HTMLElement | null) => void;
 }) {
-  const accent = statusAccent(node.status);
-
   return (
     <article ref={cardRef} className="min-w-0 pb-4">
       <button
@@ -133,27 +144,17 @@ function RouteCard({
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="font-mono text-xs uppercase tracking-widest text-[#64748B]">
-                Step {node.step}
-              </span>
-              <span
+              <h3
                 className={cn(
-                  "rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
-                  accent.badge,
+                  "font-display text-lg font-bold text-white sm:text-xl",
+                  node.status === "skipped" &&
+                    "line-through decoration-red-400/70",
                 )}
               >
-                {accent.label}
-              </span>
+                {node.step}. {node.title}
+              </h3>
+              <RouteStatusPill status={node.status} />
             </div>
-            <h3
-              className={cn(
-                "mt-1.5 font-display text-lg font-bold text-white sm:text-xl",
-                node.status === "skipped" &&
-                  "line-through decoration-red-400/70",
-              )}
-            >
-              {node.title}
-            </h3>
           </div>
           <ChevronDown
             aria-hidden
@@ -194,6 +195,17 @@ function RouteCard({
               <p className="text-sm leading-relaxed text-[#94A3B8]">
                 {node.body}
               </p>
+              {node.linkHref && node.linkLabel ? (
+                <a
+                  href={node.linkHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(event) => event.stopPropagation()}
+                  className="inline-flex text-sm font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#3B82F6]"
+                >
+                  {node.linkLabel}
+                </a>
+              ) : null}
               {node.detail ? (
                 <p className="rounded-xl bg-black/20 px-3 py-2 font-mono text-xs leading-relaxed text-[#CBD5E1]">
                   {node.detail}
@@ -210,21 +222,18 @@ function RouteCard({
 function RouteEndCard({ cardRef }: { cardRef: (el: HTMLElement | null) => void }) {
   return (
     <article ref={cardRef} className="min-w-0 pb-1">
-      <div className="w-full rounded-2xl bg-white/[0.04] px-4 py-4 sm:px-5 sm:py-5">
+      <Link
+        href={APP_ROUTES.questionBank}
+        className="block w-full rounded-2xl bg-white/[0.04] px-4 py-4 transition-colors hover:bg-white/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6] sm:px-5 sm:py-5"
+      >
         <p className="font-display text-lg font-bold text-white sm:text-xl">
           Run out of questions?
         </p>
         <p className="mt-2 text-sm leading-relaxed text-[#94A3B8]">
-          Check out our{" "}
-          <Link
-            href={APP_ROUTES.questionBank}
-            className="font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#3B82F6]"
-          >
-            {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ written questions
-          </Link>{" "}
-          in the ESAT CAMP question bank.
+          Check out our {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ written
+          questions in the ESAT CAMP question bank.
         </p>
-      </div>
+      </Link>
     </article>
   );
 }

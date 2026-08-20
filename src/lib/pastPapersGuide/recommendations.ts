@@ -15,6 +15,9 @@ export type RouteNode = {
   status: RouteNodeStatus;
   skipReason?: string;
   detail?: string;
+  /** Optional external/in-app link shown in the expanded body. */
+  linkHref?: string;
+  linkLabel?: string;
 };
 
 export type BuildRouteInput = {
@@ -57,6 +60,8 @@ export function buildPaperRoute({ modules }: BuildRouteInput): RouteNode[] {
     title: "Official ESAT specimen and practice tests",
     body: "Do these first to learn the real computer interface, navigation and 27-questions-in-40-minutes format. Treat them as format practice, not a reliable score prediction.",
     status: "active",
+    linkHref: SOURCES.esatPrepMaterials.url,
+    linkLabel: "Open the official ESAT specimen and practice tests",
   });
 
   if (hasModule(modules, "maths1")) {
