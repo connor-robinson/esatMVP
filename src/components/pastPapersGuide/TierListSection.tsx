@@ -39,7 +39,7 @@ function TierCard({
 
   return (
     <div
-      className="relative"
+      className="relative shrink-0"
       onMouseEnter={onActivate}
       onMouseLeave={onDeactivate}
       onFocus={onActivate}
@@ -57,19 +57,19 @@ function TierCard({
           });
         }}
         className={cn(
-          "flex min-h-[5.5rem] w-[7.75rem] flex-col items-center justify-center rounded-md px-2 py-2.5 text-center text-white transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 sm:min-h-[6.25rem] sm:w-[8.75rem]",
-          active && "scale-[1.03]",
-          item.muted && "opacity-80",
+          "flex size-[4.5rem] flex-col items-center justify-center rounded-md px-1.5 text-center text-white shadow-[0_4px_12px_rgba(0,0,0,0.45)] transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 sm:size-[5rem]",
+          active && "scale-[1.04]",
+          item.muted && "opacity-85",
         )}
         style={{ backgroundColor: fill }}
       >
-        <span className="text-[10px] font-medium leading-none text-white/85 sm:text-[11px]">
+        <span className="text-[9px] font-medium leading-none text-white/85 sm:text-[10px]">
           {item.years}
         </span>
-        <span className="mt-1.5 text-lg font-black leading-none tracking-wide sm:text-xl">
+        <span className="mt-1 text-base font-black leading-none tracking-wide sm:text-lg">
           {item.exam}
         </span>
-        <span className="mt-1.5 text-[11px] font-semibold leading-tight text-white/90 sm:text-xs">
+        <span className="mt-1 max-w-full truncate text-[9px] font-semibold leading-tight text-white/90 sm:text-[10px]">
           {item.section}
         </span>
       </button>
@@ -78,7 +78,7 @@ function TierCard({
         <div
           id={`${item.id}-tip`}
           role="tooltip"
-          className="absolute left-1/2 top-[calc(100%+0.55rem)] z-20 w-56 -translate-x-1/2 rounded-xl bg-[#161D2F] px-3 py-2.5 text-left shadow-xl"
+          className="absolute left-1/2 top-[calc(100%+0.5rem)] z-20 w-52 -translate-x-1/2 rounded-xl bg-[#161D2F] px-3 py-2.5 text-left shadow-xl"
         >
           {item.note ? (
             <p className="text-xs font-bold uppercase tracking-wide text-white">
@@ -113,26 +113,23 @@ export function TierListSection() {
         to open first.
       </p>
 
-      <div className="bg-[#121212]">
-        {TIER_LIST.map((group, index) => (
+      <div className="space-y-2">
+        {TIER_LIST.map((group) => (
           <div
             key={group.tier}
-            className={cn(
-              "grid grid-cols-[4.25rem_minmax(0,1fr)] sm:grid-cols-[5rem_minmax(0,1fr)]",
-              index < TIER_LIST.length - 1 && "border-b border-black",
-            )}
+            className="grid h-[5.25rem] grid-cols-[3.5rem_minmax(0,1fr)] overflow-visible sm:h-[5.75rem] sm:grid-cols-[4rem_minmax(0,1fr)]"
           >
             <div
-              className="flex aspect-square items-center justify-center border-r border-black"
+              className="flex h-full w-full items-center justify-center"
               style={{ backgroundColor: TIER_LABEL[group.tier] }}
               title={group.title}
             >
-              <span className="font-sans text-3xl font-black leading-none text-black sm:text-4xl">
+              <span className="font-sans text-2xl font-black leading-none text-black sm:text-3xl">
                 {group.tier}
               </span>
             </div>
 
-            <div className="flex min-h-[5.5rem] flex-wrap items-center gap-2.5 bg-[#1A1A1A] px-3 py-3 sm:min-h-[6.5rem] sm:gap-3 sm:px-4">
+            <div className="flex h-full items-center gap-2.5 overflow-x-auto bg-[#1A1A1A] px-3 sm:gap-3 sm:px-4">
               {group.items.map((item) => (
                 <TierCard
                   key={item.id}
