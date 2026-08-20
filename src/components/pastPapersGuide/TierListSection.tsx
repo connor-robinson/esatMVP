@@ -1,126 +1,154 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { trackEvent } from "@/lib/ga/trackEvent";
-import { TIER_LIST, type TierItem } from "@/content/pastPapersGuide";
-import { routeToPlainText, buildPaperRoute } from "@/lib/pastPapersGuide/recommendations";
+import {
+  TIER_LIST,
+  type TierExam,
+  type TierId,
+  type TierItem,
+} from "@/content/pastPapersGuide";
 
-const EXAM_COLORS = {
+const TIER_LABEL: Record<TierId, string> = {
+  S: "#FF7F7F",
+  A: "#FFBF7F",
+  B: "#FFFF7F",
+  C: "#7FFF7F",
+};
+
+const EXAM_FILL: Record<TierExam, string> = {
   NSAA: "#8FA88A",
   ENGAA: "#C9A227",
   TMUA: "#9B8AA8",
   ESAT: "#8B2942",
-} as const;
+};
 
 function TierCard({
   item,
-  open,
-  onToggle,
+  active,
+  onActivate,
+  onDeactivate,
 }: {
   item: TierItem;
-  open: boolean;
-  onToggle: () => void;
+  active: boolean;
+  onActivate: () => void;
+  onDeactivate: () => void;
 }) {
+  const fill = item.muted ? "#2A2F3A" : EXAM_FILL[item.exam];
+
   return (
-    <button
-      type="button"
-      onClick={onToggle}
-      className={cn(
-        "min-h-11 w-full rounded-xl border px-4 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]",
-        open ? "border-white/20 bg-white/10" : "border-white/10 bg-white/[0.03] hover:bg-white/[0.06]",
-      )}
-      style={{ borderLeftColor: EXAM_COLORS[item.exam], borderLeftWidth: 4 }}
+    <div
+      className="relative"
+      onMouseEnter={onActivate}
+      onMouseLeave={onDeactivate}
+      onFocus={onActivate}
+      onBlur={onDeactivate}
     >
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <p className="text-sm font-semibold text-white">{item.title}</p>
-        {item.badge ? (
-          <span className="rounded-full bg-[#3B82F6]/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#93C5FD]">
-            {item.badge}
-          </span>
-        ) : null}
-      </div>
-      {open ? (
-        <p className="mt-2 text-sm leading-relaxed text-[#94A3B8]">
-          {item.description}
-        </p>
+      <button
+        type="button"
+        aria-describedby={active ? `${item.id}-tip` : undefined}
+        onClick={() => {
+          if (active) onDeactivate();
+          else onActivate();
+          trackEvent("tier_item_opened", {
+            item: item.id,
+            surface: "past_papers_guide",
+          });
+        }}
+        className={cn(
+          "flex min-h-[5.5rem] w-[7.75rem] flex-col items-center justify-center rounded-md px-2 py-2.5 text-center text-white transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 sm:min-h-[6.25rem] sm:w-[8.75rem]",
+          active && "scale-[1.03]",
+          item.muted && "opacity-80",
+        )}
+        style={{ backgroundColor: fill }}
+      >
+        <span className="text-[10px] font-medium leading-none text-white/85 sm:text-[11px]">
+          {item.years}
+        </span>
+        <span className="mt-1.5 text-lg font-black leading-none tracking-wide sm:text-xl">
+          {item.exam}
+        </span>
+        <span className="mt-1.5 text-[11px] font-semibold leading-tight text-white/90 sm:text-xs">
+          {item.section}
+        </span>
+      </button>
+
+      {active ? (
+        <div
+          id={`${item.id}-tip`}
+          role="tooltip"
+          className="absolute left-1/2 top-[calc(100%+0.55rem)] z-20 w-56 -translate-x-1/2 rounded-xl bg-[#161D2F] px-3 py-2.5 text-left shadow-xl"
+        >
+          {item.note ? (
+            <p className="text-xs font-bold uppercase tracking-wide text-white">
+              {item.note}
+            </p>
+          ) : null}
+          <p
+            className={cn(
+              "text-xs leading-relaxed text-[#CBD5E1]",
+              item.note && "mt-1",
+            )}
+          >
+            {item.description}
+          </p>
+          <span
+            aria-hidden
+            className="absolute -top-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 bg-[#161D2F]"
+          />
+        </div>
       ) : null}
-    </button>
+    </div>
   );
 }
 
 export function TierListSection() {
-  const [openId, setOpenId] = useState<string | null>(null);
-  const [copyStatus, setCopyStatus] = useState<string | null>(null);
-
-  const personalisedText = useMemo(() => {
-    const route = buildPaperRoute({
-      modules: ["maths1", "maths2", "physics"],
-    });
-    const tiers = TIER_LIST.map(
-      (group) => `${group.title}\n${group.items.map((item) => `- ${item.title}`).join("\n")}`,
-    ).join("\n\n");
-    return `ESAT CAMP personalised tier list\n\n${tiers}\n\nSuggested route:\n${routeToPlainText(route)}`;
-  }, []);
-
-  const onCopyTierList = async () => {
-    try {
-      await navigator.clipboard.writeText(personalisedText);
-      setCopyStatus("Tier list copied");
-    } catch {
-      setCopyStatus("Could not copy");
-    }
-    window.setTimeout(() => setCopyStatus(null), 2500);
-  };
+  const [activeId, setActiveId] = useState<string | null>(null);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <p className="text-sm leading-relaxed text-[#94A3B8]">
-        Tier = reusable practice value, not what to open first.
+        Hover a paper for commentary. Tier = reusable practice value, not what
+        to open first.
       </p>
 
-      <div className="space-y-8">
-        {TIER_LIST.map((group) => (
-          <div key={group.tier}>
-            <div className="flex items-center gap-4">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/10 font-display text-2xl font-bold text-white">
+      <div className="bg-[#121212]">
+        {TIER_LIST.map((group, index) => (
+          <div
+            key={group.tier}
+            className={cn(
+              "grid grid-cols-[4.25rem_minmax(0,1fr)] sm:grid-cols-[5rem_minmax(0,1fr)]",
+              index < TIER_LIST.length - 1 && "border-b border-black",
+            )}
+          >
+            <div
+              className="flex aspect-square items-center justify-center border-r border-black"
+              style={{ backgroundColor: TIER_LABEL[group.tier] }}
+              title={group.title}
+            >
+              <span className="font-sans text-3xl font-black leading-none text-black sm:text-4xl">
                 {group.tier}
               </span>
-              <h3 className="font-display text-xl font-bold text-white">
-                {group.title}
-              </h3>
             </div>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+
+            <div className="flex min-h-[5.5rem] flex-wrap items-center gap-2.5 bg-[#1A1A1A] px-3 py-3 sm:min-h-[6.5rem] sm:gap-3 sm:px-4">
               {group.items.map((item) => (
                 <TierCard
                   key={item.id}
                   item={item}
-                  open={openId === item.id}
-                  onToggle={() => {
-                    setOpenId((current) => (current === item.id ? null : item.id));
-                    trackEvent("tier_item_opened", {
-                      item: item.id,
-                      surface: "past_papers_guide",
-                    });
-                  }}
+                  active={activeId === item.id}
+                  onActivate={() => setActiveId(item.id)}
+                  onDeactivate={() =>
+                    setActiveId((current) =>
+                      current === item.id ? null : current,
+                    )
+                  }
                 />
               ))}
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          onClick={onCopyTierList}
-          className="min-h-11 rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-[#0A0F1D] hover:bg-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]"
-        >
-          Copy my tier list
-        </button>
-        <p role="status" className="text-sm text-[#94A3B8]">
-          {copyStatus}
-        </p>
       </div>
     </div>
   );

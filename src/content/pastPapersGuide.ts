@@ -128,12 +128,18 @@ export const OVERLAP_RULES_2020_2023 = [
 
 export type TierId = "S" | "A" | "B" | "C";
 
+export type TierExam = "NSAA" | "ENGAA" | "TMUA" | "ESAT";
+
 export type TierItem = {
   id: string;
-  title: string;
+  years: string;
+  exam: TierExam;
+  section: string;
+  /** Short label shown on hover (matches the handwritten notes on the reference). */
+  note?: string;
   description: string;
-  exam: "NSAA" | "ENGAA" | "TMUA" | "ESAT";
-  badge?: "Do first";
+  /** Dimmed charcoal cards used for duplicate / skip material. */
+  muted?: boolean;
 };
 
 export const TIER_LIST: readonly {
@@ -143,103 +149,126 @@ export const TIER_LIST: readonly {
 }[] = [
   {
     tier: "S",
-    title: "S — Highest priority",
+    title: "Highest priority",
     items: [
       {
         id: "nsaa-s1",
-        title: "NSAA Section 1, 2016–2023 — relevant parts only",
-        description:
-          "Best large source for Mathematics 1, Physics, Chemistry and Biology.",
+        years: "2016–2023",
         exam: "NSAA",
+        section: "Section 1",
+        note: "parts only",
+        description:
+          "Best large source for Mathematics 1, Physics, Chemistry and Biology. Use the parts that match your modules.",
       },
       {
         id: "engaa-s1b-2020",
-        title: "ENGAA Section 1 Part B, 2020–2023",
+        years: "2020–2023",
+        exam: "ENGAA",
+        section: "Section 1 Part B",
+        note: "Physics + Maths 2",
         description:
           "Fresh Mathematics 2 and Physics practice after NSAA Part E disappeared.",
-        exam: "ENGAA",
       },
       {
         id: "tmua-p1",
-        title: "TMUA Paper 1, 2016–2023 — Mathematics 2 only",
+        years: "2016–2023",
+        exam: "TMUA",
+        section: "Paper 1",
+        note: "Maths 2",
         description:
           "Strong extra Mathematics 2 problem solving, but the questions are longer.",
-        exam: "TMUA",
       },
     ],
   },
   {
     tier: "A",
-    title: "A — Useful after the closest material",
+    title: "Useful after the closest material",
     items: [
       {
         id: "nsaa-s2-2020",
-        title: "NSAA Section 2, 2020–2023",
+        years: "2020–2023",
+        exam: "NSAA",
+        section: "Section 2",
+        note: "harder and less similar",
         description:
           "Harder science multiple choice. Relevant parts only; skip out-of-spec content.",
-        exam: "NSAA",
       },
       {
         id: "engaa-s2-2016",
-        title: "ENGAA Section 2, 2016–2019",
+        years: "2016–2019",
+        exam: "ENGAA",
+        section: "Section 2",
+        note: "harder and less similar",
         description:
           "Unique harder Physics, but less similar to ESAT and sometimes calculator-based.",
-        exam: "ENGAA",
       },
       {
         id: "engaa-s1b-2016",
-        title: "ENGAA Section 1 Part B, 2016–2019 — unique questions only",
+        years: "2016–2019",
+        exam: "ENGAA",
+        section: "Section 1 Part B",
+        note: "unique qs only",
         description:
           "Useful advanced Mathematics and Physics once the NSAA Part E duplicates are removed.",
-        exam: "ENGAA",
       },
     ],
   },
   {
     tier: "B",
-    title: "B — Supplementary or format-only",
+    title: "Supplementary or format-only",
     items: [
       {
-        id: "esat-samples",
-        title: "Official ESAT specimen and practice tests",
-        description:
-          "Do these first for format and interface. Do not treat one score as a forecast of your live result.",
-        exam: "ESAT",
-        badge: "Do first",
-      },
-      {
         id: "nsaa-s2-2016",
-        title: "NSAA Section 2, 2016–2019",
+        years: "2016–2019",
+        exam: "NSAA",
+        section: "Section 2",
+        note: "written qs",
         description:
           "Longer written, calculator-allowed science problems. Interesting, but not ESAT-shaped.",
-        exam: "NSAA",
       },
       {
         id: "tmua-p2",
-        title: "TMUA Paper 2, 2016–2023",
+        years: "2016–2023",
+        exam: "TMUA",
+        section: "Paper 2",
+        note: "logic / reasoning",
         description:
           "More logic and mathematical reasoning than ESAT-style Mathematics 2.",
-        exam: "TMUA",
+      },
+      {
+        id: "esat-samples",
+        years: "2024",
+        exam: "ESAT",
+        section: "Specimen",
+        note: "easier qs",
+        description:
+          "Do these first for format and interface. Do not treat one score as a forecast of your live result.",
       },
     ],
   },
   {
     tier: "C",
-    title: "C — Duplicates after NSAA",
+    title: "Duplicates after NSAA",
     items: [
       {
         id: "engaa-s1a",
-        title: "ENGAA Section 1 Part A, 2016–2023",
+        years: "2016–2023",
+        exam: "ENGAA",
+        section: "Section 1 Part A",
+        note: "duplicates",
         description:
           "Skip if you have completed the same year's NSAA Mathematics and Physics.",
-        exam: "ENGAA",
+        muted: true,
       },
       {
         id: "engaa-s2-2020",
-        title: "ENGAA Section 2, 2020–2023",
+        years: "2020–2023",
+        exam: "ENGAA",
+        section: "Section 2",
+        note: "duplicates",
         description:
           "Skip if you have completed the same year's NSAA Section 2 Part X Physics.",
-        exam: "ENGAA",
+        muted: true,
       },
     ],
   },
