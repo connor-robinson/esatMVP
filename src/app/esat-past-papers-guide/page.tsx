@@ -116,7 +116,7 @@ export default function EsatPastPapersGuidePage() {
             Which past papers should you use for the ESAT?
           </h1>
 
-          <div className="mt-5 flex w-full items-center gap-3">
+          <div className="mt-5 flex w-full items-center gap-3 rounded-2xl bg-white/[0.04] px-4 py-3 sm:px-5">
             <span
               aria-hidden
               className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10"
@@ -130,19 +130,27 @@ export default function EsatPastPapersGuidePage() {
                 <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v1h16v-1c0-2.66-5.33-4-8-4z" />
               </svg>
             </span>
-            <p className="text-sm text-[#94A3B8]">
-              Written by the ESAT CAMP editorial team
-            </p>
+            <div className="min-w-0 text-sm text-[#94A3B8]">
+              <p className="font-medium text-[#CBD5E1]">
+                Written by the ESAT CAMP editorial team
+              </p>
+              <p className="mt-0.5">
+                Last updated {PAST_PAPERS_GUIDE_LAST_REVIEWED.label}
+              </p>
+            </div>
           </div>
 
-          <div className="mt-5 max-w-3xl space-y-3 text-base leading-relaxed text-[#94A3B8]">
-            <p>
-              There are no released ESAT papers yet, so the best practice comes
-              from Cambridge&apos;s older NSAA, ENGAA and TMUA papers. The
-              problem is that their formats have changed over the years, and
-              NSAA and ENGAA reuse many of the same questions.
-            </p>
-            <p>This guide shows exactly what to do, what to skip and why.</p>
+          <div className="mt-8 grid items-center gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+            <div className="max-w-3xl space-y-3 text-base leading-relaxed text-[#94A3B8]">
+              <p>
+                There are no released ESAT papers yet, so the best practice comes
+                from Cambridge&apos;s older NSAA, ENGAA and TMUA papers. The
+                problem is that their formats have changed over the years, and
+                NSAA and ENGAA reuse many of the same questions.
+              </p>
+              <p>This guide shows exactly what to do, what to skip and why.</p>
+            </div>
+            <HeroPaperStack />
           </div>
         </div>
       </header>
