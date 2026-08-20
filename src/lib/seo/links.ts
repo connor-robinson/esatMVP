@@ -33,6 +33,11 @@ export const SEO_LINKS = {
     label: "ESAT past papers library",
     blurb: "Every official ENGAA, NSAA and TMUA paper, filterable by module.",
   },
+  pastPapersGuide: {
+    href: SEO_ROUTES.pastPapersGuide,
+    label: "Which ESAT past papers to use",
+    blurb: "NSAA, ENGAA and TMUA roadmap, overlaps and tier list.",
+  },
   engaaNsaaPapers: {
     href: SEO_ROUTES.engaaNsaaPapers,
     label: "ENGAA and NSAA papers for ESAT",
@@ -177,6 +182,7 @@ export const SEO_GUIDE_KEYS: SeoLinkKey[] = [
   "testDates",
   "testDay",
   "pastPapers",
+  "pastPapersGuide",
   "engaaNsaaPapers",
   "tmuaForEsat",
   "maths1",
@@ -224,7 +230,7 @@ export const FAQ_GUIDE_SECTIONS: readonly FaqGuideSection[] = [
     id: "past-papers",
     title: "Past papers",
     description: "Official papers and how to use older ENGAA, NSAA and TMUA material.",
-    keys: ["pastPapers", "engaaNsaaPapers", "tmuaForEsat"],
+    keys: ["pastPapers", "pastPapersGuide", "engaaNsaaPapers", "tmuaForEsat"],
   },
   {
     id: "rules-and-scores",

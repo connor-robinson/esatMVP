@@ -157,6 +157,7 @@ export default function EsatPastPapersPage() {
         },
       }}
       related={seoLinks(
+        "pastPapersGuide",
         "engaaNsaaPapers",
         "tmuaForEsat",
         "maths1",

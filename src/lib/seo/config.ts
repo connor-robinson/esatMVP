@@ -61,6 +61,7 @@ export const SEO_ROUTES = {
   testDates: "/esat-test-dates",
   testDay: "/esat-test-day",
   pastPapers: "/esat-past-papers",
+  pastPapersGuide: "/esat-past-papers-guide",
   engaaNsaaPapers: "/engaa-nsaa-papers-for-esat",
   tmuaForEsat: "/tmua-for-esat",
   maths1: "/esat-maths-1",

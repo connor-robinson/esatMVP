@@ -118,6 +118,7 @@ export default function EngaaNsaaPapersPage() {
         },
       }}
       related={seoLinks(
+        "pastPapersGuide",
         "pastPapers",
         "tmuaForEsat",
         "maths1",

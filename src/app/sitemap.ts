@@ -15,6 +15,7 @@ const ENTRIES: readonly { path: string; priority: number }[] = [
   { path: SEO_ROUTES.preparation, priority: 0.9 },
   { path: SEO_ROUTES.testDates, priority: 0.9 },
   { path: SEO_ROUTES.pastPapers, priority: 0.9 },
+  { path: SEO_ROUTES.pastPapersGuide, priority: 0.9 },
   { path: SEO_ROUTES.engaaNsaaPapers, priority: 0.8 },
   { path: SEO_ROUTES.tmuaForEsat, priority: 0.8 },
   { path: SEO_ROUTES.maths1, priority: 0.8 },
