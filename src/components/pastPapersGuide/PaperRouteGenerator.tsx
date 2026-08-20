@@ -177,7 +177,7 @@ function RouteCard({
           <div className="min-h-0 overflow-hidden">
             <div
               className={cn(
-                "mt-4 space-y-3 border-t border-white/10 pt-4 transition-opacity",
+                "mt-4 space-y-3 pt-4 transition-opacity",
                 ROADMAP_EXPAND_TRANSITION_CLASS,
                 expanded ? "opacity-100" : "opacity-0",
               )}

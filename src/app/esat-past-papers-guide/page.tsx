@@ -191,7 +191,8 @@ export default function EsatPastPapersGuidePage() {
 
         <SeoSection
           id="overlaps"
-          heading="Do not repeat the same questions twice"
+          heading="Overlaps"
+          lead="NSAA and ENGAA drew from the same question pool, and have duplicate questions."
         >
           <OverlapExplorerSection />
         </SeoSection>
