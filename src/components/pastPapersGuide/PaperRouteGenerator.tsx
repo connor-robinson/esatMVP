@@ -230,7 +230,7 @@ function PaperRouteGeneratorInner() {
               />
             </div>
           ) : null}
-          <div className="flex w-full flex-wrap gap-2">
+          <div className="grid w-full grid-cols-2 gap-2 sm:grid-cols-4">
             {GUIDE_MODULES.map((module) => {
               const active = modules.includes(module.id);
               return (
@@ -240,7 +240,7 @@ function PaperRouteGeneratorInner() {
                   aria-pressed={active}
                   onClick={() => onModuleToggle(module.id)}
                   className={cn(
-                    "min-h-11 rounded-full px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]",
+                    "min-h-11 w-full rounded-full px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]",
                     active
                       ? "bg-[#3B82F6] text-white"
                       : "bg-white/5 text-[#94A3B8] hover:bg-white/10 hover:text-white",
