@@ -69,6 +69,12 @@ describe("query param parsing", () => {
       "chemistry",
     ]);
   });
+
+  it("caps modules at three", () => {
+    expect(
+      parseModulesParam("maths1,maths2,physics,chemistry,biology"),
+    ).toEqual(["maths1", "maths2", "physics"]);
+  });
 });
 
 describe("routeToPlainText", () => {

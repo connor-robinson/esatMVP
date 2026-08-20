@@ -1,6 +1,14 @@
 "use client";
 
-import { Suspense, useCallback, useMemo, useState } from "react";
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronDown, Flag } from "lucide-react";
@@ -8,7 +16,11 @@ import { cn } from "@/lib/utils";
 import { trackEvent } from "@/lib/ga/trackEvent";
 import { APP_ROUTES } from "@/lib/seo/config";
 import { QUESTION_BANK_TOTAL_COUNT } from "@/config/questionBankMarketing";
-import { GUIDE_MODULES, type GuideModuleId } from "@/content/pastPapersGuide";
+import {
+  GUIDE_MODULES,
+  MAX_GUIDE_MODULES,
+  type GuideModuleId,
+} from "@/content/pastPapersGuide";
 import {
   buildPaperRoute,
   modulesToParam,
@@ -17,12 +29,53 @@ import {
 } from "@/lib/pastPapersGuide/recommendations";
 import { ROADMAP_EXPAND_TRANSITION_CLASS } from "@/components/papers/roadmap/roadmapTimelineLayout";
 
+const SPINE_WIDTH = 72;
+const SPINE_CENTER_X = SPINE_WIDTH / 2;
+const WAVE_AMPLITUDE = 12;
+const WAVE_FREQUENCY = 0.012;
+
+function getNodeX(y: number): number {
+  const offsetCorrection = WAVE_AMPLITUDE * 0.3;
+  const sine = Math.sin(y * WAVE_FREQUENCY) * WAVE_AMPLITUDE;
+  const cosine = Math.cos(y * WAVE_FREQUENCY * 0.7) * (WAVE_AMPLITUDE * 0.3);
+  return SPINE_CENTER_X + sine + cosine - offsetCorrection;
+}
+
+function generateSpinePath(startY: number, endY: number): string {
+  if (endY <= startY) return "";
+
+  const points: { x: number; y: number }[] = [];
+  const pathLength = endY - startY;
+  const steps = Math.max(Math.floor(pathLength / 2), 16);
+
+  for (let i = 0; i <= steps; i++) {
+    const y = startY + (i / steps) * pathLength;
+    points.push({ x: getNodeX(y), y });
+  }
+
+  let path = `M ${points[0].x} ${points[0].y}`;
+  for (let i = 1; i < points.length; i++) {
+    const curr = points[i];
+    const next = points[i + 1];
+    if (next) {
+      path += ` Q ${curr.x} ${curr.y} ${(curr.x + next.x) / 2} ${(curr.y + next.y) / 2}`;
+    } else {
+      path += ` L ${curr.x} ${curr.y}`;
+    }
+  }
+  return path;
+}
+
 function toggleModule(
   current: readonly GuideModuleId[],
   id: GuideModuleId,
 ): GuideModuleId[] {
   if (current.includes(id)) {
-    return current.filter((module) => module !== id);
+    const next = current.filter((module) => module !== id);
+    return next.length ? next : [...current];
+  }
+  if (current.length >= MAX_GUIDE_MODULES) {
+    return [...current];
   }
   return [...current, id];
 }
@@ -30,178 +83,307 @@ function toggleModule(
 function statusAccent(status: RouteNode["status"]) {
   if (status === "skipped") {
     return {
-      node: "bg-red-400/80 ring-red-400/30",
+      node: "bg-red-400/80",
       badge: "bg-red-500/15 text-red-300",
       label: "Skip",
-      bar: "bg-red-400/50",
+      stroke: "#F87171",
     };
   }
   if (status === "partial") {
     return {
-      node: "bg-[#C9A227] ring-[#C9A227]/30",
+      node: "bg-[#C9A227]",
       badge: "bg-[#C9A227]/15 text-[#E8D5A3]",
       label: "Unique only",
-      bar: "bg-[#C9A227]/60",
+      stroke: "#C9A227",
     };
   }
   return {
-    node: "bg-[#3B82F6] ring-[#3B82F6]/30",
+    node: "bg-[#3B82F6]",
     badge: "bg-[#3B82F6]/15 text-[#93C5FD]",
     label: "Do",
-    bar: "bg-[#3B82F6]/50",
+    stroke: "#3B82F6",
   };
 }
 
-function RouteTimelineCard({
+function RouteCard({
   node,
   expanded,
   onToggle,
+  cardRef,
 }: {
   node: RouteNode;
   expanded: boolean;
   onToggle: () => void;
+  cardRef: (el: HTMLElement | null) => void;
 }) {
   const accent = statusAccent(node.status);
 
   return (
-    <div className="relative flex gap-4 sm:gap-5">
-      <div className="relative flex w-10 shrink-0 flex-col items-center sm:w-12">
-        <span
-          className={cn(
-            "z-[1] mt-5 h-3.5 w-3.5 rounded-full ring-4 ring-[#0A0F1D] transition-transform duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-            accent.node,
-            expanded && "scale-125",
-          )}
-          aria-hidden
-        />
-        <span
-          aria-hidden
-          className={cn(
-            "absolute top-9 bottom-0 w-[3px] rounded-full bg-white/10",
-            expanded && accent.bar,
-          )}
-        />
-      </div>
+    <article ref={cardRef} className="min-w-0 pb-4">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={expanded}
+        className={cn(
+          "w-full rounded-2xl bg-white/[0.035] px-4 py-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6] sm:px-5",
+          expanded ? "bg-white/[0.06]" : "hover:bg-white/[0.05]",
+          node.status === "skipped" && "opacity-80",
+        )}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-mono text-xs uppercase tracking-widest text-[#64748B]">
+                Step {node.step}
+              </span>
+              <span
+                className={cn(
+                  "rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
+                  accent.badge,
+                )}
+              >
+                {accent.label}
+              </span>
+            </div>
+            <h3
+              className={cn(
+                "mt-1.5 font-display text-lg font-bold text-white sm:text-xl",
+                node.status === "skipped" &&
+                  "line-through decoration-red-400/70",
+              )}
+            >
+              {node.title}
+            </h3>
+          </div>
+          <ChevronDown
+            aria-hidden
+            className={cn(
+              "mt-1 h-5 w-5 shrink-0 text-[#94A3B8] transition-transform duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
+              expanded && "rotate-180 text-[#3B82F6]",
+            )}
+          />
+        </div>
 
-      <article className="min-w-0 flex-1 pb-4">
-        <button
-          type="button"
-          onClick={onToggle}
-          aria-expanded={expanded}
+        <div
           className={cn(
-            "w-full rounded-2xl bg-white/[0.035] px-4 py-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6] sm:px-5",
-            expanded ? "bg-white/[0.06]" : "hover:bg-white/[0.05]",
-            node.status === "skipped" && "opacity-80",
+            "grid motion-reduce:transition-none",
+            ROADMAP_EXPAND_TRANSITION_CLASS,
+            expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
           )}
         >
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="font-mono text-xs uppercase tracking-widest text-[#64748B]">
-                  Step {node.step}
-                </span>
-                <span
+          <div className="min-h-0 overflow-hidden">
+            <div
+              className={cn(
+                "mt-4 space-y-3 border-t border-white/10 pt-4 transition-opacity",
+                ROADMAP_EXPAND_TRANSITION_CLASS,
+                expanded ? "opacity-100" : "opacity-0",
+              )}
+            >
+              {node.skipReason ? (
+                <p
                   className={cn(
-                    "rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
-                    accent.badge,
+                    "text-sm font-medium",
+                    node.status === "skipped"
+                      ? "text-red-300"
+                      : "text-[#E8D5A3]",
                   )}
                 >
-                  {accent.label}
-                </span>
-              </div>
-              <h3
-                className={cn(
-                  "mt-1.5 font-display text-lg font-bold text-white sm:text-xl",
-                  node.status === "skipped" &&
-                    "line-through decoration-red-400/70",
-                )}
-              >
-                {node.title}
-              </h3>
-            </div>
-            <ChevronDown
-              aria-hidden
-              className={cn(
-                "mt-1 h-5 w-5 shrink-0 text-[#94A3B8] transition-transform duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-                expanded && "rotate-180 text-[#3B82F6]",
-              )}
-            />
-          </div>
-
-          <div
-            className={cn(
-              "grid motion-reduce:transition-none",
-              ROADMAP_EXPAND_TRANSITION_CLASS,
-              expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
-            )}
-          >
-            <div className="min-h-0 overflow-hidden">
-              <div
-                className={cn(
-                  "space-y-3 border-t border-white/10 pt-4 mt-4 transition-opacity",
-                  ROADMAP_EXPAND_TRANSITION_CLASS,
-                  expanded ? "opacity-100" : "opacity-0",
-                )}
-              >
-                {node.skipReason ? (
-                  <p
-                    className={cn(
-                      "text-sm font-medium",
-                      node.status === "skipped"
-                        ? "text-red-300"
-                        : "text-[#E8D5A3]",
-                    )}
-                  >
-                    {node.skipReason}
-                  </p>
-                ) : null}
-                <p className="text-sm leading-relaxed text-[#94A3B8]">
-                  {node.body}
+                  {node.skipReason}
                 </p>
-                {node.detail ? (
-                  <p className="rounded-xl bg-black/20 px-3 py-2 font-mono text-xs leading-relaxed text-[#CBD5E1]">
-                    {node.detail}
-                  </p>
-                ) : null}
-              </div>
+              ) : null}
+              <p className="text-sm leading-relaxed text-[#94A3B8]">
+                {node.body}
+              </p>
+              {node.detail ? (
+                <p className="rounded-xl bg-black/20 px-3 py-2 font-mono text-xs leading-relaxed text-[#CBD5E1]">
+                  {node.detail}
+                </p>
+              ) : null}
             </div>
           </div>
-        </button>
-      </article>
-    </div>
+        </div>
+      </button>
+    </article>
   );
 }
 
-function RouteEndFlagCard() {
+function RouteEndCard({ cardRef }: { cardRef: (el: HTMLElement | null) => void }) {
   return (
-    <div className="relative flex gap-4 sm:gap-5">
-      <div className="relative flex w-10 shrink-0 flex-col items-center sm:w-12">
-        <span
-          className="z-[1] mt-5 flex h-8 w-8 items-center justify-center rounded-full bg-white/[0.06] text-[#94A3B8] ring-4 ring-[#0A0F1D]"
-          title="End of roadmap"
-          aria-hidden
+    <article ref={cardRef} className="min-w-0 pb-1">
+      <div className="w-full rounded-2xl bg-white/[0.04] px-4 py-4 sm:px-5 sm:py-5">
+        <p className="font-display text-lg font-bold text-white sm:text-xl">
+          Run out of questions?
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-[#94A3B8]">
+          Check out our{" "}
+          <Link
+            href={APP_ROUTES.questionBank}
+            className="font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#3B82F6]"
+          >
+            {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ written questions
+          </Link>{" "}
+          in the ESAT CAMP question bank.
+        </p>
+      </div>
+    </article>
+  );
+}
+
+function CurvyRouteTimeline({
+  route,
+  expandedId,
+  onToggle,
+}: {
+  route: readonly RouteNode[];
+  expandedId: string | null;
+  onToggle: (id: string) => void;
+}) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLElement | null)[]>([]);
+  const [centers, setCenters] = useState<number[]>([]);
+  const [trackHeight, setTrackHeight] = useState(0);
+
+  const itemCount = route.length + 1;
+
+  const measure = useCallback(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const trackTop = track.getBoundingClientRect().top;
+    const next = cardRefs.current.slice(0, itemCount).map((el) => {
+      if (!el) return 0;
+      const rect = el.getBoundingClientRect();
+      return rect.top - trackTop + rect.height / 2;
+    });
+    setCenters(next);
+    setTrackHeight(track.scrollHeight);
+  }, [itemCount]);
+
+  useLayoutEffect(() => {
+    measure();
+  }, [measure, route, expandedId]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(measure, 430);
+    return () => window.clearTimeout(timer);
+  }, [expandedId, measure]);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const observer = new ResizeObserver(() => measure());
+    observer.observe(track);
+    cardRefs.current.forEach((el) => {
+      if (el) observer.observe(el);
+    });
+    window.addEventListener("resize", measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [measure, itemCount]);
+
+  const endY =
+    centers.length > 0
+      ? Math.max(...centers, trackHeight - 8)
+      : Math.max(trackHeight - 8, 0);
+  const spinePath = generateSpinePath(0, endY);
+  const expandedIndex =
+    expandedId === null
+      ? -1
+      : route.findIndex((node) => node.id === expandedId);
+  const progressY =
+    expandedIndex >= 0 && centers[expandedIndex] !== undefined
+      ? centers[expandedIndex]
+      : centers[0] ?? 0;
+  const progressPath =
+    centers.length > 0 ? generateSpinePath(0, progressY) : "";
+
+  return (
+    <div ref={trackRef} className="relative flex gap-3 sm:gap-5">
+      <div
+        className="relative w-12 shrink-0 sm:w-[4.5rem]"
+        style={{ minHeight: trackHeight || undefined }}
+        aria-hidden
+      >
+        <svg
+          className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 overflow-visible"
+          width={SPINE_WIDTH}
+          height={Math.max(endY, 1)}
+          viewBox={`0 0 ${SPINE_WIDTH} ${Math.max(endY, 1)}`}
         >
-          <Flag className="h-4 w-4" strokeWidth={2} />
-        </span>
+          {spinePath ? (
+            <path
+              d={spinePath}
+              fill="none"
+              stroke="rgba(255,255,255,0.12)"
+              strokeWidth={6}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          ) : null}
+          {progressPath ? (
+            <path
+              d={progressPath}
+              fill="none"
+              stroke="#3B82F6"
+              strokeWidth={6}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="transition-[d] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+            />
+          ) : null}
+        </svg>
+
+        {route.map((node, index) => {
+          const y = centers[index];
+          if (y === undefined) return null;
+          const accent = statusAccent(node.status);
+          const expanded = expandedId === node.id;
+          return (
+            <span
+              key={node.id}
+              className={cn(
+                "absolute z-[1] h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-4 ring-[#0A0F1D] transition-transform duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
+                accent.node,
+                expanded && "scale-125",
+              )}
+              style={{ left: getNodeX(y), top: y }}
+            />
+          );
+        })}
+
+        {centers[route.length] !== undefined ? (
+          <span
+            className="absolute z-[1] flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/[0.06] text-[#94A3B8] ring-4 ring-[#0A0F1D]"
+            style={{
+              left: getNodeX(centers[route.length]),
+              top: centers[route.length],
+            }}
+            title="End of roadmap"
+          >
+            <Flag className="h-4 w-4" strokeWidth={2} />
+          </span>
+        ) : null}
       </div>
 
-      <article className="min-w-0 flex-1 pb-1">
-        <div className="w-full rounded-2xl bg-white/[0.04] px-4 py-4 sm:px-5 sm:py-5">
-          <p className="font-display text-lg font-bold text-white sm:text-xl">
-            Run out of questions?
-          </p>
-          <p className="mt-2 text-sm leading-relaxed text-[#94A3B8]">
-            Check out our{" "}
-            <Link
-              href={APP_ROUTES.questionBank}
-              className="font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#3B82F6]"
-            >
-              {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ written questions
-            </Link>{" "}
-            in the ESAT CAMP question bank.
-          </p>
-        </div>
-      </article>
+      <div className="min-w-0 flex-1">
+        {route.map((node, index) => (
+          <RouteCard
+            key={node.id}
+            node={node}
+            expanded={expandedId === node.id}
+            onToggle={() => onToggle(node.id)}
+            cardRef={(el) => {
+              cardRefs.current[index] = el;
+            }}
+          />
+        ))}
+        <RouteEndCard
+          cardRef={(el) => {
+            cardRefs.current[route.length] = el;
+          }}
+        />
+      </div>
     </div>
   );
 }
@@ -232,7 +414,8 @@ function PaperRouteGeneratorInner() {
   const onModuleToggle = (id: GuideModuleId) => {
     setShowModuleTip(false);
     const next = toggleModule(modules, id);
-    updateQuery(next.length ? next : [...modules]);
+    if (next === modules || next.join() === modules.join()) return;
+    updateQuery(next);
     trackEvent("past_paper_plan_module_changed", {
       module: id,
       selected: next.includes(id),
@@ -243,40 +426,53 @@ function PaperRouteGeneratorInner() {
   return (
     <div className="space-y-8">
       <div className="w-full">
-        <p className="text-sm font-semibold text-white">
-          Which modules are you taking?
-        </p>
+        <div className="flex flex-wrap items-end justify-between gap-2">
+          <p className="text-sm font-semibold text-white">
+            Which modules are you taking?
+          </p>
+          <p className="text-xs text-[#64748B]">
+            Up to {MAX_GUIDE_MODULES} subjects
+          </p>
+        </div>
         <div className="relative mt-3 w-full">
           {showModuleTip ? (
             <div
               role="status"
               className="absolute -top-14 left-0 z-10 max-w-[16rem] rounded-2xl bg-[#161D2F] px-3 py-2 text-xs leading-snug text-[#CBD5E1] shadow-lg"
             >
-              Change these to match your course. Defaults are Maths 1, Maths 2
-              and Physics.
+              Defaults are Maths 1, Maths 2 and Physics. Pick up to three.
               <span
                 aria-hidden
                 className="absolute -bottom-1.5 left-6 h-3 w-3 rotate-45 bg-[#161D2F]"
               />
             </div>
           ) : null}
-          <div className="grid w-full grid-cols-2 gap-2 sm:grid-cols-4">
+          <div className="grid w-full grid-cols-5 gap-1.5 sm:gap-2">
             {GUIDE_MODULES.map((module) => {
               const active = modules.includes(module.id);
+              const atCap = modules.length >= MAX_GUIDE_MODULES && !active;
               return (
                 <button
                   key={module.id}
                   type="button"
                   aria-pressed={active}
+                  disabled={atCap}
+                  title={
+                    atCap
+                      ? `Maximum ${MAX_GUIDE_MODULES} subjects`
+                      : module.label
+                  }
                   onClick={() => onModuleToggle(module.id)}
                   className={cn(
-                    "min-h-11 w-full rounded-full px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]",
+                    "min-h-10 w-full rounded-full px-1 py-2 text-center text-[11px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6] sm:min-h-11 sm:px-2 sm:text-sm",
                     active
                       ? "bg-[#3B82F6] text-white"
-                      : "bg-white/5 text-[#94A3B8] hover:bg-white/10 hover:text-white",
+                      : atCap
+                        ? "bg-white/[0.03] text-[#475569]"
+                        : "bg-white/5 text-[#94A3B8] hover:bg-white/10 hover:text-white",
                   )}
                 >
-                  {module.label}
+                  {module.shortLabel}
                 </button>
               );
             })}
@@ -285,17 +481,13 @@ function PaperRouteGeneratorInner() {
       </div>
 
       <div className="w-full" aria-live="polite">
-        {route.map((node) => (
-          <RouteTimelineCard
-            key={node.id}
-            node={node}
-            expanded={expandedId === node.id}
-            onToggle={() =>
-              setExpandedId((current) => (current === node.id ? null : node.id))
-            }
-          />
-        ))}
-        <RouteEndFlagCard />
+        <CurvyRouteTimeline
+          route={route}
+          expandedId={expandedId}
+          onToggle={(id) =>
+            setExpandedId((current) => (current === id ? null : id))
+          }
+        />
       </div>
 
       <p className="text-sm leading-relaxed text-[#94A3B8]">

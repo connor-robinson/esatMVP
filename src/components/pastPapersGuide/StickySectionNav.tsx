@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 const SECTIONS = [
-  { id: "roadmap", label: "Roadmap" },
+  { id: "roadmap", label: "Your Roadmap" },
   { id: "nsaa", label: "NSAA structure" },
   { id: "engaa", label: "ENGAA structure" },
   { id: "overlaps", label: "Overlaps" },

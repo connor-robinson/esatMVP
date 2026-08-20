@@ -121,7 +121,23 @@ export default function EsatPastPapersGuidePage() {
             Which past papers should you use for the ESAT?
           </h1>
 
-          <div className="mt-5 flex w-full items-center gap-3 rounded-2xl bg-white/[0.04] px-4 py-3 sm:px-5">
+          <div className="mt-8 grid items-center gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+            <div className="max-w-3xl space-y-3 text-base leading-relaxed text-[#94A3B8]">
+              <p>
+                There are no released ESAT papers yet, so the best practice comes
+                from Cambridge&apos;s older NSAA, ENGAA and TMUA papers. Their
+                formats changed across years, and NSAA and ENGAA reuse many of
+                the same questions.
+              </p>
+              <p>
+                This guide maps each exam&apos;s structure over time, then shows
+                what to do, what to skip and why.
+              </p>
+            </div>
+            <HeroPaperStack />
+          </div>
+
+          <div className="mt-8 flex w-full items-center gap-3 rounded-2xl bg-white/[0.04] px-4 py-3 sm:px-5">
             <span
               aria-hidden
               className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10"
@@ -144,22 +160,6 @@ export default function EsatPastPapersGuidePage() {
               </p>
             </div>
           </div>
-
-          <div className="mt-8 grid items-center gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
-            <div className="max-w-3xl space-y-3 text-base leading-relaxed text-[#94A3B8]">
-              <p>
-                There are no released ESAT papers yet, so the best practice comes
-                from Cambridge&apos;s older NSAA, ENGAA and TMUA papers. Their
-                formats changed across years, and NSAA and ENGAA reuse many of
-                the same questions.
-              </p>
-              <p>
-                This guide maps each exam&apos;s structure over time, then shows
-                what to do, what to skip and why.
-              </p>
-            </div>
-            <HeroPaperStack />
-          </div>
         </div>
       </header>
 
@@ -175,8 +175,8 @@ export default function EsatPastPapersGuidePage() {
       <div className={`space-y-16 pb-8 pt-8 sm:space-y-20 sm:pt-10 ${CONTENT}`}>
         <SeoSection
           id="roadmap"
-          heading="Your shortest useful route"
-          lead="Choose your ESAT modules. We hide irrelevant sections and mark the Skip / Unique only steps that appear if you follow this order from the start."
+          heading="Your Roadmap"
+          lead="Choose your ESAT modules, and we will show you our suggested past papers."
         >
           <PaperRouteGenerator />
         </SeoSection>

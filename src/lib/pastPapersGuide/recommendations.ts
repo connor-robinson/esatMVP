@@ -1,5 +1,6 @@
 import {
   DEFAULT_GUIDE_MODULES,
+  MAX_GUIDE_MODULES,
   UNIQUE_ENGAA_PART_B_BY_YEAR,
   type GuideModuleId,
 } from "@/content/pastPapersGuide";
@@ -198,7 +199,8 @@ export function parseModulesParam(raw: string | null): GuideModuleId[] {
     .filter((part): part is GuideModuleId =>
       valid.has(part as GuideModuleId),
     );
-  return parsed.length ? parsed : [...DEFAULT_GUIDE_MODULES];
+  const unique = [...new Set(parsed)].slice(0, MAX_GUIDE_MODULES);
+  return unique.length ? unique : [...DEFAULT_GUIDE_MODULES];
 }
 
 export function modulesToParam(modules: readonly GuideModuleId[]): string {

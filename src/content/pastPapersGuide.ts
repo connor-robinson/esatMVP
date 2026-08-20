@@ -22,13 +22,17 @@ export type GuideProgressId =
 export const GUIDE_MODULES: readonly {
   id: GuideModuleId;
   label: string;
+  shortLabel: string;
 }[] = [
-  { id: "maths1", label: "Mathematics 1" },
-  { id: "maths2", label: "Mathematics 2" },
-  { id: "physics", label: "Physics" },
-  { id: "chemistry", label: "Chemistry" },
-  { id: "biology", label: "Biology" },
+  { id: "maths1", label: "Mathematics 1", shortLabel: "Maths 1" },
+  { id: "maths2", label: "Mathematics 2", shortLabel: "Maths 2" },
+  { id: "physics", label: "Physics", shortLabel: "Physics" },
+  { id: "chemistry", label: "Chemistry", shortLabel: "Chem" },
+  { id: "biology", label: "Biology", shortLabel: "Bio" },
 ] as const;
+
+/** ESAT candidates sit at most three modules. */
+export const MAX_GUIDE_MODULES = 3;
 
 export const GUIDE_PROGRESS_OPTIONS: readonly {
   id: GuideProgressId;
