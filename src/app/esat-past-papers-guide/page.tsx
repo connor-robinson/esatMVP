@@ -18,9 +18,7 @@ import {
   SeoProse,
   SeoSection,
   SeoSubheading,
-  SeoTextLink,
 } from "@/components/seo/SeoSections";
-import { HeroPaperStack } from "@/components/pastPapersGuide/HeroPaperStack";
 import { OverlapExplorerSection } from "@/components/pastPapersGuide/OverlapExplorerSection";
 import { PaperRouteGenerator } from "@/components/pastPapersGuide/PaperRouteGenerator";
 import { StickySectionNav } from "@/components/pastPapersGuide/StickySectionNav";
@@ -99,7 +97,7 @@ export default function EsatPastPapersGuidePage() {
         ]}
       />
 
-      <header className="relative overflow-hidden pt-12 pb-10 sm:pt-16 sm:pb-14">
+      <header className="relative overflow-hidden pt-10 pb-6 sm:pt-12 sm:pb-8">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 opacity-[0.35]"
@@ -110,63 +108,51 @@ export default function EsatPastPapersGuidePage() {
           }}
         />
         <div className={`relative ${CONTENT}`}>
-          <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
-                ESAT past-paper roadmap
-              </p>
-              <h1 className="mt-4 text-4xl font-display font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-[3.25rem]">
-                Which past papers should you use for the ESAT?
-              </h1>
-              <div className="mt-5 max-w-2xl space-y-3 text-base leading-relaxed text-[#94A3B8]">
-                <p>
-                  There are no released live ESAT papers yet, so the best
-                  practice comes from the official ESAT samples and Cambridge's
-                  older NSAA, ENGAA and TMUA papers. The problem is that their
-                  formats changed, some content is now out of specification, and
-                  NSAA and ENGAA reuse many of the same questions.
-                </p>
-                <p>This guide shows exactly what to do, what to skip and why.</p>
-              </div>
-              <SeoCtaRow className="mt-8">
-                <SeoCta href="#roadmap" placement="past_papers_guide_hero">
-                  Build my paper plan
-                </SeoCta>
-                <SeoCta
-                  href={APP_ROUTES.pastPaperLibrary}
-                  variant="quiet"
-                  placement="past_papers_guide_library"
-                >
-                  Browse the official papers
-                </SeoCta>
-              </SeoCtaRow>
-            </div>
-            <HeroPaperStack />
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
+            ESAT past-paper roadmap
+          </p>
+          <h1 className="mt-3 w-full text-4xl font-display font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-[3.25rem]">
+            Which past papers should you use for the ESAT?
+          </h1>
+
+          <div className="mt-5 flex w-full items-center gap-3">
+            <span
+              aria-hidden
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="h-5 w-5 text-[#64748B]"
+                fill="currentColor"
+                aria-hidden
+              >
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v1h16v-1c0-2.66-5.33-4-8-4z" />
+              </svg>
+            </span>
+            <p className="text-sm text-[#94A3B8]">
+              Written by the ESAT CAMP editorial team
+            </p>
           </div>
 
-          <div className="mt-10 rounded-2xl bg-white/[0.04] p-5 sm:p-6">
-            <ul className="grid gap-3 text-sm text-[#94A3B8] sm:grid-cols-3">
-              <li>Written by the ESAT CAMP editorial team</li>
-              <li>
-                Reviewed against the current ESAT specification and official
-                UAT-UK archive
-              </li>
-              <li>
-                Last reviewed {PAST_PAPERS_GUIDE_LAST_REVIEWED.label}.{" "}
-                <a
-                  href="#sources"
-                  className="text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#3B82F6]"
-                >
-                  How we checked this
-                </a>
-              </li>
-            </ul>
+          <div className="mt-5 max-w-3xl space-y-3 text-base leading-relaxed text-[#94A3B8]">
+            <p>
+              There are no released ESAT papers yet, so the best practice comes
+              from Cambridge&apos;s older NSAA, ENGAA and TMUA papers. The
+              problem is that their formats have changed over the years, and
+              NSAA and ENGAA reuse many of the same questions.
+            </p>
+            <p>This guide shows exactly what to do, what to skip and why.</p>
           </div>
         </div>
       </header>
 
       <div className={CONTENT}>
-        <StickySectionNav />
+        <div>
+          <p className="mb-2 text-xs font-bold uppercase tracking-[0.3em] text-[#64748B]">
+            Content
+          </p>
+          <StickySectionNav />
+        </div>
       </div>
 
       <div className={`space-y-16 pb-8 pt-8 sm:space-y-20 sm:pt-10 ${CONTENT}`}>
