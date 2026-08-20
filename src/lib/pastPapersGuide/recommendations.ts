@@ -4,6 +4,7 @@ import {
   UNIQUE_ENGAA_PART_B_BY_YEAR,
   type GuideModuleId,
 } from "@/content/pastPapersGuide";
+import { SOURCES } from "@/lib/seo/config";
 
 export type RouteNodeStatus = "active" | "skipped" | "partial";
 
