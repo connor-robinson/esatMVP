@@ -19,6 +19,7 @@ import {
   SeoSection,
   SeoSubheading,
 } from "@/components/seo/SeoSections";
+import { HeroPaperStack } from "@/components/pastPapersGuide/HeroPaperStack";
 import { OverlapExplorerSection } from "@/components/pastPapersGuide/OverlapExplorerSection";
 import { PaperRouteGenerator } from "@/components/pastPapersGuide/PaperRouteGenerator";
 import { StickySectionNav } from "@/components/pastPapersGuide/StickySectionNav";
