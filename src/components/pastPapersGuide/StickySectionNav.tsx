@@ -5,10 +5,10 @@ import { cn } from "@/lib/utils";
 
 const SECTIONS = [
   { id: "roadmap", label: "Roadmap" },
-  { id: "nsaa", label: "NSAA" },
-  { id: "engaa", label: "ENGAA" },
+  { id: "nsaa", label: "NSAA structure" },
+  { id: "engaa", label: "ENGAA structure" },
   { id: "overlaps", label: "Overlaps" },
-  { id: "tmua", label: "TMUA" },
+  { id: "tmua", label: "TMUA structure" },
   { id: "tier-list", label: "Tier list" },
   { id: "timing", label: "Timing" },
 ] as const;
