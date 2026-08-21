@@ -210,7 +210,7 @@ function UniquePartBTable() {
               {questions.map((q) => (
                 <span
                   key={q}
-                  className="inline-flex rounded-full bg-accent/20 px-2.5 py-1 font-mono text-sm font-bold tabular-nums text-accent"
+                  className="inline-flex rounded-full bg-white/15 px-2.5 py-1 font-mono text-sm font-bold tabular-nums text-white"
                 >
                   Q{q}
                 </span>
