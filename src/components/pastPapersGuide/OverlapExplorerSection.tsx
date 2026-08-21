@@ -73,7 +73,7 @@ function ActionPill({ action }: { action: ActionKind }) {
     },
     unique: {
       label: "Unique questions only",
-      className: `bg-warning ${ON_SOLID_SUBJECT_TEXT}`,
+      className: `bg-error ${ON_SOLID_SUBJECT_TEXT}`,
     },
     complete: {
       label: "Complete",
@@ -81,7 +81,7 @@ function ActionPill({ action }: { action: ActionKind }) {
     },
     optional: {
       label: "Optional",
-      className: `bg-accent ${ON_SOLID_SUBJECT_TEXT}`,
+      className: `bg-primary ${ON_SOLID_SUBJECT_TEXT}`,
     },
   };
   const style = styles[action];
