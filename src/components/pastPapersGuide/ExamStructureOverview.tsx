@@ -687,41 +687,75 @@ function EngaaGuide() {
 
 function TmuaGuide() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="w-full">
         <h2 className="text-2xl font-display font-bold tracking-tight text-white sm:text-3xl">
           TMUA Guide
         </h2>
         <p className={cn("mt-3 w-full text-[15px] leading-[1.45] sm:text-base", BODY)}>
-          Two maths papers, same shape every year from 2016-2023. No science
+          Two maths papers with the same format from 2016–2023. No science
           content.
         </p>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div className="rounded-xl bg-white/[0.08] px-4 py-5">
-          <p className="font-mono text-xs uppercase tracking-widest text-[#E2E8F0]">
-            Paper 1
-          </p>
-          <p className="mt-2 font-semibold text-white">Applications</p>
-          <StatLine
-            questions="20 questions"
-            time="75 min"
-            pace={`${secPerQuestion(75, 20)} sec/question`}
-          />
+
+      <section className="space-y-2.5">
+        <EraHeading years="2016–2023" />
+        <div className="grid gap-3 sm:grid-cols-2 sm:items-stretch lg:gap-4">
+          <SectionPanel
+            title="Paper 1 · Applications"
+            choose="Mathematical problem solving"
+            badge="recommended"
+            stretch
+            commentary={
+              <Commentary label="Use:">
+                Good extra Maths 2 practice once you finish ENGAA Part B.
+              </Commentary>
+            }
+          >
+            <div
+              className={cn(
+                "flex min-h-[2.75rem] items-center justify-center rounded-md px-3 py-2 text-center text-sm font-bold shadow-md shadow-black/35",
+                getSectionSubjectPillClass(
+                  "Advanced Mathematics and Advanced Physics",
+                ),
+              )}
+            >
+              Maths 2 practice
+            </div>
+            <StatLine
+              questions="20 questions"
+              time="75 min"
+              pace="225 sec/question"
+            />
+          </SectionPanel>
+
+          <SectionPanel
+            title="Paper 2 · Reasoning"
+            choose="Logic and mathematical reasoning"
+            badge="lowPriority"
+            stretch
+            commentary={
+              <Commentary label="Use later:">
+                More logic-based and less similar to ESAT questions.
+              </Commentary>
+            }
+          >
+            <div
+              className={cn(
+                "flex min-h-[2.75rem] items-center justify-center rounded-md px-3 py-2 text-center text-sm font-bold shadow-md shadow-black/35",
+                `bg-maths/55 ${ON_SOLID_SUBJECT_TEXT}`,
+              )}
+            >
+              Reasoning practice
+            </div>
+            <StatLine
+              questions="20 questions"
+              time="75 min"
+              pace="225 sec/question"
+            />
+          </SectionPanel>
         </div>
-        <div className="rounded-xl bg-white/[0.08] px-4 py-5">
-          <p className="font-mono text-xs uppercase tracking-widest text-[#E2E8F0]">
-            Paper 2
-          </p>
-          <p className="mt-2 font-semibold text-white">Reasoning</p>
-          <StatLine
-            questions="20 questions"
-            time="75 min"
-            pace={`${secPerQuestion(75, 20)} sec/question`}
-          />
-          <p className={cn("mt-2 text-sm", BODY)}>Lower priority for ESAT</p>
-        </div>
-      </div>
+      </section>
     </div>
   );
 }

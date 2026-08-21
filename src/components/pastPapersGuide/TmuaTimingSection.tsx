@@ -4,9 +4,27 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 const PRESETS = [
-  { id: "tmua", label: "Original TMUA", minutes: 3.75 },
-  { id: "bridge", label: "ESAT CAMP bridge pace", minutes: 2.25 },
-  { id: "esat", label: "ESAT pace", minutes: 1.48 },
+  {
+    id: "tmua",
+    label: "Original TMUA",
+    display: "3.75 min / question",
+    support:
+      "Original TMUA averages 3.75 minutes per question. Useful for careful first passes.",
+  },
+  {
+    id: "bridge",
+    label: "Recommended pace",
+    display: "2–2.5 min / question",
+    support:
+      "TMUA questions are longer than ESAT questions. This gives you useful speed practice without forcing an unrealistic 89-second limit.",
+  },
+  {
+    id: "esat",
+    label: "Full ESAT pace",
+    display: "1.48 min / question",
+    support:
+      "Full ESAT speed. Only use this once you are already comfortable with TMUA papers.",
+  },
 ] as const;
 
 /** Pacing helper shown under the TMUA structure overview. */
@@ -16,7 +34,9 @@ export function TmuaTimingSection() {
 
   return (
     <div className="rounded-2xl bg-white/[0.035] p-5 sm:p-6">
-      <p className="text-sm font-semibold text-white">Paper 1 pacing for ESAT</p>
+      <p className="text-sm font-semibold text-white">
+        Recommended Paper 1 pacing for ESAT
+      </p>
       <div className="mt-3 flex flex-wrap gap-2">
         {PRESETS.map((item) => (
           <button
@@ -36,11 +56,10 @@ export function TmuaTimingSection() {
         ))}
       </div>
       <p className="mt-4 font-mono text-2xl font-bold text-white">
-        {active.minutes.toFixed(2)} min / question
+        {active.display}
       </p>
-      <p className="mt-2 text-sm text-[#94A3B8]">
-        Original TMUA averages 3.75 minutes per question. For ESAT speed work,
-        aim closer to 1.5–2.5 minutes.
+      <p className="mt-2 text-[15px] leading-[1.45] text-[#94A3B8] sm:text-base">
+        {active.support}
       </p>
     </div>
   );
