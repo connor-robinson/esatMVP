@@ -224,34 +224,29 @@ function EngaaEra({
       <EraHeading years={years} />
       <div className="grid gap-3 lg:grid-cols-2">
         <SectionPanel title="Section 1" choose="Answer all parts" accent="ENGAA">
-          <div className="space-y-2">
-            <div
-              className={cn(
-                "rounded-md px-3 py-3",
-                getSectionSubjectPillClass("Mathematics and Physics"),
-              )}
-            >
-              <p className="text-sm font-semibold">
-                Part A · Mathematics and Physics
+          <div className="space-y-3">
+            <div>
+              <p className={cn("mb-2 text-xs font-medium", SOFT)}>
+                Part A · {s1.partA} questions · Mathematics and Physics mixed
               </p>
-              <p className="mt-1 font-mono text-xs opacity-90">
-                {s1.partA} questions
-              </p>
+              <div className="grid grid-cols-2 gap-2">
+                <PartChip
+                  code="A"
+                  label="Mathematics"
+                  sectionKey="Mathematics"
+                />
+                <PartChip code="A" label="Physics" sectionKey="Physics" />
+              </div>
             </div>
-            <div
-              className={cn(
-                "rounded-md px-3 py-3",
-                getSectionSubjectPillClass(
-                  "Advanced Mathematics and Advanced Physics",
-                ),
-              )}
-            >
-              <p className="text-sm font-semibold">
-                Part B · Advanced Math + Phy
+            <div>
+              <p className={cn("mb-2 text-xs font-medium", SOFT)}>
+                Part B · {s1.partB} questions
               </p>
-              <p className="mt-1 font-mono text-xs opacity-90">
-                {s1.partB} questions
-              </p>
+              <PartChip
+                code="B"
+                label="Advanced Math + Phy"
+                sectionKey="Advanced Mathematics and Advanced Physics"
+              />
             </div>
           </div>
           <StatRow
@@ -270,17 +265,7 @@ function EngaaEra({
           choose="Advanced Physics only"
           accent="ENGAA"
         >
-          <div
-            className={cn(
-              "rounded-md px-3 py-6 text-center",
-              getSectionSubjectPillClass("Physics"),
-            )}
-          >
-            <p className="text-sm font-semibold">Physics</p>
-            <p className="mt-1 text-xs opacity-90">
-              All questions in this section
-            </p>
-          </div>
+          <PartChip code="S2" label="Physics" sectionKey="Physics" />
           <StatRow
             questions={`${s2.questions} questions`}
             minutes={`${s2.minutes} min`}
