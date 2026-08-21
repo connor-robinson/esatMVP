@@ -2,19 +2,22 @@ import { cn } from "@/lib/utils";
 import type { ExamStructureBlock } from "@/content/legacyExamStructures";
 import {
   getSectionSubjectPillClass,
-  ON_SOLID_SUBJECT_TEXT,
 } from "@/config/colors";
 
 const BODY = "text-[#CBD5E1]";
 const META = "text-[#E2E8F0]";
+const COMMENTARY =
+  "max-w-xl text-[15px] leading-[1.45] text-[#CBD5E1] sm:text-base";
 
 type RecBadge =
-  | "best"
   | "recommended"
   | "optional"
-  | "skip"
-  | "checkDuplicates"
-  | "nsaaDuplicate";
+  | "lowPriority"
+  | "bestMatch"
+  | "harderPractice"
+  | "duplicateAfterNsaa"
+  | "doUniqueOnly"
+  | "checkYear";
 
 function secPerQuestion(minutes: number, questions: number): number | null {
   if (questions <= 0) return null;
@@ -23,21 +26,19 @@ function secPerQuestion(minutes: number, questions: number): number | null {
 
 function RecommendationBadge({ kind }: { kind: RecBadge }) {
   const labels: Record<RecBadge, string> = {
-    best: "Best for ESAT",
     recommended: "Recommended",
     optional: "Optional",
-    skip: "Skip",
-    checkDuplicates: "Check duplicates",
-    nsaaDuplicate: "NSAA duplicate",
+    lowPriority: "Low priority",
+    bestMatch: "Best match",
+    harderPractice: "Harder practice",
+    duplicateAfterNsaa: "Duplicate after NSAA",
+    doUniqueOnly: "Do unique only",
+    checkYear: "Check year",
   };
-  const isSkip = kind === "skip";
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide",
-        isSkip
-          ? `bg-error ${ON_SOLID_SUBJECT_TEXT}`
-          : "bg-white/15 text-white",
+        "inline-flex shrink-0 items-center rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white",
       )}
     >
       {labels[kind]}
@@ -54,30 +55,40 @@ function FormatChangeNotice({
 }) {
   return (
     <div className="rounded-xl bg-accent/15 px-4 py-3.5">
-      <p className="text-xs font-bold uppercase tracking-widest text-accent">
+      <p className="font-mono text-xs font-bold uppercase tracking-widest text-accent">
         Format changed in {year}
       </p>
-      <p className={cn("mt-1.5 text-base leading-relaxed", BODY)}>{children}</p>
+      <p className={cn("mt-1.5", COMMENTARY)}>{children}</p>
     </div>
   );
 }
 
 function StatLine({
-  paceLabel,
-  questionsLabel,
-  minutes,
+  questions,
+  time,
+  pace,
 }: {
-  paceLabel: string;
-  questionsLabel: string;
-  minutes: number;
+  questions: string;
+  time: string;
+  pace: string;
 }) {
   return (
-    <p className="mt-2.5 font-mono text-sm leading-snug">
-      <span className="font-bold text-accent">{paceLabel}</span>
-      <span className="font-semibold text-[#E2E8F0]">
-        {" "}
-        · {questionsLabel} · {minutes} minutes
-      </span>
+    <p className="mt-2.5 font-mono text-xs leading-snug text-[#94A3B8] sm:text-sm">
+      {questions} · {time} · {pace}
+    </p>
+  );
+}
+
+function Commentary({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <p className={COMMENTARY}>
+      <span className="font-bold text-white">{label}</span> {children}
     </p>
   );
 }
@@ -146,7 +157,7 @@ function EngaaPartCard({
   return (
     <div
       className={cn(
-        "relative flex items-center gap-3 rounded-md px-3 py-2.5 pr-28 shadow-md shadow-black/35 sm:pr-32",
+        "relative flex items-center gap-3 rounded-md px-3 py-2.5 pr-28 shadow-md shadow-black/35 sm:pr-36",
         getSectionSubjectPillClass(sectionKey),
       )}
     >
@@ -182,7 +193,7 @@ function SectionPanel({
   title: string;
   choose: string;
   badge?: RecBadge;
-  commentary: string;
+  commentary: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
@@ -196,7 +207,7 @@ function SectionPanel({
         <h4
           className={cn(
             "font-display text-base font-bold text-white",
-            badge && "pr-28 sm:pr-32",
+            badge && "pr-28 sm:pr-36",
           )}
         >
           {title}
@@ -204,7 +215,7 @@ function SectionPanel({
         <p className={cn("mt-1.5 text-sm font-medium", META)}>{choose}</p>
         <div className="mt-2.5">{children}</div>
       </div>
-      <p className={cn("text-base leading-relaxed", BODY)}>{commentary}</p>
+      {commentary}
     </div>
   );
 }
@@ -226,22 +237,19 @@ function NsaaEra({
     questions: number;
     minutes: number;
     badge: RecBadge;
-    commentary: string;
+    commentary: React.ReactNode;
     title: string;
+    timing: { questions: string; time: string; pace: string };
   };
   s2: {
     parts: { code: string; label: string; sectionKey: string }[];
     choose: string;
-    questionsLabel: string;
-    minutes: number;
-    paceLabel: string;
     badge: RecBadge;
-    commentary: string;
+    commentary: React.ReactNode;
     title: string;
+    timing: { questions: string; time: string; pace: string };
   };
 }) {
-  const s1Pace = secPerQuestion(s1.minutes, s1.questions);
-
   return (
     <section className="space-y-2.5">
       <EraHeading years={years} />
@@ -271,15 +279,7 @@ function NsaaEra({
               />
             ))}
           </div>
-          <StatLine
-            paceLabel={
-              s1Pace
-                ? `${s1Pace} seconds per question`
-                : "Timing varies"
-            }
-            questionsLabel={`${s1.questions} questions`}
-            minutes={s1.minutes}
-          />
+          <StatLine {...s1.timing} />
         </SectionPanel>
 
         <SectionPanel
@@ -306,11 +306,7 @@ function NsaaEra({
               />
             ))}
           </div>
-          <StatLine
-            paceLabel={s2.paceLabel}
-            questionsLabel={s2.questionsLabel}
-            minutes={s2.minutes}
-          />
+          <StatLine {...s2.timing} />
         </SectionPanel>
       </div>
     </section>
@@ -327,27 +323,28 @@ function EngaaEra({
     partA: number;
     partB: number;
     minutes: number;
-    commentary: string;
+    partABadge: RecBadge;
+    partBBadge: RecBadge;
+    commentary: React.ReactNode;
+    timing: { questions: string; time: string; pace: string };
   };
   s2: {
     questions: number;
     minutes: number;
-    commentary: string;
+    commentary: React.ReactNode;
     badge: RecBadge;
-    title?: string;
+    title: string;
+    choose: string;
+    timing: { questions: string; time: string; pace: string };
   };
 }) {
-  const total = s1.partA + s1.partB;
-  const s1Pace = secPerQuestion(s1.minutes, total);
-  const s2Pace = secPerQuestion(s2.minutes, s2.questions);
-
   return (
     <section className="space-y-2.5">
       <EraHeading years={years} />
       <div className="grid gap-3 lg:grid-cols-2 lg:gap-4 lg:items-start">
         <SectionPanel
-          title="Section 1: No Calculator"
-          choose="Answer all parts"
+          title="Section 1 · No calculator"
+          choose="Complete both parts"
           commentary={s1.commentary}
         >
           <div className="space-y-3 pt-1">
@@ -356,30 +353,22 @@ function EngaaEra({
               label="Mathematics + Physics"
               sectionKey="Mathematics and Physics"
               questions={s1.partA}
-              badge="checkDuplicates"
+              badge={s1.partABadge}
             />
             <EngaaPartCard
               code="B"
               label="Advanced Math + Phy"
               sectionKey="Advanced Mathematics and Advanced Physics"
               questions={s1.partB}
-              badge="recommended"
+              badge={s1.partBBadge}
             />
           </div>
-          <StatLine
-            paceLabel={
-              s1Pace
-                ? `${s1Pace} seconds per question`
-                : "Timing varies"
-            }
-            questionsLabel={`${total} questions`}
-            minutes={s1.minutes}
-          />
+          <StatLine {...s1.timing} />
         </SectionPanel>
 
         <SectionPanel
-          title={s2.title ?? "Section 2: Advanced Physics only"}
-          choose="All questions in this section"
+          title={s2.title}
+          choose={s2.choose}
           commentary={s2.commentary}
         >
           <div className="pt-1">
@@ -391,15 +380,7 @@ function EngaaEra({
               badge={s2.badge}
             />
           </div>
-          <StatLine
-            paceLabel={
-              s2Pace
-                ? `${s2Pace} seconds per question`
-                : "Timing varies"
-            }
-            questionsLabel={`${s2.questions} questions`}
-            minutes={s2.minutes}
-          />
+          <StatLine {...s2.timing} />
         </SectionPanel>
       </div>
     </section>
@@ -413,9 +394,8 @@ function NsaaGuide() {
         <h2 className="text-2xl font-display font-bold tracking-tight text-white sm:text-3xl">
           Which NSAA Papers Should You Use for ESAT?
         </h2>
-        <p className={cn("mt-3 w-full text-base leading-relaxed", BODY)}>
-          The NSAA format changed in 2020. Use the guide below to see what each
-          section contains and how useful it is for ESAT preparation.
+        <p className={cn("mt-3 w-full text-[15px] leading-[1.45] sm:text-base", BODY)}>
+          The NSAA format changed in 2020. Here is what to use for ESAT.
         </p>
       </div>
 
@@ -442,9 +422,18 @@ function NsaaGuide() {
           questions: 54,
           minutes: 80,
           badge: "recommended",
-          title: "Section 1: No Calculator",
-          commentary:
-            "Highly recommended. It is strong practice for ESAT Maths 1 and sciences. Only complete the parts matching your ESAT subjects.",
+          title: "Section 1 · No calculator",
+          timing: {
+            questions: "54 questions",
+            time: "80 min",
+            pace: "89 sec/question",
+          },
+          commentary: (
+            <Commentary label="Use:">
+              Strong practice for Maths 1 and your chosen sciences. Part E adds
+              harder Maths and Physics.
+            </Commentary>
+          ),
         }}
         s2={{
           parts: [
@@ -455,20 +444,25 @@ function NsaaGuide() {
             { code: "5", label: "Biology", sectionKey: "Biology" },
             { code: "6", label: "Biology", sectionKey: "Biology" },
           ],
-          choose: "Answer any two questions",
-          questionsLabel: "2 long questions",
-          minutes: 40,
-          paceLabel: "About 20 minutes per question",
-          badge: "skip",
-          title: "Section 2: Calculator Allowed",
-          commentary:
-            "Skip this section. These are long, written, calculator-allowed questions, so they are very different from the ESAT. Useful only as harder extension practice.",
+          choose: "Choose any two written questions",
+          badge: "lowPriority",
+          title: "Section 2 · Calculator allowed",
+          timing: {
+            questions: "2 written questions",
+            time: "40 min",
+            pace: "~20 min/question",
+          },
+          commentary: (
+            <Commentary label="Skip for normal ESAT practice.">
+              Use only for extra long-form problem solving.
+            </Commentary>
+          ),
         }}
       />
 
       <FormatChangeNotice year="2020">
-        Section 1 became shorter and Part E was removed. Section 2 changed to
-        longer, no-calculator multiple-choice questions.
+        Part E was removed. Section 1 became shorter, while Section 2 became
+        no-calculator multiple choice.
       </FormatChangeNotice>
 
       <NsaaEra
@@ -488,10 +482,18 @@ function NsaaGuide() {
           choose: "Take Maths + one science",
           questions: 40,
           minutes: 60,
-          badge: "best",
-          title: "Section 1: No Calculator",
-          commentary:
-            "Best NSAA practice for ESAT. The short, timed multiple-choice questions resemble ESAT Maths 1 and science modules.",
+          badge: "bestMatch",
+          title: "Section 1 · No calculator",
+          timing: {
+            questions: "40 questions",
+            time: "60 min",
+            pace: "90 sec/question",
+          },
+          commentary: (
+            <Commentary label="Use first:">
+              The closest NSAA practice for ESAT Maths 1 and science.
+            </Commentary>
+          ),
         }}
         s2={{
           parts: [
@@ -499,28 +501,26 @@ function NsaaGuide() {
             { code: "Y", label: "Chemistry", sectionKey: "Chemistry" },
             { code: "Z", label: "Biology", sectionKey: "Biology" },
           ],
-          choose: "Choose one subject",
-          questionsLabel: "20 questions",
-          minutes: 60,
-          paceLabel: (() => {
-            const pace = secPerQuestion(60, 20);
-            return pace
-              ? `${pace} seconds per question`
-              : "Timing varies";
-          })(),
-          badge: "optional",
-          title: "Section 2: No Calculator",
-          commentary:
-            "Good secondary practice. The questions are longer and harder than the ESAT, but useful for developing deeper problem-solving once you finish Section 1.",
+          choose: "Choose one science",
+          badge: "harderPractice",
+          title: "Section 2 · No calculator",
+          timing: {
+            questions: "20 questions",
+            time: "60 min",
+            pace: "180 sec/question",
+          },
+          commentary: (
+            <Commentary label="Use later:">
+              Good harder science practice. Skip anything outside the ESAT
+              syllabus.
+            </Commentary>
+          ),
         }}
       />
 
-      <p className={cn("text-sm leading-relaxed", BODY)}>
-        Watch for duplicates: some NSAA questions also appear in ENGAA papers,
-        so avoid completing both.
-      </p>
-      <p className={cn("text-sm leading-relaxed", BODY)}>
-        UAT-UK&apos;s ESAT archive publishes NSAA Section 1 only.
+      <p className={COMMENTARY}>
+        Some questions repeat in ENGAA. UAT-UK currently publishes NSAA Section 1
+        only.
       </p>
     </div>
   );
@@ -533,10 +533,8 @@ function EngaaGuide() {
         <h2 className="text-2xl font-display font-bold tracking-tight text-white sm:text-3xl">
           ENGAA Guide
         </h2>
-        <p className={cn("mt-3 w-full text-base leading-relaxed", BODY)}>
-          ENGAA consists of two sections. Section 1 mixes Mathematics and Physics
-          in both parts. Section 2 is Advanced Physics only, with no choosing
-          between sciences.
+        <p className={cn("mt-3 w-full text-[15px] leading-[1.45] sm:text-base", BODY)}>
+          ENGAA combines Maths and Physics. Its format changed in 2019.
         </p>
       </div>
 
@@ -546,15 +544,35 @@ function EngaaGuide() {
           partA: 28,
           partB: 26,
           minutes: 80,
-          commentary:
-            "Skip Part A if you have completed NSAA Maths and Physics. Part B is more useful for Maths 2 and harder Physics, although some questions repeat NSAA Part E.",
+          partABadge: "duplicateAfterNsaa",
+          partBBadge: "doUniqueOnly",
+          timing: {
+            questions: "54 questions",
+            time: "80 min",
+            pace: "89 sec/question",
+          },
+          commentary: (
+            <Commentary label="After NSAA:">
+              Skip Part A and complete only the unique Part B questions.
+            </Commentary>
+          ),
         }}
         s2={{
           questions: 20,
           minutes: 40,
           badge: "optional",
-          commentary:
-            "Optional practice. These are unique, linked Physics questions, but the calculator-based format is less similar to the ESAT.",
+          title: "Section 2 · Physics",
+          choose: "Complete all questions",
+          timing: {
+            questions: "20 questions",
+            time: "40 min",
+            pace: "120 sec/question",
+          },
+          commentary: (
+            <Commentary label="Optional:">
+              Unique, harder Physics questions, but less similar to the ESAT.
+            </Commentary>
+          ),
         }}
       />
 
@@ -569,20 +587,44 @@ function EngaaGuide() {
           partA: 20,
           partB: 20,
           minutes: 60,
-          commentary:
-            "Skip Part A if you have completed the same year's NSAA. Part B is the main resource for Maths 2 and extra Physics.",
+          partABadge: "duplicateAfterNsaa",
+          partBBadge: "recommended",
+          timing: {
+            questions: "40 questions",
+            time: "60 min",
+            pace: "90 sec/question",
+          },
+          commentary: (
+            <Commentary label="After NSAA:">
+              Skip Part A. In 2019, do unique Part B questions only. From 2020,
+              do all relevant Part B questions.
+            </Commentary>
+          ),
         }}
         s2={{
           questions: 20,
           minutes: 60,
-          badge: "nsaaDuplicate",
-          commentary:
-            "Harder, longer Physics practice. 2019 is unique · 2020-2023 overlaps NSAA Physics.",
+          badge: "checkYear",
+          title: "Section 2 · Physics",
+          choose: "Complete all questions",
+          timing: {
+            questions: "20 questions",
+            time: "60 min",
+            pace: "180 sec/question",
+          },
+          commentary: (
+            <p className={COMMENTARY}>
+              <span className="font-bold text-white">2019:</span> Unique Physics
+              practice.{" "}
+              <span className="font-bold text-white">2020-2023:</span> Duplicate
+              of NSAA Section 2 Physics.
+            </p>
+          ),
         }}
       />
 
-      <p className={cn("text-sm leading-relaxed", BODY)}>
-        UAT-UK&apos;s ESAT archive publishes ENGAA Section 1 only.
+      <p className={COMMENTARY}>
+        UAT-UK currently publishes ENGAA Section 1 only.
       </p>
     </div>
   );
@@ -595,7 +637,7 @@ function TmuaGuide() {
         <h2 className="text-2xl font-display font-bold tracking-tight text-white sm:text-3xl">
           TMUA Guide
         </h2>
-        <p className={cn("mt-3 w-full text-base leading-relaxed", BODY)}>
+        <p className={cn("mt-3 w-full text-[15px] leading-[1.45] sm:text-base", BODY)}>
           Two maths papers, same shape every year from 2016-2023. No science
           content.
         </p>
@@ -607,9 +649,9 @@ function TmuaGuide() {
           </p>
           <p className="mt-2 font-semibold text-white">Applications</p>
           <StatLine
-            paceLabel={`${secPerQuestion(75, 20)} seconds per question`}
-            questionsLabel="20 questions"
-            minutes={75}
+            questions="20 questions"
+            time="75 min"
+            pace={`${secPerQuestion(75, 20)} sec/question`}
           />
         </div>
         <div className="rounded-xl bg-white/[0.08] px-4 py-5">
@@ -618,9 +660,9 @@ function TmuaGuide() {
           </p>
           <p className="mt-2 font-semibold text-white">Reasoning</p>
           <StatLine
-            paceLabel={`${secPerQuestion(75, 20)} seconds per question`}
-            questionsLabel="20 questions"
-            minutes={75}
+            questions="20 questions"
+            time="75 min"
+            pace={`${secPerQuestion(75, 20)} sec/question`}
           />
           <p className={cn("mt-2 text-sm", BODY)}>Lower priority for ESAT</p>
         </div>
