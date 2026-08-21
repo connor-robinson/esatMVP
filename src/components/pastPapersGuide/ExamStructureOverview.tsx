@@ -296,7 +296,7 @@ function NsaaEra({
         >
           <div
             className={cn(
-              "grid gap-3",
+              "grid gap-2",
               s2.parts.length > 3
                 ? "grid-cols-3 sm:grid-cols-6"
                 : "grid-cols-3",
@@ -308,6 +308,7 @@ function NsaaEra({
                 code={part.code}
                 label={part.label}
                 sectionKey={part.sectionKey}
+                compact
               />
             ))}
           </div>
