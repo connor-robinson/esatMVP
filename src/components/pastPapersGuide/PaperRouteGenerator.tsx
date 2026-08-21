@@ -30,11 +30,43 @@ import {
   type RouteNode,
 } from "@/lib/pastPapersGuide/recommendations";
 import { ROADMAP_EXPAND_TRANSITION_CLASS } from "@/components/papers/roadmap/roadmapTimelineLayout";
+import {
+  getExamAccentBadgeClass,
+  getExamAccentFillClass,
+  getExamAccentSurfaceClass,
+  getExamAccentTextClass,
+  getSectionSubjectPillClass,
+  ON_SOLID_SUBJECT_TEXT,
+} from "@/config/colors";
 
 const SPINE_WIDTH = 72;
 const SPINE_CENTER_X = SPINE_WIDTH / 2;
 const WAVE_AMPLITUDE = 12;
 const WAVE_FREQUENCY = 0.012;
+
+type GuideExamName = "ESAT" | "NSAA" | "ENGAA" | "TMUA";
+
+function examFromRouteNode(node: RouteNode): GuideExamName {
+  if (node.id.startsWith("nsaa")) return "NSAA";
+  if (node.id.startsWith("engaa")) return "ENGAA";
+  if (node.id.startsWith("tmua")) return "TMUA";
+  return "ESAT";
+}
+
+function examStrokeVar(exam: GuideExamName): string {
+  if (exam === "ENGAA") return "var(--color-biology)";
+  if (exam === "NSAA") return "var(--color-accent)";
+  if (exam === "TMUA") return "var(--color-tmua-accent)";
+  return "var(--color-maths)";
+}
+
+function moduleSectionKey(id: GuideModuleId): string {
+  if (id === "maths1") return "Mathematics";
+  if (id === "maths2") return "Advanced Mathematics and Advanced Physics";
+  if (id === "physics") return "Physics";
+  if (id === "chemistry") return "Chemistry";
+  return "Biology";
+}
 
 function getNodeX(y: number): number {
   const offsetCorrection = WAVE_AMPLITUDE * 0.3;
@@ -82,31 +114,37 @@ function toggleModule(
   return [...current, id];
 }
 
-/** Match question-bank session difficulty pills: solid fill + white label. */
-function statusAccent(status: RouteNode["status"]) {
+/** Status pills stay distinct; timeline dots use exam library colors. */
+function statusAccent(status: RouteNode["status"], exam: GuideExamName) {
   if (status === "skipped") {
     return {
-      node: "bg-[#EF4444]",
-      badge: "bg-[#EF4444] text-white",
+      node: "bg-error",
+      badge: `bg-error ${ON_SOLID_SUBJECT_TEXT}`,
       label: "Skip" as const,
     };
   }
   if (status === "partial") {
     return {
-      node: "bg-[#EAB308]",
-      badge: "bg-[#EAB308] text-white",
+      node: "bg-warning",
+      badge: `bg-warning ${ON_SOLID_SUBJECT_TEXT}`,
       label: "Unique only" as const,
     };
   }
   return {
-    node: "bg-[#3B82F6]",
+    node: getExamAccentFillClass(exam),
     badge: null,
     label: null,
   };
 }
 
-function RouteStatusPill({ status }: { status: RouteNode["status"] }) {
-  const accent = statusAccent(status);
+function RouteStatusPill({
+  status,
+  exam,
+}: {
+  status: RouteNode["status"];
+  exam: GuideExamName;
+}) {
+  const accent = statusAccent(status, exam);
   if (!accent.label || !accent.badge) return null;
   return (
     <span
@@ -131,6 +169,8 @@ function RouteCard({
   onToggle: () => void;
   cardRef: (el: HTMLElement | null) => void;
 }) {
+  const exam = examFromRouteNode(node);
+
   return (
     <article ref={cardRef} className="min-w-0 pb-4">
       <button
@@ -138,31 +178,41 @@ function RouteCard({
         onClick={onToggle}
         aria-expanded={expanded}
         className={cn(
-          "w-full rounded-2xl bg-white/[0.035] px-4 py-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6] sm:px-5",
-          expanded ? "bg-white/[0.06]" : "hover:bg-white/[0.05]",
+          "w-full rounded-2xl px-4 py-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maths sm:px-5",
+          expanded
+            ? getExamAccentSurfaceClass(exam)
+            : "bg-white/[0.035] hover:bg-white/[0.05]",
           node.status === "skipped" && "opacity-80",
         )}
       >
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
+              <span
+                className={cn(
+                  "inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide",
+                  getExamAccentBadgeClass(exam),
+                )}
+              >
+                {exam}
+              </span>
               <h3
                 className={cn(
                   "font-display text-lg font-bold text-white sm:text-xl",
                   node.status === "skipped" &&
-                    "line-through decoration-red-400/70",
+                    "line-through decoration-error/70",
                 )}
               >
                 {node.step}. {node.title}
               </h3>
-              <RouteStatusPill status={node.status} />
+              <RouteStatusPill status={node.status} exam={exam} />
             </div>
           </div>
           <ChevronDown
             aria-hidden
             className={cn(
               "mt-1 h-5 w-5 shrink-0 text-[#94A3B8] transition-transform duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-              expanded && "rotate-180 text-[#3B82F6]",
+              expanded && cn("rotate-180", getExamAccentTextClass(exam)),
             )}
           />
         </div>
@@ -187,8 +237,8 @@ function RouteCard({
                   className={cn(
                     "text-sm font-medium",
                     node.status === "skipped"
-                      ? "text-red-300"
-                      : "text-[#E8D5A3]",
+                      ? "text-error"
+                      : "text-warning",
                   )}
                 >
                   {node.skipReason}
@@ -203,7 +253,10 @@ function RouteCard({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(event) => event.stopPropagation()}
-                  className="inline-flex text-sm font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#3B82F6]"
+                  className={cn(
+                    "inline-flex text-sm font-semibold underline decoration-white/25 underline-offset-4",
+                    getExamAccentTextClass(exam),
+                  )}
                 >
                   {node.linkLabel}
                 </a>
@@ -226,7 +279,7 @@ function RouteEndCard({ cardRef }: { cardRef: (el: HTMLElement | null) => void }
     <article ref={cardRef} className="min-w-0 pb-1">
       <Link
         href={APP_ROUTES.questionBank}
-        className="block w-full rounded-2xl bg-white/[0.04] px-4 py-4 transition-colors hover:bg-white/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6] sm:px-5 sm:py-5"
+        className="block w-full rounded-2xl bg-maths/10 px-4 py-4 transition-colors hover:bg-maths/18 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maths sm:px-5 sm:py-5"
       >
         <p className="font-display text-lg font-bold text-white sm:text-xl">
           Run out of questions?
@@ -318,6 +371,12 @@ function CurvyRouteTimeline({
       : centers[0] ?? 0;
   const progressPath =
     centers.length > 0 ? generateSpinePath(0, Math.max(progressY, 1)) : "";
+  const progressExam =
+    expandedIndex >= 0 && route[expandedIndex]
+      ? examFromRouteNode(route[expandedIndex]!)
+      : route[0]
+        ? examFromRouteNode(route[0])
+        : ("ESAT" as GuideExamName);
 
   return (
     <div ref={trackRef} className="relative flex gap-3 sm:gap-5">
@@ -342,7 +401,7 @@ function CurvyRouteTimeline({
             <path
               d={progressPath}
               fill="none"
-              stroke="#3B82F6"
+              stroke={examStrokeVar(progressExam)}
               strokeWidth={6}
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -353,7 +412,8 @@ function CurvyRouteTimeline({
         {route.map((node, index) => {
           const y = centers[index];
           if (y === undefined || y === 0) return null;
-          const accent = statusAccent(node.status);
+          const exam = examFromRouteNode(node);
+          const accent = statusAccent(node.status, exam);
           const expanded = expandedId === node.id;
           return (
             <span
@@ -505,9 +565,9 @@ function PaperRouteGeneratorInner() {
                     onModuleToggle(module.id);
                   }}
                   className={cn(
-                    "min-h-10 w-full rounded-full px-1 py-2 text-center text-[11px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6] sm:min-h-11 sm:px-2 sm:text-sm",
+                    "min-h-10 w-full rounded-full px-1 py-2 text-center text-[11px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maths sm:min-h-11 sm:px-2 sm:text-sm",
                     active
-                      ? "bg-[#3B82F6] text-white"
+                      ? getSectionSubjectPillClass(moduleSectionKey(module.id))
                       : atCap
                         ? "cursor-not-allowed bg-white/[0.03] text-[#475569]"
                         : "bg-white/5 text-[#94A3B8] hover:bg-white/10 hover:text-white",
