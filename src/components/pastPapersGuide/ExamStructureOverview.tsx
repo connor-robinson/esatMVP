@@ -1,29 +1,44 @@
 import { cn } from "@/lib/utils";
 import type { ExamStructureBlock } from "@/content/legacyExamStructures";
+import {
+  getExamAccentBadgeClass,
+  getExamAccentSurfaceClass,
+  getSectionSubjectPillClass,
+} from "@/config/colors";
 
 const MUTED = "text-[#64748B]";
 const SOFT = "text-[#94A3B8]";
 
-function secPerQuestion(minutes: number, questions: number): string {
-  if (questions <= 0) return "—";
-  const sec = Math.round((minutes * 60) / questions);
-  return `${sec} sec / q`;
+function secPerQuestion(minutes: number, questions: number): number | null {
+  if (questions <= 0) return null;
+  return Math.round((minutes * 60) / questions);
 }
 
 function StatRow({
   questions,
   minutes,
   perQuestion,
+  accent = "NSAA",
 }: {
   questions: string;
   minutes: string;
-  perQuestion?: string;
+  perQuestion?: string | null;
+  accent?: "NSAA" | "ENGAA" | "TMUA";
 }) {
   return (
-    <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs text-[#94A3B8]">
-      <span>{questions}</span>
-      <span>{minutes}</span>
-      {perQuestion ? <span>{perQuestion}</span> : null}
+    <div className="mt-3 flex flex-wrap items-center gap-2">
+      <span className="font-mono text-xs text-[#94A3B8]">{questions}</span>
+      <span className="font-mono text-xs text-[#94A3B8]">{minutes}</span>
+      {perQuestion ? (
+        <span
+          className={cn(
+            "rounded-full px-2.5 py-1 font-mono text-xs font-bold tabular-nums",
+            getExamAccentBadgeClass(accent),
+          )}
+        >
+          {perQuestion}
+        </span>
+      ) : null}
     </div>
   );
 }
@@ -31,29 +46,27 @@ function StatRow({
 function PartChip({
   code,
   label,
+  sectionKey,
   required,
-  dim,
 }: {
   code: string;
   label: string;
+  sectionKey: string;
   required?: boolean;
-  dim?: boolean;
 }) {
   return (
     <div
       className={cn(
-        "rounded-md px-2.5 py-2 text-center",
-        dim ? "bg-white/[0.04]" : required ? "bg-white/[0.12]" : "bg-white/[0.08]",
+        "flex min-h-[4.5rem] flex-col items-center justify-center rounded-md px-2 py-2.5 text-center",
+        getSectionSubjectPillClass(sectionKey),
       )}
     >
-      <p className="text-sm font-bold text-white">{code}</p>
-      <p className={cn("mt-0.5 text-[10px] leading-tight", dim ? MUTED : SOFT)}>
-        {label}
-      </p>
+      <p className="text-sm font-bold leading-none">{code}</p>
+      <p className="mt-1.5 text-[10px] font-semibold leading-tight">{label}</p>
       {required ? (
-        <p className="mt-1 text-[9px] font-semibold uppercase tracking-wide text-white/70">
-          required
-        </p>
+        <span className="mt-2 rounded-full bg-black/25 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-white">
+          Required
+        </span>
       ) : null}
     </div>
   );
@@ -70,33 +83,24 @@ function EraHeading({ years }: { years: string }) {
 function SectionPanel({
   title,
   choose,
-  muted,
+  accent,
   children,
 }: {
   title: string;
   choose: string;
-  muted?: boolean;
+  accent?: "NSAA" | "ENGAA";
   children: React.ReactNode;
 }) {
   return (
     <div
       className={cn(
         "rounded-xl px-4 py-4 sm:px-5 sm:py-5",
-        muted ? "bg-white/[0.02] opacity-55 grayscale" : "bg-white/[0.04]",
+        accent ? getExamAccentSurfaceClass(accent) : "bg-white/[0.04]",
       )}
     >
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h4
-          className={cn(
-            "font-display text-base font-bold",
-            muted ? "text-[#94A3B8]" : "text-white",
-          )}
-        >
-          {title}
-        </h4>
-        <p className={cn("text-xs font-medium", muted ? MUTED : SOFT)}>
-          {choose}
-        </p>
+        <h4 className="font-display text-base font-bold text-white">{title}</h4>
+        <p className={cn("text-xs font-medium", SOFT)}>{choose}</p>
       </div>
       <div className="mt-3">{children}</div>
     </div>
@@ -110,29 +114,38 @@ function NsaaEra({
 }: {
   years: string;
   s1: {
-    parts: { code: string; label: string; required?: boolean }[];
+    parts: {
+      code: string;
+      label: string;
+      sectionKey: string;
+      required?: boolean;
+    }[];
     choose: string;
     questions: number;
     minutes: number;
   };
   s2: {
-    parts: { code: string; label: string }[];
+    parts: { code: string; label: string; sectionKey: string }[];
     choose: string;
     questionsLabel: string;
     minutes: number;
-    perQuestion?: string;
+    perQuestion?: string | null;
     note: string;
   };
 }) {
+  const s1Pace = secPerQuestion(s1.minutes, s1.questions);
+
   return (
     <section className="space-y-3">
       <EraHeading years={years} />
       <div className="grid gap-3 lg:grid-cols-2">
-        <SectionPanel title="Section 1" choose={s1.choose}>
+        <SectionPanel title="Section 1" choose={s1.choose} accent="NSAA">
           <div
             className={cn(
               "grid gap-2",
-              s1.parts.length >= 5 ? "grid-cols-5" : "grid-cols-4",
+              s1.parts.length >= 5
+                ? "grid-cols-2 sm:grid-cols-5"
+                : "grid-cols-2 sm:grid-cols-4",
             )}
           >
             {s1.parts.map((part) => (
@@ -140,6 +153,7 @@ function NsaaEra({
                 key={part.code}
                 code={part.code}
                 label={part.label}
+                sectionKey={part.sectionKey}
                 required={part.required}
               />
             ))}
@@ -147,16 +161,19 @@ function NsaaEra({
           <StatRow
             questions={`${s1.questions} questions`}
             minutes={`${s1.minutes} min`}
-            perQuestion={secPerQuestion(s1.minutes, s1.questions)}
+            perQuestion={s1Pace ? `${s1Pace} sec / q` : null}
+            accent="NSAA"
           />
           <p className={`mt-2 text-xs ${MUTED}`}>No calculator</p>
         </SectionPanel>
 
-        <SectionPanel title="Section 2" choose={s2.choose} muted>
+        <SectionPanel title="Section 2" choose={s2.choose} accent="NSAA">
           <div
             className={cn(
               "grid gap-2",
-              s2.parts.length > 3 ? "grid-cols-6" : "grid-cols-3",
+              s2.parts.length > 3
+                ? "grid-cols-3 sm:grid-cols-6"
+                : "grid-cols-3",
             )}
           >
             {s2.parts.map((part, index) => (
@@ -164,7 +181,7 @@ function NsaaEra({
                 key={`${part.code}-${index}`}
                 code={part.code}
                 label={part.label}
-                dim
+                sectionKey={part.sectionKey}
               />
             ))}
           </div>
@@ -172,6 +189,7 @@ function NsaaEra({
             questions={s2.questionsLabel}
             minutes={`${s2.minutes} min`}
             perQuestion={s2.perQuestion}
+            accent="NSAA"
           />
           <p className={`mt-2 text-xs ${MUTED}`}>{s2.note}</p>
         </SectionPanel>
@@ -198,41 +216,49 @@ function EngaaEra({
   };
 }) {
   const total = s1.partA + s1.partB;
+  const s1Pace = secPerQuestion(s1.minutes, total);
+  const s2Pace = secPerQuestion(s2.minutes, s2.questions);
+
   return (
     <section className="space-y-3">
       <EraHeading years={years} />
       <div className="grid gap-3 lg:grid-cols-2">
-        <SectionPanel title="Section 1" choose="Answer all parts">
+        <SectionPanel title="Section 1" choose="Answer all parts" accent="ENGAA">
           <div className="space-y-2">
-            <div className="rounded-md bg-white/[0.08] px-3 py-3">
-              <p className="text-sm font-semibold text-white">
-                Part A · Maths + Physics mixed
+            <div
+              className={cn(
+                "rounded-md px-3 py-3",
+                getSectionSubjectPillClass("Mathematics and Physics"),
+              )}
+            >
+              <p className="text-sm font-semibold">
+                Part A · Mathematics and Physics
               </p>
-              <p className={`mt-1 font-mono text-xs ${SOFT}`}>
+              <p className="mt-1 font-mono text-xs opacity-90">
                 {s1.partA} questions
               </p>
-              <div className="mt-2 flex h-1.5 overflow-hidden rounded-full bg-black/25">
-                <span className="w-1/2 bg-white/30" />
-                <span className="w-1/2 bg-white/15" />
-              </div>
             </div>
-            <div className="rounded-md bg-white/[0.08] px-3 py-3">
-              <p className="text-sm font-semibold text-white">
-                Part B · Advanced Maths + Advanced Physics
+            <div
+              className={cn(
+                "rounded-md px-3 py-3",
+                getSectionSubjectPillClass(
+                  "Advanced Mathematics and Advanced Physics",
+                ),
+              )}
+            >
+              <p className="text-sm font-semibold">
+                Part B · Advanced Math + Phy
               </p>
-              <p className={`mt-1 font-mono text-xs ${SOFT}`}>
+              <p className="mt-1 font-mono text-xs opacity-90">
                 {s1.partB} questions
               </p>
-              <div className="mt-2 flex h-1.5 overflow-hidden rounded-full bg-black/25">
-                <span className="w-1/2 bg-white/30" />
-                <span className="w-1/2 bg-white/15" />
-              </div>
             </div>
           </div>
           <StatRow
             questions={`${total} questions`}
             minutes={`${s1.minutes} min`}
-            perQuestion={secPerQuestion(s1.minutes, total)}
+            perQuestion={s1Pace ? `${s1Pace} sec / q` : null}
+            accent="ENGAA"
           />
           <p className={`mt-2 text-xs ${MUTED}`}>
             No calculator · no Chemistry or Biology
@@ -242,16 +268,24 @@ function EngaaEra({
         <SectionPanel
           title="Section 2"
           choose="Advanced Physics only"
-          muted
+          accent="ENGAA"
         >
-          <div className="rounded-md bg-white/[0.06] px-3 py-6 text-center">
-            <p className="text-sm font-semibold text-white/80">Physics</p>
-            <p className={`mt-1 text-xs ${MUTED}`}>All questions in this section</p>
+          <div
+            className={cn(
+              "rounded-md px-3 py-6 text-center",
+              getSectionSubjectPillClass("Physics"),
+            )}
+          >
+            <p className="text-sm font-semibold">Physics</p>
+            <p className="mt-1 text-xs opacity-90">
+              All questions in this section
+            </p>
           </div>
           <StatRow
             questions={`${s2.questions} questions`}
             minutes={`${s2.minutes} min`}
-            perQuestion={secPerQuestion(s2.minutes, s2.questions)}
+            perQuestion={s2Pace ? `${s2Pace} sec / q` : null}
+            accent="ENGAA"
           />
           <p className={`mt-2 text-xs ${MUTED}`}>{s2.note}</p>
         </SectionPanel>
@@ -263,13 +297,13 @@ function EngaaEra({
 function NsaaGuide() {
   return (
     <div className="space-y-10">
-      <div>
+      <div className="w-full">
         <h2 className="text-2xl font-display font-bold tracking-tight text-white sm:text-3xl">
           NSAA Guide
         </h2>
-        <p className={`mt-3 max-w-2xl text-sm leading-relaxed ${SOFT}`}>
-          You sit two sections. In each section you choose which parts to take —
-          you never answer every part on the paper.
+        <p className={`mt-3 w-full text-base leading-relaxed ${SOFT}`}>
+          NSAA consists of two sections. In each section candidates choose which
+          parts to sit based on their subject.
         </p>
       </div>
 
@@ -277,11 +311,20 @@ function NsaaGuide() {
         years="2016–2019"
         s1={{
           parts: [
-            { code: "A", label: "Maths", required: true },
-            { code: "B", label: "Physics" },
-            { code: "C", label: "Chem" },
-            { code: "D", label: "Bio" },
-            { code: "E", label: "Advanced" },
+            {
+              code: "A",
+              label: "Mathematics",
+              sectionKey: "Mathematics",
+              required: true,
+            },
+            { code: "B", label: "Physics", sectionKey: "Physics" },
+            { code: "C", label: "Chemistry", sectionKey: "Chemistry" },
+            { code: "D", label: "Biology", sectionKey: "Biology" },
+            {
+              code: "E",
+              label: "Advanced Math + Phy",
+              sectionKey: "Advanced Mathematics and Advanced Physics",
+            },
           ],
           choose: "Sit A + any 2 others",
           questions: 54,
@@ -289,12 +332,12 @@ function NsaaGuide() {
         }}
         s2={{
           parts: [
-            { code: "P", label: "Phys" },
-            { code: "P", label: "Phys" },
-            { code: "C", label: "Chem" },
-            { code: "C", label: "Chem" },
-            { code: "B", label: "Bio" },
-            { code: "B", label: "Bio" },
+            { code: "1", label: "Physics", sectionKey: "Physics" },
+            { code: "2", label: "Physics", sectionKey: "Physics" },
+            { code: "3", label: "Chemistry", sectionKey: "Chemistry" },
+            { code: "4", label: "Chemistry", sectionKey: "Chemistry" },
+            { code: "5", label: "Biology", sectionKey: "Biology" },
+            { code: "6", label: "Biology", sectionKey: "Biology" },
           ],
           choose: "Pick any 2 of 6 written qs",
           questionsLabel: "2 long questions",
@@ -308,10 +351,15 @@ function NsaaGuide() {
         years="2020–2023"
         s1={{
           parts: [
-            { code: "A", label: "Maths", required: true },
-            { code: "B", label: "Physics" },
-            { code: "C", label: "Chem" },
-            { code: "D", label: "Bio" },
+            {
+              code: "A",
+              label: "Mathematics",
+              sectionKey: "Mathematics",
+              required: true,
+            },
+            { code: "B", label: "Physics", sectionKey: "Physics" },
+            { code: "C", label: "Chemistry", sectionKey: "Chemistry" },
+            { code: "D", label: "Biology", sectionKey: "Biology" },
           ],
           choose: "Sit A + one science",
           questions: 40,
@@ -319,14 +367,17 @@ function NsaaGuide() {
         }}
         s2={{
           parts: [
-            { code: "X", label: "Physics" },
-            { code: "Y", label: "Chem" },
-            { code: "Z", label: "Bio" },
+            { code: "X", label: "Physics", sectionKey: "Physics" },
+            { code: "Y", label: "Chemistry", sectionKey: "Chemistry" },
+            { code: "Z", label: "Biology", sectionKey: "Biology" },
           ],
           choose: "Pick one part",
           questionsLabel: "20 questions",
           minutes: 60,
-          perQuestion: secPerQuestion(60, 20),
+          perQuestion: (() => {
+            const pace = secPerQuestion(60, 20);
+            return pace ? `${pace} sec / q` : null;
+          })(),
           note: "No calculator · harder / secondary for ESAT",
         }}
       />
@@ -341,14 +392,13 @@ function NsaaGuide() {
 function EngaaGuide() {
   return (
     <div className="space-y-10">
-      <div>
+      <div className="w-full">
         <h2 className="text-2xl font-display font-bold tracking-tight text-white sm:text-3xl">
           ENGAA Guide
         </h2>
-        <p className={`mt-3 max-w-2xl text-sm leading-relaxed ${SOFT}`}>
-          You sit two sections. Section 1 is always Maths and Physics mixed in
-          both parts. Section 2 is Advanced Physics only — no choosing between
-          sciences.
+        <p className={`mt-3 w-full text-base leading-relaxed ${SOFT}`}>
+          ENGAA consists of two sections. Section 1 mixes Mathematics and Physics
+          in both parts. Section 2 is Advanced Physics only.
         </p>
       </div>
 
@@ -382,11 +432,11 @@ function EngaaGuide() {
 function TmuaGuide() {
   return (
     <div className="space-y-6">
-      <div>
+      <div className="w-full">
         <h2 className="text-2xl font-display font-bold tracking-tight text-white sm:text-3xl">
           TMUA Guide
         </h2>
-        <p className={`mt-3 max-w-2xl text-sm leading-relaxed ${SOFT}`}>
+        <p className={`mt-3 w-full text-base leading-relaxed ${SOFT}`}>
           Two maths papers, same shape every year from 2016–2023. No science
           content.
         </p>
@@ -400,18 +450,20 @@ function TmuaGuide() {
           <StatRow
             questions="20 questions"
             minutes="75 min"
-            perQuestion={secPerQuestion(75, 20)}
+            perQuestion={`${secPerQuestion(75, 20)} sec / q`}
+            accent="TMUA"
           />
         </div>
-        <div className="rounded-xl bg-white/[0.02] px-4 py-5 opacity-70">
+        <div className="rounded-xl bg-white/[0.04] px-4 py-5">
           <p className="font-mono text-xs uppercase tracking-widest text-[#64748B]">
             Paper 2
           </p>
-          <p className="mt-2 font-semibold text-white/80">Reasoning</p>
+          <p className="mt-2 font-semibold text-white">Reasoning</p>
           <StatRow
             questions="20 questions"
             minutes="75 min"
-            perQuestion={secPerQuestion(75, 20)}
+            perQuestion={`${secPerQuestion(75, 20)} sec / q`}
+            accent="TMUA"
           />
           <p className={`mt-2 text-xs ${MUTED}`}>Lower priority for ESAT</p>
         </div>
