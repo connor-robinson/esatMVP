@@ -672,59 +672,55 @@ function TmuaGuide() {
       <section className="space-y-2.5">
         <EraHeading years="2016–2023" />
         <div className="grid gap-3 sm:grid-cols-2 sm:items-stretch lg:gap-4">
-          <SectionPanel
-            title="Paper 1 · Applications"
-            choose="Mathematical problem solving"
-            badge="recommended"
-            stretch
-            commentary={
-              <Commentary label="Use:">
-                Good extra Maths 2 practice once you finish ENGAA Part B.
-              </Commentary>
-            }
-          >
-            <div
-              className={cn(
-                "flex min-h-[2.75rem] items-center justify-center rounded-md px-3 py-2 text-center text-sm font-bold shadow-md shadow-black/35",
-                getSectionSubjectPillClass(
-                  "Advanced Mathematics and Advanced Physics",
-                ),
-              )}
-            >
-              Maths 2 practice
+          <div className="flex h-full flex-col gap-2.5">
+            <div className="relative flex flex-1 flex-col rounded-xl bg-white/[0.09] px-5 py-5 sm:px-6 sm:py-6">
+              <span className="absolute right-4 top-4 z-10 sm:right-5 sm:top-5">
+                <RecommendationBadge kind="recommended" />
+              </span>
+              <h4 className="font-display pr-28 text-xl font-bold text-white sm:pr-36 sm:text-2xl">
+                Paper 1
+              </h4>
+              <p className={cn("mt-1.5 text-sm font-medium", META)}>
+                Applications of Mathematical Knowledge
+              </p>
+              <div className="mt-4 flex min-h-[5.5rem] flex-1 flex-col items-center justify-center rounded-md bg-white/[0.14] px-4 py-5 text-center sm:min-h-[6.25rem]">
+                <p className="text-base font-bold text-white sm:text-lg">
+                  Maths 2 practice
+                </p>
+                <p className="mt-2 text-sm font-semibold tabular-nums text-white/80">
+                  20 questions
+                </p>
+              </div>
             </div>
-            <StatLine
-              questions="20 questions"
-              time="75 min"
-              pace="225 sec/question"
-            />
-          </SectionPanel>
+            <Commentary label="Use:">
+              Good extra Maths 2 practice once you finish ENGAA Part B.
+            </Commentary>
+          </div>
 
-          <SectionPanel
-            title="Paper 2 · Reasoning"
-            choose="Logic and mathematical reasoning"
-            badge="lowPriority"
-            stretch
-            commentary={
-              <Commentary label="Use later:">
-                More logic-based and less similar to ESAT questions.
-              </Commentary>
-            }
-          >
-            <div
-              className={cn(
-                "flex min-h-[2.75rem] items-center justify-center rounded-md px-3 py-2 text-center text-sm font-bold shadow-md shadow-black/35",
-                `bg-maths/55 ${ON_SOLID_SUBJECT_TEXT}`,
-              )}
-            >
-              Reasoning practice
+          <div className="flex h-full flex-col gap-2.5">
+            <div className="relative flex flex-1 flex-col rounded-xl bg-white/[0.09] px-5 py-5 sm:px-6 sm:py-6">
+              <span className="absolute right-4 top-4 z-10 sm:right-5 sm:top-5">
+                <RecommendationBadge kind="lowPriority" />
+              </span>
+              <h4 className="font-display pr-28 text-xl font-bold text-white sm:pr-36 sm:text-2xl">
+                Paper 2
+              </h4>
+              <p className={cn("mt-1.5 text-sm font-medium", META)}>
+                Mathematical Reasoning
+              </p>
+              <div className="mt-4 flex min-h-[5.5rem] flex-1 flex-col items-center justify-center rounded-md bg-white/[0.14] px-4 py-5 text-center sm:min-h-[6.25rem]">
+                <p className="text-base font-bold text-white sm:text-lg">
+                  Reasoning practice
+                </p>
+                <p className="mt-2 text-sm font-semibold tabular-nums text-white/80">
+                  20 questions
+                </p>
+              </div>
             </div>
-            <StatLine
-              questions="20 questions"
-              time="75 min"
-              pace="225 sec/question"
-            />
-          </SectionPanel>
+            <Commentary label="Use later:">
+              More logic-based and less similar to ESAT questions.
+            </Commentary>
+          </div>
         </div>
       </section>
     </div>

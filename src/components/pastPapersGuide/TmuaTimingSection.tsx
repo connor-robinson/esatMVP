@@ -34,10 +34,7 @@ export function TmuaTimingSection() {
 
   return (
     <div className="rounded-2xl bg-white/[0.035] p-5 sm:p-6">
-      <p className="text-sm font-semibold text-white">
-        Recommended Paper 1 pacing for ESAT
-      </p>
-      <div className="mt-3 flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2">
         {PRESETS.map((item) => (
           <button
             key={item.id}
