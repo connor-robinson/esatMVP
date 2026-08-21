@@ -383,7 +383,8 @@ function EngaaGuide() {
         </h2>
         <p className={`mt-3 w-full text-base leading-relaxed ${SOFT}`}>
           ENGAA consists of two sections. Section 1 mixes Mathematics and Physics
-          in both parts. Section 2 is Advanced Physics only.
+          in both parts. Section 2 is Advanced Physics only — no choosing between
+          sciences.
         </p>
       </div>
 
