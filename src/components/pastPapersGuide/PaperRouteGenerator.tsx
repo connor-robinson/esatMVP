@@ -187,14 +187,6 @@ function RouteCard({
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <span
-                className={cn(
-                  "inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide",
-                  getExamAccentBadgeClass(exam),
-                )}
-              >
-                {exam}
-              </span>
               <h3
                 className={cn(
                   "font-display text-lg font-bold text-white sm:text-xl",
@@ -278,15 +270,18 @@ function RouteEndCard({ cardRef }: { cardRef: (el: HTMLElement | null) => void }
     <article ref={cardRef} className="min-w-0 pb-1">
       <Link
         href={APP_ROUTES.questionBank}
-        className="block w-full rounded-2xl bg-maths/10 px-4 py-4 transition-colors hover:bg-maths/18 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maths sm:px-5 sm:py-5"
+        className="block w-full rounded-2xl bg-white/[0.08] px-4 py-4 text-left transition-colors hover:bg-white/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maths sm:px-5"
       >
-        <p className="font-display text-lg font-bold text-white sm:text-xl">
+        <h3 className="font-display text-lg font-bold text-white sm:text-xl">
           Run out of questions?
-        </p>
+        </h3>
         <p className="mt-2 text-sm leading-relaxed text-[#94A3B8]">
           Check out our {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ written
           questions in the ESAT CAMP question bank.
         </p>
+        <span className="mt-4 inline-flex items-center rounded-full bg-maths px-4 py-2 text-sm font-semibold text-white">
+          Open question bank
+        </span>
       </Link>
     </article>
   );
