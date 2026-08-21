@@ -68,51 +68,43 @@ const ROWS_2020_2023: readonly OverlapRow[] = [
 ];
 
 function ActionPill({ action }: { action: ActionKind }) {
-  const styles: Record<ActionKind, { label: string; className: string }> = {
-    skip: {
-      label: "Skip",
-      className: `bg-error ${ON_SOLID_SUBJECT_TEXT}`,
-    },
-    unique: {
-      label: "Unique questions only",
-      className: `bg-warning ${ON_SOLID_SUBJECT_TEXT}`,
-    },
-    complete: {
-      label: "Complete",
-      className: `bg-primary ${ON_SOLID_SUBJECT_TEXT}`,
-    },
-    optional: {
-      label: "Optional",
-      className: `bg-accent ${ON_SOLID_SUBJECT_TEXT}`,
-    },
+  const labels: Record<ActionKind, string> = {
+    skip: "Skip",
+    unique: "Unique questions only",
+    complete: "Complete",
+    optional: "Optional",
   };
-  const style = styles[action];
   return (
     <span
       className={cn(
         "inline-flex items-center rounded-full px-3 py-1.5 text-xs font-bold uppercase tracking-wide",
-        style.className,
+        action === "skip"
+          ? `bg-error ${ON_SOLID_SUBJECT_TEXT}`
+          : "bg-white/15 text-white",
       )}
     >
-      {style.label}
+      {labels[action]}
     </span>
   );
 }
 
 function RelationshipRow({ row }: { row: OverlapRow }) {
   return (
-    <article className="rounded-xl bg-white/[0.07] px-4 py-4 sm:px-5 sm:py-5">
-      <div className="flex flex-col gap-3 lg:grid lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1.4fr)_auto] lg:items-start lg:gap-5">
+    <article className="relative rounded-xl bg-white/[0.07] px-4 py-4 pr-28 sm:px-5 sm:py-5 sm:pr-36">
+      <div className="absolute right-3 top-3 z-10 sm:right-4 sm:top-4">
+        <ActionPill action={row.action} />
+      </div>
+      <div className="grid gap-3 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1.6fr)] lg:items-start lg:gap-5">
         <p className="text-base font-bold text-white sm:text-lg">{row.engaa}</p>
 
-        <div className="order-2 space-y-2 lg:order-none">
+        <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
             <span className="text-[15px] font-semibold text-white sm:text-base">
               {row.relationship}
             </span>
             <ArrowRight
               aria-hidden
-              className="h-4 w-4 shrink-0 text-accent"
+              className="h-4 w-4 shrink-0 text-white/70"
               strokeWidth={2.5}
             />
             <span className="text-[15px] text-[#E2E8F0] sm:text-base">
@@ -120,14 +112,8 @@ function RelationshipRow({ row }: { row: OverlapRow }) {
               {row.nsaa}
             </span>
           </div>
-          <p className={cn("hidden lg:block", BODY)}>{row.support}</p>
+          <p className={BODY}>{row.support}</p>
         </div>
-
-        <div className="order-3 lg:order-none lg:justify-self-end lg:pt-0.5">
-          <ActionPill action={row.action} />
-        </div>
-
-        <p className={cn("order-4 lg:hidden", BODY)}>{row.support}</p>
       </div>
     </article>
   );
@@ -199,7 +185,7 @@ function UniquePartBTable() {
                     {questions.map((q) => (
                       <span
                         key={q}
-                        className="inline-flex rounded-full bg-accent/20 px-2.5 py-1 font-mono text-sm font-bold tabular-nums text-accent"
+                        className="inline-flex rounded-full bg-white/15 px-2.5 py-1 font-mono text-sm font-bold tabular-nums text-white"
                       >
                         Q{q}
                       </span>

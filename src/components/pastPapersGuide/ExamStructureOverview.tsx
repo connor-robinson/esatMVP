@@ -22,41 +22,25 @@ function secPerQuestion(minutes: number, questions: number): number | null {
 }
 
 function RecommendationBadge({ kind }: { kind: RecBadge }) {
-  const styles: Record<RecBadge, { label: string; className: string }> = {
-    best: {
-      label: "Best for ESAT",
-      className: `bg-primary ${ON_SOLID_SUBJECT_TEXT}`,
-    },
-    recommended: {
-      label: "Recommended",
-      className: `bg-accent ${ON_SOLID_SUBJECT_TEXT}`,
-    },
-    optional: {
-      label: "Optional",
-      className: `bg-warning ${ON_SOLID_SUBJECT_TEXT}`,
-    },
-    skip: {
-      label: "Skip",
-      className: `bg-error ${ON_SOLID_SUBJECT_TEXT}`,
-    },
-    checkDuplicates: {
-      label: "Check duplicates",
-      className: `bg-warning ${ON_SOLID_SUBJECT_TEXT}`,
-    },
-    nsaaDuplicate: {
-      label: "NSAA duplicate",
-      className: `bg-error ${ON_SOLID_SUBJECT_TEXT}`,
-    },
+  const labels: Record<RecBadge, string> = {
+    best: "Best for ESAT",
+    recommended: "Recommended",
+    optional: "Optional",
+    skip: "Skip",
+    checkDuplicates: "Check duplicates",
+    nsaaDuplicate: "NSAA duplicate",
   };
-  const style = styles[kind];
+  const isSkip = kind === "skip";
   return (
     <span
       className={cn(
         "inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide",
-        style.className,
+        isSkip
+          ? `bg-error ${ON_SOLID_SUBJECT_TEXT}`
+          : "bg-white/15 text-white",
       )}
     >
-      {style.label}
+      {labels[kind]}
     </span>
   );
 }
@@ -120,7 +104,8 @@ function PartChip({
       className={cn(
         "relative flex flex-col items-center justify-center rounded-md px-2 text-center shadow-md shadow-black/35",
         compact ? "min-h-0 py-2" : "min-h-[3.5rem] py-2",
-        (required || badge) && "pt-3.5",
+        required && "pt-3.5",
+        badge && "pr-2 pt-5",
         getSectionSubjectPillClass(sectionKey),
       )}
     >
@@ -130,7 +115,7 @@ function PartChip({
         </span>
       ) : null}
       {badge ? (
-        <span className="absolute -top-2.5 left-1/2 z-10 -translate-x-1/2">
+        <span className="absolute right-1 top-1 z-10">
           <RecommendationBadge kind={badge} />
         </span>
       ) : null}
@@ -161,11 +146,11 @@ function EngaaPartCard({
   return (
     <div
       className={cn(
-        "relative flex items-center gap-3 rounded-md px-3 py-2.5 pt-4 shadow-md shadow-black/35",
+        "relative flex items-center gap-3 rounded-md px-3 py-2.5 pr-28 shadow-md shadow-black/35 sm:pr-32",
         getSectionSubjectPillClass(sectionKey),
       )}
     >
-      <span className="absolute -top-2.5 left-3 z-10">
+      <span className="absolute right-2 top-2 z-10">
         <RecommendationBadge kind={badge} />
       </span>
       <p className="shrink-0 text-sm font-bold leading-none">{code}</p>
@@ -202,11 +187,20 @@ function SectionPanel({
 }) {
   return (
     <div className="flex min-h-0 flex-col gap-2.5">
-      <div className="rounded-xl bg-white/[0.09] px-4 py-3.5 sm:px-5 sm:py-4">
-        <div className="flex flex-wrap items-center gap-2">
-          {badge ? <RecommendationBadge kind={badge} /> : null}
-          <h4 className="font-display text-base font-bold text-white">{title}</h4>
-        </div>
+      <div className="relative rounded-xl bg-white/[0.09] px-4 py-3.5 sm:px-5 sm:py-4">
+        {badge ? (
+          <span className="absolute right-3 top-3 z-10 sm:right-4 sm:top-4">
+            <RecommendationBadge kind={badge} />
+          </span>
+        ) : null}
+        <h4
+          className={cn(
+            "font-display text-base font-bold text-white",
+            badge && "pr-28 sm:pr-32",
+          )}
+        >
+          {title}
+        </h4>
         <p className={cn("mt-1.5 text-sm font-medium", META)}>{choose}</p>
         <div className="mt-2.5">{children}</div>
       </div>

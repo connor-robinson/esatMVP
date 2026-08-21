@@ -31,9 +31,6 @@ import {
 } from "@/lib/pastPapersGuide/recommendations";
 import { ROADMAP_EXPAND_TRANSITION_CLASS } from "@/components/papers/roadmap/roadmapTimelineLayout";
 import {
-  getExamAccentFillClass,
-  getExamAccentSurfaceClass,
-  getExamAccentTextClass,
   getSectionSubjectPillClass,
   ON_SOLID_SUBJECT_TEXT,
 } from "@/config/colors";
@@ -42,15 +39,6 @@ const SPINE_WIDTH = 72;
 const SPINE_CENTER_X = SPINE_WIDTH / 2;
 const WAVE_AMPLITUDE = 12;
 const WAVE_FREQUENCY = 0.012;
-
-type GuideExamName = "ESAT" | "NSAA" | "ENGAA" | "TMUA";
-
-function examFromRouteNode(node: RouteNode): GuideExamName {
-  if (node.id.startsWith("nsaa")) return "NSAA";
-  if (node.id.startsWith("engaa")) return "ENGAA";
-  if (node.id.startsWith("tmua")) return "TMUA";
-  return "ESAT";
-}
 
 function moduleSectionKey(id: GuideModuleId): string {
   if (id === "maths1") return "Mathematics";
@@ -106,8 +94,8 @@ function toggleModule(
   return [...current, id];
 }
 
-/** Status pills stay distinct; timeline dots use exam library colors. */
-function statusAccent(status: RouteNode["status"], exam: GuideExamName) {
+/** Status pills: monochrome white, Skip stays red. Timeline nodes match. */
+function statusAccent(status: RouteNode["status"]) {
   if (status === "skipped") {
     return {
       node: "bg-error",
@@ -117,31 +105,25 @@ function statusAccent(status: RouteNode["status"], exam: GuideExamName) {
   }
   if (status === "partial") {
     return {
-      node: "bg-warning",
-      badge: `bg-warning ${ON_SOLID_SUBJECT_TEXT}`,
+      node: "bg-white",
+      badge: "bg-white/15 text-white",
       label: "Unique only" as const,
     };
   }
   return {
-    node: getExamAccentFillClass(exam),
+    node: "bg-white",
     badge: null,
     label: null,
   };
 }
 
-function RouteStatusPill({
-  status,
-  exam,
-}: {
-  status: RouteNode["status"];
-  exam: GuideExamName;
-}) {
-  const accent = statusAccent(status, exam);
+function RouteStatusPill({ status }: { status: RouteNode["status"] }) {
+  const accent = statusAccent(status);
   if (!accent.label || !accent.badge) return null;
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-xs font-bold",
+        "inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-xs font-bold uppercase tracking-wide",
         accent.badge,
       )}
     >
@@ -161,8 +143,6 @@ function RouteCard({
   onToggle: () => void;
   cardRef: (el: HTMLElement | null) => void;
 }) {
-  const exam = examFromRouteNode(node);
-
   return (
     <article ref={cardRef} className="min-w-0 pb-4">
       <button
@@ -170,35 +150,36 @@ function RouteCard({
         onClick={onToggle}
         aria-expanded={expanded}
         className={cn(
-          "w-full rounded-2xl px-4 py-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maths sm:px-5",
+          "relative w-full rounded-2xl px-4 py-4 pr-14 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 sm:px-5 sm:pr-16",
           expanded
-            ? getExamAccentSurfaceClass(exam)
+            ? "bg-white/[0.08]"
             : "bg-white/[0.035] hover:bg-white/[0.05]",
           node.status === "skipped" && "opacity-80",
         )}
       >
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <h3
-                className={cn(
-                  "font-display text-lg font-bold text-white sm:text-xl",
-                  node.status === "skipped" &&
-                    "line-through decoration-error/70",
-                )}
-              >
-                {node.step}. {node.title}
-              </h3>
-              <RouteStatusPill status={node.status} exam={exam} />
-            </div>
-          </div>
+        <div className="absolute right-3 top-3 z-10 flex items-start gap-2 sm:right-4 sm:top-4">
+          <RouteStatusPill status={node.status} />
           <ChevronDown
             aria-hidden
             className={cn(
-              "mt-1 h-5 w-5 shrink-0 text-[#94A3B8] transition-transform duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-              expanded && cn("rotate-180", getExamAccentTextClass(exam)),
+              "mt-0.5 h-5 w-5 shrink-0 text-[#94A3B8] transition-transform duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
+              expanded && "rotate-180 text-white",
             )}
           />
+        </div>
+
+        <div className="min-w-0">
+          <h3
+            className={cn(
+              "font-display text-lg font-bold text-white sm:text-xl",
+              node.status === "skipped" &&
+                "line-through decoration-error/70",
+              (node.status === "skipped" || node.status === "partial") &&
+                "pr-28 sm:pr-36",
+            )}
+          >
+            {node.step}. {node.title}
+          </h3>
         </div>
 
         <div
@@ -222,7 +203,7 @@ function RouteCard({
                     "text-sm font-medium",
                     node.status === "skipped"
                       ? "text-error"
-                      : "text-warning",
+                      : "text-white/80",
                   )}
                 >
                   {node.skipReason}
@@ -237,10 +218,7 @@ function RouteCard({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(event) => event.stopPropagation()}
-                  className={cn(
-                    "inline-flex text-sm font-semibold underline decoration-white/25 underline-offset-4",
-                    getExamAccentTextClass(exam),
-                  )}
+                  className="inline-flex text-sm font-semibold text-white underline decoration-white/25 underline-offset-4"
                 >
                   {node.linkLabel}
                 </a>
@@ -382,7 +360,7 @@ function CurvyRouteTimeline({
             <path
               d={progressPath}
               fill="none"
-              stroke="var(--color-accent)"
+              stroke="rgba(255,255,255,0.85)"
               strokeWidth={6}
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -393,8 +371,7 @@ function CurvyRouteTimeline({
         {route.map((node, index) => {
           const y = centers[index];
           if (y === undefined || y === 0) return null;
-          const exam = examFromRouteNode(node);
-          const accent = statusAccent(node.status, exam);
+          const accent = statusAccent(node.status);
           const expanded = expandedId === node.id;
           return (
             <span
