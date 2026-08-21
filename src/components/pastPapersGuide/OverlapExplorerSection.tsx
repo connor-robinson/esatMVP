@@ -242,22 +242,6 @@ export function OverlapExplorerSection() {
           NSAA and ENGAA reuse many of the same questions. If you have already
           completed NSAA, use this guide to avoid repeating them in ENGAA.
         </p>
-
-        <div className="rounded-2xl bg-accent/15 px-4 py-5 sm:px-6 sm:py-6">
-          <p className="text-base font-bold text-white sm:text-lg">
-            Already completed NSAA?
-          </p>
-          <p className={cn("mt-2", BODY)}>
-            Skip ENGAA Part A. Use Part B for Maths 2 and extra Physics. From
-            2020 onwards, complete only one copy of Section 2 Physics.
-          </p>
-          <a
-            href={`#${UNIQUE_TABLE_ID}`}
-            className="mt-4 inline-flex items-center rounded-full bg-white/10 px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/15"
-          >
-            View unique Part B questions
-          </a>
-        </div>
       </div>
 
       <EraBlock years="2016-2019" rows={ROWS_2016_2019} />
