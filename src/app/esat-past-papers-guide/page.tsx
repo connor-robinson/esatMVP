@@ -187,11 +187,7 @@ export default function EsatPastPapersGuidePage() {
           <ExamStructureOverview data={ENGAA_STRUCTURE} />
         </SeoSection>
 
-        <SeoSection
-          id="overlaps"
-          heading="Overlaps"
-          lead="NSAA and ENGAA drew from the same question pool, and have duplicate questions."
-        >
+        <SeoSection id="overlaps">
           <OverlapExplorerSection />
         </SeoSection>
 
