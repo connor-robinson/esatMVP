@@ -18,7 +18,10 @@ type RecBadge =
   | "harderPractice"
   | "duplicateAfterNsaa"
   | "doUniqueOnly"
-  | "checkYear";
+  | "checkYear"
+  | "skip"
+  | "mostlyOverlap"
+  | "doAll";
 
 function secPerQuestion(minutes: number, questions: number): number | null {
   if (questions <= 0) return null;
@@ -58,6 +61,18 @@ function RecommendationBadge({ kind }: { kind: RecBadge }) {
     checkYear: {
       label: "Check year",
       className: `bg-error ${ON_SOLID_SUBJECT_TEXT}`,
+    },
+    skip: {
+      label: "Skip",
+      className: `bg-error ${ON_SOLID_SUBJECT_TEXT}`,
+    },
+    mostlyOverlap: {
+      label: "Mostly overlap",
+      className: `bg-warning ${ON_SOLID_SUBJECT_TEXT}`,
+    },
+    doAll: {
+      label: "Do all",
+      className: `bg-primary ${ON_SOLID_SUBJECT_TEXT}`,
     },
   };
   const style = styles[kind];
@@ -184,11 +199,11 @@ function EngaaPartCard({
   return (
     <div
       className={cn(
-        "relative flex items-center gap-3 rounded-md px-3 py-2.5 pr-28 shadow-md shadow-black/35 sm:pr-36",
+        "relative flex min-h-[4.25rem] flex-1 items-center gap-3 rounded-md px-4 py-3.5 pr-[7.5rem] shadow-md shadow-black/35 sm:min-h-[4.5rem] sm:pr-32",
         getSectionSubjectPillClass(sectionKey),
       )}
     >
-      <span className="absolute right-2 top-2 z-10">
+      <span className="absolute right-3 top-3 z-10 sm:right-3.5 sm:top-3.5">
         <RecommendationBadge kind={badge} />
       </span>
       <p className="shrink-0 text-sm font-bold leading-none">{code}</p>
@@ -216,18 +231,30 @@ function SectionPanel({
   badge,
   commentary,
   children,
+  stretch,
 }: {
   title: string;
   choose: string;
   badge?: RecBadge;
   commentary: React.ReactNode;
   children: React.ReactNode;
+  stretch?: boolean;
 }) {
   return (
-    <div className="flex min-h-0 flex-col gap-2.5">
-      <div className="relative rounded-xl bg-white/[0.09] px-4 py-3.5 sm:px-5 sm:py-4">
+    <div
+      className={cn(
+        "flex min-h-0 flex-col gap-2.5",
+        stretch && "h-full",
+      )}
+    >
+      <div
+        className={cn(
+          "relative flex flex-1 flex-col rounded-xl bg-white/[0.09] px-5 py-5 sm:px-6 sm:py-6",
+          stretch && "h-full",
+        )}
+      >
         {badge ? (
-          <span className="absolute right-3 top-3 z-10 sm:right-4 sm:top-4">
+          <span className="absolute right-4 top-4 z-10 sm:right-5 sm:top-5">
             <RecommendationBadge kind={badge} />
           </span>
         ) : null}
@@ -240,7 +267,7 @@ function SectionPanel({
           {title}
         </h4>
         <p className={cn("mt-1.5 text-sm font-medium", META)}>{choose}</p>
-        <div className="mt-2.5">{children}</div>
+        <div className="mt-3.5 flex flex-1 flex-col">{children}</div>
       </div>
       {commentary}
     </div>
@@ -368,13 +395,14 @@ function EngaaEra({
   return (
     <section className="space-y-2.5">
       <EraHeading years={years} />
-      <div className="grid gap-3 lg:grid-cols-2 lg:gap-4 lg:items-start">
+      <div className="grid gap-3 lg:grid-cols-2 lg:items-stretch lg:gap-4">
         <SectionPanel
           title="Section 1 · No calculator"
           choose="Complete both parts"
           commentary={s1.commentary}
+          stretch
         >
-          <div className="space-y-3 pt-1">
+          <div className="flex flex-1 flex-col gap-3 pt-1">
             <EngaaPartCard
               code="A"
               label="Mathematics + Physics"
@@ -397,8 +425,9 @@ function EngaaEra({
           title={s2.title}
           choose={s2.choose}
           commentary={s2.commentary}
+          stretch
         >
-          <div className="pt-1">
+          <div className="flex flex-1 flex-col justify-center pt-1">
             <EngaaPartCard
               code="S2"
               label="Physics"
@@ -566,13 +595,13 @@ function EngaaGuide() {
       </div>
 
       <EngaaEra
-        years="2016-2018"
+        years="2016-2019"
         s1={{
           partA: 28,
           partB: 26,
           minutes: 80,
-          partABadge: "duplicateAfterNsaa",
-          partBBadge: "doUniqueOnly",
+          partABadge: "skip",
+          partBBadge: "mostlyOverlap",
           timing: {
             questions: "54 questions",
             time: "80 min",
@@ -580,14 +609,15 @@ function EngaaGuide() {
           },
           commentary: (
             <Commentary label="After NSAA:">
-              Skip Part A and complete only the unique Part B questions.
+              Skip Part A. Part B mostly overlaps NSAA Part E, so do the unique
+              questions only.
             </Commentary>
           ),
         }}
         s2={{
           questions: 20,
           minutes: 40,
-          badge: "optional",
+          badge: "doAll",
           title: "Section 2 · Physics",
           choose: "Complete all questions",
           timing: {
@@ -596,26 +626,26 @@ function EngaaGuide() {
             pace: "120 sec/question",
           },
           commentary: (
-            <Commentary label="Optional:">
-              Unique, harder Physics questions, but less similar to the ESAT.
+            <Commentary label="Do all:">
+              Unique Physics practice for these years. Complete the full paper.
             </Commentary>
           ),
         }}
       />
 
       <FormatChangeNotice year="2019">
-        Section 1 was shortened to 40 questions. Section 2 became a 60-minute,
-        no-calculator paper.
+        From 2019, Section 1 is 40 questions in 60 minutes. From 2020, Section 2
+        is 60 minutes and duplicates NSAA Section 2 Physics.
       </FormatChangeNotice>
 
       <EngaaEra
-        years="2019-2023"
+        years="2020-2023"
         s1={{
           partA: 20,
           partB: 20,
           minutes: 60,
-          partABadge: "duplicateAfterNsaa",
-          partBBadge: "recommended",
+          partABadge: "skip",
+          partBBadge: "doAll",
           timing: {
             questions: "40 questions",
             time: "60 min",
@@ -623,29 +653,27 @@ function EngaaGuide() {
           },
           commentary: (
             <Commentary label="After NSAA:">
-              Skip Part A. In 2019, do unique Part B questions only. From 2020,
-              do all relevant Part B questions.
+              Skip Part A. Do all relevant Part B questions for Maths 2 and
+              extra Physics.
             </Commentary>
           ),
         }}
         s2={{
           questions: 20,
           minutes: 60,
-          badge: "checkYear",
+          badge: "skip",
           title: "Section 2 · Physics",
-          choose: "Complete all questions",
+          choose: "Skip if you did NSAA Section 2",
           timing: {
             questions: "20 questions",
             time: "60 min",
             pace: "180 sec/question",
           },
           commentary: (
-            <p className={COMMENTARY}>
-              <span className="font-bold text-white">2019:</span> Unique Physics
-              practice.{" "}
-              <span className="font-bold text-white">2020-2023:</span> Duplicate
-              of NSAA Section 2 Physics.
-            </p>
+            <Commentary label="Skip:">
+              Same Physics set as NSAA Section 2 Part X. Complete either copy,
+              not both.
+            </Commentary>
           ),
         }}
       />
