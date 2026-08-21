@@ -21,10 +21,10 @@ export const PAPER_COLORS = {
   // Chemistry & PAT
   chemistry: colorTokens.chemistry.dark,
 
-  // Biology & NSAA & Completed years
+  // Biology — green
   biology: colorTokens.biology.dark,
 
-  // Advanced Math & ENGAA & Multiple Choice
+  // Advanced Math — yellow
   advanced: colorTokens.advanced.dark
 } as const;
 
@@ -35,7 +35,7 @@ export const PAPER_TYPE_COLORS = {
   ESAT: PAPER_COLORS.mathematics,
   TMUA: colorTokens.tmuaAccent.dark,
   NSAA: colorTokens.accent.dark,
-  ENGAA: PAPER_COLORS.biology,
+  ENGAA: PAPER_COLORS.advanced,
   PAT: PAPER_COLORS.chemistry,
   MAT: PAPER_COLORS.mathematics,
   OTHER: PAPER_COLORS.mathematics,
@@ -79,7 +79,7 @@ export function getPaperTypeColor(paperType: string): string {
 /** Tailwind text class for grouped exam titles (theme tokens — no hex in UI). */
 export function getExamAccentTextClass(examName: string): string {
   const key = examName.trim().toUpperCase();
-  if (key === "ENGAA") return "text-biology";
+  if (key === "ENGAA") return "text-advanced";
   if (key === "NSAA") return "text-accent";
   if (key === "TMUA") return "text-tmua-accent";
   if (key === "ESAT") return "text-maths";
@@ -196,7 +196,7 @@ export const cssVar = {
  */
 export function getExamSectionNumberBadgeClass(examName: string): string {
   const key = examName.trim().toUpperCase();
-  if (key === "ENGAA") return "bg-biology text-text";
+  if (key === "ENGAA") return "bg-advanced text-text";
   if (key === "NSAA") return "bg-accent text-text";
   if (key === "TMUA") return "bg-tmua-accent text-text";
   if (key === "ESAT") return "bg-maths text-text";
@@ -220,7 +220,7 @@ export function getPaperSessionIconClass(examName: string): string {
 /** Badge / tile accents for roadmap (borderless — matches getExamAccentTextClass). */
 export function getExamAccentBadgeClass(examName: string): string {
   const key = examName.trim().toUpperCase();
-  if (key === "ENGAA") return "bg-biology/15 text-biology";
+  if (key === "ENGAA") return "bg-advanced/15 text-advanced";
   if (key === "NSAA") return "bg-accent/15 text-accent";
   if (key === "TMUA") return "bg-tmua-accent/15 text-tmua-accent";
   if (key === "ESAT") return "bg-maths/15 text-maths";
@@ -232,7 +232,7 @@ export function getExamAccentBadgeClass(examName: string): string {
 /** Solid fill for stage numbers, timeline nodes, primary actions. */
 export function getExamAccentFillClass(examName: string): string {
   const key = examName.trim().toUpperCase();
-  if (key === "ENGAA") return "bg-biology text-background";
+  if (key === "ENGAA") return "bg-advanced text-background";
   if (key === "NSAA") return "bg-accent text-background";
   if (key === "TMUA") return "bg-tmua-accent text-background";
   if (key === "ESAT") return "bg-maths text-background";
@@ -244,7 +244,7 @@ export function getExamAccentFillClass(examName: string): string {
 /** Progress bar fill only (no text color). */
 export function getExamProgressFillClass(examName: string): string {
   const key = examName.trim().toUpperCase();
-  if (key === "ENGAA") return "bg-biology";
+  if (key === "ENGAA") return "bg-advanced";
   if (key === "NSAA") return "bg-accent";
   if (key === "TMUA") return "bg-tmua-accent";
   if (key === "ESAT") return "bg-maths";
@@ -256,7 +256,7 @@ export function getExamProgressFillClass(examName: string): string {
 /** Tinted panel background (cards, expanded sections). */
 export function getExamAccentSurfaceClass(examName: string): string {
   const key = examName.trim().toUpperCase();
-  if (key === "ENGAA") return "bg-biology/10";
+  if (key === "ENGAA") return "bg-advanced/10";
   if (key === "NSAA") return "bg-accent/10";
   if (key === "TMUA") return "bg-tmua-accent/10";
   if (key === "ESAT") return "bg-maths/10";
@@ -268,7 +268,7 @@ export function getExamAccentSurfaceClass(examName: string): string {
 /** Stronger tint for current / highlighted stage row. */
 export function getExamAccentSurfaceStrongClass(examName: string): string {
   const key = examName.trim().toUpperCase();
-  if (key === "ENGAA") return "bg-biology/18";
+  if (key === "ENGAA") return "bg-advanced/18";
   if (key === "NSAA") return "bg-accent/18";
   if (key === "TMUA") return "bg-tmua-accent/18";
   if (key === "ESAT") return "bg-maths/18";
@@ -287,7 +287,7 @@ export function getExamAccentLibraryPaperRowClass(
     selected ? active : `${base} ${hover}`;
 
   if (key === "ENGAA") {
-    return row("bg-biology/10", "hover:bg-biology/18", "bg-biology/18");
+    return row("bg-advanced/10", "hover:bg-advanced/18", "bg-advanced/18");
   }
   if (key === "NSAA") {
     return row("bg-accent/10", "hover:bg-accent/18", "bg-accent/18");

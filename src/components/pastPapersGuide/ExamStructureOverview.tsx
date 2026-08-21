@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
 import type { ExamStructureBlock } from "@/content/legacyExamStructures";
 import {
-  getExamAccentBadgeClass,
   getExamAccentSurfaceClass,
   getSectionSubjectPillClass,
 } from "@/config/colors";
@@ -18,27 +17,20 @@ function StatRow({
   questions,
   minutes,
   perQuestion,
-  accent = "NSAA",
 }: {
   questions: string;
   minutes: string;
   perQuestion?: string | null;
-  accent?: "NSAA" | "ENGAA" | "TMUA";
 }) {
   return (
-    <div className="mt-3 flex flex-wrap items-center gap-2">
-      <span className="font-mono text-xs text-[#94A3B8]">{questions}</span>
-      <span className="font-mono text-xs text-[#94A3B8]">{minutes}</span>
+    <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
       {perQuestion ? (
-        <span
-          className={cn(
-            "rounded-full px-2.5 py-1 font-mono text-xs font-bold tabular-nums",
-            getExamAccentBadgeClass(accent),
-          )}
-        >
+        <span className="font-mono text-sm font-bold tabular-nums text-accent">
           {perQuestion}
         </span>
       ) : null}
+      <span className="font-mono text-xs text-[#94A3B8]">{questions}</span>
+      <span className="font-mono text-xs text-[#94A3B8]">{minutes}</span>
     </div>
   );
 }
@@ -57,17 +49,18 @@ function PartChip({
   return (
     <div
       className={cn(
-        "flex min-h-[4.5rem] flex-col items-center justify-center rounded-md px-2 py-2.5 text-center",
+        "relative flex min-h-[4.75rem] flex-col items-center justify-center rounded-md px-2 py-2.5 text-center shadow-md shadow-black/35",
+        required && "pt-4",
         getSectionSubjectPillClass(sectionKey),
       )}
     >
-      <p className="text-sm font-bold leading-none">{code}</p>
-      <p className="mt-1.5 text-[10px] font-semibold leading-tight">{label}</p>
       {required ? (
-        <span className="mt-2 rounded-full bg-black/25 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-white">
+        <span className="absolute -top-2.5 left-1/2 z-10 -translate-x-1/2 rounded-full bg-white px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-neutral-900 shadow-sm shadow-black/25">
           Required
         </span>
       ) : null}
+      <p className="text-sm font-bold leading-none">{code}</p>
+      <p className="mt-1.5 text-[10px] font-semibold leading-tight">{label}</p>
     </div>
   );
 }
@@ -139,10 +132,14 @@ function NsaaEra({
     <section className="space-y-3">
       <EraHeading years={years} />
       <div className="grid gap-3 lg:grid-cols-2">
-        <SectionPanel title="Section 1" choose={s1.choose} accent="NSAA">
+        <SectionPanel
+          title="Section 1 — No Calculator"
+          choose={s1.choose}
+          accent="NSAA"
+        >
           <div
             className={cn(
-              "grid gap-2",
+              "grid gap-3 pt-1",
               s1.parts.length >= 5
                 ? "grid-cols-2 sm:grid-cols-5"
                 : "grid-cols-2 sm:grid-cols-4",
@@ -162,15 +159,13 @@ function NsaaEra({
             questions={`${s1.questions} questions`}
             minutes={`${s1.minutes} min`}
             perQuestion={s1Pace ? `${s1Pace} sec / q` : null}
-            accent="NSAA"
           />
-          <p className={`mt-2 text-xs ${MUTED}`}>No calculator</p>
         </SectionPanel>
 
         <SectionPanel title="Section 2" choose={s2.choose} accent="NSAA">
           <div
             className={cn(
-              "grid gap-2",
+              "grid gap-3",
               s2.parts.length > 3
                 ? "grid-cols-3 sm:grid-cols-6"
                 : "grid-cols-3",
@@ -189,7 +184,6 @@ function NsaaEra({
             questions={s2.questionsLabel}
             minutes={`${s2.minutes} min`}
             perQuestion={s2.perQuestion}
-            accent="NSAA"
           />
           <p className={`mt-2 text-xs ${MUTED}`}>{s2.note}</p>
         </SectionPanel>
@@ -223,13 +217,17 @@ function EngaaEra({
     <section className="space-y-3">
       <EraHeading years={years} />
       <div className="grid gap-3 lg:grid-cols-2">
-        <SectionPanel title="Section 1" choose="Answer all parts" accent="ENGAA">
+        <SectionPanel
+          title="Section 1 — No Calculator"
+          choose="Answer all parts"
+          accent="ENGAA"
+        >
           <div className="space-y-3">
             <div>
               <p className={cn("mb-2 text-xs font-medium", SOFT)}>
                 Part A · {s1.partA} questions · Mathematics and Physics mixed
               </p>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <PartChip
                   code="A"
                   label="Mathematics"
@@ -253,11 +251,8 @@ function EngaaEra({
             questions={`${total} questions`}
             minutes={`${s1.minutes} min`}
             perQuestion={s1Pace ? `${s1Pace} sec / q` : null}
-            accent="ENGAA"
           />
-          <p className={`mt-2 text-xs ${MUTED}`}>
-            No calculator · no Chemistry or Biology
-          </p>
+          <p className={`mt-2 text-xs ${MUTED}`}>No Chemistry or Biology</p>
         </SectionPanel>
 
         <SectionPanel
@@ -270,7 +265,6 @@ function EngaaEra({
             questions={`${s2.questions} questions`}
             minutes={`${s2.minutes} min`}
             perQuestion={s2Pace ? `${s2Pace} sec / q` : null}
-            accent="ENGAA"
           />
           <p className={`mt-2 text-xs ${MUTED}`}>{s2.note}</p>
         </SectionPanel>
@@ -437,7 +431,6 @@ function TmuaGuide() {
             questions="20 questions"
             minutes="75 min"
             perQuestion={`${secPerQuestion(75, 20)} sec / q`}
-            accent="TMUA"
           />
         </div>
         <div className="rounded-xl bg-white/[0.04] px-4 py-5">
@@ -449,7 +442,6 @@ function TmuaGuide() {
             questions="20 questions"
             minutes="75 min"
             perQuestion={`${secPerQuestion(75, 20)} sec / q`}
-            accent="TMUA"
           />
           <p className={`mt-2 text-xs ${MUTED}`}>Lower priority for ESAT</p>
         </div>

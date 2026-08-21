@@ -329,8 +329,10 @@ export const colorTokens = {
   maths: { dark: figmaPalette.blueDark, light: figmaPalette.blueDark },
   physics: { dark: figmaPalette.purpleLight, light: figmaPalette.purpleDark },
   chemistry: { dark: figmaPalette.redDark, light: figmaPalette.redDark },
-  biology: { dark: figmaPalette.yellowLight, light: figmaPalette.yellowDark },
-  advanced: { dark: figmaPalette.redLight, light: figmaPalette.redDark },
+  /** Biology — Figma green (distinct from Advanced yellow). */
+  biology: { dark: figmaPalette.greenLight, light: figmaPalette.greenDark },
+  /** Advanced Maths / Advanced Math + Phy — Figma yellow. */
+  advanced: { dark: figmaPalette.yellowLight, light: figmaPalette.yellowDark },
   /** Island “questions” label + easy pill — always Figma greenLight in both themes. */
   sessionGreen: { dark: figmaPalette.greenLight, light: figmaPalette.greenLight },
   success: { dark: figmaPalette.greenLight, light: figmaPalette.greenDark },

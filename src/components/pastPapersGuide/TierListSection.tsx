@@ -18,11 +18,11 @@ const TIER_LABEL: Record<TierId, string> = {
 };
 
 const EXAM_FILL: Record<TierExam, string> = {
-  NSAA: "#8FA88A",
-  ENGAA: "#C9A227",
-  TMUA: "#9B8AA8",
-  ESAT: "#8B2942",
-  OTHERS: "#5F7F66",
+  NSAA: "var(--color-accent)",
+  ENGAA: "var(--color-advanced)",
+  TMUA: "var(--color-tmua-accent)",
+  ESAT: "var(--color-maths)",
+  OTHERS: "var(--color-primary)",
 };
 
 function TierCard({

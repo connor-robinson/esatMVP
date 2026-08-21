@@ -54,7 +54,7 @@ function examFromRouteNode(node: RouteNode): GuideExamName {
 }
 
 function examStrokeVar(exam: GuideExamName): string {
-  if (exam === "ENGAA") return "var(--color-biology)";
+  if (exam === "ENGAA") return "var(--color-advanced)";
   if (exam === "NSAA") return "var(--color-accent)";
   if (exam === "TMUA") return "var(--color-tmua-accent)";
   return "var(--color-maths)";
