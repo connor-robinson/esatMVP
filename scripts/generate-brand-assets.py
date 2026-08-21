@@ -41,21 +41,25 @@ def trim_transparent(img: Image.Image, padding: int = 8) -> Image.Image:
     return canvas
 
 
-def rounded_square_favicon(
+def circular_favicon(
     icon: Image.Image,
     size: int = 512,
-    radius: int = 96,
     bg=(0, 0, 0, 255),
 ) -> Image.Image:
+    """Opaque black circle with the white mark centered — no transparent corners.
+
+    Transparent rounded-square corners show up as a white ring in Google SERPs.
+    """
     canvas = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     mask = Image.new("L", (size, size), 0)
     draw = ImageDraw.Draw(mask)
-    draw.rounded_rectangle((0, 0, size, size), radius=radius, fill=255)
+    draw.ellipse((0, 0, size - 1, size - 1), fill=255)
 
     bg_layer = Image.new("RGBA", (size, size), bg)
     canvas = Image.composite(bg_layer, canvas, mask)
 
-    icon_max = int(size * 0.62)
+    # Fill most of the disc so the mark stays clear at 16–32px.
+    icon_max = int(size * 0.58)
     icon_w, icon_h = icon.size
     scale = min(icon_max / icon_w, icon_max / icon_h)
     new_size = (max(1, int(icon_w * scale)), max(1, int(icon_h * scale)))
@@ -63,7 +67,11 @@ def rounded_square_favicon(
     x = (size - new_size[0]) // 2
     y = (size - new_size[1]) // 2
     canvas.paste(resized, (x, y), resized)
-    return canvas
+
+    # Flatten onto black so ICO/PNG has no alpha fringe for crawlers.
+    flat = Image.new("RGBA", (size, size), (0, 0, 0, 255))
+    flat.paste(canvas, (0, 0), canvas)
+    return flat
 
 
 def main() -> None:
@@ -76,7 +84,7 @@ def main() -> None:
     mark = trim_transparent(black_to_white_transparent(source))
     mark.save(OUT / "logo-mark.png")
 
-    favicon_512 = rounded_square_favicon(mark, size=512, radius=96)
+    favicon_512 = circular_favicon(mark, size=512)
     favicon_512.save(OUT / "favicon-dark.png")
     favicon_512.resize((180, 180), Image.Resampling.LANCZOS).save(
         OUT / "apple-icon-dark.png"
