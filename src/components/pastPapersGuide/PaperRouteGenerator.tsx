@@ -31,7 +31,6 @@ import {
 } from "@/lib/pastPapersGuide/recommendations";
 import { ROADMAP_EXPAND_TRANSITION_CLASS } from "@/components/papers/roadmap/roadmapTimelineLayout";
 import {
-  getExamAccentBadgeClass,
   getExamAccentFillClass,
   getExamAccentSurfaceClass,
   getExamAccentTextClass,
