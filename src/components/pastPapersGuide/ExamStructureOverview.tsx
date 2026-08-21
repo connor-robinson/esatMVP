@@ -93,11 +93,11 @@ function FormatChangeNotice({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl bg-accent/15 px-4 py-3.5">
-      <p className="font-mono text-xs font-bold uppercase tracking-widest text-accent">
-        Format changed in {year}
+    <div className="rounded-2xl bg-white/[0.05] px-4 py-5 sm:px-6">
+      <p className="text-sm font-bold uppercase tracking-widest text-accent">
+        What changed in {year}?
       </p>
-      <p className={cn("mt-1.5", COMMENTARY)}>{children}</p>
+      <p className={cn("mt-2 max-w-3xl", COMMENTARY)}>{children}</p>
     </div>
   );
 }
@@ -443,7 +443,7 @@ function NsaaGuide() {
     <div className="space-y-8">
       <div className="w-full">
         <h2 className="text-2xl font-display font-bold tracking-tight text-white sm:text-3xl">
-          Which NSAA Papers Should You Use for ESAT?
+          NSAA Guide
         </h2>
         <p className={cn("mt-3 w-full text-[15px] leading-[1.45] sm:text-base", BODY)}>
           The NSAA format changed in 2020. Here is what to use for ESAT.
