@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import type { ExamStructureBlock } from "@/content/legacyExamStructures";
 import {
   getSectionSubjectPillClass,
+  ON_SOLID_SUBJECT_TEXT,
 } from "@/config/colors";
 
 const BODY = "text-[#CBD5E1]";
@@ -25,23 +26,49 @@ function secPerQuestion(minutes: number, questions: number): number | null {
 }
 
 function RecommendationBadge({ kind }: { kind: RecBadge }) {
-  const labels: Record<RecBadge, string> = {
-    recommended: "Recommended",
-    optional: "Optional",
-    lowPriority: "Low priority",
-    bestMatch: "Best match",
-    harderPractice: "Harder practice",
-    duplicateAfterNsaa: "Duplicate after NSAA",
-    doUniqueOnly: "Do unique only",
-    checkYear: "Check year",
+  const styles: Record<RecBadge, { label: string; className: string }> = {
+    recommended: {
+      label: "Recommended",
+      className: `bg-accent ${ON_SOLID_SUBJECT_TEXT}`,
+    },
+    optional: {
+      label: "Optional",
+      className: `bg-warning ${ON_SOLID_SUBJECT_TEXT}`,
+    },
+    lowPriority: {
+      label: "Low priority",
+      className: `bg-error ${ON_SOLID_SUBJECT_TEXT}`,
+    },
+    bestMatch: {
+      label: "Best match",
+      className: `bg-primary ${ON_SOLID_SUBJECT_TEXT}`,
+    },
+    harderPractice: {
+      label: "Harder practice",
+      className: `bg-warning ${ON_SOLID_SUBJECT_TEXT}`,
+    },
+    duplicateAfterNsaa: {
+      label: "Duplicate after NSAA",
+      className: `bg-warning ${ON_SOLID_SUBJECT_TEXT}`,
+    },
+    doUniqueOnly: {
+      label: "Do unique only",
+      className: `bg-accent ${ON_SOLID_SUBJECT_TEXT}`,
+    },
+    checkYear: {
+      label: "Check year",
+      className: `bg-error ${ON_SOLID_SUBJECT_TEXT}`,
+    },
   };
+  const style = styles[kind];
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white",
+        "inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide",
+        style.className,
       )}
     >
-      {labels[kind]}
+      {style.label}
     </span>
   );
 }

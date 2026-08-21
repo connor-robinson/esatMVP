@@ -66,22 +66,33 @@ const ROWS_2020_2023: readonly OverlapRow[] = [
 ];
 
 function ActionPill({ action }: { action: ActionKind }) {
-  const labels: Record<ActionKind, string> = {
-    skip: "Skip",
-    unique: "Unique questions only",
-    complete: "Complete",
-    optional: "Optional",
+  const styles: Record<ActionKind, { label: string; className: string }> = {
+    skip: {
+      label: "Skip",
+      className: `bg-error ${ON_SOLID_SUBJECT_TEXT}`,
+    },
+    unique: {
+      label: "Unique questions only",
+      className: `bg-warning ${ON_SOLID_SUBJECT_TEXT}`,
+    },
+    complete: {
+      label: "Complete",
+      className: `bg-primary ${ON_SOLID_SUBJECT_TEXT}`,
+    },
+    optional: {
+      label: "Optional",
+      className: `bg-accent ${ON_SOLID_SUBJECT_TEXT}`,
+    },
   };
+  const style = styles[action];
   return (
     <span
       className={cn(
         "inline-flex items-center rounded-full px-3 py-1.5 text-xs font-bold uppercase tracking-wide",
-        action === "skip"
-          ? `bg-error ${ON_SOLID_SUBJECT_TEXT}`
-          : "bg-white/15 text-white",
+        style.className,
       )}
     >
-      {labels[action]}
+      {style.label}
     </span>
   );
 }
@@ -102,7 +113,7 @@ function RelationshipRow({ row }: { row: OverlapRow }) {
             </span>
             <ArrowRight
               aria-hidden
-              className="h-4 w-4 shrink-0 text-white/70"
+              className="h-4 w-4 shrink-0 text-accent"
               strokeWidth={2.5}
             />
             <span className="text-[15px] text-[#E2E8F0] sm:text-base">

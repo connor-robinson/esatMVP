@@ -31,6 +31,9 @@ import {
 } from "@/lib/pastPapersGuide/recommendations";
 import { ROADMAP_EXPAND_TRANSITION_CLASS } from "@/components/papers/roadmap/roadmapTimelineLayout";
 import {
+  getExamAccentFillClass,
+  getExamAccentSurfaceClass,
+  getExamAccentTextClass,
   getSectionSubjectPillClass,
   ON_SOLID_SUBJECT_TEXT,
 } from "@/config/colors";
@@ -39,6 +42,15 @@ const SPINE_WIDTH = 72;
 const SPINE_CENTER_X = SPINE_WIDTH / 2;
 const WAVE_AMPLITUDE = 12;
 const WAVE_FREQUENCY = 0.012;
+
+type GuideExamName = "ESAT" | "NSAA" | "ENGAA" | "TMUA";
+
+function examFromRouteNode(node: RouteNode): GuideExamName {
+  if (node.id.startsWith("nsaa")) return "NSAA";
+  if (node.id.startsWith("engaa")) return "ENGAA";
+  if (node.id.startsWith("tmua")) return "TMUA";
+  return "ESAT";
+}
 
 function moduleSectionKey(id: GuideModuleId): string {
   if (id === "maths1") return "Mathematics";
@@ -94,8 +106,8 @@ function toggleModule(
   return [...current, id];
 }
 
-/** Status pills: monochrome white, Skip stays red. Timeline nodes match. */
-function statusAccent(status: RouteNode["status"]) {
+/** Timeline spine stays white; nodes and badges keep exam / status colours. */
+function statusAccent(status: RouteNode["status"], exam: GuideExamName) {
   if (status === "skipped") {
     return {
       node: "bg-error",
@@ -105,20 +117,26 @@ function statusAccent(status: RouteNode["status"]) {
   }
   if (status === "partial") {
     return {
-      node: "bg-white",
-      badge: "bg-white/15 text-white",
+      node: "bg-warning",
+      badge: `bg-warning ${ON_SOLID_SUBJECT_TEXT}`,
       label: "Unique only" as const,
     };
   }
   return {
-    node: "bg-white",
+    node: getExamAccentFillClass(exam),
     badge: null,
     label: null,
   };
 }
 
-function RouteStatusPill({ status }: { status: RouteNode["status"] }) {
-  const accent = statusAccent(status);
+function RouteStatusPill({
+  status,
+  exam,
+}: {
+  status: RouteNode["status"];
+  exam: GuideExamName;
+}) {
+  const accent = statusAccent(status, exam);
   if (!accent.label || !accent.badge) return null;
   return (
     <span
@@ -143,6 +161,8 @@ function RouteCard({
   onToggle: () => void;
   cardRef: (el: HTMLElement | null) => void;
 }) {
+  const exam = examFromRouteNode(node);
+
   return (
     <article ref={cardRef} className="min-w-0 pb-4">
       <button
@@ -150,20 +170,20 @@ function RouteCard({
         onClick={onToggle}
         aria-expanded={expanded}
         className={cn(
-          "relative w-full rounded-2xl px-4 py-4 pr-14 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 sm:px-5 sm:pr-16",
+          "relative w-full rounded-2xl px-4 py-4 pr-14 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maths sm:px-5 sm:pr-16",
           expanded
-            ? "bg-white/[0.08]"
+            ? getExamAccentSurfaceClass(exam)
             : "bg-white/[0.035] hover:bg-white/[0.05]",
           node.status === "skipped" && "opacity-80",
         )}
       >
         <div className="absolute right-3 top-3 z-10 flex items-start gap-2 sm:right-4 sm:top-4">
-          <RouteStatusPill status={node.status} />
+          <RouteStatusPill status={node.status} exam={exam} />
           <ChevronDown
             aria-hidden
             className={cn(
               "mt-0.5 h-5 w-5 shrink-0 text-[#94A3B8] transition-transform duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-              expanded && "rotate-180 text-white",
+              expanded && cn("rotate-180", getExamAccentTextClass(exam)),
             )}
           />
         </div>
@@ -203,7 +223,7 @@ function RouteCard({
                     "text-sm font-medium",
                     node.status === "skipped"
                       ? "text-error"
-                      : "text-white/80",
+                      : "text-warning",
                   )}
                 >
                   {node.skipReason}
@@ -218,7 +238,10 @@ function RouteCard({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(event) => event.stopPropagation()}
-                  className="inline-flex text-sm font-semibold text-white underline decoration-white/25 underline-offset-4"
+                  className={cn(
+                    "inline-flex text-sm font-semibold underline decoration-white/25 underline-offset-4",
+                    getExamAccentTextClass(exam),
+                  )}
                 >
                   {node.linkLabel}
                 </a>
@@ -371,7 +394,8 @@ function CurvyRouteTimeline({
         {route.map((node, index) => {
           const y = centers[index];
           if (y === undefined || y === 0) return null;
-          const accent = statusAccent(node.status);
+          const exam = examFromRouteNode(node);
+          const accent = statusAccent(node.status, exam);
           const expanded = expandedId === node.id;
           return (
             <span
