@@ -358,12 +358,6 @@ function CurvyRouteTimeline({
       : centers[0] ?? 0;
   const progressPath =
     centers.length > 0 ? generateSpinePath(0, Math.max(progressY, 1)) : "";
-  const progressExam =
-    expandedIndex >= 0 && route[expandedIndex]
-      ? examFromRouteNode(route[expandedIndex]!)
-      : route[0]
-        ? examFromRouteNode(route[0])
-        : ("ESAT" as GuideExamName);
 
   return (
     <div ref={trackRef} className="relative flex gap-3 sm:gap-5">
@@ -388,7 +382,7 @@ function CurvyRouteTimeline({
             <path
               d={progressPath}
               fill="none"
-              stroke={examStrokeVar(progressExam)}
+              stroke="var(--color-accent)"
               strokeWidth={6}
               strokeLinecap="round"
               strokeLinejoin="round"
