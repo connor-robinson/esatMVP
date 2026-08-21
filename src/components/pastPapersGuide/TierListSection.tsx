@@ -18,10 +18,10 @@ import {
 } from "@/content/pastPapersGuide";
 
 const TIER_LABEL: Record<TierId, string> = {
-  S: "#FF7F7F",
-  A: "#FFBF7F",
-  B: "#FFFF7F",
-  C: "#7FFF7F",
+  S: "#D99292",
+  A: "#D9B592",
+  B: "#D9D992",
+  C: "#92D992",
 };
 
 const EXAM_FILL: Record<TierExam, string> = {
@@ -224,8 +224,7 @@ export function TierListSection() {
   return (
     <div className="space-y-4">
       <p className="text-sm leading-relaxed text-[#94A3B8]">
-        Hover a paper for commentary. Tier = reusable practice value, not what
-        to open first.
+        Hover a paper for commentary.
       </p>
 
       <div className="space-y-2.5">
