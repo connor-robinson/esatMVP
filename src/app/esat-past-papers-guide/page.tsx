@@ -13,9 +13,7 @@ import { SeoCta, SeoCtaRow } from "@/components/seo/SeoCta";
 import { SeoFaq } from "@/components/seo/SeoFaq";
 import { SeoGuideFooter } from "@/components/seo/SeoPageLayout";
 import {
-  HighlightBox,
   InternalLinks,
-  SeoProse,
   SeoSection,
 } from "@/components/seo/SeoSections";
 import { HeroPaperStack } from "@/components/pastPapersGuide/HeroPaperStack";
@@ -208,61 +206,18 @@ export default function EsatPastPapersGuidePage() {
           <TierListSection />
         </SeoSection>
 
-        <SeoSection id="timing" heading="Convert old papers into ESAT practice">
-          <div className="grid gap-6 sm:grid-cols-3">
-            <div className="rounded-2xl bg-white/[0.04] p-6 text-center">
-              <p className="font-mono text-4xl font-bold text-white">27</p>
-              <p className="mt-1 text-sm text-[#94A3B8]">questions</p>
-            </div>
-            <div className="rounded-2xl bg-white/[0.04] p-6 text-center">
-              <p className="font-mono text-4xl font-bold text-white">40</p>
-              <p className="mt-1 text-sm text-[#94A3B8]">minutes</p>
-            </div>
-            <div className="rounded-2xl bg-white/[0.04] p-6 text-center">
-              <p className="font-mono text-4xl font-bold text-white">89</p>
-              <p className="mt-1 text-sm text-[#94A3B8]">seconds per question</p>
-            </div>
-          </div>
-          <SeoProse
-            className="mt-6"
-            paragraphs={[
-              "None of the old papers reproduces the current ESAT format perfectly. You do not need to spend exactly 89 seconds on every question, but that is the average pace you must sustain.",
-              "Once you are comfortable with the content: practise 27-question, 40-minute modules; review every wrong answer and every guess; practise all required modules back-to-back; keep at least two recent paper sets unseen for late timed practice.",
-            ]}
-          />
-          <HighlightBox className="mt-6" title="Stamina is part of the exam">
-            <p>
-              Many students can perform well in one module but lose speed and
-              judgement near the end of the final one. Train the full sequence
-              before test day.
-            </p>
-          </HighlightBox>
-          <HighlightBox className="mt-5" title="Use the current specification as the final authority">
-            <p>
-              UAT-UK has crossed out out-of-spec questions in the Section 1
-              archive. Those questions can still be interesting for Mathematics 2
-              or general problem solving, but they should not displace examinable
-              practice.
-            </p>
-          </HighlightBox>
-          <p className="mt-6 text-sm leading-relaxed text-[#94A3B8]">
-            This is a menu, not a checklist. You do not need every paper to do
-            well. Start with the closest material, remove duplicates, review
-            properly and build towards the real timing.
-          </p>
-          <SeoCtaRow className="mt-8">
-            <SeoCta href={APP_ROUTES.pastPaperLibrary} placement="past_papers_guide_footer">
-              Browse the past-paper library
-            </SeoCta>
-            <SeoCta
-              href={APP_ROUTES.calibration}
-              variant="quiet"
-              placement="past_papers_guide_calibration"
-            >
-              Start a free calibration test
-            </SeoCta>
-          </SeoCtaRow>
-        </SeoSection>
+        <SeoCtaRow className="mt-2">
+          <SeoCta href={APP_ROUTES.pastPaperLibrary} placement="past_papers_guide_footer">
+            Browse the past-paper library
+          </SeoCta>
+          <SeoCta
+            href={APP_ROUTES.calibration}
+            variant="quiet"
+            placement="past_papers_guide_calibration"
+          >
+            Start a free calibration test
+          </SeoCta>
+        </SeoCtaRow>
 
         <SeoFaq items={PAST_PAPERS_GUIDE_FAQ} heading="Common questions" />
 

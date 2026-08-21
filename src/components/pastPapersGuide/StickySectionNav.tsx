@@ -10,7 +10,6 @@ const SECTIONS = [
   { id: "overlaps", label: "Overlaps" },
   { id: "tmua", label: "TMUA Guide" },
   { id: "tier-list", label: "Tier list" },
-  { id: "timing", label: "Timing" },
 ] as const;
 
 export function StickySectionNav() {
