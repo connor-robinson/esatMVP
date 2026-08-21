@@ -99,16 +99,9 @@ function TierTooltip({
         </p>
       ) : null}
       {item.related?.length ? (
-        <ul className="mt-2 space-y-1.5">
-          {item.related.map((name) => (
-            <li
-              key={name}
-              className="font-mono text-sm font-semibold text-white"
-            >
-              {name}
-            </li>
-          ))}
-        </ul>
+        <p className="mt-2 font-mono text-sm font-semibold text-white">
+          {item.related.join(" · ")}
+        </p>
       ) : null}
       <p
         className={cn(
