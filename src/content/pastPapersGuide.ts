@@ -128,7 +128,7 @@ export const OVERLAP_RULES_2020_2023 = [
 
 export type TierId = "S" | "A" | "B" | "C";
 
-export type TierExam = "NSAA" | "ENGAA" | "TMUA" | "ESAT";
+export type TierExam = "NSAA" | "ENGAA" | "TMUA" | "ESAT" | "OTHERS";
 
 export type TierItem = {
   id: string;
@@ -140,6 +140,8 @@ export type TierItem = {
   description: string;
   /** Dimmed charcoal cards used for duplicate / skip material. */
   muted?: boolean;
+  /** Extra papers grouped under an OTHERS card. */
+  related?: readonly string[];
 };
 
 export const TIER_LIST: readonly {
@@ -156,7 +158,7 @@ export const TIER_LIST: readonly {
         years: "2016–2023",
         exam: "NSAA",
         section: "Section 1",
-        note: "parts only",
+        note: "relevant parts only",
         description:
           "Best large source for Mathematics 1, Physics, Chemistry and Biology. Use the parts that match your modules.",
       },
@@ -165,7 +167,7 @@ export const TIER_LIST: readonly {
         years: "2020–2023",
         exam: "ENGAA",
         section: "Section 1 Part B",
-        note: "Physics + Maths 2",
+        note: "maths 2 & Physics",
         description:
           "Fresh Mathematics 2 and Physics practice after NSAA Part E disappeared.",
       },
@@ -207,7 +209,7 @@ export const TIER_LIST: readonly {
         years: "2016–2019",
         exam: "ENGAA",
         section: "Section 1 Part B",
-        note: "unique qs only",
+        note: "harder and less similar",
         description:
           "Useful advanced Mathematics and Physics once the NSAA Part E duplicates are removed.",
       },
@@ -243,6 +245,16 @@ export const TIER_LIST: readonly {
         note: "easier qs",
         description:
           "Do these first for format and interface. Do not treat one score as a forecast of your live result.",
+      },
+      {
+        id: "others",
+        years: "All years",
+        exam: "OTHERS",
+        section: "extra papers",
+        note: "easier qs",
+        related: ["PAT", "BMAT", "BPHO SPC", "CAIE", "UKMT SMC"],
+        description:
+          "Useful for extra maths and physics practice once the closer ESAT-shaped papers are used up. Style and difficulty vary a lot.",
       },
     ],
   },

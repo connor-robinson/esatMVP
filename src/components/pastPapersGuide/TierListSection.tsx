@@ -22,6 +22,7 @@ const EXAM_FILL: Record<TierExam, string> = {
   ENGAA: "#C9A227",
   TMUA: "#9B8AA8",
   ESAT: "#8B2942",
+  OTHERS: "#5F7F66",
 };
 
 function TierCard({
@@ -36,6 +37,7 @@ function TierCard({
   onDeactivate: () => void;
 }) {
   const fill = item.muted ? "#2A2F3A" : EXAM_FILL[item.exam];
+  const isOthers = item.exam === "OTHERS";
 
   return (
     <div
@@ -66,7 +68,12 @@ function TierCard({
         <span className="text-[9px] font-medium leading-none text-white/85 sm:text-[10px]">
           {item.years}
         </span>
-        <span className="mt-1 text-base font-black leading-none tracking-wide sm:text-lg">
+        <span
+          className={cn(
+            "mt-1 font-black leading-none tracking-wide",
+            isOthers ? "text-sm sm:text-base" : "text-base sm:text-lg",
+          )}
+        >
           {item.exam}
         </span>
         <span className="mt-1 max-w-full truncate text-[9px] font-semibold leading-tight text-white/90 sm:text-[10px]">
@@ -78,17 +85,29 @@ function TierCard({
         <div
           id={`${item.id}-tip`}
           role="tooltip"
-          className="absolute left-1/2 top-[calc(100%+0.5rem)] z-20 w-52 -translate-x-1/2 rounded-xl bg-[#161D2F] px-3 py-2.5 text-left shadow-xl"
+          className="absolute left-1/2 top-[calc(100%+0.5rem)] z-20 w-56 -translate-x-1/2 rounded-xl bg-[#161D2F] px-3 py-2.5 text-left shadow-xl"
         >
           {item.note ? (
             <p className="text-xs font-bold uppercase tracking-wide text-white">
               {item.note}
             </p>
           ) : null}
+          {item.related?.length ? (
+            <ul className="mt-2 space-y-1">
+              {item.related.map((name) => (
+                <li
+                  key={name}
+                  className="font-mono text-xs font-semibold text-white"
+                >
+                  {name}
+                </li>
+              ))}
+            </ul>
+          ) : null}
           <p
             className={cn(
               "text-xs leading-relaxed text-[#CBD5E1]",
-              item.note && "mt-1",
+              (item.note || item.related?.length) && "mt-1.5",
             )}
           >
             {item.description}
