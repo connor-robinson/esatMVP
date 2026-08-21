@@ -24,8 +24,7 @@ type RecBadge =
   | "doAll";
 
 function RecommendationBadge({ kind }: { kind: RecBadge }) {
-  const gray =
-    "bg-white/15 text-white/75";
+  const gray = "bg-[#1E2433]/50 text-white";
   const styles: Record<RecBadge, { label: string; className: string }> = {
     recommended: {
       label: "Recommended",
@@ -69,7 +68,7 @@ function RecommendationBadge({ kind }: { kind: RecBadge }) {
     },
     doAll: {
       label: "Do all",
-      className: "bg-white/12 text-white/65",
+      className: gray,
     },
   };
   const style = styles[kind];
