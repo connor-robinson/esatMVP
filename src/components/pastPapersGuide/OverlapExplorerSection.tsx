@@ -1,7 +1,5 @@
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { UNIQUE_ENGAA_PART_B_BY_YEAR } from "@/content/pastPapersGuide";
-import { SEO_ROUTES } from "@/lib/seo/config";
 import { ON_SOLID_SUBJECT_TEXT } from "@/config/colors";
 import { cn } from "@/lib/utils";
 
@@ -140,6 +138,14 @@ function EraBlock({
   );
 }
 
+function QuestionPill({ n }: { n: number }) {
+  return (
+    <span className="inline-flex min-w-[3.25rem] items-center justify-center rounded-lg bg-white px-3 py-2 font-mono text-lg font-bold tabular-nums text-neutral-900 shadow-sm sm:min-w-[3.75rem] sm:px-3.5 sm:py-2.5 sm:text-xl">
+      Q{n}
+    </span>
+  );
+}
+
 function UniquePartBTable() {
   const years = Object.entries(UNIQUE_ENGAA_PART_B_BY_YEAR);
 
@@ -177,18 +183,13 @@ function UniquePartBTable() {
                   index % 2 === 0 ? "bg-white/[0.03]" : "bg-white/[0.07]",
                 )}
               >
-                <td className="px-5 py-5 align-middle font-mono text-base font-bold text-white">
+                <td className="px-5 py-6 align-middle font-mono text-xl font-bold text-white">
                   {year}
                 </td>
-                <td className="px-5 py-5 align-middle">
-                  <div className="flex flex-wrap gap-2">
+                <td className="px-5 py-6 align-middle">
+                  <div className="flex flex-wrap gap-2.5">
                     {questions.map((q) => (
-                      <span
-                        key={q}
-                        className="inline-flex rounded-full bg-white/15 px-2.5 py-1 font-mono text-sm font-bold tabular-nums text-white"
-                      >
-                        Q{q}
-                      </span>
+                      <QuestionPill key={q} n={q} />
                     ))}
                   </div>
                 </td>
@@ -201,44 +202,20 @@ function UniquePartBTable() {
       {/* Mobile year cards */}
       <div className="mt-6 space-y-3 sm:hidden">
         {years.map(([year, questions]) => (
-          <div
-            key={year}
-            className="rounded-xl bg-black/25 px-4 py-4"
-          >
-            <p className="font-mono text-base font-bold text-white">{year}</p>
-            <div className="mt-3 flex flex-wrap gap-2">
+          <div key={year} className="rounded-xl bg-black/25 px-4 py-4">
+            <p className="font-mono text-xl font-bold text-white">{year}</p>
+            <div className="mt-3 flex flex-wrap gap-2.5">
               {questions.map((q) => (
-                <span
-                  key={q}
-                  className="inline-flex rounded-full bg-white/15 px-2.5 py-1 font-mono text-sm font-bold tabular-nums text-white"
-                >
-                  Q{q}
-                </span>
+                <QuestionPill key={q} n={q} />
               ))}
             </div>
           </div>
         ))}
       </div>
 
-      <p className="mt-4 font-mono text-sm text-[#94A3B8]">
+      <p className="mt-5 font-mono text-sm text-[#94A3B8]">
         Question numbers refer to the ENGAA paper.
       </p>
-
-      <div className="mt-8 rounded-xl bg-white/[0.05] px-4 py-5 sm:px-5">
-        <p className="text-base font-bold text-white sm:text-lg">
-          Need an exact question-by-question comparison?
-        </p>
-        <p className={cn("mt-2", BODY)}>
-          Open the full overlap checker to see where every repeated question
-          appears.
-        </p>
-        <Link
-          href={SEO_ROUTES.engaaNsaaPapers}
-          className="mt-4 inline-flex items-center rounded-full bg-maths px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-maths/90"
-        >
-          Open full overlap checker
-        </Link>
-      </div>
     </section>
   );
 }
