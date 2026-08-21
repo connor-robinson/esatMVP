@@ -24,34 +24,36 @@ type RecBadge =
   | "doAll";
 
 function RecommendationBadge({ kind }: { kind: RecBadge }) {
+  const gray =
+    "bg-white/15 text-white/75";
   const styles: Record<RecBadge, { label: string; className: string }> = {
     recommended: {
       label: "Recommended",
-      className: `bg-accent ${ON_SOLID_SUBJECT_TEXT}`,
+      className: gray,
     },
     optional: {
       label: "Optional",
-      className: `bg-warning ${ON_SOLID_SUBJECT_TEXT}`,
+      className: gray,
     },
     lowPriority: {
       label: "Low priority",
-      className: `bg-error ${ON_SOLID_SUBJECT_TEXT}`,
+      className: gray,
     },
     bestMatch: {
       label: "Best match",
-      className: `bg-primary ${ON_SOLID_SUBJECT_TEXT}`,
+      className: gray,
     },
     harderPractice: {
       label: "Harder practice",
-      className: `bg-warning ${ON_SOLID_SUBJECT_TEXT}`,
+      className: gray,
     },
     duplicateAfterNsaa: {
       label: "Duplicate after NSAA",
-      className: `bg-warning ${ON_SOLID_SUBJECT_TEXT}`,
+      className: `bg-error ${ON_SOLID_SUBJECT_TEXT}`,
     },
     doUniqueOnly: {
       label: "Do unique only",
-      className: `bg-accent ${ON_SOLID_SUBJECT_TEXT}`,
+      className: gray,
     },
     checkYear: {
       label: "Check year",
@@ -63,11 +65,11 @@ function RecommendationBadge({ kind }: { kind: RecBadge }) {
     },
     mostlyOverlap: {
       label: "Mostly overlap",
-      className: `bg-warning ${ON_SOLID_SUBJECT_TEXT}`,
+      className: `bg-error ${ON_SOLID_SUBJECT_TEXT}`,
     },
     doAll: {
       label: "Do all",
-      className: `bg-primary ${ON_SOLID_SUBJECT_TEXT}`,
+      className: "bg-white/12 text-white/65",
     },
   };
   const style = styles[kind];
@@ -192,22 +194,24 @@ function EngaaPartCard({
   badge: RecBadge;
 }) {
   return (
-    <div
-      className={cn(
-        "relative flex min-h-[4.25rem] flex-1 items-center gap-3 rounded-md px-4 py-3.5 pr-[7.5rem] shadow-md shadow-black/35 sm:min-h-[4.5rem] sm:pr-32",
-        getSectionSubjectPillClass(sectionKey),
-      )}
-    >
-      <span className="absolute right-3 top-3 z-10 sm:right-3.5 sm:top-3.5">
+    <div className="relative pt-3">
+      <span className="absolute right-0 top-0 z-10">
         <RecommendationBadge kind={badge} />
       </span>
-      <p className="shrink-0 text-sm font-bold leading-none">{code}</p>
-      <p className="min-w-0 flex-1 text-left text-xs font-semibold leading-snug sm:text-sm">
-        {label}
-      </p>
-      <p className="shrink-0 text-xs font-bold tabular-nums sm:text-sm">
-        {questions} questions
-      </p>
+      <div
+        className={cn(
+          "flex min-h-[4.25rem] flex-1 items-center gap-3 rounded-md px-4 py-3.5 shadow-md shadow-black/35 sm:min-h-[4.5rem]",
+          getSectionSubjectPillClass(sectionKey),
+        )}
+      >
+        <p className="shrink-0 text-sm font-bold leading-none">{code}</p>
+        <p className="min-w-0 flex-1 text-left text-xs font-semibold leading-snug sm:text-sm">
+          {label}
+        </p>
+        <p className="shrink-0 text-xs font-bold tabular-nums sm:text-sm">
+          {questions} questions
+        </p>
+      </div>
     </div>
   );
 }
@@ -302,12 +306,13 @@ function NsaaEra({
   return (
     <section className="space-y-2.5">
       <EraHeading years={years} />
-      <div className="grid gap-3 lg:grid-cols-2 lg:gap-4 lg:items-start">
+      <div className="grid gap-3 lg:grid-cols-2 lg:items-stretch lg:gap-4">
         <SectionPanel
           title={s1.title}
           choose={s1.choose}
           badge={s1.badge}
           commentary={s1.commentary}
+          stretch
         >
           <div
             className={cn(
@@ -336,6 +341,7 @@ function NsaaEra({
           choose={s2.choose}
           badge={s2.badge}
           commentary={s2.commentary}
+          stretch
         >
           <div
             className={cn(
@@ -371,20 +377,16 @@ function EngaaEra({
   s1: {
     partA: number;
     partB: number;
-    minutes: number;
     partABadge: RecBadge;
     partBBadge: RecBadge;
     commentary: React.ReactNode;
-    timing: { questions: string; time: string; pace: string };
   };
   s2: {
     questions: number;
-    minutes: number;
     commentary: React.ReactNode;
     badge: RecBadge;
     title: string;
     choose: string;
-    timing: { questions: string; time: string; pace: string };
   };
 }) {
   return (
@@ -413,7 +415,6 @@ function EngaaEra({
               badge={s1.partBBadge}
             />
           </div>
-          <StatLine {...s1.timing} />
         </SectionPanel>
 
         <SectionPanel
@@ -431,7 +432,6 @@ function EngaaEra({
               badge={s2.badge}
             />
           </div>
-          <StatLine {...s2.timing} />
         </SectionPanel>
       </div>
     </section>
@@ -594,14 +594,8 @@ function EngaaGuide() {
         s1={{
           partA: 28,
           partB: 26,
-          minutes: 80,
           partABadge: "skip",
           partBBadge: "mostlyOverlap",
-          timing: {
-            questions: "54 questions",
-            time: "80 min",
-            pace: "89 sec/question",
-          },
           commentary: (
             <Commentary label="After NSAA:">
               Skip Part A. Part B mostly overlaps NSAA Part E, so do the unique
@@ -611,15 +605,9 @@ function EngaaGuide() {
         }}
         s2={{
           questions: 20,
-          minutes: 40,
           badge: "doAll",
           title: "Section 2 · Physics",
           choose: "Complete all questions",
-          timing: {
-            questions: "20 questions",
-            time: "40 min",
-            pace: "120 sec/question",
-          },
           commentary: (
             <Commentary label="Do all:">
               Unique Physics practice for these years. Complete the full paper.
@@ -638,14 +626,8 @@ function EngaaGuide() {
         s1={{
           partA: 20,
           partB: 20,
-          minutes: 60,
           partABadge: "skip",
           partBBadge: "doAll",
-          timing: {
-            questions: "40 questions",
-            time: "60 min",
-            pace: "90 sec/question",
-          },
           commentary: (
             <Commentary label="After NSAA:">
               Skip Part A. Do all relevant Part B questions for Maths 2 and
@@ -655,15 +637,9 @@ function EngaaGuide() {
         }}
         s2={{
           questions: 20,
-          minutes: 60,
           badge: "skip",
           title: "Section 2 · Physics",
           choose: "Skip if you did NSAA Section 2",
-          timing: {
-            questions: "20 questions",
-            time: "60 min",
-            pace: "180 sec/question",
-          },
           commentary: (
             <Commentary label="Skip:">
               Same Physics set as NSAA Section 2 Part X. Complete either copy,
