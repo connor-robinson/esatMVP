@@ -260,7 +260,7 @@ export interface GeometryDiagramData {
   circles?: { cx: number; cy: number; r: number }[];
   /** Caption below diagram (e.g. not to scale) */
   caption?: string;
-  /** Visual scale — circle theorems use large */
+  /** Visual scale - circle theorems use large */
   size?: "default" | "large";
   /** Point markers (centre dots, etc.) */
   points?: { x: number; y: number; label?: string; emphasis?: boolean }[];

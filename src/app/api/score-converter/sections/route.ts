@@ -96,7 +96,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Failed to load sections" }, { status: 500 });
   }
 
-  // max(raw_score) per (table, part) — the table itself defines the max mark.
+  // max(raw_score) per (table, part) - the table itself defines the max mark.
   const maxByKey = new Map<string, number>();
   for (const r of (rows ?? []) as Array<{
     table_id: number;

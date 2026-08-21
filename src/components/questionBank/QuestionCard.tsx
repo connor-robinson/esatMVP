@@ -304,7 +304,7 @@ export function QuestionCard({
     "bg-surface-subtle dark:bg-surface-mid";
   const OPTION_ROW_SELECTED =
     "bg-surface-mid dark:bg-folder-card-selected";
-  /** Correct when answered or revealed — one step darker (light) / lighter (dark) than row base. */
+  /** Correct when answered or revealed - one step darker (light) / lighter (dark) than row base. */
   const OPTION_ROW_CORRECT =
     "bg-surface-mid dark:bg-folder-card-selected";
   const OPTION_ROW_HOVER =
@@ -680,7 +680,7 @@ export function QuestionCard({
               Rate this question
             </span>
             {ratingLoading ? (
-              <span className="text-xs text-text-muted">—</span>
+              <span className="text-xs text-text-muted"> - </span>
             ) : (
               <>
                 <div

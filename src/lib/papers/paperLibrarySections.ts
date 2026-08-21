@@ -21,7 +21,7 @@ export type PaperSectionsOutline = {
   paperId: number;
   sections: PaperSection[];
   mainSections: PaperMainSection[];
-  /** One row per question — metadata only, for basket stats (no images). */
+  /** One row per question - metadata only, for basket stats (no images). */
   partRows?: Array<
     Omit<SlimQuestionPart, "paperId"> & { paperId: number; questionNumber: number }
   >;
@@ -67,7 +67,7 @@ function resolveQuestionPaperName(
 
 /**
  * Which main exam section (Section 1 / Section 2) a question belongs to.
- * For NSAA, part letters B/C/D appear in BOTH sections — paper name is authoritative.
+ * For NSAA, part letters B/C/D appear in BOTH sections - paper name is authoritative.
  */
 export function getMainSectionForQuestion(
   question: SlimQuestionPart,
@@ -89,7 +89,7 @@ export function getMainSectionForQuestion(
   const partName = (question.partName || "").toString().toLowerCase();
 
   if (paperType === "NSAA") {
-    // Part E / Advanced — Section 2 only (pre-2020)
+    // Part E / Advanced - Section 2 only (pre-2020)
     if (
       partLetter === "e" ||
       partLetter === "5" ||
@@ -97,7 +97,7 @@ export function getMainSectionForQuestion(
     ) {
       return "Section 2";
     }
-    // Part B/C/D sciences exist in Section 1 AND Section 2 — never infer from letter alone.
+    // Part B/C/D sciences exist in Section 1 AND Section 2 - never infer from letter alone.
     return "Section 1";
   }
 

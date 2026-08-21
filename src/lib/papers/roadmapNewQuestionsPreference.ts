@@ -1,6 +1,6 @@
 const STORAGE_KEY = "roadmap-new-questions-only";
 
-/** Default on — roadmap sessions prefer unseen questions. */
+/** Default on - roadmap sessions prefer unseen questions. */
 export function readNewQuestionsOnlyPreference(): boolean {
   if (typeof window === "undefined") return true;
   try {

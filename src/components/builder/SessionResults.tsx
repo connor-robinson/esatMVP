@@ -519,7 +519,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                 {new Date(session.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
               </>
             ) : (
-              "—"
+              "-"
             )}
           </div>
           </div>

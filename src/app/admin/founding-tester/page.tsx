@@ -198,12 +198,12 @@ function TesterRow({
     <>
       <tr className="align-top">
         <td className="px-4 py-3 text-text">
-          <div className="font-medium">{tester.username ?? "—"}</div>
+          <div className="font-medium">{tester.username ?? "-"}</div>
           <div className="text-xs text-text-muted">{tester.userId.slice(0, 8)}</div>
         </td>
         <td className="px-4 py-3 text-text-muted">{tester.status}</td>
         <td className="px-4 py-3 text-text-muted">
-          {expiry ? formatExpiry(expiry) : "—"}
+          {expiry ? formatExpiry(expiry) : "-"}
         </td>
         <td className="px-4 py-3 text-text-muted">{tester.meaningfulSessions}</td>
         <td className="px-4 py-3 text-text-muted">
@@ -213,7 +213,7 @@ function TesterRow({
             tester.finalSurveyDone ? "F2" : "",
           ]
             .filter(Boolean)
-            .join(" · ") || "—"}
+            .join(" · ") || "-"}
         </td>
         <td className="px-4 py-3">
           <div className="flex flex-wrap gap-1.5">

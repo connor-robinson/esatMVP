@@ -1,5 +1,5 @@
 /**
- * FermiGuessr — daily mental-maths estimation minigame.
+ * FermiGuessr - daily mental-maths estimation minigame.
  *
  * Everyone gets the same five questions each UTC day. Questions cycle through
  * the bank without repeating until the pool is exhausted, then restart.
@@ -373,7 +373,7 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
         </div>
       </header>
 
-      {/* Next question — above progress bar */}
+      {/* Next question - above progress bar */}
       {displayPhase === "revealed" && (
         <div className="flex shrink-0 justify-center px-4 pb-3 sm:px-6">
           <button

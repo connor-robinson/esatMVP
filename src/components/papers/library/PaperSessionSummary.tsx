@@ -317,7 +317,7 @@ export function PaperSessionSummary({
         return next;
       });
 
-      // Load data for each new paper (outline + part metadata only — no question images)
+      // Load data for each new paper (outline + part metadata only - no question images)
       await Promise.all(
         papersToLoad.map(async ({ paper }) => {
           try {
@@ -641,7 +641,7 @@ export function PaperSessionSummary({
                   Questions
                 </dt>
                 <dd className="mt-0.5 font-heading text-lg font-semibold tabular-nums text-text">
-                  {sessionStats.totalQuestions > 0 ? sessionStats.totalQuestions : "—"}
+                  {sessionStats.totalQuestions > 0 ? sessionStats.totalQuestions : "-"}
                 </dd>
               </div>
               <div>
@@ -650,7 +650,7 @@ export function PaperSessionSummary({
                 </dt>
                 <dd className="mt-0.5 flex items-center gap-1 font-heading text-lg font-semibold tabular-nums text-text">
                   <Clock className="h-3.5 w-3.5 shrink-0 text-text-muted" aria-hidden />
-                  {sessionStats.totalTimeMinutes > 0 ? `${sessionStats.totalTimeMinutes}m` : "—"}
+                  {sessionStats.totalTimeMinutes > 0 ? `${sessionStats.totalTimeMinutes}m` : "-"}
                 </dd>
               </div>
             </dl>

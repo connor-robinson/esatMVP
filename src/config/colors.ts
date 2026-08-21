@@ -21,10 +21,10 @@ export const PAPER_COLORS = {
   // Chemistry & PAT
   chemistry: colorTokens.chemistry.dark,
 
-  // Biology — green
+  // Biology - green
   biology: colorTokens.biology.dark,
 
-  // Advanced Math — yellow
+  // Advanced Math - yellow
   advanced: colorTokens.advanced.dark
 } as const;
 
@@ -76,7 +76,7 @@ export function getPaperTypeColor(paperType: string): string {
   return PAPER_TYPE_COLORS[paperType as keyof typeof PAPER_TYPE_COLORS] || PAPER_COLORS.mathematics;
 }
 
-/** Tailwind text class for grouped exam titles (theme tokens — no hex in UI). */
+/** Tailwind text class for grouped exam titles (theme tokens - no hex in UI). */
 export function getExamAccentTextClass(examName: string): string {
   const key = examName.trim().toUpperCase();
   if (key === "ENGAA") return "text-advanced";
@@ -88,7 +88,7 @@ export function getExamAccentTextClass(examName: string): string {
   return "text-maths";
 }
 
-/** Text on saturated subject / status fills — dark in light mode, white in dark mode. */
+/** Text on saturated subject / status fills - dark in light mode, white in dark mode. */
 export const ON_SOLID_SUBJECT_TEXT = "text-neutral-900 dark:text-white";
 
 function resolveSectionColorRef(sectionName: string): string {
@@ -132,7 +132,7 @@ export function getSectionBarTrackClass(sectionName: string): string {
 }
 
 /**
- * Solid section pill — colored background with theme-aware label text.
+ * Solid section pill - colored background with theme-aware label text.
  */
 export function getSectionSubjectPillClass(sectionName: string): string {
   return subjectRefToSolidClass(resolveSectionColorRef(sectionName));
@@ -192,7 +192,7 @@ export const cssVar = {
 } as const;
 
 /**
- * Section 1 / 2 number chip — exam-colored pill, neutral digit (library rows).
+ * Section 1 / 2 number chip - exam-colored pill, neutral digit (library rows).
  */
 export function getExamSectionNumberBadgeClass(examName: string): string {
   const key = examName.trim().toUpperCase();
@@ -217,7 +217,7 @@ export function getPaperSessionIconClass(examName: string): string {
   return "bg-maths/15 text-maths";
 }
 
-/** Badge / tile accents for roadmap (borderless — matches getExamAccentTextClass). */
+/** Badge / tile accents for roadmap (borderless - matches getExamAccentTextClass). */
 export function getExamAccentBadgeClass(examName: string): string {
   const key = examName.trim().toUpperCase();
   if (key === "ENGAA") return "bg-advanced/15 text-advanced";
@@ -277,7 +277,7 @@ export function getExamAccentSurfaceStrongClass(examName: string): string {
   return "bg-accent/18";
 }
 
-/** Past-papers library year row — exam tint, no border; lifts in dark, subtle wash in light. */
+/** Past-papers library year row - exam tint, no border; lifts in dark, subtle wash in light. */
 export function getExamAccentLibraryPaperRowClass(
   examName: string,
   selected = false,
@@ -307,7 +307,7 @@ export function getExamAccentLibraryPaperRowClass(
   return row("bg-accent/10", "hover:bg-accent/18", "bg-accent/18");
 }
 
-/** Overall roadmap progress bar — NSAA blue. */
+/** Overall roadmap progress bar - NSAA blue. */
 export const PAST_PAPERS_PROGRESS_FILL = "bg-accent";
 
 /**

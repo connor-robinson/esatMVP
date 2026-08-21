@@ -7,7 +7,7 @@ import type { ProgrammeStatus, TesterProgrammeRow } from "./types";
 export const DEV_STAGE_MINUTES = 2;
 
 export function isTesterDevEnabled(): boolean {
-  // Temporarily enabled for QA — revert before public launch.
+  // Temporarily enabled for QA - revert before public launch.
   return true;
 }
 

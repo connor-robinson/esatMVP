@@ -1,5 +1,5 @@
 /**
- * Wordle-style daily progress for FermiGuessr — stored in localStorage per device.
+ * Wordle-style daily progress for FermiGuessr - stored in localStorage per device.
  * Logged-in users also sync to the server on completion.
  */
 

@@ -143,7 +143,7 @@ export function QuestionBankSessionHistory({
                   <p className='mt-0.5 text-xs text-text-muted'>
                     {s.ended_at
                       ? new Date(s.ended_at).toLocaleString()
-                      : '—'}{' '}
+                      : '-'}{' '}
                     · {s.question_count} questions
                   </p>
                 </div>

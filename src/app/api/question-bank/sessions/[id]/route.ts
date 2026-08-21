@@ -7,8 +7,8 @@ export const dynamic = 'force-dynamic';
 type RouteContext = { params: Promise<{ id: string }> };
 
 /**
- * GET /api/question-bank/sessions/[id] — session detail + attempts
- * PATCH /api/question-bank/sessions/[id] — complete session
+ * GET /api/question-bank/sessions/[id] - session detail + attempts
+ * PATCH /api/question-bank/sessions/[id] - complete session
  */
 export async function GET(_request: NextRequest, context: RouteContext) {
   try {

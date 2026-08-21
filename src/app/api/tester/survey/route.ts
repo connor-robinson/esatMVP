@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (submissionError || !submission) {
-      // Already submitted — return current state without re-applying rewards.
+      // Already submitted - return current state without re-applying rewards.
       const { state } = await syncTesterProgramme(service, user.id);
       return NextResponse.json({ state, alreadySubmitted: true });
     }

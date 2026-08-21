@@ -28,7 +28,7 @@ export function generateGeometry3d(
   return generateVolume(weights);
 }
 
-// —— Volume ——
+// - -  Volume - - 
 
 type VolKind = "cuboid" | "cylinder" | "pyramid" | "cone" | "sphere" | "hemisphere";
 
@@ -155,7 +155,7 @@ function volHemisphere(): GeneratedQuestion {
   };
 }
 
-// —— Surface Area ——
+// - -  Surface Area - - 
 
 type SaKind = "cuboid" | "prism" | "cylinder" | "cone" | "sphere";
 

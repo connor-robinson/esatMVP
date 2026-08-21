@@ -1,5 +1,5 @@
 /**
- * Account setup gate — redirects incomplete profiles to /onboarding.
+ * Account setup gate - redirects incomplete profiles to /onboarding.
  * Username and questionnaire are collected in one full-page flow.
  */
 

@@ -77,7 +77,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           <div className="flex items-center justify-between gap-6">
             <span className="font-mono text-xs text-text-muted">Accuracy</span>
             <span className="font-mono text-sm font-bold text-text">
-              {data.accuracy !== null ? `${data.accuracy.toFixed(1)}%` : "—"}
+              {data.accuracy !== null ? `${data.accuracy.toFixed(1)}%` : "-"}
             </span>
           </div>
           <div className="flex items-center justify-between gap-6">

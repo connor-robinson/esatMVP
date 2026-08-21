@@ -164,7 +164,7 @@ export interface QuestionBankCommunityStats {
   attempts: number;
   /** Mean time spent (ms→s) across all attempts */
   avgTimeSeconds: number;
-  /** Mean time for correct attempts only — “Average correct time” */
+  /** Mean time for correct attempts only - “Average correct time” */
   avgCorrectTimeSeconds: number;
   correctPercentage: number;
   optionCounts: Record<string, number>;

@@ -1,5 +1,5 @@
 /**
- * Founding Tester Programme — survey definitions.
+ * Founding Tester Programme - survey definitions.
  *
  * These are versioned. Changing questions should bump the `version` so historic
  * structured responses (tester_survey_responses) remain interpretable.

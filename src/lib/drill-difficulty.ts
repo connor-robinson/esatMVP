@@ -1,5 +1,5 @@
 /**
- * Difficulty label helper — single source of truth lives in `src/config/theme.ts`.
+ * Difficulty label helper - single source of truth lives in `src/config/theme.ts`.
  * This file is a thin re-export so existing imports keep working.
  */
 export {

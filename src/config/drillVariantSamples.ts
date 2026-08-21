@@ -9,7 +9,7 @@ type DrillPreview =
 const S = (samples: DrillPreview[]): readonly DrillPreview[] => samples;
 
 export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> = {
-  // —— Arithmetic (see also drillPreviews for re-export) ——
+  // - -  Arithmetic (see also drillPreviews for re-export) - - 
   'addition-single-digit': S([
     { kind: 'plain', text: '9 + 7' },
     { kind: 'plain', text: '6 + 8' },
@@ -164,7 +164,7 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'latex', latex: String.raw`(2.5 \times 10^{-3})(4 \times 10^{6})` },
   ]),
 
-  // —— Algebra ——
+  // - -  Algebra - - 
   'linearEquations-core': S([
     { kind: 'latex', latex: String.raw`2x + 5 = 13` },
     { kind: 'latex', latex: String.raw`2(x + 3) = 14` },
@@ -282,7 +282,7 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'latex', latex: String.raw`2x^{1/2}` },
   ]),
 
-  // —— Geometry ——
+  // - -  Geometry - - 
   'triangles-level-1': S([
     { kind: 'plain', text: '∠ sum = 180°' },
     { kind: 'plain', text: 'a = 5, b = 7' },
@@ -316,7 +316,7 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'plain', text: 'Find the surface area.' },
   ]),
 
-  // —— Number theory ——
+  // - -  Number theory - - 
   'prime_factorise-mixed': S([
     { kind: 'latex', latex: String.raw`60 = \_ \times \_ \times \_` },
     { kind: 'latex', latex: String.raw`180 = \_ \times \_ \times \_ \times \_` },
@@ -346,7 +346,7 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'latex', latex: String.raw`2^{\frac{7}{2}}` },
   ]),
 
-  // —— Shortcuts ——
+  // - -  Shortcuts - - 
   'percentages-basic': S([
     { kind: 'plain', text: '15% of 80' },
     { kind: 'plain', text: '20% of 150' },
@@ -360,7 +360,7 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'plain', text: 'Decrease 500 by 15%' },
   ]),
 
-  // —— Trigonometry ——
+  // - -  Trigonometry - - 
   'trig_recall-basic-angles': S([
     { kind: 'latex', latex: String.raw`\sin 30°` },
     { kind: 'latex', latex: String.raw`\cos 60°` },
@@ -406,7 +406,7 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'latex', latex: String.raw`7\sqrt{2}` },
   ]),
 
-  // —— Physics ——
+  // - -  Physics - - 
   'kinematics-speed-distance-time': S([
     { kind: 'latex', latex: String.raw`v = \frac{s}{t}` },
     { kind: 'plain', text: 's = 120 m, t = 8 s' },

@@ -1,0 +1,16 @@
+---
+description: Never use em dashes in copy, UI, or comments
+alwaysApply: true
+---
+
+# No em dashes
+
+Do not use the em dash character (`—`, U+2014) anywhere in this project: UI copy, marketing pages, comments, or commit messages.
+
+Prefer:
+- a period or new sentence
+- a comma or colon
+- a hyphen (`-`) for compounds or simple separators
+- an en dash (`–`) only for numeric ranges like `2016–2019` when a range is needed
+
+When editing existing text that contains an em dash, replace it with one of the options above.

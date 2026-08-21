@@ -92,7 +92,7 @@ function bareDigitToRawCode(tag: string, paperId: string): string | null {
 }
 
 function displayLabelToPrefixed(tag: string, paperId: string): string | null {
-  const sep = tag.indexOf(" - ");
+  const sep = tag.indexOf("-");
   if (sep < 0) return null;
   const subjPart = tag.slice(0, sep);
   const titlePart = tag.slice(sep + 3);
@@ -199,8 +199,8 @@ export function labelForEsatTag(
   }
 
   // Legacy display strings: "Chemistry - Atomic structure"
-  if (raw.includes(" - ")) {
-    const titlePart = raw.split(" - ").slice(1).join(" - ").trim();
+  if (raw.includes("-")) {
+    const titlePart = raw.split("-").slice(1).join("-").trim();
     if (titlePart) return titlePart;
   }
 
@@ -223,7 +223,7 @@ export function labelForEsatTag(
   return canonical;
 }
 
-/** Sort key for topic groups — alphabetical by display title. */
+/** Sort key for topic groups - alphabetical by display title. */
 export function compareEsatTagLabels(
   a: string,
   b: string,

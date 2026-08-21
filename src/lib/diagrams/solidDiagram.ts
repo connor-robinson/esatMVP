@@ -1,5 +1,5 @@
 /**
- * Isometric 3D solid diagram builders — fixed visual size, centered
+ * Isometric 3D solid diagram builders - fixed visual size, centered
  */
 
 import type { GeometryDiagramData } from "@/types/core";

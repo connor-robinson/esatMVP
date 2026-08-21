@@ -1,5 +1,5 @@
 /**
- * Roadmap summary header — progress + continue
+ * Roadmap summary header - progress + continue
  */
 
 "use client";

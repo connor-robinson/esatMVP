@@ -330,7 +330,7 @@ export async function PATCH(request: NextRequest) {
       .select(PREFS_SELECT_FULL)
       .single();
 
-    // Newer columns may not exist yet — strip optional fields and retry
+    // Newer columns may not exist yet - strip optional fields and retry
     if (
       profileError?.message?.includes('marketing_emails_consent') ||
       profileError?.message?.includes('target_universities') ||

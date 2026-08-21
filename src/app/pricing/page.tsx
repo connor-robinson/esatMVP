@@ -259,10 +259,10 @@ export default function PricingPage() {
             }
             if (id !== "weekly" && id !== "monthly" && id !== "season_pass") return;
 
-            // Season-pass holders keep prepaid access until Oct — no mid-pass switch
+            // Season-pass holders keep prepaid access until Oct - no mid-pass switch
             if (isSeasonPass) return;
 
-            // Already scheduled season-pass end — don't re-fire
+            // Already scheduled season-pass end - don't re-fire
             if (
               id === "season_pass" &&
               cancelAtPeriodEnd &&

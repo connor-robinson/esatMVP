@@ -73,7 +73,7 @@ export function SlotMachineCount({
       const linear = Math.min(1, (now - startedAt) / durationMs);
       const eased = easeOutCubic(linear);
 
-      // Frame spacing grows as we ease out — scramble slows near the end.
+      // Frame spacing grows as we ease out - scramble slows near the end.
       const minGap = 28;
       const maxGap = 160;
       const frameGap = minGap + (maxGap - minGap) * eased;

@@ -7,7 +7,7 @@ export function getGoogleOAuthRedirectUrl(redirectTo: string): string {
 }
 
 /**
- * Google sign-in requesting email only — no profile/name/picture scopes.
+ * Google sign-in requesting email only - no profile/name/picture scopes.
  * Users pick their own username; we never use Google display name or avatar.
  *
  * Also remove `…/auth/userinfo.profile` from the Google Cloud OAuth consent
@@ -22,7 +22,7 @@ export async function signInWithGoogle(
     provider: "google",
     options: {
       redirectTo: redirectUrl,
-      // Email only — never request profile / name / picture
+      // Email only - never request profile / name / picture
       scopes: "openid email",
       queryParams: {
         redirectTo,

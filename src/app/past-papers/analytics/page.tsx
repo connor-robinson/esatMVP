@@ -1,5 +1,5 @@
 /**
- * Past Papers Analytics — layout aligned with Mental Maths analytics
+ * Past Papers Analytics - layout aligned with Mental Maths analytics
  */
 
 'use client';

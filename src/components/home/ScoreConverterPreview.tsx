@@ -24,7 +24,7 @@ type DemoExam = {
   };
 };
 
-/** Fixed sample conversions — click Try me to enter your own year and marks. */
+/** Fixed sample conversions - click Try me to enter your own year and marks. */
 const DEMOS: DemoExam[] = [
   {
     id: "nsaa",
@@ -163,7 +163,7 @@ export function ScoreConverterPreview() {
             Percentile
           </p>
           <p className="mt-1 text-2xl font-display font-bold tabular-nums text-white sm:text-3xl">
-            {topPct != null ? `Top ${topPct.toFixed(0)}%` : "—"}
+            {topPct != null ? `Top ${topPct.toFixed(0)}%` : "-"}
           </p>
         </div>
       </div>

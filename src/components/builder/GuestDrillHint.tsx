@@ -31,7 +31,7 @@ type GuestDrillHintCalloutProps = {
   className?: string;
   /** Arrow below label (points at control below). Default true. */
   arrowDown?: boolean;
-  /** Quieter suggestion styling — no heavy motion or bold callout. */
+  /** Quieter suggestion styling - no heavy motion or bold callout. */
   subtle?: boolean;
 };
 

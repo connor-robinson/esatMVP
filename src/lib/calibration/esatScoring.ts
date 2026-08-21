@@ -1,5 +1,5 @@
 /**
- * ESAT Mathematics 1 prediction model — versioned scoring config + engine.
+ * ESAT Mathematics 1 prediction model - versioned scoring config + engine.
  *
  * Model version: math1_calibration_score_v1
  *

@@ -1,5 +1,5 @@
 /**
- * Fraction ↔ decimal conversion (2 d.p.) — harder conversions both ways
+ * Fraction ↔ decimal conversion (2 d.p.) - harder conversions both ways
  * Includes recurring decimals with overline LaTeX notation
  */
 

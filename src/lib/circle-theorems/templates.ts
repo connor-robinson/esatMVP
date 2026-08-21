@@ -1,5 +1,5 @@
 /**
- * Circle theorem templates — math-first instantiation.
+ * Circle theorem templates - math-first instantiation.
  */
 
 import type { CircleTheoremResult, LabelledPoint, LineSegment, TemplateId } from "./types";
@@ -122,7 +122,7 @@ export function templateCircumferenceToCentre(): CircleTheoremResult {
   };
 }
 
-/** Angle in a semicircle — find third angle in triangle (basic level). */
+/** Angle in a semicircle - find third angle in triangle (basic level). */
 export function templateSemicircleTriangle(basic = false): CircleTheoremResult {
   const aDeg = 200;
   const bDeg = 20;
@@ -223,7 +223,7 @@ export function templateSameSegment(): CircleTheoremResult {
   };
 }
 
-/** Alternate segment theorem — tangent/chord angle equals angle in the alternate segment. */
+/** Alternate segment theorem - tangent/chord angle equals angle in the alternate segment. */
 export function templateAlternateSegment(): CircleTheoremResult {
   for (let attempt = 0; attempt < 24; attempt++) {
     const result = buildAlternateSegment();
@@ -375,7 +375,7 @@ export function templateRadiusTangent(basic = false): CircleTheoremResult {
   };
 }
 
-/** Cyclic quadrilateral — opposite angles sum to 180°. */
+/** Cyclic quadrilateral - opposite angles sum to 180°. */
 export function templateCyclicOpposite(): CircleTheoremResult {
   const aDeg = 160;
   const bDeg = 60;
@@ -414,7 +414,7 @@ export function templateCyclicOpposite(): CircleTheoremResult {
   };
 }
 
-/** Cyclic quadrilateral — exterior angle equals opposite interior. */
+/** Cyclic quadrilateral - exterior angle equals opposite interior. */
 export function templateCyclicExterior(): CircleTheoremResult {
   for (let attempt = 0; attempt < 24; attempt++) {
     const result = buildCyclicExterior();

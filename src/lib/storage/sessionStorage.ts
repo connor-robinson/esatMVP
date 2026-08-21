@@ -19,7 +19,7 @@ interface SessionData {
   isPaused: boolean;
   pausedAt: number | null;
   savedAt: number; // When this save occurred
-  /** User saved & left — do not auto-restore into the global progress bar */
+  /** User saved & left - do not auto-restore into the global progress bar */
   detachedFromNavbar?: boolean;
 }
 
@@ -296,7 +296,7 @@ export async function findDetachedSession(): Promise<{ sessionId: string } | nul
  * Returns the most recent active session ID, or null if none found
  * Also reconciles differences (database is source of truth for ended_at)
  *
- * Skips save-and-left sessions (detached) — those resume only when the user asks.
+ * Skips save-and-left sessions (detached) - those resume only when the user asks.
  */
 export async function findActiveSession(): Promise<{ sessionId: string; source: 'indexeddb' | 'database' } | null> {
   try {

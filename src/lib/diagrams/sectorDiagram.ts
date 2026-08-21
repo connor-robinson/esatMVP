@@ -1,5 +1,5 @@
 /**
- * Sector diagram — symmetric wedge centered in the view, fixed size
+ * Sector diagram - symmetric wedge centered in the view, fixed size
  */
 
 import type { GeometryDiagramData } from "@/types/core";

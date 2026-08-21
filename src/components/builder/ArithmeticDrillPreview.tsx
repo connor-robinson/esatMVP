@@ -90,7 +90,10 @@ export function ArithmeticDrillPreview({
   if (preview.kind === 'latex') {
     const textClass =
       size === 'folder'
-        ? folderPreviewClass(selected)
+        ? cn(
+            'max-w-full text-[1.2rem] font-medium tabular-nums tracking-tight leading-none',
+            selected ? 'text-primary' : 'text-primary/90',
+          )
         : cardPreviewClass(selected);
 
     return (

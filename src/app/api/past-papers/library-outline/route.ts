@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 /**
  * GET /api/past-papers/library-outline
- * Lightweight paper catalog (metadata only — no questions).
+ * Lightweight paper catalog (metadata only - no questions).
  */
 export async function GET() {
   try {

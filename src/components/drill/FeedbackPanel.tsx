@@ -72,7 +72,7 @@ export function FeedbackPanel({
               
               {!isCorrect && correctAnswer && (
                 <div className="text-white/60">
-                  <div className="text-sm mb-1">Your answer: {userAnswer || "—"}</div>
+                  <div className="text-sm mb-1">Your answer: {userAnswer || "-"}</div>
                   <div className="text-base">
                     Correct answer: <span className="font-mono font-bold text-white/90">{correctAnswer}</span>
                   </div>

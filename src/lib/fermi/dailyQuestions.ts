@@ -11,7 +11,7 @@ import { daysSinceEpoch } from "@/lib/fermi/dates";
 
 export const FERMI_DAILY_ROUND_SIZE = 5;
 
-/** Stable bank order — do not shuffle; day index picks the slice. */
+/** Stable bank order - do not shuffle; day index picks the slice. */
 const ORDERED_BANK: FermiQuestion[] = [...FERMI_QUESTIONS].sort((a, b) =>
   a.id.localeCompare(b.id),
 );
@@ -23,7 +23,7 @@ export function getDailyPuzzleNumber(date: Date = new Date()): number {
   return daysSinceEpoch(date) + 1;
 }
 
-/** Today's five questions — identical for every player on the same UTC day. */
+/** Today's five questions - identical for every player on the same UTC day. */
 export function getDailyFermiQuestions(date: Date = new Date()): FermiQuestion[] {
   const day = daysSinceEpoch(date);
   const dayInCycle = day % DAYS_PER_CYCLE;

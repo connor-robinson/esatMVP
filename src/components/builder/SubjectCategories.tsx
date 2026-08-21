@@ -21,7 +21,7 @@ import { FermiGuessrIcon } from '@/components/icons/FermiGuessrIcon';
 interface SubjectCategoriesProps {
   selectedCategory: HighLevelCategory | null;
   onSelectCategory: (category: HighLevelCategory) => void;
-  /** Opens FermiGuessr — a daily estimation minigame, separate from drills. */
+  /** Opens FermiGuessr - a daily estimation minigame, separate from drills. */
   onLaunchFermiGuessr?: () => void;
 }
 
@@ -77,7 +77,7 @@ export function SubjectCategories({
   return (
     <aside className='scrollbar-hide hidden h-full min-h-0 w-[5.75rem] shrink-0 flex-col overflow-hidden rounded-organic-xl bg-surface lg:flex xl:w-[6.5rem]'>
       <nav className='flex h-full min-h-0 flex-1 flex-col px-1.5 py-2'>
-        {/* Categories share remaining height evenly — no dead top/bottom gap. */}
+        {/* Categories share remaining height evenly - no dead top/bottom gap. */}
         <div className='flex min-h-0 flex-1 flex-col'>
           {SIDEBAR_CATEGORY_ORDER.map((category) => {
             const config = categoryConfig[category];

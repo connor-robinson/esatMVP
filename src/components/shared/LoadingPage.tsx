@@ -1,5 +1,5 @@
 /**
- * Full-screen loading overlay — logo, spinner, status, and tip.
+ * Full-screen loading overlay - logo, spinner, status, and tip.
  */
 
 "use client";
@@ -14,9 +14,9 @@ export type LoadingPageVariant = "app" | "session";
 
 interface LoadingPageProps {
   message?: string;
-  /** @deprecated Progress bar removed — kept for API compatibility. */
+  /** @deprecated Progress bar removed - kept for API compatibility. */
   showProgress?: boolean;
-  /** @deprecated Progress bar removed — kept for API compatibility. */
+  /** @deprecated Progress bar removed - kept for API compatibility. */
   progress?: number;
   /** Fixed hint; if omitted, a random tip is chosen once on mount. */
   hint?: string;

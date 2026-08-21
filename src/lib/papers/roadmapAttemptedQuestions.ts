@@ -95,7 +95,7 @@ export async function loadAttemptedQuestionsContext(
       }
     }
   } catch {
-    // Non-fatal — session can still start with full question set.
+    // Non-fatal - session can still start with full question set.
   }
 
   return { attemptedKeys, attemptedDuplicateGroups };

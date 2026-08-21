@@ -31,7 +31,7 @@ export function ConversionFlipCard({ row }: ConversionFlipCardProps) {
   const flags = getConversionFlagChips(row.conversionReport);
   const label = `${row.examName} ${row.examYear} · ${row.paperName} · Q${row.questionNumber}`;
   const confidence =
-    row.confidence != null ? `${Math.round(row.confidence * 100)}%` : "—";
+    row.confidence != null ? `${Math.round(row.confidence * 100)}%` : "-";
 
   return (
     <div className="flex flex-col gap-2">
@@ -51,7 +51,7 @@ export function ConversionFlipCard({ row }: ConversionFlipCardProps) {
               flipped && "[transform:rotateY(180deg)]",
             )}
           >
-            {/* Front — original screenshot */}
+            {/* Front - original screenshot */}
             <div className="absolute inset-0 overflow-hidden rounded-organic-md bg-neutral-900 [backface-visibility:hidden]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -65,7 +65,7 @@ export function ConversionFlipCard({ row }: ConversionFlipCardProps) {
               </div>
             </div>
 
-            {/* Back — exam-fidelity text render */}
+            {/* Back - exam-fidelity text render */}
             <div className="absolute inset-0 overflow-hidden rounded-organic-md [backface-visibility:hidden] [transform:rotateY(180deg)]">
               <ExamFidelityPreview row={row} />
             </div>
@@ -73,7 +73,7 @@ export function ConversionFlipCard({ row }: ConversionFlipCardProps) {
         </div>
       </button>
 
-      {/* Footer metadata — always visible */}
+      {/* Footer metadata - always visible */}
       <div className="space-y-1.5 px-1">
         <div className="flex flex-wrap items-center gap-2 text-xs text-text-muted">
           <span className="truncate font-medium text-text">{label}</span>

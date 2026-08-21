@@ -7,7 +7,7 @@ export type BrandLogoVariant = "full" | "mark";
 
 export type BrandLogoSize = "nav" | "md" | "lg";
 
-/** Height only — width follows native 687×583 aspect ratio. */
+/** Height only - width follows native 687×583 aspect ratio. */
 const MARK_HEIGHT_CLASS: Record<BrandLogoSize, string> = {
   nav: "h-5",
   md: "h-8",

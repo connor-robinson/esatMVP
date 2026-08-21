@@ -177,7 +177,7 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Build count query — approved questions only (same as questions API)
+    // Build count query - approved questions only (same as questions API)
     let countQuery = applyPublishedQuestionBankFilter(
       supabase.from('ai_generated_questions').select('id', { count: 'exact', head: true }),
     );

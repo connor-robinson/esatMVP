@@ -246,7 +246,7 @@ export function QuestionSessionSummary({
                 </dt>
                 <dd className="mt-0.5 flex items-center gap-1 font-heading text-lg font-semibold tabular-nums text-text">
                   <Clock className="h-3.5 w-3.5 shrink-0 text-text-muted" aria-hidden />
-                  {timeLimitMinutes > 0 ? `${timeLimitMinutes}m` : "—"}
+                  {timeLimitMinutes > 0 ? `${timeLimitMinutes}m` : "-"}
                 </dd>
               </div>
             </dl>

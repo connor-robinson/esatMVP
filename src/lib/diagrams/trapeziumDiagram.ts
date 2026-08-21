@@ -1,5 +1,5 @@
 /**
- * Trapezium diagram with parallel sides a, b and height h — fixed visual size
+ * Trapezium diagram with parallel sides a, b and height h - fixed visual size
  */
 
 import type { GeometryDiagramData } from "@/types/core";

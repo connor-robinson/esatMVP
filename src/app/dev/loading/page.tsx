@@ -1,5 +1,5 @@
 /**
- * Dev preview — full-screen loading UI only.
+ * Dev preview - full-screen loading UI only.
  *
  * Examples:
  *   /dev/loading

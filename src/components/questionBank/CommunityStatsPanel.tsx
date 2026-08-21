@@ -63,7 +63,7 @@ export function CommunityStatsPanel({
                     >
                       <div className="flex min-h-[22px] items-end justify-center">
                         <span className="text-[11px] tabular-nums text-text-muted sm:text-xs">
-                          {pct > 0 ? `${pct.toFixed(0)}%` : "—"}
+                          {pct > 0 ? `${pct.toFixed(0)}%` : "-"}
                         </span>
                       </div>
                       <div className="flex h-[92px] w-full flex-col justify-end px-0.5 sm:h-[96px]">
@@ -106,7 +106,7 @@ export function CommunityStatsPanel({
                   {formatTime(Math.round(stats.avgCorrectTimeSeconds * 1000))}
                 </span>
               ) : (
-                <span className="text-center text-sm text-text-muted">—</span>
+                <span className="text-center text-sm text-text-muted"> - </span>
               )}
             </div>
           </div>

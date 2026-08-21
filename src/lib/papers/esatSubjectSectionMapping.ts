@@ -83,7 +83,7 @@ export function paperSectionsForEsatSubjects(
     return Array.from(sections);
   }
 
-  // TMUA / MAT / etc. — ESAT subject prefs do not apply.
+  // TMUA / MAT / etc. - ESAT subject prefs do not apply.
   return null;
 }
 

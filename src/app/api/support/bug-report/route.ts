@@ -38,7 +38,7 @@ async function sendSupportEmail(params: {
   userAgent: string | null;
 }): Promise<{ ok: boolean; skipped?: boolean; error?: string }> {
   const resendApiKey = process.env.RESEND_API_KEY;
-  // Server-only inbox — never returned to the client or shown in UI.
+  // Server-only inbox - never returned to the client or shown in UI.
   const recipientEmail =
     process.env.SUPPORT_INBOX_EMAIL || process.env.BUG_REPORT_EMAIL;
   const fromEmail =

@@ -1,5 +1,5 @@
 /**
- * Shared layout constants — diagrams render at fixed visual size, centered.
+ * Shared layout constants - diagrams render at fixed visual size, centered.
  * Numeric labels still show actual dimensions; scale is not to scale.
  */
 
@@ -14,7 +14,7 @@ export const DIAGRAM_CY = 200;
 /** Fixed pixel radius for circles, spheres (independent of r value). */
 export const FIXED_RADIUS_PX = 108;
 
-/** Radius for sector wedges — cropped viewBox keeps them readable without dominating the page. */
+/** Radius for sector wedges - cropped viewBox keeps them readable without dominating the page. */
 export const SECTOR_RADIUS_PX = 125;
 
 /** Fixed isometric extent (max edge length in px). */

@@ -1,5 +1,5 @@
 /**
- * Fractions question generator — mixed arithmetic and simplification
+ * Fractions question generator - mixed arithmetic and simplification
  */
 
 import { GeneratedQuestion } from "@/types/core";

@@ -1,5 +1,5 @@
 /**
- * Circle theorem question model — math-first, render second.
+ * Circle theorem question model - math-first, render second.
  */
 
 export type TheoremTag =

@@ -5,9 +5,9 @@
  */
 
 export function formatExpiry(iso: string | null): string {
-  if (!iso) return "—";
+  if (!iso) return "-";
   const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "—";
+  if (Number.isNaN(d.getTime())) return "-";
   const date = d.toLocaleDateString(undefined, {
     day: "numeric",
     month: "long",
@@ -21,7 +21,7 @@ export function formatExpiry(iso: string | null): string {
 }
 
 export function formatRemaining(ms: number | null): string {
-  if (ms === null) return "—";
+  if (ms === null) return "-";
   if (ms <= 0) return "Expired";
   const totalMinutes = Math.floor(ms / 60000);
   const days = Math.floor(totalMinutes / (60 * 24));

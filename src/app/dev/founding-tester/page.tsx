@@ -13,7 +13,7 @@ import type { DevSimulateAction } from "@/lib/tester/dev";
 import { cn } from "@/lib/utils";
 
 /**
- * Dev QA panel — fast-forward the Founding Tester Programme without waiting days.
+ * Dev QA panel - fast-forward the Founding Tester Programme without waiting days.
  * Available in development, for admins, or when ENABLE_TESTER_DEV_TOOLS=true.
  *
  * /dev/founding-tester

@@ -42,7 +42,7 @@ export function useTesterProgramme(): TesterProgrammeContextValue {
   return ctx;
 }
 
-/** Safe hook for Navbar — returns null context values when outside provider. */
+/** Safe hook for Navbar - returns null context values when outside provider. */
 export function useTesterProgrammeOptional(): TesterProgrammeContextValue | null {
   return useContext(TesterProgrammeContext);
 }

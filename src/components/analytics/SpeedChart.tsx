@@ -77,7 +77,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           <div className="flex items-center justify-between gap-6">
             <span className="font-mono text-xs text-text-muted">Avg speed</span>
             <span className="font-mono text-sm font-bold text-text">
-              {data.speed !== null && data.speed > 0 ? `${data.speed.toFixed(1)} q/min` : "—"}
+              {data.speed !== null && data.speed > 0 ? `${data.speed.toFixed(1)} q/min` : "-"}
             </span>
           </div>
           <div className="flex items-center justify-between gap-6">

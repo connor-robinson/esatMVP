@@ -68,7 +68,7 @@ interface MentalMathSessionProps {
   totalAttempts: number;
   /** When set, show countdown instead of question cap. */
   remainingSeconds?: number | null;
-  /** Open-ended questions or unlimited time — no fixed total. */
+  /** Open-ended questions or unlimited time - no fixed total. */
   isUnlimitedSession?: boolean;
   onSubmitAnswer: (answer: string) => void;
   onContinueAfterIncorrect: () => void;
@@ -349,7 +349,7 @@ export function MentalMathSession({
 
   return (
     <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-background">
-      {/* Header with progress bar and end session — keep above question layer */}
+      {/* Header with progress bar and end session - keep above question layer */}
       <div className="relative z-30 flex-shrink-0 px-1 pb-3 pt-6 sm:pt-8">
         <Container size="xl">
           <div className="space-y-2">
@@ -403,7 +403,7 @@ export function MentalMathSession({
         </Container>
       </div>
 
-      {/* Question area — no negative margin (was blocking header clicks) */}
+      {/* Question area - no negative margin (was blocking header clicks) */}
       <div
         className={cn(
           "relative z-0 flex min-h-0 flex-1 overflow-hidden",

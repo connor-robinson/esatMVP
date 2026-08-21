@@ -123,7 +123,7 @@ export function parseFermiInput(raw: string): number | null {
 
 /** Compact, human-friendly rendering of a number (e.g. 7000000 -> "7 million"). */
 export function formatFermiNumber(value: number): string {
-  if (!Number.isFinite(value)) return "—";
+  if (!Number.isFinite(value)) return "-";
   const abs = Math.abs(value);
 
   if (abs !== 0 && (abs >= 1e15 || abs < 1e-3)) {
@@ -149,7 +149,7 @@ export function formatFermiNumber(value: number): string {
 
 /** Full number with thousands separators (e.g. "80,000,000"). */
 export function formatFullNumber(value: number): string {
-  if (!Number.isFinite(value)) return "—";
+  if (!Number.isFinite(value)) return "-";
   if (Math.abs(value) >= 1e15 || (value !== 0 && Math.abs(value) < 1e-3)) {
     return value.toExponential(2);
   }

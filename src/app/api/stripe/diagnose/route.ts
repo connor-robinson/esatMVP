@@ -28,7 +28,7 @@ async function verifyPrice(priceId: string | null) {
   }
 }
 
-/** Auth-gated Stripe config check — no secrets exposed. */
+/** Auth-gated Stripe config check - no secrets exposed. */
 export async function GET(request: NextRequest) {
   const { user, error } = await requireRouteUser(request);
   if (error || !user) {

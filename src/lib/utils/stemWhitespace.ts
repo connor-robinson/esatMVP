@@ -5,7 +5,7 @@
 const FINAL_Q_RE =
   /((?:What|Which|How|Find|Calculate|Determine|State|Explain|Deduce)\b[^?]*\?)/i;
 
-/** Figures / placeholders — may get paragraph spacing when masked. */
+/** Figures / placeholders - may get paragraph spacing when masked. */
 const PROTECTED_BLOCK: Array<{ re: RegExp }> = [
   {
     re: /<figure\b[^>]*class="[^"]*qg-diagram[^"]*"[^>]*>[\s\S]*?<\/figure>/gi,
@@ -14,13 +14,13 @@ const PROTECTED_BLOCK: Array<{ re: RegExp }> = [
   { re: /<DIAGRAM\s+id\s*=\s*"[^"]+"\s*\/?>/gi },
 ];
 
-/** Display $$...$$ — masked in place so prose does not split around each equation. */
+/** Display $$...$$ - masked in place so prose does not split around each equation. */
 const DISPLAY_MATH_RE = /\$\$[\s\S]*?\$\$/g;
 
-/** Inline $...$ — masked in place. */
+/** Inline $...$ - masked in place. */
 const INLINE_MATH_RE = /\$(?!\$)[^\$\n]+?\$/g;
 
-/** \\(...\\) and \\[...\\] — masked before prose collapse. */
+/** \\(...\\) and \\[...\\] - masked before prose collapse. */
 const PAREN_INLINE_MATH_RE = /\\\([\s\S]*?\\\)/g;
 const PAREN_DISPLAY_MATH_RE = /\\\[([\s\S]*?)\\\]/g;
 

@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // No paid access — check the Founding Tester Programme (server-side).
+    // No paid access - check the Founding Tester Programme (server-side).
     try {
       const { state } = await syncTesterProgramme(supabase as never, user.id);
       const tester = {

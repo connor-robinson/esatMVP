@@ -1,5 +1,5 @@
 /**
- * Session outcome stats — one row per question, not per submit attempt.
+ * Session outcome stats - one row per question, not per submit attempt.
  * Retries on incorrect answers must not inflate totals (e.g. 6/12 not 12/19).
  */
 
@@ -232,7 +232,7 @@ export function getSessionQuestionPool(session: BuilderSession): GeneratedQuesti
   return limit > 0 ? session.questions.slice(0, limit) : session.questions;
 }
 
-/** Topic rows when nothing was answered — still allows DB + leaderboard saves. */
+/** Topic rows when nothing was answered - still allows DB + leaderboard saves. */
 export function buildPlannedTopicOutcomes(session: BuilderSession): TopicOutcomeStats[] {
   const pool = getSessionQuestionPool(session);
   const byFolder = new Map<string, TopicOutcomeStats>();

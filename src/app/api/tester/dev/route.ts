@@ -53,7 +53,7 @@ async function authorizeDev(request: NextRequest) {
   };
 }
 
-/** GET /api/tester/dev — availability + current synced state */
+/** GET /api/tester/dev - availability + current synced state */
 export async function GET(request: NextRequest) {
   const auth = await authorizeDev(request);
   if (!auth.ok) {

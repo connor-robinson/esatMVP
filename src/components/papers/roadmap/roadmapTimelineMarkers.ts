@@ -1,6 +1,6 @@
 /**
  * Timeline tip placements and ESAT-focused guidance copy for the practice roadmap.
- * Only key transition years — concise, factual notes (visible to all users).
+ * Only key transition years - concise, factual notes (visible to all users).
  */
 
 import type { RoadmapStage } from "@/lib/papers/roadmapConfig";
@@ -17,7 +17,7 @@ export interface StageCommentary {
   text: string;
 }
 
-/** Commentary keyed by roadmap stage id — important / transition papers only. */
+/** Commentary keyed by roadmap stage id - important / transition papers only. */
 const STAGE_COMMENTARY: Record<string, StageCommentary> = {
   "nsaa-2016": {
     title: "NSAA 2016",

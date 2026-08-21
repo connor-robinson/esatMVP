@@ -1,5 +1,5 @@
 /**
- * Mental Maths personal analytics — overview → trends → session history → mistakes
+ * Mental Maths personal analytics - overview → trends → session history → mistakes
  */
 
 "use client";

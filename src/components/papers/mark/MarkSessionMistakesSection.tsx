@@ -171,8 +171,8 @@ export function MarkSessionMistakesSection({
                         {row.sectionName}
                       </span>
                       <span className="min-w-0 flex-1 truncate text-xs text-text-muted">
-                        Your {row.yourAnswer ?? "—"} · Correct{" "}
-                        {row.correctAnswer ?? "—"}
+                        Your {row.yourAnswer ?? "-"} · Correct{" "}
+                        {row.correctAnswer ?? "-"}
                       </span>
                       <span className="shrink-0 tabular-nums text-xs text-text-muted">
                         {formatTime(row.timeSec)}

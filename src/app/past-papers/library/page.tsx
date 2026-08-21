@@ -205,7 +205,7 @@ export default function PapersLibraryPage() {
         }
       })
       .catch(() => {
-        /* optional — fall back to adding all sections */
+        /* optional - fall back to adding all sections */
       });
     return () => {
       cancelled = true;

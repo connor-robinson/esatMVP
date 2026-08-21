@@ -20,7 +20,7 @@ type SeoPageLayoutProps = {
   title: React.ReactNode;
   /** Intro paragraphs. The first one should answer the search query directly. */
   intro: readonly string[];
-  /** Optional hero CTAs — omit when the page should open with content first. */
+  /** Optional hero CTAs - omit when the page should open with content first. */
   primaryCta?: Cta;
   secondaryCta?: Cta;
   /** Set on pages carrying official dates or rules. */

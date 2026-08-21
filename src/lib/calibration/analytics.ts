@@ -5,7 +5,7 @@ import { trackEvent } from "@/lib/ga";
  *
  * Events are posted to a lightweight endpoint that stores them in
  * `homepage_analytics_events` (event name + JSON properties). Raw answer
- * content is never sent — only diagnostic metadata.
+ * content is never sent - only diagnostic metadata.
  */
 
 export type CalibrationAnalyticsEvent =

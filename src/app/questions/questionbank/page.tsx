@@ -684,7 +684,7 @@ export default function QuestionBankPage() {
       .finally(() => setCommunityStatsLoading(false));
   }, [currentQuestion?.id, isAnswered, isCorrect]);
 
-  // Session countdown — stable interval; do not depend on completeSession (it changes every answer)
+  // Session countdown - stable interval; do not depend on completeSession (it changes every answer)
   useEffect(() => {
     if (!sessionMode || !deadline) return;
 

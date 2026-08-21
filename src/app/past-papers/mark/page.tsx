@@ -1109,7 +1109,7 @@ export default function PapersMarkPage() {
                       </div>
                     </div>
 
-                    {/* Overview pills — single row */}
+                    {/* Overview pills - single row */}
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                       {(() => {
                         const scoreLabel =
@@ -1127,7 +1127,7 @@ export default function PapersMarkPage() {
                               <div className="text-5xl font-bold leading-none tracking-tight sm:text-6xl">
                                 {predictedScore !== null && predictedScore !== undefined
                                   ? predictedScore.toFixed(1)
-                                  : "—"}
+                                  : "-"}
                               </div>
                               <div className="mt-2 text-xs font-medium uppercase tracking-wide opacity-90">
                                 {scoreLabel}
@@ -1161,7 +1161,7 @@ export default function PapersMarkPage() {
                       {/* Combined Guess Distribution moved into Guessing Behavior */}
 
                     <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
-                      {/* Section Performance — compact list */}
+                      {/* Section Performance - compact list */}
                       <div className={`${bubbleClass} space-y-3 lg:col-span-2`}>
                         <div className="text-base font-semibold text-neutral-100">Section Performance</div>
                         <div className="divide-y divide-border-subtle">
@@ -1266,7 +1266,7 @@ export default function PapersMarkPage() {
                                   <div className="text-lg font-semibold tabular-nums text-neutral-100">
                                     {scaledScore !== null && scaledScore !== undefined
                                       ? scaledScore.toFixed(1)
-                                      : "—"}
+                                      : "-"}
                                   </div>
                                 </div>
                               </div>
@@ -1275,7 +1275,7 @@ export default function PapersMarkPage() {
                         </div>
                       </div>
 
-                      {/* Section Percentiles — focused view with part selector */}
+                      {/* Section Percentiles - focused view with part selector */}
                       <div className={`${bubbleClass} space-y-4 lg:col-span-3`}>
                         <div className="flex flex-wrap items-center justify-between gap-3">
                           <div className="flex flex-wrap items-center gap-2">
@@ -1374,7 +1374,7 @@ export default function PapersMarkPage() {
                               <div className="text-center text-4xl font-bold tracking-tight text-neutral-100 sm:text-5xl">
                                 {Number.isFinite(pct as number)
                                   ? `TOP ${(Math.max(0, 100 - (pct as number))).toFixed(1)}%`
-                                  : "—"}
+                                  : "-"}
                               </div>
 
                               {isTmuAPre2024 &&
@@ -1405,7 +1405,7 @@ export default function PapersMarkPage() {
                                   ? isAverage
                                     ? `If you sat the NSAA today, ${(100 - (pct as number)).toFixed(1)}% of test-takers would outperform you on average across all subjects.`
                                     : `If you sat the ${displayExamLabel} today, ${(100 - (pct as number)).toFixed(1)}% of test-takers would outperform you in ${section}.`
-                                  : `Your ${displayExamLabel} score: ${typeof score === "number" ? score.toFixed(1) : "—"}`}
+                                  : `Your ${displayExamLabel} score: ${typeof score === "number" ? score.toFixed(1) : "-"}`}
                               </p>
                             </div>
                           );
@@ -2033,7 +2033,7 @@ export default function PapersMarkPage() {
                 <div>
                   <div className="text-xs text-text-muted">Your answer</div>
                   <div className="mt-1.5 inline-flex min-h-[1.75rem] min-w-[2.25rem] items-center justify-center rounded-full bg-surface-mid px-3 py-1 text-sm font-medium tabular-nums text-text">
-                    {answers[selectedIndex]?.choice ?? "—"}
+                    {answers[selectedIndex]?.choice ?? "-"}
                   </div>
                 </div>
                 <div>
@@ -2042,7 +2042,7 @@ export default function PapersMarkPage() {
                     {(
                       usePaperSessionStore.getState().questions[selectedIndex]
                         ?.answerLetter || ""
-                    ).toUpperCase() || "—"}
+                    ).toUpperCase() || "-"}
                   </div>
                 </div>
                 <div>
@@ -2126,7 +2126,7 @@ export default function PapersMarkPage() {
                                     />
                                   </div>
                                   <div className="w-10 text-xs text-neutral-400 text-right">
-                                    {percentage > 0 ? `${percentage.toFixed(0)}%` : "—"}
+                                    {percentage > 0 ? `${percentage.toFixed(0)}%` : "-"}
                                   </div>
                                 </div>
                               );

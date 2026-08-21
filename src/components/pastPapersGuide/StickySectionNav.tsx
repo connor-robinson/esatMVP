@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 const SECTIONS = [
   { id: "roadmap", label: "Your Roadmap" },
-  { id: "nsaa", label: "NSAA Guide" },
+  { id: "nsaa", label: "NSAA papers" },
   { id: "engaa", label: "ENGAA Guide" },
   { id: "overlaps", label: "Overlaps" },
   { id: "tmua", label: "TMUA Guide" },

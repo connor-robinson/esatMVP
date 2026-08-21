@@ -15,7 +15,7 @@ type TopicOption = { value: string; label: string };
 
 const PAGE_SIZE = 1000;
 
-/** Tags that are only digits (e.g. "1", "07") — bad legacy/ingest data, not ESAT codes like M1/MM1. */
+/** Tags that are only digits (e.g. "1", "07") - bad legacy/ingest data, not ESAT codes like M1/MM1. */
 function isPlaceholderNumericTag(tag: string): boolean {
   const t = tag.trim();
   return t.length > 0 && /^\d+$/.test(t);

@@ -5,9 +5,9 @@
 
 const EXAM_DATE = new Date("2026-10-01");
 
-/** Weekly plan rate — Season Pass must beat this on a £/week basis. */
+/** Weekly plan rate - Season Pass must beat this on a £/week basis. */
 const WEEKLY_RATE = 8;
-/** Target Season Pass rate (£/week) — £1 cheaper than Weekly. */
+/** Target Season Pass rate (£/week) - £1 cheaper than Weekly. */
 const SEASON_PASS_TARGET_RATE = 7;
 
 export type PlanId = "free" | "weekly" | "monthly" | "season_pass";

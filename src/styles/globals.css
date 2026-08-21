@@ -348,7 +348,7 @@
   }
 }
 
-/* Past Papers: signature blue (`maths`) for session CTAs only — exam labels keep roadmap colors */
+/* Past Papers: signature blue (`maths`) for session CTAs only - exam labels keep roadmap colors */
 .past-papers-theme {
   --color-primary: var(--color-maths);
   --color-primary-hover: color-mix(in srgb, var(--color-maths) 88%, black);

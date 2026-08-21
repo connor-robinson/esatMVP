@@ -367,7 +367,7 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
             </g>
           ))}
 
-          {/* Curve A — official pre-2024 */}
+          {/* Curve A - official pre-2024 */}
           <polyline
             points={curveA}
             fill="none"
@@ -379,7 +379,7 @@ export function TmuaDualCurveChart({ data, className }: TmuaDualCurveChartProps)
             className="tmua-curve-draw"
           />
 
-          {/* Curve B — post-2024 equivalent (dashed neutral) */}
+          {/* Curve B - post-2024 equivalent (dashed neutral) */}
           {curveBLeftExtension && (
             <polyline
               points={curveBLeftExtension}

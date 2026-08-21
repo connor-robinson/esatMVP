@@ -1,5 +1,5 @@
 /**
- * RoadmapTimeline — vertical progress spine + ESAT tips (desktop left column)
+ * RoadmapTimeline - vertical progress spine + ESAT tips (desktop left column)
  */
 
 "use client";
@@ -24,7 +24,7 @@ interface RoadmapTimelineProps {
   stages: RoadmapStage[];
   nodePositions: number[];
   currentStageIndex?: number;
-  /** Stage indices where every part is finished — drives completed node styling. */
+  /** Stage indices where every part is finished - drives completed node styling. */
   completedStageIndices?: ReadonlySet<number>;
 }
 

@@ -2,7 +2,7 @@
  * Score-converter domain config.
  *
  * Everything numeric (scaled scores, percentiles, max raw marks) comes from the
- * live Supabase conversion tables / official distribution CSVs — this file only
+ * live Supabase conversion tables / official distribution CSVs - this file only
  * maps legacy paper structures onto ESAT-module language and describes how each
  * sitting's reliability should be framed. No conversion numbers are hardcoded.
  */
@@ -130,7 +130,7 @@ export function describeModule(
     }
     return { module: "Maths & Physics", color: "maths" };
   }
-  // TMUA is its own test — no ESAT module equivalent.
+  // TMUA is its own test - no ESAT module equivalent.
   return { module: null, color: "tmua-accent" };
 }
 
@@ -188,7 +188,7 @@ function labelForPart(
   return { legacyLabel: "Paper 1: Mathematical Thinking", group: "Papers", order: 1 };
 }
 
-/** TMUA picker: Paper 1 + Paper 2 together, or overall — never a mix or single paper alone. */
+/** TMUA picker: Paper 1 + Paper 2 together, or overall - never a mix or single paper alone. */
 export function isTmuaOverallPart(partName: string): boolean {
   return /overall/i.test(partName.trim());
 }

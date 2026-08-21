@@ -1,5 +1,5 @@
 /**
- * ESAT-style polynomial calculus (power rule only — no ln, sin, cos).
+ * ESAT-style polynomial calculus (power rule only - no ln, sin, cos).
  */
 
 import { GeneratedQuestion } from "@/types/core";

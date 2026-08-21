@@ -34,7 +34,7 @@ interface PaperLibraryGridProps {
   onAddFullPaper: (paper: Paper, sectionsByMain: Map<string, Set<PaperSection>>) => void;
   onAddPaper: (paper: Paper) => void;
   onAddSection?: (paper: Paper, sectionName: string, sections: PaperSection[]) => void;
-  /** When true, papers are preview-only — add actions are locked behind upgrade. */
+  /** When true, papers are preview-only - add actions are locked behind upgrade. */
   locked?: boolean;
   /** Per-paper lock override (e.g. free preview years stay unlocked). */
   isPaperLocked?: (paper: Paper) => boolean;

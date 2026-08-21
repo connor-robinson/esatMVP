@@ -495,7 +495,7 @@ export function CalibrationTest() {
     <div className="min-h-[calc(100vh-3.5rem)] py-6 pb-28 sm:py-8 sm:pb-32">
       <Container size="lg">
         <div className="space-y-6">
-          {/* Stem panel — QuestionCard style */}
+          {/* Stem panel - QuestionCard style */}
           <div className={cn(PANEL_SHELL, "px-5 pb-8 pt-5 sm:px-8 sm:pb-10 sm:pt-6")}>
             <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
               <div className="flex flex-wrap items-center gap-2">
@@ -580,7 +580,7 @@ export function CalibrationTest() {
         </div>
       </Container>
 
-      {/* Bottom session bar — QuestionBankSessionBar style */}
+      {/* Bottom session bar - QuestionBankSessionBar style */}
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-background/98 shadow-bar-floating backdrop-blur-md">
         <div
           className="h-2.5 w-full overflow-hidden bg-surface-elevated sm:h-3"

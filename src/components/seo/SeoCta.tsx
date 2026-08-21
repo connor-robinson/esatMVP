@@ -9,7 +9,7 @@ type SeoCtaProps = {
   href: string;
   children: React.ReactNode;
   variant?: "primary" | "secondary" | "quiet";
-  /** Where on the page the CTA sits — recorded with the click event. */
+  /** Where on the page the CTA sits - recorded with the click event. */
   placement?: string;
   className?: string;
 };

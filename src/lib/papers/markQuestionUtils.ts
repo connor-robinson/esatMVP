@@ -1,14 +1,14 @@
 import { mapPartToSection } from "@/lib/papers/sectionMapping";
 import type { PaperType, Question } from "@/types/papers";
 
-/** Placeholder part_letter values — not a real Part A/B/C label. */
+/** Placeholder part_letter values - not a real Part A/B/C label. */
 export function isBogusPartLetter(partLetter: string | null | undefined): boolean {
   const upper = (partLetter ?? "").trim().toUpperCase();
   if (!upper) return true;
   if (upper === "SECTION" || upper === "SECTIONS") return true;
   // Main exam section stored on paper_name, not part_letter
   if (/^SECTION\s*\d+$/.test(upper)) return true;
-  if (upper === "X" || upper === "—" || upper === "-") return true;
+  if (upper === "X" || upper === "-" || upper === "-") return true;
   return false;
 }
 

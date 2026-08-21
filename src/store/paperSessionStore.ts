@@ -655,7 +655,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                 });
               }
               
-              // Then filter by selected sections (must use filteredQuestions — not allQuestions — so SECTION rows etc. stay excluded)
+              // Then filter by selected sections (must use filteredQuestions - not allQuestions - so SECTION rows etc. stay excluded)
               const usesPartIdFilter = willUsePartIdFilter;
 
               const questionCatalog = usesPartIdFilter

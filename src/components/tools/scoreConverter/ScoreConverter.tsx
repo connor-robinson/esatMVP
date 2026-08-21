@@ -177,7 +177,7 @@ function ModernSelect({
   onChange,
   options,
   disabled,
-  placeholder = "—",
+  placeholder = "-",
   minWidth = "5rem",
 }: {
   label: string;
@@ -1076,7 +1076,7 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
                               inputMode="numeric"
                               disabled={!checked}
                               value={checked ? String(rawByKey[s.key] ?? 0) : ""}
-                              placeholder="—"
+                              placeholder="-"
                               onClick={(e) => e.stopPropagation()}
                               onFocus={(e) => e.stopPropagation()}
                               onChange={(e) => {
@@ -1587,7 +1587,7 @@ function NoteRow({
   );
 }
 
-/** Mirrors the real results layout before Calculate — ??? scores + ghost chart. */
+/** Mirrors the real results layout before Calculate - ??? scores + ghost chart. */
 function ResultsPreviewPlaceholder({
   exam,
   year,
@@ -1642,7 +1642,7 @@ function ResultsPreviewPlaceholder({
   );
 }
 
-/** Fuzzy stand-in for the distribution chart — same footprint, no real data. */
+/** Fuzzy stand-in for the distribution chart - same footprint, no real data. */
 function GhostPercentileChart() {
   const w = 720;
   const h = 220;

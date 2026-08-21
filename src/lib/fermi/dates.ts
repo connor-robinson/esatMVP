@@ -8,7 +8,7 @@ export function daysSinceEpoch(date: Date = new Date()): number {
   return Math.floor(startOfUTCDay(date).getTime() / 86_400_000);
 }
 
-/** `YYYY-MM-DD` in UTC — used as a localStorage key for daily progress. */
+/** `YYYY-MM-DD` in UTC - used as a localStorage key for daily progress. */
 export function utcDateKey(date: Date = new Date()): string {
   const d = startOfUTCDay(date);
   const y = d.getUTCFullYear();

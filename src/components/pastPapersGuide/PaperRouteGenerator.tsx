@@ -592,8 +592,8 @@ function PaperRouteGeneratorInner() {
       </div>
 
       <p className="text-sm leading-relaxed text-[#94A3B8]">
-        You do not need to finish everything on this page. Quality of review
-        matters more than the number of papers completed.
+        You do not need to finish everything on this roadmap. Quality matters
+        much more than how many papers you&apos;ve completed.
       </p>
     </div>
   );

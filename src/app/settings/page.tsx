@@ -5,7 +5,7 @@ type SettingsPageProps = {
 };
 
 /**
- * Canonical URL for navbar Settings — account prefs live on `/profile`.
+ * Canonical URL for navbar Settings - account prefs live on `/profile`.
  */
 export default function SettingsPage({ searchParams }: SettingsPageProps) {
   const section = searchParams?.section;

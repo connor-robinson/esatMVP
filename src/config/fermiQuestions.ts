@@ -2,7 +2,7 @@
  * Fermi estimation question bank.
  *
  * Each question has a true `answer` (a single positive number) and an optional
- * `unit` for display. `answers` are approximate real-world figures — the game
+ * `unit` for display. `answers` are approximate real-world figures - the game
  * scores on order-of-magnitude closeness, so rough sourced values are fine.
  */
 
@@ -32,7 +32,7 @@ export interface FermiQuestion {
   note?: string;
 }
 
-/** In-play question — answer omitted for server-scheduled rounds. */
+/** In-play question - answer omitted for server-scheduled rounds. */
 export type PlayableFermiQuestion = Omit<FermiQuestion, "answer"> & {
   answer?: number;
 };

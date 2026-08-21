@@ -4,8 +4,8 @@ import { createServerClient } from '@/lib/supabase/server';
 export const dynamic = 'force-dynamic';
 
 /**
- * GET /api/question-bank/sessions — list completed sessions
- * POST /api/question-bank/sessions — create session at start
+ * GET /api/question-bank/sessions - list completed sessions
+ * POST /api/question-bank/sessions - create session at start
  */
 export async function GET(request: NextRequest) {
   try {

@@ -135,7 +135,7 @@ export function InfoCardGrid({
   );
 }
 
-/** Compact fact box — used for "the basic format" style summaries. */
+/** Compact fact box - used for "the basic format" style summaries. */
 export function SummaryBox({
   title,
   items,
@@ -167,7 +167,7 @@ export function SummaryBox({
   );
 }
 
-/** Emphasised aside — tips, warnings and transparency notes. */
+/** Emphasised aside - tips, warnings and transparency notes. */
 export function HighlightBox({
   title,
   children,

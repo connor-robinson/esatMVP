@@ -71,7 +71,7 @@ function HeroTriangleSvg({ className }: { className?: string }) {
         opacity="0.9"
       />
 
-      {/* Angle labels — inside the triangle, clear of the arcs */}
+      {/* Angle labels - inside the triangle, clear of the arcs */}
       <text
         x="94"
         y="72"

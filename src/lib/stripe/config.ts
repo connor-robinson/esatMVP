@@ -41,7 +41,7 @@ export function isStripeConfigured(): boolean {
   return Boolean(resolveStripeSecretKey().key);
 }
 
-/** Lazy Stripe client — safe to import during Next.js build without env vars. */
+/** Lazy Stripe client - safe to import during Next.js build without env vars. */
 export function getStripe(): Stripe {
   if (stripeClient) return stripeClient;
 

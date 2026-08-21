@@ -1,5 +1,5 @@
 /**
- * Login / sign-up — email + password, or Google OAuth.
+ * Login / sign-up - email + password, or Google OAuth.
  */
 
 "use client";

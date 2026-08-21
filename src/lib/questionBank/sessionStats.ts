@@ -9,7 +9,7 @@ const PRIMARY_TOPIC_WEIGHT = 1.0;
 const SECONDARY_TOPIC_WEIGHT = 0.35;
 const MIN_ATTEMPTS_FOR_WEAKNESS = 2;
 
-/** First-try correct only — wrong guesses or reveal disqualify the question. */
+/** First-try correct only - wrong guesses or reveal disqualify the question. */
 export function countsAsSessionCorrect(
   attempt: QuestionBankSessionAttempt,
 ): boolean {

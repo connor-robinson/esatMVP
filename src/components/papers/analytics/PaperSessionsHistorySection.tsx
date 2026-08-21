@@ -184,7 +184,7 @@ export function PaperSessionsHistorySection({
                         const sectionInfo =
                           s.selectedSections && s.selectedSections.length > 0
                             ? s.selectedSections.join(', ')
-                            : s.sessionName || '—';
+                            : s.sessionName || '-';
                         const isHighlighted = highlightedSessionId === s.id;
                         const date = s.startedAt
                           ? new Date(s.startedAt).toLocaleDateString('en-GB', {
@@ -234,12 +234,12 @@ export function PaperSessionsHistorySection({
                             <td className="px-4 py-3 text-right tabular-nums text-text">
                               {s.scorePercentage !== null
                                 ? `${s.scorePercentage.toFixed(1)}%`
-                                : '—'}
+                                : '-'}
                             </td>
                             <td className="px-4 py-3 text-right tabular-nums text-text">
                               {s.percentile !== null
                                 ? `${s.percentile.toFixed(1)}th`
-                                : '—'}
+                                : '-'}
                             </td>
                             <td className="px-4 py-3 text-right tabular-nums text-text-muted">
                               {Math.round(s.timeLimitMinutes)}m

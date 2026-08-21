@@ -21,7 +21,7 @@ import { primaryButtonLabelClasses, removeButtonLabelClasses } from "@/config/th
 import { SessionLengthControl } from "@/components/ui/SessionLengthControl";
 import { GuestDrillHintCallout } from "@/components/builder/GuestDrillHint";
 
-/** Session length + “questions” — session green in light, inverted text in dark. */
+/** Session length + “questions” - session green in light, inverted text in dark. */
 const FIGMA_SESSION_LABEL = "text-session-green dark:text-text";
 
 export interface SessionSelectionBarProps {
@@ -47,13 +47,13 @@ export interface SessionSelectionBarProps {
   clearDimmedWhenReady?: boolean;
   clearDisabled?: boolean;
   /**
-   * `full` — wide centered bar (Figma Bars spec).
-   * `compact` — floating chip; use `compactVariant` for layout.
+   * `full` - wide centered bar (Figma Bars spec).
+   * `compact` - floating chip; use `compactVariant` for layout.
    */
   density?: "full" | "compact";
   /**
-   * `icons` — calculator + clock + drill/question lines (dense).
-   * `figma` — mental maths drill screen: one row, “N Questions selected”, underlined Clear all, pill CTA (matches Figma).
+   * `icons` - calculator + clock + drill/question lines (dense).
+   * `figma` - mental maths drill screen: one row, “N Questions selected”, underlined Clear all, pill CTA (matches Figma).
    */
   compactVariant?: "icons" | "figma";
   /** For figma compact bar, hides the numeric input and shows plain count text. */

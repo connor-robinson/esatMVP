@@ -91,7 +91,7 @@ function generateMultMod(): GeneratedQuestion {
   };
 }
 
-/** @deprecated Use generateRemainders — kept for generator registry alias */
+/** @deprecated Use generateRemainders - kept for generator registry alias */
 export function generateModular(level: number, weights?: Record<string, number>): GeneratedQuestion {
   return generateRemainders(weights);
 }

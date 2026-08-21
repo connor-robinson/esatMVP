@@ -335,7 +335,7 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
               value:
                 p.nonGuessedAccuracy != null
                   ? `${Math.round(p.nonGuessedAccuracy * 100)}%`
-                  : "—",
+                  : "-",
             },
           ].map((item) => (
             <div key={item.label}>

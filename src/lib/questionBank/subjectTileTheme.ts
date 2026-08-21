@@ -107,14 +107,14 @@ export function resolveSubjectTileKey(
   return null;
 }
 
-/** Accent text — chevrons, subject headers (matches home card hue). */
+/** Accent text - chevrons, subject headers (matches home card hue). */
 export function getSubjectTileTopicClass(subject?: string | null): string {
   const key = resolveSubjectTileKey(subject);
   if (!key) return "text-text-muted";
   return SUBJECT_TILE_STYLES[key].topicClass;
 }
 
-/** Subject pill colors — home tile track + topic hues (layout classes applied by caller). */
+/** Subject pill colors - home tile track + topic hues (layout classes applied by caller). */
 export function getSubjectTileBadgeClass(subject?: string | null): string {
   const key = resolveSubjectTileKey(subject);
   if (!key) return "bg-surface-mid text-text-muted";

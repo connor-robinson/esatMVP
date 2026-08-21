@@ -21,10 +21,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       secondary: "bg-surface-subtle border border-border text-text hover:bg-surface hover:border-border-subtle",
       ghost: "text-text-muted hover:bg-surface-subtle hover:text-text",
       danger: "bg-error/90 text-white hover:bg-error hover:shadow-[0_0_12px_0_rgba(239,68,68,0.4)]",
-      /** Full-width pricing / Section 2 — aligns with Figma Bars CTA radius (16px). */
+      /** Full-width pricing / Section 2 - aligns with Figma Bars CTA radius (16px). */
       wide:
         "w-full rounded-organic-lg bg-primary text-background hover:bg-primary-hover hover:shadow-glow font-semibold",
-      /** Idle session bar CTA — surface n200, muted label (Figma `370:6425`). */
+      /** Idle session bar CTA - surface n200, muted label (Figma `370:6425`). */
       mutedBar:
         "rounded-organic-lg bg-surface-elevated text-text/50 [&_svg]:opacity-30 hover:text-text/70",
     } as const;

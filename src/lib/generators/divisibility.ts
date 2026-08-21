@@ -2,8 +2,8 @@
  * Divisibility drill generator
  * Levels:
  * 1 - Remainders (mostly a mod b; rare add/sub/mult mod)
- * 2 - Parity (mixed) — even/odd multiple choice
- * 3 - Divisibility rules for 6, 7, 8, 9, 11 — yes/no multiple choice
+ * 2 - Parity (mixed) - even/odd multiple choice
+ * 3 - Divisibility rules for 6, 7, 8, 9, 11 - yes/no multiple choice
  */
 
 import { GeneratedQuestion } from "@/types/core";

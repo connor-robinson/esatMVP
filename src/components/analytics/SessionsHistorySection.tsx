@@ -42,7 +42,7 @@ function sessionLabel(s: SessionSummary): string {
 }
 
 function formatSessionDurationMs(ms: number): string {
-  if (!ms || ms <= 0) return "—";
+  if (!ms || ms <= 0) return "-";
   const minutes = Math.round(ms / 60000);
   if (minutes < 1) return "<1m";
   return `${minutes}m`;
@@ -225,7 +225,7 @@ export function SessionsHistorySection({
                         const subj =
                           row.topicNames.length > 0
                             ? row.topicNames.join(", ")
-                            : "—";
+                            : "-";
                         return (
                         <Fragment key={row.id}>
                           <tr
@@ -268,7 +268,7 @@ export function SessionsHistorySection({
                                 : "0.0%"}
                             </td>
                             <td className="px-4 py-3 text-right tabular-nums text-maths">
-                              {row.totalQuestions > 0 ? row.score : "—"}
+                              {row.totalQuestions > 0 ? row.score : "-"}
                             </td>
                             <td className="px-4 py-3 text-right tabular-nums text-text-muted">
                               {percentileAmongSessions(row, sessions)}

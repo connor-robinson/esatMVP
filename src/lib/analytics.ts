@@ -71,7 +71,7 @@ export type LeaderboardDisplayItem =
   | { type: "ellipsis" };
 
 /**
- * Leaderboard window by rank number (not list index — ties can share a rank).
+ * Leaderboard window by rank number (not list index - ties can share a rank).
  * Example at rank 54: #1 → … → #53 → #54 (you) → #55.
  * - Default: ranks current−1, current, current+1, plus #1
  * - User is #1: also ranks 2 and 3

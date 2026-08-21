@@ -95,7 +95,7 @@ export const KatexInput = forwardRef<HTMLInputElement, KatexInputProps>(function
 
   return (
     <div className="relative flex w-full max-w-md flex-col gap-2">
-      {/* KaTeX preview — above the type bar */}
+      {/* KaTeX preview - above the type bar */}
       <div
         className={cn(
           "flex min-h-[2.75rem] items-center justify-center rounded-xl px-3 py-2",
@@ -116,7 +116,7 @@ export const KatexInput = forwardRef<HTMLInputElement, KatexInputProps>(function
         )}
       </div>
 
-      {/* Main type bar — raw text visible while typing */}
+      {/* Main type bar - raw text visible while typing */}
       <div className="relative">
         <input
           ref={inputRef}

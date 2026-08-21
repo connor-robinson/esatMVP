@@ -1,5 +1,5 @@
 /**
- * Curated “Most Useful” drills — flat list, no folders.
+ * Curated “Most Useful” drills - flat list, no folders.
  */
 
 import { getTopic } from '@/config/topics';

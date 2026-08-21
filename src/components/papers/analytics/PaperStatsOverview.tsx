@@ -83,7 +83,7 @@ export function PaperStatsOverview({
                 <div className="text-2xl font-bold leading-none tabular-nums text-text">
                   {highestPredictedScore !== null
                     ? highestPredictedScore.toFixed(1)
-                    : '—'}
+                    : '-'}
                 </div>
               </div>
             </div>

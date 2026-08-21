@@ -9,7 +9,7 @@ import type { TesterProgrammeRow } from "@/lib/tester/types";
 
 export const dynamic = "force-dynamic";
 
-/** GET /api/admin/tester/[id] — full detail + structured survey answers. */
+/** GET /api/admin/tester/[id] - full detail + structured survey answers. */
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } },

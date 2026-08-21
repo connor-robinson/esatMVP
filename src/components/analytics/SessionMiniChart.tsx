@@ -19,7 +19,7 @@ interface SessionMiniChartProps {
   data: SessionProgressPoint[];
 }
 
-/** Session progress — accuracy (green), speed (warning). */
+/** Session progress - accuracy (green), speed (warning). */
 const ACCURACY_LINE = "var(--color-success)";
 const SPEED_LINE = "var(--color-warning)";
 const CHART_GRID = "var(--color-border-subtle)";

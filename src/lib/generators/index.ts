@@ -22,7 +22,7 @@ import { generatePrimeFactorise } from "./prime_factorise";
 import { generateFactors } from "./factors";
 import { generateDivisibility } from "./divisibility";
 
-// Patterns (legacy aliases — variants moved to multiplication / Powers & Surds)
+// Patterns (legacy aliases - variants moved to multiplication / Powers & Surds)
 import { generatePowers } from "./powers";
 import { generatePowerBases } from "./power_bases";
 

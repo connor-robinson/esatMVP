@@ -17,7 +17,7 @@ export interface PricingTier {
   ctaLabel: string;
   /** Crown / “Best value” badge on card */
   featured?: boolean;
-  /** Primary green card — recommended plan (monthly) */
+  /** Primary green card - recommended plan (monthly) */
   highlighted?: boolean;
 }
 

@@ -413,7 +413,7 @@ function JoinForm({
         setError("Join did not complete. Please try again.");
         return;
       }
-      // Open survey immediately — don't wait for refresh (avoids loading flash).
+      // Open survey immediately - don't wait for refresh (avoids loading flash).
       onStartSurvey("initial");
       setSubmitting(false);
       void onJoined();

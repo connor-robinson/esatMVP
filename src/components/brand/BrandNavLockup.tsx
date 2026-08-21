@@ -6,7 +6,7 @@ interface BrandNavLockupProps {
   className?: string;
 }
 
-/** Navbar lockup — teepee PNG + ESAT CAMP wordmark. */
+/** Navbar lockup - teepee PNG + ESAT CAMP wordmark. */
 export function BrandNavLockup({ className }: BrandNavLockupProps) {
   return (
     <span

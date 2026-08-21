@@ -1,5 +1,5 @@
 /**
- * Unit circle drill generators — separate degrees and radians topics.
+ * Unit circle drill generators - separate degrees and radians topics.
  */
 
 import { GeneratedQuestion } from "@/types/core";

@@ -114,7 +114,7 @@ export const createOrRetrieveCustomer = async (uuid: string, email: string) => {
   let stripeCustomerId: string | undefined;
 
   // Verify any stored customer still exists in the CURRENT Stripe account.
-  // (After switching Stripe accounts, old IDs will 404 — fall back to create.)
+  // (After switching Stripe accounts, old IDs will 404 - fall back to create.)
   if (existing?.stripe_customer_id) {
     try {
       const cust = await getStripe().customers.retrieve(existing.stripe_customer_id);
@@ -241,7 +241,7 @@ export const upsertOneTimePurchase = async (
   const currency = (session.currency ?? "gbp").toLowerCase();
 
   // Dynamic Checkout price_data IDs are not synced into our prices/products
-  // tables — leave FKs null and store details in metadata instead.
+  // tables - leave FKs null and store details in metadata instead.
   const { error } = await supabaseAdmin.from("one_time_purchases").insert({
     user_id: customerData.id,
     stripe_payment_intent_id: paymentIntentId,

@@ -1,5 +1,5 @@
 /**
- * Prime factorisation generator — product-of-primes with slot inputs (_ × _ × _)
+ * Prime factorisation generator - product-of-primes with slot inputs (_ × _ × _)
  */
 
 import { GeneratedQuestion } from "@/types/core";

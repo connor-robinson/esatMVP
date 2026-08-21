@@ -111,7 +111,7 @@ export function PaperMistakeAnalysisSection({
           >
             {total === 0 ? (
               <p className="rounded-organic-lg bg-surface-mid/50 px-4 py-10 text-center text-sm text-text-muted">
-                No mistake tags recorded yet — mark sessions and tag errors to see
+                No mistake tags recorded yet - mark sessions and tag errors to see
                 this breakdown.
               </p>
             ) : (

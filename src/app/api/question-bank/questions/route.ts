@@ -138,7 +138,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // STAGE 0.5: expensive DB verification — only when ?debug=1 or QUESTION_BANK_API_DEBUG=1
+    // STAGE 0.5: expensive DB verification - only when ?debug=1 or QUESTION_BANK_API_DEBUG=1
     if (verboseApiDebug) {
       debug('[Question Bank API] Stage 0.5: Database Verification');
 
@@ -260,7 +260,7 @@ export async function GET(request: NextRequest) {
     }
 
     // ============================================================================
-    // STAGE 1: Build base query — only QG auto-approved questions in the bank
+    // STAGE 1: Build base query - only QG auto-approved questions in the bank
     // ============================================================================
     debug(
       '[Question Bank API] Stage 1: Building base query (approved only)',
@@ -779,7 +779,7 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    // If no questions found, run diagnostic queries (verbose only — avoids extra round-trips in prod)
+    // If no questions found, run diagnostic queries (verbose only - avoids extra round-trips in prod)
     if (verboseApiDebug && finalQuestions.length === 0) {
       debug(
         '[Question Bank API] ⚠️ NO QUESTIONS FOUND - Running diagnostic queries...',

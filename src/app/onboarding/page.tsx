@@ -73,7 +73,7 @@ const SITTING_OPTIONS: {
   },
 ];
 
-/** Account-setup accent — clear blue, independent of olive primary. */
+/** Account-setup accent - clear blue, independent of olive primary. */
 const ACCENT = {
   bar: "bg-[#4C8BF5]",
   btn: "bg-[#4C8BF5] text-white hover:bg-[#3B7AE0]",

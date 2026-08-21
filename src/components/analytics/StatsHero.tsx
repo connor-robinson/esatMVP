@@ -1,5 +1,5 @@
 /**
- * Consolidated stats hero — quick overview tiles
+ * Consolidated stats hero - quick overview tiles
  */
 
 "use client";
@@ -26,7 +26,7 @@ interface DrillOverview {
 
 interface StatsHeroProps {
   variant?: "default" | "drill";
-  /** When variant is drill — derived from session list + topic breadth */
+  /** When variant is drill - derived from session list + topic breadth */
   sessions?: SessionSummary[];
   drillOverview?: DrillOverview;
   totalQuestions: number;

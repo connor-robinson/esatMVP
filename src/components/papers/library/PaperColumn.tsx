@@ -222,7 +222,7 @@ export function PaperColumn({
       return;
     }
 
-    // Sections are lazy-loaded on expand — fetch (or use TMUA defaults) before adding.
+    // Sections are lazy-loaded on expand - fetch (or use TMUA defaults) before adding.
     if (paperType === "TMUA") {
       onAddFullPaper(paper, defaultTmuaSectionsByMain());
       return;

@@ -10,7 +10,7 @@ type DrillPanelTransitionProps = {
   className?: string;
 };
 
-/** Fade-in on panel swap (no exit animation — avoids scroll/layout flicker). */
+/** Fade-in on panel swap (no exit animation - avoids scroll/layout flicker). */
 export function DrillPanelTransition({
   panelKey,
   children,

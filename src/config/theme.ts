@@ -95,7 +95,7 @@ export function paperDifferenceBackdropForBackground(
   return rgbToHex(channels[0], channels[1], channels[2]);
 }
 
-/** Darkest neutral stop ↔ lightest — canonical Figma scale only (no demo swatches). */
+/** Darkest neutral stop ↔ lightest - canonical Figma scale only (no demo swatches). */
 function buildNeutralInversionMap(): Map<string, string> {
   const unique = [
     figmaNeutralScale.n50,
@@ -247,7 +247,7 @@ function lightenNeutralOneStep(hex: string): string {
 
 const IDENTITY_SITE_COLORS = new Set(["#8caba0", "#bf8c58"]);
 
-/** Tokens that keep the same saturated hue in both themes — no brand swap. */
+/** Tokens that keep the same saturated hue in both themes - no brand swap. */
 const SATURATED_BOTH_MODES = new Set<string>([
   "sessionGreen",
   "difficultyPillEasy",
@@ -307,7 +307,7 @@ export const colorTokens = {
   surfaceNeutral: { dark: figmaNeutralScale.n400, light: figmaNeutralScale.n850 },
   /** Folder/topic item cards: n300 dark (#2b2831), n900 light (#f4f1f5) */
   folderCard: { dark: figmaNeutralScale.n300, light: figmaNeutralScale.n900 },
-  /** Selected topic / added drill tile — lifted in dark, pressed-in in light */
+  /** Selected topic / added drill tile - lifted in dark, pressed-in in light */
   folderCardSelected: {
     dark: figmaNeutralScale.n400,
     light: figmaNeutralScale.n800,
@@ -329,17 +329,17 @@ export const colorTokens = {
   maths: { dark: figmaPalette.blueDark, light: figmaPalette.blueDark },
   physics: { dark: figmaPalette.purpleLight, light: figmaPalette.purpleDark },
   chemistry: { dark: figmaPalette.redDark, light: figmaPalette.redDark },
-  /** Biology — Figma green (distinct from Advanced yellow). */
+  /** Biology - Figma green (distinct from Advanced yellow). */
   biology: { dark: figmaPalette.greenLight, light: figmaPalette.greenDark },
-  /** Advanced Maths / Advanced Math + Phy — Figma yellow. */
+  /** Advanced Maths / Advanced Math + Phy - Figma yellow. */
   advanced: { dark: figmaPalette.yellowLight, light: figmaPalette.yellowDark },
-  /** Island “questions” label + easy pill — always Figma greenLight in both themes. */
+  /** Island “questions” label + easy pill - always Figma greenLight in both themes. */
   sessionGreen: { dark: figmaPalette.greenLight, light: figmaPalette.greenLight },
   success: { dark: figmaPalette.greenLight, light: figmaPalette.greenDark },
   error: { dark: figmaPalette.redLight, light: figmaPalette.redDark },
   warning: { dark: figmaPalette.yellowLight, light: figmaPalette.yellowDark },
   /**
-   * Drill card difficulty pill fills — same saturated hues as dark UI
+   * Drill card difficulty pill fills - same saturated hues as dark UI
    * (`greenLight` / `yellowLight` / `redLight`) in light and dark theme.
    */
   difficultyPillEasy: {
@@ -351,11 +351,11 @@ export const colorTokens = {
     light: figmaPalette.yellowLight,
   },
   difficultyPillHard: { dark: figmaPalette.redLight, light: figmaPalette.redLight },
-  /** Easy difficulty pill — teal-grey, same in both modes */
+  /** Easy difficulty pill - teal-grey, same in both modes */
   difficultyEasy: { dark: "#8CABA0", light: "#8CABA0" },
   /** Medium difficulty pill: muted amber dark, warm-brown light */
   difficultyMedium: { dark: "#BF8C58", light: figmaPalette.yellowDark },
-  /** TMUA exam label — Figma #CA7BB3 (lighter pink-purple, distinct from physics) */
+  /** TMUA exam label - Figma #CA7BB3 (lighter pink-purple, distinct from physics) */
   tmuaAccent: { dark: "#CA7BB3", light: "#8B4F7A" },
 } as const satisfies Record<string, ModeToken>;
 
@@ -368,7 +368,7 @@ export const surfaceOpacityTokens = {
 } as const satisfies Record<string, ModeToken>;
 
 /**
- * Figma frame **Typography** (node `247:3298`) — Space Grotesk-only scale.
+ * Figma frame **Typography** (node `247:3298`) - Space Grotesk-only scale.
  * H3 metadata lists `lineHeightPx: 120` (auto-layout artifact); we use 120% of 31px → 37.2px.
  */
 export const figmaTypographyScale = {
@@ -461,7 +461,7 @@ export const shadowTokens = {
   /** Matches primary / Figma Green Light #a9b167 */
   glow: "0 0 12px 0 rgba(169, 177, 103, 0.4)",
   glowFocus: "0 0 0 3px rgba(169, 177, 103, 0.35)",
-  /** Figma Bars `219:594` overlay rect — y 25, blur 50, spread -12 */
+  /** Figma Bars `219:594` overlay rect - y 25, blur 50, spread -12 */
   barFloating: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
   /** Mint calculator badge cluster (~85BC82 @ 40%) */
   badgeMint: "0 0 12px 0 rgba(133, 188, 130, 0.4)",
@@ -474,7 +474,7 @@ export const shadowTokens = {
 } as const;
 
 /**
- * Difficulty pills — pill-specific fills (dark-mode saturation in both
+ * Difficulty pills - pill-specific fills (dark-mode saturation in both
  * themes) + white type and a light text shadow for depth.
  */
 export const difficultyTokens = {
@@ -500,11 +500,11 @@ export const difficultyTokens = {
 
 export type DifficultyKey = keyof typeof difficultyTokens;
 
-/** Primary (green) button label — light UI: pale type + highlight shadow; dark UI: white + depth shadow. */
+/** Primary (green) button label - light UI: pale type + highlight shadow; dark UI: white + depth shadow. */
 export const primaryButtonLabelClasses =
   "text-background [text-shadow:0_0.5px_1px_rgb(255_255_255_/_0.35)] dark:text-white dark:[text-shadow:0_0.5px_2px_rgb(0_0_0_/_0.45),0_0_1px_rgb(0_0_0_/_0.35)] dark:hover:text-white";
 
-/** Remove control on cards / lists — opposite pairing for light vs dark. */
+/** Remove control on cards / lists - opposite pairing for light vs dark. */
 export const removeButtonLabelClasses =
   "text-text [text-shadow:0_0.5px_1px_rgb(255_255_255_/_0.35)] dark:text-white dark:[text-shadow:0_0.5px_2px_rgb(0_0_0_/_0.45),0_0_1px_rgb(0_0_0_/_0.35)] dark:hover:text-white";
 

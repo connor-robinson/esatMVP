@@ -236,7 +236,8 @@ export function getAvailableSectionsFromParts(
   examType?: ExamType | string
 ): PaperSection[] {
   const SCIENCE_SECTIONS: PaperSection[] = ['Physics', 'Chemistry', 'Biology'];
-  try {  } catch {}
+  try {
+  } catch {}
   // Special handling for NSAA based on year
   if (paperType === 'NSAA') {
     // Normalize examType for robust matching
@@ -262,7 +263,7 @@ export function getAvailableSectionsFromParts(
   }
   }
   
-  // TMUA: papers only — section = Paper 1 / Paper 2 from `paper_name`, not parts
+  // TMUA: papers only - section = Paper 1 / Paper 2 from `paper_name`, not parts
   if (paperType === 'TMUA') {
     const tmuaSections = ['Paper 1', 'Paper 2'] as PaperSection[];
     const fromPapers = new Set<TmuaSection>();

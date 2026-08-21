@@ -2,7 +2,7 @@ import type { TesterState } from "./types";
 
 const DISMISS_PREFIX = "nocalc:testerCheckpointDismissed:";
 
-/** Stable key for dismiss — changes when status/checkpoint changes so a new prompt can appear. */
+/** Stable key for dismiss - changes when status/checkpoint changes so a new prompt can appear. */
 export function getCheckpointDismissKey(state: TesterState): string {
   return `${state.status}:${state.checkpointDue ?? "none"}`;
 }

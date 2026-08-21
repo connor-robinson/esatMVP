@@ -74,7 +74,7 @@ const SECTIONS: readonly PastPaperSection[] = [
     guide: (
       <p className="text-sm leading-relaxed text-[#64748B]">
         Maths only, and slower than ESAT. Paper 1 is useful extra. Paper 2 is
-        logic and proof — skip it unless you like that stuff. Worked answers are
+        logic and proof - skip it unless you like that stuff. Worked answers are
         the actual reason to open these.
       </p>
     ),
@@ -202,7 +202,7 @@ export default function EsatPastPapersPage() {
           />
           <ModuleRow
             module="Biology"
-            use="NSAA Part D. Same story — no second public source."
+            use="NSAA Part D. Same story - no second public source."
           />
         </div>
       </SeoSection>

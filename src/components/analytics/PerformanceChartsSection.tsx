@@ -1,5 +1,5 @@
 /**
- * Performance trends — session-based lines for Mental Maths drill analytics
+ * Performance trends - session-based lines for Mental Maths drill analytics
  */
 
 "use client";

@@ -1,5 +1,5 @@
 /**
- * ESAT guidance tips — floated over the roadmap cards (no extra column width).
+ * ESAT guidance tips - floated over the roadmap cards (no extra column width).
  */
 
 "use client";

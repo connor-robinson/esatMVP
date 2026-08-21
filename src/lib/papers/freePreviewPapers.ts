@@ -12,7 +12,7 @@ export const PRIMARY_FREE_PREVIEW_PAPER = {
   examYear: 2016,
 } as const;
 
-/** Roadmap free stages — same early NSAA papers as the library preview. */
+/** Roadmap free stages - same early NSAA papers as the library preview. */
 export const FREE_PREVIEW_ROADMAP_PAST_PAPERS = [
   { examName: "NSAA", examYear: 2016 },
   { examName: "NSAA", examYear: 2017 },

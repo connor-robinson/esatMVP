@@ -39,7 +39,7 @@ interface RoadmapListProps {
   onUnlockStage?: (stageId: string) => void;
   onNodePositionsUpdate?: (positions: number[]) => void;
   timelineNodePositions?: number[];
-  /** Sticky timeline column — node Y is measured relative to this while scrolling. */
+  /** Sticky timeline column - node Y is measured relative to this while scrolling. */
   timelineAnchorRef?: RefObject<HTMLDivElement | null>;
 }
 
@@ -48,7 +48,7 @@ const SCROLL_MAX_MS = 1050;
 const SCROLL_MS_PER_PX = 0.5;
 const SCROLL_BASE_DELAY_MS = 280;
 
-/** Fast start, gentle stop — matches other roadmap motion. */
+/** Fast start, gentle stop - matches other roadmap motion. */
 function easeOutCubic(t: number): number {
   return 1 - Math.pow(1 - t, 3);
 }
@@ -120,7 +120,7 @@ export function RoadmapList({
     measurePositionsRef.current = measurePositions;
   }, [measurePositions]);
 
-  // Stable observers — do not tear down when a card expands.
+  // Stable observers - do not tear down when a card expands.
   useEffect(() => {
     let rafId: number | null = null;
 

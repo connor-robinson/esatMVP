@@ -46,7 +46,7 @@ const LABEL: Record<GoogleAuthMode, string> = {
 };
 
 /**
- * Google Identity branding — white neutral button on dark app chrome.
+ * Google Identity branding - white neutral button on dark app chrome.
  * @see https://developers.google.com/identity/branding-guidelines
  */
 export const GoogleAuthButton = forwardRef<HTMLButtonElement, GoogleAuthButtonProps>(

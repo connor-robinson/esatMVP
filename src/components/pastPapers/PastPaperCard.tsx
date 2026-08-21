@@ -36,7 +36,7 @@ function commentary(paper: PastPaperResource) {
   }
   if (paper.sectionName === "Paper 2") {
     return paper.year === null
-      ? "Undated Paper 2. Logic and proof — skip unless you like that."
+      ? "Undated Paper 2. Logic and proof - skip unless you like that."
       : "Logic and proof. Not ESAT. Skip unless you like that.";
   }
   if (paper.year === null) {

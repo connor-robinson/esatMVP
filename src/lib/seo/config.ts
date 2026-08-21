@@ -3,7 +3,7 @@
  *
  * These pages are editorial content that sits in front of the product. They are
  * never gated behind login and they always link into a real in-app route via
- * `APP_ROUTES` — the marketing slugs in `SEO_ROUTES` are content pages only.
+ * `APP_ROUTES` - the marketing slugs in `SEO_ROUTES` are content pages only.
  */
 
 import type { Metadata } from "next";
@@ -38,7 +38,7 @@ function normalizeSiteUrl(raw: string | undefined): string {
 
 export const SITE_URL = normalizeSiteUrl(process.env.NEXT_PUBLIC_SITE_URL);
 
-/** Hostname only — used for robots.txt Host. */
+/** Hostname only - used for robots.txt Host. */
 export const SITE_HOST = "esatcamp.com";
 
 /** Real in-app destinations. SEO page CTAs must point at these, not at slugs. */

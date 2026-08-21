@@ -1,5 +1,5 @@
 /**
- * Founding Tester Programme — shared types.
+ * Founding Tester Programme - shared types.
  * These mirror the DB schema in
  * supabase/migrations/20260703000000_founding_tester_programme.sql
  */

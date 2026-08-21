@@ -1,7 +1,7 @@
 import { BRAND_CONFIG } from "@/config/brand";
 import { cn } from "@/lib/utils";
 
-/** Raster mark intrinsic size (preserve aspect ratio — do not force square). */
+/** Raster mark intrinsic size (preserve aspect ratio - do not force square). */
 export const BRAND_MARK_WIDTH = 687;
 export const BRAND_MARK_HEIGHT = 583;
 
@@ -25,9 +25,9 @@ export function BrandMarkImage({ className, alt = "" }: BrandMarkImageProps) {
       decoding="sync"
       className={cn(
         "block shrink-0 w-auto max-w-none object-contain object-left",
-        // Default white mark — app defaults to dark theme (incl. SSR before theme script runs).
+        // Default white mark - app defaults to dark theme (incl. SSR before theme script runs).
         "brightness-100 invert-0",
-        // Light theme — dark mark on light backgrounds.
+        // Light theme - dark mark on light backgrounds.
         "[.light_&]:brightness-0 [.light_&]:invert",
         className,
       )}

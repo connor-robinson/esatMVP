@@ -11,7 +11,7 @@ type PlanType = "weekly" | "monthly" | "season_pass";
 
 const TRIAL_DAYS = 7;
 
-/** First-time customers only — avoid stacking free trials. */
+/** First-time customers only - avoid stacking free trials. */
 async function isEligibleForTrial(customerId: string): Promise<boolean> {
   const existing = await getStripe().subscriptions.list({
     customer: customerId,
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     const successUrl = `${siteUrl}/pricing/success?session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = `${siteUrl}/pricing?canceled=true`;
 
-    // Exam Season Pass — true one-time payment (no yearly subscription)
+    // Exam Season Pass - true one-time payment (no yearly subscription)
     if (planType === "season_pass") {
       const amountPence = Math.round(getSeasonPassPrice() * 100);
       const session = await getStripe().checkout.sessions.create({

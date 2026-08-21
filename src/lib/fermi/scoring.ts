@@ -1,5 +1,5 @@
 /**
- * Fermi scoring — log-scale distance.
+ * Fermi scoring - log-scale distance.
  *
  * Fermi answers span orders of magnitude, so we score on how far apart the
  * guess and the truth are in powers of ten, not raw percentage error.

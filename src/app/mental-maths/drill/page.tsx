@@ -163,7 +163,7 @@ export default function BuilderPage() {
               onLaunchFermiGuessr={() => router.push(FERMI_GUESSR_PLAY_PATH)}
             />
 
-            {/* Columns 2 & 3: Topic Folders + Drill Variants — share remaining width */}
+            {/* Columns 2 & 3: Topic Folders + Drill Variants - share remaining width */}
             <div className="flex min-h-0 min-w-0 flex-1 items-stretch gap-3 overflow-hidden sm:gap-4 lg:gap-6">
               {selectedCategory !== 'most_useful' && (
               <Suspense

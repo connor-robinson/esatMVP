@@ -61,7 +61,7 @@ export async function getPaidAccess(
 }
 
 // ---------------------------------------------------------------------------
-// Meaningful sessions — central definition. A session qualifies if it meets the
+// Meaningful sessions - central definition. A session qualifies if it meets the
 // admin-configured minimum duration OR minimum questions. Deduplicated into
 // tester_qualifying_sessions so counts are stable and idempotent.
 // ---------------------------------------------------------------------------
@@ -357,7 +357,7 @@ export function stage3ActivationUpdates(config: TesterConfig) {
 }
 
 // ---------------------------------------------------------------------------
-// Sync — applies time-based expiry AND reward-granting transitions, recomputes
+// Sync - applies time-based expiry AND reward-granting transitions, recomputes
 // meaningful sessions, and persists changes. Single source of truth. Idempotent.
 // Surveys only record completion timestamps; rewards unlock here once all
 // eligibility conditions (survey done + required sessions) are met.

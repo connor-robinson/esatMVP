@@ -8,7 +8,7 @@ import { DIAGRAM_CX, DIAGRAM_CY } from "@/lib/diagrams/diagramLayout";
 
 export const CT_CX = DIAGRAM_CX;
 export const CT_CY = DIAGRAM_CY;
-/** Larger than area/volume diagrams — circle theorems need readable angle arcs */
+/** Larger than area/volume diagrams - circle theorems need readable angle arcs */
 export const CT_R = 128;
 
 export function pointOnCircle(deg: number, r = CT_R): Point {

@@ -14,7 +14,7 @@ interface BrandWordmarkProps {
   size?: BrandWordmarkSize;
 }
 
-/** ESAT CAMP — Space Grotesk wordmark (regular A). */
+/** ESAT CAMP - Space Grotesk wordmark (regular A). */
 export function BrandWordmark({ className, size = "md" }: BrandWordmarkProps) {
   return (
     <span

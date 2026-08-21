@@ -1,5 +1,5 @@
 /**
- * Pre-mark completion summary — sections completed and CTA to continue marking.
+ * Pre-mark completion summary - sections completed and CTA to continue marking.
  */
 
 "use client";
@@ -28,7 +28,7 @@ function derivePartLetter(
   paperType: PaperType,
 ): string {
   const trimmedLetter = (partLetter || "").trim();
-  if (trimmedLetter && trimmedLetter !== "—") {
+  if (trimmedLetter && trimmedLetter !== "-") {
     if (/^part\s+/i.test(trimmedLetter)) return trimmedLetter;
     const letterOnly = trimmedLetter.match(/^([A-E])$/i)?.[1];
     if (letterOnly) return `Part ${letterOnly.toUpperCase()}`;
@@ -36,7 +36,7 @@ function derivePartLetter(
   }
 
   const trimmedName = (partName || "").trim().toLowerCase();
-  if (!trimmedName) return "—";
+  if (!trimmedName) return "-";
 
   if (paperType === "NSAA") {
     if (
@@ -78,7 +78,7 @@ function derivePartLetter(
     }
   }
 
-  return "—";
+  return "-";
 }
 
 function getSectionRow(

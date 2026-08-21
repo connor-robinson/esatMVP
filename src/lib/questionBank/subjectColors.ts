@@ -18,7 +18,7 @@ export const SUBJECT_PILL_CLASS: Record<SubjectFilter, string> = {
   "Paper 2": "border border-physics/30 bg-physics/20 text-physics",
 };
 
-/** Borderless session pills — lifted surface + subject text color. */
+/** Borderless session pills - lifted surface + subject text color. */
 export const SUBJECT_PILL_ACTIVE: Record<SubjectFilter, string> = {
   All: "bg-surface-mid text-text dark:bg-surface-neutral",
   "Math 1": "bg-surface-mid text-accent dark:bg-surface-neutral",
@@ -37,7 +37,7 @@ export function getSubjectPillActiveClass(subject: SubjectFilter): string {
   return SUBJECT_PILL_ACTIVE[subject] ?? SUBJECT_PILL_ACTIVE.All;
 }
 
-/** Session settings — subject hue as pill background, neutral label text. */
+/** Session settings - subject hue as pill background, neutral label text. */
 export function getSubjectSessionPillActiveClass(subject: SubjectFilter): string {
   const key = resolveSubjectTileKey(subject);
   if (!key) return "bg-surface-mid text-text";
@@ -101,12 +101,12 @@ export function getSubjectPillClass(subject?: string | null): string {
   return SUBJECT_PILL_CLASS.All;
 }
 
-/** Library group title — matches question bank home subject tile hues. */
+/** Library group title - matches question bank home subject tile hues. */
 export function getSubjectAccentTextClass(subject?: string | null): string {
   return getSubjectTileTopicClass(subject);
 }
 
-/** Library pill in tips / badges — matches question bank home subject tile hues. */
+/** Library pill in tips / badges - matches question bank home subject tile hues. */
 export function getSubjectAccentBadgeClass(subject?: string | null): string {
   return getSubjectTileBadgeClass(subject);
 }

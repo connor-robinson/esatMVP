@@ -4,7 +4,7 @@ import { RelevanceBadge } from "./RelevanceBadge";
 
 function Pdf({ href, label }: { href: string | null; label: string }) {
   if (!href) {
-    return <span className="text-[#64748B]">—</span>;
+    return <span className="text-[#64748B]">-</span>;
   }
   return (
     <a

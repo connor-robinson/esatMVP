@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Already a member? Return current state (idempotent — one join per user).
+    // Already a member? Return current state (idempotent - one join per user).
     const { data: existing } = await service
       .from("tester_programmes")
       .select("id, programme_status")
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
           { status: 503 },
         );
       }
-      // Unique violation (race) — someone just enrolled; return current state.
+      // Unique violation (race) - someone just enrolled; return current state.
       const { state } = await syncTesterProgramme(service, user.id);
       if (state.isMember) {
         return NextResponse.json({ state, alreadyMember: true });

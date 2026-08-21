@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 /**
- * Essential operational tester emails. These are NOT marketing — marketing
+ * Essential operational tester emails. These are NOT marketing - marketing
  * consent is stored separately (tester_programmes.marketing_consent).
  *
  * No transactional email provider is wired up in this codebase yet, so these

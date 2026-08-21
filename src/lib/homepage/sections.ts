@@ -187,5 +187,5 @@ export const HOMEPAGE_SECTIONS: MainSectionGroup[] = [
   },
 ];
 
-/** Lighter section set for logged-out visitors — public tools stay accessible. */
+/** Lighter section set for logged-out visitors - public tools stay accessible. */
 export const LOGGED_OUT_SECTIONS: MainSectionGroup[] = HOMEPAGE_SECTIONS;

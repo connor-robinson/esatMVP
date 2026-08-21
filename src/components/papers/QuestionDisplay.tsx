@@ -283,7 +283,7 @@ export function QuestionDisplay({
                   <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/20 to-transparent pointer-events-none z-[5]" />
                 )}
 
-                {/* Question tools — below session progress bar and answer/navigation chrome */}
+                {/* Question tools - below session progress bar and answer/navigation chrome */}
                 <div className="absolute inset-0 pointer-events-none z-10">
                   {/* Fullscreen Button - Top Left */}
                   <div className="absolute top-6 left-6 pointer-events-auto">

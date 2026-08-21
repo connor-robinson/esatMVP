@@ -1,5 +1,5 @@
 /**
- * StageListCard — roadmap row + expansion (DESIGN.md tokens)
+ * StageListCard - roadmap row + expansion (DESIGN.md tokens)
  */
 
 "use client";
@@ -60,7 +60,7 @@ interface StageListCardProps {
   onNewQuestionsOnlyChange: (enabled: boolean) => void;
   timelineNodeY?: number;
   isStageCompleted?: boolean;
-  /** Header row anchor — timeline nodes track this, not expanded body height. */
+  /** Header row anchor - timeline nodes track this, not expanded body height. */
   anchorRef?: (el: HTMLDivElement | null) => void;
 }
 

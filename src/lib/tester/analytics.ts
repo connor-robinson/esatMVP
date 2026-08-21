@@ -30,7 +30,7 @@ export interface LogTesterEventInput {
 }
 
 /**
- * Best-effort analytics logging. Never throws — analytics failures must not
+ * Best-effort analytics logging. Never throws - analytics failures must not
  * block entitlement or survey flows.
  */
 export async function logTesterEvent(
@@ -47,6 +47,6 @@ export async function logTesterEvent(
       metadata: input.metadata ?? {},
     });
   } catch {
-    /* swallow — analytics is non-critical */
+    /* swallow - analytics is non-critical */
   }
 }

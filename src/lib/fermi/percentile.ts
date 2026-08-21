@@ -32,7 +32,7 @@ export function estimateBeatPercentile(
 }
 
 /**
- * Beat-percentile for a score — empirical when enough players played,
+ * Beat-percentile for a score - empirical when enough players played,
  * otherwise a normal-curve estimate (marked as approximate in the UI).
  */
 export function resolveBeatPercentile(
