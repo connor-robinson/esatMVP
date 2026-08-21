@@ -52,13 +52,6 @@ function examFromRouteNode(node: RouteNode): GuideExamName {
   return "ESAT";
 }
 
-function examStrokeVar(exam: GuideExamName): string {
-  if (exam === "ENGAA") return "var(--color-advanced)";
-  if (exam === "NSAA") return "var(--color-accent)";
-  if (exam === "TMUA") return "var(--color-tmua-accent)";
-  return "var(--color-maths)";
-}
-
 function moduleSectionKey(id: GuideModuleId): string {
   if (id === "maths1") return "Mathematics";
   if (id === "maths2") return "Advanced Mathematics and Advanced Physics";
