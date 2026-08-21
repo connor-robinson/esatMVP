@@ -1,365 +1,335 @@
-"use client";
-
-import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import type { ExamStructureBlock } from "@/content/legacyExamStructures";
 
 const MUTED = "text-[#64748B]";
 const SOFT = "text-[#94A3B8]";
 
-function YearTabs({
-  left,
-  right,
-  active,
-  onChange,
+function secPerQuestion(minutes: number, questions: number): string {
+  if (questions <= 0) return "—";
+  const sec = Math.round((minutes * 60) / questions);
+  return `${sec} sec / q`;
+}
+
+function StatRow({
+  questions,
+  minutes,
+  perQuestion,
 }: {
-  left: string;
-  right: string;
-  active: "left" | "right";
-  onChange: (next: "left" | "right") => void;
+  questions: string;
+  minutes: string;
+  perQuestion?: string;
 }) {
   return (
-    <div className="inline-flex gap-1 rounded-full bg-white/[0.04] p-1">
-      {(
-        [
-          ["left", left],
-          ["right", right],
-        ] as const
-      ).map(([key, label]) => (
-        <button
-          key={key}
-          type="button"
-          onClick={() => onChange(key)}
-          className={cn(
-            "rounded-full px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
-            active === key
-              ? "bg-white/10 text-white"
-              : "text-[#64748B] hover:text-white",
-          )}
-        >
-          {label}
-        </button>
-      ))}
+    <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs text-[#94A3B8]">
+      <span>{questions}</span>
+      <span>{minutes}</span>
+      {perQuestion ? <span>{perQuestion}</span> : null}
     </div>
   );
 }
 
-function StructureBlock({
-  title,
-  muted,
-  children,
-  control,
+function PartChip({
+  code,
+  label,
+  required,
+  dim,
 }: {
-  title: string;
-  muted?: boolean;
-  children: ReactNode;
-  control?: ReactNode;
+  code: string;
+  label: string;
+  required?: boolean;
+  dim?: boolean;
 }) {
   return (
-    <section className={cn(muted && "rounded-xl bg-white/[0.02] p-4 sm:p-5")}>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h3
+    <div
+      className={cn(
+        "rounded-md px-2.5 py-2 text-center",
+        dim ? "bg-white/[0.04]" : required ? "bg-white/[0.12]" : "bg-white/[0.08]",
+      )}
+    >
+      <p className="text-sm font-bold text-white">{code}</p>
+      <p className={cn("mt-0.5 text-[10px] leading-tight", dim ? MUTED : SOFT)}>
+        {label}
+      </p>
+      {required ? (
+        <p className="mt-1 text-[9px] font-semibold uppercase tracking-wide text-white/70">
+          required
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function EraHeading({ years }: { years: string }) {
+  return (
+    <h3 className="font-mono text-sm font-bold uppercase tracking-widest text-[#94A3B8]">
+      {years}
+    </h3>
+  );
+}
+
+function SectionPanel({
+  title,
+  choose,
+  muted,
+  children,
+}: {
+  title: string;
+  choose: string;
+  muted?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className={cn(
+        "rounded-xl px-4 py-4 sm:px-5 sm:py-5",
+        muted ? "bg-white/[0.02] opacity-55 grayscale" : "bg-white/[0.04]",
+      )}
+    >
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h4
           className={cn(
-            "font-display text-lg font-bold",
+            "font-display text-base font-bold",
             muted ? "text-[#94A3B8]" : "text-white",
           )}
         >
           {title}
-          {muted ? (
-            <span className="ml-2 text-xs font-medium uppercase tracking-wide text-[#64748B]">
-              lower priority for ESAT
-            </span>
-          ) : null}
-        </h3>
-        {control}
+        </h4>
+        <p className={cn("text-xs font-medium", muted ? MUTED : SOFT)}>
+          {choose}
+        </p>
       </div>
-      <div className="mt-4">{children}</div>
+      <div className="mt-3">{children}</div>
+    </div>
+  );
+}
+
+function NsaaEra({
+  years,
+  s1,
+  s2,
+}: {
+  years: string;
+  s1: {
+    parts: { code: string; label: string; required?: boolean }[];
+    choose: string;
+    questions: number;
+    minutes: number;
+  };
+  s2: {
+    parts: { code: string; label: string }[];
+    choose: string;
+    questionsLabel: string;
+    minutes: number;
+    perQuestion?: string;
+    note: string;
+  };
+}) {
+  return (
+    <section className="space-y-3">
+      <EraHeading years={years} />
+      <div className="grid gap-3 lg:grid-cols-2">
+        <SectionPanel title="Section 1" choose={s1.choose}>
+          <div
+            className={cn(
+              "grid gap-2",
+              s1.parts.length >= 5 ? "grid-cols-5" : "grid-cols-4",
+            )}
+          >
+            {s1.parts.map((part) => (
+              <PartChip
+                key={part.code}
+                code={part.code}
+                label={part.label}
+                required={part.required}
+              />
+            ))}
+          </div>
+          <StatRow
+            questions={`${s1.questions} questions`}
+            minutes={`${s1.minutes} min`}
+            perQuestion={secPerQuestion(s1.minutes, s1.questions)}
+          />
+          <p className={`mt-2 text-xs ${MUTED}`}>No calculator</p>
+        </SectionPanel>
+
+        <SectionPanel title="Section 2" choose={s2.choose} muted>
+          <div
+            className={cn(
+              "grid gap-2",
+              s2.parts.length > 3 ? "grid-cols-6" : "grid-cols-3",
+            )}
+          >
+            {s2.parts.map((part, index) => (
+              <PartChip
+                key={`${part.code}-${index}`}
+                code={part.code}
+                label={part.label}
+                dim
+              />
+            ))}
+          </div>
+          <StatRow
+            questions={s2.questionsLabel}
+            minutes={`${s2.minutes} min`}
+            perQuestion={s2.perQuestion}
+          />
+          <p className={`mt-2 text-xs ${MUTED}`}>{s2.note}</p>
+        </SectionPanel>
+      </div>
     </section>
   );
 }
 
-/** Hub-and-spoke map of NSAA Section 1 parts. */
-function NsaaSection1Map({ era }: { era: "old" | "new" }) {
-  const nodes =
-    era === "old"
-      ? [
-          { id: "A", label: "Maths", x: 50, y: 12 },
-          { id: "B", label: "Physics", x: 88, y: 38 },
-          { id: "C", label: "Chem", x: 78, y: 82 },
-          { id: "D", label: "Bio", x: 22, y: 82 },
-          { id: "E", label: "Advanced", x: 12, y: 38 },
-        ]
-      : [
-          { id: "A", label: "Maths", x: 50, y: 14 },
-          { id: "B", label: "Physics", x: 86, y: 50 },
-          { id: "C", label: "Chem", x: 50, y: 86 },
-          { id: "D", label: "Bio", x: 14, y: 50 },
-        ];
-
-  const meta =
-    era === "old"
-      ? {
-          sit: "Sit A + any 2",
-          time: "80 min · 18 qs/part",
-          note: "Part E = advanced Maths / Physics",
-        }
-      : {
-          sit: "Sit A + one science",
-          time: "60 min · 20 qs/part",
-          note: "Part E removed",
-        };
-
+function EngaaEra({
+  years,
+  s1,
+  s2,
+}: {
+  years: string;
+  s1: {
+    partA: number;
+    partB: number;
+    minutes: number;
+  };
+  s2: {
+    questions: number;
+    minutes: number;
+    note: string;
+  };
+}) {
+  const total = s1.partA + s1.partB;
   return (
-    <div className="grid items-center gap-6 lg:grid-cols-[minmax(0,1fr)_12rem]">
-      <div className="relative mx-auto aspect-square w-full max-w-[280px]">
-        <svg viewBox="0 0 100 100" className="h-full w-full" aria-hidden>
-          {nodes.map((node) => (
-            <line
-              key={`line-${node.id}`}
-              x1={50}
-              y1={50}
-              x2={node.x}
-              y2={node.y}
-              stroke="rgba(255,255,255,0.14)"
-              strokeWidth={0.8}
-            />
-          ))}
-          <circle cx={50} cy={50} r={11} fill="rgba(255,255,255,0.08)" />
-          <text
-            x={50}
-            y={51.5}
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fill="#fff"
-            fontSize={5.5}
-            fontWeight={700}
-          >
-            S1
-          </text>
-          {nodes.map((node) => (
-            <g key={node.id}>
-              <circle
-                cx={node.x}
-                cy={node.y}
-                r={9}
-                fill={
-                  node.id === "E"
-                    ? "rgba(255,255,255,0.04)"
-                    : "rgba(255,255,255,0.1)"
-                }
-                stroke="rgba(255,255,255,0.18)"
-                strokeWidth={0.6}
-              />
-              <text
-                x={node.x}
-                y={node.y - 1.2}
-                textAnchor="middle"
-                fill="#fff"
-                fontSize={5}
-                fontWeight={700}
-              >
-                {node.id}
-              </text>
-              <text
-                x={node.x}
-                y={node.y + 4.2}
-                textAnchor="middle"
-                fill="rgba(255,255,255,0.55)"
-                fontSize={3.2}
-              >
-                {node.label}
-              </text>
-            </g>
-          ))}
-        </svg>
-      </div>
-      <div className="space-y-2 text-sm">
-        <p className="font-semibold text-white">{meta.sit}</p>
-        <p className={SOFT}>{meta.time}</p>
-        <p className={MUTED}>{meta.note}</p>
-        <p className={MUTED}>No calculator</p>
-      </div>
-    </div>
-  );
-}
-
-function NsaaSection2Map({ era }: { era: "old" | "new" }) {
-  if (era === "old") {
-    const slots = ["P", "P", "C", "C", "B", "B"];
-    return (
-      <div className="space-y-3 opacity-45 grayscale">
-        <p className="text-sm font-semibold text-white">
-          6 long written questions · pick any 2
-        </p>
-        <div className="grid grid-cols-6 gap-2">
-          {slots.map((label, index) => (
-            <div
-              key={`${label}-${index}`}
-              className="flex aspect-[3/4] items-center justify-center rounded-md bg-white/[0.06] text-xs font-bold text-white/70"
-            >
-              {label}
+    <section className="space-y-3">
+      <EraHeading years={years} />
+      <div className="grid gap-3 lg:grid-cols-2">
+        <SectionPanel title="Section 1" choose="Answer all parts">
+          <div className="space-y-2">
+            <div className="rounded-md bg-white/[0.08] px-3 py-3">
+              <p className="text-sm font-semibold text-white">
+                Part A · Maths + Physics mixed
+              </p>
+              <p className={`mt-1 font-mono text-xs ${SOFT}`}>
+                {s1.partA} questions
+              </p>
+              <div className="mt-2 flex h-1.5 overflow-hidden rounded-full bg-black/25">
+                <span className="w-1/2 bg-white/30" />
+                <span className="w-1/2 bg-white/15" />
+              </div>
             </div>
-          ))}
-        </div>
-        <p className={`text-sm ${MUTED}`}>
-          40 min · calculator allowed · not ESAT-shaped
-        </p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-3 opacity-50 grayscale">
-      <p className="text-sm font-semibold text-white">
-        Pick one science part · 20 MCQs
-      </p>
-      <div className="grid grid-cols-3 gap-2">
-        {[
-          ["X", "Physics"],
-          ["Y", "Chemistry"],
-          ["Z", "Biology"],
-        ].map(([id, label]) => (
-          <div
-            key={id}
-            className="rounded-md bg-white/[0.06] px-3 py-4 text-center"
-          >
-            <p className="text-lg font-bold text-white/80">{id}</p>
-            <p className="mt-1 text-xs text-white/50">{label}</p>
+            <div className="rounded-md bg-white/[0.08] px-3 py-3">
+              <p className="text-sm font-semibold text-white">
+                Part B · Advanced Maths + Advanced Physics
+              </p>
+              <p className={`mt-1 font-mono text-xs ${SOFT}`}>
+                {s1.partB} questions
+              </p>
+              <div className="mt-2 flex h-1.5 overflow-hidden rounded-full bg-black/25">
+                <span className="w-1/2 bg-white/30" />
+                <span className="w-1/2 bg-white/15" />
+              </div>
+            </div>
           </div>
-        ))}
-      </div>
-      <p className={`text-sm ${MUTED}`}>
-        60 min · no calculator · harder / secondary
-      </p>
-    </div>
-  );
-}
+          <StatRow
+            questions={`${total} questions`}
+            minutes={`${s1.minutes} min`}
+            perQuestion={secPerQuestion(s1.minutes, total)}
+          />
+          <p className={`mt-2 text-xs ${MUTED}`}>
+            No calculator · no Chemistry or Biology
+          </p>
+        </SectionPanel>
 
-function EngaaSection1Map({ era }: { era: "old" | "new" }) {
-  const counts =
-    era === "old"
-      ? { a: 28, b: 26, total: 54, mins: 80 }
-      : { a: 20, b: 20, total: 40, mins: 60 };
-
-  return (
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <div className="rounded-md bg-white/[0.07] px-4 py-3">
-          <div className="flex items-baseline justify-between gap-3">
-            <p className="text-sm font-semibold text-white">
-              Part A · Maths + Physics mixed
-            </p>
-            <p className="font-mono text-xs text-[#94A3B8]">{counts.a} qs</p>
+        <SectionPanel
+          title="Section 2"
+          choose="Advanced Physics only"
+          muted
+        >
+          <div className="rounded-md bg-white/[0.06] px-3 py-6 text-center">
+            <p className="text-sm font-semibold text-white/80">Physics</p>
+            <p className={`mt-1 text-xs ${MUTED}`}>All questions in this section</p>
           </div>
-          <div className="mt-2 flex h-2 overflow-hidden rounded-full bg-black/30">
-            <span className="w-1/2 bg-white/25" />
-            <span className="w-1/2 bg-white/15" />
-          </div>
-        </div>
-        <div className="rounded-md bg-white/[0.07] px-4 py-3">
-          <div className="flex items-baseline justify-between gap-3">
-            <p className="text-sm font-semibold text-white">
-              Part B · Advanced Maths + Advanced Physics
-            </p>
-            <p className="font-mono text-xs text-[#94A3B8]">{counts.b} qs</p>
-          </div>
-          <div className="mt-2 flex h-2 overflow-hidden rounded-full bg-black/30">
-            <span className="w-1/2 bg-white/25" />
-            <span className="w-1/2 bg-white/15" />
-          </div>
-        </div>
+          <StatRow
+            questions={`${s2.questions} questions`}
+            minutes={`${s2.minutes} min`}
+            perQuestion={secPerQuestion(s2.minutes, s2.questions)}
+          />
+          <p className={`mt-2 text-xs ${MUTED}`}>{s2.note}</p>
+        </SectionPanel>
       </div>
-      <p className={`text-sm ${SOFT}`}>
-        Answer all {counts.total} · {counts.mins} min · no calculator · no Chem /
-        Bio
-      </p>
-    </div>
-  );
-}
-
-function EngaaSection2Map({ era }: { era: "old" | "new" }) {
-  return (
-    <div className="space-y-3 opacity-45 grayscale">
-      <div className="rounded-md bg-white/[0.06] px-4 py-5 text-center">
-        <p className="text-sm font-semibold text-white/80">
-          Section 2 · Advanced Physics only
-        </p>
-        <p className={`mt-2 text-sm ${MUTED}`}>
-          {era === "old"
-            ? "~20 linked MCQs · 40 min · basic calculator allowed"
-            : "20 MCQs · 60 min · no calculator"}
-        </p>
-      </div>
-      <p className={`text-sm ${MUTED}`}>
-        {era === "old"
-          ? "Less similar to ESAT"
-          : "From 2020 overlaps NSAA Section 2 Part X"}
-      </p>
-    </div>
-  );
-}
-
-function TmuaMap() {
-  return (
-    <div className="grid gap-3 sm:grid-cols-2">
-      <div className="rounded-md bg-white/[0.06] px-4 py-5">
-        <p className="font-mono text-xs uppercase tracking-widest text-[#64748B]">
-          Paper 1
-        </p>
-        <p className="mt-2 font-semibold text-white">Applications</p>
-        <p className={`mt-2 text-sm ${SOFT}`}>20 MCQs · 75 min</p>
-      </div>
-      <div className="rounded-md bg-white/[0.04] px-4 py-5 opacity-70">
-        <p className="font-mono text-xs uppercase tracking-widest text-[#64748B]">
-          Paper 2
-        </p>
-        <p className="mt-2 font-semibold text-white/80">Reasoning</p>
-        <p className={`mt-2 text-sm ${MUTED}`}>
-          20 MCQs · 75 min · lower priority
-        </p>
-      </div>
-    </div>
+    </section>
   );
 }
 
 function NsaaGuide() {
-  const [s1, setS1] = useState<"left" | "right">("right");
-  const [s2, setS2] = useState<"left" | "right">("right");
-
   return (
     <div className="space-y-10">
-      <h2 className="text-2xl font-display font-bold tracking-tight text-white sm:text-3xl">
-        NSAA Guide
-      </h2>
+      <div>
+        <h2 className="text-2xl font-display font-bold tracking-tight text-white sm:text-3xl">
+          NSAA Guide
+        </h2>
+        <p className={`mt-3 max-w-2xl text-sm leading-relaxed ${SOFT}`}>
+          You sit two sections. In each section you choose which parts to take —
+          you never answer every part on the paper.
+        </p>
+      </div>
 
-      <StructureBlock
-        title="Section 1"
-        control={
-          <YearTabs
-            left="2016–2019"
-            right="2020–2023"
-            active={s1}
-            onChange={setS1}
-          />
-        }
-      >
-        <NsaaSection1Map era={s1 === "left" ? "old" : "new"} />
-      </StructureBlock>
+      <NsaaEra
+        years="2016–2019"
+        s1={{
+          parts: [
+            { code: "A", label: "Maths", required: true },
+            { code: "B", label: "Physics" },
+            { code: "C", label: "Chem" },
+            { code: "D", label: "Bio" },
+            { code: "E", label: "Advanced" },
+          ],
+          choose: "Sit A + any 2 others",
+          questions: 54,
+          minutes: 80,
+        }}
+        s2={{
+          parts: [
+            { code: "P", label: "Phys" },
+            { code: "P", label: "Phys" },
+            { code: "C", label: "Chem" },
+            { code: "C", label: "Chem" },
+            { code: "B", label: "Bio" },
+            { code: "B", label: "Bio" },
+          ],
+          choose: "Pick any 2 of 6 written qs",
+          questionsLabel: "2 long questions",
+          minutes: 40,
+          perQuestion: "~20 min / q",
+          note: "Calculator allowed · not ESAT-shaped",
+        }}
+      />
 
-      <StructureBlock
-        title="Section 2"
-        muted
-        control={
-          <YearTabs
-            left="2016–2019"
-            right="2020–2023"
-            active={s2}
-            onChange={setS2}
-          />
-        }
-      >
-        <NsaaSection2Map era={s2 === "left" ? "old" : "new"} />
-      </StructureBlock>
+      <NsaaEra
+        years="2020–2023"
+        s1={{
+          parts: [
+            { code: "A", label: "Maths", required: true },
+            { code: "B", label: "Physics" },
+            { code: "C", label: "Chem" },
+            { code: "D", label: "Bio" },
+          ],
+          choose: "Sit A + one science",
+          questions: 40,
+          minutes: 60,
+        }}
+        s2={{
+          parts: [
+            { code: "X", label: "Physics" },
+            { code: "Y", label: "Chem" },
+            { code: "Z", label: "Bio" },
+          ],
+          choose: "Pick one part",
+          questionsLabel: "20 questions",
+          minutes: 60,
+          perQuestion: secPerQuestion(60, 20),
+          note: "No calculator · harder / secondary for ESAT",
+        }}
+      />
 
       <p className={`text-sm ${MUTED}`}>
         UAT-UK&apos;s ESAT archive publishes NSAA Section 1 only.
@@ -369,43 +339,38 @@ function NsaaGuide() {
 }
 
 function EngaaGuide() {
-  const [s1, setS1] = useState<"left" | "right">("right");
-  const [s2, setS2] = useState<"left" | "right">("right");
-
   return (
     <div className="space-y-10">
-      <h2 className="text-2xl font-display font-bold tracking-tight text-white sm:text-3xl">
-        ENGAA Guide
-      </h2>
+      <div>
+        <h2 className="text-2xl font-display font-bold tracking-tight text-white sm:text-3xl">
+          ENGAA Guide
+        </h2>
+        <p className={`mt-3 max-w-2xl text-sm leading-relaxed ${SOFT}`}>
+          You sit two sections. Section 1 is always Maths and Physics mixed in
+          both parts. Section 2 is Advanced Physics only — no choosing between
+          sciences.
+        </p>
+      </div>
 
-      <StructureBlock
-        title="Section 1"
-        control={
-          <YearTabs
-            left="2016–2018"
-            right="2019–2023"
-            active={s1}
-            onChange={setS1}
-          />
-        }
-      >
-        <EngaaSection1Map era={s1 === "left" ? "old" : "new"} />
-      </StructureBlock>
+      <EngaaEra
+        years="2016–2018"
+        s1={{ partA: 28, partB: 26, minutes: 80 }}
+        s2={{
+          questions: 20,
+          minutes: 40,
+          note: "Linked MCQs · basic calculator allowed · less similar to ESAT",
+        }}
+      />
 
-      <StructureBlock
-        title="Section 2"
-        muted
-        control={
-          <YearTabs
-            left="2016–2018"
-            right="2019–2023"
-            active={s2}
-            onChange={setS2}
-          />
-        }
-      >
-        <EngaaSection2Map era={s2 === "left" ? "old" : "new"} />
-      </StructureBlock>
+      <EngaaEra
+        years="2019–2023"
+        s1={{ partA: 20, partB: 20, minutes: 60 }}
+        s2={{
+          questions: 20,
+          minutes: 60,
+          note: "No calculator · from 2020 overlaps NSAA Section 2 Part X",
+        }}
+      />
 
       <p className={`text-sm ${MUTED}`}>
         UAT-UK&apos;s ESAT archive publishes ENGAA Section 1 only.
@@ -417,13 +382,40 @@ function EngaaGuide() {
 function TmuaGuide() {
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-display font-bold tracking-tight text-white sm:text-3xl">
-        TMUA Guide
-      </h2>
-      <TmuaMap />
-      <p className={`text-sm ${MUTED}`}>
-        Stable 2016–2023 format. Maths only · no calculator.
-      </p>
+      <div>
+        <h2 className="text-2xl font-display font-bold tracking-tight text-white sm:text-3xl">
+          TMUA Guide
+        </h2>
+        <p className={`mt-3 max-w-2xl text-sm leading-relaxed ${SOFT}`}>
+          Two maths papers, same shape every year from 2016–2023. No science
+          content.
+        </p>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="rounded-xl bg-white/[0.04] px-4 py-5">
+          <p className="font-mono text-xs uppercase tracking-widest text-[#64748B]">
+            Paper 1
+          </p>
+          <p className="mt-2 font-semibold text-white">Applications</p>
+          <StatRow
+            questions="20 questions"
+            minutes="75 min"
+            perQuestion={secPerQuestion(75, 20)}
+          />
+        </div>
+        <div className="rounded-xl bg-white/[0.02] px-4 py-5 opacity-70">
+          <p className="font-mono text-xs uppercase tracking-widest text-[#64748B]">
+            Paper 2
+          </p>
+          <p className="mt-2 font-semibold text-white/80">Reasoning</p>
+          <StatRow
+            questions="20 questions"
+            minutes="75 min"
+            perQuestion={secPerQuestion(75, 20)}
+          />
+          <p className={`mt-2 text-xs ${MUTED}`}>Lower priority for ESAT</p>
+        </div>
+      </div>
     </div>
   );
 }
