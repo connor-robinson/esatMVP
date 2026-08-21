@@ -72,11 +72,13 @@ function PartChip({
   label,
   sectionKey,
   required,
+  questions,
 }: {
   code: string;
   label: string;
   sectionKey: string;
   required?: boolean;
+  questions?: number;
 }) {
   return (
     <div
@@ -93,6 +95,11 @@ function PartChip({
       ) : null}
       <p className="text-sm font-bold leading-none">{code}</p>
       <p className="mt-1.5 text-[10px] font-semibold leading-tight">{label}</p>
+      {questions != null ? (
+        <p className="mt-1.5 text-[11px] font-bold tabular-nums">
+          {questions} questions
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -271,29 +278,18 @@ function EngaaEra({
           commentary="Core ENGAA practice for Maths and Physics. No Chemistry or Biology content."
         >
           <div className="space-y-3">
-            <div>
-              <p className={cn("mb-2 text-sm font-medium", META)}>
-                Part A · {s1.partA} questions · Mathematics and Physics mixed
-              </p>
-              <div className="grid grid-cols-2 gap-3">
-                <PartChip
-                  code="A"
-                  label="Mathematics"
-                  sectionKey="Mathematics"
-                />
-                <PartChip code="A" label="Physics" sectionKey="Physics" />
-              </div>
-            </div>
-            <div>
-              <p className={cn("mb-2 text-sm font-medium", META)}>
-                Part B · {s1.partB} questions
-              </p>
-              <PartChip
-                code="B"
-                label="Advanced Math + Phy"
-                sectionKey="Advanced Mathematics and Advanced Physics"
-              />
-            </div>
+            <PartChip
+              code="A"
+              label="Maths & Physics"
+              sectionKey="Mathematics and Physics"
+              questions={s1.partA}
+            />
+            <PartChip
+              code="B"
+              label="Advanced Math + Phy"
+              sectionKey="Advanced Mathematics and Advanced Physics"
+              questions={s1.partB}
+            />
           </div>
           <StatLine
             paceLabel={
@@ -312,7 +308,12 @@ function EngaaEra({
           badge="optional"
           commentary={s2.note}
         >
-          <PartChip code="S2" label="Physics" sectionKey="Physics" />
+          <PartChip
+            code="S2"
+            label="Physics"
+            sectionKey="Physics"
+            questions={s2.questions}
+          />
           <StatLine
             paceLabel={
               s2Pace
