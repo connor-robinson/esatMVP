@@ -251,7 +251,6 @@ export const TIER_LIST: readonly {
         years: "All years",
         exam: "OTHERS",
         section: "extra papers",
-        note: "easier qs",
         related: ["PAT", "BMAT", "BPHO SPC", "CAIE", "UKMT SMC"],
         description:
           "Useful for extra maths and physics practice once the closer ESAT-shaped papers are used up. Style and difficulty vary a lot.",
