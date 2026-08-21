@@ -31,7 +31,6 @@ import {
 } from "@/lib/pastPapersGuide/recommendations";
 import { ROADMAP_EXPAND_TRANSITION_CLASS } from "@/components/papers/roadmap/roadmapTimelineLayout";
 import {
-  getExamAccentFillClass,
   getExamAccentSurfaceClass,
   getExamAccentTextClass,
   getSectionSubjectPillClass,
@@ -106,8 +105,8 @@ function toggleModule(
   return [...current, id];
 }
 
-/** Timeline spine stays white; nodes and badges keep exam / status colours. */
-function statusAccent(status: RouteNode["status"], exam: GuideExamName) {
+/** Timeline spine + default nodes: light blue. Skip red, Unique only yellow. */
+function statusAccent(status: RouteNode["status"]) {
   if (status === "skipped") {
     return {
       node: "bg-error",
@@ -123,20 +122,14 @@ function statusAccent(status: RouteNode["status"], exam: GuideExamName) {
     };
   }
   return {
-    node: getExamAccentFillClass(exam),
+    node: "bg-accent",
     badge: null,
     label: null,
   };
 }
 
-function RouteStatusPill({
-  status,
-  exam,
-}: {
-  status: RouteNode["status"];
-  exam: GuideExamName;
-}) {
-  const accent = statusAccent(status, exam);
+function RouteStatusPill({ status }: { status: RouteNode["status"] }) {
+  const accent = statusAccent(status);
   if (!accent.label || !accent.badge) return null;
   return (
     <span
@@ -178,7 +171,7 @@ function RouteCard({
         )}
       >
         <div className="absolute right-3 top-3 z-10 flex items-start gap-2 sm:right-4 sm:top-4">
-          <RouteStatusPill status={node.status} exam={exam} />
+          <RouteStatusPill status={node.status} />
           <ChevronDown
             aria-hidden
             className={cn(
@@ -373,7 +366,7 @@ function CurvyRouteTimeline({
             <path
               d={spinePath}
               fill="none"
-              stroke="rgba(255,255,255,0.12)"
+              stroke="color-mix(in srgb, var(--color-accent) 28%, transparent)"
               strokeWidth={6}
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -383,7 +376,7 @@ function CurvyRouteTimeline({
             <path
               d={progressPath}
               fill="none"
-              stroke="rgba(255,255,255,0.85)"
+              stroke="var(--color-accent)"
               strokeWidth={6}
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -395,7 +388,7 @@ function CurvyRouteTimeline({
           const y = centers[index];
           if (y === undefined || y === 0) return null;
           const exam = examFromRouteNode(node);
-          const accent = statusAccent(node.status, exam);
+          const accent = statusAccent(node.status);
           const expanded = expandedId === node.id;
           return (
             <span
