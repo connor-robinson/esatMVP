@@ -23,11 +23,6 @@ type RecBadge =
   | "mostlyOverlap"
   | "doAll";
 
-function secPerQuestion(minutes: number, questions: number): number | null {
-  if (questions <= 0) return null;
-  return Math.round((minutes * 60) / questions);
-}
-
 function RecommendationBadge({ kind }: { kind: RecBadge }) {
   const styles: Record<RecBadge, { label: string; className: string }> = {
     recommended: {
