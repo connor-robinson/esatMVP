@@ -8,7 +8,13 @@ import {
 const BODY = "text-[#CBD5E1]";
 const META = "text-[#E2E8F0]";
 
-type RecBadge = "best" | "recommended" | "optional" | "skip";
+type RecBadge =
+  | "best"
+  | "recommended"
+  | "optional"
+  | "skip"
+  | "checkDuplicates"
+  | "nsaaDuplicate";
 
 function secPerQuestion(minutes: number, questions: number): number | null {
   if (questions <= 0) return null;
@@ -33,6 +39,14 @@ function RecommendationBadge({ kind }: { kind: RecBadge }) {
       label: "Skip",
       className: `bg-error ${ON_SOLID_SUBJECT_TEXT}`,
     },
+    checkDuplicates: {
+      label: "Check duplicates",
+      className: `bg-warning ${ON_SOLID_SUBJECT_TEXT}`,
+    },
+    nsaaDuplicate: {
+      label: "NSAA duplicate",
+      className: `bg-error ${ON_SOLID_SUBJECT_TEXT}`,
+    },
   };
   const style = styles[kind];
   return (
@@ -47,6 +61,23 @@ function RecommendationBadge({ kind }: { kind: RecBadge }) {
   );
 }
 
+function FormatChangeNotice({
+  year,
+  children,
+}: {
+  year: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-xl bg-accent/15 px-4 py-3.5">
+      <p className="text-xs font-bold uppercase tracking-widest text-accent">
+        Format changed in {year}
+      </p>
+      <p className={cn("mt-1.5 text-base leading-relaxed", BODY)}>{children}</p>
+    </div>
+  );
+}
+
 function StatLine({
   paceLabel,
   questionsLabel,
@@ -57,7 +88,7 @@ function StatLine({
   minutes: number;
 }) {
   return (
-    <p className="mt-3 font-mono text-sm leading-snug">
+    <p className="mt-2.5 font-mono text-sm leading-snug">
       <span className="font-bold text-accent">{paceLabel}</span>
       <span className="font-semibold text-[#E2E8F0]">
         {" "}
@@ -73,18 +104,23 @@ function PartChip({
   sectionKey,
   required,
   questions,
+  badge,
+  compact,
 }: {
   code: string;
   label: string;
   sectionKey: string;
   required?: boolean;
   questions?: number;
+  badge?: RecBadge;
+  compact?: boolean;
 }) {
   return (
     <div
       className={cn(
-        "relative flex min-h-[4.75rem] flex-col items-center justify-center rounded-md px-2 py-2.5 text-center shadow-md shadow-black/35",
-        required && "pt-4",
+        "relative flex flex-col items-center justify-center rounded-md px-2 text-center shadow-md shadow-black/35",
+        compact ? "min-h-0 py-2" : "min-h-[3.5rem] py-2",
+        (required || badge) && "pt-3.5",
         getSectionSubjectPillClass(sectionKey),
       )}
     >
@@ -93,13 +129,52 @@ function PartChip({
           Required
         </span>
       ) : null}
+      {badge ? (
+        <span className="absolute -top-2.5 left-1/2 z-10 -translate-x-1/2">
+          <RecommendationBadge kind={badge} />
+        </span>
+      ) : null}
       <p className="text-sm font-bold leading-none">{code}</p>
-      <p className="mt-1.5 text-[10px] font-semibold leading-tight">{label}</p>
+      <p className="mt-1 text-[10px] font-semibold leading-tight">{label}</p>
       {questions != null ? (
-        <p className="mt-1.5 text-[11px] font-bold tabular-nums">
+        <p className="mt-1 text-[11px] font-bold tabular-nums">
           {questions} questions
         </p>
       ) : null}
+    </div>
+  );
+}
+
+function EngaaPartCard({
+  code,
+  label,
+  sectionKey,
+  questions,
+  badge,
+}: {
+  code: string;
+  label: string;
+  sectionKey: string;
+  questions: number;
+  badge: RecBadge;
+}) {
+  return (
+    <div
+      className={cn(
+        "relative flex items-center gap-3 rounded-md px-3 py-2.5 pt-4 shadow-md shadow-black/35",
+        getSectionSubjectPillClass(sectionKey),
+      )}
+    >
+      <span className="absolute -top-2.5 left-3 z-10">
+        <RecommendationBadge kind={badge} />
+      </span>
+      <p className="shrink-0 text-sm font-bold leading-none">{code}</p>
+      <p className="min-w-0 flex-1 text-left text-xs font-semibold leading-snug sm:text-sm">
+        {label}
+      </p>
+      <p className="shrink-0 text-xs font-bold tabular-nums sm:text-sm">
+        {questions} questions
+      </p>
     </div>
   );
 }
@@ -121,21 +196,21 @@ function SectionPanel({
 }: {
   title: string;
   choose: string;
-  badge: RecBadge;
+  badge?: RecBadge;
   commentary: string;
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-0 flex-col gap-2">
-      <div className="rounded-xl bg-white/[0.09] px-4 py-4 sm:px-5 sm:py-5">
+    <div className="flex min-h-0 flex-col gap-2.5">
+      <div className="rounded-xl bg-white/[0.09] px-4 py-3.5 sm:px-5 sm:py-4">
         <div className="flex flex-wrap items-center gap-2">
-          <RecommendationBadge kind={badge} />
+          {badge ? <RecommendationBadge kind={badge} /> : null}
           <h4 className="font-display text-base font-bold text-white">{title}</h4>
         </div>
-        <p className={cn("mt-2 text-sm font-medium", META)}>{choose}</p>
-        <div className="mt-3">{children}</div>
+        <p className={cn("mt-1.5 text-sm font-medium", META)}>{choose}</p>
+        <div className="mt-2.5">{children}</div>
       </div>
-      <p className={cn("text-sm leading-relaxed", BODY)}>{commentary}</p>
+      <p className={cn("text-base leading-relaxed", BODY)}>{commentary}</p>
     </div>
   );
 }
@@ -185,7 +260,7 @@ function NsaaEra({
         >
           <div
             className={cn(
-              "grid gap-3 pt-1",
+              "grid gap-2 pt-1",
               s1.parts.length >= 5
                 ? "grid-cols-2 sm:grid-cols-5"
                 : "grid-cols-2 sm:grid-cols-4",
@@ -198,6 +273,7 @@ function NsaaEra({
                 label={part.label}
                 sectionKey={part.sectionKey}
                 required={part.required}
+                compact
               />
             ))}
           </div>
@@ -256,11 +332,14 @@ function EngaaEra({
     partA: number;
     partB: number;
     minutes: number;
+    commentary: string;
   };
   s2: {
     questions: number;
     minutes: number;
-    note: string;
+    commentary: string;
+    badge: RecBadge;
+    title?: string;
   };
 }) {
   const total = s1.partA + s1.partB;
@@ -274,21 +353,22 @@ function EngaaEra({
         <SectionPanel
           title="Section 1: No Calculator"
           choose="Answer all parts"
-          badge="recommended"
-          commentary="Core ENGAA practice for Maths and Physics. No Chemistry or Biology content."
+          commentary={s1.commentary}
         >
-          <div className="space-y-3">
-            <PartChip
+          <div className="space-y-3 pt-1">
+            <EngaaPartCard
               code="A"
-              label="Maths & Physics"
+              label="Mathematics + Physics"
               sectionKey="Mathematics and Physics"
               questions={s1.partA}
+              badge="checkDuplicates"
             />
-            <PartChip
+            <EngaaPartCard
               code="B"
               label="Advanced Math + Phy"
               sectionKey="Advanced Mathematics and Advanced Physics"
               questions={s1.partB}
+              badge="recommended"
             />
           </div>
           <StatLine
@@ -303,17 +383,19 @@ function EngaaEra({
         </SectionPanel>
 
         <SectionPanel
-          title="Section 2: Advanced Physics only"
+          title={s2.title ?? "Section 2: Advanced Physics only"}
           choose="All questions in this section"
-          badge="optional"
-          commentary={s2.note}
+          commentary={s2.commentary}
         >
-          <PartChip
-            code="S2"
-            label="Physics"
-            sectionKey="Physics"
-            questions={s2.questions}
-          />
+          <div className="pt-1">
+            <EngaaPartCard
+              code="S2"
+              label="Physics"
+              sectionKey="Physics"
+              questions={s2.questions}
+              badge={s2.badge}
+            />
+          </div>
           <StatLine
             paceLabel={
               s2Pace
@@ -389,6 +471,11 @@ function NsaaGuide() {
         }}
       />
 
+      <FormatChangeNotice year="2020">
+        Section 1 became shorter and Part E was removed. Section 2 changed to
+        longer, no-calculator multiple-choice questions.
+      </FormatChangeNotice>
+
       <NsaaEra
         years="2020-2023"
         s1={{
@@ -460,21 +547,42 @@ function EngaaGuide() {
 
       <EngaaEra
         years="2016-2018"
-        s1={{ partA: 28, partB: 26, minutes: 80 }}
+        s1={{
+          partA: 28,
+          partB: 26,
+          minutes: 80,
+          commentary:
+            "Skip Part A if you have completed NSAA Maths and Physics. Part B is more useful for Maths 2 and harder Physics, although some questions repeat NSAA Part E.",
+        }}
         s2={{
           questions: 20,
           minutes: 40,
-          note: "Linked MCQs with a basic calculator allowed. Less similar to ESAT.",
+          badge: "optional",
+          commentary:
+            "Optional practice. These are unique, linked Physics questions, but the calculator-based format is less similar to the ESAT.",
         }}
       />
 
+      <FormatChangeNotice year="2019">
+        Section 1 was shortened to 40 questions. Section 2 became a 60-minute,
+        no-calculator paper.
+      </FormatChangeNotice>
+
       <EngaaEra
         years="2019-2023"
-        s1={{ partA: 20, partB: 20, minutes: 60 }}
+        s1={{
+          partA: 20,
+          partB: 20,
+          minutes: 60,
+          commentary:
+            "Skip Part A if you have completed the same year's NSAA. Part B is the main resource for Maths 2 and extra Physics.",
+        }}
         s2={{
           questions: 20,
           minutes: 60,
-          note: "No calculator. From 2020 this overlaps NSAA Section 2 Part X.",
+          badge: "nsaaDuplicate",
+          commentary:
+            "Harder, longer Physics practice. 2019 is unique · 2020-2023 overlaps NSAA Physics.",
         }}
       />
 
