@@ -80,7 +80,6 @@ export default function ExamScoreConverterPage({
   return (
     <ScoreConverter
       initialExam={exam}
-      title={copy.h1}
       intro={copy.intro}
       beforeFaq={<PublishedConversionTables examFilter={exam} />}
     />

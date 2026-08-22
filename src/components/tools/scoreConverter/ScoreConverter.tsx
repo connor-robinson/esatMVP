@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { AlertTriangle, ArrowRight, Check, ChevronDown, Info, Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { cssVar } from "@/config/colors";
@@ -45,6 +46,119 @@ import {
 
 const MAX_SECTIONS = 3;
 const OVERALL_CHART_KEY = "__overall__";
+
+const EXAM_TITLE_COLOR: Record<ConverterExam, string> = {
+  NSAA: "text-tmua-accent",
+  ENGAA: "text-advanced",
+  TMUA: "text-tmua-accent",
+};
+
+function examConverterPath(exam: ConverterExam): string {
+  return `/tools/score-converter/${exam.toLowerCase()}`;
+}
+
+function converterTitleSuffix(exam: ConverterExam): string {
+  return exam === "TMUA" ? " Score Converter" : " to ESAT Score Converter";
+}
+
+/** Inline exam picker in the page title; navigates to exam-specific converter routes. */
+function ExamTitleDropdown({ exam }: { exam: ConverterExam }) {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLSpanElement>(null);
+  const listId = useId();
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
+  return (
+    <span ref={rootRef} className="relative inline-flex items-baseline">
+      <button
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={listId}
+        aria-label={`Exam board: ${exam}. Change exam board.`}
+        onClick={() => setOpen((value) => !value)}
+        className={cn(
+          "inline-flex items-center gap-1 rounded-organic-md px-1 -ml-1 transition-colors hover:bg-surface-mid/60",
+          EXAM_TITLE_COLOR[exam],
+          controlBase,
+        )}
+      >
+        <span>{exam}</span>
+        <ChevronDown
+          className={cn(
+            "h-5 w-5 shrink-0 opacity-80 transition-transform duration-fast sm:h-6 sm:w-6",
+            open && "rotate-180",
+          )}
+          aria-hidden
+        />
+      </button>
+
+      {open ? (
+        <ul
+          id={listId}
+          role="listbox"
+          aria-label="Exam board"
+          className="absolute left-0 top-full z-50 mt-2 min-w-[9rem] overflow-hidden rounded-organic-lg bg-surface-subtle py-1.5 shadow-modal-card"
+        >
+          {CONVERTER_EXAMS.map((option) => {
+            const isSelected = option === exam;
+            return (
+              <li key={option} role="presentation">
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={isSelected}
+                  onClick={() => {
+                    setOpen(false);
+                    if (option !== exam) {
+                      router.push(examConverterPath(option));
+                    }
+                  }}
+                  className={cn(
+                    "flex w-full items-center justify-between gap-2 px-3.5 py-2.5 text-left text-base transition-colors duration-fast",
+                    isSelected
+                      ? "bg-surface-mid font-semibold text-text"
+                      : "text-text-muted hover:bg-surface-mid/80 hover:text-text",
+                    controlBase,
+                  )}
+                >
+                  <span className={cn("font-bold", EXAM_TITLE_COLOR[option])}>
+                    {option}
+                  </span>
+                  {isSelected ? (
+                    <Check
+                      className="h-3.5 w-3.5 shrink-0 text-secondary"
+                      strokeWidth={2.5}
+                      aria-hidden
+                    />
+                  ) : null}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      ) : null}
+    </span>
+  );
+}
 
 /** What the selected past paper proxies for in current admissions. */
 function examTargetLabel(exam: ConverterExam): "ESAT" | "TMUA" {
@@ -548,12 +662,10 @@ function applyExampleFormState(
 
 export function ScoreConverter({
   initialExam,
-  title,
   intro,
   beforeFaq,
 }: {
   initialExam?: ConverterExam;
-  title?: string;
   intro?: string;
   beforeFaq?: React.ReactNode;
 }) {
@@ -1189,7 +1301,8 @@ export function ScoreConverter({
         <div className="mb-3 flex items-start justify-between gap-3">
           <div>
             <h1 className="text-xl font-bold tracking-tight text-text sm:text-3xl">
-              {title ?? "ESAT Score Converter"}
+              <ExamTitleDropdown exam={exam} />
+              <span>{converterTitleSuffix(exam)}</span>
             </h1>
             {intro ? (
               <p className="mt-3 max-w-3xl text-sm leading-relaxed text-text-muted sm:text-base">
@@ -1204,32 +1317,6 @@ export function ScoreConverter({
 
         <div className="relative overflow-visible rounded-organic-lg bg-surface-mid/30 p-3 sm:p-4">
           <div className="flex flex-wrap items-end gap-3 sm:gap-4">
-            <div className="flex min-w-[10rem] flex-1 items-end gap-2" onPointerDown={dismissInputHint}>
-              <ModernSelect
-                label="Exam"
-                value={exam}
-                minWidth="5.5rem"
-                options={CONVERTER_EXAMS.map((e) => ({ value: e, label: e }))}
-                onChange={(next) => {
-                  dismissInputHint();
-                  dismissExample();
-                  setPendingExample(null);
-                  setExam(next as ConverterExam);
-                  setYear(null);
-                  invalidateResults();
-                }}
-              />
-              <ArrowRight className="mb-2.5 h-4 w-4 shrink-0 text-text-muted" strokeWidth={2} aria-hidden />
-              <span
-                className={cn(
-                  "mb-2 text-sm font-bold tracking-tight sm:text-base",
-                  exam === "TMUA" ? "text-tmua-accent" : "text-secondary",
-                )}
-              >
-                {examTargetLabel(exam)}
-              </span>
-            </div>
-
             <div className="relative min-w-[6rem] flex-1" onPointerDown={dismissInputHint}>
               <InputHelperHint open={showInputHint} onDismiss={dismissInputHint} />
               <ModernSelect

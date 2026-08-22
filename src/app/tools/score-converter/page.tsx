@@ -61,6 +61,8 @@ export default function ScoreConverterPage() {
       />
 
       <ScoreConverter
+        initialExam="NSAA"
+        intro="Convert NSAA Section 1 and Section 2 raw marks from 2016–2023 into published scaled scores. Use this as a historical proxy for ESAT Maths 1, Maths 2 and science modules when you know the exact year and part you completed."
         beforeFaq={
           <div className="space-y-6">
             <PublishedConversionTables />
