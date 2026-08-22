@@ -10,11 +10,14 @@ import {
   DEFAULT_SCORE,
   DEFAULT_TEST_CYCLE_ID,
   ESAT_TEST_CYCLES,
+  OVERALL_TABLE_KEY,
   SCORE_MAX,
   SCORE_MIN,
   SCORE_STEP,
   getExplorerModule,
+  getModuleTableKeys,
   getTestCycle,
+  isOverallModule,
   parseModuleId,
   parseScoreParam,
   parseTestCycleId,
@@ -22,6 +25,7 @@ import {
   type EsatTestCycleId,
 } from "@/lib/esat/percentileCatalog";
 import {
+  averageEsatDistributionTables,
   fetchEsatTable,
   interpolatePercentile,
   type EsatRow,
@@ -29,7 +33,6 @@ import {
 import {
   ensureCumulativeRows,
   formatApproximatePercentile,
-  formatCycleInterpretation,
   formatTopPercentLabel,
   roundScore,
 } from "@/lib/esat/percentileWording";
@@ -46,6 +49,8 @@ const selectTriggerClass = cn(
   "bg-white/[0.06] text-white hover:bg-white/[0.09] active:scale-[0.99]",
   controlBase,
 );
+
+const CHART_ACCENT_OVERALL = "var(--color-text)";
 
 const CHART_ACCENT: Record<ModuleColor, string> = {
   maths: "var(--color-maths)",
@@ -126,7 +131,9 @@ export function PercentileExplorer() {
   const tableKeys = useMemo(() => {
     const keys = new Set<string>();
     for (const testCycle of ESAT_TEST_CYCLES) {
-      for (const mod of testCycle.modules) keys.add(mod.tableKey);
+      for (const mod of testCycle.modules) {
+        if (mod.tableKey !== OVERALL_TABLE_KEY) keys.add(mod.tableKey);
+      }
     }
     return [...keys];
   }, []);
@@ -159,7 +166,16 @@ export function PercentileExplorer() {
     setScoreInput(score.toFixed(1));
   }, [score]);
 
-  const rows = module ? rowsByKey[module.tableKey] ?? [] : [];
+  const rows = useMemo(() => {
+    if (!module || !cycle) return [];
+    if (isOverallModule(moduleId)) {
+      const moduleTables = getModuleTableKeys(cycleId)
+        .map((key) => rowsByKey[key])
+        .filter((table) => table.length > 0);
+      return moduleTables.length > 0 ? averageEsatDistributionTables(moduleTables) : [];
+    }
+    return rowsByKey[module.tableKey] ?? [];
+  }, [cycle, cycleId, module, moduleId, rowsByKey]);
 
   const percentile = useMemo(() => {
     if (rows.length < 2) return null;
@@ -197,8 +213,10 @@ export function PercentileExplorer() {
 
   if (!ready || !cycle || !module) return null;
 
-  const accentColor = CHART_ACCENT[module.color];
-  const accentTextClass = MODULE_TEXT[module.color];
+  const accentColor = isOverallModule(moduleId)
+    ? CHART_ACCENT_OVERALL
+    : CHART_ACCENT[module.color];
+  const accentTextClass = isOverallModule(moduleId) ? "text-white" : MODULE_TEXT[module.color];
 
   return (
     <section id="percentile-explorer" className="scroll-mt-24">
@@ -315,34 +333,27 @@ export function PercentileExplorer() {
         </div>
 
         <div className="mt-6" aria-live="polite" aria-atomic="true">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="text-2xl font-display font-bold text-white sm:text-3xl">
-                <span className={cn("tabular-nums", accentTextClass)}>
-                  {score.toFixed(1)}
-                </span>{" "}
-                in {module.label}
-              </p>
-              {percentile != null ? (
-                <>
-                  <p className={cn("mt-1 text-lg font-semibold", accentTextClass)}>
-                    {formatApproximatePercentile(percentile)}
-                  </p>
-                  <p className="mt-0.5 text-sm text-[#94A3B8]">
-                    {formatTopPercentLabel(percentile)}
-                  </p>
-                </>
-              ) : (
-                <p className="mt-1 text-sm text-[#94A3B8]">
-                  Percentile unavailable for this selection.
-                </p>
-              )}
-            </div>
+          <div>
+            <p className="text-2xl font-display font-bold text-white sm:text-3xl">
+              <span className={cn("tabular-nums", accentTextClass)}>
+                {score.toFixed(1)}
+              </span>{" "}
+              in {module.label}
+            </p>
             {percentile != null ? (
-              <p className="max-w-md text-sm leading-relaxed text-[#94A3B8]">
-                {formatCycleInterpretation(score, module.label, cycle.label, percentile)}
+              <p className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-lg">
+                <span className={cn("font-semibold", accentTextClass)}>
+                  {formatApproximatePercentile(percentile)}
+                </span>
+                <span className="text-sm text-[#94A3B8]">
+                  {formatTopPercentLabel(percentile)}
+                </span>
               </p>
-            ) : null}
+            ) : (
+              <p className="mt-1 text-sm text-[#94A3B8]">
+                Percentile unavailable for this selection.
+              </p>
+            )}
           </div>
         </div>
 

@@ -10,7 +10,8 @@ export type EsatExplorerModuleId =
   | "math2"
   | "physics"
   | "chemistry"
-  | "biology";
+  | "biology"
+  | "overall";
 
 export type EsatTestCycleId = "2025-26" | "2024-25";
 
@@ -30,8 +31,11 @@ export type EsatTestCycle = {
   modules: readonly EsatExplorerModule[];
 };
 
+/** Sentinel table key for the averaged all-module distribution. */
+export const OVERALL_TABLE_KEY = "__overall__";
+
 const MODULE_DEFS: Record<
-  EsatExplorerModuleId,
+  Exclude<EsatExplorerModuleId, "overall">,
   Omit<EsatExplorerModule, "id" | "tableKey"> & { defaultTableKey: string }
 > = {
   math1: { label: "Mathematics 1", color: "maths", defaultTableKey: "esat_math1_cumulative" },
@@ -42,7 +46,7 @@ const MODULE_DEFS: Record<
 };
 
 function moduleForCycle(
-  id: EsatExplorerModuleId,
+  id: Exclude<EsatExplorerModuleId, "overall">,
   tableKey: string,
 ): EsatExplorerModule {
   const def = MODULE_DEFS[id];
@@ -56,9 +60,17 @@ export const ESAT_TEST_CYCLES: readonly EsatTestCycle[] = [
     label: "2025/26 test cycle",
     explanationOfResultsUrl:
       "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/02/11111430/ESAT_Explanation_of_Results-October2025_and_January2026.pdf",
-    modules: (Object.keys(MODULE_DEFS) as EsatExplorerModuleId[]).map((id) =>
-      moduleForCycle(id, MODULE_DEFS[id].defaultTableKey),
-    ),
+    modules: [
+      ...(Object.keys(MODULE_DEFS) as Exclude<EsatExplorerModuleId, "overall">[]).map(
+        (id) => moduleForCycle(id, MODULE_DEFS[id].defaultTableKey),
+      ),
+      {
+        id: "overall",
+        label: "Overall",
+        color: "maths",
+        tableKey: OVERALL_TABLE_KEY,
+      },
+    ],
   },
 ] as const;
 
@@ -106,6 +118,8 @@ export function parseModuleId(value: string | null | undefined): EsatExplorerMod
     physics: "physics",
     chemistry: "chemistry",
     biology: "biology",
+    overall: "overall",
+    allmodules: "overall",
   };
   return aliases[normalized] ?? null;
 }
@@ -143,6 +157,18 @@ export function moduleIdFromTableKey(tableKey: string | null | undefined): EsatE
     default:
       return null;
   }
+}
+
+export function getModuleTableKeys(cycleId: EsatTestCycleId): string[] {
+  const cycle = getTestCycle(cycleId);
+  if (!cycle) return [];
+  return cycle.modules
+    .filter((module) => module.id !== "overall")
+    .map((module) => module.tableKey);
+}
+
+export function isOverallModule(moduleId: EsatExplorerModuleId): boolean {
+  return moduleId === "overall";
 }
 
 export function buildExplorerHref(options?: {
