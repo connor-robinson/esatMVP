@@ -22,6 +22,8 @@ import {
   HISTORICAL_AVERAGE_NOTE,
   IMPERIAL_SCORE_DASHBOARD_HREF,
 } from "@/lib/seo/universityRequirements";
+import { Suspense } from "react";
+import { PercentileExplorer } from "@/components/esat/PercentileExplorer";
 
 const PATH = SEO_ROUTES.goodScore;
 
@@ -104,6 +106,10 @@ export default function GoodEsatScorePage() {
         path: PATH,
       })}
     >
+      <Suspense fallback={null}>
+        <PercentileExplorer />
+      </Suspense>
+
       <SeoSection heading="How to read the 1.0 to 9.0 scale">
         <ResponsiveTable
           columns={["Score", "Rough interpretation"]}

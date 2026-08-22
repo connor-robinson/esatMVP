@@ -13,6 +13,7 @@ import {
 } from "@/components/tools/scoreConverter/TmuaDualCurveChart";
 import { ScoreConverterFaq } from "@/components/tools/scoreConverter/ScoreConverterFaq";
 import { ScoreConverterQuestionBankPromo } from "@/components/tools/scoreConverter/ScoreConverterQuestionBankPromo";
+import { ExplorePercentileLink } from "@/components/esat/ExplorePercentileLink";
 import { fetchEsatTable, type EsatRow } from "@/lib/esat/percentiles";
 import {
   CONVERTER_EXAMS,
@@ -1545,6 +1546,10 @@ function OverallResult({
           xLabel="Scaled score"
         />
       )}
+
+      {chartRows.length > 1 && result.averageScaled != null && exam !== "TMUA" && (
+        <ExplorePercentileLink score={result.averageScaled} className="pt-1" />
+      )}
     </div>
   );
 }
@@ -1640,6 +1645,14 @@ function SectionResult({
           percentile={section.percentile}
           accentColor={CHART_ACCENT[section.color]}
           xLabel="Scaled score"
+        />
+      )}
+
+      {!chartLoading && chartRows.length > 1 && section.scaledScore != null && exam !== "TMUA" && (
+        <ExplorePercentileLink
+          score={section.scaledScore}
+          moduleLabel={section.moduleLabel ?? section.legacyLabel}
+          className="pt-1"
         />
       )}
 
