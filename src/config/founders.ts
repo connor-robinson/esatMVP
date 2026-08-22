@@ -6,27 +6,27 @@ export const FOUNDERS = {
     name: "Ewan Ellson",
     role: "Co-founder",
     credential:
-      "Medicine student at Trinity College, University of Cambridge",
+      "Medical student at Trinity College, University of Cambridge",
     homepageCredential:
       "Incoming Medicine student at Trinity College, Cambridge",
-    bio: "Ewan is the public face of ESAT Camp and helps shape how we explain difficult ideas clearly. His focus is making admissions preparation feel approachable, structured and genuinely useful.",
+    bio: "Hi! My name is Ewan and I am a medical student at the University of Cambridge. I have lots of experience with standardised tests from doing the UCAT and of course the ESAT, so I know exactly what would  help future med and bioscience applicants taking the exam. Outside of ESAT CAMP, I love playing the guitar and listening to live music. ",
     imageSrc: "/images/team/ewan-ellson.png",
     imageAlt: "Ewan Ellson playing guitar, co-founder of ESAT Camp",
-    imageScale: 1.8,
-    imagePosition: "left center",
+    imageScale: 1,
+    imagePosition: "38% 32%",
   },
   anson: {
     id: "anson-chan",
     name: "Anson Chan",
-    role: "Co-founder & Product Lead",
+    role: "Co-founder",
     credential: "MSci Physics student at Imperial College London",
     homepageCredential:
       "Incoming MSci Physics student at Imperial College London",
-    bio: "Anson leads the development of ESAT Camp’s question bank, preparation tools and data-driven resources, with a particular focus on mathematics and physics.",
+    bio: "Hi I'm Anson and I'm currently doing a Master's degree in Physics at Imperial College London. Having done the ESAT myself, I'm really passionate about building a tool for future Oxbridge applicants that I wish I had two years ago.",
     imageSrc: "/images/team/anson-chan.png",
     imageAlt: "Anson Chan playing saxophone, co-founder of ESAT Camp",
-    imageScale: 1.8,
-    imagePosition: "left center",
+    imageScale: 1,
+    imagePosition: "45% 35%",
   },
 } as const;
 

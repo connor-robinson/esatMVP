@@ -63,6 +63,7 @@ const ABOUT_SCHEMAS = [
 ];
 
 const CONTENT = "mx-auto max-w-[1400px] px-4 sm:px-5 lg:px-6";
+const FOUNDER_CARD_BG = "bg-[#161D2F]";
 
 function FounderCard({
   founder,
@@ -70,38 +71,32 @@ function FounderCard({
   founder: (typeof FOUNDERS)[keyof typeof FOUNDERS];
 }) {
   return (
-    <article id={founder.id} className="group">
-      <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:gap-8">
-        <div className="relative h-[100px] w-[100px] shrink-0 overflow-hidden rounded-2xl bg-[#161D2F] sm:h-[120px] sm:w-[120px]">
-          <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-[1.03]">
-            <div
-              className="relative h-full w-full origin-left"
-              style={{ transform: `scale(${founder.imageScale ?? 1})` }}
-            >
-              <Image
-                src={founder.imageSrc}
-                alt={founder.imageAlt}
-                fill
-                sizes="120px"
-                className="object-cover"
-                style={{ objectPosition: founder.imagePosition ?? "center" }}
-              />
-            </div>
-          </div>
+    <article
+      id={founder.id}
+      className={`group rounded-3xl ${FOUNDER_CARD_BG} p-6 sm:p-8`}
+    >
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-8">
+        <div className="relative mx-auto h-[100px] w-[100px] shrink-0 overflow-hidden rounded-2xl bg-[#0A0F1D] sm:mx-0 sm:h-[120px] sm:w-[120px]">
+          <Image
+            src={founder.imageSrc}
+            alt={founder.imageAlt}
+            fill
+            sizes="120px"
+            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            style={{ objectPosition: founder.imagePosition ?? "center" }}
+          />
         </div>
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 text-center sm:text-left">
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#3B82F6]">
             {founder.role}
           </p>
-          <h2 className="mt-2 font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
+          <h3 className="mt-2 font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
             {founder.name}
-          </h2>
+          </h3>
           <p className="mt-2 text-sm font-medium leading-relaxed text-[#CBD5E1] sm:text-base">
             {founder.credential}
           </p>
-          <p className="mt-4 max-w-3xl leading-relaxed text-[#94A3B8]">
-            {founder.bio}
-          </p>
+          <p className="mt-4 leading-relaxed text-[#94A3B8]">{founder.bio}</p>
         </div>
       </div>
     </article>
@@ -144,43 +139,52 @@ export default function AboutPage() {
       </header>
 
       <main className={`space-y-20 pb-20 sm:space-y-24 sm:pb-24 ${CONTENT}`}>
-        <section aria-labelledby="why-we-built">
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start lg:gap-16">
-            <h2
-              id="why-we-built"
-              className="font-display text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl"
-            >
-              Why we built ESAT Camp
-            </h2>
-            <p className="text-lg leading-relaxed text-[#94A3B8]">
-              The ESAT is a relatively new admissions test recently adopted by
-              leading universities, including Cambridge, Oxford and Imperial, for
-              several highly competitive courses. Because reliable ESAT guidance
-              and high-quality practice resources can be difficult to find, we
-              created ESAT Camp to bring realistic practice questions,
-              past-paper solutions and mental maths training together in one
-              platform.
-            </p>
-          </div>
-        </section>
-
-        <section aria-label="ESAT Camp founders">
-          <div className="mb-10">
+        <section aria-labelledby="meet-founders">
+          <div className="mb-8 sm:mb-10">
             <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
               The team
             </p>
-            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+            <h2
+              id="meet-founders"
+              className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl"
+            >
               Meet the founders
             </h2>
           </div>
-          <div className="flex flex-col gap-14 sm:gap-16">
+          <div className="flex flex-col gap-5 sm:gap-6">
             <FounderCard founder={FOUNDERS.ewan} />
             <FounderCard founder={FOUNDERS.anson} />
           </div>
         </section>
 
+        <section aria-labelledby="why-we-built">
+          <div
+            className={`rounded-3xl ${FOUNDER_CARD_BG} p-6 sm:p-8 lg:p-10`}
+          >
+            <div className="grid gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start lg:gap-16">
+              <h2
+                id="why-we-built"
+                className="font-display text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl"
+              >
+                Why we built ESAT Camp
+              </h2>
+              <p className="text-lg leading-relaxed text-[#94A3B8]">
+                The ESAT is a relatively new admissions test recently adopted by
+                leading universities, including Cambridge, Oxford and Imperial, for
+                several highly competitive courses. Because reliable ESAT guidance
+                and high-quality practice resources can be difficult to find, we
+                created ESAT Camp to bring realistic practice questions,
+                past-paper solutions and mental maths training together in one
+                platform.
+              </p>
+            </div>
+          </div>
+        </section>
+
         <section aria-labelledby="get-started">
-          <div className="lg:flex lg:items-end lg:justify-between lg:gap-12">
+          <div
+            className={`rounded-3xl ${FOUNDER_CARD_BG} p-6 sm:p-8 lg:flex lg:items-end lg:justify-between lg:gap-12 lg:p-10`}
+          >
             <div className="max-w-2xl">
               <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
                 Ready when you are
@@ -208,7 +212,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <p className="mt-12 max-w-4xl text-sm leading-relaxed text-[#64748B]">
+          <p className="mt-10 max-w-4xl text-sm leading-relaxed text-[#64748B]">
             ESAT Camp is an independent educational platform. It is not
             affiliated with or endorsed by Imperial College London, the
             University of Cambridge, UAT-UK or Pearson VUE.
