@@ -118,15 +118,12 @@ export default function AboutPage() {
           }}
         />
         <div className={`relative ${CONTENT}`}>
-          <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
-            About us
-          </p>
-          <div className="mt-5 flex items-center justify-between gap-6 sm:gap-10 lg:gap-14">
+          <div className="flex items-center justify-between gap-6 sm:gap-10 lg:gap-14">
             <h1 className="min-w-0 flex-1 max-w-4xl font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-7xl">
               Built by students who understand the process
             </h1>
             <BrandMarkImage
-              className="h-[5.5rem] w-auto shrink-0 sm:h-[8rem] lg:h-[10.5rem]"
+              className="h-[8rem] w-auto shrink-0 sm:h-[11rem] lg:h-[14rem]"
               alt="ESAT Camp"
             />
           </div>
