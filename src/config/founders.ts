@@ -21,8 +21,8 @@ export const FOUNDERS = {
     homepageCredential:
       "Incoming MSci Physics student at Imperial College London",
     bio: "Anson leads the development of ESAT Camp’s question bank, preparation tools and data-driven resources, with a particular focus on mathematics and physics.",
-    imageSrc: "/images/team/anson-chan.webp",
-    imageAlt: "Portrait of Anson Chan, co-founder and product lead at ESAT Camp",
+    imageSrc: "/images/team/anson-chan.png",
+    imageAlt: "Anson Chan playing saxophone, co-founder of ESAT Camp",
   },
 } as const;
 
