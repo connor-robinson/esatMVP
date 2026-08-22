@@ -2,6 +2,8 @@ import type { Confidence, ConverterExam, FormatType } from "@/lib/scoreConverter
 
 export type SourceKind = "official" | "foi";
 
+export type ConversionAssetExt = "csv" | "pdf";
+
 export type PublishedTableRow = {
   id: string;
   exam: ConverterExam;
@@ -15,10 +17,34 @@ export type PublishedTableRow = {
   sourceUrl: string | null;
   sourceLabel: string;
   csvFilename: string;
+  pdfFilename: string;
   rowCount: number;
   confidence: Confidence;
   formatType: FormatType;
 };
+
+function slugify(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+export function conversionAssetFilename(
+  exam: ConverterExam,
+  year: number,
+  paperName: string,
+  partName: string,
+  ext: ConversionAssetExt,
+): string {
+  const examSlug = exam.toLowerCase();
+  const paperSlug = slugify(paperName);
+  const partSlug = slugify(partName);
+  if (exam === "TMUA") {
+    return `${examSlug}-${year}-${partSlug || "score"}-conversion.${ext}`;
+  }
+  return `${examSlug}-${year}-${paperSlug}-${partSlug}-conversion.${ext}`;
+}
 
 export type PublishedTableDetail = PublishedTableRow & {
   rows: Array<{
@@ -79,8 +105,16 @@ export function rowsToCsv(
   return [header, ...lines].join("\n");
 }
 
-export function publicCsvPath(filename: string): string {
+export function publicConversionAssetPath(filename: string): string {
   return `/downloads/conversion-tables/${filename}`;
+}
+
+export function publicCsvPath(filename: string): string {
+  return publicConversionAssetPath(filename);
+}
+
+export function publicPdfPath(filename: string): string {
+  return publicConversionAssetPath(filename);
 }
 
 export function parsePublishedTableQueryId(id: string): {

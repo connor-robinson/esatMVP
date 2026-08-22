@@ -4,7 +4,10 @@ import { useEffect, useId, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { type PublishedTableRow } from "@/lib/scoreConverter/publishedTables.shared";
+import {
+  publicPdfPath,
+  type PublishedTableRow,
+} from "@/lib/scoreConverter/publishedTables.shared";
 import {
   CONVERTER_EXAMS,
   type ConverterExam,
@@ -307,13 +310,16 @@ function RowActions({
   return (
     <div className="flex flex-wrap gap-2.5">
       <ActionButton onClick={onView}>View table</ActionButton>
+      <ActionLink href={publicPdfPath(row.pdfFilename)} download>
+        Download PDF
+      </ActionLink>
       {row.sourceUrl ? (
         <ActionLink
           href={row.sourceUrl}
           target="_blank"
           rel="noopener noreferrer"
         >
-          Download PDF
+          Original source
         </ActionLink>
       ) : null}
     </div>

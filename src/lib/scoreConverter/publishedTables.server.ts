@@ -12,6 +12,7 @@ import {
 import type { ConversionRow } from "@/types/papers";
 import {
   classifySourceUrl,
+  conversionAssetFilename,
   type PublishedTableDetail,
   type PublishedTableRow,
 } from "@/lib/scoreConverter/publishedTables.shared";
@@ -19,17 +20,13 @@ import {
 export type { PublishedTableDetail, PublishedTableRow, SourceKind } from "@/lib/scoreConverter/publishedTables.shared";
 export {
   classifySourceUrl,
+  conversionAssetFilename,
   parsePublishedTableQueryId,
+  publicConversionAssetPath,
   publicCsvPath,
+  publicPdfPath,
   rowsToCsv,
 } from "@/lib/scoreConverter/publishedTables.shared";
-
-function slugify(value: string): string {
-  return value
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
 
 function subjectLabel(exam: ConverterExam, paperName: string, partName: string): string {
   const { legacyLabel } = labelForPart(exam, paperName, partName);
@@ -44,21 +41,6 @@ function subjectLabel(exam: ConverterExam, paperName: string, partName: string):
   if (/overall/i.test(partName)) return "Both papers";
   if (/paper\s*2/i.test(partName)) return "Mathematical Reasoning";
   return "Mathematical Thinking";
-}
-
-function csvFilenameFor(
-  exam: ConverterExam,
-  year: number,
-  paperName: string,
-  partName: string,
-): string {
-  const examSlug = exam.toLowerCase();
-  const paperSlug = slugify(paperName);
-  const partSlug = slugify(partName);
-  if (exam === "TMUA") {
-    return `${examSlug}-${year}-${partSlug || "score"}-conversion.csv`;
-  }
-  return `${examSlug}-${year}-${paperSlug}-${partSlug}-conversion.csv`;
 }
 
 type DbPaper = { id: number; exam_name: string; exam_year: number; paper_name: string };
@@ -173,7 +155,20 @@ function sectionsForYear(
   return options.map((opt) => {
     const source = classifySourceUrl(ctx.sourceByTableId.get(opt.tableId));
     const subjects = subjectLabel(exam, opt.paperName, opt.partName);
-    const csvFilename = csvFilenameFor(exam, year, opt.paperName, opt.partName);
+    const csvFilename = conversionAssetFilename(
+      exam,
+      year,
+      opt.paperName,
+      opt.partName,
+      "csv",
+    );
+    const pdfFilename = conversionAssetFilename(
+      exam,
+      year,
+      opt.paperName,
+      opt.partName,
+      "pdf",
+    );
     const rowCount =
       rowCountByKey.get(`${opt.tableId}::${opt.partName}`) ?? 0;
 
@@ -190,6 +185,7 @@ function sectionsForYear(
       sourceUrl: source.url,
       sourceLabel: source.label,
       csvFilename,
+      pdfFilename,
       rowCount,
       confidence: opt.confidence,
       formatType: opt.formatType,
