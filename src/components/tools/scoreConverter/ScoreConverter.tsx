@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, ArrowRight, Check, ChevronDown, Info, Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { cssVar } from "@/config/colors";
 import { Container } from "@/components/layout/Container";
 import { PercentileMiniChart } from "@/components/papers/mark/PercentileMiniChart";
 import {
@@ -35,7 +34,6 @@ import {
 import { APP_ROUTES, SOURCES } from "@/lib/seo/config";
 import { SEO_LINKS } from "@/lib/seo/links";
 import { trackEvent } from "@/lib/ga";
-import type { ConverterExampleResponse } from "@/lib/scoreConverter/converterExample.server";
 import {
   hasValidUrlPrefill,
   readSavedConverterState,
@@ -674,25 +672,6 @@ function applySavedFormState(
   if (saved.scaledInput) setters.setScaledInput(saved.scaledInput);
 }
 
-function applyExampleFormState(
-  example: ConverterExampleResponse,
-  setters: {
-    setSelectedGroup: (value: string) => void;
-    setCheckedKeys: (value: string[]) => void;
-    setRawByKey: (value: Record<string, number>) => void;
-    setTmuaPickMode: (value: TmuaPickMode | null) => void;
-  },
-) {
-  setters.setSelectedGroup(example.selectedGroup);
-  if (example.tmuaPickMode) setters.setTmuaPickMode(example.tmuaPickMode);
-  setters.setCheckedKeys(example.selections.map((selection) => selection.key));
-  setters.setRawByKey(
-    Object.fromEntries(
-      example.selections.map((selection) => [selection.key, selection.raw]),
-    ),
-  );
-}
-
 export function ScoreConverter({
   initialExam,
   intro,
@@ -736,17 +715,11 @@ export function ScoreConverter({
   const [chartLoading, setChartLoading] = useState(false);
   const [showQuestionBankPromo, setShowQuestionBankPromo] = useState(false);
   const [showInputHint, setShowInputHint] = useState(true);
-  const [isExampleActive, setIsExampleActive] = useState(false);
-  const [pendingExample, setPendingExample] =
-    useState<ConverterExampleResponse | null>(null);
   const [pendingRestore, setPendingRestore] = useState<SavedConverterState | null>(
     null,
   );
   const resultsRef = useRef<HTMLDivElement>(null);
   const applyingProgrammaticRef = useRef(false);
-  const exampleAutoRunRef = useRef(false);
-  const exampleViewTrackedRef = useRef(false);
-  const skipExampleRef = useRef(hasValidUrlPrefill());
 
   useEffect(() => {
     const handler = (event: Event) => {
@@ -757,9 +730,6 @@ export function ScoreConverter({
         partName: string;
       }>).detail;
       if (!detail?.exam) return;
-      skipExampleRef.current = true;
-      setPendingExample(null);
-      setIsExampleActive(false);
       setExam(detail.exam);
       setPendingApply(detail);
     };
@@ -774,9 +744,6 @@ export function ScoreConverter({
     const paperName = params.get("paperName");
     const partName = params.get("partName");
     if (!Number.isFinite(yearParam) || !paperName || !partName) return;
-    skipExampleRef.current = true;
-    setPendingExample(null);
-    setIsExampleActive(false);
     setPendingApply({
       exam: initialExam ?? exam,
       year: yearParam,
@@ -854,17 +821,8 @@ export function ScoreConverter({
     setShowQuestionBankPromo(false);
   }, []);
 
-  const dismissExample = useCallback(() => {
-    if (!isExampleActive) return;
-    setIsExampleActive(false);
-    trackEvent("converter_example_edited", {
-      exam,
-      year: year?.year,
-    });
-  }, [isExampleActive, exam, year?.year]);
-
   const persistUserState = useCallback(() => {
-    if (applyingProgrammaticRef.current || isExampleActive || !year) return;
+    if (applyingProgrammaticRef.current || !year) return;
     writeSavedConverterState({
       exam,
       year: year.year,
@@ -876,7 +834,6 @@ export function ScoreConverter({
       scaledInput: scaledInput || undefined,
     });
   }, [
-    isExampleActive,
     exam,
     year,
     selectedGroup,
@@ -887,51 +844,16 @@ export function ScoreConverter({
   ]);
 
   useEffect(() => {
-    if (applyingProgrammaticRef.current || isExampleActive || !year) return;
+    if (applyingProgrammaticRef.current || !year) return;
     if (!canCalculate) return;
     persistUserState();
-  }, [
-    isExampleActive,
-    year,
-    canCalculate,
-    persistUserState,
-  ]);
+  }, [year, canCalculate, persistUserState]);
 
   useEffect(() => {
-    if (skipExampleRef.current) return;
+    if (hasValidUrlPrefill()) return;
     const saved = readSavedConverterState();
     if (saved) setPendingRestore(saved);
   }, []);
-
-  useEffect(() => {
-    if (skipExampleRef.current || pendingRestore || pendingApply) return;
-    if (isExampleActive || hasCalculated || pendingExample) return;
-
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch(
-          `/api/score-converter/example?exam=${encodeURIComponent(exam)}`,
-        );
-        if (!res.ok || cancelled) return;
-        const data = (await res.json()) as ConverterExampleResponse;
-        if (!cancelled) setPendingExample(data);
-      } catch {
-        /* example is optional */
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [
-    exam,
-    pendingRestore,
-    pendingApply,
-    isExampleActive,
-    hasCalculated,
-    pendingExample,
-  ]);
 
   useEffect(() => {
     if (!pendingRestore || yearsLoading) return;
@@ -974,54 +896,6 @@ export function ScoreConverter({
     applyingProgrammaticRef.current = false;
     setPendingRestore(null);
   }, [pendingRestore, year, sections, sectionsLoading]);
-
-  useEffect(() => {
-    if (!pendingExample || pendingRestore || pendingApply || skipExampleRef.current) {
-      return;
-    }
-    if (pendingExample.exam !== exam) return;
-
-    const matchYear = years.find((y) => y.year === pendingExample.year);
-    if (!matchYear) {
-      setPendingExample(null);
-      return;
-    }
-    if (!year || year.year !== pendingExample.year) {
-      applyingProgrammaticRef.current = true;
-      setYear(matchYear);
-      applyingProgrammaticRef.current = false;
-      return;
-    }
-    if (sectionsLoading || sections.length === 0) return;
-
-    applyingProgrammaticRef.current = true;
-    applyExampleFormState(pendingExample, {
-      setSelectedGroup,
-      setCheckedKeys,
-      setRawByKey,
-      setTmuaPickMode,
-    });
-    applyingProgrammaticRef.current = false;
-    setPendingExample(null);
-    setIsExampleActive(true);
-    exampleAutoRunRef.current = true;
-    if (!exampleViewTrackedRef.current) {
-      exampleViewTrackedRef.current = true;
-      trackEvent("converter_example_viewed", {
-        exam: pendingExample.exam,
-        year: pendingExample.year,
-      });
-    }
-  }, [
-    pendingExample,
-    pendingRestore,
-    pendingApply,
-    exam,
-    years,
-    year,
-    sections,
-    sectionsLoading,
-  ]);
 
   useEffect(() => {
     setYearsLoading(true);
@@ -1106,7 +980,6 @@ export function ScoreConverter({
   }, [pendingApply, exam, years, year]);
 
   const handleGroupChange = (group: string) => {
-    dismissExample();
     invalidateResults();
     setSelectedGroup(group);
     setCheckedKeys((prev) =>
@@ -1115,7 +988,6 @@ export function ScoreConverter({
   };
 
   const selectTmuaMode = (mode: TmuaPickMode) => {
-    dismissExample();
     invalidateResults();
     setTmuaPickMode(mode);
     const { paper1, paper2, overall } = tmuaSections;
@@ -1168,7 +1040,6 @@ export function ScoreConverter({
   ]);
 
   const toggleSection = (opt: SectionOption) => {
-    dismissExample();
     invalidateResults();
     setCheckedKeys((prev) => {
       if (prev.includes(opt.key)) {
@@ -1181,7 +1052,6 @@ export function ScoreConverter({
   };
 
   const setRaw = (key: string, value: number) => {
-    dismissExample();
     invalidateResults();
     setRawByKey((prev) => ({ ...prev, [key]: value }));
   };
@@ -1190,7 +1060,7 @@ export function ScoreConverter({
     setShowInputHint(false);
   }, []);
 
-  const runConvert = async (options?: { fromExample?: boolean }) => {
+  const runConvert = async () => {
     if (!year || !canCalculate) return;
     setResultLoading(true);
     setResultError(null);
@@ -1225,28 +1095,18 @@ export function ScoreConverter({
       const data = (await res.json()) as ConvertResponse;
       setResult(data);
       const isMulti = data.sections.length > 1;
-      const hideOverall =
-        options?.fromExample && exam === "ENGAA" && isMulti;
       setActiveChartKey(
-        hideOverall
-          ? (data.sections[0]?.key ?? null)
-          : isMulti
-            ? OVERALL_CHART_KEY
-            : (data.sections[0]?.key ?? null),
+        isMulti ? OVERALL_CHART_KEY : (data.sections[0]?.key ?? null),
       );
-      setShowQuestionBankPromo(!options?.fromExample);
+      setShowQuestionBankPromo(true);
       trackEvent("converter_calculation_completed", {
         exam,
         year: year.year,
-        example: Boolean(options?.fromExample),
+        example: false,
       });
-      if (!options?.fromExample) {
-        persistUserState();
-      }
+      persistUserState();
       requestAnimationFrame(() => {
-        if (!options?.fromExample) {
-          resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
+        resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       });
     } catch (e: unknown) {
       setResult(null);
@@ -1256,14 +1116,6 @@ export function ScoreConverter({
       setResultLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (!exampleAutoRunRef.current || !canCalculate || hasCalculated || resultLoading) {
-      return;
-    }
-    exampleAutoRunRef.current = false;
-    void runConvert({ fromExample: true });
-  }, [canCalculate, hasCalculated, resultLoading, checkedSections, rawByKey, year]);
 
   const activeSection = useMemo(
     () => result?.sections.find((s) => s.key === activeChartKey) ?? result?.sections[0] ?? null,
@@ -1347,7 +1199,6 @@ export function ScoreConverter({
                 }))}
                 onChange={(next) => {
                   dismissInputHint();
-                  dismissExample();
                   const opt = years.find((y) => y.year === Number(next)) ?? null;
                   setYear(opt);
                   setScaledInput("");
@@ -1382,7 +1233,6 @@ export function ScoreConverter({
                       inputMode="decimal"
                       value={scaledInput}
                       onChange={(e) => {
-                        dismissExample();
                         invalidateResults();
                         setScaledInput(e.target.value.replace(/[^0-9.]/g, ""));
                       }}
@@ -1613,21 +1463,26 @@ export function ScoreConverter({
 
       <div
         ref={resultsRef}
-        className="mb-5 min-h-[240px] scroll-mt-24 rounded-organic-xl bg-surface-elevated p-5 shadow-modal-card sm:min-h-[280px] sm:p-6"
+        className="mb-5 min-h-[200px] scroll-mt-24 rounded-organic-xl bg-surface-elevated p-5 shadow-modal-card sm:min-h-[240px] sm:p-6"
       >
         {!hasCalculated && !resultLoading && !resultError && (
-          <ResultsPreviewPlaceholder exam={exam} year={year?.year} />
+          <p className="flex min-h-[160px] items-center justify-center px-4 text-center text-sm leading-relaxed text-text-muted">
+            Choose a year, enter your marks, then press Calculate to see your
+            converted score.
+          </p>
         )}
 
         {resultLoading && (
-          <ResultsPreviewPlaceholder exam={exam} year={year?.year} loading />
+          <div className="flex min-h-[160px] items-center justify-center gap-2 text-sm text-text-muted">
+            <Loader2 className="h-4 w-4 animate-spin text-secondary" />
+            Calculating…
+          </div>
         )}
 
         {resultError && hasCalculated && !resultLoading && (
-          <div className="space-y-4">
-            <ResultsPreviewPlaceholder exam={exam} year={year?.year} />
-            <p className="text-center text-sm text-error">{resultError}</p>
-          </div>
+          <p className="flex min-h-[160px] items-center justify-center px-4 text-center text-sm text-error">
+            {resultError}
+          </p>
         )}
 
         {result && !resultLoading && (
@@ -1640,7 +1495,6 @@ export function ScoreConverter({
             onSelectChart={setActiveChartKey}
             chartRows={chartRows}
             chartLoading={chartLoading}
-            suppressOverallAverage={isExampleActive && exam === "ENGAA"}
           />
         )}
       </div>
@@ -1748,7 +1602,6 @@ function ResultsPanel({
   onSelectChart,
   chartRows,
   chartLoading,
-  suppressOverallAverage = false,
 }: {
   result: ConvertResponse;
   exam: ConverterExam;
@@ -1758,11 +1611,9 @@ function ResultsPanel({
   onSelectChart: (key: string) => void;
   chartRows: EsatRow[];
   chartLoading: boolean;
-  suppressOverallAverage?: boolean;
 }) {
   const multi = result.sections.length > 1;
-  const showOverall =
-    multi && result.averageScaled != null && !suppressOverallAverage;
+  const showOverall = multi && result.averageScaled != null;
   const showingOverall = activeChartKey === OVERALL_CHART_KEY;
   const tmuaHasDual = result.sections.some((s) => s.tmuaDualCurve != null);
   const tmuaOverallEstimated = tmuaHasDual ? tmuaAverageEstimated(result.sections) : null;
@@ -2102,158 +1953,6 @@ function NoteRow({
         <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
       )}
       {children}
-    </div>
-  );
-}
-
-/** Mirrors the real results layout before Calculate - ??? scores + ghost chart. */
-function ResultsPreviewPlaceholder({
-  exam,
-  year,
-  loading = false,
-}: {
-  exam: ConverterExam;
-  year?: number;
-  loading?: boolean;
-}) {
-  const accent =
-    exam === "TMUA" ? COLOR_TEXT["tmua-accent"] : "text-text-subtle";
-
-  return (
-    <div className={cn("relative space-y-5", loading && "opacity-70")}>
-      {loading && (
-        <div className="absolute right-0 top-0 flex items-center gap-2 text-xs text-text-muted">
-          <Loader2 className="h-3.5 w-3.5 animate-spin text-secondary" />
-          Calculating…
-        </div>
-      )}
-
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-text-subtle">
-            {convertedScoreLabel(exam)}
-          </p>
-          <p
-            className={cn(
-              "mt-1 text-4xl font-bold tracking-widest tabular-nums sm:text-5xl",
-              accent,
-              loading ? "animate-pulse opacity-50" : "opacity-40",
-            )}
-          >
-            ???
-          </p>
-        </div>
-        <div className="text-right">
-          <p className="text-xs text-text-subtle">Percentile</p>
-          <p
-            className={cn(
-              "text-3xl font-bold tracking-wider tabular-nums sm:text-4xl",
-              loading ? "animate-pulse text-text-subtle/50" : "text-text-subtle/40",
-            )}
-          >
-            ??
-          </p>
-        </div>
-      </div>
-
-      <GhostPercentileChart />
-    </div>
-  );
-}
-
-/** Fuzzy stand-in for the distribution chart - same footprint, no real data. */
-function GhostPercentileChart() {
-  const w = 720;
-  const h = 220;
-  const pad = 32;
-  const minX = 1;
-  const maxX = 9;
-  const densities = [
-    { score: 1, d: 0.4 },
-    { score: 2, d: 1.2 },
-    { score: 3, d: 3.5 },
-    { score: 4, d: 6.8 },
-    { score: 5, d: 9.2 },
-    { score: 6, d: 8.5 },
-    { score: 7, d: 5.2 },
-    { score: 8, d: 2.1 },
-    { score: 9, d: 0.5 },
-  ];
-  const maxY = 10;
-
-  const toX = (x: number) =>
-    pad + ((x - minX) / (maxX - minX)) * (w - 2 * pad);
-  const toY = (y: number) => h - pad - (y / maxY) * (h - 2 * pad);
-
-  const linePoints = densities.map((p) => `${toX(p.score)},${toY(p.d)}`).join(" ");
-  const areaPoints = [
-    `${toX(minX)},${h - pad}`,
-    ...densities.map((p) => `${toX(p.score)},${toY(p.d)}`),
-    `${toX(maxX)},${h - pad}`,
-  ].join(" ");
-
-  const ghostScore = 5.5;
-  const ghostX = toX(ghostScore);
-  const ghostY = toY(6.2);
-
-  return (
-    <div className="relative" aria-hidden>
-      <svg
-        width="100%"
-        height={h}
-        viewBox={`0 0 ${w} ${h}`}
-        preserveAspectRatio="xMidYMid meet"
-        className="block blur-[2px] opacity-40 saturate-50"
-      >
-        <line x1={pad} y1={h - pad} x2={w - pad} y2={h - pad} stroke={cssVar.borderSubtle} />
-        <line x1={pad} y1={pad} x2={pad} y2={h - pad} stroke={cssVar.borderSubtle} />
-        <polygon
-          points={areaPoints}
-          fill="color-mix(in srgb, var(--color-maths) 12%, transparent)"
-        />
-        <polyline
-          points={linePoints}
-          fill="none"
-          stroke={cssVar.textSubtle}
-          strokeWidth="2"
-          strokeLinejoin="round"
-          strokeLinecap="round"
-        />
-        {[2, 4, 6, 8].map((t) => (
-          <text
-            key={t}
-            x={toX(t)}
-            y={h - pad + 14}
-            fill={cssVar.textMuted}
-            fontSize="9"
-            textAnchor="middle"
-            opacity={0.6}
-          >
-            {t}
-          </text>
-        ))}
-        <line
-          x1={ghostX}
-          y1={pad}
-          x2={ghostX}
-          y2={h - pad}
-          stroke="color-mix(in srgb, var(--color-maths) 25%, transparent)"
-          strokeDasharray="4 4"
-        />
-        <circle
-          cx={ghostX}
-          cy={ghostY}
-          r="4"
-          fill={cssVar.maths}
-          fillOpacity={0.35}
-          stroke={cssVar.background}
-          strokeWidth="2"
-        />
-        <text x={w / 2} y={h - 4} fill={cssVar.textMuted} fontSize="10" textAnchor="middle" opacity={0.5}>
-          Scaled score
-        </text>
-      </svg>
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-surface-elevated/30" />
     </div>
   );
 }
