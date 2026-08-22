@@ -23,9 +23,6 @@ function CompactFounder({
           sizes={primary ? "(min-width: 1024px) 24vw, 100vw" : "(min-width: 1024px) 18vw, 100vw"}
           className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
         />
-        <span className="absolute bottom-3 left-3 rounded-md bg-[#0A0F1D]/85 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-[#CBD5E1] backdrop-blur-sm">
-          Temporary portrait
-        </span>
       </div>
       <div className="flex flex-col justify-center p-6">
         <h3 className="font-display text-2xl font-bold tracking-tight text-white">
@@ -48,18 +45,14 @@ export function MeetFounders() {
       <div className="mx-auto max-w-[1400px]">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-end lg:gap-14">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
-              Built by students
-            </p>
-            <h2 className="mt-4 max-w-2xl font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
-              Created by people who recently faced the same process
+            <h2 className="max-w-2xl font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+              Meet our founders
             </h2>
           </div>
           <div>
             <p className="max-w-2xl text-lg leading-relaxed text-[#94A3B8]">
-              ESAT Camp was founded by incoming Cambridge and Imperial students
-              to make ESAT preparation clearer, more focused and easier to
-              navigate.
+              We created ESAT Camp to create the ESAT preparation platform that
+              we wish we had.
             </p>
             <Link
               href={ABOUT_PATH}

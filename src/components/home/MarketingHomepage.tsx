@@ -159,7 +159,7 @@ export function MarketingHomepage() {
                 </div>
                 <div className="min-w-0">
                   <p className="text-white font-bold text-lg sm:text-xl leading-snug">
-                    Made by experienced Oxbridge tutors
+                    Join our applicants this cycle
                   </p>
                   <p className="mt-1 text-white/75 text-sm leading-relaxed">
                     Join 5,000+ applicants this cycle
