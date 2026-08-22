@@ -182,9 +182,51 @@ const selectTriggerClass = cn(
 );
 
 const markInputClass = cn(
-  "h-9 w-12 rounded-organic-md bg-background text-center text-base font-semibold tabular-nums text-text disabled:opacity-35",
+  "h-9 w-12 rounded-organic-md text-center text-base font-semibold tabular-nums text-text disabled:opacity-35",
   controlBase,
 );
+
+/** Subject card surfaces: selected state reads lighter than the default card. */
+const SUBJECT_CARD_UNCHECKED =
+  "bg-surface-mid hover:bg-surface-subtle/80 dark:hover:bg-surface-neutral/80";
+const SUBJECT_CARD_CHECKED = "bg-surface-subtle dark:bg-surface-neutral";
+
+function subjectMarkInputClass(checked: boolean) {
+  return cn(
+    markInputClass,
+    checked
+      ? "bg-background dark:bg-white/10"
+      : "bg-surface-subtle dark:bg-surface-neutral",
+  );
+}
+
+const COLOR_FILL_MUTED: Record<ModuleColor, string> = {
+  maths: "border-2 border-maths/50 bg-surface-subtle dark:bg-surface-neutral",
+  physics: "border-2 border-physics/50 bg-surface-subtle dark:bg-surface-neutral",
+  chemistry: "border-2 border-chemistry/50 bg-surface-subtle dark:bg-surface-neutral",
+  biology: "border-2 border-biology/50 bg-surface-subtle dark:bg-surface-neutral",
+  advanced: "border-2 border-advanced/50 bg-surface-subtle dark:bg-surface-neutral",
+  "tmua-accent":
+    "border-2 border-tmua-accent/50 bg-surface-subtle dark:bg-surface-neutral",
+};
+
+const COLOR_FILL_CHECKED: Record<ModuleColor, string> = {
+  maths: "border-2 border-maths/70 bg-maths/15",
+  physics: "border-2 border-physics/70 bg-physics/15",
+  chemistry: "border-2 border-chemistry/70 bg-chemistry/15",
+  biology: "border-2 border-biology/70 bg-biology/15",
+  advanced: "border-2 border-advanced/70 bg-advanced/15",
+  "tmua-accent": "border-2 border-tmua-accent/70 bg-tmua-accent/15",
+};
+
+const COLOR_CARD_CHECKED_RING: Record<ModuleColor, string> = {
+  maths: "ring-1 ring-maths/20",
+  physics: "ring-1 ring-physics/20",
+  chemistry: "ring-1 ring-chemistry/20",
+  biology: "ring-1 ring-biology/20",
+  advanced: "ring-1 ring-advanced/20",
+  "tmua-accent": "ring-1 ring-tmua-accent/20",
+};
 
 const COLOR_TEXT: Record<ModuleColor, string> = {
   maths: "text-maths",
@@ -193,42 +235,6 @@ const COLOR_TEXT: Record<ModuleColor, string> = {
   biology: "text-biology",
   advanced: "text-advanced",
   "tmua-accent": "text-tmua-accent",
-};
-
-const COLOR_FILL_MUTED: Record<ModuleColor, string> = {
-  maths: "border-2 border-maths/60 bg-surface-subtle",
-  physics: "border-2 border-physics/60 bg-surface-subtle",
-  chemistry: "border-2 border-chemistry/60 bg-surface-subtle",
-  biology: "border-2 border-biology/60 bg-surface-subtle",
-  advanced: "border-2 border-advanced/60 bg-surface-subtle",
-  "tmua-accent": "border-2 border-tmua-accent/60 bg-surface-subtle",
-};
-
-const COLOR_FILL_CHECKED: Record<ModuleColor, string> = {
-  maths: "border-2 border-maths bg-maths",
-  physics: "border-2 border-physics bg-physics",
-  chemistry: "border-2 border-chemistry bg-chemistry",
-  biology: "border-2 border-biology bg-biology",
-  advanced: "border-2 border-advanced bg-advanced",
-  "tmua-accent": "border-2 border-tmua-accent bg-tmua-accent",
-};
-
-const COLOR_CARD_ACTIVE: Record<ModuleColor, string> = {
-  maths: "bg-maths/5",
-  physics: "bg-physics/5",
-  chemistry: "bg-chemistry/5",
-  biology: "bg-biology/5",
-  advanced: "bg-advanced/5",
-  "tmua-accent": "bg-tmua-accent/5",
-};
-
-const COLOR_RING_ACTIVE: Record<ModuleColor, string> = {
-  maths: "ring-maths/30",
-  physics: "ring-physics/30",
-  chemistry: "ring-chemistry/30",
-  biology: "ring-biology/30",
-  advanced: "ring-advanced/30",
-  "tmua-accent": "ring-tmua-accent/30",
 };
 
 const CHART_ACCENT: Record<ModuleColor, string> = {
@@ -271,13 +277,13 @@ function SubjectCheckbox({
         "flex h-[1.125rem] w-[1.125rem] shrink-0 items-center justify-center rounded-[5px] transition-all duration-fast",
         checked ? COLOR_FILL_CHECKED[color] : COLOR_FILL_MUTED[color],
         disabled && "cursor-not-allowed opacity-35",
-        !disabled && !checked && "cursor-pointer hover:bg-surface-mid",
-        !disabled && checked && "cursor-pointer hover:brightness-110",
+        !disabled && !checked && "cursor-pointer hover:bg-surface-subtle dark:hover:bg-surface-neutral",
+        !disabled && checked && "cursor-pointer hover:brightness-105",
         controlBase,
       )}
     >
       {checked && (
-        <Check className="h-3 w-3 text-background" strokeWidth={3} aria-hidden />
+        <Check className={cn("h-3 w-3", COLOR_TEXT[color])} strokeWidth={3} aria-hidden />
       )}
     </button>
   );
@@ -551,7 +557,7 @@ function TmuaMarkField({
             if (Number.isNaN(n)) onRawChange(0);
             else onRawChange(Math.max(0, Math.min(section.maxRaw, n)));
           }}
-          className={markInputClass}
+          className={subjectMarkInputClass(false)}
         />
         <span className="text-sm font-medium text-text-muted">/{section.maxRaw}</span>
       </div>
@@ -1537,6 +1543,7 @@ export function ScoreConverter({
                           key={s.key}
                           role="button"
                           tabIndex={disabled ? -1 : 0}
+                          aria-pressed={checked}
                           onClick={() => !disabled && toggleSection(s)}
                           onKeyDown={(e) => {
                             if (!disabled && (e.key === "Enter" || e.key === " ")) {
@@ -1546,7 +1553,9 @@ export function ScoreConverter({
                           }}
                           className={cn(
                             "rounded-organic-lg px-4 py-3 transition-all duration-fast outline-none",
-                            checked ? COLOR_CARD_ACTIVE[s.color] : "bg-surface-mid hover:bg-surface-subtle/60",
+                            checked
+                              ? cn(SUBJECT_CARD_CHECKED, COLOR_CARD_CHECKED_RING[s.color])
+                              : SUBJECT_CARD_UNCHECKED,
                             disabled && "opacity-35",
                             !disabled && "cursor-pointer",
                             controlBase,
@@ -1563,25 +1572,23 @@ export function ScoreConverter({
                               {displaySubject(s)}
                             </span>
                           </div>
-                          <div
-                            className="mt-2.5 flex items-baseline gap-1.5"
-                            onClick={(e) => e.stopPropagation()}
-                            onPointerDown={(e) => e.stopPropagation()}
-                          >
+                          <div className="mt-2.5 flex items-baseline gap-1.5">
                             <input
                               type="text"
                               inputMode="numeric"
                               disabled={!checked}
                               value={checked ? String(rawByKey[s.key] ?? 0) : ""}
                               placeholder="-"
-                              onClick={(e) => e.stopPropagation()}
+                              onClick={(e) => {
+                                if (checked) e.stopPropagation();
+                              }}
                               onFocus={(e) => e.stopPropagation()}
                               onChange={(e) => {
                                 const n = parseInt(e.target.value.replace(/\D/g, ""), 10);
                                 if (Number.isNaN(n)) setRaw(s.key, 0);
                                 else setRaw(s.key, Math.max(0, Math.min(s.maxRaw, n)));
                               }}
-                              className={markInputClass}
+                              className={subjectMarkInputClass(checked)}
                             />
                             <span className="text-sm font-medium text-text-muted">
                               /{s.maxRaw}
