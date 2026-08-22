@@ -528,6 +528,79 @@ function ConverterInfoButton({ exam }: { exam: ConverterExam }) {
   );
 }
 
+function RawMarkInput({
+  value,
+  maxRaw,
+  disabled,
+  placeholder = "-",
+  className,
+  onValueChange,
+}: {
+  value: number;
+  maxRaw: number;
+  disabled?: boolean;
+  placeholder?: string;
+  className?: string;
+  onValueChange: (value: number) => void;
+}) {
+  const [draft, setDraft] = useState(() => String(value));
+  const externalValueRef = useRef(value);
+
+  useEffect(() => {
+    if (externalValueRef.current !== value) {
+      externalValueRef.current = value;
+      setDraft(String(value));
+    }
+  }, [value]);
+
+  const commitDigits = useCallback(
+    (digits: string) => {
+      if (digits === "") {
+        onValueChange(0);
+        return;
+      }
+      const n = parseInt(digits, 10);
+      if (!Number.isNaN(n)) {
+        onValueChange(Math.max(0, Math.min(maxRaw, n)));
+      }
+    },
+    [maxRaw, onValueChange],
+  );
+
+  return (
+    <input
+      type="text"
+      inputMode="numeric"
+      disabled={disabled}
+      value={disabled ? "" : draft}
+      placeholder={placeholder}
+      onChange={(e) => {
+        e.stopPropagation();
+        const digits = e.target.value.replace(/\D/g, "");
+        setDraft(digits);
+        commitDigits(digits);
+      }}
+      onBlur={() => {
+        if (draft === "") {
+          setDraft("0");
+          onValueChange(0);
+          return;
+        }
+        const n = parseInt(draft, 10);
+        const clamped = Number.isNaN(n) ? 0 : Math.max(0, Math.min(maxRaw, n));
+        setDraft(String(clamped));
+        onValueChange(clamped);
+      }}
+      onClick={(e) => e.stopPropagation()}
+      onFocus={(e) => {
+        e.stopPropagation();
+        e.currentTarget.select();
+      }}
+      className={className}
+    />
+  );
+}
+
 function TmuaMarkField({
   section,
   raw,
@@ -542,15 +615,10 @@ function TmuaMarkField({
     <div className="rounded-organic-lg bg-surface-mid px-4 py-3">
       <p className={cn("text-sm font-semibold", c)}>{displaySubject(section)}</p>
       <div className="mt-2.5 flex items-baseline gap-1.5">
-        <input
-          type="text"
-          inputMode="numeric"
-          value={String(raw)}
-          onChange={(e) => {
-            const n = parseInt(e.target.value.replace(/\D/g, ""), 10);
-            if (Number.isNaN(n)) onRawChange(0);
-            else onRawChange(Math.max(0, Math.min(section.maxRaw, n)));
-          }}
+        <RawMarkInput
+          value={raw}
+          maxRaw={section.maxRaw}
+          onValueChange={onRawChange}
           className={subjectMarkInputClass(false)}
         />
         <span className="text-sm font-medium text-text-muted">/{section.maxRaw}</span>
@@ -1513,21 +1581,12 @@ export function ScoreConverter({
                             </span>
                           </div>
                           <div className="mt-2.5 flex items-baseline gap-1.5">
-                            <input
-                              type="text"
-                              inputMode="numeric"
+                            <RawMarkInput
+                              value={rawByKey[s.key] ?? 0}
+                              maxRaw={s.maxRaw}
                               disabled={!checked}
-                              value={checked ? String(rawByKey[s.key] ?? 0) : ""}
                               placeholder="-"
-                              onClick={(e) => {
-                                if (checked) e.stopPropagation();
-                              }}
-                              onFocus={(e) => e.stopPropagation()}
-                              onChange={(e) => {
-                                const n = parseInt(e.target.value.replace(/\D/g, ""), 10);
-                                if (Number.isNaN(n)) setRaw(s.key, 0);
-                                else setRaw(s.key, Math.max(0, Math.min(s.maxRaw, n)));
-                              }}
+                              onValueChange={(v) => setRaw(s.key, v)}
                               className={subjectMarkInputClass(checked)}
                             />
                             <span className="text-sm font-medium text-text-muted">
