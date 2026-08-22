@@ -1689,9 +1689,6 @@ function SubjectViewPills({
           >
             {overallPillLabel(exam)}
           </span>
-          <span className="mt-0.5 block text-[11px] font-medium text-text-muted">
-            {convertedScoreLabel(exam)}
-          </span>
           <span className="mt-0.5 block text-lg font-bold tabular-nums text-text">
             {result.averageScaled!.toFixed(1)}
             {tmuaOverallEstimated != null && (

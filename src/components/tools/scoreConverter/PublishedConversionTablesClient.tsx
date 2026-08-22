@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Check, HelpCircle } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { type PublishedTableRow } from "@/lib/scoreConverter/publishedTables.shared";
 import {
@@ -19,10 +19,128 @@ type Props = {
 const controlBase =
   "border-0 shadow-none outline-none focus:outline-none focus:ring-0 focus:border-0";
 
-const filterControlClass = cn(
-  "h-10 w-full rounded-organic-lg bg-surface-mid px-3 text-sm font-medium text-text",
+const fieldLabel =
+  "mb-2 block text-xs font-semibold uppercase tracking-[0.1em] text-text-muted";
+
+const selectTriggerClass = cn(
+  "flex h-10 w-full items-center justify-between gap-2 rounded-organic-lg px-3.5 text-sm font-medium transition-all duration-fast",
+  "bg-surface-mid text-text hover:bg-surface-subtle active:scale-[0.99]",
   controlBase,
 );
+
+const actionButtonClass = cn(
+  "inline-flex min-h-9 items-center justify-center rounded-organic-lg px-3.5 py-2 text-sm font-semibold transition-all duration-fast",
+  "bg-surface-mid text-text hover:bg-surface-subtle active:scale-[0.98]",
+  controlBase,
+);
+
+type FilterSelectOption = { value: string; label: string };
+
+function FilterSelect({
+  label,
+  value,
+  onChange,
+  options,
+  placeholder = "All",
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: FilterSelectOption[];
+  placeholder?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const listId = useId();
+
+  const selected = options.find((option) => option.value === value);
+  const displayLabel = selected?.label ?? placeholder;
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (rootRef.current && !rootRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
+  return (
+    <div ref={rootRef} className="relative">
+      <span className={fieldLabel}>{label}</span>
+      <button
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={listId}
+        onClick={() => setOpen((current) => !current)}
+        className={cn(selectTriggerClass, open && "bg-surface-subtle")}
+      >
+        <span className={cn("truncate", !selected && "text-text-muted")}>
+          {displayLabel}
+        </span>
+        <ChevronDown
+          className={cn(
+            "h-4 w-4 shrink-0 text-text-subtle transition-transform duration-fast",
+            open && "rotate-180",
+          )}
+          aria-hidden
+        />
+      </button>
+
+      {open && options.length > 0 ? (
+        <ul
+          id={listId}
+          role="listbox"
+          aria-label={label}
+          className="absolute left-0 top-full z-50 mt-2 w-full min-w-[9rem] overflow-hidden rounded-organic-lg bg-surface-subtle py-1.5 shadow-modal-card"
+        >
+          {options.map((option) => {
+            const isSelected = option.value === value;
+            return (
+              <li key={option.value} role="presentation">
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={isSelected}
+                  onClick={() => {
+                    onChange(option.value);
+                    setOpen(false);
+                  }}
+                  className={cn(
+                    "flex w-full items-center justify-between gap-2 px-3.5 py-2.5 text-left text-sm transition-colors duration-fast",
+                    isSelected
+                      ? "bg-surface-mid font-semibold text-text"
+                      : "text-text-muted hover:bg-surface-mid/80 hover:text-text",
+                    controlBase,
+                  )}
+                >
+                  <span className="truncate">{option.label}</span>
+                  {isSelected ? (
+                    <Check
+                      className="h-3.5 w-3.5 shrink-0 text-secondary"
+                      strokeWidth={2.5}
+                      aria-hidden
+                    />
+                  ) : null}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      ) : null}
+    </div>
+  );
+}
 
 function filterRows(
   rows: PublishedTableRow[],
@@ -59,15 +177,7 @@ function ActionButton({
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
-    <button
-      type="button"
-      className={cn(
-        "rounded-organic-md px-2.5 py-1.5 text-xs font-semibold transition-colors",
-        "bg-surface-mid text-text hover:bg-surface-subtle",
-        className,
-      )}
-      {...props}
-    >
+    <button type="button" className={cn(actionButtonClass, className)} {...props}>
       {children}
     </button>
   );
@@ -79,14 +189,7 @@ function ActionLink({
   ...props
 }: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   return (
-    <a
-      className={cn(
-        "inline-flex items-center rounded-organic-md px-2.5 py-1.5 text-xs font-semibold transition-colors",
-        "bg-surface-mid text-text hover:bg-surface-subtle",
-        className,
-      )}
-      {...props}
-    >
+    <a className={cn(actionButtonClass, className)} {...props}>
       {children}
     </a>
   );
@@ -152,7 +255,10 @@ function TableViewModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-organic-md px-2 py-1 text-sm font-semibold text-text-muted hover:text-text"
+            className={cn(
+              "rounded-organic-md px-2.5 py-1.5 text-sm font-semibold text-text-muted transition-colors hover:bg-surface-mid hover:text-text",
+              controlBase,
+            )}
           >
             Close
           </button>
@@ -190,28 +296,6 @@ function TableViewModal({
   );
 }
 
-function SourceTrustIcon({ row }: { row: PublishedTableRow }) {
-  const verified = row.sourceUrl != null && row.sourceKind != null;
-
-  return (
-    <span
-      title={row.sourceLabel}
-      className="inline-flex shrink-0 cursor-help align-middle"
-    >
-      {verified ? (
-        <Check
-          className="h-3.5 w-3.5 text-secondary"
-          strokeWidth={2.5}
-          aria-hidden
-        />
-      ) : (
-        <HelpCircle className="h-3.5 w-3.5 text-text-muted" aria-hidden />
-      )}
-      <span className="sr-only">{row.sourceLabel}</span>
-    </span>
-  );
-}
-
 function RowActions({
   row,
   onView,
@@ -220,7 +304,7 @@ function RowActions({
   onView: () => void;
 }) {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-2.5">
       <ActionButton onClick={onView}>View table</ActionButton>
       {row.sourceUrl ? (
         <ActionLink
@@ -267,6 +351,23 @@ export function PublishedConversionTablesClient({
     [rows, exam, year, section, subject, query],
   );
 
+  const examOptions: FilterSelectOption[] = [
+    { value: "all", label: "All" },
+    ...CONVERTER_EXAMS.map((item) => ({ value: item, label: item })),
+  ];
+  const yearOptions: FilterSelectOption[] = [
+    { value: "all", label: "All" },
+    ...years.map((item) => ({ value: item, label: item })),
+  ];
+  const sectionOptions: FilterSelectOption[] = [
+    { value: "all", label: "All" },
+    ...sections.map((item) => ({ value: item, label: item })),
+  ];
+  const subjectOptions: FilterSelectOption[] = [
+    { value: "all", label: "All" },
+    ...subjects.map((item) => ({ value: item, label: item })),
+  ];
+
   return (
     <section className="space-y-5" aria-labelledby="published-tables-heading">
       <div>
@@ -284,76 +385,38 @@ export function PublishedConversionTablesClient({
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        <label className="block text-xs font-semibold uppercase tracking-wide text-text-muted">
-          Exam
-          <select
-            className={cn(filterControlClass, "mt-1.5")}
-            value={exam}
-            onChange={(event) =>
-              setExam(event.target.value as ConverterExam | "all")
-            }
-          >
-            <option value="all">All</option>
-            {CONVERTER_EXAMS.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="block text-xs font-semibold uppercase tracking-wide text-text-muted">
-          Year
-          <select
-            className={cn(filterControlClass, "mt-1.5")}
-            value={year}
-            onChange={(event) => setYear(event.target.value)}
-          >
-            <option value="all">All</option>
-            {years.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="block text-xs font-semibold uppercase tracking-wide text-text-muted">
-          Section or paper
-          <select
-            className={cn(filterControlClass, "mt-1.5")}
-            value={section}
-            onChange={(event) => setSection(event.target.value)}
-          >
-            <option value="all">All</option>
-            {sections.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="block text-xs font-semibold uppercase tracking-wide text-text-muted">
-          Subject
-          <select
-            className={cn(filterControlClass, "mt-1.5")}
-            value={subject}
-            onChange={(event) => setSubject(event.target.value)}
-          >
-            <option value="all">All</option>
-            {subjects.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="block text-xs font-semibold uppercase tracking-wide text-text-muted sm:col-span-2 lg:col-span-1">
-          Search
+        <FilterSelect
+          label="Exam"
+          value={exam}
+          onChange={(value) => setExam(value as ConverterExam | "all")}
+          options={examOptions}
+        />
+        <FilterSelect
+          label="Year"
+          value={year}
+          onChange={setYear}
+          options={yearOptions}
+        />
+        <FilterSelect
+          label="Section or paper"
+          value={section}
+          onChange={setSection}
+          options={sectionOptions}
+        />
+        <FilterSelect
+          label="Subject"
+          value={subject}
+          onChange={setSubject}
+          options={subjectOptions}
+        />
+        <label className="block sm:col-span-2 lg:col-span-1">
+          <span className={fieldLabel}>Search</span>
           <input
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Filter rows…"
-            className={cn(filterControlClass, "mt-1.5")}
+            className={cn(selectTriggerClass, "placeholder:text-text-muted")}
           />
         </label>
       </div>
@@ -380,10 +443,7 @@ export function PublishedConversionTablesClient({
                   {row.exam}
                 </td>
                 <td className="border-t border-white/5 px-4 py-3 tabular-nums">
-                  <span className="inline-flex items-center gap-1.5">
-                    {row.year}
-                    <SourceTrustIcon row={row} />
-                  </span>
+                  {row.year}
                 </td>
                 <td className="border-t border-white/5 px-4 py-3">
                   {row.sectionPaper}
@@ -407,18 +467,13 @@ export function PublishedConversionTablesClient({
             data-table-id={row.id}
             className="rounded-organic-xl bg-surface-elevated p-4"
           >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-base font-bold text-text">
-                  <span className="inline-flex items-center gap-1.5">
-                    {row.exam} · {row.year}
-                    <SourceTrustIcon row={row} />
-                  </span>
-                </p>
-                <p className="mt-1 text-sm text-text-muted">
-                  {row.sectionPaper} · {row.subjects}
-                </p>
-              </div>
+            <div>
+              <p className="text-base font-bold text-text">
+                {row.exam} · {row.year}
+              </p>
+              <p className="mt-1 text-sm text-text-muted">
+                {row.sectionPaper} · {row.subjects}
+              </p>
             </div>
             <div className="mt-3">
               <RowActions row={row} onView={() => setViewRow(row)} />
