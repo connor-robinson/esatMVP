@@ -90,7 +90,8 @@ export function hasValidUrlPrefill(): boolean {
   if (typeof window === "undefined") return false;
   const params = new URLSearchParams(window.location.search);
   const yearParam = Number(params.get("year"));
-  const paperName = params.get("paperName");
-  const partName = params.get("partName");
-  return Number.isFinite(yearParam) && Boolean(paperName && partName);
+  if (!Number.isFinite(yearParam)) return false;
+  // Year alone is enough to treat the visit as a deliberate prefill and skip
+  // localStorage restore. Exam/section/part may be partial or invalid.
+  return true;
 }

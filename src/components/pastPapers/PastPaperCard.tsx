@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import type { EsatModule, PastPaperResource } from "@/content/pastPapers";
+import { PastPaperConverterLink } from "@/components/pastPapers/PastPaperConverterLink";
 
 function PaperLink({
   href,
@@ -67,14 +68,17 @@ export function PastPaperCard({
           </h4>
           <p className="mt-1 text-sm text-[#64748B]">{bestFor}</p>
         </div>
-        <div className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-1">
-          <PaperLink href={paper.questionPaperUrl}>Paper</PaperLink>
-          {paper.answerKeyUrl ? (
-            <PaperLink href={paper.answerKeyUrl}>Answers</PaperLink>
-          ) : null}
-          {paper.workedSolutionsUrl ? (
-            <PaperLink href={paper.workedSolutionsUrl}>Worked</PaperLink>
-          ) : null}
+        <div className="flex shrink-0 flex-col items-stretch gap-2 sm:items-end">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <PaperLink href={paper.questionPaperUrl}>Paper</PaperLink>
+            {paper.answerKeyUrl ? (
+              <PaperLink href={paper.answerKeyUrl}>Answers</PaperLink>
+            ) : null}
+            {paper.workedSolutionsUrl ? (
+              <PaperLink href={paper.workedSolutionsUrl}>Worked</PaperLink>
+            ) : null}
+          </div>
+          <PastPaperConverterLink paper={paper} className="max-w-md sm:ml-auto" />
         </div>
       </div>
 

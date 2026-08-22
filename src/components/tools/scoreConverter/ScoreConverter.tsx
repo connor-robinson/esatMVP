@@ -40,6 +40,7 @@ import {
   writeSavedConverterState,
   type SavedConverterState,
 } from "@/lib/scoreConverter/converterStorage";
+import { parseConverterSearchParams } from "@/lib/scoreConverter/pastPaperConverterLinks";
 import {
   ScoreConverterProvider,
   type ApplyTableSelection,
@@ -691,11 +692,12 @@ export function ScoreConverter({
 }) {
   const [exam, setExam] = useState<ConverterExam>(initialExam ?? "NSAA");
   const yearsCacheRef = useRef<Partial<Record<ConverterExam, YearOption[]>>>({});
+  const urlPrefillAppliedRef = useRef(false);
   const [pendingApply, setPendingApply] = useState<{
     exam: ConverterExam;
     year: number;
-    paperName: string;
-    partName: string;
+    paperName?: string;
+    partName?: string;
   } | null>(null);
 
   useEffect(() => {
@@ -798,18 +800,40 @@ export function ScoreConverter({
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
-    const yearParam = Number(params.get("year"));
-    const paperName = params.get("paperName");
-    const partName = params.get("partName");
-    if (!Number.isFinite(yearParam) || !paperName || !partName) return;
-    setPendingApply({
-      exam: initialExam ?? exam,
-      year: yearParam,
-      paperName,
-      partName,
-    });
-  }, [initialExam, exam]);
+    if (urlPrefillAppliedRef.current) return;
+
+    const prefill = parseConverterSearchParams(
+      new URLSearchParams(window.location.search),
+    );
+    if (
+      prefill.year == null &&
+      !prefill.exam &&
+      !prefill.paperName &&
+      !prefill.partName
+    ) {
+      return;
+    }
+
+    urlPrefillAppliedRef.current = true;
+
+    // Hub pages honour ?exam=; exam-specific routes keep the path exam.
+    const resolvedExam = pageTitle
+      ? (prefill.exam ?? initialExam ?? exam)
+      : (initialExam ?? prefill.exam ?? exam);
+
+    if (pageTitle && resolvedExam !== exam) {
+      setExam(resolvedExam);
+    }
+
+    if (prefill.year != null) {
+      setPendingApply({
+        exam: resolvedExam,
+        year: prefill.year,
+        paperName: prefill.paperName,
+        partName: prefill.partName,
+      });
+    }
+  }, [initialExam, exam, pageTitle]);
 
   const isScaledMode = year?.mode === "scaled";
 
@@ -1045,6 +1069,15 @@ export function ScoreConverter({
   }, [sectionGroups]);
 
   useEffect(() => {
+    if (!pendingApply || pendingApply.exam === exam) return;
+    if (pageTitle) {
+      setExam(pendingApply.exam);
+      return;
+    }
+    handleExamChange(pendingApply.exam);
+  }, [pendingApply, exam, pageTitle, handleExamChange]);
+
+  useEffect(() => {
     if (!pendingApply || pendingApply.exam !== exam) return;
     const matchYear = years.find((y) => y.year === pendingApply.year);
     if (matchYear && year?.year !== pendingApply.year) {
@@ -1083,23 +1116,54 @@ export function ScoreConverter({
     if (!pendingApply || !year || pendingApply.year !== year.year) return;
     if (sections.length === 0 || sectionsLoading) return;
 
-    const match = sections.find(
-      (s) =>
-        s.paperName === pendingApply.paperName &&
-        s.partName === pendingApply.partName,
-    );
-    if (!match) return;
+    // Year-only prefill: leave section choice to the user.
+    if (!pendingApply.paperName && !pendingApply.partName) {
+      setPendingApply(null);
+      return;
+    }
 
-    if (isTmuaRaw) {
-      if (isTmuaOverallPart(match.partName)) {
+    if (pendingApply.paperName && pendingApply.partName) {
+      const match = sections.find(
+        (s) =>
+          s.paperName === pendingApply.paperName &&
+          s.partName === pendingApply.partName,
+      );
+      if (!match) {
+        // Invalid section/part: keep the year, ignore the bad identifiers.
+        setPendingApply(null);
+        return;
+      }
+
+      if (isTmuaRaw) {
+        if (isTmuaOverallPart(match.partName)) {
+          selectTmuaMode("overall");
+        } else {
+          selectTmuaMode("split");
+        }
+      } else if (isNsaaEngaa) {
+        setSelectedGroup(match.group);
+        setCheckedKeys([match.key]);
+        setRawByKey((prev) => ({ ...prev, [match.key]: prev[match.key] ?? 0 }));
+      }
+
+      setPendingApply(null);
+      return;
+    }
+
+    // Section/group only (no specific part): open the right group or TMUA mode.
+    if (pendingApply.paperName && isNsaaEngaa) {
+      const groupMatch = sections.find(
+        (s) =>
+          s.group === pendingApply.paperName ||
+          s.paperName === pendingApply.paperName,
+      );
+      if (groupMatch) setSelectedGroup(groupMatch.group);
+    } else if (pendingApply.paperName && isTmuaRaw) {
+      if (isTmuaOverallPart(pendingApply.paperName)) {
         selectTmuaMode("overall");
-      } else {
+      } else if (tmuaSections.paper1 && tmuaSections.paper2) {
         selectTmuaMode("split");
       }
-    } else if (isNsaaEngaa) {
-      setSelectedGroup(match.group);
-      setCheckedKeys([match.key]);
-      setRawByKey((prev) => ({ ...prev, [match.key]: prev[match.key] ?? 0 }));
     }
 
     setPendingApply(null);
@@ -1110,6 +1174,8 @@ export function ScoreConverter({
     sectionsLoading,
     isTmuaRaw,
     isNsaaEngaa,
+    tmuaSections.paper1,
+    tmuaSections.paper2,
   ]);
 
   const toggleSection = (opt: SectionOption) => {

@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import type { PastPaperResource } from "@/content/pastPapers";
 import { RelevanceBadge } from "./RelevanceBadge";
+import { PastPaperConverterLink } from "@/components/pastPapers/PastPaperConverterLink";
 
 function Pdf({ href, label }: { href: string | null; label: string }) {
   if (!href) {
@@ -80,7 +81,10 @@ export function PastPaperTable({
                     <Pdf href={paper.questionPaperUrl} label="Open" />
                   </td>
                   <td className="px-4 py-3.5 align-top">
-                    <Pdf href={paper.answerKeyUrl} label="Open" />
+                    <div className="space-y-2">
+                      <Pdf href={paper.answerKeyUrl} label="Open" />
+                      <PastPaperConverterLink paper={paper} compact />
+                    </div>
                   </td>
                   <td className="px-4 py-3.5 align-top">
                     <Pdf href={paper.workedSolutionsUrl} label="Open" />
