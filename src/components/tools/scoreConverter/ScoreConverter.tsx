@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, ArrowRight, Check, ChevronDown, Info, Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { cssVar } from "@/config/colors";
 import { Container } from "@/components/layout/Container";
 import { PercentileMiniChart } from "@/components/papers/mark/PercentileMiniChart";
 import {
@@ -1463,13 +1464,10 @@ export function ScoreConverter({
 
       <div
         ref={resultsRef}
-        className="mb-5 min-h-[200px] scroll-mt-24 rounded-organic-xl bg-surface-elevated p-5 shadow-modal-card sm:min-h-[240px] sm:p-6"
+        className="mb-5 min-h-[240px] scroll-mt-24 rounded-organic-xl bg-surface-elevated p-5 shadow-modal-card sm:min-h-[280px] sm:p-6"
       >
         {!hasCalculated && !resultLoading && !resultError && (
-          <p className="flex min-h-[160px] items-center justify-center px-4 text-center text-sm leading-relaxed text-text-muted">
-            Choose a year, enter your marks, then press Calculate to see your
-            converted score.
-          </p>
+          <ResultsPreviewPlaceholder exam={exam} />
         )}
 
         {resultLoading && (
@@ -1953,6 +1951,266 @@ function NoteRow({
         <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
       )}
       {children}
+    </div>
+  );
+}
+
+/** Decorative blurred stand-in before the user calculates. */
+function ResultsPreviewPlaceholder({ exam }: { exam: ConverterExam }) {
+  const accent =
+    exam === "TMUA" ? COLOR_TEXT["tmua-accent"] : "text-text-subtle";
+
+  return (
+    <div className="relative space-y-5" aria-hidden>
+      <div className="flex flex-wrap items-end justify-between gap-4 blur-[2px] opacity-50 saturate-50">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wide text-text-subtle">
+            {convertedScoreLabel(exam)}
+          </p>
+          <p
+            className={cn(
+              "mt-1 text-4xl font-bold tabular-nums sm:text-5xl",
+              accent,
+            )}
+          >
+            4.8
+          </p>
+        </div>
+        <div className="text-right">
+          <p className="text-xs text-text-subtle">Percentile</p>
+          <p className="text-3xl font-bold tabular-nums text-text-subtle sm:text-4xl">
+            62.4
+          </p>
+        </div>
+      </div>
+
+      <GhostPercentileChart />
+    </div>
+  );
+}
+
+function GhostPercentileChart() {
+  const w = 720;
+  const h = 220;
+  const pad = 32;
+  const minX = 1;
+  const maxX = 9;
+  const densities = [
+    { score: 1, d: 0.4 },
+    { score: 2, d: 1.2 },
+    { score: 3, d: 3.5 },
+    { score: 4, d: 6.8 },
+    { score: 5, d: 9.2 },
+    { score: 6, d: 8.5 },
+    { score: 7, d: 5.2 },
+    { score: 8, d: 2.1 },
+    { score: 9, d: 0.5 },
+  ];
+  const maxY = 10;
+
+  const toX = (x: number) =>
+    pad + ((x - minX) / (maxX - minX)) * (w - 2 * pad);
+  const toY = (y: number) => h - pad - (y / maxY) * (h - 2 * pad);
+
+  const linePoints = densities.map((p) => `${toX(p.score)},${toY(p.d)}`).join(" ");
+  const areaPoints = [
+    `${toX(minX)},${h - pad}`,
+    ...densities.map((p) => `${toX(p.score)},${toY(p.d)}`),
+    `${toX(maxX)},${h - pad}`,
+  ].join(" ");
+
+  const ghostScore = 4.8;
+  const ghostX = toX(ghostScore);
+  const ghostY = toY(6.2);
+
+  return (
+    <div className="relative blur-[2px] opacity-50 saturate-50" aria-hidden>
+      <svg
+        width="100%"
+        height={h}
+        viewBox={`0 0 ${w} ${h}`}
+        preserveAspectRatio="xMidYMid meet"
+        className="block"
+      >
+        <line x1={pad} y1={h - pad} x2={w - pad} y2={h - pad} stroke={cssVar.borderSubtle} />
+        <line x1={pad} y1={pad} x2={pad} y2={h - pad} stroke={cssVar.borderSubtle} />
+        <polygon
+          points={areaPoints}
+          fill="color-mix(in srgb, var(--color-maths) 12%, transparent)"
+        />
+        <polyline
+          points={linePoints}
+          fill="none"
+          stroke={cssVar.textSubtle}
+          strokeWidth="2"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+        />
+        {[2, 4, 6, 8].map((t) => (
+          <text
+            key={t}
+            x={toX(t)}
+            y={h - pad + 14}
+            fill={cssVar.textMuted}
+            fontSize="9"
+            textAnchor="middle"
+            opacity={0.6}
+          >
+            {t}
+          </text>
+        ))}
+        <line
+          x1={ghostX}
+          y1={pad}
+          x2={ghostX}
+          y2={h - pad}
+          stroke="color-mix(in srgb, var(--color-maths) 25%, transparent)"
+          strokeDasharray="4 4"
+        />
+        <circle
+          cx={ghostX}
+          cy={ghostY}
+          r="4"
+          fill={cssVar.maths}
+          fillOpacity={0.35}
+          stroke={cssVar.background}
+          strokeWidth="2"
+        />
+        <text x={w / 2} y={h - 4} fill={cssVar.textMuted} fontSize="10" textAnchor="middle" opacity={0.5}>
+          Scaled score
+        </text>
+      </svg>
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-surface-elevated/30" />
+    </div>
+  );
+}
+
+/** Decorative blurred stand-in before the user calculates. */
+function ResultsPreviewPlaceholder({ exam }: { exam: ConverterExam }) {
+  const accent =
+    exam === "TMUA" ? COLOR_TEXT["tmua-accent"] : "text-text-subtle";
+
+  return (
+    <div className="relative space-y-5" aria-hidden>
+      <div className="flex flex-wrap items-end justify-between gap-4 blur-[2px] opacity-50 saturate-50">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wide text-text-subtle">
+            {convertedScoreLabel(exam)}
+          </p>
+          <p
+            className={cn(
+              "mt-1 text-4xl font-bold tabular-nums sm:text-5xl",
+              accent,
+            )}
+          >
+            4.8
+          </p>
+        </div>
+        <div className="text-right">
+          <p className="text-xs text-text-subtle">Percentile</p>
+          <p className="text-3xl font-bold tabular-nums text-text-subtle sm:text-4xl">
+            62.4
+          </p>
+        </div>
+      </div>
+
+      <GhostPercentileChart />
+    </div>
+  );
+}
+
+function GhostPercentileChart() {
+  const w = 720;
+  const h = 220;
+  const pad = 32;
+  const minX = 1;
+  const maxX = 9;
+  const densities = [
+    { score: 1, d: 0.4 },
+    { score: 2, d: 1.2 },
+    { score: 3, d: 3.5 },
+    { score: 4, d: 6.8 },
+    { score: 5, d: 9.2 },
+    { score: 6, d: 8.5 },
+    { score: 7, d: 5.2 },
+    { score: 8, d: 2.1 },
+    { score: 9, d: 0.5 },
+  ];
+  const maxY = 10;
+
+  const toX = (x: number) =>
+    pad + ((x - minX) / (maxX - minX)) * (w - 2 * pad);
+  const toY = (y: number) => h - pad - (y / maxY) * (h - 2 * pad);
+
+  const linePoints = densities.map((p) => `${toX(p.score)},${toY(p.d)}`).join(" ");
+  const areaPoints = [
+    `${toX(minX)},${h - pad}`,
+    ...densities.map((p) => `${toX(p.score)},${toY(p.d)}`),
+    `${toX(maxX)},${h - pad}`,
+  ].join(" ");
+
+  const ghostScore = 4.8;
+  const ghostX = toX(ghostScore);
+  const ghostY = toY(6.2);
+
+  return (
+    <div className="relative blur-[2px] opacity-50 saturate-50" aria-hidden>
+      <svg
+        width="100%"
+        height={h}
+        viewBox={`0 0 ${w} ${h}`}
+        preserveAspectRatio="xMidYMid meet"
+        className="block"
+      >
+        <line x1={pad} y1={h - pad} x2={w - pad} y2={h - pad} stroke={cssVar.borderSubtle} />
+        <line x1={pad} y1={pad} x2={pad} y2={h - pad} stroke={cssVar.borderSubtle} />
+        <polygon
+          points={areaPoints}
+          fill="color-mix(in srgb, var(--color-maths) 12%, transparent)"
+        />
+        <polyline
+          points={linePoints}
+          fill="none"
+          stroke={cssVar.textSubtle}
+          strokeWidth="2"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+        />
+        {[2, 4, 6, 8].map((t) => (
+          <text
+            key={t}
+            x={toX(t)}
+            y={h - pad + 14}
+            fill={cssVar.textMuted}
+            fontSize="9"
+            textAnchor="middle"
+            opacity={0.6}
+          >
+            {t}
+          </text>
+        ))}
+        <line
+          x1={ghostX}
+          y1={pad}
+          x2={ghostX}
+          y2={h - pad}
+          stroke="color-mix(in srgb, var(--color-maths) 25%, transparent)"
+          strokeDasharray="4 4"
+        />
+        <circle
+          cx={ghostX}
+          cy={ghostY}
+          r="4"
+          fill={cssVar.maths}
+          fillOpacity={0.35}
+          stroke={cssVar.background}
+          strokeWidth="2"
+        />
+        <text x={w / 2} y={h - 4} fill={cssVar.textMuted} fontSize="10" textAnchor="middle" opacity={0.5}>
+          Scaled score
+        </text>
+      </svg>
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-surface-elevated/30" />
     </div>
   );
 }
