@@ -76,12 +76,12 @@ function FounderCard({
       className={`group rounded-3xl ${FOUNDER_CARD_BG} p-6 sm:p-8`}
     >
       <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-8">
-        <div className="relative mx-auto h-[100px] w-[100px] shrink-0 overflow-hidden rounded-2xl bg-[#0A0F1D] sm:mx-0 sm:h-[120px] sm:w-[120px]">
+        <div className="relative mx-auto h-[120px] w-[120px] shrink-0 overflow-hidden rounded-2xl bg-[#0A0F1D] sm:mx-0 sm:h-[144px] sm:w-[144px]">
           <Image
             src={founder.imageSrc}
             alt={founder.imageAlt}
             fill
-            sizes="120px"
+            sizes="144px"
             className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
             style={{ objectPosition: founder.imagePosition ?? "center" }}
           />
