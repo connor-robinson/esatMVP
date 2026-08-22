@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
+import { noIndexFollowMetadata } from "@/lib/seo/noIndex";
+
 /**
- * Past Papers routes use signature blue (`maths`) as the accent instead of mental-maths green.
+ * Past Papers app shell. Public SEO lives on `/esat-past-papers` and
+ * `/esat-past-papers-guide`. Routes use signature blue (`maths`) as the accent
+ * instead of mental-maths green.
  */
+export const metadata: Metadata = noIndexFollowMetadata;
+
 export default function PastPapersLayout({
   children,
 }: {

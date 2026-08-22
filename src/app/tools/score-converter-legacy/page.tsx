@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     path: PATH,
   }),
-  robots: { index: false, follow: false },
+  robots: { index: false, follow: true },
 };
 
 export default function ScoreConverterLegacyPage() {

@@ -1,29 +1,20 @@
 import type { MetadataRoute } from "next";
 import { SITE_HOST, SITE_URL } from "@/lib/seo/config";
 
+/**
+ * robots.txt is not the primary de-index control.
+ *
+ * Private HTML routes emit `noindex, follow` metadata so Google can crawl them,
+ * see the directive, and drop them from the index. Blocking those paths here
+ * would prevent that recrawl. Only block machine endpoints that are not pages.
+ */
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       {
         userAgent: "*",
         allow: "/",
-        disallow: [
-          "/api/",
-          "/auth/",
-          "/admin/",
-          "/dev/",
-          "/login",
-          "/signup",
-          "/onboarding",
-          "/profile",
-          "/settings",
-          "/pricing/success",
-          // Live test and session routes hold per-attempt state, not content.
-          "/exam-tools/calibration/math-1/test",
-          "/exam-tools/calibration/math-1/results",
-          "/past-papers/solve/session",
-          "/mental-maths/drill/session",
-        ],
+        disallow: ["/api/"],
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,

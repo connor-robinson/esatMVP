@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Payment successful | ESATCAMP",
-  robots: { index: false, follow: false },
+  robots: { index: false, follow: true },
 };
 
 export default function PricingSuccessLayout({

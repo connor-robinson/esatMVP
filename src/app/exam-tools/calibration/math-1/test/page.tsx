@@ -3,7 +3,7 @@ import { CalibrationTest } from "@/components/calibration/CalibrationTest";
 
 export const metadata: Metadata = {
   title: "Math 1 Calibration Test",
-  robots: { index: false },
+  robots: { index: false, follow: true },
 };
 
 export default function CalibrationTestPage() {

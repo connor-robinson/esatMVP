@@ -20,6 +20,7 @@ export const metadata: Metadata = {
   title: HOME_TITLE,
   description: HOME_DESCRIPTION,
   alternates: { canonical: buildCanonicalUrl("/") },
+  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     siteName: BRAND_CONFIG.displayName,
