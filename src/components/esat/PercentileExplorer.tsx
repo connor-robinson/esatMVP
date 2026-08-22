@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { ChevronDown, Loader2 } from "lucide-react";
+import { ChevronDown, Loader2, Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PercentileMiniChart } from "@/components/papers/mark/PercentileMiniChart";
 import {
@@ -64,6 +64,29 @@ const MODULE_TEXT: Record<ModuleColor, string> = {
   advanced: "text-advanced",
   "tmua-accent": "text-tmua-accent",
 };
+
+const stepperBtnClass = cn(
+  "flex h-11 w-11 shrink-0 items-center justify-center text-[#94A3B8] transition-colors",
+  "hover:bg-white/[0.08] hover:text-white active:scale-[0.98]",
+  "disabled:pointer-events-none disabled:opacity-30",
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white/20",
+  controlBase,
+);
+
+function sanitizeScoreDraft(raw: string): string {
+  const cleaned = raw.replace(/[^\d.]/g, "");
+  const dotIndex = cleaned.indexOf(".");
+  if (dotIndex === -1) return cleaned.slice(0, 2);
+  const whole = cleaned.slice(0, dotIndex).slice(0, 1);
+  const fraction = cleaned.slice(dotIndex + 1, dotIndex + 2);
+  return fraction.length > 0 || cleaned.endsWith(".") ? `${whole}.${fraction}` : whole;
+}
+
+function commitScoreDraft(draft: string): number {
+  const parsed = Number.parseFloat(draft);
+  if (!Number.isFinite(parsed)) return SCORE_MIN;
+  return roundScore(Math.max(SCORE_MIN, Math.min(SCORE_MAX, parsed)));
+}
 
 function useInitialState() {
   const searchParams = useSearchParams();
@@ -152,13 +175,25 @@ export function PercentileExplorer() {
   );
 
   const handleScoreInputCommit = useCallback(() => {
-    const parsed = Number.parseFloat(scoreInput);
-    if (!Number.isFinite(parsed)) {
+    if (!scoreInput || scoreInput === ".") {
       setScoreInput(score.toFixed(1));
       return;
     }
-    handleScoreChange(parsed);
+    const next = commitScoreDraft(scoreInput);
+    handleScoreChange(next);
+    setScoreInput(next.toFixed(1));
   }, [handleScoreChange, score, scoreInput]);
+
+  const bumpScore = useCallback(
+    (delta: number) => {
+      const next = roundScore(
+        Math.max(SCORE_MIN, Math.min(SCORE_MAX, score + delta)),
+      );
+      handleScoreChange(next);
+      setScoreInput(next.toFixed(1));
+    },
+    [handleScoreChange, score],
+  );
 
   if (!ready || !cycle || !module) return null;
 
@@ -168,7 +203,7 @@ export function PercentileExplorer() {
   return (
     <section id="percentile-explorer" className="scroll-mt-24">
       <div className="rounded-3xl bg-[#161D2F] p-5 sm:p-6 lg:p-7">
-        <div className="grid gap-4 border-b border-white/[0.06] pb-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 border-b border-white/[0.06] pb-6 sm:grid-cols-2 lg:grid-cols-3">
           <div>
             <label htmlFor="percentile-cycle" className={fieldLabel}>
               Test cycle
@@ -221,49 +256,60 @@ export function PercentileExplorer() {
             </div>
           </div>
 
-          <div className="sm:col-span-2">
-            <label htmlFor="percentile-score-slider" className={fieldLabel}>
+          <div>
+            <label htmlFor="percentile-score-input" className={fieldLabel}>
               ESAT score
             </label>
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div
+              className="flex h-11 w-full items-stretch overflow-hidden rounded-2xl bg-white/[0.06]"
+              role="group"
+              aria-label="ESAT score"
+            >
+              <button
+                type="button"
+                onClick={() => bumpScore(-SCORE_STEP)}
+                disabled={score <= SCORE_MIN}
+                className={stepperBtnClass}
+                aria-label="Decrease ESAT score by 0.1"
+              >
+                <Minus className="h-4 w-4" strokeWidth={2.5} aria-hidden />
+              </button>
               <input
-                id="percentile-score-slider"
-                type="range"
-                min={SCORE_MIN}
-                max={SCORE_MAX}
-                step={SCORE_STEP}
-                value={score}
-                onChange={(event) => handleScoreChange(Number(event.target.value))}
-                aria-valuemin={SCORE_MIN}
-                aria-valuemax={SCORE_MAX}
-                aria-valuenow={score}
-                aria-label="ESAT score slider"
-                className="h-3 w-full cursor-pointer"
-                style={{ accentColor }}
+                id="percentile-score-input"
+                type="text"
+                inputMode="decimal"
+                autoComplete="off"
+                value={scoreInput}
+                onChange={(event) =>
+                  setScoreInput(sanitizeScoreDraft(event.target.value))
+                }
+                onBlur={handleScoreInputCommit}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") handleScoreInputCommit();
+                  if (event.key === "ArrowUp") {
+                    event.preventDefault();
+                    bumpScore(SCORE_STEP);
+                  }
+                  if (event.key === "ArrowDown") {
+                    event.preventDefault();
+                    bumpScore(-SCORE_STEP);
+                  }
+                }}
+                aria-label="ESAT score"
+                className={cn(
+                  "min-w-0 flex-1 bg-transparent text-center text-base font-semibold tabular-nums text-white",
+                  controlBase,
+                )}
               />
-              <div className="flex items-center gap-2 sm:w-28 sm:shrink-0">
-                <label htmlFor="percentile-score-input" className="sr-only">
-                  ESAT score numeric input
-                </label>
-                <input
-                  id="percentile-score-input"
-                  type="number"
-                  min={SCORE_MIN}
-                  max={SCORE_MAX}
-                  step={SCORE_STEP}
-                  value={scoreInput}
-                  onChange={(event) => setScoreInput(event.target.value)}
-                  onBlur={handleScoreInputCommit}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter") handleScoreInputCommit();
-                  }}
-                  aria-label="ESAT score numeric input"
-                  className={cn(
-                    "h-11 w-full rounded-2xl bg-[#0A0F1D]/80 px-3 text-center text-base font-semibold tabular-nums text-white",
-                    controlBase,
-                  )}
-                />
-              </div>
+              <button
+                type="button"
+                onClick={() => bumpScore(SCORE_STEP)}
+                disabled={score >= SCORE_MAX}
+                className={stepperBtnClass}
+                aria-label="Increase ESAT score by 0.1"
+              >
+                <Plus className="h-4 w-4" strokeWidth={2.5} aria-hidden />
+              </button>
             </div>
           </div>
         </div>
