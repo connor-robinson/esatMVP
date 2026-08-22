@@ -129,9 +129,9 @@ export default function AboutPage() {
             />
           </div>
           <p className="mt-6 max-w-3xl text-lg leading-relaxed text-[#94A3B8] sm:text-xl">
-            We created ESAT Camp having gone through competitive UK university
+            We created ESAT Camp after going through competitive UK university
             admissions. We understand how hard and confusing the entire process
-            can be, so we are working on building the best, most practical ESAT
+            can be, so we are committed to building the most practical ESAT
             preparation platform that we wish we had.
           </p>
         </div>
