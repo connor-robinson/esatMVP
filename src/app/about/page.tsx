@@ -19,6 +19,7 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: ABOUT_URL },
+  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     siteName: "ESAT CAMP",
