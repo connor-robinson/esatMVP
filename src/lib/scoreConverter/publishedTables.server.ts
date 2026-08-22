@@ -11,15 +11,13 @@ import {
 } from "@/lib/scoreConverter/esatModules";
 import type { ConversionRow } from "@/types/papers";
 import {
-  classifySourceUrl,
   conversionAssetFilename,
   type PublishedTableDetail,
   type PublishedTableRow,
 } from "@/lib/scoreConverter/publishedTables.shared";
 
-export type { PublishedTableDetail, PublishedTableRow, SourceKind } from "@/lib/scoreConverter/publishedTables.shared";
+export type { PublishedTableDetail, PublishedTableRow } from "@/lib/scoreConverter/publishedTables.shared";
 export {
-  classifySourceUrl,
   conversionAssetFilename,
   parsePublishedTableQueryId,
   publicConversionAssetPath,
@@ -48,7 +46,6 @@ type DbTable = {
   id: number;
   paper_id: number;
   display_name: string | null;
-  source_pdf_url: string | null;
   format_type: PublishedTableRow["formatType"];
   confidence: PublishedTableRow["confidence"];
   reliability_note: string | null;
@@ -74,7 +71,6 @@ async function loadCatalogContext() {
       papers: [] as DbPaper[],
       tables: [] as DbTable[],
       convRows: [] as DbConvRow[],
-      sourceByTableId: new Map<number, string | null>(),
     };
   }
 
@@ -82,7 +78,7 @@ async function loadCatalogContext() {
   const { data: tables } = await supabase
     .from("conversion_tables")
     .select(
-      "id, paper_id, display_name, source_pdf_url, format_type, confidence, reliability_note",
+      "id, paper_id, display_name, format_type, confidence, reliability_note",
     )
     .in("paper_id", paperIds);
 
@@ -93,15 +89,10 @@ async function loadCatalogContext() {
       ? await fetchConversionRowsForTables(supabase, tableIds)
       : [];
 
-  const sourceByTableId = new Map<number, string | null>(
-    tableRows.map((t) => [t.id, t.source_pdf_url]),
-  );
-
   return {
     papers: paperRows,
     tables: tableRows,
     convRows: (convRows ?? []) as DbConvRow[],
-    sourceByTableId,
   };
 }
 
@@ -153,7 +144,6 @@ function sectionsForYear(
 
   const options = buildSectionOptions(exam, year, rawParts);
   return options.map((opt) => {
-    const source = classifySourceUrl(ctx.sourceByTableId.get(opt.tableId));
     const subjects = subjectLabel(exam, opt.paperName, opt.partName);
     const csvFilename = conversionAssetFilename(
       exam,
@@ -181,9 +171,6 @@ function sectionsForYear(
       paperName: opt.paperName,
       partName: opt.partName,
       tableId: opt.tableId,
-      sourceKind: source.kind,
-      sourceUrl: source.url,
-      sourceLabel: source.label,
       csvFilename,
       pdfFilename,
       rowCount,

@@ -313,15 +313,6 @@ function RowActions({
       <ActionLink href={publicPdfPath(row.pdfFilename)} download>
         Download PDF
       </ActionLink>
-      {row.sourceUrl ? (
-        <ActionLink
-          href={row.sourceUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Original source
-        </ActionLink>
-      ) : null}
     </div>
   );
 }

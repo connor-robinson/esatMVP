@@ -1,5 +1,5 @@
 /**
- * Audit published conversion table catalog and source URLs.
+ * Audit published conversion table catalog.
  * Run: node scripts/audit_published_tables.js
  */
 const fs = require("fs");
@@ -44,10 +44,10 @@ for (const row of catalog) {
 console.log("Catalog total:", catalog.length);
 console.log("By exam:", byExam);
 
-const noSource = catalog.filter((r) => !r.sourceUrl);
-console.log("\nRows missing original source URL:", noSource.length);
-noSource.forEach((r) =>
-  console.log(`  ${r.id} (${r.sourceKind}) csv=${r.csvFilename}`),
+const missingPdf = catalog.filter((r) => !r.pdfFilename);
+console.log("\nRows missing pdfFilename:", missingPdf.length);
+missingPdf.forEach((r) =>
+  console.log(`  ${r.id} csv=${r.csvFilename}`),
 );
 
 const tmua = catalog.filter((r) => r.exam === "TMUA");

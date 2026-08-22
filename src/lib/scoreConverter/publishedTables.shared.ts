@@ -1,7 +1,5 @@
 import type { Confidence, ConverterExam, FormatType } from "@/lib/scoreConverter/esatModules";
 
-export type SourceKind = "official" | "foi";
-
 export type ConversionAssetExt = "csv" | "pdf";
 
 export type PublishedTableRow = {
@@ -13,9 +11,6 @@ export type PublishedTableRow = {
   paperName: string;
   partName: string;
   tableId: number;
-  sourceKind: SourceKind | null;
-  sourceUrl: string | null;
-  sourceLabel: string;
   csvFilename: string;
   pdfFilename: string;
   rowCount: number;
@@ -52,28 +47,6 @@ export type PublishedTableDetail = PublishedTableRow & {
     scaledScore: number;
   }>;
 };
-
-export function classifySourceUrl(
-  sourcePdfUrl: string | null | undefined,
-): { kind: SourceKind | null; url: string | null; label: string } {
-  if (!sourcePdfUrl?.trim()) {
-    return { kind: null, url: null, label: "Official source not linked" };
-  }
-  const url = sourcePdfUrl.trim();
-  const lower = url.toLowerCase();
-  if (lower.includes("whatdotheyknow.com")) {
-    return { kind: "foi", url, label: "FOI disclosure" };
-  }
-  if (
-    lower.includes("esat-tmua.ac.uk") ||
-    lower.includes("uat-wp.s3") ||
-    lower.includes("website-files.com") ||
-    lower.includes("cam.ac.uk")
-  ) {
-    return { kind: "official", url, label: "Official published data" };
-  }
-  return { kind: "official", url, label: "Official published data" };
-}
 
 export function rowsToCsv(
   row: Pick<

@@ -51,7 +51,7 @@ export const SCORE_CONVERTER_FAQ_ITEMS: FaqItem[] = [
   {
     question: "How do you convert TMUA marks before 2024?",
     answer:
-      "For TMUA 2023 and earlier, we use the same official raw-to-scaled tables (sourced from Cambridge FOI disclosures and cross-checked against independent republications). Enter separate marks for Mathematical Thinking and Mathematical Reasoning together, or one combined overall score across both papers, but not a mix of those modes, because they use different scoring units.",
+      "For TMUA 2023 and earlier, we use the same official raw-to-scaled tables stored in our database. Enter separate marks for Mathematical Thinking and Mathematical Reasoning together, or one combined overall score across both papers, but not a mix of those modes, because they use different scoring units.",
   },
   {
     question: "What is the estimated post-2024 TMUA score?",
@@ -66,7 +66,7 @@ export const SCORE_CONVERTER_FAQ_ITEMS: FaqItem[] = [
   {
     question: "Where does the data come from?",
     answer:
-      "Raw-to-scaled conversion tables come from Cambridge Assessment admissions data (and FOI disclosures for TMUA). Percentile distributions come from official ESAT and TMUA cumulative tables. We do not invent conversion numbers. Everything is traced to published or disclosed source material, with gaps filled from the nearest reliable year when necessary.",
+      "Raw-to-scaled conversion tables are maintained by ESAT CAMP from Cambridge Assessment admissions data. Percentile distributions come from official ESAT and TMUA cumulative tables. We do not invent conversion numbers. Gaps are filled from the nearest reliable year when necessary.",
   },
   {
     question: "Is this an official ESAT or TMUA score?",

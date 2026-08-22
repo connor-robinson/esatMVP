@@ -1,34 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
-  classifySourceUrl,
   conversionAssetFilename,
   publicPdfPath,
   rowsToCsv,
 } from "@/lib/scoreConverter/publishedTables.shared";
 
 describe("publishedTables helpers", () => {
-  it("classifies FOI sources", () => {
-    const result = classifySourceUrl(
-      "https://www.whatdotheyknow.com/request/tmua_score_conversion_2023",
-    );
-    expect(result.kind).toBe("foi");
-    expect(result.url).toContain("whatdotheyknow");
-  });
-
-  it("classifies official UAT sources", () => {
-    const result = classifySourceUrl(
-      "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/example.pdf",
-    );
-    expect(result.kind).toBe("official");
-  });
-
-  it("marks missing sources", () => {
-    const result = classifySourceUrl(null);
-    expect(result.kind).toBeNull();
-    expect(result.url).toBeNull();
-    expect(result.label).toBe("Official source not linked");
-  });
-
   it("builds stable CSV output", () => {
     const csv = rowsToCsv(
       {
