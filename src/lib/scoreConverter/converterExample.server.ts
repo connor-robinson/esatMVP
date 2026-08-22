@@ -186,14 +186,18 @@ async function buildRawExample(
     tableIds,
   )) as DbConvRow[];
 
-  const selections = picked.map((option) => ({
-    key: option.key,
-    paperName: option.paperName,
-    partName: option.partName,
-    raw:
-      (option.moduleLabel && rawByModuleLabel?.[option.moduleLabel]) ??
-      rawMarkNearTarget(rowsForOption(convRows, option)),
-  }));
+  const selections: ConverterExampleSelection[] = picked.map((option) => {
+    const presetRaw =
+      option.moduleLabel != null
+        ? rawByModuleLabel?.[option.moduleLabel]
+        : undefined;
+    return {
+      key: option.key,
+      paperName: option.paperName,
+      partName: option.partName,
+      raw: presetRaw ?? rawMarkNearTarget(rowsForOption(convRows, option)),
+    };
+  });
 
   return {
     exam,
