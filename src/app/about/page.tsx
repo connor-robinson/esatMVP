@@ -60,20 +60,7 @@ const ABOUT_SCHEMAS = [
   ...PERSON_SCHEMAS,
 ];
 
-const PRINCIPLES = [
-  {
-    title: "Clear",
-    copy: "Straightforward explanations without unnecessary complexity.",
-  },
-  {
-    title: "Focused",
-    copy: "Resources designed specifically around the ESAT syllabus and format.",
-  },
-  {
-    title: "Transparent",
-    copy: "Clear sources, honest guidance and no claims of university endorsement.",
-  },
-] as const;
+const CONTENT = "mx-auto max-w-[1400px] px-4 sm:px-5 lg:px-6";
 
 function FounderCard({
   founder,
@@ -81,12 +68,9 @@ function FounderCard({
   founder: (typeof FOUNDERS)[keyof typeof FOUNDERS];
 }) {
   return (
-    <article
-      id={founder.id}
-      className="group rounded-3xl border border-white/[0.08] bg-[#161D2F] p-6 sm:p-8"
-    >
-      <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-6">
-        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-[#0A0F1D] sm:h-24 sm:w-24">
+    <article id={founder.id} className="group">
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:gap-8">
+        <div className="relative h-[100px] w-[100px] shrink-0 overflow-hidden rounded-2xl bg-[#161D2F] sm:h-[120px] sm:w-[120px]">
           <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-[1.03]">
             <div
               className="relative h-full w-full origin-left"
@@ -96,7 +80,7 @@ function FounderCard({
                 src={founder.imageSrc}
                 alt={founder.imageAlt}
                 fill
-                sizes="96px"
+                sizes="120px"
                 className="object-cover"
                 style={{ objectPosition: founder.imagePosition ?? "center" }}
               />
@@ -110,7 +94,7 @@ function FounderCard({
           <h2 className="mt-2 font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
             {founder.name}
           </h2>
-          <p className="mt-2 max-w-2xl text-sm font-medium leading-relaxed text-[#CBD5E1] sm:text-base">
+          <p className="mt-2 text-sm font-medium leading-relaxed text-[#CBD5E1] sm:text-base">
             {founder.credential}
           </p>
           <p className="mt-4 max-w-3xl leading-relaxed text-[#94A3B8]">
@@ -127,7 +111,7 @@ export default function AboutPage() {
     <div className="bg-[#0A0F1D] text-white">
       <JsonLd schema={ABOUT_SCHEMAS} />
 
-      <header className="relative overflow-hidden px-4 pb-16 pt-20 sm:px-5 sm:pb-20 sm:pt-24 lg:px-6 lg:pb-24 lg:pt-32">
+      <header className="relative overflow-hidden pb-12 pt-20 sm:pb-16 sm:pt-24 lg:pb-20 lg:pt-32">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 opacity-[0.38]"
@@ -137,7 +121,7 @@ export default function AboutPage() {
             backgroundSize: "22px 22px",
           }}
         />
-        <div className="relative mx-auto max-w-[1400px]">
+        <div className={`relative ${CONTENT}`}>
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
             About ESAT Camp
           </p>
@@ -145,93 +129,84 @@ export default function AboutPage() {
             Built by students who understand the process
           </h1>
           <p className="mt-6 max-w-3xl text-lg leading-relaxed text-[#94A3B8] sm:text-xl">
-            ESAT Camp was created by students who recently went through
-            competitive UK university admissions. We are building the focused,
-            practical ESAT preparation platform we wish we had.
+            We created ESAT Camp having gone through competitive UK university
+            admissions. We understand how hard and confusing the entire process
+            can be, so we are working on building the best, most practical ESAT
+            preparation platform that we wish we had.
           </p>
         </div>
       </header>
 
-      <main>
-        <section
-          aria-label="ESAT Camp founders"
-          className="px-4 pb-20 sm:px-5 sm:pb-24 lg:px-6"
-        >
-          <div className="mx-auto flex max-w-[1400px] flex-col gap-6">
+      <main className={`space-y-20 pb-20 sm:space-y-24 sm:pb-24 ${CONTENT}`}>
+        <section aria-labelledby="why-we-built">
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start lg:gap-16">
+            <h2
+              id="why-we-built"
+              className="font-display text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl"
+            >
+              Why we built ESAT Camp
+            </h2>
+            <p className="text-lg leading-relaxed text-[#94A3B8]">
+              The ESAT is a relatively new admissions test recently adopted by
+              leading universities, including Cambridge, Oxford and Imperial, for
+              several highly competitive courses. Because reliable ESAT guidance
+              and high-quality practice resources can be difficult to find, we
+              created ESAT Camp to bring realistic practice questions,
+              past-paper solutions and mental maths training together in one
+              platform.
+            </p>
+          </div>
+        </section>
+
+        <section aria-label="ESAT Camp founders">
+          <div className="mb-10">
+            <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
+              The team
+            </p>
+            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+              Meet the founders
+            </h2>
+          </div>
+          <div className="flex flex-col gap-14 sm:gap-16">
             <FounderCard founder={FOUNDERS.ewan} />
             <FounderCard founder={FOUNDERS.anson} />
           </div>
         </section>
 
-        <section className="bg-[#161D2F]/55 px-4 py-20 sm:px-5 sm:py-24 lg:px-6">
-          <div className="mx-auto max-w-[1400px]">
-            <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-20">
-              <h2 className="max-w-xl font-display text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-                Why we built ESAT Camp
-              </h2>
-              <p className="text-lg leading-relaxed text-[#94A3B8]">
-                Preparing for the ESAT can be unnecessarily confusing. Past
-                papers are spread across different examinations, formats have
-                changed repeatedly, and reliable guidance is difficult to find.
-                We created ESAT Camp to bring practice questions, past-paper
-                guidance and score tools together in one clear platform.
+        <section aria-labelledby="get-started">
+          <div className="lg:flex lg:items-end lg:justify-between lg:gap-12">
+            <div className="max-w-2xl">
+              <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
+                Ready when you are
               </p>
+              <h2
+                id="get-started"
+                className="mt-4 font-display text-3xl font-bold tracking-tight sm:text-4xl"
+              >
+                Start preparing with ESAT Camp
+              </h2>
             </div>
-
-            <div className="mt-14 grid gap-5 md:grid-cols-3">
-              {PRINCIPLES.map((principle, index) => (
-                <article
-                  key={principle.title}
-                  className="rounded-2xl border border-white/[0.07] bg-[#0A0F1D]/65 p-6 sm:p-7"
-                >
-                  <p className="text-xs font-bold tabular-nums tracking-[0.2em] text-[#3B82F6]">
-                    0{index + 1}
-                  </p>
-                  <h3 className="mt-5 font-display text-2xl font-bold">
-                    {principle.title}
-                  </h3>
-                  <p className="mt-3 leading-relaxed text-[#94A3B8]">
-                    {principle.copy}
-                  </p>
-                </article>
-              ))}
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row lg:mt-0 lg:shrink-0">
+              <Link
+                href={APP_ROUTES.questionBank}
+                className="inline-flex items-center justify-center rounded-xl bg-[#3B82F6] px-6 py-3.5 font-bold text-white transition-colors hover:bg-[#2563EB]"
+              >
+                Explore ESAT resources
+              </Link>
+              <Link
+                href={APP_ROUTES.scoreConverter}
+                className="inline-flex items-center justify-center rounded-xl bg-white/[0.08] px-6 py-3.5 font-bold text-white transition-colors hover:bg-white/[0.13]"
+              >
+                Try the score converter
+              </Link>
             </div>
           </div>
-        </section>
 
-        <section className="px-4 py-20 sm:px-5 sm:py-24 lg:px-6">
-          <div className="mx-auto max-w-[1400px]">
-            <div className="rounded-3xl bg-[#161D2F] p-7 sm:p-10 lg:flex lg:items-end lg:justify-between lg:gap-12 lg:p-12">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
-                  Ready when you are
-                </p>
-                <h2 className="mt-4 font-display text-3xl font-bold tracking-tight sm:text-4xl">
-                  Start preparing with ESAT Camp
-                </h2>
-              </div>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row lg:mt-0">
-                <Link
-                  href={APP_ROUTES.questionBank}
-                  className="inline-flex items-center justify-center rounded-xl bg-[#3B82F6] px-6 py-3.5 font-bold text-white transition-colors hover:bg-[#2563EB]"
-                >
-                  Explore ESAT resources
-                </Link>
-                <Link
-                  href={APP_ROUTES.scoreConverter}
-                  className="inline-flex items-center justify-center rounded-xl bg-white/[0.08] px-6 py-3.5 font-bold text-white transition-colors hover:bg-white/[0.13]"
-                >
-                  Try the score converter
-                </Link>
-              </div>
-            </div>
-
-            <p className="mx-auto mt-10 max-w-4xl text-center text-sm leading-relaxed text-[#64748B]">
-              ESAT Camp is an independent educational platform. It is not
-              affiliated with or endorsed by Imperial College London, the
-              University of Cambridge, UAT-UK or Pearson VUE.
-            </p>
-          </div>
+          <p className="mt-12 max-w-4xl text-sm leading-relaxed text-[#64748B]">
+            ESAT Camp is an independent educational platform. It is not
+            affiliated with or endorsed by Imperial College London, the
+            University of Cambridge, UAT-UK or Pearson VUE.
+          </p>
         </section>
       </main>
     </div>
