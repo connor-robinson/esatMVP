@@ -5,7 +5,6 @@ import Link from "next/link";
 import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
-  publicCsvPath,
   publicPdfPath,
   type PublishedTableRow,
 } from "@/lib/scoreConverter/publishedTables.shared";
@@ -14,7 +13,6 @@ import {
   type ConverterExam,
 } from "@/lib/scoreConverter/esatModules";
 import { APP_ROUTES, SEO_ROUTES } from "@/lib/seo/config";
-import { useScoreConverterActions } from "@/components/tools/scoreConverter/ScoreConverterContext";
 
 type Props = {
   rows: PublishedTableRow[];
@@ -35,7 +33,7 @@ const selectTriggerClass = cn(
 );
 
 const actionButtonClass = cn(
-  "inline-flex min-h-9 items-center justify-center rounded-organic-lg px-3.5 py-2 text-sm font-semibold transition-all duration-fast",
+  "inline-flex min-h-11 items-center justify-center rounded-organic-lg px-5 py-2.5 text-base font-semibold transition-all duration-fast",
   "bg-surface-mid text-text hover:bg-surface-subtle active:scale-[0.98]",
   controlBase,
 );
@@ -309,31 +307,12 @@ function RowActions({
   row: PublishedTableRow;
   onView: () => void;
 }) {
-  const { applyTableSelection } = useScoreConverterActions();
-
   return (
-    <div className="flex flex-wrap gap-2.5">
+    <div className="flex flex-wrap gap-3">
       <ActionButton onClick={onView}>View table</ActionButton>
-      <ActionLink href={publicCsvPath(row.csvFilename)} download>
-        Download CSV
-      </ActionLink>
       <ActionLink href={publicPdfPath(row.pdfFilename)} download>
         Download PDF
       </ActionLink>
-      {applyTableSelection ? (
-        <ActionButton
-          onClick={() =>
-            applyTableSelection({
-              exam: row.exam,
-              year: row.year,
-              paperName: row.paperName,
-              partName: row.partName,
-            })
-          }
-        >
-          Use in converter
-        </ActionButton>
-      ) : null}
     </div>
   );
 }

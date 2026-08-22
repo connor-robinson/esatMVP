@@ -7,7 +7,9 @@ const path = require("path");
 const PDFDocument = require("pdfkit");
 
 const ROOT = path.join(__dirname, "..");
-const OUT_DIR = path.join(ROOT, "public", "downloads", "conversion-tables");
+const OUT_DIR =
+  process.env.CONVERSION_PDF_OUT_DIR ||
+  path.join(ROOT, "public", "downloads", "conversion-tables");
 const LOGO_PATH = path.join(ROOT, "public", "brand", "logo-full.png");
 const FONT_REGULAR = path.join(ROOT, "scripts", "fonts", "SpaceGrotesk-Regular.ttf");
 const FONT_BOLD = path.join(ROOT, "scripts", "fonts", "SpaceGrotesk-Bold.ttf");
@@ -77,27 +79,30 @@ function registerFonts(doc) {
 }
 
 function computeLayout(rowCount) {
-  const logoHeight = 56;
-  const headerBlock =
-    PAGE.margin + logoHeight + 14 + 20 + 14 + 16;
-  const footerBlock = PAGE.margin + 18;
-  const tableHeaderHeight = 24;
+  // logo-full.png is 1024×576. Keep a compact branded header so the table
+  // always fits on a single A4 page (largest tables have ~41 rows).
+  const logoHeight = 32;
+  const logoWidth = Math.round(logoHeight * (1024 / 576));
+  const headerBlock = PAGE.margin + logoHeight + 8 + 18 + 14 + 12;
+  const footerBlock = 28;
+  const tableHeaderHeight = 20;
   const availableForRows =
-    PAGE.height - headerBlock - footerBlock - tableHeaderHeight;
+    PAGE.height - headerBlock - footerBlock - tableHeaderHeight - PAGE.margin;
   const rowHeight = Math.max(
-    11,
-    Math.min(22, Math.floor(availableForRows / Math.max(rowCount, 1))),
+    9,
+    Math.min(16, Math.floor(availableForRows / Math.max(rowCount, 1))),
   );
-  const bodySize = rowHeight >= 18 ? 10.5 : rowHeight >= 14 ? 9.5 : 8.5;
+  const bodySize = rowHeight >= 14 ? 9.5 : rowHeight >= 11 ? 8.5 : 7.5;
 
   return {
-    logoWidth: 232,
+    logoWidth,
     logoHeight,
     rowHeight,
     tableHeaderHeight,
     bodySize,
-    headerSize: 15,
-    subtitleSize: 10,
+    headerSize: 13,
+    subtitleSize: 9,
+    footerBlock,
   };
 }
 
@@ -105,15 +110,18 @@ function drawHeader(doc, meta, layout) {
   let y = PAGE.margin;
 
   if (fs.existsSync(LOGO_PATH)) {
-    doc.image(LOGO_PATH, PAGE.margin, y, { width: layout.logoWidth });
-    y += layout.logoHeight + 14;
+    doc.image(LOGO_PATH, PAGE.margin, y, {
+      width: layout.logoWidth,
+      height: layout.logoHeight,
+    });
+    y += layout.logoHeight + 8;
   } else {
     doc
       .fillColor(COLORS.ink)
       .font("Bold")
-      .fontSize(20)
-      .text(BRAND_NAME, PAGE.margin, y);
-    y += 30;
+      .fontSize(14)
+      .text(BRAND_NAME, PAGE.margin, y, { lineBreak: false });
+    y += 22;
   }
 
   doc
@@ -124,10 +132,9 @@ function drawHeader(doc, meta, layout) {
       `${meta.exam} ${meta.year}  Score conversion table`,
       PAGE.margin,
       y,
-      { width: PAGE.contentWidth },
+      { width: PAGE.contentWidth, lineBreak: false },
     );
-
-  y += 22;
+  y += 18;
 
   const subtitle = [meta.sectionPaper, meta.partName, meta.subjects]
     .filter(Boolean)
@@ -137,9 +144,83 @@ function drawHeader(doc, meta, layout) {
     .font("Body")
     .fontSize(layout.subtitleSize)
     .fillColor(COLORS.muted)
-    .text(subtitle, PAGE.margin, y, { width: PAGE.contentWidth, lineGap: 1 });
+    .text(subtitle, PAGE.margin, y, {
+      width: PAGE.contentWidth,
+      lineBreak: false,
+    });
+  y += 14;
 
-  return y + doc.heightOfString(subtitle, { width: PAGE.contentWidth }) + 16;
+  // Keep PDFKit's internal cursor above the footer so later draws do not
+  // trigger an automatic page break.
+  doc.x = PAGE.margin;
+  doc.y = y;
+  return y + 12;
+}
+
+function drawFooter(doc, layout) {
+  const footerY = PAGE.height - layout.footerBlock + 8;
+  doc
+    .fillColor(COLORS.faint)
+    .font("Body")
+    .fontSize(7.5)
+    .text(
+      `${BRAND_NAME}  ·  ${SITE_URL}  ·  Not affiliated with any university.`,
+      PAGE.margin,
+      footerY,
+      { width: PAGE.contentWidth, align: "center", lineBreak: false },
+    );
+}
+
+function writePdf(meta, rows, filePath) {
+  return new Promise((resolve, reject) => {
+    const layout = computeLayout(rows.length);
+    const doc = new PDFDocument({
+      size: "A4",
+      autoFirstPage: true,
+      // Zero bottom margin so absolute-positioned footer/table never trips
+      // PDFKit's automatic page-break logic. We lay out the page ourselves.
+      margins: {
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+      },
+      info: {
+        Title: `${meta.exam} ${meta.year} ${meta.partName} conversion table`,
+        Author: BRAND_NAME,
+        Subject: "Score conversion table",
+        Creator: BRAND_NAME,
+      },
+    });
+
+    let extraPages = 0;
+    const nativeAddPage = doc.addPage.bind(doc);
+    doc.addPage = (...args) => {
+      extraPages += 1;
+      console.warn(
+        `Blocked extra page for ${path.basename(filePath)} (${rows.length} rows).`,
+      );
+      return doc;
+    };
+
+    registerFonts(doc);
+
+    const stream = fs.createWriteStream(filePath);
+    doc.pipe(stream);
+
+    const tableStartY = drawHeader(doc, meta, layout);
+    drawTable(doc, rows, tableStartY, layout);
+    drawFooter(doc, layout);
+
+    if (extraPages > 0) {
+      // Restore for cleanliness; content already stayed on page 1.
+      doc.addPage = nativeAddPage;
+    }
+
+    doc.end();
+    stream.on("finish", resolve);
+    stream.on("error", reject);
+  });
 }
 
 function drawRoundedRect(doc, x, y, width, height, radius) {
@@ -219,64 +300,23 @@ function drawTable(doc, rows, startY, layout) {
       .fillColor(COLORS.ink)
       .font("Body")
       .fontSize(bodySize)
-      .text(String(entry.rawMark), colRawX, textY, { width: colRawWidth })
+      .text(String(entry.rawMark), colRawX, textY, {
+        width: colRawWidth,
+        lineBreak: false,
+      })
       .font("Body")
       .text(entry.scaledScore.toFixed(1), colScaledX - colScaledWidth, textY, {
         width: colScaledWidth,
         align: "right",
+        lineBreak: false,
       });
 
     y += rowHeight;
   });
 
+  doc.x = PAGE.margin;
+  doc.y = Math.min(y + 4, PAGE.height - layout.footerBlock - 4);
   return y;
-}
-
-function drawFooter(doc) {
-  doc
-    .fillColor(COLORS.faint)
-    .font("Body")
-    .fontSize(8)
-    .text(
-      `${BRAND_NAME}  ·  ${SITE_URL}  ·  Not affiliated with any university.`,
-      PAGE.margin,
-      PAGE.height - PAGE.margin - 6,
-      { width: PAGE.contentWidth, align: "center" },
-    );
-}
-
-function writePdf(meta, rows, filePath) {
-  return new Promise((resolve, reject) => {
-    const layout = computeLayout(rows.length);
-    const doc = new PDFDocument({
-      size: "A4",
-      margins: {
-        top: PAGE.margin,
-        bottom: PAGE.margin,
-        left: PAGE.margin,
-        right: PAGE.margin,
-      },
-      info: {
-        Title: `${meta.exam} ${meta.year} ${meta.partName} conversion table`,
-        Author: BRAND_NAME,
-        Subject: "Score conversion table",
-        Creator: BRAND_NAME,
-      },
-    });
-
-    registerFonts(doc);
-
-    const stream = fs.createWriteStream(filePath);
-    doc.pipe(stream);
-
-    const tableStartY = drawHeader(doc, meta, layout);
-    drawTable(doc, rows, tableStartY, layout);
-    drawFooter(doc);
-
-    doc.end();
-    stream.on("finish", resolve);
-    stream.on("error", reject);
-  });
 }
 
 async function main() {
