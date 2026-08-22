@@ -119,16 +119,21 @@ export default function AboutPage() {
           }}
         />
         <div className={`relative ${CONTENT}`}>
-          <span className="inline-flex items-center gap-3 text-white">
-            <BrandMarkImage className="h-12 w-auto sm:h-14" alt="ESAT Camp" />
-            <BrandWordmark size="lg" />
-          </span>
-          <p className="mt-6 text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
             About us
           </p>
-          <h1 className="mt-5 max-w-4xl font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-7xl">
-            Built by students who understand the process
-          </h1>
+          <div className="mt-5 flex items-start justify-between gap-5 sm:gap-8 lg:gap-12">
+            <h1 className="min-w-0 flex-1 max-w-4xl font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-7xl">
+              Built by students who understand the process
+            </h1>
+            <span className="inline-flex shrink-0 items-center gap-2.5 text-white sm:gap-3">
+              <BrandMarkImage
+                className="h-10 w-auto sm:h-14"
+                alt="ESAT Camp"
+              />
+              <BrandWordmark size="lg" className="hidden min-[420px]:inline" />
+            </span>
+          </div>
           <p className="mt-6 max-w-3xl text-lg leading-relaxed text-[#94A3B8] sm:text-xl">
             We created ESAT Camp having gone through competitive UK university
             admissions. We understand how hard and confusing the entire process
