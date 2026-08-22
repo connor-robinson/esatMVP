@@ -1309,25 +1309,23 @@ export function ScoreConverter({
     <Container id="score-converter" size="lg" className="scroll-mt-24 py-8 sm:py-10">
       <div className="mb-4 rounded-organic-xl bg-surface-elevated p-4 shadow-modal-card sm:p-5">
         <div className="mb-3 flex items-start justify-between gap-3">
-          <div>
-            {pageTitle ? (
-              <h1 className="text-xl font-bold tracking-tight text-text sm:text-3xl">
-                {pageTitle}
-              </h1>
-            ) : (
-              <h1 className="text-xl font-bold tracking-tight text-text sm:text-3xl">
-                <ExamTitleDropdown exam={exam} onExamChange={handleExamChange} />
-                <span>{converterTitleSuffix(exam)}</span>
-              </h1>
-            )}
-            {intro ? (
-              <p className="mt-3 max-w-3xl text-sm leading-relaxed text-text-muted sm:text-base">
-                {intro}
-              </p>
-            ) : null}
-          </div>
+          {pageTitle ? (
+            <h1 className="text-xl font-bold tracking-tight text-text sm:text-3xl">
+              {pageTitle}
+            </h1>
+          ) : (
+            <h1 className="text-xl font-bold tracking-tight text-text sm:text-3xl">
+              <ExamTitleDropdown exam={exam} onExamChange={handleExamChange} />
+              <span>{converterTitleSuffix(exam)}</span>
+            </h1>
+          )}
           <ConverterInfoButton exam={exam} />
         </div>
+        {intro ? (
+          <p className="mb-3 w-full text-xs leading-snug text-text-muted sm:text-sm">
+            {intro}
+          </p>
+        ) : null}
 
         <div className="relative overflow-visible rounded-organic-lg bg-surface-mid/30 p-3 sm:p-4">
           <div className="flex flex-wrap items-end gap-3 sm:gap-4">
