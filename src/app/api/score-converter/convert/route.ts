@@ -23,6 +23,7 @@ import {
   type FormatType,
 } from "@/lib/scoreConverter/esatModules";
 import type { ConversionRow } from "@/types/papers";
+import { fetchConversionRowsForTables } from "@/lib/scoreConverter/fetchConversionRows.server";
 
 export const dynamic = "force-dynamic";
 
@@ -93,15 +94,12 @@ async function buildConversionContext(
   }
 
   const tableIds = tableRows.map((t) => t.id);
-  const { data: convRows } = await supabase
-    .from("conversion_rows")
-    .select("table_id, part_name, raw_score, scaled_score")
-    .in("table_id", tableIds);
+  const convRows = await fetchConversionRowsForTables(supabase, tableIds);
 
   return {
     papers: paperRows,
     tables: tableRows,
-    convRows: (convRows ?? []) as DbConvRow[],
+    convRows: convRows as DbConvRow[],
   };
 }
 

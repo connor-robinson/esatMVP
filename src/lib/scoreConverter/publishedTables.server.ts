@@ -1,4 +1,5 @@
 import { createServerClient } from "@/lib/supabase/server";
+import { fetchConversionRowsForTables } from "@/lib/scoreConverter/fetchConversionRows.server";
 import {
   buildSectionOptions,
   CONVERTER_EXAMS,
@@ -105,13 +106,10 @@ async function loadCatalogContext() {
 
   const tableRows = (tables ?? []) as DbTable[];
   const tableIds = tableRows.map((t) => t.id);
-  const { data: convRows } =
+  const convRows =
     tableIds.length > 0
-      ? await supabase
-          .from("conversion_rows")
-          .select("table_id, part_name, raw_score, scaled_score")
-          .in("table_id", tableIds)
-      : { data: [] };
+      ? await fetchConversionRowsForTables(supabase, tableIds)
+      : [];
 
   const sourceByTableId = new Map<number, string | null>(
     tableRows.map((t) => [t.id, t.source_pdf_url]),
