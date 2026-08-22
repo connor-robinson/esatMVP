@@ -31,7 +31,7 @@ export function classifySourceUrl(
   sourcePdfUrl: string | null | undefined,
 ): { kind: SourceKind | null; url: string | null; label: string } {
   if (!sourcePdfUrl?.trim()) {
-    return { kind: null, url: null, label: "No verified original link" };
+    return { kind: null, url: null, label: "Official source not linked" };
   }
   const url = sourcePdfUrl.trim();
   const lower = url.toLowerCase();

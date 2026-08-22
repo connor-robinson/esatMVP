@@ -2,12 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { Check, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {
-  publicCsvPath,
-  type PublishedTableRow,
-  type SourceKind,
-} from "@/lib/scoreConverter/publishedTables.shared";
+import { type PublishedTableRow } from "@/lib/scoreConverter/publishedTables.shared";
 import {
   CONVERTER_EXAMS,
   type ConverterExam,
@@ -17,13 +14,15 @@ import { APP_ROUTES, SEO_ROUTES } from "@/lib/seo/config";
 type Props = {
   rows: PublishedTableRow[];
   defaultExam?: ConverterExam | "all";
-  converterAnchorId?: string;
 };
 
-const SOURCE_BADGE: Record<SourceKind, string> = {
-  official: "Official published data",
-  foi: "FOI disclosure",
-};
+const controlBase =
+  "border-0 shadow-none outline-none focus:outline-none focus:ring-0 focus:border-0";
+
+const filterControlClass = cn(
+  "h-10 w-full rounded-organic-lg bg-surface-mid px-3 text-sm font-medium text-text",
+  controlBase,
+);
 
 function filterRows(
   rows: PublishedTableRow[],
@@ -191,50 +190,47 @@ function TableViewModal({
   );
 }
 
+function SourceTrustIcon({ row }: { row: PublishedTableRow }) {
+  const verified = row.sourceUrl != null && row.sourceKind != null;
+
+  return (
+    <span
+      title={row.sourceLabel}
+      className="inline-flex shrink-0 cursor-help align-middle"
+    >
+      {verified ? (
+        <Check
+          className="h-3.5 w-3.5 text-secondary"
+          strokeWidth={2.5}
+          aria-hidden
+        />
+      ) : (
+        <HelpCircle className="h-3.5 w-3.5 text-text-muted" aria-hidden />
+      )}
+      <span className="sr-only">{row.sourceLabel}</span>
+    </span>
+  );
+}
+
 function RowActions({
   row,
-  converterAnchorId,
   onView,
 }: {
   row: PublishedTableRow;
-  converterAnchorId: string;
   onView: () => void;
 }) {
-  const csvHref = `/api/score-converter/published-table?tableId=${row.tableId}&partName=${encodeURIComponent(row.partName)}&format=csv`;
-  const staticCsvHref = publicCsvPath(row.csvFilename);
-
-  const apply = () => {
-    window.dispatchEvent(
-      new CustomEvent("score-converter:apply", {
-        detail: {
-          exam: row.exam,
-          year: row.year,
-          paperName: row.paperName,
-          partName: row.partName,
-        },
-      }),
-    );
-    document.getElementById(converterAnchorId)?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  };
-
   return (
     <div className="flex flex-wrap gap-2">
       <ActionButton onClick={onView}>View table</ActionButton>
-      <ActionLink href={staticCsvHref} download={row.csvFilename}>
-        Download CSV
-      </ActionLink>
-      <ActionLink href={csvHref} download={row.csvFilename} className="sr-only">
-        API CSV fallback
-      </ActionLink>
       {row.sourceUrl ? (
-        <ActionLink href={row.sourceUrl} target="_blank" rel="noopener noreferrer">
-          Original source
+        <ActionLink
+          href={row.sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Download PDF
         </ActionLink>
       ) : null}
-      <ActionButton onClick={apply}>Use in converter</ActionButton>
     </div>
   );
 }
@@ -242,7 +238,6 @@ function RowActions({
 export function PublishedConversionTablesClient({
   rows,
   defaultExam = "all",
-  converterAnchorId = "score-converter",
 }: Props) {
   const [exam, setExam] = useState<ConverterExam | "all">(defaultExam);
   const [year, setYear] = useState("all");
@@ -272,9 +267,6 @@ export function PublishedConversionTablesClient({
     [rows, exam, year, section, subject, query],
   );
 
-  const selectClass =
-    "h-10 w-full rounded-organic-lg bg-surface-mid px-3 text-sm font-medium text-text";
-
   return (
     <section className="space-y-5" aria-labelledby="published-tables-heading">
       <div>
@@ -295,7 +287,7 @@ export function PublishedConversionTablesClient({
         <label className="block text-xs font-semibold uppercase tracking-wide text-text-muted">
           Exam
           <select
-            className={cn(selectClass, "mt-1.5")}
+            className={cn(filterControlClass, "mt-1.5")}
             value={exam}
             onChange={(event) =>
               setExam(event.target.value as ConverterExam | "all")
@@ -312,7 +304,7 @@ export function PublishedConversionTablesClient({
         <label className="block text-xs font-semibold uppercase tracking-wide text-text-muted">
           Year
           <select
-            className={cn(selectClass, "mt-1.5")}
+            className={cn(filterControlClass, "mt-1.5")}
             value={year}
             onChange={(event) => setYear(event.target.value)}
           >
@@ -327,7 +319,7 @@ export function PublishedConversionTablesClient({
         <label className="block text-xs font-semibold uppercase tracking-wide text-text-muted">
           Section or paper
           <select
-            className={cn(selectClass, "mt-1.5")}
+            className={cn(filterControlClass, "mt-1.5")}
             value={section}
             onChange={(event) => setSection(event.target.value)}
           >
@@ -342,7 +334,7 @@ export function PublishedConversionTablesClient({
         <label className="block text-xs font-semibold uppercase tracking-wide text-text-muted">
           Subject
           <select
-            className={cn(selectClass, "mt-1.5")}
+            className={cn(filterControlClass, "mt-1.5")}
             value={subject}
             onChange={(event) => setSubject(event.target.value)}
           >
@@ -361,7 +353,7 @@ export function PublishedConversionTablesClient({
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Filter rows…"
-            className={cn(selectClass, "mt-1.5")}
+            className={cn(filterControlClass, "mt-1.5")}
           />
         </label>
       </div>
@@ -374,7 +366,6 @@ export function PublishedConversionTablesClient({
               <th className="px-4 py-3 font-semibold">Year</th>
               <th className="px-4 py-3 font-semibold">Section or paper</th>
               <th className="px-4 py-3 font-semibold">Subjects</th>
-              <th className="px-4 py-3 font-semibold">Source</th>
               <th className="px-4 py-3 font-semibold">Actions</th>
             </tr>
           </thead>
@@ -389,7 +380,10 @@ export function PublishedConversionTablesClient({
                   {row.exam}
                 </td>
                 <td className="border-t border-white/5 px-4 py-3 tabular-nums">
-                  {row.year}
+                  <span className="inline-flex items-center gap-1.5">
+                    {row.year}
+                    <SourceTrustIcon row={row} />
+                  </span>
                 </td>
                 <td className="border-t border-white/5 px-4 py-3">
                   {row.sectionPaper}
@@ -398,23 +392,7 @@ export function PublishedConversionTablesClient({
                   {row.subjects}
                 </td>
                 <td className="border-t border-white/5 px-4 py-3">
-                  <div className="space-y-1">
-                    <p className="text-xs font-semibold text-text-muted">
-                      {row.sourceKind
-                        ? SOURCE_BADGE[row.sourceKind]
-                        : "Calculator dataset"}
-                    </p>
-                    <p className="text-[11px] text-text-muted">
-                      ESAT CAMP formatted CSV
-                    </p>
-                  </div>
-                </td>
-                <td className="border-t border-white/5 px-4 py-3">
-                  <RowActions
-                    row={row}
-                    converterAnchorId={converterAnchorId}
-                    onView={() => setViewRow(row)}
-                  />
+                  <RowActions row={row} onView={() => setViewRow(row)} />
                 </td>
               </tr>
             ))}
@@ -432,25 +410,18 @@ export function PublishedConversionTablesClient({
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-base font-bold text-text">
-                  {row.exam} · {row.year}
+                  <span className="inline-flex items-center gap-1.5">
+                    {row.exam} · {row.year}
+                    <SourceTrustIcon row={row} />
+                  </span>
                 </p>
                 <p className="mt-1 text-sm text-text-muted">
                   {row.sectionPaper} · {row.subjects}
                 </p>
               </div>
-              <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-text-muted">
-                {row.sourceKind ? SOURCE_BADGE[row.sourceKind] : "Dataset"}
-              </span>
             </div>
-            <p className="mt-2 text-xs text-text-muted">
-              ESAT CAMP formatted CSV
-            </p>
             <div className="mt-3">
-              <RowActions
-                row={row}
-                converterAnchorId={converterAnchorId}
-                onView={() => setViewRow(row)}
-              />
+              <RowActions row={row} onView={() => setViewRow(row)} />
             </div>
           </article>
         ))}

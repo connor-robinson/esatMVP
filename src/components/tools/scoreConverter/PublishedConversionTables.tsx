@@ -4,21 +4,16 @@ import { PublishedConversionTablesClient } from "@/components/tools/scoreConvert
 
 type Props = {
   examFilter?: ConverterExam;
-  converterAnchorId?: string;
 };
 
 /** Server-rendered catalog with client-side filters and actions. */
-export async function PublishedConversionTables({
-  examFilter,
-  converterAnchorId = "score-converter",
-}: Props) {
+export async function PublishedConversionTables({ examFilter }: Props) {
   const rows = await fetchPublishedTableCatalog(examFilter);
 
   return (
     <PublishedConversionTablesClient
       rows={rows}
       defaultExam={examFilter ?? "all"}
-      converterAnchorId={converterAnchorId}
     />
   );
 }
