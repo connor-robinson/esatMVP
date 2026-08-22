@@ -87,13 +87,21 @@ function FounderCard({
     >
       <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-6">
         <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-[#0A0F1D] sm:h-24 sm:w-24">
-          <Image
-            src={founder.imageSrc}
-            alt={founder.imageAlt}
-            fill
-            sizes="96px"
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-          />
+          <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-[1.03]">
+            <div
+              className="relative h-full w-full origin-left"
+              style={{ transform: `scale(${founder.imageScale ?? 1})` }}
+            >
+              <Image
+                src={founder.imageSrc}
+                alt={founder.imageAlt}
+                fill
+                sizes="96px"
+                className="object-cover"
+                style={{ objectPosition: founder.imagePosition ?? "center" }}
+              />
+            </div>
+          </div>
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#3B82F6]">

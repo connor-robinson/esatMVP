@@ -12,6 +12,8 @@ export const FOUNDERS = {
     bio: "Ewan is the public face of ESAT Camp and helps shape how we explain difficult ideas clearly. His focus is making admissions preparation feel approachable, structured and genuinely useful.",
     imageSrc: "/images/team/ewan-ellson.png",
     imageAlt: "Ewan Ellson playing guitar, co-founder of ESAT Camp",
+    imageScale: 1.8,
+    imagePosition: "left center",
   },
   anson: {
     id: "anson-chan",
@@ -23,6 +25,8 @@ export const FOUNDERS = {
     bio: "Anson leads the development of ESAT Camp’s question bank, preparation tools and data-driven resources, with a particular focus on mathematics and physics.",
     imageSrc: "/images/team/anson-chan.png",
     imageAlt: "Anson Chan playing saxophone, co-founder of ESAT Camp",
+    imageScale: 1.8,
+    imagePosition: "left center",
   },
 } as const;
 
