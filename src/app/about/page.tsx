@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { BrandMarkImage } from "@/components/brand/BrandMarkImage";
+import { BrandWordmark } from "@/components/brand/BrandWordmark";
 import { ABOUT_PATH, FOUNDERS } from "@/config/founders";
 import {
   APP_ROUTES,
@@ -122,8 +124,12 @@ export default function AboutPage() {
           }}
         />
         <div className={`relative ${CONTENT}`}>
-          <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
-            About ESAT Camp
+          <span className="inline-flex items-center gap-3 text-white">
+            <BrandMarkImage className="h-12 w-auto sm:h-14" alt="ESAT Camp" />
+            <BrandWordmark size="lg" />
+          </span>
+          <p className="mt-6 text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
+            About us
           </p>
           <h1 className="mt-5 max-w-4xl font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-7xl">
             Built by students who understand the process
