@@ -16,8 +16,7 @@ export const SCORE_CONVERTER_PAGE_COPY: Record<
     description:
       "Convert ENGAA past-paper raw marks into published scaled scores and estimate the equivalent ESAT percentile. Includes downloadable ENGAA conversion tables.",
     h1: "ENGAA to ESAT Score Converter",
-    intro:
-      "ENGAA Section 1 and Section 2 tables map raw marks to the 1.0–9.0 scale used in admissions reporting. This converter is most useful for Maths & Physics and advanced Maths 2 practice once you know which ENGAA parts you completed.",
+    intro: "",
   },
   TMUA: {
     title: "TMUA Score Converter | Old vs New Scale",
