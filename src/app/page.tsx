@@ -6,8 +6,9 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { BRAND_CONFIG } from "@/config/brand";
 import { MARKETING_HOMEPAGE_FAQ } from "@/lib/homepage/marketingFaq";
 import {
+  buildCanonicalUrl,
   faqPageSchema,
-  SITE_URL,
+  PRODUCTION_SITE_URL,
   type FaqItem,
 } from "@/lib/seo/config";
 
@@ -18,14 +19,14 @@ const HOME_DESCRIPTION =
 export const metadata: Metadata = {
   title: HOME_TITLE,
   description: HOME_DESCRIPTION,
-  alternates: { canonical: SITE_URL },
+  alternates: { canonical: buildCanonicalUrl("/") },
   openGraph: {
     type: "website",
     siteName: BRAND_CONFIG.displayName,
     title: HOME_TITLE,
     description:
       "Prepare for the ESAT and TMUA with past papers, a curated question bank and timed no-calculator drills.",
-    url: SITE_URL,
+    url: PRODUCTION_SITE_URL,
   },
   twitter: {
     card: "summary_large_image",
@@ -45,13 +46,13 @@ const HOMEPAGE_SCHEMA = [
     "@context": "https://schema.org",
     "@type": "Organization",
     name: BRAND_CONFIG.displayName,
-    url: SITE_URL,
+    url: PRODUCTION_SITE_URL,
   },
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: BRAND_CONFIG.displayName,
-    url: SITE_URL,
+    url: PRODUCTION_SITE_URL,
     description: HOME_DESCRIPTION,
   },
   faqPageSchema(HOMEPAGE_FAQ_SCHEMA),

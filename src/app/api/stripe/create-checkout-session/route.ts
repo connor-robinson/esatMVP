@@ -4,6 +4,7 @@ import { getStripe, getStripeKeyMeta, isStripeConfigured } from "@/lib/stripe/co
 import { createOrRetrieveCustomer } from "@/lib/stripe/supabase-admin";
 import { getPriceIdForPlan } from "@/lib/stripe/prices";
 import { getSeasonPassPrice } from "@/lib/stripe/best-value";
+import { resolveAppSiteUrl } from "@/lib/seo/config";
 
 export const dynamic = "force-dynamic";
 
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
     }
 
     const customerId = await createOrRetrieveCustomer(user.id, user.email);
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+    const siteUrl = resolveAppSiteUrl();
     const successUrl = `${siteUrl}/pricing/success?session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = `${siteUrl}/pricing?canceled=true`;
 

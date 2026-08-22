@@ -20,7 +20,7 @@ import { TesterProgrammeProvider } from "@/contexts/TesterProgrammeContext";
 import { TesterProgrammeBanner } from "@/components/tester/TesterProgrammeBanner";
 import { BRAND_CONFIG } from "@/config/brand";
 import { buildCssVariables, LIGHT_MODE_STRATEGY_STORAGE_KEY } from "@/config/theme";
-import { SITE_URL } from "@/lib/seo/config";
+import { PRODUCTION_SITE_URL } from "@/lib/seo/config";
 import { GoogleAnalytics, PageViewTracker } from "@/components/ga";
 import "@/styles/globals.css";
 
@@ -41,19 +41,17 @@ const ebGaramond = EB_Garamond({
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
+  metadataBase: new URL(PRODUCTION_SITE_URL),
   title: BRAND_CONFIG.fullTitle,
   description:
     "Prepare for the ESAT and TMUA with past papers, question banks, and structured practice. ESAT CAMP helps you build speed and strategy for admissions exams.",
   keywords: [...BRAND_CONFIG.keywords],
-  alternates: { canonical: SITE_URL },
   openGraph: {
     type: "website",
     siteName: BRAND_CONFIG.displayName,
     title: BRAND_CONFIG.fullTitle,
     description:
       "Prepare for the ESAT and TMUA with past papers, a curated question bank and timed no-calculator drills.",
-    url: SITE_URL,
   },
   twitter: {
     card: "summary_large_image",

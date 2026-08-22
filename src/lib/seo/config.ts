@@ -18,25 +18,43 @@ import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
  */
 export const PRODUCTION_SITE_URL = "https://esatcamp.com";
 
-function normalizeSiteUrl(raw: string | undefined): string {
-  const fallback = PRODUCTION_SITE_URL;
-  if (!raw) return fallback;
+/**
+ * Canonical origin for SEO output. Always non-www, regardless of deploy env.
+ * Preview and localhost builds still emit production canonicals so drafts
+ * never index under a temporary host.
+ */
+export const SITE_URL = PRODUCTION_SITE_URL;
+
+/** Build an absolute canonical URL for a public path. */
+export function buildCanonicalUrl(path: string): string {
+  if (!path || path === "/") return PRODUCTION_SITE_URL;
+  const normalized = path.startsWith("/") ? path : `/${path}`;
+  return `${PRODUCTION_SITE_URL}${normalized}`;
+}
+
+/**
+ * App return URL base (Stripe, etc.). Strips www from esatcamp.com while
+ * preserving localhost and preview hosts.
+ */
+export function resolveAppSiteUrl(raw?: string): string {
+  const fallback =
+    process.env.NODE_ENV === "production"
+      ? PRODUCTION_SITE_URL
+      : "http://localhost:3000";
+  const value = (raw ?? process.env.NEXT_PUBLIC_SITE_URL ?? fallback).trim();
+  if (!value) return fallback;
 
   try {
-    const url = new URL(raw.trim());
+    const url = new URL(value);
     const host = url.hostname.toLowerCase().replace(/^www\./, "");
     if (host === "esatcamp.com") {
       return PRODUCTION_SITE_URL;
     }
-    // Preview / localhost: still publish production canonicals so drafts never
-    // index under a temporary host.
-    return PRODUCTION_SITE_URL;
+    return value.replace(/\/$/, "");
   } catch {
     return fallback;
   }
 }
-
-export const SITE_URL = normalizeSiteUrl(process.env.NEXT_PUBLIC_SITE_URL);
 
 /** Hostname only - used for robots.txt Host. */
 export const SITE_HOST = "esatcamp.com";
@@ -265,7 +283,7 @@ export function buildSeoMetadata({
   path,
   keywords,
 }: SeoMetadataInput): Metadata {
-  const url = `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+  const url = buildCanonicalUrl(path);
 
   return {
     title,
@@ -317,7 +335,7 @@ export function articleSchema({
     "@type": "Article",
     headline,
     description,
-    mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE_URL}${path}` },
+    mainEntityOfPage: { "@type": "WebPage", "@id": buildCanonicalUrl(path) },
     dateModified: LAST_CHECKED.iso,
     isAccessibleForFree: true,
     publisher: {
@@ -342,7 +360,7 @@ export function webApplicationSchema({
     "@type": "WebApplication",
     name,
     description,
-    url: `${SITE_URL}${path}`,
+    url: buildCanonicalUrl(path),
     applicationCategory: "EducationalApplication",
     operatingSystem: "Web browser",
     offers: { "@type": "Offer", price: "0", priceCurrency: "GBP" },

@@ -1,4 +1,4 @@
-import type { FaqItem } from "@/lib/seo/config";
+import { SEO_ROUTES, buildCanonicalUrl, type FaqItem } from "@/lib/seo/config";
 
 export const PAST_PAPERS_GUIDE_LAST_REVIEWED = {
   label: "20 August 2026",
@@ -347,6 +347,6 @@ export const PAST_PAPERS_GUIDE_SOURCES = [
   },
   {
     label: "ESAT CAMP, full NSAA/ENGAA duplicate methodology and question list",
-    url: "https://esatcamp.com/engaa-nsaa-papers-for-esat",
+    url: buildCanonicalUrl(SEO_ROUTES.engaaNsaaPapers),
   },
 ] as const;

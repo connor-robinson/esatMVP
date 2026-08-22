@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRouteUser } from "@/lib/supabase/auth";
 import { getStripe, isStripeConfigured } from "@/lib/stripe/config";
 import { createOrRetrieveCustomer } from "@/lib/stripe/supabase-admin";
+import { resolveAppSiteUrl } from "@/lib/seo/config";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +18,7 @@ export async function POST(request: NextRequest) {
     }
 
     const customerId = await createOrRetrieveCustomer(user.id, user.email);
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+    const siteUrl = resolveAppSiteUrl();
 
     const session = await getStripe().billingPortal.sessions.create({
       customer: customerId,

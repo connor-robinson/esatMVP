@@ -49,7 +49,6 @@ const ENTRIES: readonly { path: string; priority: number }[] = [
 
   { path: "/pricing", priority: 0.6 },
   { path: "/help", priority: 0.3 },
-  { path: "/contact", priority: 0.3 },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
