@@ -33,6 +33,15 @@ import {
 } from "@/lib/scoreConverter/esatModules";
 import { APP_ROUTES, SOURCES } from "@/lib/seo/config";
 import { SEO_LINKS } from "@/lib/seo/links";
+import { trackEvent } from "@/lib/ga";
+import type { ConverterExampleResponse } from "@/lib/scoreConverter/converterExample.server";
+import {
+  clearSavedConverterState,
+  hasValidUrlPrefill,
+  readSavedConverterState,
+  writeSavedConverterState,
+  type SavedConverterState,
+} from "@/lib/scoreConverter/converterStorage";
 
 const MAX_SECTIONS = 3;
 const OVERALL_CHART_KEY = "__overall__";
@@ -466,6 +475,77 @@ function InputHelperHint({
   );
 }
 
+function ExampleResultBadge({
+  onClear,
+}: {
+  onClear: () => void;
+}) {
+  return (
+    <div
+      className="mb-4 flex flex-wrap items-start justify-between gap-3 rounded-organic-lg bg-secondary/10 px-4 py-3"
+      role="status"
+      aria-label="Example result"
+    >
+      <div className="min-w-0 flex-1">
+        <p className="text-xs font-bold uppercase tracking-wide text-secondary">
+          Example result
+        </p>
+        <p className="mt-1 text-sm leading-relaxed text-text-muted">
+          Example marks are shown below. Replace them with your own past-paper
+          results.
+        </p>
+      </div>
+      <button
+        type="button"
+        onClick={onClear}
+        aria-label="Clear example marks and reset the form"
+        className={cn(
+          "shrink-0 rounded-organic-md bg-surface-mid px-3 py-1.5 text-xs font-semibold text-text transition-colors hover:bg-surface-subtle",
+          controlBase,
+        )}
+      >
+        Clear example
+      </button>
+    </div>
+  );
+}
+
+function applySavedFormState(
+  saved: SavedConverterState,
+  setters: {
+    setSelectedGroup: (value: string) => void;
+    setCheckedKeys: (value: string[]) => void;
+    setRawByKey: (value: Record<string, number>) => void;
+    setTmuaPickMode: (value: TmuaPickMode | null) => void;
+    setScaledInput: (value: string) => void;
+  },
+) {
+  if (saved.selectedGroup) setters.setSelectedGroup(saved.selectedGroup);
+  setters.setCheckedKeys(saved.checkedKeys);
+  setters.setRawByKey(saved.rawByKey);
+  if (saved.tmuaPickMode) setters.setTmuaPickMode(saved.tmuaPickMode);
+  if (saved.scaledInput) setters.setScaledInput(saved.scaledInput);
+}
+
+function applyExampleFormState(
+  example: ConverterExampleResponse,
+  setters: {
+    setSelectedGroup: (value: string) => void;
+    setCheckedKeys: (value: string[]) => void;
+    setRawByKey: (value: Record<string, number>) => void;
+    setTmuaPickMode: (value: TmuaPickMode | null) => void;
+  },
+) {
+  setters.setSelectedGroup(example.selectedGroup);
+  if (example.tmuaPickMode) setters.setTmuaPickMode(example.tmuaPickMode);
+  setters.setCheckedKeys(example.selections.map((selection) => selection.key));
+  setters.setRawByKey(
+    Object.fromEntries(
+      example.selections.map((selection) => [selection.key, selection.raw]),
+    ),
+  );
+}
+
 export function ScoreConverter({
   initialExam,
   title,
@@ -489,37 +569,6 @@ export function ScoreConverter({
     if (initialExam) setExam(initialExam);
   }, [initialExam]);
 
-  useEffect(() => {
-    const handler = (event: Event) => {
-      const detail = (event as CustomEvent<{
-        exam: ConverterExam;
-        year: number;
-        paperName: string;
-        partName: string;
-      }>).detail;
-      if (!detail?.exam) return;
-      setExam(detail.exam);
-      setPendingApply(detail);
-    };
-    window.addEventListener("score-converter:apply", handler);
-    return () => window.removeEventListener("score-converter:apply", handler);
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
-    const yearParam = Number(params.get("year"));
-    const paperName = params.get("paperName");
-    const partName = params.get("partName");
-    if (!Number.isFinite(yearParam) || !paperName || !partName) return;
-    setPendingApply({
-      exam: initialExam ?? exam,
-      year: yearParam,
-      paperName,
-      partName,
-    });
-  }, [initialExam, exam]);
-
   const [years, setYears] = useState<YearOption[]>([]);
   const [yearsLoading, setYearsLoading] = useState(false);
   const [year, setYear] = useState<YearOption | null>(null);
@@ -542,7 +591,54 @@ export function ScoreConverter({
   const [chartLoading, setChartLoading] = useState(false);
   const [showQuestionBankPromo, setShowQuestionBankPromo] = useState(false);
   const [showInputHint, setShowInputHint] = useState(true);
+  const [isExampleActive, setIsExampleActive] = useState(false);
+  const [pendingExample, setPendingExample] =
+    useState<ConverterExampleResponse | null>(null);
+  const [pendingRestore, setPendingRestore] = useState<SavedConverterState | null>(
+    null,
+  );
   const resultsRef = useRef<HTMLDivElement>(null);
+  const applyingProgrammaticRef = useRef(false);
+  const exampleAutoRunRef = useRef(false);
+  const exampleViewTrackedRef = useRef(false);
+  const skipExampleRef = useRef(hasValidUrlPrefill());
+
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent<{
+        exam: ConverterExam;
+        year: number;
+        paperName: string;
+        partName: string;
+      }>).detail;
+      if (!detail?.exam) return;
+      skipExampleRef.current = true;
+      setPendingExample(null);
+      setIsExampleActive(false);
+      setExam(detail.exam);
+      setPendingApply(detail);
+    };
+    window.addEventListener("score-converter:apply", handler);
+    return () => window.removeEventListener("score-converter:apply", handler);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const yearParam = Number(params.get("year"));
+    const paperName = params.get("paperName");
+    const partName = params.get("partName");
+    if (!Number.isFinite(yearParam) || !paperName || !partName) return;
+    skipExampleRef.current = true;
+    setPendingExample(null);
+    setIsExampleActive(false);
+    setPendingApply({
+      exam: initialExam ?? exam,
+      year: yearParam,
+      paperName,
+      partName,
+    });
+  }, [initialExam, exam]);
 
   const isScaledMode = year?.mode === "scaled";
 
@@ -612,6 +708,190 @@ export function ScoreConverter({
     setChartRows([]);
     setShowQuestionBankPromo(false);
   }, []);
+
+  const dismissExample = useCallback(() => {
+    if (!isExampleActive) return;
+    setIsExampleActive(false);
+    trackEvent("converter_example_edited", {
+      exam,
+      year: year?.year,
+    });
+  }, [isExampleActive, exam, year?.year]);
+
+  const persistUserState = useCallback(() => {
+    if (applyingProgrammaticRef.current || isExampleActive || !year) return;
+    writeSavedConverterState({
+      exam,
+      year: year.year,
+      mode: year.mode,
+      selectedGroup: selectedGroup || undefined,
+      checkedKeys,
+      rawByKey,
+      tmuaPickMode: tmuaPickMode ?? undefined,
+      scaledInput: scaledInput || undefined,
+    });
+  }, [
+    isExampleActive,
+    exam,
+    year,
+    selectedGroup,
+    checkedKeys,
+    rawByKey,
+    tmuaPickMode,
+    scaledInput,
+  ]);
+
+  useEffect(() => {
+    if (applyingProgrammaticRef.current || isExampleActive || !year) return;
+    if (!canCalculate) return;
+    persistUserState();
+  }, [
+    isExampleActive,
+    year,
+    canCalculate,
+    persistUserState,
+  ]);
+
+  const clearExample = useCallback(() => {
+    applyingProgrammaticRef.current = true;
+    setIsExampleActive(false);
+    clearSavedConverterState();
+    setYear(null);
+    setSelectedGroup("");
+    setCheckedKeys([]);
+    setRawByKey({});
+    setScaledInput("");
+    setTmuaPickMode(null);
+    invalidateResults();
+    exampleAutoRunRef.current = false;
+    applyingProgrammaticRef.current = false;
+  }, [invalidateResults]);
+
+  useEffect(() => {
+    if (skipExampleRef.current) return;
+    const saved = readSavedConverterState();
+    if (saved) setPendingRestore(saved);
+  }, []);
+
+  useEffect(() => {
+    if (skipExampleRef.current || pendingRestore || pendingApply) return;
+    if (isExampleActive || hasCalculated || pendingExample) return;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(
+          `/api/score-converter/example?exam=${encodeURIComponent(exam)}`,
+        );
+        if (!res.ok || cancelled) return;
+        const data = (await res.json()) as ConverterExampleResponse;
+        if (!cancelled) setPendingExample(data);
+      } catch {
+        /* example is optional */
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    exam,
+    pendingRestore,
+    pendingApply,
+    isExampleActive,
+    hasCalculated,
+    pendingExample,
+  ]);
+
+  useEffect(() => {
+    if (!pendingRestore || yearsLoading) return;
+    if (pendingRestore.exam !== exam) {
+      setExam(pendingRestore.exam);
+      return;
+    }
+    const matchYear = years.find((y) => y.year === pendingRestore.year);
+    if (!matchYear) {
+      setPendingRestore(null);
+      return;
+    }
+    if (year?.year !== pendingRestore.year) {
+      applyingProgrammaticRef.current = true;
+      setYear(matchYear);
+      applyingProgrammaticRef.current = false;
+    }
+  }, [pendingRestore, years, yearsLoading, exam, year?.year]);
+
+  useEffect(() => {
+    if (!pendingRestore || !year || year.year !== pendingRestore.year) return;
+    if (sectionsLoading) return;
+    if (pendingRestore.mode === "scaled") {
+      applyingProgrammaticRef.current = true;
+      setScaledInput(pendingRestore.scaledInput ?? "");
+      applyingProgrammaticRef.current = false;
+      setPendingRestore(null);
+      return;
+    }
+    if (sections.length === 0) return;
+
+    applyingProgrammaticRef.current = true;
+    applySavedFormState(pendingRestore, {
+      setSelectedGroup,
+      setCheckedKeys,
+      setRawByKey,
+      setTmuaPickMode,
+      setScaledInput,
+    });
+    applyingProgrammaticRef.current = false;
+    setPendingRestore(null);
+  }, [pendingRestore, year, sections, sectionsLoading]);
+
+  useEffect(() => {
+    if (!pendingExample || pendingRestore || pendingApply || skipExampleRef.current) {
+      return;
+    }
+    if (pendingExample.exam !== exam) return;
+
+    const matchYear = years.find((y) => y.year === pendingExample.year);
+    if (!matchYear) {
+      setPendingExample(null);
+      return;
+    }
+    if (!year || year.year !== pendingExample.year) {
+      applyingProgrammaticRef.current = true;
+      setYear(matchYear);
+      applyingProgrammaticRef.current = false;
+      return;
+    }
+    if (sectionsLoading || sections.length === 0) return;
+
+    applyingProgrammaticRef.current = true;
+    applyExampleFormState(pendingExample, {
+      setSelectedGroup,
+      setCheckedKeys,
+      setRawByKey,
+      setTmuaPickMode,
+    });
+    applyingProgrammaticRef.current = false;
+    setPendingExample(null);
+    setIsExampleActive(true);
+    exampleAutoRunRef.current = true;
+    if (!exampleViewTrackedRef.current) {
+      exampleViewTrackedRef.current = true;
+      trackEvent("converter_example_viewed", {
+        exam: pendingExample.exam,
+        year: pendingExample.year,
+      });
+    }
+  }, [
+    pendingExample,
+    pendingRestore,
+    pendingApply,
+    exam,
+    years,
+    year,
+    sections,
+    sectionsLoading,
+  ]);
 
   useEffect(() => {
     setYearsLoading(true);
@@ -696,6 +976,7 @@ export function ScoreConverter({
   }, [pendingApply, exam, years, year]);
 
   const handleGroupChange = (group: string) => {
+    dismissExample();
     invalidateResults();
     setSelectedGroup(group);
     setCheckedKeys((prev) =>
@@ -704,6 +985,7 @@ export function ScoreConverter({
   };
 
   const selectTmuaMode = (mode: TmuaPickMode) => {
+    dismissExample();
     invalidateResults();
     setTmuaPickMode(mode);
     const { paper1, paper2, overall } = tmuaSections;
@@ -756,6 +1038,7 @@ export function ScoreConverter({
   ]);
 
   const toggleSection = (opt: SectionOption) => {
+    dismissExample();
     invalidateResults();
     setCheckedKeys((prev) => {
       if (prev.includes(opt.key)) {
@@ -768,6 +1051,7 @@ export function ScoreConverter({
   };
 
   const setRaw = (key: string, value: number) => {
+    dismissExample();
     invalidateResults();
     setRawByKey((prev) => ({ ...prev, [key]: value }));
   };
@@ -776,7 +1060,7 @@ export function ScoreConverter({
     setShowInputHint(false);
   }, []);
 
-  const runConvert = async () => {
+  const runConvert = async (options?: { fromExample?: boolean }) => {
     if (!year || !canCalculate) return;
     setResultLoading(true);
     setResultError(null);
@@ -811,12 +1095,28 @@ export function ScoreConverter({
       const data = (await res.json()) as ConvertResponse;
       setResult(data);
       const isMulti = data.sections.length > 1;
+      const hideOverall =
+        options?.fromExample && exam === "ENGAA" && isMulti;
       setActiveChartKey(
-        isMulti ? OVERALL_CHART_KEY : (data.sections[0]?.key ?? null),
+        hideOverall
+          ? (data.sections[0]?.key ?? null)
+          : isMulti
+            ? OVERALL_CHART_KEY
+            : (data.sections[0]?.key ?? null),
       );
-      setShowQuestionBankPromo(true);
+      setShowQuestionBankPromo(!options?.fromExample);
+      trackEvent("converter_calculation_completed", {
+        exam,
+        year: year.year,
+        example: Boolean(options?.fromExample),
+      });
+      if (!options?.fromExample) {
+        persistUserState();
+      }
       requestAnimationFrame(() => {
-        resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (!options?.fromExample) {
+          resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
       });
     } catch (e: unknown) {
       setResult(null);
@@ -826,6 +1126,14 @@ export function ScoreConverter({
       setResultLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!exampleAutoRunRef.current || !canCalculate || hasCalculated || resultLoading) {
+      return;
+    }
+    exampleAutoRunRef.current = false;
+    void runConvert({ fromExample: true });
+  }, [canCalculate, hasCalculated, resultLoading, checkedSections, rawByKey, year]);
 
   const activeSection = useMemo(
     () => result?.sections.find((s) => s.key === activeChartKey) ?? result?.sections[0] ?? null,
@@ -892,6 +1200,8 @@ export function ScoreConverter({
           <ConverterInfoButton exam={exam} />
         </div>
 
+        {isExampleActive ? <ExampleResultBadge onClear={clearExample} /> : null}
+
         <div className="relative overflow-visible rounded-organic-lg bg-surface-mid/30 p-3 sm:p-4">
           <div className="flex flex-wrap items-end gap-3 sm:gap-4">
             <div className="flex min-w-[10rem] flex-1 items-end gap-2" onPointerDown={dismissInputHint}>
@@ -902,6 +1212,8 @@ export function ScoreConverter({
                 options={CONVERTER_EXAMS.map((e) => ({ value: e, label: e }))}
                 onChange={(next) => {
                   dismissInputHint();
+                  dismissExample();
+                  setPendingExample(null);
                   setExam(next as ConverterExam);
                   setYear(null);
                   invalidateResults();
@@ -932,6 +1244,7 @@ export function ScoreConverter({
                 }))}
                 onChange={(next) => {
                   dismissInputHint();
+                  dismissExample();
                   const opt = years.find((y) => y.year === Number(next)) ?? null;
                   setYear(opt);
                   setScaledInput("");
@@ -966,6 +1279,7 @@ export function ScoreConverter({
                       inputMode="decimal"
                       value={scaledInput}
                       onChange={(e) => {
+                        dismissExample();
                         invalidateResults();
                         setScaledInput(e.target.value.replace(/[^0-9.]/g, ""));
                       }}
@@ -1233,6 +1547,7 @@ export function ScoreConverter({
             onSelectChart={setActiveChartKey}
             chartRows={chartRows}
             chartLoading={chartLoading}
+            suppressOverallAverage={isExampleActive && exam === "ENGAA"}
           />
         )}
       </div>
@@ -1338,6 +1653,7 @@ function ResultsPanel({
   onSelectChart,
   chartRows,
   chartLoading,
+  suppressOverallAverage = false,
 }: {
   result: ConvertResponse;
   exam: ConverterExam;
@@ -1347,9 +1663,11 @@ function ResultsPanel({
   onSelectChart: (key: string) => void;
   chartRows: EsatRow[];
   chartLoading: boolean;
+  suppressOverallAverage?: boolean;
 }) {
   const multi = result.sections.length > 1;
-  const showOverall = multi && result.averageScaled != null;
+  const showOverall =
+    multi && result.averageScaled != null && !suppressOverallAverage;
   const showingOverall = activeChartKey === OVERALL_CHART_KEY;
   const tmuaHasDual = result.sections.some((s) => s.tmuaDualCurve != null);
   const tmuaOverallEstimated = tmuaHasDual ? tmuaAverageEstimated(result.sections) : null;
@@ -1545,10 +1863,6 @@ function OverallResult({
           accentColor={CHART_ACCENT_OVERALL}
           xLabel="Scaled score"
         />
-      )}
-
-      {chartRows.length > 1 && result.averageScaled != null && exam !== "TMUA" && (
-        <ExplorePercentileLink score={result.averageScaled} className="pt-1" />
       )}
     </div>
   );
