@@ -17,10 +17,11 @@ describe("publishedTables helpers", () => {
     expect(result.kind).toBe("official");
   });
 
-  it("hides unverified sources", () => {
+  it("marks missing sources", () => {
     const result = classifySourceUrl(null);
     expect(result.kind).toBeNull();
     expect(result.url).toBeNull();
+    expect(result.label).toBe("Official source not linked");
   });
 
   it("builds stable CSV output", () => {
