@@ -28,12 +28,12 @@ import {
   type EsatTestCycleId,
 } from "@/lib/esat/percentileCatalog";
 import {
-  ensureCumulativeRows,
   fetchEsatTable,
   interpolatePercentile,
   type EsatRow,
 } from "@/lib/esat/percentiles";
 import {
+  ensureCumulativeRows,
   formatApproximatePercentile,
   formatCycleInterpretation,
   formatPercentileDetail,
