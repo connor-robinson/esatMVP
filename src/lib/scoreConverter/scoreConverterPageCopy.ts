@@ -1,7 +1,7 @@
 import type { ConverterExam } from "@/lib/scoreConverter/esatModules";
 
 export const MAIN_SCORE_CONVERTER_COPY = {
-  title: "ESAT Score Converter & Conversion Tables 2026/27",
+  title: "ESAT Score Calculator & Conversion Tables 2026/27",
   description:
     "Free ESAT score conversion with downloadable conversion tables. Convert raw marks with NSAA to ESAT and ENGAA to ESAT conversion, plus an ESAT percentile calculator.",
   h1: "ESAT Score Converter",
