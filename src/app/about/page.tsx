@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { BrandMarkImage } from "@/components/brand/BrandMarkImage";
-import { BrandWordmark } from "@/components/brand/BrandWordmark";
 import { ABOUT_PATH, FOUNDERS } from "@/config/founders";
 import {
   APP_ROUTES,
@@ -122,17 +121,14 @@ export default function AboutPage() {
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
             About us
           </p>
-          <div className="mt-5 flex items-start justify-between gap-5 sm:gap-8 lg:gap-12">
+          <div className="mt-5 flex items-center justify-between gap-6 sm:gap-10 lg:gap-14">
             <h1 className="min-w-0 flex-1 max-w-4xl font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-7xl">
               Built by students who understand the process
             </h1>
-            <span className="inline-flex shrink-0 items-center gap-2.5 text-white sm:gap-3">
-              <BrandMarkImage
-                className="h-10 w-auto sm:h-14"
-                alt="ESAT Camp"
-              />
-              <BrandWordmark size="lg" className="hidden min-[420px]:inline" />
-            </span>
+            <BrandMarkImage
+              className="h-[5.5rem] w-auto shrink-0 sm:h-[8rem] lg:h-[10.5rem]"
+              alt="ESAT Camp"
+            />
           </div>
           <p className="mt-6 max-w-3xl text-lg leading-relaxed text-[#94A3B8] sm:text-xl">
             We created ESAT Camp having gone through competitive UK university
