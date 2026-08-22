@@ -14,7 +14,12 @@ import {
 } from "@/lib/scoreConverter/esatModules";
 
 const TARGET_SCALED = 4.1;
-const NSAA_EXAMPLE_COUNT = 3;
+
+const NSAA_EXAMPLE_RAW_BY_MODULE: Record<string, number> = {
+  "Mathematics 1": 18,
+  Physics: 10,
+  Chemistry: 8,
+};
 
 export type ConverterExampleSelection = {
   key: string;
@@ -165,6 +170,7 @@ async function buildRawExample(
     selectedGroup: string;
     picked: SectionOption[];
   },
+  rawByModuleLabel?: Record<string, number>,
 ): Promise<ConverterExampleResponse | null> {
   const options = await loadSectionOptions(exam, year);
   if (options.length === 0) return null;
@@ -184,7 +190,9 @@ async function buildRawExample(
     key: option.key,
     paperName: option.paperName,
     partName: option.partName,
-    raw: rawMarkNearTarget(rowsForOption(convRows, option)),
+    raw:
+      (option.moduleLabel && rawByModuleLabel?.[option.moduleLabel]) ??
+      rawMarkNearTarget(rowsForOption(convRows, option)),
   }));
 
   return {
@@ -253,11 +261,16 @@ export async function buildConverterExample(
 
   return buildRawExample("NSAA", year, (groups) => {
     const section1 = groups.get("Section 1") ?? [...groups.values()][0] ?? [];
+    const picked = ["Mathematics 1", "Physics", "Chemistry"]
+      .map((moduleLabel) =>
+        section1.find((option) => option.moduleLabel === moduleLabel),
+      )
+      .filter((option): option is SectionOption => option != null);
     return {
       selectedGroup: section1[0]?.group ?? "Section 1",
-      picked: section1.slice(0, NSAA_EXAMPLE_COUNT),
+      picked,
     };
-  });
+  }, NSAA_EXAMPLE_RAW_BY_MODULE);
 }
 
 export function scaledScoreNearTarget(

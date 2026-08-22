@@ -37,7 +37,6 @@ import { SEO_LINKS } from "@/lib/seo/links";
 import { trackEvent } from "@/lib/ga";
 import type { ConverterExampleResponse } from "@/lib/scoreConverter/converterExample.server";
 import {
-  clearSavedConverterState,
   hasValidUrlPrefill,
   readSavedConverterState,
   writeSavedConverterState,
@@ -169,6 +168,10 @@ function convertedScoreLabel(exam: ConverterExam): string {
   return exam === "TMUA" ? "Converted TMUA score" : "Converted ESAT score";
 }
 
+function overallPillLabel(exam: ConverterExam): string {
+  return exam === "TMUA" ? "Overall TMUA score" : "Overall ESAT score";
+}
+
 const fieldLabel =
   "mb-2 block text-xs font-semibold uppercase tracking-[0.1em] text-text-muted";
 
@@ -217,15 +220,6 @@ const COLOR_FILL_CHECKED: Record<ModuleColor, string> = {
   biology: "border-2 border-biology/70 bg-biology/15",
   advanced: "border-2 border-advanced/70 bg-advanced/15",
   "tmua-accent": "border-2 border-tmua-accent/70 bg-tmua-accent/15",
-};
-
-const COLOR_CARD_CHECKED_RING: Record<ModuleColor, string> = {
-  maths: "ring-1 ring-maths/20",
-  physics: "ring-1 ring-physics/20",
-  chemistry: "ring-1 ring-chemistry/20",
-  biology: "ring-1 ring-biology/20",
-  advanced: "ring-1 ring-advanced/20",
-  "tmua-accent": "ring-1 ring-tmua-accent/20",
 };
 
 const COLOR_TEXT: Record<ModuleColor, string> = {
@@ -595,41 +589,6 @@ function InputHelperHint({
   );
 }
 
-function ExampleResultBadge({
-  onClear,
-}: {
-  onClear: () => void;
-}) {
-  return (
-    <div
-      className="mb-4 flex flex-wrap items-start justify-between gap-3 rounded-organic-lg bg-secondary/10 px-4 py-3"
-      role="status"
-      aria-label="Example result"
-    >
-      <div className="min-w-0 flex-1">
-        <p className="text-xs font-bold uppercase tracking-wide text-secondary">
-          Example result
-        </p>
-        <p className="mt-1 text-sm leading-relaxed text-text-muted">
-          Example marks are shown below. Replace them with your own past-paper
-          results.
-        </p>
-      </div>
-      <button
-        type="button"
-        onClick={onClear}
-        aria-label="Clear example marks and reset the form"
-        className={cn(
-          "shrink-0 rounded-organic-md bg-surface-mid px-3 py-1.5 text-xs font-semibold text-text transition-colors hover:bg-surface-subtle",
-          controlBase,
-        )}
-      >
-        Clear example
-      </button>
-    </div>
-  );
-}
-
 function applySavedFormState(
   saved: SavedConverterState,
   setters: {
@@ -869,21 +828,6 @@ export function ScoreConverter({
     canCalculate,
     persistUserState,
   ]);
-
-  const clearExample = useCallback(() => {
-    applyingProgrammaticRef.current = true;
-    setIsExampleActive(false);
-    clearSavedConverterState();
-    setYear(null);
-    setSelectedGroup("");
-    setCheckedKeys([]);
-    setRawByKey({});
-    setScaledInput("");
-    setTmuaPickMode(null);
-    invalidateResults();
-    exampleAutoRunRef.current = false;
-    applyingProgrammaticRef.current = false;
-  }, [invalidateResults]);
 
   useEffect(() => {
     if (skipExampleRef.current) return;
@@ -1319,8 +1263,6 @@ export function ScoreConverter({
           <ConverterInfoButton exam={exam} />
         </div>
 
-        {isExampleActive ? <ExampleResultBadge onClear={clearExample} /> : null}
-
         <div className="relative overflow-visible rounded-organic-lg bg-surface-mid/30 p-3 sm:p-4">
           <div className="flex flex-wrap items-end gap-3 sm:gap-4">
             <div className="relative min-w-[6rem] flex-1" onPointerDown={dismissInputHint}>
@@ -1553,9 +1495,7 @@ export function ScoreConverter({
                           }}
                           className={cn(
                             "rounded-organic-lg px-4 py-3 transition-all duration-fast outline-none",
-                            checked
-                              ? cn(SUBJECT_CARD_CHECKED, COLOR_CARD_CHECKED_RING[s.color])
-                              : SUBJECT_CARD_UNCHECKED,
+                            checked ? SUBJECT_CARD_CHECKED : SUBJECT_CARD_UNCHECKED,
                             disabled && "opacity-35",
                             !disabled && "cursor-pointer",
                             controlBase,
@@ -1679,6 +1619,7 @@ function SubjectViewPills({
           className={cn(
             "rounded-organic-lg px-4 py-2.5 text-left transition-all duration-fast active:scale-[0.98]",
             showingOverall ? TAB_ACTIVE : TAB_INACTIVE,
+            controlBase,
           )}
         >
           <span
@@ -1687,6 +1628,9 @@ function SubjectViewPills({
               showingOverall ? "text-text" : "text-text-muted",
             )}
           >
+            {overallPillLabel(exam)}
+          </span>
+          <span className="mt-0.5 block text-[11px] font-medium text-text-muted">
             {convertedScoreLabel(exam)}
           </span>
           <span className="mt-0.5 block text-lg font-bold tabular-nums text-text">
@@ -1715,6 +1659,7 @@ function SubjectViewPills({
             className={cn(
               "rounded-organic-lg px-4 py-2.5 text-left transition-all duration-fast active:scale-[0.98]",
               active ? TAB_ACTIVE : TAB_INACTIVE,
+              controlBase,
             )}
           >
             <span

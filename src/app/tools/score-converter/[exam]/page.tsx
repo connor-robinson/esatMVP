@@ -22,8 +22,7 @@ const PAGE_COPY: Record<
     description:
       "Convert an NSAA past-paper raw mark into its published scaled score and estimate the equivalent ESAT percentile. Includes downloadable conversion tables.",
     h1: "NSAA to ESAT Score Converter",
-    intro:
-      "Convert NSAA Section 1 and Section 2 raw marks from 2016–2023 into published scaled scores. Use this as a historical proxy for ESAT Maths 1, Maths 2 and science modules when you know the exact year and part you completed.",
+    intro: "",
   },
   ENGAA: {
     title: "ENGAA to ESAT Score Converter | Raw Mark & Percentile",
