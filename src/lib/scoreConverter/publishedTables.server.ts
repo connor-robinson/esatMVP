@@ -120,15 +120,16 @@ function sectionsForYear(
   const rowCountByKey = new Map<string, number>();
   for (const r of ctx.convRows) {
     if (!tableIds.includes(r.table_id)) continue;
-    const k = `${r.table_id}::${r.part_name}`;
+    const k = `${r.table_id}\u0000${r.part_name}`;
     maxByKey.set(k, Math.max(maxByKey.get(k) ?? 0, r.raw_score));
     rowCountByKey.set(k, (rowCountByKey.get(k) ?? 0) + 1);
   }
 
   const rawParts: RawSectionPart[] = [];
   for (const [key, maxRaw] of maxByKey) {
-    const [tableIdStr, partName] = key.split("::");
-    const tableId = Number(tableIdStr);
+    const sep = key.indexOf("\u0000");
+    const tableId = Number(key.slice(0, sep));
+    const partName = key.slice(sep + 1);
     const meta = tableMeta.get(tableId);
     if (!meta) continue;
     rawParts.push({
@@ -160,7 +161,7 @@ function sectionsForYear(
       "pdf",
     );
     const rowCount =
-      rowCountByKey.get(`${opt.tableId}::${opt.partName}`) ?? 0;
+      rowCountByKey.get(`${opt.tableId}\u0000${opt.partName}`) ?? 0;
 
     return {
       id: `${exam}:${year}:${opt.paperName}:${opt.partName}`,

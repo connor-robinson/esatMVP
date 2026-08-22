@@ -10,6 +10,8 @@ import { fetchPublishedTableCatalog } from "@/lib/scoreConverter/publishedTables
 import { SCORE_CONVERTER_PAGE_COPY } from "@/lib/scoreConverter/scoreConverterPageCopy";
 import { buildSeoMetadata } from "@/lib/seo/config";
 
+export const dynamic = "force-dynamic";
+
 export function generateStaticParams() {
   return [{ exam: "nsaa" }, { exam: "engaa" }, { exam: "tmua" }];
 }

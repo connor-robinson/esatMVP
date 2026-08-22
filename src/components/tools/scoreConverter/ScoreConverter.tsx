@@ -891,13 +891,16 @@ export function ScoreConverter({
   useEffect(() => {
     if (hasValidUrlPrefill()) return;
     const saved = readSavedConverterState();
-    if (saved) setPendingRestore(saved);
-  }, []);
+    if (!saved) return;
+    const pageExam = initialExam ?? exam;
+    if (saved.exam !== pageExam) return;
+    setPendingRestore(saved);
+  }, [initialExam, exam]);
 
   useEffect(() => {
     if (!pendingRestore || yearsLoading) return;
     if (pendingRestore.exam !== exam) {
-      setExam(pendingRestore.exam);
+      setPendingRestore(null);
       return;
     }
     const matchYear = years.find((y) => y.year === pendingRestore.year);
@@ -922,7 +925,10 @@ export function ScoreConverter({
       setPendingRestore(null);
       return;
     }
-    if (sections.length === 0) return;
+    if (sections.length === 0) {
+      setPendingRestore(null);
+      return;
+    }
 
     applyingProgrammaticRef.current = true;
     applySavedFormState(pendingRestore, {
@@ -1246,6 +1252,7 @@ export function ScoreConverter({
                 }))}
                 onChange={(next) => {
                   dismissInputHint();
+                  setPendingRestore(null);
                   const opt = years.find((y) => y.year === Number(next)) ?? null;
                   setYear(opt);
                   setScaledInput("");
@@ -1432,7 +1439,12 @@ export function ScoreConverter({
                 </div>
               )}
 
-              {!isTmuaRaw && !sectionsLoading && partsInGroup.length === 0 && (
+              {!isTmuaRaw && !sectionsLoading && sections.length === 0 && year && (
+                <span className="text-sm text-text-muted">
+                  No conversion sections are available for {exam} {year.year}. Try another year.
+                </span>
+              )}
+              {!isTmuaRaw && !sectionsLoading && sections.length > 0 && partsInGroup.length === 0 && (
                 <span className="text-sm text-text-muted">No subjects for this section.</span>
               )}
               {!isTmuaRaw && !sectionsLoading && partsInGroup.length > 0 && (
