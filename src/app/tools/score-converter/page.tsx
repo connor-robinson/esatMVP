@@ -17,23 +17,22 @@ import {
   faqPageSchema,
   webApplicationSchema,
 } from "@/lib/seo/config";
+import { MAIN_SCORE_CONVERTER_COPY } from "@/lib/scoreConverter/scoreConverterPageCopy";
 
 const PATH = APP_ROUTES.scoreConverter;
 
-const TITLE = "ESAT Score Converter 2026/27 | Raw Marks to 1.0–9.0";
-const DESCRIPTION =
-  "Estimate your ESAT module score from raw marks and understand what your score might mean for preparation. Estimate only, not official scoring.";
-
 export const metadata: Metadata = buildSeoMetadata({
-  title: TITLE,
-  description: DESCRIPTION,
+  title: MAIN_SCORE_CONVERTER_COPY.title,
+  description: MAIN_SCORE_CONVERTER_COPY.description,
   path: PATH,
   keywords: [
     "ESAT score converter",
-    "ESAT raw marks",
-    "ESAT score",
-    "ESAT results",
-    "ESAT score scale",
+    "ESAT score conversion",
+    "ESAT conversion tables",
+    "raw mark conversion",
+    "NSAA to ESAT conversion",
+    "ENGAA to ESAT conversion",
+    "ESAT percentile calculator",
     "NSAA score converter",
     "ENGAA score converter",
     "TMUA score converter",
@@ -53,7 +52,7 @@ export default function ScoreConverterPage() {
         schema={[
           webApplicationSchema({
             name: "ESAT score converter",
-            description: DESCRIPTION,
+            description: MAIN_SCORE_CONVERTER_COPY.description,
             path: PATH,
           }),
           faqPageSchema(SCORE_CONVERTER_FAQ_ITEMS),
@@ -62,6 +61,8 @@ export default function ScoreConverterPage() {
 
       <ScoreConverter
         initialExam="NSAA"
+        pageTitle={MAIN_SCORE_CONVERTER_COPY.h1}
+        intro={MAIN_SCORE_CONVERTER_COPY.intro}
         beforeFaq={
           <div className="space-y-6">
             <PublishedConversionTables />

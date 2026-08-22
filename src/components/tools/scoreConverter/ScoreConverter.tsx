@@ -40,6 +40,10 @@ import {
   writeSavedConverterState,
   type SavedConverterState,
 } from "@/lib/scoreConverter/converterStorage";
+import {
+  ScoreConverterProvider,
+  type ApplyTableSelection,
+} from "@/components/tools/scoreConverter/ScoreConverterContext";
 
 const MAX_SECTIONS = 3;
 const OVERALL_CHART_KEY = "__overall__";
@@ -674,11 +678,14 @@ function applySavedFormState(
 export function ScoreConverter({
   initialExam,
   onExamChange,
+  pageTitle,
   intro,
   beforeFaq,
 }: {
   initialExam?: ConverterExam;
   onExamChange?: (exam: ConverterExam) => void;
+  /** Static H1 for hub pages; exam picker moves to the control row. */
+  pageTitle?: string;
   intro?: string;
   beforeFaq?: React.ReactNode;
 }) {
@@ -700,7 +707,7 @@ export function ScoreConverter({
       if (next === exam) return;
       setExam(next);
       onExamChange?.(next);
-      if (typeof window !== "undefined") {
+      if (typeof window !== "undefined" && !pageTitle) {
         window.history.replaceState(
           window.history.state,
           "",
@@ -708,7 +715,20 @@ export function ScoreConverter({
         );
       }
     },
-    [exam, onExamChange],
+    [exam, onExamChange, pageTitle],
+  );
+
+  const applyTableSelection = useCallback<ApplyTableSelection>(
+    (selection) => {
+      if (selection.exam !== exam) {
+        handleExamChange(selection.exam);
+      }
+      setPendingApply(selection);
+      document
+        .getElementById("score-converter")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    },
+    [exam, handleExamChange],
   );
 
   useEffect(() => {
@@ -1219,14 +1239,21 @@ export function ScoreConverter({
   }, [result, exam, year, isScaledMode, activeSection, sections]);
 
   return (
+    <ScoreConverterProvider applyTableSelection={applyTableSelection}>
     <Container id="score-converter" size="lg" className="scroll-mt-24 py-8 sm:py-10">
       <div className="mb-4 rounded-organic-xl bg-surface-elevated p-4 shadow-modal-card sm:p-5">
         <div className="mb-3 flex items-start justify-between gap-3">
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-text sm:text-3xl">
-              <ExamTitleDropdown exam={exam} onExamChange={handleExamChange} />
-              <span>{converterTitleSuffix(exam)}</span>
-            </h1>
+            {pageTitle ? (
+              <h1 className="text-xl font-bold tracking-tight text-text sm:text-3xl">
+                {pageTitle}
+              </h1>
+            ) : (
+              <h1 className="text-xl font-bold tracking-tight text-text sm:text-3xl">
+                <ExamTitleDropdown exam={exam} onExamChange={handleExamChange} />
+                <span>{converterTitleSuffix(exam)}</span>
+              </h1>
+            )}
             {intro ? (
               <p className="mt-3 max-w-3xl text-sm leading-relaxed text-text-muted sm:text-base">
                 {intro}
@@ -1238,6 +1265,20 @@ export function ScoreConverter({
 
         <div className="relative overflow-visible rounded-organic-lg bg-surface-mid/30 p-3 sm:p-4">
           <div className="flex flex-wrap items-end gap-3 sm:gap-4">
+            {pageTitle ? (
+              <div className="min-w-[6rem] flex-1">
+                <ModernSelect
+                  label="Exam"
+                  value={exam}
+                  minWidth="6rem"
+                  options={CONVERTER_EXAMS.map((item) => ({
+                    value: item,
+                    label: item,
+                  }))}
+                  onChange={(next) => handleExamChange(next as ConverterExam)}
+                />
+              </div>
+            ) : null}
             <div className="relative min-w-[6rem] flex-1" onPointerDown={dismissInputHint}>
               <InputHelperHint open={showInputHint} onDismiss={dismissInputHint} />
               <ModernSelect
@@ -1559,6 +1600,7 @@ export function ScoreConverter({
 
       <ScoreConverterFaq id="faq" />
     </Container>
+    </ScoreConverterProvider>
   );
 }
 

@@ -1,5 +1,14 @@
 import type { ConverterExam } from "@/lib/scoreConverter/esatModules";
 
+export const MAIN_SCORE_CONVERTER_COPY = {
+  title: "ESAT Score Converter & Conversion Tables 2026/27",
+  description:
+    "Free ESAT score conversion with downloadable conversion tables. Convert raw marks with NSAA to ESAT and ENGAA to ESAT conversion, plus an ESAT percentile calculator.",
+  h1: "ESAT Score Converter",
+  intro:
+    "Free ESAT score conversion for past-paper practice. Enter a raw mark for instant raw mark conversion, or use this tool for NSAA to ESAT conversion and ENGAA to ESAT conversion with an ESAT percentile calculator. Official conversion tables for every year are available to view and download below.",
+} as const;
+
 export const SCORE_CONVERTER_PAGE_COPY: Record<
   ConverterExam,
   { title: string; description: string; h1: string; intro: string }

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
+  publicCsvPath,
   publicPdfPath,
   type PublishedTableRow,
 } from "@/lib/scoreConverter/publishedTables.shared";
@@ -13,6 +14,7 @@ import {
   type ConverterExam,
 } from "@/lib/scoreConverter/esatModules";
 import { APP_ROUTES, SEO_ROUTES } from "@/lib/seo/config";
+import { useScoreConverterActions } from "@/components/tools/scoreConverter/ScoreConverterContext";
 
 type Props = {
   rows: PublishedTableRow[];
@@ -307,12 +309,31 @@ function RowActions({
   row: PublishedTableRow;
   onView: () => void;
 }) {
+  const { applyTableSelection } = useScoreConverterActions();
+
   return (
     <div className="flex flex-wrap gap-2.5">
       <ActionButton onClick={onView}>View table</ActionButton>
+      <ActionLink href={publicCsvPath(row.csvFilename)} download>
+        Download CSV
+      </ActionLink>
       <ActionLink href={publicPdfPath(row.pdfFilename)} download>
         Download PDF
       </ActionLink>
+      {applyTableSelection ? (
+        <ActionButton
+          onClick={() =>
+            applyTableSelection({
+              exam: row.exam,
+              year: row.year,
+              paperName: row.paperName,
+              partName: row.partName,
+            })
+          }
+        >
+          Use in converter
+        </ActionButton>
+      ) : null}
     </div>
   );
 }
