@@ -14,6 +14,7 @@ import { APP_ROUTES, SEO_ROUTES } from "@/lib/seo/config";
 type Props = {
   rows: PublishedTableRow[];
   defaultExam?: ConverterExam | "all";
+  examFilter?: ConverterExam;
 };
 
 const controlBase =
@@ -322,13 +323,20 @@ function RowActions({
 export function PublishedConversionTablesClient({
   rows,
   defaultExam = "all",
+  examFilter,
 }: Props) {
-  const [exam, setExam] = useState<ConverterExam | "all">(defaultExam);
+  const [exam, setExam] = useState<ConverterExam | "all">(
+    examFilter ?? defaultExam,
+  );
   const [year, setYear] = useState("all");
   const [section, setSection] = useState("all");
   const [subject, setSubject] = useState("all");
   const [query, setQuery] = useState("");
   const [viewRow, setViewRow] = useState<PublishedTableRow | null>(null);
+
+  useEffect(() => {
+    if (examFilter) setExam(examFilter);
+  }, [examFilter]);
 
   const years = useMemo(
     () =>
@@ -385,12 +393,14 @@ export function PublishedConversionTablesClient({
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        <FilterSelect
-          label="Exam"
-          value={exam}
-          onChange={(value) => setExam(value as ConverterExam | "all")}
-          options={examOptions}
-        />
+        {!examFilter ? (
+          <FilterSelect
+            label="Exam"
+            value={exam}
+            onChange={(value) => setExam(value as ConverterExam | "all")}
+            options={examOptions}
+          />
+        ) : null}
         <FilterSelect
           label="Year"
           value={year}

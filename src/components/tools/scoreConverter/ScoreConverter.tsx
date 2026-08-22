@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { AlertTriangle, ArrowRight, Check, ChevronDown, Info, Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { cssVar } from "@/config/colors";
@@ -51,17 +50,18 @@ const EXAM_TITLE_COLOR: Record<ConverterExam, string> = {
   TMUA: "text-tmua-accent",
 };
 
-function examConverterPath(exam: ConverterExam): string {
-  return `/tools/score-converter/${exam.toLowerCase()}`;
-}
-
 function converterTitleSuffix(exam: ConverterExam): string {
   return exam === "TMUA" ? " Score Converter" : " to ESAT Score Converter";
 }
 
-/** Inline exam picker in the page title; navigates to exam-specific converter routes. */
-function ExamTitleDropdown({ exam }: { exam: ConverterExam }) {
-  const router = useRouter();
+/** Inline exam picker in the page title; switches exam in place without a route transition. */
+function ExamTitleDropdown({
+  exam,
+  onExamChange,
+}: {
+  exam: ConverterExam;
+  onExamChange: (exam: ConverterExam) => void;
+}) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLSpanElement>(null);
   const listId = useId();
@@ -126,9 +126,7 @@ function ExamTitleDropdown({ exam }: { exam: ConverterExam }) {
                   aria-selected={isSelected}
                   onClick={() => {
                     setOpen(false);
-                    if (option !== exam) {
-                      router.push(examConverterPath(option));
-                    }
+                    if (option !== exam) onExamChange(option);
                   }}
                   className={cn(
                     "flex w-full items-center justify-between gap-2 px-3.5 py-2.5 text-left text-base transition-colors duration-fast",
@@ -675,14 +673,17 @@ function applySavedFormState(
 
 export function ScoreConverter({
   initialExam,
+  onExamChange,
   intro,
   beforeFaq,
 }: {
   initialExam?: ConverterExam;
+  onExamChange?: (exam: ConverterExam) => void;
   intro?: string;
   beforeFaq?: React.ReactNode;
 }) {
   const [exam, setExam] = useState<ConverterExam>(initialExam ?? "NSAA");
+  const yearsCacheRef = useRef<Partial<Record<ConverterExam, YearOption[]>>>({});
   const [pendingApply, setPendingApply] = useState<{
     exam: ConverterExam;
     year: number;
@@ -693,6 +694,43 @@ export function ScoreConverter({
   useEffect(() => {
     if (initialExam) setExam(initialExam);
   }, [initialExam]);
+
+  const handleExamChange = useCallback(
+    (next: ConverterExam) => {
+      if (next === exam) return;
+      setExam(next);
+      onExamChange?.(next);
+      if (typeof window !== "undefined") {
+        window.history.replaceState(
+          window.history.state,
+          "",
+          `/tools/score-converter/${next.toLowerCase()}`,
+        );
+      }
+    },
+    [exam, onExamChange],
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    for (const converterExam of CONVERTER_EXAMS) {
+      if (yearsCacheRef.current[converterExam]) continue;
+      void fetch(`/api/score-converter/years?exam=${converterExam}`)
+        .then(async (res) => {
+          if (!res.ok || cancelled) return;
+          const data = (await res.json()) as YearsResponse;
+          yearsCacheRef.current[converterExam] = data.years.filter(
+            (y) => y.hasData || y.mode === "scaled",
+          );
+        })
+        .catch(() => {
+          /* prefetch is optional */
+        });
+    }
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const [years, setYears] = useState<YearOption[]>([]);
   const [yearsLoading, setYearsLoading] = useState(false);
@@ -899,7 +937,6 @@ export function ScoreConverter({
   }, [pendingRestore, year, sections, sectionsLoading]);
 
   useEffect(() => {
-    setYearsLoading(true);
     setYear(null);
     setSections([]);
     setSelectedGroup("");
@@ -909,15 +946,24 @@ export function ScoreConverter({
     setTmuaPickMode(null);
     invalidateResults();
 
+    const cached = yearsCacheRef.current[exam];
+    if (cached) {
+      setYears(cached);
+      setYearsLoading(false);
+      return;
+    }
+
+    setYearsLoading(true);
+
     let cancelled = false;
     (async () => {
       try {
         const res = await fetch(`/api/score-converter/years?exam=${exam}`);
         if (!res.ok) throw new Error("years");
         const data = (await res.json()) as YearsResponse;
-        if (!cancelled) {
-          setYears(data.years.filter((y) => y.hasData || y.mode === "scaled"));
-        }
+        const nextYears = data.years.filter((y) => y.hasData || y.mode === "scaled");
+        yearsCacheRef.current[exam] = nextYears;
+        if (!cancelled) setYears(nextYears);
       } catch {
         if (!cancelled) setYears([]);
       } finally {
@@ -1172,7 +1218,7 @@ export function ScoreConverter({
         <div className="mb-3 flex items-start justify-between gap-3">
           <div>
             <h1 className="text-xl font-bold tracking-tight text-text sm:text-3xl">
-              <ExamTitleDropdown exam={exam} />
+              <ExamTitleDropdown exam={exam} onExamChange={handleExamChange} />
               <span>{converterTitleSuffix(exam)}</span>
             </h1>
             {intro ? (
