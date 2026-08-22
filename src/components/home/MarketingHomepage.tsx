@@ -57,13 +57,13 @@ function HomepageSectionNav() {
       className="sticky z-30 bg-[#0A0F1D]/90 backdrop-blur-md"
       style={{ top: NAVBAR_HEIGHT_PX }}
     >
-      <div className="mx-auto flex max-w-[1400px] gap-1 overflow-x-auto px-4 py-2.5 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-2 sm:px-5 lg:px-6 [&::-webkit-scrollbar]:hidden">
+      <div className="mx-auto flex max-w-[1400px] justify-center gap-2 overflow-x-auto px-4 py-3 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-3 sm:px-5 sm:py-4 lg:gap-4 lg:px-6 [&::-webkit-scrollbar]:hidden">
         {HOMEPAGE_SECTIONS.map((section) => (
           <a
             key={section.id}
             href={`#${section.id}`}
             className={cn(
-              "shrink-0 rounded-lg px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]",
+              "shrink-0 rounded-xl px-4 py-2.5 text-base font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6] sm:px-5 sm:py-3 sm:text-lg",
               active === section.id
                 ? "bg-white/10 text-white"
                 : "text-[#94A3B8] hover:text-white",
