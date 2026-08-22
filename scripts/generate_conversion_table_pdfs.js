@@ -9,11 +9,13 @@ const PDFDocument = require("pdfkit");
 const ROOT = path.join(__dirname, "..");
 const OUT_DIR = path.join(ROOT, "public", "downloads", "conversion-tables");
 const LOGO_PATH = path.join(ROOT, "public", "brand", "logo-full.png");
+const FONT_REGULAR = path.join(ROOT, "scripts", "fonts", "SpaceGrotesk-Regular.ttf");
+const FONT_BOLD = path.join(ROOT, "scripts", "fonts", "SpaceGrotesk-Bold.ttf");
 const SITE_URL = "https://esatcamp.com";
 const BRAND_NAME = "ESAT CAMP";
 
 const PAGE = {
-  margin: 48,
+  margin: 40,
   width: 595.28,
   height: 841.89,
   get contentWidth() {
@@ -25,11 +27,8 @@ const COLORS = {
   ink: "#111111",
   muted: "#6b7280",
   faint: "#9ca3af",
-  surface: "#f8fafc",
-  headerBg: "#111111",
-  headerText: "#ffffff",
-  border: "#e5e7eb",
-  rowAlt: "#f9fafb",
+  surface: "#f3f4f6",
+  border: "#d1d5db",
 };
 
 function loadEnvFile() {
@@ -67,70 +66,80 @@ if (!supabaseUrl || !key) {
 
 const supabase = createClient(supabaseUrl, key);
 
-function drawHeader(doc, meta) {
+function registerFonts(doc) {
+  if (fs.existsSync(FONT_REGULAR) && fs.existsSync(FONT_BOLD)) {
+    doc.registerFont("Body", FONT_REGULAR);
+    doc.registerFont("Bold", FONT_BOLD);
+    return;
+  }
+  doc.registerFont("Body", "Helvetica");
+  doc.registerFont("Bold", "Helvetica-Bold");
+}
+
+function computeLayout(rowCount) {
+  const logoHeight = 56;
+  const headerBlock =
+    PAGE.margin + logoHeight + 14 + 20 + 14 + 16;
+  const footerBlock = PAGE.margin + 18;
+  const tableHeaderHeight = 24;
+  const availableForRows =
+    PAGE.height - headerBlock - footerBlock - tableHeaderHeight;
+  const rowHeight = Math.max(
+    11,
+    Math.min(22, Math.floor(availableForRows / Math.max(rowCount, 1))),
+  );
+  const bodySize = rowHeight >= 18 ? 10.5 : rowHeight >= 14 ? 9.5 : 8.5;
+
+  return {
+    logoWidth: 232,
+    logoHeight,
+    rowHeight,
+    tableHeaderHeight,
+    bodySize,
+    headerSize: 15,
+    subtitleSize: 10,
+  };
+}
+
+function drawHeader(doc, meta, layout) {
   let y = PAGE.margin;
 
   if (fs.existsSync(LOGO_PATH)) {
-    doc.image(LOGO_PATH, PAGE.margin, y, { width: 148 });
-    y += 34;
+    doc.image(LOGO_PATH, PAGE.margin, y, { width: layout.logoWidth });
+    y += layout.logoHeight + 14;
   } else {
     doc
       .fillColor(COLORS.ink)
-      .font("Helvetica-Bold")
-      .fontSize(18)
+      .font("Bold")
+      .fontSize(20)
       .text(BRAND_NAME, PAGE.margin, y);
-    y += 28;
+    y += 30;
   }
 
-  y += 18;
   doc
-    .strokeColor(COLORS.border)
-    .lineWidth(1)
-    .moveTo(PAGE.margin, y)
-    .lineTo(PAGE.width - PAGE.margin, y)
-    .stroke();
+    .fillColor(COLORS.ink)
+    .font("Bold")
+    .fontSize(layout.headerSize)
+    .text(
+      `${meta.exam} ${meta.year}  Score conversion table`,
+      PAGE.margin,
+      y,
+      { width: PAGE.contentWidth },
+    );
+
   y += 22;
-
-  doc
-    .fillColor(COLORS.ink)
-    .font("Helvetica-Bold")
-    .fontSize(22)
-    .text(`${meta.exam} ${meta.year}`, PAGE.margin, y);
-
-  y += 28;
-  doc
-    .font("Helvetica-Bold")
-    .fontSize(13)
-    .fillColor(COLORS.ink)
-    .text("Score conversion table", PAGE.margin, y);
 
   const subtitle = [meta.sectionPaper, meta.partName, meta.subjects]
     .filter(Boolean)
     .join("  ·  ");
 
-  y += 20;
   doc
-    .font("Helvetica")
-    .fontSize(10.5)
+    .font("Body")
+    .fontSize(layout.subtitleSize)
     .fillColor(COLORS.muted)
-    .text(subtitle, PAGE.margin, y, { width: PAGE.contentWidth, lineGap: 2 });
+    .text(subtitle, PAGE.margin, y, { width: PAGE.contentWidth, lineGap: 1 });
 
-  y += doc.heightOfString(subtitle, { width: PAGE.contentWidth }) + 6;
-  doc
-    .font("Helvetica")
-    .fontSize(9)
-    .fillColor(COLORS.faint)
-    .text(
-      `${rowsLabel(meta)} · Scaled scores reported to one decimal place`,
-      PAGE.margin,
-      y,
-    );
-
-  return y + 22;
-}
-
-function rowsLabel(meta) {
-  return `${meta.rowCount} raw mark${meta.rowCount === 1 ? "" : "s"}`;
+  return y + doc.heightOfString(subtitle, { width: PAGE.contentWidth }) + 16;
 }
 
 function drawRoundedRect(doc, x, y, width, height, radius) {
@@ -146,137 +155,73 @@ function drawRoundedRect(doc, x, y, width, height, radius) {
   doc.closePath();
 }
 
-function drawTable(doc, rows, startY) {
+function drawTable(doc, rows, startY, layout) {
   const tableX = PAGE.margin;
   const tableWidth = PAGE.contentWidth;
-  const colRawX = tableX + 24;
-  const colScaledX = tableX + tableWidth - 24;
+  const colRawX = tableX + 20;
+  const colScaledX = tableX + tableWidth - 20;
   const colRawWidth = tableWidth * 0.45;
   const colScaledWidth = tableWidth * 0.35;
-  const rowHeight = 24;
-  const headerHeight = 30;
-  const bottomMargin = 56;
+  const { rowHeight, tableHeaderHeight, bodySize } = layout;
   const radius = 8;
+  const tableHeight = tableHeaderHeight + rows.length * rowHeight;
 
-  let y = startY;
-  let segmentStart = y;
-  let isFirstSegment = true;
+  doc.save();
+  drawRoundedRect(doc, tableX, startY, tableWidth, tableHeight, radius);
+  doc.lineWidth(1).strokeColor(COLORS.border).stroke();
+  doc.restore();
 
-  const drawColumnGuide = (top, bottom) => {
-    doc
-      .strokeColor(isFirstSegment ? "#2a2a2a" : COLORS.border)
-      .lineWidth(0.5)
-      .moveTo(tableX + tableWidth * 0.58, top + 8)
-      .lineTo(tableX + tableWidth * 0.58, bottom - 8)
-      .stroke();
-  };
+  doc.save();
+  drawRoundedRect(doc, tableX, startY, tableWidth, tableHeaderHeight, radius);
+  doc.fill(COLORS.surface);
+  doc.restore();
+  doc.rect(tableX, startY + tableHeaderHeight - radius, tableWidth, radius).fill(COLORS.surface);
 
-  const drawTableHeader = () => {
-    segmentStart = y;
+  doc
+    .strokeColor(COLORS.border)
+    .lineWidth(0.75)
+    .moveTo(tableX + tableWidth * 0.58, startY + 6)
+    .lineTo(tableX + tableWidth * 0.58, startY + tableHeight - 6)
+    .stroke();
 
-    if (isFirstSegment) {
-      doc.save();
-      drawRoundedRect(doc, tableX, y, tableWidth, headerHeight, radius);
-      doc.fill(COLORS.headerBg);
-      doc.restore();
-    } else {
-      doc.rect(tableX, y, tableWidth, headerHeight).fill(COLORS.headerBg);
-    }
+  doc
+    .fillColor(COLORS.ink)
+    .font("Bold")
+    .fontSize(9)
+    .text("Raw mark", colRawX, startY + 8, { width: colRawWidth })
+    .text("Scaled score", colScaledX - colScaledWidth, startY + 8, {
+      width: colScaledWidth,
+      align: "right",
+    });
 
-    doc
-      .fillColor(COLORS.headerText)
-      .font("Helvetica-Bold")
-      .fontSize(9.5)
-      .text("RAW MARK", colRawX, y + 10, {
-        width: colRawWidth,
-        characterSpacing: 0.6,
-      })
-      .text("SCALED SCORE", colScaledX - colScaledWidth, y + 10, {
-        width: colScaledWidth,
-        align: "right",
-        characterSpacing: 0.6,
-      });
+  doc
+    .strokeColor(COLORS.border)
+    .lineWidth(0.75)
+    .moveTo(tableX + 12, startY + tableHeaderHeight)
+    .lineTo(tableX + tableWidth - 12, startY + tableHeaderHeight)
+    .stroke();
 
-    drawColumnGuide(y, y + headerHeight);
-    y += headerHeight;
-  };
-
-  const finishSegment = (isLast) => {
-    const segmentHeight = y - segmentStart;
-    doc.save();
-    if (isFirstSegment && isLast) {
-      drawRoundedRect(doc, tableX, segmentStart, tableWidth, segmentHeight, radius);
-    } else if (isFirstSegment) {
-      doc.moveTo(tableX, segmentStart + radius);
-      doc.lineTo(tableX, segmentStart + segmentHeight);
-      doc.lineTo(tableX + tableWidth, segmentStart + segmentHeight);
-      doc.lineTo(tableX + tableWidth, segmentStart + radius);
-      doc.quadraticCurveTo(
-        tableX + tableWidth,
-        segmentStart,
-        tableX + tableWidth - radius,
-        segmentStart,
-      );
-      doc.lineTo(tableX + radius, segmentStart);
-      doc.quadraticCurveTo(tableX, segmentStart, tableX, segmentStart + radius);
-      doc.closePath();
-    } else if (isLast) {
-      doc.moveTo(tableX, segmentStart);
-      doc.lineTo(tableX + tableWidth, segmentStart);
-      doc.lineTo(tableX + tableWidth, segmentStart + segmentHeight - radius);
-      doc.quadraticCurveTo(
-        tableX + tableWidth,
-        segmentStart + segmentHeight,
-        tableX + tableWidth - radius,
-        segmentStart + segmentHeight,
-      );
-      doc.lineTo(tableX + radius, segmentStart + segmentHeight);
-      doc.quadraticCurveTo(
-        tableX,
-        segmentStart + segmentHeight,
-        tableX,
-        segmentStart + segmentHeight - radius,
-      );
-      doc.lineTo(tableX, segmentStart);
-      doc.closePath();
-    } else {
-      doc.rect(tableX, segmentStart, tableWidth, segmentHeight);
-    }
-    doc.lineWidth(1).strokeColor(COLORS.border).stroke();
-    doc.restore();
-    isFirstSegment = false;
-  };
-
-  drawTableHeader();
+  let y = startY + tableHeaderHeight;
 
   rows.forEach((entry, index) => {
-    if (y + rowHeight > PAGE.height - bottomMargin) {
-      finishSegment(false);
-      doc.addPage();
-      y = PAGE.margin;
-      drawTableHeader();
+    if (index > 0) {
+      doc
+        .strokeColor(COLORS.border)
+        .lineWidth(0.5)
+        .moveTo(tableX + 12, y)
+        .lineTo(tableX + tableWidth - 12, y)
+        .stroke();
     }
 
-    if (index % 2 === 0) {
-      doc.save();
-      doc.rect(tableX + 1, y, tableWidth - 2, rowHeight).fill(COLORS.rowAlt);
-      doc.restore();
-    }
-
-    doc
-      .strokeColor(COLORS.border)
-      .lineWidth(0.5)
-      .moveTo(tableX + 12, y + rowHeight)
-      .lineTo(tableX + tableWidth - 12, y + rowHeight)
-      .stroke();
+    const textY = y + Math.max(2, (rowHeight - bodySize) / 2 - 1);
 
     doc
       .fillColor(COLORS.ink)
-      .font("Helvetica")
-      .fontSize(11)
-      .text(String(entry.rawMark), colRawX, y + 7, { width: colRawWidth })
-      .font("Helvetica-Bold")
-      .text(entry.scaledScore.toFixed(1), colScaledX - colScaledWidth, y + 7, {
+      .font("Body")
+      .fontSize(bodySize)
+      .text(String(entry.rawMark), colRawX, textY, { width: colRawWidth })
+      .font("Body")
+      .text(entry.scaledScore.toFixed(1), colScaledX - colScaledWidth, textY, {
         width: colScaledWidth,
         align: "right",
       });
@@ -284,33 +229,25 @@ function drawTable(doc, rows, startY) {
     y += rowHeight;
   });
 
-  finishSegment(true);
   return y;
 }
 
 function drawFooter(doc) {
-  const footerY = PAGE.height - 40;
-  doc
-    .strokeColor(COLORS.border)
-    .lineWidth(0.75)
-    .moveTo(PAGE.margin, footerY - 10)
-    .lineTo(PAGE.width - PAGE.margin, footerY - 10)
-    .stroke();
-
   doc
     .fillColor(COLORS.faint)
-    .font("Helvetica")
+    .font("Body")
     .fontSize(8)
     .text(
       `${BRAND_NAME}  ·  ${SITE_URL}  ·  Not affiliated with any university.`,
       PAGE.margin,
-      footerY,
+      PAGE.height - PAGE.margin - 6,
       { width: PAGE.contentWidth, align: "center" },
     );
 }
 
 function writePdf(meta, rows, filePath) {
   return new Promise((resolve, reject) => {
+    const layout = computeLayout(rows.length);
     const doc = new PDFDocument({
       size: "A4",
       margins: {
@@ -327,11 +264,13 @@ function writePdf(meta, rows, filePath) {
       },
     });
 
+    registerFonts(doc);
+
     const stream = fs.createWriteStream(filePath);
     doc.pipe(stream);
 
-    const tableStartY = drawHeader(doc, meta);
-    drawTable(doc, rows, tableStartY);
+    const tableStartY = drawHeader(doc, meta, layout);
+    drawTable(doc, rows, tableStartY, layout);
     drawFooter(doc);
 
     doc.end();
@@ -360,6 +299,9 @@ async function main() {
 
   if (!fs.existsSync(LOGO_PATH)) {
     console.warn(`Warning: logo not found at ${LOGO_PATH}`);
+  }
+  if (!fs.existsSync(FONT_REGULAR)) {
+    console.warn(`Warning: font not found at ${FONT_REGULAR}`);
   }
 
   fs.mkdirSync(OUT_DIR, { recursive: true });
