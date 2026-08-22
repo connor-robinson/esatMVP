@@ -6,12 +6,12 @@ export const FOUNDERS = {
     name: "Ewan Ellson",
     role: "Co-founder",
     credential:
-      "Incoming Medicine student at Trinity College, University of Cambridge",
+      "Medicine student at Trinity College, University of Cambridge",
     homepageCredential:
       "Incoming Medicine student at Trinity College, Cambridge",
     bio: "Ewan is the public face of ESAT Camp and helps shape how we explain difficult ideas clearly. His focus is making admissions preparation feel approachable, structured and genuinely useful.",
-    imageSrc: "/images/team/ewan-ellson.webp",
-    imageAlt: "Portrait of Ewan Ellson, co-founder of ESAT Camp",
+    imageSrc: "/images/team/ewan-ellson.png",
+    imageAlt: "Ewan Ellson playing guitar, co-founder of ESAT Camp",
   },
   anson: {
     id: "anson-chan",
