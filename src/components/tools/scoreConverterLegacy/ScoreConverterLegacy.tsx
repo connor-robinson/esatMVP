@@ -1,0 +1,1497 @@
+"use client";
+
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { AlertTriangle, ArrowRight, Check, ChevronDown, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { cssVar } from "@/config/colors";
+import { Container } from "@/components/layout/Container";
+import { PercentileMiniChart } from "@/components/papers/mark/PercentileMiniChart";
+import {
+  TmuaDualCurveChart,
+  TmuaDualCurveExplainer,
+} from "@/components/tools/scoreConverter/TmuaDualCurveChart";
+import { ScoreConverterFaq } from "@/components/tools/scoreConverter/ScoreConverterFaq";
+import { ScoreConverterQuestionBankPromo } from "@/components/tools/scoreConverter/ScoreConverterQuestionBankPromo";
+import { fetchEsatTable, type EsatRow } from "@/lib/esat/percentiles";
+import {
+  CONVERTER_EXAMS,
+  TMUA_IRT_FROM_YEAR,
+  isTmuaPaper1Part,
+  isTmuaPaper2Part,
+  isTmuaOverallPart,
+  resolvePercentileTableKey,
+  type ConverterExam,
+  type ConvertResponse,
+  type ConvertedSection,
+  type ModuleColor,
+  type SectionOption,
+  type SectionsResponse,
+  type YearOption,
+  type YearsResponse,
+} from "@/lib/scoreConverter/esatModules";
+
+const MAX_SECTIONS = 3;
+const OVERALL_CHART_KEY = "__overall__";
+
+/** What the selected past paper proxies for in current admissions. */
+function examTargetLabel(exam: ConverterExam): "ESAT" | "TMUA" {
+  return exam === "TMUA" ? "TMUA" : "ESAT";
+}
+
+const fieldLabel =
+  "mb-2 block text-xs font-semibold uppercase tracking-[0.1em] text-text-muted";
+
+const controlBase = "border-0 shadow-none outline-none focus:outline-none focus:ring-0 focus:border-0";
+
+const selectTriggerClass = cn(
+  "flex h-10 w-full items-center justify-between gap-2 rounded-organic-lg px-3.5 text-base font-medium transition-all duration-fast",
+  "bg-surface-mid text-text hover:bg-surface-subtle active:scale-[0.99]",
+  "disabled:cursor-not-allowed disabled:opacity-45",
+  controlBase,
+);
+
+const markInputClass = cn(
+  "h-9 w-12 rounded-organic-md bg-background text-center text-base font-semibold tabular-nums text-text disabled:opacity-35",
+  controlBase,
+);
+
+const COLOR_TEXT: Record<ModuleColor, string> = {
+  maths: "text-maths",
+  physics: "text-physics",
+  chemistry: "text-chemistry",
+  biology: "text-biology",
+  advanced: "text-advanced",
+  "tmua-accent": "text-tmua-accent",
+};
+
+const COLOR_FILL_MUTED: Record<ModuleColor, string> = {
+  maths: "border-2 border-maths/60 bg-surface-subtle",
+  physics: "border-2 border-physics/60 bg-surface-subtle",
+  chemistry: "border-2 border-chemistry/60 bg-surface-subtle",
+  biology: "border-2 border-biology/60 bg-surface-subtle",
+  advanced: "border-2 border-advanced/60 bg-surface-subtle",
+  "tmua-accent": "border-2 border-tmua-accent/60 bg-surface-subtle",
+};
+
+const COLOR_FILL_CHECKED: Record<ModuleColor, string> = {
+  maths: "border-2 border-maths bg-maths",
+  physics: "border-2 border-physics bg-physics",
+  chemistry: "border-2 border-chemistry bg-chemistry",
+  biology: "border-2 border-biology bg-biology",
+  advanced: "border-2 border-advanced bg-advanced",
+  "tmua-accent": "border-2 border-tmua-accent bg-tmua-accent",
+};
+
+const COLOR_CARD_ACTIVE: Record<ModuleColor, string> = {
+  maths: "bg-maths/10",
+  physics: "bg-physics/10",
+  chemistry: "bg-chemistry/10",
+  biology: "bg-biology/10",
+  advanced: "bg-advanced/10",
+  "tmua-accent": "bg-tmua-accent/10",
+};
+
+function SubjectCheckbox({
+  checked,
+  disabled,
+  color,
+  onChange,
+}: {
+  checked: boolean;
+  disabled?: boolean;
+  color: ModuleColor;
+  onChange: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      role="checkbox"
+      aria-checked={checked}
+      disabled={disabled}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!disabled) onChange();
+      }}
+      className={cn(
+        "flex h-[1.125rem] w-[1.125rem] shrink-0 items-center justify-center rounded-[5px] transition-all duration-fast",
+        checked ? COLOR_FILL_CHECKED[color] : COLOR_FILL_MUTED[color],
+        disabled && "cursor-not-allowed opacity-35",
+        !disabled && !checked && "cursor-pointer hover:bg-surface-mid",
+        !disabled && checked && "cursor-pointer hover:brightness-110",
+        controlBase,
+      )}
+    >
+      {checked && (
+        <Check className="h-3 w-3 text-background" strokeWidth={3} aria-hidden />
+      )}
+    </button>
+  );
+}
+
+function displaySubject(opt: SectionOption): string {
+  if (opt.moduleLabel) return opt.moduleLabel;
+  const tail = opt.legacyLabel.split("—")[1]?.trim();
+  if (tail) {
+    if (/both papers/i.test(tail)) return "Both papers";
+    return tail;
+  }
+  return opt.legacyLabel.split("—")[0]?.trim() ?? opt.partName;
+}
+
+type ModernSelectOption = { value: string; label: string };
+
+function ModernSelect({
+  label,
+  value,
+  onChange,
+  options,
+  disabled,
+  placeholder = "—",
+  minWidth = "5rem",
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: ModernSelectOption[];
+  disabled?: boolean;
+  placeholder?: string;
+  minWidth?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const listId = useId();
+
+  const selected = options.find((o) => o.value === value);
+  const displayLabel = selected?.label ?? placeholder;
+
+  useEffect(() => {
+    if (disabled) setOpen(false);
+  }, [disabled]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
+  return (
+    <div ref={rootRef} className="relative shrink-0" style={{ minWidth }}>
+      <span className={fieldLabel}>{label}</span>
+      <button
+        type="button"
+        disabled={disabled}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={listId}
+        onClick={() => !disabled && setOpen((v) => !v)}
+        className={cn(selectTriggerClass, open && "bg-surface-subtle")}
+      >
+        <span className={cn("truncate", !selected && "text-text-muted")}>
+          {displayLabel}
+        </span>
+        <ChevronDown
+          className={cn(
+            "h-4 w-4 shrink-0 text-text-subtle transition-transform duration-fast",
+            open && "rotate-180",
+          )}
+          aria-hidden
+        />
+      </button>
+
+      {open && options.length > 0 && (
+        <ul
+          id={listId}
+          role="listbox"
+          aria-label={label}
+          className="absolute left-0 top-full z-40 mt-2 w-full min-w-[9rem] overflow-hidden rounded-organic-lg bg-surface-subtle py-1.5 shadow-modal-card"
+        >
+          {options.map((opt) => {
+            const isSelected = opt.value === value;
+            return (
+              <li key={opt.value} role="presentation">
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={isSelected}
+                  onClick={() => {
+                    onChange(opt.value);
+                    setOpen(false);
+                  }}
+                  className={cn(
+                    "flex w-full items-center justify-between gap-2 px-3.5 py-2.5 text-left text-base transition-colors duration-fast",
+                    isSelected
+                      ? "bg-surface-mid font-semibold text-text"
+                      : "text-text-muted hover:bg-surface-mid/80 hover:text-text",
+                    controlBase,
+                  )}
+                >
+                  <span className="truncate">{opt.label}</span>
+                  {isSelected && (
+                    <Check className="h-3.5 w-3.5 shrink-0 text-secondary" strokeWidth={2.5} />
+                  )}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+type TmuaPickMode = "split" | "overall";
+
+function TmuaMarkField({
+  section,
+  raw,
+  onRawChange,
+}: {
+  section: SectionOption;
+  raw: number;
+  onRawChange: (value: number) => void;
+}) {
+  const c = COLOR_TEXT[section.color];
+  return (
+    <div className="rounded-organic-lg bg-surface-mid px-4 py-3">
+      <p className={cn("text-sm font-semibold", c)}>{displaySubject(section)}</p>
+      <div className="mt-2.5 flex items-baseline gap-1.5">
+        <input
+          type="text"
+          inputMode="numeric"
+          value={String(raw)}
+          onChange={(e) => {
+            const n = parseInt(e.target.value.replace(/\D/g, ""), 10);
+            if (Number.isNaN(n)) onRawChange(0);
+            else onRawChange(Math.max(0, Math.min(section.maxRaw, n)));
+          }}
+          className={markInputClass}
+        />
+        <span className="text-sm font-medium text-text-muted">/{section.maxRaw}</span>
+      </div>
+    </div>
+  );
+}
+
+export function ScoreConverterLegacy({ initialExam }: { initialExam?: ConverterExam }) {
+  const [exam, setExam] = useState<ConverterExam>(initialExam ?? "NSAA");
+
+  useEffect(() => {
+    if (initialExam) setExam(initialExam);
+  }, [initialExam]);
+
+  const [years, setYears] = useState<YearOption[]>([]);
+  const [yearsLoading, setYearsLoading] = useState(false);
+  const [year, setYear] = useState<YearOption | null>(null);
+
+  const [sections, setSections] = useState<SectionOption[]>([]);
+  const [sectionsLoading, setSectionsLoading] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState("");
+  const [checkedKeys, setCheckedKeys] = useState<string[]>([]);
+  const [rawByKey, setRawByKey] = useState<Record<string, number>>({});
+  const [scaledInput, setScaledInput] = useState("");
+  const [tmuaPickMode, setTmuaPickMode] = useState<TmuaPickMode | null>(null);
+
+  const [result, setResult] = useState<ConvertResponse | null>(null);
+  const [resultLoading, setResultLoading] = useState(false);
+  const [resultError, setResultError] = useState<string | null>(null);
+  const [hasCalculated, setHasCalculated] = useState(false);
+
+  const [activeChartKey, setActiveChartKey] = useState<string | null>(null);
+  const [chartRows, setChartRows] = useState<EsatRow[]>([]);
+  const [chartLoading, setChartLoading] = useState(false);
+  const [showQuestionBankPromo, setShowQuestionBankPromo] = useState(false);
+
+  const isScaledMode = year?.mode === "scaled";
+
+  const isNsaaEngaa = exam === "NSAA" || exam === "ENGAA";
+  const isTmuaRaw = exam === "TMUA" && !isScaledMode;
+
+  const sectionGroups = useMemo(() => {
+    const map = new Map<string, SectionOption[]>();
+    for (const s of sections) {
+      const list = map.get(s.group) ?? [];
+      list.push(s);
+      map.set(s.group, list);
+    }
+    return Array.from(map.entries());
+  }, [sections]);
+
+  const partsInGroup = useMemo(() => {
+    if (!isNsaaEngaa) return sections;
+    return sectionGroups.find(([g]) => g === selectedGroup)?.[1] ?? [];
+  }, [sections, sectionGroups, selectedGroup, isNsaaEngaa]);
+
+  const tmuaSections = useMemo(() => {
+    if (!isTmuaRaw) {
+      return { paper1: null, paper2: null, overall: null };
+    }
+    return {
+      paper1: sections.find((s) => isTmuaPaper1Part(s.partName)) ?? null,
+      paper2: sections.find((s) => isTmuaPaper2Part(s.partName)) ?? null,
+      overall: sections.find((s) => isTmuaOverallPart(s.partName)) ?? null,
+    };
+  }, [sections, isTmuaRaw]);
+
+  const tmuaReady = useMemo(() => {
+    if (!isTmuaRaw || !tmuaPickMode) return false;
+    if (tmuaPickMode === "overall") {
+      const o = tmuaSections.overall;
+      return o != null && checkedKeys.includes(o.key);
+    }
+    const { paper1, paper2 } = tmuaSections;
+    return (
+      paper1 != null &&
+      paper2 != null &&
+      checkedKeys.includes(paper1.key) &&
+      checkedKeys.includes(paper2.key)
+    );
+  }, [isTmuaRaw, tmuaPickMode, tmuaSections, checkedKeys]);
+
+  const checkedSections = useMemo(
+    () => sections.filter((s) => checkedKeys.includes(s.key)),
+    [sections, checkedKeys],
+  );
+
+  const scaledValid = useMemo(() => {
+    const n = parseFloat(scaledInput);
+    return Number.isFinite(n) && n >= 1 && n <= 9;
+  }, [scaledInput]);
+
+  const canCalculate = isScaledMode
+    ? year != null && scaledValid
+    : year != null && (isTmuaRaw ? tmuaReady : checkedSections.length > 0);
+
+  const invalidateResults = useCallback(() => {
+    setHasCalculated(false);
+    setResult(null);
+    setResultError(null);
+    setActiveChartKey(null);
+    setChartRows([]);
+    setShowQuestionBankPromo(false);
+  }, []);
+
+  useEffect(() => {
+    setYearsLoading(true);
+    setYear(null);
+    setSections([]);
+    setSelectedGroup("");
+    setCheckedKeys([]);
+    setRawByKey({});
+    setScaledInput("");
+    setTmuaPickMode(null);
+    invalidateResults();
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/api/score-converter/years?exam=${exam}`);
+        if (!res.ok) throw new Error("years");
+        const data = (await res.json()) as YearsResponse;
+        if (!cancelled) {
+          setYears(data.years.filter((y) => y.hasData || y.mode === "scaled"));
+        }
+      } catch {
+        if (!cancelled) setYears([]);
+      } finally {
+        if (!cancelled) setYearsLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [exam, invalidateResults]);
+
+  useEffect(() => {
+    if (!year || year.mode === "scaled") {
+      setSections([]);
+      setCheckedKeys([]);
+      return;
+    }
+
+    setSectionsLoading(true);
+    setCheckedKeys([]);
+    setRawByKey({});
+    setTmuaPickMode(null);
+    invalidateResults();
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(
+          `/api/score-converter/sections?exam=${exam}&year=${year.year}`,
+        );
+        if (!res.ok) throw new Error("sections");
+        const data = (await res.json()) as SectionsResponse;
+        if (!cancelled) setSections(data.options);
+      } catch {
+        if (!cancelled) setSections([]);
+      } finally {
+        if (!cancelled) setSectionsLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [exam, year, invalidateResults]);
+
+  useEffect(() => {
+    if (sectionGroups.length === 0) {
+      setSelectedGroup("");
+      return;
+    }
+    setSelectedGroup((prev) =>
+      sectionGroups.some(([g]) => g === prev) ? prev : sectionGroups[0][0],
+    );
+  }, [sectionGroups]);
+
+  const handleGroupChange = (group: string) => {
+    invalidateResults();
+    setSelectedGroup(group);
+    setCheckedKeys((prev) =>
+      prev.filter((k) => sections.some((s) => s.key === k && s.group === group)),
+    );
+  };
+
+  const selectTmuaMode = (mode: TmuaPickMode) => {
+    invalidateResults();
+    setTmuaPickMode(mode);
+    const { paper1, paper2, overall } = tmuaSections;
+    if (mode === "split" && paper1 && paper2) {
+      setCheckedKeys([paper1.key, paper2.key]);
+      setRawByKey((r) => ({
+        ...r,
+        [paper1.key]: r[paper1.key] ?? 0,
+        [paper2.key]: r[paper2.key] ?? 0,
+      }));
+      return;
+    }
+    if (mode === "overall" && overall) {
+      setCheckedKeys([overall.key]);
+      setRawByKey((r) => ({ ...r, [overall.key]: r[overall.key] ?? 0 }));
+    }
+  };
+
+  const toggleSection = (opt: SectionOption) => {
+    invalidateResults();
+    setCheckedKeys((prev) => {
+      if (prev.includes(opt.key)) {
+        return prev.filter((k) => k !== opt.key);
+      }
+      if (prev.length >= MAX_SECTIONS) return prev;
+      setRawByKey((r) => ({ ...r, [opt.key]: r[opt.key] ?? 0 }));
+      return [...prev, opt.key];
+    });
+  };
+
+  const setRaw = (key: string, value: number) => {
+    invalidateResults();
+    setRawByKey((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const runConvert = async () => {
+    if (!year || !canCalculate) return;
+    setResultLoading(true);
+    setResultError(null);
+    setHasCalculated(true);
+    setResult(null);
+    setChartRows([]);
+    setActiveChartKey(null);
+
+    try {
+      const payload = isScaledMode
+        ? { exam, year: year.year, mode: "scaled", scaledScore: parseFloat(scaledInput) }
+        : {
+            exam,
+            year: year.year,
+            mode: "raw",
+            selections: checkedSections.map((o) => ({
+              paperName: o.paperName,
+              partName: o.partName,
+              legacyLabel: o.legacyLabel,
+              raw: rawByKey[o.key] ?? 0,
+            })),
+          };
+      const res = await fetch("/api/score-converter/convert", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body?.error || "Conversion failed");
+      }
+      const data = (await res.json()) as ConvertResponse;
+      setResult(data);
+      const isMulti = data.sections.length > 1;
+      setActiveChartKey(
+        isMulti ? OVERALL_CHART_KEY : (data.sections[0]?.key ?? null),
+      );
+      setShowQuestionBankPromo(true);
+    } catch (e: unknown) {
+      setResult(null);
+      setShowQuestionBankPromo(false);
+      setResultError(e instanceof Error ? e.message : "Something went wrong.");
+    } finally {
+      setResultLoading(false);
+    }
+  };
+
+  const activeSection = useMemo(
+    () => result?.sections.find((s) => s.key === activeChartKey) ?? result?.sections[0] ?? null,
+    [result, activeChartKey],
+  );
+
+  useEffect(() => {
+    const isTmuaLegacy =
+      exam === "TMUA" && year && year.year < TMUA_IRT_FROM_YEAR;
+    if (
+      !result ||
+      !year ||
+      activeChartKey === OVERALL_CHART_KEY ||
+      activeSection?.scaledScore == null ||
+      activeSection.tmuaDualCurve ||
+      activeSection.chartRows ||
+      isTmuaLegacy
+    ) {
+      setChartRows([]);
+      return;
+    }
+
+    const sectionOpt = sections.find((s) => s.key === activeSection.key);
+    const partName = isScaledMode
+      ? "Paper 1"
+      : sectionOpt?.partName ?? activeSection.legacyLabel;
+    const tableKey = resolvePercentileTableKey(exam, year.year, partName);
+    if (!tableKey) {
+      setChartRows([]);
+      return;
+    }
+
+    let cancelled = false;
+    setChartLoading(true);
+    fetchEsatTable(tableKey)
+      .then((rows) => {
+        if (!cancelled) setChartRows(rows);
+      })
+      .catch(() => {
+        if (!cancelled) setChartRows([]);
+      })
+      .finally(() => {
+        if (!cancelled) setChartLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [result, exam, year, isScaledMode, activeSection, sections]);
+
+  return (
+    <Container size="lg" className="py-10 sm:py-14">
+      {/* Results — top */}
+      <div className="mb-5 min-h-[280px] rounded-organic-xl bg-surface-elevated p-6 shadow-modal-card sm:min-h-[320px] sm:p-8">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl font-bold tracking-tight text-text sm:text-4xl">
+            ESAT Score Converter
+          </h1>
+          {exam !== "TMUA" && (
+            <p className="mt-2 text-sm text-text-muted">
+              Take TMUA instead? Switch using the{" "}
+              <span className="font-medium text-text">Exam</span> selector below.
+            </p>
+          )}
+        </div>
+
+        {!hasCalculated && !resultLoading && !resultError && (
+          <ResultsPreviewPlaceholder exam={exam} year={year?.year} />
+        )}
+
+        {resultLoading && (
+          <ResultsPreviewPlaceholder exam={exam} year={year?.year} loading />
+        )}
+
+        {resultError && hasCalculated && !resultLoading && (
+          <div className="space-y-4">
+            <ResultsPreviewPlaceholder exam={exam} year={year?.year} />
+            <p className="text-center text-sm text-error">{resultError}</p>
+          </div>
+        )}
+
+        {result && !resultLoading && (
+          <ResultsPanel
+            result={result}
+            exam={exam}
+            year={year!.year}
+            activeSection={activeSection}
+            activeChartKey={activeChartKey}
+            onSelectChart={setActiveChartKey}
+            chartRows={chartRows}
+            chartLoading={chartLoading}
+          />
+        )}
+      </div>
+
+      <ScoreConverterQuestionBankPromo
+        open={showQuestionBankPromo}
+        exam={exam}
+        onDismiss={() => setShowQuestionBankPromo(false)}
+        className="mb-5"
+      />
+
+      {/* Inputs */}
+      <div className="rounded-organic-xl bg-surface-elevated p-5 shadow-modal-card sm:p-6">
+        {/* Row 1: exam, year, section, calculate */}
+        <div className="flex flex-wrap items-end gap-x-5 gap-y-5 sm:gap-x-6">
+          <div className="flex shrink-0 items-end gap-2.5">
+            <ModernSelect
+              label="Exam"
+              value={exam}
+              minWidth="6.5rem"
+              options={CONVERTER_EXAMS.map((e) => ({ value: e, label: e }))}
+              onChange={(next) => {
+                setExam(next as ConverterExam);
+                setYear(null);
+                invalidateResults();
+              }}
+            />
+            <div className="flex h-10 items-center">
+              <ArrowRight
+                className="h-4 w-4 shrink-0 text-text-muted"
+                strokeWidth={2}
+                aria-hidden
+              />
+            </div>
+            <div className="flex h-10 items-center">
+              <span
+                className={cn(
+                  "text-base font-bold tracking-tight",
+                  exam === "TMUA" ? "text-tmua-accent" : "text-secondary",
+                )}
+              >
+                {examTargetLabel(exam)}
+              </span>
+            </div>
+          </div>
+
+          <ModernSelect
+            label="Year"
+            value={year ? String(year.year) : ""}
+            minWidth="5.5rem"
+            disabled={yearsLoading || years.length === 0}
+            placeholder={yearsLoading ? "…" : "—"}
+            options={years.map((y) => ({
+              value: String(y.year),
+              label: String(y.year),
+            }))}
+            onChange={(next) => {
+              const opt = years.find((y) => y.year === Number(next)) ?? null;
+              setYear(opt);
+              setScaledInput("");
+              setCheckedKeys([]);
+              setRawByKey({});
+              setTmuaPickMode(null);
+              invalidateResults();
+            }}
+          />
+
+          {isNsaaEngaa && !isScaledMode && (
+            <ModernSelect
+              label="Section"
+              value={year ? selectedGroup : ""}
+              minWidth="8.5rem"
+              disabled={!year || sectionsLoading || sectionGroups.length === 0}
+              placeholder={
+                !year
+                  ? "Select year"
+                  : sectionsLoading
+                    ? "…"
+                    : "—"
+              }
+              options={sectionGroups.map(([group]) => ({
+                value: group,
+                label: group,
+              }))}
+              onChange={handleGroupChange}
+            />
+          )}
+
+          {year && isScaledMode && (
+            <label className="block shrink-0">
+              <span className={fieldLabel}>Scaled</span>
+              <div className="flex h-10 items-center gap-2">
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={scaledInput}
+                  onChange={(e) => {
+                    invalidateResults();
+                    setScaledInput(e.target.value.replace(/[^0-9.]/g, ""));
+                  }}
+                  placeholder="6.8"
+                  className={cn(markInputClass, "w-14 bg-surface-mid")}
+                />
+                <span className="text-sm font-medium text-text-muted">/9</span>
+              </div>
+            </label>
+          )}
+
+          <button
+            type="button"
+            onClick={() => void runConvert()}
+            disabled={!canCalculate || resultLoading}
+            className={cn(
+              "ml-auto inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-organic-lg bg-secondary px-6 text-sm font-semibold text-background transition-all duration-fast",
+              "hover:brightness-110 active:scale-[0.98] disabled:opacity-40 disabled:hover:brightness-100",
+            )}
+          >
+            {resultLoading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span className="sr-only">Calculating</span>
+              </>
+            ) : (
+              <>
+                <span>Calculate</span>
+                <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* Row 2: subject marks */}
+        {year && !isScaledMode && (
+          <div className="mt-6 pt-2">
+            {sectionsLoading && (
+              <span className="text-sm text-text-muted">Loading subjects…</span>
+            )}
+
+            {isTmuaRaw && !sectionsLoading && (
+              <div className="space-y-4">
+                <p className="text-sm font-medium text-text-muted">How are you scoring?</p>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    onClick={() => selectTmuaMode("split")}
+                    disabled={!tmuaSections.paper1 || !tmuaSections.paper2}
+                    className={cn(
+                      "flex items-start gap-3 rounded-organic-lg bg-surface-mid px-4 py-3.5 text-left transition-all duration-fast",
+                      "hover:bg-surface-subtle disabled:cursor-not-allowed disabled:opacity-40",
+                      tmuaPickMode === "split" && "bg-surface-subtle",
+                      controlBase,
+                    )}
+                  >
+                    <input
+                      type="radio"
+                      name="tmua-mode"
+                      checked={tmuaPickMode === "split"}
+                      onChange={() => selectTmuaMode("split")}
+                      className={cn("mt-0.5 h-4 w-4 shrink-0 accent-secondary", controlBase)}
+                    />
+                    <span>
+                      <span className="block text-sm font-semibold text-text">
+                        Thinking + Reasoning
+                      </span>
+                      <span className="mt-0.5 block text-xs text-text-muted">
+                        Separate marks for Paper 1 and Paper 2
+                      </span>
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => selectTmuaMode("overall")}
+                    disabled={!tmuaSections.overall}
+                    className={cn(
+                      "flex items-start gap-3 rounded-organic-lg bg-surface-mid px-4 py-3.5 text-left transition-all duration-fast",
+                      "hover:bg-surface-subtle disabled:cursor-not-allowed disabled:opacity-40",
+                      tmuaPickMode === "overall" && "bg-surface-subtle",
+                      controlBase,
+                    )}
+                  >
+                    <input
+                      type="radio"
+                      name="tmua-mode"
+                      checked={tmuaPickMode === "overall"}
+                      onChange={() => selectTmuaMode("overall")}
+                      className={cn("mt-0.5 h-4 w-4 shrink-0 accent-secondary", controlBase)}
+                    />
+                    <span>
+                      <span className="block text-sm font-semibold text-text">Both papers</span>
+                      <span className="mt-0.5 block text-xs text-text-muted">
+                        One combined overall score (0–40 raw)
+                      </span>
+                    </span>
+                  </button>
+                </div>
+
+                {tmuaPickMode === "split" && tmuaSections.paper1 && tmuaSections.paper2 && (
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <TmuaMarkField
+                      section={tmuaSections.paper1}
+                      raw={rawByKey[tmuaSections.paper1.key] ?? 0}
+                      onRawChange={(v) => setRaw(tmuaSections.paper1!.key, v)}
+                    />
+                    <TmuaMarkField
+                      section={tmuaSections.paper2}
+                      raw={rawByKey[tmuaSections.paper2.key] ?? 0}
+                      onRawChange={(v) => setRaw(tmuaSections.paper2!.key, v)}
+                    />
+                  </div>
+                )}
+
+                {tmuaPickMode === "overall" && tmuaSections.overall && (
+                  <TmuaMarkField
+                    section={tmuaSections.overall}
+                    raw={rawByKey[tmuaSections.overall.key] ?? 0}
+                    onRawChange={(v) => setRaw(tmuaSections.overall!.key, v)}
+                  />
+                )}
+              </div>
+            )}
+
+            {!isTmuaRaw && !sectionsLoading && partsInGroup.length === 0 && (
+              <span className="text-sm text-text-muted">No subjects for this section.</span>
+            )}
+            {!isTmuaRaw && !sectionsLoading && partsInGroup.length > 0 && (
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {partsInGroup.map((s) => {
+                  const checked = checkedKeys.includes(s.key);
+                  const disabled = !checked && checkedKeys.length >= MAX_SECTIONS;
+                  const c = COLOR_TEXT[s.color];
+                  return (
+                    <div
+                      key={s.key}
+                      className={cn(
+                        "rounded-organic-lg px-4 py-3 transition-all duration-fast",
+                        checked ? COLOR_CARD_ACTIVE[s.color] : "bg-surface-mid",
+                        disabled && "opacity-35",
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          "flex cursor-pointer items-center gap-2.5",
+                          disabled && "cursor-not-allowed",
+                        )}
+                        onClick={() => !disabled && toggleSection(s)}
+                      >
+                        <SubjectCheckbox
+                          checked={checked}
+                          disabled={disabled}
+                          color={s.color}
+                          onChange={() => toggleSection(s)}
+                        />
+                        <span className={cn("truncate text-sm font-semibold", c)}>
+                          {displaySubject(s)}
+                        </span>
+                      </div>
+                      <div className="mt-2.5 flex items-baseline gap-1.5">
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          disabled={!checked}
+                          value={checked ? String(rawByKey[s.key] ?? 0) : ""}
+                          placeholder="—"
+                          onChange={(e) => {
+                            const n = parseInt(e.target.value.replace(/\D/g, ""), 10);
+                            if (Number.isNaN(n)) setRaw(s.key, 0);
+                            else setRaw(s.key, Math.max(0, Math.min(s.maxRaw, n)));
+                          }}
+                          className={markInputClass}
+                        />
+                        <span className="text-sm font-medium text-text-muted">
+                          /{s.maxRaw}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      <p className="mt-6 text-center text-[11px] text-text-subtle">
+        Historical proxy from official data — not an ESAT score.
+      </p>
+
+      <ScoreConverterFaq />
+    </Container>
+  );
+}
+
+function ResultsPanel({
+  result,
+  exam,
+  year,
+  activeSection,
+  activeChartKey,
+  onSelectChart,
+  chartRows,
+  chartLoading,
+}: {
+  result: ConvertResponse;
+  exam: ConverterExam;
+  year: number;
+  activeSection: ConvertedSection | null;
+  activeChartKey: string | null;
+  onSelectChart: (key: string) => void;
+  chartRows: EsatRow[];
+  chartLoading: boolean;
+}) {
+  const multi = result.sections.length > 1;
+  const showOverall = multi && result.averageScaled != null;
+  const showingOverall = activeChartKey === OVERALL_CHART_KEY;
+  const tmuaHasDual = result.sections.some((s) => s.tmuaDualCurve != null);
+  const tmuaOverallEstimated = tmuaHasDual ? tmuaAverageEstimated(result.sections) : null;
+
+  const sectionChartRows =
+    activeSection?.chartRows && activeSection.chartRows.length > 1
+      ? activeSection.chartRows
+      : chartRows;
+
+  return (
+    <div className="space-y-5">
+      {multi && (
+        <div className="flex flex-wrap gap-2">
+          {showOverall && (
+            <button
+              type="button"
+              onClick={() => onSelectChart(OVERALL_CHART_KEY)}
+              className={cn(
+                "rounded-organic-md px-3 py-1.5 text-xs font-semibold transition-colors",
+                showingOverall
+                  ? "bg-surface-mid text-text"
+                  : "text-text-muted hover:bg-surface-subtle",
+              )}
+            >
+              <span className={cn(showingOverall ? "text-text" : "text-text-muted")}>
+                Overall
+              </span>
+              <span className="ml-1.5 tabular-nums text-text">
+                {result.averageScaled!.toFixed(1)}
+                {tmuaOverallEstimated != null && (
+                  <span className="text-text-muted">
+                    {" → "}
+                    {tmuaOverallEstimated.toFixed(1)}
+                  </span>
+                )}
+              </span>
+            </button>
+          )}
+          {result.sections.map((s) => {
+            const active = s.key === activeChartKey;
+            const c = COLOR_TEXT[s.color];
+            return (
+              <button
+                key={s.key}
+                type="button"
+                onClick={() => onSelectChart(s.key)}
+                className={cn(
+                  "rounded-organic-md px-3 py-1.5 text-xs font-semibold transition-colors",
+                  active ? "bg-surface-mid text-text" : "text-text-muted hover:bg-surface-subtle",
+                )}
+              >
+                <span className={c}>
+                  {s.moduleLabel ??
+                    s.legacyLabel.split("—")[1]?.trim() ??
+                    s.legacyLabel.split("—")[0]?.trim()}
+                </span>
+                {s.scaledScore != null && (
+                  <span className="ml-1.5 tabular-nums text-text">
+                    {s.scaledScore.toFixed(1)}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {showingOverall && showOverall ? (
+        exam === "TMUA" && tmuaHasDual ? (
+          <TmuaOverallResult result={result} year={year} />
+        ) : (
+          <OverallResult result={result} exam={exam} year={year} />
+        )
+      ) : activeSection ? (
+        <SectionResult
+          section={activeSection}
+          exam={exam}
+          year={year}
+          chartRows={sectionChartRows}
+          chartLoading={chartLoading && sectionChartRows.length === 0}
+        />
+      ) : (
+        <p className="text-sm text-text-muted">No results.</p>
+      )}
+    </div>
+  );
+}
+
+function tmuaAverageEstimated(sections: ConvertedSection[]): number | null {
+  const vals = sections
+    .map((s) => s.tmuaDualCurve?.student.estimatedScaled ?? s.newScaleEquivalent)
+    .filter((v): v is number => v != null);
+  if (vals.length === 0 || vals.length !== sections.length) return null;
+  return Math.round((vals.reduce((a, b) => a + b, 0) / vals.length) * 10) / 10;
+}
+
+function TmuaPercentileBlock({ topPct }: { topPct: string }) {
+  return (
+    <div className="text-right">
+      <p className="text-[11px] font-medium uppercase tracking-wide text-text-subtle/70">
+        Top
+      </p>
+      <p className="text-2xl font-semibold tabular-nums text-text-muted sm:text-3xl">
+        {topPct}%
+      </p>
+    </div>
+  );
+}
+
+function TmuaDualScoreRow({
+  actual,
+  estimated,
+  raw,
+  maxRaw,
+  topPct,
+  colorClass,
+}: {
+  actual: number;
+  estimated: number | null;
+  raw: number | null;
+  maxRaw: number | null;
+  topPct: string | null;
+  colorClass: string;
+}) {
+  return (
+    <div className="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+          <span className={cn("text-3xl font-bold tabular-nums sm:text-4xl", colorClass)}>
+            {actual.toFixed(1)}
+          </span>
+          {estimated != null && (
+            <>
+              <ArrowRight
+                className="h-5 w-5 shrink-0 text-text-muted sm:h-6 sm:w-6"
+                strokeWidth={2.5}
+                aria-hidden
+              />
+              <span className="text-3xl font-bold tabular-nums text-text-muted sm:text-4xl">
+                {estimated.toFixed(1)}
+              </span>
+            </>
+          )}
+        </div>
+        {raw != null && maxRaw != null && (
+          <p className="mt-1 text-xs text-text-muted">
+            {raw}/{maxRaw} raw
+          </p>
+        )}
+      </div>
+      {topPct != null && <TmuaPercentileBlock topPct={topPct} />}
+    </div>
+  );
+}
+
+function TmuaOverallResult({
+  result,
+  year,
+}: {
+  result: ConvertResponse;
+  year: number;
+}) {
+  const actualAvg = result.averageScaled!;
+  const estimatedAvg = tmuaAverageEstimated(result.sections);
+  const topPct =
+    result.averagePercentile != null
+      ? Math.max(0, 100 - result.averagePercentile).toFixed(1)
+      : null;
+  const chartRows = result.overallChartRows ?? [];
+  const totalRaw = result.sections.reduce((sum, s) => sum + (s.raw ?? 0), 0);
+  const totalMaxRaw = result.sections.reduce((sum, s) => sum + (s.maxRaw ?? 0), 0);
+
+  return (
+    <div className="space-y-5">
+      <TmuaDualScoreRow
+        actual={actualAvg}
+        estimated={estimatedAvg}
+        raw={totalMaxRaw > 0 ? totalRaw : null}
+        maxRaw={totalMaxRaw > 0 ? totalMaxRaw : null}
+        topPct={topPct}
+        colorClass="text-tmua-accent"
+      />
+      <p className="text-xs text-text-muted">
+        Overall average across {result.sections.length} papers · {year} actual → post-2024 est.
+      </p>
+
+      {chartRows.length > 1 && (
+        <PercentileMiniChart
+          rows={chartRows}
+          score={actualAvg}
+          percentile={result.averagePercentile}
+          xLabel="Scaled score"
+        />
+      )}
+    </div>
+  );
+}
+
+function OverallResult({
+  result,
+  exam,
+  year,
+}: {
+  result: ConvertResponse;
+  exam: ConverterExam;
+  year: number;
+}) {
+  const topPct =
+    result.averagePercentile != null
+      ? Math.max(0, 100 - result.averagePercentile).toFixed(1)
+      : null;
+  const chartRows = result.overallChartRows ?? [];
+
+  return (
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-xs text-text-subtle">
+            {exam} {year} · Overall
+          </p>
+          <p className="mt-1 text-4xl font-bold tabular-nums text-text sm:text-5xl">
+            {result.averageScaled!.toFixed(1)}
+          </p>
+          <p className="mt-0.5 text-xs text-text-muted">
+            Average across {result.sections.length} subjects
+          </p>
+        </div>
+        {topPct != null && (
+          <div className="text-right">
+            <p className="text-[11px] font-medium uppercase tracking-wide text-text-subtle/70">
+              Top
+            </p>
+            <p className="text-2xl font-semibold tabular-nums text-text-muted sm:text-3xl">
+              {topPct}%
+            </p>
+          </div>
+        )}
+      </div>
+
+      {chartRows.length > 1 && result.averageScaled != null && (
+        <PercentileMiniChart
+          rows={chartRows}
+          score={result.averageScaled}
+          percentile={result.averagePercentile}
+          xLabel="Scaled score"
+        />
+      )}
+    </div>
+  );
+}
+
+function SectionResult({
+  section,
+  exam,
+  year,
+  chartRows,
+  chartLoading,
+}: {
+  section: ConvertedSection;
+  exam: ConverterExam;
+  year: number;
+  chartRows: EsatRow[];
+  chartLoading: boolean;
+}) {
+  const colorClass = COLOR_TEXT[section.color];
+  const dual = section.tmuaDualCurve;
+  const topPct =
+    section.percentile != null
+      ? Math.max(0, 100 - section.percentile).toFixed(1)
+      : null;
+
+  if (section.scaledScore == null) {
+    return (
+      <p className="text-sm text-text-muted">No conversion data for this section.</p>
+    );
+  }
+
+  if (dual) {
+    return (
+      <div className="space-y-5">
+        <TmuaDualScoreRow
+          actual={dual.student.actualScaled}
+          estimated={dual.student.estimatedScaled}
+          raw={section.raw}
+          maxRaw={section.maxRaw}
+          topPct={topPct}
+          colorClass={colorClass}
+        />
+
+        <TmuaDualCurveChart data={dual} />
+        <TmuaDualCurveExplainer summary={dual.summary} />
+
+        {section.fallbackFromYear != null && (
+          <NoteRow>
+            {year} table unavailable — using {section.fallbackFromYear} as approximation.
+          </NoteRow>
+        )}
+
+        {section.confidence !== "high" && section.reliabilityNote && (
+          <NoteRow warning>{section.reliabilityNote}</NoteRow>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-xs text-text-subtle">
+            {exam} {year}
+            {section.legacyLabel ? ` · ${section.legacyLabel}` : ""}
+          </p>
+          <p className={cn("mt-1 text-4xl font-bold tabular-nums sm:text-5xl", colorClass)}>
+            {section.scaledScore.toFixed(1)}
+          </p>
+          {section.raw != null && section.maxRaw != null && (
+            <p className="mt-0.5 text-xs text-text-muted">
+              {section.raw}/{section.maxRaw} correct
+            </p>
+          )}
+        </div>
+        {topPct != null && (
+          <div className="text-right">
+            <p className="text-[11px] font-medium uppercase tracking-wide text-text-subtle/70">
+              Top
+            </p>
+            <p className="text-2xl font-semibold tabular-nums text-text-muted sm:text-3xl">
+              {topPct}%
+            </p>
+          </div>
+        )}
+      </div>
+
+      {chartLoading && (
+        <div className="flex items-center justify-center gap-2 py-8 text-xs text-text-muted">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Loading chart…
+        </div>
+      )}
+
+      {!chartLoading && chartRows.length > 1 && (
+        <PercentileMiniChart
+          rows={chartRows}
+          score={section.scaledScore}
+          percentile={section.percentile}
+          xLabel="Scaled score"
+        />
+      )}
+
+      {section.newScaleEquivalent != null && (
+        <p className="text-xs text-text-muted">
+          ≈ {section.newScaleEquivalent.toFixed(1)} on post-2024 TMUA scale
+        </p>
+      )}
+
+      {section.fallbackFromYear != null && (
+        <NoteRow>
+          {year} table unavailable — using {section.fallbackFromYear} as approximation.
+        </NoteRow>
+      )}
+
+      {section.confidence !== "high" && section.reliabilityNote && (
+        <NoteRow warning>{section.reliabilityNote}</NoteRow>
+      )}
+    </div>
+  );
+}
+
+function NoteRow({
+  children,
+  warning,
+}: {
+  children: React.ReactNode;
+  warning?: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex items-start gap-2 rounded-organic-md p-3 text-xs leading-relaxed text-text-muted",
+        warning ? "bg-warning/10" : "bg-surface-subtle",
+      )}
+    >
+      {warning && (
+        <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
+      )}
+      {children}
+    </div>
+  );
+}
+
+/** Mirrors the real results layout before Calculate — ??? scores + ghost chart. */
+function ResultsPreviewPlaceholder({
+  exam,
+  year,
+  loading = false,
+}: {
+  exam: ConverterExam;
+  year?: number;
+  loading?: boolean;
+}) {
+  const accent =
+    exam === "TMUA" ? COLOR_TEXT["tmua-accent"] : "text-text-subtle";
+
+  return (
+    <div className={cn("relative space-y-5", loading && "opacity-70")}>
+      {loading && (
+        <div className="absolute right-0 top-0 flex items-center gap-2 text-xs text-text-muted">
+          <Loader2 className="h-3.5 w-3.5 animate-spin text-secondary" />
+          Calculating…
+        </div>
+      )}
+
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-xs text-text-subtle">
+            {year ? `${exam} ${year}` : `${exam} › ${examTargetLabel(exam)}`}
+            <span className="text-text-muted"> · —</span>
+          </p>
+          <p
+            className={cn(
+              "mt-1 text-4xl font-bold tracking-widest tabular-nums sm:text-5xl",
+              accent,
+              loading ? "animate-pulse opacity-50" : "opacity-40",
+            )}
+          >
+            ???
+          </p>
+        </div>
+        <div className="text-right">
+          <p className="text-xs text-text-subtle">Top</p>
+          <p
+            className={cn(
+              "text-3xl font-bold tracking-wider tabular-nums sm:text-4xl",
+              loading ? "animate-pulse text-text-subtle/50" : "text-text-subtle/40",
+            )}
+          >
+            ??%
+          </p>
+        </div>
+      </div>
+
+      <GhostPercentileChart />
+    </div>
+  );
+}
+
+/** Fuzzy stand-in for the distribution chart — same footprint, no real data. */
+function GhostPercentileChart() {
+  const w = 720;
+  const h = 220;
+  const pad = 32;
+  const minX = 1;
+  const maxX = 9;
+  const densities = [
+    { score: 1, d: 0.4 },
+    { score: 2, d: 1.2 },
+    { score: 3, d: 3.5 },
+    { score: 4, d: 6.8 },
+    { score: 5, d: 9.2 },
+    { score: 6, d: 8.5 },
+    { score: 7, d: 5.2 },
+    { score: 8, d: 2.1 },
+    { score: 9, d: 0.5 },
+  ];
+  const maxY = 10;
+
+  const toX = (x: number) =>
+    pad + ((x - minX) / (maxX - minX)) * (w - 2 * pad);
+  const toY = (y: number) => h - pad - (y / maxY) * (h - 2 * pad);
+
+  const linePoints = densities.map((p) => `${toX(p.score)},${toY(p.d)}`).join(" ");
+  const areaPoints = [
+    `${toX(minX)},${h - pad}`,
+    ...densities.map((p) => `${toX(p.score)},${toY(p.d)}`),
+    `${toX(maxX)},${h - pad}`,
+  ].join(" ");
+
+  const ghostScore = 5.5;
+  const ghostX = toX(ghostScore);
+  const ghostY = toY(6.2);
+
+  return (
+    <div className="relative" aria-hidden>
+      <svg
+        width="100%"
+        height={h}
+        viewBox={`0 0 ${w} ${h}`}
+        preserveAspectRatio="xMidYMid meet"
+        className="block blur-[2px] opacity-40 saturate-50"
+      >
+        <line x1={pad} y1={h - pad} x2={w - pad} y2={h - pad} stroke={cssVar.borderSubtle} />
+        <line x1={pad} y1={pad} x2={pad} y2={h - pad} stroke={cssVar.borderSubtle} />
+        <polygon
+          points={areaPoints}
+          fill="color-mix(in srgb, var(--color-maths) 12%, transparent)"
+        />
+        <polyline
+          points={linePoints}
+          fill="none"
+          stroke={cssVar.textSubtle}
+          strokeWidth="2"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+        />
+        {[2, 4, 6, 8].map((t) => (
+          <text
+            key={t}
+            x={toX(t)}
+            y={h - pad + 14}
+            fill={cssVar.textMuted}
+            fontSize="9"
+            textAnchor="middle"
+            opacity={0.6}
+          >
+            {t}
+          </text>
+        ))}
+        <line
+          x1={ghostX}
+          y1={pad}
+          x2={ghostX}
+          y2={h - pad}
+          stroke="color-mix(in srgb, var(--color-maths) 25%, transparent)"
+          strokeDasharray="4 4"
+        />
+        <circle
+          cx={ghostX}
+          cy={ghostY}
+          r="4"
+          fill={cssVar.maths}
+          fillOpacity={0.35}
+          stroke={cssVar.background}
+          strokeWidth="2"
+        />
+        <text x={w / 2} y={h - 4} fill={cssVar.textMuted} fontSize="10" textAnchor="middle" opacity={0.5}>
+          Scaled score
+        </text>
+      </svg>
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-surface-elevated/30" />
+    </div>
+  );
+}
