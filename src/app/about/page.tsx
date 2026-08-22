@@ -77,47 +77,38 @@ const PRINCIPLES = [
 
 function FounderCard({
   founder,
-  primary = false,
 }: {
   founder: (typeof FOUNDERS)[keyof typeof FOUNDERS];
-  primary?: boolean;
 }) {
   return (
     <article
       id={founder.id}
-      className={`group overflow-hidden rounded-3xl border border-white/[0.08] bg-[#161D2F] transition-transform duration-300 hover:-translate-y-1 ${
-        primary ? "lg:col-span-7" : "lg:col-span-5"
-      }`}
+      className="group rounded-3xl border border-white/[0.08] bg-[#161D2F] p-6 sm:p-8"
     >
-      <div
-        className={`relative overflow-hidden bg-[#0A0F1D] ${
-          primary ? "aspect-[4/3] sm:aspect-[16/10]" : "aspect-[4/3] sm:aspect-[16/11]"
-        }`}
-      >
-        <Image
-          src={founder.imageSrc}
-          alt={founder.imageAlt}
-          fill
-          sizes={primary ? "(min-width: 1024px) 58vw, 100vw" : "(min-width: 1024px) 42vw, 100vw"}
-          className="object-cover transition-transform duration-500 group-hover:scale-[1.015]"
-        />
-        <span className="absolute bottom-4 left-4 rounded-lg bg-[#0A0F1D]/85 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[#CBD5E1] backdrop-blur-sm">
-          Temporary portrait
-        </span>
-      </div>
-      <div className={primary ? "p-6 sm:p-8 lg:p-10" : "p-6 sm:p-8"}>
-        <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#3B82F6]">
-          {founder.role}
-        </p>
-        <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
-          {founder.name}
-        </h2>
-        <p className="mt-3 max-w-xl text-sm font-medium leading-relaxed text-[#CBD5E1] sm:text-base">
-          {founder.credential}
-        </p>
-        <p className="mt-5 max-w-2xl leading-relaxed text-[#94A3B8]">
-          {founder.bio}
-        </p>
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-6">
+        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-[#0A0F1D] sm:h-24 sm:w-24">
+          <Image
+            src={founder.imageSrc}
+            alt={founder.imageAlt}
+            fill
+            sizes="96px"
+            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#3B82F6]">
+            {founder.role}
+          </p>
+          <h2 className="mt-2 font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
+            {founder.name}
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm font-medium leading-relaxed text-[#CBD5E1] sm:text-base">
+            {founder.credential}
+          </p>
+          <p className="mt-4 max-w-3xl leading-relaxed text-[#94A3B8]">
+            {founder.bio}
+          </p>
+        </div>
       </div>
     </article>
   );
@@ -158,8 +149,8 @@ export default function AboutPage() {
           aria-label="ESAT Camp founders"
           className="px-4 pb-20 sm:px-5 sm:pb-24 lg:px-6"
         >
-          <div className="mx-auto grid max-w-[1400px] gap-6 lg:grid-cols-12 lg:items-start">
-            <FounderCard founder={FOUNDERS.ewan} primary />
+          <div className="mx-auto flex max-w-[1400px] flex-col gap-6">
+            <FounderCard founder={FOUNDERS.ewan} />
             <FounderCard founder={FOUNDERS.anson} />
           </div>
         </section>
