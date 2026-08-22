@@ -74,7 +74,7 @@ export default function EsatBreaksPage() {
         primary: { href: APP_ROUTES.calibration, label: "Start free calibration" },
         secondary: { href: SEO_ROUTES.whiteboard, label: "Whiteboard rules" },
       }}
-      related={seoLinks("testDay", "preparation", "testDate", "whiteboard", "calculatorRules")}
+      related={seoLinks("testDay", "preparation", "testDates", "whiteboard", "calculatorRules")}
       sources={[
         SOURCES.testDayOfficial,
         SOURCES.accessArrangements,

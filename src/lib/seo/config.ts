@@ -87,7 +87,6 @@ export const SEO_ROUTES = {
   physics: "/esat-physics",
   calculatorRules: "/esat-calculator-rules",
   goodScore: "/good-esat-score",
-  testDate: "/esat-test-date",
   esatBreaks: "/esat-breaks",
   whiteboard: "/esat-whiteboard",
   questionBankGuide: "/is-esat-a-question-bank",

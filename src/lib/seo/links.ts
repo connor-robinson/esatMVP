@@ -148,11 +148,6 @@ export const SEO_LINKS = {
     label: "UCL ESAT requirements",
     blurb: "Electronic and Electrical Engineering modules and sitting options.",
   },
-  testDate: {
-    href: SEO_ROUTES.testDate,
-    label: "When is the ESAT 2027?",
-    blurb: "October and January sittings, booking windows, centres and a live countdown.",
-  },
   esatBreaks: {
     href: SEO_ROUTES.esatBreaks,
     label: "Does the ESAT have breaks?",
@@ -199,7 +194,6 @@ export const SEO_GUIDE_KEYS: SeoLinkKey[] = [
   "oxfordRequirements",
   "imperialRequirements",
   "uclRequirements",
-  "testDate",
   "esatBreaks",
   "whiteboard",
   "questionBankGuide",
@@ -218,7 +212,7 @@ export const FAQ_GUIDE_SECTIONS: readonly FaqGuideSection[] = [
     id: "getting-started",
     title: "Getting started",
     description: "How to prepare, when the test is, and what the day looks like.",
-    keys: ["preparation", "testDate", "testDates", "testDay", "esatBreaks", "whiteboard", "commonMistakes"],
+    keys: ["preparation", "testDates", "testDay", "esatBreaks", "whiteboard", "commonMistakes"],
   },
   {
     id: "modules",

@@ -79,7 +79,7 @@ export default function IsEsatAQuestionBankPage() {
         "engaaNsaaPapers",
         "preparation",
         "questionBank",
-        "testDate",
+        "testDates",
         "goodScore",
       )}
       sources={[
@@ -147,7 +147,7 @@ export default function IsEsatAQuestionBankPage() {
         />
         <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
           Sitting rules:{" "}
-          <SeoTextLink href={SEO_ROUTES.testDate}>when is the ESAT 2027</SeoTextLink>
+          <SeoTextLink href={SEO_ROUTES.testDates}>when is the ESAT 2027</SeoTextLink>
           .
         </p>
       </SeoSection>
