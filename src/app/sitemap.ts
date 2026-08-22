@@ -10,6 +10,7 @@ import { APP_ROUTES, LAST_CHECKED, SEO_ROUTES, SITE_URL } from "@/lib/seo/config
  */
 const ENTRIES: readonly { path: string; priority: number }[] = [
   { path: "/", priority: 1 },
+  { path: "/about", priority: 0.7 },
 
   // Editorial guide pages.
   { path: SEO_ROUTES.preparation, priority: 0.9 },

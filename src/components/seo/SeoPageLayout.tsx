@@ -203,9 +203,17 @@ export function SeoGuideFooter() {
           </div>
           <div>
             <h2 className="text-[10px] font-bold uppercase tracking-widest text-white">
-              Practice and tools
+              ESAT Camp and tools
             </h2>
             <ul className="mt-5 grid gap-3 text-sm text-[#94A3B8] sm:grid-cols-2">
+              <li>
+                <Link
+                  href="/about"
+                  className="transition-colors hover:text-[#3B82F6]"
+                >
+                  About ESAT Camp
+                </Link>
+              </li>
               {tools.map((tool) => (
                 <li key={tool.href}>
                   <Link

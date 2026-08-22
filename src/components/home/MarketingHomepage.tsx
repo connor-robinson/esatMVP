@@ -14,6 +14,7 @@ import { SlotMachineCount } from "@/components/home/SlotMachineCount";
 import { HeroTrainerDemo } from "@/components/home/HeroTrainerDemo";
 import { ExampleQuestionDemo } from "@/components/home/ExampleQuestionDemo";
 import { ScoreConverterPreview } from "@/components/home/ScoreConverterPreview";
+import { MeetFounders } from "@/components/home/MeetFounders";
 
 const PAID_FEATURES = [
   "Full mental maths access",
@@ -346,6 +347,8 @@ export function MarketingHomepage() {
           </div>
         </div>
       </section>
+
+      <MeetFounders />
 
       {/* Free tools - score converter */}
       <section className="py-24 bg-[#0A0F1D]">
@@ -681,6 +684,14 @@ export function MarketingHomepage() {
                 Support
               </h4>
               <ul className="space-y-4 text-sm text-[#94A3B8]">
+                <li>
+                  <Link
+                    href="/about"
+                    className="hover:text-[#3B82F6] transition-colors"
+                  >
+                    About Us
+                  </Link>
+                </li>
                 <li>
                   <Link
                     href="/help"
