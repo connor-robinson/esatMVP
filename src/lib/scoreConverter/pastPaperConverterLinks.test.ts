@@ -132,6 +132,25 @@ describe("converter query prefill parsing", () => {
       description: MAIN_SCORE_CONVERTER_COPY.description,
       path: APP_ROUTES.scoreConverter,
     });
+    expect(MAIN_SCORE_CONVERTER_COPY.title).toBe(
+      "ESAT Score Converter - NSAA & ENGAA Raw Marks",
+    );
+    expect(MAIN_SCORE_CONVERTER_COPY.description).toBe(
+      "Estimate your ESAT score from NSAA and ENGAA past-paper raw marks. Convert your result to the ESAT 1.0–9.0 scale. Unofficial estimate.",
+    );
+    expect(metadata.title).toBe(MAIN_SCORE_CONVERTER_COPY.title);
+    expect(metadata.description).toBe(MAIN_SCORE_CONVERTER_COPY.description);
+    expect(metadata.openGraph?.title).toBe(MAIN_SCORE_CONVERTER_COPY.title);
+    expect(metadata.openGraph?.description).toBe(
+      MAIN_SCORE_CONVERTER_COPY.description,
+    );
+    expect(metadata.openGraph?.url).toBe(
+      buildCanonicalUrl(APP_ROUTES.scoreConverter),
+    );
+    expect(metadata.twitter?.title).toBe(MAIN_SCORE_CONVERTER_COPY.title);
+    expect(metadata.twitter?.description).toBe(
+      MAIN_SCORE_CONVERTER_COPY.description,
+    );
     expect(metadata.alternates?.canonical).toBe(
       buildCanonicalUrl(APP_ROUTES.scoreConverter),
     );

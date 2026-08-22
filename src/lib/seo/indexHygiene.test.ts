@@ -86,6 +86,20 @@ describe("index hygiene: public pages stay indexable", () => {
       description: MAIN_SCORE_CONVERTER_COPY.description,
       path: APP_ROUTES.scoreConverter,
     });
+    expect(scoreConverter.title).toBe(
+      "ESAT Score Converter - NSAA & ENGAA Raw Marks",
+    );
+    expect(scoreConverter.description).toBe(
+      "Estimate your ESAT score from NSAA and ENGAA past-paper raw marks. Convert your result to the ESAT 1.0–9.0 scale. Unofficial estimate.",
+    );
+    expect(scoreConverter.openGraph?.title).toBe(scoreConverter.title);
+    expect(scoreConverter.openGraph?.description).toBe(
+      scoreConverter.description,
+    );
+    expect(scoreConverter.twitter?.title).toBe(scoreConverter.title);
+    expect(scoreConverter.twitter?.description).toBe(
+      scoreConverter.description,
+    );
     expect(scoreConverter.robots).toEqual({ index: true, follow: true });
     expect(scoreConverter.alternates?.canonical).toBe(
       buildCanonicalUrl(APP_ROUTES.scoreConverter),
