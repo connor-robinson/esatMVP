@@ -41,7 +41,10 @@ function CompactFounder({
 
 export function MeetFounders() {
   return (
-    <section className="bg-[#0A0F1D] px-4 py-20 sm:px-5 sm:py-24 lg:px-6">
+    <section
+      id="about"
+      className="scroll-mt-28 bg-[#0A0F1D] px-4 py-20 sm:px-5 sm:py-24 lg:px-6"
+    >
       <div className="mx-auto max-w-[1400px]">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-end lg:gap-14">
           <div>

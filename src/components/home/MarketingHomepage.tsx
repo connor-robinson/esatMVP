@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { BRAND_CONFIG } from "@/config/brand";
+import { NAVBAR_HEIGHT_PX } from "@/config/layout";
 import { QUESTION_BANK_TOTAL_COUNT } from "@/config/questionBankMarketing";
 import { MENTAL_MATHS_MODULE_COUNT } from "@/config/drillDisplayFolders";
 import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
@@ -10,11 +11,72 @@ import { SEO_LINKS, type SeoLinkKey } from "@/lib/seo/links";
 import { MARKETING_HOMEPAGE_FAQ } from "@/lib/homepage/marketingFaq";
 import { trackHomepageEvent } from "@/lib/homepage/analytics";
 import { getSeasonPassPrice } from "@/lib/stripe/best-value";
+import { cn } from "@/lib/utils";
 import { SlotMachineCount } from "@/components/home/SlotMachineCount";
 import { HeroTrainerDemo } from "@/components/home/HeroTrainerDemo";
 import { ExampleQuestionDemo } from "@/components/home/ExampleQuestionDemo";
 import { ScoreConverterPreview } from "@/components/home/ScoreConverterPreview";
 import { MeetFounders } from "@/components/home/MeetFounders";
+
+const HOMEPAGE_SECTIONS = [
+  { id: "practice", label: "Practice" },
+  { id: "features", label: "Features" },
+  { id: "about", label: "About" },
+  { id: "pricing", label: "Pricing" },
+  { id: "faqs", label: "FAQs" },
+] as const;
+
+function HomepageSectionNav() {
+  const [active, setActive] = useState<string>(HOMEPAGE_SECTIONS[0].id);
+
+  useEffect(() => {
+    const ids = HOMEPAGE_SECTIONS.map((section) => section.id);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]?.target.id) {
+          setActive(visible[0].target.id);
+        }
+      },
+      { rootMargin: "-40% 0px -45% 0px", threshold: [0, 0.25, 0.5] },
+    );
+
+    ids.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <nav
+      aria-label="Page sections"
+      className="sticky z-30 bg-[#0A0F1D]/90 backdrop-blur-md"
+      style={{ top: NAVBAR_HEIGHT_PX }}
+    >
+      <div className="mx-auto flex max-w-[1400px] gap-1 overflow-x-auto px-4 py-2.5 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-2 sm:px-5 lg:px-6 [&::-webkit-scrollbar]:hidden">
+        {HOMEPAGE_SECTIONS.map((section) => (
+          <a
+            key={section.id}
+            href={`#${section.id}`}
+            className={cn(
+              "shrink-0 rounded-lg px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]",
+              active === section.id
+                ? "bg-white/10 text-white"
+                : "text-[#94A3B8] hover:text-white",
+            )}
+            aria-current={active === section.id ? "true" : undefined}
+          >
+            {section.label}
+          </a>
+        ))}
+      </div>
+    </nav>
+  );
+}
 
 const PAID_FEATURES = [
   "Full mental maths access",
@@ -58,8 +120,10 @@ export function MarketingHomepage() {
 
   return (
     <div className="scroll-smooth">
+      <HomepageSectionNav />
+
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-20 pb-16 lg:pt-32 lg:pb-32 bg-[#0A0F1D]">
+      <section className="relative overflow-hidden pt-12 pb-16 lg:pt-24 lg:pb-32 bg-[#0A0F1D]">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 opacity-[0.45]"
@@ -161,9 +225,6 @@ export function MarketingHomepage() {
                   <p className="text-white font-bold text-lg sm:text-xl leading-snug">
                     Join our applicants this cycle
                   </p>
-                  <p className="mt-1 text-white/75 text-sm leading-relaxed">
-                    Join 5,000+ applicants this cycle
-                  </p>
                 </div>
               </div>
 
@@ -181,7 +242,10 @@ export function MarketingHomepage() {
       </section>
 
       {/* Calibration preview */}
-      <section className="py-16 bg-[#161D2F] border-y border-white/5">
+      <section
+        id="practice"
+        className="scroll-mt-28 border-y border-white/5 bg-[#161D2F] py-16"
+      >
         <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
           <div className="grid lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] gap-10 lg:gap-14 items-center">
             <div className="space-y-8">
@@ -225,7 +289,7 @@ export function MarketingHomepage() {
       </section>
 
       {/* Why Choose Us Section */}
-      <section className="py-24 bg-[#161D2F]">
+      <section id="features" className="scroll-mt-28 bg-[#161D2F] py-24">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
           <div className="text-center max-w-3xl mx-auto mb-10 space-y-4">
             <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
@@ -408,7 +472,7 @@ export function MarketingHomepage() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-24 bg-[#161D2F]/50">
+      <section id="pricing" className="scroll-mt-28 bg-[#161D2F]/50 py-24">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
           <div className="mx-auto mb-16 max-w-2xl text-center sm:mb-20">
             <h2 className="mb-4 text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
@@ -554,7 +618,7 @@ export function MarketingHomepage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-24 bg-[#0A0F1D]">
+      <section id="faqs" className="scroll-mt-28 bg-[#0A0F1D] py-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-5 lg:px-6">
           <div className="mb-12 text-center">
             <h2 className="text-3xl font-display font-bold sm:text-4xl">
