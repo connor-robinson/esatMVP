@@ -4,11 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ChevronDown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {
-  PercentileChartSkeleton,
-  PercentileCumulativeChart,
-} from "@/components/esat/PercentileCumulativeChart";
-import { SeoSection } from "@/components/seo/SeoSections";
+import { PercentileMiniChart } from "@/components/papers/mark/PercentileMiniChart";
 import {
   DEFAULT_MODULE_ID,
   DEFAULT_SCORE,
@@ -17,9 +13,7 @@ import {
   SCORE_MAX,
   SCORE_MIN,
   SCORE_STEP,
-  cycleSupportsComparison,
   getExplorerModule,
-  getPreviousTestCycle,
   getTestCycle,
   parseModuleId,
   parseScoreParam,
@@ -36,7 +30,6 @@ import {
   ensureCumulativeRows,
   formatApproximatePercentile,
   formatCycleInterpretation,
-  formatPercentileDetail,
   formatTopPercentLabel,
   roundScore,
 } from "@/lib/esat/percentileWording";
@@ -63,13 +56,21 @@ const CHART_ACCENT: Record<ModuleColor, string> = {
   "tmua-accent": "var(--color-tmua-accent)",
 };
 
+const MODULE_TEXT: Record<ModuleColor, string> = {
+  maths: "text-maths",
+  physics: "text-physics",
+  chemistry: "text-chemistry",
+  biology: "text-biology",
+  advanced: "text-advanced",
+  "tmua-accent": "text-tmua-accent",
+};
+
 function useInitialState() {
   const searchParams = useSearchParams();
   const [ready, setReady] = useState(false);
   const [cycleId, setCycleId] = useState<EsatTestCycleId>(DEFAULT_TEST_CYCLE_ID);
   const [moduleId, setModuleId] = useState<EsatExplorerModuleId>(DEFAULT_MODULE_ID);
   const [score, setScore] = useState(DEFAULT_SCORE);
-  const [compareEnabled, setCompareEnabled] = useState(false);
 
   useEffect(() => {
     const cycleParam = parseTestCycleId(searchParams.get("cycle"));
@@ -84,21 +85,12 @@ function useInitialState() {
     setReady(true);
   }, [searchParams]);
 
-  return { ready, cycleId, setCycleId, moduleId, setModuleId, score, setScore, compareEnabled, setCompareEnabled };
+  return { ready, cycleId, setCycleId, moduleId, setModuleId, score, setScore };
 }
 
 export function PercentileExplorer() {
-  const {
-    ready,
-    cycleId,
-    setCycleId,
-    moduleId,
-    setModuleId,
-    score,
-    setScore,
-    compareEnabled,
-    setCompareEnabled,
-  } = useInitialState();
+  const { ready, cycleId, setCycleId, moduleId, setModuleId, score, setScore } =
+    useInitialState();
 
   const [rowsByKey, setRowsByKey] = useState<Record<string, EsatRow[]>>({});
   const [loading, setLoading] = useState(true);
@@ -107,8 +99,6 @@ export function PercentileExplorer() {
 
   const cycle = getTestCycle(cycleId);
   const module = getExplorerModule(cycleId, moduleId);
-  const previousCycle = getPreviousTestCycle(cycleId);
-  const canCompare = cycleSupportsComparison(cycleId);
 
   const tableKeys = useMemo(() => {
     const keys = new Set<string>();
@@ -146,17 +136,7 @@ export function PercentileExplorer() {
     setScoreInput(score.toFixed(1));
   }, [score]);
 
-  useEffect(() => {
-    if (!canCompare && compareEnabled) setCompareEnabled(false);
-  }, [canCompare, compareEnabled, setCompareEnabled]);
-
   const rows = module ? rowsByKey[module.tableKey] ?? [] : [];
-  const compareModule =
-    compareEnabled && previousCycle
-      ? previousCycle.modules.find((item) => item.id === moduleId)
-      : undefined;
-  const compareRows =
-    compareModule && compareEnabled ? rowsByKey[compareModule.tableKey] ?? [] : undefined;
 
   const percentile = useMemo(() => {
     if (rows.length < 2) return null;
@@ -164,9 +144,12 @@ export function PercentileExplorer() {
     return Number.isFinite(value) ? value : null;
   }, [rows, score]);
 
-  const handleScoreChange = useCallback((next: number) => {
-    setScore(roundScore(next));
-  }, [setScore]);
+  const handleScoreChange = useCallback(
+    (next: number) => {
+      setScore(roundScore(next));
+    },
+    [setScore],
+  );
 
   const handleScoreInputCommit = useCallback(() => {
     const parsed = Number.parseFloat(scoreInput);
@@ -180,15 +163,12 @@ export function PercentileExplorer() {
   if (!ready || !cycle || !module) return null;
 
   const accentColor = CHART_ACCENT[module.color];
+  const accentTextClass = MODULE_TEXT[module.color];
 
   return (
-    <SeoSection
-      id="percentile-explorer"
-      heading="Explore ESAT score percentiles"
-      lead="See where a scaled score sits within the official UAT-UK distribution for each module and test cycle."
-    >
-      <div className="space-y-6">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <section id="percentile-explorer" className="scroll-mt-24">
+      <div className="rounded-3xl bg-[#161D2F] p-5 sm:p-6 lg:p-7">
+        <div className="grid gap-4 border-b border-white/[0.06] pb-6 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <label htmlFor="percentile-cycle" className={fieldLabel}>
               Test cycle
@@ -197,9 +177,7 @@ export function PercentileExplorer() {
               <select
                 id="percentile-cycle"
                 value={cycleId}
-                onChange={(event) =>
-                  setCycleId(event.target.value as EsatTestCycleId)
-                }
+                onChange={(event) => setCycleId(event.target.value as EsatTestCycleId)}
                 className={selectTriggerClass}
                 aria-label="Test cycle"
               >
@@ -247,7 +225,7 @@ export function PercentileExplorer() {
             <label htmlFor="percentile-score-slider" className={fieldLabel}>
               ESAT score
             </label>
-            <div className="flex flex-col gap-3 rounded-2xl bg-white/[0.04] p-4 sm:flex-row sm:items-center">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <input
                 id="percentile-score-slider"
                 type="range"
@@ -260,7 +238,8 @@ export function PercentileExplorer() {
                 aria-valuemax={SCORE_MAX}
                 aria-valuenow={score}
                 aria-label="ESAT score slider"
-                className="h-3 w-full cursor-pointer accent-[#3B82F6]"
+                className="h-3 w-full cursor-pointer"
+                style={{ accentColor }}
               />
               <div className="flex items-center gap-2 sm:w-28 sm:shrink-0">
                 <label htmlFor="percentile-score-input" className="sr-only">
@@ -289,138 +268,124 @@ export function PercentileExplorer() {
           </div>
         </div>
 
-        {canCompare ? (
-          <label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm text-[#94A3B8]">
-            <input
-              type="checkbox"
-              checked={compareEnabled}
-              onChange={(event) => setCompareEnabled(event.target.checked)}
-              className="h-5 w-5 shrink-0 rounded accent-[#3B82F6]"
-              aria-label="Compare with previous test cycle"
-            />
-            Compare with previous cycle
-            {previousCycle ? ` (${previousCycle.label})` : null}
-          </label>
-        ) : null}
-
-        <div
-          className="rounded-3xl bg-[#161D2F] p-5 sm:p-6"
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          <div className="space-y-1">
-            <p className="text-2xl font-display font-bold text-white sm:text-3xl">
-              {score.toFixed(1)} in {module.label}
-            </p>
+        <div className="mt-6" aria-live="polite" aria-atomic="true">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="text-2xl font-display font-bold text-white sm:text-3xl">
+                <span className={cn("tabular-nums", accentTextClass)}>
+                  {score.toFixed(1)}
+                </span>{" "}
+                in {module.label}
+              </p>
+              {percentile != null ? (
+                <>
+                  <p className={cn("mt-1 text-lg font-semibold", accentTextClass)}>
+                    {formatApproximatePercentile(percentile)}
+                  </p>
+                  <p className="mt-0.5 text-sm text-[#94A3B8]">
+                    {formatTopPercentLabel(percentile)}
+                  </p>
+                </>
+              ) : (
+                <p className="mt-1 text-sm text-[#94A3B8]">
+                  Percentile unavailable for this selection.
+                </p>
+              )}
+            </div>
             {percentile != null ? (
-              <>
-                <p className="text-lg font-semibold text-[#93C5FD]">
-                  {formatApproximatePercentile(percentile)}
-                </p>
-                <p className="text-base text-white/90">{formatTopPercentLabel(percentile)}</p>
-                <p className="pt-2 text-sm leading-relaxed text-[#94A3B8]">
-                  {formatCycleInterpretation(score, module.label, cycle.label, percentile)}
-                </p>
-                <p className="text-xs leading-relaxed text-[#64748B]">
-                  {formatPercentileDetail(percentile)}
-                </p>
-              </>
-            ) : (
-              <p className="text-sm text-[#94A3B8]">Percentile unavailable for this selection.</p>
-            )}
-          </div>
-
-          <div className="mt-6">
-            {loading ? (
-              <PercentileChartSkeleton />
-            ) : rows.length > 1 && percentile != null ? (
-              <PercentileCumulativeChart
-                rows={rows}
-                compareRows={compareRows}
-                score={score}
-                onScoreChange={handleScoreChange}
-                accentColor={accentColor}
-                compareLabel={previousCycle?.label ?? "Previous cycle"}
-              />
-            ) : (
-              <div className="flex h-[280px] items-center justify-center rounded-2xl bg-white/[0.04] text-sm text-[#94A3B8]">
-                Chart unavailable for this module.
-              </div>
-            )}
-          </div>
-
-          <div className="mt-5 space-y-2 text-sm leading-relaxed text-[#94A3B8]">
-            <p>
-              Source:{" "}
-              <a
-                href={cycle.explanationOfResultsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white underline decoration-white/25 underline-offset-4 transition-colors hover:decoration-[#3B82F6]"
-              >
-                UAT-UK Explanation of Results
-              </a>
-            </p>
-            <p>
-              Percentiles describe performance within that test cohort. They are not university
-              admissions cut-offs.
-            </p>
-          </div>
-
-          <div className="mt-5">
-            <button
-              type="button"
-              onClick={() => setShowDataTable((open) => !open)}
-              aria-expanded={showDataTable}
-              aria-controls="percentile-explorer-data-table"
-              className="inline-flex min-h-11 items-center rounded-2xl bg-white/[0.06] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/[0.1]"
-            >
-              {showDataTable ? "Hide graph data" : "View graph data"}
-            </button>
-
-            {showDataTable ? (
-              <div id="percentile-explorer-data-table" className="mt-4 overflow-x-auto">
-                <table className="min-w-full text-left text-sm text-[#94A3B8]">
-                  <caption className="sr-only">
-                    Published cumulative percentile data for {module.label} in the {cycle.label}
-                  </caption>
-                  <thead>
-                    <tr className="text-xs uppercase tracking-[0.12em] text-[#64748B]">
-                      <th scope="col" className="px-3 py-2 font-semibold">
-                        Score
-                      </th>
-                      <th scope="col" className="px-3 py-2 font-semibold">
-                        % candidates
-                      </th>
-                      <th scope="col" className="px-3 py-2 font-semibold">
-                        Cumulative % at or below score
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {rows.map((row) => (
-                      <tr key={row.score} className="border-t border-white/[0.06]">
-                        <td className="px-3 py-2 tabular-nums text-white">{row.score.toFixed(1)}</td>
-                        <td className="px-3 py-2 tabular-nums">
-                          {row.candidatePct != null ? row.candidatePct.toFixed(1) : "-"}
-                        </td>
-                        <td className="px-3 py-2 tabular-nums">{row.cumulativePct.toFixed(1)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <p className="max-w-md text-sm leading-relaxed text-[#94A3B8]">
+                {formatCycleInterpretation(score, module.label, cycle.label, percentile)}
+              </p>
             ) : null}
           </div>
         </div>
 
-        {loading ? (
-          <div className="flex items-center gap-2 text-xs text-[#64748B]">
-            <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
-            Loading official percentile tables…
-          </div>
-        ) : null}
+        <div className="mt-6">
+          {loading ? (
+            <div className="flex h-[260px] items-center justify-center rounded-2xl bg-white/[0.04] text-sm text-[#94A3B8]">
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
+              Loading distribution…
+            </div>
+          ) : rows.length > 1 && percentile != null ? (
+            <PercentileMiniChart
+              rows={rows}
+              score={score}
+              percentile={percentile}
+              accentColor={accentColor}
+              xLabel="ESAT score"
+              interactive
+            />
+          ) : (
+            <div className="flex h-[260px] items-center justify-center rounded-2xl bg-white/[0.04] text-sm text-[#94A3B8]">
+              Chart unavailable for this module.
+            </div>
+          )}
+        </div>
+
+        <div className="mt-5 space-y-2 text-sm leading-relaxed text-[#94A3B8]">
+          <p>
+            Source:{" "}
+            <a
+              href={cycle.explanationOfResultsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white underline decoration-white/25 underline-offset-4 transition-colors hover:decoration-white/60"
+            >
+              UAT-UK Explanation of Results
+            </a>
+          </p>
+          <p>
+            Percentiles describe performance within that test cohort. They are not university
+            admissions cut-offs.
+          </p>
+        </div>
+
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={() => setShowDataTable((open) => !open)}
+            aria-expanded={showDataTable}
+            aria-controls="percentile-explorer-data-table"
+            className="inline-flex min-h-11 items-center rounded-2xl bg-white/[0.06] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/[0.1]"
+          >
+            {showDataTable ? "Hide graph data" : "View graph data"}
+          </button>
+
+          {showDataTable ? (
+            <div id="percentile-explorer-data-table" className="mt-4 overflow-x-auto">
+              <table className="min-w-full text-left text-sm text-[#94A3B8]">
+                <caption className="sr-only">
+                  Published score distribution for {module.label} in the {cycle.label}
+                </caption>
+                <thead>
+                  <tr className="text-xs uppercase tracking-[0.12em] text-[#64748B]">
+                    <th scope="col" className="px-3 py-2 font-semibold">
+                      Score
+                    </th>
+                    <th scope="col" className="px-3 py-2 font-semibold">
+                      % candidates
+                    </th>
+                    <th scope="col" className="px-3 py-2 font-semibold">
+                      Cumulative % at or below score
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((row) => (
+                    <tr key={row.score} className="border-t border-white/[0.06]">
+                      <td className="px-3 py-2 tabular-nums text-white">{row.score.toFixed(1)}</td>
+                      <td className="px-3 py-2 tabular-nums">
+                        {row.candidatePct != null ? row.candidatePct.toFixed(1) : "-"}
+                      </td>
+                      <td className="px-3 py-2 tabular-nums">{row.cumulativePct.toFixed(1)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+        </div>
       </div>
-    </SeoSection>
+    </section>
   );
 }
