@@ -140,7 +140,7 @@ interface Labelled {
   order: number;
 }
 
-function labelForPart(
+export function labelForPart(
   exam: ConverterExam,
   paperName: string,
   partName: string,

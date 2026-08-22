@@ -465,12 +465,59 @@ function InputHelperHint({
   );
 }
 
-export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam }) {
+export function ScoreConverter({
+  initialExam,
+  title,
+  intro,
+  beforeFaq,
+}: {
+  initialExam?: ConverterExam;
+  title?: string;
+  intro?: string;
+  beforeFaq?: React.ReactNode;
+}) {
   const [exam, setExam] = useState<ConverterExam>(initialExam ?? "NSAA");
+  const [pendingApply, setPendingApply] = useState<{
+    exam: ConverterExam;
+    year: number;
+    paperName: string;
+    partName: string;
+  } | null>(null);
 
   useEffect(() => {
     if (initialExam) setExam(initialExam);
   }, [initialExam]);
+
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent<{
+        exam: ConverterExam;
+        year: number;
+        paperName: string;
+        partName: string;
+      }>).detail;
+      if (!detail?.exam) return;
+      setExam(detail.exam);
+      setPendingApply(detail);
+    };
+    window.addEventListener("score-converter:apply", handler);
+    return () => window.removeEventListener("score-converter:apply", handler);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const yearParam = Number(params.get("year"));
+    const paperName = params.get("paperName");
+    const partName = params.get("partName");
+    if (!Number.isFinite(yearParam) || !paperName || !partName) return;
+    setPendingApply({
+      exam: initialExam ?? exam,
+      year: yearParam,
+      paperName,
+      partName,
+    });
+  }, [initialExam, exam]);
 
   const [years, setYears] = useState<YearOption[]>([]);
   const [yearsLoading, setYearsLoading] = useState(false);
@@ -639,6 +686,14 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
     );
   }, [sectionGroups]);
 
+  useEffect(() => {
+    if (!pendingApply || pendingApply.exam !== exam) return;
+    const matchYear = years.find((y) => y.year === pendingApply.year);
+    if (matchYear && year?.year !== pendingApply.year) {
+      setYear(matchYear);
+    }
+  }, [pendingApply, exam, years, year]);
+
   const handleGroupChange = (group: string) => {
     invalidateResults();
     setSelectedGroup(group);
@@ -665,6 +720,39 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
       setRawByKey((r) => ({ ...r, [overall.key]: r[overall.key] ?? 0 }));
     }
   };
+
+  useEffect(() => {
+    if (!pendingApply || !year || pendingApply.year !== year.year) return;
+    if (sections.length === 0 || sectionsLoading) return;
+
+    const match = sections.find(
+      (s) =>
+        s.paperName === pendingApply.paperName &&
+        s.partName === pendingApply.partName,
+    );
+    if (!match) return;
+
+    if (isTmuaRaw) {
+      if (isTmuaOverallPart(match.partName)) {
+        selectTmuaMode("overall");
+      } else {
+        selectTmuaMode("split");
+      }
+    } else if (isNsaaEngaa) {
+      setSelectedGroup(match.group);
+      setCheckedKeys([match.key]);
+      setRawByKey((prev) => ({ ...prev, [match.key]: prev[match.key] ?? 0 }));
+    }
+
+    setPendingApply(null);
+  }, [
+    pendingApply,
+    year,
+    sections,
+    sectionsLoading,
+    isTmuaRaw,
+    isNsaaEngaa,
+  ]);
 
   const toggleSection = (opt: SectionOption) => {
     invalidateResults();
@@ -787,12 +875,19 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
   }, [result, exam, year, isScaledMode, activeSection, sections]);
 
   return (
-    <Container size="lg" className="py-8 sm:py-10">
+    <Container id="score-converter" size="lg" className="scroll-mt-24 py-8 sm:py-10">
       <div className="mb-4 rounded-organic-xl bg-surface-elevated p-4 shadow-modal-card sm:p-5">
         <div className="mb-3 flex items-start justify-between gap-3">
-          <h1 className="text-xl font-bold tracking-tight text-text sm:text-3xl">
-            ESAT Score Converter
-          </h1>
+          <div>
+            <h1 className="text-xl font-bold tracking-tight text-text sm:text-3xl">
+              {title ?? "ESAT Score Converter"}
+            </h1>
+            {intro ? (
+              <p className="mt-3 max-w-3xl text-sm leading-relaxed text-text-muted sm:text-base">
+                {intro}
+              </p>
+            ) : null}
+          </div>
           <ConverterInfoButton exam={exam} />
         </div>
 
@@ -1140,6 +1235,8 @@ export function ScoreConverter({ initialExam }: { initialExam?: ConverterExam })
           />
         )}
       </div>
+
+      {beforeFaq ? <div className="mb-5">{beforeFaq}</div> : null}
 
       <ScoreConverterFaq id="faq" />
     </Container>

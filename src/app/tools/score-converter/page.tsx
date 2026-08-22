@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { ScoreConverter } from "@/components/tools/scoreConverter/ScoreConverter";
+import { PublishedConversionTables } from "@/components/tools/scoreConverter/PublishedConversionTables";
 import { SCORE_CONVERTER_FAQ_ITEMS } from "@/components/tools/scoreConverter/ScoreConverterFaq";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { AppSeoCta } from "@/components/seo/AppSeoCta";
@@ -32,8 +34,17 @@ export const metadata: Metadata = buildSeoMetadata({
     "ESAT score",
     "ESAT results",
     "ESAT score scale",
+    "NSAA score converter",
+    "ENGAA score converter",
+    "TMUA score converter",
   ],
 });
+
+const EXAM_LINKS = [
+  { href: "/tools/score-converter/nsaa", label: "NSAA to ESAT Score Converter" },
+  { href: "/tools/score-converter/engaa", label: "ENGAA to ESAT Score Converter" },
+  { href: "/tools/score-converter/tmua", label: "TMUA Score Converter" },
+] as const;
 
 export default function ScoreConverterPage() {
   return (
@@ -49,7 +60,33 @@ export default function ScoreConverterPage() {
         ]}
       />
 
-      <ScoreConverter />
+      <ScoreConverter
+        beforeFaq={
+          <div className="space-y-6">
+            <PublishedConversionTables />
+            <nav
+              aria-label="Exam-specific score converters"
+              className="rounded-organic-xl bg-surface-elevated p-4 sm:p-5"
+            >
+              <p className="text-sm font-semibold text-text">
+                Exam-specific converters
+              </p>
+              <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm">
+                {EXAM_LINKS.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="font-semibold text-secondary hover:underline"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+        }
+      />
 
       <Container size="lg" className="space-y-5 pb-16">
         <AppSeoSection
