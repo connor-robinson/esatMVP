@@ -11,7 +11,13 @@ import {
 
 type Phase = "idle" | "submitted";
 
-export function ExampleQuestionDemo() {
+export function ExampleQuestionDemo({
+  variant = "default",
+  className,
+}: {
+  variant?: "default" | "hero";
+  className?: string;
+}) {
   const [selected, setSelected] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
 
@@ -21,7 +27,14 @@ export function ExampleQuestionDemo() {
   };
 
   return (
-    <div className="rounded-2xl bg-[#0A0F1D]/60 p-6 sm:p-8">
+    <div
+      className={cn(
+        variant === "hero"
+          ? "relative flex w-full max-w-none flex-col overflow-hidden rounded-3xl bg-white/[0.08] p-6 backdrop-blur-xl sm:max-w-[28rem] sm:p-8 lg:min-h-[34rem] lg:p-10"
+          : "rounded-2xl bg-[#0A0F1D]/60 p-6 sm:p-8",
+        className,
+      )}
+    >
       <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#94A3B8]">
         Example question
       </p>

@@ -13,8 +13,8 @@ import { trackHomepageEvent } from "@/lib/homepage/analytics";
 import { getSeasonPassPrice } from "@/lib/stripe/best-value";
 import { cn } from "@/lib/utils";
 import { SlotMachineCount } from "@/components/home/SlotMachineCount";
-import { HeroTrainerDemo } from "@/components/home/HeroTrainerDemo";
 import { ExampleQuestionDemo } from "@/components/home/ExampleQuestionDemo";
+import { QuestionBankDistributionChart } from "@/components/home/QuestionBankDistributionChart";
 import { ScoreConverterPreview } from "@/components/home/ScoreConverterPreview";
 import { MeetFounders } from "@/components/home/MeetFounders";
 
@@ -191,7 +191,7 @@ export function MarketingHomepage() {
             </div>
 
             <div className="min-w-0">
-              <HeroTrainerDemo className="max-w-none p-4 sm:max-w-[28rem] sm:p-9 lg:min-h-[34rem] lg:p-10" />
+              <ExampleQuestionDemo variant="hero" />
             </div>
           </div>
 
@@ -283,7 +283,7 @@ export function MarketingHomepage() {
               </Link>
             </div>
 
-            <ExampleQuestionDemo />
+            <QuestionBankDistributionChart />
           </div>
         </div>
       </section>
