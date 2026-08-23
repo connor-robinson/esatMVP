@@ -34,11 +34,7 @@ export function QuestionBankDistributionChart({
         className,
       )}
     >
-      <p className="font-display text-2xl font-bold text-white sm:text-3xl">
-        {formatCount(QUESTION_BANK_TOTAL_COUNT)} questions
-      </p>
-
-      <div className="mt-6">
+      <div>
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-white">
           By subject
         </p>
@@ -47,7 +43,7 @@ export function QuestionBankDistributionChart({
             data={subjectSlices}
             centerLabel="Total"
             centerValue={formatCount(QUESTION_BANK_TOTAL_COUNT)}
-            className="mx-0 h-[9rem] max-w-[9rem] [&_.donut-center-label]:text-[#94A3B8] [&_.donut-center-value]:text-white"
+            className="mx-0 h-[9rem] max-w-[9rem] [&_.donut-center-label]:text-[9px] [&_.donut-center-label]:text-[#94A3B8] [&_.donut-center-value]:text-base [&_.donut-center-value]:font-bold [&_.donut-center-value]:text-white sm:[&_.donut-center-value]:text-lg"
             tooltipStyle={{
               borderRadius: 10,
               border: "1px solid rgba(255,255,255,0.12)",
