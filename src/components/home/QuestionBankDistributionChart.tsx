@@ -34,22 +34,12 @@ export function QuestionBankDistributionChart({
         className,
       )}
     >
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#94A3B8]">
-            Question bank
-          </p>
-          <p className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
-            {formatCount(QUESTION_BANK_TOTAL_COUNT)} questions
-          </p>
-        </div>
-        <span className="rounded-full bg-[#3B82F6]/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#93C5FD]">
-          More coming soon
-        </span>
-      </div>
+      <p className="font-display text-2xl font-bold text-white sm:text-3xl">
+        {formatCount(QUESTION_BANK_TOTAL_COUNT)} questions
+      </p>
 
       <div className="mt-6">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#3B82F6]">
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-white">
           By subject
         </p>
         <div className="mt-4 grid items-center gap-4 sm:grid-cols-[minmax(0,9rem)_minmax(0,1fr)] sm:gap-5">
@@ -57,19 +47,37 @@ export function QuestionBankDistributionChart({
             data={subjectSlices}
             centerLabel="Total"
             centerValue={formatCount(QUESTION_BANK_TOTAL_COUNT)}
-            className="mx-0 h-[9rem] max-w-[9rem]"
+            className="mx-0 h-[9rem] max-w-[9rem] [&_.donut-center-label]:text-[#94A3B8] [&_.donut-center-value]:text-white"
+            tooltipStyle={{
+              borderRadius: 10,
+              border: "1px solid rgba(255,255,255,0.12)",
+              background: "#161D2F",
+              color: "#F8FAFC",
+              fontSize: 12,
+              boxShadow: "0 8px 24px rgba(0,0,0,0.45)",
+            }}
+            tooltipItemStyle={{ color: "#F8FAFC" }}
+            tooltipLabelStyle={{ color: "#CBD5E1" }}
           />
-          <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+          <div className="flex flex-col gap-2.5">
             {QUESTION_BANK_SUBJECT_COUNTS.map((item) => (
-              <div key={item.label} className="flex items-center gap-2 min-w-0">
+              <div
+                key={item.label}
+                className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1"
+              >
                 <span
                   className="h-2 w-2 shrink-0 rounded-full"
                   style={{ backgroundColor: item.color }}
                 />
-                <span className="truncate text-xs text-white">{item.label}</span>
-                <span className="ml-auto shrink-0 text-xs tabular-nums text-[#94A3B8]">
+                <span className="text-xs text-white">{item.label}</span>
+                <span className="text-xs tabular-nums text-[#94A3B8]">
                   {formatCount(item.count)}
                 </span>
+                {"moreComingSoon" in item && item.moreComingSoon ? (
+                  <span className="rounded-full bg-white/[0.07] px-2 py-0.5 text-[9px] font-medium tracking-[0.04em] text-[#94A3B8]/75">
+                    More coming soon
+                  </span>
+                ) : null}
               </div>
             ))}
           </div>
@@ -77,31 +85,32 @@ export function QuestionBankDistributionChart({
       </div>
 
       <div className="mt-6 space-y-3 border-t border-white/[0.06] pt-6">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#3B82F6]">
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-white">
           By difficulty
         </p>
-        <div className="space-y-2.5">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {QUESTION_BANK_DIFFICULTY_COUNTS.map((item) => {
-            const width = `${Math.max(8, (item.count / maxDifficultyCount) * 100)}%`;
+            const height = `${Math.max(22, (item.count / maxDifficultyCount) * 100)}%`;
             return (
-              <div key={item.label}>
-                <div className="mb-1 flex items-center justify-between gap-3 text-sm">
-                  <span
-                    className="font-medium"
-                    style={{ color: item.color }}
-                  >
-                    {item.label}
-                  </span>
-                  <span className="tabular-nums text-[#94A3B8]">
-                    {formatCount(item.count)}
-                  </span>
-                </div>
-                <div className="h-2 overflow-hidden rounded-full bg-white/[0.06]">
+              <div
+                key={item.label}
+                className="flex flex-col items-center rounded-xl bg-white/[0.04] px-2 py-3"
+              >
+                <div className="flex h-20 w-full items-end justify-center">
                   <div
-                    className="h-full rounded-full transition-[width] duration-700 ease-out"
-                    style={{ width, backgroundColor: item.color }}
+                    className="w-9 rounded-t-md"
+                    style={{ height, backgroundColor: item.color }}
                   />
                 </div>
+                <p
+                  className="mt-3 text-xs font-semibold"
+                  style={{ color: item.color }}
+                >
+                  {item.label}
+                </p>
+                <p className="mt-0.5 text-[11px] tabular-nums text-[#94A3B8]">
+                  {formatCount(item.count)}
+                </p>
               </div>
             );
           })}

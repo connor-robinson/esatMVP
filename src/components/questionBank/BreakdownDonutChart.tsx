@@ -1,5 +1,6 @@
 'use client';
 
+import type { CSSProperties } from 'react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
 
 export type DonutSlice = {
@@ -13,6 +14,9 @@ interface BreakdownDonutChartProps {
   centerLabel?: string;
   centerValue: string | number;
   className?: string;
+  tooltipStyle?: CSSProperties;
+  tooltipItemStyle?: CSSProperties;
+  tooltipLabelStyle?: CSSProperties;
 }
 
 export function BreakdownDonutChart({
@@ -20,6 +24,9 @@ export function BreakdownDonutChart({
   centerLabel = 'Total',
   centerValue,
   className,
+  tooltipStyle,
+  tooltipItemStyle,
+  tooltipLabelStyle,
 }: BreakdownDonutChartProps) {
   const total = data.reduce((sum, slice) => sum + slice.value, 0);
 
@@ -53,9 +60,12 @@ export function BreakdownDonutChart({
             ))}
           </Pie>
           <Tooltip
-            formatter={(v?: number | string) => {
+            formatter={(v?: number | string, name?: string) => {
               const n = typeof v === 'number' ? v : Number(v ?? 0);
-              return [`${n} (${((n / total) * 100).toFixed(0)}%)`, ''];
+              return [
+                `${n.toLocaleString()} (${((n / total) * 100).toFixed(0)}%)`,
+                name ?? '',
+              ];
             }}
             contentStyle={{
               borderRadius: 10,
@@ -63,15 +73,19 @@ export function BreakdownDonutChart({
               background: 'var(--color-surface-elevated)',
               color: 'var(--color-text)',
               fontSize: 12,
+              ...tooltipStyle,
             }}
+            itemStyle={{ color: 'var(--color-text)', ...tooltipItemStyle }}
+            labelStyle={{ color: 'var(--color-text-muted)', ...tooltipLabelStyle }}
+            wrapperStyle={{ zIndex: 40, outline: 'none' }}
           />
         </PieChart>
       </ResponsiveContainer>
       <div className='pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center'>
-        <span className='text-[10px] font-semibold uppercase tracking-wide text-text-subtle'>
+        <span className='donut-center-label text-[10px] font-semibold uppercase tracking-wide text-text-subtle'>
           {centerLabel}
         </span>
-        <span className='text-2xl font-bold tabular-nums text-text'>
+        <span className='donut-center-value text-2xl font-bold tabular-nums text-text'>
           {centerValue}
         </span>
       </div>
