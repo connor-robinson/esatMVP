@@ -85,7 +85,7 @@ export function BreakdownDonutChart({
         <span className='donut-center-label text-[10px] font-semibold uppercase tracking-wide text-text-subtle'>
           {centerLabel}
         </span>
-        <span className='donut-center-value text-2xl font-bold tabular-nums text-text'>
+        <span className='donut-center-value text-lg font-bold tabular-nums text-text'>
           {centerValue}
         </span>
       </div>
