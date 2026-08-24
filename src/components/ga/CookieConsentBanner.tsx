@@ -46,7 +46,7 @@ export function CookieConsentBanner() {
                 onHomepage ? "text-white" : "text-text",
               )}
             >
-              Analytics cookies
+              Optional cookies
             </h2>
             <p
               id="cookie-consent-desc"
@@ -55,9 +55,11 @@ export function CookieConsentBanner() {
                 onHomepage ? "text-[#94A3B8]" : "text-text-muted",
               )}
             >
-              We use Google Analytics only if you opt in, to understand which
-              pages help with ESAT preparation. Necessary storage (login and
-              preferences) always works. See our{" "}
+              We use optional cookies for website analytics and Google Ads
+              conversion measurement, so we can understand which pages help with
+              ESAT preparation and whether our ads lead people here. Necessary
+              storage (login and preferences) always works. We do not use these
+              cookies for remarketing or personalised advertising. See our{" "}
               <Link
                 href="/cookie-policy"
                 className={cn(
@@ -98,7 +100,7 @@ export function CookieConsentBanner() {
                 : "rounded-organic-md bg-primary text-background hover:bg-primary/90 focus-visible:ring-primary/35",
             )}
           >
-            Accept analytics
+            Accept optional cookies
           </button>
           <button
             type="button"
@@ -110,7 +112,7 @@ export function CookieConsentBanner() {
                 : "rounded-organic-md bg-text/15 text-text hover:bg-text/20 focus-visible:ring-primary/35",
             )}
           >
-            Reject analytics
+            Reject optional cookies
           </button>
         </div>
       </div>

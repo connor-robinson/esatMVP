@@ -3,6 +3,22 @@
   <head>
     <meta charset="utf-8" />
     <title>GA consent fixture</title>
+    <script>
+      // Mirrors layout Consent Mode v2 defaults (local only; no network).
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        window.dataLayer.push(arguments);
+      }
+      window.gtag = gtag;
+      gtag("consent", "default", {
+        analytics_storage: "denied",
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied",
+        wait_for_update: 500,
+      });
+      window.__esatcamp_gcm_default = true;
+    </script>
   </head>
   <body>
     <main>
@@ -16,8 +32,8 @@
     </main>
 
     <div data-testid="cookie-banner" hidden>
-      <button type="button" data-testid="accept">Accept analytics</button>
-      <button type="button" data-testid="reject">Reject analytics</button>
+      <button type="button" data-testid="accept">Accept optional cookies</button>
+      <button type="button" data-testid="reject">Reject optional cookies</button>
     </div>
 
     <script>
@@ -29,7 +45,7 @@
       const CONSENT_KEY = "esatcamp_analytics_consent";
       const SCRIPT_ATTR = "data-esatcamp-ga";
       let loadPromise = null;
-      let stubReady = false;
+      let configReady = false;
       let lastPageView = null;
       const pending = [];
 
@@ -51,6 +67,24 @@
         return localStorage.getItem(CONSENT_KEY) === "accepted";
       }
 
+      function updateConsent(status) {
+        if (status === "accepted") {
+          window.gtag("consent", "update", {
+            analytics_storage: "granted",
+            ad_storage: "granted",
+            ad_user_data: "granted",
+            ad_personalization: "denied",
+          });
+        } else {
+          window.gtag("consent", "update", {
+            analytics_storage: "denied",
+            ad_storage: "denied",
+            ad_user_data: "denied",
+            ad_personalization: "denied",
+          });
+        }
+      }
+
       function trackPageView(url) {
         if (!hasConsent()) return;
         if (lastPageView === url) return;
@@ -70,15 +104,19 @@
           try {
             window["ga-disable-" + measurementId] = false;
             window.dataLayer = window.dataLayer || [];
-            window.gtag = function gtag() {
-              window.dataLayer.push(arguments);
-            };
-            window.gtag("js", new Date());
-            window.gtag("config", measurementId, {
-              send_page_view: false,
-              anonymize_ip: true,
-            });
-            stubReady = true;
+            if (typeof window.gtag !== "function") {
+              window.gtag = function gtag() {
+                window.dataLayer.push(arguments);
+              };
+            }
+            if (!configReady) {
+              window.gtag("js", new Date());
+              window.gtag("config", measurementId, {
+                send_page_view: false,
+                anonymize_ip: true,
+              });
+              configReady = true;
+            }
             flushQueue();
 
             if (document.querySelector("script[" + SCRIPT_ATTR + '="' + measurementId + '"]')) {
@@ -98,13 +136,13 @@
             };
             script.onerror = function () {
               loadPromise = null;
-              stubReady = false;
+              configReady = false;
               reject(new Error("gtag load failed"));
             };
             document.head.appendChild(script);
           } catch (err) {
             loadPromise = null;
-            stubReady = false;
+            configReady = false;
             reject(err);
           }
         });
@@ -120,7 +158,25 @@
         document.querySelector("[data-testid=cookie-banner]").hidden = !show;
       }
 
+      function clearGoogleCookies() {
+        document.cookie.split(";").forEach(function (part) {
+          var name = part.trim().split("=")[0];
+          if (
+            name === "_ga" ||
+            name === "_gid" ||
+            name === "_gat" ||
+            name.indexOf("_ga_") === 0 ||
+            name.indexOf("_gcl") === 0 ||
+            name.indexOf("_gac") === 0
+          ) {
+            document.cookie =
+              name + "=; Max-Age=0; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+          }
+        });
+      }
+
       function accept() {
+        updateConsent("accepted");
         window["ga-disable-" + MEASUREMENT_ID] = false;
         localStorage.setItem(CONSENT_KEY, "accepted");
         showBanner(false);
@@ -131,17 +187,12 @@
       }
 
       function reject() {
+        updateConsent("rejected");
         window["ga-disable-" + MEASUREMENT_ID] = true;
+        clearGoogleCookies();
         localStorage.setItem(CONSENT_KEY, "rejected");
         showBanner(false);
         lastPageView = null;
-        document.cookie.split(";").forEach(function (part) {
-          var name = part.trim().split("=")[0];
-          if (name === "_ga" || name.indexOf("_ga_") === 0) {
-            document.cookie =
-              name + "=; Max-Age=0; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-          }
-        });
       }
 
       document.querySelector("[data-testid=accept]").onclick = accept;
@@ -162,11 +213,13 @@
       var stored = localStorage.getItem(CONSENT_KEY);
       if (stored === "accepted") {
         showBanner(false);
+        updateConsent("accepted");
         loadGoogleAnalytics(MEASUREMENT_ID).then(function () {
           setPath("/");
         });
       } else if (stored === "rejected") {
         showBanner(false);
+        updateConsent("rejected");
       } else {
         showBanner(true);
       }

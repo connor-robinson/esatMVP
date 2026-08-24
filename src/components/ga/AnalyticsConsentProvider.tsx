@@ -17,7 +17,9 @@ import {
   clearGaCookies,
   disableGaMeasurement,
   enableGaMeasurement,
+  initGoogleConsentDefaults,
   readAnalyticsConsent,
+  updateGoogleConsentMode,
   writeAnalyticsConsent,
   type AnalyticsConsentStatus,
 } from "@/lib/ga";
@@ -45,15 +47,22 @@ export function AnalyticsConsentProvider({
   const [preferencesOpen, setPreferencesOpen] = useState(false);
 
   useEffect(() => {
+    // Local Consent Mode defaults only (no Google network request).
+    initGoogleConsentDefaults();
+
     const stored = readAnalyticsConsent();
     setStatus(stored);
     setPreferencesOpen(stored === "pending");
     setHydrated(true);
 
     if (stored === "accepted") {
+      updateGoogleConsentMode("accepted");
       enableGaMeasurement(GA_MEASUREMENT_ID);
     } else {
       disableGaMeasurement(GA_MEASUREMENT_ID);
+      if (stored === "rejected") {
+        updateGoogleConsentMode("rejected");
+      }
     }
   }, []);
 
@@ -89,6 +98,7 @@ export function AnalyticsConsentProvider({
   }, []);
 
   const accept = useCallback(() => {
+    updateGoogleConsentMode("accepted");
     enableGaMeasurement(GA_MEASUREMENT_ID);
     writeAnalyticsConsent("accepted");
     setStatus("accepted");
@@ -96,6 +106,7 @@ export function AnalyticsConsentProvider({
   }, []);
 
   const reject = useCallback(() => {
+    updateGoogleConsentMode("rejected");
     disableGaMeasurement(GA_MEASUREMENT_ID);
     clearGaCookies();
     writeAnalyticsConsent("rejected");

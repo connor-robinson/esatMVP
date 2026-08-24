@@ -6,8 +6,12 @@
  * gtag/js loads while window.gtag / dataLayer stay undefined and no collect
  * or _ga cookie appears. Creating the stub and appending the external script
  * via the DOM API runs exactly once and is deterministic.
+ *
+ * Consent Mode v2 defaults are installed separately (layout inline +
+ * initGoogleConsentDefaults) and must never trigger a Google network request.
  */
 
+import { ensureGtagStub } from "./consent";
 import { flushGaQueue } from "./queue";
 
 export const GA_SCRIPT_ATTR = "data-esatcamp-ga";
@@ -18,7 +22,7 @@ type GaWindow = Window & {
 };
 
 let loadPromise: Promise<void> | null = null;
-let stubReady = false;
+let configReady = false;
 
 function getGaWindow(): GaWindow | null {
   if (typeof window === "undefined") return null;
@@ -45,6 +49,7 @@ export function isGaScriptLoaded(measurementId: string): boolean {
 /**
  * Install the gtag stub + config, then load googletagmanager gtag.js.
  * Safe to call repeatedly — runs the bootstrap at most once per page.
+ * Call only after Consent Mode has been updated to the accepted signals.
  */
 export function loadGoogleAnalytics(measurementId: string): Promise<void> {
   const w = getGaWindow();
@@ -54,7 +59,7 @@ export function loadGoogleAnalytics(measurementId: string): Promise<void> {
 
   loadPromise = new Promise<void>((resolve, reject) => {
     try {
-      installGtagStub(w, measurementId);
+      installGaConfig(w, measurementId);
       flushGaQueue();
 
       const existing = document.querySelector(
@@ -78,13 +83,13 @@ export function loadGoogleAnalytics(measurementId: string): Promise<void> {
       };
       script.onerror = () => {
         loadPromise = null;
-        stubReady = false;
+        configReady = false;
         reject(new Error(`Failed to load Google Analytics script (${measurementId})`));
       };
       document.head.appendChild(script);
     } catch (error) {
       loadPromise = null;
-      stubReady = false;
+      configReady = false;
       reject(error);
     }
   });
@@ -92,31 +97,26 @@ export function loadGoogleAnalytics(measurementId: string): Promise<void> {
   return loadPromise;
 }
 
-function installGtagStub(w: GaWindow, measurementId: string): void {
-  if (stubReady && typeof w.gtag === "function") {
-    (w as unknown as Record<string, boolean>)[`ga-disable-${measurementId}`] =
-      false;
+function installGaConfig(w: GaWindow, measurementId: string): void {
+  (w as unknown as Record<string, boolean>)[`ga-disable-${measurementId}`] =
+    false;
+
+  ensureGtagStub();
+
+  if (configReady && typeof w.gtag === "function") {
     return;
   }
 
-  (w as unknown as Record<string, boolean>)[`ga-disable-${measurementId}`] =
-    false;
-  w.dataLayer = w.dataLayer || [];
-  // GA expects the Arguments object, not a rest-parameter array.
-  w.gtag = function gtag() {
-    // eslint-disable-next-line prefer-rest-params
-    w.dataLayer!.push(arguments);
-  };
-  w.gtag("js", new Date());
-  w.gtag("config", measurementId, {
+  w.gtag!("js", new Date());
+  w.gtag!("config", measurementId, {
     send_page_view: false,
     anonymize_ip: true,
   });
-  stubReady = true;
+  configReady = true;
 }
 
 /** Test-only: reset module state between cases. */
 export function __resetGaLoaderForTests(): void {
   loadPromise = null;
-  stubReady = false;
+  configReady = false;
 }

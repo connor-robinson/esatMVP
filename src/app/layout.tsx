@@ -104,6 +104,20 @@ export default function RootLayout({
             __html: `
               (function() {
                 try {
+                  // Google Consent Mode v2 defaults (local only; no network).
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){window.dataLayer.push(arguments);}
+                  window.gtag = gtag;
+                  gtag('consent', 'default', {
+                    analytics_storage: 'denied',
+                    ad_storage: 'denied',
+                    ad_user_data: 'denied',
+                    ad_personalization: 'denied',
+                    wait_for_update: 500
+                  });
+                  window.__esatcamp_gcm_default = true;
+                } catch (e) {}
+                try {
                   var theme = localStorage.getItem('theme');
                   var lightStrategy = localStorage.getItem('${LIGHT_MODE_STRATEGY_STORAGE_KEY}');
                   if (lightStrategy !== 'designed' && lightStrategy !== 'inverted') {

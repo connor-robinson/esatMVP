@@ -8,7 +8,7 @@ import { buildSeoMetadata } from "@/lib/seo/config";
 const PATH = "/cookie-policy";
 const TITLE = "Cookie Policy | ESAT Camp";
 const DESCRIPTION =
-  "How ESAT Camp uses necessary storage and optional Google Analytics cookies, what data is collected, and how to withdraw consent.";
+  "How ESAT Camp uses necessary storage and optional cookies for Google Analytics and Google Ads conversion measurement, and how to withdraw consent.";
 
 export const metadata: Metadata = buildSeoMetadata({
   title: TITLE,
@@ -41,43 +41,68 @@ export default function CookiePolicyPage() {
           <p className="text-sm leading-relaxed text-text-muted">
             We use essential browser storage so the site can function: keeping
             you signed in, remembering theme preferences, and saving your
-            analytics cookie choice. These are required for the service you
+            optional-cookie choice. These are required for the service you
             request and are not used for advertising.
           </p>
         </section>
 
         <section className="mt-10 space-y-3">
           <h2 className="font-heading text-xl font-semibold text-text">
-            Google Analytics
+            Optional cookies (analytics and conversion measurement)
           </h2>
           <p className="text-sm leading-relaxed text-text-muted">
-            If you choose <strong className="font-medium text-text">Accept
-            analytics</strong>, we load Google Analytics 4 (measurement ID{" "}
+            If you choose{" "}
+            <strong className="font-medium text-text">
+              Accept optional cookies
+            </strong>
+            , we enable Google Analytics 4 (measurement ID{" "}
             <code className="rounded-md bg-surface-mid px-1.5 py-0.5 text-xs text-text">
               G-Y7E2CJSKV0
             </code>
-            ). If you choose <strong className="font-medium text-text">Reject
-            analytics</strong>, we do not load Google Analytics and we remove
-            any existing <code className="text-xs">_ga</code> /{" "}
-            <code className="text-xs">_ga_*</code> cookies we can clear from
-            this site.
+            ) for website analytics, and we allow Google tags to use cookies for{" "}
+            <strong className="font-medium text-text">
+              Google Ads conversion measurement
+            </strong>{" "}
+            (to understand whether ads led someone to this site and key actions
+            such as sign-up or purchase). If you choose{" "}
+            <strong className="font-medium text-text">
+              Reject optional cookies
+            </strong>
+            , we do not load Google Analytics, we keep Consent Mode signals
+            denied, and we remove existing{" "}
+            <code className="text-xs">_ga</code> /{" "}
+            <code className="text-xs">_ga_*</code> /{" "}
+            <code className="text-xs">_gcl*</code> /{" "}
+            <code className="text-xs">_gac*</code> cookies we can clear from this
+            site. Your reject choice itself is kept in local storage so we
+            remember it.
           </p>
           <p className="text-sm leading-relaxed text-text-muted">
-            Analytics is <strong className="font-medium text-text">off by
-            default</strong>. We only enable it after you opt in.
+            Optional cookies are{" "}
+            <strong className="font-medium text-text">off by default</strong>. We
+            only enable them after you opt in. We use Google Consent Mode v2 so
+            storage signals start as denied until you accept.
+          </p>
+          <p className="text-sm leading-relaxed text-text-muted">
+            We do{" "}
+            <strong className="font-medium text-text">not</strong> enable
+            remarketing or personalised advertising. Even after acceptance, the
+            Consent Mode signal for ad personalisation stays denied.
           </p>
         </section>
 
         <section className="mt-10 space-y-3">
           <h2 className="font-heading text-xl font-semibold text-text">
-            What analytics collects
+            What analytics and conversion measurement collect
           </h2>
           <p className="text-sm leading-relaxed text-text-muted">
             When enabled, Google Analytics may process approximate page views,
             page paths, device/browser type, rough location (from IP, which we
-            ask Google to anonymise), and similar usage metrics. We do not use
-            analytics to collect passwords, answers you type into tools, or
-            other form free-text that identifies you.
+            ask Google to anonymise), and similar usage metrics. Conversion
+            measurement may associate a visit or key event with an earlier ad
+            click using Google cookies. We do not use these tools to collect
+            passwords, answers you type into tools, or other form free-text that
+            identifies you.
           </p>
         </section>
 
@@ -88,8 +113,10 @@ export default function CookiePolicyPage() {
           <p className="text-sm leading-relaxed text-text-muted">
             We use aggregated analytics to see which pages and tools help
             students prepare for the ESAT and TMUA, and to improve content and
-            navigation. It is not used to sell your data or show third-party
-            ads on this site.
+            navigation. We use conversion measurement to understand whether our
+            Google Ads spend leads people to useful actions on the site. It is
+            not used to sell your data or to show personalised third-party ads
+            on this site.
           </p>
         </section>
 
@@ -101,10 +128,13 @@ export default function CookiePolicyPage() {
             You can change your mind at any time. Use{" "}
             <strong className="font-medium text-text">Cookie preferences</strong>{" "}
             in the site footer (or the button below), then choose{" "}
-            <strong className="font-medium text-text">Reject analytics</strong>.
-            We will stop loading Google Analytics and clear analytics cookies
-            for this site where possible. Your choice is stored in your browser
-            so we remember it on later visits.
+            <strong className="font-medium text-text">
+              Reject optional cookies
+            </strong>
+            . We will stop future analytics events, set Consent Mode signals
+            back to denied, and clear applicable Google cookies for this site
+            where possible. Your choice is stored in your browser so we remember
+            it on later visits.
           </p>
           <div className="pt-2">
             <CookiePreferencesButton />
@@ -112,7 +142,7 @@ export default function CookiePolicyPage() {
         </section>
 
         <p className="mt-12 text-xs leading-relaxed text-text-subtle">
-          Last updated: 24 August 2026. Questions?{" "}
+          Last updated: 25 August 2026. Questions?{" "}
           <Link
             href="/help"
             className="text-text-muted underline-offset-2 hover:underline"
