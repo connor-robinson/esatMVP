@@ -528,11 +528,12 @@ export function QuestionBankHomeScreen() {
                   disabled={disabled}
                   className={cn(
                     "group flex min-h-[230px] flex-col justify-between rounded-[18px] bg-surface-elevated px-5 py-6 text-left",
-                    "transition-colors hover:bg-surface-mid/50",
+                    "origin-center transition-[colors,transform] duration-200 ease-out",
+                    "hover:scale-[1.03] hover:bg-surface-mid/50",
                     "outline-none ring-0 select-none [-webkit-tap-highlight-color:transparent]",
                     "focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0",
                     "active:outline-none active:ring-0",
-                    "disabled:cursor-not-allowed disabled:opacity-45",
+                    "disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:scale-100",
                   )}
                 >
                   <div className="flex items-center justify-between gap-3">
