@@ -3,10 +3,17 @@
  *
  * Never send emails, names, phone numbers, or free-text answers.
  * Only pass coarse product metadata (destination, plan, placement, etc.).
+ * Never call gtag until analytics consent is accepted.
  */
 
+import { hasAnalyticsConsent } from "./consent";
+
+/** Public GA4 measurement ID — safe to embed; consent still gates loading. */
+export const DEFAULT_GA_MEASUREMENT_ID = "G-Y7E2CJSKV0";
+
 export const GA_MEASUREMENT_ID =
-  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim() || undefined;
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim() ||
+  DEFAULT_GA_MEASUREMENT_ID;
 
 export const GA_ENABLED = Boolean(GA_MEASUREMENT_ID);
 
@@ -25,7 +32,8 @@ export type GaEventParams = Record<
   string | number | boolean | null | undefined
 >;
 
-const BLOCKED_KEYS = /^(email|e-?mail|name|full_?name|first_?name|last_?name|phone|telephone|mobile|address|password|token|authorization|auth)$/i;
+const BLOCKED_KEYS =
+  /^(email|e-?mail|name|full_?name|first_?name|last_?name|phone|telephone|mobile|address|password|token|authorization|auth)$/i;
 const EMAIL_LIKE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_STRING_LEN = 100;
 
@@ -35,6 +43,10 @@ declare global {
     gtag?: (...args: unknown[]) => void;
   }
 }
+
+type GaCall = () => void;
+
+const pendingCalls: GaCall[] = [];
 
 function isSafeKey(key: string): boolean {
   return !BLOCKED_KEYS.test(key);
@@ -67,29 +79,60 @@ export function sanitizeGaParams(
   return out;
 }
 
+function runWhenGtagReady(call: GaCall): void {
+  if (typeof window === "undefined") return;
+  if (typeof window.gtag === "function") {
+    call();
+    return;
+  }
+  pendingCalls.push(call);
+}
+
+/** Flush calls queued while gtag.js was still loading. */
+export function flushGaQueue(): void {
+  if (typeof window === "undefined" || typeof window.gtag !== "function") {
+    return;
+  }
+  while (pendingCalls.length > 0) {
+    const call = pendingCalls.shift();
+    try {
+      call?.();
+    } catch {
+      /* analytics is non-critical */
+    }
+  }
+}
+
 export function trackEvent(
   event: GaEventName,
   params?: GaEventParams,
 ): void {
   if (!GA_ENABLED || typeof window === "undefined") return;
-  if (typeof window.gtag !== "function") return;
+  if (!hasAnalyticsConsent()) return;
 
-  try {
+  runWhenGtagReady(() => {
+    if (typeof window.gtag !== "function") return;
     window.gtag("event", event, sanitizeGaParams(params));
-  } catch {
-    /* analytics is non-critical */
-  }
+  });
 }
 
+/**
+ * SPA page view. Uses a single page_view event (send_page_view is off in
+ * config) so App Router navigations do not double-count.
+ */
 export function trackPageView(url: string): void {
   if (!GA_ENABLED || typeof window === "undefined") return;
-  if (typeof window.gtag !== "function" || !GA_MEASUREMENT_ID) return;
+  if (!hasAnalyticsConsent() || !GA_MEASUREMENT_ID) return;
 
-  try {
-    window.gtag("config", GA_MEASUREMENT_ID, {
+  runWhenGtagReady(() => {
+    if (typeof window.gtag !== "function") return;
+    window.gtag("event", "page_view", {
       page_path: url,
+      page_location:
+        typeof window.location?.origin === "string"
+          ? `${window.location.origin}${url}`
+          : url,
+      page_title: typeof document !== "undefined" ? document.title : undefined,
     });
-  } catch {
-    /* analytics is non-critical */
-  }
+  });
 }

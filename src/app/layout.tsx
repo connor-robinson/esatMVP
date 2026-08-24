@@ -22,7 +22,13 @@ import { TesterProgrammeBanner } from "@/components/tester/TesterProgrammeBanner
 import { BRAND_CONFIG } from "@/config/brand";
 import { buildCssVariables, LIGHT_MODE_STRATEGY_STORAGE_KEY } from "@/config/theme";
 import { PRODUCTION_SITE_URL } from "@/lib/seo/config";
-import { GoogleAnalytics, PageViewTracker } from "@/components/ga";
+import {
+  AnalyticsConsentProvider,
+  CookieConsentBanner,
+  GoogleAnalytics,
+  PageViewTracker,
+} from "@/components/ga";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 import "@/styles/globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -171,42 +177,46 @@ export default async function RootLayout({
         />
         <meta name="theme-color" content="#000000" />
       </head>
-      <body className="min-h-screen bg-background text-text antialiased font-sans">
-        <GoogleAnalytics />
+      <body className="flex min-h-screen flex-col bg-background text-text antialiased font-sans">
         <SupabaseSessionProvider initialSession={session}>
           <GoogleOneTap />
           <ErrorBoundary>
             <ThemeProvider>
-              <LoadingProvider>
-                <QuicklinkProvider>
-                  <ServiceWorkerProvider />
-                  <BackgroundPrefetcher />
-                  <KaTeXLoader />
-                  <SessionRestore />
-                  <SessionPersistenceHandler />
-                  <SiteVisitMarker />
-                  <Suspense fallback={null}>
-                    <PageViewTracker />
-                  </Suspense>
-                  <TesterProgrammeProvider>
-                    <Navbar />
-                    <TesterProgrammeBanner />
-                    <main className="min-h-full">
-                      <UsernameGate>
-                        <Suspense
-                          fallback={
-                            <div className="min-h-screen flex items-center justify-center">
-                              <LoadingSpinner size="md" />
-                            </div>
-                          }
-                        >
-                          {children}
-                        </Suspense>
-                      </UsernameGate>
-                    </main>
-                  </TesterProgrammeProvider>
-                </QuicklinkProvider>
-              </LoadingProvider>
+              <AnalyticsConsentProvider>
+                <GoogleAnalytics />
+                <CookieConsentBanner />
+                <LoadingProvider>
+                  <QuicklinkProvider>
+                    <ServiceWorkerProvider />
+                    <BackgroundPrefetcher />
+                    <KaTeXLoader />
+                    <SessionRestore />
+                    <SessionPersistenceHandler />
+                    <SiteVisitMarker />
+                    <Suspense fallback={null}>
+                      <PageViewTracker />
+                    </Suspense>
+                    <TesterProgrammeProvider>
+                      <Navbar />
+                      <TesterProgrammeBanner />
+                      <main className="min-h-full flex-1">
+                        <UsernameGate>
+                          <Suspense
+                            fallback={
+                              <div className="min-h-screen flex items-center justify-center">
+                                <LoadingSpinner size="md" />
+                              </div>
+                            }
+                          >
+                            {children}
+                          </Suspense>
+                        </UsernameGate>
+                      </main>
+                      <SiteFooter />
+                    </TesterProgrammeProvider>
+                  </QuicklinkProvider>
+                </LoadingProvider>
+              </AnalyticsConsentProvider>
             </ThemeProvider>
           </ErrorBoundary>
         </SupabaseSessionProvider>

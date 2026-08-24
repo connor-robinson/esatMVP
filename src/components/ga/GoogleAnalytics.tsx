@@ -1,12 +1,17 @@
+"use client";
+
 import Script from "next/script";
-import { GA_MEASUREMENT_ID } from "@/lib/ga";
+import { useAnalyticsConsent } from "./AnalyticsConsentProvider";
+import { GA_MEASUREMENT_ID, flushGaQueue } from "@/lib/ga";
 
 /**
- * Loads the GA4 gtag.js snippet once for the whole app.
- * Renders nothing when the measurement ID is missing (local/dev without env).
+ * Loads GA4 only after the visitor accepts analytics cookies.
+ * Renders nothing when consent is pending or rejected.
  */
 export function GoogleAnalytics() {
-  if (!GA_MEASUREMENT_ID) return null;
+  const { status } = useAnalyticsConsent();
+
+  if (status !== "accepted" || !GA_MEASUREMENT_ID) return null;
 
   return (
     <>
@@ -14,8 +19,13 @@ export function GoogleAnalytics() {
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
         strategy="afterInteractive"
       />
-      <Script id="ga4-init" strategy="afterInteractive">
+      <Script
+        id="ga4-init"
+        strategy="afterInteractive"
+        onReady={flushGaQueue}
+      >
         {`
+          window['ga-disable-${GA_MEASUREMENT_ID}'] = false;
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           window.gtag = gtag;

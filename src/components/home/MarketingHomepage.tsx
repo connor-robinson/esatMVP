@@ -10,6 +10,7 @@ import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
 import { SEO_LINKS, type SeoLinkKey } from "@/lib/seo/links";
 import { MARKETING_HOMEPAGE_FAQ } from "@/lib/homepage/marketingFaq";
 import { trackHomepageEvent } from "@/lib/homepage/analytics";
+import { openCookiePreferences } from "@/lib/ga";
 import { getSeasonPassPrice } from "@/lib/stripe/best-value";
 import { cn } from "@/lib/utils";
 import { SlotMachineCount } from "@/components/home/SlotMachineCount";
@@ -772,6 +773,14 @@ export function MarketingHomepage() {
                     Contact Us
                   </Link>
                 </li>
+                <li>
+                  <Link
+                    href="/cookie-policy"
+                    className="hover:text-[#3B82F6] transition-colors"
+                  >
+                    Cookie Policy
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>
@@ -779,21 +788,20 @@ export function MarketingHomepage() {
             <p className="text-[#94A3B8] text-xs">
               {BRAND_CONFIG.copyright}
             </p>
-            <div className="flex gap-6">
-              <a
-                href="#"
-                className="text-[#94A3B8] hover:text-white transition-colors"
+            <div className="flex flex-wrap items-center justify-center gap-6">
+              <Link
+                href="/cookie-policy"
+                className="text-xs text-[#94A3B8] transition-colors hover:text-white"
               >
-                <span className="material-symbols-outlined text-lg">public</span>
-              </a>
-              <a
-                href="#"
-                className="text-[#94A3B8] hover:text-white transition-colors"
+                Cookie Policy
+              </Link>
+              <button
+                type="button"
+                onClick={() => openCookiePreferences()}
+                className="text-xs text-[#94A3B8] transition-colors hover:text-white"
               >
-                <span className="material-symbols-outlined text-lg">
-                  alternate_email
-                </span>
-              </a>
+                Cookie preferences
+              </button>
             </div>
           </div>
         </div>

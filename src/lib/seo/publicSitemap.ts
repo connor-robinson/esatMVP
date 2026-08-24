@@ -54,6 +54,7 @@ export const PUBLIC_SITEMAP_ENTRIES: readonly PublicSitemapEntry[] = [
 
   { path: "/pricing", priority: 0.6 },
   { path: "/help", priority: 0.3 },
+  { path: "/cookie-policy", priority: 0.3 },
 ] as const;
 
 /** Paths that must never appear in the sitemap (regression guard). */

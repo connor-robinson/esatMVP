@@ -214,6 +214,14 @@ export function SeoGuideFooter() {
                   About ESAT Camp
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/cookie-policy"
+                  className="transition-colors hover:text-[#3B82F6]"
+                >
+                  Cookie Policy
+                </Link>
+              </li>
               {tools.map((tool) => (
                 <li key={tool.href}>
                   <Link
