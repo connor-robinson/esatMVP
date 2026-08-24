@@ -60,49 +60,49 @@ export interface SubjectTileConfig {
 const SUBJECT_TILES: SubjectTileConfig[] = [
   {
     key: "Math 1",
-    headline: "ESAT · Math 1",
+    headline: "ESAT Math 1",
     topicCaps: "Algebra & functions",
     testType: "ESAT",
     ...SUBJECT_TILE_STYLES["Math 1"],
   },
   {
     key: "Math 2",
-    headline: "ESAT · Math 2",
+    headline: "ESAT Math 2",
     topicCaps: "Sequences & calculus",
     testType: "ESAT",
     ...SUBJECT_TILE_STYLES["Math 2"],
   },
   {
     key: "Physics",
-    headline: "ESAT · Physics",
+    headline: "ESAT Physics",
     topicCaps: "Mechanics & waves",
     testType: "ESAT",
     ...SUBJECT_TILE_STYLES.Physics,
   },
   {
     key: "Chemistry",
-    headline: "ESAT · Chemistry",
+    headline: "ESAT Chemistry",
     topicCaps: "Structure & reactivity",
     testType: "ESAT",
     ...SUBJECT_TILE_STYLES.Chemistry,
   },
   {
     key: "Biology",
-    headline: "ESAT · Biology",
+    headline: "ESAT Biology",
     topicCaps: "Cell & molecular biology",
     testType: "ESAT",
     ...SUBJECT_TILE_STYLES.Biology,
   },
   {
     key: "Paper 1",
-    headline: "TMUA · Paper 1",
+    headline: "TMUA Paper 1",
     topicCaps: "Mathematical thinking",
     testType: "TMUA",
     ...SUBJECT_TILE_STYLES["Paper 1"],
   },
   {
     key: "Paper 2",
-    headline: "TMUA · Paper 2",
+    headline: "TMUA Paper 2",
     topicCaps: "Mathematical reasoning",
     testType: "TMUA",
     ...SUBJECT_TILE_STYLES["Paper 2"],
@@ -490,12 +490,12 @@ export function QuestionBankHomeScreen() {
                   onClick={() => openSessionModal(tile)}
                   disabled={disabled}
                   className={cn(
-                    "flex min-h-[148px] flex-col rounded-[18px] bg-surface-elevated px-5 py-5 text-left",
+                    "flex flex-col justify-center gap-4 rounded-[18px] bg-surface-elevated px-5 py-5 text-left",
                     "transition-colors hover:bg-surface-mid/50",
                     "disabled:cursor-not-allowed disabled:opacity-45",
                   )}
                 >
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0">
                       <p
                         className={cn(
@@ -505,7 +505,7 @@ export function QuestionBankHomeScreen() {
                       >
                         {tile.headline}
                       </p>
-                      <p className="mt-1.5 text-xs tabular-nums text-text-muted">
+                      <p className="mt-1 text-xs tabular-nums text-text-muted">
                         {stats.loading ? (
                           <LoadingEllipsis />
                         ) : (
@@ -522,10 +522,10 @@ export function QuestionBankHomeScreen() {
                     </span>
                   </div>
 
-                  <div className="mt-auto flex items-center gap-3 pt-8">
+                  <div className="flex items-center gap-3">
                     <div
                       className={cn(
-                        "h-1 min-w-0 flex-1 overflow-hidden rounded-full",
+                        "h-2 min-w-0 flex-1 overflow-hidden rounded-full",
                         tile.progressTrackClass,
                       )}
                     >
@@ -545,7 +545,7 @@ export function QuestionBankHomeScreen() {
               );
             })}
 
-            <div className="flex min-h-[148px] flex-col items-center justify-center rounded-[18px] bg-surface-elevated/30 px-4 text-center">
+            <div className="flex flex-col items-center justify-center rounded-[18px] bg-surface-elevated/30 px-4 py-5 text-center">
               <span className="text-2xl text-text-muted" aria-hidden>
                 …
               </span>
