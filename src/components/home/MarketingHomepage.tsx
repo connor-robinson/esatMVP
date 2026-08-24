@@ -684,14 +684,20 @@ export function MarketingHomepage() {
                     <span className="text-base font-bold leading-snug text-white sm:text-lg">
                       {item.question}
                     </span>
-                    <span
-                      className={`material-symbols-outlined shrink-0 text-[#94A3B8] transition-transform duration-300 ease-out ${
+                    <svg
+                      viewBox="0 0 24 24"
+                      className={`h-6 w-6 shrink-0 text-[#94A3B8] transition-transform duration-300 ease-out ${
                         open ? "rotate-180 text-[#3B82F6]" : ""
                       }`}
                       aria-hidden
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     >
-                      expand_more
-                    </span>
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
                   </button>
                   <div
                     className={`grid transition-[grid-template-rows] duration-300 ease-out ${

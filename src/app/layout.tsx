@@ -15,7 +15,6 @@ import { SessionRestore } from "@/components/papers/SessionRestore";
 import { SessionPersistenceHandler } from "@/components/papers/SessionPersistenceHandler";
 import { SiteVisitMarker } from "@/components/shared/SiteVisitMarker";
 import { DeferredMount } from "@/components/shared/DeferredMount";
-import { DeferredMaterialSymbols } from "@/components/shared/DeferredMaterialSymbols";
 import { UsernameGate } from "@/components/auth/UsernameGate";
 import { GoogleOneTap } from "@/components/auth/GoogleOneTap";
 import { TesterProgrammeProvider } from "@/contexts/TesterProgrammeContext";
@@ -164,9 +163,6 @@ export default function RootLayout({
           }}
         />
 
-        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, viewport-fit=cover"
@@ -198,8 +194,7 @@ export default function RootLayout({
                         </UsernameGate>
                       </main>
                       <SiteFooter />
-                      <DeferredMount>
-                        <DeferredMaterialSymbols />
+                      <DeferredMount delayMs={1800}>
                         <GoogleOneTap />
                         <GoogleAnalytics />
                         <ServiceWorkerProvider />

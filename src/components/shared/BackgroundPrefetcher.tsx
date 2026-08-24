@@ -1,11 +1,12 @@
 /**
- * Background prefetcher component that runs intelligent prefetching
- * This component should be included in the root layout
+ * Prefetches app routes after the user is already in the product.
+ * Skipped on public marketing pages so it does not compete with homepage load.
  */
 
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { useBackgroundPrefetch } from "@/hooks/useBackgroundPrefetch";
 import { useAggressivePrefetch } from "@/hooks/useAggressivePrefetch";
 
@@ -18,14 +19,24 @@ const SECONDARY_ROUTES = [
   "/past-papers/solve",
 ];
 
+const SKIP_PREFETCH_PATHS = new Set(["/", "/about", "/pricing", "/login", "/signup"]);
+
 export function BackgroundPrefetcher() {
+  const pathname = usePathname();
+  const skip = SKIP_PREFETCH_PATHS.has(pathname);
+
+  if (skip) return null;
+  return <AppRoutePrefetcher />;
+}
+
+function AppRoutePrefetcher() {
   useAggressivePrefetch();
 
   const { queueRoutes } = useBackgroundPrefetch({
     routes: [...CRITICAL_ROUTES, ...SECONDARY_ROUTES],
-    initialDelay: 0,
-    prefetchInterval: 25,
-    maxConcurrent: 6,
+    initialDelay: 2500,
+    prefetchInterval: 200,
+    maxConcurrent: 2,
     prefetchOnLoad: true,
     prefetchOnIdle: true,
   });
@@ -33,11 +44,10 @@ export function BackgroundPrefetcher() {
   useEffect(() => {
     const handleUserInteraction = () => {
       queueRoutes(CRITICAL_ROUTES);
-      setTimeout(() => queueRoutes(SECONDARY_ROUTES), 500);
+      window.setTimeout(() => queueRoutes(SECONDARY_ROUTES), 1500);
     };
 
-    const events = ["mousedown", "mousemove", "keypress", "scroll", "touchstart"];
-
+    const events = ["mousedown", "keydown", "touchstart"];
     events.forEach((event) => {
       document.addEventListener(event, handleUserInteraction, { once: true });
     });
@@ -51,5 +61,3 @@ export function BackgroundPrefetcher() {
 
   return null;
 }
-
-
