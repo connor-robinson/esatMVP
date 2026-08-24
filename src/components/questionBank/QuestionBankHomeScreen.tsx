@@ -527,7 +527,7 @@ export function QuestionBankHomeScreen() {
                   onClick={() => openSessionModal(tile)}
                   disabled={disabled}
                   className={cn(
-                    "flex min-h-[196px] flex-col justify-between rounded-[18px] bg-surface-elevated px-5 py-6 text-left",
+                    "flex min-h-[196px] flex-col rounded-[18px] bg-surface-elevated px-5 py-6 text-left",
                     "origin-center transition-[colors,transform] duration-200 ease-out",
                     "hover:scale-[1.03] hover:bg-surface-mid/50",
                     "outline-none ring-0 select-none [-webkit-tap-highlight-color:transparent]",
@@ -536,7 +536,7 @@ export function QuestionBankHomeScreen() {
                     "disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:scale-100",
                   )}
                 >
-                  <div className="flex items-center justify-between gap-3">
+                  <div className="flex min-h-0 flex-1 items-center justify-between gap-3">
                     <div className="flex min-w-0 items-center gap-3">
                       <Icon
                         className={cn(
@@ -577,7 +577,7 @@ export function QuestionBankHomeScreen() {
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="mt-auto flex items-center gap-3 pt-4">
                     <div
                       className={cn(
                         "h-2 min-w-0 flex-1 overflow-hidden rounded-full",
