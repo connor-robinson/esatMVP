@@ -527,7 +527,7 @@ export function QuestionBankHomeScreen() {
                   onClick={() => openSessionModal(tile)}
                   disabled={disabled}
                   className={cn(
-                    "group flex min-h-[230px] flex-col justify-between rounded-[18px] bg-surface-elevated px-5 py-6 text-left",
+                    "flex min-h-[230px] flex-col justify-between rounded-[18px] bg-surface-elevated px-5 py-6 text-left",
                     "origin-center transition-[colors,transform] duration-200 ease-out",
                     "hover:scale-[1.03] hover:bg-surface-mid/50",
                     "outline-none ring-0 select-none [-webkit-tap-highlight-color:transparent]",
@@ -569,7 +569,7 @@ export function QuestionBankHomeScreen() {
                       className={cn(
                         "flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-mid text-text",
                         "origin-center transition-transform duration-200 ease-out",
-                        "group-hover:scale-125",
+                        "hover:scale-125",
                       )}
                       aria-hidden
                     >
