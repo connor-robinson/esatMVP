@@ -181,7 +181,7 @@ const controlBase = "border-0 shadow-none outline-none focus:outline-none focus:
 
 const selectTriggerClass = cn(
   "flex h-10 w-full items-center justify-between gap-2 rounded-organic-lg px-3.5 text-base font-medium transition-all duration-fast",
-  "bg-surface-mid text-text hover:bg-surface-subtle active:scale-[0.99]",
+  "bg-surface-elevated text-text hover:bg-background active:scale-[0.99]",
   "disabled:cursor-not-allowed disabled:opacity-45",
   controlBase,
 );
