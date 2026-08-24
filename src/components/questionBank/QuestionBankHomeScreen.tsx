@@ -483,7 +483,7 @@ export function QuestionBankHomeScreen() {
             </p>
           </div>
 
-          <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-5 grid gap-x-4 gap-y-9 sm:grid-cols-2 xl:grid-cols-4">
             {SUBJECT_TILES.map((tile) => {
               const stats = tiles[tile.key];
               const previewSubject = isFreeTierPreviewSubject(tile.key)
@@ -506,8 +506,11 @@ export function QuestionBankHomeScreen() {
                   onClick={() => openSessionModal(tile)}
                   disabled={disabled}
                   className={cn(
-                    "flex flex-col justify-center gap-4 rounded-[18px] bg-surface-elevated px-5 py-5 text-left",
+                    "group flex min-h-[230px] flex-col justify-center gap-5 rounded-[18px] bg-surface-elevated px-5 py-9 text-left",
                     "transition-colors hover:bg-surface-mid/50",
+                    "outline-none ring-0 select-none [-webkit-tap-highlight-color:transparent]",
+                    "focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0",
+                    "active:outline-none active:ring-0",
                     "disabled:cursor-not-allowed disabled:opacity-45",
                   )}
                 >
@@ -531,7 +534,11 @@ export function QuestionBankHomeScreen() {
                     </div>
 
                     <span
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-mid text-text"
+                      className={cn(
+                        "flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-mid text-text",
+                        "origin-center transition-transform duration-200 ease-out",
+                        "group-hover:scale-125",
+                      )}
                       aria-hidden
                     >
                       <ArrowRight className="h-4 w-4" strokeWidth={2.25} />
@@ -561,7 +568,7 @@ export function QuestionBankHomeScreen() {
               );
             })}
 
-            <div className="flex flex-col items-center justify-center rounded-[18px] bg-surface-elevated/30 px-4 py-5 text-center">
+            <div className="flex min-h-[230px] flex-col items-center justify-center rounded-[18px] bg-surface-elevated/30 px-4 py-9 text-center">
               <span className="text-2xl text-text-muted" aria-hidden>
                 …
               </span>
