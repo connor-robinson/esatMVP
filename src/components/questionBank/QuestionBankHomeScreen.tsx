@@ -379,19 +379,20 @@ export function QuestionBankHomeScreen() {
     setSessionModalOpen(true);
   };
 
-  // Calibration "Try curated questions" → home + start Math 1
+  // Deep-link: /questions?startSubject=Math%201 (calibration / converter)
   const calibrationLaunchHandled = useRef(false);
   useEffect(() => {
     if (calibrationLaunchHandled.current) return;
     if (subscriptionLoading || freeTierLoading) return;
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
-    if (params.get("startSubject") !== "Math 1") return;
+    const startSubject = params.get("startSubject");
+    if (!startSubject || !isFreeTierPreviewSubject(startSubject)) return;
     calibrationLaunchHandled.current = true;
-    const tile = SUBJECT_TILES.find((t) => t.key === "Math 1");
+    const tile = SUBJECT_TILES.find((t) => t.key === startSubject);
     if (tile) openSessionModal(tile);
     router.replace("/questions", { scroll: false });
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- calibration deep-link once ready
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- deep-link once ready
   }, [subscriptionLoading, freeTierLoading, treatAsFullAccess]);
 
   const handleSessionConfirm = (payload: QuestionBankHomeLaunchPayload) => {

@@ -35,6 +35,32 @@ export function readFreeTierLaunch(): QuestionBankFreeTierLaunchPayload | null {
   return null;
 }
 
+/** Deep-link subject from ?startSubject= on /questions or /questions/questionbank. */
+export function readFreeTierSubjectFromSearch(
+  search: string | null | undefined,
+): FreeTierPreviewSubject | null {
+  if (!search) return null;
+  const raw = search.startsWith("?") ? search.slice(1) : search;
+  const params = new URLSearchParams(raw);
+  const subject = params.get("startSubject");
+  if (subject && isFreeTierPreviewSubject(subject)) return subject;
+  return null;
+}
+
+/**
+ * Prefer an explicit sessionStorage launch; otherwise honour ?startSubject=.
+ * Used by the practice page so converter CTAs can deep-link by subject.
+ */
+export function resolveFreeTierLaunch(
+  search?: string | null,
+): QuestionBankFreeTierLaunchPayload | null {
+  const stored = readFreeTierLaunch();
+  if (stored) return stored;
+  const fromQuery = readFreeTierSubjectFromSearch(search);
+  if (fromQuery) return { subject: fromQuery };
+  return null;
+}
+
 export function clearFreeTierLaunch(): void {
   sessionStorage.removeItem(QUESTION_BANK_FREE_TIER_LAUNCH_KEY);
 }

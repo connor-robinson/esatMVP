@@ -5,10 +5,11 @@ import {
   manageSubscriptionStatusChange,
   upsertOneTimePurchase,
 } from "@/lib/stripe/supabase-admin";
+import { SEASON_PASS_ACCESS_UNTIL } from "@/lib/stripe/seasonPass";
 
 export const dynamic = "force-dynamic";
 
-const EXAM_DATE = new Date("2026-10-01");
+const EXAM_DATE = SEASON_PASS_ACCESS_UNTIL;
 
 /**
  * POST /api/stripe/sync-checkout

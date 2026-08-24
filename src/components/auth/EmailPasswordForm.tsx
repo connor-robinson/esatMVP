@@ -26,12 +26,14 @@ type AuthMode = "signin" | "signup";
 export function EmailPasswordForm({
   mode,
   redirectTo,
+  selectedPlan,
   disabled,
   onError,
   onCheckEmail,
 }: {
   mode: AuthMode;
   redirectTo: string;
+  selectedPlan?: string | null;
   disabled?: boolean;
   onError: (message: string | null) => void;
   onCheckEmail: (email: string) => void;
@@ -83,6 +85,7 @@ export function EmailPasswordForm({
           source_page:
             redirectTo.startsWith("/") ? redirectTo : currentGaPath(),
           signup_method: "email",
+          ...(selectedPlan ? { selected_plan: selectedPlan } : {}),
         });
 
         const { data, error } = await supabase.auth.signUp({

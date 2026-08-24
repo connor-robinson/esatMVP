@@ -645,6 +645,10 @@ export function ScoreConverterLegacy({ initialExam }: { initialExam?: ConverterE
       <ScoreConverterQuestionBankPromo
         open={showQuestionBankPromo}
         exam={exam}
+        sections={result?.sections ?? []}
+        activeSection={
+          activeChartKey === OVERALL_CHART_KEY ? null : activeSection
+        }
         onDismiss={() => setShowQuestionBankPromo(false)}
         className="mb-5"
       />

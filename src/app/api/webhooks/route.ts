@@ -10,6 +10,7 @@ import {
   upsertOneTimePurchase,
   finalizeSeasonPassSubscription,
 } from "@/lib/stripe/supabase-admin";
+import { SEASON_PASS_ACCESS_UNTIL } from "@/lib/stripe/seasonPass";
 
 const RELEVANT_EVENTS = new Set([
   "product.created",
@@ -24,7 +25,7 @@ const RELEVANT_EVENTS = new Set([
   "customer.subscription.deleted",
 ]);
 
-const EXAM_DATE = new Date("2026-10-01");
+const EXAM_DATE = SEASON_PASS_ACCESS_UNTIL;
 
 export async function POST(request: NextRequest) {
   const body = await request.text();

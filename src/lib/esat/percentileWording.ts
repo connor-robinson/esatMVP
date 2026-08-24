@@ -28,6 +28,14 @@ export function formatOrdinal(value: number): string {
   }
 }
 
+/** Whole-number ordinal percentile label, e.g. "60th percentile". */
+export function formatPercentileDisplay(
+  pct: number | null | undefined,
+): string | null {
+  if (pct == null || !Number.isFinite(pct)) return null;
+  return `${formatOrdinal(Math.round(pct))} percentile`;
+}
+
 export function formatApproximatePercentile(percentile: number): string {
   return `Approximately ${formatOrdinal(Math.round(percentile))} percentile`;
 }

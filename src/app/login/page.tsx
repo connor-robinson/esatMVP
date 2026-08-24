@@ -61,6 +61,7 @@ export default function LoginPage() {
   }, [searchParams]);
 
   const redirectTo = searchParams.get("redirectTo") || "/";
+  const selectedPlan = searchParams.get("plan");
   const copy = COPY[mode];
 
   useEffect(() => {
@@ -151,6 +152,9 @@ export default function LoginPage() {
     if (redirectTo !== "/") {
       params.set("redirectTo", redirectTo);
     }
+    if (selectedPlan) {
+      params.set("plan", selectedPlan);
+    }
     if (withEmail) {
       params.set("method", "email");
     }
@@ -183,6 +187,7 @@ export default function LoginPage() {
           source_page:
             redirectTo.startsWith("/") ? redirectTo : currentGaPath(),
           signup_method: "google",
+          ...(selectedPlan ? { selected_plan: selectedPlan } : {}),
         });
       }
 
@@ -351,6 +356,7 @@ export default function LoginPage() {
               <EmailPasswordForm
                 mode={mode}
                 redirectTo={redirectTo}
+                selectedPlan={selectedPlan}
                 disabled={googleLoading || !emailOpen}
                 onError={setError}
                 onCheckEmail={setPendingEmail}

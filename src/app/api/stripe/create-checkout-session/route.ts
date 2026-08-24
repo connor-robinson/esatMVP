@@ -3,7 +3,7 @@ import { requireRouteUser } from "@/lib/supabase/auth";
 import { getStripe, getStripeKeyMeta, isStripeConfigured } from "@/lib/stripe/config";
 import { createOrRetrieveCustomer } from "@/lib/stripe/supabase-admin";
 import { getPriceIdForPlan } from "@/lib/stripe/prices";
-import { getSeasonPassPrice } from "@/lib/stripe/best-value";
+import { getSeasonPassPrice, SEASON_PASS_ACCESS_UNTIL_LABEL } from "@/lib/stripe/best-value";
 import { resolveAppSiteUrl } from "@/lib/seo/config";
 
 export const dynamic = "force-dynamic";
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
               unit_amount: amountPence,
               product_data: {
                 name: "Exam Season Pass",
-                description: "One-time payment. Full access until 1 Oct 2026",
+                description: `One-time payment. Full access until ${SEASON_PASS_ACCESS_UNTIL_LABEL}`,
               },
             },
             quantity: 1,

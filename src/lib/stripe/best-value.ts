@@ -1,9 +1,16 @@
 /**
  * Best value calculation for pricing plans
- * Exam date: 1 Oct 2026
+ * Season Pass access covers the October 2026 ESAT window (12–16 Oct).
  */
 
-const EXAM_DATE = new Date("2026-10-01");
+import {
+  SEASON_PASS_ACCESS_UNTIL,
+  SEASON_PASS_ACCESS_UNTIL_LABEL,
+} from "@/lib/stripe/seasonPass";
+
+const EXAM_DATE = SEASON_PASS_ACCESS_UNTIL;
+
+export { SEASON_PASS_ACCESS_UNTIL, SEASON_PASS_ACCESS_UNTIL_LABEL };
 
 /** Weekly plan rate - Season Pass must beat this on a £/week basis. */
 const WEEKLY_RATE = 8;

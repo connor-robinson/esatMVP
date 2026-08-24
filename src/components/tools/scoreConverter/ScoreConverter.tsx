@@ -34,6 +34,7 @@ import {
 import { APP_ROUTES, SOURCES } from "@/lib/seo/config";
 import { SEO_LINKS } from "@/lib/seo/links";
 import { trackEvent, currentGaPath, markConverterResultSeen } from "@/lib/ga";
+import { formatPercentileDisplay } from "@/lib/esat/percentileWording";
 import {
   hasValidUrlPrefill,
   readSavedConverterState,
@@ -1637,13 +1638,6 @@ export function ScoreConverter({
         </div>
       </div>
 
-      <ScoreConverterQuestionBankPromo
-        open={showQuestionBankPromo}
-        exam={exam}
-        onDismiss={() => setShowQuestionBankPromo(false)}
-        className="mb-5"
-      />
-
       <div
         ref={resultsRef}
         className="mb-5 min-h-[240px] scroll-mt-24 rounded-organic-xl bg-surface-elevated p-5 shadow-modal-card sm:min-h-[280px] sm:p-6"
@@ -1678,6 +1672,17 @@ export function ScoreConverter({
           />
         )}
       </div>
+
+      <ScoreConverterQuestionBankPromo
+        open={showQuestionBankPromo}
+        exam={exam}
+        sections={result?.sections ?? []}
+        activeSection={
+          activeChartKey === OVERALL_CHART_KEY ? null : activeSection
+        }
+        onDismiss={() => setShowQuestionBankPromo(false)}
+        className="mb-5"
+      />
 
       {beforeFaq ? <div className="mb-5">{beforeFaq}</div> : null}
 
@@ -1847,11 +1852,7 @@ function tmuaAverageEstimated(sections: ConvertedSection[]): number | null {
   return Math.round((vals.reduce((a, b) => a + b, 0) / vals.length) * 10) / 10;
 }
 
-function formatPercentileDisplay(pct: number | null | undefined): string | null {
-  if (pct == null || !Number.isFinite(pct)) return null;
-  return pct.toFixed(1);
-}
-
+/** Whole-number ordinal percentile label, e.g. "60th percentile". */
 function PercentileBlock({ percentile }: { percentile: string }) {
   return (
     <div className="text-right">
@@ -1860,7 +1861,6 @@ function PercentileBlock({ percentile }: { percentile: string }) {
       </p>
       <p className="text-2xl font-semibold tabular-nums text-text-muted sm:text-3xl">
         {percentile}
-        <span className="text-base font-medium text-text-subtle sm:text-lg">th</span>
       </p>
     </div>
   );

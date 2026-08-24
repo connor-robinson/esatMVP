@@ -60,7 +60,7 @@ import {
   type QuestionBankHomeLaunchPayload,
 } from '@/lib/questionBank/homeLaunch';
 import {
-  readFreeTierLaunch,
+  resolveFreeTierLaunch,
   clearFreeTierLaunch,
   hasFreeTierLaunchPayload,
 } from '@/lib/questionBank/freeTierLaunch';
@@ -930,14 +930,18 @@ export default function QuestionBankPage() {
     if (typeof window === 'undefined') return;
     if (treatAsFullAccess) return;
 
-    const launch = readFreeTierLaunch();
+    const launch = resolveFreeTierLaunch(window.location.search);
     if (!launch) return;
 
     clearFreeTierLaunch();
+    // Drop startSubject from the URL so refresh does not restart the preview.
+    if (window.location.search.includes('startSubject=')) {
+      router.replace('/questions/questionbank', { scroll: false });
+    }
     freeTierLaunchInProgressRef.current = true;
     setSessionStarting(true);
     void startFreeTierSession({ subject: launch.subject });
-  }, [startFreeTierSession, treatAsFullAccess]);
+  }, [startFreeTierSession, treatAsFullAccess, router]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;

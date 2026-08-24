@@ -12,7 +12,7 @@ import { SEO_LINKS, type SeoLinkKey } from "@/lib/seo/links";
 import { MARKETING_HOMEPAGE_FAQ } from "@/lib/homepage/marketingFaq";
 import { trackHomepageEvent } from "@/lib/homepage/analytics";
 import { openCookiePreferences } from "@/lib/ga";
-import { getSeasonPassPrice } from "@/lib/stripe/best-value";
+import { getSeasonPassPrice, SEASON_PASS_ACCESS_UNTIL_LABEL } from "@/lib/stripe/best-value";
 import { cn } from "@/lib/utils";
 import { ExampleQuestionDemo } from "@/components/home/ExampleQuestionDemo";
 
@@ -127,7 +127,7 @@ const PAID_FEATURES = [
 const FREE_FEATURES = [
   "Mental maths: Addition module only",
   "Past papers: first 3 roadmap items",
-  "Question bank: 10 free questions",
+  "Question bank: 10 free questions per subject",
   "Free calibration & score converter",
 ];
 
@@ -630,7 +630,7 @@ export function MarketingHomepage() {
                 <span className="text-sm text-[#94A3B8]">once</span>
               </div>
               <p className="mt-2 text-sm text-[#94A3B8]">
-                One-time · access until 1 Oct 2026 · beats weekly rate
+                One-time · access until {SEASON_PASS_ACCESS_UNTIL_LABEL} · beats weekly rate
               </p>
               <ul className="mt-8 flex-1 space-y-3 text-sm text-[#94A3B8]">
                 {PAID_FEATURES.map((feature) => (

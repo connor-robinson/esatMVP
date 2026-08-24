@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
 import { getStripe } from "./config";
 import { toDateTime } from "./helpers";
+import { SEASON_PASS_ACCESS_UNTIL } from "@/lib/stripe/seasonPass";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -203,7 +204,7 @@ export const manageSubscriptionStatusChange = async (
   if (error) throw new Error(`Subscription upsert failed: ${error.message}`);
 };
 
-const EXAM_DATE = new Date("2026-10-01");
+const EXAM_DATE = SEASON_PASS_ACCESS_UNTIL;
 
 export const upsertOneTimePurchase = async (
   session: Stripe.Checkout.Session,

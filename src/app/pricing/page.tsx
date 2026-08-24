@@ -1,21 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { PricingTable, type PricingTier } from "@/components/ui";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { useSubscription } from "@/hooks/useSubscription";
-import { getSeasonPassPrice, getWeeksUntilExam, type PlanId } from "@/lib/stripe/best-value";
+import {
+  getSeasonPassPrice,
+  getWeeksUntilExam,
+  SEASON_PASS_ACCESS_UNTIL_LABEL,
+  type PlanId,
+} from "@/lib/stripe/best-value";
+import {
+  buildCheckoutSignupUrl,
+  isPaidPlanId,
+  type PaidPlanId,
+} from "@/lib/pricing/checkoutAuth";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { trackEvent } from "@/lib/ga";
+import {
+  currentGaPath,
+  readGaSourcePage,
+  rememberGaSourcePage,
+  trackEvent,
+  trackEventOnce,
+} from "@/lib/ga";
 
 const FEATURES = {
   free: [
     "Mental maths: Addition module only",
     "Past papers: First 3 roadmap items",
-    "Question Bank: 10 free questions",
+    "Question Bank: 10 free questions per subject",
     "No solutions or stats overview",
     "No drills / flashcard mode",
   ],
@@ -54,12 +70,21 @@ export default function PricingPage() {
   } = useSubscription();
   const [loading, setLoading] = useState<string | null>(null);
   const [banner, setBanner] = useState<string | null>(null);
+  const autoCheckoutStarted = useRef(false);
 
   const seasonPrice = getSeasonPassPrice();
   const perWeekSeason = seasonPrice / getWeeksUntilExam();
   const periodEndLabel = formatPeriodEnd(currentPeriodEnd);
   const isRecurringPaid = PAID_RECURRING.has(tier);
   const isSeasonPass = tier === "season_pass";
+
+  useEffect(() => {
+    const sourcePage = readGaSourcePage() ?? currentGaPath() ?? "/pricing";
+    rememberGaSourcePage(sourcePage);
+    trackEventOnce("pricing_viewed", "pricing_viewed", {
+      source_page: sourcePage,
+    });
+  }, []);
 
   const paidCta = (planId: "weekly" | "monthly" | "season_pass", loadingLabel: string) => {
     if (loading === planId) return "Loading…";
@@ -105,7 +130,7 @@ export default function PricingPage() {
       caption: "£6.25/week",
       priceNote: isRecurringPaid && tier !== "monthly"
         ? "Switch at next billing date. No charge today"
-        : "7-day free trial. Cancel anytime",
+        : "7-day free trial. Card required. Then £25/month. Cancel anytime",
       features: FEATURES.paid,
       highlighted: true,
       ctaLabel: paidCta("monthly", "Start free trial"),
@@ -122,7 +147,7 @@ export default function PricingPage() {
             : "Current plan ending, then buy Season Pass"
           : isRecurringPaid
             ? "Finish your current plan first. No overlap charge"
-            : "One-time payment. Access until 1 Oct 2026",
+            : `One-time payment. Access until ${SEASON_PASS_ACCESS_UNTIL_LABEL}`,
       features: FEATURES.paid,
       featured: true,
       ctaLabel: paidCta("season_pass", "Upgrade"),
@@ -131,10 +156,15 @@ export default function PricingPage() {
 
   const fromSettings = searchParams.get("from") === "settings";
 
-  const handleCheckout = async (planType: PlanId) => {
-    if (planType === "free") return;
+  const handleCheckout = async (planType: PaidPlanId) => {
     if (!session?.user) {
-      router.push("/login?redirect=/pricing");
+      const sourcePage = currentGaPath() ?? "/pricing";
+      rememberGaSourcePage(sourcePage);
+      trackEvent("checkout_signup_required", {
+        selected_plan: planType,
+        source_page: sourcePage,
+      });
+      router.push(buildCheckoutSignupUrl(planType));
       return;
     }
     setLoading(planType);
@@ -162,10 +192,27 @@ export default function PricingPage() {
     }
   };
 
+  useEffect(() => {
+    const checkoutPlan = searchParams.get("checkout");
+    if (!session?.user || !isPaidPlanId(checkoutPlan)) return;
+    if (autoCheckoutStarted.current) return;
+    if (isSeasonPass || isRecurringPaid) return;
+    autoCheckoutStarted.current = true;
+    router.replace("/pricing", { scroll: false });
+    void handleCheckout(checkoutPlan);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- resume checkout once after signup
+  }, [session?.user, searchParams, isSeasonPass, isRecurringPaid]);
+
   const handleSwitch = async (planType: PlanId) => {
     if (planType === "free") return;
     if (!session?.user) {
-      router.push("/login?redirect=/pricing");
+      const sourcePage = currentGaPath() ?? "/pricing";
+      rememberGaSourcePage(sourcePage);
+      trackEvent("checkout_signup_required", {
+        selected_plan: planType,
+        source_page: sourcePage,
+      });
+      router.push(buildCheckoutSignupUrl(planType));
       return;
     }
     setLoading(planType);
@@ -252,6 +299,11 @@ export default function PricingPage() {
               {banner}
             </p>
           ) : null}
+          <p className="mx-auto mt-4 max-w-2xl text-sm text-text-muted">
+            Free includes 10 questions per subject. Monthly starts with a 7-day
+            free trial; a card is required and you are charged £25/month after
+            the trial unless you cancel.
+          </p>
         </div>
 
         <PricingTable
@@ -280,7 +332,7 @@ export default function PricingPage() {
               return;
             }
 
-            handleCheckout(id);
+            void handleCheckout(id);
           }}
         />
 
@@ -288,10 +340,10 @@ export default function PricingPage() {
           {!session?.user ? (
             <p className="text-sm text-text-muted">
               <Link
-                href="/login?redirect=/pricing"
+                href="/login?mode=signup&redirectTo=%2Fpricing"
                 className="font-medium text-primary underline-offset-4 hover:text-primary-hover hover:underline"
               >
-                Sign in to subscribe.
+                Create an account to subscribe.
               </Link>{" "}
               Already have access?{" "}
               <Link
