@@ -33,7 +33,7 @@ import {
 } from "@/lib/scoreConverter/esatModules";
 import { APP_ROUTES, SOURCES } from "@/lib/seo/config";
 import { SEO_LINKS } from "@/lib/seo/links";
-import { trackEvent } from "@/lib/ga";
+import { trackEvent, currentGaPath, markConverterResultSeen } from "@/lib/ga";
 import {
   hasValidUrlPrefill,
   readSavedConverterState,
@@ -49,6 +49,20 @@ import {
 const MAX_SECTIONS = 3;
 const OVERALL_CHART_KEY = "__overall__";
 
+function conversionSubjects(sections: ConvertedSection[]): string {
+  const labels = sections
+    .map((s) => s.moduleLabel ?? s.legacyLabel)
+    .filter(Boolean);
+  if (labels.length === 0) return "unknown";
+  if (labels.length === 1) return labels[0]!;
+  return labels.join("|");
+}
+
+function conversionSection(sections: ConvertedSection[]): string {
+  if (sections.length === 0) return "none";
+  if (sections.length === 1) return sections[0]!.legacyLabel;
+  return "multi";
+}
 const EXAM_TITLE_COLOR: Record<ConverterExam, string> = {
   NSAA: "text-tmua-accent",
   ENGAA: "text-advanced",
@@ -1238,10 +1252,15 @@ export function ScoreConverter({
         isMulti ? OVERALL_CHART_KEY : (data.sections[0]?.key ?? null),
       );
       setShowQuestionBankPromo(true);
-      trackEvent("converter_calculation_completed", {
+      markConverterResultSeen(exam);
+      trackEvent("score_conversion_completed", {
         exam,
-        year: year.year,
-        example: false,
+        paper_year: year.year,
+        section:
+          data.mode === "scaled" ? "scaled" : conversionSection(data.sections),
+        subject:
+          data.mode === "scaled" ? exam : conversionSubjects(data.sections),
+        converter_page: currentGaPath() ?? "/tools/score-converter",
       });
       persistUserState();
       requestAnimationFrame(() => {

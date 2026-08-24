@@ -6,7 +6,12 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
-import { trackEvent } from "@/lib/ga";
+import {
+  currentGaPath,
+  readGaSourcePage,
+  trackEvent,
+  trackEventOnce,
+} from "@/lib/ga";
 
 interface SupabaseSessionProviderProps {
   children: ReactNode;
@@ -54,7 +59,10 @@ function maybeTrackSignup(session: Session | null) {
       ? session.user.app_metadata.provider
       : "unknown";
 
-  trackEvent("signup_completed", { method: provider });
+  trackEventOnce(`sign_up:${session.user.id}`, "sign_up", {
+    method: provider,
+    source_page: readGaSourcePage() ?? currentGaPath(),
+  });
 }
 
 export function SupabaseSessionProvider({ children, initialSession }: SupabaseSessionProviderProps) {

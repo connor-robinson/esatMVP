@@ -22,6 +22,11 @@ import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { signInWithGoogle } from "@/lib/auth/googleOAuth";
 import { mapAuthError } from "@/lib/auth/errors";
+import {
+  currentGaPath,
+  rememberGaSourcePage,
+  trackEvent,
+} from "@/lib/ga";
 
 type AuthMode = GoogleAuthMode;
 
@@ -171,6 +176,14 @@ export default function LoginPage() {
         } catch {
           /* ignore */
         }
+        rememberGaSourcePage(
+          redirectTo.startsWith("/") ? redirectTo : currentGaPath(),
+        );
+        trackEvent("sign_up_started", {
+          source_page:
+            redirectTo.startsWith("/") ? redirectTo : currentGaPath(),
+          signup_method: "google",
+        });
       }
 
       const { error: signInError } = await signInWithGoogle(

@@ -1,4 +1,4 @@
-import { trackEvent } from "@/lib/ga";
+import { trackEvent, readGaSourcePage, trackEventOnce } from "@/lib/ga";
 
 /**
  * Structured calibration funnel analytics.
@@ -56,11 +56,16 @@ export async function trackCalibrationEvent(
   properties: CalibrationAnalyticsProps = {},
 ): Promise<void> {
   if (event === "calibration_started") {
-    trackEvent("calibration_started", {
-      user_state: properties.user_state,
-      attempt_id: properties.attempt_id,
-      cta_placement: properties.cta_placement,
-    });
+    const sourcePage = readGaSourcePage();
+    trackEventOnce(
+      `calibration_started:${properties.attempt_id ?? "unknown"}`,
+      "calibration_started",
+      {
+        module: "math-1",
+        source_page: sourcePage,
+        user_state: properties.user_state,
+      },
+    );
   }
 
   try {

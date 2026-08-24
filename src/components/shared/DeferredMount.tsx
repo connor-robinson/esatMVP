@@ -23,7 +23,7 @@ export function DeferredMount({
 
     if (delayMs > 0) {
       timeoutId = window.setTimeout(enable, delayMs);
-    } else if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+    } else if (typeof window.requestIdleCallback === "function") {
       idleId = window.requestIdleCallback(enable, { timeout: 1500 });
     } else {
       timeoutId = window.setTimeout(enable, 200);
@@ -31,7 +31,7 @@ export function DeferredMount({
 
     return () => {
       if (timeoutId) window.clearTimeout(timeoutId);
-      if (idleId !== undefined && "cancelIdleCallback" in window) {
+      if (idleId !== undefined && typeof window.cancelIdleCallback === "function") {
         window.cancelIdleCallback(idleId);
       }
     };

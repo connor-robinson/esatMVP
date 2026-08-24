@@ -80,21 +80,34 @@ function PricingSuccessContent() {
               const purchaseKey = `ga_purchase_${sessionId}`;
               if (sessionStorage.getItem(purchaseKey) !== "1") {
                 sessionStorage.setItem(purchaseKey, "1");
+                const amountTotal =
+                  typeof syncData.amountTotal === "number"
+                    ? syncData.amountTotal
+                    : null;
                 trackEvent("purchase", {
+                  transaction_id: sessionId,
+                  value:
+                    amountTotal != null && Number.isFinite(amountTotal)
+                      ? amountTotal / 100
+                      : undefined,
+                  currency:
+                    typeof syncData.currency === "string"
+                      ? syncData.currency.toUpperCase()
+                      : "GBP",
                   plan_type: syncData.planType
                     ? String(syncData.planType)
                     : status.tier
                       ? String(status.tier)
                       : undefined,
-                  currency: "GBP",
                 });
               }
             } catch {
               trackEvent("purchase", {
+                transaction_id: sessionId,
+                currency: "GBP",
                 plan_type: syncData.planType
                   ? String(syncData.planType)
                   : undefined,
-                currency: "GBP",
               });
             }
             return;

@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { trackCalibrationEvent } from "@/lib/calibration/analytics";
 import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
 import { cn } from "@/lib/utils";
+import { currentGaPath, rememberGaSourcePage } from "@/lib/ga";
 
 interface CalibrationPromoProps {
   placement: string;
@@ -32,11 +33,12 @@ export function CalibrationPromo({ placement, className }: CalibrationPromoProps
         </div>
         <Link
           href={CALIBRATION_ROUTES.math1}
-          onClick={() =>
+          onClick={() => {
+            rememberGaSourcePage(currentGaPath());
             void trackCalibrationEvent("calibration_start_clicked", {
               cta_placement: placement,
-            })
-          }
+            });
+          }}
           className="inline-flex shrink-0 items-center rounded-organic-md bg-primary px-4 py-2.5 text-sm font-semibold text-background hover:bg-primary-hover"
         >
           Take the calibration

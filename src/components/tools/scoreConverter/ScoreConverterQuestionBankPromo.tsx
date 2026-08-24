@@ -6,6 +6,11 @@ import { ArrowRight, X } from "lucide-react";
 import { BrandMarkImage } from "@/components/brand/BrandMarkImage";
 import { cn } from "@/lib/utils";
 import type { ConverterExam } from "@/lib/scoreConverter/esatModules";
+import {
+  currentGaPath,
+  rememberGaSourcePage,
+  trackEvent,
+} from "@/lib/ga";
 
 function promoCopy(exam: ConverterExam) {
   if (exam === "TMUA") {
@@ -34,6 +39,7 @@ export function ScoreConverterQuestionBankPromo({
   className?: string;
 }) {
   const copy = promoCopy(exam);
+  const destination = "/questions/questionbank";
 
   return (
     <AnimatePresence>
@@ -93,8 +99,19 @@ export function ScoreConverterQuestionBankPromo({
             </div>
 
             <Link
-              href="/questions/questionbank"
-              onClick={onDismiss}
+              href={destination}
+              onClick={() => {
+                const converterPage =
+                  currentGaPath() ?? "/tools/score-converter";
+                rememberGaSourcePage(converterPage);
+                trackEvent("converter_cta_click", {
+                  cta_name: "try_question_bank",
+                  destination,
+                  exam,
+                  converter_page: converterPage,
+                });
+                onDismiss();
+              }}
               className={cn(
                 "inline-flex shrink-0 items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-fast",
                 "bg-background text-text hover:brightness-95 active:scale-[0.98]",

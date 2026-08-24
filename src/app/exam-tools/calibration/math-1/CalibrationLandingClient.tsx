@@ -18,6 +18,7 @@ import {
 import type { CalibrationAttempt } from "@/lib/calibration/types";
 import { cn } from "@/lib/utils";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
+import { currentGaPath, rememberGaSourcePage } from "@/lib/ga";
 
 export function CalibrationLandingClient() {
   const router = useRouter();
@@ -85,6 +86,7 @@ export function CalibrationLandingClient() {
       user_state: session?.user ? "free" : "signed_out",
       cta_placement: "landing_primary",
     });
+    rememberGaSourcePage(currentGaPath() ?? CALIBRATION_ROUTES.math1);
     router.push(CALIBRATION_ROUTES.test);
   };
 

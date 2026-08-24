@@ -139,7 +139,6 @@ export default function PricingPage() {
     }
     setLoading(planType);
     setBanner(null);
-    trackEvent("checkout_started", { plan_type: planType });
     try {
       const res = await fetch("/api/stripe/create-checkout-session", {
         method: "POST",
@@ -148,6 +147,11 @@ export default function PricingPage() {
       });
       const data = await res.json().catch(() => ({}));
       if (data.url) {
+        // Genuine checkout: Stripe session created and redirect about to happen.
+        trackEvent("begin_checkout", {
+          plan_type: planType,
+          currency: "GBP",
+        });
         window.location.href = data.url;
         return;
       }

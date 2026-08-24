@@ -30,3 +30,16 @@ export {
   isGaStubReady,
   loadGoogleAnalytics,
 } from "./loadGa";
+
+export {
+  GA_CONVERTER_RESULT_KEY,
+  GA_LAST_CONVERTER_EXAM_KEY,
+  GA_SOURCE_PAGE_KEY,
+  currentGaPath,
+  hasSeenConverterResult,
+  markConverterResultSeen,
+  readGaSourcePage,
+  readLastConverterExam,
+  rememberGaSourcePage,
+  trackEventOnce,
+} from "./funnel";

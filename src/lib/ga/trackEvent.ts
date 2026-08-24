@@ -22,10 +22,16 @@ export const GA_ENABLED = Boolean(GA_MEASUREMENT_ID);
 export type GaEventName =
   | "page_view"
   | "cta_clicked"
+  | "score_conversion_completed"
+  | "converter_cta_click"
   | "calibration_started"
+  | "sign_up_started"
+  | "sign_up"
+  | "begin_checkout"
+  | "purchase"
+  /** @deprecated Prefer sign_up / begin_checkout */
   | "signup_completed"
   | "checkout_started"
-  | "purchase"
   | (string & {});
 
 export type GaEventParams = Record<
@@ -34,7 +40,7 @@ export type GaEventParams = Record<
 >;
 
 const BLOCKED_KEYS =
-  /^(email|e-?mail|name|full_?name|first_?name|last_?name|phone|telephone|mobile|address|password|token|authorization|auth)$/i;
+  /^(email|e-?mail|name|full_?name|first_?name|last_?name|phone|telephone|mobile|address|password|token|authorization|auth|raw|raw_?mark|raw_?score|mark|scaled_?score|exact_?score)$/i;
 const EMAIL_LIKE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_STRING_LEN = 100;
 

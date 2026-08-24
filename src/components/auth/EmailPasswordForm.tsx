@@ -15,6 +15,11 @@ import {
 import {
   getEmailConfirmCallbackUrl,
 } from "@/lib/auth/urls";
+import {
+  currentGaPath,
+  rememberGaSourcePage,
+  trackEvent,
+} from "@/lib/ga";
 
 type AuthMode = "signin" | "signup";
 
@@ -71,6 +76,14 @@ export function EmailPasswordForm({
         } catch {
           /* ignore */
         }
+        rememberGaSourcePage(
+          redirectTo.startsWith("/") ? redirectTo : currentGaPath(),
+        );
+        trackEvent("sign_up_started", {
+          source_page:
+            redirectTo.startsWith("/") ? redirectTo : currentGaPath(),
+          signup_method: "email",
+        });
 
         const { data, error } = await supabase.auth.signUp({
           email: normalized,

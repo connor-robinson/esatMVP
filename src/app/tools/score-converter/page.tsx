@@ -98,7 +98,11 @@ export default function ScoreConverterPage() {
             "Universities receive a separate score for each module you sit, so an uneven profile matters more than a single overall figure.",
           ]}
         >
-          <AppSeoCta href={APP_ROUTES.calibration} placement="score_converter_outro">
+          <AppSeoCta
+            href={APP_ROUTES.calibration}
+            placement="score_converter_outro"
+            ctaName="start_free_calibration"
+          >
             Start free calibration
           </AppSeoCta>
         </AppSeoSection>

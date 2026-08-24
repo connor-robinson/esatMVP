@@ -642,8 +642,10 @@ function Completion({ state }: { state: TesterState }) {
         href="/pricing"
         onClick={() => {
           trackTesterEvent("checkout_started");
-          trackEvent("checkout_started", {
-            plan_type: "founding_tester",
+          // Not begin_checkout: this only navigates to pricing, no Stripe session yet.
+          trackEvent("cta_clicked", {
+            destination: "/pricing",
+            placement: "founding_tester",
             surface: "founding_tester",
           });
         }}
