@@ -181,7 +181,7 @@ const controlBase = "border-0 shadow-none outline-none focus:outline-none focus:
 
 const selectTriggerClass = cn(
   "flex h-10 w-full items-center justify-between gap-2 rounded-organic-lg px-3.5 text-base font-medium transition-all duration-fast",
-  "bg-surface-elevated text-text hover:bg-background active:scale-[0.99]",
+  "bg-surface-mid text-text hover:bg-surface-neutral active:scale-[0.99]",
   "disabled:cursor-not-allowed disabled:opacity-45",
   controlBase,
 );
@@ -353,7 +353,7 @@ function ModernSelect({
         aria-expanded={open}
         aria-controls={listId}
         onClick={() => !disabled && setOpen((v) => !v)}
-        className={cn(selectTriggerClass, open && "bg-surface-subtle")}
+        className={cn(selectTriggerClass, open && "bg-surface-neutral")}
       >
         <span className={cn("truncate", !selected && "text-text-muted")}>
           {displayLabel}
@@ -372,7 +372,7 @@ function ModernSelect({
           id={listId}
           role="listbox"
           aria-label={label}
-          className="absolute left-0 top-full z-50 mt-2 w-full min-w-[9rem] overflow-hidden rounded-organic-lg bg-surface-subtle py-1.5 shadow-modal-card"
+          className="absolute left-0 top-full z-50 mt-2 w-full min-w-[9rem] overflow-hidden rounded-organic-lg bg-surface-mid py-1.5 shadow-modal-card"
         >
           {options.map((opt) => {
             const isSelected = opt.value === value;
@@ -1327,7 +1327,7 @@ export function ScoreConverter({
           </p>
         ) : null}
 
-        <div className="relative overflow-visible rounded-organic-lg bg-surface-mid/30 p-3 sm:p-4">
+        <div className="relative overflow-visible rounded-organic-lg bg-background/50 p-3 sm:p-4">
           <div className="flex flex-wrap items-end gap-3 sm:gap-4">
             {pageTitle ? (
               <div className="min-w-[6rem] flex-1">
