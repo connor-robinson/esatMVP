@@ -423,31 +423,47 @@ export function QuestionBankHomeScreen() {
       <Container size="xl" className="space-y-10">
         {/* Progress (logged in) or free preview promo (logged out) */}
         {isLoggedIn ? (
-          <section className="space-y-4">
+          <section>
             <div>
-              <h1 className="text-2xl font-semibold tracking-tight text-text sm:text-3xl">
+              <h1 className="text-base font-semibold text-text sm:text-lg">
                 Question Bank
               </h1>
-              <p className="mt-2 text-sm text-text-muted">
+              <p className="mt-1 text-xs text-text-muted">
                 {isLoadingProgress ? <LoadingEllipsis /> : progressSummary}
               </p>
             </div>
 
-            <div>
+            <div className="mt-6">
               {isLoadingProgress ? (
-                <div className="h-1.5 w-full rounded-full bg-surface-elevated" />
-              ) : (
-                <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-elevated">
-                  <div
-                    className="h-full rounded-full bg-secondary transition-[width] duration-500 ease-out"
-                    style={{ width: `${aggregatePct}%` }}
-                  />
+                <div className="flex h-9 items-center text-xs text-text-muted">
+                  <LoadingEllipsis />
                 </div>
+              ) : (
+                <>
+                  <div className="h-3 w-full overflow-hidden rounded-full bg-surface-elevated">
+                    <div
+                      className="h-full rounded-full bg-secondary transition-[width] duration-500 ease-out"
+                      style={{ width: `${aggregatePct}%` }}
+                    />
+                  </div>
+                  <div className="relative mt-2.5 h-4 text-xs text-text-muted">
+                    <span className="absolute left-0">0%</span>
+                    {aggregatePct > 0 && aggregatePct < 100 && (
+                      <span
+                        className="absolute -translate-x-1/2 tabular-nums font-medium text-text"
+                        style={{ left: `${aggregatePct}%` }}
+                      >
+                        {aggregatePct}%
+                      </span>
+                    )}
+                    <span className="absolute right-0">100%</span>
+                  </div>
+                </>
               )}
             </div>
           </section>
         ) : freeTierLoading ? (
-          <section className="rounded-organic-xl bg-surface px-5 py-8 sm:px-7">
+          <section className="px-0 py-2">
             <div className="flex h-9 items-center text-xs text-text-muted">
               <LoadingEllipsis />
             </div>
@@ -457,17 +473,17 @@ export function QuestionBankHomeScreen() {
         )}
 
         {/* Choose a subject + cards */}
-        <section className="space-y-5">
+        <section>
           <div>
-            <h2 className="text-lg font-semibold text-text sm:text-xl">
+            <h2 className="text-base font-semibold text-text sm:text-lg">
               Choose a subject
             </h2>
-            <p className="mt-1 text-sm text-text-muted">
+            <p className="mt-0.5 text-xs text-text-muted">
               Browse ESAT subjects and TMUA papers to continue your practice.
             </p>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {SUBJECT_TILES.map((tile) => {
               const stats = tiles[tile.key];
               const previewSubject = isFreeTierPreviewSubject(tile.key)
