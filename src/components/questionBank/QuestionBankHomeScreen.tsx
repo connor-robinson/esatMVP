@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, useCallback, useRef, useLayoutEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronDown, Search } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { LoadingEllipsis } from "@/components/shared/LoadingEllipsis";
 import { DrillUpgradeBanner } from "@/components/builder/DrillUpgradeBanner";
@@ -158,8 +158,6 @@ export function QuestionBankHomeScreen() {
     null,
   );
   const [modalTile, setModalTile] = useState<SubjectTileConfig | null>(null);
-  const [mixedModalOpen, setMixedModalOpen] = useState(false);
-  const [query, setQuery] = useState("");
   const [aggregate, setAggregate] = useState<{ attempted: number; total: number } | null>(
     null,
   );
@@ -280,17 +278,6 @@ export function QuestionBankHomeScreen() {
     void loadStats();
   }, [loadStats]);
 
-  const filteredTiles = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return SUBJECT_TILES;
-    return SUBJECT_TILES.filter(
-      (t) =>
-        t.headline.toLowerCase().includes(q) ||
-        t.topicCaps.toLowerCase().includes(q) ||
-        t.key.toLowerCase().includes(q),
-    );
-  }, [query]);
-
   const aggregatePct =
     aggregate && aggregate.total > 0
       ? Math.min(100, Math.round((aggregate.attempted / aggregate.total) * 100))
@@ -302,6 +289,11 @@ export function QuestionBankHomeScreen() {
     aggregate?.attempted ?? 0,
     aggregate?.total ?? 0,
   );
+
+  const progressSummary =
+    aggregate && aggregate.total > 0
+      ? `${aggregate.attempted} / ${aggregate.total} questions completed · ${aggregatePct}% complete`
+      : progressDescription;
 
   const siblingTilesForModal = useMemo(
     () =>
@@ -353,18 +345,6 @@ export function QuestionBankHomeScreen() {
     router.push("/questions/questionbank");
   };
 
-  const launchMixedFreePreview = () => {
-    const firstAvailable = FREE_TIER_PREVIEW_SUBJECTS.find((subject) =>
-      previewAvailableFor(subject),
-    );
-    if (!firstAvailable) {
-      setBlockedSubject(null);
-      setShowFreeTierBlocked(true);
-      return;
-    }
-    launchFreeTierPreview(firstAvailable);
-  };
-
   const openSessionModal = (tile: SubjectTileConfig) => {
     if (!treatAsFullAccess) {
       if (isFreeTierPreviewSubject(tile.key)) {
@@ -401,15 +381,6 @@ export function QuestionBankHomeScreen() {
         QUESTION_BANK_HOME_LAUNCH_KEY,
         JSON.stringify(payload),
       );
-    } catch {
-      /* quota / private mode */
-    }
-    router.push("/questions/questionbank");
-  };
-
-  const handleMixedConfirm = (payload: QuestionBankHomeLaunchPayload) => {
-    try {
-      sessionStorage.setItem(QUESTION_BANK_HOME_LAUNCH_KEY, JSON.stringify(payload));
     } catch {
       /* quota / private mode */
     }
@@ -453,46 +424,26 @@ export function QuestionBankHomeScreen() {
         {/* Progress (logged in) or free preview promo (logged out) */}
         {isLoggedIn ? (
           <section className="space-y-4">
-            <div className="rounded-organic-xl bg-surface px-5 py-6 sm:px-7 sm:py-8">
             <div>
-              <h1 className="text-base font-semibold text-text sm:text-lg">
-                Question Bank Progress
+              <h1 className="text-2xl font-semibold tracking-tight text-text sm:text-3xl">
+                Question Bank
               </h1>
-              <p className="mt-1 text-xs text-text-muted">
-                {progressDescription}
+              <p className="mt-2 text-sm text-text-muted">
+                {isLoadingProgress ? <LoadingEllipsis /> : progressSummary}
               </p>
             </div>
 
-            <div className="mt-6">
+            <div>
               {isLoadingProgress ? (
-                <div className="flex h-9 items-center text-xs text-text-muted">
-                  <LoadingEllipsis />
-                </div>
+                <div className="h-1.5 w-full rounded-full bg-surface-elevated" />
               ) : (
-                <>
-                  <div className="h-3 w-full overflow-hidden rounded-full bg-surface-elevated">
-                    <div
-                      className="h-full rounded-full bg-secondary transition-[width] duration-500 ease-out"
-                      style={{
-                        width: `${aggregatePct}%`,
-                      }}
-                    />
-                  </div>
-                  <div className="relative mt-2.5 h-4 text-xs text-text-muted">
-                    <span className="absolute left-0">0%</span>
-                    {aggregatePct > 0 && aggregatePct < 100 && (
-                      <span
-                        className="absolute -translate-x-1/2 tabular-nums font-medium text-text"
-                        style={{ left: `${aggregatePct}%` }}
-                      >
-                        {aggregatePct}%
-                      </span>
-                    )}
-                    <span className="absolute right-0">100%</span>
-                  </div>
-                </>
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-elevated">
+                  <div
+                    className="h-full rounded-full bg-secondary transition-[width] duration-500 ease-out"
+                    style={{ width: `${aggregatePct}%` }}
+                  />
+                </div>
               )}
-            </div>
             </div>
           </section>
         ) : freeTierLoading ? (
@@ -505,42 +456,22 @@ export function QuestionBankHomeScreen() {
           freeTierPromoBanner
         )}
 
-        {/* Browse by subjects + cards */}
-        <section className="rounded-organic-xl bg-surface px-5 py-5 sm:px-7 sm:py-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h2 className="text-base font-semibold text-text sm:text-lg">
-                Browse By Subjects
-              </h2>
-              <p className="mt-0.5 text-xs text-text-muted">
-                Target specific modules for focused exam preparation.
-              </p>
-            </div>
-            <div className="relative w-full sm:max-w-md">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
-              <input
-                type="search"
-                placeholder="Look for your subject"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className={cn(
-                  "h-10 w-full rounded-organic-lg border-0 bg-surface-elevated py-2 pl-10 pr-4",
-                  "text-sm text-text placeholder:text-text-muted shadow-none",
-                  "outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0",
-                )}
-                aria-label="Search subjects"
-              />
-            </div>
+        {/* Choose a subject + cards */}
+        <section className="space-y-5">
+          <div>
+            <h2 className="text-lg font-semibold text-text sm:text-xl">
+              Choose a subject
+            </h2>
+            <p className="mt-1 text-sm text-text-muted">
+              Browse ESAT subjects and TMUA papers to continue your practice.
+            </p>
           </div>
 
-          <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            {filteredTiles.map((tile) => {
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {SUBJECT_TILES.map((tile) => {
               const stats = tiles[tile.key];
               const previewSubject = isFreeTierPreviewSubject(tile.key)
                 ? tile.key
-                : null;
-              const subjectFree = previewSubject
-                ? subjectStatus(previewSubject)
                 : null;
               const previewAvailable =
                 treatAsFullAccess ||
@@ -549,62 +480,52 @@ export function QuestionBankHomeScreen() {
                 stats.total > 0
                   ? Math.min(100, Math.round((stats.attempted / stats.total) * 100))
                   : 0;
+              const disabled =
+                !treatAsFullAccess && !freeTierLoading && !previewAvailable;
+
               return (
-                <div
+                <button
                   key={tile.key}
+                  type="button"
+                  onClick={() => openSessionModal(tile)}
+                  disabled={disabled}
                   className={cn(
-                    "flex min-h-[220px] flex-col rounded-[18px] bg-surface-elevated px-6 py-5",
+                    "flex min-h-[148px] flex-col rounded-[18px] bg-surface-elevated px-5 py-5 text-left",
                     "transition-colors hover:bg-surface-mid/50",
+                    "disabled:cursor-not-allowed disabled:opacity-45",
                   )}
                 >
-                  <div className="flex flex-1 items-center justify-center px-1 text-center">
-                    <p className="whitespace-nowrap text-base font-semibold leading-snug sm:text-lg">
-                      <span className="text-text">{tile.testType} · </span>
-                      <span className={tile.topicClass}>{tile.key}</span>
-                    </p>
-                  </div>
-
-                  <div className="pt-3">
-                    <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
                       <p
                         className={cn(
-                          "min-w-0 truncate text-xs tabular-nums whitespace-nowrap",
-                          tile.statClass,
+                          "text-base font-semibold leading-snug sm:text-lg",
+                          tile.topicClass,
                         )}
                       >
+                        {tile.headline}
+                      </p>
+                      <p className="mt-1.5 text-xs tabular-nums text-text-muted">
                         {stats.loading ? (
-                          <LoadingEllipsis className={tile.statClass} />
+                          <LoadingEllipsis />
                         ) : (
-                          `${stats.attempted} / ${stats.total} Qs done`
+                          `${stats.attempted} / ${stats.total} questions`
                         )}
                       </p>
-                      <button
-                        type="button"
-                        onClick={() => openSessionModal(tile)}
-                        disabled={
-                          !treatAsFullAccess &&
-                          !freeTierLoading &&
-                          !previewAvailable
-                        }
-                        className={cn(
-                          "shrink-0 rounded px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-opacity",
-                          "disabled:cursor-not-allowed disabled:opacity-40",
-                          tile.startBtnClass,
-                        )}
-                      >
-                        {treatAsFullAccess
-                          ? "Start"
-                          : previewSubject
-                            ? subjectFree?.isExhausted
-                              ? "Limit reached"
-                              : "Preview"
-                            : "Upgrade"}
-                      </button>
                     </div>
 
+                    <span
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-mid text-text"
+                      aria-hidden
+                    >
+                      <ArrowRight className="h-4 w-4" strokeWidth={2.25} />
+                    </span>
+                  </div>
+
+                  <div className="mt-auto flex items-center gap-3 pt-8">
                     <div
                       className={cn(
-                        "mt-5 h-1 w-full overflow-hidden rounded-full",
+                        "h-1 min-w-0 flex-1 overflow-hidden rounded-full",
                         tile.progressTrackClass,
                       )}
                     >
@@ -616,12 +537,15 @@ export function QuestionBankHomeScreen() {
                         style={{ width: `${stats.loading ? 0 : pct}%` }}
                       />
                     </div>
+                    <span className="shrink-0 text-xs tabular-nums text-text-muted">
+                      {stats.loading ? "..." : `${pct}%`}
+                    </span>
                   </div>
-                </div>
+                </button>
               );
             })}
 
-            <div className="flex min-h-[220px] flex-col items-center justify-center rounded-[18px] bg-surface-elevated/30 px-4 text-center">
+            <div className="flex min-h-[148px] flex-col items-center justify-center rounded-[18px] bg-surface-elevated/30 px-4 text-center">
               <span className="text-2xl text-text-muted" aria-hidden>
                 …
               </span>
@@ -649,34 +573,6 @@ export function QuestionBankHomeScreen() {
             {freeTierPromoBanner}
           </section>
         ) : null}
-
-        {/* Mixed */}
-        <div className="flex justify-center pb-8">
-          <button
-            type="button"
-            onClick={() => {
-              if (!treatAsFullAccess) {
-                launchMixedFreePreview();
-                return;
-              }
-              setMixedModalOpen(true);
-            }}
-            disabled={
-              !treatAsFullAccess &&
-              !freeTierLoading &&
-              anyPreviewAvailable !== true
-            }
-            className={cn(
-              "inline-flex items-center gap-2 rounded-full px-10 py-3.5 text-sm font-semibold",
-              "bg-secondary text-background shadow-glow transition-all duration-fast",
-              "hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/40",
-              "disabled:cursor-not-allowed disabled:opacity-45",
-            )}
-          >
-            {treatAsFullAccess ? "Start mixed practice" : "Start free preview"}
-            <ChevronDown className="h-4 w-4" aria-hidden strokeWidth={2.5} />
-          </button>
-        </div>
       </Container>
 
       <QuestionBankSessionSettingsModal
@@ -688,15 +584,6 @@ export function QuestionBankHomeScreen() {
           setModalTile(null);
         }}
         onConfirm={handleSessionConfirm}
-      />
-
-      <QuestionBankSessionSettingsModal
-        open={mixedModalOpen}
-        originTile={SUBJECT_TILES[0]}
-        siblingTiles={SUBJECT_TILES}
-        onClose={() => setMixedModalOpen(false)}
-        onConfirm={handleMixedConfirm}
-        isMixed
       />
     </div>
   );
