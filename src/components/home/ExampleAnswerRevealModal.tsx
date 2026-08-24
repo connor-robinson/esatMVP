@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { StemContent } from "@/components/shared/StemContent";
 import {
-  HOMEPAGE_EXAMPLE_QUESTION,
+  HOMEPAGE_HARDER_QUESTION,
   consumeHomepageExampleRevealPending,
 } from "@/lib/homepage/exampleQuestion";
 
@@ -31,8 +31,8 @@ export function ExampleAnswerRevealModal() {
 
   if (!open) return null;
 
-  const correct = HOMEPAGE_EXAMPLE_QUESTION.options.find(
-    (o) => o.label === HOMEPAGE_EXAMPLE_QUESTION.correctLabel,
+  const correct = HOMEPAGE_HARDER_QUESTION.options.find(
+    (o) => o.label === HOMEPAGE_HARDER_QUESTION.correctLabel,
   );
 
   return (
@@ -56,19 +56,19 @@ export function ExampleAnswerRevealModal() {
           id="example-answer-title"
           className="mt-2 text-2xl font-bold tracking-tight text-text"
         >
-          Answer: {correct?.label} ({HOMEPAGE_EXAMPLE_QUESTION.correctValue})
+          Answer: {correct?.label} ({HOMEPAGE_HARDER_QUESTION.correctValue})
         </h2>
 
         <div className="mt-5 text-sm leading-relaxed text-text-muted sm:text-base">
           <StemContent
-            content={HOMEPAGE_EXAMPLE_QUESTION.promptMarkdown}
+            content={HOMEPAGE_HARDER_QUESTION.promptMarkdown}
             className="text-inherit"
           />
         </div>
 
         <div className="mt-5 rounded-xl bg-primary/12 px-4 py-3 text-sm text-text">
           <StemContent
-            content={HOMEPAGE_EXAMPLE_QUESTION.explanationMarkdown}
+            content={HOMEPAGE_HARDER_QUESTION.explanationMarkdown}
             className="text-inherit"
           />
         </div>
