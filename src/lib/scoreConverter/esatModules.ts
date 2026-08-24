@@ -155,9 +155,6 @@ export function labelForPart(
     return { legacyLabel: `${p}: ${subject}`, group: paperName, order };
   }
   if (exam === "ENGAA") {
-    if (/general/i.test(p)) {
-      return { legacyLabel: "Section 1: overall", group: "Section 1", order: 0 };
-    }
     if (/1a/i.test(p)) {
       return {
         legacyLabel: "Section 1: Part A (Maths & Physics)",
@@ -245,7 +242,7 @@ function preferredPaperForPart(
 ): string | null {
   const p = partName.trim().toLowerCase();
   if (exam === "ENGAA") {
-    if (p === "general" || p === "section 1a" || p === "section 1b") return "Section 1";
+    if (p === "section 1a" || p === "section 1b") return "Section 1";
     if (p === "section 2") return "Section 2";
   }
   if (exam === "TMUA") {
@@ -269,13 +266,9 @@ export function buildSectionOptions(
   year: number,
   rawParts: RawSectionPart[],
 ): SectionOption[] {
-  // ENGAA 2019: the "General" overall table already represents Section 1, so the
-  // split 1A/1B rows (which live on the Section 2 table) are redundant. Collapse
-  // the picker to the single "General" option rather than surfacing near-duplicate
-  // chips for a rare edge case.
   const parts =
-    exam === "ENGAA" && year === 2019
-      ? rawParts.filter((p) => p.partName.trim().toLowerCase() === "general")
+    exam === "ENGAA"
+      ? rawParts.filter((p) => p.partName.trim().toLowerCase() !== "general")
       : rawParts;
 
   // Group duplicates by logical (partName) and pick the preferred paper.

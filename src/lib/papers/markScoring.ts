@@ -171,12 +171,7 @@ export function resolveConversionPartName(
   if (partName) candidateNames.push(partName);
 
   const rowsLower = rows.map((r) => (r.partName || "").toString().toLowerCase());
-  let match = candidateNames.find((n) => rowsLower.includes(n.toLowerCase()));
-
-  // ENGAA 2019–2020 Section 1 tables use a single "General" part name
-  if (!match && examName === "ENGAA" && rowsLower.includes("general")) {
-    match = "General";
-  }
+  const match = candidateNames.find((n) => rowsLower.includes(n.toLowerCase()));
 
   return match
     ? { name: match, matched: true }
@@ -222,26 +217,6 @@ export function computeScaledScore(
       return {
         scaled: roundScaled(scaled),
         convPartName,
-        matched: true,
-        usedAverage: false,
-      };
-    }
-  }
-
-  const rowsLower = scopedRows.map((r) =>
-    (r.partName || "").toString().toLowerCase(),
-  );
-  if (rowsLower.includes("general")) {
-    const generalScaled = scaleScore(
-      scopedRows,
-      "General",
-      correct,
-      "nearest",
-    );
-    if (typeof generalScaled === "number") {
-      return {
-        scaled: roundScaled(generalScaled),
-        convPartName: "General",
         matched: true,
         usedAverage: false,
       };

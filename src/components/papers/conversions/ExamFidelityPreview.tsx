@@ -1,6 +1,7 @@
 "use client";
 
 import { MathContent } from "@/components/shared/MathContent";
+import { StemContent } from "@/components/shared/StemContent";
 import { cn } from "@/lib/utils";
 import { buildPreviewQuestion } from "@/types/conversions";
 import type { ConversionPreviewRow } from "@/types/conversions";
@@ -21,7 +22,14 @@ export function ExamFidelityPreview({ row, className }: ExamFidelityPreviewProps
   const question = buildPreviewQuestion(row);
   const letters = getOptionLetters(row);
   const options = row.options ?? {};
-  const diagram = row.diagramAssets?.[0];
+  const stemDiagrams = (row.diagramAssets ?? []).filter(
+    (asset) => !asset.option_letter && asset.role !== "graphical_option",
+  );
+  const optionAssets = new Map(
+    (row.diagramAssets ?? [])
+      .filter((asset) => Boolean(asset.option_letter))
+      .map((asset) => [asset.option_letter, asset]),
+  );
   const qNum = row.detectedQuestionNumber ?? row.questionNumber;
   const twoCol = letters.length >= 6;
 
@@ -42,12 +50,13 @@ export function ExamFidelityPreview({ row, className }: ExamFidelityPreviewProps
 
         {question.questionStem && (
           <div className="exam-fidelity-stem mb-[0.8em]">
-            <MathContent content={question.questionStem} className="text-inherit" />
+            <StemContent content={question.questionStem} className="text-inherit" />
           </div>
         )}
 
-        {diagram?.url && (
+        {stemDiagrams.map((diagram) => (
           <div
+            key={diagram.id}
             className="mb-[0.8em] flex justify-center"
             style={
               diagram.bbox_norm
@@ -67,7 +76,7 @@ export function ExamFidelityPreview({ row, className }: ExamFidelityPreviewProps
               className="max-h-[38%] max-w-full object-contain"
             />
           </div>
-        )}
+        ))}
 
         {letters.length > 0 && (
           <div
@@ -78,12 +87,21 @@ export function ExamFidelityPreview({ row, className }: ExamFidelityPreviewProps
           >
             {letters.map((letter) => {
               const text = options[letter as Letter];
-              if (!text) return null;
+              const optionAsset = optionAssets.get(letter as Letter);
+              if (!text && !optionAsset) return null;
               return (
                 <div key={letter} className="flex items-start gap-[0.4em]">
                   <span className="shrink-0 font-normal tabular-nums">{letter}</span>
                   <div className="min-w-0 flex-1">
-                    <MathContent content={text} className="text-inherit" />
+                    {text && <MathContent content={text} className="text-inherit" />}
+                    {optionAsset && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={optionAsset.url}
+                        alt={optionAsset.alt ?? `option ${letter}`}
+                        className="mt-1 max-h-40 max-w-full object-contain"
+                      />
+                    )}
                   </div>
                 </div>
               );

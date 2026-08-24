@@ -1,6 +1,7 @@
 "use client";
 
 import { MathContent } from "@/components/shared/MathContent";
+import { StemContent } from "@/components/shared/StemContent";
 import { cn } from "@/lib/utils";
 import {
   getPastPaperOptionLetters,
@@ -41,6 +42,15 @@ export function PastPaperTextQuestion({
 
   const letters = getPastPaperOptionLetters(question);
   const options = question.options ?? {};
+  const stem = question.questionStem.replace(/<figure[^>]*>[\s\S]*?<\/figure>/gi, "").trim();
+  const stemDiagrams = (question.diagramAssets ?? []).filter(
+    (asset) => !asset.option_letter && asset.role !== "graphical_option",
+  );
+  const optionAssets = new Map(
+    (question.diagramAssets ?? [])
+      .filter((asset) => Boolean(asset.option_letter))
+      .map((asset) => [asset.option_letter as Letter, asset]),
+  );
 
   return (
     <div className={cn("w-full max-w-3xl mx-auto space-y-6 px-4 py-6", className)}>
@@ -50,8 +60,18 @@ export function PastPaperTextQuestion({
             {questionNumber}.
           </div>
           <div className="text-base leading-relaxed text-text">
-            <MathContent content={question.questionStem} className="text-inherit" />
+            <StemContent content={stem} className="text-inherit" />
           </div>
+          {stemDiagrams.map((asset) => (
+            <div key={asset.id} className="flex justify-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={asset.url}
+                alt={asset.alt ?? "question diagram"}
+                className="max-h-[32rem] max-w-full object-contain"
+              />
+            </div>
+          ))}
         </>
       )}
 
@@ -59,7 +79,8 @@ export function PastPaperTextQuestion({
         <div className="flex flex-col gap-2.5 pt-2">
           {letters.map((letter) => {
             const text = options[letter as Letter];
-            if (!text) return null;
+            const optionAsset = optionAssets.get(letter as Letter);
+            if (!text && !optionAsset) return null;
             const selected = selectedChoice === letter;
             const interactive = Boolean(onChoiceSelect);
             return (
@@ -83,7 +104,15 @@ export function PastPaperTextQuestion({
                     {letter}
                   </span>
                   <div className="min-w-0 flex-1 text-[0.98rem] leading-relaxed">
-                    <MathContent content={text} className="text-inherit" />
+                    {text && <MathContent content={text} className="text-inherit" />}
+                    {optionAsset && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={optionAsset.url}
+                        alt={optionAsset.alt ?? `option ${letter}`}
+                        className="mt-1 max-h-56 max-w-full object-contain"
+                      />
+                    )}
                   </div>
                 </div>
               </button>

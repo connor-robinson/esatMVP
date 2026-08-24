@@ -19,6 +19,9 @@ export const BRAND_CONFIG = {
   /** Raster mark (white on transparent PNG at /public/brand/logo-mark.png). */
   logoMarkSrc: "/brand/logo-mark.png",
 
+  /** Full wordmark (black on white PNG at /public/brand/logo-full.png). */
+  logoFullSrc: "/brand/logo-full.png",
+
   copyright: "© 2024 ESAT CAMP. Not affiliated with any university.",
 
   companyName: "ESAT CAMP",

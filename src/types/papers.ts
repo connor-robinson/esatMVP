@@ -19,6 +19,8 @@ export interface DiagramAsset {
   alt?: string;
   position?: string;
   bbox_norm?: [number, number, number, number] | null;
+  role?: "stem_diagram" | "graphical_option";
+  option_letter?: Letter;
 }
 
 export const MISTAKE_OPTIONS = [

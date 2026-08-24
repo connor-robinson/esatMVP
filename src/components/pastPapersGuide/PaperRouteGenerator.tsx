@@ -387,7 +387,6 @@ function CurvyRouteTimeline({
         {route.map((node, index) => {
           const y = centers[index];
           if (y === undefined || y === 0) return null;
-          const exam = examFromRouteNode(node);
           const accent = statusAccent(node.status);
           const expanded = expandedId === node.id;
           return (
