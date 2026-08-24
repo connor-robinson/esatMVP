@@ -412,7 +412,7 @@ export default function PapersSolvePage() {
   }, []);
 
   // Preserve scroll position when navigating between questions
-  const scrollPositionRef = useRef(window.scrollY);
+  const scrollPositionRef = useRef(0);
   const previousQuestionIndexRef = useRef(currentQuestionIndex);
 
   useEffect(() => {
