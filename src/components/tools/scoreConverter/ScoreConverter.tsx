@@ -640,8 +640,8 @@ function InputHelperHint({
 
   return (
     <div className="pointer-events-none absolute bottom-[calc(100%+0.5rem)] left-1/2 z-30 -translate-x-1/2">
-      <div className="pointer-events-auto relative max-w-[14rem] rounded-organic-lg bg-secondary px-3 py-2 text-[11px] font-medium leading-snug text-background shadow-modal-card">
-        Choose the year, or click here to change papers.
+      <div className="pointer-events-auto relative max-w-[12rem] rounded-organic-lg bg-secondary px-3.5 py-2 text-sm font-semibold leading-tight tracking-tight text-background shadow-modal-card">
+        Choose year.
         <button
           type="button"
           onClick={onDismiss}
@@ -1308,7 +1308,7 @@ export function ScoreConverter({
     <ScoreConverterProvider applyTableSelection={applyTableSelection}>
     <Container id="score-converter" size="lg" className="scroll-mt-24 py-8 sm:py-10">
       <div className="mb-4 rounded-organic-xl bg-surface-elevated p-4 shadow-modal-card sm:p-5">
-        <div className="mb-3 flex items-start justify-between gap-3">
+        <div className="mb-1.5 flex items-start justify-between gap-3">
           {pageTitle ? (
             <h1 className="text-xl font-bold tracking-tight text-text sm:text-3xl">
               {pageTitle}
@@ -1322,7 +1322,7 @@ export function ScoreConverter({
           <ConverterInfoButton exam={exam} />
         </div>
         {intro ? (
-          <p className="mb-3 w-full text-xs leading-snug text-text-muted sm:text-sm">
+          <p className="mb-3 w-full text-sm font-medium leading-snug tracking-tight text-text-muted sm:text-base">
             {intro}
           </p>
         ) : null}

@@ -6,7 +6,7 @@ export const MAIN_SCORE_CONVERTER_COPY = {
     "Estimate your ESAT score from NSAA and ENGAA past-paper raw marks. Convert your result to the ESAT 1.0–9.0 scale. Unofficial estimate.",
   h1: "ESAT Score Converter",
   intro:
-    "Free ESAT score conversion for past-paper practice. Enter a raw mark for instant raw mark conversion, or use this tool for NSAA to ESAT conversion and ENGAA to ESAT conversion with an ESAT percentile calculator. Official conversion tables for every year are available to view and download below.",
+    "Convert NSAA or ENGAA past-paper raw marks into estimated ESAT scores and percentiles.",
 } as const;
 
 export const SCORE_CONVERTER_PAGE_COPY: Record<
