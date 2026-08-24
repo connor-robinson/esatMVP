@@ -2,7 +2,17 @@
 
 import { useEffect, useMemo, useState, useCallback, useRef, useLayoutEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight } from "lucide-react";
+import {
+  ArrowRight,
+  Atom,
+  Brain,
+  FlaskConical,
+  FunctionSquare,
+  Leaf,
+  Lightbulb,
+  Sigma,
+  type LucideIcon,
+} from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { LoadingEllipsis } from "@/components/shared/LoadingEllipsis";
 import { DrillUpgradeBanner } from "@/components/builder/DrillUpgradeBanner";
@@ -44,6 +54,16 @@ const ALL_SUBJECT_KEYS = [
 ] as const;
 
 type SubjectKey = (typeof ALL_SUBJECT_KEYS)[number];
+
+const SUBJECT_ICONS: Record<SubjectKey, LucideIcon> = {
+  "Math 1": FunctionSquare,
+  "Math 2": Sigma,
+  Physics: Atom,
+  Chemistry: FlaskConical,
+  Biology: Leaf,
+  "Paper 1": Brain,
+  "Paper 2": Lightbulb,
+};
 
 export interface SubjectTileConfig {
   key: SubjectKey;
@@ -498,6 +518,7 @@ export function QuestionBankHomeScreen() {
                   : 0;
               const disabled =
                 !treatAsFullAccess && !freeTierLoading && !previewAvailable;
+              const Icon = SUBJECT_ICONS[tile.key];
 
               return (
                 <button
@@ -518,11 +539,16 @@ export function QuestionBankHomeScreen() {
                     <div className="min-w-0">
                       <p
                         className={cn(
-                          "text-base font-semibold leading-snug sm:text-lg",
+                          "flex items-center gap-2 text-base font-semibold leading-snug sm:text-lg",
                           tile.topicClass,
                         )}
                       >
-                        {tile.headline}
+                        <Icon
+                          className="h-5 w-5 shrink-0"
+                          strokeWidth={2.25}
+                          aria-hidden
+                        />
+                        <span className="min-w-0 truncate">{tile.headline}</span>
                       </p>
                       <p className="mt-1 text-xs tabular-nums text-text-muted">
                         {stats.loading ? (
