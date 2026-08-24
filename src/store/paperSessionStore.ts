@@ -24,7 +24,7 @@
  */
 
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import { mapPartToSection, deriveTmuaSectionFromQuestion, isTmuaSection } from '@/lib/papers/sectionMapping';
 import { questionMatchesPartId } from '@/lib/papers/paperLibrarySections';
 import { isBogusPartLetter } from '@/lib/papers/markQuestionUtils';
@@ -2353,6 +2353,17 @@ export const usePaperSessionStore = create<PaperSessionState>()(
     }),
     {
       name: 'paper-session-store',
+      // Noop storage on the server so persist API still attaches during SSR/prerender.
+      storage: createJSONStorage(() => {
+        if (typeof window === 'undefined') {
+          return {
+            getItem: () => null,
+            setItem: () => {},
+            removeItem: () => {},
+          };
+        }
+        return localStorage;
+      }),
       partialize: (state) => ({
         sessionId: state.sessionId,
         paperId: state.paperId,
