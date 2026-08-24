@@ -312,7 +312,7 @@ export function QuestionBankHomeScreen() {
 
   const progressSummary =
     aggregate && aggregate.total > 0
-      ? `${aggregate.attempted} / ${aggregate.total} questions completed · ${aggregatePct}% complete`
+      ? `${aggregate.attempted} / ${aggregate.total} questions completed`
       : progressDescription;
 
   const siblingTilesForModal = useMemo(
@@ -444,11 +444,11 @@ export function QuestionBankHomeScreen() {
         {/* Progress (logged in) or free preview promo (logged out) */}
         {isLoggedIn ? (
           <section>
-            <div>
+            <div className="flex items-baseline justify-between gap-4">
               <h1 className="text-base font-semibold text-text sm:text-lg">
                 Question Bank
               </h1>
-              <p className="mt-1 text-xs text-text-muted">
+              <p className="shrink-0 text-xs tabular-nums text-text-muted sm:text-sm">
                 {isLoadingProgress ? <LoadingEllipsis /> : progressSummary}
               </p>
             </div>
