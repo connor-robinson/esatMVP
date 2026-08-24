@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import { createServerClient } from "@/lib/supabase/server";
 import { HomePageContent } from "@/components/homepage/HomePageContent";
-import { MarketingHomepage } from "@/components/home/MarketingHomepage";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { BRAND_CONFIG } from "@/config/brand";
 import { MARKETING_HOMEPAGE_FAQ } from "@/lib/homepage/marketingFaq";
@@ -15,6 +13,9 @@ import {
 const HOME_TITLE = "ESAT CAMP | ESAT Preparation, Practice & Past Papers";
 const HOME_DESCRIPTION =
   "Prepare for the ESAT and TMUA with past papers, question banks, and structured practice. ESAT CAMP helps you build speed and strategy for admissions exams.";
+
+/** Allow the marketing shell to be cached; auth is resolved client-side. */
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: HOME_TITLE,
@@ -59,20 +60,11 @@ const HOMEPAGE_SCHEMA = [
   faqPageSchema(HOMEPAGE_FAQ_SCHEMA),
 ];
 
-export default async function HomePage() {
-  const supabase = createServerClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  if (!session) {
-    return (
-      <>
-        <JsonLd schema={HOMEPAGE_SCHEMA} />
-        <MarketingHomepage />
-      </>
-    );
-  }
-
-  return <HomePageContent />;
+export default function HomePage() {
+  return (
+    <>
+      <JsonLd schema={HOMEPAGE_SCHEMA} />
+      <HomePageContent />
+    </>
+  );
 }

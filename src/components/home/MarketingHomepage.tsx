@@ -1,11 +1,12 @@
 ﻿"use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { BRAND_CONFIG } from "@/config/brand";
 import { NAVBAR_HEIGHT_PX } from "@/config/layout";
 import { QUESTION_BANK_TOTAL_COUNT } from "@/config/questionBankMarketing";
-import { MENTAL_MATHS_MODULE_COUNT } from "@/config/drillDisplayFolders";
+import { MENTAL_MATHS_MODULE_COUNT_MARKETING } from "@/config/mentalMathsMarketing";
 import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
 import { SEO_LINKS, type SeoLinkKey } from "@/lib/seo/links";
 import { MARKETING_HOMEPAGE_FAQ } from "@/lib/homepage/marketingFaq";
@@ -13,11 +14,47 @@ import { trackHomepageEvent } from "@/lib/homepage/analytics";
 import { openCookiePreferences } from "@/lib/ga";
 import { getSeasonPassPrice } from "@/lib/stripe/best-value";
 import { cn } from "@/lib/utils";
-import { SlotMachineCount } from "@/components/home/SlotMachineCount";
 import { ExampleQuestionDemo } from "@/components/home/ExampleQuestionDemo";
-import { QuestionBankDistributionChart } from "@/components/home/QuestionBankDistributionChart";
-import { ScoreConverterPreview } from "@/components/home/ScoreConverterPreview";
-import { MeetFounders } from "@/components/home/MeetFounders";
+
+const SlotMachineCount = dynamic(
+  () =>
+    import("@/components/home/SlotMachineCount").then((m) => m.SlotMachineCount),
+  { ssr: false },
+);
+
+const QuestionBankDistributionChart = dynamic(
+  () =>
+    import("@/components/home/QuestionBankDistributionChart").then(
+      (m) => m.QuestionBankDistributionChart,
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="min-h-[22rem] rounded-2xl bg-[#0A0F1D]/40" aria-hidden />
+    ),
+  },
+);
+
+const MeetFounders = dynamic(
+  () => import("@/components/home/MeetFounders").then((m) => m.MeetFounders),
+  {
+    ssr: false,
+    loading: () => <div className="min-h-[28rem]" aria-hidden />,
+  },
+);
+
+const ScoreConverterPreview = dynamic(
+  () =>
+    import("@/components/home/ScoreConverterPreview").then(
+      (m) => m.ScoreConverterPreview,
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="min-h-[20rem] rounded-2xl bg-[#0A0F1D]/40" aria-hidden />
+    ),
+  },
+);
 
 const HOMEPAGE_SECTIONS = [
   { id: "practice", label: "Practice" },
@@ -166,7 +203,7 @@ export function MarketingHomepage() {
                 </span>{" "}
                 and{" "}
                 <span className="text-underline-accent text-white">
-                  {MENTAL_MATHS_MODULE_COUNT}+ mental maths courses
+                  {MENTAL_MATHS_MODULE_COUNT_MARKETING}+ mental maths courses
                 </span>
                 .
               </p>

@@ -3,7 +3,6 @@ import { Suspense } from "react";
 import { EB_Garamond, Space_Grotesk } from "next/font/google";
 import { Navbar } from "@/components/layout/Navbar";
 import { SupabaseSessionProvider } from "@/components/auth/SupabaseSessionProvider";
-import { createServerClient } from "@/lib/supabase/server";
 import { BackgroundPrefetcher } from "@/components/shared/BackgroundPrefetcher";
 import { QuicklinkProvider } from "@/components/shared/QuicklinkProvider";
 import { LoadingProvider } from "@/components/shared/LoadingProvider";
@@ -15,6 +14,8 @@ import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { SessionRestore } from "@/components/papers/SessionRestore";
 import { SessionPersistenceHandler } from "@/components/papers/SessionPersistenceHandler";
 import { SiteVisitMarker } from "@/components/shared/SiteVisitMarker";
+import { DeferredMount } from "@/components/shared/DeferredMount";
+import { DeferredMaterialSymbols } from "@/components/shared/DeferredMaterialSymbols";
 import { UsernameGate } from "@/components/auth/UsernameGate";
 import { GoogleOneTap } from "@/components/auth/GoogleOneTap";
 import { TesterProgrammeProvider } from "@/contexts/TesterProgrammeContext";
@@ -33,19 +34,17 @@ import "@/styles/globals.css";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "700"],
+  weight: ["400", "500", "700"],
   variable: "--font-space-grotesk",
   display: "swap",
 });
 
 const ebGaramond = EB_Garamond({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "600"],
   variable: "--font-eb-garamond",
   display: "swap",
 });
-
-export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   metadataBase: new URL(PRODUCTION_SITE_URL),
@@ -77,7 +76,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -85,10 +84,8 @@ export default async function RootLayout({
   const darkVars = buildCssVariables("dark");
   const lightVarsDesigned = buildCssVariables("light", "designed");
   const lightVarsInverted = buildCssVariables("light", "inverted");
-  const supabase = createServerClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  // Do not await auth here: cookies()/getSession() would force every route
+  // dynamic and block the marketing homepage. Client provider hydrates session.
 
   return (
     <html
@@ -170,7 +167,6 @@ export default async function RootLayout({
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, viewport-fit=cover"
@@ -178,27 +174,16 @@ export default async function RootLayout({
         <meta name="theme-color" content="#000000" />
       </head>
       <body className="flex min-h-screen flex-col bg-background text-text antialiased font-sans">
-        <SupabaseSessionProvider initialSession={session}>
-          <GoogleOneTap />
+        <SupabaseSessionProvider initialSession={null}>
           <ErrorBoundary>
             <ThemeProvider>
               <AnalyticsConsentProvider>
-                <GoogleAnalytics />
-                <CookieConsentBanner />
                 <LoadingProvider>
                   <QuicklinkProvider>
-                    <ServiceWorkerProvider />
-                    <BackgroundPrefetcher />
-                    <KaTeXLoader />
-                    <SessionRestore />
-                    <SessionPersistenceHandler />
                     <SiteVisitMarker />
-                    <Suspense fallback={null}>
-                      <PageViewTracker />
-                    </Suspense>
+                    <CookieConsentBanner />
                     <TesterProgrammeProvider>
                       <Navbar />
-                      <TesterProgrammeBanner />
                       <main className="min-h-full flex-1">
                         <UsernameGate>
                           <Suspense
@@ -213,6 +198,20 @@ export default async function RootLayout({
                         </UsernameGate>
                       </main>
                       <SiteFooter />
+                      <DeferredMount>
+                        <DeferredMaterialSymbols />
+                        <GoogleOneTap />
+                        <GoogleAnalytics />
+                        <ServiceWorkerProvider />
+                        <BackgroundPrefetcher />
+                        <KaTeXLoader />
+                        <SessionRestore />
+                        <SessionPersistenceHandler />
+                        <TesterProgrammeBanner />
+                        <Suspense fallback={null}>
+                          <PageViewTracker />
+                        </Suspense>
+                      </DeferredMount>
                     </TesterProgrammeProvider>
                   </QuicklinkProvider>
                 </LoadingProvider>

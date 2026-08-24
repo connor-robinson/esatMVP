@@ -5,11 +5,54 @@ import {
   QUESTION_BANK_SUBJECT_COUNTS,
 } from "@/config/questionBankDistribution";
 import { QUESTION_BANK_TOTAL_COUNT } from "@/config/questionBankMarketing";
-import { BreakdownDonutChart } from "@/components/questionBank/BreakdownDonutChart";
 import { cn } from "@/lib/utils";
 
 function formatCount(count: number) {
   return count.toLocaleString();
+}
+
+function SubjectPie({
+  total,
+}: {
+  total: number;
+}) {
+  const radius = 42;
+  const circumference = 2 * Math.PI * radius;
+  let offset = 0;
+
+  return (
+    <div className="relative mx-0 h-[9rem] w-[9rem]">
+      <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90" aria-hidden>
+        {QUESTION_BANK_SUBJECT_COUNTS.map((item) => {
+          const fraction = item.count / total;
+          const length = fraction * circumference;
+          const dashoffset = -offset;
+          offset += length;
+          return (
+            <circle
+              key={item.label}
+              cx="50"
+              cy="50"
+              r={radius}
+              fill="none"
+              stroke={item.color}
+              strokeWidth="14"
+              strokeDasharray={`${length} ${circumference - length}`}
+              strokeDashoffset={dashoffset}
+            />
+          );
+        })}
+      </svg>
+      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
+        <span className="text-[9px] font-semibold uppercase tracking-wide text-[#94A3B8]">
+          Total
+        </span>
+        <span className="text-base font-bold tabular-nums text-white sm:text-lg">
+          {formatCount(total)}
+        </span>
+      </div>
+    </div>
+  );
 }
 
 export function QuestionBankDistributionChart({
@@ -20,12 +63,6 @@ export function QuestionBankDistributionChart({
   const maxDifficultyCount = Math.max(
     ...QUESTION_BANK_DIFFICULTY_COUNTS.map((item) => item.count),
   );
-
-  const subjectSlices = QUESTION_BANK_SUBJECT_COUNTS.map((item) => ({
-    name: item.label,
-    value: item.count,
-    fill: item.color,
-  }));
 
   return (
     <div
@@ -39,22 +76,7 @@ export function QuestionBankDistributionChart({
           By subject
         </p>
         <div className="mt-4 grid items-center gap-4 sm:grid-cols-[minmax(0,9rem)_minmax(0,1fr)] sm:gap-5">
-          <BreakdownDonutChart
-            data={subjectSlices}
-            centerLabel="Total"
-            centerValue={formatCount(QUESTION_BANK_TOTAL_COUNT)}
-            className="mx-0 h-[9rem] max-w-[9rem] [&_.donut-center-label]:text-[9px] [&_.donut-center-label]:text-[#94A3B8] [&_.donut-center-value]:text-base [&_.donut-center-value]:font-bold [&_.donut-center-value]:text-white sm:[&_.donut-center-value]:text-lg"
-            tooltipStyle={{
-              borderRadius: 10,
-              border: "1px solid rgba(255,255,255,0.12)",
-              background: "#161D2F",
-              color: "#F8FAFC",
-              fontSize: 12,
-              boxShadow: "0 8px 24px rgba(0,0,0,0.45)",
-            }}
-            tooltipItemStyle={{ color: "#F8FAFC" }}
-            tooltipLabelStyle={{ color: "#CBD5E1" }}
-          />
+          <SubjectPie total={QUESTION_BANK_TOTAL_COUNT} />
           <div className="flex flex-col gap-2.5">
             {QUESTION_BANK_SUBJECT_COUNTS.map((item) => (
               <div

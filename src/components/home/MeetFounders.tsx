@@ -21,6 +21,7 @@ function CompactFounder({
           alt={founder.imageAlt}
           fill
           sizes={primary ? "(min-width: 1024px) 24vw, 100vw" : "(min-width: 1024px) 18vw, 100vw"}
+          loading="lazy"
           className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
         />
       </div>

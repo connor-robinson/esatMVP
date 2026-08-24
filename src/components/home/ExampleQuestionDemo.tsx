@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { StemContent } from "@/components/shared/StemContent";
+import { LazyStemContent } from "@/components/home/LazyStemContent";
 import {
   HOMEPAGE_EXAMPLE_QUESTION,
   markHomepageExampleRevealPending,
@@ -40,7 +40,7 @@ export function ExampleQuestionDemo({
       </p>
 
       <div className="mt-5 text-base leading-relaxed text-white sm:text-lg">
-        <StemContent
+        <LazyStemContent
           content={HOMEPAGE_EXAMPLE_QUESTION.promptMarkdown}
           className="text-inherit"
         />
