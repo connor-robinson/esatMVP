@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>GA consent fixture</title>
+  </head>
+  <body>
+    <main>
+      <h1>GA consent fixture</h1>
+      <p data-testid="path">/</p>
+      <button type="button" data-testid="nav-about">Go to /about</button>
+      <button type="button" data-testid="open-prefs">Cookie preferences</button>
+      <button type="button" data-testid="track-after-reject">
+        Try track after reject
+      </button>
+    </main>
+
+    <div data-testid="cookie-banner" hidden>
+      <button type="button" data-testid="accept">Accept analytics</button>
+      <button type="button" data-testid="reject">Reject analytics</button>
+    </div>
+
+    <script>
+      /**
+       * Mirrors src/lib/ga/loadGa.ts + consent/page_view behaviour.
+       * Keep in sync when changing the production loader.
+       */
+      const MEASUREMENT_ID = "G-Y7E2CJSKV0";
+      const CONSENT_KEY = "esatcamp_analytics_consent";
+      const SCRIPT_ATTR = "data-esatcamp-ga";
+      let loadPromise = null;
+      let stubReady = false;
+      let lastPageView = null;
+      const pending = [];
+
+      function flushQueue() {
+        if (typeof window.gtag !== "function") return;
+        while (pending.length) {
+          try {
+            pending.shift()();
+          } catch (_) {}
+        }
+      }
+
+      function runWhenReady(fn) {
+        if (typeof window.gtag === "function") fn();
+        else pending.push(fn);
+      }
+
+      function hasConsent() {
+        return localStorage.getItem(CONSENT_KEY) === "accepted";
+      }
+
+      function trackPageView(url) {
+        if (!hasConsent()) return;
+        if (lastPageView === url) return;
+        lastPageView = url;
+        runWhenReady(function () {
+          window.gtag("event", "page_view", {
+            page_path: url,
+            page_location: location.origin + url,
+            page_title: document.title,
+          });
+        });
+      }
+
+      function loadGoogleAnalytics(measurementId) {
+        if (loadPromise) return loadPromise;
+        loadPromise = new Promise(function (resolve, reject) {
+          try {
+            window["ga-disable-" + measurementId] = false;
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = function gtag() {
+              window.dataLayer.push(arguments);
+            };
+            window.gtag("js", new Date());
+            window.gtag("config", measurementId, {
+              send_page_view: false,
+              anonymize_ip: true,
+            });
+            stubReady = true;
+            flushQueue();
+
+            if (document.querySelector("script[" + SCRIPT_ATTR + '="' + measurementId + '"]')) {
+              resolve();
+              return;
+            }
+
+            var script = document.createElement("script");
+            script.async = true;
+            script.src =
+              "https://www.googletagmanager.com/gtag/js?id=" + measurementId;
+            script.setAttribute(SCRIPT_ATTR, measurementId);
+            script.onload = function () {
+              script.setAttribute("data-ga-loaded", "1");
+              flushQueue();
+              resolve();
+            };
+            script.onerror = function () {
+              loadPromise = null;
+              stubReady = false;
+              reject(new Error("gtag load failed"));
+            };
+            document.head.appendChild(script);
+          } catch (err) {
+            loadPromise = null;
+            stubReady = false;
+            reject(err);
+          }
+        });
+        return loadPromise;
+      }
+
+      function setPath(url) {
+        document.querySelector("[data-testid=path]").textContent = url;
+        trackPageView(url);
+      }
+
+      function showBanner(show) {
+        document.querySelector("[data-testid=cookie-banner]").hidden = !show;
+      }
+
+      function accept() {
+        window["ga-disable-" + MEASUREMENT_ID] = false;
+        localStorage.setItem(CONSENT_KEY, "accepted");
+        showBanner(false);
+        loadGoogleAnalytics(MEASUREMENT_ID).then(function () {
+          lastPageView = null;
+          setPath(document.querySelector("[data-testid=path]").textContent || "/");
+        });
+      }
+
+      function reject() {
+        window["ga-disable-" + MEASUREMENT_ID] = true;
+        localStorage.setItem(CONSENT_KEY, "rejected");
+        showBanner(false);
+        lastPageView = null;
+        document.cookie.split(";").forEach(function (part) {
+          var name = part.trim().split("=")[0];
+          if (name === "_ga" || name.indexOf("_ga_") === 0) {
+            document.cookie =
+              name + "=; Max-Age=0; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+          }
+        });
+      }
+
+      document.querySelector("[data-testid=accept]").onclick = accept;
+      document.querySelector("[data-testid=reject]").onclick = reject;
+      document.querySelector("[data-testid=open-prefs]").onclick = function () {
+        showBanner(true);
+      };
+      document.querySelector("[data-testid=nav-about]").onclick = function () {
+        setPath("/about");
+      };
+      document.querySelector("[data-testid=track-after-reject]").onclick =
+        function () {
+          // Bypass lastPageView guard to prove reject blocks gtag calls.
+          lastPageView = null;
+          trackPageView("/after-reject");
+        };
+
+      var stored = localStorage.getItem(CONSENT_KEY);
+      if (stored === "accepted") {
+        showBanner(false);
+        loadGoogleAnalytics(MEASUREMENT_ID).then(function () {
+          setPath("/");
+        });
+      } else if (stored === "rejected") {
+        showBanner(false);
+      } else {
+        showBanner(true);
+      }
+    </script>
+  </body>
+</html>

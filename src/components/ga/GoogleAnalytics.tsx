@@ -1,41 +1,32 @@
 "use client";
 
-import Script from "next/script";
+import { useEffect } from "react";
 import { useAnalyticsConsent } from "./AnalyticsConsentProvider";
-import { GA_MEASUREMENT_ID, flushGaQueue } from "@/lib/ga";
+import { GA_MEASUREMENT_ID } from "@/lib/ga";
+import { loadGoogleAnalytics } from "@/lib/ga/loadGa";
 
 /**
- * Loads GA4 only after the visitor accepts analytics cookies.
- * Renders nothing when consent is pending or rejected.
+ * Boots GA4 only after analytics consent is accepted.
+ * Uses imperative DOM script injection — next/script inline init is unreliable
+ * when the component mounts after the first paint (consent gate).
  */
 export function GoogleAnalytics() {
   const { status } = useAnalyticsConsent();
 
-  if (status !== "accepted" || !GA_MEASUREMENT_ID) return null;
+  useEffect(() => {
+    if (status !== "accepted" || !GA_MEASUREMENT_ID) return;
 
-  return (
-    <>
-      <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-        strategy="afterInteractive"
-      />
-      <Script
-        id="ga4-init"
-        strategy="afterInteractive"
-        onReady={flushGaQueue}
-      >
-        {`
-          window['ga-disable-${GA_MEASUREMENT_ID}'] = false;
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          window.gtag = gtag;
-          gtag('js', new Date());
-          gtag('config', '${GA_MEASUREMENT_ID}', {
-            send_page_view: false,
-            anonymize_ip: true
-          });
-        `}
-      </Script>
-    </>
-  );
+    let cancelled = false;
+    void loadGoogleAnalytics(GA_MEASUREMENT_ID).catch((error) => {
+      if (!cancelled && process.env.NODE_ENV !== "production") {
+        console.warn("[ga] failed to load", error);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [status]);
+
+  return null;
 }

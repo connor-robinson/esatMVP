@@ -9,6 +9,7 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
+    "test:e2e:ga": "playwright test e2e/ga-consent.spec.ts",
     "generate:conversion-tables": "node scripts/generate_conversion_table_csvs.js && node scripts/generate_conversion_table_pdfs.js",
     "seed:fermi": "npx tsx scripts/seed-fermi-questions.ts",
     "import:esat-m1-hook": "npx tsx scripts/import-esat-hook-sets.ts --only=math1",
@@ -33,6 +34,8 @@
     "dompurify": "^3.4.11",
     "framer-motion": "^11.0.0",
     "function-plot": "^1.25.1",
+    "heic2any": "^0.0.4",
+    "jszip": "^3.10.1",
     "katex": "^0.16.11",
     "lucide-react": "^0.344.0",
     "mafs": "^0.21.0",
@@ -51,6 +54,7 @@
     "zustand": "^4.5.7"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/forms": "^0.5.7",
     "@types/node": "^20.11.0",
     "@types/react": "^18.2.0",
@@ -58,6 +62,7 @@
     "autoprefixer": "^10.4.17",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.0",
+    "jsdom": "^26.1.0",
     "patch-package": "^8.0.1",
     "pdfkit": "^0.19.1",
     "postcss": "^8.4.35",

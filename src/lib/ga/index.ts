@@ -23,3 +23,10 @@ export {
   type GaEventName,
   type GaEventParams,
 } from "./trackEvent";
+
+export {
+  GA_SCRIPT_ATTR,
+  isGaScriptLoaded,
+  isGaStubReady,
+  loadGoogleAnalytics,
+} from "./loadGa";

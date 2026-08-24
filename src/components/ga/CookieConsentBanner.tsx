@@ -1,6 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
+import { cn } from "@/lib/utils";
 import { useAnalyticsConsent } from "./AnalyticsConsentProvider";
 
 /**
@@ -8,12 +11,15 @@ import { useAnalyticsConsent } from "./AnalyticsConsentProvider";
  * Shown on first visit and whenever the visitor reopens preferences.
  */
 export function CookieConsentBanner() {
+  const pathname = usePathname();
+  const session = useSupabaseSession();
   const { preferencesOpen, status, accept, reject, closePreferences } =
     useAnalyticsConsent();
 
   if (!preferencesOpen) return null;
 
   const isFirstChoice = status === "pending";
+  const onHomepage = pathname === "/" && !session;
 
   return (
     <div
@@ -23,25 +29,41 @@ export function CookieConsentBanner() {
       aria-labelledby="cookie-consent-title"
       aria-describedby="cookie-consent-desc"
     >
-      <div className="pointer-events-auto mx-auto max-w-2xl rounded-organic-xl bg-surface-elevated p-5 shadow-bar-floating sm:p-6">
+      <div
+        className={cn(
+          "pointer-events-auto mx-auto max-w-2xl p-5 sm:p-6",
+          onHomepage
+            ? "rounded-xl bg-[#161D2F]/80 shadow-xl backdrop-blur-md"
+            : "rounded-organic-xl bg-surface-elevated shadow-bar-floating",
+        )}
+      >
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2
               id="cookie-consent-title"
-              className="font-heading text-base font-semibold tracking-tight text-text sm:text-lg"
+              className={cn(
+                "font-heading text-base font-semibold tracking-tight sm:text-lg",
+                onHomepage ? "text-white" : "text-text",
+              )}
             >
               Analytics cookies
             </h2>
             <p
               id="cookie-consent-desc"
-              className="mt-2 text-sm leading-relaxed text-text-muted"
+              className={cn(
+                "mt-2 text-sm leading-relaxed",
+                onHomepage ? "text-[#94A3B8]" : "text-text-muted",
+              )}
             >
               We use Google Analytics only if you opt in, to understand which
               pages help with ESAT preparation. Necessary storage (login and
               preferences) always works. See our{" "}
               <Link
                 href="/cookie-policy"
-                className="font-medium text-text underline-offset-2 hover:underline"
+                className={cn(
+                  "font-medium underline-offset-2 hover:underline",
+                  onHomepage ? "text-white" : "text-text",
+                )}
               >
                 Cookie Policy
               </Link>
@@ -52,7 +74,12 @@ export function CookieConsentBanner() {
             <button
               type="button"
               onClick={closePreferences}
-              className="shrink-0 rounded-organic-md bg-surface-mid px-2.5 py-1.5 text-sm text-text-muted transition-colors hover:bg-surface-neutral hover:text-text"
+              className={cn(
+                "shrink-0 px-2.5 py-1.5 text-sm transition-colors",
+                onHomepage
+                  ? "rounded-xl bg-white/10 text-[#94A3B8] hover:bg-white/15 hover:text-white"
+                  : "rounded-organic-md bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text",
+              )}
               aria-label="Close cookie preferences"
             >
               Close
@@ -64,14 +91,24 @@ export function CookieConsentBanner() {
           <button
             type="button"
             onClick={accept}
-            className="rounded-organic-md bg-primary px-4 py-3 text-sm font-semibold text-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35"
+            className={cn(
+              "px-4 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2",
+              onHomepage
+                ? "rounded-xl bg-[#3B82F6] text-white hover:bg-[#2563EB] focus-visible:ring-[#3B82F6]/50"
+                : "rounded-organic-md bg-primary text-background hover:bg-primary/90 focus-visible:ring-primary/35",
+            )}
           >
             Accept analytics
           </button>
           <button
             type="button"
             onClick={reject}
-            className="rounded-organic-md bg-text/15 px-4 py-3 text-sm font-semibold text-text transition-colors hover:bg-text/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35"
+            className={cn(
+              "px-4 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2",
+              onHomepage
+                ? "rounded-xl bg-white/10 text-white hover:bg-white/15 focus-visible:ring-[#3B82F6]/50"
+                : "rounded-organic-md bg-text/15 text-text hover:bg-text/20 focus-visible:ring-primary/35",
+            )}
           >
             Reject analytics
           </button>

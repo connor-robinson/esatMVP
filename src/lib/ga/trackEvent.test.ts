@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { __resetGaQueueForTests } from "./queue";
 import { flushGaQueue, trackEvent, trackPageView } from "./trackEvent";
 
 function stubWindow(opts: {
@@ -24,6 +25,7 @@ function stubWindow(opts: {
 
 describe("GA tracking consent gate", () => {
   afterEach(() => {
+    __resetGaQueueForTests();
     vi.unstubAllGlobals();
   });
 

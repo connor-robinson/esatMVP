@@ -7,6 +7,7 @@
  */
 
 import { hasAnalyticsConsent } from "./consent";
+import { flushGaQueue, runWhenGtagReady } from "./queue";
 
 /** Public GA4 measurement ID — safe to embed; consent still gates loading. */
 export const DEFAULT_GA_MEASUREMENT_ID = "G-Y7E2CJSKV0";
@@ -44,10 +45,6 @@ declare global {
   }
 }
 
-type GaCall = () => void;
-
-const pendingCalls: GaCall[] = [];
-
 function isSafeKey(key: string): boolean {
   return !BLOCKED_KEYS.test(key);
 }
@@ -79,29 +76,7 @@ export function sanitizeGaParams(
   return out;
 }
 
-function runWhenGtagReady(call: GaCall): void {
-  if (typeof window === "undefined") return;
-  if (typeof window.gtag === "function") {
-    call();
-    return;
-  }
-  pendingCalls.push(call);
-}
-
-/** Flush calls queued while gtag.js was still loading. */
-export function flushGaQueue(): void {
-  if (typeof window === "undefined" || typeof window.gtag !== "function") {
-    return;
-  }
-  while (pendingCalls.length > 0) {
-    const call = pendingCalls.shift();
-    try {
-      call?.();
-    } catch {
-      /* analytics is non-critical */
-    }
-  }
-}
+export { flushGaQueue };
 
 export function trackEvent(
   event: GaEventName,
