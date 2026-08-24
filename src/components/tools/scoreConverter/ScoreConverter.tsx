@@ -136,8 +136,8 @@ function ExamTitleDropdown({
                   className={cn(
                     "flex w-full items-center justify-between gap-2 px-3.5 py-2.5 text-left text-base transition-colors duration-fast",
                     isSelected
-                      ? "bg-surface-mid font-semibold text-text"
-                      : "text-text-muted hover:bg-surface-mid/80 hover:text-text",
+                      ? "bg-surface-neutral font-semibold text-text"
+                      : "text-text-muted hover:bg-surface-neutral/80 hover:text-text",
                     controlBase,
                   )}
                 >
@@ -389,8 +389,8 @@ function ModernSelect({
                   className={cn(
                     "flex w-full items-center justify-between gap-2 px-3.5 py-2.5 text-left text-base transition-colors duration-fast",
                     isSelected
-                      ? "bg-surface-mid font-semibold text-text"
-                      : "text-text-muted hover:bg-surface-mid/80 hover:text-text",
+                      ? "bg-surface-neutral font-semibold text-text"
+                      : "text-text-muted hover:bg-surface-neutral/80 hover:text-text",
                     controlBase,
                   )}
                 >
