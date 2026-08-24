@@ -527,7 +527,7 @@ export function QuestionBankHomeScreen() {
                   onClick={() => openSessionModal(tile)}
                   disabled={disabled}
                   className={cn(
-                    "group flex min-h-[230px] flex-col justify-center gap-5 rounded-[18px] bg-surface-elevated px-5 py-9 text-left",
+                    "group flex min-h-[230px] flex-col justify-between rounded-[18px] bg-surface-elevated px-5 py-6 text-left",
                     "transition-colors hover:bg-surface-mid/50",
                     "outline-none ring-0 select-none [-webkit-tap-highlight-color:transparent]",
                     "focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0",
@@ -536,27 +536,32 @@ export function QuestionBankHomeScreen() {
                   )}
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <div className="min-w-0">
-                      <p
+                    <div className="flex min-w-0 items-center gap-3">
+                      <Icon
                         className={cn(
-                          "flex items-center gap-2 text-base font-semibold leading-snug sm:text-lg",
+                          "h-11 w-11 shrink-0 sm:h-12 sm:w-12",
                           tile.topicClass,
                         )}
-                      >
-                        <Icon
-                          className="h-5 w-5 shrink-0"
-                          strokeWidth={2.25}
-                          aria-hidden
-                        />
-                        <span className="min-w-0 truncate">{tile.headline}</span>
-                      </p>
-                      <p className="mt-1 text-xs tabular-nums text-text-muted">
-                        {stats.loading ? (
-                          <LoadingEllipsis />
-                        ) : (
-                          `${stats.attempted} / ${stats.total} questions`
-                        )}
-                      </p>
+                        strokeWidth={2}
+                        aria-hidden
+                      />
+                      <div className="min-w-0">
+                        <p
+                          className={cn(
+                            "text-base font-semibold leading-snug sm:text-lg",
+                            tile.topicClass,
+                          )}
+                        >
+                          {tile.headline}
+                        </p>
+                        <p className="mt-1 text-xs tabular-nums text-text-muted">
+                          {stats.loading ? (
+                            <LoadingEllipsis />
+                          ) : (
+                            `${stats.attempted} / ${stats.total} questions`
+                          )}
+                        </p>
+                      </div>
                     </div>
 
                     <span
