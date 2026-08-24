@@ -445,7 +445,7 @@ export function QuestionBankHomeScreen() {
         {isLoggedIn ? (
           <section>
             <div>
-              <h1 className="text-base font-semibold text-text sm:text-lg">
+              <h1 className="text-2xl font-semibold tracking-tight text-text sm:text-3xl">
                 Question Bank
               </h1>
               <p className="mt-1 text-xs text-text-muted">
@@ -527,7 +527,7 @@ export function QuestionBankHomeScreen() {
                   onClick={() => openSessionModal(tile)}
                   disabled={disabled}
                   className={cn(
-                    "flex min-h-[230px] flex-col justify-between rounded-[18px] bg-surface-elevated px-5 py-6 text-left",
+                    "flex min-h-[196px] flex-col justify-between rounded-[18px] bg-surface-elevated px-5 py-6 text-left",
                     "origin-center transition-[colors,transform] duration-200 ease-out",
                     "hover:scale-[1.03] hover:bg-surface-mid/50",
                     "outline-none ring-0 select-none [-webkit-tap-highlight-color:transparent]",
@@ -600,7 +600,7 @@ export function QuestionBankHomeScreen() {
               );
             })}
 
-            <div className="flex min-h-[230px] flex-col items-center justify-center rounded-[18px] bg-surface-elevated/30 px-4 py-9 text-center">
+            <div className="flex min-h-[196px] flex-col items-center justify-center rounded-[18px] bg-surface-elevated/30 px-4 py-9 text-center">
               <span className="text-2xl text-text-muted" aria-hidden>
                 …
               </span>
