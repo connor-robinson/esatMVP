@@ -26,10 +26,10 @@ export const DIFFICULTY_MIX_PRESETS: readonly DifficultyMixPreset[] = [
 ] as const;
 
 export const DIFFICULTY_MIX_BLURBS: Record<DifficultyMixPreset, string> = {
-  Auto: "Even mix of Easy, Medium and Hard.",
-  Easy: "Mostly Easy, some Medium, rarely Hard.",
-  Medium: "Mostly Medium, with some Easy and some Hard.",
-  Hard: "Mostly Hard, some Medium, little Easy. Very few extreme-level Hard items.",
+  Auto: "Even mix",
+  Easy: "Mostly easy",
+  Medium: "Mostly medium",
+  Hard: "Mostly hard",
 };
 
 export function allocateDifficultyCounts(

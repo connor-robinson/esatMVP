@@ -323,12 +323,6 @@ export function QuestionBankSessionSettingsModal({
                     This is still a mixed session. The slider sets a general
                     difficulty bias, not a single fixed level.
                   </p>
-                  <p>
-                    Auto keeps an even spread. Easy leans easy with a few medium
-                    and rare hard. Medium centres on medium with some easy and
-                    hard. Hard is mostly hard with some medium, little easy, and
-                    very few extreme-level hard questions.
-                  </p>
                 </RoadmapInfoPopover>
               </div>
               <span className="text-xs font-semibold text-text">{difficultyMix}</span>

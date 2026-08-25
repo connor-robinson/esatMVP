@@ -23,30 +23,62 @@ export function DifficultyMixSlider({ value, onChange }: Props) {
   const pct = max === 0 ? 0 : (index / max) * 100;
   const trackRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
+  const [visualPct, setVisualPct] = useState(pct);
+  const [blurbKey, setBlurbKey] = useState(0);
   const labelId = useId();
 
-  const setFromClientX = (clientX: number) => {
+  useEffect(() => {
+    if (dragging) return;
+    setVisualPct(pct);
+  }, [pct, dragging]);
+
+  useEffect(() => {
+    setBlurbKey((key) => key + 1);
+  }, [value]);
+
+  const ratioFromClientX = (clientX: number) => {
     const track = trackRef.current;
-    if (!track) return;
+    if (!track) return 0;
     const rect = track.getBoundingClientRect();
-    const ratio = rect.width <= 0 ? 0 : (clientX - rect.left) / rect.width;
-    const nextIndex = Math.round(Math.min(1, Math.max(0, ratio)) * max);
-    const next = options[nextIndex];
-    if (next) onChange(next);
+    if (rect.width <= 0) return 0;
+    return Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+  };
+
+  const presetFromRatio = (ratio: number) => {
+    const nextIndex = Math.round(ratio * max);
+    return options[nextIndex] ?? options[0]!;
+  };
+
+  const applyFromClientX = (clientX: number, { commitVisual }: { commitVisual: boolean }) => {
+    const ratio = ratioFromClientX(clientX);
+    if (commitVisual) {
+      setVisualPct(ratio * 100);
+    }
+    const next = presetFromRatio(ratio);
+    if (next !== value) onChange(next);
   };
 
   useEffect(() => {
     if (!dragging) return;
-    const onMove = (event: PointerEvent) => setFromClientX(event.clientX);
-    const onUp = () => setDragging(false);
+    const onMove = (event: PointerEvent) => {
+      applyFromClientX(event.clientX, { commitVisual: true });
+    };
+    const onUp = (event: PointerEvent) => {
+      const ratio = ratioFromClientX(event.clientX);
+      const next = presetFromRatio(ratio);
+      onChange(next);
+      const snapPct = max === 0 ? 0 : (options.indexOf(next) / max) * 100;
+      setVisualPct(snapPct);
+      setDragging(false);
+    };
     window.addEventListener("pointermove", onMove);
     window.addEventListener("pointerup", onUp);
     return () => {
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", onUp);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- bind once while dragging
-  }, [dragging, max, onChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- bind while dragging
+  }, [dragging, max, onChange, options, value]);
 
   return (
     <div className="space-y-3 pt-1">
@@ -56,16 +88,18 @@ export function DifficultyMixSlider({ value, onChange }: Props) {
         onPointerDown={(event) => {
           event.preventDefault();
           setDragging(true);
-          setFromClientX(event.clientX);
+          applyFromClientX(event.clientX, { commitVisual: true });
         }}
       >
         <div className="absolute left-0 right-0 top-1/2 h-2 -translate-y-1/2 rounded-full bg-surface-mid" />
         <div
           className={cn(
             "absolute left-0 top-1/2 h-2 -translate-y-1/2 rounded-full bg-secondary/45",
-            !dragging && "transition-[width] duration-300 ease-signature",
+            dragging
+              ? "transition-none"
+              : "transition-[width] duration-300 ease-signature",
           )}
-          style={{ width: `${pct}%` }}
+          style={{ width: `${visualPct}%` }}
         />
 
         {options.map((option, optionIndex) => {
@@ -81,7 +115,7 @@ export function DifficultyMixSlider({ value, onChange }: Props) {
                 onChange(option);
               }}
               className={cn(
-                "absolute top-1/2 z-[1] h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full transition-colors duration-300",
+                "absolute top-1/2 z-[1] h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full transition-colors duration-300 ease-signature",
                 active ? "bg-secondary" : "bg-surface-neutral",
                 controlBase,
               )}
@@ -100,11 +134,13 @@ export function DifficultyMixSlider({ value, onChange }: Props) {
           aria-labelledby={labelId}
           className={cn(
             "absolute top-1/2 z-[2] h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-secondary shadow-sm",
-            !dragging && "transition-[left] duration-300 ease-signature",
+            dragging
+              ? "scale-110 transition-transform duration-150 ease-signature"
+              : "transition-[left,transform] duration-300 ease-signature",
             "focus-visible:ring-2 focus-visible:ring-secondary/35",
             controlBase,
           )}
-          style={{ left: `${pct}%` }}
+          style={{ left: `${visualPct}%` }}
           onKeyDown={(event) => {
             if (event.key === "ArrowRight" || event.key === "ArrowUp") {
               event.preventDefault();
@@ -133,7 +169,7 @@ export function DifficultyMixSlider({ value, onChange }: Props) {
             type="button"
             onClick={() => onChange(option)}
             className={cn(
-              "min-w-0 flex-1 text-center text-[10px] font-semibold uppercase tracking-wide transition-colors duration-300 sm:text-xs",
+              "min-w-0 flex-1 text-center text-[10px] font-semibold uppercase tracking-wide transition-colors duration-300 ease-signature sm:text-xs",
               option === value
                 ? "text-text"
                 : "text-text-subtle hover:text-text-muted",
@@ -145,7 +181,11 @@ export function DifficultyMixSlider({ value, onChange }: Props) {
         ))}
       </div>
 
-      <p id={labelId} className="text-xs leading-relaxed text-text-muted">
+      <p
+        key={blurbKey}
+        id={labelId}
+        className="animate-fade-in text-xs font-medium leading-relaxed text-text-muted"
+      >
         {DIFFICULTY_MIX_BLURBS[value]}
       </p>
     </div>
