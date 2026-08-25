@@ -26,6 +26,7 @@ import { CheckCircle2, AlertCircle, Check } from "lucide-react";
 import { clearLeaderboardCache } from "@/lib/leaderboard/cache";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useSubscription } from "@/hooks/useSubscription";
+import { formatPartnerAccessDate } from "@/lib/partners/dates";
 import {
   formatAuthProviderLabel,
   getOAuthProvider,
@@ -1065,7 +1066,7 @@ export default function ProfilePage() {
                                       ? `Complimentary access through ${partnerDisplayName}.`
                                       : "Complimentary institution access is active.",
                                     accessUntil
-                                      ? ` Full access until ${formatBillingDate(accessUntil)}.`
+                                      ? ` Full access until ${formatPartnerAccessDate(accessUntil)}.`
                                       : "",
                                   ].join("")
                                 : tier === "season_pass"

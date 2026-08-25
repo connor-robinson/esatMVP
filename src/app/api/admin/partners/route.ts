@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireTesterAdmin } from "@/lib/tester/admin";
 import { listPartnerStats, getPartnerDetailStats } from "@/lib/partners/adminStats";
+import { endOfUtcDay } from "@/lib/partners/dates";
 
 export const dynamic = "force-dynamic";
 
@@ -68,9 +69,9 @@ export async function POST(request: NextRequest) {
         access_starts_at: body.accessStartsAt
           ? String(body.accessStartsAt)
           : new Date().toISOString(),
-        access_ends_at: new Date(accessEndsAt).toISOString(),
+        access_ends_at: endOfUtcDay(accessEndsAt.slice(0, 10)),
         default_invite_expiry: body.defaultInviteExpiry
-          ? new Date(String(body.defaultInviteExpiry)).toISOString()
+          ? endOfUtcDay(String(body.defaultInviteExpiry).slice(0, 10))
           : null,
         max_invites: body.maxInvites != null ? Number(body.maxInvites) : null,
         notes: body.notes ? String(body.notes) : null,
@@ -93,7 +94,9 @@ export async function POST(request: NextRequest) {
     if (body.displayName != null) updates.display_name = String(body.displayName);
     if (body.status != null) updates.status = String(body.status);
     if (body.accessEndsAt != null) {
-      updates.access_ends_at = new Date(String(body.accessEndsAt)).toISOString();
+      updates.access_ends_at = endOfUtcDay(
+        String(body.accessEndsAt).slice(0, 10),
+      );
     }
     if (body.accessStartsAt != null) {
       updates.access_starts_at = new Date(
@@ -107,7 +110,7 @@ export async function POST(request: NextRequest) {
     }
     if (body.defaultInviteExpiry !== undefined) {
       updates.default_invite_expiry = body.defaultInviteExpiry
-        ? new Date(String(body.defaultInviteExpiry)).toISOString()
+        ? endOfUtcDay(String(body.defaultInviteExpiry).slice(0, 10))
         : null;
     }
 

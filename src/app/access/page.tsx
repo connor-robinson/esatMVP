@@ -66,17 +66,17 @@ export default function AccessPage() {
   return (
     <main className="min-h-[70vh] py-16">
       <Container size="sm">
-        <h1 className="text-3xl font-semibold tracking-tight text-stone-900">
+        <h1 className="text-3xl font-semibold tracking-tight text-white">
           Institution access
         </h1>
-        <p className="mt-3 text-stone-600">
+        <p className="mt-3 text-text-muted">
           Have an institution access code? Paste the unique invitation you were
           sent. Each code works once.
         </p>
 
         {(urlError || formError) && (
           <p
-            className="mt-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800"
+            className="mt-6 rounded-lg bg-red-500/15 px-4 py-3 text-sm text-red-200"
             role="alert"
           >
             {formError || urlError}
@@ -85,7 +85,7 @@ export default function AccessPage() {
 
         <form onSubmit={onSubmit} className="mt-8 space-y-4">
           <label className="block">
-            <span className="text-sm font-medium text-stone-800">
+            <span className="text-sm font-medium text-text">
               Invitation code
             </span>
             <input
@@ -94,20 +94,20 @@ export default function AccessPage() {
               spellCheck={false}
               value={token}
               onChange={(e) => setToken(e.target.value)}
-              className="mt-2 w-full rounded-lg bg-stone-100 px-4 py-3 text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-400"
+              className="mt-2 w-full rounded-lg bg-surface-mid px-4 py-3 text-sm text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/40"
               placeholder="Paste your code here"
             />
           </label>
           <button
             type="submit"
             disabled={submitting}
-            className="rounded-lg bg-stone-900 px-5 py-3 text-sm font-medium text-white disabled:opacity-60"
+            className="rounded-lg bg-primary px-5 py-3 text-sm font-medium text-white disabled:opacity-60"
           >
             {submitting ? "Redeeming…" : "Redeem access"}
           </button>
         </form>
 
-        <p className="mt-10 text-sm text-stone-500">
+        <p className="mt-10 text-sm text-text-muted">
           Prefer a link? Use the unique claim URL your organisation sent you.
           Need help?{" "}
           <Link href="/help" className="underline underline-offset-2">

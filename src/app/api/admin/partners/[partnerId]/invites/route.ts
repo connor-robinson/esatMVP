@@ -6,6 +6,7 @@ import {
   revokeInvite,
   revokeInviteBatch,
 } from "@/lib/partners/invites";
+import { endOfUtcDay } from "@/lib/partners/dates";
 import { PRODUCTION_SITE_URL } from "@/lib/seo/config";
 
 export const dynamic = "force-dynamic";
@@ -44,8 +45,29 @@ export async function POST(
 
   if (action === "generate") {
     const count = Number(body.count);
-    const expiresAt = String(body.expiresAt ?? "");
+    const accessEndsAtRaw = String(
+      body.accessEndsAt ?? body.expiresAt ?? "",
+    ).trim();
     const label = body.label ? String(body.label) : null;
+
+    if (!accessEndsAtRaw) {
+      return NextResponse.json(
+        { error: "accessEndsAt is required" },
+        { status: 400 },
+      );
+    }
+
+    let accessEndsAt: string;
+    try {
+      accessEndsAt = accessEndsAtRaw.includes("T")
+        ? new Date(accessEndsAtRaw).toISOString()
+        : endOfUtcDay(accessEndsAtRaw);
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid accessEndsAt date" },
+        { status: 400 },
+      );
+    }
 
     if (partner.max_invites != null) {
       const { count: existing } = await admin.service
@@ -60,13 +82,36 @@ export async function POST(
       }
     }
 
+    // The generate date is the programme full-access end, not only invite expiry.
+    const { error: partnerUpdateError } = await admin.service
+      .from("partners")
+      .update({
+        access_ends_at: accessEndsAt,
+        default_invite_expiry: accessEndsAt,
+      })
+      .eq("id", partnerId);
+    if (partnerUpdateError) {
+      return NextResponse.json(
+        { error: partnerUpdateError.message },
+        { status: 400 },
+      );
+    }
+
+    // Keep already-redeemed entitlements aligned when the window is extended.
+    await admin.service
+      .from("partner_entitlements")
+      .update({ ends_at: accessEndsAt })
+      .eq("partner_id", partnerId)
+      .is("revoked_at", null)
+      .lt("ends_at", accessEndsAt);
+
     try {
       const { batchId, invites } = await generateInviteBatch({
         service: admin.service,
         partnerId,
         partnerSlug: partner.slug,
         count,
-        expiresAt,
+        expiresAt: accessEndsAt,
         label,
         siteOrigin: PRODUCTION_SITE_URL,
       });
@@ -78,6 +123,7 @@ export async function POST(
       return NextResponse.json({
         batchId,
         count: invites.length,
+        accessEndsAt,
         invites: invites.map((i) => ({
           tokenPrefix: i.tokenPrefix,
           inviteCode: i.rawToken,

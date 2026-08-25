@@ -82,7 +82,7 @@ export default function AdminPartnerDetailPage() {
       body: JSON.stringify({
         action: "generate",
         count: genCount,
-        expiresAt: new Date(`${genExpiry}T23:59:59.000Z`).toISOString(),
+        accessEndsAt: genExpiry,
         label: genLabel || null,
       }),
     });
@@ -228,7 +228,8 @@ export default function AdminPartnerDetailPage() {
             Generate invitations
           </h2>
           <p className="mt-1 text-sm text-stone-500">
-            Codes are shown once. Download the CSV before leaving this page.
+            Codes are shown once. The date below sets full access end for this
+            programme and invite validity. Download the CSV before leaving.
           </p>
           <div className="mt-4 flex flex-wrap items-end gap-3">
             <label className="text-sm text-stone-600">
@@ -243,7 +244,7 @@ export default function AdminPartnerDetailPage() {
               />
             </label>
             <label className="text-sm text-stone-600">
-              Expiry
+              Full access until
               <input
                 type="date"
                 value={genExpiry}

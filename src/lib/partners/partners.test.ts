@@ -6,6 +6,7 @@ import {
   isPlausiblePartnerToken,
 } from "./tokens";
 import { sanitizePartnerProps } from "./analytics";
+import { endOfUtcDay, formatPartnerAccessDate } from "./dates";
 import { evaluateFeedbackEligibilityRules } from "./feedback";
 import { redeemErrorMessage } from "./types";
 import { sanitizeGaParams } from "@/lib/ga/trackEvent";
@@ -135,6 +136,18 @@ describe("partner redeem error copy", () => {
     );
     expect(redeemErrorMessage("expired")).toContain("expired");
     expect(redeemErrorMessage("unavailable")).toContain("invalid");
+  });
+});
+
+describe("partner access dates", () => {
+  it("stores end-of-day UTC and formats the calendar day without local rollover", () => {
+    expect(endOfUtcDay("2027-10-13")).toBe("2027-10-13T23:59:59.000Z");
+    expect(formatPartnerAccessDate("2027-01-10T23:59:59.000Z")).toBe(
+      "10 January 2027",
+    );
+    expect(formatPartnerAccessDate("2027-10-13T23:59:59.000Z")).toBe(
+      "13 October 2027",
+    );
   });
 });
 

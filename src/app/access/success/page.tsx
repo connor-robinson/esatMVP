@@ -6,20 +6,8 @@ import { Container } from "@/components/layout/Container";
 import { APP_ROUTES } from "@/lib/seo/config";
 import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
 import { trackEvent } from "@/lib/ga/trackEvent";
+import { formatPartnerAccessDate } from "@/lib/partners/dates";
 import { PARTNER_REDEEM_TRACK_COOKIE } from "@/lib/partners/types";
-
-function formatAccessEnd(iso: string | null | undefined): string {
-  if (!iso) return "";
-  try {
-    return new Date(iso).toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  } catch {
-    return iso.slice(0, 10);
-  }
-}
 
 function readTrackCookie(): {
   partner: string;
@@ -83,32 +71,32 @@ export default function AccessSuccessPage() {
     <main className="min-h-[70vh] py-16">
       <Container size="sm">
         {loading ? (
-          <p className="text-stone-500">Confirming your access…</p>
+          <p className="text-text-muted">Confirming your access…</p>
         ) : hasAccess ? (
           <>
-            <h1 className="text-3xl font-semibold tracking-tight text-stone-900">
+            <h1 className="text-3xl font-semibold tracking-tight text-white">
               Your complimentary ESAT Camp access is active
             </h1>
-            <p className="mt-4 text-stone-600">
+            <p className="mt-4 text-text-muted">
               {displayName
                 ? `You're accessing ESAT Camp through the ${displayName} programme.`
                 : "You're accessing ESAT Camp through an institution programme."}
             </p>
             {endsAt && (
-              <p className="mt-2 text-stone-600">
-                Full access available until {formatAccessEnd(endsAt)}.
+              <p className="mt-2 text-text-muted">
+                Full access available until {formatPartnerAccessDate(endsAt)}.
               </p>
             )}
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
               <Link
                 href={CALIBRATION_ROUTES.hub}
-                className="inline-flex justify-center rounded-lg bg-stone-900 px-5 py-3 text-sm font-medium text-white"
+                className="inline-flex justify-center rounded-lg bg-primary px-5 py-3 text-sm font-medium text-white"
               >
                 Start your calibration
               </Link>
               <Link
                 href={APP_ROUTES.questionBank}
-                className="inline-flex justify-center rounded-lg bg-stone-100 px-5 py-3 text-sm font-medium text-stone-900"
+                className="inline-flex justify-center rounded-lg bg-surface-mid px-5 py-3 text-sm font-medium text-text"
               >
                 Explore the question bank
               </Link>
@@ -116,16 +104,16 @@ export default function AccessSuccessPage() {
           </>
         ) : (
           <>
-            <h1 className="text-3xl font-semibold tracking-tight text-stone-900">
+            <h1 className="text-3xl font-semibold tracking-tight text-white">
               Access not found
             </h1>
-            <p className="mt-4 text-stone-600">
+            <p className="mt-4 text-text-muted">
               We could not confirm an active institution entitlement on this
               account. If you have a code, redeem it from the access page.
             </p>
             <Link
               href="/access"
-              className="mt-8 inline-flex rounded-lg bg-stone-900 px-5 py-3 text-sm font-medium text-white"
+              className="mt-8 inline-flex rounded-lg bg-primary px-5 py-3 text-sm font-medium text-white"
             >
               Enter access code
             </Link>
