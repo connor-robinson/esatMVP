@@ -50,18 +50,12 @@ export function NsaaYearQuickConverter({ data }: Props) {
         className="space-y-3 px-4 py-5 sm:px-5 sm:py-6"
         aria-labelledby="nsaa-year-quick-converter-heading"
       >
-        <div>
-          <h2
-            id="nsaa-year-quick-converter-heading"
-            className="text-base font-semibold text-text"
-          >
-            Quick score converter
-          </h2>
-          <p className="mt-1 text-sm text-text-muted">
-            Fixed to NSAA {data.year}. Pick a subject or section, enter a raw
-            mark, and read the published scaled score here.
-          </p>
-        </div>
+        <h2
+          id="nsaa-year-quick-converter-heading"
+          className="text-base font-semibold text-text"
+        >
+          Quick score converter
+        </h2>
 
         <div className="grid gap-3 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,0.8fr)_auto] sm:items-end">
           <label className="block">
@@ -112,7 +106,7 @@ export function NsaaYearQuickConverter({ data }: Props) {
 
           <div className="rounded-organic-lg bg-surface-mid px-4 py-2.5 sm:min-w-[7.5rem]">
             <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-text-muted">
-              Scaled score
+              ESAT score
             </p>
             <p className="mt-0.5 text-2xl font-semibold tabular-nums text-text">
               {formatScaledScore(scaled)}
@@ -123,24 +117,24 @@ export function NsaaYearQuickConverter({ data }: Props) {
 
       <div className="relative isolate overflow-hidden">
         <Image
-          src="/images/score-converter/percentile-graph.png"
+          src="/images/score-converter/esat-score-converter-preview.png"
           alt=""
-          width={1376}
+          width={1024}
           height={768}
-          className="h-44 w-full object-cover object-center blur-[2.5px] scale-105 sm:h-52"
+          className="h-36 w-full object-cover object-top sm:h-40"
           aria-hidden
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-background/55"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/80 via-background/45 to-background/20"
         />
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-4 text-center">
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5 px-4 text-center">
           <p className="max-w-sm text-sm font-medium text-text sm:text-base">
-            Visit this page for the full converter
+            View where you like or percentile
           </p>
           <Link
             href={fullHref}
-            className="inline-flex items-center gap-2 rounded-organic-md bg-secondary px-4 py-2.5 text-sm font-semibold text-background transition-colors hover:brightness-110"
+            className="inline-flex items-center gap-2 rounded-organic-md bg-secondary px-4 py-2 text-sm font-semibold text-background transition-colors hover:brightness-110"
           >
             Open full converter
             <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />

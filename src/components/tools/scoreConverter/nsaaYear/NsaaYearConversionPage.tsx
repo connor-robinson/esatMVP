@@ -111,9 +111,9 @@ export function NsaaYearConversionPage({ data }: Props) {
           </h1>
         </header>
 
-        <NsaaYearConversionTables data={data} />
-
         <NsaaYearQuickConverter data={data} />
+
+        <NsaaYearConversionTables data={data} />
 
         <details className="group rounded-organic-lg bg-surface-elevated px-4 py-3 open:pb-4">
           <summary className="cursor-pointer list-none text-base font-semibold text-text marker:content-none [&::-webkit-details-marker]:hidden">
