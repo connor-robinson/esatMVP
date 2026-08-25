@@ -22,6 +22,8 @@ import type { Paper, PaperSection, Question, ExamName } from '@/types/papers';
 import { PaperLibraryGrid } from '@/components/papers/library/PaperLibraryGrid';
 import { PaperSessionSummary } from '@/components/papers/library/PaperSessionSummary';
 import { ReplaceActivePaperModal } from '@/components/papers/ReplaceActivePaperModal';
+import { LoadingPage } from '@/components/shared/LoadingPage';
+import { allowLoadingPaint } from '@/lib/papers/allowLoadingPaint';
 import { shouldConfirmReplacePaperSession, resumeInProgressPaperSession } from '@/lib/papers/activePaperSessionClient';
 import {
   isPastPaperLibraryLocked,
@@ -479,9 +481,11 @@ export default function PapersLibraryPage() {
     const paper = firstPaper.paper;
 
     const runStart = async () => {
+      let navigated = false;
       try {
         setIsStartingSession(true);
         setError(null);
+        await allowLoadingPaint();
 
         const paperType =
           examNameToPaperType(paper.examName as ExamName) || 'NSAA';
@@ -627,6 +631,7 @@ export default function PapersLibraryPage() {
           return;
         }
 
+        navigated = true;
         router.push('/past-papers/solve');
       } catch (err) {
         setError(
@@ -635,7 +640,7 @@ export default function PapersLibraryPage() {
             : 'Failed to start session. Try another paper or contact support.',
         );
       } finally {
-        setIsStartingSession(false);
+        if (!navigated) setIsStartingSession(false);
       }
     };
 
@@ -813,6 +818,10 @@ export default function PapersLibraryPage() {
         isConfirming={replaceConfirming}
         isResuming={replaceResuming}
       />
+
+      {isStartingSession ? (
+        <LoadingPage variant="session" message="Loading your paper" />
+      ) : null}
     </Container>
   );
 }

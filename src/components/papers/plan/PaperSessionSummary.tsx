@@ -5,7 +5,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { X, Play, Clock } from "lucide-react";
+import { X, ArrowRight, Clock } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
 import { getPaperTypeColor } from "@/config/colors";
@@ -185,8 +185,8 @@ export function PaperSessionSummary({
             : "bg-primary/50 hover:bg-primary/60 text-white interaction-scale"
         )}
       >
-        <Play className="w-4 h-4" />
-        <span>Start Practice Session</span>
+        <span>Start papers</span>
+        <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
       </button>
     </Card>
   );

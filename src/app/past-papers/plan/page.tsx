@@ -22,6 +22,8 @@ import { PaperLibraryFilters } from '@/components/papers/plan/PaperLibraryFilter
 import { PaperLibraryGrid } from '@/components/papers/plan/PaperLibraryGrid';
 import { PaperSessionSummary } from '@/components/papers/plan/PaperSessionSummary';
 import { ReplaceActivePaperModal } from '@/components/papers/ReplaceActivePaperModal';
+import { LoadingPage } from '@/components/shared/LoadingPage';
+import { allowLoadingPaint } from '@/lib/papers/allowLoadingPaint';
 import { shouldConfirmReplacePaperSession, resumeInProgressPaperSession } from '@/lib/papers/activePaperSessionClient';
 
 interface SelectedPaper {
@@ -214,9 +216,11 @@ export default function PapersPlanPage() {
     const selectedSections = Array.from(firstPaper.selectedSections);
 
     const runStart = async () => {
+      let navigated = false;
       try {
         setIsStartingSession(true);
         setError(null);
+        await allowLoadingPaint();
 
         const allQuestions = await getQuestions(paper.id);
 
@@ -291,13 +295,14 @@ export default function PapersPlanPage() {
         });
 
         await loadQuestions(paper.id);
+        navigated = true;
         router.push('/past-papers/solve');
       } catch (err) {
         setError(
           err instanceof Error ? err.message : 'Failed to start session',
         );
       } finally {
-        setIsStartingSession(false);
+        if (!navigated) setIsStartingSession(false);
       }
     };
 
@@ -439,6 +444,10 @@ export default function PapersPlanPage() {
         isConfirming={replaceConfirming}
         isResuming={replaceResuming}
       />
+
+      {isStartingSession ? (
+        <LoadingPage variant="session" message="Loading your paper" />
+      ) : null}
     </Container>
   );
 }

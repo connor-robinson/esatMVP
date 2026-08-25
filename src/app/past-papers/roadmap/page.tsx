@@ -31,6 +31,8 @@ import { examNameToPaperType } from '@/lib/papers/paperConfig';
 import type { PaperSection, Question, Paper } from '@/types/papers';
 import type { RoadmapPart } from '@/lib/papers/roadmapConfig';
 import { ReplaceActivePaperModal } from '@/components/papers/ReplaceActivePaperModal';
+import { LoadingPage } from '@/components/shared/LoadingPage';
+import { allowLoadingPaint } from '@/lib/papers/allowLoadingPaint';
 import { shouldConfirmReplacePaperSession, resumeInProgressPaperSession } from '@/lib/papers/activePaperSessionClient';
 import { isFreePreviewRoadmapStage } from '@/lib/papers/freePreviewPapers';
 import { applyEsatSubjectsToRoadmapStages } from '@/lib/papers/roadmapEsatFilter';
@@ -134,6 +136,7 @@ export default function PapersRoadmapPage() {
   const [replaceModalOpen, setReplaceModalOpen] = useState(false);
   const [replaceConfirming, setReplaceConfirming] = useState(false);
   const [replaceResuming, setReplaceResuming] = useState(false);
+  const [isStartingSession, setIsStartingSession] = useState(false);
   const pendingRoadmapStartRef = useRef<{
     stage: RoadmapStage;
     selectedParts: RoadmapPart[];
@@ -348,10 +351,14 @@ export default function PapersRoadmapPage() {
       selectedParts: RoadmapPart[],
       options: RoadmapStartOptions,
     ) => {
+      if (selectedParts.length === 0) {
+        return;
+      }
+
+      setIsStartingSession(true);
+      let navigated = false;
       try {
-        if (selectedParts.length === 0) {
-          return;
-        }
+        await allowLoadingPaint();
 
         // Group selected parts by paper (paperName + examType combination)
         const partsByPaper = new Map<string, typeof selectedParts>();
@@ -547,6 +554,8 @@ export default function PapersRoadmapPage() {
 
         router.push('/past-papers/solve');
       } catch (error) {
+      } finally {
+        setIsStartingSession(false);
       }
     },
     [router, startSession, setQuestions],
@@ -558,6 +567,7 @@ export default function PapersRoadmapPage() {
       selectedParts: RoadmapPart[],
       options: RoadmapStartOptions,
     ) => {
+      if (isStartingSession) return;
       if (
         !hasFullAccess &&
         !isFreePreviewRoadmapStage({
@@ -574,7 +584,7 @@ export default function PapersRoadmapPage() {
       }
       await executeStartStage(stage, selectedParts, options);
     },
-    [executeStartStage, hasFullAccess],
+    [executeStartStage, hasFullAccess, isStartingSession],
   );
 
   const handleCancelReplaceSession = useCallback(() => {
@@ -837,6 +847,10 @@ export default function PapersRoadmapPage() {
         isConfirming={replaceConfirming}
         isResuming={replaceResuming}
       />
+
+      {isStartingSession ? (
+        <LoadingPage variant="session" message="Loading your paper" />
+      ) : null}
     </Container>
   );
 }

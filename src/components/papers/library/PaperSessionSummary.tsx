@@ -684,7 +684,7 @@ export function PaperSessionSummary({
                 "z-[50] ring-2 ring-primary/50 ring-offset-2 ring-offset-surface",
             )}
           >
-            Start Practice Session
+            Start papers
             <ArrowRight
               className={cn("h-4 w-4 shrink-0", !canStart && "opacity-70")}
               strokeWidth={2.5}

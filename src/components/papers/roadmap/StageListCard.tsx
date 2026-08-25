@@ -592,7 +592,7 @@ export function StageListCard({
                   >
                     <span>
                       {isUnlocked
-                        ? "Start session"
+                        ? "Start papers"
                         : lockReason === "paywall"
                           ? "Upgrade to unlock"
                           : "Locked"}
