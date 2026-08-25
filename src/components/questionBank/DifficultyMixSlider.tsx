@@ -24,17 +24,12 @@ export function DifficultyMixSlider({ value, onChange }: Props) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
   const [visualPct, setVisualPct] = useState(pct);
-  const [blurbKey, setBlurbKey] = useState(0);
   const labelId = useId();
 
   useEffect(() => {
     if (dragging) return;
     setVisualPct(pct);
   }, [pct, dragging]);
-
-  useEffect(() => {
-    setBlurbKey((key) => key + 1);
-  }, [value]);
 
   const ratioFromClientX = (clientX: number) => {
     const track = trackRef.current;

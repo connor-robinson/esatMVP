@@ -11,6 +11,7 @@ import {
   SUBJECT_PILL_INACTIVE,
 } from "@/lib/questionBank/subjectColors";
 import {
+  DIFFICULTY_MIX_BLURBS,
   difficultiesForMixApi,
   type DifficultyMixPreset,
   uiDifficultiesForMix,
@@ -325,7 +326,12 @@ export function QuestionBankSessionSettingsModal({
                   </p>
                 </RoadmapInfoPopover>
               </div>
-              <span className="text-xs font-semibold text-text">{difficultyMix}</span>
+              <span
+                key={difficultyMix}
+                className="animate-fade-in text-xs font-medium text-text-muted"
+              >
+                {DIFFICULTY_MIX_BLURBS[difficultyMix]}
+              </span>
             </div>
             <DifficultyMixSlider
               value={difficultyMix}
