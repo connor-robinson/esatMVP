@@ -62,9 +62,28 @@ def page_review():
     return send_from_directory(STATIC_DIR, "review.html")
 
 
+# Windows mimetypes often maps .woff2 to application/octet-stream, which can
+# stop browsers from applying KaTeX fonts and leave math looking like raw text.
+_KATEX_MIME = {
+    ".css": "text/css",
+    ".js": "text/javascript",
+    ".mjs": "text/javascript",
+    ".woff": "font/woff",
+    ".woff2": "font/woff2",
+    ".ttf": "font/ttf",
+    ".otf": "font/otf",
+}
+
+
 @app.get("/vendor/katex/<path:filename>")
 def vendor_katex(filename: str):
-    return send_from_directory(KATEX_DIR, filename)
+    response = send_from_directory(KATEX_DIR, filename)
+    suffix = Path(filename).suffix.lower()
+    mime = _KATEX_MIME.get(suffix)
+    if mime:
+        response.headers["Content-Type"] = mime
+    response.headers["Cache-Control"] = "public, max-age=86400"
+    return response
 
 
 def _wants_refresh() -> bool:

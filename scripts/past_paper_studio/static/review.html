@@ -9,6 +9,31 @@
     <link rel="stylesheet" href="/static/studio.css" />
     <script src="/vendor/katex/katex.min.js"></script>
     <script src="/vendor/katex/contrib/mhchem.min.js"></script>
+    <script>
+      /* Local vendor path first; fall back to jsDelivr if node_modules is missing. */
+      (function ensureKatex() {
+        function loadCss(href) {
+          var link = document.createElement("link");
+          link.rel = "stylesheet";
+          link.href = href;
+          document.head.appendChild(link);
+        }
+        function loadScript(src, onload) {
+          var script = document.createElement("script");
+          script.src = src;
+          script.onload = onload;
+          document.head.appendChild(script);
+        }
+        if (window.katex && typeof window.katex.renderToString === "function") return;
+        var cdn = "https://cdn.jsdelivr.net/npm/katex@0.16.27/dist";
+        loadCss(cdn + "/katex.min.css");
+        loadScript(cdn + "/katex.min.js", function () {
+          loadScript(cdn + "/contrib/mhchem.min.js", function () {
+            window.dispatchEvent(new Event("katex-ready"));
+          });
+        });
+      })();
+    </script>
   </head>
   <body>
     <div class="topbar">

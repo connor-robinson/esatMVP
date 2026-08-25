@@ -12,6 +12,104 @@ function escapeHtml(text) {
     .replace(/'/g, "&#39;");
 }
 
+function isEscaped(text, index) {
+  let slashes = 0;
+  for (let i = index - 1; i >= 0 && text[i] === "\\"; i -= 1) slashes += 1;
+  return slashes % 2 === 1;
+}
+
+/** Convert \( \) / \[ \] delimiters to $ / $$ so the $ parser can find them. */
+function convertLatexDelimiters(text) {
+  if (!text) return text;
+  let out = "";
+  let i = 0;
+  const source = String(text);
+
+  while (i < source.length) {
+    if (source[i] === "$") {
+      const isDisplay = source[i + 1] === "$";
+      const close = isDisplay ? "$$" : "$";
+      const start = i;
+      i += close.length;
+      const end = source.indexOf(close, i);
+      if (end === -1) {
+        out += source.slice(start);
+        break;
+      }
+      out += source.slice(start, end + close.length);
+      i = end + close.length;
+      continue;
+    }
+
+    if (source[i] === "\\" && source[i + 1] === "[" && !isEscaped(source, i)) {
+      const end = source.indexOf("\\]", i + 2);
+      if (end !== -1) {
+        out += `$$${source.slice(i + 2, end)}$$`;
+        i = end + 2;
+        continue;
+      }
+    }
+
+    if (source[i] === "\\" && source[i + 1] === "(" && !isEscaped(source, i)) {
+      const end = source.indexOf("\\)", i + 2);
+      if (end !== -1) {
+        out += `$${source.slice(i + 2, end)}$`;
+        i = end + 2;
+        continue;
+      }
+    }
+
+    out += source[i];
+    i += 1;
+  }
+  return out;
+}
+
+function isInsideMathDelimiters(text, position) {
+  let i = 0;
+  while (i < text.length) {
+    if (text[i] !== "$") {
+      i += 1;
+      continue;
+    }
+    const isDisplay = text[i + 1] === "$";
+    const open = i;
+    const closeToken = isDisplay ? "$$" : "$";
+    const bodyStart = i + closeToken.length;
+    const close = text.indexOf(closeToken, bodyStart);
+    if (close === -1) return false;
+    const end = close + closeToken.length;
+    if (position >= open && position < end) return true;
+    i = end;
+  }
+  return false;
+}
+
+/** Wrap bare \\frac / \\sqrt / etc. that sit outside $...$ so KaTeX can see them. */
+function wrapBareLatex(text) {
+  const source = String(text ?? "");
+  const trimmed = source.trim();
+  if (!trimmed) return source;
+  if (
+    (trimmed.startsWith("$$") && trimmed.endsWith("$$")) ||
+    (trimmed.startsWith("$") && trimmed.endsWith("$") && !trimmed.slice(1, -1).includes("$"))
+  ) {
+    return source;
+  }
+
+  const pattern = /\\[a-zA-Z]+/g;
+  let match;
+  let needsWrap = false;
+  while ((match = pattern.exec(source)) !== null) {
+    if (!isInsideMathDelimiters(source, match.index)) {
+      needsWrap = true;
+      break;
+    }
+  }
+  if (!needsWrap) return source;
+  return `$${trimmed}$`;
+}
+
 function renderMath(source, displayMode) {
   if (!window.katex) return null;
   try {
@@ -38,7 +136,7 @@ function renderTextRun(text) {
 function renderMathText(text) {
   let out = "";
   let index = 0;
-  const source = String(text ?? "");
+  const source = wrapBareLatex(convertLatexDelimiters(String(text ?? "")));
 
   while (index < source.length) {
     const next = source.indexOf("$", index);
@@ -138,6 +236,14 @@ function renderTextSegment(segment) {
   return out;
 }
 
+/** Render $...$ inside HTML table cell text without touching tags/attrs. */
+function renderMathInHtmlBlock(html) {
+  return String(html).replace(
+    /(<(?:td|th|caption|p|span|div|li|figcaption)[^>]*>)([^<]*)(<\/(?:td|th|caption|p|span|div|li|figcaption)>)/gi,
+    (_, open, body, close) => `${open}${body.includes("$") || body.includes("\\") ? renderMathText(body) : body}${close}`,
+  );
+}
+
 export function renderContent(text) {
   const source = String(text ?? "");
   if (!source.trim()) return "";
@@ -146,10 +252,15 @@ export function renderContent(text) {
   for (const part of parts) {
     if (!part) continue;
     if (/^<(table|svg|figure)/i.test(part.trim())) {
-      out += part;
+      if (/^<table/i.test(part.trim())) out += renderMathInHtmlBlock(part);
+      else out += part;
       continue;
     }
     out += renderTextSegment(part);
   }
   return out;
+}
+
+export function katexReady() {
+  return typeof window !== "undefined" && typeof window.katex?.renderToString === "function";
 }

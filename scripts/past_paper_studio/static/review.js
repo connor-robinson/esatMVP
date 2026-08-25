@@ -1,5 +1,5 @@
 import { api, clear, debounce, el, flagLabel, qs, questionTitle, toast } from "./common.js";
-import { renderContent } from "./render.js";
+import { katexReady, renderContent } from "./render.js";
 import { openCropEditor } from "./crop.js";
 
 const state = {
@@ -82,6 +82,14 @@ function renderHeader() {
 function renderBanners() {
   const host = clear(document.getElementById("banners"));
   const { conversion, source } = state.data;
+  if (!katexReady()) {
+    host.appendChild(
+      el("div", {
+        class: "banner err",
+        text: "KaTeX failed to load, so math is showing as raw LaTeX. Check /vendor/katex or your network, then refresh.",
+      }),
+    );
+  }
   if (source.error) {
     host.appendChild(
       el("div", {
@@ -459,4 +467,28 @@ if (!state.questionId) {
     document.getElementById("banners").innerHTML =
       `<div class="banner err">Could not load question: ${error.message}</div>`;
   });
+}
+
+window.addEventListener("katex-ready", () => {
+  if (state.draft) {
+    renderBanners();
+    renderPreview();
+  }
+});
+
+if (!katexReady()) {
+  let attempts = 0;
+  const timer = setInterval(() => {
+    attempts += 1;
+    if (katexReady()) {
+      clearInterval(timer);
+      if (state.draft) {
+        renderBanners();
+        renderPreview();
+      }
+    } else if (attempts > 40) {
+      clearInterval(timer);
+      if (state.draft) renderBanners();
+    }
+  }, 100);
 }
