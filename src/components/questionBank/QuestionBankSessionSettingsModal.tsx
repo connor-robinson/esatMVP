@@ -51,28 +51,29 @@ function resolveDifficultiesForApi(
   return [...new Set(effective.map(uiDifficultyToApiDifficulty))];
 }
 
-function difficultyPillClass(d: UiDifficultyLabel, active: boolean): string {
-  if (!active) return SUBJECT_PILL_INACTIVE;
-  switch (d) {
-    case "Easy":
-      return "bg-difficulty-pill-easy text-text";
-    case "Medium":
-      return "bg-difficulty-pill-medium text-text";
-    case "Hard":
-      return "bg-difficulty-pill-hard text-text";
-    case "Extreme":
-      return "bg-accent text-text";
-    default:
-      return "bg-surface-mid text-text";
-  }
-}
-
-const DIFFICULTY_AUTO_ACTIVE =
-  "bg-surface-neutral text-text dark:bg-[#5b5661] dark:text-text";
-const DIFFICULTY_AUTO_INACTIVE = SUBJECT_PILL_INACTIVE;
+const DIFFICULTY_SLIDER_OPTIONS = [
+  "Auto",
+  ...ALL_UI_DIFFICULTIES,
+] as const;
 
 function clamp(n: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, n));
+}
+
+function difficultyIndexFromUi(selected: UiDifficultyLabel[]): number {
+  if (selected.length === 0) return 0;
+  const first = selected[0]!;
+  const index = DIFFICULTY_SLIDER_OPTIONS.indexOf(first);
+  return index >= 0 ? index : 0;
+}
+
+function uiFromDifficultyIndex(index: number): UiDifficultyLabel[] {
+  const option =
+    DIFFICULTY_SLIDER_OPTIONS[
+      clamp(index, 0, DIFFICULTY_SLIDER_OPTIONS.length - 1)
+    ];
+  if (!option || option === "Auto") return [];
+  return [option];
 }
 
 function autoTimeLimitMinutes(questionCount: number): number {
@@ -204,15 +205,8 @@ export function QuestionBankSessionSettingsModal({
     });
   };
 
-  const toggleDifficulty = (d: UiDifficultyLabel) => {
-    setDifficultiesUi((prev) => {
-      if (prev.includes(d)) return prev.filter((x) => x !== d);
-      return [...prev, d];
-    });
-  };
-
-  const selectDifficultyAuto = () => {
-    setDifficultiesUi([]);
+  const setDifficultyFromSlider = (index: number) => {
+    setDifficultiesUi(uiFromDifficultyIndex(index));
   };
 
   const applyAutoTimeLimit = () => {
@@ -244,7 +238,9 @@ export function QuestionBankSessionSettingsModal({
   if (!open || !originTile) return null;
 
   const modalTitle = isMixed ? "Mixed Practice" : "Session Settings";
-  const difficultyAuto = difficultiesUi.length === 0;
+  const difficultyIndex = difficultyIndexFromUi(difficultiesUi);
+  const difficultyLabel =
+    DIFFICULTY_SLIDER_OPTIONS[difficultyIndex] ?? "Auto";
   const showSubjectToggles = siblingTiles.length > 1;
   const autoMinutes = autoTimeLimitMinutes(questionCount);
 
@@ -264,7 +260,7 @@ export function QuestionBankSessionSettingsModal({
       <div
         className={cn(
           "relative z-[101] flex max-h-[min(92vh,880px)] w-full max-w-[960px] flex-col overflow-hidden rounded-organic-xl",
-          "bg-[#0a0a0c] p-8 shadow-[0_28px_80px_rgba(0,0,0,0.65)] sm:p-10",
+          "bg-surface p-8 shadow-[0_28px_80px_rgba(0,0,0,0.45)] sm:p-10",
         )}
       >
         {/* Header */}
@@ -328,41 +324,48 @@ export function QuestionBankSessionSettingsModal({
               <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
                 Difficulty
               </span>
-              <span className="text-xs text-text-muted">
-                {difficultyAuto
-                  ? "Auto"
-                  : `${difficultiesUi.length} selected`}
-              </span>
+              <span className="text-xs font-semibold text-text">{difficultyLabel}</span>
             </div>
-            <div className="flex flex-wrap items-center justify-between gap-2.5">
-              <div className="flex flex-wrap gap-2.5">
-                {ALL_UI_DIFFICULTIES.map((d) => {
-                  const active = difficultiesUi.includes(d);
-                  return (
-                    <button
-                      key={d}
-                      type="button"
-                      onClick={() => toggleDifficulty(d)}
-                      className={cn(
-                        "rounded-organic-md px-3.5 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors",
-                        difficultyPillClass(d, active),
-                      )}
-                    >
-                      {d}
-                    </button>
-                  );
-                })}
-              </div>
-              <button
-                type="button"
-                onClick={selectDifficultyAuto}
+            <div className="space-y-2.5 pt-1">
+              <input
+                type="range"
+                min={0}
+                max={DIFFICULTY_SLIDER_OPTIONS.length - 1}
+                step={1}
+                value={difficultyIndex}
+                onChange={(e) => setDifficultyFromSlider(Number(e.target.value))}
+                aria-label="Difficulty"
+                aria-valuetext={difficultyLabel}
                 className={cn(
-                  "ml-4 shrink-0 rounded-organic-md px-3.5 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors",
-                  difficultyAuto ? DIFFICULTY_AUTO_ACTIVE : DIFFICULTY_AUTO_INACTIVE,
+                  "h-2 w-full cursor-pointer appearance-none rounded-full bg-surface-mid",
+                  "accent-secondary",
+                  "[&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5",
+                  "[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full",
+                  "[&::-webkit-slider-thumb]:bg-secondary [&::-webkit-slider-thumb]:shadow-sm",
+                  "[&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5",
+                  "[&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0",
+                  "[&::-moz-range-thumb]:bg-secondary",
+                  "[&::-moz-range-track]:h-2 [&::-moz-range-track]:rounded-full [&::-moz-range-track]:bg-surface-mid",
+                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary/35",
                 )}
-              >
-                Auto
-              </button>
+              />
+              <div className="flex justify-between gap-1 px-0.5">
+                {DIFFICULTY_SLIDER_OPTIONS.map((option, index) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setDifficultyFromSlider(index)}
+                    className={cn(
+                      "min-w-0 flex-1 text-center text-[10px] font-semibold uppercase tracking-wide transition-colors sm:text-xs",
+                      index === difficultyIndex
+                        ? "text-text"
+                        : "text-text-subtle hover:text-text-muted",
+                    )}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -428,7 +431,7 @@ export function QuestionBankSessionSettingsModal({
               "inline-flex min-h-[2.75rem] w-full items-center justify-center gap-2 rounded-organic-lg px-8 sm:w-auto",
               "bg-secondary text-background text-sm font-semibold shadow-glow transition-all duration-fast",
               "hover:brightness-110 active:scale-[0.98]",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0c]",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
             )}
           >
             Start your session
