@@ -1,42 +1,49 @@
 /**
- * Post-result converter → free practice offer helpers.
- * Maps converted exam sections to free-tier preview subjects for deep links.
+ * Post-result converter → calibration offer helpers.
+ * Maps converted exam sections to module labels and calibration deep links.
  */
 
-import {
-  isFreeTierPreviewSubject,
-  type FreeTierPreviewSubject,
-} from "@/lib/questionBank/freeTierQuestions";
+import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
 import type { ConverterExam, ConvertedSection } from "@/lib/scoreConverter/esatModules";
-import { QUESTION_BANK_TOTAL_COUNT } from "@/config/questionBankMarketing";
 
-export const CONVERTER_PRICING_CTA_HREF = "/pricing";
+export type ConverterCalibrationModule =
+  | "Math 1"
+  | "Math 2"
+  | "Physics"
+  | "Chemistry"
+  | "Biology";
 
-/** Question-bank practice page that consumes free-tier launch payload. */
-export const CONVERTER_FREE_PRACTICE_HREF = "/questions/questionbank";
-
-export type ConverterPracticeOfferCopy = {
+export type ConverterCalibrationOffer = {
   headline: string;
   description: string;
-  primaryCta: string;
-  secondaryCta: string;
-  support: string;
-  subject: FreeTierPreviewSubject;
-  displaySubject: string;
+  cta: string;
+  /** Display name used in copy (e.g. "Math 1"). */
+  module: ConverterCalibrationModule;
+  /** Coarse analytics slug (e.g. "math-1"). */
+  moduleSlug: string;
+  href: string;
 };
 
 function normalizeLabel(value: string | null | undefined): string {
   return (value ?? "").trim().toLowerCase();
 }
 
+const MODULE_SLUG: Record<ConverterCalibrationModule, string> = {
+  "Math 1": "math-1",
+  "Math 2": "math-2",
+  Physics: "physics",
+  Chemistry: "chemistry",
+  Biology: "biology",
+};
+
 /**
- * Map a converter section / module label onto a free-tier preview subject.
- * Falls back to Math 1 when the sitting has no clean ESAT-module match.
+ * Map a converter section / module label onto an ESAT module.
+ * Falls back to Math 1 when the sitting has no clean module match.
  */
-export function mapConvertedSubjectToFreeTier(
+export function mapConvertedSubjectToModule(
   exam: ConverterExam,
   section: Pick<ConvertedSection, "moduleLabel" | "legacyLabel" | "key"> | null | undefined,
-): FreeTierPreviewSubject {
+): ConverterCalibrationModule {
   if (section) {
     const module = normalizeLabel(section.moduleLabel);
     const legacy = normalizeLabel(section.legacyLabel);
@@ -86,28 +93,25 @@ export function resolveOfferSection(
   return sections[0] ?? null;
 }
 
-export function buildConverterPracticeOffer(
-  exam: ConverterExam,
-  section: ConvertedSection | null | undefined,
-): ConverterPracticeOfferCopy {
-  const subject = mapConvertedSubjectToFreeTier(exam, section);
-  const displaySubject = subject;
-  const countLabel = `${Math.floor(QUESTION_BANK_TOTAL_COUNT / 100) * 100}+`;
-
-  return {
-    headline: "Turn your score into a study plan",
-    description: `Try 10 free ${displaySubject} questions to identify which topics and question types need the most work.`,
-    primaryCta: `Start free ${displaySubject} practice`,
-    secondaryCta: "View full access from £8",
-    support: `No payment required · ${countLabel} ESAT-style questions with worked solutions`,
-    subject,
-    displaySubject,
-  };
+/** Route to the matching module calibration when one exists. */
+export function calibrationHrefForModule(
+  module: ConverterCalibrationModule,
+): string {
+  if (module === "Math 1") return CALIBRATION_ROUTES.math1;
+  return CALIBRATION_ROUTES.index;
 }
 
-export function freePracticeHrefForSubject(subject: FreeTierPreviewSubject): string {
-  if (!isFreeTierPreviewSubject(subject)) {
-    return `${CONVERTER_FREE_PRACTICE_HREF}?startSubject=${encodeURIComponent("Math 1")}`;
-  }
-  return `${CONVERTER_FREE_PRACTICE_HREF}?startSubject=${encodeURIComponent(subject)}`;
+export function buildConverterCalibrationOffer(
+  exam: ConverterExam,
+  section: ConvertedSection | null | undefined,
+): ConverterCalibrationOffer {
+  const module = mapConvertedSubjectToModule(exam, section);
+  return {
+    headline: "Estimate your ESAT level",
+    description: `Take a free 15-question ${module} calibration.`,
+    cta: "Start calibration",
+    module,
+    moduleSlug: MODULE_SLUG[module],
+    href: calibrationHrefForModule(module),
+  };
 }

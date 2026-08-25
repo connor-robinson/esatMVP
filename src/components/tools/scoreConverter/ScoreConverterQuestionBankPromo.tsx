@@ -1,25 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, X } from "lucide-react";
 import { BrandMarkImage } from "@/components/brand/BrandMarkImage";
 import { cn } from "@/lib/utils";
 import type { ConverterExam, ConvertedSection } from "@/lib/scoreConverter/esatModules";
 import {
-  buildConverterPracticeOffer,
-  CONVERTER_PRICING_CTA_HREF,
-  freePracticeHrefForSubject,
+  buildConverterCalibrationOffer,
   resolveOfferSection,
 } from "@/lib/scoreConverter/converterPracticeOffer";
-import { writeFreeTierLaunch } from "@/lib/questionBank/freeTierLaunch";
-import {
-  currentGaPath,
-  rememberGaSourcePage,
-  trackEvent,
-} from "@/lib/ga";
+import { rememberGaSourcePage, trackEvent } from "@/lib/ga";
 
 export function ScoreConverterQuestionBankPromo({
   open,
@@ -36,58 +27,8 @@ export function ScoreConverterQuestionBankPromo({
   onDismiss: () => void;
   className?: string;
 }) {
-  const router = useRouter();
-  const offerViewedKey = useRef<string | null>(null);
   const section = resolveOfferSection(sections, activeSection);
-  const copy = buildConverterPracticeOffer(exam, section);
-  const practiceHref = freePracticeHrefForSubject(copy.subject);
-  const converterPage = currentGaPath() ?? "/tools/score-converter";
-
-  useEffect(() => {
-    if (!open) return;
-    const onceKey = `${exam}:${copy.subject}:${converterPage}`;
-    if (offerViewedKey.current === onceKey) return;
-    offerViewedKey.current = onceKey;
-    trackEvent("converter_offer_viewed", {
-      exam,
-      subject: copy.subject,
-      source_page: converterPage,
-    });
-  }, [open, exam, copy.subject, converterPage]);
-
-  const trackCta = (
-    event:
-      | "converter_cta_click"
-      | "converter_free_practice_started",
-    ctaName: string,
-    destination: string,
-  ) => {
-    rememberGaSourcePage(converterPage);
-    trackEvent(event, {
-      cta_name: ctaName,
-      destination,
-      exam,
-      subject: copy.subject,
-      source_page: converterPage,
-      converter_page: converterPage,
-    });
-  };
-
-  const startFreePractice = () => {
-    writeFreeTierLaunch(copy.subject);
-    trackCta(
-      "converter_cta_click",
-      "start_free_practice",
-      practiceHref,
-    );
-    trackCta(
-      "converter_free_practice_started",
-      "start_free_practice",
-      practiceHref,
-    );
-    onDismiss();
-    router.push(practiceHref);
-  };
+  const copy = buildConverterCalibrationOffer(exam, section);
 
   return (
     <AnimatePresence>
@@ -114,7 +55,7 @@ export function ScoreConverterQuestionBankPromo({
           />
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 rounded-[inherit] bg-secondary/[0.12]"
+            className="pointer-events-none absolute inset-0 rounded-[inherit] bg-secondary/[0.08]"
           />
 
           <button
@@ -144,41 +85,29 @@ export function ScoreConverterQuestionBankPromo({
               <p className="mt-2 text-sm leading-relaxed text-text/75 sm:text-base">
                 {copy.description}
               </p>
-              <p className="mt-3 text-xs text-text/55 sm:text-sm">
-                {copy.support}
-              </p>
             </div>
 
-            <div className="flex w-full shrink-0 flex-col gap-2.5 sm:w-auto sm:min-w-[14rem]">
-              <button
-                type="button"
-                onClick={startFreePractice}
-                className={cn(
-                  "inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-fast",
-                  "bg-primary text-background hover:bg-primary-hover active:scale-[0.98]",
-                )}
-              >
-                <span>{copy.primaryCta}</span>
-                <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
-              </button>
-              <Link
-                href={CONVERTER_PRICING_CTA_HREF}
-                onClick={() => {
-                  trackCta(
-                    "converter_cta_click",
-                    "view_full_access",
-                    CONVERTER_PRICING_CTA_HREF,
-                  );
-                  onDismiss();
-                }}
-                className={cn(
-                  "inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-fast",
-                  "bg-background/80 text-text hover:brightness-95 active:scale-[0.98]",
-                )}
-              >
-                <span>{copy.secondaryCta}</span>
-              </Link>
-            </div>
+            <Link
+              href={copy.href}
+              onClick={() => {
+                rememberGaSourcePage("/tools/score-converter");
+                trackEvent("converter_cta_click", {
+                  cta_name: "start_calibration",
+                  source_page: "score_converter",
+                  module: copy.moduleSlug,
+                  destination: copy.href,
+                  exam,
+                });
+                onDismiss();
+              }}
+              className={cn(
+                "inline-flex shrink-0 items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-fast",
+                "bg-background text-text hover:brightness-95 active:scale-[0.98]",
+              )}
+            >
+              <span>{copy.cta}</span>
+              <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
+            </Link>
           </div>
         </motion.aside>
       )}
