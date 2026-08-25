@@ -7,7 +7,6 @@ const state = {
   data: null,
   draft: null,
   dirty: false,
-  saving: false,
   loading: false,
   paperId: null,
   paperQuestions: null,
@@ -17,6 +16,46 @@ const state = {
 
 /** In-flight / resolved neighbor payloads so Next/Prev do not wait on Supabase. */
 const prefetchCache = new Map();
+
+/** Background saves: navigate immediately, persist without blocking the UI. */
+const saveJobs = new Map();
+const saveOrder = [];
+let savePumpRunning = false;
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function pendingSaveCount() {
+  let count = 0;
+  for (const job of saveJobs.values()) {
+    if (job.status === "queued" || job.status === "inflight") count += 1;
+  }
+  return count;
+}
+
+function updateSaveStatus() {
+  const node = document.getElementById("save-status");
+  const button = document.getElementById("save");
+  if (!node || !button) return;
+  const pending = pendingSaveCount();
+  const failed = [...saveJobs.values()].filter((job) => job.status === "failed").length;
+  if (failed) {
+    node.textContent = failed === 1 ? "1 save failed" : `${failed} saves failed`;
+    node.style.color = "#ff6f6f";
+  } else if (pending) {
+    node.textContent = pending === 1 ? "Saving…" : `Saving ${pending}…`;
+    node.style.color = "";
+  } else {
+    node.textContent = "";
+    node.style.color = "";
+  }
+  if (state.dirty) {
+    button.textContent = "Save & next *";
+  } else {
+    button.textContent = "Save & next";
+  }
+}
 
 function warmImage(url) {
   if (!url) return;
@@ -258,7 +297,7 @@ function buildDraft(data) {
 
 function markDirty() {
   state.dirty = true;
-  document.getElementById("save").textContent = "Save & publish *";
+  updateSaveStatus();
 }
 
 /* ---------- rendering ---------- */
@@ -584,12 +623,17 @@ async function load(questionId, { preferCache = true } = {}) {
   setNavBusy(true);
   renderQuestionRail();
   try {
+    // Never paint stale content over a save that is still writing.
+    await waitForSave(id);
+    if (token !== state.loadToken) return;
+
     let data = null;
-    if (preferCache && prefetchCache.has(id)) {
+    const forceRefresh = !preferCache || prefetchCache.get(id)?.stale;
+    if (!forceRefresh && preferCache && prefetchCache.has(id)) {
       const entry = prefetchCache.get(id);
       data = entry.data || (await entry.promise);
     } else {
-      data = await api(`/api/question/${id}`);
+      data = await api(`/api/question/${id}${forceRefresh ? "?refresh=1" : ""}`);
       if (token !== state.loadToken) return;
       rememberQuestion(id, data);
     }
@@ -597,13 +641,13 @@ async function load(questionId, { preferCache = true } = {}) {
     state.data = data;
     state.draft = buildDraft(data);
     state.dirty = false;
-    document.getElementById("save").textContent = "Save & publish";
     document.getElementById("mark-reviewed").checked = Boolean(
       data.conversion && data.conversion.report && data.conversion.report.studio_reviewed,
     );
     const stem = document.getElementById("stem");
     stem.value = state.draft.stem;
     renderAll();
+    updateSaveStatus();
     prefetchNeighbors(data);
     ensurePaperList(data.question.paperId).catch(() => {});
   } finally {
@@ -611,10 +655,14 @@ async function load(questionId, { preferCache = true } = {}) {
   }
 }
 
-async function go(questionId) {
+async function go(questionId, { skipDirtyCheck = false } = {}) {
   if (!questionId) return;
   if (Number(questionId) === state.questionId && state.data) return;
-  if (state.dirty && !window.confirm("Discard unsaved changes?")) return;
+  if (!skipDirtyCheck && state.dirty) {
+    // Default review flow: keep edits by saving in the background, then move on.
+    queueSaveAndContinue(Number(questionId));
+    return;
+  }
   window.history.replaceState({}, "", `/review?questionId=${questionId}`);
   try {
     await load(questionId);
@@ -623,56 +671,211 @@ async function go(questionId) {
   }
 }
 
-async function save() {
-  if (state.saving) return;
-  state.saving = true;
-  const button = document.getElementById("save");
-  button.disabled = true;
-  button.textContent = "Saving…";
-  try {
-    const payload = {
-      questionStem: state.draft.stem,
-      options: state.draft.options,
-      answerLetter: state.draft.answerLetter,
-      markReviewed: document.getElementById("mark-reviewed").checked,
-      diagramAssets: state.draft.assets.map((asset) => ({
-        id: asset.id,
-        url: asset.url,
-        alt: asset.alt,
-        role: asset.role,
-        option_letter: asset.option_letter || null,
-        bbox_norm: asset.bbox_norm,
-        recrop: Boolean(asset.recrop),
-      })),
-    };
-    const data = await api(`/api/question/${state.questionId}/save`, {
-      method: "POST",
-      body: JSON.stringify(payload),
-    });
-    const result = data.saveResult || {};
-    state.data = data;
-    state.draft = buildDraft(data);
-    rememberQuestion(state.questionId, data);
-    prefetchNeighbors(data);
-    syncPaperListFromDraft();
-    state.dirty = false;
-    document.getElementById("stem").value = state.draft.stem;
-    document.getElementById("mark-reviewed").checked = Boolean(
-      data.conversion && data.conversion.report && data.conversion.report.studio_reviewed,
-    );
-    renderAll();
-    if (result.published) {
-      toast(`Saved and published. ${(result.notes || []).join(" · ")}`, "ok");
+function buildSavePayload() {
+  return {
+    questionStem: state.draft.stem,
+    options: { ...state.draft.options },
+    answerLetter: state.draft.answerLetter,
+    markReviewed: document.getElementById("mark-reviewed").checked,
+    diagramAssets: state.draft.assets.map((asset) => ({
+      id: asset.id,
+      url: asset.url,
+      alt: asset.alt,
+      role: asset.role,
+      option_letter: asset.option_letter || null,
+      bbox_norm: asset.bbox_norm ? [...asset.bbox_norm] : null,
+      recrop: Boolean(asset.recrop),
+    })),
+    light: true,
+  };
+}
+
+function enqueueSave(questionId, payload, meta = {}) {
+  const id = Number(questionId);
+  const existing = saveJobs.get(id);
+  const seq = (existing && existing.seq ? existing.seq : 0) + 1;
+  let resolveDone;
+  const done = new Promise((resolve) => {
+    resolveDone = resolve;
+  });
+  const job = {
+    seq,
+    payload,
+    attempts: 0,
+    status: "queued",
+    label: meta.label || `Q${id}`,
+    done,
+    resolveDone,
+  };
+  // Replace first so waiters that wake on the old done immediately see the new job.
+  saveJobs.set(id, job);
+  if (existing && typeof existing.resolveDone === "function") {
+    existing.resolveDone();
+  }
+  if (!saveOrder.includes(id)) saveOrder.push(id);
+  prefetchCache.delete(id);
+  updateSaveStatus();
+  pumpSaveQueue();
+  return job;
+}
+
+function waitForSave(questionId) {
+  const id = Number(questionId);
+  return (async () => {
+    while (true) {
+      const job = saveJobs.get(id);
+      if (!job || job.status === "failed") return;
+      await job.done;
     }
-    for (const warning of result.warnings || []) toast(warning, "err", 9000);
-    if (!result.published && !(result.warnings || []).length) toast("Saved.", "ok");
-  } catch (error) {
-    toast(`Save failed: ${error.message}`, "err", 9000);
-  } finally {
-    state.saving = false;
-    const saveButton = document.getElementById("save");
-    saveButton.disabled = false;
-    saveButton.textContent = state.dirty ? "Save & publish *" : "Save & publish";
+  })();
+}
+
+function applyOptimisticRail(questionId, payload) {
+  if (!state.paperQuestions) return;
+  const current = state.paperQuestions.find((item) => item.questionId === questionId);
+  if (!current) return;
+  const assets = payload.diagramAssets || [];
+  if (assets.length > 0) {
+    current.hasDiagram = true;
+    current.diagramCount = assets.length;
+  }
+  current.studioEdited = true;
+  current.converted = true;
+  if (payload.markReviewed) current.studioReviewed = true;
+  renderQuestionRail();
+}
+
+function queueCurrentSave({ continueTo = null } = {}) {
+  if (!state.draft || !state.questionId) return null;
+  const questionId = state.questionId;
+  const label =
+    (state.data && state.data.question && questionTitle(state.data.question)) || `Q${questionId}`;
+  const payload = buildSavePayload();
+  applyOptimisticRail(questionId, payload);
+  state.dirty = false;
+  updateSaveStatus();
+  const job = enqueueSave(questionId, payload, { label });
+  if (continueTo) {
+    go(continueTo, { skipDirtyCheck: true });
+  }
+  return job;
+}
+
+function queueSaveAndContinue(nextId) {
+  queueCurrentSave({ continueTo: nextId || null });
+}
+
+async function pumpSaveQueue() {
+  if (savePumpRunning) return;
+  savePumpRunning = true;
+  updateSaveStatus();
+  while (saveOrder.length) {
+    const questionId = saveOrder[0];
+    const job = saveJobs.get(questionId);
+    if (!job) {
+      saveOrder.shift();
+      continue;
+    }
+    if (job.status === "failed") {
+      saveOrder.shift();
+      continue;
+    }
+    job.status = "inflight";
+    updateSaveStatus();
+    const seq = job.seq;
+    try {
+      const data = await api(`/api/question/${questionId}/save`, {
+        method: "POST",
+        body: JSON.stringify(job.payload),
+      });
+      const current = saveJobs.get(questionId);
+      if (!current || current.seq !== seq) {
+        // A newer edit superseded this write; keep the question queued.
+        if (current) current.status = "queued";
+        continue;
+      }
+      saveJobs.delete(questionId);
+      saveOrder.shift();
+      job.resolveDone();
+      handleBackgroundSaveSuccess(questionId, data, job);
+    } catch (error) {
+      const current = saveJobs.get(questionId);
+      if (!current || current.seq !== seq) continue;
+      current.attempts += 1;
+      if (current.attempts < 3) {
+        current.status = "queued";
+        updateSaveStatus();
+        await sleep(350 * current.attempts);
+        continue;
+      }
+      current.status = "failed";
+      saveOrder.shift();
+      current.resolveDone();
+      toast(`Save failed for ${job.label}: ${error.message}`, "err", 12000);
+      if (state.questionId === questionId) {
+        state.dirty = true;
+        updateSaveStatus();
+      }
+    }
+    updateSaveStatus();
+  }
+  savePumpRunning = false;
+  updateSaveStatus();
+}
+
+function handleBackgroundSaveSuccess(questionId, data, job) {
+  const result = (data && data.saveResult) || {};
+  prefetchCache.delete(questionId);
+  if (state.paperQuestions) {
+    const row = state.paperQuestions.find((item) => item.questionId === questionId);
+    if (row) {
+      if (result.published) {
+        row.converted = true;
+        row.contentFormat = "text";
+      }
+      if (result.studioReviewed) row.studioReviewed = true;
+      if (result.status === "failed") row.conversionStatus = "failed";
+      else if (result.status) row.conversionStatus = result.status;
+      renderQuestionRail();
+    }
+  }
+  if (state.questionId === questionId && !state.dirty) {
+    if (state.data && state.data.conversion) {
+      state.data.conversion.status = result.status || state.data.conversion.status;
+      state.data.conversion.report = {
+        ...(state.data.conversion.report || {}),
+        studio_reviewed: result.studioReviewed,
+      };
+      renderHeader();
+      renderBanners();
+    }
+  }
+  if (result.published) {
+    toast(`Saved ${job.label}`, "ok", 2200);
+  } else if ((result.warnings || []).length) {
+    for (const warning of result.warnings) toast(`${job.label}: ${warning}`, "err", 9000);
+  } else {
+    toast(`Saved ${job.label}`, "ok", 2200);
+  }
+}
+
+async function save({ continueToNext = true } = {}) {
+  if (!state.draft) return;
+  const nextId =
+    continueToNext && state.data && state.data.neighbors
+      ? state.data.neighbors.nextId
+      : null;
+  if (continueToNext && !state.dirty && nextId) {
+    await go(nextId, { skipDirtyCheck: true });
+    return;
+  }
+  if (!state.dirty && !continueToNext) {
+    toast("Nothing to save.", "ok", 1800);
+    return;
+  }
+  queueCurrentSave({ continueTo: continueToNext ? nextId : null });
+  if (continueToNext && !nextId) {
+    toast("Saved. End of paper.", "ok", 2200);
   }
 }
 
@@ -681,14 +884,23 @@ document.getElementById("stem").addEventListener("input", (event) => {
   markDirty();
   schedulePreview();
 });
+document.getElementById("mark-reviewed").addEventListener("change", () => {
+  markDirty();
+});
 document.getElementById("show-answer").addEventListener("change", renderPreview);
 document.getElementById("add-asset").addEventListener("click", addAsset);
-document.getElementById("save").addEventListener("click", save);
+document.getElementById("save").addEventListener("click", () => save({ continueToNext: true }));
 
 window.addEventListener("keydown", (event) => {
   if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
     event.preventDefault();
-    save();
+    // Stay on this question; still save in the background.
+    save({ continueToNext: false });
+    return;
+  }
+  if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+    event.preventDefault();
+    save({ continueToNext: true });
     return;
   }
   if (event.altKey && event.key === "ArrowRight") {
@@ -702,9 +914,15 @@ window.addEventListener("keydown", (event) => {
 });
 
 window.addEventListener("beforeunload", (event) => {
-  if (state.dirty) {
+  if (state.dirty || pendingSaveCount() > 0) {
     event.preventDefault();
     event.returnValue = "";
+  }
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden" && state.dirty) {
+    queueCurrentSave();
   }
 });
 

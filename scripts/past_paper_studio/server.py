@@ -199,7 +199,7 @@ def main(argv: list[str] | None = None) -> int:
     print("Press Ctrl+C to stop\n")
     if not args.no_browser:
         Timer(1.0, lambda: webbrowser.open(url)).start()
-    app.run(host=args.host, port=args.port, debug=False, use_reloader=False)
+    app.run(host=args.host, port=args.port, debug=False, use_reloader=False, threaded=True)
     return 0
 
 

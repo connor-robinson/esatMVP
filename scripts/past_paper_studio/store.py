@@ -953,11 +953,17 @@ def save_question(question_id: int, payload: Dict[str, Any]) -> Dict[str, Any]:
             warnings.append(message)
 
     invalidate("overview", f"paper:{int(question['paper_id'])}", f"question:{question_id}")
-    result = load_question(question_id, refresh=True, warm_neighbors=True)
-    result["saveResult"] = {
+    save_result = {
         "status": status,
         "published": published,
         "warnings": warnings,
         "notes": notes,
+        "studioReviewed": report.get("studio_reviewed") is True,
+        "contentFormat": "text" if published else (question.get("content_format") or "image"),
     }
+    # Background studio saves skip the expensive post-save reload.
+    if payload.get("light") is True:
+        return {"questionId": question_id, "saveResult": save_result}
+    result = load_question(question_id, refresh=True, warm_neighbors=True)
+    result["saveResult"] = save_result
     return result

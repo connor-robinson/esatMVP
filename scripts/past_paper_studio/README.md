@@ -32,8 +32,11 @@ Then open http://127.0.0.1:8790/. Requires `SUPABASE_URL` and
 - `/paper?paperId=N`: question tiles grouped by part, coloured by state
   (green hand-checked, amber converted, violet needs review, red failed).
 - `/review?questionId=N`: screenshot on the left, converted question on the
-  right, editors underneath. `Ctrl+S` saves, `Alt+←`/`Alt+→` move between
-  questions.
+  right, editors underneath. **Save & next** (or `Ctrl+Enter`) queues the save
+  in the background and opens the next question immediately. `Ctrl+S` saves in
+  the background without leaving. `Alt+←`/`Alt+→` move between questions and
+  auto-save dirty edits in the background. A topbar status shows pending or
+  failed saves.
 
 ## Diagram recropping
 
