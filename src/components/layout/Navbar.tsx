@@ -217,17 +217,15 @@ export function Navbar() {
   } = usePaperSessionStore();
   const [docFullscreen, setDocFullscreen] = useState(false);
   const { theme, toggleTheme, isDark, lightStrategy, toggleLightStrategy } = useTheme();
-  const { hasFullAccess, tier } = useSubscription();
+  const { hasFullAccess, tier, source } = useSubscription();
   const testerCtx = useTesterProgrammeOptional();
-  const paidOrFullAccess =
-    hasFullAccess ||
-    tier === "weekly" ||
-    tier === "monthly" ||
-    tier === "season_pass";
+  const suppressTesterChrome =
+    source === "partner" || tier === "partner";
   const testerNav = getTesterNavAction(
     testerCtx?.state ?? null,
-    paidOrFullAccess,
+    hasFullAccess,
     !!session?.user,
+    { suppressTesterChrome },
   );
 
   const signupHref = useMemo(() => {

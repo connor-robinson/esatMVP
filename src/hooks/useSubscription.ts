@@ -26,8 +26,11 @@ export interface SubscriptionStatus {
   hasFullAccess: boolean;
   isLoading: boolean;
   source?: string;
+  partnerId?: string | null;
   partnerSlug?: string | null;
   partnerDisplayName?: string | null;
+  partnerBatchLabel?: string | null;
+  partnerActivated?: boolean;
   subscriptionStatus?: string;
   currentPeriodEnd?: string;
   accessUntil?: string;
@@ -81,8 +84,11 @@ export function useSubscription(): SubscriptionStatus {
           hasFullAccess,
           isLoading: false,
           source: data.source,
+          partnerId: data.partnerId ?? null,
           partnerSlug: data.partnerSlug ?? null,
           partnerDisplayName: data.partnerDisplayName ?? null,
+          partnerBatchLabel: data.partnerBatchLabel ?? null,
+          partnerActivated: data.partnerActivated === true,
           subscriptionStatus: data.subscriptionStatus,
           currentPeriodEnd: data.currentPeriodEnd,
           accessUntil: data.accessUntil,

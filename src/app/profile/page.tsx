@@ -84,6 +84,8 @@ function planLabel(tier: string): string {
       return "Exam Season Pass";
     case "tester":
       return "Founding Tester";
+    case "partner":
+      return "Institution access";
     default:
       return "Free";
   }
@@ -114,6 +116,8 @@ export default function ProfilePage() {
     accessUntil,
     cancelAtPeriodEnd,
     pendingPlan,
+    partnerDisplayName,
+    source,
   } = useSubscription();
   const [portalLoading, setPortalLoading] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -1054,22 +1058,31 @@ export default function ProfilePage() {
                           {subscriptionLoading
                             ? "Loading billing status…"
                             : !hasFullAccess
-                              ? "You’re on the free plan. Upgrade anytime for full access."
-                              : tier === "season_pass"
-                                ? accessUntil
-                                  ? `One-time access until ${formatBillingDate(accessUntil)}.`
-                                  : "One-time Exam Season Pass access is active."
-                                : subscriptionStatus === "trialing"
-                                  ? currentPeriodEnd
-                                    ? `Free trial active. First charge on ${formatBillingDate(currentPeriodEnd)}.`
-                                    : "Free trial is active."
-                                  : cancelAtPeriodEnd
+                              ? "You're on the free plan. Upgrade anytime for full access."
+                              : tier === "partner" || source === "partner"
+                                ? [
+                                    partnerDisplayName
+                                      ? `Complimentary access through ${partnerDisplayName}.`
+                                      : "Complimentary institution access is active.",
+                                    accessUntil
+                                      ? ` Full access until ${formatBillingDate(accessUntil)}.`
+                                      : "",
+                                  ].join("")
+                                : tier === "season_pass"
+                                  ? accessUntil
+                                    ? `One-time access until ${formatBillingDate(accessUntil)}.`
+                                    : "One-time Exam Season Pass access is active."
+                                  : subscriptionStatus === "trialing"
                                     ? currentPeriodEnd
-                                      ? `Cancels at period end (${formatBillingDate(currentPeriodEnd)}). You’ll keep access until then.`
-                                      : "Set to cancel at the end of this billing period."
-                                    : currentPeriodEnd
-                                      ? `Renews on ${formatBillingDate(currentPeriodEnd)}.`
-                                      : "Paid access is active."}
+                                      ? `Free trial active. First charge on ${formatBillingDate(currentPeriodEnd)}.`
+                                      : "Free trial is active."
+                                    : cancelAtPeriodEnd
+                                      ? currentPeriodEnd
+                                        ? `Cancels at period end (${formatBillingDate(currentPeriodEnd)}). You'll keep access until then.`
+                                        : "Set to cancel at the end of this billing period."
+                                      : currentPeriodEnd
+                                        ? `Renews on ${formatBillingDate(currentPeriodEnd)}.`
+                                        : "Paid access is active."}
                         </p>
                         {pendingPlan === "season_pass" && cancelAtPeriodEnd ? (
                           <p className="mt-2 text-sm text-primary">
@@ -1079,12 +1092,14 @@ export default function ProfilePage() {
                       </div>
 
                       <div className="flex flex-wrap gap-2">
-                        <SettingsButton
-                          type="button"
-                          onClick={() => router.push("/pricing?from=settings")}
-                        >
-                          {hasFullAccess ? "Change plan" : "Upgrade"}
-                        </SettingsButton>
+                        {tier === "partner" || source === "partner" ? null : (
+                          <SettingsButton
+                            type="button"
+                            onClick={() => router.push("/pricing?from=settings")}
+                          >
+                            {hasFullAccess ? "Change plan" : "Upgrade"}
+                          </SettingsButton>
+                        )}
 
                         {hasFullAccess &&
                         (tier === "weekly" || tier === "monthly") ? (

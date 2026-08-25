@@ -14,12 +14,13 @@ const SESSIONS_FOR_STAGE_2 = 1;
 const SESSIONS_FOR_STAGE_3 = 3;
 
 // ---------------------------------------------------------------------------
-// Paid access (mirrors /api/subscription/status). A paid plan overrides tester.
+// Paid / complimentary full access (mirrors getUserAccess paid+partner layers).
+// A paid plan or active partner entitlement overrides tester join eligibility.
 // ---------------------------------------------------------------------------
 
 export interface PaidAccess {
   hasPaid: boolean;
-  source: "subscription" | "one_time" | null;
+  source: "subscription" | "one_time" | "partner" | null;
 }
 
 export async function getPaidAccess(
@@ -53,6 +54,15 @@ export async function getPaidAccess(
       if (accessUntil >= new Date()) {
         return { hasPaid: true, source: "one_time" };
       }
+    }
+
+    // Partner entitlement: same full product access; do not offer founding tester.
+    const { data: hasPartner } = await service.rpc(
+      "user_has_active_partner_entitlement",
+      { p_user_id: userId },
+    );
+    if (hasPartner === true) {
+      return { hasPaid: true, source: "partner" };
     }
   } catch {
     /* fall through to no paid access */

@@ -11,12 +11,14 @@ import {
 import { usePathname } from "next/navigation";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { TesterCheckpointModal } from "@/components/tester/TesterCheckpointModal";
+import { useSubscription } from "@/hooks/useSubscription";
 import type { TesterState } from "@/lib/tester/types";
 import {
   dismissCheckpoint,
   shouldAutoShowCheckpointModal,
   testerActionPending,
 } from "@/lib/tester/checkpoint";
+import { shouldSuppressTesterChrome } from "@/lib/subscription/accessUi";
 
 interface TesterProgrammeContextValue {
   state: TesterState | null;
@@ -54,6 +56,8 @@ export function TesterProgrammeProvider({
 }) {
   const session = useSupabaseSession();
   const pathname = usePathname();
+  const subscription = useSubscription();
+  const suppressTesterChrome = shouldSuppressTesterChrome(subscription);
   const [state, setState] = useState<TesterState | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -108,15 +112,22 @@ export function TesterProgrammeProvider({
     setDismissedLocally(false);
   }, [state?.status, state?.checkpointDue]);
 
-  const actionPending = testerActionPending(state);
+  const actionPending =
+    !suppressTesterChrome && testerActionPending(state);
 
   useEffect(() => {
-    if (isLoading || !state || dismissedLocally) {
+    if (suppressTesterChrome || isLoading || !state || dismissedLocally) {
       setModalOpen(false);
       return;
     }
     setModalOpen(shouldAutoShowCheckpointModal(state, pathname));
-  }, [state, pathname, isLoading, dismissedLocally]);
+  }, [
+    state,
+    pathname,
+    isLoading,
+    dismissedLocally,
+    suppressTesterChrome,
+  ]);
 
   const dismissModal = useCallback(() => {
     if (state) dismissCheckpoint(state);

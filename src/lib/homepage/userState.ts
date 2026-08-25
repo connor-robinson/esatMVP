@@ -16,6 +16,11 @@ const TESTER_ACTIVE_STATUSES = new Set([
   "stage_3_active",
 ]);
 
+/**
+ * Resolve homepage persona for upgrade / tester chrome.
+ * Active partner/subscription/season-pass full access is treated as premium
+ * even if the user also has a founding-tester membership record.
+ */
 export function resolveHomepageUserState(input: {
   isLoggedIn: boolean;
   hasFullAccess: boolean;
@@ -23,6 +28,12 @@ export function resolveHomepageUserState(input: {
   tester: TesterState | null;
 }): HomepageUserState {
   if (!input.isLoggedIn) return "logged_out";
+
+  // Partner / Stripe / season pass: product unlocked like premium.
+  // Do not fall through into tester_expired upgrade prompts.
+  if (input.hasFullAccess && input.tier !== "tester") {
+    return "premium";
+  }
 
   const tester = input.tester;
   if (tester?.isMember) {
@@ -38,10 +49,6 @@ export function resolveHomepageUserState(input: {
     ) {
       return "tester_active";
     }
-  }
-
-  if (input.hasFullAccess && input.tier !== "tester") {
-    return "premium";
   }
 
   if (input.hasFullAccess && input.tier === "tester") {

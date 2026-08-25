@@ -181,8 +181,12 @@ export function getTesterNavAction(
   state: TesterState | null,
   hasFullAccess: boolean,
   isSignedIn = false,
+  options?: { suppressTesterChrome?: boolean },
 ): TesterNavAction {
-  if (state?.isMember && testerActionPending(state)) {
+  const suppressTester = options?.suppressTesterChrome === true;
+
+  // Partner (and similar) full access: no founding-tester continue CTA.
+  if (!suppressTester && state?.isMember && testerActionPending(state)) {
     return {
       show: true,
       label: "Continue programme",
@@ -191,7 +195,8 @@ export function getTesterNavAction(
     };
   }
 
-  // Never show Upgrade for free when the user already has paid/full access.
+  // Never show Upgrade for free when the user already has paid/full access
+  // (subscription, season pass, partner entitlement, or active tester premium).
   if (isSignedIn && !hasFullAccess) {
     return {
       show: true,

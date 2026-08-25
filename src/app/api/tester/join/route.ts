@@ -57,7 +57,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error:
-            "You already have full premium access, so the tester programme is not available.",
+            paid.source === "partner"
+              ? "You already have full access through an institution programme, so the tester programme is not available."
+              : "You already have full premium access, so the tester programme is not available.",
         },
         { status: 400 },
       );

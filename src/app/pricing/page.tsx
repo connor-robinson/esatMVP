@@ -67,6 +67,7 @@ export default function PricingPage() {
     currentPeriodEnd,
     cancelAtPeriodEnd,
     pendingPlan,
+    source,
   } = useSubscription();
   const [loading, setLoading] = useState<string | null>(null);
   const [banner, setBanner] = useState<string | null>(null);
@@ -77,6 +78,7 @@ export default function PricingPage() {
   const periodEndLabel = formatPeriodEnd(currentPeriodEnd);
   const isRecurringPaid = PAID_RECURRING.has(tier);
   const isSeasonPass = tier === "season_pass";
+  const isPartnerAccess = tier === "partner" || source === "partner";
 
   useEffect(() => {
     const sourcePage = readGaSourcePage() ?? currentGaPath() ?? "/pricing";
@@ -88,6 +90,7 @@ export default function PricingPage() {
 
   const paidCta = (planId: "weekly" | "monthly" | "season_pass", loadingLabel: string) => {
     if (loading === planId) return "Loading…";
+    if (isPartnerAccess) return "Included with your access";
     if (tier === planId) return "Current plan";
 
     if (isSeasonPass) {
@@ -110,7 +113,11 @@ export default function PricingPage() {
       name: "Free",
       price: "£0",
       features: FEATURES.free,
-      ctaLabel: tier === "free" ? "Current plan" : "Downgrade via profile",
+      ctaLabel: isPartnerAccess
+        ? "Institution access active"
+        : tier === "free"
+          ? "Current plan"
+          : "Downgrade via profile",
     },
     {
       id: "weekly",
@@ -157,6 +164,12 @@ export default function PricingPage() {
   const fromSettings = searchParams.get("from") === "settings";
 
   const handleCheckout = async (planType: PaidPlanId) => {
+    if (isPartnerAccess) {
+      setBanner(
+        "You already have full access through your institution programme. No payment is needed.",
+      );
+      return;
+    }
     if (!session?.user) {
       const sourcePage = currentGaPath() ?? "/pricing";
       rememberGaSourcePage(sourcePage);
@@ -196,12 +209,12 @@ export default function PricingPage() {
     const checkoutPlan = searchParams.get("checkout");
     if (!session?.user || !isPaidPlanId(checkoutPlan)) return;
     if (autoCheckoutStarted.current) return;
-    if (isSeasonPass || isRecurringPaid) return;
+    if (isPartnerAccess || isSeasonPass || isRecurringPaid) return;
     autoCheckoutStarted.current = true;
     router.replace("/pricing", { scroll: false });
     void handleCheckout(checkoutPlan);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- resume checkout once after signup
-  }, [session?.user, searchParams, isSeasonPass, isRecurringPaid]);
+  }, [session?.user, searchParams, isSeasonPass, isRecurringPaid, isPartnerAccess]);
 
   const handleSwitch = async (planType: PlanId) => {
     if (planType === "free") return;

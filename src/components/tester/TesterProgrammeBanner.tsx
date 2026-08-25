@@ -3,16 +3,20 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTesterProgrammeOptional } from "@/contexts/TesterProgrammeContext";
+import { useSubscription } from "@/hooks/useSubscription";
 import { getCheckpointModalContent } from "@/lib/tester/checkpoint";
+import { shouldSuppressTesterChrome } from "@/lib/subscription/accessUi";
 
 /**
  * Persistent reminder after the login checkpoint is dismissed.
- * Keeps the next step one click away via the nav and this banner.
+ * Hidden while partner entitlement (or equivalent) suppresses tester chrome.
  */
 export function TesterProgrammeBanner() {
   const pathname = usePathname();
   const ctx = useTesterProgrammeOptional();
+  const subscription = useSubscription();
 
+  if (shouldSuppressTesterChrome(subscription)) return null;
   if (!ctx?.actionPending || !ctx.state) return null;
   if (pathname.startsWith("/founding-tester")) return null;
 

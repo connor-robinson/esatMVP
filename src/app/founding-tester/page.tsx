@@ -5,25 +5,30 @@ import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { useTesterProgramme } from "@/contexts/TesterProgrammeContext";
+import { useSubscription } from "@/hooks/useSubscription";
 import { trackTesterEvent } from "@/hooks/useTesterStatus";
 import { trackEvent } from "@/lib/ga";
 import { SurveyRunner } from "@/components/tester/SurveyRunner";
 import { AccessStatusCard } from "@/components/tester/AccessStatusCard";
 import { formatExpiry, formatDuration } from "@/lib/tester/format";
+import { shouldSuppressTesterChrome } from "@/lib/subscription/accessUi";
 import { cn } from "@/lib/utils";
 import type { SurveyKey, TesterState } from "@/lib/tester/types";
 
 export default function FoundingTesterPage() {
   const session = useSupabaseSession();
+  const subscription = useSubscription();
   const { state, isLoading, loadError, loadWarning, refresh } =
     useTesterProgramme();
   const [activeSurvey, setActiveSurvey] = useState<SurveyKey | null>(null);
+  const suppressJoin = shouldSuppressTesterChrome(subscription);
 
   useEffect(() => {
+    if (suppressJoin) return;
     if (state?.isMember === false || state?.eligibleToJoin) {
       trackTesterEvent("tester_programme_viewed");
     }
-  }, [state?.isMember, state?.eligibleToJoin]);
+  }, [state?.isMember, state?.eligibleToJoin, suppressJoin]);
 
   // Resume the initial survey if the user joined but didn't finish it.
   useEffect(() => {
@@ -89,6 +94,28 @@ export default function FoundingTesterPage() {
     return null;
   }
 
+  if (suppressJoin && !state.isMember) {
+    return (
+      <Container className="py-16">
+        <div className="mx-auto max-w-lg rounded-organic-xl bg-surface-elevated p-8 text-center">
+          <h1 className="text-xl font-bold text-text">
+            You already have full access
+          </h1>
+          <p className="mt-3 text-sm text-text-muted">
+            Your institution programme already includes full ESAT Camp access, so
+            the Founding Tester Programme is not needed.
+          </p>
+          <Link
+            href="/"
+            className="mt-6 inline-flex rounded-full bg-text px-6 py-2.5 text-sm font-bold text-background transition-opacity hover:opacity-90"
+          >
+            Continue practising
+          </Link>
+        </div>
+      </Container>
+    );
+  }
+
   if (activeSurvey) {
     return (
       <Container className="py-12">
@@ -152,7 +179,8 @@ function TesterFlow({
             You already have full access
           </h1>
           <p className="mt-3 text-sm text-text-muted">
-            The Founding Tester Programme is for users without a paid plan.
+            The Founding Tester Programme is for users without full premium or
+            institution access.
           </p>
         </div>
       );
