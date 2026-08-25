@@ -3,6 +3,7 @@ import { Container } from "@/components/layout/Container";
 import { ScoreConverter } from "@/components/tools/scoreConverter/ScoreConverter";
 import { PublishedConversionTables } from "@/components/tools/scoreConverter/PublishedConversionTables";
 import { SCORE_CONVERTER_FAQ_ITEMS } from "@/components/tools/scoreConverter/ScoreConverterFaq";
+import { NsaaConversionYearNav } from "@/components/tools/scoreConverter/nsaaYear/NsaaConversionYearNav";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { AppSeoCta } from "@/components/seo/AppSeoCta";
 import {
@@ -51,6 +52,10 @@ export default function ScoreConverterPage() {
           faqPageSchema(SCORE_CONVERTER_FAQ_ITEMS),
         ]}
       />
+
+      <div className="pt-6">
+        <NsaaConversionYearNav heading="NSAA score conversion by year" />
+      </div>
 
       <ScoreConverter
         initialExam="NSAA"

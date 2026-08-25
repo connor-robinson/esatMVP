@@ -10,6 +10,10 @@ import {
 } from "@/lib/scoreConverter/publishedTables.shared";
 import type { ConverterExam } from "@/lib/scoreConverter/esatModules";
 import { APP_ROUTES, SEO_ROUTES } from "@/lib/seo/config";
+import {
+  isNsaaConversionYear,
+  nsaaYearPagePath,
+} from "@/lib/scoreConverter/nsaaYearConversion.shared";
 
 type Props = {
   /** Preloaded rows (optional). When omitted, catalog loads on first expand. */
@@ -290,6 +294,11 @@ function TableRow({
   row: PublishedTableRow;
   onView: (row: PublishedTableRow) => void;
 }) {
+  const yearHref =
+    row.exam === "NSAA" && isNsaaConversionYear(row.year)
+      ? nsaaYearPagePath(row.year)
+      : null;
+
   return (
     <li
       data-table-id={row.id}
@@ -297,7 +306,16 @@ function TableRow({
     >
       <div className="min-w-0">
         <p className="text-sm font-semibold text-text">
-          <span className="tabular-nums text-text">{row.year}</span>
+          {yearHref ? (
+            <Link
+              href={yearHref}
+              className="tabular-nums text-secondary hover:underline"
+            >
+              {row.year}
+            </Link>
+          ) : (
+            <span className="tabular-nums text-text">{row.year}</span>
+          )}
           <span className="text-text-subtle"> · </span>
           <span className="text-text-muted">{row.exam}</span>
           <span className="text-text-subtle"> · </span>
@@ -308,6 +326,17 @@ function TableRow({
         </p>
       </div>
       <div className="flex shrink-0 items-center gap-1">
+        {yearHref ? (
+          <Link
+            href={yearHref}
+            className={cn(
+              "rounded-organic-md px-3 py-1.5 text-sm font-semibold text-text-muted transition-colors hover:bg-surface-mid hover:text-text",
+              controlBase,
+            )}
+          >
+            Year page
+          </Link>
+        ) : null}
         <button
           type="button"
           onClick={() => onView(row)}

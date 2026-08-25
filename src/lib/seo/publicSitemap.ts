@@ -7,11 +7,21 @@
  */
 
 import { APP_ROUTES, SEO_ROUTES } from "@/lib/seo/config";
+import {
+  getNsaaConversionYears,
+  nsaaYearPagePath,
+} from "@/lib/scoreConverter/nsaaYearConversion.shared";
 
 export type PublicSitemapEntry = {
   readonly path: string;
   readonly priority: number;
 };
+
+const NSAA_YEAR_SITEMAP_ENTRIES: PublicSitemapEntry[] =
+  getNsaaConversionYears().map((year) => ({
+    path: nsaaYearPagePath(year),
+    priority: 0.55,
+  }));
 
 export const PUBLIC_SITEMAP_ENTRIES: readonly PublicSitemapEntry[] = [
   { path: "/", priority: 1 },
@@ -47,6 +57,7 @@ export const PUBLIC_SITEMAP_ENTRIES: readonly PublicSitemapEntry[] = [
   { path: APP_ROUTES.calibration, priority: 0.8 },
   { path: APP_ROUTES.scoreConverter, priority: 0.8 },
   { path: "/tools/score-converter/nsaa", priority: 0.6 },
+  ...NSAA_YEAR_SITEMAP_ENTRIES,
   { path: "/tools/score-converter/engaa", priority: 0.6 },
   { path: "/tools/score-converter/tmua", priority: 0.6 },
   { path: APP_ROUTES.fermiGame, priority: 0.5 },
@@ -55,7 +66,7 @@ export const PUBLIC_SITEMAP_ENTRIES: readonly PublicSitemapEntry[] = [
   { path: "/pricing", priority: 0.6 },
   { path: "/help", priority: 0.3 },
   { path: "/cookie-policy", priority: 0.3 },
-] as const;
+];
 
 /** Paths that must never appear in the sitemap (regression guard). */
 export const SITEMAP_EXCLUDED_PATHS = [
@@ -82,6 +93,7 @@ export const SITEMAP_EXCLUDED_PATHS = [
   "/contact",
   "/exam-tools/calibration/math-1/test",
   "/exam-tools/calibration/math-1/results",
+  "/tools/score-converter/nsaa/2016",
 ] as const;
 
 export function isPublicSitemapPath(path: string): boolean {

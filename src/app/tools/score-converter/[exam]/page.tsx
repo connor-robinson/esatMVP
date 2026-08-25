@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ExamScoreConverterShell } from "@/components/tools/scoreConverter/ExamScoreConverterShell";
+import { NsaaConversionYearNav } from "@/components/tools/scoreConverter/nsaaYear/NsaaConversionYearNav";
 import {
   EXAM_FULL_NAME,
   isConverterExam,
@@ -48,5 +49,14 @@ export default async function ExamScoreConverterPage({
   if (!isConverterExam(raw)) notFound();
   const exam = raw.toUpperCase() as ConverterExam;
 
-  return <ExamScoreConverterShell initialExam={exam} />;
+  return (
+    <>
+      {exam === "NSAA" ? (
+        <div className="pt-6">
+          <NsaaConversionYearNav heading="NSAA score conversion by year" />
+        </div>
+      ) : null}
+      <ExamScoreConverterShell initialExam={exam} />
+    </>
+  );
 }
