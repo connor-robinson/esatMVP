@@ -259,8 +259,17 @@ export default function PapersSolvePage() {
           loadedPaperIdRef.current = paperId;
 
           let targetIndex = state.currentQuestionIndex;
+
+          // Only jump to the start of the paper for a fresh session. A resumed
+          // session must land on the question the user left off on.
+          const hasProgress =
+            state.currentSectionIndex > 0 ||
+            state.currentQuestionIndex > 0 ||
+            state.visitedQuestions.some(Boolean) ||
+            state.answers.some((answer) => answer?.choice != null);
+
           const firstInFirstSection = state.allSectionsQuestions?.[0]?.[0];
-          if (firstInFirstSection && state.questions.length > 0) {
+          if (!hasProgress && firstInFirstSection && state.questions.length > 0) {
             const gi = state.questions.findIndex(
               (q) => q.id === firstInFirstSection.id,
             );

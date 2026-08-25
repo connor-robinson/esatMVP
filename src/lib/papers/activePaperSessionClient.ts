@@ -1,6 +1,24 @@
 import { usePaperSessionStore } from '@/store/paperSessionStore';
 import { findDetachedSession, isSessionDetached } from '@/lib/storage/sessionStorage';
 
+/** Routes that show the paper itself, where the main navbar stays hidden. */
+const PAPER_IMMERSIVE_ROUTES = [
+  '/past-papers/solve',
+  '/past-papers/mark',
+  '/past-papers/submit',
+];
+
+/**
+ * True while the user is actually inside the paper. Everywhere else the main
+ * navbar must stay usable, even with a session running.
+ */
+export function isPaperImmersiveRoute(pathname: string | null): boolean {
+  if (!pathname) return false;
+  return PAPER_IMMERSIVE_ROUTES.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
+  );
+}
+
 /**
  * True if starting a new past-paper session would end an existing one
  * (local store and/or server in-progress rows).

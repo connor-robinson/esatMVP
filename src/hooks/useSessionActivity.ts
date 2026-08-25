@@ -79,7 +79,9 @@ export function useSessionActivity() {
         if (!isPaused) {
           pauseSession();
         }
-        debouncedSave();
+        // Write immediately: a debounced save never fires if the tab is closed,
+        // which loses the question the user left off on.
+        void saveSessionToIndexedDB();
       } else if (document.visibilityState === 'visible') {
         // Tab became visible - update activity
         handleActivity();
@@ -90,30 +92,29 @@ export function useSessionActivity() {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [sessionId, isPaused, pauseSession, debouncedSave, handleActivity]);
+  }, [sessionId, isPaused, pauseSession, saveSessionToIndexedDB, handleActivity]);
 
   // Handle page unload (tab close, navigation)
   useEffect(() => {
     if (!sessionId) return;
 
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      // Pause session if not already paused
+    // Pause and snapshot on the way out. The Zustand store persists to
+    // localStorage synchronously, so the position survives even when the
+    // IndexedDB write is cut short by the tab closing.
+    const handleUnload = () => {
       if (!isPaused) {
         pauseSession();
       }
-      
-      // Save synchronously (using sendBeacon or synchronous IndexedDB)
-      // Note: We can't use async/await in beforeunload, so we'll rely on
-      // the debounced save that should have already fired
-      // For critical saves, we could use navigator.sendBeacon, but IndexedDB
-      // doesn't support that. The debounced save should handle most cases.
+      void saveSessionToIndexedDB();
     };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('beforeunload', handleUnload);
+    window.addEventListener('pagehide', handleUnload);
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('beforeunload', handleUnload);
+      window.removeEventListener('pagehide', handleUnload);
     };
-  }, [sessionId, isPaused, pauseSession]);
+  }, [sessionId, isPaused, pauseSession, saveSessionToIndexedDB]);
 
   // Track user activity (mouse, keyboard, scroll, touch)
   useEffect(() => {

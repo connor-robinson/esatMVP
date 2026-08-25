@@ -7,18 +7,40 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import { findActiveSession } from "@/lib/storage/sessionStorage";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
+import { usePaperSessionHydrated } from "@/hooks/usePaperSessionHydrated";
 import { runCleanupOnLoad } from "@/lib/papers/sessionCleanup";
+
+/** Below this, the session was almost certainly still being used. */
+const STALE_ACTIVITY_MS = 15000;
 
 export function SessionRestore() {
   const router = useRouter();
   const pathname = usePathname();
   const { sessionId, isPaused, loadSessionFromIndexedDB, loadSessionFromDatabase, isRestoring, justQuitSessionId, justQuitTimestamp } = usePaperSessionStore();
   const session = useSupabaseSession();
+  const hydrated = usePaperSessionHydrated();
+  const staleCheckDoneRef = useRef(false);
+
+  // A session that was never paused (crash, hard tab close) still holds absolute
+  // section deadlines. Pause it once on load so resuming rebuilds the deadlines
+  // from elapsed time instead of instantly expiring the section.
+  useEffect(() => {
+    if (!hydrated || staleCheckDoneRef.current) return;
+    staleCheckDoneRef.current = true;
+
+    const state = usePaperSessionStore.getState();
+    if (!state.sessionId || state.endedAt || state.isPaused) return;
+    const lastActive = state.lastActiveTimestamp ?? 0;
+    if (Date.now() - lastActive <= STALE_ACTIVITY_MS) return;
+
+    state.pauseSession();
+    void state.saveSessionToIndexedDB();
+  }, [hydrated]);
   
   useEffect(() => {
     // Run cleanup on app load (once per session)

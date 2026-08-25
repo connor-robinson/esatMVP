@@ -147,7 +147,8 @@ interface PaperSessionState {
   getSectionRemainingTime: (sectionIndex: number) => number;
 
   schedulePersist: () => void;
-  persistSessionToServer: (options?: { immediate?: boolean; retry?: number }) => Promise<void>;
+  /** Resolves true only when the server confirmed the write. */
+  persistSessionToServer: (options?: { immediate?: boolean; retry?: number }) => Promise<boolean>;
   processPendingPersists: () => Promise<void>;
   
   loadSessionFromDatabase: (sessionId: string) => Promise<void>;
@@ -1239,16 +1240,28 @@ export const usePaperSessionStore = create<PaperSessionState>()(
 
         if (state.persistTimer) {
           clearTimeout(state.persistTimer);
+          set({ persistTimer: null });
         }
 
         if (!state.isPaused) {
           get().pauseSession();
         }
         get().updateTimerState();
-        await get().saveSessionToIndexedDB({ detachedFromNavbar: true });
-        await get().persistSessionToServer({ immediate: true });
 
+        // Detach before any fallible write: leaving the paper must not depend on
+        // IndexedDB or the network succeeding, or the progress bar comes back.
         markSessionDetached(sessionIdToLeave);
+
+        try {
+          await get().saveSessionToIndexedDB({ detachedFromNavbar: true });
+        } catch {
+          // Progress still lives in the persisted store; leaving must not block.
+        }
+        try {
+          await get().persistSessionToServer({ immediate: true });
+        } catch {
+          // Queued for retry by persistSessionToServer.
+        }
 
         const now = Date.now();
         set({
@@ -1270,12 +1283,37 @@ export const usePaperSessionStore = create<PaperSessionState>()(
 
       resumeSavedSession: async () => {
         const detached = await findDetachedSession();
-        if (!detached) return false;
+        if (detached) {
+          clearSessionDetached(detached.sessionId);
+          try {
+            await get().loadSessionFromIndexedDB(detached.sessionId);
+            await get().saveSessionToIndexedDB({ detachedFromNavbar: false });
+            return true;
+          } catch {
+            // Local copy unusable - fall back to the server record below.
+          }
+        }
 
-        clearSessionDetached(detached.sessionId);
-        await get().loadSessionFromIndexedDB(detached.sessionId);
-        await get().saveSessionToIndexedDB({ detachedFromNavbar: false });
-        return true;
+        // No usable local copy (IndexedDB blocked or wiped): reopen the paper
+        // from the server's in-progress session so Resume never dead-ends.
+        try {
+          const response = await fetch('/api/past-papers/sessions?in_progress=true');
+          if (!response.ok) return false;
+          const data = await response.json();
+          const sessions = (data.sessions || []) as Array<{ id: string; started_at?: string | null }>;
+          if (sessions.length === 0) return false;
+          const mostRecent = [...sessions].sort((a, b) => {
+            const aTime = a.started_at ? new Date(a.started_at).getTime() : 0;
+            const bTime = b.started_at ? new Date(b.started_at).getTime() : 0;
+            return bTime - aTime;
+          })[0];
+          clearSessionDetached(mostRecent.id);
+          await get().loadSessionFromDatabase(mostRecent.id);
+          await get().saveSessionToIndexedDB({ detachedFromNavbar: false });
+          return true;
+        } catch {
+          return false;
+        }
       },
 
       clearClientSession: () => {
@@ -1475,7 +1513,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       persistSessionToServer: async ({ immediate = false, retry = 0 } = {}) => {
         const state = get();
         if (!state.sessionId) {
-          return;
+          return false;
         }
 
         if (state.sessionPersistPromise && retry === 0) {
@@ -1490,13 +1528,13 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           clearTimeout(state.persistTimer);
           set({ persistTimer: null });
         } else if (state.persistTimer && !immediate && retry === 0) {
-          return;
+          return false;
         }
 
         // Validate questionRange before calculating totalQuestions
         if (!state.questionRange || state.questionRange.end < state.questionRange.start || state.questionRange.start < 1) {
           
-          return;
+          return false;
         }
 
         const totalQuestions = state.questionRange.end - state.questionRange.start + 1;
@@ -1528,7 +1566,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           },
         };
 
-        const persistPromise = (async () => {
+        const persistPromise = (async (): Promise<boolean> => {
           try {
             const response = await fetch("/api/past-papers/sessions", {
               method: "PATCH",
@@ -1554,6 +1592,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                 const queue = [...currentState.pendingPersistQueue];
                 queue.push({ payload, retries: retry + 1, timestamp: Date.now() });
                 set({ pendingPersistQueue: queue });
+                return false;
               } else {
                 throw new Error(`Persist failed with status ${response.status}: ${errorText}`);
               }
@@ -1566,6 +1605,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               if (filteredQueue.length !== currentState.pendingPersistQueue.length) {
                 set({ pendingPersistQueue: filteredQueue });
               }
+              return true;
             }
           } catch (error) {
             // Network errors - queue for retry
@@ -1574,6 +1614,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               const queue = [...currentState.pendingPersistQueue];
               queue.push({ payload, retries: retry + 1, timestamp: Date.now() });
               set({ pendingPersistQueue: queue });
+              return false;
             } else {
               
               throw error;
@@ -1586,8 +1627,9 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           set({ sessionPersistPromise: persistPromise });
         }
 
+        let persisted = false;
         try {
-          const responseData = await persistPromise;
+          persisted = await persistPromise;
 
           const latest = get();
           if (latest.endedAt) {
@@ -1633,8 +1675,10 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             }
           }
         } catch (error) {
-          
+          persisted = false;
         }
+
+        return persisted;
       },
       
       /**
@@ -1954,10 +1998,15 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         // If instruction timer expired, skip to section
         const shouldSkipInstruction = wasOnInstruction && (instructionTimerRemaining === null || instructionTimerRemaining <= 0);
         
-        // Restore currentQuestionIndex - find last visited question or use current
+        // Return to the question the user was actually on. Only fall back to the
+        // last visited question when the saved index is unusable.
         let restoredQuestionIndex = state.currentQuestionIndex;
-        if (state.visitedQuestions && state.visitedQuestions.length > 0) {
-          // Find the last visited question
+        const savedIndexIsUsable =
+          typeof restoredQuestionIndex === 'number' &&
+          restoredQuestionIndex >= 0 &&
+          (state.questions.length === 0 ||
+            restoredQuestionIndex < state.questions.length);
+        if (!savedIndexIsUsable && state.visitedQuestions?.length) {
           const lastVisitedIndex = state.visitedQuestions.lastIndexOf(true);
           if (lastVisitedIndex >= 0 && lastVisitedIndex < state.questions.length) {
             restoredQuestionIndex = lastVisitedIndex;
@@ -2080,18 +2129,29 @@ export const usePaperSessionStore = create<PaperSessionState>()(
 
       finishMarkSession: async () => {
         const state = get();
-        if (!state.sessionId) {
-          throw new Error("No active session");
+        const sessionIdToFinish = state.sessionId;
+        if (!sessionIdToFinish) {
+          return null;
+        }
+
+        if (state.persistTimer) {
+          clearTimeout(state.persistTimer);
+          set({ persistTimer: null });
         }
 
         if (!state.endedAt) {
           set({ endedAt: Date.now() });
         }
 
-        await get().persistSessionToServer({ immediate: true });
+        let saved = false;
+        try {
+          saved = await get().persistSessionToServer({ immediate: true });
+        } catch {
+          saved = false;
+        }
 
         const updated = get();
-        if (updated.selectedPartIds && updated.selectedPartIds.length > 0) {
+        if (saved && updated.selectedPartIds && updated.selectedPartIds.length > 0) {
           try {
             const { supabase } = await import("@/lib/supabase/client");
             const {
@@ -2110,20 +2170,39 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           }
         }
 
-        set({ isMarkingInfo: false });
-
-        const completedSessionId = get().sessionId;
-        if (completedSessionId) {
+        if (saved) {
+          set({ isMarkingInfo: false });
           try {
-            await deleteSession(completedSessionId);
-            clearSessionDetached(completedSessionId);
+            await deleteSession(sessionIdToFinish);
+            clearSessionDetached(sessionIdToFinish);
           } catch {
             // ignore cleanup errors
           }
+        } else {
+          // Server write failed. Leave the paper anyway, but keep the marking
+          // resumable locally so the user can retry the save instead of losing it.
+          set({ endedAt: null, isMarkingInfo: true });
+          markSessionDetached(sessionIdToFinish);
+          try {
+            await get().saveSessionToIndexedDB({ detachedFromNavbar: true });
+          } catch {
+            // ignore storage errors
+          }
         }
-        get().clearClientSession();
 
-        return completedSessionId;
+        const now = Date.now();
+        set({
+          justQuitSessionId: sessionIdToFinish,
+          justQuitTimestamp: now,
+        });
+        get().clearClientSession();
+        setTimeout(() => {
+          if (get().justQuitSessionId === sessionIdToFinish) {
+            set({ justQuitSessionId: null, justQuitTimestamp: null });
+          }
+        }, 5000);
+
+        return saved ? sessionIdToFinish : null;
       },
 
       saveSessionToIndexedDB: async (options?: { detachedFromNavbar?: boolean }) => {

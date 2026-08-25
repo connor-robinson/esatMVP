@@ -25,16 +25,27 @@ interface SessionData {
 
 const DETACHED_SESSIONS_KEY = 'paper-session-detached-ids';
 
+/**
+ * Mirror of the detached ids for the current page life.
+ * Save & leave must still detach the session when localStorage is unavailable
+ * (private mode, quota errors), otherwise the progress bar comes back.
+ */
+const detachedSessionIdsInMemory = new Set<string>();
+
 function readDetachedSessionIds(): Set<string> {
-  if (typeof window === 'undefined') return new Set();
+  const ids = new Set(detachedSessionIdsInMemory);
+  if (typeof window === 'undefined') return ids;
   try {
     const raw = localStorage.getItem(DETACHED_SESSIONS_KEY);
-    if (!raw) return new Set();
+    if (!raw) return ids;
     const parsed = JSON.parse(raw) as unknown;
-    if (!Array.isArray(parsed)) return new Set();
-    return new Set(parsed.filter((id): id is string => typeof id === 'string'));
+    if (!Array.isArray(parsed)) return ids;
+    for (const id of parsed) {
+      if (typeof id === 'string') ids.add(id);
+    }
+    return ids;
   } catch {
-    return new Set();
+    return ids;
   }
 }
 
@@ -49,6 +60,7 @@ function writeDetachedSessionIds(ids: Set<string>): void {
 
 /** Mark a session as save-and-left (skip auto-restore to navbar progress bar). */
 export function markSessionDetached(sessionId: string): void {
+  detachedSessionIdsInMemory.add(sessionId);
   const ids = readDetachedSessionIds();
   ids.add(sessionId);
   writeDetachedSessionIds(ids);
@@ -56,6 +68,7 @@ export function markSessionDetached(sessionId: string): void {
 
 /** Clear detached flag when user explicitly resumes. */
 export function clearSessionDetached(sessionId: string): void {
+  detachedSessionIdsInMemory.delete(sessionId);
   const ids = readDetachedSessionIds();
   ids.delete(sessionId);
   writeDetachedSessionIds(ids);

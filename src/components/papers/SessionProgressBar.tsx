@@ -17,8 +17,11 @@ import { usePathname, useRouter } from 'next/navigation';
 import { BrandNavLockup } from '@/components/brand/BrandNavLockup';
 import { APP_NAME } from '@/config/brand';
 import { getSectionColor } from '@/config/colors';
+import { NAVBAR_HEIGHT_PX } from '@/config/layout';
 import { Loader2, Save } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { isPaperImmersiveRoute } from '@/lib/papers/activePaperSessionClient';
+import { markSessionDetached } from '@/lib/storage/sessionStorage';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
 
 const MARK_SAVE_HINT_KEY = 'papers.mark.saveLeaveHintSeen';
@@ -58,9 +61,12 @@ export function SessionProgressBar({
     allSectionsQuestions,
     questions,
     isMarkingInfo,
+    isPaused,
     paperFullscreenShowMainNavbar,
     finishMarkSession,
     saveAndLeaveSession,
+    clearClientSession,
+    resumeSession,
   } = usePaperSessionStore();
 
   const isOnMarkPage = pathname.startsWith('/past-papers/mark');
@@ -102,11 +108,11 @@ export function SessionProgressBar({
     setHasSeenSaveHint(true);
   };
 
+  // On the mark page the paper is already over, so Save always means "finish".
+  const isFinishAction = isMarkingInfo || isOnMarkPage;
+
   const showSaveHint =
-    hasSeenSaveHint === false &&
-    isOnMarkPage &&
-    isMarkingInfo &&
-    !isSaving;
+    hasSeenSaveHint === false && isOnMarkPage && !isSaving;
 
   const [docFullscreen, setDocFullscreen] = useState(false);
   useEffect(() => {
@@ -202,6 +208,16 @@ export function SessionProgressBar({
     return nodeLabels[hoveredNode] ?? null;
   }, [hoveredNode, nodeLabels, endNodeLabel]);
 
+  const returnTitle = useMemo(() => {
+    if (isMarkingInfo) return 'Back to your paper';
+    const questionNumber =
+      questions[currentQuestionIndex]?.questionNumber ??
+      (questions.length > 0 ? currentQuestionIndex + 1 : null);
+    return questionNumber
+      ? `Back to question ${questionNumber}`
+      : 'Back to your paper';
+  }, [isMarkingInfo, questions, currentQuestionIndex]);
+
   if (!sessionId) return null;
 
   const calculateSectionProgress = (sectionIndex: number): number => {
@@ -290,42 +306,63 @@ export function SessionProgressBar({
 
   const progressSegments = getProgressSegments();
 
+  // On the mark page the session is already open in front of the user.
+  const canReturnToPaper = !isOnMarkPage && !isSaving;
+
+  /** Jump back into the paper, on the question the user left off on. */
+  const handleReturnToPaper = () => {
+    if (!canReturnToPaper) return;
+    if (isPaused) resumeSession();
+    router.push('/past-papers/solve');
+  };
+
   const handleSaveAndContinue = async () => {
+    if (isSaving) return;
+    const savingSessionId = sessionId;
     if (isOnMarkPage) dismissSaveHint();
     setIsSaving(true);
     try {
-      if (isMarkingInfo) {
+      if (isFinishAction) {
         const sessionIdToHighlight = await finishMarkSession();
-        if (sessionIdToHighlight) {
-          router.push(`/past-papers/analytics?highlight=${sessionIdToHighlight}`);
-        } else {
-          router.push('/past-papers/analytics');
-        }
+        router.push(
+          sessionIdToHighlight
+            ? `/past-papers/analytics?highlight=${sessionIdToHighlight}`
+            : '/past-papers/analytics',
+        );
         return;
       }
 
       await saveAndLeaveSession();
       router.push('/past-papers/library');
-    } catch (error) {
-      alert('Failed to save session. Please try again.');
+    } catch {
+      // Saving already keeps a local copy, so never trap the user in the paper.
+      if (savingSessionId) markSessionDetached(savingSessionId);
+      clearClientSession();
+      router.push('/past-papers/library');
     } finally {
       setIsSaving(false);
     }
   };
 
+  // Must match the main navbar's own visibility rule so the two bars never overlap.
   const mainNavStripVisible =
-    docFullscreen && paperFullscreenShowMainNavbar;
-  const outerClass = embedded
-    ? mainNavStripVisible
-      ? 'sticky top-16 z-50 w-full border-b border-border bg-background/95 backdrop-blur-md'
-      : 'sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur-md'
-    : 'sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur-md';
+    !isPaperImmersiveRoute(pathname) ||
+    (docFullscreen && paperFullscreenShowMainNavbar);
+  const outerClass =
+    'sticky z-50 w-full border-b border-border bg-background/95 backdrop-blur-md';
+  const outerStyle = {
+    top: embedded && mainNavStripVisible ? NAVBAR_HEIGHT_PX : 0,
+  };
 
   const iconBtnClass =
     'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-text-muted transition-colors hover:bg-surface-subtle hover:text-text';
 
   return (
-    <nav className={cn(outerClass, 'overflow-visible')} aria-label='Session progress'>
+    <nav
+      className={cn(outerClass, 'overflow-visible')}
+      style={outerStyle}
+      aria-label='Session progress'
+    >
       {hoveredLabel &&
         tooltipPos &&
         typeof document !== 'undefined' &&
@@ -358,10 +395,24 @@ export function SessionProgressBar({
           <BrandNavLockup />
         </Link>
 
-        <div className='relative min-w-0 flex-1 overflow-visible'>
+        <div className='group relative min-w-0 flex-1 overflow-visible'>
           <div className='relative h-6 w-full overflow-visible'>
+            {canReturnToPaper && (
+              <button
+                type='button'
+                onClick={handleReturnToPaper}
+                className='absolute inset-0 z-0 h-full w-full cursor-pointer bg-transparent'
+                title={returnTitle}
+                aria-label={returnTitle}
+              />
+            )}
             <div className='absolute inset-x-0 top-3 h-0'>
-              <div className='pointer-events-none absolute -top-0.5 left-0 right-0 h-[5px] overflow-hidden rounded-full bg-accent/20' />
+              <div
+                className={cn(
+                  'pointer-events-none absolute -top-0.5 left-0 right-0 h-[5px] overflow-hidden rounded-full bg-accent/20 transition-colors',
+                  canReturnToPaper && 'group-hover:bg-accent/35',
+                )}
+              />
 
               {progressSegments.map((segment, index) => (
                 <div
@@ -385,12 +436,16 @@ export function SessionProgressBar({
                   <button
                     key={`${section}-${index}`}
                     type='button'
-                    className='absolute z-10 flex flex-col items-center'
+                    className={cn(
+                      'absolute z-10 flex flex-col items-center',
+                      canReturnToPaper && 'cursor-pointer',
+                    )}
                     style={{
                       left: `${nodePosition}%`,
                       top: '-14px',
                       transform: 'translateX(-50%)',
                     }}
+                    onClick={handleReturnToPaper}
                     onMouseEnter={(e) => showNodeTooltip(index, e.currentTarget)}
                     onMouseLeave={hideNodeTooltip}
                     onFocus={(e) => showNodeTooltip(index, e.currentTarget)}
@@ -415,12 +470,16 @@ export function SessionProgressBar({
 
               <button
                 type='button'
-                className='absolute z-10 flex flex-col items-center'
+                className={cn(
+                  'absolute z-10 flex flex-col items-center',
+                  canReturnToPaper && 'cursor-pointer',
+                )}
                 style={{
                   left: '100%',
                   top: '-14px',
                   transform: 'translateX(-50%)',
                 }}
+                onClick={handleReturnToPaper}
                 onMouseEnter={(e) => showNodeTooltip('end', e.currentTarget)}
                 onMouseLeave={hideNodeTooltip}
                 onFocus={(e) => showNodeTooltip('end', e.currentTarget)}
@@ -493,13 +552,19 @@ export function SessionProgressBar({
                 showSaveHint && 'animate-pulse-soft bg-accent/15 text-accent',
                 isSaving && 'cursor-not-allowed opacity-60',
               )}
-              title={isSaving ? 'Saving…' : 'Save & leave'}
+              title={
+                isSaving
+                  ? 'Saving…'
+                  : isFinishAction
+                    ? 'Save results & finish'
+                    : 'Save & leave'
+              }
               aria-label={
                 isSaving
                   ? 'Saving session'
-                  : showSaveHint
-                    ? 'Save and leave. Keeps your results'
-                    : 'Save and leave'
+                  : isFinishAction
+                    ? 'Save results and finish the paper'
+                    : 'Save and leave the paper'
               }
             >
               {isSaving ? (

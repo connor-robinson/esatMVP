@@ -13,6 +13,7 @@ import {
 } from '@/components/auth/SupabaseSessionProvider';
 import { cn } from '@/lib/utils';
 import { SessionProgressBar } from '@/components/papers/SessionProgressBar';
+import { isPaperImmersiveRoute } from '@/lib/papers/activePaperSessionClient';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -280,9 +281,12 @@ export function Navbar() {
     };
   }, []);
 
+  // Immersive mode only applies inside the paper. With a session running on any
+  // other page, the main navbar must stay available.
+  const isImmersivePaperView =
+    hasActiveSession && isPaperImmersiveRoute(pathname);
   const showMainNavStrip =
-    !hasActiveSession ||
-    (docFullscreen && paperFullscreenShowMainNavbar);
+    !isImmersivePaperView || (docFullscreen && paperFullscreenShowMainNavbar);
 
   const currentSection = resolveSection(pathname);
 
@@ -487,7 +491,7 @@ export function Navbar() {
                   <BrandNavLockup />
                 </Link>
 
-                {!hasActiveSession && (
+                {!isImmersivePaperView && (
                   <div className='hidden min-w-0 flex-1 items-center gap-x-4 lg:gap-x-6 xl:gap-x-7 md:flex'>
                     {navSections.map((section) => (
                       <NavSectionDropdown
@@ -502,7 +506,7 @@ export function Navbar() {
               </div>
 
               <div className='flex min-w-0 shrink-0 items-center gap-1 sm:gap-1.5'>
-                {!hasActiveSession && (
+                {!isImmersivePaperView && (
                   <>
                     <button
                       type='button'
@@ -533,7 +537,7 @@ export function Navbar() {
               </div>
             </div>
 
-            {!hasActiveSession && mobileMenuOpen && (
+            {!isImmersivePaperView && mobileMenuOpen && (
               <div className='border-t border-border-subtle pb-5 pt-4 md:hidden'>
                 <div className='flex flex-col gap-6'>
                   {navSections.map((section) => (
