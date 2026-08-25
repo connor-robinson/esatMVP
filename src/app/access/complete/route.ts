@@ -36,6 +36,7 @@ export async function GET(request: NextRequest) {
 
   if (!session?.user) {
     const loginUrl = new URL("/login", origin);
+    loginUrl.searchParams.set("mode", "signup");
     loginUrl.searchParams.set("redirectTo", "/access/complete");
     return NextResponse.redirect(loginUrl);
   }

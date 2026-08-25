@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       {
         ok: false,
         error: "unauthenticated",
-        redirectTo: `/login?redirectTo=${encodeURIComponent("/access")}`,
+        redirectTo: `/login?mode=signup&redirectTo=${encodeURIComponent("/access")}`,
       },
       { status: 401 },
     );

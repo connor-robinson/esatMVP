@@ -97,6 +97,7 @@ export async function GET(
   }
 
   const loginUrl = new URL("/login", origin);
+  loginUrl.searchParams.set("mode", "signup");
   loginUrl.searchParams.set("redirectTo", "/access/complete");
 
   const response = NextResponse.redirect(loginUrl);

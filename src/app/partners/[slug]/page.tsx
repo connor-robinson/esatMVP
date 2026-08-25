@@ -61,10 +61,10 @@ export default async function PartnerLandingPage({
             Enter invitation code
           </Link>
           <Link
-            href="/login"
+            href="/login?mode=signup"
             className="inline-flex justify-center rounded-lg bg-stone-100 px-5 py-3 text-sm font-medium text-stone-900"
           >
-            Sign in
+            Sign up
           </Link>
         </div>
         <p className="mt-10 text-xs text-stone-400">
