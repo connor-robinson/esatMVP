@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ExamScoreConverterShell } from "@/components/tools/scoreConverter/ExamScoreConverterShell";
-import { NsaaConversionYearNav } from "@/components/tools/scoreConverter/nsaaYear/NsaaConversionYearNav";
 import {
   EXAM_FULL_NAME,
   isConverterExam,
