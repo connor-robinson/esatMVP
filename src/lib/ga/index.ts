@@ -50,3 +50,18 @@ export {
   rememberGaSourcePage,
   trackEventOnce,
 } from "./funnel";
+
+export {
+  clearGaUserId,
+  isSupabaseUserUuid,
+  setGaUserId,
+} from "./setUserId";
+
+export {
+  claimCommerceEvent,
+  fallbackGaClientId,
+  isCommerceEventSent,
+  sendGaCommerceEvent,
+  type GaCommerceEventName,
+  type GaCommerceSource,
+} from "./measurementProtocol";

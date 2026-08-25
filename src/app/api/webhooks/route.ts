@@ -11,6 +11,11 @@ import {
   finalizeSeasonPassSubscription,
 } from "@/lib/stripe/supabase-admin";
 import { SEASON_PASS_ACCESS_UNTIL } from "@/lib/stripe/seasonPass";
+import {
+  handleCheckoutSessionCompletedCommerce,
+  handleInvoicePaidCommerce,
+  handleSubscriptionDeletedCommerce,
+} from "@/lib/stripe/checkoutEvents";
 
 const RELEVANT_EVENTS = new Set([
   "product.created",
@@ -23,6 +28,7 @@ const RELEVANT_EVENTS = new Set([
   "customer.subscription.created",
   "customer.subscription.updated",
   "customer.subscription.deleted",
+  "invoice.paid",
 ]);
 
 const EXAM_DATE = SEASON_PASS_ACCESS_UNTIL;
@@ -69,17 +75,24 @@ export async function POST(request: NextRequest) {
         await deleteProductRecord(event.data.object as Stripe.Product);
         break;
       case "customer.subscription.created":
-      case "customer.subscription.updated":
+      case "customer.subscription.updated": {
+        const sub = event.data.object as Stripe.Subscription;
+        await manageSubscriptionStatusChange(
+          sub.id,
+          sub.customer as string,
+          event.type === "customer.subscription.created",
+        );
+        await finalizeSeasonPassSubscription(sub);
+        break;
+      }
       case "customer.subscription.deleted": {
         const sub = event.data.object as Stripe.Subscription;
         await manageSubscriptionStatusChange(
           sub.id,
           sub.customer as string,
-          event.type === "customer.subscription.created"
+          false,
         );
-        if (event.type !== "customer.subscription.deleted") {
-          await finalizeSeasonPassSubscription(sub);
-        }
+        await handleSubscriptionDeletedCommerce(sub, event.id);
         break;
       }
       case "checkout.session.completed": {
@@ -88,26 +101,43 @@ export async function POST(request: NextRequest) {
           await manageSubscriptionStatusChange(
             session.subscription as string,
             session.customer as string,
-            true
+            true,
           );
           if (session.metadata?.planType === "season_pass") {
             const sub = await getStripe().subscriptions.retrieve(
-              session.subscription as string
+              session.subscription as string,
             );
             await finalizeSeasonPassSubscription(sub);
           }
-        } else if (session.mode === "payment" && session.metadata?.planType === "season_pass") {
-          const fullSession = await getStripe().checkout.sessions.retrieve(session.id, {
-            expand: ["line_items.data.price.product"],
-          });
+        } else if (
+          session.mode === "payment" &&
+          session.metadata?.planType === "season_pass"
+        ) {
+          const fullSession = await getStripe().checkout.sessions.retrieve(
+            session.id,
+            {
+              expand: ["line_items.data.price.product"],
+            },
+          );
           await upsertOneTimePurchase(fullSession, EXAM_DATE);
         }
+        await handleCheckoutSessionCompletedCommerce(session, event.id);
+        break;
+      }
+      case "invoice.paid": {
+        const invoice = event.data.object as Stripe.Invoice;
+        await handleInvoicePaidCommerce(invoice, event.id);
         break;
       }
       default:
         break;
     }
   } catch (err) {
+    console.error("[webhooks] handler failed", {
+      type: event.type,
+      id: event.id,
+      err,
+    });
     return NextResponse.json("Webhook handler failed", { status: 400 });
   }
 

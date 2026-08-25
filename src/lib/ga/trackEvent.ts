@@ -33,6 +33,9 @@ export type GaEventName =
   | "sign_up"
   | "begin_checkout"
   | "purchase"
+  | "trial_started"
+  | "subscription_cancelled"
+  | "subscription_renewed"
   /** @deprecated Prefer sign_up / begin_checkout */
   | "signup_completed"
   | "checkout_started"

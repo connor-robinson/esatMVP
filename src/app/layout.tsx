@@ -14,6 +14,7 @@ import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { SessionRestore } from "@/components/papers/SessionRestore";
 import { SessionPersistenceHandler } from "@/components/papers/SessionPersistenceHandler";
 import { SiteVisitMarker } from "@/components/shared/SiteVisitMarker";
+import { AttributionBootstrap } from "@/components/attribution/AttributionBootstrap";
 import { DeferredMount } from "@/components/shared/DeferredMount";
 import { UsernameGate } from "@/components/auth/UsernameGate";
 import { GoogleOneTap } from "@/components/auth/GoogleOneTap";
@@ -191,6 +192,7 @@ export default function RootLayout({
                 <LoadingProvider>
                   <QuicklinkProvider>
                     <SiteVisitMarker />
+                    <AttributionBootstrap />
                     <CookieConsentBanner />
                     <TesterProgrammeProvider>
                       <Navbar />

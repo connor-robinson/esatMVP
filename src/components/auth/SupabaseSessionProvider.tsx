@@ -9,8 +9,10 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import {
   currentGaPath,
   readGaSourcePage,
-  trackEvent,
   trackEventOnce,
+  setGaUserId,
+  clearGaUserId,
+  hasAnalyticsConsent,
 } from "@/lib/ga";
 
 interface SupabaseSessionProviderProps {
@@ -75,6 +77,9 @@ export function SupabaseSessionProvider({ children, initialSession }: SupabaseSe
     supabase.auth.getSession().then(({ data }) => {
       if (mounted) {
         setSession(data.session ?? null);
+        if (data.session?.user?.id && hasAnalyticsConsent()) {
+          setGaUserId(data.session.user.id);
+        }
       }
     });
 
@@ -84,6 +89,12 @@ export function SupabaseSessionProvider({ children, initialSession }: SupabaseSe
       setSession(newSession);
       if (event === "SIGNED_IN") {
         maybeTrackSignup(newSession);
+        if (newSession?.user?.id && hasAnalyticsConsent()) {
+          setGaUserId(newSession.user.id);
+        }
+      }
+      if (event === "SIGNED_OUT") {
+        clearGaUserId();
       }
     });
 

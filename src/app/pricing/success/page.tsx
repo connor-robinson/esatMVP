@@ -78,37 +78,59 @@ function PricingSuccessContent() {
 
             try {
               const purchaseKey = `ga_purchase_${sessionId}`;
-              if (sessionStorage.getItem(purchaseKey) !== "1") {
-                sessionStorage.setItem(purchaseKey, "1");
-                const amountTotal =
-                  typeof syncData.amountTotal === "number"
-                    ? syncData.amountTotal
-                    : null;
-                trackEvent("purchase", {
-                  transaction_id: sessionId,
-                  value:
-                    amountTotal != null && Number.isFinite(amountTotal)
-                      ? amountTotal / 100
-                      : undefined,
-                  currency:
-                    typeof syncData.currency === "string"
-                      ? syncData.currency.toUpperCase()
-                      : "GBP",
-                  plan_type: syncData.planType
-                    ? String(syncData.planType)
-                    : status.tier
-                      ? String(status.tier)
-                      : undefined,
-                });
+              if (sessionStorage.getItem(purchaseKey) === "1") {
+                return;
               }
-            } catch {
+              sessionStorage.setItem(purchaseKey, "1");
+
+              // Trials and webhook-sent purchases: never double-fire client purchase.
+              if (syncData.shouldClientTrackPurchase !== true) {
+                return;
+              }
+
+              const transactionId =
+                typeof syncData.clientPurchaseTransactionId === "string"
+                  ? syncData.clientPurchaseTransactionId
+                  : sessionId;
+
+              const claimRes = await fetch("/api/analytics/commerce-sent", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  event: "purchase",
+                  transaction_id: transactionId,
+                  payload: {
+                    plan_type: syncData.planType ?? status.tier ?? null,
+                  },
+                }),
+              });
+              const claimData = await claimRes.json().catch(() => ({}));
+              if (!claimRes.ok || claimData.claimed !== true) {
+                return;
+              }
+
+              const amountTotal =
+                typeof syncData.amountTotal === "number"
+                  ? syncData.amountTotal
+                  : null;
               trackEvent("purchase", {
-                transaction_id: sessionId,
-                currency: "GBP",
+                transaction_id: transactionId,
+                value:
+                  amountTotal != null && Number.isFinite(amountTotal)
+                    ? amountTotal / 100
+                    : undefined,
+                currency:
+                  typeof syncData.currency === "string"
+                    ? syncData.currency.toUpperCase()
+                    : "GBP",
                 plan_type: syncData.planType
                   ? String(syncData.planType)
-                  : undefined,
+                  : status.tier
+                    ? String(status.tier)
+                    : undefined,
               });
+            } catch {
+              /* analytics is non-critical */
             }
             return;
           }

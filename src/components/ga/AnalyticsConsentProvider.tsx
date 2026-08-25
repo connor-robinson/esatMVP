@@ -23,6 +23,8 @@ import {
   writeAnalyticsConsent,
   type AnalyticsConsentStatus,
 } from "@/lib/ga";
+import { clearGaUserId, setGaUserId } from "@/lib/ga/setUserId";
+import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 
 type AnalyticsConsentContextValue = {
   status: AnalyticsConsentStatus;
@@ -42,6 +44,7 @@ export function AnalyticsConsentProvider({
 }: {
   children: ReactNode;
 }) {
+  const session = useSupabaseSession();
   const [status, setStatus] = useState<AnalyticsConsentStatus>("pending");
   const [hydrated, setHydrated] = useState(false);
   const [preferencesOpen, setPreferencesOpen] = useState(false);
@@ -58,13 +61,24 @@ export function AnalyticsConsentProvider({
     if (stored === "accepted") {
       updateGoogleConsentMode("accepted");
       enableGaMeasurement(GA_MEASUREMENT_ID);
+      if (session?.user?.id) {
+        setGaUserId(session.user.id);
+      }
     } else {
       disableGaMeasurement(GA_MEASUREMENT_ID);
       if (stored === "rejected") {
         updateGoogleConsentMode("rejected");
       }
     }
+    // Only run on mount for stored consent; session binding handled below.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional mount hydrate
   }, []);
+
+  useEffect(() => {
+    if (status === "accepted" && session?.user?.id) {
+      setGaUserId(session.user.id);
+    }
+  }, [status, session?.user?.id]);
 
   useEffect(() => {
     const onStorage = (event: StorageEvent) => {
@@ -103,11 +117,15 @@ export function AnalyticsConsentProvider({
     writeAnalyticsConsent("accepted");
     setStatus("accepted");
     setPreferencesOpen(false);
-  }, []);
+    if (session?.user?.id) {
+      setGaUserId(session.user.id);
+    }
+  }, [session?.user?.id]);
 
   const reject = useCallback(() => {
     updateGoogleConsentMode("rejected");
     disableGaMeasurement(GA_MEASUREMENT_ID);
+    clearGaUserId();
     clearGaCookies();
     writeAnalyticsConsent("rejected");
     setStatus("rejected");

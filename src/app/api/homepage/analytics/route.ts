@@ -18,14 +18,24 @@ export async function POST(request: NextRequest) {
     const { user } = await requireRouteUser(request);
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    await supabase.from("homepage_analytics_events").insert({
+    const { error } = await supabase.from("homepage_analytics_events").insert({
       user_id: user?.id ?? null,
       event,
       properties: body.properties ?? {},
     });
 
+    if (error) {
+      console.error("[homepage/analytics] insert failed", {
+        event,
+        code: error.code,
+        message: error.message,
+      });
+      return NextResponse.json({ ok: false }, { status: 200 });
+    }
+
     return NextResponse.json({ ok: true });
-  } catch {
-    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error("[homepage/analytics]", err);
+    return NextResponse.json({ ok: false }, { status: 200 });
   }
 }
