@@ -22,7 +22,7 @@ function SectionConversionTable({
           id={`nsaa-section-${sectionId}`}
           className="text-lg font-semibold text-text"
         >
-          {section.paperName}
+          {section.paperName} Table
         </h2>
         <p className="text-sm text-text-muted">
           Raw marks 0–{section.rawMarks[section.rawMarks.length - 1] ?? 0}
