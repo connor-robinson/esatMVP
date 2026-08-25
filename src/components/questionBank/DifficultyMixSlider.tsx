@@ -176,13 +176,9 @@ export function DifficultyMixSlider({ value, onChange }: Props) {
         ))}
       </div>
 
-      <p
-        key={blurbKey}
-        id={labelId}
-        className="animate-fade-in text-xs font-medium leading-relaxed text-text-muted"
-      >
-        {DIFFICULTY_MIX_BLURBS[value]}
-      </p>
+      <span id={labelId} className="sr-only">
+        Difficulty mix: {DIFFICULTY_MIX_BLURBS[value]}
+      </span>
     </div>
   );
 }
