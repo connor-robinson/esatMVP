@@ -295,7 +295,7 @@ def converter_status() -> Dict[str, Any]:
 
 
 PAPER_CONVERSION_COLUMNS = (
-    "question_id, status, conversion_report, confidence, updated_at, created_at"
+    "question_id, status, conversion_report, confidence, diagram_assets, updated_at, created_at"
 )
 
 
@@ -384,6 +384,9 @@ def _build_paper(paper_id: int) -> Dict[str, Any]:
         conversion = active.get(int(question["id"]))
         _apply_stats(stats, question, conversion)
         report = (conversion or {}).get("conversion_report") or {}
+        assets = (conversion or {}).get("diagram_assets")
+        asset_count = len(assets) if isinstance(assets, list) else 0
+        has_diagram = report.get("has_diagram") is True or asset_count > 0
         items.append(
             {
                 "questionId": int(question["id"]),
@@ -395,7 +398,8 @@ def _build_paper(paper_id: int) -> Dict[str, Any]:
                 "converted": _is_converted(question),
                 "conversionStatus": (conversion or {}).get("status"),
                 "confidence": (conversion or {}).get("confidence"),
-                "hasDiagram": report.get("has_diagram") is True,
+                "hasDiagram": has_diagram,
+                "diagramCount": asset_count,
                 "hasTable": report.get("has_table") is True,
                 "needsReview": report.get("diagram_review_status") == "needs_review",
                 "studioReviewed": report.get("studio_reviewed") is True,

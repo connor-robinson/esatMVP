@@ -9,6 +9,10 @@ const state = {
   dirty: false,
   saving: false,
   loading: false,
+  paperId: null,
+  paperQuestions: null,
+  paperPromise: null,
+  loadToken: 0,
 };
 
 /** In-flight / resolved neighbor payloads so Next/Prev do not wait on Supabase. */
@@ -69,6 +73,148 @@ function prefetchNeighbors(data) {
       .catch(() => {});
   }
   if (neighbors.prevId) prefetchQuestion(neighbors.prevId);
+}
+
+function railDotClass(question) {
+  if (question.conversionStatus === "failed") return "dot red";
+  if (question.needsReview) return "dot violet";
+  if (question.converted) return question.studioReviewed ? "dot green" : "dot amber";
+  return "dot";
+}
+
+function railLabel(question) {
+  const part = String(question.partLetter || "").trim();
+  if (part && !/^part\s+/i.test(part) && part.length <= 2) {
+    return `${question.questionNumber}${part}`;
+  }
+  return String(question.questionNumber);
+}
+
+function syncPaperListFromDraft() {
+  if (!state.paperQuestions || !state.draft) return;
+  const current = state.paperQuestions.find((item) => item.questionId === state.questionId);
+  if (!current) return;
+  const count = state.draft.assets.length;
+  if (count > 0) {
+    current.hasDiagram = true;
+    current.diagramCount = count;
+  }
+  current.studioEdited = true;
+  if (document.getElementById("mark-reviewed").checked) {
+    current.studioReviewed = true;
+  }
+}
+
+function renderQuestionRail() {
+  const host = document.getElementById("q-rail-list");
+  const countHost = document.getElementById("q-rail-count");
+  if (!host) return;
+
+  const questions = state.paperQuestions || [];
+  countHost.textContent = questions.length ? String(questions.length) : "";
+
+  if (!questions.length) {
+    clear(host).appendChild(
+      el("div", {
+        class: "muted",
+        style: "padding:10px 8px;font-size:12.5px",
+        text: state.paperPromise ? "Loading…" : "No questions",
+      }),
+    );
+    return;
+  }
+
+  clear(host);
+  let lastPart = null;
+  const parts = new Set(questions.map((item) => String(item.partLetter || "").trim()).filter(Boolean));
+  const showParts = parts.size > 1;
+
+  for (const question of questions) {
+    const part = String(question.partLetter || "").trim();
+    if (showParts && part && part !== lastPart) {
+      host.appendChild(el("div", { class: "q-rail-part", text: part }));
+      lastPart = part;
+    }
+
+    const badges = [];
+    if (question.hasDiagram) {
+      badges.push(
+        el("span", {
+          class: "badge diagram",
+          text: question.diagramCount > 1 ? `diagram ×${question.diagramCount}` : "diagram",
+        }),
+      );
+    } else if (question.hasTable) {
+      badges.push(el("span", { class: "badge table", text: "table" }));
+    }
+
+    const item = el(
+      "button",
+      {
+        class: `q-rail-item${question.questionId === state.questionId ? " current" : ""}`,
+        type: "button",
+        title: questionTitle(question),
+        "data-question-id": String(question.questionId),
+        onmouseenter: () => prefetchQuestion(question.questionId),
+        onclick: () => {
+          if (question.questionId === state.questionId) return;
+          go(question.questionId);
+        },
+      },
+      [
+        el("span", { class: "num", text: railLabel(question) }),
+        el("span", { class: "meta" }, badges),
+        el("span", { class: railDotClass(question) }),
+      ],
+    );
+    host.appendChild(item);
+  }
+
+  const current = host.querySelector(".q-rail-item.current");
+  if (current && typeof current.scrollIntoView === "function") {
+    current.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
+}
+
+async function ensurePaperList(paperId) {
+  const id = Number(paperId);
+  if (!id) return;
+  if (state.paperId === id && state.paperQuestions) {
+    renderQuestionRail();
+    return;
+  }
+  if (state.paperId === id && state.paperPromise) {
+    await state.paperPromise;
+    renderQuestionRail();
+    return;
+  }
+
+  state.paperId = id;
+  state.paperQuestions = null;
+  state.paperPromise = api(`/api/paper/${id}`)
+    .then((data) => {
+      if (state.paperId !== id) return;
+      state.paperQuestions = data.questions || [];
+      renderQuestionRail();
+    })
+    .catch((error) => {
+      if (state.paperId !== id) return;
+      state.paperQuestions = [];
+      const host = clear(document.getElementById("q-rail-list"));
+      host.appendChild(
+        el("div", {
+          class: "muted",
+          style: "padding:10px 8px;font-size:12.5px",
+          text: `Could not load list: ${error.message}`,
+        }),
+      );
+    })
+    .finally(() => {
+      if (state.paperId === id) state.paperPromise = null;
+    });
+
+  renderQuestionRail();
+  await state.paperPromise;
 }
 
 function setNavBusy(busy) {
@@ -426,14 +572,17 @@ function renderAll() {
   renderOptions();
   renderAssets();
   renderMeta();
+  renderQuestionRail();
 }
 
 /* ---------- data ---------- */
 
 async function load(questionId, { preferCache = true } = {}) {
   const id = Number(questionId);
+  const token = ++state.loadToken;
   state.questionId = id;
   setNavBusy(true);
+  renderQuestionRail();
   try {
     let data = null;
     if (preferCache && prefetchCache.has(id)) {
@@ -441,8 +590,10 @@ async function load(questionId, { preferCache = true } = {}) {
       data = entry.data || (await entry.promise);
     } else {
       data = await api(`/api/question/${id}`);
+      if (token !== state.loadToken) return;
       rememberQuestion(id, data);
     }
+    if (token !== state.loadToken) return;
     state.data = data;
     state.draft = buildDraft(data);
     state.dirty = false;
@@ -454,19 +605,21 @@ async function load(questionId, { preferCache = true } = {}) {
     stem.value = state.draft.stem;
     renderAll();
     prefetchNeighbors(data);
+    ensurePaperList(data.question.paperId).catch(() => {});
   } finally {
-    setNavBusy(false);
+    if (token === state.loadToken) setNavBusy(false);
   }
 }
 
 async function go(questionId) {
-  if (!questionId || state.loading) return;
+  if (!questionId) return;
+  if (Number(questionId) === state.questionId && state.data) return;
   if (state.dirty && !window.confirm("Discard unsaved changes?")) return;
   window.history.replaceState({}, "", `/review?questionId=${questionId}`);
   try {
     await load(questionId);
   } catch (error) {
-    toast(error.message, "err", 8000);
+    if (Number(questionId) === state.questionId) toast(error.message, "err", 8000);
   }
 }
 
@@ -501,6 +654,7 @@ async function save() {
     state.draft = buildDraft(data);
     rememberQuestion(state.questionId, data);
     prefetchNeighbors(data);
+    syncPaperListFromDraft();
     state.dirty = false;
     document.getElementById("stem").value = state.draft.stem;
     document.getElementById("mark-reviewed").checked = Boolean(

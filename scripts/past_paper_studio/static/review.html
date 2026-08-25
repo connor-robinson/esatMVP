@@ -35,7 +35,7 @@
       })();
     </script>
   </head>
-  <body>
+  <body class="review-page">
     <div class="topbar">
       <a id="back"><button class="ghost">← Paper</button></a>
       <span class="crumb" id="crumb"></span>
@@ -46,70 +46,82 @@
       <button class="good" id="save">Save &amp; publish</button>
     </div>
 
-    <div class="wrap wide">
-      <div id="banners"></div>
+    <div class="review-shell">
+      <aside class="q-rail" id="q-rail" aria-label="Questions in this paper">
+        <div class="q-rail-head">
+          <span>Questions</span>
+          <span class="muted" id="q-rail-count"></span>
+        </div>
+        <div class="q-rail-list" id="q-rail-list">
+          <div class="muted" style="padding:10px 8px;font-size:12.5px">Loading…</div>
+        </div>
+      </aside>
 
-      <div class="split">
-        <div class="pane">
-          <div class="pane-head">
-            <span>Original screenshot</span>
-            <div class="spacer" style="flex:1"></div>
-            <span class="muted" id="source-meta" style="font-weight:400"></span>
+      <div class="wrap wide review-main">
+        <div id="banners"></div>
+
+        <div class="split">
+          <div class="pane">
+            <div class="pane-head">
+              <span>Original screenshot</span>
+              <div class="spacer" style="flex:1"></div>
+              <span class="muted" id="source-meta" style="font-weight:400"></span>
+            </div>
+            <div class="pane-body tight" id="source-pane"></div>
           </div>
-          <div class="pane-body tight" id="source-pane"></div>
+
+          <div class="pane">
+            <div class="pane-head">
+              <span>Converted question</span>
+              <div class="spacer" style="flex:1"></div>
+              <label class="muted row" style="font-weight:400;gap:6px">
+                <input type="checkbox" id="show-answer" style="width:auto" checked />
+                highlight answer
+              </label>
+            </div>
+            <div class="pane-body" id="preview-pane"></div>
+          </div>
         </div>
 
-        <div class="pane">
+        <div class="pane" style="margin-top:16px">
           <div class="pane-head">
-            <span>Converted question</span>
+            <span>Edit</span>
             <div class="spacer" style="flex:1"></div>
             <label class="muted row" style="font-weight:400;gap:6px">
-              <input type="checkbox" id="show-answer" style="width:auto" checked />
-              highlight answer
+              <input type="checkbox" id="mark-reviewed" style="width:auto" />
+              mark hand-checked
             </label>
           </div>
-          <div class="pane-body" id="preview-pane"></div>
-        </div>
-      </div>
-
-      <div class="pane" style="margin-top:16px">
-        <div class="pane-head">
-          <span>Edit</span>
-          <div class="spacer" style="flex:1"></div>
-          <label class="muted row" style="font-weight:400;gap:6px">
-            <input type="checkbox" id="mark-reviewed" style="width:auto" />
-            mark hand-checked
-          </label>
-        </div>
-        <div class="pane-body">
-          <div class="split">
-            <div>
-              <div class="field">
-                <label>Question text (KaTeX, markdown tables)</label>
-                <textarea id="stem" rows="12"></textarea>
+          <div class="pane-body">
+            <div class="split">
+              <div>
+                <div class="field">
+                  <label>Question text (KaTeX, markdown tables)</label>
+                  <textarea id="stem" rows="12"></textarea>
+                </div>
+                <div class="field">
+                  <label>Answer key</label>
+                  <div class="chips" id="answer-chips"></div>
+                </div>
               </div>
-              <div class="field">
-                <label>Answer key</label>
-                <div class="chips" id="answer-chips"></div>
-              </div>
-            </div>
-            <div>
-              <div class="field">
-                <label>Options</label>
-                <div id="options"></div>
-              </div>
-              <div class="field">
-                <label>Diagrams and graphs</label>
-                <div id="assets"></div>
-                <button class="ghost" id="add-asset" style="margin-top:6px">+ Add diagram from screenshot</button>
+              <div>
+                <div class="field">
+                  <label>Options</label>
+                  <div id="options"></div>
+                </div>
+                <div class="field">
+                  <label>Diagrams and graphs</label>
+                  <div id="assets"></div>
+                  <button class="ghost" id="add-asset" style="margin-top:6px">+ Add diagram from screenshot</button>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="card" style="margin:16px 0 40px">
-        <div class="muted" style="font-size:12.5px" id="meta"></div>
+        <div class="card" style="margin:16px 0 40px">
+          <div class="muted" style="font-size:12.5px" id="meta"></div>
+        </div>
       </div>
     </div>
 
