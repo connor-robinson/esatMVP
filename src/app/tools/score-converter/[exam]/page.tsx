@@ -6,7 +6,6 @@ import {
   isConverterExam,
   type ConverterExam,
 } from "@/lib/scoreConverter/esatModules";
-import { fetchPublishedTableCatalog } from "@/lib/scoreConverter/publishedTables.server";
 import { SCORE_CONVERTER_PAGE_COPY } from "@/lib/scoreConverter/scoreConverterPageCopy";
 import { buildSeoMetadata } from "@/lib/seo/config";
 
@@ -48,7 +47,6 @@ export default async function ExamScoreConverterPage({
   const raw = params.exam ?? "";
   if (!isConverterExam(raw)) notFound();
   const exam = raw.toUpperCase() as ConverterExam;
-  const tableRows = await fetchPublishedTableCatalog();
 
-  return <ExamScoreConverterShell initialExam={exam} tableRows={tableRows} />;
+  return <ExamScoreConverterShell initialExam={exam} />;
 }
