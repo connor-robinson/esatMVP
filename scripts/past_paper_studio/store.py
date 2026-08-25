@@ -19,8 +19,10 @@ from past_paper_converter.validate import normalize_latex_delimiters, normalize_
 from . import imaging
 
 STATUS_FILE = CACHE_DIR.parent / ".conversion_status.json"
-FIGURE_RE = re.compile(r"<figure[^>]*>[\s\S]*?</figure>", re.IGNORECASE)
+PAPER_REVIEWS_FILE = CACHE_DIR / "studio_paper_reviews.json"
+FIGURE_RE = re.compile(r"<figure[^>]*>[\s\S]*?<\/figure>", re.IGNORECASE)
 PAGE_SIZE = 1000
+_PAPER_REVIEWS_LOCK = threading.Lock()
 
 QUESTION_COLUMNS = (
     "id, paper_id, exam_name, exam_year, paper_name, part_letter, part_name, "
@@ -248,12 +250,18 @@ def _build_overview() -> Dict[str, Any]:
         _apply_stats(stats, question, conversions.get(int(question["id"])))
 
     totals = _blank_stats()
+    paper_reviews = paper_human_reviewed_map()
+    papers_human_reviewed = 0
     exams: Dict[str, Dict[int, List[Dict[str, Any]]]] = {}
     for paper in papers:
         paper_id = int(paper["id"])
         stats = paper_stats.get(paper_id, _blank_stats())
         for key, value in stats.items():
             totals[key] += value
+        review = paper_reviews.get(paper_id) or {}
+        human_reviewed = review.get("reviewed") is True
+        if human_reviewed:
+            papers_human_reviewed += 1
         entry = {
             "paperId": paper_id,
             "examName": paper.get("exam_name") or "Unknown",
@@ -261,6 +269,8 @@ def _build_overview() -> Dict[str, Any]:
             "paperName": paper.get("paper_name") or "",
             "stats": stats,
             "state": _paper_state(stats),
+            "humanReviewed": human_reviewed,
+            "humanReviewedAt": review.get("reviewedAt") or "",
         }
         exams.setdefault(entry["examName"], {}).setdefault(entry["examYear"], []).append(entry)
 
@@ -272,17 +282,43 @@ def _build_overview() -> Dict[str, Any]:
                 exams[exam_name][year], key=lambda item: item["paperName"]
             )
             year_stats = _blank_stats()
+            year_human = 0
             for item in papers_for_year:
                 for key, value in item["stats"].items():
                     year_stats[key] += value
-            years.append({"examYear": year, "stats": year_stats, "papers": papers_for_year})
+                if item.get("humanReviewed"):
+                    year_human += 1
+            years.append(
+                {
+                    "examYear": year,
+                    "stats": year_stats,
+                    "papers": papers_for_year,
+                    "papersHumanReviewed": year_human,
+                }
+            )
         exam_stats = _blank_stats()
+        exam_human = 0
         for year_entry in years:
             for key, value in year_entry["stats"].items():
                 exam_stats[key] += value
-        exam_list.append({"examName": exam_name, "stats": exam_stats, "years": years})
+            exam_human += int(year_entry.get("papersHumanReviewed") or 0)
+        exam_list.append(
+            {
+                "examName": exam_name,
+                "stats": exam_stats,
+                "years": years,
+                "papersHumanReviewed": exam_human,
+            }
+        )
 
-    return {"totals": totals, "exams": exam_list}
+    return {
+        "totals": {
+            **totals,
+            "papers": len(papers),
+            "papersHumanReviewed": papers_human_reviewed,
+        },
+        "exams": exam_list,
+    }
 
 
 def converter_status() -> Dict[str, Any]:
@@ -292,6 +328,58 @@ def converter_status() -> Dict[str, Any]:
         return json.loads(STATUS_FILE.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError):
         return {"status": "unknown"}
+
+
+def _load_paper_reviews() -> Dict[str, Dict[str, Any]]:
+    if not PAPER_REVIEWS_FILE.is_file():
+        return {}
+    try:
+        data = json.loads(PAPER_REVIEWS_FILE.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def _save_paper_reviews(data: Dict[str, Dict[str, Any]]) -> None:
+    PAPER_REVIEWS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    PAPER_REVIEWS_FILE.write_text(json.dumps(data, indent=2, sort_keys=True), encoding="utf-8")
+
+
+def paper_human_reviewed_map() -> Dict[int, Dict[str, Any]]:
+    """paper_id -> {reviewed, reviewedAt} for homepage tracking."""
+    out: Dict[int, Dict[str, Any]] = {}
+    for key, value in _load_paper_reviews().items():
+        try:
+            paper_id = int(key)
+        except (TypeError, ValueError):
+            continue
+        if not isinstance(value, dict):
+            continue
+        if value.get("reviewed") is True:
+            out[paper_id] = {
+                "reviewed": True,
+                "reviewedAt": value.get("reviewedAt") or "",
+            }
+    return out
+
+
+def set_paper_human_reviewed(paper_id: int, reviewed: bool) -> Dict[str, Any]:
+    """Mark or clear a whole paper as human-reviewed for studio tracking."""
+    paper_id = int(paper_id)
+    with _PAPER_REVIEWS_LOCK:
+        data = _load_paper_reviews()
+        key = str(paper_id)
+        if reviewed:
+            data[key] = {"reviewed": True, "reviewedAt": _now_iso()}
+        else:
+            data.pop(key, None)
+        _save_paper_reviews(data)
+    invalidate("overview", f"paper:{paper_id}")
+    entry = paper_human_reviewed_map().get(paper_id) or {
+        "reviewed": False,
+        "reviewedAt": "",
+    }
+    return {"paperId": paper_id, **entry}
 
 
 PAPER_CONVERSION_COLUMNS = (
@@ -408,6 +496,7 @@ def _build_paper(paper_id: int) -> Dict[str, Any]:
             }
         )
 
+    review = paper_human_reviewed_map().get(paper_id) or {}
     return {
         "paper": {
             "paperId": int(paper["id"]),
@@ -416,6 +505,8 @@ def _build_paper(paper_id: int) -> Dict[str, Any]:
             "paperName": paper.get("paper_name") or "",
             "stats": stats,
             "state": _paper_state(stats),
+            "humanReviewed": review.get("reviewed") is True,
+            "humanReviewedAt": review.get("reviewedAt") or "",
         },
         "questions": items,
     }

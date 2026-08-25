@@ -7,6 +7,8 @@ const FILTERS = [
   { id: "failed", label: "Has failures" },
   { id: "review", label: "Needs review" },
   { id: "unreviewed", label: "Not hand-checked" },
+  { id: "humanReviewed", label: "Paper marked reviewed" },
+  { id: "notHumanReviewed", label: "Paper not marked reviewed" },
 ];
 
 const state = { data: null, filter: "all", search: "" };
@@ -44,6 +46,7 @@ function renderSummary() {
       statBlock(totals.needsReview, "need review", totals.needsReview ? "#a98bff" : null),
       statBlock(totals.humanCrop, "manual crop"),
       statBlock(totals.reviewed, "hand-checked", "#32d59b"),
+      statBlock(totals.papersHumanReviewed || 0, "papers marked", "#32d59b"),
       statBlock(totals.withDiagram, "with diagram"),
     ]),
   );
@@ -78,27 +81,78 @@ function paperMatches(paper) {
       return stats.needsReview > 0 || stats.humanCrop > 0;
     case "unreviewed":
       return stats.total > 0 && stats.reviewed < stats.total;
+    case "humanReviewed":
+      return paper.humanReviewed === true;
+    case "notHumanReviewed":
+      return paper.humanReviewed !== true;
     default:
       return true;
+  }
+}
+
+async function togglePaperReviewed(event, paper) {
+  event.preventDefault();
+  event.stopPropagation();
+  const next = !paper.humanReviewed;
+  const button = event.currentTarget;
+  button.disabled = true;
+  try {
+    const result = await api(`/api/paper/${paper.paperId}/human-reviewed`, {
+      method: "POST",
+      body: JSON.stringify({ reviewed: next }),
+    });
+    paper.humanReviewed = result.reviewed === true;
+    paper.humanReviewedAt = result.reviewedAt || "";
+    if (state.data && state.data.totals) {
+      let count = 0;
+      for (const exam of state.data.exams || []) {
+        for (const year of exam.years || []) {
+          for (const item of year.papers || []) {
+            if (item.humanReviewed) count += 1;
+          }
+        }
+      }
+      state.data.totals.papersHumanReviewed = count;
+    }
+    renderSummary();
+    renderContent();
+  } catch (error) {
+    window.alert(`Could not update paper review mark: ${error.message}`);
+  } finally {
+    button.disabled = false;
   }
 }
 
 function paperCard(paper) {
   const stats = paper.stats;
   const tags = [stateTag(paper.state, stats)];
+  if (paper.humanReviewed) {
+    tags.push(el("span", { class: "tag done", text: "Paper reviewed" }));
+  }
   if (stats.failed) tags.push(el("span", { class: "tag bad", text: `${stats.failed} failed` }));
   if (stats.needsReview) {
     tags.push(el("span", { class: "tag review", text: `${stats.needsReview} review` }));
   }
   if (stats.reviewed >= stats.total && stats.total > 0) {
-    tags.push(el("span", { class: "tag info", text: "Hand-checked" }));
+    tags.push(el("span", { class: "tag info", text: "All Qs checked" }));
   }
 
   return el(
     "a",
-    { class: "paper-card", href: `/paper?paperId=${paper.paperId}` },
+    { class: `paper-card${paper.humanReviewed ? " paper-reviewed" : ""}`, href: `/paper?paperId=${paper.paperId}` },
     [
-      el("div", { class: "title", text: paper.paperName || `Paper ${paper.paperId}` }),
+      el("div", { class: "paper-card-top" }, [
+        el("div", { class: "title", text: paper.paperName || `Paper ${paper.paperId}` }),
+        el("button", {
+          class: `paper-review-btn${paper.humanReviewed ? " on" : ""}`,
+          type: "button",
+          text: paper.humanReviewed ? "Reviewed" : "Mark reviewed",
+          title: paper.humanReviewed
+            ? "Clear whole-paper human reviewed mark"
+            : "Mark this whole paper as human reviewed",
+          onclick: (event) => togglePaperReviewed(event, paper),
+        }),
+      ]),
       el("div", { class: "chips" }, tags),
       el("div", { class: "meta" }, [
         el("span", { text: `${stats.converted}/${stats.total} text` }),

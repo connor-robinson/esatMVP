@@ -108,6 +108,18 @@ def api_paper(paper_id: int):
         return _error(exc)
 
 
+@app.post("/api/paper/<int:paper_id>/human-reviewed")
+def api_paper_human_reviewed(paper_id: int):
+    payload = request.get_json(silent=True) or {}
+    reviewed = payload.get("reviewed")
+    if not isinstance(reviewed, bool):
+        return jsonify({"error": "reviewed must be true or false"}), 400
+    try:
+        return jsonify(store.set_paper_human_reviewed(paper_id, reviewed))
+    except Exception as exc:
+        return _error(exc)
+
+
 @app.get("/api/question/<int:question_id>")
 def api_question(question_id: int):
     try:

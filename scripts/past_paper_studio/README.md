@@ -26,7 +26,9 @@ Then open http://127.0.0.1:8790/. Requires `SUPABASE_URL` and
 
 - `/` index: every paper grouped by exam and year, with converted counts and a
   "Fully processed" badge when a paper has no images left. Filter by outstanding
-  work, failures, review flags, or papers you have not hand-checked yet.
+  work, failures, review flags, or papers you have not hand-checked yet. Each
+  paper card has **Mark reviewed** to flag the whole paper as human-reviewed
+  (stored locally in the converter cache, separate from per-question checks).
 - `/paper?paperId=N`: question tiles grouped by part, coloured by state
   (green hand-checked, amber converted, violet needs review, red failed).
 - `/review?questionId=N`: screenshot on the left, converted question on the

@@ -372,14 +372,59 @@ textarea {
   transition: background 130ms ease, transform 130ms ease;
 }
 
+.paper-card.paper-reviewed {
+  background: color-mix(in srgb, #32d59b 12%, var(--surface));
+}
+
 .paper-card:hover {
   background: var(--surface-2);
   transform: translateY(-1px);
 }
 
+.paper-card.paper-reviewed:hover {
+  background: color-mix(in srgb, #32d59b 18%, var(--surface-2));
+}
+
+.paper-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
 .paper-card .title {
   font-weight: 640;
-  margin-bottom: 8px;
+  margin-bottom: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.paper-review-btn {
+  flex: 0 0 auto;
+  background: color-mix(in srgb, var(--text) 8%, transparent);
+  color: var(--muted);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 130ms ease, color 130ms ease;
+}
+
+.paper-review-btn:hover {
+  background: color-mix(in srgb, var(--text) 14%, transparent);
+  color: var(--text);
+}
+
+.paper-review-btn.on {
+  background: color-mix(in srgb, #32d59b 22%, transparent);
+  color: #32d59b;
+}
+
+.paper-review-btn:disabled {
+  opacity: 0.55;
+  cursor: wait;
 }
 
 .paper-card .meta {
