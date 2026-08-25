@@ -66,7 +66,7 @@ export default function AccessPage() {
   return (
     <main className="min-h-[70vh] py-16">
       <Container size="sm">
-        <h1 className="text-3xl font-semibold tracking-tight text-white">
+        <h1 className="text-3xl font-semibold tracking-tight !text-white">
           Institution access
         </h1>
         <p className="mt-3 text-text-muted">
