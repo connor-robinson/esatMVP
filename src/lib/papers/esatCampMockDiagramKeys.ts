@@ -1,4 +1,4 @@
-/** Diagram-bearing question keys from the Physics mock DOCX. */
+/** Diagram-bearing question keys from ESAT CAMP mock sources. */
 export const DIAGRAM_KEYS = [
   "A7",
   "A8",
@@ -23,6 +23,7 @@ export const DIAGRAM_KEYS = [
   "B23",
   "B25",
   "B26",
+  "M22",
 ] as const;
 
 export type EsatCampMockDiagramKey = (typeof DIAGRAM_KEYS)[number];

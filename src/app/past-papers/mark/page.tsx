@@ -18,6 +18,10 @@ import { MathContent } from "@/components/shared/MathContent";
 import { EsatCampMockReviewPanel } from "@/components/papers/esatCampMocks/EsatCampMockReviewPanel";
 import { PastPaperTextQuestion } from "@/components/papers/PastPaperTextQuestion";
 import { shouldRenderPastPaperAsText } from "@/lib/papers/pastPaperTextMode";
+import {
+  ESAT_CAMP_MOCK_DISCLOSURE,
+  isEsatCampMockExamType,
+} from "@/lib/papers/esatCampMocks";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import {
   cssVar,
@@ -1167,6 +1171,13 @@ export default function PapersMarkPage() {
                       {/* Section Performance - compact list */}
                       <div className={`${bubbleClass} space-y-3 lg:col-span-2`}>
                         <div className="text-base font-semibold text-neutral-100">Section Performance</div>
+                        {!hasConversion &&
+                        isEsatCampMockExamType(questions[0]?.examType) ? (
+                          <p className="text-xs leading-relaxed text-neutral-400">
+                            {ESAT_CAMP_MOCK_DISCLOSURE} There is no official
+                            score conversion for this paper.
+                          </p>
+                        ) : null}
                         <div className="divide-y divide-border-subtle">
                           {validSectionEntries.map(([section, data]) => {
                             const accuracy = data.total > 0 ? (data.correct / data.total) * 100 : 0;

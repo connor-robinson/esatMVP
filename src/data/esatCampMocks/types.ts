@@ -1,4 +1,4 @@
-/** ESAT CAMP Physics mock module question (DOCX source of truth). */
+/** ESAT CAMP mock module question (DOCX / markdown source of truth). */
 export type EsatCampMockLetter = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H";
 
 export interface EsatCampMockQuestion {
@@ -21,13 +21,22 @@ export interface EsatCampMockQuestion {
   diagramKey?: string;
 }
 
+export type EsatCampMockModuleId =
+  | "physics-module-a"
+  | "physics-module-b"
+  | "esatcamp-maths1-mock-01";
+
+export type EsatCampMockSubject = "Physics" | "Mathematics";
+
 export interface EsatCampMockModule {
-  id: "physics-module-a" | "physics-module-b";
+  id: EsatCampMockModuleId;
   title: string;
-  subject: "Physics";
+  subject: EsatCampMockSubject;
   questionCount: 27;
   timeLimitMinutes: 40;
   calculator: "Not permitted";
   paperName: string;
+  /** Student-facing disclosure for original (non-official) mocks. */
+  disclosure?: string;
   questions: EsatCampMockQuestion[];
 }

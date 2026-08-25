@@ -41,6 +41,15 @@ export const ESAT_CAMP_MOCK_ROADMAP_STAGES: RoadmapStage[] = [
         paperName: ESAT_CAMP_MOCK_DISPLAY_NAMES.physicsModuleB,
         examType: ESAT_CAMP_MOCK_EXAM_TYPE,
       },
+      {
+        partKey: 'esatcamp-maths1-mock-01',
+        displayGroupKey: 'esatcamp-maths1-mock-01',
+        displayName: ESAT_CAMP_MOCK_DISPLAY_NAMES.maths1Mock01,
+        partLetter: 'Part A',
+        partName: 'Mathematics',
+        paperName: ESAT_CAMP_MOCK_DISPLAY_NAMES.maths1Mock01,
+        examType: ESAT_CAMP_MOCK_EXAM_TYPE,
+      },
     ],
   },
 ];

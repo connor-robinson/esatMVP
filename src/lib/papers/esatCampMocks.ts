@@ -1,6 +1,6 @@
 /**
- * Adapt ESAT CAMP Physics mock modules into the past-papers Paper/Question shape.
- * Content source: src/data/esatCampMocks (DOCX word-for-word).
+ * Adapt ESAT CAMP mock modules into the past-papers Paper/Question shape.
+ * Content source: src/data/esatCampMocks
  */
 
 import {
@@ -8,14 +8,13 @@ import {
   ESAT_CAMP_MOCK_EXAM_TYPE,
   ESAT_CAMP_MOCK_EXAM_YEAR,
   ESAT_CAMP_MOCK_MODULES,
-  ESAT_CAMP_MOCK_PAPER_IDS,
   getEsatCampMockModuleByPaperId,
   getEsatCampMockModuleByPaperName,
-  isEsatCampMockPaperId,
+  paperIdForEsatCampMockModule,
   type EsatCampMockModule,
   type EsatCampMockQuestion,
 } from "@/data/esatCampMocks";
-import type { ExamType, Letter, Paper, Question } from "@/types/papers";
+import type { ExamType, Paper, Question } from "@/types/papers";
 
 export {
   ESAT_CAMP_MOCK_EXAM_NAME,
@@ -25,25 +24,31 @@ export {
   ESAT_CAMP_MOCK_PAPER_IDS,
   ESAT_CAMP_MOCK_SOURCE_LABEL,
   ESAT_CAMP_MOCK_DISPLAY_NAMES,
+  ESAT_CAMP_MOCK_DISCLOSURE,
   isEsatCampMockPaperId,
   getEsatCampMockModuleByPaperId,
   getEsatCampMockModuleByPaperName,
+  paperIdForEsatCampMockModule,
 } from "@/data/esatCampMocks";
 
 function paperIdForModule(mockModule: EsatCampMockModule): number {
-  return mockModule.id === "physics-module-a"
-    ? ESAT_CAMP_MOCK_PAPER_IDS.physicsModuleA
-    : ESAT_CAMP_MOCK_PAPER_IDS.physicsModuleB;
+  return paperIdForEsatCampMockModule(mockModule.id);
 }
 
-function buildSolutionText(q: EsatCampMockQuestion): string {
+function buildSolutionText(
+  q: EsatCampMockQuestion,
+  includeBenchmark: boolean,
+): string {
   const title = `${q.topicCode} ${q.topicName} · ${q.difficulty} · ${q.targetDisplay}`;
-  return [
+  const parts = [
     `<question_title>${title}</question_title>`,
     `<tip>${q.tip}</tip>`,
     q.solution,
-    `<benchmark>${q.benchmarkNote}</benchmark>`,
-  ].join("\n");
+  ];
+  if (includeBenchmark) {
+    parts.push(`<benchmark>${q.benchmarkNote}</benchmark>`);
+  }
+  return parts.join("\n");
 }
 
 export function mockQuestionToPaperQuestion(
@@ -52,6 +57,7 @@ export function mockQuestionToPaperQuestion(
 ): Question {
   const paperId = paperIdForModule(mockModule);
   const baseId = paperId * 100 + q.number;
+  const isOriginalMathsMock = mockModule.id === "esatcamp-maths1-mock-01";
   return {
     id: baseId,
     paperId,
@@ -59,14 +65,14 @@ export function mockQuestionToPaperQuestion(
     examYear: ESAT_CAMP_MOCK_EXAM_YEAR,
     paperName: mockModule.paperName,
     partLetter: "Part A",
-    partName: "Physics",
+    partName: mockModule.subject,
     examType: ESAT_CAMP_MOCK_EXAM_TYPE,
     questionNumber: q.number,
     questionImage: "",
     questionStem: q.stem,
     options: q.options as Question["options"],
     contentFormat: "text",
-    solutionText: buildSolutionText(q),
+    solutionText: buildSolutionText(q, !isOriginalMathsMock),
     solutionType: "generated",
     answerLetter: q.answer,
     createdAt: "",
@@ -78,7 +84,8 @@ export function mockQuestionToPaperQuestion(
     targetSeconds: q.targetSeconds,
     targetDisplay: q.targetDisplay,
     tipText: q.tip,
-    benchmarkNote: q.benchmarkNote,
+    // Calibration is editorial metadata for original maths mocks.
+    benchmarkNote: isOriginalMathsMock ? undefined : q.benchmarkNote,
     editorPick: q.editorPick,
     diagramKey: q.diagramKey,
   };

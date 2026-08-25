@@ -22,6 +22,7 @@ import DiagramB22 from "./DiagramB22";
 import DiagramB23 from "./DiagramB23";
 import DiagramB25 from "./DiagramB25";
 import DiagramB26 from "./DiagramB26";
+import DiagramM22 from "./DiagramM22";
 
 const DIAGRAM_MAP: Record<string, React.ComponentType> = {
   A7: DiagramA7,
@@ -47,6 +48,7 @@ const DIAGRAM_MAP: Record<string, React.ComponentType> = {
   B23: DiagramB23,
   B25: DiagramB25,
   B26: DiagramB26,
+  M22: DiagramM22,
 };
 
 export function EsatCampMockDiagram({ diagramKey }: { diagramKey: string }) {

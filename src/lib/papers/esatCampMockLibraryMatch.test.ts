@@ -40,4 +40,23 @@ describe("ESAT CAMP mock library section matching", () => {
     );
     expect(matched).toHaveLength(0);
   });
+
+  it("matches Mathematics 1 Mock 01 questions to the Mathematics basket key", () => {
+    const paper = getEsatCampMockPapers().find(
+      (p) => p.id === ESAT_CAMP_MOCK_PAPER_IDS.maths1Mock01,
+    )!;
+    const questions = getEsatCampMockQuestions(paper.id);
+    expect(questions).toHaveLength(27);
+    expect(paper.hasConversion).toBe(false);
+
+    const selected = new Map<string, Set<PaperSection>>([
+      ["Mathematics 1 Mock 01", new Set<PaperSection>(["Mathematics"])],
+    ]);
+
+    const matched = questions.filter((q) =>
+      questionMatchesSelectedSections(q, selected, "ESAT", paper, [paper]),
+    );
+    expect(matched).toHaveLength(27);
+    expect(matched.every((q) => q.partName === "Mathematics")).toBe(true);
+  });
 });
