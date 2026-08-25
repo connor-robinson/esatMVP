@@ -6,15 +6,16 @@ type Props = {
 };
 
 /**
- * Official conversion tables. Collapsed by default; catalog loads on expand
- * so the score-converter page stays fast.
+ * Official conversion tables. Header sits outside any card; catalog loads on
+ * first expand so the score-converter page stays fast. Lists ~10 rows with a
+ * “… more” control for the rest.
  */
 export function PublishedConversionTables({ examFilter }: Props) {
   return (
     <PublishedConversionTablesClient
       defaultExam={examFilter && examFilter !== "TMUA" ? examFilter : "all"}
       examFilter={examFilter === "TMUA" ? undefined : examFilter}
-      defaultOpen={false}
+      defaultOpen
     />
   );
 }

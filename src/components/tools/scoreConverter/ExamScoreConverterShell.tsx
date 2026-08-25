@@ -46,7 +46,7 @@ export function ExamScoreConverterShell({ initialExam }: Props) {
         <PublishedConversionTablesClient
           examFilter={exam === "TMUA" ? undefined : exam}
           defaultExam={exam === "TMUA" ? "all" : exam}
-          defaultOpen={false}
+          defaultOpen
         />
       }
     />

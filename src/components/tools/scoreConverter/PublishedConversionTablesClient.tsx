@@ -21,6 +21,7 @@ type Props = {
 };
 
 const PUBLISHED_EXAMS: ConverterExam[] = ["NSAA", "ENGAA"];
+const INITIAL_VISIBLE_ROWS = 10;
 
 const controlBase =
   "border-0 shadow-none outline-none focus:outline-none focus:ring-0 focus:border-0";
@@ -282,99 +283,53 @@ function TableViewModal({
   );
 }
 
-function YearGroup({
-  year,
-  rows,
-  open,
-  onToggle,
+function TableRow({
+  row,
   onView,
 }: {
-  year: number;
-  rows: PublishedTableRow[];
-  open: boolean;
-  onToggle: () => void;
+  row: PublishedTableRow;
   onView: (row: PublishedTableRow) => void;
 }) {
-  const panelId = useId();
-  const exams = [...new Set(rows.map((r) => r.exam))].join(" · ");
-
   return (
-    <div className="rounded-organic-xl bg-surface-elevated">
-      <button
-        type="button"
-        aria-expanded={open}
-        aria-controls={panelId}
-        onClick={onToggle}
-        className={cn(
-          "flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left transition-colors hover:bg-surface-mid/40 sm:px-5",
-          controlBase,
-        )}
-      >
-        <div className="min-w-0">
-          <p className="text-sm font-bold tabular-nums text-text sm:text-base">
-            {year}
-          </p>
-          <p className="mt-0.5 text-xs text-text-muted sm:text-sm">
-            {rows.length} table{rows.length === 1 ? "" : "s"}
-            {exams ? ` · ${exams}` : ""}
-          </p>
-        </div>
-        <ChevronDown
+    <li
+      data-table-id={row.id}
+      className="flex flex-col gap-2 px-1 py-2.5 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <div className="min-w-0">
+        <p className="text-sm font-semibold text-text">
+          <span className="tabular-nums text-text">{row.year}</span>
+          <span className="text-text-subtle"> · </span>
+          <span className="text-text-muted">{row.exam}</span>
+          <span className="text-text-subtle"> · </span>
+          {row.sectionPaper}
+        </p>
+        <p className="mt-0.5 truncate text-xs text-text-muted sm:text-sm">
+          {row.subjects}
+        </p>
+      </div>
+      <div className="flex shrink-0 items-center gap-1">
+        <button
+          type="button"
+          onClick={() => onView(row)}
           className={cn(
-            "h-4 w-4 shrink-0 text-text-subtle transition-transform duration-fast",
-            open && "rotate-180",
+            "rounded-organic-md px-3 py-1.5 text-sm font-semibold text-secondary transition-colors hover:bg-surface-mid",
+            controlBase,
           )}
-          aria-hidden
-        />
-      </button>
-
-      {open ? (
-        <div id={panelId} className="px-2 pb-3 sm:px-3">
-          <ul className="space-y-1">
-            {rows.map((row) => (
-              <li
-                key={row.id}
-                data-table-id={row.id}
-                className="flex flex-col gap-2 rounded-organic-lg px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between"
-              >
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-text">
-                    <span className="text-text-muted">{row.exam}</span>
-                    <span className="text-text-subtle"> · </span>
-                    {row.sectionPaper}
-                  </p>
-                  <p className="mt-0.5 truncate text-xs text-text-muted sm:text-sm">
-                    {row.subjects}
-                  </p>
-                </div>
-                <div className="flex shrink-0 items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => onView(row)}
-                    className={cn(
-                      "rounded-organic-md px-3 py-1.5 text-sm font-semibold text-secondary transition-colors hover:bg-surface-mid",
-                      controlBase,
-                    )}
-                  >
-                    View
-                  </button>
-                  <a
-                    href={publicPdfPath(row.pdfFilename)}
-                    download
-                    className={cn(
-                      "rounded-organic-md px-3 py-1.5 text-sm font-semibold text-text-muted transition-colors hover:bg-surface-mid hover:text-text",
-                      controlBase,
-                    )}
-                  >
-                    PDF
-                  </a>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
-    </div>
+        >
+          View
+        </button>
+        <a
+          href={publicPdfPath(row.pdfFilename)}
+          download
+          className={cn(
+            "rounded-organic-md px-3 py-1.5 text-sm font-semibold text-text-muted transition-colors hover:bg-surface-mid hover:text-text",
+            controlBase,
+          )}
+        >
+          PDF
+        </a>
+      </div>
+    </li>
   );
 }
 
@@ -397,7 +352,7 @@ export function PublishedConversionTablesClient({
   const [subject, setSubject] = useState("all");
   const [query, setQuery] = useState("");
   const [viewRow, setViewRow] = useState<PublishedTableRow | null>(null);
-  const [openYears, setOpenYears] = useState<Set<number>>(() => new Set());
+  const [showAllRows, setShowAllRows] = useState(false);
 
   useEffect(() => {
     if (examFilter && examFilter !== "TMUA") setExam(examFilter);
@@ -475,15 +430,14 @@ export function PublishedConversionTablesClient({
     [visibleRows, exam, year, section, subject, query],
   );
 
-  const groupedByYear = useMemo(() => {
-    const map = new Map<number, PublishedTableRow[]>();
-    for (const row of filtered) {
-      const list = map.get(row.year) ?? [];
-      list.push(row);
-      map.set(row.year, list);
-    }
-    return [...map.entries()].sort((a, b) => b[0] - a[0]);
-  }, [filtered]);
+  useEffect(() => {
+    setShowAllRows(false);
+  }, [exam, year, section, subject, query]);
+
+  const visibleFiltered = showAllRows
+    ? filtered
+    : filtered.slice(0, INITIAL_VISIBLE_ROWS);
+  const hasMore = filtered.length > INITIAL_VISIBLE_ROWS;
 
   const examOptions: FilterSelectOption[] = [
     { value: "all", label: "All" },
@@ -502,26 +456,9 @@ export function PublishedConversionTablesClient({
     ...subjects.map((item) => ({ value: item, label: item })),
   ];
 
-  const toggleYear = (y: number) => {
-    setOpenYears((prev) => {
-      const next = new Set(prev);
-      if (next.has(y)) next.delete(y);
-      else next.add(y);
-      return next;
-    });
-  };
-
   return (
     <section aria-labelledby="published-tables-heading">
-      <button
-        type="button"
-        aria-expanded={sectionOpen}
-        onClick={() => setSectionOpen((v) => !v)}
-        className={cn(
-          "flex w-full items-start justify-between gap-4 rounded-organic-xl bg-surface-elevated px-5 py-4 text-left transition-colors hover:bg-surface-mid/50 sm:px-6 sm:py-5",
-          controlBase,
-        )}
-      >
+      <div className="mb-1.5 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h2
             id="published-tables-heading"
@@ -534,24 +471,35 @@ export function PublishedConversionTablesClient({
             calculator.
           </p>
         </div>
-        <ChevronDown
+        <button
+          type="button"
+          aria-expanded={sectionOpen}
+          onClick={() => setSectionOpen((v) => !v)}
           className={cn(
-            "mt-1 h-5 w-5 shrink-0 text-text-subtle transition-transform duration-fast",
-            sectionOpen && "rotate-180",
+            "mt-1 inline-flex shrink-0 items-center gap-1.5 rounded-organic-md px-2.5 py-1.5 text-xs font-medium text-text-muted transition-colors hover:bg-surface-subtle hover:text-text",
+            controlBase,
           )}
-          aria-hidden
-        />
-      </button>
+        >
+          {sectionOpen ? "Hide" : "Browse"}
+          <ChevronDown
+            className={cn(
+              "h-3.5 w-3.5 transition-transform duration-fast",
+              sectionOpen && "rotate-180",
+            )}
+            aria-hidden
+          />
+        </button>
+      </div>
 
       {sectionOpen ? (
         <div className="mt-4 space-y-4">
           {catalogLoading ? (
-            <p className="flex items-center gap-2 px-1 py-6 text-sm text-text-muted">
+            <p className="flex items-center gap-2 py-6 text-sm text-text-muted">
               <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
               Loading tables…
             </p>
           ) : catalogError ? (
-            <p className="px-1 py-4 text-sm text-error">{catalogError}</p>
+            <p className="py-4 text-sm text-error">{catalogError}</p>
           ) : (
             <>
               <div
@@ -605,31 +553,54 @@ export function PublishedConversionTablesClient({
                 </label>
               </div>
 
-              {groupedByYear.length === 0 ? (
-                <p className="px-1 text-sm text-text-muted">
+              {filtered.length === 0 ? (
+                <p className="text-sm text-text-muted">
                   No tables match these filters.
                 </p>
               ) : (
-                <div className="space-y-2">
-                  {groupedByYear.map(([y, yearRows]) => (
-                    <YearGroup
-                      key={y}
-                      year={y}
-                      rows={yearRows}
-                      open={openYears.has(y)}
-                      onToggle={() => toggleYear(y)}
-                      onView={setViewRow}
-                    />
-                  ))}
+                <div>
+                  <ul className="space-y-0.5">
+                    {visibleFiltered.map((row) => (
+                      <TableRow
+                        key={row.id}
+                        row={row}
+                        onView={setViewRow}
+                      />
+                    ))}
+                  </ul>
+                  {hasMore && !showAllRows ? (
+                    <button
+                      type="button"
+                      onClick={() => setShowAllRows(true)}
+                      className={cn(
+                        "mt-1 w-full rounded-organic-md px-3 py-2.5 text-left text-sm font-semibold text-text-muted transition-colors hover:bg-surface-mid hover:text-text",
+                        controlBase,
+                      )}
+                    >
+                      … {filtered.length - INITIAL_VISIBLE_ROWS} more
+                    </button>
+                  ) : null}
+                  {showAllRows && hasMore ? (
+                    <button
+                      type="button"
+                      onClick={() => setShowAllRows(false)}
+                      className={cn(
+                        "mt-1 w-full rounded-organic-md px-3 py-2.5 text-left text-sm font-semibold text-text-muted transition-colors hover:bg-surface-mid hover:text-text",
+                        controlBase,
+                      )}
+                    >
+                      Show fewer
+                    </button>
+                  ) : null}
                 </div>
               )}
 
-              <p className="max-w-3xl px-1 text-sm leading-relaxed text-text-muted">
+              <p className="max-w-3xl text-sm leading-relaxed text-text-muted">
                 Pick the exact year and section you sat. Difficulty and cohort
                 changed between sittings, so the matching table matters.
               </p>
 
-              <div className="flex flex-wrap gap-x-4 gap-y-2 px-1 text-sm">
+              <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
                 <Link
                   href={SEO_ROUTES.goodScore}
                   className="font-semibold text-secondary hover:underline"
