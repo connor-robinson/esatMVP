@@ -2,7 +2,10 @@
 
 import { useEffect, useId, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import type { NsaaSubjectColumn } from "@/lib/scoreConverter/nsaaYearConversion.shared";
+import {
+  nsaaSubjectPillClass,
+  type NsaaSubjectColumn,
+} from "@/lib/scoreConverter/nsaaYearConversion.shared";
 
 const controlBase =
   "border-0 shadow-none outline-none focus:outline-none focus:ring-0 focus:border-0";
@@ -10,13 +13,15 @@ const controlBase =
 type Props = {
   subjects: NsaaSubjectColumn[];
   children: ReactNode;
+  /** Optional trailing action (e.g. year PDF download). */
+  trailing?: ReactNode;
 };
 
 /**
  * Progressive enhancement: all table columns stay in the HTML. Filtering only
  * toggles visibility client-side so crawlers and no-JS users still see every score.
  */
-export function NsaaYearTablesFilter({ subjects, children }: Props) {
+export function NsaaYearTablesFilter({ subjects, children, trailing }: Props) {
   const rootId = useId();
   const [selectedIds, setSelectedIds] = useState<Set<string>>(
     () => new Set(subjects.map((s) => s.id)),
@@ -72,10 +77,9 @@ export function NsaaYearTablesFilter({ subjects, children }: Props) {
               <label
                 key={subject.id}
                 className={cn(
-                  "inline-flex cursor-pointer items-center gap-2 rounded-organic-md px-2.5 py-1.5 text-sm transition-colors",
-                  checked
-                    ? "bg-surface-mid font-semibold text-text"
-                    : "bg-surface-subtle/70 text-text-muted hover:bg-surface-mid/70 hover:text-text",
+                  "inline-flex cursor-pointer items-center rounded-organic-md px-3 py-1.5 text-sm font-semibold transition-colors",
+                  nsaaSubjectPillClass(subject.subject, checked),
+                  controlBase,
                 )}
               >
                 <input
@@ -91,14 +95,7 @@ export function NsaaYearTablesFilter({ subjects, children }: Props) {
                   }}
                   className="sr-only"
                 />
-                <span
-                  aria-hidden
-                  className={cn(
-                    "inline-block h-2 w-2 rounded-full",
-                    checked ? "bg-secondary" : "bg-text-subtle/50",
-                  )}
-                />
-                <span>{subject.filterLabel}</span>
+                <span>{subject.subject}</span>
               </label>
             );
           })}
@@ -111,6 +108,10 @@ export function NsaaYearTablesFilter({ subjects, children }: Props) {
         <p className="text-sm text-text-muted">
           Select at least one subject to show a conversion table.
         </p>
+      ) : null}
+
+      {trailing ? (
+        <div className="flex justify-end pt-1">{trailing}</div>
       ) : null}
     </div>
   );

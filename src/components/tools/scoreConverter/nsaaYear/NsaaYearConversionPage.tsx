@@ -16,7 +16,6 @@ import {
 import {
   APP_ROUTES,
   SITE_URL,
-  SOURCES,
   buildCanonicalUrl,
 } from "@/lib/seo/config";
 
@@ -110,137 +109,126 @@ export function NsaaYearConversionPage({ data }: Props) {
           <h1 className="text-2xl font-semibold tracking-tight text-text sm:text-3xl">
             {copy.h1}
           </h1>
-          <p className="text-sm leading-relaxed text-text-muted sm:text-base">
-            {copy.lead}
-          </p>
-          <p className="text-xs leading-relaxed text-text-subtle">
-            {copy.disclaimer}
-          </p>
         </header>
 
         <NsaaYearConversionTables data={data} />
 
-        <p className="text-xs leading-relaxed text-text-muted">
-          Source: Cambridge Assessment admissions conversion tables for NSAA{" "}
-          {data.year}, mirrored as CSV/PDF downloads on this page. See also{" "}
-          <a
-            href={SOURCES.esatPrepMaterials.url}
-            className="font-semibold text-secondary hover:underline"
-            target="_blank"
-            rel="noreferrer"
-          >
-            {SOURCES.esatPrepMaterials.label}
-          </a>
-          .
-        </p>
-
         <NsaaYearQuickConverter data={data} />
 
-        <section className="space-y-4 border-t border-transparent pt-2">
-          <h2 className="text-base font-semibold text-text">
-            About the NSAA {data.year} tables
-          </h2>
-          <div className="space-y-3 text-sm leading-relaxed text-text-muted">
+        <details className="group rounded-organic-lg bg-surface-elevated px-4 py-3 open:pb-4">
+          <summary className="cursor-pointer list-none text-base font-semibold text-text marker:content-none [&::-webkit-details-marker]:hidden">
+            <span className="flex items-center justify-between gap-3">
+              <span>About the NSAA {data.year} tables</span>
+              <span
+                aria-hidden
+                className="text-text-muted transition-transform group-open:rotate-180"
+              >
+                ▾
+              </span>
+            </span>
+          </summary>
+
+          <div className="mt-4 space-y-4 text-sm leading-relaxed text-text-muted">
             <p>{copy.whatItRepresents}</p>
             <p>{copy.howToUse}</p>
             <p>{copy.sectionsAvailable}</p>
-          </div>
 
-          {(papers.questionPaperUrl || papers.answerKeyUrl) && (
-            <p className="text-sm text-text-muted">
-              NSAA {data.year} on ESAT CAMP:{" "}
-              {papers.questionPaperUrl ? (
-                <a
-                  href={papers.questionPaperUrl}
+            {(papers.questionPaperUrl || papers.answerKeyUrl) && (
+              <p>
+                NSAA {data.year} on ESAT CAMP:{" "}
+                {papers.questionPaperUrl ? (
+                  <a
+                    href={papers.questionPaperUrl}
+                    className="font-semibold text-secondary hover:underline"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    question paper
+                  </a>
+                ) : null}
+                {papers.questionPaperUrl && papers.answerKeyUrl ? " · " : null}
+                {papers.answerKeyUrl ? (
+                  <a
+                    href={papers.answerKeyUrl}
+                    className="font-semibold text-secondary hover:underline"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    mark scheme
+                  </a>
+                ) : null}
+                {" · "}
+                <Link
+                  href={papers.seoPastPapersHref}
                   className="font-semibold text-secondary hover:underline"
-                  target="_blank"
-                  rel="noreferrer"
                 >
-                  question paper
-                </a>
-              ) : null}
-              {papers.questionPaperUrl && papers.answerKeyUrl ? " · " : null}
-              {papers.answerKeyUrl ? (
-                <a
-                  href={papers.answerKeyUrl}
+                  past papers guide
+                </Link>
+              </p>
+            )}
+
+            <nav
+              aria-label="Nearby NSAA conversion years"
+              className="flex flex-wrap gap-x-4 gap-y-2"
+            >
+              {previous != null ? (
+                <Link
+                  href={nsaaYearPagePath(previous)}
                   className="font-semibold text-secondary hover:underline"
-                  target="_blank"
-                  rel="noreferrer"
                 >
-                  mark scheme
-                </a>
-              ) : null}
+                  Previous: NSAA {previous}
+                </Link>
+              ) : (
+                <span className="text-text-subtle">No earlier year</span>
+              )}
+              {next != null ? (
+                <Link
+                  href={nsaaYearPagePath(next)}
+                  className="font-semibold text-secondary hover:underline"
+                >
+                  Next: NSAA {next}
+                </Link>
+              ) : (
+                <span className="text-text-subtle">No later year</span>
+              )}
+            </nav>
+
+            <p>
+              <Link
+                href="/tools/score-converter/nsaa"
+                className="font-semibold text-secondary hover:underline"
+              >
+                NSAA converter hub
+              </Link>
               {" · "}
               <Link
-                href={papers.seoPastPapersHref}
+                href={APP_ROUTES.scoreConverter}
                 className="font-semibold text-secondary hover:underline"
               >
-                past papers guide
+                Main score converter
               </Link>
             </p>
-          )}
 
-          <nav
-            aria-label="Nearby NSAA conversion years"
-            className="flex flex-wrap gap-x-4 gap-y-2 text-sm"
-          >
-            {previous != null ? (
-              <Link
-                href={nsaaYearPagePath(previous)}
-                className="font-semibold text-secondary hover:underline"
-              >
-                Previous: NSAA {previous}
-              </Link>
-            ) : (
-              <span className="text-text-subtle">No earlier year</span>
-            )}
-            {next != null ? (
-              <Link
-                href={nsaaYearPagePath(next)}
-                className="font-semibold text-secondary hover:underline"
-              >
-                Next: NSAA {next}
-              </Link>
-            ) : (
-              <span className="text-text-subtle">No later year</span>
-            )}
-          </nav>
-
-          <p className="text-sm text-text-muted">
-            <Link
-              href="/tools/score-converter/nsaa"
-              className="font-semibold text-secondary hover:underline"
-            >
-              NSAA converter hub
-            </Link>
-            {" · "}
-            <Link
-              href={APP_ROUTES.scoreConverter}
-              className="font-semibold text-secondary hover:underline"
-            >
-              Main score converter
-            </Link>
-          </p>
-
-          <p className="text-sm text-text-muted">
-            All NSAA conversion years:{" "}
-            {allYears.map((year, index) => (
-              <span key={year}>
-                {index > 0 ? ", " : null}
-                {year === data.year ? (
-                  <span className="font-semibold text-text">{year}</span>
-                ) : (
-                  <Link
-                    href={nsaaYearPagePath(year)}
-                    className="font-semibold text-secondary hover:underline"
-                  >
-                    {year}
-                  </Link>
-                )}
-              </span>
-            ))}
-          </p>
-        </section>
+            <p>
+              All NSAA conversion years:{" "}
+              {allYears.map((year, index) => (
+                <span key={year}>
+                  {index > 0 ? ", " : null}
+                  {year === data.year ? (
+                    <span className="font-semibold text-text">{year}</span>
+                  ) : (
+                    <Link
+                      href={nsaaYearPagePath(year)}
+                      className="font-semibold text-secondary hover:underline"
+                    >
+                      {year}
+                    </Link>
+                  )}
+                </span>
+              ))}
+            </p>
+          </div>
+        </details>
       </Container>
     </>
   );

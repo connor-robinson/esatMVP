@@ -1,5 +1,6 @@
 import {
   formatTableScore,
+  nsaaYearCombinedPdfHref,
   type NsaaSectionTable,
   type NsaaSubjectColumn,
   type NsaaYearPageData,
@@ -29,13 +30,13 @@ function SectionConversionTable({
         </p>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto rounded-organic-lg bg-surface-elevated">
         <table className="w-full min-w-[18rem] border-collapse text-sm">
-          <thead className="sticky top-0 z-10 bg-bg">
-            <tr className="bg-surface-mid/90 text-left">
+          <thead className="sticky top-0 z-10">
+            <tr className="bg-surface-mid text-left">
               <th
                 scope="col"
-                className="sticky left-0 z-20 bg-surface-mid/95 px-2.5 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-muted"
+                className="sticky left-0 z-20 bg-surface-mid px-3 py-2.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-muted"
               >
                 Raw
               </th>
@@ -44,7 +45,7 @@ function SectionConversionTable({
                   key={subject.id}
                   scope="col"
                   data-nsaa-subject={subject.id}
-                  className="px-2.5 py-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-text-muted"
+                  className="px-3 py-2.5 text-[11px] font-semibold uppercase tracking-[0.06em] text-text-muted"
                   title={subject.filterLabel}
                 >
                   <span className="block sm:hidden">{subject.shortLabel}</span>
@@ -56,18 +57,22 @@ function SectionConversionTable({
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-border-subtle/70">
             {section.rawMarks.map((raw, rowIndex) => (
               <tr
                 key={raw}
                 className={
-                  rowIndex % 2 === 0 ? "bg-surface-subtle/40" : "bg-transparent"
+                  rowIndex % 2 === 0
+                    ? "bg-surface-subtle/45"
+                    : "bg-surface-elevated"
                 }
               >
                 <th
                   scope="row"
-                  className={`sticky left-0 z-[1] px-2.5 py-1 text-left font-semibold tabular-nums text-text ${
-                    rowIndex % 2 === 0 ? "bg-surface-subtle/40" : "bg-bg"
+                  className={`sticky left-0 z-[1] px-3 py-1.5 text-left font-semibold tabular-nums text-text ${
+                    rowIndex % 2 === 0
+                      ? "bg-surface-subtle/45"
+                      : "bg-surface-elevated"
                   }`}
                 >
                   {raw}
@@ -80,7 +85,7 @@ function SectionConversionTable({
                     <td
                       key={subject.id}
                       data-nsaa-subject={subject.id}
-                      className={`px-2.5 py-1 tabular-nums ${
+                      className={`px-3 py-1.5 tabular-nums ${
                         missing ? "text-text-subtle" : "font-medium text-text"
                       }`}
                       title={
@@ -98,32 +103,6 @@ function SectionConversionTable({
           </tbody>
         </table>
       </div>
-
-      <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-muted">
-        {subjects.map((subject) => (
-          <li
-            key={subject.id}
-            data-nsaa-subject={subject.id}
-            className="flex flex-wrap items-center gap-2"
-          >
-            <span className="font-medium text-text">{subject.subject}</span>
-            <a
-              href={subject.pdfHref}
-              className="font-semibold text-secondary hover:underline"
-              download
-            >
-              PDF
-            </a>
-            <a
-              href={subject.csvHref}
-              className="font-semibold text-secondary hover:underline"
-              download
-            >
-              CSV
-            </a>
-          </li>
-        ))}
-      </ul>
     </section>
   );
 }
@@ -134,8 +113,21 @@ type Props = {
 
 /** Server-rendered conversion tables; subject filtering is progressive enhancement. */
 export function NsaaYearConversionTables({ data }: Props) {
+  const pdfHref = nsaaYearCombinedPdfHref(data.year);
+
   return (
-    <NsaaYearTablesFilter subjects={data.subjects}>
+    <NsaaYearTablesFilter
+      subjects={data.subjects}
+      trailing={
+        <a
+          href={pdfHref}
+          download
+          className="inline-flex items-center rounded-organic-md bg-secondary px-3.5 py-2 text-sm font-semibold text-background transition-colors hover:brightness-110"
+        >
+          Download PDF
+        </a>
+      }
+    >
       <div className="space-y-6">
         {data.sections.map((section) => (
           <SectionConversionTable

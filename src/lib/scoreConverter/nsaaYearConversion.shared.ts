@@ -30,6 +30,39 @@ export function nsaaYearPagePath(year: number): string {
   return `/tools/score-converter/nsaa/${year}`;
 }
 
+/** Combined year PDF (all subjects) under /downloads/conversion-tables. */
+export function nsaaYearCombinedPdfFilename(year: number): string {
+  return `nsaa-${year}-conversion.pdf`;
+}
+
+export function nsaaYearCombinedPdfHref(year: number): string {
+  return `/downloads/conversion-tables/${nsaaYearCombinedPdfFilename(year)}`;
+}
+
+/** Borderless subject filter pill colors for NSAA year pages. */
+export function nsaaSubjectPillClass(subject: string, active: boolean): string {
+  const key = subject.toLowerCase();
+  if (!active) {
+    return "bg-surface-elevated text-text-muted hover:bg-surface-mid hover:text-text";
+  }
+  if (key.includes("advanced")) {
+    return "bg-advanced/25 text-text dark:bg-advanced/35";
+  }
+  if (key.includes("math")) {
+    return "bg-maths/25 text-text dark:bg-maths/35";
+  }
+  if (key.includes("physics")) {
+    return "bg-physics/25 text-text dark:bg-physics/35";
+  }
+  if (key.includes("chemistry")) {
+    return "bg-chemistry/25 text-text dark:bg-chemistry/35";
+  }
+  if (key.includes("biology")) {
+    return "bg-biology/25 text-text dark:bg-biology/35";
+  }
+  return "bg-surface-mid text-text";
+}
+
 export function getAdjacentNsaaYears(year: number): {
   previous: number | null;
   next: number | null;
