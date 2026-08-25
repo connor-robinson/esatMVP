@@ -34,6 +34,28 @@ def main(argv: list[str] | None = None) -> int:
     audit_p = sub.add_parser("audit-sequence", help="Run paper sequence audit only")
     audit_p.add_argument("--paper-id", type=int, default=None)
 
+    place_p = sub.add_parser(
+        "place-stems",
+        help="Batch-decide mid-stem diagram slots (no recrop; sidecar only)",
+    )
+    place_scope = place_p.add_mutually_exclusive_group(required=True)
+    place_scope.add_argument("--all", action="store_true", help="All stem-diagram questions")
+    place_scope.add_argument("--question-id", type=int, default=None)
+    place_scope.add_argument("--exam", type=str, default=None, help="ENGAA, NSAA, TMUA")
+    place_p.add_argument("--limit", type=int, default=None)
+    place_p.add_argument("--dry-run", action="store_true")
+    place_p.add_argument(
+        "--resume",
+        action="store_true",
+        help="Skip question ids that already have status=ok sidecars",
+    )
+    place_p.add_argument(
+        "--force",
+        action="store_true",
+        help="Redo even when an ok sidecar exists",
+    )
+    place_p.add_argument("--model", type=str, default=None, help="Override batch model id")
+
     args = parser.parse_args(argv)
 
     if args.command == "run":
@@ -78,6 +100,24 @@ def main(argv: list[str] | None = None) -> int:
         else:
             audits = audit_all_papers(fetch_paper_ids())
         print(json.dumps(audits, indent=2))
+        return 0
+
+    if args.command == "place-stems":
+        from .place_stems import place_stems
+
+        result = place_stems(
+            all_questions=bool(getattr(args, "all", False)),
+            question_id=args.question_id,
+            exam_name=args.exam,
+            limit=args.limit,
+            dry_run=args.dry_run,
+            resume=args.resume,
+            force=args.force,
+            model=args.model,
+        )
+        print(json.dumps(result, indent=2))
+        if result.get("status") == "completed" and int(result.get("failed") or 0) > 0:
+            return 2
         return 0
 
     return 1
