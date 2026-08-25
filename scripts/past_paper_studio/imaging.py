@@ -24,10 +24,18 @@ MAX_CROP_PIXELS = 40_000_000
 MIN_CROP_SIDE = 8
 
 _MEMORY: Dict[str, bytes] = {}
+_MEMORY_SIZE: Dict[str, Tuple[int, int]] = {}
 
 
 def _cache_path(url: str) -> Path:
     return SOURCE_CACHE / f"{hashlib.sha256(url.encode('utf-8')).hexdigest()}.bin"
+
+
+def _remember(url: str, data: bytes) -> None:
+    _MEMORY[url] = data
+    if url not in _MEMORY_SIZE:
+        with Image.open(io.BytesIO(data)) as img:
+            _MEMORY_SIZE[url] = img.size
 
 
 def source_bytes(url: str, *, refresh: bool = False) -> bytes:
@@ -44,13 +52,16 @@ def source_bytes(url: str, *, refresh: bool = False) -> bytes:
         data = download_image(url)
         path.write_bytes(data)
 
-    _MEMORY[url] = data
+    _remember(url, data)
     return data
 
 
 def source_size(url: str) -> Tuple[int, int]:
-    with Image.open(io.BytesIO(source_bytes(url))) as img:
-        return img.size
+    cached = _MEMORY_SIZE.get(url)
+    if cached is not None:
+        return cached
+    source_bytes(url)
+    return _MEMORY_SIZE[url]
 
 
 def sha256_hex(data: bytes) -> str:

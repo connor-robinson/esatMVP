@@ -519,79 +519,110 @@ def _normalize_assets(assets: Any) -> List[Dict[str, Any]]:
     return [dict(asset) for asset in assets if isinstance(asset, dict)]
 
 
-def load_question(question_id: int) -> Dict[str, Any]:
-    question_future = _POOL.submit(_fetch_question, question_id)
-    conversion_future = _POOL.submit(_fetch_active_conversion, question_id)
-    question = question_future.result()
-    conversion = conversion_future.result()
+def load_question(
+    question_id: int,
+    *,
+    refresh: bool = False,
+    warm_neighbors: bool = True,
+) -> Dict[str, Any]:
+    """Load one question for the review UI.
 
-    source_url = (conversion or {}).get("source_image_url") or question.get("question_image")
-    stem = (conversion or {}).get("question_stem") or question.get("question_stem") or ""
-    options = (conversion or {}).get("options") or question.get("options") or {}
-    assets = _normalize_assets(
-        (conversion or {}).get("diagram_assets") or question.get("diagram_assets")
-    )
-    report = (conversion or {}).get("conversion_report") or {}
+    Results are cached briefly and neighbors are warmed in the background so
+    Prev/Next feel instant when reviewing a paper in order.
+    """
 
-    source_width: Optional[int] = None
-    source_height: Optional[int] = None
-    source_error: Optional[str] = None
-    if source_url:
-        _CACHE[f"source_url:{question_id}"] = (time.monotonic(), source_url)
-        try:
-            source_width, source_height = imaging.source_size(source_url)
-        except Exception as exc:  # network/decoding issues must not break the editor
-            source_error = str(exc)
+    def produce() -> Dict[str, Any]:
+        question_future = _POOL.submit(_fetch_question, question_id)
+        conversion_future = _POOL.submit(_fetch_active_conversion, question_id)
+        question = question_future.result()
+        conversion = conversion_future.result()
 
-    return {
-        "question": {
-            "questionId": int(question["id"]),
-            "paperId": int(question["paper_id"]),
-            "examName": question.get("exam_name") or "",
-            "examYear": int(question.get("exam_year") or 0),
-            "paperName": question.get("paper_name") or "",
-            "partLetter": question.get("part_letter") or "",
-            "partName": question.get("part_name") or "",
-            "questionNumber": int(question.get("question_number") or 0),
-            "answerLetter": (question.get("answer_letter") or "").upper(),
-            "questionImage": question.get("question_image") or "",
-            "contentFormat": question.get("content_format") or "image",
-            "solutionImage": question.get("solution_image") or "",
-            "solutionText": question.get("solution_text") or "",
-            "expectedLetters": expected_option_letters(
-                question.get("exam_name") or "",
-                question.get("paper_name") or "",
-                question.get("part_name"),
-            ),
-            "publishedStem": question.get("question_stem") or "",
-            "publishedOptions": question.get("options") or {},
-        },
-        "conversion": None
-        if conversion is None
-        else {
-            "id": conversion.get("id"),
-            "status": conversion.get("status"),
-            "confidence": conversion.get("confidence"),
-            "modelUsed": conversion.get("model_used"),
-            "sourceImageUrl": conversion.get("source_image_url"),
-            "sourceImageHash": conversion.get("source_image_hash"),
-            "updatedAt": conversion.get("updated_at"),
-            "report": report,
-            "flags": _report_flags(report),
-        },
-        "draft": {
-            "questionStem": strip_figures(stem),
-            "options": options,
-            "diagramAssets": assets,
-        },
-        "source": {
-            "url": source_url,
-            "width": source_width,
-            "height": source_height,
-            "error": source_error,
-        },
-        "neighbors": _neighbors(question),
-    }
+        source_url = (conversion or {}).get("source_image_url") or question.get("question_image")
+        stem = (conversion or {}).get("question_stem") or question.get("question_stem") or ""
+        options = (conversion or {}).get("options") or question.get("options") or {}
+        assets = _normalize_assets(
+            (conversion or {}).get("diagram_assets") or question.get("diagram_assets")
+        )
+        report = (conversion or {}).get("conversion_report") or {}
+
+        source_width: Optional[int] = None
+        source_height: Optional[int] = None
+        source_error: Optional[str] = None
+        if source_url:
+            _CACHE[f"source_url:{question_id}"] = (time.monotonic(), source_url)
+            try:
+                source_width, source_height = imaging.source_size(source_url)
+            except Exception as exc:  # network/decoding issues must not break the editor
+                source_error = str(exc)
+
+        return {
+            "question": {
+                "questionId": int(question["id"]),
+                "paperId": int(question["paper_id"]),
+                "examName": question.get("exam_name") or "",
+                "examYear": int(question.get("exam_year") or 0),
+                "paperName": question.get("paper_name") or "",
+                "partLetter": question.get("part_letter") or "",
+                "partName": question.get("part_name") or "",
+                "questionNumber": int(question.get("question_number") or 0),
+                "answerLetter": (question.get("answer_letter") or "").upper(),
+                "questionImage": question.get("question_image") or "",
+                "contentFormat": question.get("content_format") or "image",
+                "solutionImage": question.get("solution_image") or "",
+                "solutionText": question.get("solution_text") or "",
+                "expectedLetters": expected_option_letters(
+                    question.get("exam_name") or "",
+                    question.get("paper_name") or "",
+                    question.get("part_name"),
+                ),
+                "publishedStem": question.get("question_stem") or "",
+                "publishedOptions": question.get("options") or {},
+            },
+            "conversion": None
+            if conversion is None
+            else {
+                "id": conversion.get("id"),
+                "status": conversion.get("status"),
+                "confidence": conversion.get("confidence"),
+                "modelUsed": conversion.get("model_used"),
+                "sourceImageUrl": conversion.get("source_image_url"),
+                "sourceImageHash": conversion.get("source_image_hash"),
+                "updatedAt": conversion.get("updated_at"),
+                "report": report,
+                "flags": _report_flags(report),
+            },
+            "draft": {
+                "questionStem": strip_figures(stem),
+                "options": options,
+                "diagramAssets": assets,
+            },
+            "source": {
+                "url": source_url,
+                "width": source_width,
+                "height": source_height,
+                "error": source_error,
+            },
+            "neighbors": _neighbors(question),
+        }
+
+    payload = cached(f"question:{question_id}", 180.0, produce, refresh=refresh)
+    if warm_neighbors:
+        neighbors = payload.get("neighbors") or {}
+        for neighbor_id in (neighbors.get("nextId"), neighbors.get("prevId")):
+            if neighbor_id:
+                _POOL.submit(_warm_question, int(neighbor_id))
+    return payload
+
+
+def _warm_question(question_id: int) -> None:
+    try:
+        load_question(question_id, warm_neighbors=False)
+        # Also pull the screenshot into the imaging memory cache.
+        url = source_url_for(question_id)
+        if url:
+            imaging.source_bytes(url)
+    except Exception:
+        return
 
 
 def _next_asset_id(used: Iterable[str]) -> str:
@@ -826,8 +857,8 @@ def save_question(question_id: int, payload: Dict[str, Any]) -> Dict[str, Any]:
         elif message:
             warnings.append(message)
 
-    invalidate("overview", f"paper:{int(question['paper_id'])}")
-    result = load_question(question_id)
+    invalidate("overview", f"paper:{int(question['paper_id'])}", f"question:{question_id}")
+    result = load_question(question_id, refresh=True, warm_neighbors=True)
     result["saveResult"] = {
         "status": status,
         "published": published,

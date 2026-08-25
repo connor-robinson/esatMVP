@@ -8,7 +8,76 @@ const state = {
   draft: null,
   dirty: false,
   saving: false,
+  loading: false,
 };
+
+/** In-flight / resolved neighbor payloads so Next/Prev do not wait on Supabase. */
+const prefetchCache = new Map();
+
+function warmImage(url) {
+  if (!url) return;
+  const img = new Image();
+  img.decoding = "async";
+  img.src = url;
+}
+
+function warmQuestionAssets(data) {
+  if (!data) return;
+  const questionId = data.question && data.question.questionId;
+  if (questionId) warmImage(`/api/question/${questionId}/source.png`);
+  for (const asset of (data.draft && data.draft.diagramAssets) || []) {
+    warmImage(asset.previewUrl || asset.url);
+  }
+}
+
+function prefetchQuestion(questionId) {
+  const id = Number(questionId);
+  if (!id || prefetchCache.has(id)) return prefetchCache.get(id);
+  const entry = {
+    data: null,
+    promise: api(`/api/question/${id}`)
+      .then((data) => {
+        entry.data = data;
+        warmQuestionAssets(data);
+        return data;
+      })
+      .catch((error) => {
+        prefetchCache.delete(id);
+        throw error;
+      }),
+  };
+  prefetchCache.set(id, entry);
+  return entry;
+}
+
+function rememberQuestion(questionId, data) {
+  const id = Number(questionId);
+  prefetchCache.set(id, { data, promise: Promise.resolve(data) });
+  warmQuestionAssets(data);
+}
+
+function prefetchNeighbors(data) {
+  const neighbors = (data && data.neighbors) || {};
+  if (neighbors.nextId) {
+    const entry = prefetchQuestion(neighbors.nextId);
+    // Look one step further so a fast Next-Next still hits cache.
+    entry.promise
+      .then((nextData) => {
+        const further = nextData && nextData.neighbors && nextData.neighbors.nextId;
+        if (further) prefetchQuestion(further);
+      })
+      .catch(() => {});
+  }
+  if (neighbors.prevId) prefetchQuestion(neighbors.prevId);
+}
+
+function setNavBusy(busy) {
+  state.loading = busy;
+  const next = document.getElementById("next");
+  const prev = document.getElementById("prev");
+  if (next) next.classList.toggle("busy", busy);
+  if (prev) prev.classList.toggle("busy", busy);
+}
 
 function letters() {
   const question = state.data.question;
@@ -361,26 +430,44 @@ function renderAll() {
 
 /* ---------- data ---------- */
 
-async function load(questionId) {
-  state.questionId = questionId;
-  const data = await api(`/api/question/${questionId}`);
-  state.data = data;
-  state.draft = buildDraft(data);
-  state.dirty = false;
-  document.getElementById("save").textContent = "Save & publish";
-  document.getElementById("mark-reviewed").checked = Boolean(
-    data.conversion && data.conversion.report && data.conversion.report.studio_reviewed,
-  );
-  const stem = document.getElementById("stem");
-  stem.value = state.draft.stem;
-  renderAll();
+async function load(questionId, { preferCache = true } = {}) {
+  const id = Number(questionId);
+  state.questionId = id;
+  setNavBusy(true);
+  try {
+    let data = null;
+    if (preferCache && prefetchCache.has(id)) {
+      const entry = prefetchCache.get(id);
+      data = entry.data || (await entry.promise);
+    } else {
+      data = await api(`/api/question/${id}`);
+      rememberQuestion(id, data);
+    }
+    state.data = data;
+    state.draft = buildDraft(data);
+    state.dirty = false;
+    document.getElementById("save").textContent = "Save & publish";
+    document.getElementById("mark-reviewed").checked = Boolean(
+      data.conversion && data.conversion.report && data.conversion.report.studio_reviewed,
+    );
+    const stem = document.getElementById("stem");
+    stem.value = state.draft.stem;
+    renderAll();
+    prefetchNeighbors(data);
+  } finally {
+    setNavBusy(false);
+  }
 }
 
-function go(questionId) {
-  if (!questionId) return;
+async function go(questionId) {
+  if (!questionId || state.loading) return;
   if (state.dirty && !window.confirm("Discard unsaved changes?")) return;
   window.history.replaceState({}, "", `/review?questionId=${questionId}`);
-  load(questionId).catch((error) => toast(error.message, "err", 8000));
+  try {
+    await load(questionId);
+  } catch (error) {
+    toast(error.message, "err", 8000);
+  }
 }
 
 async function save() {
@@ -412,6 +499,8 @@ async function save() {
     const result = data.saveResult || {};
     state.data = data;
     state.draft = buildDraft(data);
+    rememberQuestion(state.questionId, data);
+    prefetchNeighbors(data);
     state.dirty = false;
     document.getElementById("stem").value = state.draft.stem;
     document.getElementById("mark-reviewed").checked = Boolean(
@@ -448,8 +537,14 @@ window.addEventListener("keydown", (event) => {
     save();
     return;
   }
-  if (event.altKey && event.key === "ArrowRight") go(state.data.neighbors.nextId);
-  if (event.altKey && event.key === "ArrowLeft") go(state.data.neighbors.prevId);
+  if (event.altKey && event.key === "ArrowRight") {
+    event.preventDefault();
+    go(state.data && state.data.neighbors.nextId);
+  }
+  if (event.altKey && event.key === "ArrowLeft") {
+    event.preventDefault();
+    go(state.data && state.data.neighbors.prevId);
+  }
 });
 
 window.addEventListener("beforeunload", (event) => {

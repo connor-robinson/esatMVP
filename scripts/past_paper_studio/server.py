@@ -111,7 +111,9 @@ def api_paper(paper_id: int):
 @app.get("/api/question/<int:question_id>")
 def api_question(question_id: int):
     try:
-        return jsonify(store.load_question(question_id))
+        return jsonify(
+            store.load_question(question_id, refresh=_wants_refresh(), warm_neighbors=True)
+        )
     except LookupError as exc:
         return _error(exc, 404)
     except Exception as exc:
