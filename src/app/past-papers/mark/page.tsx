@@ -16,6 +16,8 @@ import { TimeScatterChart } from "@/components/papers/TimeScatterChart";
 import { MarkSessionMistakesSection } from "@/components/papers/mark/MarkSessionMistakesSection";
 import { MathContent } from "@/components/shared/MathContent";
 import { EsatCampMockReviewPanel } from "@/components/papers/esatCampMocks/EsatCampMockReviewPanel";
+import { PastPaperTextQuestion } from "@/components/papers/PastPaperTextQuestion";
+import { shouldRenderPastPaperAsText } from "@/lib/papers/pastPaperTextMode";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import {
   cssVar,
@@ -2145,6 +2147,55 @@ export default function PapersMarkPage() {
                 const question = usePaperSessionStore.getState().questions[selectedIndex];
                 const isTMUA = question?.questionImage && question?.solutionImage && !question?.solutionText;
                 const questionImgSrc = (isTMUA && croppedQuestionImage) ? croppedQuestionImage : question?.questionImage;
+                const useTextQuestion =
+                  question && shouldRenderPastPaperAsText(question);
+
+                if (useTextQuestion) {
+                  return (
+                    <div className={`grid gap-4 transition-all duration-300 grid-cols-1`}>
+                      <div
+                        className="relative w-full overflow-y-auto rounded-organic-lg transition-all duration-300"
+                        style={{ height: "60vh", backgroundColor: cssVar.background }}
+                      >
+                        <div className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6">
+                          <PastPaperTextQuestion
+                            question={question}
+                            questionNumber={questionNumbers[selectedIndex]}
+                            showStem
+                            showOptionsBelow
+                            selectedChoice={
+                              (answers[selectedIndex]?.choice as Letter | null) ??
+                              null
+                            }
+                            className="px-0 py-0"
+                          />
+                        </div>
+                      </div>
+
+                      {!treatAsFullAccess && (
+                        <DrillUpgradeBanner
+                          variant="panel"
+                          headline="Unlock Written Solutions"
+                          subtext="Upgrade to view official solutions and worked answers for every question."
+                          ctaLabel="View plans"
+                        />
+                      )}
+                      {treatAsFullAccess && question?.solutionText && (
+                        <div className="rounded-lg bg-neutral-800 p-4 overflow-y-auto transition-all duration-300" style={{ maxHeight: "72vh" }}>
+                          <div className="mb-3 text-[15px] font-semibold text-accent">
+                            Suggested Answer
+                          </div>
+                          <MathContent
+                            content={formatSolutionTextForDisplay(
+                              question.solutionText || "",
+                            )}
+                            className="text-sm leading-relaxed text-text"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
                 
                 return (
                   <div className={`grid gap-4 transition-all duration-300 grid-cols-1`}>

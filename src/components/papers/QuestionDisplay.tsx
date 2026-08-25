@@ -14,6 +14,7 @@ import type { Question } from "@/types/papers";
 import { shouldRenderPastPaperAsText } from "@/lib/papers/pastPaperTextMode";
 import { PastPaperTextQuestion } from "@/components/papers/PastPaperTextQuestion";
 import { ConversionReportButton } from "@/components/papers/ConversionReportButton";
+import { isEsatCampMockExamType } from "@/lib/papers/esatCampMocks";
 
 interface QuestionDisplayProps {
   question: Question;
@@ -27,6 +28,10 @@ interface QuestionDisplayProps {
   onReviewFlagToggle?: () => void;
   paperName?: string;
   currentQuestion?: Question;
+  /** Text-mode option selection (ESAT CAMP mocks use QB-style rows in the stem panel). */
+  selectedChoice?: import("@/types/papers").Letter | null;
+  onChoiceSelect?: (letter: import("@/types/papers").Letter) => void;
+  showOptionsInStem?: boolean;
 }
 
 export function QuestionDisplay({ 
@@ -40,7 +45,10 @@ export function QuestionDisplay({
   isFlaggedForReview = false,
   onReviewFlagToggle,
   paperName = "",
-  currentQuestion
+  currentQuestion,
+  selectedChoice = null,
+  onChoiceSelect,
+  showOptionsInStem = false,
 }: QuestionDisplayProps) {
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
@@ -161,13 +169,22 @@ export function QuestionDisplay({
   if (shouldRenderPastPaperAsText(question)) {
     return (
       <div className={cn("relative h-full overflow-y-auto", className)}>
-        <PastPaperTextQuestion
-          question={question}
-          questionNumber={questionNumber}
-        />
-        <div className="px-4 pb-4">
-          <ConversionReportButton questionId={question.id} />
+        <div className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6">
+          <PastPaperTextQuestion
+            question={question}
+            questionNumber={questionNumber}
+            selectedChoice={selectedChoice}
+            onChoiceSelect={onChoiceSelect}
+            showStem
+            showOptionsBelow={showOptionsInStem}
+            className="px-0 py-0"
+          />
         </div>
+        {!isEsatCampMockExamType(question.examType) ? (
+          <div className="px-4 pb-4">
+            <ConversionReportButton questionId={question.id} />
+          </div>
+        ) : null}
       </div>
     );
   }

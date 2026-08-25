@@ -30,6 +30,7 @@ import type { Letter, PaperType } from '@/types/papers';
 import { cn } from '@/lib/utils';
 import { shouldRenderPastPaperAsText } from '@/lib/papers/pastPaperTextMode';
 import { PastPaperTextQuestion } from '@/components/papers/PastPaperTextQuestion';
+import { isEsatCampMockExamType } from '@/lib/papers/esatCampMocks';
 import {
   solveSessionChoiceBtn,
   solveSessionChoiceBtnSelected,
@@ -523,6 +524,9 @@ export default function PapersSolvePage() {
   const displayQuestion = currentSectionQuestion ?? currentQuestion;
   const useTextMode = displayQuestion
     ? shouldRenderPastPaperAsText(displayQuestion)
+    : false;
+  const useMockQuestionBankLayout = displayQuestion
+    ? isEsatCampMockExamType(displayQuestion.examType)
     : false;
 
   // Find the full index in the questions array for answer storage
@@ -1048,6 +1052,9 @@ export default function PapersSolvePage() {
                 onReviewFlagToggle={handleReviewFlagToggle}
                 paperName={paperName}
                 currentQuestion={displayQuestion}
+                selectedChoice={currentAnswer?.choice ?? null}
+                onChoiceSelect={handleChoiceSelect}
+                showOptionsInStem={useMockQuestionBankLayout}
               />
             </div>
           ) : (
@@ -1085,7 +1092,7 @@ export default function PapersSolvePage() {
         >
           {/* Two-Row Button Layout */}
           <div className='space-y-4 w-full'>
-            {useTextMode && displayQuestion ? (
+            {useTextMode && displayQuestion && !useMockQuestionBankLayout ? (
               <PastPaperTextQuestion
                 question={displayQuestion}
                 questionNumber={currentQuestionNumber}
@@ -1095,7 +1102,7 @@ export default function PapersSolvePage() {
                 showStem={false}
                 className="py-0 px-0 max-w-none"
               />
-            ) : (
+            ) : !useMockQuestionBankLayout ? (
             /* First Row: A-H Buttons */
             <div className='flex items-center justify-between gap-2 w-full'>
               {LETTERS.map((letter) => {
@@ -1114,7 +1121,7 @@ export default function PapersSolvePage() {
                 );
               })}
             </div>
-            )}
+            ) : null}
 
             {/* Second Row: Navigation Buttons */}
             <div className='flex items-center justify-between w-full'>
