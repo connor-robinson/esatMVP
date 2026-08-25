@@ -10,6 +10,7 @@ import {
   ESAT_CAMP_MOCK_MODULES,
   getEsatCampMockModuleByPaperId,
   getEsatCampMockModuleByPaperName,
+  getEsatCampMockModulesByPaperName,
   paperIdForEsatCampMockModule,
   type EsatCampMockModule,
   type EsatCampMockQuestion,
@@ -28,6 +29,7 @@ export {
   isEsatCampMockPaperId,
   getEsatCampMockModuleByPaperId,
   getEsatCampMockModuleByPaperName,
+  getEsatCampMockModulesByPaperName,
   paperIdForEsatCampMockModule,
 } from "@/data/esatCampMocks";
 
@@ -92,6 +94,25 @@ export function mockQuestionToPaperQuestion(
 }
 
 export function getEsatCampMockPapers(): Paper[] {
+  const byName = new Map<string, Paper>();
+  for (const mockModule of ESAT_CAMP_MOCK_MODULES) {
+    if (byName.has(mockModule.paperName)) continue;
+    byName.set(mockModule.paperName, {
+      id: paperIdForModule(mockModule),
+      examName: ESAT_CAMP_MOCK_EXAM_NAME,
+      examYear: ESAT_CAMP_MOCK_EXAM_YEAR,
+      paperName: mockModule.paperName,
+      examType: ESAT_CAMP_MOCK_EXAM_TYPE,
+      hasConversion: false,
+      createdAt: "",
+      updatedAt: "",
+    });
+  }
+  return [...byName.values()];
+}
+
+/** One Paper entry per module (for loading questions across Mock 1 Maths+Physics). */
+export function getEsatCampMockModulePapers(): Paper[] {
   return ESAT_CAMP_MOCK_MODULES.map((mockModule) => ({
     id: paperIdForModule(mockModule),
     examName: ESAT_CAMP_MOCK_EXAM_NAME,
@@ -102,6 +123,10 @@ export function getEsatCampMockPapers(): Paper[] {
     createdAt: "",
     updatedAt: "",
   }));
+}
+
+export function getEsatCampMockModulePapersByPaperName(paperName: string): Paper[] {
+  return getEsatCampMockModulePapers().filter((p) => p.paperName === paperName);
 }
 
 export function getEsatCampMockPaper(
@@ -117,9 +142,26 @@ export function getEsatCampMockPaper(
   ) {
     return null;
   }
-  const mockModule = getEsatCampMockModuleByPaperName(paperName);
-  if (!mockModule) return null;
+  const modules = getEsatCampMockModulesByPaperName(paperName);
+  if (modules.length === 0) return null;
   return getEsatCampMockPapers().find((p) => p.paperName === paperName) ?? null;
+}
+
+/** Question parts for every module that shares this paper's display name. */
+export function getEsatCampMockQuestionPartsForPaperName(paperName: string) {
+  return getEsatCampMockModulesByPaperName(paperName).flatMap((mockModule) =>
+    mockModule.questions.map((q) => {
+      const adapted = mockQuestionToPaperQuestion(mockModule, q);
+      return {
+        paperId: adapted.paperId,
+        partLetter: adapted.partLetter,
+        partName: adapted.partName,
+        examType: adapted.examType,
+        paperName: adapted.paperName,
+        questionNumber: adapted.questionNumber,
+      };
+    }),
+  );
 }
 
 export function getEsatCampMockQuestions(paperId: number): Question[] {
@@ -127,6 +169,13 @@ export function getEsatCampMockQuestions(paperId: number): Question[] {
   if (!mockModule) return [];
   return mockModule.questions.map((q) =>
     mockQuestionToPaperQuestion(mockModule, q),
+  );
+}
+
+/** All questions for a Mock 1 / Mock 2 basket (may span multiple module paper IDs). */
+export function getEsatCampMockQuestionsByPaperName(paperName: string): Question[] {
+  return getEsatCampMockModulesByPaperName(paperName).flatMap((mockModule) =>
+    mockModule.questions.map((q) => mockQuestionToPaperQuestion(mockModule, q)),
   );
 }
 

@@ -160,8 +160,8 @@ describe("ESAT CAMP mock modules", () => {
     expect(qsM).toHaveLength(27);
     expect(qsA[0]?.examType).toBe(ESAT_CAMP_MOCK_EXAM_TYPE);
     expect(qsA[0]?.examType).not.toBe("Official");
-    expect(qsB.every((q) => q.paperName === "Mock 2 2026")).toBe(true);
-    expect(qsM.every((q) => q.paperName === "Mathematics 1 Mock 01")).toBe(true);
+    expect(qsB.every((q) => q.paperName === "Mock 2")).toBe(true);
+    expect(qsM.every((q) => q.paperName === "Mock 1")).toBe(true);
     expect(qsM.every((q) => q.partName === "Mathematics")).toBe(true);
   });
 

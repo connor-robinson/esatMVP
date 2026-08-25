@@ -27,6 +27,10 @@ import { getSectionForRoadmapPart } from '@/lib/papers/roadmapConfig';
 import { deriveTmuaSectionFromQuestion } from '@/lib/papers/sectionMapping';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
 import { getPaper, getQuestions } from '@/lib/supabase/questions';
+import {
+  getEsatCampMockModulePapersByPaperName,
+  isEsatCampMockExamType,
+} from '@/lib/papers/esatCampMocks';
 import { examNameToPaperType } from '@/lib/papers/paperConfig';
 import type { PaperSection, Question, Paper } from '@/types/papers';
 import type { RoadmapPart } from '@/lib/papers/roadmapConfig';
@@ -420,18 +424,25 @@ export default function PapersRoadmapPage() {
           );
 
           if (!paper) {
-
-            // Show user-friendly error message
             alert(
               `Paper not found: ${stage.examName} ${stage.year} ${firstPartInPaper.paperName} (${firstPartInPaper.examType}). Please check if this paper exists in the database.`,
             );
             return;
           }
 
-
           allPapers.set(paperKey, paper);
-          const questions = await getQuestions(paper.id);
-          allQuestionsByPaper.set(paper.id, questions);
+
+          // ESAT CAMP Mock 1 spans multiple module paper IDs (Maths + Physics).
+          const modulePapers = isEsatCampMockExamType(firstPartInPaper.examType)
+            ? getEsatCampMockModulePapersByPaperName(firstPartInPaper.paperName)
+            : [paper];
+
+          let combined: Question[] = [];
+          for (const modulePaper of modulePapers) {
+            const qs = await getQuestions(modulePaper.id);
+            combined = [...combined, ...qs];
+          }
+          allQuestionsByPaper.set(paper.id, combined);
         }
 
         // Get primary paper for session metadata
@@ -524,15 +535,17 @@ export default function PapersRoadmapPage() {
         const totalQuestions = matchingQuestions.length;
 
         // Calculate time (1.48 min per question, or 75 min per section for TMUA).
-        // ESAT CAMP Physics mocks are fixed 40-minute modules.
+        // ESAT CAMP modules are fixed 40 minutes each.
         let timeLimitMinutes: number;
         if (paperType === 'TMUA') {
           timeLimitMinutes = Array.from(allSections).length * 75;
         } else if (
-          selectedParts.every((part) => part.examType === 'ESAT CAMP') &&
-          totalQuestions === 27
+          selectedParts.every((part) => part.examType === 'ESAT CAMP')
         ) {
-          timeLimitMinutes = 40;
+          const moduleCount = new Set(
+            matchingQuestions.map((q) => q.paperId),
+          ).size;
+          timeLimitMinutes = Math.max(1, moduleCount) * 40;
         } else {
           timeLimitMinutes = Math.ceil(totalQuestions * 1.48);
         }

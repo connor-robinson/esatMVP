@@ -22,6 +22,10 @@ import {
   ESAT_CAMP_MOCK_DISCLOSURE,
   isEsatCampMockExamType,
 } from "@/lib/papers/esatCampMocks";
+import {
+  predictEsatCampOverallScore,
+  predictEsatCampSectionScore,
+} from "@/lib/papers/esatCampMockPredictedScore";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import {
   cssVar,
@@ -807,7 +811,21 @@ export default function PapersMarkPage() {
   }, [validSectionEntries, selectedPercentileSection, examName, nsaaAveragedPercentile]);
 
   // Predicted overall score (weighted by section totals) - exam-specific
+  const isEsatCampSession = isEsatCampMockExamType(questions[0]?.examType);
   const predictedScore = useMemo(() => {
+    if (isEsatCampSession) {
+      const qs = usePaperSessionStore.getState().questions;
+      return predictEsatCampOverallScore(
+        validSectionEntries.map(([section, data]) => {
+          const match = findQuestionForSection(qs, section, examName);
+          return {
+            section: match?.partName || section,
+            correct: data.correct,
+            total: data.total,
+          };
+        }),
+      );
+    }
     if (!hasConversion || (conversionRows as any[])?.length === 0) return null;
     const qs = usePaperSessionStore.getState().questions;
     return computePredictedScore(
@@ -819,10 +837,12 @@ export default function PapersMarkPage() {
       conversionRowsByPaperId,
     );
   }, [
+    isEsatCampSession,
     hasConversion,
     conversionRows,
     conversionRowsByPaperId,
     sectionAnalytics,
+    validSectionEntries,
     examName,
     paperName,
   ]);
@@ -1119,8 +1139,9 @@ export default function PapersMarkPage() {
                     {/* Overview pills - single row */}
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                       {(() => {
-                        const scoreLabel =
-                          examName === "ENGAA" || examName === "NSAA"
+                        const scoreLabel = isEsatCampSession
+                          ? "Predicted /9"
+                          : examName === "ENGAA" || examName === "NSAA"
                             ? "Predicted ESAT"
                             : examName === "TMUA"
                               ? "TMUA score"
@@ -1171,11 +1192,11 @@ export default function PapersMarkPage() {
                       {/* Section Performance - compact list */}
                       <div className={`${bubbleClass} space-y-3 lg:col-span-2`}>
                         <div className="text-base font-semibold text-neutral-100">Section Performance</div>
-                        {!hasConversion &&
-                        isEsatCampMockExamType(questions[0]?.examType) ? (
+                        {!hasConversion && isEsatCampSession ? (
                           <p className="text-xs leading-relaxed text-neutral-400">
-                            {ESAT_CAMP_MOCK_DISCLOSURE} There is no official
-                            score conversion for this paper.
+                            {ESAT_CAMP_MOCK_DISCLOSURE} Predicted scores use
+                            NSAA and ENGAA conversion curves by percentage, not
+                            an official ESAT raw-to-scaled table.
                           </p>
                         ) : null}
                         <div className="divide-y divide-border-subtle">
@@ -1184,8 +1205,16 @@ export default function PapersMarkPage() {
                             let scaledScore: number | null = null;
                             let convMatched = false;
                             let convUsedAverage = false;
-                            if (hasConversion && conversionRows.length > 0) {
-                              const qs = usePaperSessionStore.getState().questions;
+                            const qs = usePaperSessionStore.getState().questions;
+                            if (isEsatCampSession) {
+                              const match = findQuestionForSection(qs, section, examName);
+                              scaledScore = predictEsatCampSectionScore({
+                                section: match?.partName || section,
+                                correct: data.correct,
+                                total: data.total,
+                              });
+                              convMatched = scaledScore != null;
+                            } else if (hasConversion && conversionRows.length > 0) {
                               const sectionExamName = (qs?.[0]?.examName || "").toUpperCase();
                               const { scaled, matched, usedAverage } = computeScaledScore(
                                 sectionExamName,
@@ -1200,7 +1229,7 @@ export default function PapersMarkPage() {
                               convMatched = matched;
                               convUsedAverage = usedAverage;
                             }
-                            const qsForPill = usePaperSessionStore.getState().questions;
+                            const qsForPill = qs;
                             const matchForPill = findQuestionForSection(qsForPill, section, examName);
                             const sectionNameForColor = mapPartToSection(
                               {
@@ -1229,7 +1258,7 @@ export default function PapersMarkPage() {
                                       </span>
                                     )}
                                     <span className="truncate text-xs text-neutral-400">{section}</span>
-                                    {hasConversion && (
+                                    {hasConversion || isEsatCampSession ? (
                                       <div className="group relative shrink-0">
                                         <button
                                           type="button"
@@ -1239,10 +1268,12 @@ export default function PapersMarkPage() {
                                           <Info className="h-3.5 w-3.5" />
                                         </button>
                                         <div className="absolute left-0 top-full z-20 mt-1 hidden w-52 rounded-organic-md border border-border bg-surface-elevated p-2 text-[11px] text-text-muted shadow-bar-floating group-hover:block">
-                                          {conversionHint}
+                                          {isEsatCampSession
+                                            ? "Estimated from NSAA/ENGAA tables using your percentage correct"
+                                            : conversionHint}
                                         </div>
                                       </div>
-                                    )}
+                                    ) : null}
                                   </div>
                                   <div className="space-y-1.5">
                                     <div className="flex items-baseline justify-between gap-2">

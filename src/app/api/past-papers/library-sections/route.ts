@@ -3,8 +3,9 @@ import { createServerClient } from "@/lib/supabase/server";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import {
   getEsatCampMockPapers,
-  getEsatCampMockQuestionParts,
+  getEsatCampMockQuestionPartsForPaperName,
   isEsatCampMockPaperId,
+  getEsatCampMockModuleByPaperId,
 } from "@/lib/papers/esatCampMocks";
 import {
   buildPaperSectionsOutline,
@@ -31,10 +32,20 @@ export async function GET(request: NextRequest) {
 
     if (isEsatCampMockPaperId(paperId)) {
       const paper = getEsatCampMockPapers().find((p) => p.id === paperId);
-      if (!paper) {
+      const moduleForId = getEsatCampMockModuleByPaperId(paperId);
+      const paperName = paper?.paperName ?? moduleForId?.paperName;
+      if (!paperName) {
         return NextResponse.json({ error: "Paper not found" }, { status: 404 });
       }
-      const partRows = getEsatCampMockQuestionParts(paperId);
+      const resolvedPaper =
+        paper ??
+        getEsatCampMockPapers().find((p) => p.paperName === paperName) ??
+        null;
+      if (!resolvedPaper) {
+        return NextResponse.json({ error: "Paper not found" }, { status: 404 });
+      }
+      // Mock 1 spans Maths + Physics modules that share the same paperName.
+      const partRows = getEsatCampMockQuestionPartsForPaperName(paperName);
       const slimParts: SlimQuestionPart[] = partRows.map((row) => ({
         paperId: row.paperId,
         partLetter: row.partLetter,
@@ -42,7 +53,7 @@ export async function GET(request: NextRequest) {
         examType: row.examType,
         paperName: row.paperName,
       }));
-      const outline = buildPaperSectionsOutline(paper, [], slimParts);
+      const outline = buildPaperSectionsOutline(resolvedPaper, [], slimParts);
       return NextResponse.json({ ...outline, partRows });
     }
 

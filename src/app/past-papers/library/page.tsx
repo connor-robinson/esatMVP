@@ -17,6 +17,10 @@ import { getQuestions } from '@/lib/supabase/questions';
 import { deriveTmuaSectionFromQuestion } from "@/lib/papers/sectionMapping";
 import { questionMatchesSelectedSections, parseMainSectionFromLabel } from "@/lib/papers/paperLibrarySections";
 import { filterEngaaQuestionsByEsatSubjects } from "@/lib/papers/engaaQuestionFilter";
+import {
+  getEsatCampMockModulePapersByPaperName,
+  isEsatCampMockExamType,
+} from "@/lib/papers/esatCampMocks";
 import { generateSectionId } from '@/lib/papers/partIdUtils';
 import type { Paper, PaperSection, Question, ExamName } from '@/types/papers';
 import { PaperLibraryGrid } from '@/components/papers/library/PaperLibraryGrid';
@@ -489,20 +493,19 @@ export default function PapersLibraryPage() {
 
         const paperType =
           examNameToPaperType(paper.examName as ExamName) || 'NSAA';
-        // ESAT CAMP mocks are standalone modules - never merge A with B.
-        const mergeSiblings =
-          paper.examType !== 'ESAT CAMP' &&
-          (paperType === 'NSAA' ||
-            paperType === 'ENGAA' ||
-            paperType === 'ESAT' ||
-            paperType === 'TMUA');
-
-        const catalog = mergeSiblings
-          ? papers.filter(
-              (p) =>
-                p.examName === paper.examName && p.examYear === paper.examYear,
-            )
-          : [paper];
+        // ESAT CAMP: merge modules that share a Mock name (Mock 1 = Maths + Physics).
+        // Do not merge Mock 1 with Mock 2.
+        const catalog = isEsatCampMockExamType(paper.examType)
+          ? getEsatCampMockModulePapersByPaperName(paper.paperName)
+          : paperType === 'NSAA' ||
+              paperType === 'ENGAA' ||
+              paperType === 'ESAT' ||
+              paperType === 'TMUA'
+            ? papers.filter(
+                (p) =>
+                  p.examName === paper.examName && p.examYear === paper.examYear,
+              )
+            : [paper];
 
         let allQuestions: Question[] = [];
         for (const catalogPaper of catalog) {
@@ -562,6 +565,12 @@ export default function PapersLibraryPage() {
             tmuaPaperCount += subjects.size;
           });
           timeLimitMinutes = tmuaPaperCount * 75;
+        } else if (isEsatCampMockExamType(paper.examType)) {
+          // 40 minutes per selected module (27 questions each).
+          const moduleCount = new Set(
+            filteredQuestions.map((q) => q.paperId),
+          ).size;
+          timeLimitMinutes = Math.max(1, moduleCount) * 40;
         } else {
           timeLimitMinutes = Math.ceil(filteredQuestions.length * 1.48);
         }

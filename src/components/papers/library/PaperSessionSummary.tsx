@@ -118,7 +118,9 @@ function PaperItemComponent({
               getExamAccentTextClass(paper.examName),
             )}
           >
-            {paper.examName} {paper.examYear}
+            {paper.examType === "ESAT CAMP"
+              ? paper.paperName
+              : `${paper.examName} ${paper.examYear}`}
           </div>
         </div>
 

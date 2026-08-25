@@ -315,7 +315,9 @@ export function PaperColumn({
               locked ? "text-text-muted" : "text-text",
             )}
           >
-            {paper.examName} {paper.examYear}
+            {paper.examType === "ESAT CAMP"
+              ? paper.paperName
+              : `${paper.examName} ${paper.examYear}`}
           </span>
           {paper.examType && (
             <span className="inline-flex h-7 shrink-0 items-center rounded-[6px] bg-surface-neutral px-2.5 text-[10px] uppercase tracking-wide text-text-muted">

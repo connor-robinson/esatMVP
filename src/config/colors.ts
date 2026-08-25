@@ -86,7 +86,7 @@ export function getExamAccentTextClass(examName: string): string {
     key.startsWith("ESAT CAMP") ||
     key.startsWith("ESATCAMP")
   ) {
-    return "text-secondary";
+    return "text-error";
   }
   if (key === "ENGAA") return "text-advanced";
   if (key === "NSAA") return "text-accent";
@@ -235,7 +235,7 @@ export function getExamAccentBadgeClass(examName: string): string {
     key.startsWith("ESAT CAMP") ||
     key.startsWith("ESATCAMP")
   ) {
-    return "bg-secondary/15 text-secondary";
+    return "bg-error/15 text-error";
   }
   if (key === "ENGAA") return "bg-advanced/15 text-advanced";
   if (key === "NSAA") return "bg-accent/15 text-accent";
@@ -255,7 +255,7 @@ export function getExamAccentFillClass(examName: string): string {
     key.startsWith("ESAT CAMP") ||
     key.startsWith("ESATCAMP")
   ) {
-    return "bg-secondary text-background";
+    return "bg-error text-background";
   }
   if (key === "ENGAA") return "bg-advanced text-background";
   if (key === "NSAA") return "bg-accent text-background";
@@ -269,6 +269,14 @@ export function getExamAccentFillClass(examName: string): string {
 /** Progress bar fill only (no text color). */
 export function getExamProgressFillClass(examName: string): string {
   const key = examName.trim().toUpperCase();
+  if (
+    key === "ESATCAMP MOCK" ||
+    key === "ESAT CAMP MOCK PAPERS" ||
+    key.startsWith("ESAT CAMP") ||
+    key.startsWith("ESATCAMP")
+  ) {
+    return "bg-error";
+  }
   if (key === "ENGAA") return "bg-advanced";
   if (key === "NSAA") return "bg-accent";
   if (key === "TMUA") return "bg-tmua-accent";
@@ -281,6 +289,14 @@ export function getExamProgressFillClass(examName: string): string {
 /** Tinted panel background (cards, expanded sections). */
 export function getExamAccentSurfaceClass(examName: string): string {
   const key = examName.trim().toUpperCase();
+  if (
+    key === "ESATCAMP MOCK" ||
+    key === "ESAT CAMP MOCK PAPERS" ||
+    key.startsWith("ESAT CAMP") ||
+    key.startsWith("ESATCAMP")
+  ) {
+    return "bg-error/10";
+  }
   if (key === "ENGAA") return "bg-advanced/10";
   if (key === "NSAA") return "bg-accent/10";
   if (key === "TMUA") return "bg-tmua-accent/10";
@@ -293,6 +309,14 @@ export function getExamAccentSurfaceClass(examName: string): string {
 /** Stronger tint for current / highlighted stage row. */
 export function getExamAccentSurfaceStrongClass(examName: string): string {
   const key = examName.trim().toUpperCase();
+  if (
+    key === "ESATCAMP MOCK" ||
+    key === "ESAT CAMP MOCK PAPERS" ||
+    key.startsWith("ESAT CAMP") ||
+    key.startsWith("ESATCAMP")
+  ) {
+    return "bg-error/18";
+  }
   if (key === "ENGAA") return "bg-advanced/18";
   if (key === "NSAA") return "bg-accent/18";
   if (key === "TMUA") return "bg-tmua-accent/18";
@@ -319,6 +343,14 @@ export function getExamAccentLibraryPaperRowClass(
   }
   if (key === "TMUA") {
     return row("bg-tmua-accent/10", "hover:bg-tmua-accent/18", "bg-tmua-accent/18");
+  }
+  if (
+    key === "ESATCAMP MOCK" ||
+    key === "ESAT CAMP MOCK PAPERS" ||
+    key.startsWith("ESAT CAMP") ||
+    key.startsWith("ESATCAMP")
+  ) {
+    return row("bg-error/10", "hover:bg-error/18", "bg-error/18");
   }
   if (key === "ESAT") {
     return row("bg-maths/10", "hover:bg-maths/18", "bg-maths/18");

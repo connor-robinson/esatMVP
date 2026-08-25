@@ -12,15 +12,6 @@ import {
   sanitizeStemTable,
 } from "@/lib/utils/sanitizeStemSvg";
 
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-
 function splitMarkdownTableCellLine(line: string): string[] {
   const trimmed = line.trim().replace(/^\|/, "").replace(/\|$/, "");
   return trimmed.split("|").map((cell) => cell.trim());
@@ -49,13 +40,15 @@ function renderMarkdownTableBlock(lines: string[]): string {
     return next.slice(0, rowLen);
   };
 
+  // Do not HTML-escape before KaTeX: cells may contain \(...x<4...\).
+  // renderMathContent escapes plain-text segments after math is extracted.
   const headerHtml = normalizeRow(headerCells)
-    .map((cell) => `<th>${renderMathContent(escapeHtml(cell))}</th>`)
+    .map((cell) => `<th>${renderMathContent(cell)}</th>`)
     .join("");
   const bodyHtml = bodyRows
     .map((row) => {
       const cols = normalizeRow(row)
-        .map((cell) => `<td>${renderMathContent(escapeHtml(cell))}</td>`)
+        .map((cell) => `<td>${renderMathContent(cell)}</td>`)
         .join("");
       return `<tr>${cols}</tr>`;
     })
