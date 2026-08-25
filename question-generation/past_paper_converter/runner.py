@@ -7,9 +7,17 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from .batch import run_batch_extract
-from .config import CACHE_DIR, promote_to_questions_table
+from .config import (
+    CACHE_DIR,
+    DEFAULT_BATCH_MODEL,
+    DEFAULT_FLASH_MODEL,
+    promote_to_questions_table,
+    use_vertex_ai,
+    uses_variable_option_count,
+)
 from .db import (
     approve_question_text,
+    fetch_authoritative_recovered_conversion,
     fetch_existing_conversion,
     fetch_paper_ids,
     supersede_conversions,
@@ -25,6 +33,7 @@ from .extract import (
 )
 from .preflight import run_preflight
 from .sequence_audit import audit_all_papers, audit_paper_sequence
+from .structured_tables import process_tables
 from .validate import normalize_latex_delimiters, normalize_options, validate_extraction
 
 
@@ -78,6 +87,8 @@ def process_single_job(
     existing = None
     if job.image_hash and not force:
         existing = fetch_existing_conversion(job.question_id, job.image_hash)
+        if existing is None:
+            existing = fetch_authoritative_recovered_conversion(job.question_id)
 
     preflight = run_preflight(job, existing_conversion=existing)
     if preflight.skip_cached and preflight.cached_conversion:
@@ -91,21 +102,73 @@ def process_single_job(
         return {"question_id": job.question_id, "status": "failed", "report": report}
 
     assert job.image_bytes is not None
+    model_used = DEFAULT_FLASH_MODEL
     parsed, raw, usage = extract_from_image(job.image_bytes, job_meta(job), pdf_hint=job.pdf_text_hint)
 
     if should_escalate_to_pro(parsed, str(parsed.get("stem") or "")):
+        model_used = escalate_model()
         parsed, raw, usage = extract_from_image(
             job.image_bytes,
             job_meta(job),
-            model=escalate_model(),
+            model=model_used,
             pdf_hint=job.pdf_text_hint,
         )
 
-    stem = normalize_latex_delimiters(str(parsed.get("stem") or ""))
     options = normalize_options(parsed.get("options") or {})
-    stem, diagram_assets, diagram_crop_failed = process_diagrams(
-        job.question_id, job.image_bytes, parsed
+    # Fixed-count papers (TMUA A–H) often lose the last option(s) on the first pass.
+    # Retry with an explicit missing-letter prompt before diagrams/validation.
+    options_retry_error: Optional[str] = None
+    missing_options_recovered = False
+    if (
+        not uses_variable_option_count(job.exam_name, job.paper_name)
+        and job.expected_letters
+        and len(options) < len(job.expected_letters)
+        and not dry_run
+    ):
+        retry_models = [model_used]
+        pro = escalate_model()
+        if pro not in retry_models:
+            retry_models.append(pro)
+        for retry_model in retry_models:
+            try:
+                retried, raw_retry, retry_usage = extract_from_image(
+                    job.image_bytes,
+                    job_meta(job),
+                    model=retry_model,
+                    pdf_hint=job.pdf_text_hint,
+                    options_retry={"found_letters": sorted(options.keys())},
+                )
+            except Exception as exc:
+                options_retry_error = str(exc)
+                break
+            retried_options = normalize_options(retried.get("options") or {})
+            if len(retried_options) >= len(options):
+                parsed = retried
+                options = retried_options
+                raw = raw_retry
+                model_used = retry_model
+                usage = {**(usage or {}), "options_retry_usage": retry_usage}
+            if len(options) >= len(job.expected_letters):
+                missing_options_recovered = True
+                break
+
+    if parsed.get("has_graphical_options") is True:
+        parsed["has_diagram"] = True
+        if str(parsed.get("diagram_type") or "none") == "none":
+            parsed["diagram_type"] = "graphical_options"
+    table_stem, table_processing_failed = process_tables(
+        parsed, str(parsed.get("stem") or "")
     )
+    parsed["stem"] = table_stem
+    for letter, text in (parsed.get("structured_table_options") or {}).items():
+        options.setdefault(str(letter), str(text))
+    stem, diagram_assets, diagram_crop_failed = process_diagrams(
+        job.question_id, job.image_bytes, parsed, upload=not dry_run
+    )
+    if parsed.get("has_graphical_options") is True:
+        for letter in parsed.get("graphical_option_letters_processed") or []:
+            options.setdefault(str(letter), "")
+    stem = normalize_latex_delimiters(stem)
 
     report, hard_fail = validate_extraction(
         job,
@@ -115,7 +178,13 @@ def process_single_job(
         preflight_blur_score=preflight.blur_score,
         preflight_blurry=preflight.blurry,
         diagram_crop_failed=diagram_crop_failed,
+        table_processing_failed=table_processing_failed,
     )
+    report["ai_provider"] = "vertex_ai" if use_vertex_ai() else "gemini_api"
+    if missing_options_recovered:
+        report["missing_options_recovered"] = True
+    if options_retry_error:
+        report["missing_options_retry_error"] = options_retry_error
 
     # KaTeX fix retry
     if report.get("katex_errors") and not dry_run:
@@ -131,14 +200,14 @@ def process_single_job(
                 preflight_blur_score=preflight.blur_score,
                 preflight_blurry=preflight.blurry,
                 diagram_crop_failed=diagram_crop_failed,
+                table_processing_failed=table_processing_failed,
             )
+            report["ai_provider"] = "vertex_ai" if use_vertex_ai() else "gemini_api"
             usage = {**(usage or {}), "fix_usage": fix_usage}
         except Exception as exc:
             report.setdefault("katex_fix_error", str(exc))
 
     status = "failed" if hard_fail else "auto_approved"
-    model_used = escalate_model() if should_escalate_to_pro(parsed, stem) else None
-
     row = _build_conversion_row(
         job,
         parsed,
@@ -238,21 +307,46 @@ def run_conversion(
             key = str(job.question_id)
             parsed = batch_parsed.get(key, {"confidence": 0, "stem": "", "options": {}})
             # Reuse single-job post-processing by injecting parsed — simplified inline:
-            stem = normalize_latex_delimiters(str(parsed.get("stem") or ""))
+            if parsed.get("has_graphical_options") is True:
+                parsed["has_diagram"] = True
+                if str(parsed.get("diagram_type") or "none") == "none":
+                    parsed["diagram_type"] = "graphical_options"
             options = normalize_options(parsed.get("options") or {})
+            table_stem, table_processing_failed = process_tables(
+                parsed, str(parsed.get("stem") or "")
+            )
+            parsed["stem"] = table_stem
+            for letter, text in (parsed.get("structured_table_options") or {}).items():
+                options.setdefault(str(letter), str(text))
             assert job.image_bytes
             stem, diagram_assets, diagram_crop_failed = process_diagrams(
-                job.question_id, job.image_bytes, parsed
+                job.question_id, job.image_bytes, parsed, upload=not dry_run
             )
+            if parsed.get("has_graphical_options") is True:
+                for letter in parsed.get("graphical_option_letters_processed") or []:
+                    options.setdefault(str(letter), "")
+            stem = normalize_latex_delimiters(stem)
             pf = run_preflight(job)
             report, hard_fail = validate_extraction(
                 job, parsed, stem, options,
                 preflight_blur_score=pf.blur_score,
                 preflight_blurry=pf.blurry,
                 diagram_crop_failed=diagram_crop_failed,
+                table_processing_failed=table_processing_failed,
             )
+            report["ai_provider"] = "vertex_ai" if use_vertex_ai() else "gemini_api"
             status = "failed" if hard_fail else "auto_approved"
-            row = _build_conversion_row(job, parsed, stem, options, report, status, None, diagram_assets=diagram_assets)
+            row = _build_conversion_row(
+                job,
+                parsed,
+                stem,
+                options,
+                report,
+                status,
+                None,
+                diagram_assets=diagram_assets,
+                model_used=DEFAULT_BATCH_MODEL,
+            )
             if not dry_run:
                 if force:
                     supersede_conversions(job.question_id)

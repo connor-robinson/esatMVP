@@ -29,8 +29,16 @@ Rules:
 - options: object mapping letter -> option text (each value is self-contained KaTeX)
 - Use $...$ for inline math, $$...$$ for display math
 - Escape backslashes in JSON (e.g. \\\\frac not \\frac in the raw JSON string values)
-- Do NOT invent diagram details — if a diagram/graph is present, set has_diagram=true and provide diagram_bbox_norm
-- diagram_bbox_norm: [x, y, w, h] normalized 0-1 relative to full image. Include the ENTIRE diagram/graph with all labels, axes, and arrows — add ~5% margin beyond the ink; do not crop tightly to lines
+- Do NOT invent visual details.
+- has_diagram MUST be explicitly true or false. It covers graphs, circuits, geometry figures, scientific drawings, maps, and graphical answer choices. Tables use the separate has_table/tables workflow and are NOT diagram crops.
+- has_table MUST be explicitly true or false. If true, transcribe every header, row label, and cell into tables. Never crop a table as an image.
+- diagram_confidence: 0-1 confidence in the has_diagram classification. Use below 0.9 if uncertain.
+- diagram_type: one of graph, circuit, geometry, scientific, table, graphical_options, other, none
+- has_graphical_options: true if any answer option depends on an image/graph/diagram rather than text alone
+- diagram_bbox_norm: bounding box for a single NON-OPTION stem diagram, or null if there is no separate stem diagram. Include every label, axis title, tick label, legend, arrowhead, annotation, and caption.
+- stem_diagram_assets: when the stem has two or more spatially separated diagrams/panels (for example before/after arrangements, two spring setups, Graph 1 and Graph 2, or diagrams P and Q), return EXACTLY one entry per complete diagram as {bbox_norm, caption}. Do not merge intervening prose or answer choices into a crop. When this list is non-empty, set diagram_bbox_norm to null. Every bbox is [x, y, WIDTH, HEIGHT].
+- graphical_option_assets: when has_graphical_options=true, include EXACTLY one entry for every printed answer choice. Each entry has its letter and a bbox enclosing that choice's complete visual, including axes and labels. Do not combine choices. A–F means six entries. Every bbox is [x, y, WIDTH, HEIGHT], never [x1, y1, x2, y2].
+- tables: when has_table=true, include each table as {caption, headers, rows}. Preserve all rows and columns. Put the printed option letter in the first cell when the table contains answer choices.
 - detected_question_number: integer shown top-left of screenshot
 - confidence: 0-1 how sure you are
 - If image is unreadable, set confidence below 0.5 and empty stem/options
@@ -41,7 +49,14 @@ Schema:
   "stem": "string",
   "options": {"A": "...", "B": "..."},
   "has_diagram": false,
-  "diagram_bbox_norm": [0.1, 0.05, 0.8, 0.3],
+  "has_table": false,
+  "diagram_confidence": 0.99,
+  "diagram_type": "none",
+  "has_graphical_options": false,
+  "diagram_bbox_norm": null,
+  "stem_diagram_assets": [{"bbox_norm": [0.2, 0.15, 0.6, 0.25], "caption": "first spring arrangement"}],
+  "graphical_option_assets": [{"letter": "A", "bbox_norm": [0.1, 0.4, 0.35, 0.2], "caption": "option A graph"}],
+  "tables": [{"caption": "", "headers": ["", "quantity"], "rows": [["A", "value"]]}],
   "diagram_caption": "diagram not to scale",
   "confidence": 0.95,
   "flags": []
@@ -72,19 +87,67 @@ def extract_json_object(text: str) -> Dict[str, Any]:
     end = text.rfind("}")
     if start == -1 or end == -1:
         raise ValueError("No JSON object in model response")
-    return json.loads(text[start : end + 1])
+    blob = text[start : end + 1]
+    try:
+        return json.loads(blob)
+    except json.JSONDecodeError:
+        repaired = _repair_json_blob(blob)
+        return json.loads(repaired)
 
 
-def build_user_text(job_meta: Dict[str, Any], pdf_hint: Optional[str] = None) -> str:
+def _repair_json_blob(blob: str) -> str:
+    """Best-effort fixes for common Gemini JSON slips before giving up."""
+    repaired = blob
+    # Trailing commas before } or ]
+    repaired = re.sub(r",(\s*[}\]])", r"\1", repaired)
+    # Raw control characters inside strings break strict JSON
+    repaired = repaired.replace("\r\n", "\\n").replace("\r", "\\n")
+    repaired = re.sub(r"(?<!\\)\t", r"\\t", repaired)
+    return repaired
+
+
+def _is_transient_transport_error(exc: Exception) -> bool:
+    message = f"{exc.__class__.__name__}: {exc}".lower()
+    return any(
+        marker in message
+        for marker in (
+            "transporterror",
+            "connectionerror",
+            "connection reset",
+            "connection aborted",
+            "temporarily unavailable",
+            "server disconnected",
+            "timed out",
+            "timeout",
+            "getaddrinfo failed",
+            "winerror 10054",
+            "502",
+            "503",
+            "504",
+        )
+    )
+
+
+def build_user_text(
+    job_meta: Dict[str, Any],
+    pdf_hint: Optional[str] = None,
+    *,
+    options_retry: Optional[Dict[str, Any]] = None,
+) -> str:
     exam = job_meta.get("exam_name") or ""
     paper = job_meta.get("paper_name") or ""
+    expected = [str(letter) for letter in (job_meta.get("expected_letters") or [])]
     if uses_variable_option_count(exam, paper):
         option_hint = (
             "Option letters: variable per question (often A–F, A–G, or A–H). "
             "Extract ONLY the option letters actually printed — do not invent G/H if not shown."
         )
     else:
-        option_hint = f"Expected option letters: {', '.join(job_meta.get('expected_letters', []))}"
+        option_hint = (
+            f"This exam ALWAYS has exactly these option letters: {', '.join(expected)}. "
+            f"Return every letter in options (exactly {len(expected)} entries). "
+            "Do not stop early at F or G when H is printed."
+        )
 
     parts = [
         f"Exam: {exam} {job_meta.get('exam_year')} {paper}",
@@ -93,6 +156,15 @@ def build_user_text(job_meta: Dict[str, Any], pdf_hint: Optional[str] = None) ->
         f"Part: {job_meta.get('part_letter')} — {job_meta.get('part_name')}",
         "Extract stem and options from the attached question screenshot.",
     ]
+    if options_retry:
+        found = sorted(str(letter) for letter in (options_retry.get("found_letters") or []))
+        missing = [letter for letter in expected if letter not in found]
+        parts.append(
+            "CRITICAL RETRY: the previous extraction missed answer options. "
+            f"Found only {', '.join(found) or '(none)'}. "
+            f"Missing letters that must appear in the screenshot: {', '.join(missing) or '(unknown)'}. "
+            "Re-read the full image from top to bottom and return ALL options."
+        )
     if pdf_hint:
         parts.append(f"PDF text hint (may be messy, image is authoritative):\n{pdf_hint[:2000]}")
     return "\n".join(parts)
@@ -105,12 +177,15 @@ def extract_from_image(
     model: Optional[str] = None,
     pdf_hint: Optional[str] = None,
     mime_type: str = "image/png",
+    options_retry: Optional[Dict[str, Any]] = None,
 ) -> Tuple[Dict[str, Any], str, Dict[str, Any]]:
     client = make_client()
     m = model or DEFAULT_FLASH_MODEL
-    user_text = build_user_text(job_meta, pdf_hint)
+    user_text = build_user_text(job_meta, pdf_hint, options_retry=options_retry)
 
     last_err: Optional[Exception] = None
+    raw = ""
+    response = None
     for attempt in range(4):
         try:
             response = client.models.generate_content(
@@ -126,24 +201,31 @@ def extract_from_image(
                 ],
                 config=types.GenerateContentConfig(
                     system_instruction=SYSTEM_PROMPT,
-                    temperature=0.1,
+                    temperature=0.0 if options_retry or attempt else 0.1,
                     response_mime_type="application/json",
                 ),
             )
+            raw = response.text or ""
+            parsed = extract_json_object(raw)
             break
+        except json.JSONDecodeError as exc:
+            # Malformed model JSON is retryable generation noise, not a network outage.
+            last_err = exc
+            if attempt < 3:
+                time.sleep(1 + attempt)
+                continue
+            raise
         except Exception as exc:
             last_err = exc
-            if "429" in str(exc) and attempt < 3:
+            if ("429" in str(exc) or _is_transient_transport_error(exc)) and attempt < 3:
                 time.sleep(2 ** attempt * 5)
                 continue
             raise
     else:
         raise last_err or RuntimeError("generate_content failed")
 
-    raw = response.text or ""
-    parsed = extract_json_object(raw)
     usage = {}
-    if response.usage_metadata:
+    if response is not None and response.usage_metadata:
         usage = {
             "prompt_token_count": getattr(response.usage_metadata, "prompt_token_count", None),
             "candidates_token_count": getattr(response.usage_metadata, "candidates_token_count", None),
