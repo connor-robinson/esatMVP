@@ -270,6 +270,18 @@ const SURFACE_TOKEN_KEYS = new Set<string>([
   "surfaceDark",
 ]);
 
+/** Cooler near-whites for light UI (Figma neutrals read too pink/mauve). */
+const lightSurface = {
+  background: "#f6f6f7",
+  surface: "#ffffff",
+  surfaceElevated: "#ffffff",
+  surfaceSubtle: "#f0f0f2",
+  surfaceMid: "#e5e5e9",
+  surfaceNeutral: "#ececee",
+  folderCard: "#ffffff",
+  folderCardSelected: "#e6e6ea",
+} as const;
+
 /** Light-mode preview: swap each token's dark assignment using site-palette rules. */
 function getSwappedLightToken(
   colorKey: keyof typeof colorTokens,
@@ -277,6 +289,11 @@ function getSwappedLightToken(
 ): string {
   if (SATURATED_BOTH_MODES.has(colorKey)) {
     return token.dark;
+  }
+
+  // Keep inverted light surfaces on the cool white ladder (not pink Figma greys).
+  if (colorKey in lightSurface) {
+    return lightSurface[colorKey as keyof typeof lightSurface];
   }
 
   const darkHex = normalizeHex(token.dark);
@@ -296,38 +313,44 @@ export const colorTokens = {
   primary: { dark: figmaPalette.greenLight, light: figmaPalette.greenDark },
   primaryHover: { dark: figmaPalette.greenDark, light: "#5c6540" },
   /** Purple / Light & Purple / Dark */
-  secondary: { dark: figmaPalette.purpleLight, light: figmaPalette.purpleDark },
+  secondary: { dark: figmaPalette.purpleLight, light: "#4f3f55" },
   /** Blue / Light & Blue / Dark */
   accent: { dark: figmaPalette.blueLight, light: figmaPalette.blueDark },
-  background: { dark: figmaNeutralScale.n50, light: figmaNeutralScale.n900 },
-  surface: { dark: figmaNeutralScale.n100, light: "#ffffff" },
-  surfaceElevated: { dark: figmaNeutralScale.n200, light: figmaNeutralScale.n900 },
-  surfaceSubtle: { dark: "#17161c", light: figmaNeutralScale.n850 },
-  surfaceMid: { dark: figmaNeutralScale.n300, light: figmaNeutralScale.n800 },
-  surfaceNeutral: { dark: figmaNeutralScale.n400, light: figmaNeutralScale.n850 },
-  /** Folder/topic item cards: n300 dark (#2b2831), n900 light (#f4f1f5) */
-  folderCard: { dark: figmaNeutralScale.n300, light: figmaNeutralScale.n900 },
+  background: { dark: figmaNeutralScale.n50, light: lightSurface.background },
+  surface: { dark: figmaNeutralScale.n100, light: lightSurface.surface },
+  surfaceElevated: {
+    dark: figmaNeutralScale.n200,
+    light: lightSurface.surfaceElevated,
+  },
+  surfaceSubtle: { dark: "#17161c", light: lightSurface.surfaceSubtle },
+  surfaceMid: { dark: figmaNeutralScale.n300, light: lightSurface.surfaceMid },
+  surfaceNeutral: {
+    dark: figmaNeutralScale.n400,
+    light: lightSurface.surfaceNeutral,
+  },
+  /** Folder/topic item cards */
+  folderCard: { dark: figmaNeutralScale.n300, light: lightSurface.folderCard },
   /** Selected topic / added drill tile - lifted in dark, pressed-in in light */
   folderCardSelected: {
     dark: figmaNeutralScale.n400,
-    light: figmaNeutralScale.n800,
+    light: lightSurface.folderCardSelected,
   },
   /** Muted button / remove button background: n500 in both modes */
   surfaceDark: { dark: figmaNeutralScale.n500, light: figmaNeutralScale.n500 },
   border: {
     dark: "rgba(64, 60, 70, 0.35)",
-    light: "rgba(64, 60, 70, 0.15)",
+    light: "rgba(40, 40, 48, 0.12)",
   },
   borderSubtle: {
     dark: "rgba(64, 60, 70, 0.2)",
-    light: "rgba(64, 60, 70, 0.08)",
+    light: "rgba(40, 40, 48, 0.06)",
   },
   text: { dark: figmaNeutralScale.n900, light: figmaNeutralScale.n50 },
   textMuted: { dark: figmaNeutralScale.n700, light: figmaNeutralScale.n600 },
   textSubtle: { dark: figmaNeutralScale.n600, light: figmaNeutralScale.n500 },
   textDisabled: { dark: figmaNeutralScale.n500, light: figmaNeutralScale.n400 },
   maths: { dark: figmaPalette.blueDark, light: figmaPalette.blueDark },
-  physics: { dark: figmaPalette.purpleLight, light: figmaPalette.purpleDark },
+  physics: { dark: figmaPalette.purpleLight, light: "#5a4560" },
   chemistry: { dark: figmaPalette.redDark, light: figmaPalette.redDark },
   /** Biology - Figma green (distinct from Advanced yellow). */
   biology: { dark: figmaPalette.greenLight, light: figmaPalette.greenDark },
@@ -355,8 +378,8 @@ export const colorTokens = {
   difficultyEasy: { dark: "#8CABA0", light: "#8CABA0" },
   /** Medium difficulty pill: muted amber dark, warm-brown light */
   difficultyMedium: { dark: "#BF8C58", light: figmaPalette.yellowDark },
-  /** TMUA exam label - Figma #CA7BB3 (lighter pink-purple, distinct from physics) */
-  tmuaAccent: { dark: "#CA7BB3", light: "#8B4F7A" },
+  /** TMUA exam label - cooler mauve in light so it reads less pink */
+  tmuaAccent: { dark: "#CA7BB3", light: "#6e4f68" },
 } as const satisfies Record<string, ModeToken>;
 
 export const surfaceOpacityTokens = {
@@ -469,8 +492,16 @@ export const shadowTokens = {
   dropElevated: "0 8px 0 rgba(28, 27, 31, 0.9)",
   /** Demo drop shadow (`248:3523`): y=3 */
   dropSubtle: "0 3px 0 rgba(28, 27, 31, 0.9)",
-  /** Modal / card overlay shadow */
-  modalCard: "0 20px 60px rgba(0,0,0,0.55)",
+  /**
+   * Modal / card overlay shadow. Resolved per theme via CSS var so light mode
+   * stays soft while dark keeps depth.
+   */
+  modalCard: "var(--shadow-modal-card)",
+} as const;
+
+export const modalCardShadowByMode = {
+  dark: "0 16px 40px rgba(0, 0, 0, 0.4)",
+  light: "0 4px 16px rgba(15, 15, 20, 0.06)",
 } as const;
 
 /**
@@ -623,6 +654,7 @@ export function buildCssVariables(
     "--surface-10": resolveSurfaceOpacity("10", mode, lightStrategy),
     "--surface-15": resolveSurfaceOpacity("15", mode, lightStrategy),
     "--surface-20": resolveSurfaceOpacity("20", mode, lightStrategy),
+    "--shadow-modal-card": modalCardShadowByMode[mode],
   };
 }
 

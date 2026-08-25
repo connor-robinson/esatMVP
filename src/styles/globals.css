@@ -11,6 +11,12 @@
     overflow-y: scroll;
     scrollbar-gutter: stable;
     transition: background-color 0.2s ease, color 0.2s ease;
+    /* Fallback before theme script; light mode overrides via --shadow-modal-card */
+    --shadow-modal-card: 0 16px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  html.light {
+    --shadow-modal-card: 0 4px 16px rgba(15, 15, 20, 0.06);
   }
 
   body {

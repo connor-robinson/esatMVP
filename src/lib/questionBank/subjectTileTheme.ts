@@ -45,18 +45,18 @@ export const SUBJECT_TILE_STYLES = {
     startBtnClass: "bg-[#69724b] dark:bg-[#b8c274] text-background hover:opacity-90",
   },
   "Paper 1": {
-    topicClass: "text-[#5b5661] dark:text-[#d4b8cc]",
-    statClass: "text-[#5b5661] dark:text-[#d4b8cc]",
-    progressFillClass: "bg-[#5b5661] dark:bg-[#d4b8cc]",
-    progressTrackClass: "bg-[#c4bec9]/35 dark:bg-[#5b5661]/40",
-    startBtnClass: "bg-[#5b5661] dark:bg-[#d4b8cc] text-background hover:opacity-90",
+    topicClass: "text-[#4a4a52] dark:text-[#d4b8cc]",
+    statClass: "text-[#4a4a52] dark:text-[#d4b8cc]",
+    progressFillClass: "bg-[#4a4a52] dark:bg-[#d4b8cc]",
+    progressTrackClass: "bg-[#c8c8d0]/40 dark:bg-[#5b5661]/40",
+    startBtnClass: "bg-[#4a4a52] dark:bg-[#d4b8cc] text-background hover:opacity-90",
   },
   "Paper 2": {
-    topicClass: "text-[#5b5661] dark:text-[#d4b8cc]",
-    statClass: "text-[#5b5661] dark:text-[#d4b8cc]",
-    progressFillClass: "bg-[#5b5661] dark:bg-[#d4b8cc]",
-    progressTrackClass: "bg-[#c4bec9]/35 dark:bg-[#5b5661]/40",
-    startBtnClass: "bg-[#5b5661] dark:bg-[#d4b8cc] text-background hover:opacity-90",
+    topicClass: "text-[#4a4a52] dark:text-[#d4b8cc]",
+    statClass: "text-[#4a4a52] dark:text-[#d4b8cc]",
+    progressFillClass: "bg-[#4a4a52] dark:bg-[#d4b8cc]",
+    progressTrackClass: "bg-[#c8c8d0]/40 dark:bg-[#5b5661]/40",
+    startBtnClass: "bg-[#4a4a52] dark:bg-[#d4b8cc] text-background hover:opacity-90",
   },
 } as const;
 
