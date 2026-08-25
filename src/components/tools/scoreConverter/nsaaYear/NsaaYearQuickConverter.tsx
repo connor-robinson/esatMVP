@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -11,6 +11,13 @@ import {
   type NsaaSubjectColumn,
   type NsaaYearPageData,
 } from "@/lib/scoreConverter/nsaaYearConversion.shared";
+import { resolvePercentileTableKey } from "@/lib/scoreConverter/esatModules";
+import {
+  fetchEsatTable,
+  interpolatePercentile,
+  type EsatRow,
+} from "@/lib/esat/percentiles";
+import { formatPercentileDisplay } from "@/lib/esat/percentileWording";
 import { APP_ROUTES } from "@/lib/seo/config";
 
 const controlBase =
@@ -38,6 +45,37 @@ export function NsaaYearQuickConverter({ data }: Props) {
   const clampedRaw = Math.max(0, Math.min(maxRaw, Number.isFinite(rawMark) ? rawMark : 0));
   const scaled =
     subject != null ? subject.scoresByRaw[clampedRaw] : undefined;
+
+  const tableKey = useMemo(() => {
+    if (!subject) return null;
+    return resolvePercentileTableKey("NSAA", data.year, subject.partName);
+  }, [subject, data.year]);
+
+  const [chartRows, setChartRows] = useState<EsatRow[] | null>(null);
+
+  useEffect(() => {
+    if (!tableKey) {
+      setChartRows(null);
+      return;
+    }
+    let cancelled = false;
+    fetchEsatTable(tableKey)
+      .then((rows) => {
+        if (!cancelled) setChartRows(rows);
+      })
+      .catch(() => {
+        if (!cancelled) setChartRows(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [tableKey]);
+
+  const percentile =
+    scaled != null && chartRows && chartRows.length > 0
+      ? interpolatePercentile(chartRows, scaled)
+      : null;
+  const percentileLabel = formatPercentileDisplay(percentile);
 
   const fullHref =
     subject != null
@@ -121,24 +159,29 @@ export function NsaaYearQuickConverter({ data }: Props) {
           alt=""
           width={1024}
           height={768}
-          className="h-36 w-full object-cover object-[center_78%] sm:h-40"
+          className="h-40 w-full scale-110 object-cover object-[center_78%] blur-md sm:h-44"
           aria-hidden
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/85 via-background/50 to-background/25"
+          className="pointer-events-none absolute inset-0 bg-background/55 backdrop-blur-[2px]"
         />
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5 px-4 text-center">
-          <p className="max-w-md text-sm font-medium text-text sm:text-base">
-            View where you rank amongst others
-          </p>
-          <Link
-            href={fullHref}
-            className="inline-flex items-center gap-2 rounded-organic-md bg-secondary px-4 py-2 text-sm font-semibold text-background transition-colors hover:brightness-110"
-          >
-            Open full converter
-            <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
-          </Link>
+        <div className="absolute inset-0 flex items-center justify-center gap-5 px-4 sm:gap-8 sm:px-6">
+          <div className="min-w-0 text-center sm:text-left">
+            <p className="text-2xl font-bold tabular-nums tracking-tight text-text sm:text-3xl">
+              {percentileLabel ?? "– percentile"}
+            </p>
+            <p className="mt-1 max-w-xs text-sm font-medium text-text/80 sm:text-base">
+              View where you rank amongst others
+            </p>
+            <Link
+              href={fullHref}
+              className="mt-3 inline-flex items-center gap-2 rounded-organic-md bg-secondary px-4 py-2 text-sm font-semibold text-background transition-colors hover:brightness-110"
+            >
+              Open full converter
+              <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
+            </Link>
+          </div>
         </div>
       </div>
     </div>
