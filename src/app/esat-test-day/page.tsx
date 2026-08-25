@@ -4,26 +4,35 @@ import {
   SEO_ROUTES,
   SOURCES,
   articleSchema,
+  breadcrumbSchema,
+  buildCanonicalUrl,
   buildSeoMetadata,
   type FaqItem,
 } from "@/lib/seo/config";
 import { seoLinks } from "@/lib/seo/links";
+import { ABOUT_PATH, FOUNDERS } from "@/config/founders";
 import { SeoPageLayout } from "@/components/seo/SeoPageLayout";
+import { FirstHandAccount } from "@/components/seo/FirstHandAccount";
+import { OfficialSourceCard } from "@/components/seo/OfficialSourceCard";
+import { CandidateReports } from "@/components/seo/CandidateReports";
+import { FounderByline } from "@/components/seo/FounderByline";
 import {
   HighlightBox,
-  ResponsiveTable,
   SeoList,
   SeoProse,
   SeoSection,
+  SeoSubheading,
   SeoTextLink,
   SummaryBox,
 } from "@/components/seo/SeoSections";
 
 const PATH = SEO_ROUTES.testDay;
+const AUTHOR = FOUNDERS.anson;
+const AUTHOR_ID = `${buildCanonicalUrl(ABOUT_PATH)}#${AUTHOR.id}`;
 
-const TITLE = "ESAT Test Day 2026/27 | Timing, Breaks & What to Expect";
+const TITLE = "What Is ESAT Test Day Actually Like? | First-Hand 2025";
 const DESCRIPTION =
-  "A practical guide to ESAT test day: module timing, no automatic breaks, whiteboard rules, review screens, flagging questions and last-minute tips.";
+  "First-hand ESAT test day at Pearson VUE Oxford: arrival, security, whiteboard booklet, module transitions, water rules and what to expect.";
 
 export const metadata: Metadata = buildSeoMetadata({
   title: TITLE,
@@ -31,30 +40,45 @@ export const metadata: Metadata = buildSeoMetadata({
   path: PATH,
   keywords: [
     "ESAT test day",
+    "ESAT Pearson VUE",
     "ESAT breaks",
     "ESAT whiteboard",
-    "ESAT test centre",
-    "ESAT calculator",
-    "ESAT timing",
-    "ESAT Pearson VUE",
+    "ESAT security check",
+    "ESAT module transition",
+    "ESAT water",
   ],
 });
 
 const FAQ: readonly FaqItem[] = [
   {
-    question: "Are there breaks between ESAT modules?",
+    question: "What ID do I need for the ESAT?",
     answer:
-      "There are no automatic breaks. A break is only available if it has been approved as part of an access arrangement.",
+      "I used my passport. Current UAT-UK rules accept specified forms of original, valid photographic government ID, so check the current ID policy rather than assuming you specifically need a passport.",
   },
   {
-    question: "Can I use paper for working in the ESAT?",
+    question: "Are there lockers at Pearson VUE?",
     answer:
-      "No personal paper is allowed. You are given a whiteboard or laminated sheet and a marker pen for rough working.",
+      "There were lockers at the Oxford centre I used. UAT-UK says personal belongings are left outside the testing room, and Pearson's own test-centre documentation shows lockable storage as part of its Professional Center setup.",
   },
   {
-    question: "Can I come back to an earlier ESAT module?",
+    question: "Are you searched before the ESAT?",
     answer:
-      "No. Once you end a module, you cannot return to it later. The review screen at the end of a module is your last chance to change answers.",
+      "I went through a security scan and had my glasses inspected. Current UAT-UK guidance says candidates may be scanned and will undergo a visual inspection.",
+  },
+  {
+    question: "Is there a break between ESAT modules?",
+    answer:
+      "There is no scheduled break. In my 2025 sitting there was a short transition countdown before the next module, but that is not the same thing as a normal break. Current UAT-UK guidance explicitly says there are no breaks between modules or papers.",
+  },
+  {
+    question: "Can you take water into the ESAT?",
+    answer:
+      "Normally, no. Current UAT-UK rules say water is not permitted inside the testing room without prior approval. I had to step outside when I wanted water.",
+  },
+  {
+    question: "What rough paper do you get in the ESAT?",
+    answer:
+      "I received an A4 reusable booklet with around 10 double-sided sheets, a black marker and wet wipes. Exact centre equipment may differ. UAT-UK officially describes the provided material as an erasable notebook or sheets and a pen.",
   },
 ];
 
@@ -63,135 +87,265 @@ export default function EsatTestDayPage() {
     <SeoPageLayout
       path={PATH}
       eyebrow="Test day"
-      title="What Is ESAT Test Day Like?"
+      title="What Is ESAT Test Day Actually Like?"
       intro={[
-        "The ESAT is a computer-based test taken at a Pearson VUE test centre. The academic challenge matters, but so do small practical details: no automatic breaks, no personal paper, separately timed modules and no calculator.",
+        "I sat the ESAT at the Pearson VUE centre on St Aldates, Oxford, in 2025. This is what the process was actually like from walking in to finishing the test.",
+        "The academic part was stressful. The test-centre process itself was fine.",
+        "In my sitting, there was a roughly one-minute countdown screen before the next module. Use that minute to rest. Do not turn it into another minute of work.",
       ]}
       lastChecked={{
         detail:
-          "Test-day rules come from the UAT-UK candidate handbook linked below, which is reissued each cycle.",
+          "Official UAT-UK rules below were re-checked on this date. Arrival, security and desk details from my 2025 Oxford sitting may differ by centre or cycle.",
       }}
-      primaryCta={{ href: APP_ROUTES.calibration, label: "Practise ESAT timing" }}
+      primaryCta={{ href: SEO_ROUTES.whiteboard, label: "ESAT whiteboard guide" }}
       secondaryCta={{ href: SEO_ROUTES.testDates, label: "Check the test dates" }}
       faq={FAQ}
       finalCta={{
         heading: "Practise the conditions, not just the content",
-        body: "Pacing under a 40-minute clock is a separate skill from solving the questions. A timed diagnostic is the quickest way to find out whether your current pacing plan survives contact with the clock.",
+        body: "Pacing under a 40-minute clock matters more than memorising the test-centre layout. A timed diagnostic is the quickest way to see whether your pacing plan survives contact with the clock.",
         primary: { href: APP_ROUTES.calibration, label: "Start free calibration" },
-        secondary: { href: SEO_ROUTES.calculatorRules, label: "Read the calculator rules" },
+        secondary: { href: SEO_ROUTES.calculatorRules, label: "Calculator rules" },
       }}
-      related={seoLinks("calculatorRules", "preparation", "calibration", "testDates", "esatBreaks", "whiteboard")}
-      sources={[SOURCES.candidateHandbook, SOURCES.esatTest]}
+      related={seoLinks(
+        "whiteboard",
+        "esatBreaks",
+        "calculatorRules",
+        "preparation",
+        "testDates",
+        "calibration",
+      )}
+      sources={[
+        SOURCES.testDayOfficial,
+        SOURCES.roughWorkings,
+        SOURCES.waterFaq,
+        SOURCES.pearsonProfessionalCenterTour,
+        SOURCES.candidateHandbook,
+        SOURCES.esatTest,
+      ]}
       showDisclaimer
-      schema={articleSchema({
-        headline: "What Is ESAT Test Day Like?",
-        description: DESCRIPTION,
-        path: PATH,
-      })}
+      schema={[
+        articleSchema({
+          headline: "What Is ESAT Test Day Actually Like?",
+          description: DESCRIPTION,
+          path: PATH,
+          authorPersonId: AUTHOR_ID,
+          authorName: AUTHOR.name,
+        }),
+        breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "ESAT test day", path: PATH },
+        ]),
+      ]}
     >
-      <SeoSection heading="The basic format">
-        <SummaryBox
-          title="On the day"
-          items={[
-            "Computer-based at a Pearson VUE test centre.",
-            "27 multiple-choice questions per module.",
-            "40 minutes per module.",
-            "Usually three modules for most candidates.",
-            "Modules are timed separately.",
-            "No calculator.",
-            "No personal pen or paper.",
-            "One mark per correct answer, no negative marking.",
+      <FirstHandAccount />
+
+      <FounderByline founder="anson" attribution="Written by" className="text-sm text-[#94A3B8]" />
+
+      <HighlightBox title="Between modules">
+        <p>
+          Use that minute to rest. Do not turn it into another minute of work.
+        </p>
+      </HighlightBox>
+
+      <SeoSection heading="What happens when you arrive at Pearson VUE?">
+        <SeoProse
+          paragraphs={[
+            "I was pretty nervous when I arrived.",
+            "At the counter I used my passport as ID. There were lockers for everything you were not allowed to take into the testing room.",
+            "Current UAT-UK guidance says candidates should arrive 30 minutes before their scheduled sitting, present accepted photographic ID and their Pearson appointment confirmation. Personal belongings are then left outside the testing room.",
+            "You do not need to bring paper, pens or other exam stationery.",
+            "You cannot use them anyway.",
           ]}
         />
       </SeoSection>
 
-      <SeoSection heading="Breaks and timing">
+      <SeoSection heading="Are you searched before the ESAT?">
         <SeoProse
           paragraphs={[
-            "Do not plan on a normal break between modules. UAT-UK says modules are taken one after another, with no automatic breaks. If you stop the test for any reason, the timer does not stop, and that includes going to the toilet.",
+            "Right before entering the testing area, I went through the security process.",
+            "I had to go through a security scan and briefly take my glasses off for inspection.",
+            "It feels quite serious when you are already nervous, but it was quick.",
+            "UAT-UK currently warns that candidates may have to pass through a security scan or security wand and that staff perform a visual inspection before admission to the room.",
+            "So do not be surprised by it.",
           ]}
         />
-        <HighlightBox className="mt-5" title="Before the test starts">
+      </SeoSection>
+
+      <SeoSection heading="What is the ESAT testing room like?">
+        <SeoProse
+          paragraphs={[
+            "Once inside, everything was good.",
+            "I had the computer, the ESAT interface, an A4 erasable booklet, a black marker, wet wipes and earplugs.",
+            "Staff monitored candidates from behind the testing area. I did not find it distracting.",
+            "Pearson's own Professional Center tour shows the same general setup of testing stations, lockers and a monitored proctor area, although individual centres vary.",
+          ]}
+        />
+        <OfficialSourceCard
+          className="mt-6"
+          title="Example Pearson Professional Center testing room"
+          description="Individual centres vary. This is not a photograph of the Oxford St Aldates room. Use the official Pearson tour for the general layout of lockers, workstations and the proctor station."
+          href={SOURCES.pearsonProfessionalCenterTour.url}
+          linkLabel="Open the Pearson Professional Center Tour"
+        />
+        <SummaryBox
+          className="mt-6"
+          title="At my desk"
+          items={[
+            "Computer and ESAT interface",
+            "A4 erasable booklet",
+            "Black marker",
+            "Wet wipes",
+            "Earplugs",
+          ]}
+        />
+      </SeoSection>
+
+      <SeoSection heading="You do not have to panic-start">
+        <SeoProse
+          paragraphs={[
+            "One thing I appreciated was that once I was at the computer, I did not feel like somebody was standing over me forcing me to start immediately.",
+            "At my sitting, I could settle myself and start when I was ready after reaching the relevant pre-test screens.",
+            "So when you sit down, get comfortable.",
+            "Check your marker. Put the booklet somewhere sensible. Get the mouse where you want it. Then begin.",
+          ]}
+        />
+      </SeoSection>
+
+      <SeoSection heading="The ESAT whiteboard booklet">
+        <SeoProse
+          paragraphs={[
+            "My booklet was roughly A4 and had around 10 double-sided sheets.",
+            "One side was gridded and one side was plain.",
+            "I barely used the grid.",
+            "The marker was black and fine enough for normal calculations, although the ink could smudge underneath my writing hand. By the end my palm was black.",
+            "I was also given wet wipes, presumably for cleaning the booklet.",
+            "The important thing is that you do not need to ration the booklet as aggressively as I did.",
+            "Current UAT-UK guidance says you can raise your hand and request replacement sheets during your test.",
+            "If your marker is bad, ask for another one too.",
+          ]}
+        />
+        <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
+          Full first-hand detail:{" "}
+          <SeoTextLink href={SEO_ROUTES.whiteboard}>
+            what the ESAT whiteboard is actually like
+          </SeoTextLink>
+          .
+        </p>
+      </SeoSection>
+
+      <SeoSection heading="What happens between ESAT modules?">
+        <SeoProse
+          paragraphs={[
+            "There is no proper scheduled break between standard modules.",
+            "UAT-UK explicitly says there are no breaks between modules or papers.",
+            "In my 2025 sitting, after finishing a module I reached a screen asking whether I was ready for the next session.",
+            "There was a roughly one-minute countdown.",
+            "There was also a button to continue early. If I did nothing, the next module would start when the countdown expired.",
+            "That minute is more useful than it sounds.",
+          ]}
+        />
+        <SeoList
+          className="mt-6"
+          items={[
+            "Take your hands off the mouse",
+            "Relax your eyes",
+            "Breathe",
+            "Reset mentally",
+            "Forget the previous module",
+          ]}
+        />
+        <HighlightBox className="mt-5" title="What I would not do" tone="warning">
           <p>
-            Use the toilet, check your marker works, and settle into a pacing plan.
-            UAT-UK explicitly recommends using the toilet before the test begins.
-            Once a module starts, treat the 40 minutes as fully active time.
+            In my 2025 sitting, there was roughly a one-minute transition screen
+            between modules. I would use that minute to rest, not to erase
+            working. Asking for another booklet is much faster than cleaning
+            pages.
           </p>
         </HighlightBox>
-      </SeoSection>
-
-      <SeoSection heading="Rough working">
-        <SeoProse
-          paragraphs={[
-            "You will be given a whiteboard or laminated sheet and a marker pen for working. Personal pen and paper are not allowed. If the board or pen is not working properly, raise your hand and ask the invigilator to replace it.",
-          ]}
-        />
-        <SeoList
-          className="mt-6"
-          items={[
-            "Keep working compact. Board space runs out faster than you expect.",
-            "Write only the important intermediate step.",
-            "Avoid filling the board with long algebra unless it is genuinely necessary.",
-            "Mark questions where your working is incomplete, so the review screen is useful.",
-          ]}
-        />
-      </SeoSection>
-
-      <SeoSection heading="Navigation and review">
-        <SeoProse
-          paragraphs={[
-            "You can flag questions for review. At the end of a module, the review screen shows flagged and unanswered questions. Once you end the module, you cannot return to it later.",
-          ]}
-        />
-        <ResponsiveTable
-          className="mt-6"
-          columns={["Time remaining", "What to do"]}
-          rows={[
-            [
-              "40–25 min",
-              "First pass. Answer quick and medium questions. Flag the heavy ones and move on.",
-            ],
-            [
-              "25–8 min",
-              "Work through flagged questions, starting with the ones most likely to come out.",
-            ],
-            [
-              "Final 8 min",
-              "Fill every blank, check arithmetic traps, and leave nothing empty. There is no negative marking.",
-            ],
-          ]}
-          caption="A pacing suggestion, not an official instruction. Adjust it to how your own first pass usually goes."
-        />
-      </SeoSection>
-
-      <SeoSection heading="Order of modules">
-        <SeoProse
-          paragraphs={[
-            "Your selected modules are taken one after another, and each module is separately timed.",
-            "We do not publish a fixed universal module order. Public UAT-UK material confirms the modules are separate and consecutive, but we have not found an official statement guaranteeing one order for every possible module combination, so treat any specific ordering you read online with caution.",
-          ]}
-        />
-      </SeoSection>
-
-      <SeoSection heading="Last-week checklist">
-        <SeoList
-          items={[
-            "Know exactly which modules you are sitting.",
-            "Practise at least one full 40-minute module block.",
-            "Try the official sample interface on a desktop, not a phone.",
-            "Practise with no calculator.",
-            "Practise compact rough working on a small surface.",
-            "Prepare ID and test-centre logistics, including travel time.",
-          ]}
-        />
-        <p className="mt-6 text-sm leading-relaxed text-[#94A3B8]">
-          Related:{" "}
-          <SeoTextLink href={SEO_ROUTES.commonMistakes}>
-            common preparation mistakes
-          </SeoTextLink>{" "}
-          covers the habits that cause most of the avoidable losses in the final
-          fortnight.
+        <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
+          More on timing:{" "}
+          <SeoTextLink href={SEO_ROUTES.esatBreaks}>
+            does the ESAT have breaks?
+          </SeoTextLink>
         </p>
+      </SeoSection>
+
+      <SeoSection heading="Can you drink water during the ESAT?">
+        <SeoProse
+          paragraphs={[
+            "There was no designated water break.",
+            "Water was not sitting next to me during the test. When I wanted water, I had to step outside the testing room.",
+            "That matches the current UAT-UK rule that water is not permitted inside the test room without an approved reason.",
+            "At my centre, staff were helpful about letting me step outside.",
+            "But do not plan your test around getting a nice water break between modules. It is not part of the standard test format.",
+            "Use the toilet and drink beforehand.",
+          ]}
+        />
+      </SeoSection>
+
+      <SeoSection heading="Is the room distracting?">
+        <SeoProse
+          paragraphs={[
+            "Mine wasn't.",
+            "The desk and computer setup were completely fine and the monitoring did not bother me.",
+            "I was given earplugs, which were actually useful.",
+            "Pearson test centres are designed so candidates can be monitored throughout the examination, and UAT-UK also warns that candidates may be recorded.",
+            "After the first few minutes, I stopped thinking about it.",
+          ]}
+        />
+      </SeoSection>
+
+      <SeoSection heading="The five things I wish I knew">
+        <div className="space-y-6">
+          <div>
+            <SeoSubheading>1. Do not bring stationery</SeoSubheading>
+            <p className="mt-2 leading-relaxed text-[#94A3B8]">
+              Your own paper and pens cannot go into the room. Leave them at
+              home.
+            </p>
+          </div>
+          <div>
+            <SeoSubheading>2. Check your marker</SeoSubheading>
+            <p className="mt-2 leading-relaxed text-[#94A3B8]">
+              Do this before starting. If it is faint or running out, ask for
+              another one.
+            </p>
+          </div>
+          <div>
+            <SeoSubheading>3. Ask for more booklet space</SeoSubheading>
+            <p className="mt-2 leading-relaxed text-[#94A3B8]">
+              Do not spend valuable time erasing pages just because you think
+              you need to preserve the same booklet.
+            </p>
+          </div>
+          <div>
+            <SeoSubheading>4. Use the between-module minute to rest</SeoSubheading>
+            <p className="mt-2 leading-relaxed text-[#94A3B8]">
+              You have just done 40 minutes of intense problem solving. Give
+              your brain the minute.
+            </p>
+          </div>
+          <div>
+            <SeoSubheading>5. The test centre is not the scary part</SeoSubheading>
+            <p className="mt-2 leading-relaxed text-[#94A3B8]">
+              I was extremely nervous going in, but once I was at the computer
+              the physical setup was completely fine. Most of your preparation
+              should still go into doing questions accurately under time
+              pressure.
+            </p>
+          </div>
+        </div>
+      </SeoSection>
+
+      <CandidateReports />
+
+      <SeoSection heading="Experience note">
+        <SeoProse
+          paragraphs={[
+            "This article combines current UAT-UK rules with first-hand experience from sitting the ESAT at Pearson VUE Oxford in 2025. The experience was also compared informally with friends who sat the test.",
+            "This page separates my experience from current UAT-UK rules because individual Pearson VUE centres and future test cycles can differ.",
+          ]}
+        />
       </SeoSection>
     </SeoPageLayout>
   );

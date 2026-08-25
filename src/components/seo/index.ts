@@ -2,6 +2,10 @@ export { JsonLd } from "./JsonLd";
 export { SeoCta, SeoCtaRow } from "./SeoCta";
 export { SeoFaq } from "./SeoFaq";
 export { SeoPageLayout, SeoGuideFooter } from "./SeoPageLayout";
+export { FirstHandAccount } from "./FirstHandAccount";
+export { OfficialSourceCard } from "./OfficialSourceCard";
+export { CandidateReports } from "./CandidateReports";
+export { FounderByline } from "./FounderByline";
 export {
   Expr,
   HighlightBox,

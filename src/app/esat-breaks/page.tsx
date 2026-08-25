@@ -139,11 +139,19 @@ export default function EsatBreaksPage() {
             "Make the whole sitting feel routine.",
           ]}
         />
-        <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
-          More test-day detail:{" "}
-          <SeoTextLink href={SEO_ROUTES.testDay}>what test day is like</SeoTextLink>
-          .
-        </p>
+        <HighlightBox className="mt-5" title="Between modules" tone="neutral">
+          <p>
+            There is no scheduled break, but in a 2025 sitting there was a short
+            transition countdown before the next module. Use that minute to rest,
+            not to wipe your{" "}
+            <SeoTextLink href={SEO_ROUTES.whiteboard}>whiteboard booklet</SeoTextLink>
+            . Full chronology:{" "}
+            <SeoTextLink href={SEO_ROUTES.testDay}>
+              what ESAT test day is actually like
+            </SeoTextLink>
+            .
+          </p>
+        </HighlightBox>
       </SeoSection>
     </SeoPageLayout>
   );

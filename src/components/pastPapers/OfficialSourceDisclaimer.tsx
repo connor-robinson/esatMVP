@@ -27,7 +27,7 @@ export function OfficialSourceDisclaimer({
         Links go to the official UAT-UK files. We do not host copies. Papers are
         copyright of Cambridge University Press &amp; Assessment.{" "}
         {INDEPENDENT_DISCLAIMER} Links checked{" "}
-        <time dateTime={LAST_CHECKED.iso}>26 July 2026</time>.
+        <time dateTime={LAST_CHECKED.iso}>{LAST_CHECKED.label}</time>.
       </p>
       <p className="mt-2 text-sm text-[#64748B]">
         {OFFICIAL_PAGES.map((page, index) => (

@@ -107,9 +107,12 @@ export const SEO_ROUTES = {
  * whenever those pages are re-checked.
  */
 export const LAST_CHECKED = {
-  label: "24 July 2026",
-  iso: "2026-07-24",
+  label: "26 August 2026",
+  iso: "2026-08-26",
 } as const;
+
+/** Year of the first-hand ESAT sitting described on test-day experience pages. */
+export const FIRST_HAND_SITTING_YEAR = 2025 as const;
 
 export const INDEPENDENT_DISCLAIMER =
   "ESATCAMP is an independent preparation resource and is not affiliated with or endorsed by UAT-UK, Pearson VUE or any university.";
@@ -153,6 +156,18 @@ export const SOURCES = {
   roughWorkings: {
     label: "UAT-UK: Can I use pen and paper for rough workings?",
     url: "https://esat-tmua.ac.uk/faqs/can-i-use-pen-and-paper-for-my-rough-workings/",
+  },
+  waterFaq: {
+    label: "UAT-UK: Can I take water into the test room?",
+    url: "https://esat-tmua.ac.uk/faqs/can-i-take-water-into-the-test-room/",
+  },
+  pearsonProfessionalCenterTour: {
+    label: "Pearson VUE: Pearson Professional Center Tour",
+    url: "https://www.pearsonvue.com/us/en/test-takers/pearson-professional-center-tour.html",
+  },
+  pearsonErasableNoteboardExample: {
+    label: "Pearson VUE: erasable noteboard example (exam information page)",
+    url: "https://www.pearsonvue.com/us/en/foundationpharmacistrecruitment.html",
   },
   cambridgeAppDates: {
     label: "Cambridge: application dates and deadlines",
@@ -324,24 +339,60 @@ export function articleSchema({
   headline,
   description,
   path,
+  datePublished,
+  dateModified = LAST_CHECKED.iso,
+  authorPersonId,
+  authorName,
 }: {
   headline: string;
   description: string;
   path: string;
+  datePublished?: string;
+  dateModified?: string;
+  /** Absolute @id of an existing Person entity, e.g. about page fragment. */
+  authorPersonId?: string;
+  authorName?: string;
 }) {
-  return {
+  const schema: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline,
     description,
     mainEntityOfPage: { "@type": "WebPage", "@id": buildCanonicalUrl(path) },
-    dateModified: LAST_CHECKED.iso,
+    dateModified,
     isAccessibleForFree: true,
     publisher: {
       "@type": "Organization",
       name: "ESATCAMP",
       url: SITE_URL,
     },
+  };
+
+  if (datePublished) schema.datePublished = datePublished;
+
+  if (authorPersonId || authorName) {
+    schema.author = {
+      "@type": "Person",
+      ...(authorPersonId ? { "@id": authorPersonId } : {}),
+      ...(authorName ? { name: authorName } : {}),
+    };
+  }
+
+  return schema;
+}
+
+export function breadcrumbSchema(
+  items: readonly { name: string; path: string }[],
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: buildCanonicalUrl(item.path),
+    })),
   };
 }
 
