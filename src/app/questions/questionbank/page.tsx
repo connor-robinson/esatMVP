@@ -60,6 +60,11 @@ import {
   type QuestionBankHomeLaunchPayload,
 } from '@/lib/questionBank/homeLaunch';
 import {
+  DIFFICULTY_MIX_PRESETS,
+  sampleQuestionsByDifficultyMix,
+  type DifficultyMixPreset,
+} from '@/lib/questionBank/difficultyMix';
+import {
   resolveFreeTierLaunch,
   clearFreeTierLaunch,
   hasFreeTierLaunchPayload,
@@ -821,6 +826,7 @@ export default function QuestionBankPage() {
         difficulties: string[];
         timeLimitMinutes?: number;
         uiDifficulties?: UiDifficultyLabel[];
+        difficultyMix?: DifficultyMixPreset;
       },
       scope?: {
         subjects?: SubjectFilter[];
@@ -850,15 +856,25 @@ export default function QuestionBankPage() {
         params.append('subject', subjectsResolved.join(','));
       }
 
-      if (config.difficulties.length === 1) {
-        params.append('difficulty', config.difficulties[0]);
-      }
+      const mix: DifficultyMixPreset =
+        config.difficultyMix &&
+        (DIFFICULTY_MIX_PRESETS as readonly string[]).includes(
+          config.difficultyMix,
+        )
+          ? config.difficultyMix
+          : config.uiDifficulties?.length === 1 &&
+              (config.uiDifficulties[0] === 'Easy' ||
+                config.uiDifficulties[0] === 'Medium' ||
+                config.uiDifficulties[0] === 'Hard')
+            ? config.uiDifficulties[0]
+            : 'Auto';
 
+      // Always pull a mixed pool, then sample by weighted mix.
       if (config.topics.length > 0) {
         params.append('tags', config.topics.join(','));
       }
 
-      params.append('limit', (config.count * 2).toString());
+      params.append('limit', Math.max(config.count * 4, 40).toString());
       params.append('random', 'true');
 
       setSessionStarting(true);
@@ -870,14 +886,16 @@ export default function QuestionBankPage() {
 
         const data = await response.json();
         if (data.questions && data.questions.length > 0) {
-          let filteredQuestions = data.questions;
-          if (config.difficulties.length > 1) {
-            filteredQuestions = data.questions.filter((q: QuestionBankQuestion) =>
-              config.difficulties.includes(q.difficulty),
-            );
-          }
-
-          const sessionQs = filteredQuestions.slice(0, config.count);
+          const pool = (data.questions as QuestionBankQuestion[]).filter((q) =>
+            config.difficulties.length === 0
+              ? true
+              : config.difficulties.includes(q.difficulty),
+          );
+          const sessionQs = sampleQuestionsByDifficultyMix(
+            pool,
+            config.count,
+            mix,
+          );
 
           if (sessionQs.length > 0) {
             setSessionQuestions(sessionQs);
@@ -962,12 +980,16 @@ export default function QuestionBankPage() {
     sessionStorage.removeItem(QUESTION_BANK_HOME_LAUNCH_KEY);
 
     const d =
-      data.difficulties.length === 1 &&
-      (data.difficulties[0] === 'Easy' ||
-        data.difficulties[0] === 'Medium' ||
-        data.difficulties[0] === 'Hard')
-        ? data.difficulties[0]
-        : 'All';
+      data.difficultyMix === 'Easy' ||
+      data.difficultyMix === 'Medium' ||
+      data.difficultyMix === 'Hard'
+        ? data.difficultyMix
+        : data.difficulties.length === 1 &&
+            (data.difficulties[0] === 'Easy' ||
+              data.difficulties[0] === 'Medium' ||
+              data.difficulties[0] === 'Hard')
+          ? data.difficulties[0]
+          : 'All';
 
     setFilters({
       testType: data.testType,
@@ -986,6 +1008,7 @@ export default function QuestionBankPage() {
         difficulties: data.difficulties,
         timeLimitMinutes: data.timeLimitMinutes,
         uiDifficulties: data.uiDifficulties,
+        difficultyMix: data.difficultyMix,
       },
       { subjects: data.subjects, testType: data.testType },
     );

@@ -10,6 +10,13 @@ import {
   getSubjectSessionPillActiveClass,
   SUBJECT_PILL_INACTIVE,
 } from "@/lib/questionBank/subjectColors";
+import {
+  difficultiesForMixApi,
+  type DifficultyMixPreset,
+  uiDifficultiesForMix,
+} from "@/lib/questionBank/difficultyMix";
+import { DifficultyMixSlider } from "@/components/questionBank/DifficultyMixSlider";
+import { RoadmapInfoPopover } from "@/components/papers/roadmap/RoadmapInfoPopover";
 
 const STEP = 1;
 const QUESTION_MIN = 1;
@@ -18,13 +25,6 @@ const TIME_MIN = 1;
 const TIME_MAX = 180;
 
 export type UiDifficultyLabel = "Easy" | "Medium" | "Hard" | "Extreme";
-
-const ALL_UI_DIFFICULTIES: UiDifficultyLabel[] = [
-  "Easy",
-  "Medium",
-  "Hard",
-  "Extreme",
-];
 
 interface QuestionBankSessionSettingsModalProps {
   open: boolean;
@@ -35,45 +35,8 @@ interface QuestionBankSessionSettingsModalProps {
   isMixed?: boolean;
 }
 
-function uiDifficultyToApiDifficulty(d: UiDifficultyLabel): string {
-  if (d === "Extreme") return "Hard";
-  return d;
-}
-
-function resolveDifficultiesForApi(
-  selected: UiDifficultyLabel[],
-): string[] {
-  const effective =
-    selected.length === 0 ||
-    selected.length === ALL_UI_DIFFICULTIES.length
-      ? ALL_UI_DIFFICULTIES
-      : selected;
-  return [...new Set(effective.map(uiDifficultyToApiDifficulty))];
-}
-
-const DIFFICULTY_SLIDER_OPTIONS = [
-  "Auto",
-  ...ALL_UI_DIFFICULTIES,
-] as const;
-
 function clamp(n: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, n));
-}
-
-function difficultyIndexFromUi(selected: UiDifficultyLabel[]): number {
-  if (selected.length === 0) return 0;
-  const first = selected[0]!;
-  const index = DIFFICULTY_SLIDER_OPTIONS.indexOf(first);
-  return index >= 0 ? index : 0;
-}
-
-function uiFromDifficultyIndex(index: number): UiDifficultyLabel[] {
-  const option =
-    DIFFICULTY_SLIDER_OPTIONS[
-      clamp(index, 0, DIFFICULTY_SLIDER_OPTIONS.length - 1)
-    ];
-  if (!option || option === "Auto") return [];
-  return [option];
 }
 
 function autoTimeLimitMinutes(questionCount: number): number {
@@ -174,7 +137,8 @@ export function QuestionBankSessionSettingsModal({
   const [minutes, setMinutes] = useState(20);
   const [questionCount, setQuestionCount] = useState(30);
   const [subjectKeys, setSubjectKeys] = useState<SubjectFilter[]>([]);
-  const [difficultiesUi, setDifficultiesUi] = useState<UiDifficultyLabel[]>([]);
+  const [difficultyMix, setDifficultyMix] =
+    useState<DifficultyMixPreset>("Auto");
 
   useEffect(() => {
     if (!open || !originTile) return;
@@ -186,7 +150,7 @@ export function QuestionBankSessionSettingsModal({
     const initialCount = 30;
     setQuestionCount(initialCount);
     setMinutes(autoTimeLimitMinutes(initialCount));
-    setDifficultiesUi([]);
+    setDifficultyMix("Auto");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, originTile?.key, isMixed]);
 
@@ -205,10 +169,6 @@ export function QuestionBankSessionSettingsModal({
     });
   };
 
-  const setDifficultyFromSlider = (index: number) => {
-    setDifficultiesUi(uiFromDifficultyIndex(index));
-  };
-
   const applyAutoTimeLimit = () => {
     setMinutes(autoTimeLimitMinutes(questionCount));
   };
@@ -220,8 +180,9 @@ export function QuestionBankSessionSettingsModal({
       subjects: subjectKeys,
       timeLimitMinutes: minutes,
       questionCount,
-      difficulties: resolveDifficultiesForApi(difficultiesUi),
-      uiDifficulties: difficultiesUi,
+      difficulties: difficultiesForMixApi(difficultyMix),
+      uiDifficulties: uiDifficultiesForMix(difficultyMix),
+      difficultyMix,
     });
     onClose();
   };
@@ -238,9 +199,6 @@ export function QuestionBankSessionSettingsModal({
   if (!open || !originTile) return null;
 
   const modalTitle = isMixed ? "Mixed Practice" : "Session Settings";
-  const difficultyIndex = difficultyIndexFromUi(difficultiesUi);
-  const difficultyLabel =
-    DIFFICULTY_SLIDER_OPTIONS[difficultyIndex] ?? "Auto";
   const showSubjectToggles = siblingTiles.length > 1;
   const autoMinutes = autoTimeLimitMinutes(questionCount);
 
@@ -321,52 +279,33 @@ export function QuestionBankSessionSettingsModal({
 
           <div className={cn("space-y-3", !showSubjectToggles && "lg:col-span-2")}>
             <div className="flex items-center justify-between gap-2">
-              <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
-                Difficulty
-              </span>
-              <span className="text-xs font-semibold text-text">{difficultyLabel}</span>
-            </div>
-            <div className="space-y-2.5 pt-1">
-              <input
-                type="range"
-                min={0}
-                max={DIFFICULTY_SLIDER_OPTIONS.length - 1}
-                step={1}
-                value={difficultyIndex}
-                onChange={(e) => setDifficultyFromSlider(Number(e.target.value))}
-                aria-label="Difficulty"
-                aria-valuetext={difficultyLabel}
-                className={cn(
-                  "h-2 w-full cursor-pointer appearance-none rounded-full bg-surface-mid",
-                  "accent-secondary",
-                  "[&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5",
-                  "[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full",
-                  "[&::-webkit-slider-thumb]:bg-secondary [&::-webkit-slider-thumb]:shadow-sm",
-                  "[&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5",
-                  "[&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0",
-                  "[&::-moz-range-thumb]:bg-secondary",
-                  "[&::-moz-range-track]:h-2 [&::-moz-range-track]:rounded-full [&::-moz-range-track]:bg-surface-mid",
-                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary/35",
-                )}
-              />
-              <div className="flex justify-between gap-1 px-0.5">
-                {DIFFICULTY_SLIDER_OPTIONS.map((option, index) => (
-                  <button
-                    key={option}
-                    type="button"
-                    onClick={() => setDifficultyFromSlider(index)}
-                    className={cn(
-                      "min-w-0 flex-1 text-center text-[10px] font-semibold uppercase tracking-wide transition-colors sm:text-xs",
-                      index === difficultyIndex
-                        ? "text-text"
-                        : "text-text-subtle hover:text-text-muted",
-                    )}
-                  >
-                    {option}
-                  </button>
-                ))}
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
+                  Difficulty
+                </span>
+                <RoadmapInfoPopover
+                  title="How difficulty works"
+                  label="Difficulty info"
+                  align="left"
+                >
+                  <p>
+                    This is still a mixed session. The slider sets a general
+                    difficulty bias, not a single fixed level.
+                  </p>
+                  <p>
+                    Auto keeps an even spread. Easy leans easy with a few medium
+                    and rare hard. Medium centres on medium with some easy and
+                    hard. Hard is mostly hard with some medium, little easy, and
+                    very few extreme-level hard questions.
+                  </p>
+                </RoadmapInfoPopover>
               </div>
+              <span className="text-xs font-semibold text-text">{difficultyMix}</span>
             </div>
+            <DifficultyMixSlider
+              value={difficultyMix}
+              onChange={setDifficultyMix}
+            />
           </div>
         </div>
 
