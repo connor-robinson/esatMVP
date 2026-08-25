@@ -1,3 +1,7 @@
+/**
+ * Extend useSubscription with partner access fields from /api/subscription/status.
+ */
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -7,7 +11,8 @@ export type SubscriptionTier =
   | "weekly"
   | "monthly"
   | "season_pass"
-  | "tester";
+  | "tester"
+  | "partner";
 
 export interface TesterAccessSummary {
   isMember: boolean;
@@ -20,6 +25,9 @@ export interface SubscriptionStatus {
   tier: SubscriptionTier;
   hasFullAccess: boolean;
   isLoading: boolean;
+  source?: string;
+  partnerSlug?: string | null;
+  partnerDisplayName?: string | null;
   subscriptionStatus?: string;
   currentPeriodEnd?: string;
   accessUntil?: string;
@@ -72,6 +80,9 @@ export function useSubscription(): SubscriptionStatus {
           tier: data.tier ?? "free",
           hasFullAccess,
           isLoading: false,
+          source: data.source,
+          partnerSlug: data.partnerSlug ?? null,
+          partnerDisplayName: data.partnerDisplayName ?? null,
           subscriptionStatus: data.subscriptionStatus,
           currentPeriodEnd: data.currentPeriodEnd,
           accessUntil: data.accessUntil,

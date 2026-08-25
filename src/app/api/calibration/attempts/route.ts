@@ -84,6 +84,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: upsertError.message }, { status: 500 });
     }
 
+    if (attempt.status === "completed") {
+      try {
+        const { maybeMarkPartnerActivation } = await import(
+          "@/lib/partners/analytics"
+        );
+        const { createPartnerServiceClient } = await import(
+          "@/lib/partners/service"
+        );
+        await maybeMarkPartnerActivation(
+          createPartnerServiceClient(),
+          user.id,
+        );
+      } catch {
+        /* non-fatal */
+      }
+    }
+
     return NextResponse.json({ ok: true, attemptId: attempt.attemptId });
   } catch (e) {
     return NextResponse.json({ error: "Could not save attempt" }, { status: 500 });

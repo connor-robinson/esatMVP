@@ -20,6 +20,8 @@ import { UsernameGate } from "@/components/auth/UsernameGate";
 import { GoogleOneTap } from "@/components/auth/GoogleOneTap";
 import { TesterProgrammeProvider } from "@/contexts/TesterProgrammeContext";
 import { TesterProgrammeBanner } from "@/components/tester/TesterProgrammeBanner";
+import { PartnerFeedbackPrompt } from "@/components/partners/PartnerFeedbackPrompt";
+import { PartnerActivationTracker } from "@/components/partners/PartnerActivationTracker";
 import { BRAND_CONFIG } from "@/config/brand";
 import { buildCssVariables, LIGHT_MODE_STRATEGY_STORAGE_KEY } from "@/config/theme";
 import { PRODUCTION_SITE_URL } from "@/lib/seo/config";
@@ -219,6 +221,8 @@ export default function RootLayout({
                         <SessionRestore />
                         <SessionPersistenceHandler />
                         <TesterProgrammeBanner />
+                        <PartnerFeedbackPrompt />
+                        <PartnerActivationTracker />
                         <Suspense fallback={null}>
                           <PageViewTracker />
                         </Suspense>

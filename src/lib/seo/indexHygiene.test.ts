@@ -59,6 +59,8 @@ describe("index hygiene: private route metadata wiring", () => {
       ["settings", "layout.tsx"],
       ["onboarding", "layout.tsx"],
       ["admin", "layout.tsx"],
+      ["access", "layout.tsx"],
+      ["partners", "layout.tsx"],
       ["dev", "layout.tsx"],
       ["train", "layout.tsx"],
       ["pricing", "success", "layout.tsx"],

@@ -36,6 +36,9 @@ export type GaEventName =
   | "trial_started"
   | "subscription_cancelled"
   | "subscription_renewed"
+  | "partner_invite_redeemed"
+  | "partner_user_activated"
+  | "partner_feedback_submitted"
   /** @deprecated Prefer sign_up / begin_checkout */
   | "signup_completed"
   | "checkout_started"
@@ -47,7 +50,7 @@ export type GaEventParams = Record<
 >;
 
 const BLOCKED_KEYS =
-  /^(email|e-?mail|name|full_?name|first_?name|last_?name|phone|telephone|mobile|address|password|token|authorization|auth|raw|raw_?mark|raw_?score|mark|scaled_?score|exact_?score)$/i;
+  /^(email|e-?mail|name|full_?name|first_?name|last_?name|phone|telephone|mobile|address|password|token|invite|invite_?id|invite_?code|claim_?url|authorization|auth|raw|raw_?mark|raw_?score|mark|scaled_?score|exact_?score)$/i;
 const EMAIL_LIKE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_STRING_LEN = 100;
 

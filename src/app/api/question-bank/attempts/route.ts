@@ -125,6 +125,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Partner activation (best-effort; first-party once per entitlement)
+    try {
+      const { maybeMarkPartnerActivation } = await import(
+        '@/lib/partners/analytics'
+      );
+      const { createPartnerServiceClient } = await import(
+        '@/lib/partners/service'
+      );
+      await maybeMarkPartnerActivation(
+        createPartnerServiceClient(),
+        session.user.id,
+      );
+    } catch {
+      /* non-fatal */
+    }
 
     // Fetch updated stats for today
     const today = new Date().toISOString().split('T')[0];
