@@ -1327,7 +1327,7 @@ export function ScoreConverter({
   return (
     <ScoreConverterProvider applyTableSelection={applyTableSelection}>
     <Container id="score-converter" size="lg" className="scroll-mt-24 py-8 sm:py-10">
-      <div className="mb-4 rounded-organic-xl bg-surface-elevated p-4 shadow-modal-card sm:p-5">
+      <div className="mb-4">
         <div className="mb-1.5 flex items-start justify-between gap-3">
           {pageTitle ? (
             <h1 className="text-xl font-bold tracking-tight text-text sm:text-3xl">
@@ -1342,11 +1342,13 @@ export function ScoreConverter({
           <ConverterInfoButton exam={exam} />
         </div>
         {intro ? (
-          <p className="mb-3 w-full text-sm font-medium leading-snug tracking-tight text-text-muted sm:text-base">
+          <p className="w-full text-sm font-medium leading-snug tracking-tight text-text-muted sm:text-base">
             {intro}
           </p>
         ) : null}
+      </div>
 
+      <div className="mb-4 rounded-organic-xl bg-surface-elevated p-4 shadow-modal-card sm:p-5">
         <div className="relative overflow-visible rounded-organic-lg bg-background/50 p-3 sm:p-4">
           <div className="flex flex-wrap items-end gap-3 sm:gap-4">
             {pageTitle ? (
