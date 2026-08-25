@@ -48,14 +48,5 @@ export default async function ExamScoreConverterPage({
   if (!isConverterExam(raw)) notFound();
   const exam = raw.toUpperCase() as ConverterExam;
 
-  return (
-    <>
-      {exam === "NSAA" ? (
-        <div className="pt-6">
-          <NsaaConversionYearNav heading="NSAA score conversion by year" />
-        </div>
-      ) : null}
-      <ExamScoreConverterShell initialExam={exam} />
-    </>
-  );
+  return <ExamScoreConverterShell initialExam={exam} />;
 }
