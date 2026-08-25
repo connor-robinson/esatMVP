@@ -489,11 +489,13 @@ export default function PapersLibraryPage() {
 
         const paperType =
           examNameToPaperType(paper.examName as ExamName) || 'NSAA';
+        // ESAT CAMP mocks are standalone modules - never merge A with B.
         const mergeSiblings =
-          paperType === 'NSAA' ||
-          paperType === 'ENGAA' ||
-          paperType === 'ESAT' ||
-          paperType === 'TMUA';
+          paper.examType !== 'ESAT CAMP' &&
+          (paperType === 'NSAA' ||
+            paperType === 'ENGAA' ||
+            paperType === 'ESAT' ||
+            paperType === 'TMUA');
 
         const catalog = mergeSiblings
           ? papers.filter(

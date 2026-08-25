@@ -65,16 +65,29 @@ function resolveQuestionPaperName(
   return anchorPaper.paperName?.trim() || undefined;
 }
 
+function isEsatCampMockExamType(examType?: string | null): boolean {
+  return String(examType || "").trim().toLowerCase() === "esat camp";
+}
+
 /**
- * Which main exam section (Section 1 / Section 2) a question belongs to.
+ * Which main exam section a question belongs to.
  * For NSAA, part letters B/C/D appear in BOTH sections - paper name is authoritative.
+ * ESAT CAMP mocks use the paper name itself as the main section key.
  */
 export function getMainSectionForQuestion(
   question: SlimQuestionPart,
   paperType: PaperType,
   paperExamType?: string,
   resolvedPaperName?: string,
-): MainExamSection {
+): string {
+  if (
+    isEsatCampMockExamType(paperExamType) ||
+    isEsatCampMockExamType(question.examType)
+  ) {
+    const name = (resolvedPaperName || question.paperName || "").trim();
+    if (name) return name;
+  }
+
   const fromExamType =
     parseMainSectionFromLabel(question.examType) ??
     parseMainSectionFromLabel(paperExamType);
