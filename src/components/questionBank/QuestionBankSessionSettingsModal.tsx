@@ -18,10 +18,12 @@ import {
 import { DifficultyMixSlider } from "@/components/questionBank/DifficultyMixSlider";
 import { RoadmapInfoPopover } from "@/components/papers/roadmap/RoadmapInfoPopover";
 
-const STEP = 1;
+const QUESTION_STEP = 1;
 const QUESTION_MIN = 1;
 const QUESTION_MAX = 120;
-const TIME_MIN = 1;
+/** 90 seconds per question → half-minute steps (e.g. 45.5 min). */
+const TIME_STEP = 0.5;
+const TIME_MIN = 0.5;
 const TIME_MAX = 180;
 
 export type UiDifficultyLabel = "Easy" | "Medium" | "Hard" | "Extreme";
@@ -39,8 +41,21 @@ function clamp(n: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, n));
 }
 
+function roundToStep(n: number, step: number): number {
+  return Math.round(n / step) * step;
+}
+
+/** 90s per question = 1.5 min; keep half-minute precision. */
 function autoTimeLimitMinutes(questionCount: number): number {
-  return clamp(Math.round(questionCount * 1.5), TIME_MIN, TIME_MAX);
+  return clamp(roundToStep(questionCount * 1.5, TIME_STEP), TIME_MIN, TIME_MAX);
+}
+
+function formatStepperValue(value: number, step: number): string {
+  if (step < 1) {
+    const rounded = roundToStep(value, step);
+    return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+  }
+  return String(Math.round(value));
 }
 
 interface NumericStepperProps {
@@ -48,6 +63,8 @@ interface NumericStepperProps {
   onChange: (value: number) => void;
   min: number;
   max: number;
+  step?: number;
+  allowDecimals?: boolean;
   suffix: string;
   ariaLabel: string;
 }
@@ -57,46 +74,58 @@ function NumericStepper({
   onChange,
   min,
   max,
+  step = 1,
+  allowDecimals = false,
   suffix,
   ariaLabel,
 }: NumericStepperProps) {
-  const [draft, setDraft] = useState(String(value));
+  const [draft, setDraft] = useState(formatStepperValue(value, step));
 
   useEffect(() => {
-    setDraft(String(value));
-  }, [value]);
+    setDraft(formatStepperValue(value, step));
+  }, [value, step]);
 
   const commitDraft = () => {
-    const parsed = parseInt(draft, 10);
+    const parsed = allowDecimals ? parseFloat(draft) : parseInt(draft, 10);
     if (Number.isNaN(parsed)) {
-      setDraft(String(value));
+      setDraft(formatStepperValue(value, step));
       return;
     }
-    onChange(clamp(parsed, min, max));
+    const next = allowDecimals
+      ? clamp(roundToStep(parsed, step), min, max)
+      : clamp(Math.round(parsed), min, max);
+    onChange(next);
+    setDraft(formatStepperValue(next, step));
   };
 
   const bump = (delta: number) => {
-    onChange(clamp(value + delta, min, max));
+    const next = clamp(roundToStep(value + delta, step), min, max);
+    onChange(next);
   };
 
   return (
-    <div className="flex h-12 items-center justify-between rounded-organic-lg bg-surface-elevated px-1.5">
+    <div className="flex h-14 items-center justify-between rounded-organic-lg bg-surface-elevated px-1.5">
       <button
         type="button"
-        onClick={() => bump(-STEP)}
+        onClick={() => bump(-step)}
         disabled={value <= min}
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-organic-md text-text-muted hover:bg-surface-neutral hover:text-text disabled:opacity-35"
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md text-text-muted hover:bg-surface-neutral hover:text-text disabled:opacity-35"
         aria-label={`Decrease ${ariaLabel}`}
       >
         <Minus className="h-4 w-4" />
       </button>
-      <div className="flex min-w-0 flex-1 items-center justify-center gap-1.5 px-1">
+      <div className="flex min-w-0 flex-1 items-center justify-center gap-2 px-1">
         <input
           type="text"
-          inputMode="numeric"
-          pattern="[0-9]*"
+          inputMode={allowDecimals ? "decimal" : "numeric"}
+          pattern={allowDecimals ? "[0-9]*[.]?[0-9]*" : "[0-9]*"}
           value={draft}
-          onChange={(e) => setDraft(e.target.value.replace(/\D/g, ""))}
+          onChange={(e) => {
+            const next = allowDecimals
+              ? e.target.value.replace(/[^\d.]/g, "").replace(/(\..*)\./g, "$1")
+              : e.target.value.replace(/\D/g, "");
+            setDraft(next);
+          }}
           onBlur={commitDraft}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
@@ -106,7 +135,7 @@ function NumericStepper({
             }
           }}
           className={cn(
-            "w-14 border-0 bg-transparent text-center text-sm font-semibold tabular-nums text-text",
+            "w-[4.5rem] border-0 bg-transparent text-center text-2xl font-semibold tabular-nums leading-none text-text sm:text-[1.75rem]",
             "outline-none shadow-none ring-0 focus:border-0 focus:outline-none focus:ring-0",
           )}
           aria-label={ariaLabel}
@@ -115,9 +144,9 @@ function NumericStepper({
       </div>
       <button
         type="button"
-        onClick={() => bump(STEP)}
+        onClick={() => bump(step)}
         disabled={value >= max}
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-organic-md text-text-muted hover:bg-surface-neutral hover:text-text disabled:opacity-35"
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md text-text-muted hover:bg-surface-neutral hover:text-text disabled:opacity-35"
         aria-label={`Increase ${ariaLabel}`}
       >
         <Plus className="h-4 w-4" />
@@ -202,6 +231,8 @@ export function QuestionBankSessionSettingsModal({
   const showSubjectToggles = siblingTiles.length > 1;
   const autoMinutes = autoTimeLimitMinutes(questionCount);
 
+  const isAutoTime = Math.abs(minutes - autoMinutes) < 0.001;
+
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
@@ -211,14 +242,14 @@ export function QuestionBankSessionSettingsModal({
     >
       <button
         type="button"
-        className="absolute inset-0 bg-black/85 backdrop-blur-sm"
+        className="absolute inset-0 animate-fade-in bg-black/85 backdrop-blur-sm"
         aria-label="Close"
         onClick={onClose}
       />
       <div
         className={cn(
           "relative z-[101] flex max-h-[min(92vh,880px)] w-full max-w-[960px] flex-col overflow-hidden rounded-organic-xl",
-          "bg-surface p-8 shadow-[0_28px_80px_rgba(0,0,0,0.45)] sm:p-10",
+          "animate-slide-up bg-surface p-8 shadow-[0_28px_80px_rgba(0,0,0,0.45)] sm:p-10",
         )}
       >
         {/* Header */}
@@ -323,6 +354,8 @@ export function QuestionBankSessionSettingsModal({
                     onChange={setMinutes}
                     min={TIME_MIN}
                     max={TIME_MAX}
+                    step={TIME_STEP}
+                    allowDecimals
                     suffix="min"
                     ariaLabel="Time limit in minutes"
                   />
@@ -330,15 +363,15 @@ export function QuestionBankSessionSettingsModal({
                 <button
                   type="button"
                   onClick={applyAutoTimeLimit}
-                  disabled={minutes === autoMinutes}
-                  title={`Reset to ${autoMinutes} min (1.5× questions)`}
+                  disabled={isAutoTime}
+                  title={`Reset to ${formatStepperValue(autoMinutes, TIME_STEP)} min (90s per question)`}
                   className={cn(
-                    "flex h-12 shrink-0 items-center gap-1.5 rounded-organic-lg px-3 text-xs font-semibold transition-colors",
+                    "flex h-14 shrink-0 items-center gap-1.5 rounded-organic-lg px-3 text-xs font-semibold transition-colors",
                     "bg-surface-elevated text-text-muted hover:bg-surface-mid hover:text-text",
                     "disabled:cursor-default disabled:opacity-45 disabled:hover:bg-surface-elevated disabled:hover:text-text-muted",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/35",
                   )}
-                  aria-label={`Reset time limit to ${autoMinutes} minutes`}
+                  aria-label={`Reset time limit to ${formatStepperValue(autoMinutes, TIME_STEP)} minutes`}
                 >
                   <RotateCcw className="h-3.5 w-3.5 shrink-0" aria-hidden />
                   Reset
@@ -354,6 +387,7 @@ export function QuestionBankSessionSettingsModal({
                 onChange={handleQuestionCountChange}
                 min={QUESTION_MIN}
                 max={QUESTION_MAX}
+                step={QUESTION_STEP}
                 suffix="Qs"
                 ariaLabel="Number of questions"
               />
