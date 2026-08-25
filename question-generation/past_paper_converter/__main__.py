@@ -24,6 +24,13 @@ def main(argv: list[str] | None = None) -> int:
     requeue_p.add_argument("--flag", required=True, help="e.g. katex_errors, missing_options")
     requeue_p.add_argument("--dry-run", action="store_true")
 
+    revalidate_p = sub.add_parser(
+        "revalidate",
+        help="Re-check failed conversions without calling the model (rule-change recovery)",
+    )
+    revalidate_p.add_argument("--flag", required=True, help="e.g. missing_options")
+    revalidate_p.add_argument("--dry-run", action="store_true")
+
     audit_p = sub.add_parser("audit-sequence", help="Run paper sequence audit only")
     audit_p.add_argument("--paper-id", type=int, default=None)
 
@@ -51,6 +58,15 @@ def main(argv: list[str] | None = None) -> int:
 
         results = requeue_by_flag(args.flag, dry_run=args.dry_run)
         print(json.dumps(results, indent=2))
+        return 0
+
+    if args.command == "revalidate":
+        from .runner import revalidate_failed_by_flag
+
+        results = revalidate_failed_by_flag(args.flag, dry_run=args.dry_run)
+        approved = sum(1 for r in results if r.get("status") == "auto_approved")
+        failed = sum(1 for r in results if r.get("status") == "failed")
+        print(json.dumps({"approved": approved, "failed": failed, "results": results}, indent=2))
         return 0
 
     if args.command == "audit-sequence":

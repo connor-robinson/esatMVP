@@ -28,14 +28,34 @@ CACHE_DIR = Path(__file__).resolve().parent / "_cache"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 # Extra margin around AI diagram bbox (fraction of image width/height)
+DIAGRAM_BBOX_PAD_X = float(os.environ.get("PAST_PAPER_DIAGRAM_PAD_X", "0.08"))
+DIAGRAM_BBOX_PAD_Y = float(os.environ.get("PAST_PAPER_DIAGRAM_PAD_Y", "0.10"))
+DIAGRAM_EDGE_EXPAND_STEP = float(
+    os.environ.get("PAST_PAPER_DIAGRAM_EDGE_EXPAND_STEP", "0.03")
+)
+DIAGRAM_EDGE_INK_THRESHOLD = float(
+    os.environ.get("PAST_PAPER_DIAGRAM_EDGE_INK_THRESHOLD", "0.015")
+)
+DIAGRAM_MAX_EDGE_EXPANSIONS = int(
+    os.environ.get("PAST_PAPER_DIAGRAM_MAX_EDGE_EXPANSIONS", "5")
+)
 GEMINI_REQUEST_TIMEOUT_MS = int(float(os.environ.get("PAST_PAPER_GEMINI_TIMEOUT_S", "180")) * 1000)
 
 
 def uses_variable_option_count(exam_name: str, paper_name: str) -> bool:
-    """ENGAA/NSAA Section 1 questions have 4–8 options depending on the item."""
+    """Whether option count varies by question (extract only letters printed).
+
+    ENGAA/NSAA Section 1–2 items often show A–F through A–H.
+    TMUA past papers also vary (commonly A–E up to A–H depending on year/item);
+    newer CBT formats often standardise on five choices.
+    """
     exam = (exam_name or "").upper()
     paper = (paper_name or "").lower()
-    return exam in ("ENGAA", "NSAA") and "section 1" in paper
+    if exam == "TMUA":
+        return True
+    return exam in ("ENGAA", "NSAA") and (
+        "section 1" in paper or "section 2" in paper
+    )
 
 
 def expected_option_letters(
@@ -43,7 +63,11 @@ def expected_option_letters(
     paper_name: str,
     part_name: Optional[str] = None,
 ) -> List[str]:
-    """Return allowed MCQ letters for a past-paper question."""
+    """Return allowed MCQ letters for a past-paper question.
+
+    For variable-count exams this is the maximum allowed set (used to reject
+    invented letters), not a required count.
+    """
     exam = (exam_name or "").upper()
     paper = (paper_name or "").lower()
     part = (part_name or "").lower()
@@ -56,11 +80,11 @@ def expected_option_letters(
     if exam == "ENGAA" and "section 2" in paper:
         return list("ABCDEFGH")
 
-    # TMUA always A–H
+    # TMUA: allow up to A–H; actual count is per-question (see uses_variable_option_count)
     if exam == "TMUA":
         return list("ABCDEFGH")
 
-    # NSAA Section 1 and ENGAA Section 1 default A–H
+    # NSAA Section 1 and ENGAA Section 1 default allow A–H
     return list("ABCDEFGH")
 
 

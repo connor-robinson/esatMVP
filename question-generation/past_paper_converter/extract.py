@@ -137,7 +137,13 @@ def build_user_text(
     exam = job_meta.get("exam_name") or ""
     paper = job_meta.get("paper_name") or ""
     expected = [str(letter) for letter in (job_meta.get("expected_letters") or [])]
-    if uses_variable_option_count(exam, paper):
+    if (exam or "").upper() == "TMUA":
+        option_hint = (
+            "TMUA option count varies by question and year (commonly A–E, A–F, A–G, or A–H; "
+            "newer CBT-style items are often five choices). "
+            "Extract ONLY the option letters actually printed — do not invent missing letters."
+        )
+    elif uses_variable_option_count(exam, paper):
         option_hint = (
             "Option letters: variable per question (often A–F, A–G, or A–H). "
             "Extract ONLY the option letters actually printed — do not invent G/H if not shown."

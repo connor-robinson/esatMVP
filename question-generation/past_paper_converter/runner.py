@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -391,5 +392,161 @@ def requeue_by_flag(flag: str, *, dry_run: bool = False) -> List[Dict[str, Any]]
     for qid in qids:
         results.extend(
             run_conversion(question_id=qid, dry_run=dry_run, force=True)
+        )
+    return results
+
+
+def revalidate_failed_by_flag(flag: str, *, dry_run: bool = False) -> List[Dict[str, Any]]:
+    """Re-check failed conversions without calling the model.
+
+    Used when validation rules change (for example TMUA option count) and an
+    existing extraction would now pass.
+    """
+    from .db import make_client
+    from .export_questions import QuestionJob
+
+    client = make_client()
+    columns = (
+        "id, question_id, status, question_stem, options, diagram_assets, "
+        "detected_question_number, confidence, conversion_report, option_letters, "
+        "source_image_hash, model_used, updated_at"
+    )
+    rows: List[Dict[str, Any]] = []
+    page_size = 200
+    offset = 0
+    while True:
+        page = (
+            client.table("question_conversions")
+            .select(columns)
+            .eq("status", "failed")
+            .order("updated_at", desc=True)
+            .range(offset, offset + page_size - 1)
+            .execute()
+            .data
+            or []
+        )
+        rows.extend(page)
+        if len(page) < page_size:
+            break
+        offset += page_size
+
+    # Keep the newest failed row per question that has the flag.
+    latest: Dict[int, Dict[str, Any]] = {}
+    for row in rows:
+        qid = int(row["question_id"])
+        report = row.get("conversion_report") or {}
+        if not report.get(flag):
+            continue
+        if qid not in latest:
+            latest[qid] = row
+
+    results: List[Dict[str, Any]] = []
+    question_cache: Dict[int, Dict[str, Any]] = {}
+    qids = list(latest.keys())
+    for i in range(0, len(qids), 50):
+        chunk = qids[i : i + 50]
+        chunk_rows = (
+            client.table("questions")
+            .select("*")
+            .in_("id", chunk)
+            .execute()
+            .data
+            or []
+        )
+        for row in chunk_rows:
+            question_cache[int(row["id"])] = row
+
+    print(f"revalidate candidates: {len(latest)}", file=sys.stderr, flush=True)
+    for index, (qid, conversion) in enumerate(latest.items(), start=1):
+        if index == 1 or index % 25 == 0 or index == len(latest):
+            print(f"revalidate {index}/{len(latest)} q{qid}", file=sys.stderr, flush=True)
+        question_row = question_cache.get(qid)
+        if not question_row:
+            results.append({"question_id": qid, "status": "skipped", "reason": "question missing"})
+            continue
+        job = QuestionJob.from_row(question_row)
+        stem = str(conversion.get("question_stem") or "")
+        options = normalize_options(conversion.get("options") or {})
+        old_report = conversion.get("conversion_report") or {}
+        parsed = {
+            "detected_question_number": conversion.get("detected_question_number"),
+            "confidence": conversion.get("confidence") or old_report.get("confidence") or 0.99,
+            "has_diagram": old_report.get("has_diagram") is True,
+            "has_table": old_report.get("has_table") is True,
+            "diagram_confidence": old_report.get("diagram_confidence")
+            if old_report.get("diagram_confidence") is not None
+            else 0.99,
+            "diagram_type": old_report.get("diagram_type") or "none",
+            "has_graphical_options": old_report.get("has_graphical_options") is True,
+            "graphical_option_letters_processed": old_report.get("graphical_option_letters_processed")
+            or [],
+            "structured_tables_processed": old_report.get("structured_tables_processed") or 0,
+        }
+        report, hard_fail = validate_extraction(
+            job,
+            parsed,
+            stem,
+            options,
+            preflight_blur_score=float(old_report.get("blur_score") or 0),
+            preflight_blurry=old_report.get("blurry") is True,
+            diagram_crop_failed=old_report.get("diagram_crop_failed") is True,
+            table_processing_failed=old_report.get("table_processing_failed") is True,
+            skip_katex=True,
+        )
+        prior_katex = old_report.get("katex_errors") or []
+        report["katex_errors"] = prior_katex
+        if prior_katex:
+            hard_fail = True
+        report["ai_provider"] = old_report.get("ai_provider")
+        report["revalidated_from_flag"] = flag
+        report["previous_missing_options"] = old_report.get("missing_options") is True
+
+        status = "failed" if hard_fail else "auto_approved"
+
+        if not dry_run:
+            client.table("question_conversions").update(
+                {
+                    "status": status,
+                    "conversion_report": report,
+                    "option_letters": sorted(options.keys()) if options else [],
+                    "confidence": float(parsed.get("confidence") or 0),
+                }
+            ).eq("id", conversion["id"]).execute()
+            if status == "auto_approved":
+                _maybe_promote_question(
+                    job,
+                    report,
+                    stem=stem,
+                    options=options,
+                    diagram_assets=conversion.get("diagram_assets"),
+                )
+                if report.get("questions_promote_failed"):
+                    client.table("question_conversions").update(
+                        {"conversion_report": report}
+                    ).eq("id", conversion["id"]).execute()
+
+        results.append(
+            {
+                "question_id": qid,
+                "status": status,
+                "report": {
+                    "missing_options": report.get("missing_options"),
+                    "option_count": len(options),
+                    "expected_count": report.get("expected_count"),
+                    "hard_fail_flags": [
+                        key
+                        for key in (
+                            "missing_options",
+                            "katex_errors",
+                            "diagram_crop_failed",
+                            "answer_letter_missing",
+                            "diagram_classification_uncertain",
+                            "diagram_detection_mismatch",
+                        )
+                        if report.get(key)
+                    ],
+                    "revalidated_from_flag": flag,
+                },
+            }
         )
     return results

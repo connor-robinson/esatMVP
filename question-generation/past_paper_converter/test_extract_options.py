@@ -23,7 +23,7 @@ class ExtractJsonTests(unittest.TestCase):
 
 
 class OptionPromptTests(unittest.TestCase):
-    def test_tmua_prompt_requires_all_letters(self) -> None:
+    def test_tmua_prompt_is_variable_not_fixed_eight(self) -> None:
         text = build_user_text(
             {
                 "exam_name": "TMUA",
@@ -35,16 +35,32 @@ class OptionPromptTests(unittest.TestCase):
                 "part_name": "",
             }
         )
-        self.assertIn("exactly these option letters: A, B, C, D, E, F, G, H", text)
+        self.assertIn("varies by question", text)
+        self.assertIn("ONLY the option letters actually printed", text)
+        self.assertNotIn("ALWAYS has exactly these option letters", text)
+
+    def test_fixed_count_prompt_still_requires_all_letters(self) -> None:
+        text = build_user_text(
+            {
+                "exam_name": "OTHER",
+                "exam_year": 2023,
+                "paper_name": "Paper",
+                "question_number": 1,
+                "expected_letters": list("ABCDEFGH"),
+                "part_letter": "",
+                "part_name": "",
+            }
+        )
+        self.assertIn("ALWAYS has exactly these option letters", text)
         self.assertIn("exactly 8 entries", text)
 
     def test_options_retry_lists_missing_letters(self) -> None:
         text = build_user_text(
             {
-                "exam_name": "TMUA",
-                "exam_year": 2022,
-                "paper_name": "Paper 2",
-                "question_number": 14,
+                "exam_name": "OTHER",
+                "exam_year": 2023,
+                "paper_name": "Paper",
+                "question_number": 1,
                 "expected_letters": list("ABCDEFGH"),
                 "part_letter": "",
                 "part_name": "",

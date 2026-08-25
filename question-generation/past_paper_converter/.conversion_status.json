@@ -4,7 +4,7 @@
   "completed": 1860,
   "successful": 1623,
   "failed": 237,
-  "message": "Paused: 237 failures were mostly TMUA missing_options (model returned 4-7 of 8 A-H choices). Extractor now retries and auto-pauses on failure spikes. Requeue missing_options when ready.",
+  "message": "Paused. TMUA option-count rule fixed (variable 5-8, not fixed A-H). Revalidated missing_options: 222 recovered, 2 still failed.",
   "paperId": null,
   "scope": "all",
   "deduplication": "question_id + SHA-256 source image hash",
@@ -267,15 +267,9 @@
   "lastError": "Expecting ',' delimiter: line 12 column 3 (char 268)",
   "pausedAt": "2026-08-25T17:07:35.617632+00:00",
   "diagnosis": {
-    "primary": "missing_options",
-    "detail": "TMUA always expects A-H (8). Flash often stopped early at F/G.",
-    "sample": "option_count 4-7 vs expected_count 8",
-    "fixes": [
-      "stronger fixed-count option prompt",
-      "vision retry with missing-letter list (flash then pro)",
-      "JSON repair + generation retry for malformed model JSON",
-      "circuit breaker pauses after 12 consecutive failures",
-      "manual/external pause status is honoured mid-run"
-    ]
+    "primary": "wrong_expected_option_count",
+    "detail": "TMUA was incorrectly treated as always A-H. Past papers vary (A-E to A-H).",
+    "recovered": 222,
+    "still_failed": 2
   }
 }
