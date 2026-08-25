@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Paper · Conversion Studio</title>
+    <link rel="icon" href="/static/favicon.svg" />
+    <link rel="stylesheet" href="/static/studio.css" />
+  </head>
+  <body>
+    <div class="topbar">
+      <a href="/"><button class="ghost">← All papers</button></a>
+      <span class="crumb" id="crumb"></span>
+      <div class="spacer"></div>
+      <button class="primary" id="open-first">Start reviewing</button>
+    </div>
+
+    <div class="wrap">
+      <div class="card" id="summary">
+        <div class="row"><div class="spinner"></div><span class="muted">Loading paper…</span></div>
+      </div>
+
+      <div class="chips" id="filters" style="margin: 18px 0 12px"></div>
+      <div class="q-grid" id="grid"></div>
+    </div>
+
+    <script type="module" src="/static/paper.js"></script>
+  </body>
+</html>

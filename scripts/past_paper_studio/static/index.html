@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Past Paper Conversion Studio</title>
+    <link rel="icon" href="/static/favicon.svg" />
+    <link rel="stylesheet" href="/static/studio.css" />
+  </head>
+  <body>
+    <div class="topbar">
+      <h1>Past Paper Conversion Studio</h1>
+      <span class="crumb">Image to text review</span>
+      <div class="spacer"></div>
+      <span id="converter" class="crumb"></span>
+      <button class="ghost" id="refresh">Refresh</button>
+    </div>
+
+    <div class="wrap">
+      <div class="card" id="summary">
+        <div class="row"><div class="spinner"></div><span class="muted">Loading progress…</span></div>
+      </div>
+
+      <div class="row wrap-row" style="margin: 18px 0 4px">
+        <div class="chips" id="filters"></div>
+        <div class="grow"></div>
+        <input id="search" placeholder="Search exam, year or paper" style="max-width: 280px" />
+      </div>
+
+      <div id="content"></div>
+    </div>
+
+    <script type="module" src="/static/index.js"></script>
+  </body>
+</html>

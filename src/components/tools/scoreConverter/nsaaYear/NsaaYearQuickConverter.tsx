@@ -121,16 +121,16 @@ export function NsaaYearQuickConverter({ data }: Props) {
           alt=""
           width={1024}
           height={768}
-          className="h-36 w-full object-cover object-top sm:h-40"
+          className="h-36 w-full object-cover object-[center_78%] sm:h-40"
           aria-hidden
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/80 via-background/45 to-background/20"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/85 via-background/50 to-background/25"
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5 px-4 text-center">
-          <p className="max-w-sm text-sm font-medium text-text sm:text-base">
-            View where you like or percentile
+          <p className="max-w-md text-sm font-medium text-text sm:text-base">
+            View where you rank amongst others
           </p>
           <Link
             href={fullHref}

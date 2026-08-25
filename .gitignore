@@ -70,3 +70,6 @@ supabase_backups/
 # Personal notes/files
 commit_files.txt
 files_to_restore.txt
+
+# Conversion studio local artefacts
+.studio-shots/
