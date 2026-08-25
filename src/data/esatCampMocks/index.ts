@@ -15,27 +15,33 @@ export const ESAT_CAMP_MOCK_PAPER_IDS = {
 export const ESAT_CAMP_MOCK_EXAM_NAME = "ESAT" as const;
 export const ESAT_CAMP_MOCK_EXAM_YEAR = 2026;
 export const ESAT_CAMP_MOCK_EXAM_TYPE = "ESAT CAMP" as const;
-export const ESAT_CAMP_MOCK_SOURCE_LABEL = "ESAT CAMP Mock Papers";
+/** Roadmap / library group title. */
+export const ESAT_CAMP_MOCK_SOURCE_LABEL = "ESATCamp Mock";
+/** Display names under the ESATCamp Mock group. */
+export const ESAT_CAMP_MOCK_DISPLAY_NAMES = {
+  physicsModuleA: "Mock 1 2026",
+  physicsModuleB: "Mock 2 2026",
+} as const;
 
 export const PHYSICS_MODULE_A: EsatCampMockModule = {
   id: "physics-module-a",
-  title: "Physics Module A",
+  title: "Mock 1 2026",
   subject: "Physics",
   questionCount: 27,
   timeLimitMinutes: 40,
   calculator: "Not permitted",
-  paperName: "Physics Module A",
+  paperName: "Mock 1 2026",
   questions: PHYSICS_MODULE_A_QUESTIONS,
 };
 
 export const PHYSICS_MODULE_B: EsatCampMockModule = {
   id: "physics-module-b",
-  title: "Physics Module B",
+  title: "Mock 2 2026",
   subject: "Physics",
   questionCount: 27,
   timeLimitMinutes: 40,
   calculator: "Not permitted",
-  paperName: "Physics Module B",
+  paperName: "Mock 2 2026",
   questions: PHYSICS_MODULE_B_QUESTIONS,
 };
 

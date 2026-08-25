@@ -130,7 +130,7 @@ export function PaperLibraryGrid({
     const grouped: Record<string, Paper[]> = {};
     seenCombinations.forEach((paper) => {
       const groupName =
-        paper.examType === "ESAT CAMP" ? "ESAT CAMP Mock Papers" : paper.examName;
+        paper.examType === "ESAT CAMP" ? "ESATCamp Mock" : paper.examName;
       if (!grouped[groupName]) grouped[groupName] = [];
       grouped[groupName].push(paper);
     });
@@ -150,8 +150,8 @@ export function PaperLibraryGrid({
     });
 
     const sortedExams = Object.keys(grouped).sort((a, b) => {
-      if (a === "ESAT CAMP Mock Papers") return 1;
-      if (b === "ESAT CAMP Mock Papers") return -1;
+      if (a === "ESATCamp Mock") return 1;
+      if (b === "ESATCamp Mock") return -1;
       return compareLibraryExamGroupNames(a, b);
     });
     return { grouped, sortedExams };

@@ -89,6 +89,18 @@ export function StageListCard({
     () => groupRoadmapPartsForDisplay(stage.parts),
     [stage.parts],
   );
+  const isEsatCampMockStage = stage.id === "esat-camp-mock-papers";
+  const accentExamName = isEsatCampMockStage
+    ? "ESATCamp Mock"
+    : stage.examName;
+  const stageTitle = isEsatCampMockStage
+    ? stage.label || "ESATCamp Mock"
+    : stage.examName;
+  const stageSubtitle = isEsatCampMockStage
+    ? null
+    : stage.id === "specimen-papers"
+      ? "Specimen"
+      : String(stage.year);
 
   useEffect(() => {
     if (stage.examName === "TMUA") {
@@ -199,7 +211,7 @@ export function StageListCard({
                 className={cn(
                   "absolute right-0 top-1/2 h-[3px] w-full -translate-y-1/2 rounded-full",
                   isStageCompleted
-                    ? getExamAccentFillClass(stage.examName)
+                    ? getExamAccentFillClass(accentExamName)
                     : "bg-border-subtle/40",
                 )}
                 style={{
@@ -215,7 +227,7 @@ export function StageListCard({
             className={cn(
               "flex h-11 w-11 shrink-0 items-center justify-center rounded-organic-md text-lg font-bold tabular-nums",
               isUnlocked
-                ? getExamAccentFillClass(stage.examName)
+                ? getExamAccentFillClass(accentExamName)
                 : "bg-surface-neutral text-text-disabled",
             )}
           >
@@ -236,23 +248,23 @@ export function StageListCard({
                 <span
                   className={cn(
                     "text-base font-semibold sm:text-lg",
-                    isUnlocked ? getExamAccentTextClass(stage.examName) : "text-text-disabled",
+                    isUnlocked
+                      ? getExamAccentTextClass(accentExamName)
+                      : "text-text-disabled",
                   )}
                 >
-                  {stage.examName}
+                  {stageTitle}
                 </span>
-                <span
-                  className={cn(
-                    "ml-2 text-base font-medium sm:text-lg",
-                    isUnlocked ? "text-text-muted" : "text-text-disabled",
-                  )}
-                >
-                  {stage.id === "specimen-papers"
-                    ? "Specimen"
-                    : stage.id === "esat-camp-mock-papers"
-                      ? "Mock"
-                      : stage.year}
-                </span>
+                {stageSubtitle ? (
+                  <span
+                    className={cn(
+                      "ml-2 text-base font-medium sm:text-lg",
+                      isUnlocked ? "text-text-muted" : "text-text-disabled",
+                    )}
+                  >
+                    {stageSubtitle}
+                  </span>
+                ) : null}
               </p>
 
               {totalCount > 0 ? (
@@ -278,7 +290,7 @@ export function StageListCard({
                   }}
                   className={cn(
                     "font-semibold underline-offset-2 transition-opacity hover:underline",
-                    getExamAccentTextClass(stage.examName),
+                    getExamAccentTextClass(accentExamName),
                   )}
                 >
                   unlock now
@@ -297,7 +309,7 @@ export function StageListCard({
                   onClick={(e) => e.stopPropagation()}
                   className={cn(
                     "font-semibold underline-offset-2 transition-opacity hover:underline",
-                    getExamAccentTextClass(stage.examName),
+                    getExamAccentTextClass(accentExamName),
                   )}
                 >
                   Upgrade to unlock
@@ -452,7 +464,7 @@ export function StageListCard({
                                           "flex h-5 w-5 shrink-0 items-center justify-center rounded transition-colors duration-fast ease-signature",
                                           isSelected
                                             ? getExamAccentFillClass(
-                                                stage.examName,
+                                                accentExamName,
                                               )
                                             : "bg-surface-elevated",
                                         )}
@@ -468,9 +480,11 @@ export function StageListCard({
                                         <div className="font-medium text-text">
                                           {displayLabel}
                                         </div>
-                                        <div className="mt-0.5 text-xs text-text-muted">
-                                          {group.examType}
-                                        </div>
+                                        {!isEsatCampMockStage ? (
+                                          <div className="mt-0.5 text-xs text-text-muted">
+                                            {group.examType}
+                                          </div>
+                                        ) : null}
                                       </div>
                                       {isGroupCompleted ? (
                                         <div className="flex shrink-0 items-center gap-1.5">
@@ -478,7 +492,7 @@ export function StageListCard({
                                             className={cn(
                                               "flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
                                               getExamAccentFillClass(
-                                                stage.examName,
+                                                accentExamName,
                                               ),
                                             )}
                                             aria-hidden
@@ -589,7 +603,7 @@ export function StageListCard({
                       !isUnlocked || selectedGroups.size === 0
                         ? "cursor-not-allowed bg-surface-neutral text-text-disabled"
                         : cn(
-                            getExamAccentFillClass(stage.examName),
+                            getExamAccentFillClass(accentExamName),
                             "hover:brightness-110",
                           ),
                     )}

@@ -25,6 +25,9 @@ interface RoadmapAnalyticsProps {
 
 function stageLabel(stage: RoadmapStage): string {
   if (stage.id === "specimen-papers") return "Specimen";
+  if (stage.id === "esat-camp-mock-papers") {
+    return stage.label || "ESATCamp Mock";
+  }
   return String(stage.year);
 }
 
@@ -116,10 +119,16 @@ export function RoadmapAnalytics({
             <span
               className={cn(
                 "font-semibold",
-                getExamAccentTextClass(nextStage.examName),
+                getExamAccentTextClass(
+                  nextStage.id === "esat-camp-mock-papers"
+                    ? "ESATCamp Mock"
+                    : nextStage.examName,
+                ),
               )}
             >
-              {nextStage.examName} {stageLabel(nextStage)}
+              {nextStage.id === "esat-camp-mock-papers"
+                ? nextStage.label || "ESATCamp Mock"
+                : `${nextStage.examName} ${stageLabel(nextStage)}`}
             </span>
             <ArrowDown
               className="h-4 w-4 text-text-muted transition-transform duration-fast ease-signature group-hover:translate-y-0.5"

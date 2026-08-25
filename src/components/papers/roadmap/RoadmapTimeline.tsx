@@ -311,6 +311,11 @@ export function RoadmapTimeline({
 
           if (hasTip) return null;
 
+          const accentExamName =
+            stage.id === "esat-camp-mock-papers"
+              ? "ESATCamp Mock"
+              : stage.examName;
+
           return (
             <div
               key={`node-${stage.id}`}
@@ -319,11 +324,11 @@ export function RoadmapTimeline({
                 isCurrent
                   ? cn(
                       "h-4 w-4 ring-2 ring-offset-2 ring-offset-background ring-current",
-                      getExamAccentTextClass(stage.examName),
-                      getExamAccentFillClass(stage.examName),
+                      getExamAccentTextClass(accentExamName),
+                      getExamAccentFillClass(accentExamName),
                     )
                   : isCompleted
-                    ? cn("h-3.5 w-3.5", getExamAccentFillClass(stage.examName))
+                    ? cn("h-3.5 w-3.5", getExamAccentFillClass(accentExamName))
                     : "h-3 w-3 bg-surface-neutral",
               )}
               style={{ left: nodeX, top: centerY }}

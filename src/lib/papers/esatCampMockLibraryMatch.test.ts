@@ -17,7 +17,7 @@ describe("ESAT CAMP mock library section matching", () => {
     expect(questions).toHaveLength(27);
 
     const selected = new Map<string, Set<PaperSection>>([
-      ["Physics Module A", new Set<PaperSection>(["Physics"])],
+      ["Mock 1 2026", new Set<PaperSection>(["Physics"])],
     ]);
 
     const matched = questions.filter((q) =>
@@ -33,7 +33,7 @@ describe("ESAT CAMP mock library section matching", () => {
     )!;
     const questions = getEsatCampMockQuestions(paper.id);
     const selected = new Map<string, Set<PaperSection>>([
-      ["Physics Module B", new Set<PaperSection>(["Physics"])],
+      ["Mock 2 2026", new Set<PaperSection>(["Physics"])],
     ]);
     const matched = questions.filter((q) =>
       questionMatchesSelectedSections(q, selected, "ESAT", paper, [paper]),

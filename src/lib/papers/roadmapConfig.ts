@@ -12,6 +12,7 @@ import {
   ESAT_CAMP_MOCK_EXAM_TYPE,
   ESAT_CAMP_MOCK_EXAM_YEAR,
   ESAT_CAMP_MOCK_SOURCE_LABEL,
+  ESAT_CAMP_MOCK_DISPLAY_NAMES,
 } from '@/lib/papers/esatCampMocks';
 
 /** Full current-format unofficial mocks; placed after official/legacy practice. */
@@ -25,19 +26,19 @@ export const ESAT_CAMP_MOCK_ROADMAP_STAGES: RoadmapStage[] = [
       {
         partKey: 'physics-module-a',
         displayGroupKey: 'physics-module-a',
-        displayName: 'Physics Module A',
+        displayName: ESAT_CAMP_MOCK_DISPLAY_NAMES.physicsModuleA,
         partLetter: 'Part A',
         partName: 'Physics',
-        paperName: 'Physics Module A',
+        paperName: ESAT_CAMP_MOCK_DISPLAY_NAMES.physicsModuleA,
         examType: ESAT_CAMP_MOCK_EXAM_TYPE,
       },
       {
         partKey: 'physics-module-b',
         displayGroupKey: 'physics-module-b',
-        displayName: 'Physics Module B',
+        displayName: ESAT_CAMP_MOCK_DISPLAY_NAMES.physicsModuleB,
         partLetter: 'Part A',
         partName: 'Physics',
-        paperName: 'Physics Module B',
+        paperName: ESAT_CAMP_MOCK_DISPLAY_NAMES.physicsModuleB,
         examType: ESAT_CAMP_MOCK_EXAM_TYPE,
       },
     ],

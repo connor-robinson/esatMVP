@@ -128,7 +128,7 @@ describe("ESAT CAMP Physics mock modules", () => {
     expect(qsB).toHaveLength(27);
     expect(qsA[0]?.examType).toBe(ESAT_CAMP_MOCK_EXAM_TYPE);
     expect(qsA[0]?.examType).not.toBe("Official");
-    expect(qsB.every((q) => q.paperName === "Physics Module B")).toBe(true);
+    expect(qsB.every((q) => q.paperName === "Mock 2 2026")).toBe(true);
   });
 
   it("adapts to past-paper Question without leaking editor fields into stem", () => {

@@ -79,8 +79,14 @@ export function getPaperTypeColor(paperType: string): string {
 /** Tailwind text class for grouped exam titles (theme tokens - no hex in UI). */
 export function getExamAccentTextClass(examName: string): string {
   const key = examName.trim().toUpperCase();
-  if (key === "ESAT CAMP MOCK PAPERS" || key.startsWith("ESAT CAMP")) {
-    return "text-physics";
+  if (
+    key === "ESATCAMP MOCK" ||
+    key === "ESAT CAMP MOCK PAPERS" ||
+    key === "ESATCAMP MOCK" ||
+    key.startsWith("ESAT CAMP") ||
+    key.startsWith("ESATCAMP")
+  ) {
+    return "text-secondary";
   }
   if (key === "ENGAA") return "text-advanced";
   if (key === "NSAA") return "text-accent";
@@ -223,8 +229,13 @@ export function getPaperSessionIconClass(examName: string): string {
 /** Badge / tile accents for roadmap (borderless - matches getExamAccentTextClass). */
 export function getExamAccentBadgeClass(examName: string): string {
   const key = examName.trim().toUpperCase();
-  if (key === "ESAT CAMP MOCK PAPERS" || key.startsWith("ESAT CAMP")) {
-    return "bg-physics/15 text-physics";
+  if (
+    key === "ESATCAMP MOCK" ||
+    key === "ESAT CAMP MOCK PAPERS" ||
+    key.startsWith("ESAT CAMP") ||
+    key.startsWith("ESATCAMP")
+  ) {
+    return "bg-secondary/15 text-secondary";
   }
   if (key === "ENGAA") return "bg-advanced/15 text-advanced";
   if (key === "NSAA") return "bg-accent/15 text-accent";
@@ -238,8 +249,13 @@ export function getExamAccentBadgeClass(examName: string): string {
 /** Solid fill for stage numbers, timeline nodes, primary actions. */
 export function getExamAccentFillClass(examName: string): string {
   const key = examName.trim().toUpperCase();
-  if (key === "ESAT CAMP MOCK PAPERS" || key.startsWith("ESAT CAMP")) {
-    return "bg-physics text-background";
+  if (
+    key === "ESATCAMP MOCK" ||
+    key === "ESAT CAMP MOCK PAPERS" ||
+    key.startsWith("ESAT CAMP") ||
+    key.startsWith("ESATCAMP")
+  ) {
+    return "bg-secondary text-background";
   }
   if (key === "ENGAA") return "bg-advanced text-background";
   if (key === "NSAA") return "bg-accent text-background";

@@ -24,6 +24,7 @@ export {
   ESAT_CAMP_MOCK_MODULES,
   ESAT_CAMP_MOCK_PAPER_IDS,
   ESAT_CAMP_MOCK_SOURCE_LABEL,
+  ESAT_CAMP_MOCK_DISPLAY_NAMES,
   isEsatCampMockPaperId,
   getEsatCampMockModuleByPaperId,
   getEsatCampMockModuleByPaperName,
