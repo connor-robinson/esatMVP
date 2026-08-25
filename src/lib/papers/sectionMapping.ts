@@ -94,6 +94,7 @@ export function mapPartToSection(partInfo: PartInfo, paperType: PaperType): Pape
     },
     ESAT: {
       'part a:mathematics': 'Mathematics',
+      'part a:physics': 'Physics',
       'part b:physics': 'Physics',
       'part c:chemistry': 'Chemistry',
       'part d:biology': 'Biology',

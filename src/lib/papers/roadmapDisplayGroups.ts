@@ -64,6 +64,8 @@ export function isDisplayGroupCompleted(
 }
 
 export function displayLabelForGroup(group: RoadmapDisplayGroup): string {
+  const displayName = group.internalParts[0]?.displayName?.trim();
+  if (displayName) return displayName;
   if (group.partLetter?.trim()) {
     return `${group.partLetter}: ${group.partName}`;
   }

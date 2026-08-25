@@ -9,7 +9,7 @@ export type Letter = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H";
 
 // New types for database schema
 export type ExamName = "ENGAA" | "NSAA" | "TMUA" | "ESAT" | "PAT" | "MAT";
-export type ExamType = "Official" | "Specimen";
+export type ExamType = "Official" | "Specimen" | "ESAT CAMP";
 export type SolutionType = "official" | "generated" | "none";
 export type ContentFormat = "image" | "text" | "hybrid";
 
@@ -154,6 +154,18 @@ export interface Question {
   
   // Answer information
   answerLetter: string;
+
+  /** Optional editor-key fields (ESAT CAMP mocks and similar original papers). */
+  distractorMap?: Partial<Record<Letter, string>>;
+  topicCode?: string;
+  topicName?: string;
+  difficultyLabel?: string;
+  targetSeconds?: number;
+  targetDisplay?: string;
+  tipText?: string;
+  benchmarkNote?: string;
+  editorPick?: boolean;
+  diagramKey?: string;
   
   createdAt: string;
   updatedAt: string;

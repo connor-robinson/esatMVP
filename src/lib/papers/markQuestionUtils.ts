@@ -147,6 +147,8 @@ export function formatSolutionTextForDisplay(raw: string): string {
   return raw
     .replace(/<tip>[\s\S]*?<\/tip>/gi, "")
     .replace(/<question_title>[\s\S]*?<\/question_title>/gi, "")
+    .replace(/<benchmark>[\s\S]*?<\/benchmark>/gi, "")
+    .replace(/<distractor_map>[\s\S]*?<\/distractor_map>/gi, "")
     .replace(/<question>[\s\S]*?<\/question>/gi, "")
     .replace(/<\/?solution>/gi, "")
     .replace(/<\/?final[_\s-]?answer>/gi, "")

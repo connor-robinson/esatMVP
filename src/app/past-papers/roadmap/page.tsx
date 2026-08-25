@@ -523,10 +523,16 @@ export default function PapersRoadmapPage() {
         // Get question number range
         const totalQuestions = matchingQuestions.length;
 
-        // Calculate time (1.48 min per question, or 75 min per section for TMUA)
+        // Calculate time (1.48 min per question, or 75 min per section for TMUA).
+        // ESAT CAMP Physics mocks are fixed 40-minute modules.
         let timeLimitMinutes: number;
         if (paperType === 'TMUA') {
           timeLimitMinutes = Array.from(allSections).length * 75;
+        } else if (
+          selectedParts.every((part) => part.examType === 'ESAT CAMP') &&
+          totalQuestions === 27
+        ) {
+          timeLimitMinutes = 40;
         } else {
           timeLimitMinutes = Math.ceil(totalQuestions * 1.48);
         }
@@ -552,10 +558,11 @@ export default function PapersRoadmapPage() {
         // multi-paper ENGAA/NSAA sessions and question-number filters.
         setQuestions(matchingQuestions);
 
+        navigated = true;
         router.push('/past-papers/solve');
       } catch (error) {
       } finally {
-        setIsStartingSession(false);
+        if (!navigated) setIsStartingSession(false);
       }
     },
     [router, startSession, setQuestions],

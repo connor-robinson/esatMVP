@@ -152,6 +152,28 @@ export function groupSectionsIntoMainSections(
       mainSections.push({ name: "Paper 1", subjectParts: ["Paper 1"] });
       mainSections.push({ name: "Paper 2", subjectParts: ["Paper 2"] });
     }
+  } else if (
+    paper?.examType === "ESAT CAMP" ||
+    String(examType) === "ESAT CAMP"
+  ) {
+    const subjectParts = new Set<PaperSection>();
+    questions.forEach((question) => {
+      const section = mapPartToSection(
+        {
+          partLetter: question.partLetter,
+          partName: question.partName,
+        },
+        paperType,
+      );
+      if (section) subjectParts.add(section);
+    });
+    if (subjectParts.size === 0) {
+      subjectParts.add("Physics");
+    }
+    mainSections.push({
+      name: paper?.paperName?.trim() || "Physics Module",
+      subjectParts: Array.from(subjectParts),
+    });
   } else if (paperType === "NSAA" || paperType === "ENGAA" || paperType === "ESAT") {
     const section1Parts = new Set<PaperSection>();
     const section2Parts = new Set<PaperSection>();

@@ -7,6 +7,42 @@ import type { ExamName, ExamType, PaperSection } from '@/types/papers';
 import { mapPartToSection } from './sectionMapping';
 import { buildEngaaRoadmapStages } from './engaaRoadmapParts';
 import { buildTmuaRoadmapStagesShell } from './tmuaRoadmapParts';
+import {
+  ESAT_CAMP_MOCK_EXAM_NAME,
+  ESAT_CAMP_MOCK_EXAM_TYPE,
+  ESAT_CAMP_MOCK_EXAM_YEAR,
+  ESAT_CAMP_MOCK_SOURCE_LABEL,
+} from '@/lib/papers/esatCampMocks';
+
+/** Full current-format unofficial mocks; placed after official/legacy practice. */
+export const ESAT_CAMP_MOCK_ROADMAP_STAGES: RoadmapStage[] = [
+  {
+    id: 'esat-camp-mock-papers',
+    year: ESAT_CAMP_MOCK_EXAM_YEAR,
+    examName: ESAT_CAMP_MOCK_EXAM_NAME,
+    label: ESAT_CAMP_MOCK_SOURCE_LABEL,
+    parts: [
+      {
+        partKey: 'physics-module-a',
+        displayGroupKey: 'physics-module-a',
+        displayName: 'Physics Module A',
+        partLetter: 'Part A',
+        partName: 'Physics',
+        paperName: 'Physics Module A',
+        examType: ESAT_CAMP_MOCK_EXAM_TYPE,
+      },
+      {
+        partKey: 'physics-module-b',
+        displayGroupKey: 'physics-module-b',
+        displayName: 'Physics Module B',
+        partLetter: 'Part A',
+        partName: 'Physics',
+        paperName: 'Physics Module B',
+        examType: ESAT_CAMP_MOCK_EXAM_TYPE,
+      },
+    ],
+  },
+];
 
 export interface RoadmapPart {
   /** Stable key for completion tracking and UI selection. */
@@ -19,6 +55,8 @@ export interface RoadmapPart {
   partName: string;
   paperName: string; // "Section 1" or "Section 2"
   examType: ExamType;
+  /** Optional UI label (e.g. Physics Module A) when partName stays "Physics". */
+  displayName?: string;
   questionFilter?: number[]; // Specific question numbers to include (for ENGAA)
   questionRange?: { start: number; end: number }; // Alternative: range of questions
   /** When true, match questions by number list only (skip part letter/name). */
@@ -43,9 +81,11 @@ function getSectionForPart(part: RoadmapPart, examName: ExamName): PaperSection 
     // For TMUA, paperName (e.g., "Paper 1") is the section
     return part.paperName as PaperSection;
   }
+  const paperType =
+    examName === 'NSAA' ? 'NSAA' : examName === 'ESAT' ? 'ESAT' : 'ENGAA';
   return mapPartToSection(
     { partLetter: part.partLetter, partName: part.partName },
-    examName === 'NSAA' ? 'NSAA' : 'ENGAA'
+    paperType,
   );
 }
 
@@ -437,6 +477,7 @@ export function getRoadmapStagesShell(): RoadmapStage[] {
     ...tmuaStages,
   ];
   if (nsaa2023) ordered.push(nsaa2023);
+  ordered.push(...ESAT_CAMP_MOCK_ROADMAP_STAGES);
   return ordered;
 }
 
@@ -473,17 +514,20 @@ export async function getRoadmapStages(): Promise<RoadmapStage[]> {
       // Generate TMUA stages (both Paper 1 and Paper 2)
       const tmuaStages = await generateTmuaStages();
       
-      // Combine in correct order: NSAA (2016-2022), ENGAA, TMUA, NSAA 2023
+      // Combine in correct order: NSAA (2016-2022), ENGAA, TMUA, NSAA 2023,
+      // then ESAT CAMP mock modules (current-format timed practice).
       const orderedStages: RoadmapStage[] = [
         ...nsaaStages,
         ...engaaStages,
         ...tmuaStages,
       ];
       
-      // Add NSAA 2023 at the very end if it exists
+      // Add NSAA 2023 near the end if it exists
       if (nsaa2023) {
         orderedStages.push(nsaa2023);
       }
+
+      orderedStages.push(...ESAT_CAMP_MOCK_ROADMAP_STAGES);
       
       // Remove any duplicates by stage ID (shouldn't happen, but safety check)
       const seenIds = new Set<string>();

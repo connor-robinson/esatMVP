@@ -79,6 +79,9 @@ export function getPaperTypeColor(paperType: string): string {
 /** Tailwind text class for grouped exam titles (theme tokens - no hex in UI). */
 export function getExamAccentTextClass(examName: string): string {
   const key = examName.trim().toUpperCase();
+  if (key === "ESAT CAMP MOCK PAPERS" || key.startsWith("ESAT CAMP")) {
+    return "text-physics";
+  }
   if (key === "ENGAA") return "text-advanced";
   if (key === "NSAA") return "text-accent";
   if (key === "TMUA") return "text-tmua-accent";
@@ -220,6 +223,9 @@ export function getPaperSessionIconClass(examName: string): string {
 /** Badge / tile accents for roadmap (borderless - matches getExamAccentTextClass). */
 export function getExamAccentBadgeClass(examName: string): string {
   const key = examName.trim().toUpperCase();
+  if (key === "ESAT CAMP MOCK PAPERS" || key.startsWith("ESAT CAMP")) {
+    return "bg-physics/15 text-physics";
+  }
   if (key === "ENGAA") return "bg-advanced/15 text-advanced";
   if (key === "NSAA") return "bg-accent/15 text-accent";
   if (key === "TMUA") return "bg-tmua-accent/15 text-tmua-accent";
@@ -232,6 +238,9 @@ export function getExamAccentBadgeClass(examName: string): string {
 /** Solid fill for stage numbers, timeline nodes, primary actions. */
 export function getExamAccentFillClass(examName: string): string {
   const key = examName.trim().toUpperCase();
+  if (key === "ESAT CAMP MOCK PAPERS" || key.startsWith("ESAT CAMP")) {
+    return "bg-physics text-background";
+  }
   if (key === "ENGAA") return "bg-advanced text-background";
   if (key === "NSAA") return "bg-accent text-background";
   if (key === "TMUA") return "bg-tmua-accent text-background";

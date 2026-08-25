@@ -113,10 +113,13 @@ export function PaperLibraryGrid({
     const seenCombinations = new Map<string, Paper>();
 
     papers.forEach((paper) => {
-      const key = `${paper.examName}-${paper.examYear}-${paper.examType ?? ""}`;
+      const isEsatCampMock = paper.examType === "ESAT CAMP";
+      const key = isEsatCampMock
+        ? `${paper.examName}-${paper.examYear}-${paper.examType}-${paper.paperName}`
+        : `${paper.examName}-${paper.examYear}-${paper.examType ?? ""}`;
       if (!seenCombinations.has(key)) {
         seenCombinations.set(key, paper);
-      } else {
+      } else if (!isEsatCampMock) {
         const existing = seenCombinations.get(key)!;
         if (representativePaperScore(paper) < representativePaperScore(existing)) {
           seenCombinations.set(key, paper);
@@ -126,8 +129,10 @@ export function PaperLibraryGrid({
 
     const grouped: Record<string, Paper[]> = {};
     seenCombinations.forEach((paper) => {
-      if (!grouped[paper.examName]) grouped[paper.examName] = [];
-      grouped[paper.examName].push(paper);
+      const groupName =
+        paper.examType === "ESAT CAMP" ? "ESAT CAMP Mock Papers" : paper.examName;
+      if (!grouped[groupName]) grouped[groupName] = [];
+      grouped[groupName].push(paper);
     });
 
     Object.keys(grouped).forEach((examName) => {
@@ -137,11 +142,18 @@ export function PaperLibraryGrid({
         const typeB = (b.examType ?? "").toLowerCase();
         if (typeA === "official" && typeB !== "official") return -1;
         if (typeB === "official" && typeA !== "official") return 1;
-        return typeA.localeCompare(typeB);
+        return (
+          typeA.localeCompare(typeB) ||
+          (a.paperName ?? "").localeCompare(b.paperName ?? "")
+        );
       });
     });
 
-    const sortedExams = Object.keys(grouped).sort(compareLibraryExamGroupNames);
+    const sortedExams = Object.keys(grouped).sort((a, b) => {
+      if (a === "ESAT CAMP Mock Papers") return 1;
+      if (b === "ESAT CAMP Mock Papers") return -1;
+      return compareLibraryExamGroupNames(a, b);
+    });
     return { grouped, sortedExams };
   }, [papers]);
 

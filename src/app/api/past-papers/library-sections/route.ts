@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase/server";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import {
+  getEsatCampMockPapers,
+  getEsatCampMockQuestionParts,
+  isEsatCampMockPaperId,
+} from "@/lib/papers/esatCampMocks";
+import {
   buildPaperSectionsOutline,
   type SlimQuestionPart,
 } from "@/lib/papers/paperLibrarySections";
@@ -22,6 +27,23 @@ export async function GET(request: NextRequest) {
         { error: "paperId is required" },
         { status: 400 },
       );
+    }
+
+    if (isEsatCampMockPaperId(paperId)) {
+      const paper = getEsatCampMockPapers().find((p) => p.id === paperId);
+      if (!paper) {
+        return NextResponse.json({ error: "Paper not found" }, { status: 404 });
+      }
+      const partRows = getEsatCampMockQuestionParts(paperId);
+      const slimParts: SlimQuestionPart[] = partRows.map((row) => ({
+        paperId: row.paperId,
+        partLetter: row.partLetter,
+        partName: row.partName,
+        examType: row.examType,
+        paperName: row.paperName,
+      }));
+      const outline = buildPaperSectionsOutline(paper, [], slimParts);
+      return NextResponse.json({ ...outline, partRows });
     }
 
     const supabase = createServerClient();
@@ -83,7 +105,9 @@ export async function GET(request: NextRequest) {
 
     const { data: questionRows, error: questionsError } = await supabase
       .from("questions")
-      .select("part_letter, part_name, exam_type, paper_name, paper_id, question_number")
+      .select(
+        "part_letter, part_name, exam_type, paper_name, paper_id, question_number",
+      )
       .in("paper_id", paperIds);
 
     if (questionsError) {
@@ -117,7 +141,7 @@ export async function GET(request: NextRequest) {
     const outline = buildPaperSectionsOutline(paper, siblingRows, slimParts);
 
     return NextResponse.json({ ...outline, partRows });
-  } catch (e) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to load sections" },
       { status: 500 },

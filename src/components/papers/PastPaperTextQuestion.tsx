@@ -2,6 +2,7 @@
 
 import { MathContent } from "@/components/shared/MathContent";
 import { StemContent } from "@/components/shared/StemContent";
+import { EsatCampMockDiagram } from "@/components/papers/esatCampMocks/diagrams";
 import { cn } from "@/lib/utils";
 import {
   getPastPaperOptionLetters,
@@ -42,7 +43,9 @@ export function PastPaperTextQuestion({
 
   const letters = getPastPaperOptionLetters(question);
   const options = question.options ?? {};
-  const stem = question.questionStem.replace(/<figure[^>]*>[\s\S]*?<\/figure>/gi, "").trim();
+  const stem = question.questionStem
+    .replace(/<figure[^>]*>[\s\S]*?<\/figure>/gi, "")
+    .trim();
   const stemDiagrams = (question.diagramAssets ?? []).filter(
     (asset) => !asset.option_letter && asset.role !== "graphical_option",
   );
@@ -53,7 +56,12 @@ export function PastPaperTextQuestion({
   );
 
   return (
-    <div className={cn("w-full max-w-3xl mx-auto space-y-6 px-4 py-6", className)}>
+    <div
+      className={cn(
+        "w-full max-w-3xl mx-auto space-y-6 px-4 py-6",
+        className,
+      )}
+    >
       {showStem && (
         <>
           <div className="text-sm font-semibold text-text-muted tabular-nums">
@@ -62,6 +70,11 @@ export function PastPaperTextQuestion({
           <div className="text-base leading-relaxed text-text">
             <StemContent content={stem} className="text-inherit" />
           </div>
+          {question.diagramKey ? (
+            <div className="flex justify-center text-text">
+              <EsatCampMockDiagram diagramKey={question.diagramKey} />
+            </div>
+          ) : null}
           {stemDiagrams.map((asset) => (
             <div key={asset.id} className="flex justify-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -104,7 +117,9 @@ export function PastPaperTextQuestion({
                     {letter}
                   </span>
                   <div className="min-w-0 flex-1 text-[0.98rem] leading-relaxed">
-                    {text && <MathContent content={text} className="text-inherit" />}
+                    {text && (
+                      <MathContent content={text} className="text-inherit" />
+                    )}
                     {optionAsset && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img

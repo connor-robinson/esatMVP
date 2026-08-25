@@ -8,9 +8,11 @@ export function isPastPaperTextModeEnabled(): boolean {
 }
 
 export function shouldRenderPastPaperAsText(question: Question): boolean {
+  const isEsatCampMock =
+    question.examType === "ESAT CAMP" || Boolean(question.diagramKey);
   return (
-    isPastPaperTextModeEnabled() &&
-    question.contentFormat === 'text' &&
+    (isPastPaperTextModeEnabled() || isEsatCampMock) &&
+    question.contentFormat === "text" &&
     Boolean(question.questionStem?.trim())
   );
 }

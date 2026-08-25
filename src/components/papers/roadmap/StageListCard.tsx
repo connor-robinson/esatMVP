@@ -247,7 +247,11 @@ export function StageListCard({
                     isUnlocked ? "text-text-muted" : "text-text-disabled",
                   )}
                 >
-                  {stage.id === "specimen-papers" ? "Specimen" : stage.year}
+                  {stage.id === "specimen-papers"
+                    ? "Specimen"
+                    : stage.id === "esat-camp-mock-papers"
+                      ? "Mock"
+                      : stage.year}
                 </span>
               </p>
 

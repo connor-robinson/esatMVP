@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase/server";
+import { mergePapersWithEsatCampMocks } from "@/lib/papers/esatCampMocks";
 import type { Paper } from "@/types/papers";
 
 export const dynamic = "force-dynamic";
@@ -26,8 +27,8 @@ export async function GET() {
       );
     }
 
-    const papers: Paper[] = ((data ?? []) as Array<Record<string, unknown>>).map(
-      (row) => ({
+    const papers: Paper[] = mergePapersWithEsatCampMocks(
+      ((data ?? []) as Array<Record<string, unknown>>).map((row) => ({
         id: row.id as number,
         examName: row.exam_name as Paper["examName"],
         examYear: row.exam_year as number,
@@ -36,11 +37,11 @@ export async function GET() {
         hasConversion: row.has_conversion as boolean,
         createdAt: "",
         updatedAt: "",
-      }),
+      })),
     );
 
     return NextResponse.json({ papers, total: papers.length });
-  } catch (e) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to load papers" },
       { status: 500 },

@@ -15,6 +15,7 @@ import { ChoicePill } from "@/components/papers/ChoicePill";
 import { TimeScatterChart } from "@/components/papers/TimeScatterChart";
 import { MarkSessionMistakesSection } from "@/components/papers/mark/MarkSessionMistakesSection";
 import { MathContent } from "@/components/shared/MathContent";
+import { EsatCampMockReviewPanel } from "@/components/papers/esatCampMocks/EsatCampMockReviewPanel";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import {
   cssVar,
@@ -2448,6 +2449,16 @@ export default function PapersMarkPage() {
                     <MathContent content={currentTip} className="text-sm leading-relaxed text-text" />
                   </div>
                 </div>
+              )}
+              {treatAsFullAccess &&
+                selectedIndex >= 0 &&
+                questions[selectedIndex] && (
+                <EsatCampMockReviewPanel
+                  question={questions[selectedIndex]!}
+                  userChoice={
+                    (answers[selectedIndex]?.choice as Letter | null) ?? null
+                  }
+                />
               )}
               </div>
               ) : (

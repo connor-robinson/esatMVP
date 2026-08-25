@@ -6,6 +6,13 @@
 import { supabase, handleSupabaseError } from './client';
 import { scaleScore as scaleScoreFromMarkScoring } from '@/lib/papers/markScoring';
 import type { Paper, Question, ConversionTable, ConversionRow, ExamName, ExamType } from '@/types/papers';
+import {
+  getEsatCampMockPaper,
+  getEsatCampMockQuestionParts,
+  getEsatCampMockQuestions,
+  isEsatCampMockPaperId,
+  mergePapersWithEsatCampMocks,
+} from '@/lib/papers/esatCampMocks';
 
 export const scaleScore = scaleScoreFromMarkScoring;
 
@@ -65,6 +72,10 @@ function mapQuestionPartRow(row: Record<string, unknown>): QuestionPartRow {
 export async function getQuestionPartsForPaper(
   paperId: number,
 ): Promise<QuestionPartRow[]> {
+  if (isEsatCampMockPaperId(paperId)) {
+    return getEsatCampMockQuestionParts(paperId);
+  }
+
   const { data, error } = await supabase
     .from('questions')
     .select(QUESTION_PARTS_SELECT)
@@ -81,15 +92,25 @@ export async function getQuestionPartsForPaperIds(
 ): Promise<QuestionPartRow[]> {
   if (paperIds.length === 0) return [];
 
+  const mockIds = paperIds.filter(isEsatCampMockPaperId);
+  const dbIds = paperIds.filter((id) => !isEsatCampMockPaperId(id));
+
+  const mockParts = mockIds.flatMap((id) => getEsatCampMockQuestionParts(id));
+
+  if (dbIds.length === 0) return mockParts;
+
   const { data, error } = await supabase
     .from('questions')
     .select(QUESTION_PARTS_SELECT)
-    .in('paper_id', paperIds);
+    .in('paper_id', dbIds);
 
   if (error) throw error;
-  return (data || []).map((row) =>
-    mapQuestionPartRow(row as Record<string, unknown>),
-  );
+  return [
+    ...mockParts,
+    ...(data || []).map((row) =>
+      mapQuestionPartRow(row as Record<string, unknown>),
+    ),
+  ];
 }
 
 function mapPaperRow(row: Record<string, unknown>): Paper {
@@ -117,7 +138,9 @@ export async function getAvailablePapers() {
     throw new Error(error.message || 'Failed to load papers from database');
   }
 
-  return (data || []).map((row) => mapPaperRow(row as Record<string, unknown>));
+  return mergePapersWithEsatCampMocks(
+    (data || []).map((row) => mapPaperRow(row as Record<string, unknown>)),
+  );
 }
 
 // Get papers by exam name
@@ -131,10 +154,12 @@ export async function getPapersByExam(examName: ExamName) {
 
     if (error) throw error;
 
-    return (data || []).map((row) => mapPaperRow(row as Record<string, unknown>));
+    return mergePapersWithEsatCampMocks(
+      (data || []).map((row) => mapPaperRow(row as Record<string, unknown>)),
+    ).filter((p) => p.examName === examName);
   } catch (error) {
     handleSupabaseError(error);
-    return [];
+    return mergePapersWithEsatCampMocks([]).filter((p) => p.examName === examName);
   }
 }
 
@@ -150,16 +175,23 @@ export async function getPapersByExamAndYear(examName: ExamName, examYear: numbe
 
     if (error) throw error;
 
-    return (data || []).map((row) => mapPaperRow(row as Record<string, unknown>));
+    return mergePapersWithEsatCampMocks(
+      (data || []).map((row) => mapPaperRow(row as Record<string, unknown>)),
+    ).filter((p) => p.examName === examName && p.examYear === examYear);
   } catch (error) {
     handleSupabaseError(error);
-    return [];
+    return mergePapersWithEsatCampMocks([]).filter(
+      (p) => p.examName === examName && p.examYear === examYear,
+    );
   }
 }
 
 // Get specific paper with fallback to try common name variations
 export async function getPaper(examName: ExamName, examYear: number, paperName: string, examType: ExamType) {
   try {
+    const mockPaper = getEsatCampMockPaper(examName, examYear, paperName, examType);
+    if (mockPaper) return mockPaper;
+
     // First try exact match
     const { data, error } = await supabase
       .from('papers')
@@ -224,7 +256,10 @@ export async function getPaper(examName: ExamName, examYear: number, paperName: 
  */
 export async function getQuestions(paperId: number) {
   try {
-    
+    if (isEsatCampMockPaperId(paperId)) {
+      return getEsatCampMockQuestions(paperId);
+    }
+
     // CRITICAL: Only query 'questions' table - these are real past paper questions
     // Do NOT query 'ai_generated_questions' - those are simulated/AI-generated
     const { data, error } = await supabase
