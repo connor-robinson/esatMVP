@@ -105,7 +105,7 @@ function NumericStepper({
   };
 
   return (
-    <div className="flex h-14 items-center justify-between rounded-organic-lg bg-surface-elevated px-1.5">
+    <div className="flex min-h-14 items-center justify-between overflow-visible rounded-organic-lg bg-surface-elevated px-1.5 py-1.5">
       <button
         type="button"
         onClick={() => bump(-step)}
@@ -136,12 +136,14 @@ function NumericStepper({
             }
           }}
           className={cn(
-            "w-[4.5rem] border-0 bg-transparent text-center text-2xl font-semibold tabular-nums leading-none text-text sm:text-[1.75rem]",
+            "h-10 w-[5rem] border-0 bg-transparent text-center text-2xl font-semibold tabular-nums leading-10 text-text sm:text-[1.75rem] sm:leading-10",
             "outline-none shadow-none ring-0 focus:border-0 focus:outline-none focus:ring-0",
           )}
           aria-label={ariaLabel}
         />
-        <span className="shrink-0 text-sm font-medium text-text-muted">{suffix}</span>
+        <span className="shrink-0 text-sm font-medium leading-none text-text-muted">
+          {suffix}
+        </span>
       </div>
       <button
         type="button"
