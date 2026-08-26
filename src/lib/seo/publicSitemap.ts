@@ -73,6 +73,7 @@ export const SITEMAP_EXCLUDED_PATHS = [
   "/login",
   "/signup",
   "/onboarding",
+  "/dashboard",
   "/profile",
   "/settings",
   "/founding-tester",

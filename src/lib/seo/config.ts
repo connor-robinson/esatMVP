@@ -61,6 +61,7 @@ export const SITE_HOST = "esatcamp.com";
 
 /** Real in-app destinations. SEO page CTAs must point at these, not at slugs. */
 export const APP_ROUTES = {
+  dashboard: "/dashboard",
   calibration: CALIBRATION_ROUTES.hub,
   calibrationTest: CALIBRATION_ROUTES.test,
   scoreConverter: "/tools/score-converter",

@@ -14,7 +14,7 @@ const HOME_TITLE = "ESAT CAMP | ESAT Preparation, Practice & Past Papers";
 const HOME_DESCRIPTION =
   "Prepare for the ESAT and TMUA with past papers, question banks, and structured practice. ESAT CAMP helps you build speed and strategy for admissions exams.";
 
-/** Allow the marketing shell to be cached; auth is resolved client-side. */
+/** Allow the marketing homepage to be cached; auth never swaps this route. */
 export const revalidate = 3600;
 
 export const metadata: Metadata = {

@@ -1,13 +1,13 @@
 /**
  * Saved homepage layout reference
  *
- * The original marketing homepage lives at:
+ * The public marketing homepage lives at:
  *   src/components/home/MarketingHomepage.tsx
+ * and is always rendered from `/` via HomePageContent.
  *
- * Logged-in users see the dashboard at:
+ * Authenticated users see the dashboard at `/dashboard`:
  *   src/components/homepage/LoggedInHomepage.tsx
- *
- * Both are wired through src/components/homepage/HomePageContent.tsx
+ * wired through DashboardPageContent.
  */
 
 export {};

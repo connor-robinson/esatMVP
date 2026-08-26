@@ -88,14 +88,14 @@ export function ExampleQuestionDemo({
           </p>
           <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center">
             <Link
-              href="/login?mode=signup&redirectTo=%2F%3Freveal_example%3D1"
+              href="/login?mode=signup&redirectTo=%2Fdashboard%3Freveal_example%3D1"
               onClick={() => markHomepageExampleRevealPending()}
               className="inline-flex items-center justify-center rounded-xl bg-[#3B82F6] px-5 py-3 text-sm font-bold text-white transition-all hover:bg-[#2563EB]"
             >
               Sign up for free
             </Link>
             <Link
-              href="/login?redirectTo=%2F%3Freveal_example%3D1"
+              href="/login?redirectTo=%2Fdashboard%3Freveal_example%3D1"
               onClick={() => markHomepageExampleRevealPending()}
               className="inline-flex items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold text-[#94A3B8] transition-colors hover:text-white"
             >

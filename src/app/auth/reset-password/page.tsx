@@ -98,7 +98,7 @@ export default function ResetPasswordPage() {
       try {
         const prefsRes = await fetch("/api/profile/preferences");
         const prefs = prefsRes.ok ? await prefsRes.json() : null;
-        const { resolvePostAuthPath } = await import(
+        const { DEFAULT_POST_AUTH_PATH, resolvePostAuthPath } = await import(
           "@/lib/onboarding/redirect"
         );
         router.push(
@@ -109,12 +109,15 @@ export default function ResetPasswordPage() {
                   onboarding_completed: prefs.onboarding_completed ?? null,
                 }
               : null,
-            "/",
+            DEFAULT_POST_AUTH_PATH,
           ),
         );
         router.refresh();
       } catch {
-        router.push("/");
+        const { DEFAULT_POST_AUTH_PATH } = await import(
+          "@/lib/onboarding/redirect"
+        );
+        router.push(DEFAULT_POST_AUTH_PATH);
         router.refresh();
       }
     } catch (err) {

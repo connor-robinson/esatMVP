@@ -51,6 +51,7 @@ describe("index hygiene: private route metadata wiring", () => {
 
   it("marks private application and programme routes as noindex, follow", () => {
     const privateLayouts = [
+      ["dashboard", "layout.tsx"],
       ["questions", "layout.tsx"],
       ["mental-maths", "drill", "layout.tsx"],
       ["past-papers", "layout.tsx"],

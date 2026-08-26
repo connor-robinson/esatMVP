@@ -201,7 +201,7 @@ function PricingSuccessContent() {
             {state === "unlocked" ? (
               <>
                 <Link
-                  href="/"
+                  href="/dashboard"
                   className="inline-flex w-full items-center justify-center rounded-organic-lg bg-primary px-5 py-3 text-sm font-semibold text-black transition-colors hover:bg-primary-hover"
                 >
                   Start practising

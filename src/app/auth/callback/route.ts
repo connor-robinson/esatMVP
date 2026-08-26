@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { createCallbackClient } from "@/lib/supabase/server";
 import {
+  DEFAULT_POST_AUTH_PATH,
   resolvePostAuthPath,
   sanitizeRedirectTo,
 } from "@/lib/onboarding/redirect";
@@ -52,7 +53,7 @@ export async function GET(request: NextRequest) {
   const next = requestUrl.searchParams.get("next");
   const redirectTo = sanitizeRedirectTo(
     requestUrl.searchParams.get("redirectTo") ||
-      (isPasswordRecoveryNext(next) ? "/" : next),
+      (isPasswordRecoveryNext(next) ? DEFAULT_POST_AUTH_PATH : next),
   );
   const error = requestUrl.searchParams.get("error");
   const errorDescription = requestUrl.searchParams.get("error_description");

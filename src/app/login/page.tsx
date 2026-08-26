@@ -27,6 +27,7 @@ import {
   rememberGaSourcePage,
   trackEvent,
 } from "@/lib/ga";
+import { DEFAULT_POST_AUTH_PATH } from "@/lib/onboarding/redirect";
 
 type AuthMode = GoogleAuthMode;
 
@@ -60,7 +61,8 @@ export default function LoginPage() {
     return fromUrl === "signup" ? "signup" : "signin";
   }, [searchParams]);
 
-  const redirectTo = searchParams.get("redirectTo") || "/";
+  const redirectTo =
+    searchParams.get("redirectTo") || DEFAULT_POST_AUTH_PATH;
   const selectedPlan = searchParams.get("plan");
   const copy = COPY[mode];
 
@@ -149,7 +151,7 @@ export default function LoginPage() {
   const buildAuthUrl = (nextMode: AuthMode, withEmail = emailOpen) => {
     const params = new URLSearchParams();
     params.set("mode", nextMode);
-    if (redirectTo !== "/") {
+    if (redirectTo !== DEFAULT_POST_AUTH_PATH) {
       params.set("redirectTo", redirectTo);
     }
     if (selectedPlan) {

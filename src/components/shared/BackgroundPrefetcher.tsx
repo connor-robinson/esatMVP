@@ -10,7 +10,11 @@ import { usePathname } from "next/navigation";
 import { useBackgroundPrefetch } from "@/hooks/useBackgroundPrefetch";
 import { useAggressivePrefetch } from "@/hooks/useAggressivePrefetch";
 
-const CRITICAL_ROUTES = ["/", "/mental-maths/analytics", "/mental-maths/drill"];
+const CRITICAL_ROUTES = [
+  "/dashboard",
+  "/mental-maths/analytics",
+  "/mental-maths/drill",
+];
 
 const SECONDARY_ROUTES = [
   "/past-papers/analytics",
@@ -19,7 +23,13 @@ const SECONDARY_ROUTES = [
   "/past-papers/solve",
 ];
 
-const SKIP_PREFETCH_PATHS = new Set(["/", "/about", "/pricing", "/login", "/signup"]);
+const SKIP_PREFETCH_PATHS = new Set([
+  "/",
+  "/about",
+  "/pricing",
+  "/login",
+  "/signup",
+]);
 
 export function BackgroundPrefetcher() {
   const pathname = usePathname();

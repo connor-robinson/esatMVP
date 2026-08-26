@@ -106,7 +106,7 @@ export default function FoundingTesterPage() {
             the Founding Tester Programme is not needed.
           </p>
           <Link
-            href="/"
+            href="/dashboard"
             className="mt-6 inline-flex rounded-full bg-text px-6 py-2.5 text-sm font-bold text-background transition-opacity hover:opacity-90"
           >
             Continue practising
