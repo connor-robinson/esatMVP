@@ -21,6 +21,8 @@ export interface UserAccess {
   partnerDisplayName: string | null;
   partnerBatchLabel: string | null;
   partnerActivated: boolean;
+  /** Active partner entitlement end (authoritative for partner UI). */
+  partnerEndsAt: string | null;
   expiresAt: string | null;
   subscriptionStatus?: string;
   currentPeriodEnd?: string;

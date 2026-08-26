@@ -108,6 +108,7 @@ export async function getUserAccess(
     partnerDisplayName: null,
     partnerBatchLabel: null,
     partnerActivated: false,
+    partnerEndsAt: null,
     expiresAt: null,
   };
 
@@ -156,6 +157,7 @@ export async function getUserAccess(
           partnerDisplayName: partner?.partnerDisplayName ?? null,
           partnerBatchLabel: partner?.batchLabel ?? null,
           partnerActivated: Boolean(partner?.activatedAt),
+          partnerEndsAt: partner?.endsAt ?? null,
           expiresAt: activeSub.current_period_end,
           subscriptionStatus: activeSub.status,
           currentPeriodEnd: activeSub.current_period_end,
@@ -191,6 +193,7 @@ export async function getUserAccess(
           partnerDisplayName: partner?.partnerDisplayName ?? null,
           partnerBatchLabel: partner?.batchLabel ?? null,
           partnerActivated: Boolean(partner?.activatedAt),
+          partnerEndsAt: partner?.endsAt ?? null,
           expiresAt: validPurchase.access_until,
         };
       }
@@ -208,6 +211,7 @@ export async function getUserAccess(
         partnerDisplayName: partner.partnerDisplayName,
         partnerBatchLabel: partner.batchLabel,
         partnerActivated: Boolean(partner.activatedAt),
+        partnerEndsAt: partner.endsAt,
         expiresAt: partner.endsAt,
       };
     }
@@ -231,6 +235,7 @@ export async function getUserAccess(
           partnerDisplayName: null,
           partnerBatchLabel: null,
           partnerActivated: false,
+          partnerEndsAt: null,
           expiresAt: state.accessExpiresAt,
           tester,
         };

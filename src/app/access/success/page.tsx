@@ -6,7 +6,7 @@ import { Container } from "@/components/layout/Container";
 import { APP_ROUTES } from "@/lib/seo/config";
 import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
 import { trackEvent } from "@/lib/ga/trackEvent";
-import { formatPartnerAccessDate } from "@/lib/partners/dates";
+import { complimentaryAccessEndIso, formatPartnerAccessDate } from "@/lib/partners/dates";
 import { PARTNER_REDEEM_TRACK_COOKIE } from "@/lib/partners/types";
 
 function readTrackCookie(): {
@@ -57,7 +57,13 @@ export default function AccessSuccessPage() {
         if (!mounted) return;
         setHasAccess(Boolean(data.hasFullAccess));
         setDisplayName(data.partnerDisplayName ?? null);
-        setEndsAt(data.accessUntil ?? null);
+        setEndsAt(
+          complimentaryAccessEndIso({
+            partnerEndsAt: data.partnerEndsAt,
+            accessUntil: data.accessUntil,
+            source: data.source,
+          }),
+        );
       } finally {
         if (mounted) setLoading(false);
       }
@@ -75,7 +81,7 @@ export default function AccessSuccessPage() {
         ) : hasAccess ? (
           <>
             <h1 className="text-3xl font-semibold tracking-tight text-white">
-              Success! Your ESAT Camp access is active.
+              Success! 🎉 Your ESAT Camp access is active.
             </h1>
             <p className="mt-4 text-text-muted">
               {displayName

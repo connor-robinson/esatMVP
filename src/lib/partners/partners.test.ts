@@ -6,7 +6,7 @@ import {
   isPlausiblePartnerToken,
 } from "./tokens";
 import { sanitizePartnerProps } from "./analytics";
-import { endOfUtcDay, formatPartnerAccessDate } from "./dates";
+import { endOfUtcDay, formatPartnerAccessDate, complimentaryAccessEndIso } from "./dates";
 import { evaluateFeedbackEligibilityRules } from "./feedback";
 import { redeemErrorMessage } from "./types";
 import { sanitizeGaParams } from "@/lib/ga/trackEvent";
@@ -148,6 +148,49 @@ describe("partner access dates", () => {
     expect(formatPartnerAccessDate("2027-10-13T23:59:59.000Z")).toBe(
       "13 October 2027",
     );
+    expect(formatPartnerAccessDate("2027-10-16T23:59:59+00")).toBe(
+      "16 October 2027",
+    );
+    expect(formatPartnerAccessDate("2027-10-16 23:59:59+00")).toBe(
+      "16 October 2027",
+    );
+    expect(formatPartnerAccessDate("2027-10-16")).toBe("16 October 2027");
+  });
+});
+
+describe("complimentary access end date source", () => {
+  it("uses partner entitlement ends_at, not paid accessUntil", () => {
+    expect(
+      formatPartnerAccessDate(
+        complimentaryAccessEndIso({
+          partnerEndsAt: "2027-10-16T23:59:59+00",
+          accessUntil: "2026-10-01",
+          source: "one_time",
+        }),
+      ),
+    ).toBe("16 October 2027");
+  });
+
+  it("does not fall back to Stripe/season-pass expiry when source is not partner", () => {
+    expect(
+      complimentaryAccessEndIso({
+        partnerEndsAt: null,
+        accessUntil: "2026-10-01",
+        source: "one_time",
+      }),
+    ).toBeNull();
+  });
+
+  it("falls back to accessUntil only for partner-source access", () => {
+    expect(
+      formatPartnerAccessDate(
+        complimentaryAccessEndIso({
+          partnerEndsAt: null,
+          accessUntil: "2027-10-16T23:59:59.000Z",
+          source: "partner",
+        }),
+      ),
+    ).toBe("16 October 2027");
   });
 });
 

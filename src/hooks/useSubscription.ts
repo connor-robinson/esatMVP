@@ -31,6 +31,7 @@ export interface SubscriptionStatus {
   partnerDisplayName?: string | null;
   partnerBatchLabel?: string | null;
   partnerActivated?: boolean;
+  partnerEndsAt?: string | null;
   subscriptionStatus?: string;
   currentPeriodEnd?: string;
   accessUntil?: string;
@@ -89,6 +90,7 @@ export function useSubscription(): SubscriptionStatus {
           partnerDisplayName: data.partnerDisplayName ?? null,
           partnerBatchLabel: data.partnerBatchLabel ?? null,
           partnerActivated: data.partnerActivated === true,
+          partnerEndsAt: data.partnerEndsAt ?? null,
           subscriptionStatus: data.subscriptionStatus,
           currentPeriodEnd: data.currentPeriodEnd,
           accessUntil: data.accessUntil,

@@ -26,7 +26,7 @@ import { CheckCircle2, AlertCircle, Check } from "lucide-react";
 import { clearLeaderboardCache } from "@/lib/leaderboard/cache";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useSubscription } from "@/hooks/useSubscription";
-import { formatPartnerAccessDate } from "@/lib/partners/dates";
+import { complimentaryAccessEndIso, formatPartnerAccessDate } from "@/lib/partners/dates";
 import {
   formatAuthProviderLabel,
   getOAuthProvider,
@@ -118,8 +118,14 @@ export default function ProfilePage() {
     cancelAtPeriodEnd,
     pendingPlan,
     partnerDisplayName,
+    partnerEndsAt,
     source,
   } = useSubscription();
+  const partnerAccessEnd = complimentaryAccessEndIso({
+    partnerEndsAt,
+    accessUntil,
+    source,
+  });
   const [portalLoading, setPortalLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
@@ -1065,8 +1071,8 @@ export default function ProfilePage() {
                                     partnerDisplayName
                                       ? `Complimentary access through ${partnerDisplayName}.`
                                       : "Complimentary institution access is active.",
-                                    accessUntil
-                                      ? ` Full access until ${formatPartnerAccessDate(accessUntil)}.`
+                                    partnerAccessEnd
+                                      ? ` Full access until ${formatPartnerAccessDate(partnerAccessEnd)}.`
                                       : "",
                                   ].join("")
                                 : tier === "season_pass"

@@ -39,6 +39,7 @@ export async function GET(request: NextRequest) {
       partnerDisplayName: access.partnerDisplayName,
       partnerBatchLabel: access.partnerBatchLabel,
       partnerActivated: access.partnerActivated,
+      partnerEndsAt: access.partnerEndsAt,
       subscriptionStatus: access.subscriptionStatus,
       currentPeriodEnd: access.currentPeriodEnd,
       accessUntil: access.expiresAt,
