@@ -148,28 +148,24 @@ export function QuestionCard({
   const statementItems = getQuestionStatementItems(question);
   const showSessionNotation = questionNumber != null;
 
-  // Options are locked only when the question is fully resolved (correct or revealed).
-  // During retry (wrong answer, not revealed) they stay unlocked.
+  // Locked only when fully resolved (correct or revealed). Retry stays open.
   const optionsLocked = answerRevealed || (isAnswered && isCorrect === true);
 
-  // Reset everything on new question.
+  // Reset on question change only (do not depend on callback identity).
   useEffect(() => {
     setLocalSelectedAnswer(null);
-    onSelectionChange?.(null);
     setRevealedDistractors(new Set());
     setIncorrectAnswers(new Set());
     setResultFlash(null);
     lastFlashKeyRef.current = "";
-  }, [question.id, onSelectionChange]);
-
-  // Sync local selection to parent (simple, no competing clears).
-  useEffect(() => {
-    onSelectionChange?.(localSelectedAnswer);
-  }, [localSelectedAnswer, onSelectionChange]);
+    onSelectionChange?.(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only reset when the question changes
+  }, [question.id]);
 
   useEffect(() => {
     if (isAnswered && !isCorrect && selectedAnswer) {
       setIncorrectAnswers((prev) => {
+        if (prev.has(selectedAnswer)) return prev;
         const next = new Set(prev).add(selectedAnswer);
         onIncorrectAnswersChange?.(next);
         return next;
@@ -277,21 +273,26 @@ export function QuestionCard({
     };
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
+    // handleSubmit closes over latest localSelectedAnswer via this effect's deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localSelectedAnswer, optionsLocked, incorrectAnswers]);
 
-  const handleOptionClick = (optionLetter: string) => {
+  const handleOptionSelect = (optionLetter: string) => {
     if (optionsLocked) return;
     if (incorrectAnswers.has(optionLetter)) return;
     setLocalSelectedAnswer(optionLetter);
+    // Sync immediately so the session bar never lags behind the UI.
+    onSelectionChange?.(optionLetter);
   };
 
   const handleSubmit = () => {
     if (!localSelectedAnswer || optionsLocked) return;
     if (incorrectAnswers.has(localSelectedAnswer)) return;
-    const correct = localSelectedAnswer === question.correct_option;
-    // Clear selection immediately so user can pick again on retry.
+    const answer = localSelectedAnswer;
+    const correct = answer === question.correct_option;
     setLocalSelectedAnswer(null);
-    onAnswerSubmit(localSelectedAnswer, correct);
+    onSelectionChange?.(null);
+    onAnswerSubmit(answer, correct);
   };
 
   const OPTION_ROW_BASE = "bg-surface-subtle dark:bg-surface-mid";
@@ -480,10 +481,8 @@ export function QuestionCard({
               incorrectAnswers.has(letter) && !isCorrectAnswer;
             const showDistractorControl = isWrongAttempt && Boolean(distractor);
             const distractorRevealed = revealedDistractors.has(letter);
-            const canClick = !optionsLocked && !isWrongAttempt;
-            const showSubmit =
-              canClick &&
-              localSelectedAnswer === letter;
+            const canSelect = !optionsLocked && !isWrongAttempt;
+            const showSubmit = canSelect && localSelectedAnswer === letter;
             const showCorrectMark =
               (isAnswered && isCorrect && isCorrectAnswer) ||
               (answerRevealed && isCorrectAnswer);
@@ -496,6 +495,28 @@ export function QuestionCard({
             return (
             <div
               key={letter}
+              role={canSelect ? "button" : undefined}
+              tabIndex={canSelect ? 0 : undefined}
+              aria-pressed={canSelect ? localSelectedAnswer === letter : undefined}
+              aria-disabled={!canSelect || undefined}
+              aria-label={`Option ${letter}`}
+              onPointerDown={(e) => {
+                // Prefer pointerdown so selection updates even if click is lost
+                // on complex KaTeX/HTML inside the option.
+                if (e.button !== 0) return;
+                if (!canSelect) return;
+                // Don't steal clicks from the submit / distractor controls.
+                const target = e.target as HTMLElement;
+                if (target.closest("[data-option-control]")) return;
+                handleOptionSelect(letter);
+              }}
+              onKeyDown={(e) => {
+                if (!canSelect) return;
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleOptionSelect(letter);
+                }
+              }}
               className={cn(
                 "relative flex w-full flex-col overflow-hidden rounded-organic-md transition-[background-color,opacity,box-shadow] duration-200 ease-out",
                 getOptionStyle(letter),
@@ -504,12 +525,7 @@ export function QuestionCard({
               )}
             >
               <div className="relative flex w-full items-center gap-2 px-3.5 py-2.5 sm:gap-3 sm:px-4 sm:py-3">
-                <button
-                  type="button"
-                  onClick={() => handleOptionClick(letter)}
-                  disabled={!canClick}
-                  className="flex min-w-0 flex-1 items-center gap-3 text-left disabled:cursor-default"
-                >
+                <div className="flex min-w-0 flex-1 items-center gap-3 text-left">
                   <span
                     className={cn(
                       "flex w-6 shrink-0 items-center text-sm font-semibold tabular-nums leading-none",
@@ -523,6 +539,8 @@ export function QuestionCard({
                     className={cn(
                       "flex min-w-0 flex-1 items-center text-[0.98rem] leading-relaxed tracking-tight sm:text-[1.02rem]",
                       "font-sans text-text",
+                      // KaTeX/HTML inside options must not capture the row click target.
+                      "pointer-events-none select-none",
                       showDistractorControl &&
                         (distractorRevealed
                           ? "line-clamp-1 pr-[36%] sm:pr-[32%]"
@@ -534,14 +552,17 @@ export function QuestionCard({
                       className="text-inherit inline"
                     />
                   </div>
-                </button>
+                </div>
 
                 {showDistractorControl && !distractorRevealed ? (
                   <button
                     type="button"
-                    onClick={() =>
-                      setRevealedDistractors((prev) => new Set(prev).add(letter))
-                    }
+                    data-option-control
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setRevealedDistractors((prev) => new Set(prev).add(letter));
+                    }}
                     title="Reveal why it may be wrong"
                     className={cn(
                       "absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2",
@@ -578,6 +599,8 @@ export function QuestionCard({
                   {showSubmit ? (
                     <button
                       type="button"
+                      data-option-control
+                      onPointerDown={(e) => e.stopPropagation()}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleSubmit();
