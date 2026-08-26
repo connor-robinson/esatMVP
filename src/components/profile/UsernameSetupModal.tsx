@@ -36,11 +36,11 @@ export function UsernameSetupModal({ isOpen, onComplete, blocking = false }: Use
     }
 
     // Validate format first
-    const usernameRegex = /^[a-zA-Z0-9_-]{2,20}$/;
+    const usernameRegex = /^[a-zA-Z0-9_-]{4,20}$/;
     if (!usernameRegex.test(username)) {
       setAvailability({
         available: false,
-        message: 'Username must be 2-20 characters and contain only letters, numbers, underscores, or hyphens'
+        message: 'Username must be 4-20 characters and contain only letters, numbers, underscores, or hyphens'
       });
       setError(null);
       return;
@@ -178,7 +178,7 @@ export function UsernameSetupModal({ isOpen, onComplete, blocking = false }: Use
               )}
               
               <p className="text-xs text-white/40 mt-2">
-                2-20 characters. Letters, numbers, underscores, and hyphens only.
+                4-20 characters. Letters, numbers, underscores, and hyphens only.
               </p>
             </div>
 

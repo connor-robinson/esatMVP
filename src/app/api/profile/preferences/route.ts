@@ -144,10 +144,10 @@ export async function PATCH(request: NextRequest) {
     // Validate username if it's being updated
     if (username !== undefined && username !== null) {
       // Validate username format first
-      const usernameRegex = /^[a-zA-Z0-9_-]{2,20}$/;
+      const usernameRegex = /^[a-zA-Z0-9_-]{4,20}$/;
       if (!usernameRegex.test(username)) {
         return NextResponse.json(
-          { error: 'Username must be 2-20 characters and contain only letters, numbers, underscores, or hyphens' },
+          { error: 'Username must be 4-20 characters and contain only letters, numbers, underscores, or hyphens' },
           { status: 400 }
         );
       }

@@ -21,7 +21,7 @@ type ExamPref = "ESAT" | "TMUA";
 type Step = "username" | "exam" | "applicant" | "universities" | "referral" | "emails";
 type SittingChoice = "october_2026" | "january_2027" | "not_sure" | "future";
 
-const USERNAME_REGEX = /^[a-zA-Z0-9_-]{2,20}$/;
+const USERNAME_REGEX = /^[a-zA-Z0-9_-]{4,20}$/;
 
 const ALL_STEPS: Step[] = [
   "username",
@@ -88,7 +88,7 @@ function ProgressBar({ stepIndex, total }: { stepIndex: number; total: number })
   const pct = Math.round(((stepIndex + 1) / total) * 100);
   return (
     <div className="w-full" aria-hidden>
-      <div className="h-2 w-full overflow-hidden rounded-full bg-white/10">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
         <div
           className={cn("h-full rounded-full transition-[width] duration-500 ease-out", ACCENT.bar)}
           style={{ width: `${pct}%` }}
@@ -116,15 +116,15 @@ function ChoiceCard({
       type="button"
       onClick={onClick}
       className={cn(
-        "w-full rounded-2xl px-5 py-4 text-left transition-colors duration-200",
+        "w-full rounded-xl px-4 py-3 text-left transition-colors duration-200",
         selected ? ACCENT.selected : "bg-surface-mid text-text hover:bg-surface-neutral",
       )}
     >
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-2.5">
         <div>
-          <p className="text-base font-semibold">{title}</p>
+          <p className="text-sm font-semibold">{title}</p>
           {description ? (
-            <p className={cn("mt-1 text-sm", selected ? ACCENT.selectedMuted : "text-text-muted")}>
+            <p className={cn("mt-0.5 text-xs", selected ? ACCENT.selectedMuted : "text-text-muted")}>
               {description}
             </p>
           ) : null}
@@ -132,15 +132,15 @@ function ChoiceCard({
         {checkbox ? (
           <span
             className={cn(
-              "flex h-5 w-5 shrink-0 items-center justify-center rounded-md",
+              "flex h-4 w-4 shrink-0 items-center justify-center rounded",
               selected ? "bg-white text-[#4C8BF5]" : "bg-white/10",
             )}
             aria-hidden
           >
-            {selected ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : null}
+            {selected ? <Check className="h-3 w-3" strokeWidth={3} /> : null}
           </span>
         ) : selected ? (
-          <Check className="h-5 w-5 shrink-0" aria-hidden />
+          <Check className="h-4 w-4 shrink-0" aria-hidden />
         ) : null}
       </div>
     </button>
@@ -257,7 +257,7 @@ function OnboardingContent() {
     if (!USERNAME_REGEX.test(username)) {
       setUsernameAvailability({
         available: false,
-        message: "2–20 characters. Letters, numbers, underscores, and hyphens only.",
+        message: "4–20 characters. Letters, numbers, underscores, and hyphens only.",
       });
       return;
     }
@@ -479,9 +479,9 @@ function OnboardingContent() {
         />
       </div>
 
-      <div className="relative mx-auto flex min-h-[calc(100vh-58px)] w-full max-w-4xl flex-col px-5 py-8 sm:px-8 sm:py-10">
+      <div className="relative mx-auto flex min-h-[calc(100vh-58px)] w-full max-w-6xl flex-col px-5 py-6 sm:px-8 sm:py-8">
         {isPreview ? (
-          <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[#4C8BF5]/15 px-4 py-3 text-sm text-text">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-[#4C8BF5]/15 px-3.5 py-2.5 text-xs text-text">
             <p>
               <span className="font-semibold">Preview</span>
               <span className="text-text-muted"> (nothing is saved)</span>
@@ -499,29 +499,29 @@ function OnboardingContent() {
         <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
           <div
             className={cn(
-              "flex w-full max-w-[52rem] flex-col overflow-hidden rounded-[1.75rem] bg-surface-elevated",
-              "h-[min(44rem,calc(100vh-6rem))] sm:h-[min(46rem,calc(100vh-5rem))]",
-              "px-8 pb-8 pt-7 sm:px-14 sm:pb-10 sm:pt-9",
+              "flex w-full max-w-[68rem] flex-col overflow-hidden rounded-[1.5rem] bg-surface-elevated",
+              "h-[min(36rem,calc(100vh-5.5rem))] sm:h-[min(38rem,calc(100vh-4.5rem))]",
+              "px-6 pb-6 pt-5 sm:px-12 sm:pb-8 sm:pt-7",
             )}
           >
             <ProgressBar stepIndex={stepIndex} total={steps.length} />
 
-            <div className="mx-auto mt-9 flex min-h-0 w-full max-w-xl flex-1 flex-col">
+            <div className="mx-auto mt-6 flex min-h-0 w-full max-w-3xl flex-1 flex-col">
               {!usesStepTitle ? (
-                <h1 className="shrink-0 text-3xl font-bold tracking-tight text-text sm:text-4xl">
+                <h1 className="shrink-0 text-2xl font-bold tracking-tight text-text sm:text-[1.75rem]">
                   Set up your account
                 </h1>
               ) : null}
 
-              <div className="mt-7 min-h-0 flex-1 space-y-6 overflow-y-auto pr-1">
+              <div className="mt-5 min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
                 {step === "username" ? (
                   <>
                     <div>
-                      <h2 className="text-xl font-semibold text-text">Choose a username</h2>
+                      <h2 className="text-base font-semibold text-text">Choose a username</h2>
                     </div>
 
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-text" htmlFor="setup-username">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-medium text-text" htmlFor="setup-username">
                         Username
                       </label>
                       <div className="relative">
@@ -534,24 +534,24 @@ function OnboardingContent() {
                           autoFocus
                           disabled={saving}
                           autoComplete="username"
-                          className="w-full rounded-lg border-0 bg-surface-mid px-4 py-3.5 pr-11 text-text outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 placeholder:text-text-subtle"
+                          className="w-full rounded-lg border-0 bg-surface-mid px-3.5 py-2.5 pr-10 text-sm text-text outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 placeholder:text-text-subtle"
                         />
-                        <div className="absolute right-3.5 top-1/2 -translate-y-1/2">
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
                           {checkingUsername ? (
-                            <Loader2 className="h-4 w-4 animate-spin text-text-muted" />
+                            <Loader2 className="h-3.5 w-3.5 animate-spin text-text-muted" />
                           ) : null}
                           {!checkingUsername && usernameAvailability.available === true ? (
-                            <CheckCircle2 className={cn("h-4 w-4", ACCENT.check)} />
+                            <CheckCircle2 className={cn("h-3.5 w-3.5", ACCENT.check)} />
                           ) : null}
                           {!checkingUsername && usernameAvailability.available === false ? (
-                            <AlertCircle className="h-4 w-4 text-error" />
+                            <AlertCircle className="h-3.5 w-3.5 text-error" />
                           ) : null}
                         </div>
                       </div>
                       {usernameAvailability.message ? (
                         <p
                           className={cn(
-                            "text-xs",
+                            "text-[11px]",
                             usernameAvailability.available === true
                               ? ACCENT.available
                               : "text-error",
@@ -560,8 +560,8 @@ function OnboardingContent() {
                           {usernameAvailability.message}
                         </p>
                       ) : (
-                        <p className="text-xs text-text-muted">
-                          2–20 characters. Letters, numbers, underscores, and hyphens.
+                        <p className="text-[11px] text-text-muted">
+                          4–20 characters. Letters, numbers, underscores, and hyphens.
                         </p>
                       )}
                     </div>
@@ -576,7 +576,7 @@ function OnboardingContent() {
                       }
                       onClick={() => void submitUsername()}
                       className={cn(
-                        "w-full rounded-2xl py-3.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
+                        "w-full rounded-xl py-2.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
                         ACCENT.btn,
                       )}
                     >
@@ -588,10 +588,10 @@ function OnboardingContent() {
                 {step === "exam" ? (
                   <>
                     <div>
-                      <h2 className="text-xl font-semibold text-text">Which exam?</h2>
+                      <h2 className="text-base font-semibold text-text">Which exam?</h2>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                       <ChoiceCard
                         selected={exam === "ESAT"}
                         title="ESAT"
@@ -610,9 +610,9 @@ function OnboardingContent() {
                     </div>
 
                     {exam === "ESAT" ? (
-                      <div className="space-y-3">
-                        <p className="text-sm font-medium text-text">Your 3 subjects</p>
-                        <div className="flex flex-wrap gap-2">
+                      <div className="space-y-2">
+                        <p className="text-xs font-medium text-text">Your 3 subjects</p>
+                        <div className="flex flex-wrap gap-1.5">
                           {ESAT_SUBJECTS.map((subject) => {
                             const selected = subjects.includes(subject);
                             return (
@@ -621,7 +621,7 @@ function OnboardingContent() {
                                 type="button"
                                 onClick={() => toggleSubject(subject)}
                                 className={cn(
-                                  "rounded-xl px-3.5 py-2 text-sm transition-colors",
+                                  "rounded-lg px-3 py-1.5 text-xs transition-colors",
                                   esatSubjectPillClass(subject, selected),
                                 )}
                               >
@@ -630,16 +630,16 @@ function OnboardingContent() {
                             );
                           })}
                         </div>
-                        <p className="text-xs text-text-muted">{subjects.length}/3 selected</p>
+                        <p className="text-[11px] text-text-muted">{subjects.length}/3 selected</p>
                       </div>
                     ) : null}
 
-                    <div className="flex gap-3">
+                    <div className="flex gap-2.5">
                       {stepIndex > 0 ? (
                         <button
                           type="button"
                           onClick={goBack}
-                          className="flex-1 rounded-2xl bg-surface-mid py-3.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
+                          className="flex-1 rounded-xl bg-surface-mid py-2.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
                         >
                           Back
                         </button>
@@ -649,7 +649,7 @@ function OnboardingContent() {
                         disabled={saving || (exam === "ESAT" && subjects.length !== 3)}
                         onClick={() => void submitExam()}
                         className={cn(
-                          "flex-1 rounded-2xl py-3.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
+                          "flex-1 rounded-xl py-2.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
                           ACCENT.btn,
                         )}
                       >
@@ -662,15 +662,15 @@ function OnboardingContent() {
                 {step === "applicant" ? (
                   <>
                     <div>
-                      <h1 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">
+                      <h1 className="text-2xl font-bold tracking-tight text-text sm:text-[1.75rem]">
                         Application timing
                       </h1>
-                      <p className="mt-2 text-sm text-text-muted">
+                      <p className="mt-1.5 text-xs text-text-muted">
                         When are you planning to take the {exam}?
                       </p>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                       {SITTING_OPTIONS.map((option) => (
                         <ChoiceCard
                           key={option.id}
@@ -682,11 +682,11 @@ function OnboardingContent() {
                       ))}
                     </div>
 
-                    <div className="flex gap-3">
+                    <div className="flex gap-2.5">
                       <button
                         type="button"
                         onClick={goBack}
-                        className="flex-1 rounded-2xl bg-surface-mid py-3.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
+                        className="flex-1 rounded-xl bg-surface-mid py-2.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
                       >
                         Back
                       </button>
@@ -695,7 +695,7 @@ function OnboardingContent() {
                         disabled={saving}
                         onClick={() => void submitApplicant()}
                         className={cn(
-                          "flex-1 rounded-2xl py-3.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
+                          "flex-1 rounded-xl py-2.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
                           ACCENT.btn,
                         )}
                       >
@@ -708,15 +708,15 @@ function OnboardingContent() {
                 {step === "universities" ? (
                   <>
                     <div>
-                      <h1 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">
+                      <h1 className="text-2xl font-bold tracking-tight text-text sm:text-[1.75rem]">
                         Target universities
                       </h1>
-                      <p className="mt-2 text-sm text-text-muted">
+                      <p className="mt-1.5 text-xs text-text-muted">
                         Which universities are you applying to?
                       </p>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                       {TARGET_UNIVERSITIES.map((uni) => (
                         <ChoiceCard
                           key={uni}
@@ -728,11 +728,11 @@ function OnboardingContent() {
                       ))}
                     </div>
 
-                    <div className="flex gap-3">
+                    <div className="flex gap-2.5">
                       <button
                         type="button"
                         onClick={goBack}
-                        className="flex-1 rounded-2xl bg-surface-mid py-3.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
+                        className="flex-1 rounded-xl bg-surface-mid py-2.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
                       >
                         Back
                       </button>
@@ -741,7 +741,7 @@ function OnboardingContent() {
                         disabled={saving || universities.length === 0}
                         onClick={() => void submitUniversities()}
                         className={cn(
-                          "flex-1 rounded-2xl py-3.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
+                          "flex-1 rounded-xl py-2.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
                           ACCENT.btn,
                         )}
                       >
@@ -754,15 +754,15 @@ function OnboardingContent() {
                 {step === "referral" ? (
                   <>
                     <div>
-                      <h1 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">
+                      <h1 className="text-2xl font-bold tracking-tight text-text sm:text-[1.75rem]">
                         How did you hear about us?
                       </h1>
-                      <p className="mt-2 text-sm text-text-muted">
+                      <p className="mt-1.5 text-xs text-text-muted">
                         This helps us improve the app.
                       </p>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                       {REFERRAL_SOURCES.map((source) => (
                         <ChoiceCard
                           key={source}
@@ -776,11 +776,11 @@ function OnboardingContent() {
                       ))}
                     </div>
 
-                    <div className="flex gap-3">
+                    <div className="flex gap-2.5">
                       <button
                         type="button"
                         onClick={goBack}
-                        className="flex-1 rounded-2xl bg-surface-mid py-3.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
+                        className="flex-1 rounded-xl bg-surface-mid py-2.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
                       >
                         Back
                       </button>
@@ -789,7 +789,7 @@ function OnboardingContent() {
                         disabled={saving || !referral}
                         onClick={() => void submitReferral()}
                         className={cn(
-                          "flex-1 rounded-2xl py-3.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
+                          "flex-1 rounded-xl py-2.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
                           ACCENT.btn,
                         )}
                       >
@@ -802,10 +802,10 @@ function OnboardingContent() {
                 {step === "emails" ? (
                   <>
                     <div>
-                      <h1 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">
+                      <h1 className="text-2xl font-bold tracking-tight text-text sm:text-[1.75rem]">
                         Email tips?
                       </h1>
-                      <p className="mt-2 text-sm text-text-muted">
+                      <p className="mt-1.5 text-xs text-text-muted">
                         Optional. You can change this anytime in settings.
                       </p>
                     </div>
@@ -814,7 +814,7 @@ function OnboardingContent() {
                       type="button"
                       onClick={() => setMarketingEmails((v) => !v)}
                       className={cn(
-                        "flex w-full items-start gap-3 rounded-2xl px-4 py-3.5 text-left transition-colors",
+                        "flex w-full items-start gap-2.5 rounded-xl px-3.5 py-3 text-left transition-colors",
                         marketingEmails
                           ? "bg-[#4C8BF5]/15 text-text"
                           : "bg-surface-mid text-text hover:bg-surface-neutral",
@@ -822,31 +822,31 @@ function OnboardingContent() {
                     >
                       <span
                         className={cn(
-                          "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md",
+                          "mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded",
                           marketingEmails ? "bg-[#4C8BF5] text-white" : "bg-white/10",
                         )}
                         aria-hidden
                       >
                         {marketingEmails ? (
-                          <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                          <Check className="h-3 w-3" strokeWidth={3} />
                         ) : null}
                       </span>
                       <span>
                         <span className="block text-sm font-semibold">
                           Send me Tips and Tricks for {exam}.
                         </span>
-                        <span className="mt-0.5 block text-xs text-text-muted">
+                        <span className="mt-0.5 block text-[11px] text-text-muted">
                           Email study tips for the {exam}, with minimal marketing.
                           Unsubscribe anytime.
                         </span>
                       </span>
                     </button>
 
-                    <div className="flex gap-3">
+                    <div className="flex gap-2.5">
                       <button
                         type="button"
                         onClick={goBack}
-                        className="flex-1 rounded-2xl bg-surface-mid py-3.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
+                        className="flex-1 rounded-xl bg-surface-mid py-2.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
                       >
                         Back
                       </button>
@@ -855,7 +855,7 @@ function OnboardingContent() {
                         disabled={saving}
                         onClick={() => void finish()}
                         className={cn(
-                          "flex-1 rounded-2xl py-3.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
+                          "flex-1 rounded-xl py-2.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
                           ACCENT.btn,
                         )}
                       >
@@ -866,16 +866,16 @@ function OnboardingContent() {
                 ) : null}
 
                 {error ? (
-                  <p className="text-center text-sm text-error">{error}</p>
+                  <p className="text-center text-xs text-error">{error}</p>
                 ) : null}
               </div>
 
               {!isLastStep ? (
-                <p className="mt-6 shrink-0 text-center text-sm text-text-muted">
+                <p className="mt-4 shrink-0 text-center text-xs text-text-muted">
                   You can change this in settings later.
                 </p>
               ) : (
-                <div className="mt-6 shrink-0" aria-hidden />
+                <div className="mt-4 shrink-0" aria-hidden />
               )}
             </div>
           </div>

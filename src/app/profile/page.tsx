@@ -435,7 +435,7 @@ export default function ProfilePage() {
 
   // Check if username is valid
   const isUsernameValid = useCallback((value: string) => {
-    if (value.length < 2) return false;
+    if (value.length < 4) return false;
     const usernameRegex = /^[a-zA-Z0-9_-]+$/;
     return usernameRegex.test(value) && value.length <= 20;
   }, []);
@@ -450,7 +450,7 @@ export default function ProfilePage() {
     if (!isUsernameValid(value)) {
       setUsernameAvailability({
         available: false,
-        message: 'Username must be 2-20 characters and contain only letters, numbers, underscores, or hyphens'
+        message: 'Username must be 4-20 characters and contain only letters, numbers, underscores, or hyphens'
       });
       return;
     }
@@ -501,7 +501,7 @@ export default function ProfilePage() {
     }
 
     if (!isUsernameValid(usernameInput)) {
-      setUsernameError('Username must be 2-20 characters and contain only letters, numbers, underscores, or hyphens');
+      setUsernameError('Username must be 4-20 characters and contain only letters, numbers, underscores, or hyphens');
       return;
     }
 
