@@ -93,26 +93,50 @@ export const PARTNER_FEEDBACK_FEATURES = [
 export type PartnerFeedbackFeatureId =
   (typeof PARTNER_FEEDBACK_FEATURES)[number]["id"];
 
+export function redeemErrorTitle(code: RedeemErrorCode): string {
+  switch (code) {
+    case "already_claimed":
+      return "This code has already been used";
+    case "expired":
+      return "This code has expired";
+    case "partner_inactive":
+    case "unavailable":
+    case "invalid_token":
+      return "This access code isn't valid";
+    case "already_partner_entitled":
+    case "already_entitled":
+      return "You already have programme access";
+    case "already_paid":
+      return "You already have full access";
+    case "rate_limited":
+      return "Too many attempts";
+    case "unauthenticated":
+      return "Sign in to claim access";
+    default:
+      return "Access unavailable";
+  }
+}
+
 export function redeemErrorMessage(code: RedeemErrorCode): string {
   switch (code) {
     case "already_claimed":
-      return "This access code has already been used.";
+      return "Someone has already redeemed this access code. If that was you, sign in with the same account. If not, ask your school or programme for a new code.";
     case "expired":
-      return "This access code has expired.";
+      return "This access code is past its expiry date. Ask your school or programme for a new code.";
     case "partner_inactive":
-      return "This access code isn't valid.";
+      return "This programme is not currently issuing access. Contact your school or programme organiser for help.";
     case "already_partner_entitled":
     case "already_entitled":
-      return "You already have access through this organisation.";
+      return "Your account already has active access through this organisation, so this code was not needed.";
     case "already_paid":
-      return "Your account already has full ESAT Camp access, so you don't need to redeem this code.";
+      return "Your account already has full ESAT Camp access, so you don't need to redeem a complimentary code.";
     case "rate_limited":
-      return "Too many attempts. Please try again in a few minutes.";
+      return "Please wait a few minutes, then try again.";
     case "unauthenticated":
-      return "Please sign in to claim this access.";
+      return "Create an account or sign in to claim your complimentary ESAT Camp access.";
     case "unavailable":
     case "invalid_token":
     default:
-      return "This access code isn't valid.";
+      return "Check the code and try again. If it still fails, ask your school or programme for a fresh code.";
   }
 }

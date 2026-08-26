@@ -7,7 +7,7 @@ import {
   partnerShortAccessLabel,
 } from "./eligibility";
 import { complimentaryAccessEndIso, formatPartnerAccessDate } from "./dates";
-import { redeemErrorMessage } from "./types";
+import { redeemErrorMessage, redeemErrorTitle } from "./types";
 
 const ROOT = join(process.cwd(), "src");
 
@@ -36,9 +36,11 @@ describe("partner access claim UX copy", () => {
       "Enter the access code provided by your school or programme.",
     );
     expect(claim).not.toContain('data-testid="access-code-input"');
-    expect(claim).toContain("Your {shortLabel} access is ready");
+    expect(claim).toContain("Your ${shortLabel} access is ready");
     expect(claim).toContain("Claim access");
     expect(claim).toContain('data-testid="claim-access-button"');
+    expect(claim).toContain("Try calibration test");
+    expect(claim).toContain("Explore the question bank");
   });
 
   it("logged-out claim preserves code through Google auth via claim cookie + complete", () => {
@@ -134,8 +136,12 @@ describe("partner short label + success date", () => {
     const success = readSrc("app", "access", "success", "page.tsx");
     expect(success).toContain("partnerEndsAt");
     expect(success).toContain("complimentaryAccessEndIso");
+    expect(success).toContain("Try calibration test");
+    expect(success).toContain("Explore the question bank");
     expect(success).toContain("Go to dashboard");
-    expect(success).toContain("Your ESAT Camp access is active");
+    expect(success).toContain(
+      "Success 🎉 You now have full access to ESAT Camp",
+    );
     expect(
       formatPartnerAccessDate(
         complimentaryAccessEndIso({
@@ -147,15 +153,20 @@ describe("partner short label + success date", () => {
     ).toBe("16 October 2027");
   });
 
-  it("uses simplified invalid/expired/used copy", () => {
-    expect(redeemErrorMessage("invalid_token")).toBe(
-      "This access code isn't valid.",
+  it("uses specific invalid/expired/used titles and copy", () => {
+    expect(redeemErrorTitle("invalid_token")).toBe(
+      "This access code isn't valid",
     );
-    expect(redeemErrorMessage("expired")).toBe(
-      "This access code has expired.",
+    expect(redeemErrorMessage("invalid_token")).toContain(
+      "Check the code and try again",
     );
-    expect(redeemErrorMessage("already_claimed")).toBe(
-      "This access code has already been used.",
+    expect(redeemErrorTitle("expired")).toBe("This code has expired");
+    expect(redeemErrorMessage("expired")).toContain("past its expiry date");
+    expect(redeemErrorTitle("already_claimed")).toBe(
+      "This code has already been used",
+    );
+    expect(redeemErrorMessage("already_claimed")).toContain(
+      "already redeemed this access code",
     );
   });
 });

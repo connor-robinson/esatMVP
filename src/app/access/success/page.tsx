@@ -2,11 +2,19 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Container } from "@/components/layout/Container";
 import { APP_ROUTES } from "@/lib/seo/config";
 import { trackEvent } from "@/lib/ga/trackEvent";
-import { complimentaryAccessEndIso, formatPartnerAccessDate } from "@/lib/partners/dates";
+import {
+  complimentaryAccessEndIso,
+  formatPartnerAccessDate,
+} from "@/lib/partners/dates";
 import { PARTNER_REDEEM_TRACK_COOKIE } from "@/lib/partners/types";
+import {
+  AccessOutcomeCard,
+  ACCESS_CTA,
+  ACCESS_CTA_SECONDARY,
+  AccessTextLink,
+} from "@/components/partners/AccessOutcomeCard";
 
 function readTrackCookie(): {
   partner: string;
@@ -19,7 +27,9 @@ function readTrackCookie(): {
     .map((c) => c.trim())
     .find((c) => c.startsWith(`${PARTNER_REDEEM_TRACK_COOKIE}=`));
   if (!match) return null;
-  const raw = decodeURIComponent(match.slice(PARTNER_REDEEM_TRACK_COOKIE.length + 1));
+  const raw = decodeURIComponent(
+    match.slice(PARTNER_REDEEM_TRACK_COOKIE.length + 1),
+  );
   const [partner, accessEnd, batch] = raw.split("|");
   if (!partner) return null;
   return { partner, accessEnd: accessEnd || "", batch: batch || "" };
@@ -72,53 +82,75 @@ export default function AccessSuccessPage() {
     };
   }, []);
 
+  if (loading) {
+    return (
+      <AccessOutcomeCard
+        eyebrow="ESAT Camp"
+        title="Confirming your access"
+        loading
+        loadingLabel="Confirming your access…"
+        testId="access-success"
+      >
+        <p />
+      </AccessOutcomeCard>
+    );
+  }
+
+  if (!hasAccess) {
+    return (
+      <AccessOutcomeCard
+        eyebrow="Access"
+        title="We couldn't confirm your access"
+        tone="error"
+        testId="access-success"
+        actions={
+          <Link href="/access" className={ACCESS_CTA}>
+            Enter access code
+          </Link>
+        }
+      >
+      <p className="text-text-muted">
+          No active institution entitlement was found on this account. If you
+          have a code from your school or programme, redeem it below.
+        </p>
+      </AccessOutcomeCard>
+    );
+  }
+
   return (
-    <main className="min-h-[70vh] py-16" data-testid="access-success">
-      <Container size="sm">
-        {loading ? (
-          <p className="text-text-muted">Confirming your access…</p>
-        ) : hasAccess ? (
-          <>
-            <h1 className="text-3xl font-semibold tracking-tight text-white">
-              Your ESAT Camp access is active
-            </h1>
-            <p className="mt-4 text-text-muted">
-              {displayName
-                ? `You're accessing ESAT Camp through the ${displayName} programme.`
-                : "You're accessing ESAT Camp through an institution programme."}
-            </p>
-            {endsAt && (
-              <p className="mt-2 text-text-muted">
-                Full access available until {formatPartnerAccessDate(endsAt)}.
-              </p>
-            )}
-            <div className="mt-10">
-              <Link
-                href={APP_ROUTES.dashboard}
-                className="inline-flex justify-center rounded-lg bg-primary px-5 py-3 text-sm font-medium text-white"
-              >
-                Go to dashboard
-              </Link>
-            </div>
-          </>
-        ) : (
-          <>
-            <h1 className="text-3xl font-semibold tracking-tight text-white">
-              Access not found
-            </h1>
-            <p className="mt-4 text-text-muted">
-              We could not confirm an active institution entitlement on this
-              account. If you have a code, redeem it from the access page.
-            </p>
-            <Link
-              href="/access"
-              className="mt-8 inline-flex rounded-lg bg-primary px-5 py-3 text-sm font-medium text-white"
-            >
-              Enter access code
-            </Link>
-          </>
-        )}
-      </Container>
-    </main>
+    <AccessOutcomeCard
+      eyebrow="Programme access"
+      title="Success 🎉 You now have full access to ESAT Camp"
+      tone="success"
+      testId="access-success"
+      actions={
+        <>
+          <Link href={APP_ROUTES.calibration} className={ACCESS_CTA}>
+            Try calibration test
+          </Link>
+          <Link href={APP_ROUTES.questionBank} className={ACCESS_CTA_SECONDARY}>
+            Explore the question bank
+          </Link>
+          <AccessTextLink href={APP_ROUTES.dashboard}>
+            Go to dashboard
+          </AccessTextLink>
+        </>
+      }
+    >
+      <p className="text-text-muted">
+        {displayName
+          ? `You're accessing ESAT Camp through the ${displayName} programme.`
+          : "You're accessing ESAT Camp through an institution programme."}
+      </p>
+      {endsAt ? (
+        <p className="text-text-muted">
+          Full access available until {formatPartnerAccessDate(endsAt)}.
+        </p>
+      ) : null}
+      <p className="text-text-muted">
+        Start with a short calibration to see where you stand, or jump straight
+        into practice.
+      </p>
+    </AccessOutcomeCard>
   );
 }

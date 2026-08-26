@@ -177,11 +177,11 @@ describe("partner feedback eligibility", () => {
 
 describe("partner redeem error copy", () => {
   it("uses the required user-facing messages", () => {
-    expect(redeemErrorMessage("already_claimed")).toBe(
-      "This access code has already been used.",
+    expect(redeemErrorMessage("already_claimed")).toContain(
+      "already redeemed this access code",
     );
-    expect(redeemErrorMessage("expired")).toContain("expired");
-    expect(redeemErrorMessage("unavailable")).toContain("isn't valid");
+    expect(redeemErrorMessage("expired")).toContain("expiry");
+    expect(redeemErrorMessage("unavailable")).toContain("Check the code");
   });
 });
 

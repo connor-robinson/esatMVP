@@ -7,7 +7,7 @@ import {
   esatSubjectPillClass,
 } from "@/components/profile/settingsSubjectPills";
 import { cn } from "@/lib/utils";
-import { sanitizeRedirectTo } from "@/lib/onboarding/redirect";
+import { sanitizeRedirectTo, resolvePostOnboardingPath } from "@/lib/onboarding/redirect";
 import {
   REFERRAL_SOURCES,
   TARGET_UNIVERSITIES,
@@ -362,9 +362,10 @@ function OnboardingContent() {
   const finish = async () => {
     setSaving(true);
     setError(null);
+    const nextPath = resolvePostOnboardingPath(redirectTo);
     try {
       if (isPreview) {
-        router.replace(redirectTo);
+        router.replace(nextPath);
         return;
       }
       await savePrefs({
@@ -377,7 +378,7 @@ function OnboardingContent() {
         marketing_emails_consent: marketingEmails,
         onboarding_completed: true,
       });
-      window.location.replace(redirectTo);
+      window.location.replace(nextPath);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setSaving(false);

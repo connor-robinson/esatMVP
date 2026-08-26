@@ -2,11 +2,20 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Container } from "@/components/layout/Container";
 import { APP_ROUTES } from "@/lib/seo/config";
 import { formatPartnerAccessDate } from "@/lib/partners/dates";
 import { partnerShortAccessLabel } from "@/lib/partners/eligibility";
-import { redeemErrorMessage, type RedeemErrorCode } from "@/lib/partners/types";
+import {
+  redeemErrorMessage,
+  redeemErrorTitle,
+  type RedeemErrorCode,
+} from "@/lib/partners/types";
+import {
+  AccessOutcomeCard,
+  ACCESS_CTA,
+  ACCESS_CTA_SECONDARY,
+  AccessTextLink,
+} from "@/components/partners/AccessOutcomeCard";
 
 type ClaimView =
   | { status: "loading" }
@@ -24,7 +33,7 @@ type ClaimView =
       endsAt: string;
     }
   | { status: "already_paid" }
-  | { status: "error"; message: string };
+  | { status: "error"; code: RedeemErrorCode; message: string };
 
 async function redeemCode(raw: string) {
   const res = await fetch("/api/access/redeem", {
@@ -34,6 +43,11 @@ async function redeemCode(raw: string) {
   });
   const data = await res.json();
   return { res, data };
+}
+
+function asErrorCode(value: unknown): RedeemErrorCode {
+  const code = String(value || "invalid_token") as RedeemErrorCode;
+  return code;
 }
 
 /** Direct-link claim UX for `/access/[code]`. Never asks the user to enter a code. */
@@ -54,11 +68,11 @@ export function AccessClaimPanel({ code }: { code: string }) {
         const peek = await peekRes.json();
         if (cancelled) return;
         if (!peekRes.ok || !peek.ok) {
+          const codeErr = asErrorCode(peek.error);
           setView({
             status: "error",
-            message: redeemErrorMessage(
-              (peek.error as RedeemErrorCode) || "invalid_token",
-            ),
+            code: codeErr,
+            message: redeemErrorMessage(codeErr),
           });
           return;
         }
@@ -104,11 +118,11 @@ export function AccessClaimPanel({ code }: { code: string }) {
             return;
           }
           if (!res.ok || !data.ok) {
+            const codeErr = asErrorCode(data.error);
             setView({
               status: "error",
-              message: redeemErrorMessage(
-                (data.error as RedeemErrorCode) || "invalid_token",
-              ),
+              code: codeErr,
+              message: redeemErrorMessage(codeErr),
             });
             return;
           }
@@ -126,6 +140,7 @@ export function AccessClaimPanel({ code }: { code: string }) {
         if (!cancelled) {
           setView({
             status: "error",
+            code: "unavailable",
             message: "Something went wrong. Please try again.",
           });
         }
@@ -160,11 +175,11 @@ export function AccessClaimPanel({ code }: { code: string }) {
         return;
       }
       if (!res.ok || !data.ok) {
+        const codeErr = asErrorCode(data.error);
         setView({
           status: "error",
-          message: redeemErrorMessage(
-            (data.error as RedeemErrorCode) || "invalid_token",
-          ),
+          code: codeErr,
+          message: redeemErrorMessage(codeErr),
         });
         setSubmitting(false);
         return;
@@ -173,6 +188,7 @@ export function AccessClaimPanel({ code }: { code: string }) {
     } catch {
       setView({
         status: "error",
+        code: "unavailable",
         message: "Something went wrong. Please try again.",
       });
       setSubmitting(false);
@@ -187,91 +203,134 @@ export function AccessClaimPanel({ code }: { code: string }) {
         })
       : "";
 
+  if (view.status === "loading" || view.status === "claiming") {
+    return (
+      <AccessOutcomeCard
+        eyebrow="Programme access"
+        title={
+          view.status === "claiming"
+            ? "Claiming your access"
+            : "Checking your access"
+        }
+        loading
+        loadingLabel={
+          view.status === "claiming"
+            ? "Claiming your access…"
+            : "Checking your access…"
+        }
+        testId="access-claim-panel"
+      >
+        <p />
+      </AccessOutcomeCard>
+    );
+  }
+
+  if (view.status === "error") {
+    return (
+      <AccessOutcomeCard
+        eyebrow="Access"
+        title={redeemErrorTitle(view.code)}
+        tone="error"
+        testId="access-claim-panel"
+        actions={
+          <Link href="/access" className={ACCESS_CTA}>
+            Enter a different code
+          </Link>
+        }
+      >
+        <p className="text-text-muted" role="alert">
+          {view.message}
+        </p>
+      </AccessOutcomeCard>
+    );
+  }
+
+  if (view.status === "ready") {
+    return (
+      <AccessOutcomeCard
+        eyebrow="Programme access"
+        title={`Your ${shortLabel} access is ready`}
+        tone="info"
+        testId="access-claim-panel"
+        actions={
+          <button
+            type="button"
+            disabled={submitting}
+            onClick={onClaim}
+            className={ACCESS_CTA}
+            data-testid="claim-access-button"
+          >
+            {submitting ? "Claiming…" : "Claim access"}
+          </button>
+        }
+      >
+        <p className="text-text-muted">
+          {view.partnerDisplayName} has provided you with full access to ESAT
+          Camp until {formatPartnerAccessDate(view.accessEndsAt)}.
+        </p>
+        <p className="text-text-muted">
+          Claim it now to unlock calibration, the question bank, and more.
+        </p>
+      </AccessOutcomeCard>
+    );
+  }
+
+  if (view.status === "already_partner") {
+    return (
+      <AccessOutcomeCard
+        eyebrow="Programme access"
+        title={`You already have ${shortLabel} access`}
+        tone="success"
+        testId="access-claim-panel"
+        actions={
+          <>
+            <Link href={APP_ROUTES.calibration} className={ACCESS_CTA}>
+              Try calibration test
+            </Link>
+            <Link
+              href={APP_ROUTES.questionBank}
+              className={ACCESS_CTA_SECONDARY}
+            >
+              Explore the question bank
+            </Link>
+            <AccessTextLink href={APP_ROUTES.dashboard}>
+              Go to dashboard
+            </AccessTextLink>
+          </>
+        }
+      >
+        <p className="text-text-muted">
+          Your ESAT Camp access through {view.partnerDisplayName} is already
+          active until {formatPartnerAccessDate(view.endsAt)}.
+        </p>
+      </AccessOutcomeCard>
+    );
+  }
+
   return (
-    <main className="min-h-[70vh] py-16" data-testid="access-claim-panel">
-      <Container size="sm">
-        {view.status === "loading" || view.status === "claiming" ? (
-          <p className="text-text-muted">
-            {view.status === "claiming"
-              ? "Claiming your access…"
-              : "Checking your access…"}
-          </p>
-        ) : null}
-
-        {view.status === "error" && (
-          <>
-            <h1 className="text-3xl font-semibold tracking-tight !text-white">
-              Access unavailable
-            </h1>
-            <p className="mt-4 text-text-muted" role="alert">
-              {view.message}
-            </p>
-            <Link
-              href="/access"
-              className="mt-8 inline-flex rounded-lg bg-primary px-5 py-3 text-sm font-medium text-white"
-            >
-              Enter a different code
-            </Link>
-          </>
-        )}
-
-        {view.status === "ready" && (
-          <>
-            <h1 className="text-3xl font-semibold tracking-tight !text-white">
-              Your {shortLabel} access is ready
-            </h1>
-            <p className="mt-4 text-text-muted">
-              {view.partnerDisplayName} has provided you with full access to
-              ESAT Camp until {formatPartnerAccessDate(view.accessEndsAt)}.
-            </p>
-            <button
-              type="button"
-              disabled={submitting}
-              onClick={onClaim}
-              className="mt-8 rounded-lg bg-primary px-5 py-3 text-sm font-medium text-white disabled:opacity-60"
-              data-testid="claim-access-button"
-            >
-              {submitting ? "Claiming…" : "Claim access"}
-            </button>
-          </>
-        )}
-
-        {view.status === "already_partner" && (
-          <>
-            <h1 className="text-3xl font-semibold tracking-tight !text-white">
-              You already have {shortLabel} access
-            </h1>
-            <p className="mt-4 text-text-muted">
-              Your ESAT Camp access through {view.partnerDisplayName} is already
-              active until {formatPartnerAccessDate(view.endsAt)}.
-            </p>
-            <Link
-              href={APP_ROUTES.dashboard}
-              className="mt-8 inline-flex rounded-lg bg-primary px-5 py-3 text-sm font-medium text-white"
-            >
-              Go to dashboard
-            </Link>
-          </>
-        )}
-
-        {view.status === "already_paid" && (
-          <>
-            <h1 className="text-3xl font-semibold tracking-tight !text-white">
-              You already have full access
-            </h1>
-            <p className="mt-4 text-text-muted">
-              Your account already has full ESAT Camp access, so you don&apos;t
-              need to redeem this code.
-            </p>
-            <Link
-              href={APP_ROUTES.dashboard}
-              className="mt-8 inline-flex rounded-lg bg-primary px-5 py-3 text-sm font-medium text-white"
-            >
-              Go to dashboard
-            </Link>
-          </>
-        )}
-      </Container>
-    </main>
+    <AccessOutcomeCard
+      eyebrow="Full access"
+      title="You already have full access"
+      tone="success"
+      testId="access-claim-panel"
+      actions={
+        <>
+          <Link href={APP_ROUTES.calibration} className={ACCESS_CTA}>
+            Try calibration test
+          </Link>
+          <Link href={APP_ROUTES.questionBank} className={ACCESS_CTA_SECONDARY}>
+            Explore the question bank
+          </Link>
+          <AccessTextLink href={APP_ROUTES.dashboard}>
+            Go to dashboard
+          </AccessTextLink>
+        </>
+      }
+    >
+      <p className="text-text-muted">
+        Your account already has full ESAT Camp access, so you don&apos;t need
+        to redeem this complimentary code.
+      </p>
+    </AccessOutcomeCard>
   );
 }

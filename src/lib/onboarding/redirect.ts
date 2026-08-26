@@ -4,8 +4,13 @@
  * /onboarding, which collects everything in one flow.
  */
 
+import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
+
 /** Default destination after login/signup when no safe redirectTo is provided. */
 export const DEFAULT_POST_AUTH_PATH = "/dashboard";
+
+/** First-time users finish onboarding into calibration, not an empty dashboard. */
+export const FIRST_RUN_POST_ONBOARDING_PATH = CALIBRATION_ROUTES.hub;
 
 export function buildOnboardingUrl(redirectTo: string): string {
   const safe =
@@ -29,6 +34,20 @@ export function sanitizeRedirectTo(redirectTo: string | null | undefined): strin
     return DEFAULT_POST_AUTH_PATH;
   }
   return redirectTo;
+}
+
+/**
+ * After the questionnaire, prefer calibration for generic dashboard landings
+ * so first-time users get a clear next step.
+ */
+export function resolvePostOnboardingPath(
+  redirectTo: string | null | undefined,
+): string {
+  const safe = sanitizeRedirectTo(redirectTo);
+  if (safe === DEFAULT_POST_AUTH_PATH || safe === "/dashboard") {
+    return FIRST_RUN_POST_ONBOARDING_PATH;
+  }
+  return safe;
 }
 
 export type PostAuthProfile = {

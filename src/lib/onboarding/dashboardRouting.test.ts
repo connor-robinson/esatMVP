@@ -3,9 +3,11 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_POST_AUTH_PATH,
+  FIRST_RUN_POST_ONBOARDING_PATH,
   buildOnboardingUrl,
   dashboardLoginUrl,
   resolvePostAuthPath,
+  resolvePostOnboardingPath,
   sanitizeRedirectTo,
 } from "@/lib/onboarding/redirect";
 import { APP_ROUTES } from "@/lib/seo/config";
@@ -32,6 +34,15 @@ describe("post-auth redirect defaults", () => {
     expect(sanitizeRedirectTo("/signup?x=1")).toBe("/dashboard");
     expect(sanitizeRedirectTo("/onboarding")).toBe("/dashboard");
     expect(sanitizeRedirectTo("/auth/callback")).toBe("/dashboard");
+  });
+
+  it("sends first-time users to calibration after onboarding", () => {
+    expect(resolvePostOnboardingPath("/dashboard")).toBe(
+      FIRST_RUN_POST_ONBOARDING_PATH,
+    );
+    expect(resolvePostOnboardingPath(null)).toBe(FIRST_RUN_POST_ONBOARDING_PATH);
+    expect(resolvePostOnboardingPath("/access/success")).toBe("/access/success");
+    expect(resolvePostOnboardingPath("/questions")).toBe("/questions");
   });
 
   it("preserves explicit public homepage and app paths", () => {
