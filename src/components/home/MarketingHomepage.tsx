@@ -8,7 +8,7 @@ import { BRAND_CONFIG } from "@/config/brand";
 import { ABOUT_PATH, FOUNDERS } from "@/config/founders";
 import { NAVBAR_HEIGHT_PX } from "@/config/layout";
 import { QUESTION_BANK_TOTAL_COUNT } from "@/config/questionBankMarketing";
-import { MENTAL_MATHS_MODULE_COUNT_MARKETING } from "@/config/mentalMathsMarketing";
+import { MENTAL_MATHS_MODULE_COUNT_MARKETING, MENTAL_MATHS_TOPIC_COUNT_MARKETING } from "@/config/mentalMathsMarketing";
 import type { HomepageSocialProofStats } from "@/lib/homepage/socialProofTypes";
 import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
 import { SEO_LINKS, type SeoLinkKey } from "@/lib/seo/links";
@@ -282,6 +282,9 @@ export function MarketingHomepage({
                   <p className="text-sm leading-relaxed text-[#94A3B8] sm:text-base">
                     We built the platform we wished we&apos;d had for the ESAT.
                   </p>
+                  <p className="text-xs font-medium text-[#64748B] sm:text-sm">
+                    {FOUNDERS.ewan.credential}
+                  </p>
                 </div>
               </div>
 
@@ -290,12 +293,16 @@ export function MarketingHomepage({
                   className={cn(
                     "grid shrink-0 gap-x-6 gap-y-5 sm:gap-x-8 lg:gap-x-10",
                     socialProof.uniqueVisitors != null
-                      ? "grid-cols-3"
-                      : "grid-cols-2",
+                      ? "grid-cols-2 sm:grid-cols-4"
+                      : "grid-cols-3",
                   )}
                 >
                   {(
                     [
+                      {
+                        value: socialProof.practiceQuestions,
+                        label: "Practice questions",
+                      },
                       ...(socialProof.uniqueVisitors != null
                         ? [
                             {
@@ -427,8 +434,8 @@ export function MarketingHomepage({
                 Past Papers
               </h4>
               <p className="mt-3 text-[#94A3B8] leading-relaxed">
-                All official past papers plus our own targeted practice, planned
-                into a roadmap that fits your revision schedule.
+                All official past papers plus our own targeted practice.
+                Use our tailored roadmap.
               </p>
               <div className="mt-auto mb-6 space-y-3">
                 <div className="flex items-center gap-3 rounded-xl bg-white/[0.04] px-4 py-3">
@@ -607,7 +614,7 @@ export function MarketingHomepage({
                     className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
                   />
                   <p className="text-lg text-[#94A3B8]">
-                    Pick an exam and year, .
+                    Pick an exam and year, then calculate your ESAT score.
                   </p>
                 </li>
                 <li className="flex items-start gap-3">
@@ -616,7 +623,7 @@ export function MarketingHomepage({
                     className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
                   />
                   <p className="text-lg text-[#94A3B8]">
-                    Get a predicted score and percentile. No account needed.
+                    Free tool, no login required.
                   </p>
                 </li>
               </ul>
