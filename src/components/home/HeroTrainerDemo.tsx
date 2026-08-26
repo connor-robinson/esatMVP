@@ -339,6 +339,7 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
           </p>
         </div>
       )}
+      </div>
     </div>
   );
 }
