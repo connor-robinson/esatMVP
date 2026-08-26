@@ -282,9 +282,6 @@ export function MarketingHomepage({
                   <p className="text-sm leading-relaxed text-[#94A3B8] sm:text-base">
                     We built the platform we wished we&apos;d had for the ESAT.
                   </p>
-                  <p className="text-xs font-medium text-[#64748B] sm:text-sm">
-                    {FOUNDERS.ewan.credential}
-                  </p>
                 </div>
               </div>
 
@@ -293,16 +290,12 @@ export function MarketingHomepage({
                   className={cn(
                     "grid shrink-0 gap-x-6 gap-y-5 sm:gap-x-8 lg:gap-x-10",
                     socialProof.uniqueVisitors != null
-                      ? "grid-cols-2 sm:grid-cols-4"
-                      : "grid-cols-3",
+                      ? "grid-cols-3"
+                      : "grid-cols-2",
                   )}
                 >
                   {(
                     [
-                      {
-                        value: socialProof.practiceQuestions,
-                        label: "Practice questions",
-                      },
                       ...(socialProof.uniqueVisitors != null
                         ? [
                             {
@@ -525,25 +518,10 @@ export function MarketingHomepage({
                   Time is of the essence in the ESAT. You have to finish each
                   question in less than 90 seconds, with no calculator.
                 </p>
-              </div>
-
-              <div className="flex flex-wrap gap-8 sm:gap-12">
-                <div>
-                  <p className="font-display text-5xl font-bold tabular-nums tracking-tight text-white sm:text-6xl lg:text-7xl">
-                    {MENTAL_MATHS_MODULE_COUNT_MARKETING}+
-                  </p>
-                  <p className="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#94A3B8] sm:text-sm">
-                    Modules
-                  </p>
-                </div>
-                <div>
-                  <p className="font-display text-5xl font-bold tabular-nums tracking-tight text-white sm:text-6xl lg:text-7xl">
-                    {MENTAL_MATHS_TOPIC_COUNT_MARKETING}+
-                  </p>
-                  <p className="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#94A3B8] sm:text-sm">
-                    Topics
-                  </p>
-                </div>
+                <p className="mt-4 text-base font-semibold text-white sm:text-lg">
+                  {MENTAL_MATHS_MODULE_COUNT_MARKETING}+ modules,{" "}
+                  {MENTAL_MATHS_TOPIC_COUNT_MARKETING}+ topics
+                </p>
               </div>
 
               <ul className="space-y-4">
