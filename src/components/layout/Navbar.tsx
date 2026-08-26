@@ -46,7 +46,6 @@ import {
   HelpCircle,
   GraduationCap,
   Home,
-  LayoutDashboard,
   Library,
   LogOut,
   Map,
@@ -345,9 +344,7 @@ export function Navbar() {
   const isSettingsActive =
     pathname === '/settings' || pathname.startsWith('/profile');
   const isHomeScreen = pathname === '/';
-  const isDashboardActive =
-    pathname === DEFAULT_POST_AUTH_PATH ||
-    pathname.startsWith(`${DEFAULT_POST_AUTH_PATH}/`);
+  const logoHref = session?.user ? DEFAULT_POST_AUTH_PATH : '/';
   const showLightModeBeta = isDark && !isHomeScreen;
 
   const navIconSlotClass =
@@ -493,27 +490,12 @@ export function Navbar() {
             >
               <div className='flex min-w-0 flex-[1.35] items-center gap-4 sm:gap-6 lg:gap-8 xl:gap-9'>
                 <Link
-                  href='/'
+                  href={logoHref}
                   className='group interaction-scale inline-flex shrink-0 items-center'
                   aria-label={APP_NAME}
                 >
                   <BrandNavLockup />
                 </Link>
-
-                {!isImmersivePaperView && session?.user ? (
-                  <Link
-                    href={DEFAULT_POST_AUTH_PATH}
-                    prefetch
-                    className={cn(
-                      'hidden shrink-0 text-sm transition-colors duration-fast ease-signature md:inline-flex',
-                      isDashboardActive
-                        ? 'font-bold text-text'
-                        : 'font-medium text-text-muted hover:text-text',
-                    )}
-                  >
-                    Dashboard
-                  </Link>
-                ) : null}
 
                 {!isImmersivePaperView && (
                   <div className='hidden min-w-0 flex-1 items-center gap-x-4 lg:gap-x-6 xl:gap-x-7 md:flex'>
@@ -564,24 +546,6 @@ export function Navbar() {
             {!isImmersivePaperView && mobileMenuOpen && (
               <div className='border-t border-border-subtle pb-5 pt-4 md:hidden'>
                 <div className='flex flex-col gap-6'>
-                  {session?.user ? (
-                    <Link
-                      href={DEFAULT_POST_AUTH_PATH}
-                      prefetch
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={cn(
-                        'inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.12em]',
-                        isDashboardActive ? 'text-text' : 'text-text-muted',
-                      )}
-                    >
-                      <LayoutDashboard
-                        aria-hidden
-                        size={NAV_ICON_PX}
-                        strokeWidth={NAV_ICON_STROKE}
-                      />
-                      Dashboard
-                    </Link>
-                  ) : null}
                   {navSections.map((section) => (
                     <div key={section.section}>
                       <Link

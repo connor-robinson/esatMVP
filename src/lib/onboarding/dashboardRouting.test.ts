@@ -117,12 +117,12 @@ describe("homepage vs dashboard route ownership", () => {
     expect(dashboardLayout).toContain("noIndexFollowMetadata");
   });
 
-  it("exposes Dashboard nav to /dashboard while logo stays on /", () => {
+  it("uses the brand logo as dashboard when logged in, homepage when logged out", () => {
     const navbar = readSrc("components", "layout", "Navbar.tsx");
     expect(navbar).toContain("DEFAULT_POST_AUTH_PATH");
-    expect(navbar).toContain("Dashboard");
-    expect(navbar).toMatch(/href=['"]\/['"]/);
+    expect(navbar).toContain("logoHref");
     expect(navbar).toContain("BrandNavLockup");
+    expect(navbar).not.toMatch(/>\s*Dashboard\s*</);
   });
 
   it("points practice CTAs and legacy overview redirects at /dashboard", () => {
