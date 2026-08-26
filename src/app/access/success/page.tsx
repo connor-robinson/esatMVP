@@ -75,7 +75,7 @@ export default function AccessSuccessPage() {
         ) : hasAccess ? (
           <>
             <h1 className="text-3xl font-semibold tracking-tight text-white">
-              Your complimentary ESAT Camp access is active
+              Success! Your ESAT Camp access is active.
             </h1>
             <p className="mt-4 text-text-muted">
               {displayName
