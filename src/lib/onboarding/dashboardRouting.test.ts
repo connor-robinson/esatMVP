@@ -112,6 +112,15 @@ describe("post-auth redirect defaults", () => {
     expect(middleware).toMatch(/needsSetup && !onOnboarding && !onAccess/);
   });
 
+  it("login validates sessions with getUser and does not blank the page", () => {
+    const login = readSrc("app", "login", "page.tsx");
+    expect(login).toContain("getUser()");
+    expect(login).toContain("Continuing…");
+    expect(login).toContain("isPartnerAccessPath");
+    expect(login).toContain("signOut");
+    expect(login).not.toMatch(/if \((session\?\.user && !pendingEmail) \|\| isChecking\) \{\s*return null;/);
+  });
+
   it("builds a login URL that returns to /dashboard", () => {
     expect(dashboardLoginUrl()).toBe(
       "/login?redirectTo=%2Fdashboard",

@@ -27,7 +27,10 @@ import {
   rememberGaSourcePage,
   trackEvent,
 } from "@/lib/ga";
-import { DEFAULT_POST_AUTH_PATH } from "@/lib/onboarding/redirect";
+import {
+  DEFAULT_POST_AUTH_PATH,
+  isPartnerAccessPath,
+} from "@/lib/onboarding/redirect";
 
 type AuthMode = GoogleAuthMode;
 
@@ -42,6 +45,16 @@ const COPY: Record<AuthMode, { title: string; subtitle: string }> = {
       "Create an account to save sessions, unlock results, and pick up where you left off.",
   },
 };
+
+function continueAfterAuth(path: string) {
+  // Hard navigation so HttpOnly partner claim cookies are included and we
+  // avoid client soft-nav loops with a stale deleted-user JWT.
+  if (isPartnerAccessPath(path)) {
+    window.location.replace(path);
+    return;
+  }
+  window.location.assign(path);
+}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -79,58 +92,33 @@ export default function LoginPage() {
   useEffect(() => {
     const checkSession = async () => {
       try {
+        // Prefer getUser(): getSession() can still return a deleted-account JWT
+        // from local storage, which blanked this page and bounced /access/complete.
         const {
-          data: { session: currentSession },
-          error: sessionError,
-        } = await supabase.auth.getSession();
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
 
-        if (sessionError) {
+        if (userError || !user) {
+          if (userError || session?.user) {
+            await supabase.auth.signOut().catch(() => undefined);
+          }
           setIsChecking(false);
           return;
         }
 
-        if (currentSession?.user) {
-          try {
-            const prefsRes = await fetch("/api/profile/preferences");
-            const prefs = prefsRes.ok ? await prefsRes.json() : null;
-            const { resolvePostAuthPath } = await import(
-              "@/lib/onboarding/redirect"
-            );
-            router.push(
-              resolvePostAuthPath(
-                prefs
-                  ? {
-                      username: prefs.username ?? null,
-                      onboarding_completed: prefs.onboarding_completed ?? null,
-                    }
-                  : null,
-                redirectTo,
-              ),
-            );
-          } catch {
-            router.push(redirectTo);
-          }
-        } else {
-          setIsChecking(false);
-        }
-      } catch {
-        setIsChecking(false);
-      }
-    };
-
-    void checkSession();
-  }, [supabase, redirectTo, router]);
-
-  useEffect(() => {
-    if (session?.user && !isChecking && !pendingEmail) {
-      void (async () => {
         try {
           const prefsRes = await fetch("/api/profile/preferences");
+          if (prefsRes.status === 401) {
+            await supabase.auth.signOut().catch(() => undefined);
+            setIsChecking(false);
+            return;
+          }
           const prefs = prefsRes.ok ? await prefsRes.json() : null;
           const { resolvePostAuthPath } = await import(
             "@/lib/onboarding/redirect"
           );
-          router.push(
+          continueAfterAuth(
             resolvePostAuthPath(
               prefs
                 ? {
@@ -142,11 +130,54 @@ export default function LoginPage() {
             ),
           );
         } catch {
-          router.push(redirectTo);
+          continueAfterAuth(redirectTo);
+        }
+      } catch {
+        setIsChecking(false);
+      }
+    };
+
+    void checkSession();
+  }, [supabase, redirectTo, session?.user]);
+
+  useEffect(() => {
+    if (session?.user && !isChecking && !pendingEmail) {
+      void (async () => {
+        try {
+          const {
+            data: { user },
+            error: userError,
+          } = await supabase.auth.getUser();
+          if (userError || !user) {
+            await supabase.auth.signOut().catch(() => undefined);
+            return;
+          }
+          const prefsRes = await fetch("/api/profile/preferences");
+          if (prefsRes.status === 401) {
+            await supabase.auth.signOut().catch(() => undefined);
+            return;
+          }
+          const prefs = prefsRes.ok ? await prefsRes.json() : null;
+          const { resolvePostAuthPath } = await import(
+            "@/lib/onboarding/redirect"
+          );
+          continueAfterAuth(
+            resolvePostAuthPath(
+              prefs
+                ? {
+                    username: prefs.username ?? null,
+                    onboarding_completed: prefs.onboarding_completed ?? null,
+                  }
+                : null,
+              redirectTo,
+            ),
+          );
+        } catch {
+          continueAfterAuth(redirectTo);
         }
       })();
     }
-  }, [session, redirectTo, router, isChecking, pendingEmail]);
+  }, [session, redirectTo, supabase, isChecking, pendingEmail]);
 
   const buildAuthUrl = (nextMode: AuthMode, withEmail = emailOpen) => {
     const params = new URLSearchParams();
@@ -230,7 +261,20 @@ export default function LoginPage() {
   };
 
   if ((session?.user && !pendingEmail) || isChecking) {
-    return null;
+    return (
+      <AuthPageShell
+        title="Continuing…"
+        subtitle={
+          isPartnerAccessPath(redirectTo)
+            ? "Finishing your access claim. One moment."
+            : "Checking your account."
+        }
+      >
+        <div className="flex justify-center py-2" aria-hidden>
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/15 border-t-[#4C8BF5]" />
+        </div>
+      </AuthPageShell>
+    );
   }
 
   if (pendingEmail) {
