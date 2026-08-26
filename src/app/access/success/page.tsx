@@ -85,7 +85,6 @@ export default function AccessSuccessPage() {
   if (loading) {
     return (
       <AccessOutcomeCard
-        eyebrow="ESAT Camp"
         title="Confirming your access"
         loading
         loadingLabel="Confirming your access…"
@@ -99,7 +98,6 @@ export default function AccessSuccessPage() {
   if (!hasAccess) {
     return (
       <AccessOutcomeCard
-        eyebrow="Access"
         title="We couldn't confirm your access"
         tone="error"
         testId="access-success"
@@ -119,7 +117,6 @@ export default function AccessSuccessPage() {
 
   return (
     <AccessOutcomeCard
-      eyebrow="Programme access"
       title="Success 🎉 You now have full access to ESAT Camp"
       tone="success"
       testId="access-success"

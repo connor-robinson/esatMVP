@@ -206,7 +206,6 @@ export function AccessClaimPanel({ code }: { code: string }) {
   if (view.status === "loading" || view.status === "claiming") {
     return (
       <AccessOutcomeCard
-        eyebrow="Programme access"
         title={
           view.status === "claiming"
             ? "Claiming your access"
@@ -228,7 +227,6 @@ export function AccessClaimPanel({ code }: { code: string }) {
   if (view.status === "error") {
     return (
       <AccessOutcomeCard
-        eyebrow="Access"
         title={redeemErrorTitle(view.code)}
         tone="error"
         testId="access-claim-panel"
@@ -248,7 +246,6 @@ export function AccessClaimPanel({ code }: { code: string }) {
   if (view.status === "ready") {
     return (
       <AccessOutcomeCard
-        eyebrow="Programme access"
         title={`Your ${shortLabel} access is ready`}
         tone="info"
         testId="access-claim-panel"
@@ -278,7 +275,6 @@ export function AccessClaimPanel({ code }: { code: string }) {
   if (view.status === "already_partner") {
     return (
       <AccessOutcomeCard
-        eyebrow="Programme access"
         title={`You already have ${shortLabel} access`}
         tone="success"
         testId="access-claim-panel"
@@ -309,7 +305,6 @@ export function AccessClaimPanel({ code }: { code: string }) {
 
   return (
     <AccessOutcomeCard
-      eyebrow="Full access"
       title="You already have full access"
       tone="success"
       testId="access-claim-panel"

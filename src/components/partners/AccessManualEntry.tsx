@@ -68,7 +68,6 @@ export function AccessManualEntry() {
 
   return (
     <AccessOutcomeCard
-      eyebrow="Institution access"
       title="Access ESAT Camp"
       tone="info"
       testId="access-manual-entry"

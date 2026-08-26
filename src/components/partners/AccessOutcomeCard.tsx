@@ -26,7 +26,7 @@ const TONE_EYEBROW: Record<Tone, string> = {
 };
 
 interface AccessOutcomeCardProps {
-  eyebrow: string;
+  eyebrow?: string;
   title: string;
   tone?: Tone;
   children: ReactNode;
@@ -69,15 +69,22 @@ export function AccessOutcomeCard({
               <p className="text-sm text-text-muted">{loadingLabel}</p>
             ) : (
               <>
-                <p
+                {eyebrow ? (
+                  <p
+                    className={cn(
+                      "text-[11px] font-semibold uppercase tracking-[0.14em]",
+                      TONE_EYEBROW[tone],
+                    )}
+                  >
+                    {eyebrow}
+                  </p>
+                ) : null}
+                <h1
                   className={cn(
-                    "text-[11px] font-semibold uppercase tracking-[0.14em]",
-                    TONE_EYEBROW[tone],
+                    "text-2xl font-bold tracking-tight text-text sm:text-[1.75rem]",
+                    eyebrow ? "mt-2" : null,
                   )}
                 >
-                  {eyebrow}
-                </p>
-                <h1 className="mt-2 text-2xl font-bold tracking-tight text-text sm:text-[1.75rem]">
                   {title}
                 </h1>
                 <div className="mt-3 max-w-2xl space-y-2 text-sm leading-relaxed">
