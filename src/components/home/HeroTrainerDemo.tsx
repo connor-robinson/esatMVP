@@ -273,27 +273,47 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
               const isCorrectOption = optionIndex === question.correctIndex;
               const showCorrect = picked !== null && isCorrectOption;
               const showWrong = selected && flash === "wrong";
+              const showTryMeHint =
+                index === 0 && picked === null && optionIndex === 0;
 
               return (
-                <button
-                  key={`${question.id}-${option}`}
-                  type="button"
-                  onClick={() => handlePick(optionIndex as 0 | 1)}
-                  disabled={picked !== null}
-                  className={cn(
-                    "rounded-xl px-4 py-5 font-mono text-xl font-bold transition-all duration-200 sm:py-6 sm:text-2xl",
-                    picked === null &&
-                      "bg-white/5 text-white hover:bg-white/10 active:scale-[0.98]",
-                    showCorrect && "bg-[#3B82F6] text-white",
-                    showWrong && "bg-red-500/25 text-red-200",
-                    picked !== null &&
-                      !showCorrect &&
-                      !showWrong &&
-                      "bg-white/5 text-white/40",
-                  )}
-                >
-                  {option}
-                </button>
+                <div key={`${question.id}-${option}`} className="relative">
+                  {showTryMeHint ? (
+                    <span
+                      className={cn(
+                        "pointer-events-none absolute -top-11 left-1/2 z-10 -translate-x-1/2",
+                        "whitespace-nowrap rounded-lg bg-[#3B82F6] px-3 py-1.5",
+                        "text-[11px] font-bold tracking-wide text-white shadow-lg",
+                        "opacity-0 transition-opacity duration-200",
+                        "group-hover/option:opacity-100",
+                      )}
+                    >
+                      Try me in the simulation
+                      <span
+                        aria-hidden
+                        className="absolute left-1/2 top-full -translate-x-1/2 border-[6px] border-transparent border-t-[#3B82F6]"
+                      />
+                    </span>
+                  ) : null}
+                  <button
+                    type="button"
+                    onClick={() => handlePick(optionIndex as 0 | 1)}
+                    disabled={picked !== null}
+                    className={cn(
+                      "group/option w-full rounded-xl px-4 py-5 font-mono text-xl font-bold transition-all duration-200 sm:py-6 sm:text-2xl",
+                      picked === null &&
+                        "bg-white/5 text-white hover:bg-white/10 active:scale-[0.98]",
+                      showCorrect && "bg-[#3B82F6] text-white",
+                      showWrong && "bg-red-500/25 text-red-200",
+                      picked !== null &&
+                        !showCorrect &&
+                        !showWrong &&
+                        "bg-white/5 text-white/40",
+                    )}
+                  >
+                    {option}
+                  </button>
+                </div>
               );
             })}
           </div>
