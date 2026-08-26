@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-const TOP_HIDE_PX = 48;
+const TOP_SHOW_PX = 48;
 const DIRECTION_DELTA_PX = 6;
 
 function readScrollY(): number {
@@ -22,8 +22,11 @@ function isHomepagePath(pathname: string | null): boolean {
 }
 
 /**
- * Homepage-only auto-hide chrome: hidden near the top / while scrolling down,
- * revealed when the user scrolls up. Other routes always report visible.
+ * Homepage-only auto-hide chrome:
+ * - Visible at the top of the page
+ * - Hides while scrolling down
+ * - Shows again while scrolling up
+ * Other routes always report visible.
  */
 export function useHomepageAutoHideNav(options?: {
   /** Keep visible while a menu/modal owned by the nav is open. */
@@ -31,7 +34,7 @@ export function useHomepageAutoHideNav(options?: {
 }) {
   const pathname = usePathname();
   const isHomepage = isHomepagePath(pathname);
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
   const lastScrollY = useRef(0);
   const ticking = useRef(false);
   const forceVisible = options?.forceVisible ?? false;
@@ -42,15 +45,16 @@ export function useHomepageAutoHideNav(options?: {
       return;
     }
 
-    setVisible(false);
     lastScrollY.current = readScrollY();
+    setVisible(readScrollY() <= TOP_SHOW_PX);
 
     const update = () => {
       const y = readScrollY();
       const delta = y - lastScrollY.current;
 
-      if (y <= TOP_HIDE_PX) {
-        setVisible(false);
+      if (y <= TOP_SHOW_PX) {
+        // At (or past) the top: always show, including overscroll attempts.
+        setVisible(true);
       } else if (delta < -DIRECTION_DELTA_PX) {
         setVisible(true);
       } else if (delta > DIRECTION_DELTA_PX) {

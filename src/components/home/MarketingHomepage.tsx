@@ -178,7 +178,9 @@ export function MarketingHomepage({
 
   return (
     <div className="scroll-smooth bg-[#0A0F1D]">
-      {/* Hero Section - full-bleed; main app navbar auto-hides on this page */}
+      <HomepageSectionNav />
+
+      {/* Hero Section */}
       <section className="relative overflow-hidden pt-12 pb-16 lg:pt-24 lg:pb-32 bg-[#0A0F1D]">
         <div
           aria-hidden
@@ -330,8 +332,6 @@ export function MarketingHomepage({
           </div>
         </div>
       </section>
-
-      <HomepageSectionNav />
 
       {/* Calibration preview */}
       <section
