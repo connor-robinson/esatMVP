@@ -144,10 +144,6 @@ export default function AccessSuccessPage() {
           Full access available until {formatPartnerAccessDate(endsAt)}.
         </p>
       ) : null}
-      <p className="text-text-muted">
-        Start with a short calibration to see where you stand, or jump straight
-        into practice.
-      </p>
     </AccessOutcomeCard>
   );
 }
