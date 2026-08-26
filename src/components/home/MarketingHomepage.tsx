@@ -282,9 +282,6 @@ export function MarketingHomepage({
                   <p className="text-sm leading-relaxed text-[#94A3B8] sm:text-base">
                     We built the platform we wished we&apos;d had for the ESAT.
                   </p>
-                  <p className="text-xs font-medium text-[#64748B] sm:text-sm">
-                    {FOUNDERS.ewan.credential}
-                  </p>
                 </div>
               </div>
 
@@ -293,16 +290,12 @@ export function MarketingHomepage({
                   className={cn(
                     "grid shrink-0 gap-x-6 gap-y-5 sm:gap-x-8 lg:gap-x-10",
                     socialProof.uniqueVisitors != null
-                      ? "grid-cols-2 sm:grid-cols-4"
-                      : "grid-cols-3",
+                      ? "grid-cols-3"
+                      : "grid-cols-2",
                   )}
                 >
                   {(
                     [
-                      {
-                        value: socialProof.practiceQuestions,
-                        label: "Practice questions",
-                      },
                       ...(socialProof.uniqueVisitors != null
                         ? [
                             {
@@ -601,7 +594,9 @@ export function MarketingHomepage({
                   Try our free tools
                 </h2>
                 <p className="mt-5 text-lg leading-relaxed text-[#94A3B8]">
-                  Enter a raw mark from NSAA or ENGAA past papers, and se
+                  Enter a raw mark from NSAA or ENGAA past papers, 
+                  see your calculated ESAT score, 
+                  and where you lie on the official distribution.
                 </p>
               </div>
 
@@ -612,8 +607,7 @@ export function MarketingHomepage({
                     className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
                   />
                   <p className="text-lg text-[#94A3B8]">
-                    Pick an exam and year, then convert section scores in one
-                    place.
+                    Pick an exam and year, .
                   </p>
                 </li>
                 <li className="flex items-start gap-3">
