@@ -17,6 +17,7 @@ import { trackHomepageEvent } from "@/lib/homepage/analytics";
 import { openCookiePreferences } from "@/lib/ga";
 import { getSeasonPassPrice, SEASON_PASS_ACCESS_UNTIL_LABEL } from "@/lib/stripe/best-value";
 import { cn } from "@/lib/utils";
+import { useHomepageAutoHideNav } from "@/hooks/useHomepageAutoHideNav";
 import { ExampleQuestionDemo } from "@/components/home/ExampleQuestionDemo";
 
 const SlotMachineCount = dynamic(

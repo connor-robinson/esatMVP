@@ -59,6 +59,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { DEFAULT_POST_AUTH_PATH } from '@/lib/onboarding/redirect';
+import { useHomepageAutoHideNav } from '@/hooks/useHomepageAutoHideNav';
 
 /** Unified lucide sizing so logout / login glyphs match sun + gear optically */
 const NAV_ICON_PX = 20;
@@ -212,6 +213,9 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const { isHomepage, navVisible: homepageNavVisible } = useHomepageAutoHideNav({
+    forceVisible: mobileMenuOpen || showSignOutConfirm,
+  });
   const session = useSupabaseSession();
   const supabase = useSupabaseClient();
   const {
@@ -292,6 +296,7 @@ export function Navbar() {
     hasActiveSession && isPaperImmersiveRoute(pathname);
   const showMainNavStrip =
     !isImmersivePaperView || (docFullscreen && paperFullscreenShowMainNavbar);
+  const showNavbarChrome = showMainNavStrip && homepageNavVisible;
 
   const currentSection = resolveSection(pathname);
 
@@ -482,8 +487,18 @@ export function Navbar() {
   return (
     <>
       {showMainNavStrip && (
-        <nav className='sticky top-0 z-50 w-full border-b border-border bg-background/98 backdrop-blur-xl'>
-          <div className='w-full px-3 sm:px-5 lg:px-8 xl:px-10'>
+        <nav
+          className={cn(
+            'z-50 w-full border-b border-border bg-background/98 backdrop-blur-xl transition-transform duration-300 ease-out',
+            isHomepage
+              ? cn(
+                  'fixed inset-x-0 top-0',
+                  showNavbarChrome ? 'translate-y-0' : '-translate-y-full pointer-events-none',
+                )
+              : 'sticky top-0',
+          )}
+          aria-hidden={isHomepage && !showNavbarChrome ? true : undefined}
+        >          <div className='w-full px-3 sm:px-5 lg:px-8 xl:px-10'>
             <div
               className='flex items-center justify-between gap-2.5'
               style={{ height: NAVBAR_HEIGHT_PX }}
