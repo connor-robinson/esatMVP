@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   APP_ROUTES,
+  PEARSON_OFFICIAL_IMAGES,
   SEO_ROUTES,
   SOURCES,
   articleSchema,
@@ -15,12 +16,11 @@ import { seoLinks } from "@/lib/seo/links";
 import { ABOUT_PATH, FOUNDERS } from "@/config/founders";
 import { SeoPageLayout } from "@/components/seo/SeoPageLayout";
 import { FirstHandAccount } from "@/components/seo/FirstHandAccount";
-import { OfficialSourceCard } from "@/components/seo/OfficialSourceCard";
+import { OfficialExternalImage } from "@/components/seo/OfficialExternalImage";
 import { CandidateReports } from "@/components/seo/CandidateReports";
 import { FounderByline } from "@/components/seo/FounderByline";
 import { FounderTestimony } from "@/components/seo/FounderTestimony";
 import {
-  HighlightBox,
   NumberedSteps,
   SeoList,
   SeoProse,
@@ -33,9 +33,10 @@ const AUTHOR = FOUNDERS.anson;
 const AUTHOR_ID = `${buildCanonicalUrl(ABOUT_PATH)}#${AUTHOR.id}`;
 const EWAN = FOUNDERS.ewan;
 
-const TITLE = "What Is the ESAT Whiteboard Actually Like? | First-Hand 2025";
+const PAGE_TITLE = "What Our Students Say About the ESAT Whiteboard";
+const TITLE = `${PAGE_TITLE} | ESAT CAMP`;
 const DESCRIPTION =
-  "What the ESAT erasable booklet is actually like at Pearson VUE: size, grid, marker smudging, replacements, and what is worth practising with.";
+  "What ESAT CAMP students actually got for rough working at Pearson VUE: A4 booklet, marker smudging, replacements, and what is worth practising.";
 
 export const metadata: Metadata = buildSeoMetadata({
   title: TITLE,
@@ -89,11 +90,10 @@ export default function EsatWhiteboardPage() {
     <SeoPageLayout
       path={PATH}
       eyebrow="Test day"
-      title="What Is the ESAT Whiteboard Actually Like?"
+      title={PAGE_TITLE}
+      introFullWidth
       intro={[
-        "Our students sat the ESAT between 2024 and 2025 at Pearson VUE on St Aldates in Oxford.",
-        "Instead of pen and paper, they received a reusable A4 notebook they could flip through, plus a black marker and wet wipes.",
-        "Do not waste time cleaning your booklet. If you are running out of space, ask for a new one.",
+        "Our students sat the ESAT at Pearson VUE Oxford in 2024 and 2025. Instead of pen and paper, they got a reusable A4 booklet, a black marker and wet wipes.",
       ]}
       lastChecked={{
         detail:
@@ -129,7 +129,7 @@ export default function EsatWhiteboardPage() {
       showDisclaimer
       schema={[
         articleSchema({
-          headline: "What Is the ESAT Whiteboard Actually Like?",
+          headline: PAGE_TITLE,
           description: DESCRIPTION,
           path: PATH,
           authorPersonId: AUTHOR_ID,
@@ -145,13 +145,6 @@ export default function EsatWhiteboardPage() {
 
       <FounderByline founder="anson" attribution="Written by" className="text-sm text-[#94A3B8]" />
 
-      <HighlightBox title="The practical point">
-        <p>
-          Do not waste time cleaning your booklet. If you are running out of
-          space, ask for a new one.
-        </p>
-      </HighlightBox>
-
       <SeoSection heading="What does the ESAT whiteboard actually look like?">
         <SeoProse
           paragraphs={[
@@ -161,12 +154,14 @@ export default function EsatWhiteboardPage() {
             "Officially, UAT-UK only guarantees an erasable notebook or sheets and a pen, so do not assume every centre will use exactly the same booklet.",
           ]}
         />
-        <OfficialSourceCard
+        <OfficialExternalImage
           className="mt-6"
-          title="Figure 1: Example of a Pearson VUE erasable booklet"
-          description="Exact materials can vary by test and centre, and this linked Pearson page is not presented as the exact booklet used for every ESAT sitting. It is an official example of the kind of erasable noteboard Pearson centres use."
-          href={SOURCES.pearsonErasableNoteboardExample.url}
-          linkLabel="View Pearson VUE erasable noteboard example"
+          src={PEARSON_OFFICIAL_IMAGES.erasableNoteboard.src}
+          alt="Pearson VUE erasable noteboard booklet example with marker"
+          title="Example of a Pearson VUE erasable booklet"
+          caption="Exact materials can vary by test and centre, and this image is not presented as the exact booklet used for every ESAT sitting."
+          href={PEARSON_OFFICIAL_IMAGES.erasableNoteboard.sourceUrl}
+          linkLabel="View on Pearson VUE"
         />
       </SeoSection>
 

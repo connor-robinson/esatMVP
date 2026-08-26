@@ -26,7 +26,7 @@ export const SEO_LINKS = {
   testDay: {
     href: SEO_ROUTES.testDay,
     label: "What test day is like",
-    blurb: "First-hand Pearson VUE chronology: arrival, security, modules and water.",
+    blurb: "What our students experienced at Pearson VUE: arrival, security, modules and water.",
   },
   pastPapers: {
     href: SEO_ROUTES.pastPapers,
@@ -156,7 +156,7 @@ export const SEO_LINKS = {
   whiteboard: {
     href: SEO_ROUTES.whiteboard,
     label: "ESAT whiteboard rules",
-    blurb: "What the erasable booklet is actually like, marker smudging and replacements.",
+    blurb: "What our students got for rough working, marker smudging and replacements.",
   },
   questionBankGuide: {
     href: SEO_ROUTES.questionBankGuide,

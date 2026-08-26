@@ -36,10 +36,7 @@ export function FounderTestimony({
           />
         </div>
         <div className="min-w-0">
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#3B82F6]">
-            First-hand
-          </p>
-          <p className="mt-1 text-sm font-semibold text-white">
+          <p className="text-sm font-semibold text-white">
             <Link
               href={`${ABOUT_PATH}#${founder.id}`}
               className="transition-colors hover:text-[#93C5FD]"

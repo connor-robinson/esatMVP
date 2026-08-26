@@ -283,6 +283,19 @@ export const SOURCES = {
   },
 } as const satisfies Record<string, SourceLink>;
 
+/** Official Pearson image URLs used as hotlinks (not rehosted). */
+export const PEARSON_OFFICIAL_IMAGES = {
+  erasableNoteboard: {
+    src: "https://www.pearsonvue.com/content/dam/VUE/vue/en/images/clients/foundationpharmacistrecruitment/Noteboard.gif",
+    sourceUrl: "https://www.pearsonvue.com/us/en/foundationpharmacistrecruitment.html",
+  },
+  testingRoom: {
+    src: "https://www.pearsonvue.com/content/dam/VUE/vue/global/images/test-owners/photo-tour/testing-room.jpg",
+    sourceUrl:
+      "https://www.pearsonvue.com/us/en/test-takers/pearson-professional-center-tour.html",
+  },
+} as const;
+
 type SeoMetadataInput = {
   title: string;
   description: string;

@@ -4,6 +4,7 @@ export { SeoFaq } from "./SeoFaq";
 export { SeoPageLayout, SeoGuideFooter } from "./SeoPageLayout";
 export { FirstHandAccount } from "./FirstHandAccount";
 export { OfficialSourceCard } from "./OfficialSourceCard";
+export { OfficialExternalImage } from "./OfficialExternalImage";
 export { CandidateReports } from "./CandidateReports";
 export { FounderByline } from "./FounderByline";
 export { FounderTestimony } from "./FounderTestimony";

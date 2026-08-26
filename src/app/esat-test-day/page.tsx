@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import {
   APP_ROUTES,
+  PEARSON_OFFICIAL_IMAGES,
   SEO_ROUTES,
   SOURCES,
   articleSchema,
@@ -13,7 +14,7 @@ import { seoLinks } from "@/lib/seo/links";
 import { ABOUT_PATH, FOUNDERS } from "@/config/founders";
 import { SeoPageLayout } from "@/components/seo/SeoPageLayout";
 import { FirstHandAccount } from "@/components/seo/FirstHandAccount";
-import { OfficialSourceCard } from "@/components/seo/OfficialSourceCard";
+import { OfficialExternalImage } from "@/components/seo/OfficialExternalImage";
 import { CandidateReports } from "@/components/seo/CandidateReports";
 import { FounderByline } from "@/components/seo/FounderByline";
 import {
@@ -30,9 +31,10 @@ const PATH = SEO_ROUTES.testDay;
 const AUTHOR = FOUNDERS.anson;
 const AUTHOR_ID = `${buildCanonicalUrl(ABOUT_PATH)}#${AUTHOR.id}`;
 
-const TITLE = "What Is ESAT Test Day Actually Like? | First-Hand 2025";
+const PAGE_TITLE = "What Our Students Say About ESAT Test Day";
+const TITLE = `${PAGE_TITLE} | ESAT CAMP`;
 const DESCRIPTION =
-  "First-hand ESAT test day at Pearson VUE Oxford: arrival, security, whiteboard booklet, module transitions, water rules and what to expect.";
+  "What ESAT CAMP students experienced on ESAT test day at Pearson VUE: arrival, security, whiteboard booklet, module transitions and water rules.";
 
 export const metadata: Metadata = buildSeoMetadata({
   title: TITLE,
@@ -87,11 +89,10 @@ export default function EsatTestDayPage() {
     <SeoPageLayout
       path={PATH}
       eyebrow="Test day"
-      title="What Is ESAT Test Day Actually Like?"
+      title={PAGE_TITLE}
+      introFullWidth
       intro={[
-        "I sat the ESAT at the Pearson VUE centre on St Aldates, Oxford, in 2025. This is what the process was actually like from walking in to finishing the test.",
-        "The academic part was stressful. The test-centre process itself was fine.",
-        "In my sitting, there was a roughly one-minute countdown screen before the next module. Use that minute to rest. Do not turn it into another minute of work.",
+        "Our students sat the ESAT at Pearson VUE Oxford in 2024 and 2025. The academic part was stressful; the test-centre process itself was fine.",
       ]}
       lastChecked={{
         detail:
@@ -125,7 +126,7 @@ export default function EsatTestDayPage() {
       showDisclaimer
       schema={[
         articleSchema({
-          headline: "What Is ESAT Test Day Actually Like?",
+          headline: PAGE_TITLE,
           description: DESCRIPTION,
           path: PATH,
           authorPersonId: AUTHOR_ID,
@@ -180,11 +181,13 @@ export default function EsatTestDayPage() {
             "Pearson's own Professional Center tour shows the same general setup of testing stations, lockers and a monitored proctor area, although individual centres vary.",
           ]}
         />
-        <OfficialSourceCard
+        <OfficialExternalImage
           className="mt-6"
+          src={PEARSON_OFFICIAL_IMAGES.testingRoom.src}
+          alt="Example Pearson Professional Center testing room with partitioned computer workstations"
           title="Example Pearson Professional Center testing room"
-          description="Individual centres vary. This is not a photograph of the Oxford St Aldates room. Use the official Pearson tour for the general layout of lockers, workstations and the proctor station."
-          href={SOURCES.pearsonProfessionalCenterTour.url}
+          caption="Individual centres vary. This is not a photograph of the Oxford St Aldates room."
+          href={PEARSON_OFFICIAL_IMAGES.testingRoom.sourceUrl}
           linkLabel="Open the Pearson Professional Center Tour"
         />
         <SummaryBox

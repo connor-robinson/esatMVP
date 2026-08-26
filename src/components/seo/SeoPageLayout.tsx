@@ -20,6 +20,8 @@ type SeoPageLayoutProps = {
   title: React.ReactNode;
   /** Intro paragraphs. The first one should answer the search query directly. */
   intro: readonly string[];
+  /** When true, intro uses the full content width instead of max-w-2xl. */
+  introFullWidth?: boolean;
   /** Optional hero CTAs - omit when the page should open with content first. */
   primaryCta?: Cta;
   secondaryCta?: Cta;
@@ -49,6 +51,7 @@ export function SeoPageLayout({
   eyebrow,
   title,
   intro,
+  introFullWidth,
   primaryCta,
   secondaryCta,
   lastChecked,
@@ -86,7 +89,12 @@ export function SeoPageLayout({
           <h1 className="mt-4 text-4xl font-display font-bold leading-[1.1] tracking-tight sm:text-5xl lg:text-[3.5rem]">
             {title}
           </h1>
-          <div className="mt-4 max-w-2xl space-y-2.5">
+          <div
+            className={cn(
+              "mt-4 space-y-2.5",
+              introFullWidth ? "w-full max-w-none" : "max-w-2xl",
+            )}
+          >
             {intro.map((paragraph) => (
               <p
                 key={paragraph}
