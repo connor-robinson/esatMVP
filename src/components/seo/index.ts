@@ -6,6 +6,7 @@ export { FirstHandAccount } from "./FirstHandAccount";
 export { OfficialSourceCard } from "./OfficialSourceCard";
 export { CandidateReports } from "./CandidateReports";
 export { FounderByline } from "./FounderByline";
+export { FounderTestimony } from "./FounderTestimony";
 export {
   Expr,
   HighlightBox,

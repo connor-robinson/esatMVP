@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 import {
   APP_ROUTES,
   SEO_ROUTES,
@@ -16,6 +18,7 @@ import { FirstHandAccount } from "@/components/seo/FirstHandAccount";
 import { OfficialSourceCard } from "@/components/seo/OfficialSourceCard";
 import { CandidateReports } from "@/components/seo/CandidateReports";
 import { FounderByline } from "@/components/seo/FounderByline";
+import { FounderTestimony } from "@/components/seo/FounderTestimony";
 import {
   HighlightBox,
   NumberedSteps,
@@ -28,6 +31,7 @@ import {
 const PATH = SEO_ROUTES.whiteboard;
 const AUTHOR = FOUNDERS.anson;
 const AUTHOR_ID = `${buildCanonicalUrl(ABOUT_PATH)}#${AUTHOR.id}`;
+const EWAN = FOUNDERS.ewan;
 
 const TITLE = "What Is the ESAT Whiteboard Actually Like? | First-Hand 2025";
 const DESCRIPTION =
@@ -61,22 +65,22 @@ const FAQ: readonly FaqItem[] = [
   {
     question: "What size is the ESAT whiteboard?",
     answer:
-      "The booklet I received at Pearson VUE Oxford in 2025 was roughly A4-sized. This is my first-hand experience, not a guaranteed specification for every Pearson VUE centre.",
+      "Students who sat at Pearson VUE Oxford reported a reusable A4-sized notebook. Exact materials can vary by centre, so treat this as first-hand experience rather than a guaranteed specification.",
   },
   {
     question: "Is the ESAT whiteboard gridded?",
     answer:
-      "Mine had a gridded side and a blank side. I personally ignored the grid and preferred the blank side.",
+      "ESAT whiteboard booklets have a grid on one side and blank space on the other. Many students ignore the grid and prefer the blank side.",
   },
   {
     question: "Does the ESAT marker smudge?",
     answer:
-      "Mine did. By the end of the test I had black ink along my palm. It did not cause me any serious problems, but it is worth knowing in advance.",
+      "Students reported that it can. The marker behaves more like a wet-erase pen and can leave ink on your writing hand. It is usually more annoying than distracting.",
   },
   {
     question: "Should I buy an ESAT whiteboard to practise?",
     answer:
-      "I don't think so. A cheap reusable A4 sleeve or dry-erase pocket is enough if you really want to practise writing on a reusable surface.",
+      "No. A cheap reusable A4 sleeve or dry-erase pocket is enough if you really want to practise writing on a reusable surface.",
   },
 ];
 
@@ -87,13 +91,13 @@ export default function EsatWhiteboardPage() {
       eyebrow="Test day"
       title="What Is the ESAT Whiteboard Actually Like?"
       intro={[
-        "The ESAT does not give you normal pen and paper for rough working. At my Pearson VUE centre in Oxford in 2025, I was given an A4 erasable booklet, a black marker, wet wipes and earplugs.",
-        "The booklet had roughly 10 double-sided sheets. On mine, one side was gridded and the other was blank.",
+        "Our students sat the ESAT between 2024 and 2025 at Pearson VUE on St Aldates in Oxford.",
+        "Instead of pen and paper, they received a reusable A4 notebook they could flip through, plus a black marker and wet wipes.",
         "Do not waste time cleaning your booklet. If you are running out of space, ask for a new one.",
       ]}
       lastChecked={{
         detail:
-          "Official UAT-UK rules below were re-checked on this date. Centre-specific booklet details are from my 2025 sitting and may differ by centre or cycle.",
+          "Official UAT-UK rules below were re-checked on this date. Centre-specific booklet details are from student sittings and may differ by centre or cycle.",
       }}
       primaryCta={{ href: SEO_ROUTES.testDay, label: "ESAT test-day guide" }}
       secondaryCta={{
@@ -151,31 +155,15 @@ export default function EsatWhiteboardPage() {
       <SeoSection heading="What does the ESAT whiteboard actually look like?">
         <SeoProse
           paragraphs={[
-            "I sat the ESAT in 2025 at Pearson VUE on St Aldates in Oxford.",
-            "Mine was not a single little whiteboard. It was more like a reusable A4 notebook that you could flip through.",
-          ]}
-        />
-        <SeoList
-          className="mt-6"
-          items={[
-            "Around 10 double-sided writable sheets",
-            "A grid on one side",
-            "A plain white side",
-            "A fine black marker",
-            "Wet wipes for cleaning it",
-            "Earplugs",
-          ]}
-        />
-        <SeoProse
-          className="mt-6"
-          paragraphs={[
-            "Other friends who sat the ESAT described a broadly similar setup, although the exact materials may vary between Pearson VUE centres.",
-            "Officially, UAT-UK only guarantees an erasable notebook or sheets and a pen, so do not assume every centre will use exactly the same booklet I had.",
+            "Our students sat the ESAT between 2024 and 2025 at Pearson VUE on St Aldates in Oxford.",
+            "They have reported that instead of pen and paper, they received a reusable A4 notebook that you could flip through.",
+            "Other candidates who sat the ESAT described a broadly similar setup, although the exact materials may vary between Pearson VUE centres.",
+            "Officially, UAT-UK only guarantees an erasable notebook or sheets and a pen, so do not assume every centre will use exactly the same booklet.",
           ]}
         />
         <OfficialSourceCard
           className="mt-6"
-          title="Example of a Pearson VUE erasable booklet"
+          title="Figure 1: Example of a Pearson VUE erasable booklet"
           description="Exact materials can vary by test and centre, and this linked Pearson page is not presented as the exact booklet used for every ESAT sitting. It is an official example of the kind of erasable noteboard Pearson centres use."
           href={SOURCES.pearsonErasableNoteboardExample.url}
           linkLabel="View Pearson VUE erasable noteboard example"
@@ -185,36 +173,39 @@ export default function EsatWhiteboardPage() {
       <SeoSection heading="Does the ESAT marker smudge?">
         <SeoProse
           paragraphs={[
-            "This was probably the strangest part.",
-            "The black marker I had behaved much more like a wet-erase pen than a normal school whiteboard marker. It could smudge under my palm while I was working.",
+            "Students reported that the black marker behaved more like a wet-erase pen than a normal whiteboard marker. And beware that it could smudge under palms while working.",
+            "One student reported that by the end of their ESAT, the side of their writing hand was black from the marker. It sounds worse than it is. They did not find the smudging particularly distracting. You just have to accept that your working will not stay perfectly clean.",
           ]}
         />
-        <HighlightBox className="mt-5" title="From my sitting" tone="neutral">
+        <FounderTestimony founder="ewan" className="mt-6">
+          <p>The wet wipes they gave me could properly clean the booklet.</p>
           <p>
-            By the end of my ESAT, the side of my writing hand was black from the
-            marker. It looked worse than it actually was.
+            My advice is to check the marker immediately. Scribble something
+            before you begin. If it is faint, drying out or annoying to write
+            with, ask for another one. You don&apos;t want to spend 2 hours with
+            a bad marker.
           </p>
-        </HighlightBox>
-        <SeoProse
-          className="mt-6"
-          paragraphs={[
-            "It sounds worse than it is. I did not find the smudging particularly distracting. You just have to accept that your working will not stay perfectly clean.",
-            "The wet wipes they gave me could properly clean the booklet.",
-            "My advice is to check the marker immediately. Scribble something before you begin. If it is faint, drying out or annoying to write with, ask for another one.",
-            "Do not spend a 40-minute ESAT module fighting a bad marker.",
-          ]}
-        />
+        </FounderTestimony>
       </SeoSection>
 
       <SeoSection heading="Can you ask for another ESAT whiteboard?">
+        <FounderTestimony founder="ewan">
+          <p>
+            I used almost a full booklet during one module. During the short
+            transition period before my next module, I started wiping the pages
+            clean so I could reuse them, but only had a minute which caused me
+            to panic a bit.
+          </p>
+          <p>
+            I should simply have raised my hand and asked for another booklet,
+            which I did for the rest of the exam. They were very happy to
+            accommodate and it was a much more efficient solution.
+          </p>
+        </FounderTestimony>
         <SeoProse
+          className="mt-6"
           paragraphs={[
-            "I used almost an entire booklet during one module.",
-            "During the short transition before my next module, I started frantically wiping the pages clean so I could reuse them.",
-            "That was pointless.",
-            "I should simply have raised my hand and asked for another booklet.",
-            "UAT-UK now explicitly says that you can request new sheets at any point during the test.",
-            "If you are getting close to the end of your booklet, ask early. Do not wait until you literally have nowhere left to write.",
+            "UAT-UK now explicitly says that you can request new sheets at any point during the test. If you are getting close to the end of your booklet, ask for a new booklet.",
           ]}
         />
         <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
@@ -229,12 +220,8 @@ export default function EsatWhiteboardPage() {
       <SeoSection heading="Is the ESAT whiteboard gridded?">
         <SeoProse
           paragraphs={[
-            "Mine had a grid on one side and blank space on the other.",
-            "Personally, I found the grid useless.",
-            "For equations, mechanics diagrams and quick algebra, I just wanted empty space. I mostly ignored the grid.",
-            "More important is your handwriting size.",
-            "Do not write enormous equations and burn through half a page per question. But do not force yourself to write microscopically either.",
-            "Write compactly enough that you can see your own logic quickly.",
+            "ESAT whiteboard booklets have a grid on one side and blank space on the other.",
+            "Many students reported to have found the grid useless. For equations, mechanics diagrams and quick algebra, empty space is oftentimes better for working. Most students ignored the grid. More important is your handwriting size. Write compactly enough that you can see your own logic quickly.",
           ]}
         />
       </SeoSection>
@@ -242,9 +229,8 @@ export default function EsatWhiteboardPage() {
       <SeoSection heading="Should you buy an ESAT whiteboard for practice?">
         <SeoProse
           paragraphs={[
-            "I wouldn't.",
+            "No.",
             "There are commercial Pearson-style reusable exam notebooks online that try to recreate the real testing experience. They are useful if you want to see roughly what this kind of booklet looks like, but I do not think buying one purely for ESAT preparation will meaningfully improve your score.",
-            "You are practising physics and maths, not plastic stationery.",
             "If you really want to practise the surface, a cheap A4 dry-erase pocket with normal paper inside and a marker is more than enough.",
           ]}
         />
@@ -260,7 +246,7 @@ export default function EsatWhiteboardPage() {
         <SeoProse
           className="mt-6"
           paragraphs={[
-            "Do not obsess over recreating the exact Pearson VUE booklet. These product examples are not official ESAT materials and are not endorsed by UAT-UK, Pearson VUE or ESAT CAMP.",
+            "Do not obsess over recreating the exact Pearson VUE booklet.",
           ]}
         />
       </SeoSection>
@@ -268,9 +254,9 @@ export default function EsatWhiteboardPage() {
       <SeoSection heading="What should you bring?">
         <SeoProse
           paragraphs={[
-            "Do not bring your own paper or pens expecting to use them.",
+            "Do not bring your own paper or pens.",
             "UAT-UK does not allow candidates to take their own rough-working materials into the test room. Personal items are stored outside the testing room.",
-            "Bring the ID and booking information required for your appointment, but leave your ESAT stationery at home.",
+            "Bring the ID and booking information required for your appointment, but leave your stationery at home.",
           ]}
         />
         <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
@@ -287,11 +273,32 @@ export default function EsatWhiteboardPage() {
       </SeoSection>
 
       <SeoSection heading="What I would do if I sat the ESAT again">
+        <div className="mb-6 flex items-center gap-3">
+          <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-[#161D2F]">
+            <Image
+              src={EWAN.imageSrc}
+              alt={EWAN.imageAlt}
+              fill
+              sizes="40px"
+              className="object-cover"
+              style={{ objectPosition: EWAN.imagePosition }}
+            />
+          </div>
+          <p className="text-sm text-[#94A3B8]">
+            Advice from{" "}
+            <Link
+              href={`${ABOUT_PATH}#${EWAN.id}`}
+              className="font-medium text-[#CBD5E1] transition-colors hover:text-[#3B82F6]"
+            >
+              {EWAN.name}
+            </Link>
+          </p>
+        </div>
         <NumberedSteps
           steps={[
             "Check the marker before starting.",
             "Ask for another marker immediately if it is poor.",
-            "Use the blank side of the booklet.",
+            "Use both sides of the booklet.",
             "Keep working fairly compact.",
             "Ask for a replacement booklet before I run out.",
             "Never waste the between-module transition cleaning pages.",
@@ -302,7 +309,7 @@ export default function EsatWhiteboardPage() {
           className="mt-6"
           paragraphs={[
             "The whiteboard is not something you need to train for extensively.",
-            "You just do not want it to surprise you on test day.",
+            "You just do not want it to surprise you on test day. Good luck!",
           ]}
         />
       </SeoSection>
@@ -312,7 +319,7 @@ export default function EsatWhiteboardPage() {
       <SeoSection heading="Experience note">
         <SeoProse
           paragraphs={[
-            "This article combines current UAT-UK rules with first-hand experience from sitting the ESAT at Pearson VUE Oxford in 2025. The experience was also compared informally with friends who sat the test.",
+            "This article combines current UAT-UK rules with first-hand experience from sitting the ESAT at Pearson VUE Oxford in 2025. The experience was also compared with ESATCamp students who sat the test.",
             "Test-centre equipment can vary, so current official UAT-UK guidance should always take priority.",
           ]}
         />
