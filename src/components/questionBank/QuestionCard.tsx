@@ -120,7 +120,6 @@ export function QuestionCard({
   belowOptionsSlot,
 }: QuestionCardProps) {
   const verified = isQualityGateVerified(question);
-  const [hoveredOption, setHoveredOption] = useState<string | null>(null);
   const [localSelectedAnswer, setLocalSelectedAnswer] = useState<string | null>(
     null,
   );
@@ -139,52 +138,36 @@ export function QuestionCard({
   const [feedbackLoading, setFeedbackLoading] = useState(true);
   const [ratingSubmitting, setRatingSubmitting] = useState(false);
   const [hoverStar, setHoverStar] = useState<number | null>(null);
-  const [flashLetter, setFlashLetter] = useState<{
-    letter: string;
-    kind: "correct" | "wrong";
-  } | null>(null);
-  const lastFlashKeyRef = useRef("");
+  const wasAllowRetryRef = useRef(false);
 
   const optionLetters = Object.keys(question.options).sort();
   const statementItems = getQuestionStatementItems(question);
   const showSessionNotation = questionNumber != null;
+  const optionsLocked = answerRevealed || (isAnswered && !allowRetry);
 
   useEffect(() => {
     setLocalSelectedAnswer(null);
     onSelectionChange?.(null);
-    setHoveredOption(null);
     setRevealedDistractors(new Set());
     setIncorrectAnswers(new Set());
-    lastFlashKeyRef.current = "";
-    setFlashLetter(null);
+    wasAllowRetryRef.current = false;
   }, [question.id, onSelectionChange]);
 
+  // Clear selection once when a wrong answer unlocks retry, so the next pick is fresh.
   useEffect(() => {
-    if (!isAnswered || allowRetry) {
+    if (allowRetry && !wasAllowRetryRef.current) {
       setLocalSelectedAnswer(null);
       onSelectionChange?.(null);
     }
-    setHoveredOption(null);
-  }, [isAnswered, allowRetry, onSelectionChange]);
+    wasAllowRetryRef.current = allowRetry;
+  }, [allowRetry, onSelectionChange]);
 
+  // Keep local selection locked to the scored answer when options are locked.
   useEffect(() => {
-    if (!showSessionNotation || !selectedAnswer || !isAnswered) return;
-    const key = `${question.id}:${selectedAnswer}:${isCorrect}`;
-    if (lastFlashKeyRef.current === key) return;
-    lastFlashKeyRef.current = key;
-    setFlashLetter({
-      letter: selectedAnswer,
-      kind: isCorrect ? "correct" : "wrong",
-    });
-    const timer = window.setTimeout(() => setFlashLetter(null), 1200);
-    return () => window.clearTimeout(timer);
-  }, [
-    showSessionNotation,
-    question.id,
-    selectedAnswer,
-    isAnswered,
-    isCorrect,
-  ]);
+    if (optionsLocked && selectedAnswer) {
+      setLocalSelectedAnswer(selectedAnswer);
+    }
+  }, [optionsLocked, selectedAnswer]);
 
   useEffect(() => {
     onSelectionChange?.(localSelectedAnswer);
@@ -278,35 +261,41 @@ export function QuestionCard({
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === "Enter" && localSelectedAnswer && !isAnswered) {
+      if (
+        e.key === "Enter" &&
+        localSelectedAnswer &&
+        !optionsLocked &&
+        !incorrectAnswers.has(localSelectedAnswer)
+      ) {
         handleSubmit();
       }
     };
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [localSelectedAnswer, isAnswered]);
+  }, [localSelectedAnswer, optionsLocked, incorrectAnswers]);
 
   const handleOptionClick = (optionLetter: string) => {
-    if (isAnswered && !allowRetry && !answerRevealed) return;
+    if (optionsLocked) return;
+    if (incorrectAnswers.has(optionLetter)) return;
     setLocalSelectedAnswer(optionLetter);
   };
 
   const handleSubmit = () => {
-    if (!localSelectedAnswer || (isAnswered && !allowRetry && !answerRevealed))
-      return;
+    if (!localSelectedAnswer || optionsLocked) return;
     if (incorrectAnswers.has(localSelectedAnswer)) return;
     const correct = localSelectedAnswer === question.correct_option;
     onAnswerSubmit(localSelectedAnswer, correct);
   };
 
-  /** Option rows: subtle fill in light, mid in dark; selected one step darker/lighter. */
+  /** Option rows: subtle fill; selected one step stronger; scored states tint gently. */
   const OPTION_ROW_BASE =
     "bg-surface-subtle dark:bg-surface-mid";
   const OPTION_ROW_SELECTED =
     "bg-surface-mid dark:bg-folder-card-selected";
-  /** Correct when answered or revealed - one step darker (light) / lighter (dark) than row base. */
   const OPTION_ROW_CORRECT =
-    "bg-surface-mid dark:bg-folder-card-selected";
+    "bg-success/12 dark:bg-success/15";
+  const OPTION_ROW_WRONG =
+    "bg-error/10 dark:bg-error/12";
   const OPTION_ROW_HOVER =
     "hover:bg-surface-mid/70 dark:hover:bg-surface-neutral";
 
@@ -318,31 +307,21 @@ export function QuestionCard({
       return cn("cursor-default", OPTION_ROW_CORRECT);
     }
     if (incorrectAnswers.has(letter) && letter !== correctAnswer) {
-      return cn("cursor-default", OPTION_ROW_CORRECT);
+      return cn("cursor-default", OPTION_ROW_WRONG);
     }
     if (isAnswered && !isCorrect && !answerRevealed) {
       if (allowRetry) {
         if (localSelectedAnswer === letter) {
           return cn("cursor-pointer", OPTION_ROW_SELECTED);
         }
-        return cn(
-          "cursor-pointer",
-          OPTION_ROW_BASE,
-          OPTION_ROW_HOVER,
-          hoveredOption === letter && "bg-surface-mid/70 dark:bg-surface-neutral",
-        );
+        return cn("cursor-pointer", OPTION_ROW_BASE, OPTION_ROW_HOVER);
       }
       return cn("cursor-default opacity-70", OPTION_ROW_BASE);
     }
     if (localSelectedAnswer === letter) {
       return cn("cursor-pointer", OPTION_ROW_SELECTED);
     }
-    return cn(
-      "cursor-pointer",
-      OPTION_ROW_BASE,
-      OPTION_ROW_HOVER,
-      hoveredOption === letter && "bg-surface-mid/70 dark:bg-surface-neutral",
-    );
+    return cn("cursor-pointer", OPTION_ROW_BASE, OPTION_ROW_HOVER);
   };
 
   const letterLabelClass = (letter: string) => {
@@ -502,11 +481,18 @@ export function QuestionCard({
         <div className="flex flex-col gap-2.5">
           {optionLetters.map((letter) => {
             const distractor = distractorTextFor(question.distractor_map, letter);
-            const isFlashing = flashLetter?.letter === letter;
             const isWrongAttempt =
               incorrectAnswers.has(letter) && letter !== correctAnswer;
             const showDistractorControl = isWrongAttempt && Boolean(distractor);
             const distractorRevealed = revealedDistractors.has(letter);
+            const showSubmit =
+              !optionsLocked &&
+              localSelectedAnswer === letter &&
+              !incorrectAnswers.has(letter);
+            const showCorrectMark =
+              (isAnswered && isCorrect && letter === correctAnswer) ||
+              (answerRevealed && letter === correctAnswer);
+            const showWrongMark = isWrongAttempt;
 
             return (
             <div
@@ -514,23 +500,14 @@ export function QuestionCard({
               className={cn(
                 "relative flex w-full flex-col overflow-hidden rounded-organic-md",
                 getOptionStyle(letter),
-                isFlashing
-                  ? flashLetter.kind === "wrong"
-                    ? "animate-qb-wrong-flash"
-                    : "animate-qb-correct-flash"
-                  : "transition-[background-color,opacity] duration-fast ease-signature",
               )}
             >
               <div className="relative flex w-full items-center gap-2 px-3.5 py-2.5 sm:gap-3 sm:px-4 sm:py-3">
                 <button
                   type="button"
                   onClick={() => handleOptionClick(letter)}
-                  onMouseEnter={() =>
-                    (!isAnswered || allowRetry) && setHoveredOption(letter)
-                  }
-                  onMouseLeave={() => setHoveredOption(null)}
-                  disabled={isAnswered && !allowRetry && !answerRevealed}
-                  className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                  disabled={optionsLocked || isWrongAttempt}
+                  className="flex min-w-0 flex-1 items-center gap-3 text-left disabled:cursor-default"
                 >
                   <span
                     className={cn(
@@ -568,10 +545,9 @@ export function QuestionCard({
                     className={cn(
                       "absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2",
                       "inline-flex items-center gap-1.5 rounded-full",
-                      "border border-border-subtle/70 bg-surface-elevated/95 px-3 py-1.5",
+                      "bg-surface-elevated/95 px-3 py-1.5",
                       "text-[11px] font-medium tracking-wide text-text-muted",
-                      "transition-all duration-fast ease-signature",
-                      "hover:border-border hover:bg-surface-mid/80 hover:text-text",
+                      "hover:bg-surface-mid/80 hover:text-text",
                     )}
                   >
                     <HelpCircle
@@ -598,9 +574,7 @@ export function QuestionCard({
                 ) : null}
 
                 <div className="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center sm:h-10 sm:w-10">
-                  {((!isAnswered || (isAnswered && allowRetry)) &&
-                    localSelectedAnswer === letter &&
-                    !incorrectAnswers.has(letter)) && (
+                  {showSubmit ? (
                     <button
                       type="button"
                       onClick={(e) => {
@@ -611,7 +585,6 @@ export function QuestionCard({
                         "flex h-9 w-9 items-center justify-center rounded-organic-md sm:h-10 sm:w-10",
                         "bg-secondary text-background",
                         "shadow-[0_4px_0_0_#623e56] dark:shadow-[0_4px_0_0_#8a5a7a]",
-                        "transition-all duration-150 ease-out",
                         "hover:brightness-110",
                         "active:translate-y-0.5 active:shadow-[0_2px_0_0_#623e56] dark:active:shadow-[0_2px_0_0_#8a5a7a]",
                       )}
@@ -620,53 +593,40 @@ export function QuestionCard({
                     >
                       <ArrowRight className="h-4 w-4 sm:h-[1.125rem] sm:w-[1.125rem]" strokeWidth={2.5} />
                     </button>
-                  )}
-                  {isAnswered && (
-                    <>
-                      {(isCorrect && letter === correctAnswer) ||
-                      (answerRevealed && letter === correctAnswer) ? (
-                        <svg
-                          className={cn(
-                            "text-success",
-                            isFlashing &&
-                              flashLetter?.kind === "correct" &&
-                              "animate-qb-correct-check",
-                          )}
-                          width="22"
-                          height="22"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="3"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                      ) : incorrectAnswers.has(letter) &&
-                        letter !== correctAnswer ? (
-                        <svg
-                          className={cn(
-                            "text-error",
-                            isFlashing &&
-                              flashLetter?.kind === "wrong" &&
-                              "animate-qb-wrong-mark",
-                          )}
-                          width="22"
-                          height="22"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="3"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <line x1="18" y1="6" x2="6" y2="18" />
-                          <line x1="6" y1="6" x2="18" y2="18" />
-                        </svg>
-                      ) : null}
-                    </>
-                  )}
+                  ) : null}
+                  {showCorrectMark ? (
+                    <svg
+                      className="text-success"
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  ) : null}
+                  {showWrongMark ? (
+                    <svg
+                      className="text-error"
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden
+                    >
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  ) : null}
                 </div>
               </div>
             </div>

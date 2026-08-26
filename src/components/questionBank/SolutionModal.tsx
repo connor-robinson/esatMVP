@@ -115,17 +115,17 @@ export function SolutionModal({
           />
 
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.96 }}
+            initial={{ opacity: 0, y: 16, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 12, scale: 0.98 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-organic-xl bg-surface-elevated shadow-modal-card"
+            exit={{ opacity: 0, y: 10, scale: 0.99 }}
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            className="relative flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-organic-xl bg-surface-elevated shadow-modal-card"
             role="dialog"
             aria-modal="true"
             aria-labelledby="detailed-explanation-title"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-start justify-between gap-4 px-5 py-4 sm:px-6 sm:py-5">
+            <div className="flex items-start justify-between gap-4 px-5 py-4 sm:px-8 sm:py-5">
               <div className="flex min-w-0 items-start gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md bg-surface-mid text-secondary">
                   <ListOrdered className="h-5 w-5" aria-hidden />
@@ -133,9 +133,12 @@ export function SolutionModal({
                 <div className="min-w-0 pt-0.5">
                   <h2
                     id="detailed-explanation-title"
-                    className="text-lg font-semibold tracking-tight text-text"
+                    className="flex flex-wrap items-center gap-2 text-lg font-semibold tracking-tight text-text"
                   >
-                    Detailed explanation
+                    <span>Detailed explanation</span>
+                    <span className="rounded-organic-sm bg-surface-mid px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-text-muted">
+                      Beta
+                    </span>
                   </h2>
                   <p className="mt-0.5 text-sm text-text-muted">
                     Step-by-step solution
@@ -145,14 +148,14 @@ export function SolutionModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-organic-md bg-surface-mid text-text-muted transition-colors duration-fast ease-signature hover:bg-surface-neutral hover:text-text"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-organic-md bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text"
                 aria-label="Close"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            <div className="min-h-0 flex-1 overflow-y-auto border-t border-border-subtle/40 px-5 py-5 sm:px-6 sm:py-6">
+            <div className="min-h-0 flex-1 overflow-y-auto border-t border-border-subtle/40 px-5 py-5 sm:px-8 sm:py-6">
               <SolutionBody
                 solution_reasoning={solution_reasoning!}
                 graphSpecs={graphSpecs}
