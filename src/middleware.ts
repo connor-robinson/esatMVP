@@ -70,7 +70,8 @@ export async function middleware(request: NextRequest) {
         onOnboarding && request.nextUrl.searchParams.get('preview') === '1';
 
       // Lock the app until username + questionnaire are done (single /onboarding flow).
-      // Partner redeem must finish before onboarding so claim cookies are not lost.
+      // /access landing stays open so Claim access / exhausted UI can show first;
+      // redeem runs after onboarding via /access/complete.
       const needsSetup =
         !profile?.username || profile.onboarding_completed !== true;
       if (needsSetup && !onOnboarding && !onAccess) {

@@ -36,8 +36,8 @@ function postAuthPath(origin: string, rawToken: string, error?: string) {
 }
 
 /**
- * Completes a pending partner claim after login/signup.
- * Reads the HttpOnly claim cookie set by /access/redeem/[token].
+ * Completes a pending partner claim after onboarding (and auth).
+ * Reads the HttpOnly claim cookie set when the user clicked Claim access.
  */
 export async function GET(request: NextRequest) {
   const origin = new URL(request.url).origin;
@@ -54,6 +54,24 @@ export async function GET(request: NextRequest) {
     loginUrl.searchParams.set("mode", "signup");
     loginUrl.searchParams.set("redirectTo", "/access/complete");
     return NextResponse.redirect(loginUrl);
+  }
+
+  const { data: profileRow } = await supabase
+    .from("profiles")
+    .select("username, onboarding_completed")
+    .eq("id", user.id)
+    .maybeSingle();
+  const profile = profileRow as {
+    username: string | null;
+    onboarding_completed: boolean | null;
+  } | null;
+  const needsSetup =
+    !profile?.username || profile.onboarding_completed !== true;
+  if (needsSetup) {
+    const { buildOnboardingUrl } = await import("@/lib/onboarding/redirect");
+    return NextResponse.redirect(
+      new URL(buildOnboardingUrl("/access/complete"), origin),
+    );
   }
 
   if (!rawToken) {

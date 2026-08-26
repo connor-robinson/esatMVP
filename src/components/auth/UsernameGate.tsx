@@ -25,8 +25,9 @@ export function UsernameGate({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // Match middleware: partner /access must finish before onboarding so
-      // claim cookies and exhausted/invalid code UI are not skipped.
+      // Partner /access landing stays reachable so Claim access (and invalid
+      // code UI) work before onboarding. Redeem itself runs after setup via
+      // /access/complete.
       if (
         pathname?.startsWith("/onboarding") ||
         pathname?.startsWith("/login") ||

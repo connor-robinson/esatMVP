@@ -39,6 +39,7 @@ export interface UserAccess {
 export type RedeemErrorCode =
   | "invalid_token"
   | "unauthenticated"
+  | "needs_onboarding"
   | "already_claimed"
   | "expired"
   | "unavailable"
@@ -112,6 +113,8 @@ export function redeemErrorTitle(code: RedeemErrorCode): string {
       return "Too many attempts";
     case "unauthenticated":
       return "Sign in to claim access";
+    case "needs_onboarding":
+      return "Finish setting up your account";
     default:
       return "Access unavailable";
   }
@@ -134,6 +137,8 @@ export function redeemErrorMessage(code: RedeemErrorCode): string {
       return "Please wait a few minutes, then try again.";
     case "unauthenticated":
       return "Create an account or sign in to claim your complimentary ESAT Camp access.";
+    case "needs_onboarding":
+      return "Finish setting up your account, then we will complete your access claim.";
     case "unavailable":
     case "invalid_token":
     default:

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { APP_ROUTES } from "@/lib/seo/config";
 import { formatPartnerAccessDate } from "@/lib/partners/dates";
@@ -50,11 +50,13 @@ function asErrorCode(value: unknown): RedeemErrorCode {
   return code;
 }
 
-/** Direct-link claim UX for `/access/[code]`. Never asks the user to enter a code. */
+/**
+ * Direct-link claim UX for `/access/[code]`.
+ * Flow: Claim access → (signup if needed) → onboarding → redeem.
+ */
 export function AccessClaimPanel({ code }: { code: string }) {
   const [view, setView] = useState<ClaimView>({ status: "loading" });
   const [submitting, setSubmitting] = useState(false);
-  const autoRedeemStarted = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -83,50 +85,23 @@ export function AccessClaimPanel({ code }: { code: string }) {
         const status = await statusRes.json();
         if (cancelled) return;
 
-        if (status.authenticated === true) {
-          if (autoRedeemStarted.current) return;
-          autoRedeemStarted.current = true;
-          setView({ status: "claiming" });
-          const { res, data } = await redeemCode(code);
-          if (cancelled) return;
-          if (data.redirectTo && (res.ok || data.ok)) {
-            window.location.href = data.redirectTo;
-            return;
-          }
-          if (data.error === "already_partner_entitled") {
+        if (status.authenticated === true && status.hasFullAccess === true) {
+          if (status.source === "partner") {
             setView({
               status: "already_partner",
               partnerDisplayName: String(
-                data.partnerDisplayName || peek.partnerDisplayName,
+                status.partnerDisplayName || peek.partnerDisplayName,
               ),
-              partnerSlug: String(data.partnerSlug || peek.partnerSlug || ""),
-              endsAt: String(data.endsAt || peek.accessEndsAt),
+              partnerSlug: String(
+                status.partnerSlug || peek.partnerSlug || "",
+              ),
+              endsAt: String(
+                status.partnerEndsAt || status.accessUntil || peek.accessEndsAt,
+              ),
             });
             return;
           }
-          if (data.error === "already_paid") {
-            setView({ status: "already_paid" });
-            return;
-          }
-          if (data.error === "already_entitled") {
-            setView({
-              status: "already_partner",
-              partnerDisplayName: String(peek.partnerDisplayName),
-              partnerSlug: String(peek.partnerSlug || ""),
-              endsAt: String(peek.accessEndsAt),
-            });
-            return;
-          }
-          if (!res.ok || !data.ok) {
-            const codeErr = asErrorCode(data.error);
-            setView({
-              status: "error",
-              code: codeErr,
-              message: redeemErrorMessage(codeErr),
-            });
-            return;
-          }
-          window.location.href = data.redirectTo || "/access/success";
+          setView({ status: "already_paid" });
           return;
         }
 
@@ -153,8 +128,12 @@ export function AccessClaimPanel({ code }: { code: string }) {
 
   async function onClaim() {
     setSubmitting(true);
+    setView((prev) =>
+      prev.status === "ready" ? { status: "claiming" } : prev,
+    );
     try {
       const { res, data } = await redeemCode(code);
+      // Login, onboarding, or success - always follow server redirect first.
       if (data.redirectTo) {
         window.location.href = data.redirectTo;
         return;
@@ -208,13 +187,13 @@ export function AccessClaimPanel({ code }: { code: string }) {
       <AccessOutcomeCard
         title={
           view.status === "claiming"
-            ? "Claiming your access"
+            ? "Continuing"
             : "Checking your access"
         }
         loading
         loadingLabel={
           view.status === "claiming"
-            ? "Claiming your access…"
+            ? "Continuing…"
             : "Checking your access…"
         }
         testId="access-claim-panel"
@@ -257,7 +236,7 @@ export function AccessClaimPanel({ code }: { code: string }) {
             className={ACCESS_CTA}
             data-testid="claim-access-button"
           >
-            {submitting ? "Claiming…" : "Claim access"}
+            {submitting ? "Continuing…" : "Claim access"}
           </button>
         }
       >

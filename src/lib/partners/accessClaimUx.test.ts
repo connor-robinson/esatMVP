@@ -46,10 +46,16 @@ describe("partner access claim UX copy", () => {
   it("logged-out claim preserves code through Google auth via claim cookie + complete", () => {
     const redeemApi = readSrc("app", "api", "access", "redeem", "route.ts");
     const complete = readSrc("app", "access", "complete", "route.ts");
+    const claim = readSrc("components", "partners", "AccessClaimPanel.tsx");
     expect(redeemApi).toContain("setPartnerClaimCookie");
     expect(redeemApi).toContain("/access/complete");
+    expect(redeemApi).toContain("needs_onboarding");
+    expect(redeemApi).toContain("buildOnboardingUrl");
     expect(complete).toContain("readPartnerClaimCookie");
     expect(complete).toContain("redeemPartnerInvite");
+    expect(complete).toContain("buildOnboardingUrl");
+    expect(claim).not.toContain("autoRedeemStarted");
+    expect(claim).toContain("Claim access");
   });
 });
 

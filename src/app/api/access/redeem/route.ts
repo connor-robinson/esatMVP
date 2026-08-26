@@ -13,6 +13,7 @@ import {
   isShortAccessCode,
   stripAccessCode,
 } from "@/lib/partners/tokens";
+import { buildOnboardingUrl } from "@/lib/onboarding/redirect";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,24 @@ function clientIp(request: NextRequest): string | null {
 function cookieToken(raw: string): string {
   if (isLegacyInviteToken(raw) && !isShortAccessCode(raw)) return raw.trim();
   return stripAccessCode(raw);
+}
+
+async function profileNeedsSetup(
+  supabase: NonNullable<
+    Awaited<ReturnType<typeof requireRouteUser>>["supabase"]
+  >,
+  userId: string,
+): Promise<boolean> {
+  const { data } = await supabase
+    .from("profiles")
+    .select("username, onboarding_completed")
+    .eq("id", userId)
+    .maybeSingle();
+  const profile = data as {
+    username: string | null;
+    onboarding_completed: boolean | null;
+  } | null;
+  return !profile?.username || profile.onboarding_completed !== true;
 }
 
 export async function POST(request: NextRequest) {
@@ -54,6 +73,8 @@ export async function POST(request: NextRequest) {
         { status: peek.error === "rate_limited" ? 429 : 400 },
       );
     }
+    // After signup, resolvePostAuthPath sends incomplete users through
+    // onboarding first, then /access/complete redeems the claim cookie.
     const loginUrl = `/login?mode=signup&redirectTo=${encodeURIComponent("/access/complete")}`;
     const response = NextResponse.json(
       {
@@ -64,6 +85,25 @@ export async function POST(request: NextRequest) {
       },
       { status: 401 },
     );
+    setPartnerClaimCookie(response, cookieToken(rawToken), secure);
+    return response;
+  }
+
+  // Claim button → onboarding → redeem. Defer consumption until setup is done.
+  if (await profileNeedsSetup(supabase, user.id)) {
+    const peek = await peekPartnerAccess(rawToken, { ip: clientIp(request) });
+    if (!peek.ok) {
+      return NextResponse.json(
+        { ok: false, error: peek.error },
+        { status: peek.error === "rate_limited" ? 429 : 400 },
+      );
+    }
+    const response = NextResponse.json({
+      ok: false,
+      error: "needs_onboarding",
+      redirectTo: buildOnboardingUrl("/access/complete"),
+      partnerDisplayName: peek.partnerDisplayName,
+    });
     setPartnerClaimCookie(response, cookieToken(rawToken), secure);
     return response;
   }

@@ -56,8 +56,8 @@ export type PostAuthProfile = {
 };
 
 /**
- * Partner claim paths must run before onboarding. Middleware and UsernameGate
- * already allow /access while setup is incomplete; auth redirects must match.
+ * Partner /access landing pages stay reachable so users can see Claim access
+ * (or invalid/exhausted code UI). Actual redeem waits until after onboarding.
  */
 export function isPartnerAccessPath(path: string): boolean {
   return path === "/access" || path.startsWith("/access/");
@@ -68,11 +68,9 @@ export function resolvePostAuthPath(
   redirectTo: string,
 ): string {
   const safe = sanitizeRedirectTo(redirectTo);
-  if (isPartnerAccessPath(safe)) {
-    return safe;
-  }
   const needsSetup =
     !profile?.username || profile.onboarding_completed !== true;
+  // Claim button → signup → onboarding → /access/complete redeem.
   if (needsSetup) {
     return buildOnboardingUrl(safe);
   }

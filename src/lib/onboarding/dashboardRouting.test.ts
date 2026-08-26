@@ -83,28 +83,28 @@ describe("post-auth redirect defaults", () => {
     );
   });
 
-  it("completes partner /access claim before onboarding for incomplete profiles", () => {
+  it("sends incomplete users through onboarding before partner claim redeem", () => {
     expect(
       resolvePostAuthPath(
         { username: null, onboarding_completed: false },
         "/access/complete",
       ),
-    ).toBe("/access/complete");
+    ).toBe(buildOnboardingUrl("/access/complete"));
     expect(
       resolvePostAuthPath(
         { username: null, onboarding_completed: false },
         "/access/ARKWRIGHT26",
       ),
-    ).toBe("/access/ARKWRIGHT26");
+    ).toBe(buildOnboardingUrl("/access/ARKWRIGHT26"));
     expect(
       resolvePostAuthPath(
-        { username: null, onboarding_completed: false },
-        "/access/success",
+        { username: "alex", onboarding_completed: true },
+        "/access/complete",
       ),
-    ).toBe("/access/success");
+    ).toBe("/access/complete");
   });
 
-  it("UsernameGate and middleware both exempt /access from the setup lock", () => {
+  it("UsernameGate and middleware both exempt /access landing from the setup lock", () => {
     const gate = readSrc("components", "auth", "UsernameGate.tsx");
     const middleware = readSrc("middleware.ts");
     expect(gate).toContain('pathname?.startsWith("/access")');
