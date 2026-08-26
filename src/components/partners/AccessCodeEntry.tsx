@@ -10,7 +10,7 @@ import {
   isLegacyInviteToken,
   isShortAccessCode,
   stripAccessCode,
-} from "@/lib/partners/tokens";
+} from "@/lib/partners/accessCodeFormat";
 
 const ERROR_CODES = new Set([
   "invalid_token",
