@@ -23,7 +23,7 @@ async function selectPreferences(supabase: ReturnType<typeof createServerClient>
   let { data, error } = await (supabase.from('profiles') as any)
     .select(PREFS_SELECT_FULL)
     .eq('id', userId)
-    .single();
+    .maybeSingle();
 
   if (
     error?.message?.includes('marketing_emails_consent') ||
@@ -33,7 +33,7 @@ async function selectPreferences(supabase: ReturnType<typeof createServerClient>
     const retry = await (supabase.from('profiles') as any)
       .select(PREFS_SELECT_CORE)
       .eq('id', userId)
-      .single();
+      .maybeSingle();
     data = retry.data ? { ...OPTIONAL_DEFAULTS, ...retry.data } : null;
     error = retry.error;
   }
@@ -65,29 +65,28 @@ export async function GET(request: NextRequest) {
     );
 
     if (profileError) {
-      // If profile doesn't exist, return defaults
-      if (profileError.code === 'PGRST116') {
-        return NextResponse.json({
-          username: null,
-          last_username_change: null,
-          exam_preference: null,
-          esat_subjects: [],
-          is_early_applicant: true,
-          has_extra_time: false,
-          extra_time_percentage: 25,
-          has_rest_breaks: false,
-          font_size: 'medium',
-          reduced_motion: false,
-          dark_mode: false,
-          onboarding_completed: false,
-          ...OPTIONAL_DEFAULTS,
-        });
-      }
-      
       return NextResponse.json(
         { error: 'Failed to fetch preferences' },
         { status: 500 }
       );
+    }
+
+    if (!profile) {
+      return NextResponse.json({
+        username: null,
+        last_username_change: null,
+        exam_preference: null,
+        esat_subjects: [],
+        is_early_applicant: true,
+        has_extra_time: false,
+        extra_time_percentage: 25,
+        has_rest_breaks: false,
+        font_size: 'medium',
+        reduced_motion: false,
+        dark_mode: false,
+        onboarding_completed: false,
+        ...OPTIONAL_DEFAULTS,
+      });
     }
 
     return NextResponse.json({
@@ -157,7 +156,7 @@ export async function PATCH(request: NextRequest) {
         .from('profiles')
         .select('username, last_username_change')
         .eq('id', session.user.id)
-        .single() as { data: { username: string | null; last_username_change: string | null } | null };
+        .maybeSingle() as { data: { username: string | null; last_username_change: string | null } | null };
 
       // If username is being changed (not first time set), check 14-day restriction
       if (currentProfile?.username && username !== currentProfile.username) {
@@ -210,7 +209,7 @@ export async function PATCH(request: NextRequest) {
           .from('profiles')
           .select('exam_preference')
           .eq('id', session.user.id)
-          .single() as { data: { exam_preference: string | null } | null };
+          .maybeSingle() as { data: { exam_preference: string | null } | null };
 
         effectiveExamPreference = currentProfile?.exam_preference ?? null;
       }
@@ -279,7 +278,7 @@ export async function PATCH(request: NextRequest) {
           .from('profiles')
           .select('username')
           .eq('id', session.user.id)
-          .single() as { data: { username: string | null } | null };
+          .maybeSingle() as { data: { username: string | null } | null };
         
         // Update timestamp if username is new or changed
         if (!currentProfile?.username || currentProfile.username !== username) {
@@ -322,13 +321,14 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    // Update profile
+    // Update profile. Use maybeSingle so a missing row is detectable (new
+    // accounts occasionally lack a profiles row if the signup trigger failed).
     let { data: profile, error: profileError } = await (supabase
       .from('profiles') as any)
       .update(updateData)
       .eq('id', session.user.id)
       .select(PREFS_SELECT_FULL)
-      .single();
+      .maybeSingle();
 
     // Newer columns may not exist yet - strip optional fields and retry
     if (
@@ -355,11 +355,49 @@ export async function PATCH(request: NextRequest) {
         .update(safeUpdate)
         .eq('id', session.user.id)
         .select(PREFS_SELECT_CORE)
-        .single();
+        .maybeSingle();
       profile = retry.data
         ? { ...OPTIONAL_DEFAULTS, ...retry.data }
         : null;
       profileError = retry.error;
+      if (!profileError && !profile) {
+        const inserted = await (supabase.from('profiles') as any)
+          .insert({ id: session.user.id, ...safeUpdate })
+          .select(PREFS_SELECT_CORE)
+          .maybeSingle();
+        profile = inserted.data
+          ? { ...OPTIONAL_DEFAULTS, ...inserted.data }
+          : null;
+        profileError = inserted.error;
+      }
+    } else if (!profileError && !profile) {
+      const inserted = await (supabase.from('profiles') as any)
+        .insert({ id: session.user.id, ...updateData })
+        .select(PREFS_SELECT_FULL)
+        .maybeSingle();
+      profile = inserted.data;
+      profileError = inserted.error;
+
+      if (
+        profileError?.message?.includes('marketing_emails_consent') ||
+        profileError?.message?.includes('target_universities') ||
+        profileError?.message?.includes('referral_source')
+      ) {
+        const {
+          marketing_emails_consent: _m,
+          target_universities: _t,
+          referral_source: _r,
+          ...safeUpdate
+        } = updateData;
+        const retryInsert = await (supabase.from('profiles') as any)
+          .insert({ id: session.user.id, ...safeUpdate })
+          .select(PREFS_SELECT_CORE)
+          .maybeSingle();
+        profile = retryInsert.data
+          ? { ...OPTIONAL_DEFAULTS, ...retryInsert.data }
+          : null;
+        profileError = retryInsert.error;
+      }
     }
 
     if (profileError) {
@@ -367,12 +405,24 @@ export async function PATCH(request: NextRequest) {
       let errorMessage = 'Failed to update preferences';
       if (profileError.code === '23505') {
         errorMessage = 'This username is already taken';
+      } else if (
+        profileError.code === 'PGRST116' ||
+        String(profileError.message || '').includes('coerce the result')
+      ) {
+        errorMessage = 'Could not save your profile. Please refresh and try again.';
       } else if (profileError.message) {
         errorMessage = profileError.message;
       }
       
       return NextResponse.json(
         { error: errorMessage },
+        { status: 500 }
+      );
+    }
+
+    if (!profile) {
+      return NextResponse.json(
+        { error: 'Could not save your profile. Please refresh and try again.' },
         { status: 500 }
       );
     }

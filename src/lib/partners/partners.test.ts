@@ -178,7 +178,7 @@ describe("partner feedback eligibility", () => {
 describe("partner redeem error copy", () => {
   it("uses the required user-facing messages", () => {
     expect(redeemErrorMessage("already_claimed")).toContain(
-      "already redeemed this access code",
+      "claim limit has been reached",
     );
     expect(redeemErrorMessage("expired")).toContain("expiry");
     expect(redeemErrorMessage("unavailable")).toContain("Check the code");

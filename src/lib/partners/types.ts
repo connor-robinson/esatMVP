@@ -96,7 +96,7 @@ export type PartnerFeedbackFeatureId =
 export function redeemErrorTitle(code: RedeemErrorCode): string {
   switch (code) {
     case "already_claimed":
-      return "This code has already been used";
+      return "This code has no remaining claims";
     case "expired":
       return "This code has expired";
     case "partner_inactive":
@@ -120,7 +120,7 @@ export function redeemErrorTitle(code: RedeemErrorCode): string {
 export function redeemErrorMessage(code: RedeemErrorCode): string {
   switch (code) {
     case "already_claimed":
-      return "Someone has already redeemed this access code. If that was you, sign in with the same account. If not, ask your school or programme for a new code.";
+      return "This access code has already been fully redeemed (or its claim limit has been reached). If you already claimed it, sign in with the same account. Otherwise ask your school or programme for a new code.";
     case "expired":
       return "This access code is past its expiry date. Ask your school or programme for a new code.";
     case "partner_inactive":

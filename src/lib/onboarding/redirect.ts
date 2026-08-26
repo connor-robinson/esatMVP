@@ -55,11 +55,22 @@ export type PostAuthProfile = {
   onboarding_completed: boolean | null;
 };
 
+/**
+ * Partner claim paths must run before onboarding. Middleware and UsernameGate
+ * already allow /access while setup is incomplete; auth redirects must match.
+ */
+export function isPartnerAccessPath(path: string): boolean {
+  return path === "/access" || path.startsWith("/access/");
+}
+
 export function resolvePostAuthPath(
   profile: PostAuthProfile | null,
   redirectTo: string,
 ): string {
   const safe = sanitizeRedirectTo(redirectTo);
+  if (isPartnerAccessPath(safe)) {
+    return safe;
+  }
   const needsSetup =
     !profile?.username || profile.onboarding_completed !== true;
   if (needsSetup) {

@@ -25,10 +25,13 @@ export function UsernameGate({ children }: { children: React.ReactNode }) {
         return;
       }
 
+      // Match middleware: partner /access must finish before onboarding so
+      // claim cookies and exhausted/invalid code UI are not skipped.
       if (
         pathname?.startsWith("/onboarding") ||
         pathname?.startsWith("/login") ||
         pathname?.startsWith("/auth") ||
+        pathname?.startsWith("/access") ||
         pathname === "/signup"
       ) {
         setChecking(false);
@@ -61,7 +64,14 @@ export function UsernameGate({ children }: { children: React.ReactNode }) {
     void checkSetup();
   }, [session, pathname]);
 
-  if (checking && session?.user && !pathname?.startsWith("/onboarding") && !pathname?.startsWith("/login") && !pathname?.startsWith("/auth")) {
+  if (
+    checking &&
+    session?.user &&
+    !pathname?.startsWith("/onboarding") &&
+    !pathname?.startsWith("/login") &&
+    !pathname?.startsWith("/auth") &&
+    !pathname?.startsWith("/access")
+  ) {
     return (
       <>
         {children}

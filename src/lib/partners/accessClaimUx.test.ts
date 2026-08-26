@@ -163,10 +163,10 @@ describe("partner short label + success date", () => {
     expect(redeemErrorTitle("expired")).toBe("This code has expired");
     expect(redeemErrorMessage("expired")).toContain("past its expiry date");
     expect(redeemErrorTitle("already_claimed")).toBe(
-      "This code has already been used",
+      "This code has no remaining claims",
     );
     expect(redeemErrorMessage("already_claimed")).toContain(
-      "already redeemed this access code",
+      "claim limit has been reached",
     );
   });
 });

@@ -83,6 +83,35 @@ describe("post-auth redirect defaults", () => {
     );
   });
 
+  it("completes partner /access claim before onboarding for incomplete profiles", () => {
+    expect(
+      resolvePostAuthPath(
+        { username: null, onboarding_completed: false },
+        "/access/complete",
+      ),
+    ).toBe("/access/complete");
+    expect(
+      resolvePostAuthPath(
+        { username: null, onboarding_completed: false },
+        "/access/ARKWRIGHT26",
+      ),
+    ).toBe("/access/ARKWRIGHT26");
+    expect(
+      resolvePostAuthPath(
+        { username: null, onboarding_completed: false },
+        "/access/success",
+      ),
+    ).toBe("/access/success");
+  });
+
+  it("UsernameGate and middleware both exempt /access from the setup lock", () => {
+    const gate = readSrc("components", "auth", "UsernameGate.tsx");
+    const middleware = readSrc("middleware.ts");
+    expect(gate).toContain('pathname?.startsWith("/access")');
+    expect(middleware).toContain("path.startsWith('/access')");
+    expect(middleware).toMatch(/needsSetup && !onOnboarding && !onAccess/);
+  });
+
   it("builds a login URL that returns to /dashboard", () => {
     expect(dashboardLoginUrl()).toBe(
       "/login?redirectTo=%2Fdashboard",
