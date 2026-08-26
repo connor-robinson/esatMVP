@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 type TrainerQuestion = {
@@ -208,12 +209,25 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
   };
 
   return (
-    <div
-      className={cn(
-        "relative flex w-full max-w-[26rem] flex-col justify-self-end overflow-hidden rounded-3xl bg-white/[0.08] p-7 backdrop-blur-xl sm:max-w-[28rem] sm:p-9 lg:min-h-[34rem] lg:p-10",
-        className,
-      )}
-    >
+    <div className={cn("relative w-full max-w-[26rem] sm:max-w-[28rem]", className)}>
+      {!finished && picked === null ? (
+        <motion.div
+          className="pointer-events-none absolute -right-1 -top-3 z-20 sm:-right-2 sm:-top-4"
+          aria-hidden
+          animate={{ y: [0, -7, 0] }}
+          transition={{
+            duration: 2.2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        >
+          <div className="rounded-full bg-[#3B82F6] px-3.5 py-1.5 text-xs font-bold tracking-wide text-white shadow-[0_8px_24px_rgba(59,130,246,0.45)] sm:px-4 sm:py-2 sm:text-sm">
+            Try me
+          </div>
+        </motion.div>
+      ) : null}
+
+      <div className="relative flex w-full flex-col overflow-hidden rounded-3xl bg-white/[0.08] p-7 backdrop-blur-xl sm:p-9 lg:min-h-[34rem] lg:p-10">
       <div className="flex items-center justify-between gap-4">
         <div className="flex gap-2">
           <div className="h-3 w-3 rounded-full bg-red-500/50" />
@@ -273,47 +287,27 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
               const isCorrectOption = optionIndex === question.correctIndex;
               const showCorrect = picked !== null && isCorrectOption;
               const showWrong = selected && flash === "wrong";
-              const showTryMeHint =
-                index === 0 && picked === null && optionIndex === 0;
 
               return (
-                <div key={`${question.id}-${option}`} className="relative">
-                  {showTryMeHint ? (
-                    <span
-                      className={cn(
-                        "pointer-events-none absolute -top-11 left-1/2 z-10 -translate-x-1/2",
-                        "whitespace-nowrap rounded-lg bg-[#3B82F6] px-3 py-1.5",
-                        "text-[11px] font-bold tracking-wide text-white shadow-lg",
-                        "opacity-0 transition-opacity duration-200",
-                        "group-hover/option:opacity-100",
-                      )}
-                    >
-                      Try me in the simulation
-                      <span
-                        aria-hidden
-                        className="absolute left-1/2 top-full -translate-x-1/2 border-[6px] border-transparent border-t-[#3B82F6]"
-                      />
-                    </span>
-                  ) : null}
-                  <button
-                    type="button"
-                    onClick={() => handlePick(optionIndex as 0 | 1)}
-                    disabled={picked !== null}
-                    className={cn(
-                      "group/option w-full rounded-xl px-4 py-5 font-mono text-xl font-bold transition-all duration-200 sm:py-6 sm:text-2xl",
-                      picked === null &&
-                        "bg-white/5 text-white hover:bg-white/10 active:scale-[0.98]",
-                      showCorrect && "bg-[#3B82F6] text-white",
-                      showWrong && "bg-red-500/25 text-red-200",
-                      picked !== null &&
-                        !showCorrect &&
-                        !showWrong &&
-                        "bg-white/5 text-white/40",
-                    )}
-                  >
-                    {option}
-                  </button>
-                </div>
+                <button
+                  key={`${question.id}-${option}`}
+                  type="button"
+                  onClick={() => handlePick(optionIndex as 0 | 1)}
+                  disabled={picked !== null}
+                  className={cn(
+                    "rounded-xl px-4 py-5 font-mono text-xl font-bold transition-all duration-200 sm:py-6 sm:text-2xl",
+                    picked === null &&
+                      "bg-white/5 text-white hover:bg-white/10 active:scale-[0.98]",
+                    showCorrect && "bg-[#3B82F6] text-white",
+                    showWrong && "bg-red-500/25 text-red-200",
+                    picked !== null &&
+                      !showCorrect &&
+                      !showWrong &&
+                      "bg-white/5 text-white/40",
+                  )}
+                >
+                  {option}
+                </button>
               );
             })}
           </div>
