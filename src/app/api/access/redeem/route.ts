@@ -19,11 +19,10 @@ function clientIp(request: NextRequest): string | null {
 }
 
 export async function POST(request: NextRequest) {
-  const origin = new URL(request.url).origin;
-  const secure = origin.startsWith("https://");
+  const secure = new URL(request.url).origin.startsWith("https://");
 
-  const { user, error } = await requireRouteUser(request);
-  if (error || !user) {
+  const { user, supabase, error } = await requireRouteUser(request);
+  if (error || !user || !supabase) {
     return NextResponse.json(
       {
         ok: false,
@@ -48,6 +47,7 @@ export async function POST(request: NextRequest) {
   const result = await redeemPartnerInvite({
     rawToken,
     userId: user.id,
+    userClient: supabase,
     ip: clientIp(request),
   });
 

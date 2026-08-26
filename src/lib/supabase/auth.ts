@@ -45,20 +45,27 @@ export async function requireRouteUser(request: Request) {
       return { session: null, supabase: null as any, user: null as null, error: "unauthorized" as const };
     }
 
+    // Verify identity with the Auth server. Do not trust getSession() user data
+    // for security-sensitive authorization (cookie storage can be spoofed).
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return { session: null, supabase, user: null as null, error: "unauthorized" as const };
+    }
+
+    // Session is optional convenience for callers that need tokens; identity
+    // always comes from the verified user above.
     const {
       data: { session },
-      error: sessionError,
     } = await supabase.auth.getSession();
 
-    if (sessionError) {
-      return { session: null, supabase, user: null as null, error: "unauthorized" as const };
-    }
+    const trustedSession =
+      session?.user?.id === user.id ? { ...session, user } : null;
 
-    if (!session?.user) {
-      return { session: null, supabase, user: null as null, error: "unauthorized" as const };
-    }
-
-    return { session, supabase, user: session.user };
+    return { session: trustedSession, supabase, user };
   } catch (error: any) {
     return { session: null, supabase: null as any, user: null as null, error: "unauthorized" as const };
   }

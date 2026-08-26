@@ -57,8 +57,9 @@ export async function getPaidAccess(
     }
 
     // Partner entitlement: same full product access; do not offer founding tester.
+    // Service-only RPC: arbitrary-user lookup is not available to anon/authenticated.
     const { data: hasPartner } = await service.rpc(
-      "user_has_active_partner_entitlement",
+      "service_user_has_active_partner_entitlement",
       { p_user_id: userId },
     );
     if (hasPartner === true) {

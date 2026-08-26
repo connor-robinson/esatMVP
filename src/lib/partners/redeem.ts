@@ -81,13 +81,13 @@ export async function recordRedeemAttempt(
 
 export async function peekPartnerInvite(
   rawToken: string,
-  service: SupabaseClient = createPartnerServiceClient(),
+  client: SupabaseClient = createPartnerServiceClient(),
 ): Promise<{ ok: true; partnerSlug: string; partnerDisplayName: string; accessEndsAt: string } | { ok: false; error: RedeemErrorCode }> {
   if (!isPlausiblePartnerToken(rawToken)) {
     return { ok: false, error: "invalid_token" };
   }
   const tokenHash = hashPartnerInviteToken(rawToken);
-  const { data, error } = await service.rpc("peek_partner_invite", {
+  const { data, error } = await client.rpc("peek_partner_invite", {
     p_token_hash: tokenHash,
   });
   if (error) {
@@ -104,9 +104,17 @@ export async function peekPartnerInvite(
   };
 }
 
+/**
+ * Redeem via the authenticated user client so Postgres uses auth.uid().
+ * Never pass a client-supplied user UUID into the redeem RPC.
+ * Rate-limit bookkeeping still uses the service-role client.
+ */
 export async function redeemPartnerInvite(opts: {
   rawToken: string;
+  /** Verified user id from auth.getUser() - used only for rate-limit logging. */
   userId: string;
+  /** Cookie/JWT-authenticated Supabase client (anon key + user session). */
+  userClient: SupabaseClient;
   ip?: string | null;
   service?: SupabaseClient;
 }): Promise<RedeemResult> {
@@ -133,9 +141,9 @@ export async function redeemPartnerInvite(opts: {
   }
 
   const tokenHash = hashPartnerInviteToken(opts.rawToken);
-  const { data, error } = await service.rpc("redeem_partner_invite", {
+  // One-arg RPC: identity comes from auth.uid() on the user JWT.
+  const { data, error } = await opts.userClient.rpc("redeem_partner_invite", {
     p_token_hash: tokenHash,
-    p_user_id: opts.userId,
   });
 
   if (error) {

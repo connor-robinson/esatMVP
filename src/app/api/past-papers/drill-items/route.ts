@@ -24,9 +24,9 @@ function toIso(value?: number | null) {
 
 export async function POST(request: Request) {
   try {
-    const { session, supabase, error: authError } = await requireRouteUser(request);
+    const { user, supabase, error: authError } = await requireRouteUser(request);
     
-    if (authError || !session?.user || !supabase) {
+    if (authError || !user || !supabase) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
   }
 
 const rows = items.map((item) => ({
-    user_id: session.user.id,
+    user_id: user.id,
     paper_id: item.paperId ?? null,
     paper_name: item.paperName,
     question_number: item.questionNumber,

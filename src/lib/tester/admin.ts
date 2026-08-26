@@ -15,6 +15,9 @@ export interface AdminContext {
  * Authorise an admin request. Admins are users with profiles.role = 'admin'
  * (see current_user_is_admin() in the DB). Returns a service-role client for
  * privileged reads/writes when authorised.
+ *
+ * Identity comes from requireRouteUser → supabase.auth.getUser() (Auth server
+ * verification), not from trusted getSession() cookie data alone.
  */
 export async function requireTesterAdmin(
   request: NextRequest,

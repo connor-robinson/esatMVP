@@ -31,10 +31,10 @@ export async function GET(request: NextRequest) {
 
   const supabase = createServerClient();
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!session?.user) {
+  if (!user) {
     const loginUrl = new URL("/login", origin);
     loginUrl.searchParams.set("mode", "signup");
     loginUrl.searchParams.set("redirectTo", "/access/complete");
@@ -50,7 +50,8 @@ export async function GET(request: NextRequest) {
 
   const result = await redeemPartnerInvite({
     rawToken,
-    userId: session.user.id,
+    userId: user.id,
+    userClient: supabase,
     ip: clientIp(request),
   });
 
@@ -72,7 +73,7 @@ export async function GET(request: NextRequest) {
   if (!result.idempotent) {
     await logPartnerEvent(createPartnerServiceClient(), {
       partnerId: result.partnerId,
-      userId: session.user.id,
+      userId: user.id,
       entitlementId: result.entitlementId,
       event: "partner_invite_redeemed",
       properties: {
