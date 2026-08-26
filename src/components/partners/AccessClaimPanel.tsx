@@ -262,11 +262,9 @@ export function AccessClaimPanel({ code }: { code: string }) {
         }
       >
         <p className="text-text-muted">
-          {view.partnerDisplayName} has provided you with full access to ESAT
-          Camp until {formatPartnerAccessDate(view.accessEndsAt)}.
-        </p>
-        <p className="text-text-muted">
-          Claim it now to unlock calibration, the question bank, and more.
+          Redeem full access to ESAT Camp until{" "}
+          {formatPartnerAccessDate(view.accessEndsAt)}, from the{" "}
+          {view.partnerDisplayName}.
         </p>
       </AccessOutcomeCard>
     );
