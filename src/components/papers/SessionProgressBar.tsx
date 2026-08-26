@@ -22,6 +22,7 @@ import { Loader2, Save } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { isPaperImmersiveRoute } from '@/lib/papers/activePaperSessionClient';
 import { markSessionDetached } from '@/lib/storage/sessionStorage';
+import { DEFAULT_POST_AUTH_PATH } from '@/lib/onboarding/redirect';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
 
 const MARK_SAVE_HINT_KEY = 'papers.mark.saveLeaveHintSeen';
