@@ -601,9 +601,7 @@ export function MarketingHomepage({
                   Try our free tools
                 </h2>
                 <p className="mt-5 text-lg leading-relaxed text-[#94A3B8]">
-                  Enter a past-paper raw mark from NSAA, ENGAA or TMUA. See the
-                  predicted ESAT or TMUA score and where that sits on the
-                  official distribution.
+                  Enter a raw mark from NSAA or ENGAA past papers, and se
                 </p>
               </div>
 
