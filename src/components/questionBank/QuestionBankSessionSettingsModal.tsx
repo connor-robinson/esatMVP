@@ -115,7 +115,7 @@ function NumericStepper({
       >
         <Minus className="h-4 w-4" />
       </button>
-      <div className="flex min-w-0 flex-1 items-center justify-center gap-2 px-1">
+      <div className="flex min-w-[7.5rem] flex-1 items-center justify-center gap-1.5 overflow-visible px-1">
         <input
           type="text"
           inputMode={allowDecimals ? "decimal" : "numeric"}
@@ -136,7 +136,7 @@ function NumericStepper({
             }
           }}
           className={cn(
-            "h-10 w-[5rem] border-0 bg-transparent text-center text-2xl font-semibold tabular-nums leading-10 text-text sm:text-[1.75rem] sm:leading-10",
+            "box-content h-10 w-[5.5ch] shrink-0 border-0 bg-transparent px-1.5 text-center text-2xl font-semibold tabular-nums leading-none text-text sm:text-[1.75rem]",
             "outline-none shadow-none ring-0 focus:border-0 focus:outline-none focus:ring-0",
           )}
           aria-label={ariaLabel}
@@ -368,7 +368,7 @@ export function QuestionBankSessionSettingsModal({
                   disabled={isAutoTime}
                   title={`Reset to ${formatStepperValue(autoMinutes, TIME_STEP)} min (90s per question)`}
                   className={cn(
-                    "flex h-14 shrink-0 items-center gap-1.5 rounded-organic-lg px-3 text-xs font-semibold transition-colors",
+                    "flex min-h-14 shrink-0 items-center gap-1.5 self-stretch rounded-organic-lg px-3 text-xs font-semibold transition-colors",
                     "bg-surface-elevated text-text-muted hover:bg-surface-mid hover:text-text",
                     "disabled:cursor-default disabled:opacity-45 disabled:hover:bg-surface-elevated disabled:hover:text-text-muted",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/35",

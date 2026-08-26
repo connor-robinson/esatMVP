@@ -312,7 +312,7 @@ export function QuestionBankHomeScreen() {
 
   const progressSummary =
     aggregate && aggregate.total > 0
-      ? `${aggregate.attempted} / ${aggregate.total} questions completed · ${aggregatePct}% complete`
+      ? `${aggregate.attempted} / ${aggregate.total} questions completed of your selected subjects`
       : progressDescription;
 
   const siblingTilesForModal = useMemo(
