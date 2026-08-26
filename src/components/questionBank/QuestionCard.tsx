@@ -138,37 +138,31 @@ export function QuestionCard({
   const [feedbackLoading, setFeedbackLoading] = useState(true);
   const [ratingSubmitting, setRatingSubmitting] = useState(false);
   const [hoverStar, setHoverStar] = useState<number | null>(null);
-  const wasAllowRetryRef = useRef(false);
+  const [resultFlash, setResultFlash] = useState<{
+    letter: string;
+    kind: "correct" | "wrong";
+  } | null>(null);
+  const lastFlashKeyRef = useRef("");
 
   const optionLetters = Object.keys(question.options).sort();
   const statementItems = getQuestionStatementItems(question);
   const showSessionNotation = questionNumber != null;
-  const optionsLocked = answerRevealed || (isAnswered && !allowRetry);
 
+  // Options are locked only when the question is fully resolved (correct or revealed).
+  // During retry (wrong answer, not revealed) they stay unlocked.
+  const optionsLocked = answerRevealed || (isAnswered && isCorrect === true);
+
+  // Reset everything on new question.
   useEffect(() => {
     setLocalSelectedAnswer(null);
     onSelectionChange?.(null);
     setRevealedDistractors(new Set());
     setIncorrectAnswers(new Set());
-    wasAllowRetryRef.current = false;
+    setResultFlash(null);
+    lastFlashKeyRef.current = "";
   }, [question.id, onSelectionChange]);
 
-  // Clear selection once when a wrong answer unlocks retry, so the next pick is fresh.
-  useEffect(() => {
-    if (allowRetry && !wasAllowRetryRef.current) {
-      setLocalSelectedAnswer(null);
-      onSelectionChange?.(null);
-    }
-    wasAllowRetryRef.current = allowRetry;
-  }, [allowRetry, onSelectionChange]);
-
-  // Keep local selection locked to the scored answer when options are locked.
-  useEffect(() => {
-    if (optionsLocked && selectedAnswer) {
-      setLocalSelectedAnswer(selectedAnswer);
-    }
-  }, [optionsLocked, selectedAnswer]);
-
+  // Sync local selection to parent (simple, no competing clears).
   useEffect(() => {
     onSelectionChange?.(localSelectedAnswer);
   }, [localSelectedAnswer, onSelectionChange]);
@@ -259,6 +253,17 @@ export function QuestionCard({
     onIncorrectAnswersChange?.(incorrectAnswers);
   }, [incorrectAnswers, onIncorrectAnswersChange]);
 
+  // Trigger a short result flash when a submit is scored.
+  useEffect(() => {
+    if (!showSessionNotation || !selectedAnswer || !isAnswered) return;
+    const key = `${question.id}:${selectedAnswer}:${isCorrect}`;
+    if (lastFlashKeyRef.current === key) return;
+    lastFlashKeyRef.current = key;
+    setResultFlash({ letter: selectedAnswer, kind: isCorrect ? "correct" : "wrong" });
+    const timer = window.setTimeout(() => setResultFlash(null), 500);
+    return () => window.clearTimeout(timer);
+  }, [showSessionNotation, question.id, selectedAnswer, isAnswered, isCorrect]);
+
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (
@@ -284,60 +289,49 @@ export function QuestionCard({
     if (!localSelectedAnswer || optionsLocked) return;
     if (incorrectAnswers.has(localSelectedAnswer)) return;
     const correct = localSelectedAnswer === question.correct_option;
+    // Clear selection immediately so user can pick again on retry.
+    setLocalSelectedAnswer(null);
     onAnswerSubmit(localSelectedAnswer, correct);
   };
 
-  /** Option rows: subtle fill; selected one step stronger; scored states tint gently. */
-  const OPTION_ROW_BASE =
-    "bg-surface-subtle dark:bg-surface-mid";
-  const OPTION_ROW_SELECTED =
-    "bg-surface-mid dark:bg-folder-card-selected";
-  const OPTION_ROW_CORRECT =
-    "bg-success/12 dark:bg-success/15";
-  const OPTION_ROW_WRONG =
-    "bg-error/10 dark:bg-error/12";
-  const OPTION_ROW_HOVER =
-    "hover:bg-surface-mid/70 dark:hover:bg-surface-neutral";
+  const OPTION_ROW_BASE = "bg-surface-subtle dark:bg-surface-mid";
+  const OPTION_ROW_SELECTED = "bg-surface-mid dark:bg-folder-card-selected";
+  const OPTION_ROW_CORRECT = "bg-success/8 dark:bg-success/10";
+  const OPTION_ROW_HOVER = "hover:bg-surface-mid/70 dark:hover:bg-surface-neutral";
 
   const getOptionStyle = (letter: string) => {
-    if (isAnswered && isCorrect && letter === correctAnswer) {
+    const isCorrectAnswer = letter === correctAnswer;
+    const wasWrong = incorrectAnswers.has(letter) && !isCorrectAnswer;
+
+    // Correct answer - resolved.
+    if ((isAnswered && isCorrect && isCorrectAnswer) || (answerRevealed && isCorrectAnswer)) {
       return cn("cursor-default", OPTION_ROW_CORRECT);
     }
-    if (answerRevealed && letter === correctAnswer) {
-      return cn("cursor-default", OPTION_ROW_CORRECT);
+    // Previously wrong - greyed out, not a dark error color.
+    if (wasWrong) {
+      return cn("cursor-default opacity-50", OPTION_ROW_BASE);
     }
-    if (incorrectAnswers.has(letter) && letter !== correctAnswer) {
-      return cn("cursor-default", OPTION_ROW_WRONG);
-    }
-    if (isAnswered && !isCorrect && !answerRevealed) {
-      if (allowRetry) {
-        if (localSelectedAnswer === letter) {
-          return cn("cursor-pointer", OPTION_ROW_SELECTED);
-        }
-        return cn("cursor-pointer", OPTION_ROW_BASE, OPTION_ROW_HOVER);
-      }
+    // Locked (correct or revealed) - non-selected options dim slightly.
+    if (optionsLocked) {
       return cn("cursor-default opacity-70", OPTION_ROW_BASE);
     }
+    // Active selection.
     if (localSelectedAnswer === letter) {
       return cn("cursor-pointer", OPTION_ROW_SELECTED);
     }
+    // Default clickable.
     return cn("cursor-pointer", OPTION_ROW_BASE, OPTION_ROW_HOVER);
   };
 
   const letterLabelClass = (letter: string) => {
-    if (isAnswered && isCorrect && letter === correctAnswer) {
+    const isCorrectAnswer = letter === correctAnswer;
+    if ((isAnswered && isCorrect && isCorrectAnswer) || (answerRevealed && isCorrectAnswer)) {
       return "text-success";
     }
-    if (answerRevealed && letter === correctAnswer) {
-      return "text-success";
+    if (incorrectAnswers.has(letter) && !isCorrectAnswer) {
+      return "text-error/60";
     }
-    if (incorrectAnswers.has(letter) && letter !== correctAnswer) {
-      return "text-error";
-    }
-    if (
-      localSelectedAnswer === letter &&
-      (!isAnswered || (isAnswered && allowRetry && !incorrectAnswers.has(letter)))
-    ) {
+    if (localSelectedAnswer === letter && !optionsLocked) {
       return "text-text";
     }
     return "text-text-muted";
@@ -481,32 +475,39 @@ export function QuestionCard({
         <div className="flex flex-col gap-2.5">
           {optionLetters.map((letter) => {
             const distractor = distractorTextFor(question.distractor_map, letter);
+            const isCorrectAnswer = letter === correctAnswer;
             const isWrongAttempt =
-              incorrectAnswers.has(letter) && letter !== correctAnswer;
+              incorrectAnswers.has(letter) && !isCorrectAnswer;
             const showDistractorControl = isWrongAttempt && Boolean(distractor);
             const distractorRevealed = revealedDistractors.has(letter);
+            const canClick = !optionsLocked && !isWrongAttempt;
             const showSubmit =
-              !optionsLocked &&
-              localSelectedAnswer === letter &&
-              !incorrectAnswers.has(letter);
+              canClick &&
+              localSelectedAnswer === letter;
             const showCorrectMark =
-              (isAnswered && isCorrect && letter === correctAnswer) ||
-              (answerRevealed && letter === correctAnswer);
+              (isAnswered && isCorrect && isCorrectAnswer) ||
+              (answerRevealed && isCorrectAnswer);
             const showWrongMark = isWrongAttempt;
+
+            const isFlashing = resultFlash?.letter === letter;
+            const flashCorrect = isFlashing && resultFlash.kind === "correct";
+            const flashWrong = isFlashing && resultFlash.kind === "wrong";
 
             return (
             <div
               key={letter}
               className={cn(
-                "relative flex w-full flex-col overflow-hidden rounded-organic-md",
+                "relative flex w-full flex-col overflow-hidden rounded-organic-md transition-[background-color,opacity,box-shadow] duration-200 ease-out",
                 getOptionStyle(letter),
+                flashCorrect && "!bg-success/14 ring-2 ring-inset ring-success/25",
+                flashWrong && "!bg-error/10 ring-2 ring-inset ring-error/20",
               )}
             >
               <div className="relative flex w-full items-center gap-2 px-3.5 py-2.5 sm:gap-3 sm:px-4 sm:py-3">
                 <button
                   type="button"
                   onClick={() => handleOptionClick(letter)}
-                  disabled={optionsLocked || isWrongAttempt}
+                  disabled={!canClick}
                   className="flex min-w-0 flex-1 items-center gap-3 text-left disabled:cursor-default"
                 >
                   <span
