@@ -519,40 +519,22 @@ export function MarketingHomepage({
                   Mental maths trainer
                 </p>
                 <h2 className="mt-4 font-display text-4xl font-bold tracking-tight lg:text-5xl">
-                  Time is of the essence in the ESAT
+                  Try our one-of-a-kind mental maths trainer
                 </h2>
                 <p className="mt-5 max-w-xl text-lg leading-relaxed text-[#94A3B8]">
-                  Each module gives about 90 seconds per question, with no
-                  calculator. Arithmetic that feels easy in school becomes the
-                  bottleneck under exam pressure. Our trainer is built for that
-                  pace.
+                  Time is of the essence in the ESAT. You have to finish each
+                  question in less than 90 seconds, with no calculator.
                 </p>
-              </div>
-
-              <div className="flex flex-wrap gap-8 sm:gap-10">
-                <div>
-                  <p className="font-display text-4xl font-bold tabular-nums text-white sm:text-5xl">
-                    ≈90s
-                  </p>
-                  <p className="mt-1 text-xs font-semibold uppercase tracking-[0.16em] text-[#94A3B8]">
-                    Per question
-                  </p>
-                </div>
-                <div>
-                  <p className="font-display text-4xl font-bold tabular-nums text-white sm:text-5xl">
-                    {MENTAL_MATHS_MODULE_COUNT_MARKETING}+
-                  </p>
-                  <p className="mt-1 text-xs font-semibold uppercase tracking-[0.16em] text-[#94A3B8]">
-                    Practice modules
-                  </p>
-                </div>
+                <p className="mt-4 text-base font-semibold text-white sm:text-lg">
+                  {MENTAL_MATHS_MODULE_COUNT_MARKETING}+ modules,{" "}
+                  {MENTAL_MATHS_TOPIC_COUNT_MARKETING}+ topics
+                </p>
               </div>
 
               <ul className="space-y-4">
                 {[
-                  "Short timed drills that train speed and accuracy together",
-                  "Topics that show up inside Maths 1, Maths 2, and science questions",
-                  "Instant feedback so you fix slow steps before they cost marks",
+                  "Short timed drills that train speed and accuracy",
+                  "Remove your reliance on calculators",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3">
                     <span
