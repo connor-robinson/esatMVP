@@ -30,7 +30,7 @@ export function ExampleQuestionDemo({
     <div
       className={cn(
         variant === "hero"
-          ? "relative flex w-full max-w-none flex-col overflow-hidden rounded-3xl bg-white/[0.08] p-6 backdrop-blur-xl sm:max-w-[28rem] sm:p-8 lg:min-h-[34rem] lg:p-10"
+          ? "relative flex w-full max-w-none flex-col overflow-hidden rounded-3xl bg-white/[0.08] p-6 backdrop-blur-xl sm:max-w-[32rem] sm:p-8 lg:min-h-[34rem] lg:max-w-[34rem] lg:p-10"
           : "rounded-2xl bg-[#0A0F1D]/60 p-6 sm:p-8",
         className,
       )}
