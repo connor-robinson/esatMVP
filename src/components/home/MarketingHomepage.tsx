@@ -59,6 +59,17 @@ const ScoreConverterPreview = dynamic(
   },
 );
 
+const HeroTrainerDemo = dynamic(
+  () =>
+    import("@/components/home/HeroTrainerDemo").then((m) => m.HeroTrainerDemo),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="min-h-[28rem] rounded-3xl bg-white/[0.08]" aria-hidden />
+    ),
+  },
+);
+
 const HOMEPAGE_SECTIONS = [
   { id: "practice", label: "Practice" },
   { id: "features", label: "Features" },
@@ -487,6 +498,81 @@ export function MarketingHomepage() {
                   →
                 </span>
               </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Mental maths trainer showcase */}
+      <section className="bg-[#0A0F1D] py-24">
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-5 lg:px-6">
+          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
+            <div className="space-y-8">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
+                  Mental maths trainer
+                </p>
+                <h2 className="mt-4 font-display text-4xl font-bold tracking-tight lg:text-5xl">
+                  Time is of the essence in the ESAT
+                </h2>
+                <p className="mt-5 max-w-xl text-lg leading-relaxed text-[#94A3B8]">
+                  Each module gives about 90 seconds per question, with no
+                  calculator. Arithmetic that feels easy in school becomes the
+                  bottleneck under exam pressure. Our trainer is built for that
+                  pace.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-8 sm:gap-10">
+                <div>
+                  <p className="font-display text-4xl font-bold tabular-nums text-white sm:text-5xl">
+                    ≈90s
+                  </p>
+                  <p className="mt-1 text-xs font-semibold uppercase tracking-[0.16em] text-[#94A3B8]">
+                    Per question
+                  </p>
+                </div>
+                <div>
+                  <p className="font-display text-4xl font-bold tabular-nums text-white sm:text-5xl">
+                    {MENTAL_MATHS_MODULE_COUNT_MARKETING}+
+                  </p>
+                  <p className="mt-1 text-xs font-semibold uppercase tracking-[0.16em] text-[#94A3B8]">
+                    Practice modules
+                  </p>
+                </div>
+              </div>
+
+              <ul className="space-y-4">
+                {[
+                  "Short timed drills that train speed and accuracy together",
+                  "Topics that show up inside Maths 1, Maths 2, and science questions",
+                  "Instant feedback so you fix slow steps before they cost marks",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <span
+                      aria-hidden
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
+                    />
+                    <p className="text-base leading-relaxed text-[#94A3B8] sm:text-lg">
+                      {item}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+
+              <Link
+                href="/mental-maths/drill"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#3B82F6] px-7 py-3.5 font-bold text-white transition-colors hover:bg-[#2563EB]"
+              >
+                Try the mental maths trainer
+                <span aria-hidden className="text-lg leading-none">
+                  →
+                </span>
+              </Link>
+            </div>
+
+            <div className="flex justify-center lg:justify-end">
+              <HeroTrainerDemo className="w-full max-w-[28rem] justify-self-center" />
             </div>
           </div>
         </div>
