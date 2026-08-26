@@ -489,16 +489,24 @@ export function Navbar() {
       {showMainNavStrip && (
         <nav
           className={cn(
-            'z-50 w-full border-b border-border bg-background/98 backdrop-blur-xl transition-transform duration-300 ease-out',
+            'z-50 w-full border-b border-border bg-background/98 backdrop-blur-xl',
             isHomepage
-              ? cn(
-                  'fixed inset-x-0 top-0',
-                  showNavbarChrome ? 'translate-y-0' : '-translate-y-full pointer-events-none',
-                )
+              ? 'fixed inset-x-0 top-0 will-change-transform transition-transform duration-300 ease-out'
               : 'sticky top-0',
+            isHomepage && !showNavbarChrome && 'pointer-events-none',
           )}
+          style={
+            isHomepage
+              ? {
+                  transform: showNavbarChrome
+                    ? 'translateY(0)'
+                    : 'translateY(-110%)',
+                }
+              : undefined
+          }
           aria-hidden={isHomepage && !showNavbarChrome ? true : undefined}
-        >          <div className='w-full px-3 sm:px-5 lg:px-8 xl:px-10'>
+        >
+          <div className='w-full px-3 sm:px-5 lg:px-8 xl:px-10'>
             <div
               className='flex items-center justify-between gap-2.5'
               style={{ height: NAVBAR_HEIGHT_PX }}

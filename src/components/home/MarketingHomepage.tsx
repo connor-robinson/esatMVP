@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -81,6 +81,7 @@ const HOMEPAGE_SECTIONS = [
 
 function HomepageSectionNav() {
   const [active, setActive] = useState<string>(HOMEPAGE_SECTIONS[0].id);
+  const { navVisible } = useHomepageAutoHideNav();
 
   useEffect(() => {
     const ids = HOMEPAGE_SECTIONS.map((section) => section.id);
@@ -107,8 +108,8 @@ function HomepageSectionNav() {
   return (
     <nav
       aria-label="Page sections"
-      className="sticky z-30 bg-[#0A0F1D]/90 backdrop-blur-md"
-      style={{ top: NAVBAR_HEIGHT_PX }}
+      className="sticky z-30 bg-[#0A0F1D]/90 backdrop-blur-md transition-[top] duration-300 ease-out"
+      style={{ top: navVisible ? NAVBAR_HEIGHT_PX : 0 }}
     >
       <div className="mx-auto flex max-w-[1400px] justify-center gap-2 overflow-x-auto px-4 py-3 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-3 sm:px-5 sm:py-4 lg:gap-4 lg:px-6 [&::-webkit-scrollbar]:hidden">
         {HOMEPAGE_SECTIONS.map((section) => (
@@ -176,10 +177,8 @@ export function MarketingHomepage({
   };
 
   return (
-    <div className="scroll-smooth">
-      <HomepageSectionNav />
-
-      {/* Hero Section */}
+    <div className="scroll-smooth bg-[#0A0F1D]">
+      {/* Hero Section - full-bleed; main app navbar auto-hides on this page */}
       <section className="relative overflow-hidden pt-12 pb-16 lg:pt-24 lg:pb-32 bg-[#0A0F1D]">
         <div
           aria-hidden
@@ -331,6 +330,8 @@ export function MarketingHomepage({
           </div>
         </div>
       </section>
+
+      <HomepageSectionNav />
 
       {/* Calibration preview */}
       <section
