@@ -16,7 +16,11 @@ export const BRAND_CONFIG = {
 
   navWordmark: "ESAT CAMP",
 
-  /** Raster mark (white on transparent PNG at /public/brand/logo-mark.png). */
+  /**
+   * Legacy public path for the raster mark.
+   * Navbar / BrandMarkImage import `@/assets/logo-mark.png` instead so Next
+   * serves a fingerprinted `/_next/static/media/...` URL.
+   */
   logoMarkSrc: "/brand/logo-mark.png",
 
   /** Full wordmark (black on white PNG at /public/brand/logo-full.png). */

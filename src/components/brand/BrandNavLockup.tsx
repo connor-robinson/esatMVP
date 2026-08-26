@@ -15,7 +15,11 @@ export function BrandNavLockup({ className }: BrandNavLockupProps) {
         className,
       )}
     >
-      <BrandMarkImage className="h-[1.125rem] w-auto translate-y-px" alt="" />
+      <BrandMarkImage
+        className="h-[1.125rem] w-auto translate-y-px"
+        alt=""
+        priority
+      />
       <BrandWordmark size="sm" className="text-[13px] tracking-[0.11em]" />
     </span>
   );

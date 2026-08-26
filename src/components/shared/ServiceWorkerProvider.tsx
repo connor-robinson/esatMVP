@@ -8,6 +8,10 @@ export function ServiceWorkerProvider() {
       const isProd = process.env.NODE_ENV === "production";
 
       if (isProd) {
+        // Production currently has no /sw.js (404). If a worker is added later,
+        // do not cache-first brand marks or `/_next/static/media/*` - those are
+        // already immutably fingerprinted by Next and must not be intercepted
+        // with a stale or opaque offline response.
         const BUILD_ID = (window as any).__NEXT_DATA__?.buildId || Date.now().toString();
 
         navigator.serviceWorker

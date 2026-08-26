@@ -96,12 +96,6 @@ export default function RootLayout({
       className={`dark ${spaceGrotesk.variable} ${ebGaramond.variable}`}
     >
       <head>
-        <link
-          rel="preload"
-          href="/brand/logo-mark.png"
-          as="image"
-          type="image/png"
-        />
         <script
           dangerouslySetInnerHTML={{
             __html: `
