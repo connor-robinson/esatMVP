@@ -82,6 +82,8 @@ export const SITEMAP_EXCLUDED_PATHS = [
   "/access",
   "/access/success",
   "/access/complete",
+  "/access/redeem",
+  "/access/K7M4Q2XF",
   "/partners/arkwright-2026",
   "/dev/founding-tester",
   "/dev/loading",

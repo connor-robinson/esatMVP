@@ -6,6 +6,7 @@ import {
   revokeInvite,
   revokeInviteBatch,
 } from "@/lib/partners/invites";
+import { createCohortCode, setCohortCodeStatus } from "@/lib/partners/cohorts";
 import { endOfUtcDay } from "@/lib/partners/dates";
 import { PRODUCTION_SITE_URL } from "@/lib/seo/config";
 
@@ -140,6 +141,58 @@ export async function POST(
         { status: 400 },
       );
     }
+  }
+
+  if (action === "create_cohort") {
+    const code = String(body.code ?? "");
+    const maxRedemptions = Number(body.maxRedemptions);
+    const accessEndsAtRaw = String(
+      body.accessEndsAt ?? body.expiresAt ?? "",
+    ).trim();
+    const label = body.label ? String(body.label) : null;
+
+    if (!accessEndsAtRaw) {
+      return NextResponse.json(
+        { error: "accessEndsAt is required" },
+        { status: 400 },
+      );
+    }
+
+    let accessEndsAt: string;
+    try {
+      accessEndsAt = accessEndsAtRaw.includes("T")
+        ? new Date(accessEndsAtRaw).toISOString()
+        : endOfUtcDay(accessEndsAtRaw);
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid accessEndsAt date" },
+        { status: 400 },
+      );
+    }
+
+    const result = await createCohortCode({
+      service: admin.service,
+      partnerId,
+      code,
+      maxRedemptions,
+      expiresAt: accessEndsAt,
+      label,
+      siteOrigin: PRODUCTION_SITE_URL,
+    });
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error }, { status: 400 });
+    }
+    return NextResponse.json({ ok: true, cohort: result.cohort });
+  }
+
+  if (action === "disable_cohort" || action === "enable_cohort") {
+    const cohortId = String(body.cohortId ?? "");
+    const status = action === "disable_cohort" ? "disabled" : "active";
+    const result = await setCohortCodeStatus(admin.service, cohortId, status);
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error }, { status: 400 });
+    }
+    return NextResponse.json({ ok: true });
   }
 
   if (action === "revoke_invite") {

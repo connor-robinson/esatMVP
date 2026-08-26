@@ -10,8 +10,17 @@ export const NOINDEX_FOLLOW = {
   follow: true,
 } as const;
 
+export const NOINDEX_NOFOLLOW = {
+  index: false,
+  follow: false,
+} as const;
+
 export const noIndexFollowMetadata: Metadata = {
   robots: NOINDEX_FOLLOW,
+};
+
+export const noIndexNofollowMetadata: Metadata = {
+  robots: NOINDEX_NOFOLLOW,
 };
 
 export function buildNoIndexMetadata(
@@ -20,5 +29,14 @@ export function buildNoIndexMetadata(
   return {
     ...overrides,
     robots: NOINDEX_FOLLOW,
+  };
+}
+
+export function buildNoIndexNofollowMetadata(
+  overrides: Omit<Metadata, "robots"> = {},
+): Metadata {
+  return {
+    ...overrides,
+    robots: NOINDEX_NOFOLLOW,
   };
 }

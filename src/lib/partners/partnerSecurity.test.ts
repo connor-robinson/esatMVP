@@ -308,8 +308,18 @@ describe("redeemPartnerInvite calls one-arg RPC only", () => {
       },
       error: null,
     });
+    const chain: any = {
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      gte: vi.fn().mockResolvedValue({ count: 0 }),
+      insert: vi.fn().mockResolvedValue({ error: null }),
+    };
+    const client = {
+      rpc,
+      from: vi.fn(() => chain),
+    } as any;
 
-    const result = await peekPartnerInvite(token.rawToken, { rpc } as any);
+    const result = await peekPartnerInvite(token.rawToken, client);
     expect(result.ok).toBe(true);
     expect(rpc).toHaveBeenCalledWith("peek_partner_invite", {
       p_token_hash: hashPartnerInviteToken(token.rawToken),

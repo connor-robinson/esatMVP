@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { PRODUCTION_SITE_URL } from "@/lib/seo/config";
 
 export interface PartnerListStats {
   id: string;
@@ -61,6 +62,17 @@ export interface PartnerDetailStats extends PartnerListStats {
     unused: number;
     redeemed: number;
     revoked: number;
+  }>;
+  cohortCodes: Array<{
+    id: string;
+    codeNormalized: string;
+    status: string;
+    maxRedemptions: number;
+    redemptionCount: number;
+    expiresAt: string;
+    label: string | null;
+    createdAt: string;
+    claimUrl: string;
   }>;
 }
 
@@ -179,6 +191,15 @@ export async function getPartnerDetailStats(
     .eq("partner_id", partnerId)
     .order("created_at", { ascending: false })
     .limit(500);
+
+  const { data: cohortRows } = await service
+    .from("partner_cohort_codes")
+    .select(
+      "id, code_normalized, status, max_redemptions, redemption_count, expires_at, label, created_at",
+    )
+    .eq("partner_id", partnerId)
+    .order("created_at", { ascending: false })
+    .limit(100);
 
   const invitesExpired =
     invites?.filter((i) => i.status === "expired").length ?? 0;
@@ -352,5 +373,16 @@ export async function getPartnerDetailStats(
     batches: [...batchMap.values()].sort((a, b) =>
       a.createdAt < b.createdAt ? 1 : -1,
     ),
+    cohortCodes: (cohortRows ?? []).map((row) => ({
+      id: String(row.id),
+      codeNormalized: String(row.code_normalized),
+      status: String(row.status),
+      maxRedemptions: Number(row.max_redemptions),
+      redemptionCount: Number(row.redemption_count),
+      expiresAt: String(row.expires_at),
+      label: (row.label as string | null) ?? null,
+      createdAt: String(row.created_at),
+      claimUrl: `${PRODUCTION_SITE_URL.replace(/\/$/, "")}/access/${encodeURIComponent(String(row.code_normalized))}`,
+    })),
   };
 }

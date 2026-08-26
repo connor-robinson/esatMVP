@@ -1,9 +1,15 @@
 import { describe, expect, it } from "vitest";
 import {
+  ACCESS_CODE_ALPHABET,
   buildPartnerClaimUrl,
+  generateLegacyPartnerInviteToken,
   generatePartnerInviteToken,
+  hashAccessInput,
   hashPartnerInviteToken,
+  isCohortCodeFormat,
   isPlausiblePartnerToken,
+  isShortAccessCode,
+  stripAccessCode,
 } from "./tokens";
 import { sanitizePartnerProps } from "./analytics";
 import { endOfUtcDay, formatPartnerAccessDate, complimentaryAccessEndIso } from "./dates";
@@ -12,22 +18,62 @@ import { redeemErrorMessage } from "./types";
 import { sanitizeGaParams } from "@/lib/ga/trackEvent";
 
 describe("partner invite tokens", () => {
-  it("generates high-entropy tokens and only stores hashes", () => {
+  it("generates short human-friendly codes and only stores hashes", () => {
     const a = generatePartnerInviteToken();
     const b = generatePartnerInviteToken();
     expect(a.rawToken).not.toEqual(b.rawToken);
+    expect(a.rawToken).toHaveLength(8);
+    expect(isShortAccessCode(a.rawToken)).toBe(true);
     expect(a.tokenHash).toMatch(/^[a-f0-9]{64}$/);
-    expect(a.tokenHash).toEqual(hashPartnerInviteToken(a.rawToken));
+    expect(a.tokenHash).toEqual(hashAccessInput(a.rawToken));
     expect(a.tokenHash).not.toContain(a.rawToken);
     expect(isPlausiblePartnerToken(a.rawToken)).toBe(true);
     expect(isPlausiblePartnerToken("short")).toBe(false);
   });
 
-  it("builds claim URLs without leaking into analytics sanitizer", () => {
+  it("excludes ambiguous characters from the short-code alphabet", () => {
+    for (const ch of ["O", "0", "I", "1", "L"]) {
+      expect(ACCESS_CODE_ALPHABET).not.toContain(ch);
+    }
+    for (let i = 0; i < 40; i++) {
+      const code = generatePartnerInviteToken().rawToken;
+      expect(code).toMatch(/^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{8}$/);
+    }
+  });
+
+  it("normalises pasted short and cohort codes for hashing", () => {
+    const hash = hashAccessInput("k7m4-q2xf");
+    expect(hash).toEqual(hashAccessInput("K7M4Q2XF"));
+    expect(hash).toEqual(hashAccessInput(" K7M4 Q2XF "));
+    expect(stripAccessCode("ark-wright 26")).toBe("ARKWRIGHT26");
+    expect(isCohortCodeFormat("ARKWRIGHT26")).toBe(true);
+  });
+
+  it("keeps legacy long tokens case-sensitive after trim", () => {
+    const legacy = generateLegacyPartnerInviteToken();
+    expect(hashAccessInput(legacy.rawToken)).toEqual(
+      hashPartnerInviteToken(legacy.rawToken),
+    );
+    expect(hashAccessInput(`  ${legacy.rawToken}  `)).toEqual(
+      hashPartnerInviteToken(legacy.rawToken),
+    );
+    if (/[A-Z]/.test(legacy.rawToken) && /[a-z]/.test(legacy.rawToken)) {
+      expect(hashAccessInput(legacy.rawToken.toLowerCase())).not.toEqual(
+        hashPartnerInviteToken(legacy.rawToken),
+      );
+    }
+  });
+
+  it("builds short claim URLs without leaking into analytics sanitizer", () => {
     const token = generatePartnerInviteToken();
     const url = buildPartnerClaimUrl("https://esatcamp.com", token.rawToken);
-    expect(url).toContain("/access/redeem/");
-    expect(url).toContain(token.rawToken);
+    expect(url).toBe(`https://esatcamp.com/access/${token.rawToken}`);
+    expect(url).not.toContain("/access/redeem/");
+
+    const legacy = generateLegacyPartnerInviteToken();
+    expect(buildPartnerClaimUrl("https://esatcamp.com", legacy.rawToken)).toContain(
+      "/access/redeem/",
+    );
 
     const ga = sanitizeGaParams({
       partner: "arkwright-2026",

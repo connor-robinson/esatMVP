@@ -74,6 +74,24 @@ describe("index hygiene: private route metadata wiring", () => {
       expect(source).toMatch(/noIndexFollowMetadata|follow:\s*true/);
     }
   });
+
+  it("marks access code and legacy redeem routes as noindex, nofollow", () => {
+    for (const segments of [
+      ["access", "[code]", "layout.tsx"],
+      ["access", "redeem", "[token]", "layout.tsx"],
+    ] as const) {
+      const source = readAppSource(...segments);
+      expect(source).toMatch(
+        /noIndexNofollowMetadata|buildNoIndexNofollowMetadata|index:\s*false/,
+      );
+      expect(source).toMatch(
+        /noIndexNofollowMetadata|buildNoIndexNofollowMetadata|follow:\s*false/,
+      );
+      expect(source).not.toContain("canonical");
+      expect(source).not.toContain("params.code");
+      expect(source).not.toContain("params.token");
+    }
+  });
 });
 
 describe("index hygiene: public pages stay indexable", () => {

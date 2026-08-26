@@ -5,7 +5,7 @@ import {
   setPartnerClaimCookie,
   setPartnerRedeemTrackCookie,
 } from "@/lib/partners/claimCookie";
-import { peekPartnerInvite, redeemPartnerInvite } from "@/lib/partners/redeem";
+import { peekPartnerAccess, redeemPartnerInvite } from "@/lib/partners/redeem";
 import { logPartnerEvent } from "@/lib/partners/analytics";
 import { createPartnerServiceClient } from "@/lib/partners/service";
 
@@ -92,7 +92,7 @@ export async function GET(
     return response;
   }
 
-  const peek = await peekPartnerInvite(rawToken);
+  const peek = await peekPartnerAccess(rawToken, { ip: clientIp(request) });
   if (!peek.ok) {
     return errorRedirect(origin, peek.error);
   }

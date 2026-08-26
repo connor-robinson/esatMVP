@@ -7,7 +7,7 @@ import { Container } from "@/components/layout/Container";
 import type { PartnerDetailStats } from "@/lib/partners/adminStats";
 
 function pct(n: number | null): string {
-  if (n == null) return "—";
+  if (n == null) return "-";
   return `${Math.round(n * 100)}%`;
 }
 
@@ -36,6 +36,10 @@ export default function AdminPartnerDetailPage() {
     Array<{ inviteCode: string; claimUrl: string; tokenPrefix: string }>
   >([]);
   const [statusSaving, setStatusSaving] = useState(false);
+  const [cohortCode, setCohortCode] = useState("");
+  const [cohortMax, setCohortMax] = useState(220);
+  const [cohortLabel, setCohortLabel] = useState("");
+  const [cohortSaving, setCohortSaving] = useState(false);
 
   const load = useCallback(async () => {
     if (!partnerId) return;
@@ -112,6 +116,42 @@ export default function AdminPartnerDetailPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "revoke_invite", inviteId }),
+    });
+    await load();
+  }
+
+  async function createCohort() {
+    setCohortSaving(true);
+    const res = await fetch(`/api/admin/partners/${partnerId}/invites`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "create_cohort",
+        code: cohortCode,
+        maxRedemptions: cohortMax,
+        accessEndsAt: genExpiry,
+        label: cohortLabel || null,
+      }),
+    });
+    const data = await res.json();
+    setCohortSaving(false);
+    if (!res.ok) {
+      window.alert(data.error || "Failed to create cohort code");
+      return;
+    }
+    setCohortCode("");
+    setCohortLabel("");
+    await load();
+  }
+
+  async function setCohortStatus(cohortId: string, enable: boolean) {
+    await fetch(`/api/admin/partners/${partnerId}/invites`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: enable ? "enable_cohort" : "disable_cohort",
+        cohortId,
+      }),
     });
     await load();
   }
@@ -225,11 +265,11 @@ export default function AdminPartnerDetailPage() {
 
         <section className="mt-10">
           <h2 className="text-lg font-semibold text-stone-900">
-            Generate invitations
+            Individual invite
           </h2>
           <p className="mt-1 text-sm text-stone-500">
-            Codes are shown once. The date below sets full access end for this
-            programme and invite validity. Download the CSV before leaving.
+            Single-use 8-character codes (hash stored only). Shown once at
+            generation. Download the CSV before leaving.
           </p>
           <div className="mt-4 flex flex-wrap items-end gap-3">
             <label className="text-sm text-stone-600">
@@ -268,7 +308,7 @@ export default function AdminPartnerDetailPage() {
               onClick={generate}
               className="rounded-lg bg-stone-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
             >
-              {generating ? "Generating…" : "Generate"}
+              {generating ? "Generating…" : "Generate invites"}
             </button>
           </div>
 
@@ -289,7 +329,7 @@ export default function AdminPartnerDetailPage() {
               </button>
               <div className="mt-4 max-h-48 overflow-auto text-xs text-stone-700">
                 {generatedPreview.slice(0, 20).map((row) => (
-                  <div key={row.tokenPrefix} className="font-mono">
+                  <div key={row.tokenPrefix + row.inviteCode} className="font-mono">
                     {row.inviteCode} · {row.claimUrl}
                   </div>
                 ))}
@@ -304,6 +344,96 @@ export default function AdminPartnerDetailPage() {
         </section>
 
         <section className="mt-10">
+          <h2 className="text-lg font-semibold text-stone-900">Cohort code</h2>
+          <p className="mt-1 text-sm text-stone-500">
+            Reusable shared code (for example ARKWRIGHT26) with a redemption
+            cap. One redemption per user. Suitable for posting on a private
+            mentoring platform.
+          </p>
+          <div className="mt-4 flex flex-wrap items-end gap-3">
+            <label className="text-sm text-stone-600">
+              Code
+              <input
+                type="text"
+                value={cohortCode}
+                onChange={(e) => setCohortCode(e.target.value)}
+                placeholder="ARKWRIGHT26"
+                className="mt-1 block w-44 rounded-lg bg-stone-100 px-3 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-stone-400"
+              />
+            </label>
+            <label className="text-sm text-stone-600">
+              Max redemptions
+              <input
+                type="number"
+                min={1}
+                max={10000}
+                value={cohortMax}
+                onChange={(e) => setCohortMax(Number(e.target.value))}
+                className="mt-1 block w-28 rounded-lg bg-stone-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-stone-400"
+              />
+            </label>
+            <label className="text-sm text-stone-600">
+              Code valid until
+              <input
+                type="date"
+                value={genExpiry}
+                onChange={(e) => setGenExpiry(e.target.value)}
+                className="mt-1 block rounded-lg bg-stone-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-stone-400"
+              />
+            </label>
+            <label className="text-sm text-stone-600">
+              Label
+              <input
+                type="text"
+                value={cohortLabel}
+                onChange={(e) => setCohortLabel(e.target.value)}
+                placeholder="Mentoring platform 2026"
+                className="mt-1 block w-56 rounded-lg bg-stone-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-stone-400"
+              />
+            </label>
+            <button
+              type="button"
+              disabled={cohortSaving || !cohortCode.trim()}
+              onClick={createCohort}
+              className="rounded-lg bg-stone-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+            >
+              {cohortSaving ? "Creating…" : "Create cohort code"}
+            </button>
+          </div>
+
+          <div className="mt-4 space-y-2">
+            {(partner.cohortCodes ?? []).map((c) => (
+              <div
+                key={c.id}
+                className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-stone-50 px-3 py-2 text-sm"
+              >
+                <div>
+                  <div className="font-mono font-medium text-stone-900">
+                    {c.codeNormalized}
+                  </div>
+                  <div className="text-xs text-stone-500">
+                    {c.redemptionCount}/{c.maxRedemptions} redeemed · {c.status}{" "}
+                    · expires {c.expiresAt.slice(0, 10)}
+                    {c.label ? ` · ${c.label}` : ""}
+                  </div>
+                  <div className="mt-1 text-xs text-stone-500">{c.claimUrl}</div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setCohortStatus(c.id, c.status !== "active")}
+                  className="rounded-lg bg-stone-200 px-3 py-1.5 text-xs"
+                >
+                  {c.status === "active" ? "Disable" : "Enable"}
+                </button>
+              </div>
+            ))}
+            {(partner.cohortCodes ?? []).length === 0 && (
+              <p className="text-sm text-stone-500">No cohort codes yet.</p>
+            )}
+          </div>
+        </section>
+
+        <section className="mt-10">
           <h2 className="text-lg font-semibold text-stone-900">Usage</h2>
           <ul className="mt-3 space-y-1 text-sm text-stone-700">
             <li>Returned another day: {partner.returnedUsers}</li>
@@ -312,7 +442,7 @@ export default function AdminPartnerDetailPage() {
               Avg questions / activated:{" "}
               {partner.avgQuestionsPerActivated != null
                 ? partner.avgQuestionsPerActivated.toFixed(1)
-                : "—"}
+                : "-"}
             </li>
             <li>Calibrations completed: {partner.calibrationsCompleted}</li>
             <li>Past-paper sessions: {partner.pastPaperSessions}</li>
@@ -375,13 +505,13 @@ export default function AdminPartnerDetailPage() {
                 {partner.invites.map((i) => (
                   <tr key={i.id} className="border-t border-stone-100">
                     <td className="py-1.5 pr-2 font-mono">
-                      {i.tokenPrefix ?? "—"}
+                      {i.tokenPrefix ?? "-"}
                     </td>
                     <td className="py-1.5 pr-2">{i.status}</td>
                     <td className="py-1.5 pr-2">{i.createdAt.slice(0, 10)}</td>
                     <td className="py-1.5 pr-2">{i.expiresAt.slice(0, 10)}</td>
                     <td className="py-1.5 pr-2">
-                      {i.redeemedAt?.slice(0, 10) ?? "—"}
+                      {i.redeemedAt?.slice(0, 10) ?? "-"}
                     </td>
                     <td className="py-1.5 pr-2">
                       {i.status === "unused" && (
@@ -420,13 +550,13 @@ export default function AdminPartnerDetailPage() {
               Avg usefulness:{" "}
               {partner.avgUsefulness != null
                 ? partner.avgUsefulness.toFixed(2)
-                : "—"}
+                : "-"}
             </li>
             <li>
               Avg recommendation (0–10):{" "}
               {partner.avgRecommendation != null
                 ? partner.avgRecommendation.toFixed(2)
-                : "—"}
+                : "-"}
             </li>
           </ul>
           <div className="mt-3 text-sm text-stone-600">
@@ -441,7 +571,7 @@ export default function AdminPartnerDetailPage() {
               <div key={f.id} className="rounded-lg bg-stone-50 px-3 py-2 text-sm">
                 <div className="text-stone-800">
                   Usefulness {f.usefulnessRating}/5 · Recommend{" "}
-                  {f.recommendationRating ?? "—"}/10 · {f.mostUsefulFeature}
+                  {f.recommendationRating ?? "-"}/10 · {f.mostUsefulFeature}
                 </div>
                 {f.improvementFeedback && (
                   <p className="mt-1 whitespace-pre-wrap text-stone-600">

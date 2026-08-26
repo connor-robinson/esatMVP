@@ -65,13 +65,15 @@ export async function middleware(request: NextRequest) {
 
       const path = request.nextUrl.pathname;
       const onOnboarding = path.startsWith('/onboarding');
+      const onAccess = path.startsWith('/access');
       const isOnboardingPreview =
         onOnboarding && request.nextUrl.searchParams.get('preview') === '1';
 
       // Lock the app until username + questionnaire are done (single /onboarding flow).
+      // Partner redeem must finish before onboarding so claim cookies are not lost.
       const needsSetup =
         !profile?.username || profile.onboarding_completed !== true;
-      if (needsSetup && !onOnboarding) {
+      if (needsSetup && !onOnboarding && !onAccess) {
         const intended = sanitizeRedirectTo(
           `${path}${request.nextUrl.search}`,
         );

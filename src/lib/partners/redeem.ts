@@ -1,11 +1,17 @@
 import { createHash } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createPartnerServiceClient } from "./service";
-import { hashPartnerInviteToken, isPlausiblePartnerToken } from "./tokens";
+import {
+  hashAccessInput,
+  isLegacyInviteToken,
+  isPlausiblePartnerToken,
+  isShortAccessCode,
+} from "./tokens";
 import type { RedeemErrorCode, RedeemResult } from "./types";
 
 const RATE_WINDOW_MS = 10 * 60 * 1000;
-const RATE_MAX_ATTEMPTS = 20;
+const RATE_MAX_ATTEMPTS_LEGACY = 20;
+const RATE_MAX_ATTEMPTS_SHORT = 10;
 
 function mapRpcError(error: string | undefined): RedeemErrorCode {
   switch (error) {
@@ -51,9 +57,17 @@ export function hashClientIp(ip: string | null | undefined): string {
   return createHash("sha256").update(raw).digest("hex").slice(0, 32);
 }
 
+function maxAttemptsForInput(raw: string): number {
+  if (isLegacyInviteToken(raw) && !isShortAccessCode(raw)) {
+    return RATE_MAX_ATTEMPTS_LEGACY;
+  }
+  return RATE_MAX_ATTEMPTS_SHORT;
+}
+
 export async function checkRedeemRateLimit(
   service: SupabaseClient,
   ipHash: string,
+  maxAttempts: number = RATE_MAX_ATTEMPTS_SHORT,
 ): Promise<boolean> {
   const since = new Date(Date.now() - RATE_WINDOW_MS).toISOString();
   const { count } = await service
@@ -61,7 +75,7 @@ export async function checkRedeemRateLimit(
     .select("id", { count: "exact", head: true })
     .eq("ip_hash", ipHash)
     .gte("created_at", since);
-  return (count ?? 0) < RATE_MAX_ATTEMPTS;
+  return (count ?? 0) < maxAttempts;
 }
 
 export async function recordRedeemAttempt(
@@ -79,49 +93,128 @@ export async function recordRedeemAttempt(
   }
 }
 
-export async function peekPartnerInvite(
-  rawToken: string,
-  client: SupabaseClient = createPartnerServiceClient(),
-): Promise<{ ok: true; partnerSlug: string; partnerDisplayName: string; accessEndsAt: string } | { ok: false; error: RedeemErrorCode }> {
-  if (!isPlausiblePartnerToken(rawToken)) {
-    return { ok: false, error: "invalid_token" };
-  }
-  const tokenHash = hashPartnerInviteToken(rawToken);
+export type PeekPartnerAccess =
+  | {
+      ok: true;
+      kind: "invite" | "cohort";
+      partnerSlug: string;
+      partnerDisplayName: string;
+      accessEndsAt: string;
+    }
+  | { ok: false; error: RedeemErrorCode };
+
+async function peekInviteHash(
+  client: SupabaseClient,
+  tokenHash: string,
+): Promise<PeekPartnerAccess> {
   const { data, error } = await client.rpc("peek_partner_invite", {
     p_token_hash: tokenHash,
   });
-  if (error) {
-    return { ok: false, error: "invalid_token" };
-  }
+  if (error) return { ok: false, error: "invalid_token" };
   const parsed = parseRedeemRpc(data);
   if (!parsed.ok) return parsed;
   const row = data as Record<string, unknown>;
   return {
     ok: true,
+    kind: "invite",
     partnerSlug: String(row.partner_slug),
     partnerDisplayName: String(row.partner_display_name),
     accessEndsAt: String(row.access_ends_at),
   };
 }
 
+async function peekCohortHash(
+  client: SupabaseClient,
+  tokenHash: string,
+): Promise<PeekPartnerAccess> {
+  const { data, error } = await client.rpc("peek_partner_cohort_code", {
+    p_token_hash: tokenHash,
+  });
+  if (error) return { ok: false, error: "invalid_token" };
+  const parsed = parseRedeemRpc(data);
+  if (!parsed.ok) return parsed;
+  const row = data as Record<string, unknown>;
+  return {
+    ok: true,
+    kind: "cohort",
+    partnerSlug: String(row.partner_slug),
+    partnerDisplayName: String(row.partner_display_name),
+    accessEndsAt: String(row.access_ends_at),
+  };
+}
+
+export async function peekPartnerInvite(
+  rawToken: string,
+  client: SupabaseClient = createPartnerServiceClient(),
+): Promise<PeekPartnerAccess> {
+  return peekPartnerAccess(rawToken, { client });
+}
+
+export async function peekPartnerAccess(
+  rawToken: string,
+  opts: {
+    client?: SupabaseClient;
+    service?: SupabaseClient;
+    ip?: string | null;
+  } = {},
+): Promise<PeekPartnerAccess> {
+  const service = opts.service ?? opts.client ?? createPartnerServiceClient();
+  const client = opts.client ?? service;
+  const ipHash = hashClientIp(opts.ip);
+  const allowed = await checkRedeemRateLimit(
+    service,
+    ipHash,
+    maxAttemptsForInput(rawToken),
+  );
+  if (!allowed) {
+    await recordRedeemAttempt(service, { ipHash, success: false });
+    return { ok: false, error: "rate_limited" };
+  }
+
+  if (!isPlausiblePartnerToken(rawToken)) {
+    await recordRedeemAttempt(service, { ipHash, success: false });
+    return { ok: false, error: "invalid_token" };
+  }
+
+  const tokenHash = hashAccessInput(rawToken);
+  const invitePeek = await peekInviteHash(client, tokenHash);
+  if (invitePeek.ok || invitePeek.error !== "invalid_token") {
+    await recordRedeemAttempt(service, {
+      ipHash,
+      success: invitePeek.ok,
+    });
+    return invitePeek;
+  }
+
+  if (isLegacyInviteToken(rawToken) && !isShortAccessCode(rawToken)) {
+    await recordRedeemAttempt(service, { ipHash, success: false });
+    return { ok: false, error: "invalid_token" };
+  }
+
+  const cohortPeek = await peekCohortHash(client, tokenHash);
+  await recordRedeemAttempt(service, {
+    ipHash,
+    success: cohortPeek.ok,
+  });
+  return cohortPeek;
+}
+
 /**
  * Redeem via the authenticated user client so Postgres uses auth.uid().
  * Never pass a client-supplied user UUID into the redeem RPC.
- * Rate-limit bookkeeping still uses the service-role client.
  */
 export async function redeemPartnerInvite(opts: {
   rawToken: string;
-  /** Verified user id from auth.getUser() - used only for rate-limit logging. */
   userId: string;
-  /** Cookie/JWT-authenticated Supabase client (anon key + user session). */
   userClient: SupabaseClient;
   ip?: string | null;
   service?: SupabaseClient;
 }): Promise<RedeemResult> {
   const service = opts.service ?? createPartnerServiceClient();
   const ipHash = hashClientIp(opts.ip);
+  const maxAttempts = maxAttemptsForInput(opts.rawToken);
 
-  const allowed = await checkRedeemRateLimit(service, ipHash);
+  const allowed = await checkRedeemRateLimit(service, ipHash, maxAttempts);
   if (!allowed) {
     await recordRedeemAttempt(service, {
       ipHash,
@@ -140,22 +233,31 @@ export async function redeemPartnerInvite(opts: {
     return { ok: false, error: "invalid_token" };
   }
 
-  const tokenHash = hashPartnerInviteToken(opts.rawToken);
-  // One-arg RPC: identity comes from auth.uid() on the user JWT.
+  const tokenHash = hashAccessInput(opts.rawToken);
   const { data, error } = await opts.userClient.rpc("redeem_partner_invite", {
     p_token_hash: tokenHash,
   });
 
+  let result: RedeemResult;
   if (error) {
-    await recordRedeemAttempt(service, {
-      ipHash,
-      userId: opts.userId,
-      success: false,
-    });
-    return { ok: false, error: "invalid_token" };
+    result = { ok: false, error: "invalid_token" };
+  } else {
+    result = parseRedeemRpc(data);
   }
 
-  const result = parseRedeemRpc(data);
+  if (
+    !result.ok &&
+    result.error === "invalid_token" &&
+    !(isLegacyInviteToken(opts.rawToken) && !isShortAccessCode(opts.rawToken))
+  ) {
+    const cohort = await opts.userClient.rpc("redeem_partner_cohort_code", {
+      p_token_hash: tokenHash,
+    });
+    if (!cohort.error) {
+      result = parseRedeemRpc(cohort.data);
+    }
+  }
+
   await recordRedeemAttempt(service, {
     ipHash,
     userId: opts.userId,

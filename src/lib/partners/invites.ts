@@ -9,6 +9,7 @@ import {
 export interface GeneratedInvite {
   inviteId: string;
   rawToken: string;
+  tokenHash: string;
   tokenPrefix: string;
   claimUrl: string;
   expiresAt: string;
@@ -41,10 +42,16 @@ export async function generateInviteBatch(opts: {
   const rows = [];
 
   for (let i = 0; i < count; i++) {
-    const token = generatePartnerInviteToken();
+    let token = generatePartnerInviteToken();
+    // Extremely unlikely; retry a few times if a short code collides.
+    for (let attempt = 0; attempt < 5; attempt++) {
+      if (!generated.some((g) => g.rawToken === token.rawToken)) break;
+      token = generatePartnerInviteToken();
+    }
     generated.push({
-      inviteId: "", // filled after insert via prefix match if needed
+      inviteId: "",
       rawToken: token.rawToken,
+      tokenHash: token.tokenHash,
       tokenPrefix: token.tokenPrefix,
       claimUrl: buildPartnerClaimUrl(origin, token.rawToken),
       expiresAt: expires.toISOString(),
@@ -65,17 +72,17 @@ export async function generateInviteBatch(opts: {
   const { data, error } = await opts.service
     .from("partner_invites")
     .insert(rows)
-    .select("id, token_prefix");
+    .select("id, token_hash");
 
   if (error) {
     throw new Error(error.message || "Failed to insert invites");
   }
 
-  const byPrefix = new Map(
-    (data ?? []).map((row) => [row.token_prefix as string, row.id as string]),
+  const byHash = new Map(
+    (data ?? []).map((row) => [row.token_hash as string, row.id as string]),
   );
   for (const invite of generated) {
-    invite.inviteId = byPrefix.get(invite.tokenPrefix) ?? "";
+    invite.inviteId = byHash.get(invite.tokenHash) ?? "";
   }
 
   return { batchId, invites: generated };
