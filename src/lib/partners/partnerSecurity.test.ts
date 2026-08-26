@@ -364,14 +364,14 @@ describe("migration grants", () => {
   const secureSql = readFileSync(
     join(
       process.cwd(),
-      "supabase/migrations/20260826020000_secure_partner_rpcs.sql",
+      "supabase/migrations/20260826160000_secure_partner_rpcs_reconcile.sql",
     ),
     "utf8",
   );
   const revokeSql = readFileSync(
     join(
       process.cwd(),
-      "supabase/migrations/20260826020100_revoke_legacy_partner_rpcs.sql",
+      "supabase/migrations/20260826160100_revoke_legacy_partner_rpcs.sql",
     ),
     "utf8",
   );

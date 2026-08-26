@@ -1,8 +1,8 @@
--- Secure partner RPCs: derive identity from auth.uid(), never trust client UUIDs.
--- Safe rollout:
---   1) Apply this migration (adds secure RPCs + hardens legacy)
---   2) Deploy the app that calls the new one-arg / no-arg signatures
---   3) Apply 20260826020100_revoke_legacy_partner_rpcs.sql
+-- Reconcile migration history for partner RPC security (Step 1).
+-- Production already has these SQL effects, but schema_migrations does not
+-- record 20260826020000. This version sorts AFTER 20260826113845 so
+-- `supabase db push` / migration apply can record history safely.
+-- Fully idempotent (CREATE OR REPLACE + REVOKE/GRANT). No data changes.
 
 -- ============================================================================
 -- SERVICE-ONLY: arbitrary-user entitlement lookup
