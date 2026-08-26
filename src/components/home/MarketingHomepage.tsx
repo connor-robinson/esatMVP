@@ -553,9 +553,7 @@ export function MarketingHomepage({
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#3B82F6] px-7 py-3.5 font-bold text-white transition-colors hover:bg-[#2563EB]"
               >
                 Try the mental maths trainer
-                <span aria-hidden className="text-lg leading-none">
-                  →
-                </span>
+                <span aria-hidden className="text-lg leading-none">{"\u2192"}</span>
               </Link>
             </div>
 
