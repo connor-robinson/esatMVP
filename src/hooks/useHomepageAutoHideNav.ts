@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-const TOP_SHOW_PX = 48;
+const TOP_PX = 48;
 const DIRECTION_DELTA_PX = 6;
 
 function readScrollY(): number {
@@ -23,9 +23,8 @@ function isHomepagePath(pathname: string | null): boolean {
 
 /**
  * Homepage-only auto-hide chrome:
- * - Visible at the top of the page
- * - Hides while scrolling down
- * - Shows again while scrolling up
+ * - Hidden on initial load / while scrolling down
+ * - Revealed when the user scrolls up (including upward scroll at the top)
  * Other routes always report visible.
  */
 export function useHomepageAutoHideNav(options?: {
@@ -34,7 +33,7 @@ export function useHomepageAutoHideNav(options?: {
 }) {
   const pathname = usePathname();
   const isHomepage = isHomepagePath(pathname);
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const lastScrollY = useRef(0);
   const ticking = useRef(false);
   const forceVisible = options?.forceVisible ?? false;
@@ -45,17 +44,14 @@ export function useHomepageAutoHideNav(options?: {
       return;
     }
 
+    setVisible(false);
     lastScrollY.current = readScrollY();
-    setVisible(readScrollY() <= TOP_SHOW_PX);
 
-    const update = () => {
+    const updateFromScroll = () => {
       const y = readScrollY();
       const delta = y - lastScrollY.current;
 
-      if (y <= TOP_SHOW_PX) {
-        // At (or past) the top: always show, including overscroll attempts.
-        setVisible(true);
-      } else if (delta < -DIRECTION_DELTA_PX) {
+      if (delta < -DIRECTION_DELTA_PX) {
         setVisible(true);
       } else if (delta > DIRECTION_DELTA_PX) {
         setVisible(false);
@@ -68,16 +64,40 @@ export function useHomepageAutoHideNav(options?: {
     const onScroll = () => {
       if (ticking.current) return;
       ticking.current = true;
-      window.requestAnimationFrame(update);
+      window.requestAnimationFrame(updateFromScroll);
+    };
+
+    // At the top, scrollY cannot decrease further. Treat upward wheel/touch
+    // as an explicit "scroll up" so the nav can still drop in.
+    const onWheel = (event: WheelEvent) => {
+      if (readScrollY() <= TOP_PX && event.deltaY < 0) {
+        setVisible(true);
+      }
+    };
+
+    let touchStartY = 0;
+    const onTouchStart = (event: TouchEvent) => {
+      touchStartY = event.touches[0]?.clientY ?? 0;
+    };
+    const onTouchMove = (event: TouchEvent) => {
+      const y = event.touches[0]?.clientY ?? 0;
+      if (readScrollY() <= TOP_PX && y - touchStartY > 12) {
+        setVisible(true);
+      }
     };
 
     window.addEventListener("scroll", onScroll, { passive: true, capture: true });
     document.addEventListener("scroll", onScroll, { passive: true, capture: true });
-    update();
+    window.addEventListener("wheel", onWheel, { passive: true });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
 
     return () => {
       window.removeEventListener("scroll", onScroll, true);
       document.removeEventListener("scroll", onScroll, true);
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
     };
   }, [isHomepage]);
 
