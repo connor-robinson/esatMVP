@@ -1,9 +1,12 @@
 ﻿"use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { BRAND_CONFIG } from "@/config/brand";
+import { ABOUT_PATH, FOUNDERS } from "@/config/founders";
+import { HOMEPAGE_SOCIAL_PROOF } from "@/config/homepageSocialProof";
 import { NAVBAR_HEIGHT_PX } from "@/config/layout";
 import { QUESTION_BANK_TOTAL_COUNT } from "@/config/questionBankMarketing";
 import { MENTAL_MATHS_MODULE_COUNT_MARKETING } from "@/config/mentalMathsMarketing";
@@ -234,46 +237,85 @@ export function MarketingHomepage() {
           </div>
 
           <div className="rounded-3xl bg-white/[0.08] p-6 backdrop-blur-xl sm:p-8">
-            <div className="flex w-full flex-col gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
-              <div className="flex min-w-0 items-center gap-4">
-                <div className="flex shrink-0 -space-x-3" aria-hidden>
-                  {[
-                    { bg: "#3B82F6", fill: "#BFDBFE" },
-                    { bg: "#6366F1", fill: "#C7D2FE" },
-                    { bg: "#0EA5E9", fill: "#BAE6FD" },
-                  ].map((avatar) => (
-                    <svg
-                      key={avatar.bg}
-                      viewBox="0 0 48 48"
-                      width={48}
-                      height={48}
-                      className="h-12 w-12 rounded-full ring-2 ring-[#0A0F1D]"
-                      aria-hidden
+            <div className="flex w-full flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
+              <div className="flex min-w-0 items-start gap-4 sm:items-center sm:gap-5">
+                <Link
+                  href={`${ABOUT_PATH}#${FOUNDERS.ewan.id}`}
+                  className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-[#161D2F] sm:h-20 sm:w-20"
+                >
+                  <Image
+                    src={FOUNDERS.ewan.imageSrc}
+                    alt={FOUNDERS.ewan.imageAlt}
+                    fill
+                    sizes="80px"
+                    className="object-cover"
+                    style={{ objectPosition: FOUNDERS.ewan.imagePosition }}
+                    priority
+                  />
+                </Link>
+                <div className="min-w-0 space-y-1.5">
+                  <p className="text-base font-bold leading-snug text-white sm:text-lg lg:text-xl">
+                    Hi, I&apos;m{" "}
+                    <Link
+                      href={`${ABOUT_PATH}#${FOUNDERS.ewan.id}`}
+                      className="text-underline-accent transition-colors hover:text-[#93C5FD]"
                     >
-                      <circle cx="24" cy="24" r="24" fill={avatar.bg} />
-                      <circle cx="24" cy="19" r="8" fill={avatar.fill} />
-                      <path
-                        d="M8 42c2.5-9 10-14 16-14s13.5 5 16 14"
-                        fill={avatar.fill}
-                      />
-                    </svg>
-                  ))}
-                </div>
-                <div className="min-w-0">
-                  <p className="text-white font-bold text-lg sm:text-xl leading-snug">
-                    Join our applicants this cycle
+                      {FOUNDERS.ewan.name}
+                    </Link>
+                    , co-founder of ESAT Camp.
+                  </p>
+                  <p className="text-sm leading-relaxed text-[#94A3B8] sm:text-base">
+                    We built the platform we wished we&apos;d had for the ESAT.
+                  </p>
+                  <p className="text-xs font-medium text-[#64748B] sm:text-sm">
+                    {FOUNDERS.ewan.credential}
                   </p>
                 </div>
               </div>
 
-              <div className="shrink-0 text-left sm:text-right">
-                <p className="text-3xl sm:text-4xl font-display font-bold tabular-nums text-white">
-                  {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+
-                </p>
-                <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#94A3B8]">
-                  Practice questions
-                </p>
-              </div>
+              <dl
+                className={cn(
+                  "grid shrink-0 gap-x-6 gap-y-5 sm:gap-x-8 lg:gap-x-10",
+                  HOMEPAGE_SOCIAL_PROOF.uniqueVisitors != null
+                    ? "grid-cols-2 sm:grid-cols-4"
+                    : "grid-cols-3",
+                )}
+              >
+                {(
+                  [
+                    {
+                      value: HOMEPAGE_SOCIAL_PROOF.practiceQuestions,
+                      label: "Practice questions",
+                    },
+                    ...(HOMEPAGE_SOCIAL_PROOF.uniqueVisitors != null
+                      ? [
+                          {
+                            value: HOMEPAGE_SOCIAL_PROOF.uniqueVisitors,
+                            label: "Unique visitors",
+                          },
+                        ]
+                      : []),
+                    {
+                      value: HOMEPAGE_SOCIAL_PROOF.users,
+                      label: "Users",
+                    },
+                    {
+                      value: HOMEPAGE_SOCIAL_PROOF.questionsAnswered,
+                      label: "Questions done",
+                    },
+                  ] as { value: number; label: string }[]
+                ).map((stat) => (
+                  <div key={stat.label} className="min-w-0">
+                    <dt className="sr-only">{stat.label}</dt>
+                    <dd className="font-display text-2xl font-bold tabular-nums text-white sm:text-3xl">
+                      {stat.value.toLocaleString()}+
+                    </dd>
+                    <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#94A3B8] sm:text-xs">
+                      {stat.label}
+                    </p>
+                  </div>
+                ))}
+              </dl>
             </div>
           </div>
         </div>
