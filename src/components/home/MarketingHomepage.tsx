@@ -520,7 +520,7 @@ export function MarketingHomepage({
                   Time is of the essence in the ESAT. You have to finish each
                   question in less than 90 seconds, with no calculator.
                 </p>
-                <p className="mt-4 text-base font-semibold text-white sm:text-lg">
+                <p className="mt-6 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
                   {MENTAL_MATHS_MODULE_COUNT_MARKETING}+ modules,{" "}
                   {MENTAL_MATHS_TOPIC_COUNT_MARKETING}+ topics
                 </p>
