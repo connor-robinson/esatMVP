@@ -6,10 +6,10 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { BRAND_CONFIG } from "@/config/brand";
 import { ABOUT_PATH, FOUNDERS } from "@/config/founders";
-import { HOMEPAGE_SOCIAL_PROOF } from "@/config/homepageSocialProof";
 import { NAVBAR_HEIGHT_PX } from "@/config/layout";
 import { QUESTION_BANK_TOTAL_COUNT } from "@/config/questionBankMarketing";
 import { MENTAL_MATHS_MODULE_COUNT_MARKETING } from "@/config/mentalMathsMarketing";
+import type { HomepageSocialProofStats } from "@/lib/homepage/socialProofTypes";
 import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
 import { SEO_LINKS, type SeoLinkKey } from "@/lib/seo/links";
 import { MARKETING_HOMEPAGE_FAQ } from "@/lib/homepage/marketingFaq";
@@ -155,7 +155,11 @@ const FOOTER_GUIDE_KEYS: SeoLinkKey[] = [
   "calculatorRules",
 ];
 
-export function MarketingHomepage() {
+export function MarketingHomepage({
+  socialProof,
+}: {
+  socialProof: HomepageSocialProofStats | null;
+}) {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
   const seasonPrice = getSeasonPassPrice();
 
@@ -284,49 +288,51 @@ export function MarketingHomepage() {
                 </div>
               </div>
 
-              <dl
-                className={cn(
-                  "grid shrink-0 gap-x-6 gap-y-5 sm:gap-x-8 lg:gap-x-10",
-                  HOMEPAGE_SOCIAL_PROOF.uniqueVisitors != null
-                    ? "grid-cols-2 sm:grid-cols-4"
-                    : "grid-cols-3",
-                )}
-              >
-                {(
-                  [
-                    {
-                      value: HOMEPAGE_SOCIAL_PROOF.practiceQuestions,
-                      label: "Practice questions",
-                    },
-                    ...(HOMEPAGE_SOCIAL_PROOF.uniqueVisitors != null
-                      ? [
-                          {
-                            value: HOMEPAGE_SOCIAL_PROOF.uniqueVisitors,
-                            label: "Unique visitors",
-                          },
-                        ]
-                      : []),
-                    {
-                      value: HOMEPAGE_SOCIAL_PROOF.users,
-                      label: "Users",
-                    },
-                    {
-                      value: HOMEPAGE_SOCIAL_PROOF.questionsAnswered,
-                      label: "Questions done",
-                    },
-                  ] as { value: number; label: string }[]
-                ).map((stat) => (
-                  <div key={stat.label} className="min-w-0">
-                    <dt className="sr-only">{stat.label}</dt>
-                    <dd className="font-display text-2xl font-bold tabular-nums text-white sm:text-3xl">
-                      {stat.value.toLocaleString()}+
-                    </dd>
-                    <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#94A3B8] sm:text-xs">
-                      {stat.label}
-                    </p>
-                  </div>
-                ))}
-              </dl>
+              {socialProof ? (
+                <dl
+                  className={cn(
+                    "grid shrink-0 gap-x-6 gap-y-5 sm:gap-x-8 lg:gap-x-10",
+                    socialProof.uniqueVisitors != null
+                      ? "grid-cols-2 sm:grid-cols-4"
+                      : "grid-cols-3",
+                  )}
+                >
+                  {(
+                    [
+                      {
+                        value: socialProof.practiceQuestions,
+                        label: "Practice questions",
+                      },
+                      ...(socialProof.uniqueVisitors != null
+                        ? [
+                            {
+                              value: socialProof.uniqueVisitors,
+                              label: "Unique visitors",
+                            },
+                          ]
+                        : []),
+                      {
+                        value: socialProof.users,
+                        label: "Users",
+                      },
+                      {
+                        value: socialProof.questionsAnswered,
+                        label: "Questions done",
+                      },
+                    ] as { value: number; label: string }[]
+                  ).map((stat) => (
+                    <div key={stat.label} className="min-w-0">
+                      <dt className="sr-only">{stat.label}</dt>
+                      <dd className="font-display text-2xl font-bold tabular-nums text-white sm:text-3xl">
+                        {stat.value.toLocaleString()}
+                      </dd>
+                      <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#94A3B8] sm:text-xs">
+                        {stat.label}
+                      </p>
+                    </div>
+                  ))}
+                </dl>
+              ) : null}
             </div>
           </div>
         </div>

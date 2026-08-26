@@ -49,6 +49,7 @@
     "react-is": "^19.2.0",
     "react-pdf": "^10.2.0",
     "recharts": "^3.2.1",
+    "server-only": "^0.0.1",
     "stripe": "^20.4.0",
     "tesseract.js": "^6.0.1",
     "zustand": "^4.5.7"

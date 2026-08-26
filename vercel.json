@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/homepage-social-proof",
+      "schedule": "0 */3 * * *"
+    }
+  ]
+}

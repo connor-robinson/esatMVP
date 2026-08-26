@@ -3,6 +3,8 @@ import { HomePageContent } from "@/components/homepage/HomePageContent";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { BRAND_CONFIG } from "@/config/brand";
 import { MARKETING_HOMEPAGE_FAQ } from "@/lib/homepage/marketingFaq";
+import { getHomepageSocialProofStats } from "@/lib/homepage/socialProofStats";
+import { HOMEPAGE_SOCIAL_PROOF_REVALIDATE_SECONDS } from "@/lib/homepage/socialProofTypes";
 import {
   buildCanonicalUrl,
   faqPageSchema,
@@ -14,8 +16,8 @@ const HOME_TITLE = "ESAT CAMP | ESAT Preparation, Practice & Past Papers";
 const HOME_DESCRIPTION =
   "Prepare for the ESAT and TMUA with past papers, question banks, and structured practice. ESAT CAMP helps you build speed and strategy for admissions exams.";
 
-/** Allow the marketing homepage to be cached; auth never swaps this route. */
-export const revalidate = 3600;
+/** Match social-proof cache: refresh a few hours after the last regeneration. */
+export const revalidate = HOMEPAGE_SOCIAL_PROOF_REVALIDATE_SECONDS;
 
 export const metadata: Metadata = {
   title: HOME_TITLE,
@@ -60,11 +62,18 @@ const HOMEPAGE_SCHEMA = [
   faqPageSchema(HOMEPAGE_FAQ_SCHEMA),
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  let socialProof = null;
+  try {
+    socialProof = await getHomepageSocialProofStats();
+  } catch (error) {
+    console.error("[homepage] social proof stats failed", error);
+  }
+
   return (
     <>
       <JsonLd schema={HOMEPAGE_SCHEMA} />
-      <HomePageContent />
+      <HomePageContent socialProof={socialProof} />
     </>
   );
 }
