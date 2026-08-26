@@ -7,7 +7,7 @@ import {
   isPlausiblePartnerToken,
   isShortAccessCode,
 } from "./tokens";
-import type { RedeemErrorCode, RedeemResult } from "./types";
+import type { RedeemErrorCode, RedeemFailure, RedeemResult } from "./types";
 
 const RATE_WINDOW_MS = 10 * 60 * 1000;
 const RATE_MAX_ATTEMPTS_LEGACY = 20;
@@ -20,6 +20,8 @@ function mapRpcError(error: string | undefined): RedeemErrorCode {
     case "unavailable":
     case "partner_inactive":
     case "already_entitled":
+    case "already_partner_entitled":
+    case "already_paid":
     case "unauthenticated":
     case "invalid_token":
       return error;
@@ -49,7 +51,18 @@ function parseRedeemRpc(data: unknown): RedeemResult {
       batchLabel: row.batch_label ? String(row.batch_label) : null,
     };
   }
-  return { ok: false, error: mapRpcError(String(row.error ?? "invalid_token")) };
+  const error = mapRpcError(String(row.error ?? "invalid_token"));
+  const failure: RedeemFailure = { ok: false, error };
+  if (row.partner_display_name) {
+    failure.partnerDisplayName = String(row.partner_display_name);
+  }
+  if (row.partner_slug) {
+    failure.partnerSlug = String(row.partner_slug);
+  }
+  if (row.ends_at) {
+    failure.endsAt = String(row.ends_at);
+  }
+  return failure;
 }
 
 export function hashClientIp(ip: string | null | undefined): string {

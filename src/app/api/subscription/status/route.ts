@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     const { user, error } = await requireRouteUser(request);
     if (error || !user) {
       return NextResponse.json(
-        { tier: "free", hasFullAccess: false, source: "none" },
+        { authenticated: false, tier: "free", hasFullAccess: false, source: "none" },
         { status: 200 },
       );
     }
@@ -31,6 +31,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({
+      authenticated: true,
       tier: access.tier,
       hasFullAccess: access.hasFullAccess,
       source: access.source,
@@ -49,7 +50,7 @@ export async function GET(request: NextRequest) {
     });
   } catch {
     return NextResponse.json(
-      { tier: "free", hasFullAccess: false, source: "none" },
+      { authenticated: false, tier: "free", hasFullAccess: false, source: "none" },
       { status: 200 },
     );
   }

@@ -1,12 +1,12 @@
 "use client";
 
 import { Suspense } from "react";
-import { AccessCodeEntry } from "@/components/partners/AccessCodeEntry";
+import { AccessManualEntry } from "@/components/partners/AccessManualEntry";
 
 export default function AccessPage() {
   return (
     <Suspense fallback={null}>
-      <AccessCodeEntry />
+      <AccessManualEntry />
     </Suspense>
   );
 }

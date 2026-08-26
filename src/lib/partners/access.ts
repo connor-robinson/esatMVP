@@ -255,6 +255,47 @@ export async function userHasFullAccess(userId: string): Promise<boolean> {
   return access.hasFullAccess;
 }
 
+/**
+ * Active paid ESAT Camp access that blocks partner-code redemption.
+ * Includes Stripe subscription (active/trialing) and season-pass one-time
+ * purchases. Excludes founding-tester and partner entitlements.
+ */
+export async function userHasActivePaidAccess(
+  userId: string,
+  service: SupabaseClient = createPartnerServiceClient(),
+): Promise<boolean> {
+  try {
+    const { data: subs } = await service
+      .from("subscriptions")
+      .select("current_period_end")
+      .eq("user_id", userId)
+      .in("status", ["active", "trialing"])
+      .order("current_period_end", { ascending: false })
+      .limit(1);
+    const sub = subs?.[0];
+    if (sub && new Date(sub.current_period_end) > new Date()) {
+      return true;
+    }
+
+    const today = new Date().toISOString().slice(0, 10);
+    const { data: purchases } = await service
+      .from("one_time_purchases")
+      .select("access_until")
+      .eq("user_id", userId)
+      .gte("access_until", today)
+      .order("created_at", { ascending: false })
+      .limit(1);
+    const purchase = purchases?.[0];
+    if (purchase) {
+      const accessUntil = new Date(purchase.access_until + "T23:59:59");
+      if (accessUntil >= new Date()) return true;
+    }
+  } catch {
+    return false;
+  }
+  return false;
+}
+
 export function accessSourceLabel(source: AccessSource): string {
   switch (source) {
     case "subscription":

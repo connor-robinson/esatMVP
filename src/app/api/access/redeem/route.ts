@@ -76,8 +76,30 @@ export async function POST(request: NextRequest) {
   });
 
   if (!result.ok) {
+    if (result.error === "already_partner_entitled") {
+      const response = NextResponse.json({
+        ok: false,
+        error: "already_partner_entitled",
+        partnerDisplayName: result.partnerDisplayName,
+        partnerSlug: result.partnerSlug,
+        endsAt: result.endsAt,
+      });
+      clearPartnerClaimCookie(response, secure);
+      return response;
+    }
+    if (result.error === "already_paid") {
+      const response = NextResponse.json({
+        ok: false,
+        error: "already_paid",
+      });
+      clearPartnerClaimCookie(response, secure);
+      return response;
+    }
     if (result.error === "already_entitled") {
-      const response = NextResponse.json({ ok: true, redirectTo: "/access/success" });
+      const response = NextResponse.json({
+        ok: false,
+        error: "already_entitled",
+      });
       clearPartnerClaimCookie(response, secure);
       return response;
     }

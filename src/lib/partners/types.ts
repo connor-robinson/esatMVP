@@ -44,6 +44,8 @@ export type RedeemErrorCode =
   | "unavailable"
   | "partner_inactive"
   | "already_entitled"
+  | "already_partner_entitled"
+  | "already_paid"
   | "rate_limited";
 
 export interface RedeemSuccess {
@@ -64,6 +66,9 @@ export interface RedeemSuccess {
 export interface RedeemFailure {
   ok: false;
   error: RedeemErrorCode;
+  partnerDisplayName?: string;
+  partnerSlug?: string;
+  endsAt?: string;
 }
 
 export type RedeemResult = RedeemSuccess | RedeemFailure;
@@ -91,20 +96,23 @@ export type PartnerFeedbackFeatureId =
 export function redeemErrorMessage(code: RedeemErrorCode): string {
   switch (code) {
     case "already_claimed":
-      return "This invitation has already been claimed.";
+      return "This access code has already been used.";
     case "expired":
-      return "This invitation has expired. Please contact the organisation that sent it to you.";
+      return "This access code has expired.";
     case "partner_inactive":
-      return "This invitation is no longer available.";
+      return "This access code isn't valid.";
+    case "already_partner_entitled":
     case "already_entitled":
       return "You already have access through this organisation.";
+    case "already_paid":
+      return "Your account already has full ESAT Camp access, so you don't need to redeem this code.";
     case "rate_limited":
       return "Too many attempts. Please try again in a few minutes.";
     case "unauthenticated":
-      return "Please sign in to redeem this invitation.";
+      return "Please sign in to claim this access.";
     case "unavailable":
     case "invalid_token":
     default:
-      return "This invitation is invalid or unavailable.";
+      return "This access code isn't valid.";
   }
 }

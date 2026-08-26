@@ -8,6 +8,11 @@ import {
 import { peekPartnerAccess, redeemPartnerInvite } from "@/lib/partners/redeem";
 import { logPartnerEvent } from "@/lib/partners/analytics";
 import { createPartnerServiceClient } from "@/lib/partners/service";
+import {
+  isCohortCodeFormat,
+  isShortAccessCode,
+  stripAccessCode,
+} from "@/lib/partners/accessCodeFormat";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -24,6 +29,15 @@ function errorRedirect(origin: string, code: string) {
   return NextResponse.redirect(
     new URL(`/access?error=${encodeURIComponent(code)}`, origin),
   );
+}
+
+function claimRedirect(origin: string, rawToken: string) {
+  if (isShortAccessCode(rawToken) || isCohortCodeFormat(rawToken)) {
+    return NextResponse.redirect(
+      new URL(`/access/${encodeURIComponent(stripAccessCode(rawToken))}`, origin),
+    );
+  }
+  return errorRedirect(origin, "already_entitled");
 }
 
 export async function GET(
@@ -52,10 +66,12 @@ export async function GET(
     });
 
     if (!result.ok) {
-      if (result.error === "already_entitled") {
-        const response = NextResponse.redirect(
-          new URL("/access/success", origin),
-        );
+      if (
+        result.error === "already_partner_entitled" ||
+        result.error === "already_paid" ||
+        result.error === "already_entitled"
+      ) {
+        const response = claimRedirect(origin, rawToken);
         clearPartnerClaimCookie(response, secure);
         return response;
       }

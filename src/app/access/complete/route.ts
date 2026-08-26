@@ -8,6 +8,11 @@ import {
 import { redeemPartnerInvite } from "@/lib/partners/redeem";
 import { logPartnerEvent } from "@/lib/partners/analytics";
 import { createPartnerServiceClient } from "@/lib/partners/service";
+import {
+  isCohortCodeFormat,
+  isShortAccessCode,
+  stripAccessCode,
+} from "@/lib/partners/accessCodeFormat";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -18,6 +23,16 @@ function clientIp(request: NextRequest): string | null {
     request.headers.get("x-real-ip") ||
     null
   );
+}
+
+function postAuthPath(origin: string, rawToken: string, error?: string) {
+  if (isShortAccessCode(rawToken) || isCohortCodeFormat(rawToken)) {
+    return new URL(`/access/${encodeURIComponent(stripAccessCode(rawToken))}`, origin);
+  }
+  if (error) {
+    return new URL(`/access?error=${encodeURIComponent(error)}`, origin);
+  }
+  return new URL("/access/success", origin);
 }
 
 /**
@@ -56,9 +71,13 @@ export async function GET(request: NextRequest) {
   });
 
   if (!result.ok) {
-    if (result.error === "already_entitled") {
+    if (
+      result.error === "already_partner_entitled" ||
+      result.error === "already_paid" ||
+      result.error === "already_entitled"
+    ) {
       const response = NextResponse.redirect(
-        new URL("/access/success", origin),
+        postAuthPath(origin, rawToken, result.error),
       );
       clearPartnerClaimCookie(response, secure);
       return response;

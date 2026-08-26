@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { APP_ROUTES } from "@/lib/seo/config";
-import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
 import { trackEvent } from "@/lib/ga/trackEvent";
 import { complimentaryAccessEndIso, formatPartnerAccessDate } from "@/lib/partners/dates";
 import { PARTNER_REDEEM_TRACK_COOKIE } from "@/lib/partners/types";
@@ -74,14 +73,14 @@ export default function AccessSuccessPage() {
   }, []);
 
   return (
-    <main className="min-h-[70vh] py-16">
+    <main className="min-h-[70vh] py-16" data-testid="access-success">
       <Container size="sm">
         {loading ? (
           <p className="text-text-muted">Confirming your access…</p>
         ) : hasAccess ? (
           <>
             <h1 className="text-3xl font-semibold tracking-tight text-white">
-              Success! 🎉 Your ESAT Camp access is active.
+              Your ESAT Camp access is active
             </h1>
             <p className="mt-4 text-text-muted">
               {displayName
@@ -93,18 +92,12 @@ export default function AccessSuccessPage() {
                 Full access available until {formatPartnerAccessDate(endsAt)}.
               </p>
             )}
-            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-10">
               <Link
-                href={CALIBRATION_ROUTES.hub}
+                href={APP_ROUTES.dashboard}
                 className="inline-flex justify-center rounded-lg bg-primary px-5 py-3 text-sm font-medium text-white"
               >
-                Start your calibration
-              </Link>
-              <Link
-                href={APP_ROUTES.questionBank}
-                className="inline-flex justify-center rounded-lg bg-surface-mid px-5 py-3 text-sm font-medium text-text"
-              >
-                Explore the question bank
+                Go to dashboard
               </Link>
             </div>
           </>
