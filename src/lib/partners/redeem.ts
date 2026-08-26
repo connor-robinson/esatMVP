@@ -9,9 +9,17 @@ import {
 } from "./tokens";
 import type { RedeemErrorCode, RedeemFailure, RedeemResult } from "./types";
 
-const RATE_WINDOW_MS = 10 * 60 * 1000;
-const RATE_MAX_ATTEMPTS_LEGACY = 20;
-const RATE_MAX_ATTEMPTS_SHORT = 10;
+/** Sliding window for IP-based partner access rate limits. */
+export const RATE_WINDOW_MS = 10 * 60 * 1000;
+/** Failed invalid-code guesses allowed per IP for 8-char / cohort codes. */
+export const RATE_MAX_FAILURES_SHORT = 10;
+/** Failed invalid-code guesses allowed per IP for legacy long tokens. */
+export const RATE_MAX_FAILURES_LEGACY = 20;
+/**
+ * Secondary absolute ceiling: any recorded peek/redeem request per IP.
+ * High enough for shared-school NAT legitimate use; blocks flooding.
+ */
+export const RATE_MAX_ABSOLUTE_REQUESTS = 200;
 
 function mapRpcError(error: string | undefined): RedeemErrorCode {
   switch (error) {
@@ -70,25 +78,48 @@ export function hashClientIp(ip: string | null | undefined): string {
   return createHash("sha256").update(raw).digest("hex").slice(0, 32);
 }
 
-function maxAttemptsForInput(raw: string): number {
+export function maxFailureAttemptsForInput(raw: string): number {
   if (isLegacyInviteToken(raw) && !isShortAccessCode(raw)) {
-    return RATE_MAX_ATTEMPTS_LEGACY;
+    return RATE_MAX_FAILURES_LEGACY;
   }
-  return RATE_MAX_ATTEMPTS_SHORT;
+  return RATE_MAX_FAILURES_SHORT;
+}
+
+/**
+ * Only unknown/invalid code guesses count toward the failure limiter.
+ * Valid peeks, successful redemptions, and eligibility outcomes
+ * (already_paid, already_partner_entitled, expired, etc.) do not.
+ */
+export function isBruteForceFailure(result: {
+  ok: boolean;
+  error?: RedeemErrorCode;
+}): boolean {
+  return !result.ok && result.error === "invalid_token";
 }
 
 export async function checkRedeemRateLimit(
   service: SupabaseClient,
   ipHash: string,
-  maxAttempts: number = RATE_MAX_ATTEMPTS_SHORT,
+  maxFailures: number = RATE_MAX_FAILURES_SHORT,
 ): Promise<boolean> {
   const since = new Date(Date.now() - RATE_WINDOW_MS).toISOString();
-  const { count } = await service
+
+  const { count: failCount } = await service
+    .from("partner_redeem_attempts")
+    .select("id", { count: "exact", head: true })
+    .eq("ip_hash", ipHash)
+    .eq("success", false)
+    .gte("created_at", since);
+  if ((failCount ?? 0) >= maxFailures) return false;
+
+  const { count: totalCount } = await service
     .from("partner_redeem_attempts")
     .select("id", { count: "exact", head: true })
     .eq("ip_hash", ipHash)
     .gte("created_at", since);
-  return (count ?? 0) < maxAttempts;
+  if ((totalCount ?? 0) >= RATE_MAX_ABSOLUTE_REQUESTS) return false;
+
+  return true;
 }
 
 export async function recordRedeemAttempt(
@@ -104,6 +135,26 @@ export async function recordRedeemAttempt(
   } catch {
     /* non-fatal */
   }
+}
+
+/** Record for absolute-ceiling telemetry; mark success=false only for guesses. */
+async function recordAccessOutcome(
+  service: SupabaseClient,
+  opts: {
+    ipHash: string;
+    userId?: string | null;
+    result: { ok: boolean; error?: RedeemErrorCode };
+  },
+): Promise<void> {
+  if (!opts.result.ok && opts.result.error === "rate_limited") {
+    // Do not extend the window by logging blocked refreshes as failures.
+    return;
+  }
+  await recordRedeemAttempt(service, {
+    ipHash: opts.ipHash,
+    userId: opts.userId,
+    success: !isBruteForceFailure(opts.result),
+  });
 }
 
 export type PeekPartnerAccess =
@@ -177,38 +228,33 @@ export async function peekPartnerAccess(
   const allowed = await checkRedeemRateLimit(
     service,
     ipHash,
-    maxAttemptsForInput(rawToken),
+    maxFailureAttemptsForInput(rawToken),
   );
   if (!allowed) {
-    await recordRedeemAttempt(service, { ipHash, success: false });
     return { ok: false, error: "rate_limited" };
   }
 
   if (!isPlausiblePartnerToken(rawToken)) {
-    await recordRedeemAttempt(service, { ipHash, success: false });
-    return { ok: false, error: "invalid_token" };
+    const result: PeekPartnerAccess = { ok: false, error: "invalid_token" };
+    await recordAccessOutcome(service, { ipHash, result });
+    return result;
   }
 
   const tokenHash = hashAccessInput(rawToken);
   const invitePeek = await peekInviteHash(client, tokenHash);
   if (invitePeek.ok || invitePeek.error !== "invalid_token") {
-    await recordRedeemAttempt(service, {
-      ipHash,
-      success: invitePeek.ok,
-    });
+    await recordAccessOutcome(service, { ipHash, result: invitePeek });
     return invitePeek;
   }
 
   if (isLegacyInviteToken(rawToken) && !isShortAccessCode(rawToken)) {
-    await recordRedeemAttempt(service, { ipHash, success: false });
-    return { ok: false, error: "invalid_token" };
+    const result: PeekPartnerAccess = { ok: false, error: "invalid_token" };
+    await recordAccessOutcome(service, { ipHash, result });
+    return result;
   }
 
   const cohortPeek = await peekCohortHash(client, tokenHash);
-  await recordRedeemAttempt(service, {
-    ipHash,
-    success: cohortPeek.ok,
-  });
+  await recordAccessOutcome(service, { ipHash, result: cohortPeek });
   return cohortPeek;
 }
 
@@ -225,25 +271,21 @@ export async function redeemPartnerInvite(opts: {
 }): Promise<RedeemResult> {
   const service = opts.service ?? createPartnerServiceClient();
   const ipHash = hashClientIp(opts.ip);
-  const maxAttempts = maxAttemptsForInput(opts.rawToken);
+  const maxFailures = maxFailureAttemptsForInput(opts.rawToken);
 
-  const allowed = await checkRedeemRateLimit(service, ipHash, maxAttempts);
+  const allowed = await checkRedeemRateLimit(service, ipHash, maxFailures);
   if (!allowed) {
-    await recordRedeemAttempt(service, {
-      ipHash,
-      userId: opts.userId,
-      success: false,
-    });
     return { ok: false, error: "rate_limited" };
   }
 
   if (!isPlausiblePartnerToken(opts.rawToken)) {
-    await recordRedeemAttempt(service, {
+    const result: RedeemResult = { ok: false, error: "invalid_token" };
+    await recordAccessOutcome(service, {
       ipHash,
       userId: opts.userId,
-      success: false,
+      result,
     });
-    return { ok: false, error: "invalid_token" };
+    return result;
   }
 
   const tokenHash = hashAccessInput(opts.rawToken);
@@ -271,10 +313,10 @@ export async function redeemPartnerInvite(opts: {
     }
   }
 
-  await recordRedeemAttempt(service, {
+  await recordAccessOutcome(service, {
     ipHash,
     userId: opts.userId,
-    success: result.ok,
+    result,
   });
   return result;
 }
