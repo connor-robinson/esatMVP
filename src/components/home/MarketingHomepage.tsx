@@ -282,7 +282,7 @@ export function MarketingHomepage({
                     , co-founder of ESAT Camp.
                   </p>
                   <p className="text-sm leading-relaxed text-[#94A3B8] sm:text-base">
-                    We built the platform we wished we&apos;d had for the ESAT.
+                    Our goal is to build the platform we wish we had for the ESAT.
                   </p>
                 </div>
               </div>
