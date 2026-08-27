@@ -297,7 +297,7 @@ export function QuestionCard({
 
   const OPTION_ROW_BASE = "bg-surface-subtle dark:bg-surface-mid";
   const OPTION_ROW_SELECTED = "bg-surface-mid dark:bg-folder-card-selected";
-  const OPTION_ROW_CORRECT = "bg-success/8 dark:bg-success/10";
+  const OPTION_ROW_CORRECT = "bg-success/25 dark:bg-success/20";
   const OPTION_ROW_HOVER = "hover:bg-surface-mid/70 dark:hover:bg-surface-neutral";
 
   const getOptionStyle = (letter: string) => {
@@ -518,10 +518,15 @@ export function QuestionCard({
                 }
               }}
               className={cn(
-                "relative flex w-full flex-col overflow-hidden rounded-organic-md transition-[background-color,opacity,box-shadow] duration-200 ease-out",
+                "relative flex w-full flex-col overflow-hidden rounded-organic-md transition-[background-color,opacity] duration-200 ease-out",
+                "border-0 outline-none ring-0 shadow-none",
+                "focus:border-0 focus:outline-none focus:ring-0",
+                "focus-visible:border-0 focus-visible:outline-none focus-visible:ring-0",
+                "active:outline-none active:ring-0",
+                "select-none [-webkit-tap-highlight-color:transparent]",
                 getOptionStyle(letter),
-                flashCorrect && "!bg-success/14 ring-2 ring-inset ring-success/25",
-                flashWrong && "!bg-error/10 ring-2 ring-inset ring-error/20",
+                flashCorrect && "!bg-success/30",
+                flashWrong && "!bg-error/15",
               )}
             >
               <div className="relative flex w-full items-center gap-2 px-3.5 py-2.5 sm:gap-3 sm:px-4 sm:py-3">
@@ -607,6 +612,8 @@ export function QuestionCard({
                       }}
                       className={cn(
                         "flex h-9 w-9 items-center justify-center rounded-organic-md sm:h-10 sm:w-10",
+                        "border-0 outline-none ring-0",
+                        "focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0",
                         "bg-secondary text-background",
                         "shadow-[0_4px_0_0_#623e56] dark:shadow-[0_4px_0_0_#8a5a7a]",
                         "hover:brightness-110",
