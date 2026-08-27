@@ -152,7 +152,11 @@ def api_source(question_id: int):
         if not url:
             return jsonify({"error": "question has no source image"}), 404
         data = imaging.source_bytes(url, refresh=request.args.get("refresh") == "1")
-        return Response(data, mimetype="image/png", headers={"Cache-Control": "max-age=3600"})
+        return Response(
+            data,
+            mimetype="image/png",
+            headers={"Cache-Control": "no-store"},
+        )
     except LookupError as exc:
         return _error(exc, 404)
     except Exception as exc:

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import concurrent.futures
+import hashlib
 import json
 import re
 import threading
@@ -696,6 +697,11 @@ def load_question(
                 "width": source_width,
                 "height": source_height,
                 "error": source_error,
+                "cacheBust": (
+                    hashlib.sha256(source_url.encode("utf-8")).hexdigest()[:16]
+                    if source_url
+                    else None
+                ),
             },
             "neighbors": _neighbors(question),
         }
@@ -872,15 +878,27 @@ def replace_base_image(question_id: int, image_bytes: bytes) -> Dict[str, Any]:
 
     image_hash = imaging.sha256_hex(png)
     if conversion and conversion.get("id"):
-        client.table("question_conversions").update(
-            {
-                "source_image_url": new_url,
-                "source_image_hash": image_hash,
-            }
-        ).eq("id", conversion["id"]).execute()
+        updated = (
+            client.table("question_conversions")
+            .update(
+                {
+                    "source_image_url": new_url,
+                    "source_image_hash": image_hash,
+                }
+            )
+            .eq("id", conversion["id"])
+            .execute()
+            .data
+            or []
+        )
+        if not updated:
+            raise RuntimeError(
+                "Live question image was updated, but the conversion source_image_url "
+                "could not be rewritten. Reload and try again."
+            )
 
     imaging.forget_source(old_url)
-    imaging.forget_source(new_url)
+    imaging.remember_source(new_url, png)
     invalidate(
         "overview",
         f"paper:{int(question['paper_id'])}",
@@ -970,14 +988,17 @@ def save_question(question_id: int, payload: Dict[str, Any]) -> Dict[str, Any]:
         "diagram_assets": assets or None,
         "option_letters": sorted(options.keys()),
         "conversion_report": report,
-        "source_image_url": source_url,
     }
 
     if conversion and conversion.get("id"):
+        # Never rewrite source_image_url here. A concurrent "Replace screenshot"
+        # can finish after this save fetched the old URL; writing it back would
+        # undo the replacement and leave crops bound to the stale image.
         client.table("question_conversions").update(row).eq("id", conversion["id"]).execute()
     else:
         if not source_url:
             raise ValueError("question has no source image to record a conversion against")
+        row["source_image_url"] = source_url
         row["source_image_hash"] = imaging.sha256_hex(imaging.source_bytes(source_url))
         row["model_used"] = "manual_studio"
         client.table("question_conversions").upsert(

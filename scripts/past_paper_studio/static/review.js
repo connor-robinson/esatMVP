@@ -67,7 +67,8 @@ function warmImage(url) {
 function warmQuestionAssets(data) {
   if (!data) return;
   const questionId = data.question && data.question.questionId;
-  if (questionId) warmImage(`/api/question/${questionId}/source.png`);
+  const bust = data.source && data.source.cacheBust;
+  if (questionId) warmImage(sourceImageSrc(questionId, bust));
   for (const asset of (data.draft && data.draft.diagramAssets) || []) {
     warmImage(asset.previewUrl || asset.url);
   }
@@ -413,7 +414,10 @@ async function replaceSourceImage(file) {
     if (!response.ok) {
       throw new Error((data && data.error) || `${response.status} ${response.statusText}`);
     }
-    if (data.source) data.source.cacheBust = Date.now();
+    if (data.source) {
+      data.source.cacheBust =
+        data.source.cacheBust || Date.now();
+    }
     // Keep local text edits; only refresh question/source metadata.
     if (state.draft) {
       data.draft = {

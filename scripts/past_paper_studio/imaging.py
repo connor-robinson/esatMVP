@@ -87,6 +87,15 @@ def forget_source(url: str) -> None:
             pass
 
 
+def remember_source(url: str, data: bytes) -> None:
+    """Seed the source cache after an upload so crops use the new bytes immediately."""
+    if not url or not data:
+        return
+    path = _cache_path(url)
+    path.write_bytes(data)
+    _remember(url, data)
+
+
 def to_png_bytes(image_bytes: bytes) -> bytes:
     """Normalize any common image upload to PNG for storage."""
     with Image.open(io.BytesIO(image_bytes)) as img:

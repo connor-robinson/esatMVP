@@ -31,7 +31,8 @@ export function openCropEditor({ questionId, title, bbox, source, onApply }) {
   let box = { ...original };
   let zoom = 1;
 
-  const sourceSrc = `/api/question/${questionId}/source.png`;
+  const bust = (source && source.cacheBust) || Date.now();
+  const sourceSrc = `/api/question/${questionId}/source.png?refresh=1&t=${bust}`;
   const img = el("img", { class: "crop-img", src: sourceSrc, alt: "" });
   const rect = el("div", { class: "crop-rect" });
   for (const handle of HANDLES) rect.appendChild(el("div", { class: `handle ${handle}`, "data-handle": handle }));
@@ -171,9 +172,10 @@ export function openCropEditor({ questionId, title, bbox, source, onApply }) {
   }
 
   const schedulePreview = debounce(async () => {
+    const bust = (source && source.cacheBust) || Date.now();
     const url =
       `/api/question/${questionId}/crop-preview.png?x=${round(box.x)}&y=${round(box.y)}` +
-      `&w=${round(box.w)}&h=${round(box.h)}`;
+      `&w=${round(box.w)}&h=${round(box.h)}&t=${bust}`;
     const image = el("img", { src: url, alt: "crop preview" });
     image.addEventListener("error", () => {
       clear(previewBox).appendChild(
