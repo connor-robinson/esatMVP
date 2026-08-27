@@ -188,18 +188,19 @@ def validate_extraction(
         and not report["answer_letter_missing"]
         and not katex_errors
         and not table_processing_failed
-        and not graphical_options_incomplete
     )
-    # Diagram crop / detection issues should not block publishing good text.
-    # Flag needs_review and fix diagrams in the studio instead.
+    # Diagram / incomplete graphical crops should not block publishing good text.
+    # Flag needs_review and fix assets in the studio instead.
     diagram_only_issue = (
-        diagram_crop_failed or visual_cue_mismatch or diagram_uncertain
+        diagram_crop_failed
+        or visual_cue_mismatch
+        or diagram_uncertain
+        or graphical_options_incomplete
     )
 
     hard_fail = (
         image_fetch_failed
         or table_processing_failed
-        or graphical_options_incomplete
         or bool(katex_errors)
         or report["missing_options"]
         or report["answer_letter_missing"]
@@ -210,5 +211,7 @@ def validate_extraction(
     if diagram_only_issue and text_valid:
         report["diagram_review_status"] = "needs_review"
         report["diagram_text_published_despite_diagram_issue"] = True
+        if graphical_options_incomplete:
+            report["graphical_options_published_incomplete"] = True
 
     return report, hard_fail

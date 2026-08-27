@@ -127,7 +127,7 @@ class DiagramClassificationTests(unittest.TestCase):
         self.assertFalse(failed)
         self.assertFalse(report["graphical_options_incomplete"])
 
-    def test_incomplete_graphical_options_fail_closed(self) -> None:
+    def test_incomplete_graphical_options_approves_when_text_complete(self) -> None:
         report, failed = validate_extraction(
             _job(),
             {
@@ -141,6 +141,26 @@ class DiagramClassificationTests(unittest.TestCase):
             },
             "Which sketch is correct?",
             {"A": "", "B": "", "C": "", "D": ""},
+        )
+        self.assertFalse(failed)
+        self.assertTrue(report["graphical_options_incomplete"])
+        self.assertEqual(report["diagram_review_status"], "needs_review")
+        self.assertTrue(report.get("graphical_options_published_incomplete"))
+
+    def test_incomplete_graphical_options_still_fail_without_options(self) -> None:
+        report, failed = validate_extraction(
+            _job(),
+            {
+                "detected_question_number": 1,
+                "confidence": 0.98,
+                "has_diagram": True,
+                "diagram_confidence": 0.99,
+                "diagram_type": "graphical_options",
+                "has_graphical_options": True,
+                "graphical_option_letters_processed": list("ABC"),
+            },
+            "Which sketch is correct?",
+            {},
         )
         self.assertTrue(failed)
         self.assertTrue(report["graphical_options_incomplete"])
@@ -167,4 +187,4 @@ class DiagramClassificationTests(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    
+    unittest.main()

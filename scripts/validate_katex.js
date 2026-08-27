@@ -5,6 +5,7 @@
  * Output: JSON array of {field, error} for failures (empty array = all ok)
  */
 const katex = require('katex');
+require('katex/dist/contrib/mhchem.min.js');
 
 const DISPLAY_RE = /\$\$([\s\S]+?)\$\$/g;
 const INLINE_RE = /(?<!\$)\$(?!\$)([^\$]+?)\$(?!\$)/g;

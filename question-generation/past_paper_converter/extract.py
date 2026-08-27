@@ -278,7 +278,11 @@ def fix_katex_with_text(
             "stem": stem,
             "options": options,
             "katex_errors": katex_errors,
-            "instruction": "Fix KaTeX syntax errors. Return JSON {stem, options} only. Use $...$ delimiters.",
+            "instruction": (
+                "Fix KaTeX syntax errors. Return JSON {stem, options} only. "
+                "Use $...$ / $$...$$ delimiters. Keep \\ce{...} chemistry macros "
+                "(mhchem is supported). Do not invent content."
+            ),
         },
         ensure_ascii=False,
     )

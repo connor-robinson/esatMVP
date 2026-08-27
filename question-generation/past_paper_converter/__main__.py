@@ -66,6 +66,13 @@ def main(argv: list[str] | None = None) -> int:
         default=int(__import__("os").environ.get("PAST_PAPER_WORKERS", "2")),
     )
 
+    retry_p = sub.add_parser(
+        "retry-until-success",
+        help="Force-retry failed conversions until they approve",
+    )
+    retry_p.add_argument("--question-id", type=int, action="append", default=None)
+    retry_p.add_argument("--max-attempts", type=int, default=8)
+
     args = parser.parse_args(argv)
 
     if args.command == "run":
@@ -139,6 +146,16 @@ def main(argv: list[str] | None = None) -> int:
         if result.get("status") == "paused_failure_spike":
             return 2
         return 0
+
+    if args.command == "retry-until-success":
+        from .retry_until_success import retry_until_success
+
+        result = retry_until_success(
+            args.question_id,
+            max_attempts=args.max_attempts,
+        )
+        print(json.dumps(result, indent=2))
+        return 0 if result.get("status") == "completed" else 2
 
     return 1
 

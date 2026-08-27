@@ -153,6 +153,35 @@ def process_single_job(
                 missing_options_recovered = True
                 break
 
+    # Zero-option extractions are almost always model misses (choices in a table
+    # or at the bottom of the screenshot). Keep retrying with Pro.
+    if len(options) == 0 and not dry_run:
+        for attempt in range(3):
+            try:
+                retried, raw_retry, retry_usage = extract_from_image(
+                    job.image_bytes,
+                    job_meta(job),
+                    model=escalate_model(),
+                    pdf_hint=job.pdf_text_hint,
+                    options_retry={
+                        "found_letters": [],
+                        "variable": variable_options,
+                        "min_count": min_options or 4,
+                    },
+                )
+            except Exception as exc:
+                options_retry_error = str(exc)
+                break
+            retried_options = normalize_options(retried.get("options") or {})
+            if retried_options:
+                parsed = retried
+                options = retried_options
+                raw = raw_retry
+                model_used = escalate_model()
+                usage = {**(usage or {}), f"empty_options_retry_{attempt}": retry_usage}
+                missing_options_recovered = True
+                break
+
     if parsed.get("has_graphical_options") is True:
         parsed["has_diagram"] = True
         if str(parsed.get("diagram_type") or "none") == "none":
