@@ -367,6 +367,11 @@ function renderBanners() {
   }
 }
 
+function sourceImageSrc(questionId, bust) {
+  const base = `/api/question/${questionId}/source.png?refresh=1`;
+  return bust ? `${base}&t=${bust}` : base;
+}
+
 function renderSource() {
   const host = clear(document.getElementById("source-pane"));
   const { question, source } = state.data;
@@ -379,10 +384,56 @@ function renderSource() {
   host.appendChild(
     el("img", {
       class: "source-shot",
-      src: `/api/question/${question.questionId}/source.png`,
+      src: sourceImageSrc(question.questionId, source.cacheBust),
       alt: "original question screenshot",
     }),
   );
+}
+
+async function replaceSourceImage(file) {
+  if (!file || !state.data) return;
+  const button = document.getElementById("replace-source");
+  const questionId = state.data.question.questionId;
+  button.disabled = true;
+  button.classList.add("busy");
+  try {
+    const body = new FormData();
+    body.append("image", file);
+    const response = await fetch(`/api/question/${questionId}/source`, {
+      method: "POST",
+      body,
+    });
+    const text = await response.text();
+    let data = null;
+    try {
+      data = text ? JSON.parse(text) : null;
+    } catch (error) {
+      throw new Error(`Bad response: ${text.slice(0, 200)}`);
+    }
+    if (!response.ok) {
+      throw new Error((data && data.error) || `${response.status} ${response.statusText}`);
+    }
+    if (data.source) data.source.cacheBust = Date.now();
+    // Keep local text edits; only refresh question/source metadata.
+    if (state.draft) {
+      data.draft = {
+        questionStem: state.draft.stem,
+        options: { ...state.draft.options },
+        diagramAssets: state.draft.assets,
+      };
+    }
+    rememberQuestion(questionId, data);
+    state.data = data;
+    renderSource();
+    renderMeta();
+    renderHeader();
+    toast("Base screenshot updated.", "ok");
+  } catch (error) {
+    toast(error.message || String(error), "err");
+  } finally {
+    button.disabled = false;
+    button.classList.remove("busy");
+  }
 }
 
 function renderPreview() {
@@ -883,6 +934,14 @@ document.getElementById("stem").addEventListener("input", (event) => {
   state.draft.stem = event.target.value;
   markDirty();
   schedulePreview();
+});
+document.getElementById("replace-source").addEventListener("click", () => {
+  document.getElementById("replace-source-file").click();
+});
+document.getElementById("replace-source-file").addEventListener("change", (event) => {
+  const file = event.target.files && event.target.files[0];
+  event.target.value = "";
+  if (file) replaceSourceImage(file);
 });
 document.getElementById("mark-reviewed").addEventListener("change", () => {
   markDirty();

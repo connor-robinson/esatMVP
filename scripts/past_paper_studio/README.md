@@ -64,8 +64,17 @@ trigger otherwise rejects `answer_letter` changes:
 supabase/migrations/20260825120000_question_studio_answer_letter.sql
 ```
 
-Run it in the Supabase SQL editor. Until then the studio saves everything else
-and tells you the answer key was skipped.
+Replacing the live base screenshot needs a second migration for the same reason:
+
+```
+supabase/migrations/20260827120000_question_studio_replace_image.sql
+```
+
+Run both in the Supabase SQL editor. Until then the studio saves everything else
+and tells you the answer key or base image update was skipped.
+
+On the review page, **Replace screenshot** uploads a new PNG/JPEG and updates
+`questions.question_image` plus the conversion `source_image_url`.
 
 ## Checks
 

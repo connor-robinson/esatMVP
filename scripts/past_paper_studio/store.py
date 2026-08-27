@@ -833,6 +833,69 @@ def _set_answer_letter(question_id: int, letter: str) -> Tuple[bool, Optional[st
         return False, f"Answer key not saved: {message}"
 
 
+def replace_base_image(question_id: int, image_bytes: bytes) -> Dict[str, Any]:
+    """Upload a new base screenshot and point the live question at it."""
+    if not image_bytes:
+        raise ValueError("image file is empty")
+
+    question = _fetch_question(question_id)
+    conversion = _fetch_active_conversion(question_id)
+    old_url = (conversion or {}).get("source_image_url") or question.get("question_image") or ""
+
+    try:
+        png = imaging.to_png_bytes(image_bytes)
+    except Exception as exc:
+        raise ValueError(f"could not read image: {exc}") from exc
+
+    new_url = imaging.upload_source(question_id, png)
+    client = _client()
+    try:
+        client.rpc(
+            "set_question_image",
+            {"p_question_id": question_id, "p_question_image": new_url},
+        ).execute()
+    except Exception as exc:
+        message = str(exc)
+        lowered = message.lower()
+        if (
+            "set_question_image" in lowered
+            or "pgrst202" in lowered
+            or "does not exist" in lowered
+            or "protected data" in lowered
+            or "not allowed on table questions" in lowered
+        ):
+            raise RuntimeError(
+                "Base image uploaded but not linked on the live question. Apply migration "
+                "supabase/migrations/20260827120000_question_studio_replace_image.sql"
+            ) from exc
+        raise
+
+    image_hash = imaging.sha256_hex(png)
+    if conversion and conversion.get("id"):
+        client.table("question_conversions").update(
+            {
+                "source_image_url": new_url,
+                "source_image_hash": image_hash,
+            }
+        ).eq("id", conversion["id"]).execute()
+
+    imaging.forget_source(old_url)
+    imaging.forget_source(new_url)
+    invalidate(
+        "overview",
+        f"paper:{int(question['paper_id'])}",
+        f"question:{question_id}",
+        f"source_url:{question_id}",
+    )
+
+    result = load_question(question_id, refresh=True, warm_neighbors=True)
+    result["replaceResult"] = {
+        "url": new_url,
+        "notes": ["Replaced the live question screenshot"],
+    }
+    return result
+
+
 def save_question(question_id: int, payload: Dict[str, Any]) -> Dict[str, Any]:
     """Persist an edited conversion, re-crop dirty diagrams, then publish."""
     client = _client()

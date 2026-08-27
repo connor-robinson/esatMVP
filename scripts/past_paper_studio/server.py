@@ -159,6 +159,21 @@ def api_source(question_id: int):
         return _error(exc)
 
 
+@app.post("/api/question/<int:question_id>/source")
+def api_replace_source(question_id: int):
+    uploaded = request.files.get("image") or request.files.get("file")
+    if uploaded is None or not uploaded.filename:
+        return jsonify({"error": "multipart field 'image' is required"}), 400
+    try:
+        return jsonify(store.replace_base_image(question_id, uploaded.read()))
+    except LookupError as exc:
+        return _error(exc, 404)
+    except ValueError as exc:
+        return _error(exc, 400)
+    except Exception as exc:
+        return _error(exc)
+
+
 @app.get("/api/question/<int:question_id>/crop-preview.png")
 def api_crop_preview(question_id: int):
     try:

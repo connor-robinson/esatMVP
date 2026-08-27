@@ -11,9 +11,14 @@ from typing import Dict, List, Optional, Tuple
 
 from PIL import Image
 
-from past_paper_converter.config import CACHE_DIR
+from past_paper_converter.config import CACHE_DIR, STORAGE_BUCKET, STORAGE_PREFIX, supabase_service_key, supabase_url
 from past_paper_converter.diagram import upload_diagram
 from past_paper_converter.export_questions import download_image
+
+try:
+    from supabase import create_client
+except ImportError:  # pragma: no cover
+    create_client = None  # type: ignore
 
 SOURCE_CACHE = CACHE_DIR / "studio_sources"
 SOURCE_CACHE.mkdir(parents=True, exist_ok=True)
@@ -66,6 +71,47 @@ def source_size(url: str) -> Tuple[int, int]:
 
 def sha256_hex(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+def forget_source(url: str) -> None:
+    """Drop a cached screenshot so a replacement is visible immediately."""
+    if not url:
+        return
+    _MEMORY.pop(url, None)
+    _MEMORY_SIZE.pop(url, None)
+    path = _cache_path(url)
+    if path.is_file():
+        try:
+            path.unlink()
+        except OSError:
+            pass
+
+
+def to_png_bytes(image_bytes: bytes) -> bytes:
+    """Normalize any common image upload to PNG for storage."""
+    with Image.open(io.BytesIO(image_bytes)) as img:
+        if img.mode not in ("RGB", "RGBA"):
+            img = img.convert("RGBA" if "A" in img.getbands() else "RGB")
+        buffer = io.BytesIO()
+        img.save(buffer, format="PNG")
+        return buffer.getvalue()
+
+
+def upload_source(question_id: int, image_bytes: bytes) -> str:
+    """Upload a replacement base screenshot under a fresh versioned key."""
+    if create_client is None:
+        raise RuntimeError("supabase client is unavailable")
+    png = to_png_bytes(image_bytes)
+    client = create_client(supabase_url(), supabase_service_key())
+    version = uuid.uuid4().hex[:12]
+    key = f"{STORAGE_PREFIX}/{question_id}/source_studio_{version}.png"
+    client.storage.from_(STORAGE_BUCKET).upload(
+        key,
+        png,
+        file_options={"content-type": "image/png", "upsert": "false"},
+    )
+    base = supabase_url().rstrip("/")
+    return f"{base}/storage/v1/object/public/{STORAGE_BUCKET}/{key}"
 
 
 def normalize_bbox(bbox: List[float]) -> List[float]:
