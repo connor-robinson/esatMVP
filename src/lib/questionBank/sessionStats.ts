@@ -100,11 +100,11 @@ export type TopicStatRow = {
 
 export function computeWeightedTopicStats(
   attempts: QuestionBankSessionAttempt[],
-  labelForTag: (tag: string) => string,
+  labelForTag: (tag: string, subject?: string) => string,
 ): TopicStatRow[] {
   const byTopic = new Map<
     string,
-    { attempted: number; correct: number; weight: number }
+    { attempted: number; correct: number; weight: number; subject?: string }
   >();
 
   for (const attempt of attempts) {
@@ -117,9 +117,15 @@ export function computeWeightedTopicStats(
     }
 
     for (const { tag, weight } of contributions) {
-      const row = byTopic.get(tag) ?? { attempted: 0, correct: 0, weight };
+      const row = byTopic.get(tag) ?? {
+        attempted: 0,
+        correct: 0,
+        weight,
+        subject: attempt.subjects || undefined,
+      };
       row.attempted += weight;
       if (countsAsSessionCorrect(attempt)) row.correct += weight;
+      if (!row.subject && attempt.subjects) row.subject = attempt.subjects;
       byTopic.set(tag, row);
     }
   }
@@ -127,7 +133,7 @@ export function computeWeightedTopicStats(
   return Array.from(byTopic.entries())
     .map(([topicId, stats]) => ({
       topicId,
-      label: labelForTag(topicId),
+      label: labelForTag(topicId, stats.subject),
       attempted: stats.attempted,
       correct: stats.correct,
       accuracy: stats.attempted > 0 ? (stats.correct / stats.attempted) * 100 : 0,
@@ -149,7 +155,7 @@ export function findWeakestTopic(
 
 export function buildSessionSummary(
   attempts: QuestionBankSessionAttempt[],
-  labelForTag: (tag: string) => string,
+  labelForTag: (tag: string, subject?: string) => string,
 ): QuestionBankSessionSummary {
   const totalQuestions = attempts.length;
   const correctCount = attempts.filter(countsAsSessionCorrect).length;

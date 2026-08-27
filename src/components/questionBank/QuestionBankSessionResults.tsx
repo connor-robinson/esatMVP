@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Container } from '@/components/layout/Container';
 import { Button } from '@/components/ui/Button';
 import { DrillUpgradeBanner } from '@/components/builder/DrillUpgradeBanner';
@@ -10,14 +10,27 @@ import { signInWithGoogle } from '@/lib/auth/googleOAuth';
 import { useSupabaseClient } from '@/components/auth/SupabaseSessionProvider';
 import { SessionMiniChart } from '@/components/analytics/SessionMiniChart';
 import { BreakdownDonutChart } from '@/components/questionBank/BreakdownDonutChart';
+import { StemContent } from '@/components/shared/StemContent';
 import { labelForQuestionBankTag } from '@/lib/questionBank/esatCurriculumTopicLabels';
-import { buildSessionSummary } from '@/lib/questionBank/sessionStats';
+import {
+  buildSessionSummary,
+  countsAsSessionCorrect,
+} from '@/lib/questionBank/sessionStats';
 import type {
   QuestionBankSessionAttempt,
   QuestionBankSessionSource,
   UiDifficultyLabel,
 } from '@/types/questionBank';
-import { ArrowLeft, Clock, Target, Zap, BookOpen } from 'lucide-react';
+import {
+  ArrowLeft,
+  Check,
+  ChevronDown,
+  Clock,
+  Target,
+  X,
+  Zap,
+  BookOpen,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface QuestionBankSessionResultsProps {
@@ -108,6 +121,9 @@ export function QuestionBankSessionResults({
 }: QuestionBankSessionResultsProps) {
   const supabase = useSupabaseClient();
   const [signInLoading, setSignInLoading] = useState(false);
+  const [expandedQuestionId, setExpandedQuestionId] = useState<string | null>(
+    null,
+  );
 
   const handleGoogleSignIn = async () => {
     try {
@@ -121,6 +137,12 @@ export function QuestionBankSessionResults({
 
   const result = useMemo(
     () => buildSessionSummary(attempts, labelForQuestionBankTag),
+    [attempts],
+  );
+
+  const sortedAttempts = useMemo(
+    () =>
+      [...attempts].sort((a, b) => a.questionNumber - b.questionNumber),
     [attempts],
   );
 
@@ -331,6 +353,194 @@ export function QuestionBankSessionResults({
               </div>
               <div className='h-[200px] min-h-[180px]'>
                 <SessionMiniChart data={result.progressData} />
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {sortedAttempts.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.48 }}
+            className='mb-8 w-full'
+          >
+            <div className={cn('p-6', resultsCard)}>
+              <div className='mb-6'>
+                <h2 className='mb-1 font-heading text-xl font-bold text-text sm:text-2xl'>
+                  Review questions
+                </h2>
+                <p className='text-sm text-text-muted'>
+                  Revisit every question from this session, including your answer
+                  and the correct option
+                </p>
+              </div>
+
+              <div className='space-y-2'>
+                {sortedAttempts.map((attempt) => {
+                  const firstTryCorrect = countsAsSessionCorrect(attempt);
+                  const expandKey = `${attempt.questionId}-${attempt.questionNumber}`;
+                  const expanded = expandedQuestionId === expandKey;
+                  const topicLabel = attempt.primaryTag
+                    ? labelForQuestionBankTag(
+                        attempt.primaryTag,
+                        attempt.subjects,
+                      )
+                    : null;
+                  const optionEntries = Object.entries(attempt.options ?? {}).sort(
+                    ([a], [b]) => a.localeCompare(b),
+                  );
+
+                  return (
+                    <div
+                      key={expandKey}
+                      className='overflow-hidden rounded-organic-md bg-surface-mid'
+                    >
+                      <button
+                        type='button'
+                        onClick={() =>
+                          setExpandedQuestionId(expanded ? null : expandKey)
+                        }
+                        className='flex w-full items-start gap-3 px-3 py-3 text-left transition-colors hover:bg-surface-neutral/50 sm:px-4'
+                      >
+                        <span
+                          className={cn(
+                            'mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-organic-sm text-xs font-bold tabular-nums',
+                            firstTryCorrect
+                              ? 'bg-success/15 text-success'
+                              : 'bg-error/15 text-error',
+                          )}
+                          aria-hidden
+                        >
+                          {firstTryCorrect ? (
+                            <Check className='h-3.5 w-3.5' strokeWidth={2.5} />
+                          ) : (
+                            <X className='h-3.5 w-3.5' strokeWidth={2.5} />
+                          )}
+                        </span>
+
+                        <div className='min-w-0 flex-1'>
+                          <div className='mb-1 flex flex-wrap items-center gap-2'>
+                            <span className='text-sm font-semibold text-text'>
+                              Question {attempt.questionNumber}
+                            </span>
+                            <span className='text-xs text-text-muted'>
+                              {attempt.uiDifficulty}
+                            </span>
+                            {topicLabel ? (
+                              <span className='truncate text-xs text-text-muted'>
+                                {topicLabel}
+                              </span>
+                            ) : null}
+                          </div>
+                          <div
+                            className={cn(
+                              'text-sm leading-relaxed text-text-muted',
+                              !expanded && 'line-clamp-2',
+                            )}
+                          >
+                            <StemContent
+                              content={attempt.questionStem}
+                              className='text-inherit'
+                            />
+                          </div>
+                        </div>
+
+                        <ChevronDown
+                          className={cn(
+                            'mt-1 h-4 w-4 shrink-0 text-text-muted transition-transform',
+                            expanded && 'rotate-180',
+                          )}
+                          aria-hidden
+                        />
+                      </button>
+
+                      <AnimatePresence initial={false}>
+                        {expanded && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className='overflow-hidden'
+                          >
+                            <div className='space-y-3 px-3 pb-4 pt-1 sm:px-4'>
+                              <div className='flex flex-wrap gap-3 text-xs'>
+                                <span className='text-text-muted'>
+                                  Your answer:{' '}
+                                  <span
+                                    className={cn(
+                                      'font-semibold',
+                                      firstTryCorrect
+                                        ? 'text-success'
+                                        : 'text-error',
+                                    )}
+                                  >
+                                    {attempt.userAnswer || '-'}
+                                  </span>
+                                </span>
+                                <span className='text-text-muted'>
+                                  Correct:{' '}
+                                  <span className='font-semibold text-success'>
+                                    {attempt.correctOption}
+                                  </span>
+                                </span>
+                                {attempt.wasRevealed ? (
+                                  <span className='text-text-subtle'>
+                                    Answer revealed
+                                  </span>
+                                ) : null}
+                              </div>
+
+                              {optionEntries.length > 0 ? (
+                                <div className='space-y-1.5'>
+                                  {optionEntries.map(([letter, text]) => {
+                                    const isCorrect =
+                                      letter.toUpperCase() ===
+                                      attempt.correctOption.toUpperCase();
+                                    const isUser =
+                                      letter.toUpperCase() ===
+                                      (attempt.userAnswer || '').toUpperCase();
+                                    return (
+                                      <div
+                                        key={letter}
+                                        className={cn(
+                                          'flex items-start gap-3 rounded-organic-md px-3 py-2.5 text-sm',
+                                          isCorrect
+                                            ? 'bg-success/10'
+                                            : isUser
+                                              ? 'bg-error/10'
+                                              : 'bg-surface-elevated/60',
+                                        )}
+                                      >
+                                        <span
+                                          className={cn(
+                                            'w-5 shrink-0 font-semibold tabular-nums',
+                                            isCorrect
+                                              ? 'text-success'
+                                              : isUser
+                                                ? 'text-error'
+                                                : 'text-text-muted',
+                                          )}
+                                        >
+                                          {letter}
+                                        </span>
+                                        <StemContent
+                                          content={text}
+                                          className='min-w-0 flex-1 text-text-muted'
+                                        />
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              ) : null}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </motion.div>

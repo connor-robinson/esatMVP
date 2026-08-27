@@ -198,16 +198,10 @@ export function labelForEsatTag(
     }
   }
 
-  // Legacy display strings: "Chemistry - Atomic structure"
-  if (raw.includes("-")) {
-    const titlePart = raw.split("-").slice(1).join("-").trim();
-    if (titlePart) return titlePart;
-  }
-
-  // Fallback: extract code from prefixed form
-  const m = canonical.match(PREFIXED_TAG_RE);
-  if (m) {
-    const title = codeToTitle.get(m[2].toUpperCase());
+  // Prefixed curriculum codes (M1-M7, P-P3, chemistry-C1) before legacy "Subject - Title"
+  const prefixed = canonical.match(PREFIXED_TAG_RE);
+  if (prefixed) {
+    const title = codeToTitle.get(prefixed[2].toUpperCase());
     if (title) return title;
   }
 
@@ -218,6 +212,12 @@ export function labelForEsatTag(
   if (parentFromSpec) {
     const parentTitle = codeToTitle.get(parentFromSpec);
     if (parentTitle) return parentTitle;
+  }
+
+  // Legacy display strings: "Chemistry - Atomic structure"
+  if (raw.includes(" - ")) {
+    const titlePart = raw.split(" - ").slice(1).join(" - ").trim();
+    if (titlePart) return titlePart;
   }
 
   return canonical;
