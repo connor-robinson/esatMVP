@@ -56,6 +56,16 @@ def main(argv: list[str] | None = None) -> int:
     )
     place_p.add_argument("--model", type=str, default=None, help="Override batch model id")
 
+    resume_p = sub.add_parser(
+        "resume-remaining",
+        help="Re-run failed conversions first, then remaining image questions (force=True)",
+    )
+    resume_p.add_argument(
+        "--workers",
+        type=int,
+        default=int(__import__("os").environ.get("PAST_PAPER_WORKERS", "2")),
+    )
+
     args = parser.parse_args(argv)
 
     if args.command == "run":
@@ -117,6 +127,16 @@ def main(argv: list[str] | None = None) -> int:
         )
         print(json.dumps(result, indent=2))
         if result.get("status") == "completed" and int(result.get("failed") or 0) > 0:
+            return 2
+        return 0
+
+    if args.command == "resume-remaining":
+        from .resume_remaining import resume_remaining
+
+        workers = max(1, min(8, int(args.workers)))
+        result = resume_remaining(workers=workers)
+        print(json.dumps(result, indent=2))
+        if result.get("status") == "paused_failure_spike":
             return 2
         return 0
 

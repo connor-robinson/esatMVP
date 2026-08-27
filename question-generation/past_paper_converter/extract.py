@@ -133,6 +133,7 @@ def build_user_text(
     pdf_hint: Optional[str] = None,
     *,
     options_retry: Optional[Dict[str, Any]] = None,
+    diagram_retry: bool = False,
 ) -> str:
     exam = job_meta.get("exam_name") or ""
     paper = job_meta.get("paper_name") or ""
@@ -164,12 +165,31 @@ def build_user_text(
     ]
     if options_retry:
         found = sorted(str(letter) for letter in (options_retry.get("found_letters") or []))
-        missing = [letter for letter in expected if letter not in found]
+        if options_retry.get("variable"):
+            min_count = int(options_retry.get("min_count") or 4)
+            parts.append(
+                "CRITICAL RETRY: the previous extraction missed answer options. "
+                f"Found only {', '.join(found) or '(none)'} ({len(found)} letters). "
+                f"This question needs at least {min_count} contiguous options starting at A. "
+                "Re-read the full image and return every printed option letter and its text. "
+                "If choices are in a table, transcribe each row into options."
+            )
+        else:
+            missing = [letter for letter in expected if letter not in found]
+            parts.append(
+                "CRITICAL RETRY: the previous extraction missed answer options. "
+                f"Found only {', '.join(found) or '(none)'}. "
+                f"Missing letters that must appear in the screenshot: {', '.join(missing) or '(unknown)'}. "
+                "Re-read the full image from top to bottom and return ALL options."
+            )
+    if diagram_retry:
         parts.append(
-            "CRITICAL RETRY: the previous extraction missed answer options. "
-            f"Found only {', '.join(found) or '(none)'}. "
-            f"Missing letters that must appear in the screenshot: {', '.join(missing) or '(unknown)'}. "
-            "Re-read the full image from top to bottom and return ALL options."
+            "CRITICAL RETRY: diagram classification or crop failed on the prior pass. "
+            "The stem references a diagram/graph/figure OR a diagram is clearly visible. "
+            "Set has_diagram=true when any non-table figure is present. "
+            "Return diagram_bbox_norm or stem_diagram_assets with generous bboxes that include "
+            "all labels, axes, and captions. If answer choices are graphical, set "
+            "has_graphical_options=true and list graphical_option_assets for every letter."
         )
     if pdf_hint:
         parts.append(f"PDF text hint (may be messy, image is authoritative):\n{pdf_hint[:2000]}")
@@ -184,10 +204,13 @@ def extract_from_image(
     pdf_hint: Optional[str] = None,
     mime_type: str = "image/png",
     options_retry: Optional[Dict[str, Any]] = None,
+    diagram_retry: bool = False,
 ) -> Tuple[Dict[str, Any], str, Dict[str, Any]]:
     client = make_client()
     m = model or DEFAULT_FLASH_MODEL
-    user_text = build_user_text(job_meta, pdf_hint, options_retry=options_retry)
+    user_text = build_user_text(
+        job_meta, pdf_hint, options_retry=options_retry, diagram_retry=diagram_retry
+    )
 
     last_err: Optional[Exception] = None
     raw = ""
@@ -207,7 +230,7 @@ def extract_from_image(
                 ],
                 config=types.GenerateContentConfig(
                     system_instruction=SYSTEM_PROMPT,
-                    temperature=0.0 if options_retry or attempt else 0.1,
+                    temperature=0.0 if options_retry or diagram_retry or attempt else 0.1,
                     response_mime_type="application/json",
                 ),
             )

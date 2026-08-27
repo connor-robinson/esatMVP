@@ -116,16 +116,12 @@ def process_single_job(
         )
 
     options = normalize_options(parsed.get("options") or {})
-    # Fixed-count papers (TMUA A–H) often lose the last option(s) on the first pass.
-    # Retry with an explicit missing-letter prompt before diagrams/validation.
+    # Option letters are often dropped on the first pass. Retry before diagrams.
     options_retry_error: Optional[str] = None
     missing_options_recovered = False
-    if (
-        not uses_variable_option_count(job.exam_name, job.paper_name)
-        and job.expected_letters
-        and len(options) < len(job.expected_letters)
-        and not dry_run
-    ):
+    variable_options = uses_variable_option_count(job.exam_name, job.paper_name)
+    min_options = 4 if variable_options else len(job.expected_letters or [])
+    if len(options) < min_options and min_options > 0 and not dry_run:
         retry_models = [model_used]
         pro = escalate_model()
         if pro not in retry_models:
@@ -137,7 +133,11 @@ def process_single_job(
                     job_meta(job),
                     model=retry_model,
                     pdf_hint=job.pdf_text_hint,
-                    options_retry={"found_letters": sorted(options.keys())},
+                    options_retry={
+                        "found_letters": sorted(options.keys()),
+                        "variable": variable_options,
+                        "min_count": min_options,
+                    },
                 )
             except Exception as exc:
                 options_retry_error = str(exc)
@@ -149,7 +149,7 @@ def process_single_job(
                 raw = raw_retry
                 model_used = retry_model
                 usage = {**(usage or {}), "options_retry_usage": retry_usage}
-            if len(options) >= len(job.expected_letters):
+            if len(options) >= min_options:
                 missing_options_recovered = True
                 break
 
@@ -207,6 +207,56 @@ def process_single_job(
             usage = {**(usage or {}), "fix_usage": fix_usage}
         except Exception as exc:
             report.setdefault("katex_fix_error", str(exc))
+
+    # Diagram retry when text is good but diagram classification/crop failed.
+    diagram_flags = (
+        report.get("diagram_detection_mismatch")
+        or report.get("diagram_crop_failed")
+        or report.get("diagram_classification_uncertain")
+    )
+    if hard_fail and diagram_flags and not dry_run:
+        try:
+            retried, raw_retry, retry_usage = extract_from_image(
+                job.image_bytes,
+                job_meta(job),
+                model=escalate_model(),
+                pdf_hint=job.pdf_text_hint,
+                diagram_retry=True,
+            )
+            retried_options = normalize_options(retried.get("options") or {})
+            if len(retried_options) >= len(options):
+                options = retried_options
+            if retried.get("has_graphical_options") is True:
+                retried["has_diagram"] = True
+            table_stem, table_processing_failed = process_tables(
+                retried, str(retried.get("stem") or "")
+            )
+            retried["stem"] = table_stem
+            for letter, text in (retried.get("structured_table_options") or {}).items():
+                options.setdefault(str(letter), str(text))
+            stem, diagram_assets, diagram_crop_failed = process_diagrams(
+                job.question_id, job.image_bytes, retried, upload=True
+            )
+            if retried.get("has_graphical_options") is True:
+                for letter in retried.get("graphical_option_letters_processed") or []:
+                    options.setdefault(str(letter), "")
+            stem = normalize_latex_delimiters(stem)
+            parsed = retried
+            report, hard_fail = validate_extraction(
+                job,
+                parsed,
+                stem,
+                options,
+                preflight_blur_score=preflight.blur_score,
+                preflight_blurry=preflight.blurry,
+                diagram_crop_failed=diagram_crop_failed,
+                table_processing_failed=table_processing_failed,
+            )
+            report["diagram_retry"] = True
+            report["ai_provider"] = "vertex_ai" if use_vertex_ai() else "gemini_api"
+            usage = {**(usage or {}), "diagram_retry_usage": retry_usage}
+        except Exception as exc:
+            report.setdefault("diagram_retry_error", str(exc))
 
     status = "failed" if hard_fail else "auto_approved"
     row = _build_conversion_row(
