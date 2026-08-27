@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Container } from '@/components/layout/Container';
 import { Button } from '@/components/ui/Button';
 import { DrillUpgradeBanner } from '@/components/builder/DrillUpgradeBanner';
@@ -23,8 +23,8 @@ import type {
 } from '@/types/questionBank';
 import {
   ArrowLeft,
+  ArrowRight,
   Check,
-  ChevronDown,
   Clock,
   Target,
   X,
@@ -40,6 +40,8 @@ interface QuestionBankSessionResultsProps {
   startedAt: number;
   timedOut?: boolean;
   onBack: () => void;
+  /** Open full question layout review for a session question id. */
+  onReviewQuestion?: (questionId: string) => void;
   showUpgradeBanner?: boolean;
   showSignInBanner?: boolean;
   signInRedirectTo?: string;
@@ -115,15 +117,13 @@ export function QuestionBankSessionResults({
   startedAt,
   timedOut = false,
   onBack,
+  onReviewQuestion,
   showUpgradeBanner = false,
   showSignInBanner = false,
   signInRedirectTo = '/questions',
 }: QuestionBankSessionResultsProps) {
   const supabase = useSupabaseClient();
   const [signInLoading, setSignInLoading] = useState(false);
-  const [expandedQuestionId, setExpandedQuestionId] = useState<string | null>(
-    null,
-  );
 
   const handleGoogleSignIn = async () => {
     try {
@@ -371,174 +371,80 @@ export function QuestionBankSessionResults({
                   Review questions
                 </h2>
                 <p className='text-sm text-text-muted'>
-                  Revisit every question from this session, including your answer
-                  and the correct option
+                  Open any question in the full layout (no timer) to revisit
+                  options, distractors, and detailed explanations
                 </p>
               </div>
 
               <div className='space-y-2'>
                 {sortedAttempts.map((attempt) => {
                   const firstTryCorrect = countsAsSessionCorrect(attempt);
-                  const expandKey = `${attempt.questionId}-${attempt.questionNumber}`;
-                  const expanded = expandedQuestionId === expandKey;
                   const topicLabel = attempt.primaryTag
                     ? labelForQuestionBankTag(
                         attempt.primaryTag,
                         attempt.subjects,
                       )
                     : null;
-                  const optionEntries = Object.entries(attempt.options ?? {}).sort(
-                    ([a], [b]) => a.localeCompare(b),
-                  );
+                  const canReview = Boolean(onReviewQuestion);
 
                   return (
-                    <div
-                      key={expandKey}
-                      className='overflow-hidden rounded-organic-md bg-surface-mid'
+                    <button
+                      key={`${attempt.questionId}-${attempt.questionNumber}`}
+                      type='button'
+                      disabled={!canReview}
+                      onClick={() => onReviewQuestion?.(attempt.questionId)}
+                      className={cn(
+                        'flex w-full items-start gap-3 rounded-organic-md bg-surface-mid px-3 py-3 text-left transition-colors sm:px-4',
+                        canReview
+                          ? 'hover:bg-surface-neutral/50'
+                          : 'cursor-default opacity-80',
+                      )}
                     >
-                      <button
-                        type='button'
-                        onClick={() =>
-                          setExpandedQuestionId(expanded ? null : expandKey)
-                        }
-                        className='flex w-full items-start gap-3 px-3 py-3 text-left transition-colors hover:bg-surface-neutral/50 sm:px-4'
-                      >
-                        <span
-                          className={cn(
-                            'mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-organic-sm text-xs font-bold tabular-nums',
-                            firstTryCorrect
-                              ? 'bg-success/15 text-success'
-                              : 'bg-error/15 text-error',
-                          )}
-                          aria-hidden
-                        >
-                          {firstTryCorrect ? (
-                            <Check className='h-3.5 w-3.5' strokeWidth={2.5} />
-                          ) : (
-                            <X className='h-3.5 w-3.5' strokeWidth={2.5} />
-                          )}
-                        </span>
-
-                        <div className='min-w-0 flex-1'>
-                          <div className='mb-1 flex flex-wrap items-center gap-2'>
-                            <span className='text-sm font-semibold text-text'>
-                              Question {attempt.questionNumber}
-                            </span>
-                            <span className='text-xs text-text-muted'>
-                              {attempt.uiDifficulty}
-                            </span>
-                            {topicLabel ? (
-                              <span className='truncate text-xs text-text-muted'>
-                                {topicLabel}
-                              </span>
-                            ) : null}
-                          </div>
-                          <div
-                            className={cn(
-                              'text-sm leading-relaxed text-text-muted',
-                              !expanded && 'line-clamp-2',
-                            )}
-                          >
-                            <StemContent
-                              content={attempt.questionStem}
-                              className='text-inherit'
-                            />
-                          </div>
-                        </div>
-
-                        <ChevronDown
-                          className={cn(
-                            'mt-1 h-4 w-4 shrink-0 text-text-muted transition-transform',
-                            expanded && 'rotate-180',
-                          )}
-                          aria-hidden
-                        />
-                      </button>
-
-                      <AnimatePresence initial={false}>
-                        {expanded && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                            className='overflow-hidden'
-                          >
-                            <div className='space-y-3 px-3 pb-4 pt-1 sm:px-4'>
-                              <div className='flex flex-wrap gap-3 text-xs'>
-                                <span className='text-text-muted'>
-                                  Your answer:{' '}
-                                  <span
-                                    className={cn(
-                                      'font-semibold',
-                                      firstTryCorrect
-                                        ? 'text-success'
-                                        : 'text-error',
-                                    )}
-                                  >
-                                    {attempt.userAnswer || '-'}
-                                  </span>
-                                </span>
-                                <span className='text-text-muted'>
-                                  Correct:{' '}
-                                  <span className='font-semibold text-success'>
-                                    {attempt.correctOption}
-                                  </span>
-                                </span>
-                                {attempt.wasRevealed ? (
-                                  <span className='text-text-subtle'>
-                                    Answer revealed
-                                  </span>
-                                ) : null}
-                              </div>
-
-                              {optionEntries.length > 0 ? (
-                                <div className='space-y-1.5'>
-                                  {optionEntries.map(([letter, text]) => {
-                                    const isCorrect =
-                                      letter.toUpperCase() ===
-                                      attempt.correctOption.toUpperCase();
-                                    const isUser =
-                                      letter.toUpperCase() ===
-                                      (attempt.userAnswer || '').toUpperCase();
-                                    return (
-                                      <div
-                                        key={letter}
-                                        className={cn(
-                                          'flex items-start gap-3 rounded-organic-md px-3 py-2.5 text-sm',
-                                          isCorrect
-                                            ? 'bg-success/10'
-                                            : isUser
-                                              ? 'bg-error/10'
-                                              : 'bg-surface-elevated/60',
-                                        )}
-                                      >
-                                        <span
-                                          className={cn(
-                                            'w-5 shrink-0 font-semibold tabular-nums',
-                                            isCorrect
-                                              ? 'text-success'
-                                              : isUser
-                                                ? 'text-error'
-                                                : 'text-text-muted',
-                                          )}
-                                        >
-                                          {letter}
-                                        </span>
-                                        <StemContent
-                                          content={text}
-                                          className='min-w-0 flex-1 text-text-muted'
-                                        />
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              ) : null}
-                            </div>
-                          </motion.div>
+                      <span
+                        className={cn(
+                          'mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-organic-sm text-xs font-bold tabular-nums',
+                          firstTryCorrect
+                            ? 'bg-success/15 text-success'
+                            : 'bg-error/15 text-error',
                         )}
-                      </AnimatePresence>
-                    </div>
+                        aria-hidden
+                      >
+                        {firstTryCorrect ? (
+                          <Check className='h-3.5 w-3.5' strokeWidth={2.5} />
+                        ) : (
+                          <X className='h-3.5 w-3.5' strokeWidth={2.5} />
+                        )}
+                      </span>
+
+                      <div className='min-w-0 flex-1'>
+                        <div className='mb-1 flex flex-wrap items-center gap-2'>
+                          <span className='text-sm font-semibold text-text'>
+                            Question {attempt.questionNumber}
+                          </span>
+                          <span className='text-xs text-text-muted'>
+                            {attempt.uiDifficulty}
+                          </span>
+                          {topicLabel ? (
+                            <span className='truncate text-xs text-text-muted'>
+                              {topicLabel}
+                            </span>
+                          ) : null}
+                        </div>
+                        <div className='line-clamp-2 text-sm leading-relaxed text-text-muted'>
+                          <StemContent
+                            content={attempt.questionStem}
+                            className='text-inherit'
+                          />
+                        </div>
+                      </div>
+
+                      {canReview ? (
+                        <span className='mt-1 inline-flex shrink-0 items-center gap-1 text-xs font-medium text-text-muted'>
+                          Review
+                          <ArrowRight className='h-3.5 w-3.5' strokeWidth={2.5} />
+                        </span>
+                      ) : null}
+                    </button>
                   );
                 })}
               </div>

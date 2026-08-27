@@ -46,6 +46,8 @@ interface QuestionCardProps {
   questionNumber?: number;
   /** Centered pill under MCQ rows (e.g. Community stats) */
   belowOptionsSlot?: ReactNode;
+  /** Seed wrong attempts (e.g. post-session review) */
+  seedIncorrectAnswers?: string[];
 }
 
 const PANEL_SHELL = "rounded-organic-xl bg-surface-elevated";
@@ -118,6 +120,7 @@ export function QuestionCard({
   headerTrailing,
   questionNumber,
   belowOptionsSlot,
+  seedIncorrectAnswers,
 }: QuestionCardProps) {
   const verified = isQualityGateVerified(question);
   const [localSelectedAnswer, setLocalSelectedAnswer] = useState<string | null>(
@@ -127,7 +130,7 @@ export function QuestionCard({
     new Set(),
   );
   const [incorrectAnswers, setIncorrectAnswers] = useState<Set<string>>(
-    new Set(),
+    () => new Set(seedIncorrectAnswers ?? []),
   );
 
   const [rating, setRating] = useState<QuestionRatingResponse | null>(null);
@@ -143,6 +146,7 @@ export function QuestionCard({
     kind: "correct" | "wrong";
   } | null>(null);
   const lastFlashKeyRef = useRef("");
+  const seedIncorrectKey = (seedIncorrectAnswers ?? []).join(",");
 
   const optionLetters = Object.keys(question.options).sort();
   const statementItems = getQuestionStatementItems(question);
@@ -155,12 +159,12 @@ export function QuestionCard({
   useEffect(() => {
     setLocalSelectedAnswer(null);
     setRevealedDistractors(new Set());
-    setIncorrectAnswers(new Set());
+    setIncorrectAnswers(new Set(seedIncorrectAnswers ?? []));
     setResultFlash(null);
     lastFlashKeyRef.current = "";
     onSelectionChange?.(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only reset when the question changes
-  }, [question.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only reset when the question or seed changes
+  }, [question.id, seedIncorrectKey]);
 
   useEffect(() => {
     if (isAnswered && !isCorrect && selectedAnswer) {

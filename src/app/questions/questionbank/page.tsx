@@ -118,7 +118,9 @@ export default function QuestionBankPage() {
   } = useQuestionBank({ browseMode: false });
 
   const [sessionMode, setSessionMode] = useState(false);
-  const [sessionView, setSessionView] = useState<'playing' | 'complete'>('playing');
+  const [sessionView, setSessionView] = useState<
+    'playing' | 'complete' | 'review'
+  >('playing');
   const [qbSessionId, setQbSessionId] = useState<string | null>(null);
   const [sessionAttemptLog, setSessionAttemptLog] = useState<
     QuestionBankSessionAttempt[]
@@ -393,6 +395,9 @@ export default function QuestionBankPage() {
       setSessionAttemptLog(attempts);
       setSessionCompleting(false);
       setShowLeaveConfirm(false);
+      setDeadline(null);
+      setRemainingTime(null);
+      setShowTimeUpModal(false);
       setSessionView('complete');
     },
     [
@@ -632,7 +637,7 @@ export default function QuestionBankPage() {
   // Session-only: redirect to home when there is no launch payload or active session
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    if (sessionView === 'complete') return;
+    if (sessionView === 'complete' || sessionView === 'review') return;
     if (freeTierBlocked) return;
     if (
       freeTierLaunchInProgressRef.current ||
@@ -665,11 +670,12 @@ export default function QuestionBankPage() {
 
   // Reset answer revealed state when question changes
   useEffect(() => {
+    if (sessionView === 'review') return;
     setAnswerRevealed(false);
     setShowDetailedExplanation(false);
     setCurrentSelection(null);
     setIncorrectAnswers(new Set());
-  }, [currentQuestion?.id]);
+  }, [currentQuestion?.id, sessionView]);
 
   useEffect(() => {
     const qId = currentQuestion?.id;
@@ -691,7 +697,7 @@ export default function QuestionBankPage() {
 
   // Session countdown - stable interval; do not depend on completeSession (it changes every answer)
   useEffect(() => {
-    if (!sessionMode || !deadline) return;
+    if (!sessionMode || !deadline || sessionView !== 'playing') return;
 
     let interval: ReturnType<typeof setInterval> | null = null;
 
@@ -716,7 +722,7 @@ export default function QuestionBankPage() {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [sessionMode, deadline]);
+  }, [sessionMode, deadline, sessionView]);
 
   // Count-up timer for regular practice mode
   useEffect(() => {
@@ -1032,8 +1038,87 @@ export default function QuestionBankPage() {
     questionStartedAtRef.current = Date.now();
   }, [currentQuestion?.id]);
 
+  const enterReviewAt = useCallback(
+    (index: number) => {
+      const question = sessionQuestions[index];
+      if (!question) return;
+
+      const attempt =
+        sessionAttemptLog.find((a) => a.questionId === question.id) ??
+        sessionAttemptLog.find((a) => a.questionNumber === index + 1) ??
+        null;
+
+      const wrongs = new Set(attempt?.wrongAnswersBefore ?? []);
+      if (attempt?.userAnswer && !attempt.isCorrect) {
+        wrongs.add(attempt.userAnswer);
+      }
+
+      setDeadline(null);
+      setRemainingTime(null);
+      setShowTimeUpModal(false);
+      setShowDetailedExplanation(false);
+      setShowHint(false);
+      setSessionView('review');
+      setSessionCurrentIndex(index);
+      updateCurrentQuestion(question, {
+        isAnswered: true,
+        selectedAnswer: attempt?.userAnswer ?? null,
+        isCorrect: attempt ? attempt.isCorrect : null,
+      });
+      setAnswerRevealed(true);
+      setCurrentSelection(attempt?.userAnswer ?? null);
+      setIncorrectAnswers(wrongs);
+    },
+    [sessionAttemptLog, sessionQuestions, updateCurrentQuestion],
+  );
+
+  const enterReviewByQuestionId = useCallback(
+    (questionId: string) => {
+      const byId = sessionQuestions.findIndex((q) => q.id === questionId);
+      if (byId >= 0) {
+        enterReviewAt(byId);
+        return;
+      }
+      const attempt = sessionAttemptLog.find((a) => a.questionId === questionId);
+      if (attempt) {
+        enterReviewAt(Math.max(0, attempt.questionNumber - 1));
+      }
+    },
+    [enterReviewAt, sessionAttemptLog, sessionQuestions],
+  );
+
+  const exitReviewToSummary = useCallback(() => {
+    setShowDetailedExplanation(false);
+    setShowHint(false);
+    setSessionView('complete');
+  }, []);
+
+  const reviewAttempt =
+    sessionView === 'review' && currentQuestion
+      ? sessionAttemptLog.find((a) => a.questionId === currentQuestion.id) ??
+        sessionAttemptLog.find(
+          (a) => a.questionNumber === sessionCurrentIndex + 1,
+        ) ??
+        null
+      : null;
+
+  const reviewSeedIncorrect = reviewAttempt
+    ? Array.from(
+        new Set([
+          ...(reviewAttempt.wrongAnswersBefore ?? []),
+          ...(!reviewAttempt.isCorrect && reviewAttempt.userAnswer
+            ? [reviewAttempt.userAnswer]
+            : []),
+        ]),
+      )
+    : [];
+
   const showSessionLoading =
-    sessionStarting || (!activeSession && sessionBootPending && sessionView !== 'complete');
+    sessionStarting ||
+    (!activeSession &&
+      sessionBootPending &&
+      sessionView !== 'complete' &&
+      sessionView !== 'review');
 
   if (sessionView === 'complete') {
     return (
@@ -1044,6 +1129,9 @@ export default function QuestionBankPage() {
         startedAt={sessionStartedAt}
         timedOut={sessionEndedByTimer}
         onBack={() => router.push('/questions')}
+        onReviewQuestion={
+          sessionQuestions.length > 0 ? enterReviewByQuestionId : undefined
+        }
         showSignInBanner={!session?.user && wasFreeTierSession}
         signInRedirectTo="/questions"
         showUpgradeBanner={!!session?.user && !hasFullAccess && wasFreeTierSession}
@@ -1119,20 +1207,43 @@ export default function QuestionBankPage() {
                 <QuestionCard
                   question={currentQuestion}
                   questionNumber={sessionCurrentIndex + 1}
-                  onAnswerSubmit={handleSessionAnswerSubmit}
+                  onAnswerSubmit={
+                    sessionView === 'review'
+                      ? () => undefined
+                      : handleSessionAnswerSubmit
+                  }
                   isAnswered={isAnswered}
                   selectedAnswer={selectedAnswer}
                   correctAnswer={currentQuestion.correct_option}
                   isCorrect={isCorrect}
-                  answerRevealed={answerRevealed}
+                  answerRevealed={
+                    sessionView === 'review' ? true : answerRevealed
+                  }
                   onRevealAnswer={() => setAnswerRevealed(true)}
-                  allowRetry={isAnswered && !isCorrect && !answerRevealed}
+                  allowRetry={
+                    sessionView !== 'review' &&
+                    isAnswered &&
+                    !isCorrect &&
+                    !answerRevealed
+                  }
+                  seedIncorrectAnswers={
+                    sessionView === 'review' ? reviewSeedIncorrect : undefined
+                  }
                   topicLabels={topicLabels}
                   onSelectionChange={setCurrentSelection}
                   onIncorrectAnswersChange={setIncorrectAnswers}
                   isAuthenticated={!!session?.user}
                   headerTrailing={
-                    sessionMode && remainingTime !== null && deadline ? (
+                    sessionView === 'review' ? (
+                      <div className="flex flex-col items-end gap-0.5 rounded-organic-lg bg-surface-mid px-3 py-2 sm:px-4">
+                        <span className="text-[10px] font-medium uppercase tracking-wide text-text-muted">
+                          Review
+                        </span>
+                        <span className="text-sm font-semibold tracking-tight text-text">
+                          No timer
+                        </span>
+                      </div>
+                    ) : sessionMode && remainingTime !== null && deadline ? (
                       <div className="flex flex-col items-end gap-0.5 rounded-organic-lg bg-surface-mid px-3 py-2 sm:px-4">
                         <span className="text-[10px] font-medium uppercase tracking-wide text-text-muted">
                           Total time
@@ -1204,7 +1315,9 @@ export default function QuestionBankPage() {
             totalQuestions={sessionQuestions.length}
             hasHint={!!currentQuestion.solution_key_insight}
             hasFullAccess={hasFullAccess}
-            answerRevealed={answerRevealed}
+            answerRevealed={
+              sessionView === 'review' ? true : answerRevealed
+            }
             isAnswered={isAnswered}
             isCorrect={isCorrect}
             isFreeLimitReached={false}
@@ -1213,6 +1326,7 @@ export default function QuestionBankPage() {
               !!currentSelection && incorrectAnswers.has(currentSelection)
             }
             showLeaveConfirm={showLeaveConfirm}
+            reviewMode={sessionView === 'review'}
             onOpenLeaveConfirm={() => setShowLeaveConfirm(true)}
             onCloseLeaveConfirm={() => setShowLeaveConfirm(false)}
             onSaveAndLeave={handleSaveAndLeave}
@@ -1220,7 +1334,14 @@ export default function QuestionBankPage() {
             onShowHint={() => setShowHint(true)}
             onRevealAnswer={() => setAnswerRevealed(true)}
             onShowExplanation={() => setShowDetailedExplanation(true)}
+            onPreviousQuestion={() => {
+              if (sessionCurrentIndex > 0) {
+                enterReviewAt(sessionCurrentIndex - 1);
+              }
+            }}
+            onBackToSummary={exitReviewToSummary}
             onSubmitAnswer={() => {
+              if (sessionView === 'review') return;
               if (
                 currentSelection &&
                 !incorrectAnswers.has(currentSelection)
@@ -1239,7 +1360,17 @@ export default function QuestionBankPage() {
                 });
               }
             }}
-            onNextQuestion={() => void handleNextQuestionInSession()}
+            onNextQuestion={() => {
+              if (sessionView === 'review') {
+                if (sessionCurrentIndex < sessionQuestions.length - 1) {
+                  enterReviewAt(sessionCurrentIndex + 1);
+                } else {
+                  exitReviewToSummary();
+                }
+                return;
+              }
+              void handleNextQuestionInSession();
+            }}
           />
         )}
       </div>

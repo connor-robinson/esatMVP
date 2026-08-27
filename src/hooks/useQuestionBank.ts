@@ -40,7 +40,14 @@ interface UseQuestionBankReturn {
   ) => Promise<void>;
   nextQuestion: () => Promise<void>;
   viewSolution: () => void;
-  updateCurrentQuestion: (question: QuestionBankQuestion) => void;
+  updateCurrentQuestion: (
+    question: QuestionBankQuestion,
+    answerState?: {
+      isAnswered: boolean;
+      selectedAnswer: string | null;
+      isCorrect: boolean | null;
+    },
+  ) => void;
 }
 
 export interface UseQuestionBankOptions {
@@ -829,9 +836,22 @@ export function useQuestionBank(
 
   // Update the current question (e.g., after editing or session navigation)
   const updateCurrentQuestion = useCallback(
-    (question: QuestionBankQuestion) => {
-      // If question ID changed, reset answered state
-      if (currentQuestion?.id !== question.id) {
+    (
+      question: QuestionBankQuestion,
+      answerState?: {
+        isAnswered: boolean;
+        selectedAnswer: string | null;
+        isCorrect: boolean | null;
+      },
+    ) => {
+      if (answerState) {
+        setIsAnswered(answerState.isAnswered);
+        setSelectedAnswer(answerState.selectedAnswer);
+        setIsCorrect(answerState.isCorrect);
+        setQuestionStartTime(Date.now());
+        setViewedSolution(false);
+      } else if (currentQuestion?.id !== question.id) {
+        // If question ID changed, reset answered state
         setIsAnswered(false);
         setSelectedAnswer(null);
         setIsCorrect(null);

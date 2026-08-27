@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Container } from '@/components/layout/Container';
 import {
+  ArrowLeft,
   ArrowRight,
   ClipboardList,
   Eye,
@@ -13,7 +14,7 @@ import {
 import { cn } from '@/lib/utils';
 
 const SESSION_BAR_BTN =
-  'inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-organic-md px-4 text-sm font-medium transition-all duration-fast ease-signature focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
+  'inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-organic-md px-4 text-sm font-medium transition-all duration-fast ease-signature focus-visible:outline-none focus-visible:ring-0';
 
 const SESSION_BAR_BTN_SECONDARY = cn(
   SESSION_BAR_BTN,
@@ -41,6 +42,8 @@ interface QuestionBankSessionBarProps {
   currentSelection: string | null;
   selectionAlreadyWrong: boolean;
   showLeaveConfirm: boolean;
+  /** Post-session review: browse questions without timer or submit. */
+  reviewMode?: boolean;
   onOpenLeaveConfirm: () => void;
   onCloseLeaveConfirm: () => void;
   onSaveAndLeave: () => void;
@@ -50,6 +53,8 @@ interface QuestionBankSessionBarProps {
   onShowExplanation: () => void;
   onSubmitAnswer: () => void;
   onNextQuestion: () => void;
+  onPreviousQuestion?: () => void;
+  onBackToSummary?: () => void;
 }
 
 export function QuestionBankSessionBar({
@@ -64,6 +69,7 @@ export function QuestionBankSessionBar({
   currentSelection,
   selectionAlreadyWrong,
   showLeaveConfirm,
+  reviewMode = false,
   onOpenLeaveConfirm,
   onCloseLeaveConfirm,
   onSaveAndLeave,
@@ -73,11 +79,15 @@ export function QuestionBankSessionBar({
   onShowExplanation,
   onSubmitAnswer,
   onNextQuestion,
+  onPreviousQuestion,
+  onBackToSummary,
 }: QuestionBankSessionBarProps) {
   const progressPct = ((currentIndex + 1) / totalQuestions) * 100;
   const canProceed = answerRevealed || (isAnswered && isCorrect);
   const canSubmit =
     !!currentSelection && !selectionAlreadyWrong && !canProceed;
+  const isLastQuestion = currentIndex >= totalQuestions - 1;
+  const isFirstQuestion = currentIndex <= 0;
 
   return (
     <>
@@ -88,7 +98,7 @@ export function QuestionBankSessionBar({
           aria-valuenow={currentIndex + 1}
           aria-valuemin={1}
           aria-valuemax={totalQuestions}
-          aria-label='Session progress'
+          aria-label={reviewMode ? 'Review progress' : 'Session progress'}
         >
           <div
             className='h-full bg-secondary transition-[width] duration-300 ease-signature'
@@ -99,7 +109,7 @@ export function QuestionBankSessionBar({
         <Container size='lg' className='py-1.5 sm:py-2'>
           <div className='flex items-center gap-3 sm:gap-4'>
             <p className='min-w-0 shrink-0 text-xs text-text-muted sm:text-sm'>
-              Questions done{' '}
+              {reviewMode ? 'Reviewing' : 'Questions done'}{' '}
               <span className='font-semibold tabular-nums text-text'>
                 {currentIndex + 1}
               </span>
@@ -110,83 +120,151 @@ export function QuestionBankSessionBar({
             </p>
 
             <div className='ml-auto flex shrink-0 flex-wrap items-center justify-end gap-2'>
-              <button
-                type='button'
-                onClick={onOpenLeaveConfirm}
-                className={SESSION_BAR_BTN_SECONDARY}
-              >
-                <LogOut className='h-4 w-4 shrink-0' />
-                Leave
-              </button>
-
-              {hasHint && (
-                <button
-                  type='button'
-                  onClick={onShowHint}
-                  className={SESSION_BAR_BTN_SECONDARY}
-                >
-                  <Lightbulb className='h-4 w-4 shrink-0' />
-                  Hint
-                </button>
-              )}
-
-              {canProceed ? (
-                <button
-                  type='button'
-                  onClick={onShowExplanation}
-                  className={SESSION_BAR_BTN_SECONDARY}
-                >
-                  <ClipboardList className='h-4 w-4 shrink-0' />
-                  Detailed explanation
-                </button>
-              ) : (
-                (!isAnswered || (isAnswered && !isCorrect)) && (
+              {reviewMode ? (
+                <>
                   <button
                     type='button'
-                    onClick={onRevealAnswer}
-                    className={SESSION_BAR_BTN_REVEAL}
+                    onClick={onBackToSummary}
+                    className={SESSION_BAR_BTN_SECONDARY}
                   >
-                    <Eye className='h-4 w-4 shrink-0' />
-                    Reveal answer
+                    <LogOut className='h-4 w-4 shrink-0' />
+                    Back to summary
                   </button>
-                )
-              )}
 
-              {canProceed ? (
-                <button
-                  type='button'
-                  onClick={onNextQuestion}
-                  disabled={isFreeLimitReached}
-                  className={cn(
-                    SESSION_BAR_BTN_PRIMARY,
-                    'bg-secondary text-background shadow-glow hover:brightness-110',
-                    'disabled:cursor-not-allowed disabled:opacity-45',
-                  )}
-                >
-                  <span>
-                    {isFreeLimitReached
-                      ? 'Upgrade to continue'
-                      : currentIndex < totalQuestions - 1
-                        ? 'Next question'
-                        : 'Finish session'}
-                  </span>
-                  <ArrowRight className='h-4 w-4 shrink-0' strokeWidth={2.5} />
-                </button>
+                  {hasHint ? (
+                    <button
+                      type='button'
+                      onClick={onShowHint}
+                      className={SESSION_BAR_BTN_SECONDARY}
+                    >
+                      <Lightbulb className='h-4 w-4 shrink-0' />
+                      Hint
+                    </button>
+                  ) : null}
+
+                  <button
+                    type='button'
+                    onClick={onShowExplanation}
+                    className={SESSION_BAR_BTN_SECONDARY}
+                  >
+                    <ClipboardList className='h-4 w-4 shrink-0' />
+                    Detailed explanation
+                  </button>
+
+                  <button
+                    type='button'
+                    onClick={onPreviousQuestion}
+                    disabled={isFirstQuestion}
+                    className={cn(
+                      SESSION_BAR_BTN_SECONDARY,
+                      'disabled:cursor-not-allowed disabled:opacity-45',
+                    )}
+                  >
+                    <ArrowLeft className='h-4 w-4 shrink-0' strokeWidth={2.5} />
+                    <span>Previous</span>
+                  </button>
+
+                  <button
+                    type='button'
+                    onClick={
+                      isLastQuestion ? onBackToSummary : onNextQuestion
+                    }
+                    className={cn(
+                      SESSION_BAR_BTN_PRIMARY,
+                      'bg-secondary text-background shadow-glow hover:brightness-110',
+                    )}
+                  >
+                    <span>{isLastQuestion ? 'Back to summary' : 'Next'}</span>
+                    <ArrowRight className='h-4 w-4 shrink-0' strokeWidth={2.5} />
+                  </button>
+                </>
               ) : (
-                <button
-                  type='button'
-                  onClick={onSubmitAnswer}
-                  disabled={!canSubmit}
-                  className={cn(
-                    SESSION_BAR_BTN_PRIMARY,
-                    canSubmit
-                      ? 'bg-secondary text-background shadow-glow hover:brightness-110'
-                      : 'cursor-not-allowed bg-surface-mid text-text-disabled opacity-70 dark:bg-surface',
+                <>
+                  <button
+                    type='button'
+                    onClick={onOpenLeaveConfirm}
+                    className={SESSION_BAR_BTN_SECONDARY}
+                  >
+                    <LogOut className='h-4 w-4 shrink-0' />
+                    Leave
+                  </button>
+
+                  {hasHint && (
+                    <button
+                      type='button'
+                      onClick={onShowHint}
+                      className={SESSION_BAR_BTN_SECONDARY}
+                    >
+                      <Lightbulb className='h-4 w-4 shrink-0' />
+                      Hint
+                    </button>
                   )}
-                >
-                  <span>Submit answer</span>
-                  <ArrowRight className='h-4 w-4 shrink-0' strokeWidth={2.5} />
-                </button>
+
+                  {canProceed ? (
+                    <button
+                      type='button'
+                      onClick={onShowExplanation}
+                      className={SESSION_BAR_BTN_SECONDARY}
+                    >
+                      <ClipboardList className='h-4 w-4 shrink-0' />
+                      Detailed explanation
+                    </button>
+                  ) : (
+                    (!isAnswered || (isAnswered && !isCorrect)) && (
+                      <button
+                        type='button'
+                        onClick={onRevealAnswer}
+                        className={SESSION_BAR_BTN_REVEAL}
+                      >
+                        <Eye className='h-4 w-4 shrink-0' />
+                        Reveal answer
+                      </button>
+                    )
+                  )}
+
+                  {canProceed ? (
+                    <button
+                      type='button'
+                      onClick={onNextQuestion}
+                      disabled={isFreeLimitReached}
+                      className={cn(
+                        SESSION_BAR_BTN_PRIMARY,
+                        'bg-secondary text-background shadow-glow hover:brightness-110',
+                        'disabled:cursor-not-allowed disabled:opacity-45',
+                      )}
+                    >
+                      <span>
+                        {isFreeLimitReached
+                          ? 'Upgrade to continue'
+                          : currentIndex < totalQuestions - 1
+                            ? 'Next question'
+                            : 'Finish session'}
+                      </span>
+                      <ArrowRight
+                        className='h-4 w-4 shrink-0'
+                        strokeWidth={2.5}
+                      />
+                    </button>
+                  ) : (
+                    <button
+                      type='button'
+                      onClick={onSubmitAnswer}
+                      disabled={!canSubmit}
+                      className={cn(
+                        SESSION_BAR_BTN_PRIMARY,
+                        canSubmit
+                          ? 'bg-secondary text-background shadow-glow hover:brightness-110'
+                          : 'cursor-not-allowed bg-surface-mid text-text-disabled opacity-70 dark:bg-surface',
+                      )}
+                    >
+                      <span>Submit answer</span>
+                      <ArrowRight
+                        className='h-4 w-4 shrink-0'
+                        strokeWidth={2.5}
+                      />
+                    </button>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -194,7 +272,7 @@ export function QuestionBankSessionBar({
       </div>
 
       <AnimatePresence>
-        {showLeaveConfirm && (
+        {showLeaveConfirm && !reviewMode && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
