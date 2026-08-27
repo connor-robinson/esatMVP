@@ -246,11 +246,11 @@ export function OverlapExplorerSection() {
 
       <EraBlock years="2016-2019" rows={ROWS_2016_2019} />
 
-      <div className="rounded-2xl bg-white/[0.05] px-4 py-5 sm:px-6">
-        <p className="text-sm font-bold uppercase tracking-widest text-accent">
+      <div className="w-full rounded-2xl bg-white/[0.05] px-4 py-5 sm:px-6 sm:py-6">
+        <p className="text-sm font-bold uppercase tracking-widest text-accent sm:text-base">
           What changed in 2020?
         </p>
-        <p className={cn("mt-2 max-w-3xl", BODY)}>
+        <p className="mt-3 w-full text-base leading-relaxed text-[#CBD5E1] sm:text-lg sm:leading-relaxed">
           NSAA removed Part E, so ENGAA Part B became fresh Maths 2 and Physics
           practice. ENGAA Section 2 also began reusing the NSAA Physics question
           set.

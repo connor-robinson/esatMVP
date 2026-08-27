@@ -11,53 +11,12 @@ const COMMENTARY =
   "max-w-xl text-[15px] leading-[1.45] text-[#CBD5E1] sm:text-base";
 
 type RecBadge =
-  | "recommended"
-  | "optional"
-  | "lowPriority"
-  | "bestMatch"
-  | "harderPractice"
-  | "duplicateAfterNsaa"
-  | "doUniqueOnly"
-  | "checkYear"
+  | "doAll"
   | "skip"
-  | "mostlyOverlap"
-  | "doAll";
+  | "mostlyOverlap";
 
 function RecommendationBadge({ kind }: { kind: RecBadge }) {
-  const gray = "bg-[#1E2433]/50 text-white";
   const styles: Record<RecBadge, { label: string; className: string }> = {
-    recommended: {
-      label: "Recommended",
-      className: gray,
-    },
-    optional: {
-      label: "Optional",
-      className: gray,
-    },
-    lowPriority: {
-      label: "Low priority",
-      className: gray,
-    },
-    bestMatch: {
-      label: "Best match",
-      className: gray,
-    },
-    harderPractice: {
-      label: "Harder practice",
-      className: gray,
-    },
-    duplicateAfterNsaa: {
-      label: "Duplicate after NSAA",
-      className: `bg-error ${ON_SOLID_SUBJECT_TEXT}`,
-    },
-    doUniqueOnly: {
-      label: "Do unique only",
-      className: gray,
-    },
-    checkYear: {
-      label: "Check year",
-      className: `bg-error ${ON_SOLID_SUBJECT_TEXT}`,
-    },
     skip: {
       label: "Skip",
       className: `bg-error ${ON_SOLID_SUBJECT_TEXT}`,
@@ -68,7 +27,7 @@ function RecommendationBadge({ kind }: { kind: RecBadge }) {
     },
     doAll: {
       label: "Do all",
-      className: gray,
+      className: "bg-[#1E2433]/50 text-white",
     },
   };
   const style = styles[kind];
@@ -92,11 +51,13 @@ function FormatChangeNotice({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl bg-white/[0.05] px-4 py-5 sm:px-6">
-      <p className="text-sm font-bold uppercase tracking-widest text-accent">
+    <div className="w-full rounded-2xl bg-white/[0.05] px-4 py-5 sm:px-6 sm:py-6">
+      <p className="text-sm font-bold uppercase tracking-widest text-accent sm:text-base">
         What changed in {year}?
       </p>
-      <p className={cn("mt-2 max-w-3xl", COMMENTARY)}>{children}</p>
+      <p className="mt-3 w-full text-base leading-relaxed text-[#CBD5E1] sm:text-lg sm:leading-relaxed">
+        {children}
+      </p>
     </div>
   );
 }
@@ -471,7 +432,7 @@ function NsaaGuide() {
           choose: "Take Maths + two subjects",
           questions: 54,
           minutes: 80,
-          badge: "recommended",
+          badge: "doAll",
           title: "Section 1 · No calculator",
           timing: {
             questions: "54 questions",
@@ -495,7 +456,7 @@ function NsaaGuide() {
             { code: "6", label: "Biology", sectionKey: "Biology" },
           ],
           choose: "Choose any two written questions",
-          badge: "lowPriority",
+          badge: "skip",
           title: "Section 2 · Calculator allowed",
           timing: {
             questions: "2 written questions",
@@ -532,7 +493,7 @@ function NsaaGuide() {
           choose: "Take Maths + one science",
           questions: 40,
           minutes: 60,
-          badge: "bestMatch",
+          badge: "doAll",
           title: "Section 1 · No calculator",
           timing: {
             questions: "40 questions",
@@ -552,7 +513,7 @@ function NsaaGuide() {
             { code: "Z", label: "Biology", sectionKey: "Biology" },
           ],
           choose: "Choose one science",
-          badge: "harderPractice",
+          badge: "doAll",
           title: "Section 2 · No calculator",
           timing: {
             questions: "20 questions",
@@ -674,7 +635,7 @@ function TmuaGuide() {
           <div className="flex h-full flex-col gap-2.5">
             <div className="relative flex flex-1 flex-col rounded-xl bg-white/[0.09] px-5 py-5 sm:px-6 sm:py-6">
               <span className="absolute right-4 top-4 z-10 sm:right-5 sm:top-5">
-                <RecommendationBadge kind="recommended" />
+                <RecommendationBadge kind="doAll" />
               </span>
               <h4 className="font-display pr-28 text-xl font-bold text-white sm:pr-36 sm:text-2xl">
                 Paper 1
@@ -699,7 +660,7 @@ function TmuaGuide() {
           <div className="flex h-full flex-col gap-2.5">
             <div className="relative flex flex-1 flex-col rounded-xl bg-white/[0.09] px-5 py-5 sm:px-6 sm:py-6">
               <span className="absolute right-4 top-4 z-10 sm:right-5 sm:top-5">
-                <RecommendationBadge kind="lowPriority" />
+                <RecommendationBadge kind="skip" />
               </span>
               <h4 className="font-display pr-28 text-xl font-bold text-white sm:pr-36 sm:text-2xl">
                 Paper 2
