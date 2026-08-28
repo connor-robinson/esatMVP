@@ -68,6 +68,7 @@ Sources consulted:
 | Behaviour | Status | Notes |
 | --- | --- | --- |
 | Small circular radios, not cards | `VERIFIED_PEARSON_PLATFORM` | Guide screenshots |
+| No A/B/C labels on options (radio + text only) | `VERIFIED_ESAT` | Specimen question screen Aug 2026 |
 | Click label selects answer | `UNVERIFIED` for ESAT specifically | Standard HTML label behaviour; ship as accessible default |
 | Arrow keys within focused radio group | Native HTML | Ship |
 | Digit keys 1–8 select answers | `UNVERIFIED` | Disabled in strict mode |
