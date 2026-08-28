@@ -199,7 +199,6 @@ export function PearsonExamPlayer({
             {c.navigatorOpen ? (
               <PearsonNavigator
                 rows={c.navigatorRows}
-                currentQuestionIndex={c.currentQuestionIndex}
                 unseenIncompleteCount={c.unseenIncompleteCount}
                 onJump={(index) => c.tryNavigateTo(index)}
                 onClose={c.closeNavigator}

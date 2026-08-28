@@ -6,7 +6,6 @@ import { PearsonMnemonicLabel } from "./PearsonMnemonicLabel";
 
 interface PearsonNavigatorProps {
   rows: PearsonNavRow[];
-  currentQuestionIndex: number;
   unseenIncompleteCount: number;
   onJump: (questionIndex: number) => void;
   onClose: () => void;
@@ -59,8 +58,8 @@ export function PearsonNavigator({
                 <tr
                   key={row.questionId}
                   className={
-                    row.questionIndex === currentQuestionIndex
-                      ? "pearson-nav-row--current"
+                    row.status === "complete"
+                      ? "pearson-nav-row--complete"
                       : undefined
                   }
                 >

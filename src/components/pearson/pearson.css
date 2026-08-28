@@ -17,7 +17,8 @@
   --pearson-font-size-content: 12px;
   --pearson-status-red: #b00000;
   --pearson-nav-blue: #00599c;
-  --pearson-nav-highlight: #ffffcc;
+  --pearson-nav-highlight: #ffff80;
+  --pearson-nav-header: #587ab5;
   --pearson-dialog-blue: #0066a1;
   --pearson-radio-blue: #0078d4;
 
@@ -615,12 +616,12 @@
 }
 
 .pearson-nav-table th {
-  background: var(--pearson-nav-blue);
+  background: var(--pearson-nav-header);
   color: #ffffff;
   text-align: left;
   padding: 5px 8px;
   font-weight: 700;
-  border: 1px solid #cccccc;
+  border: 1px solid #ffffff;
 }
 
 .pearson-nav-table td {
@@ -629,7 +630,19 @@
   vertical-align: middle;
 }
 
-.pearson-nav-table tr.pearson-nav-row--current td {
+.pearson-nav-table tbody tr:nth-child(odd) td {
+  background: #ffffff;
+}
+
+.pearson-nav-table tbody tr:nth-child(even) td {
+  background: #f0f0f0;
+}
+
+.pearson-nav-table tbody tr.pearson-nav-row--complete td {
+  background: var(--pearson-nav-highlight);
+}
+
+.pearson-nav-table tbody tr:hover td {
   background: var(--pearson-nav-highlight);
 }
 
