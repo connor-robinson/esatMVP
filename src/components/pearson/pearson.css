@@ -1,5 +1,17 @@
 /* Pearson VUE ESAT specimen player – pixel-matched styles (Aug 2026 screenshots). */
 
+/* Full-screen player: no page scroll; Windows-style subpixel text (not site antialiasing). */
+html.pearson-exam-active,
+html.pearson-exam-active body {
+  overflow: hidden !important;
+  height: 100%;
+}
+
+html.pearson-exam-active body {
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+}
+
 .pearson-exam-root {
   --pearson-header: #005596;
   --pearson-toolbar: #4a78b6;
@@ -12,7 +24,8 @@
   --pearson-button-face: #ffffff;
   --pearson-button-face-hover: #f0f0f0;
   --pearson-chrome-mode: blue;
-  --pearson-font: Tahoma, Arial, Helvetica, "Segoe UI", sans-serif;
+  /* ESAT specimen: Tahoma 11px chrome, 12px question body (fixed px, not rem). */
+  --pearson-font: Tahoma, Arial, Helvetica, sans-serif;
   --pearson-font-size-ui: 11px;
   --pearson-font-size-content: 12px;
   --pearson-status-red: #b00000;
@@ -31,7 +44,11 @@
   color: var(--pearson-text);
   font-family: var(--pearson-font);
   font-size: var(--pearson-font-size-ui);
-  line-height: 1.35;
+  line-height: normal;
+  letter-spacing: normal;
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+  text-rendering: geometricPrecision;
 }
 
 .pearson-exam-root *,
@@ -39,6 +56,19 @@
 .pearson-exam-root *::after {
   border-radius: 0 !important;
   box-shadow: none !important;
+  font-family: inherit;
+}
+
+/* Stem / KaTeX inside the player: match 12px Tahoma at 100% magnification. */
+.pearson-exam-root .math-content,
+.pearson-exam-root .stem-content {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: 1.4;
+}
+
+.pearson-exam-root .katex {
+  font-size: 1em;
 }
 
 /* --- Loading --- */
@@ -79,8 +109,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 28px;
-  padding: 3px 8px;
+  min-height: 24px;
+  padding: 2px 8px;
   background: var(--pearson-header);
   color: var(--pearson-header-text);
   border-bottom: 1px solid var(--pearson-border);
@@ -91,7 +121,7 @@
 }
 
 .pearson-header-title {
-  font-weight: 700;
+  font-weight: 400;
   font-size: var(--pearson-font-size-ui);
   white-space: nowrap;
   overflow: hidden;
@@ -102,8 +132,14 @@
 .pearson-raster-icon {
   display: block;
   flex-shrink: 0;
+  height: 1em;
+  width: auto;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+}
+
+.pearson-raster-icon--lg {
+  height: 1.09em;
 }
 
 .pearson-header-right {
@@ -192,8 +228,8 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  min-height: 28px;
-  padding: 2px 6px;
+  min-height: 24px;
+  padding: 1px 6px;
   background: var(--pearson-toolbar);
   color: var(--pearson-header-text);
   border-bottom: 1px solid var(--pearson-border);
@@ -411,6 +447,13 @@
 
 .pearson-viewport-zoom {
   transform-origin: top left;
+  font-size: var(--pearson-font-size-content);
+  line-height: 1.4;
+}
+
+/* Magnification (Ctrl+/Ctrl-): content only; chrome stays 11px at browser 100%. */
+.pearson-exam-root[data-zoom="100"] .pearson-viewport-zoom {
+  zoom: 1;
 }
 
 .pearson-stem {
@@ -425,7 +468,7 @@
   display: flex;
   align-items: stretch;
   justify-content: space-between;
-  min-height: 36px;
+  min-height: 28px;
   background: var(--pearson-footer);
   color: var(--pearson-header-text);
   border-top: 1px solid var(--pearson-border);
@@ -453,11 +496,11 @@
   background: transparent;
   color: inherit;
   border: none;
-  padding: 6px 14px;
+  padding: 4px 12px;
   font: inherit;
   font-size: var(--pearson-font-size-ui);
   cursor: pointer;
-  min-height: 32px;
+  min-height: 26px;
 }
 
 .pearson-exam-root[data-chrome-mode="themed"] .pearson-footer-action {

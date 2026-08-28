@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties, ReactNode } from "react";
+import { useEffect, type CSSProperties, type ReactNode } from "react";
 import {
   colourSchemeCssVars,
   usesFullPageTheme,
@@ -8,6 +8,8 @@ import {
 import type { ColourSchemeId, ZoomLevel } from "@/lib/pearson/types";
 import { cn } from "@/lib/utils";
 import "./pearson.css";
+
+const PEARSON_ACTIVE_CLASS = "pearson-exam-active";
 
 interface PearsonExamShellProps {
   colourScheme: ColourSchemeId;
@@ -24,6 +26,14 @@ export function PearsonExamShell({
 }: PearsonExamShellProps) {
   const vars = colourSchemeCssVars(colourScheme) as CSSProperties;
   const chromeMode = usesFullPageTheme(colourScheme) ? "themed" : "blue";
+
+  // Lock document scroll and detach site typography while the player is open.
+  useEffect(() => {
+    document.documentElement.classList.add(PEARSON_ACTIVE_CLASS);
+    return () => {
+      document.documentElement.classList.remove(PEARSON_ACTIVE_CLASS);
+    };
+  }, []);
 
   return (
     <div

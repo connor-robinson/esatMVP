@@ -70,6 +70,7 @@ export function PearsonQuestionViewport({
       className="pearson-viewport"
       onScroll={onScroll}
       data-question-key={questionKey}
+      data-zoom-level={zoomLevel}
     >
       <div
         className="pearson-viewport-zoom"
