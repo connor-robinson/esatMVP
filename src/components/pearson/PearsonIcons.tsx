@@ -1,4 +1,4 @@
-/** Official Pearson VUE bitmap icons from user-supplied ESAT screenshot crops. */
+/** Official Pearson VUE bitmap icons from user-supplied standalone PNGs. */
 
 const ICONS = {
   flag: "/pearson/icons/flag.png",
