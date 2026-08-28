@@ -55,6 +55,55 @@ export function NavigatorIcon({ className }: { className?: string }) {
   );
 }
 
+/** Stopwatch-style clock for header timer; yellow when label is hidden. */
+export function TimerClockIcon({
+  className,
+  yellow,
+}: {
+  className?: string;
+  yellow?: boolean;
+}) {
+  const stroke = yellow ? "#ffff00" : "currentColor";
+  return (
+    <svg
+      className={className}
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      aria-hidden="true"
+    >
+      <line
+        x1="3.5"
+        y1="9"
+        x2="3.5"
+        y2="6.5"
+        stroke={stroke}
+        strokeWidth="1.1"
+        strokeLinecap="round"
+      />
+      <circle cx="9" cy="8" r="5.5" fill="none" stroke={stroke} strokeWidth="1.1" />
+      <line
+        x1="9"
+        y1="8"
+        x2="9"
+        y2="4.5"
+        stroke={stroke}
+        strokeWidth="1.1"
+        strokeLinecap="round"
+      />
+      <line
+        x1="9"
+        y1="8"
+        x2="11.8"
+        y2="9.8"
+        stroke={stroke}
+        strokeWidth="1.1"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 export function QuestionCounterIcon({ className }: { className?: string }) {
   return (
     <svg

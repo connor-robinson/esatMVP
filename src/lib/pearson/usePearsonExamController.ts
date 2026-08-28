@@ -101,6 +101,7 @@ export function usePearsonExamController(
   const [pendingNavIndex, setPendingNavIndex] = useState<number | null>(null);
   const [endExamReturnScreen, setEndExamReturnScreen] = useState<ExamScreen>("nda");
   const [questionCounterHidden, setQuestionCounterHidden] = useState(false);
+  const [timerHidden, setTimerHidden] = useState(false);
   const [nowTick, setNowTick] = useState(() => Date.now());
 
   const currentQuestion = questions[currentQuestionIndex] ?? null;
@@ -352,6 +353,10 @@ export function usePearsonExamController(
     setQuestionCounterHidden((hidden) => !hidden);
   }, []);
 
+  const toggleTimerHidden = useCallback(() => {
+    setTimerHidden((hidden) => !hidden);
+  }, []);
+
   const zoomIn = useCallback(() => {
     setZoomLevel((z) => stepZoom(z, "in"));
   }, []);
@@ -436,6 +441,7 @@ export function usePearsonExamController(
     : null;
 
   const showQuestionCounter = inQuestionPhase && screen !== "review";
+  const showTimer = moduleDeadline != null && showQuestionCounter;
   const showFlagToolbar = screen === "question" && !navigatorOpen;
   const showPrequestionFooter =
     screen === "nda" ||
@@ -475,6 +481,8 @@ export function usePearsonExamController(
     currentAnswer,
     showQuestionCounter,
     questionCounterHidden,
+    showTimer,
+    timerHidden,
     showFlagToolbar,
     showPrequestionFooter,
     showQuestionFooter,
@@ -497,6 +505,7 @@ export function usePearsonExamController(
     onViewportViewedToEnd,
     changeColourScheme,
     toggleQuestionCounterHidden,
+    toggleTimerHidden,
     zoomIn,
     zoomOut,
     handleVerifiedHotkey,

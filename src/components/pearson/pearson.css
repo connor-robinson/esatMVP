@@ -100,10 +100,44 @@
 
 .pearson-header-right {
   display: flex;
-  align-items: center;
-  gap: 6px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
   flex-shrink: 0;
   font-size: var(--pearson-font-size-ui);
+}
+
+.pearson-timer-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: inherit;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  font-size: var(--pearson-font-size-ui);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.pearson-timer-btn:hover .pearson-timer-label {
+  color: #ffff00;
+}
+
+.pearson-timer-btn--icon-only {
+  border: 1px solid #ffffff;
+  padding: 1px 2px;
+}
+
+.pearson-timer-btn:focus-visible {
+  outline: 1px dotted #ffffff;
+  outline-offset: 1px;
+}
+
+.pearson-timer-label {
+  white-space: nowrap;
 }
 
 .pearson-question-counter-btn {

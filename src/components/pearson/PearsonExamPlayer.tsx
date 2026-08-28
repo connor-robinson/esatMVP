@@ -126,6 +126,10 @@ export function PearsonExamPlayer({
             <>
               <PearsonHeader
                 examTitle={examTitle}
+                showTimer={c.showTimer}
+                remainingLabel={c.remainingLabel}
+                timerHidden={c.timerHidden}
+                onToggleTimer={c.toggleTimerHidden}
                 showQuestionCounter={c.showQuestionCounter}
                 questionIndex={c.currentQuestionIndex}
                 totalQuestions={c.totalQuestions}
