@@ -41,6 +41,7 @@ def main(argv: list[str] | None = None) -> int:
     place_scope = place_p.add_mutually_exclusive_group(required=True)
     place_scope.add_argument("--all", action="store_true", help="All stem-diagram questions")
     place_scope.add_argument("--question-id", type=int, default=None)
+    place_scope.add_argument("--paper-id", type=int, default=None, help="Single paper id")
     place_scope.add_argument("--exam", type=str, default=None, help="ENGAA, NSAA, TMUA")
     place_p.add_argument("--limit", type=int, default=None)
     place_p.add_argument("--dry-run", action="store_true")
@@ -160,6 +161,7 @@ def main(argv: list[str] | None = None) -> int:
         result = place_stems(
             all_questions=bool(getattr(args, "all", False)),
             question_id=args.question_id,
+            paper_id=getattr(args, "paper_id", None),
             exam_name=args.exam,
             limit=args.limit,
             dry_run=args.dry_run,

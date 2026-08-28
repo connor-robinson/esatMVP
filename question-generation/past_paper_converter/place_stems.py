@@ -94,6 +94,7 @@ def _assets_have_stem_diagram(assets: Any) -> bool:
 def load_place_candidates(
     *,
     question_id: Optional[int] = None,
+    paper_id: Optional[int] = None,
     exam_name: Optional[str] = None,
     limit: Optional[int] = None,
 ) -> List[Dict[str, Any]]:
@@ -112,6 +113,8 @@ def load_place_candidates(
         q = client.table("questions").select(question_columns).order("id")
         if question_id is not None:
             q = q.eq("id", question_id)
+        if paper_id is not None:
+            q = q.eq("paper_id", paper_id)
         if exam_name:
             q = q.eq("exam_name", exam_name)
         return q
@@ -149,7 +152,12 @@ def load_place_candidates(
     # Prefer question ids that appear in either table with stem diagrams.
     all_ids = sorted(set(by_id) | set(latest_conversion))
     for qid in all_ids:
-        question = by_id.get(qid) or {}
+        question = by_id.get(qid)
+        if paper_id is not None and question is None:
+            continue
+        if question_id is not None and qid != question_id:
+            continue
+        question = question or {}
         conversion = latest_conversion.get(qid) or {}
         assets = question.get("diagram_assets")
         if not _assets_have_stem_diagram(assets):
@@ -169,6 +177,7 @@ def load_place_candidates(
         candidates.append(
             {
                 "questionId": qid,
+                "paperId": int(question.get("paper_id") or 0),
                 "examName": exam or "Unknown",
                 "examYear": int(question.get("exam_year") or 0),
                 "paperName": str(question.get("paper_name") or ""),
@@ -272,6 +281,7 @@ def place_stems(
     *,
     all_questions: bool = False,
     question_id: Optional[int] = None,
+    paper_id: Optional[int] = None,
     exam_name: Optional[str] = None,
     limit: Optional[int] = None,
     dry_run: bool = False,
@@ -280,14 +290,15 @@ def place_stems(
     model: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Run mid-stem placement for matching diagram questions."""
-    if not all_questions and question_id is None and not exam_name:
-        raise ValueError("Pass --all, --question-id, or --exam")
+    if not all_questions and question_id is None and paper_id is None and not exam_name:
+        raise ValueError("Pass --all, --question-id, --paper-id, or --exam")
 
     model_name = model or DEFAULT_BATCH_MODEL
     PLACEMENTS_DIR.mkdir(parents=True, exist_ok=True)
 
     candidates = load_place_candidates(
         question_id=question_id,
+        paper_id=paper_id,
         exam_name=exam_name,
         limit=limit,
     )
