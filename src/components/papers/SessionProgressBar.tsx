@@ -21,7 +21,6 @@ import { NAVBAR_HEIGHT_PX } from '@/config/layout';
 import { Loader2, Save } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { isPaperImmersiveRoute } from '@/lib/papers/activePaperSessionClient';
-import { isStudioReviewedPaper } from '@/lib/pearson/studioReviewedPapers';
 import { markSessionDetached } from '@/lib/storage/sessionStorage';
 import { DEFAULT_POST_AUTH_PATH } from '@/lib/onboarding/redirect';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
@@ -222,15 +221,6 @@ export function SessionProgressBar({
   }, [isMarkingInfo, questions, currentQuestionIndex]);
 
   if (!sessionId) return null;
-
-  // Conversion Studio reviewed papers use the Pearson shell (no ESAT Camp bar).
-  if (
-    typeof paperId === 'number' &&
-    isStudioReviewedPaper(paperId) &&
-    pathname.startsWith('/past-papers/solve')
-  ) {
-    return null;
-  }
 
   const calculateSectionProgress = (sectionIndex: number): number => {
     if (isOnInstructionPage) return 0;

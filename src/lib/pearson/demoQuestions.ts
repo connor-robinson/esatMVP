@@ -1,6 +1,6 @@
 /**
  * Sample questions for Pearson shell dev / visual regression.
- * Not tied to Supabase; use /past-papers/pearson-demo in dev.
+ * Not tied to Supabase; use /pearson/demo for the isolated player sandbox.
  */
 import type { Question } from "@/types/papers";
 

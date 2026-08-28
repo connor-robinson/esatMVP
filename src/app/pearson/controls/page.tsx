@@ -2,7 +2,7 @@ import Link from "next/link";
 import { PearsonControlsCoach } from "@/components/pearson/PearsonControlsCoach";
 
 export const metadata = {
-  title: "Pearson / ESAT controls | Past papers",
+  title: "Pearson / ESAT controls",
   description:
     "Get familiar with the real ESAT controls: verified Pearson VUE shortcuts only.",
 };
@@ -20,8 +20,8 @@ export default function PearsonControlsPage() {
       }}
     >
       <p style={{ margin: "0 0 16px", fontSize: 13 }}>
-        <Link href="/past-papers/library" style={{ color: "#026bac" }}>
-          Back to library
+        <Link href="/pearson/demo" style={{ color: "#026bac" }}>
+          Open player demo
         </Link>
       </p>
 
@@ -33,8 +33,11 @@ export default function PearsonControlsPage() {
         controls verified against Pearson Platform Navigation Guides.
       </p>
       <p style={{ margin: "0 0 16px", fontSize: 13, color: "#555" }}>
-        Conversion Studio reviewed past papers open in this player in strict
-        simulation mode.
+        This sandbox is separate from the main past-papers library. Use{" "}
+        <Link href="/pearson/demo" style={{ color: "#026bac" }}>
+          /pearson/demo
+        </Link>{" "}
+        to preview the player.
       </p>
 
       <PearsonControlsCoach />

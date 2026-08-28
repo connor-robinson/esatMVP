@@ -1,5 +1,6 @@
 /**
- * Bridges paperSessionStore ↔ PearsonExamPlayer for Conversion Studio–reviewed papers.
+ * Bridges paperSessionStore ↔ PearsonExamPlayer for sandbox / test routes only.
+ * Not used by /past-papers/solve (main library uses ESAT Camp UI).
  */
 
 "use client";

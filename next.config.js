@@ -9,8 +9,6 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
 
-  transpilePackages: ['@supabase/supabase-js'],
-
   experimental: {
     optimizePackageImports: [
       "framer-motion",
@@ -79,6 +77,16 @@ const nextConfig = {
         destination: "/engaa-nsaa-papers-for-esat",
         permanent: true,
       },
+      {
+        source: "/past-papers/pearson-demo",
+        destination: "/pearson/demo",
+        permanent: false,
+      },
+      {
+        source: "/past-papers/pearson-controls",
+        destination: "/pearson/controls",
+        permanent: false,
+      },
     ];
   },
 
@@ -101,21 +109,7 @@ const nextConfig = {
     pagesBufferLength: 10,
   },
 
-  webpack: (config, { dev, isServer }) => {
-    if (dev) {
-      config.watchOptions = {
-        poll: 1000,
-        aggregateTimeout: 300,
-      };
-
-      config.optimization = {
-        ...config.optimization,
-        removeAvailableModules: false,
-        removeEmptyChunks: false,
-        splitChunks: false,
-      };
-    }
-
+  webpack: (config, { isServer }) => {
     // Fix for Supabase module resolution
     if (!isServer) {
       config.resolve.fallback = {

@@ -4,8 +4,8 @@
  * Source of truth (Conversion Studio reviews cache):
  *   question-generation/past_paper_converter/_cache/studio_paper_reviews.json
  *
- * Keep this list in sync when studio reviews change. Parent gates the solve
- * page with isStudioReviewedPaper(paperId) before rendering PearsonExamPlayer.
+ * Keep this list in sync when studio reviews change. Used for text-mode rendering
+ * (PastPaperTextQuestion), not the Pearson player shell (see /pearson/demo).
  */
 
 export const REVIEWED_PAPER_IDS: readonly number[] = [

@@ -7,8 +7,8 @@ import { PEARSON_DEMO_QUESTIONS } from "@/lib/pearson/demoQuestions";
 import type { PearsonModuleResult } from "@/lib/pearson/types";
 
 /**
- * Dev-only Pearson player preview with sample LaTeX questions.
- * Open at /past-papers/pearson-demo for visual checks and screenshots.
+ * Standalone Pearson player preview (sample LaTeX questions only).
+ * Open at /pearson/demo — not wired into /past-papers/solve.
  */
 export default function PearsonDemoPage() {
   const [done, setDone] = useState(false);
@@ -21,11 +21,11 @@ export default function PearsonDemoPage() {
         <p style={{ fontSize: 13 }}>
           Unused time: {Math.round(result.unusedMs / 1000)}s
         </p>
-        <Link href="/past-papers/pearson-demo" style={{ color: "#026bac" }}>
+        <Link href="/pearson/demo" style={{ color: "#026bac" }}>
           Restart demo
         </Link>
         {" · "}
-        <Link href="/past-papers/pearson-controls" style={{ color: "#026bac" }}>
+        <Link href="/pearson/controls" style={{ color: "#026bac" }}>
           Controls coach
         </Link>
       </main>
