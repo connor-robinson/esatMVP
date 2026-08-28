@@ -1,7 +1,7 @@
 "use client";
 
-import { splitMnemonic } from "@/lib/pearson/shortcuts";
 import { EndExamIcon, NavigatorIcon, NextArrowIcon } from "./PearsonIcons";
+import { PearsonMnemonicLabel } from "./PearsonMnemonicLabel";
 
 interface PearsonFooterProps {
   variant: "prequestion" | "question";
@@ -10,18 +10,6 @@ interface PearsonFooterProps {
   onNavigator?: () => void;
   nextDisabled?: boolean;
   navigatorDisabled?: boolean;
-}
-
-function MnemonicLabel({ label, letter }: { label: string; letter: string }) {
-  const parts = splitMnemonic(label, letter);
-  if (!parts) return <>{label}</>;
-  return (
-    <>
-      {parts.before}
-      <span className="mnemonic">{parts.mnemonic}</span>
-      {parts.after}
-    </>
-  );
 }
 
 export function PearsonFooter({
@@ -41,7 +29,7 @@ export function PearsonFooter({
           onClick={onEndExam}
         >
           <EndExamIcon />
-          <MnemonicLabel label="End Exam" letter="E" />
+          <PearsonMnemonicLabel label="End Exam" letter="E" />
         </button>
         <span className="pearson-footer-vrule" aria-hidden="true" />
       </div>
@@ -56,7 +44,7 @@ export function PearsonFooter({
               disabled={navigatorDisabled}
             >
               <NavigatorIcon />
-              <MnemonicLabel label="Navigator" letter="N" />
+              <PearsonMnemonicLabel label="Navigator" letter="N" />
             </button>
             <span className="pearson-footer-vrule" aria-hidden="true" />
           </>
@@ -67,7 +55,7 @@ export function PearsonFooter({
           onClick={onNext}
           disabled={nextDisabled}
         >
-          <MnemonicLabel label="Next" letter="N" />
+          <PearsonMnemonicLabel label="Next" letter="N" />
           <NextArrowIcon />
         </button>
         <span className="pearson-footer-vrule" aria-hidden="true" />

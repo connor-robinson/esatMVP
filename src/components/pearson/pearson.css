@@ -12,7 +12,9 @@
   --pearson-button-face: #ffffff;
   --pearson-button-face-hover: #f0f0f0;
   --pearson-chrome-mode: blue;
-  --pearson-font: Arial, Helvetica, Tahoma, "Segoe UI", sans-serif;
+  --pearson-font: Tahoma, Arial, Helvetica, "Segoe UI", sans-serif;
+  --pearson-font-size-ui: 11px;
+  --pearson-font-size-content: 12px;
   --pearson-status-red: #b00000;
   --pearson-nav-blue: #00599c;
   --pearson-nav-highlight: #ffffcc;
@@ -26,7 +28,7 @@
   background: var(--pearson-content-bg);
   color: var(--pearson-text);
   font-family: var(--pearson-font);
-  font-size: 13px;
+  font-size: var(--pearson-font-size-ui);
   line-height: 1.35;
 }
 
@@ -88,7 +90,7 @@
 
 .pearson-header-title {
   font-weight: 700;
-  font-size: 13px;
+  font-size: var(--pearson-font-size-ui);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -99,7 +101,17 @@
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
-  font-size: 13px;
+  font-size: var(--pearson-font-size-ui);
+}
+
+.pearson-mnemonic-text {
+  display: inline;
+  white-space: nowrap;
+}
+
+.pearson-mnemonic-u {
+  text-decoration: underline;
+  text-underline-offset: 0;
 }
 
 .pearson-toolbar-bar {
@@ -134,7 +146,7 @@
   padding: 3px 8px;
   cursor: pointer;
   font: inherit;
-  font-size: 13px;
+  font-size: var(--pearson-font-size-ui);
 }
 
 .pearson-toolbar-btn:focus-visible {
@@ -152,29 +164,27 @@
   background: #000000;
 }
 
-.pearson-toolbar-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 0 4px;
-  font: inherit;
-  font-size: 13px;
-  color: inherit;
-}
-
 .pearson-colour-select {
   background: var(--pearson-button-face);
   color: #000000;
-  border: 1px solid var(--pearson-border);
-  font: inherit;
-  font-size: 13px;
-  padding: 1px 4px;
-  min-width: 140px;
+  border: 1px solid #000000;
+  font-family: var(--pearson-font);
+  font-size: var(--pearson-font-size-ui);
+  padding: 1px 18px 1px 4px;
+  min-width: 148px;
+  height: 22px;
   cursor: pointer;
+  appearance: auto;
 }
 
 .pearson-exam-root[data-chrome-mode="blue"] .pearson-colour-select {
   background: #ffffff;
+}
+
+.pearson-exam-root[data-chrome-mode="themed"] .pearson-colour-select {
+  background: var(--pearson-content-bg);
+  color: var(--pearson-text);
+  border-color: var(--pearson-border);
 }
 
 /* --- Main --- */
@@ -187,8 +197,8 @@
 }
 
 .pearson-static-content {
-  padding: 20px 28px 28px;
-  font-size: 13px;
+  padding: 16px 24px 24px;
+  font-size: var(--pearson-font-size-content);
   line-height: 1.45;
   max-width: 900px;
 }
@@ -256,13 +266,19 @@
 .pearson-viewport {
   height: 100%;
   overflow: auto;
-  padding: 16px 24px 24px;
-  font-size: 14px;
-  line-height: 1.45;
+  padding: 12px 20px 20px;
+  font-size: var(--pearson-font-size-content);
+  line-height: 1.4;
 }
 
 .pearson-viewport-zoom {
   transform-origin: top left;
+}
+
+.pearson-stem {
+  font-size: var(--pearson-font-size-content);
+  line-height: 1.4;
+  margin-bottom: 4px;
 }
 
 /* --- Footer --- */
@@ -299,9 +315,9 @@
   border: none;
   padding: 6px 14px;
   font: inherit;
-  font-size: 13px;
+  font-size: var(--pearson-font-size-ui);
   cursor: pointer;
-  min-height: 36px;
+  min-height: 32px;
 }
 
 .pearson-exam-root[data-chrome-mode="themed"] .pearson-footer-action {
@@ -330,37 +346,61 @@
   background: var(--pearson-border);
 }
 
-.pearson-footer-action .mnemonic {
-  text-decoration: underline;
-}
-
-/* --- Radios --- */
+/* --- Radios (Pearson system-style circles) --- */
 .pearson-radio-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 14px;
+  gap: 14px;
+  margin-top: 12px;
   list-style: none;
   padding: 0;
 }
 
 .pearson-radio-row {
   display: flex;
-  align-items: flex-start;
-  gap: 8px;
+  align-items: center;
+  gap: 6px;
   cursor: pointer;
+  font-size: var(--pearson-font-size-content);
+  line-height: 1.4;
 }
 
 .pearson-radio-row input[type="radio"] {
-  margin-top: 3px;
-  width: 13px;
-  height: 13px;
+  appearance: none;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  width: 11px;
+  height: 11px;
+  min-width: 11px;
+  min-height: 11px;
+  margin: 0;
+  padding: 0;
   flex-shrink: 0;
+  border: 1px solid var(--pearson-text);
+  border-radius: 50% !important;
+  background-color: var(--pearson-content-bg);
+  cursor: pointer;
+}
+
+.pearson-radio-row input[type="radio"]:checked {
+  background-color: var(--pearson-content-bg);
+  background-image: radial-gradient(
+    circle,
+    var(--pearson-text) 0,
+    var(--pearson-text) 38%,
+    var(--pearson-content-bg) 40%
+  );
+}
+
+.pearson-radio-row input[type="radio"]:focus-visible {
+  outline: 1px dotted var(--pearson-text);
+  outline-offset: 1px;
 }
 
 .pearson-radio-body {
   flex: 1;
   min-width: 0;
+  padding-top: 0;
 }
 
 /* --- Dialogs --- */

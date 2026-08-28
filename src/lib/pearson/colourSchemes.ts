@@ -27,11 +27,11 @@ export const PEARSON_BLUE_CHROME = {
 export const COLOUR_SCHEMES: readonly ColourSchemeDef[] = [
   {
     id: "standard",
-    label: "Standard",
+    label: "Color Scheme",
     contentText: "#000000",
     contentBg: "#ffffff",
     fullPageTheme: false,
-    inDropdown: false,
+    inDropdown: true,
   },
   {
     id: "black-on-white",

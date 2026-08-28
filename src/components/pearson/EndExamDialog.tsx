@@ -1,6 +1,6 @@
 "use client";
 
-import { splitMnemonic } from "@/lib/pearson/shortcuts";
+import { PearsonMnemonicLabel } from "./PearsonMnemonicLabel";
 import { InfoIcon } from "./PearsonIcons";
 
 interface EndExamDialogProps {
@@ -8,14 +8,7 @@ interface EndExamDialogProps {
   onNo: () => void;
 }
 
-/**
- * End Exam confirmation (screens 11).
- * VERIFIED_ESAT specimen player Aug 2026.
- */
 export function EndExamDialog({ onYes, onNo }: EndExamDialogProps) {
-  const yesParts = splitMnemonic("Yes", "Y");
-  const noParts = splitMnemonic("No", "N");
-
   return (
     <div className="pearson-dialog-backdrop" role="presentation">
       <div
@@ -37,26 +30,10 @@ export function EndExamDialog({ onYes, onNo }: EndExamDialogProps) {
         </div>
         <div className="pearson-dialog-blue-actions">
           <button type="button" onClick={onYes} autoFocus>
-            {yesParts ? (
-              <>
-                {yesParts.before}
-                <span className="mnemonic">{yesParts.mnemonic}</span>
-                {yesParts.after}
-              </>
-            ) : (
-              "Yes"
-            )}
+            <PearsonMnemonicLabel label="Yes" letter="Y" />
           </button>
           <button type="button" onClick={onNo}>
-            {noParts ? (
-              <>
-                {noParts.before}
-                <span className="mnemonic">{noParts.mnemonic}</span>
-                {noParts.after}
-              </>
-            ) : (
-              "No"
-            )}
+            <PearsonMnemonicLabel label="No" letter="N" />
           </button>
         </div>
       </div>

@@ -1,8 +1,8 @@
 "use client";
 
 import type { PearsonNavRow } from "@/lib/pearson/types";
-import { splitMnemonic } from "@/lib/pearson/shortcuts";
 import { NavigatorWindowIcon } from "./PearsonIcons";
+import { PearsonMnemonicLabel } from "./PearsonMnemonicLabel";
 
 interface PearsonNavigatorProps {
   rows: PearsonNavRow[];
@@ -30,8 +30,6 @@ export function PearsonNavigator({
   onJump,
   onClose,
 }: PearsonNavigatorProps) {
-  const closeParts = splitMnemonic("Close", "C");
-
   return (
     <div className="pearson-nav-modal-wrap" role="presentation">
       <div
@@ -97,15 +95,7 @@ export function PearsonNavigator({
             {unseenIncompleteCount} Unseen/Incomplete
           </span>
           <button type="button" className="pearson-nav-close-btn" onClick={onClose}>
-            {closeParts ? (
-              <>
-                {closeParts.before}
-                <span className="mnemonic">{closeParts.mnemonic}</span>
-                {closeParts.after}
-              </>
-            ) : (
-              "Close"
-            )}
+            <PearsonMnemonicLabel label="Close" letter="C" />
           </button>
         </div>
       </div>
