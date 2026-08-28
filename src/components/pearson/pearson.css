@@ -110,8 +110,8 @@ html.pearson-exam-active body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 26px;
-  padding: 3px 8px;
+  min-height: 42px;
+  padding: 4px 8px;
   background: var(--pearson-header);
   color: var(--pearson-header-text);
   border-bottom: 1px solid var(--pearson-border);
@@ -130,44 +130,31 @@ html.pearson-exam-active body {
   text-overflow: ellipsis;
 }
 
-/* Official specimen bitmap icons (white #ffffff on chrome, yellow #ffff00 when toggled). */
-.pearson-raster-icon {
+/* Chrome SVG icons (cannot clip unlike scaled bitmap extractions). */
+.pearson-chrome-icon {
   display: block;
   flex-shrink: 0;
-  width: auto;
-  object-fit: contain;
-  object-position: center;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
   overflow: visible;
 }
 
-.pearson-raster-icon--header {
-  height: 13px;
-  max-width: 18px;
-}
-
-.pearson-raster-icon--toolbar {
-  height: 13px;
-  max-width: 16px;
-}
-
-.pearson-raster-icon--footer {
+.pearson-chrome-icon--header {
+  width: 14px;
   height: 14px;
-  max-width: 20px;
 }
 
-/* End Exam glyph is taller than wide in the specimen bitmap. */
-.pearson-raster-icon--end-exam {
-  width: 17px;
-  height: auto;
-  max-height: 14px;
-  max-width: none;
+.pearson-chrome-icon--toolbar {
+  width: 14px;
+  height: 13px;
 }
 
-.pearson-raster-icon--dialog {
-  height: 16px;
-  max-width: 22px;
+.pearson-chrome-icon--footer {
+  width: 16px;
+  height: 14px;
+}
+
+.pearson-chrome-icon--dialog {
+  width: 18px;
+  height: 18px;
 }
 
 .pearson-header-right {
@@ -258,8 +245,8 @@ html.pearson-exam-active body {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  min-height: 26px;
-  padding: 2px 6px;
+  min-height: 28px;
+  padding: 4px 6px;
   background: var(--pearson-toolbar);
   color: var(--pearson-header-text);
   border-bottom: 1px solid var(--pearson-border);
@@ -501,7 +488,7 @@ html.pearson-exam-active body {
   display: flex;
   align-items: stretch;
   justify-content: space-between;
-  min-height: 32px;
+  min-height: 34px;
   background: var(--pearson-footer);
   color: var(--pearson-header-text);
   border-top: 1px solid var(--pearson-border);
@@ -545,7 +532,7 @@ html.pearson-exam-active body {
   font: inherit;
   font-size: var(--pearson-font-size-ui);
   cursor: pointer;
-  min-height: 32px;
+  min-height: 34px;
   line-height: normal;
   overflow: visible;
 }
