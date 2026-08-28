@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { LAST_CHECKED, SITE_URL } from "@/lib/seo/config";
+import { SITE_URL } from "@/lib/seo/config";
 import { PUBLIC_SITEMAP_ENTRIES } from "@/lib/seo/publicSitemap";
 
 /**
@@ -7,14 +7,18 @@ import { PUBLIC_SITEMAP_ENTRIES } from "@/lib/seo/publicSitemap";
  *
  * Source of truth: `PUBLIC_SITEMAP_ENTRIES` in `@/lib/seo/publicSitemap`.
  * Do not list redirect-only marketing slugs, auth/app shells, or noindex pages.
+ *
+ * `lastModified` is included only when a page has a reliable per-page content
+ * date. Build and deploy times are never used as a sitewide lastmod.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date(LAST_CHECKED.iso);
-
-  return PUBLIC_SITEMAP_ENTRIES.map(({ path, priority }) => ({
-    url: `${SITE_URL}${path}`,
-    lastModified,
-    changeFrequency: priority >= 0.8 ? "weekly" : "monthly",
-    priority,
-  }));
+  return PUBLIC_SITEMAP_ENTRIES.map(({ path, lastModified }) => {
+    const entry: MetadataRoute.Sitemap[number] = {
+      url: `${SITE_URL}${path}`,
+    };
+    if (lastModified) {
+      entry.lastModified = new Date(lastModified);
+    }
+    return entry;
+  });
 }

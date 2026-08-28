@@ -180,6 +180,26 @@ describe("index hygiene: sitemap", () => {
       expect(isPublicSitemapPath(excluded)).toBe(false);
     }
   });
+
+  it("uses per-page lastModified only when a reliable date exists", () => {
+    const entries = sitemap();
+    const withLastMod = entries.filter((entry) => entry.lastModified != null);
+    const withoutLastMod = entries.filter((entry) => entry.lastModified == null);
+
+    expect(withLastMod.length).toBeGreaterThan(0);
+    expect(withoutLastMod.length).toBeGreaterThan(0);
+    expect(withLastMod.length).toBeLessThan(entries.length);
+
+    const lastModDates = withLastMod.map((entry) =>
+      entry.lastModified!.toISOString().slice(0, 10),
+    );
+    expect(new Set(lastModDates).size).toBeGreaterThan(1);
+
+    for (const entry of entries) {
+      expect(entry).not.toHaveProperty("changeFrequency");
+      expect(entry).not.toHaveProperty("priority");
+    }
+  });
 });
 
 describe("index hygiene: robots.txt", () => {

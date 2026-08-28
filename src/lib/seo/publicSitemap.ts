@@ -7,6 +7,7 @@
  */
 
 import { APP_ROUTES, SEO_ROUTES } from "@/lib/seo/config";
+import { PAST_PAPERS_GUIDE_LAST_REVIEWED } from "@/content/pastPapersGuide";
 import {
   getNsaaConversionYears,
   nsaaYearPagePath,
@@ -14,58 +15,67 @@ import {
 
 export type PublicSitemapEntry = {
   readonly path: string;
-  readonly priority: number;
+  /**
+   * ISO date (YYYY-MM-DD) when page content was last substantively updated.
+   * Omit when no reliable per-page date exists (do not use build or deploy time).
+   */
+  readonly lastModified?: string;
 };
+
+/** Cookie policy states this date on-page. */
+const COOKIE_POLICY_LAST_UPDATED = "2026-08-25";
 
 const NSAA_YEAR_SITEMAP_ENTRIES: PublicSitemapEntry[] =
   getNsaaConversionYears().map((year) => ({
     path: nsaaYearPagePath(year),
-    priority: 0.55,
   }));
 
 export const PUBLIC_SITEMAP_ENTRIES: readonly PublicSitemapEntry[] = [
-  { path: "/", priority: 1 },
-  { path: "/about", priority: 0.7 },
+  { path: "/" },
+  { path: "/about" },
 
   // Editorial guide pages.
-  { path: SEO_ROUTES.preparation, priority: 0.9 },
-  { path: SEO_ROUTES.testDates, priority: 0.9 },
-  { path: SEO_ROUTES.pastPapers, priority: 0.9 },
-  { path: SEO_ROUTES.pastPapersGuide, priority: 0.9 },
-  { path: SEO_ROUTES.engaaNsaaPapers, priority: 0.8 },
-  { path: SEO_ROUTES.tmuaForEsat, priority: 0.8 },
-  { path: SEO_ROUTES.maths1, priority: 0.8 },
-  { path: SEO_ROUTES.maths2, priority: 0.8 },
-  { path: SEO_ROUTES.physics, priority: 0.8 },
-  { path: SEO_ROUTES.goodScore, priority: 0.8 },
-  { path: SEO_ROUTES.calculatorRules, priority: 0.7 },
-  { path: SEO_ROUTES.testDay, priority: 0.7 },
-  { path: SEO_ROUTES.noCalcPractice, priority: 0.7 },
-  { path: SEO_ROUTES.commonMistakes, priority: 0.7 },
-  { path: SEO_ROUTES.universityRequirements, priority: 0.9 },
-  { path: SEO_ROUTES.cambridgeRequirements, priority: 0.8 },
-  { path: SEO_ROUTES.cambridgeEngineering, priority: 0.8 },
-  { path: SEO_ROUTES.cambridgeNaturalSciences, priority: 0.8 },
-  { path: SEO_ROUTES.oxfordRequirements, priority: 0.8 },
-  { path: SEO_ROUTES.imperialRequirements, priority: 0.8 },
-  { path: SEO_ROUTES.uclRequirements, priority: 0.8 },
-  { path: SEO_ROUTES.esatBreaks, priority: 0.7 },
-  { path: SEO_ROUTES.whiteboard, priority: 0.7 },
-  { path: SEO_ROUTES.questionBankGuide, priority: 0.7 },
+  { path: SEO_ROUTES.preparation },
+  { path: SEO_ROUTES.testDates },
+  { path: SEO_ROUTES.pastPapers },
+  {
+    path: SEO_ROUTES.pastPapersGuide,
+    lastModified: PAST_PAPERS_GUIDE_LAST_REVIEWED.iso,
+  },
+  { path: SEO_ROUTES.engaaNsaaPapers },
+  { path: SEO_ROUTES.tmuaForEsat },
+  { path: SEO_ROUTES.maths1 },
+  { path: SEO_ROUTES.maths2 },
+  { path: SEO_ROUTES.physics },
+  { path: SEO_ROUTES.goodScore },
+  { path: SEO_ROUTES.calculatorRules },
+  { path: SEO_ROUTES.testDay },
+  { path: SEO_ROUTES.noCalcPractice },
+  { path: SEO_ROUTES.commonMistakes },
+  { path: SEO_ROUTES.universityRequirements },
+  { path: SEO_ROUTES.cambridgeRequirements },
+  { path: SEO_ROUTES.cambridgeEngineering },
+  { path: SEO_ROUTES.cambridgeNaturalSciences },
+  { path: SEO_ROUTES.oxfordRequirements },
+  { path: SEO_ROUTES.imperialRequirements },
+  { path: SEO_ROUTES.uclRequirements },
+  { path: SEO_ROUTES.esatBreaks },
+  { path: SEO_ROUTES.whiteboard },
+  { path: SEO_ROUTES.questionBankGuide },
 
   // Free tools with public landing content (not gated app shells).
-  { path: APP_ROUTES.calibration, priority: 0.8 },
-  { path: APP_ROUTES.scoreConverter, priority: 0.8 },
-  { path: "/tools/score-converter/nsaa", priority: 0.6 },
+  { path: APP_ROUTES.calibration },
+  { path: APP_ROUTES.scoreConverter },
+  { path: "/tools/score-converter/nsaa" },
   ...NSAA_YEAR_SITEMAP_ENTRIES,
-  { path: "/tools/score-converter/engaa", priority: 0.6 },
-  { path: "/tools/score-converter/tmua", priority: 0.6 },
-  { path: APP_ROUTES.fermiGame, priority: 0.5 },
-  { path: APP_ROUTES.faqs, priority: 0.6 },
+  { path: "/tools/score-converter/engaa" },
+  { path: "/tools/score-converter/tmua" },
+  { path: APP_ROUTES.fermiGame },
+  { path: APP_ROUTES.faqs },
 
-  { path: "/pricing", priority: 0.6 },
-  { path: "/help", priority: 0.3 },
-  { path: "/cookie-policy", priority: 0.3 },
+  { path: "/pricing" },
+  { path: "/help" },
+  { path: "/cookie-policy", lastModified: COOKIE_POLICY_LAST_UPDATED },
 ];
 
 /** Paths that must never appear in the sitemap (regression guard). */

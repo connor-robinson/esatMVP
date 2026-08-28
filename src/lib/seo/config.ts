@@ -354,7 +354,7 @@ export function articleSchema({
   description,
   path,
   datePublished,
-  dateModified = LAST_CHECKED.iso,
+  dateModified,
   authorPersonId,
   authorName,
 }: {
@@ -373,7 +373,6 @@ export function articleSchema({
     headline,
     description,
     mainEntityOfPage: { "@type": "WebPage", "@id": buildCanonicalUrl(path) },
-    dateModified,
     isAccessibleForFree: true,
     publisher: {
       "@type": "Organization",
@@ -383,6 +382,7 @@ export function articleSchema({
   };
 
   if (datePublished) schema.datePublished = datePublished;
+  if (dateModified) schema.dateModified = dateModified;
 
   if (authorPersonId || authorName) {
     schema.author = {
