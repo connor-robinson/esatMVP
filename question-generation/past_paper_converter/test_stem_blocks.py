@@ -123,6 +123,19 @@ class ValidatePlacementsTests(unittest.TestCase):
         )
         self.assertEqual(preview, "{{diagram:d1}}\n\nA\n\nB\n\n{{diagram:d2}}")
 
+    def test_apply_inline_figures(self) -> None:
+        from past_paper_converter.stem_blocks import apply_placements_to_stem
+
+        stem = apply_placements_to_stem(
+            ["Alpha", "Beta"],
+            [{"assetId": "d1", "insertAfterBlock": 1, "displayWidthPct": 60.0}],
+            {"d1": {"id": "d1", "url": "https://example.com/d1.png", "alt": "graph"}},
+        )
+        self.assertIn("<figure class=\"qg-diagram\">", stem)
+        self.assertIn("width:60.0%", stem)
+        self.assertIn("Alpha", stem)
+        self.assertIn("Beta", stem)
+
 
 if __name__ == "__main__":
     unittest.main()

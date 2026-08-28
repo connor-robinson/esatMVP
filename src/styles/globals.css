@@ -264,3 +264,19 @@
   max-width: 100%;
   height: auto;
 }
+
+.stem-content .qg-diagram-wrap .qg-diagram,
+.stem-content .qg-diagram {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.stem-content .qg-diagram-wrap .qg-diagram img,
+.stem-content .qg-diagram img {
+  max-width: 100%;
+  max-height: 32rem;
+  object-fit: contain;
+  height: auto;
+}

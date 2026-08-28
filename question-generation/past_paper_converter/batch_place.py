@@ -16,10 +16,12 @@ You do NOT crop, rewrite, or invent diagrams. You only decide where each listed 
 Rules:
 - Output ONLY valid JSON matching the schema. No markdown fences.
 - placements MUST include every provided asset id exactly once.
+- When there are multiple stem diagrams (d1, d2, ...), each gets its own placement at the block boundary where that diagram appears in the screenshot. Never stack unrelated diagrams at the same slot unless they truly sit together in the original layout.
 - insert_after_block is an integer:
   - 0 = before the first text block
   - N = after text block N (1-based block numbers in the user message map to insert_after_block = N)
   - len(blocks) = after all text (end of stem)
+- Match diagram order in the screenshot when two diagrams sit in different parts of the stem.
 - If unsure, put the diagram at the end (insert_after_block = number of blocks) with confidence below 0.7.
 - Never invent asset ids. Never omit an asset.
 - Ignore answer-choice images; only the listed stem assets matter.
@@ -79,6 +81,7 @@ def build_place_batch_request(
     question_number: int,
     stem_blocks: List[str],
     assets: List[Dict[str, Any]],
+    asset_crop_bytes: Optional[Dict[str, bytes]] = None,
 ) -> Dict[str, Any]:
     user_text = build_place_user_text(
         exam_name=exam_name,
@@ -90,6 +93,7 @@ def build_place_batch_request(
     )
     parts: List[Any] = [
         {"text": user_text},
+        {"text": "Full question screenshot (layout reference):"},
         {
             "inline_data": {
                 "mime_type": "image/png",
@@ -97,6 +101,31 @@ def build_place_batch_request(
             }
         },
     ]
+    crop_map = asset_crop_bytes or {}
+    if crop_map:
+        parts.append(
+            {
+                "text": (
+                    "Individual stem diagram crops (match asset ids above; "
+                    "use these to tell d1 vs d2 when multiple diagrams exist):"
+                )
+            }
+        )
+        for asset in assets:
+            asset_id = str(asset.get("id") or "")
+            crop = crop_map.get(asset_id)
+            if not crop:
+                continue
+            alt = str(asset.get("alt") or asset.get("caption") or "diagram").strip()
+            parts.append({"text": f"Crop for {asset_id} ({alt}):"})
+            parts.append(
+                {
+                    "inline_data": {
+                        "mime_type": "image/png",
+                        "data": base64.b64encode(crop).decode("ascii"),
+                    }
+                }
+            )
     return {
         "metadata": {"key": str(question_id)},
         "contents": [{"role": "user", "parts": parts}],

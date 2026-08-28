@@ -7,7 +7,9 @@ existing stem diagram sits among these blocks. Crops are never changed here.
 from __future__ import annotations
 
 import re
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
+
+from .diagram import build_diagram_stem_embed
 
 FIGURE_RE = re.compile(r"<figure[^>]*>[\s\S]*?</figure>", re.IGNORECASE)
 
@@ -157,11 +159,44 @@ def validate_placements(
     return ordered, None
 
 
+def apply_placements_to_stem(
+    blocks: List[str],
+    placements: List[Dict[str, Any]],
+    assets_by_id: Dict[str, Dict[str, Any]],
+) -> str:
+    """Build a stem with inline ``<figure>`` embeds at the chosen block slots."""
+    slots: Dict[int, List[str]] = {}
+    for row in placements:
+        asset_id = str(row["assetId"])
+        asset = assets_by_id.get(asset_id)
+        if not asset or not asset.get("url"):
+            continue
+        display_pct = row.get("displayWidthPct", row.get("display_width_pct"))
+        if display_pct is None:
+            display_pct = asset.get("display_width_pct")
+        embed = build_diagram_stem_embed(
+            str(asset["url"]),
+            str(asset.get("alt") or "diagram not to scale"),
+            display_width_pct=display_pct,
+        )
+        index = int(row["insertAfterBlock"])
+        slots.setdefault(index, []).append(embed)
+
+    parts: List[str] = []
+    for index, block in enumerate(blocks):
+        for embed in slots.get(index, []):
+            parts.append(embed)
+        parts.append(block)
+    for embed in slots.get(len(blocks), []):
+        parts.append(embed)
+    return "\n\n".join(parts)
+
+
 def apply_placements_preview(
     blocks: List[str],
     placements: List[Dict[str, Any]],
     *,
-    marker_for: Optional[Any] = None,
+    marker_for: Optional[Callable[[str], str]] = None,
 ) -> str:
     """Build a preview stem with markers (for tests / dry inspection).
 

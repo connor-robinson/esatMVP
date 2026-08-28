@@ -1021,6 +1021,22 @@ html.pearson-exam-active body {
   object-fit: contain;
 }
 
+.qg-diagram-wrap .qg-diagram,
+.stem-content .qg-diagram {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.qg-diagram-wrap .qg-diagram img,
+.stem-content .qg-diagram img {
+  max-width: 100%;
+  max-height: 32rem;
+  object-fit: contain;
+  height: auto;
+}
+
 .pearson-fidelity-gate {
   position: absolute;
   inset: 0;

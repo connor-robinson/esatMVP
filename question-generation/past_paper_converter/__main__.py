@@ -56,6 +56,41 @@ def main(argv: list[str] | None = None) -> int:
     )
     place_p.add_argument("--model", type=str, default=None, help="Override batch model id")
 
+    apply_p = sub.add_parser(
+        "apply-stems",
+        help="Apply placement sidecars into live stems (inline figures + display width)",
+    )
+    apply_scope = apply_p.add_mutually_exclusive_group(required=True)
+    apply_scope.add_argument("--all", action="store_true", help="All stem-diagram questions")
+    apply_scope.add_argument("--question-id", type=int, default=None)
+    apply_scope.add_argument("--exam", type=str, default=None, help="ENGAA, NSAA, TMUA")
+    apply_p.add_argument("--limit", type=int, default=None)
+    apply_p.add_argument("--dry-run", action="store_true")
+    apply_p.add_argument(
+        "--resume",
+        action="store_true",
+        help="Skip sidecars that already have applyStatus=ok",
+    )
+    apply_p.add_argument(
+        "--force",
+        action="store_true",
+        help="Re-apply even when applyStatus=ok",
+    )
+
+    final_p = sub.add_parser(
+        "place-and-apply-stems",
+        help="Run place-stems then apply-stems (final diagram layout pass)",
+    )
+    final_scope = final_p.add_mutually_exclusive_group(required=True)
+    final_scope.add_argument("--all", action="store_true")
+    final_scope.add_argument("--question-id", type=int, default=None)
+    final_scope.add_argument("--exam", type=str, default=None)
+    final_p.add_argument("--limit", type=int, default=None)
+    final_p.add_argument("--dry-run", action="store_true")
+    final_p.add_argument("--resume", action="store_true")
+    final_p.add_argument("--force", action="store_true")
+    final_p.add_argument("--model", type=str, default=None)
+
     resume_p = sub.add_parser(
         "resume-remaining",
         help="Re-run failed conversions first, then remaining image questions (force=True)",
@@ -136,6 +171,55 @@ def main(argv: list[str] | None = None) -> int:
         if result.get("status") == "completed" and int(result.get("failed") or 0) > 0:
             return 2
         return 0
+
+    if args.command == "apply-stems":
+        from .apply_stems import apply_stems
+
+        result = apply_stems(
+            all_questions=bool(getattr(args, "all", False)),
+            question_id=args.question_id,
+            exam_name=args.exam,
+            limit=args.limit,
+            dry_run=args.dry_run,
+            resume=args.resume,
+            force=args.force,
+        )
+        print(json.dumps(result, indent=2))
+        if result.get("status") == "completed" and int(result.get("failed") or 0) > 0:
+            return 2
+        return 0
+
+    if args.command == "place-and-apply-stems":
+        from .apply_stems import apply_stems
+        from .place_stems import place_stems
+
+        place_result = place_stems(
+            all_questions=bool(getattr(args, "all", False)),
+            question_id=args.question_id,
+            exam_name=args.exam,
+            limit=args.limit,
+            dry_run=args.dry_run,
+            resume=args.resume,
+            force=args.force,
+            model=args.model,
+        )
+        apply_result = apply_stems(
+            all_questions=bool(getattr(args, "all", False)),
+            question_id=args.question_id,
+            exam_name=args.exam,
+            limit=args.limit,
+            dry_run=args.dry_run,
+            resume=False if args.force else args.resume,
+            force=args.force,
+        )
+        print(
+            json.dumps(
+                {"place": place_result, "apply": apply_result},
+                indent=2,
+            )
+        )
+        failed = int(place_result.get("failed") or 0) + int(apply_result.get("failed") or 0)
+        return 2 if failed > 0 else 0
 
     if args.command == "resume-remaining":
         from .resume_remaining import resume_remaining

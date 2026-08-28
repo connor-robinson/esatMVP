@@ -1,16 +1,21 @@
 export type StemSegment =
   | { type: "text"; value: string }
   | { type: "svg"; value: string }
-  | { type: "table"; value: string };
+  | { type: "table"; value: string }
+  | { type: "figure"; value: string };
 
 type RawEmbed = {
   start: number;
   end: number;
-  type: "svg" | "table";
+  type: "svg" | "table" | "figure";
   value: string;
 };
 
-function collectEmbeds(re: RegExp, raw: string, type: "svg" | "table"): RawEmbed[] {
+function collectEmbeds(
+  re: RegExp,
+  raw: string,
+  type: "svg" | "table" | "figure",
+): RawEmbed[] {
   const out: RawEmbed[] = [];
   const r = new RegExp(re.source, re.flags);
   let m: RegExpExecArray | null;
@@ -41,7 +46,17 @@ export function splitStemWithSvg(raw: string): StemSegment[] {
   const svgEmbeds = collectEmbeds(/<svg\b[\s\S]*?<\/\s*svg\s*>/gi, raw, "svg");
   const svgSelfClosing = collectEmbeds(/<svg\b[^>]*\/\s*>/gi, raw, "svg");
   const tableEmbeds = collectEmbeds(/<table\b[\s\S]*?<\/table>/gi, raw, "table");
-  const merged = mergeNonOverlapping([...svgEmbeds, ...svgSelfClosing, ...tableEmbeds]);
+  const figureEmbeds = collectEmbeds(
+    /<figure\b[\s\S]*?<\/figure>/gi,
+    raw,
+    "figure",
+  );
+  const merged = mergeNonOverlapping([
+    ...svgEmbeds,
+    ...svgSelfClosing,
+    ...tableEmbeds,
+    ...figureEmbeds,
+  ]);
 
   const segments: StemSegment[] = [];
   let last = 0;

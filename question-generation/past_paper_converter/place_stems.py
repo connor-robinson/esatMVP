@@ -358,6 +358,16 @@ def place_stems(
             image_bytes = download_image(prepared["sourceImageUrl"])
             image_hash = sha256_bytes(image_bytes)
             hash_by_id[qid] = image_hash
+            asset_crop_bytes: Dict[str, bytes] = {}
+            for asset in prepared.get("assets") or []:
+                asset_id = str(asset.get("id") or "")
+                crop_url = str(asset.get("url") or "").strip()
+                if not asset_id or not crop_url:
+                    continue
+                try:
+                    asset_crop_bytes[asset_id] = download_image(crop_url)
+                except Exception:
+                    continue
             requests.append(
                 build_place_batch_request(
                     question_id=prepared["questionId"],
@@ -368,6 +378,7 @@ def place_stems(
                     question_number=prepared["questionNumber"],
                     stem_blocks=prepared["stemBlocks"],
                     assets=prepared["assets"],
+                    asset_crop_bytes=asset_crop_bytes,
                 )
             )
         except Exception as exc:

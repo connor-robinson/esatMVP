@@ -43,7 +43,16 @@ python -m past_paper_converter requeue --flag katex_errors
 python -m past_paper_converter place-stems --all --dry-run --limit 5
 python -m past_paper_converter place-stems --all --resume
 python -m past_paper_converter place-stems --question-id 2119
+
+# Apply placements into live stems (inline figures + display width)
+python -m past_paper_converter apply-stems --all --resume
+python -m past_paper_converter apply-stems --question-id 2119 --dry-run
+
+# One-shot final run (place then apply)
+python -m past_paper_converter place-and-apply-stems --all --resume
 ```
+
+Or double-click **`place_diagram_stems.bat`** at the repo root.
 
 ## Mid-stem placement
 
@@ -52,15 +61,18 @@ question text (between which paragraphs). It does **not** recrop and does
 **not** rewrite live `question_stem` rows.
 
 - Scope: questions with stem diagram assets (graphical options skipped)
+- Multi-diagram: every stem asset id (d1, d2, ...) must get its own slot
 - Transport: Gemini Batch API (`MODEL_PAST_PAPER_BATCH`)
 - Output: `past_paper_converter/_cache/stem_placements/q{id}.json` plus
   `.place_status.json` / `run_manifest.json`
 - Slot model: `insertAfterBlock` where `0` is before the first text block and
   `len(blocks)` is after all text (today's end-of-stem default)
 
-Applying placements into published stems and the past-paper UI is a separate
-follow-up step. Re-run with `--resume` to skip ids that already have
-`status=ok` sidecars, or `--force` to redo them.
+`apply-stems` reads ok sidecars and publishes inline `<figure class="qg-diagram">`
+embeds into `question_stem`. Display width is normalized from each crop's
+source-page bbox and ink fill ratio (no recrop). Re-run with `--resume` to
+skip ids that already have `status=ok` sidecars (place) or `applyStatus=ok`
+(apply), or `--force` to redo them.
 
 ## Frontend
 

@@ -65,12 +65,19 @@ export function PearsonRichQuestion({
     );
   }
 
-  const stem = (question.questionStem ?? "")
-    .replace(/<figure[^>]*>[\s\S]*?<\/figure>/gi, "")
-    .trim();
-  const stemDiagrams = (question.diagramAssets ?? []).filter(
-    (asset) => !asset.option_letter && asset.role !== "graphical_option",
+  const useInlineStem = /<figure\b[^>]*class="[^"]*qg-diagram/i.test(
+    question.questionStem ?? "",
   );
+  const stem = useInlineStem
+    ? (question.questionStem ?? "").trim()
+    : (question.questionStem ?? "")
+        .replace(/<figure[^>]*>[\s\S]*?<\/figure>/gi, "")
+        .trim();
+  const stemDiagrams = useInlineStem
+    ? []
+    : (question.diagramAssets ?? []).filter(
+        (asset) => !asset.option_letter && asset.role !== "graphical_option",
+      );
   const optionAssets = new Map(
     (question.diagramAssets ?? [])
       .filter((asset) => Boolean(asset.option_letter))

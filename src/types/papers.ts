@@ -21,6 +21,8 @@ export interface DiagramAsset {
   bbox_norm?: [number, number, number, number] | null;
   role?: "stem_diagram" | "graphical_option";
   option_letter?: Letter;
+  /** Normalized display width (percent of stem column) after placement apply. */
+  display_width_pct?: number;
 }
 
 export const MISTAKE_OPTIONS = [
