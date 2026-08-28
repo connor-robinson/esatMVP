@@ -17,15 +17,18 @@ export const PEARSON_DEMO_QUESTIONS: Question[] = [
     questionNumber: 1,
     questionImage: "",
     questionStem:
-      "What is the value of \\(x\\) if \\(2x + 5 = 17\\)?",
+      "In a right-angled triangle PQR, the hypotenuse is the side PR.\n\n" +
+      "The length of side PQ is 20 cm and the ratio RQ : PQ is 1 : 2\n\n" +
+      "What is the length of the perpendicular from the hypotenuse to the point Q ?",
     options: {
-      A: "\\(4\\)",
-      B: "\\(6\\)",
-      C: "\\(8\\)",
-      D: "\\(11\\)",
+      A: "\\(8\\sqrt{5}\\) cm",
+      B: "\\(10\\sqrt{2}\\) cm",
+      C: "\\(2\\sqrt{5}\\) cm",
+      D: "\\(5\\sqrt{2}\\) cm",
+      E: "\\(4\\sqrt{5}\\) cm",
     },
     contentFormat: "text",
-    answerLetter: "B",
+    answerLetter: "A",
     solutionType: "none",
     createdAt: "",
     updatedAt: "",

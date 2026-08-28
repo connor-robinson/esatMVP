@@ -609,17 +609,30 @@
   background: var(--pearson-content-bg);
   color: var(--pearson-text);
   overflow: auto;
-  padding: 16px 20px 24px;
+  padding: 12px 20px 20px;
   z-index: 10;
+  font-size: var(--pearson-font-size-content);
+}
+
+.pearson-review-title {
+  font-size: var(--pearson-font-size-content);
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.pearson-review-empty {
+  margin: 0;
+  font-size: var(--pearson-font-size-content);
 }
 
 .pearson-review-section {
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 .pearson-review-section h2 {
-  font-size: 14px;
-  margin: 0 0 8px;
+  font-size: var(--pearson-font-size-content);
+  font-weight: 700;
+  margin: 0 0 6px;
 }
 
 .pearson-review-list {
@@ -645,8 +658,24 @@
 .pearson-review-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.pearson-review-btn {
+  background: var(--pearson-button-face);
+  color: var(--pearson-text);
+  border: 1px solid var(--pearson-border);
+  padding: 4px 12px;
+  font: inherit;
+  font-size: var(--pearson-font-size-ui);
+  cursor: pointer;
+  min-height: 24px;
+}
+
+.pearson-exam-root[data-chrome-mode="blue"] .pearson-review-btn {
+  background: #ececec;
+  border-color: #7a7a7a;
 }
 
 .pearson-stem-img {

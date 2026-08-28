@@ -93,8 +93,10 @@ export function PearsonExamPlayer({
     (c.screen === "nda" ||
       c.screen === "instructions" ||
       c.screen === "question" ||
+      c.screen === "review" ||
       c.screen === "unseen-content-warning" ||
-      c.screen === "end-exam-confirmation");
+      c.screen === "end-exam-confirmation" ||
+      c.screen === "end-module-confirmation");
 
   const jumpFromReview = (index: number) => {
     if (index < 0) return;
@@ -166,7 +168,7 @@ export function PearsonExamPlayer({
               </PearsonQuestionViewport>
             ) : null}
 
-            {c.screen === "review" ? (
+            {(c.screen === "review" || c.screen === "end-module-confirmation") ? (
               <PearsonReviewScreen
                 flagged={c.reviewLists.flagged}
                 unanswered={c.reviewLists.unanswered}
