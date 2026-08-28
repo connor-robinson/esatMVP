@@ -13,9 +13,9 @@ html.pearson-exam-active body {
 }
 
 .pearson-exam-root {
-  --pearson-header: #005596;
-  --pearson-toolbar: #4a78b6;
-  --pearson-footer: #005596;
+  --pearson-header: #006daa;
+  --pearson-toolbar: #4678be;
+  --pearson-footer: #006daa;
   --pearson-content-bg: #ffffff;
   --pearson-text: #000000;
   --pearson-border: #000000;
@@ -1020,7 +1020,7 @@ html.pearson-exam-active body {
   margin-left: -2.5px;
   margin-top: -24px;
   border-radius: 2.5px;
-  background: #4a78b6;
+  background: #4678be;
   transform-origin: 50% 24px;
   opacity: 0.18;
   animation: pearson-spinner-chase 1.2s linear infinite;
@@ -1029,7 +1029,7 @@ html.pearson-exam-active body {
 @keyframes pearson-spinner-chase {
   0% {
     opacity: 1;
-    background: #005596;
+    background: #006daa;
   }
   100% {
     opacity: 0.12;

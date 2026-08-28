@@ -44,8 +44,8 @@ Sources consulted:
 
 | Behaviour | Status | Notes |
 | --- | --- | --- |
-| Dark blue header bar `#005596` | `VERIFIED_ESAT` | ESAT specimen screenshots Aug 2026 |
-| Lighter blue toolbar `#4a78b6` | `VERIFIED_ESAT` | Specimen screenshots |
+| Dark blue header bar `#006daa` | `VERIFIED_ESAT` | ESAT specimen screenshots Aug 2026 |
+| Lighter blue toolbar `#4678be` | `VERIFIED_ESAT` | Specimen screenshots |
 | Footer same blue family | `VERIFIED_ESAT` | Specimen screenshots |
 | Counter format `N of M` (not "Question N of M") | `VERIFIED_ESAT` | Specimen question screen |
 | Loading screen with segmented bar | `VERIFIED_ESAT` | Specimen screen 1 |
@@ -154,9 +154,9 @@ Sources consulted:
 
 | Token | Value |
 | --- | --- |
-| `--pearson-header` | `#005596` |
-| `--pearson-toolbar` | `#4a78b6` |
-| `--pearson-footer` | `#005596` |
+| `--pearson-header` | `#006daa` |
+| `--pearson-toolbar` | `#4678be` |
+| `--pearson-footer` | `#006daa` |
 | `--pearson-nav-blue` | `#00599c` |
 | `--pearson-dialog-blue` | `#0066a1` |
 | `--pearson-content-bg` | `#ffffff` |

@@ -17,9 +17,9 @@ export interface ColourSchemeDef {
 
 /** Default Pearson blue chrome (sampled from ESAT specimen screenshots). */
 export const PEARSON_BLUE_CHROME = {
-  "--pearson-header": "#005596",
-  "--pearson-toolbar": "#4a78b6",
-  "--pearson-footer": "#005596",
+  "--pearson-header": "#006daa",
+  "--pearson-toolbar": "#4678be",
+  "--pearson-footer": "#006daa",
   "--pearson-header-text": "#ffffff",
   "--pearson-toolbar-divider": "#000000",
 } as const;
