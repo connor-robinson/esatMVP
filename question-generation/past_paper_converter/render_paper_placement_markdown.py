@@ -6,21 +6,47 @@ import json
 import sys
 from pathlib import Path
 
+REVIEW_PROMPT = """You are reviewing mid-stem diagram placement for past-paper questions.
+
+For each question below:
+1. Open **source screenshot** and compare layout to the numbered **text blocks**.
+2. For every stem diagram asset (d1, d2, ...), return `insert_after_block`:
+   - 0 = diagram before block 1
+   - N = diagram after block N
+   - {blockCount} = diagram after all text (end of stem)
+3. Do not recrop. Ignore answer-choice images. Only stem diagrams listed.
+4. Optional: comment if `displayWidthPct` looks too large/small (32-78% typical).
+
+Return JSON per question:
+{"questionId": 2904, "placements": [{"asset_id": "d1", "insert_after_block": 0, "confidence": 0.95}]}
+"""
+
 
 def render_markdown(report: dict) -> str:
+    slot = report.get("slotModel") or {}
     lines = [
-        f"# Diagram placement dry-run: {report.get('paperLabel')}",
+        REVIEW_PROMPT.strip(),
+        "",
+        f"# Diagram placement review: {report.get('paperLabel')}",
         "",
         f"- paper_id: {report.get('paperId')}",
-        f"- generated: {report.get('generatedAt')}",
         f"- diagram questions: {report.get('diagramQuestionCount')}",
         f"- multi-diagram questions: {report.get('multiDiagramQuestionCount')}",
         "",
-        "## How to read this",
+        "## Slot model (read this first)",
         "",
-        "- `insertAfterBlock`: 0 = before block 1, N = after block N, `blockCount` = after all text.",
-        "- This dry-run export shows stem blocks and assets only. AI placement was **not** run (Vertex batch API blocked).",
-        "- `displayWidthPct` normalizes on-screen size from crop bbox + ink fill (no recrop).",
+        "Text is split into numbered blocks (paragraphs/tables). Figures are stripped from blocks.",
+        "Your job: say which **slot** each diagram belongs in, using the **source screenshot** as ground truth.",
+        "",
+        "| insert_after_block | Meaning |",
+        "| --- | --- |",
+        "| 0 | Diagram before block 1 |",
+        "| 1 | Diagram after block 1 |",
+        "| 2 | Diagram after block 2 |",
+        f"| blockCount | Diagram after all blocks (end of stem) |",
+        "",
+        "Example: 2 blocks, diagram between them → `insert_after_block: 1`.",
+        "Example: diagram above all text → `insert_after_block: 0`.",
         "",
         "---",
         "",
@@ -31,41 +57,58 @@ def render_markdown(report: dict) -> str:
         qid = q.get("questionId")
         blocks = q.get("stemBlocks") or []
         assets = q.get("stemDiagramAssets") or []
-        lines.append(f"## Q{qnum} (id {qid})")
+        block_count = len(blocks)
+
+        lines.append(f"## Q{qnum} (questionId {qid})")
         lines.append("")
-        lines.append(f"- blocks: {len(blocks)}")
+        lines.append(f"- blockCount: {block_count}")
+        lines.append(f"- allowed insert_after_block: {list(range(0, block_count + 1))}")
         lines.append(f"- stem diagrams: {len(assets)}")
+        lines.append("")
+
+        screenshot = q.get("sourceScreenshotUrl") or ""
+        if screenshot:
+            lines.append("### Source screenshot (layout ground truth)")
+            lines.append(f"Open this image and compare to the blocks below:")
+            lines.append(f"{screenshot}")
+            lines.append("")
+
+        lines.append("### Stem diagram crops (already cropped; do not recrop)")
         for asset in assets:
             width = asset.get("displayWidthPct")
             width_txt = f", displayWidthPct={width}" if width is not None else ""
-            lines.append(f"  - **{asset.get('id')}**: {asset.get('alt') or 'diagram'}{width_txt}")
+            lines.append(f"- **{asset.get('id')}**{width_txt}")
+            if asset.get("alt"):
+                lines.append(f"  - alt: {asset.get('alt')}")
+            if asset.get("url"):
+                lines.append(f"  - crop: {asset.get('url')}")
         lines.append("")
-        lines.append("### Text blocks")
+
+        lines.append("### Numbered text blocks (figures removed)")
         for index, block in enumerate(blocks, start=1):
-            preview = block.replace("\n", " ").strip()
-            if len(preview) > 320:
-                preview = preview[:320] + "..."
-            lines.append(f"{index}. {preview}")
-        lines.append("")
-        placement = q.get("placement") or {}
-        if placement.get("status") == "ok":
-            lines.append("### AI placements (from sidecar)")
-            for row in placement.get("placements") or []:
-                lines.append(
-                    f"- {row.get('assetId')}: insertAfterBlock={row.get('insertAfterBlock')} "
-                    f"(confidence={row.get('confidence')})"
-                )
-        else:
-            lines.append("### AI placements")
-            lines.append("- not run in this dry-run export")
-        lines.append("")
-        apply_preview = q.get("applyDryRun")
-        if apply_preview and apply_preview.get("status") == "dry_run":
-            lines.append("### Apply preview (first 400 chars of stem with figures)")
-            stem = str(apply_preview.get("stemPreview") or "")
+            lines.append(f"**Block {index}**")
             lines.append("```")
-            lines.append(stem[:400] + ("..." if len(stem) > 400 else ""))
+            lines.append(block.strip())
             lines.append("```")
+            lines.append("")
+
+        lines.append("### Your answer (fill in)")
+        lines.append("```json")
+        placements = [
+            {
+                "asset_id": a.get("id"),
+                "insert_after_block": "?",
+                "confidence": 0.0,
+            }
+            for a in assets
+        ]
+        lines.append(
+            json.dumps(
+                {"questionId": qid, "placements": placements},
+                indent=2,
+            )
+        )
+        lines.append("```")
         lines.append("")
         lines.append("---")
         lines.append("")
@@ -76,7 +119,9 @@ def render_markdown(report: dict) -> str:
 def main() -> int:
     path = Path(sys.argv[1]) if len(sys.argv) > 1 else None
     if path is None:
-        raise SystemExit("usage: python -m past_paper_converter.render_paper_placement_markdown REPORT.json")
+        raise SystemExit(
+            "usage: python -m past_paper_converter.render_paper_placement_markdown REPORT.json"
+        )
     report = json.loads(path.read_text(encoding="utf-8"))
     out = path.with_suffix(".md")
     out.write_text(render_markdown(report), encoding="utf-8")

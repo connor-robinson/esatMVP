@@ -73,6 +73,7 @@ def build_question_report(candidate: Dict[str, Any]) -> Dict[str, Any]:
         "examName": prepared["examName"],
         "examYear": prepared["examYear"],
         "paperName": prepared["paperName"],
+        "sourceScreenshotUrl": candidate.get("sourceImageUrl") or "",
         "blockCount": len(blocks),
         "stemBlocks": blocks,
         "stemDiagramAssets": crop_meta,
@@ -108,10 +109,23 @@ def export_paper_report(paper_id: int, *, exam_label: str = "") -> Path:
         "multiDiagramQuestionCount": len(multi),
         "notes": [
             "This is a dry-run export: no live question_stem rows were modified.",
-            "placement blocks show existing sidecars when present; otherwise the AI pass has not run yet.",
-            "displayWidthPct is computed from existing crops (no recrop).",
+            "Use sourceScreenshotUrl to see where each diagram sits on the original page.",
+            "Match numbered stemBlocks to the screenshot, then choose insertAfterBlock per asset.",
             "insertAfterBlock: 0 = before block 1, N = after block N, blockCount = after all text.",
+            "displayWidthPct normalizes on-screen size from crop bbox + ink fill (no recrop).",
         ],
+        "slotModel": {
+            "insertAfterBlock": "Integer slot where the diagram is inserted among stemBlocks.",
+            "0": "Diagram appears before the first text block.",
+            "N": "Diagram appears after text block N (1-based numbering in reports).",
+            "blockCount": "Diagram appears after all text blocks (end of stem).",
+            "multiDiagram": "Each asset id (d1, d2, ...) gets its own insertAfterBlock.",
+            "outputSchema": {
+                "placements": [
+                    {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.9}
+                ]
+            },
+        },
         "questions": questions,
     }
 
