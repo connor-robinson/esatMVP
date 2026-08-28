@@ -162,9 +162,9 @@ export function PearsonControlsCoach() {
       {step === "clock" ? (
         <section style={{ fontSize: 14 }}>
           <p style={{ margin: "0 0 12px" }}>
-            <strong>Lesson 4.</strong> Click the clock icon in the upper-right
-            during a module to hide or show the countdown. Time keeps running
-            either way.
+            <strong>Lesson 4.</strong> Flag a question with <strong>Alt + F</strong>.
+            End the exam with <strong>Alt + E</strong>. Close the Navigator with{" "}
+            <strong>Alt + C</strong>.
           </p>
           <button type="button" onClick={finish} style={btnStyle}>
             Finish

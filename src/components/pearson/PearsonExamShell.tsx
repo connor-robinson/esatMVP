@@ -1,7 +1,10 @@
 "use client";
 
 import type { CSSProperties, ReactNode } from "react";
-import { colourSchemeCssVars } from "@/lib/pearson/colourSchemes";
+import {
+  colourSchemeCssVars,
+  usesFullPageTheme,
+} from "@/lib/pearson/colourSchemes";
 import type { ColourSchemeId, ZoomLevel } from "@/lib/pearson/types";
 import { cn } from "@/lib/utils";
 import "./pearson.css";
@@ -20,15 +23,17 @@ export function PearsonExamShell({
   children,
 }: PearsonExamShellProps) {
   const vars = colourSchemeCssVars(colourScheme) as CSSProperties;
+  const chromeMode = usesFullPageTheme(colourScheme) ? "themed" : "blue";
+
   return (
     <div
       className={cn("pearson-exam-root", className)}
       style={{
         ...vars,
-        // Zoom applies to content via data attr; chrome stays readable.
         ["--pearson-zoom" as string]: String(zoomLevel / 100),
       }}
       data-colour-scheme={colourScheme}
+      data-chrome-mode={chromeMode}
       data-zoom={zoomLevel}
       role="application"
       aria-label="Exam player"
@@ -37,3 +42,4 @@ export function PearsonExamShell({
     </div>
   );
 }
+

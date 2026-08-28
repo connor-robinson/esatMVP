@@ -96,7 +96,7 @@ describe("pearson exam behaviours", () => {
 
   it("colour scheme persist helper returns the next scheme", () => {
     expect(
-      persistColourScheme("black-on-white", "black-on-light-yellow"),
+      persistColourScheme("standard", "black-on-light-yellow"),
     ).toBe("black-on-light-yellow");
   });
 
@@ -110,6 +110,36 @@ describe("pearson exam behaviours", () => {
         code: "KeyN",
       }),
     ).toBe("next");
+    expect(
+      matchVerifiedShortcut({
+        altKey: true,
+        ctrlKey: false,
+        metaKey: false,
+        key: "f",
+        code: "KeyF",
+      }),
+    ).toBe("flag");
+    expect(
+      matchVerifiedShortcut({
+        altKey: true,
+        ctrlKey: false,
+        metaKey: false,
+        key: "e",
+        code: "KeyE",
+      }),
+    ).toBe("end-exam");
+    expect(
+      matchVerifiedShortcut(
+        {
+          altKey: true,
+          ctrlKey: false,
+          metaKey: false,
+          key: "n",
+          code: "KeyN",
+        },
+        { endExamDialogOpen: true },
+      ),
+    ).toBe("no");
     expect(
       matchVerifiedShortcut({
         altKey: false,
@@ -128,7 +158,6 @@ describe("pearson exam behaviours", () => {
         code: "Minus",
       }),
     ).toBe("zoom-out");
-    // Unverified: Alt+P, Alt+F, digits
     expect(
       matchVerifiedShortcut({
         altKey: true,
@@ -138,26 +167,13 @@ describe("pearson exam behaviours", () => {
         code: "KeyP",
       }),
     ).toBeNull();
-    expect(
-      matchVerifiedShortcut({
-        altKey: true,
-        ctrlKey: false,
-        metaKey: false,
-        key: "f",
-        code: "KeyF",
-      }),
-    ).toBeNull();
-    expect(
-      matchVerifiedShortcut({
-        altKey: false,
-        ctrlKey: false,
-        metaKey: false,
-        key: "1",
-        code: "Digit1",
-      }),
-    ).toBeNull();
     expect(verifiedShortcutIdsOnly()).toEqual([
       "next",
+      "flag",
+      "end-exam",
+      "close",
+      "yes",
+      "no",
       "zoom-in",
       "zoom-out",
     ]);

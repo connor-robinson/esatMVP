@@ -1,14 +1,11 @@
 /**
  * PearsonExamPlayer – Pearson VUE / ESAT-style module player.
  *
- * INTEGRATION (parent):
- * Gate the past-paper solve page with isStudioReviewedPaper(paperId) from
- * `@/lib/pearson/studioReviewedPapers`. When true, render PearsonExamPlayer
- * instead of the current solve UI. Pass the paper's Question[] and handle
- * onModuleComplete to persist answers / advance to the next module.
- *
- * Strict mode defaults: no invented inter-module countdown; only verified
- * shortcuts (Alt+N, Ctrl+/Ctrl-); clock click toggles timer numerals.
+ * Flow (reviewed text-mode papers):
+ * 1. Loading screen
+ * 2. NDA / welcome (untimed)
+ * 3. Instructions (untimed)
+ * 4. Questions with Navigator, Flag, colour schemes
  */
 
 "use client";
@@ -24,12 +21,16 @@ import type {
 } from "@/lib/pearson/types";
 import { usePearsonExamController } from "@/lib/pearson/usePearsonExamController";
 import { DesktopFidelityGate } from "./DesktopFidelityGate";
+import { EndExamDialog } from "./EndExamDialog";
 import { EndModuleDialog } from "./EndModuleDialog";
 import { PearsonExamShell } from "./PearsonExamShell";
 import { PearsonFooter } from "./PearsonFooter";
 import { PearsonHeader } from "./PearsonHeader";
 import { PearsonHotkeyManager } from "./PearsonHotkeyManager";
+import { PearsonInstructionsScreen } from "./PearsonInstructionsScreen";
+import { PearsonLoadingScreen } from "./PearsonLoadingScreen";
 import { PearsonNavigator } from "./PearsonNavigator";
+import { PearsonNdaScreen } from "./PearsonNdaScreen";
 import { PearsonQuestionViewport } from "./PearsonQuestionViewport";
 import { PearsonReviewScreen } from "./PearsonReviewScreen";
 import { PearsonRichQuestion } from "./PearsonRichQuestion";
@@ -42,7 +43,6 @@ export interface PearsonExamPlayerProps {
   questions: Question[];
   initialAnswers?: PearsonAnswerMap;
   initialFlags?: PearsonFlagMap;
-  /** Default 40*60 (VERIFIED_ESAT module length). */
   timeLimitSeconds?: number;
   moduleTransition?: ModuleTransitionConfig;
   onModuleComplete: (result: PearsonModuleResult) => void;
@@ -77,15 +77,21 @@ export function PearsonExamPlayer({
   const hotkeyApi = useMemo(
     () => ({
       handleVerifiedHotkey: c.handleVerifiedHotkey,
-      completed: c.moduleLocked,
+      completed: c.completed,
     }),
-    [c.handleVerifiedHotkey, c.moduleLocked],
+    [c.handleVerifiedHotkey, c.completed],
   );
 
   const showChrome =
-    c.screen === "question" ||
-    c.screen === "unseen-content-warning" ||
-    c.screen === "end-module-confirmation";
+    c.screen !== "loading" && c.screen !== "complete" && c.screen !== "module-transition";
+
+  const showToolbar =
+    showChrome &&
+    (c.screen === "nda" ||
+      c.screen === "instructions" ||
+      c.screen === "question" ||
+      c.screen === "unseen-content-warning" ||
+      c.screen === "end-exam-confirmation");
 
   const jumpFromReview = (index: number) => {
     if (index < 0) return;
@@ -107,117 +113,130 @@ export function PearsonExamPlayer({
       <PearsonHotkeyManager controller={hotkeyApi} />
       <DesktopFidelityGate />
 
-      {showChrome ? (
-        <>
-          <PearsonHeader
-            examTitle={examTitle}
-            remainingLabel={c.remainingLabel}
-            timerHidden={c.timerHidden}
-            onToggleTimer={c.toggleTimerHidden}
-            questionIndex={c.currentQuestionIndex}
-            totalQuestions={c.totalQuestions}
-          />
-          <PearsonToolbar
-            flagged={c.currentFlagged}
-            onToggleFlag={c.toggleCurrentFlag}
-            colourScheme={c.colourScheme}
-            onColourSchemeChange={c.changeColourScheme}
-            disabled={c.moduleLocked}
-          />
-        </>
+      {c.screen === "loading" ? (
+        <PearsonLoadingScreen onComplete={c.completeLoading} />
       ) : (
-        <PearsonHeader
-          examTitle={examTitle}
-          remainingLabel={c.remainingLabel}
-          timerHidden={c.timerHidden}
-          onToggleTimer={c.toggleTimerHidden}
-          questionIndex={c.currentQuestionIndex}
-          totalQuestions={c.totalQuestions}
-        />
-      )}
-
-      <div className="pearson-main">
-        {c.screen === "question" ||
-        c.screen === "unseen-content-warning" ||
-        c.screen === "end-module-confirmation" ? (
-          c.currentQuestion ? (
-            <PearsonQuestionViewport
-              questionKey={c.currentQuestion.id}
-              zoomLevel={c.zoomLevel}
-              onViewedToEnd={c.onViewportViewedToEnd}
-            >
-              <PearsonRichQuestion
-                question={c.currentQuestion}
-                selected={c.currentAnswer}
-                onSelect={c.selectAnswer}
-                disabled={c.moduleLocked}
+        <>
+          {showChrome ? (
+            <>
+              <PearsonHeader
+                examTitle={examTitle}
+                showQuestionCounter={c.showQuestionCounter}
+                questionIndex={c.currentQuestionIndex}
+                totalQuestions={c.totalQuestions}
               />
-            </PearsonQuestionViewport>
-          ) : null
-        ) : null}
+              {showToolbar ? (
+                <PearsonToolbar
+                  showFlag={c.showFlagToolbar}
+                  flagged={c.currentFlagged}
+                  onToggleFlag={c.toggleCurrentFlag}
+                  colourScheme={c.colourScheme}
+                  onColourSchemeChange={c.changeColourScheme}
+                  disabled={c.moduleLocked}
+                />
+              ) : null}
+            </>
+          ) : null}
 
-        {c.screen === "navigator" ? (
-          <PearsonNavigator
-            rows={c.navigatorRows}
-            onJump={(index) => c.tryNavigateTo(index)}
-            onClose={c.closeNavigator}
-          />
-        ) : null}
+          <div className="pearson-main">
+            {c.screen === "nda" ? <PearsonNdaScreen /> : null}
 
-        {c.screen === "review" ? (
-          <PearsonReviewScreen
-            flagged={c.reviewLists.flagged}
-            unanswered={c.reviewLists.unanswered}
-            allQuestions={c.questions}
-            onReviewQuestion={(index) => jumpFromReview(index)}
-            onReviewAll={() => jumpFromReview(0)}
-            onReviewIncomplete={() => jumpFromReview(firstIncompleteIndex())}
-            onReviewFlagged={() => jumpFromReview(firstFlaggedIndex())}
-            onEndReview={c.requestEndReview}
-          />
-        ) : null}
+            {c.screen === "instructions" ? (
+              <PearsonInstructionsScreen questionCount={c.totalQuestions} />
+            ) : null}
 
-        {c.screen === "module-transition" ? (
-          <div className="pearson-review-overlay">
-            {/* UNVERIFIED break UI: only reachable when moduleTransition.enabled
-                and mode is not strict-simulation. */}
-            <p>Module complete. Preparing the next module…</p>
+            {(c.screen === "question" ||
+              c.screen === "unseen-content-warning" ||
+              (c.screen === "end-exam-confirmation" && c.moduleDeadline != null)) &&
+            c.currentQuestion ? (
+              <PearsonQuestionViewport
+                questionKey={c.currentQuestion.id}
+                zoomLevel={c.zoomLevel}
+                onViewedToEnd={c.onViewportViewedToEnd}
+              >
+                <PearsonRichQuestion
+                  question={c.currentQuestion}
+                  selected={c.currentAnswer}
+                  onSelect={c.selectAnswer}
+                  disabled={c.moduleLocked}
+                />
+              </PearsonQuestionViewport>
+            ) : null}
+
+            {c.screen === "review" ? (
+              <PearsonReviewScreen
+                flagged={c.reviewLists.flagged}
+                unanswered={c.reviewLists.unanswered}
+                allQuestions={c.questions}
+                onReviewQuestion={(index) => jumpFromReview(index)}
+                onReviewAll={() => jumpFromReview(0)}
+                onReviewIncomplete={() => jumpFromReview(firstIncompleteIndex())}
+                onReviewFlagged={() => jumpFromReview(firstFlaggedIndex())}
+                onEndReview={c.requestEndReview}
+              />
+            ) : null}
+
+            {c.screen === "module-transition" ? (
+              <div className="pearson-review-overlay">
+                <p>Module complete. Preparing the next module…</p>
+              </div>
+            ) : null}
+
+            {c.screen === "complete" ? (
+              <div className="pearson-review-overlay">
+                <h1 style={{ fontSize: 16, margin: "0 0 8px" }}>Module ended</h1>
+                <p style={{ margin: 0, fontSize: 13 }}>
+                  This module is complete. Unused time does not carry over.
+                </p>
+              </div>
+            ) : null}
+
+            {c.navigatorOpen ? (
+              <PearsonNavigator
+                rows={c.navigatorRows}
+                currentQuestionIndex={c.currentQuestionIndex}
+                unseenIncompleteCount={c.unseenIncompleteCount}
+                onJump={(index) => c.tryNavigateTo(index)}
+                onClose={c.closeNavigator}
+              />
+            ) : null}
+
+            {c.screen === "unseen-content-warning" ? (
+              <UnseenContentDialog onOk={c.dismissUnseenContent} />
+            ) : null}
+
+            {c.screen === "end-exam-confirmation" ? (
+              <EndExamDialog onYes={c.confirmEndExam} onNo={c.cancelEndExam} />
+            ) : null}
+
+            {c.screen === "end-module-confirmation" ? (
+              <EndModuleDialog
+                onYes={c.confirmEndModule}
+                onNo={c.cancelEndModule}
+              />
+            ) : null}
           </div>
-        ) : null}
 
-        {c.screen === "complete" ? (
-          <div className="pearson-review-overlay">
-            <h1 style={{ fontSize: 16, margin: "0 0 8px" }}>Module ended</h1>
-            <p style={{ margin: 0, fontSize: 13 }}>
-              This module is complete. Unused time does not carry over.
-            </p>
-          </div>
-        ) : null}
+          {c.showPrequestionFooter ? (
+            <PearsonFooter
+              variant="prequestion"
+              onEndExam={c.requestEndExam}
+              onNext={c.goNext}
+            />
+          ) : null}
 
-        {c.screen === "unseen-content-warning" ? (
-          <UnseenContentDialog onOk={c.dismissUnseenContent} />
-        ) : null}
-
-        {c.screen === "end-module-confirmation" ? (
-          <EndModuleDialog
-            onYes={c.confirmEndModule}
-            onNo={c.cancelEndModule}
-          />
-        ) : null}
-      </div>
-
-      {c.screen === "question" ||
-      c.screen === "unseen-content-warning" ||
-      c.screen === "end-module-confirmation" ? (
-        <PearsonFooter
-          onPrevious={c.goPrevious}
-          onNext={c.goNext}
-          onNavigator={c.openNavigator}
-          previousDisabled={c.currentQuestionIndex <= 0 || c.moduleLocked}
-          nextDisabled={c.moduleLocked}
-          navigatorDisabled={c.moduleLocked}
-        />
-      ) : null}
+          {c.showQuestionFooter ? (
+            <PearsonFooter
+              variant="question"
+              onEndExam={c.requestEndExam}
+              onNext={c.goNext}
+              onNavigator={c.openNavigator}
+              nextDisabled={c.moduleLocked}
+              navigatorDisabled={c.moduleLocked}
+            />
+          ) : null}
+        </>
+      )}
     </PearsonExamShell>
   );
 }

@@ -9,8 +9,7 @@ test.describe("Pearson shell fixture", () => {
     await page.goto("/pearson-shell.html");
   });
 
-  test("shows Time Remaining and N of M counter", async ({ page }) => {
-    await expect(page.getByText(/Time Remaining/)).toBeVisible();
+  test("shows N of M question counter", async ({ page }) => {
     await expect(page.getByText("1 of 3")).toBeVisible();
   });
 

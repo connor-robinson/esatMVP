@@ -12,28 +12,29 @@ export type ExamMode = "strict-simulation" | "sample" | "specimen";
 
 /** Top-level UI screen in the Pearson player state machine. */
 export type ExamScreen =
+  | "loading"
+  | "nda"
+  | "instructions"
   | "question"
   | "navigator"
   | "review"
   | "unseen-content-warning"
+  | "end-exam-confirmation"
   | "end-module-confirmation"
   | "module-transition"
   | "complete";
 
 /**
- * Colour schemes.
- * Black on Light Yellow is documented in Pearson Platform Navigation Guides.
- * The fuller list matches commonly documented Pearson CBT schemes.
- * ESAT exact live subset: UNVERIFIED (ship standard Pearson list).
+ * ESAT specimen colour schemes.
+ * `standard` = default Pearson blue chrome (screens 2–4).
+ * Black-on-* = full-page high-contrast themes (screens 6–9).
  */
 export type ColourSchemeId =
+  | "standard"
   | "black-on-white"
   | "black-on-light-yellow"
   | "black-on-salmon"
-  | "black-on-yellow"
-  | "blue-on-white"
-  | "blue-on-yellow"
-  | "light-yellow-on-black";
+  | "black-on-yellow";
 
 /**
  * Module transition between papers/modules.

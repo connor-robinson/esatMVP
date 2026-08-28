@@ -44,10 +44,15 @@ Sources consulted:
 
 | Behaviour | Status | Notes |
 | --- | --- | --- |
-| Dark blue header bar `#026bac` | `VERIFIED_PEARSON_PLATFORM` | Sampled from guide screenshots |
-| Lighter blue toolbar `#4778bd` | `VERIFIED_PEARSON_PLATFORM` | Sampled |
-| Footer same blue family | `VERIFIED_PEARSON_PLATFORM` | Sampled |
-| Counter format `N of M` (not "Question N of M") | `VERIFIED_PEARSON_PLATFORM` | NESInc / Pearson CBT tutorials; align with platform |
+| Dark blue header bar `#005596` | `VERIFIED_ESAT` | ESAT specimen screenshots Aug 2026 |
+| Lighter blue toolbar `#4a78b6` | `VERIFIED_ESAT` | Specimen screenshots |
+| Footer same blue family | `VERIFIED_ESAT` | Specimen screenshots |
+| Counter format `N of M` (not "Question N of M") | `VERIFIED_ESAT` | Specimen question screen |
+| Loading screen with segmented bar | `VERIFIED_ESAT` | Specimen screen 1 |
+| NDA / welcome screen before questions | `VERIFIED_ESAT` | Specimen screen 2 |
+| Instructions table (Untimed) | `VERIFIED_ESAT` | Specimen screen 3 |
+| End Exam footer (not Previous) | `VERIFIED_ESAT` | Specimen screens 2–4 |
+| Explain Answer toolbar button | `NOT_APPLICABLE_TO_ESAT` | Omitted in sim |
 | Flag for Review upper-right | `VERIFIED_PEARSON_PLATFORM` / ESAT descriptions | Handbook confirms flagging exists |
 | Filled vs outline flag when toggled | `VERIFIED_PEARSON_PLATFORM` | Guide shows filled flag on review |
 | Color Scheme dropdown | `VERIFIED_PEARSON_PLATFORM` | Exact ESAT option list `UNVERIFIED` |
@@ -97,9 +102,9 @@ Sources consulted:
 
 | Scheme | Status |
 | --- | --- |
-| Black on Light Yellow (documented example) | `VERIFIED_PEARSON_PLATFORM` |
-| Black on White, Black on Salmon, Black on Yellow, Blue on White, Blue on Yellow, Light Yellow on Black | `UNVERIFIED` for exact ESAT subset; shipped as standard Pearson CBT set pending live ESAT dropdown capture |
-| Applies across subsequent screens | `VERIFIED_PEARSON_PLATFORM` |
+| Black on White, Black on Light Yellow, Black on Salmon, Black on Yellow | `VERIFIED_ESAT` | Specimen Color Scheme dropdown |
+| Full-page theme (header/toolbar/footer recolour) | `VERIFIED_ESAT` | Specimen high-contrast modes |
+| Blue on White, Blue on Yellow, Light Yellow on Black | `NOT_APPLICABLE_TO_ESAT` | Not in ESAT specimen dropdown |
 
 ---
 
@@ -117,10 +122,13 @@ Sources consulted:
 
 | Action | Chord | Status |
 | --- | --- | --- |
-| Next | Alt+N | `VERIFIED_PEARSON_PLATFORM` (teach in coach) |
+| Next | Alt+N | `VERIFIED_ESAT` |
+| End Exam | Alt+E | `VERIFIED_ESAT` |
+| Flag for Review | Alt+F | `VERIFIED_ESAT` |
+| Navigator Close | Alt+C | `VERIFIED_ESAT` |
+| End Exam Yes / No | Alt+Y / Alt+N | `VERIFIED_ESAT` (N conflicts with Next when dialog closed) |
 | Previous | Alt+P or other | `UNVERIFIED` for ESAT (disabled) |
-| Navigator | mnemonic | `UNVERIFIED` (disabled) |
-| Flag for Review | Alt+F (other CBT tutorials) | `UNVERIFIED` for ESAT (disabled) |
+| Navigator open | mnemonic N on button | Visual only; no verified open chord |
 | Review / End Review | mnemonic | `UNVERIFIED` (disabled) |
 | Color Scheme | mnemonic | `UNVERIFIED` (disabled) |
 | Increase magnification | Ctrl+ | `VERIFIED_PEARSON_PLATFORM` |
@@ -144,9 +152,11 @@ Sources consulted:
 
 | Token | Value |
 | --- | --- |
-| `--pearson-header` | `#026bac` |
-| `--pearson-toolbar` | `#4778bd` |
-| `--pearson-footer` | `#026bac` |
+| `--pearson-header` | `#005596` |
+| `--pearson-toolbar` | `#4a78b6` |
+| `--pearson-footer` | `#005596` |
+| `--pearson-nav-blue` | `#00599c` |
+| `--pearson-dialog-blue` | `#0066a1` |
 | `--pearson-content-bg` | `#ffffff` |
 | `--pearson-text` | `#000000` |
 

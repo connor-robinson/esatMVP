@@ -1,61 +1,77 @@
 "use client";
 
 import { splitMnemonic } from "@/lib/pearson/shortcuts";
+import { EndExamIcon, NavigatorIcon, NextArrowIcon } from "./PearsonIcons";
 
 interface PearsonFooterProps {
-  onPrevious: () => void;
+  variant: "prequestion" | "question";
+  onEndExam: () => void;
   onNext: () => void;
-  onNavigator: () => void;
-  previousDisabled?: boolean;
+  onNavigator?: () => void;
   nextDisabled?: boolean;
   navigatorDisabled?: boolean;
 }
 
+function MnemonicLabel({ label, letter }: { label: string; letter: string }) {
+  const parts = splitMnemonic(label, letter);
+  if (!parts) return <>{label}</>;
+  return (
+    <>
+      {parts.before}
+      <span className="mnemonic">{parts.mnemonic}</span>
+      {parts.after}
+    </>
+  );
+}
+
 export function PearsonFooter({
-  onPrevious,
+  variant,
+  onEndExam,
   onNext,
   onNavigator,
-  previousDisabled = false,
   nextDisabled = false,
   navigatorDisabled = false,
 }: PearsonFooterProps) {
-  // Only underline N in Next (VERIFIED_PEARSON_PLATFORM mnemonic).
-  const nextParts = splitMnemonic("Next", "N");
-
   return (
     <footer className="pearson-footer">
-      <button
-        type="button"
-        className="pearson-footer-btn"
-        onClick={onPrevious}
-        disabled={previousDisabled}
-      >
-        Previous
-      </button>
-      <button
-        type="button"
-        className="pearson-footer-btn"
-        onClick={onNavigator}
-        disabled={navigatorDisabled}
-      >
-        Navigator
-      </button>
-      <button
-        type="button"
-        className="pearson-footer-btn"
-        onClick={onNext}
-        disabled={nextDisabled}
-      >
-        {nextParts ? (
+      <div className="pearson-footer-group">
+        <button
+          type="button"
+          className="pearson-footer-action"
+          onClick={onEndExam}
+        >
+          <EndExamIcon />
+          <MnemonicLabel label="End Exam" letter="E" />
+        </button>
+        <span className="pearson-footer-vrule" aria-hidden="true" />
+      </div>
+
+      <div className="pearson-footer-group pearson-footer-group--right">
+        {variant === "question" ? (
           <>
-            {nextParts.before}
-            <span className="mnemonic">{nextParts.mnemonic}</span>
-            {nextParts.after}
+            <button
+              type="button"
+              className="pearson-footer-action"
+              onClick={onNavigator}
+              disabled={navigatorDisabled}
+            >
+              <NavigatorIcon />
+              <MnemonicLabel label="Navigator" letter="N" />
+            </button>
+            <span className="pearson-footer-vrule" aria-hidden="true" />
           </>
-        ) : (
-          "Next"
-        )}
-      </button>
+        ) : null}
+        <button
+          type="button"
+          className="pearson-footer-action"
+          onClick={onNext}
+          disabled={nextDisabled}
+        >
+          <MnemonicLabel label="Next" letter="N" />
+          <NextArrowIcon />
+        </button>
+        <span className="pearson-footer-vrule" aria-hidden="true" />
+      </div>
     </footer>
   );
 }
