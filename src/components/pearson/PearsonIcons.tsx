@@ -1,61 +1,52 @@
-/** Inline SVG icons matching ESAT Pearson VUE player (simple line weight). */
+/** Official Pearson VUE bitmap icons extracted from ESAT specimen UI screenshots. */
+
+const ICONS = {
+  flag: "/pearson/icons/flag.png",
+  flagFilled: "/pearson/icons/flag-filled.png",
+  endExam: "/pearson/icons/end-exam.png",
+  counter: "/pearson/icons/counter.png",
+  timer: "/pearson/icons/timer.png",
+  timerYellow: "/pearson/icons/timer-yellow.png",
+  prev: "/pearson/icons/prev.png",
+  navigator: "/pearson/icons/navigator.png",
+  next: "/pearson/icons/next.png",
+} as const;
+
+type RasterIconProps = {
+  src: string;
+  height?: number;
+  className?: string;
+};
+
+function RasterIcon({ src, height = 14, className }: RasterIconProps) {
+  return (
+    <img
+      src={src}
+      alt=""
+      aria-hidden="true"
+      className={className ? `pearson-raster-icon ${className}` : "pearson-raster-icon"}
+      style={{ height, width: "auto" }}
+      draggable={false}
+    />
+  );
+}
 
 export function EndExamIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="20"
-      height="14"
-      viewBox="0 0 20 14"
-      aria-hidden="true"
-    >
-      {/* Open bracket (left side open) with arrow entering from the left */}
-      <path
-        d="M7 2h9v10H7"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.15"
-      />
-      <path d="M1 7h5" fill="none" stroke="currentColor" strokeWidth="1.15" />
-      <path
-        d="M3 5l2 2-2 2"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.15"
-        strokeLinejoin="miter"
-      />
-    </svg>
-  );
+  return <RasterIcon src={ICONS.endExam} height={14} className={className} />;
 }
 
 export function NextArrowIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} width="14" height="12" viewBox="0 0 14 12" aria-hidden="true">
-      <path d="M0 6h10M7 2l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.3" />
-    </svg>
-  );
+  return <RasterIcon src={ICONS.next} height={12} className={className} />;
+}
+
+export function PrevArrowIcon({ className }: { className?: string }) {
+  return <RasterIcon src={ICONS.prev} height={12} className={className} />;
 }
 
 export function NavigatorIcon({ className }: { className?: string }) {
-  const dots: Array<[number, number]> = [];
-  const cx = 8;
-  const cy = 8;
-  const r = 5.5;
-  for (let i = 0; i < 8; i += 1) {
-    const a = (i * Math.PI * 2) / 8 - Math.PI / 2;
-    dots.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]);
-  }
-  return (
-    <svg className={className} width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-      <circle cx={cx} cy={cy} r="1.1" fill="currentColor" />
-      {dots.map(([x, y], i) => (
-        <circle key={i} cx={x} cy={y} r="0.85" fill="currentColor" />
-      ))}
-    </svg>
-  );
+  return <RasterIcon src={ICONS.navigator} height={14} className={className} />;
 }
 
-/** Stopwatch-style clock for header timer; yellow when label is hidden. */
 export function TimerClockIcon({
   className,
   yellow,
@@ -63,102 +54,28 @@ export function TimerClockIcon({
   className?: string;
   yellow?: boolean;
 }) {
-  const stroke = yellow ? "#ffff00" : "currentColor";
   return (
-    <svg
+    <RasterIcon
+      src={yellow ? ICONS.timerYellow : ICONS.timer}
+      height={14}
       className={className}
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      aria-hidden="true"
-    >
-      <line
-        x1="3.5"
-        y1="9"
-        x2="3.5"
-        y2="6.5"
-        stroke={stroke}
-        strokeWidth="1.1"
-        strokeLinecap="round"
-      />
-      <circle cx="9" cy="8" r="5.5" fill="none" stroke={stroke} strokeWidth="1.1" />
-      <line
-        x1="9"
-        y1="8"
-        x2="9"
-        y2="4.5"
-        stroke={stroke}
-        strokeWidth="1.1"
-        strokeLinecap="round"
-      />
-      <line
-        x1="9"
-        y1="8"
-        x2="11.8"
-        y2="9.8"
-        stroke={stroke}
-        strokeWidth="1.1"
-        strokeLinecap="round"
-      />
-    </svg>
+    />
   );
 }
 
 export function QuestionCounterIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      aria-hidden="true"
-    >
-      {/* Three-layer stack: short bar, hollow pill, short bar */}
-      <line x1="5" y1="2.5" x2="11" y2="2.5" stroke="currentColor" strokeWidth="1.15" />
-      <rect
-        x="3.25"
-        y="5.25"
-        width="9.5"
-        height="5.5"
-        rx="2.75"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.15"
-      />
-      <line x1="5" y1="13.5" x2="11" y2="13.5" stroke="currentColor" strokeWidth="1.15" />
-    </svg>
-  );
+  return <RasterIcon src={ICONS.counter} height={14} className={className} />;
 }
 
-/** White outline waving flag on toolbar; yellow fill when flagged. */
+/** White outline waving flag on toolbar; yellow when flagged. */
 export function FlagIcon({ filled }: { filled?: boolean }) {
   return (
-    <svg width="16" height="14" viewBox="0 0 16 14" aria-hidden="true">
-      <path
-        d="M2.5 1.2v11.6"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1"
-        strokeLinecap="square"
-      />
-      <path
-        d="M2.5 2.2h8.2c.45 0 .85.25 1 .65l-1.15 1.85c-.35.55.05 1.15.65 1.15h.75c.35 0 .6.25.45.55l-1.55 2.25c-.25.4.05.85.5.85h-1.1l-1.35-.35-1.55.35-1.55-.45V2.2z"
-        fill={filled ? "#ffcc00" : "none"}
-        stroke="currentColor"
-        strokeWidth="1"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <RasterIcon src={filled ? ICONS.flagFilled : ICONS.flag} height={13} />
   );
 }
 
 export function NavigatorWindowIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
-      <circle cx="9" cy="9" r="7" fill="none" stroke="currentColor" strokeWidth="1.2" />
-      <path d="M9 4v2M9 12v2M4 9h2M12 9h2" stroke="currentColor" strokeWidth="1" />
-    </svg>
-  );
+  return <RasterIcon src={ICONS.navigator} height={16} />;
 }
 
 export function InfoIcon() {

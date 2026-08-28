@@ -98,6 +98,14 @@
   text-overflow: ellipsis;
 }
 
+/* Official specimen bitmap icons (white #ffffff on chrome, yellow #ffff00 when toggled). */
+.pearson-raster-icon {
+  display: block;
+  flex-shrink: 0;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
 .pearson-header-right {
   display: flex;
   flex-direction: column;
