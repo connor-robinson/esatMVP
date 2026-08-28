@@ -27,17 +27,22 @@ export function PearsonFooter({
         <PearsonMnemonicLabel label="End Exam" letter="E" />
       </button>
 
+      <span className="pearson-footer-rule" aria-hidden="true" />
+
       <div className="pearson-footer-group pearson-footer-group--right">
         {variant === "question" ? (
-          <button
-            type="button"
-            className="pearson-footer-action"
-            onClick={onNavigator}
-            disabled={navigatorDisabled}
-          >
-            <NavigatorIcon />
-            <PearsonMnemonicLabel label="Navigator" letter="N" />
-          </button>
+          <>
+            <button
+              type="button"
+              className="pearson-footer-action"
+              onClick={onNavigator}
+              disabled={navigatorDisabled}
+            >
+              <NavigatorIcon />
+              <PearsonMnemonicLabel label="Navigator" letter="N" />
+            </button>
+            <span className="pearson-footer-rule" aria-hidden="true" />
+          </>
         ) : null}
         <button
           type="button"

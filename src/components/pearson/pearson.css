@@ -110,11 +110,12 @@ html.pearson-exam-active body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 24px;
-  padding: 2px 8px;
+  min-height: 26px;
+  padding: 3px 8px;
   background: var(--pearson-header);
   color: var(--pearson-header-text);
   border-bottom: 1px solid var(--pearson-border);
+  overflow: visible;
 }
 
 .pearson-exam-root[data-chrome-mode="blue"] .pearson-header-bar {
@@ -133,14 +134,40 @@ html.pearson-exam-active body {
 .pearson-raster-icon {
   display: block;
   flex-shrink: 0;
-  height: 1em;
   width: auto;
+  object-fit: contain;
+  object-position: center;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+  overflow: visible;
 }
 
-.pearson-raster-icon--lg {
-  height: 1.09em;
+.pearson-raster-icon--header {
+  height: 13px;
+  max-width: 18px;
+}
+
+.pearson-raster-icon--toolbar {
+  height: 13px;
+  max-width: 16px;
+}
+
+.pearson-raster-icon--footer {
+  height: 14px;
+  max-width: 20px;
+}
+
+/* End Exam glyph is taller than wide in the specimen bitmap. */
+.pearson-raster-icon--end-exam {
+  width: 17px;
+  height: auto;
+  max-height: 14px;
+  max-width: none;
+}
+
+.pearson-raster-icon--dialog {
+  height: 16px;
+  max-width: 22px;
 }
 
 .pearson-header-right {
@@ -164,7 +191,8 @@ html.pearson-exam-active body {
   font: inherit;
   font-size: var(--pearson-font-size-ui);
   cursor: pointer;
-  line-height: 1;
+  line-height: normal;
+  overflow: visible;
 }
 
 .pearson-timer-btn:hover .pearson-timer-label {
@@ -197,7 +225,8 @@ html.pearson-exam-active body {
   font: inherit;
   font-size: var(--pearson-font-size-ui);
   cursor: pointer;
-  line-height: 1;
+  line-height: normal;
+  overflow: visible;
 }
 
 .pearson-question-counter-btn--icon-only {
@@ -229,11 +258,12 @@ html.pearson-exam-active body {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  min-height: 24px;
-  padding: 1px 6px;
+  min-height: 26px;
+  padding: 2px 6px;
   background: var(--pearson-toolbar);
   color: var(--pearson-header-text);
   border-bottom: 1px solid var(--pearson-border);
+  overflow: visible;
 }
 
 .pearson-exam-root[data-chrome-mode="blue"] .pearson-toolbar-bar {
@@ -253,10 +283,12 @@ html.pearson-exam-active body {
   background: transparent;
   color: inherit;
   border: none;
-  padding: 3px 8px;
+  padding: 4px 8px;
   cursor: pointer;
   font: inherit;
   font-size: var(--pearson-font-size-ui);
+  line-height: normal;
+  overflow: visible;
 }
 
 .pearson-toolbar-btn:focus-visible {
@@ -469,14 +501,26 @@ html.pearson-exam-active body {
   display: flex;
   align-items: stretch;
   justify-content: space-between;
-  min-height: 28px;
+  min-height: 32px;
   background: var(--pearson-footer);
   color: var(--pearson-header-text);
   border-top: 1px solid var(--pearson-border);
+  overflow: visible;
 }
 
 .pearson-exam-root[data-chrome-mode="blue"] .pearson-footer {
   border-top-color: #ffffff;
+}
+
+.pearson-footer-rule {
+  align-self: stretch;
+  width: 1px;
+  flex-shrink: 0;
+  background: #ffffff;
+}
+
+.pearson-exam-root[data-chrome-mode="themed"] .pearson-footer-rule {
+  background: var(--pearson-border);
 }
 
 .pearson-footer-group {
@@ -497,11 +541,13 @@ html.pearson-exam-active body {
   background: transparent;
   color: inherit;
   border: none;
-  padding: 4px 12px;
+  padding: 6px 14px;
   font: inherit;
   font-size: var(--pearson-font-size-ui);
   cursor: pointer;
-  min-height: 26px;
+  min-height: 32px;
+  line-height: normal;
+  overflow: visible;
 }
 
 .pearson-exam-root[data-chrome-mode="themed"] .pearson-footer-action {

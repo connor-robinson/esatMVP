@@ -12,14 +12,20 @@ const ICONS = {
   next: "/pearson/icons/next.png",
 } as const;
 
+type IconSize = "header" | "toolbar" | "footer";
+
 type RasterIconProps = {
   src: string;
   className?: string;
-  large?: boolean;
+  size?: IconSize;
 };
 
-function RasterIcon({ src, className, large }: RasterIconProps) {
-  const classes = ["pearson-raster-icon", large ? "pearson-raster-icon--lg" : null, className]
+function RasterIcon({ src, className, size = "header" }: RasterIconProps) {
+  const classes = [
+    "pearson-raster-icon",
+    `pearson-raster-icon--${size}`,
+    className,
+  ]
     .filter(Boolean)
     .join(" ");
 
@@ -35,19 +41,25 @@ function RasterIcon({ src, className, large }: RasterIconProps) {
 }
 
 export function EndExamIcon({ className }: { className?: string }) {
-  return <RasterIcon src={ICONS.endExam} className={className} />;
+  return (
+    <RasterIcon
+      src={ICONS.endExam}
+      size="footer"
+      className={["pearson-raster-icon--end-exam", className].filter(Boolean).join(" ")}
+    />
+  );
 }
 
 export function NextArrowIcon({ className }: { className?: string }) {
-  return <RasterIcon src={ICONS.next} className={className} />;
+  return <RasterIcon src={ICONS.next} size="footer" className={className} />;
 }
 
 export function PrevArrowIcon({ className }: { className?: string }) {
-  return <RasterIcon src={ICONS.prev} className={className} />;
+  return <RasterIcon src={ICONS.prev} size="footer" className={className} />;
 }
 
 export function NavigatorIcon({ className }: { className?: string }) {
-  return <RasterIcon src={ICONS.navigator} className={className} />;
+  return <RasterIcon src={ICONS.navigator} size="footer" className={className} />;
 }
 
 export function TimerClockIcon({
@@ -60,22 +72,34 @@ export function TimerClockIcon({
   return (
     <RasterIcon
       src={yellow ? ICONS.timerYellow : ICONS.timer}
+      size="header"
       className={className}
     />
   );
 }
 
 export function QuestionCounterIcon({ className }: { className?: string }) {
-  return <RasterIcon src={ICONS.counter} className={className} />;
+  return <RasterIcon src={ICONS.counter} size="header" className={className} />;
 }
 
 /** White outline waving flag on toolbar; yellow when flagged. */
 export function FlagIcon({ filled }: { filled?: boolean }) {
-  return <RasterIcon src={filled ? ICONS.flagFilled : ICONS.flag} />;
+  return (
+    <RasterIcon
+      src={filled ? ICONS.flagFilled : ICONS.flag}
+      size="toolbar"
+    />
+  );
 }
 
 export function NavigatorWindowIcon() {
-  return <RasterIcon src={ICONS.navigator} large />;
+  return (
+    <RasterIcon
+      src={ICONS.navigator}
+      size="toolbar"
+      className="pearson-raster-icon--dialog"
+    />
+  );
 }
 
 export function InfoIcon() {
