@@ -56,7 +56,7 @@ Sources consulted:
 | Explain Answer toolbar button | `NOT_APPLICABLE_TO_ESAT` | Omitted in sim |
 | Flag for Review upper-right | `VERIFIED_PEARSON_PLATFORM` / ESAT descriptions | Handbook confirms flagging exists |
 | Filled vs outline flag when toggled | `VERIFIED_PEARSON_PLATFORM` | Guide shows filled flag on review |
-| Color Scheme dropdown | `VERIFIED_PEARSON_PLATFORM` | Exact ESAT option list `UNVERIFIED` |
+| Color Scheme dropdown | `VERIFIED_ESAT` | "Color Scheme" option restores default blue chrome |
 | Previous / Next / Navigator footer | `VERIFIED_PEARSON_PLATFORM` + Tier C ESAT | Navigator strongly attested for ESAT practice UIs |
 | Square / zero radius controls | `VERIFIED_PEARSON_PLATFORM` | Visual sample |
 | Desktop preferred for fidelity | `VERIFIED_ESAT` | Prepare page |
@@ -82,7 +82,7 @@ Sources consulted:
 | --- | --- | --- |
 | Dialog title "Unseen Content" | `VERIFIED_ESAT` | Handbook §7 |
 | Exact body wording | `VERIFIED_ESAT` | "You have not yet viewed the entire screen. Make sure you play all multimedia content, select every tab and scroll to every corner." |
-| OK dismisses | `VERIFIED_ESAT` | |
+| OK dismisses | `VERIFIED_ESAT` | Blue modal; Alt+O on **O**K |
 | Triggered if not scrolled to end | `VERIFIED_ESAT` | |
 | Not triggered when content fully fits | Implementation | No unseen region |
 

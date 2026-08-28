@@ -183,7 +183,11 @@ export function stepZoom(
 export function resolveStrictShortcut(
   mode: ExamMode,
   e: Pick<KeyboardEvent, "altKey" | "ctrlKey" | "metaKey" | "key" | "code">,
-  context?: { endExamDialogOpen?: boolean; navigatorOpen?: boolean },
+  context?: {
+    endExamDialogOpen?: boolean;
+    navigatorOpen?: boolean;
+    unseenContentDialogOpen?: boolean;
+  },
 ): ReturnType<typeof matchVerifiedShortcut> {
   const matched = matchVerifiedShortcut(e, context);
   if (!matched) return null;
@@ -201,6 +205,7 @@ export function verifiedShortcutIdsOnly(): string[] {
     "close",
     "yes",
     "no",
+    "ok",
     "zoom-in",
     "zoom-out",
   ];

@@ -372,10 +372,12 @@ export function usePearsonExamController(
       const action = resolveStrictShortcut(mode, e, {
         endExamDialogOpen,
         navigatorOpen,
+        unseenContentDialogOpen: screen === "unseen-content-warning",
       });
       if (!action) return false;
       e.preventDefault();
-      if (action === "next") goNext();
+      if (action === "ok") dismissUnseenContent();
+      else if (action === "next") goNext();
       else if (action === "flag") toggleCurrentFlag();
       else if (action === "end-exam") requestEndExam();
       else if (action === "close") closeNavigator();
@@ -396,6 +398,7 @@ export function usePearsonExamController(
       completed,
       confirmEndExam,
       confirmEndModule,
+      dismissUnseenContent,
       goNext,
       mode,
       navigatorOpen,

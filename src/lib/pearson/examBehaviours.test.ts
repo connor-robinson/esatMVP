@@ -174,6 +174,7 @@ describe("pearson exam behaviours", () => {
       "close",
       "yes",
       "no",
+      "ok",
       "zoom-in",
       "zoom-out",
     ]);

@@ -10,6 +10,7 @@ export type ShortcutId =
   | "close"
   | "yes"
   | "no"
+  | "ok"
   | "zoom-in"
   | "zoom-out";
 
@@ -65,6 +66,13 @@ export const VERIFIED_SHORTCUTS: readonly VerifiedShortcut[] = [
     enabledInStrict: true,
   },
   {
+    id: "ok",
+    chord: "Alt+O",
+    description: "Dismiss Unseen Content dialog (OK).",
+    verifiedAs: "VERIFIED_ESAT",
+    enabledInStrict: true,
+  },
+  {
     id: "zoom-in",
     chord: "Ctrl+",
     description: "Increase magnification (100% to 200% in 25% steps).",
@@ -115,13 +123,21 @@ export function isVerifiedShortcutId(id: string): id is ShortcutId {
 
 export function matchVerifiedShortcut(
   e: Pick<KeyboardEvent, "altKey" | "ctrlKey" | "metaKey" | "key" | "code">,
-  context?: { endExamDialogOpen?: boolean; navigatorOpen?: boolean },
+  context?: {
+    endExamDialogOpen?: boolean;
+    navigatorOpen?: boolean;
+    unseenContentDialogOpen?: boolean;
+  },
 ): ShortcutId | null {
   const key = e.key;
   const code = e.code;
 
   if (e.altKey && !e.ctrlKey && !e.metaKey) {
     const lk = key.toLowerCase();
+    if (context?.unseenContentDialogOpen) {
+      if (lk === "o") return "ok";
+      return null;
+    }
     if (context?.endExamDialogOpen) {
       if (lk === "y") return "yes";
       if (lk === "n") return "no";
