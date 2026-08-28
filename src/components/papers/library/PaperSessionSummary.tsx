@@ -27,6 +27,8 @@ import { questionMatchesSelectedSections } from "@/lib/papers/paperLibrarySectio
 import type { PaperMainSection } from "@/lib/papers/paperLibrarySections";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import type { Paper, PaperSection, ExamName } from "@/types/papers";
+import Link from "next/link";
+import { isStudioReviewedPaper } from "@/lib/pearson/studioReviewedPapers";
 import { SectionsLoadingState } from "./SectionsLoadingState";
 import { GuestDrillHintCallout } from "@/components/builder/GuestDrillHint";
 import type { LibraryTutorialStep } from "@/lib/papers/libraryTutorial";
@@ -523,6 +525,12 @@ export function PaperSessionSummary({
     [selectedPapers],
   );
 
+  const usesPearsonShell = useMemo(
+    () =>
+      selectedPapers.some(({ paper }) => isStudioReviewedPaper(paper.id)),
+    [selectedPapers],
+  );
+
   const totalItems = basketPapers.length;
 
   const itemCountLabel =
@@ -664,6 +672,18 @@ export function PaperSessionSummary({
         )}
 
         <div className="relative">
+          {usesPearsonShell && canStart ? (
+            <p className="mb-3 text-center text-xs text-text-muted">
+              Reviewed papers use the{" "}
+              <Link
+                href="/past-papers/pearson-controls"
+                className="text-maths underline-offset-2 hover:underline"
+              >
+                real ESAT controls
+              </Link>{" "}
+              simulation.
+            </p>
+          ) : null}
           {tutorialStep === "start" && canStart ? (
             <GuestDrillHintCallout
               label="Start when you're ready"

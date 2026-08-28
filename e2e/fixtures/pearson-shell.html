@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Pearson shell fixture</title>
+    <style>
+      :root {
+        --pearson-header: #026bac;
+        --pearson-toolbar: #4778bd;
+        --pearson-footer: #026bac;
+        --pearson-content-bg: #ffffff;
+        --pearson-text: #000000;
+        --pearson-border: #7a7a7a;
+        --pearson-button-face: #e8e8e8;
+      }
+      * { box-sizing: border-box; border-radius: 0 !important; box-shadow: none !important; }
+      body { margin: 0; font-family: Tahoma, "Segoe UI", Arial, sans-serif; font-size: 13px; }
+      .root { display: flex; flex-direction: column; height: 100vh; background: var(--pearson-content-bg); color: var(--pearson-text); }
+      .header, .toolbar, .footer { display: flex; align-items: center; color: #fff; padding: 4px 10px; }
+      .header { background: var(--pearson-header); justify-content: space-between; min-height: 36px; }
+      .toolbar { background: var(--pearson-toolbar); justify-content: flex-end; gap: 16px; min-height: 32px; }
+      .footer { background: var(--pearson-footer); justify-content: space-between; min-height: 40px; }
+      .footer button, .toolbar button, .dialog button { background: var(--pearson-button-face); color: #000; border: none; padding: 6px 14px; font: inherit; cursor: pointer; }
+      .toolbar button { background: transparent; color: #fff; }
+      .main { flex: 1; position: relative; overflow: auto; padding: 16px 20px; }
+      .viewport { height: 240px; overflow: auto; border-bottom: 1px solid #ddd; }
+      .tall { height: 600px; }
+      .dialog-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.35); display: flex; align-items: center; justify-content: center; }
+      .dialog { background: #fff; color: #000; width: 400px; padding: 14px 16px; border: 1px solid var(--pearson-border); }
+      .mnemonic { text-decoration: underline; }
+      .radio { display: flex; gap: 8px; margin: 8px 0; align-items: flex-start; }
+      [data-colour-scheme="black-on-light-yellow"] { --pearson-content-bg: #ffffcc; }
+      [data-colour-scheme="black-on-light-yellow"] .main { background: #ffffcc; }
+    </style>
+  </head>
+  <body>
+    <div class="root" data-testid="pearson-root" data-colour-scheme="black-on-white">
+      <header class="header">
+        <div>ESAT Mathematics 1</div>
+        <div>
+          <span id="timer">Time Remaining 39:42</span>
+          <span id="counter" style="margin-left:14px">1 of 3</span>
+        </div>
+      </header>
+      <div class="toolbar">
+        <button type="button" id="flag" data-flagged="false" aria-pressed="false">Flag for Review</button>
+        <label>
+          Color Scheme
+          <select id="colour-scheme">
+            <option value="black-on-white">Black on White</option>
+            <option value="black-on-light-yellow">Black on Light Yellow</option>
+          </select>
+        </label>
+      </div>
+      <div class="main">
+        <div class="viewport" data-testid="viewport" data-viewed="false" id="viewport">
+          <p>Question stem sample with enough height to require scrolling.</p>
+          <div class="tall"></div>
+          <p>Bottom of question</p>
+        </div>
+        <div class="radio"><input type="radio" name="a" id="a" /><label for="a"><strong>A.</strong> First</label></div>
+        <div class="radio"><input type="radio" name="a" id="b" /><label for="b"><strong>B.</strong> Second</label></div>
+        <div id="dialog-host"></div>
+      </div>
+      <footer class="footer">
+        <button type="button" id="prev" disabled>Previous</button>
+        <button type="button" id="nav">Navigator</button>
+        <button type="button" id="next"><span class="mnemonic">N</span>ext</button>
+      </footer>
+    </div>
+    <script>
+      let q = 1;
+      const total = 3;
+      const counter = document.getElementById("counter");
+      const viewport = document.getElementById("viewport");
+      const flag = document.getElementById("flag");
+      const nextBtn = document.getElementById("next");
+
+      function showUnseen() {
+        const host = document.getElementById("dialog-host");
+        host.innerHTML = '<div class="dialog-backdrop"><div class="dialog" role="alertdialog"><h2>Unseen Content</h2><p>You have not yet viewed the entire screen. Make sure you play all multimedia content, select every tab and scroll to every corner.</p><button type="button" id="ok">OK</button></div></div>';
+        document.getElementById("ok").onclick = () => { host.innerHTML = ""; };
+      }
+
+      function goNext() {
+        if (viewport.dataset.viewed !== "true") {
+          const rem = viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight;
+          if (rem > 2) { showUnseen(); return; }
+          viewport.dataset.viewed = "true";
+        }
+        if (q < total) { q += 1; counter.textContent = q + " of " + total; }
+      }
+
+      viewport.addEventListener("scroll", () => {
+        const rem = viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight;
+        if (rem <= 2) viewport.dataset.viewed = "true";
+      });
+
+      flag.addEventListener("click", () => {
+        const on = flag.dataset.flagged !== "true";
+        flag.dataset.flagged = on ? "true" : "false";
+        flag.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+
+      nextBtn.addEventListener("click", goNext);
+      document.addEventListener("keydown", (e) => {
+        if (e.altKey && (e.key === "n" || e.key === "N")) { e.preventDefault(); goNext(); }
+      });
+
+      document.getElementById("colour-scheme").addEventListener("change", (e) => {
+        document.querySelector("[data-testid=pearson-root]").dataset.colourScheme = e.target.value;
+      });
+    </script>
+  </body>
+</html>

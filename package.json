@@ -10,6 +10,8 @@
     "type-check": "tsc --noEmit",
     "test": "vitest run",
     "test:e2e:ga": "playwright test e2e/ga-consent.spec.ts",
+    "test:e2e:pearson": "playwright test e2e/pearson/pearson-shell.spec.ts",
+    "sync:studio-reviewed-papers": "npx tsx scripts/sync-studio-reviewed-papers.ts",
     "generate:conversion-tables": "node scripts/generate_conversion_table_csvs.js && node scripts/generate_conversion_table_pdfs.js && node scripts/generate_nsaa_year_conversion_pdfs.js",
     "seed:fermi": "npx tsx scripts/seed-fermi-questions.ts",
     "import:esat-m1-hook": "npx tsx scripts/import-esat-hook-sets.ts --only=math1",

@@ -36,6 +36,8 @@ import {
   solveSessionChoiceBtnSelected,
   solveSessionNavBtn,
 } from '@/lib/papers/solveSessionStyles';
+import { isStudioReviewedPaper } from '@/lib/pearson/studioReviewedPapers';
+import { PearsonSolveBridge } from '@/components/pearson/PearsonSolveBridge';
 
 const LETTERS: Letter[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
@@ -984,9 +986,78 @@ export default function PapersSolvePage() {
     );
   }
 
+  // Conversion Studio–reviewed papers: Pearson VUE / ESAT simulation shell.
+  // Skip ESAT Camp instruction chrome entirely for these papers.
+  const usePearsonShell =
+    typeof paperId === 'number' && isStudioReviewedPaper(paperId);
+
+  if (
+    usePearsonShell &&
+    !questionsLoading &&
+    !questionsError &&
+    questions.length > 0
+  ) {
+    const moduleQuestions =
+      isSectionMode && currentSectionQuestions.length > 0
+        ? currentSectionQuestions
+        : questions;
+    const globalOffset =
+      isSectionMode && currentSectionQuestions.length > 0
+        ? questions.findIndex((q) => q.id === currentSectionQuestions[0]?.id)
+        : 0;
+    const offset = globalOffset >= 0 ? globalOffset : 0;
+    const moduleSeconds =
+      isSectionMode && sectionTimeLimits[currentSectionIndex]
+        ? Math.round(sectionTimeLimits[currentSectionIndex] * 60)
+        : Math.round((timeLimitMinutes || 40) * 60);
+    const isLastModule = isSectionMode
+      ? currentSectionIndex >= selectedSections.length - 1
+      : true;
+    const examTitle =
+      isSectionMode && selectedSections[currentSectionIndex]
+        ? `${paperName || 'ESAT'} - ${selectedSections[currentSectionIndex]}`
+        : paperName || sessionName || 'ESAT module';
+
+    return (
+      <PearsonSolveBridge
+        key={`pearson-module-${currentSectionIndex}-${moduleQuestions[0]?.id ?? 'x'}`}
+        examTitle={examTitle}
+        questions={moduleQuestions}
+        globalOffset={offset}
+        timeLimitSeconds={moduleSeconds > 0 ? moduleSeconds : 40 * 60}
+        isLastModule={isLastModule}
+        onModuleAdvance={() => {
+          const next = currentSectionIndex + 1;
+          setCurrentSectionIndex(next);
+          // No invented break in strict simulation (VERIFIED_ESAT: no automatic breaks).
+          setSectionInstructionTimer(0);
+          const nextQs = allSectionsQuestions[next] || [];
+          if (nextQs[0]) {
+            const gi = questions.findIndex((q) => q.id === nextQs[0].id);
+            if (gi >= 0) navigateToQuestion(gi);
+          }
+        }}
+      />
+    );
+  }
+
+  if (usePearsonShell && questionsLoading) {
+    return (
+      <Container size='lg'>
+        <div className='flex items-center justify-center min-h-[50vh]'>
+          <LoadingSpinner size='md' />
+        </div>
+      </Container>
+    );
+  }
+
   // Show section summary if instruction timer is active
   // The condition properly hides when timer is 0 or null
-  if (sectionInstructionTimer !== null && sectionInstructionTimer > 0) {
+  if (
+    !usePearsonShell &&
+    sectionInstructionTimer !== null &&
+    sectionInstructionTimer > 0
+  ) {
     return (
       <Container size='lg' className='min-h-screen'>
         <SectionSummary

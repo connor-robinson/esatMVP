@@ -2,6 +2,7 @@
  * Whether past-paper text rendering is enabled (env flag + per-question content_format).
  */
 import type { Question } from '@/types/papers';
+import { isStudioReviewedPaper } from '@/lib/pearson/studioReviewedPapers';
 
 export function isPastPaperTextModeEnabled(): boolean {
   return process.env.NEXT_PUBLIC_PAST_PAPER_TEXT === '1';
@@ -10,8 +11,9 @@ export function isPastPaperTextModeEnabled(): boolean {
 export function shouldRenderPastPaperAsText(question: Question): boolean {
   const isEsatCampMock =
     question.examType === "ESAT CAMP" || Boolean(question.diagramKey);
+  const isReviewedPaper = isStudioReviewedPaper(question.paperId);
   return (
-    (isPastPaperTextModeEnabled() || isEsatCampMock) &&
+    (isPastPaperTextModeEnabled() || isEsatCampMock || isReviewedPaper) &&
     question.contentFormat === "text" &&
     Boolean(question.questionStem?.trim())
   );

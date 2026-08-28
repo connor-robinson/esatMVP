@@ -21,6 +21,7 @@ import { NAVBAR_HEIGHT_PX } from '@/config/layout';
 import { Loader2, Save } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { isPaperImmersiveRoute } from '@/lib/papers/activePaperSessionClient';
+import { isStudioReviewedPaper } from '@/lib/pearson/studioReviewedPapers';
 import { markSessionDetached } from '@/lib/storage/sessionStorage';
 import { DEFAULT_POST_AUTH_PATH } from '@/lib/onboarding/redirect';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
@@ -64,6 +65,7 @@ export function SessionProgressBar({
     isMarkingInfo,
     isPaused,
     paperFullscreenShowMainNavbar,
+    paperId,
     finishMarkSession,
     saveAndLeaveSession,
     clearClientSession,
@@ -220,6 +222,15 @@ export function SessionProgressBar({
   }, [isMarkingInfo, questions, currentQuestionIndex]);
 
   if (!sessionId) return null;
+
+  // Conversion Studio reviewed papers use the Pearson shell (no ESAT Camp bar).
+  if (
+    typeof paperId === 'number' &&
+    isStudioReviewedPaper(paperId) &&
+    pathname.startsWith('/past-papers/solve')
+  ) {
+    return null;
+  }
 
   const calculateSectionProgress = (sectionIndex: number): number => {
     if (isOnInstructionPage) return 0;
@@ -389,7 +400,7 @@ export function SessionProgressBar({
 
       <div className='flex h-12 w-full items-center gap-3 overflow-visible px-4 sm:px-6 lg:px-8'>
         <Link
-          href='/'
+          href={DEFAULT_POST_AUTH_PATH}
           className='group interaction-scale inline-flex shrink-0 items-center'
           aria-label={APP_NAME}
         >
