@@ -34,6 +34,7 @@ html.pearson-exam-active body {
   --pearson-nav-header: #587ab5;
   --pearson-dialog-blue: #0066a1;
   --pearson-radio-blue: #0078d4;
+  --pearson-radio-gray: #666666;
 
   position: fixed;
   inset: 0;
@@ -531,11 +532,26 @@ html.pearson-exam-active body {
 
 .pearson-radio-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 6px;
   cursor: pointer;
   font-size: var(--pearson-font-size-content);
   line-height: 1.4;
+}
+
+/* Square dotted focus ring around the radio only (clears on click elsewhere). */
+.pearson-radio-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 2px;
+  margin-top: 1px;
+}
+
+.pearson-radio-control:focus-within {
+  outline: 1px dotted #000000;
+  outline-offset: 0;
 }
 
 .pearson-radio-row input[type="radio"] {
@@ -549,10 +565,15 @@ html.pearson-exam-active body {
   margin: 0;
   padding: 0;
   flex-shrink: 0;
-  border: 1.5px solid var(--pearson-radio-blue);
+  border: 1.5px solid var(--pearson-radio-gray);
   border-radius: 50% !important;
   background-color: #ffffff;
   cursor: pointer;
+}
+
+.pearson-radio-row input[type="radio"]:focus,
+.pearson-radio-row input[type="radio"]:focus-visible {
+  outline: none;
 }
 
 .pearson-radio-row input[type="radio"]:checked {
@@ -572,6 +593,10 @@ html.pearson-exam-active body {
   background-color: var(--pearson-content-bg);
 }
 
+.pearson-exam-root[data-chrome-mode="themed"] .pearson-radio-row input[type="radio"]:not(:checked) {
+  border-color: #666666;
+}
+
 .pearson-exam-root[data-chrome-mode="themed"] .pearson-radio-row input[type="radio"]:checked {
   border-color: var(--pearson-text);
   background-color: var(--pearson-content-bg);
@@ -582,11 +607,6 @@ html.pearson-exam-active body {
     var(--pearson-content-bg) 39%,
     var(--pearson-content-bg) 100%
   );
-}
-
-.pearson-radio-row input[type="radio"]:focus-visible {
-  outline: 1px dotted var(--pearson-text);
-  outline-offset: 1px;
 }
 
 .pearson-radio-body {

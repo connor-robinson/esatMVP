@@ -37,15 +37,17 @@ export function PearsonRadioGroup({
         return (
           <li key={opt.letter}>
             <label className="pearson-radio-row" htmlFor={id}>
-              <input
-                id={id}
-                type="radio"
-                name={name}
-                value={opt.letter}
-                checked={value === opt.letter}
-                disabled={disabled}
-                onChange={() => onChange(opt.letter)}
-              />
+              <span className="pearson-radio-control">
+                <input
+                  id={id}
+                  type="radio"
+                  name={name}
+                  value={opt.letter}
+                  checked={value === opt.letter}
+                  disabled={disabled}
+                  onChange={() => onChange(opt.letter)}
+                />
+              </span>
               <span className="pearson-radio-body">{opt.content}</span>
             </label>
           </li>

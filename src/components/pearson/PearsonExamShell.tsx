@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, type CSSProperties, type ReactNode } from "react";
+import { useEffect, type CSSProperties, type PointerEvent, type ReactNode } from "react";
 import {
   colourSchemeCssVars,
   usesFullPageTheme,
@@ -10,6 +10,13 @@ import { cn } from "@/lib/utils";
 import "./pearson.css";
 
 const PEARSON_ACTIVE_CLASS = "pearson-exam-active";
+
+function clearRadioFocusOutsideOption(e: PointerEvent<HTMLDivElement>) {
+  const target = e.target as HTMLElement;
+  if (!target.closest(".pearson-radio-row")) {
+    (document.activeElement as HTMLElement | null)?.blur?.();
+  }
+}
 
 interface PearsonExamShellProps {
   colourScheme: ColourSchemeId;
@@ -47,6 +54,7 @@ export function PearsonExamShell({
       data-zoom={zoomLevel}
       role="application"
       aria-label="Exam player"
+      onPointerDownCapture={clearRadioFocusOutsideOption}
     >
       {children}
     </div>
