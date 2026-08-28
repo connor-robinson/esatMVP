@@ -20,8 +20,7 @@ interface PearsonRadioGroupProps {
 
 /**
  * Native radio group styled like small system radios.
- * Labels use "A." etc; clicking text selects. No cards.
- * Arrow keys / Space when focused: native HTML behaviour (OK).
+ * No A/B/C labels (official ESAT player shows radio + answer text only).
  */
 export function PearsonRadioGroup({
   name,
@@ -47,7 +46,6 @@ export function PearsonRadioGroup({
                 disabled={disabled}
                 onChange={() => onChange(opt.letter)}
               />
-              <span className="pearson-radio-letter">{opt.letter}.</span>
               <span className="pearson-radio-body">{opt.content}</span>
             </label>
           </li>

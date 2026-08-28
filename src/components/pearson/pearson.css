@@ -358,11 +358,6 @@
   flex-shrink: 0;
 }
 
-.pearson-radio-letter {
-  font-weight: 400;
-  min-width: 1.5em;
-}
-
 .pearson-radio-body {
   flex: 1;
   min-width: 0;
