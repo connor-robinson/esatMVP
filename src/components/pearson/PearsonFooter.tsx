@@ -22,32 +22,22 @@ export function PearsonFooter({
 }: PearsonFooterProps) {
   return (
     <footer className="pearson-footer">
-      <div className="pearson-footer-group">
-        <button
-          type="button"
-          className="pearson-footer-action"
-          onClick={onEndExam}
-        >
-          <EndExamIcon />
-          <PearsonMnemonicLabel label="End Exam" letter="E" />
-        </button>
-        <span className="pearson-footer-vrule" aria-hidden="true" />
-      </div>
+      <button type="button" className="pearson-footer-action" onClick={onEndExam}>
+        <EndExamIcon />
+        <PearsonMnemonicLabel label="End Exam" letter="E" />
+      </button>
 
       <div className="pearson-footer-group pearson-footer-group--right">
         {variant === "question" ? (
-          <>
-            <button
-              type="button"
-              className="pearson-footer-action"
-              onClick={onNavigator}
-              disabled={navigatorDisabled}
-            >
-              <NavigatorIcon />
-              <PearsonMnemonicLabel label="Navigator" letter="N" />
-            </button>
-            <span className="pearson-footer-vrule" aria-hidden="true" />
-          </>
+          <button
+            type="button"
+            className="pearson-footer-action"
+            onClick={onNavigator}
+            disabled={navigatorDisabled}
+          >
+            <NavigatorIcon />
+            <PearsonMnemonicLabel label="Navigator" letter="N" />
+          </button>
         ) : null}
         <button
           type="button"
@@ -58,7 +48,6 @@ export function PearsonFooter({
           <PearsonMnemonicLabel label="Next" letter="N" />
           <NextArrowIcon />
         </button>
-        <span className="pearson-footer-vrule" aria-hidden="true" />
       </div>
     </footer>
   );

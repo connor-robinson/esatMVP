@@ -19,6 +19,7 @@
   --pearson-nav-blue: #00599c;
   --pearson-nav-highlight: #ffffcc;
   --pearson-dialog-blue: #0066a1;
+  --pearson-radio-blue: #0078d4;
 
   position: fixed;
   inset: 0;
@@ -164,27 +165,92 @@
   background: #000000;
 }
 
-.pearson-colour-select {
-  background: var(--pearson-button-face);
-  color: #000000;
-  border: 1px solid #000000;
+.pearson-colour-dropdown {
+  position: relative;
+}
+
+.pearson-colour-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: transparent;
+  color: inherit;
+  border: none;
   font-family: var(--pearson-font);
   font-size: var(--pearson-font-size-ui);
-  padding: 1px 18px 1px 4px;
-  min-width: 148px;
+  padding: 2px 6px 2px 8px;
+  min-width: 132px;
   height: 22px;
   cursor: pointer;
-  appearance: auto;
 }
 
-.pearson-exam-root[data-chrome-mode="blue"] .pearson-colour-select {
+.pearson-colour-trigger:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.pearson-colour-trigger-label {
+  flex: 1;
+  text-align: left;
+}
+
+.pearson-colour-caret-svg {
+  flex-shrink: 0;
+  display: block;
+}
+
+.pearson-colour-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
   background: #ffffff;
+  border: 1px solid #000000;
+  z-index: 25;
 }
 
-.pearson-exam-root[data-chrome-mode="themed"] .pearson-colour-select {
+.pearson-colour-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: #ffffff;
+  color: #000000;
+  border: none;
+  font-family: var(--pearson-font);
+  font-size: var(--pearson-font-size-ui);
+  padding: 3px 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.pearson-colour-menu button.is-active,
+.pearson-colour-menu button:hover {
+  background: #d9d9d9;
+}
+
+.pearson-exam-root[data-chrome-mode="themed"] .pearson-colour-trigger {
+  color: var(--pearson-text);
+  background: var(--pearson-content-bg);
+  border: 1px solid var(--pearson-border);
+}
+
+.pearson-exam-root[data-chrome-mode="themed"] .pearson-colour-menu {
+  background: var(--pearson-content-bg);
+  border-color: var(--pearson-border);
+}
+
+.pearson-exam-root[data-chrome-mode="themed"] .pearson-colour-menu button {
   background: var(--pearson-content-bg);
   color: var(--pearson-text);
-  border-color: var(--pearson-border);
+}
+
+.pearson-exam-root[data-chrome-mode="themed"] .pearson-colour-menu button.is-active,
+.pearson-exam-root[data-chrome-mode="themed"] .pearson-colour-menu button:hover {
+  background: #d9d9d9;
 }
 
 /* --- Main --- */
@@ -303,6 +369,8 @@
 }
 
 .pearson-footer-group--right {
+  display: flex;
+  align-items: stretch;
   margin-left: auto;
 }
 
@@ -336,17 +404,7 @@
   outline: 1px dotted var(--pearson-header-text);
 }
 
-.pearson-footer-vrule {
-  width: 1px;
-  background: #ffffff;
-  align-self: stretch;
-}
-
-.pearson-exam-root[data-chrome-mode="themed"] .pearson-footer-vrule {
-  background: var(--pearson-border);
-}
-
-/* --- Radios (Pearson system-style circles) --- */
+/* --- Radios (Pearson Windows-style blue circles) --- */
 .pearson-radio-list {
   display: flex;
   flex-direction: column;
@@ -369,26 +427,45 @@
   appearance: none;
   -webkit-appearance: none;
   box-sizing: border-box;
-  width: 11px;
-  height: 11px;
-  min-width: 11px;
-  min-height: 11px;
+  width: 13px;
+  height: 13px;
+  min-width: 13px;
+  min-height: 13px;
   margin: 0;
   padding: 0;
   flex-shrink: 0;
-  border: 1px solid var(--pearson-text);
+  border: 1.5px solid var(--pearson-radio-blue);
   border-radius: 50% !important;
-  background-color: var(--pearson-content-bg);
+  background-color: #ffffff;
   cursor: pointer;
 }
 
 .pearson-radio-row input[type="radio"]:checked {
+  border: 1.5px solid var(--pearson-radio-blue);
+  background-color: #ffffff;
+  background-image: radial-gradient(
+    circle,
+    var(--pearson-radio-blue) 0,
+    var(--pearson-radio-blue) 38%,
+    #ffffff 39%,
+    #ffffff 100%
+  );
+}
+
+.pearson-exam-root[data-chrome-mode="themed"] .pearson-radio-row input[type="radio"] {
+  border-color: var(--pearson-text);
+  background-color: var(--pearson-content-bg);
+}
+
+.pearson-exam-root[data-chrome-mode="themed"] .pearson-radio-row input[type="radio"]:checked {
+  border-color: var(--pearson-text);
   background-color: var(--pearson-content-bg);
   background-image: radial-gradient(
     circle,
     var(--pearson-text) 0,
     var(--pearson-text) 38%,
-    var(--pearson-content-bg) 40%
+    var(--pearson-content-bg) 39%,
+    var(--pearson-content-bg) 100%
   );
 }
 

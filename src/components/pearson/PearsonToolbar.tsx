@@ -1,9 +1,9 @@
 "use client";
 
-import { DROPDOWN_COLOUR_SCHEMES } from "@/lib/pearson/colourSchemes";
 import type { ColourSchemeId } from "@/lib/pearson/types";
 import { PearsonMnemonicLabel } from "./PearsonMnemonicLabel";
 import { FlagIcon } from "./PearsonIcons";
+import { PearsonColourSchemeDropdown } from "./PearsonColourSchemeDropdown";
 
 interface PearsonToolbarProps {
   flagged?: boolean;
@@ -40,21 +40,11 @@ export function PearsonToolbar({
             <span className="pearson-toolbar-divider" aria-hidden="true" />
           </>
         ) : null}
-        <select
-          className="pearson-colour-select"
+        <PearsonColourSchemeDropdown
           value={colourScheme}
+          onChange={onColourSchemeChange}
           disabled={disabled}
-          onChange={(e) =>
-            onColourSchemeChange(e.target.value as ColourSchemeId)
-          }
-          aria-label="Color Scheme"
-        >
-          {DROPDOWN_COLOUR_SCHEMES.map((scheme) => (
-            <option key={scheme.id} value={scheme.id}>
-              {scheme.label}
-            </option>
-          ))}
-        </select>
+        />
       </div>
     </div>
   );
