@@ -148,31 +148,61 @@ html.pearson-exam-active body {
   text-overflow: ellipsis;
 }
 
-/* Chrome SVG icons (cannot clip unlike scaled bitmap extractions). */
-.pearson-chrome-icon {
+/* Official ESAT specimen bitmap icons (user screenshot crops in public/pearson/icons). */
+.pearson-raster-icon {
   display: block;
   flex-shrink: 0;
-  overflow: visible;
+  object-fit: contain;
+  object-position: center;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
-.pearson-chrome-icon--header {
-  width: 12px;
+.pearson-raster-icon--header {
   height: 12px;
+  width: auto;
 }
 
-.pearson-chrome-icon--toolbar {
-  width: 12px;
+.pearson-raster-icon--toolbar {
   height: 12px;
+  width: auto;
 }
 
-.pearson-chrome-icon--footer {
-  width: 16px;
-  height: 14px;
+.pearson-raster-icon--footer {
+  height: 12px;
+  width: auto;
 }
 
-.pearson-chrome-icon--dialog {
-  width: 18px;
+.pearson-raster-icon--dialog {
   height: 18px;
+  width: auto;
+}
+
+.pearson-raster-icon--timer,
+.pearson-raster-icon--counter {
+  max-width: 14px;
+}
+
+.pearson-raster-icon--timer-yellow {
+  max-width: 16px;
+}
+
+.pearson-raster-icon--flag {
+  max-width: 12px;
+}
+
+.pearson-raster-icon--end-exam {
+  height: 11px;
+  max-width: 22px;
+}
+
+.pearson-raster-icon--navigator {
+  max-width: 14px;
+}
+
+.pearson-raster-icon--next,
+.pearson-raster-icon--prev {
+  max-width: 16px;
 }
 
 .pearson-header-right {

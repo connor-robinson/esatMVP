@@ -1,100 +1,88 @@
-/** Inline SVG chrome icons matching ESAT Pearson VUE player. */
+/** Official Pearson VUE bitmap icons from user-supplied ESAT screenshot crops. */
 
-const CHROME_ICON = "pearson-chrome-icon";
+const ICONS = {
+  flag: "/pearson/icons/flag.png",
+  flagFilled: "/pearson/icons/flag-filled.png",
+  endExam: "/pearson/icons/end-exam.png",
+  counter: "/pearson/icons/counter.png",
+  timer: "/pearson/icons/timer.png",
+  timerYellow: "/pearson/icons/timer-yellow.png",
+  prev: "/pearson/icons/prev.png",
+  navigator: "/pearson/icons/navigator.png",
+  next: "/pearson/icons/next.png",
+} as const;
 
-export function EndExamIcon({ className }: { className?: string }) {
+type IconSlot = "header" | "toolbar" | "footer" | "dialog";
+
+type RasterIconProps = {
+  src: string;
+  slot: IconSlot;
+  variant?: string;
+  className?: string;
+};
+
+function RasterIcon({ src, slot, variant, className }: RasterIconProps) {
+  const classes = [
+    "pearson-raster-icon",
+    `pearson-raster-icon--${slot}`,
+    variant ? `pearson-raster-icon--${variant}` : null,
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <svg
-      className={[CHROME_ICON, CHROME_ICON + "--footer", className].filter(Boolean).join(" ")}
-      viewBox="0 0 20 14"
+    <img
+      src={src}
+      alt=""
       aria-hidden="true"
-    >
-      <path
-        d="M7 2h9v10H7"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.15"
-      />
-      <path d="M1 7h5" fill="none" stroke="currentColor" strokeWidth="1.15" />
-      <path
-        d="M3 5l2 2-2 2"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.15"
-        strokeLinejoin="miter"
-      />
-    </svg>
+      className={classes}
+      draggable={false}
+    />
   );
 }
 
-/** Chunky rounded footer arrow (specimen style). */
+export function EndExamIcon({ className }: { className?: string }) {
+  return (
+    <RasterIcon
+      src={ICONS.endExam}
+      slot="footer"
+      variant="end-exam"
+      className={className}
+    />
+  );
+}
+
 export function NextArrowIcon({ className }: { className?: string }) {
   return (
-    <svg
-      className={[CHROME_ICON, CHROME_ICON + "--footer", className].filter(Boolean).join(" ")}
-      viewBox="0 0 16 14"
-      aria-hidden="true"
-    >
-      <path
-        d="M1 7h7.5"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.4"
-        strokeLinecap="round"
-      />
-      <path
-        d="M7 2.5l5.5 4.5-5.5 4.5"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <RasterIcon
+      src={ICONS.next}
+      slot="footer"
+      variant="next"
+      className={className}
+    />
   );
 }
 
 export function PrevArrowIcon({ className }: { className?: string }) {
   return (
-    <svg
-      className={[CHROME_ICON, CHROME_ICON + "--footer", className].filter(Boolean).join(" ")}
-      viewBox="0 0 16 14"
-      aria-hidden="true"
-    >
-      <path
-        d="M15 7H7.5"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.4"
-        strokeLinecap="round"
-      />
-      <path
-        d="M9 2.5 3.5 7 9 11.5"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <RasterIcon
+      src={ICONS.prev}
+      slot="footer"
+      variant="prev"
+      className={className}
+    />
   );
 }
 
 export function NavigatorIcon({ className }: { className?: string }) {
   return (
-    <svg
-      className={[CHROME_ICON, CHROME_ICON + "--footer", className].filter(Boolean).join(" ")}
-      viewBox="0 0 16 16"
-      aria-hidden="true"
-    >
-      <circle cx="8" cy="8" r="1.1" fill="currentColor" />
-      {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
-        const a = (i * Math.PI * 2) / 8 - Math.PI / 2;
-        const x = 8 + 5.5 * Math.cos(a);
-        const y = 8 + 5.5 * Math.sin(a);
-        return <circle key={i} cx={x} cy={y} r="0.85" fill="currentColor" />;
-      })}
-    </svg>
+    <RasterIcon
+      src={ICONS.navigator}
+      slot="footer"
+      variant="navigator"
+      className={className}
+    />
   );
 }
 
@@ -105,105 +93,40 @@ export function TimerClockIcon({
   className?: string;
   yellow?: boolean;
 }) {
-  const stroke = yellow ? "#ffff00" : "currentColor";
   return (
-    <svg
-      className={[CHROME_ICON, CHROME_ICON + "--header", className].filter(Boolean).join(" ")}
-      viewBox="0 0 16 16"
-      aria-hidden="true"
-    >
-      <line
-        x1="3.5"
-        y1="9"
-        x2="3.5"
-        y2="6.5"
-        stroke={stroke}
-        strokeWidth="1.1"
-        strokeLinecap="round"
-      />
-      <circle cx="9" cy="8" r="5.5" fill="none" stroke={stroke} strokeWidth="1.1" />
-      <line
-        x1="9"
-        y1="8"
-        x2="9"
-        y2="4.5"
-        stroke={stroke}
-        strokeWidth="1.1"
-        strokeLinecap="round"
-      />
-      <line
-        x1="9"
-        y1="8"
-        x2="11.8"
-        y2="9.8"
-        stroke={stroke}
-        strokeWidth="1.1"
-        strokeLinecap="round"
-      />
-    </svg>
+    <RasterIcon
+      src={yellow ? ICONS.timerYellow : ICONS.timer}
+      slot="header"
+      variant={yellow ? "timer-yellow" : "timer"}
+      className={className}
+    />
   );
 }
 
 export function QuestionCounterIcon({ className }: { className?: string }) {
   return (
-    <svg
-      className={[CHROME_ICON, CHROME_ICON + "--header", className].filter(Boolean).join(" ")}
-      viewBox="0 0 16 16"
-      aria-hidden="true"
-    >
-      <line x1="5" y1="2.5" x2="11" y2="2.5" stroke="currentColor" strokeWidth="1.15" />
-      <rect
-        x="3.25"
-        y="5.25"
-        width="9.5"
-        height="5.5"
-        rx="2.75"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.15"
-      />
-      <line x1="5" y1="13.5" x2="11" y2="13.5" stroke="currentColor" strokeWidth="1.15" />
-    </svg>
+    <RasterIcon
+      src={ICONS.counter}
+      slot="header"
+      variant="counter"
+      className={className}
+    />
   );
 }
 
-/** White outline waving flag on toolbar; yellow fill when flagged. */
+/** White outline waving flag on toolbar; filled asset when flagged. */
 export function FlagIcon({ filled }: { filled?: boolean }) {
   return (
-    <svg
-      className={[CHROME_ICON, CHROME_ICON + "--toolbar"].join(" ")}
-      viewBox="0 0 16 14"
-      aria-hidden="true"
-    >
-      <path
-        d="M2.5 1.2v11.6"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1"
-        strokeLinecap="square"
-      />
-      <path
-        d="M2.5 2.2h8.2c.45 0 .85.25 1 .65l-1.15 1.85c-.35.55.05 1.15.65 1.15h.75c.35 0 .6.25.45.55l-1.55 2.25c-.25.4.05.85.5.85h-1.1l-1.35-.35-1.55.35-1.55-.45V2.2z"
-        fill={filled ? "#ffcc00" : "none"}
-        stroke="currentColor"
-        strokeWidth="1"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <RasterIcon
+      src={filled ? ICONS.flagFilled : ICONS.flag}
+      slot="toolbar"
+      variant="flag"
+    />
   );
 }
 
 export function NavigatorWindowIcon() {
-  return (
-    <svg
-      className={[CHROME_ICON, CHROME_ICON + "--dialog"].join(" ")}
-      viewBox="0 0 18 18"
-      aria-hidden="true"
-    >
-      <circle cx="9" cy="9" r="7" fill="none" stroke="currentColor" strokeWidth="1.2" />
-      <path d="M9 4v2M9 12v2M4 9h2M12 9h2" stroke="currentColor" strokeWidth="1" />
-    </svg>
-  );
+  return <RasterIcon src={ICONS.navigator} slot="dialog" variant="navigator" />;
 }
 
 export function InfoIcon() {
