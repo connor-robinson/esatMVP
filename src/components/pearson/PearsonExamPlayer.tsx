@@ -129,6 +129,8 @@ export function PearsonExamPlayer({
                 showQuestionCounter={c.showQuestionCounter}
                 questionIndex={c.currentQuestionIndex}
                 totalQuestions={c.totalQuestions}
+                counterHidden={c.questionCounterHidden}
+                onToggleCounter={c.toggleQuestionCounterHidden}
               />
               {showToolbar ? (
                 <PearsonToolbar

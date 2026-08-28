@@ -100,6 +100,7 @@ export function usePearsonExamController(
   const [zoomLevel, setZoomLevel] = useState<ZoomLevel>(100);
   const [pendingNavIndex, setPendingNavIndex] = useState<number | null>(null);
   const [endExamReturnScreen, setEndExamReturnScreen] = useState<ExamScreen>("nda");
+  const [questionCounterHidden, setQuestionCounterHidden] = useState(false);
   const [nowTick, setNowTick] = useState(() => Date.now());
 
   const currentQuestion = questions[currentQuestionIndex] ?? null;
@@ -347,6 +348,10 @@ export function usePearsonExamController(
     setColourScheme((prev) => persistColourScheme(prev, id));
   }, []);
 
+  const toggleQuestionCounterHidden = useCallback(() => {
+    setQuestionCounterHidden((hidden) => !hidden);
+  }, []);
+
   const zoomIn = useCallback(() => {
     setZoomLevel((z) => stepZoom(z, "in"));
   }, []);
@@ -466,6 +471,7 @@ export function usePearsonExamController(
     currentFlagged,
     currentAnswer,
     showQuestionCounter,
+    questionCounterHidden,
     showFlagToolbar,
     showPrequestionFooter,
     showQuestionFooter,
@@ -487,6 +493,7 @@ export function usePearsonExamController(
     toggleCurrentFlag,
     onViewportViewedToEnd,
     changeColourScheme,
+    toggleQuestionCounterHidden,
     zoomIn,
     zoomOut,
     handleVerifiedHotkey,

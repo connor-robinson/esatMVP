@@ -57,9 +57,26 @@ export function NavigatorIcon({ className }: { className?: string }) {
 
 export function QuestionCounterIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
-      <rect x="2" y="1" width="10" height="12" fill="none" stroke="currentColor" strokeWidth="1" />
-      <path d="M4 4h6M4 7h6M4 10h4" stroke="currentColor" strokeWidth="0.9" />
+    <svg
+      className={className}
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      aria-hidden="true"
+    >
+      {/* Three-layer stack: short bar, hollow pill, short bar */}
+      <line x1="5" y1="2.5" x2="11" y2="2.5" stroke="currentColor" strokeWidth="1.15" />
+      <rect
+        x="3.25"
+        y="5.25"
+        width="9.5"
+        height="5.5"
+        rx="2.75"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.15"
+      />
+      <line x1="5" y1="13.5" x2="11" y2="13.5" stroke="currentColor" strokeWidth="1.15" />
     </svg>
   );
 }

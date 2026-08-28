@@ -24,7 +24,6 @@ function statusClass(status: PearsonNavRow["status"]): string {
 
 export function PearsonNavigator({
   rows,
-  currentQuestionIndex,
   unseenIncompleteCount,
   onJump,
   onClose,
