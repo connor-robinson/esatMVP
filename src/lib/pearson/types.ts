@@ -21,6 +21,7 @@ export type ExamScreen =
   | "unseen-content-warning"
   | "end-exam-confirmation"
   | "end-module-confirmation"
+  | "session-ending"
   | "module-transition"
   | "complete";
 

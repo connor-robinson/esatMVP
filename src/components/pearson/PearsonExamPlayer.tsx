@@ -36,6 +36,7 @@ import { PearsonReviewScreen } from "./PearsonReviewScreen";
 import { PearsonRichQuestion } from "./PearsonRichQuestion";
 import { PearsonToolbar } from "./PearsonToolbar";
 import { UnseenContentDialog } from "./UnseenContentDialog";
+import { PearsonSessionEndingOverlay } from "./PearsonSessionEndingOverlay";
 
 export interface PearsonExamPlayerProps {
   mode: ExamMode;
@@ -83,7 +84,9 @@ export function PearsonExamPlayer({
   );
 
   const showChrome =
-    c.screen !== "loading" && c.screen !== "complete" && c.screen !== "module-transition";
+    c.screen !== "loading" &&
+    c.screen !== "complete" &&
+    c.screen !== "module-transition";
 
   const showToolbar =
     showChrome &&
@@ -234,6 +237,10 @@ export function PearsonExamPlayer({
               nextDisabled={c.moduleLocked}
               navigatorDisabled={c.moduleLocked}
             />
+          ) : null}
+
+          {c.screen === "session-ending" ? (
+            <PearsonSessionEndingOverlay />
           ) : null}
         </>
       )}

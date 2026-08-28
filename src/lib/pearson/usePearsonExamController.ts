@@ -37,6 +37,9 @@ import type {
 } from "./types";
 import { MODULE_DURATION_MS } from "./types";
 
+/** Blurred spinner after End Exam / End Module confirm (specimen player). */
+export const SESSION_ENDING_MS = 2800;
+
 export interface UsePearsonExamControllerOptions {
   mode: ExamMode;
   questions: Question[];
@@ -121,24 +124,35 @@ export function usePearsonExamController(
   const remainingLabel = formatRemainingMs(remaining);
 
   const finishModule = useCallback(() => {
-    if (completed) return;
+    if (completed || screen === "session-ending") return;
+    setNavigatorOpen(false);
+    setScreen("session-ending");
+  }, [completed, screen]);
+
+  useEffect(() => {
+    if (screen !== "session-ending" || completed) return;
+
     const endAt = Date.now();
     const deadline = moduleDeadline ?? endAt;
-    const unused = unusedMsAtEnd(deadline, endAt);
-    setCompleted(true);
-    setNavigatorOpen(false);
-    setScreen(
-      moduleTransition.enabled && mode !== "strict-simulation"
-        ? "module-transition"
-        : "complete",
-    );
-    onCompleteRef.current({
-      answers,
-      flagged,
-      remainingMsAtEnd: unused,
-      unusedMs: unused,
-      completedAt: endAt,
-    });
+
+    const id = window.setTimeout(() => {
+      const unused = unusedMsAtEnd(deadline, endAt);
+      setCompleted(true);
+      setScreen(
+        moduleTransition.enabled && mode !== "strict-simulation"
+          ? "module-transition"
+          : "complete",
+      );
+      onCompleteRef.current({
+        answers,
+        flagged,
+        remainingMsAtEnd: unused,
+        unusedMs: unused,
+        completedAt: endAt,
+      });
+    }, SESSION_ENDING_MS);
+
+    return () => window.clearTimeout(id);
   }, [
     answers,
     completed,
@@ -146,6 +160,7 @@ export function usePearsonExamController(
     mode,
     moduleDeadline,
     moduleTransition.enabled,
+    screen,
   ]);
 
   useEffect(() => {
@@ -347,7 +362,7 @@ export function usePearsonExamController(
         "altKey" | "ctrlKey" | "metaKey" | "key" | "code" | "preventDefault"
       >,
     ) => {
-      if (completed) return false;
+      if (completed || screen === "session-ending") return false;
       const endExamDialogOpen = screen === "end-exam-confirmation" || screen === "end-module-confirmation";
       const action = resolveStrictShortcut(mode, e, {
         endExamDialogOpen,

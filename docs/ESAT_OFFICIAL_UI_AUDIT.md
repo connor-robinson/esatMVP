@@ -49,6 +49,7 @@ Sources consulted:
 | Footer same blue family | `VERIFIED_ESAT` | Specimen screenshots |
 | Counter format `N of M` (not "Question N of M") | `VERIFIED_ESAT` | Specimen question screen |
 | Loading screen with segmented bar | `VERIFIED_ESAT` | Specimen screen 1 |
+| Blurred spinner after End Exam confirm | `VERIFIED_ESAT` | Specimen post-end session |
 | NDA / welcome screen before questions | `VERIFIED_ESAT` | Specimen screen 2 |
 | Instructions table (Untimed) | `VERIFIED_ESAT` | Specimen screen 3 |
 | End Exam footer (not Previous) | `VERIFIED_ESAT` | Specimen screens 2–4 |
