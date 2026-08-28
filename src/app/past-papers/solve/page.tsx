@@ -28,9 +28,8 @@ import { useSessionActivity } from '@/hooks/useSessionActivity';
 import { usePaperSessionHydrated } from '@/hooks/usePaperSessionHydrated';
 import type { Letter, PaperType } from '@/types/papers';
 import { cn } from '@/lib/utils';
-import { shouldRenderPastPaperAsText } from '@/lib/papers/pastPaperTextMode';
+import { shouldRenderPastPaperAsText, usePastPaperQuestionBankLayout } from '@/lib/papers/pastPaperTextMode';
 import { PastPaperTextQuestion } from '@/components/papers/PastPaperTextQuestion';
-import { isEsatCampMockExamType } from '@/lib/papers/esatCampMocks';
 import {
   solveSessionChoiceBtn,
   solveSessionChoiceBtnSelected,
@@ -535,7 +534,7 @@ export default function PapersSolvePage() {
     ? shouldRenderPastPaperAsText(displayQuestion)
     : false;
   const useMockQuestionBankLayout = displayQuestion
-    ? isEsatCampMockExamType(displayQuestion.examType)
+    ? usePastPaperQuestionBankLayout(displayQuestion)
     : false;
 
   // Find the full index in the questions array for answer storage

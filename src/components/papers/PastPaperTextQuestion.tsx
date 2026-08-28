@@ -8,12 +8,12 @@ import { cn } from "@/lib/utils";
 import {
   getPastPaperOptionLetters,
   shouldRenderPastPaperAsText,
+  usePastPaperQuestionBankLayout,
 } from "@/lib/papers/pastPaperTextMode";
 import {
   solveSessionTextChoiceBtn,
   solveSessionTextChoiceBtnSelected,
 } from "@/lib/papers/solveSessionStyles";
-import { isEsatCampMockExamType } from "@/lib/papers/esatCampMocks";
 import type { Letter, Question } from "@/types/papers";
 
 interface PastPaperTextQuestionProps {
@@ -34,8 +34,8 @@ const OPTION_ROW_HOVER =
   "hover:bg-surface-mid/70 dark:hover:bg-surface-neutral";
 
 /**
- * Text past-paper renderer.
- * ESAT CAMP mocks use Question Bank-style panels (text, not paper images).
+ * Text past-paper renderer (ESAT CAMP mocks only).
+ * Official past papers use the legacy image UI via QuestionDisplay.
  */
 export function PastPaperTextQuestion({
   question,
@@ -55,7 +55,7 @@ export function PastPaperTextQuestion({
     return null;
   }
 
-  const useQuestionBankLayout = isEsatCampMockExamType(question.examType);
+  const useQuestionBankLayout = usePastPaperQuestionBankLayout(question);
   const useInlineStem = /<figure\b[^>]*class="[^"]*qg-diagram/i.test(
     question.questionStem ?? "",
   );

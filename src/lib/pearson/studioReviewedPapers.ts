@@ -4,8 +4,9 @@
  * Source of truth (Conversion Studio reviews cache):
  *   question-generation/past_paper_converter/_cache/studio_paper_reviews.json
  *
- * Keep this list in sync when studio reviews change. Used for text-mode rendering
- * (PastPaperTextQuestion), not the Pearson player shell (see /pearson/demo).
+ * Keep this list in sync when studio reviews change. Used for Pearson/text QA
+ * tooling; the public past-papers app keeps image UI for these papers unless
+ * they are ESAT CAMP mocks (see pastPaperTextMode.ts).
  */
 
 export const REVIEWED_PAPER_IDS: readonly number[] = [
