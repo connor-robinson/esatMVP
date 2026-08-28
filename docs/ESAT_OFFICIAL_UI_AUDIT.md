@@ -161,6 +161,12 @@ Sources consulted:
 | `--pearson-dialog-blue` | `#0066a1` |
 | `--pearson-content-bg` | `#ffffff` |
 | `--pearson-text` | `#000000` |
+| `--pearson-header-height-compact` | `17px` (title-only screens) |
+| `--pearson-header-height-full` | `24px` (timer + counter stacked) |
+| `--pearson-toolbar-height` | `15px` |
+| `--pearson-footer-height` | `28px` |
+| `--pearson-content-padding` | `8px 12px` |
+| `--pearson-font-serif` | Times New Roman (instruction table headers) |
 
 Reference screenshots (where permissible) live under `docs/pearson-reference/`.
 

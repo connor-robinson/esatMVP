@@ -29,9 +29,12 @@ export function PearsonHeader({
 }: PearsonHeaderProps) {
   const n = questionIndex + 1;
   const showRight = showTimer || showQuestionCounter;
+  const headerClass = showRight
+    ? "pearson-header-bar pearson-header-bar--full"
+    : "pearson-header-bar pearson-header-bar--compact";
 
   return (
-    <header className="pearson-header-bar">
+    <header className={headerClass}>
       <div className="pearson-header-title">{examTitle}</div>
       {showRight ? (
         <div className="pearson-header-right">

@@ -35,6 +35,14 @@ html.pearson-exam-active body {
   --pearson-dialog-blue: #0066a1;
   --pearson-radio-blue: #0078d4;
   --pearson-radio-gray: #666666;
+  /* Measured from ESAT specimen screenshots at 100% (1024×507 captures). */
+  --pearson-header-height-compact: 17px;
+  --pearson-header-height-full: 24px;
+  --pearson-toolbar-height: 15px;
+  --pearson-footer-height: 28px;
+  --pearson-content-padding-x: 12px;
+  --pearson-content-padding-y: 8px;
+  --pearson-font-serif: "Times New Roman", Times, serif;
 
   position: fixed;
   inset: 0;
@@ -110,12 +118,22 @@ html.pearson-exam-active body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 42px;
-  padding: 4px 8px;
+  box-sizing: border-box;
+  padding: 3px 8px;
   background: var(--pearson-header);
   color: var(--pearson-header-text);
   border-bottom: 1px solid var(--pearson-border);
   overflow: visible;
+}
+
+.pearson-header-bar--compact {
+  min-height: var(--pearson-header-height-compact);
+}
+
+.pearson-header-bar--full {
+  min-height: var(--pearson-header-height-full);
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
 
 .pearson-exam-root[data-chrome-mode="blue"] .pearson-header-bar {
@@ -138,13 +156,13 @@ html.pearson-exam-active body {
 }
 
 .pearson-chrome-icon--header {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
 }
 
 .pearson-chrome-icon--toolbar {
-  width: 14px;
-  height: 13px;
+  width: 12px;
+  height: 12px;
 }
 
 .pearson-chrome-icon--footer {
@@ -161,15 +179,16 @@ html.pearson-exam-active body {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 2px;
+  gap: 1px;
   flex-shrink: 0;
   font-size: var(--pearson-font-size-ui);
+  line-height: 11px;
 }
 
 .pearson-timer-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   background: transparent;
   color: inherit;
   border: none;
@@ -178,7 +197,8 @@ html.pearson-exam-active body {
   font: inherit;
   font-size: var(--pearson-font-size-ui);
   cursor: pointer;
-  line-height: normal;
+  line-height: 11px;
+  height: 11px;
   overflow: visible;
 }
 
@@ -203,7 +223,7 @@ html.pearson-exam-active body {
 .pearson-question-counter-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   background: transparent;
   color: inherit;
   border: none;
@@ -212,7 +232,8 @@ html.pearson-exam-active body {
   font: inherit;
   font-size: var(--pearson-font-size-ui);
   cursor: pointer;
-  line-height: normal;
+  line-height: 11px;
+  height: 11px;
   overflow: visible;
 }
 
@@ -245,8 +266,9 @@ html.pearson-exam-active body {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  min-height: 28px;
-  padding: 4px 6px;
+  box-sizing: border-box;
+  min-height: var(--pearson-toolbar-height);
+  padding: 1px 6px;
   background: var(--pearson-toolbar);
   color: var(--pearson-header-text);
   border-bottom: 1px solid var(--pearson-border);
@@ -266,15 +288,15 @@ html.pearson-exam-active body {
 .pearson-toolbar-btn {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   background: transparent;
   color: inherit;
   border: none;
-  padding: 4px 8px;
+  padding: 0 8px;
   cursor: pointer;
   font: inherit;
   font-size: var(--pearson-font-size-ui);
-  line-height: normal;
+  line-height: 11px;
   overflow: visible;
 }
 
@@ -284,9 +306,10 @@ html.pearson-exam-active body {
 
 .pearson-toolbar-divider {
   width: 1px;
-  height: 18px;
+  height: 13px;
   background: var(--pearson-border);
   margin: 0 2px;
+  align-self: center;
 }
 
 .pearson-exam-root[data-chrome-mode="blue"] .pearson-toolbar-divider {
@@ -301,16 +324,24 @@ html.pearson-exam-active body {
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
   background: transparent;
   color: inherit;
   border: none;
+  box-sizing: border-box;
   font-family: var(--pearson-font);
   font-size: var(--pearson-font-size-ui);
-  padding: 2px 6px 2px 8px;
-  min-width: 132px;
-  height: 22px;
+  line-height: 11px;
+  padding: 0 4px 0 6px;
+  min-width: 128px;
+  height: 13px;
   cursor: pointer;
+}
+
+.pearson-exam-root[data-chrome-mode="blue"] .pearson-colour-trigger {
+  background: #ffffff;
+  color: #006daa;
+  border: 1px solid #000000;
 }
 
 .pearson-colour-trigger:disabled {
@@ -391,32 +422,38 @@ html.pearson-exam-active body {
 }
 
 .pearson-static-content {
-  padding: 16px 24px 24px;
+  padding: var(--pearson-content-padding-y) var(--pearson-content-padding-x) 16px;
   font-size: var(--pearson-font-size-content);
-  line-height: 1.45;
-  max-width: 900px;
+  line-height: 1.35;
+  max-width: none;
 }
 
 .pearson-static-content p {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
 }
 
 .pearson-info-table {
   border-collapse: collapse;
-  margin-bottom: 16px;
-  font-size: 13px;
+  margin-bottom: 12px;
+  font-size: var(--pearson-font-size-content);
 }
 
 .pearson-info-table th,
 .pearson-info-table td {
   border: 1px solid var(--pearson-border);
-  padding: 4px 16px;
+  padding: 3px 14px;
   text-align: center;
-  min-width: 120px;
+  min-width: 110px;
 }
 
 .pearson-info-table th {
+  font-family: var(--pearson-font-serif);
   font-weight: 700;
+}
+
+.pearson-info-table td {
+  font-family: var(--pearson-font);
+  font-weight: 400;
 }
 
 /* NDA logo block */
@@ -460,7 +497,7 @@ html.pearson-exam-active body {
 .pearson-viewport {
   height: 100%;
   overflow: auto;
-  padding: 12px 20px 20px;
+  padding: var(--pearson-content-padding-y) var(--pearson-content-padding-x) 16px;
   font-size: var(--pearson-font-size-content);
   line-height: 1.4;
 }
@@ -488,7 +525,8 @@ html.pearson-exam-active body {
   display: flex;
   align-items: stretch;
   justify-content: space-between;
-  min-height: 34px;
+  box-sizing: border-box;
+  min-height: var(--pearson-footer-height);
   background: var(--pearson-footer);
   color: var(--pearson-header-text);
   border-top: 1px solid var(--pearson-border);
@@ -524,16 +562,16 @@ html.pearson-exam-active body {
 .pearson-footer-action {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   background: transparent;
   color: inherit;
   border: none;
-  padding: 6px 14px;
+  padding: 4px 12px;
   font: inherit;
   font-size: var(--pearson-font-size-ui);
   cursor: pointer;
-  min-height: 34px;
-  line-height: normal;
+  min-height: var(--pearson-footer-height);
+  line-height: 11px;
   overflow: visible;
 }
 
