@@ -51,76 +51,76 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
           Example question
         </p>
 
-        <div className="mt-7 grid min-h-[240px] grid-cols-1 items-center gap-6 sm:grid-cols-[0.9fr_1.1fr] sm:gap-7">
-          <div className="text-[clamp(1.125rem,2.8vw,1.5625rem)] font-medium leading-[1.3] text-white">
+        <div className="mt-6 space-y-5">
+          <div className="text-sm leading-snug text-slate-200 sm:text-[15px]">
             <p>The graph shown is</p>
-            <p className="mt-1">
+            <p className="mt-0.5">
               <LazyStemContent content="$y = f(x)$." className="text-inherit" />
             </p>
-            <p className="mt-4">Which graph could represent</p>
-            <p className="mt-1 flex flex-wrap items-baseline gap-x-1 whitespace-nowrap">
+            <p className="mt-2.5">Which graph could represent</p>
+            <p className="mt-0.5 flex flex-wrap items-baseline gap-x-1 whitespace-nowrap">
               <LazyStemContent
                 content="$y = \\dfrac{1}{f(x)}$"
                 className="inline text-inherit [&>div]:inline"
               />
-              <span>?</span>
+              <span className="text-white">?</span>
             </p>
           </div>
 
-          <div className="h-[252px] w-full min-w-0">
+          <div className="h-[220px] w-full sm:h-[240px]">
             <MainReciprocalGraph className="h-full w-full" />
           </div>
         </div>
 
-        <div className="my-7 border-t border-white/10" aria-hidden />
+        <div className="my-6 border-t border-white/10" aria-hidden />
 
-        <div
-          className="grid grid-cols-2 gap-3.5 max-[380px]:grid-cols-1 min-[900px]:grid-cols-4 min-[900px]:gap-4"
-          role="radiogroup"
-          aria-label="Answer options"
-        >
-          {OPTION_GRAPHS.map((option) => {
-            const isSelected = selected === option.id;
-            const showCorrect = phase !== "idle" && option.isCorrect;
-            const showIncorrect =
-              phase === "incorrect" && isSelected && !option.isCorrect;
+        <div className="space-y-3.5" role="radiogroup" aria-label="Answer options">
+          {[OPTION_GRAPHS.slice(0, 2), OPTION_GRAPHS.slice(2, 4)].map((row, rowIndex) => (
+            <div key={rowIndex} className="grid grid-cols-2 gap-3.5">
+              {row.map((option) => {
+                const isSelected = selected === option.id;
+                const showCorrect = phase !== "idle" && option.isCorrect;
+                const showIncorrect =
+                  phase === "incorrect" && isSelected && !option.isCorrect;
 
-            return (
-              <button
-                key={option.id}
-                type="button"
-                role="radio"
-                aria-checked={isSelected}
-                onClick={() => handleSelect(option.id)}
-                className={cn(
-                  "group relative flex min-h-[142px] flex-col overflow-hidden rounded-[18px] border text-left transition-all duration-200",
-                  "bg-[#101a2d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/50",
-                  isSelected
-                    ? "border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_0_20px_rgba(59,130,246,0.14)]"
-                    : "border-white/10 hover:-translate-y-px hover:border-white/22",
-                  showCorrect && "border-[#34D399]/45",
-                  showIncorrect && "border-[#F87171]/40",
-                )}
-              >
-                <span
-                  className={cn(
-                    "absolute left-3 top-3 z-10 inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-bold",
-                    isSelected
-                      ? "bg-white/15 text-white"
-                      : "bg-white/[0.07] text-slate-300",
-                  )}
-                >
-                  {option.id}
-                </span>
-                <div className="flex flex-1 items-stretch px-2 pb-2 pt-9">
-                  <OptionReciprocalGraph
-                    option={option}
-                    className="h-full w-full min-h-[108px]"
-                  />
-                </div>
-              </button>
-            );
-          })}
+                return (
+                  <button
+                    key={option.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={isSelected}
+                    onClick={() => handleSelect(option.id)}
+                    className={cn(
+                      "group relative flex min-h-[132px] flex-col overflow-hidden rounded-[18px] border text-left transition-all duration-200",
+                      "bg-[#101a2d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/50",
+                      isSelected
+                        ? "border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_0_20px_rgba(59,130,246,0.14)]"
+                        : "border-white/10 hover:-translate-y-px hover:border-white/22",
+                      showCorrect && "border-[#34D399]/45",
+                      showIncorrect && "border-[#F87171]/40",
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "absolute left-3 top-3 z-10 inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-bold",
+                        isSelected
+                          ? "bg-white/15 text-white"
+                          : "bg-white/[0.07] text-slate-300",
+                      )}
+                    >
+                      {option.id}
+                    </span>
+                    <div className="flex flex-1 items-stretch px-2 pb-2 pt-9">
+                      <OptionReciprocalGraph
+                        option={option}
+                        className="h-full w-full min-h-[100px]"
+                      />
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          ))}
         </div>
 
         <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
