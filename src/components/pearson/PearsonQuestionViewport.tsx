@@ -10,7 +10,6 @@ import {
 import {
   isSentinelVisibleInRoot,
   isViewportContentFullyViewed,
-  viewportRequiresScrolling,
 } from "@/lib/pearson/viewportSeen";
 import type { ZoomLevel } from "@/lib/pearson/types";
 
@@ -21,9 +20,15 @@ interface PearsonQuestionViewportProps {
   children: ReactNode;
 }
 
+/** Growth past this after a viewed pass means new content appeared (e.g. diagram load). */
+const CONTENT_GROWTH_REVOKE_PX = 24;
+
 /**
  * Scrollable question content. Tracks scroll-to-bottom for Unseen Content gate.
- * Uses a bottom sentinel + resize/image hooks so async diagrams do not false-mark.
+ *
+ * Once the bottom has been reached, scrolling back up keeps the question marked
+ * viewed. Viewed is only revoked if content height grows after that pass
+ * (late-loading images / diagrams).
  */
 export function PearsonQuestionViewport({
   questionKey,
@@ -34,6 +39,7 @@ export function PearsonQuestionViewport({
   const scrollRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const viewedRef = useRef(false);
+  const scrollHeightWhenViewedRef = useRef(0);
 
   const evaluate = useCallback(() => {
     const root = scrollRef.current;
@@ -41,27 +47,38 @@ export function PearsonQuestionViewport({
     if (!root || !sentinel) return;
 
     const { scrollTop, scrollHeight, clientHeight } = root;
-    const requiresScroll = viewportRequiresScrolling(scrollHeight, clientHeight);
-    const viewed =
+    const atBottom =
       isViewportContentFullyViewed(scrollTop, scrollHeight, clientHeight) ||
       isSentinelVisibleInRoot(sentinel, root);
 
-    if (viewed) {
+    if (atBottom) {
       if (!viewedRef.current) {
         viewedRef.current = true;
+        scrollHeightWhenViewedRef.current = scrollHeight;
         onViewedChange(true);
+      } else {
+        // Bottom still visible after growth: keep viewed and update baseline.
+        scrollHeightWhenViewedRef.current = scrollHeight;
       }
       return;
     }
 
-    if (viewedRef.current && requiresScroll) {
+    // Scrolling back up must NOT clear viewed. Only revoke when content grew
+    // after the last successful bottom pass (async diagram / image load).
+    if (
+      viewedRef.current &&
+      scrollHeight >
+        scrollHeightWhenViewedRef.current + CONTENT_GROWTH_REVOKE_PX
+    ) {
       viewedRef.current = false;
+      scrollHeightWhenViewedRef.current = 0;
       onViewedChange(false);
     }
   }, [onViewedChange]);
 
   useEffect(() => {
     viewedRef.current = false;
+    scrollHeightWhenViewedRef.current = 0;
 
     const root = scrollRef.current;
     if (root) {
