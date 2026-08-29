@@ -243,23 +243,29 @@ export function MarketingHomepage({
               <div className="space-y-5">
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Link
-                    href="/login?mode=signup"
+                    href={CALIBRATION_ROUTES.hub}
+                    onClick={() =>
+                      void trackHomepageEvent("calibration_cta_clicked", {
+                        user_state: "logged_out",
+                        destination: CALIBRATION_ROUTES.hub,
+                      })
+                    }
                     className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 text-base font-bold text-[#0A0F1D] shadow-[0_0_28px_rgba(255,255,255,0.22),0_8px_24px_rgba(0,0,0,0.28)] transition-all hover:scale-[1.03] hover:bg-slate-100 hover:shadow-[0_0_36px_rgba(255,255,255,0.32),0_10px_28px_rgba(0,0,0,0.32)] active:scale-[0.98] sm:text-lg"
                   >
-                    Sign up free
+                    Start calibration
                     <span aria-hidden className="text-lg leading-none">
                       →
                     </span>
                   </Link>
                   <Link
-                    href="/login"
+                    href="/login?mode=signup"
                     className="inline-flex items-center justify-center rounded-xl border border-white/20 px-6 py-3.5 text-base font-bold text-white transition-all hover:bg-white/5"
                   >
-                    Sign in
+                    Sign up
                   </Link>
                 </div>
                 <p className="text-sm text-[#94A3B8]">
-                  Sign up to start using for free, upgrade later.
+                  Calibration is free. No sign-up required to get started.
                 </p>
               </div>
             </div>
