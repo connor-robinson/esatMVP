@@ -78,8 +78,8 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: "/past-papers/pearson-demo",
-        destination: "/pearson/demo",
+        source: "/pearson/demo",
+        destination: "/past-papers/pearson-demo",
         permanent: false,
       },
       {
