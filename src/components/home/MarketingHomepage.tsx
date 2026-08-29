@@ -24,6 +24,7 @@ import {
   MONTHLY_PRICE_GBP,
   SEASON_PASS_ACCESS_UNTIL_LABEL,
 } from "@/lib/stripe/best-value";
+import { GraduationCap, ListChecks, ScanEye } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useHomepageAutoHideNav } from "@/hooks/useHomepageAutoHideNav";
 import { ExampleQuestionDemo } from "@/components/home/ExampleQuestionDemo";
@@ -204,7 +205,7 @@ export function MarketingHomepage({
           }}
         />
         <div className="relative mx-auto max-w-[1400px] space-y-6 px-4 sm:px-5 lg:space-y-8 lg:px-6">
-          <div className="grid grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] items-center gap-4 sm:gap-8 lg:gap-10 xl:gap-12">
+          <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-10 xl:gap-12">
             <div className="min-w-0 space-y-7 sm:space-y-9 lg:space-y-11">
               <h1 className="font-display text-[clamp(1.875rem,0.75rem+5vw,6rem)] font-bold leading-[0.95] tracking-[-0.04em]">
                 The leading{" "}
@@ -228,7 +229,7 @@ export function MarketingHomepage({
                 question bank
               </h1>
               <p className="max-w-2xl text-sm leading-relaxed text-[#94A3B8] sm:text-lg lg:text-xl">
-                Secure your Oxbridge offers with our{" "}
+                Practice with our{" "}
                 <span className="text-underline-accent text-white">
                   {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ practice
                   questions
@@ -260,8 +261,8 @@ export function MarketingHomepage({
               </div>
             </div>
 
-            <div className="min-w-0">
-              <ExampleQuestionDemo variant="hero" />
+            <div className="min-w-0 w-full lg:justify-self-stretch">
+              <ExampleQuestionDemo variant="hero" className="w-full max-w-none" />
             </div>
           </div>
 
@@ -315,29 +316,48 @@ export function MarketingHomepage({
                             {
                               value: socialProof.uniqueVisitors,
                               label: "Unique visitors",
+                              icon: ScanEye,
                             },
                           ]
                         : []),
                       {
                         value: socialProof.users,
                         label: "Users",
+                        icon: GraduationCap,
                       },
                       {
                         value: socialProof.questionsAnswered,
                         label: "Questions done",
+                        icon: ListChecks,
                       },
-                    ] as { value: number; label: string }[]
-                  ).map((stat) => (
-                    <div key={stat.label} className="min-w-0">
-                      <dt className="sr-only">{stat.label}</dt>
-                      <dd className="font-display text-2xl font-bold tabular-nums text-white sm:text-3xl">
-                        {stat.value.toLocaleString()}
-                      </dd>
-                      <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#94A3B8] sm:text-xs">
-                        {stat.label}
-                      </p>
-                    </div>
-                  ))}
+                    ] as {
+                      value: number;
+                      label: string;
+                      icon: typeof GraduationCap;
+                    }[]
+                  ).map((stat) => {
+                    const StatIcon = stat.icon;
+                    return (
+                      <div key={stat.label} className="min-w-0">
+                        <dt className="sr-only">{stat.label}</dt>
+                        <dd className="font-display text-2xl font-bold tabular-nums text-white sm:text-3xl">
+                          {stat.value.toLocaleString()}
+                        </dd>
+                        <p className="mt-1.5 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#94A3B8] sm:text-xs">
+                          <span
+                            aria-hidden
+                            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-[#3B82F6]/15"
+                          >
+                            <StatIcon
+                              className="h-3.5 w-3.5 text-[#93C5FD]"
+                              strokeWidth={2.25}
+                            />
+                          </span>
+                          {stat.label}
+                        </p>
+                      </div>
+                    );
+                  })}
                 </dl>
               ) : null}
             </div>
