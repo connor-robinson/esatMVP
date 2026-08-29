@@ -1,19 +1,20 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { LazyInlineMath } from "@/components/home/LazyInlineMath";
-import { LazyStemContent } from "@/components/home/LazyStemContent";
+import { markHomepageExampleRevealPending } from "@/lib/homepage/exampleQuestion";
 import {
-  CORRECT_OPTION_ID,
   MainReciprocalGraph,
   OPTION_GRAPHS,
   OptionReciprocalGraph,
-  RECIPROCAL_EXPLANATION_MARKDOWN,
   type OptionGraphId,
 } from "@/components/home/ReciprocalQuestionGraphs";
 
-type SubmitPhase = "idle" | "correct" | "incorrect";
+type SubmitPhase = "idle" | "submitted";
+
+const REVEAL_REDIRECT = "/dashboard?reveal_example=1";
 
 export function ExampleGraphQuestion({ className }: { className?: string }) {
   const [selected, setSelected] = useState<OptionGraphId | null>(null);
@@ -26,7 +27,7 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
 
   const handleSubmit = useCallback(() => {
     if (!selected) return;
-    setPhase(selected === CORRECT_OPTION_ID ? "correct" : "incorrect");
+    setPhase("submitted");
   }, [selected]);
 
   return (
@@ -81,9 +82,6 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
           >
             {OPTION_GRAPHS.map((option) => {
               const isSelected = selected === option.id;
-              const showCorrect = phase !== "idle" && option.isCorrect;
-              const showIncorrect =
-                phase === "incorrect" && isSelected && !option.isCorrect;
 
               return (
                 <button
@@ -98,8 +96,6 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
                     isSelected
                       ? "border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_0_20px_rgba(59,130,246,0.14)]"
                       : "border-white/10 hover:-translate-y-px hover:border-white/22",
-                    showCorrect && "border-[#34D399]/45",
-                    showIncorrect && "border-[#F87171]/40",
                   )}
                 >
                   <span
@@ -125,54 +121,48 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
           <p className="mt-2 text-xs text-slate-500">Scroll right for more options.</p>
         </div>
 
-        <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
-          <button
-            type="button"
-            onClick={handleSubmit}
-            disabled={!selected}
-            className={cn(
-              "inline-flex items-center justify-center rounded-2xl px-8 py-3.5 text-sm font-semibold transition-all duration-200",
-              selected
-                ? "bg-white/10 text-white/90 hover:bg-white/[0.14]"
-                : "cursor-not-allowed bg-white/[0.06] text-white/40",
-            )}
-          >
-            Submit
-          </button>
-          <p className="text-sm text-slate-400">
-            {phase === "idle"
-              ? "Pick an option, then submit."
-              : phase === "correct"
-                ? "Correct. Nice reasoning."
-                : "Not quite. Compare the asymptotes and branch signs."}
-          </p>
-        </div>
-
-        {phase !== "idle" ? (
-          <div
-            className={cn(
-              "mt-6 rounded-2xl border px-5 py-4",
-              phase === "correct"
-                ? "border-[#34D399]/25 bg-[#34D399]/10"
-                : "border-white/10 bg-white/[0.04]",
-            )}
-          >
-            <p
-              className={cn(
-                "text-sm font-semibold",
-                phase === "correct" ? "text-[#6EE7B7]" : "text-slate-200",
-              )}
-            >
-              {phase === "correct" ? "Well done." : "Hint"}
+        {phase === "submitted" ? (
+          <div className="mt-7 rounded-2xl bg-white/[0.06] px-5 py-4 sm:px-6 sm:py-5">
+            <p className="text-sm font-semibold text-white">Answer locked in.</p>
+            <p className="mt-1 text-sm text-slate-400">
+              Sign in to view whether you got it right and see the worked
+              solution.
             </p>
-            <div className="mt-2 text-sm leading-relaxed text-slate-300">
-              <LazyStemContent
-                content={RECIPROCAL_EXPLANATION_MARKDOWN}
-                className="text-inherit"
-              />
+            <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center">
+              <Link
+                href={`/login?redirectTo=${encodeURIComponent(REVEAL_REDIRECT)}`}
+                onClick={() => markHomepageExampleRevealPending()}
+                className="inline-flex items-center justify-center rounded-2xl bg-white/10 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-white/[0.14]"
+              >
+                Sign in to view answer
+              </Link>
+              <Link
+                href={`/login?mode=signup&redirectTo=${encodeURIComponent(REVEAL_REDIRECT)}`}
+                onClick={() => markHomepageExampleRevealPending()}
+                className="inline-flex items-center justify-center rounded-2xl px-4 py-3 text-sm font-semibold text-slate-400 transition-colors hover:text-white"
+              >
+                Sign up for free
+              </Link>
             </div>
           </div>
-        ) : null}
+        ) : (
+          <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={!selected}
+              className={cn(
+                "inline-flex items-center justify-center rounded-2xl px-8 py-3.5 text-sm font-semibold transition-all duration-200",
+                selected
+                  ? "bg-white/10 text-white/90 hover:bg-white/[0.14]"
+                  : "cursor-not-allowed bg-white/[0.06] text-white/40",
+              )}
+            >
+              Submit
+            </button>
+            <p className="text-sm text-slate-400">Pick an option, then submit.</p>
+          </div>
+        )}
       </div>
     </div>
   );
