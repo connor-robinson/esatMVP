@@ -18,8 +18,20 @@ export function toSvgY(
   return height - ((y - minY) / (maxY - minY)) * height;
 }
 
+/** Alias for spec / shared reciprocal graph code. */
+export const mathXToSvg = toSvgX;
+export const mathYToSvg = toSvgY;
+
 /** Build an SVG path `d` from math-coordinate points. */
 export function buildPath(
+  points: [number, number][],
+  toX: (x: number) => number,
+  toY: (y: number) => number,
+): string {
+  return pointsToPath(points, toX, toY);
+}
+
+export function pointsToPath(
   points: [number, number][],
   toX: (x: number) => number,
   toY: (y: number) => number,
@@ -40,12 +52,19 @@ export type GraphDomain = {
   maxY: number;
 };
 
+/** Shared plotting window for the homepage reciprocal demo. */
 export const RECIPROCAL_QUESTION_DOMAIN: GraphDomain = {
-  minX: -4,
-  maxX: 4.5,
-  minY: -3,
-  maxY: 3,
+  minX: -3.2,
+  maxX: 3.8,
+  minY: -2.6,
+  maxY: 2.6,
 };
+
+/** Gap around vertical asymptotes when sampling 1/f. */
+export const RECIPROCAL_SAMPLE_EPS = 0.035;
+
+/** x-intercepts / asymptotes for f(x) = -(x+1.6)(x-0.5)(x-2.2) (scaled). */
+export const RECIPROCAL_ROOTS = [-1.6, 0.5, 2.2] as const;
 
 /** Sample y = fn(x) on [minX, maxX], clipping extreme values. */
 export function sampleFunction(
@@ -53,7 +72,7 @@ export function sampleFunction(
   minX: number,
   maxX: number,
   steps = 200,
-  clipY = 2.95,
+  clipY = 2.55,
 ): [number, number][] {
   const points: [number, number][] = [];
   for (let i = 0; i <= steps; i++) {
@@ -73,16 +92,16 @@ export function sampleFunctionSegments(
   fn: (x: number) => number,
   minX: number,
   maxX: number,
-  asymptotes: number[],
+  asymptotes: readonly number[],
   options?: {
     steps?: number;
     gap?: number;
     clipY?: number;
   },
 ): [number, number][][] {
-  const steps = options?.steps ?? 140;
-  const gap = options?.gap ?? 0.1;
-  const clipY = options?.clipY ?? 2.85;
+  const steps = options?.steps ?? 160;
+  const gap = options?.gap ?? RECIPROCAL_SAMPLE_EPS;
+  const clipY = options?.clipY ?? 2.45;
 
   const sorted = [...asymptotes].sort((a, b) => a - b);
   const intervals: [number, number][] = [];
@@ -103,7 +122,7 @@ export function sampleFunctionSegments(
     .map(([start, end]) => {
       const span = end - start;
       if (span <= 0) return [] as [number, number][];
-      const localSteps = Math.max(8, Math.round(steps * (span / (maxX - minX))));
+      const localSteps = Math.max(10, Math.round(steps * (span / (maxX - minX))));
       const points: [number, number][] = [];
 
       for (let i = 0; i <= localSteps; i++) {

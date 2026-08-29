@@ -12,12 +12,6 @@ import {
   type OptionGraphId,
 } from "@/components/home/ReciprocalQuestionGraphs";
 
-const PROMPT_MARKDOWN = [
-  "The graph shown is $y = f(x)$.",
-  "",
-  "Which graph could represent $y = \\dfrac{1}{f(x)}$ ?",
-].join("\n");
-
 type SubmitPhase = "idle" | "correct" | "incorrect";
 
 export function ExampleGraphQuestion({ className }: { className?: string }) {
@@ -39,16 +33,16 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
       className={cn(
         "relative overflow-hidden rounded-[28px] border border-white/10 bg-[#0f1728]",
         "shadow-[0_0_0_1px_rgba(255,255,255,0.02),0_20px_60px_rgba(0,0,0,0.35)]",
-        "px-6 py-8 sm:px-8 sm:py-9 lg:px-10 lg:py-10",
+        "px-6 py-8 sm:px-[38px] sm:py-[38px] sm:pb-8",
         className,
       )}
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-70"
+        className="pointer-events-none absolute inset-0 opacity-60"
         style={{
           background:
-            "radial-gradient(ellipse 80% 60% at 85% 15%, rgba(59,130,246,0.12), transparent 55%), radial-gradient(ellipse 50% 40% at 10% 90%, rgba(255,255,255,0.04), transparent 50%)",
+            "radial-gradient(ellipse 75% 55% at 88% 12%, rgba(59,130,246,0.11), transparent 58%)",
         }}
       />
 
@@ -57,22 +51,31 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
           Example question
         </p>
 
-        <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[1.1fr_1fr] lg:gap-10">
-          <div className="space-y-4 text-lg leading-relaxed text-white sm:text-xl lg:pt-2">
-            <LazyStemContent content={PROMPT_MARKDOWN} className="text-inherit" />
+        <div className="mt-7 grid min-h-[240px] grid-cols-1 items-center gap-6 sm:grid-cols-[0.9fr_1.1fr] sm:gap-7">
+          <div className="text-[clamp(1.125rem,2.8vw,1.5625rem)] font-medium leading-[1.3] text-white">
+            <p>The graph shown is</p>
+            <p className="mt-1">
+              <LazyStemContent content="$y = f(x)$." className="text-inherit" />
+            </p>
+            <p className="mt-4">Which graph could represent</p>
+            <p className="mt-1 flex flex-wrap items-baseline gap-x-1 whitespace-nowrap">
+              <LazyStemContent
+                content="$y = \\dfrac{1}{f(x)}$"
+                className="inline text-inherit [&>div]:inline"
+              />
+              <span>?</span>
+            </p>
           </div>
 
-          <div className="flex justify-center lg:justify-end">
-            <div className="w-full max-w-[340px] rounded-[22px] border border-white/[0.08] bg-[#101a2d]/80 p-3 sm:max-w-none sm:p-4">
-              <MainReciprocalGraph width={320} height={220} className="mx-auto w-full max-w-full" />
-            </div>
+          <div className="h-[252px] w-full min-w-0">
+            <MainReciprocalGraph className="h-full w-full" />
           </div>
         </div>
 
-        <div className="my-8 border-t border-white/10" aria-hidden />
+        <div className="my-7 border-t border-white/10" aria-hidden />
 
         <div
-          className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 xl:gap-5"
+          className="grid grid-cols-2 gap-3.5 max-[380px]:grid-cols-1 min-[900px]:grid-cols-4 min-[900px]:gap-4"
           role="radiogroup"
           aria-label="Answer options"
         >
@@ -90,31 +93,29 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
                 aria-checked={isSelected}
                 onClick={() => handleSelect(option.id)}
                 className={cn(
-                  "group flex flex-col rounded-[22px] border p-4 text-left transition-all duration-200",
-                  "bg-[#101a2d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/60",
+                  "group relative flex min-h-[142px] flex-col overflow-hidden rounded-[18px] border text-left transition-all duration-200",
+                  "bg-[#101a2d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/50",
                   isSelected
-                    ? "border-white/35 shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_0_24px_rgba(59,130,246,0.18)]"
-                    : "border-white/10 hover:-translate-y-0.5 hover:border-white/20",
-                  showCorrect && "border-[#34D399]/50",
-                  showIncorrect && "border-[#F87171]/45",
+                    ? "border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_0_20px_rgba(59,130,246,0.14)]"
+                    : "border-white/10 hover:-translate-y-px hover:border-white/22",
+                  showCorrect && "border-[#34D399]/45",
+                  showIncorrect && "border-[#F87171]/40",
                 )}
               >
                 <span
                   className={cn(
-                    "mb-3 inline-flex h-7 w-7 items-center justify-center rounded-lg text-sm font-bold",
+                    "absolute left-3 top-3 z-10 inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-bold",
                     isSelected
                       ? "bg-white/15 text-white"
-                      : "bg-white/[0.06] text-slate-300",
+                      : "bg-white/[0.07] text-slate-300",
                   )}
                 >
                   {option.id}
                 </span>
-                <div className="flex flex-1 items-center justify-center">
+                <div className="flex flex-1 items-stretch px-2 pb-2 pt-9">
                   <OptionReciprocalGraph
                     option={option}
-                    width={160}
-                    height={112}
-                    className="w-full max-w-[180px]"
+                    className="h-full w-full min-h-[108px]"
                   />
                 </div>
               </button>
@@ -122,13 +123,13 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
           })}
         </div>
 
-        <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+        <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
           <button
             type="button"
             onClick={handleSubmit}
             disabled={!selected}
             className={cn(
-              "inline-flex items-center justify-center rounded-2xl px-8 py-4 text-sm font-semibold transition-all duration-200",
+              "inline-flex items-center justify-center rounded-2xl px-8 py-3.5 text-sm font-semibold transition-all duration-200",
               selected
                 ? "bg-white/10 text-white/90 hover:bg-white/[0.14]"
                 : "cursor-not-allowed bg-white/[0.06] text-white/40",
@@ -148,7 +149,7 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
         {phase !== "idle" ? (
           <div
             className={cn(
-              "mt-6 rounded-2xl border px-5 py-4 sm:px-6",
+              "mt-6 rounded-2xl border px-5 py-4",
               phase === "correct"
                 ? "border-[#34D399]/25 bg-[#34D399]/10"
                 : "border-white/10 bg-white/[0.04]",

@@ -1,35 +1,50 @@
+"use client";
+
 import {
   RECIPROCAL_QUESTION_DOMAIN,
+  RECIPROCAL_ROOTS,
   sampleFunction,
   sampleFunctionSegments,
 } from "@/lib/graph-utils";
 import { GraphAxes, GraphCurve } from "@/components/home/GraphAxes";
 
-/** Cubic with three x-intercepts and one min below / max above the axis. */
+/** Scaled cubic with three x-intercepts at RECIPROCAL_ROOTS. */
 export function fOfX(x: number): number {
-  return -0.28 * (x + 2.2) * (x - 0.9) * (x - 3.0);
+  return -0.32 * (x + 1.6) * (x - 0.5) * (x - 2.2);
 }
 
-export const RECIPROCAL_ASYMPTOTES = [-2.2, 0.9, 3.0] as const;
-
-export const MAIN_GRAPH_INTERCEPTS = [...RECIPROCAL_ASYMPTOTES];
+export const RECIPROCAL_ASYMPTOTES = [...RECIPROCAL_ROOTS];
+export const MAIN_GRAPH_INTERCEPTS = [...RECIPROCAL_ROOTS];
 
 const DOMAIN = RECIPROCAL_QUESTION_DOMAIN;
+const [R1, , R3] = RECIPROCAL_ROOTS;
+
+export const MAIN_GRAPH_VIEW = { width: 360, height: 252 } as const;
+export const OPTION_GRAPH_VIEW = { width: 280, height: 118 } as const;
 
 function reciprocal(x: number): number {
   const y = fOfX(x);
-  if (Math.abs(y) < 1e-5) return Number.NaN;
+  if (Math.abs(y) < 1e-6) return Number.NaN;
   return 1 / y;
 }
 
-function reciprocalWithSignFlip(
-  x: number,
-  flipIntervals: [number, number][],
-): number {
+function negReciprocal(x: number): number {
+  const y = reciprocal(x);
+  return Number.isFinite(y) ? -y : y;
+}
+
+function absReciprocal(x: number): number {
+  const y = fOfX(x);
+  if (Math.abs(y) < 1e-6) return Number.NaN;
+  return 1 / Math.abs(y);
+}
+
+/** Wrong signs on outer branches only; middle intervals stay correct. */
+function wrongOuterReciprocal(x: number): number {
   const y = reciprocal(x);
   if (!Number.isFinite(y)) return y;
-  const inFlip = flipIntervals.some(([a, b]) => x > a && x < b);
-  return inFlip ? -y : y;
+  if (x < R1 || x > R3) return -y;
+  return y;
 }
 
 export type OptionGraphId = "A" | "B" | "C" | "D";
@@ -45,19 +60,19 @@ const MAIN_F_SEGMENTS = sampleFunction(
   fOfX,
   DOMAIN.minX,
   DOMAIN.maxX,
-  220,
-  2.95,
+  240,
+  DOMAIN.maxY - 0.05,
 );
 
-function buildOptionSegments(
+function buildReciprocalSegments(
   fn: (x: number) => number,
 ): [number, number][][] {
   return sampleFunctionSegments(
     fn,
     DOMAIN.minX,
     DOMAIN.maxX,
-    [...RECIPROCAL_ASYMPTOTES],
-    { steps: 160, gap: 0.1, clipY: 2.75 },
+    RECIPROCAL_ROOTS,
+    { steps: 180, clipY: DOMAIN.maxY - 0.08 },
   );
 }
 
@@ -65,87 +80,72 @@ export const OPTION_GRAPHS: OptionGraph[] = [
   {
     id: "A",
     isCorrect: false,
-    asymptotes: [...RECIPROCAL_ASYMPTOTES],
-    segments: buildOptionSegments((x) =>
-      reciprocalWithSignFlip(x, [[-2.2, 0.9]]),
-    ),
+    asymptotes: RECIPROCAL_ASYMPTOTES,
+    segments: buildReciprocalSegments(negReciprocal),
   },
   {
     id: "B",
     isCorrect: true,
-    asymptotes: [...RECIPROCAL_ASYMPTOTES],
-    segments: buildOptionSegments(reciprocal),
+    asymptotes: RECIPROCAL_ASYMPTOTES,
+    segments: buildReciprocalSegments(reciprocal),
   },
   {
     id: "C",
     isCorrect: false,
-    asymptotes: [...RECIPROCAL_ASYMPTOTES],
-    segments: buildOptionSegments((x) =>
-      reciprocalWithSignFlip(x, [[0.9, 3.0]]),
-    ),
+    asymptotes: RECIPROCAL_ASYMPTOTES,
+    segments: buildReciprocalSegments(absReciprocal),
   },
   {
     id: "D",
     isCorrect: false,
-    asymptotes: [...RECIPROCAL_ASYMPTOTES],
-    segments: buildOptionSegments((x) =>
-      reciprocalWithSignFlip(x, [
-        [DOMAIN.minX, -2.2],
-        [3.0, DOMAIN.maxX],
-      ]),
-    ),
+    asymptotes: RECIPROCAL_ASYMPTOTES,
+    segments: buildReciprocalSegments(wrongOuterReciprocal),
   },
 ];
 
-export function MainReciprocalGraph({
-  width,
-  height,
-  className,
-}: {
-  width: number;
-  height: number;
-  className?: string;
-}) {
+export function MainReciprocalGraph({ className }: { className?: string }) {
+  const { width, height } = MAIN_GRAPH_VIEW;
   return (
     <GraphAxes
       width={width}
       height={height}
+      variant="main"
       showGrid
       showArrows
       showOrigin
       intercepts={MAIN_GRAPH_INTERCEPTS}
       domain={DOMAIN}
-      padding={26}
       className={className}
     >
-      <GraphCurve segments={[MAIN_F_SEGMENTS]} strokeWidth={2.25} />
+      <GraphCurve segments={[MAIN_F_SEGMENTS]} stroke="white" strokeWidth={2} />
     </GraphAxes>
   );
 }
 
 export function OptionReciprocalGraph({
   option,
-  width,
-  height,
   className,
 }: {
   option: OptionGraph;
-  width: number;
-  height: number;
   className?: string;
 }) {
+  const { width, height } = OPTION_GRAPH_VIEW;
   return (
     <GraphAxes
       width={width}
       height={height}
-      showGrid
+      variant="option"
+      showGrid={false}
       showArrows={false}
       asymptotes={option.asymptotes}
       domain={DOMAIN}
-      padding={16}
       className={className}
     >
-      <GraphCurve segments={option.segments} strokeWidth={1.75} />
+      <GraphCurve
+        segments={option.segments}
+        stroke="rgba(226,232,240,0.92)"
+        strokeWidth={1.85}
+      />
     </GraphAxes>
   );
 }
@@ -153,4 +153,4 @@ export function OptionReciprocalGraph({
 export const CORRECT_OPTION_ID: OptionGraphId = "B";
 
 export const RECIPROCAL_EXPLANATION_MARKDOWN =
-  "Zeros of $f(x)$ become vertical asymptotes for $\\dfrac{1}{f(x)}$.";
+  "Zeros of $f(x)$ become vertical asymptotes for $\\dfrac{1}{f(x)}$, and each branch keeps the same sign as $f(x)$.";
