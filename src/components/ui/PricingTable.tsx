@@ -9,8 +9,12 @@ export interface PricingTier {
   id: string;
   name: string;
   price: string;
-  /** Inline next to price (e.g. “per week”, “£6.25/week”) */
+  /** Inline next to price (e.g. “per week”, “£3.75/week”) */
   caption?: string;
+  /** Strikethrough list price (e.g. “£25”) */
+  compareAtPrice?: string;
+  /** Promo badge (e.g. “40% off”) */
+  discountLabel?: string;
   /** Muted note under price block */
   priceNote?: string;
   features: string[];
@@ -106,7 +110,29 @@ export function PricingTable({
                 >
                   {tier.name}
                 </h3>
+                {tier.discountLabel ? (
+                  <span
+                    className={cn(
+                      "inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide transition-colors duration-300",
+                      isActive
+                        ? "bg-black text-white"
+                        : "bg-primary/20 text-primary",
+                    )}
+                  >
+                    {tier.discountLabel}
+                  </span>
+                ) : null}
                 <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                  {tier.compareAtPrice ? (
+                    <span
+                      className={cn(
+                        "text-lg font-semibold line-through transition-colors duration-300",
+                        isActive ? "text-black/45" : "text-text-subtle",
+                      )}
+                    >
+                      {tier.compareAtPrice}
+                    </span>
+                  ) : null}
                   <span
                     className={cn(
                       "text-2xl font-bold tracking-tight transition-colors duration-300 sm:text-3xl",

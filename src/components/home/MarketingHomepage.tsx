@@ -15,7 +15,15 @@ import { SEO_LINKS, type SeoLinkKey } from "@/lib/seo/links";
 import { MARKETING_HOMEPAGE_FAQ } from "@/lib/homepage/marketingFaq";
 import { trackHomepageEvent } from "@/lib/homepage/analytics";
 import { openCookiePreferences } from "@/lib/ga";
-import { getSeasonPassPrice, SEASON_PASS_ACCESS_UNTIL_LABEL } from "@/lib/stripe/best-value";
+import {
+  formatGbpPrice,
+  getMonthlyDiscountPercent,
+  getMonthlyPricePerWeek,
+  getSeasonPassPrice,
+  MONTHLY_LIST_PRICE_GBP,
+  MONTHLY_PRICE_GBP,
+  SEASON_PASS_ACCESS_UNTIL_LABEL,
+} from "@/lib/stripe/best-value";
 import { cn } from "@/lib/utils";
 import { useHomepageAutoHideNav } from "@/hooks/useHomepageAutoHideNav";
 import { ExampleQuestionDemo } from "@/components/home/ExampleQuestionDemo";
@@ -164,6 +172,10 @@ export function MarketingHomepage({
 }) {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
   const seasonPrice = getSeasonPassPrice();
+  const monthlyPriceLabel = formatGbpPrice(MONTHLY_PRICE_GBP);
+  const monthlyListPriceLabel = formatGbpPrice(MONTHLY_LIST_PRICE_GBP);
+  const monthlyPerWeekLabel = formatGbpPrice(getMonthlyPricePerWeek());
+  const monthlyDiscountLabel = `${getMonthlyDiscountPercent()}% off`;
 
   useEffect(() => {
     void trackHomepageEvent("homepage_viewed", {
@@ -696,17 +708,20 @@ export function MarketingHomepage({
             {/* Monthly - sits beside Weekly without covering it */}
             <div className="relative z-20 flex flex-col rounded-3xl bg-[#3B82F6] p-8 sm:col-span-2 sm:max-w-md sm:justify-self-center sm:p-9 xl:col-auto xl:max-w-none xl:w-[min(22rem,32%)] xl:shrink-0 xl:p-10">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-white px-3.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#3B82F6]">
-                Most popular
+                Most popular · {monthlyDiscountLabel}
               </div>
               <h4 className="text-xl font-bold text-white">Monthly</h4>
-              <div className="mt-4 flex items-baseline gap-1">
+              <div className="mt-4 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                <span className="text-2xl font-display font-bold text-white/55 line-through">
+                  {monthlyListPriceLabel}
+                </span>
                 <span className="text-5xl font-display font-bold text-white">
-                  £25
+                  {monthlyPriceLabel}
                 </span>
                 <span className="text-sm text-white/75">/month</span>
               </div>
               <p className="mt-2 text-sm font-medium text-white/80">
-                £6.25/week · 7-day free trial
+                {monthlyPerWeekLabel}/week · 7-day free trial
               </p>
               <ul className="mt-8 flex-1 space-y-3 text-sm text-white">
                 {PAID_FEATURES.map((feature) => (

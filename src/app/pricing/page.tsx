@@ -8,8 +8,13 @@ import { PricingTable, type PricingTier } from "@/components/ui";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { useSubscription } from "@/hooks/useSubscription";
 import {
+  formatGbpPrice,
+  getMonthlyDiscountPercent,
+  getMonthlyPricePerWeek,
   getSeasonPassPrice,
   getWeeksUntilExam,
+  MONTHLY_LIST_PRICE_GBP,
+  MONTHLY_PRICE_GBP,
   SEASON_PASS_ACCESS_UNTIL_LABEL,
   type PlanId,
 } from "@/lib/stripe/best-value";
@@ -75,6 +80,10 @@ export default function PricingPage() {
 
   const seasonPrice = getSeasonPassPrice();
   const perWeekSeason = seasonPrice / getWeeksUntilExam();
+  const monthlyPriceLabel = formatGbpPrice(MONTHLY_PRICE_GBP);
+  const monthlyListPriceLabel = formatGbpPrice(MONTHLY_LIST_PRICE_GBP);
+  const monthlyPerWeekLabel = formatGbpPrice(getMonthlyPricePerWeek());
+  const monthlyDiscountLabel = `${getMonthlyDiscountPercent()}% off`;
   const periodEndLabel = formatPeriodEnd(currentPeriodEnd);
   const isRecurringPaid = PAID_RECURRING.has(tier);
   const isSeasonPass = tier === "season_pass";
@@ -133,11 +142,13 @@ export default function PricingPage() {
     {
       id: "monthly",
       name: "Monthly",
-      price: "£25",
-      caption: "£6.25/week",
+      price: monthlyPriceLabel,
+      compareAtPrice: monthlyListPriceLabel,
+      discountLabel: monthlyDiscountLabel,
+      caption: `${monthlyPerWeekLabel}/week`,
       priceNote: isRecurringPaid && tier !== "monthly"
         ? "Switch at next billing date. No charge today"
-        : "7-day free trial. Card required. Then £25/month. Cancel anytime",
+        : `7-day free trial. Card required. Then ${monthlyPriceLabel}/month. Cancel anytime`,
       features: FEATURES.paid,
       highlighted: true,
       ctaLabel: paidCta("monthly", "Start free trial"),
@@ -314,8 +325,9 @@ export default function PricingPage() {
           ) : null}
           <p className="mx-auto mt-4 max-w-2xl text-sm text-text-muted">
             Free includes 10 questions per subject. Monthly starts with a 7-day
-            free trial; a card is required and you are charged £25/month after
-            the trial unless you cancel.
+            free trial; a card is required and you are charged {monthlyPriceLabel}
+            /month after the trial unless you cancel. Was {monthlyListPriceLabel}
+            ({monthlyDiscountLabel}).
           </p>
         </div>
 

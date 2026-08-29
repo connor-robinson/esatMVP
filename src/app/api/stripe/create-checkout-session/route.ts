@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRouteUser } from "@/lib/supabase/auth";
 import { getStripe, getStripeKeyMeta, isStripeConfigured } from "@/lib/stripe/config";
 import { createOrRetrieveCustomer } from "@/lib/stripe/supabase-admin";
-import { getPriceIdForPlan } from "@/lib/stripe/prices";
+import { getPriceIdForPlan, resolveMonthlyStripePrice } from "@/lib/stripe/prices";
 import { getSeasonPassPrice, SEASON_PASS_ACCESS_UNTIL_LABEL } from "@/lib/stripe/best-value";
 import { resolveAppSiteUrl } from "@/lib/seo/config";
 
@@ -71,7 +71,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ url: session.url });
     }
 
-    const priceId = getPriceIdForPlan(planType);
+    const stripe = getStripe();
+    let priceId =
+      planType === "monthly"
+        ? await resolveMonthlyStripePrice(stripe)
+        : getPriceIdForPlan(planType);
     if (!priceId) {
       return NextResponse.json(
         { error: "Price not configured for this plan" },
@@ -80,7 +84,7 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      await getStripe().prices.retrieve(priceId);
+      await stripe.prices.retrieve(priceId);
     } catch (err) {
       console.error("[create-checkout-session] price lookup failed", {
         priceId,

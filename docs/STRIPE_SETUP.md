@@ -10,7 +10,7 @@ The app supports four tiers:
 |------|-------|---------|----------|
 | **Free** | £0 | - | Mental maths (addition only), first 3 roadmap items, 10 question bank questions, no solutions/stats/drills |
 | **Weekly** | £8/week | Recurring | Full access |
-| **Monthly** | £25/month | Recurring | Full access (£6.25/week) |
+| **Monthly** | £14.99/month (was £25) | Recurring | Full access (~£3.75/week, 40% off) |
 | **Exam Season Pass** | £74–£94 | One-time | Full access until exam (1 Oct 2026), price varies by purchase date |
 
 For details on the Exam Season Pass flow, date-based pricing, and £/week calculations, see [STRIPE_SEASON_PASS.md](./STRIPE_SEASON_PASS.md).
@@ -108,7 +108,7 @@ Create the following in [Stripe Dashboard → Products](https://dashboard.stripe
 
 **Product: ESAT Monthly**
 
-- Price: £25, recurring, every month
+- Price: £14.99, recurring, every month (list price £25; optional env `STRIPE_PRICE_MONTHLY_SALE` for a fixed sale price ID)
 
 **Product: Exam Season Pass**
 

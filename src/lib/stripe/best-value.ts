@@ -17,6 +17,30 @@ const WEEKLY_RATE = 8;
 /** Target Season Pass rate (£/week) - £1 cheaper than Weekly. */
 const SEASON_PASS_TARGET_RATE = 7;
 
+/** Standard monthly list price before promotions. */
+export const MONTHLY_LIST_PRICE_GBP = 25;
+/** Active monthly sale price. */
+export const MONTHLY_PRICE_GBP = 14.99;
+
+export function getMonthlyPricePence(): number {
+  return Math.round(MONTHLY_PRICE_GBP * 100);
+}
+
+export function getMonthlyPricePerWeek(): number {
+  return MONTHLY_PRICE_GBP / 4;
+}
+
+export function getMonthlyDiscountPercent(): number {
+  return Math.round((1 - MONTHLY_PRICE_GBP / MONTHLY_LIST_PRICE_GBP) * 100);
+}
+
+export function formatGbpPrice(amount: number): string {
+  if (Number.isInteger(amount)) {
+    return `£${amount}`;
+  }
+  return `£${amount.toFixed(2)}`;
+}
+
 export type PlanId = "free" | "weekly" | "monthly" | "season_pass";
 
 export interface PlanComparison {
@@ -72,7 +96,7 @@ export function getPlanComparisons(weeksUntilExam?: number): PlanComparison[] {
   return [
     { id: "free", label: "Free", pricePerWeek: 0 },
     { id: "weekly", label: "Weekly", pricePerWeek: WEEKLY_RATE },
-    { id: "monthly", label: "Monthly", pricePerWeek: 6.25 },
+    { id: "monthly", label: "Monthly", pricePerWeek: getMonthlyPricePerWeek() },
     {
       id: "season_pass",
       label: "Exam Season Pass",

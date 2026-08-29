@@ -5,7 +5,7 @@ import {
   manageSubscriptionStatusChange,
   supabaseAdmin,
 } from "@/lib/stripe/supabase-admin";
-import { getPriceIdForPlan } from "@/lib/stripe/prices";
+import { getPriceIdForPlan, resolveMonthlyStripePrice } from "@/lib/stripe/prices";
 
 export const dynamic = "force-dynamic";
 
@@ -89,7 +89,10 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const newPriceId = getPriceIdForPlan(planType);
+    const newPriceId =
+      planType === "monthly"
+        ? await resolveMonthlyStripePrice(stripe)
+        : getPriceIdForPlan(planType);
     if (!newPriceId) {
       return NextResponse.json(
         { error: "Price not configured for this plan" },

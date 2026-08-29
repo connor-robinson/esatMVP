@@ -14,8 +14,9 @@ function inferTierFromPriceId(
   if (!priceId) return "free";
   const weekly = process.env.STRIPE_PRICE_WEEKLY;
   const monthly = process.env.STRIPE_PRICE_MONTHLY;
+  const monthlySale = process.env.STRIPE_PRICE_MONTHLY_SALE;
   if (priceId === weekly) return "weekly";
-  if (priceId === monthly) return "monthly";
+  if (priceId === monthly || priceId === monthlySale) return "monthly";
   return "free";
 }
 
