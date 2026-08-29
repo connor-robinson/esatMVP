@@ -36,6 +36,7 @@ import { PearsonReviewScreen } from "./PearsonReviewScreen";
 import { PearsonRichQuestion } from "./PearsonRichQuestion";
 import { PearsonToolbar } from "./PearsonToolbar";
 import { UnseenContentDialog } from "./UnseenContentDialog";
+import { PearsonQuestionTransitionOverlay } from "./PearsonQuestionTransitionOverlay";
 import { PearsonSessionEndingOverlay } from "./PearsonSessionEndingOverlay";
 
 export interface PearsonExamPlayerProps {
@@ -109,7 +110,7 @@ export function PearsonExamPlayer({
 
   const jumpFromReview = (index: number) => {
     if (index < 0) return;
-    c.goToQuestionIndex(index);
+    void c.transitionToQuestion(index);
   };
 
   const firstIncompleteIndex = () => {
@@ -261,6 +262,8 @@ export function PearsonExamPlayer({
               navigatorDisabled={c.moduleLocked}
             />
           ) : null}
+
+          {c.questionTransitionActive ? <PearsonQuestionTransitionOverlay /> : null}
 
           {c.screen === "session-ending" ? (
             <PearsonSessionEndingOverlay />

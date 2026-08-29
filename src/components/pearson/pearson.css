@@ -1123,6 +1123,23 @@ html.pearson-exam-active body {
   -webkit-backdrop-filter: blur(8px);
 }
 
+/* Between-question transition (blur + spinner upper-left). */
+.pearson-question-transition {
+  position: absolute;
+  inset: 0;
+  z-index: 55;
+  background: rgba(120, 120, 120, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events: all;
+}
+
+.pearson-question-transition .pearson-spinner {
+  position: absolute;
+  left: 20px;
+  top: 16px;
+}
+
 .pearson-spinner {
   position: relative;
   width: 52px;

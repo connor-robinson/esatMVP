@@ -37,6 +37,7 @@ import type {
   ZoomLevel,
 } from "./types";
 import { INSTRUCTION_READ_MS, MODULE_DURATION_MS } from "./types";
+import { preloadQuestionWithMinimumDelay } from "./preloadQuestionAssets";
 
 /** Blurred spinner after End Exam / End Module confirm (specimen player). */
 export const SESSION_ENDING_MS = 2800;
@@ -123,6 +124,8 @@ export function usePearsonExamController(
   const [questionCounterHidden, setQuestionCounterHidden] = useState(false);
   const [timerHidden, setTimerHidden] = useState(false);
   const [nowTick, setNowTick] = useState(() => Date.now());
+  const [questionTransitionActive, setQuestionTransitionActive] = useState(false);
+  const transitionInFlightRef = useRef(false);
 
   const currentQuestion = questions[currentQuestionIndex] ?? null;
   const totalQuestions = questions.length;
@@ -205,7 +208,7 @@ export function usePearsonExamController(
     setScreen("nda");
   }, []);
 
-  const goToQuestionIndex = useCallback(
+  const commitQuestionIndex = useCallback(
     (index: number) => {
       if (index < 0 || index >= questions.length) return;
       const q = questions[index];
@@ -218,13 +221,36 @@ export function usePearsonExamController(
     [questions],
   );
 
+  const transitionToQuestion = useCallback(
+    async (index: number) => {
+      if (index < 0 || index >= questions.length) return;
+      if (transitionInFlightRef.current) return;
+
+      const target = questions[index];
+      if (!target) return;
+
+      transitionInFlightRef.current = true;
+      setQuestionTransitionActive(true);
+      setNavigatorOpen(false);
+
+      try {
+        await preloadQuestionWithMinimumDelay(target);
+        commitQuestionIndex(index);
+      } finally {
+        setQuestionTransitionActive(false);
+        transitionInFlightRef.current = false;
+      }
+    },
+    [commitQuestionIndex, questions],
+  );
+
   const startQuestions = useCallback(() => {
     setInstructionDeadline(null);
     if (moduleDeadline == null) {
       setModuleDeadline(startFreshModuleDeadline(Date.now(), durationMs));
     }
-    goToQuestionIndex(0);
-  }, [durationMs, goToQuestionIndex, moduleDeadline]);
+    void transitionToQuestion(0);
+  }, [durationMs, moduleDeadline, transitionToQuestion]);
 
   useEffect(() => {
     if (screen !== "instructions" || instructionDeadline == null || completed) {
@@ -235,13 +261,13 @@ export function usePearsonExamController(
     }
   }, [completed, instructionDeadline, nowTick, screen, startQuestions]);
 
-  const moduleLocked = completed || timeExpired;
+  const moduleLocked = completed || timeExpired || questionTransitionActive;
 
   const tryNavigateTo = useCallback(
     (index: number) => {
-      if (moduleLocked) return;
+      if (moduleLocked || questionTransitionActive) return;
       if (!currentQuestion) {
-        goToQuestionIndex(index);
+        void transitionToQuestion(index);
         return;
       }
       if (needsUnseenContentWarning(currentQuestion.id, viewedToEnd)) {
@@ -250,9 +276,15 @@ export function usePearsonExamController(
         setScreen("unseen-content-warning");
         return;
       }
-      goToQuestionIndex(index);
+      void transitionToQuestion(index);
     },
-    [moduleLocked, currentQuestion, goToQuestionIndex, viewedToEnd],
+    [
+      moduleLocked,
+      questionTransitionActive,
+      currentQuestion,
+      transitionToQuestion,
+      viewedToEnd,
+    ],
   );
 
   const dismissUnseenContent = useCallback(() => {
@@ -424,7 +456,9 @@ export function usePearsonExamController(
         "altKey" | "ctrlKey" | "metaKey" | "key" | "code" | "preventDefault"
       >,
     ) => {
-      if (completed || screen === "session-ending") return false;
+      if (completed || screen === "session-ending" || questionTransitionActive) {
+        return false;
+      }
       const endExamDialogOpen = screen === "end-exam-confirmation" || screen === "end-module-confirmation";
       const action = resolveStrictShortcut(mode, e, {
         endExamDialogOpen,
@@ -461,6 +495,7 @@ export function usePearsonExamController(
       goPrev,
       mode,
       navigatorOpen,
+      questionTransitionActive,
       requestEndExam,
       screen,
       toggleCurrentFlag,
@@ -525,6 +560,7 @@ export function usePearsonExamController(
     visited,
     completed,
     timeExpired,
+    questionTransitionActive,
     moduleLocked,
     colourScheme,
     zoomLevel,
@@ -554,7 +590,7 @@ export function usePearsonExamController(
     goNext,
     goPrev,
     tryNavigateTo,
-    goToQuestionIndex,
+    transitionToQuestion,
     openNavigator,
     closeNavigator,
     requestEndExam,
