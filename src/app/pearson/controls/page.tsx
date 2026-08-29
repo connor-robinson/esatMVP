@@ -20,8 +20,8 @@ export default function PearsonControlsPage() {
       }}
     >
       <p style={{ margin: "0 0 16px", fontSize: 13 }}>
-        <Link href="/pearson/demo" style={{ color: "#026bac" }}>
-          Open player demo
+        <Link href="/past-papers/pearson-demo" style={{ color: "#026bac" }}>
+          Open NSAA 2023 Section 1 demo
         </Link>
       </p>
 
@@ -34,8 +34,8 @@ export default function PearsonControlsPage() {
       </p>
       <p style={{ margin: "0 0 16px", fontSize: 13, color: "#555" }}>
         This sandbox is separate from the main past-papers library. Use{" "}
-        <Link href="/pearson/demo" style={{ color: "#026bac" }}>
-          /pearson/demo
+        <Link href="/past-papers/pearson-demo" style={{ color: "#026bac" }}>
+          /past-papers/pearson-demo
         </Link>{" "}
         to preview the player.
       </p>
