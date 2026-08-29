@@ -73,3 +73,6 @@ files_to_restore.txt
 
 # Conversion studio local artefacts
 .studio-shots/
+
+# Local official PDF mirror (source downloads live outside the repo)
+question-generation/past_paper_converter/_cache/official_pdfs/
