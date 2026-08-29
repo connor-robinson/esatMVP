@@ -5,10 +5,21 @@ from __future__ import annotations
 import re
 from typing import Callable, Dict, List, Optional
 
-# question_id -> explicit display_width_pct for stem diagrams
+# Composite graphical answer grids mis-tagged as stem diagrams (skip placement pass).
+# Q71 NSAA 2023 S1: d1 is the A-H option grid, not a mid-stem figure.
+PLACEMENT_SKIP: Dict[int, str] = {
+    2970: "graphical_option_composite: asset is the A-H answer grid, not a stem diagram",
+}
+
+# Keep composite option grid width when rendered as a stem-style asset elsewhere.
 DISPLAY_WIDTH_OVERRIDES: Dict[int, Dict[str, float]] = {
     2956: {"d1": 22.0},  # Q57 cyclohexa-1,4-diene: tiny structure in source
+    2970: {"d1": 78.2},  # Q71 composite A-H graphical options
 }
+
+
+def placement_skip_reason(question_id: int) -> Optional[str]:
+    return PLACEMENT_SKIP.get(int(question_id))
 
 
 def _reorder_q58_blocks(blocks: List[str]) -> List[str]:

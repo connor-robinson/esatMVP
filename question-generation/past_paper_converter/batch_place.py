@@ -16,13 +16,17 @@ You do NOT crop, rewrite, or invent diagrams. You only decide where each listed 
 Rules:
 - Output ONLY valid JSON matching the schema. No markdown fences.
 - placements MUST include every provided asset id exactly once.
+- The numbered text blocks in the user message are hints, not ground truth. They are NOT authoritative.
+- If the source screenshot shows a diagram between sentences that currently share one block, you MUST treat that as a split boundary: assign insert_after_block for the layout as if the block had been split at the diagram position.
+- Never move a clearly mid-stem diagram to the end merely because no current slot exists.
+- When splitting is required, return insert_after_block for the corrected block list (as if the block had been split at the diagram boundary).
 - When there are multiple stem diagrams (d1, d2, ...), each gets its own placement at the block boundary where that diagram appears in the screenshot. Never stack unrelated diagrams at the same slot unless they truly sit together in the original layout.
 - insert_after_block is an integer:
   - 0 = before the first text block
   - N = after text block N (1-based block numbers in the user message map to insert_after_block = N)
   - len(blocks) = after all text (end of stem)
 - Match diagram order in the screenshot when two diagrams sit in different parts of the stem.
-- If unsure, put the diagram at the end (insert_after_block = number of blocks) with confidence below 0.7.
+- If unsure after applying the split rule above, use confidence below 0.7.
 - Never invent asset ids. Never omit an asset.
 - Ignore answer-choice images; only the listed stem assets matter.
 - confidence is 0-1 for that placement.
@@ -67,7 +71,10 @@ def build_place_user_text(
         f"Stem diagram assets to place (every id exactly once):\n"
         + "\n".join(asset_lines)
         + "\n\n"
-        "Look at the screenshot and decide where each diagram sits relative to the text."
+        "Look at the screenshot and decide where each diagram sits relative to the text. "
+        "The numbered text blocks are hints only. If the screenshot shows a diagram between "
+        "sentences that share one block, split that block at the diagram position before "
+        "choosing insert_after_block."
     )
 
 

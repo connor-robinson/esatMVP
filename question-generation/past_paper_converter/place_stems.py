@@ -21,6 +21,7 @@ from .stem_blocks import (
     strip_figures,
     validate_placements,
 )
+from .stem_block_overrides import placement_skip_reason
 
 PLACEMENTS_DIR = CACHE_DIR / "stem_placements"
 STATUS_FILE = PLACEMENTS_DIR / ".place_status.json"
@@ -315,6 +316,27 @@ def place_stems(
 
     for candidate in candidates:
         qid = int(candidate["questionId"])
+        skip_reason = placement_skip_reason(qid)
+        if skip_reason:
+            prepared = build_candidate_record(candidate)
+            record = {
+                "questionId": qid,
+                "examName": prepared.get("examName") or "",
+                "examYear": int(prepared.get("examYear") or 0),
+                "paperName": prepared.get("paperName") or "",
+                "questionNumber": int(prepared.get("questionNumber") or 0),
+                "stemBlocks": prepared.get("stemBlocks") or [],
+                "assets": prepared.get("assets") or [],
+                "placements": [],
+                "model": "placement_skip",
+                "placedAt": _now_iso(),
+                "sourceImageHash": prepared.get("sourceImageHash") or "",
+                "status": "skipped_placement",
+                "skipReason": skip_reason,
+            }
+            if not dry_run:
+                write_sidecar_record(record)
+            continue
         if resume and not force and has_ok_sidecar(qid):
             skipped_resume += 1
             continue
