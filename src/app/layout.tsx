@@ -115,6 +115,8 @@ export default function RootLayout({
                   window.__esatcamp_gcm_default = true;
                 } catch (e) {}
                 try {
+                  var path = window.location.pathname;
+                  var isHomepage = !path || path === '/';
                   var theme = localStorage.getItem('theme');
                   var lightStrategy = localStorage.getItem('${LIGHT_MODE_STRATEGY_STORAGE_KEY}');
                   if (lightStrategy !== 'designed' && lightStrategy !== 'inverted') {
@@ -124,7 +126,7 @@ export default function RootLayout({
                   var lightVarsDesigned = ${JSON.stringify(lightVarsDesigned)};
                   var lightVarsInverted = ${JSON.stringify(lightVarsInverted)};
                   var vars = darkVars;
-                  if (theme === 'light') {
+                  if (!isHomepage && theme === 'light') {
                     vars = lightStrategy === 'designed' ? lightVarsDesigned : lightVarsInverted;
                   }
                   Object.keys(vars).forEach(function(name) {
@@ -135,7 +137,10 @@ export default function RootLayout({
                   document.documentElement.style.setProperty('--subj-chem', 'var(--color-chemistry)');
                   document.documentElement.style.setProperty('--subj-bio', 'var(--color-biology)');
                   document.documentElement.style.setProperty('--subj-interview', 'var(--color-secondary)');
-                  if (theme === 'light' || theme === 'dark') {
+                  if (isHomepage) {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.classList.remove('light');
+                  } else if (theme === 'light' || theme === 'dark') {
                     document.documentElement.classList.add(theme);
                     document.documentElement.classList.remove(theme === 'light' ? 'dark' : 'light');
                   } else {

@@ -387,52 +387,54 @@ export function Navbar() {
         </Link>
       ) : null}
 
-      <button
-        type='button'
-        onClick={(event) => {
-          if (!isDark && event.altKey) {
-            toggleLightStrategy();
-            return;
+      {!isHomeScreen ? (
+        <button
+          type='button'
+          onClick={(event) => {
+            if (!isDark && event.altKey) {
+              toggleLightStrategy();
+              return;
+            }
+            toggleTheme();
+          }}
+          className={cn(navIconSlotClass, 'relative')}
+          aria-label={
+            isDark
+              ? `Switch to light mode${showLightModeBeta ? ' (beta)' : ''} (${lightStrategy === "inverted" ? "inverted palette preview" : "designed light theme"})`
+              : `Switch to dark mode${lightStrategy === "inverted" ? " (Alt+click: designed light)" : " (Alt+click: inverted palette preview)"}`
           }
-          toggleTheme();
-        }}
-        className={cn(navIconSlotClass, 'relative')}
-        aria-label={
-          isDark
-            ? `Switch to light mode${showLightModeBeta ? ' (beta)' : ''} (${lightStrategy === "inverted" ? "inverted palette preview" : "designed light theme"})`
-            : `Switch to dark mode${lightStrategy === "inverted" ? " (Alt+click: designed light)" : " (Alt+click: inverted palette preview)"}`
-        }
-        title={
-          isDark
-            ? showLightModeBeta
-              ? "Light mode (beta)"
-              : "Switch to light mode"
-            : lightStrategy === "inverted"
-              ? "Light mode: inverted palette preview. Alt+click for designed light."
-              : "Light mode: designed theme. Alt+click for inverted palette preview."
-        }
-      >
-        {isDark ? (
-          <Sun
-            className='text-text'
-            aria-hidden
-            size={NAV_ICON_PX}
-            strokeWidth={NAV_ICON_STROKE}
-          />
-        ) : (
-          <Moon
-            className='text-text'
-            aria-hidden
-            size={NAV_ICON_PX}
-            strokeWidth={NAV_ICON_STROKE}
-          />
-        )}
-        {showLightModeBeta ? (
-          <span className='pointer-events-none absolute -right-1 -top-1 rounded-[3px] bg-surface-mid px-1 py-px text-[7px] font-bold uppercase leading-none tracking-[0.06em] text-text-muted'>
-            Beta
-          </span>
-        ) : null}
-      </button>
+          title={
+            isDark
+              ? showLightModeBeta
+                ? "Light mode (beta)"
+                : "Switch to light mode"
+              : lightStrategy === "inverted"
+                ? "Light mode: inverted palette preview. Alt+click for designed light."
+                : "Light mode: designed theme. Alt+click for inverted palette preview."
+          }
+        >
+          {isDark ? (
+            <Sun
+              className='text-text'
+              aria-hidden
+              size={NAV_ICON_PX}
+              strokeWidth={NAV_ICON_STROKE}
+            />
+          ) : (
+            <Moon
+              className='text-text'
+              aria-hidden
+              size={NAV_ICON_PX}
+              strokeWidth={NAV_ICON_STROKE}
+            />
+          )}
+          {showLightModeBeta ? (
+            <span className='pointer-events-none absolute -right-1 -top-1 rounded-[3px] bg-surface-mid px-1 py-px text-[7px] font-bold uppercase leading-none tracking-[0.06em] text-text-muted'>
+              Beta
+            </span>
+          ) : null}
+        </button>
+      ) : null}
 
       {session?.user ? (
         <>

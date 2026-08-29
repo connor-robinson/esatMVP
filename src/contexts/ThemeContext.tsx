@@ -1,11 +1,13 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import {
   applyThemeCssVariables,
   LIGHT_MODE_STRATEGY_STORAGE_KEY,
   type LightModeStrategy,
 } from "@/config/theme";
+import { isMarketingHomepagePath } from "@/lib/homepage/routing";
 
 type Theme = "dark" | "light";
 
@@ -37,13 +39,28 @@ function getInitialTheme(): Theme {
   return "dark";
 }
 
+function applyThemeToDocument(
+  mode: Theme,
+  lightStrategy: LightModeStrategy,
+): void {
+  if (mode === "dark") {
+    document.documentElement.classList.add("dark");
+    document.documentElement.classList.remove("light");
+  } else {
+    document.documentElement.classList.add("light");
+    document.documentElement.classList.remove("dark");
+  }
+  applyThemeCssVariables(mode, lightStrategy);
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isMarketingHomepage = isMarketingHomepagePath(pathname);
+
   // Initialize with the theme from localStorage (or what the script set)
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window === "undefined") return "dark";
-    // Check if html already has a class set by the script
-    const htmlClass = document.documentElement.classList.contains("light") ? "light" : "dark";
-    return htmlClass;
+    return getInitialTheme();
   });
   const [lightStrategy, setLightStrategy] = useState<LightModeStrategy>(() =>
     getInitialLightStrategy(),
@@ -56,34 +73,24 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const currentLightStrategy = getInitialLightStrategy();
     setTheme(currentTheme);
     setLightStrategy(currentLightStrategy);
-    
-    // Ensure the class is applied (in case script didn't run)
-    if (currentTheme === "dark") {
-      document.documentElement.classList.add("dark");
-      document.documentElement.classList.remove("light");
-    } else {
-      document.documentElement.classList.add("light");
-      document.documentElement.classList.remove("dark");
-    }
-    applyThemeCssVariables(currentTheme, currentLightStrategy);
-    
+
+    const appliedTheme = isMarketingHomepagePath(window.location.pathname)
+      ? "dark"
+      : currentTheme;
+    applyThemeToDocument(appliedTheme, currentLightStrategy);
+
     setMounted(true);
   }, []);
 
   useEffect(() => {
-    if (mounted) {
-      localStorage.setItem("theme", theme);
-      localStorage.setItem(LIGHT_MODE_STRATEGY_STORAGE_KEY, lightStrategy);
-      if (theme === "dark") {
-        document.documentElement.classList.add("dark");
-        document.documentElement.classList.remove("light");
-      } else {
-        document.documentElement.classList.add("light");
-        document.documentElement.classList.remove("dark");
-      }
-      applyThemeCssVariables(theme, lightStrategy);
-    }
-  }, [theme, lightStrategy, mounted]);
+    if (!mounted) return;
+
+    localStorage.setItem("theme", theme);
+    localStorage.setItem(LIGHT_MODE_STRATEGY_STORAGE_KEY, lightStrategy);
+
+    const appliedTheme = isMarketingHomepage ? "dark" : theme;
+    applyThemeToDocument(appliedTheme, lightStrategy);
+  }, [theme, lightStrategy, mounted, isMarketingHomepage]);
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === "dark" ? "light" : "dark"));
@@ -93,7 +100,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setLightStrategy((prev) => (prev === "designed" ? "inverted" : "designed"));
   };
 
-  const isDark = theme === "dark";
+  const effectiveTheme: Theme = isMarketingHomepage ? "dark" : theme;
+  const isDark = effectiveTheme === "dark";
 
   return (
     <ThemeContext.Provider
