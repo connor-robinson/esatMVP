@@ -1,4 +1,4 @@
-import type { Question } from "@/types/papers";
+import type { Letter, Question } from "@/types/papers";
 import { getPastPaperOptionLetters } from "@/lib/papers/pastPaperTextMode";
 
 const IMG_SRC_RE = /<img\b[^>]*\bsrc=["']([^"']+)["']/gi;
