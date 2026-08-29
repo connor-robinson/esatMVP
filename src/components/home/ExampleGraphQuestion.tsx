@@ -59,10 +59,7 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
               The graph shown is{" "}
               <LazyInlineMath latex="y = f(x)" fallback="y = f(x)" />.
               {" "}Which graph could represent{" "}
-              <LazyInlineMath
-                latex="\\dfrac{1}{f(x)}"
-                fallback="y = 1/f(x)"
-              />
+              <LazyInlineMath latex="\\frac{1}{f(x)}" fallback="y = 1/f(x)" />
               ?
             </p>
           </div>
