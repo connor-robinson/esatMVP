@@ -34,7 +34,9 @@ export function collectQuestionAssetUrls(question: Question): string[] {
 
   const letters = getPastPaperOptionLetters(question);
   for (const letter of letters) {
-    for (const url of extractHtmlImageUrls(question.options?.[letter])) {
+    for (const url of extractHtmlImageUrls(
+      question.options?.[letter as Letter],
+    )) {
       urls.add(url);
     }
   }
