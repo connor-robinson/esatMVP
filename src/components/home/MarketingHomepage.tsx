@@ -244,9 +244,12 @@ export function MarketingHomepage({
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Link
                     href="/login?mode=signup"
-                    className="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3.5 text-base font-bold text-[#0A0F1D] transition-all hover:bg-slate-200"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 text-base font-bold text-[#0A0F1D] shadow-[0_0_28px_rgba(255,255,255,0.22),0_8px_24px_rgba(0,0,0,0.28)] transition-all hover:scale-[1.03] hover:bg-slate-100 hover:shadow-[0_0_36px_rgba(255,255,255,0.32),0_10px_28px_rgba(0,0,0,0.32)] active:scale-[0.98] sm:text-lg"
                   >
                     Sign up free
+                    <span aria-hidden className="text-lg leading-none">
+                      →
+                    </span>
                   </Link>
                   <Link
                     href="/login"
