@@ -27,7 +27,7 @@ import {
 import { GraduationCap, ListChecks } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useHomepageAutoHideNav } from "@/hooks/useHomepageAutoHideNav";
-import { ExampleQuestionDemo } from "@/components/home/ExampleQuestionDemo";
+import { ExampleGraphQuestion } from "@/components/home/ExampleGraphQuestion";
 
 const SlotMachineCount = dynamic(
   () =>
@@ -265,7 +265,7 @@ export function MarketingHomepage({
             </div>
 
             <div className="min-w-0 w-full lg:justify-self-stretch">
-              <ExampleQuestionDemo variant="hero" className="w-full max-w-none" />
+              <ExampleGraphQuestion className="w-full max-w-none" />
             </div>
           </div>
 
