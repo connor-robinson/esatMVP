@@ -274,15 +274,18 @@ export function MarketingHomepage({
               <div className="flex min-w-0 items-start gap-4 sm:items-center sm:gap-5">
                 <Link
                   href={`${ABOUT_PATH}#${FOUNDERS.ewan.id}`}
-                  className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-[#161D2F] sm:h-20 sm:w-20"
+                  className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-[#161D2F] sm:h-24 sm:w-24"
                 >
                   <Image
                     src={FOUNDERS.ewan.imageSrc}
                     alt={FOUNDERS.ewan.imageAlt}
                     fill
-                    sizes="80px"
+                    sizes="96px"
                     className="object-cover"
-                    style={{ objectPosition: FOUNDERS.ewan.imagePosition }}
+                    style={{
+                      objectPosition: FOUNDERS.ewan.imagePosition,
+                      transform: `scale(${FOUNDERS.ewan.imageScale})`,
+                    }}
                     priority
                   />
                 </Link>

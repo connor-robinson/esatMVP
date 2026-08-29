@@ -10,7 +10,7 @@ export const FOUNDERS = {
     bio: "Hi! My name is Ewan and I am a medical student at the University of Cambridge. I have lots of experience with standardised tests from doing the UCAT and of course the ESAT, so I know exactly what would  help future med and bioscience applicants taking the exam. Outside of ESAT CAMP, I love playing the guitar and listening to live music. ",
     imageSrc: "/images/team/ewan-ellson.png",
     imageAlt: "Ewan Ellson playing guitar, co-founder of ESAT Camp",
-    imageScale: 1,
+    imageScale: 1.2,
     imagePosition: "38% 32%",
   },
   anson: {
