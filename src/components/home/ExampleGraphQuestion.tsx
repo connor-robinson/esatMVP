@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { LazyInlineMath } from "@/components/home/LazyInlineMath";
+import { InlineKatex } from "@/components/home/InlineKatex";
 import { markHomepageExampleRevealPending } from "@/lib/homepage/exampleQuestion";
 import {
   MainReciprocalGraph,
@@ -15,6 +15,9 @@ import {
 type SubmitPhase = "idle" | "submitted";
 
 const REVEAL_REDIRECT = "/dashboard?reveal_example=1";
+
+const PROMPT_F_OF_X = String.raw`y = f(x)`;
+const PROMPT_RECIPROCAL = String.raw`\frac{1}{f(x)}`;
 
 export function ExampleGraphQuestion({ className }: { className?: string }) {
   const [selected, setSelected] = useState<OptionGraphId | null>(null);
@@ -53,27 +56,27 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
           Example question
         </p>
 
-        <div className="mt-6 grid grid-cols-1 gap-5">
+        <div className="mt-5 grid grid-cols-1 gap-3">
           <div className="w-full max-w-none text-sm leading-snug text-slate-200 sm:text-[15px]">
             <p className="w-full">
               The graph shown is{" "}
-              <LazyInlineMath latex="y = f(x)" fallback="y = f(x)" />.
+              <InlineKatex latex={PROMPT_F_OF_X} fallback="y = f(x)" />.
               {" "}Which graph could represent{" "}
-              <LazyInlineMath latex="\\frac{1}{f(x)}" fallback="y = 1/f(x)" />
+              <InlineKatex latex={PROMPT_RECIPROCAL} fallback="y = 1/f(x)" />
               ?
             </p>
           </div>
 
-          <div className="h-[220px] w-full sm:h-[240px]">
+          <div className="h-[210px] w-full sm:h-[228px]">
             <MainReciprocalGraph className="h-full w-full" />
           </div>
         </div>
 
-        <div className="my-6 border-t border-white/10" aria-hidden />
+        <div className="my-4 border-t border-white/10" aria-hidden />
 
         <div>
           <div
-            className="flex snap-x snap-mandatory gap-3.5 overflow-x-auto scroll-smooth pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="flex snap-x snap-mandatory gap-2.5 overflow-x-auto scroll-smooth pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             role="radiogroup"
             aria-label="Answer options"
           >
@@ -88,8 +91,8 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
                   aria-checked={isSelected}
                   onClick={() => handleSelect(option.id)}
                   className={cn(
-                    "group relative flex w-[calc(50%-7px)] shrink-0 snap-start flex-col overflow-hidden rounded-[18px] border text-left transition-all duration-200",
-                    "min-h-[158px] bg-[#101a2d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/50",
+                    "group relative flex w-[calc(50%-5px)] shrink-0 snap-start flex-col overflow-hidden rounded-[18px] border text-left transition-all duration-200",
+                    "min-h-[148px] bg-[#101a2d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/50",
                     isSelected
                       ? "border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_0_20px_rgba(59,130,246,0.14)]"
                       : "border-white/10 hover:-translate-y-px hover:border-white/22",
@@ -105,21 +108,21 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
                   >
                     {option.id}
                   </span>
-                  <div className="flex flex-1 items-stretch px-2 pb-2 pt-9">
+                  <div className="flex flex-1 items-stretch px-2 pb-1.5 pt-8">
                     <OptionReciprocalGraph
                       option={option}
-                      className="h-full w-full min-h-[118px]"
+                      className="h-full w-full min-h-[108px]"
                     />
                   </div>
                 </button>
               );
             })}
           </div>
-          <p className="mt-2 text-xs text-slate-500">Scroll right for more options.</p>
+          <p className="mt-1.5 text-xs text-slate-500">Scroll right for more options.</p>
         </div>
 
         {phase === "submitted" ? (
-          <div className="mt-7 rounded-2xl bg-white/[0.06] px-5 py-4 sm:px-6 sm:py-5">
+          <div className="mt-5 rounded-2xl bg-white/[0.06] px-5 py-4 sm:px-6 sm:py-5">
             <p className="text-sm font-semibold text-white">Answer locked in.</p>
             <p className="mt-1 text-sm text-slate-400">
               Sign in to view whether you got it right and see the worked
@@ -143,7 +146,7 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
             </div>
           </div>
         ) : (
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
             <button
               type="button"
               onClick={handleSubmit}
