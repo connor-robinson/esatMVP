@@ -4,7 +4,7 @@
  * Flow (reviewed text-mode papers):
  * 1. Loading screen
  * 2. NDA / welcome (untimed)
- * 3. Instructions (untimed)
+ * 3. Instructions (1-minute read countdown)
  * 4. Questions with Navigator, Flag, colour schemes
  */
 
@@ -153,7 +153,10 @@ export function PearsonExamPlayer({
             {c.screen === "nda" ? <PearsonNdaScreen /> : null}
 
             {c.screen === "instructions" ? (
-              <PearsonInstructionsScreen questionCount={c.totalQuestions} />
+              <PearsonInstructionsScreen
+                questionCount={c.totalQuestions}
+                timeLimitMinutes={c.timeLimitMinutes}
+              />
             ) : null}
 
             {(c.screen === "question" ||

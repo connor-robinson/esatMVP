@@ -35,7 +35,7 @@ import type {
   PearsonModuleResult,
   ZoomLevel,
 } from "./types";
-import { MODULE_DURATION_MS } from "./types";
+import { INSTRUCTION_READ_MS, MODULE_DURATION_MS } from "./types";
 
 /** Blurred spinner after End Exam / End Module confirm (specimen player). */
 export const SESSION_ENDING_MS = 2800;
@@ -93,6 +93,9 @@ export function usePearsonExamController(
     return base;
   });
   const [moduleDeadline, setModuleDeadline] = useState<number | null>(null);
+  const [instructionDeadline, setInstructionDeadline] = useState<number | null>(
+    null,
+  );
   const [completed, setCompleted] = useState(false);
   const [timeExpired, setTimeExpired] = useState(false);
   const [colourScheme, setColourScheme] =
@@ -113,15 +116,20 @@ export function usePearsonExamController(
     screen === "end-module-confirmation" ||
     screen === "review";
 
-  // Tick timer once module clock is running.
+  // Tick while instruction or module clock is running.
   useEffect(() => {
-    if (completed || moduleDeadline == null) return;
+    if (completed) return;
+    if (moduleDeadline == null && instructionDeadline == null) return;
     const id = window.setInterval(() => setNowTick(Date.now()), 250);
     return () => window.clearInterval(id);
-  }, [completed, moduleDeadline]);
+  }, [completed, instructionDeadline, moduleDeadline]);
 
-  const remaining = moduleDeadline
-    ? remainingMs(moduleDeadline, nowTick)
+  const activeTimerDeadline =
+    screen === "instructions" && instructionDeadline != null
+      ? instructionDeadline
+      : moduleDeadline;
+  const remaining = activeTimerDeadline
+    ? remainingMs(activeTimerDeadline, nowTick)
     : 0;
   const remainingLabel = formatRemainingMs(remaining);
 
@@ -192,11 +200,21 @@ export function usePearsonExamController(
   );
 
   const startQuestions = useCallback(() => {
+    setInstructionDeadline(null);
     if (moduleDeadline == null) {
       setModuleDeadline(startFreshModuleDeadline(Date.now(), durationMs));
     }
     goToQuestionIndex(0);
   }, [durationMs, goToQuestionIndex, moduleDeadline]);
+
+  useEffect(() => {
+    if (screen !== "instructions" || instructionDeadline == null || completed) {
+      return;
+    }
+    if (isModuleTimeExpired(instructionDeadline, nowTick)) {
+      startQuestions();
+    }
+  }, [completed, instructionDeadline, nowTick, screen, startQuestions]);
 
   const moduleLocked = completed || timeExpired;
 
@@ -225,6 +243,7 @@ export function usePearsonExamController(
 
   const advanceFlow = useCallback(() => {
     if (screen === "nda") {
+      setInstructionDeadline(Date.now() + INSTRUCTION_READ_MS);
       setScreen("instructions");
       return;
     }
@@ -441,7 +460,9 @@ export function usePearsonExamController(
     : null;
 
   const showQuestionCounter = inQuestionPhase && screen !== "review";
-  const showTimer = moduleDeadline != null && showQuestionCounter;
+  const showTimer =
+    (screen === "instructions" && instructionDeadline != null) ||
+    (moduleDeadline != null && showQuestionCounter);
   const showFlagToolbar = screen === "question" && !navigatorOpen;
   const showPrequestionFooter =
     screen === "nda" ||
@@ -470,6 +491,8 @@ export function usePearsonExamController(
     colourScheme,
     zoomLevel,
     moduleDeadline,
+    instructionDeadline,
+    timeLimitMinutes: Math.round(durationMs / 60000),
     remainingMs: remaining,
     remainingLabel,
     moduleTransition,

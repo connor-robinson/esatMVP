@@ -2,16 +2,26 @@
 
 interface PearsonInstructionsScreenProps {
   questionCount: number;
+  timeLimitMinutes: number;
+}
+
+function formatMinutes(minutes: number): string {
+  return `${minutes} ${minutes === 1 ? "minute" : "minutes"}`;
 }
 
 /**
- * Screen 3: Module instructions table (Untimed).
+ * Screen 3: Module instructions with 1-minute read countdown (header timer).
  */
 export function PearsonInstructionsScreen({
   questionCount,
+  timeLimitMinutes,
 }: PearsonInstructionsScreenProps) {
   return (
     <div className="pearson-static-content">
+      <p>
+        <strong>You have 1 minute to read these instructions.</strong>
+      </p>
+
       <table className="pearson-info-table">
         <thead>
           <tr>
@@ -22,7 +32,7 @@ export function PearsonInstructionsScreen({
         <tbody>
           <tr>
             <td>{questionCount}</td>
-            <td>Untimed</td>
+            <td>{formatMinutes(timeLimitMinutes)}</td>
           </tr>
         </tbody>
       </table>

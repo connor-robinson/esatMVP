@@ -63,6 +63,9 @@ export const ZOOM_LEVELS: readonly ZoomLevel[] = [
 /** Default module length: 40 minutes (VERIFIED_ESAT). */
 export const MODULE_DURATION_MS = 40 * 60 * 1000;
 
+/** Instruction read period before each module question block (VERIFIED_ESAT). */
+export const INSTRUCTION_READ_MS = 60 * 1000;
+
 export type PearsonAnswerMap = Record<number, Letter | null>;
 export type PearsonFlagMap = Record<number, boolean>;
 export type PearsonViewedMap = Record<number, boolean>;
