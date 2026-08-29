@@ -16,7 +16,7 @@ from past_paper_converter.place_stems import (
     load_place_candidates,
     load_sidecar,
 )
-from past_paper_converter.stem_block_overrides import display_width_override
+from past_paper_converter.stem_block_overrides import display_width_override, placement_skip_reason
 from past_paper_converter.stem_blocks import apply_placements_preview
 
 REPORT_DIR = Path(__file__).resolve().parent / "_cache" / "stem_placements" / "reports"
@@ -80,6 +80,8 @@ def build_question_report(candidate: Dict[str, Any]) -> Dict[str, Any]:
                 sidecar["placements"],
             )
 
+    skip_reason = placement_skip_reason(qid)
+
     return {
         "questionId": qid,
         "questionNumber": prepared["questionNumber"],
@@ -91,6 +93,7 @@ def build_question_report(candidate: Dict[str, Any]) -> Dict[str, Any]:
         "stemBlocks": blocks,
         "stemDiagramAssets": crop_meta,
         "allowedInsertAfterBlock": list(range(0, len(blocks) + 1)),
+        "placementSkipReason": skip_reason,
         "placement": placement_section,
         "placementPreview": placement_preview,
         "applyDryRun": apply_preview,

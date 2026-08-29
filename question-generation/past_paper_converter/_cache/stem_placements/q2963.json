@@ -5,7 +5,9 @@
   "paperName": "Section 1",
   "questionNumber": 64,
   "stemBlocks": [
-    "A Petri dish was filled with agar that had been mixed with starch. The agar is not digested by enzymes used in the experiment. Four small wells were cut in the agar. Three were filled with different solutions. Well Y was filled with water to act as a control. The dish was kept at $30^{\\circ}\\text{C}$ for 30 minutes. The surface of the agar was then washed with iodine solution, turning parts of it blue-black in the presence of starch. The Petri dish was placed on a piece of graph paper, as shown in the diagram, to measure the clear areas around the wells. The area of each well should be considered negligible. Which of the statements is/are correct?\n1 The area of starch digested around well W is 4 times the area digested around well X.\n2 Amylase could have been used in well W and protease could have been used in well X.\n3 The solution put in well Z could have contained boiled enzyme."
+    "A Petri dish was filled with agar that had been mixed with starch. The agar is not digested by enzymes used in the experiment. Four small wells were cut in the agar. Three were filled with different solutions. Well Y was filled with water to act as a control. The dish was kept at $30^{\\circ}\\text{C}$ for 30 minutes. The surface of the agar was then washed with iodine solution, turning parts of it blue-black in the presence of starch. The Petri dish was placed on a piece of graph paper, as shown in the diagram, to measure the clear areas around the wells. The area of each well should be considered negligible.",
+    "Which of the statements is/are correct?",
+    "1 The area of starch digested around well W is 4 times the area digested around well X.\n2 Amylase could have been used in well W and protease could have been used in well X.\n3 The solution put in well Z could have contained boiled enzyme."
   ],
   "assets": [
     {
@@ -23,7 +25,7 @@
     }
   ],
   "model": "human_review_chatgpt",
-  "placedAt": "2026-08-29T05:03:19.889889+00:00",
+  "placedAt": "2026-08-29T05:45:08.570299+00:00",
   "sourceImageHash": "a0801d1966cc019a95ff16d8cdc9cc36f688bbb36e4b8568a1127494e0f02a28",
   "status": "ok",
   "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"

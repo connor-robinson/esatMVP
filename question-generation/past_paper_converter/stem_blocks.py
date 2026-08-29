@@ -10,7 +10,7 @@ import re
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from .diagram import build_diagram_stem_embed
-from .stem_block_overrides import apply_block_overrides
+from .stem_block_overrides import apply_block_overrides, placement_skip_reason
 from .stem_reblock import refine_stem_blocks
 
 FIGURE_RE = re.compile(r"<figure[^>]*>[\s\S]*?</figure>", re.IGNORECASE)

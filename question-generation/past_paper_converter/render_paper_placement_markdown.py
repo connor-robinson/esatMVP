@@ -10,12 +10,13 @@ REVIEW_PROMPT = """You are reviewing mid-stem diagram placement for past-paper q
 
 For each question below:
 1. Open **source screenshot** and compare layout to the numbered **text blocks**.
-2. For every stem diagram asset (d1, d2, ...), return `insert_after_block`:
+2. The text blocks are not authoritative. If the screenshot shows a diagram between sentences currently in the same block, treat that as a split boundary before assigning placement.
+3. For every stem diagram asset (d1, d2, ...), return `insert_after_block`:
    - 0 = diagram before block 1
    - N = diagram after block N
    - {blockCount} = diagram after all text (end of stem)
-3. Do not recrop. Ignore answer-choice images. Only stem diagrams listed.
-4. Optional: comment if `displayWidthPct` looks too large/small (32-78% typical).
+4. Do not recrop. Ignore answer-choice images. Only stem diagrams listed.
+5. Optional: comment if `displayWidthPct` looks too large/small (32-78% typical).
 
 Return JSON per question:
 {"questionId": 2904, "placements": [{"asset_id": "d1", "insert_after_block": 0, "confidence": 0.95}]}
@@ -36,6 +37,7 @@ def render_markdown(report: dict) -> str:
         "## Slot model (read this first)",
         "",
         "Text is split into numbered blocks (paragraphs/tables). Figures are stripped from blocks.",
+        "Blocks are hints, not ground truth. Split at diagram boundaries when the screenshot shows mid-stem placement inside one block.",
         "Your job: say which **slot** each diagram belongs in, using the **source screenshot** as ground truth.",
         "",
         "| insert_after_block | Meaning |",
@@ -64,6 +66,9 @@ def render_markdown(report: dict) -> str:
         lines.append(f"- blockCount: {block_count}")
         lines.append(f"- allowed insert_after_block: {list(range(0, block_count + 1))}")
         lines.append(f"- stem diagrams: {len(assets)}")
+        skip_reason = q.get("placementSkipReason")
+        if skip_reason:
+            lines.append(f"- **SKIP stem placement**: {skip_reason}")
         lines.append("")
 
         screenshot = q.get("sourceScreenshotUrl") or ""
@@ -93,7 +98,10 @@ def render_markdown(report: dict) -> str:
             lines.append("")
 
         placement = q.get("placement") or {}
-        if placement.get("status") == "ok":
+        if skip_reason:
+            lines.append("### Placements")
+            lines.append("- excluded from stem-diagram placement pass (see skip note above)")
+        elif placement.get("status") == "ok":
             lines.append("### Reviewed placements")
             for row in placement.get("placements") or []:
                 width = row.get("displayWidthPct")

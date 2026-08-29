@@ -5,7 +5,8 @@
   "paperName": "Section 1",
   "questionNumber": 73,
   "stemBlocks": [
-    "The diagram represents part of the carbon cycle.\nWhich of the arrows represent processes resulting in at least one organic product (contains carbon and hydrogen)?"
+    "The diagram represents part of the carbon cycle.",
+    "Which of the arrows represent processes resulting in at least one organic product (contains carbon and hydrogen)?"
   ],
   "assets": [
     {
@@ -23,7 +24,7 @@
     }
   ],
   "model": "human_review_chatgpt",
-  "placedAt": "2026-08-29T05:03:19.905116+00:00",
+  "placedAt": "2026-08-29T05:45:08.573162+00:00",
   "sourceImageHash": "6526c8e6e92aab40a68c94a733f1b585fbf4ff3cb3ec9a67ae5e775ee9847462",
   "status": "ok",
   "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"

@@ -15,16 +15,11 @@
       "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2970/diagram_1_48f0ea72a8fe.png"
     }
   ],
-  "placements": [
-    {
-      "assetId": "d1",
-      "insertAfterBlock": 1,
-      "confidence": 0.97
-    }
-  ],
+  "placements": [],
   "model": "human_review_chatgpt",
-  "placedAt": "2026-08-29T05:03:19.900019+00:00",
+  "placedAt": "2026-08-29T05:45:08.573162+00:00",
   "sourceImageHash": "279a3431632dad4bc0efcc03e5bac0d1bd8616b3190b3e073d657936af859f39",
-  "status": "ok",
+  "status": "skipped_graphical_options",
+  "skipReason": "graphical_option_composite: asset is the A-H answer grid, not a stem diagram",
   "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
 }

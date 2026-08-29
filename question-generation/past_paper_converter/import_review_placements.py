@@ -13,7 +13,7 @@ from past_paper_converter.place_stems import (
     load_place_candidates,
     write_sidecar_record,
 )
-from past_paper_converter.stem_block_overrides import display_width_override
+from past_paper_converter.stem_block_overrides import display_width_override, placement_skip_reason
 from past_paper_converter.stem_blocks import stem_diagram_assets, validate_placements
 
 DEFAULT_PATH = (
@@ -44,6 +44,30 @@ def import_review_placements(path: Path) -> Dict[str, Any]:
         if not candidate:
             results["failed"].append({"questionId": qid, "error": "not in paper 50"})
             continue
+
+        skip_reason = placement_skip_reason(qid)
+        if skip_reason:
+            prepared = build_candidate_record(candidate)
+            record = {
+                "questionId": qid,
+                "examName": prepared["examName"],
+                "examYear": prepared["examYear"],
+                "paperName": prepared["paperName"],
+                "questionNumber": prepared["questionNumber"],
+                "stemBlocks": prepared["stemBlocks"],
+                "assets": prepared["assets"],
+                "placements": [],
+                "model": "human_review_chatgpt",
+                "placedAt": _now_iso(),
+                "sourceImageHash": prepared.get("sourceImageHash") or "",
+                "status": "skipped_graphical_options",
+                "skipReason": skip_reason,
+                "reviewSource": str(path),
+            }
+            write_sidecar_record(record)
+            results["ok"].append(qid)
+            continue
+
         prepared = build_candidate_record(candidate)
         asset_ids = [str(asset["id"]) for asset in prepared["assets"]]
         placements, error = validate_placements(

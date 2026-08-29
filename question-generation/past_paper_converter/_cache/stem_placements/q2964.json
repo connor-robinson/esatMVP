@@ -5,7 +5,10 @@
   "paperName": "Section 1",
   "questionNumber": 65,
   "stemBlocks": [
-    "The diagram shows a bubble potometer at the start of an experiment.\nThe glass tube has an internal diameter of 1 mm.\nAfter five minutes, one end of the air bubble had moved to the 4 cm mark on the scale.\nWhich row is correct?",
+    "The diagram shows a bubble potometer at the start of an experiment.",
+    "The glass tube has an internal diameter of 1 mm.",
+    "After five minutes, one end of the air bubble had moved to the 4 cm mark on the scale.",
+    "Which row is correct?",
     "|  | name of process being investigated | volume of water taken up / $\\text{mm}^3$ |\n| --- | --- | --- |\n| A | translocation | $\\pi \\times (0.5)^2 \\times 10$ |\n| B | translocation | $\\pi \\times (0.5)^2 \\times 15$ |\n| C | translocation | $2\\pi \\times (0.5) \\times 10$ |\n| D | translocation | $2\\pi \\times (0.5) \\times 15$ |\n| E | transpiration | $\\pi \\times (0.5)^2 \\times 10$ |\n| F | transpiration | $\\pi \\times (0.5)^2 \\times 15$ |\n| G | transpiration | $2\\pi \\times (0.5) \\times 10$ |\n| H | transpiration | $2\\pi \\times (0.5) \\times 15$ |"
   ],
   "assets": [
@@ -24,7 +27,7 @@
     }
   ],
   "model": "human_review_chatgpt",
-  "placedAt": "2026-08-29T05:03:19.890943+00:00",
+  "placedAt": "2026-08-29T05:45:08.572014+00:00",
   "sourceImageHash": "b109332d8c51e8f706686c923b576477f3a2bb6591f1afe00638cf271c9c5ac1",
   "status": "ok",
   "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"

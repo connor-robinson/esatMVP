@@ -2,12 +2,13 @@ You are reviewing mid-stem diagram placement for past-paper questions.
 
 For each question below:
 1. Open **source screenshot** and compare layout to the numbered **text blocks**.
-2. For every stem diagram asset (d1, d2, ...), return `insert_after_block`:
+2. The text blocks are not authoritative. If the screenshot shows a diagram between sentences currently in the same block, treat that as a split boundary before assigning placement.
+3. For every stem diagram asset (d1, d2, ...), return `insert_after_block`:
    - 0 = diagram before block 1
    - N = diagram after block N
    - {blockCount} = diagram after all text (end of stem)
-3. Do not recrop. Ignore answer-choice images. Only stem diagrams listed.
-4. Optional: comment if `displayWidthPct` looks too large/small (32-78% typical).
+4. Do not recrop. Ignore answer-choice images. Only stem diagrams listed.
+5. Optional: comment if `displayWidthPct` looks too large/small (32-78% typical).
 
 Return JSON per question:
 {"questionId": 2904, "placements": [{"asset_id": "d1", "insert_after_block": 0, "confidence": 0.95}]}
@@ -21,6 +22,7 @@ Return JSON per question:
 ## Slot model (read this first)
 
 Text is split into numbered blocks (paragraphs/tables). Figures are stripped from blocks.
+Blocks are hints, not ground truth. Split at diagram boundaries when the screenshot shows mid-stem placement inside one block.
 Your job: say which **slot** each diagram belongs in, using the **source screenshot** as ground truth.
 
 | insert_after_block | Meaning |
@@ -297,8 +299,8 @@ In what direction and through what angle should mirror Y be rotated in order for
 
 ## Q32 (questionId 2931)
 
-- blockCount: 1
-- allowed insert_after_block: [0, 1]
+- blockCount: 2
+- allowed insert_after_block: [0, 1, 2]
 - stem diagrams: 1
 
 ### Source screenshot (layout ground truth)
@@ -313,7 +315,12 @@ https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-image
 ### Numbered text blocks (figures removed)
 **Block 1**
 ```
-A large, flat, metal plate is coated on one side with a layer of thermally insulating material of the same thickness $a$ as the metal plate. The uninsulated top surface of the metal plate is maintained at a constant temperature $T_1$. The bottom surface of the insulating material is maintained at a constant, lower temperature $T_2$. The system is in equilibrium. The diagram shows this arrangement. Which graph could show how the temperature varies with distance from the top surface of the metal plate to the bottom surface of the insulating material?
+A large, flat, metal plate is coated on one side with a layer of thermally insulating material of the same thickness $a$ as the metal plate. The uninsulated top surface of the metal plate is maintained at a constant temperature $T_1$. The bottom surface of the insulating material is maintained at a constant, lower temperature $T_2$. The system is in equilibrium. The diagram shows this arrangement.
+```
+
+**Block 2**
+```
+Which graph could show how the temperature varies with distance from the top surface of the metal plate to the bottom surface of the insulating material?
 ```
 
 ### Reviewed placements
@@ -321,9 +328,11 @@ A large, flat, metal plate is coated on one side with a layer of thermally insul
 
 ### Placement preview (diagram markers in reading order)
 ```
-A large, flat, metal plate is coated on one side with a layer of thermally insulating material of the same thickness $a$ as the metal plate. The uninsulated top surface of the metal plate is maintained at a constant temperature $T_1$. The bottom surface of the insulating material is maintained at a constant, lower temperature $T_2$. The system is in equilibrium. The diagram shows this arrangement. Which graph could show how the temperature varies with distance from the top surface of the metal plate to the bottom surface of the insulating material?
+A large, flat, metal plate is coated on one side with a layer of thermally insulating material of the same thickness $a$ as the metal plate. The uninsulated top surface of the metal plate is maintained at a constant temperature $T_1$. The bottom surface of the insulating material is maintained at a constant, lower temperature $T_2$. The system is in equilibrium. The diagram shows this arrangement.
 
 {{diagram:d1}}
+
+Which graph could show how the temperature varies with distance from the top surface of the metal plate to the bottom surface of the insulating material?
 ```
 
 ---
@@ -374,8 +383,8 @@ What is the thickness of the glass?
 
 ## Q37 (questionId 2936)
 
-- blockCount: 1
-- allowed insert_after_block: [0, 1]
+- blockCount: 4
+- allowed insert_after_block: [0, 1, 2, 3, 4]
 - stem diagrams: 1
 
 ### Source screenshot (layout ground truth)
@@ -391,8 +400,20 @@ https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-image
 **Block 1**
 ```
 A copper ring, with a small gap XY, rests in a uniform horizontal magnetic field. The ring lies in the plane of the page and the direction of the magnetic field is horizontal from left to right, as shown in the diagram.
+```
+
+**Block 2**
+```
 A voltage is now applied across XY, such that X is connected to the positive terminal of the power supply and Y is connected to the negative terminal.
+```
+
+**Block 3**
+```
 Which statement describes the motion of the ring immediately after the voltage is applied?
+```
+
+**Block 4**
+```
 (Assume that the mechanism supporting the ring allows the ring to move freely and allows the voltage to be applied continuously.)
 ```
 
@@ -402,19 +423,22 @@ Which statement describes the motion of the ring immediately after the voltage i
 ### Placement preview (diagram markers in reading order)
 ```
 A copper ring, with a small gap XY, rests in a uniform horizontal magnetic field. The ring lies in the plane of the page and the direction of the magnetic field is horizontal from left to right, as shown in the diagram.
-A voltage is now applied across XY, such that X is connected to the positive terminal of the power supply and Y is connected to the negative terminal.
-Which statement describes the motion of the ring immediately after the voltage is applied?
-(Assume that the mechanism supporting the ring allows the ring to move freely and allows the voltage to be applied continuously.)
 
 {{diagram:d1}}
+
+A voltage is now applied across XY, such that X is connected to the positive terminal of the power supply and Y is connected to the negative terminal.
+
+Which statement describes the motion of the ring immediately after the voltage is applied?
+
+(Assume that the mechanism supporting the ring allows the ring to move freely and allows the voltage to be applied continuously.)
 ```
 
 ---
 
 ## Q38 (questionId 2937)
 
-- blockCount: 2
-- allowed insert_after_block: [0, 1, 2]
+- blockCount: 4
+- allowed insert_after_block: [0, 1, 2, 3, 4]
 - stem diagrams: 1
 
 ### Source screenshot (layout ground truth)
@@ -430,12 +454,20 @@ https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-image
 **Block 1**
 ```
 A battery and two resistors X and Y are connected in series.
+```
+
+**Block 2**
+```
 The power transferred by the battery is 6 W.
+```
+
+**Block 3**
+```
 The resistance of X is $10\ \Omega$.
 The voltage across Y is 4 V.
 ```
 
-**Block 2**
+**Block 4**
 ```
 What is the current in the circuit?
 ```
@@ -446,11 +478,13 @@ What is the current in the circuit?
 ### Placement preview (diagram markers in reading order)
 ```
 A battery and two resistors X and Y are connected in series.
-The power transferred by the battery is 6 W.
-The resistance of X is $10\ \Omega$.
-The voltage across Y is 4 V.
 
 {{diagram:d1}}
+
+The power transferred by the battery is 6 W.
+
+The resistance of X is $10\ \Omega$.
+The voltage across Y is 4 V.
 
 What is the current in the circuit?
 ```
@@ -499,8 +533,8 @@ What is the relative atomic mass ($A_r$) of this element?
 
 ## Q55 (questionId 2954)
 
-- blockCount: 1
-- allowed insert_after_block: [0, 1]
+- blockCount: 4
+- allowed insert_after_block: [0, 1, 2, 3, 4]
 - stem diagrams: 1
 
 ### Source screenshot (layout ground truth)
@@ -516,8 +550,20 @@ https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-image
 **Block 1**
 ```
 When methanol is burned in the apparatus shown it gives out $720 \text{ kJ mol}^{-1}$. However, only $80\%$ of the energy released is transferred into the water.
+```
+
+**Block 2**
+```
 The starting temperature of the water is $12^{\circ}\text{C}$.
+```
+
+**Block 3**
+```
 What mass of methanol would need to be burned to give a $60^{\circ}\text{C}$ temperature rise in the water?
+```
+
+**Block 4**
+```
 ($M_\text{r}$ value: methanol $= 32$. Assume that the specific heat capacity of water $= 4\text{ Jg}^{-1\circ}\text{C}^{-1}$)
 ```
 
@@ -527,11 +573,14 @@ What mass of methanol would need to be burned to give a $60^{\circ}\text{C}$ tem
 ### Placement preview (diagram markers in reading order)
 ```
 When methanol is burned in the apparatus shown it gives out $720 \text{ kJ mol}^{-1}$. However, only $80\%$ of the energy released is transferred into the water.
-The starting temperature of the water is $12^{\circ}\text{C}$.
-What mass of methanol would need to be burned to give a $60^{\circ}\text{C}$ temperature rise in the water?
-($M_\text{r}$ value: methanol $= 32$. Assume that the specific heat capacity of water $= 4\text{ Jg}^{-1\circ}\text{C}^{-1}$)
 
 {{diagram:d1}}
+
+The starting temperature of the water is $12^{\circ}\text{C}$.
+
+What mass of methanol would need to be burned to give a $60^{\circ}\text{C}$ temperature rise in the water?
+
+($M_\text{r}$ value: methanol $= 32$. Assume that the specific heat capacity of water $= 4\text{ Jg}^{-1\circ}\text{C}^{-1}$)
 ```
 
 ---
@@ -745,8 +794,8 @@ Which of the following statements is/are correct?
 
 ## Q64 (questionId 2963)
 
-- blockCount: 1
-- allowed insert_after_block: [0, 1]
+- blockCount: 3
+- allowed insert_after_block: [0, 1, 2, 3]
 - stem diagrams: 1
 
 ### Source screenshot (layout ground truth)
@@ -761,7 +810,16 @@ https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-image
 ### Numbered text blocks (figures removed)
 **Block 1**
 ```
-A Petri dish was filled with agar that had been mixed with starch. The agar is not digested by enzymes used in the experiment. Four small wells were cut in the agar. Three were filled with different solutions. Well Y was filled with water to act as a control. The dish was kept at $30^{\circ}\text{C}$ for 30 minutes. The surface of the agar was then washed with iodine solution, turning parts of it blue-black in the presence of starch. The Petri dish was placed on a piece of graph paper, as shown in the diagram, to measure the clear areas around the wells. The area of each well should be considered negligible. Which of the statements is/are correct?
+A Petri dish was filled with agar that had been mixed with starch. The agar is not digested by enzymes used in the experiment. Four small wells were cut in the agar. Three were filled with different solutions. Well Y was filled with water to act as a control. The dish was kept at $30^{\circ}\text{C}$ for 30 minutes. The surface of the agar was then washed with iodine solution, turning parts of it blue-black in the presence of starch. The Petri dish was placed on a piece of graph paper, as shown in the diagram, to measure the clear areas around the wells. The area of each well should be considered negligible.
+```
+
+**Block 2**
+```
+Which of the statements is/are correct?
+```
+
+**Block 3**
+```
 1 The area of starch digested around well W is 4 times the area digested around well X.
 2 Amylase could have been used in well W and protease could have been used in well X.
 3 The solution put in well Z could have contained boiled enzyme.
@@ -772,20 +830,23 @@ A Petri dish was filled with agar that had been mixed with starch. The agar is n
 
 ### Placement preview (diagram markers in reading order)
 ```
-A Petri dish was filled with agar that had been mixed with starch. The agar is not digested by enzymes used in the experiment. Four small wells were cut in the agar. Three were filled with different solutions. Well Y was filled with water to act as a control. The dish was kept at $30^{\circ}\text{C}$ for 30 minutes. The surface of the agar was then washed with iodine solution, turning parts of it blue-black in the presence of starch. The Petri dish was placed on a piece of graph paper, as shown in the diagram, to measure the clear areas around the wells. The area of each well should be considered negligible. Which of the statements is/are correct?
+A Petri dish was filled with agar that had been mixed with starch. The agar is not digested by enzymes used in the experiment. Four small wells were cut in the agar. Three were filled with different solutions. Well Y was filled with water to act as a control. The dish was kept at $30^{\circ}\text{C}$ for 30 minutes. The surface of the agar was then washed with iodine solution, turning parts of it blue-black in the presence of starch. The Petri dish was placed on a piece of graph paper, as shown in the diagram, to measure the clear areas around the wells. The area of each well should be considered negligible.
+
+{{diagram:d1}}
+
+Which of the statements is/are correct?
+
 1 The area of starch digested around well W is 4 times the area digested around well X.
 2 Amylase could have been used in well W and protease could have been used in well X.
 3 The solution put in well Z could have contained boiled enzyme.
-
-{{diagram:d1}}
 ```
 
 ---
 
 ## Q65 (questionId 2964)
 
-- blockCount: 2
-- allowed insert_after_block: [0, 1, 2]
+- blockCount: 5
+- allowed insert_after_block: [0, 1, 2, 3, 4, 5]
 - stem diagrams: 1
 
 ### Source screenshot (layout ground truth)
@@ -801,12 +862,24 @@ https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-image
 **Block 1**
 ```
 The diagram shows a bubble potometer at the start of an experiment.
-The glass tube has an internal diameter of 1 mm.
-After five minutes, one end of the air bubble had moved to the 4 cm mark on the scale.
-Which row is correct?
 ```
 
 **Block 2**
+```
+The glass tube has an internal diameter of 1 mm.
+```
+
+**Block 3**
+```
+After five minutes, one end of the air bubble had moved to the 4 cm mark on the scale.
+```
+
+**Block 4**
+```
+Which row is correct?
+```
+
+**Block 5**
 ```
 |  | name of process being investigated | volume of water taken up / $\text{mm}^3$ |
 | --- | --- | --- |
@@ -826,11 +899,14 @@ Which row is correct?
 ### Placement preview (diagram markers in reading order)
 ```
 The diagram shows a bubble potometer at the start of an experiment.
-The glass tube has an internal diameter of 1 mm.
-After five minutes, one end of the air bubble had moved to the 4 cm mark on the scale.
-Which row is correct?
 
 {{diagram:d1}}
+
+The glass tube has an internal diameter of 1 mm.
+
+After five minutes, one end of the air bubble had moved to the 4 cm mark on the scale.
+
+Which row is correct?
 
 |  | name of process being investigated | volume of water taken up / $\text{mm}^3$ |
 | --- | --- | --- |
@@ -848,8 +924,8 @@ Which row is correct?
 
 ## Q67 (questionId 2966)
 
-- blockCount: 2
-- allowed insert_after_block: [0, 1, 2]
+- blockCount: 4
+- allowed insert_after_block: [0, 1, 2, 3, 4]
 - stem diagrams: 1
 
 ### Source screenshot (layout ground truth)
@@ -864,10 +940,20 @@ https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-image
 ### Numbered text blocks (figures removed)
 **Block 1**
 ```
-A student viewed a bacterial cell using a microscope. The cell was measured with a microscope ruler as shown in the diagram. Each division on this ruler measures $2.5\ \mu\text{m}$. The student made a drawing of this cell. The drawing was $5.0\ \text{cm}$ in length and included the structures that the student expected to see. Which row of the table gives the magnification of the student's drawing and one of the structures that should be included?
+A student viewed a bacterial cell using a microscope. The cell was measured with a microscope ruler as shown in the diagram. Each division on this ruler measures $2.5\ \mu\text{m}$.
 ```
 
 **Block 2**
+```
+The student made a drawing of this cell. The drawing was $5.0\ \text{cm}$ in length and included the structures that the student expected to see.
+```
+
+**Block 3**
+```
+Which row of the table gives the magnification of the student's drawing and one of the structures that should be included?
+```
+
+**Block 4**
 ```
 |  | magnification of the student's drawing | structure that should be included |
 | --- | --- | --- |
@@ -886,9 +972,13 @@ A student viewed a bacterial cell using a microscope. The cell was measured with
 
 ### Placement preview (diagram markers in reading order)
 ```
-A student viewed a bacterial cell using a microscope. The cell was measured with a microscope ruler as shown in the diagram. Each division on this ruler measures $2.5\ \mu\text{m}$. The student made a drawing of this cell. The drawing was $5.0\ \text{cm}$ in length and included the structures that the student expected to see. Which row of the table gives the magnification of the student's drawing and one of the structures that should be included?
+A student viewed a bacterial cell using a microscope. The cell was measured with a microscope ruler as shown in the diagram. Each division on this ruler measures $2.5\ \mu\text{m}$.
 
 {{diagram:d1}}
+
+The student made a drawing of this cell. The drawing was $5.0\ \text{cm}$ in length and included the structures that the student expected to see.
+
+Which row of the table gives the magnification of the student's drawing and one of the structures that should be included?
 
 |  | magnification of the student's drawing | structure that should be included |
 | --- | --- | --- |
@@ -960,6 +1050,7 @@ Which of the following statements about the menstrual cycle is/are correct?
 - blockCount: 1
 - allowed insert_after_block: [0, 1]
 - stem diagrams: 1
+- **SKIP stem placement**: graphical_option_composite: asset is the A-H answer grid, not a stem diagram
 
 ### Source screenshot (layout ground truth)
 Open this image and compare to the blocks below:
@@ -976,15 +1067,8 @@ https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-image
 A scientist was investigating the effect of substrate concentration on lipase enzyme activity. Two test tubes were set up: one containing a sample of full-fat milk mixed with an alkaline solution, and a pH indicator; one containing lipase. The pH indicator turned the alkaline milk sample pink. Both tubes were incubated in a water bath set to an optimum temperature for lipase until the contents had reached this temperature. The scientist then added the lipase to the tube with the milk sample and measured the time taken for the indicator to turn colourless. This colour change was caused by an increase in concentration of one of the products of the reaction. Further samples of the milk were diluted, and added to the same quantity of alkaline solution and pH indicator, to produce another six different substrate concentrations, and the experiment was repeated. All other variables were kept constant. The scientist found that each substrate concentration caused the pH indicator to change to colourless in a different length of time. The results of the reaction in all seven tubes were plotted on a graph. Which option correctly identifies the shape of the graph of the results, the limiting factor during the experiment and an explanation for the change in colour of the pH indicator?
 ```
 
-### Reviewed placements
-- d1: insertAfterBlock=1 (confidence=0.97)
-
-### Placement preview (diagram markers in reading order)
-```
-A scientist was investigating the effect of substrate concentration on lipase enzyme activity. Two test tubes were set up: one containing a sample of full-fat milk mixed with an alkaline solution, and a pH indicator; one containing lipase. The pH indicator turned the alkaline milk sample pink. Both tubes were incubated in a water bath set to an optimum temperature for lipase until the contents had reached this temperature. The scientist then added the lipase to the tube with the milk sample and measured the time taken for the indicator to turn colourless. This colour change was caused by an increase in concentration of one of the products of the reaction. Further samples of the milk were diluted, and added to the same quantity of alkaline solution and pH indicator, to produce another six different substrate concentrations, and the experiment was repeated. All other variables were kept constant. The scientist found that each substrate concentration caused the pH indicator to change to colourless in a different length of time. The results of the reaction in all seven tubes were plotted on a graph. Which option correctly identifies the shape of the graph of the results, the limiting factor during the experiment and an explanation for the change in colour of the pH indicator?
-
-{{diagram:d1}}
-```
+### Placements
+- excluded from stem-diagram placement pass (see skip note above)
 
 ---
 
@@ -1047,8 +1131,8 @@ Which of the following statements are correct?
 
 ## Q73 (questionId 2972)
 
-- blockCount: 1
-- allowed insert_after_block: [0, 1]
+- blockCount: 2
+- allowed insert_after_block: [0, 1, 2]
 - stem diagrams: 1
 
 ### Source screenshot (layout ground truth)
@@ -1064,6 +1148,10 @@ https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-image
 **Block 1**
 ```
 The diagram represents part of the carbon cycle.
+```
+
+**Block 2**
+```
 Which of the arrows represent processes resulting in at least one organic product (contains carbon and hydrogen)?
 ```
 
@@ -1073,9 +1161,10 @@ Which of the arrows represent processes resulting in at least one organic produc
 ### Placement preview (diagram markers in reading order)
 ```
 The diagram represents part of the carbon cycle.
-Which of the arrows represent processes resulting in at least one organic product (contains carbon and hydrogen)?
 
 {{diagram:d1}}
+
+Which of the arrows represent processes resulting in at least one organic product (contains carbon and hydrogen)?
 ```
 
 ---

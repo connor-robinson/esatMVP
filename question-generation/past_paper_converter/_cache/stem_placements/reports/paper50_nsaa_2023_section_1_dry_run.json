@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-29T05:06:12.161212+00:00",
+  "generatedAt": "2026-08-29T05:47:59.737188+00:00",
   "mode": "dry_run_export",
   "paperId": 50,
   "paperLabel": "NSAA 2023 Section 1",
@@ -54,10 +54,11 @@
         1,
         2
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.849962+00:00",
+        "placedAt": "2026-08-29T05:45:08.549918+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -107,10 +108,11 @@
         2,
         3
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.849962+00:00",
+        "placedAt": "2026-08-29T05:45:08.551925+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -162,10 +164,11 @@
         3,
         4
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.849962+00:00",
+        "placedAt": "2026-08-29T05:45:08.551925+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -213,10 +216,11 @@
         1,
         2
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.849962+00:00",
+        "placedAt": "2026-08-29T05:45:08.551925+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -272,10 +276,11 @@
         2,
         3
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.849962+00:00",
+        "placedAt": "2026-08-29T05:45:08.555627+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -311,9 +316,10 @@
       "examYear": 2023,
       "paperName": "Section 1",
       "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q032.png",
-      "blockCount": 1,
+      "blockCount": 2,
       "stemBlocks": [
-        "A large, flat, metal plate is coated on one side with a layer of thermally insulating material of the same thickness $a$ as the metal plate. The uninsulated top surface of the metal plate is maintained at a constant temperature $T_1$. The bottom surface of the insulating material is maintained at a constant, lower temperature $T_2$. The system is in equilibrium. The diagram shows this arrangement. Which graph could show how the temperature varies with distance from the top surface of the metal plate to the bottom surface of the insulating material?"
+        "A large, flat, metal plate is coated on one side with a layer of thermally insulating material of the same thickness $a$ as the metal plate. The uninsulated top surface of the metal plate is maintained at a constant temperature $T_1$. The bottom surface of the insulating material is maintained at a constant, lower temperature $T_2$. The system is in equilibrium. The diagram shows this arrangement.",
+        "Which graph could show how the temperature varies with distance from the top surface of the metal plate to the bottom surface of the insulating material?"
       ],
       "stemDiagramAssets": [
         {
@@ -325,12 +331,14 @@
       ],
       "allowedInsertAfterBlock": [
         0,
-        1
+        1,
+        2
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.865887+00:00",
+        "placedAt": "2026-08-29T05:45:08.557861+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -339,11 +347,11 @@
           }
         ]
       },
-      "placementPreview": "A large, flat, metal plate is coated on one side with a layer of thermally insulating material of the same thickness $a$ as the metal plate. The uninsulated top surface of the metal plate is maintained at a constant temperature $T_1$. The bottom surface of the insulating material is maintained at a constant, lower temperature $T_2$. The system is in equilibrium. The diagram shows this arrangement. Which graph could show how the temperature varies with distance from the top surface of the metal plate to the bottom surface of the insulating material?\n\n{{diagram:d1}}",
+      "placementPreview": "A large, flat, metal plate is coated on one side with a layer of thermally insulating material of the same thickness $a$ as the metal plate. The uninsulated top surface of the metal plate is maintained at a constant temperature $T_1$. The bottom surface of the insulating material is maintained at a constant, lower temperature $T_2$. The system is in equilibrium. The diagram shows this arrangement.\n\n{{diagram:d1}}\n\nWhich graph could show how the temperature varies with distance from the top surface of the metal plate to the bottom surface of the insulating material?",
       "applyDryRun": {
         "questionId": 2931,
         "status": "dry_run",
-        "blockCount": 1,
+        "blockCount": 2,
         "placementCount": 1,
         "displayWidths": {
           "d1": 37.6
@@ -378,10 +386,11 @@
         1,
         2
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.865887+00:00",
+        "placedAt": "2026-08-29T05:45:08.557861+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -411,9 +420,12 @@
       "examYear": 2023,
       "paperName": "Section 1",
       "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q037.png",
-      "blockCount": 1,
+      "blockCount": 4,
       "stemBlocks": [
-        "A copper ring, with a small gap XY, rests in a uniform horizontal magnetic field. The ring lies in the plane of the page and the direction of the magnetic field is horizontal from left to right, as shown in the diagram.\nA voltage is now applied across XY, such that X is connected to the positive terminal of the power supply and Y is connected to the negative terminal.\nWhich statement describes the motion of the ring immediately after the voltage is applied?\n(Assume that the mechanism supporting the ring allows the ring to move freely and allows the voltage to be applied continuously.)"
+        "A copper ring, with a small gap XY, rests in a uniform horizontal magnetic field. The ring lies in the plane of the page and the direction of the magnetic field is horizontal from left to right, as shown in the diagram.",
+        "A voltage is now applied across XY, such that X is connected to the positive terminal of the power supply and Y is connected to the negative terminal.",
+        "Which statement describes the motion of the ring immediately after the voltage is applied?",
+        "(Assume that the mechanism supporting the ring allows the ring to move freely and allows the voltage to be applied continuously.)"
       ],
       "stemDiagramAssets": [
         {
@@ -425,12 +437,16 @@
       ],
       "allowedInsertAfterBlock": [
         0,
-        1
+        1,
+        2,
+        3,
+        4
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.865887+00:00",
+        "placedAt": "2026-08-29T05:45:08.557861+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -439,17 +455,17 @@
           }
         ]
       },
-      "placementPreview": "A copper ring, with a small gap XY, rests in a uniform horizontal magnetic field. The ring lies in the plane of the page and the direction of the magnetic field is horizontal from left to right, as shown in the diagram.\nA voltage is now applied across XY, such that X is connected to the positive terminal of the power supply and Y is connected to the negative terminal.\nWhich statement describes the motion of the ring immediately after the voltage is applied?\n(Assume that the mechanism supporting the ring allows the ring to move freely and allows the voltage to be applied continuously.)\n\n{{diagram:d1}}",
+      "placementPreview": "A copper ring, with a small gap XY, rests in a uniform horizontal magnetic field. The ring lies in the plane of the page and the direction of the magnetic field is horizontal from left to right, as shown in the diagram.\n\n{{diagram:d1}}\n\nA voltage is now applied across XY, such that X is connected to the positive terminal of the power supply and Y is connected to the negative terminal.\n\nWhich statement describes the motion of the ring immediately after the voltage is applied?\n\n(Assume that the mechanism supporting the ring allows the ring to move freely and allows the voltage to be applied continuously.)",
       "applyDryRun": {
         "questionId": 2936,
         "status": "dry_run",
-        "blockCount": 1,
+        "blockCount": 4,
         "placementCount": 1,
         "displayWidths": {
           "d1": 43.8
         },
         "fetchErrors": {},
-        "stemPreview": "A copper ring, with a small gap XY, rests in a uniform horizontal magnetic field. The ring lies in the plane of the page and the direction of the magnetic field is horizontal from left to right, as shown in the diagram.\nA voltage is now app..."
+        "stemPreview": "A copper ring, with a small gap XY, rests in a uniform horizontal magnetic field. The ring lies in the plane of the page and the direction of the magnetic field is horizontal from left to right, as shown in the diagram.\n\n<figure class=\"qg-d..."
       },
       "strippedStemPreview": "A copper ring, with a small gap XY, rests in a uniform horizontal magnetic field. The ring lies in the plane of the page and the direction of the magnetic field is horizontal from left to right, as shown in the diagram.\nA voltage is now applied across XY, such that X is connected to the positive terminal of the power supply and Y is connected to the negative terminal.\nWhich statement describes the motion of the ring immediately after the voltage is applied?\n(Assume that the mechanism supporting "
     },
@@ -460,9 +476,11 @@
       "examYear": 2023,
       "paperName": "Section 1",
       "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q038.png",
-      "blockCount": 2,
+      "blockCount": 4,
       "stemBlocks": [
-        "A battery and two resistors X and Y are connected in series.\nThe power transferred by the battery is 6 W.\nThe resistance of X is $10\\ \\Omega$.\nThe voltage across Y is 4 V.",
+        "A battery and two resistors X and Y are connected in series.",
+        "The power transferred by the battery is 6 W.",
+        "The resistance of X is $10\\ \\Omega$.\nThe voltage across Y is 4 V.",
         "What is the current in the circuit?"
       ],
       "stemDiagramAssets": [
@@ -476,12 +494,15 @@
       "allowedInsertAfterBlock": [
         0,
         1,
-        2
+        2,
+        3,
+        4
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.865887+00:00",
+        "placedAt": "2026-08-29T05:45:08.557861+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -490,17 +511,17 @@
           }
         ]
       },
-      "placementPreview": "A battery and two resistors X and Y are connected in series.\nThe power transferred by the battery is 6 W.\nThe resistance of X is $10\\ \\Omega$.\nThe voltage across Y is 4 V.\n\n{{diagram:d1}}\n\nWhat is the current in the circuit?",
+      "placementPreview": "A battery and two resistors X and Y are connected in series.\n\n{{diagram:d1}}\n\nThe power transferred by the battery is 6 W.\n\nThe resistance of X is $10\\ \\Omega$.\nThe voltage across Y is 4 V.\n\nWhat is the current in the circuit?",
       "applyDryRun": {
         "questionId": 2937,
         "status": "dry_run",
-        "blockCount": 2,
+        "blockCount": 4,
         "placementCount": 1,
         "displayWidths": {
           "d1": 32.5
         },
         "fetchErrors": {},
-        "stemPreview": "A battery and two resistors X and Y are connected in series.\nThe power transferred by the battery is 6 W.\nThe resistance of X is $10\\ \\Omega$.\nThe voltage across Y is 4 V.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.s..."
+        "stemPreview": "A battery and two resistors X and Y are connected in series.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2937/diagram_1_69e225a01c6f.png\" alt=\"diagram n..."
       },
       "strippedStemPreview": "A battery and two resistors X and Y are connected in series.\nThe power transferred by the battery is 6 W.\nThe resistance of X is $10\\ \\Omega$.\nThe voltage across Y is 4 V.\nWhat is the current in the circuit?"
     },
@@ -529,10 +550,11 @@
         1,
         2
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.865887+00:00",
+        "placedAt": "2026-08-29T05:45:08.557861+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -562,9 +584,12 @@
       "examYear": 2023,
       "paperName": "Section 1",
       "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q055.png",
-      "blockCount": 1,
+      "blockCount": 4,
       "stemBlocks": [
-        "When methanol is burned in the apparatus shown it gives out $720 \\text{ kJ mol}^{-1}$. However, only $80\\%$ of the energy released is transferred into the water.\nThe starting temperature of the water is $12^{\\circ}\\text{C}$.\nWhat mass of methanol would need to be burned to give a $60^{\\circ}\\text{C}$ temperature rise in the water?\n($M_\\text{r}$ value: methanol $= 32$. Assume that the specific heat capacity of water $= 4\\text{ Jg}^{-1\\circ}\\text{C}^{-1}$)"
+        "When methanol is burned in the apparatus shown it gives out $720 \\text{ kJ mol}^{-1}$. However, only $80\\%$ of the energy released is transferred into the water.",
+        "The starting temperature of the water is $12^{\\circ}\\text{C}$.",
+        "What mass of methanol would need to be burned to give a $60^{\\circ}\\text{C}$ temperature rise in the water?",
+        "($M_\\text{r}$ value: methanol $= 32$. Assume that the specific heat capacity of water $= 4\\text{ Jg}^{-1\\circ}\\text{C}^{-1}$)"
       ],
       "stemDiagramAssets": [
         {
@@ -576,12 +601,16 @@
       ],
       "allowedInsertAfterBlock": [
         0,
-        1
+        1,
+        2,
+        3,
+        4
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.876423+00:00",
+        "placedAt": "2026-08-29T05:45:08.557861+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -590,17 +619,17 @@
           }
         ]
       },
-      "placementPreview": "When methanol is burned in the apparatus shown it gives out $720 \\text{ kJ mol}^{-1}$. However, only $80\\%$ of the energy released is transferred into the water.\nThe starting temperature of the water is $12^{\\circ}\\text{C}$.\nWhat mass of methanol would need to be burned to give a $60^{\\circ}\\text{C}$ temperature rise in the water?\n($M_\\text{r}$ value: methanol $= 32$. Assume that the specific heat capacity of water $= 4\\text{ Jg}^{-1\\circ}\\text{C}^{-1}$)\n\n{{diagram:d1}}",
+      "placementPreview": "When methanol is burned in the apparatus shown it gives out $720 \\text{ kJ mol}^{-1}$. However, only $80\\%$ of the energy released is transferred into the water.\n\n{{diagram:d1}}\n\nThe starting temperature of the water is $12^{\\circ}\\text{C}$.\n\nWhat mass of methanol would need to be burned to give a $60^{\\circ}\\text{C}$ temperature rise in the water?\n\n($M_\\text{r}$ value: methanol $= 32$. Assume that the specific heat capacity of water $= 4\\text{ Jg}^{-1\\circ}\\text{C}^{-1}$)",
       "applyDryRun": {
         "questionId": 2954,
         "status": "dry_run",
-        "blockCount": 1,
+        "blockCount": 4,
         "placementCount": 1,
         "displayWidths": {
           "d1": 42.7
         },
         "fetchErrors": {},
-        "stemPreview": "When methanol is burned in the apparatus shown it gives out $720 \\text{ kJ mol}^{-1}$. However, only $80\\%$ of the energy released is transferred into the water.\nThe starting temperature of the water is $12^{\\circ}\\text{C}$.\nWhat mass of me..."
+        "stemPreview": "When methanol is burned in the apparatus shown it gives out $720 \\text{ kJ mol}^{-1}$. However, only $80\\%$ of the energy released is transferred into the water.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co..."
       },
       "strippedStemPreview": "When methanol is burned in the apparatus shown it gives out $720 \\text{ kJ mol}^{-1}$. However, only $80\\%$ of the energy released is transferred into the water.\nThe starting temperature of the water is $12^{\\circ}\\text{C}$.\nWhat mass of methanol would need to be burned to give a $60^{\\circ}\\text{C}$ temperature rise in the water?\n($M_\\text{r}$ value: methanol $= 32$. Assume that the specific heat capacity of water $= 4\\text{ Jg}^{-1\\circ}\\text{C}^{-1}$)"
     },
@@ -633,10 +662,11 @@
         3,
         4
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.879074+00:00",
+        "placedAt": "2026-08-29T05:45:08.564424+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -691,10 +721,11 @@
         4,
         5
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.881591+00:00",
+        "placedAt": "2026-08-29T05:45:08.564424+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -740,10 +771,11 @@
         0,
         1
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.881591+00:00",
+        "placedAt": "2026-08-29T05:45:08.564424+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -793,10 +825,11 @@
         2,
         3
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.886766+00:00",
+        "placedAt": "2026-08-29T05:45:08.564424+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -826,9 +859,11 @@
       "examYear": 2023,
       "paperName": "Section 1",
       "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q064.png",
-      "blockCount": 1,
+      "blockCount": 3,
       "stemBlocks": [
-        "A Petri dish was filled with agar that had been mixed with starch. The agar is not digested by enzymes used in the experiment. Four small wells were cut in the agar. Three were filled with different solutions. Well Y was filled with water to act as a control. The dish was kept at $30^{\\circ}\\text{C}$ for 30 minutes. The surface of the agar was then washed with iodine solution, turning parts of it blue-black in the presence of starch. The Petri dish was placed on a piece of graph paper, as shown in the diagram, to measure the clear areas around the wells. The area of each well should be considered negligible. Which of the statements is/are correct?\n1 The area of starch digested around well W is 4 times the area digested around well X.\n2 Amylase could have been used in well W and protease could have been used in well X.\n3 The solution put in well Z could have contained boiled enzyme."
+        "A Petri dish was filled with agar that had been mixed with starch. The agar is not digested by enzymes used in the experiment. Four small wells were cut in the agar. Three were filled with different solutions. Well Y was filled with water to act as a control. The dish was kept at $30^{\\circ}\\text{C}$ for 30 minutes. The surface of the agar was then washed with iodine solution, turning parts of it blue-black in the presence of starch. The Petri dish was placed on a piece of graph paper, as shown in the diagram, to measure the clear areas around the wells. The area of each well should be considered negligible.",
+        "Which of the statements is/are correct?",
+        "1 The area of starch digested around well W is 4 times the area digested around well X.\n2 Amylase could have been used in well W and protease could have been used in well X.\n3 The solution put in well Z could have contained boiled enzyme."
       ],
       "stemDiagramAssets": [
         {
@@ -840,12 +875,15 @@
       ],
       "allowedInsertAfterBlock": [
         0,
-        1
+        1,
+        2,
+        3
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.889889+00:00",
+        "placedAt": "2026-08-29T05:45:08.570299+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -854,11 +892,11 @@
           }
         ]
       },
-      "placementPreview": "A Petri dish was filled with agar that had been mixed with starch. The agar is not digested by enzymes used in the experiment. Four small wells were cut in the agar. Three were filled with different solutions. Well Y was filled with water to act as a control. The dish was kept at $30^{\\circ}\\text{C}$ for 30 minutes. The surface of the agar was then washed with iodine solution, turning parts of it blue-black in the presence of starch. The Petri dish was placed on a piece of graph paper, as shown in the diagram, to measure the clear areas around the wells. The area of each well should be considered negligible. Which of the statements is/are correct?\n1 The area of starch digested around well W is 4 times the area digested around well X.\n2 Amylase could have been used in well W and protease could have been used in well X.\n3 The solution put in well Z could have contained boiled enzyme.\n\n{{diagram:d1}}",
+      "placementPreview": "A Petri dish was filled with agar that had been mixed with starch. The agar is not digested by enzymes used in the experiment. Four small wells were cut in the agar. Three were filled with different solutions. Well Y was filled with water to act as a control. The dish was kept at $30^{\\circ}\\text{C}$ for 30 minutes. The surface of the agar was then washed with iodine solution, turning parts of it blue-black in the presence of starch. The Petri dish was placed on a piece of graph paper, as shown in the diagram, to measure the clear areas around the wells. The area of each well should be considered negligible.\n\n{{diagram:d1}}\n\nWhich of the statements is/are correct?\n\n1 The area of starch digested around well W is 4 times the area digested around well X.\n2 Amylase could have been used in well W and protease could have been used in well X.\n3 The solution put in well Z could have contained boiled enzyme.",
       "applyDryRun": {
         "questionId": 2963,
         "status": "dry_run",
-        "blockCount": 1,
+        "blockCount": 3,
         "placementCount": 1,
         "displayWidths": {
           "d1": 57.4
@@ -875,9 +913,12 @@
       "examYear": 2023,
       "paperName": "Section 1",
       "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q065.png",
-      "blockCount": 2,
+      "blockCount": 5,
       "stemBlocks": [
-        "The diagram shows a bubble potometer at the start of an experiment.\nThe glass tube has an internal diameter of 1 mm.\nAfter five minutes, one end of the air bubble had moved to the 4 cm mark on the scale.\nWhich row is correct?",
+        "The diagram shows a bubble potometer at the start of an experiment.",
+        "The glass tube has an internal diameter of 1 mm.",
+        "After five minutes, one end of the air bubble had moved to the 4 cm mark on the scale.",
+        "Which row is correct?",
         "|  | name of process being investigated | volume of water taken up / $\\text{mm}^3$ |\n| --- | --- | --- |\n| A | translocation | $\\pi \\times (0.5)^2 \\times 10$ |\n| B | translocation | $\\pi \\times (0.5)^2 \\times 15$ |\n| C | translocation | $2\\pi \\times (0.5) \\times 10$ |\n| D | translocation | $2\\pi \\times (0.5) \\times 15$ |\n| E | transpiration | $\\pi \\times (0.5)^2 \\times 10$ |\n| F | transpiration | $\\pi \\times (0.5)^2 \\times 15$ |\n| G | transpiration | $2\\pi \\times (0.5) \\times 10$ |\n| H | transpiration | $2\\pi \\times (0.5) \\times 15$ |"
       ],
       "stemDiagramAssets": [
@@ -891,12 +932,16 @@
       "allowedInsertAfterBlock": [
         0,
         1,
-        2
+        2,
+        3,
+        4,
+        5
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.890943+00:00",
+        "placedAt": "2026-08-29T05:45:08.572014+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -905,17 +950,17 @@
           }
         ]
       },
-      "placementPreview": "The diagram shows a bubble potometer at the start of an experiment.\nThe glass tube has an internal diameter of 1 mm.\nAfter five minutes, one end of the air bubble had moved to the 4 cm mark on the scale.\nWhich row is correct?\n\n{{diagram:d1}}\n\n|  | name of process being investigated | volume of water taken up / $\\text{mm}^3$ |\n| --- | --- | --- |\n| A | translocation | $\\pi \\times (0.5)^2 \\times 10$ |\n| B | translocation | $\\pi \\times (0.5)^2 \\times 15$ |\n| C | translocation | $2\\pi \\times (0.5) \\times 10$ |\n| D | translocation | $2\\pi \\times (0.5) \\times 15$ |\n| E | transpiration | $\\pi \\times (0.5)^2 \\times 10$ |\n| F | transpiration | $\\pi \\times (0.5)^2 \\times 15$ |\n| G | transpiration | $2\\pi \\times (0.5) \\times 10$ |\n| H | transpiration | $2\\pi \\times (0.5) \\times 15$ |",
+      "placementPreview": "The diagram shows a bubble potometer at the start of an experiment.\n\n{{diagram:d1}}\n\nThe glass tube has an internal diameter of 1 mm.\n\nAfter five minutes, one end of the air bubble had moved to the 4 cm mark on the scale.\n\nWhich row is correct?\n\n|  | name of process being investigated | volume of water taken up / $\\text{mm}^3$ |\n| --- | --- | --- |\n| A | translocation | $\\pi \\times (0.5)^2 \\times 10$ |\n| B | translocation | $\\pi \\times (0.5)^2 \\times 15$ |\n| C | translocation | $2\\pi \\times (0.5) \\times 10$ |\n| D | translocation | $2\\pi \\times (0.5) \\times 15$ |\n| E | transpiration | $\\pi \\times (0.5)^2 \\times 10$ |\n| F | transpiration | $\\pi \\times (0.5)^2 \\times 15$ |\n| G | transpiration | $2\\pi \\times (0.5) \\times 10$ |\n| H | transpiration | $2\\pi \\times (0.5) \\times 15$ |",
       "applyDryRun": {
         "questionId": 2964,
         "status": "dry_run",
-        "blockCount": 2,
+        "blockCount": 5,
         "placementCount": 1,
         "displayWidths": {
           "d1": 57.3
         },
         "fetchErrors": {},
-        "stemPreview": "The diagram shows a bubble potometer at the start of an experiment.\nThe glass tube has an internal diameter of 1 mm.\nAfter five minutes, one end of the air bubble had moved to the 4 cm mark on the scale.\nWhich row is correct?\n\n<figure class..."
+        "stemPreview": "The diagram shows a bubble potometer at the start of an experiment.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2964/diagram_1_b35953a3c882.png\" alt=\"di..."
       },
       "strippedStemPreview": "The diagram shows a bubble potometer at the start of an experiment.\nThe glass tube has an internal diameter of 1 mm.\nAfter five minutes, one end of the air bubble had moved to the 4 cm mark on the scale.\nWhich row is correct?\n\n|  | name of process being investigated | volume of water taken up / $\\text{mm}^3$ |\n| --- | --- | --- |\n| A | translocation | $\\pi \\times (0.5)^2 \\times 10$ |\n| B | translocation | $\\pi \\times (0.5)^2 \\times 15$ |\n| C | translocation | $2\\pi \\times (0.5) \\times 10$ |\n| D "
     },
@@ -926,9 +971,11 @@
       "examYear": 2023,
       "paperName": "Section 1",
       "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q067.png",
-      "blockCount": 2,
+      "blockCount": 4,
       "stemBlocks": [
-        "A student viewed a bacterial cell using a microscope. The cell was measured with a microscope ruler as shown in the diagram. Each division on this ruler measures $2.5\\ \\mu\\text{m}$. The student made a drawing of this cell. The drawing was $5.0\\ \\text{cm}$ in length and included the structures that the student expected to see. Which row of the table gives the magnification of the student's drawing and one of the structures that should be included?",
+        "A student viewed a bacterial cell using a microscope. The cell was measured with a microscope ruler as shown in the diagram. Each division on this ruler measures $2.5\\ \\mu\\text{m}$.",
+        "The student made a drawing of this cell. The drawing was $5.0\\ \\text{cm}$ in length and included the structures that the student expected to see.",
+        "Which row of the table gives the magnification of the student's drawing and one of the structures that should be included?",
         "|  | magnification of the student's drawing | structure that should be included |\n| --- | --- | --- |\n| A | $2.5 \\times 10^{-4}$ | cell wall |\n| B | $2.5 \\times 10^{-4}$ | nucleus |\n| C | $4.0 \\times 10^{-1}$ | cell wall |\n| D | $4.0 \\times 10^{-1}$ | nucleus |\n| E | $4.0 \\times 10^{3}$ | cell wall |\n| F | $4.0 \\times 10^{3}$ | nucleus |\n| G | $2.0 \\times 10^{4}$ | cell wall |\n| H | $2.0 \\times 10^{4}$ | nucleus |"
       ],
       "stemDiagramAssets": [
@@ -942,12 +989,15 @@
       "allowedInsertAfterBlock": [
         0,
         1,
-        2
+        2,
+        3,
+        4
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.890943+00:00",
+        "placedAt": "2026-08-29T05:45:08.573162+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -956,17 +1006,17 @@
           }
         ]
       },
-      "placementPreview": "A student viewed a bacterial cell using a microscope. The cell was measured with a microscope ruler as shown in the diagram. Each division on this ruler measures $2.5\\ \\mu\\text{m}$. The student made a drawing of this cell. The drawing was $5.0\\ \\text{cm}$ in length and included the structures that the student expected to see. Which row of the table gives the magnification of the student's drawing and one of the structures that should be included?\n\n{{diagram:d1}}\n\n|  | magnification of the student's drawing | structure that should be included |\n| --- | --- | --- |\n| A | $2.5 \\times 10^{-4}$ | cell wall |\n| B | $2.5 \\times 10^{-4}$ | nucleus |\n| C | $4.0 \\times 10^{-1}$ | cell wall |\n| D | $4.0 \\times 10^{-1}$ | nucleus |\n| E | $4.0 \\times 10^{3}$ | cell wall |\n| F | $4.0 \\times 10^{3}$ | nucleus |\n| G | $2.0 \\times 10^{4}$ | cell wall |\n| H | $2.0 \\times 10^{4}$ | nucleus |",
+      "placementPreview": "A student viewed a bacterial cell using a microscope. The cell was measured with a microscope ruler as shown in the diagram. Each division on this ruler measures $2.5\\ \\mu\\text{m}$.\n\n{{diagram:d1}}\n\nThe student made a drawing of this cell. The drawing was $5.0\\ \\text{cm}$ in length and included the structures that the student expected to see.\n\nWhich row of the table gives the magnification of the student's drawing and one of the structures that should be included?\n\n|  | magnification of the student's drawing | structure that should be included |\n| --- | --- | --- |\n| A | $2.5 \\times 10^{-4}$ | cell wall |\n| B | $2.5 \\times 10^{-4}$ | nucleus |\n| C | $4.0 \\times 10^{-1}$ | cell wall |\n| D | $4.0 \\times 10^{-1}$ | nucleus |\n| E | $4.0 \\times 10^{3}$ | cell wall |\n| F | $4.0 \\times 10^{3}$ | nucleus |\n| G | $2.0 \\times 10^{4}$ | cell wall |\n| H | $2.0 \\times 10^{4}$ | nucleus |",
       "applyDryRun": {
         "questionId": 2966,
         "status": "dry_run",
-        "blockCount": 2,
+        "blockCount": 4,
         "placementCount": 1,
         "displayWidths": {
           "d1": 32.1
         },
         "fetchErrors": {},
-        "stemPreview": "A student viewed a bacterial cell using a microscope. The cell was measured with a microscope ruler as shown in the diagram. Each division on this ruler measures $2.5\\ \\mu\\text{m}$. The student made a drawing of this cell. The drawing was $..."
+        "stemPreview": "A student viewed a bacterial cell using a microscope. The cell was measured with a microscope ruler as shown in the diagram. Each division on this ruler measures $2.5\\ \\mu\\text{m}$.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoa..."
       },
       "strippedStemPreview": "A student viewed a bacterial cell using a microscope. The cell was measured with a microscope ruler as shown in the diagram. Each division on this ruler measures $2.5\\ \\mu\\text{m}$. The student made a drawing of this cell. The drawing was $5.0\\ \\text{cm}$ in length and included the structures that the student expected to see. Which row of the table gives the magnification of the student's drawing and one of the structures that should be included?\n\n|  | magnification of the student's drawing | st"
     },
@@ -997,10 +1047,11 @@
         2,
         3
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.897984+00:00",
+        "placedAt": "2026-08-29T05:45:08.573162+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -1046,30 +1097,13 @@
         0,
         1
       ],
+      "placementSkipReason": "graphical_option_composite: asset is the A-H answer grid, not a stem diagram",
       "placement": {
-        "status": "ok",
-        "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.900019+00:00",
-        "placements": [
-          {
-            "assetId": "d1",
-            "insertAfterBlock": 1,
-            "confidence": 0.97
-          }
-        ]
+        "status": "not_run",
+        "note": "no placement sidecar yet"
       },
-      "placementPreview": "A scientist was investigating the effect of substrate concentration on lipase enzyme activity. Two test tubes were set up: one containing a sample of full-fat milk mixed with an alkaline solution, and a pH indicator; one containing lipase. The pH indicator turned the alkaline milk sample pink. Both tubes were incubated in a water bath set to an optimum temperature for lipase until the contents had reached this temperature. The scientist then added the lipase to the tube with the milk sample and measured the time taken for the indicator to turn colourless. This colour change was caused by an increase in concentration of one of the products of the reaction. Further samples of the milk were diluted, and added to the same quantity of alkaline solution and pH indicator, to produce another six different substrate concentrations, and the experiment was repeated. All other variables were kept constant. The scientist found that each substrate concentration caused the pH indicator to change to colourless in a different length of time. The results of the reaction in all seven tubes were plotted on a graph. Which option correctly identifies the shape of the graph of the results, the limiting factor during the experiment and an explanation for the change in colour of the pH indicator?\n\n{{diagram:d1}}",
-      "applyDryRun": {
-        "questionId": 2970,
-        "status": "dry_run",
-        "blockCount": 1,
-        "placementCount": 1,
-        "displayWidths": {
-          "d1": 78.2
-        },
-        "fetchErrors": {},
-        "stemPreview": "A scientist was investigating the effect of substrate concentration on lipase enzyme activity. Two test tubes were set up: one containing a sample of full-fat milk mixed with an alkaline solution, and a pH indicator; one containing lipase. ..."
-      },
+      "placementPreview": null,
+      "applyDryRun": null,
       "strippedStemPreview": "A scientist was investigating the effect of substrate concentration on lipase enzyme activity. Two test tubes were set up: one containing a sample of full-fat milk mixed with an alkaline solution, and a pH indicator; one containing lipase. The pH indicator turned the alkaline milk sample pink. Both tubes were incubated in a water bath set to an optimum temperature for lipase until the contents had reached this temperature. The scientist then added the lipase to the tube with the milk sample and "
     },
     {
@@ -1099,10 +1133,11 @@
         2,
         3
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.901675+00:00",
+        "placedAt": "2026-08-29T05:45:08.573162+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -1132,9 +1167,10 @@
       "examYear": 2023,
       "paperName": "Section 1",
       "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q073.png",
-      "blockCount": 1,
+      "blockCount": 2,
       "stemBlocks": [
-        "The diagram represents part of the carbon cycle.\nWhich of the arrows represent processes resulting in at least one organic product (contains carbon and hydrogen)?"
+        "The diagram represents part of the carbon cycle.",
+        "Which of the arrows represent processes resulting in at least one organic product (contains carbon and hydrogen)?"
       ],
       "stemDiagramAssets": [
         {
@@ -1146,12 +1182,14 @@
       ],
       "allowedInsertAfterBlock": [
         0,
-        1
+        1,
+        2
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.905116+00:00",
+        "placedAt": "2026-08-29T05:45:08.573162+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -1160,17 +1198,17 @@
           }
         ]
       },
-      "placementPreview": "The diagram represents part of the carbon cycle.\nWhich of the arrows represent processes resulting in at least one organic product (contains carbon and hydrogen)?\n\n{{diagram:d1}}",
+      "placementPreview": "The diagram represents part of the carbon cycle.\n\n{{diagram:d1}}\n\nWhich of the arrows represent processes resulting in at least one organic product (contains carbon and hydrogen)?",
       "applyDryRun": {
         "questionId": 2972,
         "status": "dry_run",
-        "blockCount": 1,
+        "blockCount": 2,
         "placementCount": 1,
         "displayWidths": {
           "d1": 52.8
         },
         "fetchErrors": {},
-        "stemPreview": "The diagram represents part of the carbon cycle.\nWhich of the arrows represent processes resulting in at least one organic product (contains carbon and hydrogen)?\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.c..."
+        "stemPreview": "The diagram represents part of the carbon cycle.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2972/diagram_1_d51f27833feb.png\" alt=\"A diagram showing a p..."
       },
       "strippedStemPreview": "The diagram represents part of the carbon cycle.\nWhich of the arrows represent processes resulting in at least one organic product (contains carbon and hydrogen)?"
     },
@@ -1201,10 +1239,11 @@
         2,
         3
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.909479+00:00",
+        "placedAt": "2026-08-29T05:45:08.573162+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -1254,10 +1293,11 @@
         2,
         3
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.909948+00:00",
+        "placedAt": "2026-08-29T05:45:08.580529+00:00",
         "placements": [
           {
             "assetId": "d1",
@@ -1307,10 +1347,11 @@
         2,
         3
       ],
+      "placementSkipReason": null,
       "placement": {
         "status": "ok",
         "model": "human_review_chatgpt",
-        "placedAt": "2026-08-29T05:03:19.911951+00:00",
+        "placedAt": "2026-08-29T05:45:08.582694+00:00",
         "placements": [
           {
             "assetId": "d1",
