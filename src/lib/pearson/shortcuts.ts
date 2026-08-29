@@ -5,6 +5,7 @@
 
 export type ShortcutId =
   | "next"
+  | "prev"
   | "flag"
   | "end-exam"
   | "close"
@@ -28,6 +29,13 @@ export const VERIFIED_SHORTCUTS: readonly VerifiedShortcut[] = [
     chord: "Alt+N",
     description: "Go to the next screen or question.",
     verifiedAs: "VERIFIED_ESAT",
+    enabledInStrict: true,
+  },
+  {
+    id: "prev",
+    chord: "Alt+P",
+    description: "Go to the previous question.",
+    verifiedAs: "VERIFIED_PEARSON_PLATFORM",
     enabledInStrict: true,
   },
   {
@@ -89,7 +97,6 @@ export const VERIFIED_SHORTCUTS: readonly VerifiedShortcut[] = [
 ] as const;
 
 export const UNVERIFIED_SHORTCUTS_DISABLED = [
-  { chord: "Alt+P", reason: "UNVERIFIED; disabled in strict mode" },
   { chord: "digit answers 1-8", reason: "UNVERIFIED; disabled in strict mode" },
   {
     chord: "arrow keys between questions",
@@ -145,6 +152,7 @@ export function matchVerifiedShortcut(
     }
     if (context?.navigatorOpen && lk === "c") return "close";
     if (lk === "n") return "next";
+    if (lk === "p") return "prev";
     if (lk === "f") return "flag";
     if (lk === "e") return "end-exam";
   }

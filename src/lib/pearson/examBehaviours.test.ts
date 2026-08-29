@@ -166,9 +166,10 @@ describe("pearson exam behaviours", () => {
         key: "p",
         code: "KeyP",
       }),
-    ).toBeNull();
+    ).toBe("prev");
     expect(verifiedShortcutIdsOnly()).toEqual([
       "next",
+      "prev",
       "flag",
       "end-exam",
       "close",

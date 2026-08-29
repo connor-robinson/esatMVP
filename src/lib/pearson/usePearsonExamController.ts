@@ -272,6 +272,13 @@ export function usePearsonExamController(
     }
   }, [screen, startQuestions]);
 
+  const goPrev = useCallback(() => {
+    if (screen !== "question" && screen !== "unseen-content-warning") return;
+    if (moduleLocked) return;
+    if (currentQuestionIndex <= 0) return;
+    tryNavigateTo(currentQuestionIndex - 1);
+  }, [screen, moduleLocked, currentQuestionIndex, tryNavigateTo]);
+
   const goNext = useCallback(() => {
     if (screen === "nda" || screen === "instructions") {
       advanceFlow();
@@ -428,6 +435,7 @@ export function usePearsonExamController(
       e.preventDefault();
       if (action === "ok") dismissUnseenContent();
       else if (action === "next") goNext();
+      else if (action === "prev") goPrev();
       else if (action === "flag") toggleCurrentFlag();
       else if (action === "end-exam") requestEndExam();
       else if (action === "close") closeNavigator();
@@ -450,6 +458,7 @@ export function usePearsonExamController(
       confirmEndModule,
       dismissUnseenContent,
       goNext,
+      goPrev,
       mode,
       navigatorOpen,
       requestEndExam,
@@ -499,6 +508,9 @@ export function usePearsonExamController(
     screen === "unseen-content-warning" ||
     (screen === "end-exam-confirmation" && moduleDeadline != null);
 
+  const showPrevious =
+    inQuestionPhase && currentQuestionIndex > 0 && screen !== "review";
+
   return {
     mode,
     screen,
@@ -536,9 +548,11 @@ export function usePearsonExamController(
     showFlagToolbar,
     showPrequestionFooter,
     showQuestionFooter,
+    showPrevious,
     inQuestionPhase,
     completeLoading,
     goNext,
+    goPrev,
     tryNavigateTo,
     goToQuestionIndex,
     openNavigator,

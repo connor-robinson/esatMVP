@@ -253,8 +253,11 @@ export function PearsonExamPlayer({
               variant="question"
               onEndExam={c.requestEndExam}
               onNext={c.goNext}
+              onPrevious={c.goPrev}
+              showPrevious={c.showPrevious}
               onNavigator={c.openNavigator}
               nextDisabled={c.moduleLocked}
+              previousDisabled={c.moduleLocked}
               navigatorDisabled={c.moduleLocked}
             />
           ) : null}

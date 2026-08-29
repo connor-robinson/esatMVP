@@ -208,6 +208,7 @@ export function resolveStrictShortcut(
 export function verifiedShortcutIdsOnly(): string[] {
   return [
     "next",
+    "prev",
     "flag",
     "end-exam",
     "close",
