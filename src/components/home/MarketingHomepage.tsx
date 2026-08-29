@@ -24,7 +24,7 @@ import {
   MONTHLY_PRICE_GBP,
   SEASON_PASS_ACCESS_UNTIL_LABEL,
 } from "@/lib/stripe/best-value";
-import { GraduationCap, ListChecks, ScanEye } from "lucide-react";
+import { GraduationCap, ListChecks } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useHomepageAutoHideNav } from "@/hooks/useHomepageAutoHideNav";
 import { ExampleQuestionDemo } from "@/components/home/ExampleQuestionDemo";
@@ -322,7 +322,7 @@ export function MarketingHomepage({
                             {
                               value: socialProof.uniqueVisitors,
                               label: "Unique visitors",
-                              icon: ScanEye,
+                              icon: null,
                             },
                           ]
                         : []),
@@ -339,7 +339,7 @@ export function MarketingHomepage({
                     ] as {
                       value: number;
                       label: string;
-                      icon: typeof GraduationCap;
+                      icon: typeof GraduationCap | null;
                     }[]
                   ).map((stat) => {
                     const StatIcon = stat.icon;
@@ -349,16 +349,15 @@ export function MarketingHomepage({
                         <dd className="font-display text-2xl font-bold tabular-nums text-white sm:text-3xl">
                           {stat.value.toLocaleString()}
                         </dd>
-                        <p className="mt-1.5 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#94A3B8] sm:text-xs">
-                          <span
-                            aria-hidden
-                            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-[#3B82F6]/15"
-                          >
+                        <p className="mt-1 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#94A3B8] sm:text-xs">
+                          {StatIcon ? (
                             <StatIcon
-                              className="h-3.5 w-3.5 text-[#93C5FD]"
-                              strokeWidth={2.25}
+                              aria-hidden
+                              className="h-3.5 w-3.5 shrink-0 text-white"
+                              strokeWidth={2}
+                              fill="none"
                             />
-                          </span>
+                          ) : null}
                           {stat.label}
                         </p>
                       </div>
