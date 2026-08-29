@@ -159,18 +159,17 @@ export function PastPaperTextQuestion({
                         {letter}
                       </span>
                       <div className="flex min-w-0 flex-1 items-center font-sans text-[0.98rem] leading-relaxed tracking-tight text-text sm:text-[1.02rem]">
-                        {text ? (
-                          <StemContent
-                            content={text}
-                            className="text-inherit inline"
-                          />
-                        ) : null}
                         {optionAsset ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img
                             src={optionAsset.url}
                             alt={optionAsset.alt ?? `option ${letter}`}
-                            className="mt-1 max-h-56 max-w-full object-contain"
+                            className="max-h-36 max-w-[min(42%,260px)] object-contain"
+                          />
+                        ) : text ? (
+                          <StemContent
+                            content={text}
+                            className="text-inherit inline"
                           />
                         ) : null}
                       </div>

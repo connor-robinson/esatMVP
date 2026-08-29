@@ -93,14 +93,25 @@ export function PearsonRichQuestion({
   const options = question.options ?? {};
   const letterOnlyOptions = shouldUseLetterOnlyOptions(question);
 
-  const renderOptionContent = (letter: Letter, text: string | undefined, optionAsset?: { url: string; alt?: string }) => {
+  const renderOptionContent = (
+    letter: Letter,
+    text: string | undefined,
+    optionAsset?: { url: string; alt?: string; display_width_pct?: number },
+  ) => {
+    // Graphical options: image only (never placeholder text like "Graph A").
     if (optionAsset) {
+      const widthPct = optionAsset.display_width_pct;
       return (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={optionAsset.url}
           alt={optionAsset.alt ?? `option ${letter}`}
-          className="pearson-stem-img"
+          className="pearson-option-img"
+          style={
+            typeof widthPct === "number" && widthPct > 0
+              ? { width: `${Math.min(widthPct, 42)}%` }
+              : undefined
+          }
         />
       );
     }

@@ -1094,6 +1094,22 @@ html.pearson-exam-active body {
   display: block;
 }
 
+/* Graphical MCQ choices: compact beside radios, never full-column width. */
+.pearson-option-img {
+  display: block;
+  width: auto;
+  max-width: min(42%, 260px);
+  max-height: 9rem;
+  height: auto;
+  object-fit: contain;
+}
+
+.pearson-radio-body:has(.pearson-option-img) {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
 .pearson-diagram {
   margin: 12px 0;
   display: flex;
