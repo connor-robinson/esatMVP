@@ -74,6 +74,14 @@ export function markViewedToEnd(
   return { ...viewedToEnd, [questionId]: true };
 }
 
+export function clearViewedToEnd(
+  viewedToEnd: PearsonViewedMap,
+  questionId: number,
+): PearsonViewedMap {
+  if (!viewedToEnd[questionId]) return viewedToEnd;
+  return { ...viewedToEnd, [questionId]: false };
+}
+
 /**
  * Unseen Content gate (VERIFIED_ESAT handbook wording).
  * Blocks leaving a question that has not been scrolled/viewed to the end.

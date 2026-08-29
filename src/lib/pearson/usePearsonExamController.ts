@@ -9,6 +9,7 @@ import {
   emptyFlagMap,
   listFlaggedAndUnanswered,
   markViewedToEnd,
+  clearViewedToEnd,
   markVisited,
   needsUnseenContentWarning,
   persistColourScheme,
@@ -377,10 +378,17 @@ export function usePearsonExamController(
     });
   }, [moduleLocked, currentQuestion]);
 
-  const onViewportViewedToEnd = useCallback(() => {
-    if (!currentQuestion) return;
-    setViewedToEnd((prev) => markViewedToEnd(prev, currentQuestion.id));
-  }, [currentQuestion]);
+  const onViewportViewedChange = useCallback(
+    (viewed: boolean) => {
+      if (!currentQuestion) return;
+      setViewedToEnd((prev) =>
+        viewed
+          ? markViewedToEnd(prev, currentQuestion.id)
+          : clearViewedToEnd(prev, currentQuestion.id),
+      );
+    },
+    [currentQuestion],
+  );
 
   const changeColourScheme = useCallback((id: ColourSchemeId) => {
     setColourScheme((prev) => persistColourScheme(prev, id));
@@ -544,7 +552,7 @@ export function usePearsonExamController(
     dismissUnseenContent,
     selectAnswer,
     toggleCurrentFlag,
-    onViewportViewedToEnd,
+    onViewportViewedChange,
     changeColourScheme,
     toggleQuestionCounterHidden,
     toggleTimerHidden,

@@ -6,69 +6,130 @@ import {
   useRef,
   type CSSProperties,
   type ReactNode,
-  type UIEvent,
 } from "react";
+import {
+  isSentinelVisibleInRoot,
+  isViewportContentFullyViewed,
+  viewportRequiresScrolling,
+} from "@/lib/pearson/viewportSeen";
 import type { ZoomLevel } from "@/lib/pearson/types";
 
 interface PearsonQuestionViewportProps {
   questionKey: string | number;
   zoomLevel: ZoomLevel;
-  onViewedToEnd: () => void;
+  onViewedChange: (viewed: boolean) => void;
   children: ReactNode;
-}
-
-function isScrolledToEnd(el: HTMLElement): boolean {
-  const remaining = el.scrollHeight - el.scrollTop - el.clientHeight;
-  return remaining <= 2;
 }
 
 /**
  * Scrollable question content. Tracks scroll-to-bottom for Unseen Content gate.
- * Resets scroll position when the question changes.
+ * Uses a bottom sentinel + resize/image hooks so async diagrams do not false-mark.
  */
 export function PearsonQuestionViewport({
   questionKey,
   zoomLevel,
-  onViewedToEnd,
+  onViewedChange,
   children,
 }: PearsonQuestionViewportProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const reportedRef = useRef(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const viewedRef = useRef(false);
 
-  const check = useCallback(() => {
-    const el = ref.current;
-    if (!el || reportedRef.current) return;
-    // Short content that fits without scrolling counts as viewed.
-    if (el.scrollHeight <= el.clientHeight + 2 || isScrolledToEnd(el)) {
-      reportedRef.current = true;
-      onViewedToEnd();
+  const evaluate = useCallback(() => {
+    const root = scrollRef.current;
+    const sentinel = sentinelRef.current;
+    if (!root || !sentinel) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = root;
+    const requiresScroll = viewportRequiresScrolling(scrollHeight, clientHeight);
+    const viewed =
+      isViewportContentFullyViewed(scrollTop, scrollHeight, clientHeight) ||
+      isSentinelVisibleInRoot(sentinel, root);
+
+    if (viewed) {
+      if (!viewedRef.current) {
+        viewedRef.current = true;
+        onViewedChange(true);
+      }
+      return;
     }
-  }, [onViewedToEnd]);
+
+    if (viewedRef.current && requiresScroll) {
+      viewedRef.current = false;
+      onViewedChange(false);
+    }
+  }, [onViewedChange]);
 
   useEffect(() => {
-    reportedRef.current = false;
-    const el = ref.current;
-    if (el) el.scrollTop = 0;
-    // After layout, re-check (short pages auto-clear unseen).
-    const id = window.requestAnimationFrame(() => check());
-    return () => window.cancelAnimationFrame(id);
-  }, [questionKey, check]);
+    viewedRef.current = false;
+
+    const root = scrollRef.current;
+    if (root) {
+      root.scrollTop = 0;
+    }
+
+    const raf = window.requestAnimationFrame(() => {
+      evaluate();
+      window.requestAnimationFrame(evaluate);
+    });
+
+    return () => window.cancelAnimationFrame(raf);
+  }, [questionKey, evaluate]);
 
   useEffect(() => {
-    // Zoom changes layout height; re-evaluate.
-    check();
-  }, [zoomLevel, check]);
+    const root = scrollRef.current;
+    const sentinel = sentinelRef.current;
+    if (!root || !sentinel) return;
 
-  const onScroll = (e: UIEvent<HTMLDivElement>) => {
-    void e;
-    check();
-  };
+    const observer = new IntersectionObserver(
+      () => evaluate(),
+      { root, threshold: [0, 0.01, 0.25, 1] },
+    );
+    observer.observe(sentinel);
+
+    const resizeTarget = root.querySelector(".pearson-viewport-zoom") ?? root;
+    const resizeObserver = new ResizeObserver(() => evaluate());
+    resizeObserver.observe(resizeTarget);
+
+    const onImageLoad = () => evaluate();
+    const attachImageListeners = () => {
+      root.querySelectorAll("img").forEach((img) => {
+        if (img.complete) return;
+        img.addEventListener("load", onImageLoad);
+        img.addEventListener("error", onImageLoad);
+      });
+    };
+
+    attachImageListeners();
+    const mutationObserver = new MutationObserver(() => {
+      attachImageListeners();
+      evaluate();
+    });
+    mutationObserver.observe(resizeTarget, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["src", "style", "class"],
+    });
+
+    evaluate();
+
+    return () => {
+      observer.disconnect();
+      resizeObserver.disconnect();
+      mutationObserver.disconnect();
+      root.querySelectorAll("img").forEach((img) => {
+        img.removeEventListener("load", onImageLoad);
+        img.removeEventListener("error", onImageLoad);
+      });
+    };
+  }, [questionKey, zoomLevel, evaluate]);
 
   return (
     <div
-      ref={ref}
+      ref={scrollRef}
       className="pearson-viewport"
-      onScroll={onScroll}
+      onScroll={evaluate}
       data-question-key={questionKey}
       data-zoom-level={zoomLevel}
     >
@@ -76,12 +137,16 @@ export function PearsonQuestionViewport({
         className="pearson-viewport-zoom"
         style={
           {
-            // CSS zoom is non-standard but matches Pearson magnification UX.
             zoom: zoomLevel / 100,
           } as CSSProperties
         }
       >
         {children}
+        <div
+          ref={sentinelRef}
+          className="pearson-viewport-sentinel"
+          aria-hidden="true"
+        />
       </div>
     </div>
   );

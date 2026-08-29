@@ -538,6 +538,12 @@ html.pearson-exam-active body {
   line-height: 1.4;
 }
 
+.pearson-viewport-sentinel {
+  width: 100%;
+  height: 1px;
+  pointer-events: none;
+}
+
 /* Magnification (Ctrl+/Ctrl-): content only; chrome stays 11px at browser 100%. */
 .pearson-exam-root[data-zoom="100"] .pearson-viewport-zoom {
   zoom: 1;

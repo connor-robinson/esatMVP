@@ -176,7 +176,7 @@ export function PearsonExamPlayer({
               <PearsonQuestionViewport
                 questionKey={c.currentQuestion.id}
                 zoomLevel={c.zoomLevel}
-                onViewedToEnd={c.onViewportViewedToEnd}
+                onViewedChange={c.onViewportViewedChange}
               >
                 <PearsonRichQuestion
                   question={c.currentQuestion}
