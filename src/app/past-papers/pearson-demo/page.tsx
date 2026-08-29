@@ -1,28 +1,24 @@
 import { PearsonDemoClient } from "@/app/past-papers/pearson-demo/PearsonDemoClient";
-import {
-  PEARSON_DEMO_PAPER,
-  PEARSON_DEMO_PAPER_ID,
-} from "@/lib/pearson/pearsonDemoConfig";
+import { PEARSON_DEMO_PAPER_ID } from "@/lib/pearson/pearsonDemoConfig";
 import { buildNoIndexMetadata } from "@/lib/seo/noIndex";
-import { getQuestions } from "@/lib/supabase/questions";
+import { getPastPaperQuestions } from "@/lib/supabase/pastPaperQuestions.server";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata = buildNoIndexMetadata({
   title: "ESAT player sandbox",
 });
 
 export default async function PastPapersPearsonDemoPage() {
-  const questions = await getQuestions(PEARSON_DEMO_PAPER_ID);
-
-  if (!questions.length) {
-    return (
-      <main style={{ padding: 24, fontFamily: "Tahoma, sans-serif" }}>
-        <p>
-          No questions loaded for {PEARSON_DEMO_PAPER.examTitle} (paper{" "}
-          {PEARSON_DEMO_PAPER_ID}).
-        </p>
-      </main>
-    );
+  let questions: Awaited<ReturnType<typeof getPastPaperQuestions>> = [];
+  try {
+    questions = await getPastPaperQuestions(PEARSON_DEMO_PAPER_ID);
+  } catch {
+    // Client falls back to /api/past-papers/pearson-demo
   }
 
-  return <PearsonDemoClient questions={questions} />;
+  return (
+    <PearsonDemoClient initialQuestions={questions.length ? questions : undefined} />
+  );
 }
