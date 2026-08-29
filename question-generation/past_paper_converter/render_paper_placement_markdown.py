@@ -92,23 +92,26 @@ def render_markdown(report: dict) -> str:
             lines.append("```")
             lines.append("")
 
-        lines.append("### Your answer (fill in)")
-        lines.append("```json")
-        placements = [
-            {
-                "asset_id": a.get("id"),
-                "insert_after_block": "?",
-                "confidence": 0.0,
-            }
-            for a in assets
-        ]
-        lines.append(
-            json.dumps(
-                {"questionId": qid, "placements": placements},
-                indent=2,
-            )
-        )
-        lines.append("```")
+        placement = q.get("placement") or {}
+        if placement.get("status") == "ok":
+            lines.append("### Reviewed placements")
+            for row in placement.get("placements") or []:
+                width = row.get("displayWidthPct")
+                width_txt = f", displayWidthPct={width}" if width is not None else ""
+                lines.append(
+                    f"- {row.get('assetId')}: insertAfterBlock={row.get('insertAfterBlock')} "
+                    f"(confidence={row.get('confidence')}){width_txt}"
+                )
+            preview = q.get("placementPreview")
+            if preview:
+                lines.append("")
+                lines.append("### Placement preview (diagram markers in reading order)")
+                lines.append("```")
+                lines.append(preview)
+                lines.append("```")
+        else:
+            lines.append("### Placements")
+            lines.append("- pending review")
         lines.append("")
         lines.append("---")
         lines.append("")

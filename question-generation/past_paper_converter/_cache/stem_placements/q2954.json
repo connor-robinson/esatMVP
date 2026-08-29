@@ -1,0 +1,30 @@
+{
+  "questionId": 2954,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 55,
+  "stemBlocks": [
+    "When methanol is burned in the apparatus shown it gives out $720 \\text{ kJ mol}^{-1}$. However, only $80\\%$ of the energy released is transferred into the water.\nThe starting temperature of the water is $12^{\\circ}\\text{C}$.\nWhat mass of methanol would need to be burned to give a $60^{\\circ}\\text{C}$ temperature rise in the water?\n($M_\\text{r}$ value: methanol $= 32$. Assume that the specific heat capacity of water $= 4\\text{ Jg}^{-1\\circ}\\text{C}^{-1}$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram",
+      "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2954/diagram_1_d1f05ef3b165.png"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.99
+    }
+  ],
+  "model": "human_review_chatgpt",
+  "placedAt": "2026-08-29T05:03:19.876423+00:00",
+  "sourceImageHash": "cb677218d94471b90b553f898395e61be220a7476747bc9d36663a76436c92f5",
+  "status": "ok",
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+}

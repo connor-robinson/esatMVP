@@ -1,0 +1,32 @@
+{
+  "questionId": 2962,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 63,
+  "stemBlocks": [
+    "The diagram shows the flow of energy in a year's growth of grass from $1 \\text{ m}^2$ of grassland.",
+    "Which of the following statements is/are correct?",
+    "1. $62\\%$ of the energy consumed by the cow is lost in faeces and urine.\n2. The diagram illustrates all the main processes of carbon uptake and release in the carbon cycle.\n3. $4\\%$ of the energy absorbed by the cells of the cow is used for growth."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Energy flow diagram showing a cow grazing on grass, with various energy transfers in kJ: 1020 kJ in breath, movement and heat loss; 3000 kJ eaten by the cow; 120 kJ to growth of cow; 1860 kJ in faeces and urine; 3520 kJ eaten by other herbivores; 14800 kJ to decomposers.",
+      "role": "stem_diagram",
+      "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2962/diagram_1_9d11441fa5ce.png"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.99
+    }
+  ],
+  "model": "human_review_chatgpt",
+  "placedAt": "2026-08-29T05:03:19.886766+00:00",
+  "sourceImageHash": "daac85ed051ad3dc96f7cf22f16acc9a405492c421d57d81887773d131dd6520",
+  "status": "ok",
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+}

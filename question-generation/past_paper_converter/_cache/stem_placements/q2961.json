@@ -1,0 +1,30 @@
+{
+  "questionId": 2961,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 62,
+  "stemBlocks": [
+    "Which of the following graphs could describe processes taking place in the leaf of an oak tree in the presence of light?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph 1: rate of photosynthesis vs temperature / °C; Graph 2: mass of carbon dioxide used in the leaf vs time of day; Graph 3: rate of photosynthesis vs distance from a light source",
+      "role": "stem_diagram",
+      "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2961/diagram_1_5f05689b5752.png"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.99
+    }
+  ],
+  "model": "human_review_chatgpt",
+  "placedAt": "2026-08-29T05:03:19.881591+00:00",
+  "sourceImageHash": "cef993fa78da423aa537e9b64f6e4ff79c91acb0df95b7584861310bd47a0cc0",
+  "status": "ok",
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+}

@@ -16,7 +16,8 @@ from past_paper_converter.place_stems import (
     load_place_candidates,
     load_sidecar,
 )
-from past_paper_converter.stem_blocks import apply_placements_to_stem, validate_placements
+from past_paper_converter.stem_block_overrides import display_width_override
+from past_paper_converter.stem_blocks import apply_placements_preview
 
 REPORT_DIR = Path(__file__).resolve().parent / "_cache" / "stem_placements" / "reports"
 
@@ -50,13 +51,20 @@ def build_question_report(candidate: Dict[str, Any]) -> Dict[str, Any]:
                     {**asset, **next((a for a in (candidate.get("diagramAssets") or []) if str(a.get("id")) == asset_id), {})},
                     crop_bytes,
                 )
+                override = display_width_override(qid, asset_id)
+                if override is not None:
+                    row["displayWidthPct"] = override
             except Exception as exc:
                 row["fetchError"] = str(exc)
         crop_meta.append(row)
 
     sidecar = load_sidecar(qid)
-    placement_section: Dict[str, Any] = {"status": "not_run", "note": "place-stems dry-run does not call the model"}
+    placement_section: Dict[str, Any] = {
+        "status": "not_run",
+        "note": "no placement sidecar yet",
+    }
     apply_preview: Dict[str, Any] | None = None
+    placement_preview: str | None = None
 
     if sidecar and sidecar.get("status") == "ok":
         placement_section = {
@@ -66,6 +74,11 @@ def build_question_report(candidate: Dict[str, Any]) -> Dict[str, Any]:
             "placements": sidecar.get("placements"),
         }
         apply_preview = apply_one_sidecar(sidecar, dry_run=True)
+        if sidecar.get("placements"):
+            placement_preview = apply_placements_preview(
+                blocks,
+                sidecar["placements"],
+            )
 
     return {
         "questionId": qid,
@@ -79,6 +92,7 @@ def build_question_report(candidate: Dict[str, Any]) -> Dict[str, Any]:
         "stemDiagramAssets": crop_meta,
         "allowedInsertAfterBlock": list(range(0, len(blocks) + 1)),
         "placement": placement_section,
+        "placementPreview": placement_preview,
         "applyDryRun": apply_preview,
         "strippedStemPreview": prepared.get("strippedStem", "")[:500],
     }

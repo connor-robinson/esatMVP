@@ -1,0 +1,30 @@
+{
+  "questionId": 2970,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 71,
+  "stemBlocks": [
+    "A scientist was investigating the effect of substrate concentration on lipase enzyme activity. Two test tubes were set up: one containing a sample of full-fat milk mixed with an alkaline solution, and a pH indicator; one containing lipase. The pH indicator turned the alkaline milk sample pink. Both tubes were incubated in a water bath set to an optimum temperature for lipase until the contents had reached this temperature. The scientist then added the lipase to the tube with the milk sample and measured the time taken for the indicator to turn colourless. This colour change was caused by an increase in concentration of one of the products of the reaction. Further samples of the milk were diluted, and added to the same quantity of alkaline solution and pH indicator, to produce another six different substrate concentrations, and the experiment was repeated. All other variables were kept constant. The scientist found that each substrate concentration caused the pH indicator to change to colourless in a different length of time. The results of the reaction in all seven tubes were plotted on a graph. Which option correctly identifies the shape of the graph of the results, the limiting factor during the experiment and an explanation for the change in colour of the pH indicator?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram",
+      "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2970/diagram_1_48f0ea72a8fe.png"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.97
+    }
+  ],
+  "model": "human_review_chatgpt",
+  "placedAt": "2026-08-29T05:03:19.900019+00:00",
+  "sourceImageHash": "279a3431632dad4bc0efcc03e5bac0d1bd8616b3190b3e073d657936af859f39",
+  "status": "ok",
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+}

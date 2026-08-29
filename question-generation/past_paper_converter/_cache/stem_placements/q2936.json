@@ -1,0 +1,30 @@
+{
+  "questionId": 2936,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 37,
+  "stemBlocks": [
+    "A copper ring, with a small gap XY, rests in a uniform horizontal magnetic field. The ring lies in the plane of the page and the direction of the magnetic field is horizontal from left to right, as shown in the diagram.\nA voltage is now applied across XY, such that X is connected to the positive terminal of the power supply and Y is connected to the negative terminal.\nWhich statement describes the motion of the ring immediately after the voltage is applied?\n(Assume that the mechanism supporting the ring allows the ring to move freely and allows the voltage to be applied continuously.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram",
+      "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2936/diagram_1_f7a43220e456.png"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.99
+    }
+  ],
+  "model": "human_review_chatgpt",
+  "placedAt": "2026-08-29T05:03:19.865887+00:00",
+  "sourceImageHash": "3c898a15d65554e6d31fd5b4090dc9b5344bf3df211165a6e006ffebeacc47b0",
+  "status": "ok",
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+}

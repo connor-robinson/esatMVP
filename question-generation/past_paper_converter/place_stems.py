@@ -201,7 +201,10 @@ def load_place_candidates(
 def build_candidate_record(candidate: Dict[str, Any]) -> Dict[str, Any]:
     """Prepare stem blocks + stem assets for one candidate (no network)."""
     stem_assets = stem_diagram_assets(candidate.get("diagramAssets"))
-    blocks = split_stem_blocks(str(candidate.get("questionStem") or ""))
+    blocks = split_stem_blocks(
+        str(candidate.get("questionStem") or ""),
+        question_id=int(candidate["questionId"]),
+    )
     return {
         "questionId": int(candidate["questionId"]),
         "examName": candidate.get("examName") or "",

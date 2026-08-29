@@ -21,6 +21,7 @@ from .place_stems import (
     load_sidecar,
     write_sidecar_record,
 )
+from .stem_block_overrides import display_width_override
 from .stem_blocks import apply_placements_to_stem, validate_placements
 
 APPLY_STATUS_FILE = PLACEMENTS_DIR / ".apply_status.json"
@@ -167,7 +168,11 @@ def apply_one_sidecar(
         crop_bytes_by_id=crop_bytes_by_id,
     )
     for asset in sized_assets:
-        assets_by_id[str(asset["id"])] = asset
+        asset_id = str(asset["id"])
+        override = display_width_override(qid, asset_id)
+        if override is not None:
+            asset["display_width_pct"] = override
+        assets_by_id[asset_id] = asset
 
     placements_with_size: List[Dict[str, Any]] = []
     for row in normalized:

@@ -1,0 +1,31 @@
+{
+  "questionId": 2942,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 43,
+  "stemBlocks": [
+    "The chart shows the relative abundances of the isotopes of an element.",
+    "What is the relative atomic mass ($A_r$) of this element?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram",
+      "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2942/diagram_1_eb7822b1851d.png"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.99
+    }
+  ],
+  "model": "human_review_chatgpt",
+  "placedAt": "2026-08-29T05:03:19.865887+00:00",
+  "sourceImageHash": "3b57fc93c5ae963de02ca7e6efaa065f9b1fa40f6f6f25d5b210a7f90a065dfb",
+  "status": "ok",
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+}

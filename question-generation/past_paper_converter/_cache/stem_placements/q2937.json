@@ -1,0 +1,31 @@
+{
+  "questionId": 2937,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 38,
+  "stemBlocks": [
+    "A battery and two resistors X and Y are connected in series.\nThe power transferred by the battery is 6 W.\nThe resistance of X is $10\\ \\Omega$.\nThe voltage across Y is 4 V.",
+    "What is the current in the circuit?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram",
+      "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2937/diagram_1_69e225a01c6f.png"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.99
+    }
+  ],
+  "model": "human_review_chatgpt",
+  "placedAt": "2026-08-29T05:03:19.865887+00:00",
+  "sourceImageHash": "c101fcb8600a9398b55d9c07b463babcec53008201fa0ac081ec8cbef6cba468",
+  "status": "ok",
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+}

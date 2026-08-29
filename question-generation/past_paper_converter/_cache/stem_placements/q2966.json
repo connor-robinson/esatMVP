@@ -1,0 +1,31 @@
+{
+  "questionId": 2966,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 67,
+  "stemBlocks": [
+    "A student viewed a bacterial cell using a microscope. The cell was measured with a microscope ruler as shown in the diagram. Each division on this ruler measures $2.5\\ \\mu\\text{m}$. The student made a drawing of this cell. The drawing was $5.0\\ \\text{cm}$ in length and included the structures that the student expected to see. Which row of the table gives the magnification of the student's drawing and one of the structures that should be included?",
+    "|  | magnification of the student's drawing | structure that should be included |\n| --- | --- | --- |\n| A | $2.5 \\times 10^{-4}$ | cell wall |\n| B | $2.5 \\times 10^{-4}$ | nucleus |\n| C | $4.0 \\times 10^{-1}$ | cell wall |\n| D | $4.0 \\times 10^{-1}$ | nucleus |\n| E | $4.0 \\times 10^{3}$ | cell wall |\n| F | $4.0 \\times 10^{3}$ | nucleus |\n| G | $2.0 \\times 10^{4}$ | cell wall |\n| H | $2.0 \\times 10^{4}$ | nucleus |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram",
+      "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2966/diagram_1_a095ec40d2a0.png"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.99
+    }
+  ],
+  "model": "human_review_chatgpt",
+  "placedAt": "2026-08-29T05:03:19.890943+00:00",
+  "sourceImageHash": "5abc0be25e17ff6675480105705ee25a1d4de755a9427bf4dea425e46e77e4eb",
+  "status": "ok",
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+}

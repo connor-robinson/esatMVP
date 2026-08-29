@@ -1,0 +1,34 @@
+{
+  "questionId": 2956,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 57,
+  "stemBlocks": [
+    "The structure of cyclohexa-1,4-diene is:",
+    "Bromine is dissolved in inert organic solvent to form $0.250 \\text{ mol dm}^{-3}$ of bromine solution.",
+    "What is the minimum volume of this bromine solution required to react completely with $0.10 \\text{ cm}^3$ of cyclohexa-1,4-diene?",
+    "($M_r$ value: cyclohexa-1,4-diene = 80. Density of cyclohexa-1,4-diene = $0.84 \\text{ g cm}^{-3}$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram",
+      "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2956/diagram_1_1a8f409cf027.png"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.99,
+      "displayWidthPct": 22.0
+    }
+  ],
+  "model": "human_review_chatgpt",
+  "placedAt": "2026-08-29T05:03:19.879074+00:00",
+  "sourceImageHash": "503e310dcdfddf8c7c7df64ecbd986a6c6ab53030ceeedc3516e10b0a7eca165",
+  "status": "ok",
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+}

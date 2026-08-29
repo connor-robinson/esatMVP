@@ -1,0 +1,1337 @@
+{
+  "generatedAt": "2026-08-29T05:06:12.161212+00:00",
+  "mode": "dry_run_export",
+  "paperId": 50,
+  "paperLabel": "NSAA 2023 Section 1",
+  "diagramQuestionCount": 25,
+  "multiDiagramQuestionCount": 1,
+  "notes": [
+    "This is a dry-run export: no live question_stem rows were modified.",
+    "Use sourceScreenshotUrl to see where each diagram sits on the original page.",
+    "Match numbered stemBlocks to the screenshot, then choose insertAfterBlock per asset.",
+    "insertAfterBlock: 0 = before block 1, N = after block N, blockCount = after all text.",
+    "displayWidthPct normalizes on-screen size from crop bbox + ink fill (no recrop)."
+  ],
+  "slotModel": {
+    "insertAfterBlock": "Integer slot where the diagram is inserted among stemBlocks.",
+    "0": "Diagram appears before the first text block.",
+    "N": "Diagram appears after text block N (1-based numbering in reports).",
+    "blockCount": "Diagram appears after all text blocks (end of stem).",
+    "multiDiagram": "Each asset id (d1, d2, ...) gets its own insertAfterBlock.",
+    "outputSchema": {
+      "placements": [
+        {
+          "asset_id": "d1",
+          "insert_after_block": 1,
+          "confidence": 0.9
+        }
+      ]
+    }
+  },
+  "questions": [
+    {
+      "questionId": 2904,
+      "questionNumber": 5,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q005.png",
+      "blockCount": 2,
+      "stemBlocks": [
+        "$WXYZ$ is a square of side length 1.\n$WM: MX = 1:2$\n$XN:NY=3:1$\n$YP: PZ = 4:1$",
+        "What is the area of triangle $MNP$?"
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "diagram not to scale",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2904/diagram_1_daf9ecf8c2c3.png",
+          "displayWidthPct": 34.2
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1,
+        2
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.849962+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 0,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "{{diagram:d1}}\n\n$WXYZ$ is a square of side length 1.\n$WM: MX = 1:2$\n$XN:NY=3:1$\n$YP: PZ = 4:1$\n\nWhat is the area of triangle $MNP$?",
+      "applyDryRun": {
+        "questionId": 2904,
+        "status": "dry_run",
+        "blockCount": 2,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 34.2
+        },
+        "fetchErrors": {},
+        "stemPreview": "<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2904/diagram_1_daf9ecf8c2c3.png\" alt=\"diagram not to scale\" style=\"width:34.2%;max-width:100%;height:auto;dis..."
+      },
+      "strippedStemPreview": "$WXYZ$ is a square of side length 1.\n$WM: MX = 1:2$\n$XN:NY=3:1$\n$YP: PZ = 4:1$\nWhat is the area of triangle $MNP$?"
+    },
+    {
+      "questionId": 2922,
+      "questionNumber": 23,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q023.png",
+      "blockCount": 3,
+      "stemBlocks": [
+        "A heater is connected in series with a dc power supply, a variable resistor and an ammeter in the circuit shown.",
+        "The variable resistor is adjusted until the reading on the ammeter is 0.50 A and the resistance of the heater is $8.0 \\Omega$.",
+        "How much energy is converted to thermal energy in 5.0 minutes?"
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "diagram not to scale",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2922/diagram_1_66d120298412.png",
+          "displayWidthPct": 32.0
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.849962+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "A heater is connected in series with a dc power supply, a variable resistor and an ammeter in the circuit shown.\n\n{{diagram:d1}}\n\nThe variable resistor is adjusted until the reading on the ammeter is 0.50 A and the resistance of the heater is $8.0 \\Omega$.\n\nHow much energy is converted to thermal energy in 5.0 minutes?",
+      "applyDryRun": {
+        "questionId": 2922,
+        "status": "dry_run",
+        "blockCount": 3,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 32.0
+        },
+        "fetchErrors": {},
+        "stemPreview": "A heater is connected in series with a dc power supply, a variable resistor and an ammeter in the circuit shown.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-pa..."
+      },
+      "strippedStemPreview": "A heater is connected in series with a dc power supply, a variable resistor and an ammeter in the circuit shown.\nThe variable resistor is adjusted until the reading on the ammeter is 0.50 A and the resistance of the heater is $8.0 \\Omega$.\nHow much energy is converted to thermal energy in 5.0 minutes?"
+    },
+    {
+      "questionId": 2923,
+      "questionNumber": 24,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q024.png",
+      "blockCount": 4,
+      "stemBlocks": [
+        "A circuit is set up as shown. All three resistors are identical.\nWhen the switch is open, the reading on the ammeter is $1.0\\text{ A}$ and the power transferred from the battery is $1.0\\text{ W}$.",
+        "The switch is now closed.",
+        "What is the new reading on the ammeter and what is the new power transferred from the battery?",
+        "|  | ammeter reading / A | power transferred / W |\n| --- | --- | --- |\n| A | 0.67 | 0.67 |\n| B | 0.67 | 1.3 |\n| C | 0.67 | 1.5 |\n| D | 0.67 | 2.0 |\n| E | 1.0 | 1.0 |\n| F | 1.0 | 1.5 |\n| G | 1.0 | 2.0 |\n| H | 1.0 | 3.0 |"
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "diagram not to scale",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2923/diagram_1_c5070386d195.png",
+          "displayWidthPct": 32.9
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.849962+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "A circuit is set up as shown. All three resistors are identical.\nWhen the switch is open, the reading on the ammeter is $1.0\\text{ A}$ and the power transferred from the battery is $1.0\\text{ W}$.\n\n{{diagram:d1}}\n\nThe switch is now closed.\n\nWhat is the new reading on the ammeter and what is the new power transferred from the battery?\n\n|  | ammeter reading / A | power transferred / W |\n| --- | --- | --- |\n| A | 0.67 | 0.67 |\n| B | 0.67 | 1.3 |\n| C | 0.67 | 1.5 |\n| D | 0.67 | 2.0 |\n| E | 1.0 | 1.0 |\n| F | 1.0 | 1.5 |\n| G | 1.0 | 2.0 |\n| H | 1.0 | 3.0 |",
+      "applyDryRun": {
+        "questionId": 2923,
+        "status": "dry_run",
+        "blockCount": 4,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 32.9
+        },
+        "fetchErrors": {},
+        "stemPreview": "A circuit is set up as shown. All three resistors are identical.\nWhen the switch is open, the reading on the ammeter is $1.0\\text{ A}$ and the power transferred from the battery is $1.0\\text{ W}$.\n\n<figure class=\"qg-diagram\"><img src=\"https..."
+      },
+      "strippedStemPreview": "A circuit is set up as shown. All three resistors are identical.\nWhen the switch is open, the reading on the ammeter is $1.0\\text{ A}$ and the power transferred from the battery is $1.0\\text{ W}$.\nThe switch is now closed.\nWhat is the new reading on the ammeter and what is the new power transferred from the battery?\n\n|  | ammeter reading / A | power transferred / W |\n| --- | --- | --- |\n| A | 0.67 | 0.67 |\n| B | 0.67 | 1.3 |\n| C | 0.67 | 1.5 |\n| D | 0.67 | 2.0 |\n| E | 1.0 | 1.0 |\n| F | 1.0 | 1.5"
+    },
+    {
+      "questionId": 2925,
+      "questionNumber": 26,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q026.png",
+      "blockCount": 2,
+      "stemBlocks": [
+        "A spring is initially unstretched. A force $F$ is used to stretch the spring. The extension $x$ and the energy $E$ stored in the stretched spring are measured for different values of $F$. The graph shows how the energy $E$, in J, varies with the extension squared, $x^2$, in cm$^2$.",
+        "What is the magnitude of $F$ when the spring stores $0.015$ J of energy?"
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "diagram not to scale",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2925/diagram_1_1721de310ce0.png",
+          "displayWidthPct": 32.0
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1,
+        2
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.849962+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "A spring is initially unstretched. A force $F$ is used to stretch the spring. The extension $x$ and the energy $E$ stored in the stretched spring are measured for different values of $F$. The graph shows how the energy $E$, in J, varies with the extension squared, $x^2$, in cm$^2$.\n\n{{diagram:d1}}\n\nWhat is the magnitude of $F$ when the spring stores $0.015$ J of energy?",
+      "applyDryRun": {
+        "questionId": 2925,
+        "status": "dry_run",
+        "blockCount": 2,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 32.0
+        },
+        "fetchErrors": {},
+        "stemPreview": "A spring is initially unstretched. A force $F$ is used to stretch the spring. The extension $x$ and the energy $E$ stored in the stretched spring are measured for different values of $F$. The graph shows how the energy $E$, in J, varies wit..."
+      },
+      "strippedStemPreview": "A spring is initially unstretched. A force $F$ is used to stretch the spring. The extension $x$ and the energy $E$ stored in the stretched spring are measured for different values of $F$. The graph shows how the energy $E$, in J, varies with the extension squared, $x^2$, in cm$^2$. What is the magnitude of $F$ when the spring stores $0.015$ J of energy?"
+    },
+    {
+      "questionId": 2928,
+      "questionNumber": 29,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q029.png",
+      "blockCount": 3,
+      "stemBlocks": [
+        "A ray of light is directed horizontally towards two long, plane mirrors X and Y which are both at $45^{\\circ}$ to the horizontal. After two reflections the ray is travelling horizontally again.",
+        "Mirror X is now rotated clockwise through less than $45^{\\circ}$. After this rotation, mirror X makes an angle $\\theta$ with the horizontal, where $\\theta < 45^{\\circ}$. The direction of the incident ray is unchanged.",
+        "In what direction and through what angle should mirror Y be rotated in order for the ray to be still horizontal and travelling to the right after reflecting from mirror Y?"
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "diagram not to scale",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2928/diagram_1_b89073bff457.png",
+          "displayWidthPct": 49.3
+        },
+        {
+          "id": "d2",
+          "alt": "diagram not to scale",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2928/diagram_2_30a34f21a787.png",
+          "displayWidthPct": 45.2
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.849962+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99
+          },
+          {
+            "assetId": "d2",
+            "insertAfterBlock": 2,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "A ray of light is directed horizontally towards two long, plane mirrors X and Y which are both at $45^{\\circ}$ to the horizontal. After two reflections the ray is travelling horizontally again.\n\n{{diagram:d1}}\n\nMirror X is now rotated clockwise through less than $45^{\\circ}$. After this rotation, mirror X makes an angle $\\theta$ with the horizontal, where $\\theta < 45^{\\circ}$. The direction of the incident ray is unchanged.\n\n{{diagram:d2}}\n\nIn what direction and through what angle should mirror Y be rotated in order for the ray to be still horizontal and travelling to the right after reflecting from mirror Y?",
+      "applyDryRun": {
+        "questionId": 2928,
+        "status": "dry_run",
+        "blockCount": 3,
+        "placementCount": 2,
+        "displayWidths": {
+          "d1": 49.3,
+          "d2": 45.2
+        },
+        "fetchErrors": {},
+        "stemPreview": "A ray of light is directed horizontally towards two long, plane mirrors X and Y which are both at $45^{\\circ}$ to the horizontal. After two reflections the ray is travelling horizontally again.\n\n<figure class=\"qg-diagram\"><img src=\"https://..."
+      },
+      "strippedStemPreview": "A ray of light is directed horizontally towards two long, plane mirrors X and Y which are both at $45^{\\circ}$ to the horizontal. After two reflections the ray is travelling horizontally again.\nMirror X is now rotated clockwise through less than $45^{\\circ}$. After this rotation, mirror X makes an angle $\\theta$ with the horizontal, where $\\theta < 45^{\\circ}$. The direction of the incident ray is unchanged.\nIn what direction and through what angle should mirror Y be rotated in order for the ray"
+    },
+    {
+      "questionId": 2931,
+      "questionNumber": 32,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q032.png",
+      "blockCount": 1,
+      "stemBlocks": [
+        "A large, flat, metal plate is coated on one side with a layer of thermally insulating material of the same thickness $a$ as the metal plate. The uninsulated top surface of the metal plate is maintained at a constant temperature $T_1$. The bottom surface of the insulating material is maintained at a constant, lower temperature $T_2$. The system is in equilibrium. The diagram shows this arrangement. Which graph could show how the temperature varies with distance from the top surface of the metal plate to the bottom surface of the insulating material?"
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "diagram not to scale",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2931/diagram_1_d3767a16414e.png",
+          "displayWidthPct": 37.6
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.865887+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "A large, flat, metal plate is coated on one side with a layer of thermally insulating material of the same thickness $a$ as the metal plate. The uninsulated top surface of the metal plate is maintained at a constant temperature $T_1$. The bottom surface of the insulating material is maintained at a constant, lower temperature $T_2$. The system is in equilibrium. The diagram shows this arrangement. Which graph could show how the temperature varies with distance from the top surface of the metal plate to the bottom surface of the insulating material?\n\n{{diagram:d1}}",
+      "applyDryRun": {
+        "questionId": 2931,
+        "status": "dry_run",
+        "blockCount": 1,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 37.6
+        },
+        "fetchErrors": {},
+        "stemPreview": "A large, flat, metal plate is coated on one side with a layer of thermally insulating material of the same thickness $a$ as the metal plate. The uninsulated top surface of the metal plate is maintained at a constant temperature $T_1$. The b..."
+      },
+      "strippedStemPreview": "A large, flat, metal plate is coated on one side with a layer of thermally insulating material of the same thickness $a$ as the metal plate. The uninsulated top surface of the metal plate is maintained at a constant temperature $T_1$. The bottom surface of the insulating material is maintained at a constant, lower temperature $T_2$. The system is in equilibrium. The diagram shows this arrangement. Which graph could show how the temperature varies with distance from the top surface of the metal p"
+    },
+    {
+      "questionId": 2934,
+      "questionNumber": 35,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q035.png",
+      "blockCount": 2,
+      "stemBlocks": [
+        "A physicist introduces a thin piece of glass into the path of a laser beam in order to delay the beam. The light of the laser beam has a single wavelength $L$ in air.\nWhile the beam is inside the glass it completes 10 more complete oscillations compared to the same beam passing through the same thickness of air.\nThe speed of light in air is $c$ and the speed of light in glass is $\\frac{2}{3}c$.",
+        "What is the thickness of the glass?"
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "diagram not to scale",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2934/diagram_1_f9bd98267361.png",
+          "displayWidthPct": 44.7
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1,
+        2
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.865887+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "A physicist introduces a thin piece of glass into the path of a laser beam in order to delay the beam. The light of the laser beam has a single wavelength $L$ in air.\nWhile the beam is inside the glass it completes 10 more complete oscillations compared to the same beam passing through the same thickness of air.\nThe speed of light in air is $c$ and the speed of light in glass is $\\frac{2}{3}c$.\n\n{{diagram:d1}}\n\nWhat is the thickness of the glass?",
+      "applyDryRun": {
+        "questionId": 2934,
+        "status": "dry_run",
+        "blockCount": 2,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 44.7
+        },
+        "fetchErrors": {},
+        "stemPreview": "A physicist introduces a thin piece of glass into the path of a laser beam in order to delay the beam. The light of the laser beam has a single wavelength $L$ in air.\nWhile the beam is inside the glass it completes 10 more complete oscillat..."
+      },
+      "strippedStemPreview": "A physicist introduces a thin piece of glass into the path of a laser beam in order to delay the beam. The light of the laser beam has a single wavelength $L$ in air.\nWhile the beam is inside the glass it completes 10 more complete oscillations compared to the same beam passing through the same thickness of air.\nThe speed of light in air is $c$ and the speed of light in glass is $\\frac{2}{3}c$.\nWhat is the thickness of the glass?"
+    },
+    {
+      "questionId": 2936,
+      "questionNumber": 37,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q037.png",
+      "blockCount": 1,
+      "stemBlocks": [
+        "A copper ring, with a small gap XY, rests in a uniform horizontal magnetic field. The ring lies in the plane of the page and the direction of the magnetic field is horizontal from left to right, as shown in the diagram.\nA voltage is now applied across XY, such that X is connected to the positive terminal of the power supply and Y is connected to the negative terminal.\nWhich statement describes the motion of the ring immediately after the voltage is applied?\n(Assume that the mechanism supporting the ring allows the ring to move freely and allows the voltage to be applied continuously.)"
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "diagram not to scale",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2936/diagram_1_f7a43220e456.png",
+          "displayWidthPct": 43.8
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.865887+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "A copper ring, with a small gap XY, rests in a uniform horizontal magnetic field. The ring lies in the plane of the page and the direction of the magnetic field is horizontal from left to right, as shown in the diagram.\nA voltage is now applied across XY, such that X is connected to the positive terminal of the power supply and Y is connected to the negative terminal.\nWhich statement describes the motion of the ring immediately after the voltage is applied?\n(Assume that the mechanism supporting the ring allows the ring to move freely and allows the voltage to be applied continuously.)\n\n{{diagram:d1}}",
+      "applyDryRun": {
+        "questionId": 2936,
+        "status": "dry_run",
+        "blockCount": 1,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 43.8
+        },
+        "fetchErrors": {},
+        "stemPreview": "A copper ring, with a small gap XY, rests in a uniform horizontal magnetic field. The ring lies in the plane of the page and the direction of the magnetic field is horizontal from left to right, as shown in the diagram.\nA voltage is now app..."
+      },
+      "strippedStemPreview": "A copper ring, with a small gap XY, rests in a uniform horizontal magnetic field. The ring lies in the plane of the page and the direction of the magnetic field is horizontal from left to right, as shown in the diagram.\nA voltage is now applied across XY, such that X is connected to the positive terminal of the power supply and Y is connected to the negative terminal.\nWhich statement describes the motion of the ring immediately after the voltage is applied?\n(Assume that the mechanism supporting "
+    },
+    {
+      "questionId": 2937,
+      "questionNumber": 38,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q038.png",
+      "blockCount": 2,
+      "stemBlocks": [
+        "A battery and two resistors X and Y are connected in series.\nThe power transferred by the battery is 6 W.\nThe resistance of X is $10\\ \\Omega$.\nThe voltage across Y is 4 V.",
+        "What is the current in the circuit?"
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "diagram not to scale",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2937/diagram_1_69e225a01c6f.png",
+          "displayWidthPct": 32.5
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1,
+        2
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.865887+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "A battery and two resistors X and Y are connected in series.\nThe power transferred by the battery is 6 W.\nThe resistance of X is $10\\ \\Omega$.\nThe voltage across Y is 4 V.\n\n{{diagram:d1}}\n\nWhat is the current in the circuit?",
+      "applyDryRun": {
+        "questionId": 2937,
+        "status": "dry_run",
+        "blockCount": 2,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 32.5
+        },
+        "fetchErrors": {},
+        "stemPreview": "A battery and two resistors X and Y are connected in series.\nThe power transferred by the battery is 6 W.\nThe resistance of X is $10\\ \\Omega$.\nThe voltage across Y is 4 V.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.s..."
+      },
+      "strippedStemPreview": "A battery and two resistors X and Y are connected in series.\nThe power transferred by the battery is 6 W.\nThe resistance of X is $10\\ \\Omega$.\nThe voltage across Y is 4 V.\nWhat is the current in the circuit?"
+    },
+    {
+      "questionId": 2942,
+      "questionNumber": 43,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q043.png",
+      "blockCount": 2,
+      "stemBlocks": [
+        "The chart shows the relative abundances of the isotopes of an element.",
+        "What is the relative atomic mass ($A_r$) of this element?"
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "diagram not to scale",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2942/diagram_1_eb7822b1851d.png",
+          "displayWidthPct": 42.5
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1,
+        2
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.865887+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "The chart shows the relative abundances of the isotopes of an element.\n\n{{diagram:d1}}\n\nWhat is the relative atomic mass ($A_r$) of this element?",
+      "applyDryRun": {
+        "questionId": 2942,
+        "status": "dry_run",
+        "blockCount": 2,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 42.5
+        },
+        "fetchErrors": {},
+        "stemPreview": "The chart shows the relative abundances of the isotopes of an element.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2942/diagram_1_eb7822b1851d.png\" alt=..."
+      },
+      "strippedStemPreview": "The chart shows the relative abundances of the isotopes of an element. What is the relative atomic mass ($A_r$) of this element?"
+    },
+    {
+      "questionId": 2954,
+      "questionNumber": 55,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q055.png",
+      "blockCount": 1,
+      "stemBlocks": [
+        "When methanol is burned in the apparatus shown it gives out $720 \\text{ kJ mol}^{-1}$. However, only $80\\%$ of the energy released is transferred into the water.\nThe starting temperature of the water is $12^{\\circ}\\text{C}$.\nWhat mass of methanol would need to be burned to give a $60^{\\circ}\\text{C}$ temperature rise in the water?\n($M_\\text{r}$ value: methanol $= 32$. Assume that the specific heat capacity of water $= 4\\text{ Jg}^{-1\\circ}\\text{C}^{-1}$)"
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "diagram not to scale",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2954/diagram_1_d1f05ef3b165.png",
+          "displayWidthPct": 42.7
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.876423+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "When methanol is burned in the apparatus shown it gives out $720 \\text{ kJ mol}^{-1}$. However, only $80\\%$ of the energy released is transferred into the water.\nThe starting temperature of the water is $12^{\\circ}\\text{C}$.\nWhat mass of methanol would need to be burned to give a $60^{\\circ}\\text{C}$ temperature rise in the water?\n($M_\\text{r}$ value: methanol $= 32$. Assume that the specific heat capacity of water $= 4\\text{ Jg}^{-1\\circ}\\text{C}^{-1}$)\n\n{{diagram:d1}}",
+      "applyDryRun": {
+        "questionId": 2954,
+        "status": "dry_run",
+        "blockCount": 1,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 42.7
+        },
+        "fetchErrors": {},
+        "stemPreview": "When methanol is burned in the apparatus shown it gives out $720 \\text{ kJ mol}^{-1}$. However, only $80\\%$ of the energy released is transferred into the water.\nThe starting temperature of the water is $12^{\\circ}\\text{C}$.\nWhat mass of me..."
+      },
+      "strippedStemPreview": "When methanol is burned in the apparatus shown it gives out $720 \\text{ kJ mol}^{-1}$. However, only $80\\%$ of the energy released is transferred into the water.\nThe starting temperature of the water is $12^{\\circ}\\text{C}$.\nWhat mass of methanol would need to be burned to give a $60^{\\circ}\\text{C}$ temperature rise in the water?\n($M_\\text{r}$ value: methanol $= 32$. Assume that the specific heat capacity of water $= 4\\text{ Jg}^{-1\\circ}\\text{C}^{-1}$)"
+    },
+    {
+      "questionId": 2956,
+      "questionNumber": 57,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q057.png",
+      "blockCount": 4,
+      "stemBlocks": [
+        "The structure of cyclohexa-1,4-diene is:",
+        "Bromine is dissolved in inert organic solvent to form $0.250 \\text{ mol dm}^{-3}$ of bromine solution.",
+        "What is the minimum volume of this bromine solution required to react completely with $0.10 \\text{ cm}^3$ of cyclohexa-1,4-diene?",
+        "($M_r$ value: cyclohexa-1,4-diene = 80. Density of cyclohexa-1,4-diene = $0.84 \\text{ g cm}^{-3}$)"
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "diagram not to scale",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2956/diagram_1_1a8f409cf027.png",
+          "displayWidthPct": 22.0
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.879074+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99,
+            "displayWidthPct": 22.0
+          }
+        ]
+      },
+      "placementPreview": "The structure of cyclohexa-1,4-diene is:\n\n{{diagram:d1}}\n\nBromine is dissolved in inert organic solvent to form $0.250 \\text{ mol dm}^{-3}$ of bromine solution.\n\nWhat is the minimum volume of this bromine solution required to react completely with $0.10 \\text{ cm}^3$ of cyclohexa-1,4-diene?\n\n($M_r$ value: cyclohexa-1,4-diene = 80. Density of cyclohexa-1,4-diene = $0.84 \\text{ g cm}^{-3}$)",
+      "applyDryRun": {
+        "questionId": 2956,
+        "status": "dry_run",
+        "blockCount": 4,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 22.0
+        },
+        "fetchErrors": {},
+        "stemPreview": "The structure of cyclohexa-1,4-diene is:\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2956/diagram_1_1a8f409cf027.png\" alt=\"diagram not to scale\" style=\"..."
+      },
+      "strippedStemPreview": "The structure of cyclohexa-1,4-diene is:\nBromine is dissolved in inert organic solvent to form $0.250 \\text{ mol dm}^{-3}$ of bromine solution.\nWhat is the minimum volume of this bromine solution required to react completely with $0.10 \\text{ cm}^3$ of cyclohexa-1,4-diene?\n($M_r$ value: cyclohexa-1,4-diene = 80. Density of cyclohexa-1,4-diene = $0.84 \\text{ g cm}^{-3}$)"
+    },
+    {
+      "questionId": 2957,
+      "questionNumber": 58,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q058.png",
+      "blockCount": 5,
+      "stemBlocks": [
+        "The relative tendency for metals to form positive ions in solution can be measured using the following apparatus:",
+        "Electrons can pass from metal 1 to metal 2 via the external circuit. The difference in the tendency of the metals to form positive ions is given by the reading on the voltmeter. The higher the reading on the voltmeter the greater the \\textbf{difference} in the tendency of the pair of metals to form positive ions.",
+        "Results from three experiments are given in the following table.",
+        "| experiment | metal 1 | metal 2 | reading on voltmeter / V |\n| --- | --- | --- | --- |\n| 1 | P | Q | +0.62 |\n| 2 | S | Q | +0.30 |\n| 3 | S | R | +1.24 |",
+        "Using the information in the table, what is the order of reactivity of the four metals P, Q, R and S, from most reactive to least reactive?"
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "A circuit diagram showing a voltmeter connected to two half-cells. Each half-cell contains a metal electrode (metal 1 and metal 2) immersed in a 1 mol dm^{-3} solution of its respective ions. The two solutions are connected by an inert conductor (salt bridge). Metal 1 is connected to the negative terminal of the voltmeter, and metal 2 to the positive terminal.",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2957/diagram_1_984e5a421420.png",
+          "displayWidthPct": 49.3
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.881591+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "The relative tendency for metals to form positive ions in solution can be measured using the following apparatus:\n\n{{diagram:d1}}\n\nElectrons can pass from metal 1 to metal 2 via the external circuit. The difference in the tendency of the metals to form positive ions is given by the reading on the voltmeter. The higher the reading on the voltmeter the greater the \\textbf{difference} in the tendency of the pair of metals to form positive ions.\n\nResults from three experiments are given in the following table.\n\n| experiment | metal 1 | metal 2 | reading on voltmeter / V |\n| --- | --- | --- | --- |\n| 1 | P | Q | +0.62 |\n| 2 | S | Q | +0.30 |\n| 3 | S | R | +1.24 |\n\nUsing the information in the table, what is the order of reactivity of the four metals P, Q, R and S, from most reactive to least reactive?",
+      "applyDryRun": {
+        "questionId": 2957,
+        "status": "dry_run",
+        "blockCount": 5,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 49.3
+        },
+        "fetchErrors": {},
+        "stemPreview": "The relative tendency for metals to form positive ions in solution can be measured using the following apparatus:\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-p..."
+      },
+      "strippedStemPreview": "The relative tendency for metals to form positive ions in solution can be measured using the following apparatus:\nElectrons can pass from metal 1 to metal 2 via the external circuit. The difference in the tendency of the metals to form positive ions is given by the reading on the voltmeter. The higher the reading on the voltmeter the greater the \\textbf{difference} in the tendency of the pair of metals to form positive ions.\nResults from three experiments are given in the following table.\nUsing "
+    },
+    {
+      "questionId": 2961,
+      "questionNumber": 62,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q062.png",
+      "blockCount": 1,
+      "stemBlocks": [
+        "Which of the following graphs could describe processes taking place in the leaf of an oak tree in the presence of light?"
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "Graph 1: rate of photosynthesis vs temperature / °C; Graph 2: mass of carbon dioxide used in the leaf vs time of day; Graph 3: rate of photosynthesis vs distance from a light source",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2961/diagram_1_5f05689b5752.png",
+          "displayWidthPct": 73.4
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.881591+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "Which of the following graphs could describe processes taking place in the leaf of an oak tree in the presence of light?\n\n{{diagram:d1}}",
+      "applyDryRun": {
+        "questionId": 2961,
+        "status": "dry_run",
+        "blockCount": 1,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 73.4
+        },
+        "fetchErrors": {},
+        "stemPreview": "Which of the following graphs could describe processes taking place in the leaf of an oak tree in the presence of light?\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images..."
+      },
+      "strippedStemPreview": "Which of the following graphs could describe processes taking place in the leaf of an oak tree in the presence of light?"
+    },
+    {
+      "questionId": 2962,
+      "questionNumber": 63,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q063.png",
+      "blockCount": 3,
+      "stemBlocks": [
+        "The diagram shows the flow of energy in a year's growth of grass from $1 \\text{ m}^2$ of grassland.",
+        "Which of the following statements is/are correct?",
+        "1. $62\\%$ of the energy consumed by the cow is lost in faeces and urine.\n2. The diagram illustrates all the main processes of carbon uptake and release in the carbon cycle.\n3. $4\\%$ of the energy absorbed by the cells of the cow is used for growth."
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "Energy flow diagram showing a cow grazing on grass, with various energy transfers in kJ: 1020 kJ in breath, movement and heat loss; 3000 kJ eaten by the cow; 120 kJ to growth of cow; 1860 kJ in faeces and urine; 3520 kJ eaten by other herbivores; 14800 kJ to decomposers.",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2962/diagram_1_9d11441fa5ce.png",
+          "displayWidthPct": 60.5
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.886766+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "The diagram shows the flow of energy in a year's growth of grass from $1 \\text{ m}^2$ of grassland.\n\n{{diagram:d1}}\n\nWhich of the following statements is/are correct?\n\n1. $62\\%$ of the energy consumed by the cow is lost in faeces and urine.\n2. The diagram illustrates all the main processes of carbon uptake and release in the carbon cycle.\n3. $4\\%$ of the energy absorbed by the cells of the cow is used for growth.",
+      "applyDryRun": {
+        "questionId": 2962,
+        "status": "dry_run",
+        "blockCount": 3,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 60.5
+        },
+        "fetchErrors": {},
+        "stemPreview": "The diagram shows the flow of energy in a year's growth of grass from $1 \\text{ m}^2$ of grassland.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2962/dia..."
+      },
+      "strippedStemPreview": "The diagram shows the flow of energy in a year's growth of grass from $1 \\text{ m}^2$ of grassland.\nWhich of the following statements is/are correct?\n1. $62\\%$ of the energy consumed by the cow is lost in faeces and urine.\n2. The diagram illustrates all the main processes of carbon uptake and release in the carbon cycle.\n3. $4\\%$ of the energy absorbed by the cells of the cow is used for growth."
+    },
+    {
+      "questionId": 2963,
+      "questionNumber": 64,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q064.png",
+      "blockCount": 1,
+      "stemBlocks": [
+        "A Petri dish was filled with agar that had been mixed with starch. The agar is not digested by enzymes used in the experiment. Four small wells were cut in the agar. Three were filled with different solutions. Well Y was filled with water to act as a control. The dish was kept at $30^{\\circ}\\text{C}$ for 30 minutes. The surface of the agar was then washed with iodine solution, turning parts of it blue-black in the presence of starch. The Petri dish was placed on a piece of graph paper, as shown in the diagram, to measure the clear areas around the wells. The area of each well should be considered negligible. Which of the statements is/are correct?\n1 The area of starch digested around well W is 4 times the area digested around well X.\n2 Amylase could have been used in well W and protease could have been used in well X.\n3 The solution put in well Z could have contained boiled enzyme."
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "diagram not to scale",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2963/diagram_1_9f379f984cc1.png",
+          "displayWidthPct": 57.4
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.889889+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "A Petri dish was filled with agar that had been mixed with starch. The agar is not digested by enzymes used in the experiment. Four small wells were cut in the agar. Three were filled with different solutions. Well Y was filled with water to act as a control. The dish was kept at $30^{\\circ}\\text{C}$ for 30 minutes. The surface of the agar was then washed with iodine solution, turning parts of it blue-black in the presence of starch. The Petri dish was placed on a piece of graph paper, as shown in the diagram, to measure the clear areas around the wells. The area of each well should be considered negligible. Which of the statements is/are correct?\n1 The area of starch digested around well W is 4 times the area digested around well X.\n2 Amylase could have been used in well W and protease could have been used in well X.\n3 The solution put in well Z could have contained boiled enzyme.\n\n{{diagram:d1}}",
+      "applyDryRun": {
+        "questionId": 2963,
+        "status": "dry_run",
+        "blockCount": 1,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 57.4
+        },
+        "fetchErrors": {},
+        "stemPreview": "A Petri dish was filled with agar that had been mixed with starch. The agar is not digested by enzymes used in the experiment. Four small wells were cut in the agar. Three were filled with different solutions. Well Y was filled with water t..."
+      },
+      "strippedStemPreview": "A Petri dish was filled with agar that had been mixed with starch. The agar is not digested by enzymes used in the experiment. Four small wells were cut in the agar. Three were filled with different solutions. Well Y was filled with water to act as a control. The dish was kept at $30^{\\circ}\\text{C}$ for 30 minutes. The surface of the agar was then washed with iodine solution, turning parts of it blue-black in the presence of starch. The Petri dish was placed on a piece of graph paper, as shown "
+    },
+    {
+      "questionId": 2964,
+      "questionNumber": 65,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q065.png",
+      "blockCount": 2,
+      "stemBlocks": [
+        "The diagram shows a bubble potometer at the start of an experiment.\nThe glass tube has an internal diameter of 1 mm.\nAfter five minutes, one end of the air bubble had moved to the 4 cm mark on the scale.\nWhich row is correct?",
+        "|  | name of process being investigated | volume of water taken up / $\\text{mm}^3$ |\n| --- | --- | --- |\n| A | translocation | $\\pi \\times (0.5)^2 \\times 10$ |\n| B | translocation | $\\pi \\times (0.5)^2 \\times 15$ |\n| C | translocation | $2\\pi \\times (0.5) \\times 10$ |\n| D | translocation | $2\\pi \\times (0.5) \\times 15$ |\n| E | transpiration | $\\pi \\times (0.5)^2 \\times 10$ |\n| F | transpiration | $\\pi \\times (0.5)^2 \\times 15$ |\n| G | transpiration | $2\\pi \\times (0.5) \\times 10$ |\n| H | transpiration | $2\\pi \\times (0.5) \\times 15$ |"
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "diagram not to scale",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2964/diagram_1_b35953a3c882.png",
+          "displayWidthPct": 57.3
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1,
+        2
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.890943+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "The diagram shows a bubble potometer at the start of an experiment.\nThe glass tube has an internal diameter of 1 mm.\nAfter five minutes, one end of the air bubble had moved to the 4 cm mark on the scale.\nWhich row is correct?\n\n{{diagram:d1}}\n\n|  | name of process being investigated | volume of water taken up / $\\text{mm}^3$ |\n| --- | --- | --- |\n| A | translocation | $\\pi \\times (0.5)^2 \\times 10$ |\n| B | translocation | $\\pi \\times (0.5)^2 \\times 15$ |\n| C | translocation | $2\\pi \\times (0.5) \\times 10$ |\n| D | translocation | $2\\pi \\times (0.5) \\times 15$ |\n| E | transpiration | $\\pi \\times (0.5)^2 \\times 10$ |\n| F | transpiration | $\\pi \\times (0.5)^2 \\times 15$ |\n| G | transpiration | $2\\pi \\times (0.5) \\times 10$ |\n| H | transpiration | $2\\pi \\times (0.5) \\times 15$ |",
+      "applyDryRun": {
+        "questionId": 2964,
+        "status": "dry_run",
+        "blockCount": 2,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 57.3
+        },
+        "fetchErrors": {},
+        "stemPreview": "The diagram shows a bubble potometer at the start of an experiment.\nThe glass tube has an internal diameter of 1 mm.\nAfter five minutes, one end of the air bubble had moved to the 4 cm mark on the scale.\nWhich row is correct?\n\n<figure class..."
+      },
+      "strippedStemPreview": "The diagram shows a bubble potometer at the start of an experiment.\nThe glass tube has an internal diameter of 1 mm.\nAfter five minutes, one end of the air bubble had moved to the 4 cm mark on the scale.\nWhich row is correct?\n\n|  | name of process being investigated | volume of water taken up / $\\text{mm}^3$ |\n| --- | --- | --- |\n| A | translocation | $\\pi \\times (0.5)^2 \\times 10$ |\n| B | translocation | $\\pi \\times (0.5)^2 \\times 15$ |\n| C | translocation | $2\\pi \\times (0.5) \\times 10$ |\n| D "
+    },
+    {
+      "questionId": 2966,
+      "questionNumber": 67,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q067.png",
+      "blockCount": 2,
+      "stemBlocks": [
+        "A student viewed a bacterial cell using a microscope. The cell was measured with a microscope ruler as shown in the diagram. Each division on this ruler measures $2.5\\ \\mu\\text{m}$. The student made a drawing of this cell. The drawing was $5.0\\ \\text{cm}$ in length and included the structures that the student expected to see. Which row of the table gives the magnification of the student's drawing and one of the structures that should be included?",
+        "|  | magnification of the student's drawing | structure that should be included |\n| --- | --- | --- |\n| A | $2.5 \\times 10^{-4}$ | cell wall |\n| B | $2.5 \\times 10^{-4}$ | nucleus |\n| C | $4.0 \\times 10^{-1}$ | cell wall |\n| D | $4.0 \\times 10^{-1}$ | nucleus |\n| E | $4.0 \\times 10^{3}$ | cell wall |\n| F | $4.0 \\times 10^{3}$ | nucleus |\n| G | $2.0 \\times 10^{4}$ | cell wall |\n| H | $2.0 \\times 10^{4}$ | nucleus |"
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "diagram not to scale",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2966/diagram_1_a095ec40d2a0.png",
+          "displayWidthPct": 32.1
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1,
+        2
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.890943+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "A student viewed a bacterial cell using a microscope. The cell was measured with a microscope ruler as shown in the diagram. Each division on this ruler measures $2.5\\ \\mu\\text{m}$. The student made a drawing of this cell. The drawing was $5.0\\ \\text{cm}$ in length and included the structures that the student expected to see. Which row of the table gives the magnification of the student's drawing and one of the structures that should be included?\n\n{{diagram:d1}}\n\n|  | magnification of the student's drawing | structure that should be included |\n| --- | --- | --- |\n| A | $2.5 \\times 10^{-4}$ | cell wall |\n| B | $2.5 \\times 10^{-4}$ | nucleus |\n| C | $4.0 \\times 10^{-1}$ | cell wall |\n| D | $4.0 \\times 10^{-1}$ | nucleus |\n| E | $4.0 \\times 10^{3}$ | cell wall |\n| F | $4.0 \\times 10^{3}$ | nucleus |\n| G | $2.0 \\times 10^{4}$ | cell wall |\n| H | $2.0 \\times 10^{4}$ | nucleus |",
+      "applyDryRun": {
+        "questionId": 2966,
+        "status": "dry_run",
+        "blockCount": 2,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 32.1
+        },
+        "fetchErrors": {},
+        "stemPreview": "A student viewed a bacterial cell using a microscope. The cell was measured with a microscope ruler as shown in the diagram. Each division on this ruler measures $2.5\\ \\mu\\text{m}$. The student made a drawing of this cell. The drawing was $..."
+      },
+      "strippedStemPreview": "A student viewed a bacterial cell using a microscope. The cell was measured with a microscope ruler as shown in the diagram. Each division on this ruler measures $2.5\\ \\mu\\text{m}$. The student made a drawing of this cell. The drawing was $5.0\\ \\text{cm}$ in length and included the structures that the student expected to see. Which row of the table gives the magnification of the student's drawing and one of the structures that should be included?\n\n|  | magnification of the student's drawing | st"
+    },
+    {
+      "questionId": 2969,
+      "questionNumber": 70,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q070.png",
+      "blockCount": 3,
+      "stemBlocks": [
+        "The diagram shows a flow chart representing the hormonal activity associated with the menstrual cycle.",
+        "Which of the following statements about the menstrual cycle is/are correct?",
+        "1 Hormone 1 stimulates follicle maturation and the release of hormone 3 from the ovarian follicle.\n2 Hormone 4 maintains the uterus lining.\n3 At the end of the menstrual cycle the levels of hormone 1 and hormone 2 will reach their highest point and then decrease, leading to menstruation."
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "Legend: '-' indicates a negative feedback loop; '+' indicates a loop in which an ovarian hormone stimulates the release of a second hormone from the pituitary gland. Flowchart shows hypothalamus, gonadotrophin-releasing hormone (GnRH), anterior pituitary, hormone 1, hormone 2, ovarian follicle, ovarian corpus luteum, hormone 3, hormone 4, and their interconnections with feedback loops.",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2969/diagram_1_9eea923b860a.png",
+          "displayWidthPct": 73.4
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.897984+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "The diagram shows a flow chart representing the hormonal activity associated with the menstrual cycle.\n\n{{diagram:d1}}\n\nWhich of the following statements about the menstrual cycle is/are correct?\n\n1 Hormone 1 stimulates follicle maturation and the release of hormone 3 from the ovarian follicle.\n2 Hormone 4 maintains the uterus lining.\n3 At the end of the menstrual cycle the levels of hormone 1 and hormone 2 will reach their highest point and then decrease, leading to menstruation.",
+      "applyDryRun": {
+        "questionId": 2969,
+        "status": "dry_run",
+        "blockCount": 3,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 73.4
+        },
+        "fetchErrors": {},
+        "stemPreview": "The diagram shows a flow chart representing the hormonal activity associated with the menstrual cycle.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2969/..."
+      },
+      "strippedStemPreview": "The diagram shows a flow chart representing the hormonal activity associated with the menstrual cycle.\n\nWhich of the following statements about the menstrual cycle is/are correct?\n\n1 Hormone 1 stimulates follicle maturation and the release of hormone 3 from the ovarian follicle.\n2 Hormone 4 maintains the uterus lining.\n3 At the end of the menstrual cycle the levels of hormone 1 and hormone 2 will reach their highest point and then decrease, leading to menstruation."
+    },
+    {
+      "questionId": 2970,
+      "questionNumber": 71,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q071.png",
+      "blockCount": 1,
+      "stemBlocks": [
+        "A scientist was investigating the effect of substrate concentration on lipase enzyme activity. Two test tubes were set up: one containing a sample of full-fat milk mixed with an alkaline solution, and a pH indicator; one containing lipase. The pH indicator turned the alkaline milk sample pink. Both tubes were incubated in a water bath set to an optimum temperature for lipase until the contents had reached this temperature. The scientist then added the lipase to the tube with the milk sample and measured the time taken for the indicator to turn colourless. This colour change was caused by an increase in concentration of one of the products of the reaction. Further samples of the milk were diluted, and added to the same quantity of alkaline solution and pH indicator, to produce another six different substrate concentrations, and the experiment was repeated. All other variables were kept constant. The scientist found that each substrate concentration caused the pH indicator to change to colourless in a different length of time. The results of the reaction in all seven tubes were plotted on a graph. Which option correctly identifies the shape of the graph of the results, the limiting factor during the experiment and an explanation for the change in colour of the pH indicator?"
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "diagram not to scale",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2970/diagram_1_48f0ea72a8fe.png",
+          "displayWidthPct": 78.2
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.900019+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.97
+          }
+        ]
+      },
+      "placementPreview": "A scientist was investigating the effect of substrate concentration on lipase enzyme activity. Two test tubes were set up: one containing a sample of full-fat milk mixed with an alkaline solution, and a pH indicator; one containing lipase. The pH indicator turned the alkaline milk sample pink. Both tubes were incubated in a water bath set to an optimum temperature for lipase until the contents had reached this temperature. The scientist then added the lipase to the tube with the milk sample and measured the time taken for the indicator to turn colourless. This colour change was caused by an increase in concentration of one of the products of the reaction. Further samples of the milk were diluted, and added to the same quantity of alkaline solution and pH indicator, to produce another six different substrate concentrations, and the experiment was repeated. All other variables were kept constant. The scientist found that each substrate concentration caused the pH indicator to change to colourless in a different length of time. The results of the reaction in all seven tubes were plotted on a graph. Which option correctly identifies the shape of the graph of the results, the limiting factor during the experiment and an explanation for the change in colour of the pH indicator?\n\n{{diagram:d1}}",
+      "applyDryRun": {
+        "questionId": 2970,
+        "status": "dry_run",
+        "blockCount": 1,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 78.2
+        },
+        "fetchErrors": {},
+        "stemPreview": "A scientist was investigating the effect of substrate concentration on lipase enzyme activity. Two test tubes were set up: one containing a sample of full-fat milk mixed with an alkaline solution, and a pH indicator; one containing lipase. ..."
+      },
+      "strippedStemPreview": "A scientist was investigating the effect of substrate concentration on lipase enzyme activity. Two test tubes were set up: one containing a sample of full-fat milk mixed with an alkaline solution, and a pH indicator; one containing lipase. The pH indicator turned the alkaline milk sample pink. Both tubes were incubated in a water bath set to an optimum temperature for lipase until the contents had reached this temperature. The scientist then added the lipase to the tube with the milk sample and "
+    },
+    {
+      "questionId": 2971,
+      "questionNumber": 72,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q072.png",
+      "blockCount": 3,
+      "stemBlocks": [
+        "Even when sufficient oxygen is available, yeast will respire anaerobically using glucose as a substrate. However, if its source of glucose runs out and oxygen is available, yeast can switch to using ethanol as a substrate, which it uses to respire aerobically.\nA sample of yeast was added to 100\\ \\text{cm}^3 glucose solution in an open flask.\nThe contents of the flask were monitored over 32 hours and the results are shown in the graph.",
+        "Which of the following statements are correct?",
+        "1 Carbon dioxide would be produced in the flask at all times throughout the observation period, regardless of whether the yeast was respiring aerobically or anaerobically.\n2 The yeast was respiring using ethanol as the only substrate for 22 hours.\n3 The yeast started respiring anaerobically from the start of the observation period.\n4 The yeast used an average of 4 g glucose per hour for the first 10 hours."
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "Key\\nglucose\\nethanol\\nyeast\\nconcentration of\\nglucose or ethanol\\n/\\text{g}\\ \\text{dm}^{-3}\\nconcentration of yeast\\n/ arbitrary units\\ntime/hours",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2971/diagram_1_a72221de7753.png",
+          "displayWidthPct": 74.7
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.901675+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "Even when sufficient oxygen is available, yeast will respire anaerobically using glucose as a substrate. However, if its source of glucose runs out and oxygen is available, yeast can switch to using ethanol as a substrate, which it uses to respire aerobically.\nA sample of yeast was added to 100\\ \\text{cm}^3 glucose solution in an open flask.\nThe contents of the flask were monitored over 32 hours and the results are shown in the graph.\n\n{{diagram:d1}}\n\nWhich of the following statements are correct?\n\n1 Carbon dioxide would be produced in the flask at all times throughout the observation period, regardless of whether the yeast was respiring aerobically or anaerobically.\n2 The yeast was respiring using ethanol as the only substrate for 22 hours.\n3 The yeast started respiring anaerobically from the start of the observation period.\n4 The yeast used an average of 4 g glucose per hour for the first 10 hours.",
+      "applyDryRun": {
+        "questionId": 2971,
+        "status": "dry_run",
+        "blockCount": 3,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 74.7
+        },
+        "fetchErrors": {},
+        "stemPreview": "Even when sufficient oxygen is available, yeast will respire anaerobically using glucose as a substrate. However, if its source of glucose runs out and oxygen is available, yeast can switch to using ethanol as a substrate, which it uses to ..."
+      },
+      "strippedStemPreview": "Even when sufficient oxygen is available, yeast will respire anaerobically using glucose as a substrate. However, if its source of glucose runs out and oxygen is available, yeast can switch to using ethanol as a substrate, which it uses to respire aerobically.\nA sample of yeast was added to 100\\ \\text{cm}^3 glucose solution in an open flask.\nThe contents of the flask were monitored over 32 hours and the results are shown in the graph.\nWhich of the following statements are correct?\n1 Carbon dioxi"
+    },
+    {
+      "questionId": 2972,
+      "questionNumber": 73,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q073.png",
+      "blockCount": 1,
+      "stemBlocks": [
+        "The diagram represents part of the carbon cycle.\nWhich of the arrows represent processes resulting in at least one organic product (contains carbon and hydrogen)?"
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "A diagram showing a part of the carbon cycle with several numbered arrows representing processes between different reservoirs, one of which is labeled 'plants'.",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2972/diagram_1_d51f27833feb.png",
+          "displayWidthPct": 52.8
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.905116+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "The diagram represents part of the carbon cycle.\nWhich of the arrows represent processes resulting in at least one organic product (contains carbon and hydrogen)?\n\n{{diagram:d1}}",
+      "applyDryRun": {
+        "questionId": 2972,
+        "status": "dry_run",
+        "blockCount": 1,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 52.8
+        },
+        "fetchErrors": {},
+        "stemPreview": "The diagram represents part of the carbon cycle.\nWhich of the arrows represent processes resulting in at least one organic product (contains carbon and hydrogen)?\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.c..."
+      },
+      "strippedStemPreview": "The diagram represents part of the carbon cycle.\nWhich of the arrows represent processes resulting in at least one organic product (contains carbon and hydrogen)?"
+    },
+    {
+      "questionId": 2973,
+      "questionNumber": 74,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q074.png",
+      "blockCount": 3,
+      "stemBlocks": [
+        "In an experiment, 8 identical cubes of potato were each weighed and placed in a different test tube. Each of the test tubes contained a different concentration of sodium chloride solution. All other conditions were kept the same throughout the experiment. After 30 minutes, the potato cubes were removed from the test tubes and weighed, and the percentage change in mass was calculated.",
+        "Which of the following statements is/are correct?",
+        "1 The initial concentration of sodium chloride inside the potato cubes must be $0.3 \\text{ mol dm}^{-3}$.\n2 Osmosis involves the diffusion of water molecules from a solution of high solute concentration to one of low solute concentration.\n3 In this experiment, the rate of osmosis is fastest at a sodium chloride concentration of $0.8 \\text{ mol dm}^{-3}$."
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "Graph showing percentage change in mass versus concentration of sodium chloride.",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2973/diagram_1_d21d14802b00.png",
+          "displayWidthPct": 47.9
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.909479+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "In an experiment, 8 identical cubes of potato were each weighed and placed in a different test tube. Each of the test tubes contained a different concentration of sodium chloride solution. All other conditions were kept the same throughout the experiment. After 30 minutes, the potato cubes were removed from the test tubes and weighed, and the percentage change in mass was calculated.\n\n{{diagram:d1}}\n\nWhich of the following statements is/are correct?\n\n1 The initial concentration of sodium chloride inside the potato cubes must be $0.3 \\text{ mol dm}^{-3}$.\n2 Osmosis involves the diffusion of water molecules from a solution of high solute concentration to one of low solute concentration.\n3 In this experiment, the rate of osmosis is fastest at a sodium chloride concentration of $0.8 \\text{ mol dm}^{-3}$.",
+      "applyDryRun": {
+        "questionId": 2973,
+        "status": "dry_run",
+        "blockCount": 3,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 47.9
+        },
+        "fetchErrors": {},
+        "stemPreview": "In an experiment, 8 identical cubes of potato were each weighed and placed in a different test tube. Each of the test tubes contained a different concentration of sodium chloride solution. All other conditions were kept the same throughout ..."
+      },
+      "strippedStemPreview": "In an experiment, 8 identical cubes of potato were each weighed and placed in a different test tube. Each of the test tubes contained a different concentration of sodium chloride solution. All other conditions were kept the same throughout the experiment. After 30 minutes, the potato cubes were removed from the test tubes and weighed, and the percentage change in mass was calculated.\n\nWhich of the following statements is/are correct?\n\n1 The initial concentration of sodium chloride inside the pot"
+    },
+    {
+      "questionId": 2975,
+      "questionNumber": 76,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q076.png",
+      "blockCount": 3,
+      "stemBlocks": [
+        "The family tree shows the inheritance of an autosomal recessive genetic condition.",
+        "Which of the following statements is/are correct for this family?",
+        "1 If one cheek cell is collected from each individual, the overall ratio of X chromosomes to Y chromosomes will be $3.67:1$\n2 The probability of individual 2 and individual 3 having the same alleles on their X chromosomes is $100\\%$.\n3 The probability of individual 2 and individual 3 having the same genotype for the condition is $50\\%$.\n(Assume no mutations.)"
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "diagram not to scale",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2975/diagram_1_6ef468289923.png",
+          "displayWidthPct": 67.3
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.909948+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "The family tree shows the inheritance of an autosomal recessive genetic condition.\n\n{{diagram:d1}}\n\nWhich of the following statements is/are correct for this family?\n\n1 If one cheek cell is collected from each individual, the overall ratio of X chromosomes to Y chromosomes will be $3.67:1$\n2 The probability of individual 2 and individual 3 having the same alleles on their X chromosomes is $100\\%$.\n3 The probability of individual 2 and individual 3 having the same genotype for the condition is $50\\%$.\n(Assume no mutations.)",
+      "applyDryRun": {
+        "questionId": 2975,
+        "status": "dry_run",
+        "blockCount": 3,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 67.3
+        },
+        "fetchErrors": {},
+        "stemPreview": "The family tree shows the inheritance of an autosomal recessive genetic condition.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2975/diagram_1_6ef4682899..."
+      },
+      "strippedStemPreview": "The family tree shows the inheritance of an autosomal recessive genetic condition.\nKey\nmale without condition\nfemale without condition\nfemale with condition\nWhich of the following statements is/are correct for this family?\n1 If one cheek cell is collected from each individual, the overall ratio of X chromosomes to Y chromosomes will be $3.67:1$\n2 The probability of individual 2 and individual 3 having the same alleles on their X chromosomes is $100\\%$.\n3 The probability of individual 2 and indiv"
+    },
+    {
+      "questionId": 2977,
+      "questionNumber": 78,
+      "examName": "NSAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "sourceScreenshotUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa-2023-section-1-official/q078.png",
+      "blockCount": 3,
+      "stemBlocks": [
+        "The graph shows the change in the pressure in the space X between the wall of the thorax and the lungs (as shown in the diagram) during one complete breathing cycle.",
+        "Which of the following statements is/are correct?",
+        "1 The person is breathing out between 0 and 1.5 seconds.\n2 The diaphragm is relaxing between 2 and 3 seconds.\n3 The rate of breathing is 15 breaths per minute.\n(Assume the person continues breathing at the same rate.)"
+      ],
+      "stemDiagramAssets": [
+        {
+          "id": "d1",
+          "alt": "diagram not to scale",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2977/diagram_1_b21444ccafad.png",
+          "displayWidthPct": 75.0
+        }
+      ],
+      "allowedInsertAfterBlock": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "placement": {
+        "status": "ok",
+        "model": "human_review_chatgpt",
+        "placedAt": "2026-08-29T05:03:19.911951+00:00",
+        "placements": [
+          {
+            "assetId": "d1",
+            "insertAfterBlock": 1,
+            "confidence": 0.99
+          }
+        ]
+      },
+      "placementPreview": "The graph shows the change in the pressure in the space X between the wall of the thorax and the lungs (as shown in the diagram) during one complete breathing cycle.\n\n{{diagram:d1}}\n\nWhich of the following statements is/are correct?\n\n1 The person is breathing out between 0 and 1.5 seconds.\n2 The diaphragm is relaxing between 2 and 3 seconds.\n3 The rate of breathing is 15 breaths per minute.\n(Assume the person continues breathing at the same rate.)",
+      "applyDryRun": {
+        "questionId": 2977,
+        "status": "dry_run",
+        "blockCount": 3,
+        "placementCount": 1,
+        "displayWidths": {
+          "d1": 75.0
+        },
+        "fetchErrors": {},
+        "stemPreview": "The graph shows the change in the pressure in the space X between the wall of the thorax and the lungs (as shown in the diagram) during one complete breathing cycle.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabas..."
+      },
+      "strippedStemPreview": "The graph shows the change in the pressure in the space X between the wall of the thorax and the lungs (as shown in the diagram) during one complete breathing cycle.\nWhich of the following statements is/are correct?\n1 The person is breathing out between 0 and 1.5 seconds.\n2 The diaphragm is relaxing between 2 and 3 seconds.\n3 The rate of breathing is 15 breaths per minute.\n(Assume the person continues breathing at the same rate.)"
+    }
+  ]
+}

@@ -1,0 +1,153 @@
+[
+  {
+    "questionId": 2904,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 0, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2922,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2923,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2925,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2928,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99},
+      {"asset_id": "d2", "insert_after_block": 2, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2931,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2934,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2936,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2937,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2942,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2954,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2956,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2957,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2961,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2962,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2963,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2964,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2966,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2969,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2970,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.97}
+    ]
+  },
+  {
+    "questionId": 2971,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2972,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2973,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2975,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99}
+    ]
+  },
+  {
+    "questionId": 2977,
+    "placements": [
+      {"asset_id": "d1", "insert_after_block": 1, "confidence": 0.99}
+    ]
+  }
+]

@@ -10,6 +10,8 @@ import re
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from .diagram import build_diagram_stem_embed
+from .stem_block_overrides import apply_block_overrides
+from .stem_reblock import refine_stem_blocks
 
 FIGURE_RE = re.compile(r"<figure[^>]*>[\s\S]*?</figure>", re.IGNORECASE)
 
@@ -32,7 +34,7 @@ def _is_markdown_table_block(text: str) -> bool:
     return "|" in lines[0] and "|" in lines[1] and _is_table_separator(lines[1])
 
 
-def split_stem_blocks(stem: str) -> List[str]:
+def split_stem_blocks(stem: str, *, question_id: Optional[int] = None) -> List[str]:
     """Split figure-stripped stem into ordered blocks.
 
     Blank-line paragraphs first. A markdown table kept as one block even if
@@ -63,7 +65,10 @@ def split_stem_blocks(stem: str) -> List[str]:
                 blocks[-1] = f"{blocks[-1]}\n{text}"
                 continue
         blocks.append(text)
-    return blocks
+    refined = refine_stem_blocks(blocks, is_table_block=_is_markdown_table_block)
+    if question_id is not None:
+        refined = apply_block_overrides(int(question_id), refined)
+    return refined
 
 
 def stem_diagram_assets(assets: Any) -> List[Dict[str, Any]]:

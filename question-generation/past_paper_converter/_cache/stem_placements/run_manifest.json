@@ -1,0 +1,43 @@
+{
+  "status": "dry_run",
+  "total": 25,
+  "completed": 0,
+  "successful": 0,
+  "failed": 0,
+  "skippedResume": 0,
+  "skippedNoAssets": 0,
+  "dryRun": true,
+  "model": "gemini-2.5-flash",
+  "message": "Dry run: would submit 25 placement requests (model=gemini-2.5-flash)",
+  "startedAt": "2026-08-28T17:18:36.318300+00:00",
+  "batchJobName": null,
+  "perId": {},
+  "sample": [
+    {
+      "questionId": "2904",
+      "blockCount": 1,
+      "assetIds": [
+        "d1"
+      ],
+      "requestBytesApprox": 152121
+    },
+    {
+      "questionId": "2922",
+      "blockCount": 1,
+      "assetIds": [
+        "d1"
+      ],
+      "requestBytesApprox": 110889
+    },
+    {
+      "questionId": "2923",
+      "blockCount": 2,
+      "assetIds": [
+        "d1"
+      ],
+      "requestBytesApprox": 145503
+    }
+  ],
+  "buildErrors": {},
+  "finishedAt": "2026-08-28T17:20:17.779332+00:00"
+}

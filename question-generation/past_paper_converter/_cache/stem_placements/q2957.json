@@ -1,0 +1,34 @@
+{
+  "questionId": 2957,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 58,
+  "stemBlocks": [
+    "The relative tendency for metals to form positive ions in solution can be measured using the following apparatus:",
+    "Electrons can pass from metal 1 to metal 2 via the external circuit. The difference in the tendency of the metals to form positive ions is given by the reading on the voltmeter. The higher the reading on the voltmeter the greater the \\textbf{difference} in the tendency of the pair of metals to form positive ions.",
+    "Results from three experiments are given in the following table.",
+    "| experiment | metal 1 | metal 2 | reading on voltmeter / V |\n| --- | --- | --- | --- |\n| 1 | P | Q | +0.62 |\n| 2 | S | Q | +0.30 |\n| 3 | S | R | +1.24 |",
+    "Using the information in the table, what is the order of reactivity of the four metals P, Q, R and S, from most reactive to least reactive?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A circuit diagram showing a voltmeter connected to two half-cells. Each half-cell contains a metal electrode (metal 1 and metal 2) immersed in a 1 mol dm^{-3} solution of its respective ions. The two solutions are connected by an inert conductor (salt bridge). Metal 1 is connected to the negative terminal of the voltmeter, and metal 2 to the positive terminal.",
+      "role": "stem_diagram",
+      "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2957/diagram_1_984e5a421420.png"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.99
+    }
+  ],
+  "model": "human_review_chatgpt",
+  "placedAt": "2026-08-29T05:03:19.881591+00:00",
+  "sourceImageHash": "c9735d210c3f55110a01e928a31c06af5b9c0b3fe581a32bafce84b262441fe2",
+  "status": "ok",
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+}

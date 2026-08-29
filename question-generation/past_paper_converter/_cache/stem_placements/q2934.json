@@ -1,0 +1,31 @@
+{
+  "questionId": 2934,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 35,
+  "stemBlocks": [
+    "A physicist introduces a thin piece of glass into the path of a laser beam in order to delay the beam. The light of the laser beam has a single wavelength $L$ in air.\nWhile the beam is inside the glass it completes 10 more complete oscillations compared to the same beam passing through the same thickness of air.\nThe speed of light in air is $c$ and the speed of light in glass is $\\frac{2}{3}c$.",
+    "What is the thickness of the glass?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram",
+      "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2934/diagram_1_f9bd98267361.png"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.99
+    }
+  ],
+  "model": "human_review_chatgpt",
+  "placedAt": "2026-08-29T05:03:19.865887+00:00",
+  "sourceImageHash": "46d98491049c8edd10e61b76116ca838533f9858e0b8d3a64247e4ec631e47c5",
+  "status": "ok",
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+}

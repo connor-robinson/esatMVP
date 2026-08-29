@@ -1,0 +1,15 @@
+{
+  "status": "running",
+  "total": 577,
+  "completed": 0,
+  "successful": 0,
+  "failed": 0,
+  "skippedResume": 0,
+  "skippedNoAssets": 0,
+  "dryRun": false,
+  "model": "gemini-2.5-flash",
+  "message": "Built 577 batch request(s); 0 download/build error(s)",
+  "startedAt": "2026-08-28T17:01:00.442106+00:00",
+  "batchJobName": null,
+  "perId": {}
+}

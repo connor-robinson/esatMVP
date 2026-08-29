@@ -1,0 +1,43 @@
+{
+  "questionId": 2928,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 29,
+  "stemBlocks": [
+    "A ray of light is directed horizontally towards two long, plane mirrors X and Y which are both at $45^{\\circ}$ to the horizontal. After two reflections the ray is travelling horizontally again.",
+    "Mirror X is now rotated clockwise through less than $45^{\\circ}$. After this rotation, mirror X makes an angle $\\theta$ with the horizontal, where $\\theta < 45^{\\circ}$. The direction of the incident ray is unchanged.",
+    "In what direction and through what angle should mirror Y be rotated in order for the ray to be still horizontal and travelling to the right after reflecting from mirror Y?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram",
+      "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2928/diagram_1_b89073bff457.png"
+    },
+    {
+      "id": "d2",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram",
+      "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2928/diagram_2_30a34f21a787.png"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.99
+    },
+    {
+      "assetId": "d2",
+      "insertAfterBlock": 2,
+      "confidence": 0.99
+    }
+  ],
+  "model": "human_review_chatgpt",
+  "placedAt": "2026-08-29T05:03:19.849962+00:00",
+  "sourceImageHash": "475120cc18147af0c4d5eaad0270f9a31d73d45cfa5771c27d86f703baada114",
+  "status": "ok",
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+}

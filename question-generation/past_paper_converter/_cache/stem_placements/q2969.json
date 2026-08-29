@@ -1,0 +1,32 @@
+{
+  "questionId": 2969,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 70,
+  "stemBlocks": [
+    "The diagram shows a flow chart representing the hormonal activity associated with the menstrual cycle.",
+    "Which of the following statements about the menstrual cycle is/are correct?",
+    "1 Hormone 1 stimulates follicle maturation and the release of hormone 3 from the ovarian follicle.\n2 Hormone 4 maintains the uterus lining.\n3 At the end of the menstrual cycle the levels of hormone 1 and hormone 2 will reach their highest point and then decrease, leading to menstruation."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Legend: '-' indicates a negative feedback loop; '+' indicates a loop in which an ovarian hormone stimulates the release of a second hormone from the pituitary gland. Flowchart shows hypothalamus, gonadotrophin-releasing hormone (GnRH), anterior pituitary, hormone 1, hormone 2, ovarian follicle, ovarian corpus luteum, hormone 3, hormone 4, and their interconnections with feedback loops.",
+      "role": "stem_diagram",
+      "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2969/diagram_1_9eea923b860a.png"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.99
+    }
+  ],
+  "model": "human_review_chatgpt",
+  "placedAt": "2026-08-29T05:03:19.897984+00:00",
+  "sourceImageHash": "5e1d6d751cc9c55a5fa92cf3d5bd56f4109174afe4a8865cd2886cd6cae33fc1",
+  "status": "ok",
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+}

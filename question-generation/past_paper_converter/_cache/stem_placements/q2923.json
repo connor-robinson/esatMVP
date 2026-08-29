@@ -1,0 +1,33 @@
+{
+  "questionId": 2923,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 24,
+  "stemBlocks": [
+    "A circuit is set up as shown. All three resistors are identical.\nWhen the switch is open, the reading on the ammeter is $1.0\\text{ A}$ and the power transferred from the battery is $1.0\\text{ W}$.",
+    "The switch is now closed.",
+    "What is the new reading on the ammeter and what is the new power transferred from the battery?",
+    "|  | ammeter reading / A | power transferred / W |\n| --- | --- | --- |\n| A | 0.67 | 0.67 |\n| B | 0.67 | 1.3 |\n| C | 0.67 | 1.5 |\n| D | 0.67 | 2.0 |\n| E | 1.0 | 1.0 |\n| F | 1.0 | 1.5 |\n| G | 1.0 | 2.0 |\n| H | 1.0 | 3.0 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram",
+      "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2923/diagram_1_c5070386d195.png"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.99
+    }
+  ],
+  "model": "human_review_chatgpt",
+  "placedAt": "2026-08-29T05:03:19.849962+00:00",
+  "sourceImageHash": "4bdc27b7d71a4d2e3c23cbef5eac1ad67248db15d2fa532e020da3e7d51cad92",
+  "status": "ok",
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+}

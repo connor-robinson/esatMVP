@@ -1,0 +1,32 @@
+{
+  "questionId": 2973,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 74,
+  "stemBlocks": [
+    "In an experiment, 8 identical cubes of potato were each weighed and placed in a different test tube. Each of the test tubes contained a different concentration of sodium chloride solution. All other conditions were kept the same throughout the experiment. After 30 minutes, the potato cubes were removed from the test tubes and weighed, and the percentage change in mass was calculated.",
+    "Which of the following statements is/are correct?",
+    "1 The initial concentration of sodium chloride inside the potato cubes must be $0.3 \\text{ mol dm}^{-3}$.\n2 Osmosis involves the diffusion of water molecules from a solution of high solute concentration to one of low solute concentration.\n3 In this experiment, the rate of osmosis is fastest at a sodium chloride concentration of $0.8 \\text{ mol dm}^{-3}$."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing percentage change in mass versus concentration of sodium chloride.",
+      "role": "stem_diagram",
+      "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2973/diagram_1_d21d14802b00.png"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.99
+    }
+  ],
+  "model": "human_review_chatgpt",
+  "placedAt": "2026-08-29T05:03:19.909479+00:00",
+  "sourceImageHash": "cd4a33ab8271c20ce40c56b493321d2d799922e76baa8e74feac786abf96da90",
+  "status": "ok",
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+}

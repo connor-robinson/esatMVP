@@ -1,0 +1,32 @@
+{
+  "questionId": 2975,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 76,
+  "stemBlocks": [
+    "The family tree shows the inheritance of an autosomal recessive genetic condition.",
+    "Which of the following statements is/are correct for this family?",
+    "1 If one cheek cell is collected from each individual, the overall ratio of X chromosomes to Y chromosomes will be $3.67:1$\n2 The probability of individual 2 and individual 3 having the same alleles on their X chromosomes is $100\\%$.\n3 The probability of individual 2 and individual 3 having the same genotype for the condition is $50\\%$.\n(Assume no mutations.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram",
+      "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2975/diagram_1_6ef468289923.png"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.99
+    }
+  ],
+  "model": "human_review_chatgpt",
+  "placedAt": "2026-08-29T05:03:19.909948+00:00",
+  "sourceImageHash": "e61ba4189c707c3a0926c2dc4f75d1632b5cf10d83dfd1dad3e0ca2466b9823f",
+  "status": "ok",
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+}
