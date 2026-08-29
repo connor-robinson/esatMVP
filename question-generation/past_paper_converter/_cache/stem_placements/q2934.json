@@ -20,12 +20,19 @@
     {
       "assetId": "d1",
       "insertAfterBlock": 1,
-      "confidence": 0.99
+      "confidence": 0.99,
+      "displayWidthPct": 44.7
     }
   ],
   "model": "human_review_chatgpt",
   "placedAt": "2026-08-29T05:45:08.557861+00:00",
   "sourceImageHash": "46d98491049c8edd10e61b76116ca838533f9858e0b8d3a64247e4ec631e47c5",
   "status": "ok",
-  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json",
+  "appliedStem": "A physicist introduces a thin piece of glass into the path of a laser beam in order to delay the beam. The light of the laser beam has a single wavelength $L$ in air.\nWhile the beam is inside the glass it completes 10 more complete oscillations compared to the same beam passing through the same thickness of air.\nThe speed of light in air is $c$ and the speed of light in glass is $\\frac{2}{3}c$.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2934/diagram_1_f9bd98267361.png\" alt=\"diagram not to scale\" style=\"width:44.7%;max-width:100%;height:auto;display:block;margin:0 auto\" /></figure>\n\nWhat is the thickness of the glass?",
+  "applyStatus": "ok",
+  "appliedAt": "2026-08-29T06:02:57.086808+00:00",
+  "displayWidths": {
+    "d1": 44.7
+  }
 }

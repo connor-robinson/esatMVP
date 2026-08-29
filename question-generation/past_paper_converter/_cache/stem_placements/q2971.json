@@ -21,12 +21,19 @@
     {
       "assetId": "d1",
       "insertAfterBlock": 1,
-      "confidence": 0.99
+      "confidence": 0.99,
+      "displayWidthPct": 74.7
     }
   ],
   "model": "human_review_chatgpt",
   "placedAt": "2026-08-29T05:45:08.573162+00:00",
   "sourceImageHash": "f6176d33f32372e27456ca0c7e5e0f899a3a83a7c3191f31a5fd1e8faf957632",
   "status": "ok",
-  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json",
+  "appliedStem": "Even when sufficient oxygen is available, yeast will respire anaerobically using glucose as a substrate. However, if its source of glucose runs out and oxygen is available, yeast can switch to using ethanol as a substrate, which it uses to respire aerobically.\nA sample of yeast was added to 100\\ \\text{cm}^3 glucose solution in an open flask.\nThe contents of the flask were monitored over 32 hours and the results are shown in the graph.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2971/diagram_1_a72221de7753.png\" alt=\"Key\\nglucose\\nethanol\\nyeast\\nconcentration of\\nglucose or ethanol\\n/\\text{g}\\ \\text{dm}^{-3}\\nconcentration of yeast\\n/ arbitrary units\\ntime/hours\" style=\"width:74.7%;max-width:100%;height:auto;display:block;margin:0 auto\" /></figure>\n\nWhich of the following statements are correct?\n\n1 Carbon dioxide would be produced in the flask at all times throughout the observation period, regardless of whether the yeast was respiring aerobically or anaerobically.\n2 The yeast was respiring using ethanol as the only substrate for 22 hours.\n3 The yeast started respiring anaerobically from the start of the observation period.\n4 The yeast used an average of 4 g glucose per hour for the first 10 hours.",
+  "applyStatus": "ok",
+  "appliedAt": "2026-08-29T06:04:26.338809+00:00",
+  "displayWidths": {
+    "d1": 74.7
+  }
 }

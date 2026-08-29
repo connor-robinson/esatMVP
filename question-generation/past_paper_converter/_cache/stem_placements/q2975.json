@@ -21,12 +21,19 @@
     {
       "assetId": "d1",
       "insertAfterBlock": 1,
-      "confidence": 0.99
+      "confidence": 0.99,
+      "displayWidthPct": 67.3
     }
   ],
   "model": "human_review_chatgpt",
   "placedAt": "2026-08-29T05:45:08.580529+00:00",
   "sourceImageHash": "e61ba4189c707c3a0926c2dc4f75d1632b5cf10d83dfd1dad3e0ca2466b9823f",
   "status": "ok",
-  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json",
+  "appliedStem": "The family tree shows the inheritance of an autosomal recessive genetic condition.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2975/diagram_1_6ef468289923.png\" alt=\"diagram not to scale\" style=\"width:67.3%;max-width:100%;height:auto;display:block;margin:0 auto\" /></figure>\n\nWhich of the following statements is/are correct for this family?\n\n1 If one cheek cell is collected from each individual, the overall ratio of X chromosomes to Y chromosomes will be $3.67:1$\n2 The probability of individual 2 and individual 3 having the same alleles on their X chromosomes is $100\\%$.\n3 The probability of individual 2 and individual 3 having the same genotype for the condition is $50\\%$.\n(Assume no mutations.)",
+  "applyStatus": "ok",
+  "appliedAt": "2026-08-29T06:04:50.922264+00:00",
+  "displayWidths": {
+    "d1": 67.3
+  }
 }

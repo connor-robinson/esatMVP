@@ -21,12 +21,19 @@
     {
       "assetId": "d1",
       "insertAfterBlock": 1,
-      "confidence": 0.99
+      "confidence": 0.99,
+      "displayWidthPct": 60.5
     }
   ],
   "model": "human_review_chatgpt",
   "placedAt": "2026-08-29T05:45:08.564424+00:00",
   "sourceImageHash": "daac85ed051ad3dc96f7cf22f16acc9a405492c421d57d81887773d131dd6520",
   "status": "ok",
-  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json",
+  "appliedStem": "The diagram shows the flow of energy in a year's growth of grass from $1 \\text{ m}^2$ of grassland.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2962/diagram_1_9d11441fa5ce.png\" alt=\"Energy flow diagram showing a cow grazing on grass, with various energy transfers in kJ: 1020 kJ in breath, movement and heat loss; 3000 kJ eaten by the cow; 120 kJ to growth of cow; 1860 kJ in faeces and urine; 3520 kJ eaten by other herbivores; 14800 kJ to decomposers.\" style=\"width:60.5%;max-width:100%;height:auto;display:block;margin:0 auto\" /></figure>\n\nWhich of the following statements is/are correct?\n\n1. $62\\%$ of the energy consumed by the cow is lost in faeces and urine.\n2. The diagram illustrates all the main processes of carbon uptake and release in the carbon cycle.\n3. $4\\%$ of the energy absorbed by the cells of the cow is used for growth.",
+  "applyStatus": "ok",
+  "appliedAt": "2026-08-29T06:03:49.318590+00:00",
+  "displayWidths": {
+    "d1": 60.5
+  }
 }

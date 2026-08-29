@@ -23,12 +23,19 @@
     {
       "assetId": "d1",
       "insertAfterBlock": 1,
-      "confidence": 0.99
+      "confidence": 0.99,
+      "displayWidthPct": 57.3
     }
   ],
   "model": "human_review_chatgpt",
   "placedAt": "2026-08-29T05:45:08.572014+00:00",
   "sourceImageHash": "b109332d8c51e8f706686c923b576477f3a2bb6591f1afe00638cf271c9c5ac1",
   "status": "ok",
-  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json",
+  "appliedStem": "The diagram shows a bubble potometer at the start of an experiment.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2964/diagram_1_b35953a3c882.png\" alt=\"diagram not to scale\" style=\"width:57.3%;max-width:100%;height:auto;display:block;margin:0 auto\" /></figure>\n\nThe glass tube has an internal diameter of 1 mm.\n\nAfter five minutes, one end of the air bubble had moved to the 4 cm mark on the scale.\n\nWhich row is correct?\n\n|  | name of process being investigated | volume of water taken up / $\\text{mm}^3$ |\n| --- | --- | --- |\n| A | translocation | $\\pi \\times (0.5)^2 \\times 10$ |\n| B | translocation | $\\pi \\times (0.5)^2 \\times 15$ |\n| C | translocation | $2\\pi \\times (0.5) \\times 10$ |\n| D | translocation | $2\\pi \\times (0.5) \\times 15$ |\n| E | transpiration | $\\pi \\times (0.5)^2 \\times 10$ |\n| F | transpiration | $\\pi \\times (0.5)^2 \\times 15$ |\n| G | transpiration | $2\\pi \\times (0.5) \\times 10$ |\n| H | transpiration | $2\\pi \\times (0.5) \\times 15$ |",
+  "applyStatus": "ok",
+  "appliedAt": "2026-08-29T06:04:03.969482+00:00",
+  "displayWidths": {
+    "d1": 57.3
+  }
 }

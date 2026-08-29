@@ -20,12 +20,19 @@
     {
       "assetId": "d1",
       "insertAfterBlock": 1,
-      "confidence": 0.99
+      "confidence": 0.99,
+      "displayWidthPct": 42.5
     }
   ],
   "model": "human_review_chatgpt",
   "placedAt": "2026-08-29T05:45:08.557861+00:00",
   "sourceImageHash": "3b57fc93c5ae963de02ca7e6efaa065f9b1fa40f6f6f25d5b210a7f90a065dfb",
   "status": "ok",
-  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json",
+  "appliedStem": "The chart shows the relative abundances of the isotopes of an element.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2942/diagram_1_eb7822b1851d.png\" alt=\"diagram not to scale\" style=\"width:42.5%;max-width:100%;height:auto;display:block;margin:0 auto\" /></figure>\n\nWhat is the relative atomic mass ($A_r$) of this element?",
+  "applyStatus": "ok",
+  "appliedAt": "2026-08-29T06:03:16.450510+00:00",
+  "displayWidths": {
+    "d1": 42.5
+  }
 }

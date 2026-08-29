@@ -20,12 +20,19 @@
     {
       "assetId": "d1",
       "insertAfterBlock": 0,
-      "confidence": 0.99
+      "confidence": 0.99,
+      "displayWidthPct": 34.2
     }
   ],
   "model": "human_review_chatgpt",
   "placedAt": "2026-08-29T05:45:08.549918+00:00",
   "sourceImageHash": "42469cc346fae804a19f095717387ea49cc20ca635130de9d3b0bbea7a0514c0",
   "status": "ok",
-  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json",
+  "appliedStem": "<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2904/diagram_1_daf9ecf8c2c3.png\" alt=\"diagram not to scale\" style=\"width:34.2%;max-width:100%;height:auto;display:block;margin:0 auto\" /></figure>\n\n$WXYZ$ is a square of side length 1.\n$WM: MX = 1:2$\n$XN:NY=3:1$\n$YP: PZ = 4:1$\n\nWhat is the area of triangle $MNP$?",
+  "applyStatus": "ok",
+  "appliedAt": "2026-08-29T06:02:18.568914+00:00",
+  "displayWidths": {
+    "d1": 34.2
+  }
 }

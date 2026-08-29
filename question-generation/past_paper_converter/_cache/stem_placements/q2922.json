@@ -21,12 +21,19 @@
     {
       "assetId": "d1",
       "insertAfterBlock": 1,
-      "confidence": 0.99
+      "confidence": 0.99,
+      "displayWidthPct": 32.0
     }
   ],
   "model": "human_review_chatgpt",
   "placedAt": "2026-08-29T05:45:08.551925+00:00",
   "sourceImageHash": "1630fdcdd9d9a6f4c511cba9bbdb9808f25d05cad32f4bc24c934628d207fd83",
   "status": "ok",
-  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json",
+  "appliedStem": "A heater is connected in series with a dc power supply, a variable resistor and an ammeter in the circuit shown.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2922/diagram_1_66d120298412.png\" alt=\"diagram not to scale\" style=\"width:32.0%;max-width:100%;height:auto;display:block;margin:0 auto\" /></figure>\n\nThe variable resistor is adjusted until the reading on the ammeter is 0.50 A and the resistance of the heater is $8.0 \\Omega$.\n\nHow much energy is converted to thermal energy in 5.0 minutes?",
+  "applyStatus": "ok",
+  "appliedAt": "2026-08-29T06:02:24.688932+00:00",
+  "displayWidths": {
+    "d1": 32.0
+  }
 }

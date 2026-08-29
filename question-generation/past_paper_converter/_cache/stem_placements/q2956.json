@@ -30,5 +30,11 @@
   "placedAt": "2026-08-29T05:45:08.564424+00:00",
   "sourceImageHash": "503e310dcdfddf8c7c7df64ecbd986a6c6ab53030ceeedc3516e10b0a7eca165",
   "status": "ok",
-  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json",
+  "appliedStem": "The structure of cyclohexa-1,4-diene is:\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2956/diagram_1_1a8f409cf027.png\" alt=\"diagram not to scale\" style=\"width:25.0%;max-width:100%;height:auto;display:block;margin:0 auto\" /></figure>\n\nBromine is dissolved in inert organic solvent to form $0.250 \\text{ mol dm}^{-3}$ of bromine solution.\n\nWhat is the minimum volume of this bromine solution required to react completely with $0.10 \\text{ cm}^3$ of cyclohexa-1,4-diene?\n\n($M_r$ value: cyclohexa-1,4-diene = 80. Density of cyclohexa-1,4-diene = $0.84 \\text{ g cm}^{-3}$)",
+  "applyStatus": "ok",
+  "appliedAt": "2026-08-29T06:03:28.863292+00:00",
+  "displayWidths": {
+    "d1": 22.0
+  }
 }

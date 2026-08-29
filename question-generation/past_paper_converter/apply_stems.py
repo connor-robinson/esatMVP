@@ -85,7 +85,7 @@ def _fetch_latest_conversion(question_id: int) -> Optional[Dict[str, Any]]:
 
 
 def _update_conversion_row(
-    conversion_id: int,
+    conversion_id: str | int,
     *,
     question_stem: str,
     diagram_assets: List[Dict[str, Any]],
@@ -234,7 +234,7 @@ def apply_one_sidecar(
     conversion_id = conversion.get("id")
     if conversion_id:
         _update_conversion_row(
-            int(conversion_id),
+            conversion_id,
             question_stem=stem_text,
             diagram_assets=merged_assets,
             report_patch=report_patch,
@@ -255,6 +255,7 @@ def apply_stems(
     *,
     all_questions: bool = False,
     question_id: Optional[int] = None,
+    paper_id: Optional[int] = None,
     exam_name: Optional[str] = None,
     limit: Optional[int] = None,
     dry_run: bool = False,
@@ -262,11 +263,12 @@ def apply_stems(
     force: bool = False,
 ) -> Dict[str, Any]:
     """Apply all matching placement sidecars."""
-    if not all_questions and question_id is None and not exam_name:
-        raise ValueError("Pass --all, --question-id, or --exam")
+    if not all_questions and question_id is None and paper_id is None and not exam_name:
+        raise ValueError("Pass --all, --question-id, --paper-id, or --exam")
 
     candidates = load_place_candidates(
         question_id=question_id,
+        paper_id=paper_id,
         exam_name=exam_name,
         limit=limit,
     )

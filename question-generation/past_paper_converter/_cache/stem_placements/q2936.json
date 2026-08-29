@@ -22,12 +22,19 @@
     {
       "assetId": "d1",
       "insertAfterBlock": 1,
-      "confidence": 0.99
+      "confidence": 0.99,
+      "displayWidthPct": 43.8
     }
   ],
   "model": "human_review_chatgpt",
   "placedAt": "2026-08-29T05:45:08.557861+00:00",
   "sourceImageHash": "3c898a15d65554e6d31fd5b4090dc9b5344bf3df211165a6e006ffebeacc47b0",
   "status": "ok",
-  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json",
+  "appliedStem": "A copper ring, with a small gap XY, rests in a uniform horizontal magnetic field. The ring lies in the plane of the page and the direction of the magnetic field is horizontal from left to right, as shown in the diagram.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2936/diagram_1_f7a43220e456.png\" alt=\"diagram not to scale\" style=\"width:43.8%;max-width:100%;height:auto;display:block;margin:0 auto\" /></figure>\n\nA voltage is now applied across XY, such that X is connected to the positive terminal of the power supply and Y is connected to the negative terminal.\n\nWhich statement describes the motion of the ring immediately after the voltage is applied?\n\n(Assume that the mechanism supporting the ring allows the ring to move freely and allows the voltage to be applied continuously.)",
+  "applyStatus": "ok",
+  "appliedAt": "2026-08-29T06:03:03.314742+00:00",
+  "displayWidths": {
+    "d1": 43.8
+  }
 }

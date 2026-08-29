@@ -21,12 +21,19 @@
     {
       "assetId": "d1",
       "insertAfterBlock": 1,
-      "confidence": 0.99
+      "confidence": 0.99,
+      "displayWidthPct": 75.0
     }
   ],
   "model": "human_review_chatgpt",
   "placedAt": "2026-08-29T05:45:08.582694+00:00",
   "sourceImageHash": "fefd8dc72c0ec97362e7f5a74720f3ab1b33fa57cc0807f17aaaf62969d365bb",
   "status": "ok",
-  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json",
+  "appliedStem": "The graph shows the change in the pressure in the space X between the wall of the thorax and the lungs (as shown in the diagram) during one complete breathing cycle.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2977/diagram_1_b21444ccafad.png\" alt=\"diagram not to scale\" style=\"width:75.0%;max-width:100%;height:auto;display:block;margin:0 auto\" /></figure>\n\nWhich of the following statements is/are correct?\n\n1 The person is breathing out between 0 and 1.5 seconds.\n2 The diaphragm is relaxing between 2 and 3 seconds.\n3 The rate of breathing is 15 breaths per minute.\n(Assume the person continues breathing at the same rate.)",
+  "applyStatus": "ok",
+  "appliedAt": "2026-08-29T06:04:59.742320+00:00",
+  "displayWidths": {
+    "d1": 75.0
+  }
 }

@@ -22,12 +22,19 @@
     {
       "assetId": "d1",
       "insertAfterBlock": 1,
-      "confidence": 0.99
+      "confidence": 0.99,
+      "displayWidthPct": 32.9
     }
   ],
   "model": "human_review_chatgpt",
   "placedAt": "2026-08-29T05:45:08.551925+00:00",
   "sourceImageHash": "4bdc27b7d71a4d2e3c23cbef5eac1ad67248db15d2fa532e020da3e7d51cad92",
   "status": "ok",
-  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json",
+  "appliedStem": "A circuit is set up as shown. All three resistors are identical.\nWhen the switch is open, the reading on the ammeter is $1.0\\text{ A}$ and the power transferred from the battery is $1.0\\text{ W}$.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2923/diagram_1_c5070386d195.png\" alt=\"diagram not to scale\" style=\"width:32.9%;max-width:100%;height:auto;display:block;margin:0 auto\" /></figure>\n\nThe switch is now closed.\n\nWhat is the new reading on the ammeter and what is the new power transferred from the battery?\n\n|  | ammeter reading / A | power transferred / W |\n| --- | --- | --- |\n| A | 0.67 | 0.67 |\n| B | 0.67 | 1.3 |\n| C | 0.67 | 1.5 |\n| D | 0.67 | 2.0 |\n| E | 1.0 | 1.0 |\n| F | 1.0 | 1.5 |\n| G | 1.0 | 2.0 |\n| H | 1.0 | 3.0 |",
+  "applyStatus": "ok",
+  "appliedAt": "2026-08-29T06:02:30.755358+00:00",
+  "displayWidths": {
+    "d1": 32.9
+  }
 }

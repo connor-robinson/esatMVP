@@ -22,12 +22,19 @@
     {
       "assetId": "d1",
       "insertAfterBlock": 1,
-      "confidence": 0.99
+      "confidence": 0.99,
+      "displayWidthPct": 32.5
     }
   ],
   "model": "human_review_chatgpt",
   "placedAt": "2026-08-29T05:45:08.557861+00:00",
   "sourceImageHash": "c101fcb8600a9398b55d9c07b463babcec53008201fa0ac081ec8cbef6cba468",
   "status": "ok",
-  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json",
+  "appliedStem": "A battery and two resistors X and Y are connected in series.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2937/diagram_1_69e225a01c6f.png\" alt=\"diagram not to scale\" style=\"width:32.5%;max-width:100%;height:auto;display:block;margin:0 auto\" /></figure>\n\nThe power transferred by the battery is 6 W.\n\nThe resistance of X is $10\\ \\Omega$.\nThe voltage across Y is 4 V.\n\nWhat is the current in the circuit?",
+  "applyStatus": "ok",
+  "appliedAt": "2026-08-29T06:03:09.398818+00:00",
+  "displayWidths": {
+    "d1": 32.5
+  }
 }

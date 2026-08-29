@@ -440,11 +440,21 @@ async function replaceSourceImage(file) {
   }
 }
 
+const INLINE_STEM_DIAGRAM_RE = /<figure\b[^>]*class="[^"]*qg-diagram/i;
+
+function stemDiagramAssetsForPreview(assets, stem) {
+  const hasInlineStemDiagrams = INLINE_STEM_DIAGRAM_RE.test(stem || "");
+  if (hasInlineStemDiagrams) return [];
+  return (assets || []).filter(
+    (asset) => !asset.option_letter && asset.role !== "graphical_option",
+  );
+}
+
 function renderPreview() {
   const host = clear(document.getElementById("preview-pane"));
   const { question } = state.data;
   const highlight = document.getElementById("show-answer").checked;
-  const stemDiagrams = state.draft.assets.filter((asset) => !asset.option_letter);
+  const stemDiagrams = stemDiagramAssetsForPreview(state.draft.assets, state.draft.stem);
   const optionAssets = new Map(
     state.draft.assets.filter((asset) => asset.option_letter).map((a) => [a.option_letter, a]),
   );

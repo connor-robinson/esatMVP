@@ -20,12 +20,19 @@
     {
       "assetId": "d1",
       "insertAfterBlock": 1,
-      "confidence": 0.99
+      "confidence": 0.99,
+      "displayWidthPct": 32.0
     }
   ],
   "model": "human_review_chatgpt",
   "placedAt": "2026-08-29T05:45:08.551925+00:00",
   "sourceImageHash": "446293af9cf13720df1ed5b9b2d0a2fd7f96673cd4890e6a41ebd150f5bae307",
   "status": "ok",
-  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json"
+  "reviewSource": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\past_paper_converter\\_cache\\stem_placements\\reports\\paper50_review_placements.json",
+  "appliedStem": "A spring is initially unstretched. A force $F$ is used to stretch the spring. The extension $x$ and the energy $E$ stored in the stretched spring are measured for different values of $F$. The graph shows how the energy $E$, in J, varies with the extension squared, $x^2$, in cm$^2$.\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2925/diagram_1_1721de310ce0.png\" alt=\"diagram not to scale\" style=\"width:32.0%;max-width:100%;height:auto;display:block;margin:0 auto\" /></figure>\n\nWhat is the magnitude of $F$ when the spring stores $0.015$ J of energy?",
+  "applyStatus": "ok",
+  "appliedAt": "2026-08-29T06:02:37.187227+00:00",
+  "displayWidths": {
+    "d1": 32.0
+  }
 }
