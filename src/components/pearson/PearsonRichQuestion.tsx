@@ -3,6 +3,7 @@
 import { StemContent } from "@/components/shared/StemContent";
 import { PearsonRadioGroup } from "@/components/pearson/PearsonRadioGroup";
 import { getPastPaperOptionLetters } from "@/lib/papers/pastPaperTextMode";
+import { shouldUseLetterOnlyOptions } from "@/lib/papers/tableBackedOptions";
 import type { Letter, Question } from "@/types/papers";
 
 interface PearsonRichQuestionProps {
@@ -48,17 +49,22 @@ export function PearsonRichQuestion({
             value={selected}
             onChange={onSelect}
             disabled={disabled}
-            options={getPastPaperOptionLetters(question).map((letter) => ({
-              letter: letter as Letter,
-              content: question.options?.[letter as Letter] ? (
-                <StemContent
-                  content={question.options[letter as Letter]}
-                  className="text-inherit inline"
-                />
-              ) : (
-                <span>{letter}</span>
-              ),
-            }))}
+            options={getPastPaperOptionLetters(question).map((letter) => {
+              const L = letter as Letter;
+              const text = question.options?.[L];
+              const letterOnly = shouldUseLetterOnlyOptions(question);
+              return {
+                letter: L,
+                content:
+                  letterOnly && text ? (
+                    <span>{L}</span>
+                  ) : text ? (
+                    <StemContent content={text} className="text-inherit inline" />
+                  ) : (
+                    <span>{L}</span>
+                  ),
+              };
+            })}
           />
         ) : null}
       </div>
@@ -85,6 +91,27 @@ export function PearsonRichQuestion({
   );
   const letters = getPastPaperOptionLetters(question);
   const options = question.options ?? {};
+  const letterOnlyOptions = shouldUseLetterOnlyOptions(question);
+
+  const renderOptionContent = (letter: Letter, text: string | undefined, optionAsset?: { url: string; alt?: string }) => {
+    if (optionAsset) {
+      return (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={optionAsset.url}
+          alt={optionAsset.alt ?? `option ${letter}`}
+          className="pearson-stem-img"
+        />
+      );
+    }
+    if (letterOnlyOptions) {
+      return <span>{letter}</span>;
+    }
+    if (text) {
+      return <StemContent content={text} className="text-inherit inline" />;
+    }
+    return <span>{letter}</span>;
+  };
 
   return (
     <div>
@@ -113,24 +140,7 @@ export function PearsonRichQuestion({
             if (!text && !optionAsset) return null;
             return {
               letter: L,
-              content: (
-                <>
-                  {text ? (
-                    <StemContent
-                      content={text}
-                      className="text-inherit inline"
-                    />
-                  ) : null}
-                  {optionAsset ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={optionAsset.url}
-                      alt={optionAsset.alt ?? `option ${L}`}
-                      className="pearson-stem-img"
-                    />
-                  ) : null}
-                </>
-              ),
+              content: renderOptionContent(L, text, optionAsset),
             };
           })
           .filter((x): x is NonNullable<typeof x> => x != null)}

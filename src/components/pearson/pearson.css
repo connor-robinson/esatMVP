@@ -587,6 +587,44 @@ html.pearson-exam-active body {
   margin-bottom: 4px;
 }
 
+/* ESAT specimen comparison tables (bordered grid, centred cells). */
+.pearson-exam-root .stem-content .stem-table {
+  white-space: normal;
+  overflow-x: auto;
+  max-width: 100%;
+  margin: 10px 0 12px;
+}
+
+.pearson-exam-root .stem-content .stem-table table {
+  border-collapse: collapse;
+  width: auto;
+  max-width: 100%;
+  font-size: var(--pearson-font-size-content);
+  line-height: 1.35;
+  background: #fff;
+}
+
+.pearson-exam-root .stem-content .stem-table th,
+.pearson-exam-root .stem-content .stem-table td {
+  border: 1px solid #000;
+  padding: 5px 16px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.pearson-exam-root .stem-content .stem-table thead th {
+  font-family: var(--pearson-font-serif);
+  font-weight: 700;
+}
+
+.pearson-exam-root .stem-content .stem-table tbody td:first-child {
+  font-weight: 700;
+}
+
+.pearson-exam-root .stem-content .stem-table .katex {
+  font-size: 1em;
+}
+
 /* --- Footer --- */
 .pearson-footer {
   flex: 0 0 auto;
