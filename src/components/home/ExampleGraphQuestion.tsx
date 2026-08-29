@@ -51,19 +51,20 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
           Example question
         </p>
 
-        <div className="mt-6 space-y-5">
-          <div className="text-sm leading-snug text-slate-200 sm:text-[15px]">
-            <p>The graph shown is</p>
-            <p className="mt-0.5">
-              <LazyStemContent content="$y = f(x)$." className="text-inherit" />
-            </p>
-            <p className="mt-2.5">Which graph could represent</p>
-            <p className="mt-0.5 flex flex-wrap items-baseline gap-x-1 whitespace-nowrap">
+        <div className="mt-6 grid grid-cols-1 gap-5">
+          <div className="w-full max-w-none text-sm leading-snug text-slate-200 sm:text-[15px]">
+            <p className="w-full">
+              The graph shown is{" "}
+              <LazyStemContent
+                content="$y = f(x)$."
+                className="inline text-inherit [&>div]:inline"
+              />{" "}
+              Which graph could represent{" "}
               <LazyStemContent
                 content="$y = \\dfrac{1}{f(x)}$"
                 className="inline text-inherit [&>div]:inline"
               />
-              <span className="text-white">?</span>
+              ?
             </p>
           </div>
 
