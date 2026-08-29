@@ -24,7 +24,7 @@ import {
   MONTHLY_PRICE_GBP,
   SEASON_PASS_ACCESS_UNTIL_LABEL,
 } from "@/lib/stripe/best-value";
-import { GraduationCap, ListChecks } from "lucide-react";
+import { CircleUser, ListChecks } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useHomepageAutoHideNav } from "@/hooks/useHomepageAutoHideNav";
 import { ExampleGraphQuestion } from "@/components/home/ExampleGraphQuestion";
@@ -329,7 +329,7 @@ export function MarketingHomepage({
                       {
                         value: socialProof.users,
                         label: "Users",
-                        icon: GraduationCap,
+                        icon: CircleUser,
                       },
                       {
                         value: socialProof.questionsAnswered,
@@ -339,27 +339,35 @@ export function MarketingHomepage({
                     ] as {
                       value: number;
                       label: string;
-                      icon: typeof GraduationCap | null;
+                      icon: typeof CircleUser | null;
                     }[]
                   ).map((stat) => {
                     const StatIcon = stat.icon;
                     return (
-                      <div key={stat.label} className="min-w-0">
-                        <dt className="sr-only">{stat.label}</dt>
-                        <dd className="font-display text-2xl font-bold tabular-nums text-white sm:text-3xl">
-                          {stat.value.toLocaleString()}
-                        </dd>
-                        <p className="mt-1 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#94A3B8] sm:text-xs">
-                          {StatIcon ? (
-                            <StatIcon
-                              aria-hidden
-                              className="h-3.5 w-3.5 shrink-0 text-white"
-                              strokeWidth={2}
-                              fill="none"
-                            />
-                          ) : null}
-                          {stat.label}
-                        </p>
+                      <div
+                        key={stat.label}
+                        className={cn(
+                          "min-w-0",
+                          StatIcon && "flex items-center gap-3 sm:gap-3.5",
+                        )}
+                      >
+                        {StatIcon ? (
+                          <StatIcon
+                            aria-hidden
+                            className="h-9 w-9 shrink-0 text-white sm:h-10 sm:w-10"
+                            strokeWidth={1.75}
+                            fill="none"
+                          />
+                        ) : null}
+                        <div className="min-w-0">
+                          <dt className="sr-only">{stat.label}</dt>
+                          <dd className="font-display text-2xl font-bold tabular-nums text-white sm:text-3xl">
+                            {stat.value.toLocaleString()}
+                          </dd>
+                          <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#94A3B8] sm:text-xs">
+                            {stat.label}
+                          </p>
+                        </div>
                       </div>
                     );
                   })}
