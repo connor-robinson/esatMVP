@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { cn } from "@/lib/utils";
+import { LazyInlineMath } from "@/components/home/LazyInlineMath";
 import { LazyStemContent } from "@/components/home/LazyStemContent";
 import {
   CORRECT_OPTION_ID,
@@ -31,7 +32,7 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-[28px] border border-white/10 bg-[#0f1728]",
+        "relative rounded-[28px] border border-white/10 bg-[#0f1728]",
         "shadow-[0_0_0_1px_rgba(255,255,255,0.02),0_20px_60px_rgba(0,0,0,0.35)]",
         "px-6 py-8 sm:px-[38px] sm:py-[38px] sm:pb-8",
         className,
@@ -39,7 +40,7 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-60"
+        className="pointer-events-none absolute inset-0 overflow-hidden rounded-[28px] opacity-60"
         style={{
           background:
             "radial-gradient(ellipse 75% 55% at 88% 12%, rgba(59,130,246,0.11), transparent 58%)",
@@ -55,14 +56,11 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
           <div className="w-full max-w-none text-sm leading-snug text-slate-200 sm:text-[15px]">
             <p className="w-full">
               The graph shown is{" "}
-              <LazyStemContent
-                content="$y = f(x)$."
-                className="inline text-inherit [&>div]:inline"
-              />{" "}
-              Which graph could represent{" "}
-              <LazyStemContent
-                content="$y = \\dfrac{1}{f(x)}$"
-                className="inline text-inherit [&>div]:inline"
+              <LazyInlineMath latex="y = f(x)" fallback="y = f(x)" />.
+              {" "}Which graph could represent{" "}
+              <LazyInlineMath
+                latex="\\dfrac{1}{f(x)}"
+                fallback="y = 1/f(x)"
               />
               ?
             </p>
@@ -75,53 +73,56 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
 
         <div className="my-6 border-t border-white/10" aria-hidden />
 
-        <div className="space-y-3.5" role="radiogroup" aria-label="Answer options">
-          {[OPTION_GRAPHS.slice(0, 2), OPTION_GRAPHS.slice(2, 4)].map((row, rowIndex) => (
-            <div key={rowIndex} className="grid grid-cols-2 gap-3.5">
-              {row.map((option) => {
-                const isSelected = selected === option.id;
-                const showCorrect = phase !== "idle" && option.isCorrect;
-                const showIncorrect =
-                  phase === "incorrect" && isSelected && !option.isCorrect;
+        <div>
+          <div
+            className="flex snap-x snap-mandatory gap-3.5 overflow-x-auto scroll-smooth pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            role="radiogroup"
+            aria-label="Answer options"
+          >
+            {OPTION_GRAPHS.map((option) => {
+              const isSelected = selected === option.id;
+              const showCorrect = phase !== "idle" && option.isCorrect;
+              const showIncorrect =
+                phase === "incorrect" && isSelected && !option.isCorrect;
 
-                return (
-                  <button
-                    key={option.id}
-                    type="button"
-                    role="radio"
-                    aria-checked={isSelected}
-                    onClick={() => handleSelect(option.id)}
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={isSelected}
+                  onClick={() => handleSelect(option.id)}
+                  className={cn(
+                    "group relative flex w-[calc(50%-7px)] shrink-0 snap-start flex-col overflow-hidden rounded-[18px] border text-left transition-all duration-200",
+                    "min-h-[158px] bg-[#101a2d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/50",
+                    isSelected
+                      ? "border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_0_20px_rgba(59,130,246,0.14)]"
+                      : "border-white/10 hover:-translate-y-px hover:border-white/22",
+                    showCorrect && "border-[#34D399]/45",
+                    showIncorrect && "border-[#F87171]/40",
+                  )}
+                >
+                  <span
                     className={cn(
-                      "group relative flex min-h-[132px] flex-col overflow-hidden rounded-[18px] border text-left transition-all duration-200",
-                      "bg-[#101a2d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/50",
+                      "absolute left-3 top-3 z-10 inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-bold",
                       isSelected
-                        ? "border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_0_20px_rgba(59,130,246,0.14)]"
-                        : "border-white/10 hover:-translate-y-px hover:border-white/22",
-                      showCorrect && "border-[#34D399]/45",
-                      showIncorrect && "border-[#F87171]/40",
+                        ? "bg-white/15 text-white"
+                        : "bg-white/[0.07] text-slate-300",
                     )}
                   >
-                    <span
-                      className={cn(
-                        "absolute left-3 top-3 z-10 inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-bold",
-                        isSelected
-                          ? "bg-white/15 text-white"
-                          : "bg-white/[0.07] text-slate-300",
-                      )}
-                    >
-                      {option.id}
-                    </span>
-                    <div className="flex flex-1 items-stretch px-2 pb-2 pt-9">
-                      <OptionReciprocalGraph
-                        option={option}
-                        className="h-full w-full min-h-[100px]"
-                      />
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          ))}
+                    {option.id}
+                  </span>
+                  <div className="flex flex-1 items-stretch px-2 pb-2 pt-9">
+                    <OptionReciprocalGraph
+                      option={option}
+                      className="h-full w-full min-h-[118px]"
+                    />
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          <p className="mt-2 text-xs text-slate-500">Scroll right for more options.</p>
         </div>
 
         <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
@@ -140,7 +141,7 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
           </button>
           <p className="text-sm text-slate-400">
             {phase === "idle"
-              ? "Pick an option and submit."
+              ? "Pick an option, then submit."
               : phase === "correct"
                 ? "Correct. Nice reasoning."
                 : "Not quite. Compare the asymptotes and branch signs."}

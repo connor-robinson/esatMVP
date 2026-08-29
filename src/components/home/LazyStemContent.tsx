@@ -10,9 +10,12 @@ import { cn } from "@/lib/utils";
 export function LazyStemContent({
   content,
   className,
+  fallback,
 }: {
   content: string;
   className?: string;
+  /** Plain-text placeholder until KaTeX loads. */
+  fallback?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [StemContent, setStemContent] = useState<
@@ -24,10 +27,18 @@ export function LazyStemContent({
     const node = ref.current;
     if (!node) return;
 
+    const startLoading = () => setShouldLoad(true);
+
+    const rect = node.getBoundingClientRect();
+    if (rect.top < window.innerHeight + 200 && rect.bottom > -200) {
+      startLoading();
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry?.isIntersecting) {
-          setShouldLoad(true);
+          startLoading();
           observer.disconnect();
         }
       },
@@ -35,7 +46,17 @@ export function LazyStemContent({
     );
 
     observer.observe(node);
-    return () => observer.disconnect();
+
+    if (document.readyState === "complete") {
+      startLoading();
+    } else {
+      window.addEventListener("load", startLoading, { once: true });
+    }
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("load", startLoading);
+    };
   }, []);
 
   useEffect(() => {
@@ -55,7 +76,7 @@ export function LazyStemContent({
         <StemContent content={content} className="text-inherit" />
       ) : (
         <div className="whitespace-pre-wrap text-inherit opacity-90">
-          {content.replace(/\$/g, "")}
+          {fallback ?? content.replace(/\$/g, "").replace(/\\/g, "")}
         </div>
       )}
     </div>
