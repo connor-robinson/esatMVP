@@ -46,6 +46,9 @@ export interface PearsonExamPlayerProps {
   initialFlags?: PearsonFlagMap;
   timeLimitSeconds?: number;
   moduleTransition?: ModuleTransitionConfig;
+  introMode?: "full" | "section-only";
+  suppressCompleteScreen?: boolean;
+  sectionHeading?: string;
   onModuleComplete: (result: PearsonModuleResult) => void;
   onAnswerChange?: (answers: PearsonAnswerMap) => void;
   onFlagsChange?: (flags: PearsonFlagMap) => void;
@@ -59,6 +62,9 @@ export function PearsonExamPlayer({
   initialFlags,
   timeLimitSeconds,
   moduleTransition,
+  introMode,
+  suppressCompleteScreen,
+  sectionHeading,
   onModuleComplete,
   onAnswerChange,
   onFlagsChange,
@@ -70,6 +76,9 @@ export function PearsonExamPlayer({
     initialFlags,
     timeLimitSeconds,
     moduleTransition: moduleTransition ?? { enabled: false },
+    introMode,
+    suppressCompleteScreen,
+    sectionHeading,
     onModuleComplete,
     onAnswerChange,
     onFlagsChange,
@@ -156,6 +165,7 @@ export function PearsonExamPlayer({
               <PearsonInstructionsScreen
                 questionCount={c.totalQuestions}
                 timeLimitMinutes={c.timeLimitMinutes}
+                sectionHeading={c.sectionHeading}
               />
             ) : null}
 

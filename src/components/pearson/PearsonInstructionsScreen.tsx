@@ -3,6 +3,7 @@
 interface PearsonInstructionsScreenProps {
   questionCount: number;
   timeLimitMinutes: number;
+  sectionHeading?: string;
 }
 
 function formatMinutes(minutes: number): string {
@@ -15,9 +16,16 @@ function formatMinutes(minutes: number): string {
 export function PearsonInstructionsScreen({
   questionCount,
   timeLimitMinutes,
+  sectionHeading,
 }: PearsonInstructionsScreenProps) {
   return (
     <div className="pearson-static-content">
+      {sectionHeading ? (
+        <p>
+          <strong>{sectionHeading}</strong>
+        </p>
+      ) : null}
+
       <p>
         <strong>You have 1 minute to read these instructions.</strong>
       </p>

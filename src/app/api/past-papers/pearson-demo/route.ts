@@ -14,7 +14,6 @@ export async function GET() {
     return NextResponse.json({
       paperId: PEARSON_DEMO_PAPER_ID,
       examTitle: PEARSON_DEMO_PAPER.examTitle,
-      timeLimitSeconds: PEARSON_DEMO_PAPER.timeLimitSeconds,
       count: questions.length,
       questions,
     });

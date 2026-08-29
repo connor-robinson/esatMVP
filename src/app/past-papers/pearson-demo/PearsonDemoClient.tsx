@@ -1,9 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PearsonExamPlayer } from "@/components/pearson/PearsonExamPlayer";
 import { PEARSON_DEMO_PAPER } from "@/lib/pearson/pearsonDemoConfig";
+import {
+  formatPearsonSectionHeading,
+  splitQuestionsIntoSections,
+} from "@/lib/pearson/splitPaperSections";
 import type { PearsonModuleResult } from "@/lib/pearson/types";
 import type { Question } from "@/types/papers";
 
@@ -15,8 +19,16 @@ export function PearsonDemoClient({ initialQuestions }: PearsonDemoClientProps) 
   const [questions, setQuestions] = useState<Question[]>(initialQuestions ?? []);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [loading, setLoading] = useState(!initialQuestions?.length);
+  const [sectionIndex, setSectionIndex] = useState(0);
   const [done, setDone] = useState(false);
-  const [result, setResult] = useState<PearsonModuleResult | null>(null);
+
+  const sections = useMemo(
+    () => splitQuestionsIntoSections(questions),
+    [questions],
+  );
+  const currentSection = sections[sectionIndex] ?? null;
+  const isLastSection =
+    sections.length > 0 && sectionIndex >= sections.length - 1;
 
   useEffect(() => {
     if (initialQuestions?.length) {
@@ -63,7 +75,7 @@ export function PearsonDemoClient({ initialQuestions }: PearsonDemoClientProps) 
     );
   }
 
-  if (loadError || questions.length === 0) {
+  if (loadError || questions.length === 0 || sections.length === 0) {
     return (
       <main style={{ padding: 24, fontFamily: "Tahoma, sans-serif", fontSize: 13 }}>
         <p>Could not load {PEARSON_DEMO_PAPER.examTitle}.</p>
@@ -75,13 +87,13 @@ export function PearsonDemoClient({ initialQuestions }: PearsonDemoClientProps) 
     );
   }
 
-  if (done && result) {
+  if (done) {
     return (
       <main style={{ padding: 24, fontFamily: "Tahoma, sans-serif" }}>
-        <h1 style={{ fontSize: 18 }}>Module complete</h1>
+        <h1 style={{ fontSize: 18 }}>Paper complete</h1>
         <p style={{ fontSize: 13 }}>
-          {PEARSON_DEMO_PAPER.examTitle} · {questions.length} questions · unused time:{" "}
-          {Math.round(result.unusedMs / 1000)}s
+          {PEARSON_DEMO_PAPER.examTitle} · {questions.length} questions ·{" "}
+          {sections.length} sections completed
         </p>
         <Link href="/past-papers/pearson-demo" style={{ color: "#026bac" }}>
           Restart
@@ -94,16 +106,32 @@ export function PearsonDemoClient({ initialQuestions }: PearsonDemoClientProps) 
     );
   }
 
+  if (!currentSection) {
+    return null;
+  }
+
+  const sectionHeading = formatPearsonSectionHeading(
+    currentSection,
+    PEARSON_DEMO_PAPER.examTitle,
+  );
+
   return (
     <PearsonExamPlayer
+      key={`${currentSection.sectionKey}-${sectionIndex}`}
       mode="strict-simulation"
       examTitle={PEARSON_DEMO_PAPER.examTitle}
-      questions={questions}
-      timeLimitSeconds={PEARSON_DEMO_PAPER.timeLimitSeconds}
+      questions={currentSection.questions}
+      timeLimitSeconds={currentSection.timeLimitSeconds}
+      introMode={sectionIndex === 0 ? "full" : "section-only"}
+      suppressCompleteScreen={!isLastSection}
+      sectionHeading={sectionHeading}
       moduleTransition={{ enabled: false }}
-      onModuleComplete={(r) => {
-        setResult(r);
-        setDone(true);
+      onModuleComplete={(_result: PearsonModuleResult) => {
+        if (isLastSection) {
+          setDone(true);
+          return;
+        }
+        setSectionIndex((index) => index + 1);
       }}
     />
   );

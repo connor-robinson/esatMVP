@@ -40,6 +40,9 @@ import { INSTRUCTION_READ_MS, MODULE_DURATION_MS } from "./types";
 /** Blurred spinner after End Exam / End Module confirm (specimen player). */
 export const SESSION_ENDING_MS = 2800;
 
+/** Skip loading + NDA; open straight on the 1-minute instruction screen. */
+export type PearsonIntroMode = "full" | "section-only";
+
 export interface UsePearsonExamControllerOptions {
   mode: ExamMode;
   questions: Question[];
@@ -47,6 +50,10 @@ export interface UsePearsonExamControllerOptions {
   initialFlags?: PearsonFlagMap;
   timeLimitSeconds?: number;
   moduleTransition?: ModuleTransitionConfig;
+  introMode?: PearsonIntroMode;
+  /** When true, session-ending calls onModuleComplete without the Module ended screen. */
+  suppressCompleteScreen?: boolean;
+  sectionHeading?: string;
   onModuleComplete: (result: PearsonModuleResult) => void;
   onAnswerChange?: (answers: PearsonAnswerMap) => void;
   onFlagsChange?: (flags: PearsonFlagMap) => void;
@@ -62,6 +69,9 @@ export function usePearsonExamController(
     initialFlags,
     timeLimitSeconds = MODULE_DURATION_MS / 1000,
     moduleTransition = { enabled: false },
+    introMode = "full",
+    suppressCompleteScreen = false,
+    sectionHeading,
     onModuleComplete,
     onAnswerChange,
     onFlagsChange,
@@ -70,12 +80,16 @@ export function usePearsonExamController(
   const durationMs = timeLimitSeconds * 1000;
   const onCompleteRef = useRef(onModuleComplete);
   onCompleteRef.current = onModuleComplete;
+  const suppressCompleteScreenRef = useRef(suppressCompleteScreen);
+  suppressCompleteScreenRef.current = suppressCompleteScreen;
   const onAnswerChangeRef = useRef(onAnswerChange);
   onAnswerChangeRef.current = onAnswerChange;
   const onFlagsChangeRef = useRef(onFlagsChange);
   onFlagsChangeRef.current = onFlagsChange;
 
-  const [screen, setScreen] = useState<ExamScreen>("loading");
+  const [screen, setScreen] = useState<ExamScreen>(() =>
+    introMode === "section-only" ? "instructions" : "loading",
+  );
   const [navigatorOpen, setNavigatorOpen] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<PearsonAnswerMap>(() => ({
@@ -94,7 +108,7 @@ export function usePearsonExamController(
   });
   const [moduleDeadline, setModuleDeadline] = useState<number | null>(null);
   const [instructionDeadline, setInstructionDeadline] = useState<number | null>(
-    null,
+    () => (introMode === "section-only" ? Date.now() + INSTRUCTION_READ_MS : null),
   );
   const [completed, setCompleted] = useState(false);
   const [timeExpired, setTimeExpired] = useState(false);
@@ -102,7 +116,9 @@ export function usePearsonExamController(
     useState<ColourSchemeId>(DEFAULT_COLOUR_SCHEME);
   const [zoomLevel, setZoomLevel] = useState<ZoomLevel>(100);
   const [pendingNavIndex, setPendingNavIndex] = useState<number | null>(null);
-  const [endExamReturnScreen, setEndExamReturnScreen] = useState<ExamScreen>("nda");
+  const [endExamReturnScreen, setEndExamReturnScreen] = useState<ExamScreen>(
+    () => (introMode === "section-only" ? "instructions" : "nda"),
+  );
   const [questionCounterHidden, setQuestionCounterHidden] = useState(false);
   const [timerHidden, setTimerHidden] = useState(false);
   const [nowTick, setNowTick] = useState(() => Date.now());
@@ -148,11 +164,6 @@ export function usePearsonExamController(
     const id = window.setTimeout(() => {
       const unused = unusedMsAtEnd(deadline, endAt);
       setCompleted(true);
-      setScreen(
-        moduleTransition.enabled && mode !== "strict-simulation"
-          ? "module-transition"
-          : "complete",
-      );
       onCompleteRef.current({
         answers,
         flagged,
@@ -160,6 +171,13 @@ export function usePearsonExamController(
         unusedMs: unused,
         completedAt: endAt,
       });
+      if (!suppressCompleteScreenRef.current) {
+        setScreen(
+          moduleTransition.enabled && mode !== "strict-simulation"
+            ? "module-transition"
+            : "complete",
+        );
+      }
     }, SESSION_ENDING_MS);
 
     return () => window.clearTimeout(id);
@@ -496,6 +514,7 @@ export function usePearsonExamController(
     remainingMs: remaining,
     remainingLabel,
     moduleTransition,
+    sectionHeading,
     pendingNavIndex,
     navigatorRows,
     reviewLists,
