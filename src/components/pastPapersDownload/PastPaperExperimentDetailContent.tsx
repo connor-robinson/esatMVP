@@ -3,6 +3,7 @@ import {
   type PastPaperDownload,
 } from "@/data/pastPapersDownload";
 import { SEO_ROUTES } from "@/lib/seo/config";
+import { seoLinks } from "@/lib/seo/links";
 import { SeoPageLayout } from "@/components/seo/SeoPageLayout";
 import { SeoTextLink } from "@/components/seo/SeoSections";
 import { PastPaperDownloadButton } from "./PastPaperDownloadButton";
@@ -21,6 +22,7 @@ export function PastPaperExperimentDetailContent({ paper, path }: Props) {
       eyebrow={paper.exam}
       title={`${paper.title} Past Paper`}
       intro={[]}
+      related={seoLinks("pastPapers", "pastPapersGuide", "engaaNsaaPapers")}
     >
       <div className="flex flex-wrap gap-3">
         <PastPaperDownloadButton
