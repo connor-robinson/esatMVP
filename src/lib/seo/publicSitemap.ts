@@ -8,6 +8,7 @@
 
 import { APP_ROUTES, SEO_ROUTES } from "@/lib/seo/config";
 import { PAST_PAPERS_GUIDE_LAST_REVIEWED } from "@/content/pastPapersGuide";
+import { getPastPaperDownloadSitemapPaths } from "@/data/pastPapersDownload";
 import {
   getNsaaConversionYears,
   nsaaYearPagePath,
@@ -30,6 +31,9 @@ const NSAA_YEAR_SITEMAP_ENTRIES: PublicSitemapEntry[] =
     path: nsaaYearPagePath(year),
   }));
 
+const PAST_PAPER_DOWNLOAD_SITEMAP_ENTRIES: PublicSitemapEntry[] =
+  getPastPaperDownloadSitemapPaths().map((path) => ({ path }));
+
 export const PUBLIC_SITEMAP_ENTRIES: readonly PublicSitemapEntry[] = [
   { path: "/" },
   { path: "/about" },
@@ -38,6 +42,9 @@ export const PUBLIC_SITEMAP_ENTRIES: readonly PublicSitemapEntry[] = [
   { path: SEO_ROUTES.preparation },
   { path: SEO_ROUTES.testDates },
   { path: SEO_ROUTES.pastPapers },
+  ...PAST_PAPER_DOWNLOAD_SITEMAP_ENTRIES.filter(
+    (entry) => entry.path !== SEO_ROUTES.pastPapers,
+  ),
   {
     path: SEO_ROUTES.pastPapersGuide,
     lastModified: PAST_PAPERS_GUIDE_LAST_REVIEWED.iso,
