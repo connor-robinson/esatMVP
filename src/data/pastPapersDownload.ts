@@ -414,17 +414,17 @@ export function getNsaaCompactTables(): PastPaperCompactTable[] {
   return [
     makeSectionTable(
       "nsaa-section-1",
-      "NSAA Section 1 Past Papers (2016 – 2023)",
+      "Section 1 · 2016–2023",
       sectionPastPaperRows("NSAA", "Section 1"),
     ),
     makeSectionTable(
       "nsaa-section-2",
-      "NSAA Section 2 Past Papers (2016 – 2023)",
+      "Section 2 · 2016–2023",
       sectionPastPaperRows("NSAA", "Section 2"),
     ),
     makeSectionTable(
       "nsaa-specimens",
-      "NSAA Specimen Papers",
+      "Specimen papers",
       NSAA_SPECIMEN_DOWNLOADS.map((specimen) => ({
         id: specimen.id,
         label: `${specimen.editionYear} ${specimen.section}`,
@@ -434,7 +434,7 @@ export function getNsaaCompactTables(): PastPaperCompactTable[] {
     ),
     {
       id: "nsaa-specifications",
-      heading: "NSAA Specifications (all years)",
+      heading: "Specifications",
       columns: "specification",
       rows: NSAA_SPECIFICATION_DOWNLOADS.map((specification) => ({
         id: specification.id,

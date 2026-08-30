@@ -16,12 +16,16 @@ import {
 type Cta = { href: string; label: string };
 
 type SeoPageLayoutProps = {
-  eyebrow: string;
+  eyebrow?: string;
   title: React.ReactNode;
   /** Intro paragraphs. The first one should answer the search query directly. */
-  intro: readonly string[];
+  intro?: readonly string[];
   /** When true, intro uses the full content width instead of max-w-2xl. */
   introFullWidth?: boolean;
+  /** Smaller page title for utility pages such as download hubs. */
+  compactTitle?: boolean;
+  /** Wider content column for data-heavy pages. */
+  contentMaxWidth?: "default" | "wide";
   /** Optional hero CTAs - omit when the page should open with content first. */
   primaryCta?: Cta;
   secondaryCta?: Cta;
@@ -45,13 +49,16 @@ type SeoPageLayoutProps = {
   path: string;
 };
 
-const CONTENT = "mx-auto w-full max-w-4xl px-4 sm:px-5 lg:px-6";
+const CONTENT_DEFAULT = "mx-auto w-full max-w-4xl px-4 sm:px-5 lg:px-6";
+const CONTENT_WIDE = "mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8";
 
 export function SeoPageLayout({
   eyebrow,
   title,
-  intro,
+  intro = [],
   introFullWidth,
+  compactTitle,
+  contentMaxWidth = "default",
   primaryCta,
   secondaryCta,
   lastChecked,
@@ -68,11 +75,19 @@ export function SeoPageLayout({
   if (schema) schemas.push(...(Array.isArray(schema) ? schema : [schema]));
   if (faq?.length) schemas.push(faqPageSchema(faq));
 
+  const contentClassName =
+    contentMaxWidth === "wide" ? CONTENT_WIDE : CONTENT_DEFAULT;
+
   return (
     <div className="bg-[#0A0F1D] text-white">
       {schemas.length ? <JsonLd schema={schemas} /> : null}
 
-      <header className="relative overflow-hidden pt-12 pb-8 sm:pt-16 sm:pb-12">
+      <header
+        className={cn(
+          "relative overflow-hidden",
+          compactTitle ? "pt-8 pb-4 sm:pt-10 sm:pb-5" : "pt-12 pb-8 sm:pt-16 sm:pb-12",
+        )}
+      >
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 opacity-[0.4]"
@@ -82,28 +97,43 @@ export function SeoPageLayout({
             backgroundSize: "22px 22px",
           }}
         />
-        <div className={cn("relative", CONTENT)}>
-          <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
-            {eyebrow}
-          </p>
-          <h1 className="mt-4 text-4xl font-display font-bold leading-[1.1] tracking-tight sm:text-5xl lg:text-[3.5rem]">
-            {title}
-          </h1>
-          <div
+        <div className={cn("relative", contentClassName)}>
+          {eyebrow ? (
+            <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
+              {eyebrow}
+            </p>
+          ) : null}
+          <h1
             className={cn(
-              "mt-4 space-y-2.5",
-              introFullWidth ? "w-full max-w-none" : "max-w-2xl",
+              "font-display font-bold tracking-tight",
+              compactTitle
+                ? "text-2xl text-white sm:text-3xl"
+                : cn(
+                    "leading-[1.1]",
+                    eyebrow ? "mt-4" : "",
+                    "text-4xl sm:text-5xl lg:text-[3.5rem]",
+                  ),
             )}
           >
-            {intro.map((paragraph) => (
-              <p
-                key={paragraph}
-                className="text-base leading-snug text-[#94A3B8] sm:text-[1.05rem] sm:leading-relaxed"
-              >
-                {paragraph}
-              </p>
-            ))}
-          </div>
+            {title}
+          </h1>
+          {intro.length > 0 ? (
+            <div
+              className={cn(
+                "mt-4 space-y-2.5",
+                introFullWidth ? "w-full max-w-none" : "max-w-2xl",
+              )}
+            >
+              {intro.map((paragraph) => (
+                <p
+                  key={paragraph}
+                  className="text-base leading-snug text-[#94A3B8] sm:text-[1.05rem] sm:leading-relaxed"
+                >
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          ) : null}
 
           {lastChecked ? (
             <div className="mt-7 rounded-2xl bg-white/[0.04] p-4">
@@ -132,7 +162,7 @@ export function SeoPageLayout({
         </div>
       </header>
 
-      <div className={cn("space-y-14 pb-6 sm:space-y-16", CONTENT)}>
+      <div className={cn("space-y-14 pb-6 sm:space-y-16", contentClassName)}>
         {children}
 
         {faq?.length ? <SeoFaq items={faq} heading={faqHeading} /> : null}
@@ -190,7 +220,7 @@ export function SeoGuideFooter() {
 
   return (
     <footer className="mt-16 bg-[#0A0F1D] pt-12 pb-14">
-      <div className={CONTENT}>
+      <div className={CONTENT_DEFAULT}>
         <div className="grid gap-10 sm:grid-cols-2">
           <div>
             <h2 className="text-[10px] font-bold uppercase tracking-widest text-white">

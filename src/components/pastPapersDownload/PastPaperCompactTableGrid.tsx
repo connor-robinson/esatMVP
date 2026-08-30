@@ -16,7 +16,7 @@ export function PastPaperCompactTableGrid({ tables, title }: Props) {
           {title}
         </h2>
       ) : null}
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-5 lg:grid-cols-2 lg:gap-6 xl:grid-cols-2">
         {tables.map((table) => (
           <PastPaperCompactTable key={table.id} table={table} />
         ))}

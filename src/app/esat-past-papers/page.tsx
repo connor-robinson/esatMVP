@@ -25,6 +25,7 @@ export default function EsatPastPapersPage() {
       intro={[
         "Download NSAA and ENGAA past papers and answer keys in one place. Every PDF is free with no login required.",
       ]}
+      contentMaxWidth="wide"
       related={seoLinks(
         "pastPapersGuide",
         "engaaNsaaPapers",

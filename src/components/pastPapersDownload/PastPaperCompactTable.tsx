@@ -7,36 +7,41 @@ type Props = {
 };
 
 function UnavailableCell() {
-  return <span className="text-[#475569]">—</span>;
+  return <span className="text-sm text-[#475569]">—</span>;
 }
 
 export function PastPaperCompactTable({ table }: Props) {
   const isSpecification = table.columns === "specification";
 
   return (
-    <div className="overflow-hidden rounded-2xl bg-white/[0.03]">
-      <h3 className="px-3 py-2.5 text-sm font-semibold leading-snug text-white">
-        {table.heading}
-      </h3>
+    <div className="overflow-hidden rounded-2xl bg-[#111827]/80">
+      <div className="bg-white/[0.04] px-4 py-3">
+        <h3 className="text-base font-semibold text-white">{table.heading}</h3>
+      </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[220px] text-left text-sm">
+        <table className="w-full min-w-[280px] text-left">
           <thead>
-            <tr className="text-xs text-[#64748B]">
-              <th className="px-3 py-1.5 font-medium">Year</th>
+            <tr className="text-xs font-semibold uppercase tracking-wide text-[#64748B]">
+              <th className="w-[38%] px-4 py-2.5">Year</th>
               {isSpecification ? (
-                <th className="px-3 py-1.5 font-medium">PDF</th>
+                <th className="px-4 py-2.5">PDF</th>
               ) : (
                 <>
-                  <th className="px-3 py-1.5 font-medium">Paper</th>
-                  <th className="px-3 py-1.5 text-right font-medium">Answers</th>
+                  <th className="px-4 py-2.5">Paper</th>
+                  <th className="px-4 py-2.5">Answers</th>
                 </>
               )}
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/[0.06]">
-            {table.rows.map((row) => (
-              <tr key={row.id} className="text-white">
-                <td className="px-3 py-1.5 font-medium text-[#CBD5E1]">
+          <tbody>
+            {table.rows.map((row, index) => (
+              <tr
+                key={row.id}
+                className={
+                  index % 2 === 0 ? "bg-white/[0.02]" : "bg-transparent"
+                }
+              >
+                <td className="px-4 py-2.5 text-sm font-medium text-[#E2E8F0]">
                   {row.detailHref ? (
                     <Link
                       href={row.detailHref}
@@ -49,12 +54,12 @@ export function PastPaperCompactTable({ table }: Props) {
                   )}
                 </td>
                 {isSpecification ? (
-                  <td className="px-3 py-1.5">
+                  <td className="px-4 py-2.5">
                     {row.specificationUrl ? (
                       <PastPaperCompactDownloadLink
                         href={row.specificationUrl}
-                        label="PDF"
-                        ariaLabel={`Download ${row.label} NSAA specification PDF`}
+                        label="Download"
+                        ariaLabel={`Download ${row.label} specification PDF`}
                       />
                     ) : (
                       <UnavailableCell />
@@ -62,22 +67,22 @@ export function PastPaperCompactTable({ table }: Props) {
                   </td>
                 ) : (
                   <>
-                    <td className="px-3 py-1.5">
+                    <td className="px-4 py-2.5">
                       {row.paperUrl ? (
                         <PastPaperCompactDownloadLink
                           href={row.paperUrl}
-                          label="PDF"
+                          label="Download"
                           ariaLabel={`Download ${row.label} question paper PDF`}
                         />
                       ) : (
                         <UnavailableCell />
                       )}
                     </td>
-                    <td className="px-3 py-1.5 text-right">
+                    <td className="px-4 py-2.5">
                       {row.answersUrl ? (
                         <PastPaperCompactDownloadLink
                           href={row.answersUrl}
-                          label="PDF"
+                          label="Download"
                           ariaLabel={`Download ${row.label} answer key PDF`}
                         />
                       ) : (
