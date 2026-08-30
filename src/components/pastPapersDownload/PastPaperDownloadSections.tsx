@@ -1,6 +1,7 @@
 import type { DownloadExam } from "@/data/pastPapersDownload";
 import {
   getEngaaCompactTables,
+  getMainPageCompactTables,
   getNsaaCompactTables,
 } from "@/data/pastPapersDownload";
 import { PastPaperCompactTableGrid } from "./PastPaperCompactTableGrid";
@@ -18,10 +19,5 @@ export function PastPaperDownloadSections({ exam }: Props) {
     return <PastPaperCompactTableGrid tables={getEngaaCompactTables()} />;
   }
 
-  return (
-    <div className="space-y-10">
-      <PastPaperCompactTableGrid title="NSAA" tables={getNsaaCompactTables()} />
-      <PastPaperCompactTableGrid title="ENGAA" tables={getEngaaCompactTables()} />
-    </div>
-  );
+  return <PastPaperCompactTableGrid tables={getMainPageCompactTables()} />;
 }

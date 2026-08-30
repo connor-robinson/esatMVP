@@ -181,6 +181,61 @@ export const NSAA_SPECIFICATION_DOWNLOADS: readonly PastPaperSpecification[] =
     url: specificationPdf("nsaa", year),
   }));
 
+const ENGAA_SPECIMEN_EDITIONS = [
+  { sectionNum: 1 as const, hasPaper: false, hasAnswers: false },
+  { sectionNum: 2 as const, hasPaper: true, hasAnswers: true },
+] as const;
+
+/** ENGAA specimen papers by section. */
+export const ENGAA_SPECIMEN_DOWNLOADS: readonly PastPaperSpecimen[] =
+  ENGAA_SPECIMEN_EDITIONS.map(({ sectionNum, hasPaper, hasAnswers }) => {
+    const section = sectionNum === 1 ? "Section 1" : "Section 2";
+    const sectionSlug = sectionNum === 1 ? "section-1" : "section-2";
+    const legacyPaperUrl =
+      sectionNum === 2
+        ? `${PDF_ROOT}/engaa/section-2/specimen/engaa-specimen-section-2-paper.pdf`
+        : undefined;
+    const legacyAnswersUrl =
+      sectionNum === 2
+        ? `${PDF_ROOT}/engaa/section-2/specimen/engaa-specimen-section-2-answer-key.pdf`
+        : undefined;
+
+    return {
+      id: `engaa-specimen-s${sectionNum}`,
+      exam: "ENGAA" as const,
+      editionYear: 0,
+      section,
+      sectionSlug,
+      title: `ENGAA Specimen ${section}`,
+      ...(hasPaper
+        ? {
+            paperUrl:
+              legacyPaperUrl ??
+              `${PDF_ROOT}/engaa/${sectionSlug}/specimen/engaa-specimen-section-${sectionNum}-paper.pdf`,
+          }
+        : {}),
+      ...(hasAnswers
+        ? {
+            answersUrl:
+              legacyAnswersUrl ??
+              `${PDF_ROOT}/engaa/${sectionSlug}/specimen/engaa-specimen-section-${sectionNum}-answer-key.pdf`,
+          }
+        : {}),
+    };
+  });
+
+const ENGAA_SPECIFICATION_YEARS = [2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016] as const;
+
+/** ENGAA specification PDFs by exam year. */
+export const ENGAA_SPECIFICATION_DOWNLOADS: readonly PastPaperSpecification[] =
+  ENGAA_SPECIFICATION_YEARS.map((year) => ({
+    id: `engaa-specification-${year}`,
+    exam: "ENGAA",
+    year,
+    title: `ENGAA ${year} Specification`,
+    url: specificationPdf("engaa", year),
+  }));
+
 export const DOWNLOAD_EXAMS: readonly DownloadExam[] = ["NSAA", "ENGAA"];
 
 export type PastPaperSectionGroup = {
@@ -282,39 +337,101 @@ function papersToCompactRows(papers: PastPaperDownload[]): PastPaperCompactTable
   }));
 }
 
-/** NSAA download tables for the compact 2-column layout. */
-export function getNsaaCompactTables(): PastPaperCompactTable[] {
-  const section1 = papersByExam("NSAA")
-    .filter((paper) => paper.section === "Section 1")
-    .sort((a, b) => b.year - a.year);
-  const section2 = papersByExam("NSAA")
-    .filter((paper) => paper.section === "Section 2")
-    .sort((a, b) => b.year - a.year);
+function specimensToCompactRows(specimens: readonly PastPaperSpecimen[]): PastPaperCompactTableRow[] {
+  return specimens.map((specimen) => ({
+    id: specimen.id,
+    label: specimen.editionYear > 0 ? `Specimen ${specimen.editionYear}` : "Specimen",
+    paperUrl: specimen.paperUrl,
+    answersUrl: specimen.answersUrl,
+  }));
+}
+
+function sectionPastPaperRows(
+  exam: DownloadExam,
+  section: "Section 1" | "Section 2",
+): PastPaperCompactTableRow[] {
+  return papersToCompactRows(
+    papersByExam(exam)
+      .filter((paper) => paper.section === section)
+      .sort((a, b) => b.year - a.year),
+  );
+}
+
+function makeSectionTable(
+  id: string,
+  heading: string,
+  rows: PastPaperCompactTableRow[],
+): PastPaperCompactTable {
+  return {
+    id,
+    heading,
+    columns: "paper-answers",
+    rows,
+  };
+}
+
+/** Main ESAT past-papers page: four section tables, ENGAA specimens inline. */
+export function getMainPageCompactTables(): PastPaperCompactTable[] {
+  const engaaSection1Specimen = ENGAA_SPECIMEN_DOWNLOADS.filter(
+    (specimen) => specimen.section === "Section 1",
+  );
+  const engaaSection2Specimen = ENGAA_SPECIMEN_DOWNLOADS.filter(
+    (specimen) => specimen.section === "Section 2",
+  );
 
   return [
-    {
-      id: "nsaa-section-1",
-      heading: "NSAA Section 1 Past Papers (2016 – 2023)",
-      columns: "paper-answers",
-      rows: papersToCompactRows(section1),
-    },
-    {
-      id: "nsaa-section-2",
-      heading: "NSAA Section 2 Past Papers (2016 – 2023)",
-      columns: "paper-answers",
-      rows: papersToCompactRows(section2),
-    },
-    {
-      id: "nsaa-specimens",
-      heading: "NSAA Specimen Papers",
-      columns: "paper-answers",
-      rows: NSAA_SPECIMEN_DOWNLOADS.map((specimen) => ({
+    makeSectionTable(
+      "nsaa-section-1",
+      "NSAA Section 1 Past Papers (2016 – 2023)",
+      sectionPastPaperRows("NSAA", "Section 1"),
+    ),
+    makeSectionTable(
+      "nsaa-section-2",
+      "NSAA Section 2 Past Papers (2016 – 2023)",
+      sectionPastPaperRows("NSAA", "Section 2"),
+    ),
+    makeSectionTable(
+      "engaa-section-1",
+      "ENGAA Section 1 Past Papers (2016 – 2023)",
+      [
+        ...sectionPastPaperRows("ENGAA", "Section 1"),
+        ...specimensToCompactRows(engaaSection1Specimen),
+      ],
+    ),
+    makeSectionTable(
+      "engaa-section-2",
+      "ENGAA Section 2 Past Papers (2016 – 2021)",
+      [
+        ...sectionPastPaperRows("ENGAA", "Section 2"),
+        ...specimensToCompactRows(engaaSection2Specimen),
+      ],
+    ),
+  ];
+}
+
+/** NSAA download tables for the compact 2-column layout. */
+export function getNsaaCompactTables(): PastPaperCompactTable[] {
+  return [
+    makeSectionTable(
+      "nsaa-section-1",
+      "NSAA Section 1 Past Papers (2016 – 2023)",
+      sectionPastPaperRows("NSAA", "Section 1"),
+    ),
+    makeSectionTable(
+      "nsaa-section-2",
+      "NSAA Section 2 Past Papers (2016 – 2023)",
+      sectionPastPaperRows("NSAA", "Section 2"),
+    ),
+    makeSectionTable(
+      "nsaa-specimens",
+      "NSAA Specimen Papers",
+      NSAA_SPECIMEN_DOWNLOADS.map((specimen) => ({
         id: specimen.id,
         label: `${specimen.editionYear} ${specimen.section}`,
         paperUrl: specimen.paperUrl,
         answersUrl: specimen.answersUrl,
       })),
-    },
+    ),
     {
       id: "nsaa-specifications",
       heading: "NSAA Specifications (all years)",
@@ -328,14 +445,40 @@ export function getNsaaCompactTables(): PastPaperCompactTable[] {
   ];
 }
 
-/** ENGAA section tables for the compact 2-column layout. */
+/** ENGAA download tables for the compact 2-column layout. */
 export function getEngaaCompactTables(): PastPaperCompactTable[] {
-  return getPastPaperSectionGroups({ exam: "ENGAA" }).map((group) => ({
-    id: `${group.exam.toLowerCase()}-${group.section.toLowerCase().replace(" ", "-")}`,
-    heading: group.heading,
-    columns: "paper-answers" as const,
-    rows: papersToCompactRows(group.papers),
-  }));
+  return [
+    makeSectionTable(
+      "engaa-section-1",
+      "ENGAA Section 1 Past Papers (2016 – 2023)",
+      sectionPastPaperRows("ENGAA", "Section 1"),
+    ),
+    makeSectionTable(
+      "engaa-section-2",
+      "ENGAA Section 2 Past Papers (2016 – 2021)",
+      sectionPastPaperRows("ENGAA", "Section 2"),
+    ),
+    makeSectionTable(
+      "engaa-specimens",
+      "ENGAA Specimen Papers",
+      ENGAA_SPECIMEN_DOWNLOADS.map((specimen) => ({
+        id: specimen.id,
+        label: specimen.section,
+        paperUrl: specimen.paperUrl,
+        answersUrl: specimen.answersUrl,
+      })),
+    ),
+    {
+      id: "engaa-specifications",
+      heading: "ENGAA Specifications (all years)",
+      columns: "specification",
+      rows: ENGAA_SPECIFICATION_DOWNLOADS.map((specification) => ({
+        id: specification.id,
+        label: String(specification.year),
+        specificationUrl: specification.url,
+      })),
+    },
+  ];
 }
 
 export function papersByExam(exam: DownloadExam): PastPaperDownload[] {
