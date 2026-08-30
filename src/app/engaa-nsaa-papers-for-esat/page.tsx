@@ -176,6 +176,46 @@ export default function EngaaNsaaPapersPage() {
         </HighlightBox>
       </SeoSection>
 
+      <SeoSection
+        heading="Mapping legacy maths sections to ESAT modules"
+        lead="This table is the maths-specific guide that used to live on a separate page. The duplicate research below still applies to every subject; this section is only about where to find Maths 1 and Maths 2 material."
+      >
+        <ResponsiveTable
+          columns={["Legacy paper section", "ESAT module", "Notes"]}
+          rows={[
+            [
+              "ENGAA Section 1 Part A Mathematics",
+              "Maths 1",
+              "Best single source for core maths. Overlaps heavily with NSAA Part A in the same year.",
+            ],
+            [
+              "NSAA Section 1 Part A Mathematics",
+              "Maths 1",
+              "Use one copy per year. Check the duplicate list before treating the other paper as fresh.",
+            ],
+            [
+              "ENGAA Section 1 Part B Advanced Mathematics",
+              "Maths 2",
+              "The only legacy advanced-maths source from 2020 onwards.",
+            ],
+            [
+              "NSAA Section 1 Part E (2016 to 2019 only)",
+              "Maths 2 (partial)",
+              "Mixed advanced maths and physics. NSAA dropped Part E after 2019.",
+            ],
+          ]}
+          caption="Part labels follow the headers printed in each official PDF."
+        />
+        <HighlightBox className="mt-5" title="Practical rule for maths practice">
+          <p>
+            If you need Maths 2, use ENGAA Part B for every year from 2016 to
+            2023. If you only need Maths 1, pick either ENGAA Part A or NSAA
+            Part A per year, not both, because a large share of those questions
+            are identical.
+          </p>
+        </HighlightBox>
+      </SeoSection>
+
       <SeoSection heading="They are not two separate question banks">
         <DuplicateWarning />
         <ResponsiveTable

@@ -70,7 +70,7 @@ export default function EsatMaths1Page() {
       ]}
       primaryCta={{ href: APP_ROUTES.calibration, label: "Start Maths 1 calibration" }}
       secondaryCta={{
-        href: SEO_ROUTES.noCalcPractice,
+        href: APP_ROUTES.noCalcPractice,
         label: "Try no-calculator practice",
       }}
       faq={FAQ}
@@ -80,7 +80,7 @@ export default function EsatMaths1Page() {
         primary: { href: APP_ROUTES.calibration, label: "Start free calibration" },
         secondary: { href: APP_ROUTES.noCalcPractice, label: "Open the trainer" },
       }}
-      related={seoLinks("noCalcPractice", "maths2", "pastPapers", "calibration")}
+      related={seoLinks("drill", "maths2", "pastPapers", "calibration")}
       sources={[SOURCES.contentSpec, SOURCES.esatTest]}
       schema={articleSchema({
         headline: "ESAT Maths 1 Preparation",

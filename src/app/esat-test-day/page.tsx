@@ -19,6 +19,7 @@ import { CandidateReports } from "@/components/seo/CandidateReports";
 import { FounderByline } from "@/components/seo/FounderByline";
 import {
   HighlightBox,
+  ResponsiveTable,
   SeoList,
   SeoProse,
   SeoSection,
@@ -109,7 +110,6 @@ export default function EsatTestDayPage() {
       }}
       related={seoLinks(
         "whiteboard",
-        "esatBreaks",
         "calculatorRules",
         "preparation",
         "testDates",
@@ -117,6 +117,7 @@ export default function EsatTestDayPage() {
       )}
       sources={[
         SOURCES.testDayOfficial,
+        SOURCES.accessArrangements,
         SOURCES.roughWorkings,
         SOURCES.waterFaq,
         SOURCES.pearsonProfessionalCenterTour,
@@ -236,6 +237,42 @@ export default function EsatTestDayPage() {
         </p>
       </SeoSection>
 
+      <SeoSection id="esat-breaks" heading="Are there breaks during the ESAT?">
+        <SeoProse
+          paragraphs={[
+            "There is no scheduled break between standard ESAT modules. A three-module test is 120 minutes back-to-back. A toilet trip is not a free break unless you have approved pause-the-clock arrangements.",
+          ]}
+        />
+        <ResponsiveTable
+          className="mt-6"
+          columns={["Question", "Standard sitting"]}
+          rows={[
+            ["Scheduled module break", "No"],
+            ["Standard module length", "40 minutes"],
+            ["Three-module testing time", "120 minutes"],
+            [
+              "Toilet break",
+              "Allowed, but the clock generally continues unless approved pause-the-clock arrangements apply",
+            ],
+            ["Access arrangements", "Arrange in advance through UAT-UK"],
+          ]}
+        />
+        <SeoProse
+          className="mt-6"
+          paragraphs={[
+            "You can raise your hand and ask to use the toilet. Your test time normally continues. Some candidates can receive approved access arrangements, including rest or pause-the-clock arrangements where eligible. These need to be arranged in advance, not on the day.",
+          ]}
+        />
+        <SeoList
+          className="mt-6"
+          items={[
+            "Use the toilet before entering.",
+            "Do a few full-length 120-minute sessions without getting up.",
+            "Avoid arriving dehydrated or after a huge meal.",
+          ]}
+        />
+      </SeoSection>
+
       <SeoSection heading="What happens between ESAT modules?">
         <SeoProse
           paragraphs={[
@@ -265,12 +302,6 @@ export default function EsatTestDayPage() {
             pages.
           </p>
         </HighlightBox>
-        <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
-          More on timing:{" "}
-          <SeoTextLink href={SEO_ROUTES.esatBreaks}>
-            does the ESAT have breaks?
-          </SeoTextLink>
-        </p>
       </SeoSection>
 
       <SeoSection heading="Can you drink water during the ESAT?">

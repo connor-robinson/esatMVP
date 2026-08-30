@@ -70,6 +70,26 @@ const nextConfig = {
         destination: "/esat-test-dates",
         permanent: true,
       },
+      {
+        source: "/engaa-nsaa-maths-for-esat",
+        destination: "/engaa-nsaa-papers-for-esat",
+        permanent: true,
+      },
+      {
+        source: "/esat-breaks",
+        destination: "/esat-test-day",
+        permanent: true,
+      },
+      {
+        source: "/esat-common-mistakes",
+        destination: "/esat-preparation",
+        permanent: true,
+      },
+      {
+        source: "/esat-no-calculator-practice",
+        destination: "/mental-maths/drill",
+        permanent: true,
+      },
       // The combined old-paper guide was split into one page per exam family so
       // the two topics stop competing for the same queries.
       {

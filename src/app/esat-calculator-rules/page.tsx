@@ -75,7 +75,7 @@ export default function EsatCalculatorRulesPage() {
         primary: { href: APP_ROUTES.noCalcPractice, label: "Start no-calculator practice" },
         secondary: { href: APP_ROUTES.calibration, label: "Diagnose with calibration" },
       }}
-      related={seoLinks("noCalcPractice", "testDay", "calibration", "physics")}
+      related={seoLinks("drill", "testDay", "calibration", "physics")}
       sources={[SOURCES.esatTest, SOURCES.candidateHandbook]}
       showDisclaimer
       schema={articleSchema({
@@ -155,7 +155,7 @@ export default function EsatCalculatorRulesPage() {
         />
         <p className="mt-6 text-sm leading-relaxed text-[#94A3B8]">
           The{" "}
-          <SeoTextLink href={SEO_ROUTES.noCalcPractice}>
+          <SeoTextLink href={APP_ROUTES.noCalcPractice}>
             no-calculator practice guide
           </SeoTextLink>{" "}
           covers which skills to train in which order.

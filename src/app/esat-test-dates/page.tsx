@@ -111,7 +111,7 @@ export default function EsatTestDatesPage() {
         "universityRequirements",
         "calibration",
         "pastPapers",
-        "esatBreaks",
+        "testDay",
       )}
       sources={[
         SOURCES.deadlines,

@@ -112,7 +112,7 @@ export default function TmuaForEsatPage() {
         "maths2",
         "pastPapers",
         "engaaNsaaPapers",
-        "noCalcPractice",
+        "drill",
         "drill",
         "calibration",
       )}

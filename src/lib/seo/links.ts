@@ -73,15 +73,10 @@ export const SEO_LINKS = {
     label: "What is a good ESAT score?",
     blurb: "How the 1.0 to 9.0 scale works, where 7.0 sits, and what universities publish.",
   },
-  commonMistakes: {
-    href: SEO_ROUTES.commonMistakes,
-    label: "Common ESAT mistakes",
-    blurb: "The preparation habits that quietly cost marks for weeks.",
-  },
-  noCalcPractice: {
-    href: SEO_ROUTES.noCalcPractice,
+  drill: {
+    href: APP_ROUTES.noCalcPractice,
     label: "No-calculator practice",
-    blurb: "Speed and accuracy training for fractions, ratios and formulae.",
+    blurb: "Timed no-calculator drills you can run in ten-minute sessions.",
   },
   calibration: {
     href: APP_ROUTES.calibration,
@@ -92,11 +87,6 @@ export const SEO_LINKS = {
     href: APP_ROUTES.scoreConverter,
     label: "Score converter",
     blurb: "Turn a past-paper raw mark into an estimated scaled score.",
-  },
-  drill: {
-    href: APP_ROUTES.noCalcPractice,
-    label: "Mental maths trainer",
-    blurb: "Timed no-calculator drills you can run in ten-minute sessions.",
   },
   fermiGame: {
     href: APP_ROUTES.fermiGame,
@@ -148,11 +138,6 @@ export const SEO_LINKS = {
     label: "UCL ESAT requirements",
     blurb: "Electronic and Electrical Engineering modules and sitting options.",
   },
-  esatBreaks: {
-    href: SEO_ROUTES.esatBreaks,
-    label: "Does the ESAT have breaks?",
-    blurb: "Toilet breaks, module timing and access arrangements.",
-  },
   whiteboard: {
     href: SEO_ROUTES.whiteboard,
     label: "ESAT whiteboard rules",
@@ -185,8 +170,7 @@ export const SEO_GUIDE_KEYS: SeoLinkKey[] = [
   "physics",
   "calculatorRules",
   "goodScore",
-  "commonMistakes",
-  "noCalcPractice",
+  "drill",
   "universityRequirements",
   "cambridgeRequirements",
   "cambridgeNaturalSciences",
@@ -194,7 +178,6 @@ export const SEO_GUIDE_KEYS: SeoLinkKey[] = [
   "oxfordRequirements",
   "imperialRequirements",
   "uclRequirements",
-  "esatBreaks",
   "whiteboard",
   "questionBankGuide",
 ];
@@ -212,7 +195,7 @@ export const FAQ_GUIDE_SECTIONS: readonly FaqGuideSection[] = [
     id: "getting-started",
     title: "Getting started",
     description: "How to prepare, when the test is, and what the day looks like.",
-    keys: ["preparation", "testDates", "testDay", "esatBreaks", "whiteboard", "commonMistakes"],
+    keys: ["preparation", "testDates", "testDay", "whiteboard"],
   },
   {
     id: "modules",
@@ -230,7 +213,7 @@ export const FAQ_GUIDE_SECTIONS: readonly FaqGuideSection[] = [
     id: "rules-and-scores",
     title: "Rules, scores and practice",
     description: "Calculator rules, what a good score looks like, and no-calculator training.",
-    keys: ["calculatorRules", "goodScore", "noCalcPractice", "questionBankGuide"],
+    keys: ["calculatorRules", "goodScore", "drill", "questionBankGuide"],
   },
   {
     id: "universities",

@@ -17,8 +17,8 @@ describe("SEO site URL config", () => {
 
   it("builds self-referencing canonical URLs", () => {
     expect(buildCanonicalUrl("/")).toBe("https://esatcamp.com");
-    expect(buildCanonicalUrl("/esat-common-mistakes")).toBe(
-      "https://esatcamp.com/esat-common-mistakes",
+    expect(buildCanonicalUrl("/esat-preparation")).toBe(
+      "https://esatcamp.com/esat-preparation",
     );
   });
 
@@ -26,11 +26,11 @@ describe("SEO site URL config", () => {
     const metadata = buildSeoMetadata({
       title: "Test",
       description: "Test page",
-      path: "/esat-common-mistakes",
+      path: "/esat-preparation",
     });
 
     expect(metadata.alternates?.canonical).toBe(
-      "https://esatcamp.com/esat-common-mistakes",
+      "https://esatcamp.com/esat-preparation",
     );
     expect(String(metadata.alternates?.canonical)).not.toContain("www.");
     expect(String(metadata.openGraph?.url)).not.toContain("www.");

@@ -36,7 +36,6 @@ export const SITEMAP_EXCLUDED_PATHS = [
   "/partners/arkwright-2026",
   "/dev/founding-tester",
   "/dev/loading",
-  "/mental-maths/drill",
   "/mental-maths/drill/session",
   "/questions",
   "/questions/questionbank",

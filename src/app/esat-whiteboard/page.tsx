@@ -101,7 +101,7 @@ export default function EsatWhiteboardPage() {
       }}
       primaryCta={{ href: SEO_ROUTES.testDay, label: "ESAT test-day guide" }}
       secondaryCta={{
-        href: SEO_ROUTES.esatBreaks,
+        href: `${SEO_ROUTES.testDay}#esat-breaks`,
         label: "Breaks and timing",
       }}
       faq={FAQ}
@@ -113,10 +113,9 @@ export default function EsatWhiteboardPage() {
       }}
       related={seoLinks(
         "testDay",
-        "esatBreaks",
         "calculatorRules",
         "preparation",
-        "noCalcPractice",
+        "drill",
       )}
       sources={[
         SOURCES.roughWorkings,
@@ -207,7 +206,9 @@ export default function EsatWhiteboardPage() {
           More on what happens between modules:{" "}
           <SeoTextLink href={SEO_ROUTES.testDay}>ESAT test day</SeoTextLink>{" "}
           and{" "}
-          <SeoTextLink href={SEO_ROUTES.esatBreaks}>breaks and timing</SeoTextLink>
+          <SeoTextLink href={`${SEO_ROUTES.testDay}#esat-breaks`}>
+            breaks and timing
+          </SeoTextLink>
           .
         </p>
       </SeoSection>

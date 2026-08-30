@@ -73,7 +73,7 @@ export default function EsatPreparationPage() {
       ]}
       primaryCta={{ href: APP_ROUTES.calibration, label: "Start free calibration" }}
       secondaryCta={{
-        href: SEO_ROUTES.noCalcPractice,
+        href: APP_ROUTES.noCalcPractice,
         label: "Try no-calculator practice",
       }}
       faq={FAQ}
@@ -227,6 +227,51 @@ export default function EsatPreparationPage() {
             placement="past_papers"
           >
             View the past-paper guide
+          </SeoCta>
+        </SeoCtaRow>
+      </SeoSection>
+
+      <SeoSection
+        id="common-esat-mistakes"
+        heading="Common ESAT mistakes"
+        lead="These are the preparation habits we see most often in calibration results and review sessions. They are fixable once you know which one is yours."
+      >
+        <InfoCardGrid
+          columns={2}
+          cards={[
+            {
+              title: "Practising without diagnosing",
+              body: "Calibration separates speed from accuracy and tags errors by type. Random practice hides whether the bottleneck is arithmetic, method choice or content.",
+            },
+            {
+              title: "Ignoring calculation speed",
+              body: "Slow fraction or ratio work costs time in Maths 1 and in science modules that depend on the same arithmetic mid-question.",
+            },
+            {
+              title: "Reviewing only the final mark",
+              body: "A wrong answer can come from a concept gap, wrong method, arithmetic slip or misread. Marking it wrong records none of that pattern.",
+            },
+            {
+              title: "Skipping timed module practice",
+              body: "Each module is 27 questions in 40 minutes, timed separately. Untimed sets never rehearse when to abandon a question and move on.",
+            },
+            {
+              title: "Burning clean past papers too early",
+              body: "Full mocks are useful later. Early ones often repeat what you already know and use up unseen material, including duplicate ENGAA and NSAA questions from the same year.",
+            },
+          ]}
+        />
+        <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
+          Check duplicate ENGAA and NSAA questions before treating a second paper
+          from the same year as fresh evidence:{" "}
+          <SeoTextLink href={SEO_ROUTES.engaaNsaaPapers}>
+            ENGAA and NSAA papers for ESAT
+          </SeoTextLink>
+          .
+        </p>
+        <SeoCtaRow className="mt-6">
+          <SeoCta href={APP_ROUTES.calibration} placement="common_mistakes">
+            Find my weakest ESAT skill
           </SeoCta>
         </SeoCtaRow>
       </SeoSection>

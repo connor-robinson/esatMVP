@@ -73,7 +73,7 @@ export default function EsatPhysicsPage() {
         primary: { href: APP_ROUTES.calibration, label: "Start free calibration" },
         secondary: { href: APP_ROUTES.noCalcPractice, label: "Train no-calculator speed" },
       }}
-      related={seoLinks("calculatorRules", "pastPapers", "calibration", "noCalcPractice")}
+      related={seoLinks("calculatorRules", "pastPapers", "calibration", "drill")}
       sources={[SOURCES.contentSpec, SOURCES.esatTest]}
       schema={articleSchema({
         headline: "ESAT Physics Preparation",

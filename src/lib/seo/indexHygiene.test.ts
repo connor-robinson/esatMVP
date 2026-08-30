@@ -53,7 +53,7 @@ describe("index hygiene: private route metadata wiring", () => {
     const privateLayouts = [
       ["dashboard", "layout.tsx"],
       ["questions", "layout.tsx"],
-      ["mental-maths", "drill", "layout.tsx"],
+      ["mental-maths", "drill", "session", "layout.tsx"],
       ["past-papers", "layout.tsx"],
       ["founding-tester", "layout.tsx"],
       ["profile", "layout.tsx"],
@@ -129,11 +129,11 @@ describe("index hygiene: public pages stay indexable", () => {
     const noCalc = buildSeoMetadata({
       title: "ESAT No-Calculator Practice",
       description: "Practice",
-      path: SEO_ROUTES.noCalcPractice,
+      path: APP_ROUTES.noCalcPractice,
     });
     expect(noCalc.robots).toEqual({ index: true, follow: true });
     expect(noCalc.alternates?.canonical).toBe(
-      buildCanonicalUrl(SEO_ROUTES.noCalcPractice),
+      buildCanonicalUrl(APP_ROUTES.noCalcPractice),
     );
 
     const questionBankGuide = buildSeoMetadata({
@@ -149,7 +149,7 @@ describe("index hygiene: public pages stay indexable", () => {
 
   it("wires public landings and score converter to indexable metadata", () => {
     expect(readAppSource("page.tsx")).toMatch(/index:\s*true/);
-    expect(readAppSource("esat-no-calculator-practice", "page.tsx")).toContain(
+    expect(readAppSource("mental-maths", "drill", "page.tsx")).toContain(
       "buildSeoMetadata",
     );
     expect(readAppSource("is-esat-a-question-bank", "page.tsx")).toContain(
@@ -210,9 +210,11 @@ describe("index hygiene: sitemap", () => {
     });
 
     expect(paths).toEqual(PUBLIC_SITEMAP_ENTRIES.map((entry) => entry.path));
-    expect(entries).toHaveLength(43);
+    expect(entries).toHaveLength(41);
     expect(isPublicSitemapPath(APP_ROUTES.scoreConverter)).toBe(true);
+    expect(isPublicSitemapPath(APP_ROUTES.noCalcPractice)).toBe(true);
     expect(urls).toContain(`${SITE_URL}${APP_ROUTES.scoreConverter}`);
+    expect(urls).toContain(`${SITE_URL}${APP_ROUTES.noCalcPractice}`);
   });
 
   it("excludes private, auth, app, and testing routes", () => {

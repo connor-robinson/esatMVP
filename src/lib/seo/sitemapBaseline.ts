@@ -44,8 +44,7 @@ export const APPROVED_SITEMAP_BASELINE: readonly PublicSitemapEntry[] = [
   { path: SEO_ROUTES.goodScore },
   { path: SEO_ROUTES.calculatorRules },
   { path: SEO_ROUTES.testDay },
-  { path: SEO_ROUTES.noCalcPractice },
-  { path: SEO_ROUTES.commonMistakes },
+  { path: APP_ROUTES.noCalcPractice },
   { path: SEO_ROUTES.universityRequirements },
   { path: SEO_ROUTES.cambridgeRequirements },
   { path: SEO_ROUTES.cambridgeEngineering },
@@ -53,7 +52,6 @@ export const APPROVED_SITEMAP_BASELINE: readonly PublicSitemapEntry[] = [
   { path: SEO_ROUTES.oxfordRequirements },
   { path: SEO_ROUTES.imperialRequirements },
   { path: SEO_ROUTES.uclRequirements },
-  { path: SEO_ROUTES.esatBreaks },
   { path: SEO_ROUTES.whiteboard },
   { path: SEO_ROUTES.questionBankGuide },
 

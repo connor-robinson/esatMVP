@@ -116,7 +116,7 @@ export default function Math1CalibrationPage() {
         <AppSeoFaq items={FAQ} />
 
         <AppSeoRelatedLinks
-          links={seoLinks("noCalcPractice", "preparation", "scoreConverter", "maths1")}
+          links={seoLinks("drill", "preparation", "scoreConverter", "maths1")}
         />
 
         <p className="text-xs leading-relaxed text-text-muted">
