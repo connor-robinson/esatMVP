@@ -382,17 +382,17 @@ export function getMainPageCompactTables(): PastPaperCompactTable[] {
   return [
     makeSectionTable(
       "nsaa-section-1",
-      "NSAA Section 1 Past Papers (2016 – 2023)",
+      "NSAA · Section 1 · 2016–2023",
       sectionPastPaperRows("NSAA", "Section 1"),
     ),
     makeSectionTable(
       "nsaa-section-2",
-      "NSAA Section 2 Past Papers (2016 – 2023)",
+      "NSAA · Section 2 · 2016–2023",
       sectionPastPaperRows("NSAA", "Section 2"),
     ),
     makeSectionTable(
       "engaa-section-1",
-      "ENGAA Section 1 Past Papers (2016 – 2023)",
+      "ENGAA · Section 1 · 2016–2023",
       [
         ...sectionPastPaperRows("ENGAA", "Section 1"),
         ...specimensToCompactRows(engaaSection1Specimen),
@@ -400,7 +400,7 @@ export function getMainPageCompactTables(): PastPaperCompactTable[] {
     ),
     makeSectionTable(
       "engaa-section-2",
-      "ENGAA Section 2 Past Papers (2016 – 2021)",
+      "ENGAA · Section 2 · 2016–2021",
       [
         ...sectionPastPaperRows("ENGAA", "Section 2"),
         ...specimensToCompactRows(engaaSection2Specimen),
@@ -450,17 +450,17 @@ export function getEngaaCompactTables(): PastPaperCompactTable[] {
   return [
     makeSectionTable(
       "engaa-section-1",
-      "ENGAA Section 1 Past Papers (2016 – 2023)",
+      "Section 1 · 2016–2023",
       sectionPastPaperRows("ENGAA", "Section 1"),
     ),
     makeSectionTable(
       "engaa-section-2",
-      "ENGAA Section 2 Past Papers (2016 – 2021)",
+      "Section 2 · 2016–2021",
       sectionPastPaperRows("ENGAA", "Section 2"),
     ),
     makeSectionTable(
       "engaa-specimens",
-      "ENGAA Specimen Papers",
+      "Specimen papers",
       ENGAA_SPECIMEN_DOWNLOADS.map((specimen) => ({
         id: specimen.id,
         label: specimen.section,
@@ -470,7 +470,7 @@ export function getEngaaCompactTables(): PastPaperCompactTable[] {
     ),
     {
       id: "engaa-specifications",
-      heading: "ENGAA Specifications (all years)",
+      heading: "Specifications",
       columns: "specification",
       rows: ENGAA_SPECIFICATION_DOWNLOADS.map((specification) => ({
         id: specification.id,
