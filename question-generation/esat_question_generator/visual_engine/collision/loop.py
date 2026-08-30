@@ -142,7 +142,8 @@ def resolve_label_collisions(
             remaining.append(f"{lbl.label_id}: {', '.join(issues)}")
 
     if remaining:
+        detail = "; ".join(remaining[:8])
         raise DiagramLayoutError(
-            "Could not resolve label collisions within attempt limit",
+            f"Could not resolve label collisions within attempt limit: {detail}",
             issues=remaining,
         )

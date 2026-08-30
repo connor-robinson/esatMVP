@@ -73,7 +73,9 @@ Each label:
 
 - Use `"math": true` for expressions (e.g. `y=x^2`, `\\theta`). Renderer uses Matplotlib mathtext.
 - Use single-letter variables without math mode.
-- Place anchors near the object being labelled, not on top of lines.
+- Place anchors **offset from** the object being labelled, not on vertices or on top of lines. Example: for a base at y=1, put side-length anchors near y=0.7 with `preferred_position: "below"`.
+- Vertex letter labels should sit clearly outside the shape (use `lower_left` / `upper_right` etc. with anchors slightly outside the vertex).
+- Leave coordinate-system margin so outside labels stay inside `x_min`/`x_max`/`y_min`/`y_max`.
 - Allowed `preferred_position`: `above`, `below`, `left`, `right`, `upper_left`, `upper_right`, `lower_left`, `lower_right`, `center`.
 
 ## Style constraints

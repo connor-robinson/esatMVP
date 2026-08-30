@@ -46,7 +46,8 @@ def offset_distance(ax, style: ExamStyle) -> float:
     span_x = abs(ax.get_xlim()[1] - ax.get_xlim()[0])
     span_y = abs(ax.get_ylim()[1] - ax.get_ylim()[0])
     span = max(span_x, span_y)
-    return max(span * 0.035, 0.12)
+    # Keep vertex/side labels clear of geometry; Gemini often anchors on the object itself.
+    return max(span * 0.05, 0.18)
 
 
 def apply_candidate(
