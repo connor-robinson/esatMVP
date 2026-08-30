@@ -80,24 +80,76 @@ export const PAST_PAPER_DOWNLOADS: readonly PastPaperDownload[] = [
 
 export const DOWNLOAD_EXAMS: readonly DownloadExam[] = ["NSAA", "ENGAA"];
 
+export type PastPaperSectionGroup = {
+  exam: DownloadExam;
+  section: "Section 1" | "Section 2";
+  heading: string;
+  papers: PastPaperDownload[];
+};
+
 export function pastPaperPagePath(paper: PastPaperDownload): string {
-  return `/past-papers/${paper.exam.toLowerCase()}/${paper.year}/${paper.sectionSlug}`;
+  const hub =
+    paper.exam === "NSAA"
+      ? SEO_ROUTES.nsaaPastPapers
+      : SEO_ROUTES.engaaPastPapers;
+  return `${hub}/${paper.year}/${paper.sectionSlug}`;
 }
 
 export function examHubPath(exam: DownloadExam): string {
-  return `/past-papers/${exam.toLowerCase()}`;
+  return exam === "NSAA" ? SEO_ROUTES.nsaaPastPapers : SEO_ROUTES.engaaPastPapers;
 }
 
-export function filterDownloads(
-  papers: readonly PastPaperDownload[],
-  exam: DownloadExam | "all",
-  year: number | "all",
-): PastPaperDownload[] {
-  return papers.filter((paper) => {
-    if (exam !== "all" && paper.exam !== exam) return false;
-    if (year !== "all" && paper.year !== year) return false;
-    return true;
-  });
+function yearRangeLabel(years: number[]): string {
+  if (years.length === 0) return "";
+  const min = Math.min(...years);
+  const max = Math.max(...years);
+  return min === max ? String(min) : `${min} – ${max}`;
+}
+
+/** Group papers into exam + section blocks (newest year first within each). */
+export function getPastPaperSectionGroups(options?: {
+  exam?: DownloadExam;
+}): PastPaperSectionGroup[] {
+  const source = options?.exam
+    ? papersByExam(options.exam)
+    : [...PAST_PAPER_DOWNLOADS];
+
+  const groups = new Map<string, PastPaperDownload[]>();
+  for (const paper of source) {
+    const key = `${paper.exam}:${paper.section}`;
+    const list = groups.get(key) ?? [];
+    list.push(paper);
+    groups.set(key, list);
+  }
+
+  const order: Array<{ exam: DownloadExam; section: "Section 1" | "Section 2" }> =
+    options?.exam
+      ? [
+          { exam: options.exam, section: "Section 1" },
+          { exam: options.exam, section: "Section 2" },
+        ]
+      : [
+          { exam: "NSAA", section: "Section 1" },
+          { exam: "NSAA", section: "Section 2" },
+          { exam: "ENGAA", section: "Section 1" },
+          { exam: "ENGAA", section: "Section 2" },
+        ];
+
+  return order
+    .map(({ exam, section }) => {
+      const papers = (groups.get(`${exam}:${section}`) ?? []).sort(
+        (a, b) => b.year - a.year,
+      );
+      if (papers.length === 0) return null;
+      const years = papers.map((paper) => paper.year);
+      return {
+        exam,
+        section,
+        heading: `${exam} ${section} Past Papers (${yearRangeLabel(years)})`,
+        papers,
+      };
+    })
+    .filter((group): group is PastPaperSectionGroup => group !== null);
 }
 
 export function papersByExam(exam: DownloadExam): PastPaperDownload[] {

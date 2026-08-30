@@ -162,12 +162,12 @@ describe("index hygiene: public pages stay indexable", () => {
 
   it("marks new past-paper download SEO routes as noindex, follow", () => {
     for (const segments of [
-      ["past-papers", "nsaa", "layout.tsx"],
-      ["past-papers", "engaa", "layout.tsx"],
-      ["past-papers", "nsaa", "page.tsx"],
-      ["past-papers", "engaa", "page.tsx"],
-      ["past-papers", "nsaa", "[year]", "[section]", "page.tsx"],
-      ["past-papers", "engaa", "[year]", "[section]", "page.tsx"],
+      ["nsaa-past-papers", "layout.tsx"],
+      ["engaa-past-papers", "layout.tsx"],
+      ["nsaa-past-papers", "page.tsx"],
+      ["engaa-past-papers", "page.tsx"],
+      ["nsaa-past-papers", "[year]", "[section]", "page.tsx"],
+      ["engaa-past-papers", "[year]", "[section]", "page.tsx"],
     ] as const) {
       const source = readAppSource(...segments);
       expect(source).toMatch(/buildNoIndexMetadata|noIndexFollowMetadata/);

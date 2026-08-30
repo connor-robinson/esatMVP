@@ -1,3 +1,3 @@
 export { PastPaperDetailContent } from "./PastPaperDetailContent";
-export { PastPaperDownloadLibrary } from "./PastPaperDownloadLibrary";
+export { PastPaperDownloadSections } from "./PastPaperDownloadSections";
 export { PastPaperGuideContent } from "./PastPaperGuideContent";

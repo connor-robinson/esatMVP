@@ -31,14 +31,14 @@ describe("sitemap baseline guard", () => {
     const diff = diffSitemapAgainstBaseline(
       [
         ...PUBLIC_SITEMAP_ENTRIES,
-        { path: "/past-papers/nsaa/2021/section-1" },
+        { path: "/nsaa-past-papers/2021/section-1" },
       ],
       APPROVED_SITEMAP_BASELINE,
     );
-    expect(diff.added).toContain("/past-papers/nsaa/2021/section-1");
+    expect(diff.added).toContain("/nsaa-past-papers/2021/section-1");
     expect(formatSitemapBaselineFailure(diff)).toContain("SITEMAP CHANGE DETECTED");
     expect(formatSitemapBaselineFailure(diff)).toContain(
-      "+ /past-papers/nsaa/2021/section-1",
+      "+ /nsaa-past-papers/2021/section-1",
     );
   });
 
@@ -52,11 +52,11 @@ describe("sitemap baseline guard", () => {
 
   it("does not include past-paper download SEO routes", () => {
     for (const paper of PAST_PAPER_DOWNLOADS) {
-      const path = `/past-papers/${paper.exam.toLowerCase()}/${paper.year}/${paper.sectionSlug}`;
+      const path = `/nsaa-past-papers/${paper.year}/${paper.sectionSlug}`;
       expect(APPROVED_SITEMAP_BASELINE_PATHS).not.toContain(path);
     }
-    expect(APPROVED_SITEMAP_BASELINE_PATHS).not.toContain("/past-papers/nsaa");
-    expect(APPROVED_SITEMAP_BASELINE_PATHS).not.toContain("/past-papers/engaa");
+    expect(APPROVED_SITEMAP_BASELINE_PATHS).not.toContain("/nsaa-past-papers");
+    expect(APPROVED_SITEMAP_BASELINE_PATHS).not.toContain("/engaa-past-papers");
   });
 
   it("keeps /esat-past-papers in the approved baseline", () => {

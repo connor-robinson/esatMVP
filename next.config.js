@@ -87,6 +87,26 @@ const nextConfig = {
         destination: "/pearson/controls",
         permanent: false,
       },
+      {
+        source: "/past-papers/nsaa",
+        destination: "/nsaa-past-papers",
+        permanent: true,
+      },
+      {
+        source: "/past-papers/engaa",
+        destination: "/engaa-past-papers",
+        permanent: true,
+      },
+      {
+        source: "/past-papers/nsaa/:year/:section",
+        destination: "/nsaa-past-papers/:year/:section",
+        permanent: true,
+      },
+      {
+        source: "/past-papers/engaa/:year/:section",
+        destination: "/engaa-past-papers/:year/:section",
+        permanent: true,
+      },
     ];
   },
 
