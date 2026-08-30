@@ -51,21 +51,16 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
         </p>
 
         <div className="mt-4 space-y-4">
-          <div className="text-[13px] leading-snug text-slate-300 sm:text-sm sm:leading-relaxed">
+          <div className="text-sm leading-relaxed text-slate-300 sm:text-[15px]">
             <p>
-              A person of fixed height stands directly in front of a camera.
-              They move further away from the camera. The camera position and
-              zoom do not change.
-            </p>
-            <p className="mt-2">
-              Which labelled curve could show the height{" "}
-              <InlineKatex latex="H" fallback="H" /> of their image in the photo
-              against distance{" "}
+              A person of fixed height moves away from a stationary camera with
+              fixed zoom. Which curve could show their image height{" "}
+              <InlineKatex latex="H" fallback="H" /> against distance{" "}
               <InlineKatex latex="d" fallback="d" /> from the camera?
             </p>
           </div>
 
-          <div className="min-h-[200px] w-full sm:min-h-[260px]">
+          <div className="mx-auto w-full max-w-[85%] min-h-[170px] sm:min-h-[221px]">
             <CameraDistanceGraph className="h-full w-full" />
           </div>
         </div>
