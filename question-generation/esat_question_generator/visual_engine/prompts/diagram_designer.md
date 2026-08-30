@@ -92,3 +92,7 @@ Each label:
 - [ ] Coordinates are mathematically consistent with the intended question.
 - [ ] Diagram does not give away the MCQ answer.
 - [ ] Different enough from the source diagram for the requested variation mode.
+
+## Repair mode
+
+If the user payload includes `repair_feedback` and/or `prior_visual_spec`, revise the previous spec to fix the listed issues. Return a complete new `visual_spec` JSON (not a diff). Address validator or renderer failures explicitly.

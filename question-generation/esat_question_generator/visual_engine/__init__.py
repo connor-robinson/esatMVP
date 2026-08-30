@@ -4,6 +4,7 @@ from .diagram_designer import DiagramDesignerInput, DiagramDesignerResult, run_d
 from .errors import DiagramLayoutError, VisualSpecError
 from .render_matplotlib import RenderResult, render_diagram
 from .schema import VisualSpec, parse_spec
+from .visual_verifier import VisualVerifierResult, run_visual_verifier
 
 __all__ = [
     "DiagramDesignerInput",
@@ -12,7 +13,9 @@ __all__ = [
     "RenderResult",
     "VisualSpec",
     "VisualSpecError",
+    "VisualVerifierResult",
     "parse_spec",
     "render_diagram",
     "run_diagram_designer",
+    "run_visual_verifier",
 ]

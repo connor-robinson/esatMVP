@@ -96,12 +96,13 @@ def call_json_multimodal(
     user_payload: dict[str, Any],
     image_bytes: bytes,
     mime_type: str = "image/png",
+    extra_images: list[tuple[bytes, str]] | None = None,
     model: str | None = None,
     thinking_level: str = "high",
     temperature: float = 0.2,
     max_retries: int = 3,
 ) -> MultimodalCallResult:
-    """Call Gemini with image + JSON instructions; return parsed JSON."""
+    """Call Gemini with image(s) + JSON instructions; return parsed JSON."""
     client = make_client()
     m = model or DEFAULT_DIAGRAM_DESIGNER_MODEL
     user_text = json.dumps(user_payload, ensure_ascii=False, indent=2)
@@ -114,6 +115,11 @@ def call_json_multimodal(
         thinking_config=types.ThinkingConfig(thinking_level=thinking),
     )
 
+    parts: list[types.Part] = [types.Part.from_text(text=user_text)]
+    parts.append(types.Part.from_bytes(data=image_bytes, mime_type=mime_type))
+    for extra_bytes, extra_mime in extra_images or []:
+        parts.append(types.Part.from_bytes(data=extra_bytes, mime_type=extra_mime))
+
     last_err: Exception | None = None
     raw = ""
     response = None
@@ -121,15 +127,7 @@ def call_json_multimodal(
         try:
             response = client.models.generate_content(
                 model=m,
-                contents=[
-                    types.Content(
-                        role="user",
-                        parts=[
-                            types.Part.from_text(text=user_text),
-                            types.Part.from_bytes(data=image_bytes, mime_type=mime_type),
-                        ],
-                    )
-                ],
+                contents=[types.Content(role="user", parts=parts)],
                 config=config,
             )
             raw = (response.text or "").strip()

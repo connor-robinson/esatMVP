@@ -24,6 +24,8 @@ class DiagramDesignerInput:
     variation_mode: str = "sibling"
     idea_plan: dict[str, Any] | None = None
     source_question_id: str | None = None
+    repair_feedback: str = ""
+    prior_spec: dict[str, Any] | None = None
 
 
 @dataclass
@@ -69,6 +71,10 @@ def build_user_payload(inp: DiagramDesignerInput) -> dict[str, Any]:
         payload["idea_plan"] = inp.idea_plan
     if inp.source_question_id:
         payload["source_question_id"] = inp.source_question_id
+    if inp.repair_feedback.strip():
+        payload["repair_feedback"] = inp.repair_feedback.strip()
+    if inp.prior_spec:
+        payload["prior_visual_spec"] = inp.prior_spec
     return payload
 
 
