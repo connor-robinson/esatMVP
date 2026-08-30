@@ -2,8 +2,11 @@ export const HOMEPAGE_EXAMPLE_REVEAL_KEY = "homepage_example_reveal";
 
 export const HOMEPAGE_EXAMPLE_QUESTION = {
   id: "camera-distance-graph",
-  promptMarkdown:
-    "A person of fixed height moves away from a stationary camera with fixed zoom. Which curve could show their image height $H$ against distance $d$ from the camera?",
+  promptMarkdown: [
+    "A person of fixed height moves away from a stationary camera with fixed zoom.",
+    "",
+    "Which curve could show their image height $H$ against distance $d$ from the camera?",
+  ].join("\n"),
   options: [
     { label: "A", text: "Reciprocal decay" },
     { label: "B", text: "Linear decrease" },

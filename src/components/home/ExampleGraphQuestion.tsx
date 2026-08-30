@@ -13,6 +13,11 @@ type SubmitPhase = "idle" | "submitted";
 const OPTION_IDS: CurveId[] = ["A", "B", "C", "D"];
 const REVEAL_REDIRECT = "/dashboard?reveal_example=1";
 
+const OPTION_BASE =
+  "bg-white/[0.06] hover:bg-white/[0.09] dark:bg-surface-mid dark:hover:bg-surface-neutral";
+const OPTION_SELECTED =
+  "bg-white/[0.12] dark:bg-folder-card-selected";
+
 export function ExampleGraphQuestion({ className }: { className?: string }) {
   const [selected, setSelected] = useState<CurveId | null>(null);
   const [phase, setPhase] = useState<SubmitPhase>("idle");
@@ -30,21 +35,10 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "relative rounded-[28px] border border-white/10 bg-[#0f1728]",
-        "shadow-[0_0_0_1px_rgba(255,255,255,0.02),0_20px_60px_rgba(0,0,0,0.35)]",
-        "px-6 py-8 sm:px-[38px] sm:py-[38px] sm:pb-8",
+        "relative rounded-organic-xl bg-white/[0.08] px-6 py-8 backdrop-blur-xl sm:px-8 sm:py-9",
         className,
       )}
     >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 overflow-hidden rounded-[28px] opacity-60"
-        style={{
-          background:
-            "radial-gradient(ellipse 75% 55% at 88% 12%, rgba(59,130,246,0.11), transparent 58%)",
-        }}
-      />
-
       <div className="relative">
         <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-slate-400">
           Example question
@@ -54,7 +48,10 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
           <div className="text-sm leading-relaxed text-slate-300 sm:text-[15px]">
             <p>
               A person of fixed height moves away from a stationary camera with
-              fixed zoom. Which curve could show their image height{" "}
+              fixed zoom.
+            </p>
+            <p className="mt-2">
+              Which curve could show their image height{" "}
               <InlineKatex latex="H" fallback="H" /> against distance{" "}
               <InlineKatex latex="d" fallback="d" /> from the camera?
             </p>
@@ -83,11 +80,12 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
                   aria-pressed={isSelected}
                   onClick={() => handleSelect(id)}
                   className={cn(
-                    "inline-flex h-11 w-full items-center justify-center rounded-2xl text-sm font-semibold transition-all duration-200",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/50",
+                    "inline-flex h-11 w-full items-center justify-center rounded-organic-md text-sm font-semibold tabular-nums transition-[background-color] duration-200",
+                    "border-0 outline-none ring-0 shadow-none",
+                    "focus-visible:outline-none focus-visible:ring-0",
                     isSelected
-                      ? "border border-[#3B82F6]/55 bg-white/[0.08] text-white shadow-[0_0_18px_rgba(59,130,246,0.16)]"
-                      : "border border-white/10 bg-white/[0.05] text-slate-300 hover:border-white/22 hover:text-white",
+                      ? cn(OPTION_SELECTED, "text-white")
+                      : cn(OPTION_BASE, "text-slate-300 hover:text-white"),
                   )}
                 >
                   {id}
@@ -104,26 +102,30 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
               <Link
                 href={`/login?redirectTo=${encodeURIComponent(REVEAL_REDIRECT)}`}
                 onClick={() => markHomepageExampleRevealPending()}
-                className="inline-flex items-center justify-center rounded-2xl bg-white/10 px-8 py-3.5 text-sm font-semibold text-white transition-all hover:bg-white/[0.14] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/50"
+                className="inline-flex items-center justify-center rounded-organic-md bg-white/[0.08] px-8 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/[0.12] focus-visible:outline-none"
               >
                 Sign in to view answer
               </Link>
             </div>
           ) : (
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm text-slate-400">
-                Pick an option, then submit.
-              </p>
+              <Link
+                href={`/login?redirectTo=${encodeURIComponent(REVEAL_REDIRECT)}`}
+                onClick={() => markHomepageExampleRevealPending()}
+                className="text-sm text-slate-400 transition-colors hover:text-white"
+              >
+                Sign in for more?
+              </Link>
               <button
                 type="button"
                 onClick={handleSubmit}
                 disabled={!selected}
                 className={cn(
-                  "inline-flex items-center justify-center rounded-2xl px-8 py-3.5 text-sm font-semibold transition-all duration-200",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/50",
+                  "inline-flex items-center justify-center rounded-organic-md px-8 py-3.5 text-sm font-semibold transition-colors duration-200",
+                  "border-0 outline-none focus-visible:outline-none",
                   selected
-                    ? "bg-white/10 text-white/90 hover:bg-white/[0.14]"
-                    : "cursor-not-allowed bg-white/[0.06] text-white/40",
+                    ? "bg-white/[0.12] text-white hover:bg-white/[0.16]"
+                    : "cursor-not-allowed bg-white/[0.05] text-white/40",
                 )}
               >
                 Submit
