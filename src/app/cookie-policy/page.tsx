@@ -3,17 +3,15 @@ import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { CookiePreferencesButton } from "@/components/ga/CookiePreferencesButton";
 import { BRAND_CONFIG } from "@/config/brand";
-import { buildSeoMetadata } from "@/lib/seo/config";
+import { buildNoIndexMetadata } from "@/lib/seo/noIndex";
 
-const PATH = "/cookie-policy";
 const TITLE = "Cookie Policy | ESAT Camp";
 const DESCRIPTION =
   "How ESAT Camp uses necessary storage and optional cookies for Google Analytics and Google Ads conversion measurement, and how to withdraw consent.";
 
-export const metadata: Metadata = buildSeoMetadata({
+export const metadata: Metadata = buildNoIndexMetadata({
   title: TITLE,
   description: DESCRIPTION,
-  path: PATH,
 });
 
 export default function CookiePolicyPage() {

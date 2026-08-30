@@ -7,7 +7,7 @@ import {
   isNsaaConversionYear,
   loadNsaaYearPageData,
 } from "@/lib/scoreConverter/nsaaYearConversion";
-import { buildSeoMetadata } from "@/lib/seo/config";
+import { buildNoIndexMetadata } from "@/lib/seo/noIndex";
 
 export const dynamic = "force-static";
 
@@ -27,17 +27,9 @@ export function generateMetadata({
   const data = loadNsaaYearPageData(year);
   if (!data) return { title: "NSAA Score Conversion" };
   const copy = buildNsaaYearPageCopy(data);
-  return buildSeoMetadata({
+  return buildNoIndexMetadata({
     title: copy.title,
     description: copy.description,
-    path: data.path,
-    keywords: [
-      `NSAA ${year} score conversion`,
-      `NSAA ${year} conversion table`,
-      "NSAA raw marks",
-      "NSAA scaled score",
-      ...data.subjectNames.map((subject) => `NSAA ${year} ${subject}`),
-    ],
   });
 }
 

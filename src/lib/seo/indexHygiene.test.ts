@@ -160,37 +160,33 @@ describe("index hygiene: public pages stay indexable", () => {
     );
   });
 
-  it("marks past-paper download SEO routes as noindex, follow except the experiment pages", () => {
+  it("marks past-paper download SEO routes as noindex, follow", () => {
     for (const segments of [
       ["past-papers", "nsaa", "page.tsx"],
       ["past-papers", "engaa", "page.tsx"],
+      ["past-papers", "nsaa", "[year]", "[section]", "page.tsx"],
+      ["past-papers", "engaa", "[year]", "[section]", "page.tsx"],
     ] as const) {
       const source = readAppSource(...segments);
       expect(source).toMatch(/buildNoIndexMetadata|noIndexFollowMetadata/);
       expect(source).not.toMatch(/buildSeoMetadata/);
     }
+  });
 
-    const nsaaDetail = readAppSource(
-      "past-papers",
+  it("marks rolled-back cookie-policy and NSAA year pages as noindex, follow", () => {
+    const cookiePolicy = readAppSource("cookie-policy", "page.tsx");
+    expect(cookiePolicy).toContain("buildNoIndexMetadata");
+    expect(cookiePolicy).not.toContain("buildSeoMetadata");
+
+    const nsaaYear = readAppSource(
+      "tools",
+      "score-converter",
       "nsaa",
       "[year]",
-      "[section]",
       "page.tsx",
     );
-    expect(nsaaDetail).toContain("isIndexablePastPaperExperiment");
-    expect(nsaaDetail).toContain("buildSeoMetadata");
-    expect(nsaaDetail).toContain("buildNoIndexMetadata");
-
-    const engaaDetail = readAppSource(
-      "past-papers",
-      "engaa",
-      "[year]",
-      "[section]",
-      "page.tsx",
-    );
-    expect(engaaDetail).toContain("isIndexablePastPaperExperiment");
-    expect(engaaDetail).toContain("buildSeoMetadata");
-    expect(engaaDetail).toContain("buildNoIndexMetadata");
+    expect(nsaaYear).toContain("buildNoIndexMetadata");
+    expect(nsaaYear).not.toContain("buildSeoMetadata");
   });
 
   it("keeps /esat-past-papers indexable", () => {
@@ -210,11 +206,13 @@ describe("index hygiene: sitemap", () => {
     });
 
     expect(paths).toEqual(PUBLIC_SITEMAP_ENTRIES.map((entry) => entry.path));
-    expect(entries).toHaveLength(41);
+    expect(entries).toHaveLength(35);
     expect(isPublicSitemapPath(APP_ROUTES.scoreConverter)).toBe(true);
-    expect(isPublicSitemapPath(APP_ROUTES.noCalcPractice)).toBe(true);
+    expect(isPublicSitemapPath("/esat-no-calculator-practice")).toBe(true);
     expect(urls).toContain(`${SITE_URL}${APP_ROUTES.scoreConverter}`);
-    expect(urls).toContain(`${SITE_URL}${APP_ROUTES.noCalcPractice}`);
+    expect(urls).toContain(`${SITE_URL}/esat-no-calculator-practice`);
+    expect(isPublicSitemapPath("/cookie-policy")).toBe(false);
+    expect(isPublicSitemapPath("/tools/score-converter/nsaa/2021")).toBe(false);
   });
 
   it("excludes private, auth, app, and testing routes", () => {
@@ -223,19 +221,9 @@ describe("index hygiene: sitemap", () => {
     }
   });
 
-  it("uses per-page lastModified only when a reliable date exists", () => {
+  it("omits lastModified when the baseline has no per-page dates", () => {
     const entries = sitemap();
-    const withLastMod = entries.filter((entry) => entry.lastModified != null);
-    const withoutLastMod = entries.filter((entry) => entry.lastModified == null);
-
-    expect(withLastMod.length).toBeGreaterThan(0);
-    expect(withoutLastMod.length).toBeGreaterThan(0);
-    expect(withLastMod.length).toBeLessThan(entries.length);
-
-    const lastModDates = withLastMod.map((entry) =>
-      entry.lastModified!.toISOString().slice(0, 10),
-    );
-    expect(new Set(lastModDates).size).toBeGreaterThan(1);
+    expect(entries.every((entry) => entry.lastModified == null)).toBe(true);
 
     for (const entry of entries) {
       expect(entry).not.toHaveProperty("changeFrequency");

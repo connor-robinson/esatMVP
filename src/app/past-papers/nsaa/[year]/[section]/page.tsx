@@ -3,14 +3,9 @@ import { notFound } from "next/navigation";
 import {
   buildPaperPageMetadata,
   findDownloadPaper,
-  isIndexablePastPaperExperiment,
   PAST_PAPER_DOWNLOADS,
 } from "@/data/pastPapersDownload";
-import {
-  PastPaperDetailContent,
-  PastPaperExperimentDetailContent,
-} from "@/components/pastPapersDownload";
-import { buildSeoMetadata } from "@/lib/seo/config";
+import { PastPaperDetailContent } from "@/components/pastPapersDownload";
 import { buildNoIndexMetadata } from "@/lib/seo/noIndex";
 
 export const dynamic = "force-static";
@@ -33,9 +28,6 @@ export function generateMetadata({
   const paper = findDownloadPaper("nsaa", year, params.section);
   if (!paper) return { title: "NSAA Past Paper" };
   const copy = buildPaperPageMetadata(paper);
-  if (isIndexablePastPaperExperiment(paper)) {
-    return buildSeoMetadata(copy);
-  }
   return buildNoIndexMetadata({
     title: copy.title,
     description: copy.description,
@@ -51,15 +43,6 @@ export default function NsaaPaperPage({
   if (!Number.isFinite(year)) notFound();
   const paper = findDownloadPaper("nsaa", year, params.section);
   if (!paper) notFound();
-
-  if (isIndexablePastPaperExperiment(paper)) {
-    return (
-      <PastPaperExperimentDetailContent
-        paper={paper}
-        path={buildPaperPageMetadata(paper).path}
-      />
-    );
-  }
 
   return <PastPaperDetailContent paper={paper} />;
 }

@@ -12,7 +12,8 @@ import {
   nsaaYearPagePath,
 } from "@/lib/scoreConverter/nsaaYearConversion";
 import { EXACT_CONVERSION_ENTRIES } from "@/lib/scoreConverter/pastPaperConverterLinks";
-import { buildSeoMetadata, SITE_URL } from "@/lib/seo/config";
+import { SITE_URL } from "@/lib/seo/config";
+import { buildNoIndexMetadata } from "@/lib/seo/noIndex";
 import { isPublicSitemapPath } from "@/lib/seo/publicSitemap";
 import sitemap from "@/app/sitemap";
 
@@ -99,18 +100,11 @@ describe("NSAA year conversion pages", () => {
     expect(copy.description).toContain("Mathematics");
     expect(copy.h1).toBe("NSAA 2021 Score Conversion");
 
-    const metadata = buildSeoMetadata({
+    const metadata = buildNoIndexMetadata({
       title: copy.title,
       description: copy.description,
-      path: data.path,
     });
-    expect(metadata.alternates?.canonical).toBe(
-      `${SITE_URL}/tools/score-converter/nsaa/2021`,
-    );
-    expect(metadata.robots).toEqual({ index: true, follow: true });
-    expect(metadata.alternates?.canonical).not.toBe(
-      `${SITE_URL}/tools/score-converter`,
-    );
+    expect(metadata.robots).toEqual({ index: false, follow: true });
   });
 
   it("wires adjacent years and full converter prefills", () => {
@@ -129,16 +123,17 @@ describe("NSAA year conversion pages", () => {
     );
   });
 
-  it("includes every NSAA year page in the sitemap and excludes 2016", () => {
+  it("excludes NSAA year pages from the sitemap while keeping 2016 blocked", () => {
     for (const year of getNsaaConversionYears()) {
-      expect(isPublicSitemapPath(nsaaYearPagePath(year))).toBe(true);
+      expect(isPublicSitemapPath(nsaaYearPagePath(year))).toBe(false);
     }
     expect(isPublicSitemapPath("/tools/score-converter/nsaa/2016")).toBe(false);
 
     const urls = sitemap().map((entry) => entry.url);
     for (const year of getNsaaConversionYears()) {
-      expect(urls).toContain(`${SITE_URL}${nsaaYearPagePath(year)}`);
+      expect(urls).not.toContain(`${SITE_URL}${nsaaYearPagePath(year)}`);
     }
     expect(urls).not.toContain(`${SITE_URL}/tools/score-converter/nsaa/2016`);
+    expect(isPublicSitemapPath("/tools/score-converter/nsaa")).toBe(true);
   });
 });
