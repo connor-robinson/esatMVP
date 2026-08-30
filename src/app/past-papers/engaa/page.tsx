@@ -10,12 +10,16 @@ import {
 } from "@/components/pastPapersDownload";
 import { Container } from "@/components/layout/Container";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { buildSeoMetadata, breadcrumbSchema, SEO_ROUTES } from "@/lib/seo/config";
+import { buildNoIndexMetadata } from "@/lib/seo/noIndex";
+import { breadcrumbSchema, SEO_ROUTES } from "@/lib/seo/config";
 
 const EXAM = "ENGAA" as const;
 const meta = buildExamHubMetadata(EXAM);
 
-export const metadata: Metadata = buildSeoMetadata(meta);
+export const metadata: Metadata = buildNoIndexMetadata({
+  title: meta.title,
+  description: meta.description,
+});
 
 export default function EngaaPastPapersPage() {
   const papers = papersByExam(EXAM);

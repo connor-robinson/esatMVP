@@ -159,6 +159,27 @@ describe("index hygiene: public pages stay indexable", () => {
       "buildSeoMetadata",
     );
   });
+
+  it("marks new past-paper download SEO routes as noindex, follow", () => {
+    for (const segments of [
+      ["past-papers", "nsaa", "layout.tsx"],
+      ["past-papers", "engaa", "layout.tsx"],
+      ["past-papers", "nsaa", "page.tsx"],
+      ["past-papers", "engaa", "page.tsx"],
+      ["past-papers", "nsaa", "[year]", "[section]", "page.tsx"],
+      ["past-papers", "engaa", "[year]", "[section]", "page.tsx"],
+    ] as const) {
+      const source = readAppSource(...segments);
+      expect(source).toMatch(/buildNoIndexMetadata|noIndexFollowMetadata/);
+      expect(source).not.toMatch(/buildSeoMetadata/);
+    }
+  });
+
+  it("keeps /esat-past-papers indexable", () => {
+    const page = readAppSource("esat-past-papers", "page.tsx");
+    expect(page).toContain("buildSeoMetadata");
+    expect(page).not.toContain("buildNoIndexMetadata");
+  });
 });
 
 describe("index hygiene: sitemap", () => {
@@ -171,6 +192,7 @@ describe("index hygiene: sitemap", () => {
     });
 
     expect(paths).toEqual(PUBLIC_SITEMAP_ENTRIES.map((entry) => entry.path));
+    expect(entries).toHaveLength(43);
     expect(isPublicSitemapPath(APP_ROUTES.scoreConverter)).toBe(true);
     expect(urls).toContain(`${SITE_URL}${APP_ROUTES.scoreConverter}`);
   });

@@ -190,17 +190,7 @@ export const MAIN_DOWNLOAD_PAGE_METADATA = {
   ],
 };
 
-export function getPastPaperDownloadSitemapPaths(): string[] {
-  const paths = [
-    MAIN_DOWNLOAD_PAGE_METADATA.path,
-    ...DOWNLOAD_EXAMS.map((exam) => examHubPath(exam)),
-    ...PAST_PAPER_DOWNLOADS.map((paper) => pastPaperPagePath(paper)),
-  ];
-  return [...new Set(paths)];
-}
-
 /** Papers listed in data but whose PDF file is not in the local archive. */
-/** Known gaps in the local PDF archive (not listed on the download pages). */
 export const MISSING_PDF_ASSETS: readonly {
   paper: string;
   missing: "question-paper" | "answers" | "both";

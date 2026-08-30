@@ -6,7 +6,7 @@ import {
   PAST_PAPER_DOWNLOADS,
 } from "@/data/pastPapersDownload";
 import { PastPaperDetailContent } from "@/components/pastPapersDownload";
-import { buildSeoMetadata } from "@/lib/seo/config";
+import { buildNoIndexMetadata } from "@/lib/seo/noIndex";
 
 export const dynamic = "force-static";
 
@@ -27,7 +27,11 @@ export function generateMetadata({
   const year = Number(params.year);
   const paper = findDownloadPaper("engaa", year, params.section);
   if (!paper) return { title: "ENGAA Past Paper" };
-  return buildSeoMetadata(buildPaperPageMetadata(paper));
+  const copy = buildPaperPageMetadata(paper);
+  return buildNoIndexMetadata({
+    title: copy.title,
+    description: copy.description,
+  });
 }
 
 export default function EngaaPaperPage({
