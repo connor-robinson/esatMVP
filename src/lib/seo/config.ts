@@ -90,6 +90,7 @@ export const SEO_ROUTES = {
   physics: "/esat-physics",
   calculatorRules: "/esat-calculator-rules",
   goodScore: "/good-esat-score",
+  noCalcPractice: "/esat-no-calculator-practice",
   whiteboard: "/esat-whiteboard",
   questionBankGuide: "/is-esat-a-question-bank",
   universityRequirements: "/esat-university-requirements",

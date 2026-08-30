@@ -129,11 +129,11 @@ describe("index hygiene: public pages stay indexable", () => {
     const noCalc = buildSeoMetadata({
       title: "ESAT No-Calculator Practice",
       description: "Practice",
-      path: APP_ROUTES.noCalcPractice,
+      path: SEO_ROUTES.noCalcPractice,
     });
     expect(noCalc.robots).toEqual({ index: true, follow: true });
     expect(noCalc.alternates?.canonical).toBe(
-      buildCanonicalUrl(APP_ROUTES.noCalcPractice),
+      buildCanonicalUrl(SEO_ROUTES.noCalcPractice),
     );
 
     const questionBankGuide = buildSeoMetadata({
@@ -149,8 +149,11 @@ describe("index hygiene: public pages stay indexable", () => {
 
   it("wires public landings and score converter to indexable metadata", () => {
     expect(readAppSource("page.tsx")).toMatch(/index:\s*true/);
-    expect(readAppSource("mental-maths", "drill", "page.tsx")).toContain(
+    expect(readAppSource("esat-no-calculator-practice", "page.tsx")).toContain(
       "buildSeoMetadata",
+    );
+    expect(readAppSource("mental-maths", "drill", "layout.tsx")).toContain(
+      "noIndexFollowMetadata",
     );
     expect(readAppSource("is-esat-a-question-bank", "page.tsx")).toContain(
       "buildSeoMetadata",

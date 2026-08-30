@@ -21,10 +21,6 @@ const SEO_CONSOLIDATION_REDIRECTS: readonly {
   },
   { source: "/esat-breaks", destination: "/esat-test-day" },
   { source: "/esat-common-mistakes", destination: "/esat-preparation" },
-  {
-    source: "/esat-no-calculator-practice",
-    destination: "/mental-maths/drill",
-  },
 ];
 
 async function loadRedirects(): Promise<RedirectRule[]> {

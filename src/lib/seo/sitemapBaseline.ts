@@ -28,7 +28,7 @@ export const APPROVED_SITEMAP_BASELINE: readonly PublicSitemapEntry[] = [
   { path: SEO_ROUTES.goodScore },
   { path: SEO_ROUTES.calculatorRules },
   { path: SEO_ROUTES.testDay },
-  { path: "/esat-no-calculator-practice" },
+  { path: SEO_ROUTES.noCalcPractice },
   { path: "/esat-common-mistakes" },
   { path: SEO_ROUTES.universityRequirements },
   { path: SEO_ROUTES.cambridgeRequirements },
