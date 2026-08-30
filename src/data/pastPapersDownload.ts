@@ -21,7 +21,57 @@ export type PastPaperDownload = {
   answersUrl?: string;
 };
 
+export type PastPaperSpecimen = {
+  id: string;
+  exam: DownloadExam;
+  editionYear: number;
+  section: "Section 1" | "Section 2";
+  sectionSlug: "section-1" | "section-2";
+  title: string;
+  paperUrl?: string;
+  answersUrl?: string;
+};
+
+export type PastPaperSpecification = {
+  id: string;
+  exam: DownloadExam;
+  year: number;
+  title: string;
+  url?: string;
+};
+
+export type PastPaperCompactTable = {
+  id: string;
+  heading: string;
+  rows: PastPaperCompactTableRow[];
+  columns: "paper-answers" | "specification";
+};
+
+export type PastPaperCompactTableRow = {
+  id: string;
+  label: string;
+  detailHref?: string;
+  paperUrl?: string;
+  answersUrl?: string;
+  specificationUrl?: string;
+};
+
 const PDF_ROOT = "/downloads/past-papers";
+
+function specimenPdf(
+  exam: "engaa" | "nsaa",
+  section: "section-1" | "section-2",
+  editionYear: number,
+  kind: "paper" | "answer-key",
+): string {
+  const sectionNum = section === "section-1" ? "1" : "2";
+  const kindLabel = kind === "paper" ? "paper" : "answer-key";
+  return `${PDF_ROOT}/${exam}/${section}/specimen/${exam}-specimen-${editionYear}-section-${sectionNum}-${kindLabel}.pdf`;
+}
+
+function specificationPdf(exam: "engaa" | "nsaa", year: number): string {
+  return `${PDF_ROOT}/${exam}/specifications/${year}/${exam}-${year}-specification.pdf`;
+}
 
 function pdf(exam: "engaa" | "nsaa", section: "section-1" | "section-2", year: number | "specimen", kind: "paper" | "answer-key"): string {
   const yearSegment = year === "specimen" ? "specimen" : String(year);
@@ -77,6 +127,59 @@ export const PAST_PAPER_DOWNLOADS: readonly PastPaperDownload[] = [
   ...([2022, 2021, 2020] as const).map((year) => makePaper("NSAA", year, 2, true)),
   ...([2019, 2018, 2017, 2016] as const).map((year) => makePaper("NSAA", year, 2, false)),
 ];
+
+const NSAA_SPECIMEN_EDITIONS = [
+  { editionYear: 2022, sectionNum: 2 as const, hasPaper: false, hasAnswers: false },
+  { editionYear: 2020, sectionNum: 2 as const, hasPaper: true, hasAnswers: true },
+  { editionYear: 2020, sectionNum: 1 as const, hasPaper: false, hasAnswers: false },
+  { editionYear: 2016, sectionNum: 2 as const, hasPaper: true, hasAnswers: false },
+  { editionYear: 2016, sectionNum: 1 as const, hasPaper: false, hasAnswers: false },
+] as const;
+
+/** NSAA specimen papers (edition year + section). */
+export const NSAA_SPECIMEN_DOWNLOADS: readonly PastPaperSpecimen[] =
+  NSAA_SPECIMEN_EDITIONS.map(({ editionYear, sectionNum, hasPaper, hasAnswers }) => {
+    const section = sectionNum === 1 ? "Section 1" : "Section 2";
+    const sectionSlug = sectionNum === 1 ? "section-1" : "section-2";
+    const legacyPaperUrl =
+      sectionNum === 2
+        ? `${PDF_ROOT}/nsaa/section-2/specimen/nsaa-specimen-section-2-paper.pdf`
+        : undefined;
+    const legacyAnswersUrl =
+      editionYear === 2020 && sectionNum === 2
+        ? `${PDF_ROOT}/nsaa/section-2/specimen/nsaa-specimen-section-2-answer-key.pdf`
+        : undefined;
+
+    return {
+      id: `nsaa-specimen-${editionYear}-s${sectionNum}`,
+      exam: "NSAA" as const,
+      editionYear,
+      section,
+      sectionSlug,
+      title: `NSAA Specimen ${editionYear} ${section}`,
+      ...(hasPaper
+        ? { paperUrl: legacyPaperUrl ?? specimenPdf("nsaa", sectionSlug, editionYear, "paper") }
+        : {}),
+      ...(hasAnswers
+        ? {
+            answersUrl:
+              legacyAnswersUrl ?? specimenPdf("nsaa", sectionSlug, editionYear, "answer-key"),
+          }
+        : {}),
+    };
+  });
+
+const NSAA_SPECIFICATION_YEARS = [2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016] as const;
+
+/** NSAA specification PDFs by exam year. */
+export const NSAA_SPECIFICATION_DOWNLOADS: readonly PastPaperSpecification[] =
+  NSAA_SPECIFICATION_YEARS.map((year) => ({
+    id: `nsaa-specification-${year}`,
+    exam: "NSAA",
+    year,
+    title: `NSAA ${year} Specification`,
+    url: specificationPdf("nsaa", year),
+  }));
 
 export const DOWNLOAD_EXAMS: readonly DownloadExam[] = ["NSAA", "ENGAA"];
 
@@ -167,6 +270,72 @@ export function getPastPaperSectionGroups(options?: {
       };
     })
     .filter((group): group is PastPaperSectionGroup => group !== null);
+}
+
+function papersToCompactRows(papers: PastPaperDownload[]): PastPaperCompactTableRow[] {
+  return papers.map((paper) => ({
+    id: paper.id,
+    label: String(paper.year),
+    detailHref: pastPaperPagePath(paper),
+    paperUrl: paper.paperUrl,
+    answersUrl: paper.answersUrl,
+  }));
+}
+
+/** NSAA download tables for the compact 2-column layout. */
+export function getNsaaCompactTables(): PastPaperCompactTable[] {
+  const section1 = papersByExam("NSAA")
+    .filter((paper) => paper.section === "Section 1")
+    .sort((a, b) => b.year - a.year);
+  const section2 = papersByExam("NSAA")
+    .filter((paper) => paper.section === "Section 2")
+    .sort((a, b) => b.year - a.year);
+
+  return [
+    {
+      id: "nsaa-section-1",
+      heading: "NSAA Section 1 Past Papers (2016 – 2023)",
+      columns: "paper-answers",
+      rows: papersToCompactRows(section1),
+    },
+    {
+      id: "nsaa-section-2",
+      heading: "NSAA Section 2 Past Papers (2016 – 2023)",
+      columns: "paper-answers",
+      rows: papersToCompactRows(section2),
+    },
+    {
+      id: "nsaa-specimens",
+      heading: "NSAA Specimen Papers",
+      columns: "paper-answers",
+      rows: NSAA_SPECIMEN_DOWNLOADS.map((specimen) => ({
+        id: specimen.id,
+        label: `${specimen.editionYear} ${specimen.section}`,
+        paperUrl: specimen.paperUrl,
+        answersUrl: specimen.answersUrl,
+      })),
+    },
+    {
+      id: "nsaa-specifications",
+      heading: "NSAA Specifications (all years)",
+      columns: "specification",
+      rows: NSAA_SPECIFICATION_DOWNLOADS.map((specification) => ({
+        id: specification.id,
+        label: String(specification.year),
+        specificationUrl: specification.url,
+      })),
+    },
+  ];
+}
+
+/** ENGAA section tables for the compact 2-column layout. */
+export function getEngaaCompactTables(): PastPaperCompactTable[] {
+  return getPastPaperSectionGroups({ exam: "ENGAA" }).map((group) => ({
+    id: `${group.exam.toLowerCase()}-${group.section.toLowerCase().replace(" ", "-")}`,
+    heading: group.heading,
+    columns: "paper-answers" as const,
+    rows: papersToCompactRows(group.papers),
+  }));
 }
 
 export function papersByExam(exam: DownloadExam): PastPaperDownload[] {
