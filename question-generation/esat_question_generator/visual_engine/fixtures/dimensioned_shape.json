@@ -1,0 +1,46 @@
+{
+  "spec_version": "1.0",
+  "needs_diagram": true,
+  "diagram_type": "geometry",
+  "diagram_id": "d1",
+  "not_to_scale": true,
+  "coordinate_system": {
+    "x_min": 0,
+    "x_max": 10,
+    "y_min": 0,
+    "y_max": 7,
+    "equal_aspect": true,
+    "show_axes": false
+  },
+  "objects": [
+    {
+      "id": "rect",
+      "type": "polygon",
+      "points": [[2, 2], [7, 2], [7, 5], [2, 5]],
+      "fill": false
+    },
+    {
+      "id": "width_dim",
+      "type": "dimension_line",
+      "start": [2, 2],
+      "end": [7, 2],
+      "offset": 0.55,
+      "direction": "below"
+    },
+    {
+      "id": "height_dim",
+      "type": "dimension_line",
+      "start": [7, 2],
+      "end": [7, 5],
+      "offset": 0.55,
+      "direction": "right"
+    }
+  ],
+  "labels": [
+    {"id": "width_label", "text": "5 cm", "anchor": [4.5, 1.2], "preferred_position": "below"},
+    {"id": "height_label", "text": "3 cm", "anchor": [7.9, 3.5], "preferred_position": "right"}
+  ],
+  "annotations": [
+    {"type": "caption", "text": "Diagram not to scale", "position": "bottom_center"}
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "spec_version": "1.0",
+  "needs_diagram": true,
+  "diagram_type": "graph",
+  "diagram_id": "g1",
+  "not_to_scale": false,
+  "coordinate_system": {
+    "x_min": -0.5,
+    "x_max": 5.5,
+    "y_min": -0.5,
+    "y_max": 9,
+    "equal_aspect": true,
+    "show_axes": true
+  },
+  "objects": [
+    {
+      "id": "axes",
+      "type": "axes",
+      "x_label": "x",
+      "y_label": "y"
+    },
+    {
+      "id": "parabola",
+      "type": "function",
+      "expr": "x**2",
+      "domain": [0, 3],
+      "samples": 120
+    }
+  ],
+  "labels": [
+    {"id": "curve_label", "text": "y = x^2", "anchor": [2.5, 7.2], "preferred_position": "right"},
+    {"id": "origin", "text": "O", "anchor": [0.1, 0.55], "preferred_position": "right"}
+  ],
+  "annotations": []
+}

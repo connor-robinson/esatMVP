@@ -1,0 +1,59 @@
+{
+  "spec_version": "1.0",
+  "needs_diagram": true,
+  "diagram_type": "geometry",
+  "diagram_id": "d1",
+  "not_to_scale": true,
+  "coordinate_system": {
+    "x_min": 0,
+    "x_max": 10,
+    "y_min": 0,
+    "y_max": 8,
+    "equal_aspect": true,
+    "show_axes": false
+  },
+  "objects": [
+    {
+      "id": "circle",
+      "type": "circle",
+      "center": [4, 4],
+      "radius": 2,
+      "fill": false
+    },
+    {
+      "id": "radius",
+      "type": "line",
+      "start": [4, 4],
+      "end": [4, 6],
+      "style": "dashed"
+    },
+    {
+      "id": "tangent",
+      "type": "line",
+      "start": [1, 6],
+      "end": [7, 6],
+      "style": "solid"
+    },
+    {
+      "id": "tangency",
+      "type": "point",
+      "at": [4, 6],
+      "size": 5
+    },
+    {
+      "id": "right_t",
+      "type": "right_angle_marker",
+      "vertex": [4, 6],
+      "leg1": [7, 6],
+      "leg2": [4, 4]
+    }
+  ],
+  "labels": [
+    {"id": "center_o", "text": "O", "anchor": [4, 4], "preferred_position": "lower_left"},
+    {"id": "point_t", "text": "T", "anchor": [4, 6], "preferred_position": "above"},
+    {"id": "radius_r", "text": "r", "anchor": [3.75, 5], "preferred_position": "left"}
+  ],
+  "annotations": [
+    {"type": "caption", "text": "Diagram not to scale", "position": "bottom_center"}
+  ]
+}

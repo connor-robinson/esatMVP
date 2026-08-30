@@ -1,0 +1,49 @@
+{
+  "spec_version": "1.0",
+  "needs_diagram": true,
+  "diagram_type": "geometry",
+  "diagram_id": "d1",
+  "not_to_scale": true,
+  "coordinate_system": {
+    "x_min": 0,
+    "x_max": 10,
+    "y_min": 0,
+    "y_max": 7,
+    "equal_aspect": true,
+    "show_axes": false
+  },
+  "objects": [
+    {
+      "id": "quad",
+      "type": "polygon",
+      "points": [[2, 1.2], [7.5, 1], [8.2, 4], [3, 3.6]],
+      "fill": false
+    },
+    {
+      "id": "angle_b",
+      "type": "angle_arc",
+      "vertex": [7.5, 1],
+      "point1": [2, 1.2],
+      "point2": [8.2, 4],
+      "radius": 0.55
+    },
+    {
+      "id": "equal_sides",
+      "type": "equal_length_ticks",
+      "seg1_start": [2, 1.2],
+      "seg1_end": [7.5, 1],
+      "seg2_start": [3, 3.6],
+      "seg2_end": [8.2, 4]
+    }
+  ],
+  "labels": [
+    {"id": "angle_label", "text": "θ", "anchor": [7.1, 1.55], "preferred_position": "above"},
+    {"id": "vertex_a", "text": "A", "anchor": [2, 1.2], "preferred_position": "below"},
+    {"id": "vertex_b", "text": "B", "anchor": [7.5, 1], "preferred_position": "below"},
+    {"id": "vertex_c", "text": "C", "anchor": [8.2, 4], "preferred_position": "right"},
+    {"id": "vertex_d", "text": "D", "anchor": [3, 3.6], "preferred_position": "left"}
+  ],
+  "annotations": [
+    {"type": "caption", "text": "Diagram not to scale", "position": "bottom_center"}
+  ]
+}

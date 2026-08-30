@@ -1,0 +1,46 @@
+{
+  "spec_version": "1.0",
+  "needs_diagram": true,
+  "diagram_type": "geometry",
+  "diagram_id": "d1",
+  "not_to_scale": true,
+  "coordinate_system": {
+    "x_min": 0,
+    "x_max": 10,
+    "y_min": 0,
+    "y_max": 7,
+    "equal_aspect": true,
+    "show_axes": false
+  },
+  "objects": [
+    {
+      "id": "tri",
+      "type": "polygon",
+      "points": [[2, 1], [8, 1], [5, 5.2]],
+      "fill": false
+    },
+    {
+      "id": "height",
+      "type": "line",
+      "start": [5, 5.2],
+      "end": [5, 1],
+      "style": "dashed"
+    },
+    {
+      "id": "right_h",
+      "type": "right_angle_marker",
+      "vertex": [5, 1],
+      "leg1": [8, 1],
+      "leg2": [5, 5.2]
+    }
+  ],
+  "labels": [
+    {"id": "side_a", "text": "a", "anchor": [3.5, 0.65], "preferred_position": "below"},
+    {"id": "side_b", "text": "b", "anchor": [6.5, 0.65], "preferred_position": "below"},
+    {"id": "side_c", "text": "c", "anchor": [6.6, 3.1], "preferred_position": "right"},
+    {"id": "height_h", "text": "h", "anchor": [5.15, 3.1], "preferred_position": "right"}
+  ],
+  "annotations": [
+    {"type": "caption", "text": "Diagram not to scale", "position": "bottom_center"}
+  ]
+}
