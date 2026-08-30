@@ -10,6 +10,7 @@ import pytest
 from visual_engine import DiagramLayoutError, VisualSpecError, parse_spec, render_diagram
 from visual_engine.collision.geometry import segment_intersects_rect
 from visual_engine.schema import SPEC_VERSION
+from visual_engine.text_format import format_label_text
 
 FIXTURES_DIR = Path(__file__).resolve().parent.parent / "fixtures"
 OUTPUT_DIR = Path(__file__).resolve().parent / "output"
@@ -22,6 +23,17 @@ def _load_fixture(name: str) -> dict:
 @pytest.fixture(scope="session", autouse=True)
 def _ensure_output_dir():
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+
+class TestTextFormat:
+    def test_math_label_wraps_mathtext(self):
+        assert format_label_text("y=x^2", math=True) == "$y=x^2$"
+
+    def test_latex_inline_delimiters(self):
+        assert format_label_text(r"\(y=x^2\)", math=False) == "$y=x^2$"
+
+    def test_auto_detects_math_hints(self):
+        assert format_label_text("x^2").startswith("$")
 
 
 class TestSchema:
@@ -67,7 +79,9 @@ class TestRenderer:
         assert result.dpi == 220
         assert result.renderer == "matplotlib_diagram_v1"
         assert result.label_placements is not None
-        assert len(result.label_placements) == len(spec["labels"])
+        assert len(result.label_placements) == len(spec["labels"]) + sum(
+            1 for a in spec.get("annotations", []) if str(a.get("type")).lower() == "caption"
+        ) + (2 if any(o.get("type") == "axes" for o in spec.get("objects", [])) else 0)
 
     def test_render_fails_on_impossible_label_layout(self):
         spec = {

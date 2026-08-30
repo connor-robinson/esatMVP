@@ -37,7 +37,7 @@
     }
   ],
   "labels": [
-    {"id": "angle_label", "text": "θ", "anchor": [7.1, 1.55], "preferred_position": "above"},
+    {"id": "angle_label", "text": "\\theta", "anchor": [7.1, 1.55], "preferred_position": "above", "math": true},
     {"id": "vertex_a", "text": "A", "anchor": [2, 1.2], "preferred_position": "below"},
     {"id": "vertex_b", "text": "B", "anchor": [7.5, 1], "preferred_position": "below"},
     {"id": "vertex_c", "text": "C", "anchor": [8.2, 4], "preferred_position": "right"},

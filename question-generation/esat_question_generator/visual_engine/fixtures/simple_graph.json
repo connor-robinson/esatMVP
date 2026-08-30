@@ -28,8 +28,8 @@
     }
   ],
   "labels": [
-    {"id": "curve_label", "text": "y = x^2", "anchor": [2.5, 7.2], "preferred_position": "right"},
-    {"id": "origin", "text": "O", "anchor": [0.1, 0.55], "preferred_position": "right"}
+    {"id": "curve_label", "text": "y=x^2", "anchor": [2.5, 7.2], "preferred_position": "right", "math": true},
+    {"id": "origin", "text": "O", "anchor": [0.35, 0.9], "preferred_position": "right"}
   ],
   "annotations": []
 }

@@ -37,7 +37,7 @@
     }
   ],
   "labels": [
-    {"id": "width_label", "text": "5 cm", "anchor": [4.5, 1.2], "preferred_position": "below"},
+    {"id": "width_label", "text": "5 cm", "anchor": [4.5, 1.05], "preferred_position": "below"},
     {"id": "height_label", "text": "3 cm", "anchor": [7.9, 3.5], "preferred_position": "right"}
   ],
   "annotations": [

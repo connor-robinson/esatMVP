@@ -30,7 +30,16 @@ def _eval_expr(expr: str, x: float) -> float:
     return float(eval(expr, {"__builtins__": {}}, allowed))  # noqa: S307
 
 
-def draw_axes(ax: Axes, obj: dict, style: ExamStyle, cs, obstacles: ObstacleSet) -> None:
+def draw_axes(
+    ax: Axes,
+    obj: dict,
+    style: ExamStyle,
+    cs,
+    obstacles: ObstacleSet,
+    extra_labels: list | None = None,
+) -> None:
+    from ..labels import axis_label_specs
+
     x_min, x_max = cs.x_min, cs.x_max
     y_min, y_max = cs.y_min, cs.y_max
     ax.spines["left"].set_position(("data", 0))
@@ -42,10 +51,8 @@ def draw_axes(ax: Axes, obj: dict, style: ExamStyle, cs, obstacles: ObstacleSet)
     obstacles.add_segment(x_min, 0, x_max, 0, kind="axis")
     obstacles.add_segment(0, y_min, 0, y_max, kind="axis")
 
-    x_label = str(obj.get("x_label") or "x")
-    y_label = str(obj.get("y_label") or "y")
-    ax.text(x_max, 0, f"  {x_label}", va="center", ha="left", fontsize=style.font_size, color=style.stroke)
-    ax.text(0, y_max, f"  {y_label}", va="bottom", ha="center", fontsize=style.font_size, color=style.stroke)
+    if extra_labels is not None:
+        extra_labels.extend(axis_label_specs(obj, cs))
 
 
 def draw_function(ax: Axes, obj: dict, style: ExamStyle, obstacles: ObstacleSet, y_min: float | None = None, y_max: float | None = None) -> None:

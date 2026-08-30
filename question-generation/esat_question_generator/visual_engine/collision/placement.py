@@ -74,9 +74,11 @@ def label_collides(
     bounds: tuple[float, float, float, float],
     label_gap: float,
     segment_clearance: float,
+    role: str = "label",
 ) -> list[str]:
     issues: list[str] = []
     inflated = inflate_rect(rect, label_gap)
+    is_caption = role == "caption"
 
     bx0, by0, bx1, by1 = bounds
     if rect[0] < bx0 or rect[1] < by0 or rect[2] > bx1 or rect[3] > by1:
@@ -86,11 +88,22 @@ def label_collides(
         if rects_overlap(inflated, inflate_rect(other, label_gap)):
             issues.append("label")
 
+    if is_caption:
+        return issues
+
+    if role == "axis":
+        for seg in obstacles.segments:
+            if seg.kind == "axis":
+                continue
+            if segment_intersects_rect(seg.x1, seg.y1, seg.x2, seg.y2, inflated):
+                issues.append(f"segment:{seg.kind}")
+        return issues
+
     for seg in obstacles.segments:
         if segment_intersects_rect(seg.x1, seg.y1, seg.x2, seg.y2, inflated):
             issues.append(f"segment:{seg.kind}")
             continue
-        if seg.kind in {"function", "circle", "arc", "angle_arc"}:
+        if seg.kind in {"function", "circle", "arc", "angle_arc", "axis"}:
             continue
         clearance = point_segment_distance(
             0.5 * (rect[0] + rect[2]),
@@ -105,12 +118,12 @@ def label_collides(
             issues.append(f"segment_near:{seg.kind}")
 
     for pt in obstacles.points:
-        cx = 0.5 * (rect[0] + rect[2])
-        cy = 0.5 * (rect[1] + rect[3])
-        dist = math.hypot(cx - pt.x, cy - pt.y)
-        half_diag = 0.5 * math.hypot(rect[2] - rect[0], rect[3] - rect[1])
-        if dist - half_diag < pt.radius + label_gap:
-            issues.append(f"point:{pt.kind}")
+            cx = 0.5 * (rect[0] + rect[2])
+            cy = 0.5 * (rect[1] + rect[3])
+            dist = math.hypot(cx - pt.x, cy - pt.y)
+            half_diag = 0.5 * math.hypot(rect[2] - rect[0], rect[3] - rect[1])
+            if dist - half_diag < pt.radius + label_gap:
+                issues.append(f"point:{pt.kind}")
 
     return issues
 

@@ -34,6 +34,7 @@ class LabelArtist:
     preferred_position: str
     artist: Text
     candidate_index: int = 0
+    role: str = "label"  # label | caption | axis
 
 
 @dataclass
@@ -77,6 +78,7 @@ def resolve_label_collisions(
                 bounds=bounds,
                 label_gap=label_gap,
                 segment_clearance=segment_clearance,
+                role=lbl.role,
             )
             if not issues:
                 continue
@@ -103,6 +105,7 @@ def resolve_label_collisions(
                     bounds=bounds,
                     label_gap=label_gap,
                     segment_clearance=segment_clearance,
+                    role=lbl.role,
                 )
                 score = score_candidate(trial_rect, lbl.anchor, trial_issues)
                 if score > best_score:
@@ -133,6 +136,7 @@ def resolve_label_collisions(
             bounds=bounds,
             label_gap=label_gap,
             segment_clearance=segment_clearance,
+            role=lbl.role,
         )
         if issues:
             remaining.append(f"{lbl.label_id}: {', '.join(issues)}")

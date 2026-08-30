@@ -25,12 +25,18 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
 
 
-def draw_objects(ax: Axes, spec: VisualSpec, style: ExamStyle, obstacles: ObstacleSet) -> None:
+def draw_objects(
+    ax: Axes,
+    spec: VisualSpec,
+    style: ExamStyle,
+    obstacles: ObstacleSet,
+    extra_labels: list | None = None,
+) -> None:
     cs = spec.coordinate_system
     span = max(cs.x_max - cs.x_min, cs.y_max - cs.y_min)
 
     if cs.show_axes and not any(str(o.get("type")) == "axes" for o in spec.objects):
-        draw_axes(ax, {"x_label": "x", "y_label": "y"}, style, cs, obstacles)
+        draw_axes(ax, {"x_label": "x", "y_label": "y"}, style, cs, obstacles, extra_labels)
 
     for obj in spec.objects:
         obj_type = str(obj.get("type") or "").lower()
@@ -57,4 +63,4 @@ def draw_objects(ax: Axes, spec: VisualSpec, style: ExamStyle, obstacles: Obstac
         elif obj_type == "function":
             draw_function(ax, obj, style, obstacles, y_min=cs.y_min, y_max=cs.y_max)
         elif obj_type == "axes":
-            draw_axes(ax, obj, style, cs, obstacles)
+            draw_axes(ax, obj, style, cs, obstacles, extra_labels)

@@ -11,8 +11,9 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from .collision import LabelArtist, ObstacleSet, resolve_label_collisions
+from .collision import ObstacleSet, resolve_label_collisions
 from .errors import DiagramLayoutError, VisualSpecError
+from .labels import collect_label_specs, create_label_artists
 from .objects import draw_objects
 from .schema import VisualSpec, parse_spec
 from .style import DEFAULT_STYLE, ExamStyle
@@ -42,64 +43,6 @@ def _setup_axes(fig, ax, spec: VisualSpec) -> None:
     ax.set_facecolor("white")
 
 
-def _draw_annotations(ax, spec: VisualSpec, style: ExamStyle) -> None:
-    cs = spec.coordinate_system
-    for ann in spec.annotations:
-        if str(ann.get("type") or "").lower() != "caption":
-            continue
-        text = str(ann.get("text") or "")
-        position = str(ann.get("position") or "bottom_center").lower()
-        x = 0.5 * (cs.x_min + cs.x_max)
-        y = cs.y_min + 0.04 * (cs.y_max - cs.y_min)
-        ha = "center"
-        if position == "bottom_left":
-            x = cs.x_min + 0.02 * (cs.x_max - cs.x_min)
-            ha = "left"
-        elif position == "bottom_right":
-            x = cs.x_max - 0.02 * (cs.x_max - cs.x_min)
-            ha = "right"
-        ax.text(
-            x,
-            y,
-            text,
-            ha=ha,
-            va="bottom",
-            fontsize=max(style.font_size - 1.0, 8.0),
-            color="#444444",
-            style="italic",
-            fontfamily=style.font_family,
-        )
-
-
-def _create_labels(ax, spec: VisualSpec, style: ExamStyle) -> list[LabelArtist]:
-    labels: list[LabelArtist] = []
-    for idx, lbl in enumerate(spec.labels):
-        label_id = str(lbl.get("id") or f"label_{idx + 1}")
-        text = str(lbl["text"])
-        anchor = (float(lbl["anchor"][0]), float(lbl["anchor"][1]))
-        preferred = str(lbl.get("preferred_position") or "center")
-        artist = ax.text(
-            anchor[0],
-            anchor[1],
-            text,
-            ha="center",
-            va="center",
-            fontsize=style.font_size,
-            color=style.stroke,
-            fontfamily=style.font_family,
-        )
-        labels.append(
-            LabelArtist(
-                label_id=label_id,
-                text=text,
-                anchor=anchor,
-                preferred_position=preferred,
-                artist=artist,
-            )
-        )
-    return labels
-
-
 def render_diagram(
     spec: VisualSpec | dict[str, Any],
     out_path: str | Path,
@@ -117,13 +60,14 @@ def render_diagram(
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     obstacles = ObstacleSet()
+    extra_labels: list[dict[str, Any]] = []
     fig, ax = plt.subplots(figsize=style.figsize, facecolor=style.background)
     try:
         _setup_axes(fig, ax, spec)
-        draw_objects(ax, spec, style, obstacles)
-        labels = _create_labels(ax, spec, style)
+        draw_objects(ax, spec, style, obstacles, extra_labels)
+        label_specs = collect_label_specs(spec, extra_labels)
+        labels = create_label_artists(ax, label_specs, style)
         resolve_label_collisions(fig, ax, labels, obstacles, style)
-        _draw_annotations(ax, spec, style)
 
         fig.savefig(
             out_path,

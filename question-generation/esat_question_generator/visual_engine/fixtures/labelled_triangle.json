@@ -35,8 +35,8 @@
     }
   ],
   "labels": [
-    {"id": "side_a", "text": "a", "anchor": [3.5, 0.65], "preferred_position": "below"},
-    {"id": "side_b", "text": "b", "anchor": [6.5, 0.65], "preferred_position": "below"},
+    {"id": "side_a", "text": "a", "anchor": [3.5, 0.85], "preferred_position": "below"},
+    {"id": "side_b", "text": "b", "anchor": [6.5, 0.85], "preferred_position": "below"},
     {"id": "side_c", "text": "c", "anchor": [6.6, 3.1], "preferred_position": "right"},
     {"id": "height_h", "text": "h", "anchor": [5.15, 3.1], "preferred_position": "right"}
   ],
