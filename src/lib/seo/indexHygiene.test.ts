@@ -160,19 +160,37 @@ describe("index hygiene: public pages stay indexable", () => {
     );
   });
 
-  it("marks new past-paper download SEO routes as noindex, follow", () => {
+  it("marks past-paper download SEO routes as noindex, follow except the experiment pages", () => {
     for (const segments of [
-      ["nsaa-past-papers", "layout.tsx"],
-      ["engaa-past-papers", "layout.tsx"],
-      ["nsaa-past-papers", "page.tsx"],
-      ["engaa-past-papers", "page.tsx"],
-      ["nsaa-past-papers", "[year]", "[section]", "page.tsx"],
-      ["engaa-past-papers", "[year]", "[section]", "page.tsx"],
+      ["past-papers", "nsaa", "page.tsx"],
+      ["past-papers", "engaa", "page.tsx"],
     ] as const) {
       const source = readAppSource(...segments);
       expect(source).toMatch(/buildNoIndexMetadata|noIndexFollowMetadata/);
       expect(source).not.toMatch(/buildSeoMetadata/);
     }
+
+    const nsaaDetail = readAppSource(
+      "past-papers",
+      "nsaa",
+      "[year]",
+      "[section]",
+      "page.tsx",
+    );
+    expect(nsaaDetail).toContain("isIndexablePastPaperExperiment");
+    expect(nsaaDetail).toContain("buildSeoMetadata");
+    expect(nsaaDetail).toContain("buildNoIndexMetadata");
+
+    const engaaDetail = readAppSource(
+      "past-papers",
+      "engaa",
+      "[year]",
+      "[section]",
+      "page.tsx",
+    );
+    expect(engaaDetail).toContain("isIndexablePastPaperExperiment");
+    expect(engaaDetail).toContain("buildSeoMetadata");
+    expect(engaaDetail).toContain("buildNoIndexMetadata");
   });
 
   it("keeps /esat-past-papers indexable", () => {

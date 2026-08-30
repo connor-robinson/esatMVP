@@ -5,10 +5,12 @@ import {
 import {
   PastPaperDownloadSections,
   PastPaperGuideContent,
+  PastPaperYearRelevanceSection,
 } from "@/components/pastPapersDownload";
 import { SeoPageLayout } from "@/components/seo/SeoPageLayout";
 import { SeoSection, SeoTextLink } from "@/components/seo/SeoSections";
 import { articleSchema, buildSeoMetadata, SEO_ROUTES } from "@/lib/seo/config";
+import { seoLinks } from "@/lib/seo/links";
 
 const PATH = MAIN_DOWNLOAD_PAGE_METADATA.path;
 
@@ -47,6 +49,8 @@ export default function EsatPastPapersPage() {
       </SeoSection>
 
       <PastPaperDownloadSections />
+
+      <PastPaperYearRelevanceSection />
 
       <PastPaperGuideContent />
     </SeoPageLayout>

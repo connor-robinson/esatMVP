@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 import sitemap from "@/app/sitemap";
-import { PAST_PAPER_DOWNLOADS } from "@/data/pastPapersDownload";
+import {
+  findDownloadPaper,
+  INDEXABLE_PAST_PAPER_EXPERIMENT_IDS,
+  isIndexablePastPaperExperiment,
+  pastPaperPagePath,
+  PAST_PAPER_DOWNLOADS,
+  buildPaperPageMetadata,
+} from "@/data/pastPapersDownload";
 import { PUBLIC_SITEMAP_ENTRIES } from "@/lib/seo/publicSitemap";
 import {
   APPROVED_SITEMAP_BASELINE,
@@ -11,7 +18,8 @@ import {
   formatSitemapBaselineFailure,
   sitemapMatchesBaseline,
 } from "@/lib/seo/sitemapBaselineGuard";
-import { SEO_ROUTES } from "@/lib/seo/config";
+import { buildSeoMetadata, SEO_ROUTES, SITE_URL } from "@/lib/seo/config";
+import { buildNoIndexMetadata } from "@/lib/seo/noIndex";
 
 describe("sitemap baseline guard", () => {
   it("matches the approved baseline exactly", () => {
@@ -31,14 +39,14 @@ describe("sitemap baseline guard", () => {
     const diff = diffSitemapAgainstBaseline(
       [
         ...PUBLIC_SITEMAP_ENTRIES,
-        { path: "/nsaa-past-papers/2021/section-1" },
+        { path: "/past-papers/nsaa/2021/section-1" },
       ],
       APPROVED_SITEMAP_BASELINE,
     );
-    expect(diff.added).toContain("/nsaa-past-papers/2021/section-1");
+    expect(diff.added).toContain("/past-papers/nsaa/2021/section-1");
     expect(formatSitemapBaselineFailure(diff)).toContain("SITEMAP CHANGE DETECTED");
     expect(formatSitemapBaselineFailure(diff)).toContain(
-      "+ /nsaa-past-papers/2021/section-1",
+      "+ /past-papers/nsaa/2021/section-1",
     );
   });
 
@@ -52,14 +60,73 @@ describe("sitemap baseline guard", () => {
 
   it("does not include past-paper download SEO routes", () => {
     for (const paper of PAST_PAPER_DOWNLOADS) {
-      const path = `/nsaa-past-papers/${paper.year}/${paper.sectionSlug}`;
+      const path = pastPaperPagePath(paper);
       expect(APPROVED_SITEMAP_BASELINE_PATHS).not.toContain(path);
     }
-    expect(APPROVED_SITEMAP_BASELINE_PATHS).not.toContain("/nsaa-past-papers");
-    expect(APPROVED_SITEMAP_BASELINE_PATHS).not.toContain("/engaa-past-papers");
+    expect(APPROVED_SITEMAP_BASELINE_PATHS).not.toContain("/past-papers/nsaa");
+    expect(APPROVED_SITEMAP_BASELINE_PATHS).not.toContain("/past-papers/engaa");
   });
 
   it("keeps /esat-past-papers in the approved baseline", () => {
     expect(APPROVED_SITEMAP_BASELINE_PATHS).toContain(SEO_ROUTES.pastPapers);
+  });
+
+  it("does not include the indexing experiment detail pages", () => {
+    for (const id of INDEXABLE_PAST_PAPER_EXPERIMENT_IDS) {
+      const paper = PAST_PAPER_DOWNLOADS.find((item) => item.id === id);
+      expect(paper).toBeDefined();
+      const path = pastPaperPagePath(paper!);
+      expect(APPROVED_SITEMAP_BASELINE_PATHS).not.toContain(path);
+      expect(sitemap().map((entry) => entry.url)).not.toContain(
+        `${SITE_URL}${path}`,
+      );
+    }
+  });
+
+  it("cannot expand the sitemap when past-paper data grows", () => {
+    expect(PAST_PAPER_DOWNLOADS.length).toBeGreaterThan(0);
+    expect(sitemap()).toHaveLength(43);
+    expect(PUBLIC_SITEMAP_ENTRIES).toHaveLength(43);
+  });
+});
+
+describe("indexing experiment metadata", () => {
+  it("marks NSAA 2021 Section 1 as index, follow with self-referencing canonical", () => {
+    const paper = findDownloadPaper("nsaa", 2021, "section-1");
+    expect(paper).toBeDefined();
+    expect(isIndexablePastPaperExperiment(paper!)).toBe(true);
+
+    const copy = buildPaperPageMetadata(paper!);
+    const metadata = buildSeoMetadata(copy);
+    expect(metadata.robots).toEqual({ index: true, follow: true });
+    expect(metadata.alternates?.canonical).toBe(
+      "https://esatcamp.com/past-papers/nsaa/2021/section-1",
+    );
+  });
+
+  it("marks ENGAA 2021 Section 1 as index, follow with self-referencing canonical", () => {
+    const paper = findDownloadPaper("engaa", 2021, "section-1");
+    expect(paper).toBeDefined();
+    expect(isIndexablePastPaperExperiment(paper!)).toBe(true);
+
+    const copy = buildPaperPageMetadata(paper!);
+    const metadata = buildSeoMetadata(copy);
+    expect(metadata.robots).toEqual({ index: true, follow: true });
+    expect(metadata.alternates?.canonical).toBe(
+      "https://esatcamp.com/past-papers/engaa/2021/section-1",
+    );
+  });
+
+  it("keeps NSAA 2022 Section 1 as noindex, follow", () => {
+    const paper = findDownloadPaper("nsaa", 2022, "section-1");
+    expect(paper).toBeDefined();
+    expect(isIndexablePastPaperExperiment(paper!)).toBe(false);
+
+    const copy = buildPaperPageMetadata(paper!);
+    const metadata = buildNoIndexMetadata({
+      title: copy.title,
+      description: copy.description,
+    });
+    expect(metadata.robots).toEqual({ index: false, follow: true });
   });
 });

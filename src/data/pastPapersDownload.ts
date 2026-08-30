@@ -87,6 +87,23 @@ export type PastPaperSectionGroup = {
   papers: PastPaperDownload[];
 };
 
+/** Small indexing experiment: index only these two detail pages (not in sitemap). */
+export const INDEXABLE_PAST_PAPER_EXPERIMENT_IDS = [
+  "nsaa-2021-s1",
+  "engaa-2021-s1",
+] as const;
+
+export type IndexablePastPaperExperimentId =
+  (typeof INDEXABLE_PAST_PAPER_EXPERIMENT_IDS)[number];
+
+export function isIndexablePastPaperExperiment(
+  paper: PastPaperDownload,
+): paper is PastPaperDownload & { id: IndexablePastPaperExperimentId } {
+  return (INDEXABLE_PAST_PAPER_EXPERIMENT_IDS as readonly string[]).includes(
+    paper.id,
+  );
+}
+
 export function pastPaperPagePath(paper: PastPaperDownload): string {
   const hub =
     paper.exam === "NSAA"

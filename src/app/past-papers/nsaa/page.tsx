@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import {
-  buildExamHubMetadata,
-} from "@/data/pastPapersDownload";
+import { buildExamHubMetadata } from "@/data/pastPapersDownload";
 import {
   PastPaperDownloadSections,
   PastPaperGuideContent,

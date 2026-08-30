@@ -88,23 +88,23 @@ const nextConfig = {
         permanent: false,
       },
       {
-        source: "/past-papers/nsaa",
-        destination: "/nsaa-past-papers",
+        source: "/nsaa-past-papers",
+        destination: "/past-papers/nsaa",
         permanent: true,
       },
       {
-        source: "/past-papers/engaa",
-        destination: "/engaa-past-papers",
+        source: "/engaa-past-papers",
+        destination: "/past-papers/engaa",
         permanent: true,
       },
       {
-        source: "/past-papers/nsaa/:year/:section",
-        destination: "/nsaa-past-papers/:year/:section",
+        source: "/nsaa-past-papers/:year/:section",
+        destination: "/past-papers/nsaa/:year/:section",
         permanent: true,
       },
       {
-        source: "/past-papers/engaa/:year/:section",
-        destination: "/engaa-past-papers/:year/:section",
+        source: "/engaa-past-papers/:year/:section",
+        destination: "/past-papers/engaa/:year/:section",
         permanent: true,
       },
     ];
