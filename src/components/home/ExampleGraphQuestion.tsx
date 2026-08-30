@@ -4,26 +4,24 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { InlineKatex } from "@/components/home/InlineKatex";
+import { CameraDistanceGraph } from "@/components/home/CameraDistanceGraph";
 import { markHomepageExampleRevealPending } from "@/lib/homepage/exampleQuestion";
 import {
-  MainReciprocalGraph,
-  OPTION_GRAPHS,
-  OptionReciprocalGraph,
-  type OptionGraphId,
-} from "@/components/home/ReciprocalQuestionGraphs";
+  CAMERA_DISTANCE_EXPLANATION,
+  CORRECT_CAMERA_CURVE,
+  type CurveId,
+} from "@/lib/homepage/cameraDistanceCurves";
 
 type SubmitPhase = "idle" | "submitted";
 
+const OPTION_IDS: CurveId[] = ["A", "B", "C", "D"];
 const REVEAL_REDIRECT = "/dashboard?reveal_example=1";
 
-const PROMPT_F_OF_X = String.raw`y = f(x)`;
-const PROMPT_RECIPROCAL = String.raw`\frac{1}{f(x)}`;
-
 export function ExampleGraphQuestion({ className }: { className?: string }) {
-  const [selected, setSelected] = useState<OptionGraphId | null>(null);
+  const [selected, setSelected] = useState<CurveId | null>(null);
   const [phase, setPhase] = useState<SubmitPhase>("idle");
 
-  const handleSelect = useCallback((id: OptionGraphId) => {
+  const handleSelect = useCallback((id: CurveId) => {
     setSelected(id);
     setPhase("idle");
   }, []);
@@ -32,6 +30,8 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
     if (!selected) return;
     setPhase("submitted");
   }, [selected]);
+
+  const isCorrect = phase === "submitted" && selected === CORRECT_CAMERA_CURVE;
 
   return (
     <div
@@ -56,113 +56,108 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
           Example question
         </p>
 
-        <div className="mt-5 grid grid-cols-1 gap-3">
-          <div className="w-full max-w-none text-sm leading-snug text-slate-200 sm:text-[15px]">
-            <p className="w-full">
-              The graph shown is{" "}
-              <InlineKatex latex={PROMPT_F_OF_X} fallback="y = f(x)" />.
-              {" "}Which graph could represent{" "}
-              <InlineKatex latex={PROMPT_RECIPROCAL} fallback="y = 1/f(x)" />
-              ?
+        <div className="mt-5 grid grid-cols-1 gap-6 min-[560px]:grid-cols-[0.75fr_1.25fr] min-[560px]:gap-7">
+          <div className="min-w-0 text-[22px] leading-[1.45] text-slate-200 sm:text-[23px]">
+            <p>A person of fixed height stands directly in front of a camera.</p>
+            <p className="mt-3">
+              They move further away from the camera. The camera position and
+              zoom do not change.
+            </p>
+            <p className="mt-3">
+              Which labelled curve could show the height{" "}
+              <InlineKatex latex="H" fallback="H" /> of their image in the photo
+              against distance{" "}
+              <InlineKatex latex="d" fallback="d" /> from the camera?
             </p>
           </div>
 
-          <div className="h-[210px] w-full sm:h-[228px]">
-            <MainReciprocalGraph className="h-full w-full" />
+          <div className="min-h-[220px] w-full min-[560px]:min-h-[300px]">
+            <CameraDistanceGraph className="h-full w-full" />
           </div>
         </div>
 
-        <div className="my-4 border-t border-white/10" aria-hidden />
+        <div className="my-5 border-t border-white/10 sm:my-6" aria-hidden />
 
-        <div>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
           <div
-            className="flex snap-x snap-mandatory gap-2.5 overflow-x-auto scroll-smooth pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            role="radiogroup"
+            className="grid grid-cols-2 gap-2 min-[480px]:grid-cols-4 sm:max-w-[17rem] sm:gap-2.5"
+            role="group"
             aria-label="Answer options"
           >
-            {OPTION_GRAPHS.map((option) => {
-              const isSelected = selected === option.id;
+            {OPTION_IDS.map((id) => {
+              const isSelected = selected === id;
 
               return (
                 <button
-                  key={option.id}
+                  key={id}
                   type="button"
-                  role="radio"
-                  aria-checked={isSelected}
-                  onClick={() => handleSelect(option.id)}
+                  aria-pressed={isSelected}
+                  onClick={() => handleSelect(id)}
                   className={cn(
-                    "group relative flex w-[calc(50%-5px)] shrink-0 snap-start flex-col overflow-hidden rounded-[18px] border text-left transition-all duration-200",
-                    "min-h-[148px] bg-[#101a2d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/50",
+                    "inline-flex h-11 items-center justify-center rounded-2xl text-sm font-semibold transition-all duration-200",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/50",
                     isSelected
-                      ? "border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_0_20px_rgba(59,130,246,0.14)]"
-                      : "border-white/10 hover:-translate-y-px hover:border-white/22",
+                      ? "border border-[#3B82F6]/55 bg-white/[0.08] text-white shadow-[0_0_18px_rgba(59,130,246,0.16)]"
+                      : "border border-white/10 bg-white/[0.05] text-slate-300 hover:border-white/22 hover:text-white",
                   )}
                 >
-                  <span
-                    className={cn(
-                      "absolute left-3 top-3 z-10 inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-bold",
-                      isSelected
-                        ? "bg-white/15 text-white"
-                        : "bg-white/[0.07] text-slate-300",
-                    )}
-                  >
-                    {option.id}
-                  </span>
-                  <div className="flex flex-1 items-stretch px-2 pb-1.5 pt-8">
-                    <OptionReciprocalGraph
-                      option={option}
-                      className="h-full w-full min-h-[108px]"
-                    />
-                  </div>
+                  {id}
                 </button>
               );
             })}
           </div>
-          <p className="mt-1.5 text-xs text-slate-500">Scroll right for more options.</p>
-        </div>
 
-        {phase === "submitted" ? (
-          <div className="mt-5 rounded-2xl bg-white/[0.06] px-5 py-4 sm:px-6 sm:py-5">
-            <p className="text-sm font-semibold text-white">Answer locked in.</p>
-            <p className="mt-1 text-sm text-slate-400">
-              Sign in to view whether you got it right and see the worked
-              solution.
-            </p>
-            <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center">
-              <Link
-                href={`/login?redirectTo=${encodeURIComponent(REVEAL_REDIRECT)}`}
-                onClick={() => markHomepageExampleRevealPending()}
-                className="inline-flex items-center justify-center rounded-2xl bg-white/10 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-white/[0.14]"
+          <div className="flex flex-col gap-2 sm:items-end">
+            {phase === "submitted" ? (
+              <div
+                className={cn(
+                  "rounded-2xl px-4 py-3 text-sm leading-relaxed sm:max-w-sm sm:text-right",
+                  isCorrect
+                    ? "bg-emerald-500/10 text-emerald-100"
+                    : "bg-amber-500/10 text-amber-100",
+                )}
               >
-                Sign in to view answer
-              </Link>
-              <Link
-                href={`/login?mode=signup&redirectTo=${encodeURIComponent(REVEAL_REDIRECT)}`}
-                onClick={() => markHomepageExampleRevealPending()}
-                className="inline-flex items-center justify-center rounded-2xl px-4 py-3 text-sm font-semibold text-slate-400 transition-colors hover:text-white"
-              >
-                Sign up for free
-              </Link>
-            </div>
+                <p className="font-semibold text-white">
+                  {isCorrect ? "Correct." : "Not quite."}
+                </p>
+                <p className="mt-1 text-slate-300">
+                  {isCorrect
+                    ? CAMERA_DISTANCE_EXPLANATION
+                    : "Try another curve, or sign in for the full worked solution."}
+                </p>
+                {!isCorrect ? (
+                  <Link
+                    href={`/login?redirectTo=${encodeURIComponent(REVEAL_REDIRECT)}`}
+                    onClick={() => markHomepageExampleRevealPending()}
+                    className="mt-2 inline-flex text-sm font-semibold text-white/85 underline-offset-2 hover:text-white hover:underline"
+                  >
+                    Sign in to view answer
+                  </Link>
+                ) : null}
+              </div>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={handleSubmit}
+                  disabled={!selected}
+                  className={cn(
+                    "inline-flex items-center justify-center rounded-2xl px-8 py-3.5 text-sm font-semibold transition-all duration-200",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/50",
+                    selected
+                      ? "bg-white/10 text-white/90 hover:bg-white/[0.14]"
+                      : "cursor-not-allowed bg-white/[0.06] text-white/40",
+                  )}
+                >
+                  Submit
+                </button>
+                <p className="text-sm text-slate-400">
+                  Pick an option, then submit.
+                </p>
+              </>
+            )}
           </div>
-        ) : (
-          <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={!selected}
-              className={cn(
-                "inline-flex items-center justify-center rounded-2xl px-8 py-3.5 text-sm font-semibold transition-all duration-200",
-                selected
-                  ? "bg-white/10 text-white/90 hover:bg-white/[0.14]"
-                  : "cursor-not-allowed bg-white/[0.06] text-white/40",
-              )}
-            >
-              Submit
-            </button>
-            <p className="text-sm text-slate-400">Pick an option, then submit.</p>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );

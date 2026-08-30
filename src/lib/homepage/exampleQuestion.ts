@@ -1,28 +1,24 @@
 export const HOMEPAGE_EXAMPLE_REVEAL_KEY = "homepage_example_reveal";
 
 export const HOMEPAGE_EXAMPLE_QUESTION = {
-  id: "laser-exclusion-zone",
+  id: "camera-distance-graph",
   promptMarkdown: [
-    "A laser beam follows the line $y = 2x + c$.",
+    "A person of fixed height stands directly in front of a camera.",
     "",
-    "For safety, it must just touch the edge of a circular exclusion zone centred at the origin with equation:",
+    "They move further away from the camera. The camera position and zoom do not change.",
     "",
-    "$x^2 + y^2 = 20$",
-    "",
-    "What is $c^2$?",
+    "Which labelled curve could show the height $H$ of their image in the photo against distance $d$ from the camera?",
   ].join("\n"),
   options: [
-    { label: "A", text: "20" },
-    { label: "B", text: "40" },
-    { label: "C", text: "60" },
-    { label: "D", text: "80" },
-    { label: "E", text: "100" },
-    { label: "F", text: "200" },
+    { label: "A", text: "Reciprocal decay" },
+    { label: "B", text: "Linear decrease" },
+    { label: "C", text: "Rapid exponential decay" },
+    { label: "D", text: "Increasing curve" },
   ] as const,
-  correctLabel: "E" as const,
-  correctValue: "100",
+  correctLabel: "A" as const,
+  correctValue: "A",
   explanationMarkdown:
-    "The line $2x - y + c = 0$ is tangent to $x^2 + y^2 = 20$, so the distance from the origin equals the radius:\n\n$\\dfrac{|c|}{\\sqrt{5}} = \\sqrt{20} = 2\\sqrt{5}$\n\n$|c| = 10$, so $c^2 = 100$.",
+    "With a fixed camera, image height is inversely proportional to distance: $H \\propto \\dfrac{1}{d}$.\n\nCurve A decreases steeply at first, stays positive, and approaches zero without reaching it.",
 };
 
 export function markHomepageExampleRevealPending() {
