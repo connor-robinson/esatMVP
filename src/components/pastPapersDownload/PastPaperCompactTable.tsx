@@ -82,8 +82,10 @@ export function PastPaperCompactTable({ table }: Props) {
                       {row.answersUrl ? (
                         <PastPaperCompactDownloadLink
                           href={row.answersUrl}
-                          label="Answer Key"
-                          ariaLabel={`Download ${row.label} answer key PDF`}
+                          label={row.answersLabel ?? "Answer Key"}
+                          ariaLabel={`Download ${row.label} ${
+                            row.answersLabel ?? "answer key"
+                          } PDF`}
                         />
                       ) : (
                         <UnavailableCell />

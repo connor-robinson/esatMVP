@@ -10,6 +10,9 @@ import { SEO_ROUTES } from "@/lib/seo/config";
 
 export type DownloadExam = "NSAA" | "ENGAA";
 
+/** Secondary PDF linked beside the question paper. */
+export type PastPaperAnswersKind = "answer-key" | "solutions";
+
 export type PastPaperDownload = {
   id: string;
   exam: DownloadExam;
@@ -19,6 +22,8 @@ export type PastPaperDownload = {
   title: string;
   paperUrl: string;
   answersUrl?: string;
+  /** NSAA 2016–2019 Section 2 uses worked/model solutions, not MCQ keys. */
+  answersKind?: PastPaperAnswersKind;
 };
 
 export type PastPaperSpecimen = {
@@ -30,6 +35,7 @@ export type PastPaperSpecimen = {
   title: string;
   paperUrl?: string;
   answersUrl?: string;
+  answersKind?: PastPaperAnswersKind;
 };
 
 export type PastPaperSpecification = {
@@ -53,8 +59,16 @@ export type PastPaperCompactTableRow = {
   detailHref?: string;
   paperUrl?: string;
   answersUrl?: string;
+  /** Defaults to "Answer Key" in the compact table. */
+  answersLabel?: string;
   specificationUrl?: string;
 };
+
+export function answersDownloadLabel(
+  kind: PastPaperAnswersKind | undefined = "answer-key",
+): string {
+  return kind === "solutions" ? "Solutions" : "Answer Key";
+}
 
 const PDF_ROOT = "/downloads/past-papers";
 
@@ -85,16 +99,31 @@ function pdf(exam: "engaa" | "nsaa", section: "section-1" | "section-2", year: n
   return `${PDF_ROOT}/${prefix}/${section}/${yearSegment}/${filename}`;
 }
 
+function workedSolutionsPdf(
+  exam: "engaa" | "nsaa",
+  section: "section-1" | "section-2",
+  year: number,
+): string {
+  const sectionNum = section === "section-1" ? "1" : "2";
+  return `${PDF_ROOT}/${exam}/${section}/${year}/${exam}-${year}-section-${sectionNum}-worked-solutions.pdf`;
+}
+
 function makePaper(
   exam: DownloadExam,
   year: number,
   sectionNum: 1 | 2,
   hasAnswers: boolean,
+  answersKind: PastPaperAnswersKind = "answer-key",
 ): PastPaperDownload {
   const examLower = exam.toLowerCase() as "engaa" | "nsaa";
   const sectionSlug = sectionNum === 1 ? "section-1" : "section-2";
   const section = sectionNum === 1 ? "Section 1" : "Section 2";
   const id = `${examLower}-${year}-s${sectionNum}`;
+  const answersUrl = !hasAnswers
+    ? undefined
+    : answersKind === "solutions"
+      ? workedSolutionsPdf(examLower, sectionSlug, year)
+      : pdf(examLower, sectionSlug, year, "answer-key");
   return {
     id,
     exam,
@@ -103,7 +132,7 @@ function makePaper(
     sectionSlug,
     title: `${exam} ${year} ${section}`,
     paperUrl: pdf(examLower, sectionSlug, year, "paper"),
-    ...(hasAnswers ? { answersUrl: pdf(examLower, sectionSlug, year, "answer-key") } : {}),
+    ...(answersUrl ? { answersUrl, answersKind } : {}),
   };
 }
 
@@ -113,7 +142,7 @@ export const PAST_PAPER_DOWNLOADS: readonly PastPaperDownload[] = [
   ...([2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016] as const).map((year) =>
     makePaper("ENGAA", year, 1, true),
   ),
-  // ENGAA Section 2 (2021–2022 answer keys not in the local archive)
+  // ENGAA Section 2 (2021–2022 answer keys and 2023 paper still unresolved)
   makePaper("ENGAA", 2022, 2, false),
   makePaper("ENGAA", 2021, 2, false),
   ...([2020, 2019, 2018, 2017, 2016] as const).map((year) =>
@@ -123,22 +152,43 @@ export const PAST_PAPER_DOWNLOADS: readonly PastPaperDownload[] = [
   ...([2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016] as const).map((year) =>
     makePaper("NSAA", year, 1, true),
   ),
-  // NSAA Section 2 (2016–2019 answer keys not in the local archive)
+  // NSAA Section 2: 2016–2019 use worked/model solutions (long-form papers)
   ...([2022, 2021, 2020] as const).map((year) => makePaper("NSAA", year, 2, true)),
-  ...([2019, 2018, 2017, 2016] as const).map((year) => makePaper("NSAA", year, 2, false)),
+  ...([2019, 2018, 2017, 2016] as const).map((year) =>
+    makePaper("NSAA", year, 2, true, "solutions"),
+  ),
 ];
 
 const NSAA_SPECIMEN_EDITIONS = [
   { editionYear: 2022, sectionNum: 2 as const, hasPaper: false, hasAnswers: false },
   { editionYear: 2020, sectionNum: 2 as const, hasPaper: true, hasAnswers: true },
-  { editionYear: 2020, sectionNum: 1 as const, hasPaper: false, hasAnswers: false },
-  { editionYear: 2016, sectionNum: 2 as const, hasPaper: true, hasAnswers: false },
-  { editionYear: 2016, sectionNum: 1 as const, hasPaper: false, hasAnswers: false },
+  {
+    editionYear: 2020,
+    sectionNum: 1 as const,
+    hasPaper: true,
+    hasAnswers: true,
+  },
+  {
+    editionYear: 2016,
+    sectionNum: 2 as const,
+    hasPaper: true,
+    hasAnswers: true,
+    answersKind: "solutions" as const,
+  },
+  {
+    editionYear: 2016,
+    sectionNum: 1 as const,
+    hasPaper: true,
+    hasAnswers: true,
+  },
 ] as const;
 
 /** NSAA specimen papers (edition year + section). */
 export const NSAA_SPECIMEN_DOWNLOADS: readonly PastPaperSpecimen[] =
-  NSAA_SPECIMEN_EDITIONS.map(({ editionYear, sectionNum, hasPaper, hasAnswers }) => {
+  NSAA_SPECIMEN_EDITIONS.map((edition) => {
+    const { editionYear, sectionNum, hasPaper, hasAnswers } = edition;
+    const answersKind =
+      "answersKind" in edition ? edition.answersKind : ("answer-key" as const);
     const section = sectionNum === 1 ? "Section 1" : "Section 2";
     const sectionSlug = sectionNum === 1 ? "section-1" : "section-2";
     const legacyPaperUrl =
@@ -149,6 +199,10 @@ export const NSAA_SPECIMEN_DOWNLOADS: readonly PastPaperSpecimen[] =
       editionYear === 2020 && sectionNum === 2
         ? `${PDF_ROOT}/nsaa/section-2/specimen/nsaa-specimen-section-2-answer-key.pdf`
         : undefined;
+    const solutionsUrl =
+      answersKind === "solutions"
+        ? `${PDF_ROOT}/nsaa/${sectionSlug}/specimen/nsaa-specimen-${editionYear}-section-${sectionNum}-worked-solutions.pdf`
+        : undefined;
 
     return {
       id: `nsaa-specimen-${editionYear}-s${sectionNum}`,
@@ -158,17 +212,26 @@ export const NSAA_SPECIMEN_DOWNLOADS: readonly PastPaperSpecimen[] =
       sectionSlug,
       title: `NSAA Specimen ${editionYear} ${section}`,
       ...(hasPaper
-        ? { paperUrl: legacyPaperUrl ?? specimenPdf("nsaa", sectionSlug, editionYear, "paper") }
+        ? {
+            paperUrl:
+              legacyPaperUrl ??
+              specimenPdf("nsaa", sectionSlug, editionYear, "paper"),
+          }
         : {}),
       ...(hasAnswers
         ? {
             answersUrl:
-              legacyAnswersUrl ?? specimenPdf("nsaa", sectionSlug, editionYear, "answer-key"),
+              solutionsUrl ??
+              legacyAnswersUrl ??
+              specimenPdf("nsaa", sectionSlug, editionYear, "answer-key"),
+            answersKind,
           }
         : {}),
     };
   });
 
+/** Years with a verified on-disk specification PDF. */
+const NSAA_SPECIFICATION_YEARS_WITH_PDF = [2018] as const;
 const NSAA_SPECIFICATION_YEARS = [2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016] as const;
 
 /** NSAA specification PDFs by exam year. */
@@ -178,11 +241,13 @@ export const NSAA_SPECIFICATION_DOWNLOADS: readonly PastPaperSpecification[] =
     exam: "NSAA",
     year,
     title: `NSAA ${year} Specification`,
-    url: specificationPdf("nsaa", year),
+    ...((NSAA_SPECIFICATION_YEARS_WITH_PDF as readonly number[]).includes(year)
+      ? { url: specificationPdf("nsaa", year) }
+      : {}),
   }));
 
 const ENGAA_SPECIMEN_EDITIONS = [
-  { sectionNum: 1 as const, hasPaper: false, hasAnswers: false },
+  { sectionNum: 1 as const, hasPaper: true, hasAnswers: true },
   { sectionNum: 2 as const, hasPaper: true, hasAnswers: true },
 ] as const;
 
@@ -224,6 +289,7 @@ export const ENGAA_SPECIMEN_DOWNLOADS: readonly PastPaperSpecimen[] =
     };
   });
 
+const ENGAA_SPECIFICATION_YEARS_WITH_PDF = [2018] as const;
 const ENGAA_SPECIFICATION_YEARS = [2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016] as const;
 
 /** ENGAA specification PDFs by exam year. */
@@ -233,7 +299,9 @@ export const ENGAA_SPECIFICATION_DOWNLOADS: readonly PastPaperSpecification[] =
     exam: "ENGAA",
     year,
     title: `ENGAA ${year} Specification`,
-    url: specificationPdf("engaa", year),
+    ...((ENGAA_SPECIFICATION_YEARS_WITH_PDF as readonly number[]).includes(year)
+      ? { url: specificationPdf("engaa", year) }
+      : {}),
   }));
 
 export const DOWNLOAD_EXAMS: readonly DownloadExam[] = ["NSAA", "ENGAA"];
@@ -334,6 +402,7 @@ function papersToCompactRows(papers: PastPaperDownload[]): PastPaperCompactTable
     detailHref: pastPaperPagePath(paper),
     paperUrl: paper.paperUrl,
     answersUrl: paper.answersUrl,
+    answersLabel: answersDownloadLabel(paper.answersKind),
   }));
 }
 
@@ -343,6 +412,7 @@ function specimensToCompactRows(specimens: readonly PastPaperSpecimen[]): PastPa
     label: specimen.editionYear > 0 ? `Specimen ${specimen.editionYear}` : "Specimen",
     paperUrl: specimen.paperUrl,
     answersUrl: specimen.answersUrl,
+    answersLabel: answersDownloadLabel(specimen.answersKind),
   }));
 }
 
@@ -430,6 +500,7 @@ export function getNsaaCompactTables(): PastPaperCompactTable[] {
         label: `${specimen.editionYear} ${specimen.section}`,
         paperUrl: specimen.paperUrl,
         answersUrl: specimen.answersUrl,
+        answersLabel: answersDownloadLabel(specimen.answersKind),
       })),
     ),
     {
@@ -466,6 +537,7 @@ export function getEngaaCompactTables(): PastPaperCompactTable[] {
         label: specimen.section,
         paperUrl: specimen.paperUrl,
         answersUrl: specimen.answersUrl,
+        answersLabel: answersDownloadLabel(specimen.answersKind),
       })),
     ),
     {
@@ -525,14 +597,20 @@ export function getAdjacentDownloads(paper: PastPaperDownload): {
 
 export function buildPaperPageMetadata(paper: PastPaperDownload) {
   const path = pastPaperPagePath(paper);
+  const answersNoun =
+    paper.answersKind === "solutions" ? "solutions" : "answers";
   return {
-    title: `${paper.title} Past Paper & Answers | ESAT Camp`,
-    description: `Download the ${paper.title} past paper${paper.answersUrl ? " and answers" : ""}. Free PDF resources for students preparing for the ESAT.`,
+    title: `${paper.title} Past Paper & ${
+      paper.answersKind === "solutions" ? "Solutions" : "Answers"
+    } | ESAT Camp`,
+    description: `Download the ${paper.title} past paper${
+      paper.answersUrl ? ` and ${answersNoun}` : ""
+    }. Free PDF resources for students preparing for the ESAT.`,
     path,
     keywords: [
       paper.title,
       `${paper.title} past paper`,
-      `${paper.title} answers`,
+      `${paper.title} ${answersNoun}`,
       `${paper.exam} ${paper.year}`,
       `${paper.exam} past papers PDF`,
       "ESAT preparation",
@@ -581,8 +659,9 @@ export const MISSING_PDF_ASSETS: readonly {
   { paper: "NSAA 2023 Section 2", missing: "both", note: "Not in local archive" },
   { paper: "ENGAA 2022 Section 2", missing: "answers" },
   { paper: "ENGAA 2021 Section 2", missing: "answers" },
-  { paper: "NSAA 2019 Section 2", missing: "answers" },
-  { paper: "NSAA 2018 Section 2", missing: "answers" },
-  { paper: "NSAA 2017 Section 2", missing: "answers" },
-  { paper: "NSAA 2016 Section 2", missing: "answers" },
+  {
+    paper: "NSAA Specimen 2022 Section 2",
+    missing: "both",
+    note: "VerityPrep source unreachable",
+  },
 ];

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {
+  answersDownloadLabel,
   examHubPath,
   getAdjacentDownloads,
   pastPaperPagePath,
@@ -19,6 +20,9 @@ export function PastPaperDetailContent({ paper }: Props) {
   const { previous, next } = getAdjacentDownloads(paper);
   const path = pastPaperPagePath(paper);
   const examHub = examHubPath(paper.exam);
+  const answersLabel = answersDownloadLabel(paper.answersKind);
+  const answersPhrase =
+    paper.answersKind === "solutions" ? "worked solutions" : "answer key";
 
   return (
     <SeoPageLayout
@@ -26,7 +30,9 @@ export function PastPaperDetailContent({ paper }: Props) {
       eyebrow={paper.exam}
       title={`${paper.title} Past Paper`}
       intro={[
-        `Download the ${paper.title} question paper${paper.answersUrl ? " and answer key" : ""} as free PDFs for ESAT preparation.`,
+        `Download the ${paper.title} question paper${
+          paper.answersUrl ? ` and ${answersPhrase}` : ""
+        } as free PDFs for ESAT preparation.`,
       ]}
       related={seoLinks("pastPapers", "pastPapersGuide", "engaaNsaaPapers")}
       schema={breadcrumbSchema([
@@ -46,8 +52,8 @@ export function PastPaperDetailContent({ paper }: Props) {
         {paper.answersUrl ? (
           <PastPaperDownloadButton
             href={paper.answersUrl}
-            label="Download answer key"
-            ariaLabel={`Download ${paper.title} answer key PDF`}
+            label={`Download ${answersLabel.toLowerCase()}`}
+            ariaLabel={`Download ${paper.title} ${answersLabel.toLowerCase()} PDF`}
             variant="primary"
           />
         ) : (
