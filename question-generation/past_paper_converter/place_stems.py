@@ -475,6 +475,8 @@ def place_stems(
             requests,
             model=model_name,
             on_status=on_status,
+            force_live=True,
+            live_workers=2,
         )
 
     for prepared in prepared_rows:

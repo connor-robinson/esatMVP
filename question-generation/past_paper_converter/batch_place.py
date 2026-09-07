@@ -4,9 +4,12 @@ from __future__ import annotations
 
 import base64
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any, Dict, List, Optional
 
-from .config import DEFAULT_BATCH_MODEL
+from google.genai import types
+
+from .config import DEFAULT_BATCH_MODEL, use_vertex_ai
 from .extract import extract_json_object, make_client
 
 PLACE_STEMS_SYSTEM_PROMPT = """You place existing stem diagrams into question text for UK admissions exams (NSAA, ENGAA, TMUA).
@@ -144,6 +147,126 @@ def build_place_batch_request(
     }
 
 
+def _request_to_contents(request: Dict[str, Any]) -> List[Any]:
+    """Convert a batch-style request into generate_content contents."""
+    contents = request.get("contents") or []
+    if not contents:
+        return []
+    parts_in = contents[0].get("parts") or []
+    parts_out: List[Any] = []
+    for part in parts_in:
+        if not isinstance(part, dict):
+            continue
+        if "text" in part and part["text"] is not None:
+            parts_out.append(types.Part.from_text(text=str(part["text"])))
+            continue
+        inline = part.get("inline_data") or part.get("inlineData")
+        if isinstance(inline, dict):
+            data = inline.get("data")
+            mime = inline.get("mime_type") or inline.get("mimeType") or "image/png"
+            if data:
+                raw = base64.b64decode(data) if isinstance(data, str) else data
+                parts_out.append(types.Part.from_bytes(data=raw, mime_type=mime))
+    return [
+        types.Content(role="user", parts=parts_out)
+    ] if parts_out else []
+
+
+def place_one_live(
+    request: Dict[str, Any],
+    *,
+    model: Optional[str] = None,
+    client: Optional[Any] = None,
+) -> Dict[str, Any]:
+    """Run one placement via live generate_content (Vertex-safe)."""
+    api = client or make_client()
+    m = model or DEFAULT_BATCH_MODEL
+    key = str((request.get("metadata") or {}).get("key") or "")
+    contents = _request_to_contents(request)
+    if not contents:
+        return {"error": "empty placement request", "flags": ["live_empty_request"]}
+
+    system_text = PLACE_STEMS_SYSTEM_PROMPT
+    cfg = request.get("config") or {}
+    sys_parts = ((cfg.get("system_instruction") or {}).get("parts") or [])
+    if sys_parts and isinstance(sys_parts[0], dict) and sys_parts[0].get("text"):
+        system_text = str(sys_parts[0]["text"])
+
+    last_err: Optional[Exception] = None
+    for attempt in range(4):
+        try:
+            response = api.models.generate_content(
+                model=m,
+                contents=contents,
+                config=types.GenerateContentConfig(
+                    system_instruction=system_text,
+                    temperature=float(cfg.get("temperature") or 0.1),
+                    response_mime_type="application/json",
+                ),
+            )
+            text = response.text or ""
+            return extract_json_object(text)
+        except Exception as exc:
+            last_err = exc
+            msg = str(exc)
+            if ("429" in msg or "UNAVAILABLE" in msg or "RESOURCE_EXHAUSTED" in msg) and attempt < 3:
+                time.sleep(2 ** attempt * 5)
+                continue
+            if attempt < 3:
+                time.sleep(1 + attempt)
+                continue
+            return {
+                "error": str(exc),
+                "flags": [f"live_place_error:{exc}"],
+                "questionId": key,
+            }
+    return {
+        "error": str(last_err or "live place failed"),
+        "flags": ["live_place_error"],
+        "questionId": key,
+    }
+
+
+def run_live_place(
+    requests: List[Dict[str, Any]],
+    *,
+    model: Optional[str] = None,
+    max_workers: int = 3,
+    on_status: Optional[Any] = None,
+) -> Dict[str, Dict[str, Any]]:
+    """Place stems via live API (parallel workers). Vertex Batch needs GCS."""
+    if not requests:
+        return {}
+
+    client = make_client()
+    m = model or DEFAULT_BATCH_MODEL
+    results: Dict[str, Dict[str, Any]] = {}
+    total = len(requests)
+    done = 0
+
+    def _one(req: Dict[str, Any]) -> tuple[str, Dict[str, Any]]:
+        key = str((req.get("metadata") or {}).get("key") or "")
+        return key, place_one_live(req, model=m, client=client)
+
+    workers = max(1, min(int(max_workers), total))
+    if on_status:
+        on_status("live", f"LIVE_PLACE starting {total} (workers={workers})")
+
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futures = [pool.submit(_one, req) for req in requests]
+        for fut in as_completed(futures):
+            key, payload = fut.result()
+            if key:
+                results[key] = payload
+            done += 1
+            if on_status and (done == total or done % 5 == 0):
+                on_status("live", f"LIVE_PLACE {done}/{total}")
+
+    if on_status:
+        on_status("live", f"LIVE_PLACE done {done}/{total}")
+    return results
+
+
 def run_batch_place(
     requests: List[Dict[str, Any]],
     *,
@@ -152,10 +275,24 @@ def run_batch_place(
     timeout_s: float = 86400.0,
     display_name: str = "past_paper_place_stems",
     on_status: Optional[Any] = None,
+    force_live: bool = False,
+    live_workers: int = 3,
 ) -> Dict[str, Dict[str, Any]]:
-    """Submit placement batch; return {question_id_str: parsed_json_or_error}."""
+    """Submit placement batch; return {question_id_str: parsed_json_or_error}.
+
+    Vertex AI Batch requires a GCS/BigQuery source, so under Vertex we use live
+    generate_content instead (optionally forced via force_live).
+    """
     if not requests:
         return {}
+
+    if force_live or use_vertex_ai():
+        return run_live_place(
+            requests,
+            model=model,
+            max_workers=live_workers,
+            on_status=on_status,
+        )
 
     client = make_client()
     m = model or DEFAULT_BATCH_MODEL
