@@ -25,7 +25,7 @@ export function PastPaperDownloadButton({
         "inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0F1D]",
         variant === "primary"
           ? "bg-[#3B82F6] text-white hover:bg-[#2563EB]"
-          : "bg-white/[0.06] text-white hover:bg-white/[0.1]",
+          : "bg-[#334155] text-[#F8FAFC] hover:bg-[#475569]",
         className,
       )}
     >

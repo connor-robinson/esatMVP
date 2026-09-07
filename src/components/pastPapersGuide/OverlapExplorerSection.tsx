@@ -174,14 +174,14 @@ function UniquePartBTable() {
       </p>
 
       {/* Desktop / tablet table */}
-      <div className="mt-8 hidden overflow-hidden rounded-xl bg-black/20 sm:block">
+      <div className="mt-8 hidden overflow-hidden rounded-2xl bg-[#161D2F] sm:block">
         <table className="w-full text-left text-base">
           <thead>
-            <tr className="bg-white/[0.06]">
-              <th className="w-28 px-5 py-4 font-mono text-sm font-bold uppercase tracking-wide text-[#E2E8F0]">
+            <tr>
+              <th className="w-28 px-5 py-3.5 font-mono text-xs font-semibold uppercase tracking-wide text-[#94A3B8]">
                 Year
               </th>
-              <th className="px-5 py-4 text-sm font-bold uppercase tracking-wide text-[#E2E8F0]">
+              <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wide text-[#94A3B8]">
                 Unique question numbers
               </th>
             </tr>
@@ -190,14 +190,12 @@ function UniquePartBTable() {
             {years.map(([year, questions], index) => (
               <tr
                 key={year}
-                className={cn(
-                  index % 2 === 0 ? "bg-white/[0.03]" : "bg-white/[0.07]",
-                )}
+                className={index % 2 === 0 ? "bg-white/[0.035]" : undefined}
               >
-                <td className="px-5 py-6 align-middle font-mono text-xl font-bold text-white">
+                <td className="px-5 py-4 align-middle font-mono text-xl font-bold text-[#F1F5F9]">
                   {year}
                 </td>
-                <td className="px-5 py-6 align-middle">
+                <td className="px-5 py-4 align-middle">
                   <div className="flex flex-wrap gap-2.5">
                     {questions.map((q) => (
                       <QuestionPill key={q} n={q} />

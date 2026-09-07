@@ -321,15 +321,15 @@ export function ResponsiveTable({
   return (
     <figure className={cn("m-0", className)}>
       <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
-        <div className={cn("overflow-hidden rounded-2xl bg-white/[0.04]", minWidthClass)}>
+        <div className={cn("overflow-hidden rounded-2xl bg-[#161D2F]", minWidthClass)}>
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="bg-white/[0.04]">
+              <tr>
                 {columns.map((column) => (
                   <th
                     key={column}
                     scope="col"
-                    className="px-4 py-3.5 text-xs font-bold uppercase tracking-[0.12em] text-[#93C5FD]"
+                    className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wide text-[#94A3B8]"
                   >
                     {column}
                   </th>
@@ -340,15 +340,15 @@ export function ResponsiveTable({
               {rows.map((row, rowIndex) => (
                 <tr
                   key={rowIndex}
-                  className={rowIndex % 2 === 1 ? "bg-white/[0.02]" : undefined}
+                  className={rowIndex % 2 === 0 ? "bg-white/[0.035]" : undefined}
                 >
                   {row.map((cell, cellIndex) => (
                     <td
                       key={cellIndex}
                       className={cn(
-                        "px-4 py-3.5 align-top leading-relaxed",
+                        "px-5 py-4 align-top leading-relaxed",
                         cellIndex === 0
-                          ? "font-semibold text-white"
+                          ? "font-semibold text-[#F1F5F9]"
                           : "text-[#94A3B8]",
                       )}
                     >

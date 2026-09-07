@@ -35,10 +35,10 @@ export function PastPaperTable({
   return (
     <figure className={cn("m-0", className)}>
       <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
-        <div className="min-w-[40rem] overflow-hidden rounded-2xl bg-white/[0.04]">
+        <div className="min-w-[40rem] overflow-hidden rounded-2xl bg-[#161D2F]">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="bg-white/[0.04]">
+              <tr>
                 {[
                   "Paper",
                   "Best for",
@@ -50,7 +50,7 @@ export function PastPaperTable({
                   <th
                     key={column}
                     scope="col"
-                    className="px-4 py-3.5 text-xs font-bold uppercase tracking-[0.12em] text-[#93C5FD]"
+                    className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wide text-[#94A3B8]"
                   >
                     {column}
                   </th>
@@ -61,32 +61,32 @@ export function PastPaperTable({
               {papers.map((paper, index) => (
                 <tr
                   key={paper.id}
-                  className={index % 2 === 1 ? "bg-white/[0.02]" : undefined}
+                  className={index % 2 === 0 ? "bg-white/[0.035]" : undefined}
                 >
                   <th
                     scope="row"
-                    className="px-4 py-3.5 text-left align-top font-semibold text-white"
+                    className="px-5 py-4 text-left align-top font-semibold text-[#F1F5F9]"
                   >
                     {`${paper.paperName} ${paper.sectionName}`.trim()}
                   </th>
-                  <td className="px-4 py-3.5 align-top text-[#94A3B8]">
+                  <td className="px-5 py-4 align-top text-[#94A3B8]">
                     {paper.bestForModules.length
                       ? paper.bestForModules.join(", ")
                       : "General reasoning"}
                   </td>
-                  <td className="px-4 py-3.5 align-top">
+                  <td className="px-5 py-4 align-top">
                     <RelevanceBadge relevance={paper.relevanceLevel} />
                   </td>
-                  <td className="px-4 py-3.5 align-top">
+                  <td className="px-5 py-4 align-top">
                     <Pdf href={paper.questionPaperUrl} label="Open" />
                   </td>
-                  <td className="px-4 py-3.5 align-top">
+                  <td className="px-5 py-4 align-top">
                     <div className="space-y-2">
                       <Pdf href={paper.answerKeyUrl} label="Open" />
                       <PastPaperConverterLink paper={paper} compact />
                     </div>
                   </td>
-                  <td className="px-4 py-3.5 align-top">
+                  <td className="px-5 py-4 align-top">
                     <Pdf href={paper.workedSolutionsUrl} label="Open" />
                   </td>
                 </tr>
