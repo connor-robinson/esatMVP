@@ -452,7 +452,7 @@ html.pearson-exam-active body {
   border: none;
   font-family: var(--pearson-font);
   font-size: var(--pearson-font-size-ui);
-  padding: 3px 8px;
+  padding: 5px 10px;
   cursor: pointer;
   white-space: nowrap;
 }
