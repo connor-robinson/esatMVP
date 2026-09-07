@@ -398,6 +398,8 @@ export function getPastPaperSectionGroups(options?: {
     .filter((group): group is PastPaperSectionGroup => group !== null);
 }
 
+const ARCHIVE_YEARS = [2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016] as const;
+
 function papersToCompactRows(papers: PastPaperDownload[]): PastPaperCompactTableRow[] {
   return papers.map((paper) => ({
     id: paper.id,
@@ -412,6 +414,57 @@ function papersToCompactRows(papers: PastPaperDownload[]): PastPaperCompactTable
       sectionSlug: paper.sectionSlug,
     }),
   }));
+}
+
+function placeholderYearRow(
+  exam: DownloadExam,
+  section: "Section 1" | "Section 2",
+  year: number,
+): PastPaperCompactTableRow {
+  const sectionSlug = section === "Section 2" ? "section-2" : "section-1";
+  const sectionNum = section === "Section 2" ? 2 : 1;
+  return {
+    id: `${exam.toLowerCase()}-${year}-s${sectionNum}`,
+    label: String(year),
+    practiceHref: pastPaperPracticeHref({
+      exam,
+      year,
+      sectionSlug,
+    }),
+  };
+}
+
+function completeSectionPaperRows(
+  exam: DownloadExam,
+  section: "Section 1" | "Section 2",
+): PastPaperCompactTableRow[] {
+  const existing = new Map(
+    sectionPastPaperRows(exam, section).map((row) => [row.label, row]),
+  );
+  return ARCHIVE_YEARS.map(
+    (year) => existing.get(String(year)) ?? placeholderYearRow(exam, section, year),
+  );
+}
+
+function sectionSpecimenRows(
+  exam: DownloadExam,
+  section: "Section 1" | "Section 2",
+): PastPaperCompactTableRow[] {
+  const specimens =
+    exam === "NSAA" ? NSAA_SPECIMEN_DOWNLOADS : ENGAA_SPECIMEN_DOWNLOADS;
+  return specimensToCompactRows(
+    specimens.filter((specimen) => specimen.section === section),
+  );
+}
+
+function mainPageSectionRows(
+  exam: DownloadExam,
+  section: "Section 1" | "Section 2",
+): PastPaperCompactTableRow[] {
+  return [
+    ...completeSectionPaperRows(exam, section),
+    ...sectionSpecimenRows(exam, section),
+  ];
 }
 
 function specimensToCompactRows(specimens: readonly PastPaperSpecimen[]): PastPaperCompactTableRow[] {
@@ -454,41 +507,28 @@ function makeSectionTable(
   };
 }
 
-/** Main ESAT past-papers page: four section tables, ENGAA specimens inline. */
+/** Main ESAT past-papers page: four section tables with years and specimens. */
 export function getMainPageCompactTables(): PastPaperCompactTable[] {
-  const engaaSection1Specimen = ENGAA_SPECIMEN_DOWNLOADS.filter(
-    (specimen) => specimen.section === "Section 1",
-  );
-  const engaaSection2Specimen = ENGAA_SPECIMEN_DOWNLOADS.filter(
-    (specimen) => specimen.section === "Section 2",
-  );
-
   return [
     makeSectionTable(
       "nsaa-section-1",
-      "NSAA · Section 1 · 2016–2023",
-      sectionPastPaperRows("NSAA", "Section 1"),
+      "NSAA Section 1 2016–2023",
+      mainPageSectionRows("NSAA", "Section 1"),
     ),
     makeSectionTable(
       "nsaa-section-2",
-      "NSAA · Section 2 · 2016–2023",
-      sectionPastPaperRows("NSAA", "Section 2"),
+      "NSAA Section 2 2016–2023",
+      mainPageSectionRows("NSAA", "Section 2"),
     ),
     makeSectionTable(
       "engaa-section-1",
-      "ENGAA · Section 1 · 2016–2023",
-      [
-        ...sectionPastPaperRows("ENGAA", "Section 1"),
-        ...specimensToCompactRows(engaaSection1Specimen),
-      ],
+      "ENGAA Section 1 2016–2023",
+      mainPageSectionRows("ENGAA", "Section 1"),
     ),
     makeSectionTable(
       "engaa-section-2",
-      "ENGAA · Section 2 · 2016–2021",
-      [
-        ...sectionPastPaperRows("ENGAA", "Section 2"),
-        ...specimensToCompactRows(engaaSection2Specimen),
-      ],
+      "ENGAA Section 2 2016–2023",
+      mainPageSectionRows("ENGAA", "Section 2"),
     ),
   ];
 }
