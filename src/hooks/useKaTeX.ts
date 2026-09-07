@@ -296,18 +296,23 @@ function renderTextSegmentHtml(contentStr: string): string {
 
   const paragraphs = contentStr
     .split(/\n\n+/)
-    .map((p) => String(p).replace(/\n/g, " ").trim())
+    .map((p) => p.trim())
     .filter((p) => p.length > 0);
 
   if (paragraphs.length === 0) return "";
+
+  // Escape first, then turn remaining newlines into visible breaks.
+  const renderPara = (para: string) =>
+    renderMathTextSegment(para).replace(/\n/g, "<br />");
+
   if (paragraphs.length === 1) {
-    return renderMathTextSegment(paragraphs[0]);
+    return renderPara(paragraphs[0]);
   }
   return paragraphs
     .map((para, index) =>
       index === 0
-        ? renderMathTextSegment(para)
-        : `<br /><br />${renderMathTextSegment(para)}`,
+        ? renderPara(para)
+        : `<br /><br />${renderPara(para)}`,
     )
     .join("");
 }

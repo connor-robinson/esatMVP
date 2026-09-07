@@ -400,16 +400,15 @@ export function renderMathContent(text: string): string {
       } else {
         const paragraphs = contentStr
           .split(/\n\n+/)
-          .map((p) => String(p).replace(/\n/g, " ").trim())
+          .map((p) => String(p).trim())
           .filter(Boolean);
         if (paragraphs.length <= 1) {
-          htmlParts.push(
-            renderMathTextSegment(paragraphs[0] ?? contentStr.replace(/\n/g, " "))
-          );
+          const para = paragraphs[0] ?? contentStr;
+          htmlParts.push(renderMathTextSegment(para).replace(/\n/g, "<br />"));
         } else {
           for (const para of paragraphs) {
             htmlParts.push(
-              `<p class="stem-para" style="margin:0 0 0.75em 0">${renderMathTextSegment(para)}</p>`
+              `<p class="stem-para" style="margin:0 0 0.75em 0">${renderMathTextSegment(para).replace(/\n/g, "<br />")}</p>`
             );
           }
         }

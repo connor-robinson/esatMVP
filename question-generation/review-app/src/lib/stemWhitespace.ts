@@ -38,28 +38,23 @@ function unshield(text: string, blocks: string[]): string {
 function collapseProseParagraph(para: string): string {
   const lines = para
     .split("\n")
-    .map((ln) => ln.trim())
-    .filter(Boolean);
-  if (lines.length <= 1) return lines[0] ?? "";
-  if (lines.length >= 3 && lines.every((ln) => ln.length < 100)) {
-    const givens = lines.slice(0, -1).filter((ln) =>
-      /\d|°C|kg|min|s\b|N\b|V\b|A\b/.test(ln)
-    ).length;
-    if (givens >= 2) return lines.join("\n");
-  }
-  return lines.join(" ");
+    .map((ln) => ln.replace(/[ \t]+$/g, "").replace(/^[ \t]+/g, ""));
+  while (lines.length > 0 && lines[0] === "") lines.shift();
+  while (lines.length > 0 && lines[lines.length - 1] === "") lines.pop();
+  return lines.join("\n");
 }
 
 function finalizeTextOnlyStem(text: string): string {
   if (/\$\$|<GRAPH\b|<DIAGRAM\b|<figure\b/i.test(text)) return text;
-  const flat = text.replace(/\s*\n\s*/g, " ").replace(/  +/g, " ").trim();
-  const m = FINAL_Q_RE.exec(flat);
+  const trimmed = text.replace(/[ \t]+\n/g, "\n").replace(/\n[ \t]+/g, "\n").trim();
+  if (trimmed.includes("\n\n")) return trimmed;
+  const m = FINAL_Q_RE.exec(trimmed);
   if (m && m.index > 0) {
-    const setup = flat.slice(0, m.index).trim();
-    const question = flat.slice(m.index).trim();
+    const setup = trimmed.slice(0, m.index).trim();
+    const question = trimmed.slice(m.index).trim();
     return setup ? `${setup}\n\n${question}` : question;
   }
-  return flat;
+  return trimmed;
 }
 
 export function normalizeStemWhitespace(stem: string): string {

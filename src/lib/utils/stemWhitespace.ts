@@ -123,18 +123,13 @@ function unshield(text: string, blocks: string[]): string {
 
 function collapseProseParagraph(para: string): string {
   if (/^__STEM_TABLE_\d+__$/.test(para.trim())) return para.trim();
+  // Preserve author line breaks; only trim per-line edge whitespace.
   const lines = para
     .split("\n")
-    .map((ln) => ln.trim())
-    .filter(Boolean);
-  if (lines.length <= 1) return lines[0] ?? "";
-  if (lines.length >= 3 && lines.every((ln) => ln.length < 100)) {
-    const givens = lines.slice(0, -1).filter((ln) =>
-      /\d|°C|kg|min|s\b|N\b|V\b|A\b/.test(ln),
-    ).length;
-    if (givens >= 2) return lines.join("\n");
-  }
-  return lines.join(" ");
+    .map((ln) => ln.replace(/[ \t]+$/g, "").replace(/^[ \t]+/g, ""));
+  while (lines.length > 0 && lines[0] === "") lines.shift();
+  while (lines.length > 0 && lines[lines.length - 1] === "") lines.pop();
+  return lines.join("\n");
 }
 
 function finalizeTextOnlyStem(text: string): string {
@@ -144,17 +139,21 @@ function finalizeTextOnlyStem(text: string): string {
   if (/(?:^[^\n]*\|[^\n]*\n)(?:^[^\n]*\|[\s:|-]+\|)/m.test(text)) {
     return text;
   }
-  const flat = text.replace(/\s*\n\s*/g, " ").replace(/  +/g, " ").trim();
-  const m = FINAL_Q_RE.exec(flat);
+  // Keep soft line breaks. Optionally insert a blank line before the final
+  // question when the stem is otherwise a single block.
+  const trimmed = text.replace(/[ \t]+\n/g, "\n").replace(/\n[ \t]+/g, "\n").trim();
+  if (trimmed.includes("\n\n")) return trimmed;
+
+  const m = FINAL_Q_RE.exec(trimmed);
   if (m && m.index > 0) {
-    const setup = flat.slice(0, m.index).trim();
-    const question = flat.slice(m.index).trim();
+    const setup = trimmed.slice(0, m.index).trim();
+    const question = trimmed.slice(m.index).trim();
     return setup ? `${setup}\n\n${question}` : question;
   }
-  return flat;
+  return trimmed;
 }
 
-/** Normalize stem newlines: compact prose; preserve math/graph/diagram blocks. */
+/** Normalize stem newlines: preserve soft breaks; keep math/graph/diagram blocks. */
 export function normalizeStemWhitespace(stem: string): string {
   if (stem == null) return "";
   let text = String(stem).replace(/\r\n/g, "\n").replace(/\r/g, "\n");

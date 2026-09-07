@@ -1,7 +1,7 @@
 """Deterministic whitespace normalizer for ``question.stem``.
 
-Collapses sentence-by-sentence paragraphing while preserving structure around
-display math, graph/diagram placeholders, and qg-diagram figures.
+Preserves soft line breaks while keeping structure around display math,
+graph/diagram placeholders, and qg-diagram figures.
 """
 
 from __future__ import annotations
@@ -53,25 +53,17 @@ def _unshield(text: str, blocks: List[str]) -> str:
 
 
 def _collapse_prose_paragraph(para: str) -> str:
-    """Join single newlines inside a prose-only paragraph block."""
-    lines = [ln.strip() for ln in para.split("\n")]
-    lines = [ln for ln in lines if ln]
-    if not lines:
-        return ""
-    if len(lines) == 1:
-        return lines[0]
-    # Keep intentional multi-line givens only when 3+ short list-like lines.
-    if len(lines) >= 3 and all(len(ln) < 100 for ln in lines):
-        looks_like_givens = sum(
-            1 for ln in lines[:-1] if re.search(r"\d|°C|kg|min|s\b|N\b|V\b|A\b", ln)
-        ) >= 2
-        if looks_like_givens:
-            return "\n".join(lines)
-    return " ".join(lines)
+    """Preserve author line breaks; trim per-line edge whitespace only."""
+    lines = [re.sub(r"[ \t]+$", "", re.sub(r"^[ \t]+", "", ln)) for ln in para.split("\n")]
+    while lines and lines[0] == "":
+        lines.pop(0)
+    while lines and lines[-1] == "":
+        lines.pop()
+    return "\n".join(lines)
 
 
 def normalize_stem_whitespace(stem: str) -> str:
-    """Normalize stem newlines for compact prose with preserved structure."""
+    """Normalize stem newlines while preserving soft line breaks."""
     if stem is None:
         return ""
     text = str(stem).replace("\r\n", "\n").replace("\r", "\n")
@@ -114,18 +106,20 @@ _FINAL_Q_RE = re.compile(
 
 
 def _finalize_text_only_stem(text: str) -> str:
-    """Text-only stems: one compact block; at most one break before the final question."""
+    """Preserve soft line breaks; optionally blank-line before the final question."""
     if re.search(r"\$\$|<GRAPH\b|<DIAGRAM\b|<figure\b", text, re.IGNORECASE):
         return text
-    flat = re.sub(r"\s*\n\s*", " ", text)
-    flat = re.sub(r"  +", " ", flat).strip()
-    m = _FINAL_Q_RE.search(flat)
+    trimmed = re.sub(r"[ \t]+\n", "\n", text)
+    trimmed = re.sub(r"\n[ \t]+", "\n", trimmed).strip()
+    if "\n\n" in trimmed:
+        return trimmed
+    m = _FINAL_Q_RE.search(trimmed)
     if m and m.start() > 0:
-        setup = flat[: m.start()].strip()
-        question = flat[m.start() :].strip()
+        setup = trimmed[: m.start()].strip()
+        question = trimmed[m.start() :].strip()
         if setup:
             return f"{setup}\n\n{question}"
-    return flat
+    return trimmed
 
 
 def apply_stem_whitespace_to_question_pkg(pkg: dict) -> dict:
