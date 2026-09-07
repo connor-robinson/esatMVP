@@ -7,6 +7,7 @@
  */
 
 import { SEO_ROUTES } from "@/lib/seo/config";
+import { pastPaperPracticeHref } from "@/lib/papers/pastPaperPracticeHref";
 
 export type DownloadExam = "NSAA" | "ENGAA";
 
@@ -62,6 +63,8 @@ export type PastPaperCompactTableRow = {
   /** Defaults to "Answer Key" in the compact table. */
   answersLabel?: string;
   specificationUrl?: string;
+  /** Starts this paper in the ESAT Camp solver. */
+  practiceHref?: string;
 };
 
 export function answersDownloadLabel(
@@ -403,6 +406,11 @@ function papersToCompactRows(papers: PastPaperDownload[]): PastPaperCompactTable
     paperUrl: paper.paperUrl,
     answersUrl: paper.answersUrl,
     answersLabel: answersDownloadLabel(paper.answersKind),
+    practiceHref: pastPaperPracticeHref({
+      exam: paper.exam,
+      year: paper.year,
+      sectionSlug: paper.sectionSlug,
+    }),
   }));
 }
 
@@ -413,6 +421,12 @@ function specimensToCompactRows(specimens: readonly PastPaperSpecimen[]): PastPa
     paperUrl: specimen.paperUrl,
     answersUrl: specimen.answersUrl,
     answersLabel: answersDownloadLabel(specimen.answersKind),
+    practiceHref: pastPaperPracticeHref({
+      exam: specimen.exam,
+      year: specimen.editionYear > 0 ? specimen.editionYear : undefined,
+      sectionSlug: specimen.sectionSlug,
+      examType: "specimen",
+    }),
   }));
 }
 
@@ -501,6 +515,12 @@ export function getNsaaCompactTables(): PastPaperCompactTable[] {
         paperUrl: specimen.paperUrl,
         answersUrl: specimen.answersUrl,
         answersLabel: answersDownloadLabel(specimen.answersKind),
+        practiceHref: pastPaperPracticeHref({
+          exam: specimen.exam,
+          year: specimen.editionYear,
+          sectionSlug: specimen.sectionSlug,
+          examType: "specimen",
+        }),
       })),
     ),
     {
@@ -538,6 +558,11 @@ export function getEngaaCompactTables(): PastPaperCompactTable[] {
         paperUrl: specimen.paperUrl,
         answersUrl: specimen.answersUrl,
         answersLabel: answersDownloadLabel(specimen.answersKind),
+        practiceHref: pastPaperPracticeHref({
+          exam: specimen.exam,
+          sectionSlug: specimen.sectionSlug,
+          examType: "specimen",
+        }),
       })),
     ),
     {

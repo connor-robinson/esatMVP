@@ -60,6 +60,7 @@ export const SITEMAP_EXCLUDED_PATHS = [
   "/questions/questionbank",
   "/past-papers/library",
   "/past-papers/solve/session",
+  "/past-papers/solve/start",
   "/past-papers/nsaa",
   "/past-papers/engaa",
   "/cookie-policy",

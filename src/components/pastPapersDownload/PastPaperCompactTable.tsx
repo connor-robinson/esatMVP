@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { PastPaperCompactTable as PastPaperCompactTableData } from "@/data/pastPapersDownload";
 import { PastPaperCompactDownloadLink } from "./PastPaperCompactDownloadLink";
+import { PastPaperPracticeLink } from "./PastPaperPracticeLink";
 
 type Props = {
   table: PastPaperCompactTableData;
@@ -21,16 +22,17 @@ export function PastPaperCompactTable({ table }: Props) {
         </h3>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[28rem] text-left text-base">
+        <table className="w-full min-w-[46rem] text-left text-base">
           <thead>
             <tr className="text-xs font-semibold uppercase tracking-wide text-[#94A3B8]">
-              <th className="w-[22%] px-5 py-3.5">Year</th>
+              <th className="w-[18%] px-5 py-3.5">Year</th>
               {isSpecification ? (
                 <th className="px-5 py-3.5">PDF</th>
               ) : (
                 <>
                   <th className="px-5 py-3.5">Paper</th>
                   <th className="px-5 py-3.5">Answers</th>
+                  <th className="px-5 py-3.5">ESAT Camp</th>
                 </>
               )}
             </tr>
@@ -88,6 +90,16 @@ export function PastPaperCompactTable({ table }: Props) {
                           ariaLabel={`Download ${row.label} ${
                             row.answersLabel ?? "answer key"
                           } PDF`}
+                        />
+                      ) : (
+                        <UnavailableCell />
+                      )}
+                    </td>
+                    <td className="px-5 py-5">
+                      {row.practiceHref ? (
+                        <PastPaperPracticeLink
+                          href={row.practiceHref}
+                          ariaLabel={`Start ${row.label} in ESAT Camp`}
                         />
                       ) : (
                         <UnavailableCell />

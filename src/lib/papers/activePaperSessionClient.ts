@@ -14,6 +14,12 @@ const PAPER_IMMERSIVE_ROUTES = [
  */
 export function isPaperImmersiveRoute(pathname: string | null): boolean {
   if (!pathname) return false;
+  if (
+    pathname === "/past-papers/solve/start" ||
+    pathname.startsWith("/past-papers/solve/start/")
+  ) {
+    return false;
+  }
   return PAPER_IMMERSIVE_ROUTES.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`),
   );

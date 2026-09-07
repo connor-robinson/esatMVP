@@ -7,6 +7,8 @@ import { seoLinks } from "@/lib/seo/links";
 import { SeoPageLayout } from "@/components/seo/SeoPageLayout";
 import { SeoTextLink } from "@/components/seo/SeoSections";
 import { PastPaperDownloadButton } from "./PastPaperDownloadButton";
+import { PastPaperPracticeLink } from "./PastPaperPracticeLink";
+import { pastPaperPracticeHref } from "@/lib/papers/pastPaperPracticeHref";
 
 type Props = {
   paper: PastPaperDownload;
@@ -25,18 +27,25 @@ export function PastPaperExperimentDetailContent({ paper, path }: Props) {
       related={seoLinks("pastPapers", "pastPapersGuide", "engaaNsaaPapers")}
     >
       <div className="flex flex-wrap gap-3">
+        <PastPaperPracticeLink
+          href={pastPaperPracticeHref({
+            exam: paper.exam,
+            year: paper.year,
+            sectionSlug: paper.sectionSlug,
+          })}
+          size="page"
+          ariaLabel={`Start ${paper.title} in ESAT Camp`}
+        />
         <PastPaperDownloadButton
           href={paper.paperUrl}
           label="Download question paper"
           ariaLabel={`Download ${paper.title} question paper PDF`}
-          variant="primary"
         />
         {paper.answersUrl ? (
           <PastPaperDownloadButton
             href={paper.answersUrl}
             label="Download answers"
             ariaLabel={`Download ${paper.title} answer key PDF`}
-            variant="primary"
           />
         ) : (
           <p className="self-center text-sm text-[#64748B]">
