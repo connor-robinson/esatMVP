@@ -75,7 +75,7 @@ const HeroTrainerDemo = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="min-h-[28rem] rounded-3xl bg-white/[0.08]" aria-hidden />
+      <div className="min-h-[28rem] rounded-2xl bg-white/[0.08]" aria-hidden />
     ),
   },
 );
@@ -440,7 +440,7 @@ export function MarketingHomepage({
 
           <div className="grid gap-6 md:grid-cols-3 md:gap-8">
             {/* Mental Maths Trainer Card */}
-            <div className="group flex flex-col rounded-2xl bg-[#0A0F1D]/55 p-8 transition-all duration-300 ease-out hover:scale-[1.02] hover:bg-[#0A0F1D]/90">
+            <div className="group flex flex-col rounded-xl bg-[#0A0F1D]/55 p-8 transition-all duration-300 ease-out hover:scale-[1.02] hover:bg-[#0A0F1D]/90">
               <h4 className="text-2xl font-display font-bold text-white">
                 Mental Maths Trainer
               </h4>
@@ -467,7 +467,7 @@ export function MarketingHomepage({
             </div>
 
             {/* Past Papers Card */}
-            <div className="group flex flex-col rounded-2xl bg-[#0A0F1D]/55 p-8 transition-all duration-300 ease-out hover:scale-[1.02] hover:bg-[#0A0F1D]/90">
+            <div className="group flex flex-col rounded-xl bg-[#0A0F1D]/55 p-8 transition-all duration-300 ease-out hover:scale-[1.02] hover:bg-[#0A0F1D]/90">
               <h4 className="text-2xl font-display font-bold text-white">
                 Past Papers
               </h4>
@@ -505,7 +505,7 @@ export function MarketingHomepage({
             </div>
 
             {/* Question Bank Card */}
-            <div className="group flex flex-col rounded-2xl bg-[#0A0F1D]/55 p-8 transition-all duration-300 ease-out hover:scale-[1.02] hover:bg-[#0A0F1D]/90">
+            <div className="group flex flex-col rounded-xl bg-[#0A0F1D]/55 p-8 transition-all duration-300 ease-out hover:scale-[1.02] hover:bg-[#0A0F1D]/90">
               <h4 className="text-2xl font-display font-bold text-white">
                 {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ Practice Questions
               </h4>
@@ -678,7 +678,7 @@ export function MarketingHomepage({
 
           <div className="mx-auto grid max-w-5xl items-stretch gap-5 md:grid-cols-3">
             {/* Free */}
-            <div className="relative z-[1] flex flex-col rounded-3xl bg-[#0A0F1D]/70 p-7 xl:p-8">
+            <div className="relative z-[1] flex flex-col rounded-2xl bg-[#0A0F1D]/70 p-7 xl:p-8">
               <h4 className="text-lg font-bold text-white">Free</h4>
               <div className="mt-4 flex items-baseline gap-1">
                 <span className="text-4xl font-display font-bold text-white">
@@ -707,7 +707,7 @@ export function MarketingHomepage({
             </div>
 
             {/* Monthly */}
-            <div className="relative z-20 flex flex-col rounded-3xl bg-[#3B82F6] p-8 sm:p-9 xl:p-10">
+            <div className="relative z-20 flex flex-col rounded-2xl bg-[#3B82F6] p-8 sm:p-9 xl:p-10">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-white px-3.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#3B82F6]">
                 Most popular · {monthlyDiscountLabel}
               </div>
@@ -745,7 +745,7 @@ export function MarketingHomepage({
             </div>
 
             {/* Exam Season Pass */}
-            <div className="relative z-[1] flex flex-col rounded-3xl bg-[#0A0F1D]/70 p-7 xl:p-8">
+            <div className="relative z-[1] flex flex-col rounded-2xl bg-[#0A0F1D]/70 p-7 xl:p-8">
               <h4 className="text-lg font-bold text-white">Exam Season Pass</h4>
               <div className="mt-4 flex items-baseline gap-1">
                 <span className="text-4xl font-display font-bold text-white">
