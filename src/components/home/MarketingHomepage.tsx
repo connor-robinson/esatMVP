@@ -194,16 +194,7 @@ export function MarketingHomepage({
       <HomepageSectionNav />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-12 pb-10 lg:pt-20 lg:pb-16 bg-[#0A0F1D]">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.45]"
-          style={{
-            backgroundImage:
-              "radial-gradient(rgba(147, 197, 253, 0.35) 1px, transparent 1px)",
-            backgroundSize: "22px 22px",
-          }}
-        />
+      <section className="relative overflow-hidden bg-[#0A0F1D] pt-12 pb-10 lg:pt-20 lg:pb-16">
         <div className="relative mx-auto max-w-[1400px] space-y-4 px-4 sm:px-5 lg:space-y-5 lg:px-6">
           <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-6 xl:gap-8">
             <div className="min-w-0 space-y-6 sm:space-y-7 lg:space-y-8">
@@ -218,7 +209,7 @@ export function MarketingHomepage({
                   <span
                     id="esat-definition"
                     role="tooltip"
-                    className="pointer-events-none absolute left-0 top-full z-20 mt-3 w-[min(22rem,calc(100vw-2rem))] rounded-xl bg-[#161D2F] px-4 py-3 text-left text-sm font-normal leading-relaxed tracking-normal text-[#94A3B8] opacity-0 shadow-xl transition-opacity duration-150 group-hover:opacity-100 group-focus:opacity-100 sm:w-[24rem]"
+                    className="pointer-events-none absolute left-0 top-full z-20 mt-3 w-[min(22rem,calc(100vw-2rem))] rounded-lg bg-[#161D2F] px-4 py-3 text-left text-sm font-normal leading-relaxed tracking-normal text-[#94A3B8] opacity-0 shadow-xl transition-opacity duration-150 group-hover:opacity-100 group-focus:opacity-100 sm:w-[24rem]"
                   >
                     The ESAT is the Engineering and Science Admissions Test for
                     undergraduate STEM applicants. It is a mandatory entrance
@@ -251,7 +242,7 @@ export function MarketingHomepage({
                         destination: CALIBRATION_ROUTES.hub,
                       })
                     }
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 text-base font-bold text-[#0A0F1D] shadow-[0_0_28px_rgba(255,255,255,0.22),0_8px_24px_rgba(0,0,0,0.28)] transition-all hover:scale-[1.03] hover:bg-slate-100 hover:shadow-[0_0_36px_rgba(255,255,255,0.32),0_10px_28px_rgba(0,0,0,0.32)] active:scale-[0.98] sm:text-lg"
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-8 py-4 text-base font-bold text-[#0A0F1D] shadow-[0_0_28px_rgba(255,255,255,0.22),0_8px_24px_rgba(0,0,0,0.28)] transition-all hover:scale-[1.03] hover:bg-slate-100 hover:shadow-[0_0_36px_rgba(255,255,255,0.32),0_10px_28px_rgba(0,0,0,0.32)] active:scale-[0.98] sm:text-lg"
                   >
                     Start calibration
                     <span aria-hidden className="text-lg leading-none">
@@ -260,7 +251,7 @@ export function MarketingHomepage({
                   </Link>
                   <Link
                     href="/login?mode=signup"
-                    className="inline-flex items-center justify-center rounded-xl border border-white/20 px-6 py-3.5 text-base font-bold text-white transition-all hover:bg-white/5"
+                    className="inline-flex items-center justify-center rounded-lg border border-white/20 px-6 py-3.5 text-base font-bold text-white transition-all hover:bg-white/5"
                   >
                     Sign up
                   </Link>
@@ -276,12 +267,12 @@ export function MarketingHomepage({
             </div>
           </div>
 
-          <div className="rounded-3xl bg-white/[0.08] p-5 backdrop-blur-xl sm:p-6">
+          <div className="rounded-2xl bg-white/[0.08] p-5 backdrop-blur-xl sm:p-6">
             <div className="flex w-full flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
               <div className="flex min-w-0 items-start gap-4 sm:items-center sm:gap-5">
                 <Link
                   href={`${ABOUT_PATH}#${FOUNDERS.ewan.id}`}
-                  className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-[#161D2F] sm:h-24 sm:w-24"
+                  className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[#161D2F] sm:h-24 sm:w-24"
                 >
                   <Image
                     src={FOUNDERS.ewan.imageSrc}

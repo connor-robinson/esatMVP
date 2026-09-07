@@ -34,7 +34,7 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "relative rounded-organic-xl bg-white/[0.08] px-6 py-4 backdrop-blur-xl sm:px-8 sm:py-5",
+        "relative rounded-2xl bg-white/[0.08] px-6 py-4 backdrop-blur-xl sm:px-8 sm:py-5",
         className,
       )}
     >
@@ -77,7 +77,7 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
                   aria-pressed={isSelected}
                   onClick={() => handleSelect(id)}
                   className={cn(
-                    "inline-flex h-11 w-full items-center justify-center rounded-xl text-sm font-semibold tabular-nums transition-[background-color,color] duration-200",
+                    "inline-flex h-11 w-full items-center justify-center rounded-lg text-sm font-semibold tabular-nums transition-[background-color,color] duration-200",
                     "border-0 outline-none ring-0 shadow-none",
                     "focus-visible:outline-none focus-visible:ring-0",
                     isSelected
@@ -99,7 +99,7 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
               <Link
                 href={`/login?redirectTo=${encodeURIComponent(REVEAL_REDIRECT)}`}
                 onClick={() => markHomepageExampleRevealPending()}
-                className="inline-flex items-center justify-center rounded-xl border border-white/20 px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/5 focus-visible:outline-none"
+                className="inline-flex items-center justify-center rounded-lg border border-white/20 px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/5 focus-visible:outline-none"
               >
                 Sign in to view answer
               </Link>
@@ -118,7 +118,7 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
                 onClick={handleSubmit}
                 disabled={!selected}
                 className={cn(
-                  "inline-flex items-center justify-center rounded-xl px-8 py-3 text-sm font-semibold transition-colors duration-200",
+                  "inline-flex items-center justify-center rounded-lg px-8 py-3 text-sm font-semibold transition-colors duration-200",
                   "border-0 outline-none focus-visible:outline-none",
                   selected
                     ? "bg-white text-[#0A0F1D] hover:bg-slate-200"
