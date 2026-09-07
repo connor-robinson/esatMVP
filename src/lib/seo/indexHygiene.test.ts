@@ -49,6 +49,12 @@ describe("index hygiene: private route metadata wiring", () => {
     expect(layout).not.toContain("redirectTo");
   });
 
+  it("marks /help as noindex, follow (thin contact utility)", () => {
+    const layout = readAppSource("help", "layout.tsx");
+    expect(layout).toContain("buildNoIndexMetadata");
+    expect(layout).not.toContain("buildSeoMetadata");
+  });
+
   it("marks private application and programme routes as noindex, follow", () => {
     const privateLayouts = [
       ["dashboard", "layout.tsx"],
@@ -216,6 +222,55 @@ describe("index hygiene: public pages stay indexable", () => {
     expect(page).toContain("buildSeoMetadata");
     expect(page).not.toContain("buildNoIndexMetadata");
   });
+
+  it("keeps intended SEO landings indexable with self canonicals", () => {
+    const cases: { segments: string[]; path: string }[] = [
+      { segments: ["esat-past-papers", "page.tsx"], path: SEO_ROUTES.pastPapers },
+      { segments: ["esat-physics", "page.tsx"], path: SEO_ROUTES.physics },
+      { segments: ["good-esat-score", "page.tsx"], path: SEO_ROUTES.goodScore },
+      {
+        segments: ["esat-university-requirements", "page.tsx"],
+        path: SEO_ROUTES.universityRequirements,
+      },
+      {
+        segments: ["ucl-esat-requirements", "page.tsx"],
+        path: SEO_ROUTES.uclRequirements,
+      },
+      { segments: ["about", "page.tsx"], path: "/about" },
+      {
+        segments: ["mental-maths", "fermiguessr", "page.tsx"],
+        path: APP_ROUTES.fermiGame,
+      },
+      { segments: ["pricing", "layout.tsx"], path: "/pricing" },
+    ];
+
+    for (const { segments, path } of cases) {
+      const source = readAppSource(...segments);
+      expect(source).toMatch(/buildSeoMetadata|alternates:\s*\{\s*canonical/);
+      expect(source).not.toContain("buildNoIndexMetadata");
+      expect(source).not.toContain("noIndexFollowMetadata");
+
+      const meta = buildSeoMetadata({
+        title: "t",
+        description: "d",
+        path,
+      });
+      expect(meta.alternates?.canonical).toBe(buildCanonicalUrl(path));
+      expect(meta.robots).toEqual({ index: true, follow: true });
+    }
+
+    const university = buildSeoMetadata({
+      title: "ESAT University Requirements",
+      description: "Overview",
+      path: SEO_ROUTES.universityRequirements,
+    });
+    expect(university.alternates?.canonical).toBe(
+      buildCanonicalUrl(SEO_ROUTES.universityRequirements),
+    );
+    expect(String(university.alternates?.canonical)).not.toContain(
+      "ucl-esat-requirements",
+    );
+  });
 });
 
 describe("index hygiene: sitemap", () => {
@@ -228,13 +283,25 @@ describe("index hygiene: sitemap", () => {
     });
 
     expect(paths).toEqual(PUBLIC_SITEMAP_ENTRIES.map((entry) => entry.path));
-    expect(entries).toHaveLength(35);
+    expect(entries).toHaveLength(32);
     expect(isPublicSitemapPath(APP_ROUTES.scoreConverter)).toBe(true);
     expect(isPublicSitemapPath("/esat-no-calculator-practice")).toBe(true);
     expect(urls).toContain(`${SITE_URL}${APP_ROUTES.scoreConverter}`);
     expect(urls).toContain(`${SITE_URL}/esat-no-calculator-practice`);
     expect(isPublicSitemapPath("/cookie-policy")).toBe(false);
     expect(isPublicSitemapPath("/tools/score-converter/nsaa/2021")).toBe(false);
+    expect(isPublicSitemapPath("/help")).toBe(false);
+    expect(isPublicSitemapPath("/esat-breaks")).toBe(false);
+    expect(isPublicSitemapPath("/esat-common-mistakes")).toBe(false);
+  });
+
+  it("emits only https non-www esatcamp.com URLs", () => {
+    const urls = sitemap().map((entry) => entry.url);
+    for (const url of urls) {
+      expect(url.startsWith("https://esatcamp.com")).toBe(true);
+      expect(url).not.toContain("www.");
+      expect(url).not.toMatch(/^http:\/\//);
+    }
   });
 
   it("excludes private, auth, app, and testing routes", () => {

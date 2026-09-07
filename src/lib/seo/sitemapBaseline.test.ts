@@ -64,7 +64,25 @@ describe("sitemap baseline guard", () => {
       entry.url.replace("https://esatcamp.com", "") || "/",
     );
     expect(paths).toEqual([...APPROVED_SITEMAP_BASELINE_PATHS]);
-    expect(paths).toHaveLength(35);
+    expect(paths).toHaveLength(32);
+  });
+
+  it("excludes redirect sources and the thin /help utility", () => {
+    expect(APPROVED_SITEMAP_BASELINE_PATHS).not.toContain("/esat-breaks");
+    expect(APPROVED_SITEMAP_BASELINE_PATHS).not.toContain(
+      "/esat-common-mistakes",
+    );
+    expect(APPROVED_SITEMAP_BASELINE_PATHS).not.toContain("/help");
+    expect(APPROVED_SITEMAP_BASELINE_PATHS).not.toContain(
+      "/what-is-a-good-esat-score",
+    );
+    expect(APPROVED_SITEMAP_BASELINE_PATHS).not.toContain(
+      "/engaa-nsaa-tmua-for-esat",
+    );
+    expect(APPROVED_SITEMAP_BASELINE_PATHS).toContain(SEO_ROUTES.goodScore);
+    expect(APPROVED_SITEMAP_BASELINE_PATHS).toContain(
+      SEO_ROUTES.universityRequirements,
+    );
   });
 
   it("does not include past-paper download SEO routes", () => {
@@ -92,8 +110,8 @@ describe("sitemap baseline guard", () => {
 
   it("cannot expand the sitemap when past-paper data grows", () => {
     expect(PAST_PAPER_DOWNLOADS.length).toBeGreaterThan(0);
-    expect(sitemap()).toHaveLength(35);
-    expect(PUBLIC_SITEMAP_ENTRIES).toHaveLength(35);
+    expect(sitemap()).toHaveLength(32);
+    expect(PUBLIC_SITEMAP_ENTRIES).toHaveLength(32);
   });
 });
 

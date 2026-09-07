@@ -17,6 +17,25 @@ export type { PublicSitemapEntry };
 export const PUBLIC_SITEMAP_ENTRIES: readonly PublicSitemapEntry[] =
   APPROVED_SITEMAP_BASELINE;
 
+/**
+ * Known permanent redirect sources from next.config.js.
+ * These must never appear in sitemap.xml.
+ */
+export const SITEMAP_REDIRECT_SOURCE_PATHS = [
+  "/esat-calibration-test",
+  "/esat-score-converter",
+  "/fermi-estimation-game",
+  "/esat-timing",
+  "/what-is-a-good-esat-score",
+  "/esat-test-date",
+  "/engaa-nsaa-maths-for-esat",
+  "/esat-breaks",
+  "/esat-common-mistakes",
+  "/engaa-nsaa-tmua-for-esat",
+  "/nsaa-past-papers",
+  "/engaa-past-papers",
+] as const;
+
 /** Paths that must never appear in the sitemap (regression guard). */
 export const SITEMAP_EXCLUDED_PATHS = [
   "/login",
@@ -57,9 +76,11 @@ export const SITEMAP_EXCLUDED_PATHS = [
   "/tools/tutorials",
   "/train",
   "/contact",
+  "/help",
   "/exam-tools/calibration/math-1/test",
   "/exam-tools/calibration/math-1/results",
   "/tools/score-converter/nsaa/2016",
+  ...SITEMAP_REDIRECT_SOURCE_PATHS,
 ] as const;
 
 export function isPublicSitemapPath(path: string): boolean {

@@ -4,7 +4,7 @@
  * The live sitemap must match this list exactly. Any addition, removal, or
  * lastModified change requires an intentional edit here and review.
  *
- * Frozen at the 35-URL set from commit 3aa99e94 (2026-08-23).
+ * Only canonical, indexable, non-redirecting 200 URLs belong here.
  * Do NOT derive entries from past-paper data, databases, or route generators.
  */
 
@@ -29,7 +29,6 @@ export const APPROVED_SITEMAP_BASELINE: readonly PublicSitemapEntry[] = [
   { path: SEO_ROUTES.calculatorRules },
   { path: SEO_ROUTES.testDay },
   { path: SEO_ROUTES.noCalcPractice },
-  { path: "/esat-common-mistakes" },
   { path: SEO_ROUTES.universityRequirements },
   { path: SEO_ROUTES.cambridgeRequirements },
   { path: SEO_ROUTES.cambridgeEngineering },
@@ -37,7 +36,6 @@ export const APPROVED_SITEMAP_BASELINE: readonly PublicSitemapEntry[] = [
   { path: SEO_ROUTES.oxfordRequirements },
   { path: SEO_ROUTES.imperialRequirements },
   { path: SEO_ROUTES.uclRequirements },
-  { path: "/esat-breaks" },
   { path: SEO_ROUTES.whiteboard },
   { path: SEO_ROUTES.questionBankGuide },
 
@@ -50,8 +48,9 @@ export const APPROVED_SITEMAP_BASELINE: readonly PublicSitemapEntry[] = [
   { path: APP_ROUTES.fermiGame },
   { path: APP_ROUTES.faqs },
 
+  // Public pricing landing (indexable). Help is intentionally omitted: thin
+  // signed-in contact utility with noindex, follow.
   { path: "/pricing" },
-  { path: "/help" },
 ];
 
 export const APPROVED_SITEMAP_BASELINE_PATHS: readonly string[] =

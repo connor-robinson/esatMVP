@@ -1,5 +1,10 @@
 import { createRequire } from "node:module";
 import { describe, expect, it } from "vitest";
+import { SEO_ROUTES, APP_ROUTES } from "@/lib/seo/config";
+import {
+  PUBLIC_SITEMAP_ENTRIES,
+  SITEMAP_REDIRECT_SOURCE_PATHS,
+} from "@/lib/seo/publicSitemap";
 
 const require = createRequire(import.meta.url);
 const nextConfig = require("../../../next.config.js");
@@ -21,6 +26,18 @@ const SEO_CONSOLIDATION_REDIRECTS: readonly {
   },
   { source: "/esat-breaks", destination: "/esat-test-day" },
   { source: "/esat-common-mistakes", destination: "/esat-preparation" },
+  {
+    source: "/engaa-nsaa-tmua-for-esat",
+    destination: "/engaa-nsaa-papers-for-esat",
+  },
+  {
+    source: "/what-is-a-good-esat-score",
+    destination: "/good-esat-score",
+  },
+  {
+    source: "/fermi-estimation-game",
+    destination: "/mental-maths/fermiguessr",
+  },
 ];
 
 async function loadRedirects(): Promise<RedirectRule[]> {
@@ -58,5 +75,33 @@ describe("SEO consolidation redirects", () => {
     for (const rule of consolidationRules) {
       expect(rule.permanent).toBe(true);
     }
+  });
+
+  it("keeps legacy ENGAA/NSAA/TMUA slug pointing at the merged papers page", async () => {
+    const rules = await loadRedirects();
+    const match = rules.find(
+      (rule) => rule.source === "/engaa-nsaa-tmua-for-esat",
+    );
+    expect(match?.destination).toBe(SEO_ROUTES.engaaNsaaPapers);
+    expect(match?.permanent).toBe(true);
+  });
+
+  it("keeps the old good-score slug pointing at /good-esat-score", async () => {
+    const rules = await loadRedirects();
+    const match = rules.find(
+      (rule) => rule.source === "/what-is-a-good-esat-score",
+    );
+    expect(match?.destination).toBe(SEO_ROUTES.goodScore);
+    expect(match?.permanent).toBe(true);
+  });
+
+  it("does not put redirect sources in the sitemap", () => {
+    const sitemapPaths = new Set(PUBLIC_SITEMAP_ENTRIES.map((e) => e.path));
+    for (const source of SITEMAP_REDIRECT_SOURCE_PATHS) {
+      expect(sitemapPaths.has(source)).toBe(false);
+    }
+    expect(sitemapPaths.has(SEO_ROUTES.goodScore)).toBe(true);
+    expect(sitemapPaths.has(SEO_ROUTES.engaaNsaaPapers)).toBe(true);
+    expect(sitemapPaths.has(APP_ROUTES.fermiGame)).toBe(true);
   });
 });
