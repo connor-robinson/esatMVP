@@ -198,7 +198,7 @@ export function MarketingHomepage({
         <div className="relative mx-auto max-w-[1400px] space-y-4 px-4 sm:px-5 lg:space-y-5 lg:px-6">
           <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-6 xl:gap-8">
             <div className="min-w-0 space-y-6 sm:space-y-7 lg:space-y-8">
-              <h1 className="font-display text-[clamp(1.875rem,0.9rem+3.2vw,4.25rem)] font-bold leading-[0.98] tracking-[-0.04em]">
+              <h1 className="font-display text-[clamp(1.875rem,0.75rem+5vw,6rem)] font-bold leading-[0.95] tracking-[-0.04em]">
                 The leading{" "}
                 <span
                   className="group relative inline-block cursor-help"
