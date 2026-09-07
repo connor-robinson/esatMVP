@@ -100,3 +100,4 @@ def test_math_diagram_filter_rejects_circuits():
     assert _looks_like_math_diagram("In the triangle ABC, angle A is 30 degrees.")
     assert not _looks_like_math_diagram("The circuit contains a battery and a resistor.")
     assert not _looks_like_math_diagram("A carbon cycle diagram with boxes P Q R S.")
+    assert not _looks_like_math_diagram("Mammalian immunology flowchart with antibodies.")

@@ -100,6 +100,15 @@ _UNSUPPORTED_DIAGRAM_HINTS = (
     "electron",
     "nucleus",
     "orbital",
+    "flowchart",
+    "immunolog",
+    "mammalian",
+    "antibody",
+    "antigen",
+    "lymphocyte",
+    "vaccine",
+    "dna sequence",
+    "punnett",
 )
 
 # Prefer questions whose stems suggest pure math geometry/graphs.

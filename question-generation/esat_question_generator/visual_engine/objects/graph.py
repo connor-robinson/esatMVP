@@ -46,10 +46,38 @@ def draw_axes(
     ax.spines["bottom"].set_position(("data", 0))
     ax.spines["right"].set_color("none")
     ax.spines["top"].set_color("none")
-    ax.plot([x_min, x_max], [0, 0], color=style.stroke, linewidth=style.stroke_width * 0.9, clip_on=False)
-    ax.plot([0, 0], [y_min, y_max], color=style.stroke, linewidth=style.stroke_width * 0.9, clip_on=False)
+    lw = style.stroke_width * 0.9
+    # Axis spines with arrowheads at the positive ends.
+    ax.annotate(
+        "",
+        xy=(x_max, 0),
+        xytext=(x_min, 0),
+        arrowprops=dict(arrowstyle="->", color=style.stroke, lw=lw),
+        annotation_clip=False,
+    )
+    ax.annotate(
+        "",
+        xy=(0, y_max),
+        xytext=(0, y_min),
+        arrowprops=dict(arrowstyle="->", color=style.stroke, lw=lw),
+        annotation_clip=False,
+    )
     obstacles.add_segment(x_min, 0, x_max, 0, kind="axis")
     obstacles.add_segment(0, y_min, 0, y_max, kind="axis")
+
+    tick = max(abs(x_max - x_min), abs(y_max - y_min)) * 0.012
+    for raw in obj.get("x_ticks") or []:
+        try:
+            val = float(raw)
+        except (TypeError, ValueError):
+            continue
+        ax.plot([val, val], [-tick, tick], color=style.stroke, linewidth=lw, clip_on=False)
+    for raw in obj.get("y_ticks") or []:
+        try:
+            val = float(raw)
+        except (TypeError, ValueError):
+            continue
+        ax.plot([-tick, tick], [val, val], color=style.stroke, linewidth=lw, clip_on=False)
 
     if extra_labels is not None:
         extra_labels.extend(axis_label_specs(obj, cs))

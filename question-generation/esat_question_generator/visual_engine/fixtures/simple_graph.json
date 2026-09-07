@@ -17,7 +17,9 @@
       "id": "axes",
       "type": "axes",
       "x_label": "x",
-      "y_label": "y"
+      "y_label": "y",
+      "x_ticks": [1, 2, 3],
+      "y_ticks": [4, 9]
     },
     {
       "id": "parabola",

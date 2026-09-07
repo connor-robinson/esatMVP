@@ -31,11 +31,27 @@ CANDIDATES: tuple[PlacementCandidate, ...] = (
 )
 
 
-def candidate_order(preferred: str) -> list[PlacementCandidate]:
+def candidate_order(preferred: str, *, role: str = "label") -> list[PlacementCandidate]:
     pref = (preferred or "above").strip().lower()
     # "center" almost always overlaps geometry when Gemini anchors on a vertex/edge.
     if pref == "center":
         pref = "upper_right"
+
+    # Axis ticks/titles must stay outside the plot; never flip into the data area.
+    if role == "axis":
+        if pref in {"below", "lower_left", "lower_right"}:
+            allowed = ("below", "lower_left", "lower_right")
+        elif pref in {"left", "upper_left", "lower_left"}:
+            allowed = ("left", "upper_left", "lower_left")
+        elif pref in {"above", "upper_left", "upper_right"}:
+            allowed = ("above", "upper_left", "upper_right")
+        elif pref in {"right", "upper_right", "lower_right"}:
+            allowed = ("right", "upper_right", "lower_right")
+        else:
+            allowed = ("below", "left", "lower_left")
+        ordered = [c for name in allowed for c in CANDIDATES if c.name == name]
+        return ordered
+
     ordered: list[PlacementCandidate] = []
     for cand in CANDIDATES:
         if cand.name == "center":
@@ -88,6 +104,18 @@ def label_collides(
     inflated = inflate_rect(rect, label_gap)
     is_caption = role == "caption"
 
+    if role == "axis":
+        # Axis ticks/titles may sit just outside the data box; do not bounds-check them.
+        for other in other_label_rects:
+            if rects_overlap(inflated, inflate_rect(other, label_gap * 0.5)):
+                issues.append("label")
+        for seg in obstacles.segments:
+            if seg.kind in {"axis", "arrow", "function"}:
+                continue
+            if segment_intersects_rect(seg.x1, seg.y1, seg.x2, seg.y2, inflated):
+                issues.append(f"segment:{seg.kind}")
+        return issues
+
     bx0, by0, bx1, by1 = bounds
     # Captions may sit slightly outside the bottom/top plot bounds.
     if is_caption:
@@ -102,14 +130,6 @@ def label_collides(
             issues.append("label")
 
     if is_caption:
-        return issues
-
-    if role == "axis":
-        for seg in obstacles.segments:
-            if seg.kind in {"axis", "arrow", "function"}:
-                continue
-            if segment_intersects_rect(seg.x1, seg.y1, seg.x2, seg.y2, inflated):
-                issues.append(f"segment:{seg.kind}")
         return issues
 
     # Hard intersection for solid geometry. Soft proximity only for thin construction marks.

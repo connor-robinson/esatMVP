@@ -50,7 +50,7 @@ Each object must include `"type"` and coordinates in data space.
 | `circle` | `center`, `radius`, optional `fill` |
 | `arc` | `center`, `radius`, `theta1`, `theta2` (degrees) |
 | `function` | `expr` (Python math in x), `domain`: [x0,x1], optional `samples` |
-| `axes` | optional `x_label`, `y_label` (for graphs) |
+| `axes` | optional `x_label`, `y_label`, `x_ticks`, `y_ticks`, `x_tick_labels`, `y_tick_labels` |
 | `right_angle_marker` | `vertex`, `leg1`, `leg2` |
 | `angle_arc` | `vertex`, `point1`, `point2`, optional `radius` |
 | `dimension_line` | `start`, `end`, optional `offset`, `direction` |
@@ -72,14 +72,30 @@ Each label:
 ```
 
 - Use `"math": true` for expressions (e.g. `y=x^2`, `\\theta`, `30\\Omega`). Use single backslashes in JSON strings.
+- For units prefer `1200\\text{ kg}` or plain `1200 kg` with `"math": false`. Do not invent semicolon separators.
 - Do **not** wrap labels in `$...$` yourself; set `"math": true` instead.
 - Never use `preferred_position: "center"` for vertex or side labels.
 - Place anchors **offset from** the object being labelled, not on vertices or on top of lines. Example: for a base at y=1, put side-length anchors near y=0.7 with `preferred_position: "below"`.
 - Vertex letter labels should sit clearly outside the shape (use `lower_left` / `upper_right` etc. with anchors slightly outside the vertex).
+- Side-length / dimension labels must sit **outside** the polygon, next to the `dimension_line`, never inside the filled region.
 - Leave generous coordinate-system margin so outside labels stay inside `x_min`/`x_max`/`y_min`/`y_max`.
 - Keep label count sparse (usually ≤ 8). Prefer fewer, clearer labels over dense ticks.
 - Allowed `preferred_position`: `above`, `below`, `left`, `right`, `upper_left`, `upper_right`, `lower_left`, `lower_right`.
 
+## Graphs (mandatory pattern)
+
+For any graph / axes diagram:
+1. Include one `"type": "axes"` object with `x_label`, `y_label`.
+2. Put numeric ticks in `x_ticks` / `y_ticks` (and optional `x_tick_labels` / `y_tick_labels`). Do **not** emit free-floating tick labels as ordinary `labels` when `axes` can carry them.
+3. Do not hand-draw axis arrows with `arrow` objects unless you also omit `axes` (prefer `axes`).
+4. Axis titles sit at the positive ends; tick numbers sit outside the plot (below x-axis, left of y-axis).
+5. Set `diagram_type` to `"graph"` and `show_axes: true`.
+
+## Dimension lines
+
+- Use `dimension_line` with `offset` and `direction` (`below`/`above`/`left`/`right`).
+- Place the measurement label on the outside of the dimension line (same side as `direction`).
+- Do not add extra construction lines that close into a second rectangle beside the shape.
 ## Scope limits
 
 This renderer supports geometry and graphs only (polygons, lines, circles, arcs, axes, functions, dimension lines, angle marks).
@@ -90,8 +106,8 @@ If the source is an electrical circuit, biology flowchart, apparatus sketch, or 
 - White background, black strokes only.
 - No colour, shading, grids, or decorative elements unless essential.
 - Prefer `equal_aspect: true` for geometry.
-- For graphs set `show_axes: true` and include an `axes` object.
-- Keep coordinate ranges tight with margin for labels.
+- For graphs set `show_axes: true` and include an `axes` object with ticks when numbers are needed.
+- Keep coordinate ranges tight with margin for labels (especially below y=0 and left of x=0 for tick labels).
 - Include `"Diagram not to scale"` caption when the diagram is geometric and not to scale.
 
 ## Quality checklist (self-verify before responding)

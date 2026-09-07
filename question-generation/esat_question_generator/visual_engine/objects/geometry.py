@@ -147,6 +147,11 @@ def draw_angle_arc(ax: Axes, obj: dict, style: ExamStyle, obstacles: ObstacleSet
 
 
 def draw_dimension_line(ax: Axes, obj: dict, style: ExamStyle, obstacles: ObstacleSet, cs_span: float) -> None:
+    """Draw an exam-style dimension callout with arrowheads and gapped extensions.
+
+    Extension lines stop short of the measured edge so they do not form a closed
+    rectangle with the object boundary. End ticks are omitted in favour of arrows.
+    """
     x1, y1 = float(obj["start"][0]), float(obj["start"][1])
     x2, y2 = float(obj["end"][0]), float(obj["end"][1])
     offset = float(obj.get("offset") or cs_span * 0.08)
@@ -161,21 +166,35 @@ def draw_dimension_line(ax: Axes, obj: dict, style: ExamStyle, obstacles: Obstac
     elif direction == "right" and nx < 0:
         nx, ny = -nx, -ny
 
+    # Gap between object edge and start of extension (avoids "shelf" / closed boxes).
+    gap = max(cs_span * 0.012, abs(offset) * 0.15)
     sx, sy = x1 + nx * offset, y1 + ny * offset
     ex, ey = x2 + nx * offset, y2 + ny * offset
-    lw = _lw(obj, style)
-    ax.plot([sx, ex], [sy, ey], color=style.stroke, linewidth=lw)
-    ax.plot([x1, sx], [y1, sy], color=style.stroke, linewidth=lw * 0.85)
-    ax.plot([x2, ex], [y2, ey], color=style.stroke, linewidth=lw * 0.85)
+    e1x, e1y = x1 + nx * gap, y1 + ny * gap
+    e2x, e2y = x2 + nx * gap, y2 + ny * gap
 
-    tx, ty = perpendicular((ux, uy))
-    tick = cs_span * 0.025
-    for px, py in ((sx, sy), (ex, ey)):
-        ax.plot([px - tx * tick, px + tx * tick], [py - ty * tick, py + ty * tick], color=style.stroke, linewidth=lw)
+    lw = max(_lw(obj, style) * 0.9, 0.8)
+    ext_lw = max(lw * 0.7, 0.6)
+
+    ax.annotate(
+        "",
+        xy=(ex, ey),
+        xytext=(sx, sy),
+        arrowprops=dict(
+            arrowstyle="<->",
+            color=style.stroke,
+            lw=lw,
+            shrinkA=0,
+            shrinkB=0,
+        ),
+        annotation_clip=False,
+    )
+    ax.plot([e1x, sx], [e1y, sy], color=style.stroke, linewidth=ext_lw, solid_capstyle="butt")
+    ax.plot([e2x, ex], [e2y, ey], color=style.stroke, linewidth=ext_lw, solid_capstyle="butt")
 
     obstacles.add_segment(sx, sy, ex, ey, kind="dimension")
-    obstacles.add_segment(x1, y1, sx, sy, kind="dimension_ext")
-    obstacles.add_segment(x2, y2, ex, ey, kind="dimension_ext")
+    obstacles.add_segment(e1x, e1y, sx, sy, kind="dimension_ext")
+    obstacles.add_segment(e2x, e2y, ex, ey, kind="dimension_ext")
 
 
 def draw_equal_length_ticks(ax: Axes, obj: dict, style: ExamStyle, obstacles: ObstacleSet, cs_span: float) -> None:

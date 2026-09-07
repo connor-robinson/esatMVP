@@ -84,7 +84,7 @@ def resolve_label_collisions(
                 continue
 
             any_collision = True
-            order = candidate_order(lbl.preferred_position)
+            order = candidate_order(lbl.preferred_position, role=lbl.role)
             best_score = float("-inf")
             best_candidate_idx = lbl.candidate_index
             best_pos = (lbl.artist.get_position()[0], lbl.artist.get_position()[1])

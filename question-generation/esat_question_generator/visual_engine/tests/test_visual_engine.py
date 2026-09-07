@@ -44,6 +44,35 @@ class TestTextFormat:
     def test_unicode_omega(self):
         assert format_label_text("30Ω", math=True) == r"$30\Omega$"
 
+    def test_preserves_spaces_inside_text_command(self):
+        out = format_label_text(r"1200\text{ kg}", math=True)
+        assert ";kg" not in out
+        assert r"\text{ kg}" in out or r"\text{kg}" in out
+
+    def test_repairs_semicolon_unit_spacing(self):
+        out = format_label_text("(x - 1);cm", math=True)
+        assert ";cm" not in out
+        assert "cm" in out
+
+
+class TestGraphLabelNormalize:
+    def test_snaps_numeric_x_tick(self):
+        from visual_engine.labels import normalize_graph_labels
+        from visual_engine.schema import CoordinateSystem
+
+        cs = CoordinateSystem(x_min=-1, x_max=5, y_min=-2, y_max=20, show_axes=True)
+        labels = [
+            {"id": "label_x_val", "text": "3.0", "anchor": [3.0, -0.8], "preferred_position": "below"},
+            {"id": "label_y_val", "text": "18", "anchor": [-0.2, 18.0], "preferred_position": "left"},
+        ]
+        out = normalize_graph_labels(labels, cs, diagram_type="graph")
+        assert out[0]["axis_label"] is True
+        assert out[0]["preferred_position"] == "below"
+        assert out[0]["anchor"][1] < 0
+        assert out[1]["axis_label"] is True
+        assert out[1]["preferred_position"] == "left"
+        assert out[1]["anchor"][0] < 0
+
 
 class TestSchema:
     def test_parse_triangle_fixture(self):
@@ -88,9 +117,13 @@ class TestRenderer:
         assert result.dpi == 220
         assert result.renderer == "matplotlib_diagram_v1"
         assert result.label_placements is not None
+        axes_obj = next((o for o in spec.get("objects", []) if o.get("type") == "axes"), None)
+        axes_labels = 0
+        if axes_obj:
+            axes_labels = 2 + len(axes_obj.get("x_ticks") or []) + len(axes_obj.get("y_ticks") or [])
         assert len(result.label_placements) == len(spec["labels"]) + sum(
             1 for a in spec.get("annotations", []) if str(a.get("type")).lower() == "caption"
-        ) + (2 if any(o.get("type") == "axes" for o in spec.get("objects", [])) else 0)
+        ) + axes_labels
 
     def test_render_fails_on_impossible_label_layout(self):
         spec = {
