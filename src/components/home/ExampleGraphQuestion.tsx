@@ -34,7 +34,7 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "relative rounded-organic-xl bg-white/[0.08] px-6 py-5 backdrop-blur-xl sm:px-8 sm:py-6",
+        "relative rounded-organic-xl bg-white/[0.08] px-6 py-4 backdrop-blur-xl sm:px-8 sm:py-5",
         className,
       )}
     >
@@ -56,7 +56,7 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
             </p>
           </div>
 
-          <div className="mx-auto w-full max-w-[92%] min-h-[120px] sm:min-h-[150px]">
+          <div className="mx-auto w-full max-w-[92%] min-h-[72px] sm:min-h-[88px]">
             <CameraDistanceGraph className="h-full w-full" />
           </div>
         </div>

@@ -2,13 +2,13 @@ export type CurveId = "A" | "B" | "C" | "D";
 
 export type Point = { x: number; y: number };
 
-export const CAMERA_GRAPH_VIEWBOX = { width: 620, height: 360 } as const;
+export const CAMERA_GRAPH_VIEWBOX = { width: 620, height: 200 } as const;
 
 export const CAMERA_GRAPH_PADDING = {
-  left: 50,
-  right: 26,
-  top: 22,
-  bottom: 46,
+  left: 44,
+  right: 24,
+  top: 16,
+  bottom: 34,
 } as const;
 
 /** Normalized image height at distance parameter u in [0, 1]. */

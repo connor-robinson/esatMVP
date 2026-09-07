@@ -194,7 +194,7 @@ export function MarketingHomepage({
       <HomepageSectionNav />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-12 pb-16 lg:pt-24 lg:pb-32 bg-[#0A0F1D]">
+      <section className="relative overflow-hidden pt-12 pb-10 lg:pt-20 lg:pb-16 bg-[#0A0F1D]">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 opacity-[0.45]"
@@ -204,10 +204,10 @@ export function MarketingHomepage({
             backgroundSize: "22px 22px",
           }}
         />
-        <div className="relative mx-auto max-w-[1400px] space-y-6 px-4 sm:px-5 lg:space-y-8 lg:px-6">
-          <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:gap-6 xl:gap-8">
-            <div className="min-w-0 space-y-7 sm:space-y-9 lg:flex lg:flex-col lg:justify-center lg:space-y-11">
-              <h1 className="font-display text-[clamp(1.875rem,0.75rem+5vw,6rem)] font-bold leading-[0.95] tracking-[-0.04em]">
+        <div className="relative mx-auto max-w-[1400px] space-y-4 px-4 sm:px-5 lg:space-y-5 lg:px-6">
+          <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-6 xl:gap-8">
+            <div className="min-w-0 space-y-6 sm:space-y-7 lg:space-y-8">
+              <h1 className="font-display text-[clamp(1.875rem,0.9rem+3.2vw,4.25rem)] font-bold leading-[0.98] tracking-[-0.04em]">
                 The leading{" "}
                 <span
                   className="group relative inline-block cursor-help"
@@ -225,7 +225,8 @@ export function MarketingHomepage({
                     exam for engineering, science, and medical courses at
                     Cambridge, Oxford, Imperial College London, and UCL.
                   </span>
-                </span>{" "}
+                </span>
+                <br />
                 question bank
               </h1>
               <p className="max-w-2xl text-sm leading-relaxed text-[#94A3B8] sm:text-lg lg:text-xl">
@@ -271,11 +272,11 @@ export function MarketingHomepage({
             </div>
 
             <div className="min-w-0 flex w-full lg:justify-self-stretch">
-              <ExampleGraphQuestion className="flex h-full w-full max-w-none flex-col" />
+              <ExampleGraphQuestion className="w-full max-w-none" />
             </div>
           </div>
 
-          <div className="rounded-3xl bg-white/[0.08] p-6 backdrop-blur-xl sm:p-8">
+          <div className="rounded-3xl bg-white/[0.08] p-5 backdrop-blur-xl sm:p-6">
             <div className="flex w-full flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
               <div className="flex min-w-0 items-start gap-4 sm:items-center sm:gap-5">
                 <Link
