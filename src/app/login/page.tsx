@@ -34,6 +34,8 @@ import {
 
 type AuthMode = GoogleAuthMode;
 
+const SESSION_CHECK_TIMEOUT_MS = 10_000;
+
 const COPY: Record<AuthMode, { title: string; subtitle: string }> = {
   signin: {
     title: "Welcome back",
@@ -90,6 +92,14 @@ export default function LoginPage() {
   }, [searchParams]);
 
   useEffect(() => {
+    let cancelled = false;
+
+    const showForm = () => {
+      if (!cancelled) setIsChecking(false);
+    };
+
+    const timeoutId = window.setTimeout(showForm, SESSION_CHECK_TIMEOUT_MS);
+
     const checkSession = async () => {
       try {
         // Prefer getUser(): getSession() can still return a deleted-account JWT
@@ -99,19 +109,22 @@ export default function LoginPage() {
           error: userError,
         } = await supabase.auth.getUser();
 
+        if (cancelled) return;
+
         if (userError || !user) {
           if (userError || session?.user) {
             await supabase.auth.signOut().catch(() => undefined);
           }
-          setIsChecking(false);
+          showForm();
           return;
         }
 
         try {
           const prefsRes = await fetch("/api/profile/preferences");
+          if (cancelled) return;
           if (prefsRes.status === 401) {
             await supabase.auth.signOut().catch(() => undefined);
-            setIsChecking(false);
+            showForm();
             return;
           }
           const prefs = prefsRes.ok ? await prefsRes.json() : null;
@@ -130,53 +143,60 @@ export default function LoginPage() {
             ),
           );
         } catch {
-          continueAfterAuth(redirectTo);
+          if (!cancelled) continueAfterAuth(redirectTo);
         }
       } catch {
-        setIsChecking(false);
+        showForm();
+      } finally {
+        window.clearTimeout(timeoutId);
       }
     };
 
     void checkSession();
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeoutId);
+    };
   }, [supabase, redirectTo, session?.user]);
 
   useEffect(() => {
-    if (session?.user && !isChecking && !pendingEmail) {
-      void (async () => {
-        try {
-          const {
-            data: { user },
-            error: userError,
-          } = await supabase.auth.getUser();
-          if (userError || !user) {
-            await supabase.auth.signOut().catch(() => undefined);
-            return;
-          }
-          const prefsRes = await fetch("/api/profile/preferences");
-          if (prefsRes.status === 401) {
-            await supabase.auth.signOut().catch(() => undefined);
-            return;
-          }
-          const prefs = prefsRes.ok ? await prefsRes.json() : null;
-          const { resolvePostAuthPath } = await import(
-            "@/lib/onboarding/redirect"
-          );
-          continueAfterAuth(
-            resolvePostAuthPath(
-              prefs
-                ? {
-                    username: prefs.username ?? null,
-                    onboarding_completed: prefs.onboarding_completed ?? null,
-                  }
-                : null,
-              redirectTo,
-            ),
-          );
-        } catch {
-          continueAfterAuth(redirectTo);
-        }
-      })();
+    if (session === undefined || !session?.user || isChecking || pendingEmail) {
+      return;
     }
+    void (async () => {
+      try {
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+        if (userError || !user) {
+          await supabase.auth.signOut().catch(() => undefined);
+          return;
+        }
+        const prefsRes = await fetch("/api/profile/preferences");
+        if (prefsRes.status === 401) {
+          await supabase.auth.signOut().catch(() => undefined);
+          return;
+        }
+        const prefs = prefsRes.ok ? await prefsRes.json() : null;
+        const { resolvePostAuthPath } = await import(
+          "@/lib/onboarding/redirect"
+        );
+        continueAfterAuth(
+          resolvePostAuthPath(
+            prefs
+              ? {
+                  username: prefs.username ?? null,
+                  onboarding_completed: prefs.onboarding_completed ?? null,
+                }
+              : null,
+            redirectTo,
+          ),
+        );
+      } catch {
+        continueAfterAuth(redirectTo);
+      }
+    })();
   }, [session, redirectTo, supabase, isChecking, pendingEmail]);
 
   const buildAuthUrl = (nextMode: AuthMode, withEmail = emailOpen) => {
@@ -260,7 +280,7 @@ export default function LoginPage() {
     }
   };
 
-  if ((session?.user && !pendingEmail) || isChecking) {
+  if (isChecking || session === undefined) {
     return (
       <AuthPageShell
         title="Continuing…"

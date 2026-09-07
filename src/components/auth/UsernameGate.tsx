@@ -20,6 +20,7 @@ export function UsernameGate({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     async function checkSetup() {
+      if (session === undefined) return;
       if (!session?.user) {
         setChecking(false);
         return;

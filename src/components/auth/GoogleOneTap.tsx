@@ -106,7 +106,7 @@ export function GoogleOneTap() {
 
   const startOneTap = useCallback(async () => {
     if (!GOOGLE_CLIENT_ID || !window.google?.accounts?.id) return;
-    if (session?.user || initializingRef.current) return;
+    if (session === undefined || session?.user || initializingRef.current) return;
     if (
       pathname?.startsWith("/login") ||
       pathname?.startsWith("/auth") ||
@@ -144,6 +144,7 @@ export function GoogleOneTap() {
   }, [handleCredential, pathname, session?.user, supabase.auth]);
 
   useEffect(() => {
+    if (session === undefined) return;
     if (session?.user) {
       window.google?.accounts?.id?.cancel();
       return;

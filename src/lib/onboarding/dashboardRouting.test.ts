@@ -118,7 +118,26 @@ describe("post-auth redirect defaults", () => {
     expect(login).toContain("Continuing…");
     expect(login).toContain("isPartnerAccessPath");
     expect(login).toContain("signOut");
+    expect(login).toContain("session === undefined");
+    expect(login).toContain("SESSION_CHECK_TIMEOUT_MS");
     expect(login).not.toMatch(/if \((session\?\.user && !pendingEmail) \|\| isChecking\) \{\s*return null;/);
+  });
+
+  it("does not treat a hydrating session as logged out", () => {
+    const provider = readSrc("components", "auth", "SupabaseSessionProvider.tsx");
+    const analytics = readSrc(
+      "app",
+      "questions",
+      "questionbank",
+      "analytics",
+      "page.tsx",
+    );
+    const profile = readSrc("app", "profile", "page.tsx");
+
+    expect(provider).toContain("initialSession ?? undefined");
+    expect(provider).toContain("HydratedSession");
+    expect(analytics).toContain("authSession === undefined");
+    expect(profile).toContain("session === undefined");
   });
 
   it("builds a login URL that returns to /dashboard", () => {

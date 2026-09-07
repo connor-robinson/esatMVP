@@ -15,6 +15,9 @@ import {
   hasAnalyticsConsent,
 } from "@/lib/ga";
 
+/** `undefined` while the browser session is still hydrating. */
+export type HydratedSession = Session | null | undefined;
+
 interface SupabaseSessionProviderProps {
   children: ReactNode;
   initialSession: Session | null;
@@ -22,7 +25,7 @@ interface SupabaseSessionProviderProps {
 
 interface SupabaseContextValue {
   supabase: SupabaseClient<Database>;
-  session: Session | null;
+  session: HydratedSession;
 }
 
 const SupabaseContext = createContext<SupabaseContextValue | undefined>(undefined);
@@ -69,19 +72,30 @@ function maybeTrackSignup(session: Session | null) {
 
 export function SupabaseSessionProvider({ children, initialSession }: SupabaseSessionProviderProps) {
   const [supabase] = useState(() => createSupabaseBrowserClient());
-  const [session, setSession] = useState<Session | null>(initialSession);
+  // Root layout passes null (no server session). Treat that as "not hydrated yet"
+  // so auth gates do not bounce to /login before getSession() resolves.
+  const [session, setSession] = useState<HydratedSession>(
+    initialSession ?? undefined,
+  );
 
   useEffect(() => {
     let mounted = true;
+    const hydrateTimeout = window.setTimeout(() => {
+      setSession((current) => (current === undefined ? null : current));
+    }, 8_000);
 
-    supabase.auth.getSession().then(({ data }) => {
-      if (mounted) {
+    supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        if (!mounted) return;
         setSession(data.session ?? null);
         if (data.session?.user?.id && hasAnalyticsConsent()) {
           setGaUserId(data.session.user.id);
         }
-      }
-    });
+      })
+      .catch(() => {
+        if (mounted) setSession(null);
+      });
 
     const {
       data: { subscription },
@@ -100,6 +114,7 @@ export function SupabaseSessionProvider({ children, initialSession }: SupabaseSe
 
     return () => {
       mounted = false;
+      window.clearTimeout(hydrateTimeout);
       subscription.unsubscribe();
     };
   }, [supabase]);
@@ -123,7 +138,7 @@ export function useSupabaseClient(): SupabaseClient<Database> {
   return context.supabase;
 }
 
-export function useSupabaseSession() {
+export function useSupabaseSession(): HydratedSession {
   const context = useContext(SupabaseContext);
   if (!context) {
     throw new Error("useSupabaseSession must be used within SupabaseSessionProvider");

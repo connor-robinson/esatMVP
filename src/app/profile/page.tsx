@@ -188,6 +188,7 @@ export default function ProfilePage() {
   // Load preferences
   useEffect(() => {
     async function loadPreferences() {
+      if (session === undefined) return;
       if (!session?.user) {
         router.push("/login?redirectTo=/profile");
         return;
