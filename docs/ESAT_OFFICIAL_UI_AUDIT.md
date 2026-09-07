@@ -164,9 +164,10 @@ Sources consulted:
 | `--pearson-header-height-compact` | `43px` (title-only; +30% vs prior sandbox) |
 | `--pearson-header-height-full` | `62px` (timer + counter stacked) |
 | `--pearson-toolbar-height` | `24px` |
-| `--pearson-footer-height` | `24px` |
+| `--pearson-footer-height` | `31px` (+30%) |
 | `--pearson-content-padding` | `12px 16px` |
 | `--pearson-font-size-header` | `18px` (title bar; +30%) |
+| `--pearson-font-size-footer` | `18px` (End Exam / Next / Navigator; +30%) |
 | `--pearson-font-size-ui` | `14px` (chrome labels) |
 | `--pearson-font-size-content` | `15px` (body / questions) |
 | `--pearson-font-serif` | Times New Roman (instruction table headers) |

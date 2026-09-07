@@ -172,7 +172,7 @@ html.pearson-exam-active body {
 }
 
 .pearson-raster-icon--footer {
-  height: 16px;
+  height: 21px;
   width: auto;
 }
 
@@ -195,17 +195,17 @@ html.pearson-exam-active body {
 }
 
 .pearson-raster-icon--end-exam {
-  height: 14px;
-  max-width: 28px;
+  height: 18px;
+  max-width: 36px;
 }
 
 .pearson-raster-icon--navigator {
-  max-width: 18px;
+  max-width: 23px;
 }
 
 .pearson-raster-icon--next,
 .pearson-raster-icon--prev {
-  max-width: 20px;
+  max-width: 26px;
 }
 
 /* Blue chrome controls: yellow hover label/icon, white inset ring on press. */
