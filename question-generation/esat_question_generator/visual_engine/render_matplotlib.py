@@ -30,8 +30,13 @@ class RenderResult:
 
 def _setup_axes(fig, ax, spec: VisualSpec) -> None:
     cs = spec.coordinate_system
-    ax.set_xlim(cs.x_min, cs.x_max)
-    ax.set_ylim(cs.y_min, cs.y_max)
+    span_x = max(cs.x_max - cs.x_min, 1e-6)
+    span_y = max(cs.y_max - cs.y_min, 1e-6)
+    # Extra plot margin so outside vertex/side labels are not immediately out of bounds.
+    pad_x = 0.08 * span_x
+    pad_y = 0.08 * span_y
+    ax.set_xlim(cs.x_min - pad_x, cs.x_max + pad_x)
+    ax.set_ylim(cs.y_min - pad_y, cs.y_max + pad_y)
     if cs.equal_aspect:
         ax.set_aspect("equal", adjustable="box")
     if cs.show_axes:

@@ -71,12 +71,19 @@ Each label:
 }
 ```
 
-- Use `"math": true` for expressions (e.g. `y=x^2`, `\\theta`). Renderer uses Matplotlib mathtext.
-- Use single-letter variables without math mode.
+- Use `"math": true` for expressions (e.g. `y=x^2`, `\\theta`, `30\\Omega`). Use single backslashes in JSON strings.
+- Do **not** wrap labels in `$...$` yourself; set `"math": true` instead.
+- Never use `preferred_position: "center"` for vertex or side labels.
 - Place anchors **offset from** the object being labelled, not on vertices or on top of lines. Example: for a base at y=1, put side-length anchors near y=0.7 with `preferred_position: "below"`.
 - Vertex letter labels should sit clearly outside the shape (use `lower_left` / `upper_right` etc. with anchors slightly outside the vertex).
-- Leave coordinate-system margin so outside labels stay inside `x_min`/`x_max`/`y_min`/`y_max`.
-- Allowed `preferred_position`: `above`, `below`, `left`, `right`, `upper_left`, `upper_right`, `lower_left`, `lower_right`, `center`.
+- Leave generous coordinate-system margin so outside labels stay inside `x_min`/`x_max`/`y_min`/`y_max`.
+- Keep label count sparse (usually ≤ 8). Prefer fewer, clearer labels over dense ticks.
+- Allowed `preferred_position`: `above`, `below`, `left`, `right`, `upper_left`, `upper_right`, `lower_left`, `lower_right`.
+
+## Scope limits
+
+This renderer supports geometry and graphs only (polygons, lines, circles, arcs, axes, functions, dimension lines, angle marks).
+If the source is an electrical circuit, biology flowchart, apparatus sketch, or other unsupported diagram type, invent a **mathematically equivalent geometry or graph** that preserves the same reasoning skill, or a simple labelled geometry figure that matches the variation goal. Do not try to draw circuit symbols.
 
 ## Style constraints
 

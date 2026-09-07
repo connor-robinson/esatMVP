@@ -14,18 +14,22 @@ from .text_format import format_label_text
 
 def caption_label_spec(ann: dict[str, Any], cs: CoordinateSystem, index: int) -> dict[str, Any]:
     position = str(ann.get("position") or "bottom_center").lower()
+    span_y = max(cs.y_max - cs.y_min, 1e-6)
+    span_x = max(cs.x_max - cs.x_min, 1e-6)
     x = 0.5 * (cs.x_min + cs.x_max)
-    y = cs.y_min + 0.04 * (cs.y_max - cs.y_min)
-    preferred = "above"
+    # Sit just above the bottom bound so preferred=below can clear geometry.
+    y = cs.y_min + 0.02 * span_y
+    preferred = "below"
     ha_hint = "center"
     if position == "bottom_left":
-        x = cs.x_min + 0.02 * (cs.x_max - cs.x_min)
-        preferred = "above"
+        x = cs.x_min + 0.02 * span_x
         ha_hint = "left"
     elif position == "bottom_right":
-        x = cs.x_max - 0.02 * (cs.x_max - cs.x_min)
-        preferred = "above"
+        x = cs.x_max - 0.02 * span_x
         ha_hint = "right"
+    elif position == "top_center":
+        y = cs.y_max - 0.02 * span_y
+        preferred = "above"
     return {
         "id": str(ann.get("id") or f"caption_{index + 1}"),
         "text": str(ann.get("text") or ""),
@@ -77,10 +81,13 @@ def create_label_artists(ax: Axes, label_specs: list[dict[str, Any]], style: Exa
         label_id = str(lbl.get("id") or f"label_{idx + 1}")
         raw_text = str(lbl.get("text") or "")
         is_caption = bool(lbl.get("caption"))
+        is_axis = bool(lbl.get("axis_label")) or label_id.startswith("tick_") or label_id.startswith("label_axis")
         is_math = bool(lbl.get("math")) and not is_caption
         text = format_label_text(raw_text, math=is_math)
         anchor = (float(lbl["anchor"][0]), float(lbl["anchor"][1]))
-        preferred = str(lbl.get("preferred_position") or "center")
+        preferred = str(lbl.get("preferred_position") or "above")
+        if preferred.lower() == "center" and not is_caption:
+            preferred = "upper_right"
 
         fontsize = style.font_size
         color = style.stroke
@@ -108,7 +115,7 @@ def create_label_artists(ax: Axes, label_specs: list[dict[str, Any]], style: Exa
                 anchor=anchor,
                 preferred_position=preferred,
                 artist=artist,
-                role="caption" if is_caption else ("axis" if lbl.get("axis_label") else "label"),
+                role="caption" if is_caption else ("axis" if is_axis else "label"),
             )
         )
     return labels

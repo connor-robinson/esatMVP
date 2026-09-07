@@ -91,29 +91,40 @@ def resolve_label_collisions(
             best_ha = lbl.artist.get_ha()
             best_va = lbl.artist.get_va()
 
-            for cand_idx, cand in enumerate(order):
-                pos, ha, va = apply_candidate(anchor=lbl.anchor, candidate=cand, offset_dist=offset_dist)
-                lbl.artist.set_position(pos)
-                lbl.artist.set_ha(ha)
-                lbl.artist.set_va(va)
-                fig.canvas.draw()
-                trial_rect = text_bbox_data(lbl.artist, renderer)
-                trial_issues = label_collides(
-                    trial_rect,
-                    obstacles=obstacles,
-                    other_label_rects=others,
-                    bounds=bounds,
-                    label_gap=label_gap,
-                    segment_clearance=segment_clearance,
-                    role=lbl.role,
-                )
-                score = score_candidate(trial_rect, lbl.anchor, trial_issues)
-                if score > best_score:
-                    best_score = score
-                    best_candidate_idx = cand_idx
-                    best_pos = pos
-                    best_ha = ha
-                    best_va = va
+            # Try increasing offsets so vertex/edge-anchored labels can escape geometry.
+            offset_scales = (1.0, 1.5, 2.0, 2.75, 3.5)
+            for scale in offset_scales:
+                trial_offset = offset_dist * scale
+                for cand_idx, cand in enumerate(order):
+                    pos, ha, va = apply_candidate(
+                        anchor=lbl.anchor, candidate=cand, offset_dist=trial_offset
+                    )
+                    lbl.artist.set_position(pos)
+                    lbl.artist.set_ha(ha)
+                    lbl.artist.set_va(va)
+                    fig.canvas.draw()
+                    trial_rect = text_bbox_data(lbl.artist, renderer)
+                    trial_issues = label_collides(
+                        trial_rect,
+                        obstacles=obstacles,
+                        other_label_rects=others,
+                        bounds=bounds,
+                        label_gap=label_gap,
+                        segment_clearance=segment_clearance,
+                        role=lbl.role,
+                    )
+                    score = score_candidate(trial_rect, lbl.anchor, trial_issues)
+                    # Prefer smaller offsets among equal-quality clean placements.
+                    if not trial_issues:
+                        score += 50.0 / scale
+                    if score > best_score:
+                        best_score = score
+                        best_candidate_idx = cand_idx
+                        best_pos = pos
+                        best_ha = ha
+                        best_va = va
+                if best_score >= 0:
+                    break
 
             lbl.artist.set_position(best_pos)
             lbl.artist.set_ha(best_ha)

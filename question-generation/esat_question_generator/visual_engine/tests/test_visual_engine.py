@@ -35,6 +35,15 @@ class TestTextFormat:
     def test_auto_detects_math_hints(self):
         assert format_label_text("x^2").startswith("$")
 
+    def test_collapses_double_escaped_latex(self):
+        assert format_label_text(r"8.0\\Omega", math=True) == r"$8.0\Omega$"
+
+    def test_strips_nested_dollar_delimiters(self):
+        assert format_label_text(r"$8.0\\Omega$", math=True) == r"$8.0\Omega$"
+
+    def test_unicode_omega(self):
+        assert format_label_text("30Ω", math=True) == r"$30\Omega$"
+
 
 class TestSchema:
     def test_parse_triangle_fixture(self):

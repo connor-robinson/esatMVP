@@ -32,13 +32,20 @@ CANDIDATES: tuple[PlacementCandidate, ...] = (
 
 
 def candidate_order(preferred: str) -> list[PlacementCandidate]:
-    pref = (preferred or "center").strip().lower()
+    pref = (preferred or "above").strip().lower()
+    # "center" almost always overlaps geometry when Gemini anchors on a vertex/edge.
+    if pref == "center":
+        pref = "upper_right"
     ordered: list[PlacementCandidate] = []
     for cand in CANDIDATES:
+        if cand.name == "center":
+            continue
         if cand.name == pref:
             ordered.insert(0, cand)
         else:
             ordered.append(cand)
+    # Keep center as a last resort only.
+    ordered.append(next(c for c in CANDIDATES if c.name == "center"))
     return ordered
 
 
@@ -47,7 +54,7 @@ def offset_distance(ax, style: ExamStyle) -> float:
     span_y = abs(ax.get_ylim()[1] - ax.get_ylim()[0])
     span = max(span_x, span_y)
     # Keep vertex/side labels clear of geometry; Gemini often anchors on the object itself.
-    return max(span * 0.05, 0.18)
+    return max(span * 0.055, 0.22)
 
 
 def apply_candidate(
@@ -82,8 +89,13 @@ def label_collides(
     is_caption = role == "caption"
 
     bx0, by0, bx1, by1 = bounds
-    if rect[0] < bx0 or rect[1] < by0 or rect[2] > bx1 or rect[3] > by1:
-        issues.append("bounds")
+    # Captions may sit slightly outside the bottom/top plot bounds.
+    if is_caption:
+        if rect[0] < bx0 or rect[2] > bx1:
+            issues.append("bounds")
+    else:
+        if rect[0] < bx0 or rect[1] < by0 or rect[2] > bx1 or rect[3] > by1:
+            issues.append("bounds")
 
     for other in other_label_rects:
         if rects_overlap(inflated, inflate_rect(other, label_gap)):
@@ -94,17 +106,23 @@ def label_collides(
 
     if role == "axis":
         for seg in obstacles.segments:
-            if seg.kind == "axis":
+            if seg.kind in {"axis", "arrow", "function"}:
                 continue
             if segment_intersects_rect(seg.x1, seg.y1, seg.x2, seg.y2, inflated):
                 issues.append(f"segment:{seg.kind}")
         return issues
 
+    # Hard intersection for solid geometry. Soft proximity only for thin construction marks.
+    soft_proximity_kinds = {"right_angle", "equal_tick", "dimension", "dimension_ext"}
+    skip_intersection_kinds = {"function", "circle", "arc", "angle_arc", "axis"}
+
     for seg in obstacles.segments:
+        if seg.kind in skip_intersection_kinds:
+            continue
         if segment_intersects_rect(seg.x1, seg.y1, seg.x2, seg.y2, inflated):
             issues.append(f"segment:{seg.kind}")
             continue
-        if seg.kind in {"function", "circle", "arc", "angle_arc", "axis"}:
+        if seg.kind not in soft_proximity_kinds:
             continue
         clearance = point_segment_distance(
             0.5 * (rect[0] + rect[2]),
@@ -119,12 +137,14 @@ def label_collides(
             issues.append(f"segment_near:{seg.kind}")
 
     for pt in obstacles.points:
-            cx = 0.5 * (rect[0] + rect[2])
-            cy = 0.5 * (rect[1] + rect[3])
-            dist = math.hypot(cx - pt.x, cy - pt.y)
-            half_diag = 0.5 * math.hypot(rect[2] - rect[0], rect[3] - rect[1])
-            if dist - half_diag < pt.radius + label_gap:
-                issues.append(f"point:{pt.kind}")
+        if pt.kind == "vertex":
+            continue
+        cx = 0.5 * (rect[0] + rect[2])
+        cy = 0.5 * (rect[1] + rect[3])
+        dist = math.hypot(cx - pt.x, cy - pt.y)
+        half_diag = 0.5 * math.hypot(rect[2] - rect[0], rect[3] - rect[1])
+        if dist - half_diag < pt.radius + label_gap:
+            issues.append(f"point:{pt.kind}")
 
     return issues
 
@@ -135,7 +155,8 @@ def score_candidate(
     issues: list[str],
 ) -> float:
     if issues:
-        return -1e6 + float(len(issues))
+        # Prefer fewer remaining conflicts when no clean placement exists.
+        return -1e6 - 100.0 * float(len(issues))
     cx = 0.5 * (rect[0] + rect[2])
     cy = 0.5 * (rect[1] + rect[3])
     dist = math.hypot(cx - anchor[0], cy - anchor[1])

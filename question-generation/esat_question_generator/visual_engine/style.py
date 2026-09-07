@@ -18,13 +18,13 @@ class ExamStyle:
     figsize: tuple[float, float] = (6.0, 4.2)
     tick_length: float = 0.08
     angle_arc_radius_factor: float = 0.18
-    right_angle_size_factor: float = 0.06
+    right_angle_size_factor: float = 0.045
     equal_tick_length_factor: float = 0.05
-    min_label_clearance_pt: float = 4.0
-    min_label_gap_pt: float = 4.0
-    bounds_margin_pt: float = 6.0
-    max_placement_iterations: int = 16
-    vertex_marker_radius_pt: float = 2.5
+    min_label_clearance_pt: float = 3.5
+    min_label_gap_pt: float = 3.5
+    bounds_margin_pt: float = 4.0
+    max_placement_iterations: int = 18
+    vertex_marker_radius_pt: float = 2.0
 
 
 DEFAULT_STYLE = ExamStyle()

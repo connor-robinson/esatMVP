@@ -80,6 +80,73 @@ def _candidate_to_eval(row: dict[str, Any]) -> EvalQuestion | None:
     )
 
 
+# Words that usually mean the diagram is outside the Matplotlib geometry/graph vocabulary.
+_UNSUPPORTED_DIAGRAM_HINTS = (
+    "circuit",
+    "resistor",
+    "ammeter",
+    "voltmeter",
+    "battery",
+    "capacitor",
+    "coil",
+    "magnet",
+    "solenoid",
+    "carbon cycle",
+    "photosynthesis",
+    "organism",
+    "cell membrane",
+    "food web",
+    "periodic table",
+    "electron",
+    "nucleus",
+    "orbital",
+)
+
+# Prefer questions whose stems suggest pure math geometry/graphs.
+_MATH_DIAGRAM_HINTS = (
+    "triangle",
+    "circle",
+    "angle",
+    "polygon",
+    "parallelogram",
+    "trapezium",
+    "rectangle",
+    "square",
+    "coordinate",
+    "graph of",
+    "sketch the graph",
+    "axes",
+    "tangent",
+    "chord",
+    "radius",
+    "diameter",
+    "perpendicular",
+    "isosceles",
+    "equilateral",
+    "sector",
+    "arc",
+    "vector",
+    "shaded",
+    "diagram",
+)
+
+
+def _stem_lower(text: str) -> str:
+    return strip_figures(text or "").lower()
+
+
+def _is_unsupported_diagram(stem: str) -> bool:
+    low = _stem_lower(stem)
+    return any(hint in low for hint in _UNSUPPORTED_DIAGRAM_HINTS)
+
+
+def _looks_like_math_diagram(stem: str) -> bool:
+    low = _stem_lower(stem)
+    if _is_unsupported_diagram(low):
+        return False
+    return any(hint in low for hint in _MATH_DIAGRAM_HINTS)
+
+
 def select_eval_questions(
     *,
     count: int = 20,
@@ -87,6 +154,7 @@ def select_eval_questions(
     question_ids: list[int] | None = None,
     audit_summary_path: Path | None = None,
     per_exam: bool = True,
+    math_only: bool = True,
 ) -> list[EvalQuestion]:
     """Pick indexed past-paper questions suitable for diagram variation eval."""
     flagged = _flagged_ids(audit_summary_path)
@@ -114,6 +182,8 @@ def select_eval_questions(
                 continue
             # Prefer single stem diagram, no graphical options in stem set.
             if len(stem_diagram_assets(row.get("diagramAssets") or [])) != 1:
+                continue
+            if math_only and not _looks_like_math_diagram(eq.question_stem):
                 continue
             by_exam[exam].append(eq)
 

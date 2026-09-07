@@ -92,3 +92,11 @@ def test_select_eval_questions_by_ids(mock_load):
     assert len(selected) == 1
     assert selected[0].question_id == 1797
     assert "<figure>" not in selected[0].reference_question
+
+
+def test_math_diagram_filter_rejects_circuits():
+    from visual_engine.eval.question_selector import _looks_like_math_diagram
+
+    assert _looks_like_math_diagram("In the triangle ABC, angle A is 30 degrees.")
+    assert not _looks_like_math_diagram("The circuit contains a battery and a resistor.")
+    assert not _looks_like_math_diagram("A carbon cycle diagram with boxes P Q R S.")
