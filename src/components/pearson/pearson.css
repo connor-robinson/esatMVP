@@ -40,11 +40,12 @@ html.pearson-exam-active body {
   --pearson-header-height-compact: 43px;
   --pearson-header-height-full: 62px;
   --pearson-toolbar-height: 24px;
-  --pearson-footer-height: 24px;
+  --pearson-footer-height: 31px;
   --pearson-content-padding-x: 16px;
   --pearson-content-padding-y: 12px;
   --pearson-font-serif: "Times New Roman", Times, serif;
   --pearson-font-size-header: 18px;
+  --pearson-font-size-footer: 18px;
 
   position: fixed;
   inset: 0;
@@ -709,7 +710,7 @@ html.pearson-exam-active body {
   border: none;
   padding: 4px 14px;
   font: inherit;
-  font-size: var(--pearson-font-size-ui);
+  font-size: var(--pearson-font-size-footer);
   cursor: pointer;
   min-height: var(--pearson-footer-height);
   line-height: 1.1;
