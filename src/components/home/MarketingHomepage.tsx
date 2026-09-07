@@ -205,8 +205,8 @@ export function MarketingHomepage({
           }}
         />
         <div className="relative mx-auto max-w-[1400px] space-y-6 px-4 sm:px-5 lg:space-y-8 lg:px-6">
-          <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-10 xl:gap-12">
-            <div className="min-w-0 space-y-7 sm:space-y-9 lg:space-y-11">
+          <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:gap-6 xl:gap-8">
+            <div className="min-w-0 space-y-7 sm:space-y-9 lg:flex lg:flex-col lg:justify-center lg:space-y-11">
               <h1 className="font-display text-[clamp(1.875rem,0.75rem+5vw,6rem)] font-bold leading-[0.95] tracking-[-0.04em]">
                 The leading{" "}
                 <span
@@ -270,8 +270,8 @@ export function MarketingHomepage({
               </div>
             </div>
 
-            <div className="min-w-0 w-full lg:justify-self-stretch">
-              <ExampleGraphQuestion className="w-full max-w-none" />
+            <div className="min-w-0 flex w-full lg:justify-self-stretch">
+              <ExampleGraphQuestion className="flex h-full w-full max-w-none flex-col" />
             </div>
           </div>
 

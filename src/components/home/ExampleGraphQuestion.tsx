@@ -38,12 +38,12 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
         className,
       )}
     >
-      <div className="relative">
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#94A3B8]">
-          Example question
-        </p>
+      <div className="relative flex min-h-0 flex-1 flex-col justify-between gap-3">
+        <div className="space-y-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#94A3B8]">
+            Example question
+          </p>
 
-        <div className="mt-3 space-y-3">
           <div className="text-sm leading-relaxed text-[#94A3B8] sm:text-[15px]">
             <p>
               A person of fixed height moves away from a stationary camera with
@@ -56,12 +56,12 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
             </p>
           </div>
 
-          <div className="mx-auto w-full max-w-[85%] min-h-[170px] sm:min-h-[221px]">
+          <div className="mx-auto w-full max-w-[92%] min-h-[170px] sm:min-h-[221px]">
             <CameraDistanceGraph className="h-full w-full" />
           </div>
         </div>
 
-        <div className="mt-3 space-y-3">
+        <div className="space-y-3">
           <div
             className="grid grid-cols-4 gap-2 sm:gap-2.5"
             role="group"
