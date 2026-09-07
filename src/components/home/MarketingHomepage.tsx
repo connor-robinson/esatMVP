@@ -196,29 +196,30 @@ export function MarketingHomepage({
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-[#0A0F1D] pt-12 pb-10 lg:pt-20 lg:pb-16">
         <div className="relative mx-auto max-w-[1400px] space-y-4 px-4 sm:px-5 lg:space-y-5 lg:px-6">
-          <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-6 xl:gap-8">
-            <div className="min-w-0 space-y-6 sm:space-y-7 lg:space-y-8">
-              <h1 className="font-display text-[clamp(1.875rem,0.75rem+5vw,6rem)] font-bold leading-[0.95] tracking-[-0.04em]">
-                The leading{" "}
-                <span
-                  className="group relative inline-block cursor-help"
-                  tabIndex={0}
-                  aria-describedby="esat-definition"
-                >
-                  <span className="text-underline-accent">ESAT</span>
+          <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-6 xl:gap-8">
+            <div className="min-w-0 space-y-6 sm:space-y-7 lg:space-y-8 [container-type:inline-size]">
+              <h1 className="font-display font-bold leading-[0.95] tracking-[-0.04em] [font-size:clamp(1.875rem,min(0.75rem+5vw,11cqi),6rem)]">
+                <span className="whitespace-nowrap">
+                  The leading{" "}
                   <span
-                    id="esat-definition"
-                    role="tooltip"
-                    className="pointer-events-none absolute left-0 top-full z-20 mt-3 w-[min(22rem,calc(100vw-2rem))] rounded-lg bg-[#161D2F] px-4 py-3 text-left text-sm font-normal leading-relaxed tracking-normal text-[#94A3B8] opacity-0 shadow-xl transition-opacity duration-150 group-hover:opacity-100 group-focus:opacity-100 sm:w-[24rem]"
+                    className="group relative inline-block cursor-help"
+                    tabIndex={0}
+                    aria-describedby="esat-definition"
                   >
-                    The ESAT is the Engineering and Science Admissions Test for
-                    undergraduate STEM applicants. It is a mandatory entrance
-                    exam for engineering, science, and medical courses at
-                    Cambridge, Oxford, Imperial College London, and UCL.
+                    <span className="text-underline-accent">ESAT</span>
+                    <span
+                      id="esat-definition"
+                      role="tooltip"
+                      className="pointer-events-none absolute left-0 top-full z-20 mt-3 w-[min(22rem,calc(100vw-2rem))] rounded-lg bg-[#161D2F] px-4 py-3 text-left text-sm font-normal leading-relaxed tracking-normal text-[#94A3B8] opacity-0 shadow-xl transition-opacity duration-150 group-hover:opacity-100 group-focus:opacity-100 sm:w-[24rem]"
+                    >
+                      The ESAT is the Engineering and Science Admissions Test for
+                      undergraduate STEM applicants. It is a mandatory entrance
+                      exam for engineering, science, and medical courses at
+                      Cambridge, Oxford, Imperial College London, and UCL.
+                    </span>
                   </span>
                 </span>
-                <br />
-                question bank
+                <span className="block whitespace-nowrap">question bank</span>
               </h1>
               <p className="max-w-2xl text-sm leading-relaxed text-[#94A3B8] sm:text-lg lg:text-xl">
                 Practice with our{" "}
