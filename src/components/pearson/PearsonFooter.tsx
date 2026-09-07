@@ -28,7 +28,11 @@ export function PearsonFooter({
 }: PearsonFooterProps) {
   return (
     <footer className="pearson-footer">
-      <button type="button" className="pearson-footer-action" onClick={onEndExam}>
+      <button
+        type="button"
+        className="pearson-footer-action pearson-footer-action--end-exam"
+        onClick={onEndExam}
+      >
         <EndExamIcon />
         <PearsonMnemonicLabel label="End Exam" letter="E" />
       </button>
@@ -63,7 +67,9 @@ export function PearsonFooter({
             </button>
             <span className="pearson-footer-rule" aria-hidden="true" />
           </>
-        ) : null}
+        ) : (
+          <span className="pearson-footer-rule" aria-hidden="true" />
+        )}
         <button
           type="button"
           className="pearson-footer-action"

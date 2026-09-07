@@ -161,15 +161,16 @@ Sources consulted:
 | `--pearson-dialog-blue` | `#0066a1` |
 | `--pearson-content-bg` | `#ffffff` |
 | `--pearson-text` | `#000000` |
-| `--pearson-header-height-compact` | `33px` (title-only screens; ESAT specimen) |
-| `--pearson-header-height-full` | `48px` (timer + counter stacked) |
+| `--pearson-header-height-compact` | `43px` (title-only; +30% vs prior sandbox) |
+| `--pearson-header-height-full` | `62px` (timer + counter stacked) |
 | `--pearson-toolbar-height` | `24px` |
 | `--pearson-footer-height` | `24px` |
 | `--pearson-content-padding` | `12px 16px` |
+| `--pearson-font-size-header` | `18px` (title bar; +30%) |
 | `--pearson-font-size-ui` | `14px` (chrome labels) |
 | `--pearson-font-size-content` | `15px` (body / questions) |
 | `--pearson-font-serif` | Times New Roman (instruction table headers) |
-| Color Scheme (normal) | White face `#ffffff`, label `#006daa`, 1px black border, black caret |
+| Color Scheme (normal) | Toolbar blue face, white label, 1px black border, black caret |
 
 Reference screenshots (where permissible) live under `docs/pearson-reference/`.
 

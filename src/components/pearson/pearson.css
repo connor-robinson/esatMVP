@@ -37,14 +37,14 @@ html.pearson-exam-active body {
   --pearson-radio-blue: #0078d4;
   --pearson-radio-gray: #666666;
   /* Measured from ESAT specimen screenshot mid-band (header / toolbar / footer). */
-  --pearson-header-height-compact: 33px;
-  --pearson-header-height-full: 48px;
+  --pearson-header-height-compact: 43px;
+  --pearson-header-height-full: 62px;
   --pearson-toolbar-height: 24px;
   --pearson-footer-height: 24px;
   --pearson-content-padding-x: 16px;
   --pearson-content-padding-y: 12px;
   --pearson-font-serif: "Times New Roman", Times, serif;
-  --pearson-colour-text: #006daa;
+  --pearson-font-size-header: 18px;
 
   position: fixed;
   inset: 0;
@@ -121,7 +121,7 @@ html.pearson-exam-active body {
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  padding: 6px 12px;
+  padding: 8px 14px;
   background: var(--pearson-header);
   color: var(--pearson-header-text);
   border-bottom: 1px solid var(--pearson-border);
@@ -144,7 +144,7 @@ html.pearson-exam-active body {
 
 .pearson-header-title {
   font-weight: 400;
-  font-size: var(--pearson-font-size-ui);
+  font-size: var(--pearson-font-size-header);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -382,14 +382,14 @@ html.pearson-exam-active body {
   position: relative;
 }
 
-/* Normal (closed) Color Scheme: white face, header-blue label, black border + caret. */
+/* Normal Color Scheme: toolbar-blue face, white label, black border + black caret. */
 .pearson-colour-trigger {
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  background: #ffffff;
-  color: var(--pearson-colour-text);
+  background: var(--pearson-toolbar);
+  color: #ffffff;
   border: 1px solid #000000;
   box-sizing: border-box;
   font-family: var(--pearson-font);
@@ -403,16 +403,20 @@ html.pearson-exam-active body {
 }
 
 .pearson-exam-root[data-chrome-mode="blue"] .pearson-colour-trigger {
-  background: #ffffff;
-  color: var(--pearson-colour-text);
+  background: var(--pearson-toolbar);
+  color: #ffffff;
   border: 1px solid #000000;
 }
 
-.pearson-exam-root[data-chrome-mode="blue"] .pearson-colour-trigger:hover:not(:disabled),
+.pearson-exam-root[data-chrome-mode="blue"] .pearson-colour-trigger:hover:not(:disabled) {
+  color: var(--pearson-hover-yellow);
+  background: var(--pearson-toolbar);
+}
+
 .pearson-exam-root[data-chrome-mode="blue"] .pearson-colour-trigger:active:not(:disabled) {
-  color: var(--pearson-colour-text);
-  background: #ffffff;
-  box-shadow: none;
+  color: #ffffff;
+  background: var(--pearson-toolbar);
+  box-shadow: inset 0 0 0 1px #ffffff;
 }
 
 .pearson-colour-trigger:disabled {
@@ -710,6 +714,11 @@ html.pearson-exam-active body {
   min-height: var(--pearson-footer-height);
   line-height: 1.1;
   overflow: visible;
+}
+
+.pearson-footer-action--end-exam {
+  padding-left: 10px;
+  padding-right: 8px;
 }
 
 .pearson-exam-root[data-chrome-mode="themed"] .pearson-footer-action {
