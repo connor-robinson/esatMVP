@@ -11,7 +11,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from .diagram import build_diagram_stem_embed
 from .stem_block_overrides import apply_block_overrides, placement_skip_reason
-from .stem_reblock import refine_stem_blocks
+from .stem_reblock import refine_stem_blocks, split_prose_into_sentences
 
 FIGURE_RE = re.compile(r"<figure[^>]*>[\s\S]*?</figure>", re.IGNORECASE)
 
@@ -69,6 +69,58 @@ def split_stem_blocks(stem: str, *, question_id: Optional[int] = None) -> List[s
     if question_id is not None:
         refined = apply_block_overrides(int(question_id), refined)
     return refined
+
+
+def expand_blocks_to_fit_placements(
+    blocks: List[str],
+    placements: Any,
+) -> Tuple[List[str], List[Dict[str, Any]]]:
+    """Grow sentence-level blocks so model insert_after indexes are valid.
+
+    If a block cannot be split further, clamp remaining indexes to block_count.
+    """
+    expanded = [str(block).strip() for block in blocks if str(block).strip()]
+    rows: List[Dict[str, Any]] = []
+    if isinstance(placements, list):
+        for item in placements:
+            if isinstance(item, dict):
+                rows.append(dict(item))
+
+    def _max_index() -> int:
+        highest = 0
+        for item in rows:
+            raw = item.get("insertAfterBlock", item.get("insert_after_block"))
+            try:
+                highest = max(highest, int(raw))
+            except (TypeError, ValueError):
+                continue
+        return highest
+
+    while _max_index() > len(expanded):
+        split_at = None
+        split_parts: List[str] = []
+        for index, block in enumerate(expanded):
+            if _is_markdown_table_block(block):
+                continue
+            parts = split_prose_into_sentences(block)
+            if len(parts) > 1:
+                split_at = index
+                split_parts = parts
+                break
+        if split_at is None:
+            cap = len(expanded)
+            for item in rows:
+                raw = item.get("insertAfterBlock", item.get("insert_after_block"))
+                try:
+                    index = min(int(raw), cap)
+                except (TypeError, ValueError):
+                    continue
+                item["insertAfterBlock"] = index
+                item["insert_after_block"] = index
+            break
+        expanded[split_at : split_at + 1] = split_parts
+
+    return expanded, rows
 
 
 def stem_diagram_assets(assets: Any) -> List[Dict[str, Any]]:

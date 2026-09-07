@@ -79,6 +79,11 @@ _MIDSTEM_LINE_RE = re.compile(
     re.IGNORECASE,
 )
 
+# Second diagram often starts a new sentence after Graph 1 / Diagram 1.
+_NEXT_DIAGRAM_SENTENCE_RE = re.compile(
+    r"(?<=[.?!])\s+(?=Graph\s+\d|Diagram\s+\d|Figure\s+\d|Spring [A-Z] )"
+)
+
 # Split a single prose line when the diagram sits between two sentences.
 _INLINE_SPLIT_BEFORE_RE = re.compile(
     r"(?<=[.?!])\s+(?="
@@ -176,7 +181,21 @@ def _strip_key_legend_lines(lines: List[str]) -> List[str]:
     return out
 
 
+def _split_next_diagram_sentence(text: str) -> List[str]:
+    match = _NEXT_DIAGRAM_SENTENCE_RE.search(text)
+    if match and match.start() > 12:
+        head = text[: match.start()].strip()
+        tail = text[match.start() :].strip()
+        if head and tail:
+            return [head, tail]
+    return [text]
+
+
 def _split_inline_question_tail(text: str) -> List[str]:
+    diagram_parts = _split_next_diagram_sentence(text)
+    if len(diagram_parts) > 1:
+        return diagram_parts
+
     match = _INLINE_SPLIT_BEFORE_RE.search(text)
     if match and match.start() > 15:
         head = text[: match.start()].strip()
@@ -244,10 +263,40 @@ def _split_prose_lines(text: str, *, allow_anchor_split: bool = True) -> List[st
             flush()
             buffer.append(line)
             continue
+        if buffer and line[:1].isupper() and buffer[-1].rstrip().endswith((".", "?", "!")):
+            flush()
         buffer.append(line)
 
     flush()
     return [block for block in blocks if block]
+
+
+_SENTENCE_SPLIT_RE = re.compile(r"(?<=[.?!])\s+(?=[A-Z])")
+
+
+def split_prose_into_sentences(text: str) -> List[str]:
+    """Split one prose block into sentences, leaving $math$ intact."""
+    text = (text or "").strip()
+    if not text:
+        return []
+
+    parts: List[str] = []
+    cursor = 0
+    in_math = False
+    for match in _SENTENCE_SPLIT_RE.finditer(text):
+        chunk = text[cursor : match.start()]
+        if chunk.count("$") % 2 == 1:
+            in_math = not in_math
+        if in_math:
+            continue
+        head = text[cursor : match.start()].strip()
+        if head:
+            parts.append(head)
+        cursor = match.end()
+    tail = text[cursor:].strip()
+    if tail:
+        parts.append(tail)
+    return parts or [text]
 
 
 def refine_stem_blocks(blocks: List[str], *, is_table_block) -> List[str]:

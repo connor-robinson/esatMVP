@@ -16,6 +16,7 @@ from .config import CACHE_DIR, DEFAULT_BATCH_MODEL
 from .db import make_client
 from .export_questions import download_image, sha256_bytes
 from .stem_blocks import (
+    expand_blocks_to_fit_placements,
     split_stem_blocks,
     stem_diagram_assets,
     strip_figures,
@@ -510,10 +511,15 @@ def place_stems(
 
         placements_raw = raw.get("placements")
         asset_ids = [str(a["id"]) for a in prepared["assets"]]
+        expanded_blocks, placements_raw = expand_blocks_to_fit_placements(
+            prepared.get("stemBlocks") or [],
+            placements_raw,
+        )
+        prepared["stemBlocks"] = expanded_blocks
         placements, error = validate_placements(
             placements_raw,
             asset_ids=asset_ids,
-            block_count=len(prepared["stemBlocks"]),
+            block_count=len(expanded_blocks),
         )
         if error:
             record = _failed_record(prepared, error, model=model_name)

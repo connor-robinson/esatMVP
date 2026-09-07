@@ -5,7 +5,11 @@ from __future__ import annotations
 import unittest
 
 from past_paper_converter.stem_block_overrides import placement_skip_reason
-from past_paper_converter.stem_blocks import split_stem_blocks, validate_placements
+from past_paper_converter.stem_blocks import (
+    expand_blocks_to_fit_placements,
+    split_stem_blocks,
+    validate_placements,
+)
 
 
 def _assert_diagram_after_block_1(
@@ -232,6 +236,31 @@ class StemReblockTests(unittest.TestCase):
         reason = placement_skip_reason(2970)
         self.assertIsNotNone(reason)
         self.assertIn("graphical_option_composite", reason or "")
+
+    def test_graph1_graph2_splits_and_fits_d2(self) -> None:
+        stem = (
+            "Graph 1 shows how the displacement of one of the particles of a medium "
+            "varies with time in seconds as a wave travels through the medium. "
+            "Graph 2 shows how the displacement varies with distance."
+        )
+        blocks = split_stem_blocks(stem, question_id=1865)
+        self.assertGreaterEqual(len(blocks), 2, blocks)
+        self.assertIn("Graph 1", blocks[0])
+        self.assertIn("Graph 2", blocks[1])
+        expanded, rows = expand_blocks_to_fit_placements(
+            blocks,
+            [
+                {"asset_id": "d1", "insert_after_block": 1},
+                {"asset_id": "d2", "insert_after_block": 2},
+            ],
+        )
+        placements, error = validate_placements(
+            rows,
+            asset_ids=["d1", "d2"],
+            block_count=len(expanded),
+        )
+        self.assertIsNone(error, error)
+        self.assertEqual(placements[1]["insertAfterBlock"], 2)
 
 
 if __name__ == "__main__":
