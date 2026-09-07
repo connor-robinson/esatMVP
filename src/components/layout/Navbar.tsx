@@ -13,7 +13,7 @@ import {
 } from '@/components/auth/SupabaseSessionProvider';
 import { cn } from '@/lib/utils';
 import { SessionProgressBar } from '@/components/papers/SessionProgressBar';
-import { isPaperImmersiveRoute } from '@/lib/papers/activePaperSessionClient';
+import { shouldHideSiteChromeForPaper } from '@/lib/papers/activePaperSessionClient';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -292,8 +292,7 @@ export function Navbar() {
 
   // Immersive mode only applies inside the paper. With a session running on any
   // other page, the main navbar must stay available.
-  const isImmersivePaperView =
-    hasActiveSession && isPaperImmersiveRoute(pathname);
+  const isImmersivePaperView = shouldHideSiteChromeForPaper(pathname);
   const showMainNavStrip =
     !isImmersivePaperView || (docFullscreen && paperFullscreenShowMainNavbar);
   const showNavbarChrome = showMainNavStrip && homepageNavVisible;

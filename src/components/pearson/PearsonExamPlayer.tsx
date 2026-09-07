@@ -47,12 +47,15 @@ export interface PearsonExamPlayerProps {
   initialFlags?: PearsonFlagMap;
   timeLimitSeconds?: number;
   moduleTransition?: ModuleTransitionConfig;
-  introMode?: "full" | "section-only";
+  introMode?: "full" | "section-only" | "resume-questions";
   suppressCompleteScreen?: boolean;
   sectionHeading?: string;
+  initialQuestionIndex?: number;
   onModuleComplete: (result: PearsonModuleResult) => void;
   onAnswerChange?: (answers: PearsonAnswerMap) => void;
   onFlagsChange?: (flags: PearsonFlagMap) => void;
+  onQuestionsStarted?: () => void;
+  onQuestionIndexChange?: (index: number) => void;
 }
 
 export function PearsonExamPlayer({
@@ -66,9 +69,12 @@ export function PearsonExamPlayer({
   introMode,
   suppressCompleteScreen,
   sectionHeading,
+  initialQuestionIndex,
   onModuleComplete,
   onAnswerChange,
   onFlagsChange,
+  onQuestionsStarted,
+  onQuestionIndexChange,
 }: PearsonExamPlayerProps) {
   const c = usePearsonExamController({
     mode,
@@ -80,9 +86,12 @@ export function PearsonExamPlayer({
     introMode,
     suppressCompleteScreen,
     sectionHeading,
+    initialQuestionIndex,
     onModuleComplete,
     onAnswerChange,
     onFlagsChange,
+    onQuestionsStarted,
+    onQuestionIndexChange,
   });
 
   const hotkeyApi = useMemo(
@@ -222,6 +231,11 @@ export function PearsonExamPlayer({
                 unseenIncompleteCount={c.unseenIncompleteCount}
                 onJump={(index) => c.tryNavigateTo(index)}
                 onClose={c.closeNavigator}
+                submitHint={
+                  c.isLastQuestion
+                    ? "Review this section, then End Exam to submit it."
+                    : undefined
+                }
               />
             ) : null}
 

@@ -8,6 +8,7 @@ interface PearsonLoadingScreenProps {
   onComplete: () => void;
   /** Duration ms before auto-advancing (matches segmented bar fill). */
   durationMs?: number;
+  label?: string;
 }
 
 /**
@@ -17,6 +18,7 @@ interface PearsonLoadingScreenProps {
 export function PearsonLoadingScreen({
   onComplete,
   durationMs = 2200,
+  label = "Loading, please wait...",
 }: PearsonLoadingScreenProps) {
   const [filled, setFilled] = useState(0);
 
@@ -36,7 +38,7 @@ export function PearsonLoadingScreen({
 
   return (
     <div className="pearson-loading-screen">
-      <p className="pearson-loading-text">Loading, please wait...</p>
+      <p className="pearson-loading-text">{label}</p>
       <div className="pearson-loading-bar" aria-hidden="true">
         {Array.from({ length: SEGMENTS }, (_, i) => (
           <span

@@ -6,6 +6,7 @@ const PAPER_IMMERSIVE_ROUTES = [
   '/past-papers/solve',
   '/past-papers/mark',
   '/past-papers/submit',
+  '/past-papers/pearson-demo',
 ];
 
 /**
@@ -23,6 +24,24 @@ export function isPaperImmersiveRoute(pathname: string | null): boolean {
   return PAPER_IMMERSIVE_ROUTES.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
+}
+
+/** Pearson chrome should hide site nav/footer even without a saved session. */
+export function isPearsonChromeRoute(pathname: string | null): boolean {
+  if (!pathname) return false;
+  if (pathname === "/pearson" || pathname.startsWith("/pearson/")) return true;
+  return (
+    pathname === "/past-papers/pearson-demo" ||
+    pathname.startsWith("/past-papers/pearson-demo/")
+  );
+}
+
+export function shouldHideSiteChromeForPaper(
+  pathname: string | null,
+  _hasActiveSession = false,
+): boolean {
+  if (isPearsonChromeRoute(pathname)) return true;
+  return isPaperImmersiveRoute(pathname);
 }
 
 /**

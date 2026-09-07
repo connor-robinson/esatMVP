@@ -9,6 +9,7 @@ interface PearsonNavigatorProps {
   unseenIncompleteCount: number;
   onJump: (questionIndex: number) => void;
   onClose: () => void;
+  submitHint?: string;
 }
 
 function statusLabel(status: PearsonNavRow["status"]): string {
@@ -27,6 +28,7 @@ export function PearsonNavigator({
   unseenIncompleteCount,
   onJump,
   onClose,
+  submitHint,
 }: PearsonNavigatorProps) {
   return (
     <div className="pearson-nav-modal-wrap" role="presentation">
@@ -42,6 +44,7 @@ export function PearsonNavigator({
         </div>
 
         <div className="pearson-nav-window-body">
+          {submitHint ? <p className="pearson-nav-submit-hint">{submitHint}</p> : null}
           <table className="pearson-nav-table">
             <thead>
               <tr>

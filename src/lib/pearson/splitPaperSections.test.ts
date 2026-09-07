@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Question } from "@/types/papers";
 import {
+  formatPearsonSectionHeading,
   sectionTimeLimitMinutes,
   splitQuestionsIntoSections,
 } from "./splitPaperSections";
@@ -48,6 +49,17 @@ describe("splitQuestionsIntoSections", () => {
     expect(sections[0].timeLimitMinutes).toBe(sectionTimeLimitMinutes(20));
     expect(sections[1].sectionLabel).toBe("Physics");
     expect(sections[1].timeLimitMinutes).toBe(30);
+  });
+});
+
+describe("formatPearsonSectionHeading", () => {
+  it("names the part inside the paper title", () => {
+    expect(
+      formatPearsonSectionHeading(
+        { partLetter: "Part A", partName: "Mathematics" },
+        "NSAA 2023 Section 1",
+      ),
+    ).toBe("This is Part A: Mathematics of the NSAA 2023 Section 1 paper");
   });
 });
 

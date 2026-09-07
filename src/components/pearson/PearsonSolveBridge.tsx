@@ -1,6 +1,5 @@
 /**
- * Bridges paperSessionStore ↔ PearsonExamPlayer for sandbox / test routes only.
- * Not used by /past-papers/solve (main library uses ESAT Camp UI).
+ * Bridges paperSessionStore ↔ PearsonExamPlayer for live past-paper sittings.
  */
 
 "use client";
@@ -10,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { PearsonExamPlayer } from "@/components/pearson/PearsonExamPlayer";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import type { Letter, Question } from "@/types/papers";
+import type { PearsonIntroMode } from "@/lib/pearson/usePearsonExamController";
 import type {
   PearsonAnswerMap,
   PearsonFlagMap,
@@ -47,7 +47,12 @@ export interface PearsonSolveBridgeProps {
   globalOffset: number;
   timeLimitSeconds: number;
   isLastModule: boolean;
+  introMode?: PearsonIntroMode;
+  sectionHeading?: string;
+  initialQuestionIndex?: number;
   onModuleAdvance: () => void;
+  onLastModuleComplete?: () => void;
+  onQuestionsStarted?: () => void;
 }
 
 export function PearsonSolveBridge({
@@ -56,7 +61,12 @@ export function PearsonSolveBridge({
   globalOffset,
   timeLimitSeconds,
   isLastModule,
+  introMode = "full",
+  sectionHeading,
+  initialQuestionIndex = 0,
   onModuleAdvance,
+  onLastModuleComplete,
+  onQuestionsStarted,
 }: PearsonSolveBridgeProps) {
   const router = useRouter();
   const {
@@ -64,9 +74,10 @@ export function PearsonSolveBridge({
     reviewFlags,
     setAnswer,
     setReviewFlag,
-    setIsMarkingInfo,
-    setEndedAt,
     setPaperFullscreenShowMainNavbar,
+    setSectionStartTime,
+    currentSectionIndex,
+    navigateToQuestion,
   } = usePaperSessionStore();
 
   useEffect(() => {
@@ -77,6 +88,15 @@ export function PearsonSolveBridge({
       document.documentElement.style.overflow = "";
     };
   }, [setPaperFullscreenShowMainNavbar]);
+
+  useEffect(() => {
+    if (introMode === "resume-questions") {
+      const state = usePaperSessionStore.getState();
+      if (!state.sectionStartTimes[currentSectionIndex]) {
+        setSectionStartTime(currentSectionIndex, Date.now());
+      }
+    }
+  }, [currentSectionIndex, introMode, setSectionStartTime]);
 
   const initialAnswers = useMemo(
     () => buildInitialAnswers(questions, answers, globalOffset),
@@ -117,6 +137,13 @@ export function PearsonSolveBridge({
     [globalOffset, questions, setReviewFlag],
   );
 
+  const handleQuestionIndexChange = useCallback(
+    (index: number) => {
+      navigateToQuestion(globalOffset + index);
+    },
+    [globalOffset, navigateToQuestion],
+  );
+
   const handleComplete = useCallback(
     (result: PearsonModuleResult) => {
       questions.forEach((q, i) => {
@@ -133,8 +160,7 @@ export function PearsonSolveBridge({
       });
 
       if (isLastModule) {
-        setEndedAt(Date.now());
-        setIsMarkingInfo(true);
+        onLastModuleComplete?.();
         return;
       }
       onModuleAdvance();
@@ -142,11 +168,10 @@ export function PearsonSolveBridge({
     [
       globalOffset,
       isLastModule,
+      onLastModuleComplete,
       onModuleAdvance,
       questions,
       setAnswer,
-      setEndedAt,
-      setIsMarkingInfo,
       setReviewFlag,
     ],
   );
@@ -170,10 +195,16 @@ export function PearsonSolveBridge({
       initialAnswers={initialAnswers}
       initialFlags={initialFlags}
       timeLimitSeconds={timeLimitSeconds}
+      introMode={introMode}
+      sectionHeading={sectionHeading}
+      initialQuestionIndex={initialQuestionIndex}
+      suppressCompleteScreen
       moduleTransition={{ enabled: false }}
       onAnswerChange={syncAnswersToStore}
       onFlagsChange={syncFlagsToStore}
       onModuleComplete={handleComplete}
+      onQuestionsStarted={onQuestionsStarted}
+      onQuestionIndexChange={handleQuestionIndexChange}
     />
   );
 }

@@ -1,13 +1,21 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { BRAND_CONFIG } from "@/config/brand";
 import { openCookiePreferences } from "@/lib/ga";
+import { shouldHideSiteChromeForPaper } from "@/lib/papers/activePaperSessionClient";
 
 /**
  * Site-wide legal strip: cookie policy + reopen analytics preferences.
  */
 export function SiteFooter() {
+  const pathname = usePathname();
+
+  if (shouldHideSiteChromeForPaper(pathname)) {
+    return null;
+  }
+
   return (
     <footer className="mt-auto bg-surface-elevated/80">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-6 text-center text-xs text-text-muted sm:flex-row sm:px-6 sm:text-left">

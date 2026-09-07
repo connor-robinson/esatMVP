@@ -43,7 +43,7 @@ import { preloadQuestionWithMinimumDelay } from "./preloadQuestionAssets";
 export const SESSION_ENDING_MS = 2800;
 
 /** Skip loading + NDA; open straight on the 1-minute instruction screen. */
-export type PearsonIntroMode = "full" | "section-only";
+export type PearsonIntroMode = "full" | "section-only" | "resume-questions";
 
 export interface UsePearsonExamControllerOptions {
   mode: ExamMode;
@@ -56,9 +56,12 @@ export interface UsePearsonExamControllerOptions {
   /** When true, session-ending calls onModuleComplete without the Module ended screen. */
   suppressCompleteScreen?: boolean;
   sectionHeading?: string;
+  initialQuestionIndex?: number;
   onModuleComplete: (result: PearsonModuleResult) => void;
   onAnswerChange?: (answers: PearsonAnswerMap) => void;
   onFlagsChange?: (flags: PearsonFlagMap) => void;
+  onQuestionsStarted?: () => void;
+  onQuestionIndexChange?: (index: number) => void;
 }
 
 export function usePearsonExamController(
@@ -74,6 +77,7 @@ export function usePearsonExamController(
     introMode = "full",
     suppressCompleteScreen = false,
     sectionHeading,
+    initialQuestionIndex = 0,
     onModuleComplete,
     onAnswerChange,
     onFlagsChange,
@@ -88,12 +92,21 @@ export function usePearsonExamController(
   onAnswerChangeRef.current = onAnswerChange;
   const onFlagsChangeRef = useRef(onFlagsChange);
   onFlagsChangeRef.current = onFlagsChange;
+  const onQuestionsStartedRef = useRef(options.onQuestionsStarted);
+  onQuestionsStartedRef.current = options.onQuestionsStarted;
+  const onQuestionIndexChangeRef = useRef(options.onQuestionIndexChange);
+  onQuestionIndexChangeRef.current = options.onQuestionIndexChange;
 
-  const [screen, setScreen] = useState<ExamScreen>(() =>
-    introMode === "section-only" ? "instructions" : "loading",
-  );
+  const [screen, setScreen] = useState<ExamScreen>(() => {
+    if (introMode === "resume-questions") return "question";
+    if (introMode === "section-only") return "instructions";
+    return "loading";
+  });
   const [navigatorOpen, setNavigatorOpen] = useState(false);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(() => {
+    if (questions.length === 0) return 0;
+    return Math.min(Math.max(initialQuestionIndex, 0), questions.length - 1);
+  });
   const [answers, setAnswers] = useState<PearsonAnswerMap>(() => ({
     ...emptyAnswerMap(questions),
     ...initialAnswers,
@@ -105,10 +118,22 @@ export function usePearsonExamController(
   const [viewedToEnd, setViewedToEnd] = useState(() => emptyBoolMap(questions));
   const [visited, setVisited] = useState(() => {
     const base = emptyBoolMap(questions);
-    if (questions[0]) base[questions[0].id] = true;
+    const startIndex = Math.min(
+      Math.max(initialQuestionIndex, 0),
+      Math.max(questions.length - 1, 0),
+    );
+    const startQuestion = questions[startIndex] ?? questions[0];
+    if (startQuestion) base[startQuestion.id] = true;
+    questions.forEach((question) => {
+      if (initialAnswers?.[question.id]) base[question.id] = true;
+    });
     return base;
   });
-  const [moduleDeadline, setModuleDeadline] = useState<number | null>(null);
+  const [moduleDeadline, setModuleDeadline] = useState<number | null>(() =>
+    introMode === "resume-questions"
+      ? startFreshModuleDeadline(Date.now(), durationMs)
+      : null,
+  );
   const [instructionDeadline, setInstructionDeadline] = useState<number | null>(
     () => (introMode === "section-only" ? Date.now() + INSTRUCTION_READ_MS : null),
   );
@@ -119,7 +144,11 @@ export function usePearsonExamController(
   const [zoomLevel, setZoomLevel] = useState<ZoomLevel>(100);
   const [pendingNavIndex, setPendingNavIndex] = useState<number | null>(null);
   const [endExamReturnScreen, setEndExamReturnScreen] = useState<ExamScreen>(
-    () => (introMode === "section-only" ? "instructions" : "nda"),
+    () => {
+      if (introMode === "resume-questions") return "question";
+      if (introMode === "section-only") return "instructions";
+      return "nda";
+    },
   );
   const [questionCounterHidden, setQuestionCounterHidden] = useState(false);
   const [timerHidden, setTimerHidden] = useState(false);
@@ -213,6 +242,7 @@ export function usePearsonExamController(
       if (index < 0 || index >= questions.length) return;
       const q = questions[index];
       setCurrentQuestionIndex(index);
+      onQuestionIndexChangeRef.current?.(index);
       setVisited((prev) => markVisited(prev, q.id));
       setScreen("question");
       setNavigatorOpen(false);
@@ -249,6 +279,7 @@ export function usePearsonExamController(
     if (moduleDeadline == null) {
       setModuleDeadline(startFreshModuleDeadline(Date.now(), durationMs));
     }
+    onQuestionsStartedRef.current?.();
     void transitionToQuestion(0);
   }, [durationMs, moduleDeadline, transitionToQuestion]);
 
@@ -326,8 +357,7 @@ export function usePearsonExamController(
         setScreen("unseen-content-warning");
         return;
       }
-      setNavigatorOpen(false);
-      setScreen("review");
+      setNavigatorOpen(true);
       return;
     }
     tryNavigateTo(currentQuestionIndex + 1);
@@ -585,6 +615,7 @@ export function usePearsonExamController(
     showPrequestionFooter,
     showQuestionFooter,
     showPrevious,
+    isLastQuestion: currentQuestionIndex >= totalQuestions - 1,
     inQuestionPhase,
     completeLoading,
     goNext,

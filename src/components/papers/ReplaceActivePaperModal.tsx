@@ -61,13 +61,13 @@ export function ReplaceActivePaperModal({
         </div>
         <div className="space-y-4 p-5 text-sm leading-relaxed text-white/75">
           <p>
-            You already have a past paper session in progress. Starting this
-            paper will <span className="font-medium text-white">end that session</span>{' '}
+            You can only sit one past paper at a time. Starting this paper will{' '}
+            <span className="font-medium text-white">end your current session</span>{' '}
             and you will{' '}
             <span className="font-medium text-amber-200/90">
               lose unsaved progress
             </span>{' '}
-            on the current paper.
+            on that paper.
           </p>
           <p className="text-white/50 text-xs">
             To continue where you left off, resume your saved session. The

@@ -970,6 +970,11 @@ html.pearson-exam-active body {
   margin: 0 6px;
 }
 
+.pearson-nav-submit-hint {
+  margin: 8px 8px 4px;
+  font-size: 13px;
+}
+
 .pearson-nav-table {
   width: 100%;
   border-collapse: collapse;
