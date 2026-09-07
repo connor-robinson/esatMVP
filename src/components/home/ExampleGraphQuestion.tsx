@@ -34,12 +34,16 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "relative rounded-organic-xl bg-white/[0.08] px-6 py-8 backdrop-blur-xl sm:px-8 sm:py-9",
+        "relative rounded-organic-xl bg-white/[0.08] px-6 py-5 backdrop-blur-xl sm:px-8 sm:py-6",
         className,
       )}
     >
       <div className="relative">
-        <div className="space-y-4">
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#94A3B8]">
+          Example question
+        </p>
+
+        <div className="mt-3 space-y-3">
           <div className="text-sm leading-relaxed text-[#94A3B8] sm:text-[15px]">
             <p>
               A person of fixed height moves away from a stationary camera with
