@@ -25,10 +25,10 @@ html.pearson-exam-active body {
   --pearson-button-face: #ffffff;
   --pearson-button-face-hover: #f0f0f0;
   --pearson-chrome-mode: blue;
-  /* ESAT specimen: Tahoma 11px chrome, 12px question body (fixed px, not rem). */
+  /* ESAT specimen (Aug 2026 captures ~1024×527): larger chrome + content than NSAA. */
   --pearson-font: Tahoma, Arial, Helvetica, sans-serif;
-  --pearson-font-size-ui: 11px;
-  --pearson-font-size-content: 12px;
+  --pearson-font-size-ui: 14px;
+  --pearson-font-size-content: 15px;
   --pearson-status-red: #b00000;
   --pearson-nav-blue: #00599c;
   --pearson-nav-highlight: #ffff80;
@@ -36,14 +36,15 @@ html.pearson-exam-active body {
   --pearson-dialog-blue: #0066a1;
   --pearson-radio-blue: #0078d4;
   --pearson-radio-gray: #666666;
-  /* Measured from ESAT specimen screenshots at 100% (1024×507 captures). */
-  --pearson-header-height-compact: 17px;
-  --pearson-header-height-full: 24px;
-  --pearson-toolbar-height: 15px;
-  --pearson-footer-height: 28px;
-  --pearson-content-padding-x: 12px;
-  --pearson-content-padding-y: 8px;
+  /* Measured from ESAT specimen screenshot mid-band (header / toolbar / footer). */
+  --pearson-header-height-compact: 33px;
+  --pearson-header-height-full: 48px;
+  --pearson-toolbar-height: 24px;
+  --pearson-footer-height: 24px;
+  --pearson-content-padding-x: 16px;
+  --pearson-content-padding-y: 12px;
   --pearson-font-serif: "Times New Roman", Times, serif;
+  --pearson-colour-text: #006daa;
 
   position: fixed;
   inset: 0;
@@ -120,7 +121,7 @@ html.pearson-exam-active body {
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  padding: 3px 8px;
+  padding: 6px 12px;
   background: var(--pearson-header);
   color: var(--pearson-header-text);
   border-bottom: 1px solid var(--pearson-border);
@@ -160,50 +161,50 @@ html.pearson-exam-active body {
 }
 
 .pearson-raster-icon--header {
-  height: 12px;
+  height: 16px;
   width: auto;
 }
 
 .pearson-raster-icon--toolbar {
-  height: 12px;
+  height: 16px;
   width: auto;
 }
 
 .pearson-raster-icon--footer {
-  height: 12px;
+  height: 16px;
   width: auto;
 }
 
 .pearson-raster-icon--dialog {
-  height: 18px;
+  height: 22px;
   width: auto;
 }
 
 .pearson-raster-icon--timer,
 .pearson-raster-icon--counter {
-  max-width: 14px;
+  max-width: 18px;
 }
 
 .pearson-raster-icon--timer-yellow {
-  max-width: 16px;
+  max-width: 20px;
 }
 
 .pearson-raster-icon--flag {
-  max-width: 12px;
+  max-width: 16px;
 }
 
 .pearson-raster-icon--end-exam {
-  height: 11px;
-  max-width: 22px;
+  height: 14px;
+  max-width: 28px;
 }
 
 .pearson-raster-icon--navigator {
-  max-width: 14px;
+  max-width: 18px;
 }
 
 .pearson-raster-icon--next,
 .pearson-raster-icon--prev {
-  max-width: 16px;
+  max-width: 20px;
 }
 
 /* Blue chrome controls: yellow hover label/icon, white inset ring on press. */
@@ -211,7 +212,6 @@ html.pearson-exam-active body {
 .pearson-exam-root[data-chrome-mode="blue"] .pearson-timer-btn:hover:not(:disabled),
 .pearson-exam-root[data-chrome-mode="blue"] .pearson-question-counter-btn:hover:not(:disabled),
 .pearson-exam-root[data-chrome-mode="blue"] .pearson-toolbar-btn:hover:not(:disabled),
-.pearson-exam-root[data-chrome-mode="blue"] .pearson-colour-trigger:hover:not(:disabled),
 .pearson-exam-root[data-chrome-mode="blue"] .pearson-dialog-blue-actions button:hover:not(:disabled) {
   color: var(--pearson-hover-yellow);
 }
@@ -228,7 +228,6 @@ html.pearson-exam-active body {
 .pearson-exam-root[data-chrome-mode="blue"] .pearson-timer-btn:active:not(:disabled),
 .pearson-exam-root[data-chrome-mode="blue"] .pearson-question-counter-btn:active:not(:disabled),
 .pearson-exam-root[data-chrome-mode="blue"] .pearson-toolbar-btn:active:not(:disabled),
-.pearson-exam-root[data-chrome-mode="blue"] .pearson-colour-trigger:active:not(:disabled),
 .pearson-exam-root[data-chrome-mode="blue"] .pearson-dialog-blue-actions button:active:not(:disabled) {
   box-shadow: inset 0 0 0 1px #ffffff;
 }
@@ -237,16 +236,16 @@ html.pearson-exam-active body {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 1px;
+  gap: 2px;
   flex-shrink: 0;
   font-size: var(--pearson-font-size-ui);
-  line-height: 11px;
+  line-height: 1.1;
 }
 
 .pearson-timer-btn {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   background: transparent;
   color: inherit;
   border: none;
@@ -255,8 +254,8 @@ html.pearson-exam-active body {
   font: inherit;
   font-size: var(--pearson-font-size-ui);
   cursor: pointer;
-  line-height: 11px;
-  height: 11px;
+  line-height: 1.1;
+  height: auto;
   overflow: visible;
 }
 
@@ -285,7 +284,7 @@ html.pearson-exam-active body {
 .pearson-question-counter-btn {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   background: transparent;
   color: inherit;
   border: none;
@@ -294,8 +293,8 @@ html.pearson-exam-active body {
   font: inherit;
   font-size: var(--pearson-font-size-ui);
   cursor: pointer;
-  line-height: 11px;
-  height: 11px;
+  line-height: 1.1;
+  height: auto;
   overflow: visible;
 }
 
@@ -329,8 +328,9 @@ html.pearson-exam-active body {
   align-items: center;
   justify-content: flex-end;
   box-sizing: border-box;
+  height: var(--pearson-toolbar-height);
   min-height: var(--pearson-toolbar-height);
-  padding: 1px 6px;
+  padding: 2px 10px;
   background: var(--pearson-toolbar);
   color: var(--pearson-header-text);
   border-bottom: 1px solid var(--pearson-border);
@@ -350,15 +350,15 @@ html.pearson-exam-active body {
 .pearson-toolbar-btn {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   background: transparent;
   color: inherit;
   border: none;
-  padding: 0 8px;
+  padding: 0 10px;
   cursor: pointer;
   font: inherit;
   font-size: var(--pearson-font-size-ui);
-  line-height: 11px;
+  line-height: 1.1;
   overflow: visible;
 }
 
@@ -368,9 +368,9 @@ html.pearson-exam-active body {
 
 .pearson-toolbar-divider {
   width: 1px;
-  height: 13px;
+  height: 18px;
   background: var(--pearson-border);
-  margin: 0 2px;
+  margin: 0 4px;
   align-self: center;
 }
 
@@ -382,28 +382,37 @@ html.pearson-exam-active body {
   position: relative;
 }
 
+/* Normal (closed) Color Scheme: white face, header-blue label, black border + caret. */
 .pearson-colour-trigger {
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  background: transparent;
-  color: inherit;
-  border: none;
+  gap: 10px;
+  background: #ffffff;
+  color: var(--pearson-colour-text);
+  border: 1px solid #000000;
   box-sizing: border-box;
   font-family: var(--pearson-font);
   font-size: var(--pearson-font-size-ui);
-  line-height: 11px;
-  padding: 0 4px 0 6px;
-  min-width: 128px;
-  height: 13px;
+  font-weight: 400;
+  line-height: 1;
+  padding: 0 6px 0 8px;
+  min-width: 148px;
+  height: 20px;
   cursor: pointer;
 }
 
 .pearson-exam-root[data-chrome-mode="blue"] .pearson-colour-trigger {
   background: #ffffff;
-  color: #006daa;
+  color: var(--pearson-colour-text);
   border: 1px solid #000000;
+}
+
+.pearson-exam-root[data-chrome-mode="blue"] .pearson-colour-trigger:hover:not(:disabled),
+.pearson-exam-root[data-chrome-mode="blue"] .pearson-colour-trigger:active:not(:disabled) {
+  color: var(--pearson-colour-text);
+  background: #ffffff;
+  box-shadow: none;
 }
 
 .pearson-colour-trigger:disabled {
@@ -518,35 +527,57 @@ html.pearson-exam-active body {
   font-weight: 400;
 }
 
-/* NDA logo block */
+/* NDA logo block – ESAT specimen pill wordmark proportions */
 .pearson-nda-logo {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 auto 24px;
+  align-items: flex-end;
+  gap: 14px;
+  margin: 8px auto 28px;
   justify-content: center;
 }
 
 .pearson-uat-pill {
   display: inline-flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
-  width: 28px;
-  height: 44px;
-  border-radius: 14px !important;
-  color: #fff;
+  width: 70px;
+  height: 158px;
+  padding-bottom: 18px;
+  border-radius: 35px !important;
+  color: #ffffff;
   font-weight: 700;
-  font-size: 16px;
+  font-size: 52px;
+  line-height: 1;
+  box-sizing: border-box;
 }
 
-.pearson-uat-u { background: #e87722; }
-.pearson-uat-a { background: #6ab344; }
-.pearson-uat-t { background: #7b4ea3; }
+.pearson-uat-u { background: #ff6201; }
+.pearson-uat-a { background: #20a86a; }
+.pearson-uat-t { background: #95268f; }
 
 .pearson-uat-wordmark {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
   font-size: 22px;
   line-height: 1.15;
-  color: #333;
+  color: #6e7786;
+  font-weight: 400;
+  padding-bottom: 4px;
+}
+
+.pearson-uat-wordmark-stack {
+  display: block;
+}
+
+.pearson-uat-uk {
+  display: block;
+  margin-top: 4px;
+  font-size: 58px;
+  font-weight: 700;
+  line-height: 0.95;
+  color: #293d58;
+  letter-spacing: -0.02em;
 }
 
 .pearson-uat-sub {
@@ -668,16 +699,16 @@ html.pearson-exam-active body {
 .pearson-footer-action {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   background: transparent;
   color: inherit;
   border: none;
-  padding: 4px 12px;
+  padding: 4px 14px;
   font: inherit;
   font-size: var(--pearson-font-size-ui);
   cursor: pointer;
   min-height: var(--pearson-footer-height);
-  line-height: 11px;
+  line-height: 1.1;
   overflow: visible;
 }
 

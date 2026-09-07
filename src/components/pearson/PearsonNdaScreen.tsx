@@ -2,6 +2,7 @@
 
 /**
  * Screen 2: NDA / welcome (untimed, no question counter).
+ * Logo proportions/colors matched to ESAT specimen screenshot.
  */
 export function PearsonNdaScreen() {
   return (
@@ -11,9 +12,14 @@ export function PearsonNdaScreen() {
         <span className="pearson-uat-pill pearson-uat-a">A</span>
         <span className="pearson-uat-pill pearson-uat-t">T</span>
         <span className="pearson-uat-wordmark">
-          <strong>UAT</strong> UK
-          <br />
-          <span className="pearson-uat-sub">University Admissions Tests UK</span>
+          <span className="pearson-uat-wordmark-stack">
+            University
+            <br />
+            Admissions
+            <br />
+            Tests
+          </span>
+          <span className="pearson-uat-uk">UK</span>
         </span>
       </div>
 

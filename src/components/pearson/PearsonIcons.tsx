@@ -156,8 +156,8 @@ export function InfoIcon() {
 
 export function ColourSchemeCaret() {
   return (
-    <svg width="8" height="5" viewBox="0 0 8 5" aria-hidden="true" className="pearson-colour-caret-svg">
-      <path d="M0 0h8L4 5 0 0z" fill="#000000" />
+    <svg width="9" height="6" viewBox="0 0 9 6" aria-hidden="true" className="pearson-colour-caret-svg">
+      <path d="M0 0h9L4.5 6 0 0z" fill="#000000" />
     </svg>
   );
 }
