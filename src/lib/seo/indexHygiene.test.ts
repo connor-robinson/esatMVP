@@ -163,6 +163,25 @@ describe("index hygiene: public pages stay indexable", () => {
     );
   });
 
+  it("server-preloads score-converter published tables instead of relying on /api/", () => {
+    const mainPage = readAppSource("tools", "score-converter", "page.tsx");
+    expect(mainPage).toContain("PublishedConversionTables");
+    expect(mainPage).toContain("buildSeoMetadata");
+    expect(mainPage).not.toContain("noIndexFollowMetadata");
+    expect(mainPage).not.toContain("buildNoIndexMetadata");
+
+    const publishedTables = readFileSync(
+      path.join(ROOT, "components/tools/scoreConverter/PublishedConversionTables.tsx"),
+      "utf8",
+    );
+    expect(publishedTables).toContain("fetchPublishedTableCatalog");
+    expect(publishedTables).toContain("rows={rows}");
+
+    const examPage = readAppSource("tools", "score-converter", "[exam]", "page.tsx");
+    expect(examPage).toContain("fetchPublishedTableCatalog");
+    expect(examPage).toContain("publishedRows");
+  });
+
   it("marks past-paper download SEO routes as noindex, follow", () => {
     for (const segments of [
       ["past-papers", "nsaa", "page.tsx"],

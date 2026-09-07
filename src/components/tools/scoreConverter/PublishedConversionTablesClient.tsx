@@ -362,17 +362,25 @@ function TableRow({
   );
 }
 
+function withoutTmua(rows: PublishedTableRow[]): PublishedTableRow[] {
+  return rows.filter((row) => row.exam !== "TMUA");
+}
+
 export function PublishedConversionTablesClient({
   rows: initialRows,
   defaultExam = "all",
   examFilter,
   defaultOpen = false,
 }: Props) {
+  const preloaded = initialRows !== undefined;
   const [sectionOpen, setSectionOpen] = useState(defaultOpen);
-  const [rows, setRows] = useState<PublishedTableRow[]>(initialRows ?? []);
+  const [rows, setRows] = useState<PublishedTableRow[]>(() =>
+    withoutTmua(initialRows ?? []),
+  );
   const [catalogLoading, setCatalogLoading] = useState(false);
   const [catalogError, setCatalogError] = useState<string | null>(null);
-  const [loaded, setLoaded] = useState(Boolean(initialRows));
+  // Preloaded SSR/catalog rows skip the client API fetch (robots.txt blocks /api/).
+  const [loaded, setLoaded] = useState(preloaded);
   const [exam, setExam] = useState<ConverterExam | "all">(
     examFilter && examFilter !== "TMUA" ? examFilter : defaultExam === "TMUA" ? "all" : defaultExam,
   );
@@ -382,20 +390,26 @@ export function PublishedConversionTablesClient({
   const [query, setQuery] = useState("");
   const [viewRow, setViewRow] = useState<PublishedTableRow | null>(null);
   const [showAllRows, setShowAllRows] = useState(false);
+  const rowsRef = useRef(rows);
+  rowsRef.current = rows;
+  // Ref so mid-flight prop updates (SSR rows arriving) do not cancel a pending fetch
+  // before its failure handler can preserve those rows.
+  const skipClientCatalogFetchRef = useRef(preloaded);
+  if (preloaded) skipClientCatalogFetchRef.current = true;
 
   useEffect(() => {
     if (examFilter && examFilter !== "TMUA") setExam(examFilter);
   }, [examFilter]);
 
   useEffect(() => {
-    if (initialRows) {
-      setRows(initialRows.filter((row) => row.exam !== "TMUA"));
-      setLoaded(true);
-    }
+    if (initialRows === undefined) return;
+    setRows(withoutTmua(initialRows));
+    setCatalogError(null);
   }, [initialRows]);
 
   useEffect(() => {
-    if (!sectionOpen || loaded) return;
+    // Do not client-fetch when the server already supplied the catalog.
+    if (skipClientCatalogFetchRef.current || !sectionOpen || loaded) return;
     let cancelled = false;
     setCatalogLoading(true);
     setCatalogError(null);
@@ -410,19 +424,27 @@ export function PublishedConversionTablesClient({
         if (!res.ok) throw new Error("Failed to load conversion tables");
         const data = await res.json();
         if (cancelled) return;
-        setRows(
-          ((data.rows ?? []) as PublishedTableRow[]).filter(
-            (row) => row.exam !== "TMUA",
-          ),
-        );
+        // Prefer already-visible SSR/preloaded rows over a late API response.
+        if (skipClientCatalogFetchRef.current || rowsRef.current.length > 0) {
+          setLoaded(true);
+          setCatalogError(null);
+          return;
+        }
+        setRows(withoutTmua((data.rows ?? []) as PublishedTableRow[]));
         setLoaded(true);
+        setCatalogError(null);
       })
       .catch((err: unknown) => {
-        if (!cancelled) {
-          setCatalogError(
-            err instanceof Error ? err.message : "Failed to load tables",
-          );
+        if (cancelled) return;
+        // Keep any useful rows already on screen; never replace them with the error UI.
+        if (rowsRef.current.length > 0) {
+          setLoaded(true);
+          setCatalogError(null);
+          return;
         }
+        setCatalogError(
+          err instanceof Error ? err.message : "Failed to load tables",
+        );
       })
       .finally(() => {
         if (!cancelled) setCatalogLoading(false);
@@ -522,12 +544,12 @@ export function PublishedConversionTablesClient({
 
       {sectionOpen ? (
         <div className="mt-4 space-y-4">
-          {catalogLoading ? (
+          {catalogLoading && rows.length === 0 ? (
             <p className="flex items-center gap-2 py-6 text-sm text-text-muted">
               <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
               Loading tables…
             </p>
-          ) : catalogError ? (
+          ) : catalogError && rows.length === 0 ? (
             <p className="py-4 text-sm text-error">{catalogError}</p>
           ) : (
             <>

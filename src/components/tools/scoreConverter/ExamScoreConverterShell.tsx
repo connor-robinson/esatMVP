@@ -4,10 +4,13 @@ import { useCallback, useEffect, useState } from "react";
 import { ScoreConverter } from "@/components/tools/scoreConverter/ScoreConverter";
 import { PublishedConversionTablesClient } from "@/components/tools/scoreConverter/PublishedConversionTablesClient";
 import { isConverterExam, type ConverterExam } from "@/lib/scoreConverter/esatModules";
+import type { PublishedTableRow } from "@/lib/scoreConverter/publishedTables.shared";
 import { SCORE_CONVERTER_PAGE_COPY } from "@/lib/scoreConverter/scoreConverterPageCopy";
 
 type Props = {
   initialExam: ConverterExam;
+  /** Server-preloaded catalog so crawlers do not depend on /api/. */
+  publishedRows: PublishedTableRow[];
 };
 
 function examFromPathname(): ConverterExam | null {
@@ -17,7 +20,10 @@ function examFromPathname(): ConverterExam | null {
   return segment.toUpperCase() as ConverterExam;
 }
 
-export function ExamScoreConverterShell({ initialExam }: Props) {
+export function ExamScoreConverterShell({
+  initialExam,
+  publishedRows,
+}: Props) {
   const [exam, setExam] = useState<ConverterExam>(initialExam);
 
   useEffect(() => {
@@ -44,6 +50,7 @@ export function ExamScoreConverterShell({ initialExam }: Props) {
       intro={SCORE_CONVERTER_PAGE_COPY[exam].intro}
       beforeFaq={
         <PublishedConversionTablesClient
+          rows={publishedRows}
           examFilter={exam === "TMUA" ? undefined : exam}
           defaultExam={exam === "TMUA" ? "all" : exam}
           defaultOpen

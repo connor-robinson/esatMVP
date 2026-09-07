@@ -1,4 +1,5 @@
 import type { ConverterExam } from "@/lib/scoreConverter/esatModules";
+import { fetchPublishedTableCatalog } from "@/lib/scoreConverter/publishedTables.server";
 import { PublishedConversionTablesClient } from "@/components/tools/scoreConverter/PublishedConversionTablesClient";
 
 type Props = {
@@ -6,15 +7,19 @@ type Props = {
 };
 
 /**
- * Official conversion tables. Header sits outside any card; catalog loads on
- * first expand so the score-converter page stays fast. Lists ~10 rows with a
- * “… more” control for the rest.
+ * Official conversion tables. Catalog is loaded on the server so crawlers and
+ * logged-out visitors get real rows in the initial HTML (robots.txt blocks /api/).
  */
-export function PublishedConversionTables({ examFilter }: Props) {
+export async function PublishedConversionTables({ examFilter }: Props) {
+  const exam =
+    examFilter && examFilter !== "TMUA" ? examFilter : undefined;
+  const rows = await fetchPublishedTableCatalog(exam);
+
   return (
     <PublishedConversionTablesClient
-      defaultExam={examFilter && examFilter !== "TMUA" ? examFilter : "all"}
-      examFilter={examFilter === "TMUA" ? undefined : examFilter}
+      rows={rows}
+      defaultExam={exam ?? "all"}
+      examFilter={exam}
       defaultOpen
     />
   );
