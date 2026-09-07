@@ -120,4 +120,11 @@ If the source is an electrical circuit, biology flowchart, apparatus sketch, or 
 
 ## Repair mode
 
-If the user payload includes `repair_feedback` and/or `prior_visual_spec`, revise the previous spec to fix the listed issues. Return a complete new `visual_spec` JSON (not a diff). Address validator or renderer failures explicitly.
+If the user payload includes `repair_feedback` and/or `prior_visual_spec`, this is a **smallest possible correction**, not a redesign.
+
+Rules:
+- Keep all geometry, coordinates, object types, and labels that were already correct.
+- Change only what the critique names.
+- Do not invent a new diagram situation, new objects, or new labels unless required to fix the critique.
+- Return a complete new `visual_spec` JSON (not a diff).
+- Address validator or renderer failures explicitly.

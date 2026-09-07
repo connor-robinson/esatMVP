@@ -94,7 +94,7 @@ def call_json_multimodal(
     *,
     system_prompt: str,
     user_payload: dict[str, Any],
-    image_bytes: bytes,
+    image_bytes: bytes | None = None,
     mime_type: str = "image/png",
     extra_images: list[tuple[bytes, str]] | None = None,
     model: str | None = None,
@@ -102,7 +102,7 @@ def call_json_multimodal(
     temperature: float = 0.2,
     max_retries: int = 3,
 ) -> MultimodalCallResult:
-    """Call Gemini with image(s) + JSON instructions; return parsed JSON."""
+    """Call Gemini with optional image(s) + JSON instructions; return parsed JSON."""
     client = make_client()
     m = model or DEFAULT_DIAGRAM_DESIGNER_MODEL
     user_text = json.dumps(user_payload, ensure_ascii=False, indent=2)
@@ -116,7 +116,8 @@ def call_json_multimodal(
     )
 
     parts: list[types.Part] = [types.Part.from_text(text=user_text)]
-    parts.append(types.Part.from_bytes(data=image_bytes, mime_type=mime_type))
+    if image_bytes:
+        parts.append(types.Part.from_bytes(data=image_bytes, mime_type=mime_type))
     for extra_bytes, extra_mime in extra_images or []:
         parts.append(types.Part.from_bytes(data=extra_bytes, mime_type=extra_mime))
 

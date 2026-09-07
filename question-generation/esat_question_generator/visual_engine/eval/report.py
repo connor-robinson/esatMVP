@@ -74,6 +74,32 @@ class EvalReport:
             if r.looks_bad:
                 failure_causes["quality: looks bad"] += 1
 
+        first_pass = [r for r in self.records if r.attempt == 1]
+        first_n = len(first_pass) or 1
+        first_pass_count = sum(1 for r in first_pass if r.verifier_verdict == "PASS")
+        sibling = [r for r in finals if r.variation_mode == "sibling"]
+        far = [r for r in finals if r.variation_mode in {"far", "generalisation", "generalization"}]
+        sibling_n = len(sibling) or 1
+        far_n = len(far) or 1
+        sibling_pass = sum(1 for r in sibling if r.verifier_verdict == "PASS")
+        far_pass = sum(1 for r in far if r.verifier_verdict == "PASS")
+        failures = [
+            {
+                "question_id": r.question_id,
+                "variation_mode": r.variation_mode,
+                "attempt": r.attempt,
+                "verdict": r.verifier_verdict,
+                "issues": list(r.verifier_issues),
+                "render_ok": r.render_ok,
+                "collision_failure": r.collision_failure,
+                "render_error": r.render_error,
+                "spec_error": r.spec_error,
+                "artifact_dir": r.artifact_dir,
+            }
+            for r in finals
+            if r.verifier_verdict != "PASS"
+        ]
+
         return {
             "run_id": self.run_id,
             "total_cases": len(finals),
@@ -81,12 +107,22 @@ class EvalReport:
             "render_success_rate": round(render_ok / n, 3),
             "collision_failure_rate": round(collision / n, 3),
             "verifier_pass_rate": round(pass_count / n, 3),
+            "verifier_first_pass_rate": round(first_pass_count / first_n, 3),
+            "sibling_pass_rate": round(sibling_pass / sibling_n, 3),
+            "far_pass_rate": round(far_pass / far_n, 3),
+            "sibling_cases": len(sibling),
+            "far_cases": len(far),
+            "pass_count": pass_count,
+            "first_pass_count": first_pass_count,
+            "sibling_pass_count": sibling_pass,
+            "far_pass_count": far_pass,
             "verifier_fix_rate": round(fix_count / n, 3),
             "verifier_fail_rate": round(fail_count / n, 3),
             "math_incorrect_count": math_wrong,
             "too_similar_count": too_similar,
             "looks_bad_count": looks_bad,
             "most_common_failure_causes": failure_causes.most_common(15),
+            "failures": failures,
             "records": [asdict(r) for r in finals],
         }
 
@@ -109,7 +145,10 @@ class EvalReport:
             f"| Spec validation success | {summary['spec_validation_success_rate']:.1%} |",
             f"| Render success | {summary['render_success_rate']:.1%} |",
             f"| Collision failure | {summary['collision_failure_rate']:.1%} |",
-            f"| Verifier PASS | {summary['verifier_pass_rate']:.1%} |",
+            f"| Verifier PASS (final) | {summary['verifier_pass_rate']:.1%} ({summary['pass_count']}/{summary['total_cases']}) |",
+            f"| Verifier PASS (first attempt) | {summary['verifier_first_pass_rate']:.1%} ({summary['first_pass_count']}) |",
+            f"| Sibling PASS | {summary['sibling_pass_rate']:.1%} ({summary['sibling_pass_count']}/{summary['sibling_cases']}) |",
+            f"| Far PASS | {summary['far_pass_rate']:.1%} ({summary['far_pass_count']}/{summary['far_cases']}) |",
             f"| Verifier FIX | {summary['verifier_fix_rate']:.1%} |",
             f"| Verifier FAIL | {summary['verifier_fail_rate']:.1%} |",
             "",
@@ -127,6 +166,19 @@ class EvalReport:
                 md_lines.append(f"- ({cnt}) {cause}")
         else:
             md_lines.append("- None recorded")
+        md_lines.append("")
+        md_lines.extend(["## Remaining failures", ""])
+        failures = summary.get("failures") or []
+        if not failures:
+            md_lines.append("- None")
+        else:
+            for fail in failures:
+                issues = fail.get("issues") or []
+                issue_txt = "; ".join(str(x) for x in issues[:3]) if issues else (fail.get("render_error") or fail.get("spec_error") or fail.get("verdict") or "unknown")
+                md_lines.append(
+                    f"- Q{fail.get('question_id')} {fail.get('variation_mode')} "
+                    f"(attempt {fail.get('attempt')}, {fail.get('verdict')}): {issue_txt}"
+                )
         md_lines.append("")
 
         md_path = out_dir / "report.md"

@@ -18,13 +18,16 @@ if str(_PKG_ROOT) not in sys.path:
 from visual_engine.diagram_designer import DiagramDesignerInput, run_diagram_designer
 from visual_engine.errors import DiagramLayoutError, VisualSpecError
 from visual_engine.eval.contact_sheet import build_contact_sheet
+from visual_engine.eval.html_summary import build_html_summary
 from visual_engine.eval.question_selector import EvalQuestion, download_diagram, select_eval_questions
 from visual_engine.eval.report import AttemptRecord, EvalReport
+from visual_engine.eval.taxonomy import classify_failures
 from visual_engine.render_matplotlib import render_diagram
 from visual_engine.visual_verifier import VisualVerifierResult, run_visual_verifier
 
 DEFAULT_OUT = Path(__file__).resolve().parent / "output"
-MAX_REPAIR_ATTEMPTS = 3
+MAX_REPAIR_ATTEMPTS = 2
+PREVIOUS_PASS_RATE = 0.55
 VARIATION_MODES = ("sibling", "far")
 
 
@@ -341,11 +344,39 @@ def run_eval(
             report.records.extend(recs)
             gallery_cases.append(gallery)
 
-    report.write(out_root)
+    json_path, md_path = report.write(out_root)
+    summary = report.summarize()
+    taxonomy = classify_failures(summary.get("failures") or [])
+    (out_root / "FAILURE_CLASSES.md").write_text(taxonomy["markdown"], encoding="utf-8")
+    delta = summary["verifier_pass_rate"] - PREVIOUS_PASS_RATE
+    comparison = (
+        f"# Before / after\n\n"
+        f"- Previous PASS: {PREVIOUS_PASS_RATE:.1%}\n"
+        f"- Current PASS (final): {summary['verifier_pass_rate']:.1%} "
+        f"({summary['pass_count']}/{summary['total_cases']})\n"
+        f"- First-attempt PASS: {summary['verifier_first_pass_rate']:.1%}\n"
+        f"- Sibling PASS: {summary['sibling_pass_rate']:.1%}\n"
+        f"- Far PASS: {summary['far_pass_rate']:.1%}\n"
+        f"- Delta vs 55%: {delta:+.1%}\n"
+    )
+    (out_root / "COMPARISON.md").write_text(comparison, encoding="utf-8")
+    md_path.write_text(md_path.read_text(encoding="utf-8") + "\n" + comparison + "\n" + taxonomy["markdown"], encoding="utf-8")
     if gallery_cases:
         sheet_path = out_root / "contact_sheet.jpg"
         build_contact_sheet(gallery_cases, sheet_path)
+        html_path = build_html_summary(
+            gallery_cases,
+            out_root / "summary.html",
+            extra_metrics={
+                "PASS": f"{summary['verifier_pass_rate']:.1%}",
+                "first-pass": f"{summary['verifier_first_pass_rate']:.1%}",
+                "sibling": f"{summary['sibling_pass_rate']:.1%}",
+                "far": f"{summary['far_pass_rate']:.1%}",
+                "vs 55%": f"{delta:+.1%}",
+            },
+        )
         print(f"contact_sheet={sheet_path}")
+        print(f"html_summary={html_path}")
 
     print(f"report={out_root / 'report.md'}")
     return out_root

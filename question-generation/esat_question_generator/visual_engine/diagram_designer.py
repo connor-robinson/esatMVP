@@ -42,7 +42,7 @@ def _load_prompt() -> str:
     return path.read_text(encoding="utf-8")
 
 
-def _load_image_bytes(inp: DiagramDesignerInput) -> tuple[bytes, str]:
+def _load_image_bytes(inp: DiagramDesignerInput) -> tuple[bytes | None, str]:
     if inp.diagram_image_bytes:
         return inp.diagram_image_bytes, "image/png"
     if inp.diagram_image_path:
@@ -50,7 +50,7 @@ def _load_image_bytes(inp: DiagramDesignerInput) -> tuple[bytes, str]:
         if not path.exists():
             raise FileNotFoundError(f"Diagram image not found: {path}")
         return path.read_bytes(), _mime_for_path(path)
-    raise ValueError("Diagram Designer requires diagram_image_path or diagram_image_bytes")
+    return None, "image/png"
 
 
 def build_user_payload(inp: DiagramDesignerInput) -> dict[str, Any]:
@@ -67,12 +67,25 @@ def build_user_payload(inp: DiagramDesignerInput) -> dict[str, Any]:
             "The attached image is the ORIGINAL reference diagram only."
         ),
     }
+    has_image = bool(inp.diagram_image_bytes or inp.diagram_image_path)
     if inp.idea_plan:
         payload["idea_plan"] = inp.idea_plan
     if inp.source_question_id:
         payload["source_question_id"] = inp.source_question_id
+    if not has_image:
+        payload["instructions"] = (
+            "There is no source diagram image. Design a complete visual_spec JSON "
+            "for this question from the stem and any idea_plan / visual brief. "
+            "Geometry and graphs only."
+        )
     if inp.repair_feedback.strip():
         payload["repair_feedback"] = inp.repair_feedback.strip()
+        payload["instructions"] = (
+            "Regenerate this diagram. Make the smallest possible correction. "
+            "The previous attempt is structurally close. Preserve all geometry and "
+            "labels that were already correct. Do not redesign the diagram. "
+            "Return a complete visual_spec JSON."
+        )
     if inp.prior_spec:
         payload["prior_visual_spec"] = inp.prior_spec
     return payload
