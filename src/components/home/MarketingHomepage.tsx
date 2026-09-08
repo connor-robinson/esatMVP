@@ -28,6 +28,7 @@ import { CircleUser, ListChecks } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useHomepageAutoHideNav } from "@/hooks/useHomepageAutoHideNav";
 import { ExampleGraphQuestion } from "@/components/home/ExampleGraphQuestion";
+import { PastPaperPlayerPreview } from "@/components/home/PastPaperPlayerPreview";
 
 const SlotMachineCount = dynamic(
   () =>
@@ -473,26 +474,12 @@ export function MarketingHomepage({
                 Past Papers
               </h4>
               <p className="mt-3 text-[#94A3B8] leading-relaxed">
-                All official past papers plus our own targeted practice.
-                Use our tailored roadmap.
+                Practise official papers in an interface that closely matches
+                the real UAT-UK exam, plus our own targeted practice on a
+                tailored roadmap.
               </p>
-              <div className="mt-auto mb-6 space-y-3">
-                <div className="flex items-center gap-3 rounded-xl bg-white/[0.04] px-4 py-3">
-                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/10">
-                    <div className="h-full w-[85%] rounded-full bg-[#3B82F6]" />
-                  </div>
-                  <span className="text-xs font-semibold tabular-nums text-white/70">
-                    85%
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 rounded-xl bg-white/[0.04] px-4 py-3">
-                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/10">
-                    <div className="h-full w-[20%] rounded-full bg-white/20" />
-                  </div>
-                  <span className="text-xs font-semibold text-white/50">
-                    Scheduled
-                  </span>
-                </div>
+              <div className="mt-auto mb-6">
+                <PastPaperPlayerPreview compact />
               </div>
               <Link
                 href="/past-papers/roadmap"
@@ -598,6 +585,62 @@ export function MarketingHomepage({
 
             <div className="flex justify-center lg:justify-end">
               <HeroTrainerDemo className="w-full max-w-[28rem] justify-self-center" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Past papers UAT-UK player showcase */}
+      <section className="bg-[#161D2F] py-24">
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-5 lg:px-6">
+          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
+            <div className="order-2 flex justify-center lg:order-1 lg:justify-start">
+              <PastPaperPlayerPreview />
+            </div>
+
+            <div className="order-1 space-y-8 lg:order-2">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
+                  Past papers
+                </p>
+                <h2 className="mt-4 font-display text-4xl font-bold tracking-tight lg:text-5xl">
+                  Sit papers in a{" "}
+                  <span className="whitespace-nowrap">UAT-UK-style</span> exam
+                  player
+                </h2>
+                <p className="mt-5 max-w-xl text-lg leading-relaxed text-[#94A3B8]">
+                  We&apos;ve updated our sitting UI to closely resemble the
+                  official UAT-UK interface, so exam day feels familiar.
+                </p>
+              </div>
+
+              <ul className="space-y-4">
+                {[
+                  "Official past papers plus our own targeted practice",
+                  "Timed sections, navigator, and the same keyboard shortcuts as the live test",
+                  "A tailored roadmap so you sit papers in the right order",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <span
+                      aria-hidden
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
+                    />
+                    <p className="text-base leading-relaxed text-[#94A3B8] sm:text-lg">
+                      {item}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+
+              <Link
+                href="/past-papers/roadmap"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#3B82F6] px-7 py-3.5 font-bold text-white transition-colors hover:bg-[#2563EB]"
+              >
+                View past papers
+                <span aria-hidden className="text-lg leading-none">
+                  {"\u2192"}
+                </span>
+              </Link>
             </div>
           </div>
         </div>
