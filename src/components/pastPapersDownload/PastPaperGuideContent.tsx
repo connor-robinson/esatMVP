@@ -1,8 +1,9 @@
 import type { DownloadExam } from "@/data/pastPapersDownload";
 import { UniqueEngaaPartBTable } from "@/components/pastPapersGuide/UniqueEngaaPartBTable";
 import { TierListSection } from "@/components/pastPapersGuide/TierListSection";
+import { SeoCta } from "@/components/seo/SeoCta";
 import { SeoFaq } from "@/components/seo/SeoFaq";
-import { SeoSection, SeoTextLink } from "@/components/seo/SeoSections";
+import { SeoSection } from "@/components/seo/SeoSections";
 import type { FaqItem } from "@/lib/seo/config";
 import { SEO_ROUTES } from "@/lib/seo/config";
 
@@ -90,25 +91,49 @@ const NSAA_REPEATS = [
   },
 ] as const;
 
-function GuideReadMore() {
+function GuideReadMoreBanner({ exam }: Props) {
+  const placement =
+    exam === "NSAA"
+      ? "nsaa_collection_guide_banner"
+      : exam === "ENGAA"
+        ? "engaa_collection_guide_banner"
+        : "esat_collection_guide_banner";
+
   return (
-    <p className="text-[0.95rem] leading-relaxed text-[#94A3B8]">
-      Read{" "}
-      <SeoTextLink href={SEO_ROUTES.pastPapersGuide}>
-        which ESAT past papers to use
-      </SeoTextLink>{" "}
-      for more details.
-    </p>
+    <section className="relative overflow-hidden rounded-2xl bg-[#161D2F] px-5 py-6 sm:px-8 sm:py-8">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.28),transparent_55%)]"
+      />
+      <div className="relative z-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
+        <div className="max-w-xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#60A5FA]">
+            How to use these papers
+          </p>
+          <h2 className="mt-2 text-2xl font-display font-bold tracking-tight text-white sm:text-3xl">
+            Which papers should you sit?
+          </h2>
+          <p className="mt-2 text-[0.95rem] leading-relaxed text-[#94A3B8] sm:text-base">
+            The tables above have every PDF. The guide covers the order, the
+            overlaps, and what to skip.
+          </p>
+        </div>
+        <SeoCta
+          href={SEO_ROUTES.pastPapersGuide}
+          placement={placement}
+          className="w-full shrink-0 whitespace-nowrap px-6 py-4 text-base sm:w-auto sm:min-w-[16.5rem] sm:px-8 sm:text-lg"
+        >
+          Read the past paper guide
+        </SeoCta>
+      </div>
+    </section>
   );
 }
 
 function CombinedExcerpt() {
   return (
     <SeoSection heading="The complete tier list">
-      <div className="space-y-4">
-        <TierListSection surface="esat_past_papers" />
-        <GuideReadMore />
-      </div>
+      <TierListSection surface="esat_past_papers" />
     </SeoSection>
   );
 }
@@ -165,7 +190,6 @@ function NsaaRepeatExcerpt() {
             ))}
           </div>
         </div>
-        <GuideReadMore />
       </div>
     </SeoSection>
   );
@@ -181,7 +205,6 @@ function EngaaRepeatExcerpt() {
           Part B, and skip Section 2 if you already sat NSAA Section 2 Physics.
         </p>
         <UniqueEngaaPartBTable compact />
-        <GuideReadMore />
       </div>
     </SeoSection>
   );
@@ -196,6 +219,7 @@ function faqItems(exam?: DownloadExam): readonly FaqItem[] {
 export function PastPaperGuideContent({ exam }: Props) {
   return (
     <>
+      <GuideReadMoreBanner exam={exam} />
       {exam === "NSAA" ? (
         <NsaaRepeatExcerpt />
       ) : exam === "ENGAA" ? (
