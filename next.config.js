@@ -98,6 +98,11 @@ const nextConfig = {
         permanent: false,
       },
       {
+        source: "/past-papers/solve/resume",
+        destination: "/past-papers/solve",
+        permanent: true,
+      },
+      {
         source: "/past-papers/pearson-controls",
         destination: "/pearson/controls",
         permanent: false,

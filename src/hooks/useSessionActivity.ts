@@ -11,7 +11,6 @@ const INACTIVITY_THRESHOLD = 30000;
 
 export function useSessionActivity() {
   const sessionId = usePaperSessionStore((s) => s.sessionId);
-  const isPaused = usePaperSessionStore((s) => s.isPaused);
   const updateLastActiveTimestamp = usePaperSessionStore(
     (s) => s.updateLastActiveTimestamp,
   );
@@ -20,7 +19,7 @@ export function useSessionActivity() {
   const lastActivityRef = useRef<number>(Date.now());
 
   const updateActivity = useCallback(() => {
-    if (!sessionId || isPaused) return;
+    if (!sessionId) return;
 
     const now = Date.now();
     const timeSinceLastActivity = now - lastActivityRef.current;
@@ -29,17 +28,17 @@ export function useSessionActivity() {
       updateLastActiveTimestamp();
       lastActivityRef.current = now;
     }
-  }, [sessionId, isPaused, updateLastActiveTimestamp]);
+  }, [sessionId, updateLastActiveTimestamp]);
 
   const handleActivity = useCallback(() => {
     lastActivityRef.current = Date.now();
-    if (!isPaused && sessionId) {
+    if (sessionId) {
       updateLastActiveTimestamp();
     }
-  }, [isPaused, sessionId, updateLastActiveTimestamp]);
+  }, [sessionId, updateLastActiveTimestamp]);
 
   useEffect(() => {
-    if (!sessionId || isPaused) return;
+    if (!sessionId) return;
 
     const events = [
       "mousedown",
@@ -59,10 +58,10 @@ export function useSessionActivity() {
         document.removeEventListener(event, handleActivity);
       });
     };
-  }, [sessionId, isPaused, handleActivity]);
+  }, [sessionId, handleActivity]);
 
   useEffect(() => {
-    if (!sessionId || isPaused) {
+    if (!sessionId) {
       if (activityIntervalRef.current) {
         clearInterval(activityIntervalRef.current);
         activityIntervalRef.current = null;
@@ -81,7 +80,7 @@ export function useSessionActivity() {
         activityIntervalRef.current = null;
       }
     };
-  }, [sessionId, isPaused, updateActivity]);
+  }, [sessionId, updateActivity]);
 
   useEffect(() => {
     return () => {

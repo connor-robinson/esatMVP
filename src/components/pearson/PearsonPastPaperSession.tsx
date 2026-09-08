@@ -31,13 +31,11 @@ export function PearsonPastPaperSession() {
     questionsError,
     currentQuestionIndex,
     startedAt,
-    isPaused,
     isRestoring,
     loadQuestions,
     navigateToQuestion,
     incrementTime,
     setEndedAt,
-    resumeSession,
     selectedSections,
     currentSectionIndex,
     sectionTimeLimits,
@@ -59,13 +57,11 @@ export function PearsonPastPaperSession() {
       questionsError: s.questionsError,
       currentQuestionIndex: s.currentQuestionIndex,
       startedAt: s.startedAt,
-      isPaused: s.isPaused,
       isRestoring: s.isRestoring,
       loadQuestions: s.loadQuestions,
       navigateToQuestion: s.navigateToQuestion,
       incrementTime: s.incrementTime,
       setEndedAt: s.setEndedAt,
-      resumeSession: s.resumeSession,
       selectedSections: s.selectedSections,
       currentSectionIndex: s.currentSectionIndex,
       sectionTimeLimits: s.sectionTimeLimits,
@@ -137,7 +133,6 @@ export function PearsonPastPaperSession() {
   const sectionRelativeIndex = Math.max(0, currentQuestionIndex - globalOffset);
 
   useEffect(() => {
-    if (isPaused) return;
     const shouldLoad =
       sessionId &&
       paperId &&
@@ -179,7 +174,6 @@ export function PearsonPastPaperSession() {
         loadedPaperIdRef.current = null;
       });
   }, [
-    isPaused,
     loadQuestions,
     navigateToQuestion,
     paperId,
@@ -196,7 +190,7 @@ export function PearsonPastPaperSession() {
   }, [isRestoring, paperStoreHydrated, router, sessionId]);
 
   useEffect(() => {
-    if (!sessionId || questions.length === 0 || isPaused) return;
+    if (!sessionId || questions.length === 0) return;
     const state = usePaperSessionStore.getState();
     const answered = state.answers.some((answer) => answer?.choice != null);
     if (
@@ -207,25 +201,19 @@ export function PearsonPastPaperSession() {
     ) {
       setSectionInstructionTimer(60);
     }
-  }, [isPaused, questions.length, sessionId, setSectionInstructionTimer]);
+  }, [questions.length, sessionId, setSectionInstructionTimer]);
 
   useEffect(() => {
-    if (sessionId && isPaused) {
-      resumeSession();
-    }
-  }, [isPaused, resumeSession, sessionId]);
-
-  useEffect(() => {
-    if (!startedAt || isPaused || loadingResults) return;
+    if (!startedAt || loadingResults) return;
     const tick = window.setInterval(() => {
       const state = usePaperSessionStore.getState();
-      if (state.isMarkingInfo || state.isPaused) return;
+      if (state.isMarkingInfo) return;
       if (state.currentPipelineState !== "section") return;
       incrementTime(state.currentQuestionIndex);
       updateTimerState();
     }, 1000);
     return () => window.clearInterval(tick);
-  }, [incrementTime, loadingResults, isPaused, startedAt, updateTimerState]);
+  }, [incrementTime, loadingResults, startedAt, updateTimerState]);
 
   const handleModuleAdvance = useCallback(() => {
     const nextIndex = currentSectionIndex + 1;

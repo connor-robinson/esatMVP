@@ -58,7 +58,6 @@ export function PapersSolveLegacyPage() {
     reviewFlags,
     startedAt,
     deadline,
-    isPaused,
     isRestoring,
     loadQuestions,
     navigateToQuestion,
@@ -140,7 +139,7 @@ export function PapersSolveLegacyPage() {
     let updateTimerStateInterval: ReturnType<typeof setInterval> | null = null;
 
     // Update timer state every 5 seconds to keep it accurate
-    if (!isPaused && !state.isMarkingInfo) {
+    if (!state.isMarkingInfo) {
       updateTimerStateInterval = setInterval(() => {
         updateTimerState();
       }, 5000);
@@ -148,9 +147,6 @@ export function PapersSolveLegacyPage() {
 
     const interval = setInterval(() => {
       const state = usePaperSessionStore.getState();
-
-      // Don't run timer if paused
-      if (state.isPaused) return;
 
       // Section instruction pages: never count time toward any question
       const isOnInstructionPage =
@@ -212,7 +208,6 @@ export function PapersSolveLegacyPage() {
     sectionDeadlines,
     currentSectionIndex,
     isMarkingInfo,
-    isPaused,
     handleSectionTimeExpired,
     getRemainingTime,
     incrementTime,
@@ -220,23 +215,8 @@ export function PapersSolveLegacyPage() {
     setSectionInstructionTimer,
   ]); // Minimal dependencies - getRemainingTime and incrementTime are stable from Zustand
 
-  // Check if session is paused and redirect to resume page
-  useEffect(() => {
-    if (sessionId && isPaused) {
-      // If paused, redirect to resume page
-      const currentPath = window.location.pathname;
-      if (!currentPath.includes('/past-papers/solve/resume')) {
-        router.push('/past-papers/solve/resume');
-        return;
-      }
-    }
-  }, [sessionId, isPaused, router]);
-
   // Load questions when session starts
   useEffect(() => {
-    // Don't load if paused (will be handled by resume page)
-    if (isPaused) return;
-
     // Load questions if we have a session but none in memory yet.
     // Do not reload when questions already exist: roadmap sessions may span
     // multiple papers, and a paperId mismatch would wipe the filtered set.
@@ -290,7 +270,6 @@ export function PapersSolveLegacyPage() {
     paperId,
     questions.length,
     questionsLoading,
-    isPaused,
     loadQuestions,
     navigateToQuestion,
   ]);
@@ -306,7 +285,6 @@ export function PapersSolveLegacyPage() {
   const sectionStartedRef = useRef<Set<number>>(new Set());
 
   // Initialize section instruction timer if needed (e.g., when session is restored from persistence)
-  // BUT: Don't initialize if we just resumed from a paused state (resumeSession sets it to null intentionally)
   useEffect(() => {
     // Only initialize if:
     // 1. Section mode is active (selectedSections.length > 0)
@@ -315,14 +293,12 @@ export function PapersSolveLegacyPage() {
     // 4. Current section has questions
     // 5. Timer is null (not set yet) - don't re-initialize if it's been set to 0 or we've started
     // 6. We haven't already started this section
-    // 7. Session is not paused (if paused, we're on resume page)
-    // 8. Pipeline state is "instruction" (if "section", user was already working, don't show intro)
+    // 7. Pipeline state is "instruction" (if "section", user was already working, don't show intro)
     const state = usePaperSessionStore.getState();
     const shouldInit =
       selectedSections.length > 0 &&
       questions.length > 0 &&
       !questionsLoading &&
-      !isPaused &&
       allSectionsQuestions.length > 0 &&
       currentSectionIndex < allSectionsQuestions.length &&
       allSectionsQuestions[currentSectionIndex]?.length > 0 &&
@@ -340,7 +316,6 @@ export function PapersSolveLegacyPage() {
     currentSectionIndex,
     sectionInstructionTimer,
     setSectionInstructionTimer,
-    isPaused,
   ]);
 
   // Prefetch question images during section intro timer

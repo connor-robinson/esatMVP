@@ -30,7 +30,7 @@ import { questionMatchesPartId } from '@/lib/papers/paperLibrarySections';
 import { isBogusPartLetter } from '@/lib/papers/markQuestionUtils';
 import { cropImageToContent } from '@/lib/utils/imageCrop';
 import type { Answer, Letter, MistakeTag, Paper, PaperSection, Question, ExamName, ExamType } from '@/types/papers';
-import { saveSession, loadSession, deleteSession, findDetachedSession, clearSessionDetached, markSessionDetached } from '@/lib/storage/sessionStorage';
+import { saveSession, loadSession, deleteSession, clearSessionDetached, markSessionDetached } from '@/lib/storage/sessionStorage';
 import { generatePartIdsFromSections, generatePartIdFromRoadmapPart } from '@/lib/papers/partIdUtils';
 import { examNameToPaperType } from '@/lib/papers/paperConfig';
 
@@ -83,8 +83,6 @@ interface PaperSessionState {
   // Session persistence state
   lastActiveTimestamp: number | null; // When user was last active
   sectionElapsedTimes: number[]; // Elapsed time per section in milliseconds (only active time, not instruction pages)
-  isPaused: boolean; // Whether session is currently paused
-  pausedAt: number | null; // Timestamp when paused
   isRestoring: boolean; // Whether session is currently being restored from IndexedDB
   justQuitSessionId: string | null; // Session ID that was just quit (to prevent restoration)
   justQuitTimestamp: number | null; // Timestamp when session was quit (to prevent restoration for a short period)
@@ -156,14 +154,8 @@ interface PaperSessionState {
   // Session persistence actions
   updateLastActiveTimestamp: () => void;
   updateTimerState: () => void;
-  pauseSession: () => void;
-  resumeSession: () => void;
   saveSessionToIndexedDB: (options?: { detachedFromNavbar?: boolean }) => Promise<void>;
   loadSessionFromIndexedDB: (sessionId: string) => Promise<void>;
-  /** Save progress, detach from navbar progress bar, keep session resumable */
-  saveAndLeaveSession: () => Promise<void>;
-  /** Load a save-and-left session back into the client (shows progress bar again) */
-  resumeSavedSession: () => Promise<boolean>;
   /** Remove session from client memory without ending the server session */
   clearClientSession: () => void;
   setIsMarkingInfo: (isMarkingInfo: boolean) => void;
@@ -220,8 +212,6 @@ const EMPTY_CLIENT_SESSION = {
   deadline: null as number | null,
   lastActiveTimestamp: null as number | null,
   sectionElapsedTimes: [] as number[],
-  isPaused: false,
-  pausedAt: null as number | null,
   notes: '',
   persistTimer: null as ReturnType<typeof setTimeout> | null,
   sessionPersistPromise: null as Promise<unknown> | null,
@@ -274,8 +264,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       
       lastActiveTimestamp: null,
       sectionElapsedTimes: [],
-      isPaused: false,
-      pausedAt: null,
       isRestoring: false,
       justQuitSessionId: null,
       justQuitTimestamp: null,
@@ -396,8 +384,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           deadline,
           lastActiveTimestamp: startedAt,
           sectionElapsedTimes: Array.from({ length: sectionCount }, () => 0),
-          isPaused: false,
-          pausedAt: null,
           notes: '',
           // Clear questions when starting new session to ensure fresh load
           questions: [],
@@ -1233,89 +1219,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         }, 5000);
       },
 
-      saveAndLeaveSession: async () => {
-        const state = get();
-        const sessionIdToLeave = state.sessionId;
-        if (!sessionIdToLeave) return;
-
-        if (state.persistTimer) {
-          clearTimeout(state.persistTimer);
-          set({ persistTimer: null });
-        }
-
-        if (!state.isPaused) {
-          get().pauseSession();
-        }
-        get().updateTimerState();
-
-        // Detach before any fallible write: leaving the paper must not depend on
-        // IndexedDB or the network succeeding, or the progress bar comes back.
-        markSessionDetached(sessionIdToLeave);
-
-        try {
-          await get().saveSessionToIndexedDB({ detachedFromNavbar: true });
-        } catch {
-          // Progress still lives in the persisted store; leaving must not block.
-        }
-        try {
-          await get().persistSessionToServer({ immediate: true });
-        } catch {
-          // Queued for retry by persistSessionToServer.
-        }
-
-        const now = Date.now();
-        set({
-          justQuitSessionId: sessionIdToLeave,
-          justQuitTimestamp: now,
-        });
-        set({ ...EMPTY_CLIENT_SESSION });
-
-        setTimeout(() => {
-          const currentState = get();
-          if (currentState.justQuitSessionId === sessionIdToLeave) {
-            set({
-              justQuitSessionId: null,
-              justQuitTimestamp: null,
-            });
-          }
-        }, 5000);
-      },
-
-      resumeSavedSession: async () => {
-        const detached = await findDetachedSession();
-        if (detached) {
-          clearSessionDetached(detached.sessionId);
-          try {
-            await get().loadSessionFromIndexedDB(detached.sessionId);
-            await get().saveSessionToIndexedDB({ detachedFromNavbar: false });
-            return true;
-          } catch {
-            // Local copy unusable - fall back to the server record below.
-          }
-        }
-
-        // No usable local copy (IndexedDB blocked or wiped): reopen the paper
-        // from the server's in-progress session so Resume never dead-ends.
-        try {
-          const response = await fetch('/api/past-papers/sessions?in_progress=true');
-          if (!response.ok) return false;
-          const data = await response.json();
-          const sessions = (data.sessions || []) as Array<{ id: string; started_at?: string | null }>;
-          if (sessions.length === 0) return false;
-          const mostRecent = [...sessions].sort((a, b) => {
-            const aTime = a.started_at ? new Date(a.started_at).getTime() : 0;
-            const bTime = b.started_at ? new Date(b.started_at).getTime() : 0;
-            return bTime - aTime;
-          })[0];
-          clearSessionDetached(mostRecent.id);
-          await get().loadSessionFromDatabase(mostRecent.id);
-          await get().saveSessionToIndexedDB({ detachedFromNavbar: false });
-          return true;
-        } catch {
-          return false;
-        }
-      },
-
       clearClientSession: () => {
         const state = get();
         if (state.persistTimer) {
@@ -1446,8 +1349,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             sectionTimeLimits: [],
             sectionStartTimes: [],
             sectionDeadlines: [],
-            isPaused: false, // Assume not paused when loading from database
-            pausedAt: null,
             sectionInstructionTimer: null,
             sectionInstructionDeadline: null,
             instructionTimerStartedAt: null,
@@ -1786,7 +1687,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         // Save elapsed time for previous section before switching
         const now = Date.now();
         const previousSectionIndex = state.currentSectionIndex;
-        if (previousSectionIndex !== index && previousSectionIndex >= 0 && !state.isPaused) {
+        if (previousSectionIndex !== index && previousSectionIndex >= 0) {
           const previousSectionStartTime = state.sectionStartTimes[previousSectionIndex];
           if (previousSectionStartTime && state.sectionInstructionTimer === null) {
             // Calculate elapsed time for previous section
@@ -1895,14 +1796,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           return timeLimit * 60;
         }
         
-        if (state.isPaused) {
-          // If paused, calculate remaining time based on elapsed time
-          const timeLimit = state.sectionTimeLimits[sectionIndex] || 60;
-          const elapsedMs = state.sectionElapsedTimes[sectionIndex] || 0;
-          const elapsedSeconds = Math.floor(elapsedMs / 1000);
-          return Math.max(0, timeLimit * 60 - elapsedSeconds);
-        }
-        
         const deadline = state.sectionDeadlines[sectionIndex];
         if (!deadline) {
           // If no deadline set, return the section time limit
@@ -1916,8 +1809,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         const sectionStartTime = state.sectionStartTimes[sectionIndex];
         let currentElapsed = elapsedMs;
         
-        if (sectionStartTime && !state.isPaused) {
-          // Add time since section started (if not paused and not on instruction page)
+        if (sectionStartTime) {
           currentElapsed += Date.now() - sectionStartTime;
         }
         
@@ -1931,144 +1823,9 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         set({ lastActiveTimestamp: Date.now() });
       },
       
-      pauseSession: () => {
-        const state = get();
-        if (!state.sessionId || state.isPaused) return;
-        
-        const now = Date.now();
-        const currentSectionIndex = state.currentSectionIndex;
-        const sectionStartTime = state.sectionStartTimes[currentSectionIndex];
-        
-        // Determine current pipeline state
-        const isOnInstruction = state.sectionInstructionTimer !== null && state.sectionInstructionTimer > 0;
-        const pipelineState: "instruction" | "section" = isOnInstruction ? "instruction" : "section";
-        
-        // Calculate instruction timer remaining if on instruction page
-        let instructionTimerRemaining = state.sectionInstructionTimer;
-        if (isOnInstruction && state.sectionInstructionDeadline) {
-          const remainingMs = Math.max(0, state.sectionInstructionDeadline - now);
-          instructionTimerRemaining = Math.floor(remainingMs / 1000);
-        }
-        
-        // Calculate elapsed time for current section (only if in active section, not instruction page)
-        let currentSectionElapsed = state.sectionElapsedTimes[currentSectionIndex] || 0;
-        if (sectionStartTime && !isOnInstruction) {
-          // Only count time if not on instruction page
-          currentSectionElapsed += now - sectionStartTime;
-        }
-        
-        // Update section elapsed times
-        const newSectionElapsedTimes = [...state.sectionElapsedTimes];
-        newSectionElapsedTimes[currentSectionIndex] = currentSectionElapsed;
-        
-        set({
-          isPaused: true,
-          pausedAt: now,
-          sectionElapsedTimes: newSectionElapsedTimes,
-          sectionInstructionTimer: instructionTimerRemaining,
-          currentPipelineState: pipelineState,
-          lastActiveTimestamp: now,
-        });
-      },
-      
-      resumeSession: () => {
-        const state = get();
-        if (!state.sessionId || !state.isPaused) return;
-        
-        const now = Date.now();
-        const currentSectionIndex = state.currentSectionIndex;
-        
-        // Restore pipeline state
-        const wasOnInstruction = state.currentPipelineState === "instruction" && 
-                                state.sectionInstructionTimer !== null && 
-                                state.sectionInstructionTimer > 0;
-        
-        // Check if instruction timer expired while paused
-        let instructionTimerRemaining: number | null = state.sectionInstructionTimer;
-        if (wasOnInstruction && state.pausedAt && instructionTimerRemaining !== null) {
-          // Recalculate remaining time based on when it was paused
-          const pausedAt = state.pausedAt;
-          if (state.sectionInstructionDeadline) {
-            const elapsedWhilePaused = now - pausedAt;
-            const remainingAtPause = Math.max(0, state.sectionInstructionDeadline - pausedAt);
-            instructionTimerRemaining = Math.max(0, Math.floor((remainingAtPause - elapsedWhilePaused) / 1000));
-          }
-        }
-        
-        // If instruction timer expired, skip to section
-        const shouldSkipInstruction = wasOnInstruction && (instructionTimerRemaining === null || instructionTimerRemaining <= 0);
-        
-        // Return to the question the user was actually on. Only fall back to the
-        // last visited question when the saved index is unusable.
-        let restoredQuestionIndex = state.currentQuestionIndex;
-        const savedIndexIsUsable =
-          typeof restoredQuestionIndex === 'number' &&
-          restoredQuestionIndex >= 0 &&
-          (state.questions.length === 0 ||
-            restoredQuestionIndex < state.questions.length);
-        if (!savedIndexIsUsable && state.visitedQuestions?.length) {
-          const lastVisitedIndex = state.visitedQuestions.lastIndexOf(true);
-          if (lastVisitedIndex >= 0 && lastVisitedIndex < state.questions.length) {
-            restoredQuestionIndex = lastVisitedIndex;
-          }
-        }
-        // Ensure index is valid
-        if (restoredQuestionIndex < 0 || restoredQuestionIndex >= state.questions.length) {
-          restoredQuestionIndex = Math.max(0, Math.min(state.questions.length - 1, restoredQuestionIndex));
-        }
-        
-        if (wasOnInstruction && !shouldSkipInstruction && instructionTimerRemaining !== null) {
-          // Restore instruction timer - recalculate deadline based on remaining time
-          const newDeadline = now + (instructionTimerRemaining * 1000);
-          
-          set({
-            isPaused: false,
-            pausedAt: null,
-            sectionInstructionTimer: instructionTimerRemaining,
-            sectionInstructionDeadline: newDeadline,
-            instructionTimerStartedAt: now - ((60 - instructionTimerRemaining) * 1000), // Approximate start time
-            currentPipelineState: "instruction",
-            currentQuestionIndex: restoredQuestionIndex,
-            lastActiveTimestamp: now,
-          });
-        } else {
-          // Resume active section - skip instruction timer (either wasn't on instruction or timer expired)
-          const sectionTimeLimit = state.sectionTimeLimits[currentSectionIndex] || 60;
-          const elapsedMs = state.sectionElapsedTimes[currentSectionIndex] || 0;
-          
-          // Calculate new deadline based on remaining time
-          const remainingMs = (sectionTimeLimit * 60 * 1000) - elapsedMs;
-          const newDeadline = now + remainingMs;
-          
-          // Update section start time and deadline
-          const newSectionStartTimes = [...state.sectionStartTimes];
-          const newSectionDeadlines = [...state.sectionDeadlines];
-          newSectionStartTimes[currentSectionIndex] = now;
-          newSectionDeadlines[currentSectionIndex] = newDeadline;
-          
-          set({
-            isPaused: false,
-            pausedAt: null,
-            sectionStartTimes: newSectionStartTimes,
-            sectionDeadlines: newSectionDeadlines,
-            sectionInstructionTimer: null, // Explicitly set to null to skip intro
-            sectionInstructionDeadline: null,
-            instructionTimerStartedAt: null,
-            currentPipelineState: "section",
-            currentQuestionIndex: restoredQuestionIndex,
-            lastActiveTimestamp: now,
-          });
-        }
-        
-        // Persist immediately to ensure state is saved
-        get().persistSessionToServer({ immediate: true }).catch((error) => {
-          
-        });
-      },
-      
       updateTimerState: () => {
         const state = get();
-        if (!state.sessionId || state.isPaused) return;
+        if (!state.sessionId) return;
         
         const now = Date.now();
         const currentSectionIndex = state.currentSectionIndex;
@@ -2256,8 +2013,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           await saveSession(updatedState.sessionId, stateSnapshot, {
             lastActiveTimestamp: updatedState.lastActiveTimestamp || Date.now(),
             sectionElapsedTimes: updatedState.sectionElapsedTimes,
-            isPaused: updatedState.isPaused,
-            pausedAt: updatedState.pausedAt,
             detachedFromNavbar: options?.detachedFromNavbar,
           });
         } catch (error) {
@@ -2314,16 +2069,11 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             questionsError: null,
             lastActiveTimestamp: sessionData.lastActiveTimestamp,
             sectionElapsedTimes: sessionData.sectionElapsedTimes || [],
-            isPaused: sessionData.isPaused,
-            pausedAt: sessionData.pausedAt,
             sessionPersistPromise: null,
             persistTimer: null,
           });
           
-          // If session was paused, keep it paused - don't recalculate timers
-          // Timer recalculation will happen when user resumes via resumeSession()
-          if (!sessionData.isPaused) {
-            // Only recalculate timers if session was active
+          {
             const restoredState = get();
             const now = Date.now();
             const timePassed = now - (sessionData.lastActiveTimestamp || now);
@@ -2477,11 +2227,18 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         endedAt: state.endedAt,
         lastActiveTimestamp: state.lastActiveTimestamp,
         sectionElapsedTimes: state.sectionElapsedTimes,
-        isPaused: state.isPaused,
-        pausedAt: state.pausedAt,
         notes: state.notes,
         isMarkingInfo: state.isMarkingInfo,
       }),
+      merge: (persistedState, currentState) => {
+        const persisted = { ...((persistedState as Record<string, unknown>) ?? {}) };
+        delete persisted.isPaused;
+        delete persisted.pausedAt;
+        return {
+          ...currentState,
+          ...persisted,
+        };
+      },
     }
   )
 );

@@ -16,8 +16,6 @@ interface SessionData {
   // Persistence metadata
   lastActiveTimestamp: number;
   sectionElapsedTimes: number[]; // Elapsed time per section in milliseconds
-  isPaused: boolean;
-  pausedAt: number | null;
   savedAt: number; // When this save occurred
   /** User saved & left - do not auto-restore into the global progress bar */
   detachedFromNavbar?: boolean;
@@ -124,8 +122,6 @@ function initDB(): Promise<IDBDatabase> {
 export async function saveSession(sessionId: string, state: any, metadata: {
   lastActiveTimestamp: number;
   sectionElapsedTimes: number[];
-  isPaused: boolean;
-  pausedAt: number | null;
   detachedFromNavbar?: boolean;
 }): Promise<void> {
   try {
@@ -150,8 +146,6 @@ export async function saveSession(sessionId: string, state: any, metadata: {
       state,
       lastActiveTimestamp: metadata.lastActiveTimestamp,
       sectionElapsedTimes: metadata.sectionElapsedTimes,
-      isPaused: metadata.isPaused,
-      pausedAt: metadata.pausedAt,
       savedAt: Date.now(),
       detachedFromNavbar,
     };

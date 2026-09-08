@@ -44,7 +44,6 @@ export function SectionSummary({
   const sectionInstructionDeadline = usePaperSessionStore(
     (s) => s.sectionInstructionDeadline,
   );
-  const isPaused = usePaperSessionStore((s) => s.isPaused);
 
   const currentSection = selectedSections[currentSectionIndex];
   const currentSectionQuestions = allSectionsQuestions[currentSectionIndex] || [];
@@ -97,7 +96,7 @@ export function SectionSummary({
   }, [sectionInstructionDeadline, onTimerExpire]);
 
   useEffect(() => {
-    if (!sectionInstructionDeadline || isPaused) return;
+    if (!sectionInstructionDeadline) return;
 
     tickInstructionTimer();
     intervalRef.current = setInterval(tickInstructionTimer, 1000);
@@ -108,7 +107,7 @@ export function SectionSummary({
         intervalRef.current = null;
       }
     };
-  }, [sectionInstructionDeadline, isPaused, tickInstructionTimer]);
+  }, [sectionInstructionDeadline, tickInstructionTimer]);
 
   // Initialize display when section changes
   useEffect(() => {
