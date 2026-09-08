@@ -25,6 +25,7 @@ import { generateSectionId } from '@/lib/papers/partIdUtils';
 import type { Paper, PaperSection, Question, ExamName } from '@/types/papers';
 import { PaperLibraryGrid } from '@/components/papers/library/PaperLibraryGrid';
 import { PaperSessionSummary } from '@/components/papers/library/PaperSessionSummary';
+import { PastPaperUatNotice } from '@/components/papers/PastPaperUatNotice';
 import { LoadingPage } from '@/components/shared/LoadingPage';
 import { allowLoadingPaint } from '@/lib/papers/allowLoadingPaint';
 import {
@@ -698,6 +699,7 @@ export default function PapersLibraryPage() {
           href="/pricing"
         />
       ) : null}
+      <PastPaperUatNotice />
       <div className='grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_min(100%,30rem)] lg:items-start lg:gap-6 xl:grid-cols-[minmax(0,1fr)_31rem]'>
         <div>
           <PaperLibraryGrid

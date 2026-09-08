@@ -5,7 +5,11 @@ import { CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
-export function BugReportPanel() {
+interface BugReportPanelProps {
+  subject?: string;
+}
+
+export function BugReportPanel({ subject }: BugReportPanelProps) {
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,6 +28,7 @@ export function BugReportPanel() {
         body: JSON.stringify({
           description: description.trim(),
           pageUrl: window.location.href,
+          ...(subject ? { subject } : {}),
         }),
       });
       if (!res.ok) {

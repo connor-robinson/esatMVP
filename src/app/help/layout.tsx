@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { buildNoIndexMetadata } from "@/lib/seo/noIndex";
 
 /**
@@ -12,5 +13,5 @@ export const metadata: Metadata = buildNoIndexMetadata({
 });
 
 export default function HelpLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return <Suspense fallback={null}>{children}</Suspense>;
 }

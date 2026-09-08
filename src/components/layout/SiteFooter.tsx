@@ -49,6 +49,12 @@ export function SiteFooter() {
           >
             Help
           </Link>
+          <Link
+            href="/help?topic=bug"
+            className="text-text-muted transition-colors hover:text-text"
+          >
+            Report a bug
+          </Link>
         </nav>
       </div>
     </footer>

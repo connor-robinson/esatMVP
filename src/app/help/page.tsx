@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Container } from "@/components/layout/Container";
 import {
   useSupabaseSession,
@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 export default function HelpContactPage() {
   const session = useSupabaseSession();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
@@ -24,6 +25,12 @@ export default function HelpContactPage() {
       setEmail(session.user.email);
     }
   }, [session?.user?.email, email]);
+
+  useEffect(() => {
+    if (searchParams.get("topic") === "bug" && !subject) {
+      setSubject("Past paper player bug");
+    }
+  }, [searchParams, subject]);
 
   const loginHref = useMemo(
     () => `/login?redirectTo=${encodeURIComponent(pathname || "/help")}`,
@@ -79,8 +86,9 @@ export default function HelpContactPage() {
           Help &amp; contact
         </h1>
         <p className="mt-3 text-sm leading-relaxed text-text-muted">
-          Bugs, complaints, help, or other issues. Send us a message and we
-          will get back to you.
+          The past paper player now follows the official UAT-UK interface more
+          closely. If something looks wrong, a control is missing, or a question
+          is broken, send a bug report and we will get back to you.
         </p>
 
         {!session?.user ? (
