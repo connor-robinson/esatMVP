@@ -167,6 +167,12 @@ describe("index hygiene: public pages stay indexable", () => {
     expect(readAppSource("tools", "score-converter", "page.tsx")).toContain(
       "buildSeoMetadata",
     );
+    expect(readAppSource("tools", "score-converter", "pat", "page.tsx")).toContain(
+      "buildSeoMetadata",
+    );
+    expect(readAppSource("tools", "score-converter", "pat", "page.tsx")).not.toContain(
+      "noIndexFollowMetadata",
+    );
   });
 
   it("server-preloads score-converter published tables instead of relying on /api/", () => {
@@ -283,8 +289,9 @@ describe("index hygiene: sitemap", () => {
     });
 
     expect(paths).toEqual(PUBLIC_SITEMAP_ENTRIES.map((entry) => entry.path));
-    expect(entries).toHaveLength(32);
+    expect(entries).toHaveLength(33);
     expect(isPublicSitemapPath(APP_ROUTES.scoreConverter)).toBe(true);
+    expect(isPublicSitemapPath("/tools/score-converter/pat")).toBe(true);
     expect(isPublicSitemapPath("/esat-no-calculator-practice")).toBe(true);
     expect(urls).toContain(`${SITE_URL}${APP_ROUTES.scoreConverter}`);
     expect(urls).toContain(`${SITE_URL}/esat-no-calculator-practice`);
