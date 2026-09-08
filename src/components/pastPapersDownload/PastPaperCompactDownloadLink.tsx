@@ -20,7 +20,7 @@ export function PastPaperCompactDownloadLink({
       download
       aria-label={ariaLabel}
       className={cn(
-        "inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg bg-[#334155] px-3 py-1.5 text-sm font-semibold text-[#F8FAFC] transition-colors hover:bg-[#475569] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0F1D]",
+        "inline-flex items-center gap-1 whitespace-nowrap rounded-lg bg-[#334155] px-2 py-1 text-sm font-semibold text-[#F8FAFC] transition-colors hover:bg-[#475569] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0F1D]",
         className,
       )}
     >

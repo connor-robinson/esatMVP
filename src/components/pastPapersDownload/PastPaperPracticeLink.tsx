@@ -42,10 +42,10 @@ export function PastPaperPracticeLink({
           setStarting(true);
         }}
         className={cn(
-          "inline-flex items-center justify-center gap-1.5 font-semibold text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0F1D]",
+          "inline-flex items-center justify-center gap-1 font-semibold text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0F1D]",
           size === "page"
             ? "rounded-xl bg-[#3B82F6] px-4 py-2 text-sm hover:bg-[#2563EB]"
-            : "whitespace-nowrap rounded-lg bg-[#3B82F6] px-3 py-1.5 text-sm hover:bg-[#2563EB]",
+            : "whitespace-nowrap rounded-lg bg-[#3B82F6] px-2 py-1 text-sm hover:bg-[#2563EB]",
           className,
         )}
       >

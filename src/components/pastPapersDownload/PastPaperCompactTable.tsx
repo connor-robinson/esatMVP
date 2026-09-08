@@ -16,23 +16,23 @@ export function PastPaperCompactTable({ table }: Props) {
 
   return (
     <div className="overflow-hidden rounded-2xl bg-[#161D2F]">
-      <div className="px-5 py-3.5">
+      <div className="px-3 py-3">
         <h3 className="text-base font-semibold tracking-tight text-[#F1F5F9]">
           {table.heading}
         </h3>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[46rem] text-left text-base">
+        <table className="w-full text-left text-base">
           <thead>
             <tr className="text-xs font-semibold uppercase tracking-wide text-[#94A3B8]">
-              <th className="w-[18%] px-5 py-3.5">Year</th>
+              <th className="px-2.5 py-3">Year</th>
               {isSpecification ? (
-                <th className="px-5 py-3.5">PDF</th>
+                <th className="px-2.5 py-3">PDF</th>
               ) : (
                 <>
-                  <th className="px-5 py-3.5">Paper</th>
-                  <th className="px-5 py-3.5">Answers</th>
-                  <th className="px-5 py-3.5">ESAT Camp</th>
+                  <th className="px-2.5 py-3">Paper</th>
+                  <th className="px-2.5 py-3">Answers</th>
+                  <th className="px-2.5 py-3">ESAT Camp</th>
                 </>
               )}
             </tr>
@@ -45,7 +45,7 @@ export function PastPaperCompactTable({ table }: Props) {
                   index % 2 === 0 ? "bg-white/[0.035]" : "bg-transparent"
                 }
               >
-                <td className="px-5 py-5 text-base font-medium tabular-nums text-[#F1F5F9]">
+                <td className="px-2.5 py-4 text-base font-medium tabular-nums text-[#F1F5F9]">
                   {row.detailHref ? (
                     <Link
                       href={row.detailHref}
@@ -58,7 +58,7 @@ export function PastPaperCompactTable({ table }: Props) {
                   )}
                 </td>
                 {isSpecification ? (
-                  <td className="px-5 py-5">
+                  <td className="px-2.5 py-4">
                     {row.specificationUrl ? (
                       <PastPaperCompactDownloadLink
                         href={row.specificationUrl}
@@ -71,7 +71,7 @@ export function PastPaperCompactTable({ table }: Props) {
                   </td>
                 ) : (
                   <>
-                    <td className="px-5 py-5">
+                    <td className="px-2.5 py-4">
                       {row.paperUrl ? (
                         <PastPaperCompactDownloadLink
                           href={row.paperUrl}
@@ -82,7 +82,7 @@ export function PastPaperCompactTable({ table }: Props) {
                         <UnavailableCell />
                       )}
                     </td>
-                    <td className="px-5 py-5">
+                    <td className="px-2.5 py-4">
                       {row.answersUrl ? (
                         <PastPaperCompactDownloadLink
                           href={row.answersUrl}
@@ -95,7 +95,7 @@ export function PastPaperCompactTable({ table }: Props) {
                         <UnavailableCell />
                       )}
                     </td>
-                    <td className="px-5 py-5">
+                    <td className="px-2.5 py-4">
                       {row.practiceHref ? (
                         <PastPaperPracticeLink
                           href={row.practiceHref}
