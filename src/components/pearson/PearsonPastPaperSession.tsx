@@ -2,10 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/layout/Container";
 import { PearsonSolveBridge } from "@/components/pearson/PearsonSolveBridge";
+import { PearsonPleaseWaitScreen } from "@/components/pearson/PearsonPleaseWaitScreen";
 import { PearsonResultsLoadingScreen } from "@/components/pearson/PearsonResultsLoadingScreen";
 import { usePaperSessionHydrated } from "@/hooks/usePaperSessionHydrated";
 import { useSessionActivity } from "@/hooks/useSessionActivity";
@@ -256,13 +256,7 @@ export function PearsonPastPaperSession() {
   }, [currentSectionIndex, setSectionInstructionTimer, setSectionStartTime]);
 
   if (!paperStoreHydrated || isRestoring) {
-    return (
-      <Container size="lg">
-        <div className="flex min-h-[50vh] items-center justify-center">
-          <LoadingSpinner size="md" />
-        </div>
-      </Container>
-    );
+    return <PearsonPleaseWaitScreen />;
   }
 
   if (!sessionId) {
@@ -289,16 +283,7 @@ export function PearsonPastPaperSession() {
   }
 
   if (questionsLoading && questions.length === 0) {
-    return (
-      <Container size="lg">
-        <div className="flex min-h-screen items-center justify-center">
-          <div className="space-y-4 text-center">
-            <LoadingSpinner size="md" />
-            <p className="text-sm text-white/60">Loading questions...</p>
-          </div>
-        </div>
-      </Container>
-    );
+    return <PearsonPleaseWaitScreen />;
   }
 
   if (questionsError) {

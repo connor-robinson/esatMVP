@@ -1,20 +1,12 @@
 import { Suspense } from "react";
-import { LoadingPage } from "@/components/shared/LoadingPage";
+import { PearsonPleaseWaitScreen } from "@/components/pearson/PearsonPleaseWaitScreen";
 import { StartPastPaperClient } from "./StartPastPaperClient";
 
 export const dynamic = "force-dynamic";
 
 export default function StartPastPaperPage() {
   return (
-    <Suspense
-      fallback={
-        <LoadingPage
-          variant="session"
-          hint="Sit the paper under timed conditions, then mark with the answer key."
-          message="Starting your paper"
-        />
-      }
-    >
+    <Suspense fallback={<PearsonPleaseWaitScreen />}>
       <StartPastPaperClient />
     </Suspense>
   );

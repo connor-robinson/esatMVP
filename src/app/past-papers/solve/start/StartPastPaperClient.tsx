@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
-import { LoadingPage } from "@/components/shared/LoadingPage";
+import { PearsonPleaseWaitScreen } from "@/components/pearson/PearsonPleaseWaitScreen";
 import { useSubscription } from "@/hooks/useSubscription";
 import { allowLoadingPaint } from "@/lib/papers/allowLoadingPaint";
 import {
@@ -20,8 +20,6 @@ import { startPastPaperSectionSession } from "@/lib/papers/startPastPaperSection
 import { APP_ROUTES, SEO_ROUTES } from "@/lib/seo/config";
 
 const launchingTargets = new Set<string>();
-const START_HINT =
-  "Sit the paper under timed conditions, then mark with the answer key.";
 
 function practiceTargetKey(target: PastPaperPracticeTarget): string {
   return [
@@ -116,20 +114,11 @@ export function StartPastPaperClient() {
   }
 
   if (session === undefined || (session && !error && !locked)) {
-    return (
-      <LoadingPage
-        variant="session"
-        hint={START_HINT}
-        message={`Starting ${target.exam} ${target.year ?? ""} ${practiceSectionLabel(target.sectionSlug)}`.replace(
-          /\s+/g,
-          " ",
-        )}
-      />
-    );
+    return <PearsonPleaseWaitScreen />;
   }
 
   if (session === null) {
-    return <LoadingPage variant="session" hint={START_HINT} message="Redirecting to sign in" />;
+    return <PearsonPleaseWaitScreen />;
   }
 
   if (locked) {
@@ -152,9 +141,7 @@ export function StartPastPaperClient() {
     );
   }
 
-  return (
-    <LoadingPage variant="session" hint={START_HINT} message="Starting your paper" />
-  );
+  return <PearsonPleaseWaitScreen />;
 }
 
 function StartMessage({

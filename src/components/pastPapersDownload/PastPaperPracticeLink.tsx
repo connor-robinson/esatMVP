@@ -4,7 +4,7 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { Play } from "lucide-react";
-import { LoadingPage } from "@/components/shared/LoadingPage";
+import { PearsonPleaseWaitScreen } from "@/components/pearson/PearsonPleaseWaitScreen";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -53,14 +53,7 @@ export function PastPaperPracticeLink({
         <Play aria-hidden className="h-3.5 w-3.5 fill-current opacity-90" />
       </Link>
       {starting && typeof document !== "undefined"
-        ? createPortal(
-            <LoadingPage
-              variant="session"
-              hint="Sit the paper under timed conditions, then mark with the answer key."
-              message="Starting your paper"
-            />,
-            document.body,
-          )
+        ? createPortal(<PearsonPleaseWaitScreen />, document.body)
         : null}
     </>
   );
