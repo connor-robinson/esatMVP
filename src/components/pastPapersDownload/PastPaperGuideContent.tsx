@@ -132,7 +132,7 @@ function GuideReadMoreBanner({ exam }: Props) {
 
 function CombinedExcerpt() {
   return (
-    <SeoSection heading="The complete tier list">
+    <SeoSection heading="Which past papers to attempt?">
       <TierListSection surface="esat_past_papers" />
     </SeoSection>
   );
