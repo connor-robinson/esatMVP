@@ -114,14 +114,23 @@ export function QuestionCounterIcon({ className }: { className?: string }) {
   );
 }
 
-/** White outline waving flag on toolbar; filled asset when flagged. */
-export function FlagIcon({ filled }: { filled?: boolean }) {
+/** Both assets stay mounted so flagging never waits on a PNG swap. */
+export function FlagIcon() {
   return (
-    <RasterIcon
-      src={filled ? ICONS.flagFilled : ICONS.flag}
-      slot="toolbar"
-      variant="flag"
-    />
+    <span className="pearson-flag-icon" aria-hidden="true">
+      <RasterIcon
+        src={ICONS.flag}
+        slot="toolbar"
+        variant="flag"
+        className="pearson-flag-icon-outline"
+      />
+      <RasterIcon
+        src={ICONS.flagFilled}
+        slot="toolbar"
+        variant="flag"
+        className="pearson-flag-icon-filled"
+      />
+    </span>
   );
 }
 

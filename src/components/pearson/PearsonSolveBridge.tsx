@@ -6,6 +6,7 @@
 
 import { useCallback, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useShallow } from "zustand/react/shallow";
 import { PearsonExamPlayer } from "@/components/pearson/PearsonExamPlayer";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import type { Letter, Question } from "@/types/papers";
@@ -70,15 +71,22 @@ export function PearsonSolveBridge({
 }: PearsonSolveBridgeProps) {
   const router = useRouter();
   const {
-    answers,
-    reviewFlags,
     setAnswer,
     setReviewFlag,
     setPaperFullscreenShowMainNavbar,
     setSectionStartTime,
     currentSectionIndex,
     navigateToQuestion,
-  } = usePaperSessionStore();
+  } = usePaperSessionStore(
+    useShallow((s) => ({
+      setAnswer: s.setAnswer,
+      setReviewFlag: s.setReviewFlag,
+      setPaperFullscreenShowMainNavbar: s.setPaperFullscreenShowMainNavbar,
+      setSectionStartTime: s.setSectionStartTime,
+      currentSectionIndex: s.currentSectionIndex,
+      navigateToQuestion: s.navigateToQuestion,
+    })),
+  );
 
   useEffect(() => {
     setPaperFullscreenShowMainNavbar(false);
@@ -99,16 +107,25 @@ export function PearsonSolveBridge({
   }, [currentSectionIndex, introMode, setSectionStartTime]);
 
   const initialAnswers = useMemo(
-    () => buildInitialAnswers(questions, answers, globalOffset),
+    () =>
+      buildInitialAnswers(
+        questions,
+        usePaperSessionStore.getState().answers,
+        globalOffset,
+      ),
     // Only seed once per module mount; store updates flow via onAnswerChange.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [questions, globalOffset],
+    [globalOffset, questions],
   );
 
   const initialFlags = useMemo(
-    () => buildInitialFlags(questions, reviewFlags, globalOffset),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [questions, globalOffset],
+    () =>
+      buildInitialFlags(
+        questions,
+        usePaperSessionStore.getState().reviewFlags,
+        globalOffset,
+      ),
+    // Only seed once per module mount; store updates flow via onFlagsChange.
+    [globalOffset, questions],
   );
 
   const syncAnswersToStore = useCallback(

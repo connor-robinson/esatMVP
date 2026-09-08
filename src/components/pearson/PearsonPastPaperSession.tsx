@@ -12,6 +12,7 @@ import { useSessionActivity } from "@/hooks/useSessionActivity";
 import { formatPastPaperExamTitle } from "@/lib/pearson/examTitle";
 import { formatPearsonSectionHeading } from "@/lib/pearson/splitPaperSections";
 import type { PearsonIntroMode } from "@/lib/pearson/usePearsonExamController";
+import { useShallow } from "zustand/react/shallow";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 
 export function PearsonPastPaperSession() {
@@ -47,7 +48,36 @@ export function PearsonPastPaperSession() {
     saveSessionToIndexedDB,
     updateTimerState,
     currentPipelineState,
-  } = usePaperSessionStore();
+  } = usePaperSessionStore(
+    useShallow((s) => ({
+      sessionId: s.sessionId,
+      paperId: s.paperId,
+      paperName: s.paperName,
+      paperVariant: s.paperVariant,
+      questions: s.questions,
+      questionsLoading: s.questionsLoading,
+      questionsError: s.questionsError,
+      currentQuestionIndex: s.currentQuestionIndex,
+      startedAt: s.startedAt,
+      isPaused: s.isPaused,
+      isRestoring: s.isRestoring,
+      loadQuestions: s.loadQuestions,
+      navigateToQuestion: s.navigateToQuestion,
+      incrementTime: s.incrementTime,
+      setEndedAt: s.setEndedAt,
+      resumeSession: s.resumeSession,
+      selectedSections: s.selectedSections,
+      currentSectionIndex: s.currentSectionIndex,
+      sectionTimeLimits: s.sectionTimeLimits,
+      allSectionsQuestions: s.allSectionsQuestions,
+      getSectionRemainingTime: s.getSectionRemainingTime,
+      setSectionStartTime: s.setSectionStartTime,
+      setSectionInstructionTimer: s.setSectionInstructionTimer,
+      saveSessionToIndexedDB: s.saveSessionToIndexedDB,
+      updateTimerState: s.updateTimerState,
+      currentPipelineState: s.currentPipelineState,
+    })),
+  );
 
   useSessionActivity();
 

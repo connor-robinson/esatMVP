@@ -440,9 +440,12 @@ export function usePearsonExamController(
 
   const toggleCurrentFlag = useCallback(() => {
     if (!currentQuestion || moduleLocked) return;
+    const questionId = currentQuestion.id;
     setFlagged((prev) => {
-      const next = toggleFlag(prev, currentQuestion.id, moduleLocked);
-      onFlagsChangeRef.current?.(next);
+      const next = toggleFlag(prev, questionId, moduleLocked);
+      window.setTimeout(() => {
+        onFlagsChangeRef.current?.(next);
+      }, 0);
       return next;
     });
   }, [moduleLocked, currentQuestion]);

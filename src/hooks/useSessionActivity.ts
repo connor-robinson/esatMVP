@@ -10,11 +10,11 @@ const ACTIVITY_UPDATE_INTERVAL = 5000;
 const INACTIVITY_THRESHOLD = 30000;
 
 export function useSessionActivity() {
-  const {
-    sessionId,
-    isPaused,
-    updateLastActiveTimestamp,
-  } = usePaperSessionStore();
+  const sessionId = usePaperSessionStore((s) => s.sessionId);
+  const isPaused = usePaperSessionStore((s) => s.isPaused);
+  const updateLastActiveTimestamp = usePaperSessionStore(
+    (s) => s.updateLastActiveTimestamp,
+  );
 
   const activityIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastActivityRef = useRef<number>(Date.now());

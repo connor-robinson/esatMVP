@@ -217,9 +217,9 @@ export function Navbar() {
   });
   const session = useSupabaseSession();
   const supabase = useSupabaseClient();
-  const {
-    paperFullscreenShowMainNavbar,
-  } = usePaperSessionStore();
+  const paperFullscreenShowMainNavbar = usePaperSessionStore(
+    (s) => s.paperFullscreenShowMainNavbar,
+  );
   const [docFullscreen, setDocFullscreen] = useState(false);
   const { theme, toggleTheme, isDark, lightStrategy, toggleLightStrategy } = useTheme();
   const { hasFullAccess, tier, source } = useSubscription();

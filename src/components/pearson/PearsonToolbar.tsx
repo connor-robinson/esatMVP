@@ -1,5 +1,6 @@
 "use client";
 
+import type { PointerEvent } from "react";
 import type { ColourSchemeId } from "@/lib/pearson/types";
 import { PearsonMnemonicLabel } from "./PearsonMnemonicLabel";
 import { FlagIcon } from "./PearsonIcons";
@@ -22,6 +23,16 @@ export function PearsonToolbar({
   onColourSchemeChange,
   disabled = false,
 }: PearsonToolbarProps) {
+  const handlePointerDown = (event: PointerEvent<HTMLButtonElement>) => {
+    if (disabled || event.button !== 0) return;
+    const next = event.currentTarget.getAttribute("aria-pressed") !== "true";
+    event.currentTarget.setAttribute("aria-pressed", next ? "true" : "false");
+  };
+
+  const handlePointerCancel = (event: PointerEvent<HTMLButtonElement>) => {
+    event.currentTarget.setAttribute("aria-pressed", flagged ? "true" : "false");
+  };
+
   return (
     <div className="pearson-toolbar-bar">
       <div className="pearson-toolbar-inner">
@@ -30,11 +41,13 @@ export function PearsonToolbar({
             <button
               type="button"
               className="pearson-toolbar-btn"
+              onPointerDown={handlePointerDown}
+              onPointerCancel={handlePointerCancel}
               onClick={onToggleFlag}
               disabled={disabled}
               aria-pressed={flagged}
             >
-              <FlagIcon filled={flagged} />
+              <FlagIcon />
               <PearsonMnemonicLabel label="Flag for Review" letter="F" />
             </button>
             <span className="pearson-toolbar-divider" aria-hidden="true" />

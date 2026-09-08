@@ -194,6 +194,28 @@ html.pearson-exam-active body {
   max-width: 16px;
 }
 
+.pearson-flag-icon {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.pearson-flag-icon > .pearson-raster-icon {
+  grid-area: 1 / 1;
+}
+
+.pearson-flag-icon-filled {
+  opacity: 0;
+}
+
+.pearson-toolbar-btn[aria-pressed="true"] .pearson-flag-icon-outline {
+  opacity: 0;
+}
+
+.pearson-toolbar-btn[aria-pressed="true"] .pearson-flag-icon-filled {
+  opacity: 1;
+}
+
 .pearson-raster-icon--end-exam {
   height: 18px;
   max-width: 36px;
@@ -220,9 +242,13 @@ html.pearson-exam-active body {
 .pearson-exam-root[data-chrome-mode="blue"] .pearson-footer-action:hover:not(:disabled) .pearson-raster-icon,
 .pearson-exam-root[data-chrome-mode="blue"] .pearson-timer-btn:hover:not(:disabled) .pearson-raster-icon:not(.pearson-raster-icon--timer-yellow),
 .pearson-exam-root[data-chrome-mode="blue"] .pearson-question-counter-btn:hover:not(:disabled) .pearson-raster-icon,
-.pearson-exam-root[data-chrome-mode="blue"] .pearson-toolbar-btn:hover:not(:disabled) .pearson-raster-icon {
+.pearson-exam-root[data-chrome-mode="blue"] .pearson-toolbar-btn:hover:not(:disabled) .pearson-raster-icon:not(.pearson-flag-icon-filled) {
   filter: brightness(0) saturate(100%) invert(88%) sepia(98%) saturate(7500%) hue-rotate(360deg)
     brightness(103%) contrast(104%);
+}
+
+.pearson-exam-root[data-chrome-mode="blue"] .pearson-toolbar-btn[aria-pressed="true"] {
+  color: var(--pearson-hover-yellow);
 }
 
 .pearson-exam-root[data-chrome-mode="blue"] .pearson-footer-action:active:not(:disabled),
