@@ -96,6 +96,94 @@ def _keyboard_script() -> None:
     )
 
 
+def _exam_text_height(text: str) -> int:
+    raw = text or ""
+    lines = max(1, raw.count("\n") + 1)
+    extra = 90 if "|" in raw or "<table" in raw.lower() else 0
+    return min(900, max(110, 28 * lines + extra))
+
+
+def _render_exam_text(text: str, *, key: str) -> None:
+    """Render stem/options with KaTeX + mhchem. Streamlit markdown cannot do \\ce{}."""
+    raw = text or ""
+    payload = json.dumps(raw)
+    height = _exam_text_height(raw)
+    components.html(
+        f"""<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <style>
+    body {{
+      margin: 0;
+      font-family: "Source Serif 4", "Times New Roman", serif;
+      font-size: 16px;
+      line-height: 1.45;
+      color: #111;
+    }}
+    table {{ border-collapse: collapse; margin: 0.6em 0; }}
+    th, td {{ padding: 0.2em 0.7em; text-align: left; }}
+    .katex-error {{ color: #b00020; }}
+  </style>
+</head>
+<body>
+  <div id="exam-text"></div>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/mhchem.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  <script>
+    const RAW = {payload};
+    function escapeHtml(s) {{
+      return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }}
+    function renderTables(src) {{
+      const lines = src.split(/\\n/);
+      const out = [];
+      let i = 0;
+      while (i < lines.length) {{
+        const line = lines[i];
+        const next = lines[i + 1] || "";
+        const isTable = line.includes("|") && /^\\s*\\|?\\s*:?-{3,}/.test(next.replace(/\\| /g, "|"));
+        if (isTable) {{
+          const rows = [];
+          while (i < lines.length && lines[i].includes("|")) {{
+            if (!/^\\s*\\|?\\s*:?-{3,}/.test(lines[i].replace(/\\| /g, "|"))) {{
+              rows.push(lines[i].split("|").map((c) => c.trim()).filter((_, idx, arr) => !(idx === 0 && arr[0] === "") && !(idx === arr.length - 1 && arr[arr.length - 1] === "")));
+            }}
+            i += 1;
+          }}
+          if (rows.length) {{
+            const head = rows[0].map((c) => "<th>" + escapeHtml(c) + "</th>").join("");
+            const body = rows.slice(1).map((r) => "<tr>" + r.map((c) => "<td>" + escapeHtml(c) + "</td>").join("") + "</tr>").join("");
+            out.push("<table><thead><tr>" + head + "</tr></thead><tbody>" + body + "</tbody></table>");
+          }}
+          continue;
+        }}
+        out.push(escapeHtml(line));
+        i += 1;
+      }}
+      return out.join("<br>");
+    }}
+    const el = document.getElementById("exam-text");
+    el.innerHTML = renderTables(RAW).replace(/\\*\\*([^*]+)\\*\\*/g, "<strong>$1</strong>");
+    renderMathInElement(el, {{
+      delimiters: [
+        {{left: "$$", right: "$$", display: true}},
+        {{left: "$", right: "$", display: false}}
+      ],
+      throwOnError: false,
+      strict: false
+    }});
+  </script>
+</body>
+</html>
+""",
+        height=height,
+        scrolling=True,
+    )
+
+
 def _show_image(path_str: str, caption: str) -> None:
     path = Path(path_str or "")
     if path.is_file():
@@ -334,15 +422,17 @@ def main() -> None:
     left, right = st.columns(2)
     with left:
         st.subheader("Generated question")
-        st.markdown(item.get("stem") or "(no stem)")
+        _render_exam_text(item.get("stem") or "(no stem)", key="stem")
         correct = str(item.get("correct_answer") or "").strip().upper()
         if choices:
+            option_lines = []
             for letter, text in choices.items():
                 mark = " (correct)" if str(letter).upper() == correct else ""
-                st.write(f"**{letter}.** {text}{mark}")
+                option_lines.append(f"**{letter}.** {text}{mark}")
+            _render_exam_text("\n\n".join(option_lines), key="options")
         if item.get("explanation"):
             with st.expander("Explanation"):
-                st.write(item.get("explanation"))
+                _render_exam_text(item.get("explanation") or "", key="expl")
         if source_json.get("source_stem") or source_json.get("mode_reason"):
             with st.expander("Original NSAA source"):
                 if source_json.get("mode_reason"):
@@ -354,7 +444,7 @@ def main() -> None:
                     f"(id {source_json.get('source_question_id') or ''})"
                 )
                 st.caption(meta)
-                st.write(source_json.get("source_stem") or "")
+                _render_exam_text(source_json.get("source_stem") or "", key="source")
         _show_image(
             diagram.get("source_image_path") or source_json.get("source_image_path") or "",
             "Source diagram",
