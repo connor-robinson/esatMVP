@@ -126,6 +126,7 @@ export function PearsonDemoClient({ initialQuestions }: PearsonDemoClientProps) 
       suppressCompleteScreen={!isLastSection}
       sectionHeading={sectionHeading}
       moduleTransition={{ enabled: false }}
+      isLastModule={isLastSection}
       onModuleComplete={(_result: PearsonModuleResult) => {
         if (isLastSection) {
           setDone(true);

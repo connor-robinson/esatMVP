@@ -222,6 +222,7 @@ export function PearsonSolveBridge({
       onModuleComplete={handleComplete}
       onQuestionsStarted={onQuestionsStarted}
       onQuestionIndexChange={handleQuestionIndexChange}
+      isLastModule={isLastModule}
     />
   );
 }

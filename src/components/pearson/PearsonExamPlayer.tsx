@@ -22,7 +22,6 @@ import type {
 import { usePearsonExamController } from "@/lib/pearson/usePearsonExamController";
 import { DesktopFidelityGate } from "./DesktopFidelityGate";
 import { EndExamDialog } from "./EndExamDialog";
-import { EndModuleDialog } from "./EndModuleDialog";
 import { PearsonExamShell } from "./PearsonExamShell";
 import { PearsonFooter } from "./PearsonFooter";
 import { PearsonHeader } from "./PearsonHeader";
@@ -56,6 +55,7 @@ export interface PearsonExamPlayerProps {
   onFlagsChange?: (flags: PearsonFlagMap) => void;
   onQuestionsStarted?: () => void;
   onQuestionIndexChange?: (index: number) => void;
+  isLastModule?: boolean;
 }
 
 export function PearsonExamPlayer({
@@ -75,6 +75,7 @@ export function PearsonExamPlayer({
   onFlagsChange,
   onQuestionsStarted,
   onQuestionIndexChange,
+  isLastModule = true,
 }: PearsonExamPlayerProps) {
   const c = usePearsonExamController({
     mode,
@@ -92,6 +93,7 @@ export function PearsonExamPlayer({
     onFlagsChange,
     onQuestionsStarted,
     onQuestionIndexChange,
+    isLastModule,
   });
 
   const hotkeyApi = useMemo(
@@ -233,7 +235,9 @@ export function PearsonExamPlayer({
                 onClose={c.closeNavigator}
                 submitHint={
                   c.isLastQuestion
-                    ? "Review this section, then End Exam to submit it."
+                    ? c.isLastModule
+                      ? "Review this section, then End Exam to submit it."
+                      : "Review this section, then continue to the next section."
                     : undefined
                 }
               />
@@ -244,11 +248,16 @@ export function PearsonExamPlayer({
             ) : null}
 
             {c.screen === "end-exam-confirmation" ? (
-              <EndExamDialog onYes={c.confirmEndExam} onNo={c.cancelEndExam} />
+              <EndExamDialog
+                variant={c.endPromptKind}
+                onYes={c.confirmEndExam}
+                onNo={c.cancelEndExam}
+              />
             ) : null}
 
             {c.screen === "end-module-confirmation" ? (
-              <EndModuleDialog
+              <EndExamDialog
+                variant={c.isLastModule ? "exam" : "section"}
                 onYes={c.confirmEndModule}
                 onNo={c.cancelEndModule}
               />
@@ -260,6 +269,7 @@ export function PearsonExamPlayer({
               variant="prequestion"
               onEndExam={c.requestEndExam}
               onNext={c.goNext}
+              endLabel={c.isLastModule ? "End Exam" : "End Section"}
             />
           ) : null}
 
@@ -274,6 +284,15 @@ export function PearsonExamPlayer({
               nextDisabled={c.moduleLocked}
               previousDisabled={c.moduleLocked}
               navigatorDisabled={c.moduleLocked}
+              endLabel={c.isLastModule ? "End Exam" : "End Section"}
+              nextLabel={
+                c.isLastQuestion && !c.isLastModule
+                  ? "Continue to Next Section"
+                  : "Next"
+              }
+              nextLetter={
+                c.isLastQuestion && !c.isLastModule ? "C" : "N"
+              }
             />
           ) : null}
 

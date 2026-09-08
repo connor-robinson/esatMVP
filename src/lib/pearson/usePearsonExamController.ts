@@ -32,6 +32,7 @@ import type {
   ExamScreen,
   ModuleTransitionConfig,
   PearsonAnswerMap,
+  PearsonEndPrompt,
   PearsonFlagMap,
   PearsonModuleResult,
   ZoomLevel,
@@ -62,6 +63,8 @@ export interface UsePearsonExamControllerOptions {
   onFlagsChange?: (flags: PearsonFlagMap) => void;
   onQuestionsStarted?: () => void;
   onQuestionIndexChange?: (index: number) => void;
+  /** False for earlier sections of a multi-section paper. */
+  isLastModule?: boolean;
 }
 
 export function usePearsonExamController(
@@ -81,6 +84,9 @@ export function usePearsonExamController(
     onModuleComplete,
     onAnswerChange,
     onFlagsChange,
+    onQuestionsStarted,
+    onQuestionIndexChange,
+    isLastModule = true,
   } = options;
 
   const durationMs = timeLimitSeconds * 1000;
@@ -150,6 +156,7 @@ export function usePearsonExamController(
       return "nda";
     },
   );
+  const [endPromptKind, setEndPromptKind] = useState<PearsonEndPrompt>("exam");
   const [questionCounterHidden, setQuestionCounterHidden] = useState(false);
   const [timerHidden, setTimerHidden] = useState(false);
   const [nowTick, setNowTick] = useState(() => Date.now());
@@ -357,6 +364,13 @@ export function usePearsonExamController(
         setScreen("unseen-content-warning");
         return;
       }
+      if (!isLastModule) {
+        setNavigatorOpen(false);
+        setEndExamReturnScreen("question");
+        setEndPromptKind("continue");
+        setScreen("end-exam-confirmation");
+        return;
+      }
       setNavigatorOpen(true);
       return;
     }
@@ -370,6 +384,7 @@ export function usePearsonExamController(
     totalQuestions,
     tryNavigateTo,
     viewedToEnd,
+    isLastModule,
   ]);
 
   const openNavigator = useCallback(() => {
@@ -401,8 +416,9 @@ export function usePearsonExamController(
           ? "question"
           : "nda",
     );
+    setEndPromptKind(isLastModule ? "exam" : "section");
     setScreen("end-exam-confirmation");
-  }, [completed, moduleDeadline, screen]);
+  }, [completed, isLastModule, moduleDeadline, screen]);
 
   const confirmEndExam = useCallback(() => {
     finishModule();
@@ -619,6 +635,8 @@ export function usePearsonExamController(
     showQuestionFooter,
     showPrevious,
     isLastQuestion: currentQuestionIndex >= totalQuestions - 1,
+    isLastModule,
+    endPromptKind,
     inQuestionPhase,
     completeLoading,
     goNext,

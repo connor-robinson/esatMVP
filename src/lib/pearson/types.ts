@@ -25,6 +25,9 @@ export type ExamScreen =
   | "module-transition"
   | "complete";
 
+/** Confirm dialog shown for ending or advancing a section. */
+export type PearsonEndPrompt = "exam" | "section" | "continue";
+
 /**
  * ESAT specimen colour schemes.
  * `standard` = default Pearson blue chrome (screens 2–4).

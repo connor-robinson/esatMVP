@@ -13,6 +13,9 @@ interface PearsonFooterProps {
   nextDisabled?: boolean;
   previousDisabled?: boolean;
   navigatorDisabled?: boolean;
+  endLabel?: string;
+  nextLabel?: string;
+  nextLetter?: string;
 }
 
 export function PearsonFooter({
@@ -25,6 +28,9 @@ export function PearsonFooter({
   nextDisabled = false,
   previousDisabled = false,
   navigatorDisabled = false,
+  endLabel = "End Exam",
+  nextLabel = "Next",
+  nextLetter = "N",
 }: PearsonFooterProps) {
   return (
     <footer className="pearson-footer">
@@ -34,7 +40,7 @@ export function PearsonFooter({
         onClick={onEndExam}
       >
         <EndExamIcon />
-        <PearsonMnemonicLabel label="End Exam" letter="E" />
+        <PearsonMnemonicLabel label={endLabel} letter="E" />
       </button>
 
       <span className="pearson-footer-rule" aria-hidden="true" />
@@ -76,7 +82,7 @@ export function PearsonFooter({
           onClick={onNext}
           disabled={nextDisabled}
         >
-          <PearsonMnemonicLabel label="Next" letter="N" />
+          <PearsonMnemonicLabel label={nextLabel} letter={nextLetter} />
           <NextArrowIcon />
         </button>
       </div>
