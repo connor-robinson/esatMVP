@@ -13,6 +13,10 @@ import {
   isEsatCampMockPaperId,
   mergePapersWithEsatCampMocks,
 } from '@/lib/papers/esatCampMocks';
+import {
+  preferSameSectionForExam,
+  rankConversionFallbackPapers,
+} from '@/lib/papers/conversionTableFallback';
 
 export const scaleScore = scaleScoreFromMarkScoring;
 
@@ -408,25 +412,34 @@ export async function loadConversionRowsByPaperIds(
   return result;
 }
 
-// Find a fallback conversion table for the same exam, year, and exam type when the current paper lacks one
-export async function findFallbackConversionTable(examName: ExamName, examYear: number, examType?: ExamType) {
+export type ConversionTableFallback = {
+  table: ConversionTable;
+  fallbackFromYear: number | null;
+  sourcePaperId: number;
+};
+
+/**
+ * Find a conversion table when the current paper has none.
+ * NSAA/ENGAA prefer the same section in the nearest published year
+ * (NSAA 2016 Section 1 uses 2017). TMUA prefers a same-year sibling.
+ */
+export async function findFallbackConversionTable(
+  examName: ExamName,
+  examYear: number,
+  examType?: ExamType,
+  paperName?: string,
+): Promise<ConversionTableFallback | null> {
   try {
-    
-    // Build query: same exam and year, and optionally same exam type
     let query = supabase
       .from('papers')
-      .select('id, paper_name, exam_type, has_conversion')
+      .select('id, paper_name, exam_year, exam_type, has_conversion')
       .eq('exam_name', examName)
-      .eq('exam_year', examYear)
       .eq('has_conversion', true);
-    
-    // If examType is provided, filter by it to find same-type papers (e.g., "Official")
+
     if (examType) {
       query = query.eq('exam_type', examType);
     }
-    
-    query = query.order('paper_name');
-    
+
     const { data: papers, error } = await query;
 
     if (error) throw error;
@@ -434,26 +447,41 @@ export async function findFallbackConversionTable(examName: ExamName, examYear: 
       return null;
     }
 
-    // Return the first actual conversion table we can load
-    for (const p of papers) {
+    const ranked = rankConversionFallbackPapers({
+      candidates: papers.map((p) => ({
+        id: p.id as number,
+        examYear: p.exam_year as number,
+        paperName: (p.paper_name as string) || '',
+      })),
+      examYear,
+      paperName,
+      preferSameSection: preferSameSectionForExam(examName),
+    });
+
+    for (const p of ranked) {
       const table = await getConversionTable(p.id);
-      if (table) {
-        // Double-check: verify the table's paper belongs to the correct exam
-        const { data: paperVerify } = await supabase
-          .from('papers')
-          .select('exam_name, exam_year, paper_name, exam_type')
-          .eq('id', table.paperId)
-          .single();
-        
-        if (paperVerify) {
-          const tableExamName = (paperVerify.exam_name || '').toUpperCase();
-          const requestedExamName = (examName || '').toUpperCase();
-          if (tableExamName !== requestedExamName) {
-            continue; // Skip this table, it's for the wrong exam
-          }
+      if (!table) continue;
+
+      const { data: paperVerify } = await supabase
+        .from('papers')
+        .select('exam_name, exam_year, paper_name, exam_type')
+        .eq('id', table.paperId)
+        .single();
+
+      if (paperVerify) {
+        const tableExamName = (paperVerify.exam_name || '').toUpperCase();
+        const requestedExamName = (examName || '').toUpperCase();
+        if (tableExamName !== requestedExamName) {
+          continue;
         }
-        return table;
       }
+
+      const sourceYear = paperVerify?.exam_year ?? p.examYear;
+      return {
+        table,
+        sourcePaperId: p.id,
+        fallbackFromYear: sourceYear === examYear ? null : sourceYear,
+      };
     }
     return null;
   } catch (error) {

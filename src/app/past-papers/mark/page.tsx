@@ -133,6 +133,9 @@ export default function PapersMarkPage() {
     Map<number, ConversionRow[]>
   >(new Map());
   const [hasConversion, setHasConversion] = useState(false);
+  const [conversionFallbackYear, setConversionFallbackYear] = useState<
+    number | null
+  >(null);
   const [croppedQuestionImage, setCroppedQuestionImage] = useState<string | null>(null);
   const [croppedAnswerImage, setCroppedAnswerImage] = useState<string | null>(null);
   // Session notes saving UX
@@ -196,6 +199,7 @@ export default function PapersMarkPage() {
         if (idsToLoad.length === 0) return;
 
         let rowsByPaper = await loadConversionRowsByPaperIds(idsToLoad);
+        let fallbackYear: number | null = null;
 
         if (rowsByPaper.size === 0 && paperId) {
           const table = await getConversionTable(paperId as number);
@@ -213,11 +217,13 @@ export default function PapersMarkPage() {
             qs[0].examName as ExamName,
             qs[0].examYear,
             examType,
+            qs[0].paperName,
           );
           if (fallback) {
-            const rows = await getConversionRows(fallback.id);
+            const rows = await getConversionRows(fallback.table.id);
             if (rows.length > 0) {
-              rowsByPaper = new Map([[fallback.paperId, rows]]);
+              rowsByPaper = new Map(idsToLoad.map((id) => [id, rows]));
+              fallbackYear = fallback.fallbackFromYear;
             }
           }
         }
@@ -234,6 +240,7 @@ export default function PapersMarkPage() {
           });
           if (mismatched.length > 0) {
             rowsByPaper = new Map();
+            fallbackYear = null;
           }
         }
 
@@ -241,11 +248,13 @@ export default function PapersMarkPage() {
         setConversionRowsByPaperId(rowsByPaper);
         setConversionRows(merged);
         setHasConversion(merged.length > 0);
+        setConversionFallbackYear(merged.length > 0 ? fallbackYear : null);
       } catch {
         if (!mounted) return;
         setConversionRowsByPaperId(new Map());
         setConversionRows([]);
         setHasConversion(false);
+        setConversionFallbackYear(null);
       }
     })();
     return () => {
@@ -1227,6 +1236,13 @@ export default function PapersMarkPage() {
                         );
                       })()}
                     </div>
+                    {conversionFallbackYear != null ? (
+                      <p className="mt-3 text-xs leading-relaxed text-neutral-400">
+                        No published conversion table for this sitting.
+                        Predicted score uses the {conversionFallbackYear} table
+                        as an estimate.
+                      </p>
+                    ) : null}
 
                       {/* Combined Guess Distribution moved into Guessing Behavior */}
 
@@ -1281,7 +1297,9 @@ export default function PapersMarkPage() {
                               (usePaperSessionStore.getState().questions?.[0]?.examName as any),
                             );
                             const conversionHint = convMatched
-                              ? "Conversion table found for this section"
+                              ? conversionFallbackYear != null
+                                ? `Estimated from the ${conversionFallbackYear} conversion table`
+                                : "Conversion table found for this section"
                               : convUsedAverage
                                 ? "Using average conversion table for this section"
                                 : "No conversion table found for this section";
