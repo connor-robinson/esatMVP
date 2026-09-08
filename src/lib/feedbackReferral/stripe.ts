@@ -40,7 +40,7 @@ export async function createOneUseReferralPromotionCode(opts: {
     const code = generateReferralCode();
     try {
       const promo = await stripe.promotionCodes.create({
-        coupon: couponId,
+        promotion: { type: "coupon", coupon: couponId },
         code,
         max_redemptions: 1,
         metadata: {
@@ -77,11 +77,11 @@ export async function lookupActiveReferralPromotion(code: string): Promise<{
   if (promo.max_redemptions && promo.times_redeemed >= promo.max_redemptions) {
     return null;
   }
-  const couponId =
-    typeof promo.coupon === "string" ? promo.coupon : promo.coupon.id;
+  const coupon = promo.promotion.coupon;
+  if (!coupon) return null;
   return {
     promotionCodeId: promo.id,
-    couponId,
+    couponId: typeof coupon === "string" ? coupon : coupon.id,
     referrerUserId: promo.metadata?.referrer_user_id ?? null,
   };
 }
