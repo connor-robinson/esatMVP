@@ -27,7 +27,7 @@ export default function EngaaPastPapersPage() {
     >
       <PastPaperDownloadSections exam={EXAM} />
 
-      <PastPaperGuideContent />
+      <PastPaperGuideContent exam={EXAM} />
     </SeoPageLayout>
   );
 }

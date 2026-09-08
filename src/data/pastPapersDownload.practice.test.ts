@@ -56,6 +56,20 @@ describe("past paper compact tables", () => {
     }
   });
 
+  it("lists one specification row covering 2016-2023", () => {
+    for (const table of [
+      ...getNsaaCompactTables(),
+      ...getEngaaCompactTables(),
+    ].filter((item) => item.columns === "specification")) {
+      expect(table.heading).toBe("Specification");
+      expect(table.rows).toHaveLength(1);
+      expect(table.rows[0]?.label).toBe("2016–2023");
+      expect(table.rows[0]?.specificationUrl).toMatch(
+        /\/specifications\/2018\/(nsaa|engaa)-2018-specification\.pdf$/,
+      );
+    }
+  });
+
   it("gives every paper and specimen row a start-in-camp link", () => {
     const tables = [
       ...getMainPageCompactTables(),

@@ -27,7 +27,7 @@ export default function NsaaPastPapersPage() {
     >
       <PastPaperDownloadSections exam={EXAM} />
 
-      <PastPaperGuideContent />
+      <PastPaperGuideContent exam={EXAM} />
     </SeoPageLayout>
   );
 }

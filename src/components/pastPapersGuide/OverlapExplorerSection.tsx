@@ -1,10 +1,9 @@
 import { ArrowRight } from "lucide-react";
-import { UNIQUE_ENGAA_PART_B_BY_YEAR } from "@/content/pastPapersGuide";
 import { ON_SOLID_SUBJECT_TEXT } from "@/config/colors";
+import { UniqueEngaaPartBTable } from "@/components/pastPapersGuide/UniqueEngaaPartBTable";
 import { cn } from "@/lib/utils";
 
 const BODY = "text-[15px] leading-relaxed text-[#CBD5E1] sm:text-base";
-const UNIQUE_TABLE_ID = "unique-engaa-part-b";
 
 type ActionKind = "skip" | "unique" | "complete" | "optional";
 
@@ -149,86 +148,6 @@ function EraBlock({
   );
 }
 
-function QuestionPill({ n }: { n: number }) {
-  return (
-    <span className="inline-flex min-w-[3.25rem] items-center justify-center rounded-lg bg-white px-3 py-2 font-mono text-lg font-bold tabular-nums text-neutral-900 shadow-sm sm:min-w-[3.75rem] sm:px-3.5 sm:py-2.5 sm:text-xl">
-      Q{n}
-    </span>
-  );
-}
-
-function UniquePartBTable() {
-  const years = Object.entries(UNIQUE_ENGAA_PART_B_BY_YEAR);
-
-  return (
-    <section
-      id={UNIQUE_TABLE_ID}
-      className="scroll-mt-28 rounded-2xl bg-white/[0.06] px-4 py-8 sm:px-6 sm:py-10 lg:px-8"
-    >
-      <h3 className="font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
-        Unique ENGAA Part B Questions
-      </h3>
-      <p className={cn("mt-3 max-w-3xl", BODY)}>
-        If you have already completed NSAA Part E, these are the only ENGAA Part
-        B questions from 2016-2019 that you need.
-      </p>
-
-      {/* Desktop / tablet table */}
-      <div className="mt-8 hidden overflow-hidden rounded-2xl bg-[#161D2F] sm:block">
-        <table className="w-full text-left text-base">
-          <thead>
-            <tr>
-              <th className="w-28 px-5 py-3.5 font-mono text-xs font-semibold uppercase tracking-wide text-[#94A3B8]">
-                Year
-              </th>
-              <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wide text-[#94A3B8]">
-                Unique question numbers
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {years.map(([year, questions], index) => (
-              <tr
-                key={year}
-                className={index % 2 === 0 ? "bg-white/[0.035]" : undefined}
-              >
-                <td className="px-5 py-4 align-middle font-mono text-xl font-bold text-[#F1F5F9]">
-                  {year}
-                </td>
-                <td className="px-5 py-4 align-middle">
-                  <div className="flex flex-wrap gap-2.5">
-                    {questions.map((q) => (
-                      <QuestionPill key={q} n={q} />
-                    ))}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Mobile year cards */}
-      <div className="mt-6 space-y-3 sm:hidden">
-        {years.map(([year, questions]) => (
-          <div key={year} className="rounded-xl bg-black/25 px-4 py-4">
-            <p className="font-mono text-xl font-bold text-white">{year}</p>
-            <div className="mt-3 flex flex-wrap gap-2.5">
-              {questions.map((q) => (
-                <QuestionPill key={q} n={q} />
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <p className="mt-5 font-mono text-sm text-[#94A3B8]">
-        Question numbers refer to the ENGAA paper.
-      </p>
-    </section>
-  );
-}
-
 export function OverlapExplorerSection() {
   return (
     <div className="space-y-10">
@@ -258,7 +177,7 @@ export function OverlapExplorerSection() {
       <EraBlock years="2020-2023" rows={ROWS_2020_2023} />
 
       <div className="pt-6">
-        <UniquePartBTable />
+        <UniqueEngaaPartBTable />
       </div>
     </div>
   );

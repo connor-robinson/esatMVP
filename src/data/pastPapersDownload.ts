@@ -504,6 +504,24 @@ function makeSectionTable(
   };
 }
 
+function specificationTable(exam: DownloadExam): PastPaperCompactTable {
+  const downloads =
+    exam === "NSAA" ? NSAA_SPECIFICATION_DOWNLOADS : ENGAA_SPECIFICATION_DOWNLOADS;
+  const withPdf = downloads.find((item) => item.url);
+  return {
+    id: `${exam.toLowerCase()}-specifications`,
+    heading: "Specification",
+    columns: "specification",
+    rows: [
+      {
+        id: `${exam.toLowerCase()}-specification`,
+        label: "2016–2023",
+        specificationUrl: withPdf?.url,
+      },
+    ],
+  };
+}
+
 /** Main ESAT past-papers page: four section tables with years and specimens. */
 export function getMainPageCompactTables(): PastPaperCompactTable[] {
   return [
@@ -560,16 +578,7 @@ export function getNsaaCompactTables(): PastPaperCompactTable[] {
         }),
       })),
     ),
-    {
-      id: "nsaa-specifications",
-      heading: "Specifications",
-      columns: "specification",
-      rows: NSAA_SPECIFICATION_DOWNLOADS.map((specification) => ({
-        id: specification.id,
-        label: String(specification.year),
-        specificationUrl: specification.url,
-      })),
-    },
+    specificationTable("NSAA"),
   ];
 }
 
@@ -583,7 +592,7 @@ export function getEngaaCompactTables(): PastPaperCompactTable[] {
     ),
     makeSectionTable(
       "engaa-section-2",
-      "Section 2 · 2016–2021",
+      "Section 2 · 2016–2023",
       sectionPastPaperRows("ENGAA", "Section 2"),
     ),
     makeSectionTable(
@@ -602,16 +611,7 @@ export function getEngaaCompactTables(): PastPaperCompactTable[] {
         }),
       })),
     ),
-    {
-      id: "engaa-specifications",
-      heading: "Specifications",
-      columns: "specification",
-      rows: ENGAA_SPECIFICATION_DOWNLOADS.map((specification) => ({
-        id: specification.id,
-        label: String(specification.year),
-        specificationUrl: specification.url,
-      })),
-    },
+    specificationTable("ENGAA"),
   ];
 }
 
