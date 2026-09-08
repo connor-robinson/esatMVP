@@ -22,7 +22,7 @@ export function GeometryDiagram({ data, className }: GeometryDiagramProps) {
     <div className={cn("flex flex-col items-center w-full gap-1.5", className)}>
       <svg
         viewBox={vb}
-        className={cn("w-full h-auto", isLarge ? "max-w-[min(90vw,720px)]" : "max-w-[min(100%,380px)]")}
+        className={cn("w-full h-auto", isLarge ? "max-w-[min(72vw,576px)]" : "max-w-[min(80%,304px)]")}
         preserveAspectRatio="xMidYMid meet"
       >
         {circles.map((c, i) => (

@@ -140,7 +140,7 @@ export function StemContent({ content, className }: StemContentProps) {
         } else if (p.type === "svg") {
           const safe = sanitizeStemSvg(ensureSvgResponsiveMarkup(p.value));
           if (safe) {
-            out += `<div class="stem-diagram my-4 flex justify-center max-w-full overflow-x-auto"><div class="stem-diagram-inner w-full max-w-[min(100%,640px)]">${safe}</div></div>`;
+            out += `<div class="stem-diagram my-4 flex justify-center max-w-full overflow-x-auto"><div class="stem-diagram-inner w-[80%] max-w-[min(80%,512px)]">${safe}</div></div>`;
           }
         } else if (p.type === "figure") {
           out += `<div class="stem-diagram qg-diagram-wrap my-4 flex justify-center max-w-full">${p.value}</div>`;

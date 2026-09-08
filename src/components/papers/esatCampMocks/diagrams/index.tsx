@@ -53,6 +53,16 @@ const DIAGRAM_MAP: Record<string, React.ComponentType> = {
 
 export function EsatCampMockDiagram({ diagramKey }: { diagramKey: string }) {
   const Component = DIAGRAM_MAP[diagramKey];
-  if (!Component) return null;
-  return <Component />;
+  const body = Component ? (
+    <Component />
+  ) : /^m[12]-/.test(diagramKey) ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={`/esat-camp-mocks/diagrams/${diagramKey}.png`}
+      alt=""
+      className="h-auto w-full max-w-md object-contain"
+    />
+  ) : null;
+  if (!body) return null;
+  return <div className="flex w-[80%] justify-center">{body}</div>;
 }

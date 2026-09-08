@@ -109,7 +109,7 @@ export function PearsonRichQuestion({
           className="pearson-option-img"
           style={
             typeof widthPct === "number" && widthPct > 0
-              ? { width: `${Math.min(widthPct, 42)}%` }
+              ? { width: `${Math.min(widthPct * 0.8, 33.6)}%` }
               : undefined
           }
         />

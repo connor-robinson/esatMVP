@@ -110,7 +110,7 @@ export function PastPaperTextQuestion({
                 <img
                   src={asset.url}
                   alt={asset.alt ?? "question diagram"}
-                  className="max-h-[32rem] max-w-full object-contain"
+                  className="max-h-[25.6rem] max-w-[80%] object-contain"
                 />
               </div>
             ))}
@@ -210,7 +210,7 @@ export function PastPaperTextQuestion({
               <img
                 src={asset.url}
                 alt={asset.alt ?? "question diagram"}
-                className="max-h-[32rem] max-w-full object-contain"
+                className="max-h-[25.6rem] max-w-[80%] object-contain"
               />
             </div>
           ))}
@@ -252,7 +252,7 @@ export function PastPaperTextQuestion({
                       <img
                         src={optionAsset.url}
                         alt={optionAsset.alt ?? `option ${letter}`}
-                        className="mt-1 max-h-56 max-w-full object-contain"
+                        className="mt-1 max-h-[11.2rem] max-w-[80%] object-contain"
                       />
                     )}
                   </div>
