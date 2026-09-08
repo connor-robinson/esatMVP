@@ -34,7 +34,7 @@ export function PastPaperExperimentDetailContent({ paper, path }: Props) {
             sectionSlug: paper.sectionSlug,
           })}
           size="page"
-          ariaLabel={`Start ${paper.title} in ESAT Camp`}
+          ariaLabel={`Start now: ${paper.title}`}
         />
         <PastPaperDownloadButton
           href={paper.paperUrl}

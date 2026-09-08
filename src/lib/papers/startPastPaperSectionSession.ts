@@ -14,6 +14,10 @@ import {
   matchesRequestedType,
   paperFromPracticeTarget,
 } from "./paperFromPracticeTarget";
+import {
+  firstSubjectPartsForHubStart,
+  rememberHubFirstSectionPreview,
+} from "./hubFirstSectionPreview";
 
 const MAIN_SECTION_ORDER = ["Section 1", "Section 2"];
 
@@ -89,8 +93,15 @@ export async function startPastPaperSectionSession(
     );
   }
 
+  const hubSubjectParts = firstSubjectPartsForHubStart(mainSection.subjectParts);
+  if (hubSubjectParts.length === 0) {
+    throw new Error(
+      `No ${section} questions were found for ${paper.examName} ${paper.examYear}.`,
+    );
+  }
+
   const selectedSections = new Map<string, Set<PaperSection>>();
-  selectedSections.set(section, new Set(mainSection.subjectParts));
+  selectedSections.set(section, new Set(hubSubjectParts));
 
   let allQuestions: Question[] = [];
   for (const catalogPaper of catalog) {
@@ -176,5 +187,9 @@ export async function startPastPaperSectionSession(
     throw new Error(
       `No questions loaded for ${paper.examName} ${paper.examYear} ${section}.`,
     );
+  }
+
+  if (storeAfter.sessionId) {
+    rememberHubFirstSectionPreview(storeAfter.sessionId);
   }
 }

@@ -68,7 +68,12 @@ import { MarkSectionNav,
 } from "@/components/papers/mark/MarkSectionNav";
 import { PercentileMiniChart } from "@/components/papers/mark/PercentileMiniChart";
 import { DrillUpgradeBanner } from "@/components/builder/DrillUpgradeBanner";
+import { HubMoreSectionsLibraryModal } from "@/components/papers/mark/HubMoreSectionsLibraryModal";
 import { useSubscription } from "@/hooks/useSubscription";
+import {
+  clearHubFirstSectionPreview,
+  hasHubFirstSectionPreview,
+} from "@/lib/papers/hubFirstSectionPreview";
 
 const LETTERS: Letter[] = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
@@ -144,6 +149,7 @@ export default function PapersMarkPage() {
   // Community stats state
   const [questionStats, setQuestionStats] = useState<Record<number, QuestionStats>>({});
   const [statsLoading, setStatsLoading] = useState(false);
+  const [showHubMoreSections, setShowHubMoreSections] = useState(false);
   
   // Compute values needed for hooks (with safe defaults if no session)
   const totalQuestions = sessionId
@@ -1070,6 +1076,18 @@ export default function PapersMarkPage() {
       router.replace("/past-papers/library");
     }
   }, [sessionId, router]);
+
+  useEffect(() => {
+    if (!sessionId) return;
+    if (hasHubFirstSectionPreview(sessionId)) {
+      setShowHubMoreSections(true);
+    }
+  }, [sessionId]);
+
+  const dismissHubMoreSections = () => {
+    clearHubFirstSectionPreview();
+    setShowHubMoreSections(false);
+  };
 
   if (!sessionId) {
     return null;
@@ -2728,6 +2746,9 @@ export default function PapersMarkPage() {
           </div>
         </div>
       </div>
+      {showHubMoreSections ? (
+        <HubMoreSectionsLibraryModal onStay={dismissHubMoreSections} />
+      ) : null}
     </Fragment>
   );
 }

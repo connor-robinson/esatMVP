@@ -99,7 +99,7 @@ export function PastPaperCompactTable({ table }: Props) {
                       {row.practiceHref ? (
                         <PastPaperPracticeLink
                           href={row.practiceHref}
-                          ariaLabel={`Start ${row.label} in ESAT Camp`}
+                          ariaLabel={`Start now: ${row.label}`}
                         />
                       ) : (
                         <UnavailableCell />
