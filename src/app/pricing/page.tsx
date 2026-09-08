@@ -148,7 +148,7 @@ export default function PricingPage() {
       caption: `${monthlyPerWeekLabel}/week`,
       priceNote: isRecurringPaid && tier !== "monthly"
         ? "Switch at next billing date. No charge today"
-        : `7-day free trial. Card required. Then ${monthlyPriceLabel}/month. Cancel anytime`,
+        : `2-day free trial. Card required. Then ${monthlyPriceLabel}/month. Cancel anytime`,
       features: FEATURES.paid,
       highlighted: true,
       ctaLabel: paidCta("monthly", "Start free trial"),
@@ -324,7 +324,7 @@ export default function PricingPage() {
             </p>
           ) : null}
           <p className="mx-auto mt-4 max-w-2xl text-sm text-text-muted">
-            Free includes 10 questions per subject. Monthly starts with a 7-day
+            Free includes 10 questions per subject. Monthly starts with a 2-day
             free trial; a card is required and you are charged {monthlyPriceLabel}
             /month after the trial unless you cancel. Was {monthlyListPriceLabel}
             ({monthlyDiscountLabel}).

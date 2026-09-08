@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 type PlanType = "weekly" | "monthly" | "season_pass";
 
-const TRIAL_DAYS = 7;
+const TRIAL_DAYS = 2;
 
 /** First-time customers only - avoid stacking free trials. */
 async function isEligibleForTrial(customerId: string): Promise<boolean> {
