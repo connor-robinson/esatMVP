@@ -12,6 +12,17 @@ from .llm import DEFAULT_DIAGRAM_DESIGNER_MODEL, MultimodalCallResult, _mime_for
 NSAA_DIAGRAM_MODEL = "gemini-3.7-flash"
 VALID_MODES = {"sibling", "far"}
 VALID_DIAGRAM_TYPES = {"geometry", "graph"}
+VALID_VISUAL_TYPES = {"none", "graph", "table", "chem_structure", "bio_diagram", "pedigree"}
+RENDERED_VISUAL_TYPES = {"graph", "chem_structure", "bio_diagram", "pedigree"}
+_VISUAL_ALIASES = {
+    "diagram": "bio_diagram",
+    "cycle": "bio_diagram",
+    "schematic": "bio_diagram",
+    "structure": "chem_structure",
+    "structural": "chem_structure",
+    "text": "none",
+    "plain": "none",
+}
 
 
 @dataclass
@@ -24,8 +35,10 @@ class NsaaQuestionDesignerInput:
     exam_year: int = 0
     paper_name: str = ""
     question_number: int = 0
+    subject: str = "mathematics"
     repair_feedback: str = ""
     prior_question: dict[str, Any] | None = None
+    mix_hint: str = ""
 
 
 @dataclass
@@ -62,32 +75,62 @@ def _load_image_bytes(inp: NsaaQuestionDesignerInput) -> tuple[bytes | None, str
     return None, "image/png"
 
 
+def normalize_visual_type(raw: Any, *, diagram_type: str = "", stimulus_type: str = "") -> str:
+    value = str(raw or "").strip().lower()
+    if not value:
+        value = str(stimulus_type or diagram_type or "").strip().lower()
+    value = _VISUAL_ALIASES.get(value, value)
+    if value in VALID_VISUAL_TYPES:
+        return value
+    return ""
+
+
+def visual_type_of(plan: dict[str, Any] | None) -> str:
+    plan = plan or {}
+    return normalize_visual_type(
+        plan.get("visual_type"),
+        diagram_type=str(plan.get("diagram_type") or ""),
+        stimulus_type=str(plan.get("stimulus_type") or ""),
+    )
+
+
 def build_question_payload(inp: NsaaQuestionDesignerInput) -> dict[str, Any]:
     options = inp.reference_options or {}
     if not isinstance(options, dict):
         options = {}
+    subject = (inp.subject or "mathematics").strip().lower()
     payload: dict[str, Any] = {
         "source_question_id": inp.source_question_id,
         "exam": "NSAA",
+        "subject": subject,
         "exam_year": inp.exam_year,
         "paper_name": inp.paper_name,
         "question_number": inp.question_number,
         "original_stem": (inp.reference_question or "").strip(),
         "original_options": {str(k): str(v) for k, v in options.items()},
         "instructions": (
+            "Read the original NSAA question and any attached diagram. "
+            "Choose sibling or far, then write a NEW question. "
+            "Set idea_plan.visual_type. Use a table, graph, structure, pedigree, "
+            "or schematic only when it genuinely helps the reasoning."
+        ),
+    }
+    if subject == "mathematics":
+        payload["instructions"] = (
             "Read the original NSAA question and the attached diagram. "
             "Choose sibling or far, then write a NEW diagram MCQ. "
             "If it cannot be a geometry/graph diagram question, skip."
-        ),
-    }
+        )
     if inp.repair_feedback.strip():
         payload["repair_feedback"] = inp.repair_feedback.strip()
         payload["instructions"] = (
-            "Revise the previous generated question. Keep it a diagram MCQ. "
+            "Revise the previous generated question. "
             "Address the reviewer's critique. Choose sibling or far again if needed."
         )
     if inp.prior_question:
         payload["prior_generated_question"] = inp.prior_question
+    if inp.mix_hint.strip():
+        payload["batch_mix_hint"] = inp.mix_hint.strip()
     return payload
 
 
@@ -109,7 +152,13 @@ def _normalize_options(raw: Any) -> dict[str, str]:
     return {}
 
 
-def parse_question_design(parsed: dict[str, Any], *, model: str = "", usage: dict[str, Any] | None = None) -> NsaaQuestionDesign:
+def parse_question_design(
+    parsed: dict[str, Any],
+    *,
+    model: str = "",
+    usage: dict[str, Any] | None = None,
+    subject: str = "mathematics",
+) -> NsaaQuestionDesign:
     skip = bool(parsed.get("skip"))
     mode = str(parsed.get("variation_mode") or "").strip().lower()
     if mode in {"generalisation", "generalization"}:
@@ -117,13 +166,24 @@ def parse_question_design(parsed: dict[str, Any], *, model: str = "", usage: dic
     options = _normalize_options(parsed.get("options"))
     correct = str(parsed.get("correct_option") or parsed.get("correct_answer") or "").strip().upper()
     idea_plan = parsed.get("idea_plan") if isinstance(parsed.get("idea_plan"), dict) else {}
+    for key in ("table", "chem_structure", "pedigree"):
+        if key not in idea_plan and isinstance(parsed.get(key), dict):
+            idea_plan[key] = parsed[key]
+    visual_type = visual_type_of(idea_plan) or visual_type_of(parsed)
+    if visual_type:
+        idea_plan["visual_type"] = visual_type
+    needs_diagram = bool(parsed.get("needs_diagram", visual_type in RENDERED_VISUAL_TYPES))
+    if visual_type in {"none", "table"}:
+        needs_diagram = False
+    elif visual_type in RENDERED_VISUAL_TYPES:
+        needs_diagram = True
     design = NsaaQuestionDesign(
         skip=skip,
         skip_reason=str(parsed.get("skip_reason") or "").strip(),
         variation_mode=mode,
         mode_reason=str(parsed.get("mode_reason") or "").strip(),
         difficulty=str(parsed.get("difficulty") or "Medium").strip() or "Medium",
-        needs_diagram=bool(parsed.get("needs_diagram", True)),
+        needs_diagram=needs_diagram,
         stem=str(parsed.get("stem") or "").strip(),
         options=options,
         correct_option=correct,
@@ -136,6 +196,7 @@ def parse_question_design(parsed: dict[str, Any], *, model: str = "", usage: dic
     if skip:
         return design
     errors: list[str] = []
+    subject_key = (subject or "mathematics").strip().lower()
     if mode not in VALID_MODES:
         errors.append(f"variation_mode must be sibling or far, got {mode!r}")
     if not design.stem:
@@ -144,13 +205,25 @@ def parse_question_design(parsed: dict[str, Any], *, model: str = "", usage: dic
         errors.append("need at least 4 options")
     if design.correct_option not in design.options:
         errors.append("correct_option is not one of the options")
-    if not design.needs_diagram:
-        errors.append("needs_diagram must be true for a kept question")
-    diagram_type = str(idea_plan.get("diagram_type") or "").strip().lower()
-    if diagram_type not in VALID_DIAGRAM_TYPES:
-        errors.append("idea_plan.diagram_type must be geometry or graph")
-    if not str(idea_plan.get("visual_brief") or "").strip():
-        errors.append("idea_plan.visual_brief is empty")
+    if subject_key == "mathematics":
+        if not design.needs_diagram:
+            errors.append("needs_diagram must be true for a kept mathematics question")
+        diagram_type = str(idea_plan.get("diagram_type") or "").strip().lower()
+        if diagram_type not in VALID_DIAGRAM_TYPES:
+            errors.append("idea_plan.diagram_type must be geometry or graph")
+        if not str(idea_plan.get("visual_brief") or "").strip():
+            errors.append("idea_plan.visual_brief is empty")
+    else:
+        if not visual_type:
+            errors.append("idea_plan.visual_type must be none, graph, table, chem_structure, bio_diagram, or pedigree")
+        if visual_type == "table" and not (idea_plan.get("table") or parsed.get("table")):
+            errors.append("visual_type table requires idea_plan.table")
+        if visual_type == "chem_structure" and not (idea_plan.get("chem_structure") or parsed.get("chem_structure")):
+            errors.append("visual_type chem_structure requires idea_plan.chem_structure")
+        if visual_type == "pedigree" and not (idea_plan.get("pedigree") or parsed.get("pedigree")):
+            errors.append("visual_type pedigree requires idea_plan.pedigree")
+        if visual_type in {"graph", "bio_diagram"} and not str(idea_plan.get("visual_brief") or "").strip():
+            errors.append("idea_plan.visual_brief is empty")
     if errors:
         raise VisualSpecError("NSAA question designer output invalid: " + "; ".join(errors))
     return design
@@ -164,8 +237,6 @@ def run_nsaa_question_designer(
     temperature: float = 0.3,
 ) -> NsaaQuestionDesign:
     image_bytes, mime_type = _load_image_bytes(inp)
-    if not image_bytes:
-        raise VisualSpecError("NSAA question designer requires the original diagram image")
     call: MultimodalCallResult = call_json_multimodal(
         system_prompt=_load_prompt(),
         user_payload=build_question_payload(inp),
@@ -175,4 +246,10 @@ def run_nsaa_question_designer(
         thinking_level=thinking_level,
         temperature=temperature,
     )
-    return parse_question_design(dict(call.parsed), model=call.model, usage=call.usage)
+    return parse_question_design(
+        dict(call.parsed),
+        model=call.model,
+        usage=call.usage,
+        subject=inp.subject,
+    )
+

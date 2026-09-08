@@ -1,8 +1,10 @@
-"""Generate NSAA-sourced sibling/far diagram questions into the review queue.
+"""Generate NSAA-sourced sibling/far questions into the review queue.
 
 Example:
 
     python -m visual_engine.nsaa_batch --n 10
+    python -m visual_engine.nsaa_batch --subject chemistry --n 10
+    python -m visual_engine.nsaa_batch --subject biology --n 10
     python -m visual_engine.nsaa_batch --dry-run
 """
 
@@ -23,21 +25,28 @@ if str(_PKG_ROOT) not in sys.path:
 if str(_QGEN_ROOT) not in sys.path:
     sys.path.insert(0, str(_QGEN_ROOT))
 
-from visual_engine.auto_checks import has_reject
+from visual_engine.auto_checks import has_reject, run_auto_checks
 from visual_engine.diagram_designer import DiagramDesignerInput
 from visual_engine.eval.question_selector import (
     EvalQuestion,
     download_diagram,
+    paper_subject,
     select_nsaa_diagram_questions,
+    select_nsaa_subject_questions,
 )
-from visual_engine.generation import generate_diagram, regenerate_diagram
+from visual_engine.generation import GenerationResult, generate_diagram, regenerate_diagram
 from visual_engine.question_designer import (
     NSAA_DIAGRAM_MODEL,
     NsaaQuestionDesign,
     NsaaQuestionDesignerInput,
     run_nsaa_question_designer,
+    visual_type_of,
 )
+from visual_engine.render_matplotlib import render_diagram
 from visual_engine.review_store import ReviewStore
+from visual_engine.science_visuals import chem_structure_spec, pedigree_spec
+from visual_engine.subject_review import run_subject_verifier, verdict_is_pass
+from visual_engine.tables import ensure_table_in_stem, table_auto_flags
 
 ARTIFACTS = Path(__file__).resolve().parent / "review_data" / "artifacts"
 STATUS_PATH = Path(__file__).resolve().parent / "review_data" / "nsaa_batch_status.json"
@@ -50,6 +59,74 @@ def _now() -> str:
 
 def nsaa_question_id(source_id: int | str) -> str:
     return f"nsaa-{source_id}"
+
+
+def review_subject(eq: EvalQuestion) -> str:
+    sub = paper_subject(eq.paper_name, eq.part_name)
+    return {"chemistry": "Chemistry", "biology": "Biology"}.get(sub, "NSAA")
+
+
+def _designer_subject(eq: EvalQuestion) -> str:
+    return paper_subject(eq.paper_name, eq.part_name)
+
+
+def _save_source_image(eq: EvalQuestion, out_dir: Path) -> Path | None:
+    source_png = out_dir / "source_diagram.png"
+    if source_png.is_file():
+        return source_png
+    url = str(eq.diagram_url or eq.source_image_url or "").strip()
+    if not url:
+        return None
+    try:
+        source_png.write_bytes(download_diagram(eq) if eq.diagram_url else download_image_url(url))
+        return source_png
+    except Exception:
+        return None
+
+
+def download_image_url(url: str) -> bytes:
+    from past_paper_converter.export_questions import download_image
+
+    return download_image(url)
+
+
+def _result_from_spec(
+    *,
+    question_id: str,
+    spec: dict[str, Any],
+    out_dir: Path,
+    attempt: int,
+    choices: dict[str, str],
+    correct_answer: str,
+    parent_attempt_id: int | None = None,
+) -> GenerationResult:
+    attempt_dir = out_dir / f"attempt_{attempt:02d}"
+    attempt_dir.mkdir(parents=True, exist_ok=True)
+    spec_path = attempt_dir / "visual_spec.json"
+    spec_path.write_text(json.dumps(spec, ensure_ascii=False, indent=2), encoding="utf-8")
+    png_path = attempt_dir / "rendered.png"
+    result = GenerationResult(question_id=question_id, attempt=attempt, ok=False, parent_attempt_id=parent_attempt_id)
+    try:
+        render_diagram(spec, png_path)
+        (out_dir / "rendered.png").write_bytes(png_path.read_bytes())
+        (out_dir / "visual_spec.json").write_text(spec_path.read_text(encoding="utf-8"), encoding="utf-8")
+        result.ok = True
+        result.spec = spec
+        result.png_path = png_path
+        result.spec_path = spec_path
+    except Exception as exc:
+        result.error = f"{type(exc).__name__}: {exc}"
+        result.spec = spec
+        result.spec_path = spec_path
+    result.auto_flags = run_auto_checks(
+        png_path=result.png_path,
+        spec=result.spec,
+        render_error=result.error,
+        choices=choices,
+        correct_answer=correct_answer,
+        diagram_required=True,
+    )
+    return result
 
 
 def _write_status(payload: dict[str, Any]) -> None:
@@ -165,11 +242,13 @@ def _enqueue(
     parent_attempt_id: int | None = None,
     previous_attempt_ids: list[int] | None = None,
     original_spec: dict[str, Any] | None = None,
+    subject: str = "NSAA",
+    diagram_required: bool = True,
 ) -> None:
     q_status = "needs_edit" if has_reject(auto_flags) else "pending"
     store.upsert_question(
         question_id=question_id,
-        subject="NSAA",
+        subject=subject,
         topic=design.variation_mode,
         variation_mode=design.variation_mode,
         difficulty=design.difficulty,
@@ -177,8 +256,8 @@ def _enqueue(
         choices=design.options,
         correct_answer=design.correct_option,
         explanation=design.explanation,
-        diagram_required=True,
-        diagram_status="pending",
+        diagram_required=diagram_required,
+        diagram_status="pending" if diagram_required else "none",
         question_status=q_status,
         auto_flags=auto_flags,
         source=source,
@@ -209,13 +288,14 @@ def generate_one(
     parent_attempt_id: int | None = None,
     previous_attempt_ids: list[int] | None = None,
     attempt: int = 1,
+    mix_hint: str = "",
 ) -> dict[str, Any]:
     qid = nsaa_question_id(eq.question_id)
     out_dir = ARTIFACTS / qid
     out_dir.mkdir(parents=True, exist_ok=True)
-    source_png = out_dir / "source_diagram.png"
-    if not source_png.is_file():
-        source_png.write_bytes(download_diagram(eq))
+    source_png = _save_source_image(eq, out_dir)
+    designer_subject = _designer_subject(eq)
+    review_sub = review_subject(eq)
 
     q_inp = NsaaQuestionDesignerInput(
         source_question_id=str(eq.question_id),
@@ -225,8 +305,10 @@ def generate_one(
         exam_year=eq.exam_year,
         paper_name=eq.paper_name,
         question_number=eq.question_number,
+        subject=designer_subject,
         repair_feedback=repair_feedback,
         prior_question=prior_question,
+        mix_hint=mix_hint,
     )
     design = run_nsaa_question_designer(q_inp, model=model, thinking_level=thinking_level)
     (out_dir / "question_design.json").write_text(
@@ -242,118 +324,168 @@ def generate_one(
             "model": design.model,
         }
 
-    idea_plan = _idea_plan_for_diagram(design)
-    idea_plan["original_stem"] = eq.reference_question
-    d_inp = DiagramDesignerInput(
-        reference_question=design.stem,
-        diagram_image_path=source_png,
-        subject="mathematics",
-        math_paper="NSAA",
-        target_difficulty=design.difficulty,
-        variation_mode=design.variation_mode,
-        idea_plan=idea_plan,
-        source_question_id=qid,
-    )
-    result = generate_diagram(
-        d_inp,
-        out_dir,
-        attempt=attempt,
-        designer_model=model,
-        thinking_level=thinking_level,
-        choices=design.options,
-        correct_answer=design.correct_option,
-        parent_attempt_id=parent_attempt_id,
-    )
-    if has_reject(result.auto_flags) and result.spec and attempt == 1:
-        critique = "\n".join(f"- {f.get('message')}" for f in result.auto_flags)
-        result2 = regenerate_diagram(
+    visual_type = visual_type_of(design.idea_plan)
+    if designer_subject == "mathematics" and not visual_type:
+        visual_type = "graph"
+    table = design.idea_plan.get("table") if isinstance(design.idea_plan.get("table"), dict) else None
+    if visual_type == "table" or table:
+        design.stem = ensure_table_in_stem(design.stem, table)
+        design.idea_plan["visual_type"] = visual_type or "table"
+
+    diagram_required = visual_type in {"graph", "chem_structure", "bio_diagram", "pedigree"}
+    source_image_path = str(source_png) if source_png else ""
+    result: GenerationResult | None = None
+    auto_flags: list[dict[str, Any]] = []
+
+    if visual_type in {"none", "table", ""}:
+        auto_flags = table_auto_flags(table) if visual_type == "table" else []
+        result = GenerationResult(question_id=qid, attempt=attempt, ok=True, parent_attempt_id=parent_attempt_id)
+        result.auto_flags = auto_flags
+    elif visual_type == "chem_structure":
+        spec = chem_structure_spec(
+            design.idea_plan.get("chem_structure") or {},
+            source_question_id=qid,
+            variation_mode=design.variation_mode,
+        )
+        result = _result_from_spec(
+            question_id=qid,
+            spec=spec,
+            out_dir=out_dir,
+            attempt=attempt,
+            choices=design.options,
+            correct_answer=design.correct_option,
+            parent_attempt_id=parent_attempt_id,
+        )
+        auto_flags = result.auto_flags
+    elif visual_type == "pedigree":
+        spec = pedigree_spec(
+            design.idea_plan.get("pedigree") or {},
+            source_question_id=qid,
+            variation_mode=design.variation_mode,
+        )
+        result = _result_from_spec(
+            question_id=qid,
+            spec=spec,
+            out_dir=out_dir,
+            attempt=attempt,
+            choices=design.options,
+            correct_answer=design.correct_option,
+            parent_attempt_id=parent_attempt_id,
+        )
+        auto_flags = result.auto_flags
+    else:
+        idea_plan = _idea_plan_for_diagram(design)
+        idea_plan["original_stem"] = eq.reference_question
+        d_inp = DiagramDesignerInput(
+            reference_question=design.stem,
+            diagram_image_path=source_png,
+            subject=designer_subject if designer_subject in {"chemistry", "biology"} else "mathematics",
+            math_paper="NSAA",
+            target_difficulty=design.difficulty,
+            variation_mode=design.variation_mode,
+            idea_plan=idea_plan,
+            source_question_id=qid,
+        )
+        result = generate_diagram(
             d_inp,
             out_dir,
-            critique=critique,
-            prior_spec=result.spec,
-            attempt=2,
+            attempt=attempt,
             designer_model=model,
             thinking_level=thinking_level,
             choices=design.options,
             correct_answer=design.correct_option,
             parent_attempt_id=parent_attempt_id,
         )
-        source = _source_payload(eq, design, str(source_png), model)
-        store.upsert_question(
-            question_id=qid,
-            subject="NSAA",
-            topic=design.variation_mode,
-            variation_mode=design.variation_mode,
-            difficulty=design.difficulty,
-            stem=design.stem,
-            choices=design.options,
-            correct_answer=design.correct_option,
-            explanation=design.explanation,
-            diagram_required=True,
-            diagram_status="pending",
-            question_status="needs_edit" if has_reject(result2.auto_flags) else "pending",
-            auto_flags=result2.auto_flags,
-            source=source,
-        )
-        first = store.add_diagram_attempt(
-            question_id=qid,
-            attempt=1,
-            image_path=str(result.png_path or ""),
-            spec_path=str(result.spec_path or ""),
-            source_image_path=str(source_png),
-            original_spec=result.spec or {},
-            generation_spec=result.spec or {},
-            status="superseded",
-            parent_attempt_id=parent_attempt_id,
-            previous_attempt_ids=previous_attempt_ids,
-        )
-        store.add_diagram_attempt(
-            question_id=qid,
-            attempt=2,
-            image_path=str(result2.png_path or ""),
-            spec_path=str(result2.spec_path or ""),
-            source_image_path=str(source_png),
-            original_spec=result.spec or {},
-            generation_spec=result2.spec or {},
-            status="pending",
-            parent_attempt_id=int(first["id"]),
-            previous_attempt_ids=[int(first["id"])],
-        )
-        return {
-            "status": "generated",
-            "question_id": qid,
-            "source_question_id": eq.question_id,
-            "variation_mode": design.variation_mode,
-            "attempt": 2,
-            "auto_repair": True,
-            "reject": has_reject(result2.auto_flags),
-            "model": model,
-        }
+        auto_flags = result.auto_flags
+        if has_reject(result.auto_flags) and result.spec and attempt == 1:
+            critique = "\n".join(f"- {f.get('message')}" for f in result.auto_flags)
+            result2 = regenerate_diagram(
+                d_inp,
+                out_dir,
+                critique=critique,
+                prior_spec=result.spec,
+                attempt=2,
+                designer_model=model,
+                thinking_level=thinking_level,
+                choices=design.options,
+                correct_answer=design.correct_option,
+                parent_attempt_id=parent_attempt_id,
+            )
+            result = result2
+            auto_flags = result2.auto_flags
+            attempt = 2
 
-    source = _source_payload(eq, design, str(source_png), model)
+    verifier: dict[str, Any] = {}
+    if designer_subject in {"chemistry", "biology"}:
+        image_bytes = None
+        png = result.png_path if result else None
+        if png and Path(png).is_file():
+            image_bytes = Path(png).read_bytes()
+        try:
+            verifier = run_subject_verifier(
+                subject=designer_subject,
+                stem=design.stem,
+                options=design.options,
+                correct_option=design.correct_option,
+                explanation=design.explanation,
+                idea_plan=design.idea_plan,
+                image_bytes=image_bytes,
+                model=model,
+            )
+            (out_dir / "verifier.json").write_text(
+                json.dumps(verifier, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+            if not verdict_is_pass(verifier):
+                auto_flags = list(auto_flags) + [
+                    {
+                        "code": "verifier_fail",
+                        "message": str(verifier.get("notes") or verifier.get("reasons") or "Verifier FAIL"),
+                        "severity": "reject",
+                    }
+                ]
+        except Exception as exc:
+            verifier = {"verdict": "ERROR", "notes": f"{type(exc).__name__}: {exc}"}
+            auto_flags = list(auto_flags) + [
+                {
+                    "code": "verifier_error",
+                    "message": str(exc),
+                    "severity": "flag",
+                }
+            ]
+
+    source = _source_payload(eq, design, source_image_path, model)
+    source["visual_type"] = visual_type or "none"
+    source["subject"] = designer_subject
+    source["verifier"] = verifier
     _enqueue(
         store,
         question_id=qid,
         design=design,
         source=source,
-        png_path=str(result.png_path or ""),
-        spec_path=str(result.spec_path or ""),
-        spec=result.spec,
-        source_image_path=str(source_png),
-        auto_flags=result.auto_flags,
+        png_path=str(result.png_path or "") if result else "",
+        spec_path=str(result.spec_path or "") if result else "",
+        spec=result.spec if result else None,
+        source_image_path=source_image_path,
+        auto_flags=auto_flags,
         attempt=attempt,
         parent_attempt_id=parent_attempt_id,
         previous_attempt_ids=previous_attempt_ids,
-        original_spec=result.spec,
+        original_spec=result.spec if result else None,
+        subject=review_sub,
+        diagram_required=diagram_required,
     )
     return {
         "status": "generated",
         "question_id": qid,
         "source_question_id": eq.question_id,
         "variation_mode": design.variation_mode,
+        "visual_type": visual_type or "none",
+        "subject": designer_subject,
         "attempt": attempt,
-        "reject": has_reject(result.auto_flags),
-        "error": result.error,
+        "reject": has_reject(auto_flags),
+        "verifier": verifier.get("verdict"),
+        "error": result.error if result else "",
         "model": model,
     }
 
@@ -365,15 +497,47 @@ def _source_payload(eq: EvalQuestion, design: NsaaQuestionDesign, source_image_p
         "exam_name": eq.exam_name,
         "exam_year": eq.exam_year,
         "paper_name": eq.paper_name,
+        "part_name": eq.part_name,
         "question_number": eq.question_number,
         "source_stem": eq.reference_question,
         "variation_mode": design.variation_mode,
         "mode_reason": design.mode_reason,
         "source_image_path": source_image_path,
         "idea_plan": design.idea_plan,
+        "visual_type": visual_type_of(design.idea_plan) or "none",
         "diagram_model": model,
         "question_model": design.model or model,
     }
+
+
+def _mix_hint(subject: str, counts: dict[str, int]) -> str:
+    if subject == "chemistry":
+        wants = [
+            ("none", 4, "plain-text or calculation questions (visual_type none)"),
+            ("table", 2, "table questions"),
+            ("chem_structure", 1, "one simple structural-formula question"),
+        ]
+        extra = "Also include formula/equation-heavy stems using \\ce{} when the source supports it."
+    elif subject == "biology":
+        wants = [
+            ("none", 4, "plain-text questions (visual_type none)"),
+            ("table", 1, "one table"),
+            ("graph", 2, "graphs"),
+            ("pedigree", 1, "one pedigree"),
+            ("bio_diagram", 1, "one simple labelled schematic"),
+        ]
+        extra = ""
+    else:
+        return ""
+    missing = [label for key, n, label in wants if counts.get(key, 0) < n]
+    if not missing:
+        return extra
+    return (
+        "This batch still needs: "
+        + "; ".join(missing)
+        + ". Use those formats only when the source question genuinely supports them. "
+        + extra
+    ).strip()
 
 
 def _eval_from_source_json(source: dict[str, Any], fallback_qid: str) -> EvalQuestion:
@@ -388,6 +552,7 @@ def _eval_from_source_json(source: dict[str, Any], fallback_qid: str) -> EvalQue
         diagram_url="",
         diagram_asset_id="diagram_0",
         source_image_url="",
+        part_name=str(source.get("part_name") or ""),
     )
 
 
@@ -446,11 +611,24 @@ def run_batch(
     dry_run: bool = False,
     force: bool = False,
     math_only: bool = True,
+    subject: str = "mathematics",
     model: str = NSAA_DIAGRAM_MODEL,
 ) -> dict[str, Any]:
     _load_env()
     store = ReviewStore()
-    selected = select_nsaa_diagram_questions(count=None if not question_ids else len(question_ids), question_ids=question_ids, math_only=math_only)
+    wanted = (subject or "mathematics").strip().lower()
+    if wanted in {"chemistry", "biology"}:
+        selected = select_nsaa_subject_questions(
+            subject=wanted,
+            count=None if not question_ids else len(question_ids),
+            question_ids=question_ids,
+        )
+    else:
+        selected = select_nsaa_diagram_questions(
+            count=None if not question_ids else len(question_ids),
+            question_ids=question_ids,
+            math_only=math_only,
+        )
     done = set() if force else already_generated_ids(store)
     remaining = [eq for eq in selected if eq.question_id not in done]
     if n is not None:
@@ -459,6 +637,7 @@ def run_batch(
         "status": "running",
         "pipeline": PIPELINE,
         "model": model,
+        "subject": wanted,
         "selected": len(selected),
         "already_done": len(done),
         "queued": len(remaining),
@@ -466,6 +645,7 @@ def run_batch(
         "generated": 0,
         "skipped": 0,
         "errors": 0,
+        "visual_type_counts": {},
         "results": [],
         "started_at": _now(),
     }
@@ -477,6 +657,7 @@ def run_batch(
 
     options_by_id = attach_source_options(remaining)
     results: list[dict[str, Any]] = []
+    mix_counts: dict[str, int] = {}
     for i, eq in enumerate(remaining, start=1):
         print(f"[NSAA] {i}/{len(remaining)} source {eq.question_id} ({eq.exam_year} {eq.paper_name} Q{eq.question_number})", flush=True)
         try:
@@ -485,6 +666,7 @@ def run_batch(
                 store=store,
                 source_options=options_by_id.get(eq.question_id) or {},
                 model=model,
+                mix_hint=_mix_hint(wanted, mix_counts),
             )
         except Exception as exc:
             rec = {
@@ -497,12 +679,15 @@ def run_batch(
         results.append(rec)
         if rec.get("status") == "generated":
             summary["generated"] += 1
-            print(f"  {rec.get('variation_mode')} -> {rec.get('question_id')}", flush=True)
+            vtype = str(rec.get("visual_type") or "none")
+            mix_counts[vtype] = mix_counts.get(vtype, 0) + 1
+            print(f"  {rec.get('variation_mode')} {vtype} -> {rec.get('question_id')}", flush=True)
         elif rec.get("status") == "skipped":
             summary["skipped"] += 1
             print(f"  skip: {rec.get('skip_reason')}", flush=True)
         else:
             summary["errors"] += 1
+        summary["visual_type_counts"] = mix_counts
         summary["results"] = results
         summary["counts"] = store.counts()
         _write_status(summary)
@@ -510,17 +695,24 @@ def run_batch(
     summary["status"] = "completed"
     summary["finished_at"] = _now()
     summary["counts"] = store.counts()
+    summary["visual_type_counts"] = mix_counts
     _write_status(summary)
     return summary
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Generate NSAA sibling/far diagram questions for review")
+    parser = argparse.ArgumentParser(description="Generate NSAA sibling/far questions for review")
     parser.add_argument("--n", type=int, default=None, help="Max new questions to generate")
     parser.add_argument("--ids", default="", help="Comma-separated source question IDs")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--force", action="store_true", help="Regenerate even if already queued")
     parser.add_argument("--include-non-math", action="store_true", help="Do not prefilter to math-looking stems")
+    parser.add_argument(
+        "--subject",
+        default="mathematics",
+        choices=["mathematics", "chemistry", "biology"],
+        help="NSAA source subject. chemistry/biology include plain-text questions.",
+    )
     parser.add_argument("--model", default=NSAA_DIAGRAM_MODEL)
     args = parser.parse_args()
     ids = [int(part.strip()) for part in args.ids.split(",") if part.strip()]
@@ -530,6 +722,7 @@ def main() -> int:
         dry_run=args.dry_run,
         force=args.force,
         math_only=not args.include_non_math,
+        subject=args.subject,
         model=args.model,
     )
     print(json.dumps({k: v for k, v in result.items() if k != "results"}, indent=2))

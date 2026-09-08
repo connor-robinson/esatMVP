@@ -68,15 +68,15 @@ The **variation_seed** is already chosen by the pipeline. Follow it exactly.
 
 ## Difficulty guidance (pipeline target)
 
-The user message gives **one** target label: **Easy**, **Medium**, **Hard**, or **Extreme**. Stay on **standard ESAT Biology / school biology** (plus Math 1-level numeracy where needed) for all bands — do **not** introduce ultra-specialist or off-spec content to raise difficulty, and do **not** overload stimuli (huge tables, busy diagrams, or long prose) purely to make an item harder.
+The user message gives **one** target label: **Easy**, **Medium**, **Hard**, or **Extreme**. Stay on **standard ESAT Biology / school biology** (plus Math 1-level numeracy where needed) for all bands  - do **not** introduce ultra-specialist or off-spec content to raise difficulty, and do **not** overload stimuli (huge tables, busy diagrams, or long prose) purely to make an item harder.
 
-**Easy** — The biological point or read is quick; interpretation is forgiving; stimulus stays minimal; distractors separate clearly from the correct line.
+**Easy**  - The biological point or read is quick; interpretation is forgiving; stimulus stays minimal; distractors separate clearly from the correct line.
 
-**Medium** — Typical ESAT Biology load: one dominant interpretive move (graph, process, statements, table, pedigree, etc.); short, self-contained stimulus; plausible distractors from common misconceptions.
+**Medium**  - Typical ESAT Biology load: one dominant interpretive move (graph, process, statements, table, pedigree, etc.); short, self-contained stimulus; plausible distractors from common misconceptions.
 
-**Hard** (default emphasis for the bank) — Stronger discrimination: the correct reading is **less obvious** (subtle wording, tempting false statements, or a trickier graph/table read) but still **compact** and **standard school biology** once resolved. **Not** essay stems, **not** recall-only trivia, **not** molecular overkill.
+**Hard** (default emphasis for the bank)  - Stronger discrimination: the correct reading is **less obvious** (subtle wording, tempting false statements, or a trickier graph/table read) but still **compact** and **standard school biology** once resolved. **Not** essay stems, **not** recall-only trivia, **not** molecular overkill.
 
-**Extreme** — **Hardest discrimination within the same topics and same compact ESAT-style stimulus** as Hard: the key biological judgment is **harder to spot**, or wrong answers are **more tempting** for very strong candidates. **Still** on-syllabus, **no** deliberate stimulus bloat, **no** “hard because obscure Latin or fringe detail.” If it would take much longer than a normal item once the idea is known, dial it back.
+**Extreme**  - **Hardest discrimination within the same topics and same compact ESAT-style stimulus** as Hard: the key biological judgment is **harder to spot**, or wrong answers are **more tempting** for very strong candidates. **Still** on-syllabus, **no** deliberate stimulus bloat, **no** “hard because obscure Latin or fringe detail.” If it would take much longer than a normal item once the idea is known, dial it back.
 
 Across all bands, difficulty should come from **correct interpretation and application**, not from obscure recall.
 
@@ -94,6 +94,43 @@ For tables:
 - no merged cells
 - no visual ASCII art
 - design them so they can later be emitted as structured data
+- if the scientific information is naturally tabular, use a table rather than attempting to reproduce it using positioned free text
+
+When analysing the reference question, identify whether its information is represented using:
+
+- plain text
+- mathematical notation
+- chemical formula/equation
+- table
+- graph
+- structural formula
+- labelled scientific diagram
+- pedigree diagram
+
+The new question should use an appropriate presentation format where it genuinely contributes to the reasoning.
+
+Do not add a diagram or table merely to imitate the reference.
+Do not copy the source diagram/table content.
+Preserve the style of reasoning while creating scientifically new content.
+
+Internally answer:
+
+1. What scientific idea is being tested?
+2. What reasoning trick makes the question difficult?
+3. What information must the student extract?
+4. Is the table/diagram/equation essential or incidental?
+5. What mistakes are the answer options targeting?
+6. What can be changed to create a genuinely new question?
+
+Then create a new idea that preserves the reasoning style but changes the scientific situation/data sufficiently. Do not merely relabel organisms, change numbers, or redraw the same diagram.
+
+Biology visual style, when a diagram is needed:
+- black and white simple line art
+- no decorative illustration or photorealism
+- only structures relevant to the question
+- labels outside crowded structures where possible
+- leader lines terminating clearly
+- no unnecessary anatomical detail
 
 ## Variation policy
 <!-- VARIATION_POLICY_START -->
@@ -134,6 +171,10 @@ secondary_tags:
   - <0 to 2 tags from 1..11, or []>
 
 stimulus_type: <none|graph|table|diagram|pedigree|cycle>
+
+visual_type: <none|graph|table|bio_diagram|pedigree>
+
+Map `diagram` and `cycle` to `visual_type: bio_diagram`. Keep `stimulus_type` as above. Many questions should be `none`.
 
 surface_twist: >
   FAR mode only; leave empty for SIBLING.

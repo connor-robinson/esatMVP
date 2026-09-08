@@ -268,6 +268,7 @@ def main() -> None:
     st.write(
         f"{st.session_state.idx + 1}/{len(items)}  |  {item.get('question_id')}  |  "
         f"{item.get('subject') or ''}  {mode}  {item.get('difficulty') or ''}  |  "
+        f"visual {source_json.get('visual_type') or 'n/a'}  |  "
         f"Q {item.get('question_status')} / diagram {diagram.get('status') or 'none'}"
     )
 
@@ -333,7 +334,7 @@ def main() -> None:
     left, right = st.columns(2)
     with left:
         st.subheader("Generated question")
-        st.write(item.get("stem") or "(no stem)")
+        st.markdown(item.get("stem") or "(no stem)")
         correct = str(item.get("correct_answer") or "").strip().upper()
         if choices:
             for letter, text in choices.items():
@@ -360,8 +361,13 @@ def main() -> None:
         )
 
     with right:
-        st.subheader(f"Generated diagram  ({mode or 'diagram'}, attempt {attempt})")
-        _show_image(diagram.get("image_path") or "", "Generated")
+        visual_type = str(source_json.get("visual_type") or "")
+        st.subheader(f"Generated visual  ({visual_type or mode or 'diagram'}, attempt {attempt})")
+        image_path = diagram.get("image_path") or ""
+        if image_path:
+            _show_image(image_path, "Generated")
+        else:
+            st.caption("No rendered diagram (plain text or table).")
 
 
 if __name__ == "__main__":

@@ -55,15 +55,15 @@ The **variation_seed** (SIBLING or FAR) is **already chosen by the pipeline** be
 
 ## Difficulty guidance (pipeline target)
 
-The user message gives **one** target label: **Easy**, **Medium**, **Hard**, or **Extreme**. Stay on **standard ESAT Chemistry / school chemistry** (plus normal Math 1 numeracy) for all bands — do **not** introduce niche research-level or off-spec chemistry to raise difficulty, and do **not** pad with extra data rows, statements, or stages purely to inflate length or “look harder.”
+The user message gives **one** target label: **Easy**, **Medium**, **Hard**, or **Extreme**. Stay on **standard ESAT Chemistry / school chemistry** (plus normal Math 1 numeracy) for all bands  - do **not** introduce niche research-level or off-spec chemistry to raise difficulty, and do **not** pad with extra data rows, statements, or stages purely to inflate length or “look harder.”
 
-**Easy** — Core chemical read or relation is quick; standard law/trend/formula applies with little disguise; distractors separate clearly from the correct line.
+**Easy**  - Core chemical read or relation is quick; standard law/trend/formula applies with little disguise; distractors separate clearly from the correct line.
 
-**Medium** — Typical ESAT Chemistry load: one dominant inference (short stoichiometry, statement logic, structure/trend choice, etc.); compact data if needed; plausible distractors from common chemistry slips.
+**Medium**  - Typical ESAT Chemistry load: one dominant inference (short stoichiometry, statement logic, structure/trend choice, etc.); compact data if needed; plausible distractors from common chemistry slips.
 
-**Hard** (default emphasis for the bank) — Stronger discrimination: the correct line is **less obvious** (tighter reading of data, subtler statement logic, or more tempting wrong relations) but still **short** and **on-spec** once seen. **Not** long multi-step arithmetic, **not** obscure recall, **not** forced statement-combo bulk.
+**Hard** (default emphasis for the bank)  - Stronger discrimination: the correct line is **less obvious** (tighter reading of data, subtler statement logic, or more tempting wrong relations) but still **short** and **on-spec** once seen. **Not** long multi-step arithmetic, **not** obscure recall, **not** forced statement-combo bulk.
 
-**Extreme** — **Hardest discrimination within the same topics and same authentic ESAT format** as Hard: the key chemical judgment is **harder to spot**, or wrong paths are **more tempting** for very strong candidates. **Still** standard school chemistry, **no** length creep, **no** “hard because exotic.” If solving would become a grind once the idea is known, dial it back.
+**Extreme**  - **Hardest discrimination within the same topics and same authentic ESAT format** as Hard: the key chemical judgment is **harder to spot**, or wrong paths are **more tempting** for very strong candidates. **Still** standard school chemistry, **no** length creep, **no** “hard because exotic.” If solving would become a grind once the idea is known, dial it back.
 
 Across all bands, difficulty should come from **fast chemical reasoning**, not from long arithmetic or obscure recall.
 
@@ -76,6 +76,37 @@ Use formats natural to ESAT Chemistry:
 - compact bracketed data only when needed
 
 Do not force statement-combination format; use it only when it fits naturally.
+
+## Presentation format
+
+When analysing the reference question, identify whether its information is represented using:
+
+- plain text
+- mathematical notation
+- chemical formula/equation
+- table
+- graph
+- structural formula
+- labelled scientific diagram
+
+The new question should use an appropriate presentation format where it genuinely contributes to the reasoning.
+
+Do not add a diagram or table merely to imitate the reference.
+Do not copy the source diagram/table content.
+Preserve the style of reasoning while creating scientifically new content.
+
+If the scientific information is naturally tabular, use a table rather than attempting to reproduce it using positioned free text.
+
+Internally answer:
+
+1. What scientific idea is being tested?
+2. What reasoning trick makes the question difficult?
+3. What information must the student extract?
+4. Is the table/diagram/equation essential or incidental?
+5. What mistakes are the answer options targeting?
+6. What can be changed to create a genuinely new question?
+
+Then create a new question idea that preserves the reasoning style but changes the scientific situation/data sufficiently. Do not merely rename chemicals, change numerical values, or redraw the same diagram.
 
 ## Variation policy
 <!-- VARIATION_POLICY_START -->
@@ -121,6 +152,10 @@ format_bias: <direct_single|statement_combo|equation_choice|row_table|structure_
 data_given_hint: <none|minimal|required>
 
 diagram_hint: <required|optional|none>
+
+visual_type: <none|graph|table|chem_structure>
+
+Many chemistry questions should be plain text (`none`). Use `table` when the data are naturally tabular. Use `chem_structure` only for a simple displayed structural formula. Prefer `\ce{}` when a formula is enough.
 
 surface_twist: >
   FAR mode only; leave empty for SIBLING.

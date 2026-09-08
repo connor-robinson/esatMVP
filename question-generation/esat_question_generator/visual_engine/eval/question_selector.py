@@ -33,6 +33,7 @@ class EvalQuestion:
     diagram_url: str
     diagram_asset_id: str
     source_image_url: str
+    part_name: str = ""
 
     @property
     def reference_question(self) -> str:
@@ -42,6 +43,17 @@ class EvalQuestion:
     def question_concept(self) -> str:
         text = self.reference_question
         return text[:1200] if len(text) > 1200 else text
+
+
+def paper_subject(paper_name: str, part_name: str = "") -> str:
+    blob = f"{paper_name} {part_name}".lower()
+    if "biology" in blob:
+        return "biology"
+    if "chemistry" in blob:
+        return "chemistry"
+    if "physics" in blob:
+        return "physics"
+    return "mathematics"
 
 
 def _flagged_ids(audit_summary_path: Path | None) -> set[int]:
@@ -77,6 +89,7 @@ def _candidate_to_eval(row: dict[str, Any]) -> EvalQuestion | None:
         diagram_url=url,
         diagram_asset_id=str(asset.get("id") or "diagram_0"),
         source_image_url=str(row.get("sourceImageUrl") or ""),
+        part_name=str(row.get("partName") or row.get("part_name") or ""),
     )
 
 
@@ -162,6 +175,110 @@ _SKIP_PAPER_HINTS = ("biology", "chemistry")
 def _skip_paper(paper_name: str) -> bool:
     low = (paper_name or "").lower()
     return any(hint in low for hint in _SKIP_PAPER_HINTS)
+
+
+def select_nsaa_subject_questions(
+    *,
+    subject: str,
+    count: int | None = None,
+    question_ids: list[int] | None = None,
+    require_diagram: bool = False,
+    audit_summary_path: Path | None = None,
+) -> list[EvalQuestion]:
+    """NSAA Chemistry or Biology sources, with or without a stem diagram.
+
+    Subject is taken from questions.part_name (Section 1 Part C/D), not paper_name.
+    Section 2 long-answer items are skipped so the ESAT MCQ pipeline stays on-format.
+    """
+    wanted = (subject or "").strip().lower()
+    if wanted not in {"chemistry", "biology"}:
+        raise ValueError("subject must be chemistry or biology")
+    flagged = _flagged_ids(audit_summary_path)
+    selected: list[EvalQuestion] = []
+    seen: set[int] = set()
+
+    if question_ids:
+        for qid in question_ids:
+            eq = _fetch_question_as_eval(qid)
+            if not eq or eq.question_id in flagged:
+                continue
+            if paper_subject(eq.paper_name, eq.part_name) != wanted:
+                continue
+            if require_diagram and not eq.diagram_url:
+                continue
+            selected.append(eq)
+            seen.add(eq.question_id)
+        return selected[: count or len(selected)]
+
+    for eq in _fetch_subject_questions(wanted):
+        if eq.question_id in flagged or eq.question_id in seen:
+            continue
+        if paper_subject(eq.paper_name, eq.part_name) != wanted:
+            continue
+        if require_diagram and not eq.diagram_url:
+            continue
+        selected.append(eq)
+        seen.add(eq.question_id)
+
+    n = 10_000 if count is None else max(1, int(count))
+    return selected[:n]
+
+
+def _row_to_eval_no_diagram(row: dict[str, Any]) -> EvalQuestion | None:
+    stem = str(row.get("questionStem") or row.get("question_stem") or "")
+    if not stem.strip():
+        return None
+    assets = stem_diagram_assets(row.get("diagramAssets") or row.get("diagram_assets") or [])
+    url = ""
+    asset_id = ""
+    if assets:
+        url = str(assets[0].get("url") or "").strip()
+        asset_id = str(assets[0].get("id") or "diagram_0")
+    return EvalQuestion(
+        question_id=int(row.get("questionId") or row.get("id") or 0),
+        exam_name=str(row.get("examName") or row.get("exam_name") or "NSAA"),
+        exam_year=int(row.get("examYear") or row.get("exam_year") or 0),
+        paper_name=str(row.get("paperName") or row.get("paper_name") or ""),
+        question_number=int(row.get("questionNumber") or row.get("question_number") or 0),
+        question_stem=stem,
+        diagram_url=url,
+        diagram_asset_id=asset_id,
+        source_image_url=str(row.get("sourceImageUrl") or row.get("question_image") or ""),
+        part_name=str(row.get("partName") or row.get("part_name") or ""),
+    )
+
+
+def _fetch_question_as_eval(question_id: int) -> EvalQuestion | None:
+    try:
+        from past_paper_converter.db import fetch_questions
+    except Exception:
+        return None
+    rows = fetch_questions(question_id=question_id, limit=1)
+    if not rows:
+        return None
+    return _row_to_eval_no_diagram(rows[0])
+
+
+def _fetch_subject_questions(subject: str) -> list[EvalQuestion]:
+    try:
+        from past_paper_converter.db import fetch_questions
+    except Exception:
+        return []
+    out: list[EvalQuestion] = []
+    try:
+        rows = fetch_questions(exam_name="NSAA")
+    except Exception:
+        return []
+    for row in rows:
+        paper = str(row.get("paper_name") or row.get("paperName") or "")
+        if "section 2" in paper.lower():
+            continue
+        if paper_subject(paper, str(row.get("part_name") or row.get("partName") or "")) != subject:
+            continue
+        eq = _row_to_eval_no_diagram(row)
+        if eq:
+            out.append(eq)
+    return out
 
 
 def select_nsaa_diagram_questions(

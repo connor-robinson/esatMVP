@@ -23,6 +23,8 @@ SUPPORTED_OBJECT_TYPES = frozenset(
         "equal_length_ticks",
         "point",
         "arrow",
+        "chem_structure",
+        "pedigree",
     }
 )
 
@@ -153,6 +155,35 @@ def _validate_object(obj: dict[str, Any], index: int) -> None:
     elif obj_type == "arrow":
         _as_point(obj.get("start"), f"objects[{index}].start")
         _as_point(obj.get("end"), f"objects[{index}].end")
+    elif obj_type == "chem_structure":
+        atoms = obj.get("atoms") or []
+        bonds = obj.get("bonds") or []
+        if not isinstance(atoms, list) or len(atoms) < 1:
+            raise VisualSpecError(f"objects[{index}] chem_structure needs atoms")
+        ids: set[str] = set()
+        for i, atom in enumerate(atoms):
+            if not isinstance(atom, dict):
+                raise VisualSpecError(f"objects[{index}].atoms[{i}] must be an object")
+            aid = str(atom.get("id") or "").strip()
+            if not aid:
+                raise VisualSpecError(f"objects[{index}].atoms[{i}] missing id")
+            ids.add(aid)
+            _as_float(atom.get("x"), f"objects[{index}].atoms[{i}].x")
+            _as_float(atom.get("y"), f"objects[{index}].atoms[{i}].y")
+        if not isinstance(bonds, list):
+            raise VisualSpecError(f"objects[{index}] chem_structure bonds must be a list")
+        for i, bond in enumerate(bonds):
+            if not isinstance(bond, dict):
+                raise VisualSpecError(f"objects[{index}].bonds[{i}] must be an object")
+            if str(bond.get("from") or "") not in ids or str(bond.get("to") or "") not in ids:
+                raise VisualSpecError(f"objects[{index}].bonds[{i}] refers to an unknown atom")
+    elif obj_type == "pedigree":
+        people = obj.get("people") or []
+        if not isinstance(people, list) or len(people) < 1:
+            raise VisualSpecError(f"objects[{index}] pedigree needs people")
+        for i, person in enumerate(people):
+            if not isinstance(person, dict) or not str(person.get("id") or person.get("label") or "").strip():
+                raise VisualSpecError(f"objects[{index}].people[{i}] needs an id")
 
 
 def _validate_label(label: dict[str, Any], index: int) -> None:

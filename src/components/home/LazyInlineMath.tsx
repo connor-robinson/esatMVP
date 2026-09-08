@@ -14,7 +14,10 @@ let katexPromise: Promise<typeof import("katex").default> | null = null;
 
 function loadKatex() {
   if (!katexPromise) {
-    katexPromise = import("katex").then((mod) => mod.default);
+    katexPromise = import("katex").then(async (mod) => {
+      await import("katex/dist/contrib/mhchem.min.js");
+      return mod.default;
+    });
   }
   return katexPromise;
 }

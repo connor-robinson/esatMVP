@@ -128,3 +128,30 @@ Rules:
 - Do not invent a new diagram situation, new objects, or new labels unless required to fix the critique.
 - Return a complete new `visual_spec` JSON (not a diff).
 - Address validator or renderer failures explicitly.
+
+## Biology schematics
+
+If `idea_plan.visual_type` is `bio_diagram` or `graph` for biology, reuse the same primitives (lines, polygons, circles, arrows, labels, axes, functions). Do not invent a new renderer.
+
+Suitable simple schematics:
+- membrane with movement arrows
+- cell with a few labelled structures
+- blood vessel cross-section
+- leaf/stem/root schematic
+- enzyme/substrate conceptual diagram
+- chromosome/DNA conceptual diagram
+- experimental apparatus
+
+Style:
+- black and white
+- simple line art
+- no decorative biology illustration
+- no photorealism
+- only include structures relevant to the question
+- labels outside crowded structures where possible
+- leader lines must terminate clearly
+- do not invent unnecessary anatomical detail
+
+The diagram exists to communicate information required for the reasoning.
+
+Do not use this designer for `table`, `chem_structure`, or `pedigree`. Those are rendered from structured data, not free-placed geometry.

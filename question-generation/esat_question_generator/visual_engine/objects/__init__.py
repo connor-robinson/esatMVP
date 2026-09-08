@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from ..collision.obstacles import ObstacleSet
 from ..schema import VisualSpec
 from ..style import ExamStyle
+from .chem import draw_chem_structure
 from .geometry import (
     draw_angle_arc,
     draw_arrow,
@@ -20,6 +21,7 @@ from .geometry import (
     draw_right_angle_marker,
 )
 from .graph import draw_axes, draw_function
+from .pedigree import draw_pedigree
 
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
@@ -64,3 +66,7 @@ def draw_objects(
             draw_function(ax, obj, style, obstacles, y_min=cs.y_min, y_max=cs.y_max)
         elif obj_type == "axes":
             draw_axes(ax, obj, style, cs, obstacles, extra_labels)
+        elif obj_type == "chem_structure":
+            draw_chem_structure(ax, obj, style, obstacles)
+        elif obj_type == "pedigree":
+            draw_pedigree(ax, obj, style, obstacles)

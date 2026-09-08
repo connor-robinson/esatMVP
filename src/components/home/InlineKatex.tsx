@@ -2,6 +2,8 @@
 
 import katex from "katex";
 import "katex/dist/katex.min.css";
+// @ts-ignore
+import "katex/dist/contrib/mhchem.min.js";
 import { cn } from "@/lib/utils";
 
 type InlineKatexProps = {
