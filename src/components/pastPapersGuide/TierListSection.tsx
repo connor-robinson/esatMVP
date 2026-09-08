@@ -126,11 +126,13 @@ function TierTooltip({
 function TierCard({
   item,
   active,
+  surface,
   onActivate,
   onDeactivate,
 }: {
   item: TierItem;
   active: boolean;
+  surface: string;
   onActivate: () => void;
   onDeactivate: () => void;
 }) {
@@ -180,7 +182,7 @@ function TierCard({
           else onActivate();
           trackEvent("tier_item_opened", {
             item: item.id,
-            surface: "past_papers_guide",
+            surface,
           });
         }}
         className={cn(
@@ -211,7 +213,11 @@ function TierCard({
   );
 }
 
-export function TierListSection() {
+export function TierListSection({
+  surface = "past_papers_guide",
+}: {
+  surface?: string;
+}) {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   return (
@@ -241,6 +247,7 @@ export function TierListSection() {
                 <TierCard
                   key={item.id}
                   item={item}
+                  surface={surface}
                   active={activeId === item.id}
                   onActivate={() => setActiveId(item.id)}
                   onDeactivate={() =>

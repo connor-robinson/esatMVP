@@ -1,5 +1,6 @@
 import type { DownloadExam } from "@/data/pastPapersDownload";
 import { UniqueEngaaPartBTable } from "@/components/pastPapersGuide/UniqueEngaaPartBTable";
+import { TierListSection } from "@/components/pastPapersGuide/TierListSection";
 import { SeoFaq } from "@/components/seo/SeoFaq";
 import { SeoSection, SeoTextLink } from "@/components/seo/SeoSections";
 import type { FaqItem } from "@/lib/seo/config";
@@ -103,13 +104,9 @@ function GuideReadMore() {
 
 function CombinedExcerpt() {
   return (
-    <SeoSection heading="Which past papers should I use?">
-      <div className="space-y-3">
-        <p className="text-[0.95rem] leading-relaxed text-[#94A3B8]">
-          There are no published ESAT past papers yet. NSAA and ENGAA are the closest
-          free practice, but they reuse many of the same questions and their formats
-          changed across years.
-        </p>
+    <SeoSection heading="The complete tier list">
+      <div className="space-y-4">
+        <TierListSection surface="esat_past_papers" />
         <GuideReadMore />
       </div>
     </SeoSection>
