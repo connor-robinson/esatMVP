@@ -42,6 +42,20 @@ describe("past paper compact tables", () => {
     }
   });
 
+  it("includes ENGAA Section 2 2021-2023 papers and answer keys", () => {
+    const table = getMainPageCompactTables().find(
+      (item) => item.id === "engaa-section-2",
+    );
+    expect(table).toBeDefined();
+    for (const year of ["2023", "2022", "2021"]) {
+      const row = table!.rows.find((item) => item.label === year);
+      expect(row?.paperUrl, year).toMatch(/engaa-\d{4}-section-2-paper\.pdf$/);
+      expect(row?.answersUrl, year).toMatch(
+        /engaa-\d{4}-section-2-answer-key\.pdf$/,
+      );
+    }
+  });
+
   it("gives every paper and specimen row a start-in-camp link", () => {
     const tables = [
       ...getMainPageCompactTables(),

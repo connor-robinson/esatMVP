@@ -145,10 +145,8 @@ export const PAST_PAPER_DOWNLOADS: readonly PastPaperDownload[] = [
   ...([2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016] as const).map((year) =>
     makePaper("ENGAA", year, 1, true),
   ),
-  // ENGAA Section 2 (2021–2022 answer keys and 2023 paper still unresolved)
-  makePaper("ENGAA", 2022, 2, false),
-  makePaper("ENGAA", 2021, 2, false),
-  ...([2020, 2019, 2018, 2017, 2016] as const).map((year) =>
+  // ENGAA Section 2
+  ...([2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016] as const).map((year) =>
     makePaper("ENGAA", year, 2, true),
   ),
   // NSAA Section 1
@@ -716,8 +714,5 @@ export const MISSING_PDF_ASSETS: readonly {
   missing: "question-paper" | "answers" | "both";
   note?: string;
 }[] = [
-  { paper: "ENGAA 2023 Section 2", missing: "both", note: "Not in local archive" },
   { paper: "NSAA 2023 Section 2", missing: "both", note: "Not in local archive" },
-  { paper: "ENGAA 2022 Section 2", missing: "answers" },
-  { paper: "ENGAA 2021 Section 2", missing: "answers" },
 ];
