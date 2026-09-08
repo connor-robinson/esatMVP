@@ -98,15 +98,14 @@ def convert_unicode_math(text: str) -> str:
         sub_repl,
         text,
     )
-    text = re.sub(r"\u221a\(([^)]+)\)", r"\\sqrt{\1}", text)
-    text = text.replace("\u221a", r"\sqrt")
+    text = replace_nested_sqrt(text)
     text = re.sub(r"\\sqrt(?!\{)([A-Za-z0-9]+)", r"\\sqrt{\1}", text)
     reps = {
         "\u00d7": r"\times ",
         "\u03c0": r"\pi ",
         "\u03b8": r"\theta ",
-        "\u2264": r"\le ",
-        "\u2265": r"\ge ",
+        "\u2264": r"\leq ",
+        "\u2265": r"\geq ",
         "\u2260": r"\ne ",
         "\u00b1": r"\pm ",
         "\u222b": r"\int ",
@@ -120,10 +119,69 @@ def convert_unicode_math(text: str) -> str:
     return text.strip()
 
 
+def replace_nested_sqrt(text: str) -> str:
+    """Turn √(...) into \\sqrt{...}, including nested parentheses."""
+    out: list[str] = []
+    i = 0
+    while i < len(text):
+        if text[i] == "\u221a" and i + 1 < len(text) and text[i + 1] == "(":
+            depth = 0
+            j = i + 1
+            closed = False
+            while j < len(text):
+                if text[j] == "(":
+                    depth += 1
+                elif text[j] == ")":
+                    depth -= 1
+                    if depth == 0:
+                        out.append(r"\sqrt{" + text[i + 2 : j] + "}")
+                        i = j + 1
+                        closed = True
+                        break
+                j += 1
+            if closed:
+                continue
+        if text[i] == "\u221a":
+            out.append(r"\sqrt")
+        else:
+            out.append(text[i])
+        i += 1
+    return "".join(out)
+
+
 ENGLISH_OPTION_WORDS = re.compile(
     r"\b(estimate|overestimate|underestimate|exact|asymptote|root|only|all|real|or|and|no|solution|unchanged|higher|lower)\b",
     re.I,
 )
+
+MATH_WORDS = {
+    "sin",
+    "cos",
+    "tan",
+    "sec",
+    "csc",
+    "cot",
+    "ln",
+    "log",
+    "dx",
+    "dy",
+    "or",
+    "and",
+    "if",
+    "pi",
+    "abs",
+    "min",
+    "max",
+    "mod",
+    "gcd",
+    "sqrt",
+    "frac",
+    "geq",
+    "leq",
+    "times",
+}
+
+TRIG = re.compile(r"(?<!\\)\b(sin|cos|tan|sec|csc|cot|ln|log)\b")
 
 
 def looks_like_math_option(text: str) -> bool:
@@ -131,7 +189,23 @@ def looks_like_math_option(text: str) -> bool:
         return False
     if ENGLISH_OPTION_WORDS.search(text) and len(re.findall(r"[A-Za-z]{4,}", text)) >= 2:
         return False
-    if any(tok in text for tok in ("^{", "_{", r"\times", r"\pi", r"\sqrt", r"\le", r"\ge", r"\ne", r"\int")):
+    if any(
+        tok in text
+        for tok in (
+            "^{",
+            "_{",
+            r"\times",
+            r"\pi",
+            r"\sqrt",
+            r"\leq",
+            r"\geq",
+            r"\le",
+            r"\ge",
+            r"\ne",
+            r"\neq",
+            r"\int",
+        )
+    ):
         return True
     if re.fullmatch(r"[-+]?\d+(?:\.\d+)?(?:\s*[A-Za-z/%]+)?", text):
         return False
@@ -144,20 +218,165 @@ def looks_like_math_option(text: str) -> bool:
     return False
 
 
-def latexify(text: str, *, as_option: bool = False) -> str:
-    text = convert_unicode_math(text)
-    text = re.sub(r"\^\(([^)]+)\)", r"^{\1}", text)
-    text = re.sub(r"(?<![{\\])\^(\d+)", r"^{\1}", text)
-    text = re.sub(r"\\times {2,}", r"\\times ", text)
-    if as_option and looks_like_math_option(text):
-        return "\\(" + text + "\\)"
-    # Wrap compact super/subscripted tokens inside prose.
+def collapse_pdf_wraps(text: str) -> str:
+    text = re.sub(r"([=+\-*/,(])\s*\n\s*", r"\1 ", text)
+    text = re.sub(r"\n\s*(?=[).}\]])", " ", text)
+    return text
+
+
+def maybe_frac(text: str) -> str:
+    text = re.sub(r"\(([^()]{1,80})\)\s*/\s*\(([^()]{1,80})\)", r"\\frac{\1}{\2}", text)
     text = re.sub(
-        r"((?:[A-Za-z0-9]+|\([^()]{0,48}\))(?:\^\{[^}]+\}|_\{[^}]+\})+)",
-        r"\\(\1\\)",
+        r"\(([^()]{1,80})\)\s*/\s*([A-Za-z0-9\\][A-Za-z0-9\\^{}_]*)",
+        r"\\frac{\1}{\2}",
         text,
     )
-    return text.strip()
+    text = re.sub(
+        r"(?<![A-Za-z0-9])(\d+)\s*/\s*\(([^()]{1,80})\)",
+        r"\\frac{\1}{\2}",
+        text,
+    )
+    text = re.sub(r"(?<![A-Za-z0-9])(\d+)\s*/\s*(\d+)(?![A-Za-z0-9])", r"\\frac{\1}{\2}", text)
+    return text
+
+
+def maybe_frac_line(text: str) -> str:
+    text = maybe_frac(text)
+    depth = 0
+    slashes: list[int] = []
+    for i, ch in enumerate(text):
+        if ch in "({":
+            depth += 1
+        elif ch in ")}":
+            depth = max(0, depth - 1)
+        elif ch == "/" and depth == 0:
+            slashes.append(i)
+    if len(slashes) != 1:
+        return text
+    i = slashes[0]
+    left, right = text[:i].strip(), text[i + 1 :].strip()
+    punct = ""
+    while right and right[-1] in ".,?":
+        punct = right[-1] + punct
+        right = right[:-1].strip()
+    if left and right:
+        return r"\frac{" + left + "}{" + right + "}" + punct
+    return text
+
+
+def is_prose_token(tok: str) -> bool:
+    core = re.sub(r"[^A-Za-z]", "", tok)
+    return len(core) >= 3 and core.lower() not in MATH_WORDS
+
+
+def is_formula_line(line: str) -> bool:
+    t = line.strip()
+    if not t or len(t) > 160:
+        return False
+    if re.search(r"\band\b", t, re.I) and t.count("=") >= 2:
+        return False
+    if any(is_prose_token(w) and len(w) >= 5 for w in re.findall(r"[A-Za-z]+", t)):
+        return False
+    if re.search(
+        r"\b(simplify|what|which|find|evaluate|let|complete|satisfying|shown|hence|therefore|because)\b",
+        t,
+        re.I,
+    ):
+        return False
+    has_math = bool(
+        re.search(
+            r"[=<>]|\\(?:geq|leq|neq|times|pi|sqrt|frac|ne|ge|le)|[\^_{]|/\(|\)/|[xy]\d|[A-Za-z]\^",
+            t,
+        )
+    )
+    prose = [w for w in re.findall(r"[A-Za-z]+", t) if is_prose_token(w)]
+    return has_math and len(prose) <= 1
+
+
+def wrap_math(expr: str) -> str:
+    expr = expr.strip()
+    if not expr:
+        return expr
+    if expr.startswith(r"\(") or expr.startswith(r"\["):
+        return expr
+    return r"\(" + expr + r"\)"
+
+
+def wrap_option(text: str) -> str:
+    raw = text.strip()
+    if not raw:
+        return raw
+    if raw.startswith(r"\(") or raw.startswith(r"\["):
+        return raw
+    if re.fullmatch(r"\{[^{}]+\}", raw):
+        inner = maybe_frac(raw[1:-1])
+        return wrap_math(r"\{" + inner + r"\}")
+    parts = re.split(r"\s+or\s+", raw, flags=re.I)
+    if len(parts) > 1 and all(looks_like_math_option(p) or is_formula_line(p) for p in parts):
+        return " or ".join(wrap_math(maybe_frac(p)) for p in parts)
+    if looks_like_math_option(raw) or is_formula_line(raw):
+        return wrap_math(maybe_frac(raw))
+    return wrap_prose_math(raw)
+
+
+def wrap_prose_math(text: str) -> str:
+    def wrap_if_needed(match: re.Match[str]) -> str:
+        body = match.group(0).strip()
+        if body.startswith(r"\(") or body.startswith(r"\["):
+            return match.group(0)
+        return wrap_math(body)
+
+    text = re.sub(
+        r"\b([A-Za-z]\s*(?:\\geq|\\leq|[<>]=?|\\neq?)\s*-?\d+(?:\\pi)?)",
+        wrap_if_needed,
+        text,
+    )
+    text = re.sub(
+        r"(-?\d+(?:\\pi)?\s*(?:\\leq|\\geq|[<>]=?)\s*[A-Za-z](?:\s*(?:\\leq|\\geq|[<>]=?)\s*-?\d+(?:\\pi)?)?)",
+        wrap_if_needed,
+        text,
+    )
+    text = re.sub(
+        r"(?<![{\\])((?:[A-Za-z0-9]+|\([^()]{0,48}\))(?:\^\{[^}]+\}|_\{[^}]+\})+)",
+        wrap_if_needed,
+        text,
+    )
+    text = re.sub(
+        r"(satisfying\s+)(.+?)(\??)$",
+        lambda m: m.group(1) + wrap_math(m.group(2).strip()) + (m.group(3) or ""),
+        text,
+        flags=re.I,
+    )
+    return text
+
+
+def latexify(text: str, *, as_option: bool = False) -> str:
+    text = convert_unicode_math(text)
+    text = collapse_pdf_wraps(text)
+    text = re.sub(r"\^\(([^)]+)\)", r"^{\1}", text)
+    text = re.sub(r"(?<![{\\])\^(\d+)", r"^{\1}", text)
+    text = TRIG.sub(lambda m: "\\" + m.group(1), text)
+    text = re.sub(r"\\times {2,}", r"\\times ", text)
+    if as_option:
+        return wrap_option(text)
+    lines = text.split("\n")
+    out: list[str] = []
+    for line in lines:
+        stripped = line.strip()
+        if " and " in stripped and stripped.count("=") >= 2:
+            parts = [p.strip() for p in re.split(r"\s+and\s+", stripped, flags=re.I)]
+            if parts and all(
+                p
+                and not any(is_prose_token(w) and len(w) >= 5 for w in re.findall(r"[A-Za-z]+", p))
+                for p in parts
+            ):
+                out.append(" and ".join(wrap_math(maybe_frac_line(p)) for p in parts))
+                continue
+        if is_formula_line(stripped):
+            out.append("\\[" + maybe_frac_line(stripped) + "\\]")
+        else:
+            out.append(wrap_prose_math(line))
+    return "\n".join(out).strip()
 
 
 def cleanup_math2_text(text: str) -> str:

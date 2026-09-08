@@ -36,15 +36,15 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     number: 2,
     stem: "Which fraction is equal to 0.2777...?",
     options: {
-      A: "\\(1/4\\)",
-      B: "\\(5/18\\)",
-      C: "\\(7/25\\)",
-      D: "\\(7/27\\)",
-      E: "\\(25/99\\)",
-      F: "\\(7/20\\)"
+      A: "\\(\\frac{1}{4}\\)",
+      B: "\\(\\frac{5}{18}\\)",
+      C: "\\(\\frac{7}{25}\\)",
+      D: "\\(\\frac{7}{27}\\)",
+      E: "\\(\\frac{25}{99}\\)",
+      F: "\\(\\frac{7}{20}\\)"
     },
     answer: "B",
-    answerText: "\\(5/18\\)",
+    answerText: "\\(\\frac{5}{18}\\)",
     topicCode: "M2.9",
     topicName: "Number",
     difficulty: "2/4 Medium",
@@ -97,7 +97,7 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     stem: "What is the value of \\(27^{2/3}\\) \\times \\(9^{-1/2}\\)?",
     options: {
       A: "3",
-      B: "\\(1/3\\)",
+      B: "\\(\\frac{1}{3}\\)",
       C: "1",
       D: "9",
       E: "\\(\\sqrt{3}\\)"
@@ -276,15 +276,15 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     number: 10,
     stem: "The variables satisfy p = (3x - q)/(x + r). Which expression makes x the subject?",
     options: {
-      A: "(q - pr)/(3 - p)",
-      B: "(q + pr)/(p - 3)",
-      C: "(q - pr)/(p - 3)",
-      D: "(p - q + r)/3",
-      E: "(q + r)/(3 - p)",
-      F: "(q + pr)/(3 - p)"
+      A: "\\(\\frac{q - pr}{3 - p}\\)",
+      B: "\\(\\frac{q + pr}{p - 3}\\)",
+      C: "\\(\\frac{q - pr}{p - 3}\\)",
+      D: "\\(\\frac{p - q + r}{3}\\)",
+      E: "\\(\\frac{q + r}{3 - p}\\)",
+      F: "\\(\\frac{q + pr}{3 - p}\\)"
     },
     answer: "F",
-    answerText: "(q + pr)/(3 - p)",
+    answerText: "\\(\\frac{q + pr}{3 - p}\\)",
     topicCode: "M4.7",
     topicName: "Algebra",
     difficulty: "2/4 Medium",
@@ -304,17 +304,17 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 11,
-    stem: "For x \\ne -3 and x \\ne 2, which expression is equal to (\\(x^{2}\\) - 9)/(\\(x^{2}\\) + x - 6)?",
+    stem: "For \\(x \\ne -3\\) and \\(x \\ne 2\\), which expression is equal to (\\(x^{2}\\) - 9)/(\\(x^{2}\\) + x - 6)?",
     options: {
-      A: "(x + 3)/(x - 2)",
-      B: "(x - 3)/(x - 2)",
-      C: "(x - 3)/(x + 3)",
-      D: "(x + 3)/(x + 2)",
+      A: "\\(\\frac{x + 3}{x - 2}\\)",
+      B: "\\(\\frac{x - 3}{x - 2}\\)",
+      C: "\\(\\frac{x - 3}{x + 3}\\)",
+      D: "\\(\\frac{x + 3}{x + 2}\\)",
       E: "1",
       F: "x - 3"
     },
     answer: "B",
-    answerText: "(x - 3)/(x - 2)",
+    answerText: "\\(\\frac{x - 3}{x - 2}\\)",
     topicCode: "M4.6",
     topicName: "Algebra",
     difficulty: "3/4 Hard",
@@ -368,7 +368,7 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     options: {
       A: "1",
       B: "2",
-      C: "\\(5/2\\)",
+      C: "\\(\\frac{5}{2}\\)",
       D: "3",
       E: "5",
       F: "6"
@@ -394,25 +394,25 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 14,
-    stem: "What is the complete set of values of x satisfying 3 - 2(4 - x) \\ge 5x + 1?",
+    stem: "What is the complete set of values of x satisfying \\(3 - 2(4 - x) \\geq 5x + 1\\)?",
     options: {
-      A: "\\(x \\ge -2\\)",
+      A: "\\(x \\geq -2\\)",
       B: "\\(x < -2\\)",
       C: "\\(x > -2\\)",
-      D: "\\(x \\le 2\\)",
-      E: "\\(x \\ge 2\\)",
+      D: "\\(x \\leq 2\\)",
+      E: "\\(x \\geq 2\\)",
       F: "\\(x < 2\\)",
-      G: "\\(x \\le -2\\)"
+      G: "\\(x \\leq -2\\)"
     },
     answer: "G",
-    answerText: "\\(x \\le -2\\)",
+    answerText: "\\(x \\leq -2\\)",
     topicCode: "M4.17",
     topicName: "Algebra",
     difficulty: "2/4 Medium",
     targetSeconds: 70,
     targetDisplay: "70 s",
     tip: "When dividing an inequality by a negative number, reverse its direction.",
-    solution: "Expanding gives -5 + 2x \\ge 5x + 1. Therefore -6 \\ge 3x, so x \\le -2.",
+    solution: "Expanding gives -5 + 2x \\geq 5x + 1. Therefore -6 \\geq 3x, so \\(x \\leq -2\\).",
     distractors: {
       A: "Does not reverse the inequality after effectively dividing by -3.",
       B: "Finds the correct boundary but excludes equality.",
@@ -568,7 +568,7 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     solution: "The area is 120/360 \\times \\pi (\\(6^{2}\\) - \\(3^{2}\\)) = 1/3 \\times 27\\pi = 9\\pi \\(cm^{2}\\).",
     distractors: {
       A: "Uses the difference of the radii only.",
-      B: "Uses 120/360 \\times \\pi \\times 6.",
+      B: "\\[Uses \\frac{120}{360} \\times \\pi \\times 6.\\]",
       C: "Uses the difference \\(6^{2}\\) - \\(3^{2}\\) but divides by an incorrect angle factor.",
       D: "Finds the full annulus area and forgets the \\(120^{\\circ}\\) fraction.",
       F: "Uses the full outer circle only."
@@ -586,7 +586,7 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
       C: "9 cm",
       D: "10 cm",
       E: "12 cm",
-      F: "\\(50/3 cm\\)"
+      F: "\\(\\frac{50}{3} cm\\)"
     },
     answer: "D",
     answerText: "10 cm",
@@ -627,15 +627,15 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     difficulty: "3/4 Hard",
     targetSeconds: 90,
     targetDisplay: "90 s",
-    tip: "Use tan because the two named sides are opposite and adjacent.",
-    solution: "tan \\(60^{\\circ}\\) = (x + 2)/x = \\sqrt{3}. Hence x(\\sqrt{3} - 1) = 2, so x = 2/(\\sqrt{3} - 1) = 1 + \\sqrt{3}.",
+    tip: "Use \\tan because the two named sides are opposite and adjacent.",
+    solution: "\\tan \\(60^{\\circ}\\) = (x + 2)/x = \\sqrt{3}. Hence x(\\sqrt{3} - 1) = 2, so x = 2/(\\sqrt{3} - 1) = 1 + \\sqrt{3}.",
     distractors: {
       A: "Stops after rationalising with the wrong sign.",
-      B: "Treats tan \\(60^{\\circ}\\) as 3.",
-      C: "Reports tan \\(60^{\\circ}\\) itself.",
+      B: "Treats \\tan \\(60^{\\circ}\\) as 3.",
+      C: "Reports \\tan \\(60^{\\circ}\\) itself.",
       D: "Ignores the trigonometric ratio and uses the added length.",
       E: "Multiplies 2 by \\sqrt{3} instead of solving the linear equation.",
-      F: "Uses tan \\(60^{\\circ}\\) ≈ 2."
+      F: "Uses \\tan \\(60^{\\circ}\\) ≈ 2."
     },
     benchmarkNote: "NSAA 2023, Part A, Q10: exact trigonometry embedded in an algebraic length problem.",
     editorPick: true
@@ -674,15 +674,15 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     number: 23,
     stem: "A two-digit number is formed by choosing two different digits from 1, 2, 3 and 4. Each ordered choice is equally likely. What is the probability that the number is divisible by 3?",
     options: {
-      A: "\\(1/6\\)",
-      B: "\\(1/4\\)",
-      C: "\\(2/9\\)",
-      D: "\\(1/3\\)",
-      E: "\\(1/2\\)",
-      F: "\\(2/3\\)"
+      A: "\\(\\frac{1}{6}\\)",
+      B: "\\(\\frac{1}{4}\\)",
+      C: "\\(\\frac{2}{9}\\)",
+      D: "\\(\\frac{1}{3}\\)",
+      E: "\\(\\frac{1}{2}\\)",
+      F: "\\(\\frac{2}{3}\\)"
     },
     answer: "D",
-    answerText: "\\(1/3\\)",
+    answerText: "\\(\\frac{1}{3}\\)",
     topicCode: "M7.5",
     topicName: "Probability",
     difficulty: "2/4 Medium",
@@ -704,22 +704,22 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     number: 24,
     stem: "The histogram shows journey times for 36 people. In which class interval does the median lie?",
     options: {
-      A: "\\(0 \\le t < 4\\)",
-      B: "\\(0 \\le t < 10\\)",
-      C: "\\(4 \\le t < 10\\)",
-      D: "\\(4 \\le t < 20\\)",
-      E: "\\(10 \\le t < 20\\)",
+      A: "\\(0 \\leq t < 4\\)",
+      B: "\\(0 \\leq t < 10\\)",
+      C: "\\(4 \\leq t < 10\\)",
+      D: "\\(4 \\leq t < 20\\)",
+      E: "\\(10 \\leq t < 20\\)",
       F: "It cannot be determined"
     },
     answer: "C",
-    answerText: "\\(4 \\le t < 10\\)",
+    answerText: "\\(4 \\leq t < 10\\)",
     topicCode: "M6.2",
     topicName: "Statistics",
     difficulty: "2/4 Medium",
     targetSeconds: 70,
     targetDisplay: "70 s",
     tip: "In a histogram, frequency is bar area, not bar height.",
-    solution: "The class frequencies are 4 \\times 2 = 8, 6 \\times 3 = 18 and 10 \\times 1 = 10. The 18th and 19th values are both in the second class, 4 \\le t < 10.",
+    solution: "The class frequencies are 4 \\times 2 = 8, 6 \\times 3 = 18 and 10 \\times 1 = 10. The 18th and 19th values are both in the second class, 4 \\leq \\(t < 10\\).",
     distractors: {
       A: "Uses the tallest value on the vertical scale as the median position.",
       B: "Combines the first two classes instead of identifying the containing class.",
@@ -735,15 +735,15 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     number: 25,
     stem: "A bag contains 3 red and 2 blue counters. Two counters are taken at random without replacement. What is the probability that exactly one is red?",
     options: {
-      A: "\\(1/5\\)",
-      B: "\\(3/10\\)",
-      C: "\\(2/5\\)",
-      D: "\\(1/2\\)",
-      E: "\\(7/10\\)",
-      F: "\\(3/5\\)"
+      A: "\\(\\frac{1}{5}\\)",
+      B: "\\(\\frac{3}{10}\\)",
+      C: "\\(\\frac{2}{5}\\)",
+      D: "\\(\\frac{1}{2}\\)",
+      E: "\\(\\frac{7}{10}\\)",
+      F: "\\(\\frac{3}{5}\\)"
     },
     answer: "F",
-    answerText: "\\(3/5\\)",
+    answerText: "\\(\\frac{3}{5}\\)",
     topicCode: "M7.7",
     topicName: "Probability",
     difficulty: "2/4 Medium",

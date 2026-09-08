@@ -4,7 +4,7 @@ import type { EsatCampMockQuestion } from "./types";
 export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   {
     number: 1,
-    stem: "For x > 0, simplify\n\\((16x^{6})^{3/4}\\) / (\\(2x^{1/2}\\)).",
+    stem: "For \\(x > 0\\), simplify\n\\[\\frac{(16x^{6})^{\\frac{3}{4}}}{(2x^{\\frac{1}{2}})}.\\]",
     options: {
       A: "\\(2x^{3}\\)",
       B: "\\(2x^{4}\\)",
@@ -64,7 +64,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     options: {
       A: "-3",
       B: "-1",
-      C: "\\(-1/3\\)",
+      C: "\\(-\\frac{1}{3}\\)",
       D: "0",
       E: "1",
       F: "3"
@@ -90,7 +90,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 4,
-    stem: "For x \\ge 2, let\nf(x) = \\(x^{2}\\) - 4x + 7 and g(x) = \\sqrt{x - 3}.\nWhich expression is equal to g(f(x))?",
+    stem: "For \\(x \\geq 2\\), let\n\\(f(x) = x^{2} - 4x + 7\\) and \\(g(x) = \\sqrt{x - 3}.\\)\nWhich expression is equal to g(f(x))?",
     options: {
       A: "x + 2",
       B: "|x - 2|",
@@ -105,11 +105,11 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     difficulty: "2/4 Medium",
     targetSeconds: 70,
     targetDisplay: "70 s",
-    tip: "Remember that \\sqrt{\\(u^{2}\\)} = |u|, then use the stated domain.",
-    solution: "g(f(x)) = \\sqrt{f(x} - 3) = \\sqrt{(x - 2}^{2}) = |x - 2|. Since x \\ge 2, this is x - 2.",
+    tip: "Remember that \\sqrt{u^{2}} = |u|, then use the stated domain.",
+    solution: "g(f(x)) = \\sqrt{f(x) - 3} = \\sqrt{(x - 2)^{2}} = |x - 2|. Since \\(x \\geq 2\\), this is x - 2.",
     distractors: {
       A: "Reverses the sign when completing the square.",
-      B: "Stops before using the restriction x \\ge 2.",
+      B: "Stops before using the restriction \\(x \\geq 2\\).",
       D: "Forgets that the outer function takes a square root.",
       E: "Substitutes f(x) into \\sqrt{x} rather than into \\sqrt{x - 3}."
     },
@@ -118,14 +118,14 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 5,
-    stem: "Both roots of\n\\(x^{2}\\) - 2kx + \\(k^{2}\\) - 1 = 0\nare strictly between 0 and 4. Which condition on k is correct?",
+    stem: "Both roots of\n\\[x^{2} - 2kx + k^{2} - 1 = 0\\]\nare strictly between 0 and 4. Which condition on k is correct?",
     options: {
       A: "\\(k < 1\\)",
       B: "\\(k > 3\\)",
       C: "\\(-3 < k < -1\\)",
       D: "\\(-1 < k < 3\\)",
-      E: "\\(k < 1 or k > 3\\)",
-      F: "\\(1 \\le k \\le 3\\)",
+      E: "\\(k < 1\\) or \\(k > 3\\)",
+      F: "\\(1 \\leq k \\leq 3\\)",
       G: "\\(1 < k < 3\\)"
     },
     answer: "G",
@@ -136,7 +136,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 80,
     targetDisplay: "80 s",
     tip: "Complete the square before reaching for the quadratic formula.",
-    solution: "The quadratic is \\((x - k)^{2}\\) = 1, so the roots are k - 1 and k + 1. Requiring 0 < k - 1 and k + 1 < 4 gives 1 <\nk < 3.",
+    solution: "The quadratic is \\((x - k)^{2}\\) = 1, so the roots are k - 1 and k + 1. Requiring \\(0 < k\\) - 1 and k + 1 < 4 gives 1 <\n\\[k < 3.\\]",
     distractors: {
       A: "Checks only that the smaller root is below 4.",
       B: "Checks only that the larger root is positive.",
@@ -198,7 +198,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
       A: "Moves the d terms across with the wrong sign.",
       B: "Uses 10d and 5d instead of 9d and 4d in the sum formula.",
       C: "Cancels a from both sides even though it is inside brackets.",
-      D: "Uses S = n(a + d)/2.",
+      D: "\\[Uses S = n\\frac{a + d}{2}.\\]",
       F: "Equates the tenth term to three times the fifth term instead of the sums."
     },
     benchmarkNote: "ENGAA 2023 Section 1, Q23, linked arithmetic sums; NSAA 2018 Section 1, Q79, conditions on an arithmetic progression. [ENGAA 2023 paper] [NSAA 2018 paper]",
@@ -206,7 +206,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 8,
-    stem: "What is the coefficient of \\(x^{2}\\) in\n\\((1 - 2x)^{5}\\) + \\((1 + 2x)^{5}\\)?",
+    stem: "What is the coefficient of \\(x^{2}\\) in\n\\[(1 - 2x)^{5} + (1 + 2x)^{5}?\\]",
     options: {
       A: "0",
       B: "40",
@@ -222,7 +222,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 50,
     targetDisplay: "50 s",
     tip: "Odd-power terms cancel, but even-power terms add.",
-    solution: "Each expansion contributes C(5,2)\\((2x)^{2}\\) = 10 \\times \\(4x^{2}\\) = \\(40x^{2}\\). The signs are positive for an even power,\nso the total coefficient is 80.",
+    solution: "Each expansion contributes C(5,2)\\((2x)^{2}\\) = 10 \\times \\(4x^{2}\\) = \\(40x^{2}\\). The signs are positive for an even power, so the total coefficient is 80.",
     distractors: {
       A: "Assumes every non-constant term cancels.",
       B: "Finds the coefficient from only one expansion.",
@@ -238,8 +238,8 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     options: {
       A: "\\(y = 2x + 2\\)",
       B: "\\(y = 2x - 2\\)",
-      C: "\\(y = x/2 + 7/2\\)",
-      D: "\\(y = -x/2 + 9/2\\)",
+      C: "\\(y = x/2 + \\frac{7}{2}\\)",
+      D: "\\(y = -x/2 + \\frac{9}{2}\\)",
       E: "\\(y = -2x + 6\\)"
     },
     answer: "A",
@@ -250,7 +250,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 60,
     targetDisplay: "60 s",
     tip: "Find the gradient first, then use the negative reciprocal.",
-    solution: "The gradient of AB is (2 - 4)/(5 - 1) = -1/2, so the perpendicular gradient is 2. Through A, y - 4 = 2(x -\n1), hence y = 2x + 2.",
+    solution: "The gradient of AB is (2 - 4)/(5 - 1) = -1/2, so the perpendicular gradient is 2. Through A, y - 4 = 2(x - 1), hence y = 2x + 2.",
     distractors: {
       B: "Uses the correct gradient but substitutes A incorrectly.",
       C: "Changes the sign of the gradient but does not take the reciprocal.",
@@ -264,7 +264,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     number: 10,
     stem: "The circle \\((x - 2)^{2}\\) + \\((y + 1)^{2}\\) = 9 has centre C. A tangent from P(8, -1) touches the circle at T, as shown.\nWhat is PT?",
     options: {
-      A: "\\(3/2\\)",
+      A: "\\(\\frac{3}{2}\\)",
       B: "\\(\\sqrt{3}\\)",
       C: "3",
       D: "\\(2\\sqrt{3}\\)",
@@ -279,12 +279,12 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 70,
     targetDisplay: "70 s",
     tip: "Join the external point to the centre to create a right-angled triangle.",
-    solution: "CP = 6 and CT = 3. Since CT is perpendicular to the tangent, triangle CTP is right-angled. Thus \\(PT^{2}\\) =\n\\(6^{2}\\) - \\(3^{2}\\) = 27, so PT = 3\\sqrt{3}.",
+    solution: "CP = 6 and CT = 3. Since CT is perpendicular to the tangent, triangle CTP is right-angled. Thus \\(PT^{2}\\) = \\(6^{2}\\) - \\(3^{2}\\) = 27, so PT = 3\\sqrt{3}.",
     distractors: {
       A: "Uses the difference of the two lengths and then halves it.",
       B: "Calculates \\sqrt{6 - 3} instead of using squares.",
       C: "Assumes the tangent length equals the radius.",
-      D: "Uses \\(PT^{2}\\) = CP \\times CT.",
+      D: "\\[Uses PT^{2} = CP \\times CT.\\]",
       E: "Uses \\(PT^{2}\\) = \\(CP^{2}\\) - CT rather than \\(CP^{2}\\) - \\(CT^{2}\\)."
     },
     benchmarkNote: "NSAA 2018 Section 1, Q83, tangent length from an external point to a circle. [NSAA 2018 paper]",
@@ -309,7 +309,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 65,
     targetDisplay: "65 s",
     tip: "The diameter is twice the radius, so square lengths with care.",
-    solution: "The centre is the midpoint (2, 4). Also \\(AB^{2}\\) = \\(6^{2}\\) + \\(4^{2}\\) = 52, so \\(r^{2}\\) = \\(AB^{2}\\)/4 = 13. Therefore \\((x - 2)^{2}\\) + \\((y -\n4)^{2}\\) = 13.",
+    solution: "The centre is the midpoint (2, 4). Also \\(AB^{2}\\) = \\(6^{2}\\) + \\(4^{2}\\) = 52, so \\(r^{2}\\) = \\(AB^{2}\\)/4 = 13. Therefore \\((x - 2)^{2}\\) + \\((y - 4)^{2}\\) = 13.",
     distractors: {
       A: "Uses the squared diameter as \\(r^{2}\\).",
       B: "Uses the right radius but reverses both centre signs.",
@@ -321,9 +321,9 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 12,
-    stem: "Evaluate\n(sin \\(30^{\\circ}\\) + cos \\(60^{\\circ}\\)) / tan \\(45^{\\circ}\\).",
+    stem: "Evaluate\n(\\sin \\(30^{\\circ}\\) + \\cos \\(60^{\\circ}\\)) / \\tan \\(45^{\\circ}\\).",
     options: {
-      A: "\\(1/2\\)",
+      A: "\\(\\frac{1}{2}\\)",
       B: "1",
       C: "\\(\\sqrt{2}\\)",
       D: "2",
@@ -337,12 +337,12 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 40,
     targetDisplay: "40 s",
     tip: "Recall the exact values before doing any manipulation.",
-    solution: "sin \\(30^{\\circ}\\) = cos \\(60^{\\circ}\\) = 1/2 and tan \\(45^{\\circ}\\) = 1. The value is (1/2 + 1/2)/1 = 1.",
+    solution: "\\sin \\(30^{\\circ}\\) = \\cos \\(60^{\\circ}\\) = 1/2 and \\tan \\(45^{\\circ}\\) = 1. The value is (1/2 + 1/2)/1 = 1.",
     distractors: {
       A: "Uses only one term in the numerator.",
-      C: "Confuses sin \\(45^{\\circ}\\) with tan \\(45^{\\circ}\\).",
+      C: "Confuses \\sin \\(45^{\\circ}\\) with \\tan \\(45^{\\circ}\\).",
       D: "Divides each half by 1/2 instead of by 1.",
-      E: "Uses tan \\(45^{\\circ}\\) = 1/\\sqrt{2} and also doubles the numerator."
+      E: "Uses \\tan \\(45^{\\circ}\\) = 1/\\sqrt{2} and also doubles the numerator."
     },
     benchmarkNote: "Official Pearson ESAT Mathematics 2 specimen, exact-trigonometric-value style; specification MM4.3. [official specimen page] [specification]",
     editorPick: false
@@ -367,7 +367,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 85,
     targetDisplay: "85 s",
     tip: "A segment is a sector minus the triangle formed by the two radii.",
-    solution: "The angle is \\theta = s/r = 4\\pi /6 = 2\\pi /3. Sector area is (1/2)\\(r^{2}\\)\\theta = 12\\pi . Triangle AOB has area (1/2)(6)\n(6)sin(2\\pi /3) = 9\\sqrt{3}. The segment area is 12\\pi - 9\\sqrt{3}.",
+    solution: "The angle is \\theta = s/r = 4\\pi /6 = 2\\pi /3. Sector area is (1/2)\\(r^{2}\\)\\theta = 12\\pi . Triangle AOB has area (1/2)(6)\n(6)\\sin(2\\pi /3) = 9\\sqrt{3}. The segment area is 12\\pi - 9\\sqrt{3}.",
     distractors: {
       A: "Uses the arc length as if it were the angle.",
       B: "Uses \\theta = \\pi /3 rather than 2\\pi /3.",
@@ -382,7 +382,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 14,
-    stem: "How many solutions of\n\\(2sin^{2}\\)x + cos x = 3/2\nlie in 0 \\le x < 2\\pi ?",
+    stem: "How many solutions of\n\\[2sin^{2}x + \\cos x = \\frac{3}{2}\\]\n\\[lie in 0 \\leq x < 2\\pi ?\\]",
     options: {
       A: "0",
       B: "1",
@@ -398,7 +398,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 85,
     targetDisplay: "85 s",
     tip: "You only need to check whether the cosine roots lie in [-1, 1]; you do not need their angles.",
-    solution: "Let c = cos x and use \\(sin^{2}\\)x = 1 - \\(c^{2}\\). This gives \\(4c^{2}\\) - 2c - 1 = 0, with roots c = (1 \\pm \\sqrt{5})/4. Both lie\nstrictly between -1 and 1, so each cosine value gives two x-values in the interval. Total: 4.",
+    solution: "Let c = \\cos x and use \\s\\(in^{2}\\)x = 1 - \\(c^{2}\\). This gives \\(4c^{2}\\) - 2c - 1 = 0, with roots c = (1 \\pm \\sqrt{5})/4. Both lie\nstrictly between -1 and 1, so each cosine value gives two x-values in the interval. Total: 4.",
     distractors: {
       A: "Rejects the irrational cosine values because they are not standard angles.",
       B: "Keeps only one root of the quadratic and one angle.",
@@ -410,26 +410,26 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 15,
-    stem: "An acute angle \\theta satisfies tan \\theta = 3/4.\nWhat is sin \\theta - cos \\theta ?",
+    stem: "An acute angle \\theta satisfies \\tan \\theta = 3/4.\nWhat is \\sin \\theta - \\cos \\theta ?",
     options: {
       A: "-1",
-      B: "\\(-4/5\\)",
-      C: "\\(-1/5\\)",
-      D: "\\(1/5\\)",
-      E: "\\(7/5\\)"
+      B: "\\(-\\frac{4}{5}\\)",
+      C: "\\(-\\frac{1}{5}\\)",
+      D: "\\(\\frac{1}{5}\\)",
+      E: "\\(\\frac{7}{5}\\)"
     },
     answer: "C",
-    answerText: "\\(-1/5\\)",
+    answerText: "\\(-\\frac{1}{5}\\)",
     topicCode: "MM4.5",
     topicName: "Trigonometry: identities",
     difficulty: "1/4 Easy",
     targetSeconds: 45,
     targetDisplay: "45 s",
     tip: "Turn a positive tangent ratio into a right triangle.",
-    solution: "Use a 3-4-5 triangle. Then sin \\theta = 3/5 and cos \\theta = 4/5, so sin \\theta - cos \\theta = -1/5.",
+    solution: "Use a 3-4-5 triangle. Then \\sin \\theta = 3/5 and \\cos \\theta = 4/5, so \\sin \\theta - \\cos \\theta = -1/5.",
     distractors: {
       A: "Subtracts 4 from 3 without dividing by the hypotenuse.",
-      B: "Uses sin \\theta = 0.",
+      B: "Uses \\sin \\theta = 0.",
       D: "Reverses the order of subtraction.",
       E: "Adds sine and cosine instead of subtracting."
     },
@@ -438,7 +438,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 16,
-    stem: "Solve\n\\(4^{x - 1}\\) = \\(8^{x + 1}\\).",
+    stem: "Solve\n\\[4^{x - 1} = 8^{x + 1}.\\]",
     options: {
       A: "-5",
       B: "-3",
@@ -466,7 +466,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 17,
-    stem: "Evaluate\n\\(log_{2}\\)(3/2) + \\(log_{2}\\)(4/3) + \\(log_{2}\\)(5/4) + ... + \\(log_{2}\\)(32/31).",
+    stem: "Evaluate\n\\[log_{2}(\\frac{3}{2}) + log_{2}(\\frac{4}{3}) + log_{2}(\\frac{5}{4}) + ... + log_{2}(\\frac{32}{31}).\\]",
     options: {
       A: "-4",
       B: "-1",
@@ -482,7 +482,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 60,
     targetDisplay: "60 s",
     tip: "Combine first, then cancel the product before evaluating the logarithm.",
-    solution: "Combine the logarithms. The product telescopes to (3/2)(4/3)...(32/31) = 32/2 = 16. Therefore the\nsum is \\(log_{2}\\)16 = 4.",
+    solution: "Combine the logarithms. The product telescopes to (3/2)(4/3)...(32/31) = 32/2 = 16. Therefore the\n\\[sum is log_{2}16 = 4.\\]",
     distractors: {
       A: "Reverses every fraction before combining.",
       B: "Keeps only the first and last denominators in the wrong order.",
@@ -494,17 +494,17 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 18,
-    stem: "Two quantities are modelled by\nP = 3 \\times \\(2^{t}\\) and Q = 96 \\times \\(2^{-t}\\).\nFor what value of t are P and Q equal?",
+    stem: "Two quantities are modelled by\n\\(P = 3 \\times 2^{t}\\) and \\(Q = 96 \\times 2^{-t}.\\)\nFor what value of t are P and Q equal?",
     options: {
-      A: "\\(-5/2\\)",
+      A: "\\(-\\frac{5}{2}\\)",
       B: "-1",
       C: "0",
       D: "1",
       E: "2",
-      F: "\\(5/2\\)"
+      F: "\\(\\frac{5}{2}\\)"
     },
     answer: "F",
-    answerText: "\\(5/2\\)",
+    answerText: "\\(\\frac{5}{2}\\)",
     topicCode: "MM5.3",
     topicName: "Exponentials and logarithms: exponential models",
     difficulty: "2/4 Medium",
@@ -514,9 +514,9 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     solution: "Set the models equal: 3 \\times \\(2^{t}\\) = 96 \\times \\(2^{-t}\\). Hence \\(2^{2t}\\) = 32 = \\(2^{5}\\), so 2t = 5 and t = 5/2.",
     distractors: {
       A: "Moves \\(2^{-t}\\) across but keeps the exponent negative.",
-      B: "Uses 96/3 = \\(2^{-2}\\).",
+      B: "\\[Uses \\frac{96}{3} = 2^{-2}.\\]",
       C: "Assumes the increasing and decreasing models meet at t = 0.",
-      D: "Uses 32 = \\(2^{2}\\).",
+      D: "\\[Uses 32 = 2^{2}.\\]",
       E: "Finds 2t = 4 after treating 32 as 16."
     },
     benchmarkNote: "Official 2026 Notes on Mathematics, MM5.3 exponential-equation modelling; broader ESAT intersection style. [official guide]",
@@ -527,20 +527,20 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     stem: "The curve y = \\(x^{3}\\) - 3x has a normal at the point where x = 2.\nWhich is the equation of the normal?",
     options: {
       A: "\\(y - 2 = 9(x - 2)\\)",
-      B: "\\(y - 2 = -(x - 2)/9\\)",
-      C: "\\(y + 2 = -(x + 2)/9\\)",
-      D: "\\(y - 2 = -(x - 2)/6\\)",
-      E: "\\(y - 2 = (x - 2)/9\\)"
+      B: "\\(y - 2 = -\\frac{x - 2}{9}\\)",
+      C: "\\(y + 2 = -\\frac{x + 2}{9}\\)",
+      D: "\\(y - 2 = -\\frac{x - 2}{6}\\)",
+      E: "\\(y - 2 = \\frac{x - 2}{9}\\)"
     },
     answer: "B",
-    answerText: "\\(y - 2 = -(x - 2)/9\\)",
+    answerText: "\\(y - 2 = -\\frac{x - 2}{9}\\)",
     topicCode: "MM6.3",
     topicName: "Differentiation: tangents and normals",
     difficulty: "2/4 Medium",
     targetSeconds: 70,
     targetDisplay: "70 s",
     tip: "Find both the point and the negative reciprocal gradient.",
-    solution: "At x = 2, y = 2. Also dy/dx = \\(3x^{2}\\) - 3, so the tangent gradient is 9 and the normal gradient is -1/9.\nThus y - 2 = -(x - 2)/9.",
+    solution: "At x = 2, y = 2. Also dy/dx = \\(3x^{2}\\) - 3, so the tangent gradient is 9 and the normal gradient is -1/9.\n\\[Thus y - 2 = -\\frac{x - 2}{9}.\\]",
     distractors: {
       A: "Uses the tangent gradient instead of the normal gradient.",
       C: "Uses (-2, -2) instead of (2, 2).",
@@ -553,7 +553,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 20,
-    stem: "For a > 0, the curve\ny = \\(x^{3}\\) - 3ax + 2\nhas a stationary point on the x-axis. What is a?",
+    stem: "For \\(a > 0\\), the curve\n\\[y = x^{3} - 3ax + 2\\]\nhas a stationary point on the x-axis. What is a?",
     options: {
       A: "-4",
       B: "-2",
@@ -571,9 +571,9 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 80,
     targetDisplay: "80 s",
     tip: "Use the derivative equation to remove the parameter from the curve equation.",
-    solution: "At a stationary point, \\(3x^{2}\\) - 3a = 0, so a = \\(x^{2}\\). Being on the x-axis also gives \\(x^{3}\\) - \\(3x^{3}\\) + 2 = 0, hence \\(x^{3}\\) =\n1. Therefore x = 1 and a = 1.",
+    solution: "At a stationary point, \\(3x^{2}\\) - 3a = 0, so a = \\(x^{2}\\). Being on the x-axis also gives \\(x^{3}\\) - \\(3x^{3}\\) + 2 = 0, hence \\(x^{3}\\) = 1. Therefore x = 1 and a = 1.",
     distractors: {
-      A: "Uses a = -\\(x^{2}\\) and x = 2.",
+      A: "\\(Uses a = -x^{2}\\) and \\(x = 2.\\)",
       B: "Substitutes \\(x^{3}\\) = 2 instead of \\(x^{3}\\) = 1.",
       C: "Takes x = -1 even though it does not make the point lie on the axis.",
       D: "Assumes a stationary point on an axis must occur at the origin.",
@@ -585,25 +585,25 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 21,
-    stem: "An open box is made from a 12 by 8 rectangular sheet by cutting a square of side x from each corner and folding up\nthe sides.\nFor 0 < x < 4, which value of x gives the maximum volume?",
+    stem: "An open box is made from a 12 by 8 rectangular sheet by cutting a square of side x from each corner and folding up\nthe sides.\nFor 0 < \\(x < 4\\), which value of x gives the maximum volume?",
     options: {
-      A: "\\((10 + 2\\sqrt{7})/3\\)",
-      B: "\\((10 - \\sqrt{7})/3\\)",
-      C: "\\((8 - 2\\sqrt{7})/3\\)",
+      A: "\\(\\frac{10 + 2\\sqrt{7}}{3}\\)",
+      B: "\\(\\frac{10 - \\sqrt{7}}{3}\\)",
+      C: "\\(\\frac{8 - 2\\sqrt{7}}{3}\\)",
       D: "\\(4 - \\sqrt{7}\\)",
       E: "\\(2\\sqrt{7}/3\\)",
       F: "2",
-      G: "\\((10 - 2\\sqrt{7})/3\\)"
+      G: "\\(\\frac{10 - 2\\sqrt{7}}{3}\\)"
     },
     answer: "G",
-    answerText: "\\((10 - 2\\sqrt{7})/3\\)",
+    answerText: "\\(\\frac{10 - 2\\sqrt{7}}{3}\\)",
     topicCode: "MM6.3",
     topicName: "Differentiation: optimisation",
     difficulty: "3/4 Hard",
     targetSeconds: 90,
     targetDisplay: "90 s",
     tip: "Use the physical interval to reject the second stationary value immediately.",
-    solution: "V = x(12 - 2x)(8 - 2x) = 4x(6 - x)(4 - x). Differentiating gives V' = \\(12x^{2}\\) - 80x + 96. Thus \\(3x^{2}\\) - 20x + 24 =\n0, so x = (10 \\pm 2\\sqrt{7})/3. Only the minus sign lies in 0 < x < 4, so it gives the maximum.",
+    solution: "V = x(12 - 2x)(8 - 2x) = 4x(6 - x)(4 - x). Differentiating gives V' = \\(12x^{2}\\) - 80x + 96. Thus \\(3x^{2}\\) - 20x + 24 = 0, so x = (10 \\pm 2\\sqrt{7})/3. Only the minus sign lies in 0 < \\(x < 4\\), so it gives the maximum.",
     distractors: {
       A: "Keeps the stationary value outside the physical domain.",
       B: "Loses the factor 2 when applying the quadratic formula.",
@@ -618,23 +618,23 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 22,
-    stem: "The line y = x - 1 is shown for 0 \\le x \\le 3. The two regions between the line and the x-axis are shaded.\nWhat is the total shaded area?",
+    stem: "The line y = x - 1 is shown for 0 \\leq \\(x \\leq 3\\). The two regions between the line and the x-axis are shaded.\nWhat is the total shaded area?",
     options: {
-      A: "\\(3/2\\)",
+      A: "\\(\\frac{3}{2}\\)",
       B: "2",
-      C: "\\(5/2\\)",
+      C: "\\(\\frac{5}{2}\\)",
       D: "3",
-      E: "\\(7/2\\)"
+      E: "\\(\\frac{7}{2}\\)"
     },
     answer: "C",
-    answerText: "\\(5/2\\)",
+    answerText: "\\(\\frac{5}{2}\\)",
     topicCode: "MM7.1",
     topicName: "Integration: area and signed integral",
     difficulty: "2/4 Medium",
     targetSeconds: 55,
     targetDisplay: "55 s",
     tip: "Areas below the axis still count positively in a total geometric area.",
-    solution: "From 0 to 1 the triangle has area 1/2. From 1 to 3 the triangle has area (1/2)(2)(2) = 2. Total area =\n1/2 + 2 = 5/2.",
+    solution: "From 0 to 1 the triangle has area 1/2. From 1 to 3 the triangle has area (1/2)(2)(2) = 2. Total area = 1/2 + 2 = 5/2.",
     distractors: {
       A: "Calculates the signed integral, 2 - 1/2.",
       B: "Counts only the region above the axis.",
@@ -735,7 +735,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 26,
-    stem: "How many distinct real solutions does\n\\(x^{3}\\) - 3x = 2\nhave?",
+    stem: "How many distinct real solutions does\n\\[x^{3} - 3x = 2\\]\nhave?",
     options: {
       A: "1",
       B: "2",

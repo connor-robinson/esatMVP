@@ -1,6 +1,7 @@
 "use client";
 
 import { StemContent } from "@/components/shared/StemContent";
+import { EsatCampMockDiagram } from "@/components/papers/esatCampMocks/diagrams";
 import { PearsonRadioGroup } from "@/components/pearson/PearsonRadioGroup";
 import { PearsonOptionTable } from "@/components/pearson/PearsonOptionTable";
 import { getPastPaperOptionLetters } from "@/lib/papers/pastPaperTextMode";
@@ -155,6 +156,11 @@ export function PearsonRichQuestion({
           <StemContent content={stem} className="text-inherit" />
         )}
       </div>
+      {question.diagramKey ? (
+        <div className="pearson-diagram">
+          <EsatCampMockDiagram diagramKey={question.diagramKey} />
+        </div>
+      ) : null}
       {stemDiagrams.map((asset) => (
         <div key={asset.id} className="pearson-diagram">
           {/* eslint-disable-next-line @next/next/no-img-element */}

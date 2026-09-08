@@ -67,10 +67,10 @@ export const MATHS1_MOCK_03_QUESTIONS: EsatCampMockQuestion[] = [
     stem: "Which expression is equal to 4/(\\sqrt{5} - 1)?",
     options: {
       A: "\\(\\sqrt{5} - 1\\)",
-      B: "\\((\\sqrt{5} + 1)/4\\)",
+      B: "\\(\\frac{\\sqrt{5} + 1}{4}\\)",
       C: "\\(\\sqrt{5} + 1\\)",
       D: "\\(5 + \\sqrt{5}\\)",
-      E: "\\(4/(\\sqrt{5} + 1)\\)",
+      E: "\\(\\frac{4}{\\sqrt{5} + 1}\\)",
       F: "\\(2 + \\sqrt{5}\\)"
     },
     answer: "C",
@@ -128,14 +128,14 @@ export const MATHS1_MOCK_03_QUESTIONS: EsatCampMockQuestion[] = [
     number: 5,
     stem: "A positive number x rounds to 3.7 to the nearest 0.1. Which interval contains every possible value of x?",
     options: {
-      A: "\\(3.65 \\le x < 3.75\\)",
-      B: "\\(3.65 < x \\le 3.75\\)",
-      C: "\\(3.6 \\le x < 3.8\\)",
-      D: "\\(3.69 \\le x < 3.71\\)",
-      E: "\\(3.7 \\le x < 3.8\\)"
+      A: "\\(3.65 \\leq x < 3.75\\)",
+      B: "\\(3.65 < x \\leq 3.75\\)",
+      C: "\\(3.6 \\leq x < 3.8\\)",
+      D: "\\(3.69 \\leq x < 3.71\\)",
+      E: "\\(3.7 \\leq x < 3.8\\)"
     },
     answer: "A",
-    answerText: "\\(3.65 \\le x < 3.75\\)",
+    answerText: "\\(3.65 \\leq x < 3.75\\)",
     topicCode: "M2.13",
     topicName: "Number",
     difficulty: "1/4 Easy",
@@ -306,17 +306,17 @@ export const MATHS1_MOCK_03_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 11,
-    stem: "For x \\ne -1 and x \\ne 1, which expression is equal to 1/(x - 1) - 1/(x + 1)?",
+    stem: "For \\(x \\ne -1\\) and \\(x \\ne 1\\), which expression is equal to 1/(x - 1) - 1/(x + 1)?",
     options: {
       A: "0",
-      B: "2/(x + 1)",
-      C: "2/(x - 1)",
-      D: "\\(-2/(x^{2} - 1)\\)",
-      E: "\\(2/(x^{2} - 1)\\)",
-      F: "\\(1/(x^{2} - 1)\\)"
+      B: "\\(\\frac{2}{x + 1}\\)",
+      C: "\\(\\frac{2}{x - 1}\\)",
+      D: "\\(-\\frac{2}{x^{2} - 1}\\)",
+      E: "\\(\\frac{2}{x^{2} - 1}\\)",
+      F: "\\(\\frac{1}{x^{2} - 1}\\)"
     },
     answer: "E",
-    answerText: "\\(2/(x^{2} - 1)\\)",
+    answerText: "\\(\\frac{2}{x^{2} - 1}\\)",
     topicCode: "M4.6",
     topicName: "Algebra",
     difficulty: "3/4 Hard",
@@ -415,7 +415,7 @@ export const MATHS1_MOCK_03_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 50,
     targetDisplay: "50 s",
     tip: "Square v before multiplying by m.",
-    solution: "E = 3 \\times \\(4^{2}\\) / 2 = 3 \\times 16 / 2 = 24.",
+    solution: "\\[\\frac{E = 3 \\times 4^{2}}{2 = 3 \\times \\frac{16}{2} = 24}.\\]",
     distractors: {
       A: "Calculates mv/2 without squaring v.",
       B: "Calculates \\(v^{2}\\)/2 and omits m.",
@@ -737,15 +737,15 @@ export const MATHS1_MOCK_03_QUESTIONS: EsatCampMockQuestion[] = [
     number: 25,
     stem: "In a group of 60 students, 35 study Physics, 20 study Music, and 12 study both. One student is chosen at random from those who study Physics. What is the probability that the student also studies Music?",
     options: {
-      A: "\\(1/5\\)",
-      B: "\\(12/35\\)",
-      C: "\\(3/5\\)",
-      D: "\\(4/7\\)",
-      E: "\\(23/60\\)",
-      F: "\\(7/12\\)"
+      A: "\\(\\frac{1}{5}\\)",
+      B: "\\(\\frac{12}{35}\\)",
+      C: "\\(\\frac{3}{5}\\)",
+      D: "\\(\\frac{4}{7}\\)",
+      E: "\\(\\frac{23}{60}\\)",
+      F: "\\(\\frac{7}{12}\\)"
     },
     answer: "B",
-    answerText: "\\(12/35\\)",
+    answerText: "\\(\\frac{12}{35}\\)",
     topicCode: "M7.7",
     topicName: "Probability",
     difficulty: "2/4 Medium",
@@ -767,14 +767,14 @@ export const MATHS1_MOCK_03_QUESTIONS: EsatCampMockQuestion[] = [
     number: 26,
     stem: "A fair six-sided die is rolled twice. What is the probability that the product of the two scores is even?",
     options: {
-      A: "\\(1/4\\)",
-      B: "\\(1/2\\)",
-      C: "\\(3/4\\)",
-      D: "\\(5/6\\)",
-      E: "\\(2/3\\)"
+      A: "\\(\\frac{1}{4}\\)",
+      B: "\\(\\frac{1}{2}\\)",
+      C: "\\(\\frac{3}{4}\\)",
+      D: "\\(\\frac{5}{6}\\)",
+      E: "\\(\\frac{2}{3}\\)"
     },
     answer: "C",
-    answerText: "\\(3/4\\)",
+    answerText: "\\(\\frac{3}{4}\\)",
     topicCode: "M7.6",
     topicName: "Probability",
     difficulty: "1/4 Easy",

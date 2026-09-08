@@ -53,7 +53,36 @@ function isPositionInMathDelimiters(text: string, position: number): boolean {
     }
   }
 
-  return false;
+  const parenRanges = findLatexParenRanges(text);
+  return parenRanges.some(([start, end]) => start <= position && position < end);
+}
+
+function findLatexParenRanges(text: string): Array<[number, number]> {
+  const ranges: Array<[number, number]> = [];
+  let i = 0;
+  while (i < text.length) {
+    if (text[i] !== "\\") {
+      i += 1;
+      continue;
+    }
+    const next = text[i + 1];
+    if (next === "[") {
+      const end = text.indexOf("\\]", i + 2);
+      if (end === -1) break;
+      ranges.push([i, end + 2]);
+      i = end + 2;
+      continue;
+    }
+    if (next === "(") {
+      const end = text.indexOf("\\)", i + 2);
+      if (end === -1) break;
+      ranges.push([i, end + 2]);
+      i = end + 2;
+      continue;
+    }
+    i += 1;
+  }
+  return ranges;
 }
 
 function isFullyWrappedInMath(text: string): boolean {
@@ -114,6 +143,8 @@ function wrapBareLatexPattern(text: string, pattern: RegExp): string {
 
 const BARE_FRAC_PATTERN = /\\frac\{[^}]*\}\{[^}]*\}/g;
 const BARE_SQRT_PATTERN = /(?:\d+)?\\sqrt(?:\[[^\]]*\])?\{[^}]*\}/g;
+const BARE_CMD_PATTERN =
+  /\\(?:geq?|leq?|neq?|times|pi|theta|pm|infty|cdot|circ)\b/g;
 
 /** True when text has \frac not already inside $...$ or $$...$$. */
 export function hasBareLatexFractions(text: string): boolean {
@@ -141,6 +172,11 @@ export function wrapBareLatexSqrt(text: string): string {
   return wrapBareLatexPattern(text, BARE_SQRT_PATTERN);
 }
 
+/** Wrap leftover commands such as \ge / \times that never got math delimiters. */
+export function wrapBareLatexCommands(text: string): string {
+  return wrapBareLatexPattern(text, BARE_CMD_PATTERN);
+}
+
 /**
  * Wrap bare LaTeX in $ delimiters for KaTeX.
  * Handles full math expressions (e.g. `3 + 2\sqrt{2}`) and embedded commands.
@@ -159,5 +195,6 @@ export function wrapBareLatex(text: string): string {
 
   let result = wrapBareLatexFractions(text);
   result = wrapBareLatexSqrt(result);
+  result = wrapBareLatexCommands(result);
   return result;
 }
