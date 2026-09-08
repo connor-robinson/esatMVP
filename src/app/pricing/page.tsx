@@ -77,6 +77,11 @@ export default function PricingPage() {
   } = useSubscription();
   const [loading, setLoading] = useState<string | null>(null);
   const [banner, setBanner] = useState<string | null>(null);
+  const [promoCode, setPromoCode] = useState("");
+  const [promoStatus, setPromoStatus] = useState<
+    "idle" | "checking" | "valid" | "invalid"
+  >("idle");
+  const [promoMessage, setPromoMessage] = useState<string | null>(null);
   const autoCheckoutStarted = useRef(false);
 
   const seasonPrice = getSeasonPassPrice();
@@ -174,6 +179,48 @@ export default function PricingPage() {
   ];
 
   const fromSettings = searchParams.get("from") === "settings";
+  const codeFromUrl = searchParams.get("code");
+
+  useEffect(() => {
+    if (!codeFromUrl) return;
+    setPromoCode(codeFromUrl.toUpperCase());
+  }, [codeFromUrl]);
+
+  useEffect(() => {
+    const code = promoCode.trim();
+    if (!code) {
+      setPromoStatus("idle");
+      setPromoMessage(null);
+      return;
+    }
+    const handle = window.setTimeout(() => {
+      setPromoStatus("checking");
+      void fetch(
+        `/api/feedback-referral/validate?code=${encodeURIComponent(code)}`,
+      )
+        .then(async (res) => res.json())
+        .then((data) => {
+          if (data.valid) {
+            setPromoStatus("valid");
+            setPromoMessage("50% off the first payment for one friend.");
+            return;
+          }
+          setPromoStatus("invalid");
+          setPromoMessage(
+            data.reason === "own_code"
+              ? "This is your own code. A friend has to use it."
+              : data.reason === "already_used"
+                ? "This code has already been used."
+                : "That code is not valid.",
+          );
+        })
+        .catch(() => {
+          setPromoStatus("invalid");
+          setPromoMessage("Could not check that code.");
+        });
+    }, 250);
+    return () => window.clearTimeout(handle);
+  }, [promoCode]);
 
   const handleCheckout = async (planType: PaidPlanId) => {
     if (isPartnerAccess) {
@@ -192,6 +239,14 @@ export default function PricingPage() {
       router.push(buildCheckoutSignupUrl(planType));
       return;
     }
+    if (promoCode.trim() && promoStatus !== "valid") {
+      setBanner(
+        promoStatus === "checking"
+          ? "Wait a moment while we check that friend code."
+          : promoMessage ?? "That friend code is not valid.",
+      );
+      return;
+    }
     setLoading(planType);
     setBanner(null);
     try {
@@ -199,7 +254,13 @@ export default function PricingPage() {
       const res = await fetch("/api/stripe/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planType, ...ga }),
+        body: JSON.stringify({
+          planType,
+          ...ga,
+          ...(promoStatus === "valid" && promoCode.trim()
+            ? { promotionCode: promoCode.trim() }
+            : {}),
+        }),
       });
       const data = await res.json().catch(() => ({}));
       if (data.url) {
@@ -211,10 +272,16 @@ export default function PricingPage() {
         window.location.href = data.url;
         return;
       }
-      throw new Error("checkout_failed");
-    } catch {
+      throw new Error(
+        typeof data.error === "string" ? data.error : "checkout_failed",
+      );
+    } catch (err) {
       setLoading(null);
-      setBanner("Could not start checkout. Try again.");
+      setBanner(
+        err instanceof Error && err.message !== "checkout_failed"
+          ? err.message
+          : "Could not start checkout. Try again.",
+      );
     }
   };
 
@@ -331,6 +398,27 @@ export default function PricingPage() {
             /month after the trial unless you cancel. Was {monthlyListPriceLabel}
             ({monthlyDiscountLabel}).
           </p>
+          <div className="mx-auto mt-6 max-w-md text-left">
+            <label className="text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">
+              Friend code
+            </label>
+            <input
+              value={promoCode}
+              onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+              placeholder="CAMP50-XXXXXX"
+              autoComplete="off"
+              className="mt-2 w-full rounded-organic-md bg-surface-elevated px-4 py-3 font-mono text-sm text-text placeholder:text-text-subtle focus:outline-none"
+            />
+            {promoMessage ? (
+              <p
+                className={`mt-2 text-xs ${
+                  promoStatus === "valid" ? "text-text" : "text-text-muted"
+                }`}
+              >
+                {promoStatus === "checking" ? "Checking code…" : promoMessage}
+              </p>
+            ) : null}
+          </div>
         </div>
 
         <PricingTable

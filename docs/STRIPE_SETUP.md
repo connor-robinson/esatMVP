@@ -118,6 +118,15 @@ Create the following in [Stripe Dashboard → Products](https://dashboard.stripe
 
 Copy each Price ID (e.g. `price_1ABC...`) into the matching env var.
 
+Optional friend-referral 50% codes (preview until `FEEDBACK_REFERRAL_LIVE=true`):
+
+```env
+FEEDBACK_REFERRAL_LIVE=false
+FEEDBACK_REFERRAL_PREVIEW_EMAILS=you@example.com
+# Optional: reuse a Stripe coupon instead of auto-creating one
+# STRIPE_FEEDBACK_REFERRAL_COUPON=coupon_...
+```
+
 ### 4. Stripe Webhook
 
 1. Go to [Developers → Webhooks](https://dashboard.stripe.com/test/webhooks)

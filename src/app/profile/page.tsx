@@ -20,6 +20,7 @@ import { ChangeEmailModal } from "@/components/profile/ChangeEmailModal";
 import { ResetDataModal } from "@/components/profile/ResetDataModal";
 import { UsernameSetupModal } from "@/components/profile/UsernameSetupModal";
 import { BugReportPanel } from "@/components/profile/BugReportPanel";
+import { FeedbackReferralSettingsCard } from "@/components/feedbackReferral/FeedbackReferralSettingsCard";
 import { cn } from "@/lib/utils";
 import { getExamAccentFillClass } from "@/config/colors";
 import { CheckCircle2, AlertCircle, Check } from "lucide-react";
@@ -1456,6 +1457,7 @@ export default function ProfilePage() {
                   />
                   <div className="px-5 py-5 sm:px-7">
                     <BugReportPanel />
+                    <FeedbackReferralSettingsCard />
                   </div>
                 </>
               )}
