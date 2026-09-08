@@ -28,7 +28,7 @@ function baseQuestion(overrides: Partial<Question> = {}): Question {
 }
 
 describe("stemHasLetterLabeledTable", () => {
-  it("detects markdown tables with A–H row labels", () => {
+  it("detects markdown tables with A-H row labels", () => {
     const stem = `Question text
 
 |  | ammeter reading / A | power transferred / W |
@@ -37,6 +37,20 @@ describe("stemHasLetterLabeledTable", () => {
 | B | 0.67 | 1.3 |`;
 
     expect(stemHasLetterLabeledTable(stem)).toBe(true);
+  });
+
+  it("detects bold A-H labels in the first column", () => {
+    const stem = `Which row is correct?
+
+|  | outer | inner |
+| --- | --- | --- |
+| **A** | in | out |
+| **B** | out | in |`;
+
+    expect(stemHasLetterLabeledTable(stem)).toBe(true);
+    const extracted = extractLetterLabeledTable(stem);
+    expect(extracted.table?.rows.map((row) => row.letter)).toEqual(["A", "B"]);
+    expect(extracted.table?.rows[0]?.cells).toEqual(["in", "out"]);
   });
 
   it("returns false when no letter-labeled rows exist", () => {

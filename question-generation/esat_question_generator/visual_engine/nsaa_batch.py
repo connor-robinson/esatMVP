@@ -47,7 +47,11 @@ from visual_engine.render_matplotlib import render_diagram
 from visual_engine.review_store import ReviewStore
 from visual_engine.science_visuals import chem_structure_spec, pedigree_spec
 from visual_engine.subject_review import run_subject_verifier, verdict_is_pass
-from visual_engine.tables import ensure_table_in_stem, table_auto_flags
+from visual_engine.tables import (
+    ensure_table_in_stem,
+    fill_options_from_option_table,
+    table_auto_flags,
+)
 
 ARTIFACTS = Path(__file__).resolve().parent / "review_data" / "artifacts"
 STATUS_PATH = Path(__file__).resolve().parent / "review_data" / "nsaa_batch_status.json"
@@ -342,6 +346,7 @@ def generate_one(
     if visual_type == "table" or table:
         design.stem = ensure_table_in_stem(design.stem, table)
         design.idea_plan["visual_type"] = visual_type or "table"
+    design.options = fill_options_from_option_table(design.stem, design.options)
 
     diagram_required = visual_type in {"graph", "chem_structure", "bio_diagram", "pedigree"}
     source_image_path = str(source_png) if source_png else ""

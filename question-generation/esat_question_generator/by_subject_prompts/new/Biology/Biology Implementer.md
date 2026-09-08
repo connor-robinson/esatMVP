@@ -65,7 +65,10 @@ Use whichever format best fits the designer plan:
   H 1, 2 and 3
 
 3) Row/table choice
-- Options select one row or one outcome from a compact table
+- The table rows ARE the options. First column is A, B, C, ... (usually A-H).
+- Do not also write a second list such as "A. row A", "B. row B".
+- JSON options are the row contents after the letter, not the words "row A".
+- `correct_option` is the letter of the correct row.
 
 4) Label / stage / process choice
 - Often tied to a simple diagram, cycle, or pedigree

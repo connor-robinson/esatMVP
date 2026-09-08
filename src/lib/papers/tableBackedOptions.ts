@@ -3,11 +3,11 @@ import type { Letter, Question } from "@/types/papers";
 
 const LETTERS = new Set<Letter>(["A", "B", "C", "D", "E", "F", "G", "H"]);
 
-/** Markdown table row whose first cell is a single option letter A–H. */
-const MARKDOWN_LETTER_ROW = /^\|\s*([A-H])\s*\|/gm;
+/** Markdown table row whose first cell is a single option letter A-H. */
+const MARKDOWN_LETTER_ROW = /^\|\s*(?:\*{1,2}|\$)?([A-H])(?:\*{1,2}|\$)?\s*\|/gm;
 
-/** HTML table row whose first cell is a single option letter A–H. */
-const HTML_LETTER_CELL = /<t[dh][^>]*>\s*([A-H])\s*<\/t[dh]>/gi;
+/** HTML table row whose first cell is a single option letter A-H. */
+const HTML_LETTER_CELL = /<t[dh][^>]*>\s*(?:<(?:strong|b|em|i)>)?\s*([A-H])\s*(?:<\/(?:strong|b|em|i)>)?\s*<\/t[dh]>/gi;
 
 export type LetterTableRow = {
   letter: Letter;
@@ -25,8 +25,13 @@ export type ExtractedLetterTable = {
   after: string;
 };
 
+function unwrapOptionLetter(value: string): string {
+  const match = value.trim().match(/^(?:\*{1,2}|\$)?([A-H])(?:\*{1,2}|\$)?$/);
+  return match?.[1] ?? value.trim();
+}
+
 function isOptionLetter(value: string): value is Letter {
-  return LETTERS.has(value as Letter);
+  return LETTERS.has(unwrapOptionLetter(value) as Letter);
 }
 
 function splitMarkdownTableCellLine(line: string): string[] {
@@ -44,7 +49,7 @@ function parseLetterTable(headers: string[], bodyRows: string[][]): LetterLabele
   if (headers.length === 0 || bodyRows.length < 2) return null;
   const rows: LetterTableRow[] = [];
   for (const row of bodyRows) {
-    const letter = row[0]?.trim() ?? "";
+    const letter = unwrapOptionLetter(row[0] ?? "");
     if (!isOptionLetter(letter)) return null;
     rows.push({ letter, cells: row.slice(1) });
   }

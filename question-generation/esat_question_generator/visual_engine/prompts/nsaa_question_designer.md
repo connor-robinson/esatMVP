@@ -118,10 +118,29 @@ If `visual_type` is `table`, include structured data:
 
 Also put a markdown pipe table in the stem. Do not ask for a PNG of a simple table.
 
+If the student picks a table row (comparison of outcomes, directions of movement, conditions, etc.), the table **is** the option list:
+
+```
+"table": {
+  "headers": ["Net movement across outer membrane", "Net movement across inner membrane", "Initial change in mass of inner bag"],
+  "rows": [
+    ["beaker to outer bag", "outer bag to inner bag", "increases"],
+    ["beaker to outer bag", "outer bag to inner bag", "decreases"],
+    ["beaker to outer bag", "inner bag to outer bag", "increases"],
+    ["beaker to outer bag", "inner bag to outer bag", "decreases"],
+    ["outer bag to beaker", "outer bag to inner bag", "increases"]
+  ],
+  "row_headers": ["A", "B", "C", "D", "E"]
+}
+```
+
+Put letters A-H in the first column of the markdown table. Do **not** also list options as "row A", "row B", or "A. row A". JSON `options` must be the row cell text after the letter. `correct_option` is that letter.
+
 ## Hard rules
 
 - One correct option. No duplicate option text.
-- 5 to 8 options, letters A, B, C, ... in order (A–H for statement-combo).
+- 5 to 8 options, letters A, B, C, ... in order (A-H for statement-combo or row-choice tables).
+- If the answer choices are rows of a letter-labeled table, the table is the option list. Do not repeat it as "row A", "row B", ...
 - Use KaTeX `$...$` for maths. Use `$\ce{...}$` for chemistry.
 - The new stem must stand alone. Do not mention NSAA, ENGAA, or the source paper.
 - Do not reveal the answer in a diagram or table.

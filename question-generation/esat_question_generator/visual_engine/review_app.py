@@ -22,6 +22,7 @@ from visual_engine.diagram_designer import DiagramDesignerInput
 from visual_engine.generation import MAX_AUTO_ATTEMPTS, MAX_MANUAL_ATTEMPTS, regenerate_diagram
 from visual_engine.question_designer import NSAA_DIAGRAM_MODEL
 from visual_engine.review_store import FILTERS, ReviewStore
+from visual_engine.tables import should_hide_written_options
 
 FEEDBACK_TAGS = [
     "axis/ticks",
@@ -504,12 +505,15 @@ def main() -> None:
         st.subheader("Generated question")
         _render_exam_text(item.get("stem") or "(no stem)", key="stem")
         correct = str(item.get("correct_answer") or "").strip().upper()
-        if choices:
+        stem_text = item.get("stem") or ""
+        if choices and not should_hide_written_options(stem_text, choices):
             option_lines = []
             for letter, text in choices.items():
                 mark = " (correct)" if str(letter).upper() == correct else ""
                 option_lines.append(f"**{letter}.** {text}{mark}")
             _render_exam_text("\n\n".join(option_lines), key="options")
+        elif correct:
+            st.caption(f"Correct row: {correct}")
         if item.get("explanation"):
             with st.expander("Explanation"):
                 _render_exam_text(item.get("explanation") or "", key="expl")

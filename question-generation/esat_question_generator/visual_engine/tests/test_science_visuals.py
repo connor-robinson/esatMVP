@@ -10,7 +10,14 @@ from visual_engine.objects.pedigree import layout_pedigree
 from visual_engine.question_designer import parse_question_design
 from visual_engine.render_matplotlib import render_diagram
 from visual_engine.science_visuals import chem_structure_spec, pedigree_spec
-from visual_engine.tables import ensure_table_in_stem, normalize_table, table_to_markdown
+from visual_engine.tables import (
+    ensure_table_in_stem,
+    fill_options_from_option_table,
+    normalize_table,
+    should_hide_written_options,
+    stem_has_option_table,
+    table_to_markdown,
+)
 
 
 def test_normalize_table_and_markdown():
@@ -25,6 +32,50 @@ def test_normalize_table_and_markdown():
     assert "4.2" in md
     stem = ensure_table_in_stem("Mass of product is recorded.", table)
     assert "| time / s |" in stem
+
+
+def test_option_table_hides_row_placeholders():
+    table = {
+        "headers": [
+            "Net movement across outer membrane",
+            "Net movement across inner membrane",
+            "Initial change in mass of inner bag",
+        ],
+        "rows": [
+            ["beaker to outer bag", "outer bag to inner bag", "increases"],
+            ["beaker to outer bag", "outer bag to inner bag", "decreases"],
+            ["beaker to outer bag", "inner bag to outer bag", "increases"],
+            ["beaker to outer bag", "inner bag to outer bag", "decreases"],
+            ["outer bag to beaker", "outer bag to inner bag", "increases"],
+        ],
+        "row_headers": ["A", "B", "C", "D", "E"],
+    }
+    stem = ensure_table_in_stem("An artificial cell is placed in a beaker.", table)
+    assert stem_has_option_table(stem)
+    placeholders = {letter: f"row {letter}" for letter in "ABCDE"}
+    assert should_hide_written_options(stem, placeholders)
+    filled = fill_options_from_option_table(stem, placeholders)
+    assert filled["E"].startswith("outer bag to beaker")
+    assert "row E" not in filled["E"]
+
+
+def test_option_table_detects_bold_letter_cells():
+    stem = """Which row is correct?
+
+| | outer membrane | inner membrane | inner bag |
+|---|---|---|---|
+| **A** | beaker $\\rightarrow$ outer bag | outer bag $\\rightarrow$ inner bag | increases |
+| **B** | beaker $\\rightarrow$ outer bag | outer bag $\\rightarrow$ inner bag | decreases |
+| **C** | beaker $\\rightarrow$ outer bag | inner bag $\\rightarrow$ outer bag | increases |
+| **D** | beaker $\\rightarrow$ outer bag | inner bag $\\rightarrow$ outer bag | decreases |
+| **E** | outer bag $\\rightarrow$ beaker | outer bag $\\rightarrow$ inner bag | increases |
+"""
+    placeholders = {letter: f"row {letter}" for letter in "ABCDE"}
+    assert stem_has_option_table(stem)
+    assert should_hide_written_options(stem, placeholders)
+    filled = fill_options_from_option_table(stem, placeholders)
+    assert filled["E"].startswith("outer bag")
+    assert "row E" not in filled["E"]
 
 
 def test_parse_chemistry_plain_text():

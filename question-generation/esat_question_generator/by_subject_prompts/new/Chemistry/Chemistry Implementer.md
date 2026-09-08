@@ -107,7 +107,7 @@ Use the designer's `format_bias` as a strong preference:
 - `direct_single` -> one answer among A–F
 - `statement_combo` -> statements 1/2/3 with A–H combination options
 - `equation_choice` -> choose the equation / half-equation / ionic equation / structure that could be correct
-- `row_table` -> choose correct row from a compact table
+- `row_table` -> choose the correct row from a compact table. Letters A-H go in the first column. Do not also list "row A", "row B". JSON options are the row contents.
 - `structure_choice` -> choose structure / formula / polymer / isomer / repeat unit
 
 Only deviate if the chosen format becomes unnatural.
