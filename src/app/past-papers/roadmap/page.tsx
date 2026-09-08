@@ -422,7 +422,7 @@ export default function PapersRoadmapPage() {
 
           allPapers.set(paperKey, paper);
 
-          // ESAT CAMP Mock 1 spans multiple module paper IDs (Maths + Physics).
+          // ESAT CAMP papers with the same display name can span module paper IDs.
           const modulePapers = isEsatCampMockExamType(firstPartInPaper.examType)
             ? getEsatCampMockModulePapersByPaperName(firstPartInPaper.paperName)
             : [paper];

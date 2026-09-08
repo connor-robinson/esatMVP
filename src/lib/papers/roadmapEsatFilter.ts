@@ -58,9 +58,14 @@ export function filterRoadmapStageByEsatSubjects(
   esatSubjects: string[] | null | undefined,
   examPreference: "ESAT" | "TMUA" | null,
 ): RoadmapStage | null {
-  // Always show ESATCamp Mock as its own roadmap block.
+  // Filter ESATCamp mocks to the student's chosen modules.
   if (stage.id === "esat-camp-mock-papers") {
-    return stage;
+    if (!esatSubjects?.length) return stage;
+    const parts = stage.parts.filter((part) =>
+      roadmapPartMatchesEsatSubjects(part, stage.examName, esatSubjects),
+    );
+    if (parts.length === 0) return stage;
+    return { ...stage, parts };
   }
 
   if (stage.examName === "TMUA") {

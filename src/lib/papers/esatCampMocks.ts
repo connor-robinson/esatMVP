@@ -59,7 +59,7 @@ export function mockQuestionToPaperQuestion(
 ): Question {
   const paperId = paperIdForModule(mockModule);
   const baseId = paperId * 100 + q.number;
-  const isOriginalMathsMock = mockModule.id === "esatcamp-maths1-mock-01";
+  const hideBenchmark = mockModule.subject !== "Physics";
   return {
     id: baseId,
     paperId,
@@ -74,7 +74,7 @@ export function mockQuestionToPaperQuestion(
     questionStem: q.stem,
     options: q.options as Question["options"],
     contentFormat: "text",
-    solutionText: buildSolutionText(q, !isOriginalMathsMock),
+    solutionText: buildSolutionText(q, !hideBenchmark),
     solutionType: "generated",
     answerLetter: q.answer,
     createdAt: "",
@@ -87,7 +87,7 @@ export function mockQuestionToPaperQuestion(
     targetDisplay: q.targetDisplay,
     tipText: q.tip,
     // Calibration is editorial metadata for original maths mocks.
-    benchmarkNote: isOriginalMathsMock ? undefined : q.benchmarkNote,
+    benchmarkNote: hideBenchmark ? undefined : q.benchmarkNote,
     editorPick: q.editorPick,
     diagramKey: q.diagramKey,
   };
@@ -111,7 +111,7 @@ export function getEsatCampMockPapers(): Paper[] {
   return [...byName.values()];
 }
 
-/** One Paper entry per module (for loading questions across Mock 1 Maths+Physics). */
+/** One Paper entry per module. */
 export function getEsatCampMockModulePapers(): Paper[] {
   return ESAT_CAMP_MOCK_MODULES.map((mockModule) => ({
     id: paperIdForModule(mockModule),
@@ -172,7 +172,7 @@ export function getEsatCampMockQuestions(paperId: number): Question[] {
   );
 }
 
-/** All questions for a Mock 1 / Mock 2 basket (may span multiple module paper IDs). */
+/** All questions for modules that share this display paper name. */
 export function getEsatCampMockQuestionsByPaperName(paperName: string): Question[] {
   return getEsatCampMockModulesByPaperName(paperName).flatMap((mockModule) =>
     mockModule.questions.map((q) => mockQuestionToPaperQuestion(mockModule, q)),

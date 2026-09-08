@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
       if (!resolvedPaper) {
         return NextResponse.json({ error: "Paper not found" }, { status: 404 });
       }
-      // Mock 1 spans Maths + Physics modules that share the same paperName.
+      // ESAT CAMP modules that share a paper name are one library card.
       const partRows = getEsatCampMockQuestionPartsForPaperName(paperName);
       const slimParts: SlimQuestionPart[] = partRows.map((row) => ({
         paperId: row.paperId,

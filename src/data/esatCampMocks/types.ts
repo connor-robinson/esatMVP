@@ -24,9 +24,13 @@ export interface EsatCampMockQuestion {
 export type EsatCampMockModuleId =
   | "physics-module-a"
   | "physics-module-b"
-  | "esatcamp-maths1-mock-01";
+  | "esatcamp-maths1-mock-01"
+  | "esatcamp-maths1-mock-02"
+  | "esatcamp-maths1-mock-03"
+  | "esatcamp-maths2-mock-01"
+  | "esatcamp-maths2-mock-02";
 
-export type EsatCampMockSubject = "Physics" | "Mathematics";
+export type EsatCampMockSubject = "Physics" | "Mathematics" | "Mathematics 2";
 
 export interface EsatCampMockModule {
   id: EsatCampMockModuleId;

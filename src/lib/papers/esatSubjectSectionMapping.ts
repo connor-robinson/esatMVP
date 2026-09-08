@@ -21,7 +21,7 @@ function isEsatSubjectKey(value: string): value is EsatSubjectKey {
  */
 const ESAT_SUBJECT_TO_PAPER_SECTIONS: Record<EsatSubjectKey, PaperSection[]> = {
   "Math 1": ["Mathematics", "Advanced Mathematics and Advanced Physics"],
-  "Math 2": ["Advanced Mathematics and Advanced Physics"],
+  "Math 2": ["Advanced Mathematics and Advanced Physics", "Mathematics 2"],
   Physics: ["Physics"],
   Chemistry: ["Chemistry"],
   Biology: ["Biology"],

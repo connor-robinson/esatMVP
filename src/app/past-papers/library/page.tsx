@@ -487,8 +487,7 @@ export default function PapersLibraryPage() {
 
         const paperType =
           examNameToPaperType(paper.examName as ExamName) || 'NSAA';
-        // ESAT CAMP: merge modules that share a Mock name (Mock 1 = Maths + Physics).
-        // Do not merge Mock 1 with Mock 2.
+        // ESAT CAMP: load every module that shares this paper name.
         const catalog = isEsatCampMockExamType(paper.examType)
           ? getEsatCampMockModulePapersByPaperName(paper.paperName)
           : paperType === 'NSAA' ||

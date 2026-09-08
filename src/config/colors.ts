@@ -47,6 +47,7 @@ export const PAPER_TYPE_COLORS = {
 export const SECTION_COLORS = {
   "Math": PAPER_COLORS.mathematics,
   "Mathematics": PAPER_COLORS.mathematics,
+  "Mathematics 2": PAPER_COLORS.advanced,
   "Physics": PAPER_COLORS.physics,
   "Chemistry": PAPER_COLORS.chemistry,
   "Biology": PAPER_COLORS.biology,

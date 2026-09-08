@@ -3,7 +3,7 @@
  */
 
 export type PaperType = "ESAT" | "TMUA" | "NSAA" | "ENGAA" | "PAT" | "MAT" | "OTHER";
-export type PaperSection = "Math" | "Physics" | "Chemistry" | "Advanced Math" | "Biology" | "Mathematics" | "Advanced Mathematics and Advanced Physics" | "Maths and Physics" | "Math and Physics" | "Advanced Math and Advanced Physics" | "Mathematics and Physics" | "Multiple Choice" | "Long Answers" | "Paper 1" | "Paper 2";
+export type PaperSection = "Math" | "Physics" | "Chemistry" | "Advanced Math" | "Biology" | "Mathematics" | "Mathematics 2" | "Advanced Mathematics and Advanced Physics" | "Maths and Physics" | "Math and Physics" | "Advanced Math and Advanced Physics" | "Mathematics and Physics" | "Multiple Choice" | "Long Answers" | "Paper 1" | "Paper 2";
 export type PaperVariantType = "Paper 1" | "Paper 2" | "Section 1" | "Section 2" | "Official" | "Practice 1" | "Practice 2";
 export type Letter = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H";
 

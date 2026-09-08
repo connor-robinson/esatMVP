@@ -1,9 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
+  ESAT_CAMP_MOCK_DISPLAY_NAMES,
   ESAT_CAMP_MOCK_EXAM_TYPE,
   ESAT_CAMP_MOCK_MODULES,
   ESAT_CAMP_MOCK_PAPER_IDS,
   MATHS1_MOCK_01,
+  MATHS1_MOCK_02,
+  MATHS1_MOCK_03,
+  MATHS2_MOCK_01,
+  MATHS2_MOCK_02,
   PHYSICS_MODULE_A,
   PHYSICS_MODULE_B,
 } from "@/data/esatCampMocks";
@@ -41,6 +46,40 @@ const DIAGRAM_B = [
   "B26",
 ] as const;
 const DIAGRAM_M = ["M22"] as const;
+const DIAGRAM_M1_NEW = [
+  "m1-2-q17",
+  "m1-2-q18",
+  "m1-2-q19",
+  "m1-2-q20",
+  "m1-2-q24",
+  "m1-2-q27",
+  "m1-3-q17",
+  "m1-3-q19",
+  "m1-3-q20",
+  "m1-3-q22",
+  "m1-3-q24",
+  "m1-3-q27",
+] as const;
+const DIAGRAM_M2 = [
+  "m2-1-q10",
+  "m2-1-q13",
+  "m2-1-q19",
+  "m2-1-q21",
+  "m2-1-q22",
+  "m2-1-q23",
+  "m2-1-q25",
+  "m2-1-q26",
+  "m2-1-q27",
+  "m2-2-q09",
+  "m2-2-q10",
+  "m2-2-q11",
+  "m2-2-q12",
+  "m2-2-q15",
+  "m2-2-q23",
+  "m2-2-q25",
+  "m2-2-q26",
+  "m2-2-q27",
+] as const;
 
 const MATHS1_STRONG = [19, 21, 23, 24, 25] as const;
 const MATHS1_ANSWER_COUNTS = { A: 4, B: 5, C: 5, D: 4, E: 5, F: 4 } as const;
@@ -64,7 +103,11 @@ describe("ESAT CAMP mock modules", () => {
     expect(PHYSICS_MODULE_A.questions).toHaveLength(27);
     expect(PHYSICS_MODULE_B.questions).toHaveLength(27);
     expect(MATHS1_MOCK_01.questions).toHaveLength(27);
-    expect(ESAT_CAMP_MOCK_MODULES).toHaveLength(3);
+    expect(MATHS1_MOCK_02.questions).toHaveLength(27);
+    expect(MATHS1_MOCK_03.questions).toHaveLength(27);
+    expect(MATHS2_MOCK_01.questions).toHaveLength(27);
+    expect(MATHS2_MOCK_02.questions).toHaveLength(27);
+    expect(ESAT_CAMP_MOCK_MODULES).toHaveLength(7);
   });
 
   it("numbers questions 1..27 in each module", () => {
@@ -80,8 +123,8 @@ describe("ESAT CAMP mock modules", () => {
       for (const q of mockModule.questions) {
         const letters = Object.keys(q.options);
         expect(letters).toEqual([...letters].sort());
-        expect(letters.length).toBeGreaterThanOrEqual(5);
-        expect(letters.length).toBeLessThanOrEqual(6);
+        expect(letters.length).toBeGreaterThanOrEqual(4);
+        expect(letters.length).toBeLessThanOrEqual(7);
       }
     }
   });
@@ -114,6 +157,8 @@ describe("ESAT CAMP mock modules", () => {
       for (const q of mockModule.questions) {
         if (mockModule.subject === "Physics") {
           expect(q.topicCode).toMatch(/^P\d/);
+        } else if (mockModule.subject === "Mathematics 2") {
+          expect(q.topicCode).toMatch(/^MM\d/);
         } else {
           expect(q.topicCode).toMatch(/^M\d/);
         }
@@ -143,8 +188,45 @@ describe("ESAT CAMP mock modules", () => {
     expect(
       MATHS1_MOCK_01.questions.filter((q) => q.diagramKey).map((q) => q.number),
     ).toEqual([22]);
-    expect([...DIAGRAM_A, ...DIAGRAM_B, ...DIAGRAM_M]).toHaveLength(24);
-    expect(DIAGRAM_KEYS).toEqual([...DIAGRAM_A, ...DIAGRAM_B, ...DIAGRAM_M]);
+    expect(
+      MATHS1_MOCK_02.questions.filter((q) => q.diagramKey).map((q) => q.diagramKey),
+    ).toEqual(["m1-2-q17", "m1-2-q18", "m1-2-q19", "m1-2-q20", "m1-2-q24", "m1-2-q27"]);
+    expect(
+      MATHS1_MOCK_03.questions.filter((q) => q.diagramKey).map((q) => q.diagramKey),
+    ).toEqual(["m1-3-q17", "m1-3-q19", "m1-3-q20", "m1-3-q22", "m1-3-q24", "m1-3-q27"]);
+    expect(
+      MATHS2_MOCK_01.questions.filter((q) => q.diagramKey).map((q) => q.diagramKey),
+    ).toEqual([
+      "m2-1-q10",
+      "m2-1-q13",
+      "m2-1-q19",
+      "m2-1-q21",
+      "m2-1-q22",
+      "m2-1-q23",
+      "m2-1-q25",
+      "m2-1-q26",
+      "m2-1-q27",
+    ]);
+    expect(
+      MATHS2_MOCK_02.questions.filter((q) => q.diagramKey).map((q) => q.diagramKey),
+    ).toEqual([
+      "m2-2-q09",
+      "m2-2-q10",
+      "m2-2-q11",
+      "m2-2-q12",
+      "m2-2-q15",
+      "m2-2-q23",
+      "m2-2-q25",
+      "m2-2-q26",
+      "m2-2-q27",
+    ]);
+    expect(DIAGRAM_KEYS).toEqual([
+      ...DIAGRAM_A,
+      ...DIAGRAM_B,
+      ...DIAGRAM_M,
+      ...DIAGRAM_M1_NEW,
+      ...DIAGRAM_M2,
+    ]);
   });
 
   it("exposes independent papers with ESAT CAMP exam type", () => {
@@ -160,9 +242,12 @@ describe("ESAT CAMP mock modules", () => {
     expect(qsM).toHaveLength(27);
     expect(qsA[0]?.examType).toBe(ESAT_CAMP_MOCK_EXAM_TYPE);
     expect(qsA[0]?.examType).not.toBe("Official");
-    expect(qsB.every((q) => q.paperName === "Mock 2")).toBe(true);
-    expect(qsM.every((q) => q.paperName === "Mock 1")).toBe(true);
+    expect(qsB.every((q) => q.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.physics2)).toBe(true);
+    expect(qsM.every((q) => q.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics1)).toBe(true);
     expect(qsM.every((q) => q.partName === "Mathematics")).toBe(true);
+    const qsM2 = getEsatCampMockQuestions(ESAT_CAMP_MOCK_PAPER_IDS.maths2Mock01);
+    expect(qsM2.every((q) => q.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics2)).toBe(true);
+    expect(qsM2.every((q) => q.partName === "Mathematics 2")).toBe(true);
   });
 
   it("adapts to past-paper Question without leaking editor fields into stem", () => {
@@ -205,11 +290,7 @@ describe("ESAT CAMP mock modules", () => {
   });
 
   it("disables official score conversion for all ESAT CAMP mocks", () => {
-    const papers = [
-      ESAT_CAMP_MOCK_PAPER_IDS.physicsModuleA,
-      ESAT_CAMP_MOCK_PAPER_IDS.physicsModuleB,
-      ESAT_CAMP_MOCK_PAPER_IDS.maths1Mock01,
-    ].map((id) =>
+    const papers = Object.values(ESAT_CAMP_MOCK_PAPER_IDS).map((id) =>
       getEsatCampMockQuestions(id),
     );
     expect(papers.every((qs) => qs.length === 27)).toBe(true);

@@ -94,11 +94,13 @@ export function mapPartToSection(partInfo: PartInfo, paperType: PaperType): Pape
     },
     ESAT: {
       'part a:mathematics': 'Mathematics',
+      'part a:mathematics 2': 'Mathematics 2',
       'part a:physics': 'Physics',
       'part b:physics': 'Physics',
       'part c:chemistry': 'Chemistry',
       'part d:biology': 'Biology',
       'part 1:mathematics': 'Mathematics',
+      'part 1:mathematics 2': 'Mathematics 2',
       'part 2:physics': 'Physics',
       'part 3:chemistry': 'Chemistry',
       'part 4:biology': 'Biology',
@@ -205,6 +207,14 @@ export function mapPartToSection(partInfo: PartInfo, paperType: PaperType): Pape
     } else {
       return 'Mathematics and Physics';
     }
+  }
+
+  if (
+    lowerPartName.includes('mathematics 2') ||
+    lowerPartName === 'math 2' ||
+    lowerPartName === 'maths 2'
+  ) {
+    return 'Mathematics 2';
   }
   
   if (lowerPartName.includes('mathematics')) {
@@ -352,6 +362,7 @@ export function deriveTmuaSectionFromQuestion(question: Question, index: number,
 export function getSectionDescription(section: PaperSection, paperType: PaperType): string {
   const descriptions: Record<PaperSection, string> = {
     'Mathematics': 'Basic mathematics questions covering algebra, geometry, and problem-solving',
+    'Mathematics 2': 'Advanced mathematics questions covering algebra, calculus, trigonometry and graphs',
     'Physics': 'Physics questions covering mechanics, thermodynamics, and basic physics concepts',
     'Chemistry': 'Chemistry questions covering organic, inorganic, and physical chemistry',
     'Biology': 'Biology questions covering cell biology, genetics, and biological processes',

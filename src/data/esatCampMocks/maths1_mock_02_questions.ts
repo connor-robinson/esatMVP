@@ -1,0 +1,825 @@
+import type { EsatCampMockQuestion } from "./types";
+
+/** ESAT Mathematics 1 practice pack, module 1 */
+export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
+  {
+    number: 1,
+    stem: "A pump transfers 0.72 \\(m^{3}\\) of water in 8 minutes at a constant rate. What is the rate in litres per second?",
+    options: {
+      A: "0.0015 L/s",
+      B: "0.09 L/s",
+      C: "0.15 L/s",
+      D: "1.5 L/s",
+      E: "9 L/s",
+      F: "90 L/s"
+    },
+    answer: "D",
+    answerText: "1.5 L/s",
+    topicCode: "M1.2",
+    topicName: "Units",
+    difficulty: "2/4 Medium",
+    targetSeconds: 60,
+    targetDisplay: "60 s",
+    tip: "Convert both units before dividing.",
+    solution: "0.72 \\(m^{3}\\) = 720 litres and 8 minutes = 480 seconds. The rate is 720 / 480 = 1.5 L/s.",
+    distractors: {
+      A: "Finds 0.0015 \\(m^{3}\\)/s but leaves the numerical value unchanged when relabelling it in litres.",
+      B: "Calculates 0.72 / 8 and labels the result L/s.",
+      C: "Uses 72 litres instead of 720 litres.",
+      E: "Uses 80 seconds for 8 minutes.",
+      F: "Divides 720 litres by 8 but forgets that the time is in minutes."
+    },
+    benchmarkNote: "NSAA 2023, Part A, Q11: short multi-stage rate calculation.",
+    editorPick: false
+  },
+  {
+    number: 2,
+    stem: "Which fraction is equal to 0.2777...?",
+    options: {
+      A: "\\(1/4\\)",
+      B: "\\(5/18\\)",
+      C: "\\(7/25\\)",
+      D: "\\(7/27\\)",
+      E: "\\(25/99\\)",
+      F: "\\(7/20\\)"
+    },
+    answer: "B",
+    answerText: "\\(5/18\\)",
+    topicCode: "M2.9",
+    topicName: "Number",
+    difficulty: "2/4 Medium",
+    targetSeconds: 75,
+    targetDisplay: "75 s",
+    tip: "Shift until the recurring parts line up, then subtract.",
+    solution: "Let x = 0.2777.... Then 10x = 2.7777.... Subtracting gives 9x = 2.5, so x = 2.5 / 9 = 5/18.",
+    distractors: {
+      A: "Rounds the decimal to a familiar quarter.",
+      C: "Rounds 0.2777... to 0.28 before converting.",
+      D: "Places the recurring digit over 27 without accounting for the non-recurring 2.",
+      E: "Treats both displayed digits as a two-digit recurring block.",
+      F: "Uses an incorrect denominator after multiplying by 10."
+    },
+    benchmarkNote: "NSAA 2023, Part A, Q2: rapid testing of numerical equivalence.",
+    editorPick: false
+  },
+  {
+    number: 3,
+    stem: "Two warning lights flash together at 12:00:00. One flashes every 18 seconds and the other every 24 seconds. From 12:00:00 up to and including 12:06:00, how many times do they flash together?",
+    options: {
+      A: "1",
+      B: "2",
+      C: "3",
+      D: "4",
+      E: "5",
+      F: "6"
+    },
+    answer: "F",
+    answerText: "6",
+    topicCode: "M2.3",
+    topicName: "Number",
+    difficulty: "2/4 Medium",
+    targetSeconds: 60,
+    targetDisplay: "60 s",
+    tip: "Check whether the starting and ending instants are included.",
+    solution: "The lowest common multiple of 18 and 24 is 72 seconds. In 360 seconds the common flashes occur at 0, 72, 144, 216, 288 and 360 seconds, giving 6 flashes.",
+    distractors: {
+      A: "Counts only the initial flash.",
+      B: "Uses a common interval that is too large.",
+      C: "Uses 120 seconds as the common interval.",
+      D: "Counts only the flashes strictly between the endpoints.",
+      E: "Finds five 72-second intervals but forgets the initial flash."
+    },
+    benchmarkNote: "Official ESAT Mathematics 1 specimen: broader verified short number-structure style; no close archive item.",
+    editorPick: false
+  },
+  {
+    number: 4,
+    stem: "What is the value of \\(27^{2/3}\\) \\times \\(9^{-1/2}\\)?",
+    options: {
+      A: "3",
+      B: "\\(1/3\\)",
+      C: "1",
+      D: "9",
+      E: "\\(\\sqrt{3}\\)"
+    },
+    answer: "A",
+    answerText: "3",
+    topicCode: "M2.7",
+    topicName: "Number",
+    difficulty: "1/4 Easy",
+    targetSeconds: 45,
+    targetDisplay: "45 s",
+    tip: "Interpret a fractional power as a root and a negative power as a reciprocal.",
+    solution: "\\(27^{2/3}\\) = \\((cube root of 27)^{2}\\) = 9, while \\(9^{-1/2}\\) = 1/3. Their product is 3.",
+    distractors: {
+      B: "Applies the reciprocal to the whole product.",
+      C: "Cancels the two bases as if they were equal.",
+      D: "Treats \\(9^{-1/2}\\) as 1.",
+      E: "Takes only one of the required roots."
+    },
+    benchmarkNote: "NSAA 2022, Part A, Q1: fractional-index simplification.",
+    editorPick: false
+  },
+  {
+    number: 5,
+    stem: "The length and width of a rectangle are measured as 7.2 cm and 3.0 cm, each to the nearest 0.1 cm. What is the upper bound for its area?",
+    options: {
+      A: "\\(21.6 cm^{2}\\)",
+      B: "\\(21.0925 cm^{2}\\)",
+      C: "\\(21.75 cm^{2}\\)",
+      D: "\\(21.96 cm^{2}\\)",
+      E: "\\(22.1125 cm^{2}\\)",
+      F: "\\(22.5 cm^{2}\\)"
+    },
+    answer: "E",
+    answerText: "\\(22.1125 cm^{2}\\)",
+    topicCode: "M2.12",
+    topicName: "Number",
+    difficulty: "3/4 Hard",
+    targetSeconds: 90,
+    targetDisplay: "90 s",
+    tip: "For a positive product, use both upper bounds.",
+    solution: "The upper bounds are 7.25 cm and 3.05 cm. Their product is 7.25 \\times 3.05 = 22.1125 \\(cm^{2}\\).",
+    distractors: {
+      A: "Multiplies the stated measurements rather than their bounds.",
+      B: "Uses both lower bounds: 7.15 \\times 2.95.",
+      C: "Uses the upper length but the stated width.",
+      D: "Uses the stated length but the upper width.",
+      F: "Treats rounding to 0.1 cm as allowing an extra 0.5 cm."
+    },
+    benchmarkNote: "Official ESAT Mathematics 1 specimen: broader verified numerical-accuracy style; no close archive item.",
+    editorPick: true
+  },
+  {
+    number: 6,
+    stem: "A drink contains syrup and water in the ratio 2:7. After 6 litres of water are added, the ratio is 1:5. What was the original volume of the drink?",
+    options: {
+      A: "4 litres",
+      B: "14 litres",
+      C: "18 litres",
+      D: "20 litres",
+      E: "16 litres",
+      F: "24 litres"
+    },
+    answer: "C",
+    answerText: "18 litres",
+    topicCode: "M3.5",
+    topicName: "Ratio and proportion",
+    difficulty: "2/4 Medium",
+    targetSeconds: 75,
+    targetDisplay: "75 s",
+    tip: "Keep the unchanged amount, syrup, fixed in both ratios.",
+    solution: "Write the original amounts as 2k and 7k. Then 2k:(7k + 6) = 1:5, so 10k = 7k + 6 and k = 2. The original volume is 9k = 18 litres.",
+    distractors: {
+      A: "Gives the original amount of syrup only.",
+      B: "Gives the original amount of water only.",
+      D: "Gives the final volume after the extra water is added.",
+      E: "Subtracts the added water from the original total.",
+      F: "Uses the final ratio parts with the original scale factor."
+    },
+    benchmarkNote: "NSAA 2023, Part A, Q14: linked proportional relationships with a hidden scale factor.",
+    editorPick: true
+  },
+  {
+    number: 7,
+    stem: "A price is reduced by 20%. By what percentage must the reduced price be increased to return to the original price?",
+    options: {
+      A: "16%",
+      B: "20%",
+      C: "22.5%",
+      D: "24%",
+      E: "40%",
+      F: "80%",
+      G: "25%"
+    },
+    answer: "G",
+    answerText: "25%",
+    topicCode: "M3.8",
+    topicName: "Ratio and proportion",
+    difficulty: "1/4 Easy",
+    targetSeconds: 45,
+    targetDisplay: "45 s",
+    tip: "Percentage changes use the current value as the base.",
+    solution: "After the reduction, the price is 80% of the original. Returning from 80 to 100 is an increase of 20/80 = 25%.",
+    distractors: {
+      A: "Takes 20% of the reduced value and mistakes that amount for the required percentage.",
+      B: "Assumes equal percentage decreases and increases cancel.",
+      C: "Uses 20/90 rather than 20/80.",
+      D: "Uses an approximate adjustment instead of the exact ratio.",
+      E: "Divides the remaining 80% by the lost 20%.",
+      F: "Reports the remaining percentage rather than the required increase."
+    },
+    benchmarkNote: "ENGAA 2018, Part A, Q17: successive percentage multipliers.",
+    editorPick: false
+  },
+  {
+    number: 8,
+    stem: "The positive variable y is inversely proportional to the square root of x. When x = 4, y = 12. What is y when x = 9?",
+    options: {
+      A: "4",
+      B: "6",
+      C: "8",
+      D: "9",
+      E: "18",
+      F: "27"
+    },
+    answer: "C",
+    answerText: "8",
+    topicCode: "M3.9",
+    topicName: "Ratio and proportion",
+    difficulty: "2/4 Medium",
+    targetSeconds: 70,
+    targetDisplay: "70 s",
+    tip: "Translate the words into a formula before substituting.",
+    solution: "Since y = k/\\sqrt{x}, 12 = k/2 and k = 24. When x = 9, y = 24/3 = 8.",
+    distractors: {
+      A: "Treats y as inversely proportional to \\(x^{2}\\).",
+      B: "Uses the ratio 4:9 directly.",
+      D: "Confuses the new x-value with y.",
+      E: "Uses direct proportion to \\sqrt{x}.",
+      F: "Uses direct proportion to x."
+    },
+    benchmarkNote: "NSAA 2022, Part A, Q10: inverse-square proportional reasoning.",
+    editorPick: false
+  },
+  {
+    number: 9,
+    stem: "Two bottles are mathematically similar. Their heights are in the ratio 3:5. The smaller bottle has volume 162 \\(cm^{3}\\). What is the volume of the larger bottle?",
+    options: {
+      A: "\\(750 cm^{3}\\)",
+      B: "\\(450 cm^{3}\\)",
+      C: "\\(270 cm^{3}\\)",
+      D: "\\(486 cm^{3}\\)",
+      E: "\\(1250 cm^{3}\\)",
+      F: "\\(1620 cm^{3}\\)"
+    },
+    answer: "A",
+    answerText: "\\(750 cm^{3}\\)",
+    topicCode: "M3.10",
+    topicName: "Ratio and proportion",
+    difficulty: "3/4 Hard",
+    targetSeconds: 85,
+    targetDisplay: "85 s",
+    tip: "Length, area and volume use powers 1, 2 and 3 respectively.",
+    solution: "Volumes scale with the cube of the length scale factor. The larger volume is 162 \\times \\((5/3)^{3}\\) = 162 \\times 125/27 = 750 \\(cm^{3}\\).",
+    distractors: {
+      B: "Uses the square of the scale factor, which is for area.",
+      C: "Uses the length scale factor only.",
+      D: "Multiplies the volume by 3.",
+      E: "Applies an extra factor after cubing the scale factor.",
+      F: "Multiplies by 10 rather than using a scale factor."
+    },
+    benchmarkNote: "ENGAA 2018, Part A, Q9: similar containers and cubic scaling.",
+    editorPick: true
+  },
+  {
+    number: 10,
+    stem: "The variables satisfy p = (3x - q)/(x + r). Which expression makes x the subject?",
+    options: {
+      A: "(q - pr)/(3 - p)",
+      B: "(q + pr)/(p - 3)",
+      C: "(q - pr)/(p - 3)",
+      D: "(p - q + r)/3",
+      E: "(q + r)/(3 - p)",
+      F: "(q + pr)/(3 - p)"
+    },
+    answer: "F",
+    answerText: "(q + pr)/(3 - p)",
+    topicCode: "M4.7",
+    topicName: "Algebra",
+    difficulty: "2/4 Medium",
+    targetSeconds: 80,
+    targetDisplay: "80 s",
+    tip: "Collect every x-term on one side before dividing.",
+    solution: "Multiply by x + r: px + pr = 3x - q. Hence x(p - 3) = -(q + pr), so x = (q + pr)/(3 - p).",
+    distractors: {
+      A: "Changes the sign of pr but not q.",
+      B: "Keeps the numerator positive without reversing the denominator sign.",
+      C: "Makes inconsistent sign changes when collecting terms.",
+      D: "Divides each visible term by 3 before clearing the fraction.",
+      E: "Fails to multiply r by p."
+    },
+    benchmarkNote: "NSAA 2023, Part A, Q3: rearrangement with the target variable inside a fraction.",
+    editorPick: false
+  },
+  {
+    number: 11,
+    stem: "For x \\ne -3 and x \\ne 2, which expression is equal to (\\(x^{2}\\) - 9)/(\\(x^{2}\\) + x - 6)?",
+    options: {
+      A: "(x + 3)/(x - 2)",
+      B: "(x - 3)/(x - 2)",
+      C: "(x - 3)/(x + 3)",
+      D: "(x + 3)/(x + 2)",
+      E: "1",
+      F: "x - 3"
+    },
+    answer: "B",
+    answerText: "(x - 3)/(x - 2)",
+    topicCode: "M4.6",
+    topicName: "Algebra",
+    difficulty: "3/4 Hard",
+    targetSeconds: 90,
+    targetDisplay: "90 s",
+    tip: "Factorise both numerator and denominator fully before cancelling.",
+    solution: "Factorise: \\(x^{2}\\) - 9 = (x - 3)(x + 3) and \\(x^{2}\\) + x - 6 = (x + 3)(x - 2). Cancelling x + 3 gives (x - 3)/(x - 2).",
+    distractors: {
+      A: "Cancels x - 3 instead of the common factor x + 3.",
+      C: "Cancels the wrong denominator factor.",
+      D: "Factorises \\(x^{2}\\) + x - 6 incorrectly as (x + 3)(x + 2).",
+      E: "Cancels every term across addition and subtraction.",
+      F: "Cancels the entire denominator rather than only a common factor."
+    },
+    benchmarkNote: "NSAA 2022, Part A, Q7: factorisation followed by rational-expression cancellation.",
+    editorPick: true
+  },
+  {
+    number: 12,
+    stem: "Three adult tickets and two child tickets cost £42. Two adult tickets and five child tickets cost £50. What is the price of one adult ticket?",
+    options: {
+      A: "£6",
+      B: "£8",
+      C: "£9",
+      D: "£12",
+      E: "£10",
+      F: "£14"
+    },
+    answer: "E",
+    answerText: "£10",
+    topicCode: "M4.15",
+    topicName: "Algebra",
+    difficulty: "1/4 Easy",
+    targetSeconds: 60,
+    targetDisplay: "60 s",
+    tip: "Scale the equations so one variable has matching coefficients.",
+    solution: "Let the adult and child prices be a and c. The equations are 3a + 2c = 42 and 2a + 5c = 50. Eliminating c gives 11a = 110, so a = 10.",
+    distractors: {
+      A: "Finds the child price and reports it as the adult price.",
+      B: "Averages the ticket prices without weighting the ticket counts correctly.",
+      C: "Uses the difference in totals but ignores the changed numbers of both ticket types.",
+      D: "Divides £42 by a rounded total of ticket types.",
+      F: "Divides the first total by the number of adult tickets only."
+    },
+    benchmarkNote: "ENGAA 2018, Part A, Q20: compact contextual modelling with two unknown quantities.",
+    editorPick: false
+  },
+  {
+    number: 13,
+    stem: "A positive number x satisfies x + 6/x = 5. What is the greater possible value of x?",
+    options: {
+      A: "1",
+      B: "2",
+      C: "\\(5/2\\)",
+      D: "3",
+      E: "5",
+      F: "6"
+    },
+    answer: "D",
+    answerText: "3",
+    topicCode: "M4.16",
+    topicName: "Algebra",
+    difficulty: "1/4 Easy",
+    targetSeconds: 55,
+    targetDisplay: "55 s",
+    tip: "Turn the reciprocal equation into a quadratic.",
+    solution: "Multiplying by x gives \\(x^{2}\\) - 5x + 6 = 0, so (x - 2)(x - 3) = 0. The greater solution is 3.",
+    distractors: {
+      A: "Uses the constant term as a solution.",
+      B: "Chooses the smaller valid solution.",
+      C: "Uses the midpoint of the two roots.",
+      E: "Uses the coefficient sum rather than solving the quadratic.",
+      F: "Uses the numerator of the reciprocal term as the answer."
+    },
+    benchmarkNote: "NSAA 2023, Part A, Q8: extracting a required expression from quadratic roots.",
+    editorPick: false
+  },
+  {
+    number: 14,
+    stem: "What is the complete set of values of x satisfying 3 - 2(4 - x) \\ge 5x + 1?",
+    options: {
+      A: "\\(x \\ge -2\\)",
+      B: "\\(x < -2\\)",
+      C: "\\(x > -2\\)",
+      D: "\\(x \\le 2\\)",
+      E: "\\(x \\ge 2\\)",
+      F: "\\(x < 2\\)",
+      G: "\\(x \\le -2\\)"
+    },
+    answer: "G",
+    answerText: "\\(x \\le -2\\)",
+    topicCode: "M4.17",
+    topicName: "Algebra",
+    difficulty: "2/4 Medium",
+    targetSeconds: 70,
+    targetDisplay: "70 s",
+    tip: "When dividing an inequality by a negative number, reverse its direction.",
+    solution: "Expanding gives -5 + 2x \\ge 5x + 1. Therefore -6 \\ge 3x, so x \\le -2.",
+    distractors: {
+      A: "Does not reverse the inequality after effectively dividing by -3.",
+      B: "Finds the correct boundary but excludes equality.",
+      C: "Both reverses the direction incorrectly and excludes equality.",
+      D: "Loses the negative sign on the boundary.",
+      E: "Loses the negative sign and reverses the direction.",
+      F: "Loses the negative sign and excludes equality."
+    },
+    benchmarkNote: "NSAA 2022, Part A, Q3: multi-step linear inequality with a direction trap.",
+    editorPick: false
+  },
+  {
+    number: 15,
+    stem: "The first four terms of a quadratic sequence are 2, 7, 14, 23. What is the 10th term?",
+    options: {
+      A: "99",
+      B: "119",
+      C: "120",
+      D: "121",
+      E: "143",
+      F: "209"
+    },
+    answer: "B",
+    answerText: "119",
+    topicCode: "M4.19",
+    topicName: "Algebra",
+    difficulty: "3/4 Hard",
+    targetSeconds: 85,
+    targetDisplay: "85 s",
+    tip: "A second difference of 2 means the \\(n^{2}\\) coefficient is 1.",
+    solution: "The first differences are 5, 7, 9, so the constant second difference is 2 and the \\(n^{2}\\) coefficient is 1. The rule is \\(n^{2}\\) + 2n - 1, giving 100 + 20 - 1 = 119.",
+    distractors: {
+      A: "Uses \\(n^{2}\\) - 1 and ignores the linear part.",
+      C: "Uses \\(n^{2}\\) + 2n but forgets the constant -1.",
+      D: "Recognises a square-like pattern and chooses \\(11^{2}\\).",
+      E: "Continues the first differences with an incorrect step size.",
+      F: "Adds all later differences incorrectly instead of finding the nth-term rule."
+    },
+    benchmarkNote: "ENGAA 2018, Part A, Q25: identifying and using a quadratic sequence rule.",
+    editorPick: true
+  },
+  {
+    number: 16,
+    stem: "What is the minimum value of \\(x^{2}\\) - 6x + 13?",
+    options: {
+      A: "-5",
+      B: "-4",
+      C: "0",
+      D: "3",
+      E: "13",
+      F: "4"
+    },
+    answer: "F",
+    answerText: "4",
+    topicCode: "M4.11",
+    topicName: "Algebra",
+    difficulty: "2/4 Medium",
+    targetSeconds: 55,
+    targetDisplay: "55 s",
+    tip: "Complete the square to expose the minimum directly.",
+    solution: "Complete the square: \\(x^{2}\\) - 6x + 13 = \\((x - 3)^{2}\\) + 4. The square is smallest at 0, so the minimum value is 4.",
+    distractors: {
+      A: "Substitutes x = 3 but mishandles the signs.",
+      B: "Reports the negative of the correct constant.",
+      C: "Assumes any square-based expression can reach zero.",
+      D: "Reports the x-coordinate of the turning point.",
+      E: "Uses the constant term without considering the x-terms."
+    },
+    benchmarkNote: "NSAA 2023, Part A, Q16: minimum of a quadratic expression.",
+    editorPick: false
+  },
+  {
+    number: 17,
+    stem: "A cuboid has length 12 cm, depth 4 cm and height 6 cm. M is the midpoint of the vertical edge opposite A. What is AM?",
+    options: {
+      A: "5 cm",
+      B: "\\(4\\sqrt{10} cm\\)",
+      C: "13 cm",
+      D: "14 cm",
+      E: "\\(\\sqrt{185} cm\\)",
+      F: "19 cm"
+    },
+    answer: "C",
+    answerText: "13 cm",
+    topicCode: "M5.7",
+    topicName: "Geometry",
+    difficulty: "2/4 Medium",
+    targetSeconds: 80,
+    targetDisplay: "80 s",
+    tip: "Use the midpoint height, not the full height.",
+    solution: "The vertical rise from A to M is 3 cm. Using three-dimensional Pythagoras, \\(AM^{2}\\) = \\(12^{2}\\) + \\(4^{2}\\) + \\(3^{2}\\) = 169, so AM = 13 cm.",
+    distractors: {
+      A: "Uses only the 3 cm by 4 cm end face.",
+      B: "Finds the floor diagonal and ignores the vertical rise.",
+      D: "Uses the full 6 cm height instead of the midpoint height.",
+      E: "Uses 5 cm as the vertical component after forming a 3-4-5 triangle.",
+      F: "Adds the three perpendicular lengths directly."
+    },
+    benchmarkNote: "NSAA 2022, Part A, Q2: layered Pythagorean reasoning in a compact geometry problem.",
+    editorPick: false,
+    diagramKey: "m1-2-q17"
+  },
+  {
+    number: 18,
+    stem: "The line through A is tangent to the circle with centre O. The angle between the tangent and chord AB is \\(38^{\\circ}\\). What is angle AOB?",
+    options: {
+      A: "\\(76^{\\circ}\\)",
+      B: "\\(38^{\\circ}\\)",
+      C: "\\(52^{\\circ}\\)",
+      D: "\\(90^{\\circ}\\)",
+      E: "\\(104^{\\circ}\\)",
+      F: "\\(142^{\\circ}\\)"
+    },
+    answer: "A",
+    answerText: "\\(76^{\\circ}\\)",
+    topicCode: "M5.9",
+    topicName: "Geometry",
+    difficulty: "3/4 Hard",
+    targetSeconds: 90,
+    targetDisplay: "90 s",
+    tip: "A radius meets a tangent at \\(90^{\\circ}\\), then use the isosceles triangle.",
+    solution: "OA is perpendicular to the tangent, so angle OAB = \\(90^{\\circ}\\) - \\(38^{\\circ}\\) = \\(52^{\\circ}\\). Since OA = OB, angle OBA is also \\(52^{\\circ}\\). Therefore angle AOB = \\(180^{\\circ}\\) - \\(104^{\\circ}\\) = \\(76^{\\circ}\\).",
+    distractors: {
+      B: "Copies the given tangent-chord angle.",
+      C: "Stops after finding angle OAB.",
+      D: "Uses only the radius-tangent fact.",
+      E: "Adds the two equal base angles and reports their sum.",
+      F: "Subtracts \\(38^{\\circ}\\) from \\(180^{\\circ}\\) directly."
+    },
+    benchmarkNote: "ENGAA 2018, Part A, Q21: circle theorem reasoning involving a tangent and radii.",
+    editorPick: true,
+    diagramKey: "m1-2-q18"
+  },
+  {
+    number: 19,
+    stem: "An annular sector has angle \\(120^{\\circ}\\), outer radius 6 cm and inner radius 3 cm. What is its area?",
+    options: {
+      A: "\\(3\\pi cm^{2}\\)",
+      B: "\\(6\\pi cm^{2}\\)",
+      C: "\\(12\\pi cm^{2}\\)",
+      D: "\\(27\\pi cm^{2}\\)",
+      E: "\\(9\\pi cm^{2}\\)",
+      F: "\\(36\\pi cm^{2}\\)"
+    },
+    answer: "E",
+    answerText: "\\(9\\pi cm^{2}\\)",
+    topicCode: "M5.16",
+    topicName: "Geometry",
+    difficulty: "1/4 Easy",
+    targetSeconds: 60,
+    targetDisplay: "60 s",
+    tip: "Subtract the two sector areas, not the radii.",
+    solution: "The area is 120/360 \\times \\pi (\\(6^{2}\\) - \\(3^{2}\\)) = 1/3 \\times 27\\pi = 9\\pi \\(cm^{2}\\).",
+    distractors: {
+      A: "Uses the difference of the radii only.",
+      B: "Uses 120/360 \\times \\pi \\times 6.",
+      C: "Uses the difference \\(6^{2}\\) - \\(3^{2}\\) but divides by an incorrect angle factor.",
+      D: "Finds the full annulus area and forgets the \\(120^{\\circ}\\) fraction.",
+      F: "Uses the full outer circle only."
+    },
+    benchmarkNote: "Official ESAT Mathematics 1 specimen: broader verified circle-mensuration style; no close archive item.",
+    editorPick: false,
+    diagramKey: "m1-2-q19"
+  },
+  {
+    number: 20,
+    stem: "In triangle ABC, DE is parallel to BC. The area of triangle ADE is 36 \\(cm^{2}\\) and the area of trapezium DBCE is 64 \\(cm^{2}\\). If AD = 6 cm, what is AB?",
+    options: {
+      A: "7.5 cm",
+      B: "8 cm",
+      C: "9 cm",
+      D: "10 cm",
+      E: "12 cm",
+      F: "\\(50/3 cm\\)"
+    },
+    answer: "D",
+    answerText: "10 cm",
+    topicCode: "M5.17",
+    topicName: "Geometry",
+    difficulty: "2/4 Medium",
+    targetSeconds: 80,
+    targetDisplay: "80 s",
+    tip: "Convert the area ratio into a length ratio by taking a square root.",
+    solution: "The full triangle has area 36 + 64 = 100 \\(cm^{2}\\). The linear scale factor from triangle ADE to triangle ABC is \\sqrt{36/100} = 3/5. Thus 6/AB = 3/5, so AB = 10 cm.",
+    distractors: {
+      A: "Uses 36:64 as a direct length ratio.",
+      B: "Uses the trapezium area as though it were the full triangle area.",
+      C: "Adds half the given side without using similarity.",
+      E: "Uses the area ratio 1:2 as a length ratio.",
+      F: "Multiplies 6 by 100/36 without taking a square root."
+    },
+    benchmarkNote: "NSAA 2022, Part A, Q16: parallel-line similarity with an algebraic scale factor.",
+    editorPick: true,
+    diagramKey: "m1-2-q20"
+  },
+  {
+    number: 21,
+    stem: "In a right-angled triangle, the side opposite a \\(60^{\\circ}\\) angle has length x + 2 and the adjacent non-hypotenuse side has length x. What is x?",
+    options: {
+      A: "\\(\\sqrt{3} - 1\\)",
+      B: "1",
+      C: "\\(\\sqrt{3}\\)",
+      D: "2",
+      E: "\\(2\\sqrt{3}\\)",
+      F: "3",
+      G: "\\(1 + \\sqrt{3}\\)"
+    },
+    answer: "G",
+    answerText: "\\(1 + \\sqrt{3}\\)",
+    topicCode: "M5.18",
+    topicName: "Geometry",
+    difficulty: "3/4 Hard",
+    targetSeconds: 90,
+    targetDisplay: "90 s",
+    tip: "Use tan because the two named sides are opposite and adjacent.",
+    solution: "tan \\(60^{\\circ}\\) = (x + 2)/x = \\sqrt{3}. Hence x(\\sqrt{3} - 1) = 2, so x = 2/(\\sqrt{3} - 1) = 1 + \\sqrt{3}.",
+    distractors: {
+      A: "Stops after rationalising with the wrong sign.",
+      B: "Treats tan \\(60^{\\circ}\\) as 3.",
+      C: "Reports tan \\(60^{\\circ}\\) itself.",
+      D: "Ignores the trigonometric ratio and uses the added length.",
+      E: "Multiplies 2 by \\sqrt{3} instead of solving the linear equation.",
+      F: "Uses tan \\(60^{\\circ}\\) ≈ 2."
+    },
+    benchmarkNote: "NSAA 2023, Part A, Q10: exact trigonometry embedded in an algebraic length problem.",
+    editorPick: true
+  },
+  {
+    number: 22,
+    stem: "Eight students have a mean score of 12. A further twelve students have a mean score of 20. What is the mean score of all twenty students?",
+    options: {
+      A: "16.8",
+      B: "16",
+      C: "17",
+      D: "20",
+      E: "13.2",
+      F: "17.5"
+    },
+    answer: "A",
+    answerText: "16.8",
+    topicCode: "M6.3",
+    topicName: "Statistics",
+    difficulty: "1/4 Easy",
+    targetSeconds: 55,
+    targetDisplay: "55 s",
+    tip: "Multiply each mean by its group size before combining.",
+    solution: "The total score is 8 \\times 12 + 12 \\times 20 = 336. Dividing by 20 gives 16.8.",
+    distractors: {
+      B: "Takes the unweighted mean of 12 and 20.",
+      C: "Rounds the exact mean to the nearest whole number.",
+      D: "Uses the larger group mean only.",
+      E: "Uses an incorrect total of 264 before dividing by 20.",
+      F: "Uses an incorrect weighting between the group means."
+    },
+    benchmarkNote: "NSAA 2023, Part A, Q4: linking mean and other summary information.",
+    editorPick: false
+  },
+  {
+    number: 23,
+    stem: "A two-digit number is formed by choosing two different digits from 1, 2, 3 and 4. Each ordered choice is equally likely. What is the probability that the number is divisible by 3?",
+    options: {
+      A: "\\(1/6\\)",
+      B: "\\(1/4\\)",
+      C: "\\(2/9\\)",
+      D: "\\(1/3\\)",
+      E: "\\(1/2\\)",
+      F: "\\(2/3\\)"
+    },
+    answer: "D",
+    answerText: "\\(1/3\\)",
+    topicCode: "M7.5",
+    topicName: "Probability",
+    difficulty: "2/4 Medium",
+    targetSeconds: 70,
+    targetDisplay: "70 s",
+    tip: "Use the digit-sum test before listing every number.",
+    solution: "There are 4 \\times 3 = 12 possible numbers. A number is divisible by 3 when its digit sum is divisible by 3. The favourable numbers are 12, 21, 24 and 42, so the probability is 4/12 = 1/3.",
+    distractors: {
+      A: "Counts only one unordered favourable pair.",
+      B: "Counts three favourable outcomes instead of four.",
+      C: "Uses 9 as the size of the sample space.",
+      E: "Counts all numbers containing 3 as favourable.",
+      F: "Counts favourable digits rather than ordered two-digit outcomes."
+    },
+    benchmarkNote: "NSAA 2022, Part A, Q17: systematic selection from a small finite set.",
+    editorPick: true
+  },
+  {
+    number: 24,
+    stem: "The histogram shows journey times for 36 people. In which class interval does the median lie?",
+    options: {
+      A: "\\(0 \\le t < 4\\)",
+      B: "\\(0 \\le t < 10\\)",
+      C: "\\(4 \\le t < 10\\)",
+      D: "\\(4 \\le t < 20\\)",
+      E: "\\(10 \\le t < 20\\)",
+      F: "It cannot be determined"
+    },
+    answer: "C",
+    answerText: "\\(4 \\le t < 10\\)",
+    topicCode: "M6.2",
+    topicName: "Statistics",
+    difficulty: "2/4 Medium",
+    targetSeconds: 70,
+    targetDisplay: "70 s",
+    tip: "In a histogram, frequency is bar area, not bar height.",
+    solution: "The class frequencies are 4 \\times 2 = 8, 6 \\times 3 = 18 and 10 \\times 1 = 10. The 18th and 19th values are both in the second class, 4 \\le t < 10.",
+    distractors: {
+      A: "Uses the tallest value on the vertical scale as the median position.",
+      B: "Combines the first two classes instead of identifying the containing class.",
+      D: "Uses a cumulative interval rather than one class.",
+      E: "Treats the widest bar as containing the median.",
+      F: "Assumes grouped data cannot locate a median class."
+    },
+    benchmarkNote: "Official ESAT Mathematics 1 specimen: broader verified grouped-data interpretation style; no close archive item.",
+    editorPick: false,
+    diagramKey: "m1-2-q24"
+  },
+  {
+    number: 25,
+    stem: "A bag contains 3 red and 2 blue counters. Two counters are taken at random without replacement. What is the probability that exactly one is red?",
+    options: {
+      A: "\\(1/5\\)",
+      B: "\\(3/10\\)",
+      C: "\\(2/5\\)",
+      D: "\\(1/2\\)",
+      E: "\\(7/10\\)",
+      F: "\\(3/5\\)"
+    },
+    answer: "F",
+    answerText: "\\(3/5\\)",
+    topicCode: "M7.7",
+    topicName: "Probability",
+    difficulty: "2/4 Medium",
+    targetSeconds: 70,
+    targetDisplay: "70 s",
+    tip: "Include both possible orders.",
+    solution: "Exactly one red can occur as red then blue or blue then red. The probability is (3/5 \\times 2/4) + (2/5 \\times 3/4) = 12/20 = 3/5.",
+    distractors: {
+      A: "Multiplies the counts rather than the probabilities.",
+      B: "Counts only red then blue.",
+      C: "Treats the second draw as if the first counter were replaced.",
+      D: "Assumes the two colours make the event equally likely.",
+      E: "Subtracts the probability of two reds only from 1."
+    },
+    benchmarkNote: "ENGAA 2018, Part A, Q27: dependent draws without replacement.",
+    editorPick: false
+  },
+  {
+    number: 26,
+    stem: "A metal block has mass 1.26 kg and volume 150 \\(cm^{3}\\). What is its density in g/\\(cm^{3}\\)?",
+    options: {
+      A: "0.0084",
+      B: "8.4",
+      C: "84",
+      D: "0.84",
+      E: "840",
+      F: "18.9"
+    },
+    answer: "B",
+    answerText: "8.4",
+    topicCode: "M1.2",
+    topicName: "Units",
+    difficulty: "1/4 Easy",
+    targetSeconds: 55,
+    targetDisplay: "55 s",
+    tip: "Match the mass unit to the required density unit before dividing.",
+    solution: "1.26 kg = 1260 g. Density = mass/volume = 1260/150 = 8.4 g/\\(cm^{3}\\).",
+    distractors: {
+      A: "Divides 1.26 kg by 150 \\(cm^{3}\\) without converting kilograms to grams.",
+      C: "Moves the decimal one place too far after division.",
+      D: "Converts 1.26 kg to 126 g.",
+      E: "Divides by 1.5 rather than 150.",
+      F: "Multiplies the mass and volume instead of dividing."
+    },
+    benchmarkNote: "ENGAA 2018, Part A, Q20: density with unit-aware simultaneous quantities.",
+    editorPick: false
+  },
+  {
+    number: 27,
+    stem: "The graph shows the speed of an object over 12 seconds. What is its average speed during the 12 seconds?",
+    options: {
+      A: "8.0 m/s",
+      B: "8.5 m/s",
+      C: "9.0 m/s",
+      D: "9.125 m/s",
+      E: "9.25 m/s",
+      F: "10.0 m/s"
+    },
+    answer: "E",
+    answerText: "9.25 m/s",
+    topicCode: "M4.14",
+    topicName: "Algebra",
+    difficulty: "2/4 Medium",
+    targetSeconds: 85,
+    targetDisplay: "85 s",
+    tip: "Find total area first, then divide by total time.",
+    solution: "Distance is the area under the graph: 1/2 \\times 4 \\times 12 + 5 \\times 12 + 1/2 \\times (12 + 6) \\times 3 = 24 + 60 + 27 = 111 m. Average speed = 111/12 = 9.25 m/s.",
+    distractors: {
+      A: "Averages selected labelled speeds without weighting by time.",
+      B: "Finds the final trapezium area incorrectly.",
+      C: "Rounds the total distance before division.",
+      D: "Uses 109.5 m as the total area.",
+      F: "Uses the mean of the maximum and final speeds."
+    },
+    benchmarkNote: "NSAA 2022, Part A, Q12: average speed from unequal journey stages.",
+    editorPick: true,
+    diagramKey: "m1-2-q27"
+  }
+];
