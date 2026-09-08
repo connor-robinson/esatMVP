@@ -807,7 +807,7 @@ html.pearson-exam-active body {
   outline-offset: 0;
 }
 
-.pearson-radio-row input[type="radio"] {
+.pearson-radio-control input[type="radio"] {
   appearance: none;
   -webkit-appearance: none;
   box-sizing: border-box;
@@ -824,12 +824,12 @@ html.pearson-exam-active body {
   cursor: pointer;
 }
 
-.pearson-radio-row input[type="radio"]:focus,
-.pearson-radio-row input[type="radio"]:focus-visible {
+.pearson-radio-control input[type="radio"]:focus,
+.pearson-radio-control input[type="radio"]:focus-visible {
   outline: none;
 }
 
-.pearson-radio-row input[type="radio"]:checked {
+.pearson-radio-control input[type="radio"]:checked {
   border: 1.5px solid var(--pearson-radio-blue);
   background-color: #ffffff;
   background-image: radial-gradient(
@@ -841,16 +841,16 @@ html.pearson-exam-active body {
   );
 }
 
-.pearson-exam-root[data-chrome-mode="themed"] .pearson-radio-row input[type="radio"] {
+.pearson-exam-root[data-chrome-mode="themed"] .pearson-radio-control input[type="radio"] {
   border-color: var(--pearson-text);
   background-color: var(--pearson-content-bg);
 }
 
-.pearson-exam-root[data-chrome-mode="themed"] .pearson-radio-row input[type="radio"]:not(:checked) {
+.pearson-exam-root[data-chrome-mode="themed"] .pearson-radio-control input[type="radio"]:not(:checked) {
   border-color: #666666;
 }
 
-.pearson-exam-root[data-chrome-mode="themed"] .pearson-radio-row input[type="radio"]:checked {
+.pearson-exam-root[data-chrome-mode="themed"] .pearson-radio-control input[type="radio"]:checked {
   border-color: var(--pearson-text);
   background-color: var(--pearson-content-bg);
   background-image: radial-gradient(
@@ -866,6 +866,31 @@ html.pearson-exam-active body {
   flex: 1;
   min-width: 0;
   padding-top: 0;
+}
+
+.pearson-option-table {
+  margin-top: 10px;
+}
+
+.pearson-option-table-row {
+  cursor: pointer;
+}
+
+.pearson-option-table-row-selected {
+  background: #e7f3fb;
+}
+
+.pearson-exam-root[data-chrome-mode="themed"] .pearson-option-table-row-selected {
+  background: color-mix(in srgb, var(--pearson-text) 10%, var(--pearson-content-bg));
+}
+
+.pearson-option-table-letter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 700;
 }
 
 /* --- Dialogs --- */

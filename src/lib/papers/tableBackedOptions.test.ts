@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import type { Question } from "@/types/papers";
 import {
+  extractLetterLabeledTable,
+  shouldUseInlineOptionTable,
   shouldUseLetterOnlyOptions,
   stemHasLetterLabeledTable,
 } from "./tableBackedOptions";
@@ -70,3 +72,63 @@ describe("shouldUseLetterOnlyOptions", () => {
     expect(shouldUseLetterOnlyOptions(question)).toBe(false);
   });
 });
+
+describe("extractLetterLabeledTable", () => {
+  const convectionStem = `The diagram shows four solid steel balls P, Q, R and S which are of identical size. Which two balls lose thermal energy by convection, and which ball emits thermal radiation at the greatest rate?
+
+|  | lose thermal energy by convection | greatest rate of emission of thermal radiation |
+| --- | --- | --- |
+| A | P and Q | P |
+| B | P and Q | Q |
+| C | P and Q | R |
+| D | P and Q | S |
+| E | R and S | P |
+| F | R and S | Q |
+| G | R and S | R |
+| H | R and S | S |
+
+<figure class="qg-diagram"><img src="/diagram.png" alt="diagram" /></figure>`;
+
+  it("splits the stem around the A–H options table", () => {
+    const extracted = extractLetterLabeledTable(convectionStem);
+    expect(extracted.table?.rows.map((row) => row.letter)).toEqual([
+      "A", "B", "C", "D", "E", "F", "G", "H",
+    ]);
+    expect(extracted.table?.headers[1]).toContain("convection");
+    expect(extracted.table?.rows[0]?.cells).toEqual(["P and Q", "P"]);
+    expect(extracted.before).toContain("four solid steel balls");
+    expect(extracted.before).not.toContain("| A |");
+    expect(extracted.after).toContain("qg-diagram");
+  });
+
+  it("returns null when the table is not letter-labeled", () => {
+    const extracted = extractLetterLabeledTable(`| x | y |\n| --- | --- |\n| 1 | 2 |\n| 3 | 4 |`);
+    expect(extracted.table).toBeNull();
+  });
+});
+
+describe("shouldUseInlineOptionTable", () => {
+  it("is true for text questions with an A–H table", () => {
+    const question = baseQuestion({
+      contentFormat: "text",
+      questionStem: convectionStemForInline(),
+      options: { A: "P and Q; P", B: "P and Q; Q" },
+    });
+    expect(shouldUseInlineOptionTable(question)).toBe(true);
+  });
+
+  it("is false for image-only questions", () => {
+    const question = baseQuestion({
+      contentFormat: "image",
+      questionStem: convectionStemForInline(),
+    });
+    expect(shouldUseInlineOptionTable(question)).toBe(false);
+  });
+});
+
+function convectionStemForInline(): string {
+  return `|  | lose thermal energy by convection | greatest rate of emission of thermal radiation |
+| --- | --- | --- |
+| A | P and Q | P |
+| B | P and Q | Q |`;
+}

@@ -2,8 +2,13 @@
 
 import { StemContent } from "@/components/shared/StemContent";
 import { PearsonRadioGroup } from "@/components/pearson/PearsonRadioGroup";
+import { PearsonOptionTable } from "@/components/pearson/PearsonOptionTable";
 import { getPastPaperOptionLetters } from "@/lib/papers/pastPaperTextMode";
-import { shouldUseLetterOnlyOptions } from "@/lib/papers/tableBackedOptions";
+import {
+  extractLetterLabeledTable,
+  shouldUseInlineOptionTable,
+  shouldUseLetterOnlyOptions,
+} from "@/lib/papers/tableBackedOptions";
 import type { Letter, Question } from "@/types/papers";
 
 interface PearsonRichQuestionProps {
@@ -92,6 +97,9 @@ export function PearsonRichQuestion({
   const letters = getPastPaperOptionLetters(question);
   const options = question.options ?? {};
   const letterOnlyOptions = shouldUseLetterOnlyOptions(question);
+  const extractedTable = extractLetterLabeledTable(stem);
+  const useOptionTable =
+    shouldUseInlineOptionTable(question) && extractedTable.table != null;
 
   const renderOptionContent = (
     letter: Letter,
@@ -127,7 +135,25 @@ export function PearsonRichQuestion({
   return (
     <div>
       <div className="pearson-stem">
-        <StemContent content={stem} className="text-inherit" />
+        {useOptionTable && extractedTable.table ? (
+          <>
+            {extractedTable.before.trim() ? (
+              <StemContent content={extractedTable.before} className="text-inherit" />
+            ) : null}
+            <PearsonOptionTable
+              name={`q-${question.id}`}
+              table={extractedTable.table}
+              value={selected}
+              onChange={onSelect}
+              disabled={disabled}
+            />
+            {extractedTable.after.trim() ? (
+              <StemContent content={extractedTable.after} className="text-inherit" />
+            ) : null}
+          </>
+        ) : (
+          <StemContent content={stem} className="text-inherit" />
+        )}
       </div>
       {stemDiagrams.map((asset) => (
         <div key={asset.id} className="pearson-diagram">
@@ -138,24 +164,26 @@ export function PearsonRichQuestion({
           />
         </div>
       ))}
-      <PearsonRadioGroup
-        name={`q-${question.id}`}
-        value={selected}
-        onChange={onSelect}
-        disabled={disabled}
-        options={letters
-          .map((letter) => {
-            const L = letter as Letter;
-            const text = options[L];
-            const optionAsset = optionAssets.get(L);
-            if (!text && !optionAsset) return null;
-            return {
-              letter: L,
-              content: renderOptionContent(L, text, optionAsset),
-            };
-          })
-          .filter((x): x is NonNullable<typeof x> => x != null)}
-      />
+      {useOptionTable ? null : (
+        <PearsonRadioGroup
+          name={`q-${question.id}`}
+          value={selected}
+          onChange={onSelect}
+          disabled={disabled}
+          options={letters
+            .map((letter) => {
+              const L = letter as Letter;
+              const text = options[L];
+              const optionAsset = optionAssets.get(L);
+              if (!text && !optionAsset) return null;
+              return {
+                letter: L,
+                content: renderOptionContent(L, text, optionAsset),
+              };
+            })
+            .filter((x): x is NonNullable<typeof x> => x != null)}
+        />
+      )}
     </div>
   );
 }

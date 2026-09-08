@@ -13,7 +13,7 @@ const PEARSON_ACTIVE_CLASS = "pearson-exam-active";
 
 function clearRadioFocusOutsideOption(e: PointerEvent<HTMLDivElement>) {
   const target = e.target as HTMLElement;
-  if (!target.closest(".pearson-radio-row")) {
+  if (!target.closest(".pearson-radio-row, .pearson-option-table-row")) {
     (document.activeElement as HTMLElement | null)?.blur?.();
   }
 }
