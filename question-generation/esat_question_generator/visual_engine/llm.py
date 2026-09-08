@@ -144,7 +144,15 @@ def call_json_multimodal(
         except Exception as exc:
             last_err = exc
             msg = str(exc)
-            if ("429" in msg or "503" in msg or "RESOURCE_EXHAUSTED" in msg) and attempt < max_retries - 1:
+            retryable = (
+                "429" in msg
+                or "503" in msg
+                or "RESOURCE_EXHAUSTED" in msg
+                or "disconnected" in msg.lower()
+                or "timeout" in msg.lower()
+                or "RemoteProtocolError" in type(exc).__name__
+            )
+            if retryable and attempt < max_retries - 1:
                 time.sleep(2 ** attempt * 5)
                 continue
             raise
