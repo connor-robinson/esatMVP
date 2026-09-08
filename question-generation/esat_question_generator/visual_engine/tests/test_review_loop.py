@@ -104,6 +104,18 @@ def test_review_store_supersede_never_deletes(tmp_path: Path):
     assert store.get_item("q1")["question_status"] == "pending"
 
 
+def test_review_store_delete_questions(tmp_path: Path):
+    store = ReviewStore(tmp_path / "review.db")
+    store.upsert_question(question_id="eval-1-sibling", stem="Eval diagram", subject="NSAA")
+    store.add_diagram_attempt(question_id="eval-1-sibling", attempt=1, image_path="e.png")
+    store.upsert_question(question_id="nsaa-1", stem="Keep me", subject="NSAA")
+    deleted = store.delete_questions(["eval-1-sibling", "missing"])
+    assert deleted == 1
+    assert store.get_item("eval-1-sibling") is None
+    assert store.get_item("nsaa-1") is not None
+    assert store.list_question_ids() == ["nsaa-1"]
+
+
 def test_taxonomy_axis_class():
     assert classify_issue("The x-axis tick labels are floating").startswith("A.")
     out = classify_failures(

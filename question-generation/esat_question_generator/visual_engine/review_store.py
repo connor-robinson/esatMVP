@@ -385,6 +385,24 @@ class ReviewStore:
             ).fetchone()
         return _row_to_dict(row)
 
+    def delete_questions(self, question_ids: list[str]) -> int:
+        ids = [str(qid) for qid in question_ids if str(qid).strip()]
+        if not ids:
+            return 0
+        with _connect(self.db_path) as conn:
+            deleted = 0
+            for qid in ids:
+                conn.execute("DELETE FROM diagram_reviews WHERE question_id = ?", (qid,))
+                cur = conn.execute("DELETE FROM questions WHERE question_id = ?", (qid,))
+                deleted += int(cur.rowcount or 0)
+            conn.commit()
+        return deleted
+
+    def list_question_ids(self) -> list[str]:
+        with _connect(self.db_path) as conn:
+            rows = conn.execute("SELECT question_id FROM questions ORDER BY id").fetchall()
+        return [str(row["question_id"]) for row in rows]
+
 
 def _matches_filter(item: dict[str, Any], filt: str, *, latest_only: bool) -> bool:
     q_status = (item.get("question_status") or "pending").lower()
