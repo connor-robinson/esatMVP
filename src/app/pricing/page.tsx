@@ -30,6 +30,7 @@ import {
   rememberGaSourcePage,
   trackEvent,
   trackEventOnce,
+  captureGaCheckoutAttribution,
 } from "@/lib/ga";
 
 const FEATURES = {
@@ -194,10 +195,11 @@ export default function PricingPage() {
     setLoading(planType);
     setBanner(null);
     try {
+      const ga = await captureGaCheckoutAttribution();
       const res = await fetch("/api/stripe/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planType }),
+        body: JSON.stringify({ planType, ...ga }),
       });
       const data = await res.json().catch(() => ({}));
       if (data.url) {

@@ -4,6 +4,8 @@ import {
   decideCheckoutSessionCommerce,
   decideInvoicePaidCommerce,
   getInvoiceSubscriptionId,
+  readGaAttributionFromStripe,
+  withGaAttribution,
 } from "./checkoutEvents";
 import { fallbackGaClientId } from "@/lib/ga/measurementProtocol";
 import { isSupabaseUserUuid } from "@/lib/ga/setUserId";
@@ -132,5 +134,89 @@ describe("GA identity helpers", () => {
     const id = fallbackGaClientId("c6495215-91df-4712-adfc-3899059217a2");
     expect(id.startsWith("supabase.")).toBe(true);
     expect(id.includes("@")).toBe(false);
+  });
+});
+
+describe("trial versus paid-purchase handling", () => {
+  const ga = {
+    ga_client_id: "111.222",
+    ga_session_id: "1710000000",
+    ga_session_number: "4",
+  };
+
+  it("keeps session ids on checkout trial_started", () => {
+    const decision = decideCheckoutSessionCommerce(
+      session({
+        id: "cs_trial",
+        mode: "subscription",
+        payment_status: "no_payment_required",
+        metadata: { planType: "monthly", ...ga },
+      }),
+      { id: "sub_1", status: "trialing", trial_start: 1 } as Stripe.Subscription,
+    );
+    expect(decision?.eventName).toBe("trial_started");
+    const send = withGaAttribution(
+      {
+        eventName: decision!.eventName,
+        transactionId: decision!.transactionId,
+        userId: "c6495215-91df-4712-adfc-3899059217a2",
+        source: "webhook",
+        params: decision!.params,
+      },
+      readGaAttributionFromStripe({ planType: "monthly", ...ga }),
+    );
+    expect(send.gaClientId).toBe("111.222");
+    expect(send.gaSessionId).toBe("1710000000");
+    expect(send.gaSessionNumber).toBe(4);
+    expect(send.params?.transaction_id).toBe("cs_trial");
+  });
+
+  it("keeps session ids on season-pass purchase from checkout", () => {
+    const decision = decideCheckoutSessionCommerce(
+      session({
+        id: "cs_pass",
+        mode: "payment",
+        payment_status: "paid",
+        amount_total: 9900,
+        metadata: { planType: "season_pass", ...ga },
+      }),
+    );
+    expect(decision?.eventName).toBe("purchase");
+    const send = withGaAttribution(
+      {
+        eventName: decision!.eventName,
+        transactionId: decision!.transactionId,
+        userId: null,
+        source: "webhook",
+        params: decision!.params,
+      },
+      readGaAttributionFromStripe({ planType: "season_pass", ...ga }),
+    );
+    expect(send.gaSessionId).toBe("1710000000");
+  });
+
+  it("drops stale session ids on subscription renewals", () => {
+    const decision = decideInvoicePaidCommerce(
+      invoice({
+        id: "in_renew",
+        amount_paid: 1500,
+        billing_reason: "subscription_cycle",
+      }),
+    );
+    expect(decision?.eventName).toBe("subscription_renewed");
+    const send = withGaAttribution(
+      {
+        eventName: decision!.eventName,
+        transactionId: decision!.transactionId,
+        userId: "c6495215-91df-4712-adfc-3899059217a2",
+        source: "webhook",
+        params: decision!.params,
+      },
+      readGaAttributionFromStripe(ga),
+      { includeSession: false },
+    );
+    expect(send.gaClientId).toBe("111.222");
+    expect(send.gaSessionId).toBeNull();
+    expect(send.gaSessionNumber).toBeNull();
   });
 });

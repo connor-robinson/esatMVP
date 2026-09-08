@@ -9,6 +9,8 @@ import {
   sanitizeGaParams,
   type GaEventParams,
 } from "./trackEvent";
+import { isValidGaClientId } from "./session";
+import { PRODUCTION_SITE_URL } from "@/lib/seo/config";
 
 export type GaCommerceEventName =
   | "trial_started"
@@ -18,7 +20,11 @@ export type GaCommerceEventName =
 
 export type GaCommerceSource = "webhook" | "client";
 
-type SendCommerceOptions = {
+/** Stable production URL so MP events join the same property reports. */
+export const COMMERCE_PAGE_LOCATION = `${PRODUCTION_SITE_URL}/pricing/success`;
+export const DEFAULT_ENGAGEMENT_TIME_MSEC = 1;
+
+export type SendCommerceOptions = {
   eventName: GaCommerceEventName;
   transactionId: string;
   userId: string | null;
@@ -28,6 +34,30 @@ type SendCommerceOptions = {
   /** Skip HTTP send to GA (still records dedupe row). Used by client claim. */
   recordOnly?: boolean;
   gaClientId?: string | null;
+  gaSessionId?: string | null;
+  gaSessionNumber?: number | null;
+  pageLocation?: string | null;
+  engagementTimeMsec?: number;
+};
+
+export type CommerceMpCollectBody = {
+  client_id: string;
+  user_id?: string;
+  events: Array<{
+    name: GaCommerceEventName;
+    params: Record<string, string | number | boolean>;
+  }>;
+};
+
+export type SendCommerceDeps = {
+  claim?: typeof claimCommerceEvent;
+  resolveClientId?: (
+    userId: string | null,
+    explicit?: string | null,
+  ) => Promise<string | null>;
+  fetchImpl?: typeof fetch;
+  mpSecret?: string | null;
+  measurementId?: string;
 };
 
 function getMeasurementId(): string {
@@ -48,12 +78,55 @@ function adminClient() {
   return createClient(url, key);
 }
 
-/** Deterministic client_id when we have no real _ga cookie value. */
+/** Deterministic client_id when we have no real _ga cookie value. Not sent to GA. */
 export function fallbackGaClientId(userId: string | null): string {
   if (userId && /^[0-9a-f-]{36}$/i.test(userId)) {
     return `supabase.${userId.replace(/-/g, "").slice(0, 20)}`;
   }
   return `supabase.anonymous.${Date.now()}`;
+}
+
+export function isUniqueViolation(error: { code?: string } | null | undefined): boolean {
+  return error?.code === "23505";
+}
+
+/**
+ * Build the MP collect JSON, or null when client_id is missing/invalid.
+ * Session fields are omitted when absent so we never invent a session.
+ */
+export function buildCommerceMpCollectBody(opts: {
+  clientId: string | null | undefined;
+  userId: string | null;
+  eventName: GaCommerceEventName;
+  params: Record<string, string | number | boolean>;
+  gaSessionId?: string | null;
+  gaSessionNumber?: number | null;
+  pageLocation?: string | null;
+  engagementTimeMsec?: number;
+}): CommerceMpCollectBody | null {
+  if (!isValidGaClientId(opts.clientId)) return null;
+
+  const params: Record<string, string | number | boolean> = {
+    ...opts.params,
+    engagement_time_msec:
+      opts.engagementTimeMsec ?? DEFAULT_ENGAGEMENT_TIME_MSEC,
+    page_location: opts.pageLocation ?? COMMERCE_PAGE_LOCATION,
+  };
+  if (opts.gaSessionId) {
+    params.session_id = opts.gaSessionId;
+  }
+  if (opts.gaSessionNumber != null) {
+    params.session_number = opts.gaSessionNumber;
+  }
+
+  const body: CommerceMpCollectBody = {
+    client_id: opts.clientId,
+    events: [{ name: opts.eventName, params }],
+  };
+  if (opts.userId) {
+    body.user_id = opts.userId;
+  }
+  return body;
 }
 
 export async function isCommerceEventSent(
@@ -103,19 +176,19 @@ export async function claimCommerceEvent(opts: {
   });
 
   if (error) {
-    if (error.code === "23505") return false;
+    if (isUniqueViolation(error)) return false;
     console.error("[ga_commerce] insert failed", error.message);
     return false;
   }
   return true;
 }
 
-async function resolveGaClientId(
+export async function resolveGaClientId(
   userId: string | null,
   explicit?: string | null,
-): Promise<string> {
-  if (explicit && /^\d+\.\d+$/.test(explicit)) return explicit;
-  if (!userId) return fallbackGaClientId(null);
+): Promise<string | null> {
+  if (isValidGaClientId(explicit)) return explicit;
+  if (!userId) return null;
 
   const supabase = adminClient();
   if (supabase) {
@@ -124,26 +197,28 @@ async function resolveGaClientId(
       .select("ga_client_id")
       .eq("id", userId)
       .maybeSingle();
-    if (data?.ga_client_id && /^\d+\.\d+$/.test(data.ga_client_id)) {
+    if (isValidGaClientId(data?.ga_client_id)) {
       return data.ga_client_id;
     }
   }
-  return fallbackGaClientId(userId);
+  return null;
 }
 
 /**
  * Claim + optionally send a commerce event via Measurement Protocol.
- * Returns { claimed, sent }.
+ * Returns { claimed, sent }. Does not send when client_id is invalid.
  */
 export async function sendGaCommerceEvent(
   opts: SendCommerceOptions,
+  deps: SendCommerceDeps = {},
 ): Promise<{ claimed: boolean; sent: boolean }> {
   const safeParams = sanitizeGaParams({
     transaction_id: opts.transactionId,
     ...opts.params,
   });
 
-  const claimed = await claimCommerceEvent({
+  const claim = deps.claim ?? claimCommerceEvent;
+  const claimed = await claim({
     eventName: opts.eventName,
     transactionId: opts.transactionId,
     userId: opts.userId,
@@ -160,8 +235,8 @@ export async function sendGaCommerceEvent(
     return { claimed: true, sent: false };
   }
 
-  const secret = getMpSecret();
-  const measurementId = getMeasurementId();
+  const secret = deps.mpSecret !== undefined ? deps.mpSecret : getMpSecret();
+  const measurementId = deps.measurementId ?? getMeasurementId();
   if (!secret) {
     console.error(
       "[ga_commerce] GA4_MEASUREMENT_PROTOCOL_SECRET not set; event claimed but not sent",
@@ -170,23 +245,31 @@ export async function sendGaCommerceEvent(
     return { claimed: true, sent: false };
   }
 
-  const clientId = await resolveGaClientId(opts.userId, opts.gaClientId);
-  const body: Record<string, unknown> = {
-    client_id: clientId,
-    events: [
-      {
-        name: opts.eventName,
-        params: safeParams,
-      },
-    ],
-  };
-  if (opts.userId) {
-    body.user_id = opts.userId;
+  const resolveClientId = deps.resolveClientId ?? resolveGaClientId;
+  const clientId = await resolveClientId(opts.userId, opts.gaClientId);
+  const body = buildCommerceMpCollectBody({
+    clientId,
+    userId: opts.userId,
+    eventName: opts.eventName,
+    params: safeParams,
+    gaSessionId: opts.gaSessionId,
+    gaSessionNumber: opts.gaSessionNumber,
+    pageLocation: opts.pageLocation,
+    engagementTimeMsec: opts.engagementTimeMsec,
+  });
+
+  if (!body) {
+    console.error("[ga_commerce] skip MP: no real GA client_id", {
+      eventName: opts.eventName,
+      transactionId: opts.transactionId,
+    });
+    return { claimed: true, sent: false };
   }
 
+  const fetchImpl = deps.fetchImpl ?? fetch;
   try {
     const url = `https://www.google-analytics.com/mp/collect?measurement_id=${encodeURIComponent(measurementId)}&api_secret=${encodeURIComponent(secret)}`;
-    const res = await fetch(url, {
+    const res = await fetchImpl(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),

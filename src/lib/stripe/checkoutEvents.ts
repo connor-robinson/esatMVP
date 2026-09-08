@@ -8,8 +8,12 @@ import { getStripe } from "@/lib/stripe/config";
 import {
   sendGaCommerceEvent,
   isCommerceEventSent,
+  COMMERCE_PAGE_LOCATION,
   type GaCommerceEventName,
+  type SendCommerceOptions,
 } from "@/lib/ga/measurementProtocol";
+import type { GaCheckoutAttribution } from "@/lib/ga/session";
+import { fromStripeGaMetadata } from "@/lib/stripe/checkoutGaMetadata";
 
 function adminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -89,6 +93,39 @@ export async function insertCheckoutEvent(
 export type CommerceDecision =
   | { eventName: GaCommerceEventName; transactionId: string; params: Record<string, string | number | boolean> }
   | null;
+
+export function stripeMetadataRecord(
+  metadata: Stripe.Metadata | null | undefined,
+): Record<string, string> | null {
+  if (!metadata) return null;
+  const out: Record<string, string> = {};
+  for (const [key, value] of Object.entries(metadata)) {
+    if (typeof value === "string") out[key] = value;
+  }
+  return out;
+}
+
+export function readGaAttributionFromStripe(
+  metadata: Stripe.Metadata | null | undefined,
+): GaCheckoutAttribution {
+  return fromStripeGaMetadata(stripeMetadataRecord(metadata));
+}
+
+/** Attach consent-gated GA ids to an MP send. Session ids are optional. */
+export function withGaAttribution(
+  base: Omit<SendCommerceOptions, "gaClientId" | "gaSessionId" | "gaSessionNumber" | "pageLocation">,
+  ga: GaCheckoutAttribution,
+  opts?: { includeSession?: boolean; pageLocation?: string },
+): SendCommerceOptions {
+  const includeSession = opts?.includeSession !== false;
+  return {
+    ...base,
+    gaClientId: ga.ga_client_id,
+    gaSessionId: includeSession ? ga.ga_session_id : null,
+    gaSessionNumber: includeSession ? ga.ga_session_number : null,
+    pageLocation: opts?.pageLocation ?? COMMERCE_PAGE_LOCATION,
+  };
+}
 
 /** Stripe API 2024+: subscription lives under parent.subscription_details. */
 export function getInvoiceSubscriptionId(
@@ -233,14 +270,20 @@ export async function handleCheckoutSessionCompletedCommerce(
   const decision = decideCheckoutSessionCommerce(session, subscription);
   if (!decision) return;
 
-  await sendGaCommerceEvent({
-    eventName: decision.eventName,
-    transactionId: decision.transactionId,
-    userId,
-    stripeEventId,
-    source: "webhook",
-    params: decision.params,
-  });
+  const ga = readGaAttributionFromStripe(session.metadata);
+  await sendGaCommerceEvent(
+    withGaAttribution(
+      {
+        eventName: decision.eventName,
+        transactionId: decision.transactionId,
+        userId,
+        stripeEventId,
+        source: "webhook",
+        params: decision.params,
+      },
+      ga,
+    ),
+  );
 }
 
 export async function handleInvoicePaidCommerce(
@@ -274,14 +317,31 @@ export async function handleInvoicePaidCommerce(
   const decision = decideInvoicePaidCommerce(invoice);
   if (!decision) return;
 
-  await sendGaCommerceEvent({
-    eventName: decision.eventName,
-    transactionId: decision.transactionId,
-    userId,
-    stripeEventId,
-    source: "webhook",
-    params: decision.params,
-  });
+  let ga = readGaAttributionFromStripe(null);
+  if (subscriptionId) {
+    try {
+      const sub = await getStripe().subscriptions.retrieve(subscriptionId);
+      ga = readGaAttributionFromStripe(sub.metadata);
+    } catch (err) {
+      console.error("[checkout_events] subscription retrieve for GA failed", err);
+    }
+  }
+  // Renewals happen long after the checkout session. Do not stitch a stale session.
+  const includeSession = invoice.billing_reason === "subscription_create";
+  await sendGaCommerceEvent(
+    withGaAttribution(
+      {
+        eventName: decision.eventName,
+        transactionId: decision.transactionId,
+        userId,
+        stripeEventId,
+        source: "webhook",
+        params: decision.params,
+      },
+      ga,
+      { includeSession },
+    ),
+  );
 }
 
 export async function handleSubscriptionDeletedCommerce(
@@ -310,17 +370,24 @@ export async function handleSubscriptionDeletedCommerce(
     },
   });
 
-  await sendGaCommerceEvent({
-    eventName: "subscription_cancelled",
-    transactionId: subscription.id,
-    userId,
-    stripeEventId,
-    source: "webhook",
-    params: {
-      transaction_id: subscription.id,
-      plan_type: subscription.metadata?.planType ?? undefined,
-    },
-  });
+  const ga = readGaAttributionFromStripe(subscription.metadata);
+  await sendGaCommerceEvent(
+    withGaAttribution(
+      {
+        eventName: "subscription_cancelled",
+        transactionId: subscription.id,
+        userId,
+        stripeEventId,
+        source: "webhook",
+        params: {
+          transaction_id: subscription.id,
+          plan_type: subscription.metadata?.planType ?? undefined,
+        },
+      },
+      ga,
+      { includeSession: false },
+    ),
+  );
 }
 
 export { isCommerceEventSent };

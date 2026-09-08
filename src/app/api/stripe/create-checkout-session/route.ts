@@ -5,6 +5,10 @@ import { createOrRetrieveCustomer } from "@/lib/stripe/supabase-admin";
 import { getPriceIdForPlan, resolveMonthlyStripePrice } from "@/lib/stripe/prices";
 import { getSeasonPassPrice, SEASON_PASS_ACCESS_UNTIL_LABEL } from "@/lib/stripe/best-value";
 import { resolveAppSiteUrl } from "@/lib/seo/config";
+import {
+  mergeStripeGaMetadata,
+  parseGaCheckoutAttribution,
+} from "@/lib/stripe/checkoutGaMetadata";
 
 export const dynamic = "force-dynamic";
 
@@ -44,6 +48,10 @@ export async function POST(request: NextRequest) {
     const siteUrl = resolveAppSiteUrl();
     const successUrl = `${siteUrl}/pricing/success?session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = `${siteUrl}/pricing?canceled=true`;
+    const gaMeta = mergeStripeGaMetadata(
+      { userId: user.id, planType },
+      parseGaCheckoutAttribution(body),
+    );
 
     // Exam Season Pass - true one-time payment (no yearly subscription)
     if (planType === "season_pass") {
@@ -66,7 +74,7 @@ export async function POST(request: NextRequest) {
         ],
         success_url: successUrl,
         cancel_url: cancelUrl,
-        metadata: { userId: user.id, planType: "season_pass" },
+        metadata: { ...gaMeta, planType: "season_pass" },
       });
       return NextResponse.json({ url: session.url });
     }
@@ -106,10 +114,10 @@ export async function POST(request: NextRequest) {
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: successUrl,
       cancel_url: cancelUrl,
-      metadata: { userId: user.id, planType },
+      metadata: gaMeta,
       subscription_data: {
         ...(offerTrial ? { trial_period_days: TRIAL_DAYS } : {}),
-        metadata: { userId: user.id, planType },
+        metadata: gaMeta,
       },
     });
     return NextResponse.json({ url: session.url });

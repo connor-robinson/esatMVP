@@ -62,6 +62,17 @@ export {
   fallbackGaClientId,
   isCommerceEventSent,
   sendGaCommerceEvent,
+  buildCommerceMpCollectBody,
+  isUniqueViolation,
   type GaCommerceEventName,
   type GaCommerceSource,
 } from "./measurementProtocol";
+
+export {
+  captureGaCheckoutAttribution,
+  captureGaCheckoutAttributionFromCookies,
+  isValidGaClientId,
+  parseGaSessionCookie,
+  parseGaSessionCookieValue,
+  type GaCheckoutAttribution,
+} from "./session";
