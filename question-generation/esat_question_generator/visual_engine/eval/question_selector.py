@@ -156,6 +156,38 @@ def _looks_like_math_diagram(stem: str) -> bool:
     return any(hint in low for hint in _MATH_DIAGRAM_HINTS)
 
 
+_SKIP_PAPER_HINTS = ("biology", "chemistry")
+
+
+def _skip_paper(paper_name: str) -> bool:
+    low = (paper_name or "").lower()
+    return any(hint in low for hint in _SKIP_PAPER_HINTS)
+
+
+def select_nsaa_diagram_questions(
+    *,
+    count: int | None = None,
+    question_ids: list[int] | None = None,
+    math_only: bool = True,
+    audit_summary_path: Path | None = None,
+) -> list[EvalQuestion]:
+    """All NSAA stem-diagram questions suitable for geometry/graph variation.
+
+    ENGAA is never included. Biology/chemistry papers and unsupported diagram
+    types (circuits, cells, etc.) are skipped so the renderer can draw them.
+    """
+    n = 10_000 if count is None else max(1, int(count))
+    selected = select_eval_questions(
+        count=n,
+        exam_names=("NSAA",),
+        question_ids=question_ids,
+        audit_summary_path=audit_summary_path,
+        per_exam=False,
+        math_only=math_only,
+    )
+    return [eq for eq in selected if not _skip_paper(eq.paper_name) and eq.exam_name.upper() == "NSAA"]
+
+
 def select_eval_questions(
     *,
     count: int = 20,

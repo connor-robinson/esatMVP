@@ -75,8 +75,15 @@ def init_db(db_path: Path | None = None) -> Path:
             CREATE INDEX IF NOT EXISTS idx_question_status ON questions(question_status);
             """
         )
+        _ensure_columns(conn)
         conn.commit()
     return path
+
+
+def _ensure_columns(conn: sqlite3.Connection) -> None:
+    cols = {row[1] for row in conn.execute("PRAGMA table_info(questions)")}
+    if "variation_mode" not in cols:
+        conn.execute("ALTER TABLE questions ADD COLUMN variation_mode TEXT DEFAULT ''")
 
 
 def _row_to_dict(row: sqlite3.Row | None) -> dict[str, Any] | None:
@@ -105,16 +112,19 @@ class ReviewStore:
         question_status: str = "pending",
         auto_flags: list[dict[str, Any]] | None = None,
         source: dict[str, Any] | None = None,
+        variation_mode: str = "",
     ) -> dict[str, Any]:
         now = _now()
+        mode = (variation_mode or topic or "").strip().lower()
         with _connect(self.db_path) as conn:
             conn.execute(
                 """
                 INSERT INTO questions (
                     question_id, subject, topic, difficulty, stem, choices_json,
                     correct_answer, explanation, diagram_required, diagram_status,
-                    question_status, auto_flags_json, source_json, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    question_status, auto_flags_json, source_json, created_at,
+                    variation_mode
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(question_id) DO UPDATE SET
                     subject=excluded.subject,
                     topic=excluded.topic,
@@ -125,8 +135,10 @@ class ReviewStore:
                     explanation=excluded.explanation,
                     diagram_required=excluded.diagram_required,
                     diagram_status=excluded.diagram_status,
+                    question_status=excluded.question_status,
                     auto_flags_json=excluded.auto_flags_json,
-                    source_json=excluded.source_json
+                    source_json=excluded.source_json,
+                    variation_mode=excluded.variation_mode
                 """,
                 (
                     question_id,
@@ -143,6 +155,7 @@ class ReviewStore:
                     json.dumps(auto_flags or [], ensure_ascii=False),
                     json.dumps(source or {}, ensure_ascii=False),
                     now,
+                    mode,
                 ),
             )
             conn.commit()
@@ -304,6 +317,7 @@ class ReviewStore:
         status_filter: str = "pending",
         latest_only: bool = True,
         subject: str | None = None,
+        pipeline: str | None = None,
     ) -> list[dict[str, Any]]:
         filt = (status_filter or "pending").strip().lower()
         with _connect(self.db_path) as conn:
@@ -318,6 +332,14 @@ class ReviewStore:
         for q in questions:
             if subject and (q.get("subject") or "") != subject:
                 continue
+            if pipeline:
+                source = {}
+                try:
+                    source = json.loads(q.get("source_json") or "{}")
+                except json.JSONDecodeError:
+                    source = {}
+                if not isinstance(source, dict) or str(source.get("pipeline") or "") != pipeline:
+                    continue
             attempts = by_qid.get(q["question_id"]) or []
             latest = attempts[-1] if attempts else None
             shown = [latest] if latest_only and latest else attempts

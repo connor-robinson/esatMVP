@@ -25,7 +25,11 @@ _ALLOWED_FUNCS = {
 
 
 def _eval_expr(expr: str, x: float) -> float:
-    allowed = {"x": x, **{k: v for k, v in _ALLOWED_FUNCS.items() if k != "pi"}}
+    allowed = {
+        "x": x,
+        "math": math,
+        **{k: v for k, v in _ALLOWED_FUNCS.items() if k != "pi"},
+    }
     allowed["pi"] = math.pi
     return float(eval(expr, {"__builtins__": {}}, allowed))  # noqa: S307
 

@@ -100,6 +100,8 @@ def test_review_store_supersede_never_deletes(tmp_path: Path):
     counts = store.counts()
     assert counts["approved"] == 1
     assert store.get_item("q1")["attempts"][0]["status"] == "superseded"
+    store.upsert_question(question_id="q1", stem="updated", question_status="pending")
+    assert store.get_item("q1")["question_status"] == "pending"
 
 
 def test_taxonomy_axis_class():
