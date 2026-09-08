@@ -35,6 +35,8 @@ FEEDBACK_TAGS = [
     "wrong question",
     "other",
 ]
+DIAGRAM_VISUALS = {"graph", "chem_structure", "bio_diagram", "pedigree"}
+VISUAL_FILTERS = ["All", "diagrams only", "graph", "chem_structure", "bio_diagram", "pedigree", "table", "none"]
 
 
 def _store() -> ReviewStore:
@@ -55,6 +57,22 @@ def _parse_source(item: dict) -> dict:
     except json.JSONDecodeError:
         return {}
     return data if isinstance(data, dict) else {}
+
+
+def _visual_of(item: dict) -> str:
+    src = _parse_source(item)
+    return str(src.get("visual_type") or "").strip().lower() or "none"
+
+
+def _parse_pasted_options(raw: str) -> dict:
+    out = {}
+    for line in (raw or "").splitlines():
+        text = line.strip()
+        if len(text) < 3 or not text[0].isalpha():
+            continue
+        if text[1] in ".)]:":
+            out[text[0].upper()] = text[2:].lstrip(" .)").strip()
+    return out
 
 
 def _keyboard_script() -> None:
@@ -291,13 +309,62 @@ def main() -> None:
         st.session_state.subject = "NSAA" if "NSAA" in subjects else "All"
     if "pipeline" not in st.session_state:
         st.session_state.pipeline = "nsaa"
+    if "visual" not in st.session_state:
+        st.session_state.visual = "diagrams only"
 
     st.caption(
         f"Pending {counts['pending']} | Approved {counts['approved']} | "
         f"Rejected {counts['rejected']} | Regenerated {counts['regenerated']}"
     )
 
-    cols = st.columns([2, 2, 2, 2, 3])
+    with st.expander("Paste a question to try diagram generation"):
+        st.caption(
+            "Paste an NSAA-style stem and optionally its original figure. "
+            "This uses the same designer and deterministic renderer. "
+            "Plain-text and table outputs are skipped."
+        )
+        paste_subject = st.selectbox(
+            "Paste subject",
+            ["biology", "chemistry", "mathematics"],
+            key="paste_subject",
+        )
+        paste_stem = st.text_area("Question stem", key="paste_stem", height=140)
+        paste_opts = st.text_area(
+            "Options optional, one per line, e.g. A) ...",
+            key="paste_opts",
+            height=90,
+        )
+        paste_img = st.file_uploader(
+            "Original diagram image optional",
+            type=["png", "jpg", "jpeg", "webp"],
+            key="paste_img",
+        )
+        if st.button("GENERATE from this input"):
+            from visual_engine.nsaa_batch import generate_from_input
+
+            with st.spinner("Running designer and renderer..."):
+                try:
+                    rec = generate_from_input(
+                        store=store,
+                        stem=paste_stem,
+                        subject=paste_subject,
+                        options=_parse_pasted_options(paste_opts),
+                        source_image_bytes=paste_img.getvalue() if paste_img else None,
+                    )
+                except Exception as exc:
+                    rec = {"status": "error", "error": str(exc)}
+            if rec.get("status") == "skipped":
+                st.warning(rec.get("skip_reason") or "Designer skipped this input")
+            elif rec.get("status") == "error":
+                st.error(rec.get("error") or "Generation failed")
+            else:
+                st.success(
+                    f"Queued {rec.get('question_id')} as {rec.get('visual_type')}. "
+                    "Set Visual to diagrams only if you do not see it."
+                )
+                st.rerun()
+
+    cols = st.columns([2, 2, 2, 2, 2, 3])
     with cols[0]:
         status_filter = st.selectbox(
             "Filter",
@@ -317,11 +384,18 @@ def main() -> None:
             index=0 if st.session_state.pipeline == "nsaa" else 1,
         )
     with cols[3]:
+        visual_choice = st.selectbox(
+            "Visual",
+            VISUAL_FILTERS,
+            index=VISUAL_FILTERS.index(st.session_state.visual) if st.session_state.visual in VISUAL_FILTERS else 1,
+        )
+    with cols[4]:
         latest_only = st.checkbox("Only show latest attempt", value=st.session_state.latest_only)
     st.session_state.filter = status_filter
     st.session_state.latest_only = latest_only
     st.session_state.subject = subject_choice
     st.session_state.pipeline = pipeline_choice
+    st.session_state.visual = visual_choice
 
     items = store.list_items(
         status_filter=status_filter,
@@ -329,9 +403,15 @@ def main() -> None:
         subject=None if subject_choice == "All" else subject_choice,
         pipeline=None if pipeline_choice == "all" else pipeline_choice,
     )
+    if visual_choice == "diagrams only":
+        items = [item for item in items if _visual_of(item) in DIAGRAM_VISUALS]
+    elif visual_choice != "All":
+        items = [item for item in items if _visual_of(item) == visual_choice]
     if not items:
         st.write("Nothing in this filter.")
-        st.caption("Generate NSAA diagram questions with: python -m visual_engine.nsaa_batch --n 10")
+        st.caption(
+            "For diagrams only: python -m visual_engine.nsaa_batch --subject biology --diagrams-only --n 5"
+        )
         return
 
     if st.session_state.idx >= len(items):

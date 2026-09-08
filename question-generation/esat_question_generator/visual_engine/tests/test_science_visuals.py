@@ -140,3 +140,52 @@ def test_select_nsaa_subject_keeps_biology(tmp_path: Path):
             audit_summary_path=tmp_path / "no-audit.json",
         )
     assert [eq.question_id for eq in selected] == [201]
+
+
+def test_has_source_visual_and_require_diagram(tmp_path: Path):
+    from visual_engine.eval.question_selector import EvalQuestion, select_nsaa_subject_questions
+
+    bio = EvalQuestion(
+        question_id=201,
+        exam_name="NSAA",
+        exam_year=2019,
+        paper_name="Section 1",
+        question_number=40,
+        question_stem="A pedigree shows inheritance of a recessive allele.",
+        diagram_url="",
+        diagram_asset_id="",
+        source_image_url="",
+        part_name="Biology",
+    )
+    bio_fig = EvalQuestion(
+        question_id=202,
+        exam_name="NSAA",
+        exam_year=2019,
+        paper_name="Section 1",
+        question_number=41,
+        question_stem="The graph shows enzyme rate against pH.",
+        diagram_url="https://example.com/graph.png",
+        diagram_asset_id="d1",
+        source_image_url="",
+        part_name="Biology",
+    )
+    assert bio.has_source_visual is False
+    assert bio_fig.has_source_visual is True
+    with patch(
+        "visual_engine.eval.question_selector._fetch_subject_questions",
+        return_value=[bio, bio_fig],
+    ):
+        selected = select_nsaa_subject_questions(
+            subject="biology",
+            require_diagram=True,
+            audit_summary_path=tmp_path / "no-audit.json",
+        )
+    assert [eq.question_id for eq in selected] == [202]
+
+
+def test_diagrams_only_mix_hint():
+    from visual_engine.nsaa_batch import _mix_hint
+
+    hint = _mix_hint("biology", {}, diagrams_only=True)
+    assert "none or table" in hint
+    assert "pedigree" in hint

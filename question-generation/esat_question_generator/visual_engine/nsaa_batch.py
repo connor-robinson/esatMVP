@@ -4,7 +4,7 @@ Example:
 
     python -m visual_engine.nsaa_batch --n 10
     python -m visual_engine.nsaa_batch --subject chemistry --n 10
-    python -m visual_engine.nsaa_batch --subject biology --n 10
+    python -m visual_engine.nsaa_batch --subject biology --diagrams-only --n 5
     python -m visual_engine.nsaa_batch --dry-run
 """
 
@@ -37,6 +37,7 @@ from visual_engine.eval.question_selector import (
 from visual_engine.generation import GenerationResult, generate_diagram, regenerate_diagram
 from visual_engine.question_designer import (
     NSAA_DIAGRAM_MODEL,
+    RENDERED_VISUAL_TYPES,
     NsaaQuestionDesign,
     NsaaQuestionDesignerInput,
     run_nsaa_question_designer,
@@ -289,6 +290,7 @@ def generate_one(
     previous_attempt_ids: list[int] | None = None,
     attempt: int = 1,
     mix_hint: str = "",
+    require_rendered_visual: bool = False,
 ) -> dict[str, Any]:
     qid = nsaa_question_id(eq.question_id)
     out_dir = ARTIFACTS / qid
@@ -327,6 +329,15 @@ def generate_one(
     visual_type = visual_type_of(design.idea_plan)
     if designer_subject == "mathematics" and not visual_type:
         visual_type = "graph"
+    if require_rendered_visual and visual_type not in RENDERED_VISUAL_TYPES:
+        return {
+            "status": "skipped",
+            "question_id": qid,
+            "source_question_id": eq.question_id,
+            "skip_reason": f"diagrams-only batch skipped visual_type {visual_type or 'none'}",
+            "visual_type": visual_type or "none",
+            "model": design.model,
+        }
     table = design.idea_plan.get("table") if isinstance(design.idea_plan.get("table"), dict) else None
     if visual_type == "table" or table:
         design.stem = ensure_table_in_stem(design.stem, table)
@@ -510,7 +521,32 @@ def _source_payload(eq: EvalQuestion, design: NsaaQuestionDesign, source_image_p
     }
 
 
-def _mix_hint(subject: str, counts: dict[str, int]) -> str:
+def _looks_like_diagram_stem(stem: str) -> bool:
+    low = (stem or "").lower()
+    hints = (
+        "graph",
+        "diagram",
+        "figure",
+        "pedigree",
+        "family tree",
+        "structural formula",
+        "displayed formula",
+        "the curve",
+        "axes",
+        "labelled",
+        "schematic",
+    )
+    return any(hint in low for hint in hints)
+
+
+def _mix_hint(subject: str, counts: dict[str, int], *, diagrams_only: bool = False) -> str:
+    if diagrams_only:
+        return (
+            "This batch is for reviewing rendered diagrams only. "
+            "Set idea_plan.visual_type to graph, chem_structure, bio_diagram, or pedigree. "
+            "Do not use none or table. "
+            "If the source cannot support a genuine diagram, set skip true."
+        )
     if subject == "chemistry":
         wants = [
             ("none", 4, "plain-text or calculation questions (visual_type none)"),
@@ -553,6 +589,50 @@ def _eval_from_source_json(source: dict[str, Any], fallback_qid: str) -> EvalQue
         diagram_asset_id="diagram_0",
         source_image_url="",
         part_name=str(source.get("part_name") or ""),
+    )
+
+
+def generate_from_input(
+    *,
+    store: ReviewStore,
+    stem: str,
+    subject: str,
+    options: dict[str, str] | None = None,
+    source_image_bytes: bytes | None = None,
+    model: str = NSAA_DIAGRAM_MODEL,
+) -> dict[str, Any]:
+    """Run the existing NSAA designer + renderer from a pasted stem and optional source image."""
+    _load_env()
+    wanted = (subject or "biology").strip().lower()
+    if wanted not in {"mathematics", "chemistry", "biology"}:
+        raise ValueError("subject must be mathematics, chemistry, or biology")
+    if not stem.strip():
+        raise ValueError("stem is empty")
+    qid_num = 900_000_000 + (int(datetime.now(timezone.utc).timestamp()) % 1_000_000)
+    part = {"chemistry": "Chemistry", "biology": "Biology"}.get(wanted, "Mathematics")
+    eq = EvalQuestion(
+        question_id=qid_num,
+        exam_name="NSAA",
+        exam_year=0,
+        paper_name="Section 1",
+        question_number=0,
+        question_stem=stem.strip(),
+        diagram_url="",
+        diagram_asset_id="",
+        source_image_url="",
+        part_name=part,
+    )
+    out_dir = ARTIFACTS / nsaa_question_id(qid_num)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    if source_image_bytes:
+        (out_dir / "source_diagram.png").write_bytes(source_image_bytes)
+    return generate_one(
+        eq,
+        store=store,
+        source_options=options or {},
+        model=model,
+        mix_hint=_mix_hint(wanted, {}, diagrams_only=True),
+        require_rendered_visual=True,
     )
 
 
@@ -613,6 +693,7 @@ def run_batch(
     math_only: bool = True,
     subject: str = "mathematics",
     model: str = NSAA_DIAGRAM_MODEL,
+    diagrams_only: bool = False,
 ) -> dict[str, Any]:
     _load_env()
     store = ReviewStore()
@@ -622,6 +703,7 @@ def run_batch(
             subject=wanted,
             count=None if not question_ids else len(question_ids),
             question_ids=question_ids,
+            require_diagram=diagrams_only,
         )
     else:
         selected = select_nsaa_diagram_questions(
@@ -631,16 +713,28 @@ def run_batch(
         )
     done = set() if force else already_generated_ids(store)
     remaining = [eq for eq in selected if eq.question_id not in done]
-    if n is not None:
+    if diagrams_only:
+        remaining.sort(
+            key=lambda eq: (
+                0 if _looks_like_diagram_stem(eq.question_stem) else 1,
+                eq.question_id,
+            )
+        )
+    if n is not None and not diagrams_only:
         remaining = remaining[: max(0, n)]
+    elif n is not None and diagrams_only:
+        remaining = remaining[: max(n * 6, n)]
+    target = n if n is not None else len(remaining)
     summary: dict[str, Any] = {
         "status": "running",
         "pipeline": PIPELINE,
         "model": model,
         "subject": wanted,
+        "diagrams_only": diagrams_only,
         "selected": len(selected),
         "already_done": len(done),
         "queued": len(remaining),
+        "target": target,
         "ids": [eq.question_id for eq in remaining],
         "generated": 0,
         "skipped": 0,
@@ -659,6 +753,8 @@ def run_batch(
     results: list[dict[str, Any]] = []
     mix_counts: dict[str, int] = {}
     for i, eq in enumerate(remaining, start=1):
+        if diagrams_only and summary["generated"] >= target:
+            break
         print(f"[NSAA] {i}/{len(remaining)} source {eq.question_id} ({eq.exam_year} {eq.paper_name} Q{eq.question_number})", flush=True)
         try:
             rec = generate_one(
@@ -666,7 +762,8 @@ def run_batch(
                 store=store,
                 source_options=options_by_id.get(eq.question_id) or {},
                 model=model,
-                mix_hint=_mix_hint(wanted, mix_counts),
+                mix_hint=_mix_hint(wanted, mix_counts, diagrams_only=diagrams_only),
+                require_rendered_visual=diagrams_only,
             )
         except Exception as exc:
             rec = {
@@ -713,6 +810,11 @@ def main() -> int:
         choices=["mathematics", "chemistry", "biology"],
         help="NSAA source subject. chemistry/biology include plain-text questions.",
     )
+    parser.add_argument(
+        "--diagrams-only",
+        action="store_true",
+        help="Only keep questions that render a graph, structure, pedigree, or schematic. Skip plain text and tables.",
+    )
     parser.add_argument("--model", default=NSAA_DIAGRAM_MODEL)
     args = parser.parse_args()
     ids = [int(part.strip()) for part in args.ids.split(",") if part.strip()]
@@ -724,6 +826,7 @@ def main() -> int:
         math_only=not args.include_non_math,
         subject=args.subject,
         model=args.model,
+        diagrams_only=args.diagrams_only,
     )
     print(json.dumps({k: v for k, v in result.items() if k != "results"}, indent=2))
     if result.get("results"):

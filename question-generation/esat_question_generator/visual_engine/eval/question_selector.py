@@ -44,6 +44,10 @@ class EvalQuestion:
         text = self.reference_question
         return text[:1200] if len(text) > 1200 else text
 
+    @property
+    def has_source_visual(self) -> bool:
+        return bool(str(self.diagram_url or "").strip() or str(self.source_image_url or "").strip())
+
 
 def paper_subject(paper_name: str, part_name: str = "") -> str:
     blob = f"{paper_name} {part_name}".lower()
@@ -204,7 +208,7 @@ def select_nsaa_subject_questions(
                 continue
             if paper_subject(eq.paper_name, eq.part_name) != wanted:
                 continue
-            if require_diagram and not eq.diagram_url:
+            if require_diagram and not eq.has_source_visual:
                 continue
             selected.append(eq)
             seen.add(eq.question_id)
@@ -215,7 +219,7 @@ def select_nsaa_subject_questions(
             continue
         if paper_subject(eq.paper_name, eq.part_name) != wanted:
             continue
-        if require_diagram and not eq.diagram_url:
+        if require_diagram and not eq.has_source_visual:
             continue
         selected.append(eq)
         seen.add(eq.question_id)
