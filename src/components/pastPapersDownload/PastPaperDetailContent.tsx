@@ -23,8 +23,7 @@ export function PastPaperDetailContent({ paper }: Props) {
   const path = pastPaperPagePath(paper);
   const examHub = examHubPath(paper.exam);
   const answersLabel = answersDownloadLabel(paper.answersKind);
-  const answersPhrase =
-    paper.answersKind === "solutions" ? "worked solutions" : "answer key";
+  const answersPhrase = "answer key";
 
   return (
     <SeoPageLayout

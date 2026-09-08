@@ -23,7 +23,7 @@ export type PastPaperDownload = {
   title: string;
   paperUrl: string;
   answersUrl?: string;
-  /** NSAA 2016–2019 Section 2 uses worked/model solutions, not MCQ keys. */
+  /** NSAA 2016–2019 Section 2 uses official UCLES worked answers, not an MCQ key. */
   answersKind?: PastPaperAnswersKind;
 };
 
@@ -68,9 +68,9 @@ export type PastPaperCompactTableRow = {
 };
 
 export function answersDownloadLabel(
-  kind: PastPaperAnswersKind | undefined = "answer-key",
+  _kind: PastPaperAnswersKind | undefined = "answer-key",
 ): string {
-  return kind === "solutions" ? "Solutions" : "Answer Key";
+  return "Answer Key";
 }
 
 const PDF_ROOT = "/downloads/past-papers";
@@ -155,7 +155,7 @@ export const PAST_PAPER_DOWNLOADS: readonly PastPaperDownload[] = [
   ...([2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016] as const).map((year) =>
     makePaper("NSAA", year, 1, true),
   ),
-  // NSAA Section 2: 2016–2019 use worked/model solutions (long-form papers)
+  // NSAA Section 2: 2016–2019 official answers are UCLES worked answers
   ...([2022, 2021, 2020] as const).map((year) => makePaper("NSAA", year, 2, true)),
   ...([2019, 2018, 2017, 2016] as const).map((year) =>
     makePaper("NSAA", year, 2, true, "solutions"),
@@ -163,7 +163,6 @@ export const PAST_PAPER_DOWNLOADS: readonly PastPaperDownload[] = [
 ];
 
 const NSAA_SPECIMEN_EDITIONS = [
-  { editionYear: 2022, sectionNum: 2 as const, hasPaper: false, hasAnswers: false },
   { editionYear: 2020, sectionNum: 2 as const, hasPaper: true, hasAnswers: true },
   {
     editionYear: 2020,
@@ -662,12 +661,9 @@ export function getAdjacentDownloads(paper: PastPaperDownload): {
 
 export function buildPaperPageMetadata(paper: PastPaperDownload) {
   const path = pastPaperPagePath(paper);
-  const answersNoun =
-    paper.answersKind === "solutions" ? "solutions" : "answers";
+  const answersNoun = "answers";
   return {
-    title: `${paper.title} Past Paper & ${
-      paper.answersKind === "solutions" ? "Solutions" : "Answers"
-    } | ESAT Camp`,
+    title: `${paper.title} Past Paper & Answers | ESAT Camp`,
     description: `Download the ${paper.title} past paper${
       paper.answersUrl ? ` and ${answersNoun}` : ""
     }. Free PDF resources for students preparing for the ESAT.`,
@@ -724,9 +720,4 @@ export const MISSING_PDF_ASSETS: readonly {
   { paper: "NSAA 2023 Section 2", missing: "both", note: "Not in local archive" },
   { paper: "ENGAA 2022 Section 2", missing: "answers" },
   { paper: "ENGAA 2021 Section 2", missing: "answers" },
-  {
-    paper: "NSAA Specimen 2022 Section 2",
-    missing: "both",
-    note: "VerityPrep source unreachable",
-  },
 ];

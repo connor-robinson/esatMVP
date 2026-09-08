@@ -24,6 +24,21 @@ describe("past paper compact tables", () => {
         labels.some((label) => label.startsWith("Specimen")),
         table.id,
       ).toBe(true);
+      expect(labels, table.id).not.toContain("Specimen 2022");
+    }
+  });
+
+  it("labels official answers as Answer Key", () => {
+    const tables = [
+      ...getMainPageCompactTables(),
+      ...getNsaaCompactTables(),
+      ...getEngaaCompactTables(),
+    ];
+    for (const table of tables) {
+      for (const row of table.rows) {
+        if (!row.answersUrl) continue;
+        expect(row.answersLabel, `${table.id} ${row.label}`).toBe("Answer Key");
+      }
     }
   });
 
