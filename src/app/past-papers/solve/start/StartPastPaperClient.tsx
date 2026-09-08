@@ -4,14 +4,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
-import { ReplaceActivePaperModal } from "@/components/papers/ReplaceActivePaperModal";
 import { LoadingPage } from "@/components/shared/LoadingPage";
 import { useSubscription } from "@/hooks/useSubscription";
 import { allowLoadingPaint } from "@/lib/papers/allowLoadingPaint";
-import {
-  shouldConfirmReplacePaperSession,
-  resumeInProgressPaperSession,
-} from "@/lib/papers/activePaperSessionClient";
 import {
   isPastPaperLibraryLocked,
   freePreviewPastPapersLabel,
@@ -57,9 +52,6 @@ export function StartPastPaperClient() {
 
   const [error, setError] = useState<string | null>(null);
   const [locked, setLocked] = useState(false);
-  const [replaceOpen, setReplaceOpen] = useState(false);
-  const [replaceConfirming, setReplaceConfirming] = useState(false);
-  const [replaceResuming, setReplaceResuming] = useState(false);
   const startedRef = useRef(false);
 
   useEffect(() => {
@@ -72,7 +64,7 @@ export function StartPastPaperClient() {
 
   useEffect(() => {
     if (!target || session === undefined || session === null) return;
-    if (subscriptionLoading || locked || replaceOpen) return;
+    if (subscriptionLoading || locked) return;
     if (startedRef.current) return;
 
     const paperLockProbe = {
@@ -89,7 +81,7 @@ export function StartPastPaperClient() {
     launchingTargets.add(key);
     startedRef.current = true;
 
-    const runStart = async () => {
+    void (async () => {
       setError(null);
       try {
         await allowLoadingPaint();
@@ -104,63 +96,15 @@ export function StartPastPaperClient() {
             : "Failed to start this paper. Try again from the library.",
         );
       }
-    };
-
-    void (async () => {
-      if (await shouldConfirmReplacePaperSession()) {
-        launchingTargets.delete(key);
-        startedRef.current = false;
-        setReplaceOpen(true);
-        return;
-      }
-      await runStart();
     })();
   }, [
     hasFullAccess,
     locked,
-    replaceOpen,
     router,
     session,
     subscriptionLoading,
     target,
   ]);
-
-  const handleConfirmReplace = async () => {
-    if (!target) return;
-    const key = practiceTargetKey(target);
-    setReplaceConfirming(true);
-    launchingTargets.add(key);
-    startedRef.current = true;
-    try {
-      await allowLoadingPaint();
-      await startPastPaperSectionSession(target);
-      router.push("/past-papers/solve");
-    } catch (err) {
-      launchingTargets.delete(key);
-      startedRef.current = false;
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Failed to start this paper. Try again from the library.",
-      );
-    } finally {
-      setReplaceConfirming(false);
-      setReplaceOpen(false);
-    }
-  };
-
-  const handleResume = async () => {
-    setReplaceResuming(true);
-    try {
-      const resumed = await resumeInProgressPaperSession();
-      if (resumed) {
-        setReplaceOpen(false);
-        router.push("/past-papers/solve/resume");
-      }
-    } finally {
-      setReplaceResuming(false);
-    }
-  };
 
   if (!target) {
     return (
@@ -171,7 +115,7 @@ export function StartPastPaperClient() {
     );
   }
 
-  if (session === undefined || (session && !error && !locked && !replaceOpen)) {
+  if (session === undefined || (session && !error && !locked)) {
     return (
       <LoadingPage
         variant="session"
@@ -209,20 +153,7 @@ export function StartPastPaperClient() {
   }
 
   return (
-    <>
-      <LoadingPage variant="session" hint={START_HINT} message="Starting your paper" />
-      <ReplaceActivePaperModal
-        open={replaceOpen}
-        onCancel={() => {
-          setReplaceOpen(false);
-          router.push(SEO_ROUTES.pastPapers);
-        }}
-        onConfirm={() => void handleConfirmReplace()}
-        onResume={() => void handleResume()}
-        isConfirming={replaceConfirming}
-        isResuming={replaceResuming}
-      />
-    </>
+    <LoadingPage variant="session" hint={START_HINT} message="Starting your paper" />
   );
 }
 

@@ -5,7 +5,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Container } from '@/components/layout/Container';
 import { DrillUpgradeBanner } from '@/components/builder/DrillUpgradeBanner';
@@ -25,10 +25,8 @@ import { generateSectionId } from '@/lib/papers/partIdUtils';
 import type { Paper, PaperSection, Question, ExamName } from '@/types/papers';
 import { PaperLibraryGrid } from '@/components/papers/library/PaperLibraryGrid';
 import { PaperSessionSummary } from '@/components/papers/library/PaperSessionSummary';
-import { ReplaceActivePaperModal } from '@/components/papers/ReplaceActivePaperModal';
 import { LoadingPage } from '@/components/shared/LoadingPage';
 import { allowLoadingPaint } from '@/lib/papers/allowLoadingPaint';
-import { shouldConfirmReplacePaperSession, resumeInProgressPaperSession } from '@/lib/papers/activePaperSessionClient';
 import {
   isPastPaperLibraryLocked,
   freePreviewPastPapersLabel,
@@ -183,10 +181,6 @@ export default function PapersLibraryPage() {
 
   // Session starting state
   const [isStartingSession, setIsStartingSession] = useState(false);
-  const [replaceModalOpen, setReplaceModalOpen] = useState(false);
-  const [replaceConfirming, setReplaceConfirming] = useState(false);
-  const [replaceResuming, setReplaceResuming] = useState(false);
-  const pendingStartRef = useRef<(() => Promise<void>) | null>(null);
   const [showTutorial, setShowTutorial] = useState(false);
   const [customizeAcknowledged, setCustomizeAcknowledged] = useState(false);
   const [userEsatSubjects, setUserEsatSubjects] = useState<string[] | null>(null);
@@ -655,49 +649,7 @@ export default function PapersLibraryPage() {
       }
     };
 
-    if (await shouldConfirmReplacePaperSession()) {
-      pendingStartRef.current = runStart;
-      setReplaceModalOpen(true);
-      return;
-    }
-
     await runStart();
-  };
-
-  const handleCancelReplaceSession = () => {
-    pendingStartRef.current = null;
-    setReplaceModalOpen(false);
-    setReplaceConfirming(false);
-  };
-
-  const handleConfirmReplaceSession = async () => {
-    const fn = pendingStartRef.current;
-    pendingStartRef.current = null;
-    if (!fn) {
-      setReplaceModalOpen(false);
-      return;
-    }
-    setReplaceConfirming(true);
-    try {
-      await fn();
-    } finally {
-      setReplaceConfirming(false);
-      setReplaceModalOpen(false);
-    }
-  };
-
-  const handleResumeSession = async () => {
-    setReplaceResuming(true);
-    try {
-      pendingStartRef.current = null;
-      const resumed = await resumeInProgressPaperSession();
-      if (resumed) {
-        setReplaceModalOpen(false);
-        router.push('/past-papers/solve/resume');
-      }
-    } finally {
-      setReplaceResuming(false);
-    }
   };
 
   const canStart = selectedPapers.some((sp) =>
@@ -820,15 +772,6 @@ export default function PapersLibraryPage() {
           {error}
         </div>
       )}
-
-      <ReplaceActivePaperModal
-        open={replaceModalOpen}
-        onCancel={handleCancelReplaceSession}
-        onConfirm={handleConfirmReplaceSession}
-        onResume={handleResumeSession}
-        isConfirming={replaceConfirming}
-        isResuming={replaceResuming}
-      />
 
       {isStartingSession ? (
         <LoadingPage variant="session" message="Loading your paper" />

@@ -36,6 +36,7 @@ export function PearsonPastPaperSession() {
     navigateToQuestion,
     incrementTime,
     setEndedAt,
+    resumeSession,
     selectedSections,
     currentSectionIndex,
     sectionTimeLimits,
@@ -180,9 +181,9 @@ export function PearsonPastPaperSession() {
 
   useEffect(() => {
     if (sessionId && isPaused) {
-      router.push("/past-papers/solve/resume");
+      resumeSession();
     }
-  }, [isPaused, router, sessionId]);
+  }, [isPaused, resumeSession, sessionId]);
 
   useEffect(() => {
     if (!startedAt || isPaused || loadingResults) return;

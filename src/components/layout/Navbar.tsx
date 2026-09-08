@@ -12,7 +12,6 @@ import {
   useSupabaseSession,
 } from '@/components/auth/SupabaseSessionProvider';
 import { cn } from '@/lib/utils';
-import { SessionProgressBar } from '@/components/papers/SessionProgressBar';
 import { shouldHideSiteChromeForPaper } from '@/lib/papers/activePaperSessionClient';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -219,11 +218,6 @@ export function Navbar() {
   const session = useSupabaseSession();
   const supabase = useSupabaseClient();
   const {
-    sessionId,
-    endedAt,
-    justQuitSessionId,
-    justQuitTimestamp,
-    isMarkingInfo,
     paperFullscreenShowMainNavbar,
   } = usePaperSessionStore();
   const [docFullscreen, setDocFullscreen] = useState(false);
@@ -256,15 +250,6 @@ export function Navbar() {
     'hover:bg-[#f8f9fa] hover:shadow-[0_1px_3px_rgba(60,64,67,0.2)]',
     'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4285f4]',
   );
-
-  const isJustQuit =
-    justQuitSessionId === sessionId &&
-    justQuitTimestamp &&
-    Date.now() - justQuitTimestamp < 5000;
-  const hasActiveSession =
-    sessionId !== null &&
-    !isJustQuit &&
-    (endedAt === null || isMarkingInfo);
 
   useEffect(() => {
     const sync = () => {
@@ -644,7 +629,6 @@ export function Navbar() {
           </div>
         </nav>
       )}
-      {hasActiveSession && <SessionProgressBar embedded />}
       <SignOutConfirmModal
         open={showSignOutConfirm}
         isLoading={isSigningOut}

@@ -34,10 +34,8 @@ import {
 import { examNameToPaperType } from '@/lib/papers/paperConfig';
 import type { PaperSection, Question, Paper } from '@/types/papers';
 import type { RoadmapPart } from '@/lib/papers/roadmapConfig';
-import { ReplaceActivePaperModal } from '@/components/papers/ReplaceActivePaperModal';
 import { LoadingPage } from '@/components/shared/LoadingPage';
 import { allowLoadingPaint } from '@/lib/papers/allowLoadingPaint';
-import { shouldConfirmReplacePaperSession, resumeInProgressPaperSession } from '@/lib/papers/activePaperSessionClient';
 import { isFreePreviewRoadmapStage } from '@/lib/papers/freePreviewPapers';
 import { applyEsatSubjectsToRoadmapStages } from '@/lib/papers/roadmapEsatFilter';
 import {
@@ -137,15 +135,7 @@ export default function PapersRoadmapPage() {
     Map<string, StageCompletionEntry>
   >(() => new Map(INITIAL_COMPLETION));
   const [completionLoading, setCompletionLoading] = useState(true);
-  const [replaceModalOpen, setReplaceModalOpen] = useState(false);
-  const [replaceConfirming, setReplaceConfirming] = useState(false);
-  const [replaceResuming, setReplaceResuming] = useState(false);
   const [isStartingSession, setIsStartingSession] = useState(false);
-  const pendingRoadmapStartRef = useRef<{
-    stage: RoadmapStage;
-    selectedParts: RoadmapPart[];
-    options: RoadmapStartOptions;
-  } | null>(null);
   const [newQuestionsOnly, setNewQuestionsOnly] = useState(
     readNewQuestionsOnlyPreference,
   );
@@ -597,55 +587,10 @@ export default function PapersRoadmapPage() {
       ) {
         return;
       }
-      if (await shouldConfirmReplacePaperSession()) {
-        pendingRoadmapStartRef.current = { stage, selectedParts, options };
-        setReplaceModalOpen(true);
-        return;
-      }
       await executeStartStage(stage, selectedParts, options);
     },
     [executeStartStage, hasFullAccess, isStartingSession],
   );
-
-  const handleCancelReplaceSession = useCallback(() => {
-    pendingRoadmapStartRef.current = null;
-    setReplaceModalOpen(false);
-    setReplaceConfirming(false);
-  }, []);
-
-  const handleConfirmReplaceSession = useCallback(async () => {
-    const pending = pendingRoadmapStartRef.current;
-    pendingRoadmapStartRef.current = null;
-    if (!pending) {
-      setReplaceModalOpen(false);
-      return;
-    }
-    setReplaceConfirming(true);
-    try {
-      await executeStartStage(
-        pending.stage,
-        pending.selectedParts,
-        pending.options,
-      );
-    } finally {
-      setReplaceConfirming(false);
-      setReplaceModalOpen(false);
-    }
-  }, [executeStartStage]);
-
-  const handleResumeSession = useCallback(async () => {
-    setReplaceResuming(true);
-    try {
-      pendingRoadmapStartRef.current = null;
-      const resumed = await resumeInProgressPaperSession();
-      if (resumed) {
-        setReplaceModalOpen(false);
-        router.push('/past-papers/solve/resume');
-      }
-    } finally {
-      setReplaceResuming(false);
-    }
-  }, [router]);
 
   // Refresh completion data
   const refreshCompletionData = useCallback(async () => {
@@ -858,15 +803,6 @@ export default function PapersRoadmapPage() {
           </div>
         </div>
       </div>
-
-      <ReplaceActivePaperModal
-        open={replaceModalOpen}
-        onCancel={handleCancelReplaceSession}
-        onConfirm={handleConfirmReplaceSession}
-        onResume={handleResumeSession}
-        isConfirming={replaceConfirming}
-        isResuming={replaceResuming}
-      />
 
       {isStartingSession ? (
         <LoadingPage variant="session" message="Loading your paper" />
