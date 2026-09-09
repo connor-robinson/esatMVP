@@ -56,6 +56,20 @@ describe("past paper compact tables", () => {
     }
   });
 
+  it("includes NSAA Section 2 2023 paper and answer key", () => {
+    const table = getMainPageCompactTables().find(
+      (item) => item.id === "nsaa-section-2",
+    );
+    const row = table?.rows.find((item) => item.label === "2023");
+    expect(row?.paperUrl).toBe(
+      "/downloads/past-papers/nsaa/section-2/2023/nsaa-2023-section-2-paper.pdf",
+    );
+    expect(row?.answersUrl).toBe(
+      "/downloads/past-papers/nsaa/section-2/2023/nsaa-2023-section-2-answer-key.pdf",
+    );
+    expect(row?.detailHref).toBe("/past-papers/nsaa/2023/section-2");
+  });
+
   it("lists one specification row covering 2016-2023", () => {
     for (const table of [
       ...getNsaaCompactTables(),

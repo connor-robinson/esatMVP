@@ -154,7 +154,7 @@ export const PAST_PAPER_DOWNLOADS: readonly PastPaperDownload[] = [
     makePaper("NSAA", year, 1, true),
   ),
   // NSAA Section 2: 2016–2019 official answers are UCLES worked answers
-  ...([2022, 2021, 2020] as const).map((year) => makePaper("NSAA", year, 2, true)),
+  ...([2023, 2022, 2021, 2020] as const).map((year) => makePaper("NSAA", year, 2, true)),
   ...([2019, 2018, 2017, 2016] as const).map((year) =>
     makePaper("NSAA", year, 2, true, "solutions"),
   ),
@@ -713,6 +713,4 @@ export const MISSING_PDF_ASSETS: readonly {
   paper: string;
   missing: "question-paper" | "answers" | "both";
   note?: string;
-}[] = [
-  { paper: "NSAA 2023 Section 2", missing: "both", note: "Not in local archive" },
-];
+}[] = [];
