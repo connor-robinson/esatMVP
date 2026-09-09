@@ -104,15 +104,21 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Conditional `.select()` makes the Supabase client return a parser-error union;
+    // narrow to the fields we actually read.
+    const questionRows = (rows ?? []) as Array<
+      Record<string, unknown> & { id: string; subjects?: string }
+    >;
+
     const byId = new Map<string, ParsedQuestion>(
-      (rows ?? []).map((row) => [
-        row.id as string,
+      questionRows.map((row) => [
+        row.id,
         summaryOnly
           ? ({
-              id: row.id as string,
-              subjects: (row as { subjects?: string }).subjects,
+              id: row.id,
+              subjects: row.subjects,
             } as ParsedQuestion)
-          : parseQuestionRow(row as Record<string, unknown>),
+          : parseQuestionRow(row),
       ]),
     );
 
