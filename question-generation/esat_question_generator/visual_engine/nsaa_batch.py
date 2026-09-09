@@ -1008,7 +1008,12 @@ def main() -> int:
     print(json.dumps({k: v for k, v in result.items() if k != "results"}, indent=2))
     if result.get("results"):
         print(json.dumps(result["results"], indent=2))
-    return 0 if result.get("status") in {"completed", "dry_run"} else 1
+    if result.get("status") not in {"completed", "dry_run"}:
+        return 1
+    if int(result.get("generated") or 0) == 0 and int(result.get("errors") or 0) > 0:
+        print(f"ERROR: generated=0 with errors={result.get('errors')}", flush=True)
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
