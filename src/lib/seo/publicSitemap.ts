@@ -61,8 +61,6 @@ export const SITEMAP_EXCLUDED_PATHS = [
   "/past-papers/library",
   "/past-papers/solve/session",
   "/past-papers/solve/start",
-  "/past-papers/nsaa",
-  "/past-papers/engaa",
   "/cookie-policy",
   "/tools/score-converter/nsaa/2017",
   "/tools/score-converter/nsaa/2018",

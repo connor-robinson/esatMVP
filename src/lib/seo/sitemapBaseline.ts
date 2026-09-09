@@ -20,6 +20,8 @@ export const APPROVED_SITEMAP_BASELINE: readonly PublicSitemapEntry[] = [
   { path: SEO_ROUTES.testDates },
   { path: SEO_ROUTES.pastPapers },
   { path: SEO_ROUTES.pastPapersGuide },
+  { path: SEO_ROUTES.engaaPastPapers },
+  { path: SEO_ROUTES.nsaaPastPapers },
   { path: SEO_ROUTES.engaaNsaaPapers },
   { path: SEO_ROUTES.tmuaForEsat },
   { path: SEO_ROUTES.maths1 },

@@ -64,7 +64,7 @@ describe("sitemap baseline guard", () => {
       entry.url.replace("https://esatcamp.com", "") || "/",
     );
     expect(paths).toEqual([...APPROVED_SITEMAP_BASELINE_PATHS]);
-    expect(paths).toHaveLength(33);
+    expect(paths).toHaveLength(35);
   });
 
   it("excludes redirect sources and the thin /help utility", () => {
@@ -85,13 +85,27 @@ describe("sitemap baseline guard", () => {
     );
   });
 
-  it("does not include past-paper download SEO routes", () => {
+  it("includes only the two approved exam hub URLs, once each", () => {
+    const paths = APPROVED_SITEMAP_BASELINE_PATHS;
+    expect(paths.filter((path) => path === "/past-papers/engaa")).toHaveLength(
+      1,
+    );
+    expect(paths.filter((path) => path === "/past-papers/nsaa")).toHaveLength(1);
+    expect(sitemap().map((entry) => entry.url)).toEqual(
+      expect.arrayContaining([
+        `${SITE_URL}/past-papers/engaa`,
+        `${SITE_URL}/past-papers/nsaa`,
+      ]),
+    );
+    expect(SITEMAP_EXCLUDED_PATHS).not.toContain("/past-papers/engaa");
+    expect(SITEMAP_EXCLUDED_PATHS).not.toContain("/past-papers/nsaa");
+  });
+
+  it("does not include past-paper download detail SEO routes", () => {
     for (const paper of PAST_PAPER_DOWNLOADS) {
       const path = pastPaperPagePath(paper);
       expect(APPROVED_SITEMAP_BASELINE_PATHS).not.toContain(path);
     }
-    expect(APPROVED_SITEMAP_BASELINE_PATHS).not.toContain("/past-papers/nsaa");
-    expect(APPROVED_SITEMAP_BASELINE_PATHS).not.toContain("/past-papers/engaa");
   });
 
   it("keeps /esat-past-papers in the approved baseline", () => {
@@ -110,8 +124,46 @@ describe("sitemap baseline guard", () => {
 
   it("cannot expand the sitemap when past-paper data grows", () => {
     expect(PAST_PAPER_DOWNLOADS.length).toBeGreaterThan(0);
-    expect(sitemap()).toHaveLength(33);
-    expect(PUBLIC_SITEMAP_ENTRIES).toHaveLength(33);
+    expect(sitemap()).toHaveLength(35);
+    expect(PUBLIC_SITEMAP_ENTRIES).toHaveLength(35);
+  });
+
+  it("increased the approved baseline by exactly two hub URLs", () => {
+    expect(APPROVED_SITEMAP_BASELINE).toHaveLength(35);
+    const withoutHubs = APPROVED_SITEMAP_BASELINE_PATHS.filter(
+      (path) =>
+        path !== "/past-papers/engaa" && path !== "/past-papers/nsaa",
+    );
+    expect(withoutHubs).toHaveLength(33);
+  });
+});
+
+describe("exam hub indexability", () => {
+  it("makes ENGAA and NSAA hubs indexable with self-canonicals", async () => {
+    const [{ metadata: engaa }, { metadata: nsaa }] = await Promise.all([
+      import("@/app/past-papers/engaa/page"),
+      import("@/app/past-papers/nsaa/page"),
+    ]);
+
+    expect(engaa.robots).toEqual({ index: true, follow: true });
+    expect(nsaa.robots).toEqual({ index: true, follow: true });
+    expect(String(engaa.robots)).not.toMatch(/noindex/i);
+    expect(String(nsaa.robots)).not.toMatch(/noindex/i);
+    expect(engaa.alternates?.canonical).toBe(
+      `${SITE_URL}/past-papers/engaa`,
+    );
+    expect(nsaa.alternates?.canonical).toBe(`${SITE_URL}/past-papers/nsaa`);
+  });
+
+  it("keeps live exam hub pages publicly reachable with HTTP 200", async () => {
+    for (const path of ["/past-papers/engaa", "/past-papers/nsaa"] as const) {
+      const response = await fetch(`${SITE_URL}${path}`, {
+        method: "GET",
+        redirect: "manual",
+      });
+      expect(response.status).toBe(200);
+      expect(response.headers.get("location")).toBeNull();
+    }
   });
 });
 

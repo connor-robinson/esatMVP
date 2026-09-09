@@ -5,16 +5,13 @@ import {
   PastPaperGuideContent,
 } from "@/components/pastPapersDownload";
 import { SeoPageLayout } from "@/components/seo/SeoPageLayout";
-import { buildNoIndexMetadata } from "@/lib/seo/noIndex";
+import { buildSeoMetadata } from "@/lib/seo/config";
 import { seoLinks } from "@/lib/seo/links";
 
 const EXAM = "NSAA" as const;
 const meta = buildExamHubMetadata(EXAM);
 
-export const metadata: Metadata = buildNoIndexMetadata({
-  title: meta.title,
-  description: meta.description,
-});
+export const metadata: Metadata = buildSeoMetadata(meta);
 
 export default function NsaaPastPapersPage() {
   return (

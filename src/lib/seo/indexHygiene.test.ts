@@ -194,16 +194,40 @@ describe("index hygiene: public pages stay indexable", () => {
     expect(examPage).toContain("publishedRows");
   });
 
-  it("marks past-paper download SEO routes as noindex, follow", () => {
+  it("marks past-paper detail download SEO routes as noindex, follow", () => {
     for (const segments of [
-      ["past-papers", "nsaa", "page.tsx"],
-      ["past-papers", "engaa", "page.tsx"],
       ["past-papers", "nsaa", "[year]", "[section]", "page.tsx"],
       ["past-papers", "engaa", "[year]", "[section]", "page.tsx"],
     ] as const) {
       const source = readAppSource(...segments);
       expect(source).toMatch(/buildNoIndexMetadata|noIndexFollowMetadata/);
       expect(source).not.toMatch(/buildSeoMetadata/);
+    }
+  });
+
+  it("keeps ENGAA and NSAA exam hubs indexable with self canonicals", () => {
+    for (const { segments, path } of [
+      {
+        segments: ["past-papers", "engaa", "page.tsx"] as const,
+        path: SEO_ROUTES.engaaPastPapers,
+      },
+      {
+        segments: ["past-papers", "nsaa", "page.tsx"] as const,
+        path: SEO_ROUTES.nsaaPastPapers,
+      },
+    ]) {
+      const source = readAppSource(...segments);
+      expect(source).toContain("buildSeoMetadata");
+      expect(source).not.toContain("buildNoIndexMetadata");
+      expect(source).not.toContain("noIndexFollowMetadata");
+
+      const meta = buildSeoMetadata({
+        title: "t",
+        description: "d",
+        path,
+      });
+      expect(meta.alternates?.canonical).toBe(buildCanonicalUrl(path));
+      expect(meta.robots).toEqual({ index: true, follow: true });
     }
   });
 
@@ -289,10 +313,18 @@ describe("index hygiene: sitemap", () => {
     });
 
     expect(paths).toEqual(PUBLIC_SITEMAP_ENTRIES.map((entry) => entry.path));
-    expect(entries).toHaveLength(33);
+    expect(entries).toHaveLength(35);
     expect(isPublicSitemapPath(APP_ROUTES.scoreConverter)).toBe(true);
     expect(isPublicSitemapPath("/tools/score-converter/pat")).toBe(true);
     expect(isPublicSitemapPath("/esat-no-calculator-practice")).toBe(true);
+    expect(isPublicSitemapPath("/past-papers/engaa")).toBe(true);
+    expect(isPublicSitemapPath("/past-papers/nsaa")).toBe(true);
+    expect(urls.filter((url) => url === `${SITE_URL}/past-papers/engaa`)).toHaveLength(
+      1,
+    );
+    expect(urls.filter((url) => url === `${SITE_URL}/past-papers/nsaa`)).toHaveLength(
+      1,
+    );
     expect(urls).toContain(`${SITE_URL}${APP_ROUTES.scoreConverter}`);
     expect(urls).toContain(`${SITE_URL}/esat-no-calculator-practice`);
     expect(isPublicSitemapPath("/cookie-policy")).toBe(false);
