@@ -181,6 +181,14 @@ def _skip_paper(paper_name: str) -> bool:
     return any(hint in low for hint in _SKIP_PAPER_HINTS)
 
 
+_NSAA_SUBJECTS = {"mathematics", "physics", "chemistry", "biology"}
+
+
+def _is_specimen_paper(paper_name: str) -> bool:
+    low = (paper_name or "").lower()
+    return "specimen" in low or "/spec" in low or low.startswith("spec ")
+
+
 def select_nsaa_subject_questions(
     *,
     subject: str,
@@ -189,14 +197,14 @@ def select_nsaa_subject_questions(
     require_diagram: bool = False,
     audit_summary_path: Path | None = None,
 ) -> list[EvalQuestion]:
-    """NSAA Chemistry or Biology sources, with or without a stem diagram.
+    """NSAA Section 1 sources for one subject, with or without a stem diagram.
 
-    Subject is taken from questions.part_name (Section 1 Part C/D), not paper_name.
-    Section 2 long-answer items are skipped so the ESAT MCQ pipeline stays on-format.
+    Subject is taken from questions.part_name (or paper_name), not exam mix-ins.
+    ENGAA is never included. Specimen papers and Section 2 long-answer items are skipped.
     """
     wanted = (subject or "").strip().lower()
-    if wanted not in {"chemistry", "biology"}:
-        raise ValueError("subject must be chemistry or biology")
+    if wanted not in _NSAA_SUBJECTS:
+        raise ValueError("subject must be mathematics, physics, chemistry, or biology")
     flagged = _flagged_ids(audit_summary_path)
     selected: list[EvalQuestion] = []
     seen: set[int] = set()
@@ -205,6 +213,12 @@ def select_nsaa_subject_questions(
         for qid in question_ids:
             eq = _fetch_question_as_eval(qid)
             if not eq or eq.question_id in flagged:
+                continue
+            if eq.exam_name.upper() != "NSAA":
+                continue
+            if _is_specimen_paper(eq.paper_name):
+                continue
+            if "section 2" in (eq.paper_name or "").lower():
                 continue
             if paper_subject(eq.paper_name, eq.part_name) != wanted:
                 continue
@@ -216,6 +230,10 @@ def select_nsaa_subject_questions(
 
     for eq in _fetch_subject_questions(wanted):
         if eq.question_id in flagged or eq.question_id in seen:
+            continue
+        if eq.exam_name.upper() != "NSAA":
+            continue
+        if _is_specimen_paper(eq.paper_name):
             continue
         if paper_subject(eq.paper_name, eq.part_name) != wanted:
             continue
@@ -275,12 +293,12 @@ def _fetch_subject_questions(subject: str) -> list[EvalQuestion]:
         return []
     for row in rows:
         paper = str(row.get("paper_name") or row.get("paperName") or "")
-        if "section 2" in paper.lower():
+        if "section 2" in paper.lower() or _is_specimen_paper(paper):
             continue
         if paper_subject(paper, str(row.get("part_name") or row.get("partName") or "")) != subject:
             continue
         eq = _row_to_eval_no_diagram(row)
-        if eq:
+        if eq and eq.exam_name.upper() == "NSAA":
             out.append(eq)
     return out
 

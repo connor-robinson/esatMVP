@@ -26,9 +26,9 @@ on:
         default: true
         type: boolean
       only_visuals:
-        description: Optional visual_type allow-list (comma-separated). Empty = any allowed type.
+        description: Optional visual_type allow-list (comma-separated). Leave the chemistry default blanked by picking subject-specific autos; empty = auto by subject.
         required: false
-        default: "chem_structure,graph,energy_profile"
+        default: ""
         type: string
       force:
         description: Regenerate even if already present in this runner DB
@@ -104,20 +104,55 @@ jobs:
         run: |
           set -euo pipefail
           if [ "${{ github.event_name }}" = "schedule" ]; then
-            echo "subject=chemistry" >> "$GITHUB_OUTPUT"
-            echo "n=5" >> "$GITHUB_OUTPUT"
-            echo "diagrams_only=true" >> "$GITHUB_OUTPUT"
-            echo "only_visuals=chem_structure,graph,energy_profile" >> "$GITHUB_OUTPUT"
-            echo "force=true" >> "$GITHUB_OUTPUT"
-            echo "model=gemini-3.7-flash" >> "$GITHUB_OUTPUT"
+            SUBJECT="chemistry"
+            N="5"
+            DIAG="true"
+            ONLY="chem_structure,graph,energy_profile"
+            FORCE="true"
+            MODEL="gemini-3.7-flash"
           else
-            echo "subject=${{ inputs.subject }}" >> "$GITHUB_OUTPUT"
-            echo "n=${{ inputs.n }}" >> "$GITHUB_OUTPUT"
-            echo "diagrams_only=${{ inputs.diagrams_only }}" >> "$GITHUB_OUTPUT"
-            echo "only_visuals=${{ inputs.only_visuals }}" >> "$GITHUB_OUTPUT"
-            echo "force=${{ inputs.force }}" >> "$GITHUB_OUTPUT"
-            echo "model=${{ inputs.model }}" >> "$GITHUB_OUTPUT"
+            SUBJECT="${{ inputs.subject }}"
+            N="${{ inputs.n }}"
+            DIAG="${{ inputs.diagrams_only }}"
+            ONLY="${{ inputs.only_visuals }}"
+            FORCE="${{ inputs.force }}"
+            MODEL="${{ inputs.model }}"
           fi
+
+          # Subject-aware visual defaults. The workflow input default is chemistry-oriented;
+          # do not pass chem_structure to physics/math/biology unless the user typed it.
+          CHEM_DEFAULT="chem_structure,graph,energy_profile"
+          if [ -z "$ONLY" ] || [ "$ONLY" = "$CHEM_DEFAULT" ]; then
+            case "$SUBJECT" in
+              chemistry)
+                ONLY="chem_structure,graph,energy_profile"
+                ;;
+              biology)
+                ONLY="graph,bio_diagram,pedigree"
+                ;;
+              physics)
+                ONLY="graph"
+                ;;
+              mathematics)
+                ONLY="graph"
+                ;;
+            esac
+          fi
+
+          # Mathematics uses the full stem-diagram pool via --full-pool when diagrams-only.
+          FULL_POOL="false"
+          if [ "$SUBJECT" = "mathematics" ]; then
+            FULL_POOL="true"
+          fi
+
+          echo "subject=$SUBJECT" >> "$GITHUB_OUTPUT"
+          echo "n=$N" >> "$GITHUB_OUTPUT"
+          echo "diagrams_only=$DIAG" >> "$GITHUB_OUTPUT"
+          echo "only_visuals=$ONLY" >> "$GITHUB_OUTPUT"
+          echo "force=$FORCE" >> "$GITHUB_OUTPUT"
+          echo "model=$MODEL" >> "$GITHUB_OUTPUT"
+          echo "full_pool=$FULL_POOL" >> "$GITHUB_OUTPUT"
+          echo "Resolved subject=$SUBJECT n=$N diagrams_only=$DIAG only_visuals=$ONLY full_pool=$FULL_POOL"
 
       - name: Preflight secrets
         shell: bash
@@ -149,6 +184,7 @@ jobs:
           MODEL="${{ steps.params.outputs.model }}"
           DIAG="${{ steps.params.outputs.diagrams_only }}"
           FORCE="${{ steps.params.outputs.force }}"
+          FULL_POOL="${{ steps.params.outputs.full_pool }}"
 
           if [ -n "$MODEL" ]; then
             export MODEL_DIAGRAM_DESIGNER="$MODEL"
@@ -157,6 +193,9 @@ jobs:
           ARGS=(--subject "$SUBJECT" --n "$N" --model "${MODEL_DIAGRAM_DESIGNER}")
           if [ "$DIAG" = "true" ]; then
             ARGS+=(--diagrams-only)
+          fi
+          if [ "$FULL_POOL" = "true" ]; then
+            ARGS+=(--full-pool)
           fi
           if [ -n "$ONLY" ]; then
             ARGS+=(--only-visuals "$ONLY")

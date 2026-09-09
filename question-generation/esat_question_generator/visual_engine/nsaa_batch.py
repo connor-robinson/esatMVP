@@ -602,12 +602,20 @@ def _mix_hint(
                 "For chem_structure, provide SMILES only (RDKit draws the structure; never invent atom coordinates or bonds). "
                 "If the source cannot support a genuine diagram, set skip true."
             )
+        if subject == "physics":
+            return (
+                "This batch requires a rendered physics graph. "
+                "Set idea_plan.visual_type to graph, needs_diagram true, graph_preset "
+                "(science_xy / cartesian / signed_y / multi_series as appropriate), and visual_brief. "
+                "Do not use none or table. "
+                "If the source cannot support a genuine graph MCQ, set skip true."
+            )
         return (
             "This batch is for reviewing rendered diagrams only. "
-            "Set idea_plan.visual_type to graph, chem_structure, bio_diagram, or pedigree. "
+            "For mathematics set idea_plan.diagram_type to geometry or graph with a non-empty visual_brief. "
+            "Set idea_plan.visual_type to graph (or leave diagram_type geometry/graph). "
             "Do not use none or table. "
-            "For graphs, set graph_preset to one of cartesian, science_xy, log_x, signed_y, multi_series. "
-            "For chem_structure, provide SMILES only (no hand-placed atoms). "
+            "For graphs, set graph_preset to one of cartesian, science_xy, log_x, signed_y, multi_series when relevant. "
             "If the source cannot support a genuine diagram, set skip true."
         )
     if subject == "chemistry":
