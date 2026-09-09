@@ -37,17 +37,19 @@ describe("feedback referral access", () => {
         role: "admin",
         live: false,
         previewEmails: [],
+        activeDays: 0,
       }),
     ).toBe(true);
   });
 
-  it("lets preview emails in while gated", () => {
+  it("lets preview emails in while gated without tenure", () => {
     expect(
       canAccessFeedbackReferral({
         email: "Anson@example.com",
         role: "user",
         live: false,
         previewEmails: ["anson@example.com"],
+        activeDays: 0,
       }),
     ).toBe(true);
   });
@@ -59,17 +61,40 @@ describe("feedback referral access", () => {
         role: "user",
         live: false,
         previewEmails: ["anson@example.com"],
+        activeDays: 10,
       }),
     ).toBe(false);
   });
 
-  it("opens to everyone when live", () => {
+  it("requires 3 active days when live", () => {
     expect(
       canAccessFeedbackReferral({
         email: "student@example.com",
         role: "user",
         live: true,
         previewEmails: [],
+        activeDays: 2,
+      }),
+    ).toBe(false);
+    expect(
+      canAccessFeedbackReferral({
+        email: "student@example.com",
+        role: "user",
+        live: true,
+        previewEmails: [],
+        activeDays: 3,
+      }),
+    ).toBe(true);
+  });
+
+  it("lets admins in when live even without tenure", () => {
+    expect(
+      canAccessFeedbackReferral({
+        email: "someone@example.com",
+        role: "admin",
+        live: true,
+        previewEmails: [],
+        activeDays: 0,
       }),
     ).toBe(true);
   });

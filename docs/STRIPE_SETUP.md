@@ -121,6 +121,8 @@ Copy each Price ID (e.g. `price_1ABC...`) into the matching env var.
 Optional friend-referral 50% codes (preview until `FEEDBACK_REFERRAL_LIVE=true`).
 Test on production at `https://esatcamp.com/feedback` while signed in as an allowlisted account (no localhost login needed). Built-in preview emails already include the admin/tester accounts; use the env var only to add more.
 
+When live, the invite / survey only unlocks after **3 distinct active usage days** (practice metrics + past-paper session days). Admins skip that check. While still gated, preview allowlist emails also skip it for QA.
+
 New survey replies email `ansonchanw@gmail.com` immediately (override with `FEEDBACK_REFERRAL_NOTIFY_EMAIL`). Requires `RESEND_API_KEY`.
 
 Friend codes are Stripe promotion codes (`CAMP50-…`). Checkout sessions use `allow_promotion_codes: true` so friends enter the code in Stripe Checkout (not on the pricing page).

@@ -22,11 +22,54 @@ export function createFeedbackReferralServiceClient(): SupabaseClient {
   });
 }
 
+/**
+ * Distinct UTC calendar days the user has used practice surfaces.
+ * Uses user_daily_metrics (answered questions) plus past-paper session days.
+ */
+export async function countDistinctActiveUsageDays(
+  userId: string,
+  service: SupabaseClient = createFeedbackReferralServiceClient(),
+): Promise<number> {
+  const days = new Set<string>();
+
+  const { data: metrics } = await service
+    .from("user_daily_metrics")
+    .select("metric_date, total_questions")
+    .eq("user_id", userId);
+
+  for (const row of metrics ?? []) {
+    if (((row.total_questions as number | null) ?? 0) > 0) {
+      const date = String(row.metric_date ?? "").slice(0, 10);
+      if (date) days.add(date);
+    }
+  }
+
+  try {
+    const { data: papers } = await service
+      .from("paper_sessions")
+      .select("started_at")
+      .eq("user_id", userId)
+      .limit(500);
+    for (const row of papers ?? []) {
+      const date = String(row.started_at ?? "").slice(0, 10);
+      if (date) days.add(date);
+    }
+  } catch {
+    /* paper_sessions may be unavailable in some environments */
+  }
+
+  return days.size;
+}
+
 export async function resolveFeedbackReferralAccess(opts: {
   userId: string;
   email?: string | null;
   service?: SupabaseClient;
-}): Promise<{ allowed: boolean; role: string | null }> {
+}): Promise<{
+  allowed: boolean;
+  role: string | null;
+  activeDays: number;
+}> {
   const service = opts.service ?? createFeedbackReferralServiceClient();
   const { data: profile } = await service
     .from("profiles")
@@ -34,9 +77,15 @@ export async function resolveFeedbackReferralAccess(opts: {
     .eq("id", opts.userId)
     .maybeSingle();
   const role = (profile?.role as string | null) ?? null;
+  const activeDays = await countDistinctActiveUsageDays(opts.userId, service);
   return {
-    allowed: canAccessFeedbackReferral({ email: opts.email, role }),
+    allowed: canAccessFeedbackReferral({
+      email: opts.email,
+      role,
+      activeDays,
+    }),
     role,
+    activeDays,
   };
 }
 
