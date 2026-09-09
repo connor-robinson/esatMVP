@@ -2,7 +2,6 @@
 
 import { createContext, useContext, ReactNode } from "react";
 import { useLoadingState } from "@/hooks/useLoadingState";
-import { LoadingPage } from "@/components/shared/LoadingPage";
 
 interface LoadingContextType {
   isCompiling: boolean;
@@ -30,13 +29,7 @@ export function LoadingProvider({ children }: LoadingProviderProps) {
 
   return (
     <LoadingContext.Provider value={loadingState}>
-      {loadingState.isCompiling && (
-        <LoadingPage message={loadingState.message} />
-      )}
       {children}
     </LoadingContext.Provider>
   );
 }
-
-
-
