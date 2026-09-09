@@ -34,7 +34,7 @@ export interface FeedbackAnswer {
 export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
   title: "Quick feedback",
   intro: "A few short questions unlocks 50% off for one friend.",
-  estimatedTime: "About a minute",
+  estimatedTime: "About 1 minute",
   questions: [
     {
       id: "parts_used",

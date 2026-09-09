@@ -27,9 +27,14 @@ interface FeedbackSurveyFormProps {
     shareUrl: string;
     alreadyCompleted?: boolean;
   }) => void;
+  /** UI rehearsal only: skip API and return a sample code. */
+  preview?: boolean;
 }
 
-export function FeedbackSurveyForm({ onComplete }: FeedbackSurveyFormProps) {
+export function FeedbackSurveyForm({
+  onComplete,
+  preview = false,
+}: FeedbackSurveyFormProps) {
   const survey = FEEDBACK_REFERRAL_SURVEY;
   const questions = survey.questions;
   const [stepIndex, setStepIndex] = useState(0);
@@ -96,6 +101,16 @@ export function FeedbackSurveyForm({ onComplete }: FeedbackSurveyFormProps) {
 
     setSubmitting(true);
     try {
+      if (preview) {
+        window.setTimeout(() => {
+          onComplete({
+            code: "CAMP50-PREVIEW",
+            shareUrl: "https://esatcamp.com/pricing?code=CAMP50-PREVIEW",
+            alreadyCompleted: false,
+          });
+        }, 450);
+        return;
+      }
       const res = await fetch("/api/feedback-referral/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

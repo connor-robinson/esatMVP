@@ -21,6 +21,7 @@ import { GoogleOneTap } from "@/components/auth/GoogleOneTap";
 import { TesterProgrammeProvider } from "@/contexts/TesterProgrammeContext";
 import { TesterProgrammeBanner } from "@/components/tester/TesterProgrammeBanner";
 import { PartnerFeedbackPrompt } from "@/components/partners/PartnerFeedbackPrompt";
+import { FeedbackReferralPrompt } from "@/components/feedbackReferral/FeedbackReferralPrompt";
 import { PartnerActivationTracker } from "@/components/partners/PartnerActivationTracker";
 import { BRAND_CONFIG } from "@/config/brand";
 import { buildCssVariables, LIGHT_MODE_STRATEGY_STORAGE_KEY } from "@/config/theme";
@@ -221,6 +222,7 @@ export default function RootLayout({
                         <SessionPersistenceHandler />
                         <TesterProgrammeBanner />
                         <PartnerFeedbackPrompt />
+                        <FeedbackReferralPrompt />
                         <PartnerActivationTracker />
                         <Suspense fallback={null}>
                           <PageViewTracker />
