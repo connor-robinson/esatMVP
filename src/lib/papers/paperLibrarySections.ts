@@ -1,3 +1,4 @@
+import { getEsatCampMockModuleByPaperId } from "@/data/esatCampMocks";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import { normalizeEngaaPaperSections } from "@/lib/papers/engaaQuestionFilter";
 import { mapPartToSection, mapTmuaPaperNameToSection } from "@/lib/papers/sectionMapping";
@@ -79,6 +80,50 @@ export function esatCampMockMainSectionLabel(section: PaperSection): string {
   if (section === "Mathematics") return "Math 1";
   if (section === "Physics") return "Physics";
   return section;
+}
+
+const DEFAULT_MAIN_SECTION_ORDER = ["Section 1", "Section 2"];
+
+/**
+ * Pick the paper row to use as session `paperId`.
+ * ESAT CAMP full mocks share one display name across module IDs, so match by
+ * Math 1 / Math 2 / Physics instead of paperName alone.
+ */
+export function resolveAnchorPaperForSession(
+  catalog: Paper[],
+  selectedSections: Map<string, Set<PaperSection>>,
+  fallback: Paper,
+  mainSectionOrder: string[] = DEFAULT_MAIN_SECTION_ORDER,
+): Paper {
+  const activeMainSections = [...selectedSections.entries()]
+    .sort(([a], [b]) => {
+      const ai = mainSectionOrder.indexOf(a);
+      const bi = mainSectionOrder.indexOf(b);
+      return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+    })
+    .filter(([, subjects]) => subjects.size > 0)
+    .map(([name]) => name);
+
+  for (const mainSection of activeMainSections) {
+    const byPaperName = catalog.find((paper) => {
+      const fromPaperName = parseMainSectionFromLabel(paper.paperName);
+      return fromPaperName === mainSection || paper.paperName === mainSection;
+    });
+    if (byPaperName) return byPaperName;
+
+    const byCampModule = catalog.find((paper) => {
+      if (!isEsatCampMockExamType(paper.examType)) return false;
+      const mockModule = getEsatCampMockModuleByPaperId(paper.id);
+      if (!mockModule) return false;
+      return (
+        esatCampMockMainSectionLabel(mockModule.subject as PaperSection) ===
+        mainSection
+      );
+    });
+    if (byCampModule) return byCampModule;
+  }
+
+  return fallback;
 }
 
 const ESAT_CAMP_SUBJECT_ORDER: PaperSection[] = [

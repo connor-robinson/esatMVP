@@ -2,7 +2,10 @@ import { describe, expect, it } from "vitest";
 import {
   buildPaperSectionsOutline,
   questionMatchesSelectedSections,
+  questionMatchesPartId,
+  resolveAnchorPaperForSession,
 } from "@/lib/papers/paperLibrarySections";
+import { generateSectionId } from "@/lib/papers/partIdUtils";
 import {
   ESAT_CAMP_MOCK_DISPLAY_NAMES,
   ESAT_CAMP_MOCK_EXAM_TYPE,
@@ -11,6 +14,7 @@ import {
   getEsatCampMockQuestionsByPaperName,
   getEsatCampMockQuestionPartsForPaperName,
   getEsatCampMockPapers,
+  getEsatCampMockModulePapersByPaperName,
 } from "@/lib/papers/esatCampMocks";
 import { getRoadmapStagesShell } from "@/lib/papers/roadmapConfig";
 import type { PaperSection } from "@/types/papers";
@@ -134,6 +138,46 @@ describe("ESAT CAMP mock library section matching", () => {
     );
     expect(matched).toHaveLength(27);
     expect(matched.every((q) => q.partName === "Mathematics 2")).toBe(true);
+  });
+
+  it("anchors Full Mock Physics selection to the Physics module id", () => {
+    const catalog = getEsatCampMockModulePapersByPaperName(
+      ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
+    );
+    const fallback = catalog[0]!;
+    const selected = new Map<string, Set<PaperSection>>([
+      ["Physics", new Set<PaperSection>(["Physics"])],
+    ]);
+    const anchor = resolveAnchorPaperForSession(catalog, selected, fallback);
+    expect(anchor.id).toBe(ESAT_CAMP_MOCK_PAPER_IDS.physicsModuleA);
+  });
+
+  it("keeps Physics questions after load-style expand + part-id filter from Math 1 anchor", () => {
+    const catalog = getEsatCampMockModulePapersByPaperName(
+      ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
+    );
+    const fallback = catalog.find(
+      (paper) => paper.id === ESAT_CAMP_MOCK_PAPER_IDS.maths1Mock01,
+    )!;
+    const allQuestions = getEsatCampMockQuestionsByPaperName(
+      ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
+    );
+    expect(allQuestions).toHaveLength(81);
+
+    const physicsPartId = generateSectionId(
+      fallback.examName,
+      fallback.examYear,
+      "Physics",
+      "Physics",
+      fallback.examType,
+    );
+    const matched = allQuestions.filter((q) =>
+      questionMatchesPartId(q, physicsPartId, fallback, catalog),
+    );
+    expect(matched).toHaveLength(27);
+    expect(matched.every((q) => q.paperId === ESAT_CAMP_MOCK_PAPER_IDS.physicsModuleA)).toBe(
+      true,
+    );
   });
 });
 

@@ -15,7 +15,10 @@ import { fetchPastPaperLibraryOutline } from "@/lib/papers/pastPaperLibraryData"
 import { examNameToPaperType } from '@/lib/papers/paperConfig';
 import { getQuestions } from '@/lib/supabase/questions';
 import { deriveTmuaSectionFromQuestion } from "@/lib/papers/sectionMapping";
-import { questionMatchesSelectedSections, parseMainSectionFromLabel } from "@/lib/papers/paperLibrarySections";
+import {
+  questionMatchesSelectedSections,
+  resolveAnchorPaperForSession,
+} from "@/lib/papers/paperLibrarySections";
 import { filterEngaaQuestionsByEsatSubjects } from "@/lib/papers/engaaQuestionFilter";
 import {
   getEsatCampMockModulePapersByPaperName,
@@ -96,26 +99,6 @@ function cloneMainSectionMap(
     copy.set(mainSectionName, new Set(subjects));
   });
   return copy;
-}
-
-function resolveAnchorPaperForSession(
-  catalog: Paper[],
-  selectedSections: Map<string, Set<PaperSection>>,
-  fallback: Paper,
-): Paper {
-  const activeMainSections = sortMainSectionEntries(selectedSections)
-    .filter(([, subjects]) => subjects.size > 0)
-    .map(([name]) => name);
-
-  for (const mainSection of activeMainSections) {
-    const match = catalog.find((p) => {
-      const fromPaperName = parseMainSectionFromLabel(p.paperName);
-      return fromPaperName === mainSection || p.paperName === mainSection;
-    });
-    if (match) return match;
-  }
-
-  return fallback;
 }
 
 function buildSessionPaperVariant(

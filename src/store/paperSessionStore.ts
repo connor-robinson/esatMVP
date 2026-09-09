@@ -477,12 +477,26 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               // It queries the 'questions' table, NOT 'ai_generated_questions'
               // No fake or simulated questions are used here
               const { getQuestions, getPapersByExamAndYear } = await import('@/lib/supabase/questions');
+              const {
+                isEsatCampMockPaperId,
+                getEsatCampMockModuleByPaperId,
+                getEsatCampMockQuestionsByPaperName,
+              } = await import('@/lib/papers/esatCampMocks');
               let allQuestions = await getQuestions(paperId);
 
-              // For exams split into multiple paper records by section/paper (ENGAA/NSAA/TMUA),
-              // merge sibling paper questions from the same year + exam type so selected section
-              // filters operate on the full intended structure.
-              if (allQuestions.length > 0) {
+              // ESAT CAMP full mocks: one library card / paperName, several module paper IDs.
+              // Expand to every module that shares the display name before section filters run.
+              if (isEsatCampMockPaperId(paperId)) {
+                const mockModule = getEsatCampMockModuleByPaperId(paperId);
+                if (mockModule) {
+                  allQuestions = getEsatCampMockQuestionsByPaperName(
+                    mockModule.paperName,
+                  );
+                }
+              } else if (allQuestions.length > 0) {
+                // For exams split into multiple paper records by section/paper (ENGAA/NSAA/TMUA),
+                // merge sibling paper questions from the same year + exam type so selected section
+                // filters operate on the full intended structure.
                 const firstQuestion = allQuestions[0];
                 const examName = String(firstQuestion.examName || '').toUpperCase();
                 const shouldMergeSiblingPapers =

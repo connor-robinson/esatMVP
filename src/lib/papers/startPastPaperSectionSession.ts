@@ -3,7 +3,9 @@ import {
   fetchPaperSectionsOutline,
   fetchPastPaperLibraryOutline,
 } from "@/lib/papers/pastPaperLibraryData";
-import { parseMainSectionFromLabel } from "@/lib/papers/paperLibrarySections";
+import {
+  resolveAnchorPaperForSession,
+} from "@/lib/papers/paperLibrarySections";
 import { generateSectionId } from "@/lib/papers/partIdUtils";
 import { getQuestions } from "@/lib/supabase/questions";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
@@ -29,26 +31,6 @@ function sortMainSectionEntries(
     const bi = MAIN_SECTION_ORDER.indexOf(b);
     return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
   });
-}
-
-function resolveAnchorPaperForSession(
-  catalog: Paper[],
-  selectedSections: Map<string, Set<PaperSection>>,
-  fallback: Paper,
-): Paper {
-  const activeMainSections = sortMainSectionEntries(selectedSections)
-    .filter(([, subjects]) => subjects.size > 0)
-    .map(([name]) => name);
-
-  for (const mainSection of activeMainSections) {
-    const match = catalog.find((paper) => {
-      const fromPaperName = parseMainSectionFromLabel(paper.paperName);
-      return fromPaperName === mainSection || paper.paperName === mainSection;
-    });
-    if (match) return match;
-  }
-
-  return fallback;
 }
 
 function buildSessionPaperVariant(
