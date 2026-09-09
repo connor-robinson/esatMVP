@@ -33,14 +33,52 @@ export interface FeedbackAnswer {
 
 export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
   title: "Quick feedback",
-  intro: "A few short questions unlocks 50% off for one friend.",
+  intro: "Answer a few questions to unlock 50% off for one friend.",
   estimatedTime: "About 1 minute",
   questions: [
     {
-      id: "parts_used",
-      type: "multi",
-      label: "What have you tried?",
-      help: "Pick everything you've opened.",
+      id: "most_useful",
+      type: "single",
+      label: "What's most useful?",
+      help: "Pick the one thing that helped you most.",
+      options: [
+        {
+          value: "calibration",
+          label: "Calibration",
+          description: "The short placement quiz",
+        },
+        {
+          value: "question_bank",
+          label: "Question bank",
+          description: "Practice by topic",
+        },
+        {
+          value: "past_papers",
+          label: "Past papers",
+          description: "Timed full papers",
+        },
+        {
+          value: "mental_maths",
+          label: "Mental maths",
+          description: "Drills and speed practice",
+        },
+        {
+          value: "score_converter",
+          label: "Score converter",
+          description: "Rough grade estimates",
+        },
+        {
+          value: "other",
+          label: "Something else",
+          description: "Homepage, settings, or another bit",
+        },
+      ],
+    },
+    {
+      id: "least_useful",
+      type: "single",
+      label: "What's least useful?",
+      help: "Pick the one that felt weakest or hardest to use.",
       options: [
         {
           value: "calibration",

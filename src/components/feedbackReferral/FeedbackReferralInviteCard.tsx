@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function FeedbackReferralInviteCard({
@@ -34,19 +35,21 @@ export function FeedbackReferralInviteCard({
         Got a minute to help?
       </h2>
       <p className="mt-3 text-sm leading-relaxed text-text-muted">
-        A few short questions unlocks <span className="font-medium text-text">50% off for one friend</span>.
+        Answer a few questions to unlock 50% off for one friend.
       </p>
       <p className="mt-2 text-xs leading-relaxed text-text-subtle">
-        They apply the code in Stripe Checkout. One use. Not on your own account.
+        They apply the code in Stripe Checkout. One use. Not on your own
+        account.
       </p>
 
       <div className="mt-7 flex flex-col gap-2.5">
         <button
           type="button"
           onClick={onStart}
-          className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-[#4C8BF5] px-5 text-sm font-bold text-white transition-colors hover:bg-[#3B7AE0]"
+          className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#4C8BF5] px-5 text-sm font-bold text-white transition-colors hover:bg-[#3B7AE0]"
         >
-          Start the questions
+          Start
+          <ArrowRight className="h-4 w-4" aria-hidden />
         </button>
         {onNotNow ? (
           <button

@@ -91,7 +91,8 @@ describe("survey validation", () => {
 
   it("rejects thin written answers", () => {
     const error = validateFeedbackReferralSurvey([
-      { questionId: "parts_used", value: ["past_papers"] },
+      { questionId: "most_useful", value: "past_papers" },
+      { questionId: "least_useful", value: "score_converter" },
       { questionId: "recommend", value: 8 },
       { questionId: "improve_first", value: "fix it" },
     ]);
@@ -100,7 +101,8 @@ describe("survey validation", () => {
 
   it("accepts concise friendly answers", () => {
     const error = validateFeedbackReferralSurvey([
-      { questionId: "parts_used", value: ["past_papers", "question_bank"] },
+      { questionId: "most_useful", value: "question_bank" },
+      { questionId: "least_useful", value: "past_papers" },
       { questionId: "recommend", value: 7 },
       { questionId: "improve_first", value: improve },
       { questionId: "works_well", value: "Calibration felt clear and quick." },
@@ -110,7 +112,8 @@ describe("survey validation", () => {
 
   it("allows skipping the optional liked question", () => {
     const error = validateFeedbackReferralSurvey([
-      { questionId: "parts_used", value: ["calibration"] },
+      { questionId: "most_useful", value: "calibration" },
+      { questionId: "least_useful", value: "other" },
       { questionId: "recommend", value: 9 },
       { questionId: "improve_first", value: improve },
     ]);
@@ -119,7 +122,8 @@ describe("survey validation", () => {
 
   it("rejects copy-pasted identical text", () => {
     const error = validateFeedbackReferralSurvey([
-      { questionId: "parts_used", value: ["calibration"] },
+      { questionId: "most_useful", value: "calibration" },
+      { questionId: "least_useful", value: "mental_maths" },
       { questionId: "recommend", value: 5 },
       { questionId: "improve_first", value: improve },
       { questionId: "works_well", value: improve },
@@ -129,10 +133,10 @@ describe("survey validation", () => {
 });
 
 describe("step completion", () => {
-  const multiQ: FeedbackQuestion = {
-    id: "parts_used",
-    type: "multi",
-    label: "What have you tried?",
+  const singleQ: FeedbackQuestion = {
+    id: "most_useful",
+    type: "single",
+    label: "What's most useful?",
     options: [{ value: "calibration", label: "Calibration" }],
   };
   const textQ: FeedbackQuestion = {
@@ -149,9 +153,9 @@ describe("step completion", () => {
     required: false,
   };
 
-  it("requires a multi selection", () => {
-    expect(isFeedbackStepComplete(multiQ, [])).toBe(false);
-    expect(isFeedbackStepComplete(multiQ, ["calibration"])).toBe(true);
+  it("requires a single selection", () => {
+    expect(isFeedbackStepComplete(singleQ, undefined)).toBe(false);
+    expect(isFeedbackStepComplete(singleQ, "calibration")).toBe(true);
   });
 
   it("enforces min length on required text", () => {
