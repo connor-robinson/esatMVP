@@ -12,6 +12,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 from .bounds_check import assert_text_inside_figure, series_label_specs_only
+from .chem_rdkit import render_chem_structure_files
 from .collision import ObstacleSet, resolve_label_collisions
 from .errors import DiagramLayoutError, VisualSpecError
 from .graph_presets import layout_for_preset, resolve_graph_preset
@@ -199,6 +200,50 @@ def _render_geometry(
         plt.close(fig)
 
 
+def _chem_smiles_from_spec(spec: VisualSpec) -> str:
+    for obj in spec.objects:
+        if str(obj.get("type") or "").lower() == "chem_structure":
+            smiles = str(obj.get("smiles") or "").strip()
+            if smiles:
+                return smiles
+    raise VisualSpecError("chem_structure diagram requires an object with smiles")
+
+
+def _render_chem_structure(
+    spec: VisualSpec,
+    out_path: Path,
+    style: ExamStyle,
+) -> RenderResult:
+    smiles = _chem_smiles_from_spec(spec)
+    svg_path = out_path.with_suffix(".svg")
+    props = render_chem_structure_files(
+        smiles,
+        png_path=out_path,
+        svg_path=svg_path,
+        width=max(360, int(style.figsize[0] * style.dpi * 0.55)),
+        height=max(280, int(style.figsize[1] * style.dpi * 0.55)),
+    )
+    # Keep derived properties on the object for downstream verifiers.
+    for obj in spec.objects:
+        if str(obj.get("type") or "").lower() == "chem_structure":
+            obj["smiles"] = props["canonical_smiles"]
+            obj["input_smiles"] = props.get("input_smiles") or smiles
+            obj["molecular_formula"] = props.get("molecular_formula")
+            obj["exact_mass"] = props.get("exact_mass")
+            obj["molecular_weight"] = props.get("molecular_weight")
+            obj["num_atoms"] = props.get("num_atoms")
+            obj["num_heavy_atoms"] = props.get("num_heavy_atoms")
+            obj["num_rings"] = props.get("num_rings")
+            break
+    return RenderResult(
+        path=out_path,
+        spec=spec,
+        dpi=style.dpi,
+        label_placements=[],
+        renderer="rdkit_moldraw2dsvg",
+    )
+
+
 def render_diagram(
     spec: VisualSpec | dict[str, Any],
     out_path: str | Path,
@@ -215,6 +260,11 @@ def render_diagram(
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
-    if str(spec.diagram_type or "").lower() == "graph":
+    dtype = str(spec.diagram_type or "").lower()
+    if dtype == "graph":
         return _render_graph(spec, out_path, style)
+    if dtype == "chem_structure" or any(
+        str(o.get("type") or "").lower() == "chem_structure" for o in spec.objects
+    ):
+        return _render_chem_structure(spec, out_path, style)
     return _render_geometry(spec, out_path, style)

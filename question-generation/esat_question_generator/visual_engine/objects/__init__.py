@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 from ..collision.obstacles import ObstacleSet
 from ..schema import VisualSpec
 from ..style import ExamStyle
-from .chem import draw_chem_structure
 from .geometry import (
     draw_angle_arc,
     draw_arrow,
@@ -87,11 +86,12 @@ def draw_objects(
                 preset=graph_preset,
                 use_native=native_graph_axes,
             )
-        elif obj_type == "chem_structure":
-            draw_chem_structure(ax, obj, style, obstacles)
-        elif obj_type == "apparatus":
-            from .apparatus_draw import draw_apparatus
-
-            draw_apparatus(ax, obj, style, obstacles)
         elif obj_type == "pedigree":
             draw_pedigree(ax, obj, style, obstacles)
+        elif obj_type in {"chem_structure", "apparatus"}:
+            from ..errors import VisualSpecError
+
+            raise VisualSpecError(
+                f"{obj_type} must not be drawn via Matplotlib geometry; "
+                "chem_structure uses RDKit MolDraw2DSVG and apparatus is not a supported visual type"
+            )

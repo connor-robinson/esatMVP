@@ -36,13 +36,13 @@ FEEDBACK_TAGS = [
     "wrong question",
     "other",
 ]
-DIAGRAM_VISUALS = {"graph", "chem_structure", "apparatus", "bio_diagram", "pedigree"}
+DIAGRAM_VISUALS = {"graph", "chem_structure", "energy_profile", "bio_diagram", "pedigree"}
 VISUAL_FILTERS = [
     "All",
     "diagrams only",
     "graph",
     "chem_structure",
-    "apparatus",
+    "energy_profile",
     "bio_diagram",
     "pedigree",
     "table",
@@ -294,6 +294,104 @@ def _regenerate_diagram_only(store: ReviewStore, item: dict, *, feedback: str, t
     return None
 
 
+STATUS_PATH = Path(__file__).resolve().parent / "review_data" / "nsaa_esat_batch_status.json"
+USED_PATH = Path(__file__).resolve().parent / "review_data" / "nsaa_esat_used_sources.json"
+
+
+def _load_esat_progress() -> dict:
+    if not STATUS_PATH.is_file():
+        return {}
+    try:
+        data = json.loads(STATUS_PATH.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def _show_esat_progress() -> None:
+    """Manual progress panel. Does not auto-refresh so reviewing stays stable."""
+    with st.expander("NSAA Math1 / Math2 / Physics generation progress", expanded=True):
+        st.caption(
+            "Progress updates only when you click Refresh progress. "
+            "Generation keeps writing in the background; this panel will not interrupt review."
+        )
+        cols = st.columns([1, 3])
+        with cols[0]:
+            refresh = st.button("Refresh progress", key="refresh_esat_progress")
+        if refresh:
+            st.session_state["esat_progress_nonce"] = int(st.session_state.get("esat_progress_nonce") or 0) + 1
+        data = _load_esat_progress()
+        if not data:
+            st.info(
+                "No ESAT batch status yet. Start with: "
+                "`python -m visual_engine.nsaa_esat_batch --cycles 10`"
+            )
+            return
+        status = str(data.get("status") or "unknown")
+        generated = data.get("generated") or {}
+        pools = data.get("pools") or {}
+        current = data.get("current") or {}
+        phase = str(pools.get("phase") or current.get("phase") or data.get("phase") or "?")
+        st.write(
+            f"**{status}** · phase **{phase}** · cycles {data.get('completed_cycles', 0)}/"
+            f"{data.get('target_cycles', 0)} · ratio {data.get('ratio') or '1:1:3'}"
+        )
+        plan = data.get("phase_plan") or []
+        if plan:
+            st.caption(
+                "Plan: "
+                + " · ".join(
+                    f"{p.get('phase')}: m1={p.get('math1')} m2={p.get('math2')} "
+                    f"p={p.get('physics')} ({p.get('max_cycles')} cycles @ {int(round(float(p.get('diagram_target_ratio') or 0)*100))}%)"
+                    for p in plan
+                )
+            )
+        m1 = int(generated.get("Math 1") or 0)
+        m2 = int(generated.get("Math 2") or 0)
+        phys = int(generated.get("Physics") or 0)
+        total = int(generated.get("total") or (m1 + m2 + phys))
+        st.write(
+            f"Generated **{total}** "
+            f"(Math 1: {m1}, Math 2: {m2}, Physics: {phys}) · "
+            f"skipped {data.get('skipped', 0)} · errors {data.get('errors', 0)}"
+        )
+        st.write(
+            f"Phase remaining · Math1 {pools.get('phase_math1', pools.get('math1_remaining', '?'))} · "
+            f"Math2 {pools.get('phase_math2', pools.get('math2_remaining', '?'))} · "
+            f"Physics {pools.get('phase_physics', pools.get('physics_remaining', '?'))} · "
+            f"ticked {pools.get('already_ticked', '?')}"
+        )
+        if pools.get("diagram_math1") is not None:
+            st.caption(
+                f"Source pools · diagram m1/m2/p="
+                f"{pools.get('diagram_math1')}/{pools.get('diagram_math2')}/{pools.get('diagram_physics')} · "
+                f"text m1/m2/p="
+                f"{pools.get('text_math1')}/{pools.get('text_math2')}/{pools.get('text_physics')}"
+            )
+        if current:
+            st.caption(
+                f"Current: {current.get('review_label')} from NSAA "
+                f"{current.get('exam_year')} Q{current.get('question_number')} "
+                f"(source {current.get('source_question_id')})"
+            )
+        vcounts = data.get("visual_type_counts") or {}
+        dcounts = data.get("difficulty_counts") or {}
+        if vcounts:
+            st.caption("Visuals: " + ", ".join(f"{k}={v}" for k, v in sorted(vcounts.items())))
+        if dcounts:
+            st.caption("Difficulty: " + ", ".join(f"{k}={v}" for k, v in sorted(dcounts.items())))
+        recent = data.get("recent") or []
+        if recent:
+            last = recent[-5:]
+            st.caption(
+                "Recent: "
+                + " · ".join(
+                    f"{r.get('review_label')}:{r.get('status')}:{r.get('question_id') or r.get('source_question_id')}"
+                    for r in last
+                )
+            )
+
+
 def main() -> None:
     st.set_page_config(page_title="Diagram review", layout="wide")
     st.markdown(
@@ -327,6 +425,7 @@ def main() -> None:
         f"Pending {counts['pending']} | Approved {counts['approved']} | "
         f"Rejected {counts['rejected']} | Regenerated {counts['regenerated']}"
     )
+    _show_esat_progress()
 
     with st.expander("Paste a question to try diagram generation"):
         st.caption(
@@ -336,7 +435,7 @@ def main() -> None:
         )
         paste_subject = st.selectbox(
             "Paste subject",
-            ["biology", "chemistry", "mathematics"],
+            ["biology", "chemistry", "mathematics", "physics"],
             key="paste_subject",
         )
         paste_stem = st.text_area("Question stem", key="paste_stem", height=140)
@@ -421,7 +520,8 @@ def main() -> None:
     if not items:
         st.write("Nothing in this filter.")
         st.caption(
-            "For diagrams only: python -m visual_engine.nsaa_batch --subject biology --diagrams-only --n 5"
+            "For Math1/Math2/Physics: `python -m visual_engine.nsaa_esat_batch --cycles 10`  ·  "
+            "For diagrams only: `python -m visual_engine.nsaa_batch --subject biology --diagrams-only --n 5`"
         )
         return
 

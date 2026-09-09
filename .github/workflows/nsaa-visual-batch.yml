@@ -1,0 +1,201 @@
+# NSAA visual_engine batch (runs in the cloud)
+
+name: NSAA visual batch
+
+on:
+  workflow_dispatch:
+    inputs:
+      subject:
+        description: NSAA subject
+        required: true
+        default: chemistry
+        type: choice
+        options:
+          - chemistry
+          - biology
+          - mathematics
+          - physics
+      n:
+        description: How many questions to generate
+        required: true
+        default: "5"
+        type: string
+      diagrams_only:
+        description: Only keep rendered diagram questions
+        required: true
+        default: true
+        type: boolean
+      only_visuals:
+        description: Optional visual_type allow-list (comma-separated). Empty = any allowed type.
+        required: false
+        default: "chem_structure,graph,energy_profile"
+        type: string
+      force:
+        description: Regenerate even if already present in this runner DB
+        required: true
+        default: true
+        type: boolean
+      model:
+        description: Gemini / Vertex model id
+        required: false
+        default: "gemini-3.7-flash"
+        type: string
+  schedule:
+    # 10:00 UTC daily (~18:00 HKT). Edit timezone/time as needed.
+    - cron: "0 10 * * *"
+
+concurrency:
+  group: nsaa-visual-batch
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    name: Generate NSAA review items
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    defaults:
+      run:
+        working-directory: question-generation/esat_question_generator
+
+    env:
+      PYTHONUNBUFFERED: "1"
+      PYTHONPATH: ${{ github.workspace }}/question-generation:${{ github.workspace }}/question-generation/esat_question_generator
+      GOOGLE_CLOUD_PROJECT: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
+      GOOGLE_CLOUD_LOCATION: ${{ secrets.GOOGLE_CLOUD_LOCATION }}
+      VERTEX_GENAI_NO_GLOBAL_REMAP: ${{ secrets.VERTEX_GENAI_NO_GLOBAL_REMAP }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      MODEL_DIAGRAM_DESIGNER: gemini-3.7-flash
+      DIAGRAM_GEMINI_TIMEOUT_S: "240"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: question-generation/esat_question_generator/visual_engine/requirements.txt
+
+      - name: Authenticate to Google Cloud (Vertex AI)
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Install system deps for RDKit / Matplotlib
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libxrender1 libxext6 libsm6
+
+      - name: Install Python deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r visual_engine/requirements.txt
+
+      - name: Resolve batch parameters
+        id: params
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "subject=chemistry" >> "$GITHUB_OUTPUT"
+            echo "n=5" >> "$GITHUB_OUTPUT"
+            echo "diagrams_only=true" >> "$GITHUB_OUTPUT"
+            echo "only_visuals=chem_structure,graph,energy_profile" >> "$GITHUB_OUTPUT"
+            echo "force=true" >> "$GITHUB_OUTPUT"
+            echo "model=gemini-3.7-flash" >> "$GITHUB_OUTPUT"
+          else
+            echo "subject=${{ inputs.subject }}" >> "$GITHUB_OUTPUT"
+            echo "n=${{ inputs.n }}" >> "$GITHUB_OUTPUT"
+            echo "diagrams_only=${{ inputs.diagrams_only }}" >> "$GITHUB_OUTPUT"
+            echo "only_visuals=${{ inputs.only_visuals }}" >> "$GITHUB_OUTPUT"
+            echo "force=${{ inputs.force }}" >> "$GITHUB_OUTPUT"
+            echo "model=${{ inputs.model }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Preflight secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+          missing=0
+          for key in GOOGLE_CLOUD_PROJECT SUPABASE_URL SUPABASE_SERVICE_ROLE_KEY; do
+            if [ -z "${!key}" ]; then
+              echo "::error::Missing required secret/env: $key"
+              missing=1
+            fi
+          done
+          if [ -z "${GOOGLE_CLOUD_LOCATION:-}" ]; then
+            echo "GOOGLE_CLOUD_LOCATION unset; defaulting to us-central1"
+            echo "GOOGLE_CLOUD_LOCATION=us-central1" >> "$GITHUB_ENV"
+          fi
+          if [ "$missing" -ne 0 ]; then
+            exit 1
+          fi
+          echo "Preflight OK (project=$GOOGLE_CLOUD_PROJECT location=${GOOGLE_CLOUD_LOCATION:-us-central1})"
+
+      - name: Run NSAA batch
+        shell: bash
+        run: |
+          set -euo pipefail
+          SUBJECT="${{ steps.params.outputs.subject }}"
+          N="${{ steps.params.outputs.n }}"
+          ONLY="${{ steps.params.outputs.only_visuals }}"
+          MODEL="${{ steps.params.outputs.model }}"
+          DIAG="${{ steps.params.outputs.diagrams_only }}"
+          FORCE="${{ steps.params.outputs.force }}"
+
+          if [ -n "$MODEL" ]; then
+            export MODEL_DIAGRAM_DESIGNER="$MODEL"
+          fi
+
+          ARGS=(--subject "$SUBJECT" --n "$N" --model "${MODEL_DIAGRAM_DESIGNER}")
+          if [ "$DIAG" = "true" ]; then
+            ARGS+=(--diagrams-only)
+          fi
+          if [ -n "$ONLY" ]; then
+            ARGS+=(--only-visuals "$ONLY")
+          fi
+          if [ "$FORCE" = "true" ]; then
+            ARGS+=(--force)
+          fi
+
+          echo "Running: python -m visual_engine.nsaa_batch ${ARGS[*]}"
+          python -m visual_engine.nsaa_batch "${ARGS[@]}"
+
+      - name: Package review_data
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p visual_engine/review_data
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from visual_engine.review_store import ReviewStore
+          store = ReviewStore()
+          meta = {
+              "db_path": str(store.db_path),
+              "counts": store.counts(),
+              "subject_counts": store.subject_counts() if hasattr(store, "subject_counts") else {},
+          }
+          Path("visual_engine/review_data/ci_run_meta.json").write_text(
+              json.dumps(meta, indent=2), encoding="utf-8"
+          )
+          print(json.dumps(meta, indent=2))
+          PY
+          tar -C visual_engine -czf "$GITHUB_WORKSPACE/nsaa-review-data.tgz" review_data
+
+      - name: Upload review artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nsaa-review-${{ steps.params.outputs.subject }}-${{ github.run_id }}
+          path: nsaa-review-data.tgz
+          if-no-files-found: warn
+          retention-days: 30

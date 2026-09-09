@@ -45,7 +45,7 @@ from visual_engine.question_designer import (
 )
 from visual_engine.render_matplotlib import render_diagram
 from visual_engine.review_store import ReviewStore
-from visual_engine.science_visuals import apparatus_spec, chem_structure_spec, pedigree_spec
+from visual_engine.science_visuals import chem_structure_spec, pedigree_spec
 from visual_engine.subject_review import run_subject_verifier, verdict_is_pass
 from visual_engine.tables import (
     ensure_table_in_stem,
@@ -66,9 +66,16 @@ def nsaa_question_id(source_id: int | str) -> str:
     return f"nsaa-{source_id}"
 
 
-def review_subject(eq: EvalQuestion) -> str:
+def review_subject(eq: EvalQuestion, review_label: str | None = None) -> str:
+    if review_label:
+        return review_label
     sub = paper_subject(eq.paper_name, eq.part_name)
-    return {"chemistry": "Chemistry", "biology": "Biology"}.get(sub, "NSAA")
+    return {
+        "chemistry": "Chemistry",
+        "biology": "Biology",
+        "physics": "Physics",
+        "mathematics": "Math 1",
+    }.get(sub, "NSAA")
 
 
 def _designer_subject(eq: EvalQuestion) -> str:
@@ -305,13 +312,15 @@ def generate_one(
     attempt: int = 1,
     mix_hint: str = "",
     require_rendered_visual: bool = False,
+    allowed_visual_types: set[str] | None = None,
+    review_label: str | None = None,
 ) -> dict[str, Any]:
     qid = nsaa_question_id(eq.question_id)
     out_dir = ARTIFACTS / qid
     out_dir.mkdir(parents=True, exist_ok=True)
     source_png = _save_source_image(eq, out_dir)
     designer_subject = _designer_subject(eq)
-    review_sub = review_subject(eq)
+    review_sub = review_subject(eq, review_label)
 
     q_inp = NsaaQuestionDesignerInput(
         source_question_id=str(eq.question_id),
@@ -342,7 +351,7 @@ def generate_one(
 
     visual_type = visual_type_of(design.idea_plan)
     if designer_subject == "mathematics" and not visual_type:
-        visual_type = "graph"
+        visual_type = "graph" if design.needs_diagram else "none"
     if require_rendered_visual and visual_type not in RENDERED_VISUAL_TYPES:
         return {
             "status": "skipped",
@@ -352,13 +361,28 @@ def generate_one(
             "visual_type": visual_type or "none",
             "model": design.model,
         }
+    if allowed_visual_types is not None and visual_type not in allowed_visual_types:
+        return {
+            "status": "skipped",
+            "question_id": qid,
+            "source_question_id": eq.question_id,
+            "skip_reason": f"visual_type {visual_type or 'none'} not in allowed set",
+            "visual_type": visual_type or "none",
+            "model": design.model,
+        }
     table = design.idea_plan.get("table") if isinstance(design.idea_plan.get("table"), dict) else None
     if visual_type == "table" or table:
         design.stem = ensure_table_in_stem(design.stem, table)
         design.idea_plan["visual_type"] = visual_type or "table"
     design.options = fill_options_from_option_table(design.stem, design.options)
 
-    diagram_required = visual_type in {"graph", "chem_structure", "apparatus", "bio_diagram", "pedigree"}
+    diagram_required = visual_type in {
+        "graph",
+        "chem_structure",
+        "energy_profile",
+        "bio_diagram",
+        "pedigree",
+    }
     source_image_path = str(source_png) if source_png else ""
     result: GenerationResult | None = None
     auto_flags: list[dict[str, Any]] = []
@@ -368,27 +392,14 @@ def generate_one(
         result = GenerationResult(question_id=qid, attempt=attempt, ok=True, parent_attempt_id=parent_attempt_id)
         result.auto_flags = auto_flags
     elif visual_type == "chem_structure":
+        chem_raw = design.idea_plan.get("chem_structure") or {}
         spec = chem_structure_spec(
-            design.idea_plan.get("chem_structure") or {},
+            chem_raw,
             source_question_id=qid,
             variation_mode=design.variation_mode,
         )
-        result = _result_from_spec(
-            question_id=qid,
-            spec=spec,
-            out_dir=out_dir,
-            attempt=attempt,
-            choices=design.options,
-            correct_answer=design.correct_option,
-            parent_attempt_id=parent_attempt_id,
-        )
-        auto_flags = result.auto_flags
-    elif visual_type == "apparatus":
-        spec = apparatus_spec(
-            design.idea_plan.get("apparatus") or {},
-            source_question_id=qid,
-            variation_mode=design.variation_mode,
-        )
+        if isinstance(spec.get("rdkit_properties"), dict):
+            design.idea_plan["rdkit_properties"] = spec["rdkit_properties"]
         result = _result_from_spec(
             question_id=qid,
             spec=spec,
@@ -416,13 +427,17 @@ def generate_one(
         )
         auto_flags = result.auto_flags
     else:
+        # graph, energy_profile, bio_diagram -> diagram designer + matplotlib
+        if visual_type == "energy_profile":
+            design.idea_plan["diagram_type"] = "graph"
+            design.idea_plan.setdefault("graph_preset", "science_xy")
         idea_plan = _idea_plan_for_diagram(design)
         idea_plan["original_stem"] = eq.reference_question
         d_inp = DiagramDesignerInput(
             reference_question=design.stem,
             diagram_image_path=source_png,
-            subject=designer_subject if designer_subject in {"chemistry", "biology"} else "mathematics",
-            math_paper="NSAA",
+            subject=designer_subject if designer_subject in {"chemistry", "biology", "physics"} else "mathematics",
+            math_paper=review_sub if review_sub.startswith("Math") else "NSAA",
             target_difficulty=design.difficulty,
             variation_mode=design.variation_mode,
             idea_plan=idea_plan,
@@ -570,15 +585,29 @@ def _looks_like_diagram_stem(stem: str) -> bool:
     return any(hint in low for hint in hints)
 
 
-def _mix_hint(subject: str, counts: dict[str, int], *, diagrams_only: bool = False) -> str:
+def _mix_hint(
+    subject: str,
+    counts: dict[str, int],
+    *,
+    diagrams_only: bool = False,
+    diagram_target_ratio: float | None = None,
+) -> str:
     if diagrams_only:
+        if subject == "chemistry":
+            return (
+                "This batch is for reviewing rendered chemistry diagrams only. "
+                "Set idea_plan.visual_type to graph, chem_structure, or energy_profile. "
+                "Do not use none, table, or apparatus. "
+                "For graphs / energy profiles, set graph_preset to one of cartesian, science_xy, log_x, signed_y, multi_series. "
+                "For chem_structure, provide SMILES only (RDKit draws the structure; never invent atom coordinates or bonds). "
+                "If the source cannot support a genuine diagram, set skip true."
+            )
         return (
             "This batch is for reviewing rendered diagrams only. "
-            "Set idea_plan.visual_type to graph, chem_structure, apparatus, bio_diagram, or pedigree. "
+            "Set idea_plan.visual_type to graph, chem_structure, bio_diagram, or pedigree. "
             "Do not use none or table. "
             "For graphs, set graph_preset to one of cartesian, science_xy, log_x, signed_y, multi_series. "
             "For chem_structure, provide SMILES only (no hand-placed atoms). "
-            "For apparatus, list reusable components (beaker, conical_flask, test_tube, gas_jar, delivery_tube, bunsen, stand). "
             "If the source cannot support a genuine diagram, set skip true."
         )
     if subject == "chemistry":
@@ -586,9 +615,12 @@ def _mix_hint(subject: str, counts: dict[str, int], *, diagrams_only: bool = Fal
             ("none", 4, "plain-text or calculation questions (visual_type none)"),
             ("table", 2, "table questions"),
             ("chem_structure", 1, "one SMILES structural-formula question"),
-            ("apparatus", 1, "one apparatus diagram from the SVG component library"),
+            ("graph", 1, "one graph or energy_profile question"),
         ]
-        extra = "Also include formula/equation-heavy stems using \\ce{} when the source supports it."
+        extra = (
+            "Also include formula/equation-heavy stems using \\ce{} when the source supports it. "
+            "Never use apparatus. Prefer chem_structure SMILES, graph, table, or energy_profile."
+        )
     elif subject == "biology":
         wants = [
             ("none", 4, "plain-text questions (visual_type none)"),
@@ -598,6 +630,47 @@ def _mix_hint(subject: str, counts: dict[str, int], *, diagrams_only: bool = Fal
             ("bio_diagram", 1, "one simple labelled schematic"),
         ]
         extra = ""
+    elif subject in {"mathematics", "physics"}:
+        diagram_n = counts.get("graph", 0) + counts.get("geometry", 0)
+        text_n = counts.get("none", 0) + counts.get("table", 0)
+        total = diagram_n + text_n
+        target = 0.8 if diagram_target_ratio is None else float(diagram_target_ratio)
+        target = min(0.95, max(0.05, target))
+        text_share = 1.0 - target
+        # Express as diagram:text parts, e.g. 0.6 -> 3:2, 0.8 -> 4:1
+        diagram_parts = max(1, round(target * 10))
+        text_parts = max(1, round(text_share * 10))
+        if target >= 0.75:
+            prefer = (
+                "The source likely supports a figure. Strongly prefer a rendered diagram "
+                "(graph/geometry for math, graph for physics). "
+                f"Aim for roughly {diagram_parts} diagram questions for every {text_parts} plain-text/table. "
+                "Do not invent unsupported diagrams (no circuits/apparatus the renderer cannot draw)."
+            )
+        else:
+            prefer = (
+                "Prefer a diagram when it helps, but plain-text/table is fine when natural. "
+                f"Aim for about {int(round(target * 100))}% diagram and {int(round(text_share * 100))}% "
+                f"plain-text/table (roughly {diagram_parts}:{text_parts}). "
+                "Do not invent unsupported diagrams."
+            )
+        difficulty = "Vary difficulty across Easy, Medium, Hard, and Extreme over the batch."
+        if total == 0:
+            return f"{prefer} {difficulty}".strip()
+        current = diagram_n / total
+        if current < target - 0.08:
+            return (
+                f"{prefer} Recent outputs are under the diagram target "
+                f"(diagrams={diagram_n}, text/table={text_n}, ~{current:.0%} diagram). "
+                f"Prefer a diagram if honest. {difficulty}"
+            ).strip()
+        if current > target + 0.12:
+            return (
+                f"{prefer} Recent outputs are over the diagram target "
+                f"(diagrams={diagram_n}, text/table={text_n}, ~{current:.0%} diagram). "
+                f"Plain-text/table is welcome when natural. {difficulty}"
+            ).strip()
+        return f"{prefer} {difficulty}".strip()
     else:
         return ""
     missing = [label for key, n, label in wants if counts.get(key, 0) < n]
@@ -639,12 +712,16 @@ def generate_from_input(
     """Run the existing NSAA designer + renderer from a pasted stem and optional source image."""
     _load_env()
     wanted = (subject or "biology").strip().lower()
-    if wanted not in {"mathematics", "chemistry", "biology"}:
-        raise ValueError("subject must be mathematics, chemistry, or biology")
+    if wanted not in {"mathematics", "chemistry", "biology", "physics"}:
+        raise ValueError("subject must be mathematics, chemistry, biology, or physics")
     if not stem.strip():
         raise ValueError("stem is empty")
     qid_num = 900_000_000 + (int(datetime.now(timezone.utc).timestamp()) % 1_000_000)
-    part = {"chemistry": "Chemistry", "biology": "Biology"}.get(wanted, "Mathematics")
+    part = {
+        "chemistry": "Chemistry",
+        "biology": "Biology",
+        "physics": "Physics",
+    }.get(wanted, "Mathematics")
     eq = EvalQuestion(
         question_id=qid_num,
         exam_name="NSAA",
@@ -729,16 +806,30 @@ def run_batch(
     subject: str = "mathematics",
     model: str = NSAA_DIAGRAM_MODEL,
     diagrams_only: bool = False,
+    allowed_visual_types: set[str] | None = None,
+    review_label: str | None = None,
+    status_path: Path | None = None,
 ) -> dict[str, Any]:
     _load_env()
     store = ReviewStore()
     wanted = (subject or "mathematics").strip().lower()
-    if wanted in {"chemistry", "biology"}:
+    status_file = status_path or STATUS_PATH
+
+    def write_status(payload: dict[str, Any]) -> None:
+        status_file.parent.mkdir(parents=True, exist_ok=True)
+        status_file.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    # Full subject pools for science + soft math (1 NSAA source -> 1 new question).
+    # Legacy diagram-only math path keeps select_nsaa_diagram_questions when math_only=True.
+    if wanted in {"chemistry", "biology", "physics"} or (wanted == "mathematics" and not math_only):
+        need_source_diagram = diagrams_only and not (
+            allowed_visual_types and allowed_visual_types <= {"chem_structure", "pedigree"}
+        )
         selected = select_nsaa_subject_questions(
             subject=wanted,
             count=None if not question_ids else len(question_ids),
             question_ids=question_ids,
-            require_diagram=diagrams_only,
+            require_diagram=need_source_diagram,
         )
     else:
         selected = select_nsaa_diagram_questions(
@@ -755,10 +846,24 @@ def run_batch(
                 eq.question_id,
             )
         )
+    if allowed_visual_types:
+        # Prefer stems that match forced visual types.
+        want_struct = "chem_structure" in allowed_visual_types
+
+        def _prefer(eq: EvalQuestion) -> tuple[int, int]:
+            stem = (eq.question_stem or "").lower()
+            score = 1
+            if want_struct and any(
+                k in stem for k in ("structure", "isomer", "formula", "molecule", "organic", "display")
+            ):
+                score = 0
+            return (score, eq.question_id)
+
+        remaining.sort(key=_prefer)
     if n is not None and not diagrams_only:
         remaining = remaining[: max(0, n)]
     elif n is not None and diagrams_only:
-        remaining = remaining[: max(n * 6, n)]
+        remaining = remaining[: max(n * 10, n)]
     target = n if n is not None else len(remaining)
     summary: dict[str, Any] = {
         "status": "running",
@@ -766,6 +871,7 @@ def run_batch(
         "model": model,
         "subject": wanted,
         "diagrams_only": diagrams_only,
+        "allowed_visual_types": sorted(allowed_visual_types) if allowed_visual_types else None,
         "selected": len(selected),
         "already_done": len(done),
         "queued": len(remaining),
@@ -777,11 +883,12 @@ def run_batch(
         "visual_type_counts": {},
         "results": [],
         "started_at": _now(),
+        "review_label": review_label,
     }
-    _write_status(summary)
+    write_status(summary)
     if dry_run:
         summary["status"] = "dry_run"
-        _write_status(summary)
+        write_status(summary)
         return summary
 
     options_by_id = attach_source_options(remaining)
@@ -791,14 +898,24 @@ def run_batch(
         if diagrams_only and summary["generated"] >= target:
             break
         print(f"[NSAA] {i}/{len(remaining)} source {eq.question_id} ({eq.exam_year} {eq.paper_name} Q{eq.question_number})", flush=True)
+        chem_force_hint = ""
+        if allowed_visual_types and allowed_visual_types <= {"chem_structure"}:
+            chem_force_hint = (
+                "CRITICAL: visual_type must be chem_structure only. "
+                "Provide SMILES only, e.g. {\"smiles\": \"CCO\"}. "
+                "Do not invent atom coordinates or bonds. RDKit will draw the structure. "
+                "If the source cannot support a structural formula, set skip true."
+            )
         try:
             rec = generate_one(
                 eq,
                 store=store,
                 source_options=options_by_id.get(eq.question_id) or {},
                 model=model,
-                mix_hint=_mix_hint(wanted, mix_counts, diagrams_only=diagrams_only),
+                mix_hint=(chem_force_hint + " " + _mix_hint(wanted, mix_counts, diagrams_only=diagrams_only)).strip(),
                 require_rendered_visual=diagrams_only,
+                allowed_visual_types=allowed_visual_types,
+                review_label=review_label,
             )
         except Exception as exc:
             rec = {
@@ -822,13 +939,13 @@ def run_batch(
         summary["visual_type_counts"] = mix_counts
         summary["results"] = results
         summary["counts"] = store.counts()
-        _write_status(summary)
+        write_status(summary)
 
     summary["status"] = "completed"
     summary["finished_at"] = _now()
     summary["counts"] = store.counts()
     summary["visual_type_counts"] = mix_counts
-    _write_status(summary)
+    write_status(summary)
     return summary
 
 
@@ -842,26 +959,43 @@ def main() -> int:
     parser.add_argument(
         "--subject",
         default="mathematics",
-        choices=["mathematics", "chemistry", "biology"],
-        help="NSAA source subject. chemistry/biology include plain-text questions.",
+        choices=["mathematics", "physics", "chemistry", "biology"],
+        help="NSAA source subject. mathematics/physics use soft diagram preference by default.",
     )
+    parser.add_argument(
+        "--full-pool",
+        action="store_true",
+        help="For mathematics: use all Section 1 math sources (not diagram-prefiltered).",
+    )
+    parser.add_argument("--review-label", default="", help="Override review subject label, e.g. Math 1")
     parser.add_argument(
         "--diagrams-only",
         action="store_true",
         help="Only keep questions that render a graph, structure, pedigree, or schematic. Skip plain text and tables.",
     )
+    parser.add_argument(
+        "--only-visuals",
+        default="",
+        help="Comma-separated visual_type allow-list, e.g. chem_structure,graph",
+    )
     parser.add_argument("--model", default=NSAA_DIAGRAM_MODEL)
     args = parser.parse_args()
     ids = [int(part.strip()) for part in args.ids.split(",") if part.strip()]
+    allowed = {part.strip() for part in args.only_visuals.split(",") if part.strip()} or None
+    math_only = not args.include_non_math and not args.full_pool
+    if args.subject in {"physics", "chemistry", "biology"}:
+        math_only = False
     result = run_batch(
         n=args.n,
         question_ids=ids or None,
         dry_run=args.dry_run,
         force=args.force,
-        math_only=not args.include_non_math,
+        math_only=math_only,
         subject=args.subject,
         model=args.model,
         diagrams_only=args.diagrams_only,
+        allowed_visual_types=allowed,
+        review_label=args.review_label.strip() or None,
     )
     print(json.dumps({k: v for k, v in result.items() if k != "results"}, indent=2))
     if result.get("results"):

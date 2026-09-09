@@ -1,3 +1,5 @@
+"""Tests for science visuals: RDKit chem structures and pedigrees."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -5,6 +7,7 @@ from unittest.mock import patch
 
 import pytest
 
+from visual_engine.chem_rdkit import normalize_chem_structure_payload, smiles_to_svg
 from visual_engine.errors import VisualSpecError
 from visual_engine.objects.pedigree import layout_pedigree
 from visual_engine.question_designer import parse_question_design
@@ -98,6 +101,27 @@ def test_parse_chemistry_plain_text():
     assert design.idea_plan["visual_type"] == "none"
 
 
+def test_parse_chemistry_rejects_apparatus():
+    with pytest.raises(VisualSpecError):
+        parse_question_design(
+            {
+                "skip": False,
+                "variation_mode": "sibling",
+                "mode_reason": "lab setup",
+                "stem": "Which apparatus collects a gas?",
+                "options": {"A": "1", "B": "2", "C": "3", "D": "4"},
+                "correct_option": "A",
+                "explanation": "n/a",
+                "idea_plan": {
+                    "visual_type": "apparatus",
+                    "apparatus": {"components": ["beaker"]},
+                    "visual_brief": "beaker",
+                },
+            },
+            subject="chemistry",
+        )
+
+
 def test_parse_chemistry_table_requires_data():
     with pytest.raises(VisualSpecError):
         parse_question_design(
@@ -117,20 +141,34 @@ def test_parse_chemistry_table_requires_data():
 
 def test_chem_structure_from_smiles(tmp_path: Path):
     spec = chem_structure_spec({"smiles": "CCO"})
+    assert spec["diagram_type"] == "chem_structure"
+    assert "atoms" not in (spec["objects"][0] or {})
+    assert "bonds" not in (spec["objects"][0] or {})
+    assert spec["objects"][0]["smiles"]
+    assert spec["rdkit_properties"]["molecular_formula"] == "C2H6O"
     out = tmp_path / "ethanol.png"
-    render_diagram(spec, out)
+    result = render_diagram(spec, out)
     assert out.is_file()
     assert out.stat().st_size > 100
+    assert result.renderer == "rdkit_moldraw2dsvg"
+    assert out.with_suffix(".svg").is_file()
+    svg = smiles_to_svg("CCO")
+    assert "<svg" in svg.lower()
 
 
-def test_apparatus_renders(tmp_path: Path):
-    from visual_engine.science_visuals import apparatus_spec
+def test_chem_structure_rejects_invalid_smiles():
+    with pytest.raises(VisualSpecError):
+        chem_structure_spec({"smiles": "not_a_smiles%%%"})
 
-    spec = apparatus_spec({"components": ["beaker", "delivery_tube", "gas_jar"]})
-    out = tmp_path / "apparatus.png"
-    render_diagram(spec, out)
-    assert out.is_file()
-    assert out.stat().st_size > 100
+
+def test_chem_structure_rejects_hand_atoms():
+    with pytest.raises(VisualSpecError):
+        normalize_chem_structure_payload(
+            {
+                "atoms": [{"id": "c1", "label": "C", "x": 0, "y": 0}],
+                "bonds": [],
+            }
+        )
 
 
 def test_graph_preset_native_axes(tmp_path: Path):
@@ -183,28 +221,6 @@ def test_graph_preset_native_axes(tmp_path: Path):
     result = render_diagram(spec, out)
     assert out.is_file()
     assert result.graph_preset == "signed_y"
-    assert out.stat().st_size > 100
-
-
-def test_chem_structure_renders(tmp_path: Path):
-    spec = chem_structure_spec(
-        {
-            "atoms": [
-                {"id": "c1", "label": "C", "x": 0, "y": 0},
-                {"id": "c2", "label": "C", "x": 1.4, "y": 0},
-                {"id": "h1", "label": "H", "x": 0, "y": 1.0},
-                {"id": "ch3", "label": "CH3", "x": 2.4, "y": 0},
-            ],
-            "bonds": [
-                {"from": "c1", "to": "c2", "order": 1},
-                {"from": "c1", "to": "h1", "order": 1},
-                {"from": "c2", "to": "ch3", "order": 1},
-            ],
-        }
-    )
-    out = tmp_path / "chem.png"
-    render_diagram(spec, out)
-    assert out.is_file()
     assert out.stat().st_size > 100
 
 
@@ -309,5 +325,8 @@ def test_diagrams_only_mix_hint():
     from visual_engine.nsaa_batch import _mix_hint
 
     hint = _mix_hint("biology", {}, diagrams_only=True)
-    assert "none or table" in hint
+    assert "none or table" in hint or "Do not use none or table" in hint
     assert "pedigree" in hint
+    chem = _mix_hint("chemistry", {}, diagrams_only=True)
+    assert "apparatus" not in chem.lower() or "Do not use" in chem
+    assert "chem_structure" in chem

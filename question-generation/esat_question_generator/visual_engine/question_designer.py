@@ -12,16 +12,24 @@ from .llm import DEFAULT_DIAGRAM_DESIGNER_MODEL, MultimodalCallResult, _mime_for
 NSAA_DIAGRAM_MODEL = "gemini-3.7-flash"
 VALID_MODES = {"sibling", "far"}
 VALID_DIAGRAM_TYPES = {"geometry", "graph"}
-VALID_VISUAL_TYPES = {"none", "graph", "table", "chem_structure", "apparatus", "bio_diagram", "pedigree"}
-RENDERED_VISUAL_TYPES = {"graph", "chem_structure", "apparatus", "bio_diagram", "pedigree"}
+VALID_VISUAL_TYPES = {
+    "none",
+    "graph",
+    "table",
+    "chem_structure",
+    "energy_profile",
+    "bio_diagram",
+    "pedigree",
+}
+RENDERED_VISUAL_TYPES = {"graph", "chem_structure", "energy_profile", "bio_diagram", "pedigree"}
 _VISUAL_ALIASES = {
     "diagram": "bio_diagram",
     "cycle": "bio_diagram",
     "schematic": "bio_diagram",
     "structure": "chem_structure",
     "structural": "chem_structure",
-    "lab": "apparatus",
-    "apparatus_diagram": "apparatus",
+    "energy": "energy_profile",
+    "reaction_profile": "energy_profile",
     "text": "none",
     "plain": "none",
 }
@@ -119,9 +127,21 @@ def build_question_payload(inp: NsaaQuestionDesignerInput) -> dict[str, Any]:
     }
     if subject == "mathematics":
         payload["instructions"] = (
-            "Read the original NSAA question and the attached diagram. "
-            "Choose sibling or far, then write a NEW diagram MCQ. "
-            "If it cannot be a geometry/graph diagram question, skip."
+            "Read the original NSAA question and any attached diagram. "
+            "Choose sibling or far, then write a NEW ESAT-style MCQ. "
+            "Strongly prefer a geometry/graph diagram when the source supports it. "
+            "If a diagram does not help the reasoning, use visual_type none or table. "
+            "Only skip if the source cannot become a fair MCQ."
+        )
+    elif subject == "physics":
+        payload["instructions"] = (
+            "Read the original NSAA Physics question and any attached diagram. "
+            "Choose sibling or far, then write a NEW ESAT-style Physics MCQ. "
+            "Strongly prefer a graph when the source is graph-based. "
+            "Use visual_type none or table when a rendered diagram is not natural. "
+            "Do not invent circuit/schematic visuals the renderer cannot draw. "
+            "Cover Easy through Extreme difficulty when appropriate. "
+            "Only skip if the source cannot become a fair MCQ."
         )
     if inp.repair_feedback.strip():
         payload["repair_feedback"] = inp.repair_feedback.strip()
@@ -168,12 +188,16 @@ def parse_question_design(
     options = _normalize_options(parsed.get("options"))
     correct = str(parsed.get("correct_option") or parsed.get("correct_answer") or "").strip().upper()
     idea_plan = parsed.get("idea_plan") if isinstance(parsed.get("idea_plan"), dict) else {}
-    for key in ("table", "chem_structure", "apparatus", "pedigree"):
+    for key in ("table", "chem_structure", "pedigree"):
         if key not in idea_plan and isinstance(parsed.get(key), dict):
             idea_plan[key] = parsed[key]
     visual_type = visual_type_of(idea_plan) or visual_type_of(parsed)
     if visual_type:
         idea_plan["visual_type"] = visual_type
+    # energy_profile is drawn with the graph renderer.
+    if visual_type == "energy_profile":
+        idea_plan.setdefault("diagram_type", "graph")
+        idea_plan.setdefault("graph_preset", "science_xy")
     needs_diagram = bool(parsed.get("needs_diagram", visual_type in RENDERED_VISUAL_TYPES))
     if visual_type in {"none", "table"}:
         needs_diagram = False
@@ -207,34 +231,82 @@ def parse_question_design(
         errors.append("need at least 4 options")
     if design.correct_option not in design.options:
         errors.append("correct_option is not one of the options")
-    if subject_key == "mathematics":
+    math_text_ok = {"none", "table"}
+    chem_ok = {"none", "graph", "table", "chem_structure", "energy_profile"}
+    bio_ok = {"none", "graph", "table", "bio_diagram", "pedigree"}
+    physics_ok = {"none", "graph", "table"}
+
+    if subject_key == "mathematics" and visual_type not in math_text_ok:
         if not design.needs_diagram:
-            errors.append("needs_diagram must be true for a kept mathematics question")
+            errors.append("needs_diagram must be true for a mathematics diagram question")
         diagram_type = str(idea_plan.get("diagram_type") or "").strip().lower()
         if diagram_type not in VALID_DIAGRAM_TYPES:
             errors.append("idea_plan.diagram_type must be geometry or graph")
         if not str(idea_plan.get("visual_brief") or "").strip():
             errors.append("idea_plan.visual_brief is empty")
     else:
-        if not visual_type:
+        if subject_key == "mathematics":
+            if visual_type not in math_text_ok:
+                errors.append("mathematics visual_type must be graph/geometry, none, or table")
+        elif not visual_type:
             errors.append(
-                "idea_plan.visual_type must be none, graph, table, chem_structure, apparatus, bio_diagram, or pedigree"
+                "idea_plan.visual_type must be none, graph, table, chem_structure, energy_profile, "
+                "bio_diagram, or pedigree"
             )
+        elif subject_key == "chemistry" and visual_type not in chem_ok:
+            errors.append(
+                "chemistry visual_type must be none, graph, table, chem_structure, or energy_profile "
+                "(apparatus is not supported)"
+            )
+        elif subject_key == "biology" and visual_type not in bio_ok:
+            errors.append("biology visual_type must be none, graph, table, bio_diagram, or pedigree")
+        elif subject_key == "physics" and visual_type not in physics_ok:
+            errors.append("physics visual_type must be none, graph, or table")
         if visual_type == "table" and not (idea_plan.get("table") or parsed.get("table")):
             errors.append("visual_type table requires idea_plan.table")
         if visual_type == "chem_structure":
             chem = idea_plan.get("chem_structure") or parsed.get("chem_structure") or {}
             if not isinstance(chem, dict):
                 errors.append("visual_type chem_structure requires idea_plan.chem_structure")
-            elif not str(chem.get("smiles") or chem.get("SMILES") or "").strip() and not (chem.get("atoms") or []):
-                errors.append("chem_structure requires smiles (preferred) or atoms/bonds")
-        if visual_type == "apparatus" and not (idea_plan.get("apparatus") or parsed.get("apparatus")):
-            errors.append("visual_type apparatus requires idea_plan.apparatus")
+            elif not str(chem.get("smiles") or chem.get("SMILES") or "").strip():
+                errors.append("chem_structure requires a valid SMILES string (no atom coordinates)")
+            elif chem.get("atoms") or chem.get("bonds"):
+                errors.append("chem_structure must use SMILES only; do not specify atoms or bonds")
+            else:
+                try:
+                    from .chem_rdkit import normalize_chem_structure_payload
+
+                    normalized = normalize_chem_structure_payload(chem)
+                    idea_plan["chem_structure"] = {
+                        "smiles": normalized["smiles"],
+                        "input_smiles": normalized.get("input_smiles") or normalized["smiles"],
+                    }
+                    idea_plan["rdkit_properties"] = {
+                        k: normalized[k]
+                        for k in (
+                            "molecular_formula",
+                            "exact_mass",
+                            "molecular_weight",
+                            "num_atoms",
+                            "num_heavy_atoms",
+                            "num_rings",
+                            "canonical_smiles",
+                        )
+                        if k in normalized
+                    }
+                    idea_plan["rdkit_properties"]["canonical_smiles"] = normalized["smiles"]
+                    idea_plan["rdkit_properties"]["input_smiles"] = (
+                        normalized.get("input_smiles") or normalized["smiles"]
+                    )
+                except Exception as exc:
+                    errors.append(str(exc))
         if visual_type == "pedigree" and not (idea_plan.get("pedigree") or parsed.get("pedigree")):
             errors.append("visual_type pedigree requires idea_plan.pedigree")
-        if visual_type in {"graph", "bio_diagram"} and not str(idea_plan.get("visual_brief") or "").strip():
+        if visual_type in {"graph", "energy_profile", "bio_diagram"} and not str(
+            idea_plan.get("visual_brief") or ""
+        ).strip():
             errors.append("idea_plan.visual_brief is empty")
-        if visual_type == "graph":
+        if visual_type in {"graph", "energy_profile"}:
             preset = str(idea_plan.get("graph_preset") or "").strip()
             if preset:
                 from .graph_presets import GRAPH_PRESETS, normalize_graph_preset

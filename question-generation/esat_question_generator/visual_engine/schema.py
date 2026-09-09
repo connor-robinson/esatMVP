@@ -24,7 +24,6 @@ SUPPORTED_OBJECT_TYPES = frozenset(
         "point",
         "arrow",
         "chem_structure",
-        "apparatus",
         "pedigree",
     }
 )
@@ -162,34 +161,12 @@ def _validate_object(obj: dict[str, Any], index: int) -> None:
         _as_point(obj.get("end"), f"objects[{index}].end")
     elif obj_type == "chem_structure":
         smiles = str(obj.get("smiles") or "").strip()
-        atoms = obj.get("atoms") or []
-        bonds = obj.get("bonds") or []
-        if smiles and (not isinstance(atoms, list) or len(atoms) < 1):
-            # SMILES-only objects are expanded before render; allow empty atoms here.
-            return
-        if not isinstance(atoms, list) or len(atoms) < 1:
-            raise VisualSpecError(f"objects[{index}] chem_structure needs smiles or atoms")
-        ids: set[str] = set()
-        for i, atom in enumerate(atoms):
-            if not isinstance(atom, dict):
-                raise VisualSpecError(f"objects[{index}].atoms[{i}] must be an object")
-            aid = str(atom.get("id") or "").strip()
-            if not aid:
-                raise VisualSpecError(f"objects[{index}].atoms[{i}] missing id")
-            ids.add(aid)
-            _as_float(atom.get("x"), f"objects[{index}].atoms[{i}].x")
-            _as_float(atom.get("y"), f"objects[{index}].atoms[{i}].y")
-        if not isinstance(bonds, list):
-            raise VisualSpecError(f"objects[{index}] chem_structure bonds must be a list")
-        for i, bond in enumerate(bonds):
-            if not isinstance(bond, dict):
-                raise VisualSpecError(f"objects[{index}].bonds[{i}] must be an object")
-            if str(bond.get("from") or "") not in ids or str(bond.get("to") or "") not in ids:
-                raise VisualSpecError(f"objects[{index}].bonds[{i}] refers to an unknown atom")
-    elif obj_type == "apparatus":
-        comps = obj.get("components") or obj.get("pieces") or []
-        if not isinstance(comps, list) or not comps:
-            raise VisualSpecError(f"objects[{index}] apparatus needs components")
+        if obj.get("atoms") or obj.get("bonds"):
+            raise VisualSpecError(
+                f"objects[{index}] chem_structure must use SMILES only; atom coordinates and bonds are not allowed"
+            )
+        if not smiles:
+            raise VisualSpecError(f"objects[{index}] chem_structure needs smiles")
     elif obj_type == "pedigree":
         people = obj.get("people") or []
         if not isinstance(people, list) or len(people) < 1:

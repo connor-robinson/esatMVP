@@ -156,4 +156,4 @@ Style:
 
 The diagram exists to communicate information required for the reasoning.
 
-Do not use this designer for `table`, `chem_structure`, `apparatus`, or `pedigree`. Those are rendered from structured data (SMILES / SVG component library / pedigree semantics), not free-placed geometry.
+Do not use this designer for `table`, `chem_structure`, or `pedigree`. Those are rendered from structured data (SMILES via RDKit / pedigree semantics), not free-placed geometry.

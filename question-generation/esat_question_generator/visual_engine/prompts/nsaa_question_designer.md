@@ -63,13 +63,15 @@ Set `idea_plan.visual_type` to exactly one of:
 - `graph`
 - `table`
 - `chem_structure`
-- `apparatus`
+- `energy_profile` (chemistry; drawn as a graph of energy vs reaction coordinate)
 - `bio_diagram`
 - `pedigree`
 
 Many questions should be plain text (`none`). Only use special rendering when the question genuinely needs it.
 
-For `graph`, also set `idea_plan.graph_preset` to exactly one of:
+Chemistry should normally use only `none`, `chem_structure`, `graph`, `table`, or optionally `energy_profile`. Do **not** use `apparatus`.
+
+For `graph` or `energy_profile`, also set `idea_plan.graph_preset` to exactly one of:
 
 - `cartesian` (math curves, origin axes)
 - `science_xy` (boxed science axes with units)
@@ -105,9 +107,11 @@ Do not put ordinary English text inside `\ce{}`.
 
 Prefer `\ce{}` over a structural drawing when the formula is enough. Use `chem_structure` only for simple displayed organic structures, isomer choices, repeating units, or bonding questions.
 
-For `chem_structure`, provide **SMILES only**. Do not invent atom coordinates or freehand bonds. Example: `"chem_structure": {"smiles": "CCO"}`.
+For `chem_structure`, provide **SMILES only**. Do not invent atom coordinates or freehand bonds. RDKit parses the SMILES, generates standard 2D coordinates, and draws the structure. Invalid SMILES will be rejected. Example: `"chem_structure": {"smiles": "CCO"}`.
 
-For lab kit / setup questions use `apparatus` with a component list from this library only: `beaker`, `conical_flask`, `test_tube`, `gas_jar`, `delivery_tube`, `bunsen`, `stand`, `label`. Do not freehand-draw apparatus. Example: `"apparatus": {"components": ["beaker", "delivery_tube", "gas_jar"]}`.
+Do **not** generate apparatus / lab-kit diagrams. If the source is an apparatus question, either convert it to a `graph`, `table`, `chem_structure`, or `energy_profile` when scientifically appropriate, or set `"skip": true`.
+
+For reaction energy diagrams, use `energy_profile` (or `graph`) with axes for reaction coordinate vs energy. Do not freehand-draw bonds or molecules for energy profiles.
 
 ## Biology rules
 
@@ -186,7 +190,6 @@ Return **only** valid JSON. No markdown fences. No commentary.
     "what_must_not_reveal": "",
     "table": {},
     "chem_structure": {},
-    "apparatus": {},
     "pedigree": {},
     "graph_preset": "",
     "source_analysis": {
@@ -209,14 +212,7 @@ For `chem_structure`:
 }
 ```
 
-For `apparatus`:
-
-```
-"apparatus": {
-  "components": ["beaker", "delivery_tube", "gas_jar"],
-  "title": ""
-}
-```
+Do not include `atoms`, `bonds`, or coordinates. RDKit determines the 2D depiction.
 
 For `pedigree`:
 
