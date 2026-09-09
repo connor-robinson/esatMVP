@@ -25,14 +25,14 @@ export function PastPaperCompactTable({ table }: Props) {
         <table className="w-full text-left text-base">
           <thead>
             <tr className="text-xs font-semibold uppercase tracking-wide text-[#94A3B8]">
-              <th className="px-2.5 py-3">Year</th>
+              <th className="px-2.5 py-2.5">Year</th>
               {isSpecification ? (
-                <th className="px-2.5 py-3">PDF</th>
+                <th className="px-2.5 py-2.5">PDF</th>
               ) : (
                 <>
-                  <th className="px-2.5 py-3">Paper</th>
-                  <th className="px-2.5 py-3">Answers</th>
-                  <th className="px-2.5 py-3">ESAT Camp</th>
+                  <th className="px-2.5 py-2.5">Paper</th>
+                  <th className="px-2.5 py-2.5">Answers</th>
+                  <th className="px-2.5 py-2.5">ESAT Camp</th>
                 </>
               )}
             </tr>

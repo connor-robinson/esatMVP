@@ -112,22 +112,15 @@ export function PastPaperPracticeLink({
           })();
         }}
         className={cn(
-          "inline-flex items-center justify-center gap-2 font-semibold leading-none text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0F1D]",
+          "inline-flex items-center justify-center gap-1.5 font-semibold leading-none text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0F1D]",
           size === "page"
             ? "rounded-xl bg-[#3B82F6] px-4 py-2 text-sm hover:bg-[#2563EB]"
-            : "h-10 min-h-10 whitespace-nowrap rounded-lg bg-[#3B82F6] px-4 text-base hover:bg-[#2563EB]",
+            : "whitespace-nowrap rounded-lg bg-[#3B82F6] px-3 py-1.5 text-sm hover:bg-[#2563EB]",
           className,
         )}
       >
         {label}
-        <Play
-          aria-hidden
-          className={
-            size === "page"
-              ? "h-3.5 w-3.5 fill-current opacity-90"
-              : "h-[18px] w-[18px] fill-current opacity-90"
-          }
-        />
+        <Play aria-hidden className="h-4 w-4 fill-current opacity-90" />
       </Link>
       {starting && typeof document !== "undefined"
         ? createPortal(<PearsonPleaseWaitScreen />, document.body)
