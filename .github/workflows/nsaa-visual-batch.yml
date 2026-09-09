@@ -1,39 +1,45 @@
 # NSAA visual_engine batch (runs in the cloud)
+# Default path matches local: visual_engine.nsaa_esat_batch
+# (Math 1 : Math 2 : Physics = 1:1:3, Math 100% diagrams, Physics mixed)
 
 name: NSAA visual batch
 
 on:
   workflow_dispatch:
     inputs:
-      subject:
-        description: NSAA subject
+      mode:
+        description: Batch mode
         required: true
-        default: chemistry
+        default: esat
         type: choice
         options:
+          - esat
           - chemistry
           - biology
-          - mathematics
-          - physics
-      n:
-        description: How many questions to generate
+      cycles:
+        description: ESAT cycles (each = 1 Math1 + 1 Math2 + 3 Physics). Use 0 for until sources run out.
         required: true
         default: "5"
         type: string
+      n:
+        description: Chemistry/biology only. How many questions to generate.
+        required: false
+        default: "5"
+        type: string
       diagrams_only:
-        description: Only keep rendered diagram questions
-        required: true
+        description: Chemistry/biology only. Keep rendered diagram questions.
+        required: false
         default: true
         type: boolean
       only_visuals:
-        description: Optional visual_type allow-list (comma-separated). Leave the chemistry default blanked by picking subject-specific autos; empty = auto by subject.
+        description: Chemistry/biology only. Optional visual_type allow-list. Empty = auto by subject.
         required: false
         default: ""
         type: string
       force:
-        description: Regenerate even if already present in this runner DB
+        description: Ignore already-ticked sources / regenerate
         required: true
-        default: true
+        default: false
         type: boolean
       model:
         description: Gemini / Vertex model id
@@ -41,7 +47,7 @@ on:
         default: "gemini-3.7-flash"
         type: string
   schedule:
-    # 10:00 UTC daily (~18:00 HKT). Edit timezone/time as needed.
+    # 10:00 UTC daily (~18:00 HKT). Same ESAT path as local.
     - cron: "0 10 * * *"
 
 concurrency:
@@ -50,12 +56,13 @@ concurrency:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   generate:
     name: Generate NSAA review items
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 360
     defaults:
       run:
         working-directory: question-generation/esat_question_generator
@@ -96,7 +103,11 @@ jobs:
       - name: Install Python deps
         run: |
           python -m pip install --upgrade pip
-          pip install -r visual_engine/requirements.txt
+          if [ -f visual_engine/requirements.txt ]; then
+            pip install -r visual_engine/requirements.txt
+          else
+            pip install -r requirements.txt
+          fi
 
       - name: Resolve batch parameters
         id: params
@@ -104,14 +115,16 @@ jobs:
         run: |
           set -euo pipefail
           if [ "${{ github.event_name }}" = "schedule" ]; then
-            SUBJECT="chemistry"
+            MODE="esat"
+            CYCLES="5"
             N="5"
             DIAG="true"
-            ONLY="chem_structure,graph,energy_profile"
-            FORCE="true"
+            ONLY=""
+            FORCE="false"
             MODEL="gemini-3.7-flash"
           else
-            SUBJECT="${{ inputs.subject }}"
+            MODE="${{ inputs.mode }}"
+            CYCLES="${{ inputs.cycles }}"
             N="${{ inputs.n }}"
             DIAG="${{ inputs.diagrams_only }}"
             ONLY="${{ inputs.only_visuals }}"
@@ -119,40 +132,50 @@ jobs:
             MODEL="${{ inputs.model }}"
           fi
 
-          # Subject-aware visual defaults. The workflow input default is chemistry-oriented;
-          # do not pass chem_structure to physics/math/biology unless the user typed it.
-          CHEM_DEFAULT="chem_structure,graph,energy_profile"
-          if [ -z "$ONLY" ] || [ "$ONLY" = "$CHEM_DEFAULT" ]; then
-            case "$SUBJECT" in
-              chemistry)
-                ONLY="chem_structure,graph,energy_profile"
-                ;;
-              biology)
-                ONLY="graph,bio_diagram,pedigree"
-                ;;
-              physics)
-                ONLY="graph"
-                ;;
-              mathematics)
-                ONLY="graph"
-                ;;
+          if [ -z "$ONLY" ]; then
+            case "$MODE" in
+              chemistry) ONLY="chem_structure,graph,energy_profile" ;;
+              biology) ONLY="graph,bio_diagram,pedigree" ;;
+              *) ONLY="" ;;
             esac
           fi
 
-          # Mathematics uses the full stem-diagram pool via --full-pool when diagrams-only.
-          FULL_POOL="false"
-          if [ "$SUBJECT" = "mathematics" ]; then
-            FULL_POOL="true"
-          fi
-
-          echo "subject=$SUBJECT" >> "$GITHUB_OUTPUT"
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+          echo "cycles=$CYCLES" >> "$GITHUB_OUTPUT"
           echo "n=$N" >> "$GITHUB_OUTPUT"
           echo "diagrams_only=$DIAG" >> "$GITHUB_OUTPUT"
           echo "only_visuals=$ONLY" >> "$GITHUB_OUTPUT"
           echo "force=$FORCE" >> "$GITHUB_OUTPUT"
           echo "model=$MODEL" >> "$GITHUB_OUTPUT"
-          echo "full_pool=$FULL_POOL" >> "$GITHUB_OUTPUT"
-          echo "Resolved subject=$SUBJECT n=$N diagrams_only=$DIAG only_visuals=$ONLY full_pool=$FULL_POOL"
+          echo "Resolved mode=$MODE cycles=$CYCLES n=$N force=$FORCE model=$MODEL"
+
+      - name: Restore previous review_data (tick-off continuity)
+        uses: dawidd6/action-download-artifact@v6
+        continue-on-error: true
+        with:
+          github_token: ${{ github.token }}
+          workflow: nsaa-visual-batch.yml
+          workflow_conclusion: success
+          name_is_regexp: true
+          name: nsaa-review-esat-.*
+          path: ${{ github.workspace }}/_prev_artifacts
+          if_no_artifact_found: warn
+          search_artifacts: true
+
+      - name: Unpack previous review_data if present
+        shell: bash
+        working-directory: question-generation/esat_question_generator
+        run: |
+          set -euo pipefail
+          mkdir -p visual_engine/review_data
+          PREV="$(find "$GITHUB_WORKSPACE/_prev_artifacts" -name 'nsaa-review-data.tgz' 2>/dev/null | head -n 1 || true)"
+          if [ -n "${PREV:-}" ] && [ -f "$PREV" ]; then
+            echo "Restoring review_data from $PREV"
+            tar -xzf "$PREV" -C visual_engine
+            ls -la visual_engine/review_data || true
+          else
+            echo "No previous review_data artifact found; starting fresh tick-off state"
+          fi
 
       - name: Preflight secrets
         shell: bash
@@ -174,17 +197,36 @@ jobs:
           fi
           echo "Preflight OK (project=$GOOGLE_CLOUD_PROJECT location=${GOOGLE_CLOUD_LOCATION:-us-central1})"
 
-      - name: Run NSAA batch
+      - name: Run NSAA ESAT batch (Math1 / Math2 / Physics)
+        if: steps.params.outputs.mode == 'esat'
         shell: bash
         run: |
           set -euo pipefail
-          SUBJECT="${{ steps.params.outputs.subject }}"
+          MODEL="${{ steps.params.outputs.model }}"
+          CYCLES="${{ steps.params.outputs.cycles }}"
+          FORCE="${{ steps.params.outputs.force }}"
+          if [ -n "$MODEL" ]; then
+            export MODEL_DIAGRAM_DESIGNER="$MODEL"
+          fi
+          ARGS=(--cycles "$CYCLES" --model "${MODEL_DIAGRAM_DESIGNER}")
+          if [ "$FORCE" = "true" ]; then
+            ARGS+=(--force)
+          fi
+          echo "Running: python -m visual_engine.nsaa_esat_batch ${ARGS[*]}"
+          echo "Policy: Math1/Math2=100% diagram; Physics mixed; ratio 1:1:3"
+          python -m visual_engine.nsaa_esat_batch "${ARGS[@]}"
+
+      - name: Run single-subject NSAA batch (chemistry/biology)
+        if: steps.params.outputs.mode != 'esat'
+        shell: bash
+        run: |
+          set -euo pipefail
+          SUBJECT="${{ steps.params.outputs.mode }}"
           N="${{ steps.params.outputs.n }}"
           ONLY="${{ steps.params.outputs.only_visuals }}"
           MODEL="${{ steps.params.outputs.model }}"
           DIAG="${{ steps.params.outputs.diagrams_only }}"
           FORCE="${{ steps.params.outputs.force }}"
-          FULL_POOL="${{ steps.params.outputs.full_pool }}"
 
           if [ -n "$MODEL" ]; then
             export MODEL_DIAGRAM_DESIGNER="$MODEL"
@@ -193,9 +235,6 @@ jobs:
           ARGS=(--subject "$SUBJECT" --n "$N" --model "${MODEL_DIAGRAM_DESIGNER}")
           if [ "$DIAG" = "true" ]; then
             ARGS+=(--diagrams-only)
-          fi
-          if [ "$FULL_POOL" = "true" ]; then
-            ARGS+=(--full-pool)
           fi
           if [ -n "$ONLY" ]; then
             ARGS+=(--only-visuals "$ONLY")
@@ -217,16 +256,20 @@ jobs:
           import json
           from pathlib import Path
           from visual_engine.review_store import ReviewStore
+          status_esat = Path("visual_engine/review_data/nsaa_esat_batch_status.json")
+          status_legacy = Path("visual_engine/review_data/nsaa_batch_status.json")
           store = ReviewStore()
           meta = {
               "db_path": str(store.db_path),
               "counts": store.counts(),
               "subject_counts": store.subject_counts() if hasattr(store, "subject_counts") else {},
+              "esat_status": json.loads(status_esat.read_text(encoding="utf-8")) if status_esat.is_file() else None,
+              "nsaa_status": json.loads(status_legacy.read_text(encoding="utf-8")) if status_legacy.is_file() else None,
           }
           Path("visual_engine/review_data/ci_run_meta.json").write_text(
               json.dumps(meta, indent=2), encoding="utf-8"
           )
-          print(json.dumps(meta, indent=2))
+          print(json.dumps({k: meta[k] for k in ("counts", "subject_counts")}, indent=2))
           PY
           tar -C visual_engine -czf "$GITHUB_WORKSPACE/nsaa-review-data.tgz" review_data
 
@@ -234,7 +277,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: nsaa-review-${{ steps.params.outputs.subject }}-${{ github.run_id }}
+          name: nsaa-review-esat-${{ github.run_id }}
           path: nsaa-review-data.tgz
           if-no-files-found: warn
           retention-days: 30
