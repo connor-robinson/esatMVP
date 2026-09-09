@@ -166,8 +166,8 @@ export function QuestionBankSessionSettingsModal({
   onConfirm,
   isMixed = false,
 }: QuestionBankSessionSettingsModalProps) {
-  const [minutes, setMinutes] = useState(20);
-  const [questionCount, setQuestionCount] = useState(30);
+  const [minutes, setMinutes] = useState(() => autoTimeLimitMinutes(10));
+  const [questionCount, setQuestionCount] = useState(10);
   const [subjectKeys, setSubjectKeys] = useState<SubjectFilter[]>([]);
   const [difficultyMix, setDifficultyMix] =
     useState<DifficultyMixPreset>("Auto");
@@ -179,7 +179,7 @@ export function QuestionBankSessionSettingsModal({
     } else {
       setSubjectKeys([originTile.key as SubjectFilter]);
     }
-    const initialCount = 30;
+    const initialCount = 10;
     setQuestionCount(initialCount);
     setMinutes(autoTimeLimitMinutes(initialCount));
     setDifficultyMix("Auto");
@@ -245,14 +245,14 @@ export function QuestionBankSessionSettingsModal({
     >
       <button
         type="button"
-        className="absolute inset-0 animate-fade-in bg-black/85 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/85"
         aria-label="Close"
         onClick={onClose}
       />
       <div
         className={cn(
-          "relative z-[101] flex max-h-[min(92vh,880px)] w-full max-w-[960px] flex-col overflow-hidden rounded-organic-xl",
-          "animate-slide-up bg-surface p-8 shadow-[0_28px_80px_rgba(0,0,0,0.45)] sm:p-10",
+          "relative z-[101] flex max-h-[min(92vh,880px)] w-full max-w-[960px] flex-col overflow-hidden rounded-[4px]",
+          "bg-surface p-8 sm:p-10",
         )}
       >
         {/* Header */}
@@ -330,7 +330,7 @@ export function QuestionBankSessionSettingsModal({
               </div>
               <span
                 key={difficultyMix}
-                className="animate-fade-in text-xs font-medium text-text-muted"
+                className="text-xs font-medium text-text-muted"
               >
                 {DIFFICULTY_MIX_BLURBS[difficultyMix]}
               </span>
@@ -403,9 +403,9 @@ export function QuestionBankSessionSettingsModal({
             type="button"
             onClick={handleStart}
             className={cn(
-              "inline-flex min-h-[2.75rem] w-full items-center justify-center gap-2 rounded-organic-lg px-8 sm:w-auto",
-              "bg-secondary text-background text-sm font-semibold shadow-glow transition-all duration-fast",
-              "hover:brightness-110 active:scale-[0.98]",
+              "inline-flex min-h-[2.75rem] w-full items-center justify-center gap-2 rounded-[4px] px-8 sm:w-auto",
+              "bg-secondary text-background text-sm font-semibold shadow-none",
+              "hover:bg-secondary/90",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
             )}
           >
