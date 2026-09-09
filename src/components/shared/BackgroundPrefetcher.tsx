@@ -12,6 +12,8 @@ import { useAggressivePrefetch } from "@/hooks/useAggressivePrefetch";
 
 const CRITICAL_ROUTES = [
   "/dashboard",
+  "/questions",
+  "/questions/questionbank",
   "/mental-maths/analytics",
   "/mental-maths/drill",
 ];
@@ -29,6 +31,10 @@ const SKIP_PREFETCH_PATHS = new Set([
   "/pricing",
   "/login",
   "/signup",
+  "/esat-past-papers",
+  "/esat-past-papers-guide",
+  "/past-papers/nsaa",
+  "/past-papers/engaa",
 ]);
 
 export function BackgroundPrefetcher() {

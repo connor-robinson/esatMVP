@@ -5,16 +5,7 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Play } from "lucide-react";
-import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { PearsonPleaseWaitScreen } from "@/components/pearson/PearsonPleaseWaitScreen";
-import { useSubscription } from "@/hooks/useSubscription";
-import {
-  isFreePreviewPastPaper,
-  isPastPaperLibraryLocked,
-} from "@/lib/papers/freePreviewPapers";
-import { parsePastPaperPracticeSearchParams } from "@/lib/papers/pastPaperPracticeHref";
-import { startPastPaperSectionSession } from "@/lib/papers/startPastPaperSectionSession";
-import { warmPastPaperPracticeStart } from "@/lib/papers/warmPastPaperPracticeStart";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -25,6 +16,11 @@ type Props = {
   className?: string;
 };
 
+/**
+ * Lightweight Start now control for download hubs.
+ * Avoids mounting subscription/session hooks on every table row so the page
+ * can hydrate quickly. Session start work runs only after click.
+ */
 export function PastPaperPracticeLink({
   href,
   label = "Start now",
@@ -33,14 +29,14 @@ export function PastPaperPracticeLink({
   className,
 }: Props) {
   const router = useRouter();
-  const session = useSupabaseSession();
-  const { hasFullAccess, isLoading: subscriptionLoading } = useSubscription();
   const [starting, setStarting] = useState(false);
 
   const warmStart = () => {
     router.prefetch(href);
     router.prefetch("/past-papers/solve");
-    void warmPastPaperPracticeStart(href);
+    void import("@/lib/papers/warmPastPaperPracticeStart").then((mod) =>
+      mod.warmPastPaperPracticeStart(href),
+    );
   };
 
   return (
@@ -61,8 +57,6 @@ export function PastPaperPracticeLink({
             return;
           }
 
-          // Start from this page when auth is ready so we skip /solve/start
-          // hydration. Fall back to the start route for login / lock / loading.
           event.preventDefault();
           if (starting) return;
 
@@ -71,17 +65,32 @@ export function PastPaperPracticeLink({
 
           void (async () => {
             try {
+              const [
+                { parsePastPaperPracticeSearchParams },
+                { startPastPaperSectionSession },
+                { isFreePreviewPastPaper, isPastPaperLibraryLocked },
+                { createSupabaseBrowserClient },
+              ] = await Promise.all([
+                import("@/lib/papers/pastPaperPracticeHref"),
+                import("@/lib/papers/startPastPaperSectionSession"),
+                import("@/lib/papers/freePreviewPapers"),
+                import("@/lib/supabase/browser"),
+              ]);
+
               const url = new URL(href, window.location.origin);
               const target = parsePastPaperPracticeSearchParams(url.searchParams);
-              if (!target || session === undefined) {
+              if (!target) {
                 router.push(href);
                 return;
               }
 
-              if (session === null) {
-                router.push(
-                  `/login?redirectTo=${encodeURIComponent(href)}`,
-                );
+              const supabase = createSupabaseBrowserClient();
+              const {
+                data: { session },
+              } = await supabase.auth.getSession();
+
+              if (!session) {
+                router.push(`/login?redirectTo=${encodeURIComponent(href)}`);
                 return;
               }
 
@@ -91,17 +100,17 @@ export function PastPaperPracticeLink({
               };
               const freePreview = isFreePreviewPastPaper(paperLockProbe);
 
-              if (subscriptionLoading && !freePreview) {
-                router.push(href);
-                return;
-              }
-
-              if (
-                !subscriptionLoading &&
-                isPastPaperLibraryLocked(paperLockProbe, hasFullAccess)
-              ) {
-                router.push(href);
-                return;
+              if (!freePreview) {
+                const res = await fetch("/api/subscription/status");
+                let hasFullAccess = false;
+                if (res.ok) {
+                  const data = (await res.json()) as { hasFullAccess?: boolean };
+                  hasFullAccess = data.hasFullAccess === true;
+                }
+                if (isPastPaperLibraryLocked(paperLockProbe, hasFullAccess)) {
+                  router.push(href);
+                  return;
+                }
               }
 
               await startPastPaperSectionSession(target);

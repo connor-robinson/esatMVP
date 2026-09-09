@@ -1,6 +1,9 @@
 /**
  * Account setup gate - redirects incomplete profiles to /onboarding.
  * Username and questionnaire are collected in one full-page flow.
+ *
+ * Public SEO hubs skip the full-screen spinner: middleware already enforces
+ * onboarding, and the overlay made past-paper pages feel like a fake load.
  */
 
 "use client";
@@ -13,10 +16,37 @@ import {
   sanitizeRedirectTo,
 } from "@/lib/onboarding/redirect";
 
+function isSetupExemptPath(pathname: string | null | undefined): boolean {
+  if (!pathname) return false;
+  return (
+    pathname.startsWith("/onboarding") ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/auth") ||
+    pathname.startsWith("/access") ||
+    pathname === "/signup"
+  );
+}
+
+/** Public marketing / download hubs: never block first paint with a spinner. */
+function isPublicSeoHub(pathname: string | null | undefined): boolean {
+  if (!pathname) return false;
+  return (
+    pathname === "/esat-past-papers" ||
+    pathname.startsWith("/esat-past-papers/") ||
+    pathname === "/esat-past-papers-guide" ||
+    pathname.startsWith("/esat-past-papers-guide/") ||
+    pathname === "/past-papers/nsaa" ||
+    pathname.startsWith("/past-papers/nsaa/") ||
+    pathname === "/past-papers/engaa" ||
+    pathname.startsWith("/past-papers/engaa/")
+  );
+}
+
 export function UsernameGate({ children }: { children: React.ReactNode }) {
   const session = useSupabaseSession();
   const pathname = usePathname();
-  const [checking, setChecking] = useState(true);
+  const skipOverlay = isSetupExemptPath(pathname) || isPublicSeoHub(pathname);
+  const [checking, setChecking] = useState(!skipOverlay);
 
   useEffect(() => {
     async function checkSetup() {
@@ -26,18 +56,15 @@ export function UsernameGate({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // Partner /access landing stays reachable so Claim access (and invalid
-      // code UI) work before onboarding. Redeem itself runs after setup via
-      // /access/complete.
-      if (
-        pathname?.startsWith("/onboarding") ||
-        pathname?.startsWith("/login") ||
-        pathname?.startsWith("/auth") ||
-        pathname?.startsWith("/access") ||
-        pathname === "/signup"
-      ) {
+      if (isSetupExemptPath(pathname)) {
         setChecking(false);
         return;
+      }
+
+      // Public hubs: paint immediately. Middleware already redirects incomplete
+      // onboarding; keep a quiet client check only as a safety net.
+      if (isPublicSeoHub(pathname)) {
+        setChecking(false);
       }
 
       try {
@@ -66,14 +93,7 @@ export function UsernameGate({ children }: { children: React.ReactNode }) {
     void checkSetup();
   }, [session, pathname]);
 
-  if (
-    checking &&
-    session?.user &&
-    !pathname?.startsWith("/onboarding") &&
-    !pathname?.startsWith("/login") &&
-    !pathname?.startsWith("/auth") &&
-    !pathname?.startsWith("/access")
-  ) {
+  if (checking && session?.user && !skipOverlay) {
     return (
       <>
         {children}
