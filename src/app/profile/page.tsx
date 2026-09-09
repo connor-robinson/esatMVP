@@ -1157,6 +1157,8 @@ export default function ProfilePage() {
                           to cancel. Access lasts until the date above.
                         </p>
                       ) : null}
+
+                      <FeedbackReferralSettingsCard />
                     </div>
                   </SettingsGroup>
 
@@ -1457,7 +1459,6 @@ export default function ProfilePage() {
                   />
                   <div className="px-5 py-5 sm:px-7">
                     <BugReportPanel />
-                    <FeedbackReferralSettingsCard />
                   </div>
                 </>
               )}

@@ -85,3 +85,37 @@ export async function lookupActiveReferralPromotion(code: string): Promise<{
     referrerUserId: promo.metadata?.referrer_user_id ?? null,
   };
 }
+
+/** Read a CAMP50 code from Checkout Session discounts or legacy metadata. */
+export async function resolveReferralCodeFromCheckoutSession(
+  session: Stripe.Checkout.Session,
+  stripe: Stripe = getStripe(),
+): Promise<string | null> {
+  const fromMeta = session.metadata?.referralCode?.trim();
+  if (fromMeta && isReferralCodeFormat(fromMeta)) {
+    return fromMeta.toUpperCase();
+  }
+
+  const full = await stripe.checkout.sessions.retrieve(session.id, {
+    expand: ["discounts.promotion_code"],
+  });
+
+  for (const entry of full.discounts ?? []) {
+    const promo = entry.promotion_code;
+    if (!promo) continue;
+    if (typeof promo === "string") {
+      try {
+        const retrieved = await stripe.promotionCodes.retrieve(promo);
+        const code = retrieved.code?.trim().toUpperCase() ?? "";
+        if (isReferralCodeFormat(code)) return code;
+      } catch {
+        continue;
+      }
+      continue;
+    }
+    const code = promo.code?.trim().toUpperCase() ?? "";
+    if (isReferralCodeFormat(code)) return code;
+  }
+
+  return null;
+}

@@ -17,6 +17,7 @@ import {
   handleSubscriptionDeletedCommerce,
 } from "@/lib/stripe/checkoutEvents";
 import { markReferralCodeRedeemed } from "@/lib/feedbackReferral/service";
+import { resolveReferralCodeFromCheckoutSession } from "@/lib/feedbackReferral/stripe";
 
 const RELEVANT_EVENTS = new Set([
   "product.created",
@@ -123,18 +124,24 @@ export async function POST(request: NextRequest) {
           await upsertOneTimePurchase(fullSession, EXAM_DATE);
         }
         await handleCheckoutSessionCompletedCommerce(session, event.id);
-        const referralCode = session.metadata?.referralCode;
         const redeemerId = session.metadata?.userId;
         if (
-          session.payment_status === "paid" ||
-          session.payment_status === "no_payment_required"
+          redeemerId &&
+          (session.payment_status === "paid" ||
+            session.payment_status === "no_payment_required")
         ) {
-          if (referralCode && redeemerId) {
-            await markReferralCodeRedeemed({
-              code: referralCode,
-              redeemedByUserId: redeemerId,
-              checkoutSessionId: session.id,
-            });
+          try {
+            const referralCode =
+              await resolveReferralCodeFromCheckoutSession(session);
+            if (referralCode) {
+              await markReferralCodeRedeemed({
+                code: referralCode,
+                redeemedByUserId: redeemerId,
+                checkoutSessionId: session.id,
+              });
+            }
+          } catch (err) {
+            console.error("[webhooks] referral redeem failed", err);
           }
         }
         break;

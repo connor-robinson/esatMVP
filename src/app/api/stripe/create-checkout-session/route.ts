@@ -9,8 +9,6 @@ import {
   mergeStripeGaMetadata,
   parseGaCheckoutAttribution,
 } from "@/lib/stripe/checkoutGaMetadata";
-import { findReferralCodeRow } from "@/lib/feedbackReferral/service";
-import { normalizeReferralCode } from "@/lib/feedbackReferral/codes";
 
 export const dynamic = "force-dynamic";
 
@@ -50,44 +48,13 @@ export async function POST(request: NextRequest) {
     const siteUrl = resolveAppSiteUrl();
     const successUrl = `${siteUrl}/pricing/success?session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = `${siteUrl}/pricing?canceled=true`;
-    const referralCode = normalizeReferralCode(
-      typeof body.promotionCode === "string" ? body.promotionCode : "",
-    );
-    let referralDiscount:
-      | { code: string; promotionCodeId: string }
-      | null = null;
-    if (referralCode) {
-      const row = await findReferralCodeRow(referralCode);
-      if (!row || row.redeemed_at) {
-        return NextResponse.json(
-          { error: "That referral code is invalid or already used." },
-          { status: 400 },
-        );
-      }
-      if (row.user_id === user.id) {
-        return NextResponse.json(
-          { error: "You cannot use your own referral code." },
-          { status: 400 },
-        );
-      }
-      referralDiscount = {
-        code: row.code,
-        promotionCodeId: row.stripe_promotion_code_id,
-      };
-    }
     const gaMeta = mergeStripeGaMetadata(
       {
         userId: user.id,
         planType,
-        ...(referralDiscount
-          ? { referralCode: referralDiscount.code }
-          : {}),
       },
       parseGaCheckoutAttribution(body),
     );
-    const referralDiscounts = referralDiscount
-      ? [{ promotion_code: referralDiscount.promotionCodeId }]
-      : undefined;
 
     // Exam Season Pass - true one-time payment (no yearly subscription)
     if (planType === "season_pass") {
@@ -110,8 +77,8 @@ export async function POST(request: NextRequest) {
         ],
         success_url: successUrl,
         cancel_url: cancelUrl,
+        allow_promotion_codes: true,
         metadata: { ...gaMeta, planType: "season_pass" },
-        ...(referralDiscounts ? { discounts: referralDiscounts } : {}),
       });
       return NextResponse.json({ url: session.url });
     }
@@ -143,9 +110,7 @@ export async function POST(request: NextRequest) {
     }
 
     const offerTrial =
-      !referralDiscount &&
-      planType === "monthly" &&
-      (await isEligibleForTrial(customerId));
+      planType === "monthly" && (await isEligibleForTrial(customerId));
 
     const session = await getStripe().checkout.sessions.create({
       mode: "subscription",
@@ -153,8 +118,8 @@ export async function POST(request: NextRequest) {
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: successUrl,
       cancel_url: cancelUrl,
+      allow_promotion_codes: true,
       metadata: gaMeta,
-      ...(referralDiscounts ? { discounts: referralDiscounts } : {}),
       subscription_data: {
         ...(offerTrial ? { trial_period_days: TRIAL_DAYS } : {}),
         metadata: gaMeta,

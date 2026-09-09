@@ -123,6 +123,8 @@ Test on production at `https://esatcamp.com/feedback` while signed in as an allo
 
 New survey replies email `ansonchanw@gmail.com` immediately (override with `FEEDBACK_REFERRAL_NOTIFY_EMAIL`). Requires `RESEND_API_KEY`.
 
+Friend codes are Stripe promotion codes (`CAMP50-…`). Checkout sessions use `allow_promotion_codes: true` so friends enter the code in Stripe Checkout (not on the pricing page).
+
 ```env
 FEEDBACK_REFERRAL_LIVE=false
 # Optional extras beyond the built-in allowlist
