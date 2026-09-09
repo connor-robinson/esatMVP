@@ -1,7 +1,8 @@
 """Systematic NSAA -> ESAT Math 1 / Math 2 / Physics generation.
 
 One new review question per unused NSAA Section 1 source. ENGAA and specimen
-papers are never used.
+papers are never used. A source ID is only marked used (ticked) after a
+successful kept generation; skips and errors can be retried later.
 
 Diagram policy:
   - Math 1 / Math 2: 100% must have a rendered diagram (geometry/graph).
@@ -252,13 +253,15 @@ def _process_one(
         }
         print(f"    error: {exc}", flush=True)
 
-    _tick(used, eq.question_id)
-
+    kept = False
     if rec.get("status") == "generated":
         vtype = str(rec.get("visual_type") or "none")
+        qid = str(rec.get("question_id") or "")
         if is_math and vtype not in {"graph", "geometry"}:
             summary["skipped"] += 1
-            print(f"    skip(math-no-diagram): visual_type={vtype}", flush=True)
+            if qid:
+                store.delete_questions([qid])
+            print(f"    skip(math-no-diagram): visual_type={vtype} (removed from review DB)", flush=True)
             rec = {
                 **rec,
                 "status": "skipped",
@@ -266,25 +269,33 @@ def _process_one(
             }
         elif is_physics and require_diagram and vtype != "graph":
             summary["skipped"] += 1
-            print(f"    skip(physics-no-diagram): visual_type={vtype}", flush=True)
+            if qid:
+                store.delete_questions([qid])
+            print(f"    skip(physics-no-diagram): visual_type={vtype} (removed from review DB)", flush=True)
             rec = {
                 **rec,
                 "status": "skipped",
                 "skip_reason": f"Physics requires graph diagram, got visual_type={vtype}",
             }
         else:
+            kept = True
+            _tick(used, eq.question_id)
             summary["generated"][review_label] = int(summary["generated"].get(review_label) or 0) + 1
             summary["generated"]["total"] = int(summary["generated"]["total"]) + 1
             mix_counts[vtype] = mix_counts.get(vtype, 0) + 1
-            item = store.get_item(str(rec.get("question_id") or ""))
+            item = store.get_item(qid)
             diff = str((item or {}).get("difficulty") or "Unknown")
             difficulty_counts[diff] = difficulty_counts.get(diff, 0) + 1
-            print(f"    {rec.get('variation_mode')} {vtype} -> {rec.get('question_id')}", flush=True)
+            print(f"    {rec.get('variation_mode')} {vtype} -> {qid}", flush=True)
     elif rec.get("status") == "skipped":
         summary["skipped"] += 1
         print(f"    skip: {rec.get('skip_reason')}", flush=True)
     elif rec.get("status") == "error":
         summary["errors"] += 1
+
+    # Only successful kept questions consume a source ID. Skips/errors can be retried later.
+    if not kept:
+        print(f"    source {eq.question_id} not ticked (can retry)", flush=True)
 
     recent.append(
         {
@@ -522,7 +533,15 @@ def main() -> int:
         model=args.model,
     )
     print(json.dumps({k: v for k, v in result.items() if k != "recent"}, indent=2))
-    return 0 if result.get("status") in {"completed", "dry_run"} else 1
+    if result.get("status") not in {"completed", "dry_run"}:
+        return 1
+    # Fail CI when every attempt errored (previously looked "successful" with empty artifacts).
+    generated = int((result.get("generated") or {}).get("total") or 0)
+    errors = int(result.get("errors") or 0)
+    if generated == 0 and errors > 0:
+        print(f"ERROR: generated=0 with errors={errors}", flush=True)
+        return 1
+    return 0
 
 
 if __name__ == "__main__":

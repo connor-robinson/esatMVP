@@ -71,6 +71,7 @@ jobs:
       PYTHONUNBUFFERED: "1"
       PYTHONPATH: ${{ github.workspace }}/question-generation:${{ github.workspace }}/question-generation/esat_question_generator
       GOOGLE_CLOUD_PROJECT: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
+      # Match local .env.local: global + no remap. Secret overrides if set.
       GOOGLE_CLOUD_LOCATION: ${{ secrets.GOOGLE_CLOUD_LOCATION }}
       VERTEX_GENAI_NO_GLOBAL_REMAP: ${{ secrets.VERTEX_GENAI_NO_GLOBAL_REMAP }}
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -184,14 +185,17 @@ jobs:
               missing=1
             fi
           done
-          if [ -z "${GOOGLE_CLOUD_LOCATION:-}" ]; then
-            echo "GOOGLE_CLOUD_LOCATION unset; defaulting to us-central1"
-            echo "GOOGLE_CLOUD_LOCATION=us-central1" >> "$GITHUB_ENV"
-          fi
+          # Force local parity for this workflow (local .env.local uses global + remap=1).
+          # Repo secrets may still be us-central1 from older setup; that 404s gemini-3.7-flash.
+          echo "Aligning Vertex location with local: GOOGLE_CLOUD_LOCATION=global VERTEX_GENAI_NO_GLOBAL_REMAP=1"
+          echo "GOOGLE_CLOUD_LOCATION=global" >> "$GITHUB_ENV"
+          echo "VERTEX_GENAI_NO_GLOBAL_REMAP=1" >> "$GITHUB_ENV"
+          export GOOGLE_CLOUD_LOCATION=global
+          export VERTEX_GENAI_NO_GLOBAL_REMAP=1
           if [ "$missing" -ne 0 ]; then
             exit 1
           fi
-          echo "Preflight OK (project=$GOOGLE_CLOUD_PROJECT location=${GOOGLE_CLOUD_LOCATION:-us-central1})"
+          echo "Preflight OK (project=$GOOGLE_CLOUD_PROJECT location=$GOOGLE_CLOUD_LOCATION remap_guard=${VERTEX_GENAI_NO_GLOBAL_REMAP} model=${MODEL_DIAGRAM_DESIGNER:-})"
 
       - name: Run NSAA ESAT batch (Math1 / Math2 / Physics)
         if: steps.params.outputs.mode == 'esat'
