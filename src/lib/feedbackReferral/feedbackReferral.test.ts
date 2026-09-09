@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   canAccessFeedbackReferral,
+  DEFAULT_FEEDBACK_REFERRAL_PREVIEW_EMAILS,
   isFeedbackReferralLive,
   parsePreviewEmails,
 } from "@/lib/feedbackReferral/access";
@@ -12,8 +13,11 @@ import {
 import { validateFeedbackReferralSurvey } from "@/lib/feedbackReferral/survey";
 
 describe("feedback referral access", () => {
-  it("parses preview emails", () => {
+  it("parses preview emails and keeps built-in testers", () => {
     expect(parsePreviewEmails("a@x.com, B@X.com ; c@x.com")).toEqual([
+      ...DEFAULT_FEEDBACK_REFERRAL_PREVIEW_EMAILS.map((email) =>
+        email.toLowerCase(),
+      ),
       "a@x.com",
       "b@x.com",
       "c@x.com",

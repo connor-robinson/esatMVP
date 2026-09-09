@@ -1,10 +1,21 @@
 /**
  * Preview gate: the feedback-for-referral flow is hidden from everyone except
  * admins and an explicit email allowlist until FEEDBACK_REFERRAL_LIVE=true.
+ *
+ * Default allowlist is baked in so preview works on production (esatcamp.com)
+ * without requiring Vercel env vars. FEEDBACK_REFERRAL_PREVIEW_EMAILS still
+ * adds more emails when set.
  */
 
 const LIVE_FLAG = "FEEDBACK_REFERRAL_LIVE";
 const PREVIEW_EMAILS_FLAG = "FEEDBACK_REFERRAL_PREVIEW_EMAILS";
+
+/** Built-in preview testers. Kept until the flow ships publicly. */
+export const DEFAULT_FEEDBACK_REFERRAL_PREVIEW_EMAILS = [
+  "esatcamp@gmail.com",
+  "ansonchanw@gmail.com",
+  "anson.chan@abingdon.org.uk",
+] as const;
 
 export function isFeedbackReferralLive(): boolean {
   const raw = process.env[LIVE_FLAG]?.trim().toLowerCase();
@@ -12,10 +23,18 @@ export function isFeedbackReferralLive(): boolean {
 }
 
 export function parsePreviewEmails(raw?: string | null): string[] {
-  return (raw ?? process.env[PREVIEW_EMAILS_FLAG] ?? "")
+  const fromEnv = (raw ?? process.env[PREVIEW_EMAILS_FLAG] ?? "")
     .split(/[,;\s]+/)
     .map((email) => email.trim().toLowerCase())
     .filter(Boolean);
+  return Array.from(
+    new Set([
+      ...DEFAULT_FEEDBACK_REFERRAL_PREVIEW_EMAILS.map((email) =>
+        email.toLowerCase(),
+      ),
+      ...fromEnv,
+    ]),
+  );
 }
 
 export function isFeedbackReferralPreviewEmail(

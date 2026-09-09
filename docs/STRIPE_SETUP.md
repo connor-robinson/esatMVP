@@ -118,10 +118,12 @@ Create the following in [Stripe Dashboard → Products](https://dashboard.stripe
 
 Copy each Price ID (e.g. `price_1ABC...`) into the matching env var.
 
-Optional friend-referral 50% codes (preview until `FEEDBACK_REFERRAL_LIVE=true`):
+Optional friend-referral 50% codes (preview until `FEEDBACK_REFERRAL_LIVE=true`).
+Test on production at `https://esatcamp.com/feedback` while signed in as an allowlisted account (no localhost login needed). Built-in preview emails already include the admin/tester accounts; use the env var only to add more.
 
 ```env
 FEEDBACK_REFERRAL_LIVE=false
+# Optional extras beyond the built-in allowlist
 FEEDBACK_REFERRAL_PREVIEW_EMAILS=you@example.com
 # Optional: reuse a Stripe coupon instead of auto-creating one
 # STRIPE_FEEDBACK_REFERRAL_COUPON=coupon_...
