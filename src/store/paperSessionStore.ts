@@ -292,36 +292,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         if (!config.questionRange || config.questionRange.end < config.questionRange.start || config.questionRange.start < 1) {
           return;
         }
-        
-        // Before starting a new session, end ALL existing in-progress sessions for this user.
-        // Product rule: only one active past-paper session may exist at a time.
-        try {
-          const response = await fetch(`/api/past-papers/sessions?in_progress=true`);
-          if (response.ok) {
-            const data = await response.json();
-            const inProgressSessions = (data.sessions || []) as any[];
 
-            // End all active sessions except the one we are about to create
-            if (inProgressSessions.length > 0) {
-              const now = Date.now();
-              await Promise.all(
-                inProgressSessions.map(session =>
-                  fetch('/api/past-papers/sessions', {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      id: session.id,
-                      endedAt: now,
-                    }),
-                  }).catch(() => {})
-                )
-              );
-            }
-          }
-        } catch (error) {
-          // Continue with starting new session even if cleanup fails
-        }
-        
         const totalQuestions = config.questionRange.end - config.questionRange.start + 1;
         // Generate unique UUID for this session attempt
         // This ensures multiple attempts of the same paper are tracked separately
@@ -385,9 +356,10 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           lastActiveTimestamp: startedAt,
           sectionElapsedTimes: Array.from({ length: sectionCount }, () => 0),
           notes: '',
-          // Clear questions when starting new session to ensure fresh load
+          // Clear questions and mark loading so solve can navigate immediately
+          // without flashing an empty-section state while questions fetch.
           questions: [],
-          questionsLoading: false,
+          questionsLoading: true,
           questionsError: null,
           sessionPersistPromise: null,
           pendingPersistQueue: [],
@@ -429,42 +401,71 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           score: null,
         };
 
-            const createPromise = fetch("/api/past-papers/sessions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include", // Ensure cookies are sent
-          body: JSON.stringify(payload),
-        })
-          .then(async (response) => {
-            if (!response.ok) {
-              const errorData = await response.json().catch(() => ({}));
-              if (response.status === 401) {
-                // User not authenticated - session will work locally but won't be saved to server
-                return;
+        // End old sessions and create the new one in the background so question
+        // loading can start immediately after local session state is ready.
+        const persistPromise = (async () => {
+          try {
+            const response = await fetch(`/api/past-papers/sessions?in_progress=true`);
+            if (response.ok) {
+              const data = await response.json();
+              const inProgressSessions = (data.sessions || []) as Array<{ id: string }>;
+
+              if (inProgressSessions.length > 0) {
+                const now = Date.now();
+                await Promise.all(
+                  inProgressSessions.map((session) =>
+                    fetch("/api/past-papers/sessions", {
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        id: session.id,
+                        endedAt: now,
+                      }),
+                    }).catch(() => {}),
+                  ),
+                );
               }
-              // Enhanced error logging
-              throw new Error(errorData.error || "Failed to create paper session");
             }
-            const result = await response.json().catch(() => ({}));
-            return result;
-          })
+          } catch {
+            // Continue creating the new session even if cleanup fails.
+          }
+
+          const response = await fetch("/api/past-papers/sessions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify(payload),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            if (response.status === 401) {
+              return;
+            }
+            throw new Error(errorData.error || "Failed to create paper session");
+          }
+
+          return response.json().catch(() => ({}));
+        })()
           .catch((error) => {
-            // Only log non-401 errors as errors, 401 is expected for unauthenticated users
-            if (!error.message?.includes("401") && !error.message?.includes("not authenticated")) {
+            if (
+              !error?.message?.includes("401") &&
+              !error?.message?.includes("not authenticated")
+            ) {
             }
           })
           .finally(() => {
             set((state) => {
-              if (state.sessionPersistPromise === createPromise) {
+              if (state.sessionPersistPromise === persistPromise) {
                 return { sessionPersistPromise: null };
               }
               return {};
             });
           });
 
-        set({ sessionPersistPromise: createPromise });
+        set({ sessionPersistPromise: persistPromise });
       },
       
           loadQuestions: async (paperId) => {

@@ -5,19 +5,24 @@ import {
   getNsaaCompactTables,
 } from "@/data/pastPapersDownload";
 import { PastPaperCompactTableGrid } from "./PastPaperCompactTableGrid";
+import { PastPaperLibraryPrefetch } from "./PastPaperLibraryPrefetch";
 
 type Props = {
   exam?: DownloadExam;
 };
 
 export function PastPaperDownloadSections({ exam }: Props) {
-  if (exam === "NSAA") {
-    return <PastPaperCompactTableGrid tables={getNsaaCompactTables()} />;
-  }
+  const tables =
+    exam === "NSAA"
+      ? getNsaaCompactTables()
+      : exam === "ENGAA"
+        ? getEngaaCompactTables()
+        : getMainPageCompactTables();
 
-  if (exam === "ENGAA") {
-    return <PastPaperCompactTableGrid tables={getEngaaCompactTables()} />;
-  }
-
-  return <PastPaperCompactTableGrid tables={getMainPageCompactTables()} />;
+  return (
+    <>
+      <PastPaperLibraryPrefetch />
+      <PastPaperCompactTableGrid tables={tables} />
+    </>
+  );
 }

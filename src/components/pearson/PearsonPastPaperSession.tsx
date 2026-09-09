@@ -286,6 +286,17 @@ export function PearsonPastPaperSession() {
     return <PearsonPleaseWaitScreen />;
   }
 
+  // Early Start now navigation can arrive before questionsLoading flips true.
+  if (
+    sessionId &&
+    paperId &&
+    questions.length === 0 &&
+    !questionsError &&
+    currentSectionQuestions.length === 0
+  ) {
+    return <PearsonPleaseWaitScreen />;
+  }
+
   if (questionsError) {
     return (
       <Container size="lg">

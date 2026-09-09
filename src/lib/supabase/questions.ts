@@ -258,36 +258,82 @@ export async function getPaper(examName: ExamName, examYear: number, paperName: 
  * @param paperId - The ID of the paper to get questions for
  * @returns Array of real exam questions from past papers
  */
+const QUESTIONS_CACHE_TTL_MS = 5 * 60 * 1000;
+const questionsCache = new Map<number, { at: number; data: Question[] }>();
+const questionsInFlight = new Map<number, Promise<Question[]>>();
+
+/** Columns needed to sit and mark a paper (avoids select * payload bloat). */
+const QUESTION_SOLVE_SELECT = [
+  "id",
+  "paper_id",
+  "exam_name",
+  "exam_year",
+  "paper_name",
+  "part_letter",
+  "part_name",
+  "exam_type",
+  "question_number",
+  "question_image",
+  "question_stem",
+  "options",
+  "diagram_assets",
+  "content_format",
+  "solution_image",
+  "solution_text",
+  "solution_type",
+  "answer_letter",
+  "created_at",
+  "updated_at",
+].join(",");
+
+async function fetchQuestionsFromDb(paperId: number): Promise<Question[]> {
+  if (isEsatCampMockPaperId(paperId)) {
+    return getEsatCampMockQuestions(paperId);
+  }
+
+  const { data, error } = await supabase
+    .from("questions")
+    .select(QUESTION_SOLVE_SELECT)
+    .eq("paper_id", paperId)
+    .order("question_number");
+
+  if (error) throw error;
+
+  return (data || []).map((row: Record<string, unknown>) =>
+    mapQuestionRow(row),
+  );
+}
+
 export async function getQuestions(paperId: number) {
   try {
-    if (isEsatCampMockPaperId(paperId)) {
-      return getEsatCampMockQuestions(paperId);
+    const cached = questionsCache.get(paperId);
+    if (cached && Date.now() - cached.at < QUESTIONS_CACHE_TTL_MS) {
+      return cached.data;
     }
 
-    // CRITICAL: Only query 'questions' table - these are real past paper questions
-    // Do NOT query 'ai_generated_questions' - those are simulated/AI-generated
-    const { data, error } = await supabase
-      .from('questions')
-      .select('*')
-      .eq('paper_id', paperId)
-      .order('question_number');
+    const existing = questionsInFlight.get(paperId);
+    if (existing) return existing;
 
-    
-    // Log exam info from first question to verify paper type
-    if (data && data.length > 0) {
-      const firstQ = data[0];
-    }
+    const promise = fetchQuestionsFromDb(paperId)
+      .then((questions) => {
+        questionsCache.set(paperId, { at: Date.now(), data: questions });
+        return questions;
+      })
+      .finally(() => {
+        questionsInFlight.delete(paperId);
+      });
 
-    if (error) throw error;
-    
-    // Convert database format to TypeScript interface format
-    const questions: Question[] = (data || []).map((row: any) => mapQuestionRow(row));
-    
-    return questions;
+    questionsInFlight.set(paperId, promise);
+    return await promise;
   } catch (error) {
     handleSupabaseError(error);
     return [];
   }
+}
+
+/** Prefetch and cache questions for Start now / solve warm paths. */
+export function prefetchQuestions(paperId: number): Promise<Question[]> {
+  return getQuestions(paperId);
 }
 
 // Get single question

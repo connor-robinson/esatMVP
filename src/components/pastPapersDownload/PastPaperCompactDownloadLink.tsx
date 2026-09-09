@@ -20,12 +20,12 @@ export function PastPaperCompactDownloadLink({
       download
       aria-label={ariaLabel}
       className={cn(
-        "inline-flex items-center gap-1 whitespace-nowrap rounded-lg bg-[#334155] px-2 py-1 text-sm font-semibold text-[#F8FAFC] transition-colors hover:bg-[#475569] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0F1D]",
+        "inline-flex h-10 min-h-10 items-center gap-2 whitespace-nowrap rounded-lg bg-[#334155] px-4 text-base font-semibold leading-none text-[#F8FAFC] transition-colors hover:bg-[#475569] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0F1D]",
         className,
       )}
     >
       {label}
-      <Download aria-hidden className="h-3.5 w-3.5 opacity-80" />
+      <Download aria-hidden className="h-[18px] w-[18px] opacity-80" />
     </a>
   );
 }

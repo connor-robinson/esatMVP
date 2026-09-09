@@ -4,12 +4,16 @@ import {
   fetchPastPaperLibraryOutline,
 } from "@/lib/papers/pastPaperLibraryData";
 import {
+  questionMatchesSelectedSections,
   resolveAnchorPaperForSession,
 } from "@/lib/papers/paperLibrarySections";
 import { generateSectionId } from "@/lib/papers/partIdUtils";
-import { getQuestions } from "@/lib/supabase/questions";
+import {
+  getQuestionPartsForPaperIds,
+  prefetchQuestions,
+} from "@/lib/supabase/questions";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
-import type { ExamName, Paper, PaperSection, Question } from "@/types/papers";
+import type { ExamName, PaperSection } from "@/types/papers";
 import type { PastPaperPracticeTarget } from "./pastPaperPracticeHref";
 import { practiceSectionLabel } from "./pastPaperPracticeHref";
 import {
@@ -67,6 +71,12 @@ export async function startPastPaperSectionSession(
       matchesRequestedType(item, target.examType),
   );
 
+  // Fetch section metadata and full question payloads in parallel. loadQuestions
+  // later reuses the same in-flight/cache entries.
+  void Promise.all(
+    catalog.map((item) => prefetchQuestions(item.id).catch(() => [])),
+  );
+
   const outline = await fetchPaperSectionsOutline(paper.id);
   const mainSection = outline.mainSections.find((item) => item.name === section);
   if (!mainSection || mainSection.subjectParts.length === 0) {
@@ -85,37 +95,33 @@ export async function startPastPaperSectionSession(
   const selectedSections = new Map<string, Set<PaperSection>>();
   selectedSections.set(section, new Set(hubSubjectParts));
 
-  let allQuestions: Question[] = [];
-  for (const catalogPaper of catalog) {
-    const questions = await getQuestions(catalogPaper.id);
-    allQuestions = [...allQuestions, ...questions];
-  }
+  const partRows =
+    outline.partRows && outline.partRows.length > 0
+      ? outline.partRows
+      : await getQuestionPartsForPaperIds(catalog.map((item) => item.id));
 
-  const { questionMatchesSelectedSections } = await import(
-    "@/lib/papers/paperLibrarySections"
-  );
-  const filteredQuestions = allQuestions.filter((question) =>
-    questionMatchesSelectedSections(
-      question,
-      selectedSections,
-      paperType,
-      paper,
-      catalog,
-    ),
-  );
+  const filteredQuestionNumbers = partRows
+    .filter((row) =>
+      questionMatchesSelectedSections(
+        row,
+        selectedSections,
+        paperType,
+        paper,
+        catalog,
+      ),
+    )
+    .map((row) => row.questionNumber)
+    .sort((a, b) => a - b);
 
-  if (filteredQuestions.length === 0) {
+  if (filteredQuestionNumbers.length === 0) {
     throw new Error(
       `No questions found for ${paper.examName} ${paper.examYear} ${section}.`,
     );
   }
 
-  const questionNumbers = filteredQuestions
-    .map((question) => question.questionNumber)
-    .sort((a, b) => a - b);
-  const questionStart = questionNumbers[0]!;
-  const questionEnd = questionNumbers[questionNumbers.length - 1]!;
-  const timeLimitMinutes = Math.ceil(filteredQuestions.length * 1.48);
+  const questionStart = filteredQuestionNumbers[0]!;
+  const questionEnd = filteredQuestionNumbers[filteredQuestionNumbers.length - 1]!;
+  const timeLimitMinutes = Math.ceil(filteredQuestionNumbers.length * 1.48);
 
   const anchorPaper = resolveAnchorPaperForSession(catalog, selectedSections, paper);
   const variantString = buildSessionPaperVariant(
@@ -159,19 +165,18 @@ export async function startPastPaperSectionSession(
     selectedPartIds,
   });
 
-  await loadQuestions(anchorPaper.id);
-
-  const storeAfter = usePaperSessionStore.getState();
-  if (storeAfter.questionsError) {
-    throw new Error(storeAfter.questionsError);
-  }
-  if (!storeAfter.questions || storeAfter.questions.length === 0) {
-    throw new Error(
-      `No questions loaded for ${paper.examName} ${paper.examYear} ${section}.`,
-    );
+  const sessionId = usePaperSessionStore.getState().sessionId;
+  if (sessionId) {
+    rememberHubFirstSectionPreview(sessionId);
   }
 
-  if (storeAfter.sessionId) {
-    rememberHubFirstSectionPreview(storeAfter.sessionId);
-  }
+  // loadQuestions shares the in-flight/cache from questionsWarm. Navigate
+  // quickly; solve keeps please-wait until questions land.
+  const loadPromise = loadQuestions(anchorPaper.id);
+  await Promise.race([
+    loadPromise,
+    new Promise<void>((resolve) => {
+      setTimeout(resolve, 200);
+    }),
+  ]);
 }

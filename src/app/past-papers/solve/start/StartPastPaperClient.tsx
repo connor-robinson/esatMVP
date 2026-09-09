@@ -8,6 +8,7 @@ import { PearsonPleaseWaitScreen } from "@/components/pearson/PearsonPleaseWaitS
 import { useSubscription } from "@/hooks/useSubscription";
 import { allowLoadingPaint } from "@/lib/papers/allowLoadingPaint";
 import {
+  isFreePreviewPastPaper,
   isPastPaperLibraryLocked,
   freePreviewPastPapersLabel,
 } from "@/lib/papers/freePreviewPapers";
@@ -62,14 +63,22 @@ export function StartPastPaperClient() {
 
   useEffect(() => {
     if (!target || session === undefined || session === null) return;
-    if (subscriptionLoading || locked) return;
+    if (locked) return;
     if (startedRef.current) return;
 
     const paperLockProbe = {
       examName: target.exam,
       examYear: target.year ?? 0,
     };
-    if (isPastPaperLibraryLocked(paperLockProbe, hasFullAccess)) {
+    const freePreview = isFreePreviewPastPaper(paperLockProbe);
+
+    // Free-preview papers can start without waiting on subscription status.
+    if (subscriptionLoading && !freePreview) return;
+
+    if (
+      !subscriptionLoading &&
+      isPastPaperLibraryLocked(paperLockProbe, hasFullAccess)
+    ) {
       setLocked(true);
       return;
     }
