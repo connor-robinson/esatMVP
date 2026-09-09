@@ -40,6 +40,12 @@ def run_subject_verifier(
     if not prompt:
         return {"verdict": "SKIP", "notes": "no verifier prompt"}
     extra = (
+        "This item is from the NSAA visual_engine pipeline. "
+        "There is no legacy question.stimulus JSON field. "
+        "If an image is attached, that PNG is the graph/diagram/pedigree stimulus. "
+        "If visual_type is graph/bio_diagram/chem_structure/pedigree and no image is attached, "
+        "FAIL as stimulus_dependency because the rendered visual is missing. "
+        "Do not demand a stimulus object in the JSON when the PNG is present. "
         "The visual/table must be treated as part of the scientific evidence. "
         "Verify the rendered information, not merely the written stem. "
         "Independently solve the MCQ and verify exactly one answer is correct."
@@ -58,6 +64,8 @@ def run_subject_verifier(
         system_prompt=prompt + "\n\n" + extra,
         user_payload={
             "idea_plan": idea_plan,
+            "visual_type": str((idea_plan or {}).get("visual_type") or ""),
+            "image_attached": bool(image_bytes),
             "question": {
                 "stem": stem,
                 "options": options,

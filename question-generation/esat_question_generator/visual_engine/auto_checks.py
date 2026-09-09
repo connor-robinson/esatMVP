@@ -154,6 +154,16 @@ def run_auto_checks(
         flags.extend(check_png(png_path))
         flags.extend(check_spec(spec))
         flags.extend(check_collision(render_error, collision_failure))
+        if render_error and not collision_failure and "collision" not in render_error.lower():
+            # Surface Matplotlib/mathtext failures separately from a bare missing PNG.
+            if not png_path or not Path(png_path).is_file():
+                flags.append(
+                    _flag(
+                        "render_failed",
+                        render_error.splitlines()[0][:300] if render_error else "Diagram render failed",
+                        severity="reject",
+                    )
+                )
     flags.extend(check_question(choices=choices, correct_answer=correct_answer))
     return flags
 

@@ -123,10 +123,18 @@ def _result_from_spec(
         result.error = f"{type(exc).__name__}: {exc}"
         result.spec = spec
         result.spec_path = spec_path
+        if png_path.is_file():
+            result.png_path = png_path
+            try:
+                (out_dir / "rendered.png").write_bytes(png_path.read_bytes())
+                (out_dir / "visual_spec.json").write_text(spec_path.read_text(encoding="utf-8"), encoding="utf-8")
+            except OSError:
+                pass
     result.auto_flags = run_auto_checks(
         png_path=result.png_path,
         spec=result.spec,
         render_error=result.error,
+        collision_failure="collision" in result.error.lower() or "label" in result.error.lower(),
         choices=choices,
         correct_answer=correct_answer,
         diagram_required=True,

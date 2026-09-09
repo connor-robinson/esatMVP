@@ -54,6 +54,22 @@ class TestTextFormat:
         assert ";cm" not in out
         assert "cm" in out
 
+    def test_prose_plus_minus_does_not_force_math(self):
+        text = "Percentage stimulation (+) or inhibition (-) / %"
+        assert format_label_text(text, math=False) == text
+
+    def test_axis_title_with_percent_is_safe_mathtext(self):
+        import matplotlib.pyplot as plt
+
+        text = "Percentage stimulation (+) or inhibition (-) / %"
+        out = format_label_text(text, math=True)
+        assert r"\%" in out
+        assert "stimulatio" in out  # spaces become \, so word remains
+        fig, ax = plt.subplots()
+        ax.set_ylabel(out)
+        fig.canvas.draw()
+        plt.close(fig)
+
 
 class TestGraphLabelNormalize:
     def test_snaps_numeric_x_tick(self):

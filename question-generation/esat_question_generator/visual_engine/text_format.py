@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import re
 
-_MATH_HINT_RE = re.compile(r"[\\^_{}=+\-*/]|\\[a-zA-Z]+|\^[\w{]|_\w")
+# Require real math cues. Lone +, -, / in prose like "stimulation (+)" must not force math mode.
+_MATH_HINT_RE = re.compile(r"[\\^_{}=]|\\[a-zA-Z]+|\^[\w{]|_\w")
 _TEXT_CMD_RE = re.compile(r"\\(?:text|mathrm|mathbf|mathit)\{[^}]*\}")
 _UNICODE_MATH = {
     "Ω": r"\Omega",
@@ -52,6 +53,24 @@ def _repair_semicolon_spaces(text: str) -> str:
     return re.sub(r"(?<=[\w\)])\s*;\s*(?=[\w\\])", " ", text)
 
 
+def _escape_math_specials(text: str) -> str:
+    """Escape TeX specials that break matplotlib mathtext (notably %)."""
+    out: list[str] = []
+    i = 0
+    while i < len(text):
+        ch = text[i]
+        if ch == "\\" and i + 1 < len(text):
+            out.append(text[i : i + 2])
+            i += 2
+            continue
+        if ch in "%&#$":
+            out.append("\\" + ch)
+        else:
+            out.append(ch)
+        i += 1
+    return "".join(out)
+
+
 def _math_spaces(text: str) -> str:
     """Insert thin math spaces outside \\text/\\mathrm groups; keep spaces inside them."""
     parts = _TEXT_CMD_RE.split(text)
@@ -75,6 +94,8 @@ def format_label_text(text: str, *, math: bool = False) -> str:
     - ``math=True`` wrapping with lightweight normalisation
     - Gemini double-escaped commands (``\\\\Omega`` → ``\\Omega``)
     - preserves spaces inside ``\\text{...}`` (avoids visible ';' artifacts)
+    - escapes ``%`` and keeps word spaces as ``\\,`` so axis titles like
+      ``stimulation (+) / %`` still render
     """
     raw = (text or "").strip()
     if not raw:
@@ -93,10 +114,8 @@ def format_label_text(text: str, *, math: bool = False) -> str:
         math = True
 
     if math or had_delimiters:
-        if "\\" in inner:
-            cleaned = _math_spaces(inner)
-        else:
-            cleaned = inner.replace(" ", "")
+        inner = _escape_math_specials(inner)
+        cleaned = _math_spaces(inner) if ("\\" in inner or " " in inner) else inner
         return f"${cleaned}$"
 
     return inner

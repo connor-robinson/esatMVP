@@ -33,8 +33,10 @@ def _setup_axes(fig, ax, spec: VisualSpec) -> None:
     span_x = max(cs.x_max - cs.x_min, 1e-6)
     span_y = max(cs.y_max - cs.y_min, 1e-6)
     # Extra plot margin so outside vertex/side labels are not immediately out of bounds.
-    pad_x = 0.08 * span_x
-    pad_y = 0.08 * span_y
+    # Graphs with dense tick labels need more room than geometry figures.
+    is_graph = str(getattr(spec, "diagram_type", "") or "").lower() == "graph"
+    pad_x = (0.14 if is_graph else 0.08) * span_x
+    pad_y = (0.16 if is_graph else 0.08) * span_y
     ax.set_xlim(cs.x_min - pad_x, cs.x_max + pad_x)
     ax.set_ylim(cs.y_min - pad_y, cs.y_max + pad_y)
     if cs.equal_aspect:
@@ -72,7 +74,13 @@ def render_diagram(
         draw_objects(ax, spec, style, obstacles, extra_labels)
         label_specs = collect_label_specs(spec, extra_labels)
         labels = create_label_artists(ax, label_specs, style)
-        resolve_label_collisions(fig, ax, labels, obstacles, style)
+        layout_error: DiagramLayoutError | None = None
+        try:
+            resolve_label_collisions(fig, ax, labels, obstacles, style)
+        except DiagramLayoutError as exc:
+            # Still write a best-effort PNG so reviewers and the science verifier
+            # can see the graph instead of a blank "PNG path is missing" reject.
+            layout_error = exc
 
         fig.savefig(
             out_path,
@@ -82,6 +90,8 @@ def render_diagram(
             facecolor=style.background,
             transparent=False,
         )
+        if layout_error is not None:
+            raise layout_error
 
         placements = [
             {

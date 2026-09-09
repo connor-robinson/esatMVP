@@ -107,6 +107,18 @@ def generate_diagram(
                 spec_path.write_text(json.dumps(spec_dict, ensure_ascii=False, indent=2), encoding="utf-8")
             result.spec = spec_dict
             result.spec_path = spec_path
+        png_path = attempt_dir / "rendered.png"
+        if png_path.is_file():
+            result.png_path = png_path
+            try:
+                (out / "rendered.png").write_bytes(png_path.read_bytes())
+            except OSError:
+                pass
+            if result.spec:
+                (out / "visual_spec.json").write_text(
+                    json.dumps(result.spec, ensure_ascii=False, indent=2),
+                    encoding="utf-8",
+                )
 
     result.auto_flags = run_auto_checks(
         png_path=result.png_path,
