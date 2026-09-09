@@ -63,7 +63,7 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
   --eup-header-height: 68px;
   --eup-toolbar-height: 40px;
   --eup-footer-height: 44px;
-  --eup-progress-height: 5px;
+  --eup-progress-height: 10px;
   --eup-pad-x: 28px;
   --eup-pad-y: 16px;
   --eup-qnum-size: var(--eup-font-size-content);

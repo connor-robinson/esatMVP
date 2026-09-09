@@ -249,27 +249,47 @@ export function QuestionBankHomeScreen() {
   }, []);
 
   const loadStats = useCallback(async () => {
+    // Keep cached progress visible; only show loading if we have nothing yet.
     if (!hasAggregateRef.current) {
       setIsLoadingProgress(true);
     }
 
     try {
-      const prefsPromise = session?.user
-        ? fetch("/api/profile/preferences", { credentials: "include" })
-        : Promise.resolve(null);
+      // Paint from progress ASAP; prefs refine aggregate after without blocking the bar.
       const progressPromise = fetch(
         progressUrlSubjects(ALL_SUBJECT_KEYS, { perSubject: true }),
         { credentials: "include" },
       );
+      const prefsPromise = session?.user
+        ? fetch("/api/profile/preferences", { credentials: "include" })
+        : Promise.resolve(null);
 
-      const [prefRes, progressRes] = await Promise.all([
-        prefsPromise,
-        progressPromise,
-      ]);
+      const progressRes = await progressPromise;
 
-      let preference: ExamPreference = readCachedUserPrefs()?.exam_preference ?? null;
-      let userEsatSubjects: string[] = readCachedUserPrefs()?.esat_subjects ?? [];
+      const json: ProgressApiResponse = progressRes.ok
+        ? await progressRes.json()
+        : { attempted: 0, total: 0, bySubject: {} };
 
+      if (json.bySubject) {
+        writeHomeProgressCache({
+          attempted: json.attempted,
+          total: json.total,
+          bySubject: json.bySubject,
+        });
+      }
+
+      const cachedPrefs = readCachedUserPrefs();
+      let preference: ExamPreference = cachedPrefs?.exam_preference ?? null;
+      let userEsatSubjects: string[] = cachedPrefs?.esat_subjects ?? [];
+
+      setAggregate(
+        aggregateProgressForSubjects(json.bySubject, preference, userEsatSubjects),
+      );
+      setTiles(tilesFromProgress(json.bySubject, false));
+      hasAggregateRef.current = true;
+      setIsLoadingProgress(false);
+
+      const prefRes = await prefsPromise;
       if (prefRes?.ok) {
         const prefJson = await prefRes.json();
         preference =
@@ -288,28 +308,17 @@ export function QuestionBankHomeScreen() {
             esat_subjects: userEsatSubjects,
           });
         }
+        setAggregate(
+          aggregateProgressForSubjects(
+            json.bySubject,
+            preference,
+            userEsatSubjects,
+          ),
+        );
       } else if (!session?.user) {
         setExamPreference(null);
         setEsatSubjects([]);
       }
-
-      const json: ProgressApiResponse = progressRes.ok
-        ? await progressRes.json()
-        : { attempted: 0, total: 0, bySubject: {} };
-
-      if (json.bySubject) {
-        writeHomeProgressCache({
-          attempted: json.attempted,
-          total: json.total,
-          bySubject: json.bySubject,
-        });
-      }
-
-      setAggregate(
-        aggregateProgressForSubjects(json.bySubject, preference, userEsatSubjects),
-      );
-      setTiles(tilesFromProgress(json.bySubject, false));
-      hasAggregateRef.current = true;
     } catch {
       setAggregate((prev) => prev ?? { attempted: 0, total: 0 });
       setTiles((prev) => {
@@ -319,7 +328,6 @@ export function QuestionBankHomeScreen() {
         });
         return next;
       });
-    } finally {
       setIsLoadingProgress(false);
     }
   }, [session?.user]);
@@ -331,6 +339,11 @@ export function QuestionBankHomeScreen() {
   useEffect(() => {
     router.prefetch("/questions/questionbank");
   }, [router]);
+
+  const aggregatePct =
+    aggregate && aggregate.total > 0
+      ? Math.min(100, Math.round((aggregate.attempted / aggregate.total) * 100))
+      : 0;
 
   const progressDescription = progressSubtext(
     examPreference,
@@ -457,7 +470,7 @@ export function QuestionBankHomeScreen() {
     showFreeTierBlocked ? (
       <DrillUpgradeBanner
         variant="panel"
-        className="!rounded-[16px]"
+        className="!rounded-[4px]"
         headline={freeTierBlockedHeadline}
         subtext={freeTierBlockedSubtext}
         ctaLabel="View plans"
@@ -465,7 +478,7 @@ export function QuestionBankHomeScreen() {
     ) : (
       <DrillUpgradeBanner
         variant="panel"
-        className="!rounded-[16px]"
+        className="!rounded-[4px]"
         headline="Try 10 free questions per subject"
         subtext="Preview sets for Math 1, Math 2, Physics, Chemistry and Biology. Upgrade for the full question bank."
         ctaLabel="View plans"
@@ -478,12 +491,54 @@ export function QuestionBankHomeScreen() {
         {/* Heading (logged in) or free preview promo (logged out) */}
         {isLoggedIn ? (
           <section>
-            <h1 className="text-2xl font-semibold tracking-tight text-text sm:text-3xl">
-              Question Bank
-            </h1>
-            <p className="mt-1 text-xs text-text-muted">
-              {isLoadingProgress ? <LoadingEllipsis /> : progressSummary}
-            </p>
+            <div>
+              <h1 className="text-2xl font-semibold tracking-tight text-text sm:text-3xl">
+                Question Bank
+              </h1>
+              <p className="mt-1 text-xs text-text-muted">
+                {isLoadingProgress && !aggregate ? (
+                  <LoadingEllipsis />
+                ) : (
+                  progressSummary
+                )}
+              </p>
+            </div>
+
+            <div className="mt-6">
+              {isLoadingProgress && !aggregate ? (
+                <div className="flex h-9 items-center text-xs text-text-muted">
+                  <LoadingEllipsis />
+                </div>
+              ) : (
+                <>
+                  <div
+                    className="h-3 w-full overflow-hidden rounded-[2px] bg-surface-elevated"
+                    role="progressbar"
+                    aria-valuenow={aggregatePct}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-label="Overall question bank progress"
+                  >
+                    <div
+                      className="h-full rounded-[2px] bg-secondary"
+                      style={{ width: `${aggregatePct}%` }}
+                    />
+                  </div>
+                  <div className="relative mt-2.5 h-4 text-xs text-text-muted">
+                    <span className="absolute left-0">0%</span>
+                    {aggregatePct > 0 && aggregatePct < 100 ? (
+                      <span
+                        className="absolute -translate-x-1/2 tabular-nums font-medium text-text"
+                        style={{ left: `${aggregatePct}%` }}
+                      >
+                        {aggregatePct}%
+                      </span>
+                    ) : null}
+                    <span className="absolute right-0">100%</span>
+                  </div>
+                </>
+              )}
+            </div>
           </section>
         ) : authUnknown ? (
           <section>
@@ -537,9 +592,8 @@ export function QuestionBankHomeScreen() {
                   disabled={disabled}
                   aria-disabled={disabled}
                   className={cn(
-                    "flex min-h-[196px] flex-col rounded-[12px] bg-surface-elevated px-5 py-6 text-left",
-                    "origin-center transition-[colors,transform] duration-200 ease-out",
-                    "hover:scale-[1.03] hover:bg-surface-mid/50",
+                    "flex min-h-[196px] flex-col rounded-[4px] bg-surface-elevated px-5 py-6 text-left",
+                    "origin-center hover:scale-[1.03] hover:bg-surface-mid/50",
                     "outline-none ring-0 select-none [-webkit-tap-highlight-color:transparent]",
                     "focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0",
                     "active:outline-none active:ring-0",
@@ -580,9 +634,8 @@ export function QuestionBankHomeScreen() {
                     {!comingSoon ? (
                       <span
                         className={cn(
-                          "flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-mid text-text",
-                          "origin-center transition-transform duration-200 ease-out",
-                          "hover:scale-125",
+                          "flex h-9 w-9 shrink-0 items-center justify-center rounded-[4px] bg-surface-mid text-text",
+                          "origin-center hover:scale-125",
                         )}
                         aria-hidden
                       >
@@ -594,13 +647,13 @@ export function QuestionBankHomeScreen() {
                   <div className="mt-auto flex items-center gap-3 pt-4">
                     <div
                       className={cn(
-                        "h-2 min-w-0 flex-1 overflow-hidden rounded-full",
+                        "h-2 min-w-0 flex-1 overflow-hidden rounded-[2px]",
                         tile.progressTrackClass,
                       )}
                     >
                       <div
                         className={cn(
-                          "h-full rounded-full transition-[width]",
+                          "h-full rounded-[2px]",
                           tile.progressFillClass,
                         )}
                         style={{
@@ -620,7 +673,7 @@ export function QuestionBankHomeScreen() {
               );
             })}
 
-            <div className="flex min-h-[196px] flex-col items-center justify-center rounded-[12px] bg-surface-elevated/30 px-4 py-9 text-center">
+            <div className="flex min-h-[196px] flex-col items-center justify-center rounded-[4px] bg-surface-elevated/30 px-4 py-9 text-center">
               <span className="text-2xl text-text-muted" aria-hidden>
                 …
               </span>
