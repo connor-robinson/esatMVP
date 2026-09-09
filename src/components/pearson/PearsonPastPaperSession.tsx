@@ -32,6 +32,8 @@ export function PearsonPastPaperSession() {
     currentQuestionIndex,
     startedAt,
     isRestoring,
+    sessionBootstrapping,
+    sessionBootstrapError,
     loadQuestions,
     navigateToQuestion,
     incrementTime,
@@ -58,6 +60,8 @@ export function PearsonPastPaperSession() {
       currentQuestionIndex: s.currentQuestionIndex,
       startedAt: s.startedAt,
       isRestoring: s.isRestoring,
+      sessionBootstrapping: s.sessionBootstrapping,
+      sessionBootstrapError: s.sessionBootstrapError,
       loadQuestions: s.loadQuestions,
       navigateToQuestion: s.navigateToQuestion,
       incrementTime: s.incrementTime,
@@ -184,10 +188,19 @@ export function PearsonPastPaperSession() {
 
   useEffect(() => {
     if (!paperStoreHydrated || isRestoring) return;
+    if (sessionBootstrapping) return;
+    if (sessionBootstrapError) return;
     if (!sessionId) {
       router.replace("/past-papers/library");
     }
-  }, [isRestoring, paperStoreHydrated, router, sessionId]);
+  }, [
+    isRestoring,
+    paperStoreHydrated,
+    router,
+    sessionBootstrapError,
+    sessionBootstrapping,
+    sessionId,
+  ]);
 
   useEffect(() => {
     if (!sessionId || questions.length === 0) return;
@@ -259,6 +272,28 @@ export function PearsonPastPaperSession() {
     return <PearsonPleaseWaitScreen />;
   }
 
+  if (sessionBootstrapError) {
+    return (
+      <Container size="lg">
+        <div className="py-16 text-center">
+          <p className="text-sm text-red-400">{sessionBootstrapError}</p>
+          <Button
+            variant="secondary"
+            size="sm"
+            className="mt-4"
+            onClick={() => router.push("/esat-past-papers")}
+          >
+            Back to past papers
+          </Button>
+        </div>
+      </Container>
+    );
+  }
+
+  if (sessionBootstrapping || (!sessionId && questionsLoading)) {
+    return <PearsonPleaseWaitScreen />;
+  }
+
   if (!sessionId) {
     return (
       <Container size="lg">
@@ -282,17 +317,9 @@ export function PearsonPastPaperSession() {
     return <PearsonResultsLoadingScreen onComplete={handleResultsReady} />;
   }
 
-  if (questionsLoading && questions.length === 0) {
-    return <PearsonPleaseWaitScreen />;
-  }
-
-  // Early Start now navigation can arrive before questionsLoading flips true.
   if (
-    sessionId &&
-    paperId &&
-    questions.length === 0 &&
-    !questionsError &&
-    currentSectionQuestions.length === 0
+    questionsLoading ||
+    (questions.length === 0 && !questionsError && currentSectionQuestions.length === 0)
   ) {
     return <PearsonPleaseWaitScreen />;
   }

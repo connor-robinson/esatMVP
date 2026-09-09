@@ -87,6 +87,9 @@ interface PaperSessionState {
   justQuitSessionId: string | null; // Session ID that was just quit (to prevent restoration)
   justQuitTimestamp: number | null; // Timestamp when session was quit (to prevent restoration for a short period)
   isMarkingInfo: boolean; // Whether user is currently viewing the Marking Info page before final submission
+  /** Hub Start now navigated to solve; session/questions still bootstrapping. */
+  sessionBootstrapping: boolean;
+  sessionBootstrapError: string | null;
   
   // Session notes
   notes: string;
@@ -160,6 +163,8 @@ interface PaperSessionState {
   clearClientSession: () => void;
   setIsMarkingInfo: (isMarkingInfo: boolean) => void;
   finishMarkSession: () => Promise<string | null>;
+  beginSessionBootstrap: () => void;
+  finishSessionBootstrap: (error?: string | null) => void;
 
   /** When false during browser fullscreen + paper session, main Navbar is hidden (immersive). */
   paperFullscreenShowMainNavbar: boolean;
@@ -217,6 +222,8 @@ const EMPTY_CLIENT_SESSION = {
   sessionPersistPromise: null as Promise<unknown> | null,
   pendingPersistQueue: [] as Array<{ payload: any; retries: number; timestamp: number }>,
   isMarkingInfo: false,
+  sessionBootstrapping: false,
+  sessionBootstrapError: null as string | null,
   paperFullscreenShowMainNavbar: true,
 };
 
@@ -268,6 +275,8 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       justQuitSessionId: null,
       justQuitTimestamp: null,
       isMarkingInfo: false,
+      sessionBootstrapping: false,
+      sessionBootstrapError: null,
 
       paperFullscreenShowMainNavbar: true,
       
@@ -1897,6 +1906,25 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       setIsMarkingInfo: (isMarkingInfo: boolean) => {
         set({ isMarkingInfo });
         get().saveSessionToIndexedDB();
+      },
+
+      beginSessionBootstrap: () => {
+        set({
+          sessionBootstrapping: true,
+          sessionBootstrapError: null,
+          questionsLoading: true,
+          questionsError: null,
+        });
+      },
+
+      finishSessionBootstrap: (error = null) => {
+        set({
+          sessionBootstrapping: false,
+          sessionBootstrapError: error,
+          ...(error
+            ? { questionsLoading: false }
+            : {}),
+        });
       },
 
       finishMarkSession: async () => {

@@ -170,13 +170,6 @@ export async function startPastPaperSectionSession(
     rememberHubFirstSectionPreview(sessionId);
   }
 
-  // loadQuestions shares the in-flight/cache from questionsWarm. Navigate
-  // quickly; solve keeps please-wait until questions land.
-  const loadPromise = loadQuestions(anchorPaper.id);
-  await Promise.race([
-    loadPromise,
-    new Promise<void>((resolve) => {
-      setTimeout(resolve, 200);
-    }),
-  ]);
+  // Backload questions on /past-papers/solve; do not block navigation.
+  void loadQuestions(anchorPaper.id);
 }

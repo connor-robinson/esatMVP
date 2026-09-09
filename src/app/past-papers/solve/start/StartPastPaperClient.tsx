@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { PearsonPleaseWaitScreen } from "@/components/pearson/PearsonPleaseWaitScreen";
 import { useSubscription } from "@/hooks/useSubscription";
-import { allowLoadingPaint } from "@/lib/papers/allowLoadingPaint";
 import {
   isFreePreviewPastPaper,
   isPastPaperLibraryLocked,
@@ -17,8 +16,13 @@ import {
   practiceSectionLabel,
   type PastPaperPracticeTarget,
 } from "@/lib/papers/pastPaperPracticeHref";
+import {
+  clearPendingHubStart,
+  setPendingHubStart,
+} from "@/lib/papers/hubPendingStart";
 import { startPastPaperSectionSession } from "@/lib/papers/startPastPaperSectionSession";
 import { APP_ROUTES, SEO_ROUTES } from "@/lib/seo/config";
+import { usePaperSessionStore } from "@/store/paperSessionStore";
 
 const launchingTargets = new Set<string>();
 
@@ -72,7 +76,6 @@ export function StartPastPaperClient() {
     };
     const freePreview = isFreePreviewPastPaper(paperLockProbe);
 
-    // Free-preview papers can start without waiting on subscription status.
     if (subscriptionLoading && !freePreview) return;
 
     if (
@@ -88,20 +91,27 @@ export function StartPastPaperClient() {
     launchingTargets.add(key);
     startedRef.current = true;
 
+    setPendingHubStart(target);
+    usePaperSessionStore.getState().beginSessionBootstrap();
+    // Land on solve immediately; continue session setup in the background.
+    router.replace("/past-papers/solve");
+
     void (async () => {
       setError(null);
       try {
-        await allowLoadingPaint();
         await startPastPaperSectionSession(target);
-        router.push("/past-papers/solve");
+        clearPendingHubStart();
+        usePaperSessionStore.getState().finishSessionBootstrap();
       } catch (err) {
         launchingTargets.delete(key);
         startedRef.current = false;
-        setError(
+        clearPendingHubStart();
+        const message =
           err instanceof Error
             ? err.message
-            : "Failed to start this paper. Try again from the library.",
-        );
+            : "Failed to start this paper. Try again from the library.";
+        usePaperSessionStore.getState().finishSessionBootstrap(message);
+        setError(message);
       }
     })();
   }, [
@@ -120,14 +130,6 @@ export function StartPastPaperClient() {
         body="This start link is missing a paper year or section."
       />
     );
-  }
-
-  if (session === undefined || (session && !error && !locked)) {
-    return <PearsonPleaseWaitScreen />;
-  }
-
-  if (session === null) {
-    return <PearsonPleaseWaitScreen />;
   }
 
   if (locked) {
@@ -150,6 +152,7 @@ export function StartPastPaperClient() {
     );
   }
 
+  // Brief handoff while we replace to /past-papers/solve.
   return <PearsonPleaseWaitScreen />;
 }
 
