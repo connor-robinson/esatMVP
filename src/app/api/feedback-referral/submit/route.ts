@@ -32,6 +32,7 @@ export async function POST(request: NextRequest) {
   try {
     const result = await submitFeedbackAndIssueCode({
       userId: user.id,
+      userEmail: user.email,
       answers,
     });
     const siteUrl = resolveAppSiteUrl();

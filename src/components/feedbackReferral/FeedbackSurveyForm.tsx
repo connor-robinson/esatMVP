@@ -1,14 +1,25 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   FEEDBACK_REFERRAL_SURVEY,
+  isFeedbackStepComplete,
   validateFeedbackReferralSurvey,
   type FeedbackAnswer,
   type FeedbackAnswerValue,
   type FeedbackQuestion,
 } from "@/lib/feedbackReferral/survey";
+
+/** Match onboarding account-setup accent. */
+const ACCENT = {
+  bar: "bg-[#4C8BF5]",
+  btn: "bg-[#4C8BF5] text-white hover:bg-[#3B7AE0]",
+  selected: "bg-[#4C8BF5] text-white",
+  selectedMuted: "text-white/70",
+  dots: "rgba(76, 139, 245, 0.35)",
+} as const;
 
 interface FeedbackSurveyFormProps {
   onComplete: (result: {
@@ -20,27 +31,69 @@ interface FeedbackSurveyFormProps {
 
 export function FeedbackSurveyForm({ onComplete }: FeedbackSurveyFormProps) {
   const survey = FEEDBACK_REFERRAL_SURVEY;
+  const questions = survey.questions;
+  const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, FeedbackAnswerValue>>(
     {},
   );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const question = questions[stepIndex]!;
+  const isLast = stepIndex === questions.length - 1;
+  const value = answers[question.id];
+  const canContinue = isFeedbackStepComplete(question, value);
+
   const payload: FeedbackAnswer[] = useMemo(
     () =>
-      survey.questions
-        .filter((q) => answers[q.id] !== undefined && answers[q.id] !== "")
+      questions
+        .filter((q) => {
+          const v = answers[q.id];
+          if (v === undefined || v === "") return false;
+          if (Array.isArray(v) && v.length === 0) return false;
+          return true;
+        })
         .map((q) => ({ questionId: q.id, value: answers[q.id] })),
-    [answers, survey.questions],
+    [answers, questions],
   );
 
-  const handleSubmit = async () => {
+  const setValue = (next: FeedbackAnswerValue) => {
+    setAnswers((prev) => ({ ...prev, [question.id]: next }));
+    setError(null);
+  };
+
+  const toggleMulti = (optionValue: string) => {
+    setAnswers((prev) => {
+      const current = Array.isArray(prev[question.id])
+        ? (prev[question.id] as string[])
+        : [];
+      const next = current.includes(optionValue)
+        ? current.filter((v) => v !== optionValue)
+        : [...current, optionValue];
+      return { ...prev, [question.id]: next };
+    });
+    setError(null);
+  };
+
+  const goBack = () => {
+    setError(null);
+    setStepIndex((i) => Math.max(0, i - 1));
+  };
+
+  const handleContinue = async () => {
+    if (!canContinue) return;
+    if (!isLast) {
+      setStepIndex((i) => i + 1);
+      return;
+    }
+
     setError(null);
     const validationError = validateFeedbackReferralSurvey(payload);
     if (validationError) {
       setError(validationError);
       return;
     }
+
     setSubmitting(true);
     try {
       const res = await fetch("/api/feedback-referral/submit", {
@@ -66,173 +119,284 @@ export function FeedbackSurveyForm({ onComplete }: FeedbackSurveyFormProps) {
   };
 
   return (
-    <div className="rounded-organic-xl bg-surface-elevated p-6 sm:p-8">
-      <h1 className="text-xl font-bold text-text sm:text-2xl">{survey.title}</h1>
-      <p className="mt-2 text-sm text-text-muted">{survey.intro}</p>
-      <p className="mt-1 text-xs font-medium uppercase tracking-[0.12em] text-text-muted">
-        {survey.estimatedTime}
-      </p>
-
-      <div className="mt-6 flex flex-col gap-6">
-        {survey.questions.map((q, i) => (
-          <QuestionField
-            key={q.id}
-            index={i + 1}
-            question={q}
-            value={answers[q.id]}
-            onChange={(value) =>
-              setAnswers((prev) => ({ ...prev, [q.id]: value }))
-            }
-            onToggleMulti={(value) =>
-              setAnswers((prev) => {
-                const current = Array.isArray(prev[q.id])
-                  ? (prev[q.id] as string[])
-                  : [];
-                const next = current.includes(value)
-                  ? current.filter((v) => v !== value)
-                  : [...current, value];
-                return { ...prev, [q.id]: next };
-              })
-            }
-          />
-        ))}
+    <div className="relative min-h-[calc(100vh-58px)] bg-background">
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        <div
+          className="absolute inset-0 opacity-[0.3]"
+          style={{
+            backgroundImage: `radial-gradient(${ACCENT.dots} 1px, transparent 1px)`,
+            backgroundSize: "24px 24px",
+          }}
+        />
       </div>
 
-      {error ? (
-        <p className="mt-5 rounded-organic-md bg-error/10 px-4 py-3 text-sm text-error">
-          {error}
-        </p>
-      ) : null}
+      <div className="relative mx-auto flex min-h-[calc(100vh-58px)] w-full max-w-6xl flex-col px-5 py-6 sm:px-8 sm:py-8">
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
+          <div
+            className={cn(
+              "flex w-full max-w-[68rem] flex-col overflow-hidden rounded-[1.5rem] bg-surface-elevated",
+              "h-[min(36rem,calc(100vh-5.5rem))] sm:h-[min(38rem,calc(100vh-4.5rem))]",
+              "px-6 pb-6 pt-5 sm:px-12 sm:pb-8 sm:pt-7",
+            )}
+          >
+            <ProgressBar stepIndex={stepIndex} total={questions.length} />
 
-      <div className="mt-7 flex justify-end">
-        <button
-          type="button"
-          onClick={() => void handleSubmit()}
-          disabled={submitting}
-          className="rounded-full bg-text px-6 py-2.5 text-sm font-bold text-background transition-opacity hover:opacity-90 disabled:opacity-60"
-        >
-          {submitting ? "Submitting…" : "Submit and get your code"}
-        </button>
+            <div className="mx-auto mt-6 flex min-h-0 w-full max-w-3xl flex-1 flex-col">
+              <div className="shrink-0">
+                <p className="text-xs font-medium uppercase tracking-[0.12em] text-text-muted">
+                  {survey.estimatedTime}
+                </p>
+                <h1 className="mt-2 text-2xl font-bold tracking-tight text-text sm:text-[1.75rem]">
+                  {question.label}
+                </h1>
+                {question.help ? (
+                  <p className="mt-1.5 text-xs text-text-muted">{question.help}</p>
+                ) : null}
+              </div>
+
+              <div className="mt-5 min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
+                <StepBody
+                  question={question}
+                  value={value}
+                  onChange={setValue}
+                  onToggleMulti={toggleMulti}
+                />
+
+                {error ? (
+                  <p className="text-center text-xs text-error">{error}</p>
+                ) : null}
+              </div>
+
+              <div className="mt-4 flex shrink-0 gap-2.5">
+                {stepIndex > 0 ? (
+                  <button
+                    type="button"
+                    onClick={goBack}
+                    disabled={submitting}
+                    className="flex-1 rounded-xl bg-surface-mid py-2.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral disabled:opacity-50"
+                  >
+                    Back
+                  </button>
+                ) : null}
+                <button
+                  type="button"
+                  disabled={!canContinue || submitting}
+                  onClick={() => void handleContinue()}
+                  className={cn(
+                    "flex-1 rounded-xl py-2.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
+                    ACCENT.btn,
+                  )}
+                >
+                  {submitting
+                    ? "Submitting…"
+                    : isLast
+                      ? "Finish and get code"
+                      : "Continue"}
+                </button>
+              </div>
+
+              <p className="mt-4 shrink-0 text-center text-xs text-text-muted">
+                {isLast
+                  ? "You'll get a one-friend 50% code when you finish."
+                  : survey.intro}
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-function QuestionField({
-  index,
+function ProgressBar({ stepIndex, total }: { stepIndex: number; total: number }) {
+  const pct = Math.round(((stepIndex + 1) / total) * 100);
+  return (
+    <div className="w-full" aria-hidden>
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+        <div
+          className={cn(
+            "h-full rounded-full transition-[width] duration-500 ease-out",
+            ACCENT.bar,
+          )}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
+function ChoiceCard({
+  selected,
+  title,
+  description,
+  onClick,
+  checkbox = false,
+}: {
+  selected: boolean;
+  title: string;
+  description?: string;
+  onClick: () => void;
+  checkbox?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "w-full rounded-xl px-4 py-3 text-left transition-colors duration-200",
+        selected ? ACCENT.selected : "bg-surface-mid text-text hover:bg-surface-neutral",
+      )}
+    >
+      <div className="flex items-center justify-between gap-2.5">
+        <div>
+          <p className="text-sm font-semibold">{title}</p>
+          {description ? (
+            <p
+              className={cn(
+                "mt-0.5 text-xs",
+                selected ? ACCENT.selectedMuted : "text-text-muted",
+              )}
+            >
+              {description}
+            </p>
+          ) : null}
+        </div>
+        {checkbox ? (
+          <span
+            className={cn(
+              "flex h-4 w-4 shrink-0 items-center justify-center rounded",
+              selected ? "bg-white text-[#4C8BF5]" : "bg-white/10",
+            )}
+            aria-hidden
+          >
+            {selected ? <Check className="h-3 w-3" strokeWidth={3} /> : null}
+          </span>
+        ) : selected ? (
+          <Check className="h-4 w-4 shrink-0" aria-hidden />
+        ) : null}
+      </div>
+    </button>
+  );
+}
+
+function StepBody({
   question,
   value,
   onChange,
   onToggleMulti,
 }: {
-  index: number;
   question: FeedbackQuestion;
   value: FeedbackAnswerValue | undefined;
   onChange: (value: FeedbackAnswerValue) => void;
   onToggleMulti: (value: string) => void;
 }) {
-  const optionBase =
-    "rounded-organic-md bg-surface-subtle px-4 py-2.5 text-sm text-text text-left transition-colors hover:bg-surface-mid";
   const textLen = typeof value === "string" ? value.trim().length : 0;
   const min = question.minLength ?? 0;
 
-  return (
-    <div>
-      <label className="block text-sm font-semibold text-text">
-        <span className="text-text-muted">{index}. </span>
-        {question.label}
-      </label>
-      {question.help ? (
-        <p className="mt-1 text-xs text-text-muted">{question.help}</p>
-      ) : null}
+  if (question.type === "single" && question.options) {
+    return (
+      <div className="space-y-2">
+        {question.options.map((opt) => (
+          <ChoiceCard
+            key={opt.value}
+            selected={value === opt.value}
+            title={opt.label}
+            description={opt.description}
+            onClick={() => onChange(opt.value)}
+          />
+        ))}
+      </div>
+    );
+  }
 
-      <div className="mt-3">
-        {question.type === "single" && question.options ? (
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {question.options.map((opt) => (
-              <button
-                key={opt.value}
-                type="button"
-                onClick={() => onChange(opt.value)}
-                className={cn(optionBase, value === opt.value && "bg-primary/20")}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-        ) : null}
-
-        {question.type === "multi" && question.options ? (
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {question.options.map((opt) => {
-              const selected =
-                Array.isArray(value) && value.includes(opt.value);
-              return (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => onToggleMulti(opt.value)}
-                  className={cn(optionBase, selected && "bg-primary/20")}
-                >
-                  {opt.label}
-                </button>
-              );
-            })}
-          </div>
-        ) : null}
-
-        {question.type === "scale" ? (
-          <div className="flex flex-wrap items-center gap-2">
-            {Array.from(
-              {
-                length:
-                  (question.scaleMax ?? 10) - (question.scaleMin ?? 0) + 1,
-              },
-              (_, i) => (question.scaleMin ?? 0) + i,
-            ).map((n) => (
-              <button
-                key={n}
-                type="button"
-                onClick={() => onChange(n)}
-                className={cn(
-                  "h-10 w-10 rounded-organic-md bg-surface-subtle text-sm font-semibold text-text transition-colors hover:bg-surface-mid",
-                  value === n && "bg-primary/20",
-                )}
-              >
-                {n}
-              </button>
-            ))}
-            {question.scaleMinLabel || question.scaleMaxLabel ? (
-              <span className="ml-1 text-xs text-text-muted">
-                {question.scaleMinLabel} → {question.scaleMaxLabel}
-              </span>
-            ) : null}
-          </div>
-        ) : null}
-
-        {question.type === "longtext" ? (
-          <div>
-            <textarea
-              value={typeof value === "string" ? value : ""}
-              maxLength={question.maxLength ?? 1500}
-              rows={4}
-              onChange={(e) => onChange(e.target.value)}
-              className="w-full resize-y rounded-organic-md bg-surface-subtle px-4 py-2.5 text-sm text-text placeholder:text-text-muted focus:outline-none"
-              placeholder="Write a specific answer"
+  if (question.type === "multi" && question.options) {
+    return (
+      <div className="space-y-2">
+        {question.options.map((opt) => {
+          const selected = Array.isArray(value) && value.includes(opt.value);
+          return (
+            <ChoiceCard
+              key={opt.value}
+              selected={selected}
+              title={opt.label}
+              description={opt.description}
+              checkbox
+              onClick={() => onToggleMulti(opt.value)}
             />
-            {min > 0 ? (
-              <p
-                className={cn(
-                  "mt-1 text-xs tabular-nums",
-                  textLen >= min ? "text-text-muted" : "text-text-subtle",
-                )}
-              >
-                {textLen}/{min} minimum
-              </p>
-            ) : null}
+          );
+        })}
+      </div>
+    );
+  }
+
+  if (question.type === "scale") {
+    const minScale = question.scaleMin ?? 0;
+    const maxScale = question.scaleMax ?? 10;
+    return (
+      <div className="space-y-3">
+        <div className="flex flex-wrap gap-2">
+          {Array.from(
+            { length: maxScale - minScale + 1 },
+            (_, i) => minScale + i,
+          ).map((n) => (
+            <button
+              key={n}
+              type="button"
+              onClick={() => onChange(n)}
+              className={cn(
+                "h-11 w-11 rounded-xl text-sm font-semibold transition-colors",
+                value === n
+                  ? ACCENT.selected
+                  : "bg-surface-mid text-text hover:bg-surface-neutral",
+              )}
+            >
+              {n}
+            </button>
+          ))}
+        </div>
+        {question.scaleMinLabel || question.scaleMaxLabel ? (
+          <div className="flex justify-between text-[11px] text-text-muted">
+            <span>{question.scaleMinLabel}</span>
+            <span>{question.scaleMaxLabel}</span>
           </div>
         ) : null}
       </div>
-    </div>
-  );
+    );
+  }
+
+  if (question.type === "longtext") {
+    return (
+      <div>
+        <textarea
+          value={typeof value === "string" ? value : ""}
+          maxLength={question.maxLength ?? 1000}
+          rows={5}
+          autoFocus
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full resize-y rounded-xl border-0 bg-surface-mid px-4 py-3 text-sm text-text outline-none ring-0 placeholder:text-text-subtle focus:outline-none focus:ring-0"
+          placeholder={
+            question.required === false
+              ? "Optional. Skip if nothing comes to mind."
+              : "Type a short answer…"
+          }
+        />
+        {min > 0 ? (
+          <p
+            className={cn(
+              "mt-1.5 text-[11px] tabular-nums",
+              textLen >= min ? "text-text-muted" : "text-text-subtle",
+            )}
+          >
+            {textLen}/{min} minimum
+          </p>
+        ) : (
+          <p className="mt-1.5 text-[11px] text-text-muted">
+            You can leave this blank and finish.
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  return null;
 }

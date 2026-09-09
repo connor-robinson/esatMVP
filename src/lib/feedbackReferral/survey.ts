@@ -5,7 +5,7 @@ export interface FeedbackQuestion {
   type: FeedbackQuestionType;
   label: string;
   help?: string;
-  options?: Array<{ value: string; label: string }>;
+  options?: Array<{ value: string; label: string; description?: string }>;
   scaleMin?: number;
   scaleMax?: number;
   scaleMinLabel?: string;
@@ -30,78 +30,75 @@ export interface FeedbackAnswer {
 }
 
 export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
-  title: "2-minute feedback",
-  intro:
-    "Tell us what to fix and what is working. If the written answers are specific enough, you get a one-friend code for 50% off.",
-  estimatedTime: "About 2 minutes",
+  title: "Quick feedback",
+  intro: "A few short questions unlocks 50% off for one friend.",
+  estimatedTime: "About a minute",
   questions: [
-    {
-      id: "time_using",
-      type: "single",
-      label: "How long have you been using the app?",
-      options: [
-        { value: "today", label: "I just started" },
-        { value: "few_days", label: "A few days" },
-        { value: "week_plus", label: "A week or more" },
-        { value: "not_much", label: "I have barely used it" },
-      ],
-    },
     {
       id: "parts_used",
       type: "multi",
-      label: "Which parts have you actually used?",
+      label: "What have you tried?",
+      help: "Pick everything you've opened.",
       options: [
-        { value: "calibration", label: "Calibration" },
-        { value: "question_bank", label: "Question bank" },
-        { value: "past_papers", label: "Past papers" },
-        { value: "mental_maths", label: "Mental maths / drills" },
-        { value: "score_converter", label: "Score converter" },
-        { value: "other", label: "Something else" },
+        {
+          value: "calibration",
+          label: "Calibration",
+          description: "The short placement quiz",
+        },
+        {
+          value: "question_bank",
+          label: "Question bank",
+          description: "Practice by topic",
+        },
+        {
+          value: "past_papers",
+          label: "Past papers",
+          description: "Timed full papers",
+        },
+        {
+          value: "mental_maths",
+          label: "Mental maths",
+          description: "Drills and speed practice",
+        },
+        {
+          value: "score_converter",
+          label: "Score converter",
+          description: "Rough grade estimates",
+        },
+        {
+          value: "other",
+          label: "Something else",
+          description: "Homepage, settings, or another bit",
+        },
       ],
     },
     {
       id: "recommend",
       type: "scale",
-      label: "How likely are you to recommend this to a friend preparing for ESAT?",
+      label: "Would you recommend us to a friend?",
+      help: "0 = not really, 10 = yes, for sure.",
       scaleMin: 0,
       scaleMax: 10,
-      scaleMinLabel: "Not likely",
-      scaleMaxLabel: "Very likely",
-    },
-    {
-      id: "works_well",
-      type: "longtext",
-      label: "What is working well? Be specific.",
-      help: "Name a screen, question type, or moment. One word answers do not count.",
-      required: true,
-      minLength: 40,
-      maxLength: 1200,
+      scaleMinLabel: "Not really",
+      scaleMaxLabel: "Yes, for sure",
     },
     {
       id: "improve_first",
       type: "longtext",
-      label: "What is the one thing we should improve first, and why?",
-      help: "Describe the problem and what you wanted instead.",
+      label: "What's one thing we should improve?",
+      help: "A rough note is fine. A concrete example helps a lot.",
       required: true,
-      minLength: 80,
-      maxLength: 1500,
+      minLength: 20,
+      maxLength: 1000,
     },
     {
-      id: "broken_or_confusing",
+      id: "works_well",
       type: "longtext",
-      label: "What felt broken, slow, or confusing?",
-      help: "If nothing broke, say what almost made you quit.",
-      required: true,
-      minLength: 40,
-      maxLength: 1200,
-    },
-    {
-      id: "anything_else",
-      type: "longtext",
-      label: "Anything else we should know?",
+      label: "Anything you liked?",
+      help: "Optional, but we'd love to hear it.",
       required: false,
       minLength: 0,
-      maxLength: 1200,
+      maxLength: 1000,
     },
   ],
 };
@@ -114,6 +111,59 @@ function asMap(answers: FeedbackAnswer[]): Record<string, FeedbackAnswerValue> {
 
 function trimmedText(value: FeedbackAnswerValue | undefined): string {
   return typeof value === "string" ? value.trim() : "";
+}
+
+export function formatFeedbackAnswersForEmail(
+  answers: FeedbackAnswer[],
+): string {
+  const map = asMap(answers);
+  const lines: string[] = [];
+  for (const q of FEEDBACK_REFERRAL_SURVEY.questions) {
+    const val = map[q.id];
+    let display = "(skipped)";
+    if (val === undefined || val === "") {
+      display = "(skipped)";
+    } else if (Array.isArray(val)) {
+      const labels = val.map((v) => {
+        const opt = q.options?.find((o) => o.value === v);
+        return opt?.label ?? v;
+      });
+      display = labels.join(", ") || "(none)";
+    } else if (q.type === "scale") {
+      display = String(val);
+    } else {
+      display = String(val).trim() || "(skipped)";
+    }
+    lines.push(`${q.label}`);
+    lines.push(display);
+    lines.push("");
+  }
+  return lines.join("\n").trim();
+}
+
+export function isFeedbackStepComplete(
+  question: FeedbackQuestion,
+  value: FeedbackAnswerValue | undefined,
+): boolean {
+  if (question.type === "multi") {
+    return Array.isArray(value) && value.length > 0;
+  }
+  if (question.type === "scale") {
+    if (typeof value !== "number" && typeof value !== "string") return false;
+    const n = typeof value === "number" ? value : Number(value);
+    const min = question.scaleMin ?? 0;
+    const max = question.scaleMax ?? 10;
+    return Number.isInteger(n) && n >= min && n <= max;
+  }
+  if (question.type === "single") {
+    return typeof value === "string" && value.length > 0;
+  }
+  if (question.type === "longtext") {
+    if (question.required === false) return true;
+    const text = trimmedText(value);
+    return text.length >= (question.minLength ?? 0);
+  }
+  return false;
 }
 
 export function validateFeedbackReferralSurvey(
@@ -158,7 +208,7 @@ export function validateFeedbackReferralSurvey(
       const min = q.minLength ?? 0;
       const max = q.maxLength ?? 1500;
       if (q.required !== false && text.length < min) {
-        return `"${q.label}" needs at least ${min} characters. Add a concrete example.`;
+        return `"${q.label}" needs a bit more detail (at least ${min} characters).`;
       }
       if (text.length > max) {
         return `"${q.label}" is too long.`;

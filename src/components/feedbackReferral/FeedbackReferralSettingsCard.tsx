@@ -41,7 +41,7 @@ export function FeedbackReferralSettingsCard() {
       <p className="mt-2 text-sm text-text-muted">
         {status.completed
           ? `Your one-friend 50% code is ${status.code}.`
-          : "Two minutes of specific feedback unlocks a 50% off code for one friend."}
+          : "A quick questionnaire unlocks a 50% off code for one friend."}
       </p>
       <Link
         href="/feedback"

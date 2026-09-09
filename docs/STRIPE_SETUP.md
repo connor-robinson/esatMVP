@@ -121,10 +121,13 @@ Copy each Price ID (e.g. `price_1ABC...`) into the matching env var.
 Optional friend-referral 50% codes (preview until `FEEDBACK_REFERRAL_LIVE=true`).
 Test on production at `https://esatcamp.com/feedback` while signed in as an allowlisted account (no localhost login needed). Built-in preview emails already include the admin/tester accounts; use the env var only to add more.
 
+New survey replies email `ansonchanw@gmail.com` immediately (override with `FEEDBACK_REFERRAL_NOTIFY_EMAIL`). Requires `RESEND_API_KEY`.
+
 ```env
 FEEDBACK_REFERRAL_LIVE=false
 # Optional extras beyond the built-in allowlist
 FEEDBACK_REFERRAL_PREVIEW_EMAILS=you@example.com
+# FEEDBACK_REFERRAL_NOTIFY_EMAIL=ansonchanw@gmail.com
 # Optional: reuse a Stripe coupon instead of auto-creating one
 # STRIPE_FEEDBACK_REFERRAL_COUPON=coupon_...
 ```

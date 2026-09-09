@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { canAccessFeedbackReferral } from "./access";
 import { normalizeReferralCode, referralSharePath } from "./codes";
 import { createOneUseReferralPromotionCode } from "./stripe";
+import { sendFeedbackReferralNotification } from "./notify";
 import {
   validateFeedbackReferralSurvey,
   type FeedbackAnswer,
@@ -54,6 +55,7 @@ export async function getReferralCodeForUser(
 export async function submitFeedbackAndIssueCode(opts: {
   userId: string;
   answers: FeedbackAnswer[];
+  userEmail?: string | null;
   service?: SupabaseClient;
 }): Promise<{ code: string; sharePath: string; alreadyCompleted: boolean }> {
   const validationError = validateFeedbackReferralSurvey(opts.answers);
@@ -111,6 +113,16 @@ export async function submitFeedbackAndIssueCode(opts: {
     }
     throw new FeedbackReferralError(codeError.message, 500);
   }
+
+  // Fire immediately for new replies. Do not block the user's code on email failure.
+  void sendFeedbackReferralNotification({
+    userId: opts.userId,
+    userEmail: opts.userEmail,
+    code: issued.code,
+    answers: opts.answers,
+  }).catch((err) => {
+    console.error("[feedback-referral] notify threw", err);
+  });
 
   return {
     code: issued.code,

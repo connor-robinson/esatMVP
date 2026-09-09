@@ -10,7 +10,11 @@ import {
   isReferralCodeFormat,
   normalizeReferralCode,
 } from "@/lib/feedbackReferral/codes";
-import { validateFeedbackReferralSurvey } from "@/lib/feedbackReferral/survey";
+import {
+  isFeedbackStepComplete,
+  validateFeedbackReferralSurvey,
+  type FeedbackQuestion,
+} from "@/lib/feedbackReferral/survey";
 
 describe("feedback referral access", () => {
   it("parses preview emails and keeps built-in testers", () => {
@@ -82,48 +86,81 @@ describe("referral codes", () => {
 });
 
 describe("survey validation", () => {
-  const detailed = {
-    works:
-      "The NSAA 2019 paper timer and the way answers persist when I leave the page.",
-    improve:
-      "The past-paper score showing 0 correct even after I answered a full section. I cannot tell if I am improving.",
-    broken:
-      "Question bank felt fine, but switching modules dumped me back to the start of the list.",
-  };
+  const improve =
+    "Past paper scores reset to zero after I finish a section, so I cannot track progress.";
 
   it("rejects thin written answers", () => {
     const error = validateFeedbackReferralSurvey([
-      { questionId: "time_using", value: "today" },
       { questionId: "parts_used", value: ["past_papers"] },
       { questionId: "recommend", value: 8 },
-      { questionId: "works_well", value: "good" },
-      { questionId: "improve_first", value: "fix papers" },
-      { questionId: "broken_or_confusing", value: "ui" },
+      { questionId: "improve_first", value: "fix it" },
     ]);
     expect(error).toMatch(/at least/i);
   });
 
-  it("accepts detailed answers", () => {
+  it("accepts concise friendly answers", () => {
     const error = validateFeedbackReferralSurvey([
-      { questionId: "time_using", value: "week_plus" },
       { questionId: "parts_used", value: ["past_papers", "question_bank"] },
       { questionId: "recommend", value: 7 },
-      { questionId: "works_well", value: detailed.works },
-      { questionId: "improve_first", value: detailed.improve },
-      { questionId: "broken_or_confusing", value: detailed.broken },
+      { questionId: "improve_first", value: improve },
+      { questionId: "works_well", value: "Calibration felt clear and quick." },
+    ]);
+    expect(error).toBeNull();
+  });
+
+  it("allows skipping the optional liked question", () => {
+    const error = validateFeedbackReferralSurvey([
+      { questionId: "parts_used", value: ["calibration"] },
+      { questionId: "recommend", value: 9 },
+      { questionId: "improve_first", value: improve },
     ]);
     expect(error).toBeNull();
   });
 
   it("rejects copy-pasted identical text", () => {
     const error = validateFeedbackReferralSurvey([
-      { questionId: "time_using", value: "today" },
       { questionId: "parts_used", value: ["calibration"] },
       { questionId: "recommend", value: 5 },
-      { questionId: "works_well", value: detailed.improve },
-      { questionId: "improve_first", value: detailed.improve },
-      { questionId: "broken_or_confusing", value: detailed.improve },
+      { questionId: "improve_first", value: improve },
+      { questionId: "works_well", value: improve },
     ]);
     expect(error).toMatch(/different answers/i);
+  });
+});
+
+describe("step completion", () => {
+  const multiQ: FeedbackQuestion = {
+    id: "parts_used",
+    type: "multi",
+    label: "What have you tried?",
+    options: [{ value: "calibration", label: "Calibration" }],
+  };
+  const textQ: FeedbackQuestion = {
+    id: "improve_first",
+    type: "longtext",
+    label: "Improve?",
+    required: true,
+    minLength: 20,
+  };
+  const optionalQ: FeedbackQuestion = {
+    id: "works_well",
+    type: "longtext",
+    label: "Liked?",
+    required: false,
+  };
+
+  it("requires a multi selection", () => {
+    expect(isFeedbackStepComplete(multiQ, [])).toBe(false);
+    expect(isFeedbackStepComplete(multiQ, ["calibration"])).toBe(true);
+  });
+
+  it("enforces min length on required text", () => {
+    expect(isFeedbackStepComplete(textQ, "short")).toBe(false);
+    expect(isFeedbackStepComplete(textQ, "a".repeat(20))).toBe(true);
+  });
+
+  it("lets optional text steps continue empty", () => {
+    expect(isFeedbackStepComplete(optionalQ, undefined)).toBe(true);
+    expect(isFeedbackStepComplete(optionalQ, "")).toBe(true);
   });
 });
