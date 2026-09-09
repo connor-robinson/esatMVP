@@ -63,51 +63,40 @@ const sectionActiveClass: Record<NavSectionId, string> = {
 const sectionTheme: Record<
   NavSectionId,
   {
-    accentBar: string;
-    iconBox: string;
     iconColor: string;
-    itemActive: string;
-    triggerOpen: string;
+    activeMark: string;
   }
 > = {
   skills: {
-    accentBar: 'bg-primary',
-    iconBox: 'bg-primary/15',
     iconColor: 'text-primary',
-    itemActive: 'bg-primary/10',
-    triggerOpen: 'bg-surface-elevated',
+    activeMark: 'bg-primary',
   },
   papers: {
-    accentBar: 'bg-accent',
-    iconBox: 'bg-accent/15',
     iconColor: 'text-accent',
-    itemActive: 'bg-accent/10',
-    triggerOpen: 'bg-surface-elevated',
+    activeMark: 'bg-accent',
   },
   questions: {
-    accentBar: 'bg-secondary',
-    iconBox: 'bg-secondary/15',
     iconColor: 'text-secondary',
-    itemActive: 'bg-secondary/10',
-    triggerOpen: 'bg-surface-elevated',
+    activeMark: 'bg-secondary',
   },
   tools: {
-    accentBar: 'bg-text-subtle',
-    iconBox: 'bg-surface-mid',
     iconColor: 'text-text',
-    itemActive: 'bg-surface-mid',
-    triggerOpen: 'bg-surface-elevated',
+    activeMark: 'bg-text/55',
   },
 };
+
+/** Visible in both themes; border-subtle alone washes out on dark elevated surfaces. */
+const dropdownPanelClass =
+  'min-w-[17.5rem] w-max overflow-hidden rounded-[8px] border border-border bg-surface-elevated shadow-sm dark:border-white/15';
 
 const sectionLabelClass =
   'whitespace-nowrap text-[13px] font-semibold uppercase tracking-[0.11em] transition-colors duration-fast ease-signature';
 
 const dropdownMotion = {
-  initial: { opacity: 0, y: -8, scale: 0.97 },
-  animate: { opacity: 1, y: 0, scale: 1 },
-  exit: { opacity: 0, y: -6, scale: 0.98 },
-  transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] as const },
+  initial: { opacity: 0, y: -6 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -4 },
+  transition: { duration: 0.16, ease: [0.16, 1, 0.3, 1] as const },
 };
 
 interface NavSectionDropdownProps {
@@ -123,6 +112,7 @@ export function NavDropdownMenuItem({
   onPrefetch,
   onNavigate,
   compact = false,
+  showRule = false,
 }: {
   item: NavDropdownItem;
   section: NavSectionId;
@@ -130,6 +120,8 @@ export function NavDropdownMenuItem({
   onPrefetch: (href: string) => void;
   onNavigate?: () => void;
   compact?: boolean;
+  /** Hairline separator above this row (ruled list). */
+  showRule?: boolean;
 }) {
   const theme = sectionTheme[section];
   const Icon = item.icon;
@@ -151,45 +143,47 @@ export function NavDropdownMenuItem({
         onNavigate?.();
       }}
       className={cn(
-        'flex items-start gap-2.5 rounded-organic-md transition-colors duration-fast ease-signature',
-        compact ? 'px-2 py-2.5' : 'gap-3.5 px-3 py-3',
-        isActive ? theme.itemActive : 'hover:bg-surface-subtle/80',
+        'relative flex items-start gap-2.5 text-left transition-colors duration-fast ease-signature',
+        compact ? 'px-3 py-2.5' : 'gap-3 px-3 py-3',
+        showRule && 'border-t border-border dark:border-white/10',
       )}
     >
-      <span
-        className={cn(
-          'mt-0.5 inline-flex shrink-0 items-center justify-center rounded-[10px]',
-          compact ? 'h-8 w-8' : 'h-9 w-9',
-          item.iconBoxClassName ?? theme.iconBox,
-        )}
-        aria-hidden
-      >
-        <Icon
-          className={cn(compact ? 'h-4 w-4' : 'h-[18px] w-[18px]', theme.iconColor)}
-          strokeWidth={2}
-        />
-      </span>
-      <span className='min-w-0 flex-1 pt-0.5'>
+      {isActive ? (
         <span
           className={cn(
-            'block text-sm font-semibold leading-tight',
-            isActive ? theme.iconColor : 'text-text',
+            'absolute bottom-2 left-0 top-2 w-px',
+            theme.activeMark,
+          )}
+          aria-hidden
+        />
+      ) : null}
+      <Icon
+        className={cn(
+          'mt-0.5 shrink-0',
+          compact ? 'h-[15px] w-[15px]' : 'h-4 w-4',
+          theme.iconColor,
+        )}
+        strokeWidth={1.75}
+        aria-hidden
+      />
+      <span className='min-w-0 flex-1'>
+        <span
+          className={cn(
+            'inline-flex items-center gap-2 text-[13px] leading-tight',
+            isActive ? cn('font-semibold', theme.iconColor) : 'font-medium text-text',
           )}
         >
-          <span className="inline-flex items-center gap-2">
-            {item.label}
-            {item.badge ? (
-              <span
-                className={cn(
-                  'font-bold uppercase tracking-[0.08em] text-error',
-                  item.badgeClassName ??
-                    (compact ? 'text-xs' : 'text-sm'),
-                )}
-              >
-                {item.badge}
-              </span>
-            ) : null}
-          </span>
+          {item.label}
+          {item.badge ? (
+            <span
+              className={cn(
+                'font-bold uppercase tracking-[0.08em] text-error',
+                item.badgeClassName ?? (compact ? 'text-[10px]' : 'text-xs'),
+              )}
+            >
+              {item.badge}
+            </span>
+          ) : null}
         </span>
         {item.description ? (
           <span
@@ -206,6 +200,75 @@ export function NavDropdownMenuItem({
   );
 }
 
+export function NavDropdownItemList({
+  config,
+  pathname,
+  onPrefetch,
+  onItemNavigate,
+  compact,
+}: {
+  config: NavSectionConfig;
+  pathname: string;
+  onPrefetch: (href: string) => void;
+  onItemNavigate: (href: string) => void;
+  compact?: boolean;
+}) {
+  if (config.groups?.length) {
+    return (
+      <>
+        {config.groups.map((group, groupIndex) => (
+          <div key={group.title ?? `group-${groupIndex}`}>
+            {group.title ? (
+              <p
+                className={cn(
+                  'px-3 py-2 text-[10px] font-medium uppercase tracking-[0.12em] text-text-muted',
+                  groupIndex > 0 && 'border-t border-border dark:border-white/10',
+                )}
+              >
+                {group.title}
+              </p>
+            ) : null}
+            {group.items.map((item, itemIndex) => {
+              const showRule =
+                itemIndex > 0 ||
+                (groupIndex > 0 && !group.title && itemIndex === 0);
+              return (
+                <NavDropdownMenuItem
+                  key={item.href}
+                  item={item}
+                  section={config.section}
+                  isActive={pathname === item.href}
+                  onPrefetch={onPrefetch}
+                  onNavigate={() => onItemNavigate(item.href)}
+                  compact={compact}
+                  showRule={showRule}
+                />
+              );
+            })}
+          </div>
+        ))}
+      </>
+    );
+  }
+
+  return (
+    <>
+      {(config.items ?? []).map((item, itemIndex) => (
+        <NavDropdownMenuItem
+          key={item.href}
+          item={item}
+          section={config.section}
+          isActive={pathname === item.href}
+          onPrefetch={onPrefetch}
+          onNavigate={() => onItemNavigate(item.href)}
+          compact={compact}
+          showRule={itemIndex > 0}
+        />
+      ))}
+    </>
+  );
+}
+
 export function NavSectionDropdown({
   config,
   isActive,
@@ -216,7 +279,6 @@ export function NavSectionDropdown({
   const rootRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const theme = sectionTheme[config.section];
 
   const close = useCallback(() => setOpen(false), []);
 
@@ -271,120 +333,79 @@ export function NavSectionDropdown({
   return (
     <div
       ref={rootRef}
-      className='relative inline-flex'
+      className={cn('relative inline-flex', open && 'z-[80]')}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <div
-        className={cn(
-          'inline-flex flex-col transition-[background-color,box-shadow,border-radius] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
-          open && 'rounded-t-organic-md',
-        )}
-      >
-        <div
+      <div className='inline-flex items-center px-2 py-1'>
+        <Link
+          href={config.href}
+          prefetch
+          onMouseEnter={() => onPrefetch(config.href)}
+          onClick={() => {
+            if (
+              config.href === MENTAL_MATHS_DRILL_HREF &&
+              isMentalMathsDrillPath(pathname)
+            ) {
+              requestMentalMathsDrillHome();
+            }
+          }}
           className={cn(
-            'inline-flex items-center rounded-organic-md px-2 py-1 transition-colors duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
-            open && cn(theme.triggerOpen, 'rounded-b-none shadow-sm'),
+            sectionLabelClass,
+            config.triggerPadding,
+            isActive
+              ? sectionActiveClass[config.section]
+              : 'text-text-muted hover:text-text',
           )}
         >
-          <Link
-            href={config.href}
-            prefetch
-            onMouseEnter={() => onPrefetch(config.href)}
-            onClick={() => {
-              if (
-                config.href === MENTAL_MATHS_DRILL_HREF &&
-                isMentalMathsDrillPath(pathname)
-              ) {
-                requestMentalMathsDrillHome();
-              }
-            }}
-            className={cn(
-              sectionLabelClass,
-              config.triggerPadding,
-              isActive
-                ? sectionActiveClass[config.section]
-                : 'text-text-muted hover:text-text',
-            )}
-          >
-            {config.label}
-          </Link>
-          <button
-            type='button'
-            onClick={toggleMenu}
-            className={cn(
-              'ml-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-colors duration-fast ease-signature',
-              isActive || open
-                ? sectionActiveClass[config.section]
-                : 'text-text-muted hover:bg-surface-subtle hover:text-text',
-            )}
-            aria-expanded={open}
-            aria-haspopup='true'
-            aria-label={`${config.label} menu`}
-          >
-            <ChevronDown
-              className={cn(
-                'h-3 w-3 transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
-                open && 'rotate-180',
-              )}
-              aria-hidden
-            />
-          </button>
-        </div>
-
-        <AnimatePresence>
-          {open && (
-            <motion.div
-              {...dropdownMotion}
-              className='absolute -mt-px left-0 top-full z-50 min-w-[19rem] w-max overflow-hidden rounded-b-organic-lg rounded-t-none bg-surface-elevated backdrop-blur-xl shadow-modal-card'
-              role='menu'
-              style={{ transformOrigin: 'top center' }}
-            >
-              <div className={cn('h-[3px] w-full shrink-0', theme.accentBar)} aria-hidden />
-
-              <div className='flex flex-col gap-1 p-2'>
-                {config.groups?.length
-                  ? config.groups.map((group, groupIndex) => (
-                      <div
-                        key={group.title ?? `group-${groupIndex}`}
-                        className={cn(groupIndex > 0 && 'mt-2 border-t border-border-subtle pt-2')}
-                      >
-                        {group.title ? (
-                          <p className='mb-1.5 px-2 text-[10px] font-bold uppercase tracking-[0.14em] text-text-muted'>
-                            {group.title}
-                          </p>
-                        ) : null}
-                        <div className='flex flex-col gap-1'>
-                          {group.items.map((item) => (
-                            <NavDropdownMenuItem
-                              key={item.href}
-                              item={item}
-                              section={config.section}
-                              isActive={pathname === item.href}
-                              onPrefetch={onPrefetch}
-                              onNavigate={() => handleItemClick(item.href)}
-                              compact
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    ))
-                  : (config.items ?? []).map((item) => (
-                      <NavDropdownMenuItem
-                        key={item.href}
-                        item={item}
-                        section={config.section}
-                        isActive={pathname === item.href}
-                        onPrefetch={onPrefetch}
-                        onNavigate={() => handleItemClick(item.href)}
-                        compact
-                      />
-                    ))}
-              </div>
-            </motion.div>
+          {config.label}
+        </Link>
+        <button
+          type='button'
+          onClick={toggleMenu}
+          className={cn(
+            'ml-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] transition-colors duration-fast ease-signature',
+            isActive || open
+              ? sectionActiveClass[config.section]
+              : 'text-text-muted hover:text-text',
           )}
-        </AnimatePresence>
+          aria-expanded={open}
+          aria-haspopup='true'
+          aria-label={`${config.label} menu`}
+        >
+          <ChevronDown
+            className={cn(
+              'h-3 w-3 transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
+              open && 'rotate-180',
+            )}
+            aria-hidden
+          />
+        </button>
       </div>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            {...dropdownMotion}
+            className={cn('absolute left-0 top-full z-50 mt-1.5', dropdownPanelClass)}
+            role='menu'
+            style={{ transformOrigin: 'top left' }}
+          >
+            <NavDropdownItemList
+              config={config}
+              pathname={pathname}
+              onPrefetch={onPrefetch}
+              onItemNavigate={handleItemClick}
+              compact
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
+
+/** Shared panel chrome for mobile section lists (ruled rows). */
+export const navDropdownMobileListClass = cn(
+  'mt-3 overflow-hidden rounded-[8px] border border-border bg-surface-elevated dark:border-white/15',
+);

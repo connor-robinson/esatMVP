@@ -29,7 +29,8 @@ import {
 } from '@/lib/mentalMathsNav';
 import {
   NavSectionDropdown,
-  NavDropdownMenuItem,
+  NavDropdownItemList,
+  navDropdownMobileListClass,
   getNavSectionItems,
   type NavSectionConfig,
   type NavSectionId,
@@ -592,42 +593,13 @@ export function Navbar() {
                       >
                         {section.label}
                       </Link>
-                      <div className='mt-3 flex flex-col gap-1'>
-                        {section.groups?.length
-                          ? section.groups.map((group, groupIndex) => (
-                              <div
-                                key={group.title ?? `mobile-group-${groupIndex}`}
-                                className={cn(groupIndex > 0 && 'mt-3 border-t border-border-subtle pt-3')}
-                              >
-                                {group.title ? (
-                                  <p className='mb-2 px-2 text-[10px] font-bold uppercase tracking-[0.14em] text-text-muted'>
-                                    {group.title}
-                                  </p>
-                                ) : null}
-                                <div className='flex flex-col gap-1'>
-                                  {group.items.map((item) => (
-                                    <NavDropdownMenuItem
-                                      key={item.href}
-                                      item={item}
-                                      section={section.section}
-                                      isActive={pathname === item.href}
-                                      onPrefetch={handlePrefetch}
-                                      onNavigate={() => setMobileMenuOpen(false)}
-                                    />
-                                  ))}
-                                </div>
-                              </div>
-                            ))
-                          : (section.items ?? []).map((item) => (
-                              <NavDropdownMenuItem
-                                key={item.href}
-                                item={item}
-                                section={section.section}
-                                isActive={pathname === item.href}
-                                onPrefetch={handlePrefetch}
-                                onNavigate={() => setMobileMenuOpen(false)}
-                              />
-                            ))}
+                      <div className={navDropdownMobileListClass}>
+                        <NavDropdownItemList
+                          config={section}
+                          pathname={pathname}
+                          onPrefetch={handlePrefetch}
+                          onItemNavigate={() => setMobileMenuOpen(false)}
+                        />
                       </div>
                     </div>
                   ))}
