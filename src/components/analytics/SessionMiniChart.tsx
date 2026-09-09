@@ -4,6 +4,7 @@
 
 "use client";
 
+import { useEffect, useState } from "react";
 import { SessionProgressPoint } from "@/types/analytics";
 import {
   LineChart,
@@ -51,8 +52,15 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 export function SessionMiniChart({ data }: SessionMiniChartProps) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <div className="w-full">
+      <div className="h-[180px] w-full">
+      {mounted ? (
       <ResponsiveContainer width="100%" height={180}>
         <LineChart data={data} margin={{ top: 12, right: 16, left: 8, bottom: 12 }}>
           <CartesianGrid
@@ -115,6 +123,8 @@ export function SessionMiniChart({ data }: SessionMiniChartProps) {
           />
         </LineChart>
       </ResponsiveContainer>
+      ) : null}
+      </div>
       <div className="mt-4 flex items-center justify-center gap-6">
         <div className="flex items-center gap-2">
           <div
