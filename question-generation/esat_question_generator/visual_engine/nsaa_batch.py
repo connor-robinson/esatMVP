@@ -314,6 +314,7 @@ def generate_one(
     require_rendered_visual: bool = False,
     allowed_visual_types: set[str] | None = None,
     review_label: str | None = None,
+    diagram_suitability_retry: bool = False,
 ) -> dict[str, Any]:
     qid = nsaa_question_id(eq.question_id)
     out_dir = ARTIFACTS / qid
@@ -336,7 +337,8 @@ def generate_one(
         mix_hint=mix_hint,
     )
     design = run_nsaa_question_designer(q_inp, model=model, thinking_level=thinking_level)
-    (out_dir / "question_design.json").write_text(
+    design_path = out_dir / ("question_design_retry.json" if diagram_suitability_retry else "question_design.json")
+    design_path.write_text(
         json.dumps(design.raw, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
@@ -353,11 +355,57 @@ def generate_one(
     if designer_subject == "mathematics" and not visual_type:
         visual_type = "graph" if design.needs_diagram else "none"
     if require_rendered_visual and visual_type not in RENDERED_VISUAL_TYPES:
+        # Ask once whether a genuine diagram is suitable; do not force a fake figure.
+        if not diagram_suitability_retry:
+            prior = {
+                "stem": design.stem,
+                "options": design.options,
+                "correct_option": design.correct_option,
+                "explanation": design.explanation,
+                "variation_mode": design.variation_mode,
+                "idea_plan": design.idea_plan,
+                "visual_type": visual_type or "none",
+            }
+            suitability_feedback = (
+                f"Your previous draft used visual_type={visual_type or 'none'} "
+                "(no rendered diagram). Decide honestly:\n"
+                "A) If this source CAN support a genuine rendered-diagram MCQ "
+                "(physics: graph; mathematics: geometry or graph), rewrite the full item "
+                "with that diagram visual_type, a clear visual_brief, and graph_preset when needed.\n"
+                "B) If it is NOT suitable for an honest diagram, set skip=true and explain why "
+                "in skip_reason.\n"
+                "Do not invent a forced or fake diagram. Do not return none/table if option A is possible."
+            )
+            print(
+                f"  diagram suitability retry for source {eq.question_id} "
+                f"(was visual_type={visual_type or 'none'})",
+                flush=True,
+            )
+            return generate_one(
+                eq,
+                store=store,
+                source_options=source_options,
+                model=model,
+                thinking_level=thinking_level,
+                repair_feedback=suitability_feedback,
+                prior_question=prior,
+                parent_attempt_id=parent_attempt_id,
+                previous_attempt_ids=previous_attempt_ids,
+                attempt=attempt,
+                mix_hint=mix_hint,
+                require_rendered_visual=True,
+                allowed_visual_types=allowed_visual_types,
+                review_label=review_label,
+                diagram_suitability_retry=True,
+            )
         return {
             "status": "skipped",
             "question_id": qid,
             "source_question_id": eq.question_id,
-            "skip_reason": f"diagrams-only batch skipped visual_type {visual_type or 'none'}",
+            "skip_reason": (
+                f"No suitable rendered diagram after suitability retry "
+                f"(visual_type={visual_type or 'none'})"
+            ),
             "visual_type": visual_type or "none",
             "model": design.model,
         }
@@ -604,11 +652,11 @@ def _mix_hint(
             )
         if subject == "physics":
             return (
-                "This batch requires a rendered physics graph. "
-                "Set idea_plan.visual_type to graph, needs_diagram true, graph_preset "
+                "Prefer a rendered physics graph when the source honestly supports one. "
+                "If suitable: set idea_plan.visual_type to graph, needs_diagram true, graph_preset "
                 "(science_xy / cartesian / signed_y / multi_series as appropriate), and visual_brief. "
-                "Do not use none or table. "
-                "If the source cannot support a genuine graph MCQ, set skip true."
+                "If not suitable for an honest graph, set skip=true and explain why. "
+                "Do not use none or table for this slot, and do not invent a forced fake diagram."
             )
         return (
             "This batch is for reviewing rendered diagrams only. "

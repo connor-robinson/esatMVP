@@ -17,6 +17,8 @@ interface ThemeContextType {
   isDark: boolean;
   lightStrategy: LightModeStrategy;
   toggleLightStrategy: () => void;
+  /** False until localStorage theme has been applied post-hydration. */
+  themeReady: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -57,14 +59,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isMarketingHomepage = isMarketingHomepagePath(pathname);
 
-  // Initialize with the theme from localStorage (or what the script set)
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window === "undefined") return "dark";
-    return getInitialTheme();
-  });
-  const [lightStrategy, setLightStrategy] = useState<LightModeStrategy>(() =>
-    getInitialLightStrategy(),
-  );
+  // Match SSR defaults on the first client render. Reading localStorage here
+  // desyncs Sun/Moon (and other theme UI) and breaks hydration.
+  const [theme, setTheme] = useState<Theme>("dark");
+  const [lightStrategy, setLightStrategy] =
+    useState<LightModeStrategy>("inverted");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -105,7 +104,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <ThemeContext.Provider
-      value={{ theme, toggleTheme, isDark, lightStrategy, toggleLightStrategy }}
+      value={{
+        theme,
+        toggleTheme,
+        isDark,
+        lightStrategy,
+        toggleLightStrategy,
+        themeReady: mounted,
+      }}
     >
       {children}
     </ThemeContext.Provider>

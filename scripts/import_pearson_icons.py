@@ -17,6 +17,7 @@ SOURCES_DIR = ROOT / "public" / "pearson" / "icon-sources"
 OUT = ROOT / "public" / "pearson" / "icons"
 
 # User-provided standalone icon crops (Aug 2026). Stored under icon-sources/.
+# counter = three-bar list (header); navigator = star/grid (footer). Do not swap.
 SOURCES: dict[str, str] = {
     "flag.png": "flag-outline.png",
     "flag-filled.png": "flag-filled.png",

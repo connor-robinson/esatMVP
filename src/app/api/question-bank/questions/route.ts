@@ -88,6 +88,10 @@ export async function GET(request: NextRequest) {
     const primaryTag = searchParams.get('primaryTag') || '';
     const search = searchParams.get('search') || '';
     const idParam = searchParams.get('id') || '';
+    const idsParam = searchParams.get('ids') || '';
+    const idsFromParam = idsParam
+      ? [...new Set(idsParam.split(',').map((s) => s.trim()).filter(Boolean))]
+      : [];
     const limit = parseInt(searchParams.get('limit') || '20', 10);
     const offset = parseInt(searchParams.get('offset') || '0', 10);
     const random = searchParams.get('random') === 'true';
@@ -378,9 +382,15 @@ export async function GET(request: NextRequest) {
     }
 
     // ============================================================================
-    // STAGE 5: Apply ID search filter
+    // STAGE 5: Apply ID search filter (single id or bulk ids)
     // ============================================================================
-    if (idParam) {
+    if (idsFromParam.length > 0) {
+      debug(
+        '[Question Bank API] Stage 5: Applying bulk ID filter:',
+        idsFromParam.length,
+      );
+      query = query.in('id', idsFromParam);
+    } else if (idParam) {
       debug('[Question Bank API] Stage 5: Applying ID search filter:', idParam);
       query = query.or(`generation_id.eq.${idParam},id.eq.${idParam}`);
     } else {
@@ -390,7 +400,7 @@ export async function GET(request: NextRequest) {
     // ============================================================================
     // STAGE 6: Apply search filter (question stem content search)
     // ============================================================================
-    if (search && !idParam) {
+    if (search && !idParam && idsFromParam.length === 0) {
       debug('[Question Bank API] Stage 6: Applying search filter:', search);
       query = query.ilike('question_stem', `%${search}%`);
     } else {
@@ -422,7 +432,14 @@ export async function GET(request: NextRequest) {
     // STAGE 8: Apply ordering and limits (before executing query)
     // ============================================================================
     debug('[Question Bank API] Stage 8: Applying ordering and limits');
-    if (random) {
+    if (idsFromParam.length > 0) {
+      // Bulk id lookup: return every matching published row (no random window).
+      query = query.limit(Math.max(idsFromParam.length, limit));
+      debug(
+        '[Question Bank API] Stage 8: Bulk ids mode - limit:',
+        Math.max(idsFromParam.length, limit),
+      );
+    } else if (random) {
       query = query.limit(Math.min(limit * 2, 200));
       debug(
         '[Question Bank API] Stage 8: Random mode - limit:',

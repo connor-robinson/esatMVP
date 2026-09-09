@@ -52,9 +52,11 @@ USED_PATH = Path(__file__).resolve().parent / "review_data" / "nsaa_esat_used_so
 PHYSICS_DIAGRAM_RATIO = 0.85
 
 MATH_DIAGRAM_HINT = (
-    "MATH REQUIREMENT: every kept Math 1 / Math 2 question MUST include a rendered diagram. "
+    "MATH: prefer a rendered diagram (geometry or graph) when the source supports one. "
     "Set idea_plan.diagram_type to geometry or graph, needs_diagram true, and provide visual_brief. "
-    "Do not use visual_type none or table. If the source cannot support a genuine diagram MCQ, set skip true."
+    "Do not use visual_type none or table for this slot. "
+    "If the source is not suitable for an honest diagram MCQ, set skip=true and explain why "
+    "(do not force a fake figure)."
 )
 
 
@@ -158,22 +160,25 @@ def _slot_mix(review_label: str, designer_subject: str, eq: EvalQuestion, mix_co
     must_diagram = _physics_require_diagram(mix_counts, eq)
     pct = int(PHYSICS_DIAGRAM_RATIO * 100)
     physics_hint = (
-        f"PHYSICS: aim for about {pct}% rendered graph diagrams. "
-        "Prefer visual_type graph with graph_preset and a clear visual_brief. "
-        "Do not invent unsupported circuit/apparatus schematics the renderer cannot draw. "
-        "Use none/table only when a graph truly cannot carry the reasoning."
+        f"PHYSICS: aim for about {pct}% rendered graph diagrams when sources suit it. "
+        "Prefer visual_type graph with graph_preset and a clear visual_brief when a graph "
+        "honestly carries the reasoning. "
+        "Do not invent unsupported circuit/apparatus schematics. "
+        "If a rendered diagram is not suitable, set skip=true and say why "
+        "(do not fill the slot with none/table just to avoid a graph)."
     )
     if must_diagram:
         physics_hint += (
-            " CRITICAL: this item MUST use visual_type graph (rendered diagram). "
-            "Do not use none or table. If impossible, set skip true."
+            " This slot prefers a graph if suitable. "
+            "If suitable → visual_type graph. If not suitable for an honest graph → skip=true. "
+            "Do not use none/table for this slot."
         )
     if _has_stem_diagram(eq):
-        physics_hint += " SOURCE HAS A DIAGRAM: keep a graph-based sibling/far variation."
+        physics_hint += " SOURCE HAS A DIAGRAM: prefer a graph-based sibling/far variation when honest."
     elif must_diagram:
         physics_hint += (
-            " SOURCE HAS NO FIGURE: still invent an honest science graph "
-            "(e.g. force/extension, v-t, I-V, energy levels) that matches the skill."
+            " SOURCE HAS NO FIGURE: only invent a graph if the skill naturally fits one "
+            "(e.g. force/extension, v-t, I-V). Otherwise skip."
         )
     if share is not None:
         physics_hint += (

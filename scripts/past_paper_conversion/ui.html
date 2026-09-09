@@ -186,6 +186,12 @@
           <option value="auto_approved">Auto approved</option>
           <option value="failed">Failed</option>
         </select>
+        <select id="diagramFilter" class="btn-secondary" style="padding:8px 12px;min-width:auto">
+          <option value="all">All visual types</option>
+          <option value="diagram">Diagrams only</option>
+          <option value="needs_review">Needs diagram review</option>
+          <option value="no_diagram">No diagram</option>
+        </select>
         <button class="btn-secondary" id="refreshBtn">Refresh</button>
         <button class="btn-secondary" id="shuffleBtn">Shuffle</button>
       </div>
@@ -291,9 +297,12 @@
       meta.className = "meta";
       const badgeClass = row.status === "auto_approved" ? "badge-ok" : row.status === "failed" ? "badge-fail" : "";
       const conf = row.confidence != null ? Math.round(row.confidence * 100) + "%" : "—";
+      const diagramLabel = row.conversionReport?.has_diagram
+        ? " · diagram: " + (row.conversionReport.diagram_type || "other")
+        : " · no diagram";
       meta.innerHTML =
         '<span class="badge ' + badgeClass + '">' + row.status.replace("_", " ") + '</span>' +
-        row.examName + " " + row.examYear + " · Q" + row.questionNumber + " · conf " + conf;
+        row.examName + " " + row.examYear + " · Q" + row.questionNumber + " · conf " + conf + diagramLabel;
       const f = flags(row.conversionReport);
       if (f.length) meta.innerHTML += "<br>" + f.map(x => '<span class="flag">' + x + '</span>').join("");
       wrap.appendChild(meta);
@@ -320,6 +329,8 @@
       $("stats").innerHTML =
         '<span>' + data.totalQuestions + ' questions total</span>' +
         '<span>' + data.conversionRows + ' conversions</span>' +
+        '<span>diagrams: ' + (data.diagrams?.diagram || 0) + '</span>' +
+        '<span>diagram review: ' + (data.diagrams?.needsReview || 0) + '</span>' +
         Object.entries(data.byStatus || {}).map(([s, n]) => '<span>' + s + ': ' + n + '</span>').join("");
     }
 
@@ -330,6 +341,7 @@
         paperId: $("paperSelect").value,
         limit: "24",
         status: $("statusFilter").value,
+        diagram: $("diagramFilter").value,
       });
       if (shuffle) params.set("shuffle", "1");
       const res = await fetch("/api/conversions?" + params);
@@ -406,6 +418,7 @@
     $("refreshBtn").onclick = () => { shuffle = false; loadConversions(); };
     $("shuffleBtn").onclick = () => { shuffle = true; loadConversions(); };
     $("statusFilter").onchange = loadConversions;
+    $("diagramFilter").onchange = loadConversions;
     $("paperSelect").onchange = loadConversions;
 
     (async () => {

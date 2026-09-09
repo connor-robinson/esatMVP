@@ -336,15 +336,16 @@ def _show_esat_progress() -> None:
             f"**{status}** · phase **{phase}** · cycles {data.get('completed_cycles', 0)}/"
             f"{data.get('target_cycles', 0)} · ratio {data.get('ratio') or '1:1:3'}"
         )
+        st.caption(str(data.get("diagram_policy") or "Math=100% diagram; Physics=~85% graph"))
         plan = data.get("phase_plan") or []
         if plan:
+            p0 = plan[0]
             st.caption(
                 "Plan: "
-                + " · ".join(
-                    f"{p.get('phase')}: m1={p.get('math1')} m2={p.get('math2')} "
-                    f"p={p.get('physics')} ({p.get('max_cycles')} cycles @ {int(round(float(p.get('diagram_target_ratio') or 0)*100))}%)"
-                    for p in plan
-                )
+                + f"math1={p0.get('math1_diagram_sources', p0.get('math1'))} "
+                + f"math2={p0.get('math2_diagram_sources', p0.get('math2'))} "
+                + f"physics={p0.get('physics_remaining', p0.get('physics'))} "
+                + f"({p0.get('max_cycles')} cycles)"
             )
         m1 = int(generated.get("Math 1") or 0)
         m2 = int(generated.get("Math 2") or 0)

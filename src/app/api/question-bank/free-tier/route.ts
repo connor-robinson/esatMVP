@@ -89,10 +89,11 @@ export async function GET(request: NextRequest) {
     const scopedSubject = isFreeTierPreviewSubject(subjectParam ?? "")
       ? (subjectParam as FreeTierPreviewSubject)
       : null;
+    const summaryOnly = request.nextUrl.searchParams.get("summary") === "1";
 
     const { data: rows, error: queryError } = await supabase
       .from("ai_generated_questions")
-      .select("*")
+      .select(summaryOnly ? "id, subjects" : "*")
       .eq("status", QUESTION_BANK_PUBLISH_STATUS)
       .in("id", [...FREE_TIER_QUESTION_IDS]);
 
@@ -106,7 +107,12 @@ export async function GET(request: NextRequest) {
     const byId = new Map<string, ParsedQuestion>(
       (rows ?? []).map((row) => [
         row.id as string,
-        parseQuestionRow(row as Record<string, unknown>),
+        summaryOnly
+          ? ({
+              id: row.id as string,
+              subjects: (row as { subjects?: string }).subjects,
+            } as ParsedQuestion)
+          : parseQuestionRow(row as Record<string, unknown>),
       ]),
     );
 
@@ -144,6 +150,45 @@ export async function GET(request: NextRequest) {
     const anyPreviewAvailable = FREE_TIER_PREVIEW_SUBJECTS.some(
       (s) => bySubject[s].remainingQuestions.length > 0 && !bySubject[s].isExhausted,
     );
+
+    if (summaryOnly) {
+      const summaryBySubject = Object.fromEntries(
+        FREE_TIER_PREVIEW_SUBJECTS.map((subject) => {
+          const row = bySubject[subject];
+          return [
+            subject,
+            {
+              subject,
+              limit: row.limit,
+              attemptedCount: row.attemptedCount,
+              remaining: row.remaining,
+              isExhausted: row.isExhausted,
+              attemptedQuestionIds: row.attemptedQuestionIds,
+              questions: [] as ParsedQuestion[],
+              remainingQuestions: [] as ParsedQuestion[],
+            },
+          ];
+        }),
+      ) as Record<FreeTierPreviewSubject, SubjectFreeTierStatus>;
+
+      return NextResponse.json({
+        hasFullAccess: false,
+        subject: active,
+        limit: FREE_TIER_LIMIT_PER_SUBJECT,
+        limitPerSubject: FREE_TIER_LIMIT_PER_SUBJECT,
+        attemptedCount: activeStatus.attemptedCount,
+        remaining: activeStatus.remaining,
+        isExhausted: activeStatus.isExhausted,
+        attemptedQuestionIds: activeStatus.attemptedQuestionIds,
+        questions: [],
+        remainingQuestions: [],
+        bySubject: summaryBySubject,
+        totalAttempted,
+        totalRemaining,
+        anyPreviewAvailable,
+        requiresAuth: !user,
+      });
+    }
 
     return NextResponse.json({
       hasFullAccess: false,

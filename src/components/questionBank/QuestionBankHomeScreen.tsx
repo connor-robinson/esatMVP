@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useEffect, useMemo, useState, useCallback, useRef, useLayoutEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   ArrowRight,
   Atom,
@@ -16,9 +16,16 @@ import {
 import { Container } from "@/components/layout/Container";
 import { LoadingEllipsis } from "@/components/shared/LoadingEllipsis";
 import { DrillUpgradeBanner } from "@/components/builder/DrillUpgradeBanner";
-import { QUESTION_BANK_HOME_LAUNCH_KEY } from "@/lib/questionBank/homeLaunch";
+import {
+  QUESTION_BANK_HOME_LAUNCH_EVENT,
+  QUESTION_BANK_HOME_LAUNCH_KEY,
+} from "@/lib/questionBank/homeLaunch";
 import type { QuestionBankHomeLaunchPayload } from "@/lib/questionBank/homeLaunch";
-import { writeFreeTierLaunch } from "@/lib/questionBank/freeTierLaunch";
+import { beginHomeLaunchQuestionsPrefetch } from "@/lib/questionBank/sessionLaunchPrefetch";
+import {
+  FREE_TIER_LAUNCH_EVENT,
+  writeFreeTierLaunch,
+} from "@/lib/questionBank/freeTierLaunch";
 import {
   FREE_TIER_LIMIT_PER_SUBJECT,
   FREE_TIER_PREVIEW_SUBJECTS,
@@ -29,6 +36,7 @@ import { QuestionBankSessionSettingsModal } from "@/components/questionBank/Ques
 import { useSubscription } from "@/hooks/useSubscription";
 import { useQuestionBankFreeTier } from "@/hooks/useQuestionBankFreeTier";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
+import { readCachedHasAuthUser } from "@/lib/auth/sessionPresenceCache";
 import {
   progressSubtext,
   type ExamPreference,
@@ -75,6 +83,8 @@ export interface SubjectTileConfig {
   progressTrackClass: string;
   progressFillClass: string;
   startBtnClass: string;
+  /** When true, tile is visible but not launchable. */
+  comingSoon?: boolean;
 }
 
 const SUBJECT_TILES: SubjectTileConfig[] = [
@@ -118,6 +128,7 @@ const SUBJECT_TILES: SubjectTileConfig[] = [
     headline: "TMUA Paper 1",
     topicCaps: "Mathematical thinking",
     testType: "TMUA",
+    comingSoon: true,
     ...SUBJECT_TILE_STYLES["Paper 1"],
   },
   {
@@ -125,6 +136,7 @@ const SUBJECT_TILES: SubjectTileConfig[] = [
     headline: "TMUA Paper 2",
     topicCaps: "Mathematical reasoning",
     testType: "TMUA",
+    comingSoon: true,
     ...SUBJECT_TILE_STYLES["Paper 2"],
   },
 ];
@@ -164,14 +176,29 @@ function tilesFromProgress(
 
 export function QuestionBankHomeScreen() {
   const router = useRouter();
+  const pathname = usePathname();
   const session = useSupabaseSession();
+  const [authHint] = useState(() => readCachedHasAuthUser());
+  const sessionPending = session === undefined;
+  const isLoggedIn =
+    sessionPending ? authHint === true : Boolean(session?.user);
+  const authUnknown = sessionPending && authHint === undefined;
+
   const { hasFullAccess, isLoading: subscriptionLoading } = useSubscription();
-  const treatAsFullAccess = subscriptionLoading || hasFullAccess;
+  // Never treat "still loading" as paid. That caused free/logged-out chrome to
+  // flash the paid layout, then jump. Cache makes hasFullAccess correct on paint.
+  const showFullAccess = hasFullAccess;
+  const accessPending = subscriptionLoading;
   const {
     isLoading: freeTierLoading,
     subjectStatus,
     anyPreviewAvailable,
-  } = useQuestionBankFreeTier(treatAsFullAccess);
+  } = useQuestionBankFreeTier(showFullAccess, {
+    enabled: !showFullAccess && !accessPending,
+    summary: true,
+  });
+  const freeTierPending =
+    !showFullAccess && !accessPending && freeTierLoading;
   const [sessionModalOpen, setSessionModalOpen] = useState(false);
   const [showFreeTierBlocked, setShowFreeTierBlocked] = useState(false);
   const [blockedSubject, setBlockedSubject] = useState<FreeTierPreviewSubject | null>(
@@ -298,10 +325,9 @@ export function QuestionBankHomeScreen() {
     void loadStats();
   }, [loadStats]);
 
-  const aggregatePct =
-    aggregate && aggregate.total > 0
-      ? Math.min(100, Math.round((aggregate.attempted / aggregate.total) * 100))
-      : 0;
+  useEffect(() => {
+    router.prefetch("/questions/questionbank");
+  }, [router]);
 
   const progressDescription = progressSubtext(
     examPreference,
@@ -318,7 +344,9 @@ export function QuestionBankHomeScreen() {
   const siblingTilesForModal = useMemo(
     () =>
       modalTile
-        ? SUBJECT_TILES.filter((t) => t.testType === modalTile.testType)
+        ? SUBJECT_TILES.filter(
+            (t) => t.testType === modalTile.testType && !t.comingSoon,
+          )
         : [],
     [modalTile],
   );
@@ -326,18 +354,13 @@ export function QuestionBankHomeScreen() {
   const previewAvailableFor = useCallback(
     (subject: FreeTierPreviewSubject) => {
       const stats = subjectStatus(subject);
-      return (
-        !!stats &&
-        !stats.isExhausted &&
-        stats.remaining > 0 &&
-        stats.remainingQuestions.length > 0
-      );
+      return !!stats && !stats.isExhausted && stats.remaining > 0;
     },
     [subjectStatus],
   );
 
   const launchFreeTierPreview = (subject: FreeTierPreviewSubject) => {
-    if (freeTierLoading) return;
+    if (accessPending || freeTierPending || sessionPending) return;
 
     const stats = subjectStatus(subject);
     if (!stats) {
@@ -350,11 +373,6 @@ export function QuestionBankHomeScreen() {
       setShowFreeTierBlocked(true);
       return;
     }
-    if (stats.remainingQuestions.length === 0) {
-      setBlockedSubject(null);
-      setShowFreeTierBlocked(true);
-      return;
-    }
     setShowFreeTierBlocked(false);
     setBlockedSubject(null);
     try {
@@ -362,11 +380,17 @@ export function QuestionBankHomeScreen() {
     } catch {
       /* quota / private mode */
     }
+    if (pathname === "/questions/questionbank") {
+      window.dispatchEvent(new Event(FREE_TIER_LAUNCH_EVENT));
+      return;
+    }
     router.push("/questions/questionbank");
   };
 
   const openSessionModal = (tile: SubjectTileConfig) => {
-    if (!treatAsFullAccess) {
+    if (tile.comingSoon) return;
+    if (accessPending || sessionPending) return;
+    if (!showFullAccess) {
       if (isFreeTierPreviewSubject(tile.key)) {
         launchFreeTierPreview(tile.key);
       } else {
@@ -383,7 +407,7 @@ export function QuestionBankHomeScreen() {
   const calibrationLaunchHandled = useRef(false);
   useEffect(() => {
     if (calibrationLaunchHandled.current) return;
-    if (subscriptionLoading || freeTierLoading) return;
+    if (accessPending || freeTierPending || sessionPending) return;
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
     const startSubject = params.get("startSubject");
@@ -393,7 +417,7 @@ export function QuestionBankHomeScreen() {
     if (tile) openSessionModal(tile);
     router.replace("/questions", { scroll: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- deep-link once ready
-  }, [subscriptionLoading, freeTierLoading, treatAsFullAccess]);
+  }, [accessPending, freeTierPending, sessionPending, showFullAccess]);
 
   const handleSessionConfirm = (payload: QuestionBankHomeLaunchPayload) => {
     try {
@@ -404,10 +428,15 @@ export function QuestionBankHomeScreen() {
     } catch {
       /* quota / private mode */
     }
+    // Overlap the questions API with the practice-route navigation.
+    beginHomeLaunchQuestionsPrefetch(payload);
+    if (pathname === "/questions/questionbank") {
+      // Already on the practice route (home alias). Soft-push would no-op.
+      window.dispatchEvent(new Event(QUESTION_BANK_HOME_LAUNCH_EVENT));
+      return;
+    }
     router.push("/questions/questionbank");
   };
-
-  const isLoggedIn = Boolean(session?.user);
 
   const freeTierBlockedHeadline = blockedSubject
     ? `You've used your ${FREE_TIER_LIMIT_PER_SUBJECT} free ${blockedSubject} questions`
@@ -425,6 +454,7 @@ export function QuestionBankHomeScreen() {
     showFreeTierBlocked ? (
       <DrillUpgradeBanner
         variant="panel"
+        className="!rounded-[16px]"
         headline={freeTierBlockedHeadline}
         subtext={freeTierBlockedSubtext}
         ctaLabel="View plans"
@@ -432,6 +462,7 @@ export function QuestionBankHomeScreen() {
     ) : (
       <DrillUpgradeBanner
         variant="panel"
+        className="!rounded-[16px]"
         headline="Try 10 free questions per subject"
         subtext="Preview sets for Math 1, Math 2, Physics, Chemistry and Biology. Upgrade for the full question bank."
         ctaLabel="View plans"
@@ -441,54 +472,20 @@ export function QuestionBankHomeScreen() {
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-background pb-16 pt-8 sm:pt-10">
       <Container size="xl" className="space-y-10">
-        {/* Progress (logged in) or free preview promo (logged out) */}
+        {/* Heading (logged in) or free preview promo (logged out) */}
         {isLoggedIn ? (
           <section>
-            <div className="rounded-organic-xl bg-surface px-5 py-6 sm:px-7 sm:py-8">
-              <div>
-                <h1 className="text-2xl font-semibold tracking-tight text-text sm:text-3xl">
-                  Question Bank
-                </h1>
-                <p className="mt-1 text-xs text-text-muted">
-                  {isLoadingProgress ? <LoadingEllipsis /> : progressSummary}
-                </p>
-              </div>
-
-              <div className="mt-6">
-                {isLoadingProgress ? (
-                  <div className="flex h-9 items-center text-xs text-text-muted">
-                    <LoadingEllipsis />
-                  </div>
-                ) : (
-                  <>
-                    <div className="h-3 w-full overflow-hidden rounded-full bg-surface-elevated">
-                      <div
-                        className="h-full rounded-full bg-secondary transition-[width] duration-500 ease-out"
-                        style={{ width: `${aggregatePct}%` }}
-                      />
-                    </div>
-                    <div className="relative mt-2.5 h-4 text-xs text-text-muted">
-                      <span className="absolute left-0">0%</span>
-                      {aggregatePct > 0 && aggregatePct < 100 && (
-                        <span
-                          className="absolute -translate-x-1/2 tabular-nums font-medium text-text"
-                          style={{ left: `${aggregatePct}%` }}
-                        >
-                          {aggregatePct}%
-                        </span>
-                      )}
-                      <span className="absolute right-0">100%</span>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
+            <h1 className="text-2xl font-semibold tracking-tight text-text sm:text-3xl">
+              Question Bank
+            </h1>
+            <p className="mt-1 text-xs text-text-muted">
+              {isLoadingProgress ? <LoadingEllipsis /> : progressSummary}
+            </p>
           </section>
-        ) : freeTierLoading ? (
-          <section className="px-0 py-2">
-            <div className="flex h-9 items-center text-xs text-text-muted">
-              <LoadingEllipsis />
-            </div>
+        ) : authUnknown ? (
+          <section>
+            <div className="h-8 w-48 animate-pulse rounded-md bg-surface-elevated" />
+            <div className="mt-3 h-3 w-72 max-w-full animate-pulse rounded-md bg-surface-elevated" />
           </section>
         ) : (
           freeTierPromoBanner
@@ -501,7 +498,8 @@ export function QuestionBankHomeScreen() {
               Choose a subject
             </h2>
             <p className="mt-0.5 text-xs text-text-muted">
-              Browse ESAT subjects and TMUA papers to continue your practice.
+              Browse ESAT subjects to continue your practice. TMUA papers coming
+              soon.
             </p>
           </div>
 
@@ -512,14 +510,20 @@ export function QuestionBankHomeScreen() {
                 ? tile.key
                 : null;
               const previewAvailable =
-                treatAsFullAccess ||
+                showFullAccess ||
+                accessPending ||
                 (previewSubject != null && previewAvailableFor(previewSubject));
               const pct =
                 stats.total > 0
                   ? Math.min(100, Math.round((stats.attempted / stats.total) * 100))
                   : 0;
+              const comingSoon = !!tile.comingSoon;
               const disabled =
-                !treatAsFullAccess && !freeTierLoading && !previewAvailable;
+                comingSoon ||
+                (!showFullAccess &&
+                  !accessPending &&
+                  !freeTierPending &&
+                  !previewAvailable);
               const Icon = SUBJECT_ICONS[tile.key];
 
               return (
@@ -528,8 +532,9 @@ export function QuestionBankHomeScreen() {
                   type="button"
                   onClick={() => openSessionModal(tile)}
                   disabled={disabled}
+                  aria-disabled={disabled}
                   className={cn(
-                    "flex min-h-[196px] flex-col rounded-[18px] bg-surface-elevated px-5 py-6 text-left",
+                    "flex min-h-[196px] flex-col rounded-[12px] bg-surface-elevated px-5 py-6 text-left",
                     "origin-center transition-[colors,transform] duration-200 ease-out",
                     "hover:scale-[1.03] hover:bg-surface-mid/50",
                     "outline-none ring-0 select-none [-webkit-tap-highlight-color:transparent]",
@@ -558,7 +563,9 @@ export function QuestionBankHomeScreen() {
                           {tile.headline}
                         </p>
                         <p className="mt-1 text-xs tabular-nums text-text-muted">
-                          {stats.loading ? (
+                          {comingSoon ? (
+                            "Coming soon"
+                          ) : stats.loading ? (
                             <LoadingEllipsis />
                           ) : (
                             `${stats.attempted} / ${stats.total} questions`
@@ -567,16 +574,18 @@ export function QuestionBankHomeScreen() {
                       </div>
                     </div>
 
-                    <span
-                      className={cn(
-                        "flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-mid text-text",
-                        "origin-center transition-transform duration-200 ease-out",
-                        "hover:scale-125",
-                      )}
-                      aria-hidden
-                    >
-                      <ArrowRight className="h-4 w-4" strokeWidth={2.25} />
-                    </span>
+                    {!comingSoon ? (
+                      <span
+                        className={cn(
+                          "flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-mid text-text",
+                          "origin-center transition-transform duration-200 ease-out",
+                          "hover:scale-125",
+                        )}
+                        aria-hidden
+                      >
+                        <ArrowRight className="h-4 w-4" strokeWidth={2.25} />
+                      </span>
+                    ) : null}
                   </div>
 
                   <div className="mt-auto flex items-center gap-3 pt-4">
@@ -591,18 +600,24 @@ export function QuestionBankHomeScreen() {
                           "h-full rounded-full transition-[width]",
                           tile.progressFillClass,
                         )}
-                        style={{ width: `${stats.loading ? 0 : pct}%` }}
+                        style={{
+                          width: `${comingSoon || stats.loading ? 0 : pct}%`,
+                        }}
                       />
                     </div>
                     <span className="shrink-0 text-xs tabular-nums text-text-muted">
-                      {stats.loading ? "..." : `${pct}%`}
+                      {comingSoon
+                        ? "Soon"
+                        : stats.loading
+                          ? "..."
+                          : `${pct}%`}
                     </span>
                   </div>
                 </button>
               );
             })}
 
-            <div className="flex min-h-[196px] flex-col items-center justify-center rounded-[18px] bg-surface-elevated/30 px-4 py-9 text-center">
+            <div className="flex min-h-[196px] flex-col items-center justify-center rounded-[12px] bg-surface-elevated/30 px-4 py-9 text-center">
               <span className="text-2xl text-text-muted" aria-hidden>
                 …
               </span>
@@ -613,7 +628,7 @@ export function QuestionBankHomeScreen() {
           </div>
         </section>
 
-        {!treatAsFullAccess && !freeTierLoading && isLoggedIn ? (
+        {!showFullAccess && !accessPending && !freeTierPending && isLoggedIn ? (
           <section className="space-y-4">
             <p className="text-center text-sm text-text-muted">
               Free preview limits (per subject):{" "}

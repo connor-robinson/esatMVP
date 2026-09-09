@@ -18,28 +18,38 @@ export type CachedUserPrefs = {
   esat_subjects: string[];
 };
 
-export function readHomeProgressCache(): HomeProgressCache | null {
-  if (typeof window === "undefined") return null;
+const PROGRESS_CACHE_TTL_MS = 30 * 60 * 1000;
+
+function readProgressCacheFrom(storage: Storage): HomeProgressCache | null {
   try {
-    const raw = sessionStorage.getItem(QUESTION_BANK_HOME_PROGRESS_CACHE_KEY);
+    const raw = storage.getItem(QUESTION_BANK_HOME_PROGRESS_CACHE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as HomeProgressCache;
     if (!parsed?.bySubject || typeof parsed.cachedAt !== "number") return null;
-    // Ignore stale cache (> 5 min)
-    if (Date.now() - parsed.cachedAt > 5 * 60 * 1000) return null;
+    if (Date.now() - parsed.cachedAt > PROGRESS_CACHE_TTL_MS) return null;
     return parsed;
   } catch {
     return null;
   }
 }
 
+export function readHomeProgressCache(): HomeProgressCache | null {
+  if (typeof window === "undefined") return null;
+  return (
+    readProgressCacheFrom(localStorage) ?? readProgressCacheFrom(sessionStorage)
+  );
+}
+
 export function writeHomeProgressCache(data: Omit<HomeProgressCache, "cachedAt">) {
   if (typeof window === "undefined") return;
+  const payload = JSON.stringify({ ...data, cachedAt: Date.now() });
   try {
-    sessionStorage.setItem(
-      QUESTION_BANK_HOME_PROGRESS_CACHE_KEY,
-      JSON.stringify({ ...data, cachedAt: Date.now() }),
-    );
+    localStorage.setItem(QUESTION_BANK_HOME_PROGRESS_CACHE_KEY, payload);
+  } catch {
+    /* quota / private mode */
+  }
+  try {
+    sessionStorage.setItem(QUESTION_BANK_HOME_PROGRESS_CACHE_KEY, payload);
   } catch {
     /* quota / private mode */
   }

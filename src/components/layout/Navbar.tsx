@@ -221,7 +221,7 @@ export function Navbar() {
     (s) => s.paperFullscreenShowMainNavbar,
   );
   const [docFullscreen, setDocFullscreen] = useState(false);
-  const { theme, toggleTheme, isDark, lightStrategy, toggleLightStrategy } = useTheme();
+  const { toggleTheme, isDark, lightStrategy, toggleLightStrategy, themeReady } = useTheme();
   const { hasFullAccess, tier, source } = useSubscription();
   const testerCtx = useTesterProgrammeOptional();
   const suppressTesterChrome =
@@ -397,22 +397,30 @@ export function Navbar() {
                 : "Light mode: designed theme. Alt+click for inverted palette preview."
           }
         >
-          {isDark ? (
-            <Sun
-              className='text-text'
-              aria-hidden
-              size={NAV_ICON_PX}
-              strokeWidth={NAV_ICON_STROKE}
-            />
+          {themeReady ? (
+            isDark ? (
+              <Sun
+                className='text-text'
+                aria-hidden
+                size={NAV_ICON_PX}
+                strokeWidth={NAV_ICON_STROKE}
+              />
+            ) : (
+              <Moon
+                className='text-text'
+                aria-hidden
+                size={NAV_ICON_PX}
+                strokeWidth={NAV_ICON_STROKE}
+              />
+            )
           ) : (
-            <Moon
-              className='text-text'
+            <span
+              className='inline-block'
+              style={{ width: NAV_ICON_PX, height: NAV_ICON_PX }}
               aria-hidden
-              size={NAV_ICON_PX}
-              strokeWidth={NAV_ICON_STROKE}
             />
           )}
-          {showLightModeBeta ? (
+          {themeReady && showLightModeBeta ? (
             <span className='pointer-events-none absolute -right-1 -top-1 rounded-[3px] bg-surface-mid px-1 py-px text-[7px] font-bold uppercase leading-none tracking-[0.06em] text-text-muted'>
               Beta
             </span>

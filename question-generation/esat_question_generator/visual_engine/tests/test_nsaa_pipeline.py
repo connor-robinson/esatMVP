@@ -64,9 +64,54 @@ def test_parse_question_design_skip_does_not_require_stem():
     assert "circuit" in design.skip_reason
 
 
-def test_parse_question_design_rejects_text_only():
+def test_parse_question_design_rejects_text_only_on_diagram_path():
     with pytest.raises(VisualSpecError):
         parse_question_design(_valid_design(needs_diagram=False))
+
+
+def test_parse_question_design_allows_math_text_when_none():
+    design = parse_question_design(
+        {
+            "skip": False,
+            "variation_mode": "sibling",
+            "mode_reason": "same algebra skill without a figure",
+            "difficulty": "Easy",
+            "needs_diagram": False,
+            "stem": "What is the value of 2x when x=3?",
+            "options": {"A": "3", "B": "4", "C": "5", "D": "6", "E": "7"},
+            "correct_option": "D",
+            "explanation": "2*3=6",
+            "idea_plan": {"visual_type": "none"},
+        },
+        subject="mathematics",
+    )
+    assert design.needs_diagram is False
+    assert design.idea_plan.get("visual_type") == "none"
+
+
+def test_parse_question_design_accepts_physics_graph():
+    design = parse_question_design(
+        {
+            "skip": False,
+            "variation_mode": "far",
+            "mode_reason": "same kinematics idea with new numbers",
+            "difficulty": "Hard",
+            "needs_diagram": True,
+            "stem": "The graph shows velocity against time. Find displacement.",
+            "options": {"A": "1", "B": "2", "C": "3", "D": "4", "E": "5"},
+            "correct_option": "C",
+            "explanation": "Area under v-t.",
+            "idea_plan": {
+                "visual_type": "graph",
+                "diagram_type": "graph",
+                "visual_brief": "v-t graph with a triangle of base 4 and height 3",
+                "graph_preset": "science_xy",
+            },
+        },
+        subject="physics",
+    )
+    assert design.variation_mode == "far"
+    assert design.idea_plan.get("visual_type") == "graph"
 
 
 def test_parse_question_design_rejects_missing_visual_brief():

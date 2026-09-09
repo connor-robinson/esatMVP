@@ -45,7 +45,7 @@ export function PastPaperCompactTable({ table }: Props) {
                   index % 2 === 0 ? "bg-white/[0.035]" : "bg-transparent"
                 }
               >
-                <td className="px-2.5 py-4 text-base font-medium tabular-nums text-[#F1F5F9]">
+                <td className="px-2.5 py-2.5 text-base font-medium tabular-nums text-[#F1F5F9]">
                   {row.detailHref ? (
                     <Link
                       href={row.detailHref}
@@ -58,7 +58,7 @@ export function PastPaperCompactTable({ table }: Props) {
                   )}
                 </td>
                 {isSpecification ? (
-                  <td className="px-2.5 py-4">
+                  <td className="px-2.5 py-2.5">
                     {row.specificationUrl ? (
                       <PastPaperCompactDownloadLink
                         href={row.specificationUrl}
@@ -71,7 +71,7 @@ export function PastPaperCompactTable({ table }: Props) {
                   </td>
                 ) : (
                   <>
-                    <td className="px-2.5 py-4">
+                    <td className="px-2.5 py-2.5">
                       {row.paperUrl ? (
                         <PastPaperCompactDownloadLink
                           href={row.paperUrl}
@@ -82,7 +82,7 @@ export function PastPaperCompactTable({ table }: Props) {
                         <UnavailableCell />
                       )}
                     </td>
-                    <td className="px-2.5 py-4">
+                    <td className="px-2.5 py-2.5">
                       {row.answersUrl ? (
                         <PastPaperCompactDownloadLink
                           href={row.answersUrl}
@@ -95,7 +95,7 @@ export function PastPaperCompactTable({ table }: Props) {
                         <UnavailableCell />
                       )}
                     </td>
-                    <td className="px-2.5 py-4">
+                    <td className="px-2.5 py-2.5">
                       {row.practiceHref ? (
                         <PastPaperPracticeLink
                           href={row.practiceHref}

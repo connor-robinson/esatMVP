@@ -42,10 +42,9 @@ export interface SubscriptionStatus {
 
 const SUBSCRIPTION_ACCESS_CACHE_KEY = "nocalc:subscriptionHasFullAccess";
 
-function readCachedHasFullAccess(): boolean | undefined {
-  if (typeof window === "undefined") return undefined;
+function readStorageFlag(storage: Storage): boolean | undefined {
   try {
-    const raw = sessionStorage.getItem(SUBSCRIPTION_ACCESS_CACHE_KEY);
+    const raw = storage.getItem(SUBSCRIPTION_ACCESS_CACHE_KEY);
     if (raw === "true") return true;
     if (raw === "false") return false;
   } catch {
@@ -54,21 +53,36 @@ function readCachedHasFullAccess(): boolean | undefined {
   return undefined;
 }
 
-function writeCachedHasFullAccess(value: boolean) {
+export function readCachedHasFullAccess(): boolean | undefined {
+  if (typeof window === "undefined") return undefined;
+  const fromLocal = readStorageFlag(localStorage);
+  if (fromLocal !== undefined) return fromLocal;
+  return readStorageFlag(sessionStorage);
+}
+
+export function writeCachedHasFullAccess(value: boolean) {
+  const raw = String(value);
   try {
-    sessionStorage.setItem(SUBSCRIPTION_ACCESS_CACHE_KEY, String(value));
+    localStorage.setItem(SUBSCRIPTION_ACCESS_CACHE_KEY, raw);
+  } catch {
+    /* ignore */
+  }
+  try {
+    sessionStorage.setItem(SUBSCRIPTION_ACCESS_CACHE_KEY, raw);
   } catch {
     /* ignore */
   }
 }
 
 export function useSubscription(): SubscriptionStatus {
-  const cachedAccess = readCachedHasFullAccess();
-  const [state, setState] = useState<SubscriptionStatus>(() => ({
-    tier: "free",
-    hasFullAccess: cachedAccess ?? false,
-    isLoading: cachedAccess === undefined,
-  }));
+  const [state, setState] = useState<SubscriptionStatus>(() => {
+    const cachedAccess = readCachedHasFullAccess();
+    return {
+      tier: "free",
+      hasFullAccess: cachedAccess ?? false,
+      isLoading: cachedAccess === undefined,
+    };
+  });
 
   useEffect(() => {
     let mounted = true;

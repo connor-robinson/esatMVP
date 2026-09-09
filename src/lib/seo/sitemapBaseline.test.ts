@@ -64,7 +64,7 @@ describe("sitemap baseline guard", () => {
       entry.url.replace("https://esatcamp.com", "") || "/",
     );
     expect(paths).toEqual([...APPROVED_SITEMAP_BASELINE_PATHS]);
-    expect(paths).toHaveLength(35);
+    expect(paths).toHaveLength(36);
   });
 
   it("excludes redirect sources and the thin /help utility", () => {
@@ -124,17 +124,17 @@ describe("sitemap baseline guard", () => {
 
   it("cannot expand the sitemap when past-paper data grows", () => {
     expect(PAST_PAPER_DOWNLOADS.length).toBeGreaterThan(0);
-    expect(sitemap()).toHaveLength(35);
-    expect(PUBLIC_SITEMAP_ENTRIES).toHaveLength(35);
+    expect(sitemap()).toHaveLength(36);
+    expect(PUBLIC_SITEMAP_ENTRIES).toHaveLength(36);
   });
 
   it("increased the approved baseline by exactly two hub URLs", () => {
-    expect(APPROVED_SITEMAP_BASELINE).toHaveLength(35);
+    expect(APPROVED_SITEMAP_BASELINE).toHaveLength(36);
     const withoutHubs = APPROVED_SITEMAP_BASELINE_PATHS.filter(
       (path) =>
         path !== "/past-papers/engaa" && path !== "/past-papers/nsaa",
     );
-    expect(withoutHubs).toHaveLength(33);
+    expect(withoutHubs).toHaveLength(34);
   });
 });
 

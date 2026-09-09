@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import { signalFeedbackReferralEngagement } from "@/lib/feedbackReferral/promptStorage";
+import { isPaperImmersiveRoute } from "@/lib/papers/activePaperSessionClient";
 
 const CLOSE_WARNING =
   "Are you sure you want to close the tab? This exam is not saved.";
@@ -36,9 +38,15 @@ function discardUnsavedExamSession(): void {
 }
 
 export function SessionPersistenceHandler() {
+  const pathname = usePathname();
   const sessionId = usePaperSessionStore((s) => s.sessionId);
   const endedAt = usePaperSessionStore((s) => s.endedAt);
   const hadLiveSessionRef = useRef(false);
+  // Only warn while the user is inside a live past-paper sitting. A leftover
+  // sessionId in localStorage must not block Question Bank (or any other route)
+  // with the browser "Leave site?" dialog.
+  const guardUnload =
+    isPaperImmersiveRoute(pathname) && Boolean(sessionId && !endedAt);
 
   useEffect(() => {
     if (sessionId && !endedAt) {
@@ -51,6 +59,8 @@ export function SessionPersistenceHandler() {
   }, [sessionId, endedAt]);
 
   useEffect(() => {
+    if (!guardUnload) return;
+
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       if (!hasUnsavedExamSession()) return;
       event.preventDefault();
@@ -69,7 +79,7 @@ export function SessionPersistenceHandler() {
       window.removeEventListener("beforeunload", handleBeforeUnload);
       window.removeEventListener("pagehide", handlePageHide);
     };
-  }, [sessionId, endedAt]);
+  }, [guardUnload]);
 
   return null;
 }

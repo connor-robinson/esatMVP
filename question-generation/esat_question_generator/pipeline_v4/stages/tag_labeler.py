@@ -27,9 +27,9 @@ def run_tag_labeler(
     """Run the legacy tag labeler for Physics; returns its JSON output."""
     try:
         from project import (  # type: ignore
-            classifier_call,
             load_prompts,
             ModelsConfig,
+            tag_labeler_call,
         )
         from curriculum_parser import CurriculumParser  # type: ignore
     except Exception as e:
@@ -53,13 +53,14 @@ def run_tag_labeler(
         cur_path = Path(base_dir) / "curriculum" / "ESAT_CURRICULUM.json"
         parser = CurriculumParser(str(cur_path)) if cur_path.is_file() else None
 
-        tag_result = classifier_call(
+        tag_result = tag_labeler_call(
             llm._inner,  # type: ignore[attr-defined]
             legacy_prompts,
             models,
             question_pkg,
             schema_id,
             parser,
+            math_paper=None,
         )
 
         if not isinstance(tag_result, dict):

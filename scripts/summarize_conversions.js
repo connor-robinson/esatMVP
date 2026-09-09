@@ -55,9 +55,19 @@ async function main() {
 
   const byStatus = {};
   const flagCounts = {};
+  const diagramCounts = {
+    diagram: 0,
+    no_diagram: 0,
+    unclassified: 0,
+    needs_review: 0,
+  };
   for (const row of conversions || []) {
     byStatus[row.status] = (byStatus[row.status] || 0) + 1;
     const report = row.conversion_report || {};
+    if (report.has_diagram === true) diagramCounts.diagram++;
+    else if (report.has_diagram === false) diagramCounts.no_diagram++;
+    else diagramCounts.unclassified++;
+    if (report.diagram_review_status === 'needs_review') diagramCounts.needs_review++;
     for (const [k, v] of Object.entries(report)) {
       if (v === true || (Array.isArray(v) && v.length > 0)) {
         flagCounts[k] = (flagCounts[k] || 0) + 1;
@@ -81,6 +91,8 @@ async function main() {
   Object.entries(flagCounts)
     .sort((a, b) => b[1] - a[1])
     .forEach(([f, n]) => console.log(`  ${f}: ${n}`));
+  console.log('\nDiagram classification:');
+  Object.entries(diagramCounts).forEach(([label, n]) => console.log(`  ${label}: ${n}`));
   console.log('\nUser reports:', reportCount ?? 0);
   console.log('');
 }

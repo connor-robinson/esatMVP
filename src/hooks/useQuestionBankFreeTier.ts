@@ -2,7 +2,16 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { QuestionBankQuestion } from "@/types/questionBank";
-import type { FreeTierPreviewSubject } from "@/lib/questionBank/freeTierQuestions";
+import {
+  FREE_TIER_LIMIT_PER_SUBJECT,
+  FREE_TIER_PREVIEW_SUBJECTS,
+  type FreeTierPreviewSubject,
+} from "@/lib/questionBank/freeTierQuestions";
+import {
+  readFreeTierHomeCache,
+  writeFreeTierHomeCache,
+  type FreeTierHomeSubjectCache,
+} from "@/lib/questionBank/freeTierHomeCache";
 
 export type SubjectFreeTierStatus = {
   subject: FreeTierPreviewSubject;
@@ -37,20 +46,116 @@ type FreeTierResponse =
   | { hasFullAccess: true }
   | QuestionBankFreeTierStatus;
 
-export function useQuestionBankFreeTier(hasFullAccess: boolean) {
-  const [status, setStatus] = useState<QuestionBankFreeTierStatus | null>(null);
-  const [isLoading, setIsLoading] = useState(!hasFullAccess);
+function statusFromHomeCache(): QuestionBankFreeTierStatus | null {
+  const cached = readFreeTierHomeCache();
+  if (!cached) return null;
+
+  const bySubject = Object.fromEntries(
+    FREE_TIER_PREVIEW_SUBJECTS.map((subject) => {
+      const row = cached.bySubject[subject];
+      return [
+        subject,
+        {
+          subject,
+          limit: FREE_TIER_LIMIT_PER_SUBJECT,
+          attemptedCount: row.attemptedCount,
+          remaining: row.remaining,
+          isExhausted: row.isExhausted,
+          attemptedQuestionIds: [],
+          questions: [],
+          remainingQuestions: [],
+        } satisfies SubjectFreeTierStatus,
+      ];
+    }),
+  ) as Record<FreeTierPreviewSubject, SubjectFreeTierStatus>;
+
+  const totalAttempted = FREE_TIER_PREVIEW_SUBJECTS.reduce(
+    (sum, subject) => sum + bySubject[subject].attemptedCount,
+    0,
+  );
+  const totalRemaining = FREE_TIER_PREVIEW_SUBJECTS.reduce(
+    (sum, subject) => sum + bySubject[subject].remaining,
+    0,
+  );
+
+  return {
+    hasFullAccess: false,
+    subject: "Math 1",
+    limit: FREE_TIER_LIMIT_PER_SUBJECT,
+    limitPerSubject: FREE_TIER_LIMIT_PER_SUBJECT,
+    attemptedCount: bySubject["Math 1"].attemptedCount,
+    remaining: bySubject["Math 1"].remaining,
+    isExhausted: bySubject["Math 1"].isExhausted,
+    attemptedQuestionIds: [],
+    questions: [],
+    remainingQuestions: [],
+    bySubject,
+    totalAttempted,
+    totalRemaining,
+    anyPreviewAvailable: cached.anyPreviewAvailable,
+    requiresAuth: false,
+  };
+}
+
+function persistHomeCache(data: QuestionBankFreeTierStatus) {
+  const bySubject = Object.fromEntries(
+    FREE_TIER_PREVIEW_SUBJECTS.map((subject) => {
+      const row = data.bySubject[subject];
+      return [
+        subject,
+        {
+          attemptedCount: row.attemptedCount,
+          remaining: row.remaining,
+          isExhausted: row.isExhausted,
+        } satisfies FreeTierHomeSubjectCache,
+      ];
+    }),
+  ) as Record<FreeTierPreviewSubject, FreeTierHomeSubjectCache>;
+
+  writeFreeTierHomeCache({
+    anyPreviewAvailable: data.anyPreviewAvailable,
+    bySubject,
+  });
+}
+
+type UseQuestionBankFreeTierOptions = {
+  /** When false, skip network (e.g. paid user or access still resolving). */
+  enabled?: boolean;
+  /** Home only needs counts; practice session start should use full payloads. */
+  summary?: boolean;
+};
+
+export function useQuestionBankFreeTier(
+  hasFullAccess: boolean,
+  options?: UseQuestionBankFreeTierOptions,
+) {
+  const enabled = options?.enabled ?? !hasFullAccess;
+  const summary = options?.summary ?? false;
+
+  const [status, setStatus] = useState<QuestionBankFreeTierStatus | null>(() => {
+    if (hasFullAccess || !enabled) return null;
+    return statusFromHomeCache();
+  });
+  const [isLoading, setIsLoading] = useState(() => {
+    if (hasFullAccess || !enabled) return false;
+    return statusFromHomeCache() == null;
+  });
 
   const refresh = useCallback(async () => {
-    if (hasFullAccess) {
+    if (hasFullAccess || !enabled) {
       setStatus(null);
       setIsLoading(false);
       return;
     }
 
-    setIsLoading(true);
+    const hadCache = statusFromHomeCache() != null;
+    if (!hadCache) setIsLoading(true);
+
     try {
-      const res = await fetch("/api/question-bank/free-tier", {
+      const url = summary
+        ? "/api/question-bank/free-tier?summary=1"
+        : "/api/question-bank/free-tier";
+      const res = await fetch(url, {
         credentials: "include",
       });
       if (!res.ok) throw new Error("Failed to load free tier status");
@@ -58,14 +163,16 @@ export function useQuestionBankFreeTier(hasFullAccess: boolean) {
       if ("hasFullAccess" in data && data.hasFullAccess) {
         setStatus(null);
       } else {
-        setStatus(data as QuestionBankFreeTierStatus);
+        const next = data as QuestionBankFreeTierStatus;
+        setStatus(next);
+        persistHomeCache(next);
       }
     } catch {
-      setStatus(null);
+      if (!hadCache) setStatus(null);
     } finally {
       setIsLoading(false);
     }
-  }, [hasFullAccess]);
+  }, [enabled, hasFullAccess, summary]);
 
   useEffect(() => {
     void refresh();

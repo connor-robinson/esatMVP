@@ -153,35 +153,36 @@ export function NsaaYearQuickConverter({ data }: Props) {
         </div>
       </section>
 
-      <div className="relative isolate overflow-hidden">
-        <Image
-          src="/images/score-converter/esat-score-converter-preview.png"
-          alt=""
-          width={1024}
-          height={768}
-          className="h-40 w-full scale-110 object-cover object-[center_78%] blur-md sm:h-44"
-          aria-hidden
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-background/55 backdrop-blur-[2px]"
-        />
-        <div className="absolute inset-0 flex items-center justify-center gap-5 px-4 sm:gap-8 sm:px-6">
-          <div className="min-w-0 text-center sm:text-left">
-            <p className="text-2xl font-bold tabular-nums tracking-tight text-text sm:text-3xl">
-              {percentileLabel ?? "– percentile"}
-            </p>
-            <p className="mt-1 max-w-xs text-sm font-medium text-text/80 sm:text-base">
-              View where you rank amongst others
-            </p>
-            <Link
-              href={fullHref}
-              className="mt-3 inline-flex items-center gap-2 rounded-organic-md bg-secondary px-4 py-2 text-sm font-semibold text-background transition-colors hover:brightness-110"
-            >
-              Open full converter
-              <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
-            </Link>
-          </div>
+      <div className="relative isolate grid overflow-hidden sm:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+        <div className="relative min-h-[9.5rem] overflow-hidden sm:min-h-[11rem]">
+          <Image
+            src="/images/score-converter/esat-score-converter-preview.png"
+            alt=""
+            width={1024}
+            height={768}
+            className="absolute inset-0 h-full w-full scale-110 object-cover object-[center_78%] blur-md"
+            aria-hidden
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-background/45"
+          />
+        </div>
+
+        <div className="relative flex flex-col items-center justify-center gap-2.5 bg-surface-elevated/90 px-5 py-6 text-center backdrop-blur-sm sm:items-start sm:px-6 sm:py-5 sm:text-left">
+          <p className="text-2xl font-bold tabular-nums tracking-tight text-text sm:text-3xl">
+            {percentileLabel ?? "– percentile"}
+          </p>
+          <p className="max-w-xs text-sm font-medium text-text-muted sm:text-base">
+            View where you rank amongst others
+          </p>
+          <Link
+            href={fullHref}
+            className="inline-flex items-center gap-2 rounded-organic-md bg-secondary px-4 py-2 text-sm font-semibold text-background transition-colors hover:brightness-110"
+          >
+            Open full converter
+            <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
+          </Link>
         </div>
       </div>
     </div>

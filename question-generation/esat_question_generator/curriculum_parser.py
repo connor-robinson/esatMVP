@@ -6,8 +6,26 @@ Parses ESAT_CURRICULUM.json and provides schema-based filtering and topic mappin
 
 import json
 import os
+import re
 from typing import Dict, List, Optional, Tuple
 from pathlib import Path
+
+
+# Display labels stored by legacy db_sync / reclass scripts -> curriculum paper_id
+_SUBJECT_LABEL_TO_PAPER_ID: Dict[str, str] = {
+    "mathematics 1": "math1",
+    "math 1": "math1",
+    "mathematics 2": "math2",
+    "math 2": "math2",
+    "physics": "physics",
+    "chemistry": "chemistry",
+    "biology": "biology",
+}
+
+_PREFIXED_TAG_RE = re.compile(
+    r"^(M1-|M2-|P-|chemistry-|biology-)([A-Za-z0-9]+)$",
+    re.IGNORECASE,
+)
 
 
 def _default_curriculum_path() -> Path:
@@ -22,6 +40,145 @@ def _default_curriculum_path() -> Path:
         if p.is_file():
             return p
     return candidates[0]
+
+
+def esat_paper_id_from_row(
+    *,
+    schema_id: str = "",
+    subjects: str = "",
+    paper: Optional[str] = None,
+) -> Optional[str]:
+    """Resolve ESAT curriculum ``paper_id`` from DB row fields."""
+    subj = (subjects or "").strip()
+    if subj:
+        key = subj.lower()
+        if key in _SUBJECT_LABEL_TO_PAPER_ID:
+            return _SUBJECT_LABEL_TO_PAPER_ID[key]
+    pap = (paper or "").strip()
+    if pap in ("Math 1", "Math 2"):
+        return "math1" if pap == "Math 1" else "math2"
+    if not schema_id:
+        return None
+    c0 = schema_id[0].upper()
+    if c0 == "M":
+        return "math2" if subj == "Math 2" else "math1"
+    if c0 == "P":
+        return "physics"
+    if c0 == "C":
+        return "chemistry"
+    if c0 == "B":
+        return "biology"
+    return None
+
+
+def _bare_digit_to_raw_code(tag: str, paper_id: str) -> Optional[str]:
+    t = tag.strip()
+    if not re.fullmatch(r"[1-9]|1[01]", t):
+        return None
+    n = t
+    if paper_id == "math1":
+        return f"M{n}"
+    if paper_id == "math2":
+        return f"MM{n}"
+    if paper_id == "physics":
+        return f"P{n}"
+    if paper_id == "biology" and 1 <= int(t) <= 11:
+        return f"B{n}"
+    return None
+
+
+def _display_label_to_prefixed_code(tag: str, parser: "CurriculumParser") -> Optional[str]:
+    """``Physics - Mechanics`` / ``Biology - Cells`` -> prefixed curriculum code."""
+    if " - " not in tag:
+        return None
+    subj_part, title_part = tag.split(" - ", 1)
+    paper_id = _SUBJECT_LABEL_TO_PAPER_ID.get(subj_part.strip().lower())
+    if not paper_id:
+        return None
+    title = title_part.strip()
+    paper = parser.papers_by_id.get(paper_id)
+    if not paper:
+        return None
+    for topic in paper.get("topics", []):
+        if (topic.get("title") or "").strip() == title:
+            raw = topic.get("code", "")
+            if raw:
+                return parser._get_prefixed_code(paper_id, str(raw))
+    return None
+
+
+def canonicalize_esat_tag(
+    tag: Optional[str],
+    *,
+    schema_id: str = "",
+    subjects: str = "",
+    paper_id: Optional[str] = None,
+    parser: Optional["CurriculumParser"] = None,
+) -> Optional[str]:
+    """
+    Normalize any stored ESAT tag to prefixed curriculum code (e.g. ``M1-M4``, ``P-P3``).
+
+    Handles bare labeler digits, raw codes (``M4``, ``P2``), prefixed codes, and legacy
+    ``Subject - Topic title`` strings.
+    """
+    if tag is None:
+        return None
+    t = str(tag).strip()
+    if not t:
+        return None
+
+    p = parser or CurriculumParser()
+    pid = paper_id or esat_paper_id_from_row(schema_id=schema_id, subjects=subjects)
+    if not pid:
+        pid = esat_paper_id_from_row(schema_id=schema_id)
+
+    m = _PREFIXED_TAG_RE.match(t)
+    if m:
+        norm = p.normalize_topic_code(t)
+        return norm or t
+
+    if pid:
+        from_title = _display_label_to_prefixed_code(t, p)
+        if from_title:
+            return from_title
+
+        bare_raw = _bare_digit_to_raw_code(t, pid) if pid else None
+        if bare_raw:
+            norm = p.normalize_topic_code(bare_raw)
+            if norm:
+                return norm
+
+    coerced = coerce_classifier_topic_code(schema_id, t)
+    norm = p.normalize_topic_code(coerced)
+    if norm:
+        return norm
+    if coerced != t and p.validate_topic_code(coerced):
+        return coerced
+    return t
+
+
+def canonicalize_esat_tags_list(
+    tags: Optional[List[str]],
+    *,
+    schema_id: str = "",
+    subjects: str = "",
+    paper_id: Optional[str] = None,
+    parser: Optional["CurriculumParser"] = None,
+) -> List[str]:
+    if not tags:
+        return []
+    out: List[str] = []
+    for raw in tags:
+        c = canonicalize_esat_tag(
+            raw,
+            schema_id=schema_id,
+            subjects=subjects,
+            paper_id=paper_id,
+            parser=parser,
+        )
+        if c and c not in out:
+            out.append(c)
+    return out
 
 
 def coerce_classifier_topic_code(schema_id: str, code: str) -> str:
@@ -306,43 +463,36 @@ class CurriculumParser:
         Map a tag code to its curriculum text name.
         
         Args:
-            tag_code: Tag code (e.g., "M1", "MM1", "P1", "C1", "B1")
+            tag_code: Tag code (e.g., "M1", "MM1", "P1", "M1-M4", "P-P3")
             paper_id: Paper ID (e.g., "math1", "math2", "physics", "chemistry", "biology")
         
         Returns:
             Topic title text (e.g., "Units", "Algebra and functions", "Electricity")
             Returns the original tag_code if mapping not found
         """
-        # Get the paper
         paper = self.papers_by_id.get(paper_id)
         if not paper:
             return tag_code
-        
-        # Extract the numeric part from tag code
-        # Handle different formats: M1, MM1, P1, C1, B1
-        numeric_part = None
-        if tag_code.startswith("MM"):
-            numeric_part = tag_code[2:]
-        elif len(tag_code) > 1 and tag_code[0].isalpha():
-            numeric_part = tag_code[1:]
-        
-        if numeric_part is None:
-            return tag_code
-        
-        # For Math 2, handle both M1-M7 and MM1-MM7 formats
-        if paper_id == "math2":
-            # Try MM format first
-            for topic in paper["topics"]:
-                if topic["code"] == numeric_part:
-                    return topic["title"]
-            # If not found, return original
-            return tag_code
-        
-        # For other papers, match by numeric code
+
+        norm = self.normalize_topic_code(tag_code)
+        lookup = norm or tag_code
+
+        prefix_for_paper = {
+            "math1": "M1-",
+            "math2": "M2-",
+            "physics": "P-",
+            "chemistry": "chemistry-",
+            "biology": "biology-",
+        }.get(paper_id, "")
+
+        raw = lookup
+        if prefix_for_paper and lookup.startswith(prefix_for_paper):
+            raw = lookup[len(prefix_for_paper) :]
+
         for topic in paper["topics"]:
-            if topic["code"] == numeric_part:
+            if topic["code"] == raw or topic["code"] == lookup:
                 return topic["title"]
-        
+
         return tag_code
     
     def map_tags_to_text(self, primary_tag: Optional[str], secondary_tags: Optional[List[str]], paper_id: str) -> Tuple[Optional[str], List[str]]:

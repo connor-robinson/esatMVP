@@ -164,6 +164,9 @@ def main(argv: Optional[List[str]] = None) -> int:
                     "quality_gate_job_id": job_id,
                     "quality_gate_model": used_model,
                 }
+                if content_patch:
+                    patch.update(content_patch)
+                    patch["quality_gate_payload"] = payload
                 if ns.mark_needs_review and result.curriculum_match in ("off_syllabus", "borderline"):
                     patch["status"] = "needs_review"
                 update_question_assessment(client, qid, patch)

@@ -2,7 +2,7 @@
 
 import { QuestionBankHomeScreen } from "@/components/questionBank/QuestionBankHomeScreen";
 
-/** Question Bank overview: progress and subject tiles */
+/** Question Bank overview: subject tiles */
 export default function QuestionsHomePage() {
   return <QuestionBankHomeScreen />;
 }

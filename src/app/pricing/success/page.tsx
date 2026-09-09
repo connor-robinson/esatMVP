@@ -6,10 +6,9 @@ import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { CheckCircle2, Loader2, AlertCircle } from "lucide-react";
 import { trackEvent } from "@/lib/ga";
+import { writeCachedHasFullAccess } from "@/hooks/useSubscription";
 
 type SyncState = "syncing" | "unlocked" | "pending" | "error";
-
-const ACCESS_CACHE_KEY = "nocalc:subscriptionHasFullAccess";
 
 function PricingSuccessContent() {
   const router = useRouter();
@@ -68,7 +67,7 @@ function PricingSuccessContent() {
 
           if (status.hasFullAccess) {
             try {
-              sessionStorage.setItem(ACCESS_CACHE_KEY, "true");
+              writeCachedHasFullAccess(true);
             } catch {
               /* ignore */
             }

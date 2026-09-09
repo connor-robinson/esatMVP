@@ -20,6 +20,9 @@ import {
 import { CommunityStatsPanel } from '@/components/questionBank/CommunityStatsPanel';
 import { QuestionBankSessionResults } from '@/components/questionBank/QuestionBankSessionResults';
 import { QuestionBankSessionBar } from '@/components/questionBank/QuestionBankSessionBar';
+import { QuestionBankEsatSessionShell } from '@/components/questionBank/QuestionBankEsatSessionShell';
+import { QuestionBankUiPreferenceModal } from '@/components/questionBank/QuestionBankUiPreferenceModal';
+import { QuestionBankHomeScreen } from '@/components/questionBank/QuestionBankHomeScreen';
 import {
   QuestionBankTimeUpModal,
   QUESTION_BANK_TIME_EXTENSION_MINUTES,
@@ -56,24 +59,39 @@ import type {
   UiDifficultyLabel,
 } from '@/types/questionBank';
 import {
+  QUESTION_BANK_HOME_LAUNCH_EVENT,
   QUESTION_BANK_HOME_LAUNCH_KEY,
   type QuestionBankHomeLaunchPayload,
 } from '@/lib/questionBank/homeLaunch';
+import {
+  resolveHookQuestionsForSubjects,
+  sessionQuestionPoolLimit,
+  takeHomeLaunchQuestionsPrefetch,
+} from '@/lib/questionBank/sessionLaunchPrefetch';
 import {
   DIFFICULTY_MIX_PRESETS,
   sampleQuestionsByDifficultyMix,
   type DifficultyMixPreset,
 } from '@/lib/questionBank/difficultyMix';
+import { buildSessionQuestionsWithHookLead } from '@/lib/questionBank/sessionHookLead';
 import {
   resolveFreeTierLaunch,
   clearFreeTierLaunch,
   hasFreeTierLaunchPayload,
+  FREE_TIER_LAUNCH_EVENT,
 } from '@/lib/questionBank/freeTierLaunch';
 import {
   FREE_TIER_LIMIT_PER_SUBJECT,
   type FreeTierPreviewSubject,
 } from '@/lib/questionBank/freeTierQuestions';
 import { cn, formatTime } from '@/lib/utils';
+import {
+  readSessionUiVariant,
+  writeSessionUiVariant,
+  writeSessionUiSurveyChoice,
+  shouldPromptSessionUiSurvey,
+  type QuestionBankSessionUiVariant,
+} from '@/lib/questionBank/sessionUiPreference';
 
 function hasSessionBootPayload(): boolean {
   if (typeof window === 'undefined') return false;
@@ -90,12 +108,16 @@ export default function QuestionBankPage() {
   const session = useSupabaseSession();
   const isSessionMode = searchParams.get('session') === 'true';
   const { hasFullAccess, isLoading: subscriptionLoading } = useSubscription();
-  const treatAsFullAccess = subscriptionLoading || hasFullAccess;
+  // Wait for a real access answer before starting paid vs free session boots.
+  const treatAsFullAccess = hasFullAccess;
+  const accessPending = subscriptionLoading;
   const {
     refresh: refreshFreeTier,
     subjectStatus,
     anyPreviewAvailable,
-  } = useQuestionBankFreeTier(treatAsFullAccess);
+  } = useQuestionBankFreeTier(treatAsFullAccess, {
+    enabled: !treatAsFullAccess && !accessPending,
+  });
   const [freeTierBlocked, setFreeTierBlocked] = useState(false);
   const [freeTierBlockedSubject, setFreeTierBlockedSubject] =
     useState<FreeTierPreviewSubject | null>(null);
@@ -171,6 +193,18 @@ export default function QuestionBankPage() {
   const [incorrectAnswers, setIncorrectAnswers] = useState<Set<string>>(
     new Set(),
   );
+  const [sessionUiVariant, setSessionUiVariant] =
+    useState<QuestionBankSessionUiVariant>('esat');
+  const [flaggedQuestionIds, setFlaggedQuestionIds] = useState<Set<string>>(
+    () => new Set(),
+  );
+  const [uiSurveyOpen, setUiSurveyOpen] = useState(false);
+  const [uiSurveyDismissedSession, setUiSurveyDismissedSession] =
+    useState(false);
+
+  useEffect(() => {
+    setSessionUiVariant(readSessionUiVariant());
+  }, []);
 
   const [communityStatsByQuestionId, setCommunityStatsByQuestionId] = useState<
     Record<string, QuestionBankCommunityStats>
@@ -276,6 +310,7 @@ export default function QuestionBankPage() {
 
       if (!correct && !revealed) {
         setIncorrectAnswers((prev) => new Set(prev).add(answer));
+        setCurrentSelection(null);
         return;
       }
 
@@ -460,7 +495,12 @@ export default function QuestionBankPage() {
           return true;
         }
 
-        const sessionQs = remainingQs.slice(0, requested);
+        const sessionQs = buildSessionQuestionsWithHookLead({
+          pool: remainingQs,
+          hookQuestions: remainingQs,
+          count: requested,
+          mix: 'Auto',
+        });
         if (sessionQs.length === 0) {
           setFreeTierBlockedSubject(subject);
           setFreeTierBlockedReason('exhausted');
@@ -634,11 +674,12 @@ export default function QuestionBankPage() {
     initializeTrackedSession,
   ]);
 
-  // Session-only: redirect to home when there is no launch payload or active session
+  // Prefer the canonical /questions home URL when there is no session to run.
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (sessionView === 'complete' || sessionView === 'review') return;
     if (freeTierBlocked) return;
+    if (accessPending) return;
     if (
       freeTierLaunchInProgressRef.current ||
       sessionStarting ||
@@ -649,6 +690,7 @@ export default function QuestionBankPage() {
     }
     router.replace('/questions');
   }, [
+    accessPending,
     activeSession,
     freeTierBlocked,
     router,
@@ -838,6 +880,7 @@ export default function QuestionBankPage() {
         subjects?: SubjectFilter[];
         testType?: TestTypeFilter;
         source?: QuestionBankSessionSource;
+        prefetchedQuestions?: Promise<QuestionBankQuestion[] | null> | null;
       },
     ) => {
       const params = new URLSearchParams();
@@ -880,28 +923,44 @@ export default function QuestionBankPage() {
         params.append('tags', config.topics.join(','));
       }
 
-      params.append('limit', Math.max(config.count * 4, 40).toString());
+      params.append('limit', sessionQuestionPoolLimit(config.count).toString());
       params.append('random', 'true');
 
       setSessionStarting(true);
       try {
-        const response = await fetch(
-          `/api/question-bank/questions?${params.toString()}`,
-        );
-        if (!response.ok) throw new Error('Failed to fetch session questions');
+        let questions: QuestionBankQuestion[] | null = null;
+        if (scope?.prefetchedQuestions) {
+          questions = await scope.prefetchedQuestions;
+        }
+        if (!questions) {
+          const response = await fetch(
+            `/api/question-bank/questions?${params.toString()}`,
+          );
+          if (!response.ok) throw new Error('Failed to fetch session questions');
 
-        const data = await response.json();
-        if (data.questions && data.questions.length > 0) {
-          const pool = (data.questions as QuestionBankQuestion[]).filter((q) =>
+          const data = await response.json();
+          questions = Array.isArray(data.questions) ? data.questions : null;
+        }
+
+        if (questions && questions.length > 0) {
+          const pool = questions.filter((q) =>
             config.difficulties.length === 0
               ? true
               : config.difficulties.includes(q.difficulty),
           );
-          const sessionQs = sampleQuestionsByDifficultyMix(
+          const hookQuestions = await resolveHookQuestionsForSubjects(
+            subjectsResolved,
             pool,
-            config.count,
-            mix,
           );
+          const sessionQs =
+            hookQuestions.length > 0
+              ? buildSessionQuestionsWithHookLead({
+                  pool,
+                  hookQuestions,
+                  count: config.count,
+                  mix,
+                })
+              : sampleQuestionsByDifficultyMix(pool, config.count, mix);
 
           if (sessionQs.length > 0) {
             setSessionQuestions(sessionQs);
@@ -952,83 +1011,100 @@ export default function QuestionBankPage() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    if (treatAsFullAccess) return;
 
-    const launch = resolveFreeTierLaunch(window.location.search);
-    if (!launch) return;
+    const bootFreeTierLaunch = () => {
+      if (accessPending || treatAsFullAccess) return;
+      const launch = resolveFreeTierLaunch(window.location.search);
+      if (!launch) return;
 
-    clearFreeTierLaunch();
-    // Drop startSubject from the URL so refresh does not restart the preview.
-    if (window.location.search.includes('startSubject=')) {
-      router.replace('/questions/questionbank', { scroll: false });
-    }
-    freeTierLaunchInProgressRef.current = true;
-    setSessionStarting(true);
-    void startFreeTierSession({ subject: launch.subject });
-  }, [startFreeTierSession, treatAsFullAccess, router]);
+      clearFreeTierLaunch();
+      if (window.location.search.includes('startSubject=')) {
+        router.replace('/questions/questionbank', { scroll: false });
+      }
+      freeTierLaunchInProgressRef.current = true;
+      setSessionStarting(true);
+      void startFreeTierSession({ subject: launch.subject });
+    };
+
+    bootFreeTierLaunch();
+    window.addEventListener(FREE_TIER_LAUNCH_EVENT, bootFreeTierLaunch);
+    return () => {
+      window.removeEventListener(FREE_TIER_LAUNCH_EVENT, bootFreeTierLaunch);
+    };
+  }, [startFreeTierSession, treatAsFullAccess, accessPending, router]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    if (!treatAsFullAccess) return;
 
-    const raw = sessionStorage.getItem(QUESTION_BANK_HOME_LAUNCH_KEY);
-    if (!raw) return;
+    const bootHomeLaunch = () => {
+      if (accessPending || !treatAsFullAccess) return;
 
-    setSessionStarting(true);
+      const raw = sessionStorage.getItem(QUESTION_BANK_HOME_LAUNCH_KEY);
+      if (!raw) return;
 
-    let data: QuestionBankHomeLaunchPayload;
-    try {
-      data = JSON.parse(raw);
-    } catch {
+      setSessionStarting(true);
+
+      let data: QuestionBankHomeLaunchPayload;
+      try {
+        data = JSON.parse(raw);
+      } catch {
+        sessionStorage.removeItem(QUESTION_BANK_HOME_LAUNCH_KEY);
+        setSessionStarting(false);
+        return;
+      }
       sessionStorage.removeItem(QUESTION_BANK_HOME_LAUNCH_KEY);
-      return;
-    }
-    sessionStorage.removeItem(QUESTION_BANK_HOME_LAUNCH_KEY);
 
-    const d =
-      data.difficultyMix === 'Easy' ||
-      data.difficultyMix === 'Medium' ||
-      data.difficultyMix === 'Hard'
-        ? data.difficultyMix
-        : data.difficulties.length === 1 &&
-            (data.difficulties[0] === 'Easy' ||
-              data.difficulties[0] === 'Medium' ||
-              data.difficulties[0] === 'Hard')
-          ? data.difficulties[0]
-          : 'All';
+      const d =
+        data.difficultyMix === 'Easy' ||
+        data.difficultyMix === 'Medium' ||
+        data.difficultyMix === 'Hard'
+          ? data.difficultyMix
+          : data.difficulties.length === 1 &&
+              (data.difficulties[0] === 'Easy' ||
+                data.difficulties[0] === 'Medium' ||
+                data.difficulties[0] === 'Hard')
+            ? data.difficulties[0]
+            : 'All';
 
-    setFilters({
-      testType: data.testType,
-      subject:
-        data.subjects.length === 1 ? data.subjects[0] : data.subjects,
-      difficulty: d,
-      searchTag: '',
-      attemptedStatus: 'Mix',
-      attemptResult: [],
-    });
+      setFilters({
+        testType: data.testType,
+        subject:
+          data.subjects.length === 1 ? data.subjects[0] : data.subjects,
+        difficulty: d,
+        searchTag: '',
+        attemptedStatus: 'Mix',
+        attemptResult: [],
+      });
 
-    void handleStartSession(
-      {
-        count: data.questionCount,
-        topics: [],
-        difficulties: data.difficulties,
-        timeLimitMinutes: data.timeLimitMinutes,
-        uiDifficulties: data.uiDifficulties,
-        difficultyMix: data.difficultyMix,
-      },
-      { subjects: data.subjects, testType: data.testType },
-    );
-  }, [handleStartSession, setFilters, treatAsFullAccess]);
+      void handleStartSession(
+        {
+          count: data.questionCount,
+          topics: [],
+          difficulties: data.difficulties,
+          timeLimitMinutes: data.timeLimitMinutes,
+          uiDifficulties: data.uiDifficulties,
+          difficultyMix: data.difficultyMix,
+        },
+        {
+          subjects: data.subjects,
+          testType: data.testType,
+          prefetchedQuestions: takeHomeLaunchQuestionsPrefetch(data),
+        },
+      );
+    };
+
+    bootHomeLaunch();
+    window.addEventListener(QUESTION_BANK_HOME_LAUNCH_EVENT, bootHomeLaunch);
+    return () => {
+      window.removeEventListener(QUESTION_BANK_HOME_LAUNCH_EVENT, bootHomeLaunch);
+    };
+  }, [handleStartSession, setFilters, treatAsFullAccess, accessPending]);
 
   const handleNextQuestionInSession = async () => {
     ensureCurrentQuestionLogged();
     const nextIndex = sessionCurrentIndex + 1;
     if (nextIndex < sessionQuestions.length) {
-      setSessionCurrentIndex(nextIndex);
-      updateCurrentQuestion(sessionQuestions[nextIndex]);
-      setAnswerRevealed(false);
-      setCurrentSelection(null);
-      setIncorrectAnswers(new Set());
+      loadSessionQuestionAt(nextIndex);
       return;
     }
     await completeSession();
@@ -1037,6 +1113,71 @@ export default function QuestionBankPage() {
   useEffect(() => {
     questionStartedAtRef.current = Date.now();
   }, [currentQuestion?.id]);
+
+  useEffect(() => {
+    if (sessionView !== 'playing') return;
+    if (sessionUiVariant !== 'esat') return;
+    if (uiSurveyDismissedSession || uiSurveyOpen) return;
+    if (!shouldPromptSessionUiSurvey(sessionAttemptLog.length)) return;
+    setUiSurveyOpen(true);
+  }, [
+    sessionAttemptLog.length,
+    sessionUiVariant,
+    sessionView,
+    uiSurveyDismissedSession,
+    uiSurveyOpen,
+  ]);
+
+  const applySessionUiVariant = useCallback(
+    (variant: QuestionBankSessionUiVariant) => {
+      writeSessionUiVariant(variant);
+      setSessionUiVariant(variant);
+    },
+    [],
+  );
+
+  const loadSessionQuestionAt = useCallback(
+    (index: number) => {
+      const nextQuestion = sessionQuestions[index];
+      if (!nextQuestion) return;
+
+      const attempt =
+        sessionAttemptLog.find((a) => a.questionId === nextQuestion.id) ??
+        sessionAttemptLog.find((a) => a.questionNumber === index + 1) ??
+        null;
+
+      setShowDetailedExplanation(false);
+      setShowHint(false);
+      setSessionCurrentIndex(index);
+
+      if (attempt) {
+        const wrongs = new Set(attempt.wrongAnswersBefore ?? []);
+        if (attempt.userAnswer && !attempt.isCorrect) {
+          wrongs.add(attempt.userAnswer);
+        }
+        updateCurrentQuestion(nextQuestion, {
+          isAnswered: true,
+          selectedAnswer: attempt.userAnswer || null,
+          isCorrect: attempt.isCorrect,
+        });
+        setAnswerRevealed(Boolean(attempt.wasRevealed || attempt.isCorrect));
+        setCurrentSelection(
+          attempt.userAnswer ||
+            (attempt.isCorrect || attempt.wasRevealed
+              ? nextQuestion.correct_option
+              : null),
+        );
+        setIncorrectAnswers(wrongs);
+        return;
+      }
+
+      updateCurrentQuestion(nextQuestion);
+      setAnswerRevealed(false);
+      setCurrentSelection(null);
+      setIncorrectAnswers(new Set());
+    },
+    [sessionAttemptLog, sessionQuestions, updateCurrentQuestion],
+  );
 
   const enterReviewAt = useCallback(
     (index: number) => {
@@ -1174,7 +1315,167 @@ export default function QuestionBankPage() {
   }
 
   if (!activeSession && !showSessionLoading) {
-    return <LoadingPage variant="session" />;
+    // Alias for /questions when there is no live/bootstrapping session.
+    return <QuestionBankHomeScreen />;
+  }
+
+  const submitCurrentSelection = useCallback(() => {
+    if (sessionView === 'review' || !currentQuestion) return;
+    if (!currentSelection || incorrectAnswers.has(currentSelection)) return;
+    const correct = currentSelection === currentQuestion.correct_option;
+    handleSessionAnswerSubmit(currentSelection, correct, {
+      wasRevealed: answerRevealed,
+      usedHint: showHint,
+      wrongAnswersBefore: Array.from(incorrectAnswers),
+      timeUntilCorrectMs: correct
+        ? deadline
+          ? Math.max(0, deadline - Date.now())
+          : null
+        : null,
+    });
+  }, [
+    answerRevealed,
+    currentQuestion,
+    currentSelection,
+    deadline,
+    handleSessionAnswerSubmit,
+    incorrectAnswers,
+    sessionView,
+    showHint,
+  ]);
+
+  const sharedSolutionModals =
+    currentQuestion ? (
+      <Fragment>
+        <SolutionModal
+          isOpen={showDetailedExplanation && sessionUiVariant === 'classic'}
+          onClose={() => setShowDetailedExplanation(false)}
+          solution_reasoning={currentQuestion.solution_reasoning}
+          graphSpecs={currentQuestion.graph_specs}
+        />
+        <HintModal
+          isOpen={showHint && !!currentQuestion.solution_key_insight}
+          onClose={() => setShowHint(false)}
+          content={currentQuestion.solution_key_insight}
+        />
+        <EditModal
+          isOpen={editModalOpen}
+          onClose={() => setEditModalOpen(false)}
+          title={editModalTitle}
+          content={editModalContent}
+          onSave={handleSaveEdit}
+        />
+      </Fragment>
+    ) : null;
+
+  if (activeSession && currentQuestion && sessionUiVariant === 'esat') {
+    return (
+      <Fragment>
+        {showSessionLoading ? <LoadingPage variant="session" /> : null}
+        <QuestionBankEsatSessionShell
+          question={currentQuestion}
+          questions={sessionQuestions}
+          currentIndex={sessionCurrentIndex}
+          attemptLog={sessionAttemptLog}
+          remainingTimeMs={
+            remainingTime != null ? remainingTime * 1000 : null
+          }
+          timerLabel={formatTimerDisplay()}
+          reviewMode={sessionView === 'review'}
+          currentSelection={currentSelection}
+          incorrectAnswers={incorrectAnswers}
+          isAnswered={isAnswered}
+          isCorrect={isCorrect}
+          answerRevealed={
+            sessionView === 'review' ? true : answerRevealed
+          }
+          showLeaveConfirm={showLeaveConfirm}
+          flaggedIds={flaggedQuestionIds}
+          onToggleFlag={(id) => {
+            setFlaggedQuestionIds((prev) => {
+              const next = new Set(prev);
+              if (next.has(id)) next.delete(id);
+              else next.add(id);
+              return next;
+            });
+          }}
+          onSelectionChange={setCurrentSelection}
+          onSubmitAnswer={submitCurrentSelection}
+          onRevealAnswer={() => {
+            setAnswerRevealed(true);
+            setCurrentSelection(currentQuestion.correct_option);
+          }}
+          onShowExplanation={() => setShowDetailedExplanation(true)}
+          onShowHint={() => setShowHint(true)}
+          hasHint={!!currentQuestion.solution_key_insight}
+          onNext={() => {
+            if (sessionView === 'review') {
+              if (sessionCurrentIndex < sessionQuestions.length - 1) {
+                enterReviewAt(sessionCurrentIndex + 1);
+              } else {
+                exitReviewToSummary();
+              }
+              return;
+            }
+            void handleNextQuestionInSession();
+          }}
+          onPrevious={() => {
+            if (sessionCurrentIndex <= 0) return;
+            if (sessionView === 'review') {
+              enterReviewAt(sessionCurrentIndex - 1);
+              return;
+            }
+            loadSessionQuestionAt(sessionCurrentIndex - 1);
+          }}
+          onJumpTo={(index) => {
+            if (sessionView === 'review') {
+              enterReviewAt(index);
+              return;
+            }
+            loadSessionQuestionAt(index);
+          }}
+          onOpenLeaveConfirm={() => {
+            if (sessionView === 'review') {
+              exitReviewToSummary();
+              return;
+            }
+            setShowLeaveConfirm(true);
+          }}
+          onCloseLeaveConfirm={() => setShowLeaveConfirm(false)}
+          onSaveAndLeave={handleSaveAndLeave}
+          onDiscardSession={() => void handleDiscardSession()}
+          onUseClassicUi={() => applySessionUiVariant('classic')}
+          showExplanation={showDetailedExplanation}
+          explanationContent={currentQuestion.solution_reasoning}
+          onCloseExplanation={() => setShowDetailedExplanation(false)}
+        />
+        {sharedSolutionModals}
+        <QuestionBankUiPreferenceModal
+          open={uiSurveyOpen}
+          onChooseEsat={() => {
+            writeSessionUiSurveyChoice('esat');
+            applySessionUiVariant('esat');
+            setUiSurveyOpen(false);
+          }}
+          onChooseClassic={() => {
+            writeSessionUiSurveyChoice('classic');
+            applySessionUiVariant('classic');
+            setUiSurveyOpen(false);
+          }}
+          onSkip={() => {
+            setUiSurveyDismissedSession(true);
+            setUiSurveyOpen(false);
+          }}
+        />
+        <QuestionBankTimeUpModal
+          open={showTimeUpModal}
+          remainingQuestions={remainingSessionQuestions}
+          extendMinutes={QUESTION_BANK_TIME_EXTENSION_MINUTES}
+          onContinueToReview={handleContinueToReviewAfterTimeout}
+          onExtendTime={handleExtendSessionTime}
+        />
+      </Fragment>
+    );
   }
 
   return (
@@ -1204,6 +1505,15 @@ export default function QuestionBankPage() {
             {/* Question Display */}
             {activeSession && currentQuestion && (
               <div className='space-y-6'>
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    className="rounded-organic-md bg-surface-mid px-3 py-1.5 text-xs font-semibold text-text-muted transition-colors hover:bg-surface-neutral hover:text-text"
+                    onClick={() => applySessionUiVariant('esat')}
+                  >
+                    New exam UI
+                  </button>
+                </div>
                 <QuestionCard
                   question={currentQuestion}
                   questionNumber={sessionCurrentIndex + 1}
@@ -1277,32 +1587,7 @@ export default function QuestionBankPage() {
                   }
                 />
 
-                {/* Detailed Explanation Modal */}
-                {currentQuestion && (
-                  <Fragment>
-                    <SolutionModal
-                      isOpen={showDetailedExplanation}
-                      onClose={() => setShowDetailedExplanation(false)}
-                      solution_reasoning={currentQuestion.solution_reasoning}
-                      graphSpecs={currentQuestion.graph_specs}
-                    />
-
-                    <HintModal
-                      isOpen={showHint && !!currentQuestion.solution_key_insight}
-                      onClose={() => setShowHint(false)}
-                      content={currentQuestion.solution_key_insight}
-                    />
-                  </Fragment>
-                )}
-
-                {/* Edit Modal */}
-                <EditModal
-                  isOpen={editModalOpen}
-                  onClose={() => setEditModalOpen(false)}
-                  title={editModalTitle}
-                  content={editModalContent}
-                  onSave={handleSaveEdit}
-                />
+                {sharedSolutionModals}
               </div>
             )}
 
@@ -1340,26 +1625,7 @@ export default function QuestionBankPage() {
               }
             }}
             onBackToSummary={exitReviewToSummary}
-            onSubmitAnswer={() => {
-              if (sessionView === 'review') return;
-              if (
-                currentSelection &&
-                !incorrectAnswers.has(currentSelection)
-              ) {
-                const correct =
-                  currentSelection === currentQuestion.correct_option;
-                handleSessionAnswerSubmit(currentSelection, correct, {
-                  wasRevealed: answerRevealed,
-                  usedHint: showHint,
-                  wrongAnswersBefore: Array.from(incorrectAnswers),
-                  timeUntilCorrectMs: correct
-                    ? deadline
-                      ? Math.max(0, deadline - Date.now())
-                      : null
-                    : null,
-                });
-              }
-            }}
+            onSubmitAnswer={submitCurrentSelection}
             onNextQuestion={() => {
               if (sessionView === 'review') {
                 if (sessionCurrentIndex < sessionQuestions.length - 1) {
@@ -1374,6 +1640,24 @@ export default function QuestionBankPage() {
           />
         )}
       </div>
+
+      <QuestionBankUiPreferenceModal
+        open={uiSurveyOpen}
+        onChooseEsat={() => {
+          writeSessionUiSurveyChoice('esat');
+          applySessionUiVariant('esat');
+          setUiSurveyOpen(false);
+        }}
+        onChooseClassic={() => {
+          writeSessionUiSurveyChoice('classic');
+          applySessionUiVariant('classic');
+          setUiSurveyOpen(false);
+        }}
+        onSkip={() => {
+          setUiSurveyDismissedSession(true);
+          setUiSurveyOpen(false);
+        }}
+      />
 
       <QuestionBankTimeUpModal
         open={showTimeUpModal}

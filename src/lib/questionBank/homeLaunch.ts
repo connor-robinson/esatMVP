@@ -1,6 +1,8 @@
 import type { SubjectFilter } from "@/types/questionBank";
 import type { DifficultyMixPreset } from "@/lib/questionBank/difficultyMix";
 
+export const QUESTION_BANK_HOME_LAUNCH_EVENT = "question-bank:home-launch";
+
 /** sessionStorage bootstrap from question bank homepage → Practice page */
 export const QUESTION_BANK_HOME_LAUNCH_KEY = "questionBankHomeLaunch";
 

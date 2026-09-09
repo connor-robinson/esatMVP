@@ -34,7 +34,14 @@ def list_papers() -> None:
     print()
 
 
-def export_rows(*, paper_id: int | None, limit: int, status: str, shuffle: bool) -> int:
+def export_rows(
+    *,
+    paper_id: int | None,
+    limit: int,
+    status: str,
+    diagram_filter: str = "all",
+    shuffle: bool,
+) -> int:
     client = make_client()
     question_ids: list[int] | None = None
     if paper_id is not None:
@@ -61,6 +68,12 @@ def export_rows(*, paper_id: int | None, limit: int, status: str, shuffle: bool)
     )
     if status != "all":
         query = query.eq("status", status)
+    if diagram_filter == "diagram":
+        query = query.contains("conversion_report", {"has_diagram": True})
+    elif diagram_filter == "needs_review":
+        query = query.contains("conversion_report", {"diagram_review_status": "needs_review"})
+    elif diagram_filter == "no_diagram":
+        query = query.contains("conversion_report", {"has_diagram": False})
     if question_ids is not None:
         query = query.in_("question_id", question_ids)
 
@@ -113,6 +126,11 @@ def main() -> int:
     parser.add_argument("--paper-id", type=int, default=None)
     parser.add_argument("--limit", type=int, default=24)
     parser.add_argument("--status", default="all", choices=["all", "auto_approved", "failed"])
+    parser.add_argument(
+        "--diagram-filter",
+        default="all",
+        choices=["all", "diagram", "needs_review", "no_diagram"],
+    )
     parser.add_argument("--shuffle", action="store_true")
     args = parser.parse_args()
 
@@ -124,6 +142,7 @@ def main() -> int:
         paper_id=args.paper_id,
         limit=args.limit,
         status=args.status,
+        diagram_filter=args.diagram_filter,
         shuffle=args.shuffle,
     )
     return 0

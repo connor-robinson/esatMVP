@@ -14,6 +14,7 @@ import {
   clearGaUserId,
   hasAnalyticsConsent,
 } from "@/lib/ga";
+import { writeCachedHasAuthUser } from "@/lib/auth/sessionPresenceCache";
 
 /** `undefined` while the browser session is still hydrating. */
 export type HydratedSession = Session | null | undefined;
@@ -70,6 +71,10 @@ function maybeTrackSignup(session: Session | null) {
   });
 }
 
+function rememberAuthPresence(session: Session | null) {
+  writeCachedHasAuthUser(Boolean(session?.user));
+}
+
 export function SupabaseSessionProvider({ children, initialSession }: SupabaseSessionProviderProps) {
   const [supabase] = useState(() => createSupabaseBrowserClient());
   // Root layout passes null (no server session). Treat that as "not hydrated yet"
@@ -81,25 +86,34 @@ export function SupabaseSessionProvider({ children, initialSession }: SupabaseSe
   useEffect(() => {
     let mounted = true;
     const hydrateTimeout = window.setTimeout(() => {
-      setSession((current) => (current === undefined ? null : current));
+      setSession((current) => {
+        if (current !== undefined) return current;
+        rememberAuthPresence(null);
+        return null;
+      });
     }, 8_000);
 
     supabase.auth
       .getSession()
       .then(({ data }) => {
         if (!mounted) return;
-        setSession(data.session ?? null);
-        if (data.session?.user?.id && hasAnalyticsConsent()) {
-          setGaUserId(data.session.user.id);
+        const next = data.session ?? null;
+        rememberAuthPresence(next);
+        setSession(next);
+        if (next?.user?.id && hasAnalyticsConsent()) {
+          setGaUserId(next.user.id);
         }
       })
       .catch(() => {
-        if (mounted) setSession(null);
+        if (!mounted) return;
+        rememberAuthPresence(null);
+        setSession(null);
       });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, newSession) => {
+      rememberAuthPresence(newSession);
       setSession(newSession);
       if (event === "SIGNED_IN") {
         maybeTrackSignup(newSession);

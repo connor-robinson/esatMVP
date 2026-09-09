@@ -313,9 +313,10 @@ describe("index hygiene: sitemap", () => {
     });
 
     expect(paths).toEqual(PUBLIC_SITEMAP_ENTRIES.map((entry) => entry.path));
-    expect(entries).toHaveLength(35);
+    expect(entries).toHaveLength(36);
     expect(isPublicSitemapPath(APP_ROUTES.scoreConverter)).toBe(true);
     expect(isPublicSitemapPath("/tools/score-converter/pat")).toBe(true);
+    expect(isPublicSitemapPath("/tools/score-converter/mat")).toBe(true);
     expect(isPublicSitemapPath("/esat-no-calculator-practice")).toBe(true);
     expect(isPublicSitemapPath("/past-papers/engaa")).toBe(true);
     expect(isPublicSitemapPath("/past-papers/nsaa")).toBe(true);

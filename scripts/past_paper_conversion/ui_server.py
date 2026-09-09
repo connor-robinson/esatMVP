@@ -80,12 +80,18 @@ def api_conversions():
     paper_id = request.args.get("paperId", type=int)
     limit = min(request.args.get("limit", 24, type=int), 100)
     status = request.args.get("status", "all")
+    diagram_filter = request.args.get("diagram", "all")
     shuffle = request.args.get("shuffle") == "1"
 
     count = export_rows(
         paper_id=paper_id,
         limit=limit,
         status=status if status in ("all", "auto_approved", "failed") else "all",
+        diagram_filter=(
+            diagram_filter
+            if diagram_filter in ("all", "diagram", "needs_review", "no_diagram")
+            else "all"
+        ),
         shuffle=shuffle,
     )
     data = json.loads((UI_DIR / "viewer_data.json").read_text(encoding="utf-8"))
@@ -104,13 +110,24 @@ def api_summary():
     conv = client.table("question_conversions").select("status, conversion_report").execute()
     rows = conv.data or []
     by_status: dict[str, int] = {}
+    diagrams = {"diagram": 0, "noDiagram": 0, "unclassified": 0, "needsReview": 0}
     for r in rows:
         s = r.get("status") or "unknown"
         by_status[s] = by_status.get(s, 0) + 1
+        report = r.get("conversion_report") or {}
+        if report.get("has_diagram") is True:
+            diagrams["diagram"] += 1
+        elif report.get("has_diagram") is False:
+            diagrams["noDiagram"] += 1
+        else:
+            diagrams["unclassified"] += 1
+        if report.get("diagram_review_status") == "needs_review":
+            diagrams["needsReview"] += 1
     return jsonify({
         "totalQuestions": total_q.count or 0,
         "conversionRows": len(rows),
         "byStatus": by_status,
+        "diagrams": diagrams,
     })
 
 

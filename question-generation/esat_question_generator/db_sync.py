@@ -433,37 +433,69 @@ class DatabaseSync:
                 elif first_char == "B":
                     paper_id = "biology"
             
-            # Map tags to text if we have a paper_id and curriculum parser
+            # Store prefixed curriculum codes (not display titles)
             primary_tag = primary_tag_code
             secondary_tags = secondary_tags_codes
             tags_confidence = tags_confidence_raw
-            
-            if paper_id and (primary_tag_code or secondary_tags_codes):
+
+            if test_type_row == "ESAT" and paper_id and (primary_tag_code or secondary_tags_codes):
                 try:
-                    from curriculum_parser import CurriculumParser
+                    from curriculum_parser import (
+                        CurriculumParser,
+                        canonicalize_esat_tag,
+                        canonicalize_esat_tags_list,
+                    )
+
                     parser = CurriculumParser()
+                    subj_for_tags = None
+                    if schema_id:
+                        fc = schema_id[0].upper()
+                        if fc == "M":
+                            subj_for_tags = (
+                                "Math 2" if paper == "Math 2" else "Math 1"
+                            )
+                        elif fc == "P":
+                            subj_for_tags = "Physics"
+                        elif fc == "C":
+                            subj_for_tags = "Chemistry"
+                        elif fc == "B":
+                            subj_for_tags = "Biology"
                     if primary_tag_code:
-                        primary_tag = parser.map_tag_code_to_text(primary_tag_code, paper_id)
+                        primary_tag = canonicalize_esat_tag(
+                            primary_tag_code,
+                            schema_id=schema_id,
+                            subjects=subj_for_tags or "",
+                            paper_id=paper_id,
+                            parser=parser,
+                        )
                     if secondary_tags_codes:
-                        secondary_tags = [
-                            parser.map_tag_code_to_text(tag, paper_id)
-                            for tag in secondary_tags_codes
-                        ]
-                    # Map tags_confidence keys if it's a dict
+                        secondary_tags = canonicalize_esat_tags_list(
+                            secondary_tags_codes,
+                            schema_id=schema_id,
+                            subjects=subj_for_tags or "",
+                            paper_id=paper_id,
+                            parser=parser,
+                        )
                     if tags_confidence_raw and isinstance(tags_confidence_raw, dict):
-                        tags_confidence = {
-                            parser.map_tag_code_to_text(k, paper_id): v
-                            for k, v in tags_confidence_raw.items()
-                        }
+                        tags_confidence = {}
+                        for k, v in tags_confidence_raw.items():
+                            ck = canonicalize_esat_tag(
+                                str(k),
+                                schema_id=schema_id,
+                                subjects=subj_for_tags or "",
+                                paper_id=paper_id,
+                                parser=parser,
+                            )
+                            if ck:
+                                tags_confidence[ck] = v
                 except Exception as e:
                     plog(
                         "db_sync",
-                        "tag_map_failed",
+                        "tag_canonicalize_failed",
                         level="warning",
                         detail={"error": str(e)},
                         echo=False,
                     )
-                    # Fall back to original codes
                     primary_tag = primary_tag_code
                     secondary_tags = secondary_tags_codes
                     tags_confidence = tags_confidence_raw

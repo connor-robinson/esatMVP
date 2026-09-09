@@ -48,6 +48,7 @@ export const APPROVED_SITEMAP_BASELINE: readonly PublicSitemapEntry[] = [
   { path: "/tools/score-converter/engaa" },
   { path: "/tools/score-converter/tmua" },
   { path: "/tools/score-converter/pat" },
+  { path: "/tools/score-converter/mat" },
   { path: APP_ROUTES.fermiGame },
   { path: APP_ROUTES.faqs },
 

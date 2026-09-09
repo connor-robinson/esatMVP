@@ -24,11 +24,11 @@ export const SUBJECT_TILE_STYLES = {
     startBtnClass: "bg-[#8d6741] dark:bg-[#f0bc48] text-background hover:opacity-90",
   },
   Physics: {
-    topicClass: "text-[#623e56] dark:text-[#c07bb0]",
-    statClass: "text-[#623e56] dark:text-[#c07bb0]",
-    progressFillClass: "bg-[#623e56] dark:bg-[#c07bb0]",
-    progressTrackClass: "bg-[#af6da1]/35 dark:bg-[#623e56]/40",
-    startBtnClass: "bg-[#623e56] dark:bg-[#c07bb0] text-background hover:opacity-90",
+    topicClass: "text-[#4f3f55] dark:text-[#c07bb0]",
+    statClass: "text-[#4f3f55] dark:text-[#c07bb0]",
+    progressFillClass: "bg-[#4f3f55] dark:bg-[#c07bb0]",
+    progressTrackClass: "bg-[#4f3f55]/20 dark:bg-[#623e56]/40",
+    startBtnClass: "bg-[#4f3f55] dark:bg-[#c07bb0] text-background hover:opacity-90",
   },
   Chemistry: {
     topicClass: "text-[#7c3942] dark:text-[#dc6a6a]",

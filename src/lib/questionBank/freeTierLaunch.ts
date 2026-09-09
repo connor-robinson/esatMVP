@@ -6,6 +6,9 @@ import {
 /** sessionStorage key: launch a subject-scoped free-tier session on the practice page */
 export const QUESTION_BANK_FREE_TIER_LAUNCH_KEY = "questionBankFreeTierLaunch";
 
+/** Fired when a free-tier launch is written while already on /questions/questionbank. */
+export const FREE_TIER_LAUNCH_EVENT = "question-bank:free-tier-launch";
+
 export type QuestionBankFreeTierLaunchPayload = {
   subject: FreeTierPreviewSubject;
 };
