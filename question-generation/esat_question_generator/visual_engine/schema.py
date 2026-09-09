@@ -24,6 +24,7 @@ SUPPORTED_OBJECT_TYPES = frozenset(
         "point",
         "arrow",
         "chem_structure",
+        "apparatus",
         "pedigree",
     }
 )
@@ -60,6 +61,7 @@ class VisualSpec:
     diagram_type: str = "geometry"
     diagram_id: str = "d1"
     not_to_scale: bool = True
+    graph_preset: str | None = None
     coordinate_system: CoordinateSystem = field(default_factory=CoordinateSystem)
     objects: list[dict[str, Any]] = field(default_factory=list)
     labels: list[dict[str, Any]] = field(default_factory=list)
@@ -69,7 +71,7 @@ class VisualSpec:
 
     def to_dict(self) -> dict[str, Any]:
         cs = self.coordinate_system
-        return {
+        payload = {
             "spec_version": self.spec_version,
             "needs_diagram": self.needs_diagram,
             "diagram_type": self.diagram_type,
@@ -89,6 +91,9 @@ class VisualSpec:
             "source_question_id": self.source_question_id,
             "variation_mode": self.variation_mode,
         }
+        if self.graph_preset:
+            payload["graph_preset"] = self.graph_preset
+        return payload
 
 
 def _as_float(value: Any, name: str) -> float:
@@ -156,10 +161,14 @@ def _validate_object(obj: dict[str, Any], index: int) -> None:
         _as_point(obj.get("start"), f"objects[{index}].start")
         _as_point(obj.get("end"), f"objects[{index}].end")
     elif obj_type == "chem_structure":
+        smiles = str(obj.get("smiles") or "").strip()
         atoms = obj.get("atoms") or []
         bonds = obj.get("bonds") or []
+        if smiles and (not isinstance(atoms, list) or len(atoms) < 1):
+            # SMILES-only objects are expanded before render; allow empty atoms here.
+            return
         if not isinstance(atoms, list) or len(atoms) < 1:
-            raise VisualSpecError(f"objects[{index}] chem_structure needs atoms")
+            raise VisualSpecError(f"objects[{index}] chem_structure needs smiles or atoms")
         ids: set[str] = set()
         for i, atom in enumerate(atoms):
             if not isinstance(atom, dict):
@@ -177,6 +186,10 @@ def _validate_object(obj: dict[str, Any], index: int) -> None:
                 raise VisualSpecError(f"objects[{index}].bonds[{i}] must be an object")
             if str(bond.get("from") or "") not in ids or str(bond.get("to") or "") not in ids:
                 raise VisualSpecError(f"objects[{index}].bonds[{i}] refers to an unknown atom")
+    elif obj_type == "apparatus":
+        comps = obj.get("components") or obj.get("pieces") or []
+        if not isinstance(comps, list) or not comps:
+            raise VisualSpecError(f"objects[{index}] apparatus needs components")
     elif obj_type == "pedigree":
         people = obj.get("people") or []
         if not isinstance(people, list) or len(people) < 1:
@@ -239,6 +252,7 @@ def parse_spec(data: dict[str, Any]) -> VisualSpec:
         diagram_type=str(data.get("diagram_type") or "geometry"),
         diagram_id=str(data.get("diagram_id") or "d1"),
         not_to_scale=bool(data.get("not_to_scale", True)),
+        graph_preset=str(data.get("graph_preset") or "").strip() or None,
         coordinate_system=cs,
         objects=objects,
         labels=labels,

@@ -12,14 +12,16 @@ from .llm import DEFAULT_DIAGRAM_DESIGNER_MODEL, MultimodalCallResult, _mime_for
 NSAA_DIAGRAM_MODEL = "gemini-3.7-flash"
 VALID_MODES = {"sibling", "far"}
 VALID_DIAGRAM_TYPES = {"geometry", "graph"}
-VALID_VISUAL_TYPES = {"none", "graph", "table", "chem_structure", "bio_diagram", "pedigree"}
-RENDERED_VISUAL_TYPES = {"graph", "chem_structure", "bio_diagram", "pedigree"}
+VALID_VISUAL_TYPES = {"none", "graph", "table", "chem_structure", "apparatus", "bio_diagram", "pedigree"}
+RENDERED_VISUAL_TYPES = {"graph", "chem_structure", "apparatus", "bio_diagram", "pedigree"}
 _VISUAL_ALIASES = {
     "diagram": "bio_diagram",
     "cycle": "bio_diagram",
     "schematic": "bio_diagram",
     "structure": "chem_structure",
     "structural": "chem_structure",
+    "lab": "apparatus",
+    "apparatus_diagram": "apparatus",
     "text": "none",
     "plain": "none",
 }
@@ -166,7 +168,7 @@ def parse_question_design(
     options = _normalize_options(parsed.get("options"))
     correct = str(parsed.get("correct_option") or parsed.get("correct_answer") or "").strip().upper()
     idea_plan = parsed.get("idea_plan") if isinstance(parsed.get("idea_plan"), dict) else {}
-    for key in ("table", "chem_structure", "pedigree"):
+    for key in ("table", "chem_structure", "apparatus", "pedigree"):
         if key not in idea_plan and isinstance(parsed.get(key), dict):
             idea_plan[key] = parsed[key]
     visual_type = visual_type_of(idea_plan) or visual_type_of(parsed)
@@ -215,15 +217,32 @@ def parse_question_design(
             errors.append("idea_plan.visual_brief is empty")
     else:
         if not visual_type:
-            errors.append("idea_plan.visual_type must be none, graph, table, chem_structure, bio_diagram, or pedigree")
+            errors.append(
+                "idea_plan.visual_type must be none, graph, table, chem_structure, apparatus, bio_diagram, or pedigree"
+            )
         if visual_type == "table" and not (idea_plan.get("table") or parsed.get("table")):
             errors.append("visual_type table requires idea_plan.table")
-        if visual_type == "chem_structure" and not (idea_plan.get("chem_structure") or parsed.get("chem_structure")):
-            errors.append("visual_type chem_structure requires idea_plan.chem_structure")
+        if visual_type == "chem_structure":
+            chem = idea_plan.get("chem_structure") or parsed.get("chem_structure") or {}
+            if not isinstance(chem, dict):
+                errors.append("visual_type chem_structure requires idea_plan.chem_structure")
+            elif not str(chem.get("smiles") or chem.get("SMILES") or "").strip() and not (chem.get("atoms") or []):
+                errors.append("chem_structure requires smiles (preferred) or atoms/bonds")
+        if visual_type == "apparatus" and not (idea_plan.get("apparatus") or parsed.get("apparatus")):
+            errors.append("visual_type apparatus requires idea_plan.apparatus")
         if visual_type == "pedigree" and not (idea_plan.get("pedigree") or parsed.get("pedigree")):
             errors.append("visual_type pedigree requires idea_plan.pedigree")
         if visual_type in {"graph", "bio_diagram"} and not str(idea_plan.get("visual_brief") or "").strip():
             errors.append("idea_plan.visual_brief is empty")
+        if visual_type == "graph":
+            preset = str(idea_plan.get("graph_preset") or "").strip()
+            if preset:
+                from .graph_presets import GRAPH_PRESETS, normalize_graph_preset
+
+                if normalize_graph_preset(preset) not in GRAPH_PRESETS and preset.lower() not in GRAPH_PRESETS:
+                    errors.append(
+                        "graph_preset must be one of cartesian, science_xy, log_x, signed_y, multi_series"
+                    )
     if errors:
         raise VisualSpecError("NSAA question designer output invalid: " + "; ".join(errors))
     return design

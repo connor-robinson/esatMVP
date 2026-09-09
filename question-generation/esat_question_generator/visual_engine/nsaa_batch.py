@@ -45,7 +45,7 @@ from visual_engine.question_designer import (
 )
 from visual_engine.render_matplotlib import render_diagram
 from visual_engine.review_store import ReviewStore
-from visual_engine.science_visuals import chem_structure_spec, pedigree_spec
+from visual_engine.science_visuals import apparatus_spec, chem_structure_spec, pedigree_spec
 from visual_engine.subject_review import run_subject_verifier, verdict_is_pass
 from visual_engine.tables import (
     ensure_table_in_stem,
@@ -237,6 +237,8 @@ def _idea_plan_for_diagram(design: NsaaQuestionDesign) -> dict[str, Any]:
         "correct_option": design.correct_option,
     }
     plan["variation_mode"] = design.variation_mode
+    if plan.get("visual_type") == "graph" and not plan.get("graph_preset"):
+        plan["graph_preset"] = "science_xy"
     return plan
 
 
@@ -356,7 +358,7 @@ def generate_one(
         design.idea_plan["visual_type"] = visual_type or "table"
     design.options = fill_options_from_option_table(design.stem, design.options)
 
-    diagram_required = visual_type in {"graph", "chem_structure", "bio_diagram", "pedigree"}
+    diagram_required = visual_type in {"graph", "chem_structure", "apparatus", "bio_diagram", "pedigree"}
     source_image_path = str(source_png) if source_png else ""
     result: GenerationResult | None = None
     auto_flags: list[dict[str, Any]] = []
@@ -368,6 +370,22 @@ def generate_one(
     elif visual_type == "chem_structure":
         spec = chem_structure_spec(
             design.idea_plan.get("chem_structure") or {},
+            source_question_id=qid,
+            variation_mode=design.variation_mode,
+        )
+        result = _result_from_spec(
+            question_id=qid,
+            spec=spec,
+            out_dir=out_dir,
+            attempt=attempt,
+            choices=design.options,
+            correct_answer=design.correct_option,
+            parent_attempt_id=parent_attempt_id,
+        )
+        auto_flags = result.auto_flags
+    elif visual_type == "apparatus":
+        spec = apparatus_spec(
+            design.idea_plan.get("apparatus") or {},
             source_question_id=qid,
             variation_mode=design.variation_mode,
         )
@@ -556,15 +574,19 @@ def _mix_hint(subject: str, counts: dict[str, int], *, diagrams_only: bool = Fal
     if diagrams_only:
         return (
             "This batch is for reviewing rendered diagrams only. "
-            "Set idea_plan.visual_type to graph, chem_structure, bio_diagram, or pedigree. "
+            "Set idea_plan.visual_type to graph, chem_structure, apparatus, bio_diagram, or pedigree. "
             "Do not use none or table. "
+            "For graphs, set graph_preset to one of cartesian, science_xy, log_x, signed_y, multi_series. "
+            "For chem_structure, provide SMILES only (no hand-placed atoms). "
+            "For apparatus, list reusable components (beaker, conical_flask, test_tube, gas_jar, delivery_tube, bunsen, stand). "
             "If the source cannot support a genuine diagram, set skip true."
         )
     if subject == "chemistry":
         wants = [
             ("none", 4, "plain-text or calculation questions (visual_type none)"),
             ("table", 2, "table questions"),
-            ("chem_structure", 1, "one simple structural-formula question"),
+            ("chem_structure", 1, "one SMILES structural-formula question"),
+            ("apparatus", 1, "one apparatus diagram from the SVG component library"),
         ]
         extra = "Also include formula/equation-heavy stems using \\ce{} when the source supports it."
     elif subject == "biology":

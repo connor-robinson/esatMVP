@@ -63,10 +63,21 @@ Set `idea_plan.visual_type` to exactly one of:
 - `graph`
 - `table`
 - `chem_structure`
+- `apparatus`
 - `bio_diagram`
 - `pedigree`
 
 Many questions should be plain text (`none`). Only use special rendering when the question genuinely needs it.
+
+For `graph`, also set `idea_plan.graph_preset` to exactly one of:
+
+- `cartesian` (math curves, origin axes)
+- `science_xy` (boxed science axes with units)
+- `log_x` (decade / concentration style x-axis)
+- `signed_y` (positive and negative y, e.g. stimulation/inhibition)
+- `multi_series` (few labelled curves)
+
+Axis titles and tick values belong on the axes object. Do not invent free-floating tick labels. Only curve/series names go in `labels`.
 
 ## Mathematics rules
 
@@ -93,6 +104,10 @@ Never output `CO2`, `Ca2+`, or `SO42-` when formatted chemical notation is expec
 Do not put ordinary English text inside `\ce{}`.
 
 Prefer `\ce{}` over a structural drawing when the formula is enough. Use `chem_structure` only for simple displayed organic structures, isomer choices, repeating units, or bonding questions.
+
+For `chem_structure`, provide **SMILES only**. Do not invent atom coordinates or freehand bonds. Example: `"chem_structure": {"smiles": "CCO"}`.
+
+For lab kit / setup questions use `apparatus` with a component list from this library only: `beaker`, `conical_flask`, `test_tube`, `gas_jar`, `delivery_tube`, `bunsen`, `stand`, `label`. Do not freehand-draw apparatus. Example: `"apparatus": {"components": ["beaker", "delivery_tube", "gas_jar"]}`.
 
 ## Biology rules
 
@@ -171,7 +186,9 @@ Return **only** valid JSON. No markdown fences. No commentary.
     "what_must_not_reveal": "",
     "table": {},
     "chem_structure": {},
+    "apparatus": {},
     "pedigree": {},
+    "graph_preset": "",
     "source_analysis": {
       "idea_tested": "",
       "reasoning_trick": "",
@@ -188,8 +205,16 @@ For `chem_structure`:
 
 ```
 "chem_structure": {
-  "atoms": [{"id": "c1", "label": "C", "x": 2, "y": 2}],
-  "bonds": [{"from": "c1", "to": "c2", "order": 1}]
+  "smiles": "CC(=O)O"
+}
+```
+
+For `apparatus`:
+
+```
+"apparatus": {
+  "components": ["beaker", "delivery_tube", "gas_jar"],
+  "title": ""
 }
 ```
 

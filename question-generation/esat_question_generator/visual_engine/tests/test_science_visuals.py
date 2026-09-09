@@ -115,6 +115,77 @@ def test_parse_chemistry_table_requires_data():
         )
 
 
+def test_chem_structure_from_smiles(tmp_path: Path):
+    spec = chem_structure_spec({"smiles": "CCO"})
+    out = tmp_path / "ethanol.png"
+    render_diagram(spec, out)
+    assert out.is_file()
+    assert out.stat().st_size > 100
+
+
+def test_apparatus_renders(tmp_path: Path):
+    from visual_engine.science_visuals import apparatus_spec
+
+    spec = apparatus_spec({"components": ["beaker", "delivery_tube", "gas_jar"]})
+    out = tmp_path / "apparatus.png"
+    render_diagram(spec, out)
+    assert out.is_file()
+    assert out.stat().st_size > 100
+
+
+def test_graph_preset_native_axes(tmp_path: Path):
+    from visual_engine.graph_presets import resolve_graph_preset
+
+    spec = {
+        "spec_version": "1.0",
+        "needs_diagram": True,
+        "diagram_type": "graph",
+        "graph_preset": "signed_y",
+        "diagram_id": "g1",
+        "coordinate_system": {
+            "x_min": -10,
+            "x_max": -2,
+            "y_min": -80,
+            "y_max": 160,
+            "equal_aspect": False,
+            "show_axes": True,
+        },
+        "objects": [
+            {
+                "type": "axes",
+                "x_label": "Auxin concentration / mol dm^{-3}",
+                "y_label": "Percentage stimulation (+) or inhibition (-) / %",
+                "x_ticks": [-10, -8, -6, -4, -2],
+                "x_tick_labels": ["10^{-10}", "10^{-8}", "10^{-6}", "10^{-4}", "10^{-2}"],
+                "y_ticks": [-60, 0, 60, 120],
+            },
+            {
+                "type": "function",
+                "expr": "52 * exp(-0.45 * (x + 7)**2) - 60 / (1 + exp(-2.3 * (x + 4.1)))",
+                "domain": [-10.0, -2.0],
+                "samples": 120,
+            },
+            {
+                "type": "function",
+                "expr": "132 * exp(-0.35 * (x + 3.2)**2)",
+                "domain": [-10.0, -2.0],
+                "samples": 120,
+            },
+        ],
+        "labels": [
+            {"id": "label_root", "text": "Root", "anchor": [-7.0, 40.0], "preferred_position": "above"},
+            {"id": "label_shoot", "text": "Shoot", "anchor": [-4.0, 100.0], "preferred_position": "above"},
+        ],
+        "annotations": [],
+    }
+    assert resolve_graph_preset(spec) == "signed_y"
+    out = tmp_path / "auxin.png"
+    result = render_diagram(spec, out)
+    assert out.is_file()
+    assert result.graph_preset == "signed_y"
+    assert out.stat().st_size > 100
+
+
 def test_chem_structure_renders(tmp_path: Path):
     spec = chem_structure_spec(
         {

@@ -131,15 +131,21 @@ class TestRenderer:
         assert result.path.exists()
         assert result.path.stat().st_size > 500
         assert result.dpi == 220
-        assert result.renderer == "matplotlib_diagram_v1"
+        assert result.renderer.startswith("matplotlib_")
         assert result.label_placements is not None
-        axes_obj = next((o for o in spec.get("objects", []) if o.get("type") == "axes"), None)
-        axes_labels = 0
-        if axes_obj:
-            axes_labels = 2 + len(axes_obj.get("x_ticks") or []) + len(axes_obj.get("y_ticks") or [])
-        assert len(result.label_placements) == len(spec["labels"]) + sum(
+        caption_count = sum(
             1 for a in spec.get("annotations", []) if str(a.get("type")).lower() == "caption"
-        ) + axes_labels
+        )
+        if str(spec.get("diagram_type") or "").lower() == "graph":
+            # Axis titles/ticks are native Matplotlib; only series labels are placed.
+            assert len(result.label_placements) == len(spec.get("labels") or []) + caption_count
+            assert result.graph_preset is not None
+        else:
+            axes_obj = next((o for o in spec.get("objects", []) if o.get("type") == "axes"), None)
+            axes_labels = 0
+            if axes_obj:
+                axes_labels = 2 + len(axes_obj.get("x_ticks") or []) + len(axes_obj.get("y_ticks") or [])
+            assert len(result.label_placements) == len(spec["labels"]) + caption_count + axes_labels
 
     def test_render_fails_on_impossible_label_layout(self):
         spec = {

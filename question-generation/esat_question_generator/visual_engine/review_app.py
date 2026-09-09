@@ -36,8 +36,18 @@ FEEDBACK_TAGS = [
     "wrong question",
     "other",
 ]
-DIAGRAM_VISUALS = {"graph", "chem_structure", "bio_diagram", "pedigree"}
-VISUAL_FILTERS = ["All", "diagrams only", "graph", "chem_structure", "bio_diagram", "pedigree", "table", "none"]
+DIAGRAM_VISUALS = {"graph", "chem_structure", "apparatus", "bio_diagram", "pedigree"}
+VISUAL_FILTERS = [
+    "All",
+    "diagrams only",
+    "graph",
+    "chem_structure",
+    "apparatus",
+    "bio_diagram",
+    "pedigree",
+    "table",
+    "none",
+]
 
 
 def _store() -> ReviewStore:

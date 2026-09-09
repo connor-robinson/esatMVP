@@ -232,13 +232,20 @@ def normalize_graph_labels(
     return out
 
 
-def collect_label_specs(spec: VisualSpec, extra_labels: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def collect_label_specs(
+    spec: VisualSpec,
+    extra_labels: list[dict[str, Any]],
+    *,
+    normalize_axes: bool = True,
+) -> list[dict[str, Any]]:
     combined: list[dict[str, Any]] = []
     combined.extend(spec.labels)
     combined.extend(extra_labels)
     for idx, ann in enumerate(spec.annotations):
         if str(ann.get("type") or "").lower() == "caption":
             combined.append(caption_label_spec(ann, spec.coordinate_system, idx))
+    if not normalize_axes:
+        return combined
     return normalize_graph_labels(
         combined,
         spec.coordinate_system,

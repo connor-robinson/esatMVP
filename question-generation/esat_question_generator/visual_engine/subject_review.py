@@ -43,7 +43,7 @@ def run_subject_verifier(
         "This item is from the NSAA visual_engine pipeline. "
         "There is no legacy question.stimulus JSON field. "
         "If an image is attached, that PNG is the graph/diagram/pedigree stimulus. "
-        "If visual_type is graph/bio_diagram/chem_structure/pedigree and no image is attached, "
+        "If visual_type is graph/bio_diagram/chem_structure/apparatus/pedigree and no image is attached, "
         "FAIL as stimulus_dependency because the rendered visual is missing. "
         "Do not demand a stimulus object in the JSON when the PNG is present. "
         "The visual/table must be treated as part of the scientific evidence. "

@@ -80,6 +80,12 @@ def generate_diagram(
     try:
         designer = run_diagram_designer(inp, model=designer_model, thinking_level=thinking_level)
         spec_dict = designer.visual_spec
+        if isinstance(inp.idea_plan, dict) and inp.idea_plan.get("graph_preset"):
+            spec_dict["graph_preset"] = inp.idea_plan.get("graph_preset")
+        if str(spec_dict.get("diagram_type") or "").lower() == "graph" and not spec_dict.get("graph_preset"):
+            from .graph_presets import resolve_graph_preset
+
+            spec_dict["graph_preset"] = resolve_graph_preset(spec_dict)
         spec_path = attempt_dir / "visual_spec.json"
         spec_path.write_text(json.dumps(spec_dict, ensure_ascii=False, indent=2), encoding="utf-8")
         (attempt_dir / "gemini_designer_raw.txt").write_text(designer.raw_text, encoding="utf-8")

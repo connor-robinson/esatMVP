@@ -6,6 +6,7 @@ import math
 from typing import TYPE_CHECKING
 
 from ..collision.obstacles import ObstacleSet
+from ..graph_presets import apply_native_axes, normalize_graph_preset
 from ..style import ExamStyle
 
 if TYPE_CHECKING:
@@ -41,17 +42,33 @@ def draw_axes(
     cs,
     obstacles: ObstacleSet,
     extra_labels: list | None = None,
+    *,
+    preset: str | None = None,
+    use_native: bool = True,
 ) -> None:
-    from ..labels import axis_label_specs
+    """Draw axis chrome.
 
+    When ``use_native`` is true (graph path), titles/ticks use Matplotlib APIs only
+    and are never added to ``extra_labels`` / collision resolution.
+    """
     x_min, x_max = cs.x_min, cs.x_max
     y_min, y_max = cs.y_min, cs.y_max
+    obstacles.add_segment(x_min, 0 if y_min <= 0 <= y_max else y_min, x_max, 0 if y_min <= 0 <= y_max else y_min, kind="axis")
+    obstacles.add_segment(0 if x_min <= 0 <= x_max else x_min, y_min, 0 if x_min <= 0 <= x_max else x_min, y_max, kind="axis")
+
+    if use_native:
+        name = normalize_graph_preset(preset or obj.get("preset") or obj.get("graph_preset"))
+        apply_native_axes(ax, obj, preset=name, style=style)
+        return
+
+    # Legacy geometry-style axes (kept for non-graph diagrams that still request axes).
+    from ..labels import axis_label_specs
+
     ax.spines["left"].set_position(("data", 0))
     ax.spines["bottom"].set_position(("data", 0))
     ax.spines["right"].set_color("none")
     ax.spines["top"].set_color("none")
     lw = style.stroke_width * 0.9
-    # Axis spines with arrowheads at the positive ends.
     ax.annotate(
         "",
         xy=(x_max, 0),
@@ -66,9 +83,6 @@ def draw_axes(
         arrowprops=dict(arrowstyle="->", color=style.stroke, lw=lw),
         annotation_clip=False,
     )
-    obstacles.add_segment(x_min, 0, x_max, 0, kind="axis")
-    obstacles.add_segment(0, y_min, 0, y_max, kind="axis")
-
     tick = max(abs(x_max - x_min), abs(y_max - y_min)) * 0.012
     for raw in obj.get("x_ticks") or []:
         try:
@@ -82,12 +96,18 @@ def draw_axes(
         except (TypeError, ValueError):
             continue
         ax.plot([-tick, tick], [val, val], color=style.stroke, linewidth=lw, clip_on=False)
-
     if extra_labels is not None:
         extra_labels.extend(axis_label_specs(obj, cs))
 
 
-def draw_function(ax: Axes, obj: dict, style: ExamStyle, obstacles: ObstacleSet, y_min: float | None = None, y_max: float | None = None) -> None:
+def draw_function(
+    ax: Axes,
+    obj: dict,
+    style: ExamStyle,
+    obstacles: ObstacleSet,
+    y_min: float | None = None,
+    y_max: float | None = None,
+) -> None:
     expr = str(obj["expr"])
     domain = obj["domain"]
     x0, x1 = float(domain[0]), float(domain[1])

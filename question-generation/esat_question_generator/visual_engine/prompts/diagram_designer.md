@@ -85,11 +85,13 @@ Each label:
 ## Graphs (mandatory pattern)
 
 For any graph / axes diagram:
-1. Include one `"type": "axes"` object with `x_label`, `y_label`.
-2. Put numeric ticks in `x_ticks` / `y_ticks` (and optional `x_tick_labels` / `y_tick_labels`). Do **not** emit free-floating tick labels as ordinary `labels` when `axes` can carry them.
-3. Do not hand-draw axis arrows with `arrow` objects unless you also omit `axes` (prefer `axes`).
-4. Axis titles sit at the positive ends; tick numbers sit outside the plot (below x-axis, left of y-axis).
-5. Set `diagram_type` to `"graph"` and `show_axes: true`.
+1. Set `diagram_type` to `"graph"` and `show_axes: true`.
+2. Set top-level `graph_preset` to exactly one of: `cartesian`, `science_xy`, `log_x`, `signed_y`, `multi_series`.
+3. Include one `"type": "axes"` object with `x_label`, `y_label`, and ticks in `x_ticks` / `y_ticks` (optional `x_tick_labels` / `y_tick_labels`).
+4. Do **not** emit axis titles or tick numbers as ordinary `labels`. The renderer draws those with native Matplotlib axes APIs.
+5. Only curve/series/point names belong in `labels` (those alone may be auto-placed).
+6. Do not hand-draw axis arrows with `arrow` objects when using `axes`.
+7. Prefer sparse ticks (usually ≤ 6 per axis).
 
 ## Dimension lines
 
@@ -154,4 +156,4 @@ Style:
 
 The diagram exists to communicate information required for the reasoning.
 
-Do not use this designer for `table`, `chem_structure`, or `pedigree`. Those are rendered from structured data, not free-placed geometry.
+Do not use this designer for `table`, `chem_structure`, `apparatus`, or `pedigree`. Those are rendered from structured data (SMILES / SVG component library / pedigree semantics), not free-placed geometry.

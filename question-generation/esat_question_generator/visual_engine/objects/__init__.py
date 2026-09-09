@@ -33,12 +33,24 @@ def draw_objects(
     style: ExamStyle,
     obstacles: ObstacleSet,
     extra_labels: list | None = None,
+    *,
+    graph_preset: str | None = None,
+    native_graph_axes: bool = False,
 ) -> None:
     cs = spec.coordinate_system
     span = max(cs.x_max - cs.x_min, cs.y_max - cs.y_min)
 
     if cs.show_axes and not any(str(o.get("type")) == "axes" for o in spec.objects):
-        draw_axes(ax, {"x_label": "x", "y_label": "y"}, style, cs, obstacles, extra_labels)
+        draw_axes(
+            ax,
+            {"x_label": "x", "y_label": "y"},
+            style,
+            cs,
+            obstacles,
+            extra_labels,
+            preset=graph_preset,
+            use_native=native_graph_axes,
+        )
 
     for obj in spec.objects:
         obj_type = str(obj.get("type") or "").lower()
@@ -65,8 +77,21 @@ def draw_objects(
         elif obj_type == "function":
             draw_function(ax, obj, style, obstacles, y_min=cs.y_min, y_max=cs.y_max)
         elif obj_type == "axes":
-            draw_axes(ax, obj, style, cs, obstacles, extra_labels)
+            draw_axes(
+                ax,
+                obj,
+                style,
+                cs,
+                obstacles,
+                extra_labels,
+                preset=graph_preset,
+                use_native=native_graph_axes,
+            )
         elif obj_type == "chem_structure":
             draw_chem_structure(ax, obj, style, obstacles)
+        elif obj_type == "apparatus":
+            from .apparatus_draw import draw_apparatus
+
+            draw_apparatus(ax, obj, style, obstacles)
         elif obj_type == "pedigree":
             draw_pedigree(ax, obj, style, obstacles)
