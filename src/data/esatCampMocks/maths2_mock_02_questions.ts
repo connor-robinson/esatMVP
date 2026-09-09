@@ -20,7 +20,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 50,
     targetDisplay: "50 s",
     tip: "Conjugate denominators often collapse to a small integer.",
-    solution: "The common denominator is (√5 - 2)(√5 + 2) = 1. The numerator is (√5 + 2) - (√5 - 2) = 4, so the value is 4.",
+    solution: "The common denominator is \\((\\sqrt{5} - 2)(\\sqrt{5} + 2) = 1\\). The numerator is \\((\\sqrt{5} + 2) - (\\sqrt{5} - 2) = 4\\), so the value is 4.",
     distractors: {
       A: "Subtracts the two 2s instead of accounting for the outer minus sign.",
       C: "Adds the surd parts and cancels the rational parts.",
@@ -32,7 +32,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 2,
-    stem: "The line y = x + 2 intersects the curve y = x² - k at two points. The difference between their x-coordinates is 4.\n\nWhat is k?",
+    stem: "The line \\(y = x + 2\\) intersects the curve \\(y = x^{2} - k\\) at two points. The difference between their \\(x\\)-coordinates is 4.\n\nWhat is \\(k\\)?",
     options: {
       A: "\\(-7/4\\)",
       B: "\\(-1/4\\)",
@@ -47,11 +47,11 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     difficulty: "2/4 Medium",
     targetSeconds: 75,
     targetDisplay: "75 s",
-    tip: "For roots r and s of a monic quadratic, (r - s)² equals the discriminant.",
-    solution: "Intersections satisfy x² - x - (k + 2) = 0. For a monic quadratic, the root difference has square equal to the discriminant: 1 + 4(k + 2) = 4k + 9. Hence 4k + 9 = 16 and k = 7/4.",
+    tip: "For roots \\(r\\) and \\(s\\) of a monic quadratic, \\((r - s)^{2}\\) equals the discriminant.",
+    solution: "Intersections satisfy \\(x^{2} - x - (k + 2) = 0\\). For a monic quadratic, the root difference has square equal to the discriminant: \\(1 + 4(k + 2) = 4k + 9\\). Hence \\(4k + 9 = 16\\) and \\(k = 7/4\\).",
     distractors: {
       A: "Moves 9 across with the wrong sign.",
-      B: "Uses the difference 4 as the discriminant rather than 4².",
+      B: "Uses the difference 4 as the discriminant rather than \\(4^{2}\\).",
       C: "Drops the +2 when equating the graphs.",
       D: "Uses 4k + 1 for the discriminant.",
     },
@@ -60,7 +60,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 3,
-    stem: "The polynomial x² + x - 6 is a factor of\n\n\\[x^{3} + ax^{2} + bx + 12.\\]\n\nWhat is a + b?",
+    stem: "The polynomial \\(x^{2} + x - 6\\) is a factor of\n\n\\[x^{3} + ax^{2} + bx + 12.\\]\n\nWhat is \\(a + b\\)?",
     options: {
       A: "\\(-9\\)",
       B: "\\(-6\\)",
@@ -76,7 +76,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 55,
     targetDisplay: "55 s",
     tip: "Use the constant term to find the linear quotient before expanding.",
-    solution: "Since x² + x - 6 = (x + 3)(x - 2), the remaining factor is x + c. The constant term is -6c = 12, so c = -2. Expanding (x² + x - 6)(x - 2) gives a = -1 and b = -8, hence a + b = -9.",
+    solution: "Since \\(x^{2} + x - 6 = (x + 3)(x - 2)\\), the remaining factor is \\(x + c\\). The constant term is \\(-6c = 12\\), so \\(c = -2\\). Expanding \\((x^{2} + x - 6)(x - 2)\\) gives \\(a = -1\\) and \\(b = -8\\), hence \\(a + b = -9\\).",
     distractors: {
       B: "Reports the constant coefficient of the quadratic factor.",
       C: "Uses c = 2 instead of c = -2.",
@@ -106,12 +106,12 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 65,
     targetDisplay: "65 s",
     tip: "Do not divide by an expression whose sign, or zero value, is unknown.",
-    solution: "Move the right side across and factor: (x - 1)[(x + 3) - 4] = (x - 1)² ≥ 0. A square is non-negative for every real x, including x = 1.",
+    solution: "Move the right side across and factor: \\((x - 1)[(x + 3) - 4] = (x - 1)^{2} \\ge 0\\). A square is non-negative for every real \\(x\\), including \\(x = 1\\).",
     distractors: {
       A: "Keeps the original root -3 after failing to combine the two sides.",
       B: "Divides by x - 1 and assumes it is positive.",
       C: "Divides by x - 1 and assumes it is negative.",
-      D: "Recognises a square but incorrectly excludes the zero case despite ≥.",
+      D: "Recognises a square but incorrectly excludes the zero case despite \\(\\ge\\).",
       E: "Uses the roots -3 and 1 as if the original product were compared with zero.",
       F: "Uses an exterior sign pattern for roots that disappear after simplification.",
     },
@@ -120,7 +120,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 5,
-    stem: "Let f(x) = x² + 1 and g(x) = 2x - 3.\n\nWhat is the complete solution set of f(g(x)) = 5?",
+    stem: "Let \\(f(x) = x^{2} + 1\\) and \\(g(x) = 2x - 3\\).\n\nWhat is the complete solution set of \\(f(g(x)) = 5\\)?",
     options: {
       A: "\\({1/2}\\)",
       B: "\\({5/2}\\)",
@@ -136,7 +136,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 65,
     targetDisplay: "65 s",
     tip: "When a square equals a positive number, keep both signs.",
-    solution: "f(g(x)) = (2x - 3)² + 1. Setting this equal to 5 gives (2x - 3)² = 4, so 2x - 3 = ±2. Hence x = 1/2 or 5/2.",
+    solution: "\\(f(g(x)) = (2x - 3)^{2} + 1\\). Setting this equal to 5 gives \\((2x - 3)^{2} = 4\\), so \\(2x - 3 = \\pm 2\\). Hence \\(x = 1/2\\) or \\(5/2\\).",
     distractors: {
       A: "Keeps only the negative square-root branch.",
       B: "Keeps only the positive square-root branch.",
@@ -148,7 +148,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 6,
-    stem: "A sequence is defined by u₁ = 2 and\n\n\\[uₙ₊₁ = uₙ + 2n + 1.\\]\n\nWhat is u₁₀?",
+    stem: "A sequence is defined by \\(u_{1} = 2\\) and\n\n\\[u_{n+1} = u_{n} + 2n + 1.\\]\n\nWhat is \\(u_{10}\\)?",
     options: {
       A: "\\(82\\)",
       B: "\\(100\\)",
@@ -163,13 +163,13 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     difficulty: "1/4 Easy",
     targetSeconds: 55,
     targetDisplay: "55 s",
-    tip: "Recognise 2n + 1 as (n + 1)² - n².",
-    solution: "The increments 2n + 1 are the differences between consecutive squares. Since u₁ = 1² + 1, it follows that uₙ = n² + 1. Thus u₁₀ = 101.",
+    tip: "Recognise \\(2n + 1\\) as \\((n + 1)^{2} - n^{2}\\).",
+    solution: "The increments \\(2n + 1\\) are the differences between consecutive squares. Since \\(u_{1} = 1^{2} + 1\\), it follows that \\(u_{n} = n^{2} + 1\\). Thus \\(u_{10} = 101\\).",
     distractors: {
       A: "Adds only the odd numbers from 1 to 9 rather than from 3 to 19.",
-      B: "Recognises n² but forgets the extra 1.",
-      D: "Adds the initial 2 to 10² instead of tracking the offset.",
-      E: "Uses (n + 1)².",
+      B: "Recognises \\(n^{2}\\) but forgets the extra 1.",
+      D: "Adds the initial 2 to \\(10^{2}\\) instead of tracking the offset.",
+      E: "Uses \\((n + 1)^{2}\\).",
     },
     benchmarkNote: "Official 2026 Notes on Mathematics, MM2.1 recurrence and nth-term connection style.",
     editorPick: false,
@@ -206,7 +206,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 8,
-    stem: "What is the constant term in the expansion of\n\n(2x + 1/x)^{4}?",
+    stem: "What is the constant term in the expansion of\n\n\\[\\left(2x + \\dfrac{1}{x}\\right)^{4}?\\]",
     options: {
       A: "\\(16\\)",
       B: "\\(24\\)",
@@ -222,11 +222,11 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 55,
     targetDisplay: "55 s",
     tip: "Track the power of x before calculating the coefficient.",
-    solution: "The general term contains x^(4 - 2r), so the constant term occurs when r = 2. Its coefficient is C(4,2) × 2² = 6 × 4 = 24.",
+    solution: "The general term contains \\(x^{4 - 2r}\\), so the constant term occurs when \\(r = 2\\). Its coefficient is \\(\\binom{4}{2} \\times 2^{2} = 6 \\times 4 = 24\\).",
     distractors: {
-      A: "Uses only 2⁴ and ignores the binomial coefficient.",
-      C: "Uses C(4,1) × 2³, which belongs to a non-constant term.",
-      D: "Uses C(4,2) × 2³.",
+      A: "Uses only \\(2^{4}\\) and ignores the binomial coefficient.",
+      C: "Uses \\(\\binom{4}{1} \\times 2^{3}\\), which belongs to a non-constant term.",
+      D: "Uses \\(\\binom{4}{2} \\times 2^{3}\\).",
       E: "Multiplies the correct result by the binomial coefficient a second time.",
     },
     benchmarkNote: "NSAA 2018 Section 1, Q85, targeted binomial coefficient extraction.",
@@ -234,7 +234,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 9,
-    stem: "The point Q(4, 2) lies on the circle (x - 1)² + (y + 2)² = 25.\n\nWhich is the equation of the tangent at Q?",
+    stem: "The point \\(Q(4, 2)\\) lies on the circle \\((x - 1)^{2} + (y + 2)^{2} = 25\\).\n\nWhich is the equation of the tangent at \\(Q\\)?",
     options: {
       A: "\\(3x - 4y = 4\\)",
       B: "\\(4x + 3y = 22\\)",
@@ -256,7 +256,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     distractors: {
       A: "Uses the radius direction as the tangent direction.",
       B: "Swaps the normal-vector components.",
-      C: "Uses r² = 25 as the line constant.",
+      C: "Uses \\(r^{2} = 25\\) as the line constant.",
       D: "Uses a perpendicular direction but substitutes Q incorrectly.",
       E: "Substitutes the centre rather than Q into 3x + 4y = c.",
       F: "Swaps the components and also uses the wrong constant.",
@@ -285,7 +285,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 60,
     targetDisplay: "60 s",
     tip: "Substitute the fixed coordinate and use both square-root signs.",
-    solution: "On x = 5, (x - 2)² = 9, so (y + 1)² = 16. The endpoints have y = 3 and y = -5, giving chord length 8.",
+    solution: "On \\(x = 5\\), \\((x - 2)^{2} = 9\\), so \\((y + 1)^{2} = 16\\). The endpoints have \\(y = 3\\) and \\(y = -5\\), giving chord length 8.",
     distractors: {
       A: "Finds the half-chord and reports it as the full length.",
       B: "Reports the radius.",
@@ -300,7 +300,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 11,
-    stem: "The two lines y = mx through the origin are tangent to the circle\n\n\\[(x - 4)^{2} + y^{2} = 4.\\]\n\nWhat is m^{2}?",
+    stem: "The two lines \\(y = mx\\) through the origin are tangent to the circle\n\n\\[(x - 4)^{2} + y^{2} = 4.\\]\n\nWhat is \\(m^{2}\\)?",
     options: {
       A: "\\(1/3\\)",
       B: "\\(1/2\\)",
@@ -316,11 +316,11 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 85,
     targetDisplay: "85 s",
     tip: "Tangency turns the substituted intersection equation into a repeated-root quadratic.",
-    solution: "Substitute y = mx into the circle: (1 + m²)x² - 8x + 12 = 0. Tangency requires discriminant zero, so 64 - 48(1 + m²) = 0. Hence 16 = 48m² and m² = 1/3.",
+    solution: "Substitute \\(y = mx\\) into the circle: \\((1 + m^{2})x^{2} - 8x + 12 = 0\\). Tangency requires discriminant zero, so \\(64 - 48(1 + m^{2}) = 0\\). Hence \\(16 = 48m^{2}\\) and \\(m^{2} = 1/3\\).",
     distractors: {
-      B: "Uses 4² instead of the circle's r² = 4 when expanding.",
+      B: "Uses \\(4^{2}\\) instead of the circle's \\(r^{2} = 4\\) when expanding.",
       C: "Assumes the tangent gradients are ±1 from the sketch.",
-      D: "Solves 16 = 8m² after losing the factor 1 + m².",
+      D: "Solves \\(16 = 8m^{2}\\) after losing the factor \\(1 + m^{2}\\).",
       E: "Finds the reciprocal after rearranging the discriminant equation.",
     },
     benchmarkNote: "NSAA 2018 Section 1, Q83, external tangents to a circle; ENGAA 2021 Q11, repeated-root intersection condition.",
@@ -347,10 +347,10 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 45,
     targetDisplay: "45 s",
     tip: "The side opposite the angle is the one that appears alone on the left of the cosine rule.",
-    solution: "By the cosine rule, 3² = 4² + 5² - 2(4)(5)cos θ. Thus 9 = 41 - 40cos θ, so cos θ = 32/40 = 4/5.",
+    solution: "By the cosine rule, \\(3^{2} = 4^{2} + 5^{2} - 2(4)(5)\\cos\\theta\\). Thus \\(9 = 41 - 40\\cos\\theta\\), so \\(\\cos\\theta = 32/40 = 4/5\\).",
     distractors: {
       A: "Uses the smallest side divided by the largest as the cosine.",
-      B: "Uses 16/40 after omitting 5².",
+      B: "Uses \\(16/40\\) after omitting \\(5^{2}\\).",
       C: "Uses sin θ from a 3-4-5 triangle.",
       D: "Uses adjacent/opposite rather than adjacent/hypotenuse in the right triangle.",
     },
@@ -388,7 +388,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 14,
-    stem: "How many solutions of\n\n\\[tan x (tan^{2}x - 1) = 0\\]\n\n\\[lie in 0 \\le  x \\le  2\\pi?\\]",
+    stem: "How many solutions of\n\n\\[\\tan x (\\tan^{2}x - 1) = 0\\]\n\nlie in \\(0 \\le x \\le 2\\pi\\)?",
     options: {
       A: "\\(1\\)",
       B: "\\(2\\)",
@@ -406,14 +406,14 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 80,
     targetDisplay: "80 s",
     tip: "Count endpoints carefully and exclude the vertical asymptotes of tan x.",
-    solution: "Either tan x = 0 or tan x = ±1. In the closed interval, tan x = 0 at 0, π and 2π, giving three solutions. The equations tan x = 1 and tan x = -1 give two each, for four more. The undefined points π/2 and 3π/2 are not solutions. Total: 7.",
+    solution: "Either \\(\\tan x = 0\\) or \\(\\tan x = \\pm 1\\). In the closed interval, \\(\\tan x = 0\\) at \\(0\\), \\(\\pi\\) and \\(2\\pi\\), giving three solutions. The equations \\(\\tan x = 1\\) and \\(\\tan x = -1\\) give two each, for four more. The undefined points \\(\\pi/2\\) and \\(3\\pi/2\\) are not solutions. Total: 7.",
     distractors: {
       A: "Counts only the factor tan x = 0 at x = 0.",
       B: "Counts only the two tan x = 1 solutions.",
       C: "Counts tan x = 0 but omits both ±1 branches.",
       D: "Counts the ±1 branches but omits tan x = 0.",
       E: "Counts two zeros of tan and the four ±1 solutions, then loses one branch.",
-      F: "Omits one of the equal endpoints 0 or 2π.",
+      F: "Omits one of the equal endpoints 0 or \\(2\\pi\\).",
     },
     benchmarkNote: "NSAA 2018 Section 1, Q75, counting all trigonometric solutions in a specified interval.",
     editorPick: true,
@@ -437,7 +437,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 80,
     targetDisplay: "80 s",
     tip: "Use the perimeter to find the arc length before finding the angle.",
-    solution: "The arc length is 12 - 2(3) = 6, so the angle is θ = 6/3 = 2 radians. The sector area is (1/2)(3²)(2) = 9. The triangle area is (1/2)(3²)sin 2 = (9/2)sin 2. Subtracting gives 9 - (9/2)sin 2.",
+    solution: "The arc length is \\(12 - 2(3) = 6\\), so the angle is \\(\\theta = 6/3 = 2\\) radians. The sector area is \\(\\frac{1}{2}(3^{2})(2) = 9\\). The triangle area is \\(\\frac{1}{2}(3^{2})\\sin 2 = \\frac{9}{2}\\sin 2\\). Subtracting gives \\(9 - \\frac{9}{2}\\sin 2\\).",
     distractors: {
       A: "Reports twice the triangle area.",
       B: "Omits the factor 1/2 in the triangle area.",
@@ -469,7 +469,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 70,
     targetDisplay: "70 s",
     tip: "Apply the logarithm domain after solving the algebraic equation.",
-    solution: "Combine logs: (x - 1)(x - 3) = 8. Hence x² - 4x - 5 = 0, so x = -1 or 5. The logarithms require x > 3, leaving x = 5 only.",
+    solution: "Combine logs: \\((x - 1)(x - 3) = 8\\). Hence \\(x^{2} - 4x - 5 = 0\\), so \\(x = -1\\) or \\(5\\). The logarithms require \\(x > 3\\), leaving \\(x = 5\\) only.",
     distractors: {
       A: "Keeps only the algebraic root that makes both log arguments negative.",
       C: "Keeps both quadratic roots without checking the domain.",
@@ -481,7 +481,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 17,
-    stem: "What is the complete solution set of\n\n\\[4ˣ - 5 \\times  2ˣ + 4 = 0?\\]",
+    stem: "What is the complete solution set of\n\n\\[4^{x} - 5 \\times 2^{x} + 4 = 0?\\]",
     options: {
       A: "\\({-2, 0}\\)",
       B: "\\({0}\\)",
@@ -497,7 +497,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 65,
     targetDisplay: "65 s",
     tip: "When two powers are related, substitute for the smaller base power.",
-    solution: "Let u = 2ˣ > 0. Then u² - 5u + 4 = 0, so u = 1 or 4. Therefore 2ˣ = 1 gives x = 0, and 2ˣ = 4 gives x = 2.",
+    solution: "Let \\(u = 2^{x} > 0\\). Then \\(u^{2} - 5u + 4 = 0\\), so \\(u = 1\\) or \\(4\\). Therefore \\(2^{x} = 1\\) gives \\(x = 0\\), and \\(2^{x} = 4\\) gives \\(x = 2\\).",
     distractors: {
       A: "Converts u = 4 to x = -2.",
       B: "Keeps only u = 1.",
@@ -525,7 +525,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 40,
     targetDisplay: "40 s",
     tip: "Compare the model with its initial value before solving the exponent.",
-    solution: "800/1600 = 1/2 = 2⁻¹. Hence -t/3 = -1, so t = 3.",
+    solution: "\\(800/1600 = 1/2 = 2^{-1}\\). Hence \\(-t/3 = -1\\), so \\(t = 3\\).",
     distractors: {
       B: "Treats one halving as two periods.",
       C: "Uses the denominator 3 as a multiplier twice.",
@@ -537,7 +537,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 19,
-    stem: "Given\n\n\\[y = (x^{3} + 2x)/\\sqrt{x},\\]\n\nfind dy/dx when x = 4.",
+    stem: "Given\n\n\\[y = \\dfrac{x^{3} + 2x}{\\sqrt{x}},\\]\n\nfind \\(\\dfrac{dy}{dx}\\) when \\(x = 4\\).",
     options: {
       A: "\\(9/2\\)",
       B: "\\(10\\)",
@@ -553,19 +553,19 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 70,
     targetDisplay: "70 s",
     tip: "Simplify powers before differentiating.",
-    solution: "First simplify: y = x^(5/2) + 2x^(1/2). Thus dy/dx = (5/2)x^(3/2) + x^(-1/2). At x = 4, this is (5/2)(8) + 1/2 = 41/2.",
+    solution: "First simplify: \\(y = x^{5/2} + 2x^{1/2}\\). Thus \\(\\dfrac{dy}{dx} = \\frac{5}{2}x^{3/2} + x^{-1/2}\\). At \\(x = 4\\), this is \\(\\frac{5}{2}(8) + \\frac{1}{2} = \\frac{41}{2}\\).",
     distractors: {
       A: "Substitutes x = 4 before differentiating and differentiates the resulting number.",
-      B: "Uses x^(3/2) = 4.",
+      B: "Uses \\(x^{3/2} = 4\\).",
       C: "Uses (5/2)(4) + 1/2.",
-      D: "Drops the derivative of 2x^(1/2).",
+      D: "Drops the derivative of \\(2x^{1/2}\\).",
     },
     benchmarkNote: "ENGAA 2021 Section 1, Q21, differentiating an expression after index simplification.",
     editorPick: false,
   },
   {
     number: 20,
-    stem: "For which values of a is\n\n\\[f'(x) > 0 for every real x, where\\]\n\nf(x) = x^{3} + ax^{2} + 3x?",
+    stem: "For which values of \\(a\\) is \\(f'(x) > 0\\) for every real \\(x\\), where\n\n\\[f(x) = x^{3} + ax^{2} + 3x?\\]",
     options: {
       A: "\\(a < -3\\)",
       B: "\\(a > 3\\)",
@@ -581,11 +581,11 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 85,
     targetDisplay: "85 s",
     tip: "A positive quadratic for all real x needs positive leading coefficient and negative discriminant.",
-    solution: "f'(x) = 3x² + 2ax + 3. This upward-opening quadratic is positive for every real x exactly when it has no real roots, so its discriminant is negative: (2a)² - 36 < 0. Hence a² < 9, giving -3 < a < 3.",
+    solution: "\\(f'(x) = 3x^{2} + 2ax + 3\\). This upward-opening quadratic is positive for every real \\(x\\) exactly when it has no real roots, so its discriminant is negative: \\((2a)^{2} - 36 < 0\\). Hence \\(a^{2} < 9\\), giving \\(-3 < a < 3\\).",
     distractors: {
       A: "Chooses one exterior interval after reversing the discriminant inequality.",
       B: "Chooses the other exterior interval.",
-      D: "Uses discriminant ≥ 0 instead of < 0.",
+      D: "Uses discriminant \\(\\ge 0\\) instead of \\(< 0\\).",
       E: "Includes a = ±3, where f'(x) equals zero at one x and so fails the stated > 0 condition.",
     },
     benchmarkNote: "Official 2026 Notes on Mathematics, MM6.3 increasing-function and parameter style; discriminant reasoning calibrated against NSAA 2018 Q77.",
@@ -593,7 +593,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 21,
-    stem: "A particle has displacement\n\n\\[s(t) = t^{3} - 6t^{2} + 9t\\]\n\nfor 0 \\le  t \\le  4. At which time or times is its velocity greatest?",
+    stem: "A particle has displacement\n\n\\[s(t) = t^{3} - 6t^{2} + 9t\\]\n\nfor \\(0 \\le t \\le 4\\). At which time or times is its velocity greatest?",
     options: {
       A: "\\(t = 0\\text{ only}\\)",
       B: "\\(t = 1\\text{ only}\\)",
@@ -611,7 +611,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 80,
     targetDisplay: "80 s",
     tip: "On a closed interval, a maximum can occur at an endpoint rather than at a stationary point.",
-    solution: "Velocity is v(t) = 3t² - 12t + 9, an upward-opening quadratic. Its stationary point at t = 2 is a minimum, so compare the endpoints: v(0) = 9 and v(4) = 9. The greatest velocity occurs at both t = 0 and t = 4.",
+    solution: "Velocity is \\(v(t) = 3t^{2} - 12t + 9\\), an upward-opening quadratic. Its stationary point at \\(t = 2\\) is a minimum, so compare the endpoints: \\(v(0) = 9\\) and \\(v(4) = 9\\). The greatest velocity occurs at both \\(t = 0\\) and \\(t = 4\\).",
     distractors: {
       A: "Checks the first endpoint but not the second.",
       B: "Uses a zero of velocity rather than its maximum.",
@@ -625,7 +625,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 22,
-    stem: "It is given that\n\n\\[∫₋₁^{2} f(x) dx = 5    and    ∫₄^{2} f(x) dx = -3.\\]\n\nWhat is ∫₋₁^{4} f(x) dx?",
+    stem: "It is given that\n\n\\[\\int_{-1}^{2} f(x)\\,dx = 5 \\quad\\text{and}\\quad \\int_{4}^{2} f(x)\\,dx = -3.\\]\n\nWhat is \\(\\int_{-1}^{4} f(x)\\,dx\\)?",
     options: {
       A: "\\(-8\\)",
       B: "\\(-5\\)",
@@ -642,7 +642,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 60,
     targetDisplay: "60 s",
     tip: "Reverse the limits before joining contiguous intervals.",
-    solution: "Reversing the second integral gives ∫₂⁴ f(x) dx = 3. Therefore ∫₋₁⁴ f(x) dx = 5 + 3 = 8.",
+    solution: "Reversing the second integral gives \\(\\int_{2}^{4} f(x)\\,dx = 3\\). Therefore \\(\\int_{-1}^{4} f(x)\\,dx = 5 + 3 = 8\\).",
     distractors: {
       A: "Adds the magnitudes and then keeps the reversed sign.",
       B: "Uses only the first integral and changes its sign.",
@@ -655,7 +655,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 23,
-    stem: "The curve y = (3/2)x(x - 1) is shown from x = 0 to x = 2. The regions between the curve and the x-axis are shaded.\n\nWhat is the total shaded area?",
+    stem: "The curve \\(y = \\dfrac{3}{2}x(x - 1)\\) is shown from \\(x = 0\\) to \\(x = 2\\). The regions between the curve and the x-axis are shaded.\n\nWhat is the total shaded area?",
     options: {
       A: "\\(1\\)",
       B: "\\(3/2\\)",
@@ -671,7 +671,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 85,
     targetDisplay: "85 s",
     tip: "Split at every x-intercept and make each geometric contribution positive.",
-    solution: "An antiderivative is F(x) = x³/2 - 3x²/4. From 0 to 1, the integral is -1/4, so that area is 1/4. From 1 to 2, the integral is F(2) - F(1) = 1 - (-1/4) = 5/4. The total area is 1/4 + 5/4 = 3/2.",
+    solution: "An antiderivative is \\(F(x) = x^{3}/2 - 3x^{2}/4\\). From 0 to 1, the integral is \\(-1/4\\), so that area is \\(1/4\\). From 1 to 2, the integral is \\(F(2) - F(1) = 1 - (-1/4) = 5/4\\). The total area is \\(1/4 + 5/4 = 3/2\\).",
     distractors: {
       A: "Uses only F(2), the signed integral from 0 to 2.",
       C: "Adds the magnitudes but doubles the smaller region.",
@@ -686,7 +686,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 24,
-    stem: "Let\n\n\\[F(x) = ∫₀ˣ (3t^{2} - 12t + 9) dt.\\]\n\nOn which interval is F decreasing?",
+    stem: "Let\n\n\\[F(x) = \\int_{0}^{x} (3t^{2} - 12t + 9)\\,dt.\\]\n\nOn which interval is \\(F\\) decreasing?",
     options: {
       A: "\\(x < 1\\)",
       B: "\\(x > 3\\)",
@@ -702,7 +702,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 70,
     targetDisplay: "70 s",
     tip: "Differentiate the integral by reading off its integrand.",
-    solution: "By the Fundamental Theorem, F'(x) = 3x² - 12x + 9 = 3(x - 1)(x - 3). This is negative between its roots, so F decreases for 1 < x < 3.",
+    solution: "By the Fundamental Theorem, \\(F'(x) = 3x^{2} - 12x + 9 = 3(x - 1)(x - 3)\\). This is negative between its roots, so \\(F\\) decreases for \\(1 < x < 3\\).",
     distractors: {
       A: "Uses only the interval to the left of the first root.",
       B: "Uses only the interval to the right of the second root.",
@@ -792,7 +792,7 @@ export const MATHS2_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 75,
     targetDisplay: "75 s",
     tip: "Split where the expression inside the modulus changes sign, and respect each region.",
-    solution: "For -1 ≤ x ≤ 1, 1 - x² = x + 1, so x(x + 1) = 0 and x = -1 or 0. For x ≥ 1, x² - 1 = x + 1, so (x - 2)(x + 1) = 0 and only x = 2 fits this region. For x < -1 the right side is negative, so there are no solutions. Total: 3.",
+    solution: "For \\(-1 \\le x \\le 1\\), \\(1 - x^{2} = x + 1\\), so \\(x(x + 1) = 0\\) and \\(x = -1\\) or \\(0\\). For \\(x \\ge 1\\), \\(x^{2} - 1 = x + 1\\), so \\((x - 2)(x + 1) = 0\\) and only \\(x = 2\\) fits this region. For \\(x < -1\\) the right side is negative, so there are no solutions. Total: 3.",
     distractors: {
       A: "Keeps only the positive solution x = 2.",
       B: "Solves only the central modulus branch.",

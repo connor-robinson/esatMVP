@@ -20,10 +20,10 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 45,
     targetDisplay: "45 s",
     tip: "Apply the outside power to both the number and x before dividing.",
-    solution: "16^(3/4) = 8 and (x⁶)^(3/4) = x^(9/2). Dividing by 2x^(1/2) gives 4x⁴.",
+    solution: "\\(16^{3/4} = 8\\) and \\((x^{6})^{3/4} = x^{9/2}\\). Dividing by \\(2x^{1/2}\\) gives \\(4x^{4}\\).",
     distractors: {
-      A: "Uses 16^(3/4) = 4 and also loses one power of x.",
-      B: "Gets the power of x right but evaluates 16^(3/4) as 4.",
+      A: "Uses \\(16^{3/4} = 4\\) and also loses one power of \\(x\\).",
+      B: "Gets the power of \\(x\\) right but evaluates \\(16^{3/4}\\) as 4.",
       C: "Evaluates the numerical factor correctly but subtracts the powers incorrectly.",
       E: "Forgets to divide the coefficient by 2.",
     },
@@ -32,7 +32,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 2,
-    stem: "The line y = 2x + 3 is tangent to the curve y = x² - 4x + k.\n\nWhat is the value of k?",
+    stem: "The line \\(y = 2x + 3\\) is tangent to the curve \\(y = x^{2} - 4x + k\\).\n\nWhat is the value of \\(k\\)?",
     options: {
       A: "\\(12\\)",
       B: "\\(9\\)",
@@ -48,7 +48,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 65,
     targetDisplay: "65 s",
     tip: "For a line tangent to a quadratic, set the discriminant of the intersection equation to zero.",
-    solution: "At an intersection, x² - 4x + k = 2x + 3, so x² - 6x + k - 3 = 0. Tangency means one repeated root, so 36 - 4(k - 3) = 0. Hence k = 12.",
+    solution: "At an intersection, \\(x^{2} - 4x + k = 2x + 3\\), so \\(x^{2} - 6x + k - 3 = 0\\). Tangency means one repeated root, so \\(36 - 4(k - 3) = 0\\). Hence \\(k = 12\\).",
     distractors: {
       B: "Uses the repeated x-coordinate, x = 3, as k.",
       C: "Sets the coefficient of x, rather than the discriminant, to zero.",
@@ -60,7 +60,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 3,
-    stem: "The polynomial p(x) = 2x³ + ax² - 3x + 6 leaves the same remainder when divided by x - 1 and by x + 2.\n\nWhat is a?",
+    stem: "The polynomial \\(p(x) = 2x^{3} + ax^{2} - 3x + 6\\) leaves the same remainder when divided by \\(x - 1\\) and by \\(x + 2\\).\n\nWhat is \\(a\\)?",
     options: {
       A: "\\(-3\\)",
       B: "\\(-1\\)",
@@ -83,14 +83,14 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
       B: "Changes the sign of the cubic term at x = -2 incorrectly.",
       C: "Divides by 3 too early after forming the wrong linear equation.",
       D: "Assumes equal remainders mean both remainders are zero.",
-      E: "Evaluates (-2)² as -4.",
+      E: "Evaluates \\((-2)^{2}\\) as \\(-4\\).",
     },
     benchmarkNote: "ENGAA 2023 Section 1, Q21, polynomial-factor information used to determine coefficients.",
     editorPick: false,
   },
   {
     number: 4,
-    stem: "For x ≥ 2, let\n\n\\[f(x) = x^{2} - 4x + 7    and    g(x) = \\sqrt{x - 3}.\\]\n\nWhich expression is equal to g(f(x))?",
+    stem: "For \\(x \\ge 2\\), let\n\n\\[f(x) = x^{2} - 4x + 7\\]\n\nand\n\n\\[g(x) = \\sqrt{x - 3}.\\]\n\nWhich expression is equal to \\(g(f(x))\\)?",
     options: {
       A: "\\(x + 2\\)",
       B: "\\(|x - 2|\\)",
@@ -105,13 +105,13 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     difficulty: "2/4 Medium",
     targetSeconds: 70,
     targetDisplay: "70 s",
-    tip: "Remember that √(u²) = |u|, then use the stated domain.",
-    solution: "g(f(x)) = √(f(x) - 3) = √((x - 2)²) = |x - 2|. Since x ≥ 2, this is x - 2.",
+    tip: "Remember that \\(\\sqrt{u^{2}} = |u|\\), then use the stated domain.",
+    solution: "\\(g(f(x)) = \\sqrt{f(x) - 3} = \\sqrt{(x - 2)^{2}} = |x - 2|\\). Since \\(x \\ge 2\\), this is \\(x - 2\\).",
     distractors: {
       A: "Reverses the sign when completing the square.",
-      B: "Stops before using the restriction x ≥ 2.",
+      B: "Stops before using the restriction \\(x \\ge 2\\).",
       D: "Forgets that the outer function takes a square root.",
-      E: "Substitutes f(x) into √x rather than into √(x - 3).",
+      E: "Substitutes \\(f(x)\\) into \\(\\sqrt{x}\\) rather than into \\(\\sqrt{x - 3}\\).",
     },
     benchmarkNote: "Official 2026 Notes on Mathematics, MM1.7 and MM8.2 composition style; no close single archive question was used.",
     editorPick: true,
@@ -136,7 +136,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 80,
     targetDisplay: "80 s",
     tip: "Complete the square before reaching for the quadratic formula.",
-    solution: "The quadratic is (x - k)² = 1, so the roots are k - 1 and k + 1. Requiring 0 < k - 1 and k + 1 < 4 gives 1 < k < 3.",
+    solution: "The quadratic is \\((x - k)^{2} = 1\\), so the roots are \\(k - 1\\) and \\(k + 1\\). Requiring \\(0 < k - 1\\) and \\(k + 1 < 4\\) gives \\(1 < k < 3\\).",
     distractors: {
       A: "Checks only that the smaller root is below 4.",
       B: "Checks only that the larger root is positive.",
@@ -150,7 +150,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 6,
-    stem: "A sequence is defined by u₁ = 2 and uₙ₊₁ = 1 - uₙ.\n\nWhat is u₂₀₂₆?",
+    stem: "A sequence is defined by \\(u_{1} = 2\\) and \\(u_{n+1} = 1 - u_{n}\\).\n\nWhat is \\(u_{2026}\\)?",
     options: {
       A: "\\(-2\\)",
       B: "\\(-1\\)",
@@ -168,7 +168,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     solution: "The sequence alternates 2, -1, 2, -1, ... . Every even-numbered term is -1.",
     distractors: {
       A: "Changes the sign but forgets the added 1.",
-      C: "Treats the recurrence as uₙ₊₁ = 1 - n.",
+      C: "Treats the recurrence as \\(u_{n+1} = 1 - n\\).",
       D: "Uses the value of the odd-numbered terms.",
     },
     benchmarkNote: "Official 2026 Notes on Mathematics, MM2.1 recurrence exercises; broader ESAT sequence style.",
@@ -176,7 +176,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 7,
-    stem: "An arithmetic progression has first term a, non-zero common difference d, and sum Sₙ of its first n terms.\n\nGiven that S₁₀ = 3S₅, what is a/d?",
+    stem: "An arithmetic progression has first term \\(a\\), non-zero common difference \\(d\\), and sum \\(S_{n}\\) of its first \\(n\\) terms.\n\nGiven that \\(S_{10} = 3S_{5}\\), what is a/d?",
     options: {
       A: "\\(-3\\)",
       B: "\\(-1\\)",
@@ -193,7 +193,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 70,
     targetDisplay: "70 s",
     tip: "Cancel the common factor 5 before doing the algebra.",
-    solution: "S₁₀ = 5(2a + 9d) and S₅ = (5/2)(2a + 4d). Setting S₁₀ = 3S₅ gives 10(2a + 9d) = 15(2a + 4d), so a = 3d.",
+    solution: "\\(S_{10} = 5(2a + 9d)\\) and \\(S_{5} = \\frac{5}{2}(2a + 4d)\\). Setting \\(S_{10} = 3S_{5}\\) gives \\(10(2a + 9d) = 15(2a + 4d)\\), so \\(a = 3d\\).",
     distractors: {
       A: "Moves the d terms across with the wrong sign.",
       B: "Uses 10d and 5d instead of 9d and 4d in the sum formula.",
@@ -206,7 +206,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 8,
-    stem: "What is the coefficient of x² in\n\n(1 - 2x)^{5} + (1 + 2x)^{5}?",
+    stem: "What is the coefficient of \\(x^{2}\\) in\n\n\\[(1 - 2x)^{5} + (1 + 2x)^{5}?\\]",
     options: {
       A: "\\(0\\)",
       B: "\\(40\\)",
@@ -222,12 +222,12 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 50,
     targetDisplay: "50 s",
     tip: "Odd-power terms cancel, but even-power terms add.",
-    solution: "Each expansion contributes C(5,2)(2x)² = 10 × 4x² = 40x². The signs are positive for an even power, so the total coefficient is 80.",
+    solution: "Each expansion contributes \\(\\binom{5}{2}(2x)^{2} = 10 \\times 4x^{2} = 40x^{2}\\). The signs are positive for an even power, so the total coefficient is 80.",
     distractors: {
       A: "Assumes every non-constant term cancels.",
       B: "Finds the coefficient from only one expansion.",
       D: "Adds the two contributions and then doubles once more.",
-      E: "Uses 2⁵ instead of 2² for the x² term.",
+      E: "Uses \\(2^{5}\\) instead of \\(2^{2}\\) for the \\(x^{2}\\) term.",
     },
     benchmarkNote: "NSAA 2018 Section 1, Q85, coefficient extraction with paired binomial factors.",
     editorPick: false,
@@ -262,7 +262,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 10,
-    stem: "The circle (x - 2)² + (y + 1)² = 9 has centre C. A tangent from P(8, -1) touches the circle at T, as shown.\n\nWhat is PT?",
+    stem: "The circle \\((x - 2)^{2} + (y + 1)^{2} = 9\\) has centre \\(C\\). A tangent from \\(P(8, -1)\\) touches the circle at \\(T\\), as shown.\n\nWhat is \\(PT\\)?",
     options: {
       A: "\\(3/2\\)",
       B: "\\(\\sqrt{3}\\)",
@@ -279,13 +279,13 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 70,
     targetDisplay: "70 s",
     tip: "Join the external point to the centre to create a right-angled triangle.",
-    solution: "CP = 6 and CT = 3. Since CT is perpendicular to the tangent, triangle CTP is right-angled. Thus PT² = 6² - 3² = 27, so PT = 3√3.",
+    solution: "\\(CP = 6\\) and \\(CT = 3\\). Since \\(CT\\) is perpendicular to the tangent, triangle CTP is right-angled. Thus \\(PT^{2} = 6^{2} - 3^{2} = 27\\), so \\(PT = 3\\sqrt{3}\\).",
     distractors: {
       A: "Uses the difference of the two lengths and then halves it.",
-      B: "Calculates √(6 - 3) instead of using squares.",
+      B: "Calculates \\(\\sqrt{6 - 3}\\) instead of using squares.",
       C: "Assumes the tangent length equals the radius.",
-      D: "Uses PT² = CP × CT.",
-      E: "Uses PT² = CP² - CT rather than CP² - CT².",
+      D: "Uses \\(PT^{2} = CP \\times CT\\).",
+      E: "Uses \\(PT^{2} = CP^{2} - CT\\) rather than \\(CP^{2} - CT^{2}\\).",
     },
     benchmarkNote: "NSAA 2018 Section 1, Q83, tangent length from an external point to a circle.",
     editorPick: false,
@@ -311,9 +311,9 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 65,
     targetDisplay: "65 s",
     tip: "The diameter is twice the radius, so square lengths with care.",
-    solution: "The centre is the midpoint (2, 4). Also AB² = 6² + 4² = 52, so r² = AB²/4 = 13. Therefore (x - 2)² + (y - 4)² = 13.",
+    solution: "The centre is the midpoint \\((2, 4)\\). Also \\(AB^{2} = 6^{2} + 4^{2} = 52\\), so \\(r^{2} = AB^{2}/4 = 13\\). Therefore \\((x - 2)^{2} + (y - 4)^{2} = 13\\).",
     distractors: {
-      A: "Uses the squared diameter as r².",
+      A: "Uses the squared diameter as \\(r^{2}\\).",
       B: "Uses the right radius but reverses both centre signs.",
       C: "Divides the squared diameter by 2 instead of 4.",
       E: "Finds the wrong midpoint by pairing unlike coordinates.",
@@ -344,14 +344,14 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
       A: "Uses only one term in the numerator.",
       C: "Confuses sin 45° with tan 45°.",
       D: "Divides each half by 1/2 instead of by 1.",
-      E: "Uses tan 45° = 1/√2 and also doubles the numerator.",
+      E: "Uses \\(\\tan 45^{\\circ} = 1/\\sqrt{2}\\) and also doubles the numerator.",
     },
     benchmarkNote: "Official Pearson ESAT Mathematics 2 specimen, exact-trigonometric-value style; specification MM4.3.",
     editorPick: false,
   },
   {
     number: 13,
-    stem: "A circle has radius 6. A minor arc AB has length 4π, and the minor segment cut off by chord AB is shaded.\n\nWhat is the exact area of the shaded segment?",
+    stem: "A circle has radius 6. A minor arc AB has length \\(4\\pi\\), and the minor segment cut off by chord AB is shaded.\n\nWhat is the exact area of the shaded segment?",
     options: {
       A: "\\(4\\pi - 3\\sqrt{3}\\)",
       B: "\\(8\\pi - 9\\sqrt{3}\\)",
@@ -369,14 +369,14 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 85,
     targetDisplay: "85 s",
     tip: "A segment is a sector minus the triangle formed by the two radii.",
-    solution: "The angle is θ = s/r = 4π/6 = 2π/3. Sector area is (1/2)r²θ = 12π. Triangle AOB has area (1/2)(6)(6)sin(2π/3) = 9√3. The segment area is 12π - 9√3.",
+    solution: "The angle is \\(\\theta = s/r = 4\\pi/6 = 2\\pi/3\\). Sector area is \\(\\frac{1}{2}r^{2}\\theta = 12\\pi\\). Triangle AOB has area \\(\\frac{1}{2}(6)(6)\\sin(2\\pi/3) = 9\\sqrt{3}\\). The segment area is \\(12\\pi - 9\\sqrt{3}\\).",
     distractors: {
       A: "Uses the arc length as if it were the angle.",
-      B: "Uses θ = π/3 rather than 2π/3.",
-      C: "Uses πrθ/2 for the sector area.",
+      B: "Uses \\(\\theta = \\pi/3\\) rather than \\(2\\pi/3\\).",
+      C: "Uses \\(\\pi r\\theta/2\\) for the sector area.",
       D: "Forgets the factor 1/2 in the triangle area.",
       E: "Adds the triangle instead of subtracting it.",
-      F: "Uses the whole 18π half-circle area as the sector.",
+      F: "Uses the whole \\(18\\pi\\) half-circle area as the sector.",
     },
     benchmarkNote: "ENGAA 2021 Section 1, Q27, exact area of a circular segment; official specification MM4.2.",
     editorPick: false,
@@ -386,7 +386,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 14,
-    stem: "How many solutions of\n\n\\[2sin^{2}x + cos x = 3/2\\]\n\n\\[lie in 0 \\le  x < 2\\pi?\\]",
+    stem: "How many solutions of\n\n\\[2\\sin^{2}x + \\cos x = \\dfrac{3}{2}\\]\n\nlie in \\(0 \\le x < 2\\pi\\)?",
     options: {
       A: "\\(0\\)",
       B: "\\(1\\)",
@@ -402,7 +402,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 85,
     targetDisplay: "85 s",
     tip: "You only need to check whether the cosine roots lie in [-1, 1]; you do not need their angles.",
-    solution: "Let c = cos x and use sin²x = 1 - c². This gives 4c² - 2c - 1 = 0, with roots c = (1 ± √5)/4. Both lie strictly between -1 and 1, so each cosine value gives two x-values in the interval. Total: 4.",
+    solution: "Let \\(c = \\cos x\\) and use \\(\\sin^{2}x = 1 - c^{2}\\). This gives \\(4c^{2} - 2c - 1 = 0\\), with roots \\(c = (1 \\pm \\sqrt{5})/4\\). Both lie strictly between \\(-1\\) and \\(1\\), so each cosine value gives two \\(x\\)-values in the interval. Total: 4.",
     distractors: {
       A: "Rejects the irrational cosine values because they are not standard angles.",
       B: "Keeps only one root of the quadratic and one angle.",
@@ -458,11 +458,11 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 45,
     targetDisplay: "45 s",
     tip: "Convert both sides to the same base before comparing exponents.",
-    solution: "Write both sides in base 2: 2^(2x - 2) = 2^(3x + 3). Hence 2x - 2 = 3x + 3, giving x = -5.",
+    solution: "Write both sides in base 2: \\(2^{2x - 2} = 2^{3x + 3}\\). Hence \\(2x - 2 = 3x + 3\\), giving \\(x = -5\\).",
     distractors: {
       B: "Drops the factor 2 multiplying x - 1.",
       C: "Equates x - 1 and x + 1 directly.",
-      D: "Changes 8 to 2² instead of 2³.",
+      D: "Changes 8 to \\(2^{2}\\) instead of \\(2^{3}\\).",
       E: "Moves the constants across with the wrong sign.",
     },
     benchmarkNote: "NSAA 2019 Section 1, Q81, exponential equation reduced using a substitution or common base.",
@@ -491,14 +491,14 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
       A: "Reverses every fraction before combining.",
       B: "Keeps only the first and last denominators in the wrong order.",
       C: "Assumes a telescoping product must equal the base 2.",
-      E: "Uses 32 = 2⁵ and forgets the remaining division by 2.",
+      E: "Uses \\(32 = 2^{5}\\) and forgets the remaining division by 2.",
     },
     benchmarkNote: "NSAA 2018 Section 1, Q81, telescoping sum of logarithms.",
     editorPick: false,
   },
   {
     number: 18,
-    stem: "Two quantities are modelled by\n\n\\[P = 3 \\times  2ᵗ    and    Q = 96 \\times  2^{-t}.\\]\n\nFor what value of t are P and Q equal?",
+    stem: "Two quantities are modelled by\n\n\\[P = 3 \\times 2^{t} \\quad\\text{and}\\quad Q = 96 \\times 2^{-t}.\\]\n\nFor what value of \\(t\\) are \\(P\\) and \\(Q\\) equal?",
     options: {
       A: "\\(-5/2\\)",
       B: "\\(-1\\)",
@@ -515,12 +515,12 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 65,
     targetDisplay: "65 s",
     tip: "Bring equal bases together before comparing exponents.",
-    solution: "Set the models equal: 3 × 2ᵗ = 96 × 2^(-t). Hence 2^(2t) = 32 = 2⁵, so 2t = 5 and t = 5/2.",
+    solution: "Set the models equal: \\(3 \\times 2^{t} = 96 \\times 2^{-t}\\). Hence \\(2^{2t} = 32 = 2^{5}\\), so \\(2t = 5\\) and \\(t = 5/2\\).",
     distractors: {
-      A: "Moves 2^(-t) across but keeps the exponent negative.",
-      B: "Uses 96/3 = 2⁻².",
+      A: "Moves \\(2^{-t}\\) across but keeps the exponent negative.",
+      B: "Uses \\(96/3 = 2^{-2}\\).",
       C: "Assumes the increasing and decreasing models meet at t = 0.",
-      D: "Uses 32 = 2².",
+      D: "Uses \\(32 = 2^{2}\\).",
       E: "Finds 2t = 4 after treating 32 as 16.",
     },
     benchmarkNote: "Official 2026 Notes on Mathematics, MM5.3 exponential-equation modelling; broader ESAT intersection style.",
@@ -528,7 +528,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 19,
-    stem: "The curve y = x³ - 3x has a normal at the point where x = 2.\n\nWhich is the equation of the normal?",
+    stem: "The curve \\(y = x^{3} - 3x\\) has a normal at the point where \\(x = 2\\).\n\nWhich is the equation of the normal?",
     options: {
       A: "\\(y - 2 = 9(x - 2)\\)",
       B: "\\(y - 2 = -(x - 2)/9\\)",
@@ -544,11 +544,11 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 70,
     targetDisplay: "70 s",
     tip: "Find both the point and the negative reciprocal gradient.",
-    solution: "At x = 2, y = 2. Also dy/dx = 3x² - 3, so the tangent gradient is 9 and the normal gradient is -1/9. Thus y - 2 = -(x - 2)/9.",
+    solution: "At \\(x = 2\\), \\(y = 2\\). Also \\(\\dfrac{dy}{dx} = 3x^{2} - 3\\), so the tangent gradient is 9 and the normal gradient is \\(-1/9\\). Thus \\(y - 2 = -(x - 2)/9\\).",
     distractors: {
       A: "Uses the tangent gradient instead of the normal gradient.",
       C: "Uses (-2, -2) instead of (2, 2).",
-      D: "Differentiates x³ as 3x instead of 3x².",
+      D: "Differentiates \\(x^{3}\\) as \\(3x\\) instead of \\(3x^{2}\\).",
       E: "Takes the reciprocal but forgets the negative sign.",
     },
     benchmarkNote: "ENGAA 2021 Section 1, Q21, efficient derivative evaluation; official MM6.3 tangent and normal style.",
@@ -577,13 +577,13 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 80,
     targetDisplay: "80 s",
     tip: "Use the derivative equation to remove the parameter from the curve equation.",
-    solution: "At a stationary point, 3x² - 3a = 0, so a = x². Being on the x-axis also gives x³ - 3x³ + 2 = 0, hence x³ = 1. Therefore x = 1 and a = 1.",
+    solution: "At a stationary point, \\(3x^{2} - 3a = 0\\), so \\(a = x^{2}\\). Being on the x-axis also gives \\(x^{3} - 3x^{3} + 2 = 0\\), hence \\(x^{3} = 1\\). Therefore \\(x = 1\\) and \\(a = 1\\).",
     distractors: {
-      A: "Uses a = -x² and x = 2.",
-      B: "Substitutes x³ = 2 instead of x³ = 1.",
+      A: "Uses \\(a = -x^{2}\\) and \\(x = 2\\).",
+      B: "Substitutes \\(x^{3} = 2\\) instead of \\(x^{3} = 1\\).",
       C: "Takes x = -1 even though it does not make the point lie on the axis.",
       D: "Assumes a stationary point on an axis must occur at the origin.",
-      F: "Uses x³ = 2 after missing the factor -2x³.",
+      F: "Uses \\(x^{3} = 2\\) after missing the factor \\(-2x^{3}\\).",
       G: "Squares the constant term 2 to obtain a.",
     },
     benchmarkNote: "Official 2026 Notes on Mathematics, MM6.3 stationary-point parameter exercises; tangent condition style also seen in NSAA 2018 Q77.",
@@ -609,7 +609,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 90,
     targetDisplay: "90 s",
     tip: "Use the physical interval to reject the second stationary value immediately.",
-    solution: "V = x(12 - 2x)(8 - 2x) = 4x(6 - x)(4 - x). Differentiating gives V' = 12x² - 80x + 96. Thus 3x² - 20x + 24 = 0, so x = (10 ± 2√7)/3. Only the minus sign lies in 0 < x < 4, so it gives the maximum.",
+    solution: "\\(V = x(12 - 2x)(8 - 2x) = 4x(6 - x)(4 - x)\\). Differentiating gives \\(V' = 12x^{2} - 80x + 96\\). Thus \\(3x^{2} - 20x + 24 = 0\\), so \\(x = (10 \\pm 2\\sqrt{7})/3\\). Only the minus sign lies in \\(0 < x < 4\\), so it gives the maximum.",
     distractors: {
       A: "Keeps the stationary value outside the physical domain.",
       B: "Loses the factor 2 when applying the quadratic formula.",
@@ -626,7 +626,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 22,
-    stem: "The line y = x - 1 is shown for 0 ≤ x ≤ 3. The two regions between the line and the x-axis are shaded.\n\nWhat is the total shaded area?",
+    stem: "The line \\(y = x - 1\\) is shown for \\(0 \\le x \\le 3\\). The two regions between the line and the x-axis are shaded.\n\nWhat is the total shaded area?",
     options: {
       A: "\\(3/2\\)",
       B: "\\(2\\)",
@@ -657,7 +657,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
   },
   {
     number: 23,
-    stem: "The area under y = x² from x = 0 to x = 2 is estimated using the trapezium rule with ordinates at x = 0, 1 and 2.\n\nWhich row is correct?",
+    stem: "The area under \\(y = x^{2}\\) from \\(x = 0\\) to \\(x = 2\\) is estimated using the trapezium rule with ordinates at \\(x = 0\\), 1 and 2.\n\nWhich row is correct?",
     options: {
       A: "estimate 3; overestimate",
       B: "estimate 3; underestimate",
@@ -673,7 +673,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 65,
     targetDisplay: "65 s",
     tip: "For a convex curve, trapezium tops sit above the curve.",
-    solution: "With width 1, the trapezium estimate is (1/2)[0 + 2(1) + 4] = 3. Since y = x² is convex, the chords lie above the curve, so this is an overestimate.",
+    solution: "With width 1, the trapezium estimate is \\(\\frac{1}{2}[0 + 2(1) + 4] = 3\\). Since \\(y = x^{2}\\) is convex, the chords lie above the curve, so this is an overestimate.",
     distractors: {
       B: "Gets the numerical estimate right but reverses the convexity judgement.",
       C: "Uses the exact integral instead of the trapezium estimate.",
@@ -705,11 +705,11 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 65,
     targetDisplay: "65 s",
     tip: "Find the constant before substituting the requested x-value.",
-    solution: "Integrating gives y = 3x² - 4x + C. Using (1, 5), 5 = 3 - 4 + C, so C = 6. At x = 2, y = 12 - 8 + 6 = 10.",
+    solution: "Integrating gives \\(y = 3x^{2} - 4x + C\\). Using \\((1, 5)\\), \\(5 = 3 - 4 + C\\), so \\(C = 6\\). At \\(x = 2\\), \\(y = 12 - 8 + 6 = 10\\).",
     distractors: {
       A: "Assumes the initial y-value remains constant.",
       B: "Finds C correctly but reports it as the answer.",
-      C: "Integrates 6x as 3x rather than 3x².",
+      C: "Integrates \\(6x\\) as \\(3x\\) rather than \\(3x^{2}\\).",
       D: "Omits the constant of integration.",
       E: "Uses C = 5 without applying the point to the other terms.",
     },
@@ -764,7 +764,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 80,
     targetDisplay: "80 s",
     tip: "The question asks for distinct roots, so inspect multiplicity after factorising.",
-    solution: "Rearrange to x³ - 3x - 2 = 0. This factorises as (x - 2)(x + 1)² = 0, giving the two distinct roots x = 2 and x = -1. The repeated root represents tangency to y = 2.",
+    solution: "Rearrange to \\(x^{3} - 3x - 2 = 0\\). This factorises as \\((x - 2)(x + 1)^{2} = 0\\), giving the two distinct roots \\(x = 2\\) and \\(x = -1\\). The repeated root represents tangency to \\(y = 2\\).",
     distractors: {
       A: "Counts only the crossing at x = 2 and misses the tangent root.",
       C: "Counts the repeated root x = -1 twice.",
@@ -780,7 +780,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     number: 27,
     stem: "The graph shown is decreasing, has horizontal asymptote y = -3, and passes through (0, -1).\n\nWhich is its equation?",
     options: {
-      A: "\\(y = 2ˣ - 3\\)",
+      A: "\\(y = 2^{x} - 3\\)",
       B: "\\(y = 2^{-x} + 3\\)",
       C: "\\(y = 2^{x + 1} - 3\\)",
       D: "\\(y = 2^{-x} - 1\\)",
@@ -794,7 +794,7 @@ export const MATHS2_MOCK_01_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 65,
     targetDisplay: "65 s",
     tip: "Use the asymptote and direction first, then check one point.",
-    solution: "A decreasing base-2 exponential needs a negative coefficient of x in the exponent. The asymptote -3 fixes the vertical shift. At x = 0, 2^(1 - 0) - 3 = -1, so y = 2^(1 - x) - 3.",
+    solution: "A decreasing base-2 exponential needs a negative coefficient of \\(x\\) in the exponent. The asymptote \\(-3\\) fixes the vertical shift. At \\(x = 0\\), \\(2^{1 - 0} - 3 = -1\\), so \\(y = 2^{1 - x} - 3\\).",
     distractors: {
       A: "Has the right asymptote but is increasing and has y-intercept -2.",
       B: "Is decreasing but has asymptote y = 3.",
