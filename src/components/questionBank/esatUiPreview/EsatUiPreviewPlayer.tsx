@@ -15,7 +15,6 @@ import {
   Sun,
 } from "lucide-react";
 import { StemContent } from "@/components/shared/StemContent";
-import { useTheme } from "@/contexts/ThemeContext";
 import {
   CALIBRATION_QUESTIONS,
   type CalibrationDifficulty,
@@ -91,7 +90,11 @@ function solutionMarkdown(q: CalibrationQuestion): string {
 }
 
 export function EsatUiPreviewPlayer() {
-  const { isDark, toggleTheme } = useTheme();
+  const [shellTheme, setShellTheme] = useState<"light" | "dark">("light");
+  const isDark = shellTheme === "dark";
+  const toggleShellTheme = () => {
+    setShellTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  };
   const [index, setIndex] = useState(0);
   const [states, setStates] = useState<Record<string, QuestionState>>(() =>
     Object.fromEntries(PREVIEW_QUESTIONS.map((q) => [q.id, emptyState()])),
@@ -254,7 +257,7 @@ export function EsatUiPreviewPlayer() {
             <button
               type="button"
               className="eup-theme-toggle"
-              onClick={toggleTheme}
+              onClick={toggleShellTheme}
               aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
             >
               {isDark ? (
@@ -329,7 +332,7 @@ export function EsatUiPreviewPlayer() {
           <button
             type="button"
             className="eup-theme-toggle"
-            onClick={toggleTheme}
+            onClick={toggleShellTheme}
             aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
           >
             {isDark ? (

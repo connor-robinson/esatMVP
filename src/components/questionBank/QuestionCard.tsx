@@ -328,20 +328,6 @@ export function QuestionCard({
     return cn("cursor-pointer", OPTION_ROW_BASE, OPTION_ROW_HOVER);
   };
 
-  const letterLabelClass = (letter: string) => {
-    const isCorrectAnswer = letter === correctAnswer;
-    if ((isAnswered && isCorrect && isCorrectAnswer) || (answerRevealed && isCorrectAnswer)) {
-      return "text-success";
-    }
-    if (incorrectAnswers.has(letter) && !isCorrectAnswer) {
-      return "text-error/60";
-    }
-    if (localSelectedAnswer === letter && !optionsLocked) {
-      return "text-text";
-    }
-    return "text-text-muted";
-  };
-
   const stemTypography = cn(
     "text-text text-[1.05rem] sm:text-[1.125rem] leading-relaxed tracking-tight",
     "font-sans",
@@ -535,15 +521,6 @@ export function QuestionCard({
             >
               <div className="relative flex w-full items-center gap-2 px-3.5 py-2.5 sm:gap-3 sm:px-4 sm:py-3">
                 <div className="flex min-w-0 flex-1 items-center gap-3 text-left">
-                  <span
-                    className={cn(
-                      "flex w-6 shrink-0 items-center text-sm font-semibold tabular-nums leading-none",
-                      letterLabelClass(letter),
-                    )}
-                  >
-                    {letter}
-                  </span>
-
                   <div
                     className={cn(
                       "flex min-w-0 flex-1 items-center text-[0.98rem] leading-relaxed tracking-tight sm:text-[1.02rem]",

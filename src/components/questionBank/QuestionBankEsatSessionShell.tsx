@@ -16,7 +16,6 @@ import {
 import { StemContent } from "@/components/shared/StemContent";
 import { StatementItemsList } from "@/components/shared/StatementItemsList";
 import { QuestionWithGraph } from "@/components/shared/QuestionWithGraph";
-import { useTheme } from "@/contexts/ThemeContext";
 import { getQuestionStatementItems } from "@/lib/questionBank/statementItems";
 import type {
   QuestionBankQuestion,
@@ -134,7 +133,11 @@ export function QuestionBankEsatSessionShell({
   explanationContent,
   onCloseExplanation,
 }: QuestionBankEsatSessionShellProps) {
-  const { isDark, toggleTheme } = useTheme();
+  const [shellTheme, setShellTheme] = useState<"light" | "dark">("light");
+  const isDark = shellTheme === "dark";
+  const toggleShellTheme = () => {
+    setShellTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  };
   const [timerHidden, setTimerHidden] = useState(false);
   const [counterHidden, setCounterHidden] = useState(false);
   const [navigatorOpen, setNavigatorOpen] = useState(false);
@@ -246,7 +249,7 @@ export function QuestionBankEsatSessionShell({
           <button
             type="button"
             className="eup-theme-toggle"
-            onClick={toggleTheme}
+            onClick={toggleShellTheme}
             aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
           >
             {isDark ? (
@@ -458,10 +461,10 @@ export function QuestionBankEsatSessionShell({
                         checked={isSelected || showCorrect}
                         disabled={locked || wasWrong}
                         onChange={() => selectOption(letter)}
+                        aria-label={`Option ${letter}`}
                       />
                     </span>
                     <span className="eup-radio-body">
-                      <span className="eup-radio-letter">{letter}.</span>{" "}
                       <StemContent
                         content={text}
                         className="text-inherit inline"
