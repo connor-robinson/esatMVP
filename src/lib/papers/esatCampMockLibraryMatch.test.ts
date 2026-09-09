@@ -61,7 +61,7 @@ describe("ESAT CAMP mock library section matching", () => {
       (p) => p.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
     )!;
     const questions = getEsatCampMockQuestions(
-      ESAT_CAMP_MOCK_PAPER_IDS.maths1Mock01,
+      ESAT_CAMP_MOCK_PAPER_IDS.maths1Mock02,
     );
     expect(questions).toHaveLength(27);
     expect(paper.hasConversion).toBe(false);
@@ -157,7 +157,7 @@ describe("ESAT CAMP mock library section matching", () => {
       ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
     );
     const fallback = catalog.find(
-      (paper) => paper.id === ESAT_CAMP_MOCK_PAPER_IDS.maths1Mock01,
+      (paper) => paper.id === ESAT_CAMP_MOCK_PAPER_IDS.maths1Mock02,
     )!;
     const allQuestions = getEsatCampMockQuestionsByPaperName(
       ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,

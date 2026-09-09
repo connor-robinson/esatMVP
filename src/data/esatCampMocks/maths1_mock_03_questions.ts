@@ -578,6 +578,7 @@ export const MATHS1_MOCK_03_QUESTIONS: EsatCampMockQuestion[] = [
     editorPick: false,
     diagramKey: "m1-3-q19",
     diagramAlt: "Plan of six cube stacks in a two-by-three grid, with heights 2, 1, 4 on the north row and 1, 3, 2 on the south row.",
+    diagramNotToScale: true,
   },
   {
     number: 20,
@@ -740,6 +741,7 @@ export const MATHS1_MOCK_03_QUESTIONS: EsatCampMockQuestion[] = [
     editorPick: false,
     diagramKey: "m1-3-q24",
     diagramAlt: "Scatter graph of practice time against score, with a positive trend and one low-score isolated point at high practice time.",
+    diagramNotToScale: true,
   },
   {
     number: 25,

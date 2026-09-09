@@ -75,6 +75,18 @@ export const PHYSICS_MODULE_B: EsatCampMockModule = {
 
 export const MATHS1_MOCK_01: EsatCampMockModule = {
   id: "esatcamp-maths1-mock-01",
+  title: "Math 1 Mock 1",
+  subject: "Mathematics",
+  questionCount: 27,
+  timeLimitMinutes: 40,
+  calculator: "Not permitted",
+  paperName: ESAT_CAMP_MOCK_DISPLAY_NAMES.math1Mock1,
+  disclosure: ESAT_CAMP_MOCK_DISCLOSURE,
+  questions: MATHS1_MOCK_01_QUESTIONS,
+};
+
+export const MATHS1_MOCK_02: EsatCampMockModule = {
+  id: "esatcamp-maths1-mock-02",
   title: "Full Mock 1 Math 1",
   subject: "Mathematics",
   questionCount: 27,
@@ -82,29 +94,17 @@ export const MATHS1_MOCK_01: EsatCampMockModule = {
   calculator: "Not permitted",
   paperName: ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
   disclosure: ESAT_CAMP_MOCK_DISCLOSURE,
-  questions: MATHS1_MOCK_01_QUESTIONS,
+  questions: MATHS1_MOCK_02_QUESTIONS,
 };
 
-export const MATHS1_MOCK_02: EsatCampMockModule = {
-  id: "esatcamp-maths1-mock-02",
+export const MATHS1_MOCK_03: EsatCampMockModule = {
+  id: "esatcamp-maths1-mock-03",
   title: "Full Mock 2 Math 1",
   subject: "Mathematics",
   questionCount: 27,
   timeLimitMinutes: 40,
   calculator: "Not permitted",
   paperName: ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock2,
-  disclosure: ESAT_CAMP_MOCK_DISCLOSURE,
-  questions: MATHS1_MOCK_02_QUESTIONS,
-};
-
-export const MATHS1_MOCK_03: EsatCampMockModule = {
-  id: "esatcamp-maths1-mock-03",
-  title: "Math 1 Mock 1",
-  subject: "Mathematics",
-  questionCount: 27,
-  timeLimitMinutes: 40,
-  calculator: "Not permitted",
-  paperName: ESAT_CAMP_MOCK_DISPLAY_NAMES.math1Mock1,
   disclosure: ESAT_CAMP_MOCK_DISCLOSURE,
   questions: MATHS1_MOCK_03_QUESTIONS,
 };
@@ -133,15 +133,15 @@ export const MATHS2_MOCK_02: EsatCampMockModule = {
   questions: MATHS2_MOCK_02_QUESTIONS,
 };
 
-/** Full Mock 1, Full Mock 2, then leftover singular mocks. */
+/** Full Mock 1 (Math 02), Full Mock 2 (Math 03), then leftover Math 01. */
 export const ESAT_CAMP_MOCK_MODULES: EsatCampMockModule[] = [
-  MATHS1_MOCK_01,
+  MATHS1_MOCK_02,
   MATHS2_MOCK_01,
   PHYSICS_MODULE_A,
-  MATHS1_MOCK_02,
+  MATHS1_MOCK_03,
   MATHS2_MOCK_02,
   PHYSICS_MODULE_B,
-  MATHS1_MOCK_03,
+  MATHS1_MOCK_01,
 ];
 
 const PAPER_ID_BY_MODULE: Record<EsatCampMockModule["id"], number> = {

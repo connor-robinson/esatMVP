@@ -254,7 +254,7 @@ describe("ESAT CAMP mock modules", () => {
     expect(qsA[0]?.examType).toBe(ESAT_CAMP_MOCK_EXAM_TYPE);
     expect(qsA[0]?.examType).not.toBe("Official");
     expect(qsB.every((q) => q.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock2)).toBe(true);
-    expect(qsM.every((q) => q.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1)).toBe(true);
+    expect(qsM.every((q) => q.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.math1Mock1)).toBe(true);
     expect(qsM.every((q) => q.partName === "Mathematics")).toBe(true);
     const qsM2 = getEsatCampMockQuestions(ESAT_CAMP_MOCK_PAPER_IDS.maths2Mock01);
     expect(qsM2.every((q) => q.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1)).toBe(true);

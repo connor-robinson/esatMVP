@@ -739,6 +739,7 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     editorPick: false,
     diagramKey: "m1-2-q24",
     diagramAlt: "Histogram with three unequal class widths and frequency densities 2, 3 and 1.",
+    diagramNotToScale: true,
   },
   {
     number: 25,
@@ -831,5 +832,6 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     editorPick: true,
     diagramKey: "m1-2-q27",
     diagramAlt: "Speed-time graph with a four-second rise to 12 metres per second, five seconds constant, then a three-second fall to 6 metres per second.",
+    diagramNotToScale: true,
   },
 ];
