@@ -157,14 +157,16 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       .single();
 
     if (error) {
+      console.error('[question-bank/sessions PATCH]', error.message, error.code);
       return NextResponse.json(
-        { error: 'Failed to complete session' },
+        { error: 'Failed to complete session', detail: error.message },
         { status: 500 },
       );
     }
 
     return NextResponse.json({ session: data });
   } catch (err) {
+    console.error('[question-bank/sessions PATCH]', err);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },

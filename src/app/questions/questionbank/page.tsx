@@ -362,6 +362,15 @@ export default function QuestionBankPage() {
     );
     if (alreadyLogged) return;
 
+    // Early leave: only count questions the user actually worked on.
+    // Unattempted ones stay out of the summary / pool consumption.
+    const hasAttempted =
+      answerRevealed ||
+      isAnswered ||
+      selectedAnswer != null ||
+      incorrectAnswers.size > 0;
+    if (!hasAttempted) return;
+
     const timeSpentMs = Date.now() - questionStartedAtRef.current;
     const entry = buildSessionAttemptEntry(
       currentQuestion,
@@ -384,6 +393,7 @@ export default function QuestionBankPage() {
     answerRevealed,
     currentQuestion,
     incorrectAnswers,
+    isAnswered,
     isCorrect,
     selectedAnswer,
     sessionCurrentIndex,
@@ -417,14 +427,18 @@ export default function QuestionBankPage() {
       const summary = buildSessionSummary(attempts, labelForQuestionBankTag);
 
       if (session?.user && qbSessionId) {
-        await ensureSessionRegistered();
-        await completeQuestionBankSession({
-          id: qbSessionId,
-          summary: summary as unknown as Record<string, unknown>,
-          questionCount: summary.totalQuestions,
-          correctCount: summary.correctCount,
-          totalTimeMs: summary.totalTimeMs,
-        });
+        try {
+          await ensureSessionRegistered();
+          await completeQuestionBankSession({
+            id: qbSessionId,
+            summary: summary as unknown as Record<string, unknown>,
+            questionCount: summary.totalQuestions,
+            correctCount: summary.correctCount,
+            totalTimeMs: summary.totalTimeMs,
+          });
+        } catch (err) {
+          console.error('[question-bank] Failed to persist session', err);
+        }
       }
 
       setSessionAttemptLog(attempts);
@@ -1234,6 +1248,32 @@ export default function QuestionBankPage() {
     setSessionView('complete');
   }, []);
 
+  // Must stay above any early returns (complete / home / blocked) or React #300 fires.
+  const submitCurrentSelection = useCallback(() => {
+    if (sessionView === 'review' || !currentQuestion) return;
+    if (!currentSelection || incorrectAnswers.has(currentSelection)) return;
+    const correct = currentSelection === currentQuestion.correct_option;
+    handleSessionAnswerSubmit(currentSelection, correct, {
+      wasRevealed: answerRevealed,
+      usedHint: showHint,
+      wrongAnswersBefore: Array.from(incorrectAnswers),
+      timeUntilCorrectMs: correct
+        ? deadline
+          ? Math.max(0, deadline - Date.now())
+          : null
+        : null,
+    });
+  }, [
+    answerRevealed,
+    currentQuestion,
+    currentSelection,
+    deadline,
+    handleSessionAnswerSubmit,
+    incorrectAnswers,
+    sessionView,
+    showHint,
+  ]);
+
   const reviewAttempt =
     sessionView === 'review' && currentQuestion
       ? sessionAttemptLog.find((a) => a.questionId === currentQuestion.id) ??
@@ -1318,31 +1358,6 @@ export default function QuestionBankPage() {
     // Alias for /questions when there is no live/bootstrapping session.
     return <QuestionBankHomeScreen />;
   }
-
-  const submitCurrentSelection = useCallback(() => {
-    if (sessionView === 'review' || !currentQuestion) return;
-    if (!currentSelection || incorrectAnswers.has(currentSelection)) return;
-    const correct = currentSelection === currentQuestion.correct_option;
-    handleSessionAnswerSubmit(currentSelection, correct, {
-      wasRevealed: answerRevealed,
-      usedHint: showHint,
-      wrongAnswersBefore: Array.from(incorrectAnswers),
-      timeUntilCorrectMs: correct
-        ? deadline
-          ? Math.max(0, deadline - Date.now())
-          : null
-        : null,
-    });
-  }, [
-    answerRevealed,
-    currentQuestion,
-    currentSelection,
-    deadline,
-    handleSessionAnswerSubmit,
-    incorrectAnswers,
-    sessionView,
-    showHint,
-  ]);
 
   const sharedSolutionModals =
     currentQuestion ? (

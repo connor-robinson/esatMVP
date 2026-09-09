@@ -85,19 +85,21 @@ export async function POST(request: NextRequest) {
 
     const { data, error } = await supabase
       .from('question_bank_sessions')
-      .insert(insertRow as never)
+      .upsert(insertRow as never, { onConflict: 'id' })
       .select()
       .single();
 
     if (error) {
+      console.error('[question-bank/sessions POST]', error.message, error.code);
       return NextResponse.json(
-        { error: 'Failed to create session' },
+        { error: 'Failed to create session', detail: error.message },
         { status: 500 },
       );
     }
 
     return NextResponse.json({ session: data });
   } catch (err) {
+    console.error('[question-bank/sessions POST]', err);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },

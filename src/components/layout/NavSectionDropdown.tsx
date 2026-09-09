@@ -87,7 +87,9 @@ const sectionTheme: Record<
 
 /** Visible in both themes; border-subtle alone washes out on dark elevated surfaces. */
 const dropdownPanelClass =
-  'min-w-[17.5rem] w-max overflow-hidden rounded-[8px] border border-border bg-surface-elevated shadow-sm dark:border-white/15';
+  'min-w-[17.5rem] w-max overflow-hidden rounded-[6px] border border-border bg-surface-elevated shadow-sm dark:border-white/18';
+
+const dropdownRuleClass = 'border-t border-border dark:border-white/12';
 
 const sectionLabelClass =
   'whitespace-nowrap text-[13px] font-semibold uppercase tracking-[0.11em] transition-colors duration-fast ease-signature';
@@ -145,7 +147,7 @@ export function NavDropdownMenuItem({
       className={cn(
         'relative flex items-start gap-2.5 text-left transition-colors duration-fast ease-signature',
         compact ? 'px-3 py-2.5' : 'gap-3 px-3 py-3',
-        showRule && 'border-t border-border dark:border-white/10',
+        showRule && dropdownRuleClass,
       )}
     >
       {isActive ? (
@@ -222,7 +224,7 @@ export function NavDropdownItemList({
               <p
                 className={cn(
                   'px-3 py-2 text-[10px] font-medium uppercase tracking-[0.12em] text-text-muted',
-                  groupIndex > 0 && 'border-t border-border dark:border-white/10',
+                  groupIndex > 0 && dropdownRuleClass,
                 )}
               >
                 {group.title}
@@ -407,5 +409,5 @@ export function NavSectionDropdown({
 
 /** Shared panel chrome for mobile section lists (ruled rows). */
 export const navDropdownMobileListClass = cn(
-  'mt-3 overflow-hidden rounded-[8px] border border-border bg-surface-elevated dark:border-white/15',
+  'mt-3 overflow-hidden rounded-[6px] border border-border bg-surface-elevated dark:border-white/18',
 );
