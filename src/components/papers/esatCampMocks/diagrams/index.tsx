@@ -51,18 +51,42 @@ const DIAGRAM_MAP: Record<string, React.ComponentType> = {
   M22: DiagramM22,
 };
 
-export function EsatCampMockDiagram({ diagramKey }: { diagramKey: string }) {
+type EsatCampMockDiagramProps = {
+  diagramKey: string;
+  alt?: string;
+  notToScale?: boolean;
+};
+
+export function EsatCampMockDiagram({
+  diagramKey,
+  alt = "",
+  notToScale = false,
+}: EsatCampMockDiagramProps) {
   const Component = DIAGRAM_MAP[diagramKey];
   const body = Component ? (
     <Component />
   ) : /^m[12]-/.test(diagramKey) ? (
+    // Prefer SVG from the Cursor bundles; PNG remains as the raster fallback.
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={`/esat-camp-mocks/diagrams/${diagramKey}.png`}
-      alt=""
+      src={`/esat-camp-mocks/diagrams/${diagramKey}.svg`}
+      alt={alt}
       className="h-auto w-full max-w-md object-contain"
+      onError={(event) => {
+        const img = event.currentTarget;
+        if (img.src.endsWith(".svg")) {
+          img.src = `/esat-camp-mocks/diagrams/${diagramKey}.png`;
+        }
+      }}
     />
   ) : null;
   if (!body) return null;
-  return <div className="flex w-[80%] justify-center">{body}</div>;
+  return (
+    <div className="flex w-[80%] flex-col items-center gap-1.5">
+      <div className="flex w-full justify-center">{body}</div>
+      {notToScale ? (
+        <p className="text-xs text-text-muted">Diagram not drawn to scale</p>
+      ) : null}
+    </div>
+  );
 }

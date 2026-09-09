@@ -158,7 +158,11 @@ export function PearsonRichQuestion({
       </div>
       {question.diagramKey ? (
         <div className="pearson-diagram">
-          <EsatCampMockDiagram diagramKey={question.diagramKey} />
+          <EsatCampMockDiagram
+            diagramKey={question.diagramKey}
+            alt={question.diagramAlt}
+            notToScale={question.diagramNotToScale}
+          />
         </div>
       ) : null}
       {stemDiagrams.map((asset) => (

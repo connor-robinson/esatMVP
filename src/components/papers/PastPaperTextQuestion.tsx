@@ -101,7 +101,11 @@ export function PastPaperTextQuestion({
             </div>
             {question.diagramKey ? (
               <div className="mt-6 flex justify-center text-text">
-                <EsatCampMockDiagram diagramKey={question.diagramKey} />
+                <EsatCampMockDiagram
+                  diagramKey={question.diagramKey}
+                  alt={question.diagramAlt}
+                  notToScale={question.diagramNotToScale}
+                />
               </div>
             ) : null}
             {stemDiagrams.map((asset) => (
@@ -201,7 +205,11 @@ export function PastPaperTextQuestion({
           </div>
           {question.diagramKey ? (
             <div className="flex justify-center text-text">
-              <EsatCampMockDiagram diagramKey={question.diagramKey} />
+              <EsatCampMockDiagram
+                diagramKey={question.diagramKey}
+                alt={question.diagramAlt}
+                notToScale={question.diagramNotToScale}
+              />
             </div>
           ) : null}
           {stemDiagrams.map((asset) => (

@@ -1,6 +1,6 @@
 import type { EsatCampMockQuestion } from "./types";
 
-/** ESAT Mathematics 1 practice pack, module 1 */
+/** ESAT Mathematics 1 practice pack, module 1 (Cursor bundle) */
 export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
   {
     number: 1,
@@ -11,7 +11,7 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
       C: "0.15 L/s",
       D: "1.5 L/s",
       E: "9 L/s",
-      F: "90 L/s"
+      F: "90 L/s",
     },
     answer: "D",
     answerText: "1.5 L/s",
@@ -21,16 +21,16 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 60,
     targetDisplay: "60 s",
     tip: "Convert both units before dividing.",
-    solution: "0.72 \\(m^{3}\\) = 720 litres and 8 minutes = 480 seconds. The rate is 720 / 480 = 1.5 L/s.",
+    solution: "0.72 \\(m^{3}\\) = 720 litres and 8 minutes = 480 seconds. The rate is \\(\\frac{720}{480}\\) = 1.5 L/s.",
     distractors: {
-      A: "Finds 0.0015 \\(m^{3}\\)/s but leaves the numerical value unchanged when relabelling it in litres.",
+      A: "Finds 0.0015 m³/s but leaves the numerical value unchanged when relabelling it in litres.",
       B: "Calculates 0.72 / 8 and labels the result L/s.",
       C: "Uses 72 litres instead of 720 litres.",
       E: "Uses 80 seconds for 8 minutes.",
-      F: "Divides 720 litres by 8 but forgets that the time is in minutes."
+      F: "Divides 720 litres by 8 but forgets that the time is in minutes.",
     },
     benchmarkNote: "NSAA 2023, Part A, Q11: short multi-stage rate calculation.",
-    editorPick: false
+    editorPick: false,
   },
   {
     number: 2,
@@ -41,7 +41,7 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
       C: "\\(\\frac{7}{25}\\)",
       D: "\\(\\frac{7}{27}\\)",
       E: "\\(\\frac{25}{99}\\)",
-      F: "\\(\\frac{7}{20}\\)"
+      F: "\\(\\frac{7}{20}\\)",
     },
     answer: "B",
     answerText: "\\(\\frac{5}{18}\\)",
@@ -51,16 +51,16 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 75,
     targetDisplay: "75 s",
     tip: "Shift until the recurring parts line up, then subtract.",
-    solution: "Let x = 0.2777.... Then 10x = 2.7777.... Subtracting gives 9x = 2.5, so x = 2.5 / 9 = 5/18.",
+    solution: "Let x = 0.2777.... Then 10x = 2.7777.... Subtracting gives 9x = 2.5, so x = 2.\\(\\frac{5}{9}\\) = \\(\\frac{5}{18}\\).",
     distractors: {
       A: "Rounds the decimal to a familiar quarter.",
       C: "Rounds 0.2777... to 0.28 before converting.",
       D: "Places the recurring digit over 27 without accounting for the non-recurring 2.",
       E: "Treats both displayed digits as a two-digit recurring block.",
-      F: "Uses an incorrect denominator after multiplying by 10."
+      F: "Uses an incorrect denominator after multiplying by 10.",
     },
     benchmarkNote: "NSAA 2023, Part A, Q2: rapid testing of numerical equivalence.",
-    editorPick: false
+    editorPick: false,
   },
   {
     number: 3,
@@ -71,7 +71,7 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
       C: "3",
       D: "4",
       E: "5",
-      F: "6"
+      F: "6",
     },
     answer: "F",
     answerText: "6",
@@ -87,20 +87,20 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
       B: "Uses a common interval that is too large.",
       C: "Uses 120 seconds as the common interval.",
       D: "Counts only the flashes strictly between the endpoints.",
-      E: "Finds five 72-second intervals but forgets the initial flash."
+      E: "Finds five 72-second intervals but forgets the initial flash.",
     },
     benchmarkNote: "Official ESAT Mathematics 1 specimen: broader verified short number-structure style; no close archive item.",
-    editorPick: false
+    editorPick: false,
   },
   {
     number: 4,
-    stem: "What is the value of \\(27^{2/3}\\) \\times \\(9^{-1/2}\\)?",
+    stem: "What is the value of 27^(\\(\\frac{2}{3}\\)) × 9^(\\(\\frac{-1}{2}\\))?",
     options: {
       A: "3",
       B: "\\(\\frac{1}{3}\\)",
       C: "1",
       D: "9",
-      E: "\\(\\sqrt{3}\\)"
+      E: "\\(\\sqrt{3}\\)",
     },
     answer: "A",
     answerText: "3",
@@ -110,45 +110,45 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 45,
     targetDisplay: "45 s",
     tip: "Interpret a fractional power as a root and a negative power as a reciprocal.",
-    solution: "\\(27^{2/3}\\) = \\((cube root of 27)^{2}\\) = 9, while \\(9^{-1/2}\\) = 1/3. Their product is 3.",
+    solution: "27^(\\(\\frac{2}{3}\\)) = (cube root of 27)² = 9, while 9^(\\(\\frac{-1}{2}\\)) = \\(\\frac{1}{3}\\). Their product is 3.",
     distractors: {
       B: "Applies the reciprocal to the whole product.",
       C: "Cancels the two bases as if they were equal.",
-      D: "Treats \\(9^{-1/2}\\) as 1.",
-      E: "Takes only one of the required roots."
+      D: "Treats 9^(-1/2) as 1.",
+      E: "Takes only one of the required roots.",
     },
     benchmarkNote: "NSAA 2022, Part A, Q1: fractional-index simplification.",
-    editorPick: false
+    editorPick: false,
   },
   {
     number: 5,
     stem: "The length and width of a rectangle are measured as 7.2 cm and 3.0 cm, each to the nearest 0.1 cm. What is the upper bound for its area?",
     options: {
-      A: "\\(21.6 cm^{2}\\)",
-      B: "\\(21.0925 cm^{2}\\)",
-      C: "\\(21.75 cm^{2}\\)",
-      D: "\\(21.96 cm^{2}\\)",
-      E: "\\(22.1125 cm^{2}\\)",
-      F: "\\(22.5 cm^{2}\\)"
+      A: "21.6 cm²",
+      B: "21.0925 cm²",
+      C: "21.75 cm²",
+      D: "21.96 cm²",
+      E: "22.1125 cm²",
+      F: "22.5 cm²",
     },
     answer: "E",
-    answerText: "\\(22.1125 cm^{2}\\)",
+    answerText: "22.1125 cm²",
     topicCode: "M2.12",
     topicName: "Number",
     difficulty: "3/4 Hard",
     targetSeconds: 90,
     targetDisplay: "90 s",
     tip: "For a positive product, use both upper bounds.",
-    solution: "The upper bounds are 7.25 cm and 3.05 cm. Their product is 7.25 \\times 3.05 = 22.1125 \\(cm^{2}\\).",
+    solution: "The upper bounds are 7.25 cm and 3.05 cm. Their product is 7.25 × 3.05 = 22.1125 cm².",
     distractors: {
       A: "Multiplies the stated measurements rather than their bounds.",
-      B: "Uses both lower bounds: 7.15 \\times 2.95.",
+      B: "Uses both lower bounds: 7.15 × 2.95.",
       C: "Uses the upper length but the stated width.",
       D: "Uses the stated length but the upper width.",
-      F: "Treats rounding to 0.1 cm as allowing an extra 0.5 cm."
+      F: "Treats rounding to 0.1 cm as allowing an extra 0.5 cm.",
     },
     benchmarkNote: "Official ESAT Mathematics 1 specimen: broader verified numerical-accuracy style; no close archive item.",
-    editorPick: true
+    editorPick: true,
   },
   {
     number: 6,
@@ -159,7 +159,7 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
       C: "18 litres",
       D: "20 litres",
       E: "16 litres",
-      F: "24 litres"
+      F: "24 litres",
     },
     answer: "C",
     answerText: "18 litres",
@@ -175,10 +175,10 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
       B: "Gives the original amount of water only.",
       D: "Gives the final volume after the extra water is added.",
       E: "Subtracts the added water from the original total.",
-      F: "Uses the final ratio parts with the original scale factor."
+      F: "Uses the final ratio parts with the original scale factor.",
     },
     benchmarkNote: "NSAA 2023, Part A, Q14: linked proportional relationships with a hidden scale factor.",
-    editorPick: true
+    editorPick: true,
   },
   {
     number: 7,
@@ -190,7 +190,7 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
       D: "24%",
       E: "40%",
       F: "80%",
-      G: "25%"
+      G: "25%",
     },
     answer: "G",
     answerText: "25%",
@@ -200,17 +200,17 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 45,
     targetDisplay: "45 s",
     tip: "Percentage changes use the current value as the base.",
-    solution: "After the reduction, the price is 80% of the original. Returning from 80 to 100 is an increase of 20/80 = 25%.",
+    solution: "After the reduction, the price is 80% of the original. Returning from 80 to 100 is an increase of \\(\\frac{20}{80}\\) = 25%.",
     distractors: {
       A: "Takes 20% of the reduced value and mistakes that amount for the required percentage.",
       B: "Assumes equal percentage decreases and increases cancel.",
       C: "Uses 20/90 rather than 20/80.",
       D: "Uses an approximate adjustment instead of the exact ratio.",
       E: "Divides the remaining 80% by the lost 20%.",
-      F: "Reports the remaining percentage rather than the required increase."
+      F: "Reports the remaining percentage rather than the required increase.",
     },
     benchmarkNote: "ENGAA 2018, Part A, Q17: successive percentage multipliers.",
-    editorPick: false
+    editorPick: false,
   },
   {
     number: 8,
@@ -221,7 +221,7 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
       C: "8",
       D: "9",
       E: "18",
-      F: "27"
+      F: "27",
     },
     answer: "C",
     answerText: "8",
@@ -231,60 +231,60 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 70,
     targetDisplay: "70 s",
     tip: "Translate the words into a formula before substituting.",
-    solution: "Since y = k/\\sqrt{x}, 12 = k/2 and k = 24. When x = 9, y = 24/3 = 8.",
+    solution: "Since y = k/\\(\\sqrt{x}\\), 12 = k/2 and k = 24. When x = 9, y = \\(\\frac{24}{3}\\) = 8.",
     distractors: {
-      A: "Treats y as inversely proportional to \\(x^{2}\\).",
+      A: "Treats y as inversely proportional to x².",
       B: "Uses the ratio 4:9 directly.",
       D: "Confuses the new x-value with y.",
-      E: "Uses direct proportion to \\sqrt{x}.",
-      F: "Uses direct proportion to x."
+      E: "Uses direct proportion to √x.",
+      F: "Uses direct proportion to x.",
     },
     benchmarkNote: "NSAA 2022, Part A, Q10: inverse-square proportional reasoning.",
-    editorPick: false
+    editorPick: false,
   },
   {
     number: 9,
-    stem: "Two bottles are mathematically similar. Their heights are in the ratio 3:5. The smaller bottle has volume 162 \\(cm^{3}\\). What is the volume of the larger bottle?",
+    stem: "Two bottles are mathematically similar. Their heights are in the ratio 3:5. The smaller bottle has volume 162 cm³. What is the volume of the larger bottle?",
     options: {
-      A: "\\(750 cm^{3}\\)",
-      B: "\\(450 cm^{3}\\)",
-      C: "\\(270 cm^{3}\\)",
-      D: "\\(486 cm^{3}\\)",
-      E: "\\(1250 cm^{3}\\)",
-      F: "\\(1620 cm^{3}\\)"
+      A: "750 cm³",
+      B: "450 cm³",
+      C: "270 cm³",
+      D: "486 cm³",
+      E: "1250 cm³",
+      F: "1620 cm³",
     },
     answer: "A",
-    answerText: "\\(750 cm^{3}\\)",
+    answerText: "750 cm³",
     topicCode: "M3.10",
     topicName: "Ratio and proportion",
     difficulty: "3/4 Hard",
     targetSeconds: 85,
     targetDisplay: "85 s",
     tip: "Length, area and volume use powers 1, 2 and 3 respectively.",
-    solution: "Volumes scale with the cube of the length scale factor. The larger volume is 162 \\times \\((5/3)^{3}\\) = 162 \\times 125/27 = 750 \\(cm^{3}\\).",
+    solution: "Volumes scale with the cube of the length scale factor. The larger volume is 162 × (\\(\\frac{5}{3}\\))³ = 162 × \\(\\frac{125}{27}\\) = 750 cm³.",
     distractors: {
       B: "Uses the square of the scale factor, which is for area.",
       C: "Uses the length scale factor only.",
       D: "Multiplies the volume by 3.",
       E: "Applies an extra factor after cubing the scale factor.",
-      F: "Multiplies by 10 rather than using a scale factor."
+      F: "Multiplies by 10 rather than using a scale factor.",
     },
     benchmarkNote: "ENGAA 2018, Part A, Q9: similar containers and cubic scaling.",
-    editorPick: true
+    editorPick: true,
   },
   {
     number: 10,
     stem: "The variables satisfy p = (3x - q)/(x + r). Which expression makes x the subject?",
     options: {
-      A: "\\(\\frac{q - pr}{3 - p}\\)",
-      B: "\\(\\frac{q + pr}{p - 3}\\)",
-      C: "\\(\\frac{q - pr}{p - 3}\\)",
-      D: "\\(\\frac{p - q + r}{3}\\)",
-      E: "\\(\\frac{q + r}{3 - p}\\)",
-      F: "\\(\\frac{q + pr}{3 - p}\\)"
+      A: "(q - pr)/(3 - p)",
+      B: "(q + pr)/(p - 3)",
+      C: "(q - pr)/(p - 3)",
+      D: "(p - q + r)/3",
+      E: "(q + r)/(3 - p)",
+      F: "(q + pr)/(3 - p)",
     },
     answer: "F",
-    answerText: "\\(\\frac{q + pr}{3 - p}\\)",
+    answerText: "(q + pr)/(3 - p)",
     topicCode: "M4.7",
     topicName: "Algebra",
     difficulty: "2/4 Medium",
@@ -297,24 +297,24 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
       B: "Keeps the numerator positive without reversing the denominator sign.",
       C: "Makes inconsistent sign changes when collecting terms.",
       D: "Divides each visible term by 3 before clearing the fraction.",
-      E: "Fails to multiply r by p."
+      E: "Fails to multiply r by p.",
     },
     benchmarkNote: "NSAA 2023, Part A, Q3: rearrangement with the target variable inside a fraction.",
-    editorPick: false
+    editorPick: false,
   },
   {
     number: 11,
-    stem: "For \\(x \\ne -3\\) and \\(x \\ne 2\\), which expression is equal to (\\(x^{2}\\) - 9)/(\\(x^{2}\\) + x - 6)?",
+    stem: "For x ≠ -3 and x ≠ 2, which expression is equal to (\\(x^{2}\\) - 9)/(\\(x^{2}\\) + x - 6)?",
     options: {
-      A: "\\(\\frac{x + 3}{x - 2}\\)",
-      B: "\\(\\frac{x - 3}{x - 2}\\)",
-      C: "\\(\\frac{x - 3}{x + 3}\\)",
-      D: "\\(\\frac{x + 3}{x + 2}\\)",
+      A: "(x + 3)/(x - 2)",
+      B: "(x - 3)/(x - 2)",
+      C: "(x - 3)/(x + 3)",
+      D: "(x + 3)/(x + 2)",
       E: "1",
-      F: "x - 3"
+      F: "x - 3",
     },
     answer: "B",
-    answerText: "\\(\\frac{x - 3}{x - 2}\\)",
+    answerText: "(x - 3)/(x - 2)",
     topicCode: "M4.6",
     topicName: "Algebra",
     difficulty: "3/4 Hard",
@@ -325,12 +325,12 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     distractors: {
       A: "Cancels x - 3 instead of the common factor x + 3.",
       C: "Cancels the wrong denominator factor.",
-      D: "Factorises \\(x^{2}\\) + x - 6 incorrectly as (x + 3)(x + 2).",
+      D: "Factorises x² + x - 6 incorrectly as (x + 3)(x + 2).",
       E: "Cancels every term across addition and subtraction.",
-      F: "Cancels the entire denominator rather than only a common factor."
+      F: "Cancels the entire denominator rather than only a common factor.",
     },
     benchmarkNote: "NSAA 2022, Part A, Q7: factorisation followed by rational-expression cancellation.",
-    editorPick: true
+    editorPick: true,
   },
   {
     number: 12,
@@ -341,7 +341,7 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
       C: "£9",
       D: "£12",
       E: "£10",
-      F: "£14"
+      F: "£14",
     },
     answer: "E",
     answerText: "£10",
@@ -357,10 +357,10 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
       B: "Averages the ticket prices without weighting the ticket counts correctly.",
       C: "Uses the difference in totals but ignores the changed numbers of both ticket types.",
       D: "Divides £42 by a rounded total of ticket types.",
-      F: "Divides the first total by the number of adult tickets only."
+      F: "Divides the first total by the number of adult tickets only.",
     },
     benchmarkNote: "ENGAA 2018, Part A, Q20: compact contextual modelling with two unknown quantities.",
-    editorPick: false
+    editorPick: false,
   },
   {
     number: 13,
@@ -371,7 +371,7 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
       C: "\\(\\frac{5}{2}\\)",
       D: "3",
       E: "5",
-      F: "6"
+      F: "6",
     },
     answer: "D",
     answerText: "3",
@@ -387,42 +387,42 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
       B: "Chooses the smaller valid solution.",
       C: "Uses the midpoint of the two roots.",
       E: "Uses the coefficient sum rather than solving the quadratic.",
-      F: "Uses the numerator of the reciprocal term as the answer."
+      F: "Uses the numerator of the reciprocal term as the answer.",
     },
     benchmarkNote: "NSAA 2023, Part A, Q8: extracting a required expression from quadratic roots.",
-    editorPick: false
+    editorPick: false,
   },
   {
     number: 14,
-    stem: "What is the complete set of values of x satisfying \\(3 - 2(4 - x) \\geq 5x + 1\\)?",
+    stem: "What is the complete set of values of x satisfying 3 - 2(4 - x) ≥ 5x + 1?",
     options: {
-      A: "\\(x \\geq -2\\)",
-      B: "\\(x < -2\\)",
-      C: "\\(x > -2\\)",
-      D: "\\(x \\leq 2\\)",
-      E: "\\(x \\geq 2\\)",
-      F: "\\(x < 2\\)",
-      G: "\\(x \\leq -2\\)"
+      A: "x ≥ -2",
+      B: "x < -2",
+      C: "x > -2",
+      D: "x ≤ 2",
+      E: "x ≥ 2",
+      F: "x < 2",
+      G: "x ≤ -2",
     },
     answer: "G",
-    answerText: "\\(x \\leq -2\\)",
+    answerText: "x ≤ -2",
     topicCode: "M4.17",
     topicName: "Algebra",
     difficulty: "2/4 Medium",
     targetSeconds: 70,
     targetDisplay: "70 s",
     tip: "When dividing an inequality by a negative number, reverse its direction.",
-    solution: "Expanding gives -5 + 2x \\geq 5x + 1. Therefore -6 \\geq 3x, so \\(x \\leq -2\\).",
+    solution: "Expanding gives -5 + 2x ≥ 5x + 1. Therefore -6 ≥ 3x, so x ≤ -2.",
     distractors: {
       A: "Does not reverse the inequality after effectively dividing by -3.",
       B: "Finds the correct boundary but excludes equality.",
       C: "Both reverses the direction incorrectly and excludes equality.",
       D: "Loses the negative sign on the boundary.",
       E: "Loses the negative sign and reverses the direction.",
-      F: "Loses the negative sign and excludes equality."
+      F: "Loses the negative sign and excludes equality.",
     },
     benchmarkNote: "NSAA 2022, Part A, Q3: multi-step linear inequality with a direction trap.",
-    editorPick: false
+    editorPick: false,
   },
   {
     number: 15,
@@ -433,7 +433,7 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
       C: "120",
       D: "121",
       E: "143",
-      F: "209"
+      F: "209",
     },
     answer: "B",
     answerText: "119",
@@ -442,17 +442,17 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     difficulty: "3/4 Hard",
     targetSeconds: 85,
     targetDisplay: "85 s",
-    tip: "A second difference of 2 means the \\(n^{2}\\) coefficient is 1.",
+    tip: "A second difference of 2 means the n² coefficient is 1.",
     solution: "The first differences are 5, 7, 9, so the constant second difference is 2 and the \\(n^{2}\\) coefficient is 1. The rule is \\(n^{2}\\) + 2n - 1, giving 100 + 20 - 1 = 119.",
     distractors: {
-      A: "Uses \\(n^{2}\\) - 1 and ignores the linear part.",
-      C: "Uses \\(n^{2}\\) + 2n but forgets the constant -1.",
-      D: "Recognises a square-like pattern and chooses \\(11^{2}\\).",
+      A: "Uses n² - 1 and ignores the linear part.",
+      C: "Uses n² + 2n but forgets the constant -1.",
+      D: "Recognises a square-like pattern and chooses 11².",
       E: "Continues the first differences with an incorrect step size.",
-      F: "Adds all later differences incorrectly instead of finding the nth-term rule."
+      F: "Adds all later differences incorrectly instead of finding the nth-term rule.",
     },
     benchmarkNote: "ENGAA 2018, Part A, Q25: identifying and using a quadratic sequence rule.",
-    editorPick: true
+    editorPick: true,
   },
   {
     number: 16,
@@ -463,7 +463,7 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
       C: "0",
       D: "3",
       E: "13",
-      F: "4"
+      F: "4",
     },
     answer: "F",
     answerText: "4",
@@ -473,27 +473,27 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 55,
     targetDisplay: "55 s",
     tip: "Complete the square to expose the minimum directly.",
-    solution: "Complete the square: \\(x^{2}\\) - 6x + 13 = \\((x - 3)^{2}\\) + 4. The square is smallest at 0, so the minimum value is 4.",
+    solution: "Complete the square: \\(x^{2}\\) - 6x + 13 = (x - 3)² + 4. The square is smallest at 0, so the minimum value is 4.",
     distractors: {
       A: "Substitutes x = 3 but mishandles the signs.",
       B: "Reports the negative of the correct constant.",
       C: "Assumes any square-based expression can reach zero.",
       D: "Reports the x-coordinate of the turning point.",
-      E: "Uses the constant term without considering the x-terms."
+      E: "Uses the constant term without considering the x-terms.",
     },
     benchmarkNote: "NSAA 2023, Part A, Q16: minimum of a quadratic expression.",
-    editorPick: false
+    editorPick: false,
   },
   {
     number: 17,
     stem: "A cuboid has length 12 cm, depth 4 cm and height 6 cm. M is the midpoint of the vertical edge opposite A. What is AM?",
     options: {
       A: "5 cm",
-      B: "\\(4\\sqrt{10} cm\\)",
+      B: "4√10 cm",
       C: "13 cm",
       D: "14 cm",
-      E: "\\(\\sqrt{185} cm\\)",
-      F: "19 cm"
+      E: "\\(\\sqrt{185}\\) cm",
+      F: "19 cm",
     },
     answer: "C",
     answerText: "13 cm",
@@ -503,17 +503,19 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 80,
     targetDisplay: "80 s",
     tip: "Use the midpoint height, not the full height.",
-    solution: "The vertical rise from A to M is 3 cm. Using three-dimensional Pythagoras, \\(AM^{2}\\) = \\(12^{2}\\) + \\(4^{2}\\) + \\(3^{2}\\) = 169, so AM = 13 cm.",
+    solution: "The vertical rise from A to M is 3 cm. Using three-dimensional Pythagoras, AM² = \\(12^{2}\\) + \\(4^{2}\\) + \\(3^{2}\\) = 169, so AM = 13 cm.",
     distractors: {
       A: "Uses only the 3 cm by 4 cm end face.",
       B: "Finds the floor diagonal and ignores the vertical rise.",
       D: "Uses the full 6 cm height instead of the midpoint height.",
       E: "Uses 5 cm as the vertical component after forming a 3-4-5 triangle.",
-      F: "Adds the three perpendicular lengths directly."
+      F: "Adds the three perpendicular lengths directly.",
     },
     benchmarkNote: "NSAA 2022, Part A, Q2: layered Pythagorean reasoning in a compact geometry problem.",
     editorPick: false,
-    diagramKey: "m1-2-q17"
+    diagramKey: "m1-2-q17",
+    diagramAlt: "Cuboid of length 12 cm, depth 4 cm and height 6 cm, with M at the midpoint of the vertical edge opposite A and segment AM shown.",
+    diagramNotToScale: true,
   },
   {
     number: 18,
@@ -524,7 +526,7 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
       C: "\\(52^{\\circ}\\)",
       D: "\\(90^{\\circ}\\)",
       E: "\\(104^{\\circ}\\)",
-      F: "\\(142^{\\circ}\\)"
+      F: "\\(142^{\\circ}\\)",
     },
     answer: "A",
     answerText: "\\(76^{\\circ}\\)",
@@ -533,60 +535,64 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     difficulty: "3/4 Hard",
     targetSeconds: 90,
     targetDisplay: "90 s",
-    tip: "A radius meets a tangent at \\(90^{\\circ}\\), then use the isosceles triangle.",
+    tip: "A radius meets a tangent at 90°, then use the isosceles triangle.",
     solution: "OA is perpendicular to the tangent, so angle OAB = \\(90^{\\circ}\\) - \\(38^{\\circ}\\) = \\(52^{\\circ}\\). Since OA = OB, angle OBA is also \\(52^{\\circ}\\). Therefore angle AOB = \\(180^{\\circ}\\) - \\(104^{\\circ}\\) = \\(76^{\\circ}\\).",
     distractors: {
       B: "Copies the given tangent-chord angle.",
       C: "Stops after finding angle OAB.",
       D: "Uses only the radius-tangent fact.",
       E: "Adds the two equal base angles and reports their sum.",
-      F: "Subtracts \\(38^{\\circ}\\) from \\(180^{\\circ}\\) directly."
+      F: "Subtracts 38° from 180° directly.",
     },
     benchmarkNote: "ENGAA 2018, Part A, Q21: circle theorem reasoning involving a tangent and radii.",
     editorPick: true,
-    diagramKey: "m1-2-q18"
+    diagramKey: "m1-2-q18",
+    diagramAlt: "Circle with centre O, tangent at A, chord AB and central angle AOB; the tangent-chord angle at A is 38 degrees.",
+    diagramNotToScale: true,
   },
   {
     number: 19,
     stem: "An annular sector has angle \\(120^{\\circ}\\), outer radius 6 cm and inner radius 3 cm. What is its area?",
     options: {
-      A: "\\(3\\pi cm^{2}\\)",
-      B: "\\(6\\pi cm^{2}\\)",
-      C: "\\(12\\pi cm^{2}\\)",
-      D: "\\(27\\pi cm^{2}\\)",
-      E: "\\(9\\pi cm^{2}\\)",
-      F: "\\(36\\pi cm^{2}\\)"
+      A: "\\(3\\pi  cm^{2}\\)",
+      B: "\\(6\\pi  cm^{2}\\)",
+      C: "\\(12\\pi  cm^{2}\\)",
+      D: "\\(27\\pi  cm^{2}\\)",
+      E: "\\(9\\pi  cm^{2}\\)",
+      F: "\\(36\\pi  cm^{2}\\)",
     },
     answer: "E",
-    answerText: "\\(9\\pi cm^{2}\\)",
+    answerText: "\\(9\\pi  cm^{2}\\)",
     topicCode: "M5.16",
     topicName: "Geometry",
     difficulty: "1/4 Easy",
     targetSeconds: 60,
     targetDisplay: "60 s",
     tip: "Subtract the two sector areas, not the radii.",
-    solution: "The area is 120/360 \\times \\pi (\\(6^{2}\\) - \\(3^{2}\\)) = 1/3 \\times 27\\pi = 9\\pi \\(cm^{2}\\).",
+    solution: "The area is \\(\\frac{120}{360}\\) × \\(\\pi\\)(\\(6^{2}\\) - \\(3^{2}\\)) = \\(\\frac{1}{3}\\) × \\(27\\pi\\) = \\(9\\pi  cm^{2}\\).",
     distractors: {
       A: "Uses the difference of the radii only.",
-      B: "\\[Uses \\frac{120}{360} \\times \\pi \\times 6.\\]",
-      C: "Uses the difference \\(6^{2}\\) - \\(3^{2}\\) but divides by an incorrect angle factor.",
-      D: "Finds the full annulus area and forgets the \\(120^{\\circ}\\) fraction.",
-      F: "Uses the full outer circle only."
+      B: "Uses 120/360 × π × 6.",
+      C: "Uses the difference 6² - 3² but divides by an incorrect angle factor.",
+      D: "Finds the full annulus area and forgets the 120° fraction.",
+      F: "Uses the full outer circle only.",
     },
     benchmarkNote: "Official ESAT Mathematics 1 specimen: broader verified circle-mensuration style; no close archive item.",
     editorPick: false,
-    diagramKey: "m1-2-q19"
+    diagramKey: "m1-2-q19",
+    diagramAlt: "Annular sector with angle 120 degrees, outer radius 6 cm and inner radius 3 cm.",
+    diagramNotToScale: true,
   },
   {
     number: 20,
-    stem: "In triangle ABC, DE is parallel to BC. The area of triangle ADE is 36 \\(cm^{2}\\) and the area of trapezium DBCE is 64 \\(cm^{2}\\). If AD = 6 cm, what is AB?",
+    stem: "In triangle ABC, DE is parallel to BC. The area of triangle ADE is 36 cm² and the area of trapezium DBCE is 64 cm². If AD = 6 cm, what is AB?",
     options: {
       A: "7.5 cm",
       B: "8 cm",
       C: "9 cm",
       D: "10 cm",
       E: "12 cm",
-      F: "\\(\\frac{50}{3} cm\\)"
+      F: "\\(\\frac{50}{3}\\) cm",
     },
     answer: "D",
     answerText: "10 cm",
@@ -596,49 +602,51 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 80,
     targetDisplay: "80 s",
     tip: "Convert the area ratio into a length ratio by taking a square root.",
-    solution: "The full triangle has area 36 + 64 = 100 \\(cm^{2}\\). The linear scale factor from triangle ADE to triangle ABC is \\sqrt{36/100} = 3/5. Thus 6/AB = 3/5, so AB = 10 cm.",
+    solution: "The full triangle has area 36 + 64 = 100 cm². The linear scale factor from triangle ADE to triangle ABC is √(\\(\\frac{36}{100}\\)) = \\(\\frac{3}{5}\\). Thus 6/AB = \\(\\frac{3}{5}\\), so AB = 10 cm.",
     distractors: {
       A: "Uses 36:64 as a direct length ratio.",
       B: "Uses the trapezium area as though it were the full triangle area.",
       C: "Adds half the given side without using similarity.",
       E: "Uses the area ratio 1:2 as a length ratio.",
-      F: "Multiplies 6 by 100/36 without taking a square root."
+      F: "Multiplies 6 by 100/36 without taking a square root.",
     },
     benchmarkNote: "NSAA 2022, Part A, Q16: parallel-line similarity with an algebraic scale factor.",
     editorPick: true,
-    diagramKey: "m1-2-q20"
+    diagramKey: "m1-2-q20",
+    diagramAlt: "Triangle ABC with DE parallel to BC, showing a smaller similar triangle ADE inside the full triangle.",
+    diagramNotToScale: true,
   },
   {
     number: 21,
     stem: "In a right-angled triangle, the side opposite a \\(60^{\\circ}\\) angle has length x + 2 and the adjacent non-hypotenuse side has length x. What is x?",
     options: {
-      A: "\\(\\sqrt{3} - 1\\)",
+      A: "\\(\\sqrt{3}\\) - 1",
       B: "1",
       C: "\\(\\sqrt{3}\\)",
       D: "2",
-      E: "\\(2\\sqrt{3}\\)",
+      E: "2√3",
       F: "3",
-      G: "\\(1 + \\sqrt{3}\\)"
+      G: "1 + \\(\\sqrt{3}\\)",
     },
     answer: "G",
-    answerText: "\\(1 + \\sqrt{3}\\)",
+    answerText: "1 + \\(\\sqrt{3}\\)",
     topicCode: "M5.18",
     topicName: "Geometry",
     difficulty: "3/4 Hard",
     targetSeconds: 90,
     targetDisplay: "90 s",
-    tip: "Use \\tan because the two named sides are opposite and adjacent.",
-    solution: "\\tan \\(60^{\\circ}\\) = (x + 2)/x = \\sqrt{3}. Hence x(\\sqrt{3} - 1) = 2, so x = 2/(\\sqrt{3} - 1) = 1 + \\sqrt{3}.",
+    tip: "Use tan because the two named sides are opposite and adjacent.",
+    solution: "tan \\(60^{\\circ}\\) = (x + 2)/x = \\(\\sqrt{3}\\). Hence x(\\(\\sqrt{3}\\) - 1) = 2, so x = 2/(\\(\\sqrt{3}\\) - 1) = 1 + \\(\\sqrt{3}\\).",
     distractors: {
       A: "Stops after rationalising with the wrong sign.",
-      B: "Treats \\tan \\(60^{\\circ}\\) as 3.",
-      C: "Reports \\tan \\(60^{\\circ}\\) itself.",
+      B: "Treats tan 60° as 3.",
+      C: "Reports tan 60° itself.",
       D: "Ignores the trigonometric ratio and uses the added length.",
-      E: "Multiplies 2 by \\sqrt{3} instead of solving the linear equation.",
-      F: "Uses \\tan \\(60^{\\circ}\\) ≈ 2."
+      E: "Multiplies 2 by √3 instead of solving the linear equation.",
+      F: "Uses tan 60° ≈ 2.",
     },
     benchmarkNote: "NSAA 2023, Part A, Q10: exact trigonometry embedded in an algebraic length problem.",
-    editorPick: true
+    editorPick: true,
   },
   {
     number: 22,
@@ -649,7 +657,7 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
       C: "17",
       D: "20",
       E: "13.2",
-      F: "17.5"
+      F: "17.5",
     },
     answer: "A",
     answerText: "16.8",
@@ -659,16 +667,16 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 55,
     targetDisplay: "55 s",
     tip: "Multiply each mean by its group size before combining.",
-    solution: "The total score is 8 \\times 12 + 12 \\times 20 = 336. Dividing by 20 gives 16.8.",
+    solution: "The total score is 8 × 12 + 12 × 20 = 336. Dividing by 20 gives 16.8.",
     distractors: {
       B: "Takes the unweighted mean of 12 and 20.",
       C: "Rounds the exact mean to the nearest whole number.",
       D: "Uses the larger group mean only.",
       E: "Uses an incorrect total of 264 before dividing by 20.",
-      F: "Uses an incorrect weighting between the group means."
+      F: "Uses an incorrect weighting between the group means.",
     },
     benchmarkNote: "NSAA 2023, Part A, Q4: linking mean and other summary information.",
-    editorPick: false
+    editorPick: false,
   },
   {
     number: 23,
@@ -679,7 +687,7 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
       C: "\\(\\frac{2}{9}\\)",
       D: "\\(\\frac{1}{3}\\)",
       E: "\\(\\frac{1}{2}\\)",
-      F: "\\(\\frac{2}{3}\\)"
+      F: "\\(\\frac{2}{3}\\)",
     },
     answer: "D",
     answerText: "\\(\\frac{1}{3}\\)",
@@ -689,47 +697,48 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 70,
     targetDisplay: "70 s",
     tip: "Use the digit-sum test before listing every number.",
-    solution: "There are 4 \\times 3 = 12 possible numbers. A number is divisible by 3 when its digit sum is divisible by 3. The favourable numbers are 12, 21, 24 and 42, so the probability is 4/12 = 1/3.",
+    solution: "There are 4 × 3 = 12 possible numbers. A number is divisible by 3 when its digit sum is divisible by 3. The favourable numbers are 12, 21, 24 and 42, so the probability is \\(\\frac{4}{12}\\) = \\(\\frac{1}{3}\\).",
     distractors: {
       A: "Counts only one unordered favourable pair.",
       B: "Counts three favourable outcomes instead of four.",
       C: "Uses 9 as the size of the sample space.",
       E: "Counts all numbers containing 3 as favourable.",
-      F: "Counts favourable digits rather than ordered two-digit outcomes."
+      F: "Counts favourable digits rather than ordered two-digit outcomes.",
     },
     benchmarkNote: "NSAA 2022, Part A, Q17: systematic selection from a small finite set.",
-    editorPick: true
+    editorPick: true,
   },
   {
     number: 24,
     stem: "The histogram shows journey times for 36 people. In which class interval does the median lie?",
     options: {
-      A: "\\(0 \\leq t < 4\\)",
-      B: "\\(0 \\leq t < 10\\)",
-      C: "\\(4 \\leq t < 10\\)",
-      D: "\\(4 \\leq t < 20\\)",
-      E: "\\(10 \\leq t < 20\\)",
-      F: "It cannot be determined"
+      A: "0 ≤ t < 4",
+      B: "0 ≤ t < 10",
+      C: "4 ≤ t < 10",
+      D: "4 ≤ t < 20",
+      E: "10 ≤ t < 20",
+      F: "It cannot be determined",
     },
     answer: "C",
-    answerText: "\\(4 \\leq t < 10\\)",
+    answerText: "4 ≤ t < 10",
     topicCode: "M6.2",
     topicName: "Statistics",
     difficulty: "2/4 Medium",
     targetSeconds: 70,
     targetDisplay: "70 s",
     tip: "In a histogram, frequency is bar area, not bar height.",
-    solution: "The class frequencies are 4 \\times 2 = 8, 6 \\times 3 = 18 and 10 \\times 1 = 10. The 18th and 19th values are both in the second class, 4 \\leq \\(t < 10\\).",
+    solution: "The class frequencies are 4 × 2 = 8, 6 × 3 = 18 and 10 × 1 = 10. The 18th and 19th values are both in the second class, 4 ≤ t < 10.",
     distractors: {
       A: "Uses the tallest value on the vertical scale as the median position.",
       B: "Combines the first two classes instead of identifying the containing class.",
       D: "Uses a cumulative interval rather than one class.",
       E: "Treats the widest bar as containing the median.",
-      F: "Assumes grouped data cannot locate a median class."
+      F: "Assumes grouped data cannot locate a median class.",
     },
     benchmarkNote: "Official ESAT Mathematics 1 specimen: broader verified grouped-data interpretation style; no close archive item.",
     editorPick: false,
-    diagramKey: "m1-2-q24"
+    diagramKey: "m1-2-q24",
+    diagramAlt: "Histogram with three unequal class widths and frequency densities 2, 3 and 1.",
   },
   {
     number: 25,
@@ -740,7 +749,7 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
       C: "\\(\\frac{2}{5}\\)",
       D: "\\(\\frac{1}{2}\\)",
       E: "\\(\\frac{7}{10}\\)",
-      F: "\\(\\frac{3}{5}\\)"
+      F: "\\(\\frac{3}{5}\\)",
     },
     answer: "F",
     answerText: "\\(\\frac{3}{5}\\)",
@@ -750,27 +759,27 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 70,
     targetDisplay: "70 s",
     tip: "Include both possible orders.",
-    solution: "Exactly one red can occur as red then blue or blue then red. The probability is (3/5 \\times 2/4) + (2/5 \\times 3/4) = 12/20 = 3/5.",
+    solution: "Exactly one red can occur as red then blue or blue then red. The probability is (\\(\\frac{3}{5}\\) × \\(\\frac{2}{4}\\)) + (\\(\\frac{2}{5}\\) × \\(\\frac{3}{4}\\)) = \\(\\frac{12}{20}\\) = \\(\\frac{3}{5}\\).",
     distractors: {
       A: "Multiplies the counts rather than the probabilities.",
       B: "Counts only red then blue.",
       C: "Treats the second draw as if the first counter were replaced.",
       D: "Assumes the two colours make the event equally likely.",
-      E: "Subtracts the probability of two reds only from 1."
+      E: "Subtracts the probability of two reds only from 1.",
     },
     benchmarkNote: "ENGAA 2018, Part A, Q27: dependent draws without replacement.",
-    editorPick: false
+    editorPick: false,
   },
   {
     number: 26,
-    stem: "A metal block has mass 1.26 kg and volume 150 \\(cm^{3}\\). What is its density in g/\\(cm^{3}\\)?",
+    stem: "A metal block has mass 1.26 kg and volume 150 cm³. What is its density in g/cm³?",
     options: {
       A: "0.0084",
       B: "8.4",
       C: "84",
       D: "0.84",
       E: "840",
-      F: "18.9"
+      F: "18.9",
     },
     answer: "B",
     answerText: "8.4",
@@ -780,16 +789,16 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 55,
     targetDisplay: "55 s",
     tip: "Match the mass unit to the required density unit before dividing.",
-    solution: "1.26 kg = 1260 g. Density = mass/volume = 1260/150 = 8.4 g/\\(cm^{3}\\).",
+    solution: "1.26 kg = 1260 g. Density = mass/volume = \\(\\frac{1260}{150}\\) = 8.4 g/cm³.",
     distractors: {
-      A: "Divides 1.26 kg by 150 \\(cm^{3}\\) without converting kilograms to grams.",
+      A: "Divides 1.26 kg by 150 cm³ without converting kilograms to grams.",
       C: "Moves the decimal one place too far after division.",
       D: "Converts 1.26 kg to 126 g.",
       E: "Divides by 1.5 rather than 150.",
-      F: "Multiplies the mass and volume instead of dividing."
+      F: "Multiplies the mass and volume instead of dividing.",
     },
     benchmarkNote: "ENGAA 2018, Part A, Q20: density with unit-aware simultaneous quantities.",
-    editorPick: false
+    editorPick: false,
   },
   {
     number: 27,
@@ -800,7 +809,7 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
       C: "9.0 m/s",
       D: "9.125 m/s",
       E: "9.25 m/s",
-      F: "10.0 m/s"
+      F: "10.0 m/s",
     },
     answer: "E",
     answerText: "9.25 m/s",
@@ -810,16 +819,17 @@ export const MATHS1_MOCK_02_QUESTIONS: EsatCampMockQuestion[] = [
     targetSeconds: 85,
     targetDisplay: "85 s",
     tip: "Find total area first, then divide by total time.",
-    solution: "Distance is the area under the graph: 1/2 \\times 4 \\times 12 + 5 \\times 12 + 1/2 \\times (12 + 6) \\times 3 = 24 + 60 + 27 = 111 m. Average speed = 111/12 = 9.25 m/s.",
+    solution: "Distance is the area under the graph: \\(\\frac{1}{2}\\) × 4 × 12 + 5 × 12 + \\(\\frac{1}{2}\\) × (12 + 6) × 3 = 24 + 60 + 27 = 111 m. Average speed = \\(\\frac{111}{12}\\) = 9.25 m/s.",
     distractors: {
       A: "Averages selected labelled speeds without weighting by time.",
       B: "Finds the final trapezium area incorrectly.",
       C: "Rounds the total distance before division.",
       D: "Uses 109.5 m as the total area.",
-      F: "Uses the mean of the maximum and final speeds."
+      F: "Uses the mean of the maximum and final speeds.",
     },
     benchmarkNote: "NSAA 2022, Part A, Q12: average speed from unequal journey stages.",
     editorPick: true,
-    diagramKey: "m1-2-q27"
-  }
+    diagramKey: "m1-2-q27",
+    diagramAlt: "Speed-time graph with a four-second rise to 12 metres per second, five seconds constant, then a three-second fall to 6 metres per second.",
+  },
 ];

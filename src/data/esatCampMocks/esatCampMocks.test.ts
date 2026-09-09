@@ -220,6 +220,17 @@ describe("ESAT CAMP mock modules", () => {
       "m2-2-q26",
       "m2-2-q27",
     ]);
+    for (const mockModule of [
+      MATHS1_MOCK_02,
+      MATHS1_MOCK_03,
+      MATHS2_MOCK_01,
+      MATHS2_MOCK_02,
+    ]) {
+      for (const q of mockModule.questions.filter((question) => question.diagramKey)) {
+        expect(q.diagramAlt?.trim()).toBeTruthy();
+        expect(q.diagramNotToScale).toBe(true);
+      }
+    }
     expect(DIAGRAM_KEYS).toEqual([
       ...DIAGRAM_A,
       ...DIAGRAM_B,

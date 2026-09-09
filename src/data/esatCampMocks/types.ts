@@ -19,6 +19,10 @@ export interface EsatCampMockQuestion {
   benchmarkNote: string;
   editorPick: boolean;
   diagramKey?: string;
+  /** Accessible alt text for PNG/SVG diagram assets. */
+  diagramAlt?: string;
+  /** When true, show a not-to-scale note under the diagram. */
+  diagramNotToScale?: boolean;
 }
 
 export type EsatCampMockModuleId =

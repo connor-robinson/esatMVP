@@ -168,6 +168,8 @@ export interface Question {
   benchmarkNote?: string;
   editorPick?: boolean;
   diagramKey?: string;
+  diagramAlt?: string;
+  diagramNotToScale?: boolean;
   
   createdAt: string;
   updatedAt: string;

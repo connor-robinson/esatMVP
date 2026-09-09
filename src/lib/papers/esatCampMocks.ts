@@ -90,6 +90,8 @@ export function mockQuestionToPaperQuestion(
     benchmarkNote: hideBenchmark ? undefined : q.benchmarkNote,
     editorPick: q.editorPick,
     diagramKey: q.diagramKey,
+    diagramAlt: q.diagramAlt,
+    diagramNotToScale: q.diagramNotToScale,
   };
 }
 
