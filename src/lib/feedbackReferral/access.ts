@@ -2,13 +2,8 @@
  * Preview gate: the feedback-for-referral flow is hidden from everyone except
  * admins and an explicit email allowlist until FEEDBACK_REFERRAL_LIVE=true.
  *
- * Default allowlist is baked in so preview works on production (esatcamp.com)
- * without requiring Vercel env vars. FEEDBACK_REFERRAL_PREVIEW_EMAILS still
- * adds more emails when set.
- *
- * Eligible users also need enough distinct active usage days (see
- * FEEDBACK_REFERRAL_MIN_ACTIVE_DAYS), except admins / preview emails while
- * the feature is still gated for QA.
+ * Eligible users also need FEEDBACK_REFERRAL_MIN_ACTIVE_DAYS distinct usage
+ * days. Admins skip the tenure check for support / QA only.
  */
 
 const LIVE_FLAG = "FEEDBACK_REFERRAL_LIVE";
@@ -21,7 +16,7 @@ export const DEFAULT_FEEDBACK_REFERRAL_PREVIEW_EMAILS = [
   "anson.chan@abingdon.org.uk",
 ] as const;
 
-/** Distinct calendar days of site usage required before the invite / survey. */
+/** Distinct calendar days of site usage required before invite / survey. */
 export const FEEDBACK_REFERRAL_MIN_ACTIVE_DAYS = 3;
 
 export function isFeedbackReferralLive(): boolean {
@@ -77,11 +72,9 @@ export function canAccessFeedbackReferral(opts: {
   const featureUnlocked = live || isAdmin || preview;
   if (!featureUnlocked) return false;
 
-  // QA while gated: allowlist + admin skip the tenure check.
-  if (!live && (isAdmin || preview)) return true;
-
-  // Admins can always open after launch (support / verification).
+  // Admins can always open (support / verification), including without tenure.
   if (isAdmin) return true;
 
+  // Everyone else, including preview allowlist, needs 3+ active days.
   return hasEnoughFeedbackReferralActiveDays(opts.activeDays);
 }

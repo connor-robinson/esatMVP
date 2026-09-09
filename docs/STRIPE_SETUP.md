@@ -121,7 +121,9 @@ Copy each Price ID (e.g. `price_1ABC...`) into the matching env var.
 Optional friend-referral 50% codes (preview until `FEEDBACK_REFERRAL_LIVE=true`).
 Test on production at `https://esatcamp.com/feedback` while signed in as an allowlisted account (no localhost login needed). Built-in preview emails already include the admin/tester accounts; use the env var only to add more.
 
-When live, the invite / survey only unlocks after **3 distinct active usage days** (practice metrics + past-paper session days). Admins skip that check. While still gated, preview allowlist emails also skip it for QA.
+When live (or for preview allowlist), the invite / survey only unlocks after **3 distinct active usage days** (practice metrics + past-paper session days). Admins skip that check.
+
+The popup does **not** appear on login. It only appears after finishing a past paper, question-bank session, or drill, and at most **twice** if dismissed. The questionnaire stays available under Settings → Account until completed.
 
 New survey replies email `ansonchanw@gmail.com` immediately (override with `FEEDBACK_REFERRAL_NOTIFY_EMAIL`). Requires `RESEND_API_KEY`.
 

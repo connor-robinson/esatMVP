@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Container } from '@/components/layout/Container';
 import { Button } from '@/components/ui/Button';
@@ -16,6 +16,7 @@ import {
   buildSessionSummary,
   countsAsSessionCorrect,
 } from '@/lib/questionBank/sessionStats';
+import { signalFeedbackReferralEngagement } from '@/lib/feedbackReferral/promptStorage';
 import type {
   QuestionBankSessionAttempt,
   QuestionBankSessionSource,
@@ -124,6 +125,10 @@ export function QuestionBankSessionResults({
 }: QuestionBankSessionResultsProps) {
   const supabase = useSupabaseClient();
   const [signInLoading, setSignInLoading] = useState(false);
+
+  useEffect(() => {
+    signalFeedbackReferralEngagement('question_bank_session');
+  }, []);
 
   const handleGoogleSignIn = async () => {
     try {

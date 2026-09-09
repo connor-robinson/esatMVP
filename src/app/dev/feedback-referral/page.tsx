@@ -161,10 +161,9 @@ export default function DevFeedbackReferralPage() {
         <Container className="relative pb-16">
           <div className="mx-auto max-w-md rounded-[1.5rem] bg-surface-elevated p-6 text-center sm:p-8">
             <p className="text-sm text-text-muted">
-              Popup closed. In production, <span className="font-medium text-text">Not now</span>{" "}
-              only hides it for this session.{" "}
-              <span className="font-medium text-text">Don&apos;t show again</span>{" "}
-              hides it until prefs are cleared.
+              Popup closed. In production, soft dismiss is allowed at most twice.
+              After that (or Don&apos;t show again), the invite stops. The
+              questionnaire stays in Settings → Account until completed.
             </p>
             <button
               type="button"

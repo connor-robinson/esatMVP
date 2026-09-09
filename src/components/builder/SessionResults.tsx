@@ -54,6 +54,11 @@ interface SessionResultsProps {
 type RankingView = "personal" | "global";
 
 export function SessionResults({ session, attempts, onBackToBuilder, mode = "standard" }: SessionResultsProps) {
+  useEffect(() => {
+    void import("@/lib/feedbackReferral/promptStorage").then((mod) => {
+      mod.signalFeedbackReferralEngagement("drill_session");
+    });
+  }, []);
   const supabase = useSupabaseClient();
   const authSession = useSupabaseSession();
   const isLoggedIn = Boolean(authSession?.user);

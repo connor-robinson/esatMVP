@@ -56,13 +56,14 @@ export function FeedbackReferralSettingsCard() {
         <>
           <p className="mt-2 text-sm text-text-muted">
             Answer a quick questionnaire to unlock a one-friend 50% off code.
-            Your friend applies it in Stripe Checkout.
+            Your friend applies it in Stripe Checkout. You can start it here
+            anytime if you skipped the popup.
           </p>
           <Link
             href="/feedback"
             className="mt-4 inline-flex text-sm font-medium text-primary"
           >
-            Give feedback
+            Open questionnaire
           </Link>
         </>
       ) : status.redeemed ? (

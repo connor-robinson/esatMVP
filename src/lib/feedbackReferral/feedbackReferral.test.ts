@@ -42,14 +42,23 @@ describe("feedback referral access", () => {
     ).toBe(true);
   });
 
-  it("lets preview emails in while gated without tenure", () => {
+  it("lets preview emails in only with 3+ active days", () => {
     expect(
       canAccessFeedbackReferral({
         email: "Anson@example.com",
         role: "user",
         live: false,
         previewEmails: ["anson@example.com"],
-        activeDays: 0,
+        activeDays: 2,
+      }),
+    ).toBe(false);
+    expect(
+      canAccessFeedbackReferral({
+        email: "Anson@example.com",
+        role: "user",
+        live: false,
+        previewEmails: ["anson@example.com"],
+        activeDays: 3,
       }),
     ).toBe(true);
   });

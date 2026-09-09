@@ -1,14 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { FeedbackReferralInviteCard } from "@/components/feedbackReferral/FeedbackReferralInviteCard";
 import {
+  FEEDBACK_REFERRAL_ENGAGEMENT_EVENT,
+  clearFeedbackReferralEngagement,
   hasFeedbackReferralDontShowAgain,
+  hasFeedbackReferralEngagement,
   hasFeedbackReferralSessionDismiss,
+  recordFeedbackReferralPromptDismiss,
   setFeedbackReferralDontShowAgain,
-  setFeedbackReferralSessionDismiss,
 } from "@/lib/feedbackReferral/promptStorage";
 
 const HIDDEN_PATH_PREFIXES = [
@@ -20,12 +23,13 @@ const HIDDEN_PATH_PREFIXES = [
   "/dev/feedback-referral",
   "/pricing/success",
   "/pearson",
+  "/profile",
 ];
 
 /**
  * Soft invite for the feedback-for-referral survey.
- * Keeps showing until the user finishes, or taps Don't show again.
- * "Not now" only hides for the current browser session.
+ * Only appears after a meaningful practice action (paper / session), not on login.
+ * Soft-dismiss at most twice; then it stays available from Settings.
  */
 export function FeedbackReferralPrompt() {
   const session = useSupabaseSession();
@@ -33,7 +37,7 @@ export function FeedbackReferralPrompt() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
+  const tryOpen = useCallback(() => {
     if (!session?.user) {
       setOpen(false);
       return;
@@ -42,44 +46,67 @@ export function FeedbackReferralPrompt() {
       setOpen(false);
       return;
     }
-    if (hasFeedbackReferralDontShowAgain() || hasFeedbackReferralSessionDismiss()) {
+    if (hasFeedbackReferralDontShowAgain()) {
+      setOpen(false);
+      return;
+    }
+    if (hasFeedbackReferralSessionDismiss()) {
+      setOpen(false);
+      return;
+    }
+    if (!hasFeedbackReferralEngagement()) {
       setOpen(false);
       return;
     }
 
-    let cancelled = false;
-    const timer = window.setTimeout(() => {
-      void fetch("/api/feedback-referral/status")
-        .then(async (res) => {
-          if (res.status === 403 || !res.ok) return null;
-          return res.json();
-        })
-        .then((data) => {
-          if (cancelled || !data?.enabled || data.completed) {
-            setOpen(false);
-            return;
-          }
-          if (
-            hasFeedbackReferralDontShowAgain() ||
-            hasFeedbackReferralSessionDismiss()
-          ) {
-            setOpen(false);
-            return;
-          }
-          setOpen(true);
-        })
-        .catch(() => {
-          if (!cancelled) setOpen(false);
-        });
-    }, 900);
-
-    return () => {
-      cancelled = true;
-      window.clearTimeout(timer);
-    };
+    void fetch("/api/feedback-referral/status")
+      .then(async (res) => {
+        if (res.status === 403 || !res.ok) return null;
+        return res.json();
+      })
+      .then((data) => {
+        if (!data?.enabled || data.completed) {
+          setOpen(false);
+          return;
+        }
+        if (
+          hasFeedbackReferralDontShowAgain() ||
+          hasFeedbackReferralSessionDismiss() ||
+          !hasFeedbackReferralEngagement()
+        ) {
+          setOpen(false);
+          return;
+        }
+        setOpen(true);
+      })
+      .catch(() => setOpen(false));
   }, [session?.user, pathname]);
 
+  useEffect(() => {
+    tryOpen();
+
+    const onEngagement = () => {
+      // Let results UI settle before the invite appears.
+      window.setTimeout(() => tryOpen(), 1200);
+    };
+    window.addEventListener(
+      FEEDBACK_REFERRAL_ENGAGEMENT_EVENT,
+      onEngagement as EventListener,
+    );
+    return () => {
+      window.removeEventListener(
+        FEEDBACK_REFERRAL_ENGAGEMENT_EVENT,
+        onEngagement as EventListener,
+      );
+    };
+  }, [tryOpen]);
+
   if (!open) return null;
+
+  const dismissSoft = () => {
+    recordFeedbackReferralPromptDismiss();
+    setOpen(false);
+  };
 
   return (
     <div className="fixed inset-0 z-[100] flex items-end justify-center p-4 sm:items-center">
@@ -87,24 +114,19 @@ export function FeedbackReferralPrompt() {
         type="button"
         className="absolute inset-0 bg-background/70 backdrop-blur-sm"
         aria-label="Dismiss for now"
-        onClick={() => {
-          setFeedbackReferralSessionDismiss();
-          setOpen(false);
-        }}
+        onClick={dismissSoft}
       />
       <div className="relative w-full max-w-md">
         <FeedbackReferralInviteCard
           onStart={() => {
-            setFeedbackReferralSessionDismiss();
+            clearFeedbackReferralEngagement();
             setOpen(false);
             router.push("/feedback");
           }}
-          onNotNow={() => {
-            setFeedbackReferralSessionDismiss();
-            setOpen(false);
-          }}
+          onNotNow={dismissSoft}
           onDontShowAgain={() => {
             setFeedbackReferralDontShowAgain();
+            clearFeedbackReferralEngagement();
             setOpen(false);
           }}
         />

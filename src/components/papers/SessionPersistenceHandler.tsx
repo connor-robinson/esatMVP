@@ -1,12 +1,8 @@
-/**
- * Warn before closing a tab with an unsaved exam, then drop that sitting
- * so it cannot come back as a navbar progress bar or "paper in progress".
- */
-
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
+import { signalFeedbackReferralEngagement } from "@/lib/feedbackReferral/promptStorage";
 
 const CLOSE_WARNING =
   "Are you sure you want to close the tab? This exam is not saved.";
@@ -42,6 +38,17 @@ function discardUnsavedExamSession(): void {
 export function SessionPersistenceHandler() {
   const sessionId = usePaperSessionStore((s) => s.sessionId);
   const endedAt = usePaperSessionStore((s) => s.endedAt);
+  const hadLiveSessionRef = useRef(false);
+
+  useEffect(() => {
+    if (sessionId && !endedAt) {
+      hadLiveSessionRef.current = true;
+    }
+    if (hadLiveSessionRef.current && endedAt) {
+      signalFeedbackReferralEngagement("past_paper");
+      hadLiveSessionRef.current = false;
+    }
+  }, [sessionId, endedAt]);
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
