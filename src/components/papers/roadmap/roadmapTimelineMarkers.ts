@@ -48,8 +48,16 @@ const STAGE_COMMENTARY: Record<string, StageCommentary> = {
     text: "The last ENGAA papers. Fast and calculation heavy. Section 1 only; good extra maths and physics once you have done NSAA for the same year.",
   },
   "nsaa-2023": {
-    title: "End of roadmap",
-    text: "ESAT replaces NSAA and ENGAA from 2024. More practice papers coming soon.",
+    title: "NSAA 2023",
+    text: "The last official NSAA before ESAT. Extra current-format mocks sit after this if you still want more volume.",
+  },
+  "esat-camp-full-mock-1": {
+    title: "Full Mock 1",
+    text: "First current-format timed mock. Math 1, Math 2 and Physics in one sitting, like the real ESAT.",
+  },
+  "esat-camp-full-mock-2": {
+    title: "Full Mock 2",
+    text: "Second full mock after more official papers. Use it as a checkpoint before the newest NSAA.",
   },
   "tmua-intro": {
     title: "TMUA",

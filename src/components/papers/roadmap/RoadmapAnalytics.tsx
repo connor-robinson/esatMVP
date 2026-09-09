@@ -7,6 +7,7 @@
 import { useMemo } from "react";
 import { ArrowDown } from "lucide-react";
 import type { RoadmapStage } from "@/lib/papers/roadmapConfig";
+import { isEsatCampMockRoadmapStage } from "@/lib/papers/roadmapConfig";
 import { cn } from "@/lib/utils";
 import {
   getExamAccentTextClass,
@@ -25,7 +26,7 @@ interface RoadmapAnalyticsProps {
 
 function stageLabel(stage: RoadmapStage): string {
   if (stage.id === "specimen-papers") return "Specimen";
-  if (stage.id === "esat-camp-mock-papers") {
+  if (isEsatCampMockRoadmapStage(stage)) {
     return stage.label || "ESATCamp Mock";
   }
   return String(stage.year);
@@ -120,13 +121,13 @@ export function RoadmapAnalytics({
               className={cn(
                 "font-semibold",
                 getExamAccentTextClass(
-                  nextStage.id === "esat-camp-mock-papers"
+                  isEsatCampMockRoadmapStage(nextStage)
                     ? "ESATCamp Mock"
                     : nextStage.examName,
                 ),
               )}
             >
-              {nextStage.id === "esat-camp-mock-papers"
+              {isEsatCampMockRoadmapStage(nextStage)
                 ? nextStage.label || "ESATCamp Mock"
                 : `${nextStage.examName} ${stageLabel(nextStage)}`}
             </span>

@@ -1,7 +1,11 @@
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import { paperSectionsForEsatSubjects } from "@/lib/papers/esatSubjectSectionMapping";
 import { shouldShowTmuaOnRoadmap } from "@/lib/papers/tmuaRoadmapParts";
-import type { RoadmapPart, RoadmapStage } from "@/lib/papers/roadmapConfig";
+import {
+  isEsatCampMockRoadmapStage,
+  type RoadmapPart,
+  type RoadmapStage,
+} from "@/lib/papers/roadmapConfig";
 import type { ExamName, PaperSection } from "@/types/papers";
 
 function normalizeEsatSubjects(
@@ -59,7 +63,7 @@ export function filterRoadmapStageByEsatSubjects(
   examPreference: "ESAT" | "TMUA" | null,
 ): RoadmapStage | null {
   // Filter ESATCamp mocks to the student's chosen modules.
-  if (stage.id === "esat-camp-mock-papers") {
+  if (isEsatCampMockRoadmapStage(stage)) {
     if (!esatSubjects?.length) return stage;
     const parts = stage.parts.filter((part) =>
       roadmapPartMatchesEsatSubjects(part, stage.examName, esatSubjects),

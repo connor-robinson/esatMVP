@@ -242,11 +242,11 @@ describe("ESAT CAMP mock modules", () => {
     expect(qsM).toHaveLength(27);
     expect(qsA[0]?.examType).toBe(ESAT_CAMP_MOCK_EXAM_TYPE);
     expect(qsA[0]?.examType).not.toBe("Official");
-    expect(qsB.every((q) => q.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.physics2)).toBe(true);
-    expect(qsM.every((q) => q.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics1)).toBe(true);
+    expect(qsB.every((q) => q.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock2)).toBe(true);
+    expect(qsM.every((q) => q.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1)).toBe(true);
     expect(qsM.every((q) => q.partName === "Mathematics")).toBe(true);
     const qsM2 = getEsatCampMockQuestions(ESAT_CAMP_MOCK_PAPER_IDS.maths2Mock01);
-    expect(qsM2.every((q) => q.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics2)).toBe(true);
+    expect(qsM2.every((q) => q.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1)).toBe(true);
     expect(qsM2.every((q) => q.partName === "Mathematics 2")).toBe(true);
   });
 

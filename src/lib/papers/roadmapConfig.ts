@@ -11,84 +11,122 @@ import {
   ESAT_CAMP_MOCK_EXAM_NAME,
   ESAT_CAMP_MOCK_EXAM_TYPE,
   ESAT_CAMP_MOCK_EXAM_YEAR,
-  ESAT_CAMP_MOCK_SOURCE_LABEL,
   ESAT_CAMP_MOCK_DISPLAY_NAMES,
 } from '@/lib/papers/esatCampMocks';
 
-/** Full current-format unofficial mocks; placed after official/legacy practice. */
+function esatCampMockRoadmapPart(
+  paperName: string,
+  partKey: string,
+  displayName: string,
+  partName: "Mathematics" | "Mathematics 2" | "Physics",
+): RoadmapPart {
+  return {
+    partKey,
+    displayGroupKey: partKey,
+    displayName,
+    partLetter: "Part A",
+    partName,
+    paperName,
+    examType: ESAT_CAMP_MOCK_EXAM_TYPE,
+  };
+}
+
+function esatCampFullMockParts(paperName: string, mockKey: string): RoadmapPart[] {
+  return [
+    esatCampMockRoadmapPart(
+      paperName,
+      `${mockKey}-math-1`,
+      ESAT_CAMP_MOCK_DISPLAY_NAMES.math1,
+      "Mathematics",
+    ),
+    esatCampMockRoadmapPart(
+      paperName,
+      `${mockKey}-math-2`,
+      ESAT_CAMP_MOCK_DISPLAY_NAMES.math2,
+      "Mathematics 2",
+    ),
+    esatCampMockRoadmapPart(
+      paperName,
+      `${mockKey}-physics`,
+      ESAT_CAMP_MOCK_DISPLAY_NAMES.physics,
+      "Physics",
+    ),
+  ];
+}
+
+/** First current-format timed mock: Math 1, Math 2, Physics. */
+export const ESAT_CAMP_FULL_MOCK_1_STAGE: RoadmapStage = {
+  id: "esat-camp-full-mock-1",
+  year: ESAT_CAMP_MOCK_EXAM_YEAR,
+  examName: ESAT_CAMP_MOCK_EXAM_NAME,
+  label: ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
+  parts: esatCampFullMockParts(ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1, "full-mock-1"),
+};
+
+/** Second full mock after more official papers. */
+export const ESAT_CAMP_FULL_MOCK_2_STAGE: RoadmapStage = {
+  id: "esat-camp-full-mock-2",
+  year: ESAT_CAMP_MOCK_EXAM_YEAR,
+  examName: ESAT_CAMP_MOCK_EXAM_NAME,
+  label: ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock2,
+  parts: esatCampFullMockParts(ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock2, "full-mock-2"),
+};
+
+/** Leftover singular mock after the two full sittings. */
+export const ESAT_CAMP_MATH1_MOCK_1_STAGE: RoadmapStage = {
+  id: "esat-camp-math-1-mock-1",
+  year: ESAT_CAMP_MOCK_EXAM_YEAR,
+  examName: ESAT_CAMP_MOCK_EXAM_NAME,
+  label: ESAT_CAMP_MOCK_DISPLAY_NAMES.math1Mock1,
+  parts: [
+    esatCampMockRoadmapPart(
+      ESAT_CAMP_MOCK_DISPLAY_NAMES.math1Mock1,
+      "math-1-mock-1",
+      ESAT_CAMP_MOCK_DISPLAY_NAMES.math1,
+      "Mathematics",
+    ),
+  ],
+};
+
 export const ESAT_CAMP_MOCK_ROADMAP_STAGES: RoadmapStage[] = [
-  {
-    id: 'esat-camp-mock-papers',
-    year: ESAT_CAMP_MOCK_EXAM_YEAR,
-    examName: ESAT_CAMP_MOCK_EXAM_NAME,
-    label: ESAT_CAMP_MOCK_SOURCE_LABEL,
-    parts: [
-      {
-        partKey: 'mathematics-1',
-        displayGroupKey: 'mathematics-1',
-        displayName: ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics1,
-        partLetter: 'Part A',
-        partName: 'Mathematics',
-        paperName: ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics1,
-        examType: ESAT_CAMP_MOCK_EXAM_TYPE,
-      },
-      {
-        partKey: 'mathematics-1-2',
-        displayGroupKey: 'mathematics-1-2',
-        displayName: ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics1Paper2,
-        partLetter: 'Part A',
-        partName: 'Mathematics',
-        paperName: ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics1Paper2,
-        examType: ESAT_CAMP_MOCK_EXAM_TYPE,
-      },
-      {
-        partKey: 'mathematics-1-3',
-        displayGroupKey: 'mathematics-1-3',
-        displayName: ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics1Paper3,
-        partLetter: 'Part A',
-        partName: 'Mathematics',
-        paperName: ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics1Paper3,
-        examType: ESAT_CAMP_MOCK_EXAM_TYPE,
-      },
-      {
-        partKey: 'mathematics-2',
-        displayGroupKey: 'mathematics-2',
-        displayName: ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics2,
-        partLetter: 'Part A',
-        partName: 'Mathematics 2',
-        paperName: ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics2,
-        examType: ESAT_CAMP_MOCK_EXAM_TYPE,
-      },
-      {
-        partKey: 'mathematics-2-2',
-        displayGroupKey: 'mathematics-2-2',
-        displayName: ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics2Paper2,
-        partLetter: 'Part A',
-        partName: 'Mathematics 2',
-        paperName: ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics2Paper2,
-        examType: ESAT_CAMP_MOCK_EXAM_TYPE,
-      },
-      {
-        partKey: 'physics-1',
-        displayGroupKey: 'physics-1',
-        displayName: ESAT_CAMP_MOCK_DISPLAY_NAMES.physics1,
-        partLetter: 'Part A',
-        partName: 'Physics',
-        paperName: ESAT_CAMP_MOCK_DISPLAY_NAMES.physics1,
-        examType: ESAT_CAMP_MOCK_EXAM_TYPE,
-      },
-      {
-        partKey: 'physics-2',
-        displayGroupKey: 'physics-2',
-        displayName: ESAT_CAMP_MOCK_DISPLAY_NAMES.physics2,
-        partLetter: 'Part A',
-        partName: 'Physics',
-        paperName: ESAT_CAMP_MOCK_DISPLAY_NAMES.physics2,
-        examType: ESAT_CAMP_MOCK_EXAM_TYPE,
-      },
-    ],
-  },
+  ESAT_CAMP_FULL_MOCK_1_STAGE,
+  ESAT_CAMP_FULL_MOCK_2_STAGE,
+  ESAT_CAMP_MATH1_MOCK_1_STAGE,
 ];
+
+export function isEsatCampMockRoadmapStage(
+  stage: Pick<RoadmapStage, "id"> | string,
+): boolean {
+  const id = typeof stage === "string" ? stage : stage.id;
+  return id.startsWith("esat-camp-");
+}
+
+/**
+ * Spread ESAT CAMP mocks through official practice:
+ * Full Mock 1 after NSAA 2016-2019, Full Mock 2 after ENGAA/TMUA,
+ * leftover singular mocks after NSAA 2023.
+ */
+export function assembleRoadmapStages(options: {
+  nsaaStages: RoadmapStage[];
+  nsaa2023?: RoadmapStage;
+  engaaStages: RoadmapStage[];
+  tmuaStages: RoadmapStage[];
+}): RoadmapStage[] {
+  const { nsaaStages, nsaa2023, engaaStages, tmuaStages } = options;
+  const nsaaEarly = nsaaStages.filter((stage) => stage.year <= 2019);
+  const nsaaLate = nsaaStages.filter((stage) => stage.year >= 2020);
+  const ordered: RoadmapStage[] = [
+    ...nsaaEarly,
+    ESAT_CAMP_FULL_MOCK_1_STAGE,
+    ...nsaaLate,
+    ...engaaStages,
+    ...tmuaStages,
+    ESAT_CAMP_FULL_MOCK_2_STAGE,
+  ];
+  if (nsaa2023) ordered.push(nsaa2023);
+  ordered.push(ESAT_CAMP_MATH1_MOCK_1_STAGE);
+  return ordered;
+}
 
 export interface RoadmapPart {
   /** Stable key for completion tracking and UI selection. */
@@ -517,19 +555,18 @@ export function getRoadmapStagesShell(): RoadmapStage[] {
   const engaaStages = ROADMAP_STAGES.filter((s) => s.examName === "ENGAA");
   const tmuaStages = buildTmuaRoadmapStagesShell();
 
-  const ordered: RoadmapStage[] = [
-    ...nsaaStages,
-    ...engaaStages,
-    ...tmuaStages,
-  ];
-  if (nsaa2023) ordered.push(nsaa2023);
-  ordered.push(...ESAT_CAMP_MOCK_ROADMAP_STAGES);
-  return ordered;
+  return assembleRoadmapStages({
+    nsaaStages,
+    nsaa2023,
+    engaaStages,
+    tmuaStages,
+  });
 }
 
 /**
  * Get all stages with proper ordering and dynamic TMUA stages
- * Order: NSAA 2016-2022, ENGAA, TMUA Paper 1, NSAA 2023 at the end
+ * Order: NSAA 2016-2019, Full Mock 1, NSAA 2020-2022, ENGAA, TMUA,
+ * Full Mock 2, NSAA 2023, leftover singular mocks.
  * 
  * Cached to prevent duplicate generation on multiple calls
  * 
@@ -560,20 +597,14 @@ export async function getRoadmapStages(): Promise<RoadmapStage[]> {
       // Generate TMUA stages (both Paper 1 and Paper 2)
       const tmuaStages = await generateTmuaStages();
       
-      // Combine in correct order: NSAA (2016-2022), ENGAA, TMUA, NSAA 2023,
-      // then ESAT CAMP mock modules (current-format timed practice).
-      const orderedStages: RoadmapStage[] = [
-        ...nsaaStages,
-        ...engaaStages,
-        ...tmuaStages,
-      ];
-      
-      // Add NSAA 2023 near the end if it exists
-      if (nsaa2023) {
-        orderedStages.push(nsaa2023);
-      }
-
-      orderedStages.push(...ESAT_CAMP_MOCK_ROADMAP_STAGES);
+      // NSAA 2016-2019, Full Mock 1, NSAA 2020-2022, ENGAA, TMUA,
+      // Full Mock 2, NSAA 2023, leftover singular mocks.
+      const orderedStages = assembleRoadmapStages({
+        nsaaStages,
+        nsaa2023,
+        engaaStages,
+        tmuaStages,
+      });
       
       // Remove any duplicates by stage ID (shouldn't happen, but safety check)
       const seenIds = new Set<string>();

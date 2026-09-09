@@ -20,6 +20,7 @@ import {
   getExamAccentFillClass,
 } from "@/config/colors";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
+import { isEsatCampMockRoadmapStage } from "@/lib/papers/roadmapConfig";
 import { getRoadmapPartKey } from "@/lib/papers/roadmapPartKey";
 import { defaultTmuaSelectedParts } from "@/lib/papers/tmuaRoadmapParts";
 import {
@@ -89,7 +90,7 @@ export function StageListCard({
     () => groupRoadmapPartsForDisplay(stage.parts),
     [stage.parts],
   );
-  const isEsatCampMockStage = stage.id === "esat-camp-mock-papers";
+  const isEsatCampMockStage = isEsatCampMockRoadmapStage(stage);
   const accentExamName = isEsatCampMockStage
     ? "ESATCamp Mock"
     : stage.examName;

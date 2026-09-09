@@ -304,8 +304,8 @@ export function PaperColumn({
           )}
           aria-label={
             locked
-              ? `${paper.examName} ${paper.examYear}. Upgrade to unlock`
-              : `Add ${paper.examName} ${paper.examYear} to session`
+              ? `${paper.examType === "ESAT CAMP" ? paper.paperName : `${paper.examName} ${paper.examYear}`}. Upgrade to unlock`
+              : `Add ${paper.examType === "ESAT CAMP" ? paper.paperName : `${paper.examName} ${paper.examYear}`} to session`
           }
           aria-busy={isAddingPaper}
         >

@@ -1,19 +1,24 @@
 import { describe, expect, it } from "vitest";
-import { questionMatchesSelectedSections } from "@/lib/papers/paperLibrarySections";
+import {
+  buildPaperSectionsOutline,
+  questionMatchesSelectedSections,
+} from "@/lib/papers/paperLibrarySections";
 import {
   ESAT_CAMP_MOCK_DISPLAY_NAMES,
   ESAT_CAMP_MOCK_EXAM_TYPE,
   ESAT_CAMP_MOCK_PAPER_IDS,
   getEsatCampMockQuestions,
   getEsatCampMockQuestionsByPaperName,
+  getEsatCampMockQuestionPartsForPaperName,
   getEsatCampMockPapers,
 } from "@/lib/papers/esatCampMocks";
+import { getRoadmapStagesShell } from "@/lib/papers/roadmapConfig";
 import type { PaperSection } from "@/types/papers";
 
 describe("ESAT CAMP mock library section matching", () => {
-  it("matches Physics 1 questions when Physics is selected", () => {
+  it("matches Full Mock 1 Physics when Physics is selected", () => {
     const paper = getEsatCampMockPapers().find(
-      (p) => p.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.physics1,
+      (p) => p.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
     )!;
     const questions = getEsatCampMockQuestions(
       ESAT_CAMP_MOCK_PAPER_IDS.physicsModuleA,
@@ -21,7 +26,7 @@ describe("ESAT CAMP mock library section matching", () => {
     expect(questions).toHaveLength(27);
 
     const selected = new Map<string, Set<PaperSection>>([
-      [ESAT_CAMP_MOCK_DISPLAY_NAMES.physics1, new Set<PaperSection>(["Physics"])],
+      ["Physics", new Set<PaperSection>(["Physics"])],
     ]);
 
     const matched = questions.filter((q) =>
@@ -31,15 +36,15 @@ describe("ESAT CAMP mock library section matching", () => {
     expect(paper.examType).toBe(ESAT_CAMP_MOCK_EXAM_TYPE);
   });
 
-  it("does not match Physics 1 questions when only Physics 2 is selected", () => {
+  it("does not match Full Mock 1 Physics when only Math 1 is selected", () => {
     const paper = getEsatCampMockPapers().find(
-      (p) => p.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.physics1,
+      (p) => p.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
     )!;
     const questions = getEsatCampMockQuestions(
       ESAT_CAMP_MOCK_PAPER_IDS.physicsModuleA,
     );
     const selected = new Map<string, Set<PaperSection>>([
-      [ESAT_CAMP_MOCK_DISPLAY_NAMES.physics2, new Set<PaperSection>(["Physics"])],
+      ["Math 1", new Set<PaperSection>(["Mathematics"])],
     ]);
     const matched = questions.filter((q) =>
       questionMatchesSelectedSections(q, selected, "ESAT", paper, [paper]),
@@ -47,9 +52,9 @@ describe("ESAT CAMP mock library section matching", () => {
     expect(matched).toHaveLength(0);
   });
 
-  it("matches Mathematics 1 questions when Mathematics is selected", () => {
+  it("matches Full Mock 1 Math 1 questions when Math 1 is selected", () => {
     const paper = getEsatCampMockPapers().find(
-      (p) => p.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics1,
+      (p) => p.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
     )!;
     const questions = getEsatCampMockQuestions(
       ESAT_CAMP_MOCK_PAPER_IDS.maths1Mock01,
@@ -58,7 +63,7 @@ describe("ESAT CAMP mock library section matching", () => {
     expect(paper.hasConversion).toBe(false);
 
     const selected = new Map<string, Set<PaperSection>>([
-      [ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics1, new Set<PaperSection>(["Mathematics"])],
+      ["Math 1", new Set<PaperSection>(["Mathematics"])],
     ]);
 
     const matched = questions.filter((q) =>
@@ -68,40 +73,98 @@ describe("ESAT CAMP mock library section matching", () => {
     expect(matched.every((q) => q.partName === "Mathematics")).toBe(true);
   });
 
-  it("lists each mock as its own library paper", () => {
+  it("groups modules into Full Mock 1, Full Mock 2, and leftover singular mocks", () => {
     const papers = getEsatCampMockPapers();
-    expect(papers.map((p) => p.paperName).sort()).toEqual(
-      [
-        ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics1,
-        ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics1Paper2,
-        ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics1Paper3,
-        ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics2,
-        ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics2Paper2,
-        ESAT_CAMP_MOCK_DISPLAY_NAMES.physics1,
-        ESAT_CAMP_MOCK_DISPLAY_NAMES.physics2,
-      ].sort(),
-    );
+    expect(papers.map((p) => p.paperName)).toEqual([
+      ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
+      ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock2,
+      ESAT_CAMP_MOCK_DISPLAY_NAMES.math1Mock1,
+    ]);
   });
 
-  it("keeps Mathematics 1 and Physics 1 as separate papers", () => {
-    expect(getEsatCampMockQuestionsByPaperName(ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics1)).toHaveLength(27);
-    expect(getEsatCampMockQuestionsByPaperName(ESAT_CAMP_MOCK_DISPLAY_NAMES.physics1)).toHaveLength(27);
+  it("keeps Full Mock 1 as three modules and leftover Math 1 as its own paper", () => {
+    expect(
+      getEsatCampMockQuestionsByPaperName(ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1),
+    ).toHaveLength(81);
+    expect(
+      getEsatCampMockQuestionsByPaperName(ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock2),
+    ).toHaveLength(81);
+    expect(
+      getEsatCampMockQuestionsByPaperName(
+        ESAT_CAMP_MOCK_DISPLAY_NAMES.math1Mock1,
+      ),
+    ).toHaveLength(27);
   });
 
-  it("matches Mathematics 2 questions when Mathematics 2 is selected", () => {
+  it("expands Full Mock 1 into Math 1, Math 2 and Physics library sections", () => {
     const paper = getEsatCampMockPapers().find(
-      (p) => p.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics2,
+      (p) => p.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
+    )!;
+    const outline = buildPaperSectionsOutline(
+      paper,
+      [],
+      getEsatCampMockQuestionPartsForPaperName(
+        ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
+      ),
+    );
+    expect(outline.mainSections.map((section) => section.name)).toEqual([
+      "Math 1",
+      "Math 2",
+      "Physics",
+    ]);
+    expect(outline.mainSections.map((section) => section.subjectParts)).toEqual([
+      ["Mathematics"],
+      ["Mathematics 2"],
+      ["Physics"],
+    ]);
+  });
+
+  it("matches Full Mock 1 Math 2 questions when Math 2 is selected", () => {
+    const paper = getEsatCampMockPapers().find(
+      (p) => p.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
     )!;
     const questions = getEsatCampMockQuestions(
       ESAT_CAMP_MOCK_PAPER_IDS.maths2Mock01,
     );
     const selected = new Map<string, Set<PaperSection>>([
-      [ESAT_CAMP_MOCK_DISPLAY_NAMES.mathematics2, new Set<PaperSection>(["Mathematics 2"])],
+      ["Math 2", new Set<PaperSection>(["Mathematics 2"])],
     ]);
     const matched = questions.filter((q) =>
       questionMatchesSelectedSections(q, selected, "ESAT", paper, [paper]),
     );
     expect(matched).toHaveLength(27);
     expect(matched.every((q) => q.partName === "Mathematics 2")).toBe(true);
+  });
+});
+
+describe("ESAT CAMP mock roadmap placement", () => {
+  it("spreads Full Mock 1, Full Mock 2, and leftover singular mocks through the roadmap", () => {
+    const stages = getRoadmapStagesShell();
+    const ids = stages.map((stage) => stage.id);
+    const fullMock1 = ids.indexOf("esat-camp-full-mock-1");
+    const nsaa2019 = ids.indexOf("nsaa-2019");
+    const nsaa2020 = ids.indexOf("nsaa-2020");
+    const fullMock2 = ids.indexOf("esat-camp-full-mock-2");
+    const lastTmua = ids.reduce(
+      (last, id, index) => (id.startsWith("tmua-") ? index : last),
+      -1,
+    );
+    const nsaa2023 = ids.indexOf("nsaa-2023");
+    const math1Mock1 = ids.indexOf("esat-camp-math-1-mock-1");
+
+    expect(fullMock1).toBeGreaterThan(nsaa2019);
+    expect(fullMock1).toBeLessThan(nsaa2020);
+    expect(fullMock2).toBeGreaterThan(lastTmua);
+    expect(fullMock2).toBeLessThan(nsaa2023);
+    expect(math1Mock1).toBeGreaterThan(nsaa2023);
+    expect(math1Mock1).toBe(ids.length - 1);
+
+    expect(stages[fullMock1]?.parts.map((part) => part.displayName)).toEqual([
+      "Math 1",
+      "Math 2",
+      "Physics",
+    ]);
+    expect(stages[math1Mock1]?.parts).toHaveLength(1);
+    expect(stages[math1Mock1]?.label).toBe("Math 1 Mock 1");
   });
 });

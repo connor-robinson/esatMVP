@@ -14,6 +14,7 @@ import {
   getExamAccentTextClass,
 } from "@/config/colors";
 import type { RoadmapStage } from "@/lib/papers/roadmapConfig";
+import { isEsatCampMockRoadmapStage } from "@/lib/papers/roadmapConfig";
 import {
   buildRoadmapTimelineMarkers,
   type TimelineMarker,
@@ -311,10 +312,9 @@ export function RoadmapTimeline({
 
           if (hasTip) return null;
 
-          const accentExamName =
-            stage.id === "esat-camp-mock-papers"
-              ? "ESATCamp Mock"
-              : stage.examName;
+          const accentExamName = isEsatCampMockRoadmapStage(stage)
+            ? "ESATCamp Mock"
+            : stage.examName;
 
           return (
             <div

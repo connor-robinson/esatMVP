@@ -128,7 +128,11 @@ function buildSessionPaperVariant(
     .filter(([, subjects]) => subjects.size > 0)
     .map(([name]) => name);
   const paperName =
-    activeMainSections.length > 0 ? activeMainSections[0] : fallbackPaperName;
+    examType === "ESAT CAMP"
+      ? fallbackPaperName
+      : activeMainSections.length > 0
+        ? activeMainSections[0]
+        : fallbackPaperName;
   return `${year}-${paperName}-${examType}`;
 }
 

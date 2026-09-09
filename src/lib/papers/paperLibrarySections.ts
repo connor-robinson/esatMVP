@@ -72,8 +72,21 @@ function isEsatCampMockExamType(examType?: string | null): boolean {
 /**
  * Which main exam section a question belongs to.
  * For NSAA, part letters B/C/D appear in BOTH sections - paper name is authoritative.
- * ESAT CAMP mocks use the paper name itself as the main section key.
+ * ESAT CAMP mocks use Math 1 / Math 2 / Physics as the nested library sections.
  */
+export function esatCampMockMainSectionLabel(section: PaperSection): string {
+  if (section === "Mathematics 2") return "Math 2";
+  if (section === "Mathematics") return "Math 1";
+  if (section === "Physics") return "Physics";
+  return section;
+}
+
+const ESAT_CAMP_SUBJECT_ORDER: PaperSection[] = [
+  "Mathematics",
+  "Mathematics 2",
+  "Physics",
+];
+
 export function getMainSectionForQuestion(
   question: SlimQuestionPart,
   paperType: PaperType,
@@ -84,8 +97,14 @@ export function getMainSectionForQuestion(
     isEsatCampMockExamType(paperExamType) ||
     isEsatCampMockExamType(question.examType)
   ) {
-    const name = (resolvedPaperName || question.paperName || "").trim();
-    if (name) return name;
+    const section = mapPartToSection(
+      {
+        partLetter: question.partLetter,
+        partName: question.partName,
+      },
+      paperType,
+    );
+    return esatCampMockMainSectionLabel(section);
   }
 
   const fromExamType =
@@ -183,10 +202,18 @@ export function groupSectionsIntoMainSections(
     if (subjectParts.size === 0) {
       subjectParts.add("Physics");
     }
-    mainSections.push({
-      name: paper?.paperName?.trim() || "Physics Module",
-      subjectParts: Array.from(subjectParts),
-    });
+    const orderedSubjects = [
+      ...ESAT_CAMP_SUBJECT_ORDER.filter((section) => subjectParts.has(section)),
+      ...Array.from(subjectParts).filter(
+        (section) => !ESAT_CAMP_SUBJECT_ORDER.includes(section),
+      ),
+    ];
+    for (const section of orderedSubjects) {
+      mainSections.push({
+        name: esatCampMockMainSectionLabel(section),
+        subjectParts: [section],
+      });
+    }
   } else if (paperType === "NSAA" || paperType === "ENGAA" || paperType === "ESAT") {
     const section1Parts = new Set<PaperSection>();
     const section2Parts = new Set<PaperSection>();
