@@ -227,12 +227,14 @@ export function sanitizeStemTable(html: string): string {
 }
 
 export function ensureSvgResponsiveMarkup(svgMarkup: string): string {
-  return svgMarkup.replace(/<svg\b([^>]*)>/i, (full, attrs: string) => {
+  return svgMarkup.replace(/<svg\b([^>]*)>/i, (_full, attrs: string) => {
     let next = attrs || "";
+    // Browsers reject height="auto" on SVG; size via CSS + viewBox instead.
+    next = next.replace(/\sheight\s*=\s*(["'])auto\1/gi, "");
+    next = next.replace(/\sheight\s*=\s*auto(?=[\s>])/gi, "");
     const hasViewBox = /\bviewBox\s*=|\bviewbox\s*=/i.test(next);
     if (!hasViewBox) next += ' viewBox="0 0 600 420"';
     if (!/\bwidth\s*=/i.test(next)) next += ' width="100%"';
-    if (!/\bheight\s*=/i.test(next)) next += ' height="auto"';
     if (!/\bpreserveAspectRatio\s*=/i.test(next)) {
       next += ' preserveAspectRatio="xMidYMid meet"';
     }

@@ -178,7 +178,10 @@ export function QuestionBankHomeScreen() {
   const router = useRouter();
   const pathname = usePathname();
   const session = useSupabaseSession();
-  const [authHint] = useState(() => readCachedHasAuthUser());
+  const [authHint, setAuthHint] = useState<boolean | undefined>(undefined);
+  useEffect(() => {
+    setAuthHint(readCachedHasAuthUser());
+  }, []);
   const sessionPending = session === undefined;
   const isLoggedIn =
     sessionPending ? authHint === true : Boolean(session?.user);

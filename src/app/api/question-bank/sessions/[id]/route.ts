@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase/server';
+import { requireRouteUser } from '@/lib/supabase/auth';
 import { labelForQuestionBankTag } from '@/lib/questionBank/esatCurriculumTopicLabels';
 
 export const dynamic = 'force-dynamic';
@@ -13,13 +13,8 @@ type RouteContext = { params: Promise<{ id: string }> };
 export async function GET(_request: NextRequest, context: RouteContext) {
   try {
     const { id } = await context.params;
-    const supabase = createServerClient();
-    const {
-      data: { session },
-      error: sessionError,
-    } = await supabase.auth.getSession();
-
-    if (sessionError || !session) {
+    const { user, supabase, error: authError } = await requireRouteUser(_request);
+    if (authError || !user || !supabase) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -27,7 +22,7 @@ export async function GET(_request: NextRequest, context: RouteContext) {
       .from('question_bank_sessions')
       .select('*')
       .eq('id', id)
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .single();
 
     if (qbError || !qbSession) {
@@ -59,7 +54,7 @@ export async function GET(_request: NextRequest, context: RouteContext) {
       `,
       )
       .eq('session_id', id)
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .order('attempted_at', { ascending: true });
 
     if (attemptsError) {
@@ -123,13 +118,8 @@ export async function GET(_request: NextRequest, context: RouteContext) {
 export async function PATCH(request: NextRequest, context: RouteContext) {
   try {
     const { id } = await context.params;
-    const supabase = createServerClient();
-    const {
-      data: { session },
-      error: sessionError,
-    } = await supabase.auth.getSession();
-
-    if (sessionError || !session) {
+    const { user, supabase, error: authError } = await requireRouteUser(request);
+    if (authError || !user || !supabase) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -152,9 +142,9 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
         ended_at: ended_at ?? new Date().toISOString(),
       } as never)
       .eq('id', id)
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('[question-bank/sessions PATCH]', error.message, error.code);
@@ -162,6 +152,43 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
         { error: 'Failed to complete session', detail: error.message },
         { status: 500 },
       );
+    }
+
+    if (!data) {
+      // Session row may never have been created (register failed). Create+complete.
+      const { data: created, error: createError } = await supabase
+        .from('question_bank_sessions')
+        .upsert(
+          {
+            id,
+            user_id: user.id,
+            question_count: question_count ?? 0,
+            correct_count: correct_count ?? 0,
+            total_time_ms: total_time_ms ?? 0,
+            summary: summary ?? {},
+            ended_at: ended_at ?? new Date().toISOString(),
+          } as never,
+          { onConflict: 'id' },
+        )
+        .select()
+        .maybeSingle();
+
+      if (createError || !created) {
+        console.error(
+          '[question-bank/sessions PATCH upsert]',
+          createError?.message,
+          createError?.code,
+        );
+        return NextResponse.json(
+          {
+            error: 'Failed to complete session',
+            detail: createError?.message ?? 'no_row',
+          },
+          { status: 500 },
+        );
+      }
+
+      return NextResponse.json({ session: created });
     }
 
     return NextResponse.json({ session: data });
@@ -177,13 +204,8 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
 export async function DELETE(_request: NextRequest, context: RouteContext) {
   try {
     const { id } = await context.params;
-    const supabase = createServerClient();
-    const {
-      data: { session },
-      error: sessionError,
-    } = await supabase.auth.getSession();
-
-    if (sessionError || !session) {
+    const { user, supabase, error: authError } = await requireRouteUser(_request);
+    if (authError || !user || !supabase) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -191,7 +213,7 @@ export async function DELETE(_request: NextRequest, context: RouteContext) {
       .from('question_bank_sessions')
       .delete()
       .eq('id', id)
-      .eq('user_id', session.user.id);
+      .eq('user_id', user.id);
 
     if (error) {
       return NextResponse.json(

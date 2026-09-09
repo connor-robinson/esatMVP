@@ -1,6 +1,6 @@
 'use client';
 
-import type { CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
 
 export type DonutSlice = {
@@ -28,6 +28,11 @@ export function BreakdownDonutChart({
   tooltipItemStyle,
   tooltipLabelStyle,
 }: BreakdownDonutChartProps) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const total = data.reduce((sum, slice) => sum + slice.value, 0);
 
   if (total === 0) {
@@ -42,45 +47,50 @@ export function BreakdownDonutChart({
 
   return (
     <div className={`relative mx-auto h-[180px] w-full max-w-[220px] ${className ?? ''}`}>
-      <ResponsiveContainer width='100%' height='100%'>
-        <PieChart>
-          <Pie
-            data={data}
-            cx='50%'
-            cy='50%'
-            innerRadius={48}
-            outerRadius={72}
-            paddingAngle={2}
-            dataKey='value'
-            stroke='var(--color-border-subtle)'
-            strokeWidth={1}
-          >
-            {data.map((entry) => (
-              <Cell key={entry.name} fill={entry.fill} />
-            ))}
-          </Pie>
-          <Tooltip
-            formatter={(v?: number | string, name?: string) => {
-              const n = typeof v === 'number' ? v : Number(v ?? 0);
-              return [
-                `${n.toLocaleString()} (${((n / total) * 100).toFixed(0)}%)`,
-                name ?? '',
-              ];
-            }}
-            contentStyle={{
-              borderRadius: 10,
-              border: '1px solid var(--color-border)',
-              background: 'var(--color-surface-elevated)',
-              color: 'var(--color-text)',
-              fontSize: 12,
-              ...tooltipStyle,
-            }}
-            itemStyle={{ color: 'var(--color-text)', ...tooltipItemStyle }}
-            labelStyle={{ color: 'var(--color-text-muted)', ...tooltipLabelStyle }}
-            wrapperStyle={{ zIndex: 40, outline: 'none' }}
-          />
-        </PieChart>
-      </ResponsiveContainer>
+      {mounted ? (
+        <ResponsiveContainer width='100%' height={180}>
+          <PieChart>
+            <Pie
+              data={data}
+              cx='50%'
+              cy='50%'
+              innerRadius={48}
+              outerRadius={72}
+              paddingAngle={2}
+              dataKey='value'
+              stroke='var(--color-border-subtle)'
+              strokeWidth={1}
+            >
+              {data.map((entry) => (
+                <Cell key={entry.name} fill={entry.fill} />
+              ))}
+            </Pie>
+            <Tooltip
+              formatter={(v?: number | string, name?: string) => {
+                const n = typeof v === 'number' ? v : Number(v ?? 0);
+                return [
+                  `${n.toLocaleString()} (${((n / total) * 100).toFixed(0)}%)`,
+                  name ?? '',
+                ];
+              }}
+              contentStyle={{
+                borderRadius: 10,
+                border: '1px solid var(--color-border)',
+                background: 'var(--color-surface-elevated)',
+                color: 'var(--color-text)',
+                fontSize: 12,
+                ...tooltipStyle,
+              }}
+              itemStyle={{ color: 'var(--color-text)', ...tooltipItemStyle }}
+              labelStyle={{
+                color: 'var(--color-text-muted)',
+                ...tooltipLabelStyle,
+              }}
+              wrapperStyle={{ zIndex: 40, outline: 'none' }}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      ) : null}
       <div className='pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center'>
         <span className='donut-center-label text-[10px] font-semibold uppercase tracking-wide text-text-subtle'>
           {centerLabel}

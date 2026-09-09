@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase/server';
+import { requireRouteUser } from '@/lib/supabase/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,13 +9,8 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createServerClient();
-    const {
-      data: { session },
-      error: sessionError,
-    } = await supabase.auth.getSession();
-
-    if (sessionError || !session) {
+    const { user, supabase, error: authError } = await requireRouteUser(request);
+    if (authError || !user || !supabase) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -27,20 +22,22 @@ export async function GET(request: NextRequest) {
     const { data, error } = await supabase
       .from('question_bank_sessions')
       .select('*')
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .not('ended_at', 'is', null)
       .order('ended_at', { ascending: false })
       .limit(limit);
 
     if (error) {
+      console.error('[question-bank/sessions GET]', error.message, error.code);
       return NextResponse.json(
-        { error: 'Failed to load sessions' },
+        { error: 'Failed to load sessions', detail: error.message },
         { status: 500 },
       );
     }
 
     return NextResponse.json({ sessions: data ?? [] });
   } catch (err) {
+    console.error('[question-bank/sessions GET]', err);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },
@@ -50,13 +47,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createServerClient();
-    const {
-      data: { session },
-      error: sessionError,
-    } = await supabase.auth.getSession();
-
-    if (sessionError || !session) {
+    const { user, supabase, error: authError } = await requireRouteUser(request);
+    if (authError || !user || !supabase) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -72,27 +64,37 @@ export async function POST(request: NextRequest) {
     } = body;
 
     const insertRow: Record<string, unknown> = {
-      user_id: session.user.id,
+      user_id: user.id,
       question_count: question_count ?? 0,
       time_limit_minutes: time_limit_minutes ?? null,
       source: source ?? 'home',
       subjects: subjects ?? null,
       test_type: test_type ?? null,
-      ui_difficulties: ui_difficulties ?? [],
+      ui_difficulties: Array.isArray(ui_difficulties) ? ui_difficulties : [],
     };
 
-    if (id) insertRow.id = id;
+    if (typeof id === 'string' && id.length > 0) {
+      insertRow.id = id;
+    }
 
     const { data, error } = await supabase
       .from('question_bank_sessions')
       .upsert(insertRow as never, { onConflict: 'id' })
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('[question-bank/sessions POST]', error.message, error.code);
       return NextResponse.json(
         { error: 'Failed to create session', detail: error.message },
+        { status: 500 },
+      );
+    }
+
+    if (!data) {
+      console.error('[question-bank/sessions POST] upsert returned no row');
+      return NextResponse.json(
+        { error: 'Failed to create session', detail: 'no_row' },
         { status: 500 },
       );
     }

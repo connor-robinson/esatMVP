@@ -130,14 +130,21 @@ export function useQuestionBankFreeTier(
   const enabled = options?.enabled ?? !hasFullAccess;
   const summary = options?.summary ?? false;
 
-  const [status, setStatus] = useState<QuestionBankFreeTierStatus | null>(() => {
-    if (hasFullAccess || !enabled) return null;
-    return statusFromHomeCache();
-  });
-  const [isLoading, setIsLoading] = useState(() => {
-    if (hasFullAccess || !enabled) return false;
-    return statusFromHomeCache() == null;
-  });
+  const [status, setStatus] = useState<QuestionBankFreeTierStatus | null>(null);
+  const [isLoading, setIsLoading] = useState(() => !hasFullAccess && enabled);
+
+  useEffect(() => {
+    if (hasFullAccess || !enabled) {
+      setStatus(null);
+      setIsLoading(false);
+      return;
+    }
+    const cached = statusFromHomeCache();
+    if (cached) {
+      setStatus(cached);
+      setIsLoading(false);
+    }
+  }, [enabled, hasFullAccess]);
 
   const refresh = useCallback(async () => {
     if (hasFullAccess || !enabled) {

@@ -201,15 +201,14 @@ export default function QuestionBankPage() {
   const [uiSurveyOpen, setUiSurveyOpen] = useState(false);
   const [uiSurveyDismissedSession, setUiSurveyDismissedSession] =
     useState(false);
-
-  useEffect(() => {
-    setSessionUiVariant(readSessionUiVariant());
-  }, []);
-
   const [communityStatsByQuestionId, setCommunityStatsByQuestionId] = useState<
     Record<string, QuestionBankCommunityStats>
   >({});
   const [communityStatsLoading, setCommunityStatsLoading] = useState(false);
+
+  useEffect(() => {
+    setSessionUiVariant(readSessionUiVariant());
+  }, []);
 
   const topicLabels = currentQuestion
     ? labelTopicTagsForQuestion(currentQuestion)
@@ -419,12 +418,20 @@ export default function QuestionBankPage() {
         setSessionEndedByTimer(true);
       }
       ensureCurrentQuestionLogged();
+      // Flip UI first so leave/finish is never blocked by persistence.
+      setShowLeaveConfirm(false);
+      setDeadline(null);
+      setRemainingTime(null);
+      setShowTimeUpModal(false);
+      setSessionView('complete');
+
       if (!hasFullAccess && session?.user) {
         void refreshFreeTier();
       }
 
       const attempts = sessionAttemptLogRef.current;
       const summary = buildSessionSummary(attempts, labelForQuestionBankTag);
+      setSessionAttemptLog(attempts);
 
       if (session?.user && qbSessionId) {
         try {
@@ -441,13 +448,7 @@ export default function QuestionBankPage() {
         }
       }
 
-      setSessionAttemptLog(attempts);
       setSessionCompleting(false);
-      setShowLeaveConfirm(false);
-      setDeadline(null);
-      setRemainingTime(null);
-      setShowTimeUpModal(false);
-      setSessionView('complete');
     },
     [
       ensureCurrentQuestionLogged,
