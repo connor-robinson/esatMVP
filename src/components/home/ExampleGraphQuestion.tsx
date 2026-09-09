@@ -34,12 +34,12 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "relative rounded-2xl bg-white/[0.08] px-6 py-4 backdrop-blur-xl sm:px-8 sm:py-5",
+        "relative flex h-full min-h-0 flex-col rounded-2xl bg-white/[0.08] px-6 py-4 backdrop-blur-xl sm:px-8 sm:py-5",
         className,
       )}
     >
       <div className="relative flex min-h-0 flex-1 flex-col justify-between gap-3">
-        <div className="space-y-3">
+        <div className="flex min-h-0 flex-1 flex-col space-y-3">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#94A3B8]">
             Example question
           </p>
@@ -56,7 +56,7 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
             </p>
           </div>
 
-          <div className="mx-auto w-full max-w-[92%] min-h-[120px] sm:min-h-[155px]">
+          <div className="mx-auto min-h-[120px] w-full flex-1 sm:min-h-[155px]">
             <CameraDistanceGraph className="h-full w-full" />
           </div>
         </div>

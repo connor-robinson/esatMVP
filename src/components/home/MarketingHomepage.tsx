@@ -197,9 +197,9 @@ export function MarketingHomepage({
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-[#0A0F1D] pt-12 pb-10 lg:pt-20 lg:pb-16">
         <div className="relative mx-auto max-w-[1400px] space-y-4 px-4 sm:px-5 lg:space-y-5 lg:px-6">
-          <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-6 xl:gap-8">
-            <div className="min-w-0 space-y-6 sm:space-y-7 lg:space-y-8 [container-type:inline-size]">
-              <h1 className="font-display font-bold leading-[0.95] tracking-[-0.04em] [font-size:clamp(1.875rem,min(0.75rem+5vw,11cqi),6rem)]">
+          <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.2fr)] lg:gap-6 xl:gap-8">
+            <div className="flex min-h-0 min-w-0 flex-col justify-center space-y-6 sm:space-y-7 lg:space-y-8 [container-type:inline-size]">
+              <h1 className="font-display font-bold leading-[0.95] tracking-[-0.04em] [font-size:clamp(1.875rem,min(0.7rem+4.6vw,12cqi),5.5rem)]">
                 <span className="whitespace-nowrap">
                   The leading{" "}
                   <span
@@ -264,8 +264,8 @@ export function MarketingHomepage({
               </div>
             </div>
 
-            <div className="min-w-0 flex w-full lg:justify-self-stretch">
-              <ExampleGraphQuestion className="w-full max-w-none" />
+            <div className="flex min-h-0 min-w-0 w-full">
+              <ExampleGraphQuestion className="flex h-full w-full max-w-none flex-col" />
             </div>
           </div>
 
