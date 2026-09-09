@@ -91,24 +91,45 @@ export async function GET(request: NextRequest) {
       : null;
     const summaryOnly = request.nextUrl.searchParams.get("summary") === "1";
 
-    const { data: rows, error: queryError } = await supabase
-      .from("ai_generated_questions")
-      .select(summaryOnly ? "id, subjects" : "*")
-      .eq("status", QUESTION_BANK_PUBLISH_STATUS)
-      .in("id", [...FREE_TIER_QUESTION_IDS]);
+    const questionIds = [...FREE_TIER_QUESTION_IDS];
+    let questionRows: Array<Record<string, unknown> & { id: string; subjects?: string }> =
+      [];
 
-    if (queryError) {
-      return NextResponse.json(
-        { error: "Failed to load free tier questions" },
-        { status: 500 },
-      );
+    if (summaryOnly) {
+      const { data: rows, error: queryError } = await supabase
+        .from("ai_generated_questions")
+        .select("id, subjects")
+        .eq("status", QUESTION_BANK_PUBLISH_STATUS)
+        .in("id", questionIds);
+
+      if (queryError) {
+        return NextResponse.json(
+          { error: "Failed to load free tier questions" },
+          { status: 500 },
+        );
+      }
+
+      questionRows = (rows ?? []) as Array<
+        Record<string, unknown> & { id: string; subjects?: string }
+      >;
+    } else {
+      const { data: rows, error: queryError } = await supabase
+        .from("ai_generated_questions")
+        .select("*")
+        .eq("status", QUESTION_BANK_PUBLISH_STATUS)
+        .in("id", questionIds);
+
+      if (queryError) {
+        return NextResponse.json(
+          { error: "Failed to load free tier questions" },
+          { status: 500 },
+        );
+      }
+
+      questionRows = (rows ?? []) as Array<
+        Record<string, unknown> & { id: string; subjects?: string }
+      >;
     }
-
-    // Conditional `.select()` makes the Supabase client return a parser-error union;
-    // narrow to the fields we actually read.
-    const questionRows = (rows ?? []) as Array<
-      Record<string, unknown> & { id: string; subjects?: string }
-    >;
 
     const byId = new Map<string, ParsedQuestion>(
       questionRows.map((row) => [
