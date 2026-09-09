@@ -26,9 +26,10 @@ function toInt(value: unknown): number | null {
 }
 
 async function loadHomepageSocialProofStats(): Promise<HomepageSocialProofStats> {
+  // Prefer Supabase counts; GA is optional and must not stall the slot.
   const [{ data, error }, uniqueVisitors] = await Promise.all([
     supabaseAdmin.rpc("homepage_social_proof_stats"),
-    fetchGaUniqueVisitors(),
+    fetchGaUniqueVisitors().catch(() => null),
   ]);
 
   if (error) {

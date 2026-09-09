@@ -3,13 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { BRAND_CONFIG } from "@/config/brand";
 import { ABOUT_PATH, FOUNDERS } from "@/config/founders";
 import { NAVBAR_HEIGHT_PX } from "@/config/layout";
 import { QUESTION_BANK_TOTAL_COUNT } from "@/config/questionBankMarketing";
 import { MENTAL_MATHS_MODULE_COUNT_MARKETING, MENTAL_MATHS_TOPIC_COUNT_MARKETING } from "@/config/mentalMathsMarketing";
-import type { HomepageSocialProofStats } from "@/lib/homepage/socialProofTypes";
 import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
 import { SEO_LINKS, type SeoLinkKey } from "@/lib/seo/links";
 import { MARKETING_HOMEPAGE_FAQ } from "@/lib/homepage/marketingFaq";
@@ -24,16 +23,27 @@ import {
   MONTHLY_PRICE_GBP,
   SEASON_PASS_ACCESS_UNTIL_LABEL,
 } from "@/lib/stripe/best-value";
-import { CircleUser, ListChecks } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useHomepageAutoHideNav } from "@/hooks/useHomepageAutoHideNav";
 import { ExampleGraphQuestion } from "@/components/home/ExampleGraphQuestion";
-import { PastPaperPlayerPreview } from "@/components/home/PastPaperPlayerPreview";
 
 const SlotMachineCount = dynamic(
   () =>
     import("@/components/home/SlotMachineCount").then((m) => m.SlotMachineCount),
   { ssr: false },
+);
+
+const PastPaperPlayerPreview = dynamic(
+  () =>
+    import("@/components/home/PastPaperPlayerPreview").then(
+      (m) => m.PastPaperPlayerPreview,
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="min-h-[16rem] rounded-2xl bg-white/[0.06]" aria-hidden />
+    ),
+  },
 );
 
 const QuestionBankDistributionChart = dynamic(
@@ -121,13 +131,13 @@ function HomepageSectionNav() {
       className="sticky z-30 bg-[#0A0F1D]/90 backdrop-blur-md transition-[top] duration-300 ease-out"
       style={{ top: navVisible ? NAVBAR_HEIGHT_PX : 0 }}
     >
-      <div className="mx-auto flex max-w-[1400px] justify-center gap-2 overflow-x-auto px-4 py-3 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-3 sm:px-5 sm:py-4 lg:gap-4 lg:px-6 [&::-webkit-scrollbar]:hidden">
+      <div className="mx-auto flex max-w-[1400px] justify-center gap-2 overflow-x-auto px-4 py-2 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-3 sm:px-5 sm:py-2.5 lg:gap-4 lg:px-6 [&::-webkit-scrollbar]:hidden">
         {HOMEPAGE_SECTIONS.map((section) => (
           <a
             key={section.id}
             href={`#${section.id}`}
             className={cn(
-              "shrink-0 rounded-xl px-4 py-2.5 text-base font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6] sm:px-5 sm:py-3 sm:text-lg",
+              "shrink-0 rounded-xl px-3.5 py-2 text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6] sm:px-4 sm:py-2.5 sm:text-base",
               active === section.id
                 ? "bg-white/10 text-white"
                 : "text-[#94A3B8] hover:text-white",
@@ -168,9 +178,9 @@ const FOOTER_GUIDE_KEYS: SeoLinkKey[] = [
 ];
 
 export function MarketingHomepage({
-  socialProof,
+  socialProofSlot,
 }: {
-  socialProof: HomepageSocialProofStats | null;
+  socialProofSlot?: ReactNode;
 }) {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
   const seasonPrice = getSeasonPassPrice();
@@ -195,11 +205,11 @@ export function MarketingHomepage({
       <HomepageSectionNav />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-[#0A0F1D] pt-12 pb-10 lg:pt-20 lg:pb-16">
-        <div className="relative mx-auto max-w-[1400px] space-y-4 px-4 sm:px-5 lg:space-y-5 lg:px-6">
-          <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.2fr)] lg:gap-6 xl:gap-8">
-            <div className="flex min-h-0 min-w-0 flex-col justify-center space-y-6 sm:space-y-7 lg:space-y-8 [container-type:inline-size]">
-              <h1 className="font-display font-bold leading-[0.95] tracking-[-0.04em] [font-size:clamp(1.875rem,min(0.7rem+4.6vw,12cqi),5.5rem)]">
+      <section className="relative overflow-hidden bg-[#0A0F1D] pt-6 pb-6 lg:pt-8 lg:pb-8">
+        <div className="relative mx-auto max-w-[1400px] space-y-3 px-4 sm:px-5 lg:space-y-3.5 lg:px-6">
+          <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.15fr)] lg:gap-6 xl:gap-7">
+            <div className="flex min-h-0 min-w-0 flex-col justify-between gap-6 py-1 sm:gap-7 lg:gap-8 lg:py-2 [container-type:inline-size]">
+              <h1 className="font-display font-bold leading-[0.95] tracking-[-0.04em] [font-size:clamp(1.75rem,min(0.65rem+4vw,10.5cqi),3.75rem)]">
                 <span className="whitespace-nowrap">
                   The leading{" "}
                   <span
@@ -222,7 +232,7 @@ export function MarketingHomepage({
                 </span>
                 <span className="block whitespace-nowrap">question bank</span>
               </h1>
-              <p className="max-w-2xl text-sm leading-relaxed text-[#94A3B8] sm:text-lg lg:text-xl">
+              <p className="max-w-2xl text-sm leading-relaxed text-[#94A3B8] sm:text-base lg:text-lg">
                 Practice with our{" "}
                 <span className="text-underline-accent text-white">
                   {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ practice
@@ -234,8 +244,8 @@ export function MarketingHomepage({
                 </span>
                 .
               </p>
-              <div className="space-y-5">
-                <div className="flex flex-col sm:flex-row gap-3">
+              <div className="space-y-3">
+                <div className="flex flex-col gap-3 sm:flex-row">
                   <Link
                     href={CALIBRATION_ROUTES.hub}
                     onClick={() =>
@@ -244,7 +254,7 @@ export function MarketingHomepage({
                         destination: CALIBRATION_ROUTES.hub,
                       })
                     }
-                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-8 py-4 text-base font-bold text-[#0A0F1D] shadow-[0_0_28px_rgba(255,255,255,0.22),0_8px_24px_rgba(0,0,0,0.28)] transition-all hover:scale-[1.03] hover:bg-slate-100 hover:shadow-[0_0_36px_rgba(255,255,255,0.32),0_10px_28px_rgba(0,0,0,0.32)] active:scale-[0.98] sm:text-lg"
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-7 py-3.5 text-base font-bold text-[#0A0F1D] shadow-[0_0_28px_rgba(255,255,255,0.22),0_8px_24px_rgba(0,0,0,0.28)] transition-all hover:scale-[1.03] hover:bg-slate-100 hover:shadow-[0_0_36px_rgba(255,255,255,0.32),0_10px_28px_rgba(0,0,0,0.32)] active:scale-[0.98] sm:text-lg"
                   >
                     Start calibration
                     <span aria-hidden className="text-lg leading-none">
@@ -269,18 +279,18 @@ export function MarketingHomepage({
             </div>
           </div>
 
-          <div className="rounded-2xl bg-white/[0.08] p-5 backdrop-blur-xl sm:p-6">
-            <div className="flex w-full flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
-              <div className="flex min-w-0 items-start gap-4 sm:items-center sm:gap-5">
+          <div className="rounded-2xl bg-white/[0.08] px-4 py-3.5 backdrop-blur-xl sm:px-5 sm:py-4">
+            <div className="flex w-full flex-col gap-5 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
+              <div className="flex min-w-0 items-start gap-3.5 sm:items-center sm:gap-4">
                 <Link
                   href={`${ABOUT_PATH}#${FOUNDERS.ewan.id}`}
-                  className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[#161D2F] sm:h-24 sm:w-24"
+                  className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-[#161D2F] sm:h-16 sm:w-16"
                 >
                   <Image
                     src={FOUNDERS.ewan.imageSrc}
                     alt={FOUNDERS.ewan.imageAlt}
                     fill
-                    sizes="96px"
+                    sizes="64px"
                     className="object-cover"
                     style={{
                       objectPosition: FOUNDERS.ewan.imagePosition,
@@ -289,8 +299,8 @@ export function MarketingHomepage({
                     priority
                   />
                 </Link>
-                <div className="min-w-0 space-y-1.5">
-                  <p className="text-base font-bold leading-snug text-white sm:text-lg lg:text-xl">
+                <div className="min-w-0 space-y-1">
+                  <p className="text-sm font-bold leading-snug text-white sm:text-base lg:text-lg">
                     Hi, I&apos;m{" "}
                     <Link
                       href={`${ABOUT_PATH}#${FOUNDERS.ewan.id}`}
@@ -300,79 +310,13 @@ export function MarketingHomepage({
                     </Link>
                     , co-founder of ESAT Camp.
                   </p>
-                  <p className="text-sm leading-relaxed text-[#94A3B8] sm:text-base">
+                  <p className="text-xs leading-relaxed text-[#94A3B8] sm:text-sm">
                     Our goal is to build the platform we wish we had for the ESAT.
                   </p>
                 </div>
               </div>
 
-              {socialProof ? (
-                <dl
-                  className={cn(
-                    "grid shrink-0 gap-x-6 gap-y-5 sm:gap-x-8 lg:gap-x-10",
-                    socialProof.uniqueVisitors != null
-                      ? "grid-cols-3"
-                      : "grid-cols-2",
-                  )}
-                >
-                  {(
-                    [
-                      ...(socialProof.uniqueVisitors != null
-                        ? [
-                            {
-                              value: socialProof.uniqueVisitors,
-                              label: "Unique visitors",
-                              icon: null,
-                            },
-                          ]
-                        : []),
-                      {
-                        value: socialProof.users,
-                        label: "Users",
-                        icon: CircleUser,
-                      },
-                      {
-                        value: socialProof.questionsAnswered,
-                        label: "Questions done",
-                        icon: ListChecks,
-                      },
-                    ] as {
-                      value: number;
-                      label: string;
-                      icon: typeof CircleUser | null;
-                    }[]
-                  ).map((stat) => {
-                    const StatIcon = stat.icon;
-                    return (
-                      <div
-                        key={stat.label}
-                        className={cn(
-                          "min-w-0",
-                          StatIcon && "flex items-center gap-3 sm:gap-3.5",
-                        )}
-                      >
-                        {StatIcon ? (
-                          <StatIcon
-                            aria-hidden
-                            className="h-9 w-9 shrink-0 text-white sm:h-10 sm:w-10"
-                            strokeWidth={1.75}
-                            fill="none"
-                          />
-                        ) : null}
-                        <div className="min-w-0">
-                          <dt className="sr-only">{stat.label}</dt>
-                          <dd className="font-display text-2xl font-bold tabular-nums text-white sm:text-3xl">
-                            {stat.value.toLocaleString()}
-                          </dd>
-                          <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#94A3B8] sm:text-xs">
-                            {stat.label}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </dl>
-              ) : null}
+              {socialProofSlot}
             </div>
           </div>
         </div>

@@ -3,7 +3,6 @@
 import { useCallback, useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { InlineKatex } from "@/components/home/InlineKatex";
 import { CameraDistanceGraph } from "@/components/home/CameraDistanceGraph";
 import { markHomepageExampleRevealPending } from "@/lib/homepage/exampleQuestion";
 import type { CurveId } from "@/lib/homepage/cameraDistanceCurves";
@@ -34,36 +33,38 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "relative flex h-full min-h-0 flex-col rounded-2xl bg-white/[0.08] px-6 py-4 backdrop-blur-xl sm:px-8 sm:py-5",
+        "relative flex h-full min-h-0 flex-col rounded-2xl bg-white/[0.08] px-5 py-3 backdrop-blur-xl sm:px-6 sm:py-3.5",
         className,
       )}
     >
-      <div className="relative flex min-h-0 flex-1 flex-col justify-between gap-3">
-        <div className="flex min-h-0 flex-1 flex-col space-y-3">
+      <div className="relative flex min-h-0 flex-1 flex-col justify-between gap-2.5">
+        <div className="flex min-h-0 flex-1 flex-col space-y-2">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#94A3B8]">
             Example question
           </p>
 
-          <div className="text-sm leading-relaxed text-[#94A3B8] sm:text-[15px]">
+          <div className="text-[13px] leading-snug text-[#94A3B8] sm:text-sm sm:leading-relaxed">
             <p>
               A person of fixed height moves away from a stationary camera with
               fixed zoom.
             </p>
-            <p className="mt-2">
+            <p className="mt-1.5">
               Which curve could show their image height{" "}
-              <InlineKatex latex="H" fallback="H" /> against distance{" "}
-              <InlineKatex latex="d" fallback="d" /> from the camera?
+              <span className="font-serif italic text-white/90">H</span> against
+              distance{" "}
+              <span className="font-serif italic text-white/90">d</span> from the
+              camera?
             </p>
           </div>
 
-          <div className="mx-auto min-h-[120px] w-full flex-1 sm:min-h-[155px]">
+          <div className="mx-auto h-[100px] w-full shrink-0 sm:h-[118px]">
             <CameraDistanceGraph className="h-full w-full" />
           </div>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           <div
-            className="grid grid-cols-4 gap-2 sm:gap-2.5"
+            className="grid grid-cols-4 gap-2"
             role="group"
             aria-label="Answer options"
           >
@@ -77,12 +78,10 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
                   aria-pressed={isSelected}
                   onClick={() => handleSelect(id)}
                   className={cn(
-                    "inline-flex h-11 w-full items-center justify-center rounded-lg text-sm font-semibold tabular-nums transition-[background-color,color] duration-200",
+                    "inline-flex h-9 w-full items-center justify-center rounded-lg text-sm font-semibold tabular-nums transition-[background-color,color] duration-200",
                     "border-0 outline-none ring-0 shadow-none",
                     "focus-visible:outline-none focus-visible:ring-0",
-                    isSelected
-                      ? OPTION_SELECTED
-                      : OPTION_BASE,
+                    isSelected ? OPTION_SELECTED : OPTION_BASE,
                   )}
                 >
                   {id}
@@ -92,20 +91,20 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
           </div>
 
           {phase === "submitted" ? (
-            <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm text-[#94A3B8]">
                 Sign in to view which is correct.
               </p>
               <Link
                 href={`/login?redirectTo=${encodeURIComponent(REVEAL_REDIRECT)}`}
                 onClick={() => markHomepageExampleRevealPending()}
-                className="inline-flex items-center justify-center rounded-lg border border-white/20 px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/5 focus-visible:outline-none"
+                className="inline-flex items-center justify-center rounded-lg border border-white/20 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/5 focus-visible:outline-none"
               >
                 Sign in to view answer
               </Link>
             </div>
           ) : (
-            <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <Link
                 href={`/login?redirectTo=${encodeURIComponent(REVEAL_REDIRECT)}`}
                 onClick={() => markHomepageExampleRevealPending()}
@@ -118,7 +117,7 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
                 onClick={handleSubmit}
                 disabled={!selected}
                 className={cn(
-                  "inline-flex items-center justify-center rounded-lg px-8 py-3 text-sm font-semibold transition-colors duration-200",
+                  "inline-flex items-center justify-center rounded-lg px-6 py-2.5 text-sm font-semibold transition-colors duration-200",
                   "border-0 outline-none focus-visible:outline-none",
                   selected
                     ? "bg-white text-[#0A0F1D] hover:bg-slate-200"

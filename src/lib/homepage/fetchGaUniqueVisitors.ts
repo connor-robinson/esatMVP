@@ -60,6 +60,7 @@ async function getAccessToken(account: ServiceAccount): Promise<string | null> {
       grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
       assertion,
     }),
+    signal: AbortSignal.timeout(2500),
   });
 
   if (!response.ok) return null;
@@ -77,31 +78,36 @@ export async function fetchGaUniqueVisitors(): Promise<number | null> {
   const account = readServiceAccount();
   if (!propertyId || !account) return null;
 
-  const token = await getAccessToken(account);
-  if (!token) return null;
+  try {
+    const token = await getAccessToken(account);
+    if (!token) return null;
 
-  const response = await fetch(
-    `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          dateRanges: [{ startDate: "2015-08-14", endDate: "today" }],
+          metrics: [{ name: "totalUsers" }],
+        }),
+        signal: AbortSignal.timeout(2500),
       },
-      body: JSON.stringify({
-        dateRanges: [{ startDate: "2015-08-14", endDate: "today" }],
-        metrics: [{ name: "totalUsers" }],
-      }),
-    },
-  );
+    );
 
-  if (!response.ok) return null;
+    if (!response.ok) return null;
 
-  const json = (await response.json()) as {
-    rows?: Array<{ metricValues?: Array<{ value?: string }> }>;
-  };
-  const raw = json.rows?.[0]?.metricValues?.[0]?.value;
-  if (!raw) return null;
-  const value = Number.parseInt(raw, 10);
-  return Number.isFinite(value) ? value : null;
+    const json = (await response.json()) as {
+      rows?: Array<{ metricValues?: Array<{ value?: string }> }>;
+    };
+    const raw = json.rows?.[0]?.metricValues?.[0]?.value;
+    if (!raw) return null;
+    const value = Number.parseInt(raw, 10);
+    return Number.isFinite(value) ? value : null;
+  } catch {
+    return null;
+  }
 }
