@@ -365,32 +365,61 @@ function StepBody({
   }
 
   if (question.type === "longtext") {
+    const examples = question.examples ?? [];
     return (
-      <div>
+      <div className="space-y-3">
+        {examples.length > 0 ? (
+          <div className="space-y-2">
+            <p className="text-[11px] font-medium text-text-muted">Examples</p>
+            <div className="space-y-2">
+              {examples.map((example) => {
+                const selected =
+                  typeof value === "string" && value.trim() === example;
+                return (
+                  <button
+                    key={example}
+                    type="button"
+                    onClick={() => onChange(example)}
+                    className={cn(
+                      "w-full rounded-xl px-4 py-3 text-left text-sm transition-colors duration-200",
+                      selected
+                        ? ACCENT.selected
+                        : "bg-surface-mid text-text hover:bg-surface-neutral",
+                    )}
+                  >
+                    “{example}”
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
         <textarea
           value={typeof value === "string" ? value : ""}
           maxLength={question.maxLength ?? 1000}
-          rows={5}
-          autoFocus
+          rows={4}
+          autoFocus={examples.length === 0}
           onChange={(e) => onChange(e.target.value)}
           className="w-full resize-y rounded-xl border-0 bg-surface-mid px-4 py-3 text-sm text-text outline-none ring-0 placeholder:text-text-subtle focus:outline-none focus:ring-0"
           placeholder={
-            question.required === false
-              ? "Optional. Skip if nothing comes to mind."
-              : "Type a short answer…"
+            examples.length > 0
+              ? "Or write your own…"
+              : question.required === false
+                ? "Optional. Skip if nothing comes to mind."
+                : "Write a short answer…"
           }
         />
         {min > 0 ? (
           <p
             className={cn(
-              "mt-1.5 text-[11px] tabular-nums",
+              "text-[11px] tabular-nums",
               textLen >= min ? "text-text-muted" : "text-text-subtle",
             )}
           >
             {textLen}/{min} minimum
           </p>
         ) : (
-          <p className="mt-1.5 text-[11px] text-text-muted">
+          <p className="text-[11px] text-text-muted">
             You can leave this blank and finish.
           </p>
         )}

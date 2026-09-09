@@ -13,6 +13,8 @@ export interface FeedbackQuestion {
   required?: boolean;
   maxLength?: number;
   minLength?: number;
+  /** Shown as clickable example prompts under the text box. */
+  examples?: string[];
 }
 
 export interface FeedbackSurveyDefinition {
@@ -86,10 +88,15 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       id: "improve_first",
       type: "longtext",
       label: "What's one thing we should improve?",
-      help: "A rough note is fine. A concrete example helps a lot.",
+      help: "Tap an example to start, then edit it in your own words.",
       required: true,
       minLength: 20,
       maxLength: 1000,
+      examples: [
+        "It's unclear how to leave the question bank",
+        "I want to review my incorrect options more easily in question bank",
+        "The questions are bad",
+      ],
     },
     {
       id: "works_well",
