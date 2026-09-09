@@ -338,7 +338,10 @@ describe("partner access rate limiter (failure-based)", () => {
       service,
       ip,
     });
-    expect(blocked.error).toBe("rate_limited");
+    expect(blocked.ok).toBe(false);
+    if (!blocked.ok) {
+      expect(blocked.error).toBe("rate_limited");
+    }
 
     vi.advanceTimersByTime(RATE_WINDOW_MS + 1);
 

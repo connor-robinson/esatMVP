@@ -50,24 +50,23 @@ function statusFromHomeCache(): QuestionBankFreeTierStatus | null {
   const cached = readFreeTierHomeCache();
   if (!cached) return null;
 
-  const bySubject = Object.fromEntries(
-    FREE_TIER_PREVIEW_SUBJECTS.map((subject) => {
+  const bySubject = FREE_TIER_PREVIEW_SUBJECTS.reduce(
+    (acc, subject) => {
       const row = cached.bySubject[subject];
-      return [
+      acc[subject] = {
         subject,
-        {
-          subject,
-          limit: FREE_TIER_LIMIT_PER_SUBJECT,
-          attemptedCount: row.attemptedCount,
-          remaining: row.remaining,
-          isExhausted: row.isExhausted,
-          attemptedQuestionIds: [],
-          questions: [],
-          remainingQuestions: [],
-        } satisfies SubjectFreeTierStatus,
-      ];
-    }),
-  ) as Record<FreeTierPreviewSubject, SubjectFreeTierStatus>;
+        limit: FREE_TIER_LIMIT_PER_SUBJECT,
+        attemptedCount: row.attemptedCount,
+        remaining: row.remaining,
+        isExhausted: row.isExhausted,
+        attemptedQuestionIds: [],
+        questions: [],
+        remainingQuestions: [],
+      };
+      return acc;
+    },
+    {} as Record<FreeTierPreviewSubject, SubjectFreeTierStatus>,
+  );
 
   const totalAttempted = FREE_TIER_PREVIEW_SUBJECTS.reduce(
     (sum, subject) => sum + bySubject[subject].attemptedCount,
@@ -98,19 +97,18 @@ function statusFromHomeCache(): QuestionBankFreeTierStatus | null {
 }
 
 function persistHomeCache(data: QuestionBankFreeTierStatus) {
-  const bySubject = Object.fromEntries(
-    FREE_TIER_PREVIEW_SUBJECTS.map((subject) => {
+  const bySubject = FREE_TIER_PREVIEW_SUBJECTS.reduce(
+    (acc, subject) => {
       const row = data.bySubject[subject];
-      return [
-        subject,
-        {
-          attemptedCount: row.attemptedCount,
-          remaining: row.remaining,
-          isExhausted: row.isExhausted,
-        } satisfies FreeTierHomeSubjectCache,
-      ];
-    }),
-  ) as Record<FreeTierPreviewSubject, FreeTierHomeSubjectCache>;
+      acc[subject] = {
+        attemptedCount: row.attemptedCount,
+        remaining: row.remaining,
+        isExhausted: row.isExhausted,
+      };
+      return acc;
+    },
+    {} as Record<FreeTierPreviewSubject, FreeTierHomeSubjectCache>,
+  );
 
   writeFreeTierHomeCache({
     anyPreviewAvailable: data.anyPreviewAvailable,

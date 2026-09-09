@@ -117,7 +117,7 @@ describe("sendGaCommerceEvent", () => {
   });
 
   it("POSTs the MP payload when claim wins and client_id is valid", async () => {
-    const fetchImpl = vi.fn(async () => ({ ok: true }) as Response);
+    const fetchImpl = vi.fn<typeof fetch>(async () => ({ ok: true }) as Response);
     const result = await sendGaCommerceEvent(
       {
         eventName: "purchase",
