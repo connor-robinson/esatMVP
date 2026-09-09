@@ -11,7 +11,9 @@ import {
   normalizeReferralCode,
 } from "@/lib/feedbackReferral/codes";
 import {
+  hasWrittenBeyondExamples,
   isFeedbackStepComplete,
+  matchesExampleExactly,
   validateFeedbackReferralSurvey,
   type FeedbackQuestion,
 } from "@/lib/feedbackReferral/survey";
@@ -87,7 +89,12 @@ describe("referral codes", () => {
 
 describe("survey validation", () => {
   const improve =
-    "Past paper scores reset to zero after I finish a section, so I cannot track progress.";
+    "Some Math 1 questions feel too easy compared with the real exam, especially the early algebra ones that skip the harder style.";
+  const examples = [
+    "Some Math 1 questions feel too easy compared with the real exam",
+    "I found a Math 1 question that looked incorrect or had a wrong answer",
+    "It's unclear how to leave the question bank once I'm in a set",
+  ];
 
   it("rejects thin written answers", () => {
     const error = validateFeedbackReferralSurvey([
@@ -97,6 +104,31 @@ describe("survey validation", () => {
       { questionId: "improve_first", value: "fix it" },
     ]);
     expect(error).toMatch(/at least/i);
+  });
+
+  it("rejects an example tapped with nothing added", () => {
+    expect(matchesExampleExactly(examples[0]!, examples)).toBe(true);
+    expect(hasWrittenBeyondExamples(examples[0]!, examples)).toBe(false);
+    const error = validateFeedbackReferralSurvey([
+      { questionId: "most_useful", value: "question_bank" },
+      { questionId: "least_useful", value: "past_papers" },
+      { questionId: "recommend", value: 7 },
+      { questionId: "improve_first", value: examples[0]! },
+    ]);
+    expect(error).toMatch(/own detail/i);
+  });
+
+  it("accepts an example plus the user's own detail", () => {
+    const withDetail = `${examples[1]!} Topic looked like logs but the mark scheme felt off.`;
+    expect(hasWrittenBeyondExamples(withDetail, examples)).toBe(true);
+    const error = validateFeedbackReferralSurvey([
+      { questionId: "most_useful", value: "question_bank" },
+      { questionId: "least_useful", value: "past_papers" },
+      { questionId: "recommend", value: 7 },
+      { questionId: "improve_first", value: withDetail },
+      { questionId: "works_well", value: "Calibration felt clear and quick." },
+    ]);
+    expect(error).toBeNull();
   });
 
   it("accepts concise friendly answers", () => {
@@ -144,7 +176,7 @@ describe("step completion", () => {
     type: "longtext",
     label: "Improve?",
     required: true,
-    minLength: 20,
+    minLength: 28,
   };
   const optionalQ: FeedbackQuestion = {
     id: "works_well",
@@ -160,7 +192,9 @@ describe("step completion", () => {
 
   it("enforces min length on required text", () => {
     expect(isFeedbackStepComplete(textQ, "short")).toBe(false);
-    expect(isFeedbackStepComplete(textQ, "a".repeat(20))).toBe(true);
+    expect(
+      isFeedbackStepComplete(textQ, "a".repeat(28)),
+    ).toBe(true);
   });
 
   it("lets optional text steps continue empty", () => {

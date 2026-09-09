@@ -5,7 +5,9 @@ import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   FEEDBACK_REFERRAL_SURVEY,
+  hasWrittenBeyondExamples,
   isFeedbackStepComplete,
+  matchesExampleExactly,
   validateFeedbackReferralSurvey,
   type FeedbackAnswer,
   type FeedbackAnswerValue,
@@ -381,20 +383,33 @@ function StepBody({
 
   if (question.type === "longtext") {
     const examples = question.examples ?? [];
+    const onlyExample =
+      examples.length > 0 &&
+      typeof value === "string" &&
+      matchesExampleExactly(value, examples);
+    const needsOwnDetail =
+      examples.length > 0 &&
+      typeof value === "string" &&
+      value.trim().length > 0 &&
+      !hasWrittenBeyondExamples(value, examples);
+
     return (
       <div className="space-y-3">
         {examples.length > 0 ? (
           <div className="space-y-2">
-            <p className="text-[11px] font-medium text-text-muted">Examples</p>
+            <p className="text-[11px] font-medium text-text-muted">
+              Examples (then add your own detail)
+            </p>
             <div className="space-y-2">
               {examples.map((example) => {
                 const selected =
-                  typeof value === "string" && value.trim() === example;
+                  typeof value === "string" &&
+                  value.trim().startsWith(example.trim());
                 return (
                   <button
                     key={example}
                     type="button"
-                    onClick={() => onChange(example)}
+                    onClick={() => onChange(`${example} `)}
                     className={cn(
                       "w-full rounded-xl px-4 py-3 text-left text-sm transition-colors duration-200",
                       selected
@@ -418,17 +433,25 @@ function StepBody({
           className="w-full resize-y rounded-xl border-0 bg-surface-mid px-4 py-3 text-sm text-text outline-none ring-0 placeholder:text-text-subtle focus:outline-none focus:ring-0"
           placeholder={
             examples.length > 0
-              ? "Or write your own…"
+              ? "Add what happened for you…"
               : question.required === false
                 ? "Optional. Skip if nothing comes to mind."
                 : "Write a short answer…"
           }
         />
+        {needsOwnDetail || onlyExample ? (
+          <p className="text-[11px] text-[#4C8BF5]">
+            Add at least a short line of your own. An example alone won&apos;t
+            unlock Continue.
+          </p>
+        ) : null}
         {min > 0 ? (
           <p
             className={cn(
               "text-[11px] tabular-nums",
-              textLen >= min ? "text-text-muted" : "text-text-subtle",
+              textLen >= min && !needsOwnDetail
+                ? "text-text-muted"
+                : "text-text-subtle",
             )}
           >
             {textLen}/{min} minimum

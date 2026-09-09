@@ -126,14 +126,14 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       id: "improve_first",
       type: "longtext",
       label: "What's one thing we should improve?",
-      help: "Tap an example to start, then edit it in your own words.",
+      help: "Tap an example to start, then add your own detail. An example alone is not enough.",
       required: true,
-      minLength: 20,
+      minLength: 28,
       maxLength: 1000,
       examples: [
-        "It's unclear how to leave the question bank",
-        "I want to review my incorrect options more easily in question bank",
-        "The questions are bad",
+        "Some Math 1 questions feel too easy compared with the real exam",
+        "I found a Math 1 question that looked incorrect or had a wrong answer",
+        "It's unclear how to leave the question bank once I'm in a set",
       ],
     },
     {
@@ -156,6 +156,48 @@ function asMap(answers: FeedbackAnswer[]): Record<string, FeedbackAnswerValue> {
 
 function trimmedText(value: FeedbackAnswerValue | undefined): string {
   return typeof value === "string" ? value.trim() : "";
+}
+
+/** Extra characters required beyond a tapped example starter. */
+export const EXAMPLE_EXTRA_MIN_CHARS = 12;
+
+export function normalizeExampleText(text: string): string {
+  return text.trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+export function matchesExampleExactly(
+  text: string,
+  examples: string[] | undefined,
+): boolean {
+  if (!examples?.length) return false;
+  const normalized = normalizeExampleText(text);
+  return examples.some(
+    (example) => normalizeExampleText(example) === normalized,
+  );
+}
+
+/**
+ * True when the answer is more than a canned example.
+ * Tapping an example alone is never enough.
+ */
+export function hasWrittenBeyondExamples(
+  text: string,
+  examples: string[] | undefined,
+): boolean {
+  const trimmed = text.trim();
+  if (!trimmed) return false;
+  if (!examples?.length) return true;
+  if (matchesExampleExactly(trimmed, examples)) return false;
+
+  for (const example of examples) {
+    const exampleTrim = example.trim();
+    if (!exampleTrim) continue;
+    if (!trimmed.toLowerCase().startsWith(exampleTrim.toLowerCase())) continue;
+    const rest = trimmed.slice(exampleTrim.length).trim();
+    return rest.length >= EXAMPLE_EXTRA_MIN_CHARS;
+  }
+
+  return true;
 }
 
 export function formatFeedbackAnswersForEmail(
@@ -206,7 +248,8 @@ export function isFeedbackStepComplete(
   if (question.type === "longtext") {
     if (question.required === false) return true;
     const text = trimmedText(value);
-    return text.length >= (question.minLength ?? 0);
+    if (text.length < (question.minLength ?? 0)) return false;
+    return hasWrittenBeyondExamples(text, question.examples);
   }
   return false;
 }
@@ -257,6 +300,13 @@ export function validateFeedbackReferralSurvey(
       }
       if (text.length > max) {
         return `"${q.label}" is too long.`;
+      }
+      if (
+        q.required !== false &&
+        text &&
+        !hasWrittenBeyondExamples(text, q.examples)
+      ) {
+        return `Please add your own detail after the example for "${q.label}".`;
       }
       if (text) written.push(text.toLowerCase());
     }
