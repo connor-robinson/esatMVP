@@ -12,8 +12,7 @@ import {
 } from "./blueprints";
 import { toMockCandidate, type RawBankQuestionRow } from "./metadata";
 import { assembleMockPaper, proposeReplacements } from "./select";
-import { filterMockPool, isDiagramQuestion } from "./poolFilters";
-import { FREE_TIER_QUESTION_IDS } from "@/lib/questionBank/freeTierQuestions";
+import { filterMockPool, isDiagramQuestion, isFreeTierHookQuestion } from "./poolFilters";
 import {
   EXCLUDE_SETTING_KEY,
   parseExcludeSetting,
@@ -42,7 +41,7 @@ import type {
 } from "./types";
 
 const POOL_SELECT = `
-  id, subjects, difficulty, question_stem, options, correct_option,
+  id, generation_id, subjects, difficulty, question_stem, options, correct_option,
   solution_reasoning, primary_tag, secondary_tags, status,
   mock_difficulty, estimated_time_seconds, observed_median_time_seconds,
   reasoning_type, presentation_type, quality_score,
@@ -100,7 +99,7 @@ export async function loadEligiblePool(
     // Still drop free-tier hooks; keep reserved only when allowlisted.
     return candidates.filter((q) => {
       if (options.allowIds?.has(q.id)) return true;
-      if (FREE_TIER_QUESTION_IDS.includes(q.id)) return false;
+      if (isFreeTierHookQuestion(q)) return false;
       return true;
     });
   }
@@ -163,7 +162,13 @@ export async function enrichMockMetadataForSubject(
 
   const { data, error } = await query;
   if (error) throw new Error(error.message);
-  const rows = (data as unknown as RawBankQuestionRow[] | null) ?? [];
+  const rows = ((data as unknown as RawBankQuestionRow[] | null) ?? []).filter(
+    (row) =>
+      !isFreeTierHookQuestion({
+        id: row.id,
+        generationId: row.generation_id,
+      }),
+  );
   if (rows.length === 0) {
     return { attempted: 0, labeledCount: 0, source: null };
   }
@@ -188,6 +193,11 @@ export async function enrichMockMetadataForSubject(
       maxQuestions: options?.maxQuestions ?? 120,
     });
 
+  if (attempted > 0 && labeledCount === 0) {
+    throw new Error(
+      `AI difficulty labeling returned 0 labels for ${attempted} questions (check Vertex ADC / model).`,
+    );
+  }
   const rowById = new Map(rows.map((r) => [r.id, r]));
   for (const label of labels) {
     const existing = rowById.get(label.id);
@@ -451,14 +461,18 @@ export async function generateAndPersist(
     (await resolveBlueprint(service, subject, mock.blueprint_id));
 
   // Prefer AI 1-5 difficulty labels before assembly (fills missing mock_difficulty).
+  let enrichNote: string | null = null;
   if (options?.enrichMetadata !== false) {
     try {
-      await enrichMockMetadataForSubject(service, subject, {
+      const enrich = await enrichMockMetadataForSubject(service, subject, {
         maxQuestions: 96,
         onlyMissingDifficulty: true,
       });
-    } catch {
-      // Soft-fail: fall back to Easy/Medium/Hard mapping if Vertex is unavailable.
+      enrichNote = `AI labeled ${enrich.labeledCount}/${enrich.attempted} questions via ${enrich.source ?? "none"}.`;
+    } catch (e) {
+      enrichNote = `AI difficulty labeling failed: ${
+        e instanceof Error ? e.message : "unknown error"
+      }. Using Easy/Medium/Hard fallback where mock_difficulty is missing.`;
     }
   }
 
@@ -473,13 +487,43 @@ export async function generateAndPersist(
   });
   const usedElsewhere = await loadUsedQuestionIds(service, mockId);
 
+  // Hard guard: never assemble free-tier or reserved/used questions.
+  const safePool = pool.filter(
+    (q) =>
+      !isFreeTierHookQuestion(q) &&
+      (!q.reservedForMock || allowIds.has(q.id)) &&
+      !usedElsewhere.has(q.id),
+  );
+
   const assembly = assembleMockPaper({
     blueprint,
-    pool,
+    pool: safePool,
     lockedSlots,
     usedElsewhereIds: usedElsewhere,
   });
 
+  if (enrichNote) {
+    assembly.notes.unshift(enrichNote);
+  }
+
+  // Final assertion on assembled slots
+  for (const slot of assembly.slots) {
+    const q = slot.question;
+    if (!q) continue;
+    if (isFreeTierHookQuestion(q) && !allowIds.has(q.id)) {
+      throw new Error(
+        `Free-tier preview question ${q.id} cannot enter a mock.`,
+      );
+    }
+    if (
+      (q.reservedForMock || usedElsewhere.has(q.id)) &&
+      !allowIds.has(q.id)
+    ) {
+      throw new Error(
+        `Reserved/published mock question ${q.id} cannot be reused.`,
+      );
+    }
+  }
   const lockMap = new Map(
     lockedSlots.map((s) => [s.questionId, true] as const),
   );
@@ -720,18 +764,20 @@ export async function transitionMockStatus(
   const { mock, slots } = await getMockWithSlots(service, mockId);
   const fromStatus = mock.status;
 
+  const questionIds = slots.map((s) => s.questionId);
+  const stillElsewhere = await loadUsedQuestionIds(service, mockId);
+  // loadUsedQuestionIds already excludes this mock; for release we need others only.
+
   if (toStatus === "published" || toStatus === "approved") {
     const check = assertCanPublish({
       status: toStatus,
       slots,
       questionCount: mock.question_count,
+      usedElsewhereIds: stillElsewhere,
+      fromStatus,
     });
     if (!check.ok) throw new Error(check.error);
   }
-
-  const questionIds = slots.map((s) => s.questionId);
-  const stillElsewhere = await loadUsedQuestionIds(service, mockId);
-  // loadUsedQuestionIds already excludes this mock; for release we need others only.
 
   const usageCounts = new Map<string, number>();
   if (questionIds.length > 0) {

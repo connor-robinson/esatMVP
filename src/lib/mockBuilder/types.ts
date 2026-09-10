@@ -94,6 +94,7 @@ export type MockBlueprintConfig = {
 
 export type MockCandidateQuestion = {
   id: string;
+  generationId?: string | null;
   subjects: string;
   difficultyLabel: "Easy" | "Medium" | "Hard";
   mockDifficulty: MockDifficulty;
@@ -117,6 +118,8 @@ export type MockCandidateQuestion = {
   mockUsageCount: number;
   hasVisual: boolean;
   qualityGateVerdict: string | null;
+  /** True when mock_difficulty came from stored AI/manual field, not Easy/Med/Hard fallback. */
+  hasAiMockDifficulty: boolean;
 };
 
 export type MockSlot = {

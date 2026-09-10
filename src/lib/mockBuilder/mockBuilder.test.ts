@@ -63,6 +63,8 @@ function makeQuestion(
     mockUsageCount: overrides.mockUsageCount ?? 0,
     hasVisual: overrides.hasVisual ?? false,
     qualityGateVerdict: overrides.qualityGateVerdict ?? "Pass",
+    hasAiMockDifficulty: overrides.hasAiMockDifficulty ?? false,
+    generationId: overrides.generationId ?? null,
   };
 }
 
@@ -220,6 +222,47 @@ describe("publish gates", () => {
     expect(check.ok).toBe(false);
   });
 
+  it("rejects free-tier preview and already-used mock questions", async () => {
+    const { freeTierQuestionIdsForSubject } = await import(
+      "@/lib/questionBank/freeTierQuestions"
+    );
+    const hookId = freeTierQuestionIdsForSubject("Math 1")[0];
+    const hook = makeQuestion({ id: hookId });
+    const reserved = makeQuestion({
+      id: "reserved-q",
+      reservedForMock: true,
+    });
+    const used = makeQuestion({ id: "used-elsewhere" });
+
+    expect(
+      assertCanPublish({
+        status: "published",
+        fromStatus: "draft",
+        questionCount: 1,
+        slots: [{ questionId: hook.id, question: hook }],
+      }).ok,
+    ).toBe(false);
+
+    expect(
+      assertCanPublish({
+        status: "published",
+        fromStatus: "draft",
+        questionCount: 1,
+        slots: [{ questionId: reserved.id, question: reserved }],
+      }).ok,
+    ).toBe(false);
+
+    expect(
+      assertCanPublish({
+        status: "published",
+        fromStatus: "draft",
+        questionCount: 1,
+        usedElsewhereIds: new Set(["used-elsewhere"]),
+        slots: [{ questionId: used.id, question: used }],
+      }).ok,
+    ).toBe(false);
+  });
+
   it("accepts a complete 27-question set", () => {
     const slots = buildPool(27).map((q, i) => ({
       questionId: q.id,
@@ -233,6 +276,21 @@ describe("publish gates", () => {
       slots,
     });
     expect(check.ok).toBe(true);
+  });
+});
+
+describe("vertex JSON extract", () => {
+  it("parses array responses without truncating to the first object", async () => {
+    const { extractJsonObject } = await import("./vertexClient");
+    const { parseAiMetadataBatchResponse } = await import("./aiMetadata");
+    const raw = extractJsonObject(`[
+      {"id":"t1","mockDifficulty":2,"estimatedTimeSeconds":50,"reasoningType":"direct_application","presentationType":"text"},
+      {"id":"t2","mockDifficulty":4,"estimatedTimeSeconds":90,"reasoningType":"multi_step","presentationType":"diagram"}
+    ]`);
+    const labels = parseAiMetadataBatchResponse(raw, ["t1", "t2"]);
+    expect(labels).toHaveLength(2);
+    expect(labels[0].mockDifficulty).toBe(2);
+    expect(labels[1].mockDifficulty).toBe(4);
   });
 });
 
@@ -414,9 +472,45 @@ describe("pool filters", () => {
         presentationType: "diagram",
         reservedForMock: true,
       }),
+      makeQuestion({
+        id: "hook-by-gen",
+        generationId: "esat-m1-hook-03",
+        hasVisual: true,
+        presentationType: "diagram",
+      }),
     ];
     const filtered = filterMockPool(pool);
     expect(filtered.map((q) => q.id)).toEqual(["usable-diagram"]);
+  });
+
+  it("never selects free-tier or reserved questions when assembling", async () => {
+    const blueprint = getDefaultBlueprint("Math 1");
+    const { freeTierQuestionIdsForSubject } = await import(
+      "@/lib/questionBank/freeTierQuestions"
+    );
+    const hookId = freeTierQuestionIdsForSubject("Math 1")[0];
+    const pool = buildPool(80).concat([
+      makeQuestion({
+        id: hookId,
+        mockDifficulty: 1,
+        hasVisual: true,
+        presentationType: "diagram",
+      }),
+      makeQuestion({
+        id: "already-published",
+        mockDifficulty: 5,
+        reservedForMock: true,
+      }),
+    ]);
+    const result = assembleMockPaper({
+      blueprint,
+      pool,
+      usedElsewhereIds: new Set(["already-published"]),
+      seed: 4,
+    });
+    const ids = result.slots.map((s) => s.questionId);
+    expect(ids).not.toContain(hookId);
+    expect(ids).not.toContain("already-published");
   });
 
   it("respects diagram count target when assembling", () => {

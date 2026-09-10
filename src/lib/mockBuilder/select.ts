@@ -15,7 +15,7 @@ import {
   totalWorkloadSeconds,
 } from "./scoring";
 import { detectGaps } from "./gaps";
-import { isDiagramQuestion, isFreeTierHookQuestionId } from "./poolFilters";
+import { isDiagramQuestion, isFreeTierHookQuestion } from "./poolFilters";
 import type {
   MockBlueprintConfig,
   MockCandidateQuestion,
@@ -120,7 +120,7 @@ function scoreCandidateFit(
   // Hard-excluded elsewhere; keep a heavy penalty as safety net.
   if (usedElsewhere.has(candidate.id)) score -= 100;
   if (candidate.reservedForMock) score -= 100;
-  if (isFreeTierHookQuestionId(candidate.id)) score -= 100;
+  if (isFreeTierHookQuestion(candidate)) score -= 100;
   score -= candidate.mockUsageCount * 0.5;
 
   const diagramTarget = blueprint.presentationTargets.find(
@@ -174,7 +174,7 @@ function greedySelect(
       isPublishable(q) &&
       !selectedIds.has(q.id) &&
       !usedElsewhere.has(q.id) &&
-      !isFreeTierHookQuestionId(q.id) &&
+      !isFreeTierHookQuestion(q) &&
       !q.reservedForMock,
   );
 
@@ -222,7 +222,7 @@ function iterativeImprove(
       isPublishable(q) &&
       !current.some((c) => c.id === q.id) &&
       !usedElsewhere.has(q.id) &&
-      !isFreeTierHookQuestionId(q.id) &&
+      !isFreeTierHookQuestion(q) &&
       !q.reservedForMock,
   );
 
@@ -408,7 +408,7 @@ export function proposeReplacements(
       (q) =>
         isPublishable(q) &&
         !usedIds.has(q.id) &&
-        !isFreeTierHookQuestionId(q.id) &&
+        !isFreeTierHookQuestion(q) &&
         !q.reservedForMock,
     )
     .filter((q) => !conflictsWithPaper(q, others))

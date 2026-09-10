@@ -89,11 +89,34 @@ async function postGenerateContent(input: {
   );
 }
 
+/**
+ * Parse model JSON that may be an object, an array, or fenced markdown.
+ * Prefer a full-body parse so array responses are not truncated to the first `{...}`.
+ */
 export function extractJsonObject(text: string): unknown {
   const trimmed = text.trim();
   const fence = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
   const body = fence ? fence[1].trim() : trimmed;
-  const start = body.indexOf("{");
+
+  try {
+    return JSON.parse(body);
+  } catch {
+    // fall through to brace/bracket slicing
+  }
+
+  const objStart = body.indexOf("{");
+  const arrStart = body.indexOf("[");
+  const useArray =
+    arrStart >= 0 && (objStart < 0 || arrStart < objStart);
+
+  if (useArray) {
+    const end = body.lastIndexOf("]");
+    if (end > arrStart) {
+      return JSON.parse(body.slice(arrStart, end + 1));
+    }
+  }
+
+  const start = objStart;
   const end = body.lastIndexOf("}");
   if (start < 0 || end < 0) throw new Error("No JSON object in model response");
   return JSON.parse(body.slice(start, end + 1));

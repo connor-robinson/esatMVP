@@ -163,6 +163,7 @@ export function stemSummary(stem: string, maxLen = 160): string {
 
 export type RawBankQuestionRow = {
   id: string;
+  generation_id?: string | null;
   subjects: string;
   difficulty: string;
   question_stem: string;
@@ -204,6 +205,11 @@ export function toMockCandidate(row: RawBankQuestionRow): MockCandidateQuestion 
       stem: row.question_stem,
     });
 
+  const hasAiMockDifficulty =
+    row.mock_difficulty != null &&
+    row.mock_difficulty >= 1 &&
+    row.mock_difficulty <= 5;
+
   const mockDifficulty = mapLabelToMockDifficulty(
     difficultyLabel,
     row.mock_difficulty,
@@ -239,6 +245,7 @@ export function toMockCandidate(row: RawBankQuestionRow): MockCandidateQuestion 
 
   return {
     id: row.id,
+    generationId: row.generation_id ?? null,
     subjects: row.subjects,
     difficultyLabel,
     mockDifficulty,
@@ -267,6 +274,7 @@ export function toMockCandidate(row: RawBankQuestionRow): MockCandidateQuestion 
     mockUsageCount: row.mock_usage_count ?? 0,
     hasVisual: Boolean(row.has_visual),
     qualityGateVerdict: row.quality_gate_verdict ?? null,
+    hasAiMockDifficulty,
   };
 }
 

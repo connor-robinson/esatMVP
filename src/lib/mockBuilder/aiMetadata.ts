@@ -41,7 +41,8 @@ function clampTime(n: unknown): number | null {
   const v = typeof n === "string" ? Number(n) : n;
   if (typeof v !== "number" || !Number.isFinite(v)) return null;
   const rounded = Math.round(v);
-  if (rounded < 35 || rounded > 200) return null;
+  // Allow short easy items; still reject absurd outliers.
+  if (rounded < 20 || rounded > 240) return null;
   return rounded;
 }
 
@@ -124,7 +125,7 @@ function buildLabelPrompt(batch: AiMetadataLabelInput[]) {
       "Do NOT just copy Easy/Medium/Hard bank labels; recalibrate on the 1-5 scale.",
       "Use the full 1-5 range when justified. Most questions will be 2-4; reserve 1 and 5 for clear extremes.",
       "estimatedTimeSeconds is for a strong candidate working carefully but under time pressure.",
-      "Return one item per input id. JSON only.",
+      "Return one item per input id. Prefer {\"items\":[...]} JSON; a bare array of items is also accepted.",
     ],
     questions: batch.map((q) => ({
       id: q.id,
