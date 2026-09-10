@@ -14,9 +14,14 @@ import {
   type FaqItem,
 } from "@/lib/seo/config";
 
-const HOME_TITLE = "ESAT CAMP | ESAT Preparation, Practice & Past Papers";
+/** Hyphen used instead of em dash (project style). */
+const HOME_TITLE =
+  "ESAT CAMP - ESAT Question Bank, Past Papers & Practice";
 const HOME_DESCRIPTION =
-  "Prepare for the ESAT and TMUA with past papers, question banks, and structured practice. ESAT CAMP helps you build speed and strategy for admissions exams.";
+  "Prepare for the ESAT with realistic question banks, past papers, timed practice, score conversion and full mock exams for Maths, Physics, Chemistry and Biology.";
+/** Trailing slash matches the preferred homepage canonical host form. */
+const HOME_CANONICAL = `${PRODUCTION_SITE_URL}/`;
+const HOME_LOGO_URL = buildCanonicalUrl(BRAND_CONFIG.logoMarkSrc);
 
 /** Match social-proof cache: refresh a few hours after the last regeneration. */
 export const revalidate = HOMEPAGE_SOCIAL_PROOF_REVALIDATE_SECONDS;
@@ -24,21 +29,19 @@ export const revalidate = HOMEPAGE_SOCIAL_PROOF_REVALIDATE_SECONDS;
 export const metadata: Metadata = {
   title: HOME_TITLE,
   description: HOME_DESCRIPTION,
-  alternates: { canonical: buildCanonicalUrl("/") },
+  alternates: { canonical: HOME_CANONICAL },
   robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     siteName: BRAND_CONFIG.displayName,
     title: HOME_TITLE,
-    description:
-      "Prepare for the ESAT and TMUA with past papers, a curated question bank and timed no-calculator drills.",
-    url: PRODUCTION_SITE_URL,
+    description: HOME_DESCRIPTION,
+    url: HOME_CANONICAL,
   },
   twitter: {
     card: "summary_large_image",
     title: HOME_TITLE,
-    description:
-      "Prepare for the ESAT and TMUA with past papers, a curated question bank and timed no-calculator drills.",
+    description: HOME_DESCRIPTION,
   },
 };
 
@@ -51,15 +54,19 @@ const HOMEPAGE_SCHEMA = [
   {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": `${PRODUCTION_SITE_URL}/#organization`,
     name: BRAND_CONFIG.displayName,
-    url: PRODUCTION_SITE_URL,
+    url: HOME_CANONICAL,
+    logo: HOME_LOGO_URL,
   },
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": `${PRODUCTION_SITE_URL}/#website`,
     name: BRAND_CONFIG.displayName,
-    url: PRODUCTION_SITE_URL,
+    url: HOME_CANONICAL,
     description: HOME_DESCRIPTION,
+    publisher: { "@id": `${PRODUCTION_SITE_URL}/#organization` },
   },
   faqPageSchema(HOMEPAGE_FAQ_SCHEMA),
 ];

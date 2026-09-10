@@ -55,6 +55,7 @@ import {
   Sun,
   Target,
   Trophy,
+  Download,
   X,
   Zap,
 } from 'lucide-react';
@@ -75,7 +76,7 @@ const navSections: NavSectionConfig[] = [
         items: [
           {
             href: '/mental-maths/drill',
-            label: 'Drill',
+            label: 'Mental Maths Practice',
             description: 'Start a practice session',
             icon: Zap,
           },
@@ -127,6 +128,12 @@ const navSections: NavSectionConfig[] = [
         icon: Library,
       },
       {
+        href: '/esat-past-papers',
+        label: 'Past Paper Downloads',
+        description: 'Free NSAA and ENGAA PDFs',
+        icon: Download,
+      },
+      {
         href: '/past-papers/analytics',
         label: 'Analytics',
         description: 'Review your results',
@@ -142,7 +149,7 @@ const navSections: NavSectionConfig[] = [
     items: [
       {
         href: '/questions',
-        label: 'Home',
+        label: 'ESAT Question Bank',
         description: 'Overview and mixed practice',
         icon: Home,
         badge: 'NEW',
@@ -163,14 +170,14 @@ const navSections: NavSectionConfig[] = [
     items: [
       {
         href: '/exam-tools/calibration/math-1',
-        label: 'Calibration Test',
-        description: 'Diagnose your Math 1 weak spots',
+        label: 'ESAT Mock Tests',
+        description: 'Calibration and readiness check',
         icon: Target,
         badge: 'NEW',
       },
       {
         href: '/tools/score-converter',
-        label: 'Score Converter',
+        label: 'ESAT Score Converter',
         description: 'Convert raw scores to percentiles',
         icon: ArrowLeftRight,
       },

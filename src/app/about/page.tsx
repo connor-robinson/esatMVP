@@ -54,7 +54,8 @@ const ABOUT_SCHEMAS = [
     "@type": "Organization",
     "@id": `${PRODUCTION_SITE_URL}/#organization`,
     name: "ESAT CAMP",
-    url: PRODUCTION_SITE_URL,
+    url: `${PRODUCTION_SITE_URL}/`,
+    logo: buildCanonicalUrl("/brand/logo-mark.png"),
     description:
       "An independent educational platform for focused, practical ESAT preparation.",
     founder: PERSON_SCHEMAS.map((person) => ({ "@id": person["@id"] })),

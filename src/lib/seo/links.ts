@@ -75,17 +75,17 @@ export const SEO_LINKS = {
   },
   drill: {
     href: APP_ROUTES.noCalcPractice,
-    label: "No-calculator practice",
+    label: "Mental Maths Practice",
     blurb: "Timed no-calculator drills you can run in ten-minute sessions.",
   },
   calibration: {
     href: APP_ROUTES.calibration,
-    label: "Free calibration test",
+    label: "ESAT Mock Tests",
     blurb: "A short diagnostic that shows whether speed or accuracy is the issue.",
   },
   scoreConverter: {
     href: APP_ROUTES.scoreConverter,
-    label: "Score converter",
+    label: "ESAT Score Converter",
     blurb: "Turn a past-paper raw mark into an estimated scaled score.",
   },
   fermiGame: {
@@ -95,12 +95,12 @@ export const SEO_LINKS = {
   },
   questionBank: {
     href: APP_ROUTES.questionBank,
-    label: "Question bank",
+    label: "ESAT Question Bank",
     blurb: "ESAT-style questions filtered by module, topic and difficulty.",
   },
   pastPaperRoadmap: {
     href: APP_ROUTES.pastPaperRoadmap,
-    label: "Past-paper roadmap",
+    label: "ESAT Past Papers",
     blurb: "Official papers scheduled into an order you can actually follow.",
   },
   universityRequirements: {

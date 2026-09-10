@@ -173,11 +173,20 @@ const FREE_FEATURES = [
 const FOOTER_GUIDE_KEYS: SeoLinkKey[] = [
   "preparation",
   "testDates",
-  "pastPapers",
   "universityRequirements",
   "goodScore",
   "calculatorRules",
 ];
+
+/** Primary product destinations for crawlable brand sitelink signals. */
+const FOOTER_PLATFORM_LINKS = [
+  { href: "/questions", label: "ESAT Question Bank" },
+  { href: "/mental-maths/drill", label: "Mental Maths Practice" },
+  { href: "/past-papers/roadmap", label: "ESAT Past Papers" },
+  { href: "/esat-past-papers", label: "Past Paper Downloads" },
+  { href: "/tools/score-converter", label: "ESAT Score Converter" },
+  { href: CALIBRATION_ROUTES.hub, label: "ESAT Mock Tests" },
+] as const;
 
 export function MarketingHomepage({
   socialProofSlot,
@@ -217,15 +226,18 @@ export function MarketingHomepage({
               Revise for the ESAT
             </h1>
             <p className="max-w-xl text-base leading-relaxed text-[#94A3B8] sm:text-lg">
-              With our{" "}
+              ESAT CAMP provides a question bank, mental maths, past papers and
+              downloads, score conversion and mock exams for Maths, Physics,
+              Chemistry and Biology - plus{" "}
               <span className="font-semibold text-white">
-                {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ questions
+                {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ tutor-written
+                questions
               </span>{" "}
-              written by our Oxbridge tutors,{" "}
+              and{" "}
               <span className="font-semibold text-white">
                 {MENTAL_MATHS_MODULE_COUNT_MARKETING} mental maths drills
               </span>
-              , and more.
+              .
             </p>
             <div className="flex flex-wrap items-center gap-3 pt-1">
               <Link
@@ -333,7 +345,7 @@ export function MarketingHomepage({
                 href="/questions"
                 className="inline-flex items-center gap-2 rounded-xl bg-[#3B82F6] px-6 py-3 font-bold text-white transition-all hover:bg-[#2563EB]"
               >
-                Try our questions
+                ESAT Question Bank
                 <span aria-hidden className="text-lg leading-none">
                   →
                 </span>
@@ -388,15 +400,23 @@ export function MarketingHomepage({
                 ))}
               </ul>
 
-              <Link
-                href="/past-papers/roadmap"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#3B82F6] px-7 py-3.5 font-bold text-white transition-colors hover:bg-[#2563EB]"
-              >
-                View past papers
-                <span aria-hidden className="text-lg leading-none">
-                  →
-                </span>
-              </Link>
+              <div className="flex flex-wrap items-center gap-3">
+                <Link
+                  href="/past-papers/roadmap"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#3B82F6] px-7 py-3.5 font-bold text-white transition-colors hover:bg-[#2563EB]"
+                >
+                  ESAT Past Papers
+                  <span aria-hidden className="text-lg leading-none">
+                    →
+                  </span>
+                </Link>
+                <Link
+                  href="/esat-past-papers"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-transparent px-7 py-3.5 font-bold text-white transition-colors hover:border-white/40 hover:bg-white/5"
+                >
+                  Past Paper Downloads
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -442,7 +462,7 @@ export function MarketingHomepage({
                 href="/mental-maths/drill"
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#3B82F6] px-7 py-3.5 font-bold text-white transition-colors hover:bg-[#2563EB]"
               >
-                Try the mental maths trainer
+                Mental Maths Practice
                 <span aria-hidden className="text-lg leading-none">
                   →
                 </span>
@@ -501,7 +521,7 @@ export function MarketingHomepage({
                 href="/tools/score-converter"
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#3B82F6] px-7 py-3.5 font-bold text-white transition-colors hover:bg-[#2563EB]"
               >
-                Open score converter
+                ESAT Score Converter
                 <span aria-hidden className="text-lg leading-none">
                   →
                 </span>
@@ -721,30 +741,16 @@ export function MarketingHomepage({
                 Platform
               </h4>
               <ul className="space-y-4 text-sm text-[#94A3B8]">
-                <li>
-                  <Link
-                    href="/mental-maths/drill"
-                    className="hover:text-[#3B82F6] transition-colors"
-                  >
-                    Mental Maths
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/questions/questionbank"
-                    className="hover:text-[#3B82F6] transition-colors"
-                  >
-                    Question Bank
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/past-papers/library"
-                    className="hover:text-[#3B82F6] transition-colors"
-                  >
-                    Past Papers
-                  </Link>
-                </li>
+                {FOOTER_PLATFORM_LINKS.map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      href={link.href}
+                      className="hover:text-[#3B82F6] transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
             <div>
@@ -782,23 +788,7 @@ export function MarketingHomepage({
                     href="/help"
                     className="hover:text-[#3B82F6] transition-colors"
                   >
-                    Help Center
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/help"
-                    className="hover:text-[#3B82F6] transition-colors"
-                  >
-                    Contact Us
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/cookie-policy"
-                    className="hover:text-[#3B82F6] transition-colors"
-                  >
-                    Cookie Policy
+                    Help
                   </Link>
                 </li>
               </ul>

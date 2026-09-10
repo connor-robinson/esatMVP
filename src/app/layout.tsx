@@ -53,11 +53,12 @@ export const metadata: Metadata = {
   metadataBase: new URL(PRODUCTION_SITE_URL),
   title: BRAND_CONFIG.fullTitle,
   description:
-    "Prepare for the ESAT and TMUA with past papers, question banks, and structured practice. ESAT CAMP helps you build speed and strategy for admissions exams.",
+    "Prepare for the ESAT with realistic question banks, past papers, timed practice, score conversion and full mock exams for Maths, Physics, Chemistry and Biology.",
   keywords: [...BRAND_CONFIG.keywords],
   icons: {
     icon: [
       { url: "/icon.png", sizes: "512x512", type: "image/png" },
+      { url: "/brand/favicon-512.png", sizes: "512x512", type: "image/png" },
       { url: "/brand/favicon-192.png", sizes: "192x192", type: "image/png" },
       { url: "/brand/favicon-48.png", sizes: "48x48", type: "image/png" },
       { url: "/favicon.ico", sizes: "48x48", type: "image/x-icon" },
@@ -69,13 +70,13 @@ export const metadata: Metadata = {
     siteName: BRAND_CONFIG.displayName,
     title: BRAND_CONFIG.fullTitle,
     description:
-      "Prepare for the ESAT and TMUA with past papers, a curated question bank and timed no-calculator drills.",
+      "Prepare for the ESAT with realistic question banks, past papers, timed practice, score conversion and full mock exams for Maths, Physics, Chemistry and Biology.",
   },
   twitter: {
     card: "summary_large_image",
     title: BRAND_CONFIG.fullTitle,
     description:
-      "Prepare for the ESAT and TMUA with past papers, a curated question bank and timed no-calculator drills.",
+      "Prepare for the ESAT with realistic question banks, past papers, timed practice, score conversion and full mock exams for Maths, Physics, Chemistry and Biology.",
   },
 };
 
