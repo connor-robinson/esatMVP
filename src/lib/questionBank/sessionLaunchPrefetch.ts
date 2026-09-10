@@ -9,9 +9,9 @@ type PrefetchEntry = {
 
 let entry: PrefetchEntry | null = null;
 
-/** Pool size for random session sampling (enough for mix, without over-fetching). */
+/** Pool size for session sampling (room for New filter + mix + diagram bias). */
 export function sessionQuestionPoolLimit(questionCount: number): number {
-  return Math.max(questionCount * 2, questionCount + 15);
+  return Math.max(questionCount * 4, questionCount + 40);
 }
 
 export function fingerprintHomeLaunch(
@@ -29,6 +29,7 @@ export function fingerprintHomeLaunch(
 
 export function buildHomeLaunchQuestionsUrl(
   payload: QuestionBankHomeLaunchPayload,
+  opts?: { excludeAttempted?: boolean },
 ): string {
   const params = new URLSearchParams();
   params.append("testType", payload.testType);
@@ -39,6 +40,11 @@ export function buildHomeLaunchQuestionsUrl(
   }
   params.append("limit", String(sessionQuestionPoolLimit(payload.questionCount)));
   params.append("random", "true");
+  // Skip questions the user already answered. Unanswered items from sessions
+  // left early are not in attempts, so they can still appear.
+  if (opts?.excludeAttempted !== false) {
+    params.append("attemptedStatus", "New");
+  }
   return `/api/question-bank/questions?${params.toString()}`;
 }
 

@@ -440,10 +440,15 @@ export async function GET(request: NextRequest) {
         Math.max(idsFromParam.length, limit),
       );
     } else if (random) {
-      query = query.limit(Math.min(limit * 2, 200));
+      // Bias the random window toward newer published items; client sampling
+      // then weights diagrams/recency and sprinkles older rows from this set.
+      const fetchLimit = Math.min(Math.max(limit * 3, 80), 300);
+      query = query
+        .order('created_at', { ascending: false })
+        .limit(fetchLimit);
       debug(
-        '[Question Bank API] Stage 8: Random mode - limit:',
-        Math.min(limit * 2, 200),
+        '[Question Bank API] Stage 8: Random mode - newest window limit:',
+        fetchLimit,
       );
     } else {
       // Fast path: when no attempt filters are requested, paginate directly in DB

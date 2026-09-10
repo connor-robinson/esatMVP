@@ -3,11 +3,11 @@ import {
   freeTierQuestionIdsForSubject,
   isFreeTierPreviewSubject,
 } from "@/lib/questionBank/freeTierQuestions";
-import {
-  sampleQuestionsByDifficultyMix,
-  type ApiDifficulty,
-  type DifficultyMixPreset,
+import type {
+  ApiDifficulty,
+  DifficultyMixPreset,
 } from "@/lib/questionBank/difficultyMix";
+import { sampleSessionBankQuestions } from "@/lib/questionBank/sessionBankSampling";
 
 function shuffleInPlace<T>(items: T[]): T[] {
   for (let i = items.length - 1; i > 0; i -= 1) {
@@ -38,11 +38,19 @@ export function hookQuestionIdsForSubjects(
 
 /**
  * Build a practice session that leads with the fixed subject hook set
- * (shuffled, up to 10), then fills the rest from the random pool with the
- * difficulty mix. Hook ids are excluded from the tail so they do not repeat.
+ * (shuffled, up to 10), then fills the rest from the bank with difficulty mix,
+ * diagram/recency weighting, and no in-session duplicates of hook ids.
  */
 export function buildSessionQuestionsWithHookLead<
-  T extends { id: string; difficulty: ApiDifficulty },
+  T extends {
+    id: string;
+    difficulty: ApiDifficulty;
+    created_at?: string | null;
+    has_visual?: boolean | null;
+    graph_spec?: unknown;
+    graph_specs?: Record<string, unknown> | null;
+    question_stem?: string;
+  },
 >(options: {
   pool: T[];
   hookQuestions: T[];
@@ -72,6 +80,6 @@ export function buildSessionQuestionsWithHookLead<
   if (remainingCount <= 0) return lead;
 
   const restPool = pool.filter((q) => !hookIdSet.has(q.id));
-  const rest = sampleQuestionsByDifficultyMix(restPool, remainingCount, mix);
+  const rest = sampleSessionBankQuestions(restPool, remainingCount, mix);
   return [...lead, ...rest];
 }

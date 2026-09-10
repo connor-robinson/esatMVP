@@ -69,9 +69,9 @@ import {
 } from '@/lib/questionBank/sessionLaunchPrefetch';
 import {
   DIFFICULTY_MIX_PRESETS,
-  sampleQuestionsByDifficultyMix,
   type DifficultyMixPreset,
 } from '@/lib/questionBank/difficultyMix';
+import { sampleSessionBankQuestions } from '@/lib/questionBank/sessionBankSampling';
 import { buildSessionQuestionsWithHookLead } from '@/lib/questionBank/sessionHookLead';
 import {
   resolveFreeTierLaunch,
@@ -950,6 +950,10 @@ export default function QuestionBankPage() {
 
       params.append('limit', sessionQuestionPoolLimit(config.count).toString());
       params.append('random', 'true');
+      // Exclude answered questions. Abandoned-session items never attempted stay eligible.
+      if (session?.user) {
+        params.append('attemptedStatus', 'New');
+      }
 
       setSessionStarting(true);
       try {
@@ -960,6 +964,7 @@ export default function QuestionBankPage() {
         if (!questions) {
           const response = await fetch(
             `/api/question-bank/questions?${params.toString()}`,
+            { credentials: 'include' },
           );
           if (!response.ok) throw new Error('Failed to fetch session questions');
 
@@ -985,7 +990,7 @@ export default function QuestionBankPage() {
                   count: config.count,
                   mix,
                 })
-              : sampleQuestionsByDifficultyMix(pool, config.count, mix);
+              : sampleSessionBankQuestions(pool, config.count, mix);
 
           if (sessionQs.length > 0) {
             setSessionQuestions(sessionQs);
@@ -1031,7 +1036,7 @@ export default function QuestionBankPage() {
         setSessionStarting(false);
       }
     },
-    [filters.subject, filters.testType, router, updateCurrentQuestion, initializeTrackedSession],
+    [filters.subject, filters.testType, router, updateCurrentQuestion, initializeTrackedSession, session?.user],
   );
 
   useEffect(() => {
@@ -1498,7 +1503,7 @@ export default function QuestionBankPage() {
 
   return (
     <Fragment>
-      {showSessionLoading ? <LoadingPage variant="session" /> : null}
+      {showSessionLoading ? <QuestionBankSessionLoadingScreen /> : null}
       <div className='min-h-[calc(100vh-3.5rem)] py-6 pb-28 sm:py-8 sm:pb-32'>
         <Container size='lg' className='py-2'>
           <div className='space-y-6'>
