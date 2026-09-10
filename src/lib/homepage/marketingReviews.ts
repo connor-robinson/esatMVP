@@ -157,7 +157,7 @@ export const MARKETING_HOMEPAGE_REVIEW_REPLY = {
   ],
 } as const;
 
-const PREVIEW_COUNT = 4;
+const PREVIEW_COUNT = 8;
 
 /** Deterministic daily shuffle so SSR and client agree for a given UTC day. */
 export function pickMarketingReviewOrder(seed = utcDaySeed()): MarketingReview[] {
