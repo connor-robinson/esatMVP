@@ -1,10 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
+import { FOUNDERS } from "@/config/founders";
 import {
   MARKETING_HOMEPAGE_REVIEW_REPLY,
   splitMarketingReviews,
@@ -12,6 +14,7 @@ import {
 } from "@/lib/homepage/marketingReviews";
 
 const LOGIN_HREF = `/login?redirectTo=${encodeURIComponent("/#reviews")}`;
+const EWAN = FOUNDERS.ewan;
 
 function StarRow({ stars }: { stars: MarketingReview["stars"] }) {
   return (
@@ -37,7 +40,7 @@ function StarRow({ stars }: { stars: MarketingReview["stars"] }) {
 
 function ReviewCard({ review }: { review: MarketingReview }) {
   return (
-    <figure className="flex h-full min-h-[9.5rem] flex-col rounded-xl bg-white/[0.035] px-4 py-4 sm:min-h-[10.5rem] sm:px-5 sm:py-5">
+    <figure className="flex h-full min-h-[9.5rem] flex-col rounded-xl bg-white/[0.04] px-4 py-4 sm:min-h-[10.5rem] sm:px-5 sm:py-5">
       <div className="flex items-start justify-between gap-3">
         <StarRow stars={review.stars} />
         <figcaption className="max-w-[55%] truncate text-right font-mono text-xs tracking-tight text-[#94A3B8] sm:text-[0.8rem]">
@@ -98,7 +101,7 @@ function LeaveReviewForm() {
   };
 
   return (
-    <form onSubmit={(e) => void handleSubmit(e)} className="w-full">
+    <form onSubmit={(e) => void handleSubmit(e)} className="mt-5 w-full sm:mt-6">
       <label htmlFor="homepage-review" className="sr-only">
         Leave a review
       </label>
@@ -118,7 +121,7 @@ function LeaveReviewForm() {
               ? "Leave a review…"
               : "Leave a review (log in to send)…"
           }
-          className="min-h-[2.5rem] w-full flex-1 resize-y rounded-lg border border-white/10 bg-[#161D2F] px-3 py-2 text-sm leading-snug text-white placeholder:text-[#64748B] focus:border-white/25 focus:outline-none focus:ring-1 focus:ring-white/15"
+          className="min-h-[2.5rem] w-full flex-1 resize-y rounded-lg bg-white/[0.06] px-3 py-2 text-sm leading-snug text-white placeholder:text-[#64748B] focus:outline-none focus:ring-0"
         />
         <button
           type="submit"
@@ -197,7 +200,7 @@ export function HomepageReviews() {
             <button
               type="button"
               onClick={() => setExpanded((v) => !v)}
-              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#0A0F1D]/90 px-5 py-2.5 text-sm font-semibold text-[#93C5FD] shadow-[0_8px_24px_rgba(0,0,0,0.35)] transition-colors hover:border-white/20 hover:text-white"
+              className="inline-flex items-center gap-2 rounded-full bg-[#0A0F1D]/90 px-5 py-2.5 text-sm font-semibold text-[#93C5FD] shadow-[0_8px_24px_rgba(0,0,0,0.35)] transition-colors hover:text-white"
               aria-expanded={expanded}
             >
               {expanded
@@ -210,14 +213,24 @@ export function HomepageReviews() {
           </div>
         ) : null}
 
-        <aside className="mt-10 w-full rounded-2xl border border-[#3B82F6]/25 bg-[#0A0F1D]/80 px-5 py-6 sm:mt-12 sm:px-8 sm:py-7 lg:px-10">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#60A5FA]">
-            {MARKETING_HOMEPAGE_REVIEW_REPLY.title}
-          </p>
-          <div className="mt-4 space-y-3 text-sm leading-relaxed text-[#CBD5E1] sm:text-base sm:leading-relaxed">
-            {MARKETING_HOMEPAGE_REVIEW_REPLY.body.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
+        <aside className="mt-10 flex w-full gap-4 sm:mt-12 sm:gap-5">
+          <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full bg-white/[0.06] sm:h-14 sm:w-14">
+            <Image
+              src={EWAN.imageSrc}
+              alt={EWAN.imageAlt}
+              fill
+              sizes="56px"
+              className="object-cover"
+              style={{ objectPosition: EWAN.imagePosition }}
+            />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold text-white">{EWAN.name}</p>
+            <div className="mt-2 space-y-2 text-sm leading-relaxed text-[#94A3B8] sm:text-[0.95rem] sm:leading-relaxed">
+              {MARKETING_HOMEPAGE_REVIEW_REPLY.body.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </div>
           </div>
         </aside>
 
