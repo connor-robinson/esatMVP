@@ -374,6 +374,26 @@ describe("answer pattern guard", () => {
   });
 });
 
+describe("vertex location", () => {
+  it("respects VERTEX_GENAI_NO_GLOBAL_REMAP", async () => {
+    const { resolveVertexLocation } = await import("./paperReviewer");
+    const prevRemap = process.env.VERTEX_GENAI_NO_GLOBAL_REMAP;
+    const prevLoc = process.env.VERTEX_GENAI_LOCATION;
+    try {
+      process.env.VERTEX_GENAI_NO_GLOBAL_REMAP = "1";
+      expect(resolveVertexLocation("global")).toBe("global");
+      delete process.env.VERTEX_GENAI_NO_GLOBAL_REMAP;
+      process.env.VERTEX_GENAI_LOCATION = "europe-west1";
+      expect(resolveVertexLocation("global")).toBe("europe-west1");
+    } finally {
+      if (prevRemap == null) delete process.env.VERTEX_GENAI_NO_GLOBAL_REMAP;
+      else process.env.VERTEX_GENAI_NO_GLOBAL_REMAP = prevRemap;
+      if (prevLoc == null) delete process.env.VERTEX_GENAI_LOCATION;
+      else process.env.VERTEX_GENAI_LOCATION = prevLoc;
+    }
+  });
+});
+
 describe("topic constraints", () => {
   it("penalises heavy single-topic concentration in score", () => {
     const blueprint = getDefaultBlueprint("Math 1");
