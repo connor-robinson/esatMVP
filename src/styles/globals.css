@@ -171,6 +171,11 @@
     line-height: 1.6;
   }
 
+  /* Match surrounding copy; KaTeX's default ~1.21em reads oversized in UI text */
+  .math-content .katex {
+    font-size: 1em;
+  }
+
   .math-content--inline {
     display: inline;
   }

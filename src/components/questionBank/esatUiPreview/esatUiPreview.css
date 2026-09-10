@@ -117,6 +117,10 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
   color: var(--eup-text) !important;
 }
 
+.esat-ui-preview-root .katex {
+  font-size: 1em;
+}
+
 .esat-ui-preview-root .text-text,
 .esat-ui-preview-root .text-text-muted,
 .esat-ui-preview-root [class*="text-text"] {

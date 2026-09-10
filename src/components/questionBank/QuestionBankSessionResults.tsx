@@ -435,7 +435,7 @@ export function QuestionBankSessionResults({
                             </span>
                           ) : null}
                         </div>
-                        <div className='line-clamp-2 text-sm leading-relaxed text-text-muted'>
+                        <div className='line-clamp-2 text-sm leading-relaxed text-text-muted [&_.katex]:text-[1em]'>
                           <StemContent
                             content={attempt.questionStem}
                             className='text-inherit'
