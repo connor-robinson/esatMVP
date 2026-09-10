@@ -2,19 +2,20 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { Container } from "@/components/layout/Container";
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
 
 /** High-contrast action colour for first-touch access screens. */
 export const ACCESS_CTA =
-  "inline-flex items-center justify-center rounded-xl bg-[#3B82F6] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex items-center justify-center rounded-xl bg-[#3B82F6] px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:cursor-not-allowed disabled:opacity-50";
 
 export const ACCESS_CTA_SECONDARY =
-  "inline-flex items-center justify-center rounded-xl bg-white/10 px-5 py-2.5 text-sm font-semibold text-text transition-colors hover:bg-white/15";
+  "inline-flex items-center justify-center rounded-xl bg-white/10 px-6 py-3 text-base font-semibold text-text transition-colors hover:bg-white/15";
 
 export const ACCESS_CTA_GHOST =
-  "text-sm font-medium text-text-muted underline-offset-2 transition-colors hover:text-text hover:underline";
+  "text-base font-medium text-text-muted underline-offset-2 transition-colors hover:text-text hover:underline";
 
 type Tone = "success" | "error" | "info" | "neutral";
 
@@ -58,21 +59,28 @@ export function AccessOutcomeCard({
       <Container size="md" className="w-full">
         <Card
           variant="elevated"
-          className="relative mx-auto w-full max-w-3xl overflow-hidden border-0 p-6 sm:p-8"
+          className="relative mx-auto w-full max-w-[60rem] overflow-hidden border-0 p-8 sm:p-10"
         >
           <div
             aria-hidden
             className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.14),transparent_55%)]"
           />
-          <div className="relative z-10">
+          <Link
+            href="/"
+            className="absolute right-6 top-6 z-20 sm:right-8 sm:top-8"
+            aria-label="ESAT Camp home"
+          >
+            <BrandLogo variant="mark" size="md" />
+          </Link>
+          <div className="relative z-10 pr-14 sm:pr-16">
             {loading ? (
-              <p className="text-sm text-text-muted">{loadingLabel}</p>
+              <p className="text-base text-text-muted">{loadingLabel}</p>
             ) : (
               <>
                 {eyebrow ? (
                   <p
                     className={cn(
-                      "text-[11px] font-semibold uppercase tracking-[0.14em]",
+                      "text-xs font-semibold uppercase tracking-[0.14em]",
                       TONE_EYEBROW[tone],
                     )}
                   >
@@ -81,17 +89,17 @@ export function AccessOutcomeCard({
                 ) : null}
                 <h1
                   className={cn(
-                    "text-2xl font-bold tracking-tight text-text sm:text-[1.75rem]",
+                    "text-[1.875rem] font-bold tracking-tight text-text sm:text-[2.1875rem]",
                     eyebrow ? "mt-2" : null,
                   )}
                 >
                   {title}
                 </h1>
-                <div className="mt-3 max-w-2xl space-y-2 text-sm leading-relaxed">
+                <div className="mt-4 max-w-3xl space-y-2.5 text-base leading-relaxed">
                   {children}
                 </div>
                 {actions ? (
-                  <div className="mt-7 flex flex-wrap items-center gap-3">
+                  <div className="mt-8 flex flex-wrap items-center gap-3">
                     {actions}
                   </div>
                 ) : null}
