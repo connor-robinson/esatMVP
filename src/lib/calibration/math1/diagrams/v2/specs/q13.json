@@ -36,7 +36,7 @@
       "fill": true,
       "facecolor": "#F0F0F0",
       "edgecolor": "#1A1A1A",
-      "linewidth": 2.3
+      "linewidth": 1.55
     },
     {
       "type": "circle",
@@ -97,7 +97,7 @@
       "fill": true,
       "facecolor": "#F0F0F0",
       "edgecolor": "#1A1A1A",
-      "linewidth": 2.3
+      "linewidth": 1.55
     },
     {
       "type": "circle",

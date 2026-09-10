@@ -7,7 +7,7 @@
   "coordinate_system": {
     "x_min": -1.8,
     "x_max": 13.8,
-    "y_min": -1.9,
+    "y_min": -2.0,
     "y_max": 13.7,
     "equal_aspect": true,
     "show_axes": false
@@ -33,10 +33,9 @@
           12
         ]
       ],
-      "fill": true,
-      "facecolor": "#F0F0F0",
+      "fill": false,
       "edgecolor": "#1A1A1A",
-      "linewidth": 3.0
+      "linewidth": 1.9
     },
     {
       "type": "polygon",
@@ -58,10 +57,9 @@
           6
         ]
       ],
-      "fill": true,
-      "facecolor": "#FFFFFF",
-      "edgecolor": "#666666",
-      "linewidth": 2.5
+      "fill": false,
+      "edgecolor": "#1A1A1A",
+      "linewidth": 1.55
     },
     {
       "type": "circle",
@@ -70,10 +68,9 @@
         6
       ],
       "radius": 4.2426406871,
-      "fill": true,
-      "facecolor": "#D0D0D0",
+      "fill": false,
       "edgecolor": "#1A1A1A",
-      "linewidth": 3.0
+      "linewidth": 1.9
     },
     {
       "type": "dimension_line",
@@ -86,105 +83,15 @@
         -0.8
       ],
       "direction": "below",
-      "offset": 0.85
-    },
-    {
-      "type": "point",
-      "at": [
-        0.0,
-        0.0
-      ],
-      "size": 4.0
-    },
-    {
-      "type": "point",
-      "at": [
-        12.0,
-        0.0
-      ],
-      "size": 4.0
-    },
-    {
-      "type": "point",
-      "at": [
-        12.0,
-        12.0
-      ],
-      "size": 4.0
-    },
-    {
-      "type": "point",
-      "at": [
-        0.0,
-        12.0
-      ],
-      "size": 4.0
-    },
-    {
-      "type": "point",
-      "at": [
-        6.0,
-        0.0
-      ],
-      "size": 4.0
-    },
-    {
-      "type": "point",
-      "at": [
-        12.0,
-        6.0
-      ],
-      "size": 4.0
-    },
-    {
-      "type": "point",
-      "at": [
-        6.0,
-        12.0
-      ],
-      "size": 4.0
-    },
-    {
-      "type": "point",
-      "at": [
-        0.0,
-        6.0
-      ],
-      "size": 4.0
-    },
-    {
-      "type": "line",
-      "start": [
-        5.72,
-        6.0
-      ],
-      "end": [
-        6.28,
-        6.0
-      ],
-      "color": "#666666",
-      "linewidth": 1.5
-    },
-    {
-      "type": "line",
-      "start": [
-        6.0,
-        5.72
-      ],
-      "end": [
-        6.0,
-        6.28
-      ],
-      "color": "#666666",
-      "linewidth": 1.5
+      "offset": 0.95
     }
   ],
   "labels": [
     {
       "text": "A",
       "anchor": [
-        -0.52,
-        -0.42
+        -0.55,
+        -0.48
       ],
       "preferred_position": "center",
       "id": "pt_A",
@@ -193,8 +100,8 @@
     {
       "text": "B",
       "anchor": [
-        12.22,
-        -0.42
+        12.28,
+        -0.48
       ],
       "preferred_position": "center",
       "id": "pt_B",
@@ -203,8 +110,8 @@
     {
       "text": "C",
       "anchor": [
-        12.22,
-        12.18
+        12.28,
+        12.22
       ],
       "preferred_position": "center",
       "id": "pt_C",
@@ -213,8 +120,8 @@
     {
       "text": "D",
       "anchor": [
-        -0.55,
-        12.18
+        -0.58,
+        12.22
       ],
       "preferred_position": "center",
       "id": "pt_D",
@@ -223,8 +130,8 @@
     {
       "text": "E",
       "anchor": [
-        5.88,
-        -0.55
+        5.92,
+        -0.62
       ],
       "preferred_position": "center",
       "id": "pt_E",
@@ -233,8 +140,8 @@
     {
       "text": "F",
       "anchor": [
-        12.3,
-        5.94
+        12.38,
+        5.92
       ],
       "preferred_position": "center",
       "id": "pt_F",
@@ -243,8 +150,8 @@
     {
       "text": "G",
       "anchor": [
-        5.88,
-        12.34
+        5.92,
+        12.38
       ],
       "preferred_position": "center",
       "id": "pt_G",
@@ -253,8 +160,8 @@
     {
       "text": "H",
       "anchor": [
-        -0.58,
-        5.94
+        -0.62,
+        5.92
       ],
       "preferred_position": "center",
       "id": "pt_H",
@@ -264,7 +171,7 @@
       "text": "$12\\,\\mathrm{cm}$",
       "anchor": [
         6.0,
-        -1.25
+        -1.35
       ],
       "preferred_position": "center",
       "id": "dim_12",

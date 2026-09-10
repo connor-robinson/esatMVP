@@ -20,10 +20,9 @@
         0.7778619134
       ],
       "radius": 0.7778619134,
-      "fill": true,
-      "facecolor": "#F0F0F0",
+      "fill": false,
       "edgecolor": "#1A1A1A",
-      "linewidth": 3.0
+      "linewidth": 1.9
     },
     {
       "type": "line",
@@ -36,7 +35,7 @@
         0.0
       ],
       "color": "#1A1A1A",
-      "linewidth": 3.0
+      "linewidth": 1.9
     },
     {
       "type": "line",
@@ -49,7 +48,8 @@
         0.6427876097
       ],
       "color": "#1A1A1A",
-      "linewidth": 2.8
+      "linewidth": 1.9,
+      "style": "solid"
     },
     {
       "type": "line",
@@ -62,7 +62,8 @@
         0
       ],
       "color": "#1A1A1A",
-      "linewidth": 2.8
+      "linewidth": 1.9,
+      "style": "solid"
     },
     {
       "type": "line",
@@ -75,7 +76,8 @@
         1.3737387097
       ],
       "color": "#666666",
-      "linewidth": 2.0
+      "linewidth": 1.55,
+      "style": "dashed"
     },
     {
       "type": "line",
@@ -88,7 +90,8 @@
         1.3737387097
       ],
       "color": "#666666",
-      "linewidth": 2.0
+      "linewidth": 1.55,
+      "style": "dashed"
     },
     {
       "type": "equal_length_ticks",
@@ -108,7 +111,7 @@
         0.7660444431,
         0.6427876097
       ],
-      "linewidth": 2.2
+      "linewidth": 1.55
     },
     {
       "type": "arc",
@@ -119,8 +122,8 @@
       "radius": 0.22,
       "theta1": 110,
       "theta2": 180,
-      "color": "#666666",
-      "linewidth": 2.0
+      "color": "#1A1A1A",
+      "linewidth": 1.55
     },
     {
       "type": "point",
@@ -128,7 +131,7 @@
         0.0,
         0.0
       ],
-      "size": 5.0
+      "size": 3.5
     },
     {
       "type": "point",
@@ -136,7 +139,7 @@
         1.0,
         0.0
       ],
-      "size": 5.0
+      "size": 3.5
     },
     {
       "type": "point",
@@ -144,7 +147,7 @@
         0.7660444431,
         0.6427876097
       ],
-      "size": 5.0
+      "size": 3.5
     },
     {
       "type": "point",
@@ -152,7 +155,7 @@
         -0.4999999999,
         1.3737387097
       ],
-      "size": 5.0
+      "size": 3.5
     }
   ],
   "labels": [

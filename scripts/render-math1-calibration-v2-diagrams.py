@@ -35,25 +35,32 @@ HIGHLIGHT = "#D0D0D0"
 WHITE = "#FFFFFF"
 CONSTRUCTION = "#B8B8B8"
 
+# Print-like stroke: thinner than marketing charts, still crisp on retina screens.
+STROKE = 1.55
+STROKE_EMPHASIS = 1.9
+
 QUESTIONS_PATH = ROOT / "math1-calibration-v2" / "questions.json"
 OUT_PUBLIC = ROOT / "public" / "calibration" / "math1-v2"
 OUT_LIB = ROOT / "src" / "lib" / "calibration" / "math1" / "diagrams" / "v2"
 OUT_SPECS = OUT_LIB / "specs"
 
 # Export width target: figsize_w * dpi >= 1400 (tight bbox may shrink slightly).
+# Keep DejaVu Sans (product font). Serif is the default visual_engine exam font;
+# calibration deliberately stays on DejaVu for consistency with the app.
 STYLE = ExamStyle(
     background=WHITE,
     stroke=FG,
     leader_stroke=SECONDARY,
-    stroke_width=2.2,
-    font_size=14.0,
+    stroke_width=STROKE,
+    font_size=13.0,
     font_family="DejaVu Sans",
     dpi=220,
-    pad_inches=0.22,
+    pad_inches=0.28,
     figsize=(12.0, 7.2),
-    equal_tick_length_factor=0.035,
-    right_angle_size_factor=0.04,
-    angle_arc_radius_factor=0.12,
+    equal_tick_length_factor=0.032,
+    right_angle_size_factor=0.038,
+    angle_arc_radius_factor=0.11,
+    vertex_marker_radius_pt=1.6,
 )
 
 
@@ -135,17 +142,17 @@ def _label(
     return payload
 
 
-def _point_marker(at: list[float], *, size: float = 5.0) -> dict[str, Any]:
+def _point_marker(at: list[float], *, size: float = 3.2) -> dict[str, Any]:
     return {"type": "point", "at": [float(at[0]), float(at[1])], "size": size}
 
 
 def map_nested_square_incircle(vs: dict[str, Any]) -> dict[str, Any]:
+    """TMUA-leaning geometry: outline-only, no centre mark, letter labels only."""
     g = vs["geometry"]
     outer = g["outerSquare"]
     mid = g["midpointSquare"]
     circle = g["circle"]
     dim = g["dimension"]
-    styling = vs.get("styling") or {}
     spec = _base_spec(vs["id"], vs["canvas"])
     outer_pts = [outer["A"], outer["B"], outer["C"], outer["D"]]
     mid_pts = [mid["E"], mid["F"], mid["G"], mid["H"]]
@@ -153,68 +160,44 @@ def map_nested_square_incircle(vs: dict[str, Any]) -> dict[str, Any]:
         {
             "type": "polygon",
             "points": outer_pts,
-            "fill": True,
-            "facecolor": _resolve_fill(styling.get("outerSquareFill"), LIGHT),
+            "fill": False,
             "edgecolor": FG,
-            "linewidth": 3.0,
+            "linewidth": STROKE_EMPHASIS,
         },
         {
             "type": "polygon",
             "points": mid_pts,
-            "fill": True,
-            "facecolor": WHITE,
-            "edgecolor": SECONDARY,
-            "linewidth": 2.5,
+            "fill": False,
+            "edgecolor": FG,
+            "linewidth": STROKE,
         },
         {
             "type": "circle",
             "center": circle["centre"],
             "radius": float(circle["radius"]),
-            "fill": True,
-            "facecolor": _resolve_fill(styling.get("circleFill"), HIGHLIGHT),
+            "fill": False,
             "edgecolor": FG,
-            "linewidth": 3.0,
+            "linewidth": STROKE_EMPHASIS,
         },
         {
             "type": "dimension_line",
             "start": dim["from"],
             "end": dim["to"],
             "direction": "below",
-            "offset": 0.85,
+            "offset": 0.95,
         },
     ]
-    # Vertex markers
-    for pt in outer_pts + mid_pts:
-        spec["objects"].append(_point_marker(pt, size=4.0))
-    cx, cy = float(circle["centre"][0]), float(circle["centre"][1])
-    tick = 0.28
-    spec["objects"].extend(
-        [
-            {
-                "type": "line",
-                "start": [cx - tick, cy],
-                "end": [cx + tick, cy],
-                "color": SECONDARY,
-                "linewidth": 1.5,
-            },
-            {
-                "type": "line",
-                "start": [cx, cy - tick],
-                "end": [cx, cy + tick],
-                "color": SECONDARY,
-                "linewidth": 1.5,
-            },
-        ]
-    )
+    # Letters only: no vertex dots and no centre cross (exam figures rarely mark O
+    # unless the stem needs the centre).
     label_offsets = {
-        "A": (outer["A"], (-0.52, -0.42)),
-        "B": (outer["B"], (0.22, -0.42)),
-        "C": (outer["C"], (0.22, 0.18)),
-        "D": (outer["D"], (-0.55, 0.18)),
-        "E": (mid["E"], (-0.12, -0.55)),
-        "F": (mid["F"], (0.30, -0.06)),
-        "G": (mid["G"], (-0.12, 0.34)),
-        "H": (mid["H"], (-0.58, -0.06)),
+        "A": (outer["A"], (-0.55, -0.48)),
+        "B": (outer["B"], (0.28, -0.48)),
+        "C": (outer["C"], (0.28, 0.22)),
+        "D": (outer["D"], (-0.58, 0.22)),
+        "E": (mid["E"], (-0.08, -0.62)),
+        "F": (mid["F"], (0.38, -0.08)),
+        "G": (mid["G"], (-0.08, 0.38)),
+        "H": (mid["H"], (-0.62, -0.08)),
     }
     for name, (anchor, delta) in label_offsets.items():
         spec["labels"].append(
@@ -223,13 +206,13 @@ def map_nested_square_incircle(vs: dict[str, Any]) -> dict[str, Any]:
     spec["labels"].append(
         _label(
             r"$12\,\mathrm{cm}$",
-            [(dim["from"][0] + dim["to"][0]) / 2, -1.25],
+            [(dim["from"][0] + dim["to"][0]) / 2, -1.35],
             "center",
             label_id="dim_12",
             fixed=True,
         )
     )
-    spec["coordinate_system"]["y_min"] = min(float(spec["coordinate_system"]["y_min"]), -1.9)
+    spec["coordinate_system"]["y_min"] = min(float(spec["coordinate_system"]["y_min"]), -2.0)
     return spec
 
 
@@ -266,20 +249,20 @@ def map_parabolic_arch(vs: dict[str, Any]) -> dict[str, Any]:
             "expr": str(curve["expression"]),
             "domain": list(domain),
             "samples": 600,
-            "linewidth": 3.4,
+            "linewidth": STROKE_EMPHASIS,
             "color": FG,
         },
         {
             "type": "arrow",
             "start": [float(vs["canvas"]["xlim"][0]) + 0.15, 0.0],
             "end": [float(vs["canvas"]["xlim"][1]) - 0.15, 0.0],
-            "linewidth": 1.8,
+            "linewidth": STROKE,
         },
         {
             "type": "arrow",
             "start": [0.0, float(vs["canvas"]["ylim"][0]) + 0.35],
             "end": [0.0, float(vs["canvas"]["ylim"][1]) - 0.35],
-            "linewidth": 1.8,
+            "linewidth": STROKE,
         },
         {
             "type": "line",
@@ -287,21 +270,21 @@ def map_parabolic_arch(vs: dict[str, Any]) -> dict[str, Any]:
             "end": [float(beam_from[1]), beam_y],
             "style": "dashed",
             "color": SECONDARY,
-            "linewidth": 2.5,
+            "linewidth": STROKE,
         },
         {
             "type": "line",
             "start": [float(plot["intersections"][0]["coordinate"][0]), beam_y],
             "end": [float(plot["intersections"][1]["coordinate"][0]), beam_y],
             "color": SECONDARY,
-            "linewidth": 2.7,
+            "linewidth": STROKE,
         },
     ]
     for intercept in plot.get("intercepts") or []:
         x = float(intercept[0])
         tick = 0.18
         spec["objects"].append(
-            {"type": "line", "start": [x, -tick], "end": [x, tick], "color": FG, "linewidth": 1.4}
+            {"type": "line", "start": [x, -tick], "end": [x, tick], "color": FG, "linewidth": STROKE}
         )
         spec["labels"].append(
             {
@@ -315,7 +298,7 @@ def map_parabolic_arch(vs: dict[str, Any]) -> dict[str, Any]:
 
     for item in plot["intersections"]:
         pt = item["coordinate"]
-        spec["objects"].append(_point_marker(pt, size=7.0))
+        spec["objects"].append(_point_marker(pt, size=4.0))
         side = "lower_left" if item["label"] == "P" else "lower_right"
         dx = -0.10 if item["label"] == "P" else 0.10
         spec["labels"].append(
@@ -330,7 +313,7 @@ def map_parabolic_arch(vs: dict[str, Any]) -> dict[str, Any]:
         )
 
     known_pt = known["coordinate"]
-    spec["objects"].append(_point_marker(known_pt, size=7.0))
+    spec["objects"].append(_point_marker(known_pt, size=4.0))
     spec["labels"].append(
         _label(r"$(2,12)$", known_pt, "upper_left", label_id="known", axis_label=True, offset=(-0.9, 1.2))
     )
@@ -377,7 +360,7 @@ def _spinner_objects(
                 "fill": True,
                 "facecolor": fill,
                 "edgecolor": FG,
-                "linewidth": 2.1,
+                "linewidth": STROKE,
             }
         )
     # Label angles: centres of sectors clockwise from top-right.
@@ -449,10 +432,9 @@ def map_circle_tangent_isosceles(vs: dict[str, Any]) -> dict[str, Any]:
             "type": "circle",
             "center": circle["centre"],
             "radius": float(circle["radius"]),
-            "fill": True,
-            "facecolor": _resolve_fill(styling.get("circleFill"), LIGHT),
+            "fill": False,
             "edgecolor": FG,
-            "linewidth": 3.0,
+            "linewidth": STROKE_EMPHASIS,
         }
     ]
     # Extend tangent slightly past A and T like the reference.
@@ -466,7 +448,7 @@ def map_circle_tangent_isosceles(vs: dict[str, Any]) -> dict[str, Any]:
             "start": [ax_ext, float(a[1])],
             "end": [tx_ext, float(t[1])],
             "color": FG,
-            "linewidth": 3.0,
+            "linewidth": STROKE_EMPHASIS,
         }
     )
     for seg in g["segments"]:
@@ -482,7 +464,8 @@ def map_circle_tangent_isosceles(vs: dict[str, Any]) -> dict[str, Any]:
                 "start": p0,
                 "end": p1,
                 "color": SECONDARY if is_construction else FG,
-                "linewidth": 2.0 if is_construction else 2.8,
+                "linewidth": STROKE if is_construction else STROKE_EMPHASIS,
+                "style": "dashed" if is_construction else "solid",
             }
         )
     ticks = g.get("equalLengthTicks") or []
@@ -495,7 +478,7 @@ def map_circle_tangent_isosceles(vs: dict[str, Any]) -> dict[str, Any]:
                 "seg1_end": pts[s1[1]],
                 "seg2_start": pts[s2[0]],
                 "seg2_end": pts[s2[1]],
-                "linewidth": 2.2,
+                "linewidth": STROKE,
             }
         )
     for mark in g.get("angleMarks") or []:
@@ -511,8 +494,8 @@ def map_circle_tangent_isosceles(vs: dict[str, Any]) -> dict[str, Any]:
                     "radius": 0.22,
                     "theta1": 110,
                     "theta2": 180,
-                    "color": SECONDARY,
-                    "linewidth": 2.0,
+                    "color": FG,
+                    "linewidth": STROKE,
                 }
             )
             label_angle = math.radians(144)
@@ -542,7 +525,7 @@ def map_circle_tangent_isosceles(vs: dict[str, Any]) -> dict[str, Any]:
         "T": (0.06, -0.16),
     }
     for name, xy in pts.items():
-        spec["objects"].append(_point_marker(xy, size=5.0))
+        spec["objects"].append(_point_marker(xy, size=3.5))
         dx, dy = point_deltas.get(name, (0.08, 0.08))
         spec["labels"].append(
             _label(name, xy, "center", label_id=f"pt_{name}", fixed=True, offset=(dx, dy))
@@ -617,7 +600,7 @@ def map_two_counter_boxes(vs: dict[str, Any]) -> dict[str, Any]:
                 "fill": True,
                 "facecolor": LIGHT,
                 "edgecolor": FG,
-                "linewidth": 2.3,
+                "linewidth": STROKE,
             }
         )
         spec["labels"].append(
@@ -664,35 +647,35 @@ def map_coordinate_perpendicular_division(vs: dict[str, Any]) -> dict[str, Any]:
                 "type": "arrow",
                 "start": [float(xlim[0]) + 0.2, 0.0],
                 "end": [float(xlim[1]) - 0.25, 0.0],
-                "linewidth": 1.8,
+                "linewidth": STROKE,
             },
             {
                 "type": "arrow",
                 "start": [0.0, float(ylim[0]) + 0.2],
                 "end": [0.0, float(ylim[1]) - 0.25],
-                "linewidth": 1.8,
+                "linewidth": STROKE,
             },
             {
                 "type": "line",
                 "start": pts["A"],
                 "end": pts["B"],
                 "color": FG,
-                "linewidth": 3.0,
+                "linewidth": STROKE_EMPHASIS,
             },
             {
                 "type": "line",
                 "start": pts["P"],
                 "end": pts["Q"],
-                "color": SECONDARY,
-                "linewidth": 2.8,
+                "color": FG,
+                "linewidth": STROKE,
             },
             {
                 "type": "right_angle_marker",
                 "vertex": pts["P"],
                 "leg1": pts["A"],
                 "leg2": pts["Q"],
-                "color": SECONDARY,
-                "linewidth": 1.8,
+                "color": FG,
+                "linewidth": STROKE,
             },
         ]
     )
@@ -713,7 +696,7 @@ def map_coordinate_perpendicular_division(vs: dict[str, Any]) -> dict[str, Any]:
     }
     for name, xy in pts.items():
         text, delta = label_map[name]
-        spec["objects"].append(_point_marker(xy, size=6.0))
+        spec["objects"].append(_point_marker(xy, size=3.8))
         spec["labels"].append(
             _label(text, xy, "center", label_id=f"pt_{name}", fixed=True, offset=delta)
         )
@@ -749,7 +732,7 @@ def map_isometric_cuboid_opposite_vertices(vs: dict[str, Any]) -> dict[str, Any]
             "fill": True,
             "facecolor": _resolve_fill(styling.get("leftFaceFill"), HIGHLIGHT),
             "edgecolor": FG,
-            "linewidth": 2.3,
+            "linewidth": STROKE,
         },
         {
             "type": "polygon",
@@ -757,7 +740,7 @@ def map_isometric_cuboid_opposite_vertices(vs: dict[str, Any]) -> dict[str, Any]
             "fill": True,
             "facecolor": _resolve_fill(styling.get("topFaceFill"), LIGHT),
             "edgecolor": FG,
-            "linewidth": 2.3,
+            "linewidth": STROKE,
         },
         {
             "type": "polygon",
@@ -765,34 +748,31 @@ def map_isometric_cuboid_opposite_vertices(vs: dict[str, Any]) -> dict[str, Any]
             "fill": True,
             "facecolor": _resolve_fill(styling.get("frontFaceFill"), WHITE),
             "edgecolor": FG,
-            "linewidth": 2.8,
+            "linewidth": STROKE_EMPHASIS,
         },
     ]
     # Visible depth edges only; omit fbr-bbr (would cross / clutter).
     for front_pt, back_pt in ((fbl, bbl), (ftr, btr), (ftl, btl)):
         spec["objects"].append(
-            {"type": "line", "start": front_pt, "end": back_pt, "color": FG, "linewidth": 2.2}
+            {"type": "line", "start": front_pt, "end": back_pt, "color": FG, "linewidth": STROKE}
         )
 
-    # Start A (filled) and finish G (ring).
-    spec["objects"].append(_point_marker(fbl, size=9.0))
+    # Start A (filled) and finish G (ring). Letters only; no "start"/"finish" captions.
+    spec["objects"].append(_point_marker(fbl, size=4.5))
     spec["objects"].append(
         {
             "type": "circle",
             "center": btr,
-            "radius": 0.11,
-            "fill": True,
-            "facecolor": WHITE,
+            "radius": 0.10,
+            "fill": False,
             "edgecolor": FG,
-            "linewidth": 2.5,
+            "linewidth": STROKE,
         }
     )
     spec["labels"].extend(
         [
-            _label(r"$A$", fbl, "center", label_id="pt_A", fixed=True, offset=(-0.38, -0.18)),
-            _label(r"$G$", btr, "center", label_id="pt_G", fixed=True, offset=(-0.05, 0.32)),
-            _label("start", [fbl[0], fbl[1] - 0.64], "center", label_id="start", fixed=True),
-            _label("finish", [btr[0] + 0.48, btr[1] + 0.10], "center", label_id="finish", fixed=True),
+            _label(r"$A$", fbl, "center", label_id="pt_A", fixed=True, offset=(-0.42, -0.22)),
+            _label(r"$G$", btr, "center", label_id="pt_G", fixed=True, offset=(-0.05, 0.34)),
             _label(
                 r"$6\,\mathrm{cm}$",
                 [(fbl[0] + fbr[0]) / 2.0, fbl[1] - 0.70],

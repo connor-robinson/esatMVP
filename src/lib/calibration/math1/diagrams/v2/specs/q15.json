@@ -36,7 +36,7 @@
       "fill": true,
       "facecolor": "#D0D0D0",
       "edgecolor": "#1A1A1A",
-      "linewidth": 2.3
+      "linewidth": 1.55
     },
     {
       "type": "polygon",
@@ -61,7 +61,7 @@
       "fill": true,
       "facecolor": "#F0F0F0",
       "edgecolor": "#1A1A1A",
-      "linewidth": 2.3
+      "linewidth": 1.55
     },
     {
       "type": "polygon",
@@ -86,7 +86,7 @@
       "fill": true,
       "facecolor": "#FFFFFF",
       "edgecolor": "#1A1A1A",
-      "linewidth": 2.8
+      "linewidth": 1.9
     },
     {
       "type": "line",
@@ -99,7 +99,7 @@
         2.7
       ],
       "color": "#1A1A1A",
-      "linewidth": 2.2
+      "linewidth": 1.55
     },
     {
       "type": "line",
@@ -112,7 +112,7 @@
         7.7
       ],
       "color": "#1A1A1A",
-      "linewidth": 2.2
+      "linewidth": 1.55
     },
     {
       "type": "line",
@@ -125,7 +125,7 @@
         7.7
       ],
       "color": "#1A1A1A",
-      "linewidth": 2.2
+      "linewidth": 1.55
     },
     {
       "type": "point",
@@ -133,7 +133,7 @@
         1.0,
         1.0
       ],
-      "size": 9.0
+      "size": 4.5
     },
     {
       "type": "circle",
@@ -141,11 +141,10 @@
         4.6,
         7.7
       ],
-      "radius": 0.11,
-      "fill": true,
-      "facecolor": "#FFFFFF",
+      "radius": 0.1,
+      "fill": false,
       "edgecolor": "#1A1A1A",
-      "linewidth": 2.5
+      "linewidth": 1.55
     },
     {
       "type": "dimension_line",
@@ -193,8 +192,8 @@
     {
       "text": "$A$",
       "anchor": [
-        0.62,
-        0.8200000000000001
+        0.5800000000000001,
+        0.78
       ],
       "preferred_position": "center",
       "id": "pt_A",
@@ -204,30 +203,10 @@
       "text": "$G$",
       "anchor": [
         4.55,
-        8.02
+        8.040000000000001
       ],
       "preferred_position": "center",
       "id": "pt_G",
-      "fixed": true
-    },
-    {
-      "text": "start",
-      "anchor": [
-        1.0,
-        0.36
-      ],
-      "preferred_position": "center",
-      "id": "start",
-      "fixed": true
-    },
-    {
-      "text": "finish",
-      "anchor": [
-        5.08,
-        7.8
-      ],
-      "preferred_position": "center",
-      "id": "finish",
       "fixed": true
     },
     {
