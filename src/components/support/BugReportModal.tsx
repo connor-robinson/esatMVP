@@ -1,28 +1,62 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
-import { BugReportPanel } from "@/components/profile/BugReportPanel";
+import { useOptionalSupport } from "@/components/support/SupportProvider";
+import { trackEvent } from "@/lib/ga/trackEvent";
 import { cn } from "@/lib/utils";
 
 interface BugReportModalProps {
   open: boolean;
   onClose: () => void;
   subject?: string;
+  questionId?: string;
+  paperId?: string;
 }
 
+/**
+ * Legacy modal entry for “Report a bug”. Opens the shared support panel with
+ * Technical problem preselected so we do not maintain a second form.
+ */
 export function BugReportModal({
   open,
   onClose,
   subject = "Past paper player",
+  questionId,
+  paperId,
 }: BugReportModalProps) {
   const session = useSupabaseSession();
+  const support = useOptionalSupport();
   const pathname = usePathname();
   const loginHref = `/login?redirectTo=${encodeURIComponent(pathname || "/past-papers/library")}`;
+  const handedOff = useRef(false);
+
+  useEffect(() => {
+    if (!open) {
+      handedOff.current = false;
+      return;
+    }
+    if (!session?.user || !support || handedOff.current) return;
+    handedOff.current = true;
+    trackEvent("support_opened", { placement: "bug_report_modal" });
+    support.openSupport({
+      category: "technical_problem",
+      subject,
+      questionId,
+      paperId,
+    });
+    onClose();
+  }, [open, session?.user, support, subject, questionId, paperId, onClose]);
 
   if (!open) return null;
+
+  // Authenticated handoff: support panel owns the UI.
+  if (session?.user && support) {
+    return null;
+  }
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -53,28 +87,18 @@ export function BugReportModal({
           Report a bug
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-text-muted">
-          Tell us what went wrong in the past paper player. A screenshot
-          description and the question number help a lot.
+          Sign in to send a support request. We usually reply within 24 hours.
         </p>
         <div className="mt-5">
-          {session?.user ? (
-            <BugReportPanel subject={subject} />
-          ) : (
-            <div className="space-y-4">
-              <p className="text-sm text-text-muted">
-                Sign in to send a bug report.
-              </p>
-              <Link
-                href={loginHref}
-                className={cn(
-                  "inline-flex items-center justify-center rounded-organic-md bg-primary px-5 py-3",
-                  "text-sm font-semibold text-background transition-opacity hover:opacity-90",
-                )}
-              >
-                Sign in
-              </Link>
-            </div>
-          )}
+          <Link
+            href={loginHref}
+            className={cn(
+              "inline-flex items-center justify-center rounded-organic-md bg-primary px-5 py-3",
+              "text-sm font-semibold text-background transition-opacity hover:opacity-90",
+            )}
+          >
+            Sign in
+          </Link>
         </div>
       </div>
     </div>

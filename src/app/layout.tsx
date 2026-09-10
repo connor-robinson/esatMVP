@@ -33,6 +33,7 @@ import {
   PageViewTracker,
 } from "@/components/ga";
 import { SiteFooter } from "@/components/layout/SiteFooter";
+import { SupportProvider } from "@/components/support/SupportProvider";
 import "@/styles/globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -198,37 +199,39 @@ export default function RootLayout({
                     <AttributionBootstrap />
                     <CookieConsentBanner />
                     <TesterProgrammeProvider>
-                      <Navbar />
-                      <main className="min-h-full flex-1">
-                        <UsernameGate>
-                          <Suspense
-                            fallback={
-                              <div className="min-h-screen flex items-center justify-center">
-                                <LoadingSpinner size="md" />
-                              </div>
-                            }
-                          >
-                            {children}
+                      <SupportProvider>
+                        <Navbar />
+                        <main className="min-h-full flex-1">
+                          <UsernameGate>
+                            <Suspense
+                              fallback={
+                                <div className="min-h-screen flex items-center justify-center">
+                                  <LoadingSpinner size="md" />
+                                </div>
+                              }
+                            >
+                              {children}
+                            </Suspense>
+                          </UsernameGate>
+                        </main>
+                        <SiteFooter />
+                        <DeferredMount delayMs={1800}>
+                          <GoogleOneTap />
+                          <GoogleAnalytics />
+                          <ServiceWorkerProvider />
+                          <BackgroundPrefetcher />
+                          <KaTeXLoader />
+                          <SessionRestore />
+                          <SessionPersistenceHandler />
+                          <TesterProgrammeBanner />
+                          <PartnerFeedbackPrompt />
+                          <FeedbackReferralPrompt />
+                          <PartnerActivationTracker />
+                          <Suspense fallback={null}>
+                            <PageViewTracker />
                           </Suspense>
-                        </UsernameGate>
-                      </main>
-                      <SiteFooter />
-                      <DeferredMount delayMs={1800}>
-                        <GoogleOneTap />
-                        <GoogleAnalytics />
-                        <ServiceWorkerProvider />
-                        <BackgroundPrefetcher />
-                        <KaTeXLoader />
-                        <SessionRestore />
-                        <SessionPersistenceHandler />
-                        <TesterProgrammeBanner />
-                        <PartnerFeedbackPrompt />
-                        <FeedbackReferralPrompt />
-                        <PartnerActivationTracker />
-                        <Suspense fallback={null}>
-                          <PageViewTracker />
-                        </Suspense>
-                      </DeferredMount>
+                        </DeferredMount>
+                      </SupportProvider>
                     </TesterProgrammeProvider>
                   </QuicklinkProvider>
                 </LoadingProvider>

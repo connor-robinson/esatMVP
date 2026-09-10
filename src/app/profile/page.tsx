@@ -19,11 +19,16 @@ import { ChangePasswordModal } from "@/components/profile/ChangePasswordModal";
 import { ChangeEmailModal } from "@/components/profile/ChangeEmailModal";
 import { ResetDataModal } from "@/components/profile/ResetDataModal";
 import { UsernameSetupModal } from "@/components/profile/UsernameSetupModal";
-import { BugReportPanel } from "@/components/profile/BugReportPanel";
+import { useOptionalSupport } from "@/components/support/SupportProvider";
 import { FeedbackReferralSettingsCard } from "@/components/feedbackReferral/FeedbackReferralSettingsCard";
 import { cn } from "@/lib/utils";
 import { getExamAccentFillClass } from "@/config/colors";
 import { CheckCircle2, AlertCircle, Check } from "lucide-react";
+import {
+  SUPPORT_PUBLIC_EMAIL,
+  SUPPORT_RESPONSE_COPY,
+} from "@/lib/support/constants";
+import { trackEvent } from "@/lib/ga/trackEvent";
 import { clearLeaderboardCache } from "@/lib/leaderboard/cache";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -108,6 +113,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const supabase = useSupabaseClient();
   const session = useSupabaseSession();
+  const support = useOptionalSupport();
   const { theme, toggleTheme, isDark } = useTheme();
   const {
     tier,
@@ -1454,11 +1460,52 @@ export default function ProfilePage() {
               {activeSection === 'support' && (
                 <>
                   <SettingsSectionHeader
-                    title="Report a Bug"
-                    description="Help us improve by letting us know when something isn't working"
+                    title="Help and support"
+                    description={SUPPORT_RESPONSE_COPY}
                   />
-                  <div className="px-5 py-5 sm:px-7">
-                    <BugReportPanel />
+                  <div className="space-y-5 px-5 py-5 sm:px-7">
+                    <p className="text-sm leading-relaxed text-text-muted">
+                      Send us a message from the Help button, or email{" "}
+                      <a
+                        href={`mailto:${SUPPORT_PUBLIC_EMAIL}`}
+                        className="font-medium text-text underline-offset-2 hover:underline"
+                      >
+                        {SUPPORT_PUBLIC_EMAIL}
+                      </a>
+                      . {SUPPORT_RESPONSE_COPY}
+                    </p>
+                    <div className="flex flex-wrap gap-3">
+                      <Button
+                        type="button"
+                        variant="primary"
+                        size="sm"
+                        onClick={() => {
+                          trackEvent("support_opened", {
+                            placement: "settings_support",
+                          });
+                          support?.openSupport();
+                        }}
+                      >
+                        Open support form
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => router.push("/help")}
+                      >
+                        Help Center
+                      </Button>
+                    </div>
+                    <p className="text-xs text-text-subtle">
+                      Official support email:{" "}
+                      <a
+                        href={`mailto:${SUPPORT_PUBLIC_EMAIL}`}
+                        className="font-medium text-text-muted underline-offset-2 hover:underline"
+                      >
+                        {SUPPORT_PUBLIC_EMAIL}
+                      </a>
+                    </p>
                   </div>
                 </>
               )}

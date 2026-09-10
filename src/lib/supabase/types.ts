@@ -632,6 +632,53 @@ export type AppBugReportInsert = {
 };
 export type AppBugReportUpdate = Partial<AppBugReportRow>;
 
+// support_requests
+export type SupportRequestRow = {
+  id: string;
+  user_id: string | null;
+  reply_email: string;
+  category: string;
+  subject: string;
+  message: string;
+  page_url: string | null;
+  user_agent: string | null;
+  viewport: string | null;
+  platform: string | null;
+  app_version: string | null;
+  context: Record<string, unknown>;
+  status: string;
+  email_delivery_status: string;
+  email_provider_id: string | null;
+  email_delivery_error: string | null;
+  idempotency_key: string | null;
+  ip_hash: string | null;
+  created_at: string;
+  updated_at: string;
+};
+export type SupportRequestInsert = {
+  id?: string;
+  user_id?: string | null;
+  reply_email: string;
+  category: string;
+  subject: string;
+  message: string;
+  page_url?: string | null;
+  user_agent?: string | null;
+  viewport?: string | null;
+  platform?: string | null;
+  app_version?: string | null;
+  context?: Record<string, unknown>;
+  status?: string;
+  email_delivery_status?: string;
+  email_provider_id?: string | null;
+  email_delivery_error?: string | null;
+  idempotency_key?: string | null;
+  ip_hash?: string | null;
+  created_at?: string;
+  updated_at?: string;
+};
+export type SupportRequestUpdate = Partial<SupportRequestRow>;
+
 export type Database = {
   public: {
     Tables: {
@@ -729,6 +776,11 @@ export type Database = {
         Row: AppBugReportRow;
         Insert: AppBugReportInsert;
         Update: AppBugReportUpdate;
+      };
+      support_requests: {
+        Row: SupportRequestRow;
+        Insert: SupportRequestInsert;
+        Update: SupportRequestUpdate;
       };
     };
     Views: {

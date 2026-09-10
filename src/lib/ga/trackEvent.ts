@@ -39,6 +39,9 @@ export type GaEventName =
   | "partner_invite_redeemed"
   | "partner_user_activated"
   | "partner_feedback_submitted"
+  | "support_opened"
+  | "support_submission_completed"
+  | "support_submission_failed"
   /** @deprecated Prefer sign_up / begin_checkout */
   | "signup_completed"
   | "checkout_started"

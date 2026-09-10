@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { formatExpiry } from "@/lib/tester/format";
 import { cn } from "@/lib/utils";
@@ -102,6 +103,12 @@ export default function AdminFoundingTesterPage() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <h1 className="text-2xl font-bold text-text">Founding Tester admin</h1>
           <div className="flex gap-2">
+            <Link
+              href="/admin/support"
+              className="rounded-full bg-surface-elevated px-4 py-2 text-sm font-semibold text-text hover:opacity-90"
+            >
+              Support requests
+            </Link>
             <a
               href="/api/admin/tester/export?type=surveys"
               className="rounded-full bg-surface-elevated px-4 py-2 text-sm font-semibold text-text hover:opacity-90"

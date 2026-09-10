@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Support launcher fixture</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+      body {
+        margin: 0;
+        font-family: system-ui, sans-serif;
+        min-height: 100dvh;
+        background: #0e0f13;
+        color: #e5e7eb;
+      }
+      main {
+        padding: 1.5rem;
+      }
+      .launcher {
+        position: fixed;
+        z-index: 55;
+        right: max(1rem, env(safe-area-inset-right, 0px));
+        bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+      }
+      .launcher button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        min-height: 44px;
+        min-width: 44px;
+        padding: 0.625rem 0.875rem;
+        border: 0;
+        border-radius: 12px;
+        background: #3b82f6;
+        color: #0e0f13;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .panel[hidden] {
+        display: none;
+      }
+      .panel {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        background: rgba(14, 15, 19, 0.8);
+      }
+      .panel-card {
+        width: 100%;
+        max-width: 32rem;
+        max-height: min(92dvh, 40rem);
+        overflow: auto;
+        background: #161b22;
+        border-radius: 16px 16px 0 0;
+        padding: 1.25rem;
+        padding-bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+      }
+      label {
+        display: block;
+        margin-top: 0.75rem;
+        font-size: 0.85rem;
+      }
+      input,
+      textarea,
+      select {
+        width: 100%;
+        margin-top: 0.35rem;
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Dashboard fixture</h1>
+      <p>Support launcher layout check.</p>
+    </main>
+    <div class="launcher">
+      <button type="button" id="help-btn" aria-haspopup="dialog" aria-controls="support-panel">
+        Help
+      </button>
+    </div>
+    <div
+      id="support-panel"
+      class="panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="support-title"
+      hidden
+    >
+      <div class="panel-card">
+        <h2 id="support-title">Need help?</h2>
+        <p>Send us a message and we'll usually reply within 24 hours.</p>
+        <p>
+          Email us directly:
+          <a href="mailto:esatcamp@gmail.com">esatcamp@gmail.com</a>
+        </p>
+        <form id="support-form">
+          <label>
+            Category
+            <select name="category" required>
+              <option value="technical_problem">Technical problem</option>
+              <option value="feedback">Feedback</option>
+            </select>
+          </label>
+          <label>
+            Subject
+            <input name="subject" required minlength="2" />
+          </label>
+          <label>
+            Message
+            <textarea name="message" required minlength="3" rows="4"></textarea>
+          </label>
+          <button type="submit">Send message</button>
+          <button type="button" id="close-btn">Close</button>
+        </form>
+        <p id="result" hidden>Request received</p>
+      </div>
+    </div>
+    <script>
+      const btn = document.getElementById("help-btn");
+      const panel = document.getElementById("support-panel");
+      const form = document.getElementById("support-form");
+      const result = document.getElementById("result");
+      const closeBtn = document.getElementById("close-btn");
+      btn.addEventListener("click", () => {
+        panel.hidden = false;
+        form.querySelector("input[name=subject]").focus();
+      });
+      closeBtn.addEventListener("click", () => {
+        panel.hidden = true;
+      });
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        form.hidden = true;
+        result.hidden = false;
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") panel.hidden = true;
+      });
+    </script>
+  </body>
+</html>
