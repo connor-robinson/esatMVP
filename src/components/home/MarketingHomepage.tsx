@@ -178,11 +178,14 @@ const FOOTER_GUIDE_KEYS: SeoLinkKey[] = [
   "calculatorRules",
 ];
 
-/** Primary product destinations for crawlable brand sitelink signals. */
+/**
+ * Indexable public landings for crawlable brand sitelink signals.
+ * App-shell UX entry points (e.g. /questions, /mental-maths/drill) stay in
+ * feature CTAs / nav, not here.
+ */
 const FOOTER_PLATFORM_LINKS = [
-  { href: "/questions", label: "ESAT Question Bank" },
-  { href: "/mental-maths/drill", label: "Mental Maths Practice" },
-  { href: "/past-papers/roadmap", label: "ESAT Past Papers" },
+  { href: "/esat-no-calculator-practice", label: "Mental Maths Practice" },
+  { href: "/esat-past-papers", label: "ESAT Past Papers" },
   { href: "/esat-past-papers", label: "Past Paper Downloads" },
   { href: "/tools/score-converter", label: "ESAT Score Converter" },
   { href: CALIBRATION_ROUTES.hub, label: "ESAT Mock Tests" },
@@ -399,10 +402,10 @@ export function MarketingHomepage({
 
               <div className="flex flex-wrap items-center gap-3">
                 <Link
-                  href="/past-papers/roadmap"
+                  href="/esat-past-papers"
                   className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#3B82F6] px-7 py-3.5 font-bold text-white transition-colors hover:bg-[#2563EB]"
                 >
-                  ESAT Past Papers
+                  Past Paper Downloads
                   <span aria-hidden className="text-lg leading-none">
                     →
                   </span>
@@ -411,7 +414,13 @@ export function MarketingHomepage({
                   href="/esat-past-papers"
                   className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-transparent px-7 py-3.5 font-bold text-white transition-colors hover:border-white/40 hover:bg-white/5"
                 >
-                  Past Paper Downloads
+                  ESAT Past Papers
+                </Link>
+                <Link
+                  href="/past-papers/roadmap"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-transparent px-7 py-3.5 font-bold text-white transition-colors hover:border-white/40 hover:bg-white/5"
+                >
+                  Open simulator
                 </Link>
               </div>
             </div>
@@ -456,7 +465,7 @@ export function MarketingHomepage({
               </ul>
 
               <Link
-                href="/mental-maths/drill"
+                href="/esat-no-calculator-practice"
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#3B82F6] px-7 py-3.5 font-bold text-white transition-colors hover:bg-[#2563EB]"
               >
                 Mental Maths Practice

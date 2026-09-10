@@ -74,7 +74,7 @@ export const SEO_LINKS = {
     blurb: "How the 1.0 to 9.0 scale works, where 7.0 sits, and what universities publish.",
   },
   drill: {
-    href: APP_ROUTES.noCalcPractice,
+    href: SEO_ROUTES.noCalcPractice,
     label: "Mental Maths Practice",
     blurb: "Timed no-calculator drills you can run in ten-minute sessions.",
   },
@@ -99,9 +99,9 @@ export const SEO_LINKS = {
     blurb: "ESAT-style questions filtered by module, topic and difficulty.",
   },
   pastPaperRoadmap: {
-    href: APP_ROUTES.pastPaperRoadmap,
+    href: SEO_ROUTES.pastPapers,
     label: "ESAT Past Papers",
-    blurb: "Official papers scheduled into an order you can actually follow.",
+    blurb: "Official papers and free NSAA / ENGAA PDF downloads for ESAT prep.",
   },
   universityRequirements: {
     href: SEO_ROUTES.universityRequirements,
