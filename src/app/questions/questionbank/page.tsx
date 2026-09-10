@@ -21,7 +21,6 @@ import { CommunityStatsPanel } from '@/components/questionBank/CommunityStatsPan
 import { QuestionBankSessionResults } from '@/components/questionBank/QuestionBankSessionResults';
 import { QuestionBankSessionBar } from '@/components/questionBank/QuestionBankSessionBar';
 import { QuestionBankEsatSessionShell } from '@/components/questionBank/QuestionBankEsatSessionShell';
-import { QuestionBankUiPreferenceModal } from '@/components/questionBank/QuestionBankUiPreferenceModal';
 import { QuestionBankHomeScreen } from '@/components/questionBank/QuestionBankHomeScreen';
 import {
   QuestionBankTimeUpModal,
@@ -87,9 +86,9 @@ import {
 import { cn, formatTime } from '@/lib/utils';
 import {
   readSessionUiVariant,
-  writeSessionUiVariant,
-  writeSessionUiSurveyChoice,
-  shouldPromptSessionUiSurvey,
+  applySessionUiVariantToggle,
+  hydrateSessionUiPreferenceFromServer,
+  maybeInferSessionUiPreference,
   type QuestionBankSessionUiVariant,
 } from '@/lib/questionBank/sessionUiPreference';
 
@@ -198,9 +197,7 @@ export default function QuestionBankPage() {
   const [flaggedQuestionIds, setFlaggedQuestionIds] = useState<Set<string>>(
     () => new Set(),
   );
-  const [uiSurveyOpen, setUiSurveyOpen] = useState(false);
-  const [uiSurveyDismissedSession, setUiSurveyDismissedSession] =
-    useState(false);
+  const uiToggledThisSessionRef = useRef(false);
   const [communityStatsByQuestionId, setCommunityStatsByQuestionId] = useState<
     Record<string, QuestionBankCommunityStats>
   >({});
@@ -209,6 +206,18 @@ export default function QuestionBankPage() {
   useEffect(() => {
     setSessionUiVariant(readSessionUiVariant());
   }, []);
+
+  useEffect(() => {
+    if (!session?.user) return;
+    let cancelled = false;
+    void hydrateSessionUiPreferenceFromServer().then((hydrated) => {
+      if (cancelled || !hydrated) return;
+      setSessionUiVariant(hydrated.variant);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [session?.user?.id]);
 
   const topicLabels = currentQuestion
     ? labelTopicTagsForQuestion(currentQuestion)
@@ -263,6 +272,7 @@ export default function QuestionBankPage() {
       setSessionTestType(params.testType ?? null);
       setSessionAttemptLog([]);
       sessionAttemptLogRef.current = [];
+      uiToggledThisSessionRef.current = false;
       setSessionView('playing');
       questionStartedAtRef.current = startTime;
 
@@ -1131,21 +1141,23 @@ export default function QuestionBankPage() {
 
   useEffect(() => {
     if (sessionView !== 'playing') return;
-    if (sessionUiVariant !== 'esat') return;
-    if (uiSurveyDismissedSession || uiSurveyOpen) return;
-    if (!shouldPromptSessionUiSurvey(sessionAttemptLog.length)) return;
-    setUiSurveyOpen(true);
+    maybeInferSessionUiPreference({
+      finishedQuestionCount: sessionAttemptLog.length,
+      sessionQuestionCount: sessionQuestions.length,
+      currentVariant: sessionUiVariant,
+      toggledAwayThisSession: uiToggledThisSessionRef.current,
+    });
   }, [
     sessionAttemptLog.length,
+    sessionQuestions.length,
     sessionUiVariant,
     sessionView,
-    uiSurveyDismissedSession,
-    uiSurveyOpen,
   ]);
 
   const applySessionUiVariant = useCallback(
     (variant: QuestionBankSessionUiVariant) => {
-      writeSessionUiVariant(variant);
+      uiToggledThisSessionRef.current = true;
+      applySessionUiVariantToggle(variant);
       setSessionUiVariant(variant);
     },
     [],
@@ -1370,7 +1382,11 @@ export default function QuestionBankPage() {
           graphSpecs={currentQuestion.graph_specs}
         />
         <HintModal
-          isOpen={showHint && !!currentQuestion.solution_key_insight}
+          isOpen={
+            showHint &&
+            !!currentQuestion.solution_key_insight &&
+            sessionUiVariant === 'classic'
+          }
           onClose={() => setShowHint(false)}
           content={currentQuestion.solution_key_insight}
         />
@@ -1424,6 +1440,9 @@ export default function QuestionBankPage() {
           onShowExplanation={() => setShowDetailedExplanation(true)}
           onShowHint={() => setShowHint(true)}
           hasHint={!!currentQuestion.solution_key_insight}
+          showHint={showHint}
+          hintContent={currentQuestion.solution_key_insight ?? null}
+          onCloseHint={() => setShowHint(false)}
           onNext={() => {
             if (sessionView === 'review') {
               if (sessionCurrentIndex < sessionQuestions.length - 1) {
@@ -1466,23 +1485,6 @@ export default function QuestionBankPage() {
           onCloseExplanation={() => setShowDetailedExplanation(false)}
         />
         {sharedSolutionModals}
-        <QuestionBankUiPreferenceModal
-          open={uiSurveyOpen}
-          onChooseEsat={() => {
-            writeSessionUiSurveyChoice('esat');
-            applySessionUiVariant('esat');
-            setUiSurveyOpen(false);
-          }}
-          onChooseClassic={() => {
-            writeSessionUiSurveyChoice('classic');
-            applySessionUiVariant('classic');
-            setUiSurveyOpen(false);
-          }}
-          onSkip={() => {
-            setUiSurveyDismissedSession(true);
-            setUiSurveyOpen(false);
-          }}
-        />
         <QuestionBankTimeUpModal
           open={showTimeUpModal}
           remainingQuestions={remainingSessionQuestions}
@@ -1656,24 +1658,6 @@ export default function QuestionBankPage() {
           />
         )}
       </div>
-
-      <QuestionBankUiPreferenceModal
-        open={uiSurveyOpen}
-        onChooseEsat={() => {
-          writeSessionUiSurveyChoice('esat');
-          applySessionUiVariant('esat');
-          setUiSurveyOpen(false);
-        }}
-        onChooseClassic={() => {
-          writeSessionUiSurveyChoice('classic');
-          applySessionUiVariant('classic');
-          setUiSurveyOpen(false);
-        }}
-        onSkip={() => {
-          setUiSurveyDismissedSession(true);
-          setUiSurveyOpen(false);
-        }}
-      />
 
       <QuestionBankTimeUpModal
         open={showTimeUpModal}

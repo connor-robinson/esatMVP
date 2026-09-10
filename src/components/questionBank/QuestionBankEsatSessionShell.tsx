@@ -10,8 +10,6 @@ import {
   Grid3X3,
   Hash,
   LogOut,
-  Moon,
-  Sun,
 } from "lucide-react";
 import { StemContent } from "@/components/shared/StemContent";
 import { StatementItemsList } from "@/components/shared/StatementItemsList";
@@ -86,6 +84,9 @@ export interface QuestionBankEsatSessionShellProps {
   onShowExplanation: () => void;
   onShowHint: () => void;
   hasHint: boolean;
+  showHint: boolean;
+  hintContent: string | null;
+  onCloseHint: () => void;
   onNext: () => void;
   onPrevious: () => void;
   onJumpTo: (index: number) => void;
@@ -121,6 +122,9 @@ export function QuestionBankEsatSessionShell({
   onShowExplanation,
   onShowHint,
   hasHint,
+  showHint,
+  hintContent,
+  onCloseHint,
   onNext,
   onPrevious,
   onJumpTo,
@@ -133,11 +137,6 @@ export function QuestionBankEsatSessionShell({
   explanationContent,
   onCloseExplanation,
 }: QuestionBankEsatSessionShellProps) {
-  const [shellTheme, setShellTheme] = useState<"light" | "dark">("light");
-  const isDark = shellTheme === "dark";
-  const toggleShellTheme = () => {
-    setShellTheme((prev) => (prev === "dark" ? "light" : "dark"));
-  };
   const [timerHidden, setTimerHidden] = useState(false);
   const [counterHidden, setCounterHidden] = useState(false);
   const [navigatorOpen, setNavigatorOpen] = useState(false);
@@ -237,7 +236,7 @@ export function QuestionBankEsatSessionShell({
   return (
     <div
       className="esat-ui-preview-root"
-      data-theme={isDark ? "dark" : "light"}
+      data-theme="light"
       role="application"
       aria-label="Question bank session"
     >
@@ -246,19 +245,6 @@ export function QuestionBankEsatSessionShell({
           <div className="eup-header-title">
             {reviewMode ? "Review" : "Question bank"} · {subjectLabel}
           </div>
-          <button
-            type="button"
-            className="eup-theme-toggle"
-            onClick={toggleShellTheme}
-            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-          >
-            {isDark ? (
-              <Sun size={15} strokeWidth={2} aria-hidden />
-            ) : (
-              <Moon size={15} strokeWidth={2} aria-hidden />
-            )}
-            <span>{isDark ? "Light" : "Dark"}</span>
-          </button>
           <button
             type="button"
             className="eup-theme-toggle"
@@ -573,6 +559,41 @@ export function QuestionBankEsatSessionShell({
                 >
                   Close
                 </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {showHint && hintContent ? (
+          <div
+            className="eup-explain-backdrop"
+            role="presentation"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) onCloseHint();
+            }}
+          >
+            <div
+              className="eup-explain-window"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="qb-esat-hint-title"
+              style={{ width: "min(520px, 100%)", maxHeight: "min(420px, 78vh)" }}
+            >
+              <div className="eup-explain-header">
+                <h2 id="qb-esat-hint-title">Hint</h2>
+                <button
+                  type="button"
+                  className="eup-explain-close"
+                  onClick={onCloseHint}
+                >
+                  Close
+                </button>
+              </div>
+              <div className="eup-explain-body">
+                <StemContent
+                  content={hintContent}
+                  className="eup-explain-content"
+                />
               </div>
             </div>
           </div>

@@ -11,8 +11,6 @@ import {
   Grid3X3,
   Hash,
   LogOut,
-  Moon,
-  Sun,
 } from "lucide-react";
 import { StemContent } from "@/components/shared/StemContent";
 import {
@@ -90,11 +88,6 @@ function solutionMarkdown(q: CalibrationQuestion): string {
 }
 
 export function EsatUiPreviewPlayer() {
-  const [shellTheme, setShellTheme] = useState<"light" | "dark">("light");
-  const isDark = shellTheme === "dark";
-  const toggleShellTheme = () => {
-    setShellTheme((prev) => (prev === "dark" ? "light" : "dark"));
-  };
   const [index, setIndex] = useState(0);
   const [states, setStates] = useState<Record<string, QuestionState>>(() =>
     Object.fromEntries(PREVIEW_QUESTIONS.map((q) => [q.id, emptyState()])),
@@ -247,26 +240,13 @@ export function EsatUiPreviewPlayer() {
     return (
       <div
         className="esat-ui-preview-root"
-        data-theme={isDark ? "dark" : "light"}
+        data-theme="light"
         role="application"
         aria-label="ESAT UI preview results"
       >
         <header className="eup-header">
           <div className="eup-header-left">
             <div className="eup-header-title">ESAT UI preview · Math 1</div>
-            <button
-              type="button"
-              className="eup-theme-toggle"
-              onClick={toggleShellTheme}
-              aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-            >
-              {isDark ? (
-                <Sun size={15} strokeWidth={2} aria-hidden />
-              ) : (
-                <Moon size={15} strokeWidth={2} aria-hidden />
-              )}
-              <span>{isDark ? "Light" : "Dark"}</span>
-            </button>
           </div>
         </header>
         <div className="eup-toolbar" />

@@ -12,18 +12,18 @@ interface StatementItemsListProps {
 /** Vertical numbered statement list for ESAT three-statement questions. */
 export function StatementItemsList({ items, className }: StatementItemsListProps) {
   return (
-    <div className={cn("space-y-3 sm:space-y-4", className)}>
+    <div className={cn("statement-items-list space-y-3 sm:space-y-4", className)}>
       {items.map((item) => (
         <div
           key={item.number}
           className="grid grid-cols-[2rem_1fr] items-start gap-x-2 gap-y-0"
         >
-          <span className="pt-0.5 text-sm font-semibold tabular-nums text-text">
+          <span className="statement-item-num pt-0.5 tabular-nums text-inherit">
             {item.number}.
           </span>
           <StemContent
             content={item.textMarkdown}
-            className="text-inherit text-[0.98rem] leading-relaxed sm:text-[1.02rem]"
+            className="text-inherit leading-[inherit]"
           />
         </div>
       ))}

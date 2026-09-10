@@ -53,13 +53,13 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
   --eup-progress-fill: var(--eup-pink);
 
   --eup-font: var(--font-space-grotesk), "Segoe UI", Tahoma, Arial, Helvetica, sans-serif;
-  /* ESAT / Pearson specimen content face */
-  --eup-font-question: Tahoma, Arial, Helvetica, sans-serif;
+  /* Same face as chrome for the whole session surface */
+  --eup-font-question: var(--eup-font);
 
-  /* Chrome / options stay larger; question stem ~10% smaller */
+  /* One content size for qnum, stem, statements, tables, and options */
   --eup-font-size-ui: 17px;
-  --eup-font-size-content: 16.5px;
-  --eup-font-size-options: 18.5px;
+  --eup-font-size-content: 17px;
+  --eup-font-size-options: 17px;
   --eup-header-height: 68px;
   --eup-toolbar-height: 40px;
   --eup-footer-height: 44px;
@@ -84,23 +84,23 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Temporarily: dark mode tokens match light (toggle removed from live shell). */
 .esat-ui-preview-root[data-theme="dark"] {
-  --eup-header: #1c1b20;
-  --eup-toolbar: #2a282f;
-  --eup-footer: #1c1b20;
-  --eup-content-bg: #131116;
-  --eup-page-bg: #080607;
-  --eup-text: #f4f1f5;
-  --eup-text-muted: #9a939f;
-  --eup-border: #403c46;
-  --eup-chrome-text: #ece8ef;
-  --eup-radio-face: #080607;
-  --eup-progress-track: #2a282f;
-  /* Pink stays on dark-mode brand value; brighter red/green on dark surfaces */
-  --eup-success: #a9b167;
-  --eup-error: #cf5b5b;
-  --eup-diff-easy: #a9b167;
-  --eup-diff-hard: #cf5b5b;
+  --eup-header: #3f3c44;
+  --eup-toolbar: #4c4852;
+  --eup-footer: #3f3c44;
+  --eup-content-bg: #ffffff;
+  --eup-page-bg: #f6f6f7;
+  --eup-text: #080607;
+  --eup-text-muted: #77717d;
+  --eup-border: rgba(40, 40, 48, 0.14);
+  --eup-chrome-text: #f4f1f5;
+  --eup-radio-face: #ffffff;
+  --eup-progress-track: #d8d8de;
+  --eup-success: #8f9848;
+  --eup-error: #b84a4a;
+  --eup-diff-easy: #8f9848;
+  --eup-diff-hard: #b84a4a;
   --eup-progress-fill: var(--eup-pink);
 }
 
@@ -435,7 +435,8 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
   overflow-x: hidden;
   overflow-y: auto;
   padding: var(--eup-pad-y) var(--eup-pad-x) 28px;
-  font-size: var(--eup-font-size-options);
+  font-family: var(--eup-font-question);
+  font-size: var(--eup-font-size-content);
   line-height: 1.55;
   scrollbar-gutter: stable;
 }
@@ -477,6 +478,36 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
 .esat-ui-preview-root .eup-stem .stem-content,
 .esat-ui-preview-root .eup-stem .math-content {
   font-family: var(--eup-font-question) !important;
+  font-size: var(--eup-font-size-content) !important;
+  line-height: 1.55;
+}
+
+/* Statement list: same size/weight as stem (override Tailwind defaults) */
+.esat-ui-preview-root .eup-stem .statement-items-list,
+.esat-ui-preview-root .eup-stem .statement-items-list * {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: 400;
+  color: inherit;
+}
+
+.esat-ui-preview-root .eup-stem .statement-items-list .stem-content,
+.esat-ui-preview-root .eup-stem .statement-items-list .math-content {
+  font-size: inherit !important;
+}
+
+.esat-ui-preview-root .stem-table table {
+  font-size: 1em;
+}
+
+.eup-radio-body,
+.eup-radio-body .stem-content,
+.eup-radio-body .math-content {
+  font-family: var(--eup-font-question);
+  font-size: var(--eup-font-size-content);
+  line-height: 1.55;
+  color: var(--eup-text);
 }
 
 .eup-stem > .stem-content > :first-child,
@@ -997,7 +1028,7 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
   color: var(--eup-chrome-text);
   border-radius: 2px;
   overflow: hidden;
-  box-shadow: 0 16px 48px rgba(8, 6, 7, 0.22);
+  box-shadow: none;
 }
 
 .eup-explain-header {
