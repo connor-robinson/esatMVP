@@ -20,6 +20,7 @@ import type {
   QuestionBankSessionAttempt,
 } from "@/types/questionBank";
 import { cn } from "@/lib/utils";
+import { QuestionSupportControl } from "@/components/support/QuestionSupportControl";
 import "@/components/questionBank/esatUiPreview/esatUiPreview.css";
 
 type NavStatus = "unseen" | "incomplete" | "correct" | "incorrect";
@@ -98,6 +99,7 @@ export interface QuestionBankEsatSessionShellProps {
   showExplanation: boolean;
   explanationContent: string | null;
   onCloseExplanation: () => void;
+  sessionId?: string | null;
 }
 
 export function QuestionBankEsatSessionShell({
@@ -136,6 +138,7 @@ export function QuestionBankEsatSessionShell({
   showExplanation,
   explanationContent,
   onCloseExplanation,
+  sessionId,
 }: QuestionBankEsatSessionShellProps) {
   const [timerHidden, setTimerHidden] = useState(false);
   const [counterHidden, setCounterHidden] = useState(false);
@@ -693,7 +696,17 @@ export function QuestionBankEsatSessionShell({
         ) : null}
       </div>
 
-      <footer className="eup-footer">
+      <div className="relative">
+        <div className="pointer-events-none absolute bottom-full right-3 z-20 mb-2 flex justify-end">
+          <div className="pointer-events-auto">
+            <QuestionSupportControl
+              questionId={question.id}
+              sessionId={sessionId}
+              tone="exam"
+            />
+          </div>
+        </div>
+        <footer className="eup-footer">
         <button
           type="button"
           className="eup-footer-action"
@@ -757,6 +770,7 @@ export function QuestionBankEsatSessionShell({
           )}
         </div>
       </footer>
+      </div>
     </div>
   );
 }

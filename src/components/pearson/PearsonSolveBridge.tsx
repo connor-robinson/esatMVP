@@ -77,6 +77,8 @@ export function PearsonSolveBridge({
     setSectionStartTime,
     currentSectionIndex,
     navigateToQuestion,
+    paperId,
+    sessionId,
   } = usePaperSessionStore(
     useShallow((s) => ({
       setAnswer: s.setAnswer,
@@ -85,6 +87,8 @@ export function PearsonSolveBridge({
       setSectionStartTime: s.setSectionStartTime,
       currentSectionIndex: s.currentSectionIndex,
       navigateToQuestion: s.navigateToQuestion,
+      paperId: s.paperId,
+      sessionId: s.sessionId,
     })),
   );
 
@@ -223,6 +227,8 @@ export function PearsonSolveBridge({
       onQuestionsStarted={onQuestionsStarted}
       onQuestionIndexChange={handleQuestionIndexChange}
       isLastModule={isLastModule}
+      paperId={paperId != null ? String(paperId) : null}
+      sessionId={sessionId}
     />
   );
 }

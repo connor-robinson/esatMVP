@@ -12,6 +12,7 @@ import {
   X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { QuestionSupportControl } from '@/components/support/QuestionSupportControl';
 
 const SESSION_BAR_BTN =
   'inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-organic-md px-4 text-sm font-medium transition-all duration-fast ease-signature focus-visible:outline-none focus-visible:ring-0';
@@ -44,6 +45,8 @@ interface QuestionBankSessionBarProps {
   showLeaveConfirm: boolean;
   /** Post-session review: browse questions without timer or submit. */
   reviewMode?: boolean;
+  questionId?: string | null;
+  sessionId?: string | null;
   onOpenLeaveConfirm: () => void;
   onCloseLeaveConfirm: () => void;
   onSaveAndLeave: () => void;
@@ -70,6 +73,8 @@ export function QuestionBankSessionBar({
   selectionAlreadyWrong,
   showLeaveConfirm,
   reviewMode = false,
+  questionId,
+  sessionId,
   onOpenLeaveConfirm,
   onCloseLeaveConfirm,
   onSaveAndLeave,
@@ -92,6 +97,16 @@ export function QuestionBankSessionBar({
   return (
     <>
       <div className='fixed bottom-0 left-0 right-0 z-40 bg-background/98 shadow-bar-floating backdrop-blur-md'>
+        {questionId ? (
+          <div className='pointer-events-none absolute bottom-full right-3 mb-2 flex justify-end sm:right-6'>
+            <div className='pointer-events-auto'>
+              <QuestionSupportControl
+                questionId={questionId}
+                sessionId={sessionId}
+              />
+            </div>
+          </div>
+        ) : null}
         <div
           className='h-2.5 w-full overflow-hidden bg-surface-elevated sm:h-3'
           role='progressbar'

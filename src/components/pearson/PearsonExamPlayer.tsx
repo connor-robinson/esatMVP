@@ -37,6 +37,7 @@ import { PearsonToolbar } from "./PearsonToolbar";
 import { UnseenContentDialog } from "./UnseenContentDialog";
 import { PearsonQuestionTransitionOverlay } from "./PearsonQuestionTransitionOverlay";
 import { PearsonSessionEndingOverlay } from "./PearsonSessionEndingOverlay";
+import { QuestionSupportControl } from "@/components/support/QuestionSupportControl";
 
 export interface PearsonExamPlayerProps {
   mode: ExamMode;
@@ -56,6 +57,9 @@ export interface PearsonExamPlayerProps {
   onQuestionsStarted?: () => void;
   onQuestionIndexChange?: (index: number) => void;
   isLastModule?: boolean;
+  /** Optional IDs for in-exam question reports. */
+  paperId?: string | null;
+  sessionId?: string | null;
 }
 
 export function PearsonExamPlayer({
@@ -76,6 +80,8 @@ export function PearsonExamPlayer({
   onQuestionsStarted,
   onQuestionIndexChange,
   isLastModule = true,
+  paperId = null,
+  sessionId = null,
 }: PearsonExamPlayerProps) {
   const c = usePearsonExamController({
     mode,
@@ -274,26 +280,45 @@ export function PearsonExamPlayer({
           ) : null}
 
           {c.showQuestionFooter ? (
-            <PearsonFooter
-              variant="question"
-              onEndExam={c.requestEndExam}
-              onNext={c.goNext}
-              onPrevious={c.goPrev}
-              showPrevious={c.showPrevious}
-              onNavigator={c.openNavigator}
-              nextDisabled={c.moduleLocked}
-              previousDisabled={c.moduleLocked}
-              navigatorDisabled={c.moduleLocked}
-              endLabel={c.isLastModule ? "End Exam" : "End Section"}
-              nextLabel={
-                c.isLastQuestion && !c.isLastModule
-                  ? "Continue to Next Section"
-                  : "Next"
-              }
-              nextLetter={
-                c.isLastQuestion && !c.isLastModule ? "C" : "N"
-              }
-            />
+            <div className="relative">
+              {c.currentQuestion ? (
+                <div className="pointer-events-none absolute bottom-full right-2 z-20 mb-1.5 flex justify-end">
+                  <div className="pointer-events-auto">
+                    <QuestionSupportControl
+                      questionId={String(c.currentQuestion.id)}
+                      paperId={
+                        paperId ??
+                        (c.currentQuestion.paperId != null
+                          ? String(c.currentQuestion.paperId)
+                          : null)
+                      }
+                      sessionId={sessionId}
+                      tone="exam"
+                    />
+                  </div>
+                </div>
+              ) : null}
+              <PearsonFooter
+                variant="question"
+                onEndExam={c.requestEndExam}
+                onNext={c.goNext}
+                onPrevious={c.goPrev}
+                showPrevious={c.showPrevious}
+                onNavigator={c.openNavigator}
+                nextDisabled={c.moduleLocked}
+                previousDisabled={c.moduleLocked}
+                navigatorDisabled={c.moduleLocked}
+                endLabel={c.isLastModule ? "End Exam" : "End Section"}
+                nextLabel={
+                  c.isLastQuestion && !c.isLastModule
+                    ? "Continue to Next Section"
+                    : "Next"
+                }
+                nextLetter={
+                  c.isLastQuestion && !c.isLastModule ? "C" : "N"
+                }
+              />
+            </div>
           ) : null}
 
           {c.questionTransitionActive ? <PearsonQuestionTransitionOverlay /> : null}

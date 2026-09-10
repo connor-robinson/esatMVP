@@ -1510,6 +1510,7 @@ export default function QuestionBankPage() {
           showExplanation={showDetailedExplanation}
           explanationContent={currentQuestion.solution_reasoning}
           onCloseExplanation={() => setShowDetailedExplanation(false)}
+          sessionId={qbSessionId}
         />
         {sharedSolutionModals}
         <QuestionBankTimeUpModal
@@ -1657,6 +1658,8 @@ export default function QuestionBankPage() {
             }
             showLeaveConfirm={showLeaveConfirm}
             reviewMode={sessionView === 'review'}
+            questionId={currentQuestion.id}
+            sessionId={qbSessionId}
             onOpenLeaveConfirm={() => setShowLeaveConfirm(true)}
             onCloseLeaveConfirm={() => setShowLeaveConfirm(false)}
             onSaveAndLeave={handleSaveAndLeave}
