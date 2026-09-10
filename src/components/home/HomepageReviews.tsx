@@ -1,16 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import {
   MARKETING_HOMEPAGE_REVIEW_REPLY,
   splitMarketingReviews,
   type MarketingReview,
 } from "@/lib/homepage/marketingReviews";
 
-const LEAVE_REVIEW_HREF =
-  "mailto:esatcamp@gmail.com?subject=ESAT%20Camp%20review";
+const LOGIN_HREF = `/login?redirectTo=${encodeURIComponent("/#reviews")}`;
 
 function StarRow({ stars }: { stars: MarketingReview["stars"] }) {
   return (
@@ -50,31 +51,115 @@ function ReviewCard({ review }: { review: MarketingReview }) {
   );
 }
 
-function LeaveReviewCard({ className }: { className?: string }) {
+function LeaveReviewForm() {
+  const session = useSupabaseSession();
+  const router = useRouter();
+  const [text, setText] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
+    "idle",
+  );
+  const [error, setError] = useState<string | null>(null);
+  const loggedIn = Boolean(session?.user);
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!loggedIn) {
+      router.push(LOGIN_HREF);
+      return;
+    }
+
+    const review = text.trim();
+    if (review.length < 8) {
+      setError("Write a little more before sending.");
+      setStatus("error");
+      return;
+    }
+
+    setStatus("sending");
+    setError(null);
+    try {
+      const res = await fetch("/api/homepage/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ review }),
+      });
+      const payload = (await res.json().catch(() => ({}))) as {
+        error?: string;
+      };
+      if (!res.ok) {
+        throw new Error(payload.error || "Could not send review");
+      }
+      setText("");
+      setStatus("sent");
+    } catch (err) {
+      setStatus("error");
+      setError(err instanceof Error ? err.message : "Could not send review");
+    }
+  };
+
   return (
-    <div
-      className={cn(
-        "flex h-full min-h-[9.5rem] flex-col justify-between rounded-xl border border-dashed border-white/15 px-4 py-4 sm:min-h-[10.5rem] sm:px-5 sm:py-5",
-        className,
-      )}
+    <form
+      onSubmit={(e) => void handleSubmit(e)}
+      className="w-full rounded-2xl border border-white/10 bg-[#0A0F1D]/60 p-4 sm:p-5"
     >
-      <div>
-        <p className="font-display text-lg font-bold text-white">
-          Leave a review
-        </p>
-        <p className="mt-2 text-sm leading-relaxed text-[#94A3B8]">
-          Tell us how ESAT Camp is going. We&apos;ll read it, and if it fits
-          we&apos;ll put it up here.
-        </p>
+      <label htmlFor="homepage-review" className="sr-only">
+        Leave a review
+      </label>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
+        <textarea
+          id="homepage-review"
+          value={text}
+          onChange={(e) => {
+            setText(e.target.value);
+            if (status !== "idle") setStatus("idle");
+            if (error) setError(null);
+          }}
+          rows={2}
+          maxLength={1200}
+          placeholder={
+            loggedIn
+              ? "Leave a review…"
+              : "Leave a review (log in to send)…"
+          }
+          className="min-h-[3.25rem] w-full flex-1 resize-y rounded-xl border border-white/10 bg-[#161D2F] px-4 py-3 text-sm leading-relaxed text-white placeholder:text-[#64748B] focus:border-[#3B82F6]/50 focus:outline-none focus:ring-1 focus:ring-[#3B82F6]/40"
+        />
+        <button
+          type="submit"
+          disabled={status === "sending"}
+          className="inline-flex shrink-0 items-center justify-center rounded-xl bg-[#3B82F6] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#2563EB] disabled:cursor-not-allowed disabled:opacity-60 sm:self-stretch sm:px-8"
+        >
+          {status === "sending"
+            ? "Sending…"
+            : loggedIn
+              ? "Send"
+              : "Log in to send"}
+        </button>
       </div>
-      <Link
-        href={LEAVE_REVIEW_HREF}
-        className="mt-5 inline-flex w-fit items-center gap-2 text-sm font-semibold text-[#93C5FD] transition-colors hover:text-white"
-      >
-        Write a review
-        <span aria-hidden>→</span>
-      </Link>
-    </div>
+      <p className="mt-2 text-xs text-[#64748B]">
+        {loggedIn ? (
+          status === "sent" ? (
+            <span className="text-[#86EFAC]">
+              Thanks. We&apos;ll review it and may put it up here.
+            </span>
+          ) : error ? (
+            <span className="text-[#FCA5A5]">{error}</span>
+          ) : (
+            "We read every review before it goes live."
+          )
+        ) : (
+          <>
+            You need to{" "}
+            <Link
+              href={LOGIN_HREF}
+              className="font-semibold text-[#93C5FD] hover:text-white"
+            >
+              log in
+            </Link>{" "}
+            to leave a review.
+          </>
+        )}
+      </p>
+    </form>
   );
 }
 
@@ -90,10 +175,6 @@ export function HomepageReviews() {
           <h2 className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
             What students are saying
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-[#94A3B8] sm:text-base">
-            Real feedback from people revising for the ESAT. A few rotate each
-            day; expand to read the rest.
-          </p>
         </div>
 
         <div className="relative">
@@ -106,7 +187,6 @@ export function HomepageReviews() {
             {visible.map((review) => (
               <ReviewCard key={review.id} review={review} />
             ))}
-            {expanded ? <LeaveReviewCard /> : null}
           </div>
 
           {!expanded && rest.length > 0 ? (
@@ -117,8 +197,8 @@ export function HomepageReviews() {
           ) : null}
         </div>
 
-        <div className="relative z-10 -mt-6 flex flex-col items-center gap-5 sm:-mt-8">
-          {rest.length > 0 ? (
+        {rest.length > 0 ? (
+          <div className="relative z-10 -mt-6 flex justify-center sm:-mt-8">
             <button
               type="button"
               onClick={() => setExpanded((v) => !v)}
@@ -132,25 +212,23 @@ export function HomepageReviews() {
                 {expanded ? "↑" : "↓"}
               </span>
             </button>
-          ) : null}
+          </div>
+        ) : null}
 
-          {!expanded ? (
-            <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
-              <LeaveReviewCard className="sm:col-span-2 lg:col-span-2 lg:col-start-2" />
-            </div>
-          ) : null}
-        </div>
-
-        <aside className="mx-auto mt-10 max-w-3xl rounded-2xl border border-[#3B82F6]/25 bg-[#0A0F1D]/80 px-5 py-6 sm:mt-12 sm:px-7 sm:py-7">
+        <aside className="mt-10 w-full rounded-2xl border border-[#3B82F6]/25 bg-[#0A0F1D]/80 px-5 py-6 sm:mt-12 sm:px-8 sm:py-7 lg:px-10">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#60A5FA]">
             {MARKETING_HOMEPAGE_REVIEW_REPLY.title}
           </p>
-          <div className="mt-3 space-y-3 text-sm leading-relaxed text-[#CBD5E1] sm:text-[0.95rem]">
+          <div className="mt-4 space-y-3 text-sm leading-relaxed text-[#CBD5E1] sm:text-base sm:leading-relaxed">
             {MARKETING_HOMEPAGE_REVIEW_REPLY.body.map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
             ))}
           </div>
         </aside>
+
+        <div className="mt-5 sm:mt-6">
+          <LeaveReviewForm />
+        </div>
       </div>
     </section>
   );
