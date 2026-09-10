@@ -1,0 +1,275 @@
+{
+  "spec_version": "1.0",
+  "needs_diagram": true,
+  "diagram_type": "geometry",
+  "diagram_id": "m1cal-v2-q01-diagram",
+  "not_to_scale": false,
+  "coordinate_system": {
+    "x_min": -1.8,
+    "x_max": 13.8,
+    "y_min": -1.9,
+    "y_max": 13.7,
+    "equal_aspect": true,
+    "show_axes": false
+  },
+  "objects": [
+    {
+      "type": "polygon",
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          12,
+          0
+        ],
+        [
+          12,
+          12
+        ],
+        [
+          0,
+          12
+        ]
+      ],
+      "fill": true,
+      "facecolor": "#F1F5F9",
+      "edgecolor": "#1F2937",
+      "linewidth": 3.0
+    },
+    {
+      "type": "polygon",
+      "points": [
+        [
+          6,
+          0
+        ],
+        [
+          12,
+          6
+        ],
+        [
+          6,
+          12
+        ],
+        [
+          0,
+          6
+        ]
+      ],
+      "fill": false,
+      "edgecolor": "#64748B",
+      "linewidth": 2.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        6,
+        6
+      ],
+      "radius": 4.2426406871,
+      "fill": true,
+      "facecolor": "#DCE6F0",
+      "edgecolor": "#1F2937",
+      "linewidth": 3.0
+    },
+    {
+      "type": "dimension_line",
+      "start": [
+        0,
+        -0.8
+      ],
+      "end": [
+        12,
+        -0.8
+      ],
+      "direction": "below",
+      "offset": 0.85
+    },
+    {
+      "type": "point",
+      "at": [
+        0.0,
+        0.0
+      ],
+      "size": 4.0
+    },
+    {
+      "type": "point",
+      "at": [
+        12.0,
+        0.0
+      ],
+      "size": 4.0
+    },
+    {
+      "type": "point",
+      "at": [
+        12.0,
+        12.0
+      ],
+      "size": 4.0
+    },
+    {
+      "type": "point",
+      "at": [
+        0.0,
+        12.0
+      ],
+      "size": 4.0
+    },
+    {
+      "type": "point",
+      "at": [
+        6.0,
+        0.0
+      ],
+      "size": 4.0
+    },
+    {
+      "type": "point",
+      "at": [
+        12.0,
+        6.0
+      ],
+      "size": 4.0
+    },
+    {
+      "type": "point",
+      "at": [
+        6.0,
+        12.0
+      ],
+      "size": 4.0
+    },
+    {
+      "type": "point",
+      "at": [
+        0.0,
+        6.0
+      ],
+      "size": 4.0
+    },
+    {
+      "type": "line",
+      "start": [
+        5.72,
+        6.0
+      ],
+      "end": [
+        6.28,
+        6.0
+      ],
+      "color": "#64748B",
+      "linewidth": 1.5
+    },
+    {
+      "type": "line",
+      "start": [
+        6.0,
+        5.72
+      ],
+      "end": [
+        6.0,
+        6.28
+      ],
+      "color": "#64748B",
+      "linewidth": 1.5
+    }
+  ],
+  "labels": [
+    {
+      "text": "A",
+      "anchor": [
+        -0.52,
+        -0.42
+      ],
+      "preferred_position": "center",
+      "id": "pt_A",
+      "fixed": true
+    },
+    {
+      "text": "B",
+      "anchor": [
+        12.22,
+        -0.42
+      ],
+      "preferred_position": "center",
+      "id": "pt_B",
+      "fixed": true
+    },
+    {
+      "text": "C",
+      "anchor": [
+        12.22,
+        12.18
+      ],
+      "preferred_position": "center",
+      "id": "pt_C",
+      "fixed": true
+    },
+    {
+      "text": "D",
+      "anchor": [
+        -0.55,
+        12.18
+      ],
+      "preferred_position": "center",
+      "id": "pt_D",
+      "fixed": true
+    },
+    {
+      "text": "E",
+      "anchor": [
+        5.88,
+        -0.55
+      ],
+      "preferred_position": "center",
+      "id": "pt_E",
+      "fixed": true
+    },
+    {
+      "text": "F",
+      "anchor": [
+        12.3,
+        5.94
+      ],
+      "preferred_position": "center",
+      "id": "pt_F",
+      "fixed": true
+    },
+    {
+      "text": "G",
+      "anchor": [
+        5.88,
+        12.34
+      ],
+      "preferred_position": "center",
+      "id": "pt_G",
+      "fixed": true
+    },
+    {
+      "text": "H",
+      "anchor": [
+        -0.58,
+        5.94
+      ],
+      "preferred_position": "center",
+      "id": "pt_H",
+      "fixed": true
+    },
+    {
+      "text": "$12\\,\\mathrm{cm}$",
+      "anchor": [
+        6.0,
+        -1.25
+      ],
+      "preferred_position": "center",
+      "id": "dim_12",
+      "fixed": true
+    }
+  ],
+  "annotations": [],
+  "source_question_id": "m1cal-v2-q01"
+}

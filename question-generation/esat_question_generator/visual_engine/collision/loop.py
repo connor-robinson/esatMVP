@@ -35,6 +35,7 @@ class LabelArtist:
     artist: Text
     candidate_index: int = 0
     role: str = "label"  # label | caption | axis
+    fixed: bool = False
 
 
 @dataclass
@@ -70,6 +71,8 @@ def resolve_label_collisions(
 
         any_collision = False
         for idx, lbl in enumerate(labels):
+            if lbl.fixed:
+                continue
             others = [r for j, r in enumerate(rects) if j != idx]
             issues = label_collides(
                 rects[idx],
@@ -80,7 +83,8 @@ def resolve_label_collisions(
                 segment_clearance=segment_clearance,
                 role=lbl.role,
             )
-            if not issues:
+            # Soft pad overflow alone is fine; keep the letter on its vertex side.
+            if not issues or set(issues) <= {"bounds"}:
                 continue
 
             any_collision = True
@@ -92,7 +96,11 @@ def resolve_label_collisions(
             best_va = lbl.artist.get_va()
 
             # Try increasing offsets so vertex/edge-anchored labels can escape geometry.
-            offset_scales = (1.0, 1.5, 2.0, 2.75, 3.5)
+            # Prefer staying on the requested side; mild edge clipping is acceptable.
+            pref_name = (lbl.preferred_position or "").strip().lower()
+            if pref_name == "center":
+                pref_name = "upper_right"
+            offset_scales = (1.0, 1.25, 1.5, 2.0, 2.75)
             for scale in offset_scales:
                 trial_offset = offset_dist * scale
                 for cand_idx, cand in enumerate(order):
@@ -113,9 +121,16 @@ def resolve_label_collisions(
                         segment_clearance=segment_clearance,
                         role=lbl.role,
                     )
-                    score = score_candidate(trial_rect, lbl.anchor, trial_issues)
+                    score = score_candidate(
+                        trial_rect,
+                        lbl.anchor,
+                        trial_issues,
+                        preferred_name=pref_name,
+                        candidate_name=cand.name,
+                    )
                     # Prefer smaller offsets among equal-quality clean placements.
-                    if not trial_issues:
+                    soft_only = bool(trial_issues) and set(trial_issues) <= {"bounds"}
+                    if not trial_issues or (cand.name == pref_name and soft_only):
                         score += 50.0 / scale
                     if score > best_score:
                         best_score = score
@@ -123,6 +138,9 @@ def resolve_label_collisions(
                         best_pos = pos
                         best_ha = ha
                         best_va = va
+                # Preferred side with only mild bounds overflow is good enough.
+                if best_score >= 4000.0:
+                    break
                 if best_score >= 0:
                     break
 
@@ -139,6 +157,8 @@ def resolve_label_collisions(
     remaining: list[str] = []
     rects = [text_bbox_data(lbl.artist, renderer) for lbl in labels]
     for idx, lbl in enumerate(labels):
+        if lbl.fixed:
+            continue
         others = [r for j, r in enumerate(rects) if j != idx]
         issues = label_collides(
             rects[idx],
@@ -149,6 +169,9 @@ def resolve_label_collisions(
             segment_clearance=segment_clearance,
             role=lbl.role,
         )
+        # Mild figure-pad overflow alone is acceptable for vertex letters.
+        if issues and set(issues) <= {"bounds"}:
+            continue
         if issues:
             remaining.append(f"{lbl.label_id}: {', '.join(issues)}")
 

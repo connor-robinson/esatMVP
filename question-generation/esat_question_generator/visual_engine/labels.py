@@ -21,6 +21,29 @@ _AXIS_TITLE_RE = re.compile(
     r".+/\s*(\\text\{)?(cm|mm|m|s|kg|N|s\^|cm\^)",
     re.IGNORECASE,
 )
+_NOT_TO_SCALE_RE = re.compile(r"not\s*to\s*scale", re.IGNORECASE)
+
+
+def is_not_to_scale_caption(text: str) -> bool:
+    return bool(_NOT_TO_SCALE_RE.search(str(text or "")))
+
+
+def not_to_scale_footer_text(spec: VisualSpec) -> str | None:
+    """Return the footer line for scale disclaimers, if any.
+
+    These are drawn under the whole figure and must not enter label collision.
+    """
+    for ann in spec.annotations:
+        if not isinstance(ann, dict):
+            continue
+        if str(ann.get("type") or "").lower() != "caption":
+            continue
+        text = str(ann.get("text") or "").strip()
+        if text and is_not_to_scale_caption(text):
+            return text
+    if spec.not_to_scale:
+        return "Diagram not to scale"
+    return None
 
 
 def caption_label_spec(ann: dict[str, Any], cs: CoordinateSystem, index: int) -> dict[str, Any]:
@@ -188,6 +211,9 @@ def normalize_graph_labels(
             continue
 
         already_axis = bool(item.get("axis_label") or item.get("caption"))
+        if bool(item.get("fixed")):
+            out.append(item)
+            continue
         near_x_axis = abs(ay_) <= band_y
         near_y_axis = abs(ax_) <= band_x
         is_tick = _looks_like_numeric_tick(text)
@@ -242,8 +268,12 @@ def collect_label_specs(
     combined.extend(spec.labels)
     combined.extend(extra_labels)
     for idx, ann in enumerate(spec.annotations):
-        if str(ann.get("type") or "").lower() == "caption":
-            combined.append(caption_label_spec(ann, spec.coordinate_system, idx))
+        if str(ann.get("type") or "").lower() != "caption":
+            continue
+        # Scale disclaimer is a figure footer, not a colliding in-plot caption.
+        if is_not_to_scale_caption(str(ann.get("text") or "")):
+            continue
+        combined.append(caption_label_spec(ann, spec.coordinate_system, idx))
     if not normalize_axes:
         return combined
     return normalize_graph_labels(
@@ -259,6 +289,7 @@ def create_label_artists(ax: Axes, label_specs: list[dict[str, Any]], style: Exa
         label_id = str(lbl.get("id") or f"label_{idx + 1}")
         raw_text = str(lbl.get("text") or "")
         is_caption = bool(lbl.get("caption"))
+        is_fixed = bool(lbl.get("fixed"))
         is_axis = (
             bool(lbl.get("axis_label"))
             or label_id.startswith("tick_")
@@ -270,7 +301,7 @@ def create_label_artists(ax: Axes, label_specs: list[dict[str, Any]], style: Exa
         text = format_label_text(raw_text, math=is_math)
         anchor = (float(lbl["anchor"][0]), float(lbl["anchor"][1]))
         preferred = str(lbl.get("preferred_position") or "above")
-        if preferred.lower() == "center" and not is_caption:
+        if preferred.lower() == "center" and not is_caption and not is_fixed:
             preferred = "upper_right"
 
         fontsize = style.font_size
@@ -302,6 +333,7 @@ def create_label_artists(ax: Axes, label_specs: list[dict[str, Any]], style: Exa
                 preferred_position=preferred,
                 artist=artist,
                 role="caption" if is_caption else ("axis" if is_axis else "label"),
+                fixed=is_fixed,
             )
         )
     return labels

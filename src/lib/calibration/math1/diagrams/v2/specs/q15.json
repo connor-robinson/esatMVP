@@ -1,0 +1,266 @@
+{
+  "spec_version": "1.0",
+  "needs_diagram": true,
+  "diagram_type": "geometry",
+  "diagram_id": "m1cal-v2-q15-diagram",
+  "not_to_scale": false,
+  "coordinate_system": {
+    "x_min": -1.2,
+    "x_max": 10.8,
+    "y_min": -1.3,
+    "y_max": 8.4,
+    "equal_aspect": true,
+    "show_axes": false
+  },
+  "objects": [
+    {
+      "type": "polygon",
+      "points": [
+        [
+          1.0,
+          1.0
+        ],
+        [
+          -1.4,
+          2.7
+        ],
+        [
+          -1.4,
+          7.7
+        ],
+        [
+          1.0,
+          6.0
+        ]
+      ],
+      "fill": true,
+      "facecolor": "#DCE6F0",
+      "edgecolor": "#1F2937",
+      "linewidth": 2.3
+    },
+    {
+      "type": "polygon",
+      "points": [
+        [
+          1.0,
+          6.0
+        ],
+        [
+          7.0,
+          6.0
+        ],
+        [
+          4.6,
+          7.7
+        ],
+        [
+          -1.4,
+          7.7
+        ]
+      ],
+      "fill": true,
+      "facecolor": "#F1F5F9",
+      "edgecolor": "#1F2937",
+      "linewidth": 2.3
+    },
+    {
+      "type": "polygon",
+      "points": [
+        [
+          1.0,
+          1.0
+        ],
+        [
+          7.0,
+          1.0
+        ],
+        [
+          7.0,
+          6.0
+        ],
+        [
+          1.0,
+          6.0
+        ]
+      ],
+      "fill": true,
+      "facecolor": "#FFFFFF",
+      "edgecolor": "#1F2937",
+      "linewidth": 2.8
+    },
+    {
+      "type": "line",
+      "start": [
+        1.0,
+        1.0
+      ],
+      "end": [
+        -1.4,
+        2.7
+      ],
+      "color": "#1F2937",
+      "linewidth": 2.2
+    },
+    {
+      "type": "line",
+      "start": [
+        7.0,
+        6.0
+      ],
+      "end": [
+        4.6,
+        7.7
+      ],
+      "color": "#1F2937",
+      "linewidth": 2.2
+    },
+    {
+      "type": "line",
+      "start": [
+        1.0,
+        6.0
+      ],
+      "end": [
+        -1.4,
+        7.7
+      ],
+      "color": "#1F2937",
+      "linewidth": 2.2
+    },
+    {
+      "type": "point",
+      "at": [
+        1.0,
+        1.0
+      ],
+      "size": 9.0
+    },
+    {
+      "type": "circle",
+      "center": [
+        4.6,
+        7.7
+      ],
+      "radius": 0.11,
+      "fill": true,
+      "facecolor": "#FFFFFF",
+      "edgecolor": "#1F2937",
+      "linewidth": 2.5
+    },
+    {
+      "type": "dimension_line",
+      "start": [
+        1.0,
+        1.0
+      ],
+      "end": [
+        7.0,
+        1.0
+      ],
+      "direction": "below",
+      "offset": 0.55,
+      "color": "#64748B"
+    },
+    {
+      "type": "dimension_line",
+      "start": [
+        7.0,
+        1.0
+      ],
+      "end": [
+        7.0,
+        6.0
+      ],
+      "direction": "right",
+      "offset": 0.55,
+      "color": "#64748B"
+    },
+    {
+      "type": "line",
+      "start": [
+        0.72,
+        6.25
+      ],
+      "end": [
+        -1.68,
+        7.95
+      ],
+      "color": "#64748B",
+      "linewidth": 1.6
+    }
+  ],
+  "labels": [
+    {
+      "text": "$A$",
+      "anchor": [
+        0.62,
+        0.8200000000000001
+      ],
+      "preferred_position": "center",
+      "id": "pt_A",
+      "fixed": true
+    },
+    {
+      "text": "$G$",
+      "anchor": [
+        4.55,
+        8.02
+      ],
+      "preferred_position": "center",
+      "id": "pt_G",
+      "fixed": true
+    },
+    {
+      "text": "start",
+      "anchor": [
+        1.0,
+        0.36
+      ],
+      "preferred_position": "center",
+      "id": "start",
+      "fixed": true
+    },
+    {
+      "text": "finish",
+      "anchor": [
+        5.08,
+        7.8
+      ],
+      "preferred_position": "center",
+      "id": "finish",
+      "fixed": true
+    },
+    {
+      "text": "$6\\,\\mathrm{cm}$",
+      "anchor": [
+        4.0,
+        0.30000000000000004
+      ],
+      "preferred_position": "center",
+      "id": "dim6",
+      "fixed": true
+    },
+    {
+      "text": "$5\\,\\mathrm{cm}$",
+      "anchor": [
+        7.85,
+        3.5
+      ],
+      "preferred_position": "center",
+      "id": "dim5",
+      "fixed": true
+    },
+    {
+      "text": "$3\\,\\mathrm{cm}$",
+      "anchor": [
+        -0.44999999999999996,
+        7.199999999999999
+      ],
+      "preferred_position": "center",
+      "id": "dim3",
+      "fixed": true
+    }
+  ],
+  "annotations": [],
+  "source_question_id": "m1cal-v2-q15"
+}

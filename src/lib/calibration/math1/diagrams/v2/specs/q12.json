@@ -1,0 +1,696 @@
+{
+  "spec_version": "1.0",
+  "needs_diagram": true,
+  "diagram_type": "geometry",
+  "diagram_id": "m1cal-v2-q12-diagram",
+  "not_to_scale": false,
+  "coordinate_system": {
+    "x_min": -0.5,
+    "x_max": 18.5,
+    "y_min": -1.2,
+    "y_max": 6.4,
+    "equal_aspect": true,
+    "show_axes": false
+  },
+  "objects": [
+    {
+      "type": "polygon",
+      "points": [
+        [
+          -0.050000000000000044,
+          0.44999999999999996
+        ],
+        [
+          3.21,
+          0.44999999999999996
+        ],
+        [
+          3.21,
+          2.27
+        ],
+        [
+          -0.050000000000000044,
+          2.27
+        ]
+      ],
+      "fill": true,
+      "facecolor": "#F1F5F9",
+      "edgecolor": "#CBD5E1",
+      "linewidth": 1.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        0.5,
+        1.0
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        1.22,
+        1.0
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        1.94,
+        1.0
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        2.66,
+        1.0
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        0.5,
+        1.72
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        1.22,
+        1.72
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        1.94,
+        1.72
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        2.66,
+        1.72
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "polygon",
+      "points": [
+        [
+          5.45,
+          0.44999999999999996
+        ],
+        [
+          9.43,
+          0.44999999999999996
+        ],
+        [
+          9.43,
+          2.99
+        ],
+        [
+          5.45,
+          2.99
+        ]
+      ],
+      "fill": true,
+      "facecolor": "#F1F5F9",
+      "edgecolor": "#CBD5E1",
+      "linewidth": 1.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        6.0,
+        1.0
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        6.72,
+        1.0
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        7.4399999999999995,
+        1.0
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        8.16,
+        1.0
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        8.879999999999999,
+        1.0
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        6.0,
+        1.72
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        6.72,
+        1.72
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        7.4399999999999995,
+        1.72
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        8.16,
+        1.72
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        8.879999999999999,
+        1.72
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        6.0,
+        2.44
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        6.72,
+        2.44
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        7.4399999999999995,
+        2.44
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        8.16,
+        2.44
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        8.879999999999999,
+        2.44
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "polygon",
+      "points": [
+        [
+          11.75,
+          0.44999999999999996
+        ],
+        [
+          16.45,
+          0.44999999999999996
+        ],
+        [
+          16.45,
+          3.71
+        ],
+        [
+          11.75,
+          3.71
+        ]
+      ],
+      "fill": true,
+      "facecolor": "#F1F5F9",
+      "edgecolor": "#CBD5E1",
+      "linewidth": 1.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        12.3,
+        1.0
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        13.020000000000001,
+        1.0
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        13.74,
+        1.0
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        14.46,
+        1.0
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        15.18,
+        1.0
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        15.9,
+        1.0
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        12.3,
+        1.72
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        13.020000000000001,
+        1.72
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        13.74,
+        1.72
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        14.46,
+        1.72
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        15.18,
+        1.72
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        15.9,
+        1.72
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        12.3,
+        2.44
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        13.020000000000001,
+        2.44
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        13.74,
+        2.44
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        14.46,
+        2.44
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        15.18,
+        2.44
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        15.9,
+        2.44
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        12.3,
+        3.16
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        13.020000000000001,
+        3.16
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        13.74,
+        3.16
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        14.46,
+        3.16
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        15.18,
+        3.16
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    },
+    {
+      "type": "circle",
+      "center": [
+        15.9,
+        3.16
+      ],
+      "radius": 0.13,
+      "fill": true,
+      "facecolor": "#1F2937",
+      "edgecolor": "#1F2937",
+      "linewidth": 0.5
+    }
+  ],
+  "labels": [
+    {
+      "text": "Stage 1",
+      "anchor": [
+        1.58,
+        -0.050000000000000044
+      ],
+      "preferred_position": "below",
+      "id": "stage_1"
+    },
+    {
+      "text": "Stage 2",
+      "anchor": [
+        7.4399999999999995,
+        -0.050000000000000044
+      ],
+      "preferred_position": "below",
+      "id": "stage_2"
+    },
+    {
+      "text": "Stage 3",
+      "anchor": [
+        14.100000000000001,
+        -0.050000000000000044
+      ],
+      "preferred_position": "below",
+      "id": "stage_3"
+    },
+    {
+      "text": "\u22ef",
+      "anchor": [
+        17.599999999999998,
+        2.08
+      ],
+      "preferred_position": "center",
+      "id": "ellipsis"
+    }
+  ],
+  "annotations": [],
+  "source_question_id": "m1cal-v2-q12"
+}

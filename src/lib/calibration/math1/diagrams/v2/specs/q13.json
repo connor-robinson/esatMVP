@@ -1,0 +1,245 @@
+{
+  "spec_version": "1.0",
+  "needs_diagram": true,
+  "diagram_type": "geometry",
+  "diagram_id": "m1cal-v2-q13-diagram",
+  "not_to_scale": false,
+  "coordinate_system": {
+    "x_min": -0.5,
+    "x_max": 13.5,
+    "y_min": -0.5,
+    "y_max": 6.0,
+    "equal_aspect": true,
+    "show_axes": false
+  },
+  "objects": [
+    {
+      "type": "polygon",
+      "points": [
+        [
+          0.5,
+          0.8
+        ],
+        [
+          5.7,
+          0.8
+        ],
+        [
+          5.7,
+          4.8
+        ],
+        [
+          0.5,
+          4.8
+        ]
+      ],
+      "fill": true,
+      "facecolor": "#F1F5F9",
+      "edgecolor": "#1F2937",
+      "linewidth": 2.3
+    },
+    {
+      "type": "circle",
+      "center": [
+        2.0,
+        2.8
+      ],
+      "radius": 0.4,
+      "fill": true,
+      "facecolor": "#FFFFFF",
+      "edgecolor": "#1F2937",
+      "linewidth": 2.0
+    },
+    {
+      "type": "circle",
+      "center": [
+        3.1,
+        2.8
+      ],
+      "radius": 0.4,
+      "fill": true,
+      "facecolor": "#FFFFFF",
+      "edgecolor": "#1F2937",
+      "linewidth": 2.0
+    },
+    {
+      "type": "circle",
+      "center": [
+        4.2,
+        2.8
+      ],
+      "radius": 0.4,
+      "fill": true,
+      "facecolor": "#64748B",
+      "edgecolor": "#1F2937",
+      "linewidth": 2.0
+    },
+    {
+      "type": "polygon",
+      "points": [
+        [
+          7.2,
+          0.8
+        ],
+        [
+          12.8,
+          0.8
+        ],
+        [
+          12.8,
+          4.8
+        ],
+        [
+          7.2,
+          4.8
+        ]
+      ],
+      "fill": true,
+      "facecolor": "#F1F5F9",
+      "edgecolor": "#1F2937",
+      "linewidth": 2.3
+    },
+    {
+      "type": "circle",
+      "center": [
+        8.45,
+        2.8
+      ],
+      "radius": 0.4,
+      "fill": true,
+      "facecolor": "#FFFFFF",
+      "edgecolor": "#1F2937",
+      "linewidth": 2.0
+    },
+    {
+      "type": "circle",
+      "center": [
+        9.55,
+        2.8
+      ],
+      "radius": 0.4,
+      "fill": true,
+      "facecolor": "#64748B",
+      "edgecolor": "#1F2937",
+      "linewidth": 2.0
+    },
+    {
+      "type": "circle",
+      "center": [
+        10.65,
+        2.8
+      ],
+      "radius": 0.4,
+      "fill": true,
+      "facecolor": "#64748B",
+      "edgecolor": "#1F2937",
+      "linewidth": 2.0
+    },
+    {
+      "type": "circle",
+      "center": [
+        11.75,
+        2.8
+      ],
+      "radius": 0.4,
+      "fill": true,
+      "facecolor": "#64748B",
+      "edgecolor": "#1F2937",
+      "linewidth": 2.0
+    }
+  ],
+  "labels": [
+    {
+      "text": "Box A",
+      "anchor": [
+        3.1,
+        5.1499999999999995
+      ],
+      "preferred_position": "above",
+      "id": "box_Box A"
+    },
+    {
+      "text": "G",
+      "anchor": [
+        2.0,
+        2.8
+      ],
+      "preferred_position": "center",
+      "id": "token_Box A_G_2.0"
+    },
+    {
+      "text": "G",
+      "anchor": [
+        3.1,
+        2.8
+      ],
+      "preferred_position": "center",
+      "id": "token_Box A_G_3.1"
+    },
+    {
+      "text": "B",
+      "anchor": [
+        4.2,
+        2.8
+      ],
+      "preferred_position": "center",
+      "id": "token_Box A_B_4.2"
+    },
+    {
+      "text": "Box B",
+      "anchor": [
+        10.0,
+        5.1499999999999995
+      ],
+      "preferred_position": "above",
+      "id": "box_Box B"
+    },
+    {
+      "text": "G",
+      "anchor": [
+        8.45,
+        2.8
+      ],
+      "preferred_position": "center",
+      "id": "token_Box B_G_8.45"
+    },
+    {
+      "text": "B",
+      "anchor": [
+        9.55,
+        2.8
+      ],
+      "preferred_position": "center",
+      "id": "token_Box B_B_9.55"
+    },
+    {
+      "text": "B",
+      "anchor": [
+        10.65,
+        2.8
+      ],
+      "preferred_position": "center",
+      "id": "token_Box B_B_10.65"
+    },
+    {
+      "text": "B",
+      "anchor": [
+        11.75,
+        2.8
+      ],
+      "preferred_position": "center",
+      "id": "token_Box B_B_11.75"
+    },
+    {
+      "text": "G = gold     B = blue",
+      "anchor": [
+        6.5,
+        0.15
+      ],
+      "preferred_position": "below",
+      "id": "legend"
+    }
+  ],
+  "annotations": [],
+  "source_question_id": "m1cal-v2-q13"
+}

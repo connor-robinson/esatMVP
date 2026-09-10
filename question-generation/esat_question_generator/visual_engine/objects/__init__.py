@@ -18,6 +18,7 @@ from .geometry import (
     draw_point,
     draw_polygon,
     draw_right_angle_marker,
+    draw_sector,
 )
 from .graph import draw_axes, draw_function
 from .pedigree import draw_pedigree
@@ -59,6 +60,8 @@ def draw_objects(
             draw_line(ax, obj, style, obstacles)
         elif obj_type == "circle":
             draw_circle(ax, obj, style, obstacles)
+        elif obj_type == "sector":
+            draw_sector(ax, obj, style, obstacles)
         elif obj_type == "arc":
             draw_arc(ax, obj, style, obstacles)
         elif obj_type == "point":

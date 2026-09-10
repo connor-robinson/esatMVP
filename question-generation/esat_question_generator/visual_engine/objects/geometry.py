@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
-from matplotlib.patches import Arc, Circle, Polygon
+from matplotlib.patches import Arc, Circle, Polygon, Wedge
 
 from ..style import ExamStyle
 from ..collision.obstacles import ObstacleSet
@@ -19,6 +19,23 @@ def _lw(obj: dict, style: ExamStyle) -> float:
     return float(obj.get("linewidth") or style.stroke_width)
 
 
+def _stroke_color(obj: dict, style: ExamStyle, *, default: str | None = None) -> str:
+    for key in ("edgecolor", "color", "stroke"):
+        raw = obj.get(key)
+        if raw is not None and str(raw).strip():
+            return str(raw).strip()
+    return default if default is not None else style.stroke
+
+
+def _face_color(obj: dict, *, filled: bool, default_fill: str = "#dddddd") -> str:
+    if not filled:
+        return "none"
+    raw = obj.get("facecolor")
+    if raw is not None and str(raw).strip():
+        return str(raw).strip()
+    return default_fill
+
+
 def draw_polygon(ax: Axes, obj: dict, style: ExamStyle, obstacles: ObstacleSet) -> None:
     points = [tuple(float(v) for v in pt[:2]) for pt in obj["points"]]
     fill = bool(obj.get("fill", False))
@@ -26,8 +43,8 @@ def draw_polygon(ax: Axes, obj: dict, style: ExamStyle, obstacles: ObstacleSet) 
         points,
         closed=True,
         fill=fill,
-        facecolor="#dddddd" if fill else "none",
-        edgecolor=style.stroke,
+        facecolor=_face_color(obj, filled=fill),
+        edgecolor=_stroke_color(obj, style),
         linewidth=_lw(obj, style),
     )
     ax.add_patch(patch)
@@ -40,19 +57,27 @@ def draw_line(ax: Axes, obj: dict, style: ExamStyle, obstacles: ObstacleSet) -> 
     x1, y1 = float(obj["start"][0]), float(obj["start"][1])
     x2, y2 = float(obj["end"][0]), float(obj["end"][1])
     ls_name = str(obj.get("style") or "solid").lower()
+    role = str(obj.get("role") or obj.get("kind") or "").strip().lower()
+    is_leader = ls_name == "leader" or role in {"leader", "callout", "label_leader"}
+    color = _stroke_color(obj, style, default=style.leader_stroke if is_leader else style.stroke)
     lw = _lw(obj, style)
+    if is_leader:
+        lw = max(lw * 0.7, 0.7)
     if ls_name == "dashed":
         ax.plot(
             [x1, x2],
             [y1, y2],
-            color=style.stroke,
+            color=color,
             linewidth=lw,
             linestyle="--",
             dashes=style.dash_pattern,
         )
     else:
-        ax.plot([x1, x2], [y1, y2], color=style.stroke, linewidth=lw, linestyle="solid")
-    obstacles.add_segment(x1, y1, x2, y2, kind="line")
+        ax.plot([x1, x2], [y1, y2], color=color, linewidth=lw, linestyle="solid")
+    if not is_leader:
+        obstacles.add_segment(x1, y1, x2, y2, kind="line")
+    else:
+        obstacles.add_segment(x1, y1, x2, y2, kind="dimension")
 
 
 def draw_circle(ax: Axes, obj: dict, style: ExamStyle, obstacles: ObstacleSet) -> None:
@@ -63,12 +88,42 @@ def draw_circle(ax: Axes, obj: dict, style: ExamStyle, obstacles: ObstacleSet) -
         (cx, cy),
         radius,
         fill=fill,
-        facecolor="#dddddd" if fill else "none",
-        edgecolor=style.stroke,
+        facecolor=_face_color(obj, filled=fill),
+        edgecolor=_stroke_color(obj, style),
         linewidth=_lw(obj, style),
     )
     ax.add_patch(patch)
     obstacles.add_circle(cx, cy, radius, kind="circle")
+
+
+def draw_sector(ax: Axes, obj: dict, style: ExamStyle, obstacles: ObstacleSet) -> None:
+    """Draw a circular sector (wedge) from theta1 to theta2 in degrees."""
+    cx, cy = float(obj["center"][0]), float(obj["center"][1])
+    radius = float(obj["radius"])
+    theta1 = float(obj["theta1"])
+    theta2 = float(obj["theta2"])
+    fill = bool(obj.get("fill", True))
+    patch = Wedge(
+        (cx, cy),
+        radius,
+        theta1,
+        theta2,
+        facecolor=_face_color(obj, filled=fill, default_fill="#dddddd"),
+        edgecolor=_stroke_color(obj, style),
+        linewidth=_lw(obj, style),
+    )
+    ax.add_patch(patch)
+    obstacles.add_arc(cx, cy, radius, theta1, theta2, kind="sector")
+    # Radial edges
+    for theta in (theta1, theta2):
+        rad = math.radians(theta)
+        obstacles.add_segment(
+            cx,
+            cy,
+            cx + radius * math.cos(rad),
+            cy + radius * math.sin(rad),
+            kind="sector",
+        )
 
 
 def draw_arc(ax: Axes, obj: dict, style: ExamStyle, obstacles: ObstacleSet) -> None:
@@ -83,7 +138,7 @@ def draw_arc(ax: Axes, obj: dict, style: ExamStyle, obstacles: ObstacleSet) -> N
         angle=0,
         theta1=theta1,
         theta2=theta2,
-        color=style.stroke,
+        color=_stroke_color(obj, style),
         linewidth=_lw(obj, style),
     )
     ax.add_patch(patch)
@@ -121,7 +176,7 @@ def draw_right_angle_marker(ax: Axes, obj: dict, style: ExamStyle, obstacles: Ob
     p3 = (vx + u2[0] * size, vy + u2[1] * size)
     xs = [p1[0], p2[0], p3[0]]
     ys = [p1[1], p2[1], p3[1]]
-    ax.plot(xs, ys, color=style.stroke, linewidth=_lw(obj, style))
+    ax.plot(xs, ys, color=_stroke_color(obj, style), linewidth=_lw(obj, style))
     obstacles.add_polyline([p1, p2, p3], kind="right_angle")
 
 
@@ -139,7 +194,7 @@ def draw_angle_arc(ax: Axes, obj: dict, style: ExamStyle, obstacles: ObstacleSet
         angle=0,
         theta1=min(a1, a2),
         theta2=max(a1, a2),
-        color=style.stroke,
+        color=_stroke_color(obj, style),
         linewidth=_lw(obj, style),
     )
     ax.add_patch(patch)
@@ -175,6 +230,7 @@ def draw_dimension_line(ax: Axes, obj: dict, style: ExamStyle, obstacles: Obstac
 
     lw = max(_lw(obj, style) * 0.9, 0.8)
     ext_lw = max(lw * 0.7, 0.6)
+    color = _stroke_color(obj, style)
 
     ax.annotate(
         "",
@@ -182,15 +238,15 @@ def draw_dimension_line(ax: Axes, obj: dict, style: ExamStyle, obstacles: Obstac
         xytext=(sx, sy),
         arrowprops=dict(
             arrowstyle="<->",
-            color=style.stroke,
+            color=color,
             lw=lw,
             shrinkA=0,
             shrinkB=0,
         ),
         annotation_clip=False,
     )
-    ax.plot([e1x, sx], [e1y, sy], color=style.stroke, linewidth=ext_lw, solid_capstyle="butt")
-    ax.plot([e2x, ex], [e2y, ey], color=style.stroke, linewidth=ext_lw, solid_capstyle="butt")
+    ax.plot([e1x, sx], [e1y, sy], color=color, linewidth=ext_lw, solid_capstyle="butt")
+    ax.plot([e2x, ex], [e2y, ey], color=color, linewidth=ext_lw, solid_capstyle="butt")
 
     obstacles.add_segment(sx, sy, ex, ey, kind="dimension")
     obstacles.add_segment(e1x, e1y, sx, sy, kind="dimension_ext")

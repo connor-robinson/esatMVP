@@ -132,5 +132,7 @@ def draw_function(
         ys.append(y)
     if len(xs) < 2:
         return
-    ax.plot(xs, ys, color=style.stroke, linewidth=float(obj.get("linewidth") or style.stroke_width))
+    color = str(obj.get("color") or obj.get("edgecolor") or style.stroke)
+    ax.plot(xs, ys, color=color, linewidth=float(obj.get("linewidth") or style.stroke_width))
     obstacles.add_polyline(list(zip(xs, ys)), kind="function")
+

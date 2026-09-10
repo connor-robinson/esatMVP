@@ -14,6 +14,7 @@ SUPPORTED_OBJECT_TYPES = frozenset(
         "polygon",
         "line",
         "circle",
+        "sector",
         "arc",
         "function",
         "axes",
@@ -127,6 +128,11 @@ def _validate_object(obj: dict[str, Any], index: int) -> None:
     elif obj_type == "circle":
         _as_point(obj.get("center"), f"objects[{index}].center")
         _as_float(obj.get("radius"), f"objects[{index}].radius")
+    elif obj_type == "sector":
+        _as_point(obj.get("center"), f"objects[{index}].center")
+        _as_float(obj.get("radius"), f"objects[{index}].radius")
+        _as_float(obj.get("theta1"), f"objects[{index}].theta1")
+        _as_float(obj.get("theta2"), f"objects[{index}].theta2")
     elif obj_type == "arc":
         _as_point(obj.get("center"), f"objects[{index}].center")
         _as_float(obj.get("radius"), f"objects[{index}].radius")
@@ -168,12 +174,23 @@ def _validate_object(obj: dict[str, Any], index: int) -> None:
         if not smiles:
             raise VisualSpecError(f"objects[{index}] chem_structure needs smiles")
     elif obj_type == "pedigree":
-        people = obj.get("people") or []
-        if not isinstance(people, list) or len(people) < 1:
-            raise VisualSpecError(f"objects[{index}] pedigree needs people")
-        for i, person in enumerate(people):
-            if not isinstance(person, dict) or not str(person.get("id") or person.get("label") or "").strip():
-                raise VisualSpecError(f"objects[{index}].people[{i}] needs an id")
+        from .pedigree_schema import validate_pedigree
+
+        # Accept either canonical individuals/families or legacy people/unions.
+        payload = {
+            "individuals": obj.get("individuals"),
+            "families": obj.get("families"),
+            "legend": obj.get("legend"),
+            "people": obj.get("people"),
+            "unions": obj.get("unions"),
+            "children": obj.get("children"),
+            "key": obj.get("key"),
+        }
+        result = validate_pedigree(payload)
+        if not result.valid:
+            raise VisualSpecError(
+                f"objects[{index}] invalid pedigree: " + "; ".join(result.errors)
+            )
 
 
 def _validate_label(label: dict[str, Any], index: int) -> None:
@@ -201,6 +218,12 @@ def parse_spec(data: dict[str, Any]) -> VisualSpec:
         equal_aspect=bool(cs_raw.get("equal_aspect", True)),
         show_axes=bool(cs_raw.get("show_axes", False)),
     )
+    if str(data.get("diagram_type") or "").strip().lower() == "graph":
+        # Science plots should not be distorted / padded by equal-aspect boxing.
+        if "equal_aspect" not in cs_raw:
+            cs.equal_aspect = False
+        if "show_axes" not in cs_raw:
+            cs.show_axes = True
     if cs.x_max <= cs.x_min or cs.y_max <= cs.y_min:
         raise VisualSpecError("coordinate_system bounds must be positive width/height")
 

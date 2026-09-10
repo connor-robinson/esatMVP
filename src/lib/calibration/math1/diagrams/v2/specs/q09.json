@@ -1,0 +1,212 @@
+{
+  "spec_version": "1.0",
+  "needs_diagram": true,
+  "diagram_type": "geometry",
+  "diagram_id": "m1cal-v2-q09-diagram",
+  "not_to_scale": false,
+  "coordinate_system": {
+    "x_min": -1.05,
+    "x_max": 1.55,
+    "y_min": -0.35,
+    "y_max": 1.8,
+    "equal_aspect": true,
+    "show_axes": false
+  },
+  "objects": [
+    {
+      "type": "circle",
+      "center": [
+        0,
+        0.7778619134
+      ],
+      "radius": 0.7778619134,
+      "fill": true,
+      "facecolor": "#F1F5F9",
+      "edgecolor": "#1F2937",
+      "linewidth": 3.0
+    },
+    {
+      "type": "line",
+      "start": [
+        -0.28,
+        0.0
+      ],
+      "end": [
+        1.28,
+        0.0
+      ],
+      "color": "#1F2937",
+      "linewidth": 3.0
+    },
+    {
+      "type": "line",
+      "start": [
+        0,
+        0
+      ],
+      "end": [
+        0.7660444431,
+        0.6427876097
+      ],
+      "color": "#1F2937",
+      "linewidth": 2.8
+    },
+    {
+      "type": "line",
+      "start": [
+        0.7660444431,
+        0.6427876097
+      ],
+      "end": [
+        1,
+        0
+      ],
+      "color": "#1F2937",
+      "linewidth": 2.8
+    },
+    {
+      "type": "line",
+      "start": [
+        0,
+        0
+      ],
+      "end": [
+        -0.4999999999,
+        1.3737387097
+      ],
+      "color": "#64748B",
+      "linewidth": 2.0
+    },
+    {
+      "type": "line",
+      "start": [
+        0.7660444431,
+        0.6427876097
+      ],
+      "end": [
+        -0.4999999999,
+        1.3737387097
+      ],
+      "color": "#64748B",
+      "linewidth": 2.0
+    },
+    {
+      "type": "equal_length_ticks",
+      "seg1_start": [
+        0,
+        0
+      ],
+      "seg1_end": [
+        1,
+        0
+      ],
+      "seg2_start": [
+        0,
+        0
+      ],
+      "seg2_end": [
+        0.7660444431,
+        0.6427876097
+      ],
+      "linewidth": 2.2
+    },
+    {
+      "type": "arc",
+      "center": [
+        1,
+        0
+      ],
+      "radius": 0.22,
+      "theta1": 110,
+      "theta2": 180,
+      "color": "#64748B",
+      "linewidth": 2.0
+    },
+    {
+      "type": "point",
+      "at": [
+        0.0,
+        0.0
+      ],
+      "size": 5.0
+    },
+    {
+      "type": "point",
+      "at": [
+        1.0,
+        0.0
+      ],
+      "size": 5.0
+    },
+    {
+      "type": "point",
+      "at": [
+        0.7660444431,
+        0.6427876097
+      ],
+      "size": 5.0
+    },
+    {
+      "type": "point",
+      "at": [
+        -0.4999999999,
+        1.3737387097
+      ],
+      "size": 5.0
+    }
+  ],
+  "labels": [
+    {
+      "text": "$70^{\\circ}$",
+      "anchor": [
+        0.7249342219125179,
+        0.1998469857794409
+      ],
+      "preferred_position": "center",
+      "id": "angle_70",
+      "fixed": true
+    },
+    {
+      "text": "A",
+      "anchor": [
+        -0.1,
+        -0.17
+      ],
+      "preferred_position": "center",
+      "id": "pt_A",
+      "fixed": true
+    },
+    {
+      "text": "T",
+      "anchor": [
+        1.06,
+        -0.16
+      ],
+      "preferred_position": "center",
+      "id": "pt_T",
+      "fixed": true
+    },
+    {
+      "text": "B",
+      "anchor": [
+        0.8260444431,
+        0.7027876097000001
+      ],
+      "preferred_position": "center",
+      "id": "pt_B",
+      "fixed": true
+    },
+    {
+      "text": "C",
+      "anchor": [
+        -0.6399999999,
+        1.4637387097
+      ],
+      "preferred_position": "center",
+      "id": "pt_C",
+      "fixed": true
+    }
+  ],
+  "annotations": [],
+  "source_question_id": "m1cal-v2-q09"
+}

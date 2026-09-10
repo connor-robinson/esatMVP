@@ -1,0 +1,297 @@
+{
+  "spec_version": "1.0",
+  "needs_diagram": true,
+  "diagram_type": "geometry",
+  "diagram_id": "m1cal-v2-q05-diagram",
+  "not_to_scale": false,
+  "coordinate_system": {
+    "x_min": -1.0,
+    "x_max": 13.0,
+    "y_min": -0.5,
+    "y_max": 6.5,
+    "equal_aspect": true,
+    "show_axes": false
+  },
+  "objects": [
+    {
+      "type": "sector",
+      "center": [
+        3.0,
+        3.0
+      ],
+      "radius": 2.25,
+      "theta1": 0.0,
+      "theta2": 90.0,
+      "fill": true,
+      "facecolor": "#F1F5F9",
+      "edgecolor": "#1F2937",
+      "linewidth": 2.1
+    },
+    {
+      "type": "sector",
+      "center": [
+        3.0,
+        3.0
+      ],
+      "radius": 2.25,
+      "theta1": -90.0,
+      "theta2": 0.0,
+      "fill": true,
+      "facecolor": "#FFFFFF",
+      "edgecolor": "#1F2937",
+      "linewidth": 2.1
+    },
+    {
+      "type": "sector",
+      "center": [
+        3.0,
+        3.0
+      ],
+      "radius": 2.25,
+      "theta1": -180.0,
+      "theta2": -90.0,
+      "fill": true,
+      "facecolor": "#F1F5F9",
+      "edgecolor": "#1F2937",
+      "linewidth": 2.1
+    },
+    {
+      "type": "sector",
+      "center": [
+        3.0,
+        3.0
+      ],
+      "radius": 2.25,
+      "theta1": -270.0,
+      "theta2": -180.0,
+      "fill": true,
+      "facecolor": "#FFFFFF",
+      "edgecolor": "#1F2937",
+      "linewidth": 2.1
+    },
+    {
+      "type": "circle",
+      "center": [
+        3.0,
+        3.0
+      ],
+      "radius": 0.15,
+      "fill": true,
+      "facecolor": "#64748B",
+      "edgecolor": "#1F2937",
+      "linewidth": 1.2
+    },
+    {
+      "type": "polygon",
+      "points": [
+        [
+          2.8,
+          5.47
+        ],
+        [
+          3.2,
+          5.47
+        ],
+        [
+          3.0,
+          5.15
+        ]
+      ],
+      "fill": true,
+      "facecolor": "#64748B",
+      "edgecolor": "#1F2937",
+      "linewidth": 1.0
+    },
+    {
+      "type": "sector",
+      "center": [
+        9.0,
+        3.0
+      ],
+      "radius": 2.25,
+      "theta1": 0.0,
+      "theta2": 90.0,
+      "fill": true,
+      "facecolor": "#F1F5F9",
+      "edgecolor": "#1F2937",
+      "linewidth": 2.1
+    },
+    {
+      "type": "sector",
+      "center": [
+        9.0,
+        3.0
+      ],
+      "radius": 2.25,
+      "theta1": -90.0,
+      "theta2": 0.0,
+      "fill": true,
+      "facecolor": "#FFFFFF",
+      "edgecolor": "#1F2937",
+      "linewidth": 2.1
+    },
+    {
+      "type": "sector",
+      "center": [
+        9.0,
+        3.0
+      ],
+      "radius": 2.25,
+      "theta1": -180.0,
+      "theta2": -90.0,
+      "fill": true,
+      "facecolor": "#F1F5F9",
+      "edgecolor": "#1F2937",
+      "linewidth": 2.1
+    },
+    {
+      "type": "sector",
+      "center": [
+        9.0,
+        3.0
+      ],
+      "radius": 2.25,
+      "theta1": -270.0,
+      "theta2": -180.0,
+      "fill": true,
+      "facecolor": "#FFFFFF",
+      "edgecolor": "#1F2937",
+      "linewidth": 2.1
+    },
+    {
+      "type": "circle",
+      "center": [
+        9.0,
+        3.0
+      ],
+      "radius": 0.15,
+      "fill": true,
+      "facecolor": "#64748B",
+      "edgecolor": "#1F2937",
+      "linewidth": 1.2
+    },
+    {
+      "type": "polygon",
+      "points": [
+        [
+          8.8,
+          5.47
+        ],
+        [
+          9.2,
+          5.47
+        ],
+        [
+          9.0,
+          5.15
+        ]
+      ],
+      "fill": true,
+      "facecolor": "#64748B",
+      "edgecolor": "#1F2937",
+      "linewidth": 1.0
+    }
+  ],
+  "labels": [
+    {
+      "text": "1",
+      "anchor": [
+        3.938684252025142,
+        3.938684252025142
+      ],
+      "preferred_position": "center",
+      "id": "Spinner X_1_45.0",
+      "fixed": true
+    },
+    {
+      "text": "3",
+      "anchor": [
+        3.938684252025142,
+        2.061315747974858
+      ],
+      "preferred_position": "center",
+      "id": "Spinner X_3_-45.0",
+      "fixed": true
+    },
+    {
+      "text": "2",
+      "anchor": [
+        2.0613157479748585,
+        2.061315747974858
+      ],
+      "preferred_position": "center",
+      "id": "Spinner X_2_-135.0",
+      "fixed": true
+    },
+    {
+      "text": "2",
+      "anchor": [
+        2.0613157479748585,
+        3.938684252025142
+      ],
+      "preferred_position": "center",
+      "id": "Spinner X_2_135.0",
+      "fixed": true
+    },
+    {
+      "text": "Spinner X",
+      "anchor": [
+        3.0,
+        0.19999999999999996
+      ],
+      "preferred_position": "below",
+      "id": "title_Spinner X"
+    },
+    {
+      "text": "1",
+      "anchor": [
+        9.938684252025142,
+        3.938684252025142
+      ],
+      "preferred_position": "center",
+      "id": "Spinner Y_1_45.0",
+      "fixed": true
+    },
+    {
+      "text": "2",
+      "anchor": [
+        9.938684252025142,
+        2.061315747974858
+      ],
+      "preferred_position": "center",
+      "id": "Spinner Y_2_-45.0",
+      "fixed": true
+    },
+    {
+      "text": "3",
+      "anchor": [
+        8.061315747974858,
+        2.061315747974858
+      ],
+      "preferred_position": "center",
+      "id": "Spinner Y_3_-135.0",
+      "fixed": true
+    },
+    {
+      "text": "4",
+      "anchor": [
+        8.061315747974858,
+        3.938684252025142
+      ],
+      "preferred_position": "center",
+      "id": "Spinner Y_4_135.0",
+      "fixed": true
+    },
+    {
+      "text": "Spinner Y",
+      "anchor": [
+        9.0,
+        0.19999999999999996
+      ],
+      "preferred_position": "below",
+      "id": "title_Spinner Y"
+    }
+  ],
+  "annotations": [],
+  "source_question_id": "m1cal-v2-q05"
+}
