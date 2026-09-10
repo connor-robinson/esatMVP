@@ -1,16 +1,10 @@
 import type { Metadata } from "next";
-import { cookies, headers } from "next/headers";
 import { Suspense } from "react";
 import { HomePageContent } from "@/components/homepage/HomePageContent";
 import { HomepageSocialProofStatsDisplay } from "@/components/home/HomepageSocialProofStats";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { BRAND_CONFIG } from "@/config/brand";
 import { MARKETING_HOMEPAGE_FAQ } from "@/lib/homepage/marketingFaq";
-import {
-  HOMEPAGE_HERO_AB_COOKIE,
-  HOMEPAGE_HERO_AB_HEADER,
-  resolveHomepageHeroVariant,
-} from "@/lib/homepage/heroAbTest";
 import { getHomepageSocialProofStats } from "@/lib/homepage/socialProofStats";
 import { HOMEPAGE_SOCIAL_PROOF_REVALIDATE_SECONDS } from "@/lib/homepage/socialProofTypes";
 import {
@@ -81,25 +75,11 @@ async function HomepageSocialProofSlot() {
   }
 }
 
-type HomePageProps = {
-  searchParams?: Promise<{ hero?: string }> | { hero?: string };
-};
-
-export default async function HomePage({ searchParams }: HomePageProps) {
-  const params = await Promise.resolve(searchParams ?? {});
-  const cookieStore = await cookies();
-  const headerStore = await headers();
-  const { variant: heroVariant } = resolveHomepageHeroVariant({
-    cookieValue: cookieStore.get(HOMEPAGE_HERO_AB_COOKIE)?.value,
-    queryValue: params.hero,
-    headerValue: headerStore.get(HOMEPAGE_HERO_AB_HEADER),
-  });
-
+export default function HomePage() {
   return (
     <>
       <JsonLd schema={HOMEPAGE_SCHEMA} />
       <HomePageContent
-        heroVariant={heroVariant}
         socialProofSlot={
           <Suspense fallback={null}>
             <HomepageSocialProofSlot />

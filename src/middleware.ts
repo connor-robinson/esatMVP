@@ -8,47 +8,12 @@ import {
   isRecoveryAllowedPath,
 } from '@/lib/auth/recovery';
 import { RESET_PASSWORD_PATH } from '@/lib/auth/urls';
-import {
-  HOMEPAGE_HERO_AB_COOKIE,
-  HOMEPAGE_HERO_AB_HEADER,
-  homepageHeroAbCookieOptions,
-  parseHomepageHeroVariant,
-  resolveHomepageHeroVariant,
-} from '@/lib/homepage/heroAbTest';
 
 function applyResponseCookies(from: NextResponse, to: NextResponse) {
   from.cookies.getAll().forEach((cookie) => {
     to.cookies.set(cookie);
   });
   return to;
-}
-
-function resolveHomepageHeroForRequest(request: NextRequest) {
-  return resolveHomepageHeroVariant({
-    cookieValue: request.cookies.get(HOMEPAGE_HERO_AB_COOKIE)?.value,
-    queryValue: request.nextUrl.searchParams.get('hero'),
-  });
-}
-
-function withHomepageHeroAb(
-  request: NextRequest,
-  response: NextResponse,
-  resolution: ReturnType<typeof resolveHomepageHeroVariant>,
-) {
-  if (request.nextUrl.pathname !== '/') return response;
-
-  const queryVariant = parseHomepageHeroVariant(
-    request.nextUrl.searchParams.get('hero'),
-  );
-  if (queryVariant || resolution.assigned) {
-    response.cookies.set(
-      HOMEPAGE_HERO_AB_COOKIE,
-      resolution.variant,
-      homepageHeroAbCookieOptions(),
-    );
-  }
-
-  return response;
 }
 
 export async function middleware(request: NextRequest) {
@@ -67,28 +32,14 @@ export async function middleware(request: NextRequest) {
     path.startsWith('/dev') ||
     path.startsWith('/static');
 
-  const heroResolution =
-    path === '/'
-      ? resolveHomepageHeroForRequest(request)
-      : null;
-
-  const requestHeaders = new Headers(request.headers);
-  if (heroResolution) {
-    requestHeaders.set(HOMEPAGE_HERO_AB_HEADER, heroResolution.variant);
-  }
-
-  let response = NextResponse.next({
-    request: { headers: requestHeaders },
-  });
+  let response = NextResponse.next({ request });
 
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
     if (!supabaseUrl || !supabaseAnonKey) {
-      return heroResolution
-        ? withHomepageHeroAb(request, response, heroResolution)
-        : response;
+      return response;
     }
 
     const supabase = createServerClientSSR<Database>(supabaseUrl, supabaseAnonKey, {
@@ -100,11 +51,7 @@ export async function middleware(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) => {
             request.cookies.set(name, value);
           });
-          const previous = response;
-          response = NextResponse.next({
-            request: { headers: requestHeaders },
-          });
-          applyResponseCookies(previous, response);
+          response = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) => {
             response.cookies.set(name, value, options);
           });
@@ -116,9 +63,7 @@ export async function middleware(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (skipSetupLock || !user) {
-      return heroResolution
-        ? withHomepageHeroAb(request, response, heroResolution)
-        : response;
+      return response;
     }
 
     const { data: profile } = await supabase
@@ -143,35 +88,25 @@ export async function middleware(request: NextRequest) {
       const intended = sanitizeRedirectTo(
         `${path}${request.nextUrl.search}`,
       );
-      const redirected = applyResponseCookies(
+      return applyResponseCookies(
         response,
         NextResponse.redirect(new URL(buildOnboardingUrl(intended), request.url)),
       );
-      return heroResolution
-        ? withHomepageHeroAb(request, redirected, heroResolution)
-        : redirected;
     }
 
     if (!needsSetup && onOnboarding && !isOnboardingPreview) {
       const nextPath = sanitizeRedirectTo(
         request.nextUrl.searchParams.get('redirectTo'),
       );
-      const redirected = applyResponseCookies(
+      return applyResponseCookies(
         response,
         NextResponse.redirect(new URL(nextPath, request.url)),
       );
-      return heroResolution
-        ? withHomepageHeroAb(request, redirected, heroResolution)
-        : redirected;
     }
 
-    return heroResolution
-      ? withHomepageHeroAb(request, response, heroResolution)
-      : response;
+    return response;
   } catch (error) {
-    return heroResolution
-      ? withHomepageHeroAb(request, response, heroResolution)
-      : response;
+    return response;
   }
 }
 
