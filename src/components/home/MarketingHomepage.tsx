@@ -190,7 +190,6 @@ export function MarketingHomepage({
   const monthlyPriceLabel = formatGbpPrice(MONTHLY_PRICE_GBP);
   const monthlyListPriceLabel = formatGbpPrice(MONTHLY_LIST_PRICE_GBP);
   const monthlyPerWeekLabel = formatGbpPrice(getMonthlyPricePerWeek());
-  const monthlyDiscountLabel = `${getMonthlyDiscountPercent()}% off`;
 
   useEffect(() => {
     void trackHomepageEvent("homepage_viewed", {
