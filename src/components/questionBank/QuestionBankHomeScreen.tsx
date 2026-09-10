@@ -616,6 +616,11 @@ export function QuestionBankHomeScreen() {
                         aria-hidden
                       />
                       <div className="min-w-0">
+                        {tile.tag ? (
+                          <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.1em] text-error">
+                            {tile.tag}
+                          </p>
+                        ) : null}
                         <p
                           className={cn(
                             "text-base font-semibold leading-snug sm:text-lg",
