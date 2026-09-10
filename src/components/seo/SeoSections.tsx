@@ -89,7 +89,7 @@ export function SeoList({
         <li key={index} className="flex items-start gap-3">
           <span
             aria-hidden
-            className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
+            className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-white"
           />
           <span className="leading-relaxed text-[#94A3B8]">{item}</span>
         </li>
@@ -157,7 +157,7 @@ export function SummaryBox({
           <li key={item} className="flex items-start gap-3">
             <span
               aria-hidden
-              className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
+              className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-white"
             />
             <span className="text-sm leading-relaxed text-[#94A3B8]">{item}</span>
           </li>

@@ -29,9 +29,6 @@ function CompactFounder({
         <h3 className="font-display text-2xl font-bold tracking-tight text-white">
           {founder.name}
         </h3>
-        <p className="mt-2 text-xs font-bold uppercase tracking-[0.16em] text-[#3B82F6]">
-          {founder.role}
-        </p>
         <p className="mt-4 text-sm leading-relaxed text-[#94A3B8]">
           {founder.homepageCredential}
         </p>
@@ -53,14 +50,10 @@ export function MeetFounders() {
               Meet our founders
             </h2>
           </div>
-          <div>
-            <p className="max-w-2xl text-lg leading-relaxed text-[#94A3B8]">
-              We created ESAT Camp to create the ESAT preparation platform that
-              we wish we had.
-            </p>
+          <div className="lg:flex lg:justify-end">
             <Link
               href={ABOUT_PATH}
-              className="mt-5 inline-flex items-center gap-2 font-bold text-[#93C5FD] transition-colors hover:text-white"
+              className="inline-flex items-center gap-2 font-bold text-[#93C5FD] transition-colors hover:text-white"
             >
               Meet the team
               <span aria-hidden>→</span>

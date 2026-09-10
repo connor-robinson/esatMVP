@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 type TrainerQuestion = {
@@ -210,23 +209,6 @@ export function HeroTrainerDemo({ className }: { className?: string }) {
 
   return (
     <div className={cn("relative w-full max-w-[26rem] sm:max-w-[28rem]", className)}>
-      {!finished && picked === null ? (
-        <motion.div
-          className="pointer-events-none absolute -right-1 -top-3 z-20 sm:-right-2 sm:-top-4"
-          aria-hidden
-          animate={{ y: [0, -7, 0] }}
-          transition={{
-            duration: 2.2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        >
-          <div className="rounded-full bg-[#3B82F6] px-3.5 py-1.5 text-xs font-bold tracking-wide text-white shadow-[0_8px_24px_rgba(59,130,246,0.45)] sm:px-4 sm:py-2 sm:text-sm">
-            Try me
-          </div>
-        </motion.div>
-      ) : null}
-
       <div className="relative flex w-full flex-col overflow-hidden rounded-3xl bg-white/[0.08] p-7 backdrop-blur-xl sm:p-9 lg:min-h-[34rem] lg:p-10">
       <div className="flex items-center justify-between gap-4">
         <div className="flex gap-2">

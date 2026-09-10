@@ -374,7 +374,7 @@ export function MarketingHomepage({
                   <li key={item} className="flex items-start gap-3">
                     <span
                       aria-hidden
-                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-white"
                     />
                     <p className="text-base leading-relaxed text-[#94A3B8] sm:text-lg">
                       {item}
@@ -424,7 +424,7 @@ export function MarketingHomepage({
                   <li key={item} className="flex items-start gap-3">
                     <span
                       aria-hidden
-                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-white"
                     />
                     <p className="text-base leading-relaxed text-[#94A3B8] sm:text-lg">
                       {item}
@@ -475,7 +475,7 @@ export function MarketingHomepage({
                 <li className="flex items-start gap-3">
                   <span
                     aria-hidden
-                    className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
+                    className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-white"
                   />
                   <p className="text-lg text-[#94A3B8]">
                     Pick an exam and year, then calculate your ESAT score.
@@ -484,7 +484,7 @@ export function MarketingHomepage({
                 <li className="flex items-start gap-3">
                   <span
                     aria-hidden
-                    className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
+                    className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-white"
                   />
                   <p className="text-lg text-[#94A3B8]">
                     Free tool, no login required.
@@ -536,7 +536,7 @@ export function MarketingHomepage({
                   <li key={feature} className="flex items-start gap-2">
                     <span
                       aria-hidden
-                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-white"
                     />
                     {feature}
                   </li>
@@ -606,7 +606,7 @@ export function MarketingHomepage({
                   <li key={feature} className="flex items-start gap-2">
                     <span
                       aria-hidden
-                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-white"
                     />
                     {feature}
                   </li>
