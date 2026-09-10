@@ -99,11 +99,12 @@ export function AccessManualEntry() {
           <input
             type="text"
             autoComplete="off"
+            autoCapitalize="characters"
             spellCheck={false}
             value={token}
-            onChange={(e) => setToken(e.target.value)}
+            onChange={(e) => setToken(e.target.value.toUpperCase())}
             aria-label="Access code"
-            className="min-w-0 flex-1 rounded-xl border-0 bg-surface-mid px-4 py-3 text-base text-text outline-none ring-0 placeholder:text-text-muted focus:outline-none focus:ring-0"
+            className="min-w-0 flex-1 rounded-xl border-0 bg-surface-mid px-4 py-3 text-base uppercase text-text outline-none ring-0 placeholder:normal-case placeholder:text-text-muted focus:outline-none focus:ring-0"
             placeholder="Access code"
             data-testid="access-code-input"
           />

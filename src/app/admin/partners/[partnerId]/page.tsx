@@ -356,7 +356,8 @@ export default function AdminPartnerDetailPage() {
               <input
                 type="text"
                 value={cohortCode}
-                onChange={(e) => setCohortCode(e.target.value)}
+                onChange={(e) => setCohortCode(e.target.value.toUpperCase())}
+                autoCapitalize="characters"
                 placeholder="ARKWRIGHT26"
                 className="mt-1 block w-44 rounded-lg bg-stone-100 px-3 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-stone-400"
               />
@@ -446,6 +447,16 @@ export default function AdminPartnerDetailPage() {
             </li>
             <li>Calibrations completed: {partner.calibrationsCompleted}</li>
             <li>Past-paper sessions: {partner.pastPaperSessions}</li>
+            <li>
+              QB UI preference: new {partner.qbUiSurveyBreakdown.esat}, classic{" "}
+              {partner.qbUiSurveyBreakdown.classic}, unknown{" "}
+              {partner.qbUiSurveyBreakdown.unanswered}
+            </li>
+            <li>
+              QB UI in use: new {partner.qbUiVariantBreakdown.esat}, classic{" "}
+              {partner.qbUiVariantBreakdown.classic}, unset{" "}
+              {partner.qbUiVariantBreakdown.unset}
+            </li>
             <li>
               Invite status: unused {partner.invitesUnused}, expired{" "}
               {partner.invitesExpired}, revoked {partner.invitesRevoked}
