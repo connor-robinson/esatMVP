@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import {
@@ -9,6 +9,11 @@ import {
   type MockBuilderSubject,
 } from "@/lib/mockBuilder/types";
 
+type DiagramAvailability = Record<
+  string,
+  { available: number; reserved: number; defaultTarget: number }
+>;
+
 export default function AdminMockBuilderPage() {
   const [forbidden, setForbidden] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -16,6 +21,9 @@ export default function AdminMockBuilderPage() {
   const [excludePractice, setExcludePractice] = useState(true);
   const [subject, setSubject] = useState<MockBuilderSubject>("Math 1");
   const [mockNumber, setMockNumber] = useState(1);
+  const [diagramCount, setDiagramCount] = useState(3);
+  const [diagramAvailability, setDiagramAvailability] =
+    useState<DiagramAvailability>({});
   const [creating, setCreating] = useState(false);
   const [labeling, setLabeling] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,12 +48,26 @@ export default function AdminMockBuilderPage() {
     setExcludePractice(
       data.settings?.excludePublishedMockQuestionsFromPractice !== false,
     );
+    setDiagramAvailability(data.diagramAvailability ?? {});
     setLoading(false);
   }, []);
 
   useEffect(() => {
     load();
   }, [load]);
+
+  useEffect(() => {
+    const meta = diagramAvailability[subject];
+    if (!meta) return;
+    const next = Math.min(meta.defaultTarget || 3, meta.available);
+    setDiagramCount(next);
+  }, [subject, diagramAvailability]);
+
+  const diagramMeta = diagramAvailability[subject];
+  const diagramHint = useMemo(() => {
+    if (!diagramMeta) return "Loading diagram availability…";
+    return `${diagramMeta.available} diagrams available for mocks (free-tier 10 excluded; ${diagramMeta.reserved} already reserved).`;
+  }, [diagramMeta]);
 
   async function createMock() {
     setCreating(true);
@@ -57,6 +79,7 @@ export default function AdminMockBuilderPage() {
       body: JSON.stringify({
         subject,
         mockNumber,
+        diagramCount,
         generate: true,
       }),
     });
@@ -179,6 +202,17 @@ export default function AdminMockBuilderPage() {
                 onChange={(e) => setMockNumber(Number(e.target.value))}
               />
             </label>
+            <label className="text-sm">
+              <span className="mb-1 block text-stone-600">Diagram questions</span>
+              <input
+                type="number"
+                min={0}
+                max={27}
+                className="w-24 rounded border border-stone-300 bg-white px-2 py-1.5"
+                value={diagramCount}
+                onChange={(e) => setDiagramCount(Number(e.target.value))}
+              />
+            </label>
             <button
               type="button"
               disabled={creating}
@@ -196,10 +230,11 @@ export default function AdminMockBuilderPage() {
               {labeling ? "AI labeling…" : "AI-label difficulty (1–5)"}
             </button>
           </div>
-          <p className="mt-2 text-xs text-stone-500">
-            Mock 1 is marked free; mocks 2–6 are paid (existing entitlement).
-            Difficulty 1–5 is assigned by Vertex when missing; generate also
-            auto-labels up to ~96 unlabeled questions first.
+          <p className="mt-2 text-xs text-stone-500">{diagramHint}</p>
+          <p className="mt-1 text-xs text-stone-500">
+            Free-tier preview questions (first 10 per subject) are never used in
+            mocks. Approved/published mock questions are reserved and cannot be
+            reused.
           </p>
           {error && <p className="mt-2 text-sm text-red-700">{error}</p>}
           {info && <p className="mt-2 text-sm text-stone-700">{info}</p>}

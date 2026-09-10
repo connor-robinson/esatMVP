@@ -13,3 +13,4 @@ export * from "./paperReviewer";
 export * from "./access";
 export * from "./aiMetadata";
 export * from "./vertexClient";
+export * from "./poolFilters";

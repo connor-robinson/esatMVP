@@ -15,6 +15,7 @@ import {
   totalWorkloadSeconds,
 } from "./scoring";
 import { detectGaps } from "./gaps";
+import { isDiagramQuestion, isFreeTierHookQuestionId } from "./poolFilters";
 import type {
   MockBlueprintConfig,
   MockCandidateQuestion,
@@ -116,9 +117,28 @@ function scoreCandidateFit(
 
   if (conflictsWithPaper(candidate, current)) score -= 15;
 
-  if (usedElsewhere.has(candidate.id)) score -= 4;
-  if (candidate.reservedForMock) score -= 3;
+  // Hard-excluded elsewhere; keep a heavy penalty as safety net.
+  if (usedElsewhere.has(candidate.id)) score -= 100;
+  if (candidate.reservedForMock) score -= 100;
+  if (isFreeTierHookQuestionId(candidate.id)) score -= 100;
   score -= candidate.mockUsageCount * 0.5;
+
+  const diagramTarget = blueprint.presentationTargets.find(
+    (t) => t.type === "diagram",
+  );
+  if (diagramTarget) {
+    const currentDiagrams = current.filter(isDiagramQuestion).length;
+    const candIsDiagram = isDiagramQuestion(candidate);
+    if (currentDiagrams < diagramTarget.min && candIsDiagram) {
+      score += 14;
+    }
+    if (currentDiagrams >= diagramTarget.max && candIsDiagram) {
+      score -= 18;
+    }
+    if (currentDiagrams < diagramTarget.min && !candIsDiagram) {
+      score -= 4;
+    }
+  }
 
   const letterCounts: Record<string, number> = {};
   for (const q of current) {
@@ -150,7 +170,12 @@ function greedySelect(
   const selected = [...locked];
   const selectedIds = new Set(selected.map((q) => q.id));
   const available = pool.filter(
-    (q) => isPublishable(q) && !selectedIds.has(q.id),
+    (q) =>
+      isPublishable(q) &&
+      !selectedIds.has(q.id) &&
+      !usedElsewhere.has(q.id) &&
+      !isFreeTierHookQuestionId(q.id) &&
+      !q.reservedForMock,
   );
 
   while (selected.length < blueprint.questionCount && available.length > 0) {
@@ -193,7 +218,12 @@ function iterativeImprove(
   ).overall;
 
   const available = pool.filter(
-    (q) => isPublishable(q) && !current.some((c) => c.id === q.id),
+    (q) =>
+      isPublishable(q) &&
+      !current.some((c) => c.id === q.id) &&
+      !usedElsewhere.has(q.id) &&
+      !isFreeTierHookQuestionId(q.id) &&
+      !q.reservedForMock,
   );
 
   for (let iter = 0; iter < maxIterations; iter++) {
@@ -374,7 +404,13 @@ export function proposeReplacements(
   const usedIds = new Set(current.map((q) => q.id));
 
   const scored = pool
-    .filter((q) => isPublishable(q) && !usedIds.has(q.id))
+    .filter(
+      (q) =>
+        isPublishable(q) &&
+        !usedIds.has(q.id) &&
+        !isFreeTierHookQuestionId(q.id) &&
+        !q.reservedForMock,
+    )
     .filter((q) => !conflictsWithPaper(q, others))
     .map((q) => {
       let s = scoreCandidateFit(q, others, blueprint, new Set());

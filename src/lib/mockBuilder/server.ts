@@ -8,9 +8,12 @@ import {
   getDefaultBlueprint,
   isFreeMockNumber,
   mergeBlueprintConfig,
+  withDiagramCount,
 } from "./blueprints";
 import { toMockCandidate, type RawBankQuestionRow } from "./metadata";
 import { assembleMockPaper, proposeReplacements } from "./select";
+import { filterMockPool, isDiagramQuestion } from "./poolFilters";
+import { FREE_TIER_QUESTION_IDS } from "@/lib/questionBank/freeTierQuestions";
 import {
   EXCLUDE_SETTING_KEY,
   parseExcludeSetting,
@@ -73,9 +76,13 @@ export async function setExcludePublishedFromPractice(
 export async function loadEligiblePool(
   service: SupabaseClient,
   subject: MockBuilderSubject,
-  options?: { includeReserved?: boolean },
+  options?: {
+    includeReserved?: boolean;
+    /** IDs allowed even if reserved (locked slots on regenerate). */
+    allowIds?: Set<string>;
+  },
 ): Promise<MockCandidateQuestion[]> {
-  let query = service
+  const query = service
     .from("ai_generated_questions")
     .select(POOL_SELECT)
     .eq("subjects", subject)
@@ -83,15 +90,47 @@ export async function loadEligiblePool(
     .eq("mock_eligible", true)
     .limit(2000);
 
-  if (!options?.includeReserved) {
-    // Still allow reserved in pool for regenerate with locks; default exclude heavy reuse
-  }
-
   const { data, error } = await query;
   if (error) throw new Error(error.message);
-  return ((data as unknown as RawBankQuestionRow[] | null) ?? []).map(
+  const candidates = ((data as unknown as RawBankQuestionRow[] | null) ?? []).map(
     toMockCandidate,
   );
+
+  if (options?.includeReserved) {
+    // Still drop free-tier hooks; keep reserved only when allowlisted.
+    return candidates.filter((q) => {
+      if (options.allowIds?.has(q.id)) return true;
+      if (FREE_TIER_QUESTION_IDS.includes(q.id)) return false;
+      return true;
+    });
+  }
+
+  return filterMockPool(candidates, { allowIds: options?.allowIds });
+}
+
+/** Available diagram/visual questions for a subject (excludes free hooks + reserved). */
+export async function countAvailableDiagrams(
+  service: SupabaseClient,
+  subject: MockBuilderSubject,
+): Promise<{ available: number; reserved: number }> {
+  const query = service
+    .from("ai_generated_questions")
+    .select(POOL_SELECT)
+    .eq("subjects", subject)
+    .eq("status", "approved")
+    .eq("mock_eligible", true)
+    .limit(2000);
+  const { data, error } = await query;
+  if (error) throw new Error(error.message);
+  const all = ((data as unknown as RawBankQuestionRow[] | null) ?? []).map(
+    toMockCandidate,
+  );
+  const usable = filterMockPool(all);
+  return {
+    available: usable.filter(isDiagramQuestion).length,
+    reserved: all.filter((q) => q.reservedForMock && isDiagramQuestion(q))
+      .length,
+  };
 }
 
 /**
@@ -311,9 +350,14 @@ export async function createMock(
     mockNumber: number;
     createdBy?: string | null;
     generate?: boolean;
+    /** Exact diagram/visual question target for this mock. */
+    diagramCount?: number;
   },
 ): Promise<{ mock: EsatMockRow; assembly: PaperAssemblyResult | null }> {
-  const blueprint = await resolveBlueprint(service, input.subject);
+  let blueprint = await resolveBlueprint(service, input.subject);
+  if (input.diagramCount != null && Number.isFinite(input.diagramCount)) {
+    blueprint = withDiagramCount(blueprint, input.diagramCount);
+  }
   const title = defaultMockTitle(input.subject, input.mockNumber);
   const { data: mock, error } = await service
     .from("esat_mocks")
@@ -418,14 +462,16 @@ export async function generateAndPersist(
     }
   }
 
-  const pool = await loadEligiblePool(service, subject, {
-    includeReserved: true,
-  });
-  const usedElsewhere = await loadUsedQuestionIds(service, mockId);
-
   const lockedSlots = options?.keepLocks
     ? slots.filter((s) => s.locked)
     : [];
+  const allowIds = new Set(lockedSlots.map((s) => s.questionId));
+
+  const pool = await loadEligiblePool(service, subject, {
+    includeReserved: false,
+    allowIds,
+  });
+  const usedElsewhere = await loadUsedQuestionIds(service, mockId);
 
   const assembly = assembleMockPaper({
     blueprint,

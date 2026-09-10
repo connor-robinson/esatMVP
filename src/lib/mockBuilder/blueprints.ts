@@ -159,3 +159,35 @@ export function defaultMockTitle(
 ): string {
   return `${subject} - Mock ${mockNumber}`;
 }
+
+/**
+ * Set an exact diagram-question target for this mock.
+ * Uses has_visual / diagram / graph questions to satisfy the count.
+ */
+export function withDiagramCount(
+  blueprint: MockBlueprintConfig,
+  diagramCount: number,
+): MockBlueprintConfig {
+  const n = Math.max(
+    0,
+    Math.min(blueprint.questionCount, Math.round(diagramCount)),
+  );
+  const next = structuredClone(blueprint);
+  const others = next.presentationTargets.filter((t) => t.type !== "diagram");
+  next.presentationTargets = [
+    ...others,
+    { type: "diagram", min: n, max: n },
+  ];
+  const text = next.presentationTargets.find((t) => t.type === "text");
+  if (text) {
+    text.max = Math.max(text.min, blueprint.questionCount - n);
+  }
+  return next;
+}
+
+export function getDiagramTarget(blueprint: MockBlueprintConfig): number {
+  const d = blueprint.presentationTargets.find((t) => t.type === "diagram");
+  if (!d) return 0;
+  if (d.min === d.max) return d.min;
+  return Math.round((d.min + d.max) / 2);
+}

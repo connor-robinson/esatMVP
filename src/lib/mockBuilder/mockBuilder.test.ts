@@ -3,7 +3,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { getDefaultBlueprint } from "./blueprints";
+import { getDefaultBlueprint, withDiagramCount } from "./blueprints";
 import {
   buildQualityFlags,
   computePaperCalibration,
@@ -391,6 +391,54 @@ describe("vertex location", () => {
       if (prevLoc == null) delete process.env.VERTEX_GENAI_LOCATION;
       else process.env.VERTEX_GENAI_LOCATION = prevLoc;
     }
+  });
+});
+
+describe("pool filters", () => {
+  it("excludes free-tier hook ids from the mock pool", async () => {
+    const { filterMockPool } = await import("./poolFilters");
+    const { freeTierQuestionIdsForSubject } = await import(
+      "@/lib/questionBank/freeTierQuestions"
+    );
+    const hookId = freeTierQuestionIdsForSubject("Math 1")[0];
+    const pool = [
+      makeQuestion({ id: hookId, hasVisual: true, presentationType: "diagram" }),
+      makeQuestion({
+        id: "usable-diagram",
+        hasVisual: true,
+        presentationType: "diagram",
+      }),
+      makeQuestion({
+        id: "reserved-diagram",
+        hasVisual: true,
+        presentationType: "diagram",
+        reservedForMock: true,
+      }),
+    ];
+    const filtered = filterMockPool(pool);
+    expect(filtered.map((q) => q.id)).toEqual(["usable-diagram"]);
+  });
+
+  it("respects diagram count target when assembling", () => {
+    const blueprint = withDiagramCount(getDefaultBlueprint("Physics"), 5);
+    const pool = buildPool(100).map((q, i) =>
+      makeQuestion({
+        ...q,
+        id: `phys-${i}`,
+        subjects: "Physics",
+        hasVisual: i < 20,
+        presentationType: i < 20 ? "diagram" : "text",
+        topicCode: ["P1", "P2", "P3", "P4", "P5", "P6", "P7"][i % 7],
+      }),
+    );
+    const result = assembleMockPaper({ blueprint, pool, seed: 2 });
+    const diagrams = result.slots.filter(
+      (s) =>
+        s.question &&
+        (s.question.hasVisual || s.question.presentationType === "diagram"),
+    ).length;
+    expect(diagrams).toBeGreaterThanOrEqual(4);
+    expect(diagrams).toBeLessThanOrEqual(6);
   });
 });
 
