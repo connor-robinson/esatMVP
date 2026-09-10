@@ -302,26 +302,13 @@ export function EsatUiPreviewPlayer() {
   return (
     <div
       className="esat-ui-preview-root"
-      data-theme={isDark ? "dark" : "light"}
+      data-theme="light"
       role="application"
       aria-label="ESAT UI preview player"
     >
       <header className="eup-header">
         <div className="eup-header-left">
           <div className="eup-header-title">ESAT UI preview · Math 1</div>
-          <button
-            type="button"
-            className="eup-theme-toggle"
-            onClick={toggleShellTheme}
-            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-          >
-            {isDark ? (
-              <Sun size={15} strokeWidth={2} aria-hidden />
-            ) : (
-              <Moon size={15} strokeWidth={2} aria-hidden />
-            )}
-            <span>{isDark ? "Light" : "Dark"}</span>
-          </button>
         </div>
         <div className="eup-header-right">
           <button
