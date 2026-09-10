@@ -79,6 +79,16 @@ export function LoggedInHomepage({ state }: LoggedInHomepageProps) {
           <PrimaryActionCard
             action={state.primaryAction}
             analyticsProps={analyticsProps}
+            secondaryHref={
+              state.primaryAction.type === "tester_action"
+                ? undefined
+                : "/questions"
+            }
+            secondaryLabel={
+              state.primaryAction.type === "tester_action"
+                ? undefined
+                : "Or try the new Question Bank"
+            }
           />
 
           {showTesterStatus && state.tester ? (

@@ -93,14 +93,28 @@ export function TopicHub({ topics, analyticsProps, className }: TopicHubProps) {
               aria-controls={panelId}
               className="flex w-full items-center justify-between gap-3 text-left"
             >
-              <h2
-                className={cn(
-                  "text-xl font-bold tracking-tight sm:text-2xl",
-                  styles.title,
-                )}
-              >
-                {topic.title}
-              </h2>
+              <span className="min-w-0">
+                <span className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                  <h2
+                    className={cn(
+                      "text-xl font-bold tracking-tight sm:text-2xl",
+                      styles.title,
+                    )}
+                  >
+                    {topic.title}
+                  </h2>
+                  {topic.badge ? (
+                    <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-error">
+                      {topic.badge}
+                    </span>
+                  ) : null}
+                </span>
+                {topic.description ? (
+                  <span className="mt-1 block text-sm font-normal leading-snug text-text-muted">
+                    {topic.description}
+                  </span>
+                ) : null}
+              </span>
               <ChevronDown
                 aria-hidden
                 className={cn(
@@ -141,12 +155,24 @@ export function TopicHub({ topics, analyticsProps, className }: TopicHubProps) {
                       )
                     }
                     className={cn(
-                      "rounded-organic-md px-3 py-3 text-base font-medium transition-colors duration-fast ease-signature",
+                      "rounded-organic-md px-3 py-3 transition-colors duration-fast ease-signature",
                       styles.link,
                       styles.linkHover,
                     )}
                   >
-                    {item.label}
+                    <span className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-base font-medium">
+                      {item.label}
+                      {item.badge ? (
+                        <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-error">
+                          {item.badge}
+                        </span>
+                      ) : null}
+                    </span>
+                    {item.description ? (
+                      <span className="mt-0.5 block text-xs font-normal leading-snug text-text-muted">
+                        {item.description}
+                      </span>
+                    ) : null}
                   </Link>
                 ))}
               </nav>

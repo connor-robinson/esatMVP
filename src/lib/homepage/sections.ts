@@ -30,6 +30,28 @@ export const DASHBOARD_TOPICS: DashboardTopic[] = [
     ],
   },
   {
+    id: "question-bank",
+    title: "Question Bank",
+    accent: "secondary",
+    badge: "NEW",
+    description: "Fresh ESAT Physics, Chemistry, and Biology practice.",
+    items: [
+      {
+        label: "Practice",
+        href: "/questions",
+        analyticsDestination: "question_bank",
+        description: "Start a timed session",
+        badge: "NEW",
+      },
+      {
+        label: "Analytics",
+        href: "/questions/questionbank/analytics",
+        analyticsDestination: "question_bank_analytics",
+        description: "Track your progress",
+      },
+    ],
+  },
+  {
     id: "past-papers",
     title: "Past Papers",
     accent: "accent",
@@ -48,23 +70,6 @@ export const DASHBOARD_TOPICS: DashboardTopic[] = [
         label: "Analytics",
         href: "/past-papers/analytics",
         analyticsDestination: "past_papers_analytics",
-      },
-    ],
-  },
-  {
-    id: "question-bank",
-    title: "Question Bank",
-    accent: "secondary",
-    items: [
-      {
-        label: "Home",
-        href: "/questions",
-        analyticsDestination: "question_bank",
-      },
-      {
-        label: "Analytics",
-        href: "/questions/questionbank/analytics",
-        analyticsDestination: "question_bank_analytics",
       },
     ],
   },

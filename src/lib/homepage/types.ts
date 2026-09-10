@@ -119,6 +119,8 @@ export interface DashboardTopicLink {
   label: string;
   href: string;
   analyticsDestination: string;
+  description?: string;
+  badge?: string;
 }
 
 export interface DashboardTopic {
@@ -126,4 +128,8 @@ export interface DashboardTopic {
   title: string;
   accent: DashboardTopicAccent;
   items: DashboardTopicLink[];
+  /** Short line under the hub title. */
+  description?: string;
+  /** Small tag next to the hub title (e.g. NEW). */
+  badge?: string;
 }

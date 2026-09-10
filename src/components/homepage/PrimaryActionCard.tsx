@@ -9,6 +9,9 @@ import type { HomepageAnalyticsProperties } from "@/lib/homepage/analytics";
 interface PrimaryActionCardProps {
   action: PrimaryAction;
   analyticsProps: HomepageAnalyticsProperties;
+  /** Soft alternate CTA under the main button (e.g. Question Bank). */
+  secondaryHref?: string;
+  secondaryLabel?: string;
 }
 
 function humanizeLabel(value: string): string {
@@ -18,6 +21,8 @@ function humanizeLabel(value: string): string {
 export function PrimaryActionCard({
   action,
   analyticsProps,
+  secondaryHref,
+  secondaryLabel,
 }: PrimaryActionCardProps) {
   const weaknessPrefix = "Your main weakness is ";
   const isWeaknessRecommendation =
@@ -26,6 +31,9 @@ export function PrimaryActionCard({
   const weakness = isWeaknessRecommendation
     ? humanizeLabel(action.title.slice(weaknessPrefix.length))
     : null;
+  const showSecondary =
+    Boolean(secondaryHref && secondaryLabel) &&
+    secondaryHref !== action.href;
 
   return (
     <Card
@@ -34,7 +42,7 @@ export function PrimaryActionCard({
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(var(--color-primary-rgb,34,197,94),0.08),transparent_55%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgb(var(--color-primary-rgb,34,197,94),0.08),transparent_55%)]"
       />
       <div className="relative z-10">
         <p className="text-xs font-semibold uppercase tracking-[0.12em] text-primary">
@@ -56,7 +64,7 @@ export function PrimaryActionCard({
         {action.metric ? (
           <p className="mt-3 text-sm font-medium text-text">{action.metric}</p>
         ) : null}
-        <div className="mt-6">
+        <div className="mt-6 flex flex-col items-start gap-3">
           <Link
             href={action.href}
             onClick={() =>
@@ -70,6 +78,21 @@ export function PrimaryActionCard({
           >
             {humanizeLabel(action.buttonLabel)}
           </Link>
+          {showSecondary ? (
+            <Link
+              href={secondaryHref!}
+              onClick={() =>
+                void trackHomepageEvent("homepage_section_opened", {
+                  ...analyticsProps,
+                  destination: secondaryHref,
+                  section: "question_bank",
+                })
+              }
+              className="text-sm font-medium text-text-muted transition-colors duration-fast ease-signature hover:text-secondary"
+            >
+              {secondaryLabel}
+            </Link>
+          ) : null}
         </div>
       </div>
     </Card>
