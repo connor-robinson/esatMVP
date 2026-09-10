@@ -1,5 +1,9 @@
 /**
  * Infer / normalize mock metadata from existing question-bank fields.
+ *
+ * Difficulty priority:
+ * 1. Stored `mock_difficulty` (ideally AI-assigned 1-5 via Vertex)
+ * 2. Fallback map from bank Easy/Medium/Hard (2/3/4)
  */
 
 import {
@@ -14,6 +18,7 @@ import type {
   ReasoningType,
 } from "./types";
 
+/** Last-resort map when AI has not yet written mock_difficulty. */
 const DIFFICULTY_FROM_LABEL: Record<string, MockDifficulty> = {
   Easy: 2,
   Medium: 3,

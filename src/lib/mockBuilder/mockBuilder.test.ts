@@ -376,7 +376,7 @@ describe("answer pattern guard", () => {
 
 describe("vertex location", () => {
   it("respects VERTEX_GENAI_NO_GLOBAL_REMAP", async () => {
-    const { resolveVertexLocation } = await import("./paperReviewer");
+    const { resolveVertexLocation } = await import("./vertexClient");
     const prevRemap = process.env.VERTEX_GENAI_NO_GLOBAL_REMAP;
     const prevLoc = process.env.VERTEX_GENAI_LOCATION;
     try {
@@ -391,6 +391,38 @@ describe("vertex location", () => {
       if (prevLoc == null) delete process.env.VERTEX_GENAI_LOCATION;
       else process.env.VERTEX_GENAI_LOCATION = prevLoc;
     }
+  });
+});
+
+describe("AI metadata parsing", () => {
+  it("parses Vertex difficulty labels onto 1-5", async () => {
+    const { parseAiMetadataBatchResponse } = await import("./aiMetadata");
+    const labels = parseAiMetadataBatchResponse(
+      {
+        items: [
+          {
+            id: "a",
+            mockDifficulty: 1,
+            estimatedTimeSeconds: 50,
+            reasoningType: "direct_application",
+            presentationType: "text",
+          },
+          {
+            id: "b",
+            mock_difficulty: 5,
+            estimated_time_seconds: 140,
+            reasoning_type: "multi_step",
+            presentation_type: "diagram",
+          },
+          { id: "c", mockDifficulty: 9 },
+        ],
+      },
+      ["a", "b", "c"],
+    );
+    expect(labels).toHaveLength(2);
+    expect(labels[0].mockDifficulty).toBe(1);
+    expect(labels[1].mockDifficulty).toBe(5);
+    expect(labels[1].presentationType).toBe("diagram");
   });
 });
 

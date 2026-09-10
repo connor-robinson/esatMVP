@@ -11,3 +11,5 @@ export * from "./exclusivity";
 export * from "./publish";
 export * from "./paperReviewer";
 export * from "./access";
+export * from "./aiMetadata";
+export * from "./vertexClient";

@@ -4,7 +4,11 @@
  * then a deterministic heuristic fallback.
  */
 
-import { GoogleAuth } from "google-auth-library";
+import {
+  extractJsonObject,
+  generateJsonWithLlm,
+  resolveVertexLocation,
+} from "./vertexClient";
 import type {
   MockCandidateQuestion,
   MockSlot,
@@ -23,6 +27,8 @@ export type PaperReviewInput = {
 };
 
 export type PaperReviewSource = "vertex" | "gemini" | "heuristic";
+
+export { resolveVertexLocation };
 
 function compactPaper(slots: MockSlot[]) {
   return slots.map((slot) => {
@@ -142,16 +148,6 @@ export function heuristicPaperReview(
   };
 }
 
-function extractJsonObject(text: string): unknown {
-  const trimmed = text.trim();
-  const fence = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  const body = fence ? fence[1].trim() : trimmed;
-  const start = body.indexOf("{");
-  const end = body.lastIndexOf("}");
-  if (start < 0 || end < 0) throw new Error("No JSON object in model response");
-  return JSON.parse(body.slice(start, end + 1));
-}
-
 function normalizeReview(
   raw: unknown,
   fallback: PaperReviewResult,
@@ -215,88 +211,6 @@ function buildPrompt(input: PaperReviewInput) {
   };
 }
 
-function reviewModelId(): string {
-  return (
-    process.env.MOCK_PAPER_REVIEW_MODEL ||
-    process.env.MODEL_QUALITY_GATE ||
-    process.env.MODEL_VERIFIER ||
-    "gemini-2.5-flash"
-  );
-}
-
-/**
- * Match Python pipeline location resolution:
- * global remaps to us-central1 unless VERTEX_GENAI_NO_GLOBAL_REMAP=1.
- */
-export function resolveVertexLocation(
-  location = process.env.GOOGLE_CLOUD_LOCATION || "",
-): string {
-  const loc = location.trim();
-  if (!loc) return "us-central1";
-  if (loc.toLowerCase() !== "global") return loc;
-  const noRemap = (process.env.VERTEX_GENAI_NO_GLOBAL_REMAP || "")
-    .trim()
-    .toLowerCase();
-  if (noRemap === "1" || noRemap === "true" || noRemap === "yes") {
-    return "global";
-  }
-  return (process.env.VERTEX_GENAI_LOCATION || "us-central1").trim() || "us-central1";
-}
-
-function vertexGenerateUrl(project: string, location: string, model: string): string {
-  if (location === "global") {
-    return `https://aiplatform.googleapis.com/v1/projects/${project}/locations/global/publishers/google/models/${model}:generateContent`;
-  }
-  return `https://${location}-aiplatform.googleapis.com/v1/projects/${project}/locations/${location}/publishers/google/models/${model}:generateContent`;
-}
-
-async function getVertexAccessToken(): Promise<string | null> {
-  try {
-    const auth = new GoogleAuth({
-      scopes: ["https://www.googleapis.com/auth/cloud-platform"],
-    });
-    const client = await auth.getClient();
-    const token = await client.getAccessToken();
-    return typeof token === "string" ? token : token?.token ?? null;
-  } catch {
-    return null;
-  }
-}
-
-async function callGenerateContent(input: {
-  url: string;
-  headers: Record<string, string>;
-  promptText: string;
-}): Promise<string | null> {
-  const res = await fetch(input.url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...input.headers,
-    },
-    body: JSON.stringify({
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: input.promptText }],
-        },
-      ],
-      generationConfig: {
-        temperature: 0.2,
-        responseMimeType: "application/json",
-      },
-    }),
-  });
-  if (!res.ok) return null;
-  const data = (await res.json()) as {
-    candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
-  };
-  return (
-    data.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ??
-    null
-  );
-}
-
 /**
  * Advisory whole-paper review. Never auto-trusted for publish.
  */
@@ -304,55 +218,14 @@ export async function reviewMockPaper(
   input: PaperReviewInput,
 ): Promise<{ review: PaperReviewResult; source: PaperReviewSource }> {
   const fallback = heuristicPaperReview(input);
-  const promptText = JSON.stringify(buildPrompt(input));
-  const model = reviewModelId();
-
-  const project =
-    process.env.GOOGLE_CLOUD_PROJECT || process.env.VERTEX_PROJECT || "";
-  if (project) {
-    const location = resolveVertexLocation(
-      process.env.VERTEX_GENAI_LOCATION ||
-        process.env.GOOGLE_CLOUD_LOCATION ||
-        "",
-    );
-    const token = await getVertexAccessToken();
-    if (token) {
-      try {
-        const text = await callGenerateContent({
-          url: vertexGenerateUrl(project, location, model),
-          headers: { Authorization: `Bearer ${token}` },
-          promptText,
-        });
-        if (text) {
-          return {
-            review: normalizeReview(extractJsonObject(text), fallback),
-            source: "vertex",
-          };
-        }
-      } catch {
-        // fall through
-      }
-    }
+  try {
+    const llm = await generateJsonWithLlm(buildPrompt(input));
+    if (!llm) return { review: fallback, source: "heuristic" };
+    return {
+      review: normalizeReview(extractJsonObject(llm.text), fallback),
+      source: llm.source,
+    };
+  } catch {
+    return { review: fallback, source: "heuristic" };
   }
-
-  const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-  if (apiKey) {
-    try {
-      const text = await callGenerateContent({
-        url: `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-        headers: {},
-        promptText,
-      });
-      if (text) {
-        return {
-          review: normalizeReview(extractJsonObject(text), fallback),
-          source: "gemini",
-        };
-      }
-    } catch {
-      // fall through
-    }
-  }
-
-  return { review: fallback, source: "heuristic" };
 }

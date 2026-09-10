@@ -21,6 +21,10 @@ import {
 } from "./publish";
 import { reviewMockPaper } from "./paperReviewer";
 import {
+  labelMockMetadataInChunks,
+  type AiMetadataLabelInput,
+} from "./aiMetadata";
+import {
   computePaperCalibration,
   computeQuestionCalibration,
 } from "./calibration";
@@ -88,6 +92,90 @@ export async function loadEligiblePool(
   return ((data as unknown as RawBankQuestionRow[] | null) ?? []).map(
     toMockCandidate,
   );
+}
+
+/**
+ * Use Vertex to assign mock_difficulty 1-5 (and fill missing time/reasoning/presentation).
+ * Persists to ai_generated_questions. Does not overwrite existing estimated_time_seconds /
+ * reasoning_type / presentation_type when already set.
+ */
+export async function enrichMockMetadataForSubject(
+  service: SupabaseClient,
+  subject: MockBuilderSubject,
+  options?: { maxQuestions?: number; onlyMissingDifficulty?: boolean },
+): Promise<{
+  attempted: number;
+  labeledCount: number;
+  source: "vertex" | "gemini" | null;
+}> {
+  const onlyMissing = options?.onlyMissingDifficulty !== false;
+  let query = service
+    .from("ai_generated_questions")
+    .select(POOL_SELECT)
+    .eq("subjects", subject)
+    .eq("status", "approved")
+    .eq("mock_eligible", true)
+    .order("created_at", { ascending: false })
+    .limit(options?.maxQuestions ?? 120);
+
+  if (onlyMissing) {
+    query = query.is("mock_difficulty", null);
+  }
+
+  const { data, error } = await query;
+  if (error) throw new Error(error.message);
+  const rows = (data as unknown as RawBankQuestionRow[] | null) ?? [];
+  if (rows.length === 0) {
+    return { attempted: 0, labeledCount: 0, source: null };
+  }
+
+  const inputs: AiMetadataLabelInput[] = rows.map((row) => ({
+    id: row.id,
+    subjects: row.subjects,
+    difficultyLabel: row.difficulty,
+    primaryTag: row.primary_tag ?? null,
+    questionStem: row.question_stem,
+    correctOption: row.correct_option,
+    options:
+      row.options && typeof row.options === "object" && !Array.isArray(row.options)
+        ? (row.options as Record<string, string>)
+        : {},
+    solutionReasoning: row.solution_reasoning ?? null,
+    hasVisual: Boolean(row.has_visual),
+  }));
+
+  const { labels, labeledCount, source, attempted } =
+    await labelMockMetadataInChunks(inputs, {
+      maxQuestions: options?.maxQuestions ?? 120,
+    });
+
+  const rowById = new Map(rows.map((r) => [r.id, r]));
+  for (const label of labels) {
+    const existing = rowById.get(label.id);
+    const patch: Record<string, unknown> = {
+      mock_difficulty: label.mockDifficulty,
+      updated_at: new Date().toISOString(),
+    };
+    if (
+      existing?.estimated_time_seconds == null ||
+      existing.estimated_time_seconds <= 0
+    ) {
+      patch.estimated_time_seconds = label.estimatedTimeSeconds;
+    }
+    if (!existing?.reasoning_type) {
+      patch.reasoning_type = label.reasoningType;
+    }
+    if (!existing?.presentation_type) {
+      patch.presentation_type = label.presentationType;
+    }
+    const { error: upErr } = await service
+      .from("ai_generated_questions")
+      .update(patch)
+      .eq("id", label.id);
+    if (upErr) throw new Error(upErr.message);
+  }
+
+  return { attempted, labeledCount, source };
 }
 
 export async function loadUsedQuestionIds(
@@ -306,7 +394,7 @@ async function persistAssembly(
 export async function generateAndPersist(
   service: SupabaseClient,
   mockId: string,
-  options?: { keepLocks?: boolean },
+  options?: { keepLocks?: boolean; enrichMetadata?: boolean },
 ): Promise<PaperAssemblyResult> {
   const { mock, slots } = await getMockWithSlots(service, mockId);
   if (mock.status === "published") {
@@ -317,6 +405,18 @@ export async function generateAndPersist(
   const blueprint =
     (mock.blueprint_snapshot as MockBlueprintConfig | null) ??
     (await resolveBlueprint(service, subject, mock.blueprint_id));
+
+  // Prefer AI 1-5 difficulty labels before assembly (fills missing mock_difficulty).
+  if (options?.enrichMetadata !== false) {
+    try {
+      await enrichMockMetadataForSubject(service, subject, {
+        maxQuestions: 96,
+        onlyMissingDifficulty: true,
+      });
+    } catch {
+      // Soft-fail: fall back to Easy/Medium/Hard mapping if Vertex is unavailable.
+    }
+  }
 
   const pool = await loadEligiblePool(service, subject, {
     includeReserved: true,

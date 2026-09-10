@@ -17,7 +17,9 @@ export default function AdminMockBuilderPage() {
   const [subject, setSubject] = useState<MockBuilderSubject>("Math 1");
   const [mockNumber, setMockNumber] = useState(1);
   const [creating, setCreating] = useState(false);
+  const [labeling, setLabeling] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -48,6 +50,7 @@ export default function AdminMockBuilderPage() {
   async function createMock() {
     setCreating(true);
     setError(null);
+    setInfo(null);
     const res = await fetch("/api/admin/mock-builder", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -67,6 +70,28 @@ export default function AdminMockBuilderPage() {
     if (data.mock?.id) {
       window.location.href = `/admin/mock-builder/${data.mock.id}`;
     }
+  }
+
+  async function labelDifficulty() {
+    setLabeling(true);
+    setError(null);
+    setInfo(null);
+    const res = await fetch("/api/admin/mock-builder/label-metadata", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        subject,
+        maxQuestions: 120,
+        onlyMissingDifficulty: true,
+      }),
+    });
+    const data = await res.json();
+    setLabeling(false);
+    if (!res.ok) {
+      setError(data.error || "Labeling failed");
+      return;
+    }
+    setInfo(data.message || `Labeled ${data.labeledCount} questions`);
   }
 
   async function toggleExclude(next: boolean) {
@@ -162,11 +187,22 @@ export default function AdminMockBuilderPage() {
             >
               {creating ? "Generating…" : "Generate draft"}
             </button>
+            <button
+              type="button"
+              disabled={labeling}
+              onClick={labelDifficulty}
+              className="rounded border border-stone-300 bg-white px-4 py-2 text-sm text-stone-800 disabled:opacity-50"
+            >
+              {labeling ? "AI labeling…" : "AI-label difficulty (1–5)"}
+            </button>
           </div>
           <p className="mt-2 text-xs text-stone-500">
             Mock 1 is marked free; mocks 2–6 are paid (existing entitlement).
+            Difficulty 1–5 is assigned by Vertex when missing; generate also
+            auto-labels up to ~96 unlabeled questions first.
           </p>
           {error && <p className="mt-2 text-sm text-red-700">{error}</p>}
+          {info && <p className="mt-2 text-sm text-stone-700">{info}</p>}
         </section>
 
         {loading ? (
