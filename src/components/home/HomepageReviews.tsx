@@ -98,14 +98,11 @@ function LeaveReviewForm() {
   };
 
   return (
-    <form
-      onSubmit={(e) => void handleSubmit(e)}
-      className="w-full rounded-2xl border border-white/10 bg-[#0A0F1D]/60 p-4 sm:p-5"
-    >
+    <form onSubmit={(e) => void handleSubmit(e)} className="w-full">
       <label htmlFor="homepage-review" className="sr-only">
         Leave a review
       </label>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
         <textarea
           id="homepage-review"
           value={text}
@@ -114,19 +111,19 @@ function LeaveReviewForm() {
             if (status !== "idle") setStatus("idle");
             if (error) setError(null);
           }}
-          rows={2}
+          rows={1}
           maxLength={1200}
           placeholder={
             loggedIn
               ? "Leave a review…"
               : "Leave a review (log in to send)…"
           }
-          className="min-h-[3.25rem] w-full flex-1 resize-y rounded-xl border border-white/10 bg-[#161D2F] px-4 py-3 text-sm leading-relaxed text-white placeholder:text-[#64748B] focus:border-[#3B82F6]/50 focus:outline-none focus:ring-1 focus:ring-[#3B82F6]/40"
+          className="min-h-[2.5rem] w-full flex-1 resize-y rounded-lg border border-white/10 bg-[#161D2F] px-3 py-2 text-sm leading-snug text-white placeholder:text-[#64748B] focus:border-white/25 focus:outline-none focus:ring-1 focus:ring-white/15"
         />
         <button
           type="submit"
           disabled={status === "sending"}
-          className="inline-flex shrink-0 items-center justify-center rounded-xl bg-[#3B82F6] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#2563EB] disabled:cursor-not-allowed disabled:opacity-60 sm:self-stretch sm:px-8"
+          className="inline-flex h-9 shrink-0 items-center justify-center rounded-lg bg-white/10 px-3.5 text-xs font-semibold text-[#E2E8F0] transition-colors hover:bg-white/15 hover:text-white disabled:cursor-not-allowed disabled:opacity-60 sm:self-center"
         >
           {status === "sending"
             ? "Sending…"
@@ -135,7 +132,7 @@ function LeaveReviewForm() {
               : "Log in to send"}
         </button>
       </div>
-      <p className="mt-2 text-xs text-[#64748B]">
+      <p className="mt-1.5 text-xs text-[#64748B]">
         {status === "sent" ? (
           <span className="text-[#86EFAC]">
             Thanks. We&apos;ll read it, and we&apos;ll put it up here.
@@ -143,14 +140,13 @@ function LeaveReviewForm() {
         ) : error ? (
           <span className="text-[#FCA5A5]">{error}</span>
         ) : loggedIn ? (
-          "Tell us how ESAT Camp is going. We&apos;ll read it, and we&apos;ll put it up here."
+          "If you've been using ESAT Camp, tell us how it's going."
         ) : (
           <>
-            Tell us how ESAT Camp is going. We&apos;ll read it, and we&apos;ll
-            put it up here.{" "}
+            If you&apos;ve been using ESAT Camp, tell us how it&apos;s going.{" "}
             <Link
               href={LOGIN_HREF}
-              className="font-semibold text-[#93C5FD] hover:text-white"
+              className="font-semibold text-[#94A3B8] hover:text-white"
             >
               Log in
             </Link>{" "}
@@ -225,9 +221,7 @@ export function HomepageReviews() {
           </div>
         </aside>
 
-        <div className="mt-5 sm:mt-6">
-          <LeaveReviewForm />
-        </div>
+        <LeaveReviewForm />
       </div>
     </section>
   );
