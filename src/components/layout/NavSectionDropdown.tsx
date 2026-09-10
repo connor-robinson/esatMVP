@@ -64,24 +64,29 @@ const sectionTheme: Record<
   NavSectionId,
   {
     iconColor: string;
-    activeMark: string;
+    activeBg: string;
+    activeHoverBg: string;
   }
 > = {
   skills: {
     iconColor: 'text-primary',
-    activeMark: 'bg-primary',
+    activeBg: 'bg-primary/10',
+    activeHoverBg: 'hover:bg-primary/15',
   },
   papers: {
     iconColor: 'text-accent',
-    activeMark: 'bg-accent',
+    activeBg: 'bg-accent/10',
+    activeHoverBg: 'hover:bg-accent/15',
   },
   questions: {
     iconColor: 'text-secondary',
-    activeMark: 'bg-secondary',
+    activeBg: 'bg-secondary/10',
+    activeHoverBg: 'hover:bg-secondary/15',
   },
   tools: {
     iconColor: 'text-text',
-    activeMark: 'bg-text/55',
+    activeBg: 'bg-text/8',
+    activeHoverBg: 'hover:bg-text/12',
   },
 };
 
@@ -145,23 +150,17 @@ export function NavDropdownMenuItem({
         onNavigate?.();
       }}
       className={cn(
-        'relative flex items-start gap-2.5 text-left transition-colors duration-fast ease-signature',
+        'flex items-center gap-2.5 text-left transition-colors duration-fast ease-signature',
         compact ? 'px-3 py-2.5' : 'gap-3 px-3 py-3',
         showRule && dropdownRuleClass,
+        isActive
+          ? cn(theme.activeBg, theme.activeHoverBg)
+          : 'hover:bg-surface-subtle/80',
       )}
     >
-      {isActive ? (
-        <span
-          className={cn(
-            'absolute bottom-2 left-0 top-2 w-px',
-            theme.activeMark,
-          )}
-          aria-hidden
-        />
-      ) : null}
       <Icon
         className={cn(
-          'mt-0.5 shrink-0',
+          'shrink-0',
           compact ? 'h-[15px] w-[15px]' : 'h-4 w-4',
           theme.iconColor,
         )}
