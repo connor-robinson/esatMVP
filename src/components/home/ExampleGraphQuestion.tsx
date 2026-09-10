@@ -57,7 +57,7 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
             </p>
           </div>
 
-          <div className="mx-auto min-h-[120px] w-full flex-1 sm:min-h-[155px]">
+          <div className="mx-auto h-[140px] w-full shrink-0 sm:h-[180px] lg:h-[200px]">
             <CameraDistanceGraph className="h-full w-full" />
           </div>
         </div>

@@ -128,10 +128,10 @@ function HomepageSectionNav() {
   return (
     <nav
       aria-label="Page sections"
-      className="sticky z-30 bg-[#0A0F1D]/90 backdrop-blur-md transition-[top] duration-300 ease-out"
+      className="sticky z-30 bg-[#0A0F1D]/90 pt-[max(0.5rem,env(safe-area-inset-top))] backdrop-blur-md transition-[top] duration-300 ease-out"
       style={{ top: navVisible ? NAVBAR_HEIGHT_PX : 0 }}
     >
-      <div className="mx-auto flex max-w-[1400px] justify-center gap-2 overflow-x-auto px-4 py-2 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-3 sm:px-5 sm:py-2.5 lg:gap-4 lg:px-6 [&::-webkit-scrollbar]:hidden">
+      <div className="mx-auto flex max-w-[1400px] justify-center gap-2 overflow-x-auto px-4 py-2.5 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-3 sm:px-5 sm:py-3 lg:gap-4 lg:px-6 [&::-webkit-scrollbar]:hidden">
         {HOMEPAGE_SECTIONS.map((section) => (
           <a
             key={section.id}
@@ -205,11 +205,11 @@ export function MarketingHomepage({
       <HomepageSectionNav />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-[#0A0F1D] pt-5 pb-5 lg:pt-6 lg:pb-6">
-        <div className="relative mx-auto max-w-[1400px] space-y-3 px-4 sm:px-5 lg:space-y-3 lg:px-6">
-          <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.15fr)] lg:gap-6 xl:gap-7">
-            <div className="flex min-h-0 min-w-0 flex-col justify-between gap-8 py-0.5 sm:gap-10 lg:gap-12 lg:py-1 [container-type:inline-size]">
-              <h1 className="font-display font-bold leading-[0.95] tracking-[-0.04em] [font-size:clamp(1.625rem,min(0.6rem+3.6vw,9.5cqi),3.25rem)]">
+      <section className="relative overflow-x-clip bg-[#0A0F1D] pt-5 pb-6 lg:pt-6 lg:pb-8">
+        <div className="relative mx-auto max-w-[1400px] space-y-4 px-4 sm:px-5 lg:space-y-5 lg:px-6">
+          <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.15fr)] lg:gap-8 xl:gap-10">
+            <div className="flex min-w-0 flex-col justify-center gap-3.5 sm:gap-4 lg:gap-5 [container-type:inline-size]">
+              <h1 className="font-display font-bold leading-[1.05] tracking-[-0.04em] [font-size:clamp(2rem,min(0.8rem+5vw,13cqi),4.75rem)]">
                 <span className="whitespace-nowrap">
                   The leading{" "}
                   <span
@@ -232,7 +232,7 @@ export function MarketingHomepage({
                 </span>
                 <span className="block whitespace-nowrap">question bank</span>
               </h1>
-              <p className="max-w-2xl text-sm leading-relaxed text-[#94A3B8] sm:text-[0.95rem] lg:text-base">
+              <p className="max-w-2xl text-lg leading-relaxed text-[#94A3B8] sm:text-xl lg:text-2xl">
                 Practice with our{" "}
                 <span className="text-underline-accent text-white">
                   {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ practice
@@ -245,7 +245,7 @@ export function MarketingHomepage({
                 .
               </p>
               <div className="space-y-2.5">
-                <div className="flex flex-col gap-2.5 sm:flex-row">
+                <div className="flex flex-col gap-3 sm:flex-row">
                   <Link
                     href={CALIBRATION_ROUTES.hub}
                     onClick={() =>
@@ -254,28 +254,28 @@ export function MarketingHomepage({
                         destination: CALIBRATION_ROUTES.hub,
                       })
                     }
-                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-bold text-[#0A0F1D] shadow-[0_0_28px_rgba(255,255,255,0.22),0_8px_24px_rgba(0,0,0,0.28)] transition-all hover:scale-[1.03] hover:bg-slate-100 hover:shadow-[0_0_36px_rgba(255,255,255,0.32),0_10px_28px_rgba(0,0,0,0.32)] active:scale-[0.98] sm:text-base"
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-7 py-3.5 text-base font-bold text-[#0A0F1D] shadow-[0_0_28px_rgba(255,255,255,0.22),0_8px_24px_rgba(0,0,0,0.28)] transition-all hover:scale-[1.03] hover:bg-slate-100 hover:shadow-[0_0_36px_rgba(255,255,255,0.32),0_10px_28px_rgba(0,0,0,0.32)] active:scale-[0.98] sm:text-lg"
                   >
                     Start calibration
-                    <span aria-hidden className="text-base leading-none">
+                    <span aria-hidden className="text-lg leading-none">
                       →
                     </span>
                   </Link>
                   <Link
                     href="/login?mode=signup"
-                    className="inline-flex items-center justify-center rounded-lg border border-white/20 px-5 py-3 text-sm font-bold text-white transition-all hover:bg-white/5 sm:text-base"
+                    className="inline-flex items-center justify-center rounded-lg border border-white/20 px-6 py-3.5 text-base font-bold text-white transition-all hover:bg-white/5"
                   >
                     Sign up
                   </Link>
                 </div>
-                <p className="text-xs text-[#94A3B8] sm:text-sm">
+                <p className="text-sm text-[#94A3B8] sm:text-base">
                   Calibration is free. No sign-up required to get started.
                 </p>
               </div>
             </div>
 
             <div className="flex min-h-0 min-w-0 w-full">
-              <ExampleGraphQuestion className="flex h-full w-full max-w-none flex-col" />
+              <ExampleGraphQuestion className="flex w-full max-w-none flex-col" />
             </div>
           </div>
 
