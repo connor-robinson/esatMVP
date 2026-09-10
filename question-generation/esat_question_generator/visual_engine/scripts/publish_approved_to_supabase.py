@@ -260,6 +260,22 @@ def _existing_generation_ids(client, ids: list[str]) -> set[str]:
     return found
 
 
+def _source_visual_type(item: dict[str, Any]) -> str:
+    source = _parse_json(item.get("source_json"), {})
+    if not isinstance(source, dict):
+        return "none"
+    return str(source.get("visual_type") or "none").strip().lower()
+
+
+def _allows_text_only(item: dict[str, Any]) -> bool:
+    """True when generation intentionally had no rendered diagram PNG.
+
+    Streamlit often sets diagram_required=1 even for visual_type none/table.
+    Those were human-approved as text (or markdown table) questions.
+    """
+    return _source_visual_type(item) in {"none", "table", ""}
+
+
 def publish(
     *,
     dry_run: bool,
@@ -289,6 +305,7 @@ def publish(
         "published": 0,
         "skipped_existing": 0,
         "skipped_no_diagram": 0,
+        "published_text_only": 0,
         "errors": [],
         "published_ids": [],
         "skipped_no_diagram_ids": [],
@@ -317,8 +334,11 @@ def publish(
                 continue
 
             png = _resolve_png(item)
-            diagram_required = bool(item.get("diagram_required"))
-            if png is None and diagram_required and not allow_missing_diagram:
+            if (
+                png is None
+                and not _allows_text_only(item)
+                and not allow_missing_diagram
+            ):
                 summary["skipped_no_diagram"] += 1
                 summary["skipped_no_diagram_ids"].append(qid)
                 continue
@@ -352,6 +372,8 @@ def publish(
             if dry_run:
                 summary["published"] += 1
                 summary["published_ids"].append(qid)
+                if png is None:
+                    summary["published_text_only"] += 1
                 continue
 
             # Prefer upsert on generation_id unique constraint.
@@ -364,6 +386,8 @@ def publish(
                 raise RuntimeError(str(res.error))
             summary["published"] += 1
             summary["published_ids"].append(qid)
+            if png is None:
+                summary["published_text_only"] += 1
         except Exception as exc:  # noqa: BLE001 - collect and continue batch
             summary["errors"].append({"question_id": qid, "error": str(exc)})
 
