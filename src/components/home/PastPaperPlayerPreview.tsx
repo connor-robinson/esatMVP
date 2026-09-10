@@ -2,9 +2,9 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 const PLAYER_IMAGE = {
-  src: "/images/home/uat-uk-player.png",
+  src: "/images/home/uat-uk-player-home.webp",
   alt: "Past paper exam player styled like the official UAT-UK interface, showing a timed multiple-choice question",
-  width: 2850,
+  width: 1760,
   height: 1800,
 } as const;
 
@@ -43,7 +43,7 @@ export function PastPaperPlayerPreview({
           compact
             ? "max-w-[16rem] px-2 py-3"
             : embedded
-              ? "max-w-[28rem] px-2 py-4 xl:max-w-[32rem]"
+              ? "w-full max-w-none px-0 py-1"
               : "max-w-[40rem] px-3 py-8 xl:max-w-[46rem] sm:px-5",
         )}
       >
@@ -65,7 +65,7 @@ export function PastPaperPlayerPreview({
               compact
                 ? "16rem"
                 : embedded
-                  ? "(min-width: 1280px) 32rem, 28rem"
+                  ? "(min-width: 1024px) 30rem, 58vw"
                   : "(min-width: 1280px) 46rem, (min-width: 1024px) 40rem, 100vw"
             }
             className="h-auto w-full"

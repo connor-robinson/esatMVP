@@ -369,11 +369,11 @@ export function MarketingHomepage({
             ))}
           </ul>
 
-          <div className="mt-12 flex flex-col items-center justify-center gap-6 sm:mt-14 sm:flex-row sm:items-center sm:gap-4 lg:gap-8">
-            <div className="w-full max-w-[34rem] shrink sm:max-w-[38rem] lg:max-w-[42rem]">
+          <div className="mt-12 flex flex-row flex-nowrap items-center justify-center gap-2 sm:mt-14 sm:gap-3 lg:gap-5">
+            <div className="w-[58%] max-w-[26rem] shrink sm:w-auto sm:max-w-[28rem] lg:max-w-[30rem]">
               <PastPaperPlayerPreview embedded />
             </div>
-            <div className="w-full max-w-[16rem] shrink-0 sm:max-w-[18rem] lg:max-w-[20rem]">
+            <div className="w-[38%] max-w-[14rem] shrink-0 sm:w-auto sm:max-w-[15rem] lg:max-w-[16rem]">
               <HomepageRoadmapPreview />
             </div>
           </div>
