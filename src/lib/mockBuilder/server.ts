@@ -557,7 +557,7 @@ export async function getReplacementOptions(
     (mock.blueprint_snapshot as MockBlueprintConfig | null) ??
     (await resolveBlueprint(service, subject, mock.blueprint_id));
   const pool = await loadEligiblePool(service, subject, {
-    includeReserved: true,
+    includeReserved: false,
   });
   return proposeReplacements({
     blueprint,
