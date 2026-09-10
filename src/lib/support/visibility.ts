@@ -7,6 +7,7 @@ const HIDDEN_PREFIXES = [
   "/onboarding",
   "/pearson",
   "/access",
+  "/mental-maths/drill",
 ];
 
 /**
