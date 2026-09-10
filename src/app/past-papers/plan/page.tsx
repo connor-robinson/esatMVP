@@ -23,6 +23,7 @@ import { PaperLibraryGrid } from '@/components/papers/plan/PaperLibraryGrid';
 import { PaperSessionSummary } from '@/components/papers/plan/PaperSessionSummary';
 import { LoadingPage } from '@/components/shared/LoadingPage';
 import { allowLoadingPaint } from '@/lib/papers/allowLoadingPaint';
+import { preloadQuestionsAssets } from '@/lib/pearson/preloadQuestionAssets';
 
 interface SelectedPaper {
   paper: Paper;
@@ -289,6 +290,12 @@ export default function PapersPlanPage() {
         });
 
         await loadQuestions(paper.id);
+
+        const storeAfter = usePaperSessionStore.getState();
+        if (storeAfter.questions?.length) {
+          await preloadQuestionsAssets(storeAfter.questions);
+        }
+
         navigated = true;
         router.push('/past-papers/solve');
       } catch (err) {

@@ -38,7 +38,10 @@ import type {
   ZoomLevel,
 } from "./types";
 import { INSTRUCTION_READ_MS, MODULE_DURATION_MS } from "./types";
-import { preloadQuestionWithMinimumDelay } from "./preloadQuestionAssets";
+import {
+  preloadQuestionWithMinimumDelay,
+  preloadQuestionsAssets,
+} from "./preloadQuestionAssets";
 
 /** Blurred spinner after End Exam / End Module confirm (specimen player). */
 export const SESSION_ENDING_MS = 2800;
@@ -287,8 +290,26 @@ export function usePearsonExamController(
       setModuleDeadline(startFreshModuleDeadline(Date.now(), durationMs));
     }
     onQuestionsStartedRef.current?.();
-    void transitionToQuestion(0);
-  }, [durationMs, moduleDeadline, transitionToQuestion]);
+
+    void (async () => {
+      if (transitionInFlightRef.current) return;
+      if (questions.length === 0) return;
+
+      transitionInFlightRef.current = true;
+      setQuestionTransitionActive(true);
+      setNavigatorOpen(false);
+
+      try {
+        // Hard gate: every diagram in the module must decode before Q1.
+        await preloadQuestionsAssets(questions);
+        await preloadQuestionWithMinimumDelay(questions[0]);
+        commitQuestionIndex(0);
+      } finally {
+        setQuestionTransitionActive(false);
+        transitionInFlightRef.current = false;
+      }
+    })();
+  }, [commitQuestionIndex, durationMs, moduleDeadline, questions]);
 
   useEffect(() => {
     if (screen !== "instructions" || instructionDeadline == null || completed) {

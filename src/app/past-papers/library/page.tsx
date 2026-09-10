@@ -31,6 +31,7 @@ import { PaperSessionSummary } from '@/components/papers/library/PaperSessionSum
 import { PastPaperUatNotice } from '@/components/papers/PastPaperUatNotice';
 import { LoadingPage } from '@/components/shared/LoadingPage';
 import { allowLoadingPaint } from '@/lib/papers/allowLoadingPaint';
+import { preloadQuestionsAssets } from '@/lib/pearson/preloadQuestionAssets';
 import {
   isPastPaperLibraryLocked,
   freePreviewPastPapersLabel,
@@ -622,6 +623,9 @@ export default function PapersLibraryPage() {
           );
           return;
         }
+
+        // Stay on LoadingPage until every question diagram/image is decoded.
+        await preloadQuestionsAssets(storeAfter.questions);
 
         navigated = true;
         router.push('/past-papers/solve');

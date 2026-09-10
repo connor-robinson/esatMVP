@@ -36,6 +36,7 @@ import type { PaperSection, Question, Paper } from '@/types/papers';
 import type { RoadmapPart } from '@/lib/papers/roadmapConfig';
 import { LoadingPage } from '@/components/shared/LoadingPage';
 import { allowLoadingPaint } from '@/lib/papers/allowLoadingPaint';
+import { preloadQuestionsAssets } from '@/lib/pearson/preloadQuestionAssets';
 import { isFreePreviewRoadmapStage } from '@/lib/papers/freePreviewPapers';
 import { applyEsatSubjectsToRoadmapStages } from '@/lib/papers/roadmapEsatFilter';
 import {
@@ -560,6 +561,9 @@ export default function PapersRoadmapPage() {
         // Keep the already-filtered set. Reloading by paperId would drop
         // multi-paper ENGAA/NSAA sessions and question-number filters.
         setQuestions(matchingQuestions);
+
+        // Stay on LoadingPage until every question diagram/image is decoded.
+        await preloadQuestionsAssets(matchingQuestions);
 
         navigated = true;
         router.push('/past-papers/solve');

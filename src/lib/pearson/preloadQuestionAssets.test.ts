@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { Question } from "@/types/papers";
 import {
   collectQuestionAssetUrls,
+  esatCampMockDiagramAssetUrl,
   extractHtmlImageUrls,
 } from "./preloadQuestionAssets";
 
@@ -35,6 +36,22 @@ describe("extractHtmlImageUrls", () => {
   });
 });
 
+describe("esatCampMockDiagramAssetUrl", () => {
+  it("maps maths asset diagram keys to SVG paths", () => {
+    expect(esatCampMockDiagramAssetUrl("m1-2-q17")).toBe(
+      "/esat-camp-mocks/diagrams/m1-2-q17.svg",
+    );
+    expect(esatCampMockDiagramAssetUrl("m2-1-q10")).toBe(
+      "/esat-camp-mocks/diagrams/m2-1-q10.svg",
+    );
+  });
+
+  it("ignores React-component diagram keys", () => {
+    expect(esatCampMockDiagramAssetUrl("A7")).toBeNull();
+    expect(esatCampMockDiagramAssetUrl("M22")).toBeNull();
+  });
+});
+
 describe("collectQuestionAssetUrls", () => {
   it("collects stem, diagram, option, and fallback image URLs", () => {
     const urls = collectQuestionAssetUrls(
@@ -58,5 +75,16 @@ describe("collectQuestionAssetUrls", () => {
     expect(urls).toContain("/stem-inline.png");
     expect(urls).toContain("/diagram.png");
     expect(urls).toContain("/opt-a.png");
+  });
+
+  it("includes ESAT CAMP maths diagramKey SVG assets", () => {
+    const urls = collectQuestionAssetUrls(
+      baseQuestion({
+        questionImage: "",
+        diagramKey: "m1-2-q17",
+      }),
+    );
+
+    expect(urls).toContain("/esat-camp-mocks/diagrams/m1-2-q17.svg");
   });
 });
