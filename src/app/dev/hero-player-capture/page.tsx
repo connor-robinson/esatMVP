@@ -49,7 +49,7 @@ export default function HeroPlayerCapturePage() {
   }, []);
 
   return (
-    <PearsonExamShell colourScheme="black_on_white" zoomLevel={130}>
+    <PearsonExamShell colourScheme="black-on-white" zoomLevel={125}>
       <PearsonHeader
         examTitle="ESAT Camp Mock 1"
         showTimer
@@ -60,13 +60,13 @@ export default function HeroPlayerCapturePage() {
       />
       <PearsonToolbar
         showFlag
-        colourScheme="black_on_white"
+        colourScheme="black-on-white"
         onColourSchemeChange={() => {}}
       />
       <div className="pearson-main">
         <PearsonQuestionViewport
           questionKey={question.id}
-          zoomLevel={130}
+          zoomLevel={125}
           onViewedChange={() => {}}
         >
           <PearsonRichQuestion
