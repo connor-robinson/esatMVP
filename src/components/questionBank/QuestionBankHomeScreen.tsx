@@ -85,6 +85,8 @@ export interface SubjectTileConfig {
   startBtnClass: string;
   /** When true, tile is visible but not launchable. */
   comingSoon?: boolean;
+  /** Small tag above the subject title (e.g. New questions). */
+  tag?: string;
 }
 
 const SUBJECT_TILES: SubjectTileConfig[] = [
@@ -107,6 +109,7 @@ const SUBJECT_TILES: SubjectTileConfig[] = [
     headline: "ESAT Physics",
     topicCaps: "Mechanics & waves",
     testType: "ESAT",
+    tag: "New questions",
     ...SUBJECT_TILE_STYLES.Physics,
   },
   {
@@ -114,6 +117,7 @@ const SUBJECT_TILES: SubjectTileConfig[] = [
     headline: "ESAT Chemistry",
     topicCaps: "Structure & reactivity",
     testType: "ESAT",
+    tag: "New questions",
     ...SUBJECT_TILE_STYLES.Chemistry,
   },
   {
@@ -121,6 +125,7 @@ const SUBJECT_TILES: SubjectTileConfig[] = [
     headline: "ESAT Biology",
     topicCaps: "Cell & molecular biology",
     testType: "ESAT",
+    tag: "New questions",
     ...SUBJECT_TILE_STYLES.Biology,
   },
   {

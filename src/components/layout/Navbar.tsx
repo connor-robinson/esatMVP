@@ -138,12 +138,14 @@ const navSections: NavSectionConfig[] = [
     label: 'Question Bank',
     href: '/questions',
     section: 'questions',
+    badge: 'NEW',
     items: [
       {
         href: '/questions',
         label: 'Home',
         description: 'Overview and mixed practice',
         icon: Home,
+        badge: 'NEW',
       },
       {
         href: '/questions/questionbank/analytics',
@@ -579,7 +581,7 @@ export function Navbar() {
                           setMobileMenuOpen(false);
                         }}
                         className={cn(
-                          'text-sm font-semibold uppercase tracking-[0.12em]',
+                          'relative inline-flex text-sm font-semibold uppercase tracking-[0.12em]',
                           currentSection === section.section
                             ? section.section === 'skills'
                               ? 'text-primary'
@@ -591,6 +593,14 @@ export function Navbar() {
                             : 'text-text-muted',
                         )}
                       >
+                        {section.badge ? (
+                          <span
+                            className='pointer-events-none absolute left-0 top-0 -translate-y-[70%] text-[9px] font-bold uppercase leading-none tracking-[0.1em] text-error'
+                            aria-hidden
+                          >
+                            {section.badge}
+                          </span>
+                        ) : null}
                         {section.label}
                       </Link>
                       <div className={navDropdownMobileListClass}>
