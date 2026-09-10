@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { noIndexFollowMetadata } from "@/lib/seo/noIndex";
 
@@ -8,5 +9,5 @@ export default function CalibrationResultsLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return <Suspense fallback={null}>{children}</Suspense>;
 }

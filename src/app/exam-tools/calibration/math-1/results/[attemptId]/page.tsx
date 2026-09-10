@@ -18,6 +18,7 @@ import { loadAttempt, saveAttempt } from "@/lib/calibration/attempt";
 import { computeResults } from "@/lib/calibration/scoring";
 import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
 import type { CalibrationAttempt } from "@/lib/calibration/types";
+import { trackEvent } from "@/lib/ga";
 
 export default function CalibrationResultsPage() {
   const params = useParams<{ attemptId: string }>();
@@ -27,66 +28,48 @@ export default function CalibrationResultsPage() {
   const [attempt, setAttempt] = useState<CalibrationAttempt | null>(null);
   const [authLoading, setAuthLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
-  const [status, setStatus] = useState<
-    "analyzing" | "sign_in_required" | "ready" | "not_found"
-  >("analyzing");
+  const [showSavePrompt, setShowSavePrompt] = useState(false);
+  const [status, setStatus] = useState<"analyzing" | "ready" | "not_found">(
+    "analyzing",
+  );
 
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
-      const startedAt = Date.now();
-      const finishAfterMinimumLoading = async () => {
-        const elapsed = Date.now() - startedAt;
-        if (elapsed < 1400) {
-          await new Promise((resolve) => setTimeout(resolve, 1400 - elapsed));
-        }
-      };
-
-      // 1. Prefer the local copy (works for anonymous users immediately, and
-      //    survives sign-in so results are never lost).
       const local = loadAttempt(attemptId);
       if (local) {
-        await finishAfterMinimumLoading();
         if (cancelled) return;
+        setAttempt(local);
+        setStatus("ready");
+        setShowSavePrompt(!session?.user);
 
-        if (!session?.user) {
-          setAttempt(local);
-          setStatus("sign_in_required");
-          return;
-        }
-
-        if (!cancelled) {
-          setAttempt(local);
-          setStatus("ready");
-        }
-        // 2. If signed in, merge the local attempt into the account (idempotent upsert).
-        const owned: CalibrationAttempt = { ...local };
-        const results = computeResults(owned);
-        try {
-          await fetch("/api/calibration/attempts", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ attempt: owned, result: results }),
-          });
-          saveAttempt(owned);
-        } catch {
-          /* best-effort merge */
+        if (session?.user) {
+          const owned: CalibrationAttempt = { ...local };
+          const results = computeResults(owned);
+          try {
+            await fetch("/api/calibration/attempts", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ attempt: owned, result: results }),
+            });
+            saveAttempt(owned);
+          } catch {
+            /* best-effort merge */
+          }
         }
         return;
       }
 
-      // 3. No local copy: if signed in, fetch from the account (e.g. another device).
       if (session?.user) {
         try {
           const res = await fetch(`/api/calibration/attempts/${attemptId}`);
           if (res.ok) {
             const data = await res.json();
             if (data.attempt && !cancelled) {
-              await finishAfterMinimumLoading();
-              if (cancelled) return;
               setAttempt(data.attempt as CalibrationAttempt);
               setStatus("ready");
+              setShowSavePrompt(false);
               return;
             }
           }
@@ -95,7 +78,6 @@ export default function CalibrationResultsPage() {
         }
       }
 
-      await finishAfterMinimumLoading();
       if (!cancelled) setStatus("not_found");
     }
 
@@ -116,73 +98,10 @@ export default function CalibrationResultsPage() {
         <div className="max-w-md text-center">
           <LoadingSpinner size="lg" />
           <h1 className="mt-6 font-heading text-2xl font-bold text-text">
-            Analysing your calibration
+            Preparing your results
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-text-muted">
-            We are checking your accuracy, timing and guessed answers to build a
-            concise Math 1 result.
-          </p>
-        </div>
-      </Container>
-    );
-  }
-
-  if (status === "sign_in_required" && attempt) {
-    const redirectTo = `${CALIBRATION_ROUTES.math1}/results/${attemptId}`;
-
-    const handleGoogleSignUp = async () => {
-      try {
-        setAuthLoading(true);
-        setAuthError(null);
-        const { error } = await signInWithGoogle(supabase, redirectTo);
-        if (error) {
-          setAuthError(error.message);
-          setAuthLoading(false);
-        }
-      } catch (err) {
-        setAuthError(err instanceof Error ? err.message : "Something went wrong");
-        setAuthLoading(false);
-      }
-    };
-
-    return (
-      <Container className="flex min-h-[70vh] items-center justify-center py-16">
-        <div className="mx-auto w-full max-w-[420px] rounded-organic-xl bg-surface-elevated px-6 py-9 text-center sm:px-8">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-maths">
-            Results ready
-          </p>
-          <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-text">
-            Sign up for free
-          </h1>
-          <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-text-muted">
-            Unlock your calibration score, save it to your account, and come back
-            anytime.
-          </p>
-
-          {authError ? (
-            <p
-              role="alert"
-              className="mt-5 rounded-organic-md bg-error/10 px-4 py-3 text-sm text-error"
-            >
-              {authError}
-            </p>
-          ) : null}
-
-          <div className="mt-7">
-            <GoogleAuthButton
-              mode="signup"
-              loading={authLoading}
-              onClick={handleGoogleSignUp}
-            />
-          </div>
-
-          <p className="mt-6 text-sm text-text-muted">
-            <Link
-              href={`/login?redirectTo=${encodeURIComponent(redirectTo)}`}
-              className="font-medium text-text-muted underline-offset-2 transition-colors hover:text-text hover:underline"
-            >
-              I already have an account
-            </Link>
+            Building a concise diagnosis from your answers and active timing.
           </p>
         </div>
       </Container>
@@ -195,15 +114,17 @@ export default function CalibrationResultsPage() {
         <Card variant="elevated" className="mx-auto max-w-lg p-8 text-center">
           <h1 className="text-xl font-bold text-text">Results not found</h1>
           <p className="mt-3 text-sm text-text-muted">
-            We could not find this calibration attempt on this device. If you completed it while
-            signed in, sign in to view your saved results.
+            We could not find this calibration attempt on this device. If you
+            completed it while signed in, sign in to view your saved results.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link href={CALIBRATION_ROUTES.math1}>
               <Button variant="primary">Start a calibration</Button>
             </Link>
             {!session?.user ? (
-              <Link href={`/login?redirectTo=${encodeURIComponent(CALIBRATION_ROUTES.math1)}`}>
+              <Link
+                href={`/login?redirectTo=${encodeURIComponent(CALIBRATION_ROUTES.math1)}`}
+              >
                 <Button variant="secondary">Sign in</Button>
               </Link>
             ) : null}
@@ -213,9 +134,66 @@ export default function CalibrationResultsPage() {
     );
   }
 
+  const redirectTo = `${CALIBRATION_ROUTES.math1}/results/${attemptId}`;
+
+  const handleGoogleSignUp = async () => {
+    try {
+      setAuthLoading(true);
+      setAuthError(null);
+      trackEvent("sign_up_started", {
+        source: "calibration_results",
+        method: "google",
+      });
+      const { error } = await signInWithGoogle(supabase, redirectTo);
+      if (error) {
+        setAuthError(error.message);
+        setAuthLoading(false);
+      }
+    } catch (err) {
+      setAuthError(err instanceof Error ? err.message : "Something went wrong");
+      setAuthLoading(false);
+    }
+  };
+
   return (
-    <Container size="xl">
+    <Container size="xl" className="pb-28 sm:pb-12">
+      {showSavePrompt ? (
+        <div className="mx-auto mt-6 max-w-3xl rounded-2xl border border-border-subtle bg-surface-elevated px-4 py-4 sm:px-5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold text-text">
+                Save this result to your free account
+              </p>
+              <p className="mt-1 text-sm text-text-muted">
+                You can keep reviewing without signing up. An account only saves
+                the result across devices.
+              </p>
+              {authError ? (
+                <p role="alert" className="mt-2 text-sm text-error">
+                  {authError}
+                </p>
+              ) : null}
+            </div>
+            <div className="flex shrink-0 flex-col gap-2 sm:items-end">
+              <GoogleAuthButton
+                mode="signup"
+                loading={authLoading}
+                onClick={handleGoogleSignUp}
+              />
+              <button
+                type="button"
+                className="min-h-11 text-sm font-medium text-text-muted underline-offset-2 hover:text-text hover:underline"
+                onClick={() => setShowSavePrompt(false)}
+              >
+                Continue without saving
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       <CalibrationResultsView
+        attempt={attempt}
         results={results}
         isSignedIn={!!session?.user}
         attemptId={attemptId}

@@ -1,5 +1,3 @@
-import { trackEvent, readGaSourcePage, trackEventOnce } from "@/lib/ga";
-
 /**
  * Structured calibration funnel analytics.
  *
@@ -7,6 +5,8 @@ import { trackEvent, readGaSourcePage, trackEventOnce } from "@/lib/ga";
  * `homepage_analytics_events` (event name + JSON properties). Raw answer
  * content is never sent - only diagnostic metadata.
  */
+
+import { trackEvent, readGaSourcePage, trackEventOnce } from "@/lib/ga";
 
 export type CalibrationAnalyticsEvent =
   | "calibration_landing_viewed"
@@ -22,6 +22,11 @@ export type CalibrationAnalyticsEvent =
   | "calibration_resumed"
   | "calibration_completed"
   | "calibration_results_viewed"
+  | "calibration_result_risk_opened"
+  | "calibration_question_review_opened"
+  | "calibration_methodology_opened"
+  | "calibration_fix_weaknesses_clicked"
+  | "calibration_practice_plan_started"
   | "calibration_strength_opened"
   | "calibration_weakness_opened"
   | "calibration_solution_viewed"
@@ -48,6 +53,19 @@ export interface CalibrationAnalyticsProps {
   primary_weakness?: string;
   cta_placement?: string;
   destination?: string;
+  assessment_version?: string;
+  module?: string;
+  raw_score?: number;
+  starting_band?: string;
+  confidence_level?: string;
+  pace_status?: string;
+  risk_codes?: string;
+  risk_code?: string;
+  question_id?: string;
+  review_filter?: string;
+  primary_skill_group?: string;
+  signed_in?: boolean;
+  entitlement_state?: string;
   [key: string]: string | number | boolean | undefined | null;
 }
 
@@ -63,6 +81,23 @@ export async function trackCalibrationEvent(
       {
         module: "math-1",
         source_page: sourcePage,
+        user_state: properties.user_state,
+      },
+    );
+  }
+
+  if (event === "calibration_results_viewed") {
+    trackEventOnce(
+      `calibration_results_viewed:${properties.attempt_id ?? "unknown"}`,
+      "calibration_results_viewed",
+      {
+        module: properties.module ?? "math-1",
+        assessment_version: properties.assessment_version,
+        raw_score: properties.raw_score,
+        starting_band: properties.starting_band,
+        confidence_level: properties.confidence_level,
+        pace_status: properties.pace_status,
+        risk_codes: properties.risk_codes,
         user_state: properties.user_state,
       },
     );

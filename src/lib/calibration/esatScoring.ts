@@ -69,8 +69,8 @@ export const HARD_QUESTION_IDS = [
   "m1cal-v2-q15",
 ];
 
-/** Percentile is hidden until this many valid attempts exist platform-wide. */
-export const MINIMUM_ATTEMPTS_FOR_PERCENTILE = 200;
+/** Percentile is hidden until this many valid attempts exist for this exact version. */
+export const MINIMUM_ATTEMPTS_FOR_PERCENTILE = 300;
 
 /** Uncertainty model (drives the estimated score range). */
 export const UNCERTAINTY_MODEL = {
