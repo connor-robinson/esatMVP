@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useCallback,
   useEffect,
   useId,
   useRef,
@@ -17,7 +18,14 @@ import { collectSupportDiagnostics } from "@/lib/support/diagnostics";
 import { buildSupportMailto } from "@/lib/support/mailto";
 import { cn } from "@/lib/utils";
 
+const ACCESS_DRAFT_KEY = "esatcamp.accessHelpDraft.v1";
+
 type UiPhase = "form" | "submitting" | "success" | "error";
+
+type AccessDraft = {
+  email: string;
+  query: string;
+};
 
 function createIdempotencyKey(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -33,8 +41,36 @@ function subjectFromQuery(query: string): string {
   return "Access page help";
 }
 
+function readDraft(): Partial<AccessDraft> | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = sessionStorage.getItem(ACCESS_DRAFT_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as Partial<AccessDraft>;
+  } catch {
+    return null;
+  }
+}
+
+function writeDraft(draft: AccessDraft) {
+  try {
+    sessionStorage.setItem(ACCESS_DRAFT_KEY, JSON.stringify(draft));
+  } catch {
+    // ignore
+  }
+}
+
+function clearDraft() {
+  try {
+    sessionStorage.removeItem(ACCESS_DRAFT_KEY);
+  } catch {
+    // ignore
+  }
+}
+
 /**
- * Guest Help control for /access: blue FAB, email + query only (no login).
+ * Guest Help for /access: blue FAB expands into a small popup (not fullscreen).
+ * Outside click / Escape closes; draft is kept in sessionStorage.
  */
 export function AccessHelpControl() {
   const titleId = useId();
@@ -43,6 +79,7 @@ export function AccessHelpControl() {
   const idempotencyRef = useRef<string | null>(null);
 
   const [open, setOpen] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
   const [email, setEmail] = useState("");
   const [query, setQuery] = useState("");
   const [honeypot, setHoneypot] = useState("");
@@ -52,24 +89,40 @@ export function AccessHelpControl() {
   const [reference, setReference] = useState<string | null>(null);
 
   useEffect(() => {
+    setHydrated(true);
+    const draft = readDraft();
+    if (draft?.email) setEmail(draft.email);
+    if (draft?.query) setQuery(draft.query);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated || phase === "success") return;
+    writeDraft({ email, query });
+  }, [email, query, hydrated, phase]);
+
+  useEffect(() => {
     if (!open) return;
     if (!idempotencyRef.current) {
       idempotencyRef.current = createIdempotencyKey();
     }
+    setPhase((prev) => (prev === "success" ? "form" : prev));
     const t = window.setTimeout(() => closeRef.current?.focus(), 50);
     return () => window.clearTimeout(t);
   }, [open]);
 
+  const closeQuietly = useCallback(() => {
+    if (phase === "submitting") return;
+    setOpen(false);
+  }, [phase]);
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && phase !== "submitting") {
-        setOpen(false);
-      }
+      if (e.key === "Escape") closeQuietly();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, phase]);
+  }, [open, closeQuietly]);
 
   const canSubmit =
     phase !== "submitting" &&
@@ -141,6 +194,7 @@ export function AccessHelpControl() {
               .slice(0, 8)
               .toUpperCase(),
       );
+      clearDraft();
       setQuery("");
       setHoneypot("");
       idempotencyRef.current = null;
@@ -162,47 +216,50 @@ export function AccessHelpControl() {
 
   return (
     <>
-      {!open ? (
-        <div
+      <div
+        className={cn(
+          "pointer-events-none fixed z-[101] flex justify-end",
+          "bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))] right-[max(1rem,env(safe-area-inset-right,0px))]",
+          "sm:bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))]",
+        )}
+      >
+        <button
+          type="button"
           className={cn(
-            "pointer-events-none fixed z-[55] flex justify-end",
-            "bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))] right-[max(1rem,env(safe-area-inset-right,0px))]",
-            "sm:bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))]",
+            "pointer-events-auto inline-flex items-center gap-2 rounded-xl",
+            "bg-[#3B82F6] px-3.5 py-2.5 text-sm font-semibold text-white",
+            "shadow-lg transition-colors hover:bg-[#2563EB]",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/60",
+            "min-h-[44px] min-w-[44px]",
           )}
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          aria-controls="access-help-panel"
+          onClick={() => {
+            if (open) {
+              closeQuietly();
+              return;
+            }
+            setOpen(true);
+          }}
         >
-          <button
-            type="button"
-            className={cn(
-              "pointer-events-auto inline-flex items-center gap-2 rounded-xl",
-              "bg-[#3B82F6] px-3.5 py-2.5 text-sm font-semibold text-white",
-              "shadow-lg transition-colors hover:bg-[#2563EB]",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/60",
-              "min-h-[44px] min-w-[44px]",
-            )}
-            aria-haspopup="dialog"
-            aria-expanded={false}
-            aria-controls="access-help-panel"
-            onClick={() => {
-              setPhase((prev) => (prev === "success" ? "form" : prev));
-              setOpen(true);
-            }}
-          >
+          {open ? (
+            <X className="h-4 w-4 shrink-0" aria-hidden />
+          ) : (
             <MessageCircleQuestion className="h-4 w-4 shrink-0" aria-hidden />
-            <span>Help</span>
-          </button>
-        </div>
-      ) : null}
+          )}
+          <span>{open ? "Close" : "Help"}</span>
+        </button>
+      </div>
 
       {open ? (
-        <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center sm:p-4">
+        <>
           <button
             type="button"
-            className="absolute inset-0 bg-background/80 backdrop-blur-sm"
-            aria-label="Dismiss help panel"
+            className="fixed inset-0 z-[99] cursor-default bg-transparent"
+            aria-label="Dismiss help"
             disabled={phase === "submitting"}
-            onClick={() => {
-              if (phase !== "submitting") setOpen(false);
-            }}
+            onClick={closeQuietly}
           />
           <div
             id="access-help-panel"
@@ -211,30 +268,29 @@ export function AccessHelpControl() {
             aria-labelledby={titleId}
             aria-describedby={descId}
             className={cn(
-              "relative flex max-h-[min(92dvh,36rem)] w-full flex-col",
-              "rounded-t-xl bg-surface-elevated shadow-lg",
-              "sm:max-w-md sm:rounded-xl",
-              "pb-[env(safe-area-inset-bottom,0px)]",
+              "fixed z-[100] flex w-[min(calc(100vw-1.5rem),22rem)] flex-col",
+              "max-h-[min(70dvh,28rem)] overflow-hidden",
+              "rounded-xl border border-border-subtle bg-surface-elevated shadow-lg",
+              "right-[max(0.75rem,env(safe-area-inset-right,0px))]",
+              "bottom-[calc(4.75rem+env(safe-area-inset-bottom,0px))] sm:bottom-[calc(5rem+env(safe-area-inset-bottom,0px))]",
             )}
           >
-            <div className="flex items-start justify-between gap-3 border-b border-border-subtle px-5 py-4">
-              <div>
+            <div className="flex shrink-0 items-start justify-between gap-2 border-b border-border-subtle px-4 py-3">
+              <div className="min-w-0">
                 <h2
                   id={titleId}
-                  className="text-lg font-bold tracking-tight text-text"
+                  className="text-base font-bold tracking-tight text-text"
                 >
                   Need help?
                 </h2>
-                <p id={descId} className="mt-1 text-sm text-text-muted">
+                <p id={descId} className="mt-0.5 text-xs text-text-muted">
                   No account needed. Leave your email and question.
                 </p>
               </div>
               <button
                 ref={closeRef}
                 type="button"
-                onClick={() => {
-                  if (phase !== "submitting") setOpen(false);
-                }}
+                onClick={closeQuietly}
                 disabled={phase === "submitting"}
                 className="rounded-lg p-1.5 text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
                 aria-label="Close"
@@ -243,11 +299,11 @@ export function AccessHelpControl() {
               </button>
             </div>
 
-            <div className="overflow-y-auto px-5 py-4">
+            <div className="overflow-y-auto px-4 py-3">
               {phase === "success" ? (
-                <div className="flex flex-col items-center gap-3 py-6 text-center">
+                <div className="flex flex-col items-center gap-2 py-4 text-center">
                   <CheckCircle2
-                    className="h-10 w-10 text-[#4ADE80]"
+                    className="h-8 w-8 text-[#4ADE80]"
                     aria-hidden
                   />
                   <div>
@@ -259,13 +315,13 @@ export function AccessHelpControl() {
                         Reference {reference}
                       </p>
                     ) : null}
-                    <p className="mt-2 text-sm text-text-muted">
+                    <p className="mt-1.5 text-xs text-text-muted">
                       {SUPPORT_RESPONSE_COPY}
                     </p>
                   </div>
                   <button
                     type="button"
-                    className="mt-2 rounded-xl bg-[#3B82F6] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#2563EB]"
+                    className="mt-1 rounded-xl bg-[#3B82F6] px-4 py-2 text-sm font-semibold text-white hover:bg-[#2563EB]"
                     onClick={() => {
                       setPhase("form");
                       setReference(null);
@@ -276,7 +332,7 @@ export function AccessHelpControl() {
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-3">
                   <label className="block">
                     <span className="text-xs font-medium text-text">Email</span>
                     <input
@@ -285,7 +341,7 @@ export function AccessHelpControl() {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="mt-1.5 w-full rounded-xl border-0 bg-surface-mid px-3.5 py-2.5 text-sm text-text outline-none placeholder:text-text-muted"
+                      className="mt-1 w-full rounded-xl border-0 bg-surface-mid px-3 py-2 text-sm text-text outline-none placeholder:text-text-muted"
                       placeholder="you@school.com"
                     />
                   </label>
@@ -296,15 +352,14 @@ export function AccessHelpControl() {
                     </span>
                     <textarea
                       required
-                      rows={5}
+                      rows={4}
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
-                      className="mt-1.5 w-full resize-y rounded-xl border-0 bg-surface-mid px-3.5 py-2.5 text-sm text-text outline-none placeholder:text-text-muted"
+                      className="mt-1 w-full resize-y rounded-xl border-0 bg-surface-mid px-3 py-2 text-sm text-text outline-none placeholder:text-text-muted"
                       placeholder="How can we help with your access code?"
                     />
                   </label>
 
-                  {/* Honeypot */}
                   <div
                     className="absolute -left-[9999px] h-0 w-0 overflow-hidden"
                     aria-hidden
@@ -323,7 +378,7 @@ export function AccessHelpControl() {
 
                   {phase === "error" && error ? (
                     <div
-                      className="rounded-xl bg-red-500/15 px-4 py-3 text-sm text-red-200"
+                      className="rounded-xl bg-red-500/15 px-3 py-2.5 text-sm text-red-200"
                       role="alert"
                     >
                       <p>{error}</p>
@@ -343,7 +398,7 @@ export function AccessHelpControl() {
                     disabled={!canSubmit}
                     className={cn(
                       "inline-flex w-full items-center justify-center gap-2 rounded-xl",
-                      "bg-[#3B82F6] px-5 py-2.5 text-sm font-semibold text-white",
+                      "bg-[#3B82F6] px-4 py-2.5 text-sm font-semibold text-white",
                       "transition-colors hover:bg-[#2563EB]",
                       "disabled:cursor-not-allowed disabled:opacity-50",
                     )}
@@ -361,7 +416,7 @@ export function AccessHelpControl() {
               )}
             </div>
           </div>
-        </div>
+        </>
       ) : null}
     </>
   );

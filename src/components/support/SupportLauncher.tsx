@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageCircleQuestion } from "lucide-react";
+import { MessageCircleQuestion, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { useAnalyticsConsent } from "@/components/ga/AnalyticsConsentProvider";
@@ -10,7 +10,8 @@ import { cn } from "@/lib/utils";
 import { useOptionalSupport } from "./SupportProvider";
 
 /**
- * Fixed Help button for authenticated app pages (dashboard, settings/profile, etc.).
+ * Fixed Help button for authenticated app pages.
+ * Stays visible while the compact popup is open so it can toggle closed.
  */
 export function SupportLauncher() {
   const support = useOptionalSupport();
@@ -20,13 +21,13 @@ export function SupportLauncher() {
 
   if (!support || !session?.user) return null;
   if (!shouldShowSupportLauncher(pathname)) return null;
-  if (support.open) return null;
+
+  const isOpen = support.open;
 
   return (
     <div
       className={cn(
-        "pointer-events-none fixed z-[55] flex justify-end",
-        // Keep clear of home-indicator / browser chrome and cookie banner.
+        "pointer-events-none fixed z-[101] flex justify-end",
         preferencesOpen
           ? "bottom-[calc(11rem+env(safe-area-inset-bottom,0px))] right-[max(1rem,env(safe-area-inset-right,0px))] sm:bottom-[calc(10rem+env(safe-area-inset-bottom,0px))]"
           : "bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))] right-[max(1rem,env(safe-area-inset-right,0px))] sm:bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))]",
@@ -42,15 +43,23 @@ export function SupportLauncher() {
           "min-h-[44px] min-w-[44px]",
         )}
         aria-haspopup="dialog"
-        aria-expanded={false}
+        aria-expanded={isOpen}
         aria-controls="support-panel"
         onClick={() => {
+          if (isOpen) {
+            support.closeSupport();
+            return;
+          }
           trackEvent("support_opened", { placement: "floating_launcher" });
           support.openSupport();
         }}
       >
-        <MessageCircleQuestion className="h-4 w-4 shrink-0" aria-hidden />
-        <span>Help</span>
+        {isOpen ? (
+          <X className="h-4 w-4 shrink-0" aria-hidden />
+        ) : (
+          <MessageCircleQuestion className="h-4 w-4 shrink-0" aria-hidden />
+        )}
+        <span>{isOpen ? "Close" : "Help"}</span>
       </button>
     </div>
   );

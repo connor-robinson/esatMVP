@@ -11,6 +11,7 @@ import {
 import Link from "next/link";
 import { CheckCircle2, Loader2, X } from "lucide-react";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
+import { useAnalyticsConsent } from "@/components/ga/AnalyticsConsentProvider";
 import { Button } from "@/components/ui/Button";
 import { trackEvent } from "@/lib/ga/trackEvent";
 import {
@@ -36,11 +37,7 @@ type DraftState = {
   replyEmail: string;
 };
 
-type UiPhase =
-  | "form"
-  | "submitting"
-  | "success"
-  | "error";
+type UiPhase = "form" | "submitting" | "success" | "error";
 
 function createIdempotencyKey(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -76,11 +73,17 @@ function clearDraft() {
   }
 }
 
+/**
+ * Compact Help popup anchored bottom-right (expands from the launcher).
+ * Outside click / Escape closes without clearing the draft.
+ */
 export function SupportPanel() {
   const support = useOptionalSupport();
   const session = useSupabaseSession();
+  const { preferencesOpen } = useAnalyticsConsent();
   const titleId = useId();
   const descId = useId();
+  const panelRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const idempotencyRef = useRef<string | null>(null);
 
@@ -95,7 +98,6 @@ export function SupportPanel() {
   const [mailtoHref, setMailtoHref] = useState<string | null>(null);
   const [reference, setReference] = useState<string | null>(null);
 
-  // Avoid Safari hydration mismatches: load draft only after mount.
   useEffect(() => {
     setHydrated(true);
     const draft = readDraft();
@@ -116,7 +118,6 @@ export function SupportPanel() {
       setReplyEmail(session.user.email);
     }
     setPhase((prev) => (prev === "success" ? "form" : prev));
-    // Fresh idempotency key each time the panel opens for a new attempt.
     if (!idempotencyRef.current) {
       idempotencyRef.current = createIdempotencyKey();
     }
@@ -130,16 +131,19 @@ export function SupportPanel() {
     writeDraft({ category, subject, message, replyEmail });
   }, [category, subject, message, replyEmail, hydrated, phase]);
 
+  const closeQuietly = useCallback(() => {
+    if (!support || phase === "submitting") return;
+    support.closeSupport();
+  }, [support, phase]);
+
   useEffect(() => {
     if (!support?.open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && phase !== "submitting") {
-        support.closeSupport();
-      }
+      if (e.key === "Escape") closeQuietly();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [support, phase]);
+  }, [support?.open, closeQuietly]);
 
   const resetAfterSuccess = useCallback(() => {
     setSubject("");
@@ -258,59 +262,61 @@ export function SupportPanel() {
     }
   };
 
+  const anchorBottom = preferencesOpen
+    ? "bottom-[calc(11rem+env(safe-area-inset-bottom,0px))] sm:bottom-[calc(10rem+env(safe-area-inset-bottom,0px))]"
+    : "bottom-[calc(4.75rem+env(safe-area-inset-bottom,0px))] sm:bottom-[calc(5rem+env(safe-area-inset-bottom,0px))]";
+
   return (
-    <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center sm:p-4">
+    <>
       <button
         type="button"
-        className="absolute inset-0 bg-background/80 backdrop-blur-sm"
-        aria-label="Dismiss support panel"
+        className="fixed inset-0 z-[99] cursor-default bg-transparent"
+        aria-label="Dismiss help"
         disabled={phase === "submitting"}
-        onClick={() => {
-          if (phase !== "submitting") support.closeSupport();
-        }}
+        onClick={closeQuietly}
       />
       <div
+        ref={panelRef}
         id="support-panel"
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={descId}
         className={cn(
-          "relative flex max-h-[min(92dvh,40rem)] w-full flex-col",
-          "rounded-t-organic-xl bg-surface-elevated shadow-modal-card",
-          "sm:max-w-lg sm:rounded-organic-xl",
-          "pb-[env(safe-area-inset-bottom,0px)]",
+          "fixed z-[100] flex w-[min(calc(100vw-1.5rem),22rem)] flex-col",
+          "max-h-[min(70dvh,32rem)] overflow-hidden",
+          "rounded-xl border border-border-subtle bg-surface-elevated shadow-lg",
+          "right-[max(0.75rem,env(safe-area-inset-right,0px))]",
+          anchorBottom,
         )}
       >
-        <div className="flex items-start justify-between gap-3 border-b border-border-subtle px-5 py-4 sm:px-6">
-          <div>
+        <div className="flex shrink-0 items-start justify-between gap-2 border-b border-border-subtle px-4 py-3">
+          <div className="min-w-0">
             <h2
               id={titleId}
-              className="font-heading text-xl font-bold text-text"
+              className="font-heading text-base font-bold text-text"
             >
               Need help?
             </h2>
-            <p id={descId} className="mt-1 text-sm text-text-muted">
+            <p id={descId} className="mt-0.5 text-xs text-text-muted">
               {SUPPORT_INTRO_COPY}
             </p>
           </div>
           <button
             ref={closeRef}
             type="button"
-            onClick={() => {
-              if (phase !== "submitting") support.closeSupport();
-            }}
+            onClick={closeQuietly}
             disabled={phase === "submitting"}
-            className="rounded-organic-md p-1.5 text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
+            className="rounded-md p-1.5 text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
             aria-label="Close"
           >
             <X className="h-4 w-4" aria-hidden />
           </button>
         </div>
 
-        <div className="overflow-y-auto px-5 py-4 sm:px-6 sm:py-5">
-          <p className="text-sm text-text-muted">
-            Email us directly:{" "}
+        <div className="overflow-y-auto px-4 py-3">
+          <p className="text-xs text-text-muted">
+            Email us:{" "}
             <a
               href={`mailto:${SUPPORT_PUBLIC_EMAIL}`}
               className="font-medium text-text underline-offset-2 hover:underline"
@@ -320,8 +326,8 @@ export function SupportPanel() {
           </p>
 
           {phase === "success" ? (
-            <div className="mt-6 flex flex-col items-center gap-3 py-4 text-center">
-              <CheckCircle2 className="h-10 w-10 text-success" aria-hidden />
+            <div className="mt-4 flex flex-col items-center gap-2 py-3 text-center">
+              <CheckCircle2 className="h-8 w-8 text-success" aria-hidden />
               <div>
                 <p className="text-sm font-semibold text-text">
                   Request received
@@ -331,7 +337,7 @@ export function SupportPanel() {
                     Reference {reference}
                   </p>
                 ) : null}
-                <p className="mt-2 text-sm text-text-muted">
+                <p className="mt-1.5 text-xs text-text-muted">
                   {SUPPORT_RESPONSE_COPY}
                 </p>
               </div>
@@ -348,8 +354,7 @@ export function SupportPanel() {
               </Button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="mt-5 space-y-4" noValidate>
-              {/* Honeypot: hidden from assistive tech and sighted users. */}
+            <form onSubmit={handleSubmit} className="mt-3 space-y-3" noValidate>
               <div
                 className="absolute -left-[9999px] h-0 w-0 overflow-hidden"
                 aria-hidden="true"
@@ -366,8 +371,8 @@ export function SupportPanel() {
                 </label>
               </div>
 
-              <label className="block space-y-1.5">
-                <span className="text-xs font-semibold uppercase tracking-[0.14em] text-text-muted">
+              <label className="block space-y-1">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted">
                   Category
                 </span>
                 <select
@@ -376,7 +381,7 @@ export function SupportPanel() {
                     setCategory(e.target.value as SupportCategory)
                   }
                   className={cn(
-                    "w-full rounded-organic-md border border-border-subtle bg-surface-mid px-3 py-2.5",
+                    "w-full rounded-lg border border-border-subtle bg-surface-mid px-2.5 py-2",
                     "text-sm text-text outline-none focus:border-border",
                   )}
                   required
@@ -389,8 +394,8 @@ export function SupportPanel() {
                 </select>
               </label>
 
-              <label className="block space-y-1.5">
-                <span className="text-xs font-semibold uppercase tracking-[0.14em] text-text-muted">
+              <label className="block space-y-1">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted">
                   Subject
                 </span>
                 <input
@@ -401,34 +406,34 @@ export function SupportPanel() {
                   required
                   placeholder="Short summary"
                   className={cn(
-                    "w-full rounded-organic-md border border-border-subtle bg-surface-mid px-3 py-2.5",
+                    "w-full rounded-lg border border-border-subtle bg-surface-mid px-2.5 py-2",
                     "text-sm text-text placeholder:text-text-disabled",
                     "outline-none focus:border-border",
                   )}
                 />
               </label>
 
-              <label className="block space-y-1.5">
-                <span className="text-xs font-semibold uppercase tracking-[0.14em] text-text-muted">
+              <label className="block space-y-1">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted">
                   Message
                 </span>
                 <textarea
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  rows={5}
+                  rows={4}
                   maxLength={SUPPORT_LIMITS.messageMax}
                   required
                   placeholder="How can we help?"
                   className={cn(
-                    "w-full resize-none rounded-organic-md border border-border-subtle bg-surface-mid px-3 py-2.5",
+                    "w-full resize-none rounded-lg border border-border-subtle bg-surface-mid px-2.5 py-2",
                     "text-sm text-text placeholder:text-text-disabled",
                     "outline-none focus:border-border",
                   )}
                 />
               </label>
 
-              <label className="block space-y-1.5">
-                <span className="text-xs font-semibold uppercase tracking-[0.14em] text-text-muted">
+              <label className="block space-y-1">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted">
                   Reply email
                 </span>
                 <input
@@ -439,35 +444,25 @@ export function SupportPanel() {
                   required
                   autoComplete="email"
                   className={cn(
-                    "w-full rounded-organic-md border border-border-subtle bg-surface-mid px-3 py-2.5",
+                    "w-full rounded-lg border border-border-subtle bg-surface-mid px-2.5 py-2",
                     "text-sm text-text outline-none focus:border-border",
                   )}
                 />
               </label>
 
               {category === "technical_problem" ? (
-                <p className="text-xs leading-relaxed text-text-subtle">
-                  For technical problems we include basic browser and device
-                  information (page URL, viewport, user agent) to help diagnose
-                  the issue. We never collect passwords or session tokens.
+                <p className="text-[11px] leading-relaxed text-text-subtle">
+                  We include basic browser and device info to help diagnose
+                  technical issues. No passwords or session tokens.
                 </p>
               ) : null}
 
               {phase === "error" && error ? (
                 <div
-                  className="space-y-3 rounded-organic-md bg-error/10 px-3 py-3"
+                  className="space-y-2 rounded-lg bg-error/10 px-3 py-2.5"
                   role="alert"
                 >
                   <p className="text-sm text-error">{error}</p>
-                  <p className="text-sm font-semibold text-text">
-                    Email{" "}
-                    <a
-                      href={`mailto:${SUPPORT_PUBLIC_EMAIL}`}
-                      className="underline underline-offset-2"
-                    >
-                      {SUPPORT_PUBLIC_EMAIL}
-                    </a>
-                  </p>
                   <div className="flex flex-wrap gap-2">
                     <Button
                       type="button"
@@ -485,7 +480,7 @@ export function SupportPanel() {
                       <a
                         href={mailtoHref}
                         className={cn(
-                          "inline-flex items-center justify-center rounded-organic-md px-3 py-2 text-sm font-medium",
+                          "inline-flex items-center justify-center rounded-lg px-3 py-2 text-sm font-medium",
                           "bg-primary text-background hover:opacity-90",
                         )}
                       >
@@ -496,7 +491,7 @@ export function SupportPanel() {
                 </div>
               ) : null}
 
-              <div className="flex items-center justify-between gap-3 pt-1">
+              <div className="flex items-center justify-between gap-2 pt-0.5">
                 <Link
                   href="/help"
                   className="text-xs font-medium text-text-muted underline-offset-2 hover:text-text hover:underline"
@@ -509,12 +504,12 @@ export function SupportPanel() {
                   variant="primary"
                   size="sm"
                   disabled={!canSubmit}
-                  className="min-w-[7.5rem]"
+                  className="min-w-[6.5rem]"
                 >
                   {phase === "submitting" ? (
                     <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
                   ) : (
-                    "Send message"
+                    "Send"
                   )}
                 </Button>
               </div>
@@ -522,6 +517,6 @@ export function SupportPanel() {
           )}
         </div>
       </div>
-    </div>
+    </>
   );
 }
