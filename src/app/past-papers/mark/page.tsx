@@ -16,8 +16,7 @@ import { TimeScatterChart } from "@/components/papers/TimeScatterChart";
 import { MarkSessionMistakesSection } from "@/components/papers/mark/MarkSessionMistakesSection";
 import { MathContent } from "@/components/shared/MathContent";
 import { EsatCampMockReviewPanel } from "@/components/papers/esatCampMocks/EsatCampMockReviewPanel";
-import { PastPaperTextQuestion } from "@/components/papers/PastPaperTextQuestion";
-import { shouldRenderPastPaperAsText } from "@/lib/papers/pastPaperTextMode";
+import { MarkReviewPearsonQuestion } from "@/components/papers/mark/MarkReviewPearsonQuestion";
 import {
   ESAT_CAMP_MOCK_DISCLOSURE,
   isEsatCampMockExamType,
@@ -62,7 +61,6 @@ import {
 import { fetchEsatTable, interpolatePercentile, interpolateScore, mapSectionToTable, averageEsatDistributionTables, type EsatRow } from "@/lib/esat/percentiles";
 import { cropImageToContent } from "@/lib/utils/imageCrop";
 import type { ConversionRow, ExamName, Letter, MistakeTag } from "@/types/papers";
-import type { QuestionStats } from "@/types/questionStats";
 import { MarkSectionNav,
   type MarkSection,
 } from "@/components/papers/mark/MarkSectionNav";
@@ -74,8 +72,6 @@ import {
   clearHubFirstSectionPreview,
   hasHubFirstSectionPreview,
 } from "@/lib/papers/hubFirstSectionPreview";
-
-const LETTERS: Letter[] = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
 export default function PapersMarkPage() {
   const router = useRouter();
@@ -149,9 +145,6 @@ export default function PapersMarkPage() {
   const [nsaaAveragedPercentile, setNsaaAveragedPercentile] = useState<number | null>(null);
   const [nsaaAveragedScore, setNsaaAveragedScore] = useState<number | null>(null);
   const [nsaaAveragedChartRows, setNsaaAveragedChartRows] = useState<EsatRow[]>([]);
-  // Community stats state
-  const [questionStats, setQuestionStats] = useState<Record<number, QuestionStats>>({});
-  const [statsLoading, setStatsLoading] = useState(false);
   const [showHubMoreSections, setShowHubMoreSections] = useState(false);
   
   // Compute values needed for hooks (with safe defaults if no session)
@@ -261,53 +254,6 @@ export default function PapersMarkPage() {
       mounted = false;
     };
   }, [paperId, questions]);
-
-  // Fetch community stats for all questions in session
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      try {
-        if (!treatAsFullAccess || !sessionId || totalQuestions === 0) return;
-        
-        const qs = usePaperSessionStore.getState().questions;
-        const questionIds = qs.map((q) => q.id).filter((id) => id != null);
-        
-        if (questionIds.length === 0) return;
-        
-        setStatsLoading(true);
-        const response = await fetch("/api/past-papers/questions/stats", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ questionIds }),
-        });
-        
-        if (!mounted) return;
-        
-        if (!response.ok) {
-          return;
-        }
-        
-        const data = await response.json();
-        if (!mounted) return;
-        
-        // Create a map by question ID
-        const statsMap: Record<number, QuestionStats> = {};
-        (data.stats || []).forEach((stat: QuestionStats) => {
-          statsMap[stat.questionId] = stat;
-        });
-        
-        setQuestionStats(statsMap);
-      } catch (error) {
-      } finally {
-        if (mounted) {
-          setStatsLoading(false);
-        }
-      }
-    })();
-    return () => {
-      mounted = false;
-    };
-  }, [treatAsFullAccess, sessionId, totalQuestions]);
   
   // Shared bubble utility (analytics-style)
   const bubbleClass =
@@ -2158,243 +2104,23 @@ export default function PapersMarkPage() {
                 </div>
               </div>
 
-              {/* Community Stats */}
-              {!treatAsFullAccess && (
-                <div className="mb-4">
-                  <DrillUpgradeBanner
-                    variant="panel"
-                    headline="Unlock community stats"
-                    subtext="See how other candidates answered each question: average time and answer distribution."
-                    ctaLabel="View plans"
-                  />
-                </div>
-              )}
-              {treatAsFullAccess && (() => {
-                const question = usePaperSessionStore.getState().questions[selectedIndex];
-                const stats = question ? questionStats[question.id] : null;
-                
-                if (!stats) {
-                  if (statsLoading) {
-                    return (
-                      <div className="mb-4 py-3">
-                        <div className="text-xs text-neutral-500">Loading community stats...</div>
-                      </div>
-                    );
-                  }
-                  return null;
-                }
-
-                return (
-                  <div className="mb-4 space-y-3">
-                    {/* Header */}
-                    <div className="flex items-center justify-between">
-                      <div className="text-xs font-medium text-neutral-300 uppercase tracking-wider">Community Stats</div>
-                      <div className="text-xs text-neutral-500">{stats.attempts} attempts</div>
-                    </div>
-                    
-                    {!stats.hasSufficientData ? (
-                      <div className="text-xs text-neutral-500 py-2">Not enough data yet</div>
-                    ) : (
-                      <>
-                        {/* Average Time */}
-                        <div className="flex items-center justify-between py-2">
-                          <div className="text-xs text-neutral-400">Average time</div>
-                          <div className="text-sm text-neutral-200 font-medium">
-                            {formatTime(Math.round(stats.avgTimeSeconds))}
-                          </div>
-                        </div>
-                        
-                        {/* Answer Distribution */}
-                        <div className="space-y-2">
-                          <div className="text-xs text-neutral-400 mb-2">Answer distribution</div>
-                          <div className="space-y-1.5">
-                            {LETTERS.map((letter) => {
-                              const percentage = stats.optionPercentages[letter] || 0;
-                              const isCorrect = letter === (question?.answerLetter || "").toUpperCase();
-                              const isUserChoice = letter === (answers[selectedIndex]?.choice || "").toUpperCase();
-                              
-                              // Only show options that have some percentage or are the correct/user choice
-                              if (percentage === 0 && !isCorrect && !isUserChoice) {
-                                return null;
-                              }
-                              
-                              return (
-                                <div key={letter} className="flex items-center gap-3">
-                                  <div className="w-5 text-xs text-neutral-300 font-medium">{letter}</div>
-                                  <div className="flex-1 h-1.5 bg-neutral-800/50 rounded-full overflow-hidden">
-                                    <div
-                                      className={cn(
-                                        "h-full rounded-full transition-all duration-300",
-                                        isCorrect ? "bg-primary" : isUserChoice ? "bg-warning" : "bg-text-muted",
-                                      )}
-                                      style={{ width: `${Math.max(percentage, 0.5)}%` }}
-                                    />
-                                  </div>
-                                  <div className="w-10 text-xs text-neutral-400 text-right">
-                                    {percentage > 0 ? `${percentage.toFixed(0)}%` : "-"}
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                );
-              })()}
-
-              {/* Question and Answer - Side by Side (normal) or Stacked (TMUA) */}
+              {/* Question (Pearson UI, dark) + solution below */}
               {(() => {
                 const question = usePaperSessionStore.getState().questions[selectedIndex];
+                if (!question) return null;
+
                 const isTMUA = question?.questionImage && question?.solutionImage && !question?.solutionText;
-                const questionImgSrc = (isTMUA && croppedQuestionImage) ? croppedQuestionImage : question?.questionImage;
-                const useTextQuestion =
-                  question && shouldRenderPastPaperAsText(question);
+                const answerImgSrc = (isTMUA && croppedAnswerImage) ? croppedAnswerImage : question?.solutionImage;
 
-                if (useTextQuestion) {
-                  return (
-                    <div className={`grid gap-4 transition-all duration-300 grid-cols-1`}>
-                      <div
-                        className="relative w-full overflow-y-auto rounded-organic-lg transition-all duration-300"
-                        style={{ height: "60vh", backgroundColor: cssVar.background }}
-                      >
-                        <div className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6">
-                          <PastPaperTextQuestion
-                            question={question}
-                            questionNumber={questionNumbers[selectedIndex]}
-                            showStem
-                            showOptionsBelow
-                            selectedChoice={
-                              (answers[selectedIndex]?.choice as Letter | null) ??
-                              null
-                            }
-                            className="px-0 py-0"
-                          />
-                        </div>
-                      </div>
-
-                      {!treatAsFullAccess && (
-                        <DrillUpgradeBanner
-                          variant="panel"
-                          headline="Unlock Written Solutions"
-                          subtext="Upgrade to view official solutions and worked answers for every question."
-                          ctaLabel="View plans"
-                        />
-                      )}
-                      {treatAsFullAccess && question?.solutionText && (
-                        <div className="rounded-lg bg-neutral-800 p-4 overflow-y-auto transition-all duration-300" style={{ maxHeight: "72vh" }}>
-                          <div className="mb-3 text-[15px] font-semibold text-accent">
-                            Suggested Answer
-                          </div>
-                          <MathContent
-                            content={formatSolutionTextForDisplay(
-                              question.solutionText || "",
-                            )}
-                            className="text-sm leading-relaxed text-text"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  );
-                }
-                
                 return (
-                  <div className={`grid gap-4 transition-all duration-300 grid-cols-1`}>
-                    {/* Question image */}
-                    <div className="relative w-full rounded-organic-lg transition-all duration-300" style={{ height: '60vh', backgroundColor: cssVar.background }}>
-                      <div 
-                        className="absolute inset-0 overflow-y-auto overflow-x-hidden rounded-organic-lg scrollbar-hide transition-colors duration-300 ease-in-out"
-                        style={{ backgroundColor: cssVar.background }}
-                      >
-                        <div className="flex flex-col items-center justify-center min-h-full pt-12 pb-12 px-8">
-                          <div className="relative flex w-full justify-center" style={{ isolation: 'isolate' }}>
-                            <div
-                              className="relative inline-block"
-                              style={{
-                                width: 'min(72%, 1100px)',
-                                maxWidth: '1100px',
-                                lineHeight: 0,
-                                transition: 'background-color 300ms ease-in-out'
-                              }}
-                            >
-                              <div
-                                style={{
-                                  position: 'relative',
-                                  display: 'inline-block',
-                                  lineHeight: 0,
-                                  backgroundColor: isDarkMode ? cssVar.text : 'transparent'
-                                }}
-                              >
-                                <img
-                                  src={questionImgSrc}
-                                  alt={`Question ${questionNumbers[selectedIndex]}`}
-                                  className={cn(
-                                    "block h-auto w-full transition-opacity duration-300 ease-in-out",
-                                    isDarkMode && "mix-blend-difference",
-                                  )}
-                                  style={{
-                                    display: 'block',
-                                    height: 'auto',
-                                    width: '100%',
-                                    imageRendering: 'auto',
-                                    borderRadius: 0,
-                                    margin: 0,
-                                    padding: 0,
-                                    verticalAlign: 'bottom',
-                                  }}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Fixed overlay for buttons - positioned as sibling of scrollable container */}
-                      <div className="absolute inset-0 pointer-events-none z-50">
-                        {/* Fullscreen Button - Top Left */}
-                        <div className="absolute top-6 left-6 pointer-events-auto">
-                          <button
-                            onClick={() => {
-                              setIsFullscreen(true);
-                              setFullscreenImage('question');
-                            }}
-                            className="
-                              flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200
-                              backdrop-blur-sm shadow-sm bg-black/40 text-white/70 hover:bg-black/50 hover:text-white/90
-                            "
-                            title="Enter fullscreen mode"
-                          >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                            </svg>
-                          </button>
-                        </div>
-                        {/* Dark Mode Toggle - Top Right */}
-                        <div className="absolute top-6 right-6 pointer-events-auto">
-                          <button
-                            onClick={() => setIsDarkMode(!isDarkMode)}
-                            className="
-                              flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200
-                              backdrop-blur-sm shadow-sm bg-black/40 text-white/70 hover:bg-black/50 hover:text-white/90
-                            "
-                            title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
-                          >
-                            {isDarkMode ? (
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                              </svg>
-                            ) : (
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                              </svg>
-                            )}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                  <div className="grid grid-cols-1 gap-4 transition-all duration-300">
+                    <MarkReviewPearsonQuestion
+                      question={question}
+                      selectedChoice={
+                        (answers[selectedIndex]?.choice as Letter | null) ?? null
+                      }
+                    />
 
-                    {/* Answer/Solution section */}
                     {!treatAsFullAccess && (
                       <DrillUpgradeBanner
                         variant="panel"
@@ -2403,138 +2129,31 @@ export default function PapersMarkPage() {
                         ctaLabel="View plans"
                       />
                     )}
-                    {treatAsFullAccess && (() => {
-                      const question = usePaperSessionStore.getState().questions[selectedIndex];
-                      const isTMUA = question?.questionImage && question?.solutionImage && !question?.solutionText;
-                      const answerImgSrc = (isTMUA && croppedAnswerImage) ? croppedAnswerImage : question?.solutionImage;
-                      
-                      if (isTMUA) {
-                        // TMUA: Answer image below question with solution label
-                        return (
-                          <div className="relative w-full rounded-organic-lg border-2 border-primary/30 transition-all duration-300" style={{ height: '60vh', backgroundColor: cssVar.background }}>
-                            <div 
-                              className="absolute inset-0 overflow-y-auto overflow-x-hidden rounded-organic-lg scrollbar-hide transition-colors duration-300 ease-in-out"
-                              style={{ backgroundColor: cssVar.background }}
-                            >
-                              <div className="flex flex-col items-center justify-center min-h-full pt-12 pb-12 px-8">
-                                <div className="relative flex w-full justify-center" style={{ isolation: 'isolate' }}>
-                                  <div
-                                    className="relative inline-block"
-                                    style={{
-                                      width: 'min(72%, 1100px)',
-                                      maxWidth: '1100px',
-                                      lineHeight: 0,
-                                      transition: 'background-color 300ms ease-in-out'
-                                    }}
-                                  >
-                                    <div
-                                      style={{
-                                        position: 'relative',
-                                        display: 'inline-block',
-                                        lineHeight: 0,
-                                        backgroundColor: isDarkMode ? cssVar.text : 'transparent'
-                                      }}
-                                    >
-                                      <img
-                                        src={answerImgSrc as string}
-                                        alt="Solution"
-                                        className={cn(
-                                          "block h-auto w-full transition-opacity duration-300 ease-in-out",
-                                          isDarkMode && "mix-blend-difference",
-                                        )}
-                                        style={{
-                                          display: 'block',
-                                          height: 'auto',
-                                          width: '100%',
-                                          imageRendering: 'auto',
-                                          borderRadius: 0,
-                                          margin: 0,
-                                          padding: 0,
-                                          verticalAlign: 'bottom',
-                                        }}
-                                      />
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            {/* Solution Header - Fixed overlay */}
-                            <div className="absolute top-6 left-6 z-10 px-3 py-1.5 rounded-md backdrop-blur-md border shadow-sm bg-black/30 border-white/10 text-white/80 pointer-events-auto">
-                              <div className="text-sm font-normal" style={{ fontFamily: 'Garamond, serif' }}>Official Solution</div>
-                            </div>
-                            
-                            {/* Fixed overlay for buttons */}
-                            <div className="absolute inset-0 pointer-events-none z-50">
-                              {/* Fullscreen Button - Top Left */}
-                              <div className="absolute top-6 right-6 pointer-events-auto">
-                                <button
-                                  onClick={() => {
-                                    setIsFullscreen(true);
-                                    setFullscreenImage('solution');
-                                  }}
-                                  className="
-                                    flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200
-                                    backdrop-blur-sm shadow-sm bg-black/40 text-white/70 hover:bg-black/50 hover:text-white/90
-                                  "
-                                  title="Enter fullscreen mode"
-                                >
-                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                                  </svg>
-                                </button>
-                              </div>
-                              {/* Dark Mode Toggle - Top Right (below fullscreen) */}
-                              <div className="absolute top-20 right-6 pointer-events-auto">
-                                <button
-                                  onClick={() => setIsDarkMode(!isDarkMode)}
-                                  className="
-                                    flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200
-                                    backdrop-blur-sm shadow-sm bg-black/40 text-white/70 hover:bg-black/50 hover:text-white/90
-                                  "
-                                  title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
-                                >
-                                  {isDarkMode ? (
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                                    </svg>
-                                  ) : (
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                                      <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                                    </svg>
-                                  )}
-                                </button>
-                              </div>
-                            </div>
-                      </div>
-                        );
-                      }
-                      
-                      // Normal: Side-by-side layout
-                      return (
-                        <div className="rounded-lg p-4 bg-neutral-800 overflow-y-auto transition-all duration-300" style={{ maxHeight: '72vh' }}>
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="text-[15px] font-semibold text-accent">Suggested Answer</div>
-                            {currentQuestionTitle && (
-                              <div className="ml-3 rounded-full bg-surface-mid px-2 py-0.5 text-xs font-medium text-text-muted">
-                                {currentQuestionTitle}
-                              </div>
-                            )}
-                          </div>
-                          <div className="space-y-3">
-                            {question?.solutionText && (
-                              <MathContent
-                                content={formatSolutionTextForDisplay(
-                                  question.solutionText || "",
-                                )}
-                                className="text-sm leading-relaxed text-text"
-                              />
-                            )}
-                            {question?.solutionImage && (
-                              <div className="relative flex justify-center">
+
+                    {treatAsFullAccess && isTMUA && answerImgSrc ? (
+                      <div
+                        className="relative w-full rounded-organic-lg border-2 border-primary/30 transition-all duration-300"
+                        style={{ height: "60vh", backgroundColor: cssVar.background }}
+                      >
+                        <div
+                          className="absolute inset-0 overflow-y-auto overflow-x-hidden rounded-organic-lg scrollbar-hide transition-colors duration-300 ease-in-out"
+                          style={{ backgroundColor: cssVar.background }}
+                        >
+                          <div className="flex min-h-full flex-col items-center justify-center px-8 pb-12 pt-12">
+                            <div className="relative flex w-full justify-center" style={{ isolation: "isolate" }}>
+                              <div
+                                className="relative inline-block"
+                                style={{
+                                  width: "min(72%, 1100px)",
+                                  maxWidth: "1100px",
+                                  lineHeight: 0,
+                                  transition: "background-color 300ms ease-in-out",
+                                }}
+                              >
                                 <div
-                                  className="inline-block"
                                   style={{
+                                    position: "relative",
+                                    display: "inline-block",
                                     lineHeight: 0,
                                     backgroundColor: isDarkMode ? cssVar.text : "transparent",
                                   }}
@@ -2543,38 +2162,138 @@ export default function PapersMarkPage() {
                                     src={answerImgSrc as string}
                                     alt="Solution"
                                     className={cn(
-                                      "mx-auto h-auto rounded-md object-contain",
+                                      "block h-auto w-full transition-opacity duration-300 ease-in-out",
                                       isDarkMode && "mix-blend-difference",
                                     )}
                                     style={{
-                                      maxWidth: `${RIGHT_PANEL_IMAGE_SCALE * 100}%`,
+                                      display: "block",
+                                      height: "auto",
+                                      width: "100%",
+                                      imageRendering: "auto",
+                                      borderRadius: 0,
+                                      margin: 0,
+                                      padding: 0,
+                                      verticalAlign: "bottom",
                                     }}
                                   />
                                 </div>
-                                <div className="absolute bottom-4 right-4 pointer-events-auto">
-                        <button
-                                    onClick={() => {
-                                      setIsFullscreen(true);
-                                      setFullscreenImage('solution');
-                                    }}
-                                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-normal transition-all duration-200 backdrop-blur-sm border shadow-sm bg-black/40 border-white/15 text-white/70 hover:bg-black/50 hover:text-white/90 hover:border-white/25"
-                                    title="View solution in fullscreen"
-                                  >
-                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                                    </svg>
-                                    <span className="hidden sm:inline">Fullscreen</span>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                            {!question?.solutionText && !question?.solutionImage && (
-                              <div className="text-sm text-text-muted">No solution available</div>
-                            )}
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      );
-                    })()}
+
+                        <div className="absolute left-6 top-6 z-10 rounded-md border border-white/10 bg-black/30 px-3 py-1.5 text-white/80 shadow-sm backdrop-blur-md pointer-events-auto">
+                          <div className="text-sm font-normal" style={{ fontFamily: "Garamond, serif" }}>
+                            Official Solution
+                          </div>
+                        </div>
+
+                        <div className="pointer-events-none absolute inset-0 z-50">
+                          <div className="pointer-events-auto absolute right-6 top-6">
+                            <button
+                              onClick={() => {
+                                setIsFullscreen(true);
+                                setFullscreenImage("solution");
+                              }}
+                              className="flex h-10 w-10 items-center justify-center rounded-lg bg-black/40 text-white/70 shadow-sm backdrop-blur-sm transition-all duration-200 hover:bg-black/50 hover:text-white/90"
+                              title="Enter fullscreen mode"
+                            >
+                              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                              </svg>
+                            </button>
+                          </div>
+                          <div className="pointer-events-auto absolute right-6 top-20">
+                            <button
+                              onClick={() => setIsDarkMode(!isDarkMode)}
+                              className="flex h-10 w-10 items-center justify-center rounded-lg bg-black/40 text-white/70 shadow-sm backdrop-blur-sm transition-all duration-200 hover:bg-black/50 hover:text-white/90"
+                              title={`Switch to ${isDarkMode ? "light" : "dark"} mode`}
+                            >
+                              {isDarkMode ? (
+                                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
+                              ) : (
+                                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                                </svg>
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}
+
+                    {treatAsFullAccess && !isTMUA && (question.solutionText || question.solutionImage) ? (
+                      <div
+                        className="overflow-y-auto rounded-lg bg-neutral-800 p-4 transition-all duration-300"
+                        style={{ maxHeight: "72vh" }}
+                      >
+                        <div className="mb-3 flex items-center justify-between">
+                          <div className="text-[15px] font-semibold text-accent">Suggested Answer</div>
+                          {currentQuestionTitle && (
+                            <div className="ml-3 rounded-full bg-surface-mid px-2 py-0.5 text-xs font-medium text-text-muted">
+                              {currentQuestionTitle}
+                            </div>
+                          )}
+                        </div>
+                        <div className="space-y-3">
+                          {question.solutionText && (
+                            <MathContent
+                              content={formatSolutionTextForDisplay(question.solutionText || "")}
+                              className="text-sm leading-relaxed text-text"
+                            />
+                          )}
+                          {question.solutionImage && (
+                            <div className="relative flex justify-center">
+                              <div
+                                className="inline-block"
+                                style={{
+                                  lineHeight: 0,
+                                  backgroundColor: isDarkMode ? cssVar.text : "transparent",
+                                }}
+                              >
+                                <img
+                                  src={answerImgSrc as string}
+                                  alt="Solution"
+                                  className={cn(
+                                    "mx-auto h-auto rounded-md object-contain",
+                                    isDarkMode && "mix-blend-difference",
+                                  )}
+                                  style={{
+                                    maxWidth: `${RIGHT_PANEL_IMAGE_SCALE * 100}%`,
+                                  }}
+                                />
+                              </div>
+                              <div className="pointer-events-auto absolute bottom-4 right-4">
+                                <button
+                                  onClick={() => {
+                                    setIsFullscreen(true);
+                                    setFullscreenImage("solution");
+                                  }}
+                                  className="flex items-center gap-1.5 rounded-md border border-white/15 bg-black/40 px-2.5 py-1.5 text-xs font-normal text-white/70 shadow-sm backdrop-blur-sm transition-all duration-200 hover:border-white/25 hover:bg-black/50 hover:text-white/90"
+                                  title="View solution in fullscreen"
+                                >
+                                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                                  </svg>
+                                  <span className="hidden sm:inline">Fullscreen</span>
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ) : null}
+
+                    {treatAsFullAccess &&
+                      !isTMUA &&
+                      !question.solutionText &&
+                      !question.solutionImage && (
+                        <div className="rounded-lg bg-neutral-800 p-4">
+                          <div className="text-sm text-text-muted">No solution available</div>
+                        </div>
+                      )}
                   </div>
                 );
               })()}
@@ -2611,6 +2330,7 @@ export default function PapersMarkPage() {
                   userChoice={
                     (answers[selectedIndex]?.choice as Letter | null) ?? null
                   }
+                  hideDistractorMap
                 />
               )}
               </div>

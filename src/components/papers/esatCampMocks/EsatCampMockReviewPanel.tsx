@@ -15,9 +15,12 @@ import type { Letter, Question } from "@/types/papers";
 export function EsatCampMockReviewPanel({
   question,
   userChoice,
+  hideDistractorMap = false,
 }: {
   question: Question;
   userChoice: Letter | null;
+  /** Temporarily hide distractor explanations in mark review. */
+  hideDistractorMap?: boolean;
 }) {
   const [revealedDistractors, setRevealedDistractors] = useState<Set<string>>(
     () => new Set(),
@@ -28,12 +31,14 @@ export function EsatCampMockReviewPanel({
     return Object.entries(map).sort(([a], [b]) => a.localeCompare(b));
   }, [question.distractorMap]);
 
-  if (
-    !question.distractorMap &&
-    !question.benchmarkNote &&
-    !question.tipText &&
-    !question.difficultyLabel
-  ) {
+  const showDistractors = !hideDistractorMap && distractorEntries.length > 0;
+  const hasMeta =
+    Boolean(question.topicCode) ||
+    Boolean(question.difficultyLabel) ||
+    Boolean(question.targetDisplay);
+  const hasBenchmark = Boolean(question.benchmarkNote);
+
+  if (!showDistractors && !hasMeta && !hasBenchmark) {
     return null;
   }
 
@@ -59,7 +64,7 @@ export function EsatCampMockReviewPanel({
         </div>
       )}
 
-      {distractorEntries.length > 0 ? (
+      {showDistractors ? (
         <div className="rounded-lg bg-neutral-800 p-4">
           <div className="mb-3 text-[15px] font-semibold text-accent">
             Distractor map

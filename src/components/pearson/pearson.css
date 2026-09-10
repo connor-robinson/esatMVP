@@ -63,6 +63,25 @@ html.pearson-exam-active body {
   text-rendering: geometricPrecision;
 }
 
+/* Embedded (mark review): question panel only, not a full-screen exam. */
+.pearson-exam-root.pearson-exam-root--embedded {
+  position: relative;
+  inset: auto;
+  z-index: auto;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+}
+
+.pearson-exam-root.pearson-exam-root--review-dark .katex,
+.pearson-exam-root.pearson-exam-root--review-dark .katex * {
+  color: var(--pearson-text) !important;
+}
+
+.pearson-exam-root.pearson-exam-root--review-dark .pearson-stem-img {
+  background: #ffffff;
+}
+
 .pearson-exam-root *,
 .pearson-exam-root *::before,
 .pearson-exam-root *::after {
