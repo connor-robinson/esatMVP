@@ -193,8 +193,10 @@ const FOOTER_PLATFORM_LINKS = [
 
 export function MarketingHomepage({
   socialProofSlot,
+  reviewsStatsSlot,
 }: {
   socialProofSlot?: ReactNode;
+  reviewsStatsSlot?: ReactNode;
 }) {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
   const { navVisible } = useHomepageAutoHideNav();
@@ -224,8 +226,8 @@ export function MarketingHomepage({
       {/* Hero: leave room for section nav + a peek of the founder strip */}
       <section className="relative flex min-h-[calc(100svh-11.5rem)] flex-col justify-center bg-[#0A0F1D] pt-8 pb-6 lg:pt-10 lg:pb-8">
         <div className="relative mx-auto grid w-full max-w-[1400px] flex-1 items-center gap-8 px-6 sm:px-8 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:gap-10 lg:px-10 xl:gap-14 xl:px-12">
-          <div className="flex min-w-0 flex-col gap-5 sm:gap-6">
-            <h1 className="whitespace-nowrap font-display font-bold leading-[1.08] tracking-[-0.03em] text-white [font-size:clamp(2rem,min(0.9rem+3.2vw,7.5cqi),3.25rem)]">
+          <div className="@container flex min-w-0 flex-col gap-5 sm:gap-6">
+            <h1 className="whitespace-nowrap font-display font-bold leading-[1.08] tracking-[-0.03em] text-white [font-size:clamp(2.15rem,min(1rem+3.6vw,8.25cqi),3.75rem)]">
               Revise for the ESAT
             </h1>
             <p className="max-w-xl text-base leading-relaxed text-[#94A3B8] sm:text-lg">
@@ -270,8 +272,8 @@ export function MarketingHomepage({
 
       {/* Founder strip: top edge peeks into the first viewport */}
       <section className="border-t border-white/10 bg-[#0A0F1D] py-6 sm:py-8">
-        <div className="mx-auto flex max-w-[1400px] flex-col gap-5 px-6 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10 xl:px-12">
-          <div className="flex min-w-0 items-start gap-4 sm:items-center sm:gap-5">
+        <div className="mx-auto flex max-w-[1400px] flex-col gap-5 px-6 sm:flex-row sm:items-center sm:gap-8 sm:px-8 lg:gap-10 lg:px-10 xl:px-12">
+          <div className="flex min-w-0 flex-1 items-start gap-4 sm:items-center sm:gap-5">
             <Link
               href={`${ABOUT_PATH}#${FOUNDERS.ewan.id}`}
               className="relative h-24 w-24 shrink-0 overflow-hidden rounded-md bg-[#161D2F] sm:h-28 sm:w-28"
@@ -305,6 +307,12 @@ export function MarketingHomepage({
               </p>
             </div>
           </div>
+
+          <div
+            className="h-px w-full bg-white/10 sm:h-16 sm:w-px sm:shrink-0"
+            aria-hidden
+          />
+
           {socialProofSlot}
         </div>
       </section>
@@ -537,7 +545,7 @@ export function MarketingHomepage({
         </div>
       </section>
 
-      <HomepageReviews />
+      <HomepageReviews statsSlot={reviewsStatsSlot} />
 
       {/* Pricing Section */}
       <section id="pricing" className="scroll-mt-28 bg-[#161D2F]/50 py-24">

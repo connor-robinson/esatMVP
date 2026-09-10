@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { HomePageContent } from "@/components/homepage/HomePageContent";
+import { HomepagePartnerTrust } from "@/components/home/HomepagePartnerTrust";
 import { HomepageSocialProofStatsDisplay } from "@/components/home/HomepageSocialProofStats";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { BRAND_CONFIG } from "@/config/brand";
@@ -72,7 +73,7 @@ const HOMEPAGE_SCHEMA = [
 ];
 
 /** Streams in after first paint so Supabase/GA never block the hero. */
-async function HomepageSocialProofSlot() {
+async function HomepageReviewsStatsSlot() {
   try {
     const socialProof = await getHomepageSocialProofStats();
     return <HomepageSocialProofStatsDisplay stats={socialProof} />;
@@ -87,9 +88,10 @@ export default function HomePage() {
     <>
       <JsonLd schema={HOMEPAGE_SCHEMA} />
       <HomePageContent
-        socialProofSlot={
+        socialProofSlot={<HomepagePartnerTrust />}
+        reviewsStatsSlot={
           <Suspense fallback={null}>
-            <HomepageSocialProofSlot />
+            <HomepageReviewsStatsSlot />
           </Suspense>
         }
       />

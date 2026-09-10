@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState, type FormEvent } from "react";
+import { useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
@@ -121,7 +121,7 @@ function LeaveReviewForm() {
               ? "Leave a review…"
               : "Leave a review (log in to send)…"
           }
-          className="min-h-[2.5rem] w-full flex-1 resize-y rounded-lg bg-white/[0.06] px-3 py-2 text-sm leading-snug text-white placeholder:text-[#64748B] focus:outline-none focus:ring-0"
+          className="min-h-[2.5rem] w-full flex-1 resize-y rounded-lg border-0 bg-white/[0.06] px-3 py-2 text-sm leading-snug text-white shadow-none outline-none ring-0 placeholder:text-[#64748B] focus:border-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
         />
         <button
           type="submit"
@@ -161,7 +161,40 @@ function LeaveReviewForm() {
   );
 }
 
-export function HomepageReviews() {
+function FounderWhatsAppReply() {
+  return (
+    <aside className="mt-10 flex w-full items-end gap-3 sm:mt-12 sm:gap-4">
+      <div className="relative mb-6 h-10 w-10 shrink-0 overflow-hidden rounded-full bg-white/[0.06] sm:mb-7 sm:h-11 sm:w-11">
+        <Image
+          src={EWAN.imageSrc}
+          alt={EWAN.imageAlt}
+          fill
+          sizes="44px"
+          className="object-cover"
+          style={{ objectPosition: EWAN.imagePosition }}
+        />
+      </div>
+      <div className="min-w-0 max-w-2xl flex-1">
+        <div className="relative rounded-2xl rounded-bl-md bg-[#202C33] px-3.5 py-2.5 text-sm leading-relaxed text-[#E9EDEF] shadow-[0_1px_0.5px_rgba(0,0,0,0.35)] sm:px-4 sm:py-3 sm:text-[0.95rem] sm:leading-relaxed">
+          <div className="space-y-2">
+            {MARKETING_HOMEPAGE_REVIEW_REPLY.body.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
+        </div>
+        <p className="mt-1.5 pl-1 text-xs font-medium text-[#94A3B8] sm:text-[0.8rem]">
+          {EWAN.name} - ESAT Camp
+        </p>
+      </div>
+    </aside>
+  );
+}
+
+export function HomepageReviews({
+  statsSlot,
+}: {
+  statsSlot?: ReactNode;
+}) {
   const { preview, rest } = useMemo(() => splitMarketingReviews(), []);
   const [expanded, setExpanded] = useState(false);
   const visible = expanded ? [...preview, ...rest] : preview;
@@ -173,6 +206,9 @@ export function HomepageReviews() {
           <h2 className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
             What students are saying
           </h2>
+          {statsSlot ? (
+            <div className="mt-6 flex justify-center sm:mt-7">{statsSlot}</div>
+          ) : null}
         </div>
 
         <div className="relative">
@@ -213,26 +249,7 @@ export function HomepageReviews() {
           </div>
         ) : null}
 
-        <aside className="mt-10 flex w-full gap-4 sm:mt-12 sm:gap-5">
-          <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full bg-white/[0.06] sm:h-14 sm:w-14">
-            <Image
-              src={EWAN.imageSrc}
-              alt={EWAN.imageAlt}
-              fill
-              sizes="56px"
-              className="object-cover"
-              style={{ objectPosition: EWAN.imagePosition }}
-            />
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-white">{EWAN.name}</p>
-            <div className="mt-2 space-y-2 text-sm leading-relaxed text-[#94A3B8] sm:text-[0.95rem] sm:leading-relaxed">
-              {MARKETING_HOMEPAGE_REVIEW_REPLY.body.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
-            </div>
-          </div>
-        </aside>
+        <FounderWhatsAppReply />
 
         <LeaveReviewForm />
       </div>

@@ -5,24 +5,17 @@ import type { HomepageSocialProofStats } from "@/lib/homepage/socialProofTypes";
 type StatItem = {
   value: number;
   label: string;
-  icon: typeof CircleUser | null;
+  icon: typeof CircleUser;
 };
 
 export function HomepageSocialProofStatsDisplay({
   stats,
+  className,
 }: {
   stats: HomepageSocialProofStats;
+  className?: string;
 }) {
   const items: StatItem[] = [
-    ...(stats.uniqueVisitors != null
-      ? [
-          {
-            value: stats.uniqueVisitors,
-            label: "Unique visitors",
-            icon: null,
-          },
-        ]
-      : []),
     {
       value: stats.users,
       label: "Users",
@@ -38,29 +31,21 @@ export function HomepageSocialProofStatsDisplay({
   return (
     <dl
       className={cn(
-        "grid shrink-0 gap-x-5 gap-y-4 sm:gap-x-7 lg:gap-x-8",
-        stats.uniqueVisitors != null ? "grid-cols-3" : "grid-cols-2",
+        "inline-grid grid-cols-2 gap-x-8 gap-y-4 sm:gap-x-12",
+        className,
       )}
     >
       {items.map((stat) => {
         const StatIcon = stat.icon;
         return (
-          <div
-            key={stat.label}
-            className={cn(
-              "min-w-0",
-              StatIcon && "flex items-center gap-2.5 sm:gap-3",
-            )}
-          >
-            {StatIcon ? (
-              <StatIcon
-                aria-hidden
-                className="h-7 w-7 shrink-0 text-white sm:h-8 sm:w-8"
-                strokeWidth={1.75}
-                fill="none"
-              />
-            ) : null}
-            <div className="min-w-0">
+          <div key={stat.label} className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+            <StatIcon
+              aria-hidden
+              className="h-6 w-6 shrink-0 text-white sm:h-7 sm:w-7"
+              strokeWidth={1.75}
+              fill="none"
+            />
+            <div className="min-w-0 text-left">
               <dt className="sr-only">{stat.label}</dt>
               <dd className="font-display text-xl font-bold tabular-nums text-white sm:text-2xl">
                 {stat.value.toLocaleString()}
