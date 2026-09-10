@@ -4,6 +4,7 @@ const PAPER_IMMERSIVE_ROUTES = [
   '/past-papers/mark',
   '/past-papers/submit',
   '/past-papers/pearson-demo',
+  '/exam-tools/calibration/math-1/test',
 ];
 
 /**
@@ -27,6 +28,12 @@ export function isPaperImmersiveRoute(pathname: string | null): boolean {
 export function isPearsonChromeRoute(pathname: string | null): boolean {
   if (!pathname) return false;
   if (pathname === "/pearson" || pathname.startsWith("/pearson/")) return true;
+  if (
+    pathname === "/exam-tools/calibration/math-1/test" ||
+    pathname.startsWith("/exam-tools/calibration/math-1/test/")
+  ) {
+    return true;
+  }
   return (
     pathname === "/past-papers/pearson-demo" ||
     pathname.startsWith("/past-papers/pearson-demo/")

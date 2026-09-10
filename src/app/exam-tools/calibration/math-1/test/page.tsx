@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CalibrationTest } from "@/components/calibration/CalibrationTest";
+import { CalibrationPearsonBridge } from "@/components/calibration/CalibrationPearsonBridge";
 
 export const metadata: Metadata = {
   title: "Math 1 Calibration Test",
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function CalibrationTestPage() {
-  return <CalibrationTest />;
+  return <CalibrationPearsonBridge />;
 }
