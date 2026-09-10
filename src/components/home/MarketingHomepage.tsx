@@ -343,53 +343,56 @@ export function MarketingHomepage({
       {/* Past papers simulator */}
       <section className="bg-[#0A0F1D] py-20 sm:py-24">
         <div className="mx-auto max-w-[1400px] px-4 sm:px-5 lg:px-6">
-          <div className="mx-auto max-w-3xl text-center">
-            <h2 className="font-display text-4xl font-bold tracking-tight text-white lg:text-5xl">
-              Past papers simulator
-            </h2>
-            <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-[#94A3B8]">
-              Sit official papers and our mocks in a UAT-UK-style exam player,
-              with a roadmap that keeps you on track.
-            </p>
-          </div>
+          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-14 xl:gap-20">
+            <div className="order-2 flex flex-row flex-nowrap items-center justify-center gap-2 sm:gap-3 lg:order-1 lg:justify-start lg:gap-4">
+              <div className="w-[58%] max-w-[26rem] shrink sm:w-auto sm:max-w-[28rem] lg:max-w-[30rem]">
+                <PastPaperPlayerPreview embedded />
+              </div>
+              <div className="w-[38%] max-w-[14rem] shrink-0 sm:w-auto sm:max-w-[15rem] lg:max-w-[16rem]">
+                <HomepageRoadmapPreview />
+              </div>
+            </div>
 
-          <ul className="mx-auto mt-8 flex max-w-3xl flex-col gap-3 sm:mt-10 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-8 sm:gap-y-3">
-            {[
-              "Official past papers plus our own targeted practice",
-              "Timed sections, navigator, and the same keyboard shortcuts as the live test",
-              "A roadmap so you sit papers in the right order",
-            ].map((item) => (
-              <li key={item} className="flex items-start gap-3 sm:max-w-xs">
-                <span
-                  aria-hidden
-                  className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
-                />
-                <p className="text-left text-base leading-relaxed text-[#94A3B8]">
-                  {item}
+            <div className="order-1 space-y-8 lg:order-2">
+              <div>
+                <h2 className="font-display text-4xl font-bold tracking-tight text-white lg:text-5xl">
+                  Past papers simulator
+                </h2>
+                <p className="mt-5 max-w-xl text-lg leading-relaxed text-[#94A3B8]">
+                  Sit official papers and our mocks in a UAT-UK-style simulator,
+                  with our past paper roadmap.
                 </p>
-              </li>
-            ))}
-          </ul>
+              </div>
 
-          <div className="mt-12 flex flex-row flex-nowrap items-center justify-center gap-2 sm:mt-14 sm:gap-3 lg:gap-5">
-            <div className="w-[58%] max-w-[26rem] shrink sm:w-auto sm:max-w-[28rem] lg:max-w-[30rem]">
-              <PastPaperPlayerPreview embedded />
-            </div>
-            <div className="w-[38%] max-w-[14rem] shrink-0 sm:w-auto sm:max-w-[15rem] lg:max-w-[16rem]">
-              <HomepageRoadmapPreview />
-            </div>
-          </div>
+              <ul className="space-y-4">
+                {[
+                  "Official past papers",
+                  "Pacing statistics to improve your pacing",
+                  "ESAT Camp Mock papers",
+                  "A roadmap so you sit papers in the right order",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <span
+                      aria-hidden
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
+                    />
+                    <p className="text-base leading-relaxed text-[#94A3B8] sm:text-lg">
+                      {item}
+                    </p>
+                  </li>
+                ))}
+              </ul>
 
-          <div className="mt-10 flex justify-center sm:mt-12">
-            <Link
-              href="/past-papers/roadmap"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#3B82F6] px-7 py-3.5 font-bold text-white transition-colors hover:bg-[#2563EB]"
-            >
-              View past papers
-              <span aria-hidden className="text-lg leading-none">
-                →
-              </span>
-            </Link>
+              <Link
+                href="/past-papers/roadmap"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#3B82F6] px-7 py-3.5 font-bold text-white transition-colors hover:bg-[#2563EB]"
+              >
+                View past papers
+                <span aria-hidden className="text-lg leading-none">
+                  →
+                </span>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
