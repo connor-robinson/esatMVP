@@ -40,12 +40,12 @@ function ReviewCard({ review }: { review: MarketingReview }) {
     <figure className="flex h-full min-h-[9.5rem] flex-col rounded-xl bg-white/[0.035] px-4 py-4 sm:min-h-[10.5rem] sm:px-5 sm:py-5">
       <div className="flex items-start justify-between gap-3">
         <StarRow stars={review.stars} />
-        <figcaption className="max-w-[55%] truncate text-right font-mono text-[0.65rem] tracking-tight text-[#64748B]">
+        <figcaption className="max-w-[55%] truncate text-right font-mono text-xs tracking-tight text-[#94A3B8] sm:text-[0.8rem]">
           {review.emailMask}
         </figcaption>
       </div>
       <blockquote className="mt-3 flex-1 text-[0.88rem] leading-relaxed text-[#E2E8F0] sm:text-[0.92rem]">
-        “{review.quote}”
+        {review.quote}
       </blockquote>
     </figure>
   );
