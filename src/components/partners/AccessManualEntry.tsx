@@ -94,7 +94,7 @@ export function AccessManualEntry() {
         </div>
       )}
 
-      <form onSubmit={onSubmit} className="mt-24 sm:mt-28">
+      <form onSubmit={onSubmit} className="mt-14 sm:mt-16">
         <div className="flex items-center gap-5">
           <input
             type="text"
@@ -113,7 +113,7 @@ export function AccessManualEntry() {
         </div>
       </form>
 
-      <div className="mt-10 sm:mt-12">
+      <div className="mt-6 sm:mt-7">
         <AccessTextLink href="/">Back to homepage</AccessTextLink>
       </div>
     </AccessOutcomeCard>
