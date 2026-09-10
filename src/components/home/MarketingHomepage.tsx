@@ -27,6 +27,7 @@ import { cn } from "@/lib/utils";
 import { useHomepageAutoHideNav } from "@/hooks/useHomepageAutoHideNav";
 import { ExampleGraphQuestion } from "@/components/home/ExampleGraphQuestion";
 import { HeroDeviceShowcase } from "@/components/home/HeroDeviceShowcase";
+import { HomepageReviews } from "@/components/home/HomepageReviews";
 
 const SlotMachineCount = dynamic(
   () =>
@@ -96,6 +97,7 @@ const HOMEPAGE_SECTIONS = [
   { id: "practice", label: "Practice" },
   { id: "features", label: "Features" },
   { id: "about", label: "About" },
+  { id: "reviews", label: "Reviews" },
   { id: "pricing", label: "Pricing" },
   { id: "faqs", label: "FAQs" },
 ] as const;
@@ -500,6 +502,8 @@ export function MarketingHomepage({
           </div>
         </div>
       </section>
+
+      <HomepageReviews />
 
       {/* Pricing Section */}
       <section id="pricing" className="scroll-mt-28 bg-[#161D2F]/50 py-24">
