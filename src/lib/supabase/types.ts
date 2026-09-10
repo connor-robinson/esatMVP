@@ -310,6 +310,16 @@ export type AiGeneratedQuestionRow = {
   tags_confidence: Json | null;
   tags_labeled_at: string | null;
   tags_labeled_by: string | null;
+  mock_difficulty?: number | null;
+  estimated_time_seconds?: number | null;
+  observed_median_time_seconds?: number | null;
+  reasoning_type?: string | null;
+  presentation_type?: string | null;
+  quality_score?: number | null;
+  mock_eligible?: boolean;
+  practice_eligible?: boolean;
+  reserved_for_mock?: boolean;
+  mock_usage_count?: number;
   created_at: string;
   updated_at: string;
 };
@@ -339,6 +349,16 @@ export type AiGeneratedQuestionInsert = {
   tags_confidence?: Json | null;
   tags_labeled_at?: string | null;
   tags_labeled_by?: string | null;
+  mock_difficulty?: number | null;
+  estimated_time_seconds?: number | null;
+  observed_median_time_seconds?: number | null;
+  reasoning_type?: string | null;
+  presentation_type?: string | null;
+  quality_score?: number | null;
+  mock_eligible?: boolean;
+  practice_eligible?: boolean;
+  reserved_for_mock?: boolean;
+  mock_usage_count?: number;
   created_at?: string;
   updated_at?: string;
 };
@@ -366,6 +386,10 @@ export type UserProfileRow = {
   marketing_emails_consent: boolean | null;
   target_universities: string[] | null;
   referral_source: string | null;
+  qb_session_ui_variant: 'esat' | 'classic' | null;
+  qb_session_ui_survey_choice: 'esat' | 'classic' | null;
+  qb_session_ui_preference_source: 'survey' | 'toggle' | 'inferred' | null;
+  qb_session_ui_preference_updated_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -390,6 +414,10 @@ export type UserProfileInsert = {
   marketing_emails_consent?: boolean | null;
   target_universities?: string[] | null;
   referral_source?: string | null;
+  qb_session_ui_variant?: 'esat' | 'classic' | null;
+  qb_session_ui_survey_choice?: 'esat' | 'classic' | null;
+  qb_session_ui_preference_source?: 'survey' | 'toggle' | 'inferred' | null;
+  qb_session_ui_preference_updated_at?: string | null;
 };
 export type UserProfileUpdate = Partial<UserProfileRow>;
 

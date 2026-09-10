@@ -8,6 +8,7 @@ import type {
 } from '@/types/questionBank';
 import { SUBJECT_TEST_TYPE } from '@/lib/questionBank/subjectTestTypes';
 import { applyPublishedQuestionBankFilter } from '@/lib/questionBank/libraryFilterServer';
+import { shouldExcludeReservedMockQuestions } from '@/lib/mockBuilder/practiceExclusionCache';
 
 export const dynamic = 'force-dynamic';
 
@@ -269,8 +270,10 @@ export async function GET(request: NextRequest) {
     debug(
       '[Question Bank API] Stage 1: Building base query (approved only)',
     );
+    const excludeReserved = await shouldExcludeReservedMockQuestions(supabase);
     let query = applyPublishedQuestionBankFilter(
       supabase.from('ai_generated_questions').select('*', { count: 'exact' }),
+      { excludeReservedMockQuestions: excludeReserved },
     );
 
     // Get total count of all questions (any status) for stage count only in verbose mode

@@ -12,9 +12,16 @@ export const LIBRARY_PAGE_SIZE = 1000;
 
 /** Restrict queries to QG auto-approved questions (withhold pending / review / deleted). */
 export function applyPublishedQuestionBankFilter<
-  Q extends { eq: (col: string, val: string) => Q },
->(query: Q): Q {
-  return query.eq("status", QUESTION_BANK_PUBLISH_STATUS);
+  Q extends { eq: (col: string, val: string | boolean) => Q },
+>(query: Q, options?: { excludeReservedMockQuestions?: boolean }): Q {
+  let next = query.eq("status", QUESTION_BANK_PUBLISH_STATUS);
+  // Soft-exclude questions reserved for published/approved mocks when enabled.
+  // Columns added in 20260910150000_esat_mock_builder; defaults keep practice open
+  // until a mock is approved/published.
+  if (options?.excludeReservedMockQuestions) {
+    next = next.eq("practice_eligible", true).eq("reserved_for_mock", false);
+  }
+  return next;
 }
 
 export type LibraryFilterParams = {

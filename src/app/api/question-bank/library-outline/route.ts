@@ -17,6 +17,7 @@ import {
 } from "@/lib/questionBank/libraryFilterServer";
 import { SUBJECT_TEST_TYPE } from "@/lib/questionBank/subjectTestTypes";
 import type { SubjectFilter } from "@/types/questionBank";
+import { shouldExcludeReservedMockQuestions } from "@/lib/mockBuilder/practiceExclusionCache";
 
 export const dynamic = "force-dynamic";
 
@@ -164,12 +165,14 @@ export async function GET(request: NextRequest) {
 
     const rows: SlimRow[] = [];
     let offset = 0;
+    const excludeReserved = await shouldExcludeReservedMockQuestions(supabase);
 
     for (;;) {
       let query = applyPublishedQuestionBankFilter(
         supabase
           .from("ai_generated_questions")
           .select("id, primary_tag, schema_id, test_type, subjects"),
+        { excludeReservedMockQuestions: excludeReserved },
       )
         .eq("subjects", subject)
         .order("id", { ascending: true })

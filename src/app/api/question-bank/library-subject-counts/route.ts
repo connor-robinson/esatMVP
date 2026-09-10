@@ -9,6 +9,7 @@ import {
   loadLibraryAttemptContext,
   parseLibraryFilterParams,
 } from "@/lib/questionBank/libraryFilterServer";
+import { shouldExcludeReservedMockQuestions } from "@/lib/mockBuilder/practiceExclusionCache";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +29,7 @@ export async function GET(request: NextRequest) {
       params.needsAttemptData,
     );
 
+    const excludeReserved = await shouldExcludeReservedMockQuestions(supabase);
     const rows: CountRow[] = [];
     let offset = 0;
 
@@ -36,6 +38,7 @@ export async function GET(request: NextRequest) {
         supabase
           .from("ai_generated_questions")
           .select("id, subjects, test_type"),
+        { excludeReservedMockQuestions: excludeReserved },
       )
         .in("subjects", params.subjects)
         .order("id", { ascending: true })

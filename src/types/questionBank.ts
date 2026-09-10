@@ -35,6 +35,16 @@ export interface QuestionBankQuestion {
   /** Present on many bank rows; true when a diagram / visual asset is attached. */
   has_visual?: boolean | null;
   idea_plan?: any | null; // JSONB field containing generation metadata, including variation_mode (FAR/SIBLINGS)
+  mock_difficulty?: number | null;
+  estimated_time_seconds?: number | null;
+  observed_median_time_seconds?: number | null;
+  reasoning_type?: string | null;
+  presentation_type?: string | null;
+  quality_score?: number | null;
+  mock_eligible?: boolean;
+  practice_eligible?: boolean;
+  reserved_for_mock?: boolean;
+  mock_usage_count?: number;
 }
 
 export type UiDifficultyLabel = 'Easy' | 'Medium' | 'Hard' | 'Extreme';

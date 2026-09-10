@@ -6,6 +6,7 @@ import {
 } from '@/lib/questionBank/subjectTestTypes';
 import { applyPublishedQuestionBankFilter } from '@/lib/questionBank/libraryFilterServer';
 import type { SubjectFilter } from '@/types/questionBank';
+import { shouldExcludeReservedMockQuestions } from '@/lib/mockBuilder/practiceExclusionCache';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,8 +19,10 @@ async function countQuestionsForSubject(
   subject: string,
   testType: 'ESAT' | 'TMUA' | null,
 ): Promise<number> {
+  const excludeReserved = await shouldExcludeReservedMockQuestions(supabase);
   let countQuery = applyPublishedQuestionBankFilter(
     supabase.from('ai_generated_questions').select('id', { count: 'exact', head: true }),
+    { excludeReservedMockQuestions: excludeReserved },
   ).eq('subjects', subject);
 
   if (testType) {
@@ -87,6 +90,8 @@ async function getPerSubjectProgress(
   const attemptedBySubject = new Map<string, Set<string>>();
   subjects.forEach((s) => attemptedBySubject.set(s, new Set()));
 
+  const excludeReserved = await shouldExcludeReservedMockQuestions(supabase);
+
   for (let i = 0; i < uniqueQuestionIds.length; i += ATTEMPT_ID_CHUNK) {
     const chunk = uniqueQuestionIds.slice(i, i + ATTEMPT_ID_CHUNK);
     const { data: questionRows, error: questionError } =
@@ -94,6 +99,7 @@ async function getPerSubjectProgress(
         supabase
           .from('ai_generated_questions')
           .select('id, subjects, test_type'),
+        { excludeReservedMockQuestions: excludeReserved },
       )
         .in('id', chunk)
         .in('subjects', subjects);
@@ -178,8 +184,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Build count query - approved questions only (same as questions API)
+    const excludeReserved = await shouldExcludeReservedMockQuestions(supabase);
     let countQuery = applyPublishedQuestionBankFilter(
       supabase.from('ai_generated_questions').select('id', { count: 'exact', head: true }),
+      { excludeReservedMockQuestions: excludeReserved },
     );
 
     if (testType) {
@@ -207,6 +215,7 @@ export async function GET(request: NextRequest) {
       // Fetch question IDs (same visibility as count - RLS applies)
       let idQuery = applyPublishedQuestionBankFilter(
         supabase.from('ai_generated_questions').select('id'),
+        { excludeReservedMockQuestions: excludeReserved },
       );
 
       if (testType) {
