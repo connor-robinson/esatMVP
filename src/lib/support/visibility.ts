@@ -6,6 +6,7 @@ const HIDDEN_PREFIXES = [
   "/auth",
   "/onboarding",
   "/pearson",
+  "/access",
 ];
 
 /**

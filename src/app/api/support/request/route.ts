@@ -15,14 +15,12 @@ export const dynamic = "force-dynamic";
 
 /**
  * POST /api/support/request
- * Authenticated support ticket: validate → save to Supabase → notify email.
+ * Support ticket: validate → save to Supabase → notify email.
+ * Auth is optional; guests must include a reply email (rate-limited by IP).
  */
 export async function POST(request: NextRequest) {
   try {
-    const { user, error: authError } = await requireRouteUser(request);
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const { user } = await requireRouteUser(request);
 
     let body: unknown = {};
     try {
@@ -61,7 +59,7 @@ export async function POST(request: NextRequest) {
 
     if (!validated.data.isSpam) {
       const rate = await checkSupportRateLimit(service, {
-        userId: user.id,
+        userId: user?.id ?? null,
         ipHash,
       });
       if (!rate.allowed) {
@@ -85,7 +83,7 @@ export async function POST(request: NextRequest) {
 
     const result = await submitSupportRequest({
       service,
-      userId: user.id,
+      userId: user?.id ?? null,
       payload: validated.data,
       ipHash,
       fallbackUserAgent: request.headers.get("user-agent"),

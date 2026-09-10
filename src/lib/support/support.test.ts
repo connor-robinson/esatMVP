@@ -337,6 +337,8 @@ describe("support launcher visibility", () => {
   it("hides on marketing, auth, and immersive paper routes", () => {
     expect(shouldShowSupportLauncher("/")).toBe(false);
     expect(shouldShowSupportLauncher("/login")).toBe(false);
+    expect(shouldShowSupportLauncher("/access")).toBe(false);
+    expect(shouldShowSupportLauncher("/access/ABC123")).toBe(false);
     expect(shouldShowSupportLauncher("/past-papers/solve")).toBe(false);
     expect(shouldShowSupportLauncher("/pearson/demo")).toBe(false);
   });
