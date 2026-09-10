@@ -227,7 +227,7 @@ export function MarketingHomepage({
               </span>
               , and more.
             </p>
-            <div className="pt-1">
+            <div className="flex flex-wrap items-center gap-3 pt-1">
               <Link
                 href={CALIBRATION_ROUTES.hub}
                 onClick={() =>
@@ -242,6 +242,12 @@ export function MarketingHomepage({
                 <span aria-hidden className="text-lg leading-none">
                   →
                 </span>
+              </Link>
+              <Link
+                href="/login"
+                className="inline-flex items-center justify-center rounded-lg border border-white/20 bg-transparent px-7 py-3.5 text-base font-bold text-white transition-colors hover:border-white/40 hover:bg-white/5 sm:text-lg"
+              >
+                Sign in
               </Link>
             </div>
           </div>
