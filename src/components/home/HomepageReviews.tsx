@@ -136,26 +136,25 @@ function LeaveReviewForm() {
         </button>
       </div>
       <p className="mt-2 text-xs text-[#64748B]">
-        {loggedIn ? (
-          status === "sent" ? (
-            <span className="text-[#86EFAC]">
-              Thanks. We&apos;ll review it and may put it up here.
-            </span>
-          ) : error ? (
-            <span className="text-[#FCA5A5]">{error}</span>
-          ) : (
-            "We read every review before it goes live."
-          )
+        {status === "sent" ? (
+          <span className="text-[#86EFAC]">
+            Thanks. We&apos;ll read it, and we&apos;ll put it up here.
+          </span>
+        ) : error ? (
+          <span className="text-[#FCA5A5]">{error}</span>
+        ) : loggedIn ? (
+          "Tell us how ESAT Camp is going. We&apos;ll read it, and we&apos;ll put it up here."
         ) : (
           <>
-            You need to{" "}
+            Tell us how ESAT Camp is going. We&apos;ll read it, and we&apos;ll
+            put it up here.{" "}
             <Link
               href={LOGIN_HREF}
               className="font-semibold text-[#93C5FD] hover:text-white"
             >
-              log in
+              Log in
             </Link>{" "}
-            to leave a review.
+            to send.
           </>
         )}
       </p>
