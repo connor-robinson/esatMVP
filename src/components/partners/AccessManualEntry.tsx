@@ -2,7 +2,6 @@
 
 import { FormEvent, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
 import {
   redeemErrorMessage,
   redeemErrorTitle,
@@ -95,34 +94,26 @@ export function AccessManualEntry() {
         </div>
       )}
 
-      <form onSubmit={onSubmit} className="mt-6 space-y-3">
-        <label className="block">
-          <span className="text-xs font-medium text-text">Access code</span>
+      <form onSubmit={onSubmit} className="mt-6">
+        <div className="flex items-center gap-2">
           <input
             type="text"
             autoComplete="off"
             spellCheck={false}
             value={token}
             onChange={(e) => setToken(e.target.value)}
-            className="mt-1.5 w-full rounded-xl border-0 bg-surface-mid px-3.5 py-2.5 text-sm text-text outline-none ring-0 placeholder:text-text-muted focus:outline-none focus:ring-0"
+            aria-label="Access code"
+            className="min-w-0 flex-1 rounded-xl border-0 bg-surface-mid px-3.5 py-2.5 text-sm text-text outline-none ring-0 placeholder:text-text-muted focus:outline-none focus:ring-0"
             placeholder="Access code"
             data-testid="access-code-input"
           />
-        </label>
-        <button type="submit" className={ACCESS_CTA}>
-          Continue
-        </button>
+          <button type="submit" className={`${ACCESS_CTA} shrink-0`}>
+            Continue
+          </button>
+        </div>
       </form>
 
-      <p className="mt-6 text-xs text-text-muted">
-        Need help?{" "}
-        <Link href="/help" className="underline underline-offset-2">
-          Contact support
-        </Link>
-        .
-      </p>
-
-      <div className="mt-2">
+      <div className="mt-6">
         <AccessTextLink href="/">Back to homepage</AccessTextLink>
       </div>
     </AccessOutcomeCard>
