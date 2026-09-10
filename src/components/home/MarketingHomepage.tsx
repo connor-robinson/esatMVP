@@ -590,7 +590,7 @@ export function MarketingHomepage({
                 href="/pricing"
                 className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white py-4 text-base font-bold text-[#3B82F6] transition-colors hover:bg-slate-100"
               >
-                Choose monthly
+                Start free trial
                 <span aria-hidden>→</span>
               </Link>
             </div>
