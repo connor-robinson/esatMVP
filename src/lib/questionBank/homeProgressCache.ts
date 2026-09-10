@@ -55,6 +55,21 @@ export function writeHomeProgressCache(data: Omit<HomeProgressCache, "cachedAt">
   }
 }
 
+/** Drop cached home progress so the next home load refetches after attempts. */
+export function clearHomeProgressCache(): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(QUESTION_BANK_HOME_PROGRESS_CACHE_KEY);
+  } catch {
+    /* ignore */
+  }
+  try {
+    sessionStorage.removeItem(QUESTION_BANK_HOME_PROGRESS_CACHE_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
 export function readCachedUserPrefs(): CachedUserPrefs | null {
   if (typeof window === "undefined") return null;
   try {

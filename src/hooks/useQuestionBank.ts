@@ -11,6 +11,7 @@ import type {
   SubjectFilter,
 } from '@/types/questionBank';
 import type { TMUAGraphSpec } from '@/components/shared/TMUAGraph';
+import { clearHomeProgressCache } from '@/lib/questionBank/homeProgressCache';
 
 interface UseQuestionBankReturn {
   // State
