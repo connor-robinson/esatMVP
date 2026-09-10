@@ -34,15 +34,28 @@ const SlotMachineCount = dynamic(
   { ssr: false },
 );
 
-const HomepageRoadmapPlayerSplit = dynamic(
+const PastPaperPlayerPreview = dynamic(
   () =>
-    import("@/components/home/HomepageRoadmapPlayerSplit").then(
-      (m) => m.HomepageRoadmapPlayerSplit,
+    import("@/components/home/PastPaperPlayerPreview").then(
+      (m) => m.PastPaperPlayerPreview,
     ),
   {
     ssr: false,
     loading: () => (
-      <div className="min-h-[22rem] rounded-xl bg-[#0A0F1D]" aria-hidden />
+      <div className="min-h-[16rem] rounded-2xl bg-white/[0.06]" aria-hidden />
+    ),
+  },
+);
+
+const HomepageRoadmapPreview = dynamic(
+  () =>
+    import("@/components/home/HomepageRoadmapPreview").then(
+      (m) => m.HomepageRoadmapPreview,
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="min-h-[16rem] rounded-2xl bg-white/[0.06]" aria-hidden />
     ),
   },
 );
@@ -277,34 +290,25 @@ export function MarketingHomepage({
         </div>
       </section>
 
-      {/* Compact offer strip */}
+      {/* What we offer + Question Bank */}
       <section
         id="features"
-        className="scroll-mt-28 border-y border-white/10 bg-[#0A0F1D]"
-      >
-        <div className="mx-auto flex max-w-[1400px] flex-col items-start gap-2 px-4 py-5 sm:flex-row sm:items-center sm:gap-6 sm:px-5 sm:py-4 lg:px-6">
-          <p className="shrink-0 text-sm font-semibold text-white sm:text-base">
-            What do we offer?
-          </p>
-          <p className="text-sm leading-relaxed text-[#94A3B8] sm:text-base">
-            Question bank, past papers in a UAT-UK-style player, and a mental
-            maths trainer.
-          </p>
-        </div>
-      </section>
-
-      {/* Question Bank */}
-      <section
-        id="practice"
-        className="scroll-mt-28 border-b border-white/5 bg-[#161D2F] py-16"
+        className="scroll-mt-28 border-t border-white/5 bg-[#161D2F] pt-14 pb-16 sm:pt-16 sm:pb-20"
       >
         <div className="mx-auto max-w-[1400px] px-4 sm:px-5 lg:px-6">
-          <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-14">
+          <h2 className="mb-12 text-center font-display text-3xl font-bold text-white sm:mb-14 sm:text-4xl">
+            What do we offer?
+          </h2>
+
+          <div
+            id="practice"
+            className="scroll-mt-28 grid items-center gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-14"
+          >
             <div className="space-y-8">
               <div>
-                <h2 className="mb-4 font-display text-3xl font-bold text-white sm:text-4xl">
-                  Question Bank
-                </h2>
+                <h3 className="mb-4 font-display text-3xl font-bold text-white sm:text-4xl">
+                  ESAT Question Bank
+                </h3>
                 <p className="max-w-lg leading-relaxed text-[#94A3B8]">
                   Explore practice questions written to match the difficulty and
                   style of the ESAT.
@@ -334,65 +338,68 @@ export function MarketingHomepage({
         </div>
       </section>
 
-      {/* Past papers: roadmap + player */}
+      {/* Past papers simulator */}
       <section className="bg-[#0A0F1D] py-20 sm:py-24">
         <div className="mx-auto max-w-[1400px] px-4 sm:px-5 lg:px-6">
-          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
-            <div className="space-y-8">
-              <div>
-                <h2 className="font-display text-4xl font-bold tracking-tight text-white lg:text-5xl">
-                  Sit papers in a{" "}
-                  <span className="whitespace-nowrap">UAT-UK-style</span> exam
-                  player
-                </h2>
-                <p className="mt-5 max-w-xl text-lg leading-relaxed text-[#94A3B8]">
-                  Follow a tailored roadmap, then sit official papers and our
-                  mocks in an interface built to feel like the real UAT-UK exam.
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="font-display text-4xl font-bold tracking-tight text-white lg:text-5xl">
+              Past papers simulator
+            </h2>
+            <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-[#94A3B8]">
+              Sit official papers and our mocks in a UAT-UK-style exam player,
+              with a roadmap that keeps you on track.
+            </p>
+          </div>
+
+          <ul className="mx-auto mt-8 flex max-w-3xl flex-col gap-3 sm:mt-10 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-8 sm:gap-y-3">
+            {[
+              "Official past papers plus our own targeted practice",
+              "Timed sections, navigator, and the same keyboard shortcuts as the live test",
+              "A roadmap so you sit papers in the right order",
+            ].map((item) => (
+              <li key={item} className="flex items-start gap-3 sm:max-w-xs">
+                <span
+                  aria-hidden
+                  className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
+                />
+                <p className="text-left text-base leading-relaxed text-[#94A3B8]">
+                  {item}
                 </p>
-              </div>
+              </li>
+            ))}
+          </ul>
 
-              <ul className="space-y-4">
-                {[
-                  "Official past papers plus our own targeted practice",
-                  "Timed sections, navigator, and the same keyboard shortcuts as the live test",
-                  "A roadmap so you sit papers in the right order",
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <span
-                      aria-hidden
-                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
-                    />
-                    <p className="text-base leading-relaxed text-[#94A3B8] sm:text-lg">
-                      {item}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-
-              <Link
-                href="/past-papers/roadmap"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#3B82F6] px-7 py-3.5 font-bold text-white transition-colors hover:bg-[#2563EB]"
-              >
-                View past papers
-                <span aria-hidden className="text-lg leading-none">
-                  →
-                </span>
-              </Link>
+          <div className="mt-12 flex flex-col items-center justify-center gap-6 sm:mt-14 sm:flex-row sm:items-center sm:gap-4 lg:gap-8">
+            <div className="w-full max-w-[34rem] shrink sm:max-w-[38rem] lg:max-w-[42rem]">
+              <PastPaperPlayerPreview embedded />
             </div>
+            <div className="w-full max-w-[16rem] shrink-0 sm:max-w-[18rem] lg:max-w-[20rem]">
+              <HomepageRoadmapPreview />
+            </div>
+          </div>
 
-            <HomepageRoadmapPlayerSplit />
+          <div className="mt-10 flex justify-center sm:mt-12">
+            <Link
+              href="/past-papers/roadmap"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#3B82F6] px-7 py-3.5 font-bold text-white transition-colors hover:bg-[#2563EB]"
+            >
+              View past papers
+              <span aria-hidden className="text-lg leading-none">
+                →
+              </span>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Mental maths trainer showcase */}
+      {/* Mental Maths Trainer */}
       <section className="bg-[#161D2F] py-20 sm:py-24">
         <div className="mx-auto max-w-[1400px] px-4 sm:px-5 lg:px-6">
           <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
             <div className="space-y-8">
               <div>
                 <h2 className="font-display text-4xl font-bold tracking-tight text-white lg:text-5xl">
-                  Try our one-of-a-kind mental maths trainer
+                  Mental Maths Trainer
                 </h2>
                 <p className="mt-5 max-w-xl text-lg leading-relaxed text-[#94A3B8]">
                   Time is of the essence in the ESAT. You have to finish each
