@@ -97,40 +97,48 @@ export type CalibrationAnalysis = {
     mistakeTagHints: string[];
   };
   assessmentVersion: string | null;
-  compatibleWithV2: boolean;
+  /** True when the attempt matches the currently live assessment constants. */
+  compatibleWithLiveAssessment: boolean;
 };
 
-const SKILL_GROUPS: Array<{
+const SKILL_GROUP_DEFS: Array<{
   id: SkillGroupId;
   label: string;
-  positions: number[];
+  tags: string[];
 }> = [
   {
     id: "geometry_spatial",
     label: "Geometry & spatial reasoning",
-    positions: [1, 9, 14, 15],
+    tags: ["M1-M5"],
   },
   {
     id: "algebra_patterns",
     label: "Algebra & patterns",
-    positions: [3, 7, 12],
+    tags: ["M1-M4"],
   },
   {
     id: "numerical_units",
     label: "Numerical fluency & units",
-    positions: [2, 6, 10],
+    tags: ["M1-M1", "M1-M2"],
   },
   {
     id: "ratio_modelling",
     label: "Ratio & modelling",
-    positions: [4, 11],
+    tags: ["M1-M3"],
   },
   {
     id: "probability_data",
     label: "Probability & data",
-    positions: [5, 8, 13],
+    tags: ["M1-M6", "M1-M7"],
   },
 ];
+
+/** @deprecated Prefer building groups from live questions; kept for tests. */
+export const SKILL_GROUPS = SKILL_GROUP_DEFS.map((g) => ({
+  id: g.id,
+  label: g.label,
+  positions: [] as number[],
+}));
 
 const STARTING_BANDS: Array<{
   min: number;
@@ -195,12 +203,26 @@ function clamp(n: number, lo: number, hi: number): number {
   return Math.max(lo, Math.min(hi, n));
 }
 
-function skillGroupForPosition(position: number): SkillGroupId {
-  const found = SKILL_GROUPS.find((g) => g.positions.includes(position));
+function skillGroupForQuestion(q: CalibrationQuestion): SkillGroupId {
+  const tag = q.curriculum_tags[0] ?? "";
+  const found = SKILL_GROUP_DEFS.find((g) => g.tags.includes(tag));
   if (!found) {
-    throw new Error(`No skill group for position ${position}`);
+    // Fallback: keep analysis usable even if a tag is unexpected.
+    return "algebra_patterns";
   }
   return found.id;
+}
+
+function buildSkillGroups(
+  questions: CalibrationQuestion[],
+): Array<{ id: SkillGroupId; label: string; questionIds: string[] }> {
+  return SKILL_GROUP_DEFS.map((g) => ({
+    id: g.id,
+    label: g.label,
+    questionIds: questions
+      .filter((q) => g.tags.includes(q.curriculum_tags[0] ?? ""))
+      .map((q) => q.id),
+  })).filter((g) => g.questionIds.length > 0);
 }
 
 function evidenceLabel(correct: number, total: number): {
@@ -244,12 +266,12 @@ function actionFromMissedTags(
   return `Focus on ${hint} in ${groupLabel.toLowerCase()} before another timed set.`;
 }
 
-function isCompatibleWithV2(attempt: CalibrationAttempt): boolean {
+function isCompatibleWithLiveAssessment(attempt: CalibrationAttempt): boolean {
   if (attempt.assessmentVersion != null) {
     return attempt.assessmentVersion === CALIBRATION_ASSESSMENT_VERSION;
   }
-  // Legacy attempts without assessmentVersion: only trust numeric contentVersion 2.
-  return attempt.contentVersion === 2;
+  // Legacy attempts without assessmentVersion: trust matching numeric contentVersion.
+  return attempt.contentVersion === 3 || attempt.contentVersion === 2;
 }
 
 export function analyseMath1Calibration(
@@ -263,8 +285,9 @@ export function analyseMath1Calibration(
     );
   }
 
-  const compatibleWithV2 = isCompatibleWithV2(attempt);
+  const compatibleWithLiveAssessment = isCompatibleWithLiveAssessment(attempt);
   const byId = new Map(ordered.map((q) => [q.id, q]));
+  const groupDefs = buildSkillGroups(ordered);
 
   const review: CalibrationAnalysis["questionReview"] = ordered.map((q) => {
     const a = attempt.questions[q.id];
@@ -297,7 +320,7 @@ export function analyseMath1Calibration(
       activeSeconds,
       targetSeconds: target,
       timingStatus,
-      skillGroupId: skillGroupForPosition(q.order),
+      skillGroupId: skillGroupForQuestion(q),
       mistakeTags,
       diagnosticSentence: isCorrect ? null : diagnosticFromTags(mistakeTags),
     };
@@ -391,10 +414,8 @@ export function analyseMath1Calibration(
     return { difficulty, correct, total: qs.length };
   });
 
-  const skillGroups = SKILL_GROUPS.map((g) => {
-    const ids = g.positions.map(
-      (p) => ordered.find((q) => q.order === p)!.id,
-    );
+  const skillGroups = groupDefs.map((g) => {
+    const ids = g.questionIds;
     const correct = ids.filter((id) =>
       review.find((r) => r.questionId === id)?.isCorrect,
     ).length;
@@ -638,8 +659,8 @@ export function analyseMath1Calibration(
       mistakeTagHints,
     },
     assessmentVersion: attempt.assessmentVersion ?? null,
-    compatibleWithV2,
+    compatibleWithLiveAssessment,
   };
 }
 
-export { SKILL_GROUPS };
+export { SKILL_GROUP_DEFS };

@@ -6,9 +6,10 @@
  * treated as versioned configuration. UI and scoring code must read from here
  * rather than hard-coding question IDs or formulas.
  *
- * Canonical source: `math1-calibration-v2/questions.json`
+ * Canonical source: `math1/esat_math1_full_calibration_test_v1_diagramsfixed.json`
  * (synced into `math1/config.json` via `scripts/sync-calibration-config.ts`).
- * Production diagrams: `public/calibration/math1-v2/` (visual_engine renders).
+ * Diagram SVG patches live in `math1/diagrams/`.
+ * Parked v2 package: `math1-calibration-v2/` (+ `sync-calibration-config-v2.ts`).
  */
 
 import rawConfig from "./math1/config.json";

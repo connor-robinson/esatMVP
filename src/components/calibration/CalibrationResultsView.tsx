@@ -299,14 +299,14 @@ export function CalibrationResultsView({
           }
         />
 
-        {!analysis.compatibleWithV2 ? (
+        {!analysis.compatibleWithLiveAssessment ? (
           <p
             role="status"
             className="rounded-xl border border-amber-600/30 bg-amber-50 px-4 py-3 text-sm text-amber-950"
           >
             This attempt was saved under a different assessment version. The
             diagnosis below uses the current question map for review only; do
-            not mix it with live v2 cohort stats.
+            not mix it with live cohort stats.
           </p>
         ) : null}
 

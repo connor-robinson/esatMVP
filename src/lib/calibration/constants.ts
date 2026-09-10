@@ -5,18 +5,21 @@
  * "Exam Tools" nav section historically maps to `/tools/*`; the calibration
  * product uses the spec-mandated `/exam-tools/calibration` base and the nav /
  * section resolver treats `/exam-tools` as part of the Exam Tools section.
+ *
+ * Live form: v1 (`esat_math1_calibration_v1`). The v2 package is parked under
+ * `math1-calibration-v2/` and can be re-synced via `scripts/sync-calibration-config-v2.ts`.
  */
 
-export const CALIBRATION_TEST_ID = "m1-calibration-v2";
+export const CALIBRATION_TEST_ID = "esat_math1_calibration_v1";
 
-/** Semver assessment version stored on every new attempt. */
-export const CALIBRATION_ASSESSMENT_VERSION = "2.0.0";
+/** Assessment version stored on every new attempt (v1 live form). */
+export const CALIBRATION_ASSESSMENT_VERSION = "1.0.0";
 
 /** Total questions in the Math 1 calibration. Kept for legacy homepage copy. */
 export const CALIBRATION_TOTAL_QUESTIONS = 15;
 
-/** Recommended overall time limit, in seconds (about 20 minutes). */
-export const CALIBRATION_TIME_LIMIT_SECONDS = 20 * 60;
+/** Recommended overall time limit, in seconds (23 minutes). */
+export const CALIBRATION_TIME_LIMIT_SECONDS = 23 * 60;
 
 /** Days after completion before suggesting a retake (legacy homepage logic). */
 export const CALIBRATION_OUTDATED_DAYS = 30;
