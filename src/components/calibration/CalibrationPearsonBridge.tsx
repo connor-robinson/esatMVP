@@ -378,6 +378,7 @@ export function CalibrationPearsonBridge() {
       onQuestionsStarted={handleQuestionsStarted}
       onQuestionIndexChange={handleQuestionIndexChange}
       isLastModule
+      showQuestionReport={false}
     />
   );
 }

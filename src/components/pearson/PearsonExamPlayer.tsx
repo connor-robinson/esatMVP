@@ -60,6 +60,8 @@ export interface PearsonExamPlayerProps {
   /** Optional IDs for in-exam question reports. */
   paperId?: string | null;
   sessionId?: string | null;
+  /** When false, hide the in-exam "Report question" control. */
+  showQuestionReport?: boolean;
 }
 
 export function PearsonExamPlayer({
@@ -82,6 +84,7 @@ export function PearsonExamPlayer({
   isLastModule = true,
   paperId = null,
   sessionId = null,
+  showQuestionReport = true,
 }: PearsonExamPlayerProps) {
   const c = usePearsonExamController({
     mode,
@@ -281,7 +284,7 @@ export function PearsonExamPlayer({
 
           {c.showQuestionFooter ? (
             <div className="relative">
-              {c.currentQuestion ? (
+              {showQuestionReport && c.currentQuestion ? (
                 <div className="pointer-events-none absolute bottom-full right-2 z-20 mb-1.5 flex justify-end">
                   <div className="pointer-events-auto">
                     <QuestionSupportControl

@@ -1240,6 +1240,31 @@ html.pearson-exam-active body {
   object-fit: contain;
 }
 
+/* Diagrams: full-strength ink matching exam text (never muted / washed out). */
+.pearson-exam-root .stem-diagram,
+.pearson-exam-root .stem-diagram-inner,
+.pearson-exam-root .pearson-diagram {
+  color: var(--pearson-text) !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+.pearson-exam-root .stem-diagram svg,
+.pearson-exam-root .stem-diagram-inner svg,
+.pearson-exam-root .pearson-diagram svg {
+  color: var(--pearson-text) !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+.pearson-exam-root .stem-diagram svg .label,
+.pearson-exam-root .stem-diagram svg .angle,
+.pearson-exam-root .stem-diagram svg .caption,
+.pearson-exam-root .stem-diagram svg .small {
+  fill: var(--pearson-text) !important;
+  opacity: 1 !important;
+}
+
 .qg-diagram-wrap .qg-diagram,
 .stem-content .qg-diagram {
   margin: 0 auto;

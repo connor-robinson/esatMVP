@@ -2,16 +2,16 @@
 
 import DOMPurify from "dompurify";
 
-/** Normalise dark generator colours for the app dark theme. */
+/** Map hard-coded near-black ink to currentColor so diagrams follow parent theme. */
 function normalizeSvgVisibilityColors(svg: string): string {
   if (!svg) return svg;
   let out = svg
-    .replace(/(["'\s=:])(#[0]{3,8}|#[1]{3,8})(?=["'\s;>}/])/gi, "$1#e5e7eb")
-    .replace(/(["'\s=:])(black)(?=["'\s;>}/])/gi, "$1#e5e7eb")
-    .replace(/(["'\s=:])(rgb\(\s*0\s*,\s*0\s*,\s*0\s*\))(?=["'\s;>}/])/gi, "$1#e5e7eb")
+    .replace(/(["'\s=:])(#[0]{3,8}|#[1]{3,8})(?=["'\s;>}/])/gi, "$1currentColor")
+    .replace(/(["'\s=:])(black)(?=["'\s;>}/])/gi, "$1currentColor")
+    .replace(/(["'\s=:])(rgb\(\s*0\s*,\s*0\s*,\s*0\s*\))(?=["'\s;>}/])/gi, "$1currentColor")
     .replace(
       /(["'\s=:])(rgb\(\s*1[0-9]\s*,\s*1[0-9]\s*,\s*1[0-9]\s*\))(?=["'\s;>}/])/gi,
-      "$1#e5e7eb",
+      "$1currentColor",
     )
     .replace(/\bfill:\s*#111\b/gi, "fill:currentColor")
     .replace(/\bstroke:\s*#111\b/gi, "stroke:currentColor")
@@ -26,8 +26,12 @@ function normalizeSvgVisibilityColors(svg: string): string {
     )
     .replace(/x="123" y="104">90°/g, 'x="196" y="78">90°');
 
+  // Do not force a fixed light-gray colour: that washes out diagrams on white
+  // exam UIs (Pearson / calibration). Inherit from the surrounding text colour.
   if (!/\bstroke\s*=/.test(out) && !/\bfill\s*=/.test(out) && out.includes("<svg")) {
-    out = out.replace(/<svg\b/i, '<svg style="color:#e5e7eb"');
+    if (!/\sstyle\s*=/.test(out.match(/<svg\b[^>]*>/i)?.[0] ?? "")) {
+      out = out.replace(/<svg\b/i, '<svg style="color:inherit"');
+    }
   }
   return out;
 }
