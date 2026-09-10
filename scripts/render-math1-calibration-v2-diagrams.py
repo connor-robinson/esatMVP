@@ -27,12 +27,13 @@ os.environ["PYTHONPATH"] = os.pathsep.join(
 from visual_engine.render_matplotlib import render_diagram  # noqa: E402
 from visual_engine.style import ExamStyle  # noqa: E402
 
-FG = "#1F2937"
-SECONDARY = "#64748B"
-LIGHT = "#F1F5F9"
-HIGHLIGHT = "#DCE6F0"
+# Pure greyscale palette (no blue/slate tint) so diagrams stay neutral in print and UI.
+FG = "#1A1A1A"
+SECONDARY = "#666666"
+LIGHT = "#F0F0F0"
+HIGHLIGHT = "#D0D0D0"
 WHITE = "#FFFFFF"
-CONSTRUCTION = "#CBD5E1"
+CONSTRUCTION = "#B8B8B8"
 
 QUESTIONS_PATH = ROOT / "math1-calibration-v2" / "questions.json"
 OUT_PUBLIC = ROOT / "public" / "calibration" / "math1-v2"

@@ -58,7 +58,8 @@
           6
         ]
       ],
-      "fill": false,
+      "fill": true,
+      "facecolor": "#FFFFFF",
       "edgecolor": "#64748B",
       "linewidth": 2.5
     },
