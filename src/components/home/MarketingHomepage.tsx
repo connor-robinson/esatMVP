@@ -513,12 +513,8 @@ export function MarketingHomepage({
         <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
           <div className="mx-auto mb-16 max-w-2xl text-center sm:mb-20">
             <h2 className="font-display text-4xl font-bold text-white">
-              Invest in your future
+              Pricing
             </h2>
-            <p className="mt-4 text-[#94A3B8]">
-              Same full access on every paid plan. Pick the billing that fits
-              your prep timeline.
-            </p>
           </div>
 
           <div className="mx-auto grid max-w-5xl items-stretch gap-5 md:grid-cols-3">
@@ -554,17 +550,22 @@ export function MarketingHomepage({
             {/* Monthly */}
             <div className="relative z-20 flex flex-col rounded-2xl bg-[#3B82F6] p-8 sm:p-9 xl:p-10">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-white px-3.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#3B82F6]">
-                Most popular · {monthlyDiscountLabel}
+                Most popular
               </div>
               <h4 className="text-xl font-bold text-white">Monthly</h4>
-              <div className="mt-4 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                <span className="text-2xl font-display font-bold text-white/55 line-through">
-                  {monthlyListPriceLabel}
+              <div className="mt-4 flex flex-wrap items-end gap-x-3 gap-y-1">
+                <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                  <span className="text-2xl font-display font-bold text-white/55 line-through">
+                    {monthlyListPriceLabel}
+                  </span>
+                  <span className="text-5xl font-display font-bold text-white">
+                    {monthlyPriceLabel}
+                  </span>
+                  <span className="text-sm text-white/75">/month</span>
+                </div>
+                <span className="pb-1 font-display text-3xl font-black leading-none tracking-tight text-white sm:text-4xl">
+                  {getMonthlyDiscountPercent()}%
                 </span>
-                <span className="text-5xl font-display font-bold text-white">
-                  {monthlyPriceLabel}
-                </span>
-                <span className="text-sm text-white/75">/month</span>
               </div>
               <p className="mt-2 text-sm font-medium text-white/80">
                 {monthlyPerWeekLabel}/week · 2-day free trial
