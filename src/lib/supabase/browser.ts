@@ -12,12 +12,26 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error("Missing Supabase environment variables");
 }
 
+let browserClient: SupabaseClient<Database> | undefined;
+
+/**
+ * Exactly one persistent browser auth client per JS realm.
+ * Always prefer this (or useSupabaseClient) over constructing another client.
+ */
 export function createSupabaseBrowserClient(): SupabaseClient<Database> {
-  return createSSRBrowserClient<Database>(supabaseUrl!, supabaseAnonKey!) as any as SupabaseClient<Database>;
+  if (browserClient) return browserClient;
+  browserClient = createSSRBrowserClient<Database>(
+    supabaseUrl!,
+    supabaseAnonKey!,
+  ) as any as SupabaseClient<Database>;
+  return browserClient;
+}
+
+/** @internal test helper */
+export function __resetSupabaseBrowserClientForTests() {
+  browserClient = undefined;
 }
 
 export function useBrowserSupabaseClient() {
   return useMemo(() => createSupabaseBrowserClient(), []);
 }
-
-

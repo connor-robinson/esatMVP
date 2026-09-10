@@ -144,6 +144,27 @@ const nextConfig = {
   poweredByHeader: false,
   compress: true,
 
+  async headers() {
+    return [
+      {
+        // Kill-switch worker must never be served as HTML or cached as a
+        // fingerprinted build artifact. Query strings (?build=) still match.
+        source: "/sw.js",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "application/javascript; charset=utf-8",
+          },
+          {
+            key: "Cache-Control",
+            value: "no-cache, no-store, must-revalidate",
+          },
+          { key: "Service-Worker-Allowed", value: "/" },
+        ],
+      },
+    ];
+  },
+
   onDemandEntries: {
     maxInactiveAge: 25 * 1000,
     pagesBufferLength: 10,

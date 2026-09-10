@@ -85,17 +85,23 @@ export function useBackgroundPrefetch(config: PrefetchConfig) {
   const setupIdlePrefetch = useCallback(() => {
     if (!prefetchOnIdle) return;
 
+    const scheduleIdle =
+      typeof window !== "undefined" &&
+      typeof window.requestIdleCallback === "function"
+        ? (cb: () => void) => window.requestIdleCallback(cb)
+        : (cb: () => void) => window.setTimeout(cb, 250);
+
     const idlePrefetch = () => {
       if (prefetchQueue.current.length > 0) {
         processPrefetchQueue();
       }
 
       if (prefetchQueue.current.length > 0) {
-        requestIdleCallback(idlePrefetch);
+        scheduleIdle(idlePrefetch);
       }
     };
 
-    requestIdleCallback(idlePrefetch);
+    scheduleIdle(idlePrefetch);
   }, [prefetchOnIdle, processPrefetchQueue]);
 
   useEffect(() => {

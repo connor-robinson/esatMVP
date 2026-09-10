@@ -151,7 +151,16 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
     void loadRound();
 
     try {
-      window.sessionStorage.removeItem("app-chunk-reload");
+      try {
+        const keysToRemove: string[] = [];
+        for (let i = 0; i < window.sessionStorage.length; i += 1) {
+          const key = window.sessionStorage.key(i);
+          if (key && key.startsWith("app-chunk-reload")) keysToRemove.push(key);
+        }
+        keysToRemove.forEach((key) => window.sessionStorage.removeItem(key));
+      } catch {
+        /* ignore */
+      }
     } catch {
       /* ignore */
     }

@@ -16,17 +16,36 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   workers: 1,
   reporter: "list",
+  projects: [
+    {
+      name: "chromium",
+      use: {
+        ...devices["Desktop Chrome"],
+        channel,
+        baseURL: "http://127.0.0.1:4173",
+        trace: "on-first-retry",
+        launchOptions: {
+          args: [
+            "--disable-features=InterestFeedContentSuggestions,EdgeTrackingPrevention",
+            "--disable-background-networking",
+          ],
+        },
+      },
+      testIgnore: /webkit-.*\.spec\.ts/,
+    },
+    {
+      name: "webkit",
+      use: {
+        ...devices["Desktop Safari"],
+        baseURL: "http://127.0.0.1:4173",
+        trace: "on-first-retry",
+      },
+      testMatch: /webkit-.*\.spec\.ts/,
+    },
+  ],
   use: {
-    ...devices["Desktop Chrome"],
-    channel,
     baseURL: "http://127.0.0.1:4173",
     trace: "on-first-retry",
-    launchOptions: {
-      args: [
-        "--disable-features=InterestFeedContentSuggestions,EdgeTrackingPrevention",
-        "--disable-background-networking",
-      ],
-    },
   },
   webServer: {
     command: "npx --yes serve e2e/fixtures -l 4173 --no-port-switching",

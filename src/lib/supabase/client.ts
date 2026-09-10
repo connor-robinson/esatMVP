@@ -32,12 +32,14 @@ try {
   );
 }
 
-// Create Supabase client with proper configuration for both client and server usage
+// Read-only / non-auth client. Distinct storageKey so it never competes with
+// the singleton auth browser client (avoids Multiple GoTrueClient warnings).
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: false,
     autoRefreshToken: false,
     detectSessionInUrl: false,
+    storageKey: "esat-camp-readonly-anon",
   },
   global: {
     headers: {
