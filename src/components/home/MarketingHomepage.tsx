@@ -558,8 +558,13 @@ export function MarketingHomepage({
                 Most popular
               </div>
               <h4 className="text-xl font-bold text-white">Monthly</h4>
-              <div className="mt-4 flex flex-wrap items-end gap-x-3 gap-y-1">
-                <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+              <div className="mt-4">
+                <p className="text-xs font-bold uppercase tracking-wide text-[#FECACA]">
+                  <span className="text-[#F87171]">
+                    {getMonthlyDiscountPercent()}% off
+                  </span>
+                </p>
+                <div className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-1">
                   <span className="text-2xl font-display font-bold text-white/55 line-through">
                     {monthlyListPriceLabel}
                   </span>
@@ -568,9 +573,6 @@ export function MarketingHomepage({
                   </span>
                   <span className="text-sm text-white/75">/month</span>
                 </div>
-                <span className="pb-1 font-display text-3xl font-black leading-none tracking-tight text-white sm:text-4xl">
-                  {getMonthlyDiscountPercent()}%
-                </span>
               </div>
               <p className="mt-2 text-sm font-medium text-white/80">
                 {monthlyPerWeekLabel}/week · 2-day free trial
