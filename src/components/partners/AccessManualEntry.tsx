@@ -71,7 +71,6 @@ export function AccessManualEntry() {
       tone="info"
       testId="access-manual-entry"
       actions={undefined}
-      cardClassName="min-h-[22rem] sm:min-h-[24rem]"
     >
       <p className="text-text-muted">
         Enter the access code provided by your school or programme.
@@ -95,7 +94,7 @@ export function AccessManualEntry() {
         </div>
       )}
 
-      <form onSubmit={onSubmit} className="mt-12">
+      <form onSubmit={onSubmit} className="mt-24 sm:mt-28">
         <div className="flex items-center gap-5">
           <input
             type="text"
@@ -114,7 +113,7 @@ export function AccessManualEntry() {
         </div>
       </form>
 
-      <div className="mt-12">
+      <div className="mt-24 sm:mt-28">
         <AccessTextLink href="/">Back to homepage</AccessTextLink>
       </div>
     </AccessOutcomeCard>

@@ -63,7 +63,9 @@ export function AccessOutcomeCard({
         <Card
           variant="elevated"
           className={cn(
-            "relative mx-auto w-full max-w-[60rem] overflow-hidden border-0 p-8 sm:p-10",
+            "relative mx-auto w-full max-w-[60rem] overflow-hidden border-0",
+            // Equal top/bottom padding so title↔top matches back-link↔bottom.
+            "px-8 py-10 sm:px-10 sm:py-12",
             cardClassName,
           )}
         >
@@ -71,37 +73,45 @@ export function AccessOutcomeCard({
             aria-hidden
             className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.14),transparent_55%)]"
           />
-          <Link
-            href="/"
-            className="absolute right-6 top-6 z-20 sm:right-8 sm:top-8"
-            aria-label="ESAT Camp home"
-          >
-            <BrandLogo variant="mark" size="md" />
-          </Link>
-          <div className="relative z-10 pr-14 sm:pr-16">
+          <div className="relative z-10">
             {loading ? (
               <p className="text-base text-text-muted">{loadingLabel}</p>
             ) : (
               <>
-                {eyebrow ? (
-                  <p
-                    className={cn(
-                      "text-xs font-semibold uppercase tracking-[0.14em]",
-                      TONE_EYEBROW[tone],
-                    )}
+                <div className="flex items-center justify-between gap-4">
+                  <div className="min-w-0">
+                    {eyebrow ? (
+                      <p
+                        className={cn(
+                          "text-xs font-semibold uppercase tracking-[0.14em]",
+                          TONE_EYEBROW[tone],
+                        )}
+                      >
+                        {eyebrow}
+                      </p>
+                    ) : null}
+                    <h1
+                      className={cn(
+                        "text-[1.875rem] font-bold tracking-tight text-text sm:text-[2.1875rem]",
+                        eyebrow ? "mt-2" : null,
+                      )}
+                    >
+                      {title}
+                    </h1>
+                  </div>
+                  <Link
+                    href="/"
+                    className="shrink-0"
+                    aria-label="ESAT Camp home"
                   >
-                    {eyebrow}
-                  </p>
-                ) : null}
-                <h1
-                  className={cn(
-                    "text-[1.875rem] font-bold tracking-tight text-text sm:text-[2.1875rem]",
-                    eyebrow ? "mt-2" : null,
-                  )}
-                >
-                  {title}
-                </h1>
-                <div className="mt-4 max-w-3xl space-y-2.5 text-base leading-relaxed">
+                    <BrandLogo
+                      variant="mark"
+                      size="md"
+                      className="!h-9 sm:!h-10"
+                    />
+                  </Link>
+                </div>
+                <div className="mt-4 max-w-3xl text-base leading-relaxed">
                   {children}
                 </div>
                 {actions ? (
