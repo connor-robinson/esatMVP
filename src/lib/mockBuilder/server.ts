@@ -792,6 +792,28 @@ export async function transitionMockStatus(
   return data as EsatMockRow;
 }
 
+/**
+ * Cancel a mock: release reserved questions (if approved/published), then delete it.
+ * Cascades to esat_mock_questions. Questions still used by other approved/published
+ * mocks stay reserved.
+ */
+export async function cancelAndDeleteMock(
+  service: SupabaseClient,
+  mockId: string,
+): Promise<{ freedQuestionIds: string[] }> {
+  const { mock, slots } = await getMockWithSlots(service, mockId);
+  const questionIds = slots.map((s) => s.questionId);
+
+  if (mock.status === "approved" || mock.status === "published") {
+    await transitionMockStatus(service, mockId, "archived");
+  }
+
+  const { error } = await service.from("esat_mocks").delete().eq("id", mockId);
+  if (error) throw new Error(error.message);
+
+  return { freedQuestionIds: questionIds };
+}
+
 export async function loadMockCalibration(
   service: SupabaseClient,
   mockId: string,

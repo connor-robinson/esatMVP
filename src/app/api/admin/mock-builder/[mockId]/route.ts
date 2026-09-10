@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireTesterAdmin } from "@/lib/tester/admin";
 import {
+  cancelAndDeleteMock,
   getMockWithSlots,
   transitionMockStatus,
   updateMockMeta,
@@ -85,16 +86,8 @@ export async function DELETE(
   }
 
   try {
-    const { mock } = await getMockWithSlots(admin.service, params.mockId);
-    if (mock.status === "published") {
-      await transitionMockStatus(admin.service, params.mockId, "archived");
-    }
-    const { error } = await admin.service
-      .from("esat_mocks")
-      .delete()
-      .eq("id", params.mockId);
-    if (error) throw new Error(error.message);
-    return NextResponse.json({ ok: true });
+    const result = await cancelAndDeleteMock(admin.service, params.mockId);
+    return NextResponse.json({ ok: true, ...result });
   } catch (e) {
     return NextResponse.json(
       { error: e instanceof Error ? e.message : "Delete failed" },

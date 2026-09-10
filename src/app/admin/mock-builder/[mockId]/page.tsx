@@ -120,6 +120,26 @@ export default function AdminMockDetailPage() {
     });
   }
 
+  async function cancelMock() {
+    const ok = window.confirm(
+      "Cancel this mock? It will be deleted and its questions freed for other mocks (unless still used elsewhere).",
+    );
+    if (!ok) return;
+    setBusy("cancel");
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/mock-builder/${mockId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Cancel failed");
+      window.location.href = "/admin/mock-builder";
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Cancel failed");
+      setBusy(null);
+    }
+  }
+
   async function loadStats() {
     await run("stats", async () => {
       const res = await fetch(`/api/admin/mock-builder/${mockId}/stats`, {
