@@ -26,6 +26,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useHomepageAutoHideNav } from "@/hooks/useHomepageAutoHideNav";
 import { ExampleGraphQuestion } from "@/components/home/ExampleGraphQuestion";
+import { HeroDeviceShowcase } from "@/components/home/HeroDeviceShowcase";
 
 const SlotMachineCount = dynamic(
   () =>
@@ -33,28 +34,15 @@ const SlotMachineCount = dynamic(
   { ssr: false },
 );
 
-const PastPaperPlayerPreview = dynamic(
+const HomepageRoadmapPlayerSplit = dynamic(
   () =>
-    import("@/components/home/PastPaperPlayerPreview").then(
-      (m) => m.PastPaperPlayerPreview,
+    import("@/components/home/HomepageRoadmapPlayerSplit").then(
+      (m) => m.HomepageRoadmapPlayerSplit,
     ),
   {
     ssr: false,
     loading: () => (
-      <div className="min-h-[16rem] rounded-2xl bg-white/[0.06]" aria-hidden />
-    ),
-  },
-);
-
-const QuestionBankDistributionChart = dynamic(
-  () =>
-    import("@/components/home/QuestionBankDistributionChart").then(
-      (m) => m.QuestionBankDistributionChart,
-    ),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="min-h-[22rem] rounded-2xl bg-[#0A0F1D]/40" aria-hidden />
+      <div className="min-h-[22rem] rounded-xl bg-[#0A0F1D]" aria-hidden />
     ),
   },
 );
@@ -99,9 +87,8 @@ const HOMEPAGE_SECTIONS = [
   { id: "faqs", label: "FAQs" },
 ] as const;
 
-function HomepageSectionNav() {
+function HomepageSectionNav({ navVisible }: { navVisible: boolean }) {
   const [active, setActive] = useState<string>(HOMEPAGE_SECTIONS[0].id);
-  const { navVisible } = useHomepageAutoHideNav();
 
   useEffect(() => {
     const ids = HOMEPAGE_SECTIONS.map((section) => section.id);
@@ -183,6 +170,7 @@ export function MarketingHomepage({
   socialProofSlot?: ReactNode;
 }) {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
+  const { navVisible } = useHomepageAutoHideNav();
   const seasonPrice = getSeasonPassPrice();
   const monthlyPriceLabel = formatGbpPrice(MONTHLY_PRICE_GBP);
   const monthlyListPriceLabel = formatGbpPrice(MONTHLY_LIST_PRICE_GBP);
@@ -201,155 +189,31 @@ export function MarketingHomepage({
   };
 
   return (
-    <div className="scroll-smooth bg-[#0A0F1D]">
-      <HomepageSectionNav />
+    <div
+      className="scroll-smooth bg-[#0A0F1D] transition-[padding-top] duration-300 ease-out"
+      style={{ paddingTop: navVisible ? NAVBAR_HEIGHT_PX : 0 }}
+    >
+      <HomepageSectionNav navVisible={navVisible} />
 
-      {/* Hero Section */}
-      <section className="relative overflow-x-clip bg-[#0A0F1D] pt-5 pb-6 lg:pt-6 lg:pb-8">
-        <div className="relative mx-auto max-w-[1400px] space-y-4 px-4 sm:px-5 lg:space-y-5 lg:px-6">
-          <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.15fr)] lg:gap-8 xl:gap-10">
-            <div className="flex min-w-0 flex-col justify-center gap-3.5 sm:gap-4 lg:gap-5 [container-type:inline-size]">
-              <h1 className="font-display font-bold leading-[1.05] tracking-[-0.04em] [font-size:clamp(2rem,min(0.8rem+5vw,13cqi),4.75rem)]">
-                <span className="whitespace-nowrap">
-                  The leading{" "}
-                  <span
-                    className="group relative inline-block cursor-help"
-                    tabIndex={0}
-                    aria-describedby="esat-definition"
-                  >
-                    <span className="text-underline-accent">ESAT</span>
-                    <span
-                      id="esat-definition"
-                      role="tooltip"
-                      className="pointer-events-none absolute left-0 top-full z-20 mt-3 w-[min(22rem,calc(100vw-2rem))] rounded-lg bg-[#161D2F] px-4 py-3 text-left text-sm font-normal leading-relaxed tracking-normal text-[#94A3B8] opacity-0 shadow-xl transition-opacity duration-150 group-hover:opacity-100 group-focus:opacity-100 sm:w-[24rem]"
-                    >
-                      The ESAT is the Engineering and Science Admissions Test for
-                      undergraduate STEM applicants. It is a mandatory entrance
-                      exam for engineering, science, and medical courses at
-                      Cambridge, Oxford, Imperial College London, and UCL.
-                    </span>
-                  </span>
-                </span>
-                <span className="block whitespace-nowrap">question bank</span>
-              </h1>
-              <p className="max-w-2xl text-lg leading-relaxed text-[#94A3B8] sm:text-xl lg:text-2xl">
-                Practice with our{" "}
-                <span className="text-underline-accent text-white">
-                  {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ practice
-                  questions
-                </span>{" "}
-                and{" "}
-                <span className="text-underline-accent text-white">
-                  {MENTAL_MATHS_MODULE_COUNT_MARKETING}+ mental maths courses
-                </span>
-                .
-              </p>
-              <div className="space-y-2.5">
-                <div className="flex flex-col gap-3 sm:flex-row">
-                  <Link
-                    href={CALIBRATION_ROUTES.hub}
-                    onClick={() =>
-                      void trackHomepageEvent("calibration_cta_clicked", {
-                        user_state: "logged_out",
-                        destination: CALIBRATION_ROUTES.hub,
-                      })
-                    }
-                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-7 py-3.5 text-base font-bold text-[#0A0F1D] shadow-[0_0_28px_rgba(255,255,255,0.22),0_8px_24px_rgba(0,0,0,0.28)] transition-all hover:scale-[1.03] hover:bg-slate-100 hover:shadow-[0_0_36px_rgba(255,255,255,0.32),0_10px_28px_rgba(0,0,0,0.32)] active:scale-[0.98] sm:text-lg"
-                  >
-                    Start calibration
-                    <span aria-hidden className="text-lg leading-none">
-                      →
-                    </span>
-                  </Link>
-                  <Link
-                    href="/login?mode=signup"
-                    className="inline-flex items-center justify-center rounded-lg border border-white/20 px-6 py-3.5 text-base font-bold text-white transition-all hover:bg-white/5"
-                  >
-                    Sign up
-                  </Link>
-                </div>
-                <p className="text-sm text-[#94A3B8] sm:text-base">
-                  Calibration is free. No sign-up required to get started.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex min-h-0 min-w-0 w-full">
-              <ExampleGraphQuestion className="flex w-full max-w-none flex-col" />
-            </div>
-          </div>
-
-          <div className="rounded-2xl bg-white/[0.08] px-4 py-3.5 backdrop-blur-xl sm:px-5 sm:py-4">
-            <div className="flex w-full flex-col gap-5 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
-              <div className="flex min-w-0 items-start gap-3.5 sm:items-center sm:gap-4">
-                <Link
-                  href={`${ABOUT_PATH}#${FOUNDERS.ewan.id}`}
-                  className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-[#161D2F] sm:h-16 sm:w-16"
-                >
-                  <Image
-                    src={FOUNDERS.ewan.imageSrc}
-                    alt={FOUNDERS.ewan.imageAlt}
-                    fill
-                    sizes="64px"
-                    className="object-cover"
-                    style={{
-                      objectPosition: FOUNDERS.ewan.imagePosition,
-                      transform: `scale(${FOUNDERS.ewan.imageScale})`,
-                    }}
-                    priority
-                  />
-                </Link>
-                <div className="min-w-0 space-y-1">
-                  <p className="text-sm font-bold leading-snug text-white sm:text-base lg:text-lg">
-                    Hi, I&apos;m{" "}
-                    <Link
-                      href={`${ABOUT_PATH}#${FOUNDERS.ewan.id}`}
-                      className="text-underline-accent transition-colors hover:text-[#93C5FD]"
-                    >
-                      {FOUNDERS.ewan.name}
-                    </Link>
-                    , co-founder of ESAT Camp.
-                  </p>
-                  <p className="text-xs leading-relaxed text-[#94A3B8] sm:text-sm">
-                    Our goal is to build the platform we wish we had for the ESAT.
-                  </p>
-                </div>
-              </div>
-
-              {socialProofSlot}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Calibration preview */}
-      <section
-        id="practice"
-        className="scroll-mt-28 border-y border-white/5 bg-[#161D2F] py-16"
-      >
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
-          <div className="grid lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] gap-10 lg:gap-14 items-center">
-            <div className="space-y-8">
-              <div>
-                <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6] mb-4">
-                  Free calibration
-                </h2>
-                <h3 className="text-3xl font-display font-bold mb-4">
-                  Know what to practise first
-                </h3>
-                <p className="text-[#94A3B8] leading-relaxed max-w-lg">
-                  A short diagnostic shows your weak spots, then you practise from our
-                  question bank.
-                </p>
-              </div>
-
-              <div>
-                <SlotMachineCount value={QUESTION_BANK_TOTAL_COUNT} />
-                <p className="mt-3 text-sm font-semibold uppercase tracking-[0.18em] text-[#94A3B8]">
-                  Practice questions in the bank
-                </p>
-              </div>
-
+      {/* Hero: leave room for section nav + a peek of the founder strip */}
+      <section className="relative flex min-h-[calc(100svh-11.5rem)] flex-col justify-center bg-[#0A0F1D] pt-8 pb-6 lg:pt-10 lg:pb-8">
+        <div className="relative mx-auto grid w-full max-w-[1400px] flex-1 items-center gap-8 px-6 sm:px-8 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:gap-10 lg:px-10 xl:gap-14 xl:px-12">
+          <div className="flex min-w-0 flex-col gap-5 sm:gap-6">
+            <h1 className="whitespace-nowrap font-display font-bold leading-[1.08] tracking-[-0.03em] text-white [font-size:clamp(2rem,min(0.9rem+3.2vw,7.5cqi),3.25rem)]">
+              Revise for the ESAT
+            </h1>
+            <p className="max-w-xl text-base leading-relaxed text-[#94A3B8] sm:text-lg">
+              With our{" "}
+              <span className="font-semibold text-white">
+                {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ questions
+              </span>{" "}
+              written by our Oxbridge tutors,{" "}
+              <span className="font-semibold text-white">
+                {MENTAL_MATHS_MODULE_COUNT_MARKETING} mental maths drills
+              </span>
+              , and more.
+            </p>
+            <div className="pt-1">
               <Link
                 href={CALIBRATION_ROUTES.hub}
                 onClick={() =>
@@ -358,137 +222,176 @@ export function MarketingHomepage({
                     destination: CALIBRATION_ROUTES.hub,
                   })
                 }
-                className="inline-flex rounded-xl bg-[#3B82F6] px-6 py-3 font-bold text-white transition-all hover:bg-[#2563EB]"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-7 py-3.5 text-base font-bold text-[#0A0F1D] transition-colors hover:bg-slate-100 sm:text-lg"
               >
                 Start free calibration
+                <span aria-hidden className="text-lg leading-none">
+                  →
+                </span>
+              </Link>
+            </div>
+          </div>
+
+          <HeroDeviceShowcase className="lg:justify-self-end" />
+        </div>
+      </section>
+
+      {/* Founder strip: top edge peeks into the first viewport */}
+      <section className="border-t border-white/10 bg-[#0A0F1D] py-6 sm:py-8">
+        <div className="mx-auto flex max-w-[1400px] flex-col gap-5 px-6 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10 xl:px-12">
+          <div className="flex min-w-0 items-start gap-4 sm:items-center sm:gap-5">
+            <Link
+              href={`${ABOUT_PATH}#${FOUNDERS.ewan.id}`}
+              className="relative h-24 w-24 shrink-0 overflow-hidden rounded-md bg-[#161D2F] sm:h-28 sm:w-28"
+            >
+              <Image
+                src={FOUNDERS.ewan.imageSrc}
+                alt={FOUNDERS.ewan.imageAlt}
+                fill
+                sizes="112px"
+                className="object-cover"
+                style={{
+                  objectPosition: FOUNDERS.ewan.imagePosition,
+                  transform: `scale(${FOUNDERS.ewan.imageScale})`,
+                }}
+                priority
+              />
+            </Link>
+            <div className="min-w-0 space-y-1">
+              <p className="text-sm font-bold leading-snug text-white sm:text-base lg:text-lg">
+                Hi, I&apos;m{" "}
+                <Link
+                  href={`${ABOUT_PATH}#${FOUNDERS.ewan.id}`}
+                  className="text-underline-accent transition-colors hover:text-[#93C5FD]"
+                >
+                  {FOUNDERS.ewan.name}
+                </Link>
+                , co-founder of ESAT Camp.
+              </p>
+              <p className="text-xs leading-relaxed text-[#94A3B8] sm:text-sm">
+                Our goal is to build the platform we wish we had for the ESAT.
+              </p>
+            </div>
+          </div>
+          {socialProofSlot}
+        </div>
+      </section>
+
+      {/* Compact offer strip */}
+      <section
+        id="features"
+        className="scroll-mt-28 border-y border-white/10 bg-[#0A0F1D]"
+      >
+        <div className="mx-auto flex max-w-[1400px] flex-col items-start gap-2 px-4 py-5 sm:flex-row sm:items-center sm:gap-6 sm:px-5 sm:py-4 lg:px-6">
+          <p className="shrink-0 text-sm font-semibold text-white sm:text-base">
+            What do we offer?
+          </p>
+          <p className="text-sm leading-relaxed text-[#94A3B8] sm:text-base">
+            Question bank, past papers in a UAT-UK-style player, and a mental
+            maths trainer.
+          </p>
+        </div>
+      </section>
+
+      {/* Question Bank */}
+      <section
+        id="practice"
+        className="scroll-mt-28 border-b border-white/5 bg-[#161D2F] py-16"
+      >
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-5 lg:px-6">
+          <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-14">
+            <div className="space-y-8">
+              <div>
+                <h2 className="mb-4 font-display text-3xl font-bold text-white sm:text-4xl">
+                  Question Bank
+                </h2>
+                <p className="max-w-lg leading-relaxed text-[#94A3B8]">
+                  Explore practice questions written to match the difficulty and
+                  style of the ESAT.
+                </p>
+              </div>
+
+              <div>
+                <SlotMachineCount value={QUESTION_BANK_TOTAL_COUNT} />
+                <p className="mt-3 text-sm text-[#94A3B8]">
+                  Practice questions in the bank
+                </p>
+              </div>
+
+              <Link
+                href="/questions"
+                className="inline-flex items-center gap-2 rounded-xl bg-[#3B82F6] px-6 py-3 font-bold text-white transition-all hover:bg-[#2563EB]"
+              >
+                Try our questions
+                <span aria-hidden className="text-lg leading-none">
+                  →
+                </span>
               </Link>
             </div>
 
-            <QuestionBankDistributionChart />
+            <ExampleGraphQuestion className="flex w-full max-w-none flex-col" />
           </div>
         </div>
       </section>
 
-      {/* Why Choose Us Section */}
-      <section id="features" className="scroll-mt-28 bg-[#161D2F] py-24">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
-          <div className="text-center max-w-3xl mx-auto mb-10 space-y-4">
-            <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
-              Why choose us
-            </h2>
-            <h3 className="text-4xl font-display font-bold">
-              What do we offer?
-            </h3>
-            <p className="text-lg text-[#94A3B8] sm:text-xl">
-              Try without signing up
-            </p>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-3 md:gap-8">
-            {/* Mental Maths Trainer Card */}
-            <div className="group flex flex-col rounded-xl bg-[#0A0F1D]/55 p-8 transition-all duration-300 ease-out hover:scale-[1.02] hover:bg-[#0A0F1D]/90">
-              <h4 className="text-2xl font-display font-bold text-white">
-                Mental Maths Trainer
-              </h4>
-              <p className="mt-3 text-[#94A3B8] leading-relaxed">
-                The ESAT & TMUA are non-calculator exams with heavy arithmetic.
-                Get faster & better with our specialized trainer.
-              </p>
-              <div className="mt-auto mb-6 rounded-xl bg-[#161D2F] p-4 font-mono text-sm">
-                <p className="text-[#34D399]">
-                  Problem:{" "}
-                  <span className="text-white">√(144 × 25) / 5</span>
+      {/* Past papers: roadmap + player */}
+      <section className="bg-[#0A0F1D] py-20 sm:py-24">
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-5 lg:px-6">
+          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
+            <div className="space-y-8">
+              <div>
+                <h2 className="font-display text-4xl font-bold tracking-tight text-white lg:text-5xl">
+                  Sit papers in a{" "}
+                  <span className="whitespace-nowrap">UAT-UK-style</span> exam
+                  player
+                </h2>
+                <p className="mt-5 max-w-xl text-lg leading-relaxed text-[#94A3B8]">
+                  Follow a tailored roadmap, then sit official papers and our
+                  mocks in an interface built to feel like the real UAT-UK exam.
                 </p>
-                <p className="mt-2 text-[#94A3B8]">&gt; Input your answer…</p>
               </div>
-              <Link
-                href="/mental-maths/drill"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#3B82F6] py-3.5 font-bold text-white transition-colors hover:bg-[#2563EB]"
-              >
-                Try trainer
-                <span aria-hidden className="text-lg leading-none">
-                  →
-                </span>
-              </Link>
-            </div>
 
-            {/* Past Papers Card */}
-            <div className="group flex flex-col rounded-xl bg-[#0A0F1D]/55 p-8 transition-all duration-300 ease-out hover:scale-[1.02] hover:bg-[#0A0F1D]/90">
-              <h4 className="text-2xl font-display font-bold text-white">
-                Past Papers
-              </h4>
-              <p className="mt-3 text-[#94A3B8] leading-relaxed">
-                Practise official papers in an interface that closely matches
-                the real UAT-UK exam, plus our own targeted practice on a
-                tailored roadmap.
-              </p>
-              <div className="mt-auto mb-6">
-                <PastPaperPlayerPreview compact />
-              </div>
+              <ul className="space-y-4">
+                {[
+                  "Official past papers plus our own targeted practice",
+                  "Timed sections, navigator, and the same keyboard shortcuts as the live test",
+                  "A roadmap so you sit papers in the right order",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <span
+                      aria-hidden
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
+                    />
+                    <p className="text-base leading-relaxed text-[#94A3B8] sm:text-lg">
+                      {item}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+
               <Link
                 href="/past-papers/roadmap"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#3B82F6] py-3.5 font-bold text-white transition-colors hover:bg-[#2563EB]"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#3B82F6] px-7 py-3.5 font-bold text-white transition-colors hover:bg-[#2563EB]"
               >
-                View roadmap
+                View past papers
                 <span aria-hidden className="text-lg leading-none">
                   →
                 </span>
               </Link>
             </div>
 
-            {/* Question Bank Card */}
-            <div className="group flex flex-col rounded-xl bg-[#0A0F1D]/55 p-8 transition-all duration-300 ease-out hover:scale-[1.02] hover:bg-[#0A0F1D]/90">
-              <h4 className="text-2xl font-display font-bold text-white">
-                {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ Practice Questions
-              </h4>
-              <p className="mt-3 text-[#94A3B8] leading-relaxed">
-                Practise by subject, difficulty, and topic with instant feedback
-                and analytics.
-              </p>
-              <div className="mt-auto mb-6 rounded-xl bg-white/[0.04] px-5 py-5">
-                <p className="text-4xl font-display font-bold tabular-nums tracking-tight text-white">
-                  {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}
-                </p>
-                <p className="mt-1 text-xs font-semibold uppercase tracking-[0.16em] text-[#94A3B8]">
-                  Questions in the bank
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {["Math 1", "Math 2", "Physics", "Chem", "Bio"].map(
-                    (subject) => (
-                      <span
-                        key={subject}
-                        className="rounded-lg bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-white/65"
-                      >
-                        {subject}
-                      </span>
-                    ),
-                  )}
-                </div>
-              </div>
-              <Link
-                href="/questions"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#3B82F6] py-3.5 font-bold text-white transition-colors hover:bg-[#2563EB]"
-              >
-                Try question bank
-                <span aria-hidden className="text-lg leading-none">
-                  →
-                </span>
-              </Link>
-            </div>
+            <HomepageRoadmapPlayerSplit />
           </div>
         </div>
       </section>
 
       {/* Mental maths trainer showcase */}
-      <section className="bg-[#0A0F1D] py-24">
+      <section className="bg-[#161D2F] py-20 sm:py-24">
         <div className="mx-auto max-w-[1400px] px-4 sm:px-5 lg:px-6">
           <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
             <div className="space-y-8">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
-                  Mental maths trainer
-                </p>
-                <h2 className="mt-4 font-display text-4xl font-bold tracking-tight lg:text-5xl">
+                <h2 className="font-display text-4xl font-bold tracking-tight text-white lg:text-5xl">
                   Try our one-of-a-kind mental maths trainer
                 </h2>
                 <p className="mt-5 max-w-xl text-lg leading-relaxed text-[#94A3B8]">
@@ -523,68 +426,14 @@ export function MarketingHomepage({
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#3B82F6] px-7 py-3.5 font-bold text-white transition-colors hover:bg-[#2563EB]"
               >
                 Try the mental maths trainer
-                <span aria-hidden className="text-lg leading-none">{"\u2192"}</span>
+                <span aria-hidden className="text-lg leading-none">
+                  →
+                </span>
               </Link>
             </div>
 
             <div className="flex justify-center lg:justify-end">
               <HeroTrainerDemo className="w-full max-w-[28rem] justify-self-center" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Past papers UAT-UK player showcase */}
-      <section className="bg-[#161D2F] py-24">
-        <div className="mx-auto max-w-[1400px] px-4 sm:px-5 lg:px-6">
-          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
-            <div className="order-2 flex justify-center lg:order-1 lg:justify-start">
-              <PastPaperPlayerPreview />
-            </div>
-
-            <div className="order-1 space-y-8 lg:order-2">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
-                  Past papers
-                </p>
-                <h2 className="mt-4 font-display text-4xl font-bold tracking-tight lg:text-5xl">
-                  Sit papers in a{" "}
-                  <span className="whitespace-nowrap">UAT-UK-style</span> exam
-                  player
-                </h2>
-                <p className="mt-5 max-w-xl text-lg leading-relaxed text-[#94A3B8]">
-                  We&apos;ve updated our sitting UI to closely resemble the
-                  official UAT-UK interface, so exam day feels familiar.
-                </p>
-              </div>
-
-              <ul className="space-y-4">
-                {[
-                  "Official past papers plus our own targeted practice",
-                  "Timed sections, navigator, and the same keyboard shortcuts as the live test",
-                  "A tailored roadmap so you sit papers in the right order",
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <span
-                      aria-hidden
-                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3B82F6]"
-                    />
-                    <p className="text-base leading-relaxed text-[#94A3B8] sm:text-lg">
-                      {item}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-
-              <Link
-                href="/past-papers/roadmap"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#3B82F6] px-7 py-3.5 font-bold text-white transition-colors hover:bg-[#2563EB]"
-              >
-                View past papers
-                <span aria-hidden className="text-lg leading-none">
-                  {"\u2192"}
-                </span>
-              </Link>
             </div>
           </div>
         </div>
@@ -600,16 +449,13 @@ export function MarketingHomepage({
 
             <div className="space-y-8">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
-                  Free tools
-                </p>
-                <h2 className="mt-4 text-4xl font-display font-bold lg:text-5xl">
+                <h2 className="font-display text-4xl font-bold text-white lg:text-5xl">
                   Try our free tools
                 </h2>
                 <p className="mt-5 text-lg leading-relaxed text-[#94A3B8]">
-                  Enter a raw mark from NSAA or ENGAA past papers, 
-                  see your calculated ESAT score, 
-                  and where you lie on the official distribution.
+                  Enter a raw mark from NSAA or ENGAA past papers, see your
+                  calculated ESAT score, and where you lie on the official
+                  distribution.
                 </p>
               </div>
 
@@ -652,12 +498,9 @@ export function MarketingHomepage({
       <section id="pricing" className="scroll-mt-28 bg-[#161D2F]/50 py-24">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
           <div className="mx-auto mb-16 max-w-2xl text-center sm:mb-20">
-            <h2 className="mb-4 text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
-              Pricing
-            </h2>
-            <h3 className="text-4xl font-display font-bold">
+            <h2 className="font-display text-4xl font-bold text-white">
               Invest in your future
-            </h3>
+            </h2>
             <p className="mt-4 text-[#94A3B8]">
               Same full access on every paid plan. Pick the billing that fits
               your prep timeline.

@@ -11,6 +11,8 @@ const PLAYER_IMAGE = {
 interface PastPaperPlayerPreviewProps {
   className?: string;
   compact?: boolean;
+  /** Tighter padding for embedding beside other content. */
+  embedded?: boolean;
   priority?: boolean;
 }
 
@@ -21,6 +23,7 @@ interface PastPaperPlayerPreviewProps {
 export function PastPaperPlayerPreview({
   className,
   compact = false,
+  embedded = false,
   priority = false,
 }: PastPaperPlayerPreviewProps) {
   return (
@@ -29,7 +32,9 @@ export function PastPaperPlayerPreview({
         aria-hidden
         className={cn(
           "pointer-events-none absolute left-1/2 top-1/2 -z-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#3B82F6]/25 blur-3xl",
-          compact ? "h-36 w-48" : "h-64 w-[28rem] sm:h-80 sm:w-[36rem]",
+          compact || embedded
+            ? "h-36 w-48"
+            : "h-64 w-[28rem] sm:h-80 sm:w-[36rem]",
         )}
       />
       <div
@@ -37,13 +42,15 @@ export function PastPaperPlayerPreview({
           "mx-auto [perspective:1400px]",
           compact
             ? "max-w-[16rem] px-2 py-3"
-            : "max-w-[40rem] px-3 py-8 xl:max-w-[46rem] sm:px-5",
+            : embedded
+              ? "max-w-[28rem] px-2 py-4 xl:max-w-[32rem]"
+              : "max-w-[40rem] px-3 py-8 xl:max-w-[46rem] sm:px-5",
         )}
       >
         <div
           className={cn(
             "origin-center overflow-hidden rounded-xl bg-[#0A1628] shadow-[0_28px_60px_-12px_rgba(0,0,0,0.65),0_12px_24px_-8px_rgba(15,23,42,0.45)]",
-            compact
+            compact || embedded
               ? "[transform:rotateY(-10deg)_rotateX(7deg)]"
               : "[transform:rotateY(-11deg)_rotateX(6deg)] sm:[transform:rotateY(-14deg)_rotateX(7deg)]",
           )}
@@ -57,7 +64,9 @@ export function PastPaperPlayerPreview({
             sizes={
               compact
                 ? "16rem"
-                : "(min-width: 1280px) 46rem, (min-width: 1024px) 40rem, 100vw"
+                : embedded
+                  ? "(min-width: 1280px) 32rem, 28rem"
+                  : "(min-width: 1280px) 46rem, (min-width: 1024px) 40rem, 100vw"
             }
             className="h-auto w-full"
           />

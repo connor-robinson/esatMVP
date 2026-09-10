@@ -13,8 +13,8 @@ const OPTION_IDS: CurveId[] = ["A", "B", "C", "D"];
 const REVEAL_REDIRECT = "/dashboard?reveal_example=1";
 
 const OPTION_BASE =
-  "bg-white/[0.05] text-[#94A3B8] hover:bg-white/[0.08] hover:text-white";
-const OPTION_SELECTED = "bg-white/10 text-white";
+  "bg-[#252B3B] text-[#94A3B8] hover:bg-[#2E3648] hover:text-white";
+const OPTION_SELECTED = "bg-[#3B82F6] text-white";
 
 export function ExampleGraphQuestion({ className }: { className?: string }) {
   const [selected, setSelected] = useState<CurveId | null>(null);
@@ -33,27 +33,21 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "relative flex h-full min-h-0 flex-col rounded-2xl bg-white/[0.08] px-5 py-3.5 backdrop-blur-xl sm:px-7 sm:py-4",
+        "relative flex h-full min-h-0 flex-col rounded-2xl bg-[#0A0F1D] px-5 py-5 sm:px-7 sm:py-6",
         className,
       )}
     >
-      <div className="relative flex min-h-0 flex-1 flex-col justify-between gap-2.5">
-        <div className="flex min-h-0 flex-1 flex-col space-y-2.5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#94A3B8]">
-            Example question
-          </p>
-
-          <div className="text-[13px] leading-snug text-[#94A3B8] sm:text-sm sm:leading-relaxed">
+      <div className="relative flex min-h-0 flex-1 flex-col justify-between gap-5">
+        <div className="flex min-h-0 flex-1 flex-col gap-4">
+          <div className="space-y-3 text-sm leading-relaxed text-[#E2E8F0] sm:text-[15px] sm:leading-relaxed">
             <p>
               A person of fixed height moves away from a stationary camera with
               fixed zoom.
             </p>
-            <p className="mt-1.5">
+            <p>
               Which curve could show their image height{" "}
-              <span className="font-serif italic text-white/90">H</span> against
-              distance{" "}
-              <span className="font-serif italic text-white/90">d</span> from the
-              camera?
+              <span className="font-serif italic">H</span> against distance{" "}
+              <span className="font-serif italic">d</span> from the camera?
             </p>
           </div>
 
@@ -62,7 +56,7 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
           </div>
         </div>
 
-        <div className="space-y-2.5">
+        <div className="space-y-3">
           <div
             className="grid grid-cols-4 gap-2 sm:gap-2.5"
             role="group"
@@ -78,7 +72,7 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
                   aria-pressed={isSelected}
                   onClick={() => handleSelect(id)}
                   className={cn(
-                    "inline-flex h-10 w-full items-center justify-center rounded-lg text-sm font-semibold tabular-nums transition-[background-color,color] duration-200",
+                    "inline-flex h-10 w-full items-center justify-center rounded-lg text-sm font-semibold tabular-nums transition-colors duration-150",
                     "border-0 outline-none ring-0 shadow-none",
                     "focus-visible:outline-none focus-visible:ring-0",
                     isSelected ? OPTION_SELECTED : OPTION_BASE,
@@ -117,11 +111,11 @@ export function ExampleGraphQuestion({ className }: { className?: string }) {
                 onClick={handleSubmit}
                 disabled={!selected}
                 className={cn(
-                  "inline-flex items-center justify-center rounded-lg px-6 py-2.5 text-sm font-semibold transition-colors duration-200",
+                  "inline-flex items-center justify-center rounded-lg px-6 py-2.5 text-sm font-semibold transition-colors duration-150",
                   "border-0 outline-none focus-visible:outline-none",
                   selected
                     ? "bg-white text-[#0A0F1D] hover:bg-slate-200"
-                    : "cursor-not-allowed bg-white/[0.05] text-white/40",
+                    : "cursor-not-allowed bg-[#252B3B] text-[#64748B]",
                 )}
               >
                 Submit
