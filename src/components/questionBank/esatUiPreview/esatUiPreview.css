@@ -53,8 +53,8 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
   --eup-progress-fill: var(--eup-pink);
 
   --eup-font: var(--font-space-grotesk), "Segoe UI", Tahoma, Arial, Helvetica, sans-serif;
-  /* Same face as chrome for the whole session surface */
-  --eup-font-question: var(--eup-font);
+  /* Question body uses the ESAT CAMP serif, not chrome Space Grotesk */
+  --eup-font-question: var(--font-eb-garamond), "EB Garamond", Garamond, Georgia, "Times New Roman", serif;
 
   /* One content size for qnum, stem, statements, tables, and options */
   --eup-font-size-ui: 17px;
@@ -108,7 +108,7 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
 .esat-ui-preview-root .stem-content {
   font-family: inherit;
   font-size: inherit;
-  line-height: 1.55;
+  line-height: 1.35;
   color: var(--eup-text) !important;
 }
 
@@ -441,7 +441,7 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
   padding: var(--eup-pad-y) var(--eup-pad-x) 28px;
   font-family: var(--eup-font-question);
   font-size: var(--eup-font-size-content);
-  line-height: 1.55;
+  line-height: 1.35;
   scrollbar-gutter: stable;
 }
 
@@ -457,7 +457,7 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
   font-family: var(--eup-font-question);
   font-size: var(--eup-font-size-content);
   font-weight: 400;
-  line-height: 1.55;
+  line-height: 1.35;
   font-variant-numeric: tabular-nums;
   letter-spacing: normal;
   color: var(--eup-text);
@@ -483,10 +483,32 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
 .esat-ui-preview-root .eup-stem .math-content {
   font-family: var(--eup-font-question) !important;
   font-size: var(--eup-font-size-content) !important;
-  line-height: 1.55;
+  line-height: 1.35;
+}
+
+.esat-ui-preview-root .eup-stem .stem-content p,
+.esat-ui-preview-root .eup-stem .math-content p,
+.esat-ui-preview-root .eup-stem p.stem-para {
+  margin-top: 0;
+  margin-bottom: 0.45em;
+}
+
+.esat-ui-preview-root .eup-stem .stem-content p:last-child,
+.esat-ui-preview-root .eup-stem .math-content p:last-child,
+.esat-ui-preview-root .eup-stem p.stem-para:last-child {
+  margin-bottom: 0;
+}
+
+.esat-ui-preview-root .eup-stem .stem-table {
+  margin-top: 0.55em;
+  margin-bottom: 0.55em;
 }
 
 /* Statement list: same size/weight as stem (override Tailwind defaults) */
+.esat-ui-preview-root .eup-stem .statement-items-list {
+  margin-top: 0.55em;
+}
+
 .esat-ui-preview-root .eup-stem .statement-items-list,
 .esat-ui-preview-root .eup-stem .statement-items-list * {
   font-family: inherit;
@@ -510,7 +532,7 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
 .eup-radio-body .math-content {
   font-family: var(--eup-font-question);
   font-size: var(--eup-font-size-content);
-  line-height: 1.55;
+  line-height: 1.35;
   color: var(--eup-text);
 }
 
@@ -541,7 +563,7 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin: 20px 0 0;
+  margin: 14px 0 0;
   padding: 0;
   list-style: none;
   width: 100%;
@@ -1076,7 +1098,7 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
   border-radius: 0;
   font-family: var(--eup-font-question);
   font-size: var(--eup-font-size-content);
-  line-height: 1.55;
+  line-height: 1.35;
 }
 
 .eup-explain-content,

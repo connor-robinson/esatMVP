@@ -1292,6 +1292,31 @@ export default function QuestionBankPage() {
     showHint,
   ]);
 
+  const handleRevealAnswer = useCallback(() => {
+    if (sessionView === 'review' || !currentQuestion) return;
+    if (answerRevealed || (isAnswered && isCorrect === true)) return;
+
+    const correctLetter = currentQuestion.correct_option;
+    setAnswerRevealed(true);
+    setCurrentSelection(correctLetter);
+    // Persist to attempts so progress (incl. Biology) counts reveals.
+    handleSessionAnswerSubmit(correctLetter, false, {
+      wasRevealed: true,
+      usedHint: showHint,
+      wrongAnswersBefore: Array.from(incorrectAnswers),
+    });
+  }, [
+    answerRevealed,
+    currentQuestion,
+    handleSessionAnswerSubmit,
+    incorrectAnswers,
+    isAnswered,
+    isCorrect,
+    sessionView,
+    setCurrentSelection,
+    showHint,
+  ]);
+
   const reviewAttempt =
     sessionView === 'review' && currentQuestion
       ? sessionAttemptLog.find((a) => a.questionId === currentQuestion.id) ??
@@ -1438,10 +1463,7 @@ export default function QuestionBankPage() {
           }}
           onSelectionChange={setCurrentSelection}
           onSubmitAnswer={submitCurrentSelection}
-          onRevealAnswer={() => {
-            setAnswerRevealed(true);
-            setCurrentSelection(currentQuestion.correct_option);
-          }}
+          onRevealAnswer={handleRevealAnswer}
           onShowExplanation={() => setShowDetailedExplanation(true)}
           onShowHint={() => setShowHint(true)}
           hasHint={!!currentQuestion.solution_key_insight}
@@ -1552,7 +1574,7 @@ export default function QuestionBankPage() {
                   answerRevealed={
                     sessionView === 'review' ? true : answerRevealed
                   }
-                  onRevealAnswer={() => setAnswerRevealed(true)}
+                  onRevealAnswer={handleRevealAnswer}
                   allowRetry={
                     sessionView !== 'review' &&
                     isAnswered &&
@@ -1640,7 +1662,7 @@ export default function QuestionBankPage() {
             onSaveAndLeave={handleSaveAndLeave}
             onDiscardSession={() => void handleDiscardSession()}
             onShowHint={() => setShowHint(true)}
-            onRevealAnswer={() => setAnswerRevealed(true)}
+            onRevealAnswer={handleRevealAnswer}
             onShowExplanation={() => setShowDetailedExplanation(true)}
             onPreviousQuestion={() => {
               if (sessionCurrentIndex > 0) {

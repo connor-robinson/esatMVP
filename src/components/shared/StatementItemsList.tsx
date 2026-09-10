@@ -12,7 +12,7 @@ interface StatementItemsListProps {
 /** Vertical numbered statement list for ESAT three-statement questions. */
 export function StatementItemsList({ items, className }: StatementItemsListProps) {
   return (
-    <div className={cn("statement-items-list space-y-3 sm:space-y-4", className)}>
+    <div className={cn("statement-items-list space-y-2 sm:space-y-2.5", className)}>
       {items.map((item) => (
         <div
           key={item.number}
