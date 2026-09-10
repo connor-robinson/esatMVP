@@ -6,9 +6,9 @@
  * treated as versioned configuration. UI and scoring code must read from here
  * rather than hard-coding question IDs or formulas.
  *
- * Canonical source: `math1/esat_math1_full_calibration_test_v1_diagramsfixed.json`
- * (synced into `math1/config.json` for the app bundle). Diagram SVG patches live
- * in `math1/diagrams/`.
+ * Canonical source: `math1-calibration-v2/questions.json`
+ * (synced into `math1/config.json` via `scripts/sync-calibration-config.ts`).
+ * Production diagrams: `public/calibration/math1-v2/` (visual_engine renders).
  */
 
 import rawConfig from "./math1/config.json";
@@ -34,7 +34,10 @@ export interface CalibrationQuestion {
   curriculum_tags: string[];
   question_type: string;
   question_text_markdown: string;
+  /** Inline SVG or `<figure class="qg-diagram">` markup for the stem diagram. */
   diagram_svg: string | null;
+  diagram_alt_text?: string | null;
+  fast_insight?: string | null;
   options: CalibrationOption[];
   correct_option: string;
   solution: CalibrationSolution;
@@ -56,6 +59,8 @@ export interface CalibrationQuestion {
   recommended_practice_modes: string[];
   paired_question_id: string | null;
   pair_interpretation: string | null;
+  specification_refs?: string[];
+  internal_title?: string;
 }
 
 export interface ScoreComponentConfig {
@@ -110,11 +115,18 @@ export interface RecommendationRules {
   seven_day_plan_template: { day: number; focus: string; minutes: number }[];
 }
 
+export interface CalibrationStudentIntro {
+  heading: string;
+  summary: string;
+  supportingText: string;
+}
+
 export interface CalibrationConfig {
   test: {
     id: string;
     title: string;
     version: number;
+    assessment_version?: string;
     module: string;
     question_count: number;
     estimated_duration_minutes: number;
@@ -122,6 +134,9 @@ export interface CalibrationConfig {
     calculator_allowed: boolean;
     difficulty_distribution: Record<string, number>;
     curriculum_tags_covered: string[];
+    student_intro?: CalibrationStudentIntro;
+    instructions?: string[];
+    correct_option_sequence?: string[];
     questions: CalibrationQuestion[];
   };
   paired_diagnostic_design: PairedDiagnostic[];
@@ -138,7 +153,15 @@ export interface CalibrationConfig {
 export const calibrationConfig = rawConfig as unknown as CalibrationConfig;
 
 export const CALIBRATION_CONTENT_VERSION = calibrationConfig.test.version;
+export const CALIBRATION_ASSESSMENT_VERSION_FROM_CONFIG =
+  calibrationConfig.test.assessment_version ?? String(calibrationConfig.test.version);
 export const CALIBRATION_TEST = calibrationConfig.test;
+export const CALIBRATION_STUDENT_INTRO = calibrationConfig.test.student_intro ?? {
+  heading: "Find your starting level",
+  summary: "15 questions · about 20 minutes · no calculator",
+  supportingText:
+    "The questions change pace and difficulty, just like a real admissions test. If one feels difficult, make your best choice and keep moving.",
+};
 export const CALIBRATION_QUESTIONS: CalibrationQuestion[] = [
   ...calibrationConfig.test.questions,
 ].sort((a, b) => a.order - b.order);

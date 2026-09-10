@@ -28,7 +28,7 @@ export function CalibrationPromo({ placement, className }: CalibrationPromoProps
             Not sure what to practise next?
           </p>
           <p className="mt-0.5 text-sm text-text-muted">
-            Take the 23-minute Math 1 calibration for a personalised breakdown.
+            Take the 20-minute Math 1 calibration for a personalised breakdown.
           </p>
         </div>
         <Link

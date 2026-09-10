@@ -1,0 +1,624 @@
+{
+  "assessment": {
+    "id": "m1-calibration-v2",
+    "title": "Mathematics 1 Calibration",
+    "version": "2.0.0",
+    "module": "ESAT Mathematics 1",
+    "questionCount": 15,
+    "recommendedTimeSeconds": 1200,
+    "calculatorAllowed": false,
+    "studentIntro": {
+      "heading": "Find your starting level",
+      "summary": "15 questions · about 20 minutes · no calculator",
+      "supportingText": "The questions change pace and difficulty, just like a real admissions test. If one feels difficult, make your best choice and keep moving."
+    },
+    "instructions": [
+      "Choose one answer for every question.",
+      "Calculators are not permitted.",
+      "Diagrams are not intended to be measured.",
+      "Do not show difficulty labels, specification references, correct answers, or diagnostic tags during the test."
+    ],
+    "difficultyMix": {
+      "accessible": 4,
+      "medium": 7,
+      "difficult": 4
+    },
+    "topicMix": {
+      "M1 Units": 2,
+      "M2 Number": 1,
+      "M3 Ratio and proportion": 2,
+      "M4 Algebra": 3,
+      "M5 Geometry": 4,
+      "M6 Statistics": 1,
+      "M7 Probability": 2
+    },
+    "correctOptionSequence": [
+      "C",
+      "E",
+      "B",
+      "A",
+      "D",
+      "F",
+      "C",
+      "A",
+      "E",
+      "B",
+      "D",
+      "F",
+      "A",
+      "C",
+      "E"
+    ],
+    "visualStyle": {
+      "renderer": "existing Python/Matplotlib visual_engine",
+      "background": "#FFFFFF",
+      "foreground": "#1F2937",
+      "secondary": "#64748B",
+      "construction": "#CBD5E1",
+      "lightFill": "#F1F5F9",
+      "highlightFill": "#DCE6F0",
+      "lineWidthPt": 2.2,
+      "emphasisLineWidthPt": 3.2,
+      "minimumExportWidthPx": 1400,
+      "minimumExportDpi": 200,
+      "rules": [
+        "Use equal aspect ratio for Euclidean geometry.",
+        "Use MathText for mathematical labels and DejaVu Sans for prose labels.",
+        "Leave at least 18 rendered pixels between labels and geometry.",
+        "Do not use perspective distortion to imply a measurable length.",
+        "Use colour-independent differences: labels, outlines, dashes, and fill values must remain distinguishable in grayscale.",
+        "Crop with generous whitespace; no title inside the image.",
+        "Provide descriptive alt text from visualSpec.altText."
+      ]
+    },
+    "researchBasis": [
+      "UAT-UK ESAT Content Specification for assessment in October 2026 and January 2027",
+      "UAT-UK 2022 and 2023 NSAA Mathematics papers for pacing and question-writing style"
+    ],
+    "originalityStatement": "Every question below is original. None reproduces an official ESAT, NSAA, or ENGAA question."
+  },
+  "questions": [
+    {
+      "id": "m1cal-v2-q01",
+      "position": 1,
+      "internalTitle": "Circle inside a midpoint square",
+      "primaryTopic": "M5 Geometry",
+      "specificationRefs": ["M5.7", "M5.14", "M5.15"],
+      "difficulty": "accessible",
+      "targetTimeSeconds": 70,
+      "stemMarkdown": "\\(ABCD\\) is a square of side \\(12\\text{ cm}\\). The points \\(E,F,G,H\\) are the midpoints of its sides. The circle touches all four sides of the square \\(EFGH\\). What fraction of the area of \\(ABCD\\) lies inside the circle?",
+      "visualSpec": {
+        "id": "m1cal-v2-q01-diagram",
+        "kind": "nested_square_incircle",
+        "canvas": {"widthPx": 1400, "heightPx": 900, "xlim": [-1.8, 13.8], "ylim": [-1.7, 13.7], "aspect": "equal"},
+        "geometry": {
+          "outerSquare": {"A": [0, 0], "B": [12, 0], "C": [12, 12], "D": [0, 12]},
+          "midpointSquare": {"E": [6, 0], "F": [12, 6], "G": [6, 12], "H": [0, 6]},
+          "circle": {"centre": [6, 6], "radius": 4.2426406871},
+          "dimension": {"from": [0, -0.8], "to": [12, -0.8], "label": "12 cm"}
+        },
+        "styling": {"circleFill": "highlightFill", "midpointSquareFill": "none", "outerSquareFill": "lightFill"},
+        "altText": "A square ABCD. The midpoints E, F, G and H are joined to form a rotated inner square. A circle is inscribed in the inner square. The outer side length is 12 centimetres."
+      },
+      "options": [
+        {"id": "A", "contentMarkdown": "\\(\\dfrac{\\pi}{16}\\)"},
+        {"id": "B", "contentMarkdown": "\\(\\dfrac{4-\\pi}{8}\\)"},
+        {"id": "C", "contentMarkdown": "\\(\\dfrac{\\pi}{8}\\)"},
+        {"id": "D", "contentMarkdown": "\\(\\dfrac14\\)"},
+        {"id": "E", "contentMarkdown": "\\(\\dfrac{\\pi}{6}\\)"},
+        {"id": "F", "contentMarkdown": "\\(\\dfrac{4-\\pi}{4}\\)"}
+      ],
+      "correctOption": "C",
+      "solutionMarkdown": "The diagonals of square \\(EFGH\\) are both \\(12\\), so its area is \\(\\tfrac12\\times12\\times12=72\\). Its side length is \\(6\\sqrt2\\), so the radius of its incircle is \\(3\\sqrt2\\). The circle has area \\(\\pi(3\\sqrt2)^2=18\\pi\\). Therefore the required fraction is \\(18\\pi/144=\\boxed{\\pi/8}\\).",
+      "fastInsight": "The midpoint square has half the outer area, and its incircle has radius half its side.",
+      "mistakeTagsByOption": {
+        "A": ["used-radius-3", "missed-rotated-square-scale"],
+        "B": ["found-unshaded-part-of-outer-square"],
+        "D": ["estimated-from-diagram"],
+        "E": ["area-scale-error"],
+        "F": ["found-unshaded-fraction-of-inner-square"]
+      }
+    },
+    {
+      "id": "m1cal-v2-q02",
+      "position": 2,
+      "internalTitle": "Time-lapse storage",
+      "primaryTopic": "M1 Units",
+      "specificationRefs": ["M1.1", "M1.2"],
+      "difficulty": "accessible",
+      "targetTimeSeconds": 45,
+      "stemMarkdown": "A time-lapse camera takes exactly four images per minute. Each image uses \\(6.0\\text{ MB}\\) of storage. The camera runs for \\(2.5\\) hours. How much storage does it use? Assume \\(1000\\text{ MB}=1\\text{ GB}\\).",
+      "visualSpec": null,
+      "options": [
+        {"id": "A", "contentMarkdown": "\\(0.36\\text{ GB}\\)"},
+        {"id": "B", "contentMarkdown": "\\(0.60\\text{ GB}\\)"},
+        {"id": "C", "contentMarkdown": "\\(1.5\\text{ GB}\\)"},
+        {"id": "D", "contentMarkdown": "\\(3.0\\text{ GB}\\)"},
+        {"id": "E", "contentMarkdown": "\\(3.6\\text{ GB}\\)"},
+        {"id": "F", "contentMarkdown": "\\(36\\text{ GB}\\)"}
+      ],
+      "correctOption": "E",
+      "solutionMarkdown": "There are \\(2.5\\times60=150\\) minutes, so the camera takes \\(150\\times4=600\\) images. These use \\(600\\times6.0=3600\\text{ MB}=\\boxed{3.6\\text{ GB}}\\).",
+      "fastInsight": "Convert the running time to minutes before multiplying by the image rate.",
+      "mistakeTagsByOption": {
+        "A": ["power-of-ten-conversion-error"],
+        "B": ["ignored-images-per-minute"],
+        "C": ["used-hours-as-minutes"],
+        "D": ["rounded-too-early"],
+        "F": ["mb-to-gb-decimal-error"]
+      }
+    },
+    {
+      "id": "m1cal-v2-q03",
+      "position": 3,
+      "internalTitle": "Light beam through a parabolic arch",
+      "primaryTopic": "M4 Algebra",
+      "specificationRefs": ["M4.11", "M4.13", "M4.15", "M4.16"],
+      "difficulty": "medium",
+      "targetTimeSeconds": 85,
+      "stemMarkdown": "The cross-section of an arch is modelled by \\(y=kx(8-x)\\), where distances are in metres. The arch passes through \\((2,12)\\). A horizontal light beam at \\(y=9\\) meets the arch at \\(P\\) and \\(Q\\). What is the horizontal distance \\(PQ\\)?",
+      "visualSpec": {
+        "id": "m1cal-v2-q03-diagram",
+        "kind": "parabolic_arch",
+        "canvas": {"widthPx": 1400, "heightPx": 850, "xlim": [-0.8, 8.8], "ylim": [-1.2, 17.5], "aspect": "auto"},
+        "plot": {
+          "curve": {"expression": "x*(8-x)", "domain": [0, 8], "label": "arch"},
+          "beam": {"y": 9, "fromX": [-0.25, 8.25], "style": "emphasis"},
+          "knownPoint": {"coordinate": [2, 12], "label": "(2, 12)"},
+          "intersections": [
+            {"coordinate": [1.3542486889, 9], "label": "P"},
+            {"coordinate": [6.6457513111, 9], "label": "Q"}
+          ],
+          "intercepts": [[0, 0], [8, 0]],
+          "axisLabels": {"x": "x / m", "y": "y / m"}
+        },
+        "styling": {"curveLine": "foreground", "beamLine": "secondary", "beamStyle": "dashed", "underArchFill": "lightFill"},
+        "altText": "A downward-opening parabolic arch crosses the ground at x equals 0 and x equals 8 and passes through the point 2, 12. A horizontal line y equals 9 intersects the arch at P and Q."
+      },
+      "options": [
+        {"id": "A", "contentMarkdown": "\\(\\sqrt7\\text{ m}\\)"},
+        {"id": "B", "contentMarkdown": "\\(2\\sqrt7\\text{ m}\\)"},
+        {"id": "C", "contentMarkdown": "\\(6\\text{ m}\\)"},
+        {"id": "D", "contentMarkdown": "\\(7\\text{ m}\\)"},
+        {"id": "E", "contentMarkdown": "\\(2\\sqrt{13}\\text{ m}\\)"},
+        {"id": "F", "contentMarkdown": "\\(4\\sqrt7\\text{ m}\\)"}
+      ],
+      "correctOption": "B",
+      "solutionMarkdown": "Using \\((2,12)\\), \\(12=k(2)(6)\\), so \\(k=1\\). At the beam, \\(x(8-x)=9\\), giving \\(x^2-8x+9=0\\). Hence \\(x=4\\pm\\sqrt7\\). The horizontal separation is therefore \\((4+\\sqrt7)-(4-\\sqrt7)=\\boxed{2\\sqrt7\\text{ m}}\\).",
+      "fastInsight": "The two roots are symmetric about x = 4, so their separation is twice the square-root term.",
+      "mistakeTagsByOption": {
+        "A": ["forgot-double-root-separation"],
+        "C": ["read-width-from-diagram", "incorrect-factorisation"],
+        "D": ["used-discriminant-without-square-root"],
+        "E": ["quadratic-discriminant-error"],
+        "F": ["doubled-twice"]
+      }
+    },
+    {
+      "id": "m1cal-v2-q04",
+      "position": 4,
+      "internalTitle": "Changing a light mixture",
+      "primaryTopic": "M3 Ratio and proportion",
+      "specificationRefs": ["M3.3", "M3.5", "M3.8"],
+      "difficulty": "accessible",
+      "targetTimeSeconds": 50,
+      "stemMarkdown": "The intensities of the red and blue lights in a display are initially in the ratio \\(3:2\\). The red intensity is increased by \\(20\\%\\), while the blue intensity is decreased by \\(10\\%\\). What is the new ratio of red intensity to blue intensity?",
+      "visualSpec": null,
+      "options": [
+        {"id": "A", "contentMarkdown": "\\(2:1\\)"},
+        {"id": "B", "contentMarkdown": "\\(9:5\\)"},
+        {"id": "C", "contentMarkdown": "\\(5:3\\)"},
+        {"id": "D", "contentMarkdown": "\\(3:2\\)"},
+        {"id": "E", "contentMarkdown": "\\(4:3\\)"},
+        {"id": "F", "contentMarkdown": "\\(6:5\\)"}
+      ],
+      "correctOption": "A",
+      "solutionMarkdown": "Represent the original intensities by \\(3u\\) and \\(2u\\). The new intensities are \\(1.2(3u)=3.6u\\) and \\(0.9(2u)=1.8u\\). Thus the new ratio is \\(3.6:1.8=\\boxed{2:1}\\).",
+      "fastInsight": "Apply the percentage multipliers to the two parts separately.",
+      "mistakeTagsByOption": {
+        "B": ["percentage-point-reasoning"],
+        "C": ["changed-only-red"],
+        "D": ["assumed-equal-percentage-effects-cancel"],
+        "E": ["changed-only-blue"],
+        "F": ["subtracted-percentages-from-ratio-parts"]
+      }
+    },
+    {
+      "id": "m1cal-v2-q05",
+      "position": 5,
+      "internalTitle": "Prime total from two spinners",
+      "primaryTopic": "M7 Probability",
+      "specificationRefs": ["M7.5", "M7.6", "M7.7"],
+      "difficulty": "medium",
+      "targetTimeSeconds": 75,
+      "stemMarkdown": "Each spinner has four equal sectors. The two spinners are spun independently and the two numbers are added. What is the probability that the total is a prime number?",
+      "visualSpec": {
+        "id": "m1cal-v2-q05-diagram",
+        "kind": "paired_equal_spinners",
+        "canvas": {"widthPx": 1400, "heightPx": 720, "xlim": [-1, 13], "ylim": [-0.5, 6.5], "aspect": "equal"},
+        "spinners": [
+          {"centre": [3, 3], "radius": 2.25, "title": "Spinner X", "labelsClockwiseFromTopRight": [1, 3, 2, 2]},
+          {"centre": [9, 3], "radius": 2.25, "title": "Spinner Y", "labelsClockwiseFromTopRight": [1, 2, 3, 4]}
+        ],
+        "styling": {"alternateSectorFills": ["lightFill", "#FFFFFF"], "dividerLine": "foreground", "centreHub": "secondary"},
+        "altText": "Two circular spinners, each divided into four equal sectors. Spinner X has sectors labelled 1, 2, 2 and 3. Spinner Y has sectors labelled 1, 2, 3 and 4."
+      },
+      "options": [
+        {"id": "A", "contentMarkdown": "\\(\\dfrac14\\)"},
+        {"id": "B", "contentMarkdown": "\\(\\dfrac38\\)"},
+        {"id": "C", "contentMarkdown": "\\(\\dfrac7{16}\\)"},
+        {"id": "D", "contentMarkdown": "\\(\\dfrac9{16}\\)"},
+        {"id": "E", "contentMarkdown": "\\(\\dfrac58\\)"},
+        {"id": "F", "contentMarkdown": "\\(\\dfrac{11}{16}\\)"}
+      ],
+      "correctOption": "D",
+      "solutionMarkdown": "There are \\(4\\times4=16\\) equally likely sector pairs. With \\(X=1\\), three totals are prime; with either sector labelled \\(2\\), two totals are prime, contributing \\(2+2\\); and with \\(X=3\\), two totals are prime. This gives \\(3+2+2+2=9\\) favourable pairs, so the probability is \\(\\boxed{9/16}\\).",
+      "fastInsight": "Use a 4 by 4 possibility grid and remember that the two sectors labelled 2 are distinct outcomes.",
+      "mistakeTagsByOption": {
+        "A": ["ignored-repeated-sector"],
+        "B": ["counted-prime-values-not-sector-pairs"],
+        "C": ["missed-prime-total-2"],
+        "E": ["included-one-composite-total"],
+        "F": ["treated-1-as-prime"]
+      }
+    },
+    {
+      "id": "m1cal-v2-q06",
+      "position": 6,
+      "internalTitle": "3D-printer filament mass",
+      "primaryTopic": "M1 Units",
+      "specificationRefs": ["M1.1", "M1.2"],
+      "difficulty": "accessible",
+      "targetTimeSeconds": 75,
+      "stemMarkdown": "A 3D printer uses uniform plastic filament with cross-sectional area \\(0.40\\text{ mm}^2\\). Filament enters the printer at \\(75\\text{ mm s}^{-1}\\) for \\(10\\) minutes. The plastic has density \\(1.2\\text{ g cm}^{-3}\\). Assuming no plastic is wasted, what mass of plastic is used?",
+      "visualSpec": null,
+      "options": [
+        {"id": "A", "contentMarkdown": "\\(0.216\\text{ g}\\)"},
+        {"id": "B", "contentMarkdown": "\\(2.16\\text{ g}\\)"},
+        {"id": "C", "contentMarkdown": "\\(9.0\\text{ g}\\)"},
+        {"id": "D", "contentMarkdown": "\\(18.0\\text{ g}\\)"},
+        {"id": "E", "contentMarkdown": "\\(20.0\\text{ g}\\)"},
+        {"id": "F", "contentMarkdown": "\\(21.6\\text{ g}\\)"}
+      ],
+      "correctOption": "F",
+      "solutionMarkdown": "In \\(10\\) minutes there are \\(600\\) seconds, so the filament length is \\(75\\times600=45000\\text{ mm}\\). Its volume is \\(0.40\\times45000=18000\\text{ mm}^3=18\\text{ cm}^3\\). The mass is therefore \\(1.2\\times18=\\boxed{21.6\\text{ g}}\\).",
+      "fastInsight": "Area multiplied by length gives volume; convert cubic millimetres to cubic centimetres before using the density.",
+      "mistakeTagsByOption": {
+        "A": ["cubic-unit-conversion-error"],
+        "B": ["seconds-to-minutes-error"],
+        "C": ["ignored-density"],
+        "D": ["reported-volume-as-mass"],
+        "E": ["rounded-intermediate-values"]
+      }
+    },
+    {
+      "id": "m1cal-v2-q07",
+      "position": 7,
+      "internalTitle": "Hidden reciprocal cube",
+      "primaryTopic": "M4 Algebra",
+      "specificationRefs": ["M4.4", "M4.6", "M4.15"],
+      "difficulty": "difficult",
+      "targetTimeSeconds": 95,
+      "stemMarkdown": "A positive number \\(x\\) satisfies \\(x+\\dfrac1x=3\\). What is the value of \\(\\dfrac{x^3}{x^6+1}\\)?",
+      "visualSpec": null,
+      "options": [
+        {"id": "A", "contentMarkdown": "\\(\\dfrac1{27}\\)"},
+        {"id": "B", "contentMarkdown": "\\(\\dfrac1{24}\\)"},
+        {"id": "C", "contentMarkdown": "\\(\\dfrac1{18}\\)"},
+        {"id": "D", "contentMarkdown": "\\(\\dfrac19\\)"},
+        {"id": "E", "contentMarkdown": "\\(9\\)"},
+        {"id": "F", "contentMarkdown": "\\(18\\)"}
+      ],
+      "correctOption": "C",
+      "solutionMarkdown": "Divide the numerator and denominator by \\(x^3\\): \\(\\dfrac{x^3}{x^6+1}=\\dfrac1{x^3+x^{-3}}\\). Also, \\((x+x^{-1})^3=x^3+x^{-3}+3(x+x^{-1})\\). Therefore \\(27=x^3+x^{-3}+9\\), so \\(x^3+x^{-3}=18\\). The required value is \\(\\boxed{1/18}\\).",
+      "fastInsight": "Rewrite the requested fraction before trying to solve for x.",
+      "mistakeTagsByOption": {
+        "A": ["cubed-given-value-directly"],
+        "B": ["cube-expansion-cross-term-error"],
+        "D": ["forgot-cube-cross-terms"],
+        "E": ["reciprocal-error"],
+        "F": ["inverted-final-value"]
+      }
+    },
+    {
+      "id": "m1cal-v2-q08",
+      "position": 8,
+      "internalTitle": "Drone lap-time statistics",
+      "primaryTopic": "M6 Statistics",
+      "specificationRefs": ["M6.3", "M4.15"],
+      "difficulty": "medium",
+      "targetTimeSeconds": 70,
+      "stemMarkdown": "Six drone lap times, in seconds, are listed in increasing order: \\(42,\\ 45,\\ x,\\ x+2,\\ 51,\\ 60\\). Their mean is one second greater than their median. What is the value of \\(x\\)?",
+      "visualSpec": null,
+      "options": [
+        {"id": "A", "contentMarkdown": "\\(47\\)"},
+        {"id": "B", "contentMarkdown": "\\(48\\)"},
+        {"id": "C", "contentMarkdown": "\\(49\\)"},
+        {"id": "D", "contentMarkdown": "\\(50\\)"},
+        {"id": "E", "contentMarkdown": "\\(51\\)"},
+        {"id": "F", "contentMarkdown": "\\(52\\)"}
+      ],
+      "correctOption": "A",
+      "solutionMarkdown": "The median is \\(\\frac{x+(x+2)}2=x+1\\). The mean is \\(\\frac{42+45+x+(x+2)+51+60}{6}=\\frac{x+100}{3}\\). Since the mean is one greater than the median, \\(\\frac{x+100}{3}=x+2\\). Thus \\(x+100=3x+6\\), giving \\(\\boxed{x=47}\\).",
+      "fastInsight": "For six ordered values, the median is the mean of the third and fourth values.",
+      "mistakeTagsByOption": {
+        "B": ["median-position-error"],
+        "C": ["mean-is-median-not-median-plus-one"],
+        "D": ["omitted-plus-two-term"],
+        "E": ["used-range-instead-of-mean"],
+        "F": ["arithmetic-error"]
+      }
+    },
+    {
+      "id": "m1cal-v2-q09",
+      "position": 9,
+      "internalTitle": "Tangent and equal chords",
+      "primaryTopic": "M5 Geometry",
+      "specificationRefs": ["M5.2", "M5.9"],
+      "difficulty": "medium",
+      "targetTimeSeconds": 80,
+      "stemMarkdown": "The line \\(AT\\) is tangent to the circle at \\(A\\). The points \\(A,B,C\\) lie on the circle, \\(AB=AT\\), and \\(\\angle ATB=70^\\circ\\). What is \\(\\angle ACB\\)?",
+      "visualSpec": {
+        "id": "m1cal-v2-q09-diagram",
+        "kind": "circle_tangent_isosceles",
+        "canvas": {"widthPx": 1400, "heightPx": 850, "xlim": [-1.05, 1.55], "ylim": [-0.35, 1.8], "aspect": "equal"},
+        "geometry": {
+          "circle": {"centre": [0, 0.7778619134], "radius": 0.7778619134},
+          "points": {"A": [0, 0], "T": [1, 0], "B": [0.7660444431, 0.6427876097], "C": [-0.4999999999, 1.3737387097]},
+          "segments": [["A", "T"], ["A", "B"], ["B", "T"], ["A", "C"], ["B", "C"]],
+          "equalLengthTicks": [["A", "T"], ["A", "B"]],
+          "angleMarks": [{"vertex": "T", "arms": ["A", "B"], "label": "70°"}],
+          "tangentRightAngleMarker": {"at": "A", "radiusDirection": [0, 1], "tangentDirection": [1, 0], "show": false}
+        },
+        "styling": {"circleFill": "lightFill", "tangentLine": "emphasis", "constructionSegments": ["AC", "BC"]},
+        "altText": "A circle through A, B and C has a tangent AT at A. Segments AB and AT are marked equal. Triangle ABT lies beside the circle and the angle ATB is 70 degrees."
+      },
+      "options": [
+        {"id": "A", "contentMarkdown": "\\(20^\\circ\\)"},
+        {"id": "B", "contentMarkdown": "\\(25^\\circ\\)"},
+        {"id": "C", "contentMarkdown": "\\(30^\\circ\\)"},
+        {"id": "D", "contentMarkdown": "\\(35^\\circ\\)"},
+        {"id": "E", "contentMarkdown": "\\(40^\\circ\\)"},
+        {"id": "F", "contentMarkdown": "\\(70^\\circ\\)"}
+      ],
+      "correctOption": "E",
+      "solutionMarkdown": "Since \\(AB=AT\\), triangle \\(ABT\\) is isosceles, so \\(\\angle ABT=\\angle ATB=70^\\circ\\). Hence \\(\\angle BAT=180^\\circ-140^\\circ=40^\\circ\\). By the alternate segment theorem, the angle between tangent \\(AT\\) and chord \\(AB\\) equals \\(\\angle ACB\\). Therefore \\(\\angle ACB=\\boxed{40^\\circ}\\).",
+      "fastInsight": "First use the isosceles triangle; then transfer its angle using the tangent–chord theorem.",
+      "mistakeTagsByOption": {
+        "A": ["halved-angle-without-reason"],
+        "B": ["used-half-of-given-angle-complement"],
+        "C": ["triangle-angle-arithmetic-error"],
+        "D": ["halved-given-angle"],
+        "F": ["copied-isosceles-base-angle"]
+      }
+    },
+    {
+      "id": "m1cal-v2-q10",
+      "position": 10,
+      "internalTitle": "Conjugate surd without expansion",
+      "primaryTopic": "M2 Number",
+      "specificationRefs": ["M2.7", "M2.11"],
+      "difficulty": "medium",
+      "targetTimeSeconds": 65,
+      "stemMarkdown": "Let \\(x=\\sqrt3+\\sqrt2\\). What is the value of \\(x^2+\\dfrac1{x^2}\\)?",
+      "visualSpec": null,
+      "options": [
+        {"id": "A", "contentMarkdown": "\\(8\\)"},
+        {"id": "B", "contentMarkdown": "\\(10\\)"},
+        {"id": "C", "contentMarkdown": "\\(12\\)"},
+        {"id": "D", "contentMarkdown": "\\(14\\)"},
+        {"id": "E", "contentMarkdown": "\\(16\\)"},
+        {"id": "F", "contentMarkdown": "\\(18\\)"}
+      ],
+      "correctOption": "B",
+      "solutionMarkdown": "Because \\((\\sqrt3+\\sqrt2)(\\sqrt3-\\sqrt2)=1\\), we have \\(x^{-1}=\\sqrt3-\\sqrt2\\). Therefore \\(x+x^{-1}=2\\sqrt3\\). Squaring gives \\(x^2+2+x^{-2}=12\\), so \\(x^2+x^{-2}=\\boxed{10}\\).",
+      "fastInsight": "The reciprocal of x is its conjugate because the product of the conjugates is 1.",
+      "mistakeTagsByOption": {
+        "A": ["subtracted-cross-term-twice"],
+        "C": ["forgot-middle-term-after-squaring"],
+        "D": ["added-middle-term"],
+        "E": ["expanded-both-squares-incorrectly"],
+        "F": ["surd-product-error"]
+      }
+    },
+    {
+      "id": "m1cal-v2-q11",
+      "position": 11,
+      "internalTitle": "Larger sculpture, lighter material",
+      "primaryTopic": "M3 Ratio and proportion",
+      "specificationRefs": ["M3.8", "M3.10", "M5.17", "M1.1"],
+      "difficulty": "difficult",
+      "targetTimeSeconds": 100,
+      "stemMarkdown": "Sculptures \\(X\\) and \\(Y\\) are mathematically similar. The surface area of \\(Y\\) is \\(44\\%\\) greater than the surface area of \\(X\\). The material used for \\(Y\\) has a density \\(37.5\\%\\) lower than the material used for \\(X\\). What is \\(\\dfrac{\\text{mass of }Y}{\\text{mass of }X}\\)?",
+      "visualSpec": null,
+      "options": [
+        {"id": "A", "contentMarkdown": "\\(\\dfrac{18}{25}\\)"},
+        {"id": "B", "contentMarkdown": "\\(\\dfrac{24}{25}\\)"},
+        {"id": "C", "contentMarkdown": "\\(1\\)"},
+        {"id": "D", "contentMarkdown": "\\(\\dfrac{27}{25}\\)"},
+        {"id": "E", "contentMarkdown": "\\(\\dfrac65\\)"},
+        {"id": "F", "contentMarkdown": "\\(\\dfrac{36}{25}\\)"}
+      ],
+      "correctOption": "D",
+      "solutionMarkdown": "The surface-area ratio is \\(1.44=36/25\\), so the linear scale factor is \\(6/5\\). The volume ratio is therefore \\((6/5)^3=216/125\\). A \\(37.5\\%\\) reduction gives density ratio \\(62.5\\%=5/8\\). Hence the mass ratio is \\(\\frac{216}{125}\\times\\frac58=\\boxed{\\frac{27}{25}}\\).",
+      "fastInsight": "Surface area determines the square of the scale factor; mass is density multiplied by volume.",
+      "mistakeTagsByOption": {
+        "A": ["multiplied-area-ratio-by-density-ratio"],
+        "B": ["linear-scale-density-mixup"],
+        "C": ["assumed-effects-cancel"],
+        "E": ["used-linear-scale-only"],
+        "F": ["ignored-density-change"]
+      }
+    },
+    {
+      "id": "m1cal-v2-q12",
+      "position": 12,
+      "internalTitle": "Growing light wall",
+      "primaryTopic": "M4 Algebra",
+      "specificationRefs": ["M4.17", "M4.18", "M4.19"],
+      "difficulty": "medium",
+      "targetTimeSeconds": 80,
+      "stemMarkdown": "A rectangular light wall grows in the pattern shown. Each dot represents one light. The pattern continues in the same way. What is the first stage containing more than \\(280\\) lights?",
+      "visualSpec": {
+        "id": "m1cal-v2-q12-diagram",
+        "kind": "growing_rectangular_dot_grids",
+        "canvas": {"widthPx": 1500, "heightPx": 700, "xlim": [-0.5, 18.5], "ylim": [-1.2, 6.4], "aspect": "equal"},
+        "stages": [
+          {"stage": 1, "origin": [0.5, 1.0], "rows": 2, "columns": 4, "spacing": 0.72, "caption": "Stage 1"},
+          {"stage": 2, "origin": [6.0, 1.0], "rows": 3, "columns": 5, "spacing": 0.72, "caption": "Stage 2"},
+          {"stage": 3, "origin": [12.3, 1.0], "rows": 4, "columns": 6, "spacing": 0.72, "caption": "Stage 3"}
+        ],
+        "styling": {"dotRadius": 0.13, "dotFill": "foreground", "backplateFill": "lightFill", "continuationEllipsis": true},
+        "altText": "Stage 1 is a grid of 2 rows by 4 columns of lights. Stage 2 is 3 rows by 5 columns. Stage 3 is 4 rows by 6 columns."
+      },
+      "options": [
+        {"id": "A", "contentMarkdown": "Stage \\(10\\)"},
+        {"id": "B", "contentMarkdown": "Stage \\(11\\)"},
+        {"id": "C", "contentMarkdown": "Stage \\(12\\)"},
+        {"id": "D", "contentMarkdown": "Stage \\(13\\)"},
+        {"id": "E", "contentMarkdown": "Stage \\(14\\)"},
+        {"id": "F", "contentMarkdown": "Stage \\(15\\)"}
+      ],
+      "correctOption": "F",
+      "solutionMarkdown": "At Stage \\(n\\), the grid has \\(n+1\\) rows and \\(n+3\\) columns, so it contains \\((n+1)(n+3)\\) lights. Stage \\(14\\) has \\(15\\times17=255\\) lights, while Stage \\(15\\) has \\(16\\times18=288\\) lights. Therefore the first stage above \\(280\\) is \\(\\boxed{\\text{Stage }15}\\).",
+      "fastInsight": "Identify the row and column rules separately, then check the two stages around the threshold.",
+      "mistakeTagsByOption": {
+        "A": ["assumed-linear-sequence"],
+        "B": ["counted-added-lights-only"],
+        "C": ["solved-rough-square-root-only"],
+        "D": ["off-by-two-in-dimensions"],
+        "E": ["used-greater-than-or-equal-or-off-by-one"]
+      }
+    },
+    {
+      "id": "m1cal-v2-q13",
+      "position": 13,
+      "internalTitle": "Which box was chosen?",
+      "primaryTopic": "M7 Probability",
+      "specificationRefs": ["M7.5", "M7.6", "M7.7"],
+      "difficulty": "difficult",
+      "targetTimeSeconds": 95,
+      "stemMarkdown": "Box \\(A\\) contains two gold counters and one blue counter. Box \\(B\\) contains one gold counter and three blue counters. A fair coin is used to choose a box, then two counters are drawn from that box without replacement. The two counters are the same colour. What is the probability that Box \\(A\\) was chosen?",
+      "visualSpec": {
+        "id": "m1cal-v2-q13-diagram",
+        "kind": "two_counter_boxes",
+        "canvas": {"widthPx": 1400, "heightPx": 650, "xlim": [-0.5, 13.5], "ylim": [-0.5, 6.0], "aspect": "equal"},
+        "boxes": [
+          {"label": "Box A", "bounds": [0.5, 0.8, 5.7, 4.8], "tokens": [{"label": "G", "at": [2.0, 2.8]}, {"label": "G", "at": [3.1, 2.8]}, {"label": "B", "at": [4.2, 2.8]}]},
+          {"label": "Box B", "bounds": [7.2, 0.8, 12.8, 4.8], "tokens": [{"label": "G", "at": [8.45, 2.8]}, {"label": "B", "at": [9.55, 2.8]}, {"label": "B", "at": [10.65, 2.8]}, {"label": "B", "at": [11.75, 2.8]}]}
+        ],
+        "styling": {"goldTokenFill": "#FFFFFF", "blueTokenFill": "highlightFill", "tokenOutline": "foreground", "tokenLabelsRequired": true},
+        "altText": "Box A contains counters G, G and B. Box B contains counters G, B, B and B. G means gold and B means blue."
+      },
+      "options": [
+        {"id": "A", "contentMarkdown": "\\(\\dfrac25\\)"},
+        {"id": "B", "contentMarkdown": "\\(\\dfrac12\\)"},
+        {"id": "C", "contentMarkdown": "\\(\\dfrac35\\)"},
+        {"id": "D", "contentMarkdown": "\\(\\dfrac23\\)"},
+        {"id": "E", "contentMarkdown": "\\(\\dfrac34\\)"},
+        {"id": "F", "contentMarkdown": "\\(\\dfrac56\\)"}
+      ],
+      "correctOption": "A",
+      "solutionMarkdown": "For Box \\(A\\), a matching pair must be the two gold counters, so \\(P(\\text{match}|A)=1/3\\). For Box \\(B\\), a matching pair must be two of the three blue counters, so \\(P(\\text{match}|B)=\\binom32/\\binom42=1/2\\). The boxes are initially equally likely, so \\(P(A|\\text{match})=\\frac{1/3}{1/3+1/2}=\\boxed{2/5}\\).",
+      "fastInsight": "Because the prior box probabilities are equal, compare only the two matching-pair probabilities.",
+      "mistakeTagsByOption": {
+        "B": ["ignored-new-information"],
+        "C": ["reversed-conditional-probability"],
+        "D": ["used-number-of-gold-counters-only"],
+        "E": ["used-blue-proportion-in-box-b"],
+        "F": ["added-conditional-probabilities"]
+      }
+    },
+    {
+      "id": "m1cal-v2-q14",
+      "position": 14,
+      "internalTitle": "Perpendicular drone route",
+      "primaryTopic": "M5 Geometry",
+      "specificationRefs": ["M4.9", "M4.10", "M5.10"],
+      "difficulty": "medium",
+      "targetTimeSeconds": 85,
+      "stemMarkdown": "The points \\(A=(-2,1)\\) and \\(B=(6,5)\\). The point \\(P\\) lies on \\(AB\\) such that \\(AP:PB=3:1\\). The line through \\(P\\) perpendicular to \\(AB\\) meets the \\(x\\)-axis at \\(Q\\). What are the coordinates of \\(Q\\)?",
+      "visualSpec": {
+        "id": "m1cal-v2-q14-diagram",
+        "kind": "coordinate_perpendicular_division",
+        "canvas": {"widthPx": 1400, "heightPx": 850, "xlim": [-3.5, 10.5], "ylim": [-1.5, 7.5], "aspect": "equal"},
+        "coordinatePlane": {"numericTicks": false, "grid": false, "axisLabels": ["x", "y"]},
+        "geometry": {
+          "points": {"A": [-2, 1], "B": [6, 5], "P": [4, 4], "Q": [6, 0]},
+          "segments": [["A", "B"], ["P", "Q"]],
+          "ratioMarks": {"segment": ["A", "B"], "ratio": "3:1", "showText": false},
+          "rightAngleMarker": {"vertex": "P", "line1": ["A", "B"], "line2": ["P", "Q"]}
+        },
+        "styling": {"primarySegment": "foreground", "perpendicularSegment": "secondary", "doNotRevealQCoordinate": true},
+        "altText": "Coordinate axes show A at negative 2, 1 and B at 6, 5. P divides AB in the ratio 3 to 1. A perpendicular from P meets the x-axis at the unnumbered point Q."
+      },
+      "options": [
+        {"id": "A", "contentMarkdown": "\\((4,0)\\)"},
+        {"id": "B", "contentMarkdown": "\\((5,0)\\)"},
+        {"id": "C", "contentMarkdown": "\\((6,0)\\)"},
+        {"id": "D", "contentMarkdown": "\\((7,0)\\)"},
+        {"id": "E", "contentMarkdown": "\\((8,0)\\)"},
+        {"id": "F", "contentMarkdown": "\\((10,0)\\)"}
+      ],
+      "correctOption": "C",
+      "solutionMarkdown": "From \\(A\\) to \\(B\\) the displacement is \\((8,4)\\). Since \\(AP:PB=3:1\\), \\(P=A+\\frac34(8,4)=(4,4)\\). The gradient of \\(AB\\) is \\(4/8=1/2\\), so the perpendicular gradient is \\(-2\\). Its equation through \\(P\\) is \\(y-4=-2(x-4)\\). Setting \\(y=0\\) gives \\(x=6\\), hence \\(Q=\\boxed{(6,0)}\\).",
+      "fastInsight": "Find P by taking three quarters of the displacement from A to B, then use the negative reciprocal gradient.",
+      "mistakeTagsByOption": {
+        "A": ["used-p-x-coordinate-as-intercept"],
+        "B": ["incorrect-perpendicular-gradient"],
+        "D": ["ratio-division-error"],
+        "E": ["used-reciprocal-without-negative"],
+        "F": ["extended-original-line-not-perpendicular"]
+      }
+    },
+    {
+      "id": "m1cal-v2-q15",
+      "position": 15,
+      "internalTitle": "Shortest route over a cuboid",
+      "primaryTopic": "M5 Geometry",
+      "specificationRefs": ["M5.7", "M5.11", "M5.12"],
+      "difficulty": "difficult",
+      "targetTimeSeconds": 115,
+      "stemMarkdown": "A tiny robot starts at vertex \\(A\\) of a solid cuboid and must reach the opposite vertex \\(G\\) while remaining on the surface. The cuboid has edge lengths \\(3\\text{ cm}\\), \\(5\\text{ cm}\\), and \\(6\\text{ cm}\\). What is the length of the shortest possible route?",
+      "visualSpec": {
+        "id": "m1cal-v2-q15-diagram",
+        "kind": "isometric_cuboid_opposite_vertices",
+        "canvas": {"widthPx": 1400, "heightPx": 850, "xlim": [-1.2, 10.8], "ylim": [-1.3, 8.4], "aspect": "equal"},
+        "projection": {"type": "oblique-2d", "depthVector": [2.4, 1.7]},
+        "geometry": {
+          "frontFace": {"bottomLeft": [1, 1], "width": 6, "height": 5},
+          "depth": 3,
+          "startVertex": {"label": "A", "location": "front-bottom-left"},
+          "finishVertex": {"label": "G", "location": "back-top-right"},
+          "dimensions": [
+            {"edge": "front-bottom", "label": "6 cm"},
+            {"edge": "front-left", "label": "5 cm"},
+            {"edge": "depth-top-left", "label": "3 cm"}
+          ],
+          "showCandidateRoute": false,
+          "hiddenEdges": "omit if they cross a visible face in the chosen projection"
+        },
+        "styling": {"frontFaceFill": "#FFFFFF", "topFaceFill": "lightFill", "leftFaceFill": "highlightFill", "startMarker": "filled", "finishMarker": "ring"},
+        "altText": "A cuboid has edge lengths 3, 5 and 6 centimetres. A is one vertex and G is the opposite vertex. The required route must stay on the surface."
+      },
+      "options": [
+        {"id": "A", "contentMarkdown": "\\(\\sqrt{34}\\text{ cm}\\)"},
+        {"id": "B", "contentMarkdown": "\\(3\\sqrt5\\text{ cm}\\)"},
+        {"id": "C", "contentMarkdown": "\\(\\sqrt{61}\\text{ cm}\\)"},
+        {"id": "D", "contentMarkdown": "\\(\\sqrt{70}\\text{ cm}\\)"},
+        {"id": "E", "contentMarkdown": "\\(10\\text{ cm}\\)"},
+        {"id": "F", "contentMarkdown": "\\(14\\text{ cm}\\)"}
+      ],
+      "correctOption": "E",
+      "solutionMarkdown": "Unfolding two adjacent faces gives three essentially different rectangles. Their corner-to-corner lengths are \\(\\sqrt{(3+5)^2+6^2}=10\\), \\(\\sqrt{(3+6)^2+5^2}=\\sqrt{106}\\), and \\(\\sqrt{(5+6)^2+3^2}=\\sqrt{130}\\). The least is therefore \\(\\boxed{10\\text{ cm}}\\). The body diagonal \\(\\sqrt{70}\\) passes through the solid and is not a permitted surface route.",
+      "fastInsight": "Unfold the two faces crossed by a route into one rectangle; there are only three pairings to compare.",
+      "mistakeTagsByOption": {
+        "A": ["used-one-face-diagonal-3-by-5"],
+        "B": ["used-one-face-diagonal-3-by-6"],
+        "C": ["used-one-face-diagonal-5-by-6"],
+        "D": ["used-body-diagonal-through-solid"],
+        "F": ["travelled-only-along-edges"]
+      }
+    }
+  ]
+}

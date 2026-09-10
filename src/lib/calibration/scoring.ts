@@ -32,8 +32,8 @@ import type {
   SpeedAccuracyProfile,
 } from "./types";
 
-export const SCORING_VERSION = "math1-v1";
-export const RESULT_VERSION = "math1-results-v1";
+export const SCORING_VERSION = "math1-v2";
+export const RESULT_VERSION = "math1-results-v2";
 
 const DIFFICULTY_TO_UI: Record<string, string> = {
   accessible: "Easy",

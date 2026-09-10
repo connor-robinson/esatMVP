@@ -7,13 +7,16 @@
  * section resolver treats `/exam-tools` as part of the Exam Tools section.
  */
 
-export const CALIBRATION_TEST_ID = "esat_math1_calibration_v1";
+export const CALIBRATION_TEST_ID = "m1-calibration-v2";
+
+/** Semver assessment version stored on every new attempt. */
+export const CALIBRATION_ASSESSMENT_VERSION = "2.0.0";
 
 /** Total questions in the Math 1 calibration. Kept for legacy homepage copy. */
 export const CALIBRATION_TOTAL_QUESTIONS = 15;
 
-/** Recommended overall time limit, in seconds (23 minutes). */
-export const CALIBRATION_TIME_LIMIT_SECONDS = 23 * 60;
+/** Recommended overall time limit, in seconds (about 20 minutes). */
+export const CALIBRATION_TIME_LIMIT_SECONDS = 20 * 60;
 
 /** Days after completion before suggesting a retake (legacy homepage logic). */
 export const CALIBRATION_OUTDATED_DAYS = 30;
@@ -48,6 +51,6 @@ export function calibrationResultsRoute(attemptId: string): string {
 export const CALIBRATION_STORAGE = {
   anonId: "nocalc:calibrationAnonId",
   attemptPrefix: "nocalc:calibrationAttempt:",
-  activeAttemptId: "nocalc:calibrationActiveAttempt:esat_math1_calibration_v1",
+  activeAttemptId: `nocalc:calibrationActiveAttempt:${CALIBRATION_TEST_ID}`,
   pendingMerge: "nocalc:calibrationPendingMerge",
 } as const;

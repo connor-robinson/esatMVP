@@ -77,7 +77,10 @@ export type AttemptStatus = "in_progress" | "completed" | "abandoned";
 export interface CalibrationAttempt {
   attemptId: string;
   testId: string;
+  /** Integer content version for DB / percentile queries (v2 → 2). */
   contentVersion: number;
+  /** Semver assessment version; never mix attempts across versions. */
+  assessmentVersion: string;
   status: AttemptStatus;
   /** Anonymous session id (present until an account owns the attempt). */
   anonId: string | null;

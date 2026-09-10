@@ -32,25 +32,25 @@ import type {
  * 1. Versioned model constants (edit here to recalibrate the model).
  * ------------------------------------------------------------------ */
 
-export const SCORING_MODEL_VERSION = "math1_calibration_score_v1";
+export const SCORING_MODEL_VERSION = "math1_calibration_score_v2_provisional";
 
 /** Per-question weighted point values (difficulty-based). Total = 214. */
 export const QUESTION_POINTS: Record<string, number> = {
-  "m1cal-q01": 10,
-  "m1cal-q02": 10,
-  "m1cal-q03": 14,
-  "m1cal-q04": 14,
-  "m1cal-q05": 10,
-  "m1cal-q06": 14,
-  "m1cal-q07": 14,
-  "m1cal-q08": 14,
-  "m1cal-q09": 19,
-  "m1cal-q10": 10,
-  "m1cal-q11": 19,
-  "m1cal-q12": 19,
-  "m1cal-q13": 19,
-  "m1cal-q14": 14,
-  "m1cal-q15": 14,
+  "m1cal-v2-q01": 10,
+  "m1cal-v2-q02": 10,
+  "m1cal-v2-q03": 14,
+  "m1cal-v2-q04": 10,
+  "m1cal-v2-q05": 14,
+  "m1cal-v2-q06": 10,
+  "m1cal-v2-q07": 19,
+  "m1cal-v2-q08": 14,
+  "m1cal-v2-q09": 14,
+  "m1cal-v2-q10": 14,
+  "m1cal-v2-q11": 19,
+  "m1cal-v2-q12": 14,
+  "m1cal-v2-q13": 19,
+  "m1cal-v2-q14": 14,
+  "m1cal-v2-q15": 19,
 };
 
 export const MAX_WEIGHTED_POINTS = 214;
@@ -62,7 +62,12 @@ export const ABILITY_GUESS_CORRECT_MULTIPLIER = 0.45;
 export const REAL_SECTION_QUESTION_COUNT = 27;
 
 /** Hard (difficult) calibration questions, used for the ranking index. */
-export const HARD_QUESTION_IDS = ["m1cal-q09", "m1cal-q11", "m1cal-q12", "m1cal-q13"];
+export const HARD_QUESTION_IDS = [
+  "m1cal-v2-q07",
+  "m1cal-v2-q11",
+  "m1cal-v2-q13",
+  "m1cal-v2-q15",
+];
 
 /** Percentile is hidden until this many valid attempts exist platform-wide. */
 export const MINIMUM_ATTEMPTS_FOR_PERCENTILE = 200;

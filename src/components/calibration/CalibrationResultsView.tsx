@@ -8,7 +8,9 @@ import { BrandLogo } from "@/components/brand/BrandLogo";
 import { TimeScatterChart } from "@/components/papers/TimeScatterChart";
 import { BreakdownDonutChart, type DonutSlice } from "@/components/questionBank/BreakdownDonutChart";
 import { trackCalibrationEvent, type CalibrationUserState } from "@/lib/calibration/analytics";
+import { getCalibrationQuestion } from "@/lib/calibration/config";
 import type { CalibrationResults } from "@/lib/calibration/types";
+import { StemContent } from "@/components/shared/StemContent";
 
 interface Props {
   results: CalibrationResults;
@@ -235,10 +237,10 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
       {/* Headline stats */}
       <div className="grid gap-3 sm:grid-cols-3">
         <StatPill
-          label="Estimated ESAT score"
-          value={p.estimatedEsatScore.toFixed(1)}
+          label="Estimated starting range"
+          value={`${p.estimatedScoreLow.toFixed(1)}–${p.estimatedScoreHigh.toFixed(1)}`}
           highlight
-          tooltip="This is an estimate from a 15-question diagnostic. Official ESAT scores use a separate scoring model and may differ."
+          tooltip="Provisional estimate from this 15-question diagnostic. It is not an official ESAT score and should be treated as a starting range only."
         />
         <StatPill
           label="Calibration result"
@@ -249,6 +251,12 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
           value={`${Math.round(p.rawPercent15 * 100)}%`}
         />
       </div>
+
+      <p className="px-1 text-sm text-text-muted">
+        Point estimate about {p.estimatedEsatScore.toFixed(1)} on the ESAT 1.0–9.0 scale
+        ({p.bandLabel}). Treat this as a provisional starting range until more response data
+        is available.
+      </p>
 
       <SuggestedNextSteps
         weakness={weakestTopic}
@@ -349,11 +357,63 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
         <p className="mt-4 text-sm leading-relaxed text-text-muted">{p.guessingInterpretation}</p>
       </Card>
 
+      <Card variant="elevated" className="border-0 p-5 shadow-none sm:p-6">
+        <h2 className="font-heading text-xl font-bold text-text">Question review</h2>
+        <p className="mt-1 text-sm text-text-muted">
+          Worked solutions and a short insight for each item after submission.
+        </p>
+        <div className="mt-5 space-y-5">
+          {results.mistakes.map((m) => {
+            const q = getCalibrationQuestion(m.questionId);
+            if (!q) return null;
+            const status = m.skipped
+              ? "Skipped"
+              : m.correct
+                ? "Correct"
+                : `Your answer ${m.selectedOption ?? "–"} · correct ${m.correctOption}`;
+            return (
+              <details
+                key={m.questionId}
+                className="group rounded-xl bg-surface-mid/60 px-4 py-3 open:bg-surface-mid"
+                onToggle={(event) => {
+                  if ((event.target as HTMLDetailsElement).open) {
+                    void trackCalibrationEvent("calibration_solution_viewed", {
+                      user_state: userState,
+                      attempt_id: attemptId,
+                      question_id: m.questionId,
+                    });
+                  }
+                }}
+              >
+                <summary className="cursor-pointer list-none font-semibold text-text">
+                  <span className="mr-2 tabular-nums">Q{m.order}</span>
+                  <span className="text-sm font-medium text-text-muted">{status}</span>
+                </summary>
+                <div className="mt-3 space-y-3 border-t border-border-subtle/40 pt-3 text-sm">
+                  {q.fast_insight ? (
+                    <p className="text-text-muted">
+                      <span className="font-semibold text-text">Fast insight: </span>
+                      {q.fast_insight}
+                    </p>
+                  ) : null}
+                  <div>
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-text-muted">
+                      Solution
+                    </p>
+                    <StemContent content={q.solution.steps_markdown.join("\n\n")} />
+                  </div>
+                </div>
+              </details>
+            );
+          })}
+        </div>
+      </Card>
+
       <p className="px-1 text-xs leading-relaxed text-text-subtle">
         {percentile?.unlocked
           ? null
           : "Percentile estimate will unlock once more students have completed this calibration. "}
-        This result is an estimate from a short diagnostic, not an official ESAT score.
+        This result is a provisional estimate from a short diagnostic, not an official ESAT score.
       </p>
     </div>
   );

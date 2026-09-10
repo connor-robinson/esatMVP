@@ -53,7 +53,7 @@ export function calibrationQuestionsToPearson(
       createdAt: "",
       updatedAt: "",
       topicName: q.primary_topic,
-      difficultyLabel: q.difficulty,
+      difficultyLabel: undefined,
       targetSeconds: q.expected_time_seconds,
     };
   });

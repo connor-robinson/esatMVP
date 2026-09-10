@@ -81,7 +81,18 @@ function validate(config: any): string[] {
   if (diff.accessible !== 4 || diff.medium !== 7 || diff.difficult !== 4) {
     errors.push(`Difficulty mix ${JSON.stringify(diff)} != 4/7/4`);
   }
-  if (totalTime !== 1350) errors.push(`Expected time total ${totalTime}s != 1350s`);
+  if (totalTime < 1100 || totalTime > 1300) {
+    errors.push(`Expected time total ${totalTime}s outside 1100–1300s for v2`);
+  }
+
+  const ordered = [...questions].sort((a, b) => a.order - b.order);
+  const answerKey = ordered.map((q) => q.correct_option).join("");
+  if (answerKey !== "CEBADFCAEBDFACE") {
+    errors.push(`Answer key ${answerKey} != CEBADFCAEBDFACE`);
+  }
+  if (config.test?.assessment_version && config.test.assessment_version !== "2.0.0") {
+    errors.push(`assessment_version ${config.test.assessment_version} != 2.0.0`);
+  }
 
   return errors;
 }
@@ -104,7 +115,7 @@ async function main() {
     errors.forEach((e) => console.error(" -", e));
     process.exit(1);
   }
-  console.log("Validation passed (15 questions, 4/7/4, 1350s, 6-8 options, tags OK).");
+  console.log("Validation passed (15 questions, 4/7/4, answer key, options, tags OK).");
 
   const supabase = createClient(url, key);
   const { error } = await supabase.from("calibration_tests").upsert(

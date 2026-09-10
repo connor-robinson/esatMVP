@@ -10,6 +10,7 @@ import {
   CALIBRATION_STORAGE,
   CALIBRATION_TEST_ID,
   CALIBRATION_TIME_LIMIT_SECONDS,
+  CALIBRATION_ASSESSMENT_VERSION,
 } from "./constants";
 import { CALIBRATION_CONTENT_VERSION, CALIBRATION_QUESTIONS } from "./config";
 import type { CalibrationAttempt, QuestionAttempt } from "./types";
@@ -72,6 +73,7 @@ export function createAttempt(): CalibrationAttempt {
     attemptId: safeUuid(),
     testId: CALIBRATION_TEST_ID,
     contentVersion: CALIBRATION_CONTENT_VERSION,
+    assessmentVersion: CALIBRATION_ASSESSMENT_VERSION,
     status: "in_progress",
     anonId: getAnonId(),
     startedAt: now,
@@ -120,6 +122,15 @@ export function getActiveAttempt(): CalibrationAttempt | null {
     if (!id) return null;
     const attempt = loadAttempt(id);
     if (!attempt || attempt.status === "completed") return null;
+    // Never resume an attempt from a different assessment / content version.
+    if (
+      attempt.testId !== CALIBRATION_TEST_ID ||
+      attempt.contentVersion !== CALIBRATION_CONTENT_VERSION ||
+      (attempt.assessmentVersion != null &&
+        attempt.assessmentVersion !== CALIBRATION_ASSESSMENT_VERSION)
+    ) {
+      return null;
+    }
     return attempt;
   } catch {
     return null;

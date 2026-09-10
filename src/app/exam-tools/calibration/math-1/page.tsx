@@ -46,7 +46,7 @@ const FAQ: readonly FaqItem[] = [
   {
     question: "Does it predict my official ESAT score?",
     answer:
-      "No. It gives a readiness signal and a skill diagnosis, not an official scaled score. Official scores are released by UAT-UK and depend on the cohort.",
+      "No. It gives a provisional starting range and a skill diagnosis, not an official scaled score. Official scores are released by UAT-UK and depend on the cohort.",
   },
   {
     question: "Do I need an account to take it?",

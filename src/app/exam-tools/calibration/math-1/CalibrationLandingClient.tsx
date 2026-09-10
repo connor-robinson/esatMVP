@@ -15,6 +15,7 @@ import {
   CALIBRATION_TIME_LIMIT_SECONDS,
   calibrationResultsRoute,
 } from "@/lib/calibration/constants";
+import { CALIBRATION_STUDENT_INTRO } from "@/lib/calibration/config";
 import type { CalibrationAttempt } from "@/lib/calibration/types";
 import { cn } from "@/lib/utils";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
@@ -98,12 +99,13 @@ export function CalibrationLandingClient() {
         Exam tools · Calibration
       </p>
       <h1 className="mt-4 text-3xl font-display font-bold leading-[1.15] tracking-tight text-text sm:text-4xl lg:text-5xl">
-        This is the <span className="text-maths">Mathematics 1</span>
-        <br className="hidden sm:block" /> calibration test
+        {CALIBRATION_STUDENT_INTRO.heading}
       </h1>
-      <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-text-muted sm:text-lg">
-        A short diagnostic to show your weak spots, then a clear next step for
-        practice.
+      <p className="mx-auto mt-3 max-w-xl text-base font-medium text-text sm:text-lg">
+        {CALIBRATION_STUDENT_INTRO.summary}
+      </p>
+      <p className="mx-auto mt-3 max-w-2xl text-base leading-relaxed text-text-muted sm:text-lg">
+        {CALIBRATION_STUDENT_INTRO.supportingText}
       </p>
     </header>
   );
