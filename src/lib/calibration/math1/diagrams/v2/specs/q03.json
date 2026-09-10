@@ -990,8 +990,8 @@
         ]
       ],
       "fill": true,
-      "facecolor": "#F1F5F9",
-      "edgecolor": "#F1F5F9",
+      "facecolor": "#F0F0F0",
+      "edgecolor": "#F0F0F0",
       "linewidth": 0.5
     },
     {
@@ -1003,7 +1003,7 @@
       ],
       "samples": 600,
       "linewidth": 3.4,
-      "color": "#1F2937"
+      "color": "#1A1A1A"
     },
     {
       "type": "arrow",
@@ -1040,7 +1040,7 @@
         9.0
       ],
       "style": "dashed",
-      "color": "#64748B",
+      "color": "#666666",
       "linewidth": 2.5
     },
     {
@@ -1053,7 +1053,7 @@
         6.6457513111,
         9.0
       ],
-      "color": "#64748B",
+      "color": "#666666",
       "linewidth": 2.7
     },
     {
@@ -1066,7 +1066,7 @@
         0.0,
         0.18
       ],
-      "color": "#1F2937",
+      "color": "#1A1A1A",
       "linewidth": 1.4
     },
     {
@@ -1079,7 +1079,7 @@
         8.0,
         0.18
       ],
-      "color": "#1F2937",
+      "color": "#1A1A1A",
       "linewidth": 1.4
     },
     {

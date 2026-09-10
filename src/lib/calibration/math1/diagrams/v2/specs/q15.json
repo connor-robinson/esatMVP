@@ -34,8 +34,8 @@
         ]
       ],
       "fill": true,
-      "facecolor": "#DCE6F0",
-      "edgecolor": "#1F2937",
+      "facecolor": "#D0D0D0",
+      "edgecolor": "#1A1A1A",
       "linewidth": 2.3
     },
     {
@@ -59,8 +59,8 @@
         ]
       ],
       "fill": true,
-      "facecolor": "#F1F5F9",
-      "edgecolor": "#1F2937",
+      "facecolor": "#F0F0F0",
+      "edgecolor": "#1A1A1A",
       "linewidth": 2.3
     },
     {
@@ -85,7 +85,7 @@
       ],
       "fill": true,
       "facecolor": "#FFFFFF",
-      "edgecolor": "#1F2937",
+      "edgecolor": "#1A1A1A",
       "linewidth": 2.8
     },
     {
@@ -98,7 +98,7 @@
         -1.4,
         2.7
       ],
-      "color": "#1F2937",
+      "color": "#1A1A1A",
       "linewidth": 2.2
     },
     {
@@ -111,7 +111,7 @@
         4.6,
         7.7
       ],
-      "color": "#1F2937",
+      "color": "#1A1A1A",
       "linewidth": 2.2
     },
     {
@@ -124,7 +124,7 @@
         -1.4,
         7.7
       ],
-      "color": "#1F2937",
+      "color": "#1A1A1A",
       "linewidth": 2.2
     },
     {
@@ -144,7 +144,7 @@
       "radius": 0.11,
       "fill": true,
       "facecolor": "#FFFFFF",
-      "edgecolor": "#1F2937",
+      "edgecolor": "#1A1A1A",
       "linewidth": 2.5
     },
     {
@@ -159,7 +159,7 @@
       ],
       "direction": "below",
       "offset": 0.55,
-      "color": "#64748B"
+      "color": "#666666"
     },
     {
       "type": "dimension_line",
@@ -173,7 +173,7 @@
       ],
       "direction": "right",
       "offset": 0.55,
-      "color": "#64748B"
+      "color": "#666666"
     },
     {
       "type": "line",
@@ -185,7 +185,7 @@
         -1.68,
         7.95
       ],
-      "color": "#64748B",
+      "color": "#666666",
       "linewidth": 1.6
     }
   ],

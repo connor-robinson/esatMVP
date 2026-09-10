@@ -34,8 +34,8 @@
         ]
       ],
       "fill": true,
-      "facecolor": "#F1F5F9",
-      "edgecolor": "#1F2937",
+      "facecolor": "#F0F0F0",
+      "edgecolor": "#1A1A1A",
       "linewidth": 3.0
     },
     {
@@ -60,7 +60,7 @@
       ],
       "fill": true,
       "facecolor": "#FFFFFF",
-      "edgecolor": "#64748B",
+      "edgecolor": "#666666",
       "linewidth": 2.5
     },
     {
@@ -71,8 +71,8 @@
       ],
       "radius": 4.2426406871,
       "fill": true,
-      "facecolor": "#DCE6F0",
-      "edgecolor": "#1F2937",
+      "facecolor": "#D0D0D0",
+      "edgecolor": "#1A1A1A",
       "linewidth": 3.0
     },
     {
@@ -162,7 +162,7 @@
         6.28,
         6.0
       ],
-      "color": "#64748B",
+      "color": "#666666",
       "linewidth": 1.5
     },
     {
@@ -175,7 +175,7 @@
         6.0,
         6.28
       ],
-      "color": "#64748B",
+      "color": "#666666",
       "linewidth": 1.5
     }
   ],

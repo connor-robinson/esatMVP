@@ -34,8 +34,8 @@
         ]
       ],
       "fill": true,
-      "facecolor": "#F1F5F9",
-      "edgecolor": "#1F2937",
+      "facecolor": "#F0F0F0",
+      "edgecolor": "#1A1A1A",
       "linewidth": 2.3
     },
     {
@@ -47,7 +47,7 @@
       "radius": 0.4,
       "fill": true,
       "facecolor": "#FFFFFF",
-      "edgecolor": "#1F2937",
+      "edgecolor": "#1A1A1A",
       "linewidth": 2.0
     },
     {
@@ -59,7 +59,7 @@
       "radius": 0.4,
       "fill": true,
       "facecolor": "#FFFFFF",
-      "edgecolor": "#1F2937",
+      "edgecolor": "#1A1A1A",
       "linewidth": 2.0
     },
     {
@@ -70,8 +70,8 @@
       ],
       "radius": 0.4,
       "fill": true,
-      "facecolor": "#64748B",
-      "edgecolor": "#1F2937",
+      "facecolor": "#666666",
+      "edgecolor": "#1A1A1A",
       "linewidth": 2.0
     },
     {
@@ -95,8 +95,8 @@
         ]
       ],
       "fill": true,
-      "facecolor": "#F1F5F9",
-      "edgecolor": "#1F2937",
+      "facecolor": "#F0F0F0",
+      "edgecolor": "#1A1A1A",
       "linewidth": 2.3
     },
     {
@@ -108,7 +108,7 @@
       "radius": 0.4,
       "fill": true,
       "facecolor": "#FFFFFF",
-      "edgecolor": "#1F2937",
+      "edgecolor": "#1A1A1A",
       "linewidth": 2.0
     },
     {
@@ -119,8 +119,8 @@
       ],
       "radius": 0.4,
       "fill": true,
-      "facecolor": "#64748B",
-      "edgecolor": "#1F2937",
+      "facecolor": "#666666",
+      "edgecolor": "#1A1A1A",
       "linewidth": 2.0
     },
     {
@@ -131,8 +131,8 @@
       ],
       "radius": 0.4,
       "fill": true,
-      "facecolor": "#64748B",
-      "edgecolor": "#1F2937",
+      "facecolor": "#666666",
+      "edgecolor": "#1A1A1A",
       "linewidth": 2.0
     },
     {
@@ -143,8 +143,8 @@
       ],
       "radius": 0.4,
       "fill": true,
-      "facecolor": "#64748B",
-      "edgecolor": "#1F2937",
+      "facecolor": "#666666",
+      "edgecolor": "#1A1A1A",
       "linewidth": 2.0
     }
   ],
