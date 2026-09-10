@@ -11,7 +11,7 @@ import { Container } from '@/components/layout/Container';
 import { Button } from '@/components/ui/Button';
 import { QuestionCard } from '@/components/questionBank/QuestionCard';
 import { EditModal } from '@/components/questionBank/EditModal';
-import { LoadingPage } from '@/components/shared/LoadingPage';
+import { QuestionBankSessionLoadingScreen } from '@/components/questionBank/QuestionBankSessionLoadingScreen';
 import { MathContent } from '@/components/shared/MathContent';
 import {
   HintModal,
@@ -1403,7 +1403,7 @@ export default function QuestionBankPage() {
   if (activeSession && currentQuestion && sessionUiVariant === 'esat') {
     return (
       <Fragment>
-        {showSessionLoading ? <LoadingPage variant="session" /> : null}
+        {showSessionLoading ? <QuestionBankSessionLoadingScreen /> : null}
         <QuestionBankEsatSessionShell
           question={currentQuestion}
           questions={sessionQuestions}

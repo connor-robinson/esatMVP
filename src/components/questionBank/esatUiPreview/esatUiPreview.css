@@ -1159,3 +1159,50 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
   color: var(--eup-accent-strong);
   font-weight: 600;
 }
+
+/* --- Session launch loader (ESAT / UAT-UK style) --- */
+.eup-session-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #ffffff;
+  color: #000000;
+  font-family: var(--font-space-grotesk), "Segoe UI", Tahoma, Arial, Helvetica, sans-serif;
+}
+
+.eup-session-loading-text {
+  margin: 0 0 24px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.eup-session-loading-bar {
+  display: flex;
+  gap: 3px;
+}
+
+.eup-session-loading-seg {
+  width: 10px;
+  height: 22px;
+  background: #d3d3d3;
+}
+
+.eup-session-loading-seg--on {
+  background: #555555;
+}
+
+.eup-session-loading-hint {
+  margin: 28px 0 0;
+  max-width: 28rem;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #777777;
+}
