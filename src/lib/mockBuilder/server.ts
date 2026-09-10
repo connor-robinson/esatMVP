@@ -465,7 +465,7 @@ export async function generateAndPersist(
   if (options?.enrichMetadata !== false) {
     try {
       const enrich = await enrichMockMetadataForSubject(service, subject, {
-        maxQuestions: 96,
+        maxQuestions: 120,
         onlyMissingDifficulty: true,
       });
       enrichNote = `AI labeled ${enrich.labeledCount}/${enrich.attempted} questions via ${enrich.source ?? "none"}.`;

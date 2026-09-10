@@ -321,14 +321,16 @@ export default function AdminMockDetailPage() {
             </div>
           )}
 
-        <div className="mb-6 flex flex-wrap gap-2">
+        <div className="mb-6 flex flex-wrap items-center gap-2">
           <button
             type="button"
             disabled={!!busy}
             onClick={regenerate}
             className="rounded border border-stone-300 bg-white px-3 py-1.5 text-sm"
           >
-            {busy === "generate" ? "…" : "Regenerate (keep locks)"}
+            {busy === "generate"
+              ? "Labeling + regenerating…"
+              : "Regenerate"}
           </button>
           <button
             type="button"
@@ -336,23 +338,7 @@ export default function AdminMockDetailPage() {
             onClick={aiReview}
             className="rounded border border-stone-300 bg-white px-3 py-1.5 text-sm"
           >
-            {busy === "review" ? "…" : "Run AI paper review"}
-          </button>
-          <button
-            type="button"
-            disabled={!!busy}
-            onClick={loadStats}
-            className="rounded border border-stone-300 bg-white px-3 py-1.5 text-sm"
-          >
-            {busy === "stats" ? "…" : "Load calibration"}
-          </button>
-          <button
-            type="button"
-            disabled={!!busy}
-            onClick={() => setStatus("review")}
-            className="rounded border border-stone-300 bg-white px-3 py-1.5 text-sm"
-          >
-            Mark review
+            {busy === "review" ? "…" : "AI paper review"}
           </button>
           <button
             type="button"
@@ -378,7 +364,29 @@ export default function AdminMockDetailPage() {
           >
             Archive
           </button>
+          <span className="mx-1 hidden h-5 w-px bg-stone-200 sm:inline-block" />
+          <button
+            type="button"
+            disabled={!!busy}
+            onClick={loadStats}
+            className="rounded border border-stone-200 bg-white px-3 py-1.5 text-sm text-stone-600"
+          >
+            {busy === "stats" ? "…" : "Calibration"}
+          </button>
+          <button
+            type="button"
+            disabled={!!busy}
+            onClick={cancelMock}
+            className="rounded border border-red-300 bg-red-50 px-3 py-1.5 text-sm font-medium text-red-800"
+          >
+            {busy === "cancel" ? "…" : "Cancel mock"}
+          </button>
         </div>
+        <p className="mb-4 text-xs text-stone-500">
+          Regenerate AI-labels missing difficulty for this subject, then rebuilds
+          the paper (locked slots kept). Cancel deletes this mock and frees its
+          questions.
+        </p>
 
         {error && <p className="mb-4 text-sm text-red-700">{error}</p>}
 

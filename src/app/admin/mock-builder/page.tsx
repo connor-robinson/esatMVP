@@ -25,9 +25,7 @@ export default function AdminMockBuilderPage() {
   const [diagramAvailability, setDiagramAvailability] =
     useState<DiagramAvailability>({});
   const [creating, setCreating] = useState(false);
-  const [labeling, setLabeling] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [info, setInfo] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -72,7 +70,6 @@ export default function AdminMockBuilderPage() {
   async function createMock() {
     setCreating(true);
     setError(null);
-    setInfo(null);
     const res = await fetch("/api/admin/mock-builder", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -93,28 +90,6 @@ export default function AdminMockBuilderPage() {
     if (data.mock?.id) {
       window.location.href = `/admin/mock-builder/${data.mock.id}`;
     }
-  }
-
-  async function labelDifficulty() {
-    setLabeling(true);
-    setError(null);
-    setInfo(null);
-    const res = await fetch("/api/admin/mock-builder/label-metadata", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        subject,
-        maxQuestions: 120,
-        onlyMissingDifficulty: true,
-      }),
-    });
-    const data = await res.json();
-    setLabeling(false);
-    if (!res.ok) {
-      setError(data.error || "Labeling failed");
-      return;
-    }
-    setInfo(data.message || `Labeled ${data.labeledCount} questions`);
   }
 
   async function toggleExclude(next: boolean) {
@@ -219,25 +194,20 @@ export default function AdminMockBuilderPage() {
               onClick={createMock}
               className="rounded bg-stone-900 px-4 py-2 text-sm text-white disabled:opacity-50"
             >
-              {creating ? "Generating…" : "Generate draft"}
-            </button>
-            <button
-              type="button"
-              disabled={labeling}
-              onClick={labelDifficulty}
-              className="rounded border border-stone-300 bg-white px-4 py-2 text-sm text-stone-800 disabled:opacity-50"
-            >
-              {labeling ? "AI labeling…" : "AI-label difficulty (1–5)"}
+              {creating
+                ? "Labeling + generating…"
+                : "Generate draft"}
             </button>
           </div>
           <p className="mt-2 text-xs text-stone-500">{diagramHint}</p>
           <p className="mt-1 text-xs text-stone-500">
-            Free-tier preview questions (first 10 per subject) are never used in
-            mocks. Approved/published mock questions are reserved and cannot be
-            reused.
+            Generate first AI-labels missing 1–5 difficulty for this subject
+            (batch of unlabeled approved questions, not the whole bank), then
+            assembles the draft. Free-tier preview questions (first 10 per
+            subject) are never used. Approved/published mock questions stay
+            reserved and cannot be reused.
           </p>
           {error && <p className="mt-2 text-sm text-red-700">{error}</p>}
-          {info && <p className="mt-2 text-sm text-stone-700">{info}</p>}
         </section>
 
         {loading ? (
