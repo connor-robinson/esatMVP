@@ -13,6 +13,10 @@ import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
 import { SEO_LINKS, type SeoLinkKey } from "@/lib/seo/links";
 import { MARKETING_HOMEPAGE_FAQ } from "@/lib/homepage/marketingFaq";
 import { trackHomepageEvent } from "@/lib/homepage/analytics";
+import {
+  HOMEPAGE_HERO_AB_EXPERIMENT,
+  type HomepageHeroVariant,
+} from "@/lib/homepage/heroAbTest";
 import { openCookiePreferences } from "@/lib/ga";
 import {
   formatGbpPrice,
@@ -179,8 +183,10 @@ const FOOTER_GUIDE_KEYS: SeoLinkKey[] = [
 
 export function MarketingHomepage({
   socialProofSlot,
+  heroVariant = "control",
 }: {
   socialProofSlot?: ReactNode;
+  heroVariant?: HomepageHeroVariant;
 }) {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
   const seasonPrice = getSeasonPassPrice();
@@ -188,13 +194,17 @@ export function MarketingHomepage({
   const monthlyListPriceLabel = formatGbpPrice(MONTHLY_LIST_PRICE_GBP);
   const monthlyPerWeekLabel = formatGbpPrice(getMonthlyPricePerWeek());
   const monthlyDiscountLabel = `${getMonthlyDiscountPercent()}% off`;
+  const isFearHero = heroVariant === "fear";
+  const heroAnalytics = {
+    user_state: "logged_out" as const,
+    calibration_status: "none" as const,
+    hero_variant: heroVariant,
+    hero_experiment: HOMEPAGE_HERO_AB_EXPERIMENT,
+  };
 
   useEffect(() => {
-    void trackHomepageEvent("homepage_viewed", {
-      user_state: "logged_out",
-      calibration_status: "none",
-    });
-  }, []);
+    void trackHomepageEvent("homepage_viewed", heroAnalytics);
+  }, [heroVariant]);
 
   const toggleFaq = (index: number) => {
     setExpandedFaq(expandedFaq === index ? null : index);
@@ -204,57 +214,38 @@ export function MarketingHomepage({
     <div className="scroll-smooth bg-[#0A0F1D]">
       <HomepageSectionNav />
 
-      {/* Hero Section */}
-      <section className="relative overflow-x-clip bg-[#0A0F1D] pt-5 pb-6 lg:pt-6 lg:pb-8">
-        <div className="relative mx-auto max-w-[1400px] space-y-4 px-4 sm:px-5 lg:space-y-5 lg:px-6">
-          <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.15fr)] lg:gap-8 xl:gap-10">
-            <div className="flex min-w-0 flex-col justify-center gap-3.5 sm:gap-4 lg:gap-5 [container-type:inline-size]">
-              <h1 className="font-display font-bold leading-[1.05] tracking-[-0.04em] [font-size:clamp(2rem,min(0.8rem+5vw,13cqi),4.75rem)]">
-                <span className="whitespace-nowrap">
-                  The leading{" "}
-                  <span
-                    className="group relative inline-block cursor-help"
-                    tabIndex={0}
-                    aria-describedby="esat-definition"
-                  >
-                    <span className="text-underline-accent">ESAT</span>
-                    <span
-                      id="esat-definition"
-                      role="tooltip"
-                      className="pointer-events-none absolute left-0 top-full z-20 mt-3 w-[min(22rem,calc(100vw-2rem))] rounded-lg bg-[#161D2F] px-4 py-3 text-left text-sm font-normal leading-relaxed tracking-normal text-[#94A3B8] opacity-0 shadow-xl transition-opacity duration-150 group-hover:opacity-100 group-focus:opacity-100 sm:w-[24rem]"
-                    >
-                      The ESAT is the Engineering and Science Admissions Test for
-                      undergraduate STEM applicants. It is a mandatory entrance
-                      exam for engineering, science, and medical courses at
-                      Cambridge, Oxford, Imperial College London, and UCL.
-                    </span>
-                  </span>
-                </span>
-                <span className="block whitespace-nowrap">question bank</span>
+      {isFearHero ? (
+        <>
+          {/* Fear / clarity hero (A/B treatment) */}
+          <section className="relative overflow-x-clip bg-[#0A0F1D] pt-6 pb-8 lg:pt-8 lg:pb-10">
+            <div className="relative mx-auto max-w-3xl space-y-6 px-4 sm:px-5 lg:px-6">
+              <h1 className="font-display font-bold leading-[1.08] tracking-[-0.03em] text-white [font-size:clamp(2rem,min(0.8rem+4.5vw,8cqi),3.75rem)]">
+                ESAT question bank and mock papers
               </h1>
-              <p className="max-w-2xl text-lg leading-relaxed text-[#94A3B8] sm:text-xl lg:text-2xl">
-                Practice with our{" "}
-                <span className="text-underline-accent text-white">
+              <p className="max-w-2xl text-lg leading-relaxed text-[#94A3B8] sm:text-xl">
+                On average, our students do{" "}
+                <span className="font-semibold text-white">
+                  2.47 past papers a day
+                </span>
+                . Run out of papers? Keep going with our{" "}
+                <span className="font-semibold text-white">
                   {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ practice
                   questions
-                </span>{" "}
-                and{" "}
-                <span className="text-underline-accent text-white">
-                  {MENTAL_MATHS_MODULE_COUNT_MARKETING}+ mental maths courses
                 </span>
                 .
               </p>
+
               <div className="space-y-2.5">
                 <div className="flex flex-col gap-3 sm:flex-row">
                   <Link
                     href={CALIBRATION_ROUTES.hub}
                     onClick={() =>
                       void trackHomepageEvent("calibration_cta_clicked", {
-                        user_state: "logged_out",
+                        ...heroAnalytics,
                         destination: CALIBRATION_ROUTES.hub,
                       })
                     }
-                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-7 py-3.5 text-base font-bold text-[#0A0F1D] shadow-[0_0_28px_rgba(255,255,255,0.22),0_8px_24px_rgba(0,0,0,0.28)] transition-all hover:scale-[1.03] hover:bg-slate-100 hover:shadow-[0_0_36px_rgba(255,255,255,0.32),0_10px_28px_rgba(0,0,0,0.32)] active:scale-[0.98] sm:text-lg"
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-7 py-3.5 text-base font-bold text-[#0A0F1D] transition-colors hover:bg-slate-100 sm:text-lg"
                   >
                     Start calibration
                     <span aria-hidden className="text-lg leading-none">
@@ -263,64 +254,202 @@ export function MarketingHomepage({
                   </Link>
                   <Link
                     href="/login?mode=signup"
-                    className="inline-flex items-center justify-center rounded-lg border border-white/20 px-6 py-3.5 text-base font-bold text-white transition-all hover:bg-white/5"
+                    className="inline-flex items-center justify-center rounded-lg border border-white/20 px-6 py-3.5 text-base font-bold text-white transition-colors hover:bg-white/5"
                   >
                     Sign up
                   </Link>
                 </div>
-                <p className="text-sm text-[#94A3B8] sm:text-base">
+                <p className="text-sm text-[#94A3B8]">
                   Calibration is free. No sign-up required to get started.
                 </p>
               </div>
-            </div>
 
-            <div className="flex min-h-0 min-w-0 w-full">
+              <div className="flex flex-col gap-5 border-t border-white/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex min-w-0 items-start gap-3.5 sm:items-center sm:gap-4">
+                  <Link
+                    href={`${ABOUT_PATH}#${FOUNDERS.ewan.id}`}
+                    className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-[#161D2F] sm:h-16 sm:w-16"
+                  >
+                    <Image
+                      src={FOUNDERS.ewan.imageSrc}
+                      alt={FOUNDERS.ewan.imageAlt}
+                      fill
+                      sizes="64px"
+                      className="object-cover"
+                      style={{
+                        objectPosition: FOUNDERS.ewan.imagePosition,
+                        transform: `scale(${FOUNDERS.ewan.imageScale})`,
+                      }}
+                      priority
+                    />
+                  </Link>
+                  <div className="min-w-0 space-y-1">
+                    <p className="text-sm font-bold leading-snug text-white sm:text-base">
+                      Hi, I&apos;m{" "}
+                      <Link
+                        href={`${ABOUT_PATH}#${FOUNDERS.ewan.id}`}
+                        className="text-underline-accent transition-colors hover:text-[#93C5FD]"
+                      >
+                        {FOUNDERS.ewan.name}
+                      </Link>
+                      , co-founder of ESAT Camp.
+                    </p>
+                    <p className="text-xs leading-relaxed text-[#94A3B8] sm:text-sm">
+                      Our goal is to build the platform we wish we had for the
+                      ESAT.
+                    </p>
+                  </div>
+                </div>
+                {socialProofSlot}
+              </div>
+
+              <a
+                href="#example-question"
+                className="inline-flex flex-col items-center gap-1 pt-2 text-sm font-semibold text-[#94A3B8] transition-colors hover:text-white"
+              >
+                <span>Try our questions</span>
+                <span aria-hidden className="text-xl leading-none">
+                  ↓
+                </span>
+              </a>
+            </div>
+          </section>
+
+          <section
+            id="example-question"
+            className="scroll-mt-28 border-y border-white/5 bg-[#0A0F1D] py-12 sm:py-14"
+          >
+            <div className="mx-auto max-w-3xl space-y-4 px-4 sm:px-5 lg:px-6">
+              <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
+                Try a question
+              </h2>
               <ExampleGraphQuestion className="flex w-full max-w-none flex-col" />
             </div>
-          </div>
+          </section>
+        </>
+      ) : (
+        <>
+          {/* Control hero */}
+          <section className="relative overflow-x-clip bg-[#0A0F1D] pt-5 pb-6 lg:pt-6 lg:pb-8">
+            <div className="relative mx-auto max-w-[1400px] space-y-4 px-4 sm:px-5 lg:space-y-5 lg:px-6">
+              <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.15fr)] lg:gap-8 xl:gap-10">
+                <div className="flex min-w-0 flex-col justify-center gap-3.5 sm:gap-4 lg:gap-5 [container-type:inline-size]">
+                  <h1 className="font-display font-bold leading-[1.05] tracking-[-0.04em] [font-size:clamp(2rem,min(0.8rem+5vw,13cqi),4.75rem)]">
+                    <span className="whitespace-nowrap">
+                      The leading{" "}
+                      <span
+                        className="group relative inline-block cursor-help"
+                        tabIndex={0}
+                        aria-describedby="esat-definition"
+                      >
+                        <span className="text-underline-accent">ESAT</span>
+                        <span
+                          id="esat-definition"
+                          role="tooltip"
+                          className="pointer-events-none absolute left-0 top-full z-20 mt-3 w-[min(22rem,calc(100vw-2rem))] rounded-lg bg-[#161D2F] px-4 py-3 text-left text-sm font-normal leading-relaxed tracking-normal text-[#94A3B8] opacity-0 shadow-xl transition-opacity duration-150 group-hover:opacity-100 group-focus:opacity-100 sm:w-[24rem]"
+                        >
+                          The ESAT is the Engineering and Science Admissions Test
+                          for undergraduate STEM applicants. It is a mandatory
+                          entrance exam for engineering, science, and medical
+                          courses at Cambridge, Oxford, Imperial College London,
+                          and UCL.
+                        </span>
+                      </span>
+                    </span>
+                    <span className="block whitespace-nowrap">question bank</span>
+                  </h1>
+                  <p className="max-w-2xl text-lg leading-relaxed text-[#94A3B8] sm:text-xl lg:text-2xl">
+                    Practice with our{" "}
+                    <span className="text-underline-accent text-white">
+                      {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ practice
+                      questions
+                    </span>{" "}
+                    and{" "}
+                    <span className="text-underline-accent text-white">
+                      {MENTAL_MATHS_MODULE_COUNT_MARKETING}+ mental maths courses
+                    </span>
+                    .
+                  </p>
+                  <div className="space-y-2.5">
+                    <div className="flex flex-col gap-3 sm:flex-row">
+                      <Link
+                        href={CALIBRATION_ROUTES.hub}
+                        onClick={() =>
+                          void trackHomepageEvent("calibration_cta_clicked", {
+                            ...heroAnalytics,
+                            destination: CALIBRATION_ROUTES.hub,
+                          })
+                        }
+                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-7 py-3.5 text-base font-bold text-[#0A0F1D] shadow-[0_0_28px_rgba(255,255,255,0.22),0_8px_24px_rgba(0,0,0,0.28)] transition-all hover:scale-[1.03] hover:bg-slate-100 hover:shadow-[0_0_36px_rgba(255,255,255,0.32),0_10px_28px_rgba(0,0,0,0.32)] active:scale-[0.98] sm:text-lg"
+                      >
+                        Start calibration
+                        <span aria-hidden className="text-lg leading-none">
+                          →
+                        </span>
+                      </Link>
+                      <Link
+                        href="/login?mode=signup"
+                        className="inline-flex items-center justify-center rounded-lg border border-white/20 px-6 py-3.5 text-base font-bold text-white transition-all hover:bg-white/5"
+                      >
+                        Sign up
+                      </Link>
+                    </div>
+                    <p className="text-sm text-[#94A3B8] sm:text-base">
+                      Calibration is free. No sign-up required to get started.
+                    </p>
+                  </div>
+                </div>
 
-          <div className="rounded-2xl bg-white/[0.08] px-4 py-3.5 backdrop-blur-xl sm:px-5 sm:py-4">
-            <div className="flex w-full flex-col gap-5 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
-              <div className="flex min-w-0 items-start gap-3.5 sm:items-center sm:gap-4">
-                <Link
-                  href={`${ABOUT_PATH}#${FOUNDERS.ewan.id}`}
-                  className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-[#161D2F] sm:h-16 sm:w-16"
-                >
-                  <Image
-                    src={FOUNDERS.ewan.imageSrc}
-                    alt={FOUNDERS.ewan.imageAlt}
-                    fill
-                    sizes="64px"
-                    className="object-cover"
-                    style={{
-                      objectPosition: FOUNDERS.ewan.imagePosition,
-                      transform: `scale(${FOUNDERS.ewan.imageScale})`,
-                    }}
-                    priority
-                  />
-                </Link>
-                <div className="min-w-0 space-y-1">
-                  <p className="text-sm font-bold leading-snug text-white sm:text-base lg:text-lg">
-                    Hi, I&apos;m{" "}
-                    <Link
-                      href={`${ABOUT_PATH}#${FOUNDERS.ewan.id}`}
-                      className="text-underline-accent transition-colors hover:text-[#93C5FD]"
-                    >
-                      {FOUNDERS.ewan.name}
-                    </Link>
-                    , co-founder of ESAT Camp.
-                  </p>
-                  <p className="text-xs leading-relaxed text-[#94A3B8] sm:text-sm">
-                    Our goal is to build the platform we wish we had for the ESAT.
-                  </p>
+                <div className="flex min-h-0 min-w-0 w-full">
+                  <ExampleGraphQuestion className="flex w-full max-w-none flex-col" />
                 </div>
               </div>
 
-              {socialProofSlot}
+              <div className="rounded-2xl bg-white/[0.08] px-4 py-3.5 backdrop-blur-xl sm:px-5 sm:py-4">
+                <div className="flex w-full flex-col gap-5 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
+                  <div className="flex min-w-0 items-start gap-3.5 sm:items-center sm:gap-4">
+                    <Link
+                      href={`${ABOUT_PATH}#${FOUNDERS.ewan.id}`}
+                      className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-[#161D2F] sm:h-16 sm:w-16"
+                    >
+                      <Image
+                        src={FOUNDERS.ewan.imageSrc}
+                        alt={FOUNDERS.ewan.imageAlt}
+                        fill
+                        sizes="64px"
+                        className="object-cover"
+                        style={{
+                          objectPosition: FOUNDERS.ewan.imagePosition,
+                          transform: `scale(${FOUNDERS.ewan.imageScale})`,
+                        }}
+                        priority
+                      />
+                    </Link>
+                    <div className="min-w-0 space-y-1">
+                      <p className="text-sm font-bold leading-snug text-white sm:text-base lg:text-lg">
+                        Hi, I&apos;m{" "}
+                        <Link
+                          href={`${ABOUT_PATH}#${FOUNDERS.ewan.id}`}
+                          className="text-underline-accent transition-colors hover:text-[#93C5FD]"
+                        >
+                          {FOUNDERS.ewan.name}
+                        </Link>
+                        , co-founder of ESAT Camp.
+                      </p>
+                      <p className="text-xs leading-relaxed text-[#94A3B8] sm:text-sm">
+                        Our goal is to build the platform we wish we had for the
+                        ESAT.
+                      </p>
+                    </div>
+                  </div>
+
+                  {socialProofSlot}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
+          </section>
+        </>
+      )}
 
       {/* Calibration preview */}
       <section

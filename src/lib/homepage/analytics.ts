@@ -24,6 +24,9 @@ export interface HomepageAnalyticsProperties {
   destination?: string;
   traffic_source?: string;
   section?: string;
+  /** Homepage hero A/B assignment (`control` | `fear`). */
+  hero_variant?: string;
+  hero_experiment?: string;
 }
 
 export async function trackHomepageEvent(

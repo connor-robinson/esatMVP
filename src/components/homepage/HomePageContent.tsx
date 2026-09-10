@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { MarketingHomepage } from "@/components/home/MarketingHomepage";
+import type { HomepageHeroVariant } from "@/lib/homepage/heroAbTest";
 
 /**
  * Public marketing homepage for `/`.
@@ -9,8 +10,15 @@ import { MarketingHomepage } from "@/components/home/MarketingHomepage";
  */
 export function HomePageContent({
   socialProofSlot,
+  heroVariant = "control",
 }: {
   socialProofSlot?: ReactNode;
+  heroVariant?: HomepageHeroVariant;
 }) {
-  return <MarketingHomepage socialProofSlot={socialProofSlot} />;
+  return (
+    <MarketingHomepage
+      socialProofSlot={socialProofSlot}
+      heroVariant={heroVariant}
+    />
+  );
 }
