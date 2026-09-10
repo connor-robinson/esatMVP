@@ -71,6 +71,7 @@ export function AccessManualEntry() {
       tone="info"
       testId="access-manual-entry"
       actions={undefined}
+      cardClassName="min-h-[22rem] sm:min-h-[24rem]"
     >
       <p className="text-text-muted">
         Enter the access code provided by your school or programme.
@@ -94,8 +95,8 @@ export function AccessManualEntry() {
         </div>
       )}
 
-      <form onSubmit={onSubmit} className="mt-6">
-        <div className="flex items-center gap-2">
+      <form onSubmit={onSubmit} className="mt-12">
+        <div className="flex items-center gap-5">
           <input
             type="text"
             autoComplete="off"
@@ -103,17 +104,17 @@ export function AccessManualEntry() {
             value={token}
             onChange={(e) => setToken(e.target.value)}
             aria-label="Access code"
-            className="min-w-0 flex-1 rounded-xl border-0 bg-surface-mid px-3.5 py-2.5 text-sm text-text outline-none ring-0 placeholder:text-text-muted focus:outline-none focus:ring-0"
+            className="min-w-0 flex-1 rounded-xl border-0 bg-surface-mid px-4 py-3 text-base text-text outline-none ring-0 placeholder:text-text-muted focus:outline-none focus:ring-0"
             placeholder="Access code"
             data-testid="access-code-input"
           />
-          <button type="submit" className={`${ACCESS_CTA} shrink-0`}>
+          <button type="submit" className={`${ACCESS_CTA} shrink-0 px-10`}>
             Continue
           </button>
         </div>
       </form>
 
-      <div className="mt-6">
+      <div className="mt-12">
         <AccessTextLink href="/">Back to homepage</AccessTextLink>
       </div>
     </AccessOutcomeCard>

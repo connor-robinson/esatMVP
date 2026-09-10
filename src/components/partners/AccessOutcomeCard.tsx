@@ -35,6 +35,8 @@ interface AccessOutcomeCardProps {
   testId?: string;
   loading?: boolean;
   loadingLabel?: string;
+  /** Extra classes on the card shell (e.g. min-height for the entry page). */
+  cardClassName?: string;
 }
 
 /**
@@ -50,6 +52,7 @@ export function AccessOutcomeCard({
   testId,
   loading = false,
   loadingLabel = "Loading…",
+  cardClassName,
 }: AccessOutcomeCardProps) {
   return (
     <main
@@ -59,7 +62,10 @@ export function AccessOutcomeCard({
       <Container size="md" className="w-full">
         <Card
           variant="elevated"
-          className="relative mx-auto w-full max-w-[60rem] overflow-hidden border-0 p-8 sm:p-10"
+          className={cn(
+            "relative mx-auto w-full max-w-[60rem] overflow-hidden border-0 p-8 sm:p-10",
+            cardClassName,
+          )}
         >
           <div
             aria-hidden
