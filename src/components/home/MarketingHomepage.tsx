@@ -226,18 +226,15 @@ export function MarketingHomepage({
               Revise for the ESAT
             </h1>
             <p className="max-w-xl text-base leading-relaxed text-[#94A3B8] sm:text-lg">
-              ESAT CAMP provides a question bank, mental maths, past papers and
-              downloads, score conversion and mock exams for Maths, Physics,
-              Chemistry and Biology - plus{" "}
+              With our{" "}
               <span className="font-semibold text-white">
-                {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ tutor-written
-                questions
+                {QUESTION_BANK_TOTAL_COUNT.toLocaleString()}+ questions
               </span>{" "}
-              and{" "}
+              written by our Oxbridge tutors,{" "}
               <span className="font-semibold text-white">
                 {MENTAL_MATHS_MODULE_COUNT_MARKETING} mental maths drills
               </span>
-              .
+              , and more.
             </p>
             <div className="flex flex-wrap items-center gap-3 pt-1">
               <Link
