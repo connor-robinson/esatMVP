@@ -113,7 +113,7 @@ export function AccessManualEntry() {
         </div>
       </form>
 
-      <div className="mt-24 sm:mt-28">
+      <div className="mt-10 sm:mt-12">
         <AccessTextLink href="/">Back to homepage</AccessTextLink>
       </div>
     </AccessOutcomeCard>
