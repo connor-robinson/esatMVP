@@ -33,6 +33,18 @@ export interface PartnerDetailStats extends PartnerListStats {
   avgUsefulness: number | null;
   avgRecommendation: number | null;
   featureBreakdown: Record<string, number>;
+  /** Resolved preference (toggle or inferred mid-session stay-on-new). */
+  qbUiSurveyBreakdown: {
+    esat: number;
+    classic: number;
+    unanswered: number;
+  };
+  /** Current chrome in use. */
+  qbUiVariantBreakdown: {
+    esat: number;
+    classic: number;
+    unset: number;
+  };
   feedbackRows: Array<{
     id: string;
     usefulnessRating: number;
@@ -272,6 +284,38 @@ export async function getPartnerDetailStats(
     }
   }
 
+  const qbUiSurveyBreakdown = { esat: 0, classic: 0, unanswered: 0 };
+  const qbUiVariantBreakdown = { esat: 0, classic: 0, unset: 0 };
+  if (userIds.length > 0) {
+    const { data: uiPrefs } = await service
+      .from("profiles")
+      .select("id, qb_session_ui_variant, qb_session_ui_survey_choice")
+      .in("id", userIds);
+
+    const byId = new Map(
+      (uiPrefs ?? []).map((row) => [
+        row.id as string,
+        {
+          variant: row.qb_session_ui_variant as string | null,
+          survey: row.qb_session_ui_survey_choice as string | null,
+        },
+      ]),
+    );
+
+    for (const userId of userIds) {
+      const pref = byId.get(userId);
+      const survey = pref?.survey ?? null;
+      const variant = pref?.variant ?? null;
+      if (survey === "esat") qbUiSurveyBreakdown.esat += 1;
+      else if (survey === "classic") qbUiSurveyBreakdown.classic += 1;
+      else qbUiSurveyBreakdown.unanswered += 1;
+
+      if (variant === "esat") qbUiVariantBreakdown.esat += 1;
+      else if (variant === "classic") qbUiVariantBreakdown.classic += 1;
+      else qbUiVariantBreakdown.unset += 1;
+    }
+  }
+
   const { data: feedback } = await service
     .from("partner_feedback")
     .select(
@@ -349,6 +393,8 @@ export async function getPartnerDetailStats(
     avgUsefulness: usefulnessN ? usefulnessSum / usefulnessN : null,
     avgRecommendation: recN ? recSum / recN : null,
     featureBreakdown,
+    qbUiSurveyBreakdown,
+    qbUiVariantBreakdown,
     feedbackRows: (feedback ?? []).map((f) => ({
       id: f.id as string,
       usefulnessRating: f.usefulness_rating as number,
