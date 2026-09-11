@@ -11,7 +11,6 @@ import {
 import Link from "next/link";
 import { CheckCircle2, Loader2, X } from "lucide-react";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
-import { useAnalyticsConsent } from "@/components/ga/AnalyticsConsentProvider";
 import { Button } from "@/components/ui/Button";
 import { trackEvent } from "@/lib/ga/trackEvent";
 import {
@@ -80,7 +79,6 @@ function clearDraft() {
 export function SupportPanel() {
   const support = useOptionalSupport();
   const session = useSupabaseSession();
-  const { preferencesOpen } = useAnalyticsConsent();
   const titleId = useId();
   const descId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
@@ -262,9 +260,8 @@ export function SupportPanel() {
     }
   };
 
-  const anchorBottom = preferencesOpen
-    ? "bottom-[calc(11rem+env(safe-area-inset-bottom,0px))] sm:bottom-[calc(10rem+env(safe-area-inset-bottom,0px))]"
-    : "bottom-[calc(4.75rem+env(safe-area-inset-bottom,0px))] sm:bottom-[calc(5rem+env(safe-area-inset-bottom,0px))]";
+  const anchorBottom =
+    "bottom-[calc(4.75rem+env(safe-area-inset-bottom,0px))] sm:bottom-[calc(5rem+env(safe-area-inset-bottom,0px))]";
 
   return (
     <>

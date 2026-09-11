@@ -3,7 +3,6 @@
 import { MessageCircleQuestion, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
-import { useAnalyticsConsent } from "@/components/ga/AnalyticsConsentProvider";
 import { trackEvent } from "@/lib/ga/trackEvent";
 import { shouldShowSupportLauncher } from "@/lib/support/visibility";
 import { cn } from "@/lib/utils";
@@ -17,7 +16,6 @@ export function SupportLauncher() {
   const support = useOptionalSupport();
   const session = useSupabaseSession();
   const pathname = usePathname();
-  const { preferencesOpen } = useAnalyticsConsent();
 
   if (!support || !session?.user) return null;
   if (!shouldShowSupportLauncher(pathname)) return null;
@@ -28,9 +26,7 @@ export function SupportLauncher() {
     <div
       className={cn(
         "pointer-events-none fixed z-[101] flex justify-end",
-        preferencesOpen
-          ? "bottom-[calc(11rem+env(safe-area-inset-bottom,0px))] right-[max(1rem,env(safe-area-inset-right,0px))] sm:bottom-[calc(10rem+env(safe-area-inset-bottom,0px))]"
-          : "bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))] right-[max(1rem,env(safe-area-inset-right,0px))] sm:bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))]",
+        "bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))] right-[max(1rem,env(safe-area-inset-right,0px))] sm:bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))]",
       )}
     >
       <button

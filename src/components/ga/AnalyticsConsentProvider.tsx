@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { usePathname } from "next/navigation";
 import {
   ANALYTICS_CONSENT_CHANGE_EVENT,
   ANALYTICS_CONSENT_STORAGE_KEY,
@@ -24,6 +25,7 @@ import {
   type AnalyticsConsentStatus,
 } from "@/lib/ga";
 import { clearGaUserId, setGaUserId } from "@/lib/ga/setUserId";
+import { shouldHideSiteChromeForPaper } from "@/lib/papers/activePaperSessionClient";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 
 type AnalyticsConsentContextValue = {
@@ -45,6 +47,8 @@ export function AnalyticsConsentProvider({
   children: ReactNode;
 }) {
   const session = useSupabaseSession();
+  const pathname = usePathname();
+  const immersive = shouldHideSiteChromeForPaper(pathname);
   const [status, setStatus] = useState<AnalyticsConsentStatus>("pending");
   const [hydrated, setHydrated] = useState(false);
   const [preferencesOpen, setPreferencesOpen] = useState(false);
@@ -55,7 +59,8 @@ export function AnalyticsConsentProvider({
 
     const stored = readAnalyticsConsent();
     setStatus(stored);
-    setPreferencesOpen(stored === "pending");
+    // Never open the banner on first paint. Pending visitors get a delayed reveal.
+    setPreferencesOpen(false);
     setHydrated(true);
 
     if (stored === "accepted") {
@@ -74,6 +79,49 @@ export function AnalyticsConsentProvider({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional mount hydrate
   }, []);
 
+  /**
+   * First-visit reveal: never immediate, and never during immersive exams
+   * (calibration test / Pearson papers). Scroll after a quiet period, or a
+   * longer idle fallback. Manual "Cookie preferences" still opens immediately.
+   */
+  useEffect(() => {
+    if (!hydrated || status !== "pending" || preferencesOpen || immersive) {
+      return;
+    }
+
+    let cancelled = false;
+    let revealed = false;
+    const startedAt = Date.now();
+    const MIN_MS = 6_000;
+    const FALLBACK_MS = 14_000;
+
+    const reveal = () => {
+      if (cancelled || revealed) return;
+      // Re-check route at fire time so we never cover an exam mid-timer.
+      if (shouldHideSiteChromeForPaper(window.location.pathname)) return;
+      revealed = true;
+      setPreferencesOpen(true);
+    };
+
+    const tryRevealFromScroll = () => {
+      if (Date.now() - startedAt < MIN_MS) return;
+      if (window.scrollY < 160) return;
+      reveal();
+    };
+
+    const fallbackTimer = window.setTimeout(reveal, FALLBACK_MS);
+    const minTimer = window.setTimeout(tryRevealFromScroll, MIN_MS);
+
+    window.addEventListener("scroll", tryRevealFromScroll, { passive: true });
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(fallbackTimer);
+      window.clearTimeout(minTimer);
+      window.removeEventListener("scroll", tryRevealFromScroll);
+    };
+  }, [hydrated, status, preferencesOpen, immersive]);
+
   useEffect(() => {
     if (status === "accepted" && session?.user?.id) {
       setGaUserId(session.user.id);
@@ -85,7 +133,8 @@ export function AnalyticsConsentProvider({
       if (event.key !== ANALYTICS_CONSENT_STORAGE_KEY) return;
       const next = readAnalyticsConsent();
       setStatus(next);
-      setPreferencesOpen(next === "pending");
+      // Pending again (cleared in another tab): close and let the delayed reveal re-arm.
+      setPreferencesOpen(false);
     };
     const onConsentChange = () => {
       const next = readAnalyticsConsent();
@@ -137,9 +186,8 @@ export function AnalyticsConsentProvider({
   }, []);
 
   const closePreferences = useCallback(() => {
-    // Only allow dismiss without a choice on first visit? UK wants an explicit
-    // choice — keep banner until Accept or Reject. If reopening after a choice,
-    // closing without changing keeps the prior decision.
+    // Keep banner until Accept or Reject on first visit. If reopening after a
+    // choice, closing without changing keeps the prior decision.
     if (status !== "pending") {
       setPreferencesOpen(false);
     }
