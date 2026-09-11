@@ -1,16 +1,11 @@
 /**
  * ESAT Mathematics 1 prediction model - versioned scoring config + engine.
  *
- * Model version: math1_calibration_score_v1
+ * Model version: math1_calibration_score_v3 (MAP 3PL on final form).
  *
  * This is a PROVISIONAL, private prediction model. It is not the official ESAT
  * scoring model (which is not public), and every user-facing number derived from
- * it must be labelled as an estimate. The whole model is intentionally isolated
- * in this one file, driven by exported constants, so it can be recalibrated or
- * replaced wholesale in a later version without touching UI or storage code.
- *
- * Everything here is a pure function of the raw attempt + this config, so a
- * stored result can always be recomputed / re-versioned from raw answer data.
+ * it must be labelled as an estimate. Timing does not affect the estimated score.
  */
 
 import {
@@ -20,6 +15,12 @@ import {
   type CalibrationDifficulty,
 } from "./config";
 import { CALIBRATION_TIME_LIMIT_SECONDS } from "./constants";
+import {
+  HIGH_CEILING_QUESTION_IDS,
+  anchorInterpretation,
+  estimateMaths1Score,
+  scoreModelQuestionsFromConfig,
+} from "./scoreModel";
 import type {
   CalibrationAttempt,
   EsatBand,
@@ -29,56 +30,40 @@ import type {
 } from "./types";
 
 /* ------------------------------------------------------------------ *
- * 1. Versioned model constants (edit here to recalibrate the model).
+ * 1. Versioned model constants.
  * ------------------------------------------------------------------ */
 
-export const SCORING_MODEL_VERSION = "math1_calibration_score_v1";
+export const SCORING_MODEL_VERSION = "math1_calibration_score_v3";
 
-/** Per-question weighted point values (difficulty-based). Total = 214. */
-export const QUESTION_POINTS: Record<string, number> = {
-  "m1cal-q01": 10,
-  "m1cal-q02": 10,
-  "m1cal-q03": 14,
-  "m1cal-q04": 14,
-  "m1cal-q05": 10,
-  "m1cal-q06": 14,
-  "m1cal-q07": 14,
-  "m1cal-q08": 14,
-  "m1cal-q09": 19,
-  "m1cal-q10": 10,
-  "m1cal-q11": 19,
-  "m1cal-q12": 19,
-  "m1cal-q13": 19,
-  "m1cal-q14": 14,
-  "m1cal-q15": 14,
+/** Difficulty-based display weights (UI contributions / recommendations). */
+const DIFFICULTY_POINTS: Record<CalibrationDifficulty, number> = {
+  accessible: 10,
+  medium: 14,
+  difficult: 19,
 };
 
-export const MAX_WEIGHTED_POINTS = 214;
+export const QUESTION_POINTS: Record<string, number> = Object.fromEntries(
+  CALIBRATION_QUESTIONS.map((q) => [q.id, DIFFICULTY_POINTS[q.difficulty] ?? 14]),
+);
 
-/** A guessed-correct answer is weaker evidence of stable ability. */
+export const MAX_WEIGHTED_POINTS = Object.values(QUESTION_POINTS).reduce(
+  (sum, n) => sum + n,
+  0,
+);
+
+/** A guessed-correct answer is weaker evidence for ranking / recommendations. */
 export const ABILITY_GUESS_CORRECT_MULTIPLIER = 0.45;
 
 /** The real ESAT Math 1 section has 27 MCQs. */
 export const REAL_SECTION_QUESTION_COUNT = 27;
 
-/** Hard (difficult) calibration questions, used for the ranking index. */
-export const HARD_QUESTION_IDS = ["m1cal-q09", "m1cal-q11", "m1cal-q12", "m1cal-q13"];
+/** High-ceiling calibration questions (ranking / separators). */
+export const HARD_QUESTION_IDS = [...HIGH_CEILING_QUESTION_IDS];
 
 /** Percentile is hidden until this many valid attempts exist platform-wide. */
 export const MINIMUM_ATTEMPTS_FOR_PERCENTILE = 200;
 
-/** Uncertainty model (drives the estimated score range). */
-export const UNCERTAINTY_MODEL = {
-  base: 0.55,
-  perCorrectGuess: 0.07,
-  perSkip: 0.12,
-  overtime: 0.25,
-  perPairDisagreement: 0.06,
-  min: 0.5,
-  max: 1.4,
-} as const;
-
-/** Ranking index weights (must sum to 1). */
+/** Ranking index weights (must sum to 1). Timing excluded from score estimate. */
 export const RANKING_WEIGHTS = {
   abilityWeightedPercent: 0.58,
   hardWeightedPercent: 0.17,
@@ -153,9 +138,8 @@ export function roundToOneDecimal(n: number): number {
 }
 
 /**
- * Provisional private raw(/27) → estimated ESAT score (1.0–9.0) mapping.
- * Replace this function (and bump SCORING_MODEL_VERSION) when empirical data
- * allows a fitted mapping.
+ * Legacy helper retained for tests/tools that still speak in projected /27 terms.
+ * Live estimate uses MAP 3PL (`estimateMaths1Score`) instead.
  */
 export function raw27ToEstimatedEsatScore(raw27: number): number {
   let score: number;
@@ -276,25 +260,23 @@ function difficultyLabel(difficulty: CalibrationDifficulty): string {
 function buildRecommendation(rows: Map<string, QRow>): EsatRecommendation | null {
   const all = [...rows.values()];
 
-  // Per-question weakness priority (correct answers contribute 0).
   const perQuestion = all.map((r) => {
     const nonGuessMultiplier = r.correct
       ? 0
       : r.skipped
         ? 1.0
         : r.guessed
-          ? 0.85 // wrong + guessed = weaker evidence
-          : 1.2; // wrong + not guessed = strong evidence
+          ? 0.85
+          : 1.2;
     const diffMultiplier = difficultyMultiplier(r.difficulty);
     const partner = r.pairedQuestionId ? rows.get(r.pairedQuestionId) : undefined;
-    const pairWeakness = partner ? !partner.correct : false; // partner also wrong/skipped
+    const pairWeakness = partner ? !partner.correct : false;
     const pairMultiplier = pairWeakness ? 1.25 : 1.0;
-    const pointsLost = r.points; // only non-correct questions have nonGuessMultiplier > 0
+    const pointsLost = r.points;
     const priority = pointsLost * nonGuessMultiplier * diffMultiplier * pairMultiplier;
     return { row: r, priority, pairWeakness };
   });
 
-  // Aggregate priority by curriculum topic.
   const byTopic = new Map<string, { tag: string; title: string; priority: number }>();
   for (const pq of perQuestion) {
     if (pq.priority <= 0) continue;
@@ -311,7 +293,6 @@ function buildRecommendation(rows: Map<string, QRow>): EsatRecommendation | null
   const topTopic = [...byTopic.values()].sort((a, b) => b.priority - a.priority)[0];
   if (!topTopic) return null;
 
-  // Highest-priority individual question inside the winning topic, for the reason.
   const topQuestion = perQuestion
     .filter((pq) => pq.row.topicTag === topTopic.tag && pq.priority > 0)
     .sort((a, b) => b.priority - a.priority)[0];
@@ -322,7 +303,7 @@ function buildRecommendation(rows: Map<string, QRow>): EsatRecommendation | null
     : r.guessed
       ? "which you marked as a guess"
       : "and this was not marked as guessed";
-  const reason = `You lost ${r.points} weighted points on Q${r.order}, a ${difficultyLabel(
+  const reason = `You missed marks on Q${r.order}, a ${difficultyLabel(
     r.difficulty,
   ).toLowerCase()} ${topTopic.title.toLowerCase()} question, ${statusPhrase}.${
     topQuestion.pairWeakness
@@ -352,26 +333,56 @@ export function computeEsatPrediction(attempt: CalibrationAttempt): EsatPredicti
   const rows = deriveRows(attempt);
   const all = [...rows.values()];
 
-  /* ---- raw / weighted ---- */
   const rawCorrect15 = all.filter((r) => r.correct).length;
   const rawPercent15 = rawCorrect15 / CALIBRATION_QUESTIONS.length;
 
   const observedWeightedPoints = all.reduce((s, r) => s + r.points * r.observedCredit, 0);
   const abilityWeightedPoints = all.reduce((s, r) => s + r.points * r.abilityCredit, 0);
-  const observedWeightedPercent = observedWeightedPoints / MAX_WEIGHTED_POINTS;
-  const abilityWeightedPercent = abilityWeightedPoints / MAX_WEIGHTED_POINTS;
+  const observedWeightedPercent =
+    MAX_WEIGHTED_POINTS > 0 ? observedWeightedPoints / MAX_WEIGHTED_POINTS : 0;
+  const abilityWeightedPercent =
+    MAX_WEIGHTED_POINTS > 0 ? abilityWeightedPoints / MAX_WEIGHTED_POINTS : 0;
 
-  /* ---- projected raw /27 ---- */
   const projectedRaw27 = roundToOneDecimal(REAL_SECTION_QUESTION_COUNT * abilityWeightedPercent);
   const observedProjectedRaw27 = roundToOneDecimal(
     REAL_SECTION_QUESTION_COUNT * observedWeightedPercent,
   );
 
-  /* ---- estimated ESAT score ---- */
-  const estimatedEsatScore = raw27ToEstimatedEsatScore(projectedRaw27);
-  const observedEsatScore = raw27ToEstimatedEsatScore(observedProjectedRaw27);
+  const scoreQuestions = scoreModelQuestionsFromConfig();
+  const scoreResponses = CALIBRATION_QUESTIONS.map((q) => ({
+    questionId: q.id,
+    selectedOption: attempt.questions[q.id]?.finalSelectedOption ?? null,
+    timeSeconds: attempt.questions[q.id]?.timeSpentMs
+      ? attempt.questions[q.id].timeSpentMs / 1000
+      : undefined,
+  }));
+  const estimate = estimateMaths1Score(scoreQuestions, scoreResponses);
 
-  /* ---- timing ---- */
+  const hasEstimate =
+    estimate.evidenceLabel === "provisional" &&
+    estimate.estimatedScore != null &&
+    estimate.estimatedRange != null;
+
+  const estimatedEsatScore = hasEstimate ? estimate.estimatedScore : null;
+  const estimatedScoreLow = hasEstimate ? estimate.estimatedRange![0] : null;
+  const estimatedScoreHigh = hasEstimate ? estimate.estimatedRange![1] : null;
+  const observedEsatScore = hasEstimate
+    ? estimatedEsatScore
+    : null;
+  const scoreUncertainty =
+    hasEstimate && estimatedScoreLow != null && estimatedScoreHigh != null
+      ? roundToOneDecimal((estimatedScoreHigh - estimatedScoreLow) / 2)
+      : null;
+
+  const bandInfo =
+    estimatedEsatScore != null
+      ? esatBandFor(estimatedEsatScore)
+      : {
+          band: "around_middle" as EsatBand,
+          label: "Not enough evidence",
+          message: `Not enough evidence for an estimated range. You answered ${estimate.answeredCount} of 15 questions.`,
+        };
+
   const summedSeconds = all.reduce((s, r) => {
     const q = attempt.questions[r.id];
     return s + (q?.timeSpentMs ? q.timeSpentMs / 1000 : 0);
@@ -379,14 +390,11 @@ export function computeEsatPrediction(attempt: CalibrationAttempt): EsatPredicti
   const totalTimeSeconds = Math.round(attempt.totalTimeSeconds ?? summedSeconds);
   const timeLimit = attempt.timeLimitSeconds || CALIBRATION_TIME_LIMIT_SECONDS;
   const overtimeSeconds = Math.max(0, totalTimeSeconds - timeLimit);
-  // Small tolerance for timer/rounding jitter around the hard stop.
   const completedWithinTimeLimit = totalTimeSeconds <= timeLimit + 2;
 
-  /* ---- guessing ---- */
   const guessedCount = all.filter((r) => r.guessed).length;
   const correctGuessCount = all.filter((r) => r.guessed && r.correct).length;
   const incorrectGuessCount = all.filter((r) => r.guessed && r.attempted && !r.correct).length;
-  const skippedCount = all.filter((r) => r.skipped).length;
 
   const attemptedNotGuessed = all.filter((r) => r.attempted && !r.guessed);
   const correctNotGuessed = attemptedNotGuessed.filter((r) => r.correct).length;
@@ -394,32 +402,9 @@ export function computeEsatPrediction(attempt: CalibrationAttempt): EsatPredicti
     attemptedNotGuessed.length > 0 ? correctNotGuessed / attemptedNotGuessed.length : null;
   const nonGuessedAccuracyIndex = nonGuessedAccuracy ?? 0;
 
-  /* ---- pairs / consistency ---- */
   const pairDisagreements = pairDisagreementCount(rows);
   const consistencyScore = 1 - Math.min(pairDisagreements / 6, 1);
 
-  /* ---- score range (uncertainty) ---- */
-  const u = UNCERTAINTY_MODEL;
-  const scoreUncertainty = clamp(
-    u.base +
-      u.perCorrectGuess * correctGuessCount +
-      u.perSkip * skippedCount +
-      (completedWithinTimeLimit ? 0 : u.overtime) +
-      u.perPairDisagreement * pairDisagreements,
-    u.min,
-    u.max,
-  );
-  const estimatedScoreLow = roundToOneDecimal(
-    clamp(estimatedEsatScore - scoreUncertainty, 1.0, 9.0),
-  );
-  const estimatedScoreHigh = roundToOneDecimal(
-    clamp(estimatedEsatScore + scoreUncertainty, 1.0, 9.0),
-  );
-
-  /* ---- band ---- */
-  const { band, label: bandLabel, message: bandMessage } = esatBandFor(estimatedEsatScore);
-
-  /* ---- ranking index ---- */
   const hardRows = HARD_QUESTION_IDS.map((id) => rows.get(id)).filter((r): r is QRow => !!r);
   const hardAbilityPoints = hardRows.reduce((s, r) => s + r.points * r.abilityCredit, 0);
   const hardMaxPoints = hardRows.reduce((s, r) => s + r.points, 0);
@@ -437,15 +422,11 @@ export function computeEsatPrediction(attempt: CalibrationAttempt): EsatPredicti
     100,
   );
 
-  /* ---- guess-adjusted note + interpretation ---- */
   let guessNote: string | null = null;
   if (correctGuessCount > 0) {
     guessNote = `${correctGuessCount} correct answer${
       correctGuessCount === 1 ? " was" : "s were"
-    } marked as guessed, so your ability estimate was adjusted slightly downward.`;
-    if (correctGuessCount >= 2) {
-      guessNote += " Your range is wider because some correct answers were marked as guessed.";
-    }
+    } marked as guessed. That does not change the estimated range, but treat those items carefully in review.`;
   }
 
   let guessingInterpretation: string;
@@ -454,7 +435,7 @@ export function computeEsatPrediction(attempt: CalibrationAttempt): EsatPredicti
       "You guessed on several questions and often missed them. Focus on eliminating options systematically rather than guessing randomly.";
   } else if (correctGuessCount >= 2) {
     guessingInterpretation =
-      "Some of your score came from answers marked as guessed. That is normal in a multiple-choice test, but it makes the prediction less certain.";
+      "Some of your correct answers were marked as guessed. That is normal in a multiple-choice test; review those items to confirm the method.";
   } else if (guessedCount === 0 && rawPercent15 >= 0.7) {
     guessingInterpretation =
       "Your score is based mostly on non-guessed answers, so the estimate is more stable.";
@@ -463,10 +444,9 @@ export function computeEsatPrediction(attempt: CalibrationAttempt): EsatPredicti
       "You did not mark any guesses, but several answers were incorrect. Use the guess marker honestly next time so your diagnosis is more accurate.";
   } else {
     guessingInterpretation =
-      "You marked a small number of guesses, which is factored into your ability estimate.";
+      "You marked a small number of guesses. Pace feedback is separate from the estimated range.";
   }
 
-  /* ---- per-question contributions ---- */
   const contributions: EsatQuestionContribution[] = all
     .sort((a, b) => a.order - b.order)
     .map((r) => ({
@@ -483,7 +463,6 @@ export function computeEsatPrediction(attempt: CalibrationAttempt): EsatPredicti
       scoreContribution: roundToOneDecimal(r.points * r.abilityCredit),
     }));
 
-  /* ---- recommendation ---- */
   const recommendation = buildRecommendation(rows);
 
   return {
@@ -506,11 +485,11 @@ export function computeEsatPrediction(attempt: CalibrationAttempt): EsatPredicti
     observedEsatScore,
     estimatedScoreLow,
     estimatedScoreHigh,
-    scoreUncertainty: roundToOneDecimal(scoreUncertainty),
+    scoreUncertainty,
 
-    band,
-    bandLabel,
-    bandMessage,
+    band: bandInfo.band,
+    bandLabel: bandInfo.label,
+    bandMessage: hasEstimate ? bandInfo.message : bandInfo.message,
 
     guessedCount,
     correctGuessCount,
@@ -532,5 +511,13 @@ export function computeEsatPrediction(attempt: CalibrationAttempt): EsatPredicti
 
     contributions,
     recommendation,
+
+    hasEstimate,
+    evidenceLabel: estimate.evidenceLabel,
+    answeredCount: estimate.answeredCount,
+    foundationCorrect: estimate.foundationCorrect,
+    coreCorrect: estimate.coreCorrect,
+    highCeilingCorrect: estimate.highCeilingCorrect,
+    anchorInterpretation: anchorInterpretation(estimate),
   };
 }

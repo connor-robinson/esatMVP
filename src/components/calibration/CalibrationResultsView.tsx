@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -7,10 +7,13 @@ import { Button } from "@/components/ui/Button";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 import { TimeScatterChart } from "@/components/papers/TimeScatterChart";
 import { BreakdownDonutChart, type DonutSlice } from "@/components/questionBank/BreakdownDonutChart";
+import { CalibrationQuestionReviewPlayer } from "@/components/calibration/CalibrationQuestionReviewPlayer";
 import { trackCalibrationEvent, type CalibrationUserState } from "@/lib/calibration/analytics";
 import { getCalibrationQuestion } from "@/lib/calibration/config";
+import { SKILL_DISPLAY_GROUPS } from "@/lib/calibration/scoreModel";
 import type { CalibrationResults } from "@/lib/calibration/types";
 import { StemContent } from "@/components/shared/StemContent";
+import { cn } from "@/lib/utils";
 
 interface Props {
   results: CalibrationResults;
@@ -134,11 +137,18 @@ interface PercentileState {
   unlocked: boolean;
 }
 
+function mistakeTone(m: { skipped: boolean; correct: boolean }): string {
+  if (m.skipped) return "bg-surface-mid text-text-muted ring-1 ring-border-subtle/40";
+  if (m.correct) return "bg-success/15 text-success ring-1 ring-success/25";
+  return "bg-error/15 text-error ring-1 ring-error/25";
+}
+
 export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props) {
   const userState: CalibrationUserState = isSignedIn ? "free" : "signed_out";
   const p = results.prediction;
 
   const [percentile, setPercentile] = useState<PercentileState | null>(null);
+  const [reviewQuestionId, setReviewQuestionId] = useState<string | null>(null);
 
   useEffect(() => {
     void trackCalibrationEvent("calibration_results_viewed", {
@@ -146,8 +156,10 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
       attempt_id: attemptId,
       readiness_band: results.readinessBand,
       primary_weakness: results.weaknesses[0]?.label,
+      assessment_version: "3.0.0",
+      raw_score: p.rawCorrect15,
     });
-  }, [attemptId, results.readinessBand, results.weaknesses, userState]);
+  }, [attemptId, p.rawCorrect15, results.readinessBand, results.weaknesses, userState]);
 
   useEffect(() => {
     let cancelled = false;
@@ -194,7 +206,6 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
     recommendation?.topicTitle ??
     topWeaknesses[0]?.label ??
     results.recommendedSession.targetSkill;
-  // Free-tier sample: open Math 1’s 10 preview questions from the question bank home.
   const questionBankHref = "/questions?startSubject=Math%201";
 
   const topicCounts = p.contributions.reduce<Record<string, number>>((counts, question) => {
@@ -218,6 +229,20 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
       fill: topicColours[index % topicColours.length],
     }));
 
+  const openReview = (questionId: string) => {
+    setReviewQuestionId(questionId);
+    void trackCalibrationEvent("calibration_question_review_opened", {
+      user_state: userState,
+      attempt_id: attemptId,
+      question_id: questionId,
+    });
+  };
+
+  const rangeValue =
+    p.hasEstimate && p.estimatedScoreLow != null && p.estimatedScoreHigh != null
+      ? `${p.estimatedScoreLow.toFixed(1)}-${p.estimatedScoreHigh.toFixed(1)}`
+      : "N/A";
+
   return (
     <div className="w-full space-y-6 py-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -226,7 +251,7 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
             Math 1 Calibration results
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-text-muted">
-            Based on this 15-question calibration, here are your results:
+            Based on this 15-question calibration
           </p>
         </div>
         <Link href="/exam-tools/calibration/math-1/test">
@@ -234,29 +259,41 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
         </Link>
       </div>
 
-      {/* Headline stats */}
       <div className="grid gap-3 sm:grid-cols-3">
         <StatPill
-          label="Estimated starting range"
-          value={`${p.estimatedScoreLow.toFixed(1)}–${p.estimatedScoreHigh.toFixed(1)}`}
+          label="Estimated ESAT range"
+          value={rangeValue}
           highlight
-          tooltip="Provisional estimate from this 15-question diagnostic. It is not an official ESAT score and should be treated as a starting range only."
+          tooltip="Provisional diagnostic estimate, not an official ESAT score. Your real result will also depend on the live paper and test-day conditions."
         />
+        <StatPill label="Calibration result" value={`${correct} / 15`} />
         <StatPill
-          label="Calibration result"
-          value={`${correct} / 15`}
-        />
-        <StatPill
-          label="Percentage correct"
-          value={`${Math.round(p.rawPercent15 * 100)}%`}
+          label="Questions answered"
+          value={`${p.answeredCount} / 15`}
         />
       </div>
 
-      <p className="px-1 text-sm text-text-muted">
-        Point estimate about {p.estimatedEsatScore.toFixed(1)} on the ESAT 1.0–9.0 scale
-        ({p.bandLabel}). Treat this as a provisional starting range until more response data
-        is available.
-      </p>
+      {p.hasEstimate && p.estimatedEsatScore != null ? (
+        <p className="px-1 text-sm text-text-muted">
+          Midpoint estimate: {p.estimatedEsatScore.toFixed(1)} ({p.bandLabel}).{" "}
+          <Link
+            href="/exam-tools/calibration/math-1#how-estimate-works"
+            className="font-semibold text-text underline-offset-2 hover:underline"
+            onClick={() =>
+              void trackCalibrationEvent("calibration_methodology_opened", {
+                user_state: userState,
+                attempt_id: attemptId,
+              })
+            }
+          >
+            How this estimate works
+          </Link>
+        </p>
+      ) : (
+        <p className="px-1 text-sm text-text-muted">{p.bandMessage}</p>
+      )}
+
+      <p className="px-1 text-sm text-text-muted">{p.anchorInterpretation}</p>
 
       <SuggestedNextSteps
         weakness={weakestTopic}
@@ -284,7 +321,34 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
         </div>
       ) : null}
 
-      {/* Charts */}
+      <Card variant="elevated" className="border-0 p-5 shadow-none sm:p-6">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h2 className="font-heading text-xl font-bold text-text">Jump to a question</h2>
+            <p className="mt-1 text-sm text-text-muted">
+              Green = correct, red = incorrect, grey = skipped. Open any item in the exam-style
+              review to see the full explanation.
+            </p>
+          </div>
+        </div>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {results.mistakes.map((m) => (
+            <button
+              key={m.questionId}
+              type="button"
+              onClick={() => openReview(m.questionId)}
+              className={cn(
+                "flex h-10 w-10 items-center justify-center rounded-lg text-sm font-bold tabular-nums transition hover:opacity-90",
+                mistakeTone(m),
+              )}
+              aria-label={`Review question ${m.order}`}
+            >
+              {m.order}
+            </button>
+          ))}
+        </div>
+      </Card>
+
       <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(22rem,1fr)]">
         <Card variant="elevated" className="border-0 p-5 shadow-none sm:p-6">
           <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
@@ -292,10 +356,12 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
               <h2 className="font-heading text-xl font-bold text-text">Accuracy and time</h2>
               <p className="mt-1 text-sm text-text-muted">
                 Each point is a question. Green = correct, red = wrong, ring = marked guess.
+                Timing is for pace feedback only and does not change the estimated range.
               </p>
             </div>
             <span className="rounded-full bg-surface-mid px-3 py-1.5 text-xs font-semibold text-text-muted">
-              {formatTime(p.totalTimeSeconds)} · {results.speedAccuracy.medianTimeRatio}x pace · {paceLabel}
+              {formatTime(p.totalTimeSeconds)} � {results.speedAccuracy.medianTimeRatio}x pace �{" "}
+              {paceLabel}
             </span>
           </div>
           <TimeScatterChart
@@ -330,7 +396,56 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
         </Card>
       </div>
 
-      {/* Guessing and certainty */}
+      <Card variant="elevated" className="border-0 p-5 shadow-none sm:p-6">
+        <h2 className="font-heading text-xl font-bold text-text">Anchor groups</h2>
+        <p className="mt-1 text-sm text-text-muted">
+          Plain-English evidence from foundation, core, and high-ceiling items.
+        </p>
+        <dl className="mt-4 grid gap-4 sm:grid-cols-3">
+          <div>
+            <dt className="text-xs font-semibold uppercase tracking-wide text-text-muted">
+              Foundation
+            </dt>
+            <dd className="mt-1 text-2xl font-bold tabular-nums text-text">
+              {p.foundationCorrect}/4
+            </dd>
+          </div>
+          <div>
+            <dt className="text-xs font-semibold uppercase tracking-wide text-text-muted">Core</dt>
+            <dd className="mt-1 text-2xl font-bold tabular-nums text-text">{p.coreCorrect}/7</dd>
+          </div>
+          <div>
+            <dt className="text-xs font-semibold uppercase tracking-wide text-text-muted">
+              High ceiling
+            </dt>
+            <dd className="mt-1 text-2xl font-bold tabular-nums text-text">
+              {p.highCeilingCorrect}/4
+            </dd>
+          </div>
+        </dl>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          {SKILL_DISPLAY_GROUPS.map((group) => {
+            const correctCount = group.questionIds.filter((id) => {
+              const m = results.mistakes.find((item) => item.questionId === id);
+              return m?.correct;
+            }).length;
+            const total = group.questionIds.length;
+            const limited = total <= 3;
+            return (
+              <div key={group.label} className="rounded-xl bg-surface-mid/50 px-4 py-3">
+                <p className="text-sm font-semibold text-text">{group.label}</p>
+                <p className="mt-1 text-lg font-bold tabular-nums text-text">
+                  {correctCount}/{total}
+                </p>
+                {limited ? (
+                  <p className="mt-1 text-xs text-text-muted">Limited evidence</p>
+                ) : null}
+              </div>
+            );
+          })}
+        </div>
+      </Card>
+
       <Card variant="elevated" className="border-0 p-5 shadow-none sm:p-6">
         <h2 className="font-heading text-xl font-bold text-text">Guessing and certainty</h2>
         <dl className="mt-4 grid gap-x-8 gap-y-4 sm:grid-cols-4">
@@ -360,7 +475,8 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
       <Card variant="elevated" className="border-0 p-5 shadow-none sm:p-6">
         <h2 className="font-heading text-xl font-bold text-text">Question review</h2>
         <p className="mt-1 text-sm text-text-muted">
-          Worked solutions and a short insight for each item after submission.
+          Worked solutions and a short insight for each item after submission. Open the exam-style
+          view for the full Pearson / UAT-UK style walkthrough.
         </p>
         <div className="mt-5 space-y-5">
           {results.mistakes.map((m) => {
@@ -370,7 +486,7 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
               ? "Skipped"
               : m.correct
                 ? "Correct"
-                : `Your answer ${m.selectedOption ?? "–"} · correct ${m.correctOption}`;
+                : `Your answer ${m.selectedOption ?? "?"} � correct ${m.correctOption}`;
             return (
               <details
                 key={m.questionId}
@@ -390,11 +506,22 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
                   <span className="text-sm font-medium text-text-muted">{status}</span>
                 </summary>
                 <div className="mt-3 space-y-3 border-t border-border-subtle/40 pt-3 text-sm">
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => openReview(m.questionId)}
+                    >
+                      View in exam UI
+                    </Button>
+                  </div>
                   {q.fast_insight ? (
-                    <p className="text-text-muted">
-                      <span className="font-semibold text-text">Fast insight: </span>
-                      {q.fast_insight}
-                    </p>
+                    <details className="rounded-lg bg-background/40 px-3 py-2">
+                      <summary className="cursor-pointer list-none text-sm font-semibold text-text">
+                        Fast insight
+                      </summary>
+                      <p className="mt-2 text-text-muted">{q.fast_insight}</p>
+                    </details>
                   ) : null}
                   <div>
                     <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-text-muted">
@@ -413,8 +540,19 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
         {percentile?.unlocked
           ? null
           : "Percentile estimate will unlock once more students have completed this calibration. "}
-        This result is a provisional estimate from a short diagnostic, not an official ESAT score.
+        This is a provisional diagnostic estimate, not an official ESAT score. Your real result will
+        also depend on the live paper and test-day conditions.
       </p>
+
+      {reviewQuestionId ? (
+        <CalibrationQuestionReviewPlayer
+          mistakes={results.mistakes}
+          initialQuestionId={reviewQuestionId}
+          attemptId={attemptId}
+          userState={userState}
+          onClose={() => setReviewQuestionId(null)}
+        />
+      ) : null}
     </div>
   );
 }

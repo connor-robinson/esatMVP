@@ -129,6 +129,8 @@ export function CalibrationPearsonBridge() {
       {
         user_state: session?.user ? "free" : "signed_out",
         attempt_id: a.attemptId,
+        assessment_version: "3.0.0",
+        module: "math_1",
       },
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps

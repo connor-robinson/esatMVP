@@ -1,0 +1,1334 @@
+{
+  "assessment": {
+    "id": "m1-calibration-final",
+    "title": "Mathematics 1 Calibration",
+    "version": "3.0.0",
+    "module": "ESAT Mathematics 1",
+    "questionCount": 15,
+    "recommendedTimeSeconds": 1200,
+    "calculatorAllowed": false,
+    "studentIntro": {
+      "heading": "Find your starting level",
+      "summary": "15 questions · 20 minutes · no calculator",
+      "supportingText": "Some questions reward a quick observation more than a long calculation. If you get stuck, make your best choice and keep moving."
+    },
+    "instructions": [
+      "Choose one answer for every question.",
+      "Calculators are not permitted.",
+      "Diagrams are not intended to be measured.",
+      "Do not show difficulty, answer, scoring, or inspiration metadata during the test."
+    ],
+    "difficultyMix": {
+      "accessible": 4,
+      "medium": 7,
+      "difficult": 4
+    },
+    "topicMix": {
+      "M1 Units": 1,
+      "M2 Number": 1,
+      "M3 Ratio and proportion": 1,
+      "M4 Algebra": 5,
+      "M5 Geometry": 5,
+      "M6 Statistics": 0,
+      "M7 Probability": 2
+    },
+    "diagramCount": 8,
+    "correctOptionSequence": [
+      "C",
+      "E",
+      "B",
+      "F",
+      "A",
+      "D",
+      "C",
+      "E",
+      "B",
+      "F",
+      "A",
+      "D",
+      "C",
+      "E",
+      "B"
+    ],
+    "designPrinciples": [
+      "Every item should have a short exact solution and at least one useful observation.",
+      "Do not require the quadratic formula; discriminant reasoning is permitted.",
+      "Avoid extended algebraic expansion, repetitive arithmetic, and measurement from diagrams.",
+      "Use difficult items to reward structural insight rather than syllabus obscurity.",
+      "Use diagrams only when they carry mathematical information."
+    ],
+    "visualStyle": {
+      "renderer": "Python/Matplotlib deterministic renderer",
+      "reference": "Historic NSAA Part A Mathematics diagrams",
+      "background": "#FFFFFF",
+      "foreground": "#111111",
+      "secondary": "#666666",
+      "lightFill": "#D9D9D9",
+      "darkFill": "#858585",
+      "fontFamily": "DejaVu Sans",
+      "lineWidthPt": 1.55,
+      "minimumExportWidthPx": 1400,
+      "minimumExportDpi": 200,
+      "rules": [
+        "Use black, white and greys only.",
+        "Use equal aspect ratio for Euclidean geometry.",
+        "Use thin, clean construction lines with unfilled point markers.",
+        "Place labels outside geometry wherever possible.",
+        "Do not draw coordinate grids unless the grid is essential.",
+        "Include '[diagram not to scale]' beneath each mathematical diagram.",
+        "Do not include a title inside the diagram.",
+        "Never reveal an unknown value through ticks, coordinates or scale.",
+        "Provide the supplied alt text verbatim."
+      ]
+    },
+    "originalityStatement": "Questions are original or substantially transformed ESAT CAMP items. Historic NSAA papers informed pacing and reasoning mechanisms only; no official wording or numerical construction is reproduced."
+  },
+  "scoreModel": {
+    "status": "provisional_until_empirically_calibrated",
+    "method": "MAP 3PL item-response estimate on a fixed theta grid",
+    "thetaPriorSd": 1.5,
+    "thetaMin": -2.5,
+    "thetaMax": 2.5,
+    "thetaStep": 0.01,
+    "guessingRule": "c = 1 / optionCount",
+    "provisionalScaleMapping": "score = clamp(1, 9, 4.5 + 1.9507 * theta)",
+    "mappingRationale": "The official score scale fixes the cohort median at 4.5 and the 90th percentile at 7.0. The mapping treats theta 0 as the intended calibration-cohort median and theta 1.2816 as its 90th percentile.",
+    "displayRules": [
+      "Label the output 'Estimated ESAT range', never 'Official ESAT score'.",
+      "Show the posterior 16th-84th percentile interval rounded outward to 0.1.",
+      "Do not narrow the displayed interval below 0.8 score points before empirical calibration.",
+      "Always show raw score alongside the estimate.",
+      "Timing affects pace feedback, not the estimated score.",
+      "If fewer than 12 questions are answered, show 'Not enough evidence' instead of a score."
+    ],
+    "anchorGroups": {
+      "foundation": [
+        "m1cal-final-q01",
+        "m1cal-final-q02",
+        "m1cal-final-q04",
+        "m1cal-final-q10"
+      ],
+      "core": [
+        "m1cal-final-q03",
+        "m1cal-final-q05",
+        "m1cal-final-q06",
+        "m1cal-final-q08",
+        "m1cal-final-q09",
+        "m1cal-final-q12",
+        "m1cal-final-q14"
+      ],
+      "highCeiling": [
+        "m1cal-final-q07",
+        "m1cal-final-q11",
+        "m1cal-final-q13",
+        "m1cal-final-q15"
+      ]
+    },
+    "recalibrationRequirement": "After at least 200 serious completions, fit item difficulty and discrimination to response data. Link the ESAT scale only when matched official-score data or an equivalent defensible external anchor is available."
+  },
+  "questions": [
+    {
+      "id": "m1cal-final-q01",
+      "position": 1,
+      "internalTitle": "Circle inside the midpoint square",
+      "primaryTopic": "M5 Geometry",
+      "secondarySkills": [
+        "area",
+        "similarity",
+        "circle geometry"
+      ],
+      "difficulty": "accessible",
+      "targetTimeSeconds": 65,
+      "irt": {
+        "b": -1.15,
+        "a": 0.95
+      },
+      "stemMarkdown": "\\(ABCD\\) is a square of side \\(12\\text{ cm}\\). The points \\(E,F,G,H\\) are the midpoints of its sides. A circle touches all four sides of the square \\(EFGH\\). What fraction of the area of \\(ABCD\\) lies inside the circle?",
+      "diagramPath": "diagram_previews/q01-midpoint-incircle.png",
+      "visualSpec": {
+        "kind": "midpoint_square_incircle",
+        "geometry": {
+          "outerSide": 12,
+          "joinMidpoints": true,
+          "incircle": true
+        },
+        "labels": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G",
+          "H",
+          "12 cm"
+        ],
+        "altText": "A square ABCD of side 12 centimetres. Its side midpoints E, F, G and H form a rotated inner square, and a circle is inscribed in that inner square."
+      },
+      "options": [
+        {
+          "id": "A",
+          "contentMarkdown": "\\(\\dfrac{\\pi}{16}\\)"
+        },
+        {
+          "id": "B",
+          "contentMarkdown": "\\(\\dfrac{4-\\pi}{8}\\)"
+        },
+        {
+          "id": "C",
+          "contentMarkdown": "\\(\\dfrac{\\pi}{8}\\)"
+        },
+        {
+          "id": "D",
+          "contentMarkdown": "\\(\\dfrac14\\)"
+        },
+        {
+          "id": "E",
+          "contentMarkdown": "\\(\\dfrac{\\pi}{6}\\)"
+        },
+        {
+          "id": "F",
+          "contentMarkdown": "\\(\\dfrac{4-\\pi}{4}\\)"
+        }
+      ],
+      "correctOption": "C",
+      "solutionMarkdown": "The diagonals of \\(EFGH\\) are both \\(12\\), so its side is \\(6\\sqrt2\\). The circle therefore has radius \\(3\\sqrt2\\) and area \\(18\\pi\\). Since \\(ABCD\\) has area \\(144\\), the fraction is \\(18\\pi/144=\\boxed{\\pi/8}\\).",
+      "fastInsight": "The inner square's diagonal is the outer square's side.",
+      "mistakeTagsByOption": {
+        "A": [
+          "used-radius-3"
+        ],
+        "B": [
+          "found-a-complementary-region"
+        ],
+        "D": [
+          "estimated-from-diagram"
+        ],
+        "E": [
+          "area-scale-error"
+        ],
+        "F": [
+          "used-inner-square-complement"
+        ]
+      },
+      "inspiration": {
+        "source": "NSAA 2023 Part A Q5",
+        "mechanism": "extracting an exact area from a square construction",
+        "copyingRisk": "low"
+      }
+    },
+    {
+      "id": "m1cal-final-q02",
+      "position": 2,
+      "internalTitle": "Conjugates collapse",
+      "primaryTopic": "M2 Number",
+      "secondarySkills": [
+        "surds",
+        "rationalising denominators"
+      ],
+      "difficulty": "accessible",
+      "targetTimeSeconds": 50,
+      "irt": {
+        "b": -0.95,
+        "a": 0.85
+      },
+      "stemMarkdown": "What is the exact value of \\[\\frac{1}{\\sqrt5-2}-\\frac{1}{\\sqrt5+2}?\\]",
+      "diagramPath": null,
+      "visualSpec": null,
+      "options": [
+        {
+          "id": "A",
+          "contentMarkdown": "\\(1\\)"
+        },
+        {
+          "id": "B",
+          "contentMarkdown": "\\(2\\)"
+        },
+        {
+          "id": "C",
+          "contentMarkdown": "\\(2\\sqrt5\\)"
+        },
+        {
+          "id": "D",
+          "contentMarkdown": "\\(\\sqrt5\\)"
+        },
+        {
+          "id": "E",
+          "contentMarkdown": "\\(4\\)"
+        },
+        {
+          "id": "F",
+          "contentMarkdown": "\\(4\\sqrt5\\)"
+        }
+      ],
+      "correctOption": "E",
+      "solutionMarkdown": "Since \\((\\sqrt5-2)(\\sqrt5+2)=1\\), the two reciprocals are \\(\\sqrt5+2\\) and \\(\\sqrt5-2\\). Their difference is therefore \\((\\sqrt5+2)-(\\sqrt5-2)=\\boxed4\\).",
+      "fastInsight": "The two denominators are conjugates whose product is 1.",
+      "mistakeTagsByOption": {
+        "A": [
+          "noticed-product-one-but-stopped"
+        ],
+        "B": [
+          "lost-a-factor-two"
+        ],
+        "C": [
+          "subtracted-rational-parts"
+        ],
+        "D": [
+          "combined-denominators-linearly"
+        ],
+        "F": [
+          "added-instead-of-subtracted"
+        ]
+      },
+      "inspiration": {
+        "source": "NSAA 2021 Part A Q13 and NSAA 2023 Part A Q2",
+        "mechanism": "quick exact-number recognition instead of decimal calculation",
+        "copyingRisk": "low"
+      }
+    },
+    {
+      "id": "m1cal-final-q03",
+      "position": 3,
+      "internalTitle": "Formula rearrangement",
+      "primaryTopic": "M4 Algebra",
+      "secondarySkills": [
+        "changing the subject",
+        "fractions"
+      ],
+      "difficulty": "medium",
+      "targetTimeSeconds": 75,
+      "irt": {
+        "b": -0.2,
+        "a": 1.1
+      },
+      "stemMarkdown": "\\[p=\\frac{3q-r}{2q+r}.\\] Which expression gives \\(q\\) in terms of \\(p\\) and \\(r\\)?",
+      "diagramPath": null,
+      "visualSpec": null,
+      "options": [
+        {
+          "id": "A",
+          "contentMarkdown": "\\(\\dfrac{r(p+1)}{2p-3}\\)"
+        },
+        {
+          "id": "B",
+          "contentMarkdown": "\\(\\dfrac{r(p+1)}{3-2p}\\)"
+        },
+        {
+          "id": "C",
+          "contentMarkdown": "\\(\\dfrac{r(p-1)}{3-2p}\\)"
+        },
+        {
+          "id": "D",
+          "contentMarkdown": "\\(\\dfrac{r(1-p)}{3+2p}\\)"
+        },
+        {
+          "id": "E",
+          "contentMarkdown": "\\(\\dfrac{r(1+p)}{3+2p}\\)"
+        },
+        {
+          "id": "F",
+          "contentMarkdown": "\\(\\dfrac{r(p-1)}{2p-3}\\)"
+        },
+        {
+          "id": "G",
+          "contentMarkdown": "\\(\\dfrac{r}{3-2p}\\)"
+        }
+      ],
+      "correctOption": "B",
+      "solutionMarkdown": "Multiply by \\(2q+r\\): \\(2pq+pr=3q-r\\). Hence \\(q(2p-3)=-r(p+1)\\), so \\[q=\\boxed{\\frac{r(p+1)}{3-2p}}.\\]",
+      "fastInsight": "Collect every term containing q before dividing.",
+      "mistakeTagsByOption": {
+        "A": [
+          "sign-error-when-reversing-denominator"
+        ],
+        "C": [
+          "constant-term-sign-error"
+        ],
+        "D": [
+          "two-sign-errors"
+        ],
+        "E": [
+          "denominator-sign-error"
+        ],
+        "F": [
+          "numerator-and-denominator-sign-mismatch"
+        ],
+        "G": [
+          "lost-p-plus-one-factor"
+        ]
+      },
+      "inspiration": {
+        "source": "Retained ESAT CAMP original Q4; compare NSAA 2021 Part A Q3 and NSAA 2023 Part A Q3",
+        "mechanism": "short multi-symbol subject rearrangement",
+        "copyingRisk": "low"
+      }
+    },
+    {
+      "id": "m1cal-final-q04",
+      "position": 4,
+      "internalTitle": "Divisible product",
+      "primaryTopic": "M7 Probability",
+      "secondarySkills": [
+        "systematic counting",
+        "divisibility"
+      ],
+      "difficulty": "accessible",
+      "targetTimeSeconds": 70,
+      "irt": {
+        "b": -0.55,
+        "a": 1.0
+      },
+      "stemMarkdown": "Two different numbers are chosen at random from \\(\\{1,2,3,4,5,6\\}\\). What is the probability that their product is divisible by \\(6\\)?",
+      "diagramPath": null,
+      "visualSpec": null,
+      "options": [
+        {
+          "id": "A",
+          "contentMarkdown": "\\(\\dfrac13\\)"
+        },
+        {
+          "id": "B",
+          "contentMarkdown": "\\(\\dfrac25\\)"
+        },
+        {
+          "id": "C",
+          "contentMarkdown": "\\(\\dfrac49\\)"
+        },
+        {
+          "id": "D",
+          "contentMarkdown": "\\(\\dfrac12\\)"
+        },
+        {
+          "id": "E",
+          "contentMarkdown": "\\(\\dfrac8{15}\\)"
+        },
+        {
+          "id": "F",
+          "contentMarkdown": "\\(\\dfrac7{15}\\)"
+        },
+        {
+          "id": "G",
+          "contentMarkdown": "\\(\\dfrac35\\)"
+        }
+      ],
+      "correctOption": "F",
+      "solutionMarkdown": "There are \\(\\binom62=15\\) unordered pairs. The successful pairs are \\((1,6),(2,3),(2,6),(3,4),(3,6),(4,6),(5,6)\\): seven pairs. The probability is \\(\\boxed{7/15}\\).",
+      "fastInsight": "A successful product needs both a factor 2 and a factor 3; list unordered pairs rather than 36 ordered rolls.",
+      "mistakeTagsByOption": {
+        "A": [
+          "counted-only-pairs-containing-six"
+        ],
+        "B": [
+          "missed-mixed-two-and-three-pairs"
+        ],
+        "C": [
+          "used-ordered-outcomes-inconsistently"
+        ],
+        "D": [
+          "assumed-half-without-counting"
+        ],
+        "E": [
+          "included-one-invalid-pair"
+        ],
+        "G": [
+          "included-multiples-of-two-or-three"
+        ]
+      },
+      "inspiration": {
+        "source": "Retained ESAT CAMP original Q8; compare NSAA 2022 Part A Q17",
+        "mechanism": "choose a small subset and test a structural number property",
+        "copyingRisk": "low"
+      }
+    },
+    {
+      "id": "m1cal-final-q05",
+      "position": 5,
+      "internalTitle": "Three points on a square",
+      "primaryTopic": "M5 Geometry",
+      "secondarySkills": [
+        "area",
+        "ratios on line segments",
+        "coordinate reasoning"
+      ],
+      "difficulty": "medium",
+      "targetTimeSeconds": 85,
+      "irt": {
+        "b": 0.0,
+        "a": 1.2
+      },
+      "stemMarkdown": "\\(ABCD\\) is a square of side length \\(1\\). Points \\(P,Q,R\\) lie on \\(AB,BC,CD\\) respectively. \\[AP:PB=1:2,\\qquad BQ:QC=1:3,\\qquad CR:RD=1:1.\\] What is the area of triangle \\(PQR\\)?",
+      "diagramPath": "diagram_previews/q05-square-points.png",
+      "visualSpec": {
+        "kind": "square_three_side_points",
+        "geometry": {
+          "A": [
+            0,
+            0
+          ],
+          "B": [
+            1,
+            0
+          ],
+          "C": [
+            1,
+            1
+          ],
+          "D": [
+            0,
+            1
+          ],
+          "P": [
+            0.3333333333,
+            0
+          ],
+          "Q": [
+            1,
+            0.25
+          ],
+          "R": [
+            0.5,
+            1
+          ]
+        },
+        "shadeTriangle": true,
+        "altText": "A unit square ABCD. P divides AB in the ratio 1 to 2, Q divides BC in the ratio 1 to 3, and R is the midpoint of CD. Triangle PQR is shaded."
+      },
+      "options": [
+        {
+          "id": "A",
+          "contentMarkdown": "\\(\\dfrac5{16}\\)"
+        },
+        {
+          "id": "B",
+          "contentMarkdown": "\\(\\dfrac14\\)"
+        },
+        {
+          "id": "C",
+          "contentMarkdown": "\\(\\dfrac9{32}\\)"
+        },
+        {
+          "id": "D",
+          "contentMarkdown": "\\(\\dfrac{11}{32}\\)"
+        },
+        {
+          "id": "E",
+          "contentMarkdown": "\\(\\dfrac38\\)"
+        },
+        {
+          "id": "F",
+          "contentMarkdown": "\\(\\dfrac7{16}\\)"
+        }
+      ],
+      "correctOption": "A",
+      "solutionMarkdown": "Subtract the three surrounding regions from the square. Triangle \\(PBQ\\) has area \\(\\tfrac12(2/3)(1/4)=1/12\\). Triangle \\(QCR\\) has area \\(\\tfrac12(3/4)(1/2)=3/16\\). Quadrilateral \\(ADRP\\) is a trapezium with parallel sides \\(AP=1/3\\) and \\(DR=1/2\\), so its area is \\(\\tfrac12(1/3+1/2)=5/12\\). Therefore \\[1-\\frac1{12}-\\frac3{16}-\\frac5{12}=\\boxed{\\frac5{16}}.\\]",
+      "fastInsight": "The region to the left of PR is a trapezium; subtract it and the two corner triangles from the square.",
+      "mistakeTagsByOption": {
+        "B": [
+          "used-only-one-ratio"
+        ],
+        "C": [
+          "coordinate-placement-error"
+        ],
+        "D": [
+          "forgot-half-in-triangle-area"
+        ],
+        "E": [
+          "subtracted-wrong-corner-region"
+        ],
+        "F": [
+          "ratio-direction-error"
+        ]
+      },
+      "inspiration": {
+        "source": "NSAA 2023 Part A Q5",
+        "mechanism": "area of a triangle whose vertices divide sides of a square",
+        "copyingRisk": "medium-mitigated-by-new-construction-and-method"
+      }
+    },
+    {
+      "id": "m1cal-final-q06",
+      "position": 6,
+      "internalTitle": "Quadratic tangency",
+      "primaryTopic": "M4 Algebra",
+      "secondarySkills": [
+        "discriminant",
+        "graph intersection"
+      ],
+      "difficulty": "medium",
+      "targetTimeSeconds": 80,
+      "irt": {
+        "b": 0.25,
+        "a": 1.3
+      },
+      "stemMarkdown": "The line \\(y=2x+5\\) touches the curve \\(y=x^2-4x+k\\) at exactly one point. What is the value of \\(k\\)?",
+      "diagramPath": null,
+      "visualSpec": null,
+      "options": [
+        {
+          "id": "A",
+          "contentMarkdown": "\\(0\\)"
+        },
+        {
+          "id": "B",
+          "contentMarkdown": "\\(5\\)"
+        },
+        {
+          "id": "C",
+          "contentMarkdown": "\\(9\\)"
+        },
+        {
+          "id": "D",
+          "contentMarkdown": "\\(14\\)"
+        },
+        {
+          "id": "E",
+          "contentMarkdown": "\\(12\\)"
+        },
+        {
+          "id": "F",
+          "contentMarkdown": "\\(16\\)"
+        },
+        {
+          "id": "G",
+          "contentMarkdown": "\\(20\\)"
+        },
+        {
+          "id": "H",
+          "contentMarkdown": "\\(28\\)"
+        }
+      ],
+      "correctOption": "D",
+      "solutionMarkdown": "At an intersection, \\(x^2-4x+k=2x+5\\), so \\(x^2-6x+k-5=0\\). Touching once means the discriminant is zero: \\[(-6)^2-4(k-5)=0.\\] Hence \\(36-4k+20=0\\), giving \\(\\boxed{k=14}\\).",
+      "fastInsight": "Exactly one intersection means a repeated root, so set the discriminant to zero.",
+      "mistakeTagsByOption": {
+        "A": [
+          "ignored-tangency-condition"
+        ],
+        "B": [
+          "lost-constant-five"
+        ],
+        "C": [
+          "used-vertex-x-coordinate"
+        ],
+        "E": [
+          "arithmetic-error"
+        ],
+        "F": [
+          "sign-error-in-constant"
+        ],
+        "G": [
+          "used-b-squared-minus-four-c-without-a"
+        ],
+        "H": [
+          "failed-to-divide-by-two"
+        ]
+      },
+      "inspiration": {
+        "source": "Retained ESAT CAMP original Q6; compare NSAA 2021 Part A Q11 and NSAA 2022 Part A Q14",
+        "mechanism": "translate a graph condition into a discriminant condition",
+        "copyingRisk": "low"
+      }
+    },
+    {
+      "id": "m1cal-final-q07",
+      "position": 7,
+      "internalTitle": "Square number spiral",
+      "primaryTopic": "M4 Algebra",
+      "secondarySkills": [
+        "sequences",
+        "spatial pattern",
+        "square numbers"
+      ],
+      "difficulty": "difficult",
+      "targetTimeSeconds": 100,
+      "irt": {
+        "b": 0.8,
+        "a": 1.3
+      },
+      "stemMarkdown": "The positive integers are arranged in a square spiral as shown. The pattern continues in the same way. Which number is directly below \\(100\\)?",
+      "diagramPath": "diagram_previews/q07-number-spiral.png",
+      "visualSpec": {
+        "kind": "square_number_spiral",
+        "shownNumbers": [
+          1,
+          25
+        ],
+        "orientation": "1 at centre, 2 to its right, then anticlockwise; odd squares lie on the lower-right diagonal",
+        "altText": "The integers 1 to 25 are shown on a five-by-five square spiral. One is at the centre, two is immediately right of it, and the spiral turns anticlockwise. The pattern continues beyond 25."
+      },
+      "options": [
+        {
+          "id": "A",
+          "contentMarkdown": "\\(63\\)"
+        },
+        {
+          "id": "B",
+          "contentMarkdown": "\\(64\\)"
+        },
+        {
+          "id": "C",
+          "contentMarkdown": "\\(65\\)"
+        },
+        {
+          "id": "D",
+          "contentMarkdown": "\\(66\\)"
+        },
+        {
+          "id": "E",
+          "contentMarkdown": "\\(67\\)"
+        },
+        {
+          "id": "F",
+          "contentMarkdown": "\\(68\\)"
+        }
+      ],
+      "correctOption": "C",
+      "solutionMarkdown": "The odd squares \\(81=9^2\\) and \\(121=11^2\\) are successive lower-right corners. The next layer runs from \\(82\\) up the right edge and then left along the top edge. This places \\(100\\) one square above the top-left corner of the \\(9\\times9\\) layer. That corner contains \\(81-16=65\\), so the number directly below \\(100\\) is \\(\\boxed{65}\\).",
+      "fastInsight": "Track the odd-square corners rather than extending the whole spiral to 100.",
+      "mistakeTagsByOption": {
+        "A": [
+          "off-by-two-on-inner-corner"
+        ],
+        "B": [
+          "assumed-perfect-square-neighbour"
+        ],
+        "D": [
+          "off-by-one-in-layer-length"
+        ],
+        "E": [
+          "used-wrong-corner-direction"
+        ],
+        "F": [
+          "counted-five-by-five-spacing"
+        ]
+      },
+      "inspiration": {
+        "source": "NSAA 2021 Part A Q8",
+        "mechanism": "extrapolate a spatial arrangement using square-number boundaries",
+        "copyingRisk": "medium-mitigated-by-spiral-rather-than-growing-rows"
+      }
+    },
+    {
+      "id": "m1cal-final-q08",
+      "position": 8,
+      "internalTitle": "Minimum of an exponential",
+      "primaryTopic": "M4 Algebra",
+      "secondarySkills": [
+        "completing the square",
+        "functions",
+        "indices"
+      ],
+      "difficulty": "medium",
+      "targetTimeSeconds": 65,
+      "irt": {
+        "b": 0.05,
+        "a": 1.15
+      },
+      "stemMarkdown": "For every real value of \\(x\\), \\[F(x)=3^{x^2-8x+18}.\\] What is the smallest possible value of \\(F(x)\\)?",
+      "diagramPath": null,
+      "visualSpec": null,
+      "options": [
+        {
+          "id": "A",
+          "contentMarkdown": "\\(\\dfrac19\\)"
+        },
+        {
+          "id": "B",
+          "contentMarkdown": "\\(\\dfrac13\\)"
+        },
+        {
+          "id": "C",
+          "contentMarkdown": "\\(1\\)"
+        },
+        {
+          "id": "D",
+          "contentMarkdown": "\\(3\\)"
+        },
+        {
+          "id": "E",
+          "contentMarkdown": "\\(9\\)"
+        },
+        {
+          "id": "F",
+          "contentMarkdown": "\\(27\\)"
+        }
+      ],
+      "correctOption": "E",
+      "solutionMarkdown": "Complete the square in the exponent: \\[x^2-8x+18=(x-4)^2+2.\\] Its minimum is \\(2\\), reached when \\(x=4\\). Therefore the smallest value is \\(3^2=\\boxed9\\).",
+      "fastInsight": "Minimise the exponent; there is no need to sketch or differentiate the exponential.",
+      "mistakeTagsByOption": {
+        "A": [
+          "used-negative-minimum-exponent"
+        ],
+        "B": [
+          "completed-square-sign-error"
+        ],
+        "C": [
+          "assumed-exponent-can-be-zero"
+        ],
+        "D": [
+          "minimum-exponent-one"
+        ],
+        "F": [
+          "minimum-exponent-three"
+        ]
+      },
+      "inspiration": {
+        "source": "NSAA 2023 Part A Q16",
+        "mechanism": "complete a square inside an exponential before evaluating",
+        "copyingRisk": "medium-mitigated-by-new-base-and-quadratic"
+      }
+    },
+    {
+      "id": "m1cal-final-q09",
+      "position": 9,
+      "internalTitle": "Tangent and equal chords",
+      "primaryTopic": "M5 Geometry",
+      "secondarySkills": [
+        "circle theorems",
+        "isosceles triangle",
+        "angle reasoning"
+      ],
+      "difficulty": "medium",
+      "targetTimeSeconds": 80,
+      "irt": {
+        "b": 0.25,
+        "a": 1.25
+      },
+      "stemMarkdown": "The line \\(AT\\) is tangent to the circle at \\(A\\). Points \\(A,B,C\\) lie on the circle, \\(AB=AT\\), and \\(\\angle ATB=70^\\circ\\). What is \\(\\angle ACB\\)?",
+      "diagramPath": "diagram_previews/q09-circle-tangent.png",
+      "visualSpec": {
+        "kind": "circle_tangent_isosceles",
+        "requirements": [
+          "AT tangent at A",
+          "AB and AT have matching tick marks",
+          "angle ATB labelled 70 degrees",
+          "C on opposite arc"
+        ],
+        "altText": "A circle passes through A, B and C. AT is tangent at A. Triangle ABT is outside the circle, AB and AT are equal, and angle ATB is 70 degrees."
+      },
+      "options": [
+        {
+          "id": "A",
+          "contentMarkdown": "\\(35^\\circ\\)"
+        },
+        {
+          "id": "B",
+          "contentMarkdown": "\\(40^\\circ\\)"
+        },
+        {
+          "id": "C",
+          "contentMarkdown": "\\(20^\\circ\\)"
+        },
+        {
+          "id": "D",
+          "contentMarkdown": "\\(25^\\circ\\)"
+        },
+        {
+          "id": "E",
+          "contentMarkdown": "\\(30^\\circ\\)"
+        },
+        {
+          "id": "F",
+          "contentMarkdown": "\\(70^\\circ\\)"
+        }
+      ],
+      "correctOption": "B",
+      "solutionMarkdown": "Since \\(AB=AT\\), triangle \\(ABT\\) is isosceles, so \\(\\angle ABT=70^\\circ\\). Hence \\(\\angle BAT=40^\\circ\\). By the alternate segment theorem, the angle between tangent \\(AT\\) and chord \\(AB\\) equals \\(\\angle ACB\\), so \\(\\boxed{40^\\circ}\\).",
+      "fastInsight": "Use the isosceles triangle first, then transfer its remaining angle with the tangent-chord theorem.",
+      "mistakeTagsByOption": {
+        "A": [
+          "halved-given-angle"
+        ],
+        "C": [
+          "halved-remaining-angle"
+        ],
+        "D": [
+          "used-half-complement"
+        ],
+        "E": [
+          "triangle-angle-error"
+        ],
+        "F": [
+          "copied-base-angle"
+        ]
+      },
+      "inspiration": {
+        "source": "NSAA 2021 Part A Q14",
+        "mechanism": "combine a circle theorem with one earlier triangle deduction",
+        "copyingRisk": "low"
+      }
+    },
+    {
+      "id": "m1cal-final-q10",
+      "position": 10,
+      "internalTitle": "Meshed gears",
+      "primaryTopic": "M1 Units",
+      "secondarySkills": [
+        "rates",
+        "ratio",
+        "time conversion"
+      ],
+      "difficulty": "accessible",
+      "targetTimeSeconds": 65,
+      "irt": {
+        "b": -0.7,
+        "a": 1.0
+      },
+      "stemMarkdown": "Two gears mesh without slipping. The smaller gear has \\(18\\) teeth and makes \\(25\\) complete revolutions in \\(12\\) seconds. The larger gear has \\(30\\) teeth. How many complete revolutions does the larger gear make in \\(1\\) minute?",
+      "diagramPath": "diagram_previews/q10-gears.png",
+      "visualSpec": {
+        "kind": "two_meshed_gears",
+        "smallGear": {
+          "teeth": 18,
+          "label": "18 teeth"
+        },
+        "largeGear": {
+          "teeth": 30,
+          "label": "30 teeth"
+        },
+        "altText": "A small gear with 18 teeth meshes with a larger gear with 30 teeth. The small gear is labelled 25 revolutions in 12 seconds."
+      },
+      "options": [
+        {
+          "id": "A",
+          "contentMarkdown": "\\(45\\)"
+        },
+        {
+          "id": "B",
+          "contentMarkdown": "\\(60\\)"
+        },
+        {
+          "id": "C",
+          "contentMarkdown": "\\(90\\)"
+        },
+        {
+          "id": "D",
+          "contentMarkdown": "\\(100\\)"
+        },
+        {
+          "id": "E",
+          "contentMarkdown": "\\(125\\)"
+        },
+        {
+          "id": "F",
+          "contentMarkdown": "\\(75\\)"
+        }
+      ],
+      "correctOption": "F",
+      "solutionMarkdown": "In \\(12\\) seconds the small gear moves \\(25\\times18=450\\) teeth past the contact point. The large gear therefore makes \\(450/30=15\\) revolutions. One minute is five lots of \\(12\\) seconds, so it makes \\(5\\times15=\\boxed{75}\\) revolutions.",
+      "fastInsight": "Count teeth passing the contact point; the two gears pass the same number of teeth.",
+      "mistakeTagsByOption": {
+        "A": [
+          "used-tooth-difference"
+        ],
+        "B": [
+          "reversed-gear-ratio-and-time-error"
+        ],
+        "C": [
+          "used-teeth-ratio-without-time-factor"
+        ],
+        "D": [
+          "used-four-rather-than-five-time-intervals"
+        ],
+        "E": [
+          "ignored-gear-ratio"
+        ]
+      },
+      "inspiration": {
+        "source": "NSAA 2023 Part A Q11 and NSAA 2021 Part A Q18",
+        "mechanism": "combine a rate with a non-additive ratio",
+        "copyingRisk": "low"
+      }
+    },
+    {
+      "id": "m1cal-final-q11",
+      "position": 11,
+      "internalTitle": "Which colour was transferred?",
+      "primaryTopic": "M7 Probability",
+      "secondarySkills": [
+        "conditional probability",
+        "without replacement",
+        "tree reasoning"
+      ],
+      "difficulty": "difficult",
+      "targetTimeSeconds": 100,
+      "irt": {
+        "b": 0.75,
+        "a": 1.4
+      },
+      "stemMarkdown": "Bag \\(A\\) contains two red counters and one blue counter. Bag \\(B\\) contains one red counter and two blue counters. One counter is chosen at random from Bag \\(A\\) and transferred to Bag \\(B\\). A counter is then chosen at random from Bag \\(B\\), and it is red. What is the probability that the transferred counter was red?",
+      "diagramPath": "diagram_previews/q11-counter-transfer.png",
+      "visualSpec": {
+        "kind": "counter_transfer_between_bags",
+        "bagA": [
+          "R",
+          "R",
+          "B"
+        ],
+        "bagB": [
+          "R",
+          "B",
+          "B"
+        ],
+        "showTransferArrow": true,
+        "altText": "Bag A contains counters R, R and B. Bag B contains counters R, B and B. An arrow shows one unknown counter moving from Bag A to Bag B before a counter is drawn from Bag B."
+      },
+      "options": [
+        {
+          "id": "A",
+          "contentMarkdown": "\\(\\dfrac45\\)"
+        },
+        {
+          "id": "B",
+          "contentMarkdown": "\\(\\dfrac23\\)"
+        },
+        {
+          "id": "C",
+          "contentMarkdown": "\\(\\dfrac34\\)"
+        },
+        {
+          "id": "D",
+          "contentMarkdown": "\\(\\dfrac12\\)"
+        },
+        {
+          "id": "E",
+          "contentMarkdown": "\\(\\dfrac35\\)"
+        },
+        {
+          "id": "F",
+          "contentMarkdown": "\\(\\dfrac56\\)"
+        }
+      ],
+      "correctOption": "A",
+      "solutionMarkdown": "A red transfer followed by a red draw has probability \\((2/3)(2/4)=1/3\\). A blue transfer followed by a red draw has probability \\((1/3)(1/4)=1/12\\). Given that the draw is red, the required probability is \\[\\frac{1/3}{1/3+1/12}=\\boxed{\\frac45}.\\]",
+      "fastInsight": "Compare the two routes that can produce the observed red counter.",
+      "mistakeTagsByOption": {
+        "B": [
+          "reported-prior-probability"
+        ],
+        "C": [
+          "compared-final-bag-compositions-only"
+        ],
+        "D": [
+          "assumed-two-transfer-colours-equally-likely"
+        ],
+        "E": [
+          "reversed-conditional-probability"
+        ],
+        "F": [
+          "added-incompatible-probabilities"
+        ]
+      },
+      "inspiration": {
+        "source": "NSAA 2023 Part A Q20",
+        "mechanism": "transfer between two bags, then condition on the observed colour",
+        "copyingRisk": "medium-mitigated-by-reversed-inference-task"
+      }
+    },
+    {
+      "id": "m1cal-final-q12",
+      "position": 12,
+      "internalTitle": "Square and hexagon in equal circles",
+      "primaryTopic": "M5 Geometry",
+      "secondarySkills": [
+        "regular polygons",
+        "exact trigonometry",
+        "area"
+      ],
+      "difficulty": "medium",
+      "targetTimeSeconds": 85,
+      "irt": {
+        "b": 0.35,
+        "a": 1.2
+      },
+      "stemMarkdown": "A square and a regular hexagon are inscribed in two circles of equal radius. What is \\[\\frac{\\text{area of the regular hexagon}}{\\text{area of the square}}?\\]",
+      "diagramPath": "diagram_previews/q12-inscribed-polygons.png",
+      "visualSpec": {
+        "kind": "equal_circles_inscribed_polygons",
+        "leftPolygon": "square",
+        "rightPolygon": "regular hexagon",
+        "sameRadiusMarker": true,
+        "altText": "Two equal circles are shown side by side. A square is inscribed in the first and a regular hexagon is inscribed in the second."
+      },
+      "options": [
+        {
+          "id": "A",
+          "contentMarkdown": "\\(\\dfrac{\\sqrt3}{2}\\)"
+        },
+        {
+          "id": "B",
+          "contentMarkdown": "\\(\\dfrac{2\\sqrt3}{3}\\)"
+        },
+        {
+          "id": "C",
+          "contentMarkdown": "\\(\\dfrac34\\)"
+        },
+        {
+          "id": "D",
+          "contentMarkdown": "\\(\\dfrac{3\\sqrt3}{4}\\)"
+        },
+        {
+          "id": "E",
+          "contentMarkdown": "\\(\\dfrac4{3\\sqrt3}\\)"
+        },
+        {
+          "id": "F",
+          "contentMarkdown": "\\(\\dfrac{3\\sqrt3}{2}\\)"
+        }
+      ],
+      "correctOption": "D",
+      "solutionMarkdown": "Let the common radius be \\(r\\). The square has diagonal \\(2r\\), so its area is \\(2r^2\\). The hexagon is six equilateral triangles of side \\(r\\), so its area is \\(6(\\sqrt3 r^2/4)=3\\sqrt3 r^2/2\\). The ratio is \\[\\frac{3\\sqrt3 r^2/2}{2r^2}=\\boxed{\\frac{3\\sqrt3}{4}}.\\]",
+      "fastInsight": "An inscribed regular hexagon splits into six equilateral triangles whose side equals the radius.",
+      "mistakeTagsByOption": {
+        "A": [
+          "used-three-rather-than-six-triangles"
+        ],
+        "B": [
+          "rationalised-or-inverted-partly"
+        ],
+        "C": [
+          "ignored-equilateral-triangle-height"
+        ],
+        "E": [
+          "inverted-the-required-ratio"
+        ],
+        "F": [
+          "forgot-square-area-factor-two"
+        ]
+      },
+      "inspiration": {
+        "source": "NSAA 2021 Part A Q16 and NSAA 2022 Part A Q18",
+        "mechanism": "compare exact geometry in figures sharing a common scale",
+        "copyingRisk": "low"
+      }
+    },
+    {
+      "id": "m1cal-final-q13",
+      "position": 13,
+      "internalTitle": "Hidden reciprocal cube",
+      "primaryTopic": "M4 Algebra",
+      "secondarySkills": [
+        "algebraic identities",
+        "reciprocals"
+      ],
+      "difficulty": "difficult",
+      "targetTimeSeconds": 95,
+      "irt": {
+        "b": 1.0,
+        "a": 1.45
+      },
+      "stemMarkdown": "A positive number \\(x\\) satisfies \\[x+\\frac1x=3.\\] What is the value of \\[\\frac{x^3}{x^6+1}?\\]",
+      "diagramPath": null,
+      "visualSpec": null,
+      "options": [
+        {
+          "id": "A",
+          "contentMarkdown": "\\(\\dfrac1{27}\\)"
+        },
+        {
+          "id": "B",
+          "contentMarkdown": "\\(\\dfrac1{24}\\)"
+        },
+        {
+          "id": "C",
+          "contentMarkdown": "\\(\\dfrac1{18}\\)"
+        },
+        {
+          "id": "D",
+          "contentMarkdown": "\\(\\dfrac19\\)"
+        },
+        {
+          "id": "E",
+          "contentMarkdown": "\\(9\\)"
+        },
+        {
+          "id": "F",
+          "contentMarkdown": "\\(18\\)"
+        }
+      ],
+      "correctOption": "C",
+      "solutionMarkdown": "First divide the fraction by \\(x^3\\): \\[\\frac{x^3}{x^6+1}=\\frac1{x^3+x^{-3}}.\\] Also, \\((x+x^{-1})^3=x^3+x^{-3}+3(x+x^{-1})\\). Hence \\(27=x^3+x^{-3}+9\\), so \\(x^3+x^{-3}=18\\). The answer is \\(\\boxed{1/18}\\).",
+      "fastInsight": "Rewrite the requested expression before trying to solve for x.",
+      "mistakeTagsByOption": {
+        "A": [
+          "cubed-the-given-value-directly"
+        ],
+        "B": [
+          "cube-expansion-error"
+        ],
+        "D": [
+          "forgot-cross-terms"
+        ],
+        "E": [
+          "reciprocal-error"
+        ],
+        "F": [
+          "failed-to-invert-final-value"
+        ]
+      },
+      "inspiration": {
+        "source": "NSAA 2021 Part A Q6",
+        "mechanism": "transform the requested expression so supplied information becomes directly useful",
+        "copyingRisk": "low"
+      }
+    },
+    {
+      "id": "m1cal-final-q14",
+      "position": 14,
+      "internalTitle": "Runners approaching the finish",
+      "primaryTopic": "M3 Ratio and proportion",
+      "secondarySkills": [
+        "constant speed",
+        "percentage multipliers",
+        "simultaneous comparison"
+      ],
+      "difficulty": "medium",
+      "targetTimeSeconds": 75,
+      "irt": {
+        "b": 0.15,
+        "a": 1.15
+      },
+      "stemMarkdown": "Two runners start a race at the same time and run at constant speeds. Runner \\(A\\) runs \\(25\\%\\) faster than Runner \\(B\\). At one instant, Runner \\(A\\) has \\(80\\text{ m}\\) left and Runner \\(B\\) has \\(140\\text{ m}\\) left. How long is the race?",
+      "diagramPath": null,
+      "visualSpec": null,
+      "options": [
+        {
+          "id": "A",
+          "contentMarkdown": "\\(300\\text{ m}\\)"
+        },
+        {
+          "id": "B",
+          "contentMarkdown": "\\(320\\text{ m}\\)"
+        },
+        {
+          "id": "C",
+          "contentMarkdown": "\\(360\\text{ m}\\)"
+        },
+        {
+          "id": "D",
+          "contentMarkdown": "\\(400\\text{ m}\\)"
+        },
+        {
+          "id": "E",
+          "contentMarkdown": "\\(380\\text{ m}\\)"
+        },
+        {
+          "id": "F",
+          "contentMarkdown": "\\(420\\text{ m}\\)"
+        }
+      ],
+      "correctOption": "E",
+      "solutionMarkdown": "Let the race length be \\(L\\). At the stated instant, the distances run are \\(L-80\\) and \\(L-140\\). Since the runners have travelled for the same time, \\[\\frac{L-80}{L-140}=\\frac54.\\] Thus \\(4L-320=5L-700\\), giving \\(\\boxed{L=380\\text{ m}}\\).",
+      "fastInsight": "At the same instant, distance travelled has the same ratio as speed—not distance remaining.",
+      "mistakeTagsByOption": {
+        "A": [
+          "applied-percentage-to-remaining-distance"
+        ],
+        "B": [
+          "used-80-as-twenty-five-percent"
+        ],
+        "C": [
+          "used-gap-as-percentage-of-race"
+        ],
+        "D": [
+          "used-four-hundred-metre-default"
+        ],
+        "F": [
+          "reversed-speed-ratio"
+        ]
+      },
+      "inspiration": {
+        "source": "NSAA 2021 Part A Q18",
+        "mechanism": "compare distances covered in the same time using a percentage speed ratio",
+        "copyingRisk": "medium-mitigated-by-inverse-race-length-task"
+      }
+    },
+    {
+      "id": "m1cal-final-q15",
+      "position": 15,
+      "internalTitle": "Three tangent circles",
+      "primaryTopic": "M5 Geometry",
+      "secondarySkills": [
+        "Pythagoras",
+        "circle tangency",
+        "spatial decomposition"
+      ],
+      "difficulty": "difficult",
+      "targetTimeSeconds": 105,
+      "irt": {
+        "b": 1.05,
+        "a": 1.5
+      },
+      "stemMarkdown": "Three circles of radii \\(1\\text{ cm}\\), \\(4\\text{ cm}\\), and \\(9\\text{ cm}\\) rest on the same straight line. Each circle touches the next circle. The points where the circles touch the line are \\(P,Q,R\\), as shown. What is \\(PR\\)?",
+      "diagramPath": "diagram_previews/q15-tangent-circles.png",
+      "visualSpec": {
+        "kind": "three_tangent_circles_on_line",
+        "radii": [
+          1,
+          4,
+          9
+        ],
+        "contactPointLabels": [
+          "P",
+          "Q",
+          "R"
+        ],
+        "adjacentCirclesTangent": true,
+        "altText": "Three circles of radii 1, 4 and 9 centimetres rest on a horizontal line and touch consecutively. Their points of contact with the line, from smallest to largest circle, are P, Q and R."
+      },
+      "options": [
+        {
+          "id": "A",
+          "contentMarkdown": "\\(15\\text{ cm}\\)"
+        },
+        {
+          "id": "B",
+          "contentMarkdown": "\\(16\\text{ cm}\\)"
+        },
+        {
+          "id": "C",
+          "contentMarkdown": "\\(13\\text{ cm}\\)"
+        },
+        {
+          "id": "D",
+          "contentMarkdown": "\\(14\\text{ cm}\\)"
+        },
+        {
+          "id": "E",
+          "contentMarkdown": "\\(17\\text{ cm}\\)"
+        },
+        {
+          "id": "F",
+          "contentMarkdown": "\\(18\\text{ cm}\\)"
+        }
+      ],
+      "correctOption": "B",
+      "solutionMarkdown": "For two touching circles of radii \\(a\\) and \\(b\\), their centres are \\(a+b\\) apart and differ in height by \\(b-a\\). Their horizontal separation is therefore \\[\\sqrt{(a+b)^2-(b-a)^2}=2\\sqrt{ab}.\\] Hence \\(PQ=2\\sqrt{1\\cdot4}=4\\) and \\(QR=2\\sqrt{4\\cdot9}=12\\). Therefore \\(PR=4+12=\\boxed{16\\text{ cm}}\\).",
+      "fastInsight": "Join neighbouring centres: the horizontal gap is the missing side of a right triangle.",
+      "mistakeTagsByOption": {
+        "A": [
+          "added-radii-and-adjusted-once"
+        ],
+        "C": [
+          "used-largest-plus-middle-radius"
+        ],
+        "D": [
+          "used-centre-distances-incorrectly"
+        ],
+        "E": [
+          "rounding-or-height-difference-error"
+        ],
+        "F": [
+          "added-diameters-partly"
+        ]
+      },
+      "inspiration": {
+        "source": "NSAA 2021 Part A Q9",
+        "mechanism": "two linked right triangles reveal an exact length",
+        "copyingRisk": "low"
+      }
+    }
+  ]
+}

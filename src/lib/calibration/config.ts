@@ -6,10 +6,9 @@
  * treated as versioned configuration. UI and scoring code must read from here
  * rather than hard-coding question IDs or formulas.
  *
- * Canonical source: `math1/esat_math1_full_calibration_test_v1_diagramsfixed.json`
- * (synced into `math1/config.json` via `scripts/sync-calibration-config.ts`).
- * Diagram SVG patches live in `math1/diagrams/`.
- * Parked v2 package: `math1-calibration-v2/` (+ `sync-calibration-config-v2.ts`).
+ * Canonical source: `math1-calibration-final/questions.json`
+ * (synced into `math1/config.json` via `scripts/sync-calibration-config-final.ts`).
+ * Parked older packages: `math1-calibration-v2/`, v1 JSON under `math1/`.
  */
 
 import rawConfig from "./math1/config.json";
@@ -62,6 +61,9 @@ export interface CalibrationQuestion {
   pair_interpretation: string | null;
   specification_refs?: string[];
   internal_title?: string;
+  /** Provisional IRT parameters for the MAP score estimator. */
+  irt?: { a: number; b: number } | null;
+  option_count?: number | null;
 }
 
 export interface ScoreComponentConfig {

@@ -219,6 +219,22 @@ export function CalibrationLandingClient() {
             </Link>
           ) : null}
         </div>
+
+        <section
+          id="how-estimate-works"
+          className="mx-auto mt-12 w-full max-w-4xl rounded-3xl bg-surface-elevated/50 px-6 py-6 sm:px-8"
+        >
+          <h2 className="font-heading text-lg font-bold text-text">
+            How this estimate works
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-text-muted">
+            After you finish, we show an Estimated ESAT range from the pattern of
+            right and wrong answers on this 15-question calibration. Timing is
+            used only for pace feedback. This is a provisional diagnostic
+            estimate, not an official ESAT score. Your real result will also
+            depend on the live paper and test-day conditions.
+          </p>
+        </section>
       </div>
     </div>
   );

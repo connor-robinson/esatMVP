@@ -248,7 +248,7 @@ export interface EsatPrediction {
   rawCorrect15: number;
   rawPercent15: number;
 
-  /** Weighted points (max 214). */
+  /** Weighted points (difficulty display weights). */
   maxWeightedPoints: number;
   observedWeightedPoints: number;
   abilityWeightedPoints: number;
@@ -259,16 +259,25 @@ export interface EsatPrediction {
   projectedRaw27: number;
   observedProjectedRaw27: number;
 
-  /** Estimated ESAT score (1.0–9.0). */
-  estimatedEsatScore: number;
-  observedEsatScore: number;
-  estimatedScoreLow: number;
-  estimatedScoreHigh: number;
-  scoreUncertainty: number;
+  /** Estimated ESAT score (1.0–9.0). Null when fewer than 12 questions answered. */
+  estimatedEsatScore: number | null;
+  observedEsatScore: number | null;
+  estimatedScoreLow: number | null;
+  estimatedScoreHigh: number | null;
+  scoreUncertainty: number | null;
 
   band: EsatBand;
   bandLabel: string;
   bandMessage: string;
+
+  /** True when MAP estimate has enough answered items. */
+  hasEstimate: boolean;
+  evidenceLabel: "not_enough_evidence" | "provisional";
+  answeredCount: number;
+  foundationCorrect: number;
+  coreCorrect: number;
+  highCeilingCorrect: number;
+  anchorInterpretation: string;
 
   /** Guessing / certainty. */
   guessedCount: number;
