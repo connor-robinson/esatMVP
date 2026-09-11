@@ -193,7 +193,6 @@ export default function CalibrationResultsPage() {
       ) : null}
 
       <CalibrationResultsView
-        attempt={attempt}
         results={results}
         isSignedIn={!!session?.user}
         attemptId={attemptId}
