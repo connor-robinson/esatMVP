@@ -10,10 +10,8 @@ import { BreakdownDonutChart, type DonutSlice } from "@/components/questionBank/
 import { CalibrationQuestionReviewPlayer } from "@/components/calibration/CalibrationQuestionReviewPlayer";
 import { trackCalibrationEvent, type CalibrationUserState } from "@/lib/calibration/analytics";
 import { getCalibrationQuestion } from "@/lib/calibration/config";
-import { SKILL_DISPLAY_GROUPS } from "@/lib/calibration/scoreModel";
 import type { CalibrationResults } from "@/lib/calibration/types";
 import { StemContent } from "@/components/shared/StemContent";
-import { cn } from "@/lib/utils";
 
 interface Props {
   results: CalibrationResults;
@@ -135,12 +133,6 @@ interface PercentileState {
   validAttempts: number;
   minimumRequired: number;
   unlocked: boolean;
-}
-
-function mistakeTone(m: { skipped: boolean; correct: boolean }): string {
-  if (m.skipped) return "bg-surface-mid text-text-muted ring-1 ring-border-subtle/40";
-  if (m.correct) return "bg-success/15 text-success ring-1 ring-success/25";
-  return "bg-error/15 text-error ring-1 ring-error/25";
 }
 
 export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props) {
@@ -321,34 +313,6 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
         </div>
       ) : null}
 
-      <Card variant="elevated" className="border-0 p-5 shadow-none sm:p-6">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h2 className="font-heading text-xl font-bold text-text">Jump to a question</h2>
-            <p className="mt-1 text-sm text-text-muted">
-              Green = correct, red = incorrect, grey = skipped. Open any item in the exam-style
-              review to see the full explanation.
-            </p>
-          </div>
-        </div>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {results.mistakes.map((m) => (
-            <button
-              key={m.questionId}
-              type="button"
-              onClick={() => openReview(m.questionId)}
-              className={cn(
-                "flex h-10 w-10 items-center justify-center rounded-lg text-sm font-bold tabular-nums transition hover:opacity-90",
-                mistakeTone(m),
-              )}
-              aria-label={`Review question ${m.order}`}
-            >
-              {m.order}
-            </button>
-          ))}
-        </div>
-      </Card>
-
       <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(22rem,1fr)]">
         <Card variant="elevated" className="border-0 p-5 shadow-none sm:p-6">
           <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
@@ -395,56 +359,6 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
           </div>
         </Card>
       </div>
-
-      <Card variant="elevated" className="border-0 p-5 shadow-none sm:p-6">
-        <h2 className="font-heading text-xl font-bold text-text">Anchor groups</h2>
-        <p className="mt-1 text-sm text-text-muted">
-          Plain-English evidence from foundation, core, and high-ceiling items.
-        </p>
-        <dl className="mt-4 grid gap-4 sm:grid-cols-3">
-          <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-text-muted">
-              Foundation
-            </dt>
-            <dd className="mt-1 text-2xl font-bold tabular-nums text-text">
-              {p.foundationCorrect}/4
-            </dd>
-          </div>
-          <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-text-muted">Core</dt>
-            <dd className="mt-1 text-2xl font-bold tabular-nums text-text">{p.coreCorrect}/7</dd>
-          </div>
-          <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-text-muted">
-              High ceiling
-            </dt>
-            <dd className="mt-1 text-2xl font-bold tabular-nums text-text">
-              {p.highCeilingCorrect}/4
-            </dd>
-          </div>
-        </dl>
-        <div className="mt-5 grid gap-3 sm:grid-cols-2">
-          {SKILL_DISPLAY_GROUPS.map((group) => {
-            const correctCount = group.questionIds.filter((id) => {
-              const m = results.mistakes.find((item) => item.questionId === id);
-              return m?.correct;
-            }).length;
-            const total = group.questionIds.length;
-            const limited = total <= 3;
-            return (
-              <div key={group.label} className="rounded-xl bg-surface-mid/50 px-4 py-3">
-                <p className="text-sm font-semibold text-text">{group.label}</p>
-                <p className="mt-1 text-lg font-bold tabular-nums text-text">
-                  {correctCount}/{total}
-                </p>
-                {limited ? (
-                  <p className="mt-1 text-xs text-text-muted">Limited evidence</p>
-                ) : null}
-              </div>
-            );
-          })}
-        </div>
-      </Card>
 
       <Card variant="elevated" className="border-0 p-5 shadow-none sm:p-6">
         <h2 className="font-heading text-xl font-bold text-text">Guessing and certainty</h2>
