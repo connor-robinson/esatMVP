@@ -149,7 +149,7 @@ export default function PricingPage() {
       caption: `${monthlyPerWeekLabel}/week`,
       priceNote: isRecurringPaid && tier !== "monthly"
         ? "Switch at next billing date. No charge today"
-        : `2-day free trial. Card required. Then ${monthlyPriceLabel}/month. Cancel anytime`,
+        : `4-day free trial. Card required. Then ${monthlyPriceLabel}/month. Cancel anytime`,
       features: FEATURES.paid,
       highlighted: true,
       ctaLabel: paidCta("monthly", "Start free trial"),

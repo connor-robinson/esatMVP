@@ -609,7 +609,7 @@ export function MarketingHomepage({
                 </div>
               </div>
               <p className="mt-2 text-sm font-medium text-white/80">
-                {monthlyPerWeekLabel}/week · 2-day free trial
+                {monthlyPerWeekLabel}/week · 4-day free trial
               </p>
               <ul className="mt-8 flex-1 space-y-3 text-sm text-white">
                 {PAID_FEATURES.map((feature) => (
