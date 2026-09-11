@@ -12,7 +12,7 @@ DEFAULT_DB_PATH = Path(__file__).resolve().parent / "review_data" / "review.db"
 
 DIAGRAM_STATUSES = ("pending", "approved", "rejected", "superseded")
 QUESTION_STATUSES = ("pending", "approved", "rejected", "needs_edit")
-FILTERS = ("pending", "approved", "rejected", "regenerated", "all")
+FILTERS = ("pending", "approved", "rejected", "needs_edit", "regenerated", "all")
 
 
 def _now() -> str:
@@ -22,9 +22,11 @@ def _now() -> str:
 def _connect(db_path: Path | None = None) -> sqlite3.Connection:
     path = Path(db_path or DEFAULT_DB_PATH)
     path.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(str(path))
+    conn = sqlite3.connect(str(path), timeout=60)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
+    conn.execute("PRAGMA journal_mode=WAL")
+    conn.execute("PRAGMA busy_timeout=60000")
     return conn
 
 
@@ -405,18 +407,22 @@ class ReviewStore:
 
 
 def _matches_filter(item: dict[str, Any], filt: str, *, latest_only: bool) -> bool:
+    del latest_only  # reserved; latest attempt is chosen in list_items
     q_status = (item.get("question_status") or "pending").lower()
     diagram = item.get("diagram") or {}
-    d_status = (diagram.get("status") or "").lower()
     attempt = int(diagram.get("attempt") or 1)
     if filt == "all":
         return True
+    # Pending belt is question-status only. Do not OR with diagram_status, or a
+    # rejected question with a pending/new diagram attempt reappears in Pending.
     if filt == "pending":
-        return q_status == "pending" or d_status == "pending"
+        return q_status == "pending"
     if filt == "approved":
-        return q_status == "approved" or d_status == "approved"
+        return q_status == "approved"
     if filt == "rejected":
-        return q_status == "rejected" or d_status == "rejected"
+        return q_status == "rejected"
+    if filt == "needs_edit":
+        return q_status == "needs_edit"
     if filt == "regenerated":
         return attempt > 1 or bool(diagram.get("parent_attempt_id"))
     return True
