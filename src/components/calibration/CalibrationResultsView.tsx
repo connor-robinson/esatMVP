@@ -360,7 +360,7 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
               </p>
             </div>
             <span className="rounded-full bg-surface-mid px-3 py-1.5 text-xs font-semibold text-text-muted">
-              {formatTime(p.totalTimeSeconds)} · {results.speedAccuracy.medianTimeRatio}x pace ·{" "}
+              {formatTime(p.totalTimeSeconds)} | {results.speedAccuracy.medianTimeRatio}x pace |{" "}
               {paceLabel}
             </span>
           </div>
@@ -486,7 +486,7 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
               ? "Skipped"
               : m.correct
                 ? "Correct"
-                : `Your answer ${m.selectedOption ?? "?"} · correct ${m.correctOption}`;
+                : `Your answer ${m.selectedOption ?? "-"} | correct ${m.correctOption}`;
             return (
               <details
                 key={m.questionId}
