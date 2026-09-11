@@ -65,7 +65,7 @@
       "secondary": "#666666",
       "lightFill": "#D9D9D9",
       "darkFill": "#858585",
-      "fontFamily": "DejaVu Sans",
+      "fontFamily": "Computer Modern (KaTeX / MathJax mathtext)",
       "lineWidthPt": 1.55,
       "minimumExportWidthPx": 1400,
       "minimumExportDpi": 200,
