@@ -9,7 +9,8 @@ import {
 } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Inbox } from "lucide-react";
+import { ChevronDown, Inbox } from "lucide-react";
+import { BrandMarkImage } from "@/components/brand/BrandMarkImage";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import type { InboxMessageListItem, InboxThreadReply } from "@/lib/inbox";
 import { cn } from "@/lib/utils";
@@ -17,10 +18,22 @@ import { cn } from "@/lib/utils";
 const NAV_ICON_PX = 20;
 const NAV_ICON_STROKE = 2;
 const PREVIEW_LIMIT = 6;
+const COLLAPSED_BODY_CHARS = 110;
 
 type Props = {
   className?: string;
 };
+
+function previewBody(body: string): { text: string; truncated: boolean } {
+  const cleaned = body.replace(/\s+/g, " ").trim();
+  if (cleaned.length <= COLLAPSED_BODY_CHARS) {
+    return { text: cleaned, truncated: false };
+  }
+  return {
+    text: `${cleaned.slice(0, COLLAPSED_BODY_CHARS).trimEnd()}…`,
+    truncated: true,
+  };
+}
 
 /**
  * Navbar inbox: leftmost account icon; opens a compact notification popup.
@@ -32,17 +45,21 @@ export function InboxNavButton({ className }: Props) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<InboxMessageListItem[]>([]);
-  const [unread, setUnread] = useState(0);
+  const [unreadPersonal, setUnreadPersonal] = useState(0);
+  const [hasUnreadBroadcast, setHasUnreadBroadcast] = useState(false);
   const [loading, setLoading] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [replyText, setReplyText] = useState("");
-  const [replyBusy, setReplyBusy] = useState(false);
-  const [replyError, setReplyError] = useState<string | null>(null);
+  const [replyById, setReplyById] = useState<Record<string, string>>({});
+  const [replyBusyId, setReplyBusyId] = useState<string | null>(null);
+  const [replyErrorById, setReplyErrorById] = useState<Record<string, string>>(
+    {},
+  );
 
   const refresh = useCallback(async () => {
     if (!session?.user) {
       setMessages([]);
-      setUnread(0);
+      setUnreadPersonal(0);
+      setHasUnreadBroadcast(false);
       return;
     }
     try {
@@ -54,9 +71,27 @@ export function InboxNavButton({ className }: Props) {
       const data = (await res.json()) as {
         messages?: InboxMessageListItem[];
         unreadCount?: number;
+        unreadPersonalCount?: number;
+        hasUnreadBroadcast?: boolean;
       };
-      setMessages(data.messages ?? []);
-      setUnread(typeof data.unreadCount === "number" ? data.unreadCount : 0);
+      const nextMessages = data.messages ?? [];
+      setMessages(nextMessages);
+      const personal =
+        typeof data.unreadPersonalCount === "number"
+          ? data.unreadPersonalCount
+          : typeof data.unreadCount === "number"
+            ? data.unreadCount
+            : nextMessages.filter(
+                (m) => !m.read_at && m.audience === "personal",
+              ).length;
+      setUnreadPersonal(personal);
+      setHasUnreadBroadcast(
+        typeof data.hasUnreadBroadcast === "boolean"
+          ? data.hasUnreadBroadcast
+          : nextMessages.some(
+              (m) => !m.read_at && m.audience === "broadcast",
+            ),
+      );
     } catch {
       /* ignore */
     }
@@ -101,7 +136,7 @@ export function InboxNavButton({ className }: Props) {
     setOpen(next);
     if (!next) return;
     setLoading(true);
-    setReplyError(null);
+    setReplyErrorById({});
     await refresh();
     setLoading(false);
   };
@@ -117,7 +152,18 @@ export function InboxNavButton({ className }: Props) {
           : m,
       ),
     );
-    setUnread((n) => Math.max(0, n - 1));
+    if (target.audience === "personal") {
+      setUnreadPersonal((n) => Math.max(0, n - 1));
+    } else {
+      setHasUnreadBroadcast(
+        messages.some(
+          (m) =>
+            m.id !== messageId &&
+            !m.read_at &&
+            m.audience === "broadcast",
+        ),
+      );
+    }
 
     try {
       await fetch("/api/inbox", {
@@ -133,27 +179,37 @@ export function InboxNavButton({ className }: Props) {
 
   const selectMessage = (id: string) => {
     setExpandedId((prev) => (prev === id ? null : id));
-    setReplyText("");
-    setReplyError(null);
+    setReplyErrorById((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
     void markRead(id);
   };
 
   const sendReply = async (parentId: string) => {
-    if (!replyText.trim()) return;
-    setReplyBusy(true);
-    setReplyError(null);
+    const text = (replyById[parentId] ?? "").trim();
+    if (!text) return;
+    setReplyBusyId(parentId);
+    setReplyErrorById((prev) => {
+      const next = { ...prev };
+      delete next[parentId];
+      return next;
+    });
     try {
       const res = await fetch("/api/inbox/reply", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ parentId, body: replyText }),
+        body: JSON.stringify({ parentId, body: text }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setReplyError(
-          typeof data.error === "string" ? data.error : "Could not send",
-        );
+        setReplyErrorById((prev) => ({
+          ...prev,
+          [parentId]:
+            typeof data.error === "string" ? data.error : "Could not send",
+        }));
         return;
       }
       const reply = data.reply as InboxThreadReply | undefined;
@@ -166,17 +222,27 @@ export function InboxNavButton({ className }: Props) {
           ),
         );
       }
-      setReplyText("");
+      setReplyById((prev) => ({ ...prev, [parentId]: "" }));
+      setExpandedId(parentId);
     } catch {
-      setReplyError("Could not send");
+      setReplyErrorById((prev) => ({
+        ...prev,
+        [parentId]: "Could not send",
+      }));
     } finally {
-      setReplyBusy(false);
+      setReplyBusyId(null);
     }
   };
 
   if (!session?.user) return null;
 
-  const label = unread > 0 ? `Inbox, ${unread} unread` : "Inbox";
+  const showNumberBadge = unreadPersonal > 0;
+  const showDotBadge = !showNumberBadge && hasUnreadBroadcast;
+  const label = showNumberBadge
+    ? `Inbox, ${unreadPersonal} unread direct message${unreadPersonal === 1 ? "" : "s"}`
+    : showDotBadge
+      ? "Inbox, unread announcements"
+      : "Inbox";
 
   return (
     <div ref={rootRef} className="relative">
@@ -194,7 +260,17 @@ export function InboxNavButton({ className }: Props) {
           size={NAV_ICON_PX}
           strokeWidth={NAV_ICON_STROKE}
         />
-        {unread > 0 ? (
+        {showNumberBadge ? (
+          <span
+            className={cn(
+              "pointer-events-none absolute -right-1.5 -top-1.5",
+              "flex h-[1.05rem] min-w-[1.05rem] items-center justify-center",
+              "rounded-full bg-red-500 px-1 text-[9px] font-bold leading-none text-white",
+            )}
+          >
+            {unreadPersonal > 9 ? "9+" : unreadPersonal}
+          </span>
+        ) : showDotBadge ? (
           <span className="pointer-events-none absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-red-500" />
         ) : null}
       </button>
@@ -221,7 +297,7 @@ export function InboxNavButton({ className }: Props) {
             </Link>
           </div>
 
-          <div className="max-h-[min(24rem,70vh)] overflow-y-auto">
+          <div className="max-h-[min(28rem,75vh)] overflow-y-auto">
             {loading && messages.length === 0 ? (
               <p className="px-3 py-4 text-[12px] text-text-muted">Loading…</p>
             ) : messages.length === 0 ? (
@@ -233,6 +309,13 @@ export function InboxNavButton({ className }: Props) {
                 {messages.map((m) => {
                   const unreadItem = !m.read_at;
                   const expanded = expandedId === m.id;
+                  const isDirect = m.audience === "personal";
+                  const bodyPreview = previewBody(m.body);
+                  const replyText = replyById[m.id] ?? "";
+                  const replyError = replyErrorById[m.id];
+                  const replyBusy = replyBusyId === m.id;
+                  const showCompactReply = isDirect && m.allow_reply;
+
                   return (
                     <li
                       key={m.id}
@@ -244,51 +327,89 @@ export function InboxNavButton({ className }: Props) {
                       <button
                         type="button"
                         onClick={() => selectMessage(m.id)}
-                        className="flex w-full items-start gap-2 px-3 py-2.5 text-left hover:bg-surface-subtle/80"
+                        aria-expanded={expanded}
+                        className={cn(
+                          "group flex w-full items-start gap-2.5 px-3 py-2.5 text-left",
+                          "hover:bg-surface-subtle/80",
+                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-secondary/40",
+                        )}
                       >
-                        <span
-                          className={cn(
-                            "mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full",
-                            unreadItem ? "bg-red-500" : "bg-border-subtle",
-                          )}
-                          aria-hidden
-                        />
+                        <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-surface-mid">
+                          <BrandMarkImage
+                            className="h-3.5 w-auto"
+                            alt="ESAT Camp"
+                          />
+                        </span>
                         <span className="min-w-0 flex-1">
-                          <span
-                            className={cn(
-                              "block truncate text-[12px] text-text",
-                              unreadItem && "font-semibold",
+                          <span className="flex items-start gap-1.5">
+                            <span
+                              className={cn(
+                                "min-w-0 flex-1 whitespace-normal break-words text-[12px] leading-snug text-text",
+                                unreadItem && "font-semibold",
+                              )}
+                            >
+                              {m.subject}
+                            </span>
+                            <ChevronDown
+                              aria-hidden
+                              size={14}
+                              strokeWidth={2.25}
+                              className={cn(
+                                "mt-0.5 shrink-0 text-text-subtle transition-transform duration-150",
+                                "opacity-70 group-hover:opacity-100",
+                                expanded && "rotate-180",
+                              )}
+                            />
+                          </span>
+                          <span className="mt-0.5 block text-[10px] text-text-subtle">
+                            ESAT Camp
+                            {isDirect ? " · direct" : " · everyone"}
+                            {" · "}
+                            {new Date(m.created_at).toLocaleDateString(
+                              "en-GB",
+                              {
+                                day: "numeric",
+                                month: "short",
+                              },
                             )}
-                          >
-                            {m.subject}
                           </span>
-                          <span className="mt-0.5 block truncate text-[11px] text-text-muted">
-                            ESAT Camp ·{" "}
-                            {new Date(m.created_at).toLocaleDateString("en-GB", {
-                              day: "numeric",
-                              month: "short",
-                            })}
-                          </span>
+
+                          {!expanded ? (
+                            <span className="relative mt-1.5 block">
+                              <span
+                                className={cn(
+                                  "block text-[11px] leading-relaxed text-text-muted",
+                                  bodyPreview.truncated &&
+                                    "line-clamp-2 overflow-hidden [mask-image:linear-gradient(to_bottom,black_45%,transparent)]",
+                                )}
+                              >
+                                {bodyPreview.text}
+                              </span>
+                              <span className="mt-1 block text-[10px] font-medium text-text-subtle opacity-80 group-hover:opacity-100">
+                                {bodyPreview.truncated
+                                  ? "Tap to expand…"
+                                  : "Tap for details"}
+                              </span>
+                            </span>
+                          ) : null}
                         </span>
                       </button>
 
                       {expanded ? (
-                        <div className="border-t border-border-subtle bg-surface-subtle/40 px-3 py-2.5">
+                        <div className="border-t border-border-subtle bg-surface-subtle/40 px-3 py-2.5 pl-[3.25rem]">
                           <p className="whitespace-pre-wrap text-[12px] leading-relaxed text-text-muted">
-                            {m.body.length > 420
-                              ? `${m.body.slice(0, 420)}…`
-                              : m.body}
+                            {m.body}
                           </p>
 
                           {(m.replies ?? []).length > 0 ? (
                             <div className="mt-2 space-y-1.5">
-                              {(m.replies ?? []).slice(-3).map((r) => (
+                              {(m.replies ?? []).slice(-4).map((r) => (
                                 <p
                                   key={r.id}
                                   className={cn(
                                     "rounded-md px-2 py-1.5 text-[11px] leading-relaxed",
                                     r.direction === "inbound"
-                                      ? "bg-red-500/10 text-text"
+                                      ? "bg-surface-mid text-text"
                                       : "bg-background text-text-muted",
                                   )}
                                 >
@@ -298,38 +419,60 @@ export function InboxNavButton({ className }: Props) {
                                       : "ESAT Camp"}
                                     :{" "}
                                   </span>
-                                  {r.body.length > 160
-                                    ? `${r.body.slice(0, 160)}…`
+                                  {r.body.length > 200
+                                    ? `${r.body.slice(0, 200)}…`
                                     : r.body}
                                 </p>
                               ))}
                             </div>
                           ) : null}
+                        </div>
+                      ) : null}
 
-                          {m.allow_reply ? (
-                            <div className="mt-2">
-                              <textarea
-                                value={expandedId === m.id ? replyText : ""}
-                                onChange={(e) => setReplyText(e.target.value)}
-                                rows={2}
-                                maxLength={4000}
-                                placeholder="Reply to ESAT Camp…"
-                                className="w-full resize-none rounded-md border border-border-subtle bg-background px-2 py-1.5 text-[12px] text-text"
-                              />
-                              {replyError ? (
-                                <p className="mt-1 text-[11px] text-red-600 dark:text-red-400">
-                                  {replyError}
-                                </p>
-                              ) : null}
-                              <button
-                                type="button"
-                                disabled={replyBusy || !replyText.trim()}
-                                onClick={() => void sendReply(m.id)}
-                                className="mt-1.5 rounded-md bg-surface-mid px-2.5 py-1 text-[11px] font-semibold text-text disabled:opacity-50"
-                              >
-                                {replyBusy ? "Sending…" : "Send reply"}
-                              </button>
-                            </div>
+                      {showCompactReply ? (
+                        <div
+                          className={cn(
+                            "px-3 pb-2.5 pl-[3.25rem]",
+                            expanded && "pt-2",
+                          )}
+                          onClick={(e) => e.stopPropagation()}
+                          onKeyDown={(e) => e.stopPropagation()}
+                        >
+                          <div className="flex items-center gap-1.5">
+                            <input
+                              type="text"
+                              value={replyText}
+                              onChange={(e) =>
+                                setReplyById((prev) => ({
+                                  ...prev,
+                                  [m.id]: e.target.value,
+                                }))
+                              }
+                              onFocus={() => void markRead(m.id)}
+                              maxLength={4000}
+                              placeholder="Reply to ESAT Camp…"
+                              aria-label={`Reply to ${m.subject}`}
+                              className={cn(
+                                "min-w-0 flex-1 rounded-md border border-border-subtle bg-background",
+                                "px-2 py-1 text-[11px] text-text placeholder:text-text-subtle",
+                              )}
+                            />
+                            <button
+                              type="button"
+                              disabled={replyBusy || !replyText.trim()}
+                              onClick={() => void sendReply(m.id)}
+                              className={cn(
+                                "shrink-0 rounded-md bg-surface-mid px-2 py-1",
+                                "text-[11px] font-semibold text-text disabled:opacity-50",
+                              )}
+                            >
+                              {replyBusy ? "…" : "Reply"}
+                            </button>
+                          </div>
+                          {replyError ? (
+                            <p className="mt-1 text-[10px] text-red-600 dark:text-red-400">
+                              {replyError}
+                            </p>
                           ) : null}
                         </div>
                       ) : null}

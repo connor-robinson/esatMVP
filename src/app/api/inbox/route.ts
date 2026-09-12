@@ -168,10 +168,24 @@ export async function GET(request: NextRequest) {
   }
 
   messages = messages.slice(0, limit);
-  const unreadCount = Array.from(byId.values()).filter((m) => !m.read_at)
-    .length;
 
-  return NextResponse.json({ messages, unreadCount });
+  const allRoots = Array.from(byId.values());
+  const unreadPersonalCount = allRoots.filter(
+    (m) => !m.read_at && m.audience === "personal",
+  ).length;
+  const hasUnreadBroadcast = allRoots.some(
+    (m) => !m.read_at && m.audience === "broadcast",
+  );
+  // Number badge = direct messages only. Broadcast / general notices use a red
+  // dot and do not inflate that count.
+  const unreadCount = unreadPersonalCount;
+
+  return NextResponse.json({
+    messages,
+    unreadCount,
+    unreadPersonalCount,
+    hasUnreadBroadcast,
+  });
 }
 
 /**
