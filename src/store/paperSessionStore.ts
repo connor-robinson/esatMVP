@@ -33,6 +33,10 @@ import type { Answer, Letter, MistakeTag, Paper, PaperSection, Question, ExamNam
 import { saveSession, loadSession, deleteSession, clearSessionDetached, markSessionDetached } from '@/lib/storage/sessionStorage';
 import { generatePartIdsFromSections, generatePartIdFromRoadmapPart } from '@/lib/papers/partIdUtils';
 import { examNameToPaperType } from '@/lib/papers/paperConfig';
+import {
+  applyExtraTimeMinutes,
+  fetchExtraTimePrefs,
+} from '@/lib/papers/extraTime';
 
 interface PaperSessionState {
   // Session data
@@ -42,6 +46,8 @@ interface PaperSessionState {
   paperVariant: string; // Format: "{year}-{paperName}-{examType}"
   sessionName: string;
   timeLimitMinutes: number;
+  /** Percent extra time from access arrangements (0 if none). */
+  extraTimePercentage: number;
   questionRange: { start: number; end: number };
   selectedSections: PaperSection[]; // Array of section names attempted in this session
   selectedPartIds: string[]; // Array of part IDs for granular tracking
@@ -109,6 +115,8 @@ interface PaperSessionState {
     selectedSections?: PaperSection[];
     selectedPartIds?: string[]; // Optional: if provided, use directly; otherwise generate from selectedSections
     questionOrder?: number[];
+    /** Access arrangement: percent extra time (e.g. 25). Applied to overall + section timers. */
+    extraTimePercentage?: number;
   }) => Promise<void>;
   
   loadQuestions: (paperId: number) => Promise<void>;
@@ -187,6 +195,7 @@ const EMPTY_CLIENT_SESSION = {
   paperVariant: '',
   sessionName: '',
   timeLimitMinutes: 60,
+  extraTimePercentage: 0,
   questionRange: { start: 1, end: 20 },
   selectedSections: [] as PaperSection[],
   selectedPartIds: [] as string[],
@@ -237,6 +246,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       paperVariant: '',
       sessionName: '',
       timeLimitMinutes: 60,
+      extraTimePercentage: 0,
       questionRange: { start: 1, end: 20 },
       selectedSections: [],
       selectedPartIds: [],
@@ -302,12 +312,22 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           return;
         }
 
+        let extraTimePercentage = Math.max(0, Number(config.extraTimePercentage) || 0);
+        if (config.extraTimePercentage === undefined) {
+          const prefs = await fetchExtraTimePrefs();
+          extraTimePercentage = prefs.enabled ? prefs.percentage : 0;
+        }
+        const timeLimitMinutes = applyExtraTimeMinutes(
+          config.timeLimitMinutes,
+          extraTimePercentage,
+        );
+
         const totalQuestions = config.questionRange.end - config.questionRange.start + 1;
         // Generate unique UUID for this session attempt
         // This ensures multiple attempts of the same paper are tracked separately
         const sessionId = crypto.randomUUID();
         const startedAt = Date.now();
-        const deadline = startedAt + config.timeLimitMinutes * 60 * 1000;
+        const deadline = startedAt + timeLimitMinutes * 60 * 1000;
         const selectedSections = config.selectedSections || [];
         
         // Generate part IDs from selected sections or use provided ones
@@ -346,7 +366,8 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           paperName: config.paperName,
           paperVariant: config.paperVariant,
           sessionName: config.sessionName,
-          timeLimitMinutes: config.timeLimitMinutes,
+          timeLimitMinutes,
+          extraTimePercentage,
           questionRange: config.questionRange,
           selectedSections, // Sections attempted in this session
           selectedPartIds, // Part IDs for granular tracking
@@ -397,7 +418,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           selectedSections: config.selectedSections || [],
           selectedPartIds: selectedPartIds, // Part IDs for granular tracking
           questionOrder: config.questionOrder || Array.from({ length: totalQuestions }, (_, i) => i + 1),
-          timeLimitMinutes: config.timeLimitMinutes,
+          timeLimitMinutes,
           startedAt,
           deadlineAt: deadline,
           perQuestionSec: Array.from({ length: totalQuestions }, () => 0),
@@ -1775,7 +1796,9 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         const timeLimits = state.allSectionsQuestions.map((sectionQuestions) => {
           const questionCount = sectionQuestions.length;
           // ~1.48 minutes per question for non-TMUA; 75 min per TMUA paper section (Paper 1 / Paper 2)
-          return state.paperName === 'TMUA' ? 75 : Math.ceil(questionCount * 1.48);
+          const base =
+            state.paperName === 'TMUA' ? 75 : Math.ceil(questionCount * 1.48);
+          return applyExtraTimeMinutes(base, state.extraTimePercentage || 0);
         });
         
         set({ sectionTimeLimits: timeLimits });
@@ -2243,6 +2266,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         paperVariant: state.paperVariant,
         sessionName: state.sessionName,
         timeLimitMinutes: state.timeLimitMinutes,
+        extraTimePercentage: state.extraTimePercentage,
         questionRange: state.questionRange,
         selectedSections: state.selectedSections,
         questions: state.questions,

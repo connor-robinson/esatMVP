@@ -445,7 +445,13 @@ export async function GET(request: NextRequest) {
     } else if (random) {
       // Bias the random window toward newer published items; client sampling
       // then weights diagrams/recency and sprinkles older rows from this set.
-      const fetchLimit = Math.min(Math.max(limit * 3, 80), 300);
+      // When excluding attempted questions, fetch a much larger window so the
+      // New filter still leaves enough unseen items (avoids small-pool repeats).
+      const baseFetch = Math.min(Math.max(limit * 3, 80), 300);
+      const fetchLimit =
+        attemptedStatus === 'New' && userId
+          ? Math.min(Math.max(limit * 12, 400), 2000)
+          : baseFetch;
       query = query
         .order('created_at', { ascending: false })
         .limit(fetchLimit);

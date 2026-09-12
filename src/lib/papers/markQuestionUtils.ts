@@ -37,6 +37,16 @@ export function resolveMarkPartKey(
   const rawLetter = (question.partLetter ?? "").trim();
   const partName = (question.partName ?? "").trim();
 
+  // ESAT / ESAT CAMP modules all use partLetter "Part A" with distinct partNames
+  // (Mathematics, Mathematics 2, Physics, …). Key by mapped section so modules
+  // do not collapse into a single "Part A" bucket on mark / analytics.
+  if (paperType === "ESAT" && partName) {
+    return mapPartToSection(
+      { partLetter: rawLetter, partName },
+      paperType,
+    );
+  }
+
   if (!isBogusPartLetter(rawLetter)) {
     if (/^part\s/i.test(rawLetter)) return rawLetter;
     const stripped = rawLetter.replace(/^part\s*/i, "").trim();
@@ -58,7 +68,9 @@ export function resolveMarkPartKey(
 
 export function formatMarkPartDisplay(partKey: string): string {
   if (/^part\s/i.test(partKey)) return partKey;
-  return `Part ${partKey}`;
+  // Single-letter part codes stay "Part A"; subject names stay as-is.
+  if (/^[A-E]$/i.test(partKey.trim())) return `Part ${partKey}`;
+  return partKey;
 }
 
 export function getSessionQuestionNumber(

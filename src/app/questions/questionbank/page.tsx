@@ -68,6 +68,10 @@ import {
   takeHomeLaunchQuestionsPrefetch,
 } from '@/lib/questionBank/sessionLaunchPrefetch';
 import {
+  applyExtraTimeMinutes,
+  fetchExtraTimePrefs,
+} from '@/lib/papers/extraTime';
+import {
   DIFFICULTY_MIX_PRESETS,
   type DifficultyMixPreset,
 } from '@/lib/questionBank/difficultyMix';
@@ -540,16 +544,21 @@ export default function QuestionBankPage() {
         updateCurrentQuestion(sessionQs[0]);
 
         const limitMinutes = Math.ceil(sessionQs.length * 1.5);
+        const extraPrefs = await fetchExtraTimePrefs();
+        const adjustedLimitMinutes = applyExtraTimeMinutes(
+          limitMinutes,
+          extraPrefs,
+        );
         const startTime = Date.now();
-        const timeLimitMs = limitMinutes * 60 * 1000;
+        const timeLimitMs = adjustedLimitMinutes * 60 * 1000;
         setDeadline(startTime + timeLimitMs);
         setTimerStartTime(startTime);
-        setTimeLimitMinutes(limitMinutes);
+        setTimeLimitMinutes(adjustedLimitMinutes);
         setRemainingTime(Math.ceil(timeLimitMs / 1000));
 
         await initializeTrackedSession({
           questions: sessionQs,
-          timeLimitMinutes: limitMinutes,
+          timeLimitMinutes: adjustedLimitMinutes,
           source: 'home',
           uiDifficulties: inferUiDifficultiesFromQuestions(sessionQs),
         });
@@ -982,6 +991,7 @@ export default function QuestionBankPage() {
             subjectsResolved,
             pool,
           );
+          const poolIds = new Set(pool.map((q) => q.id));
           const sessionQs =
             hookQuestions.length > 0
               ? buildSessionQuestionsWithHookLead({
@@ -989,6 +999,9 @@ export default function QuestionBankPage() {
                   hookQuestions,
                   count: config.count,
                   mix,
+                  // Only lead with hooks still in the New-filtered pool so
+                  // attempted hook questions are not replayed every session.
+                  eligibleHookIds: poolIds,
                 })
               : sampleSessionBankQuestions(pool, config.count, mix);
 
@@ -1018,11 +1031,16 @@ export default function QuestionBankPage() {
               config.timeLimitMinutes != null && config.timeLimitMinutes > 0
                 ? config.timeLimitMinutes
                 : Math.ceil(sessionQs.length * 1.5);
+            const extraPrefs = await fetchExtraTimePrefs();
+            const adjustedLimitMinutes = applyExtraTimeMinutes(
+              limitMinutes,
+              extraPrefs,
+            );
             const startTime = Date.now();
-            const timeLimitMs = limitMinutes * 60 * 1000;
+            const timeLimitMs = adjustedLimitMinutes * 60 * 1000;
             setDeadline(startTime + timeLimitMs);
             setTimerStartTime(startTime);
-            setTimeLimitMinutes(limitMinutes);
+            setTimeLimitMinutes(adjustedLimitMinutes);
             setRemainingTime(Math.ceil(timeLimitMs / 1000));
           } else {
             router.replace('/questions');

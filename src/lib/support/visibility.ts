@@ -8,6 +8,9 @@ const HIDDEN_PREFIXES = [
   "/pearson",
   "/access",
   "/mental-maths/drill",
+  // Question bank session chrome has its own report control above Next;
+  // the floating Help launcher sits on top of the footer Next button.
+  "/questions/questionbank",
 ];
 
 /**

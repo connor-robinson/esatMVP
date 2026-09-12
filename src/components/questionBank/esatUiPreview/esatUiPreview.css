@@ -518,6 +518,17 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
   color: inherit;
 }
 
+.esat-ui-preview-root .eup-stem .statement-items-list .katex,
+.esat-ui-preview-root .eup-stem .statement-items-list .katex * {
+  font-family: KaTeX_Main, "Times New Roman", serif !important;
+}
+
+.esat-ui-preview-root .eup-stem .statement-items-list .katex .mathnormal,
+.esat-ui-preview-root .eup-stem .statement-items-list .katex .mathit {
+  font-family: KaTeX_Math, "Times New Roman", serif !important;
+  font-style: italic;
+}
+
 .esat-ui-preview-root .eup-stem .statement-items-list .stem-content,
 .esat-ui-preview-root .eup-stem .statement-items-list .math-content {
   font-size: inherit !important;

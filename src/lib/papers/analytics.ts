@@ -629,11 +629,16 @@ export function topicToPaperSections(topic: string): PaperSection[] {
     case 'Math 1':
       return ['Mathematics', 'Math'];
     case 'Math 2':
-      return ['Advanced Math', 'Advanced Mathematics and Advanced Physics'];
+      return [
+        'Mathematics 2',
+        'Advanced Math',
+        'Advanced Mathematics and Advanced Physics',
+      ];
     case 'All maths':
       return [
         'Mathematics',
         'Math',
+        'Mathematics 2',
         'Advanced Math',
         'Advanced Mathematics and Advanced Physics',
       ];

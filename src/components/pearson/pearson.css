@@ -118,6 +118,39 @@ html.pearson-exam-active body {
   line-height: 1.4;
 }
 
+/* Keep KaTeX's own math fonts; global inherit above breaks glyphs (esp. Safari). */
+.pearson-exam-root .katex,
+.pearson-exam-root .katex * {
+  font-family: KaTeX_Main, "Times New Roman", serif !important;
+}
+
+.pearson-exam-root .katex .mathnormal,
+.pearson-exam-root .katex .mathit {
+  font-family: KaTeX_Math, "Times New Roman", serif !important;
+  font-style: italic;
+}
+
+.pearson-exam-root .katex .mathbf {
+  font-family: KaTeX_Main, "Times New Roman", serif !important;
+  font-weight: bold;
+}
+
+.pearson-exam-root .katex .mathsf {
+  font-family: KaTeX_SansSerif, sans-serif !important;
+}
+
+.pearson-exam-root .katex .mathtt {
+  font-family: KaTeX_Typewriter, monospace !important;
+}
+
+.pearson-exam-root .katex .mathcal {
+  font-family: KaTeX_Caligraphic, cursive !important;
+}
+
+.pearson-exam-root .katex .mathbb {
+  font-family: KaTeX_AMS, "Times New Roman", serif !important;
+}
+
 .pearson-exam-root .katex {
   font-size: 1em;
 }

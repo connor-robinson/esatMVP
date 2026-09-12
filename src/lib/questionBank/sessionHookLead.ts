@@ -40,6 +40,9 @@ export function hookQuestionIdsForSubjects(
  * Build a practice session that leads with the fixed subject hook set
  * (shuffled, up to 10), then fills the rest from the bank with difficulty mix,
  * diagram/recency weighting, and no in-session duplicates of hook ids.
+ *
+ * Pass `eligibleHookIds` (e.g. ids still in the New-filtered pool) so attempted
+ * hook questions are not re-injected ahead of unseen bank items.
  */
 export function buildSessionQuestionsWithHookLead<
   T extends {
@@ -58,6 +61,11 @@ export function buildSessionQuestionsWithHookLead<
   mix: DifficultyMixPreset;
   /** Max hook questions to place first. Defaults to the free-tier set size (10). */
   leadLimit?: number;
+  /**
+   * If set, only hooks whose ids are in this set may lead the session.
+   * Use the New-filtered pool ids so attempted hooks are not replayed.
+   */
+  eligibleHookIds?: ReadonlySet<string>;
 }): T[] {
   const {
     pool,
@@ -65,21 +73,29 @@ export function buildSessionQuestionsWithHookLead<
     count,
     mix,
     leadLimit = FREE_TIER_LIMIT_PER_SUBJECT,
+    eligibleHookIds,
   } = options;
 
   if (count <= 0) return [];
 
-  const hookIdSet = new Set(hookQuestions.map((q) => q.id));
-  const leadSize = Math.min(leadLimit, count, hookQuestions.length);
+  const eligibleHooks =
+    eligibleHookIds != null
+      ? hookQuestions.filter((q) => eligibleHookIds.has(q.id))
+      : hookQuestions;
+
+  const hookIdSet = new Set(eligibleHooks.map((q) => q.id));
+  const leadSize = Math.min(leadLimit, count, eligibleHooks.length);
   const lead =
     leadSize > 0
-      ? shuffleInPlace([...hookQuestions]).slice(0, leadSize)
+      ? shuffleInPlace([...eligibleHooks]).slice(0, leadSize)
       : [];
 
   const remainingCount = count - lead.length;
   if (remainingCount <= 0) return lead;
 
-  const restPool = pool.filter((q) => !hookIdSet.has(q.id));
+  // Exclude every hook id from the tail (attempted hooks stay out even if still in pool).
+  const allHookIds = new Set(hookQuestions.map((q) => q.id));
+  const restPool = pool.filter((q) => !allHookIds.has(q.id));
   const rest = sampleSessionBankQuestions(restPool, remainingCount, mix);
   return [...lead, ...rest];
 }

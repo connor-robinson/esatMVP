@@ -123,4 +123,29 @@ describe("buildSessionQuestionsWithHookLead", () => {
     });
     expect(session).toHaveLength(12);
   });
+
+  it("skips attempted hooks when eligibleHookIds is provided", () => {
+    vi.spyOn(Math, "random").mockReturnValue(0);
+    const hooks: Q[] = Array.from({ length: 10 }, (_, i) => ({
+      id: `h${i}`,
+      difficulty: "Medium" as ApiDifficulty,
+    }));
+    const pool = [
+      hooks[0]!,
+      hooks[1]!,
+      ...makePool("e", 20, "Easy"),
+      ...makePool("m", 20, "Medium"),
+      ...makePool("k", 20, "Hard"),
+    ];
+    const session = buildSessionQuestionsWithHookLead({
+      pool,
+      hookQuestions: hooks,
+      count: 12,
+      mix: "Auto",
+      eligibleHookIds: new Set(pool.map((q) => q.id)),
+    });
+    expect(session).toHaveLength(12);
+    expect(session.slice(0, 2).map((q) => q.id).sort()).toEqual(["h0", "h1"]);
+    expect(session.some((q) => q.id === "h9")).toBe(false);
+  });
 });
