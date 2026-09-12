@@ -2,8 +2,8 @@
  * Anonymous-safe calibration attempt persistence.
  *
  * Attempts are always written to localStorage so a signed-out user can complete
- * the entire test and view results. When the user is (or becomes) authenticated,
- * the same raw attempt is uploaded to the database; nothing is recomputed or lost.
+ * the entire test. Completed attempts are never deleted from localStorage.
+ * Sign-in uploads a copy to the database; the local copy remains as a safety net.
  */
 
 import {
@@ -216,5 +216,18 @@ export function takePendingMergeAttemptId(): string | null {
     return id;
   } catch {
     return null;
+  }
+}
+
+/** Clear pending merge only when it points at this attempt (never deletes the attempt itself). */
+export function clearPendingMergeIfMatches(attemptId: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    const id = window.localStorage.getItem(CALIBRATION_STORAGE.pendingMerge);
+    if (id === attemptId) {
+      window.localStorage.removeItem(CALIBRATION_STORAGE.pendingMerge);
+    }
+  } catch {
+    /* ignore */
   }
 }

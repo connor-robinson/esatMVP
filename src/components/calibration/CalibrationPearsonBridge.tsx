@@ -17,6 +17,7 @@ import {
   clearActiveAttemptPointer,
   createAttempt,
   getActiveAttempt,
+  queueAttemptForMerge,
   saveAttempt,
 } from "@/lib/calibration/attempt";
 import { computeResults } from "@/lib/calibration/scoring";
@@ -336,8 +337,12 @@ export function CalibrationPearsonBridge() {
         a.timeLimitSeconds - Math.max(0, a.remainingSeconds),
       );
       a.updatedAt = Date.now();
+      // Always keep the completed attempt in localStorage; never delete it.
       saveAttempt(a);
       clearActiveAttemptPointer();
+      if (!session?.user) {
+        queueAttemptForMerge(a.attemptId);
+      }
 
       if (result.remainingMsAtEnd <= 0) {
         void trackCalibrationEvent("calibration_abandoned", {
@@ -349,7 +354,7 @@ export function CalibrationPearsonBridge() {
 
       void persistAndFinish(a);
     },
-    [commitTime, pearsonQuestions, persistAndFinish, userState],
+    [commitTime, pearsonQuestions, persistAndFinish, session?.user, userState],
   );
 
   if (!ready || !attemptRef.current) {

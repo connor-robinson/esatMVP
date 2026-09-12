@@ -9,9 +9,7 @@ import { TimeScatterChart } from "@/components/papers/TimeScatterChart";
 import { BreakdownDonutChart, type DonutSlice } from "@/components/questionBank/BreakdownDonutChart";
 import { CalibrationQuestionReviewPlayer } from "@/components/calibration/CalibrationQuestionReviewPlayer";
 import { trackCalibrationEvent, type CalibrationUserState } from "@/lib/calibration/analytics";
-import { getCalibrationQuestion } from "@/lib/calibration/config";
 import type { CalibrationResults } from "@/lib/calibration/types";
-import { StemContent } from "@/components/shared/StemContent";
 
 interface Props {
   results: CalibrationResults;
@@ -140,7 +138,6 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
   const p = results.prediction;
 
   const [percentile, setPercentile] = useState<PercentileState | null>(null);
-  const [reviewQuestionId, setReviewQuestionId] = useState<string | null>(null);
 
   useEffect(() => {
     void trackCalibrationEvent("calibration_results_viewed", {
@@ -221,18 +218,9 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
       fill: topicColours[index % topicColours.length],
     }));
 
-  const openReview = (questionId: string) => {
-    setReviewQuestionId(questionId);
-    void trackCalibrationEvent("calibration_question_review_opened", {
-      user_state: userState,
-      attempt_id: attemptId,
-      question_id: questionId,
-    });
-  };
-
-  const rangeValue =
-    p.hasEstimate && p.estimatedScoreLow != null && p.estimatedScoreHigh != null
-      ? `${p.estimatedScoreLow.toFixed(1)}-${p.estimatedScoreHigh.toFixed(1)}`
+  const scoreValue =
+    p.hasEstimate && p.estimatedEsatScore != null
+      ? p.estimatedEsatScore.toFixed(1)
       : "N/A";
 
   return (
@@ -242,9 +230,6 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
           <h1 className="font-heading text-3xl font-bold tracking-tight text-text sm:text-4xl">
             Math 1 Calibration results
           </h1>
-          <p className="mt-2 max-w-2xl text-sm text-text-muted">
-            Based on this 15-question calibration
-          </p>
         </div>
         <Link href="/exam-tools/calibration/math-1/test">
           <Button variant="secondary">Retake calibration</Button>
@@ -253,8 +238,8 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
 
       <div className="grid gap-3 sm:grid-cols-3">
         <StatPill
-          label="Estimated ESAT range"
-          value={rangeValue}
+          label="Estimated ESAT score"
+          value={scoreValue}
           highlight
           tooltip="Provisional diagnostic estimate, not an official ESAT score. Your real result will also depend on the live paper and test-day conditions."
         />
@@ -264,28 +249,6 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
           value={`${p.answeredCount} / 15`}
         />
       </div>
-
-      {p.hasEstimate && p.estimatedEsatScore != null ? (
-        <p className="px-1 text-sm text-text-muted">
-          Midpoint estimate: {p.estimatedEsatScore.toFixed(1)} ({p.bandLabel}).{" "}
-          <Link
-            href="/exam-tools/calibration/math-1#how-estimate-works"
-            className="font-semibold text-text underline-offset-2 hover:underline"
-            onClick={() =>
-              void trackCalibrationEvent("calibration_methodology_opened", {
-                user_state: userState,
-                attempt_id: attemptId,
-              })
-            }
-          >
-            How this estimate works
-          </Link>
-        </p>
-      ) : (
-        <p className="px-1 text-sm text-text-muted">{p.bandMessage}</p>
-      )}
-
-      <p className="px-1 text-sm text-text-muted">{p.anchorInterpretation}</p>
 
       <SuggestedNextSteps
         weakness={weakestTopic}
@@ -300,17 +263,12 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
         }
       />
 
-      {p.guessNote || percentile?.unlocked ? (
-        <div className="flex flex-wrap gap-x-6 gap-y-2 px-1 text-sm text-text-muted">
-          {p.guessNote ? <p>{p.guessNote}</p> : null}
-          {percentile?.unlocked && percentile.percentile != null ? (
-            <p>
-              You performed better than{" "}
-              <span className="font-semibold text-text">{percentile.percentile}%</span> of Math 1
-              calibration attempts on ESAT Camp.
-            </p>
-          ) : null}
-        </div>
+      {percentile?.unlocked && percentile.percentile != null ? (
+        <p className="px-1 text-sm text-text-muted">
+          You performed better than{" "}
+          <span className="font-semibold text-text">{percentile.percentile}%</span> of Math 1
+          calibration attempts on ESAT Camp.
+        </p>
       ) : null}
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(22rem,1fr)]">
@@ -318,10 +276,6 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
           <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
             <div>
               <h2 className="font-heading text-xl font-bold text-text">Accuracy and time</h2>
-              <p className="mt-1 text-sm text-text-muted">
-                Each point is a question. Green = correct, red = wrong, ring = marked guess.
-                Timing is for pace feedback only and does not change the estimated range.
-              </p>
             </div>
             <span className="rounded-full bg-surface-mid px-3 py-1.5 text-xs font-semibold text-text-muted">
               {formatTime(p.totalTimeSeconds)} | {results.speedAccuracy.medianTimeRatio}x pace |{" "}
@@ -338,7 +292,6 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
 
         <Card variant="elevated" className="border-0 p-5 shadow-none sm:p-6">
           <h2 className="font-heading text-xl font-bold text-text">Topics and weaknesses</h2>
-          <p className="mt-1 text-sm text-text-muted">How the calibration was split by topic.</p>
           <div className="mt-4">
             <BreakdownDonutChart
               data={topicData}
@@ -383,90 +336,13 @@ export function CalibrationResultsView({ results, isSignedIn, attemptId }: Props
             </div>
           ))}
         </dl>
-        <p className="mt-4 text-sm leading-relaxed text-text-muted">{p.guessingInterpretation}</p>
       </Card>
 
-      <Card variant="elevated" className="border-0 p-5 shadow-none sm:p-6">
-        <h2 className="font-heading text-xl font-bold text-text">Question review</h2>
-        <p className="mt-1 text-sm text-text-muted">
-          Worked solutions and a short insight for each item after submission. Open the exam-style
-          view for the full Pearson / UAT-UK style walkthrough.
-        </p>
-        <div className="mt-5 space-y-5">
-          {results.mistakes.map((m) => {
-            const q = getCalibrationQuestion(m.questionId);
-            if (!q) return null;
-            const status = m.skipped
-              ? "Skipped"
-              : m.correct
-                ? "Correct"
-                : `Your answer ${m.selectedOption ?? "-"} | correct ${m.correctOption}`;
-            return (
-              <details
-                key={m.questionId}
-                className="group rounded-xl bg-surface-mid/60 px-4 py-3 open:bg-surface-mid"
-                onToggle={(event) => {
-                  if ((event.target as HTMLDetailsElement).open) {
-                    void trackCalibrationEvent("calibration_solution_viewed", {
-                      user_state: userState,
-                      attempt_id: attemptId,
-                      question_id: m.questionId,
-                    });
-                  }
-                }}
-              >
-                <summary className="cursor-pointer list-none font-semibold text-text">
-                  <span className="mr-2 tabular-nums">Q{m.order}</span>
-                  <span className="text-sm font-medium text-text-muted">{status}</span>
-                </summary>
-                <div className="mt-3 space-y-3 border-t border-border-subtle/40 pt-3 text-sm">
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={() => openReview(m.questionId)}
-                    >
-                      View in exam UI
-                    </Button>
-                  </div>
-                  {q.fast_insight ? (
-                    <details className="rounded-lg bg-background/40 px-3 py-2">
-                      <summary className="cursor-pointer list-none text-sm font-semibold text-text">
-                        Fast insight
-                      </summary>
-                      <p className="mt-2 text-text-muted">{q.fast_insight}</p>
-                    </details>
-                  ) : null}
-                  <div>
-                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-text-muted">
-                      Solution
-                    </p>
-                    <StemContent content={q.solution.steps_markdown.join("\n\n")} />
-                  </div>
-                </div>
-              </details>
-            );
-          })}
-        </div>
-      </Card>
-
-      <p className="px-1 text-xs leading-relaxed text-text-subtle">
-        {percentile?.unlocked
-          ? null
-          : "Percentile estimate will unlock once more students have completed this calibration. "}
-        This is a provisional diagnostic estimate, not an official ESAT score. Your real result will
-        also depend on the live paper and test-day conditions.
-      </p>
-
-      {reviewQuestionId ? (
-        <CalibrationQuestionReviewPlayer
-          mistakes={results.mistakes}
-          initialQuestionId={reviewQuestionId}
-          attemptId={attemptId}
-          userState={userState}
-          onClose={() => setReviewQuestionId(null)}
-        />
-      ) : null}
+      <CalibrationQuestionReviewPlayer
+        mistakes={results.mistakes}
+        attemptId={attemptId}
+        userState={userState}
+      />
     </div>
   );
 }
