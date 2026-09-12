@@ -6,7 +6,7 @@ import { Container } from "@/components/layout/Container";
 import type { PartnerListStats } from "@/lib/partners/adminStats";
 
 function pct(n: number | null): string {
-  if (n == null) return "—";
+  if (n == null) return "-";
   return `${Math.round(n * 100)}%`;
 }
 
@@ -81,17 +81,11 @@ export default function AdminPartnersPage() {
       <Container size="lg">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-semibold text-stone-900">Partners</h1>
+            <h1 className="text-2xl font-semibold text-stone-900">Access</h1>
             <p className="mt-1 text-sm text-stone-500">
               Institution and programme complimentary access
             </p>
           </div>
-          <Link
-            href="/admin/founding-tester"
-            className="text-sm text-stone-500 underline-offset-2 hover:underline"
-          >
-            Founding tester
-          </Link>
         </div>
 
         {loading ? (

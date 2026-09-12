@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { SUPPORT_CATEGORY_LABELS, type SupportCategory } from "@/lib/support";
 import { cn } from "@/lib/utils";
@@ -168,12 +167,6 @@ export default function AdminSupportPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3 text-sm">
-          <Link
-            href="/admin/inbox"
-            className="text-text-muted underline-offset-2 hover:text-text hover:underline"
-          >
-            Messages
-          </Link>
           <select
             value={filter}
             onChange={(e) =>
