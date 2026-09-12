@@ -23,6 +23,121 @@ DEFAULT_ACCEPTOR_MODEL = os.environ.get(
 
 PROMPT_PATH = Path(__file__).resolve().parent / "prompts" / "render_quality_acceptor.md"
 
+DIAGRAM_VISUAL_TYPES = frozenset(
+    {
+        "graph",
+        "geometry",
+        "pedigree",
+        "bio_diagram",
+        "chem_structure",
+        "energy_profile",
+        "circuit",
+        "diagram",
+    }
+)
+
+# Soft auto_checks codes that become rejects in aggressive/siphon mode.
+AGGRESSIVE_SOFT_CODES = frozenset(
+    {
+        "collision_check_failure",
+        "labels_outside_canvas",
+        "malformed_mathtext",
+        "malformed_spec",
+    }
+)
+
+# ACCEPT must clear this confidence floor in aggressive mode, else REJECT.
+AGGRESSIVE_ACCEPT_MIN_CONFIDENCE = 0.82
+
+
+def is_diagram_visual_type(visual_type: str) -> bool:
+    return (visual_type or "").strip().lower() in DIAGRAM_VISUAL_TYPES
+
+
+def _promote_soft_flags(flags: list[dict[str, str]]) -> list[dict[str, str]]:
+    promoted: list[dict[str, str]] = []
+    for f in flags:
+        code = str(f.get("code") or "")
+        if code in AGGRESSIVE_SOFT_CODES and f.get("severity") != "reject":
+            promoted.append({**f, "severity": "reject"})
+        else:
+            promoted.append(f)
+    return promoted
+
+
+def _apply_aggressive_bias(result: RenderQualityResult) -> RenderQualityResult:
+    """Push borderline ACCEPTs toward REJECT for queue siphoning."""
+    if result.decision != "ACCEPT":
+        return result
+
+    reasons = list(result.reject_reasons)
+    issues = list(result.issues)
+
+    soft_hits = [
+        str(f.get("code") or "")
+        for f in result.auto_flags
+        if str(f.get("code") or "") in AGGRESSIVE_SOFT_CODES
+    ]
+    if soft_hits:
+        reasons.extend(soft_hits)
+        return RenderQualityResult(
+            decision="REJECT",
+            confidence=max(result.confidence, 0.8),
+            diagram_ok=False,
+            question_ok=result.question_ok,
+            issues=issues or [f"Aggressive reject on soft flag(s): {', '.join(soft_hits)}"],
+            reject_reasons=list(dict.fromkeys(reasons)),
+            summary=(result.summary or "Rejected under aggressive soft-flag policy.").strip(),
+            source=result.source if result.source != "vision" else "hybrid",
+            auto_flags=result.auto_flags,
+            model=result.model,
+            raw_text=result.raw_text,
+            usage=result.usage,
+            skipped_vision=result.skipped_vision,
+        )
+
+    if result.confidence < AGGRESSIVE_ACCEPT_MIN_CONFIDENCE:
+        reasons.append("low_accept_confidence")
+        return RenderQualityResult(
+            decision="REJECT",
+            confidence=result.confidence,
+            diagram_ok=result.diagram_ok,
+            question_ok=result.question_ok,
+            issues=issues
+            + [f"ACCEPT confidence {result.confidence:.2f} below {AGGRESSIVE_ACCEPT_MIN_CONFIDENCE}"],
+            reject_reasons=list(dict.fromkeys(reasons)),
+            summary=(
+                result.summary
+                or f"Borderline ACCEPT demoted (confidence {result.confidence:.2f})."
+            ).strip(),
+            source=result.source,
+            auto_flags=result.auto_flags,
+            model=result.model,
+            raw_text=result.raw_text,
+            usage=result.usage,
+            skipped_vision=result.skipped_vision,
+        )
+
+    if not result.diagram_ok or not result.question_ok:
+        reasons.append("partial_ok_false")
+        return RenderQualityResult(
+            decision="REJECT",
+            confidence=max(result.confidence, 0.75),
+            diagram_ok=result.diagram_ok,
+            question_ok=result.question_ok,
+            issues=issues,
+            reject_reasons=list(dict.fromkeys(reasons)),
+            summary=(result.summary or "Rejected because diagram_ok/question_ok was false.").strip(),
+            source=result.source,
+            auto_flags=result.auto_flags,
+            model=result.model,
+            raw_text=result.raw_text,
+            usage=result.usage,
+            skipped_vision=result.skipped_vision,
+        )
+
+    return result
+
 
 @dataclass
 class RenderQualityResult:
@@ -299,6 +414,7 @@ def evaluate_render_quality(
     temperature: float = 0.1,
     force_vision: bool = False,
     skip_vision: bool = False,
+    aggressive: bool = False,
 ) -> RenderQualityResult:
     """Accept or reject based on whether question (+ diagram) rendered properly."""
     choice_map = _parse_choices(choices)
@@ -313,11 +429,32 @@ def evaluate_render_quality(
         png_path=png_path if diagram_required else None,
         spec=spec_obj or None,
     )
+    if aggressive:
+        flags = _promote_soft_flags(flags)
+        if early is None and has_reject(flags):
+            reasons = [str(f.get("code") or "auto_reject") for f in flags if f.get("severity") == "reject"]
+            issues = [
+                str(f.get("message") or f.get("code") or "")
+                for f in flags
+                if f.get("severity") == "reject"
+            ]
+            early = RenderQualityResult(
+                decision="REJECT",
+                confidence=0.9,
+                diagram_ok=False,
+                question_ok=True,
+                issues=[i for i in issues if i],
+                reject_reasons=reasons,
+                summary="Rejected by aggressive soft-flag promotion.",
+                source="deterministic",
+                auto_flags=flags,
+                skipped_vision=True,
+            )
     if early is not None and not force_vision:
-        return early
+        return _apply_aggressive_bias(early) if aggressive else early
 
     if skip_vision:
-        return RenderQualityResult(
+        result = RenderQualityResult(
             decision="ACCEPT",
             confidence=0.55,
             diagram_ok=True,
@@ -329,10 +466,11 @@ def evaluate_render_quality(
             auto_flags=flags,
             skipped_vision=True,
         )
+        return _apply_aggressive_bias(result) if aggressive else result
 
     # Text-only items with clean deterministic checks: still optionally vision-skip.
     if not diagram_required and not force_vision:
-        return RenderQualityResult(
+        result = RenderQualityResult(
             decision="ACCEPT",
             confidence=0.7,
             diagram_ok=True,
@@ -344,10 +482,11 @@ def evaluate_render_quality(
             auto_flags=flags,
             skipped_vision=True,
         )
+        return _apply_aggressive_bias(result) if aggressive else result
 
     if diagram_required and not png_bytes:
         # Should have been caught deterministically; keep a hard reject.
-        return RenderQualityResult(
+        result = RenderQualityResult(
             decision="REJECT",
             confidence=0.99,
             diagram_ok=False,
@@ -359,12 +498,14 @@ def evaluate_render_quality(
             auto_flags=flags,
             skipped_vision=True,
         )
+        return result
 
     payload: dict[str, Any] = {
         "diagram_required": bool(diagram_required),
         "image_attached": bool(png_bytes),
         "subject": (subject or "").strip(),
         "visual_type": (visual_type or "").strip(),
+        "strict_prefilter": bool(aggressive),
         "question": {
             "stem": (stem or "").strip(),
             "options": choice_map,
@@ -375,7 +516,12 @@ def evaluate_render_quality(
         "deterministic_flags": flags,
         "instructions": (
             "The attached image is the GENERATED diagram for this question. "
-            "Decide ACCEPT or REJECT based on render quality and stem-diagram usability."
+            "Decide ACCEPT or REJECT based on render quality and stem-diagram usability. "
+            + (
+                "This is a STRICT prefilter: prefer REJECT on any notable layout/render issue."
+                if aggressive
+                else ""
+            )
         ),
     }
 
@@ -388,13 +534,14 @@ def evaluate_render_quality(
         thinking_level=thinking_level,
         temperature=temperature,
     )
-    return _merge_vision(
+    result = _merge_vision(
         parsed=call.parsed if isinstance(call.parsed, dict) else {},
         auto_flags=flags,
         model=call.model,
         raw_text=call.raw_text,
         usage=call.usage,
     )
+    return _apply_aggressive_bias(result) if aggressive else result
 
 
 def evaluate_review_item(
@@ -404,6 +551,7 @@ def evaluate_review_item(
     thinking_level: str = "high",
     force_vision: bool = False,
     skip_vision: bool = False,
+    aggressive: bool = False,
 ) -> RenderQualityResult:
     """Evaluate a ``ReviewStore`` item dict (question + latest diagram)."""
     source = _parse_json_obj(item.get("source_json"))
@@ -424,11 +572,14 @@ def evaluate_review_item(
                     spec = {}
 
     visual_type = str(source.get("visual_type") or item.get("topic") or "")
-    diagram_required = bool(item.get("diagram_required"))
-    if not diagram_required:
-        vt = visual_type.strip().lower()
-        if vt and vt not in {"none", "table", "text", ""}:
-            diagram_required = True
+    vt = visual_type.strip().lower()
+    # Real diagram types always require a PNG. none/table do not.
+    if is_diagram_visual_type(vt):
+        diagram_required = True
+    elif vt in {"none", "table", "text"}:
+        diagram_required = False
+    else:
+        diagram_required = bool(item.get("diagram_required"))
 
     png = resolve_png_path(
         diagram.get("image_path"),
@@ -449,4 +600,5 @@ def evaluate_review_item(
         thinking_level=thinking_level,
         force_vision=force_vision,
         skip_vision=skip_vision,
+        aggressive=aggressive,
     )

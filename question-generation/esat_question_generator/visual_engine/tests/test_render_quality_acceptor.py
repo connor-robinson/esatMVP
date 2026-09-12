@@ -43,3 +43,41 @@ def test_rejects_missing_png_when_diagram_required(tmp_path: Path):
     )
     assert result.decision == "REJECT"
     assert "png_missing" in result.reject_reasons
+
+
+def test_aggressive_demotes_low_confidence_accept():
+    from visual_engine.render_quality_acceptor import RenderQualityResult, _apply_aggressive_bias
+
+    soft = RenderQualityResult(
+        decision="ACCEPT",
+        confidence=0.6,
+        diagram_ok=True,
+        question_ok=True,
+        summary="Borderline clean",
+        source="vision",
+    )
+    out = _apply_aggressive_bias(soft)
+    assert out.decision == "REJECT"
+    assert "low_accept_confidence" in out.reject_reasons
+
+
+def test_aggressive_promotes_collision_soft_flag():
+    from visual_engine.render_quality_acceptor import RenderQualityResult, _apply_aggressive_bias
+
+    soft = RenderQualityResult(
+        decision="ACCEPT",
+        confidence=0.95,
+        diagram_ok=True,
+        question_ok=True,
+        auto_flags=[
+            {
+                "code": "collision_check_failure",
+                "message": "label overlap",
+                "severity": "flag",
+            }
+        ],
+        source="vision",
+    )
+    out = _apply_aggressive_bias(soft)
+    assert out.decision == "REJECT"
+    assert "collision_check_failure" in out.reject_reasons
