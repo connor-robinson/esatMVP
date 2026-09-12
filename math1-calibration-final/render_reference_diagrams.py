@@ -78,24 +78,31 @@ def save(fig, filename):
 
 def q01():
     # Extra bottom room so the not-to-scale caption sits clearly below "12 cm".
-    fig, ax = canvas((-1.8, 13.8), (-3.2, 13.5))
+    # Labels sit further from the figure so letters do not crowd the outline.
+    fig, ax = canvas((-3.0, 15.0), (-4.0, 14.8))
     outer = [(0, 0), (12, 0), (12, 12), (0, 12)]
     inner = [(6, 0), (12, 6), (6, 12), (0, 6)]
     ax.add_patch(Polygon(outer, closed=True, fill=False, ec=INK, lw=LW))
     ax.add_patch(Polygon(inner, closed=True, fill=False, ec=MID, lw=LW))
     ax.add_patch(Circle((6, 6), 3 * math.sqrt(2), fill=False, ec=INK, lw=LW))
     labels = {
-        "A": (-0.45, -0.4), "B": (12.25, -0.4), "C": (12.25, 12.15), "D": (-0.45, 12.15),
-        "E": (6, -0.45), "F": (12.35, 6), "G": (6, 12.35), "H": (-0.4, 6),
+        "A": (-1.35, -1.25),
+        "B": (13.35, -1.25),
+        "C": (13.35, 13.25),
+        "D": (-1.35, 13.25),
+        "E": (6, -1.35),
+        "F": (13.45, 6),
+        "G": (6, 13.45),
+        "H": (-1.45, 6),
     }
     for label, (x, y) in labels.items():
         math_label(ax, x, y, rf"${label}$")
-    y = -0.92
+    y = -1.95
     ax.plot([0, 12], [y, y], color=MID, lw=1.0)
     ax.plot([0, 0], [y - 0.25, y + 0.25], color=MID, lw=1.0)
     ax.plot([12, 12], [y - 0.25, y + 0.25], color=MID, lw=1.0)
-    math_label(ax, 6, y - 0.15, r"$12\,\mathrm{cm}$", va="top")
-    caption(ax, 6, -2.75)
+    math_label(ax, 6, y - 0.25, r"$12\,\mathrm{cm}$", va="top")
+    caption(ax, 6, -3.55)
     save(fig, "q01-midpoint-incircle.png")
 
 

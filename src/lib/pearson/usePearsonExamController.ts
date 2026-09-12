@@ -44,7 +44,8 @@ import {
 } from "./preloadQuestionAssets";
 
 /** Blurred spinner after End Exam / End Module confirm (specimen player). */
-export const SESSION_ENDING_MS = 2800;
+/** Brief post-submit overlay before results (specimen-inspired, kept short). */
+export const SESSION_ENDING_MS = 700;
 
 /** Skip loading + NDA; open straight on the 1-minute instruction screen. */
 export type PearsonIntroMode = "full" | "section-only" | "resume-questions";
