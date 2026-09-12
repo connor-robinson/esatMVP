@@ -24,14 +24,16 @@ export function formatInboxWhen(iso: string, withTime = false): string {
 export function InboxCampIcon({
   className,
   markClassName,
+  showUnreadDot = false,
 }: {
   className?: string;
   markClassName?: string;
+  showUnreadDot?: boolean;
 }) {
   return (
     <span
       className={cn(
-        "flex shrink-0 items-center justify-center rounded-md bg-surface-mid",
+        "relative flex shrink-0 items-center justify-center rounded-md bg-surface-mid",
         className ?? "h-7 w-7",
       )}
     >
@@ -39,6 +41,12 @@ export function InboxCampIcon({
         className={cn("w-auto", markClassName ?? "h-3.5")}
         alt="ESAT Camp"
       />
+      {showUnreadDot ? (
+        <span
+          className="pointer-events-none absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-background"
+          aria-label="Unread"
+        />
+      ) : null}
     </span>
   );
 }

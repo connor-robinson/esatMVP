@@ -252,30 +252,17 @@ export default function InboxPage() {
                     )}
                   >
                     <div className="flex items-start gap-2.5">
-                      <InboxCampIcon />
+                      <InboxCampIcon showUnreadDot={!m.read_at} />
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-start justify-between gap-2">
-                          <p
-                            className={cn(
-                              "whitespace-normal break-words text-sm leading-snug text-text",
-                              !m.read_at && "font-semibold",
-                            )}
-                          >
-                            {m.subject}
-                          </p>
-                          {!m.read_at ? (
-                            <span
-                              className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-red-500"
-                              aria-label="Unread"
-                            />
-                          ) : null}
-                        </div>
                         <p
                           className={cn(
-                            "mt-1.5 line-clamp-2 text-xs leading-relaxed text-text-muted",
-                            "overflow-hidden [mask-image:linear-gradient(to_bottom,black_55%,transparent)]",
+                            "whitespace-normal break-words text-sm leading-snug text-text",
+                            !m.read_at && "font-semibold",
                           )}
                         >
+                          {m.subject}
+                        </p>
+                        <p className="mt-1.5 truncate text-xs leading-snug text-text-muted">
                           {m.body.replace(/\s+/g, " ").trim()}
                         </p>
                         <InboxFromMeta
@@ -330,7 +317,7 @@ export default function InboxPage() {
                       value={replyText}
                       onChange={(e) => setReplyText(e.target.value)}
                       maxLength={4000}
-                      className="min-w-0 flex-1 rounded-organic-md border border-border-subtle bg-surface-mid px-3 py-2 text-sm text-text"
+                      className="min-w-0 flex-1 rounded-organic-md border border-border-subtle bg-surface-subtle px-3 py-2 text-sm text-text"
                       placeholder="Reply to ESAT Camp…"
                       aria-label="Reply to ESAT Camp"
                     />
@@ -338,7 +325,7 @@ export default function InboxPage() {
                       type="button"
                       disabled={replyBusy || !replyText.trim()}
                       onClick={() => void sendReply()}
-                      className="shrink-0 rounded-organic-md bg-emerald-600/90 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50 dark:bg-emerald-700"
+                      className="shrink-0 rounded-organic-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-50 dark:bg-blue-600 dark:hover:bg-blue-500"
                     >
                       {replyBusy ? "Sending…" : "Reply"}
                     </button>

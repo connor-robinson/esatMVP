@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 const NAV_ICON_PX = 20;
 const NAV_ICON_STROKE = 2;
 const PREVIEW_LIMIT = 6;
-const COLLAPSED_BODY_CHARS = 110;
+const COLLAPSED_BODY_CHARS = 72;
 
 type Props = {
   className?: string;
@@ -341,7 +341,7 @@ export function InboxNavButton({ className }: Props) {
                         )}
                       >
                         <span className="flex items-start gap-2.5">
-                          <InboxCampIcon />
+                          <InboxCampIcon showUnreadDot={unreadItem} />
                           <span className="min-w-0 flex-1">
                             <span className="flex items-start gap-1.5">
                               <span
@@ -352,12 +352,6 @@ export function InboxNavButton({ className }: Props) {
                               >
                                 {m.subject}
                               </span>
-                              {unreadItem ? (
-                                <span
-                                  className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-red-500"
-                                  aria-label="Unread"
-                                />
-                              ) : null}
                               <ChevronDown
                                 aria-hidden
                                 size={14}
@@ -371,14 +365,8 @@ export function InboxNavButton({ className }: Props) {
                             </span>
 
                             {!expanded ? (
-                              <span className="relative mt-1.5 block">
-                                <span
-                                  className={cn(
-                                    "block text-[11px] leading-relaxed text-text-muted",
-                                    bodyPreview.truncated &&
-                                      "line-clamp-2 overflow-hidden [mask-image:linear-gradient(to_bottom,black_45%,transparent)]",
-                                  )}
-                                >
+                              <span className="mt-1.5 block">
+                                <span className="block truncate text-[11px] leading-snug text-text-muted">
                                   {bodyPreview.text}
                                 </span>
                                 <span className="mt-1.5 flex items-center justify-between gap-2">
@@ -386,7 +374,7 @@ export function InboxNavButton({ className }: Props) {
                                     from={fromLabel}
                                     when={formatInboxWhen(m.created_at)}
                                   />
-                                  <span className="text-[10px] font-medium text-text-subtle opacity-80 group-hover:opacity-100">
+                                  <span className="shrink-0 text-[10px] font-medium text-text-subtle opacity-80 group-hover:opacity-100">
                                     {bodyPreview.truncated
                                       ? "Expand…"
                                       : "Details"}
@@ -439,7 +427,7 @@ export function InboxNavButton({ className }: Props) {
                               placeholder="Reply to ESAT Camp…"
                               aria-label={`Reply to ${m.subject}`}
                               className={cn(
-                                "min-w-0 flex-1 rounded-md border border-border-subtle bg-background",
+                                "min-w-0 flex-1 rounded-md border border-border-subtle bg-surface-subtle",
                                 "px-2 py-1 text-[11px] text-text placeholder:text-text-subtle",
                               )}
                             />
@@ -448,9 +436,9 @@ export function InboxNavButton({ className }: Props) {
                               disabled={replyBusy || !replyText.trim()}
                               onClick={() => void sendReply(m.id)}
                               className={cn(
-                                "shrink-0 rounded-md bg-emerald-600/90 px-2 py-1",
+                                "shrink-0 rounded-md bg-blue-600 px-2 py-1",
                                 "text-[11px] font-semibold text-white disabled:opacity-50",
-                                "dark:bg-emerald-700",
+                                "hover:bg-blue-500 dark:bg-blue-600 dark:hover:bg-blue-500",
                               )}
                             >
                               {replyBusy ? "…" : "Reply"}
