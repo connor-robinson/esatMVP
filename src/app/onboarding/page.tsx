@@ -14,11 +14,25 @@ import {
   type ReferralSource,
   type TargetUniversity,
 } from "@/lib/onboarding/options";
-import { AlertCircle, Check, CheckCircle2, Loader2 } from "lucide-react";
+import { AlertCircle, ArrowRight, Check, CheckCircle2, Loader2, X } from "lucide-react";
 import type { SubjectTileKey } from "@/lib/questionBank/subjectTileTheme";
+import { useStartMonthlyTrialCheckout } from "@/hooks/useStartMonthlyTrialCheckout";
+import {
+  FREE_PLAN_ITEMS,
+  TRIAL_CHECKOUT_NOTE,
+  TRIAL_DAYS,
+  TRIAL_PLAN_ITEMS,
+} from "@/lib/pricing/trialCopy";
 
 type ExamPref = "ESAT" | "TMUA";
-type Step = "username" | "exam" | "applicant" | "universities" | "referral" | "emails";
+type Step =
+  | "username"
+  | "exam"
+  | "applicant"
+  | "universities"
+  | "referral"
+  | "emails"
+  | "trial";
 type SittingChoice = "october_2026" | "january_2027" | "not_sure" | "future";
 
 const USERNAME_REGEX = /^[a-zA-Z0-9_-]{4,20}$/;
@@ -30,6 +44,7 @@ const ALL_STEPS: Step[] = [
   "universities",
   "referral",
   "emails",
+  "trial",
 ];
 const STEPS_WITHOUT_USERNAME: Step[] = [
   "exam",
@@ -37,7 +52,9 @@ const STEPS_WITHOUT_USERNAME: Step[] = [
   "universities",
   "referral",
   "emails",
+  "trial",
 ];
+const PREVIEW_STEPS = new Set<Step>(ALL_STEPS);
 
 const SITTING_OPTIONS: {
   id: SittingChoice;
@@ -151,10 +168,12 @@ function OnboardingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isPreview = searchParams.get("preview") === "1";
+  const previewStepParam = searchParams.get("step");
   const redirectTo = useMemo(
     () => sanitizeRedirectTo(searchParams.get("redirectTo")),
     [searchParams],
   );
+  const { startTrial, loading: trialLoading } = useStartMonthlyTrialCheckout();
 
   const [steps, setSteps] = useState<Step[]>(ALL_STEPS);
   const [step, setStep] = useState<Step>("username");
@@ -181,13 +200,18 @@ function OnboardingContent() {
     step === "applicant" ||
     step === "universities" ||
     step === "referral" ||
-    step === "emails";
-  const isLastStep = step === "emails";
+    step === "emails" ||
+    step === "trial";
+  const isLastStep = step === "trial";
 
   useEffect(() => {
     if (isPreview) {
       setSteps(ALL_STEPS);
-      setStep("username");
+      const jump =
+        previewStepParam && PREVIEW_STEPS.has(previewStepParam as Step)
+          ? (previewStepParam as Step)
+          : "username";
+      setStep(jump);
       setBooting(false);
       return;
     }
@@ -244,7 +268,7 @@ function OnboardingContent() {
     return () => {
       cancelled = true;
     };
-  }, [isPreview, redirectTo]);
+  }, [isPreview, previewStepParam, redirectTo]);
 
   useEffect(() => {
     if (step !== "username") return;
@@ -359,7 +383,21 @@ function OnboardingContent() {
     }
   };
 
-  const finish = async () => {
+  const completeOnboardingPrefs = async () => {
+    await savePrefs({
+      exam_preference: exam,
+      esat_subjects: exam === "ESAT" ? subjects : [],
+      is_early_applicant:
+        SITTING_OPTIONS.find((o) => o.id === sitting)?.isEarly ?? true,
+      target_universities: universities,
+      referral_source: referral,
+      marketing_emails_consent: marketingEmails,
+      onboarding_completed: true,
+    });
+  };
+
+  /** Finish setup and continue with free limits (no checkout). */
+  const finishLimited = async () => {
     setSaving(true);
     setError(null);
     const nextPath = resolvePostOnboardingPath(redirectTo);
@@ -368,19 +406,49 @@ function OnboardingContent() {
         router.replace(nextPath);
         return;
       }
-      await savePrefs({
-        exam_preference: exam,
-        esat_subjects: exam === "ESAT" ? subjects : [],
-        is_early_applicant:
-          SITTING_OPTIONS.find((o) => o.id === sitting)?.isEarly ?? true,
-        target_universities: universities,
-        referral_source: referral,
-        marketing_emails_consent: marketingEmails,
-        onboarding_completed: true,
-      });
+      await completeOnboardingPrefs();
       window.location.replace(nextPath);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
+      setSaving(false);
+    }
+  };
+
+  /** Finish setup then open Stripe monthly trial checkout. */
+  const finishWithTrial = async () => {
+    setSaving(true);
+    setError(null);
+    const nextPath = resolvePostOnboardingPath(redirectTo);
+    try {
+      if (isPreview) {
+        router.replace(`/pricing?checkout=monthly`);
+        return;
+      }
+      await completeOnboardingPrefs();
+      const result = await startTrial();
+      if (!result.ok) {
+        setError(result.error);
+        setSaving(false);
+        // Setup is already saved; send them onward rather than trapping them.
+        window.setTimeout(() => {
+          window.location.replace(nextPath);
+        }, 1600);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+      setSaving(false);
+    }
+  };
+
+  const submitEmails = async () => {
+    setSaving(true);
+    setError(null);
+    try {
+      await savePrefs({ marketing_emails_consent: marketingEmails });
+      goNext("emails");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not save");
+    } finally {
       setSaving(false);
     }
   };
@@ -501,7 +569,9 @@ function OnboardingContent() {
           <div
             className={cn(
               "flex w-full max-w-[68rem] flex-col overflow-hidden rounded-[1.5rem] bg-surface-elevated",
-              "h-[min(36rem,calc(100vh-5.5rem))] sm:h-[min(38rem,calc(100vh-4.5rem))]",
+              step === "trial"
+                ? "h-[min(46rem,calc(100vh-5rem))] sm:h-[min(48rem,calc(100vh-4rem))]"
+                : "h-[min(36rem,calc(100vh-5.5rem))] sm:h-[min(38rem,calc(100vh-4.5rem))]",
               "px-6 pb-6 pt-5 sm:px-12 sm:pb-8 sm:pt-7",
             )}
           >
@@ -611,9 +681,9 @@ function OnboardingContent() {
                     </div>
 
                     {exam === "ESAT" ? (
-                      <div className="space-y-2">
-                        <p className="text-xs font-medium text-text">Your 3 subjects</p>
-                        <div className="flex flex-wrap gap-1.5">
+                      <div className="mt-4 space-y-2.5 sm:mt-5">
+                        <p className="text-sm font-medium text-text">Your 3 subjects</p>
+                        <div className="flex flex-wrap gap-2">
                           {ESAT_SUBJECTS.map((subject) => {
                             const selected = subjects.includes(subject);
                             return (
@@ -622,7 +692,7 @@ function OnboardingContent() {
                                 type="button"
                                 onClick={() => toggleSubject(subject)}
                                 className={cn(
-                                  "rounded-lg px-3 py-1.5 text-xs transition-colors",
+                                  "rounded-lg px-4 py-2.5 text-sm font-medium transition-colors",
                                   esatSubjectPillClass(subject, selected),
                                 )}
                               >
@@ -631,7 +701,7 @@ function OnboardingContent() {
                             );
                           })}
                         </div>
-                        <p className="text-[11px] text-text-muted">{subjects.length}/3 selected</p>
+                        <p className="text-xs text-text-muted">{subjects.length}/3 selected</p>
                       </div>
                     ) : null}
 
@@ -854,13 +924,116 @@ function OnboardingContent() {
                       <button
                         type="button"
                         disabled={saving}
-                        onClick={() => void finish()}
+                        onClick={() => void submitEmails()}
                         className={cn(
                           "flex-1 rounded-xl py-2.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
                           ACCENT.btn,
                         )}
                       >
-                        {saving ? "Saving…" : "Finish"}
+                        {saving ? "Saving…" : "Continue"}
+                      </button>
+                    </div>
+                  </>
+                ) : null}
+
+                {step === "trial" ? (
+                  <>
+                    <div>
+                      <h1 className="text-2xl font-bold tracking-tight text-text sm:text-[1.75rem]">
+                        Start your free trial?
+                      </h1>
+                      <p className="mt-1.5 text-sm text-text-muted">
+                        {TRIAL_DAYS} days of full access. {TRIAL_CHECKOUT_NOTE}
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+                      <div className="rounded-xl bg-[#4C8BF5]/15 px-4 py-4 sm:px-5 sm:py-5">
+                        <p className="text-sm font-semibold uppercase tracking-[0.08em] text-[#4C8BF5]">
+                          Free trial
+                        </p>
+                        <ul className="mt-4 space-y-3.5">
+                          {TRIAL_PLAN_ITEMS.map((item) => (
+                            <li
+                              key={item}
+                              className="flex items-start gap-3 text-sm leading-snug text-text sm:text-[0.95rem]"
+                            >
+                              <Check
+                                className="mt-0.5 h-4 w-4 shrink-0 text-[#4C8BF5]"
+                                strokeWidth={3}
+                                aria-hidden
+                              />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="rounded-xl bg-surface-mid px-4 py-4 sm:px-5 sm:py-5">
+                        <p className="text-sm font-semibold uppercase tracking-[0.08em] text-text-muted">
+                          Free
+                        </p>
+                        <ul className="mt-4 space-y-3.5">
+                          {FREE_PLAN_ITEMS.map((item) => (
+                            <li
+                              key={item.label}
+                              className={cn(
+                                "flex items-start gap-3 text-sm leading-snug sm:text-[0.95rem]",
+                                item.included ? "text-text" : "text-text-muted",
+                              )}
+                            >
+                              {item.included ? (
+                                <Check
+                                  className="mt-0.5 h-4 w-4 shrink-0 text-text-muted"
+                                  strokeWidth={3}
+                                  aria-hidden
+                                />
+                              ) : (
+                                <X
+                                  className="mt-0.5 h-4 w-4 shrink-0 text-error/80"
+                                  strokeWidth={3}
+                                  aria-hidden
+                                />
+                              )}
+                              <span>{item.label}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 pt-1">
+                      <button
+                        type="button"
+                        disabled={saving || trialLoading}
+                        onClick={() => void finishWithTrial()}
+                        className={cn(
+                          "inline-flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-base font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
+                          ACCENT.btn,
+                        )}
+                      >
+                        {saving || trialLoading ? (
+                          "Starting…"
+                        ) : (
+                          <>
+                            Start free trial
+                            <ArrowRight className="h-5 w-5" aria-hidden />
+                          </>
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        disabled={saving || trialLoading}
+                        onClick={() => void finishLimited()}
+                        className="w-full text-center text-xs text-text-muted transition-colors hover:text-text disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        Continue with limited access
+                      </button>
+                      <button
+                        type="button"
+                        onClick={goBack}
+                        className="w-full text-center text-[11px] text-text-subtle hover:text-text-muted"
+                      >
+                        Back
                       </button>
                     </div>
                   </>

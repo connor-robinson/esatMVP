@@ -28,7 +28,9 @@ export function DashboardPageContent() {
 
   return (
     <>
-      <LoggedInHomepage state={state} />
+      <Suspense fallback={null}>
+        <LoggedInHomepage state={state} />
+      </Suspense>
       <Suspense fallback={null}>
         <ExampleAnswerRevealModal />
       </Suspense>

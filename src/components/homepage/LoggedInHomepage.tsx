@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { Container } from "@/components/layout/Container";
 import { PrimaryActionCard } from "@/components/homepage/PrimaryActionCard";
 import { TopicHub } from "@/components/homepage/TopicHub";
+import { DashboardTrialCards } from "@/components/homepage/DashboardTrialCards";
 import {
   TesterAccessStatus,
   TesterProgrammeLink,
@@ -21,6 +23,9 @@ interface LoggedInHomepageProps {
 }
 
 export function LoggedInHomepage({ state }: LoggedInHomepageProps) {
+  const searchParams = useSearchParams();
+  const forceTrialPreview = searchParams.get("preview_trial") === "1";
+
   const analyticsProps: HomepageAnalyticsProperties = useMemo(
     () => ({
       user_state: state.userState,
@@ -40,7 +45,12 @@ export function LoggedInHomepage({ state }: LoggedInHomepageProps) {
     void trackHomepageEvent("homepage_viewed", analyticsProps);
   }, [analyticsProps]);
 
+  const showTrialCards =
+    forceTrialPreview ||
+    (state.userState === "free" && !state.hasFullAccess);
+
   const showUpgrade =
+    !showTrialCards &&
     state.upgradePrompt &&
     state.userState !== "premium" &&
     state.userState !== "tester_active";
@@ -57,6 +67,13 @@ export function LoggedInHomepage({ state }: LoggedInHomepageProps) {
   return (
     <Container className="py-10 sm:py-14">
       <div className="mx-auto max-w-[62rem] space-y-5">
+        {forceTrialPreview ? (
+          <div className="rounded-organic-md bg-primary/15 px-3.5 py-2.5 text-xs text-text">
+            <span className="font-semibold">Trial cards preview</span>
+            <span className="text-text-muted"> (`?preview_trial=1`)</span>
+          </div>
+        ) : null}
+
         {state.isPartial && state.error ? (
           <ErrorState message={state.error} onRetry={() => void state.refresh()} />
         ) : null}
@@ -95,6 +112,12 @@ export function LoggedInHomepage({ state }: LoggedInHomepageProps) {
             <div className="space-y-3 px-1">
               <TesterAccessStatus state={state.tester} />
               <TesterProgrammeLink />
+            </div>
+          ) : null}
+
+          {showTrialCards ? (
+            <div className="px-1 pt-1">
+              <DashboardTrialCards analyticsProps={analyticsProps} />
             </div>
           ) : null}
 
