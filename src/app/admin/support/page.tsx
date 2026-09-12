@@ -127,6 +127,12 @@ export default function AdminSupportPage() {
         </div>
         <div className="flex items-center gap-3 text-sm">
           <Link
+            href="/admin/inbox"
+            className="text-text-muted underline-offset-2 hover:text-text hover:underline"
+          >
+            Inbox
+          </Link>
+          <Link
             href="/admin/founding-tester"
             className="text-text-muted underline-offset-2 hover:text-text hover:underline"
           >

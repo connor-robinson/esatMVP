@@ -59,6 +59,7 @@ import {
   X,
   Zap,
 } from 'lucide-react';
+import { InboxNavButton } from '@/components/inbox/InboxNavButton';
 import { DEFAULT_POST_AUTH_PATH } from '@/lib/onboarding/redirect';
 import { useHomepageAutoHideNav } from '@/hooks/useHomepageAutoHideNav';
 
@@ -453,6 +454,7 @@ export function Navbar() {
               strokeWidth={NAV_ICON_STROKE}
             />
           </button>
+          <InboxNavButton className={navIconSlotClass} />
           <Link
             href={settingsHref}
             className={cn(

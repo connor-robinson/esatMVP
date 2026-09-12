@@ -632,6 +632,42 @@ export type AppBugReportInsert = {
 };
 export type AppBugReportUpdate = Partial<AppBugReportRow>;
 
+// inbox_messages
+export type InboxMessageRow = {
+  id: string;
+  subject: string;
+  body: string;
+  audience: "personal" | "broadcast";
+  created_by: string | null;
+  created_at: string;
+};
+export type InboxMessageInsert = {
+  id?: string;
+  subject: string;
+  body: string;
+  audience: "personal" | "broadcast";
+  created_by?: string | null;
+  created_at?: string;
+};
+export type InboxMessageUpdate = Partial<InboxMessageRow>;
+
+export type InboxMessageRecipientRow = {
+  message_id: string;
+  user_id: string;
+};
+export type InboxMessageRecipientInsert = InboxMessageRecipientRow;
+
+export type InboxMessageReadRow = {
+  message_id: string;
+  user_id: string;
+  read_at: string;
+};
+export type InboxMessageReadInsert = {
+  message_id: string;
+  user_id: string;
+  read_at?: string;
+};
+
 // support_requests
 export type SupportRequestRow = {
   id: string;
@@ -776,6 +812,21 @@ export type Database = {
         Row: AppBugReportRow;
         Insert: AppBugReportInsert;
         Update: AppBugReportUpdate;
+      };
+      inbox_messages: {
+        Row: InboxMessageRow;
+        Insert: InboxMessageInsert;
+        Update: InboxMessageUpdate;
+      };
+      inbox_message_recipients: {
+        Row: InboxMessageRecipientRow;
+        Insert: InboxMessageRecipientInsert;
+        Update: Partial<InboxMessageRecipientRow>;
+      };
+      inbox_message_reads: {
+        Row: InboxMessageReadRow;
+        Insert: InboxMessageReadInsert;
+        Update: Partial<InboxMessageReadRow>;
       };
       support_requests: {
         Row: SupportRequestRow;
