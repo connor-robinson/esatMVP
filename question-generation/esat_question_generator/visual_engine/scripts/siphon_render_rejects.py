@@ -162,6 +162,9 @@ def main() -> int:
     decisions: Counter[str] = Counter()
     workers = max(1, int(args.workers))
 
+    def _safe_console(text: str) -> str:
+        return (text or "").encode("ascii", errors="replace").decode("ascii")
+
     def _handle(row: dict[str, Any], idx: int) -> None:
         result = row.pop("_result")
         item = row.pop("_item")
@@ -173,9 +176,11 @@ def main() -> int:
         decisions[result.decision] += 1
         rows.append(row)
         print(
-            f"[{idx}/{len(items)}] {result.decision} {row['question_id']} "
-            f"src={row['source']} conf={row['confidence']:.2f} "
-            f"({row['elapsed_s']}s) {row.get('summary', '')[:100]}",
+            _safe_console(
+                f"[{idx}/{len(items)}] {result.decision} {row['question_id']} "
+                f"src={row['source']} conf={row['confidence']:.2f} "
+                f"({row['elapsed_s']}s) {row.get('summary', '')[:100]}"
+            ),
             flush=True,
         )
 
