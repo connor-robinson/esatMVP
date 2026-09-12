@@ -797,6 +797,7 @@ export function useQuestionBank(
             }
 
             const data = await response.json();
+            clearHomeProgressCache();
             return true;
           } catch (err) {
 

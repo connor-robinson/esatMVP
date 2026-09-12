@@ -149,7 +149,7 @@ export async function GET(request: NextRequest) {
         .from("question_bank_attempts")
         .select("question_id")
         .eq("user_id", user.id)
-        .in("question_id", [...FREE_TIER_QUESTION_IDS]);
+        .in("question_id", questionIds);
 
       attemptedSet = new Set(
         (attempts ?? []).map((a) => a.question_id as string),
