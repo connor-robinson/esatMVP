@@ -166,11 +166,11 @@ export default function CalibrationResultsPage() {
       <Container className="flex min-h-[70vh] items-center justify-center py-16">
         <Card variant="elevated" className="mx-auto w-full max-w-lg p-8 text-center">
           <h1 className="font-heading text-2xl font-bold text-text">
-            Sign in or sign up to view your results
+            Sign up or sign in to view your results
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-text-muted">
             Your calibration answers are saved on this device and will not be
-            deleted. Sign in or create a free account to unlock your score and
+            deleted. Create a free account or sign in to unlock your score and
             review.
           </p>
           {authError ? (
@@ -225,9 +225,9 @@ export default function CalibrationResultsPage() {
             </Link>
             {!session?.user ? (
               <Link
-                href={`/login?redirectTo=${encodeURIComponent(CALIBRATION_ROUTES.math1)}`}
+                href={`/login?mode=signup&redirectTo=${encodeURIComponent(CALIBRATION_ROUTES.math1)}`}
               >
-                <Button variant="secondary">Sign in</Button>
+                <Button variant="secondary">Sign up</Button>
               </Link>
             ) : null}
           </div>

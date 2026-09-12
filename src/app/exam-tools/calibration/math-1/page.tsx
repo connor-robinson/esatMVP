@@ -53,7 +53,7 @@ const FAQ: readonly FaqItem[] = [
   {
     question: "Do I need an account to take it?",
     answer:
-      "You can start without signing in. After you finish, you must sign in or sign up to view your results. Your answers stay saved on this device until you do, and are then also saved to your account.",
+      "You can start without signing in. After you finish, you must sign up or sign in to view your results. Your answers stay saved on this device until you do, and are then also saved to your account.",
   },
 ];
 
