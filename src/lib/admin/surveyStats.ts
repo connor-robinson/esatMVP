@@ -105,6 +105,9 @@ export type SurveyStatsPayload = {
     expired: number;
   };
   feedbackReferral: {
+    asked: number;
+    answered: number;
+    responseRate: number | null;
     codesIssued: number;
     codesRedeemed: number;
     codesUnused: number;
@@ -235,6 +238,15 @@ export async function loadSurveyStats(
   const codesIssued = feedbackCodes?.length ?? 0;
   const codesRedeemed = (feedbackCodes ?? []).filter((c) => c.redeemed_at).length;
 
+  const { count: askedCount, error: askedError } = await service
+    .from("profiles")
+    .select("id", { count: "exact", head: true })
+    .not("feedback_referral_asked_at", "is", null);
+
+  if (askedError) {
+    throw new Error(askedError.message);
+  }
+
   const { data: submissions, error: submissionsError } = await service
     .from("feedback_referral_submissions")
     .select("id, user_id, answers, created_at")
@@ -243,6 +255,9 @@ export async function loadSurveyStats(
   if (submissionsError) {
     throw new Error(submissionsError.message);
   }
+
+  const answered = submissions?.length ?? 0;
+  const asked = askedCount ?? 0;
 
   const submissionUserIds = [
     ...new Set(
@@ -329,10 +344,14 @@ export async function loadSurveyStats(
     partnerCodes,
     partnerInviteSummary,
     feedbackReferral: {
+      asked,
+      answered,
+      responseRate:
+        asked > 0 ? Math.round((answered / asked) * 1000) / 10 : null,
       codesIssued,
       codesRedeemed,
       codesUnused: codesIssued - codesRedeemed,
-      surveySubmissions: submissions?.length ?? 0,
+      surveySubmissions: answered,
       mostUseful: toSortedRows(mostUseful),
       leastUseful: toSortedRows(leastUseful),
       partsUsed: toSortedRows(partsUsed),

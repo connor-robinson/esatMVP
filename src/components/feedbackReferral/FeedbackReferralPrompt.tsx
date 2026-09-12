@@ -13,6 +13,7 @@ import {
   recordFeedbackReferralPromptDismiss,
   setFeedbackReferralDontShowAgain,
 } from "@/lib/feedbackReferral/promptStorage";
+import { markFeedbackReferralAsked } from "@/lib/feedbackReferral/markAsked";
 
 const HIDDEN_PATH_PREFIXES = [
   "/feedback",
@@ -77,6 +78,7 @@ export function FeedbackReferralPrompt() {
           setOpen(false);
           return;
         }
+        markFeedbackReferralAsked();
         setOpen(true);
       })
       .catch(() => setOpen(false));

@@ -266,7 +266,7 @@ export default function AdminSurveysPage() {
             <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-text-muted">
               Referral / access code usage
             </h2>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               <Stat
                 label="Partner invites generated"
                 value={stats.partnerInviteSummary.generated}
@@ -284,8 +284,12 @@ export default function AdminSurveysPage() {
                 value={stats.feedbackReferral.codesRedeemed}
               />
               <Stat
-                label="Feedback surveys done"
-                value={stats.feedbackReferral.surveySubmissions}
+                label="Feedback asked"
+                value={stats.feedbackReferral.asked}
+              />
+              <Stat
+                label="Feedback answered"
+                value={stats.feedbackReferral.answered}
               />
             </div>
 
@@ -345,10 +349,20 @@ export default function AdminSurveysPage() {
             <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-text-muted">
               Feedback-for-referral survey
             </h2>
-            <div className="mt-3 grid gap-3 sm:grid-cols-3">
+            <p className="mt-2 text-xs text-text-subtle">
+              Asked = soft invite or survey shown (tracked going forward; past
+              submitters backfilled). Answered = completed questionnaire.
+            </p>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <Stat label="Asked" value={stats.feedbackReferral.asked} />
+              <Stat label="Answered" value={stats.feedbackReferral.answered} />
               <Stat
-                label="Submissions"
-                value={stats.feedbackReferral.surveySubmissions}
+                label="Response rate"
+                value={
+                  stats.feedbackReferral.responseRate != null
+                    ? `${stats.feedbackReferral.responseRate}%`
+                    : "-"
+                }
               />
               <Stat
                 label="Avg recommend (0-10)"
@@ -358,9 +372,19 @@ export default function AdminSurveysPage() {
                     : "-"
                 }
               />
+            </div>
+            <div className="mt-3 grid gap-3 sm:grid-cols-3">
               <Stat
                 label="Recommend answers"
                 value={stats.feedbackReferral.recommendCount}
+              />
+              <Stat
+                label="Codes issued"
+                value={stats.feedbackReferral.codesIssued}
+              />
+              <Stat
+                label="Codes redeemed"
+                value={stats.feedbackReferral.codesRedeemed}
               />
             </div>
             <div className="mt-4 grid gap-4 lg:grid-cols-3">

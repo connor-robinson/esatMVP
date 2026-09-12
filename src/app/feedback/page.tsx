@@ -7,6 +7,7 @@ import { Check, Copy } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { FeedbackSurveyForm } from "@/components/feedbackReferral/FeedbackSurveyForm";
+import { markFeedbackReferralAsked } from "@/lib/feedbackReferral/markAsked";
 import { cn } from "@/lib/utils";
 
 type Status =
@@ -39,6 +40,9 @@ export default function FeedbackPage() {
       return;
     }
     const data = await res.json();
+    if (!data.completed) {
+      markFeedbackReferralAsked();
+    }
     setStatus({
       kind: "ready",
       completed: Boolean(data.completed),
