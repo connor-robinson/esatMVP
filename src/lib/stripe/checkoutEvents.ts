@@ -14,6 +14,10 @@ import {
 } from "@/lib/ga/measurementProtocol";
 import type { GaCheckoutAttribution } from "@/lib/ga/session";
 import { fromStripeGaMetadata } from "@/lib/stripe/checkoutGaMetadata";
+import {
+  resolveUserIdFromCheckoutSession,
+  resolveUserIdFromStripeMetadata,
+} from "@/lib/stripe/checkoutIdentity";
 
 function adminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -233,7 +237,7 @@ export async function handleCheckoutSessionCompletedCommerce(
       ? session.customer
       : session.customer?.id ?? null;
   const userId =
-    session.metadata?.userId ??
+    resolveUserIdFromCheckoutSession(session) ??
     (await resolveUserIdFromStripeCustomer(customerId));
 
   const subscriptionId =
@@ -353,8 +357,9 @@ export async function handleSubscriptionDeletedCommerce(
       ? subscription.customer
       : subscription.customer?.id ?? null;
   const userId =
-    subscription.metadata?.userId ??
-    (await resolveUserIdFromStripeCustomer(customerId));
+    resolveUserIdFromStripeMetadata(
+      subscription.metadata as Record<string, string> | null | undefined,
+    ) ?? (await resolveUserIdFromStripeCustomer(customerId));
 
   await insertCheckoutEvent({
     stripeEventId,

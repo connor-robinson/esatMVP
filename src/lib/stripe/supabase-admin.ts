@@ -3,6 +3,10 @@ import Stripe from "stripe";
 import { getStripe } from "./config";
 import { toDateTime } from "./helpers";
 import { SEASON_PASS_ACCESS_UNTIL } from "@/lib/stripe/seasonPass";
+import {
+  decideStripeCustomerLink,
+  resolveUserIdFromStripeMetadata,
+} from "@/lib/stripe/checkoutIdentity";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -103,6 +107,89 @@ export const deletePriceRecord = async (price: Stripe.Price) => {
   if (error) throw new Error(`Price delete failed: ${error.message}`);
 };
 
+/**
+ * Return a stored, still-valid Stripe Customer ID for this user.
+ * Does not create customers or upsert rows. Used by Checkout so Customers
+ * are only created when the user actually confirms Checkout.
+ */
+export const getStoredStripeCustomerId = async (
+  uuid: string,
+): Promise<string | null> => {
+  const { data: existing, error: queryError } = await supabaseAdmin
+    .from("customers")
+    .select("stripe_customer_id")
+    .eq("id", uuid)
+    .maybeSingle();
+
+  if (queryError) throw new Error(`Customer lookup failed: ${queryError.message}`);
+  if (!existing?.stripe_customer_id) return null;
+
+  try {
+    const cust = await getStripe().customers.retrieve(existing.stripe_customer_id);
+    const isDeleted = (cust as Stripe.DeletedCustomer).deleted === true;
+    if (isDeleted) return null;
+    return cust.id;
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * Idempotently map an app user to a Stripe Customer ID after Checkout.
+ * Never silently overwrites a different existing Customer ID.
+ */
+export const linkStripeCustomerId = async (
+  userId: string,
+  stripeCustomerId: string,
+): Promise<ReturnType<typeof decideStripeCustomerLink>> => {
+  const { data: existingForUser, error: userLookupError } = await supabaseAdmin
+    .from("customers")
+    .select("stripe_customer_id")
+    .eq("id", userId)
+    .maybeSingle();
+  if (userLookupError) {
+    throw new Error(`Customer lookup failed: ${userLookupError.message}`);
+  }
+
+  const { data: existingForCustomer, error: customerLookupError } =
+    await supabaseAdmin
+      .from("customers")
+      .select("id")
+      .eq("stripe_customer_id", stripeCustomerId)
+      .maybeSingle();
+  if (customerLookupError) {
+    throw new Error(`Customer lookup failed: ${customerLookupError.message}`);
+  }
+
+  const decision = decideStripeCustomerLink({
+    userId,
+    incomingCustomerId: stripeCustomerId,
+    existingCustomerIdForUser: existingForUser?.stripe_customer_id ?? null,
+    userIdAlreadyLinkedToIncoming: existingForCustomer?.id ?? null,
+  });
+
+  if (!decision.ok) {
+    console.error("[stripe] refusing to link customer id", {
+      userId,
+      stripeCustomerId,
+      ...decision,
+    });
+    return decision;
+  }
+
+  if (decision.action === "unchanged") {
+    return decision;
+  }
+
+  const { error: upsertError } = await supabaseAdmin.from("customers").upsert(
+    [{ id: userId, stripe_customer_id: stripeCustomerId }],
+    { onConflict: "id" },
+  );
+  if (upsertError) throw new Error(`Customer upsert failed: ${upsertError.message}`);
+
+  return decision;
+};
+
 export const createOrRetrieveCustomer = async (uuid: string, email: string) => {
   const { data: existing, error: queryError } = await supabaseAdmin
     .from("customers")
@@ -150,21 +237,61 @@ export const createOrRetrieveCustomer = async (uuid: string, email: string) => {
   return stripeCustomerId;
 };
 
-export const manageSubscriptionStatusChange = async (
-  subscriptionId: string,
+async function resolveUserIdForStripeCustomer(
   customerId: string,
-  createAction = false
-) => {
-  const { data: customerData, error: custError } = await supabaseAdmin
+  metadata?: Stripe.Metadata | null,
+  fallbackUserId?: string | null,
+): Promise<string> {
+  const { data: customerData } = await supabaseAdmin
     .from("customers")
     .select("id")
     .eq("stripe_customer_id", customerId)
-    .single();
-  if (custError || !customerData) throw new Error("Customer lookup failed");
+    .maybeSingle();
 
+  if (customerData?.id) return customerData.id;
+
+  const metaUserId =
+    resolveUserIdFromStripeMetadata(
+      metadata as Record<string, string> | null | undefined,
+    ) ?? fallbackUserId ?? null;
+
+  if (!metaUserId) {
+    throw new Error("Customer lookup failed");
+  }
+
+  // Webhook order is not guaranteed: subscription events may arrive before
+  // checkout.session.completed has stored the Customer mapping.
+  await linkStripeCustomerId(metaUserId, customerId);
+
+  const { data: linked } = await supabaseAdmin
+    .from("customers")
+    .select("id")
+    .eq("stripe_customer_id", customerId)
+    .maybeSingle();
+
+  if (linked?.id) return linked.id;
+
+  // Mismatch: keep the existing mapping, but still attribute the subscription
+  // to the user identified by metadata.
+  return metaUserId;
+}
+
+export const manageSubscriptionStatusChange = async (
+  subscriptionId: string,
+  customerId: string,
+  _createAction = false,
+  opts?: { fallbackUserId?: string | null },
+) => {
   const sub = await getStripe().subscriptions.retrieve(subscriptionId, {
     expand: ["default_payment_method"],
   });
+
+  const userId = await resolveUserIdForStripeCustomer(
+    customerId,
+    sub.metadata,
+    opts?.fallbackUserId,
+  );
+
   const firstItem = sub.items.data[0];
   const priceId = typeof firstItem?.price === "string" ? firstItem.price : firstItem?.price?.id;
   if (!priceId || !firstItem) throw new Error("No price on subscription");
@@ -182,7 +309,7 @@ export const manageSubscriptionStatusChange = async (
 
   const data: SubscriptionRecord = {
     id: sub.id,
-    user_id: customerData.id,
+    user_id: userId,
     status: sub.status,
     metadata: sub.metadata as Record<string, unknown> | null,
     price_id: priceId,
@@ -213,12 +340,18 @@ export const upsertOneTimePurchase = async (
   const customerId = typeof session.customer === "string" ? session.customer : session.customer?.id;
   if (!customerId) return;
 
-  const { data: customerData, error: custError } = await supabaseAdmin
-    .from("customers")
-    .select("id")
-    .eq("stripe_customer_id", customerId)
-    .single();
-  if (custError || !customerData) return;
+  let userId: string;
+  try {
+    userId = await resolveUserIdForStripeCustomer(
+      customerId,
+      session.metadata,
+      resolveUserIdFromStripeMetadata(
+        session.metadata as Record<string, string> | null | undefined,
+      ),
+    );
+  } catch {
+    return;
+  }
 
   // Prefer payment intent for dedupe; fall back to session id in metadata
   const paymentIntentId =
@@ -244,7 +377,7 @@ export const upsertOneTimePurchase = async (
   // Dynamic Checkout price_data IDs are not synced into our prices/products
   // tables - leave FKs null and store details in metadata instead.
   const { error } = await supabaseAdmin.from("one_time_purchases").insert({
-    user_id: customerData.id,
+    user_id: userId,
     stripe_payment_intent_id: paymentIntentId,
     price_id: null,
     product_id: null,
@@ -276,12 +409,15 @@ export const finalizeSeasonPassSubscription = async (
       : subscription.customer?.id;
   if (!customerId) return;
 
-  const { data: customerData, error: custError } = await supabaseAdmin
-    .from("customers")
-    .select("id")
-    .eq("stripe_customer_id", customerId)
-    .single();
-  if (custError || !customerData) return;
+  let userId: string;
+  try {
+    userId = await resolveUserIdForStripeCustomer(
+      customerId,
+      subscription.metadata,
+    );
+  } catch {
+    return;
+  }
 
   const accessUntilRaw = subscription.metadata?.access_until;
   const accessUntil =
@@ -308,7 +444,7 @@ export const finalizeSeasonPassSubscription = async (
   const { data: existingPurchases } = await supabaseAdmin
     .from("one_time_purchases")
     .select("id, metadata")
-    .eq("user_id", customerData.id);
+    .eq("user_id", userId);
 
   const alreadyRecorded = (existingPurchases ?? []).some((row) => {
     const meta = row.metadata as Record<string, unknown> | null;
@@ -317,7 +453,7 @@ export const finalizeSeasonPassSubscription = async (
 
   if (!alreadyRecorded) {
     await supabaseAdmin.from("one_time_purchases").insert({
-      user_id: customerData.id,
+      user_id: userId,
       stripe_payment_intent_id: null,
       price_id: priceId,
       product_id: productId,
@@ -337,4 +473,59 @@ export const finalizeSeasonPassSubscription = async (
       cancel_at_period_end: true,
     });
   }
+};
+
+/**
+ * If the user already has a different active/trialing subscription, cancel the
+ * newly completed Checkout subscription so we do not double-bill. Legitimate
+ * resubscriptions after cancel/expiry are unaffected.
+ *
+ * When two Checkouts race, only the newer subscription is canceled.
+ */
+export const cancelDuplicateCheckoutSubscription = async (
+  userId: string,
+  subscriptionId: string,
+): Promise<boolean> => {
+  const { data: existing } = await supabaseAdmin
+    .from("subscriptions")
+    .select("id, created")
+    .eq("user_id", userId)
+    .in("status", ["active", "trialing"])
+    .neq("id", subscriptionId)
+    .order("created", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  if (!existing) return false;
+
+  let shouldCancelIncoming = true;
+  try {
+    const incoming = await getStripe().subscriptions.retrieve(subscriptionId);
+    const existingCreated = new Date(existing.created).getTime();
+    const incomingCreated = toDateTime(incoming.created).getTime();
+    shouldCancelIncoming = incomingCreated >= existingCreated;
+  } catch (err) {
+    console.error("[stripe] failed to compare duplicate subscriptions", {
+      subscriptionId,
+      err,
+    });
+  }
+
+  if (!shouldCancelIncoming) return false;
+
+  console.warn("[stripe] duplicate active subscription from checkout; canceling newer sub", {
+    userId,
+    existingSubscriptionId: existing.id,
+    newSubscriptionId: subscriptionId,
+  });
+
+  try {
+    await getStripe().subscriptions.cancel(subscriptionId);
+  } catch (err) {
+    console.error("[stripe] failed to cancel duplicate subscription", {
+      subscriptionId,
+      err,
+    });
+  }
+  return true;
 };

@@ -9,6 +9,8 @@ import {
   manageSubscriptionStatusChange,
   upsertOneTimePurchase,
   finalizeSeasonPassSubscription,
+  linkStripeCustomerId,
+  cancelDuplicateCheckoutSubscription,
 } from "@/lib/stripe/supabase-admin";
 import { SEASON_PASS_ACCESS_UNTIL } from "@/lib/stripe/seasonPass";
 import {
@@ -18,6 +20,7 @@ import {
 } from "@/lib/stripe/checkoutEvents";
 import { markReferralCodeRedeemed } from "@/lib/feedbackReferral/service";
 import { resolveReferralCodeFromCheckoutSession } from "@/lib/feedbackReferral/stripe";
+import { resolveUserIdFromCheckoutSession } from "@/lib/stripe/checkoutIdentity";
 
 const RELEVANT_EVENTS = new Set([
   "product.created",
@@ -34,6 +37,22 @@ const RELEVANT_EVENTS = new Set([
 ]);
 
 const EXAM_DATE = SEASON_PASS_ACCESS_UNTIL;
+
+async function linkCustomerFromCheckoutSession(
+  session: Stripe.Checkout.Session,
+): Promise<string | null> {
+  const userId = resolveUserIdFromCheckoutSession(session);
+  const customerId =
+    typeof session.customer === "string"
+      ? session.customer
+      : session.customer?.id ?? null;
+
+  if (userId && customerId) {
+    await linkStripeCustomerId(userId, customerId);
+  }
+
+  return userId;
+}
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
@@ -99,16 +118,49 @@ export async function POST(request: NextRequest) {
       }
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
+        const userId = await linkCustomerFromCheckoutSession(session);
+        const customerId =
+          typeof session.customer === "string"
+            ? session.customer
+            : session.customer?.id;
+
         if (session.mode === "subscription" && session.subscription) {
+          const subscriptionId =
+            typeof session.subscription === "string"
+              ? session.subscription
+              : session.subscription.id;
+
+          if (userId) {
+            await cancelDuplicateCheckoutSubscription(userId, subscriptionId);
+          }
+
+          if (!customerId) {
+            throw new Error("checkout.session.completed missing customer");
+          }
+
           await manageSubscriptionStatusChange(
-            session.subscription as string,
-            session.customer as string,
+            subscriptionId,
+            customerId,
             true,
+            { fallbackUserId: userId },
           );
+
+          // Re-check after upsert so concurrent Checkout completions cannot
+          // both remain active/trialing.
+          if (userId) {
+            const canceledDuplicate =
+              await cancelDuplicateCheckoutSubscription(userId, subscriptionId);
+            if (canceledDuplicate) {
+              await manageSubscriptionStatusChange(
+                subscriptionId,
+                customerId,
+                false,
+                { fallbackUserId: userId },
+              );
+            }
+          }
           if (session.metadata?.planType === "season_pass") {
-            const sub = await getStripe().subscriptions.retrieve(
-              session.subscription as string,
-            );
+            const sub = await getStripe().subscriptions.retrieve(subscriptionId);
             await finalizeSeasonPassSubscription(sub);
           }
         } else if (
@@ -124,7 +176,11 @@ export async function POST(request: NextRequest) {
           await upsertOneTimePurchase(fullSession, EXAM_DATE);
         }
         await handleCheckoutSessionCompletedCommerce(session, event.id);
-        const redeemerId = session.metadata?.userId;
+        const redeemerId =
+          userId ??
+          session.metadata?.user_id ??
+          session.metadata?.userId ??
+          null;
         if (
           redeemerId &&
           (session.payment_status === "paid" ||

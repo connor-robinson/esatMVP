@@ -4,6 +4,8 @@ import { getStripe, isStripeConfigured } from "@/lib/stripe/config";
 import {
   manageSubscriptionStatusChange,
   upsertOneTimePurchase,
+  linkStripeCustomerId,
+  cancelDuplicateCheckoutSubscription,
 } from "@/lib/stripe/supabase-admin";
 import { SEASON_PASS_ACCESS_UNTIL } from "@/lib/stripe/seasonPass";
 import {
@@ -11,6 +13,7 @@ import {
   insertCheckoutEvent,
 } from "@/lib/stripe/checkoutEvents";
 import { isCommerceEventSent } from "@/lib/ga/measurementProtocol";
+import { resolveUserIdFromCheckoutSession } from "@/lib/stripe/checkoutIdentity";
 import type Stripe from "stripe";
 
 export const dynamic = "force-dynamic";
@@ -46,7 +49,8 @@ export async function POST(request: NextRequest) {
       expand: ["line_items.data.price.product", "subscription"],
     });
 
-    if (session.metadata?.userId && session.metadata.userId !== user.id) {
+    const sessionUserId = resolveUserIdFromCheckoutSession(session);
+    if (sessionUserId && sessionUserId !== user.id) {
       return NextResponse.json({ error: "Session does not belong to this user" }, { status: 403 });
     }
 
@@ -60,28 +64,40 @@ export async function POST(request: NextRequest) {
     }
 
     const planType = session.metadata?.planType ?? null;
+    const customerId =
+      typeof session.customer === "string"
+        ? session.customer
+        : session.customer?.id ?? null;
+
+    if (customerId) {
+      await linkStripeCustomerId(user.id, customerId);
+    }
 
     if (session.mode === "subscription" && session.subscription) {
       const subscriptionId =
         typeof session.subscription === "string"
           ? session.subscription
           : session.subscription.id;
-      const customerId =
-        typeof session.customer === "string"
-          ? session.customer
-          : session.customer?.id;
       if (!customerId) {
         return NextResponse.json({ error: "Missing customer" }, { status: 400 });
       }
-      await manageSubscriptionStatusChange(subscriptionId, customerId, true);
+      await cancelDuplicateCheckoutSubscription(user.id, subscriptionId);
+      await manageSubscriptionStatusChange(subscriptionId, customerId, true, {
+        fallbackUserId: user.id,
+      });
+      const canceledDuplicate = await cancelDuplicateCheckoutSubscription(
+        user.id,
+        subscriptionId,
+      );
+      if (canceledDuplicate) {
+        await manageSubscriptionStatusChange(subscriptionId, customerId, false, {
+          fallbackUserId: user.id,
+        });
+      }
     } else if (session.mode === "payment" && planType === "season_pass") {
       await upsertOneTimePurchase(session, EXAM_DATE);
     }
 
-    const customerId =
-      typeof session.customer === "string"
-        ? session.customer
-        : session.customer?.id ?? null;
     const subscriptionObj =
       typeof session.subscription === "object" && session.subscription
         ? (session.subscription as Stripe.Subscription)
