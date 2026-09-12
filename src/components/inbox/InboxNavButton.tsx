@@ -10,7 +10,12 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown, Inbox } from "lucide-react";
-import { BrandMarkImage } from "@/components/brand/BrandMarkImage";
+import {
+  formatInboxWhen,
+  InboxCampIcon,
+  InboxFromMeta,
+  InboxThreadBubbles,
+} from "@/components/inbox/InboxMessageParts";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import type { InboxMessageListItem, InboxThreadReply } from "@/lib/inbox";
 import { cn } from "@/lib/utils";
@@ -315,117 +320,98 @@ export function InboxNavButton({ className }: Props) {
                   const replyError = replyErrorById[m.id];
                   const replyBusy = replyBusyId === m.id;
                   const showCompactReply = isDirect && m.allow_reply;
+                  const fromLabel = isDirect
+                    ? "ESAT Camp · direct"
+                    : "ESAT Camp · everyone";
 
                   return (
                     <li
                       key={m.id}
-                      className={cn(
-                        "border-b border-border-subtle last:border-b-0",
-                        unreadItem ? "bg-red-500/[0.06]" : "bg-transparent",
-                      )}
+                      className="border-b border-border-subtle last:border-b-0"
                     >
                       <button
                         type="button"
                         onClick={() => selectMessage(m.id)}
                         aria-expanded={expanded}
                         className={cn(
-                          "group flex w-full items-start gap-2.5 px-3 py-2.5 text-left",
+                          "group w-full px-3 py-2.5 text-left",
                           "hover:bg-surface-subtle/80",
                           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-secondary/40",
+                          unreadItem && "bg-emerald-500/[0.04]",
                         )}
                       >
-                        <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-surface-mid">
-                          <BrandMarkImage
-                            className="h-3.5 w-auto"
-                            alt="ESAT Camp"
-                          />
-                        </span>
-                        <span className="min-w-0 flex-1">
-                          <span className="flex items-start gap-1.5">
-                            <span
-                              className={cn(
-                                "min-w-0 flex-1 whitespace-normal break-words text-[12px] leading-snug text-text",
-                                unreadItem && "font-semibold",
-                              )}
-                            >
-                              {m.subject}
-                            </span>
-                            <ChevronDown
-                              aria-hidden
-                              size={14}
-                              strokeWidth={2.25}
-                              className={cn(
-                                "mt-0.5 shrink-0 text-text-subtle transition-transform duration-150",
-                                "opacity-70 group-hover:opacity-100",
-                                expanded && "rotate-180",
-                              )}
-                            />
-                          </span>
-                          <span className="mt-0.5 block text-[10px] text-text-subtle">
-                            ESAT Camp
-                            {isDirect ? " · direct" : " · everyone"}
-                            {" · "}
-                            {new Date(m.created_at).toLocaleDateString(
-                              "en-GB",
-                              {
-                                day: "numeric",
-                                month: "short",
-                              },
-                            )}
-                          </span>
-
-                          {!expanded ? (
-                            <span className="relative mt-1.5 block">
+                        <span className="flex items-start gap-2.5">
+                          <InboxCampIcon />
+                          <span className="min-w-0 flex-1">
+                            <span className="flex items-start gap-1.5">
                               <span
                                 className={cn(
-                                  "block text-[11px] leading-relaxed text-text-muted",
-                                  bodyPreview.truncated &&
-                                    "line-clamp-2 overflow-hidden [mask-image:linear-gradient(to_bottom,black_45%,transparent)]",
+                                  "min-w-0 flex-1 whitespace-normal break-words text-[12px] leading-snug text-text",
+                                  unreadItem && "font-semibold",
                                 )}
                               >
-                                {bodyPreview.text}
+                                {m.subject}
                               </span>
-                              <span className="mt-1 block text-[10px] font-medium text-text-subtle opacity-80 group-hover:opacity-100">
-                                {bodyPreview.truncated
-                                  ? "Tap to expand…"
-                                  : "Tap for details"}
-                              </span>
+                              {unreadItem ? (
+                                <span
+                                  className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-red-500"
+                                  aria-label="Unread"
+                                />
+                              ) : null}
+                              <ChevronDown
+                                aria-hidden
+                                size={14}
+                                strokeWidth={2.25}
+                                className={cn(
+                                  "mt-0.5 shrink-0 text-text-subtle transition-transform duration-150",
+                                  "opacity-70 group-hover:opacity-100",
+                                  expanded && "rotate-180",
+                                )}
+                              />
                             </span>
-                          ) : null}
+
+                            {!expanded ? (
+                              <span className="relative mt-1.5 block">
+                                <span
+                                  className={cn(
+                                    "block text-[11px] leading-relaxed text-text-muted",
+                                    bodyPreview.truncated &&
+                                      "line-clamp-2 overflow-hidden [mask-image:linear-gradient(to_bottom,black_45%,transparent)]",
+                                  )}
+                                >
+                                  {bodyPreview.text}
+                                </span>
+                                <span className="mt-1.5 flex items-center justify-between gap-2">
+                                  <InboxFromMeta
+                                    from={fromLabel}
+                                    when={formatInboxWhen(m.created_at)}
+                                  />
+                                  <span className="text-[10px] font-medium text-text-subtle opacity-80 group-hover:opacity-100">
+                                    {bodyPreview.truncated
+                                      ? "Expand…"
+                                      : "Details"}
+                                  </span>
+                                </span>
+                              </span>
+                            ) : null}
+                          </span>
                         </span>
                       </button>
 
                       {expanded ? (
-                        <div className="border-t border-border-subtle bg-surface-subtle/40 px-3 py-2.5 pl-[3.25rem]">
-                          <p className="whitespace-pre-wrap text-[12px] leading-relaxed text-text-muted">
+                        <div className="px-3 pb-2 pl-[3.25rem]">
+                          <p className="whitespace-pre-wrap text-[12px] leading-relaxed text-text">
                             {m.body}
                           </p>
-
-                          {(m.replies ?? []).length > 0 ? (
-                            <div className="mt-2 space-y-1.5">
-                              {(m.replies ?? []).slice(-4).map((r) => (
-                                <p
-                                  key={r.id}
-                                  className={cn(
-                                    "rounded-md px-2 py-1.5 text-[11px] leading-relaxed",
-                                    r.direction === "inbound"
-                                      ? "bg-surface-mid text-text"
-                                      : "bg-background text-text-muted",
-                                  )}
-                                >
-                                  <span className="font-medium text-text-subtle">
-                                    {r.direction === "inbound"
-                                      ? "You"
-                                      : "ESAT Camp"}
-                                    :{" "}
-                                  </span>
-                                  {r.body.length > 200
-                                    ? `${r.body.slice(0, 200)}…`
-                                    : r.body}
-                                </p>
-                              ))}
-                            </div>
-                          ) : null}
+                          <InboxFromMeta
+                            className="mt-2"
+                            from={fromLabel}
+                            when={formatInboxWhen(m.created_at, true)}
+                          />
+                          <InboxThreadBubbles
+                            dense
+                            replies={(m.replies ?? []).slice(-4)}
+                          />
                         </div>
                       ) : null}
 
@@ -433,7 +419,7 @@ export function InboxNavButton({ className }: Props) {
                         <div
                           className={cn(
                             "px-3 pb-2.5 pl-[3.25rem]",
-                            expanded && "pt-2",
+                            expanded && "pt-1",
                           )}
                           onClick={(e) => e.stopPropagation()}
                           onKeyDown={(e) => e.stopPropagation()}
@@ -462,8 +448,9 @@ export function InboxNavButton({ className }: Props) {
                               disabled={replyBusy || !replyText.trim()}
                               onClick={() => void sendReply(m.id)}
                               className={cn(
-                                "shrink-0 rounded-md bg-surface-mid px-2 py-1",
-                                "text-[11px] font-semibold text-text disabled:opacity-50",
+                                "shrink-0 rounded-md bg-emerald-600/90 px-2 py-1",
+                                "text-[11px] font-semibold text-white disabled:opacity-50",
+                                "dark:bg-emerald-700",
                               )}
                             >
                               {replyBusy ? "…" : "Reply"}

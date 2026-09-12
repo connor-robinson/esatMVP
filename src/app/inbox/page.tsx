@@ -3,7 +3,12 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
-import { BrandMarkImage } from "@/components/brand/BrandMarkImage";
+import {
+  formatInboxWhen,
+  InboxCampIcon,
+  InboxFromMeta,
+  InboxThreadBubbles,
+} from "@/components/inbox/InboxMessageParts";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import type { InboxMessageListItem, InboxThreadReply } from "@/lib/inbox";
 import { cn } from "@/lib/utils";
@@ -247,12 +252,7 @@ export default function InboxPage() {
                     )}
                   >
                     <div className="flex items-start gap-2.5">
-                      <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-surface-mid">
-                        <BrandMarkImage
-                          className="h-3.5 w-auto"
-                          alt="ESAT Camp"
-                        />
-                      </span>
+                      <InboxCampIcon />
                       <div className="min-w-0 flex-1">
                         <div className="flex items-start justify-between gap-2">
                           <p
@@ -265,23 +265,28 @@ export default function InboxPage() {
                           </p>
                           {!m.read_at ? (
                             <span
-                              className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-secondary"
+                              className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-red-500"
                               aria-label="Unread"
                             />
                           ) : null}
                         </div>
-                        <p className="mt-1 text-xs text-text-subtle">
-                          ESAT Camp
-                          {m.audience === "personal"
-                            ? " · direct"
-                            : " · everyone"}
-                          {" · "}
-                          {new Date(m.created_at).toLocaleDateString("en-GB", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })}
+                        <p
+                          className={cn(
+                            "mt-1.5 line-clamp-2 text-xs leading-relaxed text-text-muted",
+                            "overflow-hidden [mask-image:linear-gradient(to_bottom,black_55%,transparent)]",
+                          )}
+                        >
+                          {m.body.replace(/\s+/g, " ").trim()}
                         </p>
+                        <InboxFromMeta
+                          className="mt-2"
+                          from={
+                            m.audience === "personal"
+                              ? "ESAT Camp · direct"
+                              : "ESAT Camp · everyone"
+                          }
+                          when={formatInboxWhen(m.created_at)}
+                        />
                       </div>
                     </div>
                   </button>
@@ -292,62 +297,34 @@ export default function InboxPage() {
 
           {selected ? (
             <article className="rounded-organic-xl bg-surface-elevated px-5 py-5 sm:px-6">
-              <div className="flex items-center gap-2">
-                <span className="flex h-8 w-8 items-center justify-center rounded-md bg-surface-mid">
-                  <BrandMarkImage className="h-4 w-auto" alt="" />
-                </span>
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-text-muted">
-                  From ESAT Camp
-                  {selected.audience === "broadcast"
-                    ? " · everyone"
-                    : " · direct"}
-                </p>
+              <div className="flex items-start gap-3">
+                <InboxCampIcon className="h-8 w-8" markClassName="h-4" />
+                <h2 className="min-w-0 flex-1 font-heading text-xl font-semibold leading-snug text-text">
+                  {selected.subject}
+                </h2>
               </div>
-              <h2 className="mt-3 font-heading text-xl font-semibold text-text">
-                {selected.subject}
-              </h2>
-              <p className="mt-1 text-xs text-text-subtle">
-                {new Date(selected.created_at).toLocaleString("en-GB")}
-              </p>
-              <div className="mt-5 whitespace-pre-wrap text-sm leading-relaxed text-text-muted">
+              <div className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-text">
                 {selected.body}
               </div>
+              <InboxFromMeta
+                className="mt-3"
+                from={
+                  selected.audience === "broadcast"
+                    ? "ESAT Camp · everyone"
+                    : "ESAT Camp · direct"
+                }
+                when={formatInboxWhen(selected.created_at, true)}
+              />
 
               {(selected.replies ?? []).length > 0 ? (
-                <div className="mt-6 space-y-3 border-t border-border-subtle pt-5">
-                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">
-                    Conversation
-                  </p>
-                  {(selected.replies ?? []).map((r) => (
-                    <div
-                      key={r.id}
-                      className={cn(
-                        "rounded-organic-md px-3 py-2.5 text-sm",
-                        r.direction === "inbound"
-                          ? "bg-secondary/15 text-text"
-                          : "bg-surface-mid text-text-muted",
-                      )}
-                    >
-                      <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-text-subtle">
-                        {r.direction === "inbound" ? "You" : "ESAT Camp"}
-                        {" · "}
-                        {new Date(r.created_at).toLocaleString("en-GB")}
-                      </p>
-                      <p className="mt-1 whitespace-pre-wrap leading-relaxed">
-                        {r.body}
-                      </p>
-                    </div>
-                  ))}
+                <div className="mt-6 border-t border-border-subtle pt-5">
+                  <InboxThreadBubbles replies={selected.replies ?? []} />
                 </div>
               ) : null}
 
               {selected.allow_reply && selected.audience === "personal" ? (
                 <div className="mt-6 border-t border-border-subtle pt-5">
-                  <p className="text-xs text-text-muted">
-                    Your reply goes to the team. They will follow up here or by
-                    email if needed.
-                  </p>
-                  <div className="mt-3 flex items-center gap-2">
+                  <div className="flex items-center gap-2">
                     <input
                       type="text"
                       value={replyText}
@@ -361,7 +338,7 @@ export default function InboxPage() {
                       type="button"
                       disabled={replyBusy || !replyText.trim()}
                       onClick={() => void sendReply()}
-                      className="shrink-0 rounded-organic-md bg-secondary/25 px-4 py-2 text-sm font-semibold text-text disabled:opacity-50"
+                      className="shrink-0 rounded-organic-md bg-emerald-600/90 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50 dark:bg-emerald-700"
                     >
                       {replyBusy ? "Sending…" : "Reply"}
                     </button>
