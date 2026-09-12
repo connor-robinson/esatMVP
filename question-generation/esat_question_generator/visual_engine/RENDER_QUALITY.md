@@ -34,7 +34,17 @@ result = evaluate_review_item(item)
 print(result.decision, result.summary, result.reject_reasons)
 ```
 
-Model default: `MODEL_RENDER_QUALITY_ACCEPTOR` or `MODEL_DIAGRAM_VERIFIER` or `gemini-3.7-flash`.
+## Siphon bad diagrams out of the pending queue
+
+Strict mode (higher reject rate) + write REJECT into `review.db`:
+
+```bash
+python -u -m visual_engine.scripts.siphon_render_rejects --workers 3
+python -u -m visual_engine.scripts.siphon_render_rejects --dry-run --limit 20
+```
+
+Only pending items with real diagram `visual_type`s (graph/geometry/pedigree/etc.) are evaluated. ACCEPTs stay pending for human review; REJECTs are marked `rejected` with `[render_quality_acceptor]` feedback.
+
 
 ## Benchmark vs your manual labels (Sep 2026)
 
