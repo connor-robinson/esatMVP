@@ -26,7 +26,7 @@ import type { CalibrationAttempt } from "@/lib/calibration/types";
 import { trackCalibrationEvent } from "@/lib/calibration/analytics";
 import { trackEvent } from "@/lib/ga";
 
-type PageStatus = "loading" | "need_auth" | "syncing" | "ready" | "not_found";
+type PageStatus = "loading" | "need_auth" | "ready" | "not_found";
 
 /**
  * Results are gated behind sign-in. The raw attempt stays in localStorage and is
@@ -44,6 +44,7 @@ export default function CalibrationResultsPage() {
   const [status, setStatus] = useState<PageStatus>("loading");
 
   const redirectTo = `${CALIBRATION_ROUTES.math1}/results/${attemptId}`;
+  const userId = session?.user?.id ?? null;
 
   useEffect(() => {
     let cancelled = false;
@@ -54,7 +55,7 @@ export default function CalibrationResultsPage() {
       // Prefer local attempt (never deleted). Fall back to account copy when signed in.
       let local = loadAttempt(attemptId);
 
-      if (!local && session?.user) {
+      if (!local && userId) {
         try {
           const res = await fetch(`/api/calibration/attempts/${attemptId}`);
           if (res.ok) {
@@ -78,14 +79,15 @@ export default function CalibrationResultsPage() {
       if (cancelled) return;
       setAttempt(local);
 
-      if (!session?.user) {
+      if (!userId) {
         queueAttemptForMerge(attemptId);
         setStatus("need_auth");
         return;
       }
 
-      // Signed in: sync a copy to the account. Local attempt stays intact.
-      setStatus("syncing");
+      // Show results immediately. Sync in the background so tab focus / token
+      // refresh never remounts the page into a loading state.
+      setStatus("ready");
       const results = computeResults(local);
       try {
         const res = await fetch("/api/calibration/attempts", {
@@ -94,7 +96,6 @@ export default function CalibrationResultsPage() {
           body: JSON.stringify({ attempt: local, result: results }),
         });
         if (!res.ok) {
-          // Still show results from local copy; sync can retry on next visit.
           if (!cancelled) {
             setSyncError("Could not sync to your account yet. Your result is safe on this device.");
           }
@@ -107,16 +108,14 @@ export default function CalibrationResultsPage() {
         }
       }
 
-      // Always re-save local so nothing is lost.
       saveAttempt(local);
-      if (!cancelled) setStatus("ready");
     }
 
     void load();
     return () => {
       cancelled = true;
     };
-  }, [attemptId, session?.user]);
+  }, [attemptId, userId]);
 
   const results = useMemo(
     () => (attempt ? computeResults(attempt) : null),
@@ -148,13 +147,13 @@ export default function CalibrationResultsPage() {
     }
   };
 
-  if (status === "loading" || status === "syncing") {
+  if (status === "loading") {
     return (
       <Container className="flex min-h-[70vh] items-center justify-center py-16">
         <div className="max-w-md text-center">
           <LoadingSpinner size="lg" />
           <h1 className="mt-6 font-heading text-2xl font-bold text-text">
-            {status === "syncing" ? "Saving your results" : "Preparing your results"}
+            Preparing your results
           </h1>
         </div>
       </Container>

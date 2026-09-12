@@ -79,7 +79,8 @@ export function CalibrationLandingClient() {
     return () => {
       cancelled = true;
     };
-  }, [router, session?.user, stayOnIntro]);
+    // Depend on user id only so token refresh does not re-run and bounce the page.
+  }, [router, session?.user?.id, stayOnIntro]);
 
   const timeLimitMinutes = Math.round(CALIBRATION_TIME_LIMIT_SECONDS / 60);
 
