@@ -46,6 +46,12 @@ const CARDS: Array<{
     key: "currentlyTrialing",
     suffix: "trialing",
   },
+  {
+    href: "/admin/emails",
+    title: "Emails",
+    body: "Tips and Tricks opt-in stats and product email sends.",
+    key: null,
+  },
 ];
 
 export default function AdminOverviewPage() {

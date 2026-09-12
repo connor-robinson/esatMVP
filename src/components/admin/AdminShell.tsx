@@ -27,6 +27,11 @@ const PRIMARY = [
     label: "Billing",
     match: (p: string) => p.startsWith("/admin/billing"),
   },
+  {
+    href: "/admin/emails",
+    label: "Emails",
+    match: (p: string) => p.startsWith("/admin/emails"),
+  },
 ] as const;
 
 const SECONDARY = [
