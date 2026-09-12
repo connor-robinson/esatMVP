@@ -363,7 +363,12 @@ export default function AdminSurveysPage() {
                 value={stats.feedbackReferral.recommendCount}
               />
             </div>
-            <div className="mt-4 grid gap-4 lg:grid-cols-2">
+            <div className="mt-4 grid gap-4 lg:grid-cols-3">
+              <CountChart
+                title="Parts used"
+                rows={stats.feedbackReferral.partsUsed}
+                color="#2E79B5"
+              />
               <CountChart
                 title="Most useful"
                 rows={stats.feedbackReferral.mostUseful}
@@ -374,6 +379,58 @@ export default function AdminSurveysPage() {
                 rows={stats.feedbackReferral.leastUseful}
                 color="#C06028"
               />
+            </div>
+
+            <h3 className="mt-6 text-sm font-semibold text-text">
+              All submissions ({stats.feedbackReferral.submissions.length})
+            </h3>
+            <div className="mt-3 space-y-4">
+              {stats.feedbackReferral.submissions.map((submission) => (
+                <article
+                  key={submission.id}
+                  className="rounded-organic-xl bg-surface-elevated px-5 py-4"
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div>
+                      <p className="font-medium text-text">
+                        {submission.username ||
+                          submission.email ||
+                          submission.userId.slice(0, 8)}
+                      </p>
+                      <p className="mt-0.5 text-xs text-text-subtle">
+                        {submission.email || "No email"}
+                        {" · "}
+                        {submission.createdAt
+                          ? new Date(submission.createdAt).toLocaleString(
+                              "en-GB",
+                            )
+                          : "-"}
+                      </p>
+                    </div>
+                    <p className="font-mono text-xs text-text-subtle">
+                      {submission.id.slice(0, 8).toUpperCase()}
+                    </p>
+                  </div>
+                  <dl className="mt-4 space-y-3">
+                    {submission.answers.map((answer) => (
+                      <div key={`${submission.id}-${answer.questionId}`}>
+                        <dt className="text-xs font-medium uppercase tracking-[0.08em] text-text-muted">
+                          {answer.label}
+                        </dt>
+                        <dd className="mt-1 whitespace-pre-wrap text-sm text-text">
+                          {answer.display}
+                        </dd>
+                      </div>
+                    ))}
+                    {submission.answers.length === 0 ? (
+                      <p className="text-sm text-text-muted">No answers saved.</p>
+                    ) : null}
+                  </dl>
+                </article>
+              ))}
+              {stats.feedbackReferral.submissions.length === 0 ? (
+                <p className="text-sm text-text-muted">No submissions yet.</p>
+              ) : null}
             </div>
           </section>
         </div>
