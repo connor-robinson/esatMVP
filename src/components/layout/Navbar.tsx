@@ -382,6 +382,10 @@ export function Navbar() {
         </Link>
       ) : null}
 
+      {session?.user ? (
+        <InboxNavButton className={navIconSlotClass} />
+      ) : null}
+
       {!isHomeScreen ? (
         <button
           type='button'
@@ -454,7 +458,6 @@ export function Navbar() {
               strokeWidth={NAV_ICON_STROKE}
             />
           </button>
-          <InboxNavButton className={navIconSlotClass} />
           <Link
             href={settingsHref}
             className={cn(
