@@ -1,12 +1,12 @@
 import type { ConverterExam } from "@/lib/scoreConverter/esatModules";
 
 export const MAIN_SCORE_CONVERTER_COPY = {
-  title: "ESAT Score Converter - NSAA & ENGAA Raw Marks",
+  title: "ESAT Score Converter & Calculator | NSAA & ENGAA Marks",
   description:
-    "Estimate your ESAT score from NSAA and ENGAA past-paper raw marks. Convert your result to the ESAT 1.0–9.0 scale. Unofficial estimate.",
+    "Use the ESAT score converter (also called an ESAT score calculator) to estimate a scaled score from NSAA or ENGAA past-paper raw marks on the 1.0–9.0 scale. Unofficial estimate.",
   h1: "ESAT Score Converter",
   intro:
-    "Convert NSAA or ENGAA past-paper raw marks into estimated ESAT scores and percentiles.",
+    "Convert NSAA or ENGAA past-paper raw marks into estimated ESAT scores and percentiles. Use it as an ESAT score calculator after timed papers, not as an official UAT-UK result.",
 } as const;
 
 export const SCORE_CONVERTER_PAGE_COPY: Record<
@@ -14,18 +14,20 @@ export const SCORE_CONVERTER_PAGE_COPY: Record<
   { title: string; description: string; h1: string; intro: string }
 > = {
   NSAA: {
-    title: "NSAA to ESAT Score Converter | 2016–2023",
+    title: "NSAA to ESAT Score Converter | Year Tables 2017–2023",
     description:
-      "Convert an NSAA past-paper raw mark into its published scaled score and estimate the equivalent ESAT percentile. Includes downloadable conversion tables.",
+      "Convert an NSAA past-paper raw mark using year-specific grade boundaries and published scaled scores, then estimate the equivalent ESAT percentile. Includes downloadable conversion tables.",
     h1: "NSAA to ESAT Score Converter",
-    intro: "",
+    intro:
+      "NSAA papers from 2017 to 2023 have published raw-to-scaled conversion tables. Pick a year below the converter, enter your raw mark, and compare against that year's boundaries. Year detail pages stay in the app for reference and are not separate indexable landings.",
   },
   ENGAA: {
     title: "ENGAA to ESAT Score Converter | Raw Mark & Percentile",
     description:
-      "Convert ENGAA past-paper raw marks into published scaled scores and estimate the equivalent ESAT percentile. Includes downloadable ENGAA conversion tables.",
+      "Convert ENGAA past-paper raw marks into published scaled scores and estimate the equivalent ESAT percentile. Built for ENGAA conversion searches and downloadable ENGAA tables.",
     h1: "ENGAA to ESAT Score Converter",
-    intro: "",
+    intro:
+      "ENGAA Section 1 papers remain one of the closest stand-ins for ESAT Maths and Physics practice. Use this page when you want ENGAA-specific conversion, not the general ESAT hub.",
   },
   TMUA: {
     title: "TMUA Score Converter | Old vs New Scale",

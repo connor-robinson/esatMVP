@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import {
   getActiveAttempt,
@@ -15,17 +15,20 @@ import {
   CALIBRATION_TIME_LIMIT_SECONDS,
   calibrationResultsRoute,
 } from "@/lib/calibration/constants";
-import { CALIBRATION_STUDENT_INTRO } from "@/lib/calibration/config";
 import type { CalibrationAttempt } from "@/lib/calibration/types";
-import { cn } from "@/lib/utils";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { currentGaPath, rememberGaSourcePage } from "@/lib/ga";
 
+/** Match Pearson exam content typeface. */
+const PEARSON_FONT = 'Tahoma, Arial, Helvetica, sans-serif';
+
 export function CalibrationLandingClient() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const session = useSupabaseSession();
   const [inProgress, setInProgress] = useState<CalibrationAttempt | null>(null);
   const [resolving, setResolving] = useState(true);
+  const stayOnIntro = searchParams.get("view") === "intro";
 
   useEffect(() => {
     let cancelled = false;
@@ -39,7 +42,6 @@ export function CalibrationLandingClient() {
         user_state: session?.user ? "free" : "signed_out",
       });
 
-      // Unfinished attempt → stay on landing to resume.
       if (active) {
         if (!cancelled) {
           setInProgress(active);
@@ -48,14 +50,13 @@ export function CalibrationLandingClient() {
         return;
       }
 
-      // Completed locally → results are the main view.
-      if (localLatest) {
+      // Local UI work: ?view=intro keeps the landing visible even after a prior attempt.
+      if (!stayOnIntro && localLatest) {
         router.replace(calibrationResultsRoute(localLatest.attemptId));
         return;
       }
 
-      // Completed on account → results are the main view.
-      if (session?.user) {
+      if (!stayOnIntro && session?.user) {
         try {
           const res = await fetch("/api/calibration/attempts");
           const data = await res.json();
@@ -78,7 +79,7 @@ export function CalibrationLandingClient() {
     return () => {
       cancelled = true;
     };
-  }, [router, session?.user]);
+  }, [router, session?.user, stayOnIntro]);
 
   const timeLimitMinutes = Math.round(CALIBRATION_TIME_LIMIT_SECONDS / 60);
 
@@ -91,117 +92,83 @@ export function CalibrationLandingClient() {
     router.push(CALIBRATION_ROUTES.test);
   };
 
-  // The header renders in every state, including the initial server render, so
-  // the page always ships an H1 and its description in the HTML.
-  const header = (
-    <header className="mx-auto max-w-3xl text-center">
-      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-maths">
-        Exam tools · Calibration
-      </p>
-      <h1 className="mt-4 text-3xl font-display font-bold leading-[1.15] tracking-tight text-text sm:text-4xl lg:text-5xl">
-        {CALIBRATION_STUDENT_INTRO.heading}
-      </h1>
-      <p className="mx-auto mt-3 max-w-xl text-base font-medium text-text sm:text-lg">
-        {CALIBRATION_STUDENT_INTRO.summary}
-      </p>
-      <p className="mx-auto mt-3 max-w-2xl text-base leading-relaxed text-text-muted sm:text-lg">
-        {CALIBRATION_STUDENT_INTRO.supportingText}
-      </p>
-    </header>
-  );
-
-  const dotField = (
-    <div
-      aria-hidden
-      className="pointer-events-none absolute inset-0 opacity-[0.35]"
-      style={{
-        backgroundImage:
-          "radial-gradient(rgba(147, 197, 253, 0.18) 1px, transparent 1px)",
-        backgroundSize: "22px 22px",
-      }}
-    />
-  );
-
   if (resolving) {
     return (
-      <div className="relative min-h-[calc(100vh-3.5rem)] overflow-hidden bg-background">
-        {dotField}
-        <div className="relative mx-auto flex min-h-[calc(100vh-3.5rem)] w-full max-w-5xl flex-col justify-center px-5 py-12 sm:px-8 sm:py-16 lg:px-10">
-          {header}
-          <div className="mt-10 flex justify-center">
-            <LoadingSpinner size="md" />
-          </div>
-        </div>
+      <div
+        className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center bg-[#141414]"
+        style={{ fontFamily: PEARSON_FONT }}
+      >
+        <LoadingSpinner size="md" />
       </div>
     );
   }
 
   return (
-    <div className="relative min-h-[calc(100vh-3.5rem)] overflow-hidden bg-background">
-      {dotField}
+    <div
+      className="min-h-[calc(100vh-3.5rem)] bg-[#141414] text-[#f0f0f0]"
+      style={{ fontFamily: PEARSON_FONT }}
+    >
+      <div className="mx-auto flex min-h-[calc(100vh-3.5rem)] w-full max-w-5xl flex-col justify-center px-6 py-16 sm:px-10 sm:py-20 lg:max-w-6xl lg:px-14">
+        <h1 className="text-[2rem] font-bold leading-[1.2] tracking-tight text-[#f4f4f4] sm:text-[2.5rem] lg:text-[2.75rem]">
+          Free ESAT diagnostic test
+        </h1>
 
-      <div className="relative mx-auto flex min-h-[calc(100vh-3.5rem)] w-full max-w-5xl flex-col justify-center px-5 py-12 sm:px-8 sm:py-16 lg:px-10">
-        {header}
+        <p className="mt-3 text-lg font-semibold text-[#e8e8e8] sm:text-xl">
+          Maths 1 calibration
+        </p>
+
+        <div className="mt-8 max-w-4xl space-y-4 text-[15px] leading-[1.55] text-[#d0d0d0] sm:text-base">
+          <p>
+            Welcome to a short diagnostic designed to calibrate student&apos;s
+            abilities for the ESAT.
+          </p>
+          <p>
+            You will answer 15 multiple-choice questions in 20 minutes.
+            Calculators are not permitted. Choose one answer for each question.
+          </p>
+          <p>
+            There are no penalties for incorrect answers. If you get stuck, make
+            your best choice and keep moving.
+          </p>
+        </div>
+
+        <div className="mt-8 max-w-3xl overflow-hidden border border-white/15 bg-[#1c1c1c]">
+          <table className="w-full text-left text-[15px]">
+            <thead>
+              <tr className="border-b border-white/12 bg-[#222222]">
+                <th className="px-4 py-3 font-semibold text-[#f0f0f0]">
+                  Number of Questions
+                </th>
+                <th className="px-4 py-3 font-semibold text-[#f0f0f0]">Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="px-4 py-3 tabular-nums text-[#d8d8d8]">
+                  {CALIBRATION_TOTAL_QUESTIONS}
+                </td>
+                <td className="px-4 py-3 tabular-nums text-[#d8d8d8]">
+                  {timeLimitMinutes} minutes
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
         {inProgress ? (
-          <p className="mx-auto mt-5 max-w-4xl text-center text-sm text-text-muted">
+          <p className="mt-6 text-sm text-[#a8a8a8]">
             You have an unfinished attempt. Resume to continue where you left
             off.
           </p>
         ) : null}
 
-        <section className="mx-auto mt-8 w-full max-w-4xl rounded-3xl bg-surface-elevated/70 px-6 py-7 sm:px-10 sm:py-9">
-          <div className="grid gap-6 sm:grid-cols-3 sm:gap-8">
-            <div className="text-center sm:text-left">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-text-muted">
-                Questions
-              </p>
-              <p className="mt-2 text-3xl font-display font-bold tabular-nums text-text">
-                {CALIBRATION_TOTAL_QUESTIONS}
-              </p>
-            </div>
-            <div className="text-center sm:text-left">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-text-muted">
-                Time
-              </p>
-              <p className="mt-2 text-3xl font-display font-bold tabular-nums text-text">
-                {timeLimitMinutes}
-                <span className="ml-1 text-base font-semibold text-text-muted">
-                  min
-                </span>
-              </p>
-            </div>
-            <div className="text-center sm:text-left">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-text-muted">
-                Calculator
-              </p>
-              <p className="mt-2 text-3xl font-display font-bold text-text">
-                Off
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-8 grid gap-5 border-t border-border-subtle/50 pt-8 sm:grid-cols-2 sm:gap-8">
-            <p className="text-sm leading-relaxed text-text-muted sm:text-[15px]">
-              Choose one answer for each question. If you are mainly eliminating
-              options, mark it as a guess.
-            </p>
-            <p className="text-sm leading-relaxed text-text-muted sm:text-[15px]">
-              No penalties for wrong answers. Attempt every question you can.
-              Timing and guesses help the diagnosis.
-            </p>
-          </div>
-        </section>
-
-        <div className="mx-auto mt-8 flex w-full max-w-4xl flex-col items-center gap-3 sm:mt-10">
+        <div className="mt-10 flex flex-col items-start gap-3">
           <button
             type="button"
             onClick={start}
-            className={cn(
-              "inline-flex min-w-[14rem] items-center justify-center rounded-xl bg-maths px-8 py-3.5 text-base font-bold text-background transition-all hover:brightness-110",
-            )}
+            className="inline-flex min-w-[11rem] items-center justify-center bg-[#006daa] px-7 py-3 text-[15px] font-semibold text-white transition hover:bg-[#1a82c0]"
           >
-            {inProgress ? "Resume" : "Start"}
+            {inProgress ? "Resume" : "Next"}
           </button>
 
           {!session?.user ? (
@@ -213,7 +180,7 @@ export function CalibrationLandingClient() {
                   user_state: "signed_out",
                 })
               }
-              className="text-sm text-text-muted transition-colors hover:text-text"
+              className="text-sm text-[#a8a8a8] underline-offset-2 transition hover:text-[#f0f0f0] hover:underline"
             >
               Sign in first to save progress
             </Link>
@@ -222,19 +189,23 @@ export function CalibrationLandingClient() {
 
         <section
           id="how-estimate-works"
-          className="mx-auto mt-12 w-full max-w-4xl rounded-3xl bg-surface-elevated/50 px-6 py-6 sm:px-8"
+          className="mt-14 max-w-4xl border-t border-white/10 pt-8"
         >
-          <h2 className="font-heading text-lg font-bold text-text">
+          <h2 className="text-sm font-semibold tracking-wide text-[#e8e8e8]">
             How this estimate works
           </h2>
-          <p className="mt-2 text-sm leading-relaxed text-text-muted">
-            After you finish, we show an Estimated ESAT range from the pattern of
-            right and wrong answers on this 15-question calibration. Timing is
-            used only for pace feedback. This is a provisional diagnostic
-            estimate, not an official ESAT score. Your real result will also
-            depend on the live paper and test-day conditions.
+          <p className="mt-2 text-sm leading-relaxed text-[#9a9a9a]">
+            After you finish, we show one Estimated ESAT score from the pattern
+            of right and wrong answers on this 15-question calibration. Timing
+            is used only for pace feedback. This is a provisional diagnostic
+            estimate, not an official ESAT score.
           </p>
         </section>
+
+        <p className="mt-8 max-w-4xl text-xs leading-relaxed text-[#777777]">
+          ESAT Camp is an independent preparation resource and is not affiliated
+          with or endorsed by UAT-UK or Pearson VUE.
+        </p>
       </div>
     </div>
   );

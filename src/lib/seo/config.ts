@@ -27,9 +27,38 @@ export const SITE_URL = PRODUCTION_SITE_URL;
 
 /** Build an absolute canonical URL for a public path. */
 export function buildCanonicalUrl(path: string): string {
-  if (!path || path === "/") return PRODUCTION_SITE_URL;
+  // Homepage uses a trailing slash; all other public paths omit it.
+  if (!path || path === "/") return `${PRODUCTION_SITE_URL}/`;
   const normalized = path.startsWith("/") ? path : `/${path}`;
   return `${PRODUCTION_SITE_URL}${normalized}`;
+}
+
+/** Shared Organization @id used by homepage, about, and article publishers. */
+export const ORGANIZATION_ID = `${PRODUCTION_SITE_URL}/#organization`;
+
+/** Absolute logo URL for Organization / Article schema. */
+export const ORGANIZATION_LOGO_URL = `${PRODUCTION_SITE_URL}/brand/logo-mark.png`;
+
+/** ImageObject for the Organization logo (include once via @id reference). */
+export function organizationLogoSchema() {
+  return {
+    "@type": "ImageObject" as const,
+    "@id": `${ORGANIZATION_ID}-logo`,
+    url: ORGANIZATION_LOGO_URL,
+    contentUrl: ORGANIZATION_LOGO_URL,
+    caption: "ESAT CAMP logo",
+  };
+}
+
+/** Compact publisher node that references the canonical Organization. */
+export function organizationPublisherSchema() {
+  return {
+    "@type": "Organization" as const,
+    "@id": ORGANIZATION_ID,
+    name: "ESATCAMP",
+    url: `${PRODUCTION_SITE_URL}/`,
+    logo: { "@id": `${ORGANIZATION_ID}-logo` },
+  };
 }
 
 /**
@@ -59,22 +88,29 @@ export function resolveAppSiteUrl(raw?: string): string {
 /** Hostname only - used for robots.txt Host. */
 export const SITE_HOST = "esatcamp.com";
 
-/** Real in-app destinations. SEO page CTAs must point at these, not at slugs. */
+/**
+ * Real in-app destinations. SEO page CTAs must point at these, not at slugs.
+ * Interactive shells stay noindex and out of the sitemap.
+ */
 export const APP_ROUTES = {
   dashboard: "/dashboard",
   calibration: CALIBRATION_ROUTES.hub,
   calibrationTest: CALIBRATION_ROUTES.test,
   scoreConverter: "/tools/score-converter",
   noCalcPractice: "/mental-maths/drill",
+  /** Interactive estimation game (noindex; not a public SEO landing). */
   fermiGame: "/mental-maths/fermiguessr",
-  questionBank: "/questions",
+  /** Practice UI destination for question-bank CTAs. */
+  questionBank: "/questions/questionbank",
+  /** Subject picker / home for the question bank app shell. */
+  questionBankHome: "/questions",
   pastPaperLibrary: "/past-papers/library",
   pastPaperRoadmap: "/past-papers/roadmap",
   faqs: "/tools/faqs",
   signUp: "/login?mode=signup",
 } as const;
 
-/** Public content routes owned by this SEO set. */
+/** Public content / product-landing routes owned by this SEO set. */
 export const SEO_ROUTES = {
   preparation: "/esat-preparation",
   testDates: "/esat-test-dates",
@@ -88,11 +124,17 @@ export const SEO_ROUTES = {
   maths1: "/esat-maths-1",
   maths2: "/esat-maths-2",
   physics: "/esat-physics",
+  chemistry: "/esat-chemistry",
+  biology: "/esat-biology",
   calculatorRules: "/esat-calculator-rules",
   goodScore: "/good-esat-score",
   noCalcPractice: "/esat-no-calculator-practice",
   whiteboard: "/esat-whiteboard",
+  /** Product landing for the ESAT CAMP question bank. */
+  questionBank: "/esat-question-bank",
+  /** Editorial page about whether the live ESAT repeats questions. */
   questionBankGuide: "/is-esat-a-question-bank",
+  mockTests: "/esat-mock-tests",
   bestEsatResources: "/best-esat-resources",
   universityRequirements: "/esat-university-requirements",
   cambridgeRequirements: "/cambridge-esat-requirements",
@@ -102,6 +144,14 @@ export const SEO_ROUTES = {
   imperialRequirements: "/imperial-esat-requirements",
   uclRequirements: "/ucl-esat-requirements",
 } as const;
+
+/**
+ * Build a subject-aware question-bank practice URL.
+ * `subject` must match free-tier labels (e.g. "Math 1", "Chemistry").
+ */
+export function questionBankSubjectHref(subject: string): string {
+  return `${APP_ROUTES.questionBank}?startSubject=${encodeURIComponent(subject)}`;
+}
 
 /**
  * Date the official UAT-UK facts on this site were last verified. Shown to
@@ -358,6 +408,7 @@ export function articleSchema({
   dateModified,
   authorPersonId,
   authorName,
+  image,
 }: {
   headline: string;
   description: string;
@@ -367,6 +418,8 @@ export function articleSchema({
   /** Absolute @id of an existing Person entity, e.g. about page fragment. */
   authorPersonId?: string;
   authorName?: string;
+  /** Absolute image URL when a real page image exists. Do not invent dates or images. */
+  image?: string;
 }) {
   const schema: Record<string, unknown> = {
     "@context": "https://schema.org",
@@ -375,15 +428,18 @@ export function articleSchema({
     description,
     mainEntityOfPage: { "@type": "WebPage", "@id": buildCanonicalUrl(path) },
     isAccessibleForFree: true,
-    publisher: {
-      "@type": "Organization",
-      name: "ESATCAMP",
-      url: SITE_URL,
-    },
+    publisher: organizationPublisherSchema(),
   };
 
   if (datePublished) schema.datePublished = datePublished;
   if (dateModified) schema.dateModified = dateModified;
+  if (image) {
+    schema.image = {
+      "@type": "ImageObject",
+      url: image,
+      contentUrl: image,
+    };
+  }
 
   if (authorPersonId || authorName) {
     schema.author = {

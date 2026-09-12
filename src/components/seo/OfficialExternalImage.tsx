@@ -34,7 +34,9 @@ export function OfficialExternalImage({
         {/* eslint-disable-next-line @next/next/no-img-element -- hotlink official Pearson assets; do not rehost */}
         <img
           src={src}
-          alt={alt}
+          alt={alt || title}
+          width={960}
+          height={540}
           className="mx-auto h-auto max-h-[28rem] w-full object-contain"
           loading="lazy"
           decoding="async"

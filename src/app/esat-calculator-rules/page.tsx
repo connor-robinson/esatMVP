@@ -22,7 +22,7 @@ const PATH = SEO_ROUTES.calculatorRules;
 
 const TITLE = "ESAT Calculator Rules 2026/27 | No Calculators Allowed";
 const DESCRIPTION =
-  "Calculators are not allowed in ESAT. Learn what that means for preparation and how to practise no-calculator speed for maths and science questions.";
+  "ESAT is a no-calculator exam. See the official calculator ban, what rough working you get instead, and how to practise mental maths and whiteboard skills before test day.";
 
 export const metadata: Metadata = buildSeoMetadata({
   title: TITLE,
@@ -34,6 +34,7 @@ export const metadata: Metadata = buildSeoMetadata({
     "ESAT no calculator",
     "ESAT mental maths",
     "ESAT rough working",
+    "ESAT whiteboard working",
   ],
 });
 

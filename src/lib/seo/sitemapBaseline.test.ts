@@ -17,7 +17,7 @@ import {
   sitemapMatchesBaseline,
 } from "@/lib/seo/sitemapBaselineGuard";
 import { buildNoIndexMetadata, NOINDEX_FOLLOW } from "@/lib/seo/noIndex";
-import { SEO_ROUTES, SITE_URL } from "@/lib/seo/config";
+import { APP_ROUTES, SEO_ROUTES, SITE_URL } from "@/lib/seo/config";
 
 const REMOVED_FROM_43_BASELINE = [
   "/cookie-policy",
@@ -64,7 +64,12 @@ describe("sitemap baseline guard", () => {
       entry.url.replace("https://esatcamp.com", "") || "/",
     );
     expect(paths).toEqual([...APPROVED_SITEMAP_BASELINE_PATHS]);
-    expect(paths).toHaveLength(37);
+    expect(paths).toHaveLength(APPROVED_SITEMAP_BASELINE_PATHS.length);
+    expect(paths).not.toContain(APP_ROUTES.fermiGame);
+    expect(paths).toContain(SEO_ROUTES.questionBank);
+    expect(paths).toContain(SEO_ROUTES.chemistry);
+    expect(paths).toContain(SEO_ROUTES.biology);
+    expect(paths).toContain(SEO_ROUTES.mockTests);
   });
 
   it("excludes redirect sources and the thin /help utility", () => {
@@ -127,17 +132,23 @@ describe("sitemap baseline guard", () => {
 
   it("cannot expand the sitemap when past-paper data grows", () => {
     expect(PAST_PAPER_DOWNLOADS.length).toBeGreaterThan(0);
-    expect(sitemap()).toHaveLength(37);
-    expect(PUBLIC_SITEMAP_ENTRIES).toHaveLength(37);
+    expect(sitemap()).toHaveLength(APPROVED_SITEMAP_BASELINE_PATHS.length);
+    expect(PUBLIC_SITEMAP_ENTRIES).toHaveLength(
+      APPROVED_SITEMAP_BASELINE_PATHS.length,
+    );
   });
 
-  it("increased the approved baseline by exactly two hub URLs", () => {
-    expect(APPROVED_SITEMAP_BASELINE).toHaveLength(37);
+  it("keeps both exam hub URLs in the approved baseline", () => {
+    expect(APPROVED_SITEMAP_BASELINE).toHaveLength(
+      APPROVED_SITEMAP_BASELINE_PATHS.length,
+    );
     const withoutHubs = APPROVED_SITEMAP_BASELINE_PATHS.filter(
       (path) =>
         path !== "/past-papers/engaa" && path !== "/past-papers/nsaa",
     );
-    expect(withoutHubs).toHaveLength(35);
+    expect(withoutHubs).toHaveLength(
+      APPROVED_SITEMAP_BASELINE_PATHS.length - 2,
+    );
   });
 });
 

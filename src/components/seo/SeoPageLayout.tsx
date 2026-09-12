@@ -1,8 +1,15 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { FaqItem, SourceLink } from "@/lib/seo/config";
-import { faqPageSchema } from "@/lib/seo/config";
-import { SEO_GUIDE_KEYS, SEO_LINKS, type SeoLink } from "@/lib/seo/links";
+import { faqPageSchema, organizationLogoSchema } from "@/lib/seo/config";
+import {
+  clusterIdForPath,
+  footerProductLinks,
+  LINK_CLUSTERS,
+  linksForCluster,
+  type LinkClusterId,
+} from "@/lib/seo/linkClusters";
+import type { SeoLink } from "@/lib/seo/links";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { SeoCta, SeoCtaRow } from "@/components/seo/SeoCta";
 import { SeoFaq } from "@/components/seo/SeoFaq";
@@ -47,6 +54,8 @@ type SeoPageLayoutProps = {
   /** Required on pages presenting official information. */
   showDisclaimer?: boolean;
   path: string;
+  /** Override the contextual footer cluster derived from `path`. */
+  footerCluster?: LinkClusterId;
 };
 
 const CONTENT_DEFAULT = "mx-auto w-full max-w-4xl px-4 sm:px-5 lg:px-6";
@@ -70,13 +79,21 @@ export function SeoPageLayout({
   sources,
   schema,
   showDisclaimer,
+  path,
+  footerCluster,
 }: SeoPageLayoutProps) {
   const schemas: object[] = [];
   if (schema) schemas.push(...(Array.isArray(schema) ? schema : [schema]));
   if (faq?.length) schemas.push(faqPageSchema(faq));
+  // Ensure Article publishers that reference the logo @id can resolve it.
+  schemas.push({
+    "@context": "https://schema.org",
+    ...organizationLogoSchema(),
+  });
 
   const contentClassName =
     contentMaxWidth === "wide" ? CONTENT_WIDE : CONTENT_DEFAULT;
+  const cluster = footerCluster ?? clusterIdForPath(path);
 
   return (
     <div className="bg-[#0A0F1D] text-white">
@@ -145,7 +162,7 @@ export function SeoPageLayout({
 
           {primaryCta ? (
             <SeoCtaRow className="mt-8">
-              <SeoCta href={primaryCta.href} placement="hero">
+              <SeoCta href={primaryCta.href} placement="hero" feature="seo_guide">
                 {primaryCta.label}
               </SeoCta>
               {secondaryCta ? (
@@ -153,6 +170,7 @@ export function SeoPageLayout({
                   href={secondaryCta.href}
                   variant="quiet"
                   placement="hero_secondary"
+                  feature="seo_guide"
                 >
                   {secondaryCta.label}
                 </SeoCta>
@@ -176,7 +194,11 @@ export function SeoPageLayout({
               {finalCta.body}
             </p>
             <SeoCtaRow className="mt-7">
-              <SeoCta href={finalCta.primary.href} placement="footer">
+              <SeoCta
+                href={finalCta.primary.href}
+                placement="footer"
+                feature="seo_guide"
+              >
                 {finalCta.primary.label}
               </SeoCta>
               {finalCta.secondary ? (
@@ -184,6 +206,7 @@ export function SeoPageLayout({
                   href={finalCta.secondary.href}
                   variant="quiet"
                   placement="footer_secondary"
+                  feature="seo_guide"
                 >
                   {finalCta.secondary.label}
                 </SeoCta>
@@ -201,22 +224,20 @@ export function SeoPageLayout({
         ) : null}
       </div>
 
-      <SeoGuideFooter />
+      <SeoGuideFooter cluster={cluster} />
     </div>
   );
 }
 
-/** Site-wide guide index, repeated on every SEO page so all of them are crawlable. */
-export function SeoGuideFooter() {
-  const guides = SEO_GUIDE_KEYS.map((key) => SEO_LINKS[key]);
-  const tools = [
-    SEO_LINKS.calibration,
-    SEO_LINKS.drill,
-    SEO_LINKS.scoreConverter,
-    SEO_LINKS.fermiGame,
-    SEO_LINKS.questionBank,
-    SEO_LINKS.pastPaperRoadmap,
-  ];
+/** Contextual guide index: one topical cluster plus a short product list. */
+export function SeoGuideFooter({
+  cluster = "practice",
+}: {
+  cluster?: LinkClusterId;
+}) {
+  const clusterDef = LINK_CLUSTERS[cluster];
+  const guides = linksForCluster(cluster);
+  const products = footerProductLinks();
 
   return (
     <footer className="mt-16 bg-[#0A0F1D] pt-12 pb-14">
@@ -224,9 +245,9 @@ export function SeoGuideFooter() {
         <div className="grid gap-10 sm:grid-cols-2">
           <div>
             <h2 className="text-[10px] font-bold uppercase tracking-widest text-white">
-              ESAT guides
+              {clusterDef.title}
             </h2>
-            <ul className="mt-5 grid gap-3 text-sm text-[#94A3B8] sm:grid-cols-2">
+            <ul className="mt-5 grid gap-3 text-sm text-[#94A3B8]">
               {guides.map((guide) => (
                 <li key={guide.href}>
                   <Link
@@ -241,9 +262,9 @@ export function SeoGuideFooter() {
           </div>
           <div>
             <h2 className="text-[10px] font-bold uppercase tracking-widest text-white">
-              ESAT Camp and tools
+              Practice and tools
             </h2>
-            <ul className="mt-5 grid gap-3 text-sm text-[#94A3B8] sm:grid-cols-2">
+            <ul className="mt-5 grid gap-3 text-sm text-[#94A3B8]">
               <li>
                 <Link
                   href="/about"
@@ -252,16 +273,8 @@ export function SeoGuideFooter() {
                   About ESAT Camp
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/cookie-policy"
-                  className="transition-colors hover:text-[#3B82F6]"
-                >
-                  Cookie Policy
-                </Link>
-              </li>
-              {tools.map((tool) => (
-                <li key={tool.href}>
+              {products.map((tool) => (
+                <li key={`tool-${tool.href}`}>
                   <Link
                     href={tool.href}
                     className="transition-colors hover:text-[#3B82F6]"

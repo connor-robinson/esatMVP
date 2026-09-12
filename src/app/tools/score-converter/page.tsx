@@ -26,6 +26,7 @@ export const metadata: Metadata = buildSeoMetadata({
   path: PATH,
   keywords: [
     "ESAT score converter",
+    "ESAT score calculator",
     "ESAT score conversion",
     "ESAT conversion tables",
     "raw mark conversion",

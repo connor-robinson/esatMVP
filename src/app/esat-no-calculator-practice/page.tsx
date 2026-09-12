@@ -75,7 +75,7 @@ export default function EsatNoCalculatorPracticePage() {
         primary: { href: APP_ROUTES.calibration, label: "Start free calibration" },
         secondary: { href: APP_ROUTES.noCalcPractice, label: "Open the trainer" },
       }}
-      related={seoLinks("calculatorRules", "maths1", "physics", "calibration", "fermiGame")}
+      related={seoLinks("calculatorRules", "maths1", "physics", "calibration", "questionBank")}
       sources={[SOURCES.esatTest, SOURCES.candidateHandbook]}
       schema={webApplicationSchema({
         name: "ESAT no-calculator trainer",

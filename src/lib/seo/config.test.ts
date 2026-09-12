@@ -16,7 +16,7 @@ describe("SEO site URL config", () => {
   });
 
   it("builds self-referencing canonical URLs", () => {
-    expect(buildCanonicalUrl("/")).toBe("https://esatcamp.com");
+    expect(buildCanonicalUrl("/")).toBe("https://esatcamp.com/");
     expect(buildCanonicalUrl("/esat-preparation")).toBe(
       "https://esatcamp.com/esat-preparation",
     );

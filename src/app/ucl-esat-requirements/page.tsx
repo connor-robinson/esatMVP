@@ -20,9 +20,9 @@ import {
 const PATH = SEO_ROUTES.uclRequirements;
 
 const TITLE =
-  "UCL ESAT Requirements 2027: Courses, Modules & Entry Requirements";
+  "UCL ESAT Requirements 2027: Electronic & Electrical Engineering";
 const DESCRIPTION =
-  "UCL ESAT 2027 for Electronic and Electrical Engineering: Maths 1 plus any two of Physics, Maths 2, Chemistry and Biology, with October or January where permitted.";
+  "UCL-only ESAT guide for Electronic and Electrical Engineering: Maths 1 plus any two of Physics, Maths 2, Chemistry and Biology, with October or January where permitted.";
 
 export const metadata: Metadata = buildSeoMetadata({
   title: TITLE,
@@ -33,6 +33,7 @@ export const metadata: Metadata = buildSeoMetadata({
     "UCL ESAT requirements",
     "UCL Electronic Electrical Engineering ESAT",
     "ESAT UCL 2027",
+    "UCL ESAT modules",
   ],
 });
 

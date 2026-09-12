@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Container } from "@/components/layout/Container";
 import { ExamScoreConverterShell } from "@/components/tools/scoreConverter/ExamScoreConverterShell";
+import { NsaaConverterYearNav } from "@/components/tools/scoreConverter/NsaaConverterYearNav";
 import {
   EXAM_FULL_NAME,
   isConverterExam,
@@ -50,11 +52,21 @@ export default async function ExamScoreConverterPage({
   const exam = raw.toUpperCase() as ConverterExam;
   // Full NSAA+ENGAA catalog so client exam switches still have rows; TMUA has no tables.
   const publishedRows = await fetchPublishedTableCatalog();
+  const copy = SCORE_CONVERTER_PAGE_COPY[exam];
 
   return (
-    <ExamScoreConverterShell
-      initialExam={exam}
-      publishedRows={publishedRows}
-    />
+    <>
+      {exam === "NSAA" ? (
+        <Container size="lg" className="pt-8 pb-2">
+          <NsaaConverterYearNav />
+        </Container>
+      ) : null}
+      <ExamScoreConverterShell
+        initialExam={exam}
+        publishedRows={publishedRows}
+        pageTitle={copy.h1}
+        intro={copy.intro}
+      />
+    </>
   );
 }

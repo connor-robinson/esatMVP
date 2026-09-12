@@ -257,15 +257,14 @@ export default function EsatPastPapersGuidePage() {
             "pastPapers",
             "engaaNsaaPapers",
             "tmuaForEsat",
+            "mockTests",
             "maths1",
-            "maths2",
-            "physics",
             "preparation",
           )}
         />
       </div>
 
-      <SeoGuideFooter />
+      <SeoGuideFooter cluster="pastPapers" />
     </div>
   );
 }

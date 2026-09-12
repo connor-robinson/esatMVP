@@ -40,6 +40,13 @@ const nextConfig = {
   // pages rather than duplicating content across two URLs.
   async redirects() {
     return [
+      // Prefer apex host in one hop (also configured at the Vercel domain layer).
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.esatcamp.com" }],
+        destination: "https://esatcamp.com/:path*",
+        permanent: true,
+      },
       {
         source: "/esat-calibration-test",
         destination: "/exam-tools/calibration/math-1",

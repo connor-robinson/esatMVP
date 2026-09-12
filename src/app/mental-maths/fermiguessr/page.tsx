@@ -1,21 +1,15 @@
 import type { Metadata } from "next";
-import { APP_ROUTES, buildSeoMetadata } from "@/lib/seo/config";
+import { buildNoIndexMetadata } from "@/lib/seo/noIndex";
 import { FermiGuessrClient } from "./FermiGuessrClient";
 
 const TITLE = "Fermi Estimation Game | ESAT Estimation Practice";
 const DESCRIPTION =
   "Practise order-of-magnitude estimation for the no-calculator ESAT. Guess the size of an answer before doing the arithmetic.";
 
-export const metadata: Metadata = buildSeoMetadata({
+/** Interactive game shell: keep the route, but do not index it. */
+export const metadata: Metadata = buildNoIndexMetadata({
   title: TITLE,
   description: DESCRIPTION,
-  path: APP_ROUTES.fermiGame,
-  keywords: [
-    "Fermi estimation game",
-    "ESAT estimation practice",
-    "order of magnitude estimation",
-    "ESAT mental maths",
-  ],
 });
 
 export default function FermiGuessrPage() {

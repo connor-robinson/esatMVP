@@ -14,6 +14,9 @@ import {
   isPublicSitemapPath,
 } from "@/lib/seo/publicSitemap";
 import {
+  APPROVED_SITEMAP_BASELINE_PATHS,
+} from "@/lib/seo/sitemapBaseline";
+import {
   APP_ROUTES,
   SEO_ROUTES,
   SITE_URL,
@@ -114,10 +117,10 @@ describe("index hygiene: public pages stay indexable", () => {
       path: APP_ROUTES.scoreConverter,
     });
     expect(scoreConverter.title).toBe(
-      "ESAT Score Converter - NSAA & ENGAA Raw Marks",
+      "ESAT Score Converter & Calculator | NSAA & ENGAA Marks",
     );
     expect(scoreConverter.description).toBe(
-      "Estimate your ESAT score from NSAA and ENGAA past-paper raw marks. Convert your result to the ESAT 1.0–9.0 scale. Unofficial estimate.",
+      "Use the ESAT score converter (also called an ESAT score calculator) to estimate a scaled score from NSAA or ENGAA past-paper raw marks on the 1.0–9.0 scale. Unofficial estimate.",
     );
     expect(scoreConverter.openGraph?.title).toBe(scoreConverter.title);
     expect(scoreConverter.openGraph?.description).toBe(
@@ -272,8 +275,20 @@ describe("index hygiene: public pages stay indexable", () => {
       },
       { segments: ["about", "page.tsx"], path: "/about" },
       {
-        segments: ["mental-maths", "fermiguessr", "page.tsx"],
-        path: APP_ROUTES.fermiGame,
+        segments: ["esat-question-bank", "page.tsx"],
+        path: SEO_ROUTES.questionBank,
+      },
+      {
+        segments: ["esat-chemistry", "page.tsx"],
+        path: SEO_ROUTES.chemistry,
+      },
+      {
+        segments: ["esat-biology", "page.tsx"],
+        path: SEO_ROUTES.biology,
+      },
+      {
+        segments: ["esat-mock-tests", "page.tsx"],
+        path: SEO_ROUTES.mockTests,
       },
       { segments: ["pricing", "layout.tsx"], path: "/pricing" },
     ];
@@ -292,6 +307,10 @@ describe("index hygiene: public pages stay indexable", () => {
       expect(meta.alternates?.canonical).toBe(buildCanonicalUrl(path));
       expect(meta.robots).toEqual({ index: true, follow: true });
     }
+
+    const fermi = readAppSource("mental-maths", "fermiguessr", "page.tsx");
+    expect(fermi).toMatch(/buildNoIndexMetadata|noIndexFollowMetadata/);
+    expect(fermi).not.toContain("buildSeoMetadata");
 
     const university = buildSeoMetadata({
       title: "ESAT University Requirements",
@@ -317,11 +336,20 @@ describe("index hygiene: sitemap", () => {
     });
 
     expect(paths).toEqual(PUBLIC_SITEMAP_ENTRIES.map((entry) => entry.path));
-    expect(entries).toHaveLength(37);
+    expect(entries).toHaveLength(APPROVED_SITEMAP_BASELINE_PATHS.length);
     expect(isPublicSitemapPath(APP_ROUTES.scoreConverter)).toBe(true);
     expect(isPublicSitemapPath("/tools/score-converter/pat")).toBe(true);
     expect(isPublicSitemapPath("/tools/score-converter/mat")).toBe(true);
     expect(isPublicSitemapPath("/esat-no-calculator-practice")).toBe(true);
+    expect(isPublicSitemapPath("/esat-question-bank")).toBe(true);
+    expect(isPublicSitemapPath("/esat-chemistry")).toBe(true);
+    expect(isPublicSitemapPath("/esat-biology")).toBe(true);
+    expect(isPublicSitemapPath("/esat-mock-tests")).toBe(true);
+    expect(isPublicSitemapPath(APP_ROUTES.fermiGame)).toBe(false);
+    expect(isPublicSitemapPath("/past-papers/library")).toBe(false);
+    expect(isPublicSitemapPath("/questions")).toBe(false);
+    expect(isPublicSitemapPath("/questions/questionbank")).toBe(false);
+    expect(isPublicSitemapPath("/mental-maths/drill")).toBe(false);
     expect(isPublicSitemapPath("/past-papers/engaa")).toBe(true);
     expect(isPublicSitemapPath("/past-papers/nsaa")).toBe(true);
     expect(urls.filter((url) => url === `${SITE_URL}/past-papers/engaa`)).toHaveLength(

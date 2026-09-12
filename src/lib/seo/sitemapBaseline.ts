@@ -28,6 +28,8 @@ export const APPROVED_SITEMAP_BASELINE: readonly PublicSitemapEntry[] = [
   { path: SEO_ROUTES.maths1 },
   { path: SEO_ROUTES.maths2 },
   { path: SEO_ROUTES.physics },
+  { path: SEO_ROUTES.chemistry },
+  { path: SEO_ROUTES.biology },
   { path: SEO_ROUTES.goodScore },
   { path: SEO_ROUTES.calculatorRules },
   { path: SEO_ROUTES.testDay },
@@ -40,7 +42,9 @@ export const APPROVED_SITEMAP_BASELINE: readonly PublicSitemapEntry[] = [
   { path: SEO_ROUTES.imperialRequirements },
   { path: SEO_ROUTES.uclRequirements },
   { path: SEO_ROUTES.whiteboard },
+  { path: SEO_ROUTES.questionBank },
   { path: SEO_ROUTES.questionBankGuide },
+  { path: SEO_ROUTES.mockTests },
 
   // Free tools with public landing content (not gated app shells).
   { path: APP_ROUTES.calibration },
@@ -49,8 +53,8 @@ export const APPROVED_SITEMAP_BASELINE: readonly PublicSitemapEntry[] = [
   { path: "/tools/score-converter/engaa" },
   { path: "/tools/score-converter/tmua" },
   { path: "/tools/score-converter/pat" },
+  // MAT converter has substantial converter + server-rendered SEO content.
   { path: "/tools/score-converter/mat" },
-  { path: APP_ROUTES.fermiGame },
   { path: APP_ROUTES.faqs },
 
   // Public pricing landing (indexable). Help is intentionally omitted: thin

@@ -25,9 +25,9 @@ import {
 const PATH = SEO_ROUTES.imperialRequirements;
 
 const TITLE =
-  "Imperial ESAT Requirements 2027: Courses, Modules & Entry Requirements";
+  "Imperial ESAT Requirements 2027: Course Modules & Score Dashboard";
 const DESCRIPTION =
-  "Imperial ESAT 2027 modules by course, plus a link to Imperial's official historical 2025 ESAT score dashboard.";
+  "Imperial-specific ESAT 2027 modules by course, plus a link to Imperial's official historical 2025 ESAT score dashboard.";
 
 export const metadata: Metadata = buildSeoMetadata({
   title: TITLE,
@@ -38,6 +38,7 @@ export const metadata: Metadata = buildSeoMetadata({
     "Imperial ESAT requirements",
     "Imperial Engineering ESAT",
     "Imperial ESAT modules",
+    "Imperial ESAT score dashboard",
     "ESAT Imperial 2027",
   ],
 });

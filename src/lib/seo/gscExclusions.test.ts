@@ -17,7 +17,8 @@ import {
  * Regression coverage for historic Google Search Console exclusion categories.
  *
  * Host redirects (http/www -> https://esatcamp.com) are configured in Vercel
- * domain settings, not next.config.js. Verify those with deployed HTTP checks:
+ * domain settings and mirrored in next.config.js for www.esatcamp.com.
+ * Verify with deployed HTTP checks:
  *   curl -I / curl -IL against http://, http://www., and https://www. hosts.
  * Prefer one-hop 301/308 to https://esatcamp.com/*; leave alone if already clean.
  */
@@ -53,7 +54,8 @@ describe("GSC exclusion regressions", () => {
       SEO_ROUTES.universityRequirements,
       SEO_ROUTES.uclRequirements,
       SEO_ROUTES.engaaNsaaPapers,
-      APP_ROUTES.fermiGame,
+      SEO_ROUTES.questionBank,
+      SEO_ROUTES.mockTests,
       "/about",
       "/pricing",
     ];
@@ -61,6 +63,7 @@ describe("GSC exclusion regressions", () => {
     for (const path of expected) {
       expect(paths.filter((p) => p === path)).toHaveLength(1);
     }
+    expect(paths).not.toContain(APP_ROUTES.fermiGame);
   });
 
   it("uses self-referencing canonicals for historic redirect-error landings", () => {

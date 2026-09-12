@@ -28,9 +28,9 @@ import {
 const PATH = SEO_ROUTES.universityRequirements;
 
 const TITLE =
-  "ESAT University Requirements 2027: Cambridge, Oxford, Imperial & UCL";
+  "ESAT University Requirements 2027: Compare Cambridge, Oxford, Imperial & UCL";
 const DESCRIPTION =
-  "2027 ESAT modules and sittings for Cambridge, Oxford, Imperial and UCL, plus published admissions data where universities share it.";
+  "Compare 2027 ESAT module combinations and sitting rules across Cambridge, Oxford, Imperial and UCL. Use university child pages for course-specific detail.";
 
 export const metadata: Metadata = buildSeoMetadata({
   title: TITLE,
@@ -38,11 +38,10 @@ export const metadata: Metadata = buildSeoMetadata({
   path: PATH,
   keywords: [
     "ESAT university requirements",
-    "ESAT Cambridge",
-    "ESAT Oxford",
-    "ESAT Imperial",
-    "ESAT UCL",
-    "ESAT modules 2027",
+    "ESAT which universities",
+    "ESAT modules by university",
+    "ESAT sittings 2027",
+    "compare ESAT requirements",
   ],
 });
 

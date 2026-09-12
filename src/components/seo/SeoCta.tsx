@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { trackHomepageEvent } from "@/lib/homepage/analytics";
 import { trackEvent } from "@/lib/ga";
@@ -11,6 +12,8 @@ type SeoCtaProps = {
   variant?: "primary" | "secondary" | "quiet";
   /** Where on the page the CTA sits - recorded with the click event. */
   placement?: string;
+  /** Product or content feature this CTA belongs to. */
+  feature?: string;
   className?: string;
 };
 
@@ -31,14 +34,21 @@ export function SeoCta({
   children,
   variant = "primary",
   placement,
+  feature = "seo_guide",
   className,
 }: SeoCtaProps) {
+  const pathname = usePathname();
+
   return (
     <Link
       href={href}
       onClick={() => {
+        const sourcePath = pathname || "/";
         trackEvent("cta_clicked", {
+          source_path: sourcePath,
+          destination_path: href,
           destination: href,
+          feature,
           placement: placement ?? "seo",
           surface: "seo_guide",
         });

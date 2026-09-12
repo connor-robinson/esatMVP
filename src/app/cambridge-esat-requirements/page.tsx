@@ -26,9 +26,9 @@ import {
 const PATH = SEO_ROUTES.cambridgeRequirements;
 
 const TITLE =
-  "Cambridge ESAT Requirements 2027: Courses, Modules & Entry Requirements";
+  "Cambridge ESAT Requirements 2027: Courses, Modules & October Sitting";
 const DESCRIPTION =
-  "Cambridge ESAT modules, October sitting rules and 2027 entry requirements for Engineering, Natural Sciences, Chemical Engineering and Veterinary Medicine.";
+  "Cambridge-specific ESAT modules, October sitting rules and 2027 entry requirements for Engineering, Natural Sciences, Chemical Engineering and Veterinary Medicine.";
 
 export const metadata: Metadata = buildSeoMetadata({
   title: TITLE,
@@ -39,6 +39,7 @@ export const metadata: Metadata = buildSeoMetadata({
     "Cambridge ESAT requirements",
     "Cambridge Engineering ESAT",
     "Cambridge Natural Sciences ESAT",
+    "Cambridge October ESAT",
     "ESAT 2027 Cambridge",
   ],
 });

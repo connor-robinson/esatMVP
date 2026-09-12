@@ -24,9 +24,9 @@ import {
 const PATH = SEO_ROUTES.oxfordRequirements;
 
 const TITLE =
-  "Oxford ESAT Requirements 2027: Courses, Modules & Entry Requirements";
+  "Oxford ESAT Requirements 2027: Engineering, Physics & Biomedical";
 const DESCRIPTION =
-  "Oxford ESAT 2027 modules for Engineering Science, Physics, Physics and Philosophy and Biomedical Sciences, plus published course competition.";
+  "Oxford-specific ESAT 2027 modules for Engineering Science, Physics, Physics and Philosophy and Biomedical Sciences, plus published course competition.";
 
 export const metadata: Metadata = buildSeoMetadata({
   title: TITLE,

@@ -13,6 +13,7 @@ type RedirectRule = {
   source: string;
   destination: string;
   permanent: boolean;
+  has?: { type: string; value: string }[];
 };
 
 const SEO_CONSOLIDATION_REDIRECTS: readonly {
@@ -95,6 +96,20 @@ describe("SEO consolidation redirects", () => {
     expect(match?.permanent).toBe(true);
   });
 
+  it("redirects www.esatcamp.com to the apex host in one hop", async () => {
+    const rules = await loadRedirects();
+    const www = rules.find(
+      (rule) =>
+        rule.source === "/:path*" &&
+        rule.has?.some(
+          (entry) =>
+            entry.type === "host" && entry.value === "www.esatcamp.com",
+        ),
+    );
+    expect(www?.destination).toBe("https://esatcamp.com/:path*");
+    expect(www?.permanent).toBe(true);
+  });
+
   it("does not put redirect sources in the sitemap", () => {
     const sitemapPaths = new Set(PUBLIC_SITEMAP_ENTRIES.map((e) => e.path));
     for (const source of SITEMAP_REDIRECT_SOURCE_PATHS) {
@@ -102,6 +117,8 @@ describe("SEO consolidation redirects", () => {
     }
     expect(sitemapPaths.has(SEO_ROUTES.goodScore)).toBe(true);
     expect(sitemapPaths.has(SEO_ROUTES.engaaNsaaPapers)).toBe(true);
-    expect(sitemapPaths.has(APP_ROUTES.fermiGame)).toBe(true);
+    expect(sitemapPaths.has(APP_ROUTES.fermiGame)).toBe(false);
+    expect(sitemapPaths.has(SEO_ROUTES.questionBank)).toBe(true);
+    expect(sitemapPaths.has(SEO_ROUTES.mockTests)).toBe(true);
   });
 });

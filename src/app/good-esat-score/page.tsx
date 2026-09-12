@@ -28,9 +28,9 @@ import { PercentileExplorer } from "@/components/esat/PercentileExplorer";
 const PATH = SEO_ROUTES.goodScore;
 
 const TITLE =
-  "What Is a Good ESAT Score? Score Guide, Percentiles & University Context";
+  "What Is a Good ESAT Score? Scale, Percentiles & How to Convert Marks";
 const DESCRIPTION =
-  "Find out what counts as a good ESAT score, how the 1.0 to 9.0 scale works, where 7.0 sits and what Cambridge, Oxford and Imperial publish about admissions.";
+  "Learn what counts as a good ESAT score on the 1.0 to 9.0 scale, where 7.0 sits, and how to convert past-paper raw marks with the ESAT score converter.";
 
 export const metadata: Metadata = buildSeoMetadata({
   title: TITLE,
@@ -42,6 +42,7 @@ export const metadata: Metadata = buildSeoMetadata({
     "ESAT 7.0",
     "ESAT percentiles",
     "ESAT score converter",
+    "ESAT score calculator",
   ],
 });
 
@@ -70,14 +71,25 @@ export default function GoodEsatScorePage() {
       eyebrow="Scores"
       title="What Is a Good ESAT Score?"
       intro={[
-        "There is no single ESAT score that guarantees an offer. Explore what ESAT scores mean below.",
+        "There is no single ESAT score that guarantees an offer. Use the scale and percentiles below, then convert your past-paper raw marks with the ESAT score converter.",
       ]}
+      primaryCta={{
+        href: APP_ROUTES.scoreConverter,
+        label: "Open the ESAT score converter",
+      }}
+      secondaryCta={{
+        href: SEO_ROUTES.universityRequirements,
+        label: "University requirements",
+      }}
       faq={FAQ}
       finalCta={{
         heading: "Aim to improve the weakest module, not hit a rumour",
-        body: "A 7.0 benchmark is very strong, but there is no universal required score. Use the converter on mocks, then practise the module that is actually holding you down.",
-        primary: { href: APP_ROUTES.calibration, label: "Start free calibration" },
-        secondary: { href: SEO_ROUTES.preparation, label: "Preparation guide" },
+        body: "A 7.0 benchmark is very strong, but there is no universal required score. Convert mock raw marks with the score converter, then practise the module that is actually holding you down.",
+        primary: {
+          href: APP_ROUTES.scoreConverter,
+          label: "Convert a past-paper score",
+        },
+        secondary: { href: APP_ROUTES.calibration, label: "Start free calibration" },
       }}
       related={seoLinks(
         "scoreConverter",

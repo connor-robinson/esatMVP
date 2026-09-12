@@ -32,10 +32,10 @@ const PATH = SEO_ROUTES.testDay;
 const AUTHOR = FOUNDERS.anson;
 const AUTHOR_ID = `${buildCanonicalUrl(ABOUT_PATH)}#${AUTHOR.id}`;
 
-const PAGE_TITLE = "What Our Students Say About ESAT Test Day";
+const PAGE_TITLE = "ESAT Test Day: Pearson VUE Rules, Breaks & Whiteboard";
 const TITLE = `${PAGE_TITLE} | ESAT CAMP`;
 const DESCRIPTION =
-  "What ESAT CAMP students experienced on ESAT test day at Pearson VUE: arrival, security, whiteboard booklet, module transitions and water rules.";
+  "ESAT test day at Pearson VUE: arrival, security, breaks between modules, erasable whiteboard rules and what you can take into the room.";
 
 export const metadata: Metadata = buildSeoMetadata({
   title: TITLE,
@@ -48,6 +48,7 @@ export const metadata: Metadata = buildSeoMetadata({
     "ESAT whiteboard",
     "ESAT security check",
     "ESAT module transition",
+    "ESAT test day rules",
     "ESAT water",
   ],
 });

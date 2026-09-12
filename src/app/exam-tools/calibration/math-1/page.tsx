@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Container } from "@/components/layout/Container";
 import { CalibrationLandingClient } from "./CalibrationLandingClient";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -20,20 +21,21 @@ import {
 
 const PATH = APP_ROUTES.calibration;
 
-const TITLE = "ESAT Calibration Test 2026/27 | Find Your Weak Spots";
+const TITLE = "Free ESAT Diagnostic Test | Maths 1 Calibration";
 const DESCRIPTION =
-  "Take a free ESAT calibration test to identify your weak skills, speed problems, accuracy issues and recommended practice areas.";
+  "Take a free ESAT diagnostic test for Maths 1. Spot speed versus accuracy issues, topic weaknesses and what to practise first. Not a full mock.";
 
 export const metadata: Metadata = buildSeoMetadata({
   title: TITLE,
   description: DESCRIPTION,
   path: PATH,
   keywords: [
+    "free ESAT diagnostic test",
     "ESAT calibration test",
-    "ESAT diagnostic test",
+    "ESAT Maths 1 calibration",
+    "ESAT diagnostic",
     "ESAT practice test",
     "ESAT readiness",
-    "ESAT weaknesses",
   ],
 });
 
@@ -46,12 +48,12 @@ const FAQ: readonly FaqItem[] = [
   {
     question: "Does it predict my official ESAT score?",
     answer:
-      "No. It gives a provisional starting range and a skill diagnosis, not an official scaled score. Official scores are released by UAT-UK and depend on the cohort.",
+      "No. It gives one provisional Estimated ESAT score and a skill diagnosis, not an official scaled score. Official scores are released by UAT-UK and depend on the cohort.",
   },
   {
     question: "Do I need an account to take it?",
     answer:
-      "No. You can take the calibration without signing in, but signing in first means the result and your progress are saved to your account.",
+      "You can start without signing in. After you finish, you must sign in to view your results. Your answers stay saved on this device until you sign in, and are then also saved to your account.",
   },
 ];
 
@@ -69,7 +71,9 @@ export default function Math1CalibrationPage() {
         ]}
       />
 
-      <CalibrationLandingClient />
+      <Suspense fallback={null}>
+        <CalibrationLandingClient />
+      </Suspense>
 
       <Container size="md" className="space-y-5 py-14">
         <AppSeoSection

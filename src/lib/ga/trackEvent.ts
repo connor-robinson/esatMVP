@@ -30,8 +30,19 @@ export type GaEventName =
   | "checkout_signup_required"
   | "calibration_started"
   | "sign_up_started"
+  /**
+   * Canonical completed-signup event. Prefer this over deprecated aliases.
+   * Deduped in SupabaseSessionProvider via sessionStorage + trackEventOnce.
+   */
   | "sign_up"
   | "begin_checkout"
+  /**
+   * Canonical purchase event (Stripe success / Measurement Protocol).
+   * Keep separate from score_conversion_completed and CTA micro-conversions.
+   * Google Ads URL-based conversions (e.g. ads_conversion_Success_Page_1) must
+   * not also fire on every success page_view; configure Ads against purchase
+   * or a one-time claim, not raw /pricing/success visits.
+   */
   | "purchase"
   | "trial_started"
   | "subscription_cancelled"
@@ -42,7 +53,7 @@ export type GaEventName =
   | "support_opened"
   | "support_submission_completed"
   | "support_submission_failed"
-  /** @deprecated Prefer sign_up / begin_checkout */
+  /** @deprecated Prefer sign_up. Do not emit from new code. */
   | "signup_completed"
   | "checkout_started"
   | (string & {});

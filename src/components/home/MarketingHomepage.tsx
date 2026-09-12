@@ -187,9 +187,10 @@ const FOOTER_GUIDE_KEYS: SeoLinkKey[] = [
 const FOOTER_PLATFORM_LINKS = [
   { href: "/esat-no-calculator-practice", label: "Mental Maths Practice" },
   { href: "/esat-past-papers", label: "ESAT Past Papers" },
-  { href: "/esat-past-papers", label: "Past Paper Downloads" },
+  { href: "/esat-question-bank", label: "ESAT Question Bank" },
   { href: "/tools/score-converter", label: "ESAT Score Converter" },
-  { href: CALIBRATION_ROUTES.hub, label: "ESAT Mock Tests" },
+  { href: "/esat-mock-tests", label: "ESAT Mock Tests" },
+  { href: CALIBRATION_ROUTES.hub, label: "Free ESAT Diagnostic" },
 ] as const;
 
 export function MarketingHomepage({

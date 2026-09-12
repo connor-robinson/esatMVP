@@ -11,6 +11,8 @@ type Props = {
   initialExam: ConverterExam;
   /** Server-preloaded catalog so crawlers do not depend on /api/. */
   publishedRows: PublishedTableRow[];
+  pageTitle?: string;
+  intro?: string;
 };
 
 function examFromPathname(): ConverterExam | null {
@@ -23,6 +25,8 @@ function examFromPathname(): ConverterExam | null {
 export function ExamScoreConverterShell({
   initialExam,
   publishedRows,
+  pageTitle,
+  intro,
 }: Props) {
   const [exam, setExam] = useState<ConverterExam>(initialExam);
 
@@ -43,11 +47,14 @@ export function ExamScoreConverterShell({
     setExam(next);
   }, []);
 
+  const copy = SCORE_CONVERTER_PAGE_COPY[exam];
+
   return (
     <ScoreConverter
       initialExam={exam}
       onExamChange={handleExamChange}
-      intro={SCORE_CONVERTER_PAGE_COPY[exam].intro}
+      pageTitle={pageTitle ?? copy.h1}
+      intro={intro ?? copy.intro}
       beforeFaq={
         <PublishedConversionTablesClient
           rows={publishedRows}

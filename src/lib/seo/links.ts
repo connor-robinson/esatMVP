@@ -25,13 +25,13 @@ export const SEO_LINKS = {
   },
   testDay: {
     href: SEO_ROUTES.testDay,
-    label: "What test day is like",
-    blurb: "What our students experienced at Pearson VUE: arrival, security, modules and water.",
+    label: "ESAT test day rules",
+    blurb: "Pearson VUE logistics, breaks, whiteboard and what to expect on the day.",
   },
   pastPapers: {
     href: SEO_ROUTES.pastPapers,
-    label: "ESAT past papers library",
-    blurb: "Every official ENGAA, NSAA and TMUA paper, filterable by module.",
+    label: "ESAT past papers",
+    blurb: "Official ENGAA, NSAA and TMUA papers for ESAT practice.",
   },
   pastPapersGuide: {
     href: SEO_ROUTES.pastPapersGuide,
@@ -63,6 +63,16 @@ export const SEO_LINKS = {
     label: "ESAT Physics",
     blurb: "Formula choice, units, graphs and proportional reasoning.",
   },
+  chemistry: {
+    href: SEO_ROUTES.chemistry,
+    label: "ESAT Chemistry",
+    blurb: "Physical, inorganic and organic chemistry for the ESAT module.",
+  },
+  biology: {
+    href: SEO_ROUTES.biology,
+    label: "ESAT Biology",
+    blurb: "Cells, genetics, physiology and data handling for ESAT Biology.",
+  },
   calculatorRules: {
     href: SEO_ROUTES.calculatorRules,
     label: "ESAT calculator rules",
@@ -80,23 +90,23 @@ export const SEO_LINKS = {
   },
   calibration: {
     href: APP_ROUTES.calibration,
-    label: "ESAT Mock Tests",
-    blurb: "A short diagnostic that shows whether speed or accuracy is the issue.",
+    label: "Free ESAT diagnostic test",
+    blurb: "A short Maths 1 calibration that shows whether speed or accuracy is the issue.",
   },
   scoreConverter: {
     href: APP_ROUTES.scoreConverter,
     label: "ESAT Score Converter",
     blurb: "Turn a past-paper raw mark into an estimated scaled score.",
   },
-  fermiGame: {
-    href: APP_ROUTES.fermiGame,
-    label: "Fermi estimation game",
-    blurb: "Estimation practice for checking whether an answer is the right size.",
-  },
   questionBank: {
-    href: APP_ROUTES.questionBank,
+    href: SEO_ROUTES.questionBank,
     label: "ESAT Question Bank",
-    blurb: "ESAT-style questions filtered by module, topic and difficulty.",
+    blurb: "Topic practice across Maths, Physics, Chemistry and Biology.",
+  },
+  mockTests: {
+    href: SEO_ROUTES.mockTests,
+    label: "ESAT mock tests",
+    blurb: "Full-module original mocks in the past-papers library and roadmap.",
   },
   pastPaperRoadmap: {
     href: SEO_ROUTES.pastPapers,
@@ -145,7 +155,7 @@ export const SEO_LINKS = {
   },
   questionBankGuide: {
     href: SEO_ROUTES.questionBankGuide,
-    label: "Is the ESAT a question bank?",
+    label: "Do ESAT questions repeat?",
     blurb: "What is known about test versions, overlap and October vs January.",
   },
   bestEsatResources: {
@@ -162,7 +172,10 @@ export function seoLinks(...keys: SeoLinkKey[]): SeoLink[] {
   return keys.map((key) => SEO_LINKS[key]);
 }
 
-/** Every guide page, in the order used by the site footer and sitemap. */
+/**
+ * Guide keys retained for FAQ hub grouping and tests.
+ * Prefer contextual clusters (linkClusters.ts) for page footers.
+ */
 export const SEO_GUIDE_KEYS: SeoLinkKey[] = [
   "preparation",
   "bestEsatResources",
@@ -175,9 +188,13 @@ export const SEO_GUIDE_KEYS: SeoLinkKey[] = [
   "maths1",
   "maths2",
   "physics",
+  "chemistry",
+  "biology",
   "calculatorRules",
   "goodScore",
   "drill",
+  "questionBank",
+  "mockTests",
   "universityRequirements",
   "cambridgeRequirements",
   "cambridgeNaturalSciences",
@@ -208,19 +225,19 @@ export const FAQ_GUIDE_SECTIONS: readonly FaqGuideSection[] = [
     id: "modules",
     title: "Modules",
     description: "What each ESAT module actually tests, and how to practise it.",
-    keys: ["maths1", "maths2", "physics"],
+    keys: ["maths1", "maths2", "physics", "chemistry", "biology"],
   },
   {
     id: "past-papers",
     title: "Past papers",
     description: "Official papers and how to use older ENGAA, NSAA and TMUA material.",
-    keys: ["pastPapers", "pastPapersGuide", "engaaNsaaPapers", "tmuaForEsat"],
+    keys: ["pastPapers", "pastPapersGuide", "engaaNsaaPapers", "tmuaForEsat", "mockTests"],
   },
   {
     id: "rules-and-scores",
     title: "Rules, scores and practice",
     description: "Calculator rules, what a good score looks like, and no-calculator training.",
-    keys: ["calculatorRules", "goodScore", "drill", "questionBankGuide"],
+    keys: ["calculatorRules", "goodScore", "drill", "questionBank", "questionBankGuide"],
   },
   {
     id: "universities",
