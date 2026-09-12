@@ -20,7 +20,7 @@ import {
 const PATH = SEO_ROUTES.questionBankGuide;
 
 const TITLE =
-  "Is the ESAT a Question Bank? Can Questions Repeat Between Test Dates?";
+  "Do ESAT Questions Repeat? Test Versions & Overlap";
 const DESCRIPTION =
   "Can ESAT questions repeat? Find out what is officially known about test versions, question overlap, October vs January and student reports.";
 
@@ -29,17 +29,17 @@ export const metadata: Metadata = buildSeoMetadata({
   description: DESCRIPTION,
   path: PATH,
   keywords: [
-    "ESAT question bank",
     "ESAT questions repeat",
-    "ESAT October vs January",
     "ESAT test versions",
+    "ESAT October vs January",
     "ESAT live questions",
+    "ESAT question overlap",
   ],
 });
 
 const FAQ: readonly FaqItem[] = [
   {
-    question: "Is the ESAT a published question bank?",
+    question: "Can ESAT questions repeat between sittings?",
     answer:
       "UAT-UK does not publicly describe the ESAT as a fixed, published question bank, and it does not publish enough information to quantify how much live-question overlap exists.",
   },
@@ -60,13 +60,14 @@ export default function IsEsatAQuestionBankPage() {
     <SeoPageLayout
       path={PATH}
       eyebrow="Test security"
-      title="Is the ESAT a Question Bank?"
+      title="Do ESAT Questions Repeat?"
       intro={[
         "UAT-UK does not describe the ESAT as a fixed, published question bank, and it does not publish enough information to say how much live-question overlap exists between sittings.",
+        "For topic-based practice with verified questions, see the ESAT CAMP question bank.",
       ]}
       lastChecked
-      primaryCta={{ href: SEO_ROUTES.pastPapers, label: "Official past papers" }}
-      secondaryCta={{ href: SEO_ROUTES.preparation, label: "Preparation guide" }}
+      primaryCta={{ href: SEO_ROUTES.questionBank, label: "ESAT Question Bank" }}
+      secondaryCta={{ href: SEO_ROUTES.pastPapers, label: "Official past papers" }}
       faq={FAQ}
       finalCta={{
         heading: "Prepare for the specification, not a rumour",
@@ -90,7 +91,7 @@ export default function IsEsatAQuestionBankPage() {
       ]}
       showDisclaimer
       schema={articleSchema({
-        headline: "Is the ESAT a Question Bank?",
+        headline: "Do ESAT Questions Repeat?",
         description: DESCRIPTION,
         path: PATH,
       })}

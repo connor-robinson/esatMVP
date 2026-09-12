@@ -7,6 +7,8 @@ import { ABOUT_PATH, FOUNDERS } from "@/config/founders";
 import {
   APP_ROUTES,
   buildCanonicalUrl,
+  ORGANIZATION_ID,
+  organizationLogoSchema,
   PRODUCTION_SITE_URL,
 } from "@/lib/seo/config";
 
@@ -44,7 +46,7 @@ const PERSON_SCHEMAS = Object.values(FOUNDERS).map((founder) => ({
   jobTitle: founder.role,
   description: `${founder.credential}. ${founder.bio}`,
   worksFor: {
-    "@id": `${PRODUCTION_SITE_URL}/#organization`,
+    "@id": ORGANIZATION_ID,
   },
 }));
 
@@ -52,10 +54,10 @@ const ABOUT_SCHEMAS = [
   {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "@id": `${PRODUCTION_SITE_URL}/#organization`,
+    "@id": ORGANIZATION_ID,
     name: "ESAT CAMP",
     url: `${PRODUCTION_SITE_URL}/`,
-    logo: buildCanonicalUrl("/brand/logo-mark.png"),
+    logo: organizationLogoSchema(),
     description:
       "An independent educational platform for focused, practical ESAT preparation.",
     founder: PERSON_SCHEMAS.map((person) => ({ "@id": person["@id"] })),

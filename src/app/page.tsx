@@ -11,6 +11,8 @@ import { HOMEPAGE_SOCIAL_PROOF_REVALIDATE_SECONDS } from "@/lib/homepage/socialP
 import {
   buildCanonicalUrl,
   faqPageSchema,
+  ORGANIZATION_ID,
+  organizationLogoSchema,
   PRODUCTION_SITE_URL,
   type FaqItem,
 } from "@/lib/seo/config";
@@ -22,7 +24,6 @@ const HOME_DESCRIPTION =
   "Prepare for the ESAT with realistic question banks, past papers, timed practice, score conversion and full mock exams for Maths, Physics, Chemistry and Biology.";
 /** Trailing slash matches the preferred homepage canonical host form. */
 const HOME_CANONICAL = `${PRODUCTION_SITE_URL}/`;
-const HOME_LOGO_URL = buildCanonicalUrl(BRAND_CONFIG.logoMarkSrc);
 
 /** Match social-proof cache: refresh a few hours after the last regeneration. */
 export const revalidate = HOMEPAGE_SOCIAL_PROOF_REVALIDATE_SECONDS;
@@ -55,10 +56,10 @@ const HOMEPAGE_SCHEMA = [
   {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "@id": `${PRODUCTION_SITE_URL}/#organization`,
+    "@id": ORGANIZATION_ID,
     name: BRAND_CONFIG.displayName,
     url: HOME_CANONICAL,
-    logo: HOME_LOGO_URL,
+    logo: organizationLogoSchema(),
   },
   {
     "@context": "https://schema.org",
@@ -67,7 +68,7 @@ const HOMEPAGE_SCHEMA = [
     name: BRAND_CONFIG.displayName,
     url: HOME_CANONICAL,
     description: HOME_DESCRIPTION,
-    publisher: { "@id": `${PRODUCTION_SITE_URL}/#organization` },
+    publisher: { "@id": ORGANIZATION_ID },
   },
   faqPageSchema(HOMEPAGE_FAQ_SCHEMA),
 ];
