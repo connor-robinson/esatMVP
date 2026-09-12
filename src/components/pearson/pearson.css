@@ -78,8 +78,28 @@ html.pearson-exam-active body {
   color: var(--pearson-text) !important;
 }
 
+/* White-paper PNGs: invert against a computed backdrop so the paper matches
+   the dark review panel (same approach as QuestionDisplay / mark page). */
 .pearson-exam-root.pearson-exam-root--review-dark .pearson-stem-img {
-  background: #ffffff;
+  background: transparent;
+}
+
+.pearson-exam-root.pearson-exam-root--review-dark .qg-diagram,
+.pearson-exam-root.pearson-exam-root--review-dark .qg-diagram-wrap,
+.pearson-exam-root.pearson-exam-root--review-dark .pearson-diagram,
+.pearson-exam-root.pearson-exam-root--review-dark .pearson-stem-img-wrap {
+  background-color: var(--pearson-diagram-invert-backdrop, #ebebeb);
+  isolation: isolate;
+  line-height: 0;
+}
+
+.pearson-exam-root.pearson-exam-root--review-dark .qg-diagram img,
+.pearson-exam-root.pearson-exam-root--review-dark .qg-diagram-wrap img,
+.pearson-exam-root.pearson-exam-root--review-dark .pearson-diagram img,
+.pearson-exam-root.pearson-exam-root--review-dark .pearson-stem-img,
+.pearson-exam-root.pearson-exam-root--review-dark .pearson-option-img {
+  mix-blend-mode: difference;
+  background: transparent !important;
 }
 
 .pearson-exam-root *,

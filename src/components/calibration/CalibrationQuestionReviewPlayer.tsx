@@ -11,7 +11,7 @@ import { trackCalibrationEvent, type CalibrationUserState } from "@/lib/calibrat
 import { CALIBRATION_QUESTIONS, getCalibrationQuestion } from "@/lib/calibration/config";
 import { calibrationQuestionsToPearson } from "@/lib/calibration/toPearsonQuestion";
 import type { MistakeReviewItem } from "@/lib/calibration/types";
-import { colorTokens } from "@/config/theme";
+import { colorTokens, paperDifferenceBackdropForBackground } from "@/config/theme";
 import { cn } from "@/lib/utils";
 import type { Letter } from "@/types/papers";
 
@@ -23,6 +23,8 @@ interface Props {
   initialQuestionId?: string | null;
 }
 
+const REVIEW_BG = "#141414";
+
 const DARK_REVIEW_VARS: CSSProperties = {
   ["--pearson-text" as string]: colorTokens.text.dark,
   ["--pearson-content-bg" as string]: "transparent",
@@ -33,6 +35,8 @@ const DARK_REVIEW_VARS: CSSProperties = {
   ["--pearson-radio-blue" as string]: colorTokens.text.dark,
   ["--pearson-radio-gray" as string]: colorTokens.textMuted.dark,
   ["--pearson-chrome-mode" as string]: "themed",
+  ["--pearson-diagram-invert-backdrop" as string]:
+    paperDifferenceBackdropForBackground(REVIEW_BG),
 };
 
 function statusLabel(m: MistakeReviewItem): string {
@@ -122,7 +126,10 @@ export function CalibrationQuestionReviewPlayer({
   return (
     <section
       className="overflow-hidden bg-[#141414] text-[#f0f0f0]"
-      style={{ fontFamily: "Tahoma, Arial, Helvetica, sans-serif" }}
+      style={{
+        fontFamily: "Tahoma, Arial, Helvetica, sans-serif",
+        backgroundColor: REVIEW_BG,
+      }}
       aria-label="Question review"
     >
       <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-5">
