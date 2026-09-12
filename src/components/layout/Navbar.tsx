@@ -170,7 +170,7 @@ const navSections: NavSectionConfig[] = [
     items: [
       {
         href: '/exam-tools/calibration/math-1',
-        label: 'ESAT Mock Tests',
+        label: 'ESAT Calibration Test',
         description: 'Calibration and readiness check',
         icon: Target,
         badge: 'NEW',
