@@ -1,5 +1,12 @@
 "use client";
 
+/**
+ * Parked homepage reviews section (testimonials, social-proof stats slot,
+ * founder reply, leave-a-review form). Removed from MarketingHomepage for now;
+ * re-import and render `<HomepageReviews statsSlot={...} />` to revive.
+ * Related: `@/lib/homepage/marketingReviews`, social-proof stats on `/`.
+ */
+
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState, type FormEvent, type ReactNode } from "react";

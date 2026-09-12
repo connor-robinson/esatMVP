@@ -9,15 +9,8 @@ import { MarketingHomepage } from "@/components/home/MarketingHomepage";
  */
 export function HomePageContent({
   socialProofSlot,
-  reviewsStatsSlot,
 }: {
   socialProofSlot?: ReactNode;
-  reviewsStatsSlot?: ReactNode;
 }) {
-  return (
-    <MarketingHomepage
-      socialProofSlot={socialProofSlot}
-      reviewsStatsSlot={reviewsStatsSlot}
-    />
-  );
+  return <MarketingHomepage socialProofSlot={socialProofSlot} />;
 }

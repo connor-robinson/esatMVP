@@ -1,15 +1,10 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { HomePageContent } from "@/components/homepage/HomePageContent";
 import { HomepagePartnerTrust } from "@/components/home/HomepagePartnerTrust";
-import { HomepageSocialProofStatsDisplay } from "@/components/home/HomepageSocialProofStats";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { BRAND_CONFIG } from "@/config/brand";
 import { MARKETING_HOMEPAGE_FAQ } from "@/lib/homepage/marketingFaq";
-import { getHomepageSocialProofStats } from "@/lib/homepage/socialProofStats";
-import { HOMEPAGE_SOCIAL_PROOF_REVALIDATE_SECONDS } from "@/lib/homepage/socialProofTypes";
 import {
-  buildCanonicalUrl,
   faqPageSchema,
   ORGANIZATION_ID,
   organizationLogoSchema,
@@ -24,9 +19,6 @@ const HOME_DESCRIPTION =
   "Prepare for the ESAT with realistic question banks, past papers, timed practice, score conversion and full mock exams for Maths, Physics, Chemistry and Biology.";
 /** Trailing slash matches the preferred homepage canonical host form. */
 const HOME_CANONICAL = `${PRODUCTION_SITE_URL}/`;
-
-/** Match social-proof cache: refresh a few hours after the last regeneration. */
-export const revalidate = HOMEPAGE_SOCIAL_PROOF_REVALIDATE_SECONDS;
 
 export const metadata: Metadata = {
   title: HOME_TITLE,
@@ -73,29 +65,11 @@ const HOMEPAGE_SCHEMA = [
   faqPageSchema(HOMEPAGE_FAQ_SCHEMA),
 ];
 
-/** Streams in after first paint so Supabase/GA never block the hero. */
-async function HomepageReviewsStatsSlot() {
-  try {
-    const socialProof = await getHomepageSocialProofStats();
-    return <HomepageSocialProofStatsDisplay stats={socialProof} />;
-  } catch (error) {
-    console.error("[homepage] social proof stats failed", error);
-    return null;
-  }
-}
-
 export default function HomePage() {
   return (
     <>
       <JsonLd schema={HOMEPAGE_SCHEMA} />
-      <HomePageContent
-        socialProofSlot={<HomepagePartnerTrust />}
-        reviewsStatsSlot={
-          <Suspense fallback={null}>
-            <HomepageReviewsStatsSlot />
-          </Suspense>
-        }
-      />
+      <HomePageContent socialProofSlot={<HomepagePartnerTrust />} />
     </>
   );
 }
