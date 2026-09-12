@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { FEEDBACK_REFERRAL_SURVEY } from "@/lib/feedbackReferral/survey";
 
 export type CountRow = { label: string; count: number };
 
@@ -16,6 +17,59 @@ function labelOrUnset(value: unknown): string {
   if (value == null || value === "") return "(not set)";
   return String(value);
 }
+
+const FEEDBACK_QUESTION_LABELS: Record<string, string> = {
+  ...Object.fromEntries(
+    FEEDBACK_REFERRAL_SURVEY.questions.map((q) => [q.id, q.label]),
+  ),
+  parts_used: "Which parts did you use?",
+};
+
+const FEEDBACK_OPTION_LABELS: Record<string, string> = Object.fromEntries(
+  FEEDBACK_REFERRAL_SURVEY.questions.flatMap((q) =>
+    (q.options ?? []).map((opt) => [opt.value, opt.label]),
+  ),
+);
+
+function formatAnswerValue(value: unknown): string {
+  if (value == null || value === "") return "(skipped)";
+  if (Array.isArray(value)) {
+    if (value.length === 0) return "(none)";
+    return value
+      .map((v) => FEEDBACK_OPTION_LABELS[String(v)] ?? String(v))
+      .join(", ");
+  }
+  if (typeof value === "number") return String(value);
+  const raw = String(value).trim();
+  if (!raw) return "(skipped)";
+  return FEEDBACK_OPTION_LABELS[raw] ?? raw;
+}
+
+function formatAnswerRows(
+  answers: Array<{ questionId?: string; value?: unknown }>,
+): FeedbackReferralSubmissionRow["answers"] {
+  return answers.map((answer) => {
+    const questionId = String(answer.questionId ?? "unknown");
+    return {
+      questionId,
+      label: FEEDBACK_QUESTION_LABELS[questionId] ?? questionId,
+      display: formatAnswerValue(answer.value),
+    };
+  });
+}
+
+export type FeedbackReferralSubmissionRow = {
+  id: string;
+  userId: string;
+  username: string | null;
+  email: string | null;
+  createdAt: string;
+  answers: Array<{
+    questionId: string;
+    label: string;
+    display: string;
+  }>;
+};
 
 export type SurveyStatsPayload = {
   funnel: {
@@ -57,8 +111,10 @@ export type SurveyStatsPayload = {
     surveySubmissions: number;
     mostUseful: CountRow[];
     leastUseful: CountRow[];
+    partsUsed: CountRow[];
     recommendAvg: number | null;
     recommendCount: number;
+    submissions: FeedbackReferralSubmissionRow[];
   };
 };
 
@@ -179,26 +235,72 @@ export async function loadSurveyStats(
   const codesIssued = feedbackCodes?.length ?? 0;
   const codesRedeemed = (feedbackCodes ?? []).filter((c) => c.redeemed_at).length;
 
-  const { data: submissions } = await service
+  const { data: submissions, error: submissionsError } = await service
     .from("feedback_referral_submissions")
-    .select("answers");
+    .select("id, user_id, answers, created_at")
+    .order("created_at", { ascending: false });
+
+  if (submissionsError) {
+    throw new Error(submissionsError.message);
+  }
+
+  const submissionUserIds = [
+    ...new Set(
+      (submissions ?? [])
+        .map((s) => s.user_id as string | null)
+        .filter((id): id is string => Boolean(id)),
+    ),
+  ];
+  const submissionProfileById = new Map<
+    string,
+    { username: string | null; email: string | null }
+  >();
+  if (submissionUserIds.length > 0) {
+    const { data: submissionProfiles } = await service
+      .from("profiles")
+      .select("id, username, email")
+      .in("id", submissionUserIds);
+    for (const profile of submissionProfiles ?? []) {
+      submissionProfileById.set(profile.id as string, {
+        username: (profile.username as string | null) ?? null,
+        email: (profile.email as string | null) ?? null,
+      });
+    }
+  }
 
   const mostUseful = new Map<string, number>();
   const leastUseful = new Map<string, number>();
+  const partsUsed = new Map<string, number>();
   let recommendSum = 0;
   let recommendCount = 0;
+  const submissionRows: FeedbackReferralSubmissionRow[] = [];
 
   for (const submission of submissions ?? []) {
     const answers = Array.isArray(submission.answers)
       ? (submission.answers as Array<{ questionId?: string; value?: unknown }>)
       : [];
+    const profile = submissionProfileById.get(String(submission.user_id ?? ""));
+    submissionRows.push({
+      id: String(submission.id),
+      userId: String(submission.user_id ?? ""),
+      username: profile?.username ?? null,
+      email: profile?.email ?? null,
+      createdAt: String(submission.created_at ?? ""),
+      answers: formatAnswerRows(answers),
+    });
+
     for (const answer of answers) {
       const id = String(answer.questionId ?? "");
       const value = answer.value;
       if (id === "most_useful" && typeof value === "string") {
-        bump(mostUseful, value);
+        bump(mostUseful, FEEDBACK_OPTION_LABELS[value] ?? value);
       } else if (id === "least_useful" && typeof value === "string") {
-        bump(leastUseful, value);
+        bump(leastUseful, FEEDBACK_OPTION_LABELS[value] ?? value);
+      } else if (id === "parts_used" && Array.isArray(value)) {
+        for (const part of value) {
+          const key = String(part);
+          bump(partsUsed, FEEDBACK_OPTION_LABELS[key] ?? key);
+        }
       } else if (id === "recommend" && typeof value === "number") {
         recommendSum += value;
         recommendCount += 1;
@@ -233,11 +335,13 @@ export async function loadSurveyStats(
       surveySubmissions: submissions?.length ?? 0,
       mostUseful: toSortedRows(mostUseful),
       leastUseful: toSortedRows(leastUseful),
+      partsUsed: toSortedRows(partsUsed),
       recommendAvg:
         recommendCount > 0
           ? Math.round((recommendSum / recommendCount) * 10) / 10
           : null,
       recommendCount,
+      submissions: submissionRows,
     },
   };
 }
