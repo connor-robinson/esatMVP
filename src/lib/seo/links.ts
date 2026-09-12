@@ -106,7 +106,7 @@ export const SEO_LINKS = {
   mockTests: {
     href: SEO_ROUTES.mockTests,
     label: "ESAT mock tests",
-    blurb: "Full-module original mocks in the past-papers library and roadmap.",
+    blurb: "Timed ESAT-style practice with official NSAA and ENGAA past papers.",
   },
   pastPaperRoadmap: {
     href: SEO_ROUTES.pastPapers,

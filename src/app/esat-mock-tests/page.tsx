@@ -23,7 +23,7 @@ const PATH = SEO_ROUTES.mockTests;
 
 const TITLE = "ESAT Mock Tests | Full Module Practice Under Timing";
 const DESCRIPTION =
-  "Practice with full ESAT mock tests: 27 questions, 40 minutes, no calculator. ESAT CAMP mocks for Maths 1, Maths 2 and Physics are available in the past papers library for paid users.";
+  "Practice with full ESAT-style mock tests: 27 questions, 40 minutes, no calculator. Use official NSAA and ENGAA past papers in the library, plus the free Maths 1 calibration diagnostic.";
 
 export const metadata: Metadata = buildSeoMetadata({
   title: TITLE,
@@ -42,7 +42,7 @@ const FAQ: readonly FaqItem[] = [
   {
     question: "How many mock tests are available?",
     answer:
-      "The past papers library includes 3 original Maths 1 mocks, 2 Maths 2 mocks and 2 Physics full mock modules. Free users can preview NSAA 2016 and 2017 past papers only.",
+      "Use the past papers library for timed NSAA and ENGAA modules that match ESAT timing (27 questions in 40 minutes). Free users can preview NSAA 2016 and 2017. Original ESAT CAMP mocks are temporarily unavailable.",
   },
   {
     question: "Are the mocks timed like the real ESAT?",
@@ -63,7 +63,7 @@ export default function EsatMockTestsPage() {
       eyebrow="Practice tools"
       title="ESAT Mock Tests"
       intro={[
-        "Practice with full ESAT mock tests under real timing: 27 questions, 40 minutes, no calculator. ESAT CAMP original mocks are available in the past papers library for paid users.",
+        "Practice with full ESAT-style mock tests under real timing: 27 questions, 40 minutes, no calculator. Use official NSAA and ENGAA past papers in the library, plus the free Maths 1 calibration diagnostic. Original ESAT CAMP mocks are temporarily unavailable.",
       ]}
       primaryCta={{ href: APP_ROUTES.pastPaperLibrary, label: "Open past papers library" }}
       secondaryCta={{
@@ -73,7 +73,7 @@ export default function EsatMockTestsPage() {
       faq={FAQ}
       finalCta={{
         heading: "Test yourself under real ESAT conditions",
-        body: "The past papers library includes full mock tests for Maths 1, Maths 2 and Physics, plus official ENGAA and NSAA past papers. Start with the free calibration test to diagnose speed vs accuracy, then unlock full access for complete mock coverage.",
+        body: "The past papers library includes official ENGAA and NSAA past papers that match ESAT timing. Start with the free calibration test to diagnose speed vs accuracy, then unlock full access for complete past-paper coverage.",
         primary: { href: APP_ROUTES.pastPaperLibrary, label: "Past papers library" },
         secondary: { href: APP_ROUTES.calibration, label: "Free calibration" },
       }}
@@ -86,15 +86,24 @@ export default function EsatMockTestsPage() {
       })}
     >
       <SeoSection
-        heading="Available mock tests"
-        lead="All mocks follow ESAT timing: 27 questions in 40 minutes with no calculator."
+        heading="Available practice"
+        lead="Timed modules follow ESAT timing: 27 questions in 40 minutes with no calculator."
       >
         <InfoCardGrid
           columns={3}
           cards={[
-            { title: "Maths 1 mocks", body: "3 original full mock modules covering all Maths 1 topics." },
-            { title: "Maths 2 mocks", body: "2 original full mock modules for advanced algebra and calculus reasoning." },
-            { title: "Physics mocks", body: "2 original full mock modules covering mechanics, electricity and waves." },
+            {
+              title: "NSAA past papers",
+              body: "Official NSAA modules in the library, timed like ESAT Maths and Physics.",
+            },
+            {
+              title: "ENGAA past papers",
+              body: "Official ENGAA modules for additional ESAT-style practice under the same constraints.",
+            },
+            {
+              title: "Calibration diagnostic",
+              body: "Free Maths 1 diagnostic that records speed and accuracy before you sit full papers.",
+            },
           ]}
         />
       </SeoSection>
@@ -102,8 +111,9 @@ export default function EsatMockTestsPage() {
       <SeoSection heading="Free vs paid access">
         <SeoProse
           paragraphs={[
-            "Free users can preview NSAA 2016 and 2017 past papers. ESAT CAMP original mocks for Maths 1, Maths 2 and Physics require full access (paid).",
+            "Free users can preview NSAA 2016 and 2017 past papers. Full library access unlocks the remaining official papers.",
             "A separate free diagnostic calibration test is available for all users. It is not a full 27-question mock, but it helps identify speed and accuracy issues in Maths 1.",
+            "Original ESAT CAMP mocks are temporarily unavailable and will return later.",
           ]}
         />
         <SeoCtaRow className="mt-6">
@@ -127,7 +137,7 @@ export default function EsatMockTestsPage() {
       <SeoSection heading="How to use the mocks">
         <SeoProse
           paragraphs={[
-            "Start with the free calibration test to diagnose whether speed or accuracy is your main issue. Then use topic practice to fix specific gaps before attempting full mocks.",
+            "Start with the free calibration test to diagnose whether speed or accuracy is your main issue. Then use topic practice to fix specific gaps before attempting full timed papers.",
           ]}
         />
         <SeoList
@@ -135,9 +145,9 @@ export default function EsatMockTestsPage() {
           items={[
             "Take the free calibration test first to identify weak areas.",
             "Use topic practice to strengthen specific skills.",
-            "Attempt a full mock under strict timing (27 questions, 40 minutes).",
-            "Review wrong answers and time-per-question data before the next mock.",
-            "Leave at least one mock untouched until close to your test date.",
+            "Attempt a full timed paper under strict timing (27 questions, 40 minutes).",
+            "Review wrong answers and time-per-question data before the next paper.",
+            "Leave at least one paper untouched until close to your test date.",
           ]}
         />
       </SeoSection>
@@ -158,7 +168,7 @@ export default function EsatMockTestsPage() {
       <SeoSection heading="Mocks vs official papers">
         <SeoProse
           paragraphs={[
-            "ESAT CAMP mocks are designed to match the specification, timing and difficulty of the real ESAT. For official past-paper practice, use NSAA and ENGAA papers from the past papers library.",
+            "For official past-paper practice, use NSAA and ENGAA papers from the past papers library. They match ESAT timing and format. Original ESAT CAMP mocks are temporarily unavailable.",
           ]}
         />
         <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">

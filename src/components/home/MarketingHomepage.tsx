@@ -395,7 +395,6 @@ export function MarketingHomepage({
                 {[
                   "Official past papers",
                   "Pacing statistics to improve your pacing",
-                  "ESAT Camp Mock papers",
                   "A roadmap so you sit papers in the right order",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3">

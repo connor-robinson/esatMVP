@@ -17,6 +17,12 @@ import {
 } from "@/data/esatCampMocks";
 import type { ExamType, Paper, Question } from "@/types/papers";
 
+/**
+ * Public surface kill switch. Keep data + adapters; hide from library,
+ * roadmap, and question loads until re-enabled.
+ */
+export const ESAT_CAMP_MOCKS_ENABLED = false;
+
 export {
   ESAT_CAMP_MOCK_EXAM_NAME,
   ESAT_CAMP_MOCK_EXAM_TYPE,
@@ -95,7 +101,10 @@ export function mockQuestionToPaperQuestion(
   };
 }
 
-export function getEsatCampMockPapers(): Paper[] {
+export function getEsatCampMockPapers(options?: {
+  includeDisabled?: boolean;
+}): Paper[] {
+  if (!ESAT_CAMP_MOCKS_ENABLED && !options?.includeDisabled) return [];
   const byName = new Map<string, Paper>();
   for (const mockModule of ESAT_CAMP_MOCK_MODULES) {
     if (byName.has(mockModule.paperName)) continue;
@@ -114,7 +123,10 @@ export function getEsatCampMockPapers(): Paper[] {
 }
 
 /** One Paper entry per module. */
-export function getEsatCampMockModulePapers(): Paper[] {
+export function getEsatCampMockModulePapers(options?: {
+  includeDisabled?: boolean;
+}): Paper[] {
+  if (!ESAT_CAMP_MOCKS_ENABLED && !options?.includeDisabled) return [];
   return ESAT_CAMP_MOCK_MODULES.map((mockModule) => ({
     id: paperIdForModule(mockModule),
     examName: ESAT_CAMP_MOCK_EXAM_NAME,
@@ -127,8 +139,13 @@ export function getEsatCampMockModulePapers(): Paper[] {
   }));
 }
 
-export function getEsatCampMockModulePapersByPaperName(paperName: string): Paper[] {
-  return getEsatCampMockModulePapers().filter((p) => p.paperName === paperName);
+export function getEsatCampMockModulePapersByPaperName(
+  paperName: string,
+  options?: { includeDisabled?: boolean },
+): Paper[] {
+  return getEsatCampMockModulePapers(options).filter(
+    (p) => p.paperName === paperName,
+  );
 }
 
 export function getEsatCampMockPaper(
@@ -137,6 +154,7 @@ export function getEsatCampMockPaper(
   paperName: string,
   examType: string,
 ): Paper | null {
+  if (!ESAT_CAMP_MOCKS_ENABLED) return null;
   if (
     examName !== ESAT_CAMP_MOCK_EXAM_NAME ||
     examYear !== ESAT_CAMP_MOCK_EXAM_YEAR ||
@@ -150,7 +168,11 @@ export function getEsatCampMockPaper(
 }
 
 /** Question parts for every module that shares this paper's display name. */
-export function getEsatCampMockQuestionPartsForPaperName(paperName: string) {
+export function getEsatCampMockQuestionPartsForPaperName(
+  paperName: string,
+  options?: { includeDisabled?: boolean },
+) {
+  if (!ESAT_CAMP_MOCKS_ENABLED && !options?.includeDisabled) return [];
   return getEsatCampMockModulesByPaperName(paperName).flatMap((mockModule) =>
     mockModule.questions.map((q) => {
       const adapted = mockQuestionToPaperQuestion(mockModule, q);
@@ -166,7 +188,11 @@ export function getEsatCampMockQuestionPartsForPaperName(paperName: string) {
   );
 }
 
-export function getEsatCampMockQuestions(paperId: number): Question[] {
+export function getEsatCampMockQuestions(
+  paperId: number,
+  options?: { includeDisabled?: boolean },
+): Question[] {
+  if (!ESAT_CAMP_MOCKS_ENABLED && !options?.includeDisabled) return [];
   const mockModule = getEsatCampMockModuleByPaperId(paperId);
   if (!mockModule) return [];
   return mockModule.questions.map((q) =>
@@ -175,7 +201,11 @@ export function getEsatCampMockQuestions(paperId: number): Question[] {
 }
 
 /** All questions for modules that share this display paper name. */
-export function getEsatCampMockQuestionsByPaperName(paperName: string): Question[] {
+export function getEsatCampMockQuestionsByPaperName(
+  paperName: string,
+  options?: { includeDisabled?: boolean },
+): Question[] {
+  if (!ESAT_CAMP_MOCKS_ENABLED && !options?.includeDisabled) return [];
   return getEsatCampMockModulesByPaperName(paperName).flatMap((mockModule) =>
     mockModule.questions.map((q) => mockQuestionToPaperQuestion(mockModule, q)),
   );
@@ -197,6 +227,7 @@ export function isEsatCampMockExamType(examType: ExamType | string | null | unde
 }
 
 export function mergePapersWithEsatCampMocks(papers: Paper[]): Paper[] {
+  if (!ESAT_CAMP_MOCKS_ENABLED) return papers;
   const mocks = getEsatCampMockPapers();
   const existingIds = new Set(papers.map((p) => p.id));
   const extras = mocks.filter((p) => !existingIds.has(p.id));

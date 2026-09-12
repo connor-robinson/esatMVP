@@ -10,6 +10,7 @@ import {
   ESAT_CAMP_MOCK_DISPLAY_NAMES,
   ESAT_CAMP_MOCK_EXAM_TYPE,
   ESAT_CAMP_MOCK_PAPER_IDS,
+  ESAT_CAMP_MOCKS_ENABLED,
   getEsatCampMockQuestions,
   getEsatCampMockQuestionsByPaperName,
   getEsatCampMockQuestionPartsForPaperName,
@@ -19,13 +20,16 @@ import {
 import { getRoadmapStagesShell } from "@/lib/papers/roadmapConfig";
 import type { PaperSection } from "@/types/papers";
 
+const includeDisabled = { includeDisabled: true } as const;
+
 describe("ESAT CAMP mock library section matching", () => {
   it("matches Full Mock 1 Physics when Physics is selected", () => {
-    const paper = getEsatCampMockPapers().find(
+    const paper = getEsatCampMockPapers(includeDisabled).find(
       (p) => p.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
     )!;
     const questions = getEsatCampMockQuestions(
       ESAT_CAMP_MOCK_PAPER_IDS.physicsModuleA,
+      includeDisabled,
     );
     expect(questions).toHaveLength(27);
 
@@ -41,11 +45,12 @@ describe("ESAT CAMP mock library section matching", () => {
   });
 
   it("does not match Full Mock 1 Physics when only Math 1 is selected", () => {
-    const paper = getEsatCampMockPapers().find(
+    const paper = getEsatCampMockPapers(includeDisabled).find(
       (p) => p.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
     )!;
     const questions = getEsatCampMockQuestions(
       ESAT_CAMP_MOCK_PAPER_IDS.physicsModuleA,
+      includeDisabled,
     );
     const selected = new Map<string, Set<PaperSection>>([
       ["Math 1", new Set<PaperSection>(["Mathematics"])],
@@ -57,11 +62,12 @@ describe("ESAT CAMP mock library section matching", () => {
   });
 
   it("matches Full Mock 1 Math 1 questions when Math 1 is selected", () => {
-    const paper = getEsatCampMockPapers().find(
+    const paper = getEsatCampMockPapers(includeDisabled).find(
       (p) => p.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
     )!;
     const questions = getEsatCampMockQuestions(
       ESAT_CAMP_MOCK_PAPER_IDS.maths1Mock02,
+      includeDisabled,
     );
     expect(questions).toHaveLength(27);
     expect(paper.hasConversion).toBe(false);
@@ -78,7 +84,7 @@ describe("ESAT CAMP mock library section matching", () => {
   });
 
   it("groups modules into Full Mock 1, Full Mock 2, and leftover singular mocks", () => {
-    const papers = getEsatCampMockPapers();
+    const papers = getEsatCampMockPapers(includeDisabled);
     expect(papers.map((p) => p.paperName)).toEqual([
       ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
       ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock2,
@@ -88,20 +94,21 @@ describe("ESAT CAMP mock library section matching", () => {
 
   it("keeps Full Mock 1 as three modules and leftover Math 1 as its own paper", () => {
     expect(
-      getEsatCampMockQuestionsByPaperName(ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1),
+      getEsatCampMockQuestionsByPaperName(ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1, includeDisabled),
     ).toHaveLength(81);
     expect(
-      getEsatCampMockQuestionsByPaperName(ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock2),
+      getEsatCampMockQuestionsByPaperName(ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock2, includeDisabled),
     ).toHaveLength(81);
     expect(
       getEsatCampMockQuestionsByPaperName(
         ESAT_CAMP_MOCK_DISPLAY_NAMES.math1Mock1,
+        includeDisabled,
       ),
     ).toHaveLength(27);
   });
 
   it("expands Full Mock 1 into Math 1, Math 2 and Physics library sections", () => {
-    const paper = getEsatCampMockPapers().find(
+    const paper = getEsatCampMockPapers(includeDisabled).find(
       (p) => p.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
     )!;
     const outline = buildPaperSectionsOutline(
@@ -109,6 +116,7 @@ describe("ESAT CAMP mock library section matching", () => {
       [],
       getEsatCampMockQuestionPartsForPaperName(
         ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
+        includeDisabled,
       ),
     );
     expect(outline.mainSections.map((section) => section.name)).toEqual([
@@ -124,11 +132,12 @@ describe("ESAT CAMP mock library section matching", () => {
   });
 
   it("matches Full Mock 1 Math 2 questions when Math 2 is selected", () => {
-    const paper = getEsatCampMockPapers().find(
+    const paper = getEsatCampMockPapers(includeDisabled).find(
       (p) => p.paperName === ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
     )!;
     const questions = getEsatCampMockQuestions(
       ESAT_CAMP_MOCK_PAPER_IDS.maths2Mock01,
+      includeDisabled,
     );
     const selected = new Map<string, Set<PaperSection>>([
       ["Math 2", new Set<PaperSection>(["Mathematics 2"])],
@@ -143,6 +152,7 @@ describe("ESAT CAMP mock library section matching", () => {
   it("anchors Full Mock Physics selection to the Physics module id", () => {
     const catalog = getEsatCampMockModulePapersByPaperName(
       ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
+      includeDisabled,
     );
     const fallback = catalog[0]!;
     const selected = new Map<string, Set<PaperSection>>([
@@ -155,12 +165,14 @@ describe("ESAT CAMP mock library section matching", () => {
   it("keeps Physics questions after load-style expand + part-id filter from Math 1 anchor", () => {
     const catalog = getEsatCampMockModulePapersByPaperName(
       ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
+      includeDisabled,
     );
     const fallback = catalog.find(
       (paper) => paper.id === ESAT_CAMP_MOCK_PAPER_IDS.maths1Mock02,
     )!;
     const allQuestions = getEsatCampMockQuestionsByPaperName(
       ESAT_CAMP_MOCK_DISPLAY_NAMES.fullMock1,
+      includeDisabled,
     );
     expect(allQuestions).toHaveLength(81);
 
@@ -182,7 +194,16 @@ describe("ESAT CAMP mock library section matching", () => {
 });
 
 describe("ESAT CAMP mock roadmap placement", () => {
-  it("spreads Full Mock 1, Full Mock 2, and leftover singular mocks through the roadmap", () => {
+  it("omits ESAT CAMP mocks from the public roadmap while disabled", () => {
+    expect(ESAT_CAMP_MOCKS_ENABLED).toBe(false);
+    const stages = getRoadmapStagesShell();
+    const ids = stages.map((stage) => stage.id);
+    expect(ids.some((id) => id.startsWith("esat-camp-"))).toBe(false);
+  });
+
+  it("spreads Full Mock 1, Full Mock 2, and leftover singular mocks when enabled", () => {
+    if (!ESAT_CAMP_MOCKS_ENABLED) return;
+
     const stages = getRoadmapStagesShell();
     const ids = stages.map((stage) => stage.id);
     const fullMock1 = ids.indexOf("esat-camp-full-mock-1");

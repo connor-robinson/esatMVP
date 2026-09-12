@@ -12,6 +12,7 @@ import {
   ESAT_CAMP_MOCK_EXAM_TYPE,
   ESAT_CAMP_MOCK_EXAM_YEAR,
   ESAT_CAMP_MOCK_DISPLAY_NAMES,
+  ESAT_CAMP_MOCKS_ENABLED,
 } from '@/lib/papers/esatCampMocks';
 
 function esatCampMockRoadmapPart(
@@ -115,6 +116,18 @@ export function assembleRoadmapStages(options: {
   const { nsaaStages, nsaa2023, engaaStages, tmuaStages } = options;
   const nsaaEarly = nsaaStages.filter((stage) => stage.year <= 2019);
   const nsaaLate = nsaaStages.filter((stage) => stage.year >= 2020);
+
+  if (!ESAT_CAMP_MOCKS_ENABLED) {
+    const ordered: RoadmapStage[] = [
+      ...nsaaEarly,
+      ...nsaaLate,
+      ...engaaStages,
+      ...tmuaStages,
+    ];
+    if (nsaa2023) ordered.push(nsaa2023);
+    return ordered;
+  }
+
   const ordered: RoadmapStage[] = [
     ...nsaaEarly,
     ESAT_CAMP_FULL_MOCK_1_STAGE,
