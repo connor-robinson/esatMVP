@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import { Container } from "@/components/layout/Container";
 import { cn } from "@/lib/utils";
 
@@ -15,7 +16,8 @@ const PRIMARY = [
   {
     href: "/admin/support",
     label: "Support",
-    match: (p: string) => p.startsWith("/admin/support"),
+    match: (p: string) =>
+      p.startsWith("/admin/support") || p.startsWith("/admin/inbox"),
   },
   {
     href: "/admin/partners",
@@ -40,14 +42,31 @@ const PRIMARY = [
 ] as const;
 
 const SECONDARY = [
-  { href: "/admin/inbox", label: "Messages" },
-  { href: "/admin/founding-tester", label: "Founding tester" },
-  { href: "/admin/feedback-referral", label: "Feedback referral" },
   { href: "/admin/mock-builder", label: "Mock builder" },
 ] as const;
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname() || "/admin";
+  const [supportBadge, setSupportBadge] = useState(0);
+
+  const loadBadge = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/support/notifications", {
+        cache: "no-store",
+      });
+      if (!res.ok) return;
+      const json = await res.json();
+      setSupportBadge(Number(json.notifications?.total ?? 0));
+    } catch {
+      // ignore badge failures
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadBadge();
+    const id = window.setInterval(() => void loadBadge(), 60_000);
+    return () => window.clearInterval(id);
+  }, [loadBadge]);
 
   return (
     <div className="min-h-screen bg-surface">
@@ -63,18 +82,24 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               </Link>
               {PRIMARY.map((item) => {
                 const active = item.match(pathname);
+                const showBadge = item.href === "/admin/support" && supportBadge > 0;
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      "rounded-organic-md px-3 py-1.5 text-sm font-medium transition-colors",
+                      "inline-flex items-center gap-1.5 rounded-organic-md px-3 py-1.5 text-sm font-medium transition-colors",
                       active
                         ? "bg-secondary/25 text-text"
                         : "text-text-muted hover:bg-surface-mid hover:text-text",
                     )}
                   >
                     {item.label}
+                    {showBadge ? (
+                      <span className="rounded-full bg-secondary/40 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-text">
+                        {supportBadge > 99 ? "99+" : supportBadge}
+                      </span>
+                    ) : null}
                   </Link>
                 );
               })}

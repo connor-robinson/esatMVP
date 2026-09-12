@@ -28,7 +28,7 @@ const CARDS: Array<{
   {
     href: "/admin/support",
     title: "Support",
-    body: "Open Help tickets and legacy /help reports in one inbox.",
+    body: "Enquiries, student replies, and outbound messages.",
     key: "openSupport",
     suffix: "open",
   },
