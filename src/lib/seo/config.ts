@@ -93,6 +93,7 @@ export const SEO_ROUTES = {
   noCalcPractice: "/esat-no-calculator-practice",
   whiteboard: "/esat-whiteboard",
   questionBankGuide: "/is-esat-a-question-bank",
+  bestEsatResources: "/best-esat-resources",
   universityRequirements: "/esat-university-requirements",
   cambridgeRequirements: "/cambridge-esat-requirements",
   cambridgeNaturalSciences: "/cambridge-natural-sciences-esat",

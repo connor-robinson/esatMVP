@@ -220,6 +220,13 @@ export default function EsatPreparationPage() {
             "Official UAT-UK materials should be the starting point. Historic ENGAA and NSAA papers are useful because they contain questions of the type found in ESAT, but they need filtering: some questions are outside the current ESAT specification, and some ENGAA and NSAA questions overlap with each other.",
           ]}
         />
+        <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
+          For a side-by-side look at paid and free options:{" "}
+          <SeoTextLink href={SEO_ROUTES.bestEsatResources}>
+            Compare ESAT preparation resources
+          </SeoTextLink>
+          .
+        </p>
         <SeoCtaRow className="mt-6">
           <SeoCta
             href={SEO_ROUTES.pastPapers}

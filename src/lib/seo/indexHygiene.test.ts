@@ -259,6 +259,10 @@ describe("index hygiene: public pages stay indexable", () => {
       { segments: ["esat-physics", "page.tsx"], path: SEO_ROUTES.physics },
       { segments: ["good-esat-score", "page.tsx"], path: SEO_ROUTES.goodScore },
       {
+        segments: ["best-esat-resources", "page.tsx"],
+        path: SEO_ROUTES.bestEsatResources,
+      },
+      {
         segments: ["esat-university-requirements", "page.tsx"],
         path: SEO_ROUTES.universityRequirements,
       },
@@ -313,7 +317,7 @@ describe("index hygiene: sitemap", () => {
     });
 
     expect(paths).toEqual(PUBLIC_SITEMAP_ENTRIES.map((entry) => entry.path));
-    expect(entries).toHaveLength(36);
+    expect(entries).toHaveLength(37);
     expect(isPublicSitemapPath(APP_ROUTES.scoreConverter)).toBe(true);
     expect(isPublicSitemapPath("/tools/score-converter/pat")).toBe(true);
     expect(isPublicSitemapPath("/tools/score-converter/mat")).toBe(true);

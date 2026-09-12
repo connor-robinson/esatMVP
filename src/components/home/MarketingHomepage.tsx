@@ -172,6 +172,7 @@ const FREE_FEATURES = [
 /** Highest-intent guide pages, surfaced in the footer for crawlability. */
 const FOOTER_GUIDE_KEYS: SeoLinkKey[] = [
   "preparation",
+  "bestEsatResources",
   "testDates",
   "universityRequirements",
   "goodScore",

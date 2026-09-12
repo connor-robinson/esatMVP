@@ -148,6 +148,12 @@ export const SEO_LINKS = {
     label: "Is the ESAT a question bank?",
     blurb: "What is known about test versions, overlap and October vs January.",
   },
+  bestEsatResources: {
+    href: SEO_ROUTES.bestEsatResources,
+    label: "Compare ESAT preparation resources",
+    blurb:
+      "Honest comparison of UAT-UK, ESAT Lab, ESAT Ninja, Lab45 and ESAT CAMP.",
+  },
 } as const satisfies Record<string, SeoLink>;
 
 export type SeoLinkKey = keyof typeof SEO_LINKS;
@@ -159,6 +165,7 @@ export function seoLinks(...keys: SeoLinkKey[]): SeoLink[] {
 /** Every guide page, in the order used by the site footer and sitemap. */
 export const SEO_GUIDE_KEYS: SeoLinkKey[] = [
   "preparation",
+  "bestEsatResources",
   "testDates",
   "testDay",
   "pastPapers",
@@ -195,7 +202,7 @@ export const FAQ_GUIDE_SECTIONS: readonly FaqGuideSection[] = [
     id: "getting-started",
     title: "Getting started",
     description: "How to prepare, when the test is, and what the day looks like.",
-    keys: ["preparation", "testDates", "testDay", "whiteboard"],
+    keys: ["preparation", "bestEsatResources", "testDates", "testDay", "whiteboard"],
   },
   {
     id: "modules",

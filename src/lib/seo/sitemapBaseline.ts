@@ -17,6 +17,7 @@ export const APPROVED_SITEMAP_BASELINE: readonly PublicSitemapEntry[] = [
 
   // Editorial guide pages.
   { path: SEO_ROUTES.preparation },
+  { path: SEO_ROUTES.bestEsatResources },
   { path: SEO_ROUTES.testDates },
   { path: SEO_ROUTES.pastPapers },
   { path: SEO_ROUTES.pastPapersGuide },
