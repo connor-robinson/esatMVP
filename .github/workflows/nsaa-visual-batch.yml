@@ -46,9 +46,7 @@ on:
         required: false
         default: "gemini-3.7-flash"
         type: string
-  schedule:
-    # 10:00 UTC daily (~18:00 HKT). Same ESAT path as local.
-    - cron: "0 10 * * *"
+  # Daily schedule removed (was 10:00 UTC). Manual runs only via workflow_dispatch.
 
 concurrency:
   group: nsaa-visual-batch
