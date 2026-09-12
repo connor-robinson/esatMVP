@@ -180,27 +180,27 @@ export default function CalibrationResultsPage() {
           ) : null}
           <div className="mt-6 flex flex-col items-center gap-3">
             <GoogleAuthButton
-              mode="signin"
+              mode="signup"
               loading={authLoading}
               onClick={handleGoogleSignIn}
             />
             <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm">
-              <Link
-                href={`/login?mode=signin&redirectTo=${encodeURIComponent(redirectTo)}`}
-                onClick={() => queueAttemptForMerge(attemptId)}
-                className="font-medium text-text-muted underline-offset-2 hover:text-text hover:underline"
-              >
-                Sign in with email
-              </Link>
-              <span className="text-text-muted" aria-hidden>
-                |
-              </span>
               <Link
                 href={`/login?mode=signup&redirectTo=${encodeURIComponent(redirectTo)}`}
                 onClick={() => queueAttemptForMerge(attemptId)}
                 className="font-medium text-text-muted underline-offset-2 hover:text-text hover:underline"
               >
                 Sign up with email
+              </Link>
+              <span className="text-text-muted" aria-hidden>
+                |
+              </span>
+              <Link
+                href={`/login?mode=signin&redirectTo=${encodeURIComponent(redirectTo)}`}
+                onClick={() => queueAttemptForMerge(attemptId)}
+                className="font-medium text-text-muted underline-offset-2 hover:text-text hover:underline"
+              >
+                Sign in with email
               </Link>
             </div>
           </div>
