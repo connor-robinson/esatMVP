@@ -25,7 +25,9 @@ export async function GET(request: NextRequest) {
 
   const { data: messages, error } = await admin.service
     .from("inbox_messages")
-    .select("id, subject, body, audience, created_by, created_at")
+    .select(
+      "id, subject, body, audience, direction, parent_id, support_request_id, legacy_bug_report_id, allow_reply, created_by, created_at",
+    )
     .order("created_at", { ascending: false })
     .limit(limit);
 
@@ -34,13 +36,38 @@ export async function GET(request: NextRequest) {
   }
 
   const personalIds = (messages ?? [])
-    .filter((m) => m.audience === "personal")
+    .filter((m) => m.audience === "personal" && m.direction === "outbound")
     .map((m) => m.id);
 
   const recipientMap = new Map<
     string,
     Array<{ user_id: string; username: string | null; email: string | null }>
   >();
+
+  const authorIds = [
+    ...new Set(
+      (messages ?? [])
+        .map((m) => m.created_by)
+        .filter((id): id is string => Boolean(id)),
+    ),
+  ];
+  const authorById = new Map<
+    string,
+    { username: string | null; email: string | null }
+  >();
+
+  if (authorIds.length > 0) {
+    const { data: authors } = await admin.service
+      .from("profiles")
+      .select("id, username, email")
+      .in("id", authorIds);
+    for (const p of authors ?? []) {
+      authorById.set(p.id, {
+        username: p.username ?? null,
+        email: p.email ?? null,
+      });
+    }
+  }
 
   if (personalIds.length > 0) {
     const { data: recipients } = await admin.service
@@ -81,17 +108,35 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  const rows: InboxMessageListItem[] = (messages ?? []).map((m) => ({
-    id: m.id,
-    subject: m.subject,
-    body: m.body,
-    audience: m.audience as "personal" | "broadcast",
-    created_by: m.created_by,
-    created_at: m.created_at,
-    read_at: null,
-    recipients:
-      m.audience === "personal" ? recipientMap.get(m.id) ?? [] : undefined,
-  }));
+  const rows: InboxMessageListItem[] = (messages ?? []).map((m) => {
+    const author = m.created_by ? authorById.get(m.created_by) : null;
+    return {
+      id: m.id,
+      subject: m.subject,
+      body: m.body,
+      audience: m.audience as "personal" | "broadcast",
+      direction: (m.direction as "outbound" | "inbound") || "outbound",
+      parent_id: m.parent_id,
+      support_request_id: m.support_request_id,
+      legacy_bug_report_id: m.legacy_bug_report_id,
+      allow_reply: m.allow_reply !== false,
+      created_by: m.created_by,
+      created_at: m.created_at,
+      read_at: null,
+      recipients:
+        m.audience === "personal" && m.direction === "outbound"
+          ? recipientMap.get(m.id) ?? []
+          : m.direction === "inbound" && author
+            ? [
+                {
+                  user_id: m.created_by!,
+                  username: author.username,
+                  email: author.email,
+                },
+              ]
+            : undefined,
+    };
+  });
 
   return NextResponse.json({ messages: rows });
 }

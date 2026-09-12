@@ -1,14 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRouteUser } from "@/lib/supabase/auth";
 import { createTesterServiceClient } from "@/lib/tester/service";
-import type { InboxMessageListItem } from "@/lib/inbox";
+import type {
+  InboxDirection,
+  InboxMessageListItem,
+  InboxThreadReply,
+} from "@/lib/inbox";
 
 export const dynamic = "force-dynamic";
 
+const MESSAGE_SELECT =
+  "id, subject, body, audience, direction, parent_id, support_request_id, legacy_bug_report_id, allow_reply, created_by, created_at";
+
 /**
  * GET /api/inbox
- * List messages visible to the signed-in user (broadcasts + personal).
- * Query: ?unreadOnly=1, ?limit=50
+ * List root outbound messages visible to the user, with thread replies.
  */
 export async function GET(request: NextRequest) {
   const { user, error } = await requireRouteUser(request);
@@ -28,17 +34,17 @@ export async function GET(request: NextRequest) {
   const [broadcastRes, personalRes, readsRes] = await Promise.all([
     service
       .from("inbox_messages")
-      .select("id, subject, body, audience, created_by, created_at")
+      .select(MESSAGE_SELECT)
       .eq("audience", "broadcast")
+      .eq("direction", "outbound")
+      .is("parent_id", null)
       .order("created_at", { ascending: false })
       .limit(limit),
     service
       .from("inbox_message_recipients")
-      .select(
-        "message_id, inbox_messages(id, subject, body, audience, created_by, created_at)",
-      )
+      .select(`message_id, inbox_messages(${MESSAGE_SELECT})`)
       .eq("user_id", user.id)
-      .limit(limit),
+      .limit(limit * 2),
     service
       .from("inbox_message_reads")
       .select("message_id, read_at")
@@ -61,42 +67,95 @@ export async function GET(request: NextRequest) {
 
   for (const row of broadcastRes.data ?? []) {
     byId.set(row.id, {
-      ...row,
-      audience: row.audience as "broadcast",
+      id: row.id,
+      subject: row.subject,
+      body: row.body,
+      audience: "broadcast",
+      direction: (row.direction as InboxDirection) || "outbound",
+      parent_id: row.parent_id,
+      support_request_id: row.support_request_id,
+      legacy_bug_report_id: row.legacy_bug_report_id,
+      allow_reply: row.allow_reply !== false,
+      created_by: row.created_by,
+      created_at: row.created_at,
       read_at: readMap.get(row.id) ?? null,
+      replies: [],
     });
   }
 
   for (const row of personalRes.data ?? []) {
     const msg = row.inbox_messages as
-      | {
-          id: string;
-          subject: string;
-          body: string;
-          audience: string;
-          created_by: string | null;
-          created_at: string;
-        }
+      | Record<string, unknown>
       | null
-      | Array<{
-          id: string;
-          subject: string;
-          body: string;
-          audience: string;
-          created_by: string | null;
-          created_at: string;
-        }>;
-    const message = Array.isArray(msg) ? msg[0] : msg;
+      | Array<Record<string, unknown>>;
+    const message = (Array.isArray(msg) ? msg[0] : msg) as {
+      id: string;
+      subject: string;
+      body: string;
+      audience: string;
+      direction: string;
+      parent_id: string | null;
+      support_request_id: string | null;
+      legacy_bug_report_id: string | null;
+      allow_reply: boolean;
+      created_by: string | null;
+      created_at: string;
+    } | null;
     if (!message?.id) continue;
+    // Only show root outbound messages in the list (replies appear in thread).
+    if (message.parent_id) continue;
+    if (message.direction === "inbound") continue;
+
     byId.set(message.id, {
       id: message.id,
       subject: message.subject,
       body: message.body,
       audience: "personal",
+      direction: (message.direction as InboxDirection) || "outbound",
+      parent_id: message.parent_id,
+      support_request_id: message.support_request_id,
+      legacy_bug_report_id: message.legacy_bug_report_id,
+      allow_reply: message.allow_reply !== false,
       created_by: message.created_by,
       created_at: message.created_at,
       read_at: readMap.get(message.id) ?? null,
+      replies: [],
     });
+  }
+
+  const rootIds = Array.from(byId.keys());
+  if (rootIds.length > 0) {
+    const { data: replyRows } = await service
+      .from("inbox_messages")
+      .select("id, body, direction, created_by, created_at, parent_id")
+      .in("parent_id", rootIds)
+      .order("created_at", { ascending: true });
+
+    const repliesByParent = new Map<string, InboxThreadReply[]>();
+    for (const r of replyRows ?? []) {
+      if (!r.parent_id) continue;
+      // Users only see their own inbound replies + all outbound follow-ups in the thread.
+      if (
+        r.direction === "inbound" &&
+        r.created_by &&
+        r.created_by !== user.id
+      ) {
+        continue;
+      }
+      const list = repliesByParent.get(r.parent_id) ?? [];
+      list.push({
+        id: r.id,
+        body: r.body,
+        direction: (r.direction as InboxDirection) || "inbound",
+        created_by: r.created_by,
+        created_at: r.created_at,
+      });
+      repliesByParent.set(r.parent_id, list);
+    }
+
+    for (const [id, msg] of byId) {
+      msg.replies = repliesByParent.get(id) ?? [];
+    }
   }
 
   let messages = Array.from(byId.values()).sort(
@@ -142,10 +201,15 @@ export async function PATCH(request: NextRequest) {
 
   if (payload.all === true) {
     const [broadcastRes, personalRes, readsRes] = await Promise.all([
-      service.from("inbox_messages").select("id").eq("audience", "broadcast"),
+      service
+        .from("inbox_messages")
+        .select("id")
+        .eq("audience", "broadcast")
+        .eq("direction", "outbound")
+        .is("parent_id", null),
       service
         .from("inbox_message_recipients")
-        .select("message_id")
+        .select("message_id, inbox_messages(id, parent_id, direction)")
         .eq("user_id", user.id),
       service
         .from("inbox_message_reads")
@@ -153,10 +217,20 @@ export async function PATCH(request: NextRequest) {
         .eq("user_id", user.id),
     ]);
     const readSet = new Set((readsRes.data ?? []).map((r) => r.message_id));
+    const personalIds: string[] = [];
+    for (const row of personalRes.data ?? []) {
+      const msg = row.inbox_messages as
+        | { id: string; parent_id: string | null; direction: string }
+        | null
+        | Array<{ id: string; parent_id: string | null; direction: string }>;
+      const m = Array.isArray(msg) ? msg[0] : msg;
+      if (!m?.id || m.parent_id || m.direction === "inbound") continue;
+      personalIds.push(m.id);
+    }
     messageIds = [
       ...new Set([
         ...(broadcastRes.data ?? []).map((r) => r.id),
-        ...(personalRes.data ?? []).map((r) => r.message_id),
+        ...personalIds,
       ]),
     ].filter((id) => !readSet.has(id));
   } else if (Array.isArray(payload.messageIds)) {
@@ -179,7 +253,6 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ ok: true, marked: 0 });
   }
 
-  // Ensure the user can only mark messages they can see.
   const [broadcastCheck, personalCheck] = await Promise.all([
     service
       .from("inbox_messages")

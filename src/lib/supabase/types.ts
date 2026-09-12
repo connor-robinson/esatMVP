@@ -620,6 +620,7 @@ export type AppBugReportRow = {
   description: string;
   page_url: string | null;
   user_agent: string | null;
+  status: string;
   created_at: string;
 };
 export type AppBugReportInsert = {
@@ -628,6 +629,7 @@ export type AppBugReportInsert = {
   description: string;
   page_url?: string | null;
   user_agent?: string | null;
+  status?: string;
   created_at?: string;
 };
 export type AppBugReportUpdate = Partial<AppBugReportRow>;
@@ -638,6 +640,11 @@ export type InboxMessageRow = {
   subject: string;
   body: string;
   audience: "personal" | "broadcast";
+  direction: "outbound" | "inbound";
+  parent_id: string | null;
+  support_request_id: string | null;
+  legacy_bug_report_id: string | null;
+  allow_reply: boolean;
   created_by: string | null;
   created_at: string;
 };
@@ -646,6 +653,11 @@ export type InboxMessageInsert = {
   subject: string;
   body: string;
   audience: "personal" | "broadcast";
+  direction?: "outbound" | "inbound";
+  parent_id?: string | null;
+  support_request_id?: string | null;
+  legacy_bug_report_id?: string | null;
+  allow_reply?: boolean;
   created_by?: string | null;
   created_at?: string;
 };

@@ -270,13 +270,15 @@ export default function AdminInboxPage() {
 
       <section className="mt-12">
         <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-text-muted">
-          Sent ({messages.length})
+          Recent activity ({messages.length})
         </h2>
         {loading ? (
           <p className="mt-4 text-sm text-text-muted">Loading…</p>
         ) : (
           <div className="mt-4 space-y-4">
-            {messages.map((m) => (
+            {messages.map((m) => {
+              const inbound = m.direction === "inbound";
+              return (
               <article
                 key={m.id}
                 className="rounded-organic-xl bg-surface-elevated px-5 py-4"
@@ -284,9 +286,15 @@ export default function AdminInboxPage() {
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.14em] text-text-muted">
-                      {m.audience === "broadcast"
-                        ? "Everyone"
-                        : `Personal · ${m.recipients?.length ?? 0} recipient${(m.recipients?.length ?? 0) === 1 ? "" : "s"}`}
+                      {inbound
+                        ? "Student reply"
+                        : m.audience === "broadcast"
+                          ? "Everyone"
+                          : `Personal · ${m.recipients?.length ?? 0} recipient${(m.recipients?.length ?? 0) === 1 ? "" : "s"}`}
+                      {m.parent_id ? " · thread" : ""}
+                      {m.support_request_id || m.legacy_bug_report_id
+                        ? " · from support"
+                        : ""}
                     </p>
                     <h3 className="mt-1 font-heading text-lg font-semibold text-text">
                       {m.subject}
@@ -301,16 +309,17 @@ export default function AdminInboxPage() {
                 </p>
                 {m.recipients && m.recipients.length > 0 ? (
                   <p className="mt-3 text-xs text-text-subtle">
-                    To:{" "}
+                    {inbound ? "From: " : "To: "}
                     {m.recipients
                       .map((r) => r.username || r.email || r.user_id.slice(0, 8))
                       .join(", ")}
                   </p>
                 ) : null}
               </article>
-            ))}
+              );
+            })}
             {messages.length === 0 ? (
-              <p className="text-sm text-text-muted">No messages sent yet.</p>
+              <p className="text-sm text-text-muted">No messages yet.</p>
             ) : null}
           </div>
         )}
