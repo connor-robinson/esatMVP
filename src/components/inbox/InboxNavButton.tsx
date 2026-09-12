@@ -68,10 +68,13 @@ export function InboxNavButton({ className }: Props) {
       return;
     }
     try {
-      const res = await fetch(`/api/inbox?limit=${PREVIEW_LIMIT}`, {
-        credentials: "include",
-        cache: "no-store",
-      });
+      const res = await fetch(
+        `/api/inbox?limit=${PREVIEW_LIMIT}&unreadOnly=1`,
+        {
+          credentials: "include",
+          cache: "no-store",
+        },
+      );
       if (!res.ok) return;
       const data = (await res.json()) as {
         messages?: InboxMessageListItem[];
@@ -139,9 +142,13 @@ export function InboxNavButton({ className }: Props) {
   const openPanel = async () => {
     const next = !open;
     setOpen(next);
-    if (!next) return;
+    if (!next) {
+      setExpandedId(null);
+      return;
+    }
     setLoading(true);
     setReplyErrorById({});
+    setExpandedId(null);
     await refresh();
     setLoading(false);
   };
@@ -183,12 +190,26 @@ export function InboxNavButton({ className }: Props) {
   };
 
   const selectMessage = (id: string) => {
-    setExpandedId((prev) => (prev === id ? null : id));
+    const target = messages.find((m) => m.id === id);
+    if (!target) return;
+
+    const needsExpand = previewBody(target.body).truncated;
+
     setReplyErrorById((prev) => {
       const next = { ...prev };
       delete next[id];
       return next;
     });
+
+    // One-line messages: mark read and drop from the popup immediately.
+    if (!needsExpand) {
+      setExpandedId((prev) => (prev === id ? null : prev));
+      void markRead(id);
+      return;
+    }
+
+    // Multi-line: expand to read; collapse removes it once marked read.
+    setExpandedId((prev) => (prev === id ? null : id));
     void markRead(id);
   };
 
@@ -240,6 +261,11 @@ export function InboxNavButton({ className }: Props) {
   };
 
   if (!session?.user) return null;
+
+  // Popup is unread-only. Keep a just-read message visible while it is expanded.
+  const visibleMessages = messages.filter(
+    (m) => !m.read_at || expandedId === m.id,
+  );
 
   const showNumberBadge = unreadPersonal > 0;
   const showDotBadge = !showNumberBadge && hasUnreadBroadcast;
@@ -303,15 +329,24 @@ export function InboxNavButton({ className }: Props) {
           </div>
 
           <div className="max-h-[min(28rem,75vh)] overflow-y-auto">
-            {loading && messages.length === 0 ? (
+            {loading && visibleMessages.length === 0 ? (
               <p className="px-3 py-4 text-[12px] text-text-muted">Loading…</p>
-            ) : messages.length === 0 ? (
-              <p className="px-3 py-4 text-[12px] text-text-muted">
-                No messages yet.
-              </p>
+            ) : visibleMessages.length === 0 ? (
+              <div className="px-3 py-5 text-center">
+                <p className="text-[12px] text-text-muted">
+                  No unread messages.
+                </p>
+                <Link
+                  href="/inbox"
+                  onClick={() => setOpen(false)}
+                  className="mt-2 inline-block text-[11px] font-medium text-blue-600 underline-offset-2 hover:underline dark:text-blue-400"
+                >
+                  Open full inbox
+                </Link>
+              </div>
             ) : (
               <ul>
-                {messages.map((m) => {
+                {visibleMessages.map((m) => {
                   const unreadItem = !m.read_at;
                   const expanded = expandedId === m.id;
                   const isDirect = m.audience === "personal";
@@ -352,16 +387,18 @@ export function InboxNavButton({ className }: Props) {
                               >
                                 {m.subject}
                               </span>
-                              <ChevronDown
-                                aria-hidden
-                                size={14}
-                                strokeWidth={2.25}
-                                className={cn(
-                                  "mt-0.5 shrink-0 text-text-subtle transition-transform duration-150",
-                                  "opacity-70 group-hover:opacity-100",
-                                  expanded && "rotate-180",
-                                )}
-                              />
+                              {bodyPreview.truncated ? (
+                                <ChevronDown
+                                  aria-hidden
+                                  size={14}
+                                  strokeWidth={2.25}
+                                  className={cn(
+                                    "mt-0.5 shrink-0 text-text-subtle transition-transform duration-150",
+                                    "opacity-70 group-hover:opacity-100",
+                                    expanded && "rotate-180",
+                                  )}
+                                />
+                              ) : null}
                             </span>
 
                             {!expanded ? (
@@ -374,11 +411,11 @@ export function InboxNavButton({ className }: Props) {
                                     from={fromLabel}
                                     when={formatInboxWhen(m.created_at)}
                                   />
-                                  <span className="shrink-0 text-[10px] font-medium text-text-subtle opacity-80 group-hover:opacity-100">
-                                    {bodyPreview.truncated
-                                      ? "Expand…"
-                                      : "Details"}
-                                  </span>
+                                  {bodyPreview.truncated ? (
+                                    <span className="shrink-0 text-[10px] font-medium text-text-subtle opacity-80 group-hover:opacity-100">
+                                      Expand…
+                                    </span>
+                                  ) : null}
                                 </span>
                               </span>
                             ) : null}
@@ -422,7 +459,6 @@ export function InboxNavButton({ className }: Props) {
                                   [m.id]: e.target.value,
                                 }))
                               }
-                              onFocus={() => void markRead(m.id)}
                               maxLength={4000}
                               placeholder="Reply to ESAT Camp…"
                               aria-label={`Reply to ${m.subject}`}
