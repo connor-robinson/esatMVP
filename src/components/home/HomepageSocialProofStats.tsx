@@ -1,6 +1,7 @@
 import { CircleUser, ListChecks } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { HomepageSocialProofStats } from "@/lib/homepage/socialProofTypes";
+import { applyHomepageSocialProofDisplayOffsets } from "@/config/homepageSocialProofDisplay";
 
 type StatItem = {
   value: number;
@@ -15,14 +16,15 @@ export function HomepageSocialProofStatsDisplay({
   stats: HomepageSocialProofStats;
   className?: string;
 }) {
+  const display = applyHomepageSocialProofDisplayOffsets(stats);
   const items: StatItem[] = [
     {
-      value: stats.users,
+      value: display.users,
       label: "Users",
       icon: CircleUser,
     },
     {
-      value: stats.questionsAnswered,
+      value: display.questionsAnswered,
       label: "Questions done",
       icon: ListChecks,
     },

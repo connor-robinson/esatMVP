@@ -58,6 +58,9 @@ async function loadHomepageSocialProofStats(): Promise<HomepageSocialProofStats>
  * Exact social-proof counts, cached for a few hours so the homepage
  * does not hit Supabase/GA on every request.
  *
+ * Marketing display offsets (deleted seed cohort) are applied only in
+ * `HomepageSocialProofStatsDisplay`, not here, so admin/analytics stay exact.
+ *
  * Refresh happens on the next visit after the TTL expires (ISR-style),
  * not on a background timer. Add a Vercel Cron later if you want a
  * guaranteed warm refresh with no visitor.
