@@ -52,6 +52,12 @@ const CARDS: Array<{
     body: "Tips and Tricks opt-in stats and product email sends.",
     key: null,
   },
+  {
+    href: "/admin/surveys",
+    title: "Surveys",
+    body: "Onboarding answers, referral codes, and UI preferences.",
+    key: null,
+  },
 ];
 
 export default function AdminOverviewPage() {
