@@ -340,10 +340,6 @@ export default function PricingPageClient() {
               will be applied automatically at checkout.
             </p>
           ) : null}
-          <p className="mx-auto mt-4 max-w-xl text-sm text-text-muted">
-            Have a code without a link? You can still enter it in Stripe
-            Checkout when you pay.
-          </p>
         </div>
 
         <PricingTable
@@ -405,6 +401,10 @@ export default function PricingPageClient() {
               </Link>
             </p>
           )}
+          <p className="mx-auto mt-6 max-w-xl text-sm text-text-muted">
+            Have a code without a link? You can still enter it in Stripe
+            Checkout when you pay.
+          </p>
         </div>
       </Container>
     </div>
