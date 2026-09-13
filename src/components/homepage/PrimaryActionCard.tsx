@@ -37,7 +37,7 @@ export function PrimaryActionCard({
   const { startTrial, loading } = useStartMonthlyTrialCheckout();
   const [trialError, setTrialError] = useState<string | null>(null);
 
-  const eyebrow = isTrial ? "Upgrade" : "Your next step";
+  const eyebrow = isTrial ? "Limited time offer" : "Your next step";
 
   const onTrialClick = async () => {
     setTrialError(null);
@@ -72,7 +72,7 @@ export function PrimaryActionCard({
         <p
           className={cn(
             "text-xs font-semibold uppercase tracking-[0.12em]",
-            isTrial ? "text-[#4C8BF5]" : "text-primary",
+            isTrial ? "text-error" : "text-primary",
           )}
         >
           {eyebrow}
