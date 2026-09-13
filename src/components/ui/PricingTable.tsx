@@ -4,6 +4,7 @@ import { ReactNode, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Check, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { OWN_REFERRAL_CODE_MESSAGE } from "@/lib/feedbackReferral/codes";
 
 export interface PricingTier {
   id: string;
@@ -62,7 +63,8 @@ export function PricingTable({
             isLoading ||
             tier.ctaLabel.startsWith("Available after") ||
             tier.ctaLabel.startsWith("Ends ") ||
-            tier.ctaLabel === "Downgrade via profile";
+            tier.ctaLabel === "Downgrade via profile" ||
+            tier.ctaLabel === OWN_REFERRAL_CODE_MESSAGE;
           const isActive = activeId === tier.id;
           const showPrimaryCta = !isFree && !isDisabledCta;
 
@@ -191,6 +193,8 @@ export function PricingTable({
                 disabled={isDisabledCta}
                 className={cn(
                   "w-full rounded-organic-lg border-0 font-semibold transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                  tier.ctaLabel === OWN_REFERRAL_CODE_MESSAGE &&
+                    "whitespace-normal px-3 text-xs leading-snug sm:text-sm",
                   showPrimaryCta && "hover:scale-[1.025] active:scale-[1.01]",
                   isActive &&
                     showPrimaryCta &&

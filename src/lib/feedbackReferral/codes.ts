@@ -3,6 +3,10 @@ import { randomBytes } from "crypto";
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 export const REFERRAL_CODE_PREFIX = "CAMP50";
 
+/** Shown on pricing when someone opens their own friend-code link. */
+export const OWN_REFERRAL_CODE_MESSAGE =
+  "You cannot use your own referral code.";
+
 export function normalizeReferralCode(raw: string | null | undefined): string {
   return (raw ?? "").trim().toUpperCase().replace(/\s+/g, "");
 }
