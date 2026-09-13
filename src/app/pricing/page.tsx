@@ -70,7 +70,7 @@ export default function PricingPage() {
 
   return (
     <>
-      <section className="border-b border-border/40 bg-background px-4 pb-2 pt-10 sm:px-6">
+      <section className="bg-background px-4 pb-0 pt-10 sm:px-6">
         <div className="mx-auto max-w-3xl text-center">
           <h1 className="text-3xl font-bold tracking-tight text-text sm:text-4xl md:text-[2.5rem] md:leading-tight">
             Choose your plan

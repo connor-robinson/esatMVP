@@ -308,9 +308,9 @@ export default function PricingPageClient() {
         />
       </div>
 
-      <Container size="xl" className="relative pb-16 pt-12 sm:pb-24 sm:pt-16">
+      <Container size="xl" className="relative pb-16 pt-4 sm:pb-24 sm:pt-5">
         {fromSettings ? (
-          <div className="mb-8 sm:mb-10">
+          <div className="mb-6 sm:mb-8">
             <Link
               href="/profile"
               className="inline-flex items-center gap-2 text-sm font-medium text-text-muted transition-colors hover:text-text"
@@ -321,26 +321,36 @@ export default function PricingPageClient() {
           </div>
         ) : null}
 
-        <div className="mb-10 text-center sm:mb-12">
-          {hasFullAccess && periodEndLabel && isRecurringPaid ? (
-            <p className="mt-3 text-sm text-text-muted">
-              Current plan renews / ends {periodEndLabel}
-              {cancelAtPeriodEnd ? " (set to end, no further renewals)" : ""}.
-            </p>
-          ) : null}
-          {banner ? (
-            <p className="mx-auto mt-4 max-w-xl rounded-organic-lg bg-primary/15 px-4 py-3 text-sm text-text">
-              {banner}
-            </p>
-          ) : null}
-          {codeFromUrl ? (
-            <p className="mx-auto mt-4 max-w-xl rounded-organic-lg bg-surface-elevated px-4 py-3 text-sm text-text">
-              Friend code{" "}
-              <span className="font-mono font-semibold">{codeFromUrl}</span>{" "}
-              will be applied automatically at checkout.
-            </p>
-          ) : null}
-        </div>
+        {hasFullAccess && periodEndLabel && isRecurringPaid ? (
+          <p className="mb-4 text-center text-sm text-text-muted">
+            Current plan renews / ends {periodEndLabel}
+            {cancelAtPeriodEnd ? " (set to end, no further renewals)" : ""}.
+          </p>
+        ) : null}
+        {banner ? (
+          <p className="mx-auto mb-4 max-w-xl rounded-organic-lg bg-primary/15 px-4 py-3 text-center text-sm text-text">
+            {banner}
+          </p>
+        ) : null}
+        {codeFromUrl ? (
+          <div className="relative mx-auto mb-5 max-w-md overflow-hidden rounded-organic-lg border border-primary/25 bg-surface-elevated px-4 py-3 shadow-md sm:mb-6">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(74,222,128,0.18),transparent_55%)]"
+            />
+            <div className="relative z-10">
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-[#4ADE80]">
+                Friend code ready
+              </p>
+              <p className="mt-1 text-sm leading-snug text-text">
+                <span className="font-mono font-semibold text-primary">
+                  {codeFromUrl}
+                </span>{" "}
+                will be applied automatically at checkout.
+              </p>
+            </div>
+          </div>
+        ) : null}
 
         <PricingTable
           tiers={tiers}
