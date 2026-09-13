@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BRAND_CONFIG } from "@/config/brand";
 import { openCookiePreferences } from "@/lib/ga";
-import { shouldHideSiteChromeForPaper } from "@/lib/papers/activePaperSessionClient";
+import { isPaperImmersiveRoute } from "@/lib/papers/activePaperSessionClient";
 
 /**
  * Site-wide legal strip: cookie policy + reopen analytics preferences.
@@ -12,7 +12,8 @@ import { shouldHideSiteChromeForPaper } from "@/lib/papers/activePaperSessionCli
 export function SiteFooter() {
   const pathname = usePathname();
 
-  if (shouldHideSiteChromeForPaper(pathname)) {
+  // Keep mark/solve chrome clean even when hub mark shows the main navbar.
+  if (isPaperImmersiveRoute(pathname)) {
     return null;
   }
 
