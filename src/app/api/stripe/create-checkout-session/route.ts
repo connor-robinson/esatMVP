@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
       ? {
           discounts: [
             { promotion_code: referralDiscount.promotionCodeId },
-          ] as const,
+          ],
         }
       : { allow_promotion_codes: true as const };
 

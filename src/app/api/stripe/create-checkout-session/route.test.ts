@@ -47,7 +47,9 @@ const {
     subscriptionsList,
     pricesRetrieve,
     supabaseFrom,
-    resolveCheckoutReferralDiscount: vi.fn(async () => null),
+    resolveCheckoutReferralDiscount: vi.fn(
+      async (): Promise<{ code: string; promotionCodeId: string } | null> => null,
+    ),
     FeedbackReferralError,
     getStripe: vi.fn(() => ({
       customers: { create: customersCreate },
