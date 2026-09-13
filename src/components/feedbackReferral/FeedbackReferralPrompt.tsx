@@ -118,7 +118,7 @@ export function FeedbackReferralPrompt() {
         aria-label="Dismiss for now"
         onClick={dismissSoft}
       />
-      <div className="relative w-full max-w-md">
+      <div className="relative w-full max-w-lg">
         <FeedbackReferralInviteCard
           onStart={() => {
             clearFeedbackReferralEngagement();

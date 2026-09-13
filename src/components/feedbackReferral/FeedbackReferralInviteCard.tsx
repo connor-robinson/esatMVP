@@ -20,26 +20,25 @@ export function FeedbackReferralInviteCard({
       aria-modal="true"
       aria-labelledby="feedback-referral-invite-title"
       className={cn(
-        "relative w-full max-w-md rounded-[1.5rem] bg-surface-elevated p-6 sm:p-8",
+        "relative w-full max-w-lg rounded-[1.5rem] bg-surface-elevated p-6 sm:p-8",
         "shadow-modal-card ring-1 ring-text/[0.06]",
         className,
       )}
     >
-      <p className="text-xs font-medium uppercase tracking-[0.14em] text-text-muted">
+      <p className="text-xs font-medium uppercase tracking-[0.14em] text-[#4C8BF5]">
         About 1 minute
       </p>
       <h2
         id="feedback-referral-invite-title"
         className="mt-2 text-xl font-bold tracking-tight text-text sm:text-2xl"
       >
-        Got a minute to help?
+        Get 50% off for a friend
       </h2>
       <p className="mt-3 text-sm leading-relaxed text-text-muted">
-        Answer a few questions to unlock 50% off for one friend.
+        Answer a few questions to unlock a discount code for your friend.
       </p>
       <p className="mt-2 text-xs leading-relaxed text-text-subtle">
-        They apply the code in Stripe Checkout. One use. Not on your own
-        account.
+        Apply the code in Stripe Checkout. One use. Not on your own account.
       </p>
 
       <div className="mt-7 flex flex-col gap-2.5">
