@@ -249,15 +249,22 @@
 
 .stem-table table {
   border-collapse: collapse;
-  width: 100%;
+  width: auto;
+  max-width: 100%;
   font-size: 0.9em;
+  background: transparent;
 }
 
 .stem-table th,
 .stem-table td {
-  padding: 0.5rem 0.75rem;
+  border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+  padding: 0.45rem 0.7rem;
   text-align: left;
-  vertical-align: top;
+  vertical-align: middle;
+}
+
+.stem-table thead th {
+  font-weight: 650;
 }
 
 .stem-diagram {

@@ -35,6 +35,93 @@ function isMarkdownTableSeparator(line: string): boolean {
   return parts.every((part) => /^:?-{3,}:?$/.test(part));
 }
 
+const MD_TABLE_SEP_ON_LINE_RE =
+  /\|[\t ]*:?-{3,}[\t ]*(?:\|[\t ]*:?-{3,}[\t ]*)+\|?/;
+
+function formatMarkdownTableRow(cells: string[]): string {
+  return `| ${cells.map((c) => c.trim()).join(" | ")} |`;
+}
+
+/**
+ * Expand a single physical line that embeds a collapsed GFM table
+ * (`| H1 | H2 | |---|---| | r1 | r2 |`) into multi-line table rows.
+ * Returns one or more lines to splice into the stem.
+ */
+function expandCollapsedTableInLine(line: string): string[] {
+  const sepMatch = line.match(MD_TABLE_SEP_ON_LINE_RE);
+  if (!sepMatch || sepMatch.index == null) return [line];
+
+  const sep = sepMatch[0];
+  const trimmed = line.trim();
+  // Already a dedicated separator line in a multi-line table.
+  if (isMarkdownTableSeparator(trimmed)) return [line];
+
+  const colCount = splitMarkdownTableCellLine(sep).length;
+  if (colCount < 1) return [line];
+
+  const sepIndex = sepMatch.index;
+  const before = line.slice(0, sepIndex);
+  const after = line.slice(sepIndex + sep.length);
+
+  const headerRe = new RegExp(`((?:\\|[^|]*){${colCount}}\\|)\\s*$`);
+  const headerMatch = before.match(headerRe);
+  if (!headerMatch || headerMatch.index == null) return [line];
+
+  const prose = before.slice(0, headerMatch.index).replace(/[ \t]+$/g, "");
+  const headerCells = splitMarkdownTableCellLine(headerMatch[1]);
+  if (headerCells.length !== colCount) return [line];
+
+  let rest = after;
+  const bodyRows: string[][] = [];
+  const rowRe = new RegExp(`^\\s*((?:\\|[^|]*){${colCount}}\\|)`);
+  for (;;) {
+    const rowMatch = rest.match(rowRe);
+    if (!rowMatch) break;
+    const cells = splitMarkdownTableCellLine(rowMatch[1]);
+    if (cells.length !== colCount) break;
+    bodyRows.push(cells);
+    rest = rest.slice(rowMatch[0].length);
+  }
+
+  const trailing = rest.replace(/^[ \t]+/, "");
+  const sepCells = splitMarkdownTableCellLine(sep).map((part) =>
+    part.replace(/\s+/g, ""),
+  );
+  const tableLines = [
+    formatMarkdownTableRow(headerCells),
+    formatMarkdownTableRow(sepCells),
+    ...bodyRows.map(formatMarkdownTableRow),
+  ];
+
+  const result: string[] = [];
+  if (prose.length > 0) {
+    result.push(prose);
+    result.push("");
+  }
+  result.push(...tableLines);
+  if (trailing.length > 0) {
+    result.push("");
+    result.push(...expandCollapsedTableInLine(trailing));
+  }
+  return result;
+}
+
+/**
+ * Bank stems often store GFM tables on one line:
+ * `| H1 | H2 | |---|---| | r1 | r2 |`
+ * Expand those into multi-line tables so the StemContent parser can detect them.
+ */
+export function expandCollapsedMarkdownTables(text: string): string {
+  if (!text || !text.includes("|")) return text;
+  const normalized = String(text).replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  const lines = normalized.split("\n");
+  const out: string[] = [];
+  for (const line of lines) {
+    out.push(...expandCollapsedTableInLine(line));
+  }
+  return out.join("\n");
+}
+
 function shieldMarkdownTables(text: string): { masked: string; tableBlocks: string[] } {
   const lines = text.split("\n");
   const tableBlocks: string[] = [];
@@ -158,6 +245,8 @@ export function normalizeStemWhitespace(stem: string): string {
   if (stem == null) return "";
   let text = String(stem).replace(/\r\n/g, "\n").replace(/\r/g, "\n");
   if (!text.trim()) return text;
+
+  text = expandCollapsedMarkdownTables(text);
 
   const { masked: tableMasked, tableBlocks } = shieldMarkdownTables(text);
   const { masked: m0, blocks } = shield(tableMasked);

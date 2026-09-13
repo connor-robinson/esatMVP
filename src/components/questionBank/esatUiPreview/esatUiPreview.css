@@ -536,6 +536,21 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
 
 .esat-ui-preview-root .stem-table table {
   font-size: 1em;
+  width: auto;
+  max-width: 100%;
+  background: #fff;
+}
+
+.esat-ui-preview-root .stem-table th,
+.esat-ui-preview-root .stem-table td {
+  border: 1px solid #1a1a1a;
+  padding: 0.4rem 0.75rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.esat-ui-preview-root .stem-table thead th {
+  font-weight: 700;
 }
 
 .eup-radio-body,
