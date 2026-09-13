@@ -336,159 +336,39 @@ export default function AdminReportedQuestionsPage() {
   return (
     <div className="relative min-h-screen bg-surface">
       <div className="sticky top-0 z-40 border-b border-amber-500/25 bg-amber-50/95 px-4 py-3 backdrop-blur dark:bg-amber-950/95">
-        <div className="mx-auto flex max-w-5xl flex-col gap-3">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-800/80 dark:text-amber-200/80">
-                Reported questions · {index + 1} of {items.length} ·{" "}
-                {current.meta.reason}
-              </p>
-              <p className="mt-1 text-sm font-medium text-text">
-                AI question bank · {current.meta.db.subjects} ·{" "}
-                {current.meta.topicLabel}
-              </p>
-              <p className="mt-0.5 text-xs text-text-muted">
-                {current.meta.sessionNote}
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-2 text-xs">
-              <Link
-                href="/admin/question-bank"
-                className="text-text-muted underline-offset-2 hover:underline"
-              >
-                Stats
-              </Link>
-              <Link
-                href="/admin/support"
-                className="text-text-muted underline-offset-2 hover:underline"
-              >
-                Support
-              </Link>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              disabled={Boolean(busy)}
-              onClick={() => void approveQuestion()}
-              className="rounded-organic-md bg-secondary/30 px-3 py-1.5 text-sm font-semibold text-text disabled:opacity-50"
-            >
-              {busy === "approve" ? "Approving…" : "Approve"}
-            </button>
-            <button
-              type="button"
-              disabled={Boolean(busy)}
-              onClick={() => {
-                setEditing((v) => !v);
-                setActionMsg(null);
-              }}
-              className={cn(
-                "rounded-organic-md px-3 py-1.5 text-sm font-semibold",
-                editing
-                  ? "bg-secondary/25 text-text"
-                  : "bg-surface-mid text-text",
-              )}
-            >
-              {editing ? "Done editing" : "Edit"}
-            </button>
-            <button
-              type="button"
-              disabled={Boolean(busy)}
-              onClick={() => void deleteQuestion()}
-              className="rounded-organic-md bg-red-500/15 px-3 py-1.5 text-sm font-semibold text-red-700 dark:text-red-300 disabled:opacity-50"
-            >
-              {busy === "delete" ? "Deleting…" : "Delete"}
-            </button>
-            <button
-              type="button"
-              disabled={Boolean(busy) || !current.meta.userId}
-              onClick={() => void sendThankYou()}
-              className="rounded-organic-md bg-[#2E79B5]/20 px-3 py-1.5 text-sm font-semibold text-text disabled:opacity-50"
-              title={
-                current.meta.userId
-                  ? "Send the prefilled thank-you and resolve"
-                  : "No linked account"
-              }
-            >
-              {busy === "send" ? "Sending…" : "Send thank-you"}
-            </button>
-          </div>
-
-          <div className="rounded-organic-md border border-border-subtle bg-surface-elevated/80 px-3 py-2">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted">
-              Prefill reply · {REPORT_THANK_YOU_SUBJECT}
+        <div className="mx-auto flex max-w-5xl flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-800/80 dark:text-amber-200/80">
+              Reported questions · {index + 1} of {items.length} ·{" "}
+              {current.meta.reason}
             </p>
-            <pre className="mt-1 whitespace-pre-wrap font-sans text-xs leading-relaxed text-text-muted">
-              {REPORT_THANK_YOU_BODY}
-            </pre>
+            <p className="mt-1 text-sm font-medium text-text">
+              AI question bank · {current.meta.db.subjects} ·{" "}
+              {current.meta.topicLabel}
+            </p>
+            <p className="mt-0.5 text-xs text-text-muted">
+              {current.meta.sessionNote}
+            </p>
+            {actionMsg ? (
+              <p className="mt-2 text-sm text-text-muted">{actionMsg}</p>
+            ) : null}
           </div>
-
-          {actionMsg ? (
-            <p className="text-sm text-text-muted">{actionMsg}</p>
-          ) : null}
+          <div className="flex flex-wrap gap-2 text-xs">
+            <Link
+              href="/admin/question-bank"
+              className="text-text-muted underline-offset-2 hover:underline"
+            >
+              Stats
+            </Link>
+            <Link
+              href="/admin/support"
+              className="text-text-muted underline-offset-2 hover:underline"
+            >
+              Support
+            </Link>
+          </div>
         </div>
       </div>
-
-      {editing ? (
-        <div className="mx-auto max-w-3xl space-y-4 px-4 py-6">
-          <p className="text-xs text-text-subtle">
-            Edits autosave to Supabase in the background. A small notice appears
-            when saved; you can keep working.
-          </p>
-          <label className="block text-xs font-medium text-text-muted">
-            Stem
-            <textarea
-              value={draftStem}
-              onChange={(e) => setDraftStem(e.target.value)}
-              rows={8}
-              className="mt-1.5 w-full rounded-organic-md border border-border-subtle bg-surface-mid px-3 py-2 font-mono text-sm text-text"
-            />
-          </label>
-          <div className="space-y-2">
-            <p className="text-xs font-medium text-text-muted">Options</p>
-            {optionLetters(displayQuestion).map((letter) => (
-              <label key={letter} className="flex items-start gap-2 text-sm">
-                <span className="mt-2 w-6 font-semibold text-text">{letter}</span>
-                <textarea
-                  value={draftOptions[letter] ?? ""}
-                  onChange={(e) =>
-                    setDraftOptions((prev) => ({
-                      ...prev,
-                      [letter]: e.target.value,
-                    }))
-                  }
-                  rows={2}
-                  className="w-full rounded-organic-md border border-border-subtle bg-surface-mid px-3 py-2 font-mono text-sm text-text"
-                />
-              </label>
-            ))}
-          </div>
-          <label className="block text-xs font-medium text-text-muted">
-            Correct option
-            <select
-              value={draftCorrect}
-              onChange={(e) => setDraftCorrect(e.target.value)}
-              className="mt-1.5 rounded-organic-md border border-border-subtle bg-surface-mid px-3 py-2 text-sm text-text"
-            >
-              {optionLetters(displayQuestion).map((letter) => (
-                <option key={letter} value={letter}>
-                  {letter}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="block text-xs font-medium text-text-muted">
-            Solution
-            <textarea
-              value={draftSolution}
-              onChange={(e) => setDraftSolution(e.target.value)}
-              rows={8}
-              className="mt-1.5 w-full rounded-organic-md border border-border-subtle bg-surface-mid px-3 py-2 font-mono text-sm text-text"
-            />
-          </label>
-        </div>
-      ) : null}
 
       <QuestionBankEsatSessionShell
         question={displayQuestion}
@@ -534,7 +414,141 @@ export default function AdminReportedQuestionsPage() {
         onCloseExplanation={() => setShowExplanation(false)}
         sessionId={current.meta.sessionId}
         belowQuestion={
-          <QuestionDetailsPanel meta={current.meta} question={displayQuestion} />
+          <div className="space-y-4">
+            <QuestionDetailsPanel
+              meta={current.meta}
+              question={displayQuestion}
+            />
+
+            <section className="rounded-organic-xl border border-border-subtle bg-surface-elevated px-4 py-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted">
+                Review actions
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  disabled={Boolean(busy)}
+                  onClick={() => void approveQuestion()}
+                  className="rounded-organic-md bg-secondary/30 px-3 py-2 text-sm font-semibold text-text disabled:opacity-50"
+                >
+                  {busy === "approve" ? "Approving…" : "Approve"}
+                </button>
+                <button
+                  type="button"
+                  disabled={Boolean(busy)}
+                  onClick={() => {
+                    setEditing((v) => !v);
+                    setActionMsg(null);
+                  }}
+                  className={cn(
+                    "rounded-organic-md px-3 py-2 text-sm font-semibold",
+                    editing
+                      ? "bg-secondary/25 text-text"
+                      : "bg-surface-mid text-text",
+                  )}
+                >
+                  {editing ? "Done editing" : "Edit"}
+                </button>
+                <button
+                  type="button"
+                  disabled={Boolean(busy)}
+                  onClick={() => void deleteQuestion()}
+                  className="rounded-organic-md bg-red-500/15 px-3 py-2 text-sm font-semibold text-red-700 dark:text-red-300 disabled:opacity-50"
+                >
+                  {busy === "delete" ? "Deleting…" : "Delete"}
+                </button>
+                <button
+                  type="button"
+                  disabled={Boolean(busy) || !current.meta.userId}
+                  onClick={() => void sendThankYou()}
+                  className="rounded-organic-md bg-[#2E79B5]/20 px-3 py-2 text-sm font-semibold text-text disabled:opacity-50"
+                  title={
+                    current.meta.userId
+                      ? "Send the prefilled thank-you and resolve"
+                      : "No linked account"
+                  }
+                >
+                  {busy === "send" ? "Sending…" : "Send thank-you"}
+                </button>
+              </div>
+
+              <div className="mt-4 rounded-organic-md border border-border-subtle bg-surface-mid/40 px-3 py-2">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted">
+                  Prefill reply · {REPORT_THANK_YOU_SUBJECT}
+                </p>
+                <pre className="mt-1 whitespace-pre-wrap font-sans text-xs leading-relaxed text-text-muted">
+                  {REPORT_THANK_YOU_BODY}
+                </pre>
+              </div>
+
+              {editing ? (
+                <div className="mt-4 space-y-4 border-t border-border-subtle pt-4">
+                  <p className="text-xs text-text-subtle">
+                    Edits autosave to Supabase in the background. A small notice
+                    appears when saved; you can keep working.
+                  </p>
+                  <label className="block text-xs font-medium text-text-muted">
+                    Stem
+                    <textarea
+                      value={draftStem}
+                      onChange={(e) => setDraftStem(e.target.value)}
+                      rows={8}
+                      className="mt-1.5 w-full rounded-organic-md border border-border-subtle bg-surface-mid px-3 py-2 font-mono text-sm text-text"
+                    />
+                  </label>
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-text-muted">
+                      Options
+                    </p>
+                    {optionLetters(displayQuestion).map((letter) => (
+                      <label
+                        key={letter}
+                        className="flex items-start gap-2 text-sm"
+                      >
+                        <span className="mt-2 w-6 font-semibold text-text">
+                          {letter}
+                        </span>
+                        <textarea
+                          value={draftOptions[letter] ?? ""}
+                          onChange={(e) =>
+                            setDraftOptions((prev) => ({
+                              ...prev,
+                              [letter]: e.target.value,
+                            }))
+                          }
+                          rows={2}
+                          className="w-full rounded-organic-md border border-border-subtle bg-surface-mid px-3 py-2 font-mono text-sm text-text"
+                        />
+                      </label>
+                    ))}
+                  </div>
+                  <label className="block text-xs font-medium text-text-muted">
+                    Correct option
+                    <select
+                      value={draftCorrect}
+                      onChange={(e) => setDraftCorrect(e.target.value)}
+                      className="mt-1.5 rounded-organic-md border border-border-subtle bg-surface-mid px-3 py-2 text-sm text-text"
+                    >
+                      {optionLetters(displayQuestion).map((letter) => (
+                        <option key={letter} value={letter}>
+                          {letter}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="block text-xs font-medium text-text-muted">
+                    Solution
+                    <textarea
+                      value={draftSolution}
+                      onChange={(e) => setDraftSolution(e.target.value)}
+                      rows={8}
+                      className="mt-1.5 w-full rounded-organic-md border border-border-subtle bg-surface-mid px-3 py-2 font-mono text-sm text-text"
+                    />
+                  </label>
+                </div>
+              ) : null}
+            </section>
+          </div>
         }
       />
 
