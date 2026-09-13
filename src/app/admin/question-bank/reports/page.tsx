@@ -41,6 +41,7 @@ export default function AdminReportedQuestionsPage() {
   const [busy, setBusy] = useState<string | null>(null);
   const [actionMsg, setActionMsg] = useState<string | null>(null);
   const [thankYouOpen, setThankYouOpen] = useState(false);
+  const [thankYouDraft, setThankYouDraft] = useState("");
   const [toasts, setToasts] = useState<SaveToast[]>([]);
   const saveTimer = useRef<number | null>(null);
   const toastId = useRef(0);
@@ -96,12 +97,15 @@ export default function AdminReportedQuestionsPage() {
     setShowHint(false);
     setActionMsg(null);
     setThankYouOpen(false);
+    setThankYouDraft("");
   }, [current?.meta.ticketId, current?.question.id]);
 
-  const thankYouBody = useMemo(
-    () => buildReportThankYouBody(current?.meta.username),
-    [current?.meta.username],
-  );
+  const openThankYou = useCallback(() => {
+    if (!current) return;
+    setActionMsg(null);
+    setThankYouDraft(buildReportThankYouBody(current.meta.username));
+    setThankYouOpen(true);
+  }, [current]);
 
   const persistQuestion = useCallback(
     async (questionId: string, patch: Record<string, unknown>) => {
@@ -218,6 +222,11 @@ export default function AdminReportedQuestionsPage() {
       setActionMsg("No linked user account to message.");
       return;
     }
+    const body = thankYouDraft.trim();
+    if (!body) {
+      setActionMsg("Thank-you message cannot be empty.");
+      return;
+    }
     setBusy("send");
     setActionMsg(null);
     try {
@@ -228,7 +237,7 @@ export default function AdminReportedQuestionsPage() {
           source: "support",
           id: current.meta.ticketId,
           subject: REPORT_THANK_YOU_SUBJECT,
-          body: thankYouBody,
+          body,
           markResolved: true,
         }),
       });
@@ -467,14 +476,11 @@ export default function AdminReportedQuestionsPage() {
             <button
               type="button"
               disabled={Boolean(busy) || !current.meta.userId}
-              onClick={() => {
-                setActionMsg(null);
-                setThankYouOpen(true);
-              }}
+              onClick={openThankYou}
               className="eup-footer-action text-sm font-semibold disabled:opacity-50"
               title={
                 current.meta.userId
-                  ? "Preview and send thank-you"
+                  ? "Edit and send thank-you"
                   : "No linked account"
               }
             >
@@ -587,9 +593,16 @@ export default function AdminReportedQuestionsPage() {
             <p className="mt-1 text-xs text-text-muted">
               To {reporterLabel(current.meta)} · {REPORT_THANK_YOU_SUBJECT}
             </p>
-            <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-text">
-              {thankYouBody}
-            </p>
+            <label className="mt-4 block text-xs font-medium text-text-muted">
+              Message
+              <textarea
+                value={thankYouDraft}
+                onChange={(e) => setThankYouDraft(e.target.value)}
+                rows={8}
+                disabled={Boolean(busy)}
+                className="mt-1.5 w-full resize-y rounded-organic-md border border-border-subtle bg-surface-mid px-3 py-2 text-sm leading-relaxed text-text disabled:opacity-50"
+              />
+            </label>
             <div className="mt-5 flex flex-wrap justify-end gap-2">
               <button
                 type="button"
@@ -601,7 +614,11 @@ export default function AdminReportedQuestionsPage() {
               </button>
               <button
                 type="button"
-                disabled={Boolean(busy) || !current.meta.userId}
+                disabled={
+                  Boolean(busy) ||
+                  !current.meta.userId ||
+                  !thankYouDraft.trim()
+                }
                 onClick={() => void sendThankYou()}
                 className="rounded-organic-md bg-[#2E79B5] px-3 py-2 text-sm font-semibold text-white disabled:opacity-50"
               >
