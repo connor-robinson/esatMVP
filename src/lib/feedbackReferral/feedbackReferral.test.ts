@@ -212,7 +212,7 @@ describe("survey validation", () => {
     const error = validateFeedbackReferralSurvey([
       ...baseAnswers,
       { questionId: "improve_first", value: withDetail },
-      { questionId: "works_well", value: "Calibration felt clear and quick." },
+      { questionId: "anything_else", value: "Calibration felt clear and quick." },
     ]);
     expect(error).toBeNull();
   });
@@ -222,7 +222,6 @@ describe("survey validation", () => {
       ...baseAnswers,
       { questionId: "almost_stopped_technical", value: "Timer froze on mobile mid paper." },
       { questionId: "improve_first", value: improve },
-      { questionId: "works_well", value: "Calibration felt clear and quick." },
       { questionId: "anything_else", value: "Would love more physics later." },
     ]);
     // technical detail without technical selected is ignored; still valid
@@ -249,7 +248,7 @@ describe("survey validation", () => {
       { questionId: "almost_stopped", value: ["nothing"] },
       { questionId: "camp_missing", value: ["more_mock_papers"] },
       { questionId: "improve_first", value: improve },
-      { questionId: "works_well", value: improve },
+      { questionId: "anything_else", value: improve },
     ]);
     expect(error).toMatch(/different answers/i);
   });
@@ -270,9 +269,9 @@ describe("step completion", () => {
     minLength: 28,
   };
   const optionalQ: FeedbackQuestion = {
-    id: "works_well",
+    id: "anything_else",
     type: "longtext",
-    label: "Liked?",
+    label: "Anything else?",
     required: false,
   };
   const recommendQ: FeedbackQuestion = {
