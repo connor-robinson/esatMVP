@@ -10,6 +10,8 @@ import {
   hasFeedbackReferralDontShowAgain,
   hasFeedbackReferralEngagement,
   hasFeedbackReferralSessionDismiss,
+  recordFeedbackReferralPromptDismiss,
+  setFeedbackReferralDontShowAgain,
   setFeedbackReferralReturnTo,
 } from "@/lib/feedbackReferral/promptStorage";
 import { markFeedbackReferralAsked } from "@/lib/feedbackReferral/markAsked";
@@ -29,7 +31,7 @@ const HIDDEN_PATH_PREFIXES = [
 /**
  * Soft invite for the feedback-for-referral survey.
  * Only appears after a meaningful practice action (paper / session), not on login.
- * Backdrop clicks do nothing. The only exits are Start, or leaving the page.
+ * Backdrop clicks do nothing.
  */
 export function FeedbackReferralPrompt() {
   const session = useSupabaseSession();
@@ -122,6 +124,15 @@ export function FeedbackReferralPrompt() {
               `${pathname}${typeof window !== "undefined" ? window.location.search : ""}`,
             );
             router.push("/feedback");
+          }}
+          onNotNow={() => {
+            recordFeedbackReferralPromptDismiss();
+            setOpen(false);
+          }}
+          onDontShowAgain={() => {
+            setFeedbackReferralDontShowAgain();
+            clearFeedbackReferralEngagement();
+            setOpen(false);
           }}
         />
       </div>

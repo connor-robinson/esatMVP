@@ -125,6 +125,8 @@ export default function DevFeedbackReferralPage() {
             >
               <FeedbackReferralInviteCard
                 onStart={() => setStage("survey")}
+                onNotNow={() => setStage("dismissed")}
+                onDontShowAgain={() => setStage("dismissed")}
               />
             </motion.div>
           </motion.div>
