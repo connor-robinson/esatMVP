@@ -304,10 +304,15 @@ export default function PapersMarkPage() {
     };
   }, [paperId, questions]);
   
-  // Shared bubble utility (analytics-style) - light mark chrome for all mark sessions.
-  const bubbleClass =
-    "rounded-md bg-white p-4 text-black shadow-none";
+  // Shared bubble utility: same radius/structure; colors follow hub light vs user theme.
+  const bubbleClass = hubMarkPreview
+    ? "rounded-md bg-white p-4 text-black shadow-none"
+    : "rounded-md border border-border-subtle bg-surface-elevated p-4 shadow-none";
   const hubScoreReveal = useHubScoreReveal(hideResultsBehindLogin);
+  const markPanelClass = hubMarkPreview
+    ? "rounded-md bg-[#c8c8d0] shadow-none"
+    : "rounded-md border border-border bg-surface shadow-none";
+  const markRailClass = hubMarkPreview ? "bg-[#c8c8d0]" : "bg-surface";
   
   const pinnedInsights = useMemo(() => {
     return answers
@@ -1093,14 +1098,15 @@ export default function PapersMarkPage() {
     }
   }, [sessionId]);
 
-  // Mark page: force light chrome for this visit only (not the site default).
-  // Hub Start now also keeps the main navbar visible.
+  // Hub Start now mark: force light mode for this visit only (not the site default).
+  // Real mark keeps the user's theme preference.
   useEffect(() => {
+    if (!hubMarkPreview) return;
+    setHubMarkChromeActive(true);
     setThemeOverride("light");
     setIsDarkMode(false);
-    if (hubMarkPreview) setHubMarkChromeActive(true);
     return () => {
-      if (hubMarkPreview) setHubMarkChromeActive(false);
+      setHubMarkChromeActive(false);
       setThemeOverride(null);
     };
   }, [hubMarkPreview, setThemeOverride]);
@@ -1159,22 +1165,32 @@ export default function PapersMarkPage() {
     <Fragment>
       <div
         className={cn(
-          "relative flex min-h-0 flex-col overflow-hidden bg-white text-black",
-          "[&_.text-neutral-100]:text-black [&_.text-neutral-200]:text-black [&_.text-neutral-300]:text-neutral-800 [&_.text-neutral-400]:text-neutral-700 [&_.text-neutral-500]:text-neutral-600 [&_.text-text]:text-black [&_.text-text-muted]:text-neutral-700",
-          hubMarkPreview ? "h-[calc(100dvh-3.75rem)]" : "h-dvh",
+          "relative flex min-h-0 flex-col overflow-hidden",
+          hubMarkPreview
+            ? "h-[calc(100dvh-3.75rem)] bg-white text-black [&_.text-neutral-100]:text-black [&_.text-neutral-200]:text-black [&_.text-neutral-300]:text-neutral-800 [&_.text-neutral-400]:text-neutral-700 [&_.text-neutral-500]:text-neutral-600 [&_.text-text]:text-black [&_.text-text-muted]:text-neutral-700"
+            : "h-dvh bg-background",
         )}
       >
-        <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden bg-white px-3 py-3 sm:px-4 sm:py-4">
+        <div
+          className={cn(
+            "flex min-h-0 flex-1 flex-col gap-3 overflow-hidden px-3 py-3 sm:px-4 sm:py-4",
+            hubMarkPreview && "bg-white",
+          )}
+        >
           <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden lg:flex-row">
             <MarkSectionNav
               active={markSection}
               onSelect={selectMarkSection}
-              light
+              light={hubMarkPreview}
+              railClassName={markRailClass}
             />
 
             <Card
               variant="flat"
-              className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-md bg-[#ebebef] p-0 shadow-none"
+              className={cn(
+                "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden p-0",
+                markPanelClass,
+              )}
             >
 
               {markSection === "overview" && (
@@ -1184,7 +1200,12 @@ export default function PapersMarkPage() {
                     <div className="flex items-start justify-between gap-4">
                       <div className="space-y-2">
                         <div className="flex flex-wrap items-center gap-2">
-                          <div className="text-lg font-semibold text-black">
+                          <div
+                            className={cn(
+                              "text-lg font-semibold",
+                              hubMarkPreview ? "text-black" : "text-text",
+                            )}
+                          >
                             {paperName} {sessionYear ?? ''}{variantDisplay ? `, ${variantDisplay}` : ''}
                           </div>
                           {sectionPills.map((s) => (
@@ -2327,7 +2348,11 @@ export default function PapersMarkPage() {
                       selectedChoice={
                         (answers[selectedIndex]?.choice as Letter | null) ?? null
                       }
-                      colourScheme="review-light"
+                      colourScheme={
+                        hubMarkPreview || !isDarkMode
+                          ? "review-light"
+                          : "review-dark"
+                      }
                     />
 
                     {!treatAsFullAccess && (
@@ -2648,13 +2673,23 @@ export default function PapersMarkPage() {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-            <div className="text-lg font-semibold text-black">
+            <div
+              className={cn(
+                "text-lg font-semibold",
+                hubMarkPreview ? "text-black" : "text-text",
+              )}
+            >
               Session Notes
             </div>
                 {/* Tooltip icon (same style as elsewhere) */}
                 <div className="relative group">
                   <button
-                    className="flex h-5 w-5 items-center justify-center rounded-full bg-black/10 text-black"
+                    className={cn(
+                      "flex h-5 w-5 items-center justify-center rounded-full",
+                      hubMarkPreview
+                        ? "bg-black/10 text-black"
+                        : "bg-surface-mid text-text-muted",
+                    )}
                     title="Notes info"
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -2663,13 +2698,25 @@ export default function PapersMarkPage() {
                       <circle cx="12" cy="8" r="1" />
                     </svg>
                   </button>
-                  <div className="absolute left-0 z-10 hidden w-64 rounded-md border border-black/10 bg-white p-2 text-[11px] text-black shadow-lg group-hover:block">
+                  <div
+                    className={cn(
+                      "absolute left-0 z-10 hidden w-64 rounded-md border p-2 text-[11px] shadow-lg group-hover:block",
+                      hubMarkPreview
+                        ? "border-black/10 bg-white text-black"
+                        : "border-border bg-surface-elevated text-text-muted",
+                    )}
+                  >
                     These notes are private. They are autosaved and available in the Papers archive.
                   </div>
               </div>
               </div>
               <div className="flex items-center gap-2">
-                <div className="text-[11px] text-black/60">
+                <div
+                  className={cn(
+                    "text-[11px]",
+                    hubMarkPreview ? "text-black/60" : "text-text-muted",
+                  )}
+                >
                   Private to you
                 </div>
                 <div className={cn('rounded-md px-2 py-0.5 text-[11px]', sessionNoteStatus === 'saved' ? 'bg-primary/15 text-primary' : 'bg-transparent text-text-muted')}>
@@ -2677,7 +2724,12 @@ export default function PapersMarkPage() {
                 </div>
               </div>
             </div>
-            <div className="text-sm text-black">
+            <div
+              className={cn(
+                "text-sm",
+                hubMarkPreview ? "text-black" : "text-text-muted",
+              )}
+            >
               Summarise your key mistakes and strategies for next time. You’ll be able to review these before your next paper. Notes save automatically and are available in the Papers archive.
             </div>
             <textarea
@@ -2689,7 +2741,12 @@ export default function PapersMarkPage() {
                   sessionNoteDebounceRef.current = setTimeout(() => setSessionNoteStatus('saved'), 700);
                 }}
                 placeholder="Summarise mistakes, patterns, and specific actions to improve next time."
-                className="w-full resize-none rounded-lg border border-black/10 bg-white px-4 py-3 text-sm text-black outline-none ring-0 placeholder:text-black/45 focus:outline-none focus:ring-0"
+                className={cn(
+                  "w-full resize-none rounded-md px-4 py-3 text-sm outline-none ring-0 focus:outline-none focus:ring-0",
+                  hubMarkPreview
+                    ? "border border-black/10 bg-white text-black placeholder:text-black/45"
+                    : "border border-border-subtle bg-surface-elevated text-text placeholder:text-text-muted",
+                )}
                 rows={5}
               />
               {/* Footer row removed per design - saved chip shown in header */}
