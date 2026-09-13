@@ -106,6 +106,7 @@ def _should_reject(
     result: Any | None,
     eff: str,
 ) -> tuple[bool, list[str]]:
+    """Strict siphon: keep only clean ESAT-fit items for human review."""
     reasons: list[str] = []
     if has_presentation_reject(presentation_issues):
         reasons.extend(
@@ -118,26 +119,50 @@ def _should_reject(
     if result is None:
         return False, reasons
 
+    verdict = str(getattr(result, "verdict", "") or "")
+    match = str(getattr(result, "curriculum_match", "") or "")
+    formatting_score = int(getattr(result, "formatting_score", 5) or 5)
+    pacing = int(getattr(result, "pacing_score", 5) or 5)
+    labels = [str(x) for x in (getattr(result, "disposition_labels", None) or [])]
+
     if eff in REJECT_ACTIONS:
         reasons.append(f"action:{eff}")
-    if str(getattr(result, "verdict", "") or "") == "Major":
+    if verdict == "Major":
         reasons.append("verdict:Major")
-    match = str(getattr(result, "curriculum_match", "") or "")
-    if match == "out_of_syllabus":
-        reasons.append("out_of_syllabus")
-    if int(getattr(result, "formatting_score", 5) or 5) <= 2:
+    if match in {"out_of_syllabus", "borderline"}:
+        reasons.append(match)
+    if formatting_score <= 3:
         reasons.append("formatting_score_low")
-    pacing = int(getattr(result, "pacing_score", 5) or 5)
     if pacing <= 2:
         reasons.append("pacing_unfit")
-    # Dense off-syllabus / unfit labels.
-    labels = list(getattr(result, "disposition_labels", None) or [])
     for lab in labels:
-        s = str(lab)
-        if s in {"off_syllabus", "too_hard", "formatting", "needs_diagram", "not_esat"}:
-            reasons.append(f"label:{s}")
+        if lab in {
+            "off_syllabus",
+            "too_hard",
+            "formatting",
+            "needs_diagram",
+            "not_esat",
+            "too_easy",
+            "wrong_answer_key",
+            "wrong_answer_key_fixed",
+        }:
+            reasons.append(f"label:{lab}")
 
-    return bool(reasons), list(dict.fromkeys(reasons))
+    # Default bias: only leave clear Pass / in-syllabus / well-formatted items.
+    keep_ok = (
+        eff in {"approve", "human_review", "move_to_math2"}
+        and verdict in {"Pass", "Minor"}
+        and match == "in_syllabus"
+        and formatting_score >= 4
+        and pacing >= 3
+        and not reasons
+    )
+    if keep_ok:
+        return False, []
+
+    if not reasons:
+        reasons.append(f"not_clean_pass(eff={eff},verdict={verdict},curriculum={match})")
+    return True, list(dict.fromkeys(reasons))
 
 
 def _feedback(
