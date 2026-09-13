@@ -69,7 +69,6 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       id: "most_useful",
       type: "single",
       label: "What's most useful?",
-      help: "Pick the one thing that helped you most.",
       whyOptional: true,
       options: [
         {
@@ -108,7 +107,6 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       id: "least_useful",
       type: "single",
       label: "What's least useful?",
-      help: "Pick the one that felt weakest or hardest to use.",
       whyOptional: true,
       options: [
         {
@@ -147,7 +145,6 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       id: "recommend",
       type: "scale",
       label: "Would you recommend us to a friend?",
-      help: "0 = not really, 10 = yes, for sure.",
       scaleMin: 0,
       scaleMax: 10,
       scaleMinLabel: "Not really",
@@ -156,7 +153,6 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       followUpText: {
         id: "describe_friend",
         label: "In one sentence, how would you describe ESATCamp to a friend?",
-        help: "Keep it short. One sentence is enough.",
         minLength: 12,
         maxLength: 280,
       },
@@ -165,33 +161,27 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       id: "recommend_more",
       type: "single",
       label: "What would make you more likely to recommend us?",
-      help: "Pick the one that would help most.",
       whyOptional: true,
       options: [
         {
           value: "better_questions",
           label: "Better questions",
-          description: "Closer to the real exam, fewer weak ones",
         },
         {
           value: "cheaper",
           label: "Cheaper",
-          description: "Lower price or a clearer deal",
         },
         {
           value: "more_papers",
           label: "More papers",
-          description: "More full timed papers to practice",
         },
         {
           value: "clearer_progress",
           label: "Clearer progress",
-          description: "Easier to see improvement over time",
         },
         {
           value: "mobile",
-          label: "Mobile",
-          description: "Works better on phone",
+          label: "Easier to use on my phone",
         },
       ],
     },
@@ -200,7 +190,6 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       type: "single",
       section: "Pricing / value",
       label: "Was the price fair for what you got?",
-      help: "Honest answers help. No wrong choice.",
       whyOptional: true,
       options: [
         {
@@ -230,7 +219,6 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       type: "multi",
       section: "Pricing / value",
       label: "What almost stopped you from paying or continuing?",
-      help: "Select all that apply.",
       whyOptional: true,
       options: [
         {
@@ -274,7 +262,6 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
           optionValue: "technical",
           id: "almost_stopped_technical",
           label: "What technical issue did you hit?",
-          help: "Required when you select Technical issues.",
           minLength: 8,
           maxLength: 500,
         },
@@ -285,7 +272,6 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       type: "multi",
       section: "What ESATCamp is missing",
       label: "What is ESATCamp missing / what would you like to see?",
-      help: "Select all that apply. Use Other for anything not listed.",
       whyOptional: true,
       options: [
         {
