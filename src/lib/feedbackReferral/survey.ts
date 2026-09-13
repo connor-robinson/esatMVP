@@ -188,7 +188,6 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
     {
       id: "price_fair",
       type: "single",
-      section: "Pricing / value",
       label: "Was the price fair for what you got?",
       whyOptional: true,
       options: [
@@ -315,7 +314,6 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
           optionValue: "other",
           id: "camp_missing_other",
           label: "What else would you like to see?",
-          help: "Required when you select Other.",
           minLength: 8,
           maxLength: 500,
         },
