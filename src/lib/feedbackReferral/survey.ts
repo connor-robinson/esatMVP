@@ -5,6 +5,8 @@ export interface FeedbackQuestion {
   type: FeedbackQuestionType;
   label: string;
   help?: string;
+  /** Optional section eyebrow shown above the question (e.g. Pricing / value). */
+  section?: string;
   options?: Array<{ value: string; label: string; description?: string }>;
   scaleMin?: number;
   scaleMax?: number;
@@ -163,6 +165,118 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       required: true,
       minLength: 12,
       maxLength: 280,
+    },
+    {
+      id: "price_fair",
+      type: "single",
+      section: "Pricing / value",
+      label: "Was the price fair for what you got?",
+      help: "Honest answers help. No wrong choice.",
+      options: [
+        {
+          value: "too_high",
+          label: "Too high",
+          description: "Felt expensive for what you used",
+        },
+        {
+          value: "fair",
+          label: "Fair",
+          description: "About right for the value",
+        },
+        {
+          value: "great_value",
+          label: "Great value",
+          description: "Worth more than you paid",
+        },
+        {
+          value: "not_paying_yet",
+          label: "Not paying yet",
+          description: "Still on free / trial, or undecided",
+        },
+      ],
+    },
+    {
+      id: "almost_stopped",
+      type: "single",
+      section: "Pricing / value",
+      label: "What almost stopped you from paying or continuing?",
+      help: "Pick the closest fit. Skip-feel options are fine.",
+      options: [
+        {
+          value: "price",
+          label: "Price",
+          description: "Cost was the main hesitation",
+        },
+        {
+          value: "unsure_value",
+          label: "Unsure it would help",
+          description: "Not clear enough that it was worth it",
+        },
+        {
+          value: "other_resources",
+          label: "Other resources",
+          description: "Already using something else",
+        },
+        {
+          value: "technical",
+          label: "Technical issues",
+          description: "Bugs, confusing UI, or device problems",
+        },
+        {
+          value: "time",
+          label: "Time",
+          description: "Hard to fit practice into the week",
+        },
+        {
+          value: "nothing",
+          label: "Nothing really",
+          description: "You were ready to continue",
+        },
+        {
+          value: "other",
+          label: "Something else",
+          description: "A different reason",
+        },
+      ],
+    },
+    {
+      id: "biggest_gap",
+      type: "single",
+      section: "Biggest remaining gap",
+      label: "What's your biggest remaining gap?",
+      help: "The one thing that would help your ESAT score most next.",
+      options: [
+        {
+          value: "speed",
+          label: "Speed",
+          description: "Working faster under time pressure",
+        },
+        {
+          value: "accuracy",
+          label: "Accuracy",
+          description: "Fewer careless or concept mistakes",
+        },
+        {
+          value: "topics",
+          label: "Specific topics",
+          description: "Weak areas still need coverage",
+        },
+        {
+          value: "exam_timing",
+          label: "Exam timing",
+          description: "Pacing a full paper start to finish",
+        },
+        {
+          value: "confidence",
+          label: "Confidence",
+          description: "Knowing you're ready on the day",
+        },
+        {
+          value: "other",
+          label: "Something else",
+          description: "A different gap",
+        },
+      ],
     },
     {
       id: "improve_first",

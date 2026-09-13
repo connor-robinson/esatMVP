@@ -142,6 +142,12 @@ describe("survey validation", () => {
   const describeFriend =
     "Timed ESAT practice that feels close to the real exam.";
 
+  const pricingAnswers = [
+    { questionId: "price_fair", value: "fair" },
+    { questionId: "almost_stopped", value: "nothing" },
+    { questionId: "biggest_gap", value: "topics" },
+  ] as const;
+
   it("rejects thin written answers", () => {
     const error = validateFeedbackReferralSurvey([
       { questionId: "most_useful", value: "past_papers" },
@@ -149,6 +155,7 @@ describe("survey validation", () => {
       { questionId: "recommend", value: 8 },
       { questionId: "recommend_more", value: "better_questions" },
       { questionId: "describe_friend", value: describeFriend },
+      ...pricingAnswers,
       { questionId: "improve_first", value: "fix it" },
     ]);
     expect(error).toMatch(/at least/i);
@@ -163,6 +170,7 @@ describe("survey validation", () => {
       { questionId: "recommend", value: 7 },
       { questionId: "recommend_more", value: "more_papers" },
       { questionId: "describe_friend", value: describeFriend },
+      ...pricingAnswers,
       { questionId: "improve_first", value: examples[0]! },
     ]);
     expect(error).toMatch(/own detail/i);
@@ -177,6 +185,7 @@ describe("survey validation", () => {
       { questionId: "recommend", value: 7 },
       { questionId: "recommend_more", value: "clearer_progress" },
       { questionId: "describe_friend", value: describeFriend },
+      ...pricingAnswers,
       { questionId: "improve_first", value: withDetail },
       { questionId: "works_well", value: "Calibration felt clear and quick." },
     ]);
@@ -190,6 +199,7 @@ describe("survey validation", () => {
       { questionId: "recommend", value: 7 },
       { questionId: "recommend_more", value: "cheaper" },
       { questionId: "describe_friend", value: describeFriend },
+      ...pricingAnswers,
       { questionId: "improve_first", value: improve },
       { questionId: "works_well", value: "Calibration felt clear and quick." },
     ]);
@@ -203,6 +213,7 @@ describe("survey validation", () => {
       { questionId: "recommend", value: 9 },
       { questionId: "recommend_more", value: "mobile" },
       { questionId: "describe_friend", value: describeFriend },
+      ...pricingAnswers,
       { questionId: "improve_first", value: improve },
     ]);
     expect(error).toBeNull();
@@ -215,6 +226,7 @@ describe("survey validation", () => {
       { questionId: "recommend", value: 5 },
       { questionId: "recommend_more", value: "better_questions" },
       { questionId: "describe_friend", value: improve },
+      ...pricingAnswers,
       { questionId: "improve_first", value: improve },
       { questionId: "works_well", value: improve },
     ]);

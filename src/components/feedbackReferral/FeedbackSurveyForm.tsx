@@ -160,7 +160,17 @@ export function FeedbackSurveyForm({
 
             <div className="mx-auto mt-6 flex min-h-0 w-full max-w-3xl flex-1 flex-col">
               <div className="shrink-0">
-                <h1 className="text-2xl font-bold tracking-tight text-text sm:text-[1.75rem]">
+                {question.section ? (
+                  <p className="text-xs font-medium uppercase tracking-[0.12em] text-[#4C8BF5]">
+                    {question.section}
+                  </p>
+                ) : null}
+                <h1
+                  className={cn(
+                    "text-2xl font-bold tracking-tight text-text sm:text-[1.75rem]",
+                    question.section ? "mt-2" : null,
+                  )}
+                >
                   {question.label}
                 </h1>
                 {question.help ? (
