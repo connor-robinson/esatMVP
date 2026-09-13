@@ -20,11 +20,17 @@ import { getCheckpointModalContent } from "@/lib/tester/checkpoint";
 
 interface LoggedInHomepageProps {
   state: HomepageState;
+  /** Skip auth/checkout; for /dev design previews. */
+  designPreview?: boolean;
 }
 
-export function LoggedInHomepage({ state }: LoggedInHomepageProps) {
+export function LoggedInHomepage({
+  state,
+  designPreview = false,
+}: LoggedInHomepageProps) {
   const searchParams = useSearchParams();
-  const forceTrialPreview = searchParams.get("preview_trial") === "1";
+  const forceTrialPreview =
+    designPreview || searchParams.get("preview_trial") === "1";
 
   const analyticsProps: HomepageAnalyticsProperties = useMemo(
     () => ({
@@ -70,7 +76,11 @@ export function LoggedInHomepage({ state }: LoggedInHomepageProps) {
         {forceTrialPreview ? (
           <div className="rounded-organic-md bg-primary/15 px-3.5 py-2.5 text-xs text-text">
             <span className="font-semibold">Trial cards preview</span>
-            <span className="text-text-muted"> (`?preview_trial=1`)</span>
+            <span className="text-text-muted">
+              {designPreview
+                ? " (no login, checkout disabled)"
+                : " (`?preview_trial=1`)"}
+            </span>
           </div>
         ) : null}
 
@@ -117,7 +127,10 @@ export function LoggedInHomepage({ state }: LoggedInHomepageProps) {
 
           {showTrialCards ? (
             <div className="px-1 pt-1">
-              <DashboardTrialCards analyticsProps={analyticsProps} />
+              <DashboardTrialCards
+                analyticsProps={analyticsProps}
+                designPreview={designPreview}
+              />
             </div>
           ) : null}
 

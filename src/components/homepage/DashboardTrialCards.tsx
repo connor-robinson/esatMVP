@@ -34,6 +34,8 @@ const TRIAL_NUDGES = [
 interface DashboardTrialCardsProps {
   analyticsProps: HomepageAnalyticsProperties;
   className?: string;
+  /** No-login design preview: skip Stripe checkout. */
+  designPreview?: boolean;
 }
 
 /**
@@ -42,6 +44,7 @@ interface DashboardTrialCardsProps {
 export function DashboardTrialCards({
   analyticsProps,
   className,
+  designPreview = false,
 }: DashboardTrialCardsProps) {
   const { startTrial, loading } = useStartMonthlyTrialCheckout();
   const [error, setError] = useState<string | null>(null);
@@ -53,6 +56,10 @@ export function DashboardTrialCards({
       destination: "monthly_trial_checkout",
       section: source,
     });
+    if (designPreview) {
+      setError("Preview only. Sign in on /dashboard to start a real trial.");
+      return;
+    }
     const result = await startTrial();
     if (!result.ok) setError(result.error);
   };
