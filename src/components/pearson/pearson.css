@@ -102,6 +102,15 @@ html.pearson-exam-active body {
   background: transparent !important;
 }
 
+.pearson-exam-root.pearson-exam-root--review-light .katex,
+.pearson-exam-root.pearson-exam-root--review-light .katex * {
+  color: var(--pearson-text) !important;
+}
+
+.pearson-exam-root.pearson-exam-root--review-light .pearson-stem-img {
+  background: transparent;
+}
+
 .pearson-exam-root *,
 .pearson-exam-root *::before,
 .pearson-exam-root *::after {

@@ -3,17 +3,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { PearsonPleaseWaitScreen } from "@/components/pearson/PearsonPleaseWaitScreen";
-import { useSubscription } from "@/hooks/useSubscription";
-import {
-  isFreePreviewPastPaper,
-  isPastPaperLibraryLocked,
-  freePreviewPastPapersLabel,
-} from "@/lib/papers/freePreviewPapers";
 import {
   parsePastPaperPracticeSearchParams,
-  practiceSectionLabel,
   type PastPaperPracticeTarget,
 } from "@/lib/papers/pastPaperPracticeHref";
 import {
@@ -35,56 +27,25 @@ function practiceTargetKey(target: PastPaperPracticeTarget): string {
   ].join(":");
 }
 
+/**
+ * Hub / SEO start links. Free to sit (no login or subscription).
+ * Library and roadmap keep their own paywalls.
+ */
 export function StartPastPaperClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const session = useSupabaseSession();
-  const { hasFullAccess, isLoading: subscriptionLoading } = useSubscription();
 
   const target = useMemo(
     () => parsePastPaperPracticeSearchParams(searchParams),
     [searchParams],
   );
 
-  const returnTo = useMemo(() => {
-    const query = searchParams.toString();
-    return query
-      ? `/past-papers/solve/start?${query}`
-      : "/past-papers/solve/start";
-  }, [searchParams]);
-
   const [error, setError] = useState<string | null>(null);
-  const [locked, setLocked] = useState(false);
   const startedRef = useRef(false);
 
   useEffect(() => {
     if (!target) return;
-    if (session === undefined) return;
-    if (session === null) {
-      router.replace(`/login?redirectTo=${encodeURIComponent(returnTo)}`);
-    }
-  }, [router, returnTo, session, target]);
-
-  useEffect(() => {
-    if (!target || session === undefined || session === null) return;
-    if (locked) return;
     if (startedRef.current) return;
-
-    const paperLockProbe = {
-      examName: target.exam,
-      examYear: target.year ?? 0,
-    };
-    const freePreview = isFreePreviewPastPaper(paperLockProbe);
-
-    if (subscriptionLoading && !freePreview) return;
-
-    if (
-      !subscriptionLoading &&
-      isPastPaperLibraryLocked(paperLockProbe, hasFullAccess)
-    ) {
-      setLocked(true);
-      return;
-    }
 
     const key = practiceTargetKey(target);
     if (launchingTargets.has(key)) return;
@@ -114,30 +75,13 @@ export function StartPastPaperClient() {
         setError(message);
       }
     })();
-  }, [
-    hasFullAccess,
-    locked,
-    router,
-    session,
-    subscriptionLoading,
-    target,
-  ]);
+  }, [router, target]);
 
   if (!target) {
     return (
       <StartMessage
         title="Paper not found"
         body="This start link is missing a paper year or section."
-      />
-    );
-  }
-
-  if (locked) {
-    return (
-      <StartMessage
-        title="Unlock this paper"
-        body={`Free accounts can sit ${freePreviewPastPapersLabel()}. Upgrade to start ${target.exam}${target.year ? ` ${target.year}` : ""} ${practiceSectionLabel(target.sectionSlug)} in ESAT Camp.`}
-        primary={{ href: "/pricing", label: "See plans" }}
       />
     );
   }

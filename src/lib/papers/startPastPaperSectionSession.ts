@@ -24,6 +24,7 @@ import {
   firstSubjectPartsForHubStart,
   rememberHubFirstSectionPreview,
 } from "./hubFirstSectionPreview";
+import { rememberHubMarkPreview } from "./hubMarkPreview";
 
 const MAIN_SECTION_ORDER = ["Section 1", "Section 2"];
 
@@ -168,6 +169,7 @@ export async function startPastPaperSectionSession(
   const sessionId = usePaperSessionStore.getState().sessionId;
   if (sessionId) {
     rememberHubFirstSectionPreview(sessionId);
+    rememberHubMarkPreview(sessionId);
   }
 
   // Backload questions on /past-papers/solve; do not block navigation.

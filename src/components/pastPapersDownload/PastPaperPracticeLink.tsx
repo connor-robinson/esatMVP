@@ -73,47 +73,10 @@ export function PastPaperPracticeLink({
 
         void (async () => {
           try {
-            const [
-              { startPastPaperSectionSession },
-              { isFreePreviewPastPaper, isPastPaperLibraryLocked },
-              { createSupabaseBrowserClient },
-            ] = await Promise.all([
-              import("@/lib/papers/startPastPaperSectionSession"),
-              import("@/lib/papers/freePreviewPapers"),
-              import("@/lib/supabase/browser"),
-            ]);
-
-            const supabase = createSupabaseBrowserClient();
-            const {
-              data: { session },
-            } = await supabase.auth.getSession();
-
-            if (!session) {
-              usePaperSessionStore.getState().finishSessionBootstrap();
-              clearPendingHubStart();
-              router.replace(`/login?redirectTo=${encodeURIComponent(href)}`);
-              return;
-            }
-
-            const paperLockProbe = {
-              examName: target.exam,
-              examYear: target.year ?? 0,
-            };
-            if (!isFreePreviewPastPaper(paperLockProbe)) {
-              const res = await fetch("/api/subscription/status");
-              let hasFullAccess = false;
-              if (res.ok) {
-                const data = (await res.json()) as { hasFullAccess?: boolean };
-                hasFullAccess = data.hasFullAccess === true;
-              }
-              if (isPastPaperLibraryLocked(paperLockProbe, hasFullAccess)) {
-                usePaperSessionStore.getState().finishSessionBootstrap();
-                clearPendingHubStart();
-                router.replace(href);
-                return;
-              }
-            }
-
+            // Hub Start now is free: no login or subscription required.
+            const { startPastPaperSectionSession } = await import(
+              "@/lib/papers/startPastPaperSectionSession"
+            );
             await startPastPaperSectionSession(target);
             clearPendingHubStart();
             usePaperSessionStore.getState().finishSessionBootstrap();

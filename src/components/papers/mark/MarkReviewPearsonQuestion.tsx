@@ -20,34 +20,54 @@ const DARK_REVIEW_VARS: CSSProperties = {
   ["--pearson-chrome-mode" as string]: "themed",
 };
 
+/** Light content scheme for hub teaser mark review. */
+const LIGHT_REVIEW_VARS: CSSProperties = {
+  ["--pearson-text" as string]: colorTokens.text.light,
+  ["--pearson-content-bg" as string]: colorTokens.surfaceElevated.light,
+  ["--pearson-border" as string]: "rgba(40, 40, 48, 0.16)",
+  ["--pearson-focus" as string]: colorTokens.text.light,
+  ["--pearson-button-face" as string]: colorTokens.surfaceElevated.light,
+  ["--pearson-button-face-hover" as string]: colorTokens.surfaceMid.light,
+  ["--pearson-radio-blue" as string]: colorTokens.text.light,
+  ["--pearson-radio-gray" as string]: colorTokens.textMuted.light,
+  ["--pearson-chrome-mode" as string]: "themed",
+};
+
 interface MarkReviewPearsonQuestionProps {
   question: Question;
   selectedChoice: Letter | null;
   className?: string;
   /** Scroll area height; defaults to match prior review panel. */
   heightClassName?: string;
+  /** Hub mark preview uses light review chrome; default stays dark. */
+  colourScheme?: "review-dark" | "review-light";
 }
 
 /**
  * Question-only Pearson renderer for past-paper mark review.
- * No exam chrome; dark content theme so it sits on the mark page.
+ * No exam chrome; themed content so it sits on the mark page.
  */
 export function MarkReviewPearsonQuestion({
   question,
   selectedChoice,
   className,
   heightClassName = "h-[60vh]",
+  colourScheme = "review-dark",
 }: MarkReviewPearsonQuestionProps) {
+  const isLight = colourScheme === "review-light";
   return (
     <div
       className={cn(
-        "pearson-exam-root pearson-exam-root--embedded pearson-exam-root--review-dark",
+        "pearson-exam-root pearson-exam-root--embedded",
+        isLight
+          ? "pearson-exam-root--review-light"
+          : "pearson-exam-root--review-dark",
         "overflow-hidden rounded-organic-lg",
         heightClassName,
         className,
       )}
-      style={DARK_REVIEW_VARS}
-      data-colour-scheme="review-dark"
+      style={isLight ? LIGHT_REVIEW_VARS : DARK_REVIEW_VARS}
+      data-colour-scheme={colourScheme}
       data-chrome-mode="themed"
       data-zoom={100}
     >

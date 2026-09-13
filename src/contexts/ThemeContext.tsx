@@ -19,6 +19,11 @@ interface ThemeContextType {
   toggleLightStrategy: () => void;
   /** False until localStorage theme has been applied post-hydration. */
   themeReady: boolean;
+  /**
+   * Temporary theme for a single surface (does not write localStorage).
+   * Pass null to restore the user's saved theme.
+   */
+  setThemeOverride: (override: Theme | null) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -33,7 +38,7 @@ function getInitialLightStrategy(): LightModeStrategy {
 // This runs on the client side only
 function getInitialTheme(): Theme {
   if (typeof window === "undefined") return "dark";
-  
+
   const savedTheme = localStorage.getItem("theme") as Theme;
   if (savedTheme && (savedTheme === "dark" || savedTheme === "light")) {
     return savedTheme;
@@ -62,6 +67,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Match SSR defaults on the first client render. Reading localStorage here
   // desyncs Sun/Moon (and other theme UI) and breaks hydration.
   const [theme, setTheme] = useState<Theme>("dark");
+  const [themeOverride, setThemeOverride] = useState<Theme | null>(null);
   const [lightStrategy, setLightStrategy] =
     useState<LightModeStrategy>("inverted");
   const [mounted, setMounted] = useState(false);
@@ -84,12 +90,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!mounted) return;
 
-    localStorage.setItem("theme", theme);
+    // Overrides are ephemeral (e.g. hub mark light mode). Do not persist them.
+    if (!themeOverride) {
+      localStorage.setItem("theme", theme);
+    }
     localStorage.setItem(LIGHT_MODE_STRATEGY_STORAGE_KEY, lightStrategy);
 
-    const appliedTheme = isMarketingHomepage ? "dark" : theme;
+    const appliedTheme = isMarketingHomepage
+      ? "dark"
+      : themeOverride ?? theme;
     applyThemeToDocument(appliedTheme, lightStrategy);
-  }, [theme, lightStrategy, mounted, isMarketingHomepage]);
+  }, [theme, themeOverride, lightStrategy, mounted, isMarketingHomepage]);
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === "dark" ? "light" : "dark"));
@@ -99,7 +110,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setLightStrategy((prev) => (prev === "designed" ? "inverted" : "designed"));
   };
 
-  const effectiveTheme: Theme = isMarketingHomepage ? "dark" : theme;
+  const effectiveTheme: Theme = isMarketingHomepage
+    ? "dark"
+    : themeOverride ?? theme;
   const isDark = effectiveTheme === "dark";
 
   return (
@@ -111,6 +124,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         lightStrategy,
         toggleLightStrategy,
         themeReady: mounted,
+        setThemeOverride,
       }}
     >
       {children}
@@ -125,6 +139,3 @@ export function useTheme() {
   }
   return context;
 }
-
-
-

@@ -7,7 +7,9 @@
 import React, { useState, useMemo, useEffect, useCallback, useRef, Fragment } from "react";
 import { Info } from "lucide-react";
 import { createPortal } from "react-dom";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { PaperBadge } from "@/components/papers/PaperBadge";
@@ -35,6 +37,7 @@ import {
   getSectionSubjectPillClass,
   ON_SOLID_SUBJECT_TEXT,
 } from "@/config/colors";
+import { useTheme } from "@/contexts/ThemeContext";
 import { cn } from "@/lib/utils";
 import {
   buildPercentileTableArgs,
@@ -72,9 +75,36 @@ import {
   clearHubFirstSectionPreview,
   hasHubFirstSectionPreview,
 } from "@/lib/papers/hubFirstSectionPreview";
+import {
+  clearHubMarkPreview,
+  isHubMarkPreview,
+} from "@/lib/papers/hubMarkPreview";
+
+function LoginToViewLink({
+  href,
+  className,
+}: {
+  href: string;
+  className?: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "text-sm font-semibold text-maths underline-offset-2 hover:underline",
+        className,
+      )}
+    >
+      Log in to view
+    </Link>
+  );
+}
 
 export default function PapersMarkPage() {
   const router = useRouter();
+  const session = useSupabaseSession();
+  const { setThemeOverride } = useTheme();
+  const isLoggedIn = Boolean(session?.user);
   // Change this width to adjust left spacing for Overview, Part headers, and Qn labels together
   const LEFT_LABEL_WIDTH_PX = 7;
   // Adjustable width of the left column (question list)
@@ -113,7 +143,13 @@ export default function PapersMarkPage() {
     finishMarkSession,
   } = usePaperSessionStore();
   const { hasFullAccess, isLoading: subscriptionLoading } = useSubscription();
-  const treatAsFullAccess = subscriptionLoading || hasFullAccess;
+  const [hubMarkPreview, setHubMarkPreview] = useState(false);
+  // Hub Start now teaser: always unpaid mark (solutions/stats locked).
+  const treatAsFullAccess =
+    !hubMarkPreview && (subscriptionLoading || hasFullAccess);
+  // Hub guests: score + which questions were wrong stay behind login.
+  const hideResultsBehindLogin = hubMarkPreview && !isLoggedIn;
+  const loginRedirectHref = `/login?redirectTo=${encodeURIComponent("/past-papers/mark")}`;
   
   const [isFinishingMark, setIsFinishingMark] = useState(false);
   const [markSection, setMarkSection] = useState<MarkSection>("overview");
@@ -1037,7 +1073,20 @@ export default function PapersMarkPage() {
     if (hasHubFirstSectionPreview(sessionId)) {
       setShowHubMoreSections(true);
     }
+    if (isHubMarkPreview(sessionId)) {
+      setHubMarkPreview(true);
+    }
   }, [sessionId]);
+
+  // Hub Start now mark: force light mode for this visit only (not the site default).
+  useEffect(() => {
+    if (!hubMarkPreview) return;
+    setThemeOverride("light");
+    setIsDarkMode(false);
+    return () => {
+      setThemeOverride(null);
+    };
+  }, [hubMarkPreview, setThemeOverride]);
 
   const dismissHubMoreSections = () => {
     clearHubFirstSectionPreview();
@@ -1071,6 +1120,8 @@ export default function PapersMarkPage() {
     if (isFinishingMark) return;
     setIsFinishingMark(true);
     try {
+      clearHubMarkPreview();
+      setThemeOverride(null);
       const sessionIdToHighlight = await finishMarkSession();
       router.push(
         sessionIdToHighlight
@@ -1149,22 +1200,47 @@ export default function PapersMarkPage() {
                         return (
                           <>
                             <div className="flex min-h-[104px] flex-col items-center justify-center rounded-organic-lg bg-maths px-3 py-4 text-neutral-900 dark:text-white sm:px-4 sm:py-5">
-                              <div className="text-5xl font-bold leading-none tracking-tight sm:text-6xl">
-                                {predictedScore !== null && predictedScore !== undefined
-                                  ? predictedScore.toFixed(1)
-                                  : "-"}
-                              </div>
-                              <div className="mt-2 text-xs font-medium uppercase tracking-wide opacity-90">
-                                {scoreLabel}
-                              </div>
+                              {hideResultsBehindLogin ? (
+                                <>
+                                  <LoginToViewLink
+                                    href={loginRedirectHref}
+                                    className="text-center text-neutral-900 dark:text-white"
+                                  />
+                                  <div className="mt-2 text-xs font-medium uppercase tracking-wide opacity-90">
+                                    {scoreLabel}
+                                  </div>
+                                </>
+                              ) : (
+                                <>
+                                  <div className="text-5xl font-bold leading-none tracking-tight sm:text-6xl">
+                                    {predictedScore !== null && predictedScore !== undefined
+                                      ? predictedScore.toFixed(1)
+                                      : "-"}
+                                  </div>
+                                  <div className="mt-2 text-xs font-medium uppercase tracking-wide opacity-90">
+                                    {scoreLabel}
+                                  </div>
+                                </>
+                              )}
                             </div>
                             <div className={`${bubbleClass} flex min-h-[104px] flex-col items-center justify-center`}>
-                              <div className="text-3xl font-bold leading-tight text-neutral-100 sm:text-4xl">
-                                {generalAccuracy}%
-                              </div>
-                              <div className="mt-1 text-xs text-neutral-400">
-                                {correctCountDerived}/{totalQuestions} correct
-                              </div>
+                              {hideResultsBehindLogin ? (
+                                <>
+                                  <LoginToViewLink href={loginRedirectHref} />
+                                  <div className="mt-1 text-xs text-neutral-400">
+                                    Accuracy
+                                  </div>
+                                </>
+                              ) : (
+                                <>
+                                  <div className="text-3xl font-bold leading-tight text-neutral-100 sm:text-4xl">
+                                    {generalAccuracy}%
+                                  </div>
+                                  <div className="mt-1 text-xs text-neutral-400">
+                                    {correctCountDerived}/{totalQuestions} correct
+                                  </div>
+                                </>
+                              )}
                             </div>
                             <div className={`${bubbleClass} flex min-h-[104px] flex-col items-center justify-center`}>
                               <div className="text-2xl font-bold leading-tight text-neutral-100 sm:text-3xl">
@@ -1283,13 +1359,20 @@ export default function PapersMarkPage() {
                                   </div>
                                   <div className="space-y-1.5">
                                     <div className="flex items-baseline justify-between gap-2">
-                                      <span className="text-sm font-semibold tabular-nums text-neutral-100">
-                                        {data.correct}/{data.total}
-                                      </span>
-                                      <span className="text-xs font-medium tabular-nums text-neutral-400">
-                                        {Math.round(accuracy)}%
-                                      </span>
+                                      {hideResultsBehindLogin ? (
+                                        <LoginToViewLink href={loginRedirectHref} />
+                                      ) : (
+                                        <>
+                                          <span className="text-sm font-semibold tabular-nums text-neutral-100">
+                                            {data.correct}/{data.total}
+                                          </span>
+                                          <span className="text-xs font-medium tabular-nums text-neutral-400">
+                                            {Math.round(accuracy)}%
+                                          </span>
+                                        </>
+                                      )}
                                     </div>
+                                    {!hideResultsBehindLogin ? (
                                     <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-surface-mid">
                                       <div
                                         className={cn(
@@ -1301,6 +1384,7 @@ export default function PapersMarkPage() {
                                         }}
                                       />
                                     </div>
+                                    ) : null}
                                   </div>
                                   <div className="min-h-4">
                                     {data.guessed > 0 && (
@@ -1314,11 +1398,15 @@ export default function PapersMarkPage() {
                                   <div className="text-[10px] uppercase tracking-wide text-neutral-500">
                                     {displayExamLabel}
                                   </div>
-                                  <div className="text-lg font-semibold tabular-nums text-neutral-100">
-                                    {scaledScore !== null && scaledScore !== undefined
-                                      ? scaledScore.toFixed(1)
-                                      : "-"}
-                                  </div>
+                                  {hideResultsBehindLogin ? (
+                                    <LoginToViewLink href={loginRedirectHref} />
+                                  ) : (
+                                    <div className="text-lg font-semibold tabular-nums text-neutral-100">
+                                      {scaledScore !== null && scaledScore !== undefined
+                                        ? scaledScore.toFixed(1)
+                                        : "-"}
+                                    </div>
+                                  )}
                                 </div>
                               </div>
                             );
@@ -1886,6 +1974,11 @@ export default function PapersMarkPage() {
             {/* Left column: list (narrow, scrolls) */}
             <div className="h-full overflow-y-auto border-b border-border-subtle pt-3 pl-0 pr-1 lg:border-b-0 lg:border-r" style={{ scrollbarGutter: 'stable', paddingLeft: SCROLLBAR_GUTTER_PX }}>
               <div className="space-y-1">
+                {hideResultsBehindLogin ? (
+                  <div className="mb-2 rounded-md bg-surface-elevated px-3 py-2 text-xs text-text-muted">
+                    <LoginToViewLink href={loginRedirectHref} /> which questions you got wrong.
+                  </div>
+                ) : null}
                 {partGroups.map((group, gi) => {
                   // Compute group score
                   const gCorrect = group.indexes.reduce((a, i) => a + (derivedCorrectFlags[i] === true ? 1 : 0), 0);
@@ -1907,7 +2000,13 @@ export default function PapersMarkPage() {
                                 <div className="text-sm font-semibold">{partDisplay}</div>
               </div>
                               <div className="flex items-center gap-2">
-                                <div className="text-[11px] opacity-90">{gCorrect}/{gTotal}</div>
+                                {hideResultsBehindLogin ? (
+                                  <div className="text-[11px] opacity-90">
+                                    {gTotal} Qs
+                                  </div>
+                                ) : (
+                                  <div className="text-[11px] opacity-90">{gCorrect}/{gTotal}</div>
+                                )}
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-90 transition-transform duration-200 -rotate-90 group-open:rotate-0">
                                   <polyline points="6 9 12 15 18 9" />
                                 </svg>
@@ -1971,7 +2070,7 @@ export default function PapersMarkPage() {
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <div className="text-[11px] text-text-muted">{formatTime(timeSpent)}</div>
-                                  {correct === true && (
+                                  {!hideResultsBehindLogin && correct === true && (
                                     <div
                                       className={cn(
                                         "flex items-center justify-center rounded-full px-1.5 py-0.5",
@@ -1981,7 +2080,7 @@ export default function PapersMarkPage() {
                                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                                     </div>
                                   )}
-                                  {correct === false && (
+                                  {!hideResultsBehindLogin && correct === false && (
                                     <div
                                       className={cn(
                                         "flex items-center justify-center rounded-full px-1.5 py-0.5",
@@ -2089,12 +2188,18 @@ export default function PapersMarkPage() {
                 </div>
                 <div>
                   <div className="text-xs text-text-muted">Correct answer</div>
-                  <div className="mt-1.5 inline-flex min-h-[1.75rem] min-w-[2.25rem] items-center justify-center rounded-full bg-surface-mid px-3 py-1 text-sm font-medium tabular-nums text-text">
-                    {(
-                      usePaperSessionStore.getState().questions[selectedIndex]
-                        ?.answerLetter || ""
-                    ).toUpperCase() || "-"}
-                  </div>
+                  {hideResultsBehindLogin ? (
+                    <div className="mt-1.5">
+                      <LoginToViewLink href={loginRedirectHref} />
+                    </div>
+                  ) : (
+                    <div className="mt-1.5 inline-flex min-h-[1.75rem] min-w-[2.25rem] items-center justify-center rounded-full bg-surface-mid px-3 py-1 text-sm font-medium tabular-nums text-text">
+                      {(
+                        usePaperSessionStore.getState().questions[selectedIndex]
+                          ?.answerLetter || ""
+                      ).toUpperCase() || "-"}
+                    </div>
+                  )}
                 </div>
                 <div>
                   <div className="text-xs text-text-muted">Time taken</div>
@@ -2119,6 +2224,7 @@ export default function PapersMarkPage() {
                       selectedChoice={
                         (answers[selectedIndex]?.choice as Letter | null) ?? null
                       }
+                      colourScheme={hubMarkPreview ? "review-light" : "review-dark"}
                     />
 
                     {!treatAsFullAccess && (
