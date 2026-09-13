@@ -6,8 +6,9 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { useTesterProgrammeOptional } from "@/contexts/TesterProgrammeContext";
 import type { CalibrationStatus } from "@/lib/calibration/types";
 import {
-  determinePrimaryAction,
   loggedOutPrimaryAction,
+  resolveDashboardPrimaryAction,
+  type DashboardPrimaryVariant,
 } from "@/lib/homepage/primaryAction";
 import { resolveHomepageUserState } from "@/lib/homepage/userState";
 import {
@@ -18,7 +19,9 @@ import {
 import type { HomepageState, HomepageSummary } from "@/lib/homepage/types";
 import type { TesterState } from "@/lib/tester/types";
 
-export function useHomepageState(): HomepageState {
+export function useHomepageState(options?: {
+  forcePrimaryVariant?: DashboardPrimaryVariant;
+}): HomepageState {
   const session = useSupabaseSession();
   const subscription = useSubscription();
   const testerCtx = useTesterProgrammeOptional();
@@ -27,6 +30,7 @@ export function useHomepageState(): HomepageState {
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [summaryError, setSummaryError] = useState<string | null>(null);
   const [testerFromApi, setTesterFromApi] = useState<TesterState | null>(null);
+  const [esatSubjects, setEsatSubjects] = useState<string[]>([]);
 
   const isLoggedIn = Boolean(session?.user);
 
@@ -35,14 +39,18 @@ export function useHomepageState(): HomepageState {
       setSummary(null);
       setSummaryError(null);
       setSummaryLoading(false);
+      setEsatSubjects([]);
       return;
     }
 
     setSummaryLoading(true);
     setSummaryError(null);
     try {
-      const res = await fetch("/api/homepage/summary", { cache: "no-store" });
-      const data = await res.json();
+      const [summaryRes, prefsRes] = await Promise.all([
+        fetch("/api/homepage/summary", { cache: "no-store" }),
+        fetch("/api/profile/preferences", { cache: "no-store" }),
+      ]);
+      const data = await summaryRes.json();
       if (data.summary) {
         setSummary(data.summary as HomepageSummary);
       }
@@ -51,6 +59,15 @@ export function useHomepageState(): HomepageState {
       }
       if (data.error) {
         setSummaryError(data.error);
+      }
+
+      if (prefsRes.ok) {
+        const prefs = await prefsRes.json();
+        if (Array.isArray(prefs.esat_subjects)) {
+          setEsatSubjects(
+            prefs.esat_subjects.filter((s: unknown): s is string => typeof s === "string"),
+          );
+        }
       }
     } catch {
       setSummaryError("Some progress data could not be loaded.");
@@ -81,13 +98,24 @@ export function useHomepageState(): HomepageState {
     if (userState === "logged_out") {
       return loggedOutPrimaryAction();
     }
-    return determinePrimaryAction({
+    return resolveDashboardPrimaryAction({
       userState,
+      hasFullAccess,
       tester,
       calibrationStatus,
       summary,
+      esatSubjects,
+      forceVariant: options?.forcePrimaryVariant,
     });
-  }, [userState, tester, calibrationStatus, summary]);
+  }, [
+    userState,
+    hasFullAccess,
+    tester,
+    calibrationStatus,
+    summary,
+    esatSubjects,
+    options?.forcePrimaryVariant,
+  ]);
 
   const upgradePrompt = useMemo(() => {
     if (userState === "logged_out") {
@@ -96,11 +124,13 @@ export function useHomepageState(): HomepageState {
     if (userState === "tester_expired") {
       return buildTesterExpiredUpgrade();
     }
+    // Trial upgrade already lives in the primary card when rotated in.
+    if (primaryAction.type === "trial_upgrade") {
+      return null;
+    }
     return buildUpgradePrompt({ userState, hasFullAccess, summary });
-  }, [userState, hasFullAccess, summary]);
+  }, [userState, hasFullAccess, summary, primaryAction.type]);
 
-  // Subscription status is only needed for logged-in dashboard content.
-  // Public visitors and crawlers must not wait on /api/subscription/status.
   const isLoading = Boolean(
     isLoggedIn &&
       (subscription.isLoading ||

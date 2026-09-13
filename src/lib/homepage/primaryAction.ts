@@ -2,7 +2,8 @@ import type { TesterState } from "@/lib/tester/types";
 import { getCheckpointModalContent } from "@/lib/tester/checkpoint";
 import { CALIBRATION_ROUTES } from "@/lib/calibration/constants";
 import type { CalibrationStatus } from "@/lib/calibration/types";
-import type { HomepageSummary, PrimaryAction } from "./types";
+import { TRIAL_CHECKOUT_NOTE, TRIAL_DAYS } from "@/lib/pricing/trialCopy";
+import type { HomepageSummary, HomepageUserState, PrimaryAction } from "./types";
 
 const DEFAULT_BROWSE: PrimaryAction = {
   type: "browse_practice",
@@ -13,6 +14,8 @@ const DEFAULT_BROWSE: PrimaryAction = {
   reason: "fallback",
   priority: 8,
 };
+
+const SCIENCE_SUBJECTS = ["Biology", "Chemistry", "Physics"] as const;
 
 function testerPrimaryAction(state: TesterState): PrimaryAction | null {
   if (state.nextAction === "complete_initial_survey") {
@@ -42,7 +45,6 @@ function testerPrimaryAction(state: TesterState): PrimaryAction | null {
 
   if (state.nextAction === "complete_qualifying_session") {
     const needed = state.sessionsRequiredForNext ?? 1;
-    const remaining = Math.max(0, needed - state.meaningfulSessionsCompleted);
     return {
       type: "tester_action",
       title: "Complete a qualifying session",
@@ -146,7 +148,60 @@ function calibrationAction(
   return null;
 }
 
-export function determinePrimaryAction(input: {
+/** Prefer science subjects for the "new Question Bank" pitch. */
+export function pickQuestionBankSubject(subjects: string[]): string {
+  const science = SCIENCE_SUBJECTS.find((s) => subjects.includes(s));
+  if (science) return science;
+  if (subjects.length > 0) return subjects[0];
+  return "Biology";
+}
+
+export function buildQuestionBankPrimaryAction(subjects: string[]): PrimaryAction {
+  const subject = pickQuestionBankSubject(subjects);
+  return {
+    type: "question_bank_session",
+    title: `Try new ${subject} questions`,
+    description: `Fresh ${subject} practice in the Question Bank.`,
+    buttonLabel: `Start ${subject} practice`,
+    href: `/questions/questionbank?subject=${encodeURIComponent(subject)}`,
+    reason: "question_bank_rotation",
+    priority: 5,
+  };
+}
+
+export function buildTrialUpgradePrimaryAction(): PrimaryAction {
+  return {
+    type: "trial_upgrade",
+    title: `Upgrade for ${TRIAL_DAYS} days free`,
+    description: `Full access for ${TRIAL_DAYS} days. ${TRIAL_CHECKOUT_NOTE}`,
+    buttonLabel: "Start free trial",
+    href: "/pricing?checkout=monthly",
+    reason: "free_user_trial_rotation",
+    priority: 4,
+  };
+}
+
+function isBlockingPrimary(action: PrimaryAction): boolean {
+  return (
+    action.type === "tester_action" ||
+    action.type === "resume_calibration" ||
+    action.type === "start_calibration"
+  );
+}
+
+function isMentalMathsPractice(action: PrimaryAction): boolean {
+  return (
+    action.type === "recommended_session" ||
+    action.type === "continue_practice" ||
+    action.type === "recent_mode" ||
+    action.type === "daily_session" ||
+    action.type === "retake_calibration" ||
+    action.type === "browse_practice"
+  );
+}
+
+/** Mental-maths flavoured next step (weakness / continue / daily). */
+export function determineMentalMathsPrimaryAction(input: {
   userState: string;
   tester: TesterState | null;
   calibrationStatus: CalibrationStatus;
@@ -219,6 +274,104 @@ export function determinePrimaryAction(input: {
     buttonLabel: "Start recommended session",
     href: "/mental-maths/drill",
     reason: "daily_default",
+    priority: 6,
+  };
+}
+
+/** @deprecated Prefer determineMentalMathsPrimaryAction / resolveDashboardPrimaryAction */
+export function determinePrimaryAction(input: {
+  userState: string;
+  tester: TesterState | null;
+  calibrationStatus: CalibrationStatus;
+  summary: HomepageSummary | null;
+}): PrimaryAction {
+  return determineMentalMathsPrimaryAction(input);
+}
+
+export type DashboardPrimaryVariant = "mental_maths" | "question_bank" | "trial";
+
+/**
+ * Rotate next-step content for returning users.
+ * Free returning users: ~1/3 of days see trial upgrade in place of practice next step.
+ * Otherwise alternate mental maths vs question bank.
+ */
+export function pickDashboardPrimaryVariant(input: {
+  userState: HomepageUserState;
+  hasFullAccess: boolean;
+  isReturning: boolean;
+  daySeed?: number;
+  /** Force a variant (dev preview). */
+  forceVariant?: DashboardPrimaryVariant;
+}): DashboardPrimaryVariant {
+  if (input.forceVariant) return input.forceVariant;
+
+  const day = input.daySeed ?? Math.floor(Date.now() / 86_400_000);
+  const freeReturning =
+    input.userState === "free" && !input.hasFullAccess && input.isReturning;
+
+  if (freeReturning) {
+    const bucket = day % 3;
+    if (bucket === 0) return "trial";
+    if (bucket === 1) return "question_bank";
+    return "mental_maths";
+  }
+
+  return day % 2 === 0 ? "mental_maths" : "question_bank";
+}
+
+export function resolveDashboardPrimaryAction(input: {
+  userState: HomepageUserState;
+  hasFullAccess: boolean;
+  tester: TesterState | null;
+  calibrationStatus: CalibrationStatus;
+  summary: HomepageSummary | null;
+  esatSubjects: string[];
+  daySeed?: number;
+  forceVariant?: DashboardPrimaryVariant;
+}): PrimaryAction {
+  const mental = determineMentalMathsPrimaryAction({
+    userState: input.userState,
+    tester: input.tester,
+    calibrationStatus: input.calibrationStatus,
+    summary: input.summary,
+  });
+
+  if (isBlockingPrimary(mental)) {
+    return mental;
+  }
+
+  const isReturning =
+    Boolean(input.summary?.hasPracticeData) ||
+    input.calibrationStatus === "completed" ||
+    input.calibrationStatus === "outdated";
+
+  const variant = pickDashboardPrimaryVariant({
+    userState: input.userState,
+    hasFullAccess: input.hasFullAccess,
+    isReturning,
+    daySeed: input.daySeed,
+    forceVariant: input.forceVariant,
+  });
+
+  if (variant === "trial") {
+    return buildTrialUpgradePrimaryAction();
+  }
+
+  if (variant === "question_bank") {
+    return buildQuestionBankPrimaryAction(input.esatSubjects);
+  }
+
+  if (isMentalMathsPractice(mental)) {
+    return mental;
+  }
+
+  return {
+    type: "daily_session",
+    title: "Keep practising Math 1",
+    description: "A short no-calculator drill to stay sharp.",
+    buttonLabel: "Continue practice",
+    href: "/mental-maths/drill",
+    reason: "mental_maths_fallback",
     priority: 6,
   };
 }

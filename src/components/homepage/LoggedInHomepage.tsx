@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 import { Container } from "@/components/layout/Container";
 import { PrimaryActionCard } from "@/components/homepage/PrimaryActionCard";
 import { TopicHub } from "@/components/homepage/TopicHub";
-import { DashboardTrialCards } from "@/components/homepage/DashboardTrialCards";
 import {
   TesterAccessStatus,
   TesterProgrammeLink,
@@ -29,7 +28,7 @@ export function LoggedInHomepage({
   designPreview = false,
 }: LoggedInHomepageProps) {
   const searchParams = useSearchParams();
-  const forceTrialPreview =
+  const previewBanner =
     designPreview || searchParams.get("preview_trial") === "1";
 
   const analyticsProps: HomepageAnalyticsProperties = useMemo(
@@ -51,13 +50,9 @@ export function LoggedInHomepage({
     void trackHomepageEvent("homepage_viewed", analyticsProps);
   }, [analyticsProps]);
 
-  const showTrialCards =
-    forceTrialPreview ||
-    (state.userState === "free" && !state.hasFullAccess);
-
   const showUpgrade =
-    !showTrialCards &&
     state.upgradePrompt &&
+    state.primaryAction.type !== "trial_upgrade" &&
     state.userState !== "premium" &&
     state.userState !== "tester_active";
 
@@ -73,12 +68,12 @@ export function LoggedInHomepage({
   return (
     <Container className="py-10 sm:py-14">
       <div className="mx-auto max-w-[62rem] space-y-5">
-        {forceTrialPreview ? (
+        {previewBanner ? (
           <div className="rounded-organic-md bg-primary/15 px-3.5 py-2.5 text-xs text-text">
-            <span className="font-semibold">Trial cards preview</span>
+            <span className="font-semibold">Dashboard preview</span>
             <span className="text-text-muted">
               {designPreview
-                ? " (no login, checkout disabled)"
+                ? " (no login)"
                 : " (`?preview_trial=1`)"}
             </span>
           </div>
@@ -106,31 +101,13 @@ export function LoggedInHomepage({
           <PrimaryActionCard
             action={state.primaryAction}
             analyticsProps={analyticsProps}
-            secondaryHref={
-              state.primaryAction.type === "tester_action"
-                ? undefined
-                : "/questions"
-            }
-            secondaryLabel={
-              state.primaryAction.type === "tester_action"
-                ? undefined
-                : "Or try the new Question Bank"
-            }
+            designPreview={designPreview}
           />
 
           {showTesterStatus && state.tester ? (
             <div className="space-y-3 px-1">
               <TesterAccessStatus state={state.tester} />
               <TesterProgrammeLink />
-            </div>
-          ) : null}
-
-          {showTrialCards ? (
-            <div className="px-1 pt-1">
-              <DashboardTrialCards
-                analyticsProps={analyticsProps}
-                designPreview={designPreview}
-              />
             </div>
           ) : null}
 

@@ -19,7 +19,9 @@ export type PrimaryActionType =
   | "recommended_session"
   | "daily_session"
   | "recent_mode"
-  | "browse_practice";
+  | "browse_practice"
+  | "question_bank_session"
+  | "trial_upgrade";
 
 export interface PrimaryAction {
   type: PrimaryActionType;
