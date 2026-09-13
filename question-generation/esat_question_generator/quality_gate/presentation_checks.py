@@ -303,11 +303,14 @@ Also reject (recommended_action `delete` or `regenerate`, verdict Major) when:
 - Syntax/placeholders (TODO, template braces, model tokens) appear in stem/options.
 - Item is not fit for ESAT: off-syllabus for the stated subject, unrealistic pacing, GCSE drill disguised as ESAT, or unusable presentation.
 
-### Subject syllabus (use `curriculum_snapshot` / `curriculum_allowed_codes`)
+### Subject syllabus (use `curriculum_snapshot` / `curriculum_primary_codes`)
 
-- **Chemistry**: judge against Chemistry + Math 1 codes only. Reject VSEPR/shape-angle demands unless the stem supplies rules; reject NMR/IR detail, advanced organic mechanisms (SN1/SN2/E1/E2), transition-metal complex theory, Gibbs/entropy/lattice cycles unless explicitly in the snapshot.
-- **Biology**: judge against Biology + Math 1 codes only. Reject action-potential / ion-channel biophysics unless supplied; reject detailed metabolic intermediate lists, advanced immunology, CRISPR/NGS-level techniques beyond ESAT gene technologies.
-- **Physics**: judge against Physics + Math 1. Reject torque/moments/angular mechanics and quantum formalism unless in the snapshot or stem.
+- **Chemistry**: score against the Chemistry primary module (C1–C17). Math 1 is toolkit only.
+- **Biology**: score against the Biology primary module (B1–B11). Math 1 is toolkit only.
+- **Physics**: score against the Physics primary module. Math 1 is toolkit only.
+- Do **not** mark a Chemistry item in_syllabus using Biology codes (or vice versa).
+- Reject VSEPR/shape-angle demands unless the stem supplies rules; reject NMR/IR detail, advanced organic mechanisms (SN1/SN2/E1/E2), transition-metal complex theory, Gibbs/entropy/lattice cycles unless explicitly in the Chemistry snapshot.
+- Reject Biology action-potential / ion-channel biophysics unless supplied; reject detailed metabolic intermediate lists, advanced immunology, CRISPR/NGS-level techniques beyond ESAT gene technologies.
 - **Math 1 / Math 2**: keep Math 1 free of MM calculus/logs/radians; use move_to_math2 when appropriate.
 
 Prefer reject over approve when presentation or syllabus fit is borderline. Leave only clearly clean, ESAT-fit items for human review (`approve` / soft `human_review`).

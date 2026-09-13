@@ -62,11 +62,21 @@ def _papers_by_id() -> Dict[str, Dict[str, Any]]:
     return {p["paper_id"]: p for p in data.get("papers") or []}
 
 
-def get_allowed_curriculum(subject: Any) -> List[Dict[str, str]]:
-    """Topic entries allowed for the given subject label."""
+def _primary_paper_id(subject: Any) -> Optional[str]:
+    """Main ESAT module paper for this subject (not assumed Math 1)."""
+    papers = subject_paper_ids(subject)
+    if not papers:
+        return None
+    for pid in papers:
+        if pid != "math1":
+            return pid
+    return papers[0]
+
+
+def _entries_for_papers(paper_ids: Tuple[str, ...]) -> List[Dict[str, str]]:
     out: List[Dict[str, str]] = []
     seen: set[str] = set()
-    for paper_id in subject_paper_ids(subject):
+    for paper_id in paper_ids:
         paper = _papers_by_id().get(paper_id)
         if not paper:
             continue
@@ -86,6 +96,30 @@ def get_allowed_curriculum(subject: Any) -> List[Dict[str, str]]:
                 }
             )
     return out
+
+
+def get_allowed_curriculum(subject: Any) -> List[Dict[str, str]]:
+    """Topic entries allowed for the given subject label."""
+    return _entries_for_papers(subject_paper_ids(subject))
+
+
+def get_primary_curriculum(subject: Any) -> List[Dict[str, str]]:
+    """Subject-module topics only (Chemistry / Biology / Physics / Math), excluding assumed Math 1 extras."""
+    primary = _primary_paper_id(subject)
+    if not primary:
+        return []
+    return _entries_for_papers((primary,))
+
+
+def get_assumed_math1_curriculum(subject: Any) -> List[Dict[str, str]]:
+    """Math 1 topics assumed by science modules (empty for pure Math 1 rows)."""
+    papers = subject_paper_ids(subject)
+    if "math1" not in papers:
+        return []
+    primary = _primary_paper_id(subject)
+    if primary == "math1":
+        return []
+    return _entries_for_papers(("math1",))
 
 
 def get_allowed_topic_codes(subject: Any) -> List[str]:
@@ -126,18 +160,53 @@ def get_curriculum_snapshot(
     primary_tag: Optional[str] = None,
     max_chars: int = 8000,
 ) -> str:
-    """Compact allowed-topics snapshot for the LLM judge."""
+    """Compact allowed-topics snapshot for the LLM judge.
+
+    For science subjects, the **primary module** (Chemistry / Biology / Physics)
+    is listed first and clearly separated from assumed Mathematics 1 toolkit topics.
+    """
     subject_s = normalize_subject(subject) or "unknown"
+    primary_id = _primary_paper_id(subject)
+    primary_entries = get_primary_curriculum(subject)
+    assumed_m1 = get_assumed_math1_curriculum(subject)
+
     lines = [
         f"ESAT allowed curriculum for subject: {subject_s}",
         f"Source: {_CURRICULUM_SOURCE}",
         "",
     ]
-    for entry in get_allowed_curriculum(subject):
+    if primary_id and primary_id != "math1" and assumed_m1:
+        paper_name = (primary_entries[0].get("paper_name") if primary_entries else primary_id) or primary_id
+        lines.append(f"## Primary module ({paper_name}) — score scientific content here")
         lines.append(
-            f"- {entry['prefixed_code']} ({entry['code']}): {entry['title']} "
-            f"[{entry['paper_name']}]"
+            "Syllabus fit for Biology/Chemistry/Physics content must be judged against "
+            "these primary-module codes. Do not mark a science item in_syllabus using only Math 1 codes."
         )
+        lines.append("")
+        for entry in primary_entries:
+            lines.append(
+                f"- {entry['prefixed_code']} ({entry['code']}): {entry['title']} "
+                f"[{entry['paper_name']}]"
+            )
+        lines.append("")
+        lines.append("## Assumed Mathematics 1 toolkit (supporting maths only)")
+        lines.append(
+            "Math 1 may be used for arithmetic/algebra needed to solve the science item. "
+            "It does not replace the Chemistry/Biology/Physics module requirement."
+        )
+        lines.append("")
+        for entry in assumed_m1:
+            lines.append(
+                f"- {entry['prefixed_code']} ({entry['code']}): {entry['title']} "
+                f"[{entry['paper_name']}]"
+            )
+    else:
+        for entry in get_allowed_curriculum(subject):
+            lines.append(
+                f"- {entry['prefixed_code']} ({entry['code']}): {entry['title']} "
+                f"[{entry['paper_name']}]"
+            )
+
     if primary_tag:
         match = _lookup_primary_tag_entry(primary_tag)
         lines.append("")
@@ -200,9 +269,24 @@ def get_curriculum_for_row(row: Dict[str, Any]) -> Dict[str, Any]:
     else:
         sec_list = []
     allowed = get_allowed_curriculum(subject)
+    primary_entries = get_primary_curriculum(subject)
+    assumed_m1 = get_assumed_math1_curriculum(subject)
+    primary_codes: List[str] = []
+    seen: set[str] = set()
+    for entry in primary_entries:
+        for key in ("prefixed_code", "code"):
+            c = entry.get(key) or ""
+            if c and c not in seen:
+                seen.add(c)
+                primary_codes.append(c)
     return {
         "curriculum_source": _CURRICULUM_SOURCE,
         "curriculum_allowed_codes": get_allowed_topic_codes(subject),
+        "curriculum_primary_paper": _primary_paper_id(subject),
+        "curriculum_primary_codes": primary_codes,
+        "curriculum_assumed_math1_codes": [
+            e["prefixed_code"] for e in assumed_m1 if e.get("prefixed_code")
+        ],
         "curriculum_snapshot": get_curriculum_snapshot(subject, primary_tag=primary),
         "primary_tag_entry": _lookup_primary_tag_entry(primary),
         "primary_tag_allowed": primary_tag_allowed_for_subject(primary, subject),

@@ -130,8 +130,19 @@ def build_question_payload(
         "distractor_map": row.get("distractor_map"),
         "curriculum_source": curriculum["curriculum_source"],
         "curriculum_allowed_codes": curriculum["curriculum_allowed_codes"],
+        "curriculum_primary_paper": curriculum.get("curriculum_primary_paper"),
+        "curriculum_primary_codes": curriculum.get("curriculum_primary_codes") or [],
+        "curriculum_assumed_math1_codes": curriculum.get("curriculum_assumed_math1_codes") or [],
         "curriculum_snapshot": curriculum["curriculum_snapshot"],
         "primary_tag_allowed_for_subject": curriculum["primary_tag_allowed"],
+        "syllabus_scoring_note": (
+            "For Chemistry/Biology/Physics, judge scientific syllabus fit against "
+            "curriculum_primary_codes / the Primary module section. "
+            "Math 1 codes are assumed toolkit only and must not replace the science module."
+            if str(curriculum.get("curriculum_primary_paper") or "")
+            in {"chemistry", "biology", "physics"}
+            else ""
+        ),
     }
     if deterministic_prechecks_enabled():
         payload["answer_key_precheck"] = build_answer_key_precheck(answer_key_row or row)
@@ -171,6 +182,10 @@ def build_assessment_system_user_prompts(
         "Solve each item independently before trusting the stored key, solution, or tags. "
         "Judge syllabus fit ONLY against the provided `curriculum_snapshot` and "
         "`curriculum_allowed_codes` — map the actual solve-path concepts to explicit codes. "
+        "For Chemistry, Biology, or Physics rows: scientific content must map to "
+        "`curriculum_primary_codes` (C/B/P module). Assumed Math 1 is supporting maths only "
+        "and must not be used alone to call a science item in_syllabus. "
+        "Chemistry items are judged against Chemistry topics; Biology against Biology topics. "
         "If the stored correct_option is wrong, set apply_fix true but recommended_action must be human_review "
         "(never auto-approve wrong-key items). "
         "Always label review_disposition.labels. "
