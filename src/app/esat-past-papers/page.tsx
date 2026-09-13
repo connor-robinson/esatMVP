@@ -7,9 +7,12 @@ import {
 import { SeoPageLayout } from "@/components/seo/SeoPageLayout";
 import { APP_ROUTES, SEO_ROUTES, articleSchema, buildSeoMetadata } from "@/lib/seo/config";
 import { seoLinks } from "@/lib/seo/links";
-import { SeoProse, SeoSection, SeoTextLink } from "@/components/seo/SeoSections";
+import { SeoTextLink } from "@/components/seo/SeoSections";
 
 const PATH = MAIN_DOWNLOAD_PAGE_METADATA.path;
+
+const SEO_SUBTEXT =
+  "Download ESAT past-paper and practice-papers. Download NSAA and ENGAA PDFs here, then go into the interactive library for timed practice.";
 
 export const metadata: Metadata = buildSeoMetadata({
   ...MAIN_DOWNLOAD_PAGE_METADATA,
@@ -31,20 +34,8 @@ export default function EsatPastPapersPage() {
     <SeoPageLayout
       path={PATH}
       title="ESAT Past Papers"
-      intro={[
-        "Use this landing for ESAT past-paper and practice-paper intent. Download NSAA and ENGAA PDFs here, then continue into the interactive library for timed practice.",
-        "For which legacy papers to prioritise, see the separate past-papers guide.",
-      ]}
       compactTitle
       contentMaxWidth="wide"
-      primaryCta={{
-        href: APP_ROUTES.pastPaperLibrary,
-        label: "Open past papers library",
-      }}
-      secondaryCta={{
-        href: SEO_ROUTES.pastPapersGuide,
-        label: "Which papers should I use?",
-      }}
       related={seoLinks(
         "pastPapersGuide",
         "engaaNsaaPapers",
@@ -59,24 +50,32 @@ export default function EsatPastPapersPage() {
         path: PATH,
       })}
     >
-      <SeoSection heading="NSAA and ENGAA catalogues">
-        <SeoProse
-          paragraphs={[
-            "Browse the exam-family catalogues for year lists and section links, then return here for downloads or open the library for timed practice.",
-          ]}
-        />
-        <p className="mt-4 text-sm text-[#94A3B8]">
-          <SeoTextLink href={SEO_ROUTES.nsaaPastPapers}>NSAA past papers catalogue</SeoTextLink>
-          {" · "}
-          <SeoTextLink href={SEO_ROUTES.engaaPastPapers}>ENGAA past papers catalogue</SeoTextLink>
-          {" · "}
-          <SeoTextLink href={SEO_ROUTES.pastPapersGuide}>
-            Which legacy papers to use for ESAT
-          </SeoTextLink>
-        </p>
-      </SeoSection>
+      {/* Visible copy removed; keep crawlable intent text for SEO. */}
+      <p className="sr-only">{SEO_SUBTEXT}</p>
 
       <PastPaperDownloadSections />
+
+      <p className="text-sm leading-relaxed text-[#94A3B8]">
+        <SeoTextLink href={APP_ROUTES.pastPaperLibrary}>
+          Open past papers library
+        </SeoTextLink>
+        {" · "}
+        <SeoTextLink href={SEO_ROUTES.pastPapersGuide}>
+          Which papers should I use?
+        </SeoTextLink>
+        {" · "}
+        <SeoTextLink href={SEO_ROUTES.nsaaPastPapers}>
+          NSAA past papers catalogue
+        </SeoTextLink>
+        {" · "}
+        <SeoTextLink href={SEO_ROUTES.engaaPastPapers}>
+          ENGAA past papers catalogue
+        </SeoTextLink>
+        {" · "}
+        <SeoTextLink href={SEO_ROUTES.pastPapersGuide}>
+          Which legacy papers to use for ESAT
+        </SeoTextLink>
+      </p>
 
       <PastPaperGuideContent />
     </SeoPageLayout>
