@@ -604,10 +604,10 @@ function OnboardingContent() {
 
               <div
                 className={cn(
-                  "mt-5 min-h-0 flex-1 overflow-y-auto pr-1",
+                  "mt-5 min-h-0 flex-1 pr-1",
                   step === "trial"
-                    ? "flex flex-col"
-                    : "space-y-4",
+                    ? "flex flex-col overflow-visible"
+                    : "space-y-4 overflow-y-auto",
                 )}
               >
                 {step === "username" ? (
