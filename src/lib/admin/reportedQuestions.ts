@@ -1,8 +1,4 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import {
-  FREE_TIER_QUESTION_ID_SET,
-  freeTierSubjectForQuestionId,
-} from "@/lib/questionBank/freeTierQuestions";
 import { labelForEsatTag } from "@/lib/questionBank/esatTagCanonicalize";
 import { labelTopicTagsForQuestion } from "@/lib/questionBank/questionTopicDisplay";
 import type { QuestionBankQuestion } from "@/types/questionBank";
@@ -311,12 +307,4 @@ export async function loadReportedQuestionBankItems(
   }
 
   return items;
-}
-
-export function showcaseLabel(questionId: string): string {
-  if (!FREE_TIER_QUESTION_ID_SET.has(questionId)) {
-    return "No. Not one of the 10 free-tier showcase questions for any subject.";
-  }
-  const subject = freeTierSubjectForQuestionId(questionId);
-  return `Yes. Free-tier / hook showcase set for ${subject}.`;
 }
