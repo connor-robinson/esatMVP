@@ -26,6 +26,16 @@ describe("checkoutAuth plan preservation", () => {
     expect(url).not.toContain("mode=signin");
   });
 
+  it("keeps friend codes on signup and pricing return paths", () => {
+    expect(pricingCheckoutRedirectPath("monthly", "camp50-abc")).toBe(
+      "/pricing?checkout=monthly&code=CAMP50-ABC",
+    );
+    const url = buildCheckoutSignupUrl("weekly", "CAMP50-XYZ");
+    expect(url).toContain(
+      encodeURIComponent("/pricing?checkout=weekly&code=CAMP50-XYZ"),
+    );
+  });
+
   it("keeps selected plan on sign-in helper for existing users", () => {
     const url = buildCheckoutSignInUrl("season_pass");
     expect(url).toContain("mode=signin");

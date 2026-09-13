@@ -325,6 +325,7 @@ describe("POST /api/stripe/create-checkout-session", () => {
     expect(args.allow_promotion_codes).toBeUndefined();
     expect(args.metadata.referralCode).toBe("CAMP50-ABCDEF");
     expect(args.cancel_url).toContain("code=CAMP50-ABCDEF");
+    expect(args.subscription_data.trial_period_days).toBeUndefined();
   });
 
   it("rejects using your own referral code at checkout", async () => {

@@ -201,6 +201,7 @@ export async function POST(request: NextRequest) {
     }
 
     const offerTrial =
+      !referralDiscount &&
       planType === "monthly" &&
       (await isEligibleForTrial(user.id, existingCustomerId));
 

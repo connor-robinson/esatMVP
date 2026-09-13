@@ -89,6 +89,9 @@ export default function PricingPageClient() {
   const isRecurringPaid = PAID_RECURRING.has(tier);
   const isSeasonPass = tier === "season_pass";
   const isPartnerAccess = tier === "partner" || source === "partner";
+  const fromSettings = searchParams.get("from") === "settings";
+  const codeFromUrl = searchParams.get("code")?.trim().toUpperCase() ?? "";
+  const hasFriendCode = Boolean(codeFromUrl);
 
   useEffect(() => {
     const sourcePage = readGaSourcePage() ?? currentGaPath() ?? "/pricing";
@@ -149,10 +152,15 @@ export default function PricingPageClient() {
       caption: `${monthlyPerWeekLabel}/week`,
       priceNote: isRecurringPaid && tier !== "monthly"
         ? "Switch at next billing date. No charge today"
-        : `4-day free trial. Card required. Then ${monthlyPriceLabel}/month. Cancel anytime`,
+        : hasFriendCode
+          ? `Friend discount at checkout. Then ${monthlyPriceLabel}/month. Cancel anytime`
+          : `4-day free trial. Card required. Then ${monthlyPriceLabel}/month. Cancel anytime`,
       features: FEATURES.paid,
       highlighted: true,
-      ctaLabel: paidCta("monthly", "Start free trial"),
+      ctaLabel: paidCta(
+        "monthly",
+        hasFriendCode ? "Upgrade" : "Start free trial",
+      ),
     },
     {
       id: "season_pass",
@@ -173,9 +181,6 @@ export default function PricingPageClient() {
     },
   ];
 
-  const fromSettings = searchParams.get("from") === "settings";
-  const codeFromUrl = searchParams.get("code")?.trim().toUpperCase() ?? "";
-
   const handleCheckout = async (planType: PaidPlanId) => {
     if (isPartnerAccess) {
       setBanner(
@@ -190,7 +195,7 @@ export default function PricingPageClient() {
         selected_plan: planType,
         source_page: sourcePage,
       });
-      router.push(buildCheckoutSignupUrl(planType));
+      router.push(buildCheckoutSignupUrl(planType, codeFromUrl || null));
       return;
     }
     setLoading(planType);
@@ -235,7 +240,10 @@ export default function PricingPageClient() {
     if (autoCheckoutStarted.current) return;
     if (isPartnerAccess || isSeasonPass || isRecurringPaid) return;
     autoCheckoutStarted.current = true;
-    router.replace("/pricing", { scroll: false });
+    const pricingReturn = codeFromUrl
+      ? `/pricing?code=${encodeURIComponent(codeFromUrl)}`
+      : "/pricing";
+    router.replace(pricingReturn, { scroll: false });
     void handleCheckout(checkoutPlan);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- resume checkout once after signup
   }, [session?.user, searchParams, isSeasonPass, isRecurringPaid, isPartnerAccess]);
@@ -249,7 +257,7 @@ export default function PricingPageClient() {
         selected_plan: planType,
         source_page: sourcePage,
       });
-      router.push(buildCheckoutSignupUrl(planType));
+      router.push(buildCheckoutSignupUrl(planType, codeFromUrl || null));
       return;
     }
     setLoading(planType);
