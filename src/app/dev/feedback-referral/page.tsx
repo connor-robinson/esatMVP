@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/layout/Container";
 import { FeedbackReferralInviteCard } from "@/components/feedbackReferral/FeedbackReferralInviteCard";
 import { FeedbackSurveyForm } from "@/components/feedbackReferral/FeedbackSurveyForm";
+import { FeedbackReferralCodeScreen } from "@/components/feedbackReferral/FeedbackReferralCodeScreen";
 import { resetFeedbackReferralPromptPrefs } from "@/lib/feedbackReferral/promptStorage";
 
 type Stage = "invite" | "survey" | "done" | "dismissed";
@@ -34,6 +35,32 @@ export default function DevFeedbackReferralPage() {
     setStage("invite");
     setReplayKey((k) => k + 1);
   };
+
+  if (stage === "done" && code) {
+    return (
+      <FeedbackReferralCodeScreen
+        code={code}
+        shareUrl={sharePath}
+        footer={
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href={sharePath}
+              className="inline-flex rounded-organic-md bg-surface-mid px-4 py-2.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
+            >
+              Open friend pricing page
+            </Link>
+            <button
+              type="button"
+              onClick={resetInvite}
+              className="inline-flex rounded-organic-md bg-surface-mid px-4 py-2.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
+            >
+              Replay from the start
+            </button>
+          </div>
+        }
+      />
+    );
+  }
 
   return (
     <div className="relative min-h-[calc(100vh-58px)] bg-background">
@@ -78,6 +105,17 @@ export default function DevFeedbackReferralPage() {
               className="rounded-xl bg-surface-mid px-3.5 py-2 text-xs font-semibold text-text"
             >
               Jump to questionnaire
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setCode("CAMP50-PREVIEW");
+                setSharePath("/pricing?code=CAMP50-PREVIEW");
+                setStage("done");
+              }}
+              className="rounded-xl bg-surface-mid px-3.5 py-2 text-xs font-semibold text-text"
+            >
+              Jump to code screen
             </button>
             <Link
               href="/pricing?code=CAMP50-PREVIEW"
@@ -142,41 +180,6 @@ export default function DevFeedbackReferralPage() {
           </motion.div>
         ) : null}
       </AnimatePresence>
-
-      {stage === "done" ? (
-        <Container className="relative pb-16">
-          <div className="mx-auto max-w-md rounded-[1.5rem] bg-surface-elevated p-6 sm:p-8">
-            <h2 className="text-xl font-bold text-text">Code ready</h2>
-            <p className="mt-2 text-sm text-text-muted">
-              In production the friend opens this share link. The code is applied
-              automatically at checkout (they still need an account to pay).
-            </p>
-            {code ? (
-              <p className="mt-5 rounded-xl bg-surface-mid px-4 py-3 font-mono text-lg font-bold tracking-wide text-text">
-                {code}
-              </p>
-            ) : null}
-            <p className="mt-3 break-all font-mono text-xs text-text-subtle">
-              {sharePath}
-            </p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              <Link
-                href={sharePath}
-                className="inline-flex rounded-xl bg-[#4C8BF5] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#3B7AE0]"
-              >
-                Open friend pricing page
-              </Link>
-              <button
-                type="button"
-                onClick={resetInvite}
-                className="inline-flex rounded-xl bg-surface-mid px-4 py-2.5 text-sm font-semibold text-text"
-              >
-                Replay from the start
-              </button>
-            </div>
-          </div>
-        </Container>
-      ) : null}
 
       {stage === "dismissed" ? (
         <Container className="relative pb-16">
