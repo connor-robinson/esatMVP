@@ -160,32 +160,52 @@ export function HubMarkMistakesPieTeaser({
   };
 
   return (
-    <div
-      className={cn(
-        "relative overflow-hidden rounded-md p-6 sm:p-8",
-        PILL_SURFACE,
-      )}
-    >
+    <div className="relative min-h-[28rem] overflow-hidden rounded-md bg-white p-6 sm:min-h-[32rem] sm:p-10">
+      {/* Preview layer: keep blur light so the pie still reads. */}
       <div
-        className="pointer-events-none flex select-none flex-col items-center gap-6 blur-[7px] opacity-75"
+        className="pointer-events-none flex select-none flex-col items-center gap-8 pt-4 blur-[2.5px] sm:pt-8"
         aria-hidden
       >
-        <div className="text-lg font-semibold text-black">Mistake analysis</div>
-        <svg viewBox="0 0 120 120" className="h-44 w-44" aria-hidden>
-          <circle cx="60" cy="60" r="48" fill="#E8F1FF" />
-          <path d="M60 60 L60 12 A48 48 0 0 1 104 78 Z" fill="#91b4a4" />
-          <path d="M60 60 L104 78 A48 48 0 0 1 28 95 Z" fill="#af6da1" />
-          <path d="M60 60 L28 95 A48 48 0 0 1 60 12 Z" fill="#cf5b5b" />
-          <circle cx="60" cy="60" r="22" fill="white" />
-        </svg>
-        <div className="flex flex-wrap justify-center gap-3 text-xs text-black/70">
-          <span>Concept gap</span>
-          <span>Careless</span>
-          <span>Timing</span>
+        <div className="text-lg font-semibold text-black sm:text-xl">
+          Mistake analysis
+        </div>
+        <div className="relative h-52 w-52 sm:h-60 sm:w-60">
+          <div
+            className="h-full w-full rounded-full shadow-sm"
+            style={{
+              background:
+                "conic-gradient(#4b6b64 0deg 126deg, #af6da1 126deg 223deg, #cf5b5b 223deg 360deg)",
+            }}
+          />
+          <div className="absolute inset-[28%] rounded-full bg-white" />
+        </div>
+        <div className="flex flex-wrap justify-center gap-4 text-sm font-medium text-black/80">
+          <span className="inline-flex items-center gap-2">
+            <span
+              className="h-2.5 w-2.5 rounded-full"
+              style={{ backgroundColor: "#4b6b64" }}
+            />
+            Concept gap
+          </span>
+          <span className="inline-flex items-center gap-2">
+            <span
+              className="h-2.5 w-2.5 rounded-full"
+              style={{ backgroundColor: "#af6da1" }}
+            />
+            Careless
+          </span>
+          <span className="inline-flex items-center gap-2">
+            <span
+              className="h-2.5 w-2.5 rounded-full"
+              style={{ backgroundColor: "#cf5b5b" }}
+            />
+            Timing
+          </span>
         </div>
       </div>
-      <div className="absolute inset-0 flex items-center justify-center bg-[#f0f0f2]/50 p-4 backdrop-blur-[1.5px]">
-        <div className="w-full max-w-sm space-y-4 rounded-md bg-white p-5 text-center">
+
+      <div className="absolute inset-0 flex items-center justify-center bg-white/35 p-4 backdrop-blur-[0.5px]">
+        <div className="w-full max-w-sm space-y-4 rounded-md bg-white/95 p-5 text-center shadow-sm ring-1 ring-black/5">
           <p className="text-lg font-bold tracking-tight text-black">
             Unlock mistake analysis
           </p>
