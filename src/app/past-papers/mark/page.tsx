@@ -2666,29 +2666,65 @@ export default function PapersMarkPage() {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-            <div className="text-lg font-semibold text-neutral-100">Session Notes</div>
+            <div
+              className={cn(
+                "text-lg font-semibold",
+                hubMarkPreview ? "text-black" : "text-neutral-100",
+              )}
+            >
+              Session Notes
+            </div>
                 {/* Tooltip icon (same style as elsewhere) */}
                 <div className="relative group">
-                  <button className="w-5 h-5 rounded-full bg-neutral-800 text-neutral-300 flex items-center justify-center" title="Notes info">
+                  <button
+                    className={cn(
+                      "flex h-5 w-5 items-center justify-center rounded-full",
+                      hubMarkPreview
+                        ? "bg-black/10 text-black"
+                        : "bg-neutral-800 text-neutral-300",
+                    )}
+                    title="Notes info"
+                  >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <circle cx="12" cy="12" r="9" />
                       <line x1="12" y1="16" x2="12" y2="12" />
                       <circle cx="12" cy="8" r="1" />
                     </svg>
                   </button>
-                  <div className="absolute left-0 z-10 hidden group-hover:block bg-surface-elevated text-[11px] text-neutral-300 p-2 rounded-md border border-border w-64 shadow-lg">
+                  <div
+                    className={cn(
+                      "absolute left-0 z-10 hidden w-64 rounded-md border p-2 text-[11px] shadow-lg group-hover:block",
+                      hubMarkPreview
+                        ? "border-black/10 bg-white text-black"
+                        : "border-border bg-surface-elevated text-neutral-300",
+                    )}
+                  >
                     These notes are private. They are autosaved and available in the Papers archive.
                   </div>
               </div>
               </div>
               <div className="flex items-center gap-2">
-                <div className="text-[11px] text-neutral-400">Private to you</div>
+                <div
+                  className={cn(
+                    "text-[11px]",
+                    hubMarkPreview ? "text-black/60" : "text-neutral-400",
+                  )}
+                >
+                  Private to you
+                </div>
                 <div className={cn('rounded-md px-2 py-0.5 text-[11px]', sessionNoteStatus === 'saved' ? 'bg-primary/15 text-primary' : 'bg-transparent text-text-muted')}>
                   {sessionNoteStatus === 'typing' ? 'Saving…' : 'Saved'}
                 </div>
               </div>
             </div>
-            <div className="text-sm text-neutral-300">Summarise your key mistakes and strategies for next time. You’ll be able to review these before your next paper. Notes save automatically and are available in the Papers archive.</div>
+            <div
+              className={cn(
+                "text-sm",
+                hubMarkPreview ? "text-black" : "text-neutral-300",
+              )}
+            >
+              Summarise your key mistakes and strategies for next time. You’ll be able to review these before your next paper. Notes save automatically and are available in the Papers archive.
+            </div>
             <textarea
               value={notes}
                 onChange={(e) => {
@@ -2698,7 +2734,12 @@ export default function PapersMarkPage() {
                   sessionNoteDebounceRef.current = setTimeout(() => setSessionNoteStatus('saved'), 700);
                 }}
                 placeholder="Summarise mistakes, patterns, and specific actions to improve next time."
-                className="w-full px-4 py-3 text-neutral-100 rounded-lg bg-white/5 text-sm resize-none placeholder:text-neutral-400 outline-none focus:outline-none focus:ring-0 ring-0 border-0"
+                className={cn(
+                  "w-full resize-none rounded-lg px-4 py-3 text-sm outline-none ring-0 focus:outline-none focus:ring-0",
+                  hubMarkPreview
+                    ? "border border-black/10 bg-white text-black placeholder:text-black/45"
+                    : "border-0 bg-white/5 text-neutral-100 placeholder:text-neutral-400",
+                )}
                 rows={5}
               />
               {/* Footer row removed per design - saved chip shown in header */}
