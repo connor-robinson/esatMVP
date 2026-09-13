@@ -1,11 +1,73 @@
 import { Suspense } from "react";
+import {
+  formatGbpPrice,
+  getMonthlyDiscountPercent,
+  getMonthlyPricePerWeek,
+  getSeasonPassPrice,
+  MONTHLY_LIST_PRICE_GBP,
+  MONTHLY_PRICE_GBP,
+  SEASON_PASS_ACCESS_UNTIL_LABEL,
+} from "@/lib/stripe/best-value";
 import PricingPageClient from "./PricingPageClient";
 
+const FREE_FEATURES = [
+  "Mental maths: Addition module only",
+  "Past papers: First 3 roadmap items",
+  "Question Bank: 10 free questions per subject",
+  "No solutions or stats overview",
+  "No drills / flashcard mode",
+] as const;
+
+const PAID_FEATURES = [
+  "Full mental maths access",
+  "Full roadmap & past papers",
+  "Unlimited Question Bank",
+  "Solutions & stats overview",
+  "Drills & flashcard mode",
+] as const;
+
 /**
- * Server-rendered H1 for crawlers. Interactive checkout and plan cards live in
- * PricingPageClient (which also SSRs).
+ * Server-rendered pricing summary so crawlers see plan names, prices,
+ * features and CTA labels in the initial HTML. Hidden visually via sr-only;
+ * the interactive PricingTable in PricingPageClient is what users see.
  */
 export default function PricingPage() {
+  const seasonPrice = getSeasonPassPrice();
+  const monthlyLabel = formatGbpPrice(MONTHLY_PRICE_GBP);
+  const monthlyPerWeek = formatGbpPrice(getMonthlyPricePerWeek());
+  const discount = getMonthlyDiscountPercent();
+
+  const plans = [
+    {
+      name: "Free",
+      price: "£0",
+      note: "Limited preview access",
+      features: FREE_FEATURES,
+      cta: "Continue free",
+    },
+    {
+      name: "Weekly",
+      price: "£8/week",
+      note: "Billed weekly. Cancel anytime",
+      features: PAID_FEATURES,
+      cta: "Start free trial",
+    },
+    {
+      name: "Monthly",
+      price: `${monthlyLabel}/month`,
+      note: `Was ${formatGbpPrice(MONTHLY_LIST_PRICE_GBP)}. Save ${discount}%. About ${monthlyPerWeek}/week`,
+      features: PAID_FEATURES,
+      cta: "Start free trial",
+    },
+    {
+      name: "Exam Season Pass",
+      price: `£${seasonPrice}`,
+      note: `One-time payment. Access until ${SEASON_PASS_ACCESS_UNTIL_LABEL}`,
+      features: PAID_FEATURES,
+      cta: "Upgrade",
+    },
+  ] as const;
+
   return (
     <>
       <section className="border-b border-border/40 bg-background px-4 pb-2 pt-10 sm:px-6">
@@ -17,6 +79,21 @@ export default function PricingPage() {
             Compare Free, Weekly, Monthly and Exam Season Pass. Paid plans unlock
             full past papers, the question bank, mental maths and analytics.
           </p>
+        </div>
+        <div className="sr-only">
+          {plans.map((plan) => (
+            <article key={plan.name}>
+              <h2>{plan.name}</h2>
+              <p>{plan.price}</p>
+              <p>{plan.note}</p>
+              <ul>
+                {plan.features.map((feature) => (
+                  <li key={feature}>{feature}</li>
+                ))}
+              </ul>
+              <p>{plan.cta}</p>
+            </article>
+          ))}
         </div>
       </section>
       <Suspense fallback={null}>
