@@ -139,11 +139,16 @@ describe("survey validation", () => {
     "It's unclear how to leave the question bank once I'm in a set",
   ];
 
+  const describeFriend =
+    "Timed ESAT practice that feels close to the real exam.";
+
   it("rejects thin written answers", () => {
     const error = validateFeedbackReferralSurvey([
       { questionId: "most_useful", value: "past_papers" },
       { questionId: "least_useful", value: "score_converter" },
       { questionId: "recommend", value: 8 },
+      { questionId: "recommend_more", value: "better_questions" },
+      { questionId: "describe_friend", value: describeFriend },
       { questionId: "improve_first", value: "fix it" },
     ]);
     expect(error).toMatch(/at least/i);
@@ -156,6 +161,8 @@ describe("survey validation", () => {
       { questionId: "most_useful", value: "question_bank" },
       { questionId: "least_useful", value: "past_papers" },
       { questionId: "recommend", value: 7 },
+      { questionId: "recommend_more", value: "more_papers" },
+      { questionId: "describe_friend", value: describeFriend },
       { questionId: "improve_first", value: examples[0]! },
     ]);
     expect(error).toMatch(/own detail/i);
@@ -168,6 +175,8 @@ describe("survey validation", () => {
       { questionId: "most_useful", value: "question_bank" },
       { questionId: "least_useful", value: "past_papers" },
       { questionId: "recommend", value: 7 },
+      { questionId: "recommend_more", value: "clearer_progress" },
+      { questionId: "describe_friend", value: describeFriend },
       { questionId: "improve_first", value: withDetail },
       { questionId: "works_well", value: "Calibration felt clear and quick." },
     ]);
@@ -179,6 +188,8 @@ describe("survey validation", () => {
       { questionId: "most_useful", value: "question_bank" },
       { questionId: "least_useful", value: "past_papers" },
       { questionId: "recommend", value: 7 },
+      { questionId: "recommend_more", value: "cheaper" },
+      { questionId: "describe_friend", value: describeFriend },
       { questionId: "improve_first", value: improve },
       { questionId: "works_well", value: "Calibration felt clear and quick." },
     ]);
@@ -190,6 +201,8 @@ describe("survey validation", () => {
       { questionId: "most_useful", value: "calibration" },
       { questionId: "least_useful", value: "other" },
       { questionId: "recommend", value: 9 },
+      { questionId: "recommend_more", value: "mobile" },
+      { questionId: "describe_friend", value: describeFriend },
       { questionId: "improve_first", value: improve },
     ]);
     expect(error).toBeNull();
@@ -200,6 +213,8 @@ describe("survey validation", () => {
       { questionId: "most_useful", value: "calibration" },
       { questionId: "least_useful", value: "mental_maths" },
       { questionId: "recommend", value: 5 },
+      { questionId: "recommend_more", value: "better_questions" },
+      { questionId: "describe_friend", value: improve },
       { questionId: "improve_first", value: improve },
       { questionId: "works_well", value: improve },
     ]);

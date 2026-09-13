@@ -123,6 +123,48 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       scaleMaxLabel: "Yes, for sure",
     },
     {
+      id: "recommend_more",
+      type: "single",
+      label: "What would make you more likely to recommend us?",
+      help: "Pick the one that would help most.",
+      options: [
+        {
+          value: "better_questions",
+          label: "Better questions",
+          description: "Closer to the real exam, fewer weak ones",
+        },
+        {
+          value: "cheaper",
+          label: "Cheaper",
+          description: "Lower price or a clearer deal",
+        },
+        {
+          value: "more_papers",
+          label: "More papers",
+          description: "More full timed papers to practice",
+        },
+        {
+          value: "clearer_progress",
+          label: "Clearer progress",
+          description: "Easier to see improvement over time",
+        },
+        {
+          value: "mobile",
+          label: "Mobile",
+          description: "Works better on phone",
+        },
+      ],
+    },
+    {
+      id: "describe_friend",
+      type: "longtext",
+      label: "In one sentence, how would you describe ESATCamp to a friend?",
+      help: "Keep it short. One sentence is enough.",
+      required: true,
+      minLength: 12,
+      maxLength: 280,
+    },
+    {
       id: "improve_first",
       type: "longtext",
       label: "What's one thing we should improve?",
