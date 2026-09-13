@@ -34,6 +34,7 @@ export default function EsatPastPapersPage() {
     <SeoPageLayout
       path={PATH}
       title="ESAT Past Papers"
+      visuallyHiddenIntro={SEO_SUBTEXT}
       compactTitle
       contentMaxWidth="wide"
       related={seoLinks(
@@ -50,9 +51,6 @@ export default function EsatPastPapersPage() {
         path: PATH,
       })}
     >
-      {/* Visible copy removed; keep crawlable intent text for SEO. */}
-      <p className="sr-only">{SEO_SUBTEXT}</p>
-
       <PastPaperDownloadSections />
 
       <p className="text-sm leading-relaxed text-[#94A3B8]">

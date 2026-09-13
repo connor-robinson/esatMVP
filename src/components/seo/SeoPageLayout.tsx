@@ -27,6 +27,11 @@ type SeoPageLayoutProps = {
   title: React.ReactNode;
   /** Intro paragraphs. The first one should answer the search query directly. */
   intro?: readonly string[];
+  /**
+   * Crawlable intent copy kept in the header with `sr-only` (no layout gap).
+   * Prefer this over putting sr-only as the first content child when using space-y.
+   */
+  visuallyHiddenIntro?: string;
   /** When true, intro uses the full content width instead of max-w-2xl. */
   introFullWidth?: boolean;
   /** Smaller page title for utility pages such as download hubs. */
@@ -65,6 +70,7 @@ export function SeoPageLayout({
   eyebrow,
   title,
   intro = [],
+  visuallyHiddenIntro,
   introFullWidth,
   compactTitle,
   contentMaxWidth = "default",
@@ -94,6 +100,11 @@ export function SeoPageLayout({
   const contentClassName =
     contentMaxWidth === "wide" ? CONTENT_WIDE : CONTENT_DEFAULT;
   const cluster = footerCluster ?? clusterIdForPath(path);
+  const denseCompactHeader =
+    Boolean(compactTitle) &&
+    intro.length === 0 &&
+    !primaryCta &&
+    !lastChecked;
 
   return (
     <div className="bg-[#0A0F1D] text-white">
@@ -102,7 +113,11 @@ export function SeoPageLayout({
       <header
         className={cn(
           "relative overflow-hidden",
-          compactTitle ? "pt-8 pb-4 sm:pt-10 sm:pb-5" : "pt-12 pb-8 sm:pt-16 sm:pb-12",
+          denseCompactHeader
+            ? "pt-6 pb-2 sm:pt-8 sm:pb-3"
+            : compactTitle
+              ? "pt-8 pb-4 sm:pt-10 sm:pb-5"
+              : "pt-12 pb-8 sm:pt-16 sm:pb-12",
         )}
       >
         <div
@@ -134,6 +149,9 @@ export function SeoPageLayout({
           >
             {title}
           </h1>
+          {visuallyHiddenIntro ? (
+            <p className="sr-only">{visuallyHiddenIntro}</p>
+          ) : null}
           {intro.length > 0 ? (
             <div
               className={cn(
