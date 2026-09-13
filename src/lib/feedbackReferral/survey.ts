@@ -273,10 +273,9 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       minLength: 28,
       maxLength: 1000,
       examples: [
-        "Math 1 questions feel too easy compared with the real exam",
+        "You could do a better job getting found on Google when people search for ESAT practice",
         "Lots of Biology questions are being displayed incorrectly",
         "It's unclear how to leave the question bank once I'm in a set",
-        "You could do a better job getting found on Google when people search for ESAT practice",
       ],
     },
     {

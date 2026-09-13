@@ -132,12 +132,11 @@ describe("referral codes", () => {
 
 describe("survey validation", () => {
   const improve =
-    "Math 1 questions feel too easy compared with the real exam, especially the early algebra ones that skip the harder style.";
+    "You could do a better job getting found on Google when people search for ESAT practice, especially with clearer landing pages.";
   const examples = [
-    "Math 1 questions feel too easy compared with the real exam",
+    "You could do a better job getting found on Google when people search for ESAT practice",
     "Lots of Biology questions are being displayed incorrectly",
     "It's unclear how to leave the question bank once I'm in a set",
-    "You could do a better job getting found on Google when people search for ESAT practice",
   ];
 
   const describeFriend =
