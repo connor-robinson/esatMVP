@@ -101,7 +101,7 @@ export default function DevFeedbackReferralPage() {
           >
             <div className="absolute inset-0 bg-background/70 backdrop-blur-sm" aria-hidden />
             <motion.div
-              className="relative w-full max-w-xl"
+              className="relative w-full max-w-2xl"
               initial={{ opacity: 0, y: 16, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.98 }}

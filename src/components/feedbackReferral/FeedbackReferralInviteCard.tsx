@@ -20,7 +20,7 @@ export function FeedbackReferralInviteCard({
       aria-modal="true"
       aria-labelledby="feedback-referral-invite-title"
       className={cn(
-        "relative w-full max-w-xl overflow-hidden rounded-organic-lg bg-surface-elevated p-7 shadow-lg backdrop-blur-sm sm:p-9",
+        "relative w-full max-w-2xl overflow-hidden rounded-organic-lg bg-surface-elevated p-7 shadow-lg backdrop-blur-sm sm:p-9",
         className,
       )}
     >
@@ -38,10 +38,10 @@ export function FeedbackReferralInviteCard({
         >
           Get 50% off for a friend
         </h2>
-        <p className="mt-3 text-sm leading-relaxed text-text-muted sm:text-base">
+        <p className="mt-3 text-sm leading-relaxed text-text sm:whitespace-nowrap sm:text-base">
           Answer a few questions to unlock a discount code for your friend.
         </p>
-        <p className="mt-2 text-sm leading-relaxed text-text-subtle">
+        <p className="mt-2 text-sm leading-relaxed text-text-subtle sm:whitespace-nowrap">
           Apply the code in Stripe Checkout. One use. Not on your own account.
         </p>
 
