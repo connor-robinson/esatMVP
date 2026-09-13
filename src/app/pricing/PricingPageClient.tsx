@@ -520,6 +520,38 @@ export default function PricingPageClient() {
               ) : null}
             </div>
           </div>
+        ) : !codeFromUrl ? (
+          <form
+            className="mx-auto mb-5 flex max-w-md flex-col items-stretch gap-3 sm:mb-6 sm:flex-row sm:items-center"
+            onSubmit={(event) => {
+              event.preventDefault();
+              const next = manualCodeInput.trim().toUpperCase();
+              if (!next) return;
+              const params = new URLSearchParams(searchParams.toString());
+              params.set("code", next);
+              params.delete("checkout");
+              router.push(`/pricing?${params.toString()}`);
+            }}
+          >
+            <label className="sr-only" htmlFor="friend-code-input">
+              Friend code
+            </label>
+            <input
+              id="friend-code-input"
+              value={manualCodeInput}
+              onChange={(event) => setManualCodeInput(event.target.value)}
+              placeholder="Have a friend code? Enter it here"
+              autoComplete="off"
+              spellCheck={false}
+              className="min-w-0 flex-1 rounded-organic-lg border border-border bg-surface-elevated px-4 py-2.5 text-sm text-text placeholder:text-text-muted focus-visible:outline-none focus-visible:shadow-glow-focus"
+            />
+            <button
+              type="submit"
+              className="shrink-0 rounded-organic-lg bg-primary px-4 py-2.5 text-sm font-semibold text-black transition-opacity hover:opacity-90"
+            >
+              Apply code
+            </button>
+          </form>
         ) : null}
 
         <PricingTable
@@ -582,39 +614,6 @@ export default function PricingPageClient() {
               </Link>
             </p>
           )}
-          {!codeFromUrl ? (
-            <form
-              className="mx-auto mt-8 flex max-w-md flex-col items-stretch gap-3 sm:flex-row sm:items-center"
-              onSubmit={(event) => {
-                event.preventDefault();
-                const next = manualCodeInput.trim().toUpperCase();
-                if (!next) return;
-                const params = new URLSearchParams(searchParams.toString());
-                params.set("code", next);
-                params.delete("checkout");
-                router.push(`/pricing?${params.toString()}`);
-              }}
-            >
-              <label className="sr-only" htmlFor="friend-code-input">
-                Friend code
-              </label>
-              <input
-                id="friend-code-input"
-                value={manualCodeInput}
-                onChange={(event) => setManualCodeInput(event.target.value)}
-                placeholder="Have a friend code? Enter it here"
-                autoComplete="off"
-                spellCheck={false}
-                className="min-w-0 flex-1 rounded-organic-lg border border-border bg-surface-elevated px-4 py-2.5 text-sm text-text placeholder:text-text-muted focus-visible:outline-none focus-visible:shadow-glow-focus"
-              />
-              <button
-                type="submit"
-                className="shrink-0 rounded-organic-lg bg-primary px-4 py-2.5 text-sm font-semibold text-black transition-opacity hover:opacity-90"
-              >
-                Apply code
-              </button>
-            </form>
-          ) : null}
         </div>
       </Container>
     </div>
