@@ -9,6 +9,8 @@ export type SupportNotificationItem = {
   createdAt: string;
   ticketId: string | null;
   messageId: string | null;
+  rootMessageId: string | null;
+  userId: string | null;
   username: string | null;
   email: string | null;
 };
@@ -133,6 +135,8 @@ export async function loadSupportNotifications(
       createdAt: String(ticket.created_at),
       ticketId: id,
       messageId: null,
+      rootMessageId: null,
+      userId: (ticket.user_id as string | null) ?? null,
       username: profile?.username ?? null,
       email:
         profile?.email ??
@@ -157,6 +161,8 @@ export async function loadSupportNotifications(
       createdAt: String(ticket.created_at),
       ticketId: id,
       messageId: null,
+      rootMessageId: null,
+      userId: (ticket.user_id as string | null) ?? null,
       username: profile?.username ?? null,
       email: profile?.email ?? null,
     });
@@ -181,6 +187,8 @@ export async function loadSupportNotifications(
       createdAt: row.created_at,
       ticketId: row.support_request_id ?? row.legacy_bug_report_id ?? null,
       messageId: row.id,
+      rootMessageId: row.parent_id ?? row.id,
+      userId: row.created_by,
       username: profile?.username ?? null,
       email: profile?.email ?? null,
     });

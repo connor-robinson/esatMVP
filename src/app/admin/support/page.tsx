@@ -60,6 +60,9 @@ export default function AdminSupportPage() {
   const [highlightTicketId, setHighlightTicketId] = useState<string | null>(
     null,
   );
+  const [notifReplyOpenId, setNotifReplyOpenId] = useState<string | null>(null);
+  const [notifReplyBody, setNotifReplyBody] = useState("");
+  const [notifAlsoResolve, setNotifAlsoResolve] = useState(true);
 
   const [notifications, setNotifications] = useState<SupportNotificationItem[]>(
     [],
@@ -195,11 +198,119 @@ export default function AdminSupportPage() {
   const focusTicket = (ticketId: string | null) => {
     if (!ticketId) return;
     setHighlightTicketId(ticketId);
-    setFilter("open");
-    window.requestAnimationFrame(() => {
-      const el = document.getElementById(`ticket-${ticketId}`);
-      el?.scrollIntoView({ behavior: "smooth", block: "center" });
+    setFilter("all");
+  };
+
+  useEffect(() => {
+    if (!highlightTicketId || loading) return;
+    const ticket = tickets.find((t) => t.id === highlightTicketId);
+    if (!ticket) return;
+    const el = document.getElementById(`ticket-${highlightTicketId}`);
+    el?.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (ticket.can_inbox_reply) {
+      setReplyOpenId(`${ticket.source}:${ticket.id}`);
+      setReplyBody("");
+      setReplyAlsoResolve(ticket.status !== "resolved");
+    }
+  }, [highlightTicketId, tickets, loading]);
+
+  const replyToStudentMessage = async (
+    inboundMessageId: string,
+    body: string,
+    markResolved: boolean,
+  ) => {
+    const res = await fetch("/api/admin/inbox/reply", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        inboundMessageId,
+        body,
+        markResolved,
+      }),
     });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(
+        typeof data.error === "string" ? data.error : "Reply failed",
+      );
+    }
+  };
+
+  const resolveTicketOnly = async (
+    source: "support" | "legacy_bug",
+    ticketId: string,
+  ) => {
+    const res = await fetch("/api/admin/support", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        source,
+        id: ticketId,
+        status: "resolved",
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(
+        typeof data.error === "string" ? data.error : "Update failed",
+      );
+    }
+  };
+
+  const sendNotifReply = async (item: SupportNotificationItem) => {
+    if (!item.messageId || !notifReplyBody.trim()) return;
+    setBusyKey(`notif:${item.id}`);
+    setActionError(null);
+    setActionOk(null);
+    try {
+      await replyToStudentMessage(
+        item.messageId,
+        notifReplyBody,
+        Boolean(item.ticketId) && notifAlsoResolve,
+      );
+      setActionOk(
+        notifAlsoResolve && item.ticketId
+          ? "Reply sent and ticket resolved."
+          : "Reply sent to their inbox.",
+      );
+      setNotifReplyBody("");
+      setNotifReplyOpenId(null);
+      await refreshAll();
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Reply failed");
+    } finally {
+      setBusyKey(null);
+    }
+  };
+
+  const markNotifResolved = async (item: SupportNotificationItem) => {
+    if (!item.messageId) {
+      setActionError("Missing message id for this reply.");
+      return;
+    }
+    setBusyKey(`notif-resolve:${item.id}`);
+    setActionError(null);
+    setActionOk(null);
+    try {
+      if (item.ticketId && item.source !== "inbox") {
+        await resolveTicketOnly(
+          item.source === "legacy_bug" ? "legacy_bug" : "support",
+          item.ticketId,
+        );
+      }
+      await replyToStudentMessage(
+        item.messageId,
+        "Thanks - we've marked this as resolved. Reply here if you still need help.",
+        Boolean(item.ticketId),
+      );
+      setActionOk("Marked as resolved.");
+      setNotifReplyOpenId(null);
+      await refreshAll();
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Update failed");
+    } finally {
+      setBusyKey(null);
+    }
   };
 
   const setStatus = async (ticket: Ticket, status: string) => {
@@ -359,36 +470,118 @@ export default function AdminSupportPage() {
           </p>
         ) : (
           <ul className="mt-4 space-y-2">
-            {notifications.map((item) => (
-              <li key={item.id}>
-                <button
-                  type="button"
-                  onClick={() => focusTicket(item.ticketId)}
-                  className="flex w-full flex-col gap-1 rounded-organic-md bg-surface-mid/60 px-3 py-3 text-left transition-colors hover:bg-surface-mid"
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">
-                      {item.kind === "new_ticket"
-                        ? "New enquiry"
-                        : "Student reply"}
-                      {item.source === "legacy_bug" ? " · legacy" : ""}
-                    </span>
-                    <span className="font-mono text-[11px] text-text-subtle">
-                      {new Date(item.createdAt).toLocaleString("en-GB")}
-                    </span>
+            {notifications.map((item) => {
+              const isStudentReply = item.kind === "student_reply";
+              const open = notifReplyOpenId === item.id;
+              const busy =
+                busyKey === `notif:${item.id}` ||
+                busyKey === `notif-resolve:${item.id}`;
+
+              return (
+                <li key={item.id}>
+                  <div className="rounded-organic-md bg-surface-mid/60 px-3 py-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (isStudentReply) {
+                          setNotifReplyOpenId(open ? null : item.id);
+                          setNotifReplyBody("");
+                          setNotifAlsoResolve(Boolean(item.ticketId));
+                          setActionError(null);
+                          setActionOk(null);
+                          return;
+                        }
+                        focusTicket(item.ticketId);
+                      }}
+                      className="flex w-full flex-col gap-1 text-left transition-colors"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">
+                          {isStudentReply ? "Student reply" : "New enquiry"}
+                          {item.source === "legacy_bug" ? " · legacy" : ""}
+                        </span>
+                        <span className="font-mono text-[11px] text-text-subtle">
+                          {new Date(item.createdAt).toLocaleString("en-GB")}
+                        </span>
+                      </div>
+                      <span className="text-sm font-semibold text-text">
+                        {item.title}
+                      </span>
+                      <span className="line-clamp-2 text-xs text-text-muted">
+                        {item.preview || "No preview"}
+                      </span>
+                      <span className="text-xs text-text-subtle">
+                        {item.username || item.email || "Unknown user"}
+                        {isStudentReply
+                          ? open
+                            ? " · hide reply"
+                            : " · reply / resolve"
+                          : " · open ticket"}
+                      </span>
+                    </button>
+
+                    {isStudentReply && open ? (
+                      <div className="mt-3 border-t border-border-subtle pt-3">
+                        <label className="block text-xs font-medium text-text-muted">
+                          Reply to student
+                        </label>
+                        <textarea
+                          value={notifReplyBody}
+                          onChange={(e) => setNotifReplyBody(e.target.value)}
+                          rows={4}
+                          className="mt-1.5 w-full rounded-organic-md border border-border-subtle bg-surface-elevated px-3 py-2 text-sm text-text"
+                          placeholder="Write your response…"
+                        />
+                        {item.ticketId ? (
+                          <label className="mt-2 flex items-center gap-2 text-xs text-text-muted">
+                            <input
+                              type="checkbox"
+                              checked={notifAlsoResolve}
+                              onChange={(e) =>
+                                setNotifAlsoResolve(e.target.checked)
+                              }
+                            />
+                            Also mark ticket as resolved
+                          </label>
+                        ) : null}
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            disabled={busy || !notifReplyBody.trim()}
+                            onClick={() => void sendNotifReply(item)}
+                            className="rounded-organic-md bg-secondary/25 px-3 py-1.5 text-sm font-semibold text-text disabled:opacity-50"
+                          >
+                            {busyKey === `notif:${item.id}`
+                              ? "Sending…"
+                              : "Send reply"}
+                          </button>
+                          <button
+                            type="button"
+                            disabled={busy || !item.messageId}
+                            onClick={() => void markNotifResolved(item)}
+                            className="rounded-organic-md bg-surface-elevated px-3 py-1.5 text-sm font-medium text-text disabled:opacity-50"
+                          >
+                            {busyKey === `notif-resolve:${item.id}`
+                              ? "Resolving…"
+                              : "Mark as resolved"}
+                          </button>
+                          {item.ticketId ? (
+                            <button
+                              type="button"
+                              disabled={busy}
+                              onClick={() => focusTicket(item.ticketId)}
+                              className="rounded-organic-md px-3 py-1.5 text-sm text-text-muted underline-offset-2 hover:underline"
+                            >
+                              Open ticket
+                            </button>
+                          ) : null}
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
-                  <span className="text-sm font-semibold text-text">
-                    {item.title}
-                  </span>
-                  <span className="line-clamp-2 text-xs text-text-muted">
-                    {item.preview || "No preview"}
-                  </span>
-                  <span className="text-xs text-text-subtle">
-                    {item.username || item.email || "Unknown user"}
-                  </span>
-                </button>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>
@@ -766,6 +959,11 @@ export default function AdminSupportPage() {
           <div className="mt-4 space-y-4">
             {messages.map((m) => {
               const inbound = m.direction === "inbound";
+              const recentReplyKey = `recent:${m.id}`;
+              const recentOpen = notifReplyOpenId === recentReplyKey;
+              const recentBusy =
+                busyKey === `notif:${recentReplyKey}` ||
+                busyKey === `notif-resolve:${recentReplyKey}`;
               return (
                 <article
                   key={m.id}
@@ -805,6 +1003,119 @@ export default function AdminSupportPage() {
                         )
                         .join(", ")}
                     </p>
+                  ) : null}
+                  {inbound ? (
+                    <div className="mt-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setNotifReplyOpenId(
+                            recentOpen ? null : recentReplyKey,
+                          );
+                          setNotifReplyBody("");
+                          setNotifAlsoResolve(
+                            Boolean(
+                              m.support_request_id || m.legacy_bug_report_id,
+                            ),
+                          );
+                        }}
+                        className="text-sm font-medium text-text-muted underline-offset-2 hover:text-text hover:underline"
+                      >
+                        {recentOpen ? "Hide reply" : "Reply / resolve"}
+                      </button>
+                      {recentOpen ? (
+                        <div className="mt-3 rounded-organic-md border border-border-subtle bg-surface-mid/40 p-3">
+                          <textarea
+                            value={notifReplyBody}
+                            onChange={(e) => setNotifReplyBody(e.target.value)}
+                            rows={3}
+                            className="w-full rounded-organic-md border border-border-subtle bg-surface-elevated px-3 py-2 text-sm text-text"
+                            placeholder="Write your response…"
+                          />
+                          {(m.support_request_id ||
+                            m.legacy_bug_report_id) && (
+                            <label className="mt-2 flex items-center gap-2 text-xs text-text-muted">
+                              <input
+                                type="checkbox"
+                                checked={notifAlsoResolve}
+                                onChange={(e) =>
+                                  setNotifAlsoResolve(e.target.checked)
+                                }
+                              />
+                              Also mark ticket as resolved
+                            </label>
+                          )}
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            <button
+                              type="button"
+                              disabled={recentBusy || !notifReplyBody.trim()}
+                              onClick={() =>
+                                void sendNotifReply({
+                                  id: recentReplyKey,
+                                  kind: "student_reply",
+                                  source: m.support_request_id
+                                    ? "support"
+                                    : m.legacy_bug_report_id
+                                      ? "legacy_bug"
+                                      : "inbox",
+                                  title: m.subject,
+                                  preview: m.body,
+                                  createdAt: m.created_at,
+                                  ticketId:
+                                    m.support_request_id ||
+                                    m.legacy_bug_report_id ||
+                                    null,
+                                  messageId: m.id,
+                                  rootMessageId: m.parent_id ?? m.id,
+                                  userId:
+                                    m.recipients?.[0]?.user_id ?? null,
+                                  username:
+                                    m.recipients?.[0]?.username ?? null,
+                                  email: m.recipients?.[0]?.email ?? null,
+                                })
+                              }
+                              className="rounded-organic-md bg-secondary/25 px-3 py-1.5 text-sm font-semibold text-text disabled:opacity-50"
+                            >
+                              {busyKey === `notif:${recentReplyKey}`
+                                ? "Sending…"
+                                : "Send reply"}
+                            </button>
+                            <button
+                              type="button"
+                              disabled={recentBusy}
+                              onClick={() =>
+                                void markNotifResolved({
+                                  id: recentReplyKey,
+                                  kind: "student_reply",
+                                  source: m.support_request_id
+                                    ? "support"
+                                    : m.legacy_bug_report_id
+                                      ? "legacy_bug"
+                                      : "inbox",
+                                  title: m.subject,
+                                  preview: m.body,
+                                  createdAt: m.created_at,
+                                  ticketId:
+                                    m.support_request_id ||
+                                    m.legacy_bug_report_id ||
+                                    null,
+                                  messageId: m.id,
+                                  rootMessageId: m.parent_id ?? m.id,
+                                  userId:
+                                    m.recipients?.[0]?.user_id ?? null,
+                                  username:
+                                    m.recipients?.[0]?.username ?? null,
+                                  email: m.recipients?.[0]?.email ?? null,
+                                })
+                              }
+                              className="rounded-organic-md bg-surface-mid px-3 py-1.5 text-sm font-medium text-text disabled:opacity-50"
+                            >
+                              Mark as resolved
+                            </button>
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
                   ) : null}
                 </article>
               );
