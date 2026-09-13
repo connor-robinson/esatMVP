@@ -26,7 +26,7 @@ export function FeedbackReferralInviteCard({
       )}
     >
       <p className="text-xs font-medium uppercase tracking-[0.14em] text-[#4C8BF5]">
-        About 1 minute
+        About 2 minutes
       </p>
       <h2
         id="feedback-referral-invite-title"
