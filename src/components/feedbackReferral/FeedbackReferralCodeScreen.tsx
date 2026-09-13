@@ -1,8 +1,12 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Check, Copy, Share2 } from "lucide-react";
+import {
+  clearFeedbackReferralReturnTo,
+  getFeedbackReferralReturnTo,
+} from "@/lib/feedbackReferral/promptStorage";
 import { cn } from "@/lib/utils";
 
 type CopiedField = "code" | "link" | null;
@@ -20,15 +24,13 @@ export function FeedbackReferralCodeScreen({
   code,
   shareUrl,
   redeemed = false,
-  /** Extra actions under the main card (e.g. replay in the dev preview). */
-  footer,
 }: {
   code: string;
   shareUrl: string;
   redeemed?: boolean;
-  footer?: ReactNode;
 }) {
   const [copied, setCopied] = useState<CopiedField>(null);
+  const returnTo = useMemo(() => getFeedbackReferralReturnTo(), []);
   const absoluteLink = useMemo(
     () => toAbsoluteShareUrl(shareUrl),
     [shareUrl],
@@ -171,18 +173,27 @@ export function FeedbackReferralCodeScreen({
               </div>
             ) : null}
 
-            <p className="mt-6 text-sm text-text-muted">
-              Find this anytime in{" "}
+            <p className="mt-6 text-sm font-medium text-text">
+              This redemption code is not valid on your own account.
+            </p>
+            <p className="mt-2 text-sm text-text-muted">
+              Find it anytime in{" "}
               <Link
                 href="/profile?section=account"
                 className="font-medium text-[#4C8BF5] hover:underline"
               >
                 Settings → Account
               </Link>
-              . Not valid on your own account.
+              .
             </p>
 
-            {footer ? <div className="mt-6">{footer}</div> : null}
+            <Link
+              href={returnTo}
+              onClick={() => clearFeedbackReferralReturnTo()}
+              className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-organic-md bg-[#4C8BF5] px-5 text-base font-bold text-white transition-colors hover:bg-[#3B7AE0]"
+            >
+              Continue
+            </Link>
           </div>
         </div>
       </div>

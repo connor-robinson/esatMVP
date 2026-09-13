@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Check, Copy, Lock } from "lucide-react";
+import { setFeedbackReferralReturnTo } from "@/lib/feedbackReferral/promptStorage";
 import { cn } from "@/lib/utils";
 
 type Status = {
@@ -48,6 +49,10 @@ export function FeedbackReferralSettingsCard() {
     }
   };
 
+  const rememberReturn = () => {
+    setFeedbackReferralReturnTo("/profile?section=account");
+  };
+
   return (
     <div className="mt-4 rounded-organic-xl bg-surface-mid/60 px-5 py-5">
       <h3 className="text-sm font-semibold text-text">Friend referral code</h3>
@@ -61,6 +66,7 @@ export function FeedbackReferralSettingsCard() {
           </p>
           <Link
             href="/feedback"
+            onClick={rememberReturn}
             className="mt-4 inline-flex text-sm font-medium text-primary"
           >
             Open questionnaire
@@ -110,6 +116,7 @@ export function FeedbackReferralSettingsCard() {
           </p>
           <Link
             href="/feedback"
+            onClick={rememberReturn}
             className="mt-3 inline-flex text-sm font-medium text-primary"
           >
             View code page

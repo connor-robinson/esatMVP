@@ -12,6 +12,7 @@ import {
   hasFeedbackReferralSessionDismiss,
   recordFeedbackReferralPromptDismiss,
   setFeedbackReferralDontShowAgain,
+  setFeedbackReferralReturnTo,
 } from "@/lib/feedbackReferral/promptStorage";
 import { markFeedbackReferralAsked } from "@/lib/feedbackReferral/markAsked";
 
@@ -123,6 +124,9 @@ export function FeedbackReferralPrompt() {
           onStart={() => {
             clearFeedbackReferralEngagement();
             setOpen(false);
+            setFeedbackReferralReturnTo(
+              `${pathname}${typeof window !== "undefined" ? window.location.search : ""}`,
+            );
             router.push("/feedback");
           }}
           onNotNow={dismissSoft}

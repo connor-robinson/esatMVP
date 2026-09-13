@@ -37,29 +37,7 @@ export default function DevFeedbackReferralPage() {
   };
 
   if (stage === "done" && code) {
-    return (
-      <FeedbackReferralCodeScreen
-        code={code}
-        shareUrl={sharePath}
-        footer={
-          <div className="flex flex-wrap gap-2">
-            <Link
-              href={sharePath}
-              className="inline-flex rounded-organic-md bg-surface-mid px-4 py-2.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
-            >
-              Open friend pricing page
-            </Link>
-            <button
-              type="button"
-              onClick={resetInvite}
-              className="inline-flex rounded-organic-md bg-surface-mid px-4 py-2.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
-            >
-              Replay from the start
-            </button>
-          </div>
-        }
-      />
-    );
+    return <FeedbackReferralCodeScreen code={code} shareUrl={sharePath} />;
   }
 
   return (

@@ -2,10 +2,72 @@ const DONT_SHOW_KEY = "esatcamp.feedbackReferral.dontShowAgain.v1";
 const DISMISS_COUNT_KEY = "esatcamp.feedbackReferral.dismissCount.v1";
 const SESSION_DISMISS_KEY = "esatcamp.feedbackReferral.sessionDismiss.v1";
 const ENGAGEMENT_KEY = "esatcamp.feedbackReferral.engagement.v1";
+const RETURN_TO_KEY = "esatcamp.feedbackReferral.returnTo.v1";
 
 export const FEEDBACK_REFERRAL_MAX_PROMPT_SHOWS = 2;
 export const FEEDBACK_REFERRAL_ENGAGEMENT_EVENT =
   "esatcamp:feedback-referral-engagement";
+export const FEEDBACK_REFERRAL_DEFAULT_RETURN_TO = "/";
+
+const BLOCKED_RETURN_PREFIXES = [
+  "/feedback",
+  "/login",
+  "/signup",
+  "/auth",
+  "/dev/feedback-referral",
+];
+
+/** Safe same-site path for after the survey (pathname + search only). */
+export function sanitizeFeedbackReferralReturnTo(
+  raw: string | null | undefined,
+): string | null {
+  if (!raw) return null;
+  const trimmed = raw.trim();
+  if (!trimmed.startsWith("/") || trimmed.startsWith("//")) return null;
+  try {
+    const url = new URL(trimmed, "http://local.invalid");
+    const path = `${url.pathname}${url.search}`;
+    if (BLOCKED_RETURN_PREFIXES.some((p) => path === p || path.startsWith(`${p}/`) || path.startsWith(`${p}?`))) {
+      return null;
+    }
+    return path;
+  } catch {
+    return null;
+  }
+}
+
+export function setFeedbackReferralReturnTo(path: string): void {
+  if (typeof window === "undefined") return;
+  const safe = sanitizeFeedbackReferralReturnTo(path);
+  if (!safe) return;
+  try {
+    window.sessionStorage.setItem(RETURN_TO_KEY, safe);
+  } catch {
+    /* ignore */
+  }
+}
+
+export function getFeedbackReferralReturnTo(): string {
+  if (typeof window === "undefined") return FEEDBACK_REFERRAL_DEFAULT_RETURN_TO;
+  try {
+    const stored = sanitizeFeedbackReferralReturnTo(
+      window.sessionStorage.getItem(RETURN_TO_KEY),
+    );
+    if (stored) return stored;
+  } catch {
+    /* ignore */
+  }
+  return FEEDBACK_REFERRAL_DEFAULT_RETURN_TO;
+}
+
+export function clearFeedbackReferralReturnTo(): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.removeItem(RETURN_TO_KEY);
+  } catch {
+    /* ignore */
+  }
+}
 
 export function hasFeedbackReferralDontShowAgain(): boolean {
   if (typeof window === "undefined") return false;
@@ -127,6 +189,7 @@ export function resetFeedbackReferralPromptPrefs(): void {
     window.localStorage.removeItem(DISMISS_COUNT_KEY);
     window.sessionStorage.removeItem(SESSION_DISMISS_KEY);
     window.sessionStorage.removeItem(ENGAGEMENT_KEY);
+    window.sessionStorage.removeItem(RETURN_TO_KEY);
   } catch {
     /* ignore */
   }
