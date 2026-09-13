@@ -304,10 +304,9 @@ export default function PapersMarkPage() {
     };
   }, [paperId, questions]);
   
-  // Shared bubble utility (analytics-style)
-  const bubbleClass = hubMarkPreview
-    ? "rounded-md bg-white p-4 text-black shadow-none"
-    : "rounded-organic-lg border border-border-subtle bg-surface-elevated p-4 shadow-bar-floating";
+  // Shared bubble utility (analytics-style) - light mark chrome for all mark sessions.
+  const bubbleClass =
+    "rounded-md bg-white p-4 text-black shadow-none";
   const hubScoreReveal = useHubScoreReveal(hideResultsBehindLogin);
   
   const pinnedInsights = useMemo(() => {
@@ -1094,15 +1093,14 @@ export default function PapersMarkPage() {
     }
   }, [sessionId]);
 
-  // Hub Start now mark: force light mode for this visit only (not the site default).
-  // Leaving the page clears the override so the app returns to dark.
+  // Mark page: force light chrome for this visit only (not the site default).
+  // Hub Start now also keeps the main navbar visible.
   useEffect(() => {
-    if (!hubMarkPreview) return;
-    setHubMarkChromeActive(true);
     setThemeOverride("light");
     setIsDarkMode(false);
+    if (hubMarkPreview) setHubMarkChromeActive(true);
     return () => {
-      setHubMarkChromeActive(false);
+      if (hubMarkPreview) setHubMarkChromeActive(false);
       setThemeOverride(null);
     };
   }, [hubMarkPreview, setThemeOverride]);
@@ -1161,33 +1159,22 @@ export default function PapersMarkPage() {
     <Fragment>
       <div
         className={cn(
-          "relative flex min-h-0 flex-col overflow-hidden bg-background",
-          hubMarkPreview
-            ? "h-[calc(100dvh-3.75rem)] bg-white text-black [&_.text-neutral-100]:text-black [&_.text-neutral-200]:text-black [&_.text-neutral-300]:text-neutral-800 [&_.text-neutral-400]:text-neutral-700 [&_.text-neutral-500]:text-neutral-600 [&_.text-text]:text-black [&_.text-text-muted]:text-neutral-700"
-            : "h-dvh",
+          "relative flex min-h-0 flex-col overflow-hidden bg-white text-black",
+          "[&_.text-neutral-100]:text-black [&_.text-neutral-200]:text-black [&_.text-neutral-300]:text-neutral-800 [&_.text-neutral-400]:text-neutral-700 [&_.text-neutral-500]:text-neutral-600 [&_.text-text]:text-black [&_.text-text-muted]:text-neutral-700",
+          hubMarkPreview ? "h-[calc(100dvh-3.75rem)]" : "h-dvh",
         )}
       >
-        <div
-          className={cn(
-            "flex min-h-0 flex-1 flex-col gap-3 overflow-hidden px-3 py-3 sm:px-4 sm:py-4",
-            hubMarkPreview && "bg-white",
-          )}
-        >
+        <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden bg-white px-3 py-3 sm:px-4 sm:py-4">
           <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden lg:flex-row">
             <MarkSectionNav
               active={markSection}
               onSelect={selectMarkSection}
-              light={hubMarkPreview}
+              light
             />
 
             <Card
-              variant={hubMarkPreview ? "flat" : "default"}
-              className={cn(
-                "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden p-0",
-                hubMarkPreview
-                  ? "rounded-md bg-[#ebebef] shadow-none"
-                  : "border border-border bg-surface",
-              )}
+              variant="flat"
+              className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-md bg-[#ebebef] p-0 shadow-none"
             >
 
               {markSection === "overview" && (
@@ -1197,12 +1184,7 @@ export default function PapersMarkPage() {
                     <div className="flex items-start justify-between gap-4">
                       <div className="space-y-2">
                         <div className="flex flex-wrap items-center gap-2">
-                          <div
-                            className={cn(
-                              "text-lg font-semibold",
-                              hubMarkPreview ? "text-black" : "text-neutral-100",
-                            )}
-                          >
+                          <div className="text-lg font-semibold text-black">
                             {paperName} {sessionYear ?? ''}{variantDisplay ? `, ${variantDisplay}` : ''}
                           </div>
                           {sectionPills.map((s) => (
@@ -1227,7 +1209,7 @@ export default function PapersMarkPage() {
                         type="button"
                         onClick={() => void handleFinishMark()}
                         disabled={isFinishingMark}
-                        className="shrink-0 rounded-organic-md bg-accent px-4 py-2 text-sm font-semibold text-background transition-colors hover:bg-accent/90 disabled:opacity-50"
+                        className="shrink-0 rounded-md bg-accent px-4 py-2 text-sm font-semibold text-background transition-colors hover:bg-accent/90 disabled:opacity-50"
                       >
                         {isFinishingMark ? "Saving..." : "Save results"}
                       </button>
@@ -1328,7 +1310,7 @@ export default function PapersMarkPage() {
                         );
                         return (
                           <>
-                            <div className="flex min-h-[104px] flex-col items-center justify-center rounded-organic-lg bg-maths px-3 py-4 text-neutral-900 dark:text-white sm:px-4 sm:py-5">
+                            <div className="flex min-h-[104px] flex-col items-center justify-center rounded-md bg-maths px-3 py-4 text-neutral-900 sm:px-4 sm:py-5">
                               <div className="text-5xl font-bold leading-none tracking-tight sm:text-6xl">
                                 {predictedScore !== null && predictedScore !== undefined
                                   ? predictedScore.toFixed(1)
@@ -2345,7 +2327,7 @@ export default function PapersMarkPage() {
                       selectedChoice={
                         (answers[selectedIndex]?.choice as Letter | null) ?? null
                       }
-                      colourScheme={hubMarkPreview ? "review-light" : "review-dark"}
+                      colourScheme="review-light"
                     />
 
                     {!treatAsFullAccess && (
@@ -2666,23 +2648,13 @@ export default function PapersMarkPage() {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-            <div
-              className={cn(
-                "text-lg font-semibold",
-                hubMarkPreview ? "text-black" : "text-neutral-100",
-              )}
-            >
+            <div className="text-lg font-semibold text-black">
               Session Notes
             </div>
                 {/* Tooltip icon (same style as elsewhere) */}
                 <div className="relative group">
                   <button
-                    className={cn(
-                      "flex h-5 w-5 items-center justify-center rounded-full",
-                      hubMarkPreview
-                        ? "bg-black/10 text-black"
-                        : "bg-neutral-800 text-neutral-300",
-                    )}
+                    className="flex h-5 w-5 items-center justify-center rounded-full bg-black/10 text-black"
                     title="Notes info"
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -2691,25 +2663,13 @@ export default function PapersMarkPage() {
                       <circle cx="12" cy="8" r="1" />
                     </svg>
                   </button>
-                  <div
-                    className={cn(
-                      "absolute left-0 z-10 hidden w-64 rounded-md border p-2 text-[11px] shadow-lg group-hover:block",
-                      hubMarkPreview
-                        ? "border-black/10 bg-white text-black"
-                        : "border-border bg-surface-elevated text-neutral-300",
-                    )}
-                  >
+                  <div className="absolute left-0 z-10 hidden w-64 rounded-md border border-black/10 bg-white p-2 text-[11px] text-black shadow-lg group-hover:block">
                     These notes are private. They are autosaved and available in the Papers archive.
                   </div>
               </div>
               </div>
               <div className="flex items-center gap-2">
-                <div
-                  className={cn(
-                    "text-[11px]",
-                    hubMarkPreview ? "text-black/60" : "text-neutral-400",
-                  )}
-                >
+                <div className="text-[11px] text-black/60">
                   Private to you
                 </div>
                 <div className={cn('rounded-md px-2 py-0.5 text-[11px]', sessionNoteStatus === 'saved' ? 'bg-primary/15 text-primary' : 'bg-transparent text-text-muted')}>
@@ -2717,12 +2677,7 @@ export default function PapersMarkPage() {
                 </div>
               </div>
             </div>
-            <div
-              className={cn(
-                "text-sm",
-                hubMarkPreview ? "text-black" : "text-neutral-300",
-              )}
-            >
+            <div className="text-sm text-black">
               Summarise your key mistakes and strategies for next time. You’ll be able to review these before your next paper. Notes save automatically and are available in the Papers archive.
             </div>
             <textarea
@@ -2734,12 +2689,7 @@ export default function PapersMarkPage() {
                   sessionNoteDebounceRef.current = setTimeout(() => setSessionNoteStatus('saved'), 700);
                 }}
                 placeholder="Summarise mistakes, patterns, and specific actions to improve next time."
-                className={cn(
-                  "w-full resize-none rounded-lg px-4 py-3 text-sm outline-none ring-0 focus:outline-none focus:ring-0",
-                  hubMarkPreview
-                    ? "border border-black/10 bg-white text-black placeholder:text-black/45"
-                    : "border-0 bg-white/5 text-neutral-100 placeholder:text-neutral-400",
-                )}
+                className="w-full resize-none rounded-lg border border-black/10 bg-white px-4 py-3 text-sm text-black outline-none ring-0 placeholder:text-black/45 focus:outline-none focus:ring-0"
                 rows={5}
               />
               {/* Footer row removed per design - saved chip shown in header */}

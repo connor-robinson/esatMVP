@@ -340,6 +340,7 @@ describe("support launcher visibility", () => {
     expect(shouldShowSupportLauncher("/access")).toBe(false);
     expect(shouldShowSupportLauncher("/access/ABC123")).toBe(false);
     expect(shouldShowSupportLauncher("/past-papers/solve")).toBe(false);
+    expect(shouldShowSupportLauncher("/past-papers/mark")).toBe(true);
     expect(shouldShowSupportLauncher("/pearson/demo")).toBe(false);
     expect(shouldShowSupportLauncher("/mental-maths/drill")).toBe(false);
     expect(shouldShowSupportLauncher("/questions/questionbank")).toBe(false);
