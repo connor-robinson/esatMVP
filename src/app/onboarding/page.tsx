@@ -559,7 +559,7 @@ function OnboardingContent() {
             className={cn(
               "flex w-full max-w-[68rem] flex-col overflow-hidden rounded-[1.5rem] bg-surface-elevated",
               step === "trial"
-                ? "h-[min(46rem,calc(100vh-5rem))] sm:h-[min(48rem,calc(100vh-4rem))]"
+                ? "h-[min(50rem,calc(100vh-4.5rem))] sm:h-[min(52rem,calc(100vh-3.5rem))]"
                 : step === "referral"
                   ? "h-[min(40rem,calc(100vh-5.5rem))] sm:h-[min(42rem,calc(100vh-4.5rem))]"
                   : "h-[min(36rem,calc(100vh-5.5rem))] sm:h-[min(38rem,calc(100vh-4.5rem))]",
@@ -568,14 +568,26 @@ function OnboardingContent() {
           >
             <ProgressBar stepIndex={stepIndex} total={steps.length} />
 
-            <div className="mx-auto mt-6 flex min-h-0 w-full max-w-3xl flex-1 flex-col">
+            <div
+              className={cn(
+                "mx-auto mt-6 flex min-h-0 w-full flex-1 flex-col",
+                step === "trial" ? "max-w-4xl" : "max-w-3xl",
+              )}
+            >
               {!usesStepTitle ? (
                 <h1 className="shrink-0 text-2xl font-bold tracking-tight text-text sm:text-[1.75rem]">
                   Set up your account
                 </h1>
               ) : null}
 
-              <div className="mt-5 min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
+              <div
+                className={cn(
+                  "mt-5 min-h-0 flex-1 overflow-y-auto pr-1",
+                  step === "trial"
+                    ? "flex flex-col"
+                    : "space-y-4",
+                )}
+              >
                 {step === "username" ? (
                   <>
                     <div>
@@ -898,76 +910,88 @@ function OnboardingContent() {
 
                 {step === "trial" ? (
                   <>
-                    <div>
-                      <h1 className="text-2xl font-bold tracking-tight text-text sm:text-[1.75rem]">
+                    <div className="shrink-0">
+                      <h1 className="text-[1.7rem] font-bold tracking-tight text-text sm:text-[2.1rem]">
                         Start your free trial?
                       </h1>
-                      <p className="mt-1.5 text-sm text-text-muted">
+                      <p className="mt-2 text-base text-text-muted sm:text-[1.05rem]">
                         {TRIAL_DAYS} days of full access. {TRIAL_CHECKOUT_NOTE}
                       </p>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
-                      <div className="rounded-xl bg-[#4C8BF5]/15 px-4 py-4 sm:px-5 sm:py-5">
-                        <p className="text-sm font-semibold uppercase tracking-[0.08em] text-[#4C8BF5]">
-                          Free trial
-                        </p>
-                        <ul className="mt-4 space-y-3.5">
-                          {TRIAL_PLAN_ITEMS.map((item) => (
-                            <li
-                              key={item}
-                              className="flex items-start gap-3 text-sm leading-snug text-text sm:text-[0.95rem]"
-                            >
-                              <Check
-                                className="mt-0.5 h-4 w-4 shrink-0 text-[#4C8BF5]"
-                                strokeWidth={3}
-                                aria-hidden
-                              />
-                              <span>{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div className="rounded-xl bg-surface-mid px-4 py-4 sm:px-5 sm:py-5">
-                        <p className="text-sm font-semibold uppercase tracking-[0.08em] text-text-muted">
-                          Free
-                        </p>
-                        <ul className="mt-4 space-y-3.5">
-                          {FREE_PLAN_ITEMS.map((item) => (
-                            <li
-                              key={item.label}
-                              className={cn(
-                                "flex items-start gap-3 text-sm leading-snug sm:text-[0.95rem]",
-                                item.included ? "text-text" : "text-text-muted",
-                              )}
-                            >
-                              {item.included ? (
+                    <div className="flex min-h-0 flex-1 items-center py-4 sm:py-6">
+                      <div className="grid w-full grid-cols-1 items-stretch gap-4 sm:grid-cols-[1.4fr_1fr] sm:gap-5">
+                        <div className="relative flex flex-col rounded-2xl border border-white/10 bg-surface-mid px-5 py-6 sm:px-7 sm:py-8">
+                          <div
+                            aria-hidden
+                            className="absolute inset-y-4 left-0 w-1 rounded-full bg-[#4C8BF5]"
+                          />
+                          <div className="mb-4 flex items-center gap-2.5">
+                            <span className="rounded-md bg-[#4C8BF5] px-2 py-0.5 text-[0.7rem] font-semibold text-white sm:text-xs">
+                              Popular
+                            </span>
+                            <h2 className="text-xl font-bold tracking-tight text-text sm:text-2xl">
+                              Free trial
+                            </h2>
+                          </div>
+                          <ul className="space-y-4">
+                            {TRIAL_PLAN_ITEMS.map((item) => (
+                              <li
+                                key={item}
+                                className="flex items-start gap-3.5 text-base leading-snug text-text sm:text-[1.1rem]"
+                              >
                                 <Check
-                                  className="mt-0.5 h-4 w-4 shrink-0 text-text-muted"
-                                  strokeWidth={3}
+                                  className="mt-1 h-5 w-5 shrink-0 text-[#4C8BF5]"
+                                  strokeWidth={2.75}
                                   aria-hidden
                                 />
-                              ) : (
-                                <X
-                                  className="mt-0.5 h-4 w-4 shrink-0 text-error/80"
-                                  strokeWidth={3}
-                                  aria-hidden
-                                />
-                              )}
-                              <span>{item.label}</span>
-                            </li>
-                          ))}
-                        </ul>
+                                <span>{item}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        <div className="flex flex-col rounded-2xl bg-background/40 px-4 py-5 sm:px-5 sm:py-6">
+                          <h2 className="mb-3.5 text-base font-semibold text-text-muted sm:text-lg">
+                            Free
+                          </h2>
+                          <ul className="space-y-3.5">
+                            {FREE_PLAN_ITEMS.map((item) => (
+                              <li
+                                key={item.label}
+                                className={cn(
+                                  "flex items-start gap-3 text-[0.95rem] leading-snug sm:text-base",
+                                  item.included ? "text-text" : "text-text-muted",
+                                )}
+                              >
+                                {item.included ? (
+                                  <Check
+                                    className="mt-0.5 h-4 w-4 shrink-0 text-text-muted"
+                                    strokeWidth={2.75}
+                                    aria-hidden
+                                  />
+                                ) : (
+                                  <X
+                                    className="mt-0.5 h-4 w-4 shrink-0 text-error/80"
+                                    strokeWidth={2.75}
+                                    aria-hidden
+                                  />
+                                )}
+                                <span>{item.label}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="space-y-3 pt-1">
+                    <div className="shrink-0 space-y-3 pt-1">
                       <button
                         type="button"
                         disabled={saving || trialLoading}
                         onClick={() => void finishWithTrial()}
                         className={cn(
-                          "inline-flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-base font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
+                          "inline-flex w-full items-center justify-center gap-2.5 rounded-xl py-4 text-lg font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
                           ACCENT.btn,
                         )}
                       >
@@ -984,14 +1008,14 @@ function OnboardingContent() {
                         type="button"
                         disabled={saving || trialLoading}
                         onClick={() => void finishLimited()}
-                        className="w-full text-center text-xs text-text-muted transition-colors hover:text-text disabled:cursor-not-allowed disabled:opacity-50"
+                        className="w-full text-center text-sm text-text-muted transition-colors hover:text-text disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         Continue with limited access
                       </button>
                       <button
                         type="button"
                         onClick={goBack}
-                        className="w-full text-center text-[11px] text-text-subtle hover:text-text-muted"
+                        className="w-full text-center text-xs text-text-subtle hover:text-text-muted"
                       >
                         Back
                       </button>
