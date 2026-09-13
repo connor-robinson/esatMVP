@@ -101,6 +101,47 @@ export async function getReferralCodeForUser(
   return data as FeedbackReferralCodeRow | null;
 }
 
+/**
+ * Resolve a CAMP50 friend code for Checkout.
+ * Returns null when no code was provided (caller should allow manual promo entry).
+ */
+export async function resolveCheckoutReferralDiscount(opts: {
+  rawCode: string | null | undefined;
+  redeemerUserId: string;
+  service?: SupabaseClient;
+}): Promise<{
+  code: string;
+  promotionCodeId: string;
+} | null> {
+  const code = normalizeReferralCode(opts.rawCode);
+  if (!code) return null;
+
+  const row = await findReferralCodeRow(code, opts.service);
+  if (!row) {
+    throw new FeedbackReferralError("This friend code is not valid.", 400);
+  }
+  if (row.redeemed_at) {
+    throw new FeedbackReferralError(
+      "This friend code has already been used.",
+      400,
+    );
+  }
+  if (row.user_id === opts.redeemerUserId) {
+    throw new FeedbackReferralError(
+      "You cannot use your own referral code.",
+      400,
+    );
+  }
+  if (!row.stripe_promotion_code_id) {
+    throw new FeedbackReferralError("This friend code is not valid.", 400);
+  }
+
+  return {
+    code: row.code,
+    promotionCodeId: row.stripe_promotion_code_id,
+  };
+}
+
 export async function submitFeedbackAndIssueCode(opts: {
   userId: string;
   answers: FeedbackAnswer[];
@@ -122,16 +163,7 @@ export async function submitFeedbackAndIssueCode(opts: {
     };
   }
 
-  const { error: submitError } = await service
-    .from("feedback_referral_submissions")
-    .insert({
-      user_id: opts.userId,
-      answers: opts.answers,
-    });
-  if (submitError && !submitError.message.toLowerCase().includes("duplicate")) {
-    throw new FeedbackReferralError(submitError.message, 500);
-  }
-
+  // Create Stripe first so a failed promo never leaves a submission without a code.
   let issued: { code: string; couponId: string; promotionCodeId: string };
   try {
     issued = await createOneUseReferralPromotionCode({
@@ -161,6 +193,23 @@ export async function submitFeedbackAndIssueCode(opts: {
       };
     }
     throw new FeedbackReferralError(codeError.message, 500);
+  }
+
+  // Upsert answers after the code exists (covers retries after earlier Stripe failures).
+  const { error: submitError } = await service
+    .from("feedback_referral_submissions")
+    .upsert(
+      {
+        user_id: opts.userId,
+        answers: opts.answers,
+      },
+      { onConflict: "user_id" },
+    );
+  if (submitError) {
+    console.error(
+      "[feedback-referral] code issued but submission upsert failed",
+      submitError,
+    );
   }
 
   // Fire immediately for new replies. Do not block the user's code on email failure.

@@ -10,6 +10,7 @@ import {
   isReferralCodeFormat,
   normalizeReferralCode,
 } from "@/lib/feedbackReferral/codes";
+import { FeedbackReferralError } from "@/lib/feedbackReferral/service";
 import {
   hasWrittenBeyondExamples,
   isFeedbackStepComplete,
@@ -17,6 +18,14 @@ import {
   validateFeedbackReferralSurvey,
   type FeedbackQuestion,
 } from "@/lib/feedbackReferral/survey";
+
+describe("resolveCheckoutReferralDiscount guards", () => {
+  it("exposes FeedbackReferralError with status", () => {
+    const err = new FeedbackReferralError("You cannot use your own referral code.", 400);
+    expect(err.message).toMatch(/own referral code/i);
+    expect(err.status).toBe(400);
+  });
+});
 
 describe("feedback referral access", () => {
   it("parses preview emails and keeps built-in testers", () => {

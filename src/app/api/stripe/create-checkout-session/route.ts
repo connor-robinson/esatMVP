@@ -13,6 +13,10 @@ import {
   parseGaCheckoutAttribution,
 } from "@/lib/stripe/checkoutGaMetadata";
 import { buildCheckoutCustomerFields } from "@/lib/stripe/checkoutIdentity";
+import {
+  FeedbackReferralError,
+  resolveCheckoutReferralDiscount,
+} from "@/lib/feedbackReferral/service";
 
 export const dynamic = "force-dynamic";
 
@@ -75,6 +79,8 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json().catch(() => ({}));
     const planType = (body.planType ?? "monthly") as PlanType;
+    const referralCodeRaw =
+      typeof body.referralCode === "string" ? body.referralCode : null;
 
     if (planType !== "weekly" && planType !== "monthly" && planType !== "season_pass") {
       return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
@@ -87,6 +93,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    let referralDiscount: { code: string; promotionCodeId: string } | null =
+      null;
+    try {
+      referralDiscount = await resolveCheckoutReferralDiscount({
+        rawCode: referralCodeRaw,
+        redeemerUserId: user.id,
+      });
+    } catch (err) {
+      if (err instanceof FeedbackReferralError) {
+        return NextResponse.json({ error: err.message }, { status: err.status });
+      }
+      throw err;
+    }
+
+    // Stripe forbids combining allow_promotion_codes with discounts.
+    const promoFields = referralDiscount
+      ? {
+          discounts: [
+            { promotion_code: referralDiscount.promotionCodeId },
+          ] as const,
+        }
+      : { allow_promotion_codes: true as const };
+
     // Only reuse a stored Customer. Do not create one until Checkout completes.
     const existingCustomerId = await getStoredStripeCustomerId(user.id);
     const customerFields = buildCheckoutCustomerFields(
@@ -95,12 +124,19 @@ export async function POST(request: NextRequest) {
     );
     const siteUrl = resolveAppSiteUrl();
     const successUrl = `${siteUrl}/pricing/success?session_id={CHECKOUT_SESSION_ID}`;
-    const cancelUrl = `${siteUrl}/pricing?canceled=true`;
+    const cancelQuery = new URLSearchParams({ canceled: "true" });
+    if (referralDiscount?.code) {
+      cancelQuery.set("code", referralDiscount.code);
+    }
+    const cancelUrl = `${siteUrl}/pricing?${cancelQuery.toString()}`;
     const gaMeta = mergeStripeGaMetadata(
       {
         userId: user.id,
         user_id: user.id,
         planType,
+        ...(referralDiscount
+          ? { referralCode: referralDiscount.code }
+          : {}),
       },
       parseGaCheckoutAttribution(body),
     );
@@ -108,9 +144,14 @@ export async function POST(request: NextRequest) {
     // Exam Season Pass - true one-time payment (no yearly subscription)
     if (planType === "season_pass") {
       const amountPence = Math.round(getSeasonPassPrice() * 100);
+      // payment mode does not create a Customer by default. Force creation when
+      // we only have customer_email so webhooks can link the buyer.
       const session = await getStripe().checkout.sessions.create({
         mode: "payment",
         ...customerFields,
+        ...(!("customer" in customerFields)
+          ? { customer_creation: "always" as const }
+          : {}),
         client_reference_id: user.id,
         line_items: [
           {
@@ -127,7 +168,7 @@ export async function POST(request: NextRequest) {
         ],
         success_url: successUrl,
         cancel_url: cancelUrl,
-        allow_promotion_codes: true,
+        ...promoFields,
         metadata: { ...gaMeta, planType: "season_pass" },
       });
       return NextResponse.json({ url: session.url });
@@ -171,7 +212,7 @@ export async function POST(request: NextRequest) {
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: successUrl,
       cancel_url: cancelUrl,
-      allow_promotion_codes: true,
+      ...promoFields,
       metadata: gaMeta,
       subscription_data: {
         ...(offerTrial ? { trial_period_days: TRIAL_DAYS } : {}),

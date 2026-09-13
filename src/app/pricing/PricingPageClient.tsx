@@ -202,6 +202,7 @@ export default function PricingPageClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           planType,
+          ...(codeFromUrl ? { referralCode: codeFromUrl } : {}),
           ...ga,
         }),
       });
@@ -334,12 +335,14 @@ export default function PricingPageClient() {
           ) : null}
           {codeFromUrl ? (
             <p className="mx-auto mt-4 max-w-xl rounded-organic-lg bg-surface-elevated px-4 py-3 text-sm text-text">
-              Friend code <span className="font-mono font-semibold">{codeFromUrl}</span>.
-              Choose a plan, then apply it in Stripe Checkout.
+              Friend code{" "}
+              <span className="font-mono font-semibold">{codeFromUrl}</span>{" "}
+              will be applied automatically at checkout.
             </p>
           ) : null}
           <p className="mx-auto mt-4 max-w-xl text-sm text-text-muted">
-            Have a code? Apply it in Stripe Checkout when you pay.
+            Have a code without a link? You can still enter it in Stripe
+            Checkout when you pay.
           </p>
         </div>
 

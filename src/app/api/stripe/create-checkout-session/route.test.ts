@@ -16,12 +16,22 @@ const {
   checkoutSessionsCreate,
   subscriptionsList,
   pricesRetrieve,
+  resolveCheckoutReferralDiscount,
+  FeedbackReferralError,
 } = vi.hoisted(() => {
   const checkoutSessionsCreate = vi.fn();
   const customersCreate = vi.fn();
   const subscriptionsList = vi.fn();
   const pricesRetrieve = vi.fn();
   const supabaseFrom = vi.fn();
+
+  class FeedbackReferralError extends Error {
+    status: number;
+    constructor(message: string, status: number) {
+      super(message);
+      this.status = status;
+    }
+  }
 
   return {
     requireRouteUser: vi.fn(),
@@ -37,6 +47,8 @@ const {
     subscriptionsList,
     pricesRetrieve,
     supabaseFrom,
+    resolveCheckoutReferralDiscount: vi.fn(async () => null),
+    FeedbackReferralError,
     getStripe: vi.fn(() => ({
       customers: { create: customersCreate },
       checkout: { sessions: { create: checkoutSessionsCreate } },
@@ -67,6 +79,10 @@ vi.mock("@/lib/seo/config", () => ({ resolveAppSiteUrl }));
 vi.mock("@/lib/stripe/best-value", () => ({
   getSeasonPassPrice,
   SEASON_PASS_ACCESS_UNTIL_LABEL: "31 Oct 2026",
+}));
+vi.mock("@/lib/feedbackReferral/service", () => ({
+  FeedbackReferralError,
+  resolveCheckoutReferralDiscount,
 }));
 
 import { POST } from "@/app/api/stripe/create-checkout-session/route";
@@ -132,6 +148,7 @@ describe("POST /api/stripe/create-checkout-session", () => {
     checkoutSessionsCreate.mockResolvedValue({
       url: "https://checkout.stripe.com/test",
     });
+    resolveCheckoutReferralDiscount.mockResolvedValue(null);
     mockNoActiveSubscription();
   });
 
@@ -240,6 +257,33 @@ describe("POST /api/stripe/create-checkout-session", () => {
     ).toBe(4);
   });
 
+  it("forces customer_creation for season pass when using customer_email", async () => {
+    await POST(
+      new NextRequest("http://localhost/api/stripe/create-checkout-session", {
+        method: "POST",
+        body: JSON.stringify({ planType: "season_pass" }),
+      }),
+    );
+    const args = checkoutSessionsCreate.mock.calls[0][0];
+    expect(args.mode).toBe("payment");
+    expect(args.customer_email).toBe(USER.email);
+    expect(args.customer).toBeUndefined();
+    expect(args.customer_creation).toBe("always");
+  });
+
+  it("does not set customer_creation when reusing an existing customer for season pass", async () => {
+    getStoredStripeCustomerId.mockResolvedValue("cus_existing");
+    await POST(
+      new NextRequest("http://localhost/api/stripe/create-checkout-session", {
+        method: "POST",
+        body: JSON.stringify({ planType: "season_pass" }),
+      }),
+    );
+    const args = checkoutSessionsCreate.mock.calls[0][0];
+    expect(args.customer).toBe("cus_existing");
+    expect(args.customer_creation).toBeUndefined();
+  });
+
   it("blocks checkout when the user already has an active subscription", async () => {
     mockActiveSubscription();
     const res = await POST(
@@ -251,5 +295,54 @@ describe("POST /api/stripe/create-checkout-session", () => {
     expect(res.status).toBe(409);
     expect(checkoutSessionsCreate).not.toHaveBeenCalled();
     expect(customersCreate).not.toHaveBeenCalled();
+  });
+
+  it("auto-applies a valid friend referral code at checkout", async () => {
+    resolveCheckoutReferralDiscount.mockResolvedValue({
+      code: "CAMP50-ABCDEF",
+      promotionCodeId: "promo_friend",
+    });
+
+    const res = await POST(
+      new NextRequest("http://localhost/api/stripe/create-checkout-session", {
+        method: "POST",
+        body: JSON.stringify({
+          planType: "monthly",
+          referralCode: "CAMP50-ABCDEF",
+        }),
+      }),
+    );
+
+    expect(res.status).toBe(200);
+    expect(resolveCheckoutReferralDiscount).toHaveBeenCalledWith({
+      rawCode: "CAMP50-ABCDEF",
+      redeemerUserId: USER.id,
+    });
+    const args = checkoutSessionsCreate.mock.calls[0][0];
+    expect(args.discounts).toEqual([{ promotion_code: "promo_friend" }]);
+    expect(args.allow_promotion_codes).toBeUndefined();
+    expect(args.metadata.referralCode).toBe("CAMP50-ABCDEF");
+    expect(args.cancel_url).toContain("code=CAMP50-ABCDEF");
+  });
+
+  it("rejects using your own referral code at checkout", async () => {
+    resolveCheckoutReferralDiscount.mockRejectedValue(
+      new FeedbackReferralError("You cannot use your own referral code.", 400),
+    );
+
+    const res = await POST(
+      new NextRequest("http://localhost/api/stripe/create-checkout-session", {
+        method: "POST",
+        body: JSON.stringify({
+          planType: "monthly",
+          referralCode: "CAMP50-OWNCODE",
+        }),
+      }),
+    );
+    const data = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(data.error).toMatch(/own referral code/i);
+    expect(checkoutSessionsCreate).not.toHaveBeenCalled();
   });
 });
