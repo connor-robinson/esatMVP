@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -100,6 +100,8 @@ export interface QuestionBankEsatSessionShellProps {
   explanationContent: string | null;
   onCloseExplanation: () => void;
   sessionId?: string | null;
+  /** Optional block rendered under the stem + options (e.g. support review meta). */
+  belowQuestion?: ReactNode;
 }
 
 export function QuestionBankEsatSessionShell({
@@ -139,6 +141,7 @@ export function QuestionBankEsatSessionShell({
   explanationContent,
   onCloseExplanation,
   sessionId,
+  belowQuestion,
 }: QuestionBankEsatSessionShellProps) {
   const [timerHidden, setTimerHidden] = useState(false);
   const [counterHidden, setCounterHidden] = useState(false);
@@ -464,6 +467,10 @@ export function QuestionBankEsatSessionShell({
               );
             })}
           </ul>
+
+          {belowQuestion ? (
+            <div className="mt-6 w-full max-w-3xl">{belowQuestion}</div>
+          ) : null}
         </div>
 
         {navigatorOpen ? (
