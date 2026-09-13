@@ -5,6 +5,7 @@ import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   FEEDBACK_REFERRAL_SURVEY,
+  feedbackWhyId,
   hasWrittenBeyondExamples,
   isFeedbackStepComplete,
   matchesExampleExactly,
@@ -49,24 +50,26 @@ export function FeedbackSurveyForm({
   const question = questions[stepIndex]!;
   const isLast = stepIndex === questions.length - 1;
   const value = answers[question.id];
-  const canContinue = isFeedbackStepComplete(question, value);
+  const canContinue = isFeedbackStepComplete(question, value, answers);
 
-  const payload: FeedbackAnswer[] = useMemo(
-    () =>
-      questions
-        .filter((q) => {
-          const v = answers[q.id];
-          if (v === undefined || v === "") return false;
-          if (Array.isArray(v) && v.length === 0) return false;
-          return true;
-        })
-        .map((q) => ({ questionId: q.id, value: answers[q.id] })),
-    [answers, questions],
-  );
+  const payload: FeedbackAnswer[] = useMemo(() => {
+    const entries: FeedbackAnswer[] = [];
+    for (const [questionId, answerValue] of Object.entries(answers)) {
+      if (answerValue === undefined || answerValue === "") continue;
+      if (Array.isArray(answerValue) && answerValue.length === 0) continue;
+      if (typeof answerValue === "string" && !answerValue.trim()) continue;
+      entries.push({ questionId, value: answerValue });
+    }
+    return entries;
+  }, [answers]);
+
+  const setField = (id: string, next: FeedbackAnswerValue) => {
+    setAnswers((prev) => ({ ...prev, [id]: next }));
+    setError(null);
+  };
 
   const setValue = (next: FeedbackAnswerValue) => {
-    setAnswers((prev) => ({ ...prev, [question.id]: next }));
-    setError(null);
+    setField(question.id, next);
   };
 
   const toggleMulti = (optionValue: string) => {
@@ -152,7 +155,7 @@ export function FeedbackSurveyForm({
           <div
             className={cn(
               "flex w-full max-w-[68rem] flex-col overflow-hidden rounded-[1.5rem] bg-surface-elevated",
-              "h-[min(36rem,calc(100vh-5.5rem))] sm:h-[min(38rem,calc(100vh-4.5rem))]",
+              "h-[min(42rem,calc(100vh-5.5rem))] sm:h-[min(44rem,calc(100vh-4.5rem))]",
               "px-6 pb-6 pt-5 sm:px-12 sm:pb-8 sm:pt-7",
             )}
           >
@@ -182,8 +185,10 @@ export function FeedbackSurveyForm({
                 <StepBody
                   question={question}
                   value={value}
+                  answers={answers}
                   onChange={setValue}
                   onToggleMulti={toggleMulti}
+                  onSetField={setField}
                 />
 
                 {error ? (
@@ -303,52 +308,203 @@ function ChoiceCard({
   );
 }
 
+function ExplainWhyBox({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (next: string) => void;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <p className="text-[11px] font-medium text-text-muted">
+        Explain why <span className="text-text-subtle">(optional)</span>
+      </p>
+      <textarea
+        value={value}
+        maxLength={500}
+        rows={2}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full resize-y rounded-xl border-0 bg-surface-mid px-4 py-3 text-sm text-text outline-none ring-0 placeholder:text-text-subtle focus:outline-none focus:ring-0"
+        placeholder="A short reason helps us improve…"
+      />
+    </div>
+  );
+}
+
+function RequiredDetailBox({
+  label,
+  help,
+  value,
+  minLength,
+  maxLength,
+  onChange,
+}: {
+  label: string;
+  help?: string;
+  value: string;
+  minLength?: number;
+  maxLength?: number;
+  onChange: (next: string) => void;
+}) {
+  const len = value.trim().length;
+  const min = minLength ?? 1;
+  return (
+    <div className="space-y-1.5 rounded-xl bg-surface-mid/60 p-3">
+      <p className="text-sm font-semibold text-text">{label}</p>
+      {help ? <p className="text-[11px] text-text-muted">{help}</p> : null}
+      <textarea
+        value={value}
+        maxLength={maxLength ?? 500}
+        rows={3}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full resize-y rounded-xl border-0 bg-surface-mid px-4 py-3 text-sm text-text outline-none ring-0 placeholder:text-text-subtle focus:outline-none focus:ring-0"
+        placeholder="Please specify…"
+      />
+      <p
+        className={cn(
+          "text-[11px] tabular-nums",
+          len >= min ? "text-text-muted" : "text-[#4C8BF5]",
+        )}
+      >
+        {len}/{min} minimum
+      </p>
+    </div>
+  );
+}
+
 function StepBody({
   question,
   value,
+  answers,
   onChange,
   onToggleMulti,
+  onSetField,
 }: {
   question: FeedbackQuestion;
   value: FeedbackAnswerValue | undefined;
+  answers: Record<string, FeedbackAnswerValue>;
   onChange: (value: FeedbackAnswerValue) => void;
   onToggleMulti: (value: string) => void;
+  onSetField: (id: string, value: FeedbackAnswerValue) => void;
 }) {
   const textLen = typeof value === "string" ? value.trim().length : 0;
   const min = question.minLength ?? 0;
+  const mainAnswered = isFeedbackStepComplete(
+    { ...question, followUpText: undefined, requiredDetails: undefined },
+    value,
+  );
+  const whyId = feedbackWhyId(question.id);
+  const whyValue =
+    typeof answers[whyId] === "string" ? (answers[whyId] as string) : "";
+
+  const whyBox =
+    question.whyOptional && mainAnswered ? (
+      <ExplainWhyBox
+        value={whyValue}
+        onChange={(next) => onSetField(whyId, next)}
+      />
+    ) : null;
+
+  const detailBoxes = (question.requiredDetails ?? [])
+    .filter((detail) => {
+      if (Array.isArray(value)) return value.includes(detail.optionValue);
+      return value === detail.optionValue;
+    })
+    .map((detail) => (
+      <RequiredDetailBox
+        key={detail.id}
+        label={detail.label}
+        help={detail.help}
+        value={
+          typeof answers[detail.id] === "string"
+            ? (answers[detail.id] as string)
+            : ""
+        }
+        minLength={detail.minLength}
+        maxLength={detail.maxLength}
+        onChange={(next) => onSetField(detail.id, next)}
+      />
+    ));
+
+  const followUp =
+    question.followUpText && mainAnswered ? (
+      <div className="space-y-1.5 border-t border-white/10 pt-4">
+        <p className="text-base font-semibold text-text">
+          {question.followUpText.label}
+        </p>
+        {question.followUpText.help ? (
+          <p className="text-[11px] text-text-muted">
+            {question.followUpText.help}
+          </p>
+        ) : null}
+        <textarea
+          value={
+            typeof answers[question.followUpText.id] === "string"
+              ? (answers[question.followUpText.id] as string)
+              : ""
+          }
+          maxLength={question.followUpText.maxLength ?? 280}
+          rows={3}
+          onChange={(e) => onSetField(question.followUpText!.id, e.target.value)}
+          className="w-full resize-y rounded-xl border-0 bg-surface-mid px-4 py-3 text-sm text-text outline-none ring-0 placeholder:text-text-subtle focus:outline-none focus:ring-0"
+          placeholder="One sentence…"
+        />
+        <p
+          className={cn(
+            "text-[11px] tabular-nums",
+            trimmedLen(answers[question.followUpText.id]) >=
+              (question.followUpText.minLength ?? 1)
+              ? "text-text-muted"
+              : "text-[#4C8BF5]",
+          )}
+        >
+          {trimmedLen(answers[question.followUpText.id])}/
+          {question.followUpText.minLength ?? 1} minimum
+        </p>
+      </div>
+    ) : null;
 
   if (question.type === "single" && question.options) {
     return (
-      <div className="space-y-2">
-        {question.options.map((opt) => (
-          <ChoiceCard
-            key={opt.value}
-            selected={value === opt.value}
-            title={opt.label}
-            description={opt.description}
-            onClick={() => onChange(opt.value)}
-          />
-        ))}
+      <div className="space-y-3">
+        <div className="space-y-2">
+          {question.options.map((opt) => (
+            <ChoiceCard
+              key={opt.value}
+              selected={value === opt.value}
+              title={opt.label}
+              description={opt.description}
+              onClick={() => onChange(opt.value)}
+            />
+          ))}
+        </div>
+        {detailBoxes}
+        {whyBox}
       </div>
     );
   }
 
   if (question.type === "multi" && question.options) {
     return (
-      <div className="space-y-2">
-        {question.options.map((opt) => {
-          const selected = Array.isArray(value) && value.includes(opt.value);
-          return (
-            <ChoiceCard
-              key={opt.value}
-              selected={selected}
-              title={opt.label}
-              description={opt.description}
-              checkbox
-              onClick={() => onToggleMulti(opt.value)}
-            />
-          );
-        })}
+      <div className="space-y-3">
+        <div className="space-y-2">
+          {question.options.map((opt) => {
+            const selected = Array.isArray(value) && value.includes(opt.value);
+            return (
+              <ChoiceCard
+                key={opt.value}
+                selected={selected}
+                title={opt.label}
+                description={opt.description}
+                checkbox
+                onClick={() => onToggleMulti(opt.value)}
+              />
+            );
+          })}
+        </div>
+        {detailBoxes}
+        {whyBox}
       </div>
     );
   }
@@ -384,6 +540,8 @@ function StepBody({
             <span>{question.scaleMaxLabel}</span>
           </div>
         ) : null}
+        {followUp}
+        {whyBox}
       </div>
     );
   }
@@ -473,4 +631,8 @@ function StepBody({
   }
 
   return null;
+}
+
+function trimmedLen(value: FeedbackAnswerValue | undefined): number {
+  return typeof value === "string" ? value.trim().length : 0;
 }

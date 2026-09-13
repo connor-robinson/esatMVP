@@ -1,5 +1,22 @@
 export type FeedbackQuestionType = "single" | "multi" | "scale" | "longtext";
 
+export interface FeedbackFollowUpText {
+  id: string;
+  label: string;
+  help?: string;
+  minLength?: number;
+  maxLength?: number;
+}
+
+export interface FeedbackRequiredOptionDetail {
+  optionValue: string;
+  id: string;
+  label: string;
+  help?: string;
+  minLength?: number;
+  maxLength?: number;
+}
+
 export interface FeedbackQuestion {
   id: string;
   type: FeedbackQuestionType;
@@ -17,6 +34,12 @@ export interface FeedbackQuestion {
   minLength?: number;
   /** Shown as clickable example prompts under the text box. */
   examples?: string[];
+  /** Optional "explain why" box under the main answer. */
+  whyOptional?: boolean;
+  /** Shown after the main answer is set (e.g. describe-to-a-friend after recommend). */
+  followUpText?: FeedbackFollowUpText;
+  /** Extra required text when specific option(s) are selected. */
+  requiredDetails?: FeedbackRequiredOptionDetail[];
 }
 
 export interface FeedbackSurveyDefinition {
@@ -33,6 +56,10 @@ export interface FeedbackAnswer {
   value: FeedbackAnswerValue;
 }
 
+export function feedbackWhyId(questionId: string): string {
+  return `${questionId}_why`;
+}
+
 export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
   title: "Quick feedback",
   intro: "Answer a few questions to unlock a discount code for your friend.",
@@ -43,6 +70,7 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       type: "single",
       label: "What's most useful?",
       help: "Pick the one thing that helped you most.",
+      whyOptional: true,
       options: [
         {
           value: "calibration",
@@ -81,6 +109,7 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       type: "single",
       label: "What's least useful?",
       help: "Pick the one that felt weakest or hardest to use.",
+      whyOptional: true,
       options: [
         {
           value: "calibration",
@@ -123,12 +152,21 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       scaleMax: 10,
       scaleMinLabel: "Not really",
       scaleMaxLabel: "Yes, for sure",
+      whyOptional: true,
+      followUpText: {
+        id: "describe_friend",
+        label: "In one sentence, how would you describe ESATCamp to a friend?",
+        help: "Keep it short. One sentence is enough.",
+        minLength: 12,
+        maxLength: 280,
+      },
     },
     {
       id: "recommend_more",
       type: "single",
       label: "What would make you more likely to recommend us?",
       help: "Pick the one that would help most.",
+      whyOptional: true,
       options: [
         {
           value: "better_questions",
@@ -158,20 +196,12 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       ],
     },
     {
-      id: "describe_friend",
-      type: "longtext",
-      label: "In one sentence, how would you describe ESATCamp to a friend?",
-      help: "Keep it short. One sentence is enough.",
-      required: true,
-      minLength: 12,
-      maxLength: 280,
-    },
-    {
       id: "price_fair",
       type: "single",
       section: "Pricing / value",
       label: "Was the price fair for what you got?",
       help: "Honest answers help. No wrong choice.",
+      whyOptional: true,
       options: [
         {
           value: "too_high",
@@ -197,10 +227,11 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
     },
     {
       id: "almost_stopped",
-      type: "single",
+      type: "multi",
       section: "Pricing / value",
       label: "What almost stopped you from paying or continuing?",
-      help: "Pick the closest fit. Skip-feel options are fine.",
+      help: "Select all that apply.",
+      whyOptional: true,
       options: [
         {
           value: "price",
@@ -238,43 +269,69 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
           description: "A different reason",
         },
       ],
+      requiredDetails: [
+        {
+          optionValue: "technical",
+          id: "almost_stopped_technical",
+          label: "What technical issue did you hit?",
+          help: "Required when you select Technical issues.",
+          minLength: 8,
+          maxLength: 500,
+        },
+      ],
     },
     {
-      id: "biggest_gap",
-      type: "single",
-      section: "Biggest remaining gap",
-      label: "What's your biggest remaining gap?",
-      help: "The one thing that would help your ESAT score most next.",
+      id: "camp_missing",
+      type: "multi",
+      section: "What ESATCamp is missing",
+      label: "What is ESATCamp missing / what would you like to see?",
+      help: "Select all that apply. Use Other for anything not listed.",
+      whyOptional: true,
       options: [
         {
-          value: "speed",
-          label: "Speed",
-          description: "Working faster under time pressure",
+          value: "more_papers",
+          label: "More papers",
+          description: "More full timed papers or mocks",
         },
         {
-          value: "accuracy",
-          label: "Accuracy",
-          description: "Fewer careless or concept mistakes",
+          value: "better_explanations",
+          label: "Better explanations",
+          description: "Clearer solutions and walkthroughs",
         },
         {
-          value: "topics",
-          label: "Specific topics",
-          description: "Weak areas still need coverage",
+          value: "more_topics",
+          label: "More topic coverage",
+          description: "Broader or deeper practice by topic",
         },
         {
-          value: "exam_timing",
-          label: "Exam timing",
-          description: "Pacing a full paper start to finish",
+          value: "progress",
+          label: "Clearer progress",
+          description: "Easier to see improvement over time",
         },
         {
-          value: "confidence",
-          label: "Confidence",
-          description: "Knowing you're ready on the day",
+          value: "mobile",
+          label: "Better mobile",
+          description: "Works better on phone",
+        },
+        {
+          value: "pricing",
+          label: "Pricing options",
+          description: "Different plans, trials, or free content",
         },
         {
           value: "other",
-          label: "Something else",
-          description: "A different gap",
+          label: "Other",
+          description: "Tell us what else you'd like",
+        },
+      ],
+      requiredDetails: [
+        {
+          optionValue: "other",
+          id: "camp_missing_other",
+          label: "What else would you like to see?",
+          help: "Required when you select Other.",
+          minLength: 8,
+          maxLength: 500,
         },
       ],
     },
@@ -301,6 +358,15 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       minLength: 0,
       maxLength: 1000,
     },
+    {
+      id: "anything_else",
+      type: "longtext",
+      label: "Anything else we should know?",
+      help: "Optional. Bugs, ideas, or context we missed.",
+      required: false,
+      minLength: 0,
+      maxLength: 1000,
+    },
   ],
 };
 
@@ -312,6 +378,14 @@ function asMap(answers: FeedbackAnswer[]): Record<string, FeedbackAnswerValue> {
 
 function trimmedText(value: FeedbackAnswerValue | undefined): string {
   return typeof value === "string" ? value.trim() : "";
+}
+
+function selectedIncludes(
+  value: FeedbackAnswerValue | undefined,
+  optionValue: string,
+): boolean {
+  if (Array.isArray(value)) return value.includes(optionValue);
+  return value === optionValue;
 }
 
 /** Extra characters required beyond a tapped example starter. */
@@ -356,6 +430,25 @@ export function hasWrittenBeyondExamples(
   return true;
 }
 
+function formatChoiceValue(
+  question: FeedbackQuestion,
+  val: FeedbackAnswerValue,
+): string {
+  if (Array.isArray(val)) {
+    const labels = val.map((v) => {
+      const opt = question.options?.find((o) => o.value === v);
+      return opt?.label ?? v;
+    });
+    return labels.join(", ") || "(none)";
+  }
+  if (question.type === "scale") return String(val);
+  if (question.options) {
+    const opt = question.options.find((o) => o.value === String(val));
+    return opt?.label ?? String(val);
+  }
+  return String(val).trim() || "(skipped)";
+}
+
 export function formatFeedbackAnswersForEmail(
   answers: FeedbackAnswer[],
 ): string {
@@ -364,27 +457,43 @@ export function formatFeedbackAnswersForEmail(
   for (const q of FEEDBACK_REFERRAL_SURVEY.questions) {
     const val = map[q.id];
     let display = "(skipped)";
-    if (val === undefined || val === "") {
+    if (val === undefined || val === "" || (Array.isArray(val) && val.length === 0)) {
       display = "(skipped)";
-    } else if (Array.isArray(val)) {
-      const labels = val.map((v) => {
-        const opt = q.options?.find((o) => o.value === v);
-        return opt?.label ?? v;
-      });
-      display = labels.join(", ") || "(none)";
-    } else if (q.type === "scale") {
-      display = String(val);
     } else {
-      display = String(val).trim() || "(skipped)";
+      display = formatChoiceValue(q, val);
     }
     lines.push(`${q.label}`);
     lines.push(display);
     lines.push("");
+
+    if (q.followUpText) {
+      const follow = trimmedText(map[q.followUpText.id]);
+      lines.push(q.followUpText.label);
+      lines.push(follow || "(skipped)");
+      lines.push("");
+    }
+
+    for (const detail of q.requiredDetails ?? []) {
+      if (!selectedIncludes(val, detail.optionValue)) continue;
+      const text = trimmedText(map[detail.id]);
+      lines.push(detail.label);
+      lines.push(text || "(missing)");
+      lines.push("");
+    }
+
+    if (q.whyOptional) {
+      const why = trimmedText(map[feedbackWhyId(q.id)]);
+      if (why) {
+        lines.push(`Why (${q.label})`);
+        lines.push(why);
+        lines.push("");
+      }
+    }
   }
   return lines.join("\n").trim();
 }
 
-export function isFeedbackStepComplete(
+function isMainAnswerComplete(
   question: FeedbackQuestion,
   value: FeedbackAnswerValue | undefined,
 ): boolean {
@@ -408,6 +517,47 @@ export function isFeedbackStepComplete(
     return hasWrittenBeyondExamples(text, question.examples);
   }
   return false;
+}
+
+function isDetailComplete(
+  detail: FeedbackRequiredOptionDetail,
+  text: string,
+): boolean {
+  const min = detail.minLength ?? 1;
+  return text.trim().length >= min;
+}
+
+function isFollowUpComplete(
+  followUp: FeedbackFollowUpText,
+  text: string,
+): boolean {
+  const min = followUp.minLength ?? 1;
+  return text.trim().length >= min;
+}
+
+/**
+ * Whether the current step can continue, including follow-ups and
+ * required option details. `answers` should include companion fields.
+ */
+export function isFeedbackStepComplete(
+  question: FeedbackQuestion,
+  value: FeedbackAnswerValue | undefined,
+  answers: Record<string, FeedbackAnswerValue> = {},
+): boolean {
+  if (!isMainAnswerComplete(question, value)) return false;
+
+  if (question.followUpText) {
+    const followText = trimmedText(answers[question.followUpText.id]);
+    if (!isFollowUpComplete(question.followUpText, followText)) return false;
+  }
+
+  for (const detail of question.requiredDetails ?? []) {
+    if (!selectedIncludes(value, detail.optionValue)) continue;
+    const text = trimmedText(answers[detail.id]);
+    if (!isDetailComplete(detail, text)) return false;
+  }
+
+  return true;
 }
 
 export function validateFeedbackReferralSurvey(
@@ -465,6 +615,41 @@ export function validateFeedbackReferralSurvey(
         return `Please add your own detail after the example for "${q.label}".`;
       }
       if (text) written.push(text.toLowerCase());
+    }
+
+    if (q.followUpText) {
+      const follow = trimmedText(map[q.followUpText.id]);
+      const min = q.followUpText.minLength ?? 1;
+      const max = q.followUpText.maxLength ?? 500;
+      if (follow.length < min) {
+        return `Please answer: "${q.followUpText.label}"`;
+      }
+      if (follow.length > max) {
+        return `"${q.followUpText.label}" is too long.`;
+      }
+      written.push(follow.toLowerCase());
+    }
+
+    for (const detail of q.requiredDetails ?? []) {
+      if (!selectedIncludes(val, detail.optionValue)) continue;
+      const text = trimmedText(map[detail.id]);
+      const min = detail.minLength ?? 1;
+      const max = detail.maxLength ?? 500;
+      if (text.length < min) {
+        return `Please specify: "${detail.label}"`;
+      }
+      if (text.length > max) {
+        return `"${detail.label}" is too long.`;
+      }
+      written.push(text.toLowerCase());
+    }
+
+    if (q.whyOptional) {
+      const why = trimmedText(map[feedbackWhyId(q.id)]);
+      if (why.length > 500) {
+        return `The "explain why" note for "${q.label}" is too long.`;
+      }
+      if (why) written.push(why.toLowerCase());
     }
   }
 

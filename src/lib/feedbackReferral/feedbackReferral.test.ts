@@ -142,20 +142,20 @@ describe("survey validation", () => {
   const describeFriend =
     "Timed ESAT practice that feels close to the real exam.";
 
-  const pricingAnswers = [
+  const baseAnswers = [
+    { questionId: "most_useful", value: "question_bank" },
+    { questionId: "least_useful", value: "past_papers" },
+    { questionId: "recommend", value: 7 },
+    { questionId: "describe_friend", value: describeFriend },
+    { questionId: "recommend_more", value: "cheaper" },
     { questionId: "price_fair", value: "fair" },
-    { questionId: "almost_stopped", value: "nothing" },
-    { questionId: "biggest_gap", value: "topics" },
+    { questionId: "almost_stopped", value: ["nothing"] },
+    { questionId: "camp_missing", value: ["more_papers"] },
   ] as const;
 
   it("rejects thin written answers", () => {
     const error = validateFeedbackReferralSurvey([
-      { questionId: "most_useful", value: "past_papers" },
-      { questionId: "least_useful", value: "score_converter" },
-      { questionId: "recommend", value: 8 },
-      { questionId: "recommend_more", value: "better_questions" },
-      { questionId: "describe_friend", value: describeFriend },
-      ...pricingAnswers,
+      ...baseAnswers,
       { questionId: "improve_first", value: "fix it" },
     ]);
     expect(error).toMatch(/at least/i);
@@ -165,27 +165,50 @@ describe("survey validation", () => {
     expect(matchesExampleExactly(examples[0]!, examples)).toBe(true);
     expect(hasWrittenBeyondExamples(examples[0]!, examples)).toBe(false);
     const error = validateFeedbackReferralSurvey([
-      { questionId: "most_useful", value: "question_bank" },
-      { questionId: "least_useful", value: "past_papers" },
-      { questionId: "recommend", value: 7 },
-      { questionId: "recommend_more", value: "more_papers" },
-      { questionId: "describe_friend", value: describeFriend },
-      ...pricingAnswers,
+      ...baseAnswers,
       { questionId: "improve_first", value: examples[0]! },
     ]);
     expect(error).toMatch(/own detail/i);
+  });
+
+  it("requires describe_friend after recommend", () => {
+    const error = validateFeedbackReferralSurvey([
+      { questionId: "most_useful", value: "question_bank" },
+      { questionId: "least_useful", value: "past_papers" },
+      { questionId: "recommend", value: 7 },
+      { questionId: "recommend_more", value: "cheaper" },
+      { questionId: "price_fair", value: "fair" },
+      { questionId: "almost_stopped", value: ["nothing"] },
+      { questionId: "camp_missing", value: ["more_papers"] },
+      { questionId: "improve_first", value: improve },
+    ]);
+    expect(error).toMatch(/describe ESATCamp/i);
+  });
+
+  it("requires technical detail when technical is selected", () => {
+    const error = validateFeedbackReferralSurvey([
+      ...baseAnswers.slice(0, 6),
+      { questionId: "almost_stopped", value: ["technical", "price"] },
+      { questionId: "camp_missing", value: ["more_papers"] },
+      { questionId: "improve_first", value: improve },
+    ]);
+    expect(error).toMatch(/technical issue/i);
+  });
+
+  it("requires other detail for camp_missing other", () => {
+    const error = validateFeedbackReferralSurvey([
+      ...baseAnswers.slice(0, 7),
+      { questionId: "camp_missing", value: ["other"] },
+      { questionId: "improve_first", value: improve },
+    ]);
+    expect(error).toMatch(/like to see/i);
   });
 
   it("accepts an example plus the user's own detail", () => {
     const withDetail = `${examples[1]!} Topic looked like logs but the mark scheme felt off.`;
     expect(hasWrittenBeyondExamples(withDetail, examples)).toBe(true);
     const error = validateFeedbackReferralSurvey([
-      { questionId: "most_useful", value: "question_bank" },
-      { questionId: "least_useful", value: "past_papers" },
-      { questionId: "recommend", value: 7 },
-      { questionId: "recommend_more", value: "clearer_progress" },
-      { questionId: "describe_friend", value: describeFriend },
-      ...pricingAnswers,
+      ...baseAnswers,
       { questionId: "improve_first", value: withDetail },
       { questionId: "works_well", value: "Calibration felt clear and quick." },
     ]);
@@ -194,26 +217,19 @@ describe("survey validation", () => {
 
   it("accepts concise friendly answers", () => {
     const error = validateFeedbackReferralSurvey([
-      { questionId: "most_useful", value: "question_bank" },
-      { questionId: "least_useful", value: "past_papers" },
-      { questionId: "recommend", value: 7 },
-      { questionId: "recommend_more", value: "cheaper" },
-      { questionId: "describe_friend", value: describeFriend },
-      ...pricingAnswers,
+      ...baseAnswers,
+      { questionId: "almost_stopped_technical", value: "Timer froze on mobile mid paper." },
       { questionId: "improve_first", value: improve },
       { questionId: "works_well", value: "Calibration felt clear and quick." },
+      { questionId: "anything_else", value: "Would love more physics later." },
     ]);
+    // technical detail without technical selected is ignored; still valid
     expect(error).toBeNull();
   });
 
-  it("allows skipping the optional liked question", () => {
+  it("allows skipping optional text questions", () => {
     const error = validateFeedbackReferralSurvey([
-      { questionId: "most_useful", value: "calibration" },
-      { questionId: "least_useful", value: "other" },
-      { questionId: "recommend", value: 9 },
-      { questionId: "recommend_more", value: "mobile" },
-      { questionId: "describe_friend", value: describeFriend },
-      ...pricingAnswers,
+      ...baseAnswers,
       { questionId: "improve_first", value: improve },
     ]);
     expect(error).toBeNull();
@@ -224,9 +240,11 @@ describe("survey validation", () => {
       { questionId: "most_useful", value: "calibration" },
       { questionId: "least_useful", value: "mental_maths" },
       { questionId: "recommend", value: 5 },
-      { questionId: "recommend_more", value: "better_questions" },
       { questionId: "describe_friend", value: improve },
-      ...pricingAnswers,
+      { questionId: "recommend_more", value: "better_questions" },
+      { questionId: "price_fair", value: "fair" },
+      { questionId: "almost_stopped", value: ["nothing"] },
+      { questionId: "camp_missing", value: ["more_papers"] },
       { questionId: "improve_first", value: improve },
       { questionId: "works_well", value: improve },
     ]);
@@ -254,6 +272,35 @@ describe("step completion", () => {
     label: "Liked?",
     required: false,
   };
+  const recommendQ: FeedbackQuestion = {
+    id: "recommend",
+    type: "scale",
+    label: "Would you recommend us to a friend?",
+    scaleMin: 0,
+    scaleMax: 10,
+    followUpText: {
+      id: "describe_friend",
+      label: "In one sentence, how would you describe ESATCamp to a friend?",
+      minLength: 12,
+    },
+  };
+  const almostStoppedQ: FeedbackQuestion = {
+    id: "almost_stopped",
+    type: "multi",
+    label: "What almost stopped you?",
+    options: [
+      { value: "technical", label: "Technical issues" },
+      { value: "price", label: "Price" },
+    ],
+    requiredDetails: [
+      {
+        optionValue: "technical",
+        id: "almost_stopped_technical",
+        label: "What technical issue did you hit?",
+        minLength: 8,
+      },
+    ],
+  };
 
   it("requires a single selection", () => {
     expect(isFeedbackStepComplete(singleQ, undefined)).toBe(false);
@@ -262,13 +309,37 @@ describe("step completion", () => {
 
   it("enforces min length on required text", () => {
     expect(isFeedbackStepComplete(textQ, "short")).toBe(false);
-    expect(
-      isFeedbackStepComplete(textQ, "a".repeat(28)),
-    ).toBe(true);
+    expect(isFeedbackStepComplete(textQ, "a".repeat(28))).toBe(true);
   });
 
   it("lets optional text steps continue empty", () => {
     expect(isFeedbackStepComplete(optionalQ, undefined)).toBe(true);
     expect(isFeedbackStepComplete(optionalQ, "")).toBe(true);
+  });
+
+  it("blocks continue until describe follow-up is filled", () => {
+    expect(isFeedbackStepComplete(recommendQ, 8, {})).toBe(false);
+    expect(
+      isFeedbackStepComplete(recommendQ, 8, {
+        describe_friend: "short",
+      }),
+    ).toBe(false);
+    expect(
+      isFeedbackStepComplete(recommendQ, 8, {
+        describe_friend: "Timed practice that feels like the real exam.",
+      }),
+    ).toBe(true);
+  });
+
+  it("requires technical detail when selected", () => {
+    expect(
+      isFeedbackStepComplete(almostStoppedQ, ["technical"], {}),
+    ).toBe(false);
+    expect(
+      isFeedbackStepComplete(almostStoppedQ, ["technical"], {
+        almost_stopped_technical: "Timer froze",
+      }),
+    ).toBe(true);
+    expect(isFeedbackStepComplete(almostStoppedQ, ["price"], {})).toBe(true);
   });
 });
