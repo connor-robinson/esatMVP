@@ -1,10 +1,13 @@
+import { isHubMarkPreview } from "@/lib/papers/hubMarkPreview";
+import { usePaperSessionStore } from "@/store/paperSessionStore";
+
 /** Routes that show the paper itself, where the main navbar stays hidden. */
 const PAPER_IMMERSIVE_ROUTES = [
-  '/past-papers/solve',
-  '/past-papers/mark',
-  '/past-papers/submit',
-  '/past-papers/pearson-demo',
-  '/exam-tools/calibration/math-1/test',
+  "/past-papers/solve",
+  "/past-papers/mark",
+  "/past-papers/submit",
+  "/past-papers/pearson-demo",
+  "/exam-tools/calibration/math-1/test",
 ];
 
 /**
@@ -45,5 +48,14 @@ export function shouldHideSiteChromeForPaper(
   _hasActiveSession = false,
 ): boolean {
   if (isPearsonChromeRoute(pathname)) return true;
+  // Hub Start now mark teaser keeps the main navbar visible.
+  if (
+    pathname &&
+    (pathname === "/past-papers/mark" ||
+      pathname.startsWith("/past-papers/mark/"))
+  ) {
+    const sessionId = usePaperSessionStore.getState().sessionId;
+    if (isHubMarkPreview(sessionId)) return false;
+  }
   return isPaperImmersiveRoute(pathname);
 }

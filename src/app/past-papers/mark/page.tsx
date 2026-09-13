@@ -69,7 +69,13 @@ import { MarkSectionNav,
 } from "@/components/papers/mark/MarkSectionNav";
 import { PercentileMiniChart } from "@/components/papers/mark/PercentileMiniChart";
 import { DrillUpgradeBanner } from "@/components/builder/DrillUpgradeBanner";
-import { HubMoreSectionsLibraryModal } from "@/components/papers/mark/HubMoreSectionsLibraryModal";
+import {
+  HubMarkLoginBanner,
+  HubMarkMistakesPieTeaser,
+  HubMarkPercentilePreview,
+  HubMarkStatPill,
+  useHubScoreReveal,
+} from "@/components/papers/mark/HubMarkTeaser";
 import { useSubscription } from "@/hooks/useSubscription";
 import {
   clearHubFirstSectionPreview,
@@ -78,6 +84,7 @@ import {
 import {
   clearHubMarkPreview,
   isHubMarkPreview,
+  setHubMarkChromeActive,
 } from "@/lib/papers/hubMarkPreview";
 
 function LoginToViewLink({
@@ -181,7 +188,6 @@ export default function PapersMarkPage() {
   const [nsaaAveragedPercentile, setNsaaAveragedPercentile] = useState<number | null>(null);
   const [nsaaAveragedScore, setNsaaAveragedScore] = useState<number | null>(null);
   const [nsaaAveragedChartRows, setNsaaAveragedChartRows] = useState<EsatRow[]>([]);
-  const [showHubMoreSections, setShowHubMoreSections] = useState(false);
   
   // Compute values needed for hooks (with safe defaults if no session)
   const totalQuestions = sessionId
@@ -292,8 +298,10 @@ export default function PapersMarkPage() {
   }, [paperId, questions]);
   
   // Shared bubble utility (analytics-style)
-  const bubbleClass =
-    "rounded-organic-lg border border-border-subtle bg-surface-elevated p-4 shadow-bar-floating";
+  const bubbleClass = hubMarkPreview
+    ? "rounded-md border border-black/10 bg-white p-4 text-black shadow-sm"
+    : "rounded-organic-lg border border-border-subtle bg-surface-elevated p-4 shadow-bar-floating";
+  const hubScoreReveal = useHubScoreReveal(hideResultsBehindLogin);
   
   const pinnedInsights = useMemo(() => {
     return answers
@@ -1070,8 +1078,9 @@ export default function PapersMarkPage() {
 
   useEffect(() => {
     if (!sessionId) return;
+    // Hub start: skip the "Section complete" modal and land on overview.
     if (hasHubFirstSectionPreview(sessionId)) {
-      setShowHubMoreSections(true);
+      clearHubFirstSectionPreview();
     }
     if (isHubMarkPreview(sessionId)) {
       setHubMarkPreview(true);
@@ -1079,19 +1088,17 @@ export default function PapersMarkPage() {
   }, [sessionId]);
 
   // Hub Start now mark: force light mode for this visit only (not the site default).
+  // Leaving the page clears the override so the app returns to dark.
   useEffect(() => {
     if (!hubMarkPreview) return;
+    setHubMarkChromeActive(true);
     setThemeOverride("light");
     setIsDarkMode(false);
     return () => {
+      setHubMarkChromeActive(false);
       setThemeOverride(null);
     };
   }, [hubMarkPreview, setThemeOverride]);
-
-  const dismissHubMoreSections = () => {
-    clearHubFirstSectionPreview();
-    setShowHubMoreSections(false);
-  };
 
   if (!sessionId) {
     return null;
@@ -1138,13 +1145,29 @@ export default function PapersMarkPage() {
   return (
     <Fragment>
       <div
-        className="relative flex h-dvh min-h-0 flex-col overflow-hidden bg-background"
+        className={cn(
+          "relative flex min-h-0 flex-col overflow-hidden bg-background",
+          hubMarkPreview
+            ? "h-[calc(100dvh-3.75rem)] text-black [&_.text-neutral-100]:text-black [&_.text-neutral-200]:text-black [&_.text-neutral-300]:text-neutral-800 [&_.text-neutral-400]:text-neutral-700 [&_.text-neutral-500]:text-neutral-600 [&_.text-text]:text-black [&_.text-text-muted]:text-neutral-700"
+            : "h-dvh",
+        )}
       >
         <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden px-3 py-3 sm:px-4 sm:py-4">
           <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden lg:flex-row">
-            <MarkSectionNav active={markSection} onSelect={selectMarkSection} />
+            <MarkSectionNav
+              active={markSection}
+              onSelect={selectMarkSection}
+              light={hubMarkPreview}
+            />
 
-            <Card className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden border border-border bg-surface p-0">
+            <Card
+              className={cn(
+                "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden border p-0",
+                hubMarkPreview
+                  ? "rounded-md border-black/10 bg-[#f6f6f7] shadow-sm"
+                  : "border-border bg-surface",
+              )}
+            >
 
               {markSection === "overview" && (
                 <div className="h-full min-h-0 overflow-y-auto p-4 sm:p-6" style={{ scrollbarGutter: "stable" }}>
@@ -1153,7 +1176,12 @@ export default function PapersMarkPage() {
                     <div className="flex items-start justify-between gap-4">
                       <div className="space-y-2">
                         <div className="flex flex-wrap items-center gap-2">
-                          <div className="text-lg font-semibold text-neutral-100">
+                          <div
+                            className={cn(
+                              "text-lg font-semibold",
+                              hubMarkPreview ? "text-black" : "text-neutral-100",
+                            )}
+                          >
                             {paperName} {sessionYear ?? ''}{variantDisplay ? `, ${variantDisplay}` : ''}
                           </div>
                           {sectionPills.map((s) => (
@@ -1184,7 +1212,74 @@ export default function PapersMarkPage() {
                       </button>
                     </div>
 
-                    {/* Overview pills - single row */}
+                    {/* Overview pills */}
+                    {hubMarkPreview ? (
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-3 lg:grid-cols-[1.35fr_1.35fr_0.85fr_0.85fr]">
+                          {(() => {
+                            const scoreLoading =
+                              hideResultsBehindLogin &&
+                              hubScoreReveal === "loading";
+                            const scoreLocked =
+                              hideResultsBehindLogin &&
+                              hubScoreReveal === "ready";
+                            const generalAccuracy = Math.round(
+                              (correctCountDerived /
+                                Math.max(totalQuestions, 1)) *
+                                100,
+                            );
+                            return (
+                              <>
+                                <HubMarkStatPill
+                                  label="ESAT SCORE:"
+                                  prominent
+                                  loading={scoreLoading}
+                                  locked={scoreLocked}
+                                >
+                                  <div className="text-5xl font-bold leading-none tracking-tight text-black sm:text-6xl">
+                                    {predictedScore !== null &&
+                                    predictedScore !== undefined
+                                      ? predictedScore.toFixed(1)
+                                      : "-"}
+                                  </div>
+                                </HubMarkStatPill>
+                                <HubMarkStatPill
+                                  label="Accuracy"
+                                  loading={scoreLoading}
+                                  locked={scoreLocked}
+                                >
+                                  <div className="text-center">
+                                    <div className="text-4xl font-bold leading-none text-black sm:text-5xl">
+                                      {generalAccuracy}%
+                                    </div>
+                                    <div className="mt-2 text-xs text-black/65">
+                                      {correctCountDerived}/{totalQuestions}{" "}
+                                      correct
+                                    </div>
+                                  </div>
+                                </HubMarkStatPill>
+                                <HubMarkStatPill label="Avg per question">
+                                  <div className="text-2xl font-bold leading-none text-black sm:text-3xl">
+                                    {formatTime(
+                                      Math.round(avgTimePerQuestion),
+                                    )}
+                                  </div>
+                                </HubMarkStatPill>
+                                <HubMarkStatPill label="Guessed">
+                                  <div className="text-2xl font-bold leading-none text-black sm:text-3xl">
+                                    {accuracyPatterns.guessed}/{totalQuestions}
+                                  </div>
+                                </HubMarkStatPill>
+                              </>
+                            );
+                          })()}
+                        </div>
+                        {hideResultsBehindLogin &&
+                        hubScoreReveal === "ready" ? (
+                          <HubMarkLoginBanner redirectTo="/past-papers/mark" />
+                        ) : null}
+                      </div>
+                    ) : (
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                       {(() => {
                         const scoreLabel = isEsatCampSession
@@ -1200,47 +1295,22 @@ export default function PapersMarkPage() {
                         return (
                           <>
                             <div className="flex min-h-[104px] flex-col items-center justify-center rounded-organic-lg bg-maths px-3 py-4 text-neutral-900 dark:text-white sm:px-4 sm:py-5">
-                              {hideResultsBehindLogin ? (
-                                <>
-                                  <LoginToViewLink
-                                    href={loginRedirectHref}
-                                    className="text-center text-neutral-900 dark:text-white"
-                                  />
-                                  <div className="mt-2 text-xs font-medium uppercase tracking-wide opacity-90">
-                                    {scoreLabel}
-                                  </div>
-                                </>
-                              ) : (
-                                <>
-                                  <div className="text-5xl font-bold leading-none tracking-tight sm:text-6xl">
-                                    {predictedScore !== null && predictedScore !== undefined
-                                      ? predictedScore.toFixed(1)
-                                      : "-"}
-                                  </div>
-                                  <div className="mt-2 text-xs font-medium uppercase tracking-wide opacity-90">
-                                    {scoreLabel}
-                                  </div>
-                                </>
-                              )}
+                              <div className="text-5xl font-bold leading-none tracking-tight sm:text-6xl">
+                                {predictedScore !== null && predictedScore !== undefined
+                                  ? predictedScore.toFixed(1)
+                                  : "-"}
+                              </div>
+                              <div className="mt-2 text-xs font-medium uppercase tracking-wide opacity-90">
+                                {scoreLabel}
+                              </div>
                             </div>
                             <div className={`${bubbleClass} flex min-h-[104px] flex-col items-center justify-center`}>
-                              {hideResultsBehindLogin ? (
-                                <>
-                                  <LoginToViewLink href={loginRedirectHref} />
-                                  <div className="mt-1 text-xs text-neutral-400">
-                                    Accuracy
-                                  </div>
-                                </>
-                              ) : (
-                                <>
-                                  <div className="text-3xl font-bold leading-tight text-neutral-100 sm:text-4xl">
-                                    {generalAccuracy}%
-                                  </div>
-                                  <div className="mt-1 text-xs text-neutral-400">
-                                    {correctCountDerived}/{totalQuestions} correct
-                                  </div>
-                                </>
-                              )}
+                              <div className="text-3xl font-bold leading-tight text-neutral-100 sm:text-4xl">
+                                {generalAccuracy}%
+                              </div>
+                              <div className="mt-1 text-xs text-neutral-400">
+                                {correctCountDerived}/{totalQuestions} correct
+                              </div>
                             </div>
                             <div className={`${bubbleClass} flex min-h-[104px] flex-col items-center justify-center`}>
                               <div className="text-2xl font-bold leading-tight text-neutral-100 sm:text-3xl">
@@ -1258,6 +1328,7 @@ export default function PapersMarkPage() {
                         );
                       })()}
                     </div>
+                    )}
                     {conversionFallbackYear != null ? (
                       <p className="mt-3 text-xs leading-relaxed text-neutral-400">
                         No published conversion table for this sitting.
@@ -1415,6 +1486,11 @@ export default function PapersMarkPage() {
                       </div>
 
                       {/* Section Percentiles - focused view with part selector */}
+                      {hideResultsBehindLogin ? (
+                        <div className="lg:col-span-3">
+                          <HubMarkPercentilePreview />
+                        </div>
+                      ) : (
                       <div className={`${bubbleClass} space-y-4 lg:col-span-3`}>
                         <div className="flex flex-wrap items-center justify-between gap-3">
                           <div className="flex flex-wrap items-center gap-2">
@@ -1550,6 +1626,7 @@ export default function PapersMarkPage() {
                           );
                         })()}
                       </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -2520,7 +2597,12 @@ export default function PapersMarkPage() {
               )}
               {markSection === "mistakes" && (
               <div className="h-full min-h-0 overflow-y-auto p-4 sm:p-6">
-                {!treatAsFullAccess ? (
+                {hubMarkPreview ? (
+                  <HubMarkMistakesPieTeaser
+                    showGoogleLogin={!isLoggedIn}
+                    redirectTo="/past-papers/mark"
+                  />
+                ) : !treatAsFullAccess ? (
                   <DrillUpgradeBanner
                     variant="panel"
                     headline="Unlock mistake analysis"
@@ -2590,9 +2672,6 @@ export default function PapersMarkPage() {
           </div>
         </div>
       </div>
-      {showHubMoreSections ? (
-        <HubMoreSectionsLibraryModal onStay={dismissHubMoreSections} />
-      ) : null}
     </Fragment>
   );
 }

@@ -231,6 +231,8 @@ export function Navbar() {
   const paperFullscreenShowMainNavbar = usePaperSessionStore(
     (s) => s.paperFullscreenShowMainNavbar,
   );
+  // Re-render when the paper session changes so hub mark can show the navbar.
+  usePaperSessionStore((s) => s.sessionId);
   const [docFullscreen, setDocFullscreen] = useState(false);
   const { toggleTheme, isDark, lightStrategy, toggleLightStrategy, themeReady } = useTheme();
   const { hasFullAccess, tier, source } = useSubscription();
