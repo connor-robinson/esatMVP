@@ -959,7 +959,7 @@ function OnboardingContent() {
                       </p>
                     </div>
 
-                    <div className="mt-3 flex min-h-0 flex-1 items-start pt-1 sm:mt-4 sm:pt-2">
+                    <div className="mt-3 shrink-0 pt-1 sm:mt-4 sm:pt-2">
                       <div className="grid w-full grid-cols-1 items-stretch gap-4 sm:grid-cols-[1.4fr_1fr] sm:gap-5">
                         <div className="relative pt-3">
                           <span className="absolute left-1/2 top-0 z-10 -translate-x-1/2 rounded-md bg-[#4C8BF5] px-2.5 py-1 text-[0.7rem] font-semibold text-white shadow-sm sm:text-xs">
@@ -1021,7 +1021,7 @@ function OnboardingContent() {
                       </div>
                     </div>
 
-                    <div className="shrink-0 space-y-3 pt-1">
+                    <div className="mt-4 shrink-0 space-y-3 sm:mt-5">
                       <button
                         type="button"
                         disabled={saving || trialLoading}
