@@ -31,6 +31,7 @@ type Step =
   | "applicant"
   | "universities"
   | "referral"
+  | "emails"
   | "trial";
 type SittingChoice = "october_2026" | "january_2027" | "not_sure" | "future";
 
@@ -42,6 +43,7 @@ const ALL_STEPS: Step[] = [
   "applicant",
   "universities",
   "referral",
+  "emails",
   "trial",
 ];
 const STEPS_WITHOUT_USERNAME: Step[] = [
@@ -49,6 +51,7 @@ const STEPS_WITHOUT_USERNAME: Step[] = [
   "applicant",
   "universities",
   "referral",
+  "emails",
   "trial",
 ];
 const PREVIEW_STEPS = new Set<Step>(ALL_STEPS);
@@ -197,18 +200,16 @@ function OnboardingContent() {
     step === "applicant" ||
     step === "universities" ||
     step === "referral" ||
+    step === "emails" ||
     step === "trial";
   const isLastStep = step === "trial";
 
   useEffect(() => {
     if (isPreview) {
       setSteps(ALL_STEPS);
-      // Legacy preview alias: emails now lives on the referral step.
-      const requested =
-        previewStepParam === "emails" ? "referral" : previewStepParam;
       const jump =
-        requested && PREVIEW_STEPS.has(requested as Step)
-          ? (requested as Step)
+        previewStepParam && PREVIEW_STEPS.has(previewStepParam as Step)
+          ? (previewStepParam as Step)
           : "username";
       setStep(jump);
       setBooting(false);
@@ -373,11 +374,21 @@ function OnboardingContent() {
     setSaving(true);
     setError(null);
     try {
-      await savePrefs({
-        referral_source: referral,
-        marketing_emails_consent: marketingEmails,
-      });
+      await savePrefs({ referral_source: referral });
       goNext("referral");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not save");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const submitEmails = async () => {
+    setSaving(true);
+    setError(null);
+    try {
+      await savePrefs({ marketing_emails_consent: marketingEmails });
+      goNext("emails");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save");
     } finally {
@@ -560,9 +571,7 @@ function OnboardingContent() {
               "flex w-full max-w-[68rem] flex-col overflow-hidden rounded-[1.5rem] bg-surface-elevated",
               step === "trial"
                 ? "h-[min(50rem,calc(100vh-4.5rem))] sm:h-[min(52rem,calc(100vh-3.5rem))]"
-                : step === "referral"
-                  ? "h-[min(40rem,calc(100vh-5.5rem))] sm:h-[min(42rem,calc(100vh-4.5rem))]"
-                  : "h-[min(36rem,calc(100vh-5.5rem))] sm:h-[min(38rem,calc(100vh-4.5rem))]",
+                : "h-[min(36rem,calc(100vh-5.5rem))] sm:h-[min(38rem,calc(100vh-4.5rem))]",
               "px-6 pb-6 pt-5 sm:px-12 sm:pb-8 sm:pt-7",
             )}
           >
@@ -684,7 +693,7 @@ function OnboardingContent() {
                     </div>
 
                     {exam === "ESAT" ? (
-                      <div className="mt-4 space-y-2.5 sm:mt-5">
+                      <div className="mt-8 space-y-2.5 sm:mt-10">
                         <p className="text-sm font-medium text-text">Your 3 subjects</p>
                         <div className="flex flex-wrap gap-2">
                           {ESAT_SUBJECTS.map((subject) => {
