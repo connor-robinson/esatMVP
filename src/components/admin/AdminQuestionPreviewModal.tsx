@@ -120,7 +120,7 @@ export function AdminQuestionPreviewModal({
               <div className="prose-stem text-base leading-relaxed text-text">
                 {question.graph_specs || question.graph_spec ? (
                   <QuestionWithGraph
-                    content={question.question_stem}
+                    questionText={question.question_stem}
                     graphSpecs={question.graph_specs}
                     graphSpec={question.graph_spec}
                   />
