@@ -47,20 +47,20 @@ export function CookieConsentBanner() {
     >
       <div
         className={cn(
-          "pointer-events-auto w-full max-w-[22rem] origin-bottom-left rounded-2xl border-0 outline-none",
-          "text-blue-50 backdrop-blur-xl backdrop-saturate-150",
+          "pointer-events-auto w-full max-w-[22rem] origin-bottom-left rounded-xl border-0 outline-none",
+          "text-slate-50 backdrop-blur-xl backdrop-saturate-150",
           "transition-[opacity,transform] duration-500 ease-out",
           "sm:ml-1",
           onHomepage
-            ? "bg-[#3B82F6]/45 shadow-[0_18px_50px_-20px_rgba(59,130,246,0.55)]"
-            : "bg-[#1E3A8A]/55 shadow-[0_18px_50px_-24px_rgba(30,58,138,0.85)]",
+            ? "bg-slate-800/55 shadow-[0_18px_50px_-20px_rgba(15,23,42,0.45)]"
+            : "bg-slate-950/60 shadow-[0_18px_50px_-24px_rgba(2,6,23,0.8)]",
           entered ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0",
         )}
       >
         <div className="p-4">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-blue-100/80">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-300/80">
                 Privacy
               </p>
               <h2
@@ -74,7 +74,7 @@ export function CookieConsentBanner() {
               <button
                 type="button"
                 onClick={closePreferences}
-                className="shrink-0 rounded-lg px-2 py-1 text-xs font-medium text-blue-100/70 transition-colors hover:bg-white/10 hover:text-white"
+                className="shrink-0 rounded-md px-2 py-1 text-xs font-medium text-slate-300/70 transition-colors hover:bg-white/10 hover:text-white"
                 aria-label="Close cookie preferences"
               >
                 Close
@@ -84,13 +84,13 @@ export function CookieConsentBanner() {
 
           <p
             id="cookie-consent-desc"
-            className="mt-2.5 text-[13px] leading-relaxed text-blue-100/80"
+            className="mt-2.5 text-[13px] leading-relaxed text-slate-200/80"
           >
             We use optional cookies for analytics and ad conversion measurement.
             Necessary login storage always works. No remarketing.{" "}
             <Link
               href="/cookie-policy"
-              className="font-medium text-blue-50 underline decoration-blue-200/40 underline-offset-2 transition-colors hover:decoration-blue-100"
+              className="font-medium text-slate-50 underline decoration-slate-300/40 underline-offset-2 transition-colors hover:decoration-slate-100"
             >
               Cookie Policy
             </Link>
@@ -101,7 +101,7 @@ export function CookieConsentBanner() {
               type="button"
               data-testid="accept"
               onClick={accept}
-              className="rounded-xl bg-[#3B82F6] px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#2563EB] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/60"
+              className="rounded-lg bg-[#3B82F6] px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#2563EB] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/60"
             >
               Accept optional cookies
             </button>
@@ -109,7 +109,7 @@ export function CookieConsentBanner() {
               type="button"
               data-testid="reject"
               onClick={reject}
-              className="rounded-xl bg-white/10 px-3.5 py-2.5 text-sm font-semibold text-blue-50 transition-colors hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/40"
+              className="rounded-lg bg-white/10 px-3.5 py-2.5 text-sm font-semibold text-slate-50 transition-colors hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/40"
             >
               Reject optional cookies
             </button>
