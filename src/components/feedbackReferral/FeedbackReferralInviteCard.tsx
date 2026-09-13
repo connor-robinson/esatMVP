@@ -10,7 +10,7 @@ export function FeedbackReferralInviteCard({
   className,
 }: {
   onStart: () => void;
-  onDontShowAgain: () => void;
+  onDontShowAgain?: () => void;
   onNotNow?: () => void;
   className?: string;
 }) {
@@ -63,13 +63,15 @@ export function FeedbackReferralInviteCard({
               Not now
             </button>
           ) : null}
-          <button
-            type="button"
-            onClick={onDontShowAgain}
-            className="inline-flex h-9 w-full items-center justify-center px-5 text-xs font-medium text-text-muted transition-colors hover:text-text"
-          >
-            Don&apos;t show again
-          </button>
+          {onDontShowAgain ? (
+            <button
+              type="button"
+              onClick={onDontShowAgain}
+              className="inline-flex h-9 w-full items-center justify-center px-5 text-xs font-medium text-text-muted transition-colors hover:text-text"
+            >
+              Don&apos;t show again
+            </button>
+          ) : null}
         </div>
       </div>
     </div>

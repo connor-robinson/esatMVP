@@ -10,8 +10,6 @@ import {
   hasFeedbackReferralDontShowAgain,
   hasFeedbackReferralEngagement,
   hasFeedbackReferralSessionDismiss,
-  recordFeedbackReferralPromptDismiss,
-  setFeedbackReferralDontShowAgain,
   setFeedbackReferralReturnTo,
 } from "@/lib/feedbackReferral/promptStorage";
 import { markFeedbackReferralAsked } from "@/lib/feedbackReferral/markAsked";
@@ -31,7 +29,7 @@ const HIDDEN_PATH_PREFIXES = [
 /**
  * Soft invite for the feedback-for-referral survey.
  * Only appears after a meaningful practice action (paper / session), not on login.
- * Soft-dismiss at most twice; then it stays available from Settings.
+ * Backdrop clicks do nothing. The only exits are Start, or leaving the page.
  */
 export function FeedbackReferralPrompt() {
   const session = useSupabaseSession();
@@ -88,15 +86,18 @@ export function FeedbackReferralPrompt() {
   useEffect(() => {
     tryOpen();
 
+    let settleTimer: number | undefined;
     const onEngagement = () => {
       // Let results UI settle before the invite appears.
-      window.setTimeout(() => tryOpen(), 1200);
+      window.clearTimeout(settleTimer);
+      settleTimer = window.setTimeout(() => tryOpen(), 3200);
     };
     window.addEventListener(
       FEEDBACK_REFERRAL_ENGAGEMENT_EVENT,
       onEngagement as EventListener,
     );
     return () => {
+      window.clearTimeout(settleTimer);
       window.removeEventListener(
         FEEDBACK_REFERRAL_ENGAGEMENT_EVENT,
         onEngagement as EventListener,
@@ -106,18 +107,11 @@ export function FeedbackReferralPrompt() {
 
   if (!open) return null;
 
-  const dismissSoft = () => {
-    recordFeedbackReferralPromptDismiss();
-    setOpen(false);
-  };
-
   return (
     <div className="fixed inset-0 z-[100] flex items-end justify-center p-4 sm:items-center">
-      <button
-        type="button"
+      <div
         className="absolute inset-0 bg-background/70 backdrop-blur-sm"
-        aria-label="Dismiss for now"
-        onClick={dismissSoft}
+        aria-hidden
       />
       <div className="relative w-full max-w-2xl">
         <FeedbackReferralInviteCard
@@ -128,12 +122,6 @@ export function FeedbackReferralPrompt() {
               `${pathname}${typeof window !== "undefined" ? window.location.search : ""}`,
             );
             router.push("/feedback");
-          }}
-          onNotNow={dismissSoft}
-          onDontShowAgain={() => {
-            setFeedbackReferralDontShowAgain();
-            clearFeedbackReferralEngagement();
-            setOpen(false);
           }}
         />
       </div>
