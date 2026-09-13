@@ -571,7 +571,7 @@ function OnboardingContent() {
             className={cn(
               "flex w-full max-w-[68rem] flex-col overflow-hidden rounded-[1.5rem] bg-surface-elevated",
               step === "trial"
-                ? "h-[min(48rem,calc(100vh-4rem))] sm:h-[min(50rem,calc(100vh-3.25rem))]"
+                ? "h-[min(42rem,calc(100vh-5rem))] sm:h-[min(44rem,calc(100vh-4rem))]"
                 : "h-[min(36rem,calc(100vh-5.5rem))] sm:h-[min(38rem,calc(100vh-4.5rem))]",
               "px-6 pb-6 pt-5 sm:px-12 sm:pb-8 sm:pt-7",
             )}
