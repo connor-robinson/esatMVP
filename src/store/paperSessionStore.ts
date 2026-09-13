@@ -1514,45 +1514,55 @@ export const usePaperSessionStore = create<PaperSessionState>()(
 
         const persistPromise = (async (): Promise<boolean> => {
           try {
-            const response = await fetch("/api/past-papers/sessions", {
-              method: "PATCH",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(payload),
-            });
+            const { upsertPaperSessionOnServer } = await import(
+              "@/lib/papers/upsertPaperSessionOnServer"
+            );
+            const result = await upsertPaperSessionOnServer(payload);
 
-            if (!response.ok) {
-              const errorText = await response.text();
-              
-              
-              // Retry logic: exponential backoff (max 3 retries)
-              if (retry < 3 && response.status >= 500) {
-                // Only retry on server errors (5xx), not client errors (4xx)
-                const delay = Math.min(1000 * Math.pow(2, retry), 5000); // 1s, 2s, 4s, max 5s
-                await new Promise(resolve => setTimeout(resolve, delay));
-                return get().persistSessionToServer({ immediate: true, retry: retry + 1 });
+            if (result.status === 401) {
+              // Still logged out. Keep local sitting; retry after login.
+              const currentState = get();
+              const queue = [...currentState.pendingPersistQueue];
+              queue.push({ payload, retries: retry + 1, timestamp: Date.now() });
+              set({ pendingPersistQueue: queue });
+              return false;
+            }
+
+            if (!result.ok) {
+              if (retry < 3 && result.status >= 500) {
+                const delay = Math.min(1000 * Math.pow(2, retry), 5000);
+                await new Promise((resolve) => setTimeout(resolve, delay));
+                return get().persistSessionToServer({
+                  immediate: true,
+                  retry: retry + 1,
+                });
               } else if (retry < 3) {
-                // For other errors, queue for later retry
                 const currentState = get();
                 const queue = [...currentState.pendingPersistQueue];
-                queue.push({ payload, retries: retry + 1, timestamp: Date.now() });
+                queue.push({
+                  payload,
+                  retries: retry + 1,
+                  timestamp: Date.now(),
+                });
                 set({ pendingPersistQueue: queue });
                 return false;
               } else {
-                throw new Error(`Persist failed with status ${response.status}: ${errorText}`);
+                throw new Error(
+                  `Persist failed with status ${result.status}`,
+                );
               }
-            } else {
-              // Success - clear any queued items for this session
-              const currentState = get();
-              const filteredQueue = currentState.pendingPersistQueue.filter(
-                item => item.payload.id !== payload.id
-              );
-              if (filteredQueue.length !== currentState.pendingPersistQueue.length) {
-                set({ pendingPersistQueue: filteredQueue });
-              }
-              return true;
             }
+
+            const currentState = get();
+            const filteredQueue = currentState.pendingPersistQueue.filter(
+              (item) => item.payload.id !== payload.id,
+            );
+            if (
+              filteredQueue.length !== currentState.pendingPersistQueue.length
+            ) {
+              set({ pendingPersistQueue: filteredQueue });
+            }
+            return true;
           } catch (error) {
             // Network errors - queue for retry
             if (retry < 3) {
@@ -1652,26 +1662,26 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         // Process items one by one
         for (const item of itemsToRetry) {
           try {
-            const response = await fetch("/api/past-papers/sessions", {
-              method: "PATCH",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(item.payload),
-            });
-            
-            if (response.ok) {
-              // Success - remove from queue
+            const { upsertPaperSessionOnServer } = await import(
+              "@/lib/papers/upsertPaperSessionOnServer"
+            );
+            const result = await upsertPaperSessionOnServer(item.payload);
+
+            if (result.ok) {
               const currentState = get();
               const filtered = currentState.pendingPersistQueue.filter(
-                q => q.payload.id !== item.payload.id || q.timestamp !== item.timestamp
+                (q) =>
+                  q.payload.id !== item.payload.id ||
+                  q.timestamp !== item.timestamp,
               );
               set({ pendingPersistQueue: filtered });
             } else {
-              // Still failed - increment retries
               const currentState = get();
-              const updated = currentState.pendingPersistQueue.map(q =>
-                q.payload.id === item.payload.id && q.timestamp === item.timestamp
+              const updated = currentState.pendingPersistQueue.map((q) =>
+                q.payload.id === item.payload.id &&
+                q.timestamp === item.timestamp
                   ? { ...q, retries: q.retries + 1, timestamp: now }
-                  : q
+                  : q,
               );
               set({ pendingPersistQueue: updated });
             }

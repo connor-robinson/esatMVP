@@ -39,6 +39,7 @@ import {
 } from "@/config/colors";
 import { useTheme } from "@/contexts/ThemeContext";
 import { cn } from "@/lib/utils";
+import { usePaperSessionHydrated } from "@/hooks/usePaperSessionHydrated";
 import {
   buildPercentileTableArgs,
   computePredictedScore,
@@ -112,6 +113,7 @@ export default function PapersMarkPage() {
   const session = useSupabaseSession();
   const { setThemeOverride } = useTheme();
   const isLoggedIn = Boolean(session?.user);
+  const paperSessionHydrated = usePaperSessionHydrated();
   // Change this width to adjust left spacing for Overview, Part headers, and Qn labels together
   const LEFT_LABEL_WIDTH_PX = 7;
   // Adjustable width of the left column (question list)
@@ -1099,6 +1101,14 @@ export default function PapersMarkPage() {
       setThemeOverride(null);
     };
   }, [hubMarkPreview, setThemeOverride]);
+
+  // After login on the hub mark page, create the server history row from local state.
+  useEffect(() => {
+    if (!isLoggedIn || !paperSessionHydrated || !sessionId) return;
+    void usePaperSessionStore
+      .getState()
+      .persistSessionToServer({ immediate: true });
+  }, [isLoggedIn, paperSessionHydrated, sessionId]);
 
   if (!sessionId) {
     return null;

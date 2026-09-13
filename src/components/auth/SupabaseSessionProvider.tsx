@@ -120,6 +120,31 @@ export function SupabaseSessionProvider({ children, initialSession }: SupabaseSe
         if (newSession?.user?.id && hasAnalyticsConsent()) {
           setGaUserId(newSession.user.id);
         }
+        // Guest hub sittings live in localStorage until auth; create the
+        // server row now so they appear in account history.
+        void (async () => {
+          try {
+            const { usePaperSessionStore } = await import(
+              "@/store/paperSessionStore"
+            );
+            const persistApi = usePaperSessionStore.persist;
+            if (persistApi && !persistApi.hasHydrated()) {
+              await new Promise<void>((resolve) => {
+                const unsub = persistApi.onFinishHydration(() => {
+                  unsub?.();
+                  resolve();
+                });
+              });
+            }
+            const store = usePaperSessionStore.getState();
+            if (store.sessionId) {
+              await store.persistSessionToServer({ immediate: true });
+            }
+            await store.processPendingPersists();
+          } catch {
+            /* best-effort */
+          }
+        })();
       }
       if (event === "SIGNED_OUT") {
         clearGaUserId();
