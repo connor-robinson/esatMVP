@@ -12,6 +12,7 @@ import {
   YAxis,
 } from "recharts";
 import { Container } from "@/components/layout/Container";
+import { AdminQuestionPreviewModal } from "@/components/admin/AdminQuestionPreviewModal";
 import type { QuestionBankStatsPayload } from "@/lib/admin/questionBankStats";
 
 const TOP_SUBJECTS = 5;
@@ -59,6 +60,10 @@ export default function AdminQuestionBankPage() {
   const [since, setSince] = useState<"all" | "2026-08-24">("all");
   const [subjectsExpanded, setSubjectsExpanded] = useState(false);
   const [wrongExpanded, setWrongExpanded] = useState(false);
+  const [preview, setPreview] = useState<{
+    id: string;
+    label: string;
+  } | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -344,8 +349,20 @@ export default function AdminQuestionBankPage() {
                       <td className="px-4 py-2.5 tabular-nums text-text-subtle">
                         {index + 1}
                       </td>
-                      <td className="px-4 py-2.5 font-mono text-xs text-text">
-                        {row.schema_id || row.question_id.slice(0, 8)}
+                      <td className="px-4 py-2.5 font-mono text-xs">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setPreview({
+                              id: row.question_id,
+                              label:
+                                row.schema_id || row.question_id.slice(0, 8),
+                            })
+                          }
+                          className="text-left text-text underline-offset-2 hover:underline"
+                        >
+                          {row.schema_id || row.question_id.slice(0, 8)}
+                        </button>
                       </td>
                       <td className="px-4 py-2.5 text-text-muted">
                         {row.subject}
@@ -393,6 +410,14 @@ export default function AdminQuestionBankPage() {
             </div>
           </section>
         </div>
+      ) : null}
+
+      {preview ? (
+        <AdminQuestionPreviewModal
+          questionId={preview.id}
+          label={preview.label}
+          onClose={() => setPreview(null)}
+        />
       ) : null}
     </Container>
   );

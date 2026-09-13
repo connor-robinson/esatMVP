@@ -19,6 +19,45 @@ const ALLOWED_FIELDS = [
 ] as const;
 
 /**
+ * GET /api/admin/question-bank/questions/[id]
+ * Load a full question for admin preview.
+ */
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  const admin = await requireTesterAdmin(_request);
+  if (!admin.ok || !admin.service) {
+    return NextResponse.json(
+      { error: admin.error ?? "Unauthorized" },
+      { status: admin.status ?? 401 },
+    );
+  }
+
+  const questionId = params.id?.trim();
+  if (!questionId) {
+    return NextResponse.json({ error: "Missing question id" }, { status: 400 });
+  }
+
+  const { data, error } = await admin.service
+    .from("ai_generated_questions")
+    .select("*")
+    .eq("id", questionId)
+    .maybeSingle();
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+  if (!data) {
+    return NextResponse.json({ error: "Question not found" }, { status: 404 });
+  }
+
+  return NextResponse.json({
+    question: normalizeQuestionBankRow(data as Record<string, unknown>),
+  });
+}
+
+/**
  * PATCH /api/admin/question-bank/questions/[id]
  * Service-role update for reported-question review (approve / delete / edit).
  */
