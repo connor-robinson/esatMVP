@@ -922,21 +922,21 @@ function OnboardingContent() {
                     <div className="flex min-h-0 flex-1 items-center py-4 sm:py-6">
                       <div className="grid w-full grid-cols-1 items-stretch gap-4 sm:grid-cols-[1.4fr_1fr] sm:gap-5">
                         <div className="relative pt-3">
-                          <span className="absolute left-1/2 top-0 z-10 -translate-x-1/2 rounded-md bg-white px-2.5 py-1 text-[0.7rem] font-semibold text-[#4C8BF5] shadow-sm sm:text-xs">
+                          <span className="absolute left-1/2 top-0 z-10 -translate-x-1/2 rounded-md bg-[#4C8BF5] px-2.5 py-1 text-[0.7rem] font-semibold text-white shadow-sm sm:text-xs">
                             Most popular option
                           </span>
-                          <div className="flex h-full flex-col rounded-2xl bg-[#4C8BF5] px-5 pb-6 pt-7 sm:px-7 sm:pb-8 sm:pt-8">
-                            <h2 className="mb-4 text-xl font-bold tracking-tight text-white sm:text-2xl">
+                          <div className="flex h-full flex-col rounded-2xl border-2 border-[#4C8BF5] bg-surface-mid px-5 pb-6 pt-7 sm:px-7 sm:pb-8 sm:pt-8">
+                            <h2 className="mb-4 text-xl font-bold tracking-tight text-text sm:text-2xl">
                               Free trial
                             </h2>
                             <ul className="space-y-4">
                               {TRIAL_PLAN_ITEMS.map((item) => (
                                 <li
                                   key={item}
-                                  className="flex items-start gap-3.5 text-base leading-snug text-white sm:text-[1.1rem]"
+                                  className="flex items-start gap-3.5 text-base leading-snug text-text sm:text-[1.1rem]"
                                 >
                                   <Check
-                                    className="mt-1 h-5 w-5 shrink-0 text-white"
+                                    className="mt-1 h-5 w-5 shrink-0 text-[#4C8BF5]"
                                     strokeWidth={2.75}
                                     aria-hidden
                                   />
