@@ -8,7 +8,10 @@ import katex from "katex";
 import "katex/dist/katex.min.css";
 import { normalizeStemWhitespace } from "@/lib/utils/stemWhitespace";
 import { wrapBareLatex } from "@/lib/utils/fixBareLatexFractions";
-import { prepareQuestionBankMathText } from "@/lib/utils/convertLatexDelimiters";
+import {
+  normalizeDisplayMathEnvironments,
+  prepareQuestionBankMathText,
+} from "@/lib/utils/convertLatexDelimiters";
 // @ts-ignore
 import "katex/dist/contrib/mhchem.min.js";
 
@@ -118,9 +121,13 @@ function addSpacingAroundInlineMath(text: string): string {
   // Add remaining text
   result += textWithPlaceholders.substring(lastIndex);
   
-  // Restore display math placeholders (in reverse order to avoid replacing placeholders within placeholders)
+  // Restore display math placeholders (in reverse order to avoid replacing placeholders within placeholders).
+  // Use split/join: String.replace treats `$` specially in replacement strings, which
+  // would turn restored `$$...$$` blocks into `$...$` and break align/aligned systems.
   for (let i = displayMathPlaceholders.length - 1; i >= 0; i--) {
-    result = result.replace(`__DISPLAY_MATH_${i}__`, displayMathPlaceholders[i]);
+    result = result
+      .split(`__DISPLAY_MATH_${i}__`)
+      .join(displayMathPlaceholders[i]);
   }
   
   return result;
@@ -253,13 +260,20 @@ export function renderMath(
 ): string | null {
   // Ensure math is a string
   if (math == null) return null;
-  const mathStr = String(math);
-  if (!mathStr) return null;
+  const raw = String(math);
+  if (!raw) return null;
+
+  // Always rewrite display-only envs; callers may pass them with displayMode
+  // false when newline detection fails (collapsed stems).
+  const mathStr = normalizeDisplayMathEnvironments(raw);
+  const useDisplay =
+    displayMode ||
+    /\\begin\{(?:aligned|gathered|multlined)\}/.test(mathStr);
   
   try {
     return katex.renderToString(mathStr, {
       throwOnError: false,
-      displayMode,
+      displayMode: useDisplay,
       strict: false,
     });
   } catch (error) {
@@ -333,7 +347,13 @@ function needsGlueSpace(prev: RenderedPart, next: RenderedPart): boolean {
 
 /** Only true multi-line display math should break onto its own block. */
 function isInlineFriendlyDisplayMath(content: string): boolean {
-  return !content.includes("\n");
+  const normalized = normalizeDisplayMathEnvironments(content);
+  if (normalized.includes("\n")) return false;
+  // Systems / multi-line envs must stay as display blocks.
+  if (/\\begin\{(?:aligned|gathered|multlined)\}/.test(normalized)) {
+    return false;
+  }
+  return true;
 }
 
 function joinRenderedParts(parts: RenderedPart[]): string {
@@ -374,7 +394,10 @@ export function renderMathContent(text: string): string {
       }
     } else if (segment.type === "display") {
       const contentStr = segment.content != null ? String(segment.content) : "";
-      const flowInline = isInlineFriendlyDisplayMath(contentStr);
+      const normalized = normalizeDisplayMathEnvironments(contentStr);
+      const flowInline =
+        isInlineFriendlyDisplayMath(contentStr) &&
+        !/\\begin\{(?:aligned|gathered|multlined)\}/.test(normalized);
       const rendered = renderMath(contentStr, !flowInline);
       if (rendered) {
         if (flowInline) {

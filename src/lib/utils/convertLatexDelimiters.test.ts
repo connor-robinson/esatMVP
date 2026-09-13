@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { renderMathContent } from "../../hooks/useKaTeX";
 import {
   convertProseLatexLineBreaks,
+  normalizeDisplayMathEnvironments,
   prepareQuestionBankMathText,
 } from "./convertLatexDelimiters";
 
@@ -49,6 +50,21 @@ describe("convertProseLatexLineBreaks", () => {
   });
 });
 
+describe("normalizeDisplayMathEnvironments", () => {
+  it("rewrites align* to aligned for KaTeX display math", () => {
+    const input = `
+\\begin{align*}
+\\log_2(x^2 y^3) &= 9 \\\\
+\\log_4\\left(\\frac{x}{y}\\right) &= 1
+\\end{align*}
+`;
+    const out = normalizeDisplayMathEnvironments(input);
+    expect(out).toContain("\\begin{aligned}");
+    expect(out).toContain("\\end{aligned}");
+    expect(out).not.toContain("align*");
+  });
+});
+
 describe("prepareQuestionBankMathText", () => {
   it("renders numbered statements on separate lines", () => {
     const stem =
@@ -70,5 +86,26 @@ describe("renderMathContent", () => {
     expect(html).toContain("<br");
     expect(html).toMatch(/1 kinetic energy[\s\S]*<br[\s\S]*2 potential energy/);
     expect(html.replace(/<[^>]+>/g, "")).not.toMatch(/\\\\\s*\d/);
+  });
+
+  it("renders align* systems inside $$ without character-by-character fallback", () => {
+    const stem = `Given that $x > 0$ and $y > 0$ satisfy the simultaneous equations:
+
+$$
+\\begin{align*}
+\\log_2(x^2 y^3) &= 9 \\\\
+\\log_4\\left(\\frac{x}{y}\\right) &= 1
+\\end{align*}
+$$
+
+What is the value of $\\log_8(xy)$?`;
+
+    const html = renderMathContent(stem);
+    expect(html).toContain("katex");
+    expect(html).toContain("math-display-wrap");
+    expect(html).toContain("katex-display");
+    // Source should be rewritten to aligned; raw align* must not leak as visible text.
+    expect(html).not.toMatch(/\\begin\{align\*\}/);
+    expect(html.replace(/<[^>]+>/g, "")).not.toContain("align*");
   });
 });

@@ -186,3 +186,26 @@ export function unwrapLatexBoxed(text: string): string {
   }
   return result;
 }
+
+/**
+ * KaTeX only allows `align` / `align*` / `gather` / `eqnarray` as top-level
+ * environments, not inside `$$...$$` math mode. Bank stems often nest them
+ * in display math, which then falls apart character-by-character when
+ * `throwOnError` is false. Rewrite to the math-mode equivalents.
+ */
+export function normalizeDisplayMathEnvironments(math: string): string {
+  if (!math) return math;
+  return String(math)
+    .replace(/\\begin\{align\*\}/g, "\\begin{aligned}")
+    .replace(/\\end\{align\*\}/g, "\\end{aligned}")
+    .replace(/\\begin\{align\}/g, "\\begin{aligned}")
+    .replace(/\\end\{align\}/g, "\\end{aligned}")
+    .replace(/\\begin\{gather\*\}/g, "\\begin{gathered}")
+    .replace(/\\end\{gather\*\}/g, "\\end{gathered}")
+    .replace(/\\begin\{gather\}/g, "\\begin{gathered}")
+    .replace(/\\end\{gather\}/g, "\\end{gathered}")
+    .replace(/\\begin\{eqnarray\*\}/g, "\\begin{aligned}")
+    .replace(/\\end\{eqnarray\*\}/g, "\\end{aligned}")
+    .replace(/\\begin\{eqnarray\}/g, "\\begin{aligned}")
+    .replace(/\\end\{eqnarray\}/g, "\\end{aligned}");
+}
