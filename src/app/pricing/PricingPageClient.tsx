@@ -52,6 +52,12 @@ const FEATURES = {
 
 const PAID_RECURRING = new Set(["weekly", "monthly"]);
 
+type FriendCodeStatus =
+  | { state: "idle" }
+  | { state: "checking" }
+  | { state: "valid"; code: string }
+  | { state: "invalid"; code: string; message: string };
+
 function formatPeriodEnd(iso?: string): string | null {
   if (!iso) return null;
   const d = new Date(iso);
@@ -61,6 +67,16 @@ function formatPeriodEnd(iso?: string): string | null {
     month: "short",
     year: "numeric",
   });
+}
+
+function friendCodeErrorMessage(reason: string | undefined): string {
+  if (reason === "already_used") {
+    return "This friend code has already been used.";
+  }
+  if (reason === "own_code") {
+    return "You cannot use your own referral code.";
+  }
+  return "This friend code is not valid.";
 }
 
 export default function PricingPageClient() {
@@ -77,6 +93,9 @@ export default function PricingPageClient() {
   } = useSubscription();
   const [loading, setLoading] = useState<string | null>(null);
   const [banner, setBanner] = useState<string | null>(null);
+  const [friendCodeStatus, setFriendCodeStatus] = useState<FriendCodeStatus>({
+    state: "idle",
+  });
   const autoCheckoutStarted = useRef(false);
 
   const seasonPrice = getSeasonPassPrice();
@@ -91,7 +110,9 @@ export default function PricingPageClient() {
   const isPartnerAccess = tier === "partner" || source === "partner";
   const fromSettings = searchParams.get("from") === "settings";
   const codeFromUrl = searchParams.get("code")?.trim().toUpperCase() ?? "";
-  const hasFriendCode = Boolean(codeFromUrl);
+  const validFriendCode =
+    friendCodeStatus.state === "valid" ? friendCodeStatus.code : null;
+  const hasFriendCode = Boolean(validFriendCode);
 
   useEffect(() => {
     const sourcePage = readGaSourcePage() ?? currentGaPath() ?? "/pricing";
@@ -100,6 +121,50 @@ export default function PricingPageClient() {
       source_page: sourcePage,
     });
   }, []);
+
+  useEffect(() => {
+    if (!codeFromUrl) {
+      setFriendCodeStatus({ state: "idle" });
+      return;
+    }
+
+    let cancelled = false;
+    setFriendCodeStatus({ state: "checking" });
+
+    void (async () => {
+      try {
+        const res = await fetch(
+          `/api/feedback-referral/validate?code=${encodeURIComponent(codeFromUrl)}`,
+        );
+        const data = (await res.json().catch(() => ({}))) as {
+          valid?: boolean;
+          code?: string;
+          reason?: string;
+        };
+        if (cancelled) return;
+        if (data.valid && data.code) {
+          setFriendCodeStatus({ state: "valid", code: data.code });
+          return;
+        }
+        setFriendCodeStatus({
+          state: "invalid",
+          code: codeFromUrl,
+          message: friendCodeErrorMessage(data.reason),
+        });
+      } catch {
+        if (cancelled) return;
+        setFriendCodeStatus({
+          state: "invalid",
+          code: codeFromUrl,
+          message: "Could not verify this friend code. Try again.",
+        });
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [codeFromUrl, session?.user?.id]);
 
   const paidCta = (planId: "weekly" | "monthly" | "season_pass", loadingLabel: string) => {
     if (loading === planId) return "Loading…";
@@ -195,7 +260,11 @@ export default function PricingPageClient() {
         selected_plan: planType,
         source_page: sourcePage,
       });
-      router.push(buildCheckoutSignupUrl(planType, codeFromUrl || null));
+      router.push(buildCheckoutSignupUrl(planType, validFriendCode));
+      return;
+    }
+    if (friendCodeStatus.state === "checking") {
+      setBanner("Checking friend code…");
       return;
     }
     setLoading(planType);
@@ -207,7 +276,7 @@ export default function PricingPageClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           planType,
-          ...(codeFromUrl ? { referralCode: codeFromUrl } : {}),
+          ...(validFriendCode ? { referralCode: validFriendCode } : {}),
           ...ga,
         }),
       });
@@ -239,14 +308,27 @@ export default function PricingPageClient() {
     if (!session?.user || !isPaidPlanId(checkoutPlan)) return;
     if (autoCheckoutStarted.current) return;
     if (isPartnerAccess || isSeasonPass || isRecurringPaid) return;
+    // Wait until friend-code validation finishes so we do not send a bad code.
+    if (codeFromUrl && friendCodeStatus.state === "checking") return;
+    if (codeFromUrl && friendCodeStatus.state === "idle") return;
     autoCheckoutStarted.current = true;
-    const pricingReturn = codeFromUrl
-      ? `/pricing?code=${encodeURIComponent(codeFromUrl)}`
-      : "/pricing";
+    const pricingReturn = validFriendCode
+      ? `/pricing?code=${encodeURIComponent(validFriendCode)}`
+      : codeFromUrl
+        ? `/pricing?code=${encodeURIComponent(codeFromUrl)}`
+        : "/pricing";
     router.replace(pricingReturn, { scroll: false });
     void handleCheckout(checkoutPlan);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- resume checkout once after signup
-  }, [session?.user, searchParams, isSeasonPass, isRecurringPaid, isPartnerAccess]);
+  }, [
+    session?.user,
+    searchParams,
+    isSeasonPass,
+    isRecurringPaid,
+    isPartnerAccess,
+    friendCodeStatus.state,
+    validFriendCode,
+  ]);
 
   const handleSwitch = async (planType: PlanId) => {
     if (planType === "free") return;
@@ -257,7 +339,7 @@ export default function PricingPageClient() {
         selected_plan: planType,
         source_page: sourcePage,
       });
-      router.push(buildCheckoutSignupUrl(planType, codeFromUrl || null));
+      router.push(buildCheckoutSignupUrl(planType, validFriendCode));
       return;
     }
     setLoading(planType);
@@ -341,24 +423,63 @@ export default function PricingPageClient() {
           </p>
         ) : null}
         {codeFromUrl ? (
-          <div className="relative mx-auto mb-5 max-w-md overflow-hidden rounded-organic-lg border border-primary/30 bg-surface-elevated px-4 py-3 shadow-md sm:mb-6">
+          <div
+            className={
+              friendCodeStatus.state === "invalid"
+                ? "relative mx-auto mb-5 max-w-md overflow-hidden rounded-organic-lg border border-error/35 bg-surface-elevated px-4 py-3 shadow-md sm:mb-6"
+                : "relative mx-auto mb-5 max-w-md overflow-hidden rounded-organic-lg border border-primary/30 bg-surface-elevated px-4 py-3 shadow-md sm:mb-6"
+            }
+          >
             <div
               aria-hidden
               className="pointer-events-none absolute inset-0"
               style={{
                 background:
-                  "radial-gradient(circle at top right, rgba(169, 177, 103, 0.28) 0%, transparent 55%)",
+                  friendCodeStatus.state === "invalid"
+                    ? "radial-gradient(circle at top right, rgba(248, 113, 113, 0.16) 0%, transparent 55%)"
+                    : "radial-gradient(circle at top right, rgba(169, 177, 103, 0.28) 0%, transparent 55%)",
               }}
             />
             <div className="relative z-10">
-              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-primary">
-                Friend code ready
+              <p
+                className={
+                  friendCodeStatus.state === "invalid"
+                    ? "text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-error"
+                    : "text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-primary"
+                }
+              >
+                {friendCodeStatus.state === "checking"
+                  ? "Checking friend code"
+                  : friendCodeStatus.state === "invalid"
+                    ? "Friend code unavailable"
+                    : "Friend code ready"}
               </p>
               <p className="mt-1 text-sm leading-snug text-text">
-                <span className="font-mono font-semibold text-primary">
-                  {codeFromUrl}
-                </span>{" "}
-                will be applied automatically at checkout.
+                {friendCodeStatus.state === "invalid" ? (
+                  <>
+                    <span className="font-mono font-semibold text-text">
+                      {codeFromUrl}
+                    </span>
+                    {" - "}
+                    {friendCodeStatus.message} Checkout will continue without
+                    the discount.
+                  </>
+                ) : friendCodeStatus.state === "checking" ? (
+                  <>
+                    Verifying{" "}
+                    <span className="font-mono font-semibold text-primary">
+                      {codeFromUrl}
+                    </span>
+                    …
+                  </>
+                ) : (
+                  <>
+                    <span className="font-mono font-semibold text-primary">
+                      {validFriendCode ?? codeFromUrl}
+                    </span>{" "}
+                    will be applied automatically at checkout.
+                  </>
+                )}
               </p>
             </div>
           </div>
