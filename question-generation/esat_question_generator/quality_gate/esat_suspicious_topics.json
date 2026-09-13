@@ -164,5 +164,178 @@
       "patterns": ["half-life", "half life", "decay constant", "radioactive decay"],
       "topic": "P7 Radioactivity"
     }
+  ],
+  "chemistry_hard_fail": [
+    {
+      "id": "vsepr_shapes",
+      "patterns": [
+        "VSEPR",
+        "bond angle",
+        "tetrahedral angle",
+        "109\\.5",
+        "trigonal bipyramid",
+        "octahedral geometry",
+        "AX4",
+        "AX5",
+        "AX6"
+      ],
+      "reason": "VSEPR / molecular shape angles are not assumed ESAT Chemistry knowledge unless the stem supplies the rules."
+    },
+    {
+      "id": "nmr_ir_spectroscopy",
+      "patterns": [
+        "NMR",
+        "nuclear magnetic resonance",
+        "chemical shift",
+        "IR spectrum",
+        "infrared spectrum",
+        "wavenumber",
+        "fingerprint region",
+        "mass spectrometry fragment"
+      ],
+      "reason": "Spectroscopic interpretation (NMR/IR fragmentation detail) is beyond ESAT Chemistry assumed knowledge."
+    },
+    {
+      "id": "advanced_organic_mechanisms",
+      "patterns": [
+        "SN1",
+        "SN2",
+        "E1 elimination",
+        "E2 elimination",
+        "curly arrow",
+        "electrophilic aromatic",
+        "Friedel-Crafts",
+        "Grignard",
+        "carbocation rearrangement"
+      ],
+      "reason": "Advanced organic mechanism formalism is not required ESAT Chemistry content."
+    },
+    {
+      "id": "transition_metal_complexes",
+      "patterns": [
+        "ligand field",
+        "crystal field",
+        "d-d transition",
+        "coordination number 6",
+        "complex ion colour"
+      ],
+      "reason": "Transition-metal complex theory is outside ESAT Chemistry syllabus depth."
+    },
+    {
+      "id": "thermodynamics_advanced",
+      "patterns": [
+        "Gibbs free energy",
+        "\\Delta G",
+        "entropy change",
+        "\\Delta S",
+        "Born-Haber",
+        "lattice enthalpy"
+      ],
+      "reason": "Advanced thermodynamics (Gibbs/entropy/lattice enthalpy cycles) exceeds ESAT Chemistry."
+    }
+  ],
+  "chemistry_warning": [
+    {
+      "id": "organic_named_reactions",
+      "patterns": ["Markovnikov", "Zaitsev", "Hofmann", "aldol"]
+    },
+    {
+      "id": "buffer_henderson",
+      "patterns": ["Henderson-Hasselbalch", "buffer equation"]
+    }
+  ],
+  "biology_hard_fail": [
+    {
+      "id": "action_potentials_channels",
+      "patterns": [
+        "action potential",
+        "sodium-potassium pump detail",
+        "voltage-gated",
+        "ion channel kinetics",
+        "depolarisation threshold",
+        "depolarization threshold",
+        "resting membrane potential equation"
+      ],
+      "reason": "Action potentials / channel biophysics are not assumed ESAT Biology unless supplied in the stem."
+    },
+    {
+      "id": "advanced_biochem_pathways",
+      "patterns": [
+        "Krebs cycle intermediates",
+        "TCA cycle enzyme",
+        "electron transport chain complex",
+        "oxidative phosphorylation chemiosmosis",
+        "Calvin cycle enzyme",
+        "glycolysis ATP yield calculation"
+      ],
+      "reason": "Detailed metabolic pathway intermediates/enzyme names exceed ESAT Biology depth."
+    },
+    {
+      "id": "immunology_advanced",
+      "patterns": [
+        "MHC class",
+        "T-cell receptor",
+        "clonal selection detailed",
+        "cytokine cascade",
+        "complement pathway"
+      ],
+      "reason": "Advanced immunology detail is outside ESAT Biology assumed knowledge."
+    },
+    {
+      "id": "molecular_lab_techniques",
+      "patterns": [
+        "CRISPR",
+        "Cas9",
+        "Southern blot",
+        "Western blot",
+        "ChIP-seq",
+        "RNA-seq",
+        "next-generation sequencing"
+      ],
+      "reason": "Advanced molecular lab techniques beyond ESAT gene technologies scope."
+    },
+    {
+      "id": "neuroscience_anatomy",
+      "patterns": [
+        "synaptic plasticity",
+        "long-term potentiation",
+        "neurotransmitter receptor subtype",
+        "brain lobe function mapping"
+      ],
+      "reason": "Neuroscience detail beyond ESAT animal physiology."
+    }
+  ],
+  "biology_warning": [
+    {
+      "id": "hard_gene_tech",
+      "patterns": ["plasmid map", "restriction digest fragment", "gel electrophoresis band"]
+    },
+    {
+      "id": "ecology_stats",
+      "patterns": ["Simpson.?s index", "Spearman", "chi-squared ecology"]
+    }
+  ],
+  "physics_hard_fail": [
+    {
+      "id": "moments_torque_unsupplied",
+      "patterns": [
+        "torque",
+        "moment of a couple",
+        "angular momentum",
+        "moment of inertia"
+      ],
+      "reason": "Moments/torque/angular mechanics are not assumed ESAT Physics unless present in the curriculum snapshot or supplied in the stem."
+    },
+    {
+      "id": "quantum_modern",
+      "patterns": [
+        "Schrödinger",
+        "wavefunction",
+        "quantum number",
+        "de Broglie derivation",
+        "Heisenberg uncertainty"
+      ],
+      "reason": "Quantum mechanics formalism exceeds ESAT Physics."
+    }
   ]
 }

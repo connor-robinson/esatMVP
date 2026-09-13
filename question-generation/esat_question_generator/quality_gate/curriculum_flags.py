@@ -196,6 +196,49 @@ def detect_curriculum_flags(row: Dict[str, Any]) -> List[CurriculumFlag]:
                     "flag_id": "further_math",
                 }
             )
+    elif subj_key == "chemistry":
+        flags.extend(
+            _match_rule_group(
+                text,
+                cfg.get("chemistry_hard_fail") or [],
+                default_severity="hard_fail",
+                default_action="delete",
+            )
+        )
+        flags.extend(
+            _match_rule_group(
+                text,
+                cfg.get("chemistry_warning") or [],
+                default_severity="warning",
+                default_action="human_review",
+            )
+        )
+    elif subj_key == "biology":
+        flags.extend(
+            _match_rule_group(
+                text,
+                cfg.get("biology_hard_fail") or [],
+                default_severity="hard_fail",
+                default_action="delete",
+            )
+        )
+        flags.extend(
+            _match_rule_group(
+                text,
+                cfg.get("biology_warning") or [],
+                default_severity="warning",
+                default_action="human_review",
+            )
+        )
+    elif subj_key == "physics":
+        flags.extend(
+            _match_rule_group(
+                text,
+                cfg.get("physics_hard_fail") or [],
+                default_severity="hard_fail",
+                default_action="delete",
+            )
+        )
 
     seen: set[tuple[str, str]] = set()
     deduped: List[CurriculumFlag] = []
