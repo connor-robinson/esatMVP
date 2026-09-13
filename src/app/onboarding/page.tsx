@@ -691,7 +691,7 @@ function OnboardingContent() {
                     </div>
 
                     {exam === "ESAT" ? (
-                      <div className="mt-8 space-y-2.5 sm:mt-10">
+                      <div className="mt-12 space-y-2.5 sm:mt-14">
                         <p className="text-sm font-medium text-text">Your 3 subjects</p>
                         <div className="flex flex-wrap gap-2">
                           {ESAT_SUBJECTS.map((subject) => {
