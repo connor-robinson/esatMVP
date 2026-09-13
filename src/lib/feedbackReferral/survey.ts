@@ -36,6 +36,10 @@ export interface FeedbackQuestion {
   examples?: string[];
   /** Optional "explain why" box under the main answer. */
   whyOptional?: boolean;
+  /** Render single-choice options as a labeled slider. */
+  presentation?: "cards" | "slider";
+  /** Larger choice cards (e.g. camp missing options). */
+  optionSize?: "default" | "large";
   /** Shown after the main answer is set (e.g. describe-to-a-friend after recommend). */
   followUpText?: FeedbackFollowUpText;
   /** Extra required text when specific option(s) are selected. */
@@ -71,36 +75,12 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       label: "What's most useful?",
       whyOptional: true,
       options: [
-        {
-          value: "calibration",
-          label: "Calibration",
-          description: "The short placement quiz",
-        },
-        {
-          value: "question_bank",
-          label: "Question bank",
-          description: "Practice by topic",
-        },
-        {
-          value: "past_papers",
-          label: "Past papers",
-          description: "Timed full papers",
-        },
-        {
-          value: "mental_maths",
-          label: "Mental maths",
-          description: "Drills and speed practice",
-        },
-        {
-          value: "score_converter",
-          label: "Score converter",
-          description: "Rough grade estimates",
-        },
-        {
-          value: "other",
-          label: "Something else",
-          description: "Homepage, settings, or another bit",
-        },
+        { value: "calibration", label: "Calibration" },
+        { value: "question_bank", label: "Question bank" },
+        { value: "past_papers", label: "Past papers" },
+        { value: "mental_maths", label: "Mental maths" },
+        { value: "score_converter", label: "Score converter" },
+        { value: "other", label: "Something else" },
       ],
     },
     {
@@ -109,36 +89,12 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       label: "What's least useful?",
       whyOptional: true,
       options: [
-        {
-          value: "calibration",
-          label: "Calibration",
-          description: "The short placement quiz",
-        },
-        {
-          value: "question_bank",
-          label: "Question bank",
-          description: "Practice by topic",
-        },
-        {
-          value: "past_papers",
-          label: "Past papers",
-          description: "Timed full papers",
-        },
-        {
-          value: "mental_maths",
-          label: "Mental maths",
-          description: "Drills and speed practice",
-        },
-        {
-          value: "score_converter",
-          label: "Score converter",
-          description: "Rough grade estimates",
-        },
-        {
-          value: "other",
-          label: "Something else",
-          description: "Homepage, settings, or another bit",
-        },
+        { value: "calibration", label: "Calibration" },
+        { value: "question_bank", label: "Question bank" },
+        { value: "past_papers", label: "Past papers" },
+        { value: "mental_maths", label: "Mental maths" },
+        { value: "score_converter", label: "Score converter" },
+        { value: "other", label: "Something else" },
       ],
     },
     {
@@ -197,28 +153,13 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       id: "price_fair",
       type: "single",
       label: "Was the price fair for what you got?",
+      presentation: "slider",
       whyOptional: true,
       options: [
-        {
-          value: "too_high",
-          label: "Too high",
-          description: "Felt expensive for what you used",
-        },
-        {
-          value: "fair",
-          label: "Fair",
-          description: "About right for the value",
-        },
-        {
-          value: "great_value",
-          label: "Great value",
-          description: "Worth more than you paid",
-        },
-        {
-          value: "not_paying_yet",
-          label: "Not paying yet",
-          description: "Still on free / trial, or undecided",
-        },
+        { value: "too_high", label: "Too high" },
+        { value: "fair", label: "Fair" },
+        { value: "great_value", label: "Great value" },
+        { value: "not_paying_yet", label: "Not paying yet" },
       ],
     },
     {
@@ -278,6 +219,7 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       type: "multi",
       section: "What ESATCamp is missing",
       label: "What is ESATCamp missing / what would you like to see?",
+      optionSize: "large",
       whyOptional: true,
       options: [
         {

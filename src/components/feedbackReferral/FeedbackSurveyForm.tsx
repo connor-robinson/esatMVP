@@ -150,86 +150,85 @@ export function FeedbackSurveyForm({
         />
       </div>
 
-      <div className="relative mx-auto flex min-h-[calc(100vh-58px)] w-full max-w-6xl flex-col px-5 py-6 sm:px-8 sm:py-8">
-        <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
-          <div
-            className={cn(
-              "flex w-full max-w-[68rem] flex-col overflow-hidden rounded-[1.5rem] bg-surface-elevated",
-              "h-[min(42rem,calc(100vh-5.5rem))] sm:h-[min(44rem,calc(100vh-4.5rem))]",
-              "px-6 pb-6 pt-5 sm:px-12 sm:pb-8 sm:pt-7",
-            )}
-          >
-            <ProgressBar stepIndex={stepIndex} total={questions.length} />
+      <div className="relative flex min-h-[calc(100vh-58px)] w-full flex-col px-5 py-5 sm:px-10 sm:py-8 lg:px-14">
+        <div
+          className={cn(
+            "flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.5rem] bg-surface-elevated",
+            "px-6 pb-6 pt-5 sm:px-12 sm:pb-8 sm:pt-8 lg:px-16",
+          )}
+        >
+          <ProgressBar stepIndex={stepIndex} total={questions.length} />
 
-            <div className="mx-auto mt-6 flex min-h-0 w-full max-w-3xl flex-1 flex-col">
-              <div className="shrink-0">
-                {question.section ? (
-                  <p className="text-xs font-medium uppercase tracking-[0.12em] text-[#4C8BF5]">
-                    {question.section}
-                  </p>
-                ) : null}
-                <h1
-                  className={cn(
-                    "text-2xl font-bold tracking-tight text-text sm:text-[1.75rem]",
-                    question.section ? "mt-2" : null,
-                  )}
-                >
-                  {question.label}
-                </h1>
-                {question.help ? (
-                  <p className="mt-1.5 text-xs text-text-muted">{question.help}</p>
-                ) : null}
-              </div>
+          <div className="mx-auto mt-7 flex min-h-0 w-full max-w-4xl flex-1 flex-col sm:mt-8">
+            <div className="shrink-0">
+              {question.section ? (
+                <p className="text-sm font-bold uppercase tracking-[0.12em] text-[#4C8BF5]">
+                  {question.section}
+                </p>
+              ) : null}
+              <h1
+                className={cn(
+                  "text-3xl font-bold tracking-tight text-text sm:text-4xl",
+                  question.section ? "mt-2" : null,
+                )}
+              >
+                {question.label}
+              </h1>
+              {question.help ? (
+                <p className="mt-2 text-sm text-text-muted sm:text-base">
+                  {question.help}
+                </p>
+              ) : null}
+            </div>
 
-              <div className="mt-5 min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
-                <StepBody
-                  question={question}
-                  value={value}
-                  answers={answers}
-                  onChange={setValue}
-                  onToggleMulti={toggleMulti}
-                  onSetField={setField}
-                />
+            <div className="mt-6 min-h-0 flex-1 space-y-4 overflow-y-auto pr-1 sm:mt-8">
+              <StepBody
+                question={question}
+                value={value}
+                answers={answers}
+                onChange={setValue}
+                onToggleMulti={toggleMulti}
+                onSetField={setField}
+              />
 
-                {error ? (
-                  <p className="text-center text-xs text-error">{error}</p>
-                ) : null}
-              </div>
+              {error ? (
+                <p className="text-center text-sm text-error">{error}</p>
+              ) : null}
+            </div>
 
-              <div className="mt-4 flex shrink-0 gap-2.5">
-                {stepIndex > 0 ? (
-                  <button
-                    type="button"
-                    onClick={goBack}
-                    disabled={submitting}
-                    className="flex-1 rounded-xl bg-surface-mid py-2.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral disabled:opacity-50"
-                  >
-                    Back
-                  </button>
-                ) : null}
+            <div className="mt-5 flex shrink-0 gap-3 sm:mt-6">
+              {stepIndex > 0 ? (
                 <button
                   type="button"
-                  disabled={!canContinue || submitting}
-                  onClick={() => void handleContinue()}
-                  className={cn(
-                    "flex-1 rounded-xl py-2.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
-                    ACCENT.btn,
-                  )}
+                  onClick={goBack}
+                  disabled={submitting}
+                  className="flex-1 rounded-xl bg-surface-mid py-3.5 text-base font-semibold text-text transition-colors hover:bg-surface-neutral disabled:opacity-50"
                 >
-                  {submitting
-                    ? "Submitting…"
-                    : isLast
-                      ? "Finish and get code"
-                      : "Continue"}
+                  Back
                 </button>
-              </div>
-
-              <p className="mt-4 shrink-0 text-center text-xs text-text-muted">
-                {isLast
-                  ? "You'll get a one-friend 50% code when you finish."
-                  : survey.intro}
-              </p>
+              ) : null}
+              <button
+                type="button"
+                disabled={!canContinue || submitting}
+                onClick={() => void handleContinue()}
+                className={cn(
+                  "flex-1 rounded-xl py-3.5 text-base font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
+                  ACCENT.btn,
+                )}
+              >
+                {submitting
+                  ? "Submitting…"
+                  : isLast
+                    ? "Finish and get code"
+                    : "Continue"}
+              </button>
             </div>
+
+            <p className="mt-4 shrink-0 text-center text-sm text-text-muted">
+              {isLast
+                ? "You'll get a one-friend 50% code when you finish."
+                : survey.intro}
+            </p>
           </div>
         </div>
       </div>
@@ -241,7 +240,7 @@ function ProgressBar({ stepIndex, total }: { stepIndex: number; total: number })
   const pct = Math.round(((stepIndex + 1) / total) * 100);
   return (
     <div className="w-full" aria-hidden>
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+      <div className="h-2 w-full overflow-hidden rounded-full bg-white/10">
         <div
           className={cn(
             "h-full rounded-full transition-[width] duration-500 ease-out",
@@ -260,29 +259,40 @@ function ChoiceCard({
   description,
   onClick,
   checkbox = false,
+  size = "default",
 }: {
   selected: boolean;
   title: string;
   description?: string;
   onClick: () => void;
   checkbox?: boolean;
+  size?: "default" | "large";
 }) {
+  const large = size === "large";
   return (
     <button
       type="button"
       onClick={onClick}
       className={cn(
-        "w-full rounded-xl px-4 py-3 text-left transition-colors duration-200",
+        "w-full rounded-xl text-left transition-colors duration-200",
+        large ? "px-5 py-4" : "px-4 py-3",
         selected ? ACCENT.selected : "bg-surface-mid text-text hover:bg-surface-neutral",
       )}
     >
       <div className="flex items-center justify-between gap-2.5">
         <div>
-          <p className="text-sm font-semibold">{title}</p>
+          <p
+            className={cn(
+              "font-semibold",
+              large ? "text-lg sm:text-xl" : "text-base sm:text-lg",
+            )}
+          >
+            {title}
+          </p>
           {description ? (
             <p
               className={cn(
-                "mt-0.5 text-xs",
+                "mt-0.5 text-sm",
                 selected ? ACCENT.selectedMuted : "text-text-muted",
               )}
             >
@@ -293,18 +303,80 @@ function ChoiceCard({
         {checkbox ? (
           <span
             className={cn(
-              "flex h-4 w-4 shrink-0 items-center justify-center rounded",
+              "flex shrink-0 items-center justify-center rounded",
+              large ? "h-5 w-5" : "h-4 w-4",
               selected ? "bg-white text-[#4C8BF5]" : "bg-white/10",
             )}
             aria-hidden
           >
-            {selected ? <Check className="h-3 w-3" strokeWidth={3} /> : null}
+            {selected ? (
+              <Check className={large ? "h-3.5 w-3.5" : "h-3 w-3"} strokeWidth={3} />
+            ) : null}
           </span>
         ) : selected ? (
-          <Check className="h-4 w-4 shrink-0" aria-hidden />
+          <Check
+            className={cn("shrink-0", large ? "h-5 w-5" : "h-4 w-4")}
+            aria-hidden
+          />
         ) : null}
       </div>
     </button>
+  );
+}
+
+function OptionSlider({
+  options,
+  value,
+  onChange,
+}: {
+  options: Array<{ value: string; label: string }>;
+  value: string | undefined;
+  onChange: (next: string) => void;
+}) {
+  const index = Math.max(
+    0,
+    options.findIndex((o) => o.value === value),
+  );
+  const hasValue = typeof value === "string" && value.length > 0;
+  const current = hasValue ? options[index] : null;
+
+  return (
+    <div className="space-y-5">
+      <p className="text-center text-xl font-bold text-text sm:text-2xl">
+        {current?.label ?? "Slide to choose"}
+      </p>
+      <input
+        type="range"
+        min={0}
+        max={Math.max(0, options.length - 1)}
+        step={1}
+        value={hasValue ? index : 0}
+        onChange={(e) => {
+          const next = options[Number(e.target.value)];
+          if (next) onChange(next.value);
+        }}
+        onPointerDown={() => {
+          if (!hasValue && options[0]) onChange(options[0].value);
+        }}
+        className="h-2 w-full cursor-pointer appearance-none rounded-full bg-white/15 accent-[#4C8BF5]"
+        aria-label="Price fairness"
+      />
+      <div className="flex justify-between gap-2 text-xs font-medium text-text-muted sm:text-sm">
+        {options.map((opt) => (
+          <button
+            key={opt.value}
+            type="button"
+            onClick={() => onChange(opt.value)}
+            className={cn(
+              "max-w-[25%] flex-1 text-center transition-colors",
+              value === opt.value ? "font-bold text-[#4C8BF5]" : "hover:text-text",
+            )}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -317,7 +389,7 @@ function ExplainWhyBox({
 }) {
   return (
     <div className="space-y-1.5">
-      <p className="text-[11px] font-medium text-text-muted">
+      <p className="text-sm font-medium text-text-muted">
         Explain why <span className="text-text-subtle">(optional)</span>
       </p>
       <textarea
@@ -325,7 +397,7 @@ function ExplainWhyBox({
         maxLength={500}
         rows={2}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full resize-y rounded-xl border-0 bg-surface-mid px-4 py-3 text-sm text-text outline-none ring-0 placeholder:text-text-subtle focus:outline-none focus:ring-0"
+        className="w-full resize-y rounded-xl border-0 bg-surface-mid px-4 py-3 text-base text-text outline-none ring-0 placeholder:text-text-subtle focus:outline-none focus:ring-0"
         placeholder="A short reason helps us improve…"
       />
     </div>
@@ -430,11 +502,11 @@ function StepBody({
   const followUp =
     question.followUpText && mainAnswered ? (
       <div className="space-y-1.5 border-t border-white/10 pt-4">
-        <p className="text-base font-semibold text-text">
+        <p className="text-lg font-semibold text-text sm:text-xl">
           {question.followUpText.label}
         </p>
         {question.followUpText.help ? (
-          <p className="text-[11px] text-text-muted">
+          <p className="text-sm text-text-muted">
             {question.followUpText.help}
           </p>
         ) : null}
@@ -447,12 +519,12 @@ function StepBody({
           maxLength={question.followUpText.maxLength ?? 280}
           rows={3}
           onChange={(e) => onSetField(question.followUpText!.id, e.target.value)}
-          className="w-full resize-y rounded-xl border-0 bg-surface-mid px-4 py-3 text-sm text-text outline-none ring-0 placeholder:text-text-subtle focus:outline-none focus:ring-0"
+          className="w-full resize-y rounded-xl border-0 bg-surface-mid px-4 py-3 text-base text-text outline-none ring-0 placeholder:text-text-subtle focus:outline-none focus:ring-0"
           placeholder="One sentence…"
         />
         <p
           className={cn(
-            "text-[11px] tabular-nums",
+            "text-sm tabular-nums",
             trimmedLen(answers[question.followUpText.id]) >=
               (question.followUpText.minLength ?? 1)
               ? "text-text-muted"
@@ -466,6 +538,19 @@ function StepBody({
     ) : null;
 
   if (question.type === "single" && question.options) {
+    if (question.presentation === "slider") {
+      return (
+        <div className="space-y-4">
+          <OptionSlider
+            options={question.options}
+            value={typeof value === "string" ? value : undefined}
+            onChange={onChange}
+          />
+          {detailBoxes}
+          {whyBox}
+        </div>
+      );
+    }
     return (
       <div className="space-y-3">
         <div className="space-y-2">
@@ -475,6 +560,7 @@ function StepBody({
               selected={value === opt.value}
               title={opt.label}
               description={opt.description}
+              size={question.optionSize}
               onClick={() => onChange(opt.value)}
             />
           ))}
@@ -488,7 +574,7 @@ function StepBody({
   if (question.type === "multi" && question.options) {
     return (
       <div className="space-y-3">
-        <div className="space-y-2">
+        <div className={cn("space-y-2", question.optionSize === "large" && "space-y-3")}>
           {question.options.map((opt) => {
             const selected = Array.isArray(value) && value.includes(opt.value);
             return (
@@ -498,6 +584,7 @@ function StepBody({
                 title={opt.label}
                 description={opt.description}
                 checkbox
+                size={question.optionSize}
                 onClick={() => onToggleMulti(opt.value)}
               />
             );
@@ -513,8 +600,8 @@ function StepBody({
     const minScale = question.scaleMin ?? 0;
     const maxScale = question.scaleMax ?? 10;
     return (
-      <div className="space-y-3">
-        <div className="flex flex-wrap gap-2">
+      <div className="space-y-4">
+        <div className="flex flex-wrap gap-2.5">
           {Array.from(
             { length: maxScale - minScale + 1 },
             (_, i) => minScale + i,
@@ -524,7 +611,7 @@ function StepBody({
               type="button"
               onClick={() => onChange(n)}
               className={cn(
-                "h-11 w-11 rounded-xl text-sm font-semibold transition-colors",
+                "h-12 w-12 rounded-xl text-base font-semibold transition-colors sm:h-14 sm:w-14 sm:text-lg",
                 value === n
                   ? ACCENT.selected
                   : "bg-surface-mid text-text hover:bg-surface-neutral",
@@ -535,7 +622,7 @@ function StepBody({
           ))}
         </div>
         {question.scaleMinLabel || question.scaleMaxLabel ? (
-          <div className="flex justify-between text-[11px] text-text-muted">
+          <div className="flex justify-between text-sm text-text-muted">
             <span>{question.scaleMinLabel}</span>
             <span>{question.scaleMaxLabel}</span>
           </div>
@@ -562,7 +649,7 @@ function StepBody({
       <div className="space-y-3">
         {examples.length > 0 ? (
           <div className="space-y-2">
-            <p className="text-[11px] font-medium text-text-muted">
+            <p className="text-sm font-medium text-text-muted">
               Examples (then add your own detail)
             </p>
             <div className="space-y-2">
@@ -576,7 +663,7 @@ function StepBody({
                     type="button"
                     onClick={() => onChange(`${example} `)}
                     className={cn(
-                      "w-full rounded-xl px-4 py-3 text-left text-sm transition-colors duration-200",
+                      "w-full rounded-xl px-4 py-3 text-left text-base transition-colors duration-200",
                       selected
                         ? ACCENT.selected
                         : "bg-surface-mid text-text hover:bg-surface-neutral",
@@ -595,7 +682,7 @@ function StepBody({
           rows={4}
           autoFocus={examples.length === 0}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full resize-y rounded-xl border-0 bg-surface-mid px-4 py-3 text-sm text-text outline-none ring-0 placeholder:text-text-subtle focus:outline-none focus:ring-0"
+          className="w-full resize-y rounded-xl border-0 bg-surface-mid px-4 py-3 text-base text-text outline-none ring-0 placeholder:text-text-subtle focus:outline-none focus:ring-0"
           placeholder={
             examples.length > 0
               ? "Add what happened for you…"
