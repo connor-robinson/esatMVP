@@ -5,6 +5,10 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { Container } from "@/components/layout/Container";
 import { cn } from "@/lib/utils";
+import {
+  FEEDBACK_ADMIN_VIEWED_EVENT,
+  getFeedbackAdminLastSeenAt,
+} from "@/lib/admin/feedbackReferralLastSeen";
 
 const PRIMARY = [
   { href: "/admin", label: "Overview", match: (p: string) => p === "/admin" },
@@ -40,6 +44,13 @@ const PRIMARY = [
     match: (p: string) => p.startsWith("/admin/surveys"),
   },
   {
+    href: "/admin/feedback",
+    label: "Feedback",
+    match: (p: string) =>
+      p.startsWith("/admin/feedback") ||
+      p.startsWith("/admin/feedback-referral"),
+  },
+  {
     href: "/admin/question-bank",
     label: "Question bank",
     match: (p: string) => p.startsWith("/admin/question-bank"),
@@ -53,15 +64,31 @@ const SECONDARY = [
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname() || "/admin";
   const [supportBadge, setSupportBadge] = useState(0);
+  const [feedbackBadge, setFeedbackBadge] = useState(0);
 
   const loadBadge = useCallback(async () => {
     try {
-      const res = await fetch("/api/admin/support/notifications", {
-        cache: "no-store",
-      });
-      if (!res.ok) return;
-      const json = await res.json();
-      setSupportBadge(Number(json.notifications?.total ?? 0));
+      const [supportRes, feedbackRes] = await Promise.all([
+        fetch("/api/admin/support/notifications", { cache: "no-store" }),
+        fetch(
+          (() => {
+            const since = getFeedbackAdminLastSeenAt();
+            const qs = since
+              ? `?since=${encodeURIComponent(since)}`
+              : "";
+            return `/api/admin/feedback-referral/notifications${qs}`;
+          })(),
+          { cache: "no-store" },
+        ),
+      ]);
+      if (supportRes.ok) {
+        const json = await supportRes.json();
+        setSupportBadge(Number(json.notifications?.total ?? 0));
+      }
+      if (feedbackRes.ok) {
+        const json = await feedbackRes.json();
+        setFeedbackBadge(Number(json.notifications?.total ?? 0));
+      }
     } catch {
       // ignore badge failures
     }
@@ -70,7 +97,12 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     void loadBadge();
     const id = window.setInterval(() => void loadBadge(), 60_000);
-    return () => window.clearInterval(id);
+    const onViewed = () => void loadBadge();
+    window.addEventListener(FEEDBACK_ADMIN_VIEWED_EVENT, onViewed);
+    return () => {
+      window.clearInterval(id);
+      window.removeEventListener(FEEDBACK_ADMIN_VIEWED_EVENT, onViewed);
+    };
   }, [loadBadge]);
 
   return (
@@ -87,7 +119,13 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               </Link>
               {PRIMARY.map((item) => {
                 const active = item.match(pathname);
-                const showBadge = item.href === "/admin/support" && supportBadge > 0;
+                const badgeCount =
+                  item.href === "/admin/support"
+                    ? supportBadge
+                    : item.href === "/admin/feedback"
+                      ? feedbackBadge
+                      : 0;
+                const showBadge = badgeCount > 0;
                 return (
                   <Link
                     key={item.href}
@@ -102,7 +140,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                     {item.label}
                     {showBadge ? (
                       <span className="rounded-full bg-secondary/40 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-text">
-                        {supportBadge > 99 ? "99+" : supportBadge}
+                        {badgeCount > 99 ? "99+" : badgeCount}
                       </span>
                     ) : null}
                   </Link>

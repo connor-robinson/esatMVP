@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireTesterAdmin } from "@/lib/tester/admin";
-import { loadFeedbackReferralStats } from "@/lib/admin/feedbackReferralAdmin";
+import { loadFeedbackReferralNotifications } from "@/lib/admin/feedbackReferralAdmin";
 
 export const dynamic = "force-dynamic";
 
@@ -13,9 +13,13 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  const since = request.nextUrl.searchParams.get("since");
   try {
-    const stats = await loadFeedbackReferralStats(admin.service);
-    return NextResponse.json({ stats });
+    const notifications = await loadFeedbackReferralNotifications(
+      admin.service,
+      since && Number.isFinite(Date.parse(since)) ? since : null,
+    );
+    return NextResponse.json({ notifications });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Failed to load";
     return NextResponse.json({ error: message }, { status: 500 });

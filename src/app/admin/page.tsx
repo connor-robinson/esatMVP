@@ -59,6 +59,12 @@ const CARDS: Array<{
     key: null,
   },
   {
+    href: "/admin/feedback",
+    title: "Feedback",
+    body: "Friend-referral questionnaire responses, stats, and codes.",
+    key: null,
+  },
+  {
     href: "/admin/question-bank",
     title: "Question bank",
     body: "Subject popularity, hardest questions, reports, and coverage.",
