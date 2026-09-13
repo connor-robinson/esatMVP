@@ -366,14 +366,15 @@ function OptionSlider({
             className="relative z-10 h-2 w-full cursor-pointer appearance-none rounded-full bg-white/15 accent-[#4C8BF5]"
             aria-label="Price fairness"
           />
-          <div className="pointer-events-none absolute inset-x-0 top-1/2 z-0 flex -translate-y-1/2 justify-between">
-            {options.map((opt) => (
+          <div className="pointer-events-none absolute inset-x-0 top-1/2 z-0 h-2.5 -translate-y-1/2">
+            {options.map((opt, i) => (
               <span
                 key={`tick-${opt.value}`}
                 className={cn(
-                  "h-2.5 w-2.5 rounded-full",
+                  "absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full",
                   value === opt.value ? "bg-[#4C8BF5]" : "bg-white/35",
                 )}
+                style={{ left: `${(i / last) * 100}%` }}
                 aria-hidden
               />
             ))}
@@ -381,22 +382,35 @@ function OptionSlider({
         </div>
 
         <div className="relative mt-4 h-12 sm:h-10">
-          {options.map((opt, i) => (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => onChange(opt.value)}
-              className={cn(
-                "absolute top-0 max-w-[6.5rem] -translate-x-1/2 text-center text-xs font-medium leading-snug transition-colors sm:max-w-[7.5rem] sm:text-sm",
-                value === opt.value
-                  ? "font-bold text-[#4C8BF5]"
-                  : "text-text-muted hover:text-text",
-              )}
-              style={{ left: `${(i / last) * 100}%` }}
-            >
-              {opt.label}
-            </button>
-          ))}
+          {options.map((opt, i) => {
+            const isFirst = i === 0;
+            const isLastStop = i === options.length - 1;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => onChange(opt.value)}
+                className={cn(
+                  "absolute top-0 max-w-[7rem] text-xs font-medium leading-snug transition-colors sm:max-w-[8.5rem] sm:text-sm",
+                  isFirst && "left-0 text-left",
+                  isLastStop && "right-0 text-right",
+                  !isFirst &&
+                    !isLastStop &&
+                    "left-[var(--stop)] -translate-x-1/2 text-center",
+                  value === opt.value
+                    ? "font-bold text-[#4C8BF5]"
+                    : "text-text-muted hover:text-text",
+                )}
+                style={
+                  !isFirst && !isLastStop
+                    ? ({ "--stop": `${(i / last) * 100}%` } as React.CSSProperties)
+                    : undefined
+                }
+              >
+                {opt.label}
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>
