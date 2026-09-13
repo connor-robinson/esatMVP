@@ -314,7 +314,7 @@ export function TimeScatterChart({
           >
             <div>Q{hover.data.questionNumber}</div>
             <div>Time: {Math.round(hover.data.timeSec)}s</div>
-            <div>Status: {hover.data.answered ? (hover.data.correct ? 'Correct' : 'Wrong') : 'Unanswered'}{hover.data.guessed ? ' (Guess)' : ''}</div>
+            <div>Status: {hover.data.answered ? (hover.data.correct ? 'Correct' : 'Wrong') : 'Unanswered'}{hover.data.guessed ? ' (Flagged for review)' : ''}</div>
           </div>
         )}
 
@@ -330,7 +330,7 @@ export function TimeScatterChart({
           </div>
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-full border-2 border-warning" />
-            <span>Guessed</span>
+            <span>Flagged for review</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-2 h-2" style={{ background: COLOR_UNANSWERED }} />

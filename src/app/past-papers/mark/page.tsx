@@ -301,7 +301,7 @@ export default function PapersMarkPage() {
   
   // Shared bubble utility (analytics-style)
   const bubbleClass = hubMarkPreview
-    ? "rounded-md bg-[#E4E4E8] p-4 text-black shadow-none"
+    ? "rounded-md bg-white p-4 text-black shadow-none"
     : "rounded-organic-lg border border-border-subtle bg-surface-elevated p-4 shadow-bar-floating";
   const hubScoreReveal = useHubScoreReveal(hideResultsBehindLogin);
   
@@ -1244,10 +1244,10 @@ export default function PapersMarkPage() {
                                   label="ESAT SCORE:"
                                   prominent
                                   loading={scoreLoading}
-                                  locked={scoreLocked}
+                                  hideValue={scoreLocked}
                                   className={
                                     scoreLocked
-                                      ? "min-h-[14.5rem] sm:min-h-[15.5rem]"
+                                      ? "min-h-[13.5rem] justify-start gap-1 pt-6 sm:min-h-[14.5rem]"
                                       : undefined
                                   }
                                   footer={
@@ -1266,7 +1266,14 @@ export default function PapersMarkPage() {
                                 <HubMarkStatPill
                                   label="Accuracy"
                                   loading={scoreLoading}
-                                  locked={scoreLocked}
+                                  hideValue={scoreLocked}
+                                  footer={
+                                    scoreLocked && !scoreLoading ? (
+                                      <p className="text-center text-sm font-semibold text-black/75">
+                                        Log in to view
+                                      </p>
+                                    ) : null
+                                  }
                                 >
                                   <div className="text-center">
                                     <div className="text-4xl font-bold leading-none text-black sm:text-5xl">
@@ -1285,7 +1292,7 @@ export default function PapersMarkPage() {
                                     )}
                                   </div>
                                 </HubMarkStatPill>
-                                <HubMarkStatPill label="Guessed">
+                                <HubMarkStatPill label="Flagged for review">
                                   <div className="text-2xl font-bold leading-none text-black sm:text-3xl">
                                     {accuracyPatterns.guessed}/{totalQuestions}
                                   </div>
@@ -1338,7 +1345,7 @@ export default function PapersMarkPage() {
                               <div className="text-2xl font-bold leading-tight text-neutral-100 sm:text-3xl">
                                 {accuracyPatterns.guessed}/{totalQuestions}
                               </div>
-                              <div className="mt-1 text-xs text-neutral-400">Guessed</div>
+                              <div className="mt-1 text-xs text-neutral-400">Flagged for review</div>
                             </div>
                           </>
                         );
@@ -1476,7 +1483,7 @@ export default function PapersMarkPage() {
                                   <div className="min-h-4">
                                     {data.guessed > 0 && (
                                       <div className="text-[11px] text-neutral-500">
-                                        {data.guessed} guessed
+                                        {data.guessed} flagged for review
                                       </div>
                                     )}
                                   </div>
@@ -1742,10 +1749,10 @@ export default function PapersMarkPage() {
                   {/* Guessing Behavior + Accuracy Patterns */}
                   <div className="grid grid-cols-1 gap-4 md:col-span-2 md:grid-cols-2">
                   <div className={`${bubbleClass} space-y-3`}>
-                    <div className="text-base font-semibold text-neutral-100">Guessing Behavior</div>
+                    <div className="text-base font-semibold text-neutral-100">Flagged for review</div>
                     <div className="grid grid-cols-4 gap-2 text-center">
                       <div className="p-2 rounded bg-neutral-900">
-                        <div className="text-[11px] text-neutral-400">Guessed</div>
+                        <div className="text-[11px] text-neutral-400">Flagged for review</div>
                         <div className="text-sm font-semibold text-neutral-200">{guessExtended.count}</div>
                       </div>
                       <div className="p-2 rounded bg-neutral-900">
@@ -1753,7 +1760,7 @@ export default function PapersMarkPage() {
                         <div className="text-sm font-semibold text-neutral-200">{guessExtended.correctGuesses}</div>
                       </div>
                       <div className="p-2 rounded bg-neutral-900">
-                        <div className="text-[11px] text-neutral-400">Guess accuracy</div>
+                        <div className="text-[11px] text-neutral-400">Flag accuracy</div>
                         <div className="text-sm font-semibold text-neutral-200">{guessExtended.accuracy}%</div>
                       </div>
                       <div className="p-2 rounded bg-neutral-900">
@@ -1772,7 +1779,7 @@ export default function PapersMarkPage() {
                       const wrongPct = Math.max(0, 100 - correctPct);
                       return (
                     <div>
-                          <div className="text-xs text-neutral-400 mb-2">Guess time split: correct vs wrong</div>
+                          <div className="text-xs text-neutral-400 mb-2">Flagged time split: correct vs wrong</div>
                           <div className="h-6 w-full overflow-hidden rounded-full border border-border-subtle bg-surface-mid">
                             <div className="flex w-full h-full">
                               <div
@@ -1813,8 +1820,8 @@ export default function PapersMarkPage() {
                     {/* Combined Guess Distribution: line + timeline */}
                     <div className="">
                       <div className="flex items-center justify-between mb-2">
-                        <div className="text-sm font-semibold text-neutral-200">Guess Distribution</div>
-                        <div className="text-[11px] text-neutral-400">Guesses through Q{questionNumbers[0]}–Q{questionNumbers[questionNumbers.length-1]}</div>
+                        <div className="text-sm font-semibold text-neutral-200">Flagged distribution</div>
+                        <div className="text-[11px] text-neutral-400">Flags through Q{questionNumbers[0]}–Q{questionNumbers[questionNumbers.length-1]}</div>
                             </div>
                       {(() => {
                         const w = Math.max(420, questionNumbers.length * 14 + 16);
@@ -1855,7 +1862,7 @@ export default function PapersMarkPage() {
                                 const border = corr === true ? correctBorder : (corr === false ? wrongBorder : cssVar.border);
                         return (
                                   <g key={qn}>
-                                    <title>{`Q${qn}${guessed ? ' • Guessed' : ''}${corr===true?' • Correct':(corr===false?' • Wrong':'')}`}</title>
+                                    <title>{`Q${qn}${guessed ? ' • Flagged for review' : ''}${corr===true?' • Correct':(corr===false?' • Wrong':'')}`}</title>
                                     <rect x={rectX} y={h - pad - stripH} width={blockW - 2} height={stripH} rx={4} ry={4} fill={fill} stroke={border} strokeWidth={1} />
                                   </g>
                         );
@@ -1892,7 +1899,7 @@ export default function PapersMarkPage() {
                           </div>
                         </div>
                         <div className="rounded-organic-md border border-border-subtle bg-surface-mid/60 p-3 text-center">
-                          <div className="mb-1 text-xs text-text-muted">Guessed</div>
+                          <div className="mb-1 text-xs text-text-muted">Flagged for review</div>
                           <div className="text-2xl font-bold text-warning">
                             {accuracyPatterns.guessed}
                       </div>
@@ -1909,7 +1916,7 @@ export default function PapersMarkPage() {
                           {Math.round(guessStats.accuracy)}%
                     </div>
                         <div className="text-xs text-neutral-400 mt-1">
-                          You guessed {guessStats.correctGuesses} correct out of {guessStats.count}
+                          You flagged {guessStats.correctGuesses} correct out of {guessStats.count}
                     </div>
                   </div>
 
@@ -2157,7 +2164,7 @@ export default function PapersMarkPage() {
                                         getMarkAnswerBadgeClass("guess"),
                                       )}
                                     >
-                                      Guess
+                                      Flagged
                                     </div>
                                   )}
                                 </div>
@@ -2266,7 +2273,7 @@ export default function PapersMarkPage() {
                         <path d="M9.25 9.9c.35-1.2 1.5-2 2.75-2 1.6 0 2.9 1.2 2.9 2.7 0 1.9-1.9 2.2-2.6 3.3" />
                         <path d="M12 16.9h.01" />
                       </svg>
-                      Guess
+                      Flag for review
                     </button>
                 </div>
                   </div>
