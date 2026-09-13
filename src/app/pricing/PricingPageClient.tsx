@@ -333,13 +333,17 @@ export default function PricingPageClient() {
           </p>
         ) : null}
         {codeFromUrl ? (
-          <div className="relative mx-auto mb-5 max-w-md overflow-hidden rounded-organic-lg border border-primary/25 bg-surface-elevated px-4 py-3 shadow-md sm:mb-6">
+          <div className="relative mx-auto mb-5 max-w-md overflow-hidden rounded-organic-lg border border-primary/30 bg-surface-elevated px-4 py-3 shadow-md sm:mb-6">
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(74,222,128,0.18),transparent_55%)]"
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  "radial-gradient(circle at top right, rgba(169, 177, 103, 0.28) 0%, transparent 55%)",
+              }}
             />
             <div className="relative z-10">
-              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-[#4ADE80]">
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-primary">
                 Friend code ready
               </p>
               <p className="mt-1 text-sm leading-snug text-text">
