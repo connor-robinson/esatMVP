@@ -8,6 +8,7 @@ import {
   StickyNote,
   type LucideIcon,
 } from "lucide-react";
+import type { CSSProperties } from "react";
 import { cn } from "@/lib/utils";
 
 export type MarkSection =
@@ -30,13 +31,17 @@ const SECTIONS: {
   { id: "notes", label: "Session Notes", shortLabel: "Notes", icon: StickyNote },
 ];
 
+const DEFAULT_LIGHT_RAIL = "#f0f0f2";
+
 interface MarkSectionNavProps {
   active: MarkSection;
   onSelect: (section: MarkSection) => void;
-  /** Hub teaser mark page: light surfaces, tighter radius. */
+  /** Light surfaces + white nav tiles (hub / user light theme). */
   light?: boolean;
-  /** Override rail/aside surface (should match the main mark panel). */
+  /** Override rail/aside surface class (should match the main mark panel). */
   railClassName?: string;
+  /** Inline surface color so it cannot lose to transparent utilities. */
+  railStyle?: CSSProperties;
 }
 
 export function MarkSectionNav({
@@ -44,14 +49,21 @@ export function MarkSectionNav({
   onSelect,
   light,
   railClassName,
+  railStyle,
 }: MarkSectionNavProps) {
+  const lightRailStyle =
+    light && !railStyle
+      ? ({ backgroundColor: DEFAULT_LIGHT_RAIL } as const)
+      : railStyle;
+
   return (
     <>
       <nav
         className={cn(
           "scrollbar-hide flex shrink-0 gap-1 overflow-x-auto rounded-md p-1.5 lg:hidden",
-          railClassName ?? (light ? "bg-[#c8c8d0]" : "bg-surface"),
+          railClassName ?? (!light ? "bg-surface" : undefined),
         )}
+        style={light ? lightRailStyle : railStyle}
         aria-label="Mark session sections"
       >
         {SECTIONS.map(({ id, label }) => {
@@ -80,8 +92,9 @@ export function MarkSectionNav({
       <aside
         className={cn(
           "scrollbar-hide hidden h-full min-h-0 w-[4.75rem] shrink-0 flex-col overflow-hidden rounded-md lg:flex xl:w-24",
-          railClassName ?? (light ? "bg-[#c8c8d0]" : "bg-surface"),
+          railClassName ?? (!light ? "bg-surface" : undefined),
         )}
+        style={light ? lightRailStyle : railStyle}
       >
         <div className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto px-2 py-4">
           <nav
@@ -98,7 +111,11 @@ export function MarkSectionNav({
                   title={label}
                   className={cn(
                     "flex w-full flex-col items-center gap-1.5 rounded-md px-1 py-2 transition-colors duration-fast ease-signature",
-                    light ? "bg-white" : isActive ? "bg-surface-mid" : "bg-surface-elevated",
+                    light
+                      ? "bg-white"
+                      : isActive
+                        ? "bg-surface-mid"
+                        : "bg-surface-elevated",
                     isActive
                       ? light
                         ? "text-black"

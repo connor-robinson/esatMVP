@@ -10,7 +10,6 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
-import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { PaperBadge } from "@/components/papers/PaperBadge";
 import { ChoicePill } from "@/components/papers/ChoicePill";
@@ -116,7 +115,7 @@ function LoginToViewLink({
 export default function PapersMarkPage() {
   const router = useRouter();
   const session = useSupabaseSession();
-  const { setThemeOverride } = useTheme();
+  const { setThemeOverride, isDark } = useTheme();
   const isLoggedIn = Boolean(session?.user);
   const paperSessionHydrated = usePaperSessionHydrated();
   // Change this width to adjust left spacing for Overview, Part headers, and Qn labels together
@@ -304,15 +303,21 @@ export default function PapersMarkPage() {
     };
   }, [paperId, questions]);
   
-  // Shared bubble utility: same radius/structure; colors follow hub light vs user theme.
-  const bubbleClass = hubMarkPreview
+  // Soft gray shells (slightly darker than white) for hub + user light theme.
+  // Dark theme keeps token surfaces. Avoid Card `flat` (bg-transparent) fighting panel bg.
+  const lightMarkShell = hubMarkPreview || !isDark;
+  const markShellTone = "#f0f0f2";
+  const bubbleClass = lightMarkShell
     ? "rounded-md bg-white p-4 text-black shadow-none"
     : "rounded-md border border-border-subtle bg-surface-elevated p-4 shadow-none";
   const hubScoreReveal = useHubScoreReveal(hideResultsBehindLogin);
-  const markPanelClass = hubMarkPreview
-    ? "rounded-md bg-[#c8c8d0] shadow-none"
+  const markPanelClass = lightMarkShell
+    ? "rounded-md shadow-none"
     : "rounded-md border border-border bg-surface shadow-none";
-  const markRailClass = hubMarkPreview ? "bg-[#c8c8d0]" : "bg-surface";
+  const markRailClass = lightMarkShell ? undefined : "bg-surface";
+  const markShellStyle = lightMarkShell
+    ? ({ backgroundColor: markShellTone } as const)
+    : undefined;
   
   const pinnedInsights = useMemo(() => {
     return answers
@@ -1168,29 +1173,32 @@ export default function PapersMarkPage() {
           "relative flex min-h-0 flex-col overflow-hidden",
           hubMarkPreview
             ? "h-[calc(100dvh-3.75rem)] bg-white text-black [&_.text-neutral-100]:text-black [&_.text-neutral-200]:text-black [&_.text-neutral-300]:text-neutral-800 [&_.text-neutral-400]:text-neutral-700 [&_.text-neutral-500]:text-neutral-600 [&_.text-text]:text-black [&_.text-text-muted]:text-neutral-700"
-            : "h-dvh bg-background",
+            : lightMarkShell
+              ? "h-dvh bg-white text-black [&_.text-neutral-100]:text-black [&_.text-neutral-200]:text-black [&_.text-neutral-300]:text-neutral-800 [&_.text-neutral-400]:text-neutral-700 [&_.text-neutral-500]:text-neutral-600 [&_.text-text]:text-black [&_.text-text-muted]:text-neutral-700"
+              : "h-dvh bg-background",
         )}
       >
         <div
           className={cn(
             "flex min-h-0 flex-1 flex-col gap-3 overflow-hidden px-3 py-3 sm:px-4 sm:py-4",
-            hubMarkPreview && "bg-white",
+            lightMarkShell && "bg-white",
           )}
         >
           <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden lg:flex-row">
             <MarkSectionNav
               active={markSection}
               onSelect={selectMarkSection}
-              light={hubMarkPreview}
+              light={lightMarkShell}
               railClassName={markRailClass}
+              railStyle={markShellStyle}
             />
 
-            <Card
-              variant="flat"
+            <div
               className={cn(
                 "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden p-0",
                 markPanelClass,
               )}
+              style={markShellStyle}
             >
 
               {markSection === "overview" && (
@@ -1203,7 +1211,9 @@ export default function PapersMarkPage() {
                           <div
                             className={cn(
                               "text-lg font-semibold",
-                              hubMarkPreview ? "text-black" : "text-text",
+                              hubMarkPreview || lightMarkShell
+                                ? "text-black"
+                                : "text-text",
                             )}
                           >
                             {paperName} {sessionYear ?? ''}{variantDisplay ? `, ${variantDisplay}` : ''}
@@ -2753,7 +2763,7 @@ export default function PapersMarkPage() {
             </div>
               </div>
               )}
-            </Card>
+            </div>
           </div>
         </div>
       </div>
