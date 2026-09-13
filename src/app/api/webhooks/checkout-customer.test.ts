@@ -14,8 +14,9 @@ const {
   handleCheckoutSessionCompletedCommerce,
   handleInvoicePaidCommerce,
   handleSubscriptionDeletedCommerce,
-  markReferralCodeRedeemed,
+  finalizeReferralRedemptionFromCheckout,
   resolveReferralCodeFromCheckoutSession,
+  clawBackSelfReferralDiscount,
   upsertProductRecord,
   upsertPriceRecord,
   deleteProductRecord,
@@ -31,8 +32,9 @@ const {
   handleCheckoutSessionCompletedCommerce: vi.fn(),
   handleInvoicePaidCommerce: vi.fn(),
   handleSubscriptionDeletedCommerce: vi.fn(),
-  markReferralCodeRedeemed: vi.fn(),
+  finalizeReferralRedemptionFromCheckout: vi.fn(async () => "redeemed"),
   resolveReferralCodeFromCheckoutSession: vi.fn(async () => null),
+  clawBackSelfReferralDiscount: vi.fn(),
   upsertProductRecord: vi.fn(),
   upsertPriceRecord: vi.fn(),
   deleteProductRecord: vi.fn(),
@@ -71,10 +73,11 @@ vi.mock("@/lib/stripe/checkoutEvents", () => ({
   handleSubscriptionDeletedCommerce,
 }));
 vi.mock("@/lib/feedbackReferral/service", () => ({
-  markReferralCodeRedeemed,
+  finalizeReferralRedemptionFromCheckout,
 }));
 vi.mock("@/lib/feedbackReferral/stripe", () => ({
   resolveReferralCodeFromCheckoutSession,
+  clawBackSelfReferralDiscount,
 }));
 
 import { POST } from "@/app/api/webhooks/route";

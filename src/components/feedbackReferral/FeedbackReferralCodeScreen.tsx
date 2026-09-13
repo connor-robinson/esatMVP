@@ -100,7 +100,7 @@ export function FeedbackReferralCodeScreen({
             <p className="mt-3 text-base text-text-muted">
               {redeemed
                 ? "A friend already redeemed this code. It only works once."
-                : "One friend gets 50% off their first payment. Share the link below. The code applies in Stripe Checkout."}
+                : "One friend gets 50% off their first payment. Share the link below. The code applies automatically on the pricing page."}
             </p>
 
             <div className="mt-8 rounded-2xl bg-surface-mid/80 px-5 py-6 sm:px-6">

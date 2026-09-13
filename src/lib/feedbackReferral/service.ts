@@ -270,6 +270,23 @@ export async function markReferralCodeRedeemed(opts: {
     .is("redeemed_at", null);
 }
 
+/**
+ * Mark a friend code redeemed after Checkout, unless the buyer owns the code.
+ * Self-redemptions must not burn the code for a real friend.
+ */
+export async function finalizeReferralRedemptionFromCheckout(opts: {
+  code: string;
+  redeemedByUserId: string;
+  checkoutSessionId: string;
+  service?: SupabaseClient;
+}): Promise<"redeemed" | "own_code" | "missing"> {
+  const row = await findReferralCodeRow(opts.code, opts.service);
+  if (!row) return "missing";
+  if (row.user_id === opts.redeemedByUserId) return "own_code";
+  await markReferralCodeRedeemed(opts);
+  return "redeemed";
+}
+
 export class FeedbackReferralError extends Error {
   status: number;
   constructor(message: string, status: number) {

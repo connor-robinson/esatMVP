@@ -119,3 +119,75 @@ export async function resolveReferralCodeFromCheckoutSession(
 
   return null;
 }
+
+/**
+ * If someone somehow applied their own CAMP50 code in Checkout, bill back the
+ * discounted amount and clear any remaining subscription discount.
+ * Primary prevention is disabling Stripe's promo field; this is the safety net.
+ */
+export async function clawBackSelfReferralDiscount(
+  session: Stripe.Checkout.Session,
+  stripe: Stripe = getStripe(),
+): Promise<void> {
+  const customerId =
+    typeof session.customer === "string"
+      ? session.customer
+      : session.customer?.id ?? null;
+  const discountAmount = session.total_details?.amount_discount ?? 0;
+  const currency = session.currency ?? "gbp";
+
+  if (customerId && discountAmount > 0) {
+    try {
+      await stripe.invoiceItems.create({
+        customer: customerId,
+        amount: discountAmount,
+        currency,
+        description:
+          "Adjustment: friend codes cannot be used on your own account",
+        metadata: {
+          kind: "referral_self_use_clawback",
+          checkout_session_id: session.id,
+        },
+      });
+      const invoice = await stripe.invoices.create({
+        customer: customerId,
+        auto_advance: true,
+        collection_method: "charge_automatically",
+        metadata: {
+          kind: "referral_self_use_clawback",
+          checkout_session_id: session.id,
+        },
+      });
+      const finalized = await stripe.invoices.finalizeInvoice(invoice.id);
+      if (finalized.status === "open") {
+        await stripe.invoices.pay(finalized.id).catch((err) => {
+          console.error(
+            "[feedback-referral] self-use clawback invoice pay failed",
+            err,
+          );
+        });
+      }
+    } catch (err) {
+      console.error(
+        "[feedback-referral] self-use clawback invoice failed",
+        err,
+      );
+    }
+  }
+
+  const subscriptionId =
+    typeof session.subscription === "string"
+      ? session.subscription
+      : session.subscription?.id ?? null;
+  if (subscriptionId) {
+    try {
+      await stripe.subscriptions.deleteDiscount(subscriptionId);
+    } catch (err) {
+      // Once coupons may already be consumed; ignore missing discount errors.
+      console.warn(
+        "[feedback-referral] self-use deleteDiscount skipped",
+        err,
+      );
+    }
+  }
+}

@@ -18,8 +18,11 @@ import {
   handleInvoicePaidCommerce,
   handleSubscriptionDeletedCommerce,
 } from "@/lib/stripe/checkoutEvents";
-import { markReferralCodeRedeemed } from "@/lib/feedbackReferral/service";
-import { resolveReferralCodeFromCheckoutSession } from "@/lib/feedbackReferral/stripe";
+import { finalizeReferralRedemptionFromCheckout } from "@/lib/feedbackReferral/service";
+import {
+  clawBackSelfReferralDiscount,
+  resolveReferralCodeFromCheckoutSession,
+} from "@/lib/feedbackReferral/stripe";
 import { resolveUserIdFromCheckoutSession } from "@/lib/stripe/checkoutIdentity";
 
 const RELEVANT_EVENTS = new Set([
@@ -190,11 +193,22 @@ export async function POST(request: NextRequest) {
             const referralCode =
               await resolveReferralCodeFromCheckoutSession(session);
             if (referralCode) {
-              await markReferralCodeRedeemed({
+              const result = await finalizeReferralRedemptionFromCheckout({
                 code: referralCode,
                 redeemedByUserId: redeemerId,
                 checkoutSessionId: session.id,
               });
+              if (result === "own_code") {
+                console.warn(
+                  "[webhooks] blocked self referral redemption",
+                  {
+                    referralCode,
+                    redeemerId,
+                    sessionId: session.id,
+                  },
+                );
+                await clawBackSelfReferralDiscount(session);
+              }
             }
           } catch (err) {
             console.error("[webhooks] referral redeem failed", err);
