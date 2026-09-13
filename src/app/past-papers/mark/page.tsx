@@ -1162,7 +1162,12 @@ export default function PapersMarkPage() {
             : "h-dvh",
         )}
       >
-        <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden px-3 py-3 sm:px-4 sm:py-4">
+        <div
+          className={cn(
+            "flex min-h-0 flex-1 flex-col gap-3 overflow-hidden px-3 py-3 sm:px-4 sm:py-4",
+            hubMarkPreview && "bg-[#f3f3f5]",
+          )}
+        >
           <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden lg:flex-row">
             <MarkSectionNav
               active={markSection}
@@ -1171,10 +1176,11 @@ export default function PapersMarkPage() {
             />
 
             <Card
+              variant={hubMarkPreview ? "flat" : "default"}
               className={cn(
                 "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden p-0",
                 hubMarkPreview
-                  ? "rounded-md border-0 bg-[#f0f0f2] shadow-none"
+                  ? "rounded-md bg-[#e8e8ec] shadow-none"
                   : "border border-border bg-surface",
               )}
             >
