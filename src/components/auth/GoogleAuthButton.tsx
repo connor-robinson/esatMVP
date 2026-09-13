@@ -9,6 +9,8 @@ interface GoogleAuthButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   mode?: GoogleAuthMode;
   loading?: boolean;
+  /** Override the default Google CTA label. */
+  label?: string;
 }
 
 /** Official multicolor Google "G" mark (brand guidelines). */
@@ -50,7 +52,17 @@ const LABEL: Record<GoogleAuthMode, string> = {
  * @see https://developers.google.com/identity/branding-guidelines
  */
 export const GoogleAuthButton = forwardRef<HTMLButtonElement, GoogleAuthButtonProps>(
-  ({ mode = "signin", loading = false, className, disabled, ...props }, ref) => {
+  (
+    {
+      mode = "signin",
+      loading = false,
+      label,
+      className,
+      disabled,
+      ...props
+    },
+    ref,
+  ) => {
     return (
       <button
         ref={ref}
@@ -79,7 +91,7 @@ export const GoogleAuthButton = forwardRef<HTMLButtonElement, GoogleAuthButtonPr
         ) : (
           <>
             <GoogleLogo className="h-5 w-5 shrink-0" />
-            <span>{LABEL[mode]}</span>
+            <span>{label ?? LABEL[mode]}</span>
           </>
         )}
       </button>

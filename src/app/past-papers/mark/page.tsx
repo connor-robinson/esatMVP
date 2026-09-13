@@ -75,6 +75,7 @@ import {
   HubMarkPercentilePreview,
   HubMarkScoreLoginCta,
   HubMarkStatPill,
+  HubMarkLoginToViewButton,
   useHubScoreReveal,
 } from "@/components/papers/mark/HubMarkTeaser";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -91,15 +92,19 @@ import {
 function LoginToViewLink({
   href,
   className,
+  variant = "link",
 }: {
   href: string;
   className?: string;
+  variant?: "link" | "button";
 }) {
   return (
     <Link
       href={href}
       className={cn(
-        "text-sm font-semibold text-maths underline-offset-2 hover:underline",
+        variant === "button"
+          ? "inline-flex items-center justify-center rounded-md border border-black/10 bg-white px-3.5 py-2 text-sm font-semibold text-black shadow-sm transition-colors hover:bg-black/[0.03]"
+          : "text-sm font-semibold text-maths underline-offset-2 hover:underline",
         className,
       )}
     >
@@ -1158,14 +1163,14 @@ export default function PapersMarkPage() {
         className={cn(
           "relative flex min-h-0 flex-col overflow-hidden bg-background",
           hubMarkPreview
-            ? "h-[calc(100dvh-3.75rem)] text-black [&_.text-neutral-100]:text-black [&_.text-neutral-200]:text-black [&_.text-neutral-300]:text-neutral-800 [&_.text-neutral-400]:text-neutral-700 [&_.text-neutral-500]:text-neutral-600 [&_.text-text]:text-black [&_.text-text-muted]:text-neutral-700"
+            ? "h-[calc(100dvh-3.75rem)] bg-white text-black [&_.text-neutral-100]:text-black [&_.text-neutral-200]:text-black [&_.text-neutral-300]:text-neutral-800 [&_.text-neutral-400]:text-neutral-700 [&_.text-neutral-500]:text-neutral-600 [&_.text-text]:text-black [&_.text-text-muted]:text-neutral-700"
             : "h-dvh",
         )}
       >
         <div
           className={cn(
             "flex min-h-0 flex-1 flex-col gap-3 overflow-hidden px-3 py-3 sm:px-4 sm:py-4",
-            hubMarkPreview && "bg-[#f3f3f5]",
+            hubMarkPreview && "bg-white",
           )}
         >
           <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden lg:flex-row">
@@ -1180,7 +1185,7 @@ export default function PapersMarkPage() {
               className={cn(
                 "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden p-0",
                 hubMarkPreview
-                  ? "rounded-md bg-[#e8e8ec] shadow-none"
+                  ? "rounded-md bg-[#ebebef] shadow-none"
                   : "border border-border bg-surface",
               )}
             >
@@ -1275,9 +1280,9 @@ export default function PapersMarkPage() {
                                   hideValue={scoreLocked}
                                   footer={
                                     scoreLocked && !scoreLoading ? (
-                                      <p className="text-center text-sm font-semibold text-black/75">
-                                        Log in to view
-                                      </p>
+                                      <div className="flex justify-center">
+                                        <HubMarkLoginToViewButton href={loginRedirectHref} />
+                                      </div>
                                     ) : null
                                   }
                                 >
@@ -1460,7 +1465,10 @@ export default function PapersMarkPage() {
                                   <div className="space-y-1.5">
                                     <div className="flex items-baseline justify-between gap-2">
                                       {hideResultsBehindLogin ? (
-                                        <LoginToViewLink href={loginRedirectHref} />
+                                        <LoginToViewLink
+                                          href={loginRedirectHref}
+                                          variant="button"
+                                        />
                                       ) : (
                                         <>
                                           <span className="text-sm font-semibold tabular-nums text-neutral-100">
@@ -1499,7 +1507,10 @@ export default function PapersMarkPage() {
                                     {displayExamLabel}
                                   </div>
                                   {hideResultsBehindLogin ? (
-                                    <LoginToViewLink href={loginRedirectHref} />
+                                    <LoginToViewLink
+                                      href={loginRedirectHref}
+                                      variant="button"
+                                    />
                                   ) : (
                                     <div className="text-lg font-semibold tabular-nums text-neutral-100">
                                       {scaledScore !== null && scaledScore !== undefined
@@ -1517,7 +1528,7 @@ export default function PapersMarkPage() {
                       {/* Section Percentiles - focused view with part selector */}
                       {hideResultsBehindLogin ? (
                         <div className="lg:col-span-3">
-                          <HubMarkPercentilePreview />
+                          <HubMarkPercentilePreview loginHref={loginRedirectHref} />
                         </div>
                       ) : (
                       <div className={`${bubbleClass} space-y-4 lg:col-span-3`}>
@@ -2081,8 +2092,9 @@ export default function PapersMarkPage() {
             <div className="h-full overflow-y-auto border-b border-border-subtle pt-3 pl-0 pr-1 lg:border-b-0 lg:border-r" style={{ scrollbarGutter: 'stable', paddingLeft: SCROLLBAR_GUTTER_PX }}>
               <div className="space-y-1">
                 {hideResultsBehindLogin ? (
-                  <div className="mb-2 rounded-md bg-surface-elevated px-3 py-2 text-xs text-text-muted">
-                    <LoginToViewLink href={loginRedirectHref} /> which questions you got wrong.
+                  <div className="mb-2 rounded-md bg-white px-3 py-2 text-xs text-black/70">
+                    <LoginToViewLink href={loginRedirectHref} variant="button" />{" "}
+                    which questions you got wrong.
                   </div>
                 ) : null}
                 {partGroups.map((group, gi) => {
@@ -2296,7 +2308,10 @@ export default function PapersMarkPage() {
                   <div className="text-xs text-text-muted">Correct answer</div>
                   {hideResultsBehindLogin ? (
                     <div className="mt-1.5">
-                      <LoginToViewLink href={loginRedirectHref} />
+                      <LoginToViewLink
+                        href={loginRedirectHref}
+                        variant="button"
+                      />
                     </div>
                   ) : (
                     <div className="mt-1.5 inline-flex min-h-[1.75rem] min-w-[2.25rem] items-center justify-center rounded-full bg-surface-mid px-3 py-1 text-sm font-medium tabular-nums text-text">

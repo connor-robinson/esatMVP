@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useSupabaseClient } from "@/components/auth/SupabaseSessionProvider";
 import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
 import { signInWithGoogle } from "@/lib/auth/googleOAuth";
@@ -90,6 +91,7 @@ export function HubMarkScoreLoginCta({
     <div className="mx-auto flex w-[92%] max-w-[14.5rem] flex-col items-center gap-2">
       <GoogleAuthButton
         mode="signin"
+        label="Sign in or Sign up"
         loading={loading}
         onClick={() => void handleGoogle()}
         className="h-12 text-[13px]"
@@ -101,8 +103,37 @@ export function HubMarkScoreLoginCta({
   );
 }
 
+const LOGIN_TO_VIEW_HREF = `/login?redirectTo=${encodeURIComponent("/past-papers/mark")}`;
+
+/** Compact login CTA used on locked hub mark stats. */
+export function HubMarkLoginToViewButton({
+  href = LOGIN_TO_VIEW_HREF,
+  className,
+}: {
+  href?: string;
+  className?: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "inline-flex items-center justify-center rounded-md border border-black/10 bg-white px-3.5 py-2 text-sm font-semibold text-black shadow-sm transition-colors hover:bg-black/[0.03]",
+        className,
+      )}
+    >
+      Log in to view
+    </Link>
+  );
+}
+
 /** Fake percentile card content shown blurred behind the login gate. */
-export function HubMarkPercentilePreview({ className }: { className?: string }) {
+export function HubMarkPercentilePreview({
+  className,
+  loginHref = LOGIN_TO_VIEW_HREF,
+}: {
+  className?: string;
+  loginHref?: string;
+}) {
   return (
     <div
       className={cn(
@@ -129,10 +160,8 @@ export function HubMarkPercentilePreview({ className }: { className?: string }) 
           If you sat the ESAT today, 18.4% of test-takers would outperform you.
         </p>
       </div>
-      <div className="absolute inset-0 flex items-center justify-center bg-[#f0f0f2]/55 p-4 backdrop-blur-[1px]">
-        <p className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-black">
-          Log in to view
-        </p>
+      <div className="absolute inset-0 flex items-center justify-center bg-[#ebebef]/55 p-4 backdrop-blur-[1px]">
+        <HubMarkLoginToViewButton href={loginHref} />
       </div>
     </div>
   );

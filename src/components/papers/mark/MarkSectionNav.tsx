@@ -44,7 +44,7 @@ export function MarkSectionNav({ active, onSelect, light }: MarkSectionNavProps)
         className={cn(
           "scrollbar-hide flex shrink-0 gap-1 overflow-x-auto p-1.5 lg:hidden",
           light
-            ? "rounded-md bg-[#e6e6ea]"
+            ? "rounded-md bg-[#ebebef]"
             : "rounded-organic-lg bg-surface",
         )}
         aria-label="Mark session sections"
@@ -77,7 +77,7 @@ export function MarkSectionNav({ active, onSelect, light }: MarkSectionNavProps)
         className={cn(
           "scrollbar-hide hidden h-full min-h-0 w-[4.75rem] shrink-0 flex-col overflow-hidden lg:flex xl:w-24",
           light
-            ? "rounded-md bg-[#e6e6ea]"
+            ? "rounded-md bg-[#ebebef]"
             : "rounded-organic-xl bg-surface",
         )}
       >
