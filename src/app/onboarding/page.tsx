@@ -569,9 +569,7 @@ function OnboardingContent() {
           <div
             className={cn(
               "flex w-full max-w-[68rem] flex-col overflow-hidden rounded-[1.5rem] bg-surface-elevated",
-              step === "trial"
-                ? "h-[min(50rem,calc(100vh-4.5rem))] sm:h-[min(52rem,calc(100vh-3.5rem))]"
-                : "h-[min(36rem,calc(100vh-5.5rem))] sm:h-[min(38rem,calc(100vh-4.5rem))]",
+              "h-[min(36rem,calc(100vh-5.5rem))] sm:h-[min(38rem,calc(100vh-4.5rem))]",
               "px-6 pb-6 pt-5 sm:px-12 sm:pb-8 sm:pt-7",
             )}
           >
@@ -959,7 +957,7 @@ function OnboardingContent() {
                       </p>
                     </div>
 
-                    <div className="flex min-h-0 flex-1 items-center py-4 sm:py-6">
+                    <div className="mt-3 flex min-h-0 flex-1 items-start pt-1 sm:mt-4 sm:pt-2">
                       <div className="grid w-full grid-cols-1 items-stretch gap-4 sm:grid-cols-[1.4fr_1fr] sm:gap-5">
                         <div className="relative pt-3">
                           <span className="absolute left-1/2 top-0 z-10 -translate-x-1/2 rounded-md bg-[#4C8BF5] px-2.5 py-1 text-[0.7rem] font-semibold text-white shadow-sm sm:text-xs">
