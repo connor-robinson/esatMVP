@@ -560,7 +560,9 @@ function OnboardingContent() {
               "flex w-full max-w-[68rem] flex-col overflow-hidden rounded-[1.5rem] bg-surface-elevated",
               step === "trial"
                 ? "h-[min(46rem,calc(100vh-5rem))] sm:h-[min(48rem,calc(100vh-4rem))]"
-                : "h-[min(36rem,calc(100vh-5.5rem))] sm:h-[min(38rem,calc(100vh-4.5rem))]",
+                : step === "referral"
+                  ? "h-[min(40rem,calc(100vh-5.5rem))] sm:h-[min(42rem,calc(100vh-4.5rem))]"
+                  : "h-[min(36rem,calc(100vh-5.5rem))] sm:h-[min(38rem,calc(100vh-4.5rem))]",
               "px-6 pb-6 pt-5 sm:px-12 sm:pb-8 sm:pt-7",
             )}
           >
