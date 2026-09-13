@@ -129,7 +129,7 @@ export function AdminQuestionPreviewModal({
                 )}
               </div>
 
-              {statementItems.length > 0 ? (
+              {statementItems && statementItems.length > 0 ? (
                 <StatementItemsList items={statementItems} />
               ) : null}
 
