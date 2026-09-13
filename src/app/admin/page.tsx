@@ -58,6 +58,12 @@ const CARDS: Array<{
     body: "Onboarding answers, referral codes, and UI preferences.",
     key: null,
   },
+  {
+    href: "/admin/question-bank",
+    title: "Question bank",
+    body: "Subject popularity, hardest questions, and unique coverage.",
+    key: null,
+  },
 ];
 
 export default function AdminOverviewPage() {
