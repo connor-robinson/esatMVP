@@ -2620,17 +2620,10 @@ export default function PapersMarkPage() {
               )}
               {markSection === "mistakes" && (
               <div className="h-full min-h-0 overflow-y-auto p-4 sm:p-6">
-                {hubMarkPreview ? (
+                {!treatAsFullAccess || hubMarkPreview ? (
                   <HubMarkMistakesPieTeaser
-                    showGoogleLogin={!isLoggedIn}
+                    showGoogleLogin={hubMarkPreview && !isLoggedIn}
                     redirectTo="/past-papers/mark"
-                  />
-                ) : !treatAsFullAccess ? (
-                  <DrillUpgradeBanner
-                    variant="panel"
-                    headline="Unlock mistake analysis"
-                    subtext="Upgrade to tag mistakes, review patterns, and build a personalised fix list for your next paper."
-                    ctaLabel="View plans"
                   />
                 ) : (
                 <MarkSessionMistakesSection
