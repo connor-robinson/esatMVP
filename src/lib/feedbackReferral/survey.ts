@@ -187,52 +187,11 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
     },
     {
       id: "spread_word",
-      type: "multi",
+      type: "longtext",
       label: "What's the best way for people like you to hear about ESATCamp?",
-      whyOptional: true,
-      options: [
-        {
-          value: "friends_classmates",
-          label: "Friends or classmates telling each other",
-        },
-        {
-          value: "school_teachers",
-          label: "Teachers or school",
-        },
-        {
-          value: "tutors",
-          label: "Tutors or tutoring centres",
-        },
-        {
-          value: "instagram_tiktok",
-          label: "Instagram or TikTok",
-        },
-        {
-          value: "youtube",
-          label: "YouTube",
-        },
-        {
-          value: "discord_reddit",
-          label: "Discord or Reddit",
-        },
-        {
-          value: "search_google",
-          label: "Searching Google",
-        },
-        {
-          value: "other",
-          label: "Other",
-        },
-      ],
-      requiredDetails: [
-        {
-          optionValue: "other",
-          id: "spread_word_other",
-          label: "What would work better?",
-          minLength: 8,
-          maxLength: 500,
-        },
-      ],
+      required: true,
+      minLength: 12,
+      maxLength: 500,
     },
     {
       id: "price_fair",
