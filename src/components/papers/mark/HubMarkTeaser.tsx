@@ -6,6 +6,9 @@ import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
 import { signInWithGoogle } from "@/lib/auth/googleOAuth";
 import { cn } from "@/lib/utils";
 
+const PILL_SURFACE = "bg-[#E4E4E8]";
+const PILL_SURFACE_EMPHASIS = "bg-[#D8D8DE]";
+
 type ScorePillProps = {
   label: string;
   /** Prominent ESAT score hero treatment. */
@@ -14,6 +17,7 @@ type ScorePillProps = {
   locked?: boolean;
   children?: React.ReactNode;
   className?: string;
+  footer?: React.ReactNode;
 };
 
 export function HubMarkStatPill({
@@ -23,26 +27,35 @@ export function HubMarkStatPill({
   locked,
   children,
   className,
+  footer,
 }: ScorePillProps) {
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center border border-black/10 bg-white px-4 py-5 text-black",
+        "flex flex-col items-center justify-center px-4 py-5 text-black",
         prominent
-          ? "min-h-[9.5rem] rounded-md bg-[#E8F1FF] sm:min-h-[10.5rem]"
-          : "min-h-[9.5rem] rounded-md sm:min-h-[10.5rem]",
+          ? cn(
+              "min-h-[10.5rem] rounded-md sm:min-h-[11.5rem]",
+              PILL_SURFACE_EMPHASIS,
+            )
+          : cn("min-h-[9.5rem] rounded-md sm:min-h-[10.5rem]", PILL_SURFACE),
         className,
       )}
     >
+      {prominent ? (
+        <span className="mb-1.5 rounded-sm bg-black px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+          Free
+        </span>
+      ) : null}
       <div
         className={cn(
           "font-semibold uppercase tracking-wide text-black",
-          prominent ? "text-sm sm:text-base" : "text-xs",
+          prominent ? "text-base sm:text-lg" : "text-xs",
         )}
       >
         {label}
       </div>
-      <div className="mt-3 flex min-h-[3.25rem] items-center justify-center">
+      <div className="mt-3 flex min-h-[3.5rem] items-center justify-center">
         {loading ? (
           <span
             aria-label="Loading"
@@ -54,19 +67,19 @@ export function HubMarkStatPill({
           children
         )}
       </div>
+      {footer ? <div className="mt-4 w-full">{footer}</div> : null}
     </div>
   );
 }
 
-type LoginBannerProps = {
+type LoginUnderScoreProps = {
   redirectTo?: string;
-  className?: string;
 };
 
-export function HubMarkLoginBanner({
+/** Google CTA stacked under the ESAT score pill. */
+export function HubMarkScoreLoginCta({
   redirectTo = "/past-papers/mark",
-  className,
-}: LoginBannerProps) {
+}: LoginUnderScoreProps) {
   const supabase = useSupabaseClient();
   const [loading, setLoading] = useState(false);
 
@@ -81,28 +94,15 @@ export function HubMarkLoginBanner({
   };
 
   return (
-    <div
-      className={cn(
-        "flex flex-col gap-4 rounded-md border border-black/10 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-5",
-        className,
-      )}
-    >
-      <div className="min-w-0">
-        <p className="text-base font-bold tracking-tight text-black sm:text-lg">
-          Log in to view
-        </p>
-        <p className="mt-1 text-sm text-black/70">
-          See your ESAT score, which questions you got wrong, and full session
-          insights.
-        </p>
-      </div>
-      <div className="w-full shrink-0 sm:max-w-[15.5rem]">
-        <GoogleAuthButton
-          mode="signin"
-          loading={loading}
-          onClick={() => void handleGoogle()}
-        />
-      </div>
+    <div className="w-full space-y-2">
+      <p className="text-center text-xs font-medium text-black/70">
+        Free. Sign in to unlock your score.
+      </p>
+      <GoogleAuthButton
+        mode="signup"
+        loading={loading}
+        onClick={() => void handleGoogle()}
+      />
     </div>
   );
 }
@@ -112,7 +112,8 @@ export function HubMarkPercentilePreview({ className }: { className?: string }) 
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-md border border-black/10 bg-white p-4",
+        "relative overflow-hidden rounded-md p-4",
+        PILL_SURFACE,
         className,
       )}
     >
@@ -134,8 +135,13 @@ export function HubMarkPercentilePreview({ className }: { className?: string }) 
           If you sat the ESAT today, 18.4% of test-takers would outperform you.
         </p>
       </div>
-      <div className="absolute inset-0 flex items-center justify-center bg-white/55 p-4 backdrop-blur-[1px]">
-        <p className="rounded-md border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-black shadow-sm">
+      <div className="absolute inset-0 flex items-center justify-center bg-[#f6f6f7]/55 p-4 backdrop-blur-[1px]">
+        <p
+          className={cn(
+            "rounded-md px-4 py-2 text-sm font-semibold text-black",
+            PILL_SURFACE_EMPHASIS,
+          )}
+        >
           Log in to view
         </p>
       </div>
@@ -165,7 +171,12 @@ export function HubMarkMistakesPieTeaser({
   };
 
   return (
-    <div className="relative overflow-hidden rounded-md border border-black/10 bg-white p-6 sm:p-8">
+    <div
+      className={cn(
+        "relative overflow-hidden rounded-md p-6 sm:p-8",
+        PILL_SURFACE,
+      )}
+    >
       <div
         className="pointer-events-none flex select-none flex-col items-center gap-6 blur-[7px] opacity-75"
         aria-hidden
@@ -184,8 +195,13 @@ export function HubMarkMistakesPieTeaser({
           <span>Timing</span>
         </div>
       </div>
-      <div className="absolute inset-0 flex items-center justify-center bg-white/50 p-4 backdrop-blur-[1.5px]">
-        <div className="w-full max-w-sm space-y-4 rounded-md border border-black/10 bg-white p-5 text-center shadow-sm">
+      <div className="absolute inset-0 flex items-center justify-center bg-[#f6f6f7]/50 p-4 backdrop-blur-[1.5px]">
+        <div
+          className={cn(
+            "w-full max-w-sm space-y-4 rounded-md p-5 text-center",
+            PILL_SURFACE_EMPHASIS,
+          )}
+        >
           <p className="text-lg font-bold tracking-tight text-black">
             Unlock mistake analysis
           </p>
@@ -195,7 +211,7 @@ export function HubMarkMistakesPieTeaser({
           </p>
           {showGoogleLogin ? (
             <GoogleAuthButton
-              mode="signin"
+              mode="signup"
               loading={loading}
               onClick={() => void handleGoogle()}
             />

@@ -71,9 +71,9 @@ import { MarkSectionNav,
 import { PercentileMiniChart } from "@/components/papers/mark/PercentileMiniChart";
 import { DrillUpgradeBanner } from "@/components/builder/DrillUpgradeBanner";
 import {
-  HubMarkLoginBanner,
   HubMarkMistakesPieTeaser,
   HubMarkPercentilePreview,
+  HubMarkScoreLoginCta,
   HubMarkStatPill,
   useHubScoreReveal,
 } from "@/components/papers/mark/HubMarkTeaser";
@@ -301,7 +301,7 @@ export default function PapersMarkPage() {
   
   // Shared bubble utility (analytics-style)
   const bubbleClass = hubMarkPreview
-    ? "rounded-md border border-black/10 bg-white p-4 text-black shadow-sm"
+    ? "rounded-md bg-[#E4E4E8] p-4 text-black shadow-none"
     : "rounded-organic-lg border border-border-subtle bg-surface-elevated p-4 shadow-bar-floating";
   const hubScoreReveal = useHubScoreReveal(hideResultsBehindLogin);
   
@@ -1172,10 +1172,10 @@ export default function PapersMarkPage() {
 
             <Card
               className={cn(
-                "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden border p-0",
+                "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden p-0",
                 hubMarkPreview
-                  ? "rounded-md border-black/10 bg-[#f6f6f7] shadow-sm"
-                  : "border-border bg-surface",
+                  ? "rounded-md border-0 bg-[#f0f0f2] shadow-none"
+                  : "border border-border bg-surface",
               )}
             >
 
@@ -1225,7 +1225,7 @@ export default function PapersMarkPage() {
                     {/* Overview pills */}
                     {hubMarkPreview ? (
                       <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-3 lg:grid-cols-[1.35fr_1.35fr_0.85fr_0.85fr]">
+                        <div className="grid grid-cols-2 gap-3 lg:grid-cols-[1.45fr_1.25fr_0.85fr_0.85fr]">
                           {(() => {
                             const scoreLoading =
                               hideResultsBehindLogin &&
@@ -1245,8 +1245,18 @@ export default function PapersMarkPage() {
                                   prominent
                                   loading={scoreLoading}
                                   locked={scoreLocked}
+                                  className={
+                                    scoreLocked
+                                      ? "min-h-[14.5rem] sm:min-h-[15.5rem]"
+                                      : undefined
+                                  }
+                                  footer={
+                                    scoreLocked ? (
+                                      <HubMarkScoreLoginCta redirectTo="/past-papers/mark" />
+                                    ) : null
+                                  }
                                 >
-                                  <div className="text-5xl font-bold leading-none tracking-tight text-black sm:text-6xl">
+                                  <div className="text-6xl font-bold leading-none tracking-tight text-black sm:text-7xl">
                                     {predictedScore !== null &&
                                     predictedScore !== undefined
                                       ? predictedScore.toFixed(1)
@@ -1284,10 +1294,6 @@ export default function PapersMarkPage() {
                             );
                           })()}
                         </div>
-                        {hideResultsBehindLogin &&
-                        hubScoreReveal === "ready" ? (
-                          <HubMarkLoginBanner redirectTo="/past-papers/mark" />
-                        ) : null}
                       </div>
                     ) : (
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">

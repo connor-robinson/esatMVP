@@ -973,23 +973,23 @@ function OnboardingContent() {
                     </div>
 
                     <div className="mt-3 shrink-0 pt-1 sm:mt-4 sm:pt-2">
-                      <div className="grid w-full grid-cols-1 items-stretch gap-3 sm:grid-cols-[1.35fr_1fr] sm:gap-4">
+                      <div className="grid w-full grid-cols-1 items-stretch gap-4 sm:grid-cols-[1.4fr_1fr] sm:gap-5">
                         <div className="relative pt-3">
                           <span className="absolute left-1/2 top-0 z-10 -translate-x-1/2 rounded-md bg-[#4C8BF5] px-2.5 py-1 text-[0.7rem] font-semibold text-white shadow-sm sm:text-xs">
                             Most popular option
                           </span>
-                          <div className="flex h-full flex-col rounded-2xl border-2 border-[#4C8BF5] bg-surface-mid px-4 pb-4 pt-6 sm:px-5 sm:pb-5 sm:pt-7">
-                            <h2 className="mb-3 text-lg font-bold tracking-tight text-text sm:text-xl">
+                          <div className="flex h-full flex-col rounded-2xl bg-surface-mid px-5 pb-6 pt-7 sm:px-7 sm:pb-8 sm:pt-8">
+                            <h2 className="mb-4 text-xl font-bold tracking-tight text-text sm:text-2xl">
                               Free trial
                             </h2>
-                            <ul className="space-y-3">
+                            <ul className="space-y-4">
                               {TRIAL_PLAN_ITEMS.map((item) => (
                                 <li
                                   key={item}
-                                  className="flex items-start gap-3 text-[0.95rem] leading-snug text-text sm:text-base"
+                                  className="flex items-start gap-3.5 text-base leading-snug text-text sm:text-[1.1rem]"
                                 >
                                   <Check
-                                    className="mt-0.5 h-4 w-4 shrink-0 text-[#4C8BF5]"
+                                    className="mt-1 h-5 w-5 shrink-0 text-[#4C8BF5]"
                                     strokeWidth={2.75}
                                     aria-hidden
                                   />
@@ -1000,28 +1000,28 @@ function OnboardingContent() {
                           </div>
                         </div>
 
-                        <div className="flex flex-col rounded-2xl bg-background/40 px-3.5 py-4 sm:px-4 sm:py-5 sm:pt-7">
-                          <h2 className="mb-3 text-sm font-semibold text-text-muted sm:text-base">
+                        <div className="flex flex-col rounded-2xl bg-background/40 px-4 py-5 sm:px-5 sm:py-6 sm:pt-8">
+                          <h2 className="mb-3.5 text-base font-semibold text-text-muted sm:text-lg">
                             Free
                           </h2>
-                          <ul className="space-y-2.5">
+                          <ul className="space-y-3.5">
                             {FREE_PLAN_ITEMS.map((item) => (
                               <li
                                 key={item.label}
                                 className={cn(
-                                  "flex items-start gap-2.5 text-sm leading-snug sm:text-[0.95rem]",
+                                  "flex items-start gap-3 text-[0.95rem] leading-snug sm:text-base",
                                   item.included ? "text-text" : "text-text-muted",
                                 )}
                               >
                                 {item.included ? (
                                   <Check
-                                    className="mt-0.5 h-3.5 w-3.5 shrink-0 text-text-muted"
+                                    className="mt-0.5 h-4 w-4 shrink-0 text-text-muted"
                                     strokeWidth={2.75}
                                     aria-hidden
                                   />
                                 ) : (
                                   <X
-                                    className="mt-0.5 h-3.5 w-3.5 shrink-0 text-error/80"
+                                    className="mt-0.5 h-4 w-4 shrink-0 text-error/80"
                                     strokeWidth={2.75}
                                     aria-hidden
                                   />
@@ -1034,7 +1034,7 @@ function OnboardingContent() {
                       </div>
                     </div>
 
-                    <div className="mt-7 shrink-0 space-y-3 sm:mt-8">
+                    <div className="mt-10 shrink-0 space-y-3 sm:mt-12">
                       <button
                         type="button"
                         disabled={saving || trialLoading}

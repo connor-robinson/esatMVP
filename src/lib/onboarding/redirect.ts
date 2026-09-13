@@ -39,15 +39,29 @@ export function sanitizeRedirectTo(redirectTo: string | null | undefined): strin
 /**
  * After the questionnaire, prefer calibration for generic dashboard landings
  * so first-time users get a clear next step.
+ * Past-paper hub mark redirects are preserved so they return to their results.
  */
 export function resolvePostOnboardingPath(
   redirectTo: string | null | undefined,
 ): string {
   const safe = sanitizeRedirectTo(redirectTo);
+  if (isPastPaperMarkRedirect(safe)) {
+    return safe;
+  }
   if (safe === DEFAULT_POST_AUTH_PATH || safe === "/dashboard") {
     return FIRST_RUN_POST_ONBOARDING_PATH;
   }
   return safe;
+}
+
+/** True when auth came from the hub past-paper mark teaser. */
+export function isPastPaperMarkRedirect(
+  redirectTo: string | null | undefined,
+): boolean {
+  const safe = sanitizeRedirectTo(redirectTo);
+  return (
+    safe === "/past-papers/mark" || safe.startsWith("/past-papers/mark?")
+  );
 }
 
 export type PostAuthProfile = {
