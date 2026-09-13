@@ -98,18 +98,17 @@ export function QuestionDetailsPanel({
         />
         <DetailRow label="Support reason" value={meta.reason} />
         <DetailRow label="Reported at" value={meta.reportedAt} />
+        <DetailRow
+          label="Reported by"
+          value={
+            [meta.username, meta.email].filter(Boolean).join(" · ") ||
+            (meta.userId ? `User ${meta.userId.slice(0, 8)}` : "Unknown")
+          }
+        />
         <DetailRow label="Original session" value={meta.sessionNote} />
         <DetailRow
           label="Session id"
           value={meta.sessionId ?? "none"}
-        />
-        <DetailRow
-          label="Reporter"
-          value={
-            meta.username ||
-            meta.email ||
-            (meta.userId ? meta.userId.slice(0, 8) : "unknown")
-          }
         />
       </dl>
     </section>

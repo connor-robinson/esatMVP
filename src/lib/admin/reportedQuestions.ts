@@ -8,11 +8,13 @@ const UUID_RE =
 
 export const REPORT_THANK_YOU_SUBJECT = "Thanks for your question report";
 
-export const REPORT_THANK_YOU_BODY = `Thanks for flagging this.
-
-We've reviewed that question and improved it where needed. Feedback like yours helps keep the bank accurate for everyone.
-
-If anything still looks off, reply here and we'll take another look.`;
+export function buildReportThankYouBody(username: string | null | undefined): string {
+  const name =
+    typeof username === "string" && username.trim()
+      ? username.trim()
+      : "there";
+  return `${name}, Thank you for reporting an error. We've reviewed and updated the question. Please bear with us as our site is new and expanding rapidly. If anything else looks off, please let us know, we will respond within 24 hours!`;
+}
 
 export type ReportedQuestionMeta = {
   ticketId: string;

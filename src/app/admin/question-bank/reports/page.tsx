@@ -2,11 +2,12 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { QuestionBankEsatSessionShell } from "@/components/questionBank/QuestionBankEsatSessionShell";
 import { QuestionDetailsPanel } from "@/components/admin/QuestionDetailsPanel";
 import {
-  REPORT_THANK_YOU_BODY,
   REPORT_THANK_YOU_SUBJECT,
+  buildReportThankYouBody,
   type ReportedQuestionItem,
 } from "@/lib/admin/reportedQuestions";
 import type { QuestionBankQuestion } from "@/types/questionBank";
@@ -18,7 +19,13 @@ function optionLetters(question: QuestionBankQuestion): string[] {
   return Object.keys(question.options ?? {}).sort();
 }
 
+function reporterLabel(meta: ReportedQuestionItem["meta"]): string {
+  if (meta.username && meta.email) return `${meta.username} (${meta.email})`;
+  return meta.username || meta.email || "Unknown user";
+}
+
 export default function AdminReportedQuestionsPage() {
+  const router = useRouter();
   const [forbidden, setForbidden] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -33,6 +40,7 @@ export default function AdminReportedQuestionsPage() {
   const [draftSolution, setDraftSolution] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
   const [actionMsg, setActionMsg] = useState<string | null>(null);
+  const [thankYouOpen, setThankYouOpen] = useState(false);
   const [toasts, setToasts] = useState<SaveToast[]>([]);
   const saveTimer = useRef<number | null>(null);
   const toastId = useRef(0);
@@ -87,7 +95,13 @@ export default function AdminReportedQuestionsPage() {
     setShowExplanation(false);
     setShowHint(false);
     setActionMsg(null);
+    setThankYouOpen(false);
   }, [current?.meta.ticketId, current?.question.id]);
+
+  const thankYouBody = useMemo(
+    () => buildReportThankYouBody(current?.meta.username),
+    [current?.meta.username],
+  );
 
   const persistQuestion = useCallback(
     async (questionId: string, patch: Record<string, unknown>) => {
@@ -214,7 +228,7 @@ export default function AdminReportedQuestionsPage() {
           source: "support",
           id: current.meta.ticketId,
           subject: REPORT_THANK_YOU_SUBJECT,
-          body: REPORT_THANK_YOU_BODY,
+          body: thankYouBody,
           markResolved: true,
         }),
       });
@@ -224,6 +238,7 @@ export default function AdminReportedQuestionsPage() {
           typeof json.error === "string" ? json.error : "Send failed",
         );
       }
+      setThankYouOpen(false);
       setActionMsg("Thank-you sent and ticket resolved.");
       pushToast("Message sent", "ok");
       removeCurrentFromQueue();
@@ -343,11 +358,14 @@ export default function AdminReportedQuestionsPage() {
               {current.meta.reason}
             </p>
             <p className="mt-1 text-sm font-medium text-text">
-              AI question bank · {current.meta.db.subjects} ·{" "}
-              {current.meta.topicLabel}
+              Reported by {reporterLabel(current.meta)}
             </p>
             <p className="mt-0.5 text-xs text-text-muted">
-              {current.meta.sessionNote}
+              AI question bank · {current.meta.db.subjects} ·{" "}
+              {current.meta.topicLabel}
+              {current.meta.sessionNote
+                ? ` · ${current.meta.sessionNote}`
+                : ""}
             </p>
             {actionMsg ? (
               <p className="mt-2 text-sm text-text-muted">{actionMsg}</p>
@@ -404,7 +422,7 @@ export default function AdminReportedQuestionsPage() {
         onNext={() => setIndex((i) => Math.min(items.length - 1, i + 1))}
         onPrevious={() => setIndex((i) => Math.max(0, i - 1))}
         onJumpTo={(i) => setIndex(i)}
-        onOpenLeaveConfirm={() => {}}
+        onOpenLeaveConfirm={() => router.push("/admin/question-bank")}
         onCloseLeaveConfirm={() => {}}
         onSaveAndLeave={() => {}}
         onDiscardSession={() => {}}
@@ -413,6 +431,57 @@ export default function AdminReportedQuestionsPage() {
         explanationContent={displayQuestion.solution_reasoning}
         onCloseExplanation={() => setShowExplanation(false)}
         sessionId={current.meta.sessionId}
+        hideSupportControl
+        footerExtra={
+          <div className="flex flex-wrap items-center justify-center gap-1.5">
+            <button
+              type="button"
+              disabled={Boolean(busy)}
+              onClick={() => void approveQuestion()}
+              className="eup-footer-action text-sm font-semibold disabled:opacity-50"
+            >
+              {busy === "approve" ? "Approving…" : "Approve"}
+            </button>
+            <button
+              type="button"
+              disabled={Boolean(busy)}
+              onClick={() => {
+                setEditing((v) => !v);
+                setActionMsg(null);
+              }}
+              className={cn(
+                "eup-footer-action text-sm font-semibold",
+                editing && "opacity-100",
+              )}
+            >
+              {editing ? "Done editing" : "Edit"}
+            </button>
+            <button
+              type="button"
+              disabled={Boolean(busy)}
+              onClick={() => void deleteQuestion()}
+              className="eup-footer-action text-sm font-semibold text-red-700 dark:text-red-300 disabled:opacity-50"
+            >
+              {busy === "delete" ? "Deleting…" : "Delete"}
+            </button>
+            <button
+              type="button"
+              disabled={Boolean(busy) || !current.meta.userId}
+              onClick={() => {
+                setActionMsg(null);
+                setThankYouOpen(true);
+              }}
+              className="eup-footer-action text-sm font-semibold disabled:opacity-50"
+              title={
+                current.meta.userId
+                  ? "Preview and send thank-you"
+                  : "No linked account"
+              }
+            >
+              Send thank-you
+            </button>
+          </div>
+        }
         belowQuestion={
           <div className="space-y-4">
             <QuestionDetailsPanel
@@ -420,73 +489,16 @@ export default function AdminReportedQuestionsPage() {
               question={displayQuestion}
             />
 
-            <section className="rounded-organic-xl border border-border-subtle bg-surface-elevated px-4 py-4">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted">
-                Review actions
-              </p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  disabled={Boolean(busy)}
-                  onClick={() => void approveQuestion()}
-                  className="rounded-organic-md bg-secondary/30 px-3 py-2 text-sm font-semibold text-text disabled:opacity-50"
-                >
-                  {busy === "approve" ? "Approving…" : "Approve"}
-                </button>
-                <button
-                  type="button"
-                  disabled={Boolean(busy)}
-                  onClick={() => {
-                    setEditing((v) => !v);
-                    setActionMsg(null);
-                  }}
-                  className={cn(
-                    "rounded-organic-md px-3 py-2 text-sm font-semibold",
-                    editing
-                      ? "bg-secondary/25 text-text"
-                      : "bg-surface-mid text-text",
-                  )}
-                >
-                  {editing ? "Done editing" : "Edit"}
-                </button>
-                <button
-                  type="button"
-                  disabled={Boolean(busy)}
-                  onClick={() => void deleteQuestion()}
-                  className="rounded-organic-md bg-red-500/15 px-3 py-2 text-sm font-semibold text-red-700 dark:text-red-300 disabled:opacity-50"
-                >
-                  {busy === "delete" ? "Deleting…" : "Delete"}
-                </button>
-                <button
-                  type="button"
-                  disabled={Boolean(busy) || !current.meta.userId}
-                  onClick={() => void sendThankYou()}
-                  className="rounded-organic-md bg-[#2E79B5]/20 px-3 py-2 text-sm font-semibold text-text disabled:opacity-50"
-                  title={
-                    current.meta.userId
-                      ? "Send the prefilled thank-you and resolve"
-                      : "No linked account"
-                  }
-                >
-                  {busy === "send" ? "Sending…" : "Send thank-you"}
-                </button>
-              </div>
-
-              <div className="mt-4 rounded-organic-md border border-border-subtle bg-surface-mid/40 px-3 py-2">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted">
-                  Prefill reply · {REPORT_THANK_YOU_SUBJECT}
+            {editing ? (
+              <section className="rounded-organic-xl border border-border-subtle bg-surface-elevated px-4 py-4">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted">
+                  Edit question
                 </p>
-                <pre className="mt-1 whitespace-pre-wrap font-sans text-xs leading-relaxed text-text-muted">
-                  {REPORT_THANK_YOU_BODY}
-                </pre>
-              </div>
-
-              {editing ? (
-                <div className="mt-4 space-y-4 border-t border-border-subtle pt-4">
-                  <p className="text-xs text-text-subtle">
-                    Edits autosave to Supabase in the background. A small notice
-                    appears when saved; you can keep working.
-                  </p>
+                <p className="mt-2 text-xs text-text-subtle">
+                  Edits autosave to Supabase in the background. A small notice
+                  appears when saved; you can keep working.
+                </p>
+                <div className="mt-4 space-y-4">
                   <label className="block text-xs font-medium text-text-muted">
                     Stem
                     <textarea
@@ -546,11 +558,59 @@ export default function AdminReportedQuestionsPage() {
                     />
                   </label>
                 </div>
-              ) : null}
-            </section>
+              </section>
+            ) : null}
           </div>
         }
       />
+
+      {thankYouOpen ? (
+        <div
+          className="fixed inset-0 z-[130] flex items-center justify-center bg-black/45 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="thank-you-title"
+          onClick={() => {
+            if (!busy) setThankYouOpen(false);
+          }}
+        >
+          <div
+            className="w-full max-w-md rounded-organic-xl border border-border-subtle bg-surface-elevated p-5 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2
+              id="thank-you-title"
+              className="text-lg font-semibold text-text"
+            >
+              Send thank-you
+            </h2>
+            <p className="mt-1 text-xs text-text-muted">
+              To {reporterLabel(current.meta)} · {REPORT_THANK_YOU_SUBJECT}
+            </p>
+            <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-text">
+              {thankYouBody}
+            </p>
+            <div className="mt-5 flex flex-wrap justify-end gap-2">
+              <button
+                type="button"
+                disabled={Boolean(busy)}
+                onClick={() => setThankYouOpen(false)}
+                className="rounded-organic-md bg-surface-mid px-3 py-2 text-sm font-semibold text-text disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={Boolean(busy) || !current.meta.userId}
+                onClick={() => void sendThankYou()}
+                className="rounded-organic-md bg-[#2E79B5] px-3 py-2 text-sm font-semibold text-white disabled:opacity-50"
+              >
+                {busy === "send" ? "Sending…" : "Send & resolve"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <div className="pointer-events-none fixed bottom-4 right-4 z-[120] flex flex-col gap-2">
         {toasts.map((toast) => (

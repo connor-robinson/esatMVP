@@ -102,6 +102,10 @@ export interface QuestionBankEsatSessionShellProps {
   sessionId?: string | null;
   /** Optional block rendered under the stem + options (e.g. support review meta). */
   belowQuestion?: ReactNode;
+  /** Extra controls in the bottom footer (admin review actions). */
+  footerExtra?: ReactNode;
+  /** Hide the in-session report control (e.g. admin reviewing reports). */
+  hideSupportControl?: boolean;
 }
 
 export function QuestionBankEsatSessionShell({
@@ -142,6 +146,8 @@ export function QuestionBankEsatSessionShell({
   onCloseExplanation,
   sessionId,
   belowQuestion,
+  footerExtra,
+  hideSupportControl = false,
 }: QuestionBankEsatSessionShellProps) {
   const [timerHidden, setTimerHidden] = useState(false);
   const [counterHidden, setCounterHidden] = useState(false);
@@ -704,15 +710,17 @@ export function QuestionBankEsatSessionShell({
       </div>
 
       <div className="relative">
-        <div className="pointer-events-none absolute bottom-full right-3 z-20 mb-2 flex justify-end">
-          <div className="pointer-events-auto">
-            <QuestionSupportControl
-              questionId={question.id}
-              sessionId={sessionId}
-              tone="exam"
-            />
+        {!hideSupportControl ? (
+          <div className="pointer-events-none absolute bottom-full right-3 z-20 mb-2 flex justify-end">
+            <div className="pointer-events-auto">
+              <QuestionSupportControl
+                questionId={question.id}
+                sessionId={sessionId}
+                tone="exam"
+              />
+            </div>
           </div>
-        </div>
+        ) : null}
         <footer className="eup-footer">
         <button
           type="button"
@@ -722,6 +730,14 @@ export function QuestionBankEsatSessionShell({
           <LogOut size={19} strokeWidth={2} aria-hidden />
           <span>{reviewMode ? "Back to summary" : "End session"}</span>
         </button>
+        {footerExtra ? (
+          <>
+            <span className="eup-footer-rule" aria-hidden />
+            <div className="eup-footer-group eup-footer-group--center min-w-0 flex-1 justify-center overflow-x-auto px-1">
+              {footerExtra}
+            </div>
+          </>
+        ) : null}
         <span className="eup-footer-rule" aria-hidden />
         <div className="eup-footer-group eup-footer-group--right">
           <button
