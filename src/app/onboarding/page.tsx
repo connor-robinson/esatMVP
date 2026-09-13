@@ -7,7 +7,7 @@ import {
   esatSubjectPillClass,
 } from "@/components/profile/settingsSubjectPills";
 import { cn } from "@/lib/utils";
-import { sanitizeRedirectTo, resolvePostOnboardingPath } from "@/lib/onboarding/redirect";
+import { sanitizeRedirectTo, resolvePostOnboardingPath, isPastPaperMarkRedirect } from "@/lib/onboarding/redirect";
 import {
   REFERRAL_SOURCES,
   TARGET_UNIVERSITIES,
@@ -173,6 +173,7 @@ function OnboardingContent() {
     () => sanitizeRedirectTo(searchParams.get("redirectTo")),
     [searchParams],
   );
+  const fromPastPaperMark = isPastPaperMarkRedirect(redirectTo);
   const { startTrial, loading: trialLoading } = useStartMonthlyTrialCheckout();
 
   const [steps, setSteps] = useState<Step[]>(ALL_STEPS);
@@ -570,12 +571,24 @@ function OnboardingContent() {
             className={cn(
               "flex w-full max-w-[68rem] flex-col overflow-hidden rounded-[1.5rem] bg-surface-elevated",
               step === "trial"
-                ? "h-[min(44rem,calc(100vh-5rem))] sm:h-[min(46rem,calc(100vh-4rem))]"
+                ? "h-[min(38rem,calc(100vh-5.5rem))] sm:h-[min(40rem,calc(100vh-4.5rem))]"
                 : "h-[min(36rem,calc(100vh-5.5rem))] sm:h-[min(38rem,calc(100vh-4.5rem))]",
               "px-6 pb-6 pt-5 sm:px-12 sm:pb-8 sm:pt-7",
             )}
           >
             <ProgressBar stepIndex={stepIndex} total={steps.length} />
+
+            {fromPastPaperMark ? (
+              <div className="mt-4 shrink-0 rounded-xl bg-[#4C8BF5]/15 px-3.5 py-2.5 text-sm text-text">
+                <p className="font-semibold">
+                  View your paper results after this onboarding process.
+                </p>
+                <p className="mt-0.5 text-xs text-text-muted">
+                  We will take you straight back to your past paper mark page when
+                  you finish.
+                </p>
+              </div>
+            ) : null}
 
             <div
               className={cn(
