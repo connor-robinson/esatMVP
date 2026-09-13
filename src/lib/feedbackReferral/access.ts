@@ -2,8 +2,8 @@
  * Preview gate: the feedback-for-referral flow is hidden from everyone except
  * admins and an explicit email allowlist until FEEDBACK_REFERRAL_LIVE=true.
  *
- * Eligible users also need FEEDBACK_REFERRAL_MIN_ACTIVE_DAYS distinct usage
- * days. Admins skip the tenure check for support / QA only.
+ * Eligible live users also need FEEDBACK_REFERRAL_MIN_ACTIVE_DAYS distinct usage
+ * days. Admins and preview allowlist emails skip the tenure check for support / QA.
  */
 
 const LIVE_FLAG = "FEEDBACK_REFERRAL_LIVE";
@@ -14,6 +14,7 @@ export const DEFAULT_FEEDBACK_REFERRAL_PREVIEW_EMAILS = [
   "esatcamp@gmail.com",
   "ansonchanw@gmail.com",
   "anson.chan@abingdon.org.uk",
+  "thelame1sout@gmail.com",
 ] as const;
 
 /** Distinct calendar days of site usage required before invite / survey. */
@@ -72,9 +73,9 @@ export function canAccessFeedbackReferral(opts: {
   const featureUnlocked = live || isAdmin || preview;
   if (!featureUnlocked) return false;
 
-  // Admins can always open (support / verification), including without tenure.
-  if (isAdmin) return true;
+  // Admins and preview allowlist can always open for support / QA.
+  if (isAdmin || preview) return true;
 
-  // Everyone else, including preview allowlist, needs 3+ active days.
+  // Public live users need 3+ active days.
   return hasEnoughFeedbackReferralActiveDays(opts.activeDays);
 }

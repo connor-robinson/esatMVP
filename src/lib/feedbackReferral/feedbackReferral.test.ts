@@ -51,23 +51,25 @@ describe("feedback referral access", () => {
     ).toBe(true);
   });
 
-  it("lets preview emails in only with 3+ active days", () => {
+  it("lets preview emails in without tenure for QA", () => {
     expect(
       canAccessFeedbackReferral({
         email: "Anson@example.com",
         role: "user",
         live: false,
         previewEmails: ["anson@example.com"],
-        activeDays: 2,
+        activeDays: 0,
       }),
-    ).toBe(false);
+    ).toBe(true);
+  });
+
+  it("lets the dedicated walkthrough preview email through the default allowlist", () => {
     expect(
       canAccessFeedbackReferral({
-        email: "Anson@example.com",
+        email: "thelame1sout@gmail.com",
         role: "user",
         live: false,
-        previewEmails: ["anson@example.com"],
-        activeDays: 3,
+        activeDays: 0,
       }),
     ).toBe(true);
   });
