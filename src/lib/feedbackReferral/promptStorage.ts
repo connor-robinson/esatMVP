@@ -5,9 +5,13 @@ const ENGAGEMENT_KEY = "esatcamp.feedbackReferral.engagement.v1";
 const RETURN_TO_KEY = "esatcamp.feedbackReferral.returnTo.v1";
 
 export const FEEDBACK_REFERRAL_MAX_PROMPT_SHOWS = 2;
+/** Invite only counts as "just finished a session" for this long. */
+export const FEEDBACK_REFERRAL_ENGAGEMENT_TTL_MS = 90_000;
 export const FEEDBACK_REFERRAL_ENGAGEMENT_EVENT =
   "esatcamp:feedback-referral-engagement";
 export const FEEDBACK_REFERRAL_DEFAULT_RETURN_TO = "/";
+export const FEEDBACK_REFERRAL_ENGAGEMENT_CLEARED_EVENT =
+  "esatcamp:feedback-referral-engagement-cleared";
 
 const BLOCKED_RETURN_PREFIXES = [
   "/feedback",
@@ -164,19 +168,51 @@ export function signalFeedbackReferralEngagement(source: string): void {
   }
 }
 
-export function hasFeedbackReferralEngagement(): boolean {
-  if (typeof window === "undefined") return false;
+function readEngagementAt(): number | null {
+  if (typeof window === "undefined") return null;
   try {
-    return Boolean(window.sessionStorage.getItem(ENGAGEMENT_KEY));
+    const raw = window.sessionStorage.getItem(ENGAGEMENT_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { at?: unknown };
+    const at = typeof parsed?.at === "number" ? parsed.at : NaN;
+    return Number.isFinite(at) ? at : null;
   } catch {
+    return null;
+  }
+}
+
+/** True only for a recent post-session signal (stale flags are cleared). */
+export function hasFeedbackReferralEngagement(): boolean {
+  const at = readEngagementAt();
+  if (at == null) return false;
+  if (Date.now() - at > FEEDBACK_REFERRAL_ENGAGEMENT_TTL_MS) {
+    clearFeedbackReferralEngagement();
     return false;
   }
+  return true;
+}
+
+export function getFeedbackReferralEngagementAgeMs(): number | null {
+  const at = readEngagementAt();
+  if (at == null) return null;
+  const age = Date.now() - at;
+  if (age > FEEDBACK_REFERRAL_ENGAGEMENT_TTL_MS) {
+    clearFeedbackReferralEngagement();
+    return null;
+  }
+  return Math.max(0, age);
 }
 
 export function clearFeedbackReferralEngagement(): void {
   if (typeof window === "undefined") return;
   try {
+    const had = Boolean(window.sessionStorage.getItem(ENGAGEMENT_KEY));
     window.sessionStorage.removeItem(ENGAGEMENT_KEY);
+    if (had) {
+      window.dispatchEvent(
+        new CustomEvent(FEEDBACK_REFERRAL_ENGAGEMENT_CLEARED_EVENT),
+      );
+    }
   } catch {
     /* ignore */
   }

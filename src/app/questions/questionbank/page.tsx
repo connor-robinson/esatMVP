@@ -77,6 +77,7 @@ import {
 } from '@/lib/questionBank/difficultyMix';
 import { sampleSessionBankQuestions } from '@/lib/questionBank/sessionBankSampling';
 import { buildSessionQuestionsWithHookLead } from '@/lib/questionBank/sessionHookLead';
+import { clearFeedbackReferralEngagement } from '@/lib/feedbackReferral/promptStorage';
 import {
   resolveFreeTierLaunch,
   clearFreeTierLaunch,
@@ -257,6 +258,8 @@ export default function QuestionBankPage() {
       testType?: string | null;
       uiDifficulties?: UiDifficultyLabel[];
     }) => {
+      clearFeedbackReferralEngagement();
+
       const id = createSessionId();
       const startTime = Date.now();
       const uiDiffs =

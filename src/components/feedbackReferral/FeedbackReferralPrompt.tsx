@@ -4,9 +4,12 @@ import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { FeedbackReferralInviteCard } from "@/components/feedbackReferral/FeedbackReferralInviteCard";
+import { isPaperImmersiveRoute } from "@/lib/papers/activePaperSessionClient";
 import {
+  FEEDBACK_REFERRAL_ENGAGEMENT_CLEARED_EVENT,
   FEEDBACK_REFERRAL_ENGAGEMENT_EVENT,
   clearFeedbackReferralEngagement,
+  getFeedbackReferralEngagementAgeMs,
   hasFeedbackReferralDontShowAgain,
   hasFeedbackReferralEngagement,
   hasFeedbackReferralSessionDismiss,
@@ -15,6 +18,8 @@ import {
   setFeedbackReferralReturnTo,
 } from "@/lib/feedbackReferral/promptStorage";
 import { markFeedbackReferralAsked } from "@/lib/feedbackReferral/markAsked";
+
+const SETTLE_DELAY_MS = 3200;
 
 const HIDDEN_PATH_PREFIXES = [
   "/feedback",
@@ -26,11 +31,20 @@ const HIDDEN_PATH_PREFIXES = [
   "/pricing/success",
   "/pearson",
   "/profile",
+  // Pre-session / mid-session surfaces: never interrupt these.
+  "/past-papers/solve/start",
+  "/mental-maths/drill/session",
 ];
+
+function isBlockedPromptPath(pathname: string): boolean {
+  if (HIDDEN_PATH_PREFIXES.some((p) => pathname.startsWith(p))) return true;
+  if (isPaperImmersiveRoute(pathname)) return true;
+  return false;
+}
 
 /**
  * Soft invite for the feedback-for-referral survey.
- * Only appears after a meaningful practice action (paper / session), not on login.
+ * Only appears after a meaningful practice action finishes, not before or during.
  * Backdrop clicks do nothing.
  */
 export function FeedbackReferralPrompt() {
@@ -44,7 +58,7 @@ export function FeedbackReferralPrompt() {
       setOpen(false);
       return;
     }
-    if (HIDDEN_PATH_PREFIXES.some((p) => pathname.startsWith(p))) {
+    if (isBlockedPromptPath(pathname)) {
       setOpen(false);
       return;
     }
@@ -72,6 +86,7 @@ export function FeedbackReferralPrompt() {
           return;
         }
         if (
+          isBlockedPromptPath(pathname) ||
           hasFeedbackReferralDontShowAgain() ||
           hasFeedbackReferralSessionDismiss() ||
           !hasFeedbackReferralEngagement()
@@ -86,23 +101,49 @@ export function FeedbackReferralPrompt() {
   }, [session?.user, pathname]);
 
   useEffect(() => {
-    tryOpen();
+    // Path changes must never reopen from a stale flag. Only close if blocked.
+    if (isBlockedPromptPath(pathname)) {
+      setOpen(false);
+    }
+  }, [pathname]);
 
+  useEffect(() => {
     let settleTimer: number | undefined;
-    const onEngagement = () => {
-      // Let results UI settle before the invite appears.
+
+    const scheduleOpen = () => {
       window.clearTimeout(settleTimer);
-      settleTimer = window.setTimeout(() => tryOpen(), 3200);
+      const age = getFeedbackReferralEngagementAgeMs();
+      if (age == null) return;
+      const remaining = Math.max(0, SETTLE_DELAY_MS - age);
+      settleTimer = window.setTimeout(() => tryOpen(), remaining);
     };
+
+    // Refresh on a results page shortly after finishing can still show once.
+    scheduleOpen();
+
+    const onEngagement = () => scheduleOpen();
+    const onCleared = () => {
+      window.clearTimeout(settleTimer);
+      setOpen(false);
+    };
+
     window.addEventListener(
       FEEDBACK_REFERRAL_ENGAGEMENT_EVENT,
       onEngagement as EventListener,
+    );
+    window.addEventListener(
+      FEEDBACK_REFERRAL_ENGAGEMENT_CLEARED_EVENT,
+      onCleared as EventListener,
     );
     return () => {
       window.clearTimeout(settleTimer);
       window.removeEventListener(
         FEEDBACK_REFERRAL_ENGAGEMENT_EVENT,
         onEngagement as EventListener,
+      );
+      window.removeEventListener(
+        FEEDBACK_REFERRAL_ENGAGEMENT_CLEARED_EVENT,
+        onCleared as EventListener,
       );
     };
   }, [tryOpen]);

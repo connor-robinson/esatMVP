@@ -329,6 +329,11 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         const startedAt = Date.now();
         const deadline = startedAt + timeLimitMinutes * 60 * 1000;
         const selectedSections = config.selectedSections || [];
+
+        // Starting a new sitting cancels any pending post-session invite.
+        void import("@/lib/feedbackReferral/promptStorage").then((mod) => {
+          mod.clearFeedbackReferralEngagement();
+        });
         
         // Generate part IDs from selected sections or use provided ones
         let selectedPartIds: string[] = [];

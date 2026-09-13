@@ -51,7 +51,9 @@ export function SessionPersistenceHandler() {
   useEffect(() => {
     if (sessionId && !endedAt) {
       hadLiveSessionRef.current = true;
+      return;
     }
+    // Only fire after a live sitting ends in this tab, not on hydrate of old ended state.
     if (hadLiveSessionRef.current && endedAt) {
       signalFeedbackReferralEngagement("past_paper");
       hadLiveSessionRef.current = false;

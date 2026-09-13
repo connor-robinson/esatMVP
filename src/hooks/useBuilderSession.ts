@@ -394,6 +394,10 @@ export function useBuilderSession() {
       alert("Please add at least one topic to start a session.");
       return;
     }
+
+    void import("@/lib/feedbackReferral/promptStorage").then((mod) => {
+      mod.clearFeedbackReferralEngagement();
+    });
     
     // Note: Allow starting session without auth for testing
     // if (!authSession?.user) {
