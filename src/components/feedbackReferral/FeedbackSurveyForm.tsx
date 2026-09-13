@@ -339,42 +339,65 @@ function OptionSlider({
   );
   const hasValue = typeof value === "string" && value.length > 0;
   const current = hasValue ? options[index] : null;
+  const last = Math.max(1, options.length - 1);
 
   return (
     <div className="space-y-5">
       <p className="text-center text-xl font-bold text-text sm:text-2xl">
         {current?.label ?? "Slide to choose"}
       </p>
-      <input
-        type="range"
-        min={0}
-        max={Math.max(0, options.length - 1)}
-        step={1}
-        value={hasValue ? index : 0}
-        onChange={(e) => {
-          const next = options[Number(e.target.value)];
-          if (next) onChange(next.value);
-        }}
-        onPointerDown={() => {
-          if (!hasValue && options[0]) onChange(options[0].value);
-        }}
-        className="h-2 w-full cursor-pointer appearance-none rounded-full bg-white/15 accent-[#4C8BF5]"
-        aria-label="Price fairness"
-      />
-      <div className="flex justify-between gap-2 text-xs font-medium text-text-muted sm:text-sm">
-        {options.map((opt) => (
-          <button
-            key={opt.value}
-            type="button"
-            onClick={() => onChange(opt.value)}
-            className={cn(
-              "max-w-[25%] flex-1 text-center transition-colors",
-              value === opt.value ? "font-bold text-[#4C8BF5]" : "hover:text-text",
-            )}
-          >
-            {opt.label}
-          </button>
-        ))}
+
+      {/* Shared inset so thumb centers line up with label centers. */}
+      <div className="px-3 sm:px-4">
+        <div className="relative">
+          <input
+            type="range"
+            min={0}
+            max={last}
+            step={1}
+            value={hasValue ? index : 0}
+            onChange={(e) => {
+              const next = options[Number(e.target.value)];
+              if (next) onChange(next.value);
+            }}
+            onPointerDown={() => {
+              if (!hasValue && options[0]) onChange(options[0].value);
+            }}
+            className="relative z-10 h-2 w-full cursor-pointer appearance-none rounded-full bg-white/15 accent-[#4C8BF5]"
+            aria-label="Price fairness"
+          />
+          <div className="pointer-events-none absolute inset-x-0 top-1/2 z-0 flex -translate-y-1/2 justify-between">
+            {options.map((opt) => (
+              <span
+                key={`tick-${opt.value}`}
+                className={cn(
+                  "h-2.5 w-2.5 rounded-full",
+                  value === opt.value ? "bg-[#4C8BF5]" : "bg-white/35",
+                )}
+                aria-hidden
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="relative mt-4 h-12 sm:h-10">
+          {options.map((opt, i) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => onChange(opt.value)}
+              className={cn(
+                "absolute top-0 max-w-[6.5rem] -translate-x-1/2 text-center text-xs font-medium leading-snug transition-colors sm:max-w-[7.5rem] sm:text-sm",
+                value === opt.value
+                  ? "font-bold text-[#4C8BF5]"
+                  : "text-text-muted hover:text-text",
+              )}
+              style={{ left: `${(i / last) * 100}%` }}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
