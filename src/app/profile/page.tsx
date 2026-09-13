@@ -1170,21 +1170,6 @@ export default function ProfilePage() {
 
                   <SettingsGroup title="Session">
                     <SettingsRow
-                      label="Preview first-time setup"
-                      description="Walk through account setup (username, exam, subjects, timing, access arrangements) without saving"
-                      action={
-                        <SettingsButton
-                          type="button"
-                          onClick={() => {
-                            window.location.href =
-                              "/onboarding?preview=1&redirectTo=%2Fprofile%3Fsection%3Daccount";
-                          }}
-                        >
-                          Preview
-                        </SettingsButton>
-                      }
-                    />
-                    <SettingsRow
                       label="Replay account setup"
                       description="Reset the setup flag and walk through the real lock screen again (saves when you finish)"
                       action={
