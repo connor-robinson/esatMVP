@@ -216,7 +216,6 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
     {
       id: "almost_stopped",
       type: "multi",
-      section: "Pricing / value",
       label: "What almost stopped you from paying or continuing?",
       whyOptional: true,
       options: [
@@ -274,39 +273,36 @@ export const FEEDBACK_REFERRAL_SURVEY: FeedbackSurveyDefinition = {
       whyOptional: true,
       options: [
         {
-          value: "more_papers",
-          label: "More papers",
-          description: "More full timed papers or mocks",
+          value: "more_mock_papers",
+          label: "More Mock Papers",
         },
         {
-          value: "better_explanations",
-          label: "Better explanations",
-          description: "Clearer solutions and walkthroughs",
+          value: "video_explanations",
+          label: "Video Explanations",
         },
         {
-          value: "more_topics",
-          label: "More topic coverage",
-          description: "Broader or deeper practice by topic",
+          value: "topic_specific_qb",
+          label: "Topic specific selection in Question Bank",
         },
         {
-          value: "progress",
-          label: "Clearer progress",
-          description: "Easier to see improvement over time",
+          value: "review_mistakes_qb",
+          label: "Review Mistakes in Question Bank",
+        },
+        {
+          value: "clearer_progress",
+          label: "Clearer progress indicators to see improvement over time",
         },
         {
           value: "mobile",
-          label: "Better mobile",
-          description: "Works better on phone",
+          label: "Work better on mobile",
         },
         {
           value: "pricing",
-          label: "Pricing options",
-          description: "Different plans, trials, or free content",
+          label: "Different Pricing Options",
         },
         {
           value: "other",
           label: "Other",
-          description: "Tell us what else you'd like",
         },
       ],
       requiredDetails: [

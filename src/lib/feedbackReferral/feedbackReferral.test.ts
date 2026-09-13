@@ -150,7 +150,7 @@ describe("survey validation", () => {
     { questionId: "recommend_more", value: "cheaper" },
     { questionId: "price_fair", value: "fair" },
     { questionId: "almost_stopped", value: ["nothing"] },
-    { questionId: "camp_missing", value: ["more_papers"] },
+    { questionId: "camp_missing", value: ["more_mock_papers"] },
   ] as const;
 
   it("rejects thin written answers", () => {
@@ -179,7 +179,7 @@ describe("survey validation", () => {
       { questionId: "recommend_more", value: "cheaper" },
       { questionId: "price_fair", value: "fair" },
       { questionId: "almost_stopped", value: ["nothing"] },
-      { questionId: "camp_missing", value: ["more_papers"] },
+      { questionId: "camp_missing", value: ["more_mock_papers"] },
       { questionId: "improve_first", value: improve },
     ]);
     expect(error).toMatch(/describe ESATCamp/i);
@@ -189,7 +189,7 @@ describe("survey validation", () => {
     const error = validateFeedbackReferralSurvey([
       ...baseAnswers.slice(0, 6),
       { questionId: "almost_stopped", value: ["technical", "price"] },
-      { questionId: "camp_missing", value: ["more_papers"] },
+      { questionId: "camp_missing", value: ["more_mock_papers"] },
       { questionId: "improve_first", value: improve },
     ]);
     expect(error).toMatch(/technical issue/i);
@@ -244,7 +244,7 @@ describe("survey validation", () => {
       { questionId: "recommend_more", value: "better_questions" },
       { questionId: "price_fair", value: "fair" },
       { questionId: "almost_stopped", value: ["nothing"] },
-      { questionId: "camp_missing", value: ["more_papers"] },
+      { questionId: "camp_missing", value: ["more_mock_papers"] },
       { questionId: "improve_first", value: improve },
       { questionId: "works_well", value: improve },
     ]);
