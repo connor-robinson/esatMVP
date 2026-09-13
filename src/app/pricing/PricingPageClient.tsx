@@ -459,7 +459,7 @@ export default function PricingPageClient() {
             {banner}
           </p>
         ) : null}
-        {codeFromUrl ? (
+        {codeFromUrl && friendCodeStatus.state !== "idle" ? (
           <div
             className={
               friendCodeStatus.state === "invalid"
@@ -495,33 +495,28 @@ export default function PricingPageClient() {
                         : " cannot be applied."}
                   </p>
                 </>
-              ) : (
+              ) : friendCodeStatus.state === "checking" ? (
                 <>
                   <p className="text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-primary">
-                    {friendCodeStatus.state === "checking"
-                      ? "Checking friend code"
-                      : "Friend code ready"}
+                    Checking friend code
                   </p>
                   <p className="mt-1 text-sm leading-snug text-text">
-                    {friendCodeStatus.state === "checking" ? (
-                      <>
-                        Verifying{" "}
-                        <span className="font-mono font-semibold text-primary">
-                          {codeFromUrl}
-                        </span>
-                        …
-                      </>
-                    ) : (
-                      <>
-                        <span className="font-mono font-semibold text-primary">
-                          {validFriendCode ?? codeFromUrl}
-                        </span>{" "}
-                        will be applied automatically at checkout.
-                      </>
-                    )}
+                    Verifying{" "}
+                    <span className="font-mono font-semibold text-primary">
+                      {codeFromUrl}
+                    </span>
+                    …
                   </p>
                 </>
-              )}
+              ) : friendCodeStatus.state === "valid" ? (
+                <p className="text-sm leading-snug text-text">
+                  Friend code{" "}
+                  <span className="font-mono font-semibold text-primary">
+                    {friendCodeStatus.code}
+                  </span>{" "}
+                  will be applied automatically at checkout.
+                </p>
+              ) : null}
             </div>
           </div>
         ) : null}
