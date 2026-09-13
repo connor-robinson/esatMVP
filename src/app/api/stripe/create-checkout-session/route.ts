@@ -107,17 +107,27 @@ export async function POST(request: NextRequest) {
       throw err;
     }
 
-    // Stripe forbids combining allow_promotion_codes with discounts.
+    // Only reuse a stored Customer. Do not create one until Checkout completes.
+    const existingCustomerId = await getStoredStripeCustomerId(user.id);
+
+    // Coupon and free trial are mutually exclusive: any applied discount means
+    // charge immediately.
+    const offerTrial =
+      !referralDiscount &&
+      planType === "monthly" &&
+      (await isEligibleForTrial(user.id, existingCustomerId));
+
+    // Friend codes are only applied via our validated `referralCode` path.
+    // Never enable Stripe Checkout's promo field: people could type their own
+    // CAMP50 code there and bypass ownership checks.
     const promoFields = referralDiscount
       ? {
           discounts: [
             { promotion_code: referralDiscount.promotionCodeId },
           ],
         }
-      : { allow_promotion_codes: true as const };
+      : {};
 
-    // Only reuse a stored Customer. Do not create one until Checkout completes.
-    const existingCustomerId = await getStoredStripeCustomerId(user.id);
     const customerFields = buildCheckoutCustomerFields(
       existingCustomerId,
       user.email,
@@ -199,11 +209,6 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
-
-    const offerTrial =
-      !referralDiscount &&
-      planType === "monthly" &&
-      (await isEligibleForTrial(user.id, existingCustomerId));
 
     const session = await getStripe().checkout.sessions.create({
       mode: "subscription",

@@ -114,6 +114,27 @@ function mockNoActiveSubscription() {
   });
 }
 
+function mockPriorSubscriptionNoActive() {
+  supabaseFrom.mockImplementation((table: string) => {
+    if (table === "subscriptions") {
+      return {
+        select: () => ({
+          eq: () => ({
+            in: () => ({
+              limit: () => ({
+                maybeSingle: async () => ({ data: null, error: null }),
+              }),
+            }),
+            // Any prior row makes the user ineligible for a free trial.
+            limit: async () => ({ data: [{ id: "sub_prior" }], error: null }),
+          }),
+        }),
+      };
+    }
+    throw new Error(`unexpected table ${table}`);
+  });
+}
+
 function mockActiveSubscription() {
   supabaseFrom.mockImplementation((table: string) => {
     if (table === "subscriptions") {
@@ -254,9 +275,26 @@ describe("POST /api/stripe/create-checkout-session", () => {
         body: JSON.stringify({ planType: "monthly" }),
       }),
     );
-    expect(
-      checkoutSessionsCreate.mock.calls[0][0].subscription_data.trial_period_days,
-    ).toBe(4);
+    const args = checkoutSessionsCreate.mock.calls[0][0];
+    expect(args.subscription_data.trial_period_days).toBe(4);
+    // Promo entry is disabled so coupons cannot bypass ownership checks.
+    expect(args.allow_promotion_codes).toBeUndefined();
+    expect(args.discounts).toBeUndefined();
+  });
+
+  it("does not expose Stripe promo entry when monthly has no trial", async () => {
+    mockPriorSubscriptionNoActive();
+
+    await POST(
+      new NextRequest("http://localhost/api/stripe/create-checkout-session", {
+        method: "POST",
+        body: JSON.stringify({ planType: "monthly" }),
+      }),
+    );
+    const args = checkoutSessionsCreate.mock.calls[0][0];
+    expect(args.subscription_data.trial_period_days).toBeUndefined();
+    expect(args.allow_promotion_codes).toBeUndefined();
+    expect(args.discounts).toBeUndefined();
   });
 
   it("forces customer_creation for season pass when using customer_email", async () => {
