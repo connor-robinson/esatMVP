@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { BugReportModal } from "@/components/support/BugReportModal";
 
+/** Keep stable so users who already dismissed do not see this again. */
 const DISMISS_KEY = "esatcamp.pastPaperUatNotice.dismissed.v1";
 
 /**
@@ -34,11 +35,11 @@ export function PastPaperUatNotice() {
   return (
     <>
       {visible ? (
-        <div className="mb-5 rounded-organic-xl bg-surface-elevated px-5 py-5 sm:px-6 sm:py-5">
-          <p className="font-heading text-base font-bold text-text sm:text-lg">
-            Updated past paper player
+        <div className="mb-5 w-full rounded-organic-xl bg-surface-elevated px-5 py-5 sm:px-6 sm:py-5">
+          <p className="w-full font-heading text-base font-bold text-text sm:text-lg">
+            🚀 We updated the past paper player recently
           </p>
-          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-text-muted sm:text-[15px]">
+          <p className="mt-2 w-full text-sm leading-relaxed text-text-muted sm:text-[15px]">
             We&apos;ve updated our UI to closely resemble the official UAT-UK
             interface. If something looks off, a shortcut is wrong, or a question
             is broken, report a bug and we&apos;ll look into it.
