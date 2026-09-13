@@ -107,7 +107,7 @@ export function FeedbackSurveyForm({
         window.setTimeout(() => {
           onComplete({
             code: "CAMP50-PREVIEW",
-            shareUrl: "https://esatcamp.com/pricing?code=CAMP50-PREVIEW",
+            shareUrl: "/pricing?code=CAMP50-PREVIEW",
             alreadyCompleted: false,
           });
         }, 450);
