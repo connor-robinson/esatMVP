@@ -17,6 +17,7 @@ import {
   FeedbackReferralError,
   resolveCheckoutReferralDiscount,
 } from "@/lib/feedbackReferral/service";
+import { hardenPublicReferralPromotionCodes } from "@/lib/feedbackReferral/stripe";
 
 export const dynamic = "force-dynamic";
 
@@ -77,6 +78,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Payments not configured" }, { status: 503 });
     }
 
+    // Best-effort: deactivate any still-public CAMP50 promotion codes so they
+    // cannot be typed into Stripe surfaces. Safe to call repeatedly.
+    void hardenPublicReferralPromotionCodes().catch((err) => {
+      console.error("[create-checkout-session] referral promo harden failed", err);
+    });
+
     const body = await request.json().catch(() => ({}));
     const planType = (body.planType ?? "monthly") as PlanType;
     const referralCodeRaw =
@@ -93,7 +100,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let referralDiscount: { code: string; promotionCodeId: string } | null =
+    let referralDiscount: { code: string; couponId: string } | null =
       null;
     try {
       referralDiscount = await resolveCheckoutReferralDiscount({
@@ -117,14 +124,12 @@ export async function POST(request: NextRequest) {
       planType === "monthly" &&
       (await isEligibleForTrial(user.id, existingCustomerId));
 
-    // Friend codes are only applied via our validated `referralCode` path.
-    // Never enable Stripe Checkout's promo field: people could type their own
-    // CAMP50 code there and bypass ownership checks.
+    // Friend codes are only applied via our validated `referralCode` path using
+    // the shared coupon (not a public Stripe promotion code). Never enable
+    // Checkout's promo field, or people could type their own CAMP50 code.
     const promoFields = referralDiscount
       ? {
-          discounts: [
-            { promotion_code: referralDiscount.promotionCodeId },
-          ],
+          discounts: [{ coupon: referralDiscount.couponId }],
         }
       : {};
 

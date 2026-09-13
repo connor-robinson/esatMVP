@@ -39,10 +39,13 @@ export async function createOneUseReferralPromotionCode(opts: {
   for (let attempt = 0; attempt < 6; attempt++) {
     const code = generateReferralCode();
     try {
+      // Create inactive so the code cannot be typed into Stripe Checkout.
+      // Checkout applies the shared coupon only after our server-side checks.
       const promo = await stripe.promotionCodes.create({
         promotion: { type: "coupon", coupon: couponId },
         code,
         max_redemptions: 1,
+        active: false,
         metadata: {
           kind: COUPON_METADATA_KIND,
           referrer_user_id: opts.referrerUserId,
@@ -58,6 +61,71 @@ export async function createOneUseReferralPromotionCode(opts: {
   }
 
   throw new Error("Could not allocate a unique referral code");
+}
+
+/** Deactivate public Stripe promotion codes so they cannot be typed in Checkout. */
+export async function deactivateReferralPromotionCodes(
+  promotionCodeIds: string[],
+  stripe: Stripe = getStripe(),
+): Promise<{ deactivated: string[]; failed: string[] }> {
+  const deactivated: string[] = [];
+  const failed: string[] = [];
+  for (const id of promotionCodeIds) {
+    if (!id) continue;
+    try {
+      await stripe.promotionCodes.update(id, { active: false });
+      deactivated.push(id);
+    } catch (err) {
+      console.error("[feedback-referral] deactivate promo failed", id, err);
+      failed.push(id);
+    }
+  }
+  return { deactivated, failed };
+}
+
+let referralPromoHardenInFlight: Promise<void> | null = null;
+
+/**
+ * Deactivate every stored CAMP50 promotion code once per process.
+ * Checkout applies the shared coupon after our validation instead.
+ */
+export async function hardenPublicReferralPromotionCodes(): Promise<void> {
+  if (referralPromoHardenInFlight) return referralPromoHardenInFlight;
+
+  referralPromoHardenInFlight = (async () => {
+    const { createFeedbackReferralServiceClient } = await import(
+      "./service"
+    );
+    const service = createFeedbackReferralServiceClient();
+    const { data, error } = await service
+      .from("feedback_referral_codes")
+      .select("stripe_promotion_code_id");
+    if (error) throw error;
+    const ids = (data ?? [])
+      .map((row) => row.stripe_promotion_code_id as string)
+      .filter(Boolean);
+    if (!ids.length) return;
+    const result = await deactivateReferralPromotionCodes(ids);
+    if (result.deactivated.length) {
+      console.info(
+        "[feedback-referral] deactivated public promotion codes",
+        result.deactivated.length,
+      );
+    }
+    if (result.failed.length) {
+      console.error(
+        "[feedback-referral] failed to deactivate promotion codes",
+        result.failed,
+      );
+      // Allow retry on a later request.
+      referralPromoHardenInFlight = null;
+    }
+  })().catch((err) => {
+    referralPromoHardenInFlight = null;
+    throw err;
+  });
+
+  return referralPromoHardenInFlight;
 }
 
 export async function lookupActiveReferralPromotion(code: string): Promise<{

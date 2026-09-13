@@ -103,7 +103,9 @@ export async function getReferralCodeForUser(
 
 /**
  * Resolve a CAMP50 friend code for Checkout.
- * Returns null when no code was provided (caller should allow manual promo entry).
+ * Returns null when no code was provided.
+ * Applies the shared Stripe coupon (not the public promotion code) so the
+ * discount can only be attached after our ownership / one-use checks.
  */
 export async function resolveCheckoutReferralDiscount(opts: {
   rawCode: string | null | undefined;
@@ -111,7 +113,7 @@ export async function resolveCheckoutReferralDiscount(opts: {
   service?: SupabaseClient;
 }): Promise<{
   code: string;
-  promotionCodeId: string;
+  couponId: string;
 } | null> {
   const code = normalizeReferralCode(opts.rawCode);
   if (!code) return null;
@@ -132,13 +134,13 @@ export async function resolveCheckoutReferralDiscount(opts: {
       400,
     );
   }
-  if (!row.stripe_promotion_code_id) {
+  if (!row.stripe_coupon_id) {
     throw new FeedbackReferralError("This friend code is not valid.", 400);
   }
 
   return {
     code: row.code,
-    promotionCodeId: row.stripe_promotion_code_id,
+    couponId: row.stripe_coupon_id,
   };
 }
 
@@ -235,18 +237,22 @@ export async function findReferralCodeRow(
 ): Promise<{
   code: string;
   user_id: string;
+  stripe_coupon_id: string;
   stripe_promotion_code_id: string;
   redeemed_at: string | null;
 } | null> {
   const code = normalizeReferralCode(rawCode);
   const { data } = await service
     .from("feedback_referral_codes")
-    .select("code, user_id, stripe_promotion_code_id, redeemed_at")
+    .select(
+      "code, user_id, stripe_coupon_id, stripe_promotion_code_id, redeemed_at",
+    )
     .eq("code", code)
     .maybeSingle();
   return data as {
     code: string;
     user_id: string;
+    stripe_coupon_id: string;
     stripe_promotion_code_id: string;
     redeemed_at: string | null;
   } | null;

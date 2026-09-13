@@ -48,7 +48,7 @@ const {
     pricesRetrieve,
     supabaseFrom,
     resolveCheckoutReferralDiscount: vi.fn(
-      async (): Promise<{ code: string; promotionCodeId: string } | null> => null,
+      async (): Promise<{ code: string; couponId: string } | null> => null,
     ),
     FeedbackReferralError,
     getStripe: vi.fn(() => ({
@@ -85,6 +85,9 @@ vi.mock("@/lib/stripe/best-value", () => ({
 vi.mock("@/lib/feedbackReferral/service", () => ({
   FeedbackReferralError,
   resolveCheckoutReferralDiscount,
+}));
+vi.mock("@/lib/feedbackReferral/stripe", () => ({
+  hardenPublicReferralPromotionCodes: vi.fn(async () => undefined),
 }));
 
 import { POST } from "@/app/api/stripe/create-checkout-session/route";
@@ -340,7 +343,7 @@ describe("POST /api/stripe/create-checkout-session", () => {
   it("auto-applies a valid friend referral code at checkout", async () => {
     resolveCheckoutReferralDiscount.mockResolvedValue({
       code: "CAMP50-ABCDEF",
-      promotionCodeId: "promo_friend",
+      couponId: "coupon_friend",
     });
 
     const res = await POST(
@@ -359,7 +362,7 @@ describe("POST /api/stripe/create-checkout-session", () => {
       redeemerUserId: USER.id,
     });
     const args = checkoutSessionsCreate.mock.calls[0][0];
-    expect(args.discounts).toEqual([{ promotion_code: "promo_friend" }]);
+    expect(args.discounts).toEqual([{ coupon: "coupon_friend" }]);
     expect(args.allow_promotion_codes).toBeUndefined();
     expect(args.metadata.referralCode).toBe("CAMP50-ABCDEF");
     expect(args.cancel_url).toContain("code=CAMP50-ABCDEF");
