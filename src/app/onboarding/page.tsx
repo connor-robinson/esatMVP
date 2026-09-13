@@ -859,41 +859,6 @@ function OnboardingContent() {
                       ))}
                     </div>
 
-                    <div className="space-y-2 pt-1">
-                      <p className="text-sm font-semibold text-text">Email tips?</p>
-                      <button
-                        type="button"
-                        onClick={() => setMarketingEmails((v) => !v)}
-                        className={cn(
-                          "flex w-full items-start gap-2.5 rounded-xl px-3.5 py-3 text-left transition-colors",
-                          marketingEmails
-                            ? "bg-[#4C8BF5]/15 text-text"
-                            : "bg-surface-mid text-text hover:bg-surface-neutral",
-                        )}
-                      >
-                        <span
-                          className={cn(
-                            "mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded",
-                            marketingEmails ? "bg-[#4C8BF5] text-white" : "bg-white/10",
-                          )}
-                          aria-hidden
-                        >
-                          {marketingEmails ? (
-                            <Check className="h-3 w-3" strokeWidth={3} />
-                          ) : null}
-                        </span>
-                        <span>
-                          <span className="block text-sm font-semibold">
-                            Send me Tips and Tricks for {exam}.
-                          </span>
-                          <span className="mt-0.5 block text-[11px] text-text-muted">
-                            Optional. Email study tips for the {exam}, with minimal
-                            marketing. Unsubscribe anytime.
-                          </span>
-                        </span>
-                      </button>
-                    </div>
-
                     <div className="flex gap-2.5">
                       <button
                         type="button"
@@ -906,6 +871,72 @@ function OnboardingContent() {
                         type="button"
                         disabled={saving || !referral}
                         onClick={() => void submitReferral()}
+                        className={cn(
+                          "flex-1 rounded-xl py-2.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
+                          ACCENT.btn,
+                        )}
+                      >
+                        {saving ? "Saving…" : "Continue"}
+                      </button>
+                    </div>
+                  </>
+                ) : null}
+
+                {step === "emails" ? (
+                  <>
+                    <div>
+                      <h1 className="text-2xl font-bold tracking-tight text-text sm:text-[1.75rem]">
+                        Email tips?
+                      </h1>
+                      <p className="mt-1.5 text-xs text-text-muted">
+                        Optional. You can change this anytime in settings.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setMarketingEmails((v) => !v)}
+                      className={cn(
+                        "flex w-full items-start gap-2.5 rounded-xl px-3.5 py-3 text-left transition-colors",
+                        marketingEmails
+                          ? "bg-[#4C8BF5]/15 text-text"
+                          : "bg-surface-mid text-text hover:bg-surface-neutral",
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded",
+                          marketingEmails ? "bg-[#4C8BF5] text-white" : "bg-white/10",
+                        )}
+                        aria-hidden
+                      >
+                        {marketingEmails ? (
+                          <Check className="h-3 w-3" strokeWidth={3} />
+                        ) : null}
+                      </span>
+                      <span>
+                        <span className="block text-sm font-semibold">
+                          Send me Tips and Tricks for {exam}.
+                        </span>
+                        <span className="mt-0.5 block text-[11px] text-text-muted">
+                          Email study tips for the {exam}, with minimal marketing.
+                          Unsubscribe anytime.
+                        </span>
+                      </span>
+                    </button>
+
+                    <div className="flex gap-2.5">
+                      <button
+                        type="button"
+                        onClick={goBack}
+                        className="flex-1 rounded-xl bg-surface-mid py-2.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
+                      >
+                        Back
+                      </button>
+                      <button
+                        type="button"
+                        disabled={saving}
+                        onClick={() => void submitEmails()}
                         className={cn(
                           "flex-1 rounded-xl py-2.5 text-sm font-bold transition-opacity disabled:cursor-not-allowed disabled:opacity-50",
                           ACCENT.btn,
