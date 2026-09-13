@@ -51,7 +51,7 @@ export default function DevFeedbackReferralPage() {
       <Container className="relative py-8 sm:py-10">
         <div className="mx-auto max-w-2xl">
           <p className="text-xs font-medium uppercase tracking-[0.14em] text-text-muted">
-            Dev preview · no login
+            Dev preview - no login
           </p>
           <h1 className="mt-2 text-2xl font-bold tracking-tight text-text">
             Feedback-for-referral flow
