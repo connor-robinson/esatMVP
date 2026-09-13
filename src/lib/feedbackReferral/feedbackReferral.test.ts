@@ -148,6 +148,7 @@ describe("survey validation", () => {
     { questionId: "recommend", value: 7 },
     { questionId: "describe_friend", value: describeFriend },
     { questionId: "recommend_more", value: "cheaper" },
+    { questionId: "spread_word", value: ["friends_classmates"] },
     { questionId: "price_fair", value: "fair" },
     { questionId: "almost_stopped", value: ["nothing"] },
     { questionId: "camp_missing", value: ["more_mock_papers"] },
@@ -177,6 +178,7 @@ describe("survey validation", () => {
       { questionId: "least_useful", value: "past_papers" },
       { questionId: "recommend", value: 7 },
       { questionId: "recommend_more", value: "cheaper" },
+      { questionId: "spread_word", value: ["friends_classmates"] },
       { questionId: "price_fair", value: "fair" },
       { questionId: "almost_stopped", value: ["nothing"] },
       { questionId: "camp_missing", value: ["more_mock_papers"] },
@@ -187,7 +189,7 @@ describe("survey validation", () => {
 
   it("requires technical detail when technical is selected", () => {
     const error = validateFeedbackReferralSurvey([
-      ...baseAnswers.slice(0, 6),
+      ...baseAnswers.slice(0, 7),
       { questionId: "almost_stopped", value: ["technical", "price"] },
       { questionId: "camp_missing", value: ["more_mock_papers"] },
       { questionId: "improve_first", value: improve },
@@ -197,7 +199,7 @@ describe("survey validation", () => {
 
   it("requires other detail for camp_missing other", () => {
     const error = validateFeedbackReferralSurvey([
-      ...baseAnswers.slice(0, 7),
+      ...baseAnswers.slice(0, 8),
       { questionId: "camp_missing", value: ["other"] },
       { questionId: "improve_first", value: improve },
     ]);
@@ -242,6 +244,7 @@ describe("survey validation", () => {
       { questionId: "recommend", value: 5 },
       { questionId: "describe_friend", value: improve },
       { questionId: "recommend_more", value: "better_questions" },
+      { questionId: "spread_word", value: ["youtube"] },
       { questionId: "price_fair", value: "fair" },
       { questionId: "almost_stopped", value: ["nothing"] },
       { questionId: "camp_missing", value: ["more_mock_papers"] },
