@@ -30,7 +30,7 @@ export function FeedbackReferralInviteCard({
       />
       <div className="relative z-10">
         <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#4C8BF5]">
-          About 2 minutes
+          One-time offer · About 2 minutes
         </p>
         <h2
           id="feedback-referral-invite-title"
@@ -38,11 +38,8 @@ export function FeedbackReferralInviteCard({
         >
           Get 50% off for a friend
         </h2>
-        <p className="mt-3 text-sm leading-relaxed text-text sm:whitespace-nowrap sm:text-base">
+        <p className="mt-3 text-sm leading-relaxed text-text sm:text-base">
           Answer a few questions to unlock a discount code for your friend.
-        </p>
-        <p className="mt-2 text-sm leading-relaxed text-text-subtle sm:whitespace-nowrap">
-          Apply the code in Stripe Checkout. One use. Not on your own account.
         </p>
 
         <div className="mt-7 flex flex-col gap-2.5">
