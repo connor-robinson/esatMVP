@@ -45,6 +45,18 @@ python -u -m visual_engine.scripts.siphon_render_rejects --dry-run --limit 20
 
 Only pending items with real diagram `visual_type`s (graph/geometry/pedigree/etc.) are evaluated. ACCEPTs stay pending for human review; REJECTs are marked `rejected` with `[render_quality_acceptor]` feedback.
 
+## Siphon bad non-diagram (none/table) via quality gate
+
+Uses ESAT `quality_gate.assess_question` plus deterministic MathJax/table/syntax checks:
+
+```bash
+set QUALITY_GATE_DETERMINISTIC=1
+python -u -m visual_engine.scripts.siphon_quality_gate_rejects --workers 2
+python -u -m visual_engine.scripts.siphon_quality_gate_rejects --dry-run --limit 20
+```
+
+Rejects off-syllabus / unfit ESAT items, broken MathJax, malformed tables, and quality-gate `delete`/`regenerate`/`Major` outcomes. Survivors stay pending for human review.
+
 
 ## Benchmark vs your manual labels (Sep 2026)
 

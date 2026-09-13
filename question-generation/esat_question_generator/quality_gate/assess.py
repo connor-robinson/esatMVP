@@ -11,6 +11,10 @@ from .answer_key import build_answer_key_precheck
 from .curriculum import get_curriculum_for_row, get_math2_relocation_context, normalize_subject
 from .curriculum_flags import detect_curriculum_flags
 from .formatting import build_formatting_report, detect_formatting_issues
+from .presentation_checks import (
+    SIPHON_PRESENTATION_RUBRIC_ADDENDUM,
+    detect_presentation_issues,
+)
 from .defaults import deterministic_prechecks_enabled, quality_gate_model_try_order
 from .schemas import CurriculumFlag, QualityGateResult, parse_quality_gate_json
 
@@ -138,6 +142,17 @@ def build_question_payload(
         fmt_issues = detect_formatting_issues(row)
         if fmt_issues:
             payload["deterministic_formatting_flags"] = fmt_report.get("deterministic_formatting_flags")
+    # Always attach presentation precheck when siphon mode is on (tables / MathJax / syntax).
+    if row.get("siphon_presentation_mode"):
+        presentation = detect_presentation_issues(
+            row,
+            visual_type=str(row.get("visual_type") or ""),
+        )
+        payload["visual_type"] = row.get("visual_type")
+        payload["presentation_precheck"] = presentation
+        payload["presentation_reject"] = any(
+            str(i.get("severity") or "") == "reject" for i in presentation
+        )
     payload.update(get_math2_relocation_context(row))
     return payload
 
@@ -167,8 +182,10 @@ def build_assessment_system_user_prompts(
         "For Mathematics 1 rows with curriculum_math2_snapshot, check whether a sound question "
         "belongs on Math 2 (move_to_math2) before regenerate.\n\n"
         + rubric
-        + "\n\nAlways respond with a single JSON object only."
     )
+    if row.get("siphon_presentation_mode"):
+        system_prompt += "\n\n" + SIPHON_PRESENTATION_RUBRIC_ADDENDUM
+    system_prompt += "\n\nAlways respond with a single JSON object only."
     payload = build_question_payload(row, pre_flags=pre_flags, answer_key_row=answer_key_row)
     user_prompt = (
         "Grade this question. Input JSON:\n"
