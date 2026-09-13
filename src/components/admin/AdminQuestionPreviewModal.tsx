@@ -74,7 +74,7 @@ export function AdminQuestionPreviewModal({
         a.localeCompare(b),
       )
     : [];
-  const statementItems = question ? getQuestionStatementItems(question) : [];
+  const statementItems = question ? getQuestionStatementItems(question) : null;
 
   return (
     <div className="fixed inset-0 z-[120] flex items-end justify-center p-3 sm:items-center sm:p-6">
