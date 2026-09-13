@@ -94,8 +94,8 @@ export function FeedbackReferralCodeScreen({
             <p className="text-sm font-bold uppercase tracking-[0.12em] text-[#4C8BF5]">
               {redeemed ? "Already used" : "Thanks for the feedback"}
             </p>
-            <h1 className="mt-2 text-3xl font-bold tracking-tight text-text sm:text-4xl">
-              {redeemed ? "Friend code used" : "Your friend code is ready"}
+            <h1 className="mt-2 text-2xl font-bold tracking-tight text-text sm:text-3xl">
+              {redeemed ? "Friend code used" : "Your friend code is ready 🎉"}
             </h1>
             <p className="mt-3 text-base text-text-muted">
               {redeemed
