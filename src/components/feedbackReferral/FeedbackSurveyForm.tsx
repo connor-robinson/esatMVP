@@ -160,10 +160,7 @@ export function FeedbackSurveyForm({
 
             <div className="mx-auto mt-6 flex min-h-0 w-full max-w-3xl flex-1 flex-col">
               <div className="shrink-0">
-                <p className="text-xs font-medium uppercase tracking-[0.12em] text-text-muted">
-                  {survey.estimatedTime}
-                </p>
-                <h1 className="mt-2 text-2xl font-bold tracking-tight text-text sm:text-[1.75rem]">
+                <h1 className="text-2xl font-bold tracking-tight text-text sm:text-[1.75rem]">
                   {question.label}
                 </h1>
                 {question.help ? (
