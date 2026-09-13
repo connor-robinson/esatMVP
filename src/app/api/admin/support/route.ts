@@ -77,7 +77,10 @@ export async function GET(request: NextRequest) {
     .order("created_at", { ascending: false })
     .limit(limit);
 
-  if (status !== "all") {
+  if (status === "open") {
+    supportQuery = supportQuery.in("status", ["open", "in_progress"]);
+    legacyQuery = legacyQuery.in("status", ["open", "in_progress"]);
+  } else if (status !== "all") {
     supportQuery = supportQuery.eq("status", status);
     legacyQuery = legacyQuery.eq("status", status);
   }
@@ -280,6 +283,7 @@ export async function POST(request: NextRequest) {
     id?: unknown;
     body?: unknown;
     markResolved?: unknown;
+    subject?: unknown;
   };
 
   const source =
@@ -292,6 +296,8 @@ export async function POST(request: NextRequest) {
   const messageBody =
     typeof body.body === "string" ? body.body.trim() : "";
   const markResolved = body.markResolved === true;
+  const subjectOverride =
+    typeof body.subject === "string" ? body.subject.trim() : "";
 
   if (!source || !id || messageBody.length < 1) {
     return NextResponse.json(
@@ -316,7 +322,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Ticket not found" }, { status: 404 });
     }
     userId = ticket.user_id;
-    subject = `Re: ${ticket.subject}`;
+    subject = subjectOverride || `Re: ${ticket.subject}`;
   } else {
     const { data: ticket, error } = await admin.service
       .from("app_bug_reports")
@@ -328,7 +334,7 @@ export async function POST(request: NextRequest) {
     }
     userId = ticket.user_id;
     const parsed = parseLegacyDescription(String(ticket.description ?? ""));
-    subject = `Re: ${parsed.subject}`;
+    subject = subjectOverride || `Re: ${parsed.subject}`;
   }
 
   if (!userId) {

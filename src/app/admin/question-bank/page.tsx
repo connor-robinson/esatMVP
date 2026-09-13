@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import {
   Bar,
   BarChart,
@@ -140,6 +141,12 @@ export default function AdminQuestionBankPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href="/admin/question-bank/reports"
+            className="rounded-organic-md bg-secondary/25 px-3 py-2 text-sm font-semibold text-text"
+          >
+            Review reports
+          </Link>
           <select
             value={since}
             onChange={(e) =>

@@ -61,7 +61,7 @@ const CARDS: Array<{
   {
     href: "/admin/question-bank",
     title: "Question bank",
-    body: "Subject popularity, hardest questions, and unique coverage.",
+    body: "Subject popularity, hardest questions, reports, and coverage.",
     key: null,
   },
 ];
