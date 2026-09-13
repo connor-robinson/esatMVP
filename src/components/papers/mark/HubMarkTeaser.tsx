@@ -160,7 +160,7 @@ export function HubMarkPercentilePreview({
           If you sat the ESAT today, 18.4% of test-takers would outperform you.
         </p>
       </div>
-      <div className="absolute inset-0 flex items-center justify-center bg-[#ebebef]/55 p-4 backdrop-blur-[1px]">
+      <div className="absolute inset-0 flex items-center justify-center bg-[#c8c8d0]/55 p-4 backdrop-blur-[1px]">
         <HubMarkLoginToViewButton href={loginHref} />
       </div>
     </div>
