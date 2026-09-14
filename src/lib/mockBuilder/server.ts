@@ -10,7 +10,7 @@ import {
   mergeBlueprintConfig,
   withDiagramCount,
 } from "./blueprints";
-import { toMockCandidate, type RawBankQuestionRow } from "./metadata";
+import { toMockCandidate, withAttemptFlags, type RawBankQuestionRow } from "./metadata";
 import { assembleMockPaper, proposeReplacements } from "./select";
 import { filterMockPool, isDiagramQuestion, isFreeTierHookQuestion } from "./poolFilters";
 import {
@@ -84,22 +84,27 @@ export async function loadEligiblePool(
     allowIds?: Set<string>;
   },
 ): Promise<MockCandidateQuestion[]> {
+  // Include pending (off-bank) plus approved so mocks can deplete overnight stock first.
   const query = service
     .from("ai_generated_questions")
     .select(POOL_SELECT)
     .eq("subjects", subject)
-    .eq("status", "approved")
+    .in("status", ["approved", "pending"])
     .eq("mock_eligible", true)
-    .limit(2000);
+    .limit(3000);
 
   const { data, error } = await query;
   if (error) throw new Error(error.message);
-  const candidates = ((data as unknown as RawBankQuestionRow[] | null) ?? []).map(
-    toMockCandidate,
+  const rows = (data as unknown as RawBankQuestionRow[] | null) ?? [];
+  let candidates = rows.map(toMockCandidate);
+
+  const attemptedIds = await loadAttemptedQuestionIds(
+    service,
+    candidates.map((q) => q.id),
   );
+  candidates = withAttemptFlags(candidates, attemptedIds);
 
   if (options?.includeReserved) {
-    // Still drop free-tier hooks; keep reserved only when allowlisted.
     return candidates.filter((q) => {
       if (options.allowIds?.has(q.id)) return true;
       if (isFreeTierHookQuestion(q)) return false;
@@ -108,6 +113,27 @@ export async function loadEligiblePool(
   }
 
   return filterMockPool(candidates, { allowIds: options?.allowIds });
+}
+
+async function loadAttemptedQuestionIds(
+  service: SupabaseClient,
+  questionIds: string[],
+): Promise<Set<string>> {
+  if (questionIds.length === 0) return new Set();
+  const attempted = new Set<string>();
+  const pageSize = 500;
+  for (let i = 0; i < questionIds.length; i += pageSize) {
+    const chunk = questionIds.slice(i, i + pageSize);
+    const { data, error } = await service
+      .from("question_bank_attempts")
+      .select("question_id")
+      .in("question_id", chunk);
+    if (error) throw new Error(error.message);
+    for (const row of data ?? []) {
+      attempted.add((row as { question_id: string }).question_id);
+    }
+  }
+  return attempted;
 }
 
 /** Available diagram/visual questions for a subject (excludes free hooks + reserved). */
@@ -119,9 +145,9 @@ export async function countAvailableDiagrams(
     .from("ai_generated_questions")
     .select(POOL_SELECT)
     .eq("subjects", subject)
-    .eq("status", "approved")
+    .in("status", ["approved", "pending"])
     .eq("mock_eligible", true)
-    .limit(2000);
+    .limit(3000);
   const { data, error } = await query;
   if (error) throw new Error(error.message);
   const all = ((data as unknown as RawBankQuestionRow[] | null) ?? []).map(
@@ -154,7 +180,7 @@ export async function enrichMockMetadataForSubject(
     .from("ai_generated_questions")
     .select(POOL_SELECT)
     .eq("subjects", subject)
-    .eq("status", "approved")
+    .in("status", ["approved", "pending"])
     .eq("mock_eligible", true)
     .order("created_at", { ascending: false })
     .limit(options?.maxQuestions ?? 120);
@@ -233,19 +259,28 @@ export async function enrichMockMetadataForSubject(
 export async function loadUsedQuestionIds(
   service: SupabaseClient,
   excludeMockId?: string,
+  options?: {
+    /** Defaults to draft→published so multi-mock generation depletes the pool. */
+    statuses?: MockStatus[];
+  },
 ): Promise<Set<string>> {
-  let query = service
+  const activeStatuses = options?.statuses ?? [
+    "draft",
+    "review",
+    "approved",
+    "published",
+  ];
+  const { data, error } = await service
     .from("esat_mock_questions")
     .select("question_id, mock_id, esat_mocks!inner(status)")
-    .in("esat_mocks.status", ["approved", "published"]);
+    .in("esat_mocks.status", activeStatuses);
 
-  const { data, error } = await query;
   if (error) {
     // Fallback without embed if relationship name differs
     const { data: mocks } = await service
       .from("esat_mocks")
       .select("id")
-      .in("status", ["approved", "published"]);
+      .in("status", activeStatuses);
     const mockIds = (mocks ?? [])
       .map((m: { id: string }) => m.id)
       .filter((id) => id !== excludeMockId);
@@ -429,6 +464,24 @@ async function persistAssembly(
     if (error) throw new Error(error.message);
   }
 
+  // Stage pending off-bank picks so drafts stay publishable without entering practice.
+  const pendingIds = assembly.slots
+    .map((s) => s.question)
+    .filter((q): q is MockCandidateQuestion => Boolean(q) && q.status === "pending")
+    .map((q) => q.id);
+  if (pendingIds.length > 0) {
+    const { error: stageErr } = await service
+      .from("ai_generated_questions")
+      .update({
+        status: "approved",
+        practice_eligible: false,
+        updated_at: new Date().toISOString(),
+      })
+      .in("id", pendingIds)
+      .eq("status", "pending");
+    if (stageErr) throw new Error(stageErr.message);
+  }
+
   await service
     .from("esat_mocks")
     .update({
@@ -442,6 +495,28 @@ async function persistAssembly(
         similarityIssues: assembly.similarityIssues,
         gaps: assembly.gaps,
         notes: assembly.notes,
+        poolMix: {
+          offBank: assembly.slots.filter(
+            (s) =>
+              s.question &&
+              (s.question.status === "pending" ||
+                s.question.practiceEligible === false),
+          ).length,
+          unattemptedBank: assembly.slots.filter(
+            (s) =>
+              s.question &&
+              s.question.status === "approved" &&
+              s.question.practiceEligible &&
+              !s.question.hasAttempts,
+          ).length,
+          attemptedBank: assembly.slots.filter(
+            (s) =>
+              s.question &&
+              s.question.status === "approved" &&
+              s.question.practiceEligible &&
+              s.question.hasAttempts,
+          ).length,
+        },
       },
       updated_at: new Date().toISOString(),
     })
@@ -768,15 +843,17 @@ export async function transitionMockStatus(
   const fromStatus = mock.status;
 
   const questionIds = slots.map((s) => s.questionId);
-  const stillElsewhere = await loadUsedQuestionIds(service, mockId);
-  // loadUsedQuestionIds already excludes this mock; for release we need others only.
+  const stillElsewhereAny = await loadUsedQuestionIds(service, mockId);
+  const stillReservedElsewhere = await loadUsedQuestionIds(service, mockId, {
+    statuses: ["approved", "published"],
+  });
 
   if (toStatus === "published" || toStatus === "approved") {
     const check = assertCanPublish({
       status: toStatus,
       slots,
       questionCount: mock.question_count,
-      usedElsewhereIds: stillElsewhere,
+      usedElsewhereIds: stillElsewhereAny,
       fromStatus,
     });
     if (!check.ok) throw new Error(check.error);
@@ -800,7 +877,7 @@ export async function transitionMockStatus(
     fromStatus,
     toStatus,
     questionIds,
-    stillReservedElsewhere: stillElsewhere,
+    stillReservedElsewhere,
     currentUsageCounts: usageCounts,
   });
 

@@ -27,6 +27,9 @@ import {
   sequenceQuestions,
 } from "./sequence";
 import {
+  mockPoolTier,
+} from "./poolFilters";
+import {
   compareDifficultyToTypicalEsat,
   idealMeanDifficulty,
 } from "./difficultyVsTypical";
@@ -69,6 +72,7 @@ function makeQuestion(
     qualityGateVerdict: overrides.qualityGateVerdict ?? "Pass",
     hasAiMockDifficulty: overrides.hasAiMockDifficulty ?? false,
     generationId: overrides.generationId ?? null,
+    hasAttempts: overrides.hasAttempts ?? false,
   };
 }
 
@@ -621,5 +625,94 @@ describe("difficultyVsTypical", () => {
 
   it("returns null when difficulty is missing", () => {
     expect(compareDifficultyToTypicalEsat(null)).toBeNull();
+  });
+});
+
+describe("pool tier preference", () => {
+  it("exhausts off-bank questions before unattempted bank questions", () => {
+    const blueprint = getDefaultBlueprint("Math 1");
+    const offBank = Array.from({ length: 27 }, (_, i) =>
+      makeQuestion({
+        id: `off-${i}`,
+        status: "pending",
+        practiceEligible: true,
+        hasAttempts: false,
+        mockDifficulty: ((i % 5) + 1) as 1 | 2 | 3 | 4 | 5,
+        topicCode: ["M1", "M2", "M3", "M4", "M5", "M6", "M7"][i % 7],
+        primaryTag: ["M1", "M2", "M3", "M4", "M5", "M6", "M7"][i % 7],
+        correctOption: ["A", "B", "C", "D", "E"][i % 5],
+        stemSummary: `off bank unique ${i}`,
+        questionStem: `Off bank question body ${i}`,
+        qualityScore: 0.4,
+      }),
+    );
+    const unattempted = Array.from({ length: 40 }, (_, i) =>
+      makeQuestion({
+        id: `bank-${i}`,
+        status: "approved",
+        practiceEligible: true,
+        hasAttempts: false,
+        mockDifficulty: ((i % 5) + 1) as 1 | 2 | 3 | 4 | 5,
+        topicCode: ["M1", "M2", "M3", "M4", "M5", "M6", "M7"][i % 7],
+        primaryTag: ["M1", "M2", "M3", "M4", "M5", "M6", "M7"][i % 7],
+        correctOption: ["A", "B", "C", "D", "E"][i % 5],
+        stemSummary: `bank unique ${i}`,
+        questionStem: `Bank question body ${i}`,
+        qualityScore: 0.99,
+      }),
+    );
+
+    const assembly = assembleMockPaper({
+      blueprint,
+      pool: [...unattempted, ...offBank],
+      seed: 7,
+    });
+
+    expect(assembly.slots).toHaveLength(27);
+    expect(
+      assembly.slots.every((s) => s.question && mockPoolTier(s.question) === "off_bank"),
+    ).toBe(true);
+  });
+
+  it("uses unattempted bank only after off-bank is exhausted", () => {
+    const blueprint = getDefaultBlueprint("Math 1");
+    const offBank = Array.from({ length: 10 }, (_, i) =>
+      makeQuestion({
+        id: `off-small-${i}`,
+        status: "pending",
+        practiceEligible: false,
+        hasAttempts: false,
+        mockDifficulty: ((i % 5) + 1) as 1 | 2 | 3 | 4 | 5,
+        topicCode: ["M1", "M2", "M3", "M4", "M5", "M6", "M7"][i % 7],
+        primaryTag: ["M1", "M2", "M3", "M4", "M5", "M6", "M7"][i % 7],
+        correctOption: ["A", "B", "C", "D", "E"][i % 5],
+        stemSummary: `off small ${i}`,
+        questionStem: `Off small body ${i}`,
+      }),
+    );
+    const unattempted = Array.from({ length: 40 }, (_, i) =>
+      makeQuestion({
+        id: `unatt-${i}`,
+        status: "approved",
+        practiceEligible: true,
+        hasAttempts: false,
+        mockDifficulty: ((i % 5) + 1) as 1 | 2 | 3 | 4 | 5,
+        topicCode: ["M1", "M2", "M3", "M4", "M5", "M6", "M7"][i % 7],
+        primaryTag: ["M1", "M2", "M3", "M4", "M5", "M6", "M7"][i % 7],
+        correctOption: ["A", "B", "C", "D", "E"][i % 5],
+        stemSummary: `unatt ${i}`,
+        questionStem: `Unattempted body ${i}`,
+      }),
+    );
+
+    const assembly = assembleMockPaper({
+      blueprint,
+      pool: [...unattempted, ...offBank],
+      seed: 3,
+    });
+
+    const tiers = assembly.slots.map((s) => mockPoolTier(s.question!));
+    expect(tiers.filter((t) => t === "off_bank")).toHaveLength(10);
+    expect(tiers.filter((t) => t === "unattempted_bank")).toHaveLength(17);
   });
 });

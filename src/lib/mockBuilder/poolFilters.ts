@@ -62,4 +62,27 @@ export function filterMockPool(
   });
 }
 
+/**
+ * Selection priority for mock assembly.
+ * Prefer questions not in the student practice bank; never-attempted bank
+ * questions are a deep fallback; attempted bank questions are last resort.
+ */
+export type MockPoolTier = "off_bank" | "unattempted_bank" | "attempted_bank";
+
+export function mockPoolTier(q: MockCandidateQuestion): MockPoolTier {
+  const offBank =
+    q.status === "pending" ||
+    q.practiceEligible === false;
+  if (offBank) return "off_bank";
+  if (!q.hasAttempts) return "unattempted_bank";
+  return "attempted_bank";
+}
+
+/** Large score deltas so greedy fill exhausts higher tiers first. */
+export function mockPoolTierScoreBonus(tier: MockPoolTier): number {
+  if (tier === "off_bank") return 80;
+  if (tier === "unattempted_bank") return -35;
+  return -70;
+}
+
 export { FREE_TIER_GENERATION_ID_SET };

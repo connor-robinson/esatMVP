@@ -275,7 +275,19 @@ export function toMockCandidate(row: RawBankQuestionRow): MockCandidateQuestion 
     hasVisual: Boolean(row.has_visual),
     qualityGateVerdict: row.quality_gate_verdict ?? null,
     hasAiMockDifficulty,
+    hasAttempts: false,
   };
+}
+
+/** Attach attempt flags after loading bank rows. */
+export function withAttemptFlags(
+  candidates: MockCandidateQuestion[],
+  attemptedIds: Set<string>,
+): MockCandidateQuestion[] {
+  return candidates.map((q) => ({
+    ...q,
+    hasAttempts: attemptedIds.has(q.id),
+  }));
 }
 
 /** Effective time for paper workload: prefer observed median when present. */

@@ -15,7 +15,7 @@ import {
   totalWorkloadSeconds,
 } from "./scoring";
 import { detectGaps } from "./gaps";
-import { isDiagramQuestion, isFreeTierHookQuestion } from "./poolFilters";
+import { isDiagramQuestion, isFreeTierHookQuestion, mockPoolTier, mockPoolTierScoreBonus } from "./poolFilters";
 import type {
   MockBlueprintConfig,
   MockCandidateQuestion,
@@ -29,15 +29,17 @@ export type AssembleOptions = {
   pool: MockCandidateQuestion[];
   /** Locked slots that must remain (position 1-based). */
   lockedSlots?: MockSlot[];
-  /** Question IDs already used in other published/approved mocks (soft avoid). */
+  /** Question IDs already used in other mocks (soft avoid / hard exclude). */
   usedElsewhereIds?: Set<string>;
   maxIterations?: number;
   seed?: number;
 };
 
-function isPublishable(q: MockCandidateQuestion): boolean {
+/** Draft assembly may include pending off-bank questions; publish still requires approved. */
+function isSelectableForMock(q: MockCandidateQuestion): boolean {
+  const statusOk = q.status === "approved" || q.status === "pending";
   return (
-    q.status === "approved" &&
+    statusOk &&
     q.mockEligible &&
     Boolean(q.questionStem?.trim()) &&
     Boolean(q.correctOption) &&
@@ -122,6 +124,7 @@ function scoreCandidateFit(
   if (candidate.reservedForMock) score -= 100;
   if (isFreeTierHookQuestion(candidate)) score -= 100;
   score -= candidate.mockUsageCount * 0.5;
+  score += mockPoolTierScoreBonus(mockPoolTier(candidate));
 
   const diagramTarget = blueprint.presentationTargets.find(
     (t) => t.type === "diagram",
@@ -171,7 +174,7 @@ function greedySelect(
   const selectedIds = new Set(selected.map((q) => q.id));
   const available = pool.filter(
     (q) =>
-      isPublishable(q) &&
+      isSelectableForMock(q) &&
       !selectedIds.has(q.id) &&
       !usedElsewhere.has(q.id) &&
       !isFreeTierHookQuestion(q) &&
@@ -179,11 +182,21 @@ function greedySelect(
   );
 
   while (selected.length < blueprint.questionCount && available.length > 0) {
+    // Exhaust higher-priority tiers first (off-bank → unattempted → attempted).
+    const tierRank = { off_bank: 0, unattempted_bank: 1, attempted_bank: 2 };
+    let bestTier = 2;
+    for (const q of available) {
+      bestTier = Math.min(bestTier, tierRank[mockPoolTier(q)]);
+    }
+    const tierPool = available.filter(
+      (q) => tierRank[mockPoolTier(q)] === bestTier,
+    );
+
     let bestIdx = 0;
     let bestScore = Number.NEGATIVE_INFINITY;
-    for (let i = 0; i < available.length; i++) {
+    for (let i = 0; i < tierPool.length; i++) {
       const s = scoreCandidateFit(
-        available[i],
+        tierPool[i],
         selected,
         blueprint,
         usedElsewhere,
@@ -193,7 +206,9 @@ function greedySelect(
         bestIdx = i;
       }
     }
-    const [chosen] = available.splice(bestIdx, 1);
+    const chosen = tierPool[bestIdx];
+    const availIdx = available.findIndex((q) => q.id === chosen.id);
+    available.splice(availIdx, 1);
     selected.push(chosen);
     selectedIds.add(chosen.id);
   }
@@ -219,7 +234,7 @@ function iterativeImprove(
 
   const available = pool.filter(
     (q) =>
-      isPublishable(q) &&
+      isSelectableForMock(q) &&
       !current.some((c) => c.id === q.id) &&
       !usedElsewhere.has(q.id) &&
       !isFreeTierHookQuestion(q) &&
@@ -247,6 +262,11 @@ function iterativeImprove(
 
     for (const cand of available) {
       if (cand.id === outgoing.id) continue;
+      const outTier = mockPoolTier(outgoing);
+      const candTier = mockPoolTier(cand);
+      const tierRank = { off_bank: 0, unattempted_bank: 1, attempted_bank: 2 };
+      // Never demote an off-bank slot into bank stock during polishing.
+      if (tierRank[candTier] > tierRank[outTier]) continue;
       if (conflictsWithPaper(cand, current.filter((_, i) => i !== replaceIdx))) {
         continue;
       }
@@ -358,6 +378,17 @@ export function assembleMockPaper(options: AssembleOptions): PaperAssemblyResult
   const score = computePaperScore(sequenced, blueprint, similarityIssues);
   const gaps = detectGaps(sequenced, blueprint, similarityIssues);
 
+  const offBank = sequenced.filter((q) => mockPoolTier(q) === "off_bank").length;
+  const unattempted = sequenced.filter(
+    (q) => mockPoolTier(q) === "unattempted_bank",
+  ).length;
+  const attempted = sequenced.filter(
+    (q) => mockPoolTier(q) === "attempted_bank",
+  ).length;
+  notes.push(
+    `Pool mix: ${offBank} off-bank, ${unattempted} unattempted bank, ${attempted} attempted bank.`,
+  );
+
   const slots: MockSlot[] = sequenced.map((q, i) => ({
     position: i + 1,
     questionId: q.id,
@@ -406,7 +437,7 @@ export function proposeReplacements(
   const scored = pool
     .filter(
       (q) =>
-        isPublishable(q) &&
+        isSelectableForMock(q) &&
         !usedIds.has(q.id) &&
         !isFreeTierHookQuestion(q) &&
         !q.reservedForMock,

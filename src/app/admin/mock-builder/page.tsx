@@ -332,11 +332,13 @@ export default function AdminMockBuilderPage() {
         </div>
         <p className="mt-2 text-xs text-text-subtle">{diagramHint}</p>
         <p className="mt-1 text-xs text-text-subtle">
-          Generate first AI-labels missing 1–5 difficulty for this subject
-          (batch of unlabeled approved questions, not the whole bank), then
-          assembles the draft. Free-tier preview questions (first 10 per
-          subject) are never used. Approved/published mock questions stay
-          reserved and cannot be reused.
+          Selection priority: use up questions not in the practice bank first
+          (pending / mock-staged), then deeply deprioritised never-attempted
+          bank questions, then already-attempted bank questions only if needed.
+          Aim for about 5 mocks per subject so off-bank stock is consumed before
+          dipping into the bank. Drafts also exclude each other&apos;s questions
+          so generation does not reuse the same items. Free-tier preview
+          questions are never used.
         </p>
         {error ? <p className="mt-2 text-sm text-red-700">{error}</p> : null}
       </section>

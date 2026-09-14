@@ -120,6 +120,8 @@ export type MockCandidateQuestion = {
   qualityGateVerdict: string | null;
   /** True when mock_difficulty came from stored AI/manual field, not Easy/Med/Hard fallback. */
   hasAiMockDifficulty: boolean;
+  /** True when any student has attempted this question in the practice bank. */
+  hasAttempts: boolean;
 };
 
 export type MockSlot = {

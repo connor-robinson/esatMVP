@@ -264,6 +264,30 @@ export default function AdminMockDetailPage() {
           </div>
         ) : null}
 
+        {(() => {
+          const notes = mock.generation_notes as {
+            notes?: string[];
+            poolMix?: {
+              offBank?: number;
+              unattemptedBank?: number;
+              attemptedBank?: number;
+            };
+          } | null;
+          const mix = notes?.poolMix;
+          const mixLine = notes?.notes?.find((n) => n.startsWith("Pool mix:"));
+          if (!mix && !mixLine) return null;
+          return (
+            <div className="mb-6 rounded-lg border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-800">
+              <p className="font-semibold">Question sources</p>
+              <p className="mt-1">
+                {mix
+                  ? `${mix.offBank ?? 0} off-bank · ${mix.unattemptedBank ?? 0} unattempted bank · ${mix.attemptedBank ?? 0} attempted bank`
+                  : mixLine}
+              </p>
+            </div>
+          );
+        })()}
+
         <div className="mb-6 grid gap-3 rounded-lg border border-stone-200 bg-stone-50 p-4 text-sm sm:grid-cols-2 lg:grid-cols-3">
           <div>
             <div className="text-stone-500">Predicted difficulty</div>
