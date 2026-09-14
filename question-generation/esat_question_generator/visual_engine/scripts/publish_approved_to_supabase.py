@@ -238,6 +238,7 @@ def _build_row(
         "visual_assets": visual_assets,
         "practice_eligible": True,
         "reserved_for_mock": False,
+        "mock_eligible": True,
         "created_at": created,
     }
 
@@ -284,6 +285,7 @@ def publish(
     overwrite: bool,
     allow_missing_diagram: bool,
     question_ids: list[str] | None,
+    mock_pool_only: bool = False,
 ) -> dict[str, Any]:
     store = ReviewStore()
     items = store.list_items(status_filter="approved", latest_only=True)
@@ -301,6 +303,7 @@ def publish(
 
     summary: dict[str, Any] = {
         "dry_run": dry_run,
+        "mock_pool_only": mock_pool_only,
         "candidates": len(items),
         "published": 0,
         "skipped_existing": 0,
@@ -368,6 +371,11 @@ def publish(
                 image_key=image_key,
                 local_png=png,
             )
+            if mock_pool_only:
+                # Available for mock builder; withheld from student practice bank.
+                row["practice_eligible"] = False
+                row["reserved_for_mock"] = False
+                row["mock_eligible"] = True
 
             if dry_run:
                 summary["published"] += 1
@@ -426,6 +434,11 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="Comma-separated question_id list (e.g. nsaa-2462,nsaa-2422)",
     )
+    parser.add_argument(
+        "--mock-pool-only",
+        action="store_true",
+        help="Publish with practice_eligible=false so questions feed mocks but not the student bank",
+    )
     args = parser.parse_args(argv)
 
     question_ids = None
@@ -439,6 +452,7 @@ def main(argv: list[str] | None = None) -> int:
         overwrite=args.overwrite,
         allow_missing_diagram=args.allow_missing_diagram,
         question_ids=question_ids,
+        mock_pool_only=args.mock_pool_only,
     )
     print(json.dumps(summary, indent=2))
     if summary["errors"]:
