@@ -244,7 +244,7 @@ export function buildPastPaperTopWrongExportJson(
   return JSON.stringify(
     {
       ranking: "plus_four_wrong",
-      note: "plus_four_wrong_pct = 100 * (wrong + 2) / (attempts + 4)",
+      note: "Ranking uses each user's first attempt. plus_four_wrong_pct = 100 * (wrong + 2) / (users + 4). attempts = total tries including retakes.",
       range: meta.rangeLabel,
       since: meta.since,
       generated_at: meta.generatedAt,

@@ -533,12 +533,11 @@ export default function AdminPastPapersPage() {
                   Questions people get wrong most
                 </h2>
                 <p className="mt-2 text-xs text-text-subtle">
-                  Attempts count every try (retries included); Unique users is
-                  distinct people. Ranked by plus-four wrong rate: 100 × (wrong +
-                  2) / (attempts + 4). Min {stats.min_attempts} attempts ·{" "}
-                  {rangeLabel}. Showing{" "}
-                  {wrongExpanded ? "all loaded" : `top ${TOP_WRONG}`}. Operator
-                  and admin accounts are excluded.
+                  Ranked by each user&apos;s first attempt only (plus-four wrong
+                  rate). Unique users is the sample size; total tries includes
+                  retakes. Min {stats.min_attempts} unique users · {rangeLabel}.
+                  Showing {wrongExpanded ? "all loaded" : `top ${TOP_WRONG}`}.
+                  Operator and admin accounts are excluded.
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -581,21 +580,21 @@ export default function AdminPastPapersPage() {
                       </div>
                       <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-right text-xs sm:grid-cols-4">
                         <div>
-                          <p className="text-text-subtle">Attempts (all tries)</p>
+                          <p className="text-text-subtle">Unique users</p>
                           <p className="tabular-nums font-semibold text-text">
-                            {row.attempts}
+                            {row.users}
                           </p>
                         </div>
                         <div>
-                          <p className="text-text-subtle">Wrong</p>
+                          <p className="text-text-subtle">Wrong (1st try)</p>
                           <p className="tabular-nums font-semibold text-text">
                             {row.wrong} ({row.pct_wrong}%)
                           </p>
                         </div>
                         <div>
-                          <p className="text-text-subtle">Unique users</p>
+                          <p className="text-text-subtle">Total tries</p>
                           <p className="tabular-nums font-semibold text-text">
-                            {row.users}
+                            {row.attempts}
                           </p>
                         </div>
                         <div>
@@ -630,9 +629,9 @@ export default function AdminPastPapersPage() {
                     <th className="px-4 py-3 font-medium">Question</th>
                     <th className="px-4 py-3 font-medium">Exam</th>
                     <th className="px-4 py-3 font-medium">Section</th>
-                    <th className="px-4 py-3 font-medium">Attempts</th>
-                    <th className="px-4 py-3 font-medium">Wrong</th>
                     <th className="px-4 py-3 font-medium">Unique users</th>
+                    <th className="px-4 py-3 font-medium">Wrong (1st)</th>
+                    <th className="px-4 py-3 font-medium">Total tries</th>
                     <th className="px-4 py-3 font-medium">% wrong</th>
                     <th className="px-4 py-3 font-medium">+4 wrong</th>
                     <th className="px-4 py-3 font-medium">Options</th>
@@ -661,13 +660,13 @@ export default function AdminPastPapersPage() {
                         {row.section}
                       </td>
                       <td className="px-4 py-2.5 tabular-nums text-text">
-                        {row.attempts}
+                        {row.users}
                       </td>
                       <td className="px-4 py-2.5 tabular-nums text-text">
                         {row.wrong}
                       </td>
                       <td className="px-4 py-2.5 tabular-nums text-text-muted">
-                        {row.users}
+                        {row.attempts}
                       </td>
                       <td className="px-4 py-2.5 tabular-nums text-text-muted">
                         {row.pct_wrong}%
