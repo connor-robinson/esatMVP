@@ -35,8 +35,10 @@ import { generatePartIdsFromSections, generatePartIdFromRoadmapPart } from '@/li
 import { examNameToPaperType } from '@/lib/papers/paperConfig';
 import {
   applyExtraTimeMinutes,
-  fetchExtraTimePrefs,
 } from '@/lib/papers/extraTime';
+import {
+  fetchAccessArrangementPrefs,
+} from '@/lib/papers/restBreaks';
 
 interface PaperSessionState {
   // Session data
@@ -48,6 +50,10 @@ interface PaperSessionState {
   timeLimitMinutes: number;
   /** Percent extra time from access arrangements (0 if none). */
   extraTimePercentage: number;
+  /** Profile access arrangement: pause-the-clock rest breaks. */
+  hasRestBreaks: boolean;
+  /** True while a rest break overlay is active (freeze section elapsed clocks). */
+  isRestBreakActive: boolean;
   questionRange: { start: number; end: number };
   selectedSections: PaperSection[]; // Array of section names attempted in this session
   selectedPartIds: string[]; // Array of part IDs for granular tracking
@@ -117,6 +123,8 @@ interface PaperSessionState {
     questionOrder?: number[];
     /** Access arrangement: percent extra time (e.g. 25). Applied to overall + section timers. */
     extraTimePercentage?: number;
+    /** Access arrangement: pause-the-clock rest breaks. */
+    hasRestBreaks?: boolean;
   }) => Promise<void>;
   
   loadQuestions: (paperId: number) => Promise<void>;
@@ -138,6 +146,7 @@ interface PaperSessionState {
   setDeadline: (deadline: number | null) => void;
   setEndedAt: (endedAt: number | null) => void;
   setNotes: (notes: string) => void;
+  setRestBreakActive: (active: boolean) => void;
   
   resetSession: () => void;
   
@@ -196,6 +205,8 @@ const EMPTY_CLIENT_SESSION = {
   sessionName: '',
   timeLimitMinutes: 60,
   extraTimePercentage: 0,
+  hasRestBreaks: false,
+  isRestBreakActive: false,
   questionRange: { start: 1, end: 20 },
   selectedSections: [] as PaperSection[],
   selectedPartIds: [] as string[],
@@ -247,6 +258,8 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       sessionName: '',
       timeLimitMinutes: 60,
       extraTimePercentage: 0,
+      hasRestBreaks: false,
+      isRestBreakActive: false,
       questionRange: { start: 1, end: 20 },
       selectedSections: [],
       selectedPartIds: [],
@@ -313,9 +326,20 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         }
 
         let extraTimePercentage = Math.max(0, Number(config.extraTimePercentage) || 0);
-        if (config.extraTimePercentage === undefined) {
-          const prefs = await fetchExtraTimePrefs();
-          extraTimePercentage = prefs.enabled ? prefs.percentage : 0;
+        let hasRestBreaks = Boolean(config.hasRestBreaks);
+        if (
+          config.extraTimePercentage === undefined ||
+          config.hasRestBreaks === undefined
+        ) {
+          const prefs = await fetchAccessArrangementPrefs();
+          if (config.extraTimePercentage === undefined) {
+            extraTimePercentage = prefs.extraTime.enabled
+              ? prefs.extraTime.percentage
+              : 0;
+          }
+          if (config.hasRestBreaks === undefined) {
+            hasRestBreaks = prefs.restBreaks.enabled;
+          }
         }
         const timeLimitMinutes = applyExtraTimeMinutes(
           config.timeLimitMinutes,
@@ -373,6 +397,8 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           sessionName: config.sessionName,
           timeLimitMinutes,
           extraTimePercentage,
+          hasRestBreaks,
+          isRestBreakActive: false,
           questionRange: config.questionRange,
           selectedSections, // Sections attempted in this session
           selectedPartIds, // Part IDs for granular tracking
@@ -1206,6 +1232,49 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         set({ notes });
         get().schedulePersist();
       },
+
+      setRestBreakActive: (active) => {
+        const state = get();
+        if (active === state.isRestBreakActive) return;
+
+        const sectionIndex = state.currentSectionIndex;
+        const now = Date.now();
+
+        if (active) {
+          const sectionStartTime = state.sectionStartTimes[sectionIndex];
+          const newSectionElapsedTimes = [...state.sectionElapsedTimes];
+          const newSectionStartTimes = [...state.sectionStartTimes];
+          if (sectionStartTime) {
+            newSectionElapsedTimes[sectionIndex] =
+              (newSectionElapsedTimes[sectionIndex] || 0) +
+              (now - sectionStartTime);
+            // 0 marks the section clock as frozen during the break.
+            newSectionStartTimes[sectionIndex] = 0;
+          }
+          set({
+            isRestBreakActive: true,
+            sectionElapsedTimes: newSectionElapsedTimes,
+            sectionStartTimes: newSectionStartTimes,
+          });
+          return;
+        }
+
+        const sectionTimeLimit = state.sectionTimeLimits[sectionIndex] || 60;
+        const elapsedMs = state.sectionElapsedTimes[sectionIndex] || 0;
+        const remainingMs = Math.max(
+          0,
+          sectionTimeLimit * 60 * 1000 - elapsedMs,
+        );
+        const newSectionStartTimes = [...state.sectionStartTimes];
+        const newSectionDeadlines = [...state.sectionDeadlines];
+        newSectionStartTimes[sectionIndex] = now;
+        newSectionDeadlines[sectionIndex] = now + remainingMs;
+        set({
+          isRestBreakActive: false,
+          sectionStartTimes: newSectionStartTimes,
+          sectionDeadlines: newSectionDeadlines,
+        });
+      },
       
       resetSession: async () => {
         const state = get();
@@ -1866,12 +1935,12 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         }
         
         // Account for elapsed time when calculating remaining time
-        // Only count time when not on instruction page
+        // Only count time when not on instruction page / rest break
         const elapsedMs = state.sectionElapsedTimes[sectionIndex] || 0;
         const sectionStartTime = state.sectionStartTimes[sectionIndex];
         let currentElapsed = elapsedMs;
         
-        if (sectionStartTime) {
+        if (sectionStartTime && !state.isRestBreakActive) {
           currentElapsed += Date.now() - sectionStartTime;
         }
         
@@ -1888,6 +1957,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       updateTimerState: () => {
         const state = get();
         if (!state.sessionId) return;
+        if (state.isRestBreakActive) return;
         
         const now = Date.now();
         const currentSectionIndex = state.currentSectionIndex;
@@ -2282,6 +2352,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         sessionName: state.sessionName,
         timeLimitMinutes: state.timeLimitMinutes,
         extraTimePercentage: state.extraTimePercentage,
+        hasRestBreaks: state.hasRestBreaks,
         questionRange: state.questionRange,
         selectedSections: state.selectedSections,
         questions: state.questions,
@@ -2316,9 +2387,12 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         const persisted = { ...((persistedState as Record<string, unknown>) ?? {}) };
         delete persisted.isPaused;
         delete persisted.pausedAt;
+        // Never restore mid-break; clock freeze is ephemeral UI state.
+        delete persisted.isRestBreakActive;
         return {
           ...currentState,
           ...persisted,
+          isRestBreakActive: false,
         };
       },
     }

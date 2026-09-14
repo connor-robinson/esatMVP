@@ -42,6 +42,11 @@ import {
   preloadQuestionWithMinimumDelay,
   preloadQuestionsAssets,
 } from "./preloadQuestionAssets";
+import {
+  canStartRestBreak,
+  extendDeadlineByPause,
+  restBreaksRemaining,
+} from "@/lib/papers/restBreaks";
 
 /** Blurred spinner after End Exam / End Module confirm (specimen player). */
 /** Brief post-submit overlay before results (specimen-inspired, kept short). */
@@ -69,6 +74,10 @@ export interface UsePearsonExamControllerOptions {
   onQuestionIndexChange?: (index: number) => void;
   /** False for earlier sections of a multi-section paper. */
   isLastModule?: boolean;
+  /** Profile access arrangement: pause-the-clock rest breaks. */
+  restBreaksEnabled?: boolean;
+  /** Notify host when a rest break starts/ends (freeze store elapsed clocks). */
+  onRestBreakChange?: (active: boolean) => void;
 }
 
 export function usePearsonExamController(
@@ -91,6 +100,8 @@ export function usePearsonExamController(
     onQuestionsStarted,
     onQuestionIndexChange,
     isLastModule = true,
+    restBreaksEnabled = false,
+    onRestBreakChange,
   } = options;
 
   const durationMs = timeLimitSeconds * 1000;
@@ -106,6 +117,8 @@ export function usePearsonExamController(
   onQuestionsStartedRef.current = options.onQuestionsStarted;
   const onQuestionIndexChangeRef = useRef(options.onQuestionIndexChange);
   onQuestionIndexChangeRef.current = options.onQuestionIndexChange;
+  const onRestBreakChangeRef = useRef(onRestBreakChange);
+  onRestBreakChangeRef.current = onRestBreakChange;
 
   const [screen, setScreen] = useState<ExamScreen>(() => {
     if (introMode === "resume-questions") return "question";
@@ -165,6 +178,11 @@ export function usePearsonExamController(
   const [timerHidden, setTimerHidden] = useState(false);
   const [nowTick, setNowTick] = useState(() => Date.now());
   const [questionTransitionActive, setQuestionTransitionActive] = useState(false);
+  const [restBreakActive, setRestBreakActive] = useState(false);
+  const [restBreaksUsed, setRestBreaksUsed] = useState(0);
+  const [restBreakStartedAt, setRestBreakStartedAt] = useState<number | null>(
+    null,
+  );
   const transitionInFlightRef = useRef(false);
 
   const currentQuestion = questions[currentQuestionIndex] ?? null;
@@ -176,20 +194,25 @@ export function usePearsonExamController(
     screen === "end-module-confirmation" ||
     screen === "review";
 
-  // Tick while instruction or module clock is running.
+  // Tick while instruction or module clock is running (frozen during rest breaks).
   useEffect(() => {
-    if (completed) return;
+    if (completed || restBreakActive) return;
     if (moduleDeadline == null && instructionDeadline == null) return;
     const id = window.setInterval(() => setNowTick(Date.now()), 250);
     return () => window.clearInterval(id);
-  }, [completed, instructionDeadline, moduleDeadline]);
+  }, [completed, instructionDeadline, moduleDeadline, restBreakActive]);
 
   const activeTimerDeadline =
     screen === "instructions" && instructionDeadline != null
       ? instructionDeadline
       : moduleDeadline;
   const remaining = activeTimerDeadline
-    ? remainingMs(activeTimerDeadline, nowTick)
+    ? remainingMs(
+        activeTimerDeadline,
+        restBreakActive && restBreakStartedAt != null
+          ? restBreakStartedAt
+          : nowTick,
+      )
     : 0;
   const remainingLabel = formatRemainingMs(remaining);
 
@@ -236,13 +259,15 @@ export function usePearsonExamController(
   ]);
 
   useEffect(() => {
-    if (completed || moduleDeadline == null || timeExpired) return;
+    if (completed || moduleDeadline == null || timeExpired || restBreakActive) {
+      return;
+    }
     if (isModuleTimeExpired(moduleDeadline, nowTick)) {
       setTimeExpired(true);
       setNavigatorOpen(false);
       setScreen("review");
     }
-  }, [completed, moduleDeadline, nowTick, timeExpired]);
+  }, [completed, moduleDeadline, nowTick, restBreakActive, timeExpired]);
 
   const completeLoading = useCallback(() => {
     setScreen("nda");
@@ -321,7 +346,46 @@ export function usePearsonExamController(
     }
   }, [completed, instructionDeadline, nowTick, screen, startQuestions]);
 
-  const moduleLocked = completed || timeExpired || questionTransitionActive;
+  const moduleLocked =
+    completed || timeExpired || questionTransitionActive || restBreakActive;
+
+  const restBreaksLeft = restBreaksRemaining(restBreaksUsed);
+  const canTakeRestBreak = canStartRestBreak({
+    enabled: restBreaksEnabled,
+    used: restBreaksUsed,
+    alreadyActive: restBreakActive,
+  });
+
+  const startRestBreak = useCallback(() => {
+    if (
+      !canStartRestBreak({
+        enabled: restBreaksEnabled,
+        used: restBreaksUsed,
+        alreadyActive: restBreakActive,
+      })
+    ) {
+      return;
+    }
+    if (moduleDeadline == null) return;
+    const startedAt = Date.now();
+    setNavigatorOpen(false);
+    setRestBreakStartedAt(startedAt);
+    setRestBreakActive(true);
+    onRestBreakChangeRef.current?.(true);
+  }, [moduleDeadline, restBreakActive, restBreaksEnabled, restBreaksUsed]);
+
+  const endRestBreak = useCallback(() => {
+    if (!restBreakActive || restBreakStartedAt == null) return;
+    const resumedAt = Date.now();
+    setModuleDeadline((prev) =>
+      extendDeadlineByPause(prev, restBreakStartedAt, resumedAt),
+    );
+    setRestBreaksUsed((n) => n + 1);
+    setRestBreakActive(false);
+    setRestBreakStartedAt(null);
+    setNowTick(resumedAt);
+    onRestBreakChangeRef.current?.(false);
+  }, [restBreakActive, restBreakStartedAt]);
 
   const tryNavigateTo = useCallback(
     (index: number) => {
@@ -527,7 +591,12 @@ export function usePearsonExamController(
         "altKey" | "ctrlKey" | "metaKey" | "key" | "code" | "preventDefault"
       >,
     ) => {
-      if (completed || screen === "session-ending" || questionTransitionActive) {
+      if (
+        completed ||
+        screen === "session-ending" ||
+        questionTransitionActive ||
+        restBreakActive
+      ) {
         return false;
       }
       const endExamDialogOpen = screen === "end-exam-confirmation" || screen === "end-module-confirmation";
@@ -568,6 +637,7 @@ export function usePearsonExamController(
       navigatorOpen,
       questionTransitionActive,
       requestEndExam,
+      restBreakActive,
       screen,
       toggleCurrentFlag,
       zoomIn,
@@ -604,7 +674,14 @@ export function usePearsonExamController(
   const showTimer =
     (screen === "instructions" && instructionDeadline != null) ||
     (moduleDeadline != null && showQuestionCounter);
-  const showFlagToolbar = screen === "question" && !navigatorOpen;
+  const showRestBreakControl =
+    restBreaksEnabled &&
+    moduleDeadline != null &&
+    showQuestionCounter &&
+    !completed &&
+    !timeExpired &&
+    screen !== "session-ending";
+  const showFlagToolbar = screen === "question" && !navigatorOpen && !restBreakActive;
   const showPrequestionFooter =
     screen === "nda" ||
     screen === "instructions" ||
@@ -652,6 +729,12 @@ export function usePearsonExamController(
     questionCounterHidden,
     showTimer,
     timerHidden,
+    showRestBreakControl,
+    restBreakActive,
+    restBreaksLeft,
+    canTakeRestBreak,
+    startRestBreak,
+    endRestBreak,
     showFlagToolbar,
     showPrequestionFooter,
     showQuestionFooter,

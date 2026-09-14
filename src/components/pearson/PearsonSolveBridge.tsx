@@ -75,20 +75,24 @@ export function PearsonSolveBridge({
     setReviewFlag,
     setPaperFullscreenShowMainNavbar,
     setSectionStartTime,
+    setRestBreakActive,
     currentSectionIndex,
     navigateToQuestion,
     paperId,
     sessionId,
+    hasRestBreaks,
   } = usePaperSessionStore(
     useShallow((s) => ({
       setAnswer: s.setAnswer,
       setReviewFlag: s.setReviewFlag,
       setPaperFullscreenShowMainNavbar: s.setPaperFullscreenShowMainNavbar,
       setSectionStartTime: s.setSectionStartTime,
+      setRestBreakActive: s.setRestBreakActive,
       currentSectionIndex: s.currentSectionIndex,
       navigateToQuestion: s.navigateToQuestion,
       paperId: s.paperId,
       sessionId: s.sessionId,
+      hasRestBreaks: s.hasRestBreaks,
     })),
   );
 
@@ -165,6 +169,13 @@ export function PearsonSolveBridge({
     [globalOffset, navigateToQuestion],
   );
 
+  const handleRestBreakChange = useCallback(
+    (active: boolean) => {
+      setRestBreakActive(active);
+    },
+    [setRestBreakActive],
+  );
+
   const handleComplete = useCallback(
     (result: PearsonModuleResult) => {
       questions.forEach((q, i) => {
@@ -229,6 +240,8 @@ export function PearsonSolveBridge({
       isLastModule={isLastModule}
       paperId={paperId != null ? String(paperId) : null}
       sessionId={sessionId}
+      restBreaksEnabled={hasRestBreaks}
+      onRestBreakChange={handleRestBreakChange}
     />
   );
 }

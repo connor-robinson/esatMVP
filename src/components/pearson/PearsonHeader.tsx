@@ -13,6 +13,10 @@ interface PearsonHeaderProps {
   totalQuestions?: number;
   counterHidden?: boolean;
   onToggleCounter?: () => void;
+  showRestBreakControl?: boolean;
+  canTakeRestBreak?: boolean;
+  restBreaksLeft?: number;
+  onStartRestBreak?: () => void;
 }
 
 export function PearsonHeader({
@@ -26,9 +30,13 @@ export function PearsonHeader({
   totalQuestions = 0,
   counterHidden = false,
   onToggleCounter,
+  showRestBreakControl = false,
+  canTakeRestBreak = false,
+  restBreaksLeft = 0,
+  onStartRestBreak,
 }: PearsonHeaderProps) {
   const n = questionIndex + 1;
-  const showRight = showTimer || showQuestionCounter;
+  const showRight = showTimer || showQuestionCounter || showRestBreakControl;
   const headerClass = showRight
     ? "pearson-header-bar pearson-header-bar--full"
     : "pearson-header-bar pearson-header-bar--compact";
@@ -38,6 +46,27 @@ export function PearsonHeader({
       <div className="pearson-header-title">{examTitle}</div>
       {showRight ? (
         <div className="pearson-header-right">
+          {showRestBreakControl ? (
+            <button
+              type="button"
+              className="pearson-rest-break-btn"
+              onClick={onStartRestBreak}
+              disabled={!canTakeRestBreak}
+              aria-label={
+                canTakeRestBreak
+                  ? `Start rest break (${restBreaksLeft} remaining)`
+                  : "No rest breaks remaining"
+              }
+              title={
+                canTakeRestBreak
+                  ? `Pause the clock (${restBreaksLeft} left)`
+                  : "No rest breaks left for this section"
+              }
+            >
+              Pause Exam
+              <span className="pearson-rest-break-count">{restBreaksLeft}</span>
+            </button>
+          ) : null}
           {showTimer ? (
             <button
               type="button"

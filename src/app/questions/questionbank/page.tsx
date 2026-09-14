@@ -69,8 +69,14 @@ import {
 } from '@/lib/questionBank/sessionLaunchPrefetch';
 import {
   applyExtraTimeMinutes,
-  fetchExtraTimePrefs,
 } from '@/lib/papers/extraTime';
+import {
+  canStartRestBreak,
+  fetchAccessArrangementPrefs,
+  restBreaksRemaining,
+} from '@/lib/papers/restBreaks';
+import { RestBreakOverlay } from '@/components/exam/RestBreakOverlay';
+import '@/components/exam/restBreakOverlay.css';
 import {
   DIFFICULTY_MIX_PRESETS,
   type DifficultyMixPreset,
@@ -189,6 +195,9 @@ export default function QuestionBankPage() {
   const [timeLimitMinutes, setTimeLimitMinutes] = useState(0);
   const [deadline, setDeadline] = useState<number | null>(null);
   const [remainingTime, setRemainingTime] = useState<number | null>(null);
+  const [restBreaksEnabled, setRestBreaksEnabled] = useState(false);
+  const [restBreakActive, setRestBreakActive] = useState(false);
+  const [restBreaksUsed, setRestBreaksUsed] = useState(0);
 
   const [answerRevealed, setAnswerRevealed] = useState(false);
   const [showDetailedExplanation, setShowDetailedExplanation] = useState(false);
@@ -547,13 +556,16 @@ export default function QuestionBankPage() {
         updateCurrentQuestion(sessionQs[0]);
 
         const limitMinutes = Math.ceil(sessionQs.length * 1.5);
-        const extraPrefs = await fetchExtraTimePrefs();
+        const accessPrefs = await fetchAccessArrangementPrefs();
         const adjustedLimitMinutes = applyExtraTimeMinutes(
           limitMinutes,
-          extraPrefs,
+          accessPrefs.extraTime,
         );
         const startTime = Date.now();
         const timeLimitMs = adjustedLimitMinutes * 60 * 1000;
+        setRestBreaksEnabled(accessPrefs.restBreaks.enabled);
+        setRestBreakActive(false);
+        setRestBreaksUsed(0);
         setDeadline(startTime + timeLimitMs);
         setTimerStartTime(startTime);
         setTimeLimitMinutes(adjustedLimitMinutes);
@@ -777,6 +789,7 @@ export default function QuestionBankPage() {
   // Session countdown - stable interval; do not depend on completeSession (it changes every answer)
   useEffect(() => {
     if (!sessionMode || !deadline || sessionView !== 'playing') return;
+    if (restBreakActive) return;
 
     let interval: ReturnType<typeof setInterval> | null = null;
 
@@ -801,7 +814,43 @@ export default function QuestionBankPage() {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [sessionMode, deadline, sessionView]);
+  }, [sessionMode, deadline, sessionView, restBreakActive]);
+
+  const qbRestBreaksLeft = restBreaksRemaining(restBreaksUsed);
+  const qbCanTakeRestBreak = canStartRestBreak({
+    enabled: restBreaksEnabled,
+    used: restBreaksUsed,
+    alreadyActive: restBreakActive,
+  });
+
+  const startQbRestBreak = useCallback(() => {
+    if (
+      !canStartRestBreak({
+        enabled: restBreaksEnabled,
+        used: restBreaksUsed,
+        alreadyActive: restBreakActive,
+      })
+    ) {
+      return;
+    }
+    if (deadline == null || remainingTime == null) return;
+    setRestBreakActive(true);
+  }, [
+    deadline,
+    remainingTime,
+    restBreakActive,
+    restBreaksEnabled,
+    restBreaksUsed,
+  ]);
+
+  const endQbRestBreak = useCallback(() => {
+    if (!restBreakActive || remainingTime == null) return;
+    const remainingMs = Math.max(0, remainingTime) * 1000;
+    const now = Date.now();
+    setDeadline(now + remainingMs);
+    setRestBreaksUsed((n) => n + 1);
+    setRestBreakActive(false);
+  }, [remainingTime, restBreakActive]);
 
   // Count-up timer for regular practice mode
   useEffect(() => {
@@ -1034,13 +1083,16 @@ export default function QuestionBankPage() {
               config.timeLimitMinutes != null && config.timeLimitMinutes > 0
                 ? config.timeLimitMinutes
                 : Math.ceil(sessionQs.length * 1.5);
-            const extraPrefs = await fetchExtraTimePrefs();
+            const accessPrefs = await fetchAccessArrangementPrefs();
             const adjustedLimitMinutes = applyExtraTimeMinutes(
               limitMinutes,
-              extraPrefs,
+              accessPrefs.extraTime,
             );
             const startTime = Date.now();
             const timeLimitMs = adjustedLimitMinutes * 60 * 1000;
+            setRestBreaksEnabled(accessPrefs.restBreaks.enabled);
+            setRestBreakActive(false);
+            setRestBreaksUsed(0);
             setDeadline(startTime + timeLimitMs);
             setTimerStartTime(startTime);
             setTimeLimitMinutes(adjustedLimitMinutes);
@@ -1474,6 +1526,12 @@ export default function QuestionBankPage() {
           }
           showLeaveConfirm={showLeaveConfirm}
           flaggedIds={flaggedQuestionIds}
+          restBreaksEnabled={restBreaksEnabled && sessionView === 'playing'}
+          restBreakActive={restBreakActive}
+          restBreaksLeft={qbRestBreaksLeft}
+          canTakeRestBreak={qbCanTakeRestBreak}
+          onStartRestBreak={startQbRestBreak}
+          onEndRestBreak={endQbRestBreak}
           onToggleFlag={(id) => {
             setFlaggedQuestionIds((prev) => {
               const next = new Set(prev);
@@ -1621,18 +1679,30 @@ export default function QuestionBankPage() {
                         </span>
                       </div>
                     ) : sessionMode && remainingTime !== null && deadline ? (
-                      <div className="flex flex-col items-end gap-0.5 rounded-organic-lg bg-surface-mid px-3 py-2 sm:px-4">
-                        <span className="text-[10px] font-medium uppercase tracking-wide text-text-muted">
-                          Total time
-                        </span>
-                        <span
-                          className={cn(
-                            'tabular-nums text-lg font-semibold tracking-tight',
-                            getTimerColor(),
-                          )}
-                        >
-                          {formatTimerDisplay()}
-                        </span>
+                      <div className="flex flex-col items-end gap-1">
+                        {restBreaksEnabled && sessionView === 'playing' ? (
+                          <button
+                            type="button"
+                            className="rounded-md border border-border-subtle bg-surface px-2 py-1 text-[11px] font-semibold text-text disabled:opacity-50"
+                            onClick={startQbRestBreak}
+                            disabled={!qbCanTakeRestBreak || restBreakActive}
+                          >
+                            Pause ({qbRestBreaksLeft})
+                          </button>
+                        ) : null}
+                        <div className="flex flex-col items-end gap-0.5 rounded-organic-lg bg-surface-mid px-3 py-2 sm:px-4">
+                          <span className="text-[10px] font-medium uppercase tracking-wide text-text-muted">
+                            Total time
+                          </span>
+                          <span
+                            className={cn(
+                              'tabular-nums text-lg font-semibold tracking-tight',
+                              getTimerColor(),
+                            )}
+                          >
+                            {formatTimerDisplay()}
+                          </span>
+                        </div>
                       </div>
                     ) : null
                   }
@@ -1653,6 +1723,17 @@ export default function QuestionBankPage() {
                     ) : null
                   }
                 />
+
+                {restBreakActive ? (
+                  <RestBreakOverlay
+                    breaksRemainingAfterResume={Math.max(
+                      0,
+                      qbRestBreaksLeft - 1,
+                    )}
+                    onResume={endQbRestBreak}
+                    tone="esat"
+                  />
+                ) : null}
 
                 {sharedSolutionModals}
               </div>

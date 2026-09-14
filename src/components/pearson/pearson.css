@@ -385,6 +385,51 @@ html.pearson-exam-active body {
   outline-offset: 1px;
 }
 
+.pearson-rest-break-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  padding: 1px 6px;
+  margin: 0 0 2px;
+  font: inherit;
+  font-size: var(--pearson-font-size-ui);
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1.1;
+  height: auto;
+}
+
+.pearson-rest-break-btn:hover:not(:disabled) {
+  color: var(--pearson-hover-yellow);
+  border-color: var(--pearson-hover-yellow);
+}
+
+.pearson-rest-break-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.pearson-rest-break-btn:focus-visible {
+  outline: 1px dotted #ffffff;
+  outline-offset: 1px;
+}
+
+.pearson-rest-break-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.2);
+  font-size: 10px;
+  font-weight: 700;
+}
+
 .pearson-timer-label {
   white-space: nowrap;
 }

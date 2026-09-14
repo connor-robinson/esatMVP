@@ -1398,7 +1398,7 @@ export default function ProfilePage() {
                               savePreferences({ has_rest_breaks: checked }, "rest_breaks");
                             }}
                             label="Rest breaks"
-                            description='Pause-the-clock style breaks during timed practice'
+                            description="Pause-the-clock breaks during timed practice (up to 3 per section, matching UAT-UK). Content is hidden while the clock is paused."
                           />
                         </div>
                       </div>

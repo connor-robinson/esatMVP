@@ -221,6 +221,7 @@ export function PearsonPastPaperSession() {
     const tick = window.setInterval(() => {
       const state = usePaperSessionStore.getState();
       if (state.isMarkingInfo) return;
+      if (state.isRestBreakActive) return;
       if (state.currentPipelineState !== "section") return;
       incrementTime(state.currentQuestionIndex);
       updateTimerState();

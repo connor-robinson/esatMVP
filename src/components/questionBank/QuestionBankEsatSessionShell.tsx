@@ -21,6 +21,8 @@ import type {
 } from "@/types/questionBank";
 import { cn } from "@/lib/utils";
 import { QuestionSupportControl } from "@/components/support/QuestionSupportControl";
+import { RestBreakOverlay } from "@/components/exam/RestBreakOverlay";
+import "@/components/exam/restBreakOverlay.css";
 import "@/components/questionBank/esatUiPreview/esatUiPreview.css";
 
 type NavStatus = "unseen" | "incomplete" | "correct" | "incorrect";
@@ -106,6 +108,12 @@ export interface QuestionBankEsatSessionShellProps {
   footerExtra?: ReactNode;
   /** Hide the in-session report control (e.g. admin reviewing reports). */
   hideSupportControl?: boolean;
+  restBreaksEnabled?: boolean;
+  restBreakActive?: boolean;
+  restBreaksLeft?: number;
+  canTakeRestBreak?: boolean;
+  onStartRestBreak?: () => void;
+  onEndRestBreak?: () => void;
 }
 
 export function QuestionBankEsatSessionShell({
@@ -148,6 +156,12 @@ export function QuestionBankEsatSessionShell({
   belowQuestion,
   footerExtra,
   hideSupportControl = false,
+  restBreaksEnabled = false,
+  restBreakActive = false,
+  restBreaksLeft = 0,
+  canTakeRestBreak = false,
+  onStartRestBreak,
+  onEndRestBreak,
 }: QuestionBankEsatSessionShellProps) {
   const [timerHidden, setTimerHidden] = useState(false);
   const [counterHidden, setCounterHidden] = useState(false);
@@ -251,7 +265,15 @@ export function QuestionBankEsatSessionShell({
       data-theme="light"
       role="application"
       aria-label="Question bank session"
+      style={{ position: "relative" }}
     >
+      {restBreakActive && onEndRestBreak ? (
+        <RestBreakOverlay
+          breaksRemainingAfterResume={Math.max(0, restBreaksLeft - 1)}
+          onResume={onEndRestBreak}
+          tone="esat"
+        />
+      ) : null}
       <header className="eup-header">
         <div className="eup-header-left">
           <div className="eup-header-title">
@@ -267,6 +289,27 @@ export function QuestionBankEsatSessionShell({
           </button>
         </div>
         <div className="eup-header-right">
+          {!reviewMode && restBreaksEnabled && remainingTimeMs != null ? (
+            <button
+              type="button"
+              className="eup-header-meta"
+              onClick={onStartRestBreak}
+              disabled={!canTakeRestBreak || restBreakActive}
+              aria-label={
+                canTakeRestBreak
+                  ? `Start rest break (${restBreaksLeft} remaining)`
+                  : "No rest breaks remaining"
+              }
+              title={
+                canTakeRestBreak
+                  ? `Pause the clock (${restBreaksLeft} left)`
+                  : "No rest breaks left for this session"
+              }
+            >
+              <span>Pause</span>
+              <span aria-hidden>{restBreaksLeft}</span>
+            </button>
+          ) : null}
           {!reviewMode && remainingTimeMs != null ? (
             <button
               type="button"

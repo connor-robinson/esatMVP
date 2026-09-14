@@ -38,6 +38,8 @@ import { UnseenContentDialog } from "./UnseenContentDialog";
 import { PearsonQuestionTransitionOverlay } from "./PearsonQuestionTransitionOverlay";
 import { PearsonSessionEndingOverlay } from "./PearsonSessionEndingOverlay";
 import { QuestionSupportControl } from "@/components/support/QuestionSupportControl";
+import { RestBreakOverlay } from "@/components/exam/RestBreakOverlay";
+import "@/components/exam/restBreakOverlay.css";
 
 export interface PearsonExamPlayerProps {
   mode: ExamMode;
@@ -62,6 +64,9 @@ export interface PearsonExamPlayerProps {
   sessionId?: string | null;
   /** When false, hide the in-exam "Report question" control. */
   showQuestionReport?: boolean;
+  /** Profile access arrangement: pause-the-clock rest breaks. */
+  restBreaksEnabled?: boolean;
+  onRestBreakChange?: (active: boolean) => void;
 }
 
 export function PearsonExamPlayer({
@@ -85,6 +90,8 @@ export function PearsonExamPlayer({
   paperId = null,
   sessionId = null,
   showQuestionReport = true,
+  restBreaksEnabled = false,
+  onRestBreakChange,
 }: PearsonExamPlayerProps) {
   const c = usePearsonExamController({
     mode,
@@ -103,6 +110,8 @@ export function PearsonExamPlayer({
     onQuestionsStarted,
     onQuestionIndexChange,
     isLastModule,
+    restBreaksEnabled,
+    onRestBreakChange,
   });
 
   const hotkeyApi = useMemo(
@@ -165,6 +174,10 @@ export function PearsonExamPlayer({
                 totalQuestions={c.totalQuestions}
                 counterHidden={c.questionCounterHidden}
                 onToggleCounter={c.toggleQuestionCounterHidden}
+                showRestBreakControl={c.showRestBreakControl}
+                canTakeRestBreak={c.canTakeRestBreak}
+                restBreaksLeft={c.restBreaksLeft}
+                onStartRestBreak={c.startRestBreak}
               />
               {showToolbar ? (
                 <PearsonToolbar
@@ -234,6 +247,14 @@ export function PearsonExamPlayer({
                   This module is complete. Unused time does not carry over.
                 </p>
               </div>
+            ) : null}
+
+            {c.restBreakActive ? (
+              <RestBreakOverlay
+                breaksRemainingAfterResume={Math.max(0, c.restBreaksLeft - 1)}
+                onResume={c.endRestBreak}
+                tone="pearson"
+              />
             ) : null}
 
             {c.navigatorOpen ? (
