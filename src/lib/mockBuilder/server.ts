@@ -1004,7 +1004,9 @@ export async function loadMockPoolInventory(
   };
 
   for (const row of offBank) {
-    const subject = row.subjects ?? "Unknown";
+    const subject = (row.subjects ?? "Unknown").trim() || "Unknown";
+    // TMUA Paper 1/2 are not part of the ESAT mock pool inventory.
+    if (subject === "Paper 1" || subject === "Paper 2") continue;
     const entry = bump(subject);
     if (row.status === "pending") entry.pending += 1;
     else if (row.status === "approved" && row.practice_eligible === false) {

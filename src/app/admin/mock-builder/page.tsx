@@ -187,17 +187,34 @@ export default function AdminMockBuilderPage() {
     );
   }
 
-  const offBankRows =
-    inventory?.subjects.map((row) => [
-      row.subject,
-      row.mockStaged,
-      row.pending,
-      row.totalNotInPracticeBank,
-    ]) ?? [];
+  const offBankSubjects =
+    inventory?.subjects.filter((row) => row.totalNotInPracticeBank > 0) ?? [];
+  const offBankRows = offBankSubjects.map((row) => [
+    row.subject,
+    row.mockStaged,
+    row.pending,
+    row.totalNotInPracticeBank,
+  ]);
+  const offBankTotals = offBankSubjects.reduce(
+    (acc, row) => {
+      acc.mockStaged += row.mockStaged;
+      acc.pending += row.pending;
+      acc.total += row.totalNotInPracticeBank;
+      return acc;
+    },
+    { mockStaged: 0, pending: 0, total: 0 },
+  );
 
-  const unattemptedRows =
-    inventory?.subjects.map((row) => [row.subject, row.unattemptedInBank]) ??
-    [];
+  const unattemptedSubjects =
+    inventory?.subjects.filter((row) => row.unattemptedInBank > 0) ?? [];
+  const unattemptedRows = unattemptedSubjects.map((row) => [
+    row.subject,
+    row.unattemptedInBank,
+  ]);
+  const unattemptedTotal = unattemptedSubjects.reduce(
+    (sum, row) => sum + row.unattemptedInBank,
+    0,
+  );
 
   return (
     <Container size="lg" className="py-10">
@@ -227,12 +244,12 @@ export default function AdminMockBuilderPage() {
             headers={["Subject", "Mock-staged", "Pending", "Total"]}
             rows={offBankRows}
             footer={
-              inventory
+              offBankSubjects.length
                 ? [
                     "Total",
-                    inventory.totals.mockStaged,
-                    inventory.totals.pending,
-                    inventory.totals.totalNotInPracticeBank,
+                    offBankTotals.mockStaged,
+                    offBankTotals.pending,
+                    offBankTotals.total,
                   ]
                 : undefined
             }
@@ -243,8 +260,8 @@ export default function AdminMockBuilderPage() {
             headers={["Subject", "Unattempted"]}
             rows={unattemptedRows}
             footer={
-              inventory
-                ? ["Total", inventory.totals.unattemptedInBank]
+              unattemptedSubjects.length
+                ? ["Total", unattemptedTotal]
                 : undefined
             }
           />
