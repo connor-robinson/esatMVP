@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import type { MockPoolInventory } from "@/lib/mockBuilder/types";
+import { compareDifficultyToTypicalEsat } from "@/lib/mockBuilder/difficultyVsTypical";
 import {
   MOCK_BUILDER_SUBJECTS,
   type EsatMockRow,
@@ -349,12 +350,18 @@ export default function AdminMockBuilderPage() {
                 <th className="py-2 pr-3 font-medium">Status</th>
                 <th className="py-2 pr-3 font-medium">Access</th>
                 <th className="py-2 pr-3 font-medium">Difficulty</th>
+                <th className="py-2 pr-3 font-medium">Vs typical ESAT</th>
                 <th className="py-2 pr-3 font-medium">Workload</th>
                 <th className="py-2 font-medium">AI review</th>
               </tr>
             </thead>
             <tbody>
-              {mocks.map((m) => (
+              {mocks.map((m) => {
+                const vs = compareDifficultyToTypicalEsat(
+                  m.predicted_difficulty,
+                  m.blueprint_snapshot,
+                );
+                return (
                 <tr key={m.id} className="border-b border-border-subtle/60">
                   <td className="py-2.5 pr-3">
                     <Link
@@ -373,6 +380,7 @@ export default function AdminMockBuilderPage() {
                       ? Number(m.predicted_difficulty).toFixed(1)
                       : "–"}
                   </td>
+                  <td className="py-2.5 pr-3 text-text">{vs?.label ?? "–"}</td>
                   <td className="py-2.5 pr-3 tabular-nums text-text">
                     {m.predicted_workload_seconds != null
                       ? `${Math.round(m.predicted_workload_seconds / 60)} min`
@@ -386,10 +394,11 @@ export default function AdminMockBuilderPage() {
                       : "–"}
                   </td>
                 </tr>
-              ))}
+                );
+              })}
               {mocks.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-6 text-text-muted">
+                  <td colSpan={7} className="py-6 text-text-muted">
                     No mocks yet. Generate your first draft above.
                   </td>
                 </tr>

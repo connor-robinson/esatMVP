@@ -26,6 +26,10 @@ import {
   isStrictlyAscendingDifficulty,
   sequenceQuestions,
 } from "./sequence";
+import {
+  compareDifficultyToTypicalEsat,
+  idealMeanDifficulty,
+} from "./difficultyVsTypical";
 import type { MockCandidateQuestion } from "./types";
 
 function makeQuestion(
@@ -589,5 +593,33 @@ describe("topic constraints", () => {
     expect(scoreTopicCoverage(diverse, blueprint)).toBeGreaterThan(
       scoreTopicCoverage(concentrated, blueprint),
     );
+  });
+});
+
+describe("difficultyVsTypical", () => {
+  it("ideal mean from default blueprint is about 3.15", () => {
+    const mean = idealMeanDifficulty(getDefaultBlueprint("Math 1"));
+    expect(mean).toBeCloseTo(85 / 27, 5);
+  });
+
+  it("labels typical, easier, and harder papers", () => {
+    const typical = compareDifficultyToTypicalEsat(3.15);
+    expect(typical?.band).toBe("typical");
+    expect(typical?.summary).toMatch(/About as hard as a typical ESAT/);
+
+    const easier = compareDifficultyToTypicalEsat(2.8);
+    expect(easier?.band).toBe("easier");
+    expect(easier?.label).toBe("Slightly easier");
+
+    const harder = compareDifficultyToTypicalEsat(3.5);
+    expect(harder?.band).toBe("harder");
+    expect(harder?.summary).toMatch(/Slightly harder than a typical ESAT/);
+
+    const muchHarder = compareDifficultyToTypicalEsat(4.0);
+    expect(muchHarder?.band).toBe("much_harder");
+  });
+
+  it("returns null when difficulty is missing", () => {
+    expect(compareDifficultyToTypicalEsat(null)).toBeNull();
   });
 });

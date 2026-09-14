@@ -12,6 +12,7 @@ import type {
   PaperCalibrationStats,
   QuestionCalibrationStats,
 } from "@/lib/mockBuilder/types";
+import { compareDifficultyToTypicalEsat } from "@/lib/mockBuilder/difficultyVsTypical";
 
 type AlternativesState = {
   position: number;
@@ -234,6 +235,11 @@ export default function AdminMockDetailPage() {
       : "REVIEW"
     : "–";
 
+  const vsTypical = compareDifficultyToTypicalEsat(
+    mock.predicted_difficulty,
+    mock.blueprint_snapshot,
+  );
+
   return (
     <main className="py-10">
       <Container size="lg">
@@ -251,6 +257,13 @@ export default function AdminMockDetailPage() {
           </p>
         </div>
 
+        {vsTypical ? (
+          <div className="mb-6 rounded-lg border border-stone-300 bg-amber-50 px-4 py-3 text-sm text-stone-900">
+            <p className="font-semibold">Vs typical ESAT</p>
+            <p className="mt-1">{vsTypical.summary}</p>
+          </div>
+        ) : null}
+
         <div className="mb-6 grid gap-3 rounded-lg border border-stone-200 bg-stone-50 p-4 text-sm sm:grid-cols-2 lg:grid-cols-3">
           <div>
             <div className="text-stone-500">Predicted difficulty</div>
@@ -259,6 +272,10 @@ export default function AdminMockDetailPage() {
                 ? `${Number(mock.predicted_difficulty).toFixed(1)} / 5`
                 : "–"}
             </div>
+          </div>
+          <div>
+            <div className="text-stone-500">Vs typical ESAT</div>
+            <div className="font-medium">{vsTypical?.label ?? "–"}</div>
           </div>
           <div>
             <div className="text-stone-500">Predicted workload</div>

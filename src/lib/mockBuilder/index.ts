@@ -14,3 +14,4 @@ export * from "./access";
 export * from "./aiMetadata";
 export * from "./vertexClient";
 export * from "./poolFilters";
+export * from "./difficultyVsTypical";
