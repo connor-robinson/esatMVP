@@ -11,7 +11,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, BarChart3, X } from "lucide-react";
-import { FermiGuessrIcon } from "@/components/icons/FermiGuessrIcon";
 import { cn } from "@/lib/utils";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import type { FermiQuestion, PlayableFermiQuestion } from "@/config/fermiQuestions";
@@ -342,7 +341,7 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
         <button
           type="button"
           onClick={() => window.location.reload()}
-          className="rounded-organic-lg bg-secondary px-5 py-2.5 text-sm font-bold text-white"
+          className="rounded-md bg-secondary px-5 py-2.5 text-sm font-bold text-white"
         >
           Retry
         </button>
@@ -354,16 +353,11 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
     <div className="relative flex h-[calc(100vh-58px)] max-h-[calc(100vh-58px)] flex-col overflow-hidden bg-background">
       {/* Header */}
       <header className="flex shrink-0 items-center justify-between px-4 py-4 sm:px-6">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-organic-lg bg-secondary/20 text-secondary">
-            <FermiGuessrIcon className="h-5 w-5" strokeWidth={2.25} />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold leading-tight text-text">
-              {FERMI_GUESSR_NAME} #{puzzleNumber}
-            </h1>
-            {displayPhase === "summary" && <DailyResetSubtext />}
-          </div>
+        <div>
+          <h1 className="text-lg font-bold leading-tight text-text">
+            {FERMI_GUESSR_NAME} #{puzzleNumber}
+          </h1>
+          {displayPhase === "summary" && <DailyResetSubtext />}
         </div>
         <div className="flex items-center gap-3">
           {displayPhase !== "summary" && (
@@ -374,7 +368,7 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
           <button
             type="button"
             onClick={onExit}
-            className="flex h-10 w-10 items-center justify-center rounded-organic-lg bg-surface text-text-muted outline-none transition-colors hover:bg-surface-mid hover:text-text"
+            className="flex h-10 w-10 items-center justify-center rounded-sm bg-surface text-text-muted outline-none transition-colors hover:bg-surface-mid hover:text-text"
             title="Exit game"
           >
             <X className="h-5 w-5" strokeWidth={2.25} />
@@ -384,9 +378,9 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
 
       {/* Progress bar */}
       {displayPhase !== "summary" && (
-        <div className="mx-4 mb-2 h-1.5 shrink-0 overflow-hidden rounded-full bg-surface sm:mx-6">
+        <div className="mx-4 mb-2 h-1.5 shrink-0 overflow-hidden rounded-sm bg-surface sm:mx-6">
           <div
-            className="h-full rounded-full bg-secondary transition-all duration-normal ease-signature"
+            className="h-full rounded-sm bg-secondary transition-all duration-normal ease-signature"
             style={{
               width: `${((index + (displayPhase === "revealed" ? 1 : 0)) / round.length) * 100}%`,
             }}
@@ -479,7 +473,7 @@ function PlayingView({
         {hasInput && (
           <div
             className={cn(
-              "flex min-h-[2.5rem] items-center justify-center rounded-xl px-3 py-2 text-center transition-colors",
+              "flex min-h-[2.5rem] items-center justify-center rounded-sm px-3 py-2 text-center transition-colors",
               parsedPreview != null
                 ? "bg-primary/10 text-primary"
                 : "bg-error/10 text-error",
@@ -516,7 +510,7 @@ function PlayingView({
             autoComplete="off"
             spellCheck={false}
             className={cn(
-              "h-16 w-full rounded-2xl border-0 pl-5 pr-16 text-2xl font-semibold outline-none transition-all duration-75",
+              "h-16 w-full rounded-md border-0 pl-5 pr-16 text-2xl font-semibold outline-none transition-all duration-75",
               error
                 ? "bg-error/20 text-error focus:ring-0"
                 : "bg-surface-elevated text-text focus:ring-0",
@@ -528,7 +522,7 @@ function PlayingView({
             onClick={onSubmit}
             disabled={!input.trim() || submitting}
             className={cn(
-              "absolute right-2 top-1/2 -translate-y-1/2 rounded-xl p-3 outline-none transition-all",
+              "absolute right-2 top-1/2 -translate-y-1/2 rounded-sm p-3 outline-none transition-all",
               input.trim()
                 ? "bg-secondary/20 text-secondary hover:scale-110 hover:bg-secondary/30"
                 : "cursor-not-allowed bg-surface-elevated text-text-disabled",
@@ -588,7 +582,7 @@ function RevealedView({
       {/* Same input footprint as playing */}
       <div className="flex w-full max-w-md flex-col gap-2">
         <div
-          className="flex min-h-[2.5rem] items-center justify-center rounded-xl bg-primary/10 px-3 py-2 text-center text-primary"
+          className="flex min-h-[2.5rem] items-center justify-center rounded-sm bg-primary/10 px-3 py-2 text-center text-primary"
           aria-live="polite"
         >
           <span className="text-base font-semibold">
@@ -599,7 +593,7 @@ function RevealedView({
           </span>
         </div>
         <div
-          className="flex h-16 w-full items-center rounded-2xl bg-surface-elevated px-5 text-2xl font-semibold text-text"
+          className="flex h-16 w-full items-center rounded-md bg-surface-elevated px-5 text-2xl font-semibold text-text"
           aria-label={`Your guess: ${input || formatFullNumber(guess)}`}
         >
           <span className="truncate">{input.trim() || formatFullNumber(guess)}</span>
@@ -621,7 +615,7 @@ function RevealedView({
         <button
           type="button"
           onClick={onNext}
-          className="flex shrink-0 items-center justify-center gap-2 self-start rounded-organic-lg bg-secondary px-5 py-2.5 text-sm font-bold text-white outline-none transition-all hover:scale-[1.02] active:scale-[0.98]"
+          className="flex shrink-0 items-center justify-center gap-2 self-start rounded-md bg-secondary px-5 py-2.5 text-sm font-bold text-white outline-none transition-all hover:scale-[1.02] active:scale-[0.98]"
         >
           {isLastQuestion ? "See results" : "Next question"}
           <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
@@ -663,7 +657,7 @@ function FermiResultsScoreGrid({
               key={r.question.id}
               type="button"
               className={cn(
-                "flex flex-col items-center gap-1 rounded-organic-lg py-3 outline-none transition-colors duration-150",
+                "flex flex-col items-center gap-1 rounded-md py-3 outline-none transition-colors duration-150",
                 isActive ? "bg-surface" : "bg-transparent hover:bg-surface/70",
               )}
               onMouseEnter={() => onActiveChange(i)}
@@ -695,7 +689,7 @@ function FermiResultDetailPanel({ result }: { result: FermiResult }) {
   const tone = toneClasses[result.verdict.tone];
 
   return (
-    <div className={cn("rounded-organic-lg p-4", tone.bg)}>
+    <div className={cn("rounded-md p-4", tone.bg)}>
       <div className="flex flex-col gap-3">
         <p className="text-balance text-sm font-medium leading-snug text-text sm:text-base">
           {result.question.question}
@@ -806,7 +800,7 @@ function SummaryView({
         <button
           type="button"
           onClick={onViewStats}
-          className="flex w-full items-center justify-center gap-2 rounded-organic-lg bg-secondary px-4 py-3 text-sm font-bold text-white outline-none transition-all hover:scale-[1.02] active:scale-[0.98]"
+          className="flex w-full items-center justify-center gap-2 rounded-md bg-secondary px-4 py-3 text-sm font-bold text-white outline-none transition-all hover:scale-[1.02] active:scale-[0.98]"
         >
           <BarChart3 className="h-4 w-4" strokeWidth={2.25} />
           View stats
@@ -814,7 +808,7 @@ function SummaryView({
         <button
           type="button"
           onClick={onCopyShare}
-          className="flex w-full items-center justify-center gap-2 rounded-organic-lg bg-surface px-4 py-3 text-sm font-bold text-text outline-none transition-colors hover:bg-surface-mid"
+          className="flex w-full items-center justify-center gap-2 rounded-md bg-surface px-4 py-3 text-sm font-bold text-text outline-none transition-colors hover:bg-surface-mid"
         >
           {copied ? "Copied!" : "Share result"}
         </button>
