@@ -70,6 +70,10 @@ function makeQuestion(
     mockUsageCount: overrides.mockUsageCount ?? 0,
     hasVisual: overrides.hasVisual ?? false,
     qualityGateVerdict: overrides.qualityGateVerdict ?? "Pass",
+    qualityGateAction: overrides.qualityGateAction ?? "approve",
+    qualityGateReason: overrides.qualityGateReason ?? null,
+    qualityGateAssessedAt: overrides.qualityGateAssessedAt ?? null,
+    solutionReasoning: overrides.solutionReasoning ?? null,
     hasAiMockDifficulty: overrides.hasAiMockDifficulty ?? false,
     generationId: overrides.generationId ?? null,
     hasAttempts: overrides.hasAttempts ?? false,
@@ -597,6 +601,41 @@ describe("topic constraints", () => {
     expect(scoreTopicCoverage(diverse, blueprint)).toBeGreaterThan(
       scoreTopicCoverage(concentrated, blueprint),
     );
+  });
+});
+
+describe("question quality scan heuristics", () => {
+  it("flags missing correct option as Major", async () => {
+    const { scanMockQuestionQuality } = await import("./questionQualityScan");
+    const q = makeQuestion({
+      id: "broken",
+      qualityGateVerdict: null,
+      options: { A: "1", B: "2", C: "3", D: "4" },
+      correctOption: "E",
+      questionStem: "Stem",
+    });
+    const result = await scanMockQuestionQuality(
+      [{ position: 1, questionId: q.id, locked: false, question: q }],
+      { force: true },
+    );
+    // force skips DB; without LLM falls back to heuristic
+    expect(result.byPosition[0].verdict).toBe("Major");
+    expect(result.byPosition[0].flags).toContain("correct_not_in_options");
+  });
+
+  it("reuses existing quality-gate Pass from DB", async () => {
+    const { scanMockQuestionQuality } = await import("./questionQualityScan");
+    const q = makeQuestion({
+      id: "ok",
+      qualityGateVerdict: "Pass",
+      qualityGateAction: "approve",
+      qualityGateReason: "Already checked",
+    });
+    const result = await scanMockQuestionQuality([
+      { position: 1, questionId: q.id, locked: false, question: q },
+    ]);
+    expect(result.byPosition[0].source).toBe("db");
+    expect(result.byPosition[0].verdict).toBe("Pass");
   });
 });
 

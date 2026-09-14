@@ -188,6 +188,9 @@ export type RawBankQuestionRow = {
   graphs?: unknown;
   graph_specs?: unknown;
   quality_gate_verdict?: string | null;
+  quality_gate_action?: string | null;
+  quality_gate_reason?: string | null;
+  quality_gate_assessed_at?: string | null;
 };
 
 export function toMockCandidate(row: RawBankQuestionRow): MockCandidateQuestion {
@@ -274,6 +277,10 @@ export function toMockCandidate(row: RawBankQuestionRow): MockCandidateQuestion 
     mockUsageCount: row.mock_usage_count ?? 0,
     hasVisual: Boolean(row.has_visual),
     qualityGateVerdict: row.quality_gate_verdict ?? null,
+    qualityGateAction: row.quality_gate_action ?? null,
+    qualityGateReason: row.quality_gate_reason ?? null,
+    qualityGateAssessedAt: row.quality_gate_assessed_at ?? null,
+    solutionReasoning: row.solution_reasoning ?? null,
     hasAiMockDifficulty,
     hasAttempts: false,
   };

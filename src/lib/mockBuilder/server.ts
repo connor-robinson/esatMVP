@@ -49,7 +49,8 @@ const POOL_SELECT = `
   mock_difficulty, estimated_time_seconds, observed_median_time_seconds,
   reasoning_type, presentation_type, quality_score,
   mock_eligible, practice_eligible, reserved_for_mock, mock_usage_count,
-  has_visual, visual_type, graphs, quality_gate_verdict
+  has_visual, visual_type, graphs, quality_gate_verdict, quality_gate_action,
+  quality_gate_reason, quality_gate_assessed_at
 `.replace(/\s+/g, " ");
 
 export async function getExcludePublishedFromPractice(
@@ -609,7 +610,96 @@ export async function generateAndPersist(
     lockedSlots.map((s) => [s.questionId, true] as const),
   );
   await persistAssembly(service, mockId, assembly, lockMap);
+
+  // Per-question stem/options/answer-key scan (uses DB QG when present, else LLM).
+  try {
+    const { data: notesRow } = await service
+      .from("esat_mocks")
+      .select("generation_notes")
+      .eq("id", mockId)
+      .maybeSingle();
+    const existingNotes =
+      (notesRow?.generation_notes as Record<string, unknown> | null) ?? {};
+
+    const { slots: scannedSlots } = await getMockWithSlots(service, mockId);
+    const { scanMockQuestionQuality } = await import("./questionQualityScan");
+    const questionQualityScan = await scanMockQuestionQuality(scannedSlots);
+    assembly.notes.push(
+      `Question quality scan: ${questionQualityScan.summary.pass} Pass, ${questionQualityScan.summary.minor} Minor, ${questionQualityScan.summary.major} Major, ${questionQualityScan.summary.unscanned} unscanned (${questionQualityScan.source}).`,
+    );
+    await service
+      .from("esat_mocks")
+      .update({
+        generation_notes: {
+          ...existingNotes,
+          score: assembly.score,
+          similarityIssues: assembly.similarityIssues,
+          gaps: assembly.gaps,
+          notes: assembly.notes,
+          questionQualityScan,
+        },
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", mockId);
+  } catch (e) {
+    assembly.notes.push(
+      `Question quality scan failed: ${
+        e instanceof Error ? e.message : "unknown error"
+      }`,
+    );
+    await service
+      .from("esat_mocks")
+      .update({
+        generation_notes: {
+          score: assembly.score,
+          similarityIssues: assembly.similarityIssues,
+          gaps: assembly.gaps,
+          notes: assembly.notes,
+        },
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", mockId);
+  }
+
   return assembly;
+}
+
+export async function runQuestionQualityScan(
+  service: SupabaseClient,
+  mockId: string,
+  options?: { force?: boolean },
+): Promise<import("./questionQualityScan").QuestionQualityScanResult> {
+  const { slots } = await getMockWithSlots(service, mockId);
+  const { scanMockQuestionQuality } = await import("./questionQualityScan");
+  const questionQualityScan = await scanMockQuestionQuality(slots, {
+    force: options?.force,
+  });
+
+  const { data: notesRow } = await service
+    .from("esat_mocks")
+    .select("generation_notes")
+    .eq("id", mockId)
+    .maybeSingle();
+  const existingNotes =
+    (notesRow?.generation_notes as Record<string, unknown> | null) ?? {};
+  const prevNotes = Array.isArray(existingNotes.notes)
+    ? (existingNotes.notes as string[])
+    : [];
+  const note = `Question quality scan: ${questionQualityScan.summary.pass} Pass, ${questionQualityScan.summary.minor} Minor, ${questionQualityScan.summary.major} Major, ${questionQualityScan.summary.unscanned} unscanned (${questionQualityScan.source}).`;
+
+  await service
+    .from("esat_mocks")
+    .update({
+      generation_notes: {
+        ...existingNotes,
+        notes: [...prevNotes.filter((n) => !n.startsWith("Question quality scan:")), note],
+        questionQualityScan,
+      },
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", mockId);
+
+  return questionQualityScan;
 }
 
 export async function updateMockMeta(

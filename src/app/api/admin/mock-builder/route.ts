@@ -15,6 +15,7 @@ import {
 import { getDefaultBlueprint, getDiagramTarget } from "@/lib/mockBuilder/blueprints";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 300;
 
 export async function GET(request: NextRequest) {
   const admin = await requireTesterAdmin(request);

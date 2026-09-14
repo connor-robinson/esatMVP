@@ -11,13 +11,34 @@ import type {
   MockStatus,
   PaperCalibrationStats,
   QuestionCalibrationStats,
+  SimilarityIssue,
 } from "@/lib/mockBuilder/types";
 import { compareDifficultyToTypicalEsat } from "@/lib/mockBuilder/difficultyVsTypical";
+import type { QuestionQualityScanResult } from "@/lib/mockBuilder/questionQualityScan";
 
 type AlternativesState = {
   position: number;
   items: MockCandidateQuestion[];
 } | null;
+
+type GenerationNotes = {
+  gaps?: Array<{ message: string }>;
+  notes?: string[];
+  similarityIssues?: SimilarityIssue[];
+  poolMix?: {
+    offBank?: number;
+    unattemptedBank?: number;
+    attemptedBank?: number;
+  };
+  questionQualityScan?: QuestionQualityScanResult;
+};
+
+function qualityBadgeClass(verdict: string): string {
+  if (verdict === "Pass") return "bg-emerald-100 text-emerald-900";
+  if (verdict === "Minor") return "bg-amber-100 text-amber-900";
+  if (verdict === "Major") return "bg-red-100 text-red-900";
+  return "bg-stone-100 text-stone-700";
+}
 
 export default function AdminMockDetailPage() {
   const params = useParams();
@@ -74,6 +95,21 @@ export default function AdminMockDetailPage() {
       .join(" · ");
   }, [mock]);
 
+  const generationNotes = (mock?.generation_notes ??
+    null) as GenerationNotes | null;
+  const qualityScanResult = generationNotes?.questionQualityScan ?? null;
+  const qualityByQuestionId = useMemo(() => {
+    const map = new Map<
+      string,
+      NonNullable<QuestionQualityScanResult["byPosition"]>[number]
+    >();
+    for (const row of qualityScanResult?.byPosition ?? []) {
+      map.set(row.questionId, row);
+    }
+    return map;
+  }, [qualityScanResult]);
+  const similarityIssues = generationNotes?.similarityIssues ?? [];
+
   async function run(action: string, fn: () => Promise<void>) {
     setBusy(action);
     setError(null);
@@ -106,6 +142,23 @@ export default function AdminMockDetailPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Review failed");
+    });
+  }
+
+  async function qualityScan(force = false) {
+    await run("quality-scan", async () => {
+      const res = await fetch(
+        `/api/admin/mock-builder/${mockId}/quality-scan`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ force }),
+        },
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Quality scan failed");
+      setMock(data.mock);
+      setSlots(data.slots ?? []);
     });
   }
 
@@ -347,15 +400,48 @@ export default function AdminMockDetailPage() {
           </div>
         )}
 
-        {Array.isArray((mock.generation_notes as { gaps?: unknown } | null)?.gaps) &&
-          ((mock.generation_notes as { gaps: Array<{ message: string }> }).gaps
-            .length > 0) && (
+        {qualityScanResult ? (
+          <div className="mb-6 rounded-lg border border-stone-200 p-4 text-sm">
+            <h2 className="mb-2 font-medium">Question quality scan</h2>
+            <p className="text-stone-700">
+              {qualityScanResult.summary.pass} Pass ·{" "}
+              {qualityScanResult.summary.minor} Minor ·{" "}
+              {qualityScanResult.summary.major} Major ·{" "}
+              {qualityScanResult.summary.unscanned} unscanned
+              <span className="text-stone-500">
+                {" "}
+                ({qualityScanResult.source})
+              </span>
+            </p>
+            {qualityScanResult.summary.major > 0 ? (
+              <p className="mt-2 text-red-800">
+                Replace or regenerate slots flagged Major before publishing.
+              </p>
+            ) : null}
+          </div>
+        ) : null}
+
+        {similarityIssues.length > 0 ? (
+          <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm">
+            <h2 className="mb-2 font-medium text-stone-900">
+              Similarity issues
+            </h2>
+            <ul className="list-disc pl-5 text-stone-800">
+              {similarityIssues.map((issue, i) => (
+                <li key={i}>
+                  [{issue.severity}] {issue.reason}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+
+        {Array.isArray(generationNotes?.gaps) &&
+          generationNotes!.gaps!.length > 0 && (
             <div className="mb-6 rounded-lg border border-stone-200 p-4 text-sm">
               <h2 className="mb-2 font-medium">Blueprint gaps (for generation)</h2>
               <ul className="list-disc pl-5 text-stone-700">
-                {(
-                  mock.generation_notes as { gaps: Array<{ message: string }> }
-                ).gaps.map((g, i) => (
+                {generationNotes!.gaps!.map((g, i) => (
                   <li key={i}>{g.message}</li>
                 ))}
               </ul>
@@ -380,6 +466,22 @@ export default function AdminMockDetailPage() {
             className="rounded border border-stone-300 bg-white px-3 py-1.5 text-sm"
           >
             {busy === "review" ? "…" : "AI paper review"}
+          </button>
+          <button
+            type="button"
+            disabled={!!busy}
+            onClick={() => qualityScan(false)}
+            className="rounded border border-stone-300 bg-white px-3 py-1.5 text-sm"
+          >
+            {busy === "quality-scan" ? "Scanning…" : "Scan questions"}
+          </button>
+          <button
+            type="button"
+            disabled={!!busy}
+            onClick={() => qualityScan(true)}
+            className="rounded border border-stone-300 bg-white px-3 py-1.5 text-sm"
+          >
+            {busy === "quality-scan" ? "…" : "Rescan all"}
           </button>
           <button
             type="button"
@@ -424,9 +526,10 @@ export default function AdminMockDetailPage() {
           </button>
         </div>
         <p className="mb-4 text-xs text-stone-500">
-          Regenerate AI-labels missing difficulty for this subject, then rebuilds
-          the paper (locked slots kept). Cancel deletes this mock and frees its
-          questions.
+          Generate runs a per-question quality scan (stem/options/answer key)
+          after assembly. Scan questions reuses existing quality-gate results
+          where present; Rescan all forces a fresh LLM check. Locked slots are
+          kept on regenerate. Cancel deletes this mock and frees its questions.
         </p>
 
         {error && <p className="mb-4 text-sm text-red-700">{error}</p>}
@@ -502,16 +605,39 @@ export default function AdminMockDetailPage() {
             const cal = stats?.questionStats.find(
               (s) => s.questionId === slot.questionId,
             );
+            const qScan = qualityByQuestionId.get(slot.questionId);
+            const borderClass =
+              qScan?.verdict === "Major"
+                ? "border-red-300 bg-red-50/40"
+                : qScan?.verdict === "Minor"
+                  ? "border-amber-200 bg-amber-50/30"
+                  : "border-stone-200";
             return (
               <div
                 key={`${slot.position}-${slot.questionId}`}
-                className="rounded-lg border border-stone-200 p-3 text-sm"
+                className={`rounded-lg border p-3 text-sm ${borderClass}`}
               >
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div>
-                    <div className="font-semibold text-stone-900">
-                      Q{slot.position}
-                      {slot.locked ? " · locked" : ""}
+                    <div className="flex flex-wrap items-center gap-2 font-semibold text-stone-900">
+                      <span>
+                        Q{slot.position}
+                        {slot.locked ? " · locked" : ""}
+                      </span>
+                      {qScan ? (
+                        <span
+                          className={`rounded px-1.5 py-0.5 text-[11px] font-semibold ${qualityBadgeClass(qScan.verdict)}`}
+                        >
+                          {qScan.verdict}
+                          {qScan.action !== "unknown"
+                            ? ` · ${qScan.action}`
+                            : ""}
+                        </span>
+                      ) : (
+                        <span className="rounded bg-stone-100 px-1.5 py-0.5 text-[11px] font-semibold text-stone-600">
+                          Unscanned
+                        </span>
+                      )}
                     </div>
                     {q ? (
                       <div className="mt-1 text-stone-700">
@@ -526,6 +652,11 @@ export default function AdminMockDetailPage() {
                     ) : (
                       <div className="text-red-700">Missing question data</div>
                     )}
+                    {qScan?.reason ? (
+                      <p className="mt-1 text-xs text-stone-600">
+                        Quality: {qScan.reason}
+                      </p>
+                    ) : null}
                     {cal && cal.attemptCount > 0 && (
                       <div className="mt-2 text-xs text-stone-600">
                         Actual correct rate:{" "}

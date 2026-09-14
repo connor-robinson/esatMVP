@@ -118,6 +118,10 @@ export type MockCandidateQuestion = {
   mockUsageCount: number;
   hasVisual: boolean;
   qualityGateVerdict: string | null;
+  qualityGateAction: string | null;
+  qualityGateReason: string | null;
+  qualityGateAssessedAt: string | null;
+  solutionReasoning: string | null;
   /** True when mock_difficulty came from stored AI/manual field, not Easy/Med/Hard fallback. */
   hasAiMockDifficulty: boolean;
   /** True when any student has attempted this question in the practice bank. */
