@@ -467,7 +467,10 @@ async function persistAssembly(
   // Stage pending off-bank picks so drafts stay publishable without entering practice.
   const pendingIds = assembly.slots
     .map((s) => s.question)
-    .filter((q): q is MockCandidateQuestion => Boolean(q) && q.status === "pending")
+    .filter(
+      (q): q is MockCandidateQuestion =>
+        q != null && q.status === "pending",
+    )
     .map((q) => q.id);
   if (pendingIds.length > 0) {
     const { error: stageErr } = await service
