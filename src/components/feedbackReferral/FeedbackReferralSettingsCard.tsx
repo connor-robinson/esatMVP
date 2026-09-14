@@ -61,8 +61,8 @@ export function FeedbackReferralSettingsCard() {
         <>
           <p className="mt-2 text-sm text-text-muted">
             Answer a quick questionnaire to unlock a one-friend 50% off code.
-            Your friend applies it in Stripe Checkout. You can start it here
-            anytime if you skipped the popup.
+            Your friend enters it on the Pricing page before checkout. You can
+            start it here anytime if you skipped the popup.
           </p>
           <Link
             href="/feedback"
@@ -110,9 +110,9 @@ export function FeedbackReferralSettingsCard() {
             </button>
           </div>
           <p className="mt-3 text-sm text-text-muted">
-            Share this with one friend. They choose a plan on Pricing, then
-            apply the code in Stripe Checkout. It locks here automatically
-            after one use. You cannot use it on your own account.
+            Share this with one friend. They enter it on the Pricing page before
+            paying. It locks here automatically after one use. You cannot use it
+            on your own account.
           </p>
           <Link
             href="/feedback"

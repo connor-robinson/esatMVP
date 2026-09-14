@@ -45,10 +45,19 @@ export function FeedbackReferralInviteCard({
             title="How it works"
             align="right"
             className="mt-1.5"
+            panelClassName="w-max max-w-[min(100vw-2rem,40rem)]"
           >
-            <p>After the questions, you get a one-use 50% code to share.</p>
-            <p>Your friend enters it in Stripe Checkout.</p>
-            <p>Not valid on your own account.</p>
+            <ul className="list-disc space-y-2 pl-4 marker:text-text-muted">
+              <li className="whitespace-nowrap">
+                After the questions, you get a one-use 50% code to share.
+              </li>
+              <li className="whitespace-nowrap">
+                Your friend enters it on the Pricing page before checkout.
+              </li>
+              <li className="whitespace-nowrap">
+                Not valid on your own account.
+              </li>
+            </ul>
           </RoadmapInfoPopover>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-text sm:text-base">

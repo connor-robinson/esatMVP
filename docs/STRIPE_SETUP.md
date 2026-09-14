@@ -127,7 +127,7 @@ The popup does **not** appear on login. It only appears after finishing a past p
 
 New survey replies email `ansonchanw@gmail.com` immediately (override with `FEEDBACK_REFERRAL_NOTIFY_EMAIL`). Requires `RESEND_API_KEY`.
 
-Friend codes are Stripe promotion codes (`CAMP50-…`). Checkout sessions use `allow_promotion_codes: true` so friends enter the code in Stripe Checkout (not on the pricing page).
+Friend codes (`CAMP50-…`) are applied on the Pricing page (share link or the friend-code field), then attached server-side to Checkout. They are not typed into Stripe Checkout.
 
 ```env
 FEEDBACK_REFERRAL_LIVE=false

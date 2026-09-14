@@ -9,6 +9,7 @@ interface RoadmapInfoPopoverProps {
   title: string;
   children: React.ReactNode;
   className?: string;
+  panelClassName?: string;
   align?: "left" | "right";
 }
 
@@ -17,6 +18,7 @@ export function RoadmapInfoPopover({
   title,
   children,
   className,
+  panelClassName,
   align = "right",
 }: RoadmapInfoPopoverProps) {
   const [open, setOpen] = useState(false);
@@ -67,6 +69,7 @@ export function RoadmapInfoPopover({
           className={cn(
             "absolute top-full z-40 mt-2 w-[min(100vw-2rem,22rem)] rounded-organic-lg bg-surface-elevated p-4 shadow-modal-card",
             align === "right" ? "right-0" : "left-0",
+            panelClassName,
           )}
           onClick={(e) => e.stopPropagation()}
         >
