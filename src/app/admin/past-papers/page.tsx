@@ -99,6 +99,11 @@ export default function AdminPastPapersPage() {
   const [papersExpanded, setPapersExpanded] = useState(false);
   const [sectionsExpanded, setSectionsExpanded] = useState(false);
   const [wrongExpanded, setWrongExpanded] = useState(false);
+  const [chartsReady, setChartsReady] = useState(false);
+
+  useEffect(() => {
+    setChartsReady(true);
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -107,28 +112,33 @@ export default function AdminPastPapersPage() {
     const minAttempts = minAttemptsForRange(range);
     const params = new URLSearchParams({
       minAttempts: String(minAttempts),
-      wrongLimit: "100",
+      wrongLimit: "40",
     });
     if (since) params.set("since", since);
 
-    const res = await fetch(`/api/admin/past-papers?${params}`, {
-      cache: "no-store",
-    });
-    if (res.status === 401 || res.status === 403) {
-      setForbidden(true);
+    try {
+      const res = await fetch(`/api/admin/past-papers?${params}`, {
+        cache: "no-store",
+      });
+      if (res.status === 401 || res.status === 403) {
+        setForbidden(true);
+        return;
+      }
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(
+          typeof json.error === "string" ? json.error : "Failed to load stats",
+        );
+        setStats(null);
+        return;
+      }
+      setStats((json.stats as PastPaperStatsPayload | null) ?? null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load stats");
+      setStats(null);
+    } finally {
       setLoading(false);
-      return;
     }
-    const json = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      setError(
-        typeof json.error === "string" ? json.error : "Failed to load stats",
-      );
-      setLoading(false);
-      return;
-    }
-    setStats(json.stats ?? null);
-    setLoading(false);
   }, [range]);
 
   useEffect(() => {
@@ -263,8 +273,14 @@ export default function AdminPastPapersPage() {
 
       {loading && !stats ? (
         <p className="mt-8 text-sm text-text-muted">Loading…</p>
-      ) : stats ? (
-        <div className="mt-8 space-y-10">
+      ) : null}
+
+      {!loading && !stats && !error && !forbidden ? (
+        <p className="mt-8 text-sm text-text-muted">No stats available.</p>
+      ) : null}
+
+      {stats ? (
+        <div className={cn("mt-8 space-y-10", loading && "opacity-70")}>
           <section>
             <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-text-muted">
               Overview
@@ -315,11 +331,9 @@ export default function AdminPastPapersPage() {
                 <h3 className="mb-3 text-sm font-semibold text-text">
                   Sessions by paper
                 </h3>
-                {paperChartData.length === 0 ? (
-                  <p className="text-sm text-text-muted">No sessions yet.</p>
-                ) : (
-                  <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
+                {chartsReady && paperChartData.length > 0 ? (
+                  <div className="h-64 w-full min-w-0">
+                    <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                       <BarChart
                         layout="vertical"
                         data={paperChartData}
@@ -342,10 +356,16 @@ export default function AdminPastPapersPage() {
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
+                ) : (
+                  <p className="text-sm text-text-muted">
+                    {paperChartData.length === 0
+                      ? "No sessions yet."
+                      : "Preparing chart…"}
+                  </p>
                 )}
               </div>
 
-              <div className="overflow-x-auto rounded-organic-xl bg-surface-elevated">
+              <div className="min-w-0 overflow-x-auto rounded-organic-xl bg-surface-elevated">
                 <table className="w-full min-w-[420px] text-left text-sm">
                   <thead className="text-xs uppercase tracking-wide text-text-muted">
                     <tr>
@@ -421,11 +441,9 @@ export default function AdminPastPapersPage() {
                 <h3 className="mb-3 text-sm font-semibold text-text">
                   Sessions by section
                 </h3>
-                {sectionChartData.length === 0 ? (
-                  <p className="text-sm text-text-muted">No section data.</p>
-                ) : (
-                  <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
+                {chartsReady && sectionChartData.length > 0 ? (
+                  <div className="h-64 w-full min-w-0">
+                    <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                       <BarChart
                         layout="vertical"
                         data={sectionChartData}
@@ -448,10 +466,16 @@ export default function AdminPastPapersPage() {
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
+                ) : (
+                  <p className="text-sm text-text-muted">
+                    {sectionChartData.length === 0
+                      ? "No section data."
+                      : "Preparing chart…"}
+                  </p>
                 )}
               </div>
 
-              <div className="overflow-x-auto rounded-organic-xl bg-surface-elevated">
+              <div className="min-w-0 overflow-x-auto rounded-organic-xl bg-surface-elevated">
                 <table className="w-full min-w-[360px] text-left text-sm">
                   <thead className="text-xs uppercase tracking-wide text-text-muted">
                     <tr>

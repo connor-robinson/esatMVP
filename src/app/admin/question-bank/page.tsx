@@ -95,10 +95,15 @@ export default function AdminQuestionBankPage() {
   const [range, setRange] = useState<QuestionBankTimeRange>("all");
   const [subjectsExpanded, setSubjectsExpanded] = useState(false);
   const [wrongExpanded, setWrongExpanded] = useState(false);
+  const [chartsReady, setChartsReady] = useState(false);
   const [preview, setPreview] = useState<{
     id: string;
     label: string;
   } | null>(null);
+
+  useEffect(() => {
+    setChartsReady(true);
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -107,28 +112,33 @@ export default function AdminQuestionBankPage() {
     const minAttempts = minAttemptsForRange(range);
     const params = new URLSearchParams({
       minAttempts: String(minAttempts),
-      wrongLimit: "100",
+      wrongLimit: "40",
     });
     if (since) params.set("since", since);
 
-    const res = await fetch(`/api/admin/question-bank?${params}`, {
-      cache: "no-store",
-    });
-    if (res.status === 401 || res.status === 403) {
-      setForbidden(true);
+    try {
+      const res = await fetch(`/api/admin/question-bank?${params}`, {
+        cache: "no-store",
+      });
+      if (res.status === 401 || res.status === 403) {
+        setForbidden(true);
+        return;
+      }
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(
+          typeof json.error === "string" ? json.error : "Failed to load stats",
+        );
+        setStats(null);
+        return;
+      }
+      setStats((json.stats as QuestionBankStatsPayload | null) ?? null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load stats");
+      setStats(null);
+    } finally {
       setLoading(false);
-      return;
     }
-    const json = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      setError(
-        typeof json.error === "string" ? json.error : "Failed to load stats",
-      );
-      setLoading(false);
-      return;
-    }
-    setStats(json.stats ?? null);
-    setLoading(false);
   }, [range]);
 
   useEffect(() => {
@@ -253,8 +263,14 @@ export default function AdminQuestionBankPage() {
 
       {loading && !stats ? (
         <p className="mt-8 text-sm text-text-muted">Loading…</p>
-      ) : stats ? (
-        <div className="mt-8 space-y-10">
+      ) : null}
+
+      {!loading && !stats && !error && !forbidden ? (
+        <p className="mt-8 text-sm text-text-muted">No stats available.</p>
+      ) : null}
+
+      {stats ? (
+        <div className={cn("mt-8 space-y-10", loading && "opacity-70")}>
           <section>
             <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-text-muted">
               Overview
@@ -302,11 +318,9 @@ export default function AdminQuestionBankPage() {
                 <h3 className="mb-3 text-sm font-semibold text-text">
                   Attempts by subject
                 </h3>
-                {chartData.length === 0 ? (
-                  <p className="text-sm text-text-muted">No attempts yet.</p>
-                ) : (
-                  <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
+                {chartsReady && chartData.length > 0 ? (
+                  <div className="h-64 w-full min-w-0">
+                    <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                       <BarChart
                         layout="vertical"
                         data={chartData}
@@ -329,10 +343,14 @@ export default function AdminQuestionBankPage() {
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
+                ) : (
+                  <p className="text-sm text-text-muted">
+                    {chartData.length === 0 ? "No attempts yet." : "Preparing chart…"}
+                  </p>
                 )}
               </div>
 
-              <div className="overflow-x-auto rounded-organic-xl bg-surface-elevated">
+              <div className="min-w-0 overflow-x-auto rounded-organic-xl bg-surface-elevated">
                 <table className="w-full min-w-[420px] text-left text-sm">
                   <thead className="text-xs uppercase tracking-wide text-text-muted">
                     <tr>
