@@ -174,11 +174,11 @@ function CompactDownloadLink({
     <a
       href={href}
       download
-      className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md bg-[#2A3347] px-2.5 py-1.5 text-sm font-medium leading-none text-[#E2E8F0] transition-colors hover:bg-[#334155]"
+      className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-sm border border-border-subtle bg-surface-mid px-2.5 py-1.5 text-sm font-medium leading-none text-text transition-colors hover:bg-surface-neutral"
       onClick={(e) => e.stopPropagation()}
     >
       {label}
-      <Download aria-hidden className="h-3.5 w-3.5 opacity-75" />
+      <Download aria-hidden className="h-3.5 w-3.5 opacity-70" />
     </a>
   );
 }
@@ -186,24 +186,23 @@ function CompactDownloadLink({
 function UniqueQuestionsSwitch({
   enabled,
   onChange,
+  className,
 }: {
   enabled: boolean;
   onChange: (enabled: boolean) => void;
+  className?: string;
 }) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-[#161D2F] px-3 py-2.5">
-      <div className="flex min-w-0 items-center gap-2">
-        <span className="text-sm text-[#CBD5E1]">Unique questions only</span>
-        <RoadmapInfoPopover
-          title="Unique questions only"
-          panelClassName="bg-[#1B2438] text-[#CBD5E1]"
-        >
-          <p>
-            When on, ENGAA sessions skip questions you already did in NSAA (and
-            other overlaps).
-          </p>
-        </RoadmapInfoPopover>
-      </div>
+    <div className={cn("flex items-center gap-2", className)}>
+      <span className="text-xs text-text-muted sm:text-sm">
+        Unique questions only
+      </span>
+      <RoadmapInfoPopover title="Unique questions only">
+        <p>
+          When on, ENGAA sessions skip questions you already did in NSAA (and
+          other overlaps).
+        </p>
+      </RoadmapInfoPopover>
       <button
         type="button"
         role="switch"
@@ -211,13 +210,13 @@ function UniqueQuestionsSwitch({
         aria-label="Unique questions only"
         onClick={() => onChange(!enabled)}
         className={cn(
-          "relative h-5 w-9 shrink-0 rounded-full transition-colors",
-          enabled ? "bg-[#3B82F6]" : "bg-[#334155]",
+          "relative h-5 w-9 shrink-0 rounded-sm transition-colors",
+          enabled ? "bg-primary/70" : "bg-surface-neutral",
         )}
       >
         <span
           className={cn(
-            "absolute top-0.5 h-4 w-4 rounded-full bg-white transition-transform",
+            "absolute top-0.5 h-4 w-4 rounded-sm bg-white transition-transform",
             enabled ? "left-[16px]" : "left-0.5",
           )}
         />
@@ -308,20 +307,16 @@ function StageOptionsPanel({
   };
 
   return (
-    <div className="space-y-4 bg-[#121826] px-3 py-3.5 sm:px-3.5">
+    <div className="space-y-4 border-t border-border-subtle bg-surface-mid/40 px-3 py-3.5 sm:px-3.5">
       {mode === "options" ? (
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
-            <p className="text-sm font-medium text-[#F1F5F9]">
-              Start paper now
-            </p>
-            <p className="mt-1 text-sm leading-relaxed text-[#94A3B8]">
+            <p className="text-sm font-medium text-text">Start paper now</p>
+            <p className="mt-1 text-sm leading-relaxed text-text-muted">
               {sectionSummary.length > 0 ? (
                 <>
                   Includes:{" "}
-                  <span className="text-[#CBD5E1]">
-                    {sectionSummary.join(" · ")}
-                  </span>
+                  <span className="text-text">{sectionSummary.join(" · ")}</span>
                 </>
               ) : (
                 "No incomplete sections left. Start an individual part below."
@@ -333,20 +328,20 @@ function StageOptionsPanel({
             disabled={defaultParts.length === 0}
             onClick={startDefaults}
             className={cn(
-              "inline-flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-semibold text-white transition-colors",
+              "inline-flex shrink-0 items-center gap-1.5 rounded-sm border px-3 py-1.5 text-sm font-medium transition-colors",
               defaultParts.length > 0
-                ? "bg-[#3B82F6] hover:bg-[#2563EB]"
-                : "cursor-not-allowed bg-[#334155] text-[#94A3B8]",
+                ? "border-border bg-surface-elevated text-text hover:bg-surface-neutral"
+                : "cursor-not-allowed border-border-subtle text-text-disabled",
             )}
           >
             Start paper now
-            <Play className="h-3.5 w-3.5 fill-current" aria-hidden />
+            <Play className="h-3.5 w-3.5 fill-current opacity-70" aria-hidden />
           </button>
         </div>
       ) : null}
 
       <div className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-wide text-[#64748B]">
+        <p className="text-xs font-medium uppercase tracking-wide text-text-subtle">
           Downloads
         </p>
         {sectionDownloads.length > 0 ? (
@@ -356,7 +351,7 @@ function StageOptionsPanel({
                 key={paperName}
                 className="flex flex-wrap items-center gap-2"
               >
-                <span className="min-w-[5rem] text-sm text-[#CBD5E1]">
+                <span className="min-w-[5rem] text-sm text-text-muted">
                   {paperName}
                 </span>
                 {links.paperUrl ? (
@@ -372,12 +367,12 @@ function StageOptionsPanel({
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-[#94A3B8]">No PDFs for this paper yet.</p>
+          <p className="text-sm text-text-muted">No PDFs for this paper yet.</p>
         )}
       </div>
 
       <div className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-wide text-[#64748B]">
+        <p className="text-xs font-medium uppercase tracking-wide text-text-subtle">
           Or start one part
         </p>
         <ul>
@@ -398,13 +393,13 @@ function StageOptionsPanel({
                 key={group.key}
                 className={cn(
                   "flex flex-wrap items-center justify-between gap-3 py-2.5",
-                  idx > 0 && "border-t border-white/[0.06]",
+                  idx > 0 && "border-t border-border-subtle",
                 )}
               >
                 <div className="min-w-0">
-                  <p className="text-sm text-[#F1F5F9]">
+                  <p className="text-sm text-text">
                     {displayLabelForGroup(group)}
-                    <span className="ml-2 text-[#94A3B8]">{group.paperName}</span>
+                    <span className="ml-2 text-text-muted">{group.paperName}</span>
                   </p>
                   <div className="mt-1.5 flex flex-wrap gap-2">
                     {links?.paperUrl ? (
@@ -426,7 +421,7 @@ function StageOptionsPanel({
                       void setGroupDone(group, e.target.value === "done");
                     }}
                     aria-label={`Status for ${displayLabelForGroup(group)}`}
-                    className="rounded-md border-0 bg-[#1B2438] px-2 py-1 text-xs font-medium text-[#E2E8F0] outline-none ring-1 ring-white/10 disabled:opacity-50"
+                    className="rounded-sm border-0 bg-surface-elevated px-2 py-1 text-xs font-medium text-text outline-none ring-1 ring-border-subtle disabled:opacity-50"
                   >
                     <option value="not_started">Not done</option>
                     <option value="done">Done</option>
@@ -434,10 +429,10 @@ function StageOptionsPanel({
                   <button
                     type="button"
                     onClick={() => startGroup(group)}
-                    className="inline-flex items-center gap-1 rounded-md bg-[#3B82F6] px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-[#2563EB]"
+                    className="inline-flex items-center gap-1 rounded-sm border border-border-subtle bg-surface-elevated px-2.5 py-1.5 text-xs font-medium text-text hover:bg-surface-neutral"
                   >
                     Start
-                    <Play className="h-3 w-3 fill-current" aria-hidden />
+                    <Play className="h-3 w-3 fill-current opacity-70" aria-hidden />
                   </button>
                 </div>
               </li>
@@ -458,6 +453,8 @@ function ExamGroupTable({
   scoresLoading,
   userId,
   newQuestionsOnly,
+  onNewQuestionsOnlyChange,
+  showUniqueQuestions,
   expanded,
   statusBusyId,
   onToggleExpand,
@@ -473,6 +470,8 @@ function ExamGroupTable({
   scoresLoading: boolean;
   userId: string | null;
   newQuestionsOnly: boolean;
+  onNewQuestionsOnlyChange?: (enabled: boolean) => void;
+  showUniqueQuestions?: boolean;
   expanded: { id: string; mode: ExpandMode } | null;
   statusBusyId: string | null;
   onToggleExpand: (stageId: string, mode: ExpandMode) => void;
@@ -495,22 +494,28 @@ function ExamGroupTable({
   };
 
   return (
-    <div className="overflow-hidden rounded-xl bg-[#161D2F]">
-      <div className="px-3 py-3">
-        <h2 className="text-base font-semibold tracking-tight text-[#F1F5F9]">
+    <div className="overflow-hidden rounded-sm border border-border-subtle bg-surface-elevated">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border-subtle px-3 py-2.5">
+        <h2 className="text-sm font-semibold tracking-tight text-text">
           {heading}
         </h2>
+        {showUniqueQuestions && onNewQuestionsOnlyChange ? (
+          <UniqueQuestionsSwitch
+            enabled={newQuestionsOnly}
+            onChange={onNewQuestionsOnlyChange}
+          />
+        ) : null}
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[36rem] text-left text-base">
+        <table className="w-full min-w-[36rem] text-left text-sm">
           <thead>
-            <tr className="text-xs font-semibold uppercase tracking-wide text-[#94A3B8]">
-              <th className="px-2.5 py-2.5">Paper</th>
-              <th className="px-2.5 py-2.5">Parts</th>
-              <th className="px-2.5 py-2.5">Status</th>
-              <th className="px-2.5 py-2.5">Score</th>
-              <th className="px-2.5 py-2.5">Practice</th>
-              <th className="px-2.5 py-2.5">Download</th>
+            <tr className="text-xs font-medium uppercase tracking-wide text-text-muted">
+              <th className="px-3 py-2">Paper</th>
+              <th className="px-3 py-2">Parts</th>
+              <th className="px-3 py-2">Status</th>
+              <th className="px-3 py-2">Score</th>
+              <th className="px-3 py-2">Practice</th>
+              <th className="px-3 py-2">Download</th>
             </tr>
           </thead>
           <tbody>
@@ -533,20 +538,22 @@ function ExamGroupTable({
                   <tr
                     data-stage-id={stage.id}
                     className={
-                      index % 2 === 0 ? "bg-white/[0.035]" : "bg-transparent"
+                      index % 2 === 0
+                        ? "bg-surface-mid/30"
+                        : "bg-transparent"
                     }
                   >
-                    <td className="px-2.5 py-2.5 align-middle">
+                    <td className="px-3 py-2.5 align-middle">
                       <div className="flex items-center gap-1.5">
                         <button
                           type="button"
                           onClick={() => onToggleExpand(stage.id, "options")}
                           aria-expanded={isOpen && mode === "options"}
-                          className="text-left text-base font-medium tabular-nums text-[#F1F5F9] transition-colors hover:text-[#93C5FD]"
+                          className="text-left text-sm font-medium tabular-nums text-text transition-colors hover:text-text-muted"
                         >
                           {stageTitle(stage)}
                           {subtitle ? (
-                            <span className="ml-1.5 text-sm font-normal text-[#94A3B8]">
+                            <span className="ml-1.5 text-sm font-normal text-text-muted">
                               {subtitle}
                             </span>
                           ) : null}
@@ -556,17 +563,16 @@ function ExamGroupTable({
                             title={commentary.title}
                             label={`About ${commentary.title}`}
                             align="left"
-                            panelClassName="bg-[#1B2438]"
                           >
                             <p>{commentary.text}</p>
                           </RoadmapInfoPopover>
                         ) : null}
                       </div>
                     </td>
-                    <td className="px-2.5 py-2.5 align-middle tabular-nums text-[#CBD5E1]">
+                    <td className="px-3 py-2.5 align-middle tabular-nums text-text-muted">
                       {completed}/{total}
                     </td>
-                    <td className="px-2.5 py-2.5 align-middle">
+                    <td className="px-3 py-2.5 align-middle">
                       <select
                         value={
                           currentStatus === "in_progress"
@@ -583,7 +589,7 @@ function ExamGroupTable({
                           );
                         }}
                         aria-label={`Status for ${stageTitle(stage)}`}
-                        className="rounded-md border-0 bg-[#1B2438] px-2 py-1.5 text-sm font-medium text-[#E2E8F0] outline-none ring-1 ring-white/10 disabled:opacity-50"
+                        className="rounded-sm border-0 bg-background px-2 py-1.5 text-sm font-medium text-text outline-none ring-1 ring-border-subtle disabled:opacity-50"
                         title={
                           userId
                             ? "Manually mark this paper done or not started"
@@ -597,34 +603,36 @@ function ExamGroupTable({
                         <option value="done">Done</option>
                       </select>
                     </td>
-                    <td className="px-2.5 py-2.5 align-middle tabular-nums text-[#F1F5F9]">
+                    <td className="px-3 py-2.5 align-middle tabular-nums text-text">
                       {scoresLoading ? (
-                        <span className="inline-block h-3.5 w-8 animate-pulse rounded bg-white/10" />
+                        <span className="inline-block h-3.5 w-8 animate-pulse rounded-sm bg-surface-mid" />
                       ) : (
                         formatRoadmapScore(score)
                       )}
                     </td>
-                    <td className="px-2.5 py-2.5 align-middle">
+                    <td className="px-3 py-2.5 align-middle">
                       <button
                         type="button"
                         onClick={() => onToggleExpand(stage.id, "options")}
-                        className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md bg-[#3B82F6] px-3 py-1.5 text-sm font-semibold leading-none text-white transition-colors hover:bg-[#2563EB]"
+                        className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-sm border border-border-subtle bg-background px-2.5 py-1.5 text-sm font-medium leading-none text-text transition-colors hover:bg-surface-mid"
                       >
                         Start now
                         <Play
                           aria-hidden
-                          className="h-3.5 w-3.5 fill-current opacity-90"
+                          className="h-3.5 w-3.5 fill-current opacity-70"
                         />
                       </button>
                     </td>
-                    <td className="px-2.5 py-2.5 align-middle">
+                    <td className="px-3 py-2.5 align-middle">
                       <button
                         type="button"
                         onClick={() => onToggleExpand(stage.id, "downloads")}
                         aria-expanded={isOpen && mode === "downloads"}
                         className={cn(
-                          "inline-flex items-center gap-1 whitespace-nowrap rounded-md bg-[#2A3347] px-2.5 py-1.5 text-sm font-medium leading-none text-[#E2E8F0] transition-colors hover:bg-[#334155]",
-                          isOpen && mode === "downloads" && "bg-[#334155]",
+                          "inline-flex items-center gap-1 whitespace-nowrap rounded-sm border border-border-subtle bg-background px-2.5 py-1.5 text-sm font-medium leading-none text-text-muted transition-colors hover:bg-surface-mid hover:text-text",
+                          isOpen &&
+                            mode === "downloads" &&
+                            "bg-surface-mid text-text",
                         )}
                       >
                         Download
@@ -746,20 +754,13 @@ export function RoadmapTable({
         </p>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-5">
         {GROUP_ORDER.map((key) => {
           const groupStages = grouped[key];
           if (groupStages.length === 0) return null;
 
           return (
-            <section key={key} className="space-y-3">
-              {key === "ENGAA" ? (
-                <UniqueQuestionsSwitch
-                  enabled={newQuestionsOnly}
-                  onChange={onNewQuestionsOnlyChange}
-                />
-              ) : null}
-
+            <section key={key}>
               <ExamGroupTable
                 heading={GROUP_HEADINGS[key]}
                 stages={groupStages}
@@ -769,6 +770,8 @@ export function RoadmapTable({
                 scoresLoading={scoresLoading}
                 userId={userId}
                 newQuestionsOnly={newQuestionsOnly}
+                onNewQuestionsOnlyChange={onNewQuestionsOnlyChange}
+                showUniqueQuestions={key === "ENGAA"}
                 expanded={expanded}
                 statusBusyId={statusBusyId}
                 onToggleExpand={toggleExpand}
