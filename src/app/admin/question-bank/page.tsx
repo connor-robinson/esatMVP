@@ -416,9 +416,12 @@ export default function AdminQuestionBankPage() {
                   Questions people get wrong most
                 </h2>
                 <p className="mt-2 text-xs text-text-subtle">
-                  Ranked by plus-four wrong rate: 100 × (wrong + 2) / (attempts +
-                  4). Min {stats.min_attempts} attempts · {rangeLabel}. Showing{" "}
-                  {wrongExpanded ? "all loaded" : `top ${TOP_WRONG}`}.
+                  Attempts count every try (retries included); Users is unique
+                  people. Ranked by plus-four wrong rate: 100 × (wrong + 2) /
+                  (attempts + 4). Min {stats.min_attempts} attempts ·{" "}
+                  {rangeLabel}. Showing{" "}
+                  {wrongExpanded ? "all loaded" : `top ${TOP_WRONG}`}. Operator
+                  and admin accounts are excluded.
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -476,7 +479,7 @@ export default function AdminQuestionBankPage() {
                       </div>
                       <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-right text-xs sm:grid-cols-4">
                         <div>
-                          <p className="text-text-subtle">Attempts</p>
+                          <p className="text-text-subtle">Attempts (all tries)</p>
                           <p className="tabular-nums font-semibold text-text">
                             {row.attempts}
                           </p>
@@ -488,7 +491,7 @@ export default function AdminQuestionBankPage() {
                           </p>
                         </div>
                         <div>
-                          <p className="text-text-subtle">Users</p>
+                          <p className="text-text-subtle">Unique users</p>
                           <p className="tabular-nums font-semibold text-text">
                             {row.users}
                           </p>
@@ -527,7 +530,7 @@ export default function AdminQuestionBankPage() {
                     <th className="px-4 py-3 font-medium">Topic</th>
                     <th className="px-4 py-3 font-medium">Attempts</th>
                     <th className="px-4 py-3 font-medium">Wrong</th>
-                    <th className="px-4 py-3 font-medium">Users</th>
+                    <th className="px-4 py-3 font-medium">Unique users</th>
                     <th className="px-4 py-3 font-medium">% wrong</th>
                     <th className="px-4 py-3 font-medium">+4 wrong</th>
                     <th className="px-4 py-3 font-medium">Options</th>
