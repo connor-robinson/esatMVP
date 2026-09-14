@@ -174,11 +174,11 @@ function CompactDownloadLink({
     <a
       href={href}
       download
-      className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-sm border border-border-subtle bg-surface-mid px-2.5 py-1.5 text-sm font-medium leading-none text-text transition-colors hover:bg-surface-neutral"
+      className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-sm bg-[#334155] px-2.5 py-1.5 text-sm font-medium leading-none text-[#F8FAFC] transition-colors hover:bg-[#475569]"
       onClick={(e) => e.stopPropagation()}
     >
       {label}
-      <Download aria-hidden className="h-3.5 w-3.5 opacity-70" />
+      <Download aria-hidden className="h-3.5 w-3.5 opacity-80" />
     </a>
   );
 }
@@ -194,10 +194,13 @@ function UniqueQuestionsSwitch({
 }) {
   return (
     <div className={cn("flex items-center gap-2", className)}>
-      <span className="text-xs text-text-muted sm:text-sm">
+      <span className="text-xs text-[#94A3B8] sm:text-sm">
         Unique questions only
       </span>
-      <RoadmapInfoPopover title="Unique questions only">
+      <RoadmapInfoPopover
+        title="Unique questions only"
+        panelClassName="bg-[#1B2438]"
+      >
         <p>
           When on, ENGAA sessions skip questions you already did in NSAA (and
           other overlaps).
@@ -211,7 +214,7 @@ function UniqueQuestionsSwitch({
         onClick={() => onChange(!enabled)}
         className={cn(
           "relative h-5 w-9 shrink-0 rounded-sm transition-colors",
-          enabled ? "bg-primary/70" : "bg-surface-neutral",
+          enabled ? "bg-[#3B82F6]/80" : "bg-[#334155]",
         )}
       >
         <span
@@ -307,16 +310,18 @@ function StageOptionsPanel({
   };
 
   return (
-    <div className="space-y-4 border-t border-border-subtle bg-surface-mid/40 px-3 py-3.5 sm:px-3.5">
+    <div className="space-y-4 border-t border-white/[0.06] bg-[#121826] px-3 py-3.5 sm:px-3.5">
       {mode === "options" ? (
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
-            <p className="text-sm font-medium text-text">Start paper now</p>
-            <p className="mt-1 text-sm leading-relaxed text-text-muted">
+            <p className="text-sm font-medium text-[#F1F5F9]">Start paper now</p>
+            <p className="mt-1 text-sm leading-relaxed text-[#94A3B8]">
               {sectionSummary.length > 0 ? (
                 <>
                   Includes:{" "}
-                  <span className="text-text">{sectionSummary.join(" · ")}</span>
+                  <span className="text-[#CBD5E1]">
+                    {sectionSummary.join(" · ")}
+                  </span>
                 </>
               ) : (
                 "No incomplete sections left. Start an individual part below."
@@ -328,20 +333,20 @@ function StageOptionsPanel({
             disabled={defaultParts.length === 0}
             onClick={startDefaults}
             className={cn(
-              "inline-flex shrink-0 items-center gap-1.5 rounded-sm border px-3 py-1.5 text-sm font-medium transition-colors",
+              "inline-flex shrink-0 items-center gap-1.5 rounded-sm px-3 py-1.5 text-sm font-medium transition-colors",
               defaultParts.length > 0
-                ? "border-border bg-surface-elevated text-text hover:bg-surface-neutral"
-                : "cursor-not-allowed border-border-subtle text-text-disabled",
+                ? "bg-[#3B82F6]/85 text-white hover:bg-[#3B82F6]"
+                : "cursor-not-allowed bg-[#334155] text-[#94A3B8]",
             )}
           >
             Start paper now
-            <Play className="h-3.5 w-3.5 fill-current opacity-70" aria-hidden />
+            <Play className="h-3.5 w-3.5 fill-current opacity-80" aria-hidden />
           </button>
         </div>
       ) : null}
 
       <div className="space-y-2">
-        <p className="text-xs font-medium uppercase tracking-wide text-text-subtle">
+        <p className="text-xs font-medium uppercase tracking-wide text-[#64748B]">
           Downloads
         </p>
         {sectionDownloads.length > 0 ? (
@@ -351,7 +356,7 @@ function StageOptionsPanel({
                 key={paperName}
                 className="flex flex-wrap items-center gap-2"
               >
-                <span className="min-w-[5rem] text-sm text-text-muted">
+                <span className="min-w-[5rem] text-sm text-[#CBD5E1]">
                   {paperName}
                 </span>
                 {links.paperUrl ? (
@@ -367,12 +372,12 @@ function StageOptionsPanel({
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-text-muted">No PDFs for this paper yet.</p>
+          <p className="text-sm text-[#94A3B8]">No PDFs for this paper yet.</p>
         )}
       </div>
 
       <div className="space-y-2">
-        <p className="text-xs font-medium uppercase tracking-wide text-text-subtle">
+        <p className="text-xs font-medium uppercase tracking-wide text-[#64748B]">
           Or start one part
         </p>
         <ul>
@@ -393,13 +398,13 @@ function StageOptionsPanel({
                 key={group.key}
                 className={cn(
                   "flex flex-wrap items-center justify-between gap-3 py-2.5",
-                  idx > 0 && "border-t border-border-subtle",
+                  idx > 0 && "border-t border-white/[0.06]",
                 )}
               >
                 <div className="min-w-0">
-                  <p className="text-sm text-text">
+                  <p className="text-sm text-[#F1F5F9]">
                     {displayLabelForGroup(group)}
-                    <span className="ml-2 text-text-muted">{group.paperName}</span>
+                    <span className="ml-2 text-[#94A3B8]">{group.paperName}</span>
                   </p>
                   <div className="mt-1.5 flex flex-wrap gap-2">
                     {links?.paperUrl ? (
@@ -421,7 +426,7 @@ function StageOptionsPanel({
                       void setGroupDone(group, e.target.value === "done");
                     }}
                     aria-label={`Status for ${displayLabelForGroup(group)}`}
-                    className="rounded-sm border-0 bg-surface-elevated px-2 py-1 text-xs font-medium text-text outline-none ring-1 ring-border-subtle disabled:opacity-50"
+                    className="rounded-sm border-0 bg-[#1B2438] px-2 py-1 text-xs font-medium text-[#E2E8F0] outline-none ring-1 ring-white/10 disabled:opacity-50"
                   >
                     <option value="not_started">Not done</option>
                     <option value="done">Done</option>
@@ -429,10 +434,10 @@ function StageOptionsPanel({
                   <button
                     type="button"
                     onClick={() => startGroup(group)}
-                    className="inline-flex items-center gap-1 rounded-sm border border-border-subtle bg-surface-elevated px-2.5 py-1.5 text-xs font-medium text-text hover:bg-surface-neutral"
+                    className="inline-flex items-center gap-1 rounded-sm bg-[#3B82F6]/85 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-[#3B82F6]"
                   >
                     Start
-                    <Play className="h-3 w-3 fill-current opacity-70" aria-hidden />
+                    <Play className="h-3 w-3 fill-current opacity-80" aria-hidden />
                   </button>
                 </div>
               </li>
