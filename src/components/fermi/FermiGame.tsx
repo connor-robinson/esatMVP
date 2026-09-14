@@ -458,7 +458,7 @@ function FermiQuestionAnchor({
 }) {
   return (
     <div className="flex w-full flex-col items-center gap-6">
-      <div className="relative w-full max-w-xl px-14 sm:px-16">
+      <div className="relative w-full max-w-2xl px-10 sm:px-12">
         <h2 className="text-balance text-center font-serif text-2xl leading-snug text-text sm:text-3xl">
           {questionText}
         </h2>
