@@ -19,6 +19,9 @@ export interface StoredFermiResult {
   unit?: string;
   category?: string;
   note?: string;
+  didYouKnow?: string;
+  factSourceUrl?: string;
+  factSourceLabel?: string;
   guess: number;
   logErr: number;
   score: number;
@@ -81,6 +84,9 @@ function storedToQuestion(stored: StoredFermiResult): FermiQuestion | null {
       unit: stored.unit,
       category: (stored.category ?? "everyday") as FermiQuestion["category"],
       note: stored.note,
+      didYouKnow: stored.didYouKnow,
+      factSourceUrl: stored.factSourceUrl,
+      factSourceLabel: stored.factSourceLabel,
     };
   }
   return {
@@ -90,6 +96,9 @@ function storedToQuestion(stored: StoredFermiResult): FermiQuestion | null {
     unit: stored.unit,
     category: (stored.category ?? "everyday") as FermiQuestion["category"],
     note: stored.note,
+    didYouKnow: stored.didYouKnow,
+    factSourceUrl: stored.factSourceUrl,
+    factSourceLabel: stored.factSourceLabel,
   };
 }
 
@@ -167,6 +176,9 @@ export function saveFermiDailyState(
         question: r.question.question,
         answer: r.question.answer,
         unit: r.question.unit,
+        didYouKnow: r.question.didYouKnow,
+        factSourceUrl: r.question.factSourceUrl,
+        factSourceLabel: r.question.factSourceLabel,
         category: r.question.category,
         note: r.question.note,
         guess: r.guess,

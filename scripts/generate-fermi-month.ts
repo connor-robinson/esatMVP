@@ -150,12 +150,17 @@ async function generateCreativeJson(promptText: string, model: string): Promise<
             const errText = await res.text().catch(() => "");
             console.warn(`Vertex HTTP ${res.status}: ${errText.slice(0, 200)}`);
             lastErr = new Error(`Vertex HTTP ${res.status}`);
+            if (res.status === 429) {
+              await sleep(4000 * netAttempt);
+              continue;
+            }
           }
         }
       }
 
       const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
       if (!apiKey) {
+        if (lastErr) throw lastErr;
         throw new Error("No Vertex ADC / project and no GEMINI_API_KEY");
       }
       const res = await fetch(

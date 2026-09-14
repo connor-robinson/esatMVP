@@ -5,6 +5,7 @@ import {
   buildQuestionNote,
   scheduledQuestionId,
   toPublicQuestion,
+  toRevealedExtras,
 } from "@/lib/fermi/scheduledBatch";
 import { getScheduledRowByPublicId } from "@/lib/fermi/resolveDailyRound";
 
@@ -44,16 +45,20 @@ export async function POST(request: Request) {
   const score = closenessScore(logErr);
   const publicQuestion = toPublicQuestion(row);
 
+  const extras = toRevealedExtras(row);
+
   return NextResponse.json({
     question: {
       ...publicQuestion,
       answer: row.answer,
       note: buildQuestionNote(row.source_note, row.seasonal_note),
+      ...extras,
     },
     guess,
     logErr,
     score,
     verdict,
     questionId: scheduledQuestionId(row.batch_item_id),
+    ...extras,
   });
 }

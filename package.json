@@ -14,6 +14,7 @@
     "sync:studio-reviewed-papers": "npx tsx scripts/sync-studio-reviewed-papers.ts",
     "generate:conversion-tables": "node scripts/generate_conversion_table_csvs.js && node scripts/generate_conversion_table_pdfs.js && node scripts/generate_nsaa_year_conversion_pdfs.js",
     "seed:fermi": "npx tsx scripts/seed-fermi-questions.ts",
+    "generate:fermi-month": "npx tsx scripts/generate-fermi-month.ts",
     "import:esat-m1-hook": "npx tsx scripts/import-esat-hook-sets.ts --only=math1",
     "import:esat-hook-sets": "npx tsx scripts/import-esat-hook-sets.ts",
     "build:check": "npm run type-check && npm run lint && npm run build",
