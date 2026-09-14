@@ -40,6 +40,14 @@ function qualityBadgeClass(verdict: string): string {
   return "bg-stone-100 text-stone-700";
 }
 
+function qualityActionLabel(action: string): string {
+  if (action === "human_review") return "review";
+  if (action === "regenerate") return "regenerate";
+  if (action === "delete") return "delete";
+  if (action === "approve") return "approve";
+  return action;
+}
+
 export default function AdminMockDetailPage() {
   const params = useParams();
   const mockId = String(params.mockId);
@@ -157,6 +165,27 @@ export default function AdminMockDetailPage() {
       );
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Quality scan failed");
+      setMock(data.mock);
+      setSlots(data.slots ?? []);
+    });
+  }
+
+  async function autoFixQuality() {
+    const ok = window.confirm(
+      "Auto-fix flagged questions?\n\n• Minor / human_review: AI edits the question in place\n• Major / regenerate / delete: remove from this mock and replace from the pool (bad question demoted to pending)\n\nLocked slots are skipped.",
+    );
+    if (!ok) return;
+    await run("quality-fix", async () => {
+      const res = await fetch(
+        `/api/admin/mock-builder/${mockId}/quality-remediate`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({}),
+        },
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Auto-fix failed");
       setMock(data.mock);
       setSlots(data.slots ?? []);
     });
@@ -416,6 +445,7 @@ export default function AdminMockDetailPage() {
             {qualityScanResult.summary.major > 0 ? (
               <p className="mt-2 text-red-800">
                 Replace or regenerate slots flagged Major before publishing.
+                Use Auto-fix flagged to edit Minors and replace Majors.
               </p>
             ) : null}
           </div>
@@ -486,6 +516,14 @@ export default function AdminMockDetailPage() {
           <button
             type="button"
             disabled={!!busy}
+            onClick={autoFixQuality}
+            className="rounded border border-amber-400 bg-amber-50 px-3 py-1.5 text-sm font-medium text-amber-950"
+          >
+            {busy === "quality-fix" ? "Fixing…" : "Auto-fix flagged"}
+          </button>
+          <button
+            type="button"
+            disabled={!!busy}
             onClick={() => setStatus("approved")}
             className="rounded border border-stone-300 bg-white px-3 py-1.5 text-sm"
           >
@@ -527,9 +565,11 @@ export default function AdminMockDetailPage() {
         </div>
         <p className="mb-4 text-xs text-stone-500">
           Generate runs a per-question quality scan (stem/options/answer key)
-          after assembly. Scan questions reuses existing quality-gate results
-          where present; Rescan all forces a fresh LLM check. Locked slots are
-          kept on regenerate. Cancel deletes this mock and frees its questions.
+          after assembly. Labels like Minor · human_review or Major · regenerate
+          are recommendations from that scan (or existing quality-gate DB fields).
+          Auto-fix flagged applies them: edit Minors in place; remove and
+          replace Majors/regenerate/delete. Locked slots are kept on regenerate.
+          Cancel deletes this mock and frees its questions.
         </p>
 
         {error && <p className="mb-4 text-sm text-red-700">{error}</p>}

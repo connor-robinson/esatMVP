@@ -38,8 +38,12 @@ export type AssembleOptions = {
 /** Draft assembly may include pending off-bank questions; publish still requires approved. */
 function isSelectableForMock(q: MockCandidateQuestion): boolean {
   const statusOk = q.status === "approved" || q.status === "pending";
+  const demoted =
+    q.qualityGateAction === "delete" ||
+    (q.qualityGateVerdict === "Major" && q.qualityGateAction === "regenerate");
   return (
     statusOk &&
+    !demoted &&
     q.mockEligible &&
     Boolean(q.questionStem?.trim()) &&
     Boolean(q.correctOption) &&

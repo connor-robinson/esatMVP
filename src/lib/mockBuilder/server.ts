@@ -761,6 +761,282 @@ export async function runQuestionQualityScan(
   return questionQualityScan;
 }
 
+async function demoteQuestionFromMockPool(
+  service: SupabaseClient,
+  questionId: string,
+  reason: string,
+): Promise<void> {
+  const now = new Date().toISOString();
+  const { error } = await service
+    .from("ai_generated_questions")
+    .update({
+      status: "pending",
+      practice_eligible: true,
+      reserved_for_mock: false,
+      quality_gate_verdict: "Major",
+      quality_gate_action: "delete",
+      quality_gate_reason: reason.slice(0, 480),
+      quality_gate_assessed_at: now,
+      updated_at: now,
+    })
+    .eq("id", questionId);
+  if (error) throw new Error(error.message);
+}
+
+async function stageQuestionForMockPool(
+  service: SupabaseClient,
+  questionId: string,
+): Promise<void> {
+  const { error } = await service
+    .from("ai_generated_questions")
+    .update({
+      status: "approved",
+      practice_eligible: false,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", questionId)
+    .eq("status", "pending");
+  if (error) throw new Error(error.message);
+}
+
+/**
+ * Apply quality-scan recommendations: edit Minors in place; replace Majors.
+ * Uses the latest stored scan, or runs one first if missing.
+ */
+export async function autoRemediateMockQuality(
+  service: SupabaseClient,
+  mockId: string,
+  options?: { rescanFirst?: boolean },
+): Promise<{
+  outcomes: import("./questionQualityRemediate").RemediateSlotOutcome[];
+  scan: import("./questionQualityScan").QuestionQualityScanResult;
+}> {
+  const {
+    planRemediation,
+    llmEditQuestion,
+  } = await import("./questionQualityRemediate");
+  type RemediateSlotOutcome =
+    import("./questionQualityRemediate").RemediateSlotOutcome;
+
+  const { mock, slots } = await getMockWithSlots(service, mockId);
+  if (mock.status === "published") {
+    throw new Error("Cannot auto-fix a published mock. Archive it first.");
+  }
+
+  let scan =
+    (
+      mock.generation_notes as {
+        questionQualityScan?: import("./questionQualityScan").QuestionQualityScanResult;
+      } | null
+    )?.questionQualityScan ?? null;
+
+  if (!scan || options?.rescanFirst) {
+    scan = await runQuestionQualityScan(service, mockId, { force: true });
+  }
+
+  const byQuestionId = new Map(
+    scan.byPosition.map((row) => [row.questionId, row]),
+  );
+  const outcomes: RemediateSlotOutcome[] = [];
+
+  for (const slot of slots) {
+    const row = byQuestionId.get(slot.questionId);
+    if (!row) {
+      outcomes.push({
+        position: slot.position,
+        questionId: slot.questionId,
+        plan: "skip",
+        status: "skipped",
+        detail: "No quality scan row for this slot.",
+      });
+      continue;
+    }
+
+    const plan = planRemediation({
+      ...row,
+      locked: slot.locked,
+    });
+
+    if (plan.kind === "skip") {
+      outcomes.push({
+        position: slot.position,
+        questionId: slot.questionId,
+        plan: "skip",
+        status: "skipped",
+        detail: plan.reason,
+      });
+      continue;
+    }
+
+    if (plan.kind === "edit") {
+      const q = slot.question;
+      if (!q) {
+        outcomes.push({
+          position: slot.position,
+          questionId: slot.questionId,
+          plan: "edit",
+          status: "failed",
+          detail: "Missing question data; cannot edit.",
+        });
+        continue;
+      }
+
+      const edited = await llmEditQuestion({
+        question: q,
+        issueReason: row.reason,
+        flags: row.flags,
+      });
+
+      if (!edited) {
+        // Fall back to replace when the editor cannot produce a valid fix.
+        const alts = await getReplacementOptions(
+          service,
+          mockId,
+          slot.position,
+          1,
+        );
+        if (alts.length === 0) {
+          outcomes.push({
+            position: slot.position,
+            questionId: slot.questionId,
+            plan: "edit",
+            status: "failed",
+            detail: "LLM edit failed and no replacement available.",
+          });
+          continue;
+        }
+        const replacement = alts[0];
+        await replaceSlot(service, mockId, slot.position, replacement.id);
+        await demoteQuestionFromMockPool(
+          service,
+          slot.questionId,
+          `Auto-fix: edit failed (${row.reason}). Replaced in mock.`,
+        );
+        await stageQuestionForMockPool(service, replacement.id);
+        outcomes.push({
+          position: slot.position,
+          questionId: slot.questionId,
+          plan: "replace",
+          status: "ok",
+          detail: "Edit failed; replaced from pool instead.",
+          replacementQuestionId: replacement.id,
+        });
+        continue;
+      }
+
+      const now = new Date().toISOString();
+      const { error: editErr } = await service
+        .from("ai_generated_questions")
+        .update({
+          question_stem: edited.questionStem,
+          options: edited.options,
+          correct_option: edited.correctOption,
+          solution_reasoning: edited.solutionReasoning,
+          quality_gate_verdict: "Pass",
+          quality_gate_action: "approve",
+          quality_gate_reason: `Auto-edited: ${edited.editSummary}`.slice(
+            0,
+            480,
+          ),
+          quality_gate_assessed_at: now,
+          updated_at: now,
+        })
+        .eq("id", q.id);
+      if (editErr) {
+        outcomes.push({
+          position: slot.position,
+          questionId: slot.questionId,
+          plan: "edit",
+          status: "failed",
+          detail: editErr.message,
+        });
+        continue;
+      }
+
+      outcomes.push({
+        position: slot.position,
+        questionId: slot.questionId,
+        plan: "edit",
+        status: "ok",
+        detail: edited.editSummary,
+      });
+      continue;
+    }
+
+    // replace
+    const alts = await getReplacementOptions(service, mockId, slot.position, 1);
+    if (alts.length === 0) {
+      outcomes.push({
+        position: slot.position,
+        questionId: slot.questionId,
+        plan: "replace",
+        status: "failed",
+        detail: "No suitable replacement in the pool.",
+      });
+      continue;
+    }
+    const replacement = alts[0];
+    await replaceSlot(service, mockId, slot.position, replacement.id);
+    await demoteQuestionFromMockPool(
+      service,
+      slot.questionId,
+      `Auto-fix removed from mock: ${plan.reason}`,
+    );
+    await stageQuestionForMockPool(service, replacement.id);
+    outcomes.push({
+      position: slot.position,
+      questionId: slot.questionId,
+      plan: "replace",
+      status: "ok",
+      detail: plan.reason,
+      replacementQuestionId: replacement.id,
+    });
+  }
+
+  const refreshedScan = await runQuestionQualityScan(service, mockId, {
+    force: false,
+  });
+
+  const { data: notesRow } = await service
+    .from("esat_mocks")
+    .select("generation_notes")
+    .eq("id", mockId)
+    .maybeSingle();
+  const existingNotes =
+    (notesRow?.generation_notes as Record<string, unknown> | null) ?? {};
+  const prevNotes = Array.isArray(existingNotes.notes)
+    ? (existingNotes.notes as string[])
+    : [];
+  const edited = outcomes.filter((o) => o.plan === "edit" && o.status === "ok")
+    .length;
+  const replaced = outcomes.filter(
+    (o) => o.plan === "replace" && o.status === "ok",
+  ).length;
+  const failed = outcomes.filter((o) => o.status === "failed").length;
+  const note = `Auto-fix quality: ${edited} edited, ${replaced} replaced, ${failed} failed.`;
+
+  await service
+    .from("esat_mocks")
+    .update({
+      generation_notes: {
+        ...existingNotes,
+        notes: [
+          ...prevNotes.filter((n) => !n.startsWith("Auto-fix quality:")),
+          note,
+        ],
+        qualityRemediation: {
+          at: new Date().toISOString(),
+          outcomes,
+        },
+        questionQualityScan: refreshedScan,
+      },
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", mockId);
+
+  return { outcomes, scan: refreshedScan };
+}
+
 export async function updateMockMeta(
   service: SupabaseClient,
   mockId: string,

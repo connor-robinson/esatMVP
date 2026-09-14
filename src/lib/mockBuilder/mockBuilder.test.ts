@@ -639,6 +639,59 @@ describe("question quality scan heuristics", () => {
   });
 });
 
+describe("question quality remediation plans", () => {
+  it("plans edit for Minor and replace for Major/regenerate/delete", async () => {
+    const { planRemediation, validateEditedQuestion } = await import(
+      "./questionQualityRemediate"
+    );
+    expect(
+      planRemediation({
+        verdict: "Minor",
+        action: "human_review",
+        reason: "Wording",
+      }).kind,
+    ).toBe("edit");
+    expect(
+      planRemediation({
+        verdict: "Major",
+        action: "regenerate",
+        reason: "Broken key",
+      }).kind,
+    ).toBe("replace");
+    expect(
+      planRemediation({
+        verdict: "Pass",
+        action: "delete",
+        reason: "Dup",
+      }).kind,
+    ).toBe("replace");
+    expect(
+      planRemediation({
+        verdict: "Minor",
+        action: "human_review",
+        reason: "x",
+        locked: true,
+      }).kind,
+    ).toBe("skip");
+    expect(
+      validateEditedQuestion({
+        questionStem: "Fixed stem?",
+        options: { A: "1", B: "2", C: "3", D: "4" },
+        correctOption: "B",
+        solutionReasoning: "Because B",
+        editSummary: "Fixed stem",
+      })?.correctOption,
+    ).toBe("B");
+    expect(
+      validateEditedQuestion({
+        questionStem: "x",
+        options: { A: "1" },
+        correctOption: "A",
+      }),
+    ).toBeNull();
+  });
+});
+
 describe("difficultyVsTypical", () => {
   it("ideal mean from default blueprint is about 3.15", () => {
     const mean = idealMeanDifficulty(getDefaultBlueprint("Math 1"));
