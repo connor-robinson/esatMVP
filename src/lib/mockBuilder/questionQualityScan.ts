@@ -6,7 +6,6 @@
 import {
   extractJsonObject,
   generateJsonWithLlm,
-  type LlmJsonSource,
 } from "./vertexClient";
 import type { MockCandidateQuestion, MockSlot } from "./types";
 
@@ -31,7 +30,7 @@ export type QuestionQualitySlotResult = {
 
 export type QuestionQualityScanResult = {
   scannedAt: string;
-  source: LlmJsonSource | "db" | "mixed" | "heuristic";
+  source: "db" | "llm" | "mixed" | "heuristic";
   summary: {
     pass: number;
     minor: number;
