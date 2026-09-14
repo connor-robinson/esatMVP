@@ -76,6 +76,12 @@ const CARDS: Array<{
     body: "Paper popularity, sections, and hardest past-paper questions.",
     key: null,
   },
+  {
+    href: "/admin/mock-builder",
+    title: "Mocks",
+    body: "Assemble ESAT mock papers from the bank and mock-staged questions.",
+    key: null,
+  },
 ];
 
 export default function AdminOverviewPage() {

@@ -245,3 +245,25 @@ export type EsatMockRow = {
 
 export const SETTING_EXCLUDE_PUBLISHED_FROM_PRACTICE =
   "exclude_published_mock_questions_from_practice" as const;
+
+export type MockPoolInventorySubjectRow = {
+  subject: string;
+  /** Approved but withheld from practice (mock-staged / overnight). */
+  mockStaged: number;
+  /** Still pending; not in the student bank. */
+  pending: number;
+  /** mockStaged + pending. */
+  totalNotInPracticeBank: number;
+  /** Approved + practice_eligible, never attempted by anyone. */
+  unattemptedInBank: number;
+};
+
+export type MockPoolInventory = {
+  subjects: MockPoolInventorySubjectRow[];
+  totals: {
+    mockStaged: number;
+    pending: number;
+    totalNotInPracticeBank: number;
+    unattemptedInBank: number;
+  };
+};

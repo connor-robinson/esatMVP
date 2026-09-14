@@ -5,6 +5,7 @@ import {
   countAvailableDiagrams,
   getExcludePublishedFromPractice,
   listMocks,
+  loadMockPoolInventory,
   setExcludePublishedFromPractice,
 } from "@/lib/mockBuilder/server";
 import {
@@ -27,6 +28,7 @@ export async function GET(request: NextRequest) {
   try {
     const mocks = await listMocks(admin.service);
     const exclude = await getExcludePublishedFromPractice(admin.service);
+    const inventory = await loadMockPoolInventory(admin.service);
     const diagramAvailability: Record<
       string,
       { available: number; reserved: number; defaultTarget: number }
@@ -43,6 +45,7 @@ export async function GET(request: NextRequest) {
       settings: { excludePublishedMockQuestionsFromPractice: exclude },
       subjects: MOCK_BUILDER_SUBJECTS,
       diagramAvailability,
+      inventory,
     });
   } catch (e) {
     return NextResponse.json(

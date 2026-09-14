@@ -66,10 +66,14 @@ const PRIMARY = [
     label: "QB reports",
     match: (p: string) => p.startsWith("/admin/question-reports"),
   },
+  {
+    href: "/admin/mock-builder",
+    label: "Mocks",
+    match: (p: string) => p.startsWith("/admin/mock-builder"),
+  },
 ] as const;
 
 const SECONDARY = [
-  { href: "/admin/mock-builder", label: "Mock builder" },
   { href: "/mental-maths/fermiguessr/preview", label: "Fermi preview" },
 ] as const;
 
