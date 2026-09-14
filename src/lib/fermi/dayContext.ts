@@ -45,6 +45,23 @@ const FIXED: Record<string, { observances?: string[]; bigEdition?: string }> = {
 
 /** Everyday / food / nature hooks teens and families get instantly. */
 const FUN_DAYS: Record<string, string[]> = {
+  "09-14": ["back to school / uni", "rainy autumn"],
+  "09-15": ["football / weekend sports"],
+  "09-16": ["pizza night"],
+  "09-17": ["phones / battery life"],
+  "09-18": ["burgers / fast food"],
+  "09-19": ["pirates / treasure (silly fun day)"],
+  "09-20": ["drinks / parties"],
+  "09-21": ["books / reading"],
+  "09-22": ["autumn equinox", "day and night"],
+  "09-23": ["commuting / buses"],
+  "09-24": ["punctuation / typing jokes"],
+  "09-25": ["rivers / swimming"],
+  "09-26": ["languages / words"],
+  "09-27": ["travel / airports"],
+  "09-28": ["dogs / pets"],
+  "09-29": ["hearts / fitness"],
+  "09-30": ["podcasts / headphones"],
   "10-02": ["autumn walks", "hot drinks weather"],
   "10-03": ["weekend sports"],
   "10-05": ["school / uni Monday energy"],
@@ -79,6 +96,9 @@ const FUN_DAYS: Record<string, string[]> = {
  * Skip wars, politics, disasters, revolutions, executions.
  */
 const ON_THIS_DAY: Record<string, string[]> = {
+  "09-19": ["silly pirate day vibes"],
+  "09-21": ["The Hobbit published (books / reading)"],
+  "09-22": ["autumn equinox"],
   "10-01": ["coffee / cafes everywhere"],
   "10-04": ["Sputnik / space race vibe (keep light)"],
   "10-05": ["Beatles / music charts"],

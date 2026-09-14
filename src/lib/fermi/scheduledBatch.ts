@@ -1,7 +1,7 @@
 import { stripTrackingParams } from "@/lib/fermi/stripUtm";
 
 /** Prefer DB presence over a hardcoded window. Kept for docs / seed messaging. */
-export const FERMI_SCHEDULED_BATCH_START = "2026-07-01";
+export const FERMI_SCHEDULED_BATCH_START = "2026-09-14";
 export const FERMI_SCHEDULED_BATCH_END = "2026-10-31";
 
 export function scheduledQuestionId(batchItemId: number): string {
