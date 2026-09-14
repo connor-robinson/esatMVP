@@ -927,7 +927,10 @@ type MockAttemptAnswers = Array<{
 }> | null;
 
 async function fetchAllRows<T>(
-  fetchPage: (from: number, to: number) => Promise<{ data: T[] | null; error: { message: string } | null }>,
+  fetchPage: (
+    from: number,
+    to: number,
+  ) => PromiseLike<{ data: T[] | null; error: { message: string } | null }>,
   pageSize = 1000,
 ): Promise<T[]> {
   const out: T[] = [];
