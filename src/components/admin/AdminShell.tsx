@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { Container } from "@/components/layout/Container";
 import { cn } from "@/lib/utils";
+import { ADMIN_BADGES_REFRESH_EVENT } from "@/lib/admin/adminBadges";
 import {
   FEEDBACK_ADMIN_VIEWED_EVENT,
   getFeedbackAdminLastSeenAt,
@@ -70,10 +71,11 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname() || "/admin";
   const [supportBadge, setSupportBadge] = useState(0);
   const [feedbackBadge, setFeedbackBadge] = useState(0);
+  const [reportsBadge, setReportsBadge] = useState(0);
 
   const loadBadge = useCallback(async () => {
     try {
-      const [supportRes, feedbackRes] = await Promise.all([
+      const [supportRes, feedbackRes, reportsRes] = await Promise.all([
         fetch("/api/admin/support/notifications", { cache: "no-store" }),
         fetch(
           (() => {
@@ -85,6 +87,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           })(),
           { cache: "no-store" },
         ),
+        fetch("/api/admin/question-reports/notifications", {
+          cache: "no-store",
+        }),
       ]);
       if (supportRes.ok) {
         const json = await supportRes.json();
@@ -94,6 +99,10 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         const json = await feedbackRes.json();
         setFeedbackBadge(Number(json.notifications?.total ?? 0));
       }
+      if (reportsRes.ok) {
+        const json = await reportsRes.json();
+        setReportsBadge(Number(json.notifications?.total ?? 0));
+      }
     } catch {
       // ignore badge failures
     }
@@ -102,13 +111,19 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     void loadBadge();
     const id = window.setInterval(() => void loadBadge(), 60_000);
-    const onViewed = () => void loadBadge();
-    window.addEventListener(FEEDBACK_ADMIN_VIEWED_EVENT, onViewed);
+    const onRefresh = () => void loadBadge();
+    window.addEventListener(FEEDBACK_ADMIN_VIEWED_EVENT, onRefresh);
+    window.addEventListener(ADMIN_BADGES_REFRESH_EVENT, onRefresh);
     return () => {
       window.clearInterval(id);
-      window.removeEventListener(FEEDBACK_ADMIN_VIEWED_EVENT, onViewed);
+      window.removeEventListener(FEEDBACK_ADMIN_VIEWED_EVENT, onRefresh);
+      window.removeEventListener(ADMIN_BADGES_REFRESH_EVENT, onRefresh);
     };
   }, [loadBadge]);
+
+  useEffect(() => {
+    void loadBadge();
+  }, [pathname, loadBadge]);
 
   return (
     <div className="min-h-screen bg-surface">
@@ -129,7 +144,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                     ? supportBadge
                     : item.href === "/admin/feedback"
                       ? feedbackBadge
-                      : 0;
+                      : item.href === "/admin/question-reports"
+                        ? reportsBadge
+                        : 0;
                 const showBadge = badgeCount > 0;
                 return (
                   <Link

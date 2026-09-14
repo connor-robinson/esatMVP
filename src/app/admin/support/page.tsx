@@ -9,6 +9,7 @@ import type {
   InboxUserSearchHit,
 } from "@/lib/inbox";
 import type { SupportNotificationItem } from "@/lib/admin/supportNotifications";
+import { requestAdminBadgesRefresh } from "@/lib/admin/adminBadges";
 import { SUPPORT_CATEGORY_LABELS, type SupportCategory } from "@/lib/support";
 import { cn } from "@/lib/utils";
 
@@ -141,6 +142,7 @@ export default function AdminSupportPage() {
 
   const refreshAll = useCallback(async () => {
     await Promise.all([loadTickets(), loadNotifications(), loadMessages()]);
+    requestAdminBadgesRefresh();
   }, [loadTickets, loadNotifications, loadMessages]);
 
   useEffect(() => {
@@ -457,7 +459,7 @@ export default function AdminSupportPage() {
           <p className="text-xs text-text-subtle">
             {notifLoading
               ? "Refreshing…"
-              : `${notifCounts.newTicketCount} new · ${notifCounts.studentReplyCount} replies`}
+              : `${notifCounts.newTicketCount} open · ${notifCounts.studentReplyCount} replies`}
           </p>
         </div>
 
@@ -465,8 +467,8 @@ export default function AdminSupportPage() {
           <p className="mt-4 text-sm text-text-muted">Loading…</p>
         ) : notifications.length === 0 ? (
           <p className="mt-4 text-sm text-text-muted">
-            Nothing waiting. New support tickets and unanswered student replies
-            show up here.
+            Nothing waiting. Unresolved help requests and student replies show
+            up here until resolved.
           </p>
         ) : (
           <ul className="mt-4 space-y-2">

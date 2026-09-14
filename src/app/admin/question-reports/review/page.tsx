@@ -11,6 +11,7 @@ import {
   type QuestionReportStatusFilter,
   type ReportedQuestionItem,
 } from "@/lib/admin/reportedQuestions";
+import { requestAdminBadgesRefresh } from "@/lib/admin/adminBadges";
 import type { QuestionBankQuestion } from "@/types/questionBank";
 import { cn } from "@/lib/utils";
 
@@ -233,6 +234,7 @@ function AdminReportedQuestionsReviewPage() {
       );
     }
     markTicketResolvedLocally(ticketId);
+    requestAdminBadgesRefresh();
   };
 
   const sendThankYou = async () => {
@@ -269,6 +271,7 @@ function AdminReportedQuestionsReviewPage() {
       setThankYouOpen(false);
       setActionMsg("Thank-you sent and ticket resolved. Question stays in this review session.");
       pushToast("Message sent", "ok");
+      requestAdminBadgesRefresh();
     } catch (err) {
       setActionMsg(err instanceof Error ? err.message : "Send failed");
     } finally {

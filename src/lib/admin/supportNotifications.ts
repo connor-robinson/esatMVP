@@ -40,18 +40,23 @@ function threadKey(row: InboxRow): string {
   return `root:${row.parent_id ?? row.id}`;
 }
 
+/**
+ * Unresolved help / support notifications (excludes question-bank content reports).
+ * Badge clears when the underlying ticket is resolved/closed.
+ */
 export async function loadSupportNotifications(
   service: SupabaseClient,
 ): Promise<SupportNotificationsPayload> {
-  const [supportRes, legacyRes, inboxRes] = await Promise.all([
+  const [supportRes, legacyRes, inboxRes, qbOpenRes] = await Promise.all([
     service
       .from("support_requests")
       .select(
-        "id, user_id, reply_email, subject, message, status, created_at",
+        "id, user_id, reply_email, subject, message, status, category, created_at",
       )
       .in("status", ["open", "in_progress"])
+      .neq("category", "question_or_content_error")
       .order("created_at", { ascending: false })
-      .limit(80),
+      .limit(120),
     service
       .from("app_bug_reports")
       .select("id, user_id, description, status, created_at")
@@ -65,28 +70,37 @@ export async function loadSupportNotifications(
       )
       .order("created_at", { ascending: false })
       .limit(300),
+    service
+      .from("support_requests")
+      .select("id")
+      .eq("category", "question_or_content_error")
+      .in("status", ["open", "in_progress"])
+      .limit(200),
   ]);
 
   if (supportRes.error) throw new Error(supportRes.error.message);
   if (legacyRes.error) throw new Error(legacyRes.error.message);
   if (inboxRes.error) throw new Error(inboxRes.error.message);
+  if (qbOpenRes.error) throw new Error(qbOpenRes.error.message);
+
+  const qbTicketIds = new Set(
+    (qbOpenRes.data ?? []).map((row) => row.id as string),
+  );
 
   const inbox = (inboxRes.data ?? []) as InboxRow[];
 
   const latestByThread = new Map<string, InboxRow>();
-  const hasOutboundBySupport = new Set<string>();
-  const hasOutboundByLegacy = new Set<string>();
-
   for (const row of inbox) {
     const key = threadKey(row);
     if (!latestByThread.has(key)) latestByThread.set(key, row);
-    if (row.direction === "outbound") {
-      if (row.support_request_id) hasOutboundBySupport.add(row.support_request_id);
-      if (row.legacy_bug_report_id) {
-        hasOutboundByLegacy.add(row.legacy_bug_report_id);
-      }
-    }
   }
+
+  const openSupportIds = new Set(
+    (supportRes.data ?? []).map((t) => t.id as string),
+  );
+  const openLegacyIds = new Set(
+    (legacyRes.data ?? []).map((t) => t.id as string),
+  );
 
   const userIds = new Set<string>();
   for (const t of supportRes.data ?? []) {
@@ -119,15 +133,16 @@ export async function loadSupportNotifications(
   }
 
   const items: SupportNotificationItem[] = [];
+  const countedTicketIds = new Set<string>();
 
   for (const ticket of supportRes.data ?? []) {
     const id = ticket.id as string;
-    if (hasOutboundBySupport.has(id)) continue;
+    countedTicketIds.add(id);
     const profile = ticket.user_id
       ? profileById.get(ticket.user_id as string)
       : null;
     items.push({
-      id: `new-support-${id}`,
+      id: `open-support-${id}`,
       kind: "new_ticket",
       source: "support",
       title: String(ticket.subject ?? "Support request"),
@@ -146,14 +161,14 @@ export async function loadSupportNotifications(
 
   for (const ticket of legacyRes.data ?? []) {
     const id = ticket.id as string;
-    if (hasOutboundByLegacy.has(id)) continue;
+    countedTicketIds.add(id);
     const profile = ticket.user_id
       ? profileById.get(ticket.user_id as string)
       : null;
     const description = String(ticket.description ?? "");
     const subjectMatch = /^Subject:\s*(.*)$/im.exec(description);
     items.push({
-      id: `new-legacy-${id}`,
+      id: `open-legacy-${id}`,
       kind: "new_ticket",
       source: "legacy_bug",
       title: subjectMatch?.[1]?.trim() || "Legacy help report",
@@ -170,6 +185,16 @@ export async function loadSupportNotifications(
 
   for (const row of latestByThread.values()) {
     if (row.direction !== "inbound") continue;
+
+    if (row.support_request_id) {
+      if (qbTicketIds.has(row.support_request_id)) continue;
+      // Already covered by the open-ticket badge entry.
+      if (openSupportIds.has(row.support_request_id)) continue;
+    }
+    if (row.legacy_bug_report_id && openLegacyIds.has(row.legacy_bug_report_id)) {
+      continue;
+    }
+
     const profile = row.created_by
       ? profileById.get(row.created_by)
       : null;
@@ -178,6 +203,10 @@ export async function loadSupportNotifications(
       : row.legacy_bug_report_id
         ? "legacy_bug"
         : "inbox";
+    const ticketId = row.support_request_id ?? row.legacy_bug_report_id ?? null;
+    if (ticketId && countedTicketIds.has(ticketId)) continue;
+    if (ticketId) countedTicketIds.add(ticketId);
+
     items.push({
       id: `reply-${row.id}`,
       kind: "student_reply",
@@ -185,7 +214,7 @@ export async function loadSupportNotifications(
       title: String(row.subject ?? "Student reply"),
       preview: String(row.body ?? "").slice(0, 180),
       createdAt: row.created_at,
-      ticketId: row.support_request_id ?? row.legacy_bug_report_id ?? null,
+      ticketId,
       messageId: row.id,
       rootMessageId: row.parent_id ?? row.id,
       userId: row.created_by,
