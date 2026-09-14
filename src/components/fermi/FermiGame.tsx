@@ -341,7 +341,7 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
         <button
           type="button"
           onClick={() => window.location.reload()}
-          className="rounded-md bg-secondary px-5 py-2.5 text-sm font-bold text-white"
+          className="rounded-sm bg-secondary px-5 py-2.5 text-sm font-bold text-white"
         >
           Retry
         </button>
@@ -510,7 +510,7 @@ function PlayingView({
             autoComplete="off"
             spellCheck={false}
             className={cn(
-              "h-16 w-full rounded-md border-0 pl-5 pr-16 text-2xl font-semibold outline-none transition-all duration-75",
+              "h-16 w-full rounded-sm border-0 pl-5 pr-16 text-2xl font-semibold outline-none transition-all duration-75",
               error
                 ? "bg-error/20 text-error focus:ring-0"
                 : "bg-surface-elevated text-text focus:ring-0",
@@ -593,7 +593,7 @@ function RevealedView({
           </span>
         </div>
         <div
-          className="flex h-16 w-full items-center rounded-md bg-surface-elevated px-5 text-2xl font-semibold text-text"
+          className="flex h-16 w-full items-center rounded-sm bg-surface-elevated px-5 text-2xl font-semibold text-text"
           aria-label={`Your guess: ${input || formatFullNumber(guess)}`}
         >
           <span className="truncate">{input.trim() || formatFullNumber(guess)}</span>
@@ -615,7 +615,7 @@ function RevealedView({
         <button
           type="button"
           onClick={onNext}
-          className="flex shrink-0 items-center justify-center gap-2 self-start rounded-md bg-secondary px-5 py-2.5 text-sm font-bold text-white outline-none transition-all hover:scale-[1.02] active:scale-[0.98]"
+          className="flex shrink-0 items-center justify-center gap-2 self-start rounded-sm bg-secondary px-5 py-2.5 text-sm font-bold text-white outline-none transition-all hover:scale-[1.02] active:scale-[0.98]"
         >
           {isLastQuestion ? "See results" : "Next question"}
           <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
@@ -657,7 +657,7 @@ function FermiResultsScoreGrid({
               key={r.question.id}
               type="button"
               className={cn(
-                "flex flex-col items-center gap-1 rounded-md py-3 outline-none transition-colors duration-150",
+                "flex flex-col items-center gap-1 rounded-sm py-3 outline-none transition-colors duration-150",
                 isActive ? "bg-surface" : "bg-transparent hover:bg-surface/70",
               )}
               onMouseEnter={() => onActiveChange(i)}
@@ -689,7 +689,7 @@ function FermiResultDetailPanel({ result }: { result: FermiResult }) {
   const tone = toneClasses[result.verdict.tone];
 
   return (
-    <div className={cn("rounded-md p-4", tone.bg)}>
+    <div className={cn("rounded-sm p-4", tone.bg)}>
       <div className="flex flex-col gap-3">
         <p className="text-balance text-sm font-medium leading-snug text-text sm:text-base">
           {result.question.question}
@@ -800,7 +800,7 @@ function SummaryView({
         <button
           type="button"
           onClick={onViewStats}
-          className="flex w-full items-center justify-center gap-2 rounded-md bg-secondary px-4 py-3 text-sm font-bold text-white outline-none transition-all hover:scale-[1.02] active:scale-[0.98]"
+          className="flex w-full items-center justify-center gap-2 rounded-sm bg-secondary px-4 py-3 text-sm font-bold text-white outline-none transition-all hover:scale-[1.02] active:scale-[0.98]"
         >
           <BarChart3 className="h-4 w-4" strokeWidth={2.25} />
           View stats
@@ -808,7 +808,7 @@ function SummaryView({
         <button
           type="button"
           onClick={onCopyShare}
-          className="flex w-full items-center justify-center gap-2 rounded-md bg-surface px-4 py-3 text-sm font-bold text-text outline-none transition-colors hover:bg-surface-mid"
+          className="flex w-full items-center justify-center gap-2 rounded-sm bg-surface px-4 py-3 text-sm font-bold text-text outline-none transition-colors hover:bg-surface-mid"
         >
           {copied ? "Copied!" : "Share result"}
         </button>
