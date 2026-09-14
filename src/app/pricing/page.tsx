@@ -75,12 +75,12 @@ export default function PricingPage() {
           <h1 className="text-3xl font-bold tracking-tight text-text sm:text-4xl md:text-[2.5rem] md:leading-tight">
             Choose your plan
           </h1>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-text-muted">
+        </div>
+        <div className="sr-only">
+          <p>
             Compare Free, Weekly, Monthly and Exam Season Pass. Paid plans unlock
             full past papers, the question bank, mental maths and analytics.
           </p>
-        </div>
-        <div className="sr-only">
           {plans.map((plan) => (
             <article key={plan.name}>
               <h2>{plan.name}</h2>
