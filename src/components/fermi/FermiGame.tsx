@@ -671,7 +671,6 @@ function RevealedView({
   isLastQuestion,
 }: {
   result: FermiResult;
-  input: string;
   onNext: () => void;
   isLastQuestion: boolean;
 }) {
@@ -684,11 +683,7 @@ function RevealedView({
 
   return (
     <div className="flex w-full flex-col items-center gap-6">
-      <FermiQuestionAnchor
-        questionText={question.question}
-        score={score}
-        scoreTone={tone.text}
-      >
+      <FermiQuestionAnchor questionText={question.question}>
         {/* Slider between question and the action bar */}
         <LogScaleBar guess={guess} answer={question.answer} tone={tone.text} />
 
@@ -710,15 +705,6 @@ function RevealedView({
           </IconActionButton>
         </div>
       </FermiQuestionAnchor>
-
-      <div className="w-full max-w-md text-center">
-        <p className={cn("text-2xl font-bold uppercase tracking-wide sm:text-3xl", tone.text)}>
-          {verdict.label.toUpperCase()}
-        </p>
-        <p className="mt-1 text-sm font-medium text-text-muted sm:text-base">
-          {verdict.detail}
-        </p>
-      </div>
 
       {showSolution && (
         <div className="w-full max-w-xl rounded-sm bg-surface-elevated px-4 py-3 text-left">
@@ -753,6 +739,28 @@ function RevealedView({
           ) : null}
         </div>
       ) : null}
+
+      <div
+        className={cn(
+          "w-full max-w-2xl text-center text-sm leading-snug sm:text-base",
+          "flex flex-wrap items-baseline justify-center gap-x-2 gap-y-1",
+        )}
+      >
+        <span className={cn("font-bold tabular-nums", tone.text)}>
+          {score}
+          <span className="font-semibold text-text-muted">/100</span>
+        </span>
+        <span className="text-text-muted" aria-hidden>
+          ·
+        </span>
+        <span className={cn("font-bold uppercase tracking-wide", tone.text)}>
+          {verdict.label}
+        </span>
+        <span className="text-text-muted" aria-hidden>
+          ·
+        </span>
+        <span className="font-medium text-text-muted">{verdict.detail}</span>
+      </div>
     </div>
   );
 }

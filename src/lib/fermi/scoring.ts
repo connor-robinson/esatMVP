@@ -68,6 +68,14 @@ export function getVerdict(guess: number, answer: number): FermiVerdict {
 }
 
 function formatFactor(factor: number): string {
+  if (!Number.isFinite(factor) || factor < 1) return "1×";
+  if (factor >= 1e6) {
+    const exp = Math.floor(Math.log10(factor));
+    const mant = factor / 10 ** exp;
+    const m = Math.round(mant * 10) / 10;
+    return `${m}×10^${exp}×`;
+  }
+  if (factor >= 1000) return `${Math.round(factor / 100) * 100}×`;
   if (factor >= 100) return `${Math.round(factor / 10) * 10}×`;
   if (factor >= 10) return `${Math.round(factor)}×`;
   return `${(Math.round(factor * 10) / 10).toLocaleString("en-US")}×`;
