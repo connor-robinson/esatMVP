@@ -577,46 +577,61 @@ function PlayingView({
 /* ------------------------------- Revealed ------------------------------ */
 
 function LogScaleBar({ guess, answer, tone }: { guess: number; answer: number; tone: string }) {
+  /** Track is linear in log10-space: left = answer/10^RANGE, right = answer*10^RANGE. */
   const RANGE = 3;
-  const SNAP_PCT = 4;
+  const SNAP_ORDERS = 0.12;
   const trackRef = useRef<HTMLDivElement>(null);
-  const [scrubPct, setScrubPct] = useState<number | null>(null);
+  const [scrubOrders, setScrubOrders] = useState<number | null>(null);
 
-  const guessDelta = Math.log10(Math.max(guess, 1e-9)) - Math.log10(Math.max(answer, 1e-9));
-  const guessClamped = Math.max(-RANGE, Math.min(RANGE, guessDelta));
-  const guessPct = 50 + (guessClamped / RANGE) * 50;
+  const answerLog = Math.log10(Math.max(answer, 1e-9));
+  const guessOrders = Math.log10(Math.max(guess, 1e-9)) - answerLog;
+  const guessClamped = Math.max(-RANGE, Math.min(RANGE, guessOrders));
+  const guessPct = ((guessClamped + RANGE) / (2 * RANGE)) * 100;
 
   const snapped =
-    scrubPct != null && Math.abs(scrubPct - guessPct) <= SNAP_PCT;
-  const activePct = scrubPct == null ? guessPct : snapped ? guessPct : scrubPct;
-  const scrubDelta = ((activePct - 50) / 50) * RANGE;
-  const scrubValue = snapped ? guess : Math.max(answer, 1e-9) * 10 ** scrubDelta;
+    scrubOrders != null && Math.abs(scrubOrders - guessClamped) <= SNAP_ORDERS;
+  const activeOrders = scrubOrders == null ? guessClamped : snapped ? guessClamped : scrubOrders;
+  const activePct = ((activeOrders + RANGE) / (2 * RANGE)) * 100;
+  const scrubValue = snapped ? guess : 10 ** (answerLog + activeOrders);
   const scrubScore = snapped
-    ? closenessScore(Math.abs(guessDelta))
-    : closenessScore(Math.abs(scrubDelta));
+    ? closenessScore(Math.abs(guessOrders))
+    : closenessScore(Math.abs(activeOrders));
   const scrubLabel = `${formatFermiNumber(scrubValue)} · ${scrubScore}/100`;
+
+  const decadeTicks = useMemo(() => {
+    const ticks: { orders: number; label: string }[] = [];
+    for (let o = -RANGE; o <= RANGE; o += 1) {
+      if (o === 0) continue;
+      ticks.push({
+        orders: o,
+        label: o > 0 ? `×10^${o}` : `×10^${o}`,
+      });
+    }
+    return ticks;
+  }, [RANGE]);
 
   const updateFromClientX = (clientX: number) => {
     const el = trackRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
     if (rect.width <= 0) return;
-    const raw = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
-    setScrubPct(Math.abs(raw - guessPct) <= SNAP_PCT ? guessPct : raw);
+    const pct = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
+    const orders = (pct / 100) * (2 * RANGE) - RANGE;
+    setScrubOrders(Math.abs(orders - guessClamped) <= SNAP_ORDERS ? guessClamped : orders);
   };
 
   return (
     <div
       className="w-full max-w-md select-none py-1"
-      onPointerLeave={() => setScrubPct(null)}
+      onPointerLeave={() => setScrubOrders(null)}
     >
       <div
         ref={trackRef}
         role="slider"
-        aria-label="Explore closeness on a log scale"
+        aria-label="Log-scale closeness explorer"
         aria-valuemin={-RANGE}
         aria-valuemax={RANGE}
-        aria-valuenow={Number(scrubDelta.toFixed(2))}
+        aria-valuenow={Number(activeOrders.toFixed(2))}
         aria-valuetext={scrubLabel}
         tabIndex={0}
         className="relative h-10 cursor-ew-resize touch-none outline-none"
@@ -628,31 +643,44 @@ function LogScaleBar({ guess, answer, tone }: { guess: number; answer: number; t
           updateFromClientX(e.clientX);
         }}
         onKeyDown={(e) => {
-          const step = 2;
+          const step = 0.25;
           if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
             e.preventDefault();
-            setScrubPct((p) => {
-              const next = Math.max(0, (p ?? guessPct) - step);
-              return Math.abs(next - guessPct) <= SNAP_PCT ? guessPct : next;
+            setScrubOrders((o) => {
+              const next = Math.max(-RANGE, (o ?? guessClamped) - step);
+              return Math.abs(next - guessClamped) <= SNAP_ORDERS ? guessClamped : next;
             });
           } else if (e.key === "ArrowRight" || e.key === "ArrowUp") {
             e.preventDefault();
-            setScrubPct((p) => {
-              const next = Math.min(100, (p ?? guessPct) + step);
-              return Math.abs(next - guessPct) <= SNAP_PCT ? guessPct : next;
+            setScrubOrders((o) => {
+              const next = Math.min(RANGE, (o ?? guessClamped) + step);
+              return Math.abs(next - guessClamped) <= SNAP_ORDERS ? guessClamped : next;
             });
           } else if (e.key === "Home") {
             e.preventDefault();
-            setScrubPct(0);
+            setScrubOrders(-RANGE);
           } else if (e.key === "End") {
             e.preventDefault();
-            setScrubPct(100);
+            setScrubOrders(RANGE);
           } else if (e.key === "Escape") {
-            setScrubPct(null);
+            setScrubOrders(null);
           }
         }}
       >
         <div className="absolute left-0 right-0 top-1/2 h-1.5 -translate-y-1/2 rounded-sm bg-surface-mid" />
+
+        {/* Log decade ticks */}
+        {decadeTicks.map((tick) => {
+          const pct = ((tick.orders + RANGE) / (2 * RANGE)) * 100;
+          return (
+            <div
+              key={tick.orders}
+              className="pointer-events-none absolute top-1/2 h-3 w-px -translate-x-1/2 -translate-y-1/2 bg-text-disabled"
+              style={{ left: `${pct}%` }}
+            />
+          );
+        })}
+
         <div className="absolute left-1/2 top-1/2 h-5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-sm bg-primary" />
 
         {/* Your actual guess marker (fixed) */}
@@ -660,7 +688,7 @@ function LogScaleBar({ guess, answer, tone }: { guess: number; answer: number; t
           className={cn(
             "pointer-events-none absolute top-1/2 flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-sm bg-surface-elevated shadow-sm ring-2",
             tone.replace("text-", "ring-"),
-            scrubPct != null && !snapped && "opacity-40",
+            scrubOrders != null && !snapped && "opacity-40",
           )}
           style={{ left: `${guessPct}%` }}
           title="Your guess"
@@ -668,8 +696,7 @@ function LogScaleBar({ guess, answer, tone }: { guess: number; answer: number; t
           <div className={cn("h-2.5 w-2.5 rounded-sm", tone.replace("text-", "bg-"))} />
         </div>
 
-        {/* Scrub cursor (hidden while snapped onto the guess) */}
-        {scrubPct != null && !snapped && (
+        {scrubOrders != null && !snapped && (
           <div
             className="pointer-events-none absolute top-1/2 h-7 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-sm bg-text"
             style={{ left: `${activePct}%` }}
@@ -679,7 +706,7 @@ function LogScaleBar({ guess, answer, tone }: { guess: number; answer: number; t
         <div
           className={cn(
             "pointer-events-none absolute -top-8 z-10 -translate-x-1/2 whitespace-nowrap rounded-sm bg-surface-elevated px-2 py-1 text-[11px] font-medium tabular-nums text-text shadow-sm",
-            scrubPct == null && "opacity-0",
+            scrubOrders == null && "opacity-0",
           )}
           style={{ left: `${activePct}%` }}
         >
@@ -687,9 +714,9 @@ function LogScaleBar({ guess, answer, tone }: { guess: number; answer: number; t
         </div>
       </div>
       <div className="mt-1 flex justify-between text-[10px] font-medium uppercase tracking-wide text-text-muted">
-        <span>too low</span>
+        <span>×10^-3</span>
         <span className="text-primary">actual</span>
-        <span>too high</span>
+        <span>×10^3</span>
       </div>
     </div>
   );
@@ -783,13 +810,6 @@ function RevealedView({
           >
             {verdict.label}
           </h3>
-          <p className="mt-1 max-w-xl text-sm font-medium leading-snug text-text sm:text-base">
-            <span className="text-text-muted">Answer </span>
-            <span className="font-semibold text-primary">
-              {formatFermiNumber(question.answer)}
-              {question.unit ? ` ${question.unit}` : ""}
-            </span>
-          </p>
         </motion.div>
       </div>
 
@@ -821,7 +841,13 @@ function RevealedView({
           </div>
         </div>
 
-        <div className="min-h-[1rem]" aria-hidden />
+        <p className="min-h-[1rem] text-center text-sm font-medium text-text">
+          <span className="text-text-muted">Answer </span>
+          <span className="font-semibold text-primary">
+            {formatFermiNumber(question.answer)}
+            {question.unit ? ` ${question.unit}` : ""}
+          </span>
+        </p>
       </FermiControlsColumn>
 
       {showSolution && (
