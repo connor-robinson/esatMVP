@@ -16,6 +16,7 @@ export const REFERRAL_SOURCES = [
   "Instagram",
   "YouTube",
   "Google search",
+  "AI",
   "Reddit",
   "Friend / classmate",
   "Teacher / school",
