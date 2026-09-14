@@ -10,7 +10,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, BarChart3, X } from "lucide-react";
+import { ArrowRight, BarChart3, Eye, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import type { FermiQuestion, PlayableFermiQuestion } from "@/config/fermiQuestions";
@@ -392,7 +392,7 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
       <div
         className={cn(
           "flex min-h-0 flex-1 justify-center overflow-y-auto px-4 py-4 sm:px-6",
-          displayPhase === "summary" ? "items-start" : "items-center",
+          displayPhase === "summary" ? "items-start" : "items-start pt-6 sm:pt-10",
         )}
       >
         <div className="w-full max-w-2xl">
@@ -442,6 +442,44 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
 
 /* ------------------------------- Playing ------------------------------- */
 
+const PREVIEW_SLOT =
+  "flex min-h-[2.5rem] items-center justify-center rounded-sm px-3 py-2 text-center";
+
+function FermiQuestionAnchor({
+  questionText,
+  score,
+  scoreTone,
+  children,
+}: {
+  questionText: string;
+  score?: number | null;
+  scoreTone?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex w-full flex-col items-center gap-6">
+      <div className="relative w-full max-w-xl px-14 sm:px-16">
+        <h2 className="text-balance text-center font-serif text-2xl leading-snug text-text sm:text-3xl">
+          {questionText}
+        </h2>
+        {score != null && (
+          <p
+            className={cn(
+              "absolute right-0 top-1/2 -translate-y-1/2 text-3xl font-bold tabular-nums sm:text-4xl",
+              scoreTone,
+            )}
+            aria-label={`Score ${score} out of 100`}
+          >
+            {score}
+            <span className="text-xl font-semibold text-text-muted sm:text-2xl">/100</span>
+          </p>
+        )}
+      </div>
+      <div className="flex w-full max-w-md flex-col gap-2">{children}</div>
+    </div>
+  );
+}
+
 function PlayingView({
   question,
   input,
@@ -464,23 +502,23 @@ function PlayingView({
   const hasInput = Boolean(input.trim());
 
   return (
-    <div className="animate-fade-in flex w-full flex-col items-center gap-6">
-      <h2 className="text-balance text-center font-serif text-2xl leading-snug text-text sm:text-3xl">
-        {question.question}
-      </h2>
-
-      <div className="flex w-full max-w-md flex-col gap-2">
-        {hasInput && (
-          <div
-            className={cn(
-              "flex min-h-[2.5rem] items-center justify-center rounded-sm px-3 py-2 text-center transition-colors",
-              parsedPreview != null
+    <div className="flex w-full flex-col items-center">
+      <FermiQuestionAnchor questionText={question.question}>
+        {/* Always reserved so typing never shifts the input */}
+        <div
+          className={cn(
+            PREVIEW_SLOT,
+            "transition-colors",
+            hasInput
+              ? parsedPreview != null
                 ? "bg-primary/10 text-primary"
-                : "bg-error/10 text-error",
-            )}
-            aria-live="polite"
-          >
-            {parsedPreview != null ? (
+                : "bg-error/10 text-error"
+              : "bg-transparent",
+          )}
+          aria-live="polite"
+        >
+          {hasInput ? (
+            parsedPreview != null ? (
               <span className="text-base font-semibold">
                 = {formatFullNumber(parsedPreview)}
                 <span className="ml-2 text-sm font-medium opacity-70">
@@ -489,9 +527,9 @@ function PlayingView({
               </span>
             ) : (
               <span className="text-sm font-medium">Can&apos;t read that number yet…</span>
-            )}
-          </div>
-        )}
+            )
+          ) : null}
+        </div>
 
         <div className="relative">
           <input
@@ -524,7 +562,7 @@ function PlayingView({
             className={cn(
               "absolute right-2 top-1/2 -translate-y-1/2 rounded-sm p-3 outline-none transition-all",
               input.trim()
-                ? "bg-secondary/20 text-secondary hover:scale-110 hover:bg-secondary/30"
+                ? "bg-secondary/20 text-secondary hover:bg-secondary/30"
                 : "cursor-not-allowed bg-surface-elevated text-text-disabled",
             )}
             title="Submit estimate"
@@ -533,15 +571,47 @@ function PlayingView({
           </button>
         </div>
 
-        {error && (
-          <p className="text-center text-xs font-medium text-error">{error}</p>
+        {error ? (
+          <p className="min-h-[1rem] text-center text-xs font-medium text-error">{error}</p>
+        ) : (
+          <div className="min-h-[1rem]" aria-hidden />
         )}
-      </div>
+      </FermiQuestionAnchor>
     </div>
   );
 }
 
 /* ------------------------------- Revealed ------------------------------ */
+
+function LogScaleBar({ guess, answer, tone }: { guess: number; answer: number; tone: string }) {
+  const RANGE = 3;
+  const delta = Math.log10(Math.max(guess, 1e-9)) - Math.log10(Math.max(answer, 1e-9));
+  const clamped = Math.max(-RANGE, Math.min(RANGE, delta));
+  const guessPct = 50 + (clamped / RANGE) * 50;
+
+  return (
+    <div className="w-full max-w-md">
+      <div className="relative h-10">
+        <div className="absolute left-0 right-0 top-1/2 h-1.5 -translate-y-1/2 rounded-sm bg-surface-mid" />
+        <div className="absolute left-1/2 top-1/2 h-5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-sm bg-primary" />
+        <div
+          className={cn(
+            "absolute top-1/2 flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-sm bg-surface-elevated shadow-sm ring-2",
+            tone.replace("text-", "ring-"),
+          )}
+          style={{ left: `${guessPct}%` }}
+        >
+          <div className={cn("h-2.5 w-2.5 rounded-sm", tone.replace("text-", "bg-"))} />
+        </div>
+      </div>
+      <div className="flex justify-between text-[10px] font-medium uppercase tracking-wide text-text-muted">
+        <span>too low</span>
+        <span className="text-primary">actual</span>
+        <span>too high</span>
+      </div>
+    </div>
+  );
+}
 
 function RevealedView({
   result,
@@ -556,74 +626,95 @@ function RevealedView({
 }) {
   const tone = toneClasses[result.verdict.tone];
   const { question, guess, score, verdict } = result;
-  const note =
-    question.note ??
-    `Answer: ${formatFermiNumber(question.answer)}${question.unit ? ` ${question.unit}` : ""}`;
+  const solution =
+    question.note?.trim() ||
+    `Answer ≈ ${formatFermiNumber(question.answer)}${question.unit ? ` ${question.unit}` : ""}`;
+  const [showSolution, setShowSolution] = useState(false);
 
   return (
-    <div className="animate-fade-in flex w-full flex-col items-center gap-6">
-      {/* Same anchor as playing: question (+ score on the right, slight left nudge) */}
-      <div className="flex w-full max-w-xl items-center justify-center gap-3 sm:gap-5">
-        <h2 className="-translate-x-1 text-balance text-center font-serif text-2xl leading-snug text-text sm:-translate-x-3 sm:text-3xl">
-          {question.question}
-        </h2>
-        <p
-          className={cn(
-            "shrink-0 text-3xl font-bold tabular-nums sm:text-4xl",
-            tone.text,
-          )}
-          aria-label={`Score ${score} out of 100`}
-        >
-          {score}
-          <span className="text-xl font-semibold text-text-muted sm:text-2xl">/100</span>
-        </p>
-      </div>
-
-      {/* Same input footprint as playing */}
-      <div className="flex w-full max-w-md flex-col gap-2">
-        <div
-          className="flex min-h-[2.5rem] items-center justify-center rounded-sm bg-primary/10 px-3 py-2 text-center text-primary"
-          aria-live="polite"
-        >
-          <span className="text-base font-semibold">
-            = {formatFullNumber(guess)}
-            <span className="ml-2 text-sm font-medium opacity-70">
-              ({formatFermiNumber(guess)})
-            </span>
-          </span>
-        </div>
+    <div className="flex w-full flex-col items-center gap-6">
+      {/* Same footprint as playing: question + empty preview slot + input */}
+      <FermiQuestionAnchor
+        questionText={question.question}
+        score={score}
+        scoreTone={tone.text}
+      >
+        <div className={cn(PREVIEW_SLOT, "bg-transparent")} aria-hidden />
         <div
           className="flex h-16 w-full items-center rounded-sm bg-surface-elevated px-5 text-2xl font-semibold text-text"
           aria-label={`Your guess: ${input || formatFullNumber(guess)}`}
         >
           <span className="truncate">{input.trim() || formatFullNumber(guess)}</span>
         </div>
+      </FermiQuestionAnchor>
+
+      <LogScaleBar guess={guess} answer={question.answer} tone={tone.text} />
+
+      {/* Solution + next on the same row as verdict */}
+      <div className="flex w-full max-w-xl flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowSolution((v) => !v)}
+            className="inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-sm bg-surface px-4 text-sm font-medium text-text-muted outline-none transition-colors hover:bg-surface-mid hover:text-text"
+            aria-expanded={showSolution}
+          >
+            <Eye className="h-4 w-4 shrink-0" strokeWidth={2} />
+            {showSolution ? "Hide solution" : "View our solution"}
+          </button>
+          <button
+            type="button"
+            onClick={onNext}
+            className="inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-sm bg-secondary px-5 text-sm font-bold text-white outline-none transition-colors hover:brightness-110"
+          >
+            {isLastQuestion ? "See results" : "Next question"}
+            <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
+          </button>
+        </div>
+
+        <div className="min-w-0 flex-1 sm:pt-0.5">
+          <p className={cn("text-2xl font-bold uppercase tracking-wide sm:text-3xl", tone.text)}>
+            {verdict.label.toUpperCase()}
+          </p>
+          <p className="mt-1 text-sm font-medium text-text-muted sm:text-base">
+            {verdict.detail}
+          </p>
+        </div>
       </div>
 
-      {/* Commentary grows below the anchored question + input */}
-      <div className="w-full max-w-md text-center">
-        <p className={cn("text-2xl font-bold uppercase tracking-wide sm:text-3xl", tone.text)}>
-          {verdict.label.toUpperCase()}
-        </p>
-        <p className="mt-1.5 text-sm font-medium text-text-muted sm:text-base">
-          {verdict.detail}
-        </p>
-      </div>
+      {showSolution && (
+        <div className="w-full max-w-xl rounded-sm bg-surface-elevated px-4 py-3 text-left">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-text-muted">
+            Our solution
+          </p>
+          <p className="mt-1 text-sm leading-snug text-text">{solution}</p>
+          <p className="mt-2 text-xs font-medium text-text-muted">
+            Answer: {formatFermiNumber(question.answer)}
+            {question.unit ? ` ${question.unit}` : ""}
+            {" · "}
+            {formatFullNumber(question.answer)}
+          </p>
+        </div>
+      )}
 
-      {/* Next (bottom left) + note on one line */}
-      <div className="flex w-full max-w-xl flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-4">
-        <button
-          type="button"
-          onClick={onNext}
-          className="flex shrink-0 items-center justify-center gap-2 self-start rounded-sm bg-secondary px-5 py-2.5 text-sm font-bold text-white outline-none transition-all hover:scale-[1.02] active:scale-[0.98]"
-        >
-          {isLastQuestion ? "See results" : "Next question"}
-          <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
-        </button>
-        <p className="text-sm font-medium leading-snug text-text-muted sm:text-left">
-          {note}
-        </p>
-      </div>
+      {question.didYouKnow ? (
+        <div className="w-full max-w-xl rounded-sm bg-surface-elevated px-4 py-3 text-left">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-secondary">
+            Did you know?
+          </p>
+          <p className="mt-1 text-sm leading-snug text-text">{question.didYouKnow}</p>
+          {question.factSourceUrl ? (
+            <a
+              href={question.factSourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-1.5 inline-block text-xs font-semibold text-primary underline-offset-2 hover:underline"
+            >
+              {question.factSourceLabel || "Source"}
+            </a>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }

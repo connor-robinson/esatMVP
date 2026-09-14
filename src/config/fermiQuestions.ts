@@ -28,8 +28,14 @@ export interface FermiQuestion {
   answer: number;
   unit?: string;
   category: FermiCategory;
-  /** One-line context shown after guessing. */
+  /** Concise Fermi estimation method shown via "View our solution". */
   note?: string;
+  /** Concise fact card after reveal (usually 1 of 5 in a scheduled day). */
+  didYouKnow?: string;
+  factSourceUrl?: string;
+  factSourceLabel?: string;
+  editionTitle?: string;
+  themeHook?: string;
 }
 
 /** In-play question - answer omitted for server-scheduled rounds. */
