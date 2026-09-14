@@ -9,7 +9,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { ArrowRight, BarChart3, Eye, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
@@ -396,6 +396,7 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
         )}
       >
         <div className="w-full max-w-2xl">
+          <LayoutGroup id="fermi-stage">
           {displayPhase === "playing" && current && !completedToday && (
             <PlayingView
               question={current}
@@ -415,10 +416,12 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
           {displayPhase === "revealed" && currentResult && (
             <RevealedView
               result={currentResult}
+              input={input}
               onNext={handleNext}
               isLastQuestion={isLastQuestion}
             />
           )}
+          </LayoutGroup>
 
           {displayPhase === "summary" && (
             <SummaryView
@@ -444,39 +447,16 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
 const PREVIEW_SLOT =
   "flex min-h-[2.5rem] items-center justify-center rounded-sm px-3 py-2 text-center";
 
-function FermiQuestionAnchor({
-  questionText,
-  score,
-  scoreTone,
-  children,
-}: {
-  questionText: string;
-  score?: number | null;
-  scoreTone?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="flex w-full flex-col items-center gap-6">
-      <div className="relative w-full max-w-2xl px-10 sm:px-12">
-        <h2 className="text-balance text-center font-serif text-2xl leading-snug text-text sm:text-3xl">
-          {questionText}
-        </h2>
-        {score != null && (
-          <p
-            className={cn(
-              "absolute right-0 top-1/2 -translate-y-1/2 text-3xl font-bold tabular-nums sm:text-4xl",
-              scoreTone,
-            )}
-            aria-label={`Score ${score} out of 100`}
-          >
-            {score}
-            <span className="text-xl font-semibold text-text-muted sm:text-2xl">/100</span>
-          </p>
-        )}
-      </div>
-      <div className="flex w-full max-w-md flex-col gap-2">{children}</div>
-    </div>
-  );
+/** Fixed hero height so reveal score panel never shifts slider/input. */
+const QUESTION_ZONE =
+  "flex w-full max-w-2xl flex-col items-stretch justify-center min-h-[9.5rem] sm:min-h-[10.5rem]";
+
+function FermiStageShell({ children }: { children: React.ReactNode }) {
+  return <div className="flex w-full flex-col items-center gap-6">{children}</div>;
+}
+
+function FermiControlsColumn({ children }: { children: React.ReactNode }) {
+  return <div className="flex w-full max-w-md flex-col gap-2">{children}</div>;
 }
 
 function PlayingView({
@@ -501,9 +481,17 @@ function PlayingView({
   const hasInput = Boolean(input.trim());
 
   return (
-    <div className="flex w-full flex-col items-center">
-      <FermiQuestionAnchor questionText={question.question}>
-        {/* Always reserved so typing never shifts the input */}
+    <FermiStageShell>
+      <div className={QUESTION_ZONE}>
+        <motion.h2
+          layoutId="fermi-question"
+          className="text-balance text-center font-serif text-2xl leading-snug text-text sm:text-3xl"
+        >
+          {question.question}
+        </motion.h2>
+      </div>
+
+      <FermiControlsColumn>
         <div
           className={cn(
             PREVIEW_SLOT,
@@ -575,8 +563,8 @@ function PlayingView({
         ) : (
           <div className="min-h-[1rem]" aria-hidden />
         )}
-      </FermiQuestionAnchor>
-    </div>
+      </FermiControlsColumn>
+    </FermiStageShell>
   );
 }
 
@@ -667,10 +655,12 @@ function IconActionButton({
 
 function RevealedView({
   result,
+  input,
   onNext,
   isLastQuestion,
 }: {
   result: FermiResult;
+  input: string;
   onNext: () => void;
   isLastQuestion: boolean;
 }) {
@@ -680,31 +670,76 @@ function RevealedView({
     question.note?.trim() ||
     `Answer ≈ ${formatFermiNumber(question.answer)}${question.unit ? ` ${question.unit}` : ""}`;
   const [showSolution, setShowSolution] = useState(false);
+  const guessLabel = input.trim() || formatFullNumber(guess);
 
   return (
-    <div className="flex w-full flex-col items-center gap-6">
-      <FermiQuestionAnchor questionText={question.question}>
-        {/* Slider between question and the action bar */}
+    <FermiStageShell>
+      <div className={QUESTION_ZONE}>
+        <motion.h2
+          layoutId="fermi-question"
+          className="truncate text-center text-sm font-medium leading-tight text-text-muted sm:text-base"
+          title={question.question}
+        >
+          {question.question}
+        </motion.h2>
+
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
+          className="mt-2 flex min-h-0 flex-1 flex-col items-center justify-center text-center"
+        >
+          <p
+            className={cn("text-5xl font-bold tabular-nums leading-none sm:text-6xl", tone.text)}
+            aria-label={`Score ${score} out of 100`}
+          >
+            {score}
+            <span className="text-2xl font-semibold text-text-muted sm:text-3xl">/100</span>
+          </p>
+          <h3
+            className={cn(
+              "mt-2 text-lg font-bold uppercase tracking-wide sm:text-xl",
+              tone.text,
+            )}
+          >
+            {verdict.label}
+          </h3>
+          <p className="mt-1 max-w-xl text-sm font-medium leading-snug text-text-muted sm:text-base">
+            {verdict.detail}
+          </p>
+        </motion.div>
+      </div>
+
+      <FermiControlsColumn>
         <LogScaleBar guess={guess} answer={question.answer} tone={tone.text} />
 
-        {/* Same footprint as the input: icon actions with hover labels */}
-        <div className="flex h-16 w-full items-center justify-center gap-2 rounded-sm bg-surface-elevated px-3">
-          <IconActionButton
-            onClick={() => setShowSolution((v) => !v)}
-            label={showSolution ? "Hide solution" : "View our solution"}
-            tone="muted"
+        <div className="flex h-16 w-full items-center gap-2 rounded-sm bg-surface-elevated pl-5 pr-2">
+          <span
+            className="min-w-0 flex-1 truncate text-2xl font-semibold text-text"
+            aria-label={`Your guess: ${guessLabel}`}
           >
-            <Eye className="h-5 w-5" strokeWidth={2} />
-          </IconActionButton>
-          <IconActionButton
-            onClick={onNext}
-            label={isLastQuestion ? "See results" : "Next question"}
-            tone="primary"
-          >
-            <ArrowRight className="h-5 w-5" strokeWidth={2.5} />
-          </IconActionButton>
+            {guessLabel}
+          </span>
+          <div className="flex shrink-0 items-center gap-1">
+            <IconActionButton
+              onClick={() => setShowSolution((v) => !v)}
+              label={showSolution ? "Hide solution" : "View our solution"}
+              tone="muted"
+            >
+              <Eye className="h-5 w-5" strokeWidth={2} />
+            </IconActionButton>
+            <IconActionButton
+              onClick={onNext}
+              label={isLastQuestion ? "See results" : "Next question"}
+              tone="primary"
+            >
+              <ArrowRight className="h-5 w-5" strokeWidth={2.5} />
+            </IconActionButton>
+          </div>
         </div>
-      </FermiQuestionAnchor>
+
+        <div className="min-h-[1rem]" aria-hidden />
+      </FermiControlsColumn>
 
       {showSolution && (
         <div className="w-full max-w-xl rounded-sm bg-surface-elevated px-4 py-3 text-left">
@@ -739,29 +774,7 @@ function RevealedView({
           ) : null}
         </div>
       ) : null}
-
-      <div
-        className={cn(
-          "w-full max-w-2xl text-center text-sm leading-snug sm:text-base",
-          "flex flex-wrap items-baseline justify-center gap-x-2 gap-y-1",
-        )}
-      >
-        <span className={cn("font-bold tabular-nums", tone.text)}>
-          {score}
-          <span className="font-semibold text-text-muted">/100</span>
-        </span>
-        <span className="text-text-muted" aria-hidden>
-          ·
-        </span>
-        <span className={cn("font-bold uppercase tracking-wide", tone.text)}>
-          {verdict.label}
-        </span>
-        <span className="text-text-muted" aria-hidden>
-          ·
-        </span>
-        <span className="font-medium text-text-muted">{verdict.detail}</span>
-      </div>
-    </div>
+    </FermiStageShell>
   );
 }
 
