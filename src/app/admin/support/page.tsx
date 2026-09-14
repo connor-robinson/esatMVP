@@ -372,11 +372,22 @@ export default function AdminSupportPage() {
         );
         return;
       }
-      setActionOk(
-        replyAlsoResolve
-          ? "Reply sent to their inbox and ticket resolved."
-          : "Reply sent to their inbox.",
-      );
+      const base = replyAlsoResolve
+        ? "Reply sent to their inbox and ticket resolved."
+        : "Reply sent to their inbox.";
+      if (data.email?.ok === true) {
+        setActionOk(`${base} Email sent too.`);
+      } else if (data.email && data.email.ok === false) {
+        setActionOk(
+          `${base} Email not sent: ${
+            typeof data.email.error === "string"
+              ? data.email.error
+              : "Resend failed"
+          }.`,
+        );
+      } else {
+        setActionOk(base);
+      }
       setReplyBody("");
       setReplyOpenId(null);
       await refreshAll();

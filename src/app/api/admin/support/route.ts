@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireTesterAdmin } from "@/lib/tester/admin";
 import { sendPersonalInboxMessage } from "@/lib/inbox";
+import { sendResendEmail } from "@/lib/email/resend";
+import { resolveSupportFromEmail } from "@/lib/support/email";
+import { PRODUCTION_SITE_URL } from "@/lib/seo/config";
 
 export const dynamic = "force-dynamic";
 
@@ -311,11 +314,12 @@ export async function POST(request: NextRequest) {
 
   let userId: string | null = null;
   let subject = "Support reply";
+  let replyEmail: string | null = null;
 
   if (source === "support") {
     const { data: ticket, error } = await admin.service
       .from("support_requests")
-      .select("id, user_id, subject")
+      .select("id, user_id, subject, reply_email")
       .eq("id", id)
       .maybeSingle();
     if (error || !ticket) {
@@ -323,6 +327,10 @@ export async function POST(request: NextRequest) {
     }
     userId = ticket.user_id;
     subject = subjectOverride || `Re: ${ticket.subject}`;
+    replyEmail =
+      typeof ticket.reply_email === "string" && ticket.reply_email.trim()
+        ? ticket.reply_email.trim()
+        : null;
   } else {
     const { data: ticket, error } = await admin.service
       .from("app_bug_reports")
@@ -335,6 +343,7 @@ export async function POST(request: NextRequest) {
     userId = ticket.user_id;
     const parsed = parseLegacyDescription(String(ticket.description ?? ""));
     subject = subjectOverride || `Re: ${parsed.subject}`;
+    replyEmail = parsed.reply_email;
   }
 
   if (!userId) {
@@ -345,6 +354,18 @@ export async function POST(request: NextRequest) {
       },
       { status: 400 },
     );
+  }
+
+  // Prefer profile email when ticket reply_email is missing.
+  if (!replyEmail) {
+    const { data: profile } = await admin.service
+      .from("profiles")
+      .select("email")
+      .eq("id", userId)
+      .maybeSingle();
+    if (typeof profile?.email === "string" && profile.email.trim()) {
+      replyEmail = profile.email.trim();
+    }
   }
 
   const sent = await sendPersonalInboxMessage({
@@ -360,6 +381,29 @@ export async function POST(request: NextRequest) {
 
   if ("error" in sent) {
     return NextResponse.json({ error: sent.error }, { status: 500 });
+  }
+
+  let emailDelivery:
+    | { ok: true; providerId: string | null }
+    | { ok: false; status: string; error: string }
+    | { ok: false; status: "skipped"; error: string } = {
+    ok: false,
+    status: "skipped",
+    error: "No recipient email",
+  };
+
+  if (replyEmail) {
+    const emailText = `${messageBody}
+
+---
+You can also reply in your ESATcamp inbox: ${PRODUCTION_SITE_URL}/inbox`;
+    emailDelivery = await sendResendEmail({
+      to: replyEmail,
+      subject,
+      text: emailText,
+      from: resolveSupportFromEmail(),
+      replyTo: process.env.SUPPORT_NOTIFICATION_EMAIL?.trim() || undefined,
+    });
   }
 
   const nextStatus = markResolved ? "resolved" : "in_progress";
@@ -379,5 +423,6 @@ export async function POST(request: NextRequest) {
     ok: true,
     messageId: sent.id,
     status: nextStatus,
+    email: emailDelivery,
   });
 }
