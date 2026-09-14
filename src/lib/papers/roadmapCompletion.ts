@@ -24,9 +24,28 @@ import { getPaper } from '@/lib/supabase/questions';
 import { generatePartIdFromRoadmapPart } from './partIdUtils';
 import { getRoadmapPartKey } from './roadmapPartKey';
 import { countDisplayGroupCompletion } from './roadmapDisplayGroups';
-import { isPartIdCompleted, getCompletedPartIds } from './completionCache';
+import {
+  isPartIdCompleted,
+  getCompletedPartIds,
+  markPartIdsAsCompleted,
+  invalidateCache,
+  setCachedCompletedIds,
+  getCachedCompletedIds,
+  syncWithDatabase,
+} from './completionCache';
 
 export { getCompletedPartIds } from './completionCache';
+
+function removePartIdsFromCache(userId: string, partIds: string[]): void {
+  const cached = getCachedCompletedIds(userId);
+  if (!cached) {
+    invalidateCache(userId);
+    return;
+  }
+  const next = new Set(cached);
+  for (const id of partIds) next.delete(id);
+  setCachedCompletedIds(userId, next);
+}
 
 /**
  * Check if a specific roadmap part is completed by a user
@@ -239,14 +258,8 @@ export async function getStageCompletionCount(
 }
 
 /**
- * Mark a part as completed by creating a minimal session record
- * This allows users to manually mark papers/sections they've done outside the app
- * 
- * @param userId - User ID (not used directly, but required for consistency)
- * @param examName - Exam name
- * @param year - Exam year
- * @param part - Roadmap part to mark as completed
- * @returns true if successfully marked as completed
+ * Mark a part as completed by creating a minimal session record.
+ * Allows users to manually mark papers/sections they've done outside the app.
  */
 export async function markPartAsCompleted(
   userId: string,
@@ -255,18 +268,17 @@ export async function markPartAsCompleted(
   part: RoadmapPart
 ): Promise<boolean> {
   try {
-    const paperVariant = constructPaperVariant(year, part.paperName, part.examType);
-    const section = getSectionForRoadmapPart(part, examName);
-    
-    // Check if already completed
-    const alreadyCompleted = await isPartCompleted(userId, examName, year, part);
+    const partId = generatePartIdFromRoadmapPart(examName, year, part);
+    const alreadyCompleted = await isPartIdCompleted(userId, partId);
     if (alreadyCompleted) {
-      return true; // Already marked as done
+      return true;
     }
 
-    // Create minimal session record via API
+    const paperVariant = constructPaperVariant(year, part.paperName, part.examType);
+    const section = getSectionForRoadmapPart(part, examName);
+    const paperName = examNameToPaperType(examName) || examName;
     const sessionId = crypto.randomUUID();
-    
+
     const response = await fetch('/api/past-papers/sessions', {
       method: 'POST',
       headers: {
@@ -274,17 +286,18 @@ export async function markPartAsCompleted(
       },
       body: JSON.stringify({
         id: sessionId,
-        paperName: examName,
-        paperVariant: paperVariant,
-        sessionName: `Manual: ${examName} ${year} ${part.paperName} ${part.partLetter}`,
+        paperName,
+        paperVariant,
+        sessionName: `Manual: ${examName} ${year} ${part.paperName} ${part.partLetter || part.partName}`,
         questionRange: {
           start: 1,
-          end: 1, // Minimal range
+          end: 1,
         },
         selectedSections: [section],
+        selectedPartIds: [partId],
         timeLimitMinutes: 0,
         startedAt: Date.now(),
-        endedAt: Date.now(), // Mark as completed immediately
+        endedAt: Date.now(),
         deadlineAt: Date.now(),
         questionOrder: [],
         perQuestionSec: [],
@@ -299,14 +312,114 @@ export async function markPartAsCompleted(
     });
 
     if (!response.ok) {
-      const error = await response.json();
       return false;
     }
 
+    markPartIdsAsCompleted(userId, [partId]);
     return true;
   } catch (error) {
     return false;
   }
 }
 
+/**
+ * Remove part IDs from finished sessions so those parts count as not done.
+ */
+export async function unmarkPartIdsAsCompleted(
+  userId: string,
+  partIds: string[],
+): Promise<boolean> {
+  if (partIds.length === 0) return true;
+  const remove = new Set(partIds);
+
+  try {
+    const response = await fetch('/api/past-papers/sessions');
+    if (!response.ok) return false;
+
+    const data = await response.json();
+    const sessions = (data.sessions || []) as Array<{
+      id: string;
+      ended_at: string | null;
+      selected_part_ids?: string[] | null;
+      session_name?: string | null;
+    }>;
+
+    for (const session of sessions) {
+      if (!session.ended_at) continue;
+      const current = session.selected_part_ids ?? [];
+      if (!current.some((id) => remove.has(id))) continue;
+
+      const nextIds = current.filter((id) => !remove.has(id));
+
+      // Pure manual markers with nothing left can be deleted via emptying part ids.
+      const patch = await fetch('/api/past-papers/sessions', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: session.id,
+          selectedPartIds: nextIds,
+        }),
+      });
+      if (!patch.ok) return false;
+    }
+
+    removePartIdsFromCache(userId, partIds);
+    invalidateCache(userId);
+    await syncWithDatabase(userId);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function unmarkPartAsCompleted(
+  userId: string,
+  examName: ExamName,
+  year: number,
+  part: RoadmapPart,
+): Promise<boolean> {
+  const partId = generatePartIdFromRoadmapPart(examName, year, part);
+  return unmarkPartIdsAsCompleted(userId, [partId]);
+}
+
+/** Mark every part in a stage as done (manual). */
+export async function markStageAsCompleted(
+  userId: string,
+  stage: RoadmapStage,
+): Promise<boolean> {
+  for (const part of stage.parts) {
+    const ok = await markPartAsCompleted(
+      userId,
+      stage.examName,
+      stage.year,
+      part,
+    );
+    if (!ok) return false;
+  }
+  return true;
+}
+
+/** Clear completion for every part in a stage (manual). */
+export async function unmarkStageAsCompleted(
+  userId: string,
+  stage: RoadmapStage,
+): Promise<boolean> {
+  const partIds = stage.parts.map((part) =>
+    generatePartIdFromRoadmapPart(stage.examName, stage.year, part),
+  );
+  return unmarkPartIdsAsCompleted(userId, partIds);
+}
+
+export type ManualRoadmapStatus = "not_started" | "done";
+
+export async function setRoadmapStageManualStatus(
+  userId: string,
+  stage: RoadmapStage,
+  status: ManualRoadmapStatus,
+): Promise<boolean> {
+  if (status === "done") {
+    return markStageAsCompleted(userId, stage);
+  }
+  return unmarkStageAsCompleted(userId, stage);
+}
 

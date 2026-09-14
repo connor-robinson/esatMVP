@@ -567,6 +567,48 @@ export default function PapersRoadmapPage() {
     [executeStartStage, isStartingSession],
   );
 
+  const refreshCompletionData = useCallback(async () => {
+    if (subjectFilteredStages.length === 0) return;
+
+    try {
+      const completionMap = new Map<string, StageCompletionEntry>();
+
+      if (session?.user?.id) {
+        const { syncWithDatabase } = await import('@/lib/papers/completionCache');
+        const { getStageCompletionFromSessions } = await import(
+          '@/lib/papers/roadmapCompletion'
+        );
+        const completedPartIds = await syncWithDatabase(session.user.id);
+
+        for (const stage of subjectFilteredStages) {
+          const parts = await getStageCompletionFromSessions(
+            session.user.id,
+            stage,
+            completedPartIds,
+          );
+          const groupCounts = countDisplayGroupCompletion(stage.parts, parts);
+          completionMap.set(stage.id, {
+            completed: groupCounts.completed,
+            total: groupCounts.total,
+            parts,
+          });
+        }
+      } else {
+        for (const stage of subjectFilteredStages) {
+          completionMap.set(stage.id, {
+            completed: 0,
+            total: groupRoadmapPartsForDisplay(stage.parts).length,
+            parts: new Map(),
+          });
+        }
+      }
+
+      setCompletionData(completionMap);
+    } catch {
+      /* keep current completion if refresh fails */
+    }
+  }, [session?.user?.id, subjectFilteredStages]);
+
   return (
     <Container size="lg" className="overflow-x-clip bg-background pb-16 pt-6 font-sans sm:pb-20 sm:pt-8">
       <RoadmapSubjectPreview
@@ -582,9 +624,11 @@ export default function PapersRoadmapPage() {
         stageScores={stageScores}
         completionLoading={completionLoading}
         scoresLoading={scoresLoading}
+        userId={session?.user?.id ?? null}
         newQuestionsOnly={newQuestionsOnly}
         onNewQuestionsOnlyChange={handleNewQuestionsOnlyChange}
         onStartSession={handleStartStage}
+        onCompletionChange={refreshCompletionData}
       />
 
       {isStartingSession ? (

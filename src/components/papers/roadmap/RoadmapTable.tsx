@@ -6,7 +6,7 @@
 "use client";
 
 import { useMemo, useState, Fragment } from "react";
-import { Check, ChevronDown, Download } from "lucide-react";
+import { ChevronDown, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getExamAccentTextClass } from "@/config/colors";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
@@ -28,6 +28,12 @@ import {
   formatRoadmapScore,
   type RoadmapStageScore,
 } from "@/lib/papers/roadmapStageScores";
+import {
+  markPartAsCompleted,
+  setRoadmapStageManualStatus,
+  unmarkPartAsCompleted,
+  type ManualRoadmapStatus,
+} from "@/lib/papers/roadmapCompletion";
 import { RoadmapInfoPopover } from "./RoadmapInfoPopover";
 import {
   getStageCommentary,
@@ -49,6 +55,7 @@ type Props = {
   stageScores: Map<string, RoadmapStageScore>;
   completionLoading?: boolean;
   scoresLoading?: boolean;
+  userId: string | null;
   newQuestionsOnly: boolean;
   onNewQuestionsOnlyChange: (enabled: boolean) => void;
   onStartSession: (
@@ -56,6 +63,7 @@ type Props = {
     selectedParts: RoadmapPart[],
     options: RoadmapStartOptions,
   ) => void;
+  onCompletionChange: () => void | Promise<void>;
 };
 
 function stageTitle(stage: RoadmapStage): string {
@@ -163,19 +171,26 @@ function StageOptionsPanel({
   partCompletion,
   newQuestionsOnly,
   mode,
+  userId,
+  statusBusy,
   onStartSession,
+  onCompletionChange,
 }: {
   stage: RoadmapStage;
   partCompletion: Map<string, boolean>;
   newQuestionsOnly: boolean;
   mode: ExpandMode;
+  userId: string | null;
+  statusBusy: boolean;
   onStartSession: (
     stage: RoadmapStage,
     selectedParts: RoadmapPart[],
     options: RoadmapStartOptions,
   ) => void;
+  onCompletionChange: () => void | Promise<void>;
 }) {
   const getPartKey = getRoadmapPartKey;
+  const [markingKey, setMarkingKey] = useState<string | null>(null);
   const displayGroups = useMemo(
     () => groupRoadmapPartsForDisplay(stage.parts),
     [stage.parts],
@@ -204,6 +219,32 @@ function StageOptionsPanel({
       expandDisplayGroupsToParts(stage.parts, new Set([group.key])),
       { newQuestionsOnly },
     );
+  };
+
+  const setGroupDone = async (group: RoadmapDisplayGroup, done: boolean) => {
+    if (!userId || statusBusy) return;
+    setMarkingKey(group.key);
+    try {
+      for (const part of group.internalParts) {
+        const ok = done
+          ? await markPartAsCompleted(
+              userId,
+              stage.examName,
+              stage.year,
+              part,
+            )
+          : await unmarkPartAsCompleted(
+              userId,
+              stage.examName,
+              stage.year,
+              part,
+            );
+        if (!ok) break;
+      }
+      await onCompletionChange();
+    } finally {
+      setMarkingKey(null);
+    }
   };
 
   return (
@@ -287,6 +328,7 @@ function StageOptionsPanel({
               stage,
               group.internalParts[0]!,
             );
+            const busy = markingKey === group.key || statusBusy;
 
             return (
               <li
@@ -304,7 +346,6 @@ function StageOptionsPanel({
                     </span>
                   </p>
                   <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-text-muted">
-                    <span>{done ? "Done" : "Not done"}</span>
                     {links?.paperUrl ? (
                       <DownloadAnchor href={links.paperUrl} label="PDF" />
                     ) : null}
@@ -316,13 +357,30 @@ function StageOptionsPanel({
                     ) : null}
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => startGroup(group)}
-                  className="shrink-0 text-sm font-semibold text-primary hover:underline"
-                >
-                  Start part
-                </button>
+                <div className="flex shrink-0 items-center gap-3">
+                  <select
+                    value={done ? "done" : "not_started"}
+                    disabled={!userId || busy}
+                    onChange={(e) => {
+                      void setGroupDone(
+                        group,
+                        e.target.value === "done",
+                      );
+                    }}
+                    aria-label={`Status for ${displayLabelForGroup(group)}`}
+                    className="rounded-md border-0 bg-surface-mid px-2 py-1 text-xs font-medium text-text outline-none ring-1 ring-border-subtle focus:ring-primary disabled:opacity-50"
+                  >
+                    <option value="not_started">Not done</option>
+                    <option value="done">Done</option>
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => startGroup(group)}
+                    className="text-sm font-semibold text-primary hover:underline"
+                  >
+                    Start part
+                  </button>
+                </div>
               </li>
             );
           })}
@@ -338,14 +396,17 @@ export function RoadmapTable({
   stageScores,
   completionLoading = false,
   scoresLoading = false,
+  userId,
   newQuestionsOnly,
   onNewQuestionsOnlyChange,
   onStartSession,
+  onCompletionChange,
 }: Props) {
   const [expanded, setExpanded] = useState<{
     id: string;
     mode: ExpandMode;
   } | null>(null);
+  const [statusBusyId, setStatusBusyId] = useState<string | null>(null);
 
   const totals = useMemo(() => {
     let completed = 0;
@@ -364,6 +425,29 @@ export function RoadmapTable({
         ? null
         : { id: stageId, mode },
     );
+  };
+
+  const handleStageStatusChange = async (
+    stage: RoadmapStage,
+    next: ManualRoadmapStatus,
+  ) => {
+    if (!userId || statusBusyId) return;
+    setStatusBusyId(stage.id);
+    try {
+      await setRoadmapStageManualStatus(userId, stage, next);
+      await onCompletionChange();
+    } finally {
+      setStatusBusyId(null);
+    }
+  };
+
+  const statusValue = (
+    completed: number,
+    total: number,
+  ): ManualRoadmapStatus | "in_progress" => {
+    if (total > 0 && completed === total) return "done";
+    if (completed > 0) return "in_progress";
+    return "not_started";
   };
 
   return (
@@ -442,7 +526,6 @@ export function RoadmapTable({
                   data?.total ??
                   groupRoadmapPartsForDisplay(stage.parts).length;
                 const isDone = total > 0 && completed === total;
-                const isPartial = completed > 0 && !isDone;
                 const isOpen = expanded?.id === stage.id;
                 const mode = expanded?.mode ?? "options";
                 const accentExam = isEsatCampMockRoadmapStage(stage)
@@ -451,6 +534,8 @@ export function RoadmapTable({
                 const score = stageScores.get(stage.id);
                 const commentary = commentaryForStage(stage, stages);
                 const zebra = index % 2 === 1;
+                const currentStatus = statusValue(completed, total);
+                const busy = statusBusyId === stage.id;
 
                 return (
                   <Fragment key={stage.id}>
@@ -496,22 +581,42 @@ export function RoadmapTable({
                         {completed}/{total}
                       </td>
                       <td className="px-3 py-3.5 text-text">
-                        {isDone ? (
-                          <span className="inline-flex items-center gap-1.5">
-                            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary/15 text-primary">
-                              <Check className="h-3 w-3" aria-hidden />
-                            </span>
-                            Done
-                          </span>
-                        ) : isPartial ? (
-                          "In progress"
-                        ) : (
-                          <span className="text-text-muted">Not started</span>
-                        )}
+                        <select
+                          value={
+                            currentStatus === "in_progress"
+                              ? "in_progress"
+                              : currentStatus
+                          }
+                          disabled={!userId || busy}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (value === "in_progress") return;
+                            void handleStageStatusChange(
+                              stage,
+                              value as ManualRoadmapStatus,
+                            );
+                          }}
+                          aria-label={`Status for ${stageTitle(stage)}`}
+                          className={cn(
+                            "max-w-full rounded-md border-0 bg-surface-mid px-2 py-1.5 text-sm font-medium outline-none ring-1 ring-border-subtle focus:ring-primary disabled:opacity-50",
+                            isDone ? "text-text" : "text-text-muted",
+                          )}
+                          title={
+                            userId
+                              ? "Manually mark this paper done or not started"
+                              : "Sign in to update status"
+                          }
+                        >
+                          <option value="not_started">Not started</option>
+                          {currentStatus === "in_progress" ? (
+                            <option value="in_progress">In progress</option>
+                          ) : null}
+                          <option value="done">Done</option>
+                        </select>
                       </td>
                       <td className="px-3 py-3.5 tabular-nums text-text">
                         {scoresLoading ? (
-                          <span className="inline-block h-3.5 w-3.5 w-8 animate-pulse rounded bg-surface-mid" />
+                          <span className="inline-block h-3.5 w-8 animate-pulse rounded bg-surface-mid" />
                         ) : (
                           formatRoadmapScore(score)
                         )}
@@ -549,7 +654,10 @@ export function RoadmapTable({
                               partCompletion={data?.parts ?? new Map()}
                               newQuestionsOnly={newQuestionsOnly}
                               mode={mode}
+                              userId={userId}
+                              statusBusy={busy}
                               onStartSession={onStartSession}
+                              onCompletionChange={onCompletionChange}
                             />
                           </div>
                         </td>
