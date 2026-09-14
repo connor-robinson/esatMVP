@@ -570,48 +570,138 @@ function PlayingView({
 
 /* ------------------------------- Revealed ------------------------------ */
 
+function formatScaleFactor(factor: number): string {
+  if (!Number.isFinite(factor) || factor < 1) return "1×";
+  if (factor >= 1e6) {
+    const exp = Math.floor(Math.log10(factor));
+    const mant = factor / 10 ** exp;
+    return `${Math.round(mant * 10) / 10}×10^${exp}×`;
+  }
+  if (factor >= 1000) return `${Math.round(factor / 100) * 100}×`;
+  if (factor >= 100) return `${Math.round(factor / 10) * 10}×`;
+  if (factor >= 10) return `${Math.round(factor)}×`;
+  return `${(Math.round(factor * 10) / 10).toLocaleString("en-US")}×`;
+}
+
 function LogScaleBar({ guess, answer, tone }: { guess: number; answer: number; tone: string }) {
   const RANGE = 3;
-  const delta = Math.log10(Math.max(guess, 1e-9)) - Math.log10(Math.max(answer, 1e-9));
-  const clamped = Math.max(-RANGE, Math.min(RANGE, delta));
-  const guessPct = 50 + (clamped / RANGE) * 50;
-  const orders = Math.abs(delta);
-  const factor = 10 ** orders;
-  const direction = delta > 0.02 ? "too high" : delta < -0.02 ? "too low" : "on target";
-  const hoverDetail =
-    direction === "on target"
-      ? "Right on the mark"
-      : `${formatFermiNumber(guess)} vs ${formatFermiNumber(answer)} · ~${
-          factor >= 10 ? `${Math.round(factor)}×` : `${(Math.round(factor * 10) / 10).toLocaleString("en-US")}×`
-        } ${direction}`;
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [scrubPct, setScrubPct] = useState<number | null>(null);
+
+  const guessDelta = Math.log10(Math.max(guess, 1e-9)) - Math.log10(Math.max(answer, 1e-9));
+  const guessClamped = Math.max(-RANGE, Math.min(RANGE, guessDelta));
+  const guessPct = 50 + (guessClamped / RANGE) * 50;
+
+  const activePct = scrubPct ?? guessPct;
+  const scrubDelta = ((activePct - 50) / 50) * RANGE;
+  const scrubValue = Math.max(answer, 1e-9) * 10 ** scrubDelta;
+  const scrubOrders = Math.abs(scrubDelta);
+  const scrubFactor = 10 ** scrubOrders;
+  const scrubScore = closenessScore(scrubOrders);
+  const scrubDirection =
+    scrubDelta > 0.05 ? "too high" : scrubDelta < -0.05 ? "too low" : "on target";
+  const scrubLabel =
+    scrubDirection === "on target"
+      ? `${formatFermiNumber(scrubValue)} · bang on · ${scrubScore}/100`
+      : `${formatFermiNumber(scrubValue)} · ${formatScaleFactor(scrubFactor)} ${scrubDirection} · ${scrubScore}/100`;
+
+  const updateFromClientX = (clientX: number) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    if (rect.width <= 0) return;
+    const pct = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
+    setScrubPct(pct);
+  };
 
   return (
-    <div className="group/slider w-full max-w-md cursor-default py-1">
-      <div className="relative h-10 transition-transform duration-150 group-hover/slider:scale-y-110">
-        <div className="absolute left-0 right-0 top-1/2 h-1.5 -translate-y-1/2 rounded-sm bg-surface-mid transition-colors group-hover/slider:bg-surface" />
+    <div
+      className="w-full max-w-md select-none py-1"
+      onPointerLeave={() => setScrubPct(null)}
+    >
+      <div
+        ref={trackRef}
+        role="slider"
+        aria-label="Explore closeness on a log scale"
+        aria-valuemin={-RANGE}
+        aria-valuemax={RANGE}
+        aria-valuenow={Number(scrubDelta.toFixed(2))}
+        aria-valuetext={scrubLabel}
+        tabIndex={0}
+        className="relative h-10 cursor-ew-resize touch-none outline-none"
+        onPointerDown={(e) => {
+          e.currentTarget.setPointerCapture(e.pointerId);
+          updateFromClientX(e.clientX);
+        }}
+        onPointerMove={(e) => {
+          if (scrubPct != null || e.buttons === 1) updateFromClientX(e.clientX);
+          else updateFromClientX(e.clientX);
+        }}
+        onKeyDown={(e) => {
+          const step = 2;
+          if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
+            e.preventDefault();
+            setScrubPct((p) => Math.max(0, (p ?? guessPct) - step));
+          } else if (e.key === "ArrowRight" || e.key === "ArrowUp") {
+            e.preventDefault();
+            setScrubPct((p) => Math.min(100, (p ?? guessPct) + step));
+          } else if (e.key === "Home") {
+            e.preventDefault();
+            setScrubPct(0);
+          } else if (e.key === "End") {
+            e.preventDefault();
+            setScrubPct(100);
+          } else if (e.key === "Escape") {
+            setScrubPct(null);
+          }
+        }}
+      >
+        <div className="absolute left-0 right-0 top-1/2 h-1.5 -translate-y-1/2 rounded-sm bg-surface-mid" />
         <div className="absolute left-1/2 top-1/2 h-5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-sm bg-primary" />
+
+        {/* Your actual guess marker (fixed) */}
         <div
           className={cn(
-            "absolute top-1/2 flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-sm bg-surface-elevated shadow-sm ring-2 transition-transform duration-150 group-hover/slider:scale-110",
+            "pointer-events-none absolute top-1/2 flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-sm bg-surface-elevated shadow-sm ring-2",
             tone.replace("text-", "ring-"),
+            scrubPct != null && "opacity-40",
           )}
           style={{ left: `${guessPct}%` }}
-          title={hoverDetail}
+          title="Your guess"
         >
           <div className={cn("h-2.5 w-2.5 rounded-sm", tone.replace("text-", "bg-"))} />
         </div>
+
+        {/* Scrub cursor */}
+        {scrubPct != null && (
+          <div
+            className="pointer-events-none absolute top-1/2 h-7 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-sm bg-text"
+            style={{ left: `${scrubPct}%` }}
+          />
+        )}
+
         <div
-          className="pointer-events-none absolute -top-7 left-1/2 z-10 hidden -translate-x-1/2 whitespace-nowrap rounded-sm bg-surface-elevated px-2 py-1 text-[11px] font-medium text-text shadow-sm group-hover/slider:block"
-          style={{ left: `${guessPct}%` }}
+          className={cn(
+            "pointer-events-none absolute -top-8 z-10 -translate-x-1/2 whitespace-nowrap rounded-sm bg-surface-elevated px-2 py-1 text-[11px] font-medium text-text shadow-sm",
+            scrubPct == null && "opacity-0",
+          )}
+          style={{ left: `${activePct}%` }}
         >
-          {hoverDetail}
+          {scrubLabel}
         </div>
       </div>
-      <div className="flex justify-between text-[10px] font-medium uppercase tracking-wide text-text-muted opacity-70 transition-opacity group-hover/slider:opacity-100">
+      <div className="mt-1 flex justify-between text-[10px] font-medium uppercase tracking-wide text-text-muted">
         <span>too low</span>
         <span className="text-primary">actual</span>
         <span>too high</span>
       </div>
+      <p className="mt-1 min-h-[1rem] text-center text-[11px] font-medium text-text-muted">
+        {scrubPct == null
+          ? "Hover and drag to explore the scale"
+          : Math.abs(scrubPct - guessPct) < 1.5
+            ? "Your guess"
+            : "Exploring"}
+      </p>
     </div>
   );
 }
