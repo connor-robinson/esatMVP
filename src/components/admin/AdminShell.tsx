@@ -57,6 +57,11 @@ const PRIMARY = [
     match: (p: string) => p.startsWith("/admin/question-bank"),
   },
   {
+    href: "/admin/past-papers",
+    label: "Past papers",
+    match: (p: string) => p.startsWith("/admin/past-papers"),
+  },
+  {
     href: "/admin/question-reports",
     label: "QB reports",
     match: (p: string) => p.startsWith("/admin/question-reports"),

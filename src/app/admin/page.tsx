@@ -70,6 +70,12 @@ const CARDS: Array<{
     body: "Subject popularity, hardest questions, reports, and coverage.",
     key: null,
   },
+  {
+    href: "/admin/past-papers",
+    title: "Past papers",
+    body: "Paper popularity, sections, and hardest past-paper questions.",
+    key: null,
+  },
 ];
 
 export default function AdminOverviewPage() {
