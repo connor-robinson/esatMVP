@@ -218,11 +218,11 @@ function buildPrompt(input: {
     input.avoid.length === 0
       ? "(none yet)"
       : input.avoid
-          .slice(-80)
+          .slice(-120)
           .map((q) => `- ${q}`)
           .join("\n");
 
-  return `You are writing FermiGuessr, a daily order-of-magnitude estimation game for sharp students.
+  return `You write FermiGuessr: a daily order-of-magnitude estimation game that trains gut-feel estimation.
 
 TASK: Produce EXACTLY 5 estimation questions for ${input.dateKey}.
 
@@ -231,28 +231,49 @@ ${input.brief}
 
 ${
   input.editionTitle
-    ? `EDITION TITLE TO USE ON ALL 5: "${input.editionTitle}"`
+    ? `EDITION: "${input.editionTitle}" for all 5.`
     : "No full-day edition unless the brief says so."
 }
 
-RULES:
-1. Questions must ask for a single positive numeric estimate (count, length, mass, money, time, rate, etc.).
-2. SUPER CREATIVE and fun. Prefer weird, vivid angles over textbook classics. Some may still be classic Fermi style.
-3. At least one question should feel date-specific (observance, food day, season, or on-this-day history) UNLESS it is a full holiday edition (then ALL 5 match the edition).
-4. Exactly ONE of the five must have showDidYouKnow=true. That one includes:
-   - didYouKnow: 1-2 short sentences, genuinely useful / surprising, max ~220 chars
-   - factSourceUrl: a real reputable URL with NO utm_ parameters and no "utm" substring
-   - factSourceLabel: short publisher name (e.g. "NASA", "ONS", "FAO")
-5. The other four: showDidYouKnow=false, omit didYouKnow/factSourceUrl/factSourceLabel (or null).
-6. Answers must be grounded real-world estimates (not fantasy). Use scientific notation in JSON numbers when huge (e.g. 2e16).
-7. difficulty is one of: standard | surprising | hard
-8. category: short snake_case or spaced label (food, sports, space, history, everyday, nature, tech, economy, human_body, …)
-9. exact=true only if the figure is definitional / officially fixed; otherwise false.
-10. Do NOT repeat or near-paraphrase any of these already-used questions:
-${avoidBlock}
-11. sourceNote: REQUIRED. Very concise Fermi-style solution (how a sharp student estimates it in one short line, with the key multiply/divide steps). Max ~160 chars. Example: "~70 bpm × 60 × 24 × 365 × ~80 yr ≈ 2.5e9". This powers the in-game "View our solution" button. Do NOT paste the Did-you-know fact here.
+VOICE (critical):
+- Sound like a curious friend, not a museum plaque or Wikipedia intro.
+- SHORT: ideally under 110 characters, hard max 140 characters per question.
+- One breath. One clear ask. No stacked clauses.
+- Do NOT open with long historical setup ("The era of…", "By the time…", "On this day in 1871…").
+- You do NOT have to name the calendar day. If you nod to Coffee Day / Halloween, keep it to a few words max.
+  Good: "How many coffee beans go into a typical espresso shot?"
+  Also fine: "Today is Coffee Day. How many beans go into a typical espresso?"
+  Bad: "To celebrate International Coffee Day, consider your morning espresso: roughly how many individual roasted coffee beans…"
 
-Return ONLY a JSON object:
+WHAT TO ASK:
+- Surprising everyday estimates friends/family (esp. 18-24) can argue about at a table.
+- Prefer: animals, food, body, phones/internet use, sports, travel, money, weather, space (simple), music, games, cities.
+- Mix scales: tiny → planetary. At least 2 of 5 should feel "wait, WHAT?" surprising.
+- Classic Fermi energy is welcome (ants, heartbeats, piano tuners vibes) but do not copy avoided list.
+
+HARD BANS:
+- No politics, elections, wars, revolutions, disasters, fires, crashes, disease campaigns, identity/awareness days, religion fights.
+- No niche industrial trivia (Model T production totals, rivet counts, submarine cable km, obscure patents).
+- No jargon teens would need to Google (submarine internet cables, ossuary, chassis, etc.).
+- No "national coming out day" or any politically sensitive topic.
+- No repeats or near-paraphrases of avoided questions (keep distinct across ~2-3 weeks).
+
+STRUCTURE RULES:
+1. Single positive numeric answer (count, length, mass, money, time, rate…).
+2. Exactly ONE question has showDidYouKnow=true with:
+   - didYouKnow: 1-2 short sentences, max ~200 chars, fun/useful
+   - factSourceUrl: real reputable URL, NO utm params
+   - factSourceLabel: short name (NASA, FAO, ONS…)
+3. Other four: showDidYouKnow=false; didYouKnow/fact fields null.
+4. difficulty: standard | surprising | hard
+5. category: short label (food, sports, space, everyday, nature, tech, body, money…)
+6. exact=true only if definitional/officially fixed.
+7. sourceNote: REQUIRED short Fermi solution (~how to estimate), max ~160 chars. Example: "~70 bpm × 60 × 24 × 365 × ~80 yr ≈ 2.5e9".
+
+Avoided questions:
+${avoidBlock}
+
+Return ONLY JSON:
 {
   "editionTitle": string | null,
   "questions": [
@@ -274,6 +295,16 @@ Return ONLY a JSON object:
     }
   ]
 }`;
+}
+
+const BANNED_PHRASE =
+  /\b(constitution|election|revolution|war\b|missile|crash of|great fire|coming out|gunpowder plot|armistice|berlin wall|colonialis|genocide|massacre|execution|riot|protest march)\b/i;
+
+const PREAMBLE_SMELL =
+  /^(the era of|by the time|to celebrate|on this (day|night) in|consider your|if you were to meticulously|the devastating)\b/i;
+
+function questionTooLong(q: string): boolean {
+  return q.trim().length > 140;
 }
 
 function asArrayQuestions(parsed: unknown): ModelQuestion[] {
@@ -305,6 +336,16 @@ function validateDay(
       errors.push("Missing question text");
       continue;
     }
+    const trimmedQ = q.question.trim();
+    if (questionTooLong(trimmedQ)) {
+      errors.push(`Too long (${trimmedQ.length} chars): ${trimmedQ.slice(0, 60)}`);
+      continue;
+    }
+    if (PREAMBLE_SMELL.test(trimmedQ) || BANNED_PHRASE.test(trimmedQ)) {
+      errors.push(`Bad voice/topic: ${trimmedQ.slice(0, 70)}`);
+      continue;
+    }
+    q.question = trimmedQ;
     const norm = normalizeQuestionText(q.question);
     if (used.has(norm)) {
       errors.push(`Duplicate: ${q.question.slice(0, 80)}`);
@@ -391,7 +432,7 @@ async function generateDay(input: {
   const avoid = [...input.used];
   let lastErrors: string[] = [];
 
-  for (let attempt = 1; attempt <= 4; attempt++) {
+  for (let attempt = 1; attempt <= 6; attempt++) {
     const prompt = buildPrompt({
       dateKey: input.dateKey,
       brief: ctx.brief,
@@ -446,7 +487,7 @@ async function generateDay(input: {
       return mapped;
     }
     lastErrors = errors;
-    console.warn(`  retry ${attempt}/4 for ${input.dateKey}: ${errors.join("; ")}`);
+    console.warn(`  retry ${attempt}/6 for ${input.dateKey}: ${errors.join("; ")}`);
     await sleep(800 * attempt);
   }
 
@@ -458,8 +499,15 @@ async function generateDay(input: {
 async function main() {
   const start = argValue("--start") || "2026-10-01";
   const days = Number(argValue("--days") || "31");
+  const fresh = process.argv.includes("--fresh");
   if (!/^\d{4}-\d{2}-\d{2}$/.test(start) || !Number.isFinite(days) || days < 1) {
-    throw new Error("Usage: --start YYYY-MM-DD --days N");
+    throw new Error("Usage: --start YYYY-MM-DD --days N [--fresh]");
+  }
+
+  if (fresh && existsSync(OUT_PATH)) {
+    const { unlinkSync } = await import("fs");
+    unlinkSync(OUT_PATH);
+    console.log(`Fresh run: deleted ${OUT_PATH}`);
   }
 
   const model =
