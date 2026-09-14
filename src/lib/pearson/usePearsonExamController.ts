@@ -679,8 +679,7 @@ export function usePearsonExamController(
     moduleDeadline != null &&
     showQuestionCounter &&
     !completed &&
-    !timeExpired &&
-    screen !== "session-ending";
+    !timeExpired;
   const showFlagToolbar = screen === "question" && !navigatorOpen && !restBreakActive;
   const showPrequestionFooter =
     screen === "nda" ||
