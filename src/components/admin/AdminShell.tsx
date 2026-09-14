@@ -70,7 +70,7 @@ const PRIMARY = [
 
 const SECONDARY = [
   { href: "/admin/mock-builder", label: "Mock builder" },
-  { href: "/admin/fermi-preview", label: "Fermi preview" },
+  { href: "/mental-maths/fermiguessr/preview", label: "Fermi preview" },
 ] as const;
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
