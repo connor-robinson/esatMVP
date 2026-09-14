@@ -1,10 +1,11 @@
 /**
- * Minimal past-papers roadmap table: expand rows to practice or download sections.
+ * Past-papers practice table: click a paper to start with defaults;
+ * use Download to expand PDFs and individual parts.
  */
 
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Check, ChevronDown, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getExamAccentTextClass } from "@/config/colors";
@@ -17,6 +18,7 @@ import {
   expandDisplayGroupsToParts,
   groupRoadmapPartsForDisplay,
   isDisplayGroupCompleted,
+  type RoadmapDisplayGroup,
 } from "@/lib/papers/roadmapDisplayGroups";
 import {
   getRoadmapPartSectionDownloads,
@@ -27,6 +29,10 @@ import {
   type RoadmapStageScore,
 } from "@/lib/papers/roadmapStageScores";
 import { RoadmapInfoPopover } from "./RoadmapInfoPopover";
+import {
+  getStageCommentary,
+  type StageCommentary,
+} from "./roadmapTimelineMarkers";
 import type { RoadmapStartOptions } from "./StageListCard";
 
 type StageCompletionEntry = {
@@ -60,6 +66,64 @@ function stageTitle(stage: RoadmapStage): string {
   return `${stage.examName} ${stage.year}`;
 }
 
+function commentaryForStage(
+  stage: RoadmapStage,
+  stages: RoadmapStage[],
+): StageCommentary | null {
+  if (stage.examName === "TMUA") {
+    const firstTmua = stages.find((s) => s.examName === "TMUA");
+    if (firstTmua?.id === stage.id) {
+      return getStageCommentary("tmua-intro");
+    }
+    return null;
+  }
+  return getStageCommentary(stage.id);
+}
+
+/** Same defaults the old roadmap used when starting a stage. */
+function getDefaultPartsForStage(
+  stage: RoadmapStage,
+  partCompletion: Map<string, boolean>,
+): RoadmapPart[] {
+  const getPartKey = getRoadmapPartKey;
+  const displayGroups = groupRoadmapPartsForDisplay(stage.parts);
+
+  if (stage.examName === "TMUA") {
+    return defaultTmuaSelectedParts(stage, partCompletion, getPartKey);
+  }
+
+  if (stage.examName === "ENGAA") {
+    const keys = new Set<string>();
+    for (const group of displayGroups) {
+      const startsSelected = group.internalParts.some(
+        (part) => part.defaultSelected !== false,
+      );
+      if (
+        startsSelected &&
+        !isDisplayGroupCompleted(group, partCompletion, getPartKey)
+      ) {
+        keys.add(group.key);
+      }
+    }
+    if (keys.size === 0) {
+      for (const group of displayGroups) {
+        if (!isDisplayGroupCompleted(group, partCompletion, getPartKey)) {
+          keys.add(group.key);
+        }
+      }
+    }
+    return expandDisplayGroupsToParts(stage.parts, keys);
+  }
+
+  const incomplete = displayGroups.filter(
+    (group) => !isDisplayGroupCompleted(group, partCompletion, getPartKey),
+  );
+  const keys = new Set(
+    (incomplete.length > 0 ? incomplete : displayGroups).map((g) => g.key),
+  );
+  return expandDisplayGroupsToParts(stage.parts, keys);
+}
+
 function DownloadAnchor({
   href,
   label,
@@ -71,16 +135,16 @@ function DownloadAnchor({
     <a
       href={href}
       download
-      className="inline-flex items-center gap-1 text-xs font-medium text-text-muted underline-offset-2 hover:text-text hover:underline"
+      className="inline-flex items-center gap-1.5 text-sm font-medium text-text underline-offset-2 hover:underline"
       onClick={(e) => e.stopPropagation()}
     >
-      <Download className="h-3 w-3" aria-hidden />
+      <Download className="h-3.5 w-3.5 opacity-70" aria-hidden />
       {label}
     </a>
   );
 }
 
-function StageExpandedBody({
+function StageDownloadPanel({
   stage,
   partCompletion,
   newQuestionsOnly,
@@ -104,206 +168,108 @@ function StageExpandedBody({
     () => getRoadmapStageSectionDownloads(stage),
     [stage],
   );
-  const [selectedGroups, setSelectedGroups] = useState<Set<string>>(new Set());
 
-  useEffect(() => {
-    if (stage.examName === "TMUA") {
-      const defaultParts = defaultTmuaSelectedParts(
-        stage,
-        partCompletion,
-        getPartKey,
-      );
-      const keys = new Set<string>();
-      for (const group of displayGroups) {
-        if (
-          group.internalParts.some((part) =>
-            defaultParts.some(
-              (selected) => getPartKey(selected) === getPartKey(part),
-            ),
-          )
-        ) {
-          keys.add(group.key);
-        }
-      }
-      setSelectedGroups(keys);
-      return;
-    }
-
-    if (stage.examName === "ENGAA") {
-      const keys = new Set<string>();
-      for (const group of displayGroups) {
-        const startsSelected = group.internalParts.some(
-          (part) => part.defaultSelected !== false,
-        );
-        if (
-          startsSelected &&
-          !isDisplayGroupCompleted(group, partCompletion, getPartKey)
-        ) {
-          keys.add(group.key);
-        }
-      }
-      setSelectedGroups(keys);
-      return;
-    }
-
-    const incomplete = displayGroups.filter(
-      (group) => !isDisplayGroupCompleted(group, partCompletion, getPartKey),
+  const startGroup = (group: RoadmapDisplayGroup) => {
+    onStartSession(
+      stage,
+      expandDisplayGroupsToParts(stage.parts, new Set([group.key])),
+      { newQuestionsOnly },
     );
-    setSelectedGroups(new Set(incomplete.map((group) => group.key)));
-  }, [stage, partCompletion, displayGroups, getPartKey]);
-
-  const toggleGroup = (key: string) => {
-    setSelectedGroups((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
-  };
-
-  const startSelected = () => {
-    if (selectedGroups.size === 0) return;
-    const parts = expandDisplayGroupsToParts(stage.parts, selectedGroups);
-    onStartSession(stage, parts, { newQuestionsOnly });
-  };
-
-  const startGroup = (groupKey: string) => {
-    const parts = expandDisplayGroupsToParts(
-      stage.parts,
-      new Set([groupKey]),
-    );
-    onStartSession(stage, parts, { newQuestionsOnly });
   };
 
   return (
-    <div className="space-y-4 border-t border-border-subtle bg-surface-mid/30 px-3 py-3 sm:px-4">
+    <div className="space-y-4 px-1 pb-4 pt-1 sm:px-2">
       {sectionDownloads.length > 0 ? (
-        <div className="flex flex-wrap gap-x-4 gap-y-2">
-          {sectionDownloads.map(({ paperName, links }) => (
-            <div
-              key={paperName}
-              className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs"
-            >
-              <span className="font-medium text-text">{paperName}</span>
-              {links.paperUrl ? (
-                <DownloadAnchor href={links.paperUrl} label="Paper PDF" />
-              ) : null}
-              {links.answersUrl ? (
-                <DownloadAnchor
-                  href={links.answersUrl}
-                  label={links.answersLabel}
-                />
-              ) : null}
-            </div>
-          ))}
+        <div className="space-y-2">
+          <p className="text-xs font-medium uppercase tracking-wide text-text-subtle">
+            Downloads
+          </p>
+          <ul className="space-y-2">
+            {sectionDownloads.map(({ paperName, links }) => (
+              <li
+                key={paperName}
+                className="flex flex-wrap items-baseline gap-x-4 gap-y-1"
+              >
+                <span className="min-w-[5.5rem] text-sm font-medium text-text">
+                  {paperName}
+                </span>
+                {links.paperUrl ? (
+                  <DownloadAnchor href={links.paperUrl} label="Paper PDF" />
+                ) : null}
+                {links.answersUrl ? (
+                  <DownloadAnchor
+                    href={links.answersUrl}
+                    label={links.answersLabel}
+                  />
+                ) : null}
+              </li>
+            ))}
+          </ul>
         </div>
-      ) : null}
-
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[28rem] text-left text-sm">
-          <thead>
-            <tr className="text-xs uppercase tracking-wide text-text-subtle">
-              <th className="w-8 py-1.5 pr-2 font-medium" />
-              <th className="py-1.5 pr-3 font-medium">Part</th>
-              <th className="py-1.5 pr-3 font-medium">Section</th>
-              <th className="py-1.5 pr-3 font-medium">Status</th>
-              <th className="py-1.5 pr-3 font-medium">Download</th>
-              <th className="py-1.5 text-right font-medium">Practice</th>
-            </tr>
-          </thead>
-          <tbody>
-            {displayGroups.map((group) => {
-              const done = isDisplayGroupCompleted(
-                group,
-                partCompletion,
-                getPartKey,
-              );
-              const selected = selectedGroups.has(group.key);
-              const links = getRoadmapPartSectionDownloads(
-                stage,
-                group.internalParts[0]!,
-              );
-
-              return (
-                <tr
-                  key={group.key}
-                  className="border-t border-border-subtle/70"
-                >
-                  <td className="py-2 pr-2 align-middle">
-                    <input
-                      type="checkbox"
-                      checked={selected}
-                      onChange={() => toggleGroup(group.key)}
-                      aria-label={`Select ${displayLabelForGroup(group)}`}
-                      className="h-3.5 w-3.5 accent-[var(--color-primary)]"
-                    />
-                  </td>
-                  <td className="py-2 pr-3 align-middle text-text">
-                    {displayLabelForGroup(group)}
-                  </td>
-                  <td className="py-2 pr-3 align-middle text-text-muted">
-                    {group.paperName}
-                  </td>
-                  <td className="py-2 pr-3 align-middle">
-                    {done ? (
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-text">
-                        <Check className="h-3.5 w-3.5" aria-hidden />
-                        Done
-                      </span>
-                    ) : (
-                      <span className="text-xs text-text-muted">Not done</span>
-                    )}
-                  </td>
-                  <td className="py-2 pr-3 align-middle">
-                    <div className="flex flex-wrap gap-x-2 gap-y-1">
-                      {links?.paperUrl ? (
-                        <DownloadAnchor href={links.paperUrl} label="PDF" />
-                      ) : null}
-                      {links?.answersUrl ? (
-                        <DownloadAnchor
-                          href={links.answersUrl}
-                          label={links.answersLabel}
-                        />
-                      ) : null}
-                      {!links?.paperUrl && !links?.answersUrl ? (
-                        <span className="text-xs text-text-subtle">-</span>
-                      ) : null}
-                    </div>
-                  </td>
-                  <td className="py-2 text-right align-middle">
-                    <button
-                      type="button"
-                      onClick={() => startGroup(group.key)}
-                      className="text-xs font-semibold text-primary hover:underline"
-                    >
-                      Start
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-        <p className="text-xs text-text-muted">
-          {selectedGroups.size} part
-          {selectedGroups.size === 1 ? "" : "s"} selected
+      ) : (
+        <p className="text-sm text-text-muted">
+          No PDF downloads for this paper yet.
         </p>
-        <button
-          type="button"
-          disabled={selectedGroups.size === 0}
-          onClick={startSelected}
-          className={cn(
-            "rounded border px-3 py-1.5 text-sm font-semibold transition-colors",
-            selectedGroups.size > 0
-              ? "border-primary bg-primary text-white hover:bg-primary-hover"
-              : "cursor-not-allowed border-border-subtle bg-surface-mid text-text-disabled",
-          )}
-        >
-          Start selected
-        </button>
+      )}
+
+      <div className="space-y-2">
+        <p className="text-xs font-medium uppercase tracking-wide text-text-subtle">
+          Practice one part
+        </p>
+        <ul className="divide-y divide-border-subtle/60">
+          {displayGroups.map((group) => {
+            const done = isDisplayGroupCompleted(
+              group,
+              partCompletion,
+              getPartKey,
+            );
+            const links = getRoadmapPartSectionDownloads(
+              stage,
+              group.internalParts[0]!,
+            );
+
+            return (
+              <li
+                key={group.key}
+                className="flex flex-wrap items-center justify-between gap-2 py-2.5"
+              >
+                <div className="min-w-0">
+                  <p className="text-sm text-text">
+                    {displayLabelForGroup(group)}
+                    <span className="ml-2 text-text-muted">
+                      {group.paperName}
+                    </span>
+                  </p>
+                  <p className="mt-0.5 text-xs text-text-muted">
+                    {done ? "Done" : "Not done"}
+                    {links?.paperUrl || links?.answersUrl ? (
+                      <>
+                        {" · "}
+                        {links.paperUrl ? (
+                          <DownloadAnchor href={links.paperUrl} label="PDF" />
+                        ) : null}
+                        {links.paperUrl && links.answersUrl ? " · " : null}
+                        {links.answersUrl ? (
+                          <DownloadAnchor
+                            href={links.answersUrl}
+                            label={links.answersLabel}
+                          />
+                        ) : null}
+                      </>
+                    ) : null}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => startGroup(group)}
+                  className="shrink-0 text-sm font-semibold text-primary hover:underline"
+                >
+                  Start part
+                </button>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </div>
   );
@@ -332,9 +298,18 @@ export function RoadmapTable({
     return { completed, total };
   }, [stages, completionData]);
 
+  const startStageDefaults = (stage: RoadmapStage) => {
+    const parts = getDefaultPartsForStage(
+      stage,
+      completionData.get(stage.id)?.parts ?? new Map(),
+    );
+    if (parts.length === 0) return;
+    onStartSession(stage, parts, { newQuestionsOnly });
+  };
+
   return (
     <div className="font-sans">
-      <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+      <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-xl font-semibold tracking-tight text-text sm:text-2xl">
             Past papers
@@ -344,14 +319,15 @@ export function RoadmapTable({
               <span className="inline-block h-4 w-28 animate-pulse rounded bg-surface-mid" />
             ) : (
               <>
-                {totals.completed} of {totals.total} parts done
+                {totals.completed} of {totals.total} parts done. Click a paper to
+                start.
               </>
             )}
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-text-subtle">
+          <span className="text-xs font-medium text-text-muted">
             Unique questions only
           </span>
           <RoadmapInfoPopover title="Unique questions only">
@@ -385,112 +361,157 @@ export function RoadmapTable({
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-md border border-border-subtle bg-background">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[36rem] text-left text-sm">
-            <thead>
-              <tr className="border-b border-border-subtle bg-surface-mid/50 text-xs uppercase tracking-wide text-text-subtle">
-                <th className="px-3 py-2.5 font-medium sm:px-4">Paper</th>
-                <th className="px-3 py-2.5 font-medium sm:px-4">Progress</th>
-                <th className="px-3 py-2.5 font-medium sm:px-4">Status</th>
-                <th className="px-3 py-2.5 font-medium sm:px-4">Score</th>
-                <th className="w-10 px-3 py-2.5 sm:px-4" />
-              </tr>
-            </thead>
-            <tbody>
-              {stages.map((stage) => {
-                const data = completionData.get(stage.id);
-                const completed = data?.completed ?? 0;
-                const total =
-                  data?.total ??
-                  groupRoadmapPartsForDisplay(stage.parts).length;
-                const isDone = total > 0 && completed === total;
-                const isPartial = completed > 0 && !isDone;
-                const isExpanded = expandedId === stage.id;
-                const accentExam = isEsatCampMockRoadmapStage(stage)
-                  ? "ESATCamp Mock"
-                  : stage.examName;
-                const score = stageScores.get(stage.id);
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[40rem] border-collapse text-left text-sm">
+          <thead>
+            <tr className="border-b border-border text-xs font-medium uppercase tracking-wide text-text-muted">
+              <th className="pb-2.5 pr-4 font-medium">Paper</th>
+              <th className="w-[4.5rem] pb-2.5 pr-4 font-medium">Parts</th>
+              <th className="w-[7rem] pb-2.5 pr-4 font-medium">Status</th>
+              <th className="w-[4.5rem] pb-2.5 pr-4 font-medium">Score</th>
+              <th className="w-[6.5rem] pb-2.5 text-right font-medium">
+                Download
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {stages.map((stage, index) => {
+              const data = completionData.get(stage.id);
+              const completed = data?.completed ?? 0;
+              const total =
+                data?.total ??
+                groupRoadmapPartsForDisplay(stage.parts).length;
+              const isDone = total > 0 && completed === total;
+              const isPartial = completed > 0 && !isDone;
+              const isExpanded = expandedId === stage.id;
+              const accentExam = isEsatCampMockRoadmapStage(stage)
+                ? "ESATCamp Mock"
+                : stage.examName;
+              const score = stageScores.get(stage.id);
+              const commentary = commentaryForStage(stage, stages);
 
-                return (
-                  <tr key={stage.id} data-stage-id={stage.id} className="group">
-                    <td colSpan={5} className="p-0">
+              return (
+                <tr
+                  key={stage.id}
+                  data-stage-id={stage.id}
+                  className="align-top"
+                >
+                  <td
+                    colSpan={5}
+                    className={cn(
+                      "p-0",
+                      index < stages.length - 1 && "border-b border-border-subtle",
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "grid grid-cols-[minmax(0,1fr)_4.5rem_7rem_4.5rem_6.5rem] items-start gap-x-0 py-3.5 pr-0",
+                        isExpanded && "pb-1",
+                      )}
+                    >
                       <button
                         type="button"
-                        onClick={() =>
-                          setExpandedId(isExpanded ? null : stage.id)
-                        }
-                        className={cn(
-                          "grid w-full grid-cols-[minmax(0,1.4fr)_minmax(0,0.7fr)_minmax(0,0.7fr)_minmax(0,0.6fr)_2.5rem] items-center gap-0 border-b border-border-subtle px-3 py-2.5 text-left transition-colors sm:px-4",
-                          isExpanded
-                            ? "bg-surface-mid/40"
-                            : "hover:bg-surface-mid/25",
-                        )}
-                        aria-expanded={isExpanded}
+                        onClick={() => startStageDefaults(stage)}
+                        className="min-w-0 pr-4 text-left transition-opacity hover:opacity-80"
                       >
                         <span
                           className={cn(
-                            "truncate font-medium",
+                            "block text-base font-semibold leading-snug",
                             getExamAccentTextClass(accentExam),
                           )}
                         >
                           {stageTitle(stage)}
                         </span>
-                        <span className="tabular-nums text-text-muted">
-                          {completed}/{total}
-                        </span>
-                        <span className="text-text-muted">
-                          {isDone ? (
-                            <span className="inline-flex items-center gap-1 text-text">
-                              <Check className="h-3.5 w-3.5" aria-hidden />
-                              Done
-                            </span>
-                          ) : isPartial ? (
-                            "In progress"
-                          ) : (
-                            "Not started"
+                        {commentary ? (
+                          <span className="mt-1 block text-sm leading-relaxed text-text-muted">
+                            {commentary.text}
+                          </span>
+                        ) : null}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => startStageDefaults(stage)}
+                        className="pt-0.5 text-left tabular-nums text-text hover:opacity-80"
+                      >
+                        {completed}/{total}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => startStageDefaults(stage)}
+                        className="pt-0.5 text-left text-text hover:opacity-80"
+                      >
+                        {isDone ? (
+                          <span className="inline-flex items-center gap-1">
+                            <Check className="h-3.5 w-3.5" aria-hidden />
+                            Done
+                          </span>
+                        ) : isPartial ? (
+                          "In progress"
+                        ) : (
+                          <span className="text-text-muted">Not started</span>
+                        )}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => startStageDefaults(stage)}
+                        className="pt-0.5 text-left tabular-nums text-text hover:opacity-80"
+                      >
+                        {scoresLoading ? (
+                          <span className="inline-block h-3.5 w-8 animate-pulse rounded bg-surface-mid" />
+                        ) : (
+                          formatRoadmapScore(score)
+                        )}
+                      </button>
+
+                      <div className="flex justify-end pt-0.5">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setExpandedId(isExpanded ? null : stage.id)
+                          }
+                          aria-expanded={isExpanded}
+                          aria-label={`Download options for ${stageTitle(stage)}`}
+                          className={cn(
+                            "inline-flex items-center gap-1 text-sm font-medium text-text-muted transition-colors hover:text-text",
+                            isExpanded && "text-text",
                           )}
-                        </span>
-                        <span className="tabular-nums text-text">
-                          {scoresLoading ? (
-                            <span className="inline-block h-3.5 w-8 animate-pulse rounded bg-surface-mid" />
-                          ) : (
-                            formatRoadmapScore(score)
-                          )}
-                        </span>
-                        <span className="flex justify-end">
+                        >
+                          Download
                           <ChevronDown
                             className={cn(
-                              "h-4 w-4 text-text-muted transition-transform duration-fast ease-signature",
+                              "h-4 w-4 transition-transform duration-fast ease-signature",
                               isExpanded && "rotate-180",
                             )}
                             aria-hidden
                           />
-                        </span>
-                      </button>
+                        </button>
+                      </div>
+                    </div>
 
-                      {isExpanded ? (
-                        <StageExpandedBody
-                          stage={stage}
-                          partCompletion={data?.parts ?? new Map()}
-                          newQuestionsOnly={newQuestionsOnly}
-                          onStartSession={onStartSession}
-                        />
-                      ) : null}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-
-        {stages.length === 0 ? (
-          <p className="px-4 py-8 text-center text-sm text-text-muted">
-            No papers match your subjects yet. Set ESAT modules in your profile.
-          </p>
-        ) : null}
+                    {isExpanded ? (
+                      <StageDownloadPanel
+                        stage={stage}
+                        partCompletion={data?.parts ?? new Map()}
+                        newQuestionsOnly={newQuestionsOnly}
+                        onStartSession={onStartSession}
+                      />
+                    ) : null}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
+
+      {stages.length === 0 ? (
+        <p className="py-10 text-center text-sm text-text-muted">
+          No papers match your subjects yet. Set ESAT modules in your profile.
+        </p>
+      ) : null}
     </div>
   );
 }
