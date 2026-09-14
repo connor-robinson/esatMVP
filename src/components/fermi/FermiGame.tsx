@@ -415,7 +415,6 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
           {displayPhase === "revealed" && currentResult && (
             <RevealedView
               result={currentResult}
-              input={input}
               onNext={handleNext}
               isLastQuestion={isLastQuestion}
             />
@@ -588,23 +587,39 @@ function LogScaleBar({ guess, answer, tone }: { guess: number; answer: number; t
   const delta = Math.log10(Math.max(guess, 1e-9)) - Math.log10(Math.max(answer, 1e-9));
   const clamped = Math.max(-RANGE, Math.min(RANGE, delta));
   const guessPct = 50 + (clamped / RANGE) * 50;
+  const orders = Math.abs(delta);
+  const factor = 10 ** orders;
+  const direction = delta > 0.02 ? "too high" : delta < -0.02 ? "too low" : "on target";
+  const hoverDetail =
+    direction === "on target"
+      ? "Right on the mark"
+      : `${formatFermiNumber(guess)} vs ${formatFermiNumber(answer)} · ~${
+          factor >= 10 ? `${Math.round(factor)}×` : `${(Math.round(factor * 10) / 10).toLocaleString("en-US")}×`
+        } ${direction}`;
 
   return (
-    <div className="w-full max-w-md">
-      <div className="relative h-10">
-        <div className="absolute left-0 right-0 top-1/2 h-1.5 -translate-y-1/2 rounded-sm bg-surface-mid" />
+    <div className="group/slider w-full max-w-md cursor-default py-1">
+      <div className="relative h-10 transition-transform duration-150 group-hover/slider:scale-y-110">
+        <div className="absolute left-0 right-0 top-1/2 h-1.5 -translate-y-1/2 rounded-sm bg-surface-mid transition-colors group-hover/slider:bg-surface" />
         <div className="absolute left-1/2 top-1/2 h-5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-sm bg-primary" />
         <div
           className={cn(
-            "absolute top-1/2 flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-sm bg-surface-elevated shadow-sm ring-2",
+            "absolute top-1/2 flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-sm bg-surface-elevated shadow-sm ring-2 transition-transform duration-150 group-hover/slider:scale-110",
             tone.replace("text-", "ring-"),
           )}
           style={{ left: `${guessPct}%` }}
+          title={hoverDetail}
         >
           <div className={cn("h-2.5 w-2.5 rounded-sm", tone.replace("text-", "bg-"))} />
         </div>
+        <div
+          className="pointer-events-none absolute -top-7 left-1/2 z-10 hidden -translate-x-1/2 whitespace-nowrap rounded-sm bg-surface-elevated px-2 py-1 text-[11px] font-medium text-text shadow-sm group-hover/slider:block"
+          style={{ left: `${guessPct}%` }}
+        >
+          {hoverDetail}
+        </div>
       </div>
-      <div className="flex justify-between text-[10px] font-medium uppercase tracking-wide text-text-muted">
+      <div className="flex justify-between text-[10px] font-medium uppercase tracking-wide text-text-muted opacity-70 transition-opacity group-hover/slider:opacity-100">
         <span>too low</span>
         <span className="text-primary">actual</span>
         <span>too high</span>
@@ -613,9 +628,45 @@ function LogScaleBar({ guess, answer, tone }: { guess: number; answer: number; t
   );
 }
 
+function IconActionButton({
+  onClick,
+  label,
+  tone = "muted",
+  children,
+}: {
+  onClick: () => void;
+  label: string;
+  tone?: "muted" | "primary";
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={label}
+      aria-label={label}
+      className={cn(
+        "group/btn inline-flex h-11 items-center justify-center gap-0 overflow-hidden rounded-sm px-3 outline-none transition-all duration-150",
+        tone === "primary"
+          ? "bg-secondary text-white hover:brightness-110"
+          : "bg-surface text-text-muted hover:bg-surface-mid hover:text-text",
+      )}
+    >
+      <span className="shrink-0">{children}</span>
+      <span
+        className={cn(
+          "max-w-0 overflow-hidden whitespace-nowrap text-sm font-medium opacity-0 transition-all duration-150",
+          "group-hover/btn:ml-2 group-hover/btn:max-w-[11rem] group-hover/btn:opacity-100",
+        )}
+      >
+        {label}
+      </span>
+    </button>
+  );
+}
+
 function RevealedView({
   result,
-  input,
   onNext,
   isLastQuestion,
 }: {
@@ -633,53 +684,40 @@ function RevealedView({
 
   return (
     <div className="flex w-full flex-col items-center gap-6">
-      {/* Same footprint as playing: question + empty preview slot + input */}
       <FermiQuestionAnchor
         questionText={question.question}
         score={score}
         scoreTone={tone.text}
       >
-        <div className={cn(PREVIEW_SLOT, "bg-transparent")} aria-hidden />
-        <div
-          className="flex h-16 w-full items-center rounded-sm bg-surface-elevated px-5 text-2xl font-semibold text-text"
-          aria-label={`Your guess: ${input || formatFullNumber(guess)}`}
-        >
-          <span className="truncate">{input.trim() || formatFullNumber(guess)}</span>
+        {/* Slider between question and the action bar */}
+        <LogScaleBar guess={guess} answer={question.answer} tone={tone.text} />
+
+        {/* Same footprint as the input: icon actions with hover labels */}
+        <div className="flex h-16 w-full items-center justify-center gap-2 rounded-sm bg-surface-elevated px-3">
+          <IconActionButton
+            onClick={() => setShowSolution((v) => !v)}
+            label={showSolution ? "Hide solution" : "View our solution"}
+            tone="muted"
+          >
+            <Eye className="h-5 w-5" strokeWidth={2} />
+          </IconActionButton>
+          <IconActionButton
+            onClick={onNext}
+            label={isLastQuestion ? "See results" : "Next question"}
+            tone="primary"
+          >
+            <ArrowRight className="h-5 w-5" strokeWidth={2.5} />
+          </IconActionButton>
         </div>
       </FermiQuestionAnchor>
 
-      <LogScaleBar guess={guess} answer={question.answer} tone={tone.text} />
-
-      {/* Solution + next on the same row as verdict */}
-      <div className="flex w-full max-w-xl flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
-        <div className="flex shrink-0 flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setShowSolution((v) => !v)}
-            className="inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-sm bg-surface px-4 text-sm font-medium text-text-muted outline-none transition-colors hover:bg-surface-mid hover:text-text"
-            aria-expanded={showSolution}
-          >
-            <Eye className="h-4 w-4 shrink-0" strokeWidth={2} />
-            {showSolution ? "Hide solution" : "View our solution"}
-          </button>
-          <button
-            type="button"
-            onClick={onNext}
-            className="inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-sm bg-secondary px-5 text-sm font-bold text-white outline-none transition-colors hover:brightness-110"
-          >
-            {isLastQuestion ? "See results" : "Next question"}
-            <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
-          </button>
-        </div>
-
-        <div className="min-w-0 flex-1 sm:pt-0.5">
-          <p className={cn("text-2xl font-bold uppercase tracking-wide sm:text-3xl", tone.text)}>
-            {verdict.label.toUpperCase()}
-          </p>
-          <p className="mt-1 text-sm font-medium text-text-muted sm:text-base">
-            {verdict.detail}
-          </p>
-        </div>
+      <div className="w-full max-w-md text-center">
+        <p className={cn("text-2xl font-bold uppercase tracking-wide sm:text-3xl", tone.text)}>
+          {verdict.label.toUpperCase()}
+        </p>
+        <p className="mt-1 text-sm font-medium text-text-muted sm:text-base">
+          {verdict.detail}
+        </p>
       </div>
 
       {showSolution && (
