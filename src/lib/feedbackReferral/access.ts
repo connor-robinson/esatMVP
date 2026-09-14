@@ -1,15 +1,15 @@
 /**
- * Preview gate: the feedback-for-referral flow is hidden from everyone except
- * admins and an explicit email allowlist until FEEDBACK_REFERRAL_LIVE=true.
+ * Feedback-for-referral access.
  *
- * Eligible live users also need FEEDBACK_REFERRAL_MIN_ACTIVE_DAYS distinct usage
- * days. Admins and preview allowlist emails skip the tenure check for support / QA.
+ * When FEEDBACK_REFERRAL_LIVE=true, eligible users need
+ * FEEDBACK_REFERRAL_MIN_ACTIVE_DAYS distinct usage days. Admins and preview
+ * allowlist emails skip the tenure check for support / QA.
  */
 
 const LIVE_FLAG = "FEEDBACK_REFERRAL_LIVE";
 const PREVIEW_EMAILS_FLAG = "FEEDBACK_REFERRAL_PREVIEW_EMAILS";
 
-/** Built-in preview testers. Kept until the flow ships publicly. */
+/** Built-in preview testers. Kept for support / QA even after launch. */
 export const DEFAULT_FEEDBACK_REFERRAL_PREVIEW_EMAILS = [
   "esatcamp@gmail.com",
   "ansonchanw@gmail.com",
@@ -18,10 +18,12 @@ export const DEFAULT_FEEDBACK_REFERRAL_PREVIEW_EMAILS = [
 ] as const;
 
 /** Distinct calendar days of site usage required before invite / survey. */
-export const FEEDBACK_REFERRAL_MIN_ACTIVE_DAYS = 3;
+export const FEEDBACK_REFERRAL_MIN_ACTIVE_DAYS = 2;
 
 export function isFeedbackReferralLive(): boolean {
   const raw = process.env[LIVE_FLAG]?.trim().toLowerCase();
+  // Shipped: live by default. Set FEEDBACK_REFERRAL_LIVE=false to gate again.
+  if (!raw) return true;
   return raw === "true" || raw === "1" || raw === "yes";
 }
 
@@ -76,6 +78,6 @@ export function canAccessFeedbackReferral(opts: {
   // Admins and preview allowlist can always open for support / QA.
   if (isAdmin || preview) return true;
 
-  // Public live users need 3+ active days.
+  // Public live users need enough distinct active days.
   return hasEnoughFeedbackReferralActiveDays(opts.activeDays);
 }

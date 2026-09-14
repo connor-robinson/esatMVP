@@ -118,10 +118,10 @@ Create the following in [Stripe Dashboard → Products](https://dashboard.stripe
 
 Copy each Price ID (e.g. `price_1ABC...`) into the matching env var.
 
-Optional friend-referral 50% codes (preview until `FEEDBACK_REFERRAL_LIVE=true`).
-Test on production at `https://esatcamp.com/feedback` while signed in as an allowlisted account (no localhost login needed). Built-in preview emails already include the admin/tester accounts; use the env var only to add more.
+Optional friend-referral 50% codes (live when `FEEDBACK_REFERRAL_LIVE` is unset or true).
+Eligible users need **2 distinct active usage days** (practice metrics + past-paper session days). Admins and preview allowlist emails skip that check.
 
-When live (or for preview allowlist), the invite / survey only unlocks after **3 distinct active usage days** (practice metrics + past-paper session days). Admins skip that check.
+Test on production at `https://esatcamp.com/feedback` while signed in. Built-in preview emails already include the admin/tester accounts; use the env var only to add more.
 
 The popup does **not** appear on login. It only appears after finishing a past paper, question-bank session, or drill, and at most **twice** if dismissed. The questionnaire stays available under Settings → Account until completed.
 
@@ -130,8 +130,10 @@ New survey replies email `ansonchanw@gmail.com` immediately (override with `FEED
 Friend codes (`CAMP50-…`) are applied on the Pricing page (share link or the friend-code field), then attached server-side to Checkout. They are not typed into Stripe Checkout.
 
 ```env
-FEEDBACK_REFERRAL_LIVE=false
-# Optional extras beyond the built-in allowlist
+FEEDBACK_REFERRAL_LIVE=true
+# Set to false to gate the feature again
+# FEEDBACK_REFERRAL_LIVE=false
+# Optional extras beyond the built-in allowlist (skip tenure for QA)
 FEEDBACK_REFERRAL_PREVIEW_EMAILS=you@example.com
 # FEEDBACK_REFERRAL_NOTIFY_EMAIL=ansonchanw@gmail.com
 # Optional: reuse a Stripe coupon instead of auto-creating one

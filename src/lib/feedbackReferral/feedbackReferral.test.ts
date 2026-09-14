@@ -86,14 +86,14 @@ describe("feedback referral access", () => {
     ).toBe(false);
   });
 
-  it("requires 3 active days when live", () => {
+  it("requires 2 active days when live", () => {
     expect(
       canAccessFeedbackReferral({
         email: "student@example.com",
         role: "user",
         live: true,
         previewEmails: [],
-        activeDays: 2,
+        activeDays: 1,
       }),
     ).toBe(false);
     expect(
@@ -102,7 +102,7 @@ describe("feedback referral access", () => {
         role: "user",
         live: true,
         previewEmails: [],
-        activeDays: 3,
+        activeDays: 2,
       }),
     ).toBe(true);
   });
@@ -120,7 +120,18 @@ describe("feedback referral access", () => {
   });
 
   it("reads live flag from env-like values", () => {
-    expect(isFeedbackReferralLive()).toBe(false);
+    const prev = process.env.FEEDBACK_REFERRAL_LIVE;
+    try {
+      delete process.env.FEEDBACK_REFERRAL_LIVE;
+      expect(isFeedbackReferralLive()).toBe(true);
+      process.env.FEEDBACK_REFERRAL_LIVE = "false";
+      expect(isFeedbackReferralLive()).toBe(false);
+      process.env.FEEDBACK_REFERRAL_LIVE = "true";
+      expect(isFeedbackReferralLive()).toBe(true);
+    } finally {
+      if (prev === undefined) delete process.env.FEEDBACK_REFERRAL_LIVE;
+      else process.env.FEEDBACK_REFERRAL_LIVE = prev;
+    }
   });
 });
 
