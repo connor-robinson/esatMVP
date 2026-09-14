@@ -351,42 +351,48 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
 
   return (
     <div className="relative flex h-[calc(100vh-58px)] max-h-[calc(100vh-58px)] flex-col overflow-hidden bg-background">
-      {/* Header */}
-      <header className="flex shrink-0 items-center justify-between px-4 py-4 sm:px-6">
-        <div>
-          <h1 className="text-lg font-bold leading-tight text-text">
+      {/* Compact header: title · progress · count · close */}
+      <header className="flex shrink-0 items-center gap-3 px-4 py-2.5 sm:px-6">
+        <div className="min-w-0 shrink-0">
+          <h1 className="truncate text-sm font-bold leading-none text-text sm:text-base">
             {FERMI_GUESSR_NAME} #{puzzleNumber}
           </h1>
-          {displayPhase === "summary" && <DailyResetSubtext />}
+          {displayPhase === "summary" && (
+            <div className="mt-1">
+              <DailyResetSubtext />
+            </div>
+          )}
         </div>
-        <div className="flex items-center gap-3">
+
+        {displayPhase !== "summary" && (
+          <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-sm bg-surface">
+            <div
+              className="h-full rounded-sm bg-secondary transition-all duration-normal ease-signature"
+              style={{
+                width: `${((index + (displayPhase === "revealed" ? 1 : 0)) / round.length) * 100}%`,
+              }}
+            />
+          </div>
+        )}
+
+        {displayPhase === "summary" && <div className="min-w-0 flex-1" />}
+
+        <div className="flex shrink-0 items-center gap-2">
           {displayPhase !== "summary" && (
-            <span className="text-sm font-semibold text-text-muted">
-              {index + 1} / {round.length}
+            <span className="text-xs font-semibold tabular-nums text-text-muted sm:text-sm">
+              {index + 1}/{round.length}
             </span>
           )}
           <button
             type="button"
             onClick={onExit}
-            className="flex h-10 w-10 items-center justify-center rounded-sm bg-surface text-text-muted outline-none transition-colors hover:bg-surface-mid hover:text-text"
+            className="flex h-8 w-8 items-center justify-center rounded-sm bg-surface text-text-muted outline-none transition-colors hover:bg-surface-mid hover:text-text"
             title="Exit game"
           >
-            <X className="h-5 w-5" strokeWidth={2.25} />
+            <X className="h-4 w-4" strokeWidth={2.25} />
           </button>
         </div>
       </header>
-
-      {/* Progress bar */}
-      {displayPhase !== "summary" && (
-        <div className="mx-4 mb-2 h-1.5 shrink-0 overflow-hidden rounded-sm bg-surface sm:mx-6">
-          <div
-            className="h-full rounded-sm bg-secondary transition-all duration-normal ease-signature"
-            style={{
-              width: `${((index + (displayPhase === "revealed" ? 1 : 0)) / round.length) * 100}%`,
-            }}
-          />
-        </div>
-      )}
 
       {/* Body */}
       <div
