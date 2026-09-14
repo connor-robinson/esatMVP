@@ -1,14 +1,13 @@
 /**
- * Past-papers practice table: click a paper name for start options;
- * info buttons show roadmap commentary; Download expands PDFs.
+ * Past-papers practice list, styled like the esat-past-papers compact tables,
+ * grouped by NSAA / ENGAA / TMUA.
  */
 
 "use client";
 
 import { useMemo, useState, Fragment } from "react";
-import { ChevronDown, Download } from "lucide-react";
+import { ChevronDown, Download, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getExamAccentTextClass } from "@/config/colors";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
 import { isEsatCampMockRoadmapStage } from "@/lib/papers/roadmapConfig";
 import { getRoadmapPartKey } from "@/lib/papers/roadmapPartKey";
@@ -49,6 +48,8 @@ type StageCompletionEntry = {
 
 type ExpandMode = "options" | "downloads";
 
+type ExamGroupKey = "NSAA" | "ENGAA" | "TMUA" | "Mocks";
+
 type Props = {
   stages: RoadmapStage[];
   completionData: Map<string, StageCompletionEntry>;
@@ -66,14 +67,34 @@ type Props = {
   onCompletionChange: () => void | Promise<void>;
 };
 
+const GROUP_ORDER: ExamGroupKey[] = ["NSAA", "ENGAA", "TMUA", "Mocks"];
+
+const GROUP_HEADINGS: Record<ExamGroupKey, string> = {
+  NSAA: "NSAA",
+  ENGAA: "ENGAA",
+  TMUA: "TMUA",
+  Mocks: "ESAT Camp mocks",
+};
+
+function stageGroupKey(stage: RoadmapStage): ExamGroupKey {
+  if (isEsatCampMockRoadmapStage(stage)) return "Mocks";
+  if (stage.examName === "ENGAA") return "ENGAA";
+  if (stage.examName === "TMUA") return "TMUA";
+  return "NSAA";
+}
+
 function stageTitle(stage: RoadmapStage): string {
   if (isEsatCampMockRoadmapStage(stage)) {
     return stage.label || "ESATCamp Mock";
   }
-  if (stage.id === "specimen-papers") {
-    return `${stage.examName} Specimen`;
-  }
-  return `${stage.examName} ${stage.year}`;
+  if (stage.id === "specimen-papers") return "Specimen";
+  return String(stage.year);
+}
+
+function stageSubtitle(stage: RoadmapStage): string | null {
+  if (isEsatCampMockRoadmapStage(stage)) return null;
+  if (stage.id === "specimen-papers") return stage.examName;
+  return null;
 }
 
 function commentaryForStage(
@@ -90,7 +111,6 @@ function commentaryForStage(
   return getStageCommentary(stage.id);
 }
 
-/** Same defaults the old roadmap used when starting a stage. */
 function getDefaultPartsForStage(
   stage: RoadmapStage,
   partCompletion: Map<string, boolean>,
@@ -134,10 +154,7 @@ function getDefaultPartsForStage(
   return expandDisplayGroupsToParts(stage.parts, keys);
 }
 
-function describeDefaultSections(
-  stage: RoadmapStage,
-  defaultParts: RoadmapPart[],
-): string[] {
+function describeDefaultSections(defaultParts: RoadmapPart[]): string[] {
   const groups = groupRoadmapPartsForDisplay(defaultParts);
   if (groups.length === 0) return [];
   return groups.map((group) => {
@@ -146,7 +163,7 @@ function describeDefaultSections(
   });
 }
 
-function DownloadAnchor({
+function CompactDownloadLink({
   href,
   label,
 }: {
@@ -157,12 +174,55 @@ function DownloadAnchor({
     <a
       href={href}
       download
-      className="inline-flex items-center gap-1.5 rounded-md bg-surface-mid px-2.5 py-1.5 text-xs font-semibold text-text transition-colors hover:bg-surface-neutral"
+      className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md bg-[#2A3347] px-2.5 py-1.5 text-sm font-medium leading-none text-[#E2E8F0] transition-colors hover:bg-[#334155]"
       onClick={(e) => e.stopPropagation()}
     >
-      <Download className="h-3.5 w-3.5 opacity-70" aria-hidden />
       {label}
+      <Download aria-hidden className="h-3.5 w-3.5 opacity-75" />
     </a>
+  );
+}
+
+function UniqueQuestionsSwitch({
+  enabled,
+  onChange,
+}: {
+  enabled: boolean;
+  onChange: (enabled: boolean) => void;
+}) {
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-[#161D2F] px-3 py-2.5">
+      <div className="flex min-w-0 items-center gap-2">
+        <span className="text-sm text-[#CBD5E1]">Unique questions only</span>
+        <RoadmapInfoPopover
+          title="Unique questions only"
+          panelClassName="bg-[#1B2438] text-[#CBD5E1]"
+        >
+          <p>
+            When on, ENGAA sessions skip questions you already did in NSAA (and
+            other overlaps).
+          </p>
+        </RoadmapInfoPopover>
+      </div>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={enabled}
+        aria-label="Unique questions only"
+        onClick={() => onChange(!enabled)}
+        className={cn(
+          "relative h-5 w-9 shrink-0 rounded-full transition-colors",
+          enabled ? "bg-[#3B82F6]" : "bg-[#334155]",
+        )}
+      >
+        <span
+          className={cn(
+            "absolute top-0.5 h-4 w-4 rounded-full bg-white transition-transform",
+            enabled ? "left-[16px]" : "left-0.5",
+          )}
+        />
+      </button>
+    </div>
   );
 }
 
@@ -204,8 +264,8 @@ function StageOptionsPanel({
     [stage, partCompletion],
   );
   const sectionSummary = useMemo(
-    () => describeDefaultSections(stage, defaultParts),
-    [stage, defaultParts],
+    () => describeDefaultSections(defaultParts),
+    [defaultParts],
   );
 
   const startDefaults = () => {
@@ -248,19 +308,23 @@ function StageOptionsPanel({
   };
 
   return (
-    <div className="space-y-5 px-4 py-4 sm:px-5">
+    <div className="space-y-4 bg-[#121826] px-3 py-3.5 sm:px-3.5">
       {mode === "options" ? (
-        <div className="flex flex-col gap-3 rounded-lg bg-surface-mid/60 px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-text">Start paper now</p>
-            <p className="mt-1 text-sm leading-relaxed text-text-muted">
+            <p className="text-sm font-medium text-[#F1F5F9]">
+              Start paper now
+            </p>
+            <p className="mt-1 text-sm leading-relaxed text-[#94A3B8]">
               {sectionSummary.length > 0 ? (
                 <>
                   Includes:{" "}
-                  <span className="text-text">{sectionSummary.join(" · ")}</span>
+                  <span className="text-[#CBD5E1]">
+                    {sectionSummary.join(" · ")}
+                  </span>
                 </>
               ) : (
-                "No incomplete sections left. You can still start an individual part below."
+                "No incomplete sections left. Start an individual part below."
               )}
             </p>
           </div>
@@ -269,19 +333,20 @@ function StageOptionsPanel({
             disabled={defaultParts.length === 0}
             onClick={startDefaults}
             className={cn(
-              "shrink-0 rounded-md px-4 py-2 text-sm font-semibold transition-colors",
+              "inline-flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-semibold text-white transition-colors",
               defaultParts.length > 0
-                ? "bg-primary text-white hover:bg-primary-hover"
-                : "cursor-not-allowed bg-surface-neutral text-text-disabled",
+                ? "bg-[#3B82F6] hover:bg-[#2563EB]"
+                : "cursor-not-allowed bg-[#334155] text-[#94A3B8]",
             )}
           >
             Start paper now
+            <Play className="h-3.5 w-3.5 fill-current" aria-hidden />
           </button>
         </div>
       ) : null}
 
-      <div className="space-y-2.5">
-        <p className="text-xs font-semibold uppercase tracking-wide text-text-muted">
+      <div className="space-y-2">
+        <p className="text-xs font-semibold uppercase tracking-wide text-[#64748B]">
           Downloads
         </p>
         {sectionDownloads.length > 0 ? (
@@ -291,14 +356,14 @@ function StageOptionsPanel({
                 key={paperName}
                 className="flex flex-wrap items-center gap-2"
               >
-                <span className="min-w-[5.5rem] text-sm font-medium text-text">
+                <span className="min-w-[5rem] text-sm text-[#CBD5E1]">
                   {paperName}
                 </span>
                 {links.paperUrl ? (
-                  <DownloadAnchor href={links.paperUrl} label="Paper PDF" />
+                  <CompactDownloadLink href={links.paperUrl} label="Paper" />
                 ) : null}
                 {links.answersUrl ? (
-                  <DownloadAnchor
+                  <CompactDownloadLink
                     href={links.answersUrl}
                     label={links.answersLabel}
                   />
@@ -307,17 +372,15 @@ function StageOptionsPanel({
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-text-muted">
-            No PDF downloads for this paper yet.
-          </p>
+          <p className="text-sm text-[#94A3B8]">No PDFs for this paper yet.</p>
         )}
       </div>
 
-      <div className="space-y-2.5">
-        <p className="text-xs font-semibold uppercase tracking-wide text-text-muted">
+      <div className="space-y-2">
+        <p className="text-xs font-semibold uppercase tracking-wide text-[#64748B]">
           Or start one part
         </p>
-        <ul className="overflow-hidden rounded-lg bg-background/40">
+        <ul>
           {displayGroups.map((group, idx) => {
             const done = isDisplayGroupCompleted(
               group,
@@ -334,41 +397,36 @@ function StageOptionsPanel({
               <li
                 key={group.key}
                 className={cn(
-                  "flex flex-wrap items-center justify-between gap-3 px-3 py-2.5",
-                  idx > 0 && "border-t border-border-subtle/70",
+                  "flex flex-wrap items-center justify-between gap-3 py-2.5",
+                  idx > 0 && "border-t border-white/[0.06]",
                 )}
               >
                 <div className="min-w-0">
-                  <p className="text-sm text-text">
+                  <p className="text-sm text-[#F1F5F9]">
                     {displayLabelForGroup(group)}
-                    <span className="ml-2 text-text-muted">
-                      {group.paperName}
-                    </span>
+                    <span className="ml-2 text-[#94A3B8]">{group.paperName}</span>
                   </p>
-                  <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-text-muted">
+                  <div className="mt-1.5 flex flex-wrap gap-2">
                     {links?.paperUrl ? (
-                      <DownloadAnchor href={links.paperUrl} label="PDF" />
+                      <CompactDownloadLink href={links.paperUrl} label="PDF" />
                     ) : null}
                     {links?.answersUrl ? (
-                      <DownloadAnchor
+                      <CompactDownloadLink
                         href={links.answersUrl}
                         label={links.answersLabel}
                       />
                     ) : null}
                   </div>
                 </div>
-                <div className="flex shrink-0 items-center gap-3">
+                <div className="flex shrink-0 items-center gap-2.5">
                   <select
                     value={done ? "done" : "not_started"}
                     disabled={!userId || busy}
                     onChange={(e) => {
-                      void setGroupDone(
-                        group,
-                        e.target.value === "done",
-                      );
+                      void setGroupDone(group, e.target.value === "done");
                     }}
                     aria-label={`Status for ${displayLabelForGroup(group)}`}
-                    className="rounded-md border-0 bg-surface-mid px-2 py-1 text-xs font-medium text-text outline-none ring-1 ring-border-subtle focus:ring-primary disabled:opacity-50"
+                    className="rounded-md border-0 bg-[#1B2438] px-2 py-1 text-xs font-medium text-[#E2E8F0] outline-none ring-1 ring-white/10 disabled:opacity-50"
                   >
                     <option value="not_started">Not done</option>
                     <option value="done">Done</option>
@@ -376,15 +434,231 @@ function StageOptionsPanel({
                   <button
                     type="button"
                     onClick={() => startGroup(group)}
-                    className="text-sm font-semibold text-primary hover:underline"
+                    className="inline-flex items-center gap-1 rounded-md bg-[#3B82F6] px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-[#2563EB]"
                   >
-                    Start part
+                    Start
+                    <Play className="h-3 w-3 fill-current" aria-hidden />
                   </button>
                 </div>
               </li>
             );
           })}
         </ul>
+      </div>
+    </div>
+  );
+}
+
+function ExamGroupTable({
+  heading,
+  stages,
+  allStages,
+  completionData,
+  stageScores,
+  scoresLoading,
+  userId,
+  newQuestionsOnly,
+  expanded,
+  statusBusyId,
+  onToggleExpand,
+  onStartSession,
+  onCompletionChange,
+  onStageStatusChange,
+}: {
+  heading: string;
+  stages: RoadmapStage[];
+  allStages: RoadmapStage[];
+  completionData: Map<string, StageCompletionEntry>;
+  stageScores: Map<string, RoadmapStageScore>;
+  scoresLoading: boolean;
+  userId: string | null;
+  newQuestionsOnly: boolean;
+  expanded: { id: string; mode: ExpandMode } | null;
+  statusBusyId: string | null;
+  onToggleExpand: (stageId: string, mode: ExpandMode) => void;
+  onStartSession: Props["onStartSession"];
+  onCompletionChange: Props["onCompletionChange"];
+  onStageStatusChange: (
+    stage: RoadmapStage,
+    next: ManualRoadmapStatus,
+  ) => void;
+}) {
+  if (stages.length === 0) return null;
+
+  const statusValue = (
+    completed: number,
+    total: number,
+  ): ManualRoadmapStatus | "in_progress" => {
+    if (total > 0 && completed === total) return "done";
+    if (completed > 0) return "in_progress";
+    return "not_started";
+  };
+
+  return (
+    <div className="overflow-hidden rounded-xl bg-[#161D2F]">
+      <div className="px-3 py-3">
+        <h2 className="text-base font-semibold tracking-tight text-[#F1F5F9]">
+          {heading}
+        </h2>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[36rem] text-left text-base">
+          <thead>
+            <tr className="text-xs font-semibold uppercase tracking-wide text-[#94A3B8]">
+              <th className="px-2.5 py-2.5">Paper</th>
+              <th className="px-2.5 py-2.5">Parts</th>
+              <th className="px-2.5 py-2.5">Status</th>
+              <th className="px-2.5 py-2.5">Score</th>
+              <th className="px-2.5 py-2.5">Practice</th>
+              <th className="px-2.5 py-2.5">Download</th>
+            </tr>
+          </thead>
+          <tbody>
+            {stages.map((stage, index) => {
+              const data = completionData.get(stage.id);
+              const completed = data?.completed ?? 0;
+              const total =
+                data?.total ??
+                groupRoadmapPartsForDisplay(stage.parts).length;
+              const isOpen = expanded?.id === stage.id;
+              const mode = expanded?.mode ?? "options";
+              const score = stageScores.get(stage.id);
+              const commentary = commentaryForStage(stage, allStages);
+              const currentStatus = statusValue(completed, total);
+              const busy = statusBusyId === stage.id;
+              const subtitle = stageSubtitle(stage);
+
+              return (
+                <Fragment key={stage.id}>
+                  <tr
+                    data-stage-id={stage.id}
+                    className={
+                      index % 2 === 0 ? "bg-white/[0.035]" : "bg-transparent"
+                    }
+                  >
+                    <td className="px-2.5 py-2.5 align-middle">
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => onToggleExpand(stage.id, "options")}
+                          aria-expanded={isOpen && mode === "options"}
+                          className="text-left text-base font-medium tabular-nums text-[#F1F5F9] transition-colors hover:text-[#93C5FD]"
+                        >
+                          {stageTitle(stage)}
+                          {subtitle ? (
+                            <span className="ml-1.5 text-sm font-normal text-[#94A3B8]">
+                              {subtitle}
+                            </span>
+                          ) : null}
+                        </button>
+                        {commentary ? (
+                          <RoadmapInfoPopover
+                            title={commentary.title}
+                            label={`About ${commentary.title}`}
+                            align="left"
+                            panelClassName="bg-[#1B2438]"
+                          >
+                            <p>{commentary.text}</p>
+                          </RoadmapInfoPopover>
+                        ) : null}
+                      </div>
+                    </td>
+                    <td className="px-2.5 py-2.5 align-middle tabular-nums text-[#CBD5E1]">
+                      {completed}/{total}
+                    </td>
+                    <td className="px-2.5 py-2.5 align-middle">
+                      <select
+                        value={
+                          currentStatus === "in_progress"
+                            ? "in_progress"
+                            : currentStatus
+                        }
+                        disabled={!userId || busy}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === "in_progress") return;
+                          onStageStatusChange(
+                            stage,
+                            value as ManualRoadmapStatus,
+                          );
+                        }}
+                        aria-label={`Status for ${stageTitle(stage)}`}
+                        className="rounded-md border-0 bg-[#1B2438] px-2 py-1.5 text-sm font-medium text-[#E2E8F0] outline-none ring-1 ring-white/10 disabled:opacity-50"
+                        title={
+                          userId
+                            ? "Manually mark this paper done or not started"
+                            : "Sign in to update status"
+                        }
+                      >
+                        <option value="not_started">Not started</option>
+                        {currentStatus === "in_progress" ? (
+                          <option value="in_progress">In progress</option>
+                        ) : null}
+                        <option value="done">Done</option>
+                      </select>
+                    </td>
+                    <td className="px-2.5 py-2.5 align-middle tabular-nums text-[#F1F5F9]">
+                      {scoresLoading ? (
+                        <span className="inline-block h-3.5 w-8 animate-pulse rounded bg-white/10" />
+                      ) : (
+                        formatRoadmapScore(score)
+                      )}
+                    </td>
+                    <td className="px-2.5 py-2.5 align-middle">
+                      <button
+                        type="button"
+                        onClick={() => onToggleExpand(stage.id, "options")}
+                        className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md bg-[#3B82F6] px-3 py-1.5 text-sm font-semibold leading-none text-white transition-colors hover:bg-[#2563EB]"
+                      >
+                        Start now
+                        <Play
+                          aria-hidden
+                          className="h-3.5 w-3.5 fill-current opacity-90"
+                        />
+                      </button>
+                    </td>
+                    <td className="px-2.5 py-2.5 align-middle">
+                      <button
+                        type="button"
+                        onClick={() => onToggleExpand(stage.id, "downloads")}
+                        aria-expanded={isOpen && mode === "downloads"}
+                        className={cn(
+                          "inline-flex items-center gap-1 whitespace-nowrap rounded-md bg-[#2A3347] px-2.5 py-1.5 text-sm font-medium leading-none text-[#E2E8F0] transition-colors hover:bg-[#334155]",
+                          isOpen && mode === "downloads" && "bg-[#334155]",
+                        )}
+                      >
+                        Download
+                        <ChevronDown
+                          className={cn(
+                            "h-3.5 w-3.5 opacity-80 transition-transform",
+                            isOpen && "rotate-180",
+                          )}
+                          aria-hidden
+                        />
+                      </button>
+                    </td>
+                  </tr>
+                  {isOpen ? (
+                    <tr>
+                      <td colSpan={6} className="p-0">
+                        <StageOptionsPanel
+                          stage={stage}
+                          partCompletion={data?.parts ?? new Map()}
+                          newQuestionsOnly={newQuestionsOnly}
+                          mode={mode}
+                          userId={userId}
+                          statusBusy={busy}
+                          onStartSession={onStartSession}
+                          onCompletionChange={onCompletionChange}
+                        />
+                      </td>
+                    </tr>
+                  ) : null}
+                </Fragment>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </div>
   );
@@ -419,6 +693,19 @@ export function RoadmapTable({
     return { completed, total };
   }, [stages, completionData]);
 
+  const grouped = useMemo(() => {
+    const map: Record<ExamGroupKey, RoadmapStage[]> = {
+      NSAA: [],
+      ENGAA: [],
+      TMUA: [],
+      Mocks: [],
+    };
+    for (const stage of stages) {
+      map[stageGroupKey(stage)].push(stage);
+    }
+    return map;
+  }, [stages]);
+
   const toggleExpand = (stageId: string, mode: ExpandMode) => {
     setExpanded((prev) =>
       prev?.id === stageId && prev.mode === mode
@@ -441,241 +728,66 @@ export function RoadmapTable({
     }
   };
 
-  const statusValue = (
-    completed: number,
-    total: number,
-  ): ManualRoadmapStatus | "in_progress" => {
-    if (total > 0 && completed === total) return "done";
-    if (completed > 0) return "in_progress";
-    return "not_started";
-  };
-
   return (
     <div className="font-sans">
-      <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight text-text sm:text-2xl">
-            Past papers
-          </h1>
-          <p className="mt-1 text-sm text-text-muted">
-            {completionLoading ? (
-              <span className="inline-block h-4 w-28 animate-pulse rounded bg-surface-mid" />
-            ) : (
-              <>
-                {totals.completed} of {totals.total} parts done. Click a paper
-                name for options.
-              </>
-            )}
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-text-muted">
-            Unique questions only
-          </span>
-          <RoadmapInfoPopover title="Unique questions only">
-            <p>
-              When on, sessions only include questions you have not tried
-              before.
-            </p>
-            <p>
-              Some ENGAA papers overlap with NSAA. Matching questions you already
-              did are skipped too.
-            </p>
-          </RoadmapInfoPopover>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={newQuestionsOnly}
-            aria-label="Unique questions only"
-            onClick={() => onNewQuestionsOnlyChange(!newQuestionsOnly)}
-            className={cn(
-              "relative h-5 w-9 shrink-0 rounded-full transition-colors duration-fast ease-signature",
-              newQuestionsOnly ? "bg-primary" : "bg-surface-neutral",
-            )}
-          >
-            <span
-              className={cn(
-                "absolute top-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-transform duration-fast ease-signature",
-                newQuestionsOnly ? "left-[16px]" : "left-0.5",
-              )}
-            />
-          </button>
-        </div>
+      <div className="mb-6">
+        <h1 className="text-xl font-semibold tracking-tight text-text sm:text-2xl">
+          Past papers
+        </h1>
+        <p className="mt-1 text-sm text-text-muted">
+          {completionLoading ? (
+            <span className="inline-block h-4 w-28 animate-pulse rounded bg-surface-mid" />
+          ) : (
+            <>
+              {totals.completed} of {totals.total} parts done. Open a paper for
+              options, or mark status yourself.
+            </>
+          )}
+        </p>
       </div>
 
-      <div className="overflow-hidden rounded-xl bg-surface-elevated shadow-sm ring-1 ring-border-subtle/80">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[44rem] border-collapse text-left text-sm">
-            <thead>
-              <tr className="bg-surface-mid/70 text-xs font-semibold uppercase tracking-wide text-text-muted">
-                <th className="px-4 py-3 font-semibold sm:px-5">Paper</th>
-                <th className="w-[5rem] px-3 py-3 font-semibold">Parts</th>
-                <th className="w-[7.5rem] px-3 py-3 font-semibold">Status</th>
-                <th className="w-[5rem] px-3 py-3 font-semibold">Score</th>
-                <th className="w-[7rem] px-4 py-3 text-right font-semibold sm:px-5">
-                  Download
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {stages.map((stage, index) => {
-                const data = completionData.get(stage.id);
-                const completed = data?.completed ?? 0;
-                const total =
-                  data?.total ??
-                  groupRoadmapPartsForDisplay(stage.parts).length;
-                const isDone = total > 0 && completed === total;
-                const isOpen = expanded?.id === stage.id;
-                const mode = expanded?.mode ?? "options";
-                const accentExam = isEsatCampMockRoadmapStage(stage)
-                  ? "ESATCamp Mock"
-                  : stage.examName;
-                const score = stageScores.get(stage.id);
-                const commentary = commentaryForStage(stage, stages);
-                const zebra = index % 2 === 1;
-                const currentStatus = statusValue(completed, total);
-                const busy = statusBusyId === stage.id;
+      <div className="space-y-6">
+        {GROUP_ORDER.map((key) => {
+          const groupStages = grouped[key];
+          if (groupStages.length === 0) return null;
 
-                return (
-                  <Fragment key={stage.id}>
-                    <tr
-                      data-stage-id={stage.id}
-                      className={cn(
-                        "transition-colors",
-                        zebra ? "bg-background/25" : "bg-transparent",
-                        isOpen && "bg-surface-mid/35",
-                        !isOpen && "hover:bg-surface-mid/25",
-                      )}
-                    >
-                      <td className="px-4 py-3.5 sm:px-5">
-                        <div className="flex min-w-0 items-start gap-1.5">
-                          <button
-                            type="button"
-                            onClick={() => toggleExpand(stage.id, "options")}
-                            aria-expanded={isOpen && mode === "options"}
-                            className="min-w-0 text-left"
-                          >
-                            <span
-                              className={cn(
-                                "text-base font-semibold leading-snug underline-offset-2 hover:underline",
-                                getExamAccentTextClass(accentExam),
-                              )}
-                            >
-                              {stageTitle(stage)}
-                            </span>
-                          </button>
-                          {commentary ? (
-                            <RoadmapInfoPopover
-                              title={commentary.title}
-                              label={`About ${commentary.title}`}
-                              align="left"
-                              className="mt-0.5"
-                            >
-                              <p>{commentary.text}</p>
-                            </RoadmapInfoPopover>
-                          ) : null}
-                        </div>
-                      </td>
-                      <td className="px-3 py-3.5 tabular-nums text-text">
-                        {completed}/{total}
-                      </td>
-                      <td className="px-3 py-3.5 text-text">
-                        <select
-                          value={
-                            currentStatus === "in_progress"
-                              ? "in_progress"
-                              : currentStatus
-                          }
-                          disabled={!userId || busy}
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            if (value === "in_progress") return;
-                            void handleStageStatusChange(
-                              stage,
-                              value as ManualRoadmapStatus,
-                            );
-                          }}
-                          aria-label={`Status for ${stageTitle(stage)}`}
-                          className={cn(
-                            "max-w-full rounded-md border-0 bg-surface-mid px-2 py-1.5 text-sm font-medium outline-none ring-1 ring-border-subtle focus:ring-primary disabled:opacity-50",
-                            isDone ? "text-text" : "text-text-muted",
-                          )}
-                          title={
-                            userId
-                              ? "Manually mark this paper done or not started"
-                              : "Sign in to update status"
-                          }
-                        >
-                          <option value="not_started">Not started</option>
-                          {currentStatus === "in_progress" ? (
-                            <option value="in_progress">In progress</option>
-                          ) : null}
-                          <option value="done">Done</option>
-                        </select>
-                      </td>
-                      <td className="px-3 py-3.5 tabular-nums text-text">
-                        {scoresLoading ? (
-                          <span className="inline-block h-3.5 w-8 animate-pulse rounded bg-surface-mid" />
-                        ) : (
-                          formatRoadmapScore(score)
-                        )}
-                      </td>
-                      <td className="px-4 py-3.5 text-right sm:px-5">
-                        <button
-                          type="button"
-                          onClick={() => toggleExpand(stage.id, "downloads")}
-                          aria-expanded={isOpen && mode === "downloads"}
-                          aria-label={`Download options for ${stageTitle(stage)}`}
-                          className={cn(
-                            "inline-flex items-center gap-1 rounded-md px-2 py-1 text-sm font-medium text-text-muted transition-colors hover:bg-surface-mid hover:text-text",
-                            isOpen &&
-                              mode === "downloads" &&
-                              "bg-surface-mid text-text",
-                          )}
-                        >
-                          Download
-                          <ChevronDown
-                            className={cn(
-                              "h-4 w-4 transition-transform duration-fast ease-signature",
-                              isOpen && "rotate-180",
-                            )}
-                            aria-hidden
-                          />
-                        </button>
-                      </td>
-                    </tr>
-                    {isOpen ? (
-                      <tr className="bg-surface-mid/20">
-                        <td colSpan={5} className="p-0">
-                          <div className="border-t border-border-subtle/80">
-                            <StageOptionsPanel
-                              stage={stage}
-                              partCompletion={data?.parts ?? new Map()}
-                              newQuestionsOnly={newQuestionsOnly}
-                              mode={mode}
-                              userId={userId}
-                              statusBusy={busy}
-                              onStartSession={onStartSession}
-                              onCompletionChange={onCompletionChange}
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    ) : null}
-                  </Fragment>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+          return (
+            <section key={key} className="space-y-3">
+              {key === "ENGAA" ? (
+                <UniqueQuestionsSwitch
+                  enabled={newQuestionsOnly}
+                  onChange={onNewQuestionsOnlyChange}
+                />
+              ) : null}
 
-        {stages.length === 0 ? (
-          <p className="px-5 py-10 text-center text-sm text-text-muted">
-            No papers match your subjects yet. Set ESAT modules in your profile.
-          </p>
-        ) : null}
+              <ExamGroupTable
+                heading={GROUP_HEADINGS[key]}
+                stages={groupStages}
+                allStages={stages}
+                completionData={completionData}
+                stageScores={stageScores}
+                scoresLoading={scoresLoading}
+                userId={userId}
+                newQuestionsOnly={newQuestionsOnly}
+                expanded={expanded}
+                statusBusyId={statusBusyId}
+                onToggleExpand={toggleExpand}
+                onStartSession={onStartSession}
+                onCompletionChange={onCompletionChange}
+                onStageStatusChange={(stage, next) => {
+                  void handleStageStatusChange(stage, next);
+                }}
+              />
+            </section>
+          );
+        })}
       </div>
+
+      {stages.length === 0 ? (
+        <p className="py-10 text-center text-sm text-text-muted">
+          No papers match your subjects yet. Set ESAT modules in your profile.
+        </p>
+      ) : null}
     </div>
   );
 }
