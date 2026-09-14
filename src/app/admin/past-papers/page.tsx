@@ -11,6 +11,7 @@ import {
   YAxis,
 } from "recharts";
 import { Container } from "@/components/layout/Container";
+import { AdminPastPaperPreviewModal } from "@/components/admin/AdminPastPaperPreviewModal";
 import {
   buildPastPaperTopWrongExportCsv,
   buildPastPaperTopWrongExportJson,
@@ -100,6 +101,10 @@ export default function AdminPastPapersPage() {
   const [sectionsExpanded, setSectionsExpanded] = useState(false);
   const [wrongExpanded, setWrongExpanded] = useState(false);
   const [chartsReady, setChartsReady] = useState(false);
+  const [preview, setPreview] = useState<{
+    id: number;
+    label: string;
+  } | null>(null);
 
   useEffect(() => {
     setChartsReady(true);
@@ -235,8 +240,9 @@ export default function AdminPastPapersPage() {
         <div>
           <h1 className="text-2xl font-bold text-text">Past papers</h1>
           <p className="mt-2 text-sm text-text-muted">
-            Session volume, section popularity, and hardest questions (plus-four
-            ranking). Seed accounts are excluded.
+            Session volume, section popularity, and hardest questions
+            (first-attempt plus-four ranking). Operator and admin accounts are
+            excluded.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -574,9 +580,20 @@ export default function AdminPastPapersPage() {
                           {row.exam_year ? ` ${row.exam_year}` : ""} ·{" "}
                           {row.section}
                         </p>
-                        <p className="mt-1 text-sm font-semibold text-text">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setPreview({
+                              id: row.question_id,
+                              label: `Q${row.question_number} · ${row.exam_name}${
+                                row.exam_year ? ` ${row.exam_year}` : ""
+                              } · ${row.paper_label}`,
+                            })
+                          }
+                          className="mt-1 text-left text-sm font-semibold text-text underline-offset-2 hover:underline"
+                        >
                           Q{row.question_number} · {row.paper_label}
-                        </p>
+                        </button>
                       </div>
                       <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-right text-xs sm:grid-cols-4">
                         <div>
@@ -647,10 +664,23 @@ export default function AdminPastPapersPage() {
                         {index + 1}
                       </td>
                       <td className="px-4 py-2.5 text-text">
-                        Q{row.question_number}
-                        <span className="mt-0.5 block text-xs text-text-muted">
-                          {row.paper_label}
-                        </span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setPreview({
+                              id: row.question_id,
+                              label: `Q${row.question_number} · ${row.exam_name}${
+                                row.exam_year ? ` ${row.exam_year}` : ""
+                              } · ${row.paper_label}`,
+                            })
+                          }
+                          className="text-left text-text underline-offset-2 hover:underline"
+                        >
+                          Q{row.question_number}
+                          <span className="mt-0.5 block text-xs text-text-muted">
+                            {row.paper_label}
+                          </span>
+                        </button>
                       </td>
                       <td className="px-4 py-2.5 text-text-muted">
                         {row.exam_name}
@@ -706,6 +736,14 @@ export default function AdminPastPapersPage() {
             </div>
           </section>
         </div>
+      ) : null}
+
+      {preview ? (
+        <AdminPastPaperPreviewModal
+          questionId={preview.id}
+          label={preview.label}
+          onClose={() => setPreview(null)}
+        />
       ) : null}
     </Container>
   );
