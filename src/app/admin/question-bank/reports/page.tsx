@@ -190,14 +190,18 @@ export default function AdminReportedQuestionsPage() {
     };
   }, [scheduleAutosave]);
 
-  const removeCurrentFromQueue = useCallback(() => {
-    setItems((prev) => {
-      const next = prev.filter((_, i) => i !== index);
-      setIndex((i) => Math.max(0, Math.min(i, next.length - 1)));
-      return next;
-    });
-    setEditing(false);
-  }, [index]);
+  const markTicketResolvedLocally = useCallback((ticketId: string) => {
+    setItems((prev) =>
+      prev.map((item) =>
+        item.meta.ticketId === ticketId
+          ? {
+              ...item,
+              meta: { ...item.meta, ticketStatus: "resolved" },
+            }
+          : item,
+      ),
+    );
+  }, []);
 
   const resolveTicket = async (ticketId: string) => {
     const res = await fetch("/api/admin/support", {
@@ -215,6 +219,7 @@ export default function AdminReportedQuestionsPage() {
         typeof json.error === "string" ? json.error : "Could not resolve ticket",
       );
     }
+    markTicketResolvedLocally(ticketId);
   };
 
   const sendThankYou = async () => {
@@ -247,10 +252,10 @@ export default function AdminReportedQuestionsPage() {
           typeof json.error === "string" ? json.error : "Send failed",
         );
       }
+      markTicketResolvedLocally(current.meta.ticketId);
       setThankYouOpen(false);
-      setActionMsg("Thank-you sent and ticket resolved.");
+      setActionMsg("Thank-you sent and ticket resolved. Question stays in this review session.");
       pushToast("Message sent", "ok");
-      removeCurrentFromQueue();
     } catch (err) {
       setActionMsg(err instanceof Error ? err.message : "Send failed");
     } finally {
@@ -258,18 +263,33 @@ export default function AdminReportedQuestionsPage() {
     }
   };
 
+  const questionStatus = current?.meta.db.status ?? current?.question.status ?? "pending";
+  const isApproved = questionStatus === "approved";
+  const isDeleted = questionStatus === "deleted";
+
   const approveQuestion = async () => {
     if (!current) return;
-    setBusy("approve");
+    const nextStatus = isApproved ? "pending" : "approved";
+    setBusy(nextStatus === "approved" ? "approve" : "unapprove");
     setActionMsg(null);
     try {
-      await persistQuestion(current.question.id, { status: "approved" });
-      await resolveTicket(current.meta.ticketId);
-      setActionMsg("Approved and ticket resolved.");
-      pushToast("Approved", "ok");
-      removeCurrentFromQueue();
+      await persistQuestion(current.question.id, { status: nextStatus });
+      if (nextStatus === "approved") {
+        await resolveTicket(current.meta.ticketId);
+        setActionMsg("Approved and ticket resolved.");
+        pushToast("Approved", "ok");
+      } else {
+        setActionMsg("Unapproved (status set to pending).");
+        pushToast("Unapproved", "ok");
+      }
     } catch (err) {
-      setActionMsg(err instanceof Error ? err.message : "Approve failed");
+      setActionMsg(
+        err instanceof Error
+          ? err.message
+          : nextStatus === "approved"
+            ? "Approve failed"
+            : "Unapprove failed",
+      );
     } finally {
       setBusy(null);
     }
@@ -277,20 +297,33 @@ export default function AdminReportedQuestionsPage() {
 
   const deleteQuestion = async () => {
     if (!current) return;
-    const ok = window.confirm(
-      "Soft-delete this question in Supabase (status=deleted) and resolve the report?",
-    );
-    if (!ok) return;
-    setBusy("delete");
+    const nextStatus = isDeleted ? "pending" : "deleted";
+    if (nextStatus === "deleted") {
+      const ok = window.confirm(
+        "Soft-delete this question in Supabase (status=deleted) and resolve the report?",
+      );
+      if (!ok) return;
+    }
+    setBusy(nextStatus === "deleted" ? "delete" : "undelete");
     setActionMsg(null);
     try {
-      await persistQuestion(current.question.id, { status: "deleted" });
-      await resolveTicket(current.meta.ticketId);
-      setActionMsg("Question deleted and ticket resolved.");
-      pushToast("Deleted", "ok");
-      removeCurrentFromQueue();
+      await persistQuestion(current.question.id, { status: nextStatus });
+      if (nextStatus === "deleted") {
+        await resolveTicket(current.meta.ticketId);
+        setActionMsg("Question deleted and ticket resolved.");
+        pushToast("Deleted", "ok");
+      } else {
+        setActionMsg("Undeleted (status set to pending).");
+        pushToast("Undeleted", "ok");
+      }
     } catch (err) {
-      setActionMsg(err instanceof Error ? err.message : "Delete failed");
+      setActionMsg(
+        err instanceof Error
+          ? err.message
+          : nextStatus === "deleted"
+            ? "Delete failed"
+            : "Undelete failed",
+      );
     } finally {
       setBusy(null);
     }
@@ -370,6 +403,10 @@ export default function AdminReportedQuestionsPage() {
               Reported by {reporterLabel(current.meta)}
             </p>
             <p className="mt-0.5 text-xs text-text-muted">
+              Status: {questionStatus}
+              {" · "}
+              Ticket: {current.meta.ticketStatus}
+              {" · "}
               AI question bank · {current.meta.db.subjects} ·{" "}
               {current.meta.topicLabel}
               {current.meta.sessionNote
@@ -449,7 +486,13 @@ export default function AdminReportedQuestionsPage() {
               onClick={() => void approveQuestion()}
               className="eup-footer-action text-sm font-semibold disabled:opacity-50"
             >
-              {busy === "approve" ? "Approving…" : "Approve"}
+              {busy === "approve"
+                ? "Approving…"
+                : busy === "unapprove"
+                  ? "Unapproving…"
+                  : isApproved
+                    ? "Unapprove"
+                    : "Approve"}
             </button>
             <button
               type="button"
@@ -469,9 +512,18 @@ export default function AdminReportedQuestionsPage() {
               type="button"
               disabled={Boolean(busy)}
               onClick={() => void deleteQuestion()}
-              className="eup-footer-action text-sm font-semibold text-red-700 dark:text-red-300 disabled:opacity-50"
+              className={cn(
+                "eup-footer-action text-sm font-semibold disabled:opacity-50",
+                !isDeleted && "text-red-700 dark:text-red-300",
+              )}
             >
-              {busy === "delete" ? "Deleting…" : "Delete"}
+              {busy === "delete"
+                ? "Deleting…"
+                : busy === "undelete"
+                  ? "Undeleting…"
+                  : isDeleted
+                    ? "Undelete"
+                    : "Delete"}
             </button>
             <button
               type="button"
