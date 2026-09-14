@@ -6,6 +6,7 @@ import {
   getExcludePublishedFromPractice,
   listMocks,
   loadMockPoolInventory,
+  nextAvailableMockNumber,
   setExcludePublishedFromPractice,
 } from "@/lib/mockBuilder/server";
 import {
@@ -34,12 +35,17 @@ export async function GET(request: NextRequest) {
       string,
       { available: number; reserved: number; defaultTarget: number }
     > = {};
+    const nextMockNumbers: Record<string, number> = {};
     for (const subject of MOCK_BUILDER_SUBJECTS) {
       const counts = await countAvailableDiagrams(admin.service, subject);
       diagramAvailability[subject] = {
         ...counts,
         defaultTarget: getDiagramTarget(getDefaultBlueprint(subject)),
       };
+      nextMockNumbers[subject] = await nextAvailableMockNumber(
+        admin.service,
+        subject,
+      );
     }
     return NextResponse.json({
       mocks,
@@ -47,6 +53,7 @@ export async function GET(request: NextRequest) {
       subjects: MOCK_BUILDER_SUBJECTS,
       diagramAvailability,
       inventory,
+      nextMockNumbers,
     });
   } catch (e) {
     return NextResponse.json(

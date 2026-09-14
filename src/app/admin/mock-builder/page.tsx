@@ -99,6 +99,9 @@ export default function AdminMockBuilderPage() {
   const [diagramCount, setDiagramCount] = useState(3);
   const [diagramAvailability, setDiagramAvailability] =
     useState<DiagramAvailability>({});
+  const [nextMockNumbers, setNextMockNumbers] = useState<
+    Partial<Record<MockBuilderSubject, number>>
+  >({});
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -123,12 +126,18 @@ export default function AdminMockBuilderPage() {
       data.settings?.excludePublishedMockQuestionsFromPractice !== false,
     );
     setDiagramAvailability(data.diagramAvailability ?? {});
+    setNextMockNumbers(data.nextMockNumbers ?? {});
     setLoading(false);
   }, []);
 
   useEffect(() => {
     load();
   }, [load]);
+
+  useEffect(() => {
+    const next = nextMockNumbers[subject];
+    if (typeof next === "number") setMockNumber(next);
+  }, [subject, nextMockNumbers]);
 
   useEffect(() => {
     const meta = diagramAvailability[subject];
@@ -309,6 +318,11 @@ export default function AdminMockBuilderPage() {
               value={mockNumber}
               onChange={(e) => setMockNumber(Number(e.target.value))}
             />
+            {typeof nextMockNumbers[subject] === "number" ? (
+              <span className="mt-1 block text-xs text-text-muted">
+                Next free: {nextMockNumbers[subject]}
+              </span>
+            ) : null}
           </label>
           <label className="text-sm">
             <span className="mb-1 block text-text-muted">Diagram questions</span>

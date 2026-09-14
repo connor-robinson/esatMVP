@@ -392,6 +392,25 @@ export async function getMockWithSlots(
   return { mock: mock as EsatMockRow, slots };
 }
 
+export async function nextAvailableMockNumber(
+  service: SupabaseClient,
+  subject: MockBuilderSubject,
+): Promise<number> {
+  const { data, error } = await service
+    .from("esat_mocks")
+    .select("mock_number")
+    .eq("subject", subject)
+    .order("mock_number", { ascending: true });
+  if (error) throw new Error(error.message);
+  const used = new Set(
+    ((data as { mock_number: number }[] | null) ?? []).map((r) => r.mock_number),
+  );
+  for (let n = 1; n <= 99; n++) {
+    if (!used.has(n)) return n;
+  }
+  throw new Error(`No free mock numbers left for ${subject} (1–99 are all used).`);
+}
+
 export async function createMock(
   service: SupabaseClient,
   input: {
@@ -401,29 +420,69 @@ export async function createMock(
     generate?: boolean;
     /** Exact diagram/visual question target for this mock. */
     diagramCount?: number;
+    /** If the requested number is taken, assign the next free one. Default true. */
+    autoNumber?: boolean;
   },
 ): Promise<{ mock: EsatMockRow; assembly: PaperAssemblyResult | null }> {
   let blueprint = await resolveBlueprint(service, input.subject);
   if (input.diagramCount != null && Number.isFinite(input.diagramCount)) {
     blueprint = withDiagramCount(blueprint, input.diagramCount);
   }
-  const title = defaultMockTitle(input.subject, input.mockNumber);
-  const { data: mock, error } = await service
+
+  let mockNumber = input.mockNumber;
+  const { data: existing } = await service
     .from("esat_mocks")
-    .insert({
-      subject: input.subject,
-      mock_number: input.mockNumber,
-      title,
-      status: "draft",
-      is_free: isFreeMockNumber(input.mockNumber),
-      blueprint_snapshot: blueprint,
-      question_count: blueprint.questionCount,
-      time_limit_minutes: blueprint.timeLimitMinutes,
-      created_by: input.createdBy ?? null,
-    })
-    .select("*")
-    .single();
-  if (error || !mock) throw new Error(error?.message ?? "Failed to create mock");
+    .select("id")
+    .eq("subject", input.subject)
+    .eq("mock_number", mockNumber)
+    .maybeSingle();
+
+  if (existing) {
+    if (input.autoNumber === false) {
+      throw new Error(
+        `${input.subject} mock ${mockNumber} already exists. Pick another number.`,
+      );
+    }
+    mockNumber = await nextAvailableMockNumber(service, input.subject);
+  }
+
+  async function insertMock(number: number) {
+    const title = defaultMockTitle(input.subject, number);
+    return service
+      .from("esat_mocks")
+      .insert({
+        subject: input.subject,
+        mock_number: number,
+        title,
+        status: "draft",
+        is_free: isFreeMockNumber(number),
+        blueprint_snapshot: blueprint,
+        question_count: blueprint.questionCount,
+        time_limit_minutes: blueprint.timeLimitMinutes,
+        created_by: input.createdBy ?? null,
+      })
+      .select("*")
+      .single();
+  }
+
+  let { data: mock, error } = await insertMock(mockNumber);
+  if (
+    error &&
+    input.autoNumber !== false &&
+    /esat_mocks_unique_subject_number/i.test(error.message)
+  ) {
+    mockNumber = await nextAvailableMockNumber(service, input.subject);
+    ({ data: mock, error } = await insertMock(mockNumber));
+  }
+  if (error || !mock) {
+    const msg = error?.message ?? "Failed to create mock";
+    if (/esat_mocks_unique_subject_number/i.test(msg)) {
+      throw new Error(
+        `${input.subject} mock ${mockNumber} already exists. Pick another number.`,
+      );
+    }
+    throw new Error(msg);
+  }
 
   if (!input.generate) {
     return { mock: mock as EsatMockRow, assembly: null };
