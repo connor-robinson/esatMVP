@@ -401,7 +401,7 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
           displayPhase === "summary" ? "items-start" : "items-start pt-6 sm:pt-10",
         )}
       >
-        <div className="w-full max-w-2xl">
+        <div className="w-full max-w-3xl">
           <LayoutGroup id="fermi-stage">
           {displayPhase === "playing" && current && !completedToday && (
             <PlayingView
@@ -455,14 +455,14 @@ const PREVIEW_SLOT =
 
 /** Fixed hero height so reveal score panel never shifts slider/input. */
 const QUESTION_ZONE =
-  "flex w-full max-w-2xl flex-col items-stretch justify-center min-h-[9.5rem] sm:min-h-[10.5rem]";
+  "flex w-full max-w-3xl flex-col items-stretch justify-center min-h-[9.5rem] sm:min-h-[10.5rem]";
 
 function FermiStageShell({ children }: { children: React.ReactNode }) {
   return <div className="flex w-full flex-col items-center gap-6">{children}</div>;
 }
 
 function FermiControlsColumn({ children }: { children: React.ReactNode }) {
-  return <div className="flex w-full max-w-md flex-col gap-2">{children}</div>;
+  return <div className="flex w-full max-w-xl flex-col gap-2">{children}</div>;
 }
 
 function PlayingView({
@@ -622,7 +622,7 @@ function LogScaleBar({ guess, answer, tone }: { guess: number; answer: number; t
 
   return (
     <div
-      className="w-full max-w-md select-none py-1"
+      className="w-full max-w-xl select-none py-1"
       onPointerLeave={() => setScrubOrders(null)}
     >
       <div

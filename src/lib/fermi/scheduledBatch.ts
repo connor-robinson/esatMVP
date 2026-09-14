@@ -21,10 +21,11 @@ export function isWithinScheduledBatch(dateKey: string): boolean {
 
 export function buildQuestionNote(
   sourceNote?: string | null,
-  seasonalNote?: string | null,
+  _seasonalNote?: string | null,
 ): string | undefined {
-  const parts = [seasonalNote, sourceNote].filter(Boolean) as string[];
-  return parts.length > 0 ? parts.join(". ") : undefined;
+  // "Our solution" should be the estimation note only, not seasonal fluff.
+  const note = sourceNote?.trim();
+  return note || undefined;
 }
 
 export type ScheduledBatchRow = {

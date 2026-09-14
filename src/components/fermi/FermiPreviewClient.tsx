@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, Eye, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatFermiNumber, formatFullNumber } from "@/lib/fermi/parseNumber";
 import { FERMI_GUESSR_NAME } from "@/config/fermiGuessr";
@@ -32,19 +32,12 @@ type DayPayload = {
   questions: FermiBatchQuestion[];
 };
 
-function formatAnswer(n: number, unit?: string): string {
-  const formatted = formatFermiNumber(n);
-  const full = formatFullNumber(n);
-  const withUnit = unit ? `${full} ${unit}` : full;
-  return `${withUnit} (${formatted})`;
-}
-
 export function FermiPreviewClient({ batchId }: { batchId: "01" | "02" }) {
   const [index, setIndex] = useState<IndexPayload | null>(null);
   const [dayIndex, setDayIndex] = useState(0);
   const [day, setDay] = useState<DayPayload | null>(null);
   const [qIndex, setQIndex] = useState(0);
-  const [revealed, setRevealed] = useState(true);
+  const [showSolution, setShowSolution] = useState(true);
   const [loadingIndex, setLoadingIndex] = useState(true);
   const [loadingDay, setLoadingDay] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -103,7 +96,7 @@ export function FermiPreviewClient({ batchId }: { batchId: "01" | "02" }) {
         if (cancelled) return;
         setDay(json.day);
         setQIndex(0);
-        setRevealed(true);
+        setShowSolution(true);
       } catch (err) {
         if (!cancelled) setError(String(err));
       } finally {
@@ -120,8 +113,8 @@ export function FermiPreviewClient({ batchId }: { batchId: "01" | "02" }) {
 
   const progress = useMemo(() => {
     if (!day?.questions.length) return 0;
-    return ((qIndex + (revealed ? 1 : 0)) / day.questions.length) * 100;
-  }, [day, qIndex, revealed]);
+    return ((qIndex + 1) / day.questions.length) * 100;
+  }, [day, qIndex]);
 
   const goDay = useCallback(
     (next: number) => {
@@ -137,7 +130,7 @@ export function FermiPreviewClient({ batchId }: { batchId: "01" | "02" }) {
       if (!day) return;
       if (next < 0 || next >= day.questions.length) return;
       setQIndex(next);
-      setRevealed(true);
+      setShowSolution(true);
     },
     [day],
   );
@@ -173,10 +166,13 @@ export function FermiPreviewClient({ batchId }: { batchId: "01" | "02" }) {
   }
 
   const edition =
-    day?.editionTitle ||
-    index.days[dayIndex]?.editionTitle ||
-    question?.themeHook ||
-    null;
+    day?.editionTitle || index.days[dayIndex]?.editionTitle || null;
+
+  const solution =
+    question?.sourceNote?.trim() ||
+    (question
+      ? `Answer ≈ ${formatFermiNumber(question.answer)}${question.unit ? ` ${question.unit}` : ""}`
+      : "");
 
   return (
     <div className="relative flex h-[calc(100vh-58px)] max-h-[calc(100vh-58px)] flex-col overflow-hidden bg-background">
@@ -222,9 +218,7 @@ export function FermiPreviewClient({ batchId }: { batchId: "01" | "02" }) {
           <ChevronLeft className="h-4 w-4" />
         </button>
         <div className="min-w-0 flex-1 text-center">
-          <p className="text-sm font-bold tabular-nums text-text">
-            {selectedDate}
-          </p>
+          <p className="text-sm font-bold tabular-nums text-text">{selectedDate}</p>
           {edition ? (
             <p className="truncate text-xs font-medium text-secondary">{edition}</p>
           ) : (
@@ -266,43 +260,70 @@ export function FermiPreviewClient({ batchId }: { batchId: "01" | "02" }) {
         {loadingDay || !question || !day ? (
           <p className="text-sm font-medium text-text-muted">Loading day…</p>
         ) : (
-          <div className="flex w-full max-w-2xl flex-col items-center gap-6">
-            <div className="flex w-full max-w-xl items-center justify-center gap-3 sm:gap-5">
-              <h2 className="-translate-x-1 text-balance text-center font-serif text-2xl leading-snug text-text sm:-translate-x-3 sm:text-3xl">
-                {question.question}
-              </h2>
-            </div>
+          <div className="flex w-full max-w-3xl flex-col items-center gap-6">
+            <h2 className="w-full max-w-3xl text-balance text-center font-serif text-2xl leading-snug text-text sm:text-3xl">
+              {question.question}
+            </h2>
 
-            <div className="flex w-full max-w-md flex-col gap-2">
-              <div className="flex min-h-[2.5rem] items-center justify-center rounded-sm bg-primary/10 px-3 py-2 text-center text-primary">
-                <span className="text-sm font-semibold">
-                  {question.category.replace(/_/g, " ")} · {question.difficulty}
-                  {question.exact ? " · exact" : ""}
-                </span>
-              </div>
-
-              {revealed ? (
-                <div className="flex min-h-16 w-full flex-col justify-center rounded-sm bg-surface-elevated px-5 py-3 text-center">
+            <div className="flex w-full max-w-xl flex-col gap-2">
+              <div className="flex h-16 w-full items-center gap-2 rounded-sm bg-surface-elevated pl-5 pr-2">
+                <div className="min-w-0 flex-1">
                   <p className="text-xs font-semibold uppercase tracking-wide text-text-muted">
                     Answer
                   </p>
-                  <p className="text-xl font-semibold text-text sm:text-2xl">
-                    {formatAnswer(question.answer, question.unit)}
+                  <p className="truncate text-xl font-semibold text-text sm:text-2xl">
+                    {formatFullNumber(question.answer)}
+                    {question.unit ? ` ${question.unit}` : ""}
+                    <span className="ml-2 text-sm font-medium text-text-muted">
+                      ({formatFermiNumber(question.answer)})
+                    </span>
                   </p>
                 </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setRevealed(true)}
-                  className="flex h-16 w-full items-center justify-center rounded-sm bg-secondary text-base font-bold text-white"
-                >
-                  Reveal answer
-                </button>
-              )}
+                <div className="flex shrink-0 items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowSolution((v) => !v)}
+                    title={showSolution ? "Hide solution" : "View our solution"}
+                    aria-label={showSolution ? "Hide solution" : "View our solution"}
+                    className="inline-flex h-11 items-center justify-center rounded-sm bg-surface px-3 text-text-muted hover:bg-surface-mid hover:text-text"
+                  >
+                    <Eye className="h-5 w-5" strokeWidth={2} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (qIndex + 1 < day.questions.length) {
+                        goQuestion(qIndex + 1);
+                      } else if (dayIndex + 1 < index.days.length) {
+                        goDay(dayIndex + 1);
+                      }
+                    }}
+                    className="inline-flex h-11 items-center justify-center rounded-sm bg-secondary px-3 text-white hover:brightness-110"
+                    title="Next"
+                  >
+                    <ArrowRight className="h-5 w-5" strokeWidth={2.5} />
+                  </button>
+                </div>
+              </div>
             </div>
 
-            {revealed && question.showDidYouKnow && question.didYouKnow ? (
-              <div className="w-full max-w-md rounded-sm bg-surface-elevated px-4 py-3 text-left">
+            {showSolution ? (
+              <div className="w-full max-w-xl rounded-sm bg-surface-elevated px-4 py-3 text-left">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-text-muted">
+                  Our solution
+                </p>
+                <p className="mt-1 text-sm leading-snug text-text">{solution}</p>
+                <p className="mt-2 text-xs font-medium text-text-muted">
+                  Answer: {formatFermiNumber(question.answer)}
+                  {question.unit ? ` ${question.unit}` : ""}
+                  {" · "}
+                  {formatFullNumber(question.answer)}
+                </p>
+              </div>
+            ) : null}
+
+            {question.showDidYouKnow && question.didYouKnow ? (
+              <div className="w-full max-w-xl rounded-sm bg-surface-elevated px-4 py-3 text-left">
                 <p className="text-[11px] font-bold uppercase tracking-wider text-secondary">
                   Did you know?
                 </p>
@@ -322,12 +343,6 @@ export function FermiPreviewClient({ batchId }: { batchId: "01" | "02" }) {
               </div>
             ) : null}
 
-            {revealed && question.sourceNote && !question.showDidYouKnow ? (
-              <p className="max-w-md text-center text-sm font-medium leading-snug text-text-muted">
-                {question.sourceNote}
-              </p>
-            ) : null}
-
             <div className="flex w-full max-w-xl items-center justify-between gap-3">
               <button
                 type="button"
@@ -338,49 +353,26 @@ export function FermiPreviewClient({ batchId }: { batchId: "01" | "02" }) {
                 <ArrowLeft className="h-4 w-4" strokeWidth={2.5} />
                 Prev
               </button>
-              <button
-                type="button"
-                onClick={() => {
-                  if (qIndex + 1 < day.questions.length) {
-                    goQuestion(qIndex + 1);
-                  } else if (dayIndex + 1 < index.days.length) {
-                    goDay(dayIndex + 1);
-                  }
-                }}
-                disabled={
-                  qIndex + 1 >= day.questions.length &&
-                  dayIndex + 1 >= index.days.length
-                }
-                className="flex items-center gap-2 rounded-sm bg-secondary px-5 py-2.5 text-sm font-bold text-white disabled:opacity-40"
-              >
-                {qIndex + 1 < day.questions.length
-                  ? "Next question"
-                  : dayIndex + 1 < index.days.length
-                    ? "Next day"
-                    : "Done"}
-                <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
-              </button>
-            </div>
-
-            <div className="flex gap-2">
-              {day.questions.map((q, i) => (
-                <button
-                  key={q.id}
-                  type="button"
-                  onClick={() => goQuestion(i)}
-                  className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-sm text-xs font-bold",
-                    i === qIndex
-                      ? "bg-secondary text-white"
-                      : q.showDidYouKnow
-                        ? "bg-secondary/20 text-secondary"
-                        : "bg-surface text-text-muted",
-                  )}
-                  title={q.showDidYouKnow ? "Has Did you know" : undefined}
-                >
-                  {i + 1}
-                </button>
-              ))}
+              <div className="flex gap-2">
+                {day.questions.map((q, i) => (
+                  <button
+                    key={q.id}
+                    type="button"
+                    onClick={() => goQuestion(i)}
+                    className={cn(
+                      "flex h-8 w-8 items-center justify-center rounded-sm text-xs font-bold",
+                      i === qIndex
+                        ? "bg-secondary text-white"
+                        : q.showDidYouKnow
+                          ? "bg-secondary/20 text-secondary"
+                          : "bg-surface text-text-muted",
+                    )}
+                    title={q.showDidYouKnow ? "Has Did you know" : undefined}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         )}
