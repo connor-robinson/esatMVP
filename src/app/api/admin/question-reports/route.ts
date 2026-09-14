@@ -28,7 +28,8 @@ export async function GET(request: NextRequest) {
       admin.service,
       {
         status,
-        includeDeleted: status !== "open",
+        includeDeleted: true,
+        limit: status === "open" ? 120 : 400,
       },
     );
     return NextResponse.json({

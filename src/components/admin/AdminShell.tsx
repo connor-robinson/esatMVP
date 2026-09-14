@@ -55,6 +55,11 @@ const PRIMARY = [
     label: "Question bank",
     match: (p: string) => p.startsWith("/admin/question-bank"),
   },
+  {
+    href: "/admin/question-reports",
+    label: "QB reports",
+    match: (p: string) => p.startsWith("/admin/question-reports"),
+  },
 ] as const;
 
 const SECONDARY = [

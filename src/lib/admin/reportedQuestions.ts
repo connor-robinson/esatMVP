@@ -56,8 +56,56 @@ export type ReportedQuestionItem = {
   question: QuestionBankQuestion;
 };
 
+export type QuestionReportStatusFilter = "open" | "resolved" | "all";
+
+export type QuestionReportSlice = { name: string; value: number };
+
+export type QuestionReportSummary = {
+  total: number;
+  open: number;
+  inProgress: number;
+  resolved: number;
+  closed: number;
+  withQuestion: number;
+  byReason: QuestionReportSlice[];
+  bySubject: QuestionReportSlice[];
+  byPrimaryTag: QuestionReportSlice[];
+};
+
+export type LoadReportedQuestionsOptions = {
+  status?: QuestionReportStatusFilter;
+  includeDeleted?: boolean;
+  limit?: number;
+};
+
 function isUuid(value: string): boolean {
   return UUID_RE.test(value);
+}
+
+function countSlices(
+  values: Array<string | null | undefined>,
+  limit = 12,
+): QuestionReportSlice[] {
+  const map = new Map<string, number>();
+  for (const raw of values) {
+    const name = (raw ?? "").trim() || "Unknown";
+    map.set(name, (map.get(name) ?? 0) + 1);
+  }
+  return [...map.entries()]
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value || a.name.localeCompare(b.name))
+    .slice(0, limit);
+}
+
+function statusMatchesFilter(
+  status: string,
+  filter: QuestionReportStatusFilter,
+): boolean {
+  if (filter === "all") return true;
+  if (filter === "open") {
+    return status === "open" || status === "in_progress";
+  }
+  return status === "resolved" || status === "closed";
 }
 
 function parseJsonRecord(value: unknown): Record<string, unknown> {
@@ -169,20 +217,36 @@ async function buildSessionNote(
 
 export async function loadReportedQuestionBankItems(
   service: SupabaseClient,
-): Promise<ReportedQuestionItem[]> {
-  const { data: tickets, error } = await service
+  options: LoadReportedQuestionsOptions = {},
+): Promise<{ items: ReportedQuestionItem[]; summary: QuestionReportSummary }> {
+  const filter = options.status ?? "open";
+  const includeDeleted = options.includeDeleted ?? filter !== "open";
+  const limit = options.limit ?? (filter === "open" ? 80 : 300);
+
+  let query = service
     .from("support_requests")
     .select(
       "id, user_id, subject, message, status, context, created_at, reply_email",
     )
     .eq("category", "question_or_content_error")
-    .in("status", ["open", "in_progress"])
     .order("created_at", { ascending: false })
-    .limit(80);
+    .limit(limit);
+
+  if (filter === "open") {
+    query = query.in("status", ["open", "in_progress"]);
+  } else if (filter === "resolved") {
+    query = query.in("status", ["resolved", "closed"]);
+  }
+
+  const { data: tickets, error } = await query;
 
   if (error) throw new Error(error.message);
 
-  const parsed = (tickets ?? [])
+  const allTickets = (tickets ?? []).filter((ticket) =>
+    statusMatchesFilter(String(ticket.status ?? "open"), filter),
+  );
+
+  const parsed = allTickets
     .map((ticket) => {
       const context = parseJsonRecord(ticket.context);
       const questionId =
@@ -198,8 +262,6 @@ export async function loadReportedQuestionBankItems(
     })
     .filter((row): row is NonNullable<typeof row> => Boolean(row));
 
-  if (parsed.length === 0) return [];
-
   const questionIds = [...new Set(parsed.map((p) => p.questionId))];
   const userIds = [
     ...new Set(
@@ -210,10 +272,18 @@ export async function loadReportedQuestionBankItems(
   ];
 
   const [{ data: questions }, { data: profiles }] = await Promise.all([
-    service.from("ai_generated_questions").select("*").in("id", questionIds),
+    questionIds.length > 0
+      ? service.from("ai_generated_questions").select("*").in("id", questionIds)
+      : Promise.resolve({ data: [] as Array<Record<string, unknown>> }),
     userIds.length > 0
       ? service.from("profiles").select("id, username, email").in("id", userIds)
-      : Promise.resolve({ data: [] as Array<{ id: string; username: string | null; email: string | null }> }),
+      : Promise.resolve({
+          data: [] as Array<{
+            id: string;
+            username: string | null;
+            email: string | null;
+          }>,
+        }),
   ]);
 
   const questionById = new Map<string, QuestionBankQuestion>();
@@ -235,11 +305,13 @@ export async function loadReportedQuestionBankItems(
   );
 
   const items: ReportedQuestionItem[] = [];
+  const subjectValues: string[] = [];
+  const tagValues: string[] = [];
 
   for (const row of parsed) {
     const question = questionById.get(row.questionId);
     if (!question) continue;
-    if (question.status === "deleted") continue;
+    if (!includeDeleted && question.status === "deleted") continue;
     const raw = rawById.get(row.questionId) ?? {};
 
     const profile = row.ticket.user_id
@@ -259,6 +331,9 @@ export async function loadReportedQuestionBankItems(
     const reason =
       (typeof row.ticket.subject === "string" && row.ticket.subject.trim()) ||
       "Question report";
+
+    subjectValues.push(question.subjects || "Unknown");
+    tagValues.push(question.primary_tag || "Untagged");
 
     items.push({
       question,
@@ -308,5 +383,35 @@ export async function loadReportedQuestionBankItems(
     });
   }
 
-  return items;
+  let open = 0;
+  let inProgress = 0;
+  let resolved = 0;
+  let closed = 0;
+  for (const ticket of allTickets) {
+    const status = String(ticket.status ?? "open");
+    if (status === "open") open += 1;
+    else if (status === "in_progress") inProgress += 1;
+    else if (status === "resolved") resolved += 1;
+    else if (status === "closed") closed += 1;
+  }
+
+  const summary: QuestionReportSummary = {
+    total: allTickets.length,
+    open,
+    inProgress,
+    resolved,
+    closed,
+    withQuestion: items.length,
+    byReason: countSlices(
+      allTickets.map((t) =>
+        typeof t.subject === "string" && t.subject.trim()
+          ? t.subject.trim()
+          : "Question report",
+      ),
+    ),
+    bySubject: countSlices(subjectValues),
+    byPrimaryTag: countSlices(tagValues),
+  };
+
+  return { items, summary };
 }

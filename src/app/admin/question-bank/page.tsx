@@ -147,10 +147,10 @@ export default function AdminQuestionBankPage() {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Link
-            href="/admin/question-bank/reports"
+            href="/admin/question-reports"
             className="rounded-organic-md bg-secondary/25 px-3 py-2 text-sm font-semibold text-text"
           >
-            Review reports
+            Question reports
           </Link>
           <select
             value={since}
