@@ -382,20 +382,6 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
         </div>
       </header>
 
-      {/* Next question - above progress bar */}
-      {displayPhase === "revealed" && (
-        <div className="flex shrink-0 justify-center px-4 pb-3 sm:px-6">
-          <button
-            type="button"
-            onClick={handleNext}
-            className="flex items-center gap-2 rounded-organic-lg bg-secondary px-6 py-2.5 text-sm font-bold text-white shadow-sm outline-none transition-all hover:scale-[1.02] active:scale-[0.98]"
-          >
-            {isLastQuestion ? "See results" : "Next question"}
-            <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
-          </button>
-        </div>
-      )}
-
       {/* Progress bar */}
       {displayPhase !== "summary" && (
         <div className="mx-4 mb-2 h-1.5 shrink-0 overflow-hidden rounded-full bg-surface sm:mx-6">
@@ -412,7 +398,7 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
       <div
         className={cn(
           "flex min-h-0 flex-1 justify-center overflow-y-auto px-4 py-4 sm:px-6",
-          displayPhase === "playing" ? "items-center" : "items-start",
+          displayPhase === "summary" ? "items-start" : "items-center",
         )}
       >
         <div className="w-full max-w-2xl">
@@ -433,7 +419,12 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
           )}
 
           {displayPhase === "revealed" && currentResult && (
-            <RevealedView result={currentResult} />
+            <RevealedView
+              result={currentResult}
+              input={input}
+              onNext={handleNext}
+              isLastQuestion={isLastQuestion}
+            />
           )}
 
           {displayPhase === "summary" && (
@@ -476,6 +467,8 @@ function PlayingView({
   submitting: boolean;
   inputRef: React.RefObject<HTMLInputElement>;
 }) {
+  const hasInput = Boolean(input.trim());
+
   return (
     <div className="animate-fade-in flex w-full flex-col items-center gap-6">
       <h2 className="text-balance text-center font-serif text-2xl leading-snug text-text sm:text-3xl">
@@ -483,19 +476,17 @@ function PlayingView({
       </h2>
 
       <div className="flex w-full max-w-md flex-col gap-2">
-        <div
-          className={cn(
-            "flex min-h-[2.5rem] items-center justify-center rounded-xl px-3 py-2 text-center transition-colors",
-            input.trim()
-              ? parsedPreview != null
+        {hasInput && (
+          <div
+            className={cn(
+              "flex min-h-[2.5rem] items-center justify-center rounded-xl px-3 py-2 text-center transition-colors",
+              parsedPreview != null
                 ? "bg-primary/10 text-primary"
-                : "bg-error/10 text-error"
-              : "bg-surface-elevated/50 text-text-disabled",
-          )}
-          aria-live="polite"
-        >
-          {input.trim() ? (
-            parsedPreview != null ? (
+                : "bg-error/10 text-error",
+            )}
+            aria-live="polite"
+          >
+            {parsedPreview != null ? (
               <span className="text-base font-semibold">
                 = {formatFullNumber(parsedPreview)}
                 <span className="ml-2 text-sm font-medium opacity-70">
@@ -504,11 +495,9 @@ function PlayingView({
               </span>
             ) : (
               <span className="text-sm font-medium">Can&apos;t read that number yet…</span>
-            )
-          ) : (
-            <span className="text-sm font-medium">Type an estimate below</span>
-          )}
-        </div>
+            )}
+          </div>
+        )}
 
         <div className="relative">
           <input
@@ -560,79 +549,86 @@ function PlayingView({
 
 /* ------------------------------- Revealed ------------------------------ */
 
-function RevealedView({ result }: { result: FermiResult }) {
+function RevealedView({
+  result,
+  input,
+  onNext,
+  isLastQuestion,
+}: {
+  result: FermiResult;
+  input: string;
+  onNext: () => void;
+  isLastQuestion: boolean;
+}) {
   const tone = toneClasses[result.verdict.tone];
   const { question, guess, score, verdict } = result;
+  const note =
+    question.note ??
+    `Answer: ${formatFermiNumber(question.answer)}${question.unit ? ` ${question.unit}` : ""}`;
 
   return (
-    <div className="animate-slide-up flex flex-col items-center gap-5 pt-2 sm:pt-4">
-      <h2 className="text-balance text-center font-serif text-xl leading-snug text-text sm:text-2xl">
-        {question.question}
-      </h2>
-
-      <div className={cn("w-full max-w-md rounded-organic-xl p-4 text-center", tone.bg)}>
-        <p className={cn("text-xl font-bold tracking-wide", tone.text)}>
-          {verdict.label.toUpperCase()}
-          <span className="mx-2 font-normal text-text-muted">·</span>
-          <span>{score}/100</span>
-        </p>
-        <p className="mt-1.5 text-sm font-medium text-text-muted">{verdict.detail}</p>
-      </div>
-
-      <LogScaleBar guess={guess} answer={question.answer} tone={tone.text} />
-
-      <div className="grid w-full max-w-md grid-cols-2 gap-3">
-        <div className="rounded-organic-lg bg-surface p-4 text-center">
-          <p className="text-xs font-semibold uppercase tracking-wide text-text-muted">Your guess</p>
-          <p className="mt-1 text-lg font-bold text-text">{formatFullNumber(guess)}</p>
-          <p className="text-xs font-medium text-text-muted">{formatFermiNumber(guess)}</p>
-        </div>
-        <div className="rounded-organic-lg bg-surface p-4 text-center">
-          <p className="text-xs font-semibold uppercase tracking-wide text-text-muted">Actual answer</p>
-          <p className="mt-1 text-lg font-bold text-primary">
-            {formatFullNumber(question.answer)}
-          </p>
-          <p className="text-xs font-medium text-text-muted">
-            {formatFermiNumber(question.answer)}
-            {question.unit ? ` ${question.unit}` : ""}
-          </p>
-        </div>
-      </div>
-
-      {question.note && (
-        <p className="max-w-md text-balance text-center text-sm font-medium leading-relaxed text-text-muted">
-          {question.note}
-        </p>
-      )}
-    </div>
-  );
-}
-
-function LogScaleBar({ guess, answer, tone }: { guess: number; answer: number; tone: string }) {
-  const RANGE = 3;
-  const delta = Math.log10(Math.max(guess, 1e-9)) - Math.log10(Math.max(answer, 1e-9));
-  const clamped = Math.max(-RANGE, Math.min(RANGE, delta));
-  const guessPct = 50 + (clamped / RANGE) * 50;
-
-  return (
-    <div className="w-full max-w-md">
-      <div className="relative h-10">
-        <div className="absolute left-0 right-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-surface-mid" />
-        <div className="absolute left-1/2 top-1/2 h-5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary" />
-        <div
+    <div className="animate-fade-in flex w-full flex-col items-center gap-6">
+      {/* Same anchor as playing: question (+ score on the right, slight left nudge) */}
+      <div className="flex w-full max-w-xl items-center justify-center gap-3 sm:gap-5">
+        <h2 className="-translate-x-1 text-balance text-center font-serif text-2xl leading-snug text-text sm:-translate-x-3 sm:text-3xl">
+          {question.question}
+        </h2>
+        <p
           className={cn(
-            "absolute top-1/2 flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-surface-elevated shadow-sm ring-2",
-            tone.replace("text-", "ring-"),
+            "shrink-0 text-3xl font-bold tabular-nums sm:text-4xl",
+            tone.text,
           )}
-          style={{ left: `${guessPct}%` }}
+          aria-label={`Score ${score} out of 100`}
         >
-          <div className={cn("h-2.5 w-2.5 rounded-full", tone.replace("text-", "bg-"))} />
+          {score}
+          <span className="text-xl font-semibold text-text-muted sm:text-2xl">/100</span>
+        </p>
+      </div>
+
+      {/* Same input footprint as playing */}
+      <div className="flex w-full max-w-md flex-col gap-2">
+        <div
+          className="flex min-h-[2.5rem] items-center justify-center rounded-xl bg-primary/10 px-3 py-2 text-center text-primary"
+          aria-live="polite"
+        >
+          <span className="text-base font-semibold">
+            = {formatFullNumber(guess)}
+            <span className="ml-2 text-sm font-medium opacity-70">
+              ({formatFermiNumber(guess)})
+            </span>
+          </span>
+        </div>
+        <div
+          className="flex h-16 w-full items-center rounded-2xl bg-surface-elevated px-5 text-2xl font-semibold text-text"
+          aria-label={`Your guess: ${input || formatFullNumber(guess)}`}
+        >
+          <span className="truncate">{input.trim() || formatFullNumber(guess)}</span>
         </div>
       </div>
-      <div className="flex justify-between text-[10px] font-medium uppercase tracking-wide text-text-muted">
-        <span>too low</span>
-        <span className="text-primary">actual</span>
-        <span>too high</span>
+
+      {/* Commentary grows below the anchored question + input */}
+      <div className="w-full max-w-md text-center">
+        <p className={cn("text-2xl font-bold uppercase tracking-wide sm:text-3xl", tone.text)}>
+          {verdict.label.toUpperCase()}
+        </p>
+        <p className="mt-1.5 text-sm font-medium text-text-muted sm:text-base">
+          {verdict.detail}
+        </p>
+      </div>
+
+      {/* Next (bottom left) + note on one line */}
+      <div className="flex w-full max-w-xl flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-4">
+        <button
+          type="button"
+          onClick={onNext}
+          className="flex shrink-0 items-center justify-center gap-2 self-start rounded-organic-lg bg-secondary px-5 py-2.5 text-sm font-bold text-white outline-none transition-all hover:scale-[1.02] active:scale-[0.98]"
+        >
+          {isLastQuestion ? "See results" : "Next question"}
+          <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
+        </button>
+        <p className="text-sm font-medium leading-snug text-text-muted sm:text-left">
+          {note}
+        </p>
       </div>
     </div>
   );
