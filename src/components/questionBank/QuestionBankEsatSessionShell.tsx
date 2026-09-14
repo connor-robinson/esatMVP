@@ -475,7 +475,7 @@ export function QuestionBankEsatSessionShell({
           </ul>
 
           {belowQuestion ? (
-            <div className="mt-6 w-full max-w-3xl">{belowQuestion}</div>
+            <div className="mt-6 w-full max-w-4xl">{belowQuestion}</div>
           ) : null}
         </div>
 

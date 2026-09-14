@@ -59,7 +59,7 @@ export async function GET(
 
 /**
  * PATCH /api/admin/question-bank/questions/[id]
- * Service-role update for reported-question review (approve / delete / edit).
+ * Service-role update for reported-question review (approve / edit).
  */
 export async function PATCH(
   request: NextRequest,
@@ -144,5 +144,66 @@ export async function PATCH(
 
   return NextResponse.json({
     question: normalizeQuestionBankRow(data as Record<string, unknown>),
+  });
+}
+
+/**
+ * DELETE /api/admin/question-bank/questions/[id]
+ * Hard-delete a question (cascades attempts/ratings). Unlinks mock refs first.
+ */
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  const admin = await requireTesterAdmin(request);
+  if (!admin.ok || !admin.service) {
+    return NextResponse.json(
+      { error: admin.error ?? "Unauthorized" },
+      { status: admin.status ?? 401 },
+    );
+  }
+
+  const questionId = params.id?.trim();
+  if (!questionId) {
+    return NextResponse.json({ error: "Missing question id" }, { status: 400 });
+  }
+
+  const { data: existing, error: existingError } = await admin.service
+    .from("ai_generated_questions")
+    .select("id, schema_id")
+    .eq("id", questionId)
+    .maybeSingle();
+
+  if (existingError) {
+    return NextResponse.json({ error: existingError.message }, { status: 500 });
+  }
+  if (!existing) {
+    return NextResponse.json({ error: "Question not found" }, { status: 404 });
+  }
+
+  const { error: mockLinkError } = await admin.service
+    .from("esat_mock_questions")
+    .delete()
+    .eq("question_id", questionId);
+  if (mockLinkError) {
+    return NextResponse.json(
+      { error: `Could not unlink from mocks: ${mockLinkError.message}` },
+      { status: 500 },
+    );
+  }
+
+  const { error: deleteError } = await admin.service
+    .from("ai_generated_questions")
+    .delete()
+    .eq("id", questionId);
+
+  if (deleteError) {
+    return NextResponse.json({ error: deleteError.message }, { status: 500 });
+  }
+
+  return NextResponse.json({
+    ok: true,
+    deletedId: questionId,
+    schemaId: existing.schema_id ?? null,
   });
 }

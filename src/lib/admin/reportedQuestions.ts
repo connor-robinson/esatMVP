@@ -16,6 +16,19 @@ export function buildReportThankYouBody(username: string | null | undefined): st
   return `${name}, Thank you for reporting an error. We've reviewed and updated the question. Please bear with us as our site is new and expanding rapidly. If anything else looks off, please let us know, we will respond within 24 hours!`;
 }
 
+export type ReportedQuestionReporter = {
+  ticketId: string;
+  userId: string | null;
+  username: string | null;
+  email: string | null;
+  reason: string;
+  message: string;
+  reportedAt: string;
+  ticketStatus: string;
+  thankYouSent: boolean;
+  thankYouSentAt: string | null;
+};
+
 export type ReportedQuestionMeta = {
   ticketId: string;
   questionId: string;
@@ -26,6 +39,9 @@ export type ReportedQuestionMeta = {
   reportedAt: string;
   ticketStatus: string;
   ticketMessage: string;
+  thankYouSent: boolean;
+  thankYouSentAt: string | null;
+  reporters: ReportedQuestionReporter[];
   sessionId: string | null;
   sessionNote: string;
   topicLabel: string;
@@ -263,6 +279,7 @@ export async function loadReportedQuestionBankItems(
     .filter((row): row is NonNullable<typeof row> => Boolean(row));
 
   const questionIds = [...new Set(parsed.map((p) => p.questionId))];
+  const ticketIds = parsed.map((p) => p.ticket.id as string);
   const userIds = [
     ...new Set(
       parsed
@@ -271,20 +288,127 @@ export async function loadReportedQuestionBankItems(
     ),
   ];
 
-  const [{ data: questions }, { data: profiles }] = await Promise.all([
-    questionIds.length > 0
-      ? service.from("ai_generated_questions").select("*").in("id", questionIds)
-      : Promise.resolve({ data: [] as Array<Record<string, unknown>> }),
-    userIds.length > 0
-      ? service.from("profiles").select("id, username, email").in("id", userIds)
-      : Promise.resolve({
-          data: [] as Array<{
-            id: string;
-            username: string | null;
-            email: string | null;
-          }>,
-        }),
-  ]);
+  const [{ data: questions }, { data: profiles }, { data: thankYouRows }, relatedTicketsRes] =
+    await Promise.all([
+      questionIds.length > 0
+        ? service.from("ai_generated_questions").select("*").in("id", questionIds)
+        : Promise.resolve({ data: [] as Array<Record<string, unknown>> }),
+      userIds.length > 0
+        ? service.from("profiles").select("id, username, email").in("id", userIds)
+        : Promise.resolve({
+            data: [] as Array<{
+              id: string;
+              username: string | null;
+              email: string | null;
+            }>,
+          }),
+      ticketIds.length > 0
+        ? service
+            .from("inbox_messages")
+            .select("support_request_id, subject, created_at, direction")
+            .in("support_request_id", ticketIds)
+            .eq("direction", "outbound")
+            .order("created_at", { ascending: false })
+            .limit(400)
+        : Promise.resolve({
+            data: [] as Array<{
+              support_request_id: string | null;
+              subject: string | null;
+              created_at: string;
+              direction: string | null;
+            }>,
+          }),
+      // All reports for these questions (any status) for the reporter table.
+      questionIds.length > 0
+        ? service
+            .from("support_requests")
+            .select(
+              "id, user_id, subject, message, status, context, created_at, reply_email",
+            )
+            .eq("category", "question_or_content_error")
+            .order("created_at", { ascending: false })
+            .limit(500)
+        : Promise.resolve({
+            data: [] as Array<Record<string, unknown>>,
+            error: null,
+          }),
+    ]);
+
+  if (relatedTicketsRes.error) throw new Error(relatedTicketsRes.error.message);
+
+  const thankYouByTicket = new Map<string, string>();
+  for (const row of thankYouRows ?? []) {
+    const ticketId = row.support_request_id;
+    if (!ticketId || thankYouByTicket.has(ticketId)) continue;
+    const subject = String(row.subject ?? "");
+    if (
+      subject === REPORT_THANK_YOU_SUBJECT ||
+      subject.toLowerCase().includes("thanks for your question report")
+    ) {
+      thankYouByTicket.set(ticketId, String(row.created_at));
+    }
+  }
+
+  const questionIdSet = new Set(questionIds);
+  const relatedParsed = (relatedTicketsRes.data ?? [])
+    .map((ticket) => {
+      const context = parseJsonRecord(ticket.context);
+      const questionId =
+        typeof context.questionId === "string" ? context.questionId.trim() : "";
+      if (!questionId || !questionIdSet.has(questionId)) return null;
+      return { ticket, questionId };
+    })
+    .filter((row): row is NonNullable<typeof row> => Boolean(row));
+
+  const relatedUserIds = [
+    ...new Set(
+      relatedParsed
+        .map((p) => p.ticket.user_id as string | null)
+        .filter((id): id is string => Boolean(id)),
+    ),
+  ];
+  const missingRelatedUserIds = relatedUserIds.filter((id) => !userIds.includes(id));
+  let extraProfiles: Array<{
+    id: string;
+    username: string | null;
+    email: string | null;
+  }> = [];
+  if (missingRelatedUserIds.length > 0) {
+    const { data } = await service
+      .from("profiles")
+      .select("id, username, email")
+      .in("id", missingRelatedUserIds);
+    extraProfiles = (data ?? []) as Array<{
+      id: string;
+      username: string | null;
+      email: string | null;
+    }>;
+  }
+
+  const relatedTicketIds = relatedParsed.map((p) => p.ticket.id as string);
+  const missingThankYouIds = relatedTicketIds.filter(
+    (id) => !thankYouByTicket.has(id),
+  );
+  if (missingThankYouIds.length > 0) {
+    const { data: extraThanks } = await service
+      .from("inbox_messages")
+      .select("support_request_id, subject, created_at, direction")
+      .in("support_request_id", missingThankYouIds)
+      .eq("direction", "outbound")
+      .order("created_at", { ascending: false })
+      .limit(400);
+    for (const row of extraThanks ?? []) {
+      const ticketId = row.support_request_id as string | null;
+      if (!ticketId || thankYouByTicket.has(ticketId)) continue;
+      const subject = String(row.subject ?? "");
+      if (
+        subject === REPORT_THANK_YOU_SUBJECT ||
+        subject.toLowerCase().includes("thanks for your question report")
+      ) {
+        thankYouByTicket.set(ticketId, String(row.created_at));
+      }
+    }
+  }
 
   const questionById = new Map<string, QuestionBankQuestion>();
   const rawById = new Map<string, Record<string, unknown>>();
@@ -295,7 +419,7 @@ export async function loadReportedQuestionBankItems(
     questionById.set(id, normalizeQuestionBankRow(raw));
   }
   const profileById = new Map(
-    (profiles ?? []).map((p) => [
+    [...(profiles ?? []), ...extraProfiles].map((p) => [
       p.id as string,
       {
         username: (p.username as string | null) ?? null,
@@ -303,6 +427,36 @@ export async function loadReportedQuestionBankItems(
       },
     ]),
   );
+
+  const reportersByQuestion = new Map<string, ReportedQuestionReporter[]>();
+  for (const row of relatedParsed) {
+    const profile = row.ticket.user_id
+      ? profileById.get(row.ticket.user_id as string)
+      : null;
+    const ticketId = row.ticket.id as string;
+    const thankYouSentAt = thankYouByTicket.get(ticketId) ?? null;
+    const reporter: ReportedQuestionReporter = {
+      ticketId,
+      userId: (row.ticket.user_id as string | null) ?? null,
+      username: profile?.username ?? null,
+      email:
+        profile?.email ??
+        (typeof row.ticket.reply_email === "string"
+          ? row.ticket.reply_email
+          : null),
+      reason:
+        (typeof row.ticket.subject === "string" && row.ticket.subject.trim()) ||
+        "Question report",
+      message: String(row.ticket.message ?? ""),
+      reportedAt: formatReportedAt(String(row.ticket.created_at)),
+      ticketStatus: String(row.ticket.status ?? "open"),
+      thankYouSent: Boolean(thankYouSentAt),
+      thankYouSentAt,
+    };
+    const list = reportersByQuestion.get(row.questionId) ?? [];
+    list.push(reporter);
+    reportersByQuestion.set(row.questionId, list);
+  }
 
   const items: ReportedQuestionItem[] = [];
   const subjectValues: string[] = [];
@@ -331,6 +485,9 @@ export async function loadReportedQuestionBankItems(
     const reason =
       (typeof row.ticket.subject === "string" && row.ticket.subject.trim()) ||
       "Question report";
+    const ticketId = row.ticket.id as string;
+    const thankYouSentAt = thankYouByTicket.get(ticketId) ?? null;
+    const reporters = reportersByQuestion.get(row.questionId) ?? [];
 
     subjectValues.push(question.subjects || "Unknown");
     tagValues.push(question.primary_tag || "Untagged");
@@ -338,7 +495,7 @@ export async function loadReportedQuestionBankItems(
     items.push({
       question,
       meta: {
-        ticketId: row.ticket.id as string,
+        ticketId,
         questionId: row.questionId,
         userId: (row.ticket.user_id as string | null) ?? null,
         username: profile?.username ?? null,
@@ -351,6 +508,9 @@ export async function loadReportedQuestionBankItems(
         reportedAt: formatReportedAt(String(row.ticket.created_at)),
         ticketStatus: String(row.ticket.status ?? "open"),
         ticketMessage: String(row.ticket.message ?? ""),
+        thankYouSent: Boolean(thankYouSentAt),
+        thankYouSentAt,
+        reporters,
         sessionId: row.sessionId,
         sessionNote,
         topicLabel: buildTopicLabel(question),

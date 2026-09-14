@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { QuestionBankEsatSessionShell } from "@/components/questionBank/QuestionBankEsatSessionShell";
 import { QuestionDetailsPanel } from "@/components/admin/QuestionDetailsPanel";
+import { ReportReportersTable } from "@/components/admin/ReportReportersTable";
 import {
   REPORT_THANK_YOU_SUBJECT,
   buildReportThankYouBody,
@@ -206,15 +207,77 @@ function AdminReportedQuestionsReviewPage() {
 
   const markTicketResolvedLocally = useCallback((ticketId: string) => {
     setItems((prev) =>
-      prev.map((item) =>
-        item.meta.ticketId === ticketId
-          ? {
-              ...item,
-              meta: { ...item.meta, ticketStatus: "resolved" },
-            }
-          : item,
-      ),
+      prev.map((item) => {
+        if (
+          item.meta.ticketId !== ticketId &&
+          !item.meta.reporters.some((r) => r.ticketId === ticketId)
+        ) {
+          return item;
+        }
+        return {
+          ...item,
+          meta: {
+            ...item.meta,
+            ticketStatus:
+              item.meta.ticketId === ticketId
+                ? "resolved"
+                : item.meta.ticketStatus,
+            reporters: item.meta.reporters.map((r) =>
+              r.ticketId === ticketId
+                ? { ...r, ticketStatus: "resolved" }
+                : r,
+            ),
+          },
+        };
+      }),
     );
+  }, []);
+
+  const markThankYouSentLocally = useCallback((ticketId: string) => {
+    const sentAt = new Date().toISOString();
+    setItems((prev) =>
+      prev.map((item) => {
+        const touchMeta =
+          item.meta.ticketId === ticketId ||
+          item.meta.reporters.some((r) => r.ticketId === ticketId);
+        if (!touchMeta) return item;
+        return {
+          ...item,
+          meta: {
+            ...item.meta,
+            thankYouSent:
+              item.meta.ticketId === ticketId ? true : item.meta.thankYouSent,
+            thankYouSentAt:
+              item.meta.ticketId === ticketId
+                ? sentAt
+                : item.meta.thankYouSentAt,
+            ticketStatus:
+              item.meta.ticketId === ticketId
+                ? "resolved"
+                : item.meta.ticketStatus,
+            reporters: item.meta.reporters.map((r) =>
+              r.ticketId === ticketId
+                ? {
+                    ...r,
+                    thankYouSent: true,
+                    thankYouSentAt: sentAt,
+                    ticketStatus: "resolved",
+                  }
+                : r,
+            ),
+          },
+        };
+      }),
+    );
+  }, []);
+
+  const removeQuestionFromQueue = useCallback((questionId: string) => {
+    setItems((prev) => {
+      const next = prev.filter((item) => item.meta.questionId !== questionId);
+      setIndex((i) => Math.max(0, Math.min(i, Math.max(0, next.length - 1))));
+      return next;
+    });
+    setEditing(false);
   }, []);
 
   const resolveTicket = async (ticketId: string) => {
@@ -268,6 +331,7 @@ function AdminReportedQuestionsReviewPage() {
         );
       }
       markTicketResolvedLocally(current.meta.ticketId);
+      markThankYouSentLocally(current.meta.ticketId);
       setThankYouOpen(false);
       setActionMsg("Thank-you sent and ticket resolved. Question stays in this review session.");
       pushToast("Message sent", "ok");
@@ -281,7 +345,6 @@ function AdminReportedQuestionsReviewPage() {
 
   const questionStatus = current?.meta.db.status ?? current?.question.status ?? "pending";
   const isApproved = questionStatus === "approved";
-  const isDeleted = questionStatus === "deleted";
 
   const approveQuestion = async () => {
     if (!current) return;
@@ -313,33 +376,32 @@ function AdminReportedQuestionsReviewPage() {
 
   const deleteQuestion = async () => {
     if (!current) return;
-    const nextStatus = isDeleted ? "pending" : "deleted";
-    if (nextStatus === "deleted") {
-      const ok = window.confirm(
-        "Soft-delete this question in Supabase (status=deleted) and resolve the report?",
-      );
-      if (!ok) return;
-    }
-    setBusy(nextStatus === "deleted" ? "delete" : "undelete");
+    const ok = window.confirm(
+      "Permanently delete this question from the database? Attempts and ratings cascade. This cannot be undone.",
+    );
+    if (!ok) return;
+    setBusy("delete");
     setActionMsg(null);
     try {
-      await persistQuestion(current.question.id, { status: nextStatus });
-      if (nextStatus === "deleted") {
-        await resolveTicket(current.meta.ticketId);
-        setActionMsg("Question deleted and ticket resolved.");
-        pushToast("Deleted", "ok");
-      } else {
-        setActionMsg("Undeleted (status set to pending).");
-        pushToast("Undeleted", "ok");
-      }
-    } catch (err) {
-      setActionMsg(
-        err instanceof Error
-          ? err.message
-          : nextStatus === "deleted"
-            ? "Delete failed"
-            : "Undelete failed",
+      const questionId = current.question.id;
+      const ticketId = current.meta.ticketId;
+      const res = await fetch(
+        `/api/admin/question-bank/questions/${questionId}`,
+        { method: "DELETE" },
       );
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(
+          typeof json.error === "string" ? json.error : "Delete failed",
+        );
+      }
+      await resolveTicket(ticketId);
+      removeQuestionFromQueue(questionId);
+      setActionMsg("Question permanently deleted and ticket resolved.");
+      pushToast("Deleted", "ok");
+      requestAdminBadgesRefresh();
+    } catch (err) {
+      setActionMsg(err instanceof Error ? err.message : "Delete failed");
     } finally {
       setBusy(null);
     }
@@ -420,6 +482,11 @@ function AdminReportedQuestionsReviewPage() {
             </p>
             <p className="mt-1 text-sm font-medium text-text">
               Reported by {reporterLabel(current.meta)}
+              {current.meta.thankYouSent ? (
+                <span className="ml-2 inline-flex rounded-organic-md bg-[#2E79B5]/20 px-2 py-0.5 text-xs font-semibold">
+                  Thank you sent
+                </span>
+              ) : null}
             </p>
             <p className="mt-0.5 text-xs text-text-muted">
               Status: {questionStatus}
@@ -537,36 +604,37 @@ function AdminReportedQuestionsReviewPage() {
               type="button"
               disabled={Boolean(busy)}
               onClick={() => void deleteQuestion()}
-              className={cn(
-                "eup-footer-action text-sm font-semibold disabled:opacity-50",
-                !isDeleted && "text-red-700 dark:text-red-300",
-              )}
+              className="eup-footer-action text-sm font-semibold text-red-700 dark:text-red-300 disabled:opacity-50"
             >
-              {busy === "delete"
-                ? "Deleting…"
-                : busy === "undelete"
-                  ? "Undeleting…"
-                  : isDeleted
-                    ? "Undelete"
-                    : "Delete"}
+              {busy === "delete" ? "Deleting…" : "Delete"}
             </button>
             <button
               type="button"
               disabled={Boolean(busy) || !current.meta.userId}
               onClick={openThankYou}
-              className="eup-footer-action text-sm font-semibold disabled:opacity-50"
+              className={cn(
+                "eup-footer-action text-sm font-semibold disabled:opacity-50",
+                current.meta.thankYouSent && "opacity-80",
+              )}
               title={
                 current.meta.userId
-                  ? "Edit and send thank-you"
+                  ? current.meta.thankYouSent
+                    ? "Thank-you already sent (you can send again)"
+                    : "Edit and send thank-you"
                   : "No linked account"
               }
             >
-              Send thank-you
+              {current.meta.thankYouSent ? "Thank you sent" : "Send thank-you"}
             </button>
           </div>
         }
         belowQuestion={
           <div className="space-y-4">
+            <ReportReportersTable
+              reporters={current.meta.reporters}
+              activeTicketId={current.meta.ticketId}
+            />
+
             <QuestionDetailsPanel
               meta={current.meta}
               question={displayQuestion}

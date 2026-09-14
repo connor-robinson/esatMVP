@@ -319,6 +319,7 @@ export default function AdminQuestionReportsDashboardPage() {
                       <th className="px-3 py-2 font-semibold">Reason</th>
                       <th className="px-3 py-2 font-semibold">Subject</th>
                       <th className="px-3 py-2 font-semibold">Ticket</th>
+                      <th className="px-3 py-2 font-semibold">Thank-you</th>
                       <th className="px-3 py-2 font-semibold">Question</th>
                       <th className="px-3 py-2 font-semibold" />
                     </tr>
@@ -353,6 +354,15 @@ export default function AdminQuestionReportsDashboardPage() {
                           >
                             {item.meta.ticketStatus.replace("_", " ")}
                           </span>
+                        </td>
+                        <td className="px-3 py-2.5">
+                          {item.meta.thankYouSent ? (
+                            <span className="inline-flex rounded-organic-md bg-[#2E79B5]/20 px-2 py-0.5 text-xs font-semibold text-text">
+                              Sent
+                            </span>
+                          ) : (
+                            <span className="text-xs text-text-subtle">-</span>
+                          )}
                         </td>
                         <td className="px-3 py-2.5 text-text-muted">
                           <span className="capitalize">

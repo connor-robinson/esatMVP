@@ -96,15 +96,6 @@ export function QuestionDetailsPanel({
           label="Created / updated"
           value={`${meta.db.createdAt} · ${meta.db.updatedAt}`}
         />
-        <DetailRow label="Support reason" value={meta.reason} />
-        <DetailRow label="Reported at" value={meta.reportedAt} />
-        <DetailRow
-          label="Reported by"
-          value={
-            [meta.username, meta.email].filter(Boolean).join(" · ") ||
-            (meta.userId ? `User ${meta.userId.slice(0, 8)}` : "Unknown")
-          }
-        />
         <DetailRow label="Original session" value={meta.sessionNote} />
         <DetailRow
           label="Session id"

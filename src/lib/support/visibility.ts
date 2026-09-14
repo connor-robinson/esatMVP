@@ -36,5 +36,8 @@ export function shouldShowSupportLauncher(pathname: string | null): boolean {
   ) {
     return false;
   }
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+    return false;
+  }
   return true;
 }
