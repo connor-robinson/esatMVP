@@ -783,8 +783,12 @@ function RevealedView({
           >
             {verdict.label}
           </h3>
-          <p className="mt-1 max-w-xl text-sm font-medium leading-snug text-text-muted sm:text-base">
-            {verdict.detail}
+          <p className="mt-1 max-w-xl text-sm font-medium leading-snug text-text sm:text-base">
+            <span className="text-text-muted">Answer </span>
+            <span className="font-semibold text-primary">
+              {formatFermiNumber(question.answer)}
+              {question.unit ? ` ${question.unit}` : ""}
+            </span>
           </p>
         </motion.div>
       </div>
