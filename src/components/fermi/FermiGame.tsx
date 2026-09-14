@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import type { FermiQuestion, PlayableFermiQuestion } from "@/config/fermiQuestions";
 import {
+  formatFermiAnswerDisplay,
   formatFermiNumber,
   formatFullNumber,
   parseFermiInput,
@@ -841,10 +842,10 @@ function RevealedView({
           </div>
         </div>
 
-        <p className="min-h-[1rem] text-center text-sm font-medium text-text">
+        <p className="min-h-[1.5rem] text-left text-xl font-medium leading-snug text-text sm:text-2xl">
           <span className="text-text-muted">Answer </span>
-          <span className="font-semibold text-primary">
-            {formatFermiNumber(question.answer)}
+          <span className="font-bold text-primary">
+            {formatFermiAnswerDisplay(question.answer)}
             {question.unit ? ` ${question.unit}` : ""}
           </span>
         </p>
@@ -857,10 +858,8 @@ function RevealedView({
           </p>
           <p className="mt-1 text-sm leading-snug text-text">{solution}</p>
           <p className="mt-2 text-xs font-medium text-text-muted">
-            Answer: {formatFermiNumber(question.answer)}
+            Answer: {formatFermiAnswerDisplay(question.answer)}
             {question.unit ? ` ${question.unit}` : ""}
-            {" · "}
-            {formatFullNumber(question.answer)}
           </p>
         </div>
       )}
@@ -959,10 +958,7 @@ function FermiResultDetailPanel({ result }: { result: FermiResult }) {
               Your guess
             </p>
             <p className="mt-0.5 text-sm font-bold text-text">
-              {formatFullNumber(result.guess)}
-            </p>
-            <p className="text-xs font-medium text-text-muted">
-              {formatFermiNumber(result.guess)}
+              {formatFermiAnswerDisplay(result.guess)}
             </p>
           </div>
           <div>
@@ -970,10 +966,7 @@ function FermiResultDetailPanel({ result }: { result: FermiResult }) {
               Answer
             </p>
             <p className="mt-0.5 text-sm font-bold text-primary">
-              {formatFullNumber(result.question.answer)}
-            </p>
-            <p className="text-xs font-medium text-text-muted">
-              {formatFermiNumber(result.question.answer)}
+              {formatFermiAnswerDisplay(result.question.answer)}
               {result.question.unit ? ` ${result.question.unit}` : ""}
             </p>
           </div>

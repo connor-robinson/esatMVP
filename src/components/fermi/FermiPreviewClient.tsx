@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, Eye, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { formatFermiNumber, formatFullNumber } from "@/lib/fermi/parseNumber";
+import { formatFermiAnswerDisplay, formatFermiNumber } from "@/lib/fermi/parseNumber";
 import { FERMI_GUESSR_NAME } from "@/config/fermiGuessr";
 import type { FermiBatchQuestion } from "@/lib/fermi/batchQuestion";
 
@@ -267,16 +267,13 @@ export function FermiPreviewClient({ batchId }: { batchId: "01" | "02" }) {
 
             <div className="flex w-full max-w-xl flex-col gap-2">
               <div className="flex h-16 w-full items-center gap-2 rounded-sm bg-surface-elevated pl-5 pr-2">
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 text-left">
                   <p className="text-xs font-semibold uppercase tracking-wide text-text-muted">
                     Answer
                   </p>
-                  <p className="truncate text-xl font-semibold text-text sm:text-2xl">
-                    {formatFullNumber(question.answer)}
+                  <p className="truncate text-xl font-bold text-primary sm:text-2xl">
+                    {formatFermiAnswerDisplay(question.answer)}
                     {question.unit ? ` ${question.unit}` : ""}
-                    <span className="ml-2 text-sm font-medium text-text-muted">
-                      ({formatFermiNumber(question.answer)})
-                    </span>
                   </p>
                 </div>
                 <div className="flex shrink-0 items-center gap-1">
@@ -314,10 +311,8 @@ export function FermiPreviewClient({ batchId }: { batchId: "01" | "02" }) {
                 </p>
                 <p className="mt-1 text-sm leading-snug text-text">{solution}</p>
                 <p className="mt-2 text-xs font-medium text-text-muted">
-                  Answer: {formatFermiNumber(question.answer)}
+                  Answer: {formatFermiAnswerDisplay(question.answer)}
                   {question.unit ? ` ${question.unit}` : ""}
-                  {" · "}
-                  {formatFullNumber(question.answer)}
                 </p>
               </div>
             ) : null}

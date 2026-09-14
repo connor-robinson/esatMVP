@@ -125,33 +125,55 @@ export function parseFermiInput(raw: string): number | null {
 export function formatFermiNumber(value: number): string {
   if (!Number.isFinite(value)) return "-";
   const abs = Math.abs(value);
+  const sign = value < 0 ? "-" : "";
 
-  if (abs !== 0 && (abs >= 1e15 || abs < 1e-3)) {
-    // Very large / very small: scientific.
-    const exp = Math.floor(Math.log10(abs));
-    const mantissa = value / 10 ** exp;
-    return `${trimFloat(mantissa)} × 10^${exp}`;
-  }
-
+  // Prefer named scales over scientific notation whenever possible.
   const units: Array<[number, string]> = [
+    [1e30, " nonillion"],
+    [1e27, " octillion"],
+    [1e24, " septillion"],
+    [1e21, " sextillion"],
+    [1e18, " quintillion"],
+    [1e15, " quadrillion"],
     [1e12, " trillion"],
     [1e9, " billion"],
     [1e6, " million"],
-    [1e3, "k"],
+    [1e3, " thousand"],
   ];
+
   for (const [unit, suffix] of units) {
     if (abs >= unit) {
-      return `${trimFloat(value / unit)}${suffix}`;
+      return `${sign}${trimFloat(abs / unit)}${suffix}`;
     }
   }
-  return trimFloat(value);
+
+  // Tiny non-integers / leftovers: keep a short decimal, not scientific.
+  if (abs !== 0 && abs < 1e-3) {
+    return value.toPrecision(3).replace(/\.?0+e/, "e");
+  }
+
+  return `${sign}${trimFloat(abs)}`;
+}
+
+/**
+ * Primary answer label for reveal UI: named scale when large,
+ * otherwise a readable full number.
+ */
+export function formatFermiAnswerDisplay(value: number): string {
+  if (!Number.isFinite(value)) return "-";
+  const abs = Math.abs(value);
+  if (abs >= 1000) return formatFermiNumber(value);
+  return formatFullNumber(value);
 }
 
 /** Full number with thousands separators (e.g. "80,000,000"). */
 export function formatFullNumber(value: number): string {
   if (!Number.isFinite(value)) return "-";
-  if (Math.abs(value) >= 1e15 || (value !== 0 && Math.abs(value) < 1e-3)) {
-    return value.toExponential(2);
+  const abs = Math.abs(value);
+  // Huge values: still prefer named scales over "2.00e+16".
+  if (abs >= 1e15) return formatFermiNumber(value);
+  if (value !== 0 && abs < 1e-3) {
+    return formatFermiNumber(value);
   }
   const rounded = Math.round(value * 1000) / 1000;
   return rounded.toLocaleString("en-US", { maximumFractionDigits: 3 });
