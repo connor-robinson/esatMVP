@@ -68,7 +68,9 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
   --eup-pad-y: 16px;
   --eup-qnum-size: var(--eup-font-size-content);
 
-  position: fixed;
+  /* Must stay fixed. An inline position:relative override (rest-breaks, Sep 14)
+     pushed the footer Next/Submit off-screen with body overflow hidden. */
+  position: fixed !important;
   inset: 0;
   width: 100%;
   height: 100%;

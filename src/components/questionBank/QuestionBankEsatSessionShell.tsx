@@ -265,7 +265,6 @@ export function QuestionBankEsatSessionShell({
       data-theme="light"
       role="application"
       aria-label="Question bank session"
-      style={{ position: "relative" }}
     >
       {restBreakActive && onEndRestBreak ? (
         <RestBreakOverlay

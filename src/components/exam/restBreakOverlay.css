@@ -1,7 +1,9 @@
 .rest-break-overlay {
+  /* Viewport-fixed on its own; do not force a relative containing block on the
+     ESAT/Pearson shell (that clipped the session footer / Next button). */
   position: fixed;
   inset: 0;
-  z-index: 80;
+  z-index: 200;
   display: flex;
   align-items: center;
   justify-content: center;
