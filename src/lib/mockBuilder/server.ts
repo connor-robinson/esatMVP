@@ -352,30 +352,25 @@ export async function listMocks(
   service: SupabaseClient,
   options?: { light?: boolean },
 ): Promise<EsatMockRow[]> {
-  const columns = options?.light
-    ? [
-        "id",
-        "subject",
-        "mock_number",
-        "title",
-        "status",
-        "is_free",
-        "question_count",
-        "time_limit_minutes",
-        "predicted_difficulty",
-        "predicted_workload_seconds",
-        "ai_review",
-        "created_at",
-        "updated_at",
-      ].join(", ")
-    : "*";
+  if (options?.light) {
+    const { data, error } = await service
+      .from("esat_mocks")
+      .select(
+        "id, subject, mock_number, title, status, is_free, question_count, time_limit_minutes, predicted_difficulty, predicted_workload_seconds, ai_review, created_at, updated_at",
+      )
+      .order("subject")
+      .order("mock_number");
+    if (error) throw new Error(error.message);
+    return (data ?? []) as unknown as EsatMockRow[];
+  }
+
   const { data, error } = await service
     .from("esat_mocks")
-    .select(columns)
+    .select("*")
     .order("subject")
     .order("mock_number");
   if (error) throw new Error(error.message);
-  return (data ?? []) as unknown as EsatMockRow[];
+  return (data ?? []) as EsatMockRow[];
 }
 
 /** Next free mock number per subject from an already-loaded mocks list. */
@@ -1611,9 +1606,7 @@ export async function loadMockPoolInventoryLite(
     }),
   );
 
-  const subjects = subjectRows.filter(
-    (r): r is MockPoolInventorySubjectRow => r != null,
-  );
+  const subjects = subjectRows.filter((r) => r != null);
   const totals = subjects.reduce(
     (acc, row) => {
       acc.mockStaged += row.mockStaged;
@@ -1701,9 +1694,7 @@ export async function loadMockPoolInventory(
     }),
   );
 
-  const subjects = subjectRows.filter(
-    (r): r is MockPoolInventorySubjectRow => r != null,
-  );
+  const subjects = subjectRows.filter((r) => r != null);
 
   const totals = subjects.reduce(
     (acc, row) => {
