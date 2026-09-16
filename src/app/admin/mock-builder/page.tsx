@@ -103,6 +103,7 @@ export default function AdminMockBuilderPage() {
     Partial<Record<MockBuilderSubject, number>>
   >({});
   const [creating, setCreating] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -187,6 +188,31 @@ export default function AdminMockBuilderPage() {
         excludePublishedMockQuestionsFromPractice: next,
       }),
     });
+  }
+
+  async function deleteMock(m: EsatMockRow) {
+    const ok = window.confirm(
+      `Delete "${m.title}"?\n\nThis removes the mock and releases its questions back into the pool for other drafts (unless they are still used by another approved/published mock).`,
+    );
+    if (!ok) return;
+    setDeletingId(m.id);
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/mock-builder/${m.id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(
+          (data as { error?: string }).error || "Delete failed",
+        );
+      }
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Delete failed");
+    } finally {
+      setDeletingId(null);
+    }
   }
 
   if (forbidden) {
@@ -368,7 +394,8 @@ export default function AdminMockBuilderPage() {
                 <th className="py-2 pr-3 font-medium">Difficulty</th>
                 <th className="py-2 pr-3 font-medium">Vs typical ESAT</th>
                 <th className="py-2 pr-3 font-medium">Workload</th>
-                <th className="py-2 font-medium">AI review</th>
+                <th className="py-2 pr-3 font-medium">AI review</th>
+                <th className="py-2 font-medium"> </th>
               </tr>
             </thead>
             <tbody>
@@ -402,19 +429,29 @@ export default function AdminMockBuilderPage() {
                       ? `${Math.round(m.predicted_workload_seconds / 60)} min`
                       : "–"}
                   </td>
-                  <td className="py-2.5 text-text">
+                  <td className="py-2.5 pr-3 text-text">
                     {m.ai_review
                       ? m.ai_review.pass
                         ? "PASS"
                         : "REVIEW"
                       : "–"}
                   </td>
+                  <td className="py-2.5 text-right">
+                    <button
+                      type="button"
+                      disabled={deletingId === m.id || creating}
+                      onClick={() => deleteMock(m)}
+                      className="rounded border border-red-300 bg-red-50 px-2 py-1 text-xs font-medium text-red-800 disabled:opacity-50"
+                    >
+                      {deletingId === m.id ? "…" : "Delete"}
+                    </button>
+                  </td>
                 </tr>
                 );
               })}
               {mocks.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-6 text-text-muted">
+                  <td colSpan={8} className="py-6 text-text-muted">
                     No mocks yet. Generate your first draft above.
                   </td>
                 </tr>
