@@ -150,7 +150,12 @@ export async function llmEditQuestion(input: {
 
   const llm = await generateJsonWithLlm(prompt);
   if (!llm.text) return null;
-  const parsed = extractJsonObject(llm.text);
+  let parsed: unknown;
+  try {
+    parsed = extractJsonObject(llm.text);
+  } catch {
+    return null;
+  }
   if (!parsed || typeof parsed !== "object") return null;
   return validateEditedQuestion(parsed as Partial<EditedQuestionFields>);
 }

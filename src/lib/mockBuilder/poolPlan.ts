@@ -88,6 +88,7 @@ export function analysePoolPlan(
   }
 
   const shortfalls: string[] = [];
+  const softShortfalls: string[] = [];
   const difficultyTargets: DifficultyFillTarget[] = [];
 
   let remainingSlots = blueprint.questionCount;
@@ -96,7 +97,8 @@ export function analysePoolPlan(
   for (const band of blueprint.difficultyDistribution) {
     const available = byDifficulty[band.difficulty] ?? 0;
     if (available < band.min) {
-      shortfalls.push(
+      // Soft when the paper can still fill from other bands (multi-mock depletion).
+      softShortfalls.push(
         `Need ${band.min} difficulty-${band.difficulty} questions; pool has ${available}.`,
       );
     }
@@ -169,12 +171,18 @@ export function analysePoolPlan(
     // Not a hard fail by itself if labeled stock is enough, but note it.
   }
 
-  const feasible = shortfalls.length === 0;
+  // Band mins are soft when total stock can still fill the paper (typical after
+  // multi-mock depletion of D1/D5). Only total count is a hard gate.
+  const feasible = totalEligible >= blueprint.questionCount;
   const bandSummary = difficultyTargets
     .map((t) => `D${t.difficulty}:${t.target}/${t.available}`)
     .join(" ");
+  const softNote =
+    softShortfalls.length > 0
+      ? ` Soft band gaps: ${softShortfalls.join(" ")}`
+      : "";
   const summary = feasible
-    ? `Pool plan OK (${totalEligible} eligible). Targets ${bandSummary}. Off-bank ${byTier.off_bank}.`
+    ? `Pool plan OK (${totalEligible} eligible). Targets ${bandSummary}. Off-bank ${byTier.off_bank}.${softNote}`
     : `Pool plan blocked: ${shortfalls.join(" ")}`;
 
   return {

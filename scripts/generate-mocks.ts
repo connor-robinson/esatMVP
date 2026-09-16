@@ -61,7 +61,7 @@ async function main() {
     throw new Error(`Invalid --subject. Use: ${MOCK_BUILDER_SUBJECTS.join(", ")}`);
   }
 
-  const count = Math.min(5, Math.max(1, Number(argValue("--count") || 1)));
+  const count = Math.min(10, Math.max(1, Number(argValue("--count") || 1)));
   const diagramsRaw = argValue("--diagrams");
   const diagramCount =
     diagramsRaw == null ? undefined : Math.min(27, Math.max(0, Number(diagramsRaw)));

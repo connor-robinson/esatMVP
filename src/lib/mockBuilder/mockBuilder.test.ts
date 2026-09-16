@@ -803,8 +803,8 @@ describe("pool tier preference", () => {
 });
 
 describe("poolPlan", () => {
-  it("fails when difficulty-1 stock is below hard min", async () => {
-    const { analysePoolPlan } = await import("./poolPlan");
+  it("stays feasible with soft band gap when difficulty-1 stock is below min but total pool fills", async () => {
+    const { analysePoolPlan, assertPoolPlanFeasible } = await import("./poolPlan");
     const blueprint = getDefaultBlueprint("Math 1");
     const pool = Array.from({ length: 40 }, (_, i) =>
       makeQuestion({
@@ -814,8 +814,25 @@ describe("poolPlan", () => {
       }),
     );
     const plan = analysePoolPlan(pool, blueprint);
+    expect(plan.feasible).toBe(true);
+    expect(plan.summary).toMatch(/Soft band gaps:.*difficulty-1/);
+    expect(() => assertPoolPlanFeasible(plan)).not.toThrow();
+  });
+
+  it("hard-fails when total eligible stock is below paper size", async () => {
+    const { analysePoolPlan, assertPoolPlanFeasible } = await import("./poolPlan");
+    const blueprint = getDefaultBlueprint("Math 1");
+    const pool = Array.from({ length: 10 }, (_, i) =>
+      makeQuestion({
+        id: `tiny-${i}`,
+        mockDifficulty: ((i % 5) + 1) as 1 | 2 | 3 | 4 | 5,
+        hasAiMockDifficulty: true,
+      }),
+    );
+    const plan = analysePoolPlan(pool, blueprint);
     expect(plan.feasible).toBe(false);
-    expect(plan.shortfalls.join(" ")).toMatch(/difficulty-1/);
+    expect(plan.shortfalls.join(" ")).toMatch(/Need 27/);
+    expect(() => assertPoolPlanFeasible(plan)).toThrow(/Need 27/);
   });
 
   it("is feasible when each band meets mins", async () => {
