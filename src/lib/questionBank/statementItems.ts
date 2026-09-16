@@ -37,6 +37,19 @@ export function getQuestionStatementItems(
   return parseStatementItems((plan as Record<string, unknown>).statementItems);
 }
 
+/** Append numbered statements under a stem for surfaces that only render one markdown field. */
+export function appendStatementItemsToStem(
+  stem: string,
+  items: StatementItem[] | null | undefined,
+): string {
+  const base = stem.trim();
+  if (!items?.length) return base;
+  const block = items
+    .map((item) => `${item.number}. ${item.textMarkdown.trim()}`)
+    .join("\n\n");
+  return base ? `${base}\n\n${block}` : block;
+}
+
 export function isMultiStatementQuestion(
   question: Pick<QuestionBankQuestion, "idea_plan"> | null | undefined,
 ): boolean {

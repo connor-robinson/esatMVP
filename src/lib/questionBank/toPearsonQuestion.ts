@@ -5,6 +5,10 @@
 
 import type { Letter, Question } from "@/types/papers";
 import type { QuestionBankQuestion } from "@/types/questionBank";
+import {
+  appendStatementItemsToStem,
+  getQuestionStatementItems,
+} from "@/lib/questionBank/statementItems";
 
 const LETTERS = new Set<string>(["A", "B", "C", "D", "E", "F", "G", "H"]);
 
@@ -40,7 +44,10 @@ export function questionBankQuestionsToPearson(
       examType: q.test_type === "TMUA" ? "TMUA" : "ESAT",
       questionNumber: index + 1,
       questionImage: "",
-      questionStem: q.question_stem,
+      questionStem: appendStatementItemsToStem(
+        q.question_stem,
+        getQuestionStatementItems(q),
+      ),
       options,
       contentFormat: "text",
       solutionText: q.solution_reasoning ?? undefined,
