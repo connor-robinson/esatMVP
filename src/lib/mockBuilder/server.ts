@@ -308,11 +308,22 @@ export async function enrichMockMetadataForSubject(
     if (!existing?.presentation_type) {
       patch.presentation_type = label.presentationType;
     }
-    const { error: upErr } = await service
-      .from("ai_generated_questions")
-      .update(patch)
-      .eq("id", label.id);
-    if (upErr) throw new Error(upErr.message);
+    let lastError: string | null = null;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const { error: upErr } = await service
+          .from("ai_generated_questions")
+          .update(patch)
+          .eq("id", label.id);
+        if (!upErr) return;
+        lastError = upErr.message;
+      } catch (e) {
+        lastError = e instanceof Error ? e.message : "fetch failed";
+      }
+    }
+    console.warn(
+      `  ${subject}: failed to persist ${label.id.slice(0, 8)} (${lastError})`,
+    );
   }
 
   for (let i = 0; i < batches.length; i += concurrency) {
