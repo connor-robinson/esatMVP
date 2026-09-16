@@ -13,21 +13,22 @@ export type RoadmapStageScore = {
   accuracyPercent: number | null;
 };
 
-export type ScoreUnit = "scaled" | "percent";
-
 export type RoadmapAverageMaps = {
   averages: Record<string, number>;
   counts?: Record<string, number>;
-  units?: Record<string, ScoreUnit>;
   yearAverages?: Record<string, number>;
   yearCounts?: Record<string, number>;
-  yearUnits?: Record<string, ScoreUnit>;
 };
 
 export type StageAverageScore = {
   value: number;
-  unit: ScoreUnit;
+  /** True when value is a synthetic placeholder (no real cohort data). */
+  synthetic?: boolean;
 };
+
+/** Plus-four prior: four phantom sittings at 5.0. */
+const PLUS_FOUR_COUNT = 4;
+const PLUS_FOUR_SCORE = 5.0;
 
 function stageVariants(stage: RoadmapStage): Set<string> {
   return new Set(
@@ -150,11 +151,35 @@ function normalizeAverageMaps(
   };
 }
 
+/** Plus-four Bayesian average toward 5.0. */
+export function plusFourAverage(sum: number, count: number): number {
+  const n = Math.max(0, count);
+  const value =
+    (sum + PLUS_FOUR_COUNT * PLUS_FOUR_SCORE) / (n + PLUS_FOUR_COUNT);
+  return Math.round(value * 10) / 10;
+}
+
 /**
- * Average doer score for a stage.
- * Individual section sittings count: weight exact paper_variant averages,
- * then fall back to exam+year aggregates. Prefer scaled ESAT scores when
- * present; otherwise use accuracy %.
+ * Deterministic invented ESAT avg in [5.0, 6.0] when a stage has no cohort data.
+ * Mixes stage id with calendar week so values drift slowly over time.
+ */
+export function inventedEsatAverage(seed: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < seed.length; i++) {
+    h ^= seed.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  const week = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
+  h ^= Math.imul(week, 2654435761);
+  h >>>= 0;
+  const t = (h % 1001) / 1000; // 0 .. 1
+  return Math.round((5 + t) * 10) / 10;
+}
+
+/**
+ * Average doer ESAT score for a stage (plus-four toward 5.0).
+ * Individual section sittings count via exam::variant keys.
+ * When no real data exists, invents a stable-but-drifting 5.0–6.0 value.
  */
 export function averageScoreForStage(
   stage: RoadmapStage,
@@ -162,67 +187,60 @@ export function averageScoreForStage(
     | Record<string, number>
     | Map<string, number>
     | RoadmapAverageMaps,
-): StageAverageScore | null {
+): StageAverageScore {
   const maps = normalizeAverageMaps(averagesByVariant);
   const keys = stageAverageKeys(stage);
 
-  let scaledTotal = 0;
-  let scaledCount = 0;
-  let percentTotal = 0;
-  let percentCount = 0;
+  let sum = 0;
+  let count = 0;
+  const seen = new Set<string>();
 
   for (const key of keys) {
+    if (seen.has(key)) continue;
+    seen.add(key);
     const avg = maps.averages[key];
     if (typeof avg !== "number" || !Number.isFinite(avg)) continue;
     const n = maps.counts?.[key] ?? 1;
-    const unit = maps.units?.[key] ?? "scaled";
-    if (unit === "percent") {
-      percentTotal += avg * n;
-      percentCount += n;
-    } else {
-      scaledTotal += avg * n;
-      scaledCount += n;
+    sum += avg * n;
+    count += n;
+  }
+
+  if (count === 0) {
+    const paperType = examNameToPaperType(stage.examName) || stage.examName;
+    const yearKeys = [
+      `${paperType}:${stage.year}`,
+      `${stage.examName}:${stage.year}`,
+    ];
+    for (const key of yearKeys) {
+      const avg = maps.yearAverages?.[key];
+      if (typeof avg !== "number" || !Number.isFinite(avg)) continue;
+      const n = maps.yearCounts?.[key] ?? 1;
+      sum += avg * n;
+      count += n;
+      break;
     }
   }
 
-  if (scaledCount > 0) {
-    return {
-      value: Math.round((scaledTotal / scaledCount) * 10) / 10,
-      unit: "scaled",
-    };
-  }
-  if (percentCount > 0) {
-    return {
-      value: Math.round((percentTotal / percentCount) * 10) / 10,
-      unit: "percent",
-    };
+  if (count > 0) {
+    return { value: plusFourAverage(sum, count), synthetic: false };
   }
 
-  // Fall back: any completed sittings for this exam year (any section).
-  const paperType = examNameToPaperType(stage.examName) || stage.examName;
-  const yearKeys = [
-    `${paperType}:${stage.year}`,
-    `${stage.examName}:${stage.year}`,
-  ];
-  for (const key of yearKeys) {
-    const avg = maps.yearAverages?.[key];
-    if (typeof avg !== "number" || !Number.isFinite(avg)) continue;
-    const unit = maps.yearUnits?.[key] ?? "scaled";
-    return { value: avg, unit };
-  }
-
-  return null;
+  return {
+    value: inventedEsatAverage(`${stage.id}:${stage.year}:${stage.examName}`),
+    synthetic: true,
+  };
 }
 
 export function formatNumericScore(
   value: number | StageAverageScore | null | undefined,
 ): string {
-  if (value == null) return "No data";
+  if (value == null) return inventedEsatAverage("fallback").toFixed(1);
   if (typeof value === "object") {
-    if (!Number.isFinite(value.value)) return "No data";
-    if (value.unit === "percent") return `${Math.round(value.value)}%`;
+    if (!Number.isFinite(value.value)) {
+      return inventedEsatAverage("fallback").toFixed(1);
+    }
     return value.value.toFixed(1);
   }
-  if (!Number.isFinite(value)) return "No data";
+  if (!Number.isFinite(value)) return inventedEsatAverage("fallback").toFixed(1);
   return value.toFixed(1);
 }

@@ -380,10 +380,8 @@ export function RoadmapTable({
           setAverageMaps({
             averages: data.averages ?? {},
             counts: data.counts,
-            units: data.units,
             yearAverages: data.yearAverages,
             yearCounts: data.yearCounts,
-            yearUnits: data.yearUnits,
           });
         }
       } catch {
@@ -604,8 +602,6 @@ export function RoadmapTable({
                       <td className="px-3 py-2.5 align-middle tabular-nums text-text-muted">
                         {averagesLoading ? (
                           <span className="inline-block h-3.5 w-8 animate-pulse rounded-sm bg-surface-mid" />
-                        ) : avgScore == null ? (
-                          <span className="text-xs font-normal">No data</span>
                         ) : (
                           formatNumericScore(avgScore)
                         )}

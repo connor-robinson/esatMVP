@@ -4,25 +4,16 @@ import { createTesterServiceClient } from "@/lib/tester/service";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-type ScoreJson = {
-  correct?: number;
-  total?: number;
-};
+/** Ignore testing / pre-launch sittings before this date (01/09/2026). */
+const DATA_SINCE_ISO = "2026-09-01T00:00:00.000Z";
 
 type SectionPercentile = {
   score?: number | null;
 };
 
-type SessionMetric = {
-  value: number;
-  unit: "scaled" | "percent";
-};
-
 type Bucket = {
-  scaledTotal: number;
-  scaledCount: number;
-  percentTotal: number;
-  percentCount: number;
+  total: number;
+  count: number;
 };
 
 function mean(values: number[]): number | null {
@@ -30,100 +21,37 @@ function mean(values: number[]): number | null {
   return values.reduce((a, b) => a + b, 0) / values.length;
 }
 
-function emptyBucket(): Bucket {
-  return {
-    scaledTotal: 0,
-    scaledCount: 0,
-    percentTotal: 0,
-    percentCount: 0,
-  };
-}
-
-function addMetric(bucket: Bucket, metric: SessionMetric) {
-  if (metric.unit === "scaled") {
-    bucket.scaledTotal += metric.value;
-    bucket.scaledCount += 1;
-  } else {
-    bucket.percentTotal += metric.value;
-    bucket.percentCount += 1;
-  }
-}
-
-function finalizeBucket(
-  bucket: Bucket,
-): { average: number; unit: "scaled" | "percent"; count: number } | null {
-  if (bucket.scaledCount > 0) {
-    return {
-      average: Math.round((bucket.scaledTotal / bucket.scaledCount) * 10) / 10,
-      unit: "scaled",
-      count: bucket.scaledCount,
-    };
-  }
-  if (bucket.percentCount > 0) {
-    return {
-      average:
-        Math.round((bucket.percentTotal / bucket.percentCount) * 10) / 10,
-      unit: "percent",
-      count: bucket.percentCount,
-    };
-  }
-  return null;
-}
-
 /**
- * Prefer overall predicted ESAT score; else average section scaled scores;
- * else accuracy % from score (so section-only sittings still count).
- * Skip empty 0/total attempts that never answered anything correctly.
+ * ESAT scaled score from a session: overall predicted, else mean of
+ * section_percentiles scores (so single-section sittings still count).
  */
-function metricFromSession(row: {
+function esatScoreFromSession(row: {
   predicted_score?: number | null;
   section_percentiles?: unknown;
-  score?: unknown;
-}): SessionMetric | null {
+}): number | null {
   if (
     typeof row.predicted_score === "number" &&
     Number.isFinite(row.predicted_score)
   ) {
-    return { value: row.predicted_score, unit: "scaled" };
+    return row.predicted_score;
   }
 
   const percentiles = row.section_percentiles;
-  if (percentiles && typeof percentiles === "object") {
-    const sectionScores: number[] = [];
-    for (const value of Object.values(
-      percentiles as Record<string, SectionPercentile>,
-    )) {
-      if (
-        value &&
-        typeof value.score === "number" &&
-        Number.isFinite(value.score)
-      ) {
-        sectionScores.push(value.score);
-      }
-    }
-    const sectionMean = mean(sectionScores);
-    if (sectionMean != null) {
-      return { value: sectionMean, unit: "scaled" };
+  if (!percentiles || typeof percentiles !== "object") return null;
+
+  const sectionScores: number[] = [];
+  for (const value of Object.values(
+    percentiles as Record<string, SectionPercentile>,
+  )) {
+    if (
+      value &&
+      typeof value.score === "number" &&
+      Number.isFinite(value.score)
+    ) {
+      sectionScores.push(value.score);
     }
   }
-
-  const score = row.score as ScoreJson | null;
-  if (
-    score &&
-    typeof score.correct === "number" &&
-    typeof score.total === "number" &&
-    Number.isFinite(score.correct) &&
-    Number.isFinite(score.total) &&
-    score.total > 0 &&
-    score.correct > 0
-  ) {
-    return {
-      value: (score.correct / score.total) * 100,
-      unit: "percent",
-    };
-  }
-
-  return null;
+  return mean(sectionScores);
 }
 
 function parseVariantYear(variant: string): string | null {
@@ -131,21 +59,33 @@ function parseVariantYear(variant: string): string | null {
   return year && /^\d{4}$/.test(year) ? year : null;
 }
 
-/** exam + variant, e.g. NSAA::2016-Section 1-Official */
 function averageKey(paperName: string, variant: string): string {
   return `${paperName}::${variant}`;
 }
 
-async function fetchAllEndedSessions(
+async function fetchExcludedUserIds(
   service: ReturnType<typeof createTesterServiceClient>,
+): Promise<Set<string>> {
+  const { data, error } = await service
+    .from("profiles")
+    .select("id")
+    .eq("role", "admin");
+
+  if (error) throw new Error(error.message);
+  return new Set((data ?? []).map((row) => row.id as string).filter(Boolean));
+}
+
+async function fetchEligibleSessions(
+  service: ReturnType<typeof createTesterServiceClient>,
+  excludedUserIds: Set<string>,
 ) {
   const pageSize = 1000;
   const rows: Array<{
+    user_id: string | null;
     paper_name: string | null;
     paper_variant: string | null;
     predicted_score: number | null;
     section_percentiles: unknown;
-    score: unknown;
   }> = [];
 
   for (let from = 0; ; from += pageSize) {
@@ -153,14 +93,19 @@ async function fetchAllEndedSessions(
     const { data, error } = await service
       .from("paper_sessions")
       .select(
-        "paper_name, paper_variant, predicted_score, section_percentiles, score",
+        "user_id, paper_name, paper_variant, predicted_score, section_percentiles",
       )
       .not("ended_at", "is", null)
+      .gte("ended_at", DATA_SINCE_ISO)
       .range(from, to);
 
     if (error) throw new Error(error.message);
     if (!data || data.length === 0) break;
-    rows.push(...data);
+
+    for (const row of data) {
+      if (row.user_id && excludedUserIds.has(row.user_id)) continue;
+      rows.push(row);
+    }
     if (data.length < pageSize) break;
   }
 
@@ -168,13 +113,15 @@ async function fetchAllEndedSessions(
 }
 
 /**
- * Public aggregate: average doer score per exam+paper_variant (and per exam year).
- * Individual section sittings count via section_percentiles or score accuracy.
+ * Public aggregate: average ESAT (scaled) score per exam+paper_variant
+ * and per exam year. Section sittings count via section_percentiles.
+ * Excludes admins and sittings before 01/09/2026.
  */
 export async function GET() {
   try {
     const service = createTesterServiceClient();
-    const data = await fetchAllEndedSessions(service);
+    const excludedUserIds = await fetchExcludedUserIds(service);
+    const data = await fetchEligibleSessions(service, excludedUserIds);
 
     const byVariant = new Map<string, Bucket>();
     const byYearExam = new Map<string, Bucket>();
@@ -186,52 +133,45 @@ export async function GET() {
         typeof row.paper_name === "string" ? row.paper_name.trim() : "";
       if (!variant || !paperName) continue;
 
-      const metric = metricFromSession(row);
-      if (!metric) continue;
+      const score = esatScoreFromSession(row);
+      if (score == null) continue;
 
       const key = averageKey(paperName, variant);
-      const variantBucket = byVariant.get(key) ?? emptyBucket();
-      addMetric(variantBucket, metric);
+      const variantBucket = byVariant.get(key) ?? { total: 0, count: 0 };
+      variantBucket.total += score;
+      variantBucket.count += 1;
       byVariant.set(key, variantBucket);
 
       const year = parseVariantYear(variant);
       if (year) {
         const yearKey = `${paperName}:${year}`;
-        const yearBucket = byYearExam.get(yearKey) ?? emptyBucket();
-        addMetric(yearBucket, metric);
+        const yearBucket = byYearExam.get(yearKey) ?? { total: 0, count: 0 };
+        yearBucket.total += score;
+        yearBucket.count += 1;
         byYearExam.set(yearKey, yearBucket);
       }
     }
 
     const averages: Record<string, number> = {};
     const counts: Record<string, number> = {};
-    const units: Record<string, "scaled" | "percent"> = {};
     for (const [key, bucket] of byVariant) {
-      const finalized = finalizeBucket(bucket);
-      if (!finalized) continue;
-      averages[key] = finalized.average;
-      counts[key] = finalized.count;
-      units[key] = finalized.unit;
+      averages[key] = Math.round((bucket.total / bucket.count) * 10) / 10;
+      counts[key] = bucket.count;
     }
 
     const yearAverages: Record<string, number> = {};
     const yearCounts: Record<string, number> = {};
-    const yearUnits: Record<string, "scaled" | "percent"> = {};
     for (const [key, bucket] of byYearExam) {
-      const finalized = finalizeBucket(bucket);
-      if (!finalized) continue;
-      yearAverages[key] = finalized.average;
-      yearCounts[key] = finalized.count;
-      yearUnits[key] = finalized.unit;
+      yearAverages[key] = Math.round((bucket.total / bucket.count) * 10) / 10;
+      yearCounts[key] = bucket.count;
     }
 
     return NextResponse.json({
       averages,
       counts,
-      units,
       yearAverages,
       yearCounts,
-      yearUnits,
+      since: DATA_SINCE_ISO,
     });
   } catch (err) {
     const message =
