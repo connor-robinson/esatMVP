@@ -104,6 +104,18 @@ export function calculateScorePercentage(correct: number, total: number): number
 /**
  * Convert database PaperSessionRow to PaperSession format
  */
+function coerceOptionalNumber(value: unknown): number | null | undefined {
+  if (value == null) return undefined;
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : undefined;
+  }
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : undefined;
+  }
+  return undefined;
+}
+
 export function convertSessionRow(row: PaperSessionRow): PaperSession {
   const score = row.score as { correct: number; total: number } | null;
   const answers = (row.answers as any[]) || [];
@@ -112,6 +124,23 @@ export function convertSessionRow(row: PaperSessionRow): PaperSession {
   const guessedFlags = (row.guessed_flags as boolean[]) || [];
   const mistakeTags = (row.mistake_tags as MistakeTag[]) || [];
   const sectionPercentiles = row.section_percentiles as Record<string, { percentile: number | null; score: number | null; table: string | null; label: string }> | null;
+
+  const normalizedSections = sectionPercentiles
+    ? Object.fromEntries(
+        Object.entries(sectionPercentiles).map(([key, entry]) => {
+          const scoreNum = coerceOptionalNumber(entry?.score);
+          const percentileNum = coerceOptionalNumber(entry?.percentile);
+          return [
+            key,
+            {
+              ...entry,
+              score: scoreNum === undefined ? null : scoreNum,
+              percentile: percentileNum === undefined ? null : percentileNum,
+            },
+          ];
+        }),
+      )
+    : undefined;
 
   return {
     id: row.id,
@@ -138,8 +167,8 @@ export function convertSessionRow(row: PaperSessionRow): PaperSession {
     guessedFlags,
     mistakeTags,
     score: score || undefined,
-    predictedScore: row.predicted_score ?? undefined,
-    sectionPercentiles: sectionPercentiles || undefined,
+    predictedScore: coerceOptionalNumber(row.predicted_score) ?? undefined,
+    sectionPercentiles: normalizedSections,
     notes: row.notes || undefined,
     createdAt: row.created_at,
     updatedAt: row.updated_at,

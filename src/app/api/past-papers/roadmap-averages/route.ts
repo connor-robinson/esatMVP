@@ -48,16 +48,21 @@ function isLocalhostRequest(request: Request): boolean {
 /**
  * Prefer stored scaled ESAT score; else mean of section_percentiles scores.
  */
+function coerceEsatValue(value: unknown): number | null {
+  if (typeof value === "number" && inEsatRange(value)) return value;
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number(value);
+    if (inEsatRange(parsed)) return parsed;
+  }
+  return null;
+}
+
 function esatScoreFromStored(row: {
-  predicted_score?: number | null;
+  predicted_score?: number | string | null;
   section_percentiles?: unknown;
 }): number | null {
-  if (
-    typeof row.predicted_score === "number" &&
-    inEsatRange(row.predicted_score)
-  ) {
-    return row.predicted_score;
-  }
+  const overall = coerceEsatValue(row.predicted_score);
+  if (overall != null) return overall;
 
   const percentiles = row.section_percentiles;
   if (!percentiles || typeof percentiles !== "object") return null;
@@ -66,9 +71,8 @@ function esatScoreFromStored(row: {
   for (const value of Object.values(
     percentiles as Record<string, SectionPercentile>,
   )) {
-    if (value && typeof value.score === "number" && inEsatRange(value.score)) {
-      sectionScores.push(value.score);
-    }
+    const score = coerceEsatValue(value?.score);
+    if (score != null) sectionScores.push(score);
   }
   return mean(sectionScores);
 }

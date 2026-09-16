@@ -1,5 +1,5 @@
 /**
- * Best predicted ESAT / paper score per roadmap stage from completed sessions.
+ * Latest predicted ESAT / paper score per roadmap stage from completed sessions.
  */
 
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
@@ -7,7 +7,7 @@ import type { RoadmapStage } from "@/lib/papers/roadmapConfig";
 import type { PaperSession } from "@/types/papers";
 
 export type RoadmapStageScore = {
-  /** Best predicted / scaled score for this stage, if any session recorded one. */
+  /** Latest predicted / scaled ESAT score for this stage, if any. */
   predictedScore: number | null;
   /** Fallback accuracy % when no predicted score exists. */
   accuracyPercent: number | null;
@@ -40,14 +40,28 @@ function stageVariants(stage: RoadmapStage): Set<string> {
   );
 }
 
+/** Coerce DB / JSON values (number or numeric string) onto the 1.0–9.0 scale. */
+export function coerceEsatScaledScore(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    if (value < ESAT_SCORE_MIN || value > ESAT_SCORE_MAX) return null;
+    return value;
+  }
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number(value);
+    if (
+      Number.isFinite(parsed) &&
+      parsed >= ESAT_SCORE_MIN &&
+      parsed <= ESAT_SCORE_MAX
+    ) {
+      return parsed;
+    }
+  }
+  return null;
+}
+
 /** True only for official UAT-UK / ESAT-style scaled scores (1.0–9.0). */
 export function isEsatScaledScore(value: unknown): value is number {
-  return (
-    typeof value === "number" &&
-    Number.isFinite(value) &&
-    value >= ESAT_SCORE_MIN &&
-    value <= ESAT_SCORE_MAX
-  );
+  return coerceEsatScaledScore(value) != null;
 }
 
 function clampEsatScore(value: number): number {
@@ -90,7 +104,45 @@ function sessionMatchesStage(
   );
 }
 
-/** Map stage id → best ESAT scaled score (1.0–9.0 only; no accuracy %). */
+/**
+ * Prefer overall predicted ESAT score; else the latest section scaled score
+ * from `sectionPercentiles` (mark page saves both after conversion).
+ */
+export function esatScoreFromSession(session: PaperSession): number | null {
+  const overall = coerceEsatScaledScore(session.predictedScore);
+  if (overall != null) return overall;
+
+  const sections = session.sectionPercentiles;
+  if (!sections || typeof sections !== "object") return null;
+
+  let latest: number | null = null;
+  for (const [key, entry] of Object.entries(sections)) {
+    if (key.toUpperCase() === "SECTION") continue;
+    const score = coerceEsatScaledScore(entry?.score);
+    if (score != null) latest = score;
+  }
+  return latest;
+}
+
+function sessionRecency(session: PaperSession): number {
+  if (typeof session.endedAt === "number" && Number.isFinite(session.endedAt)) {
+    return session.endedAt;
+  }
+  if (session.updatedAt) {
+    const t = Date.parse(session.updatedAt);
+    if (Number.isFinite(t)) return t;
+  }
+  if (session.createdAt) {
+    const t = Date.parse(session.createdAt);
+    if (Number.isFinite(t)) return t;
+  }
+  return session.startedAt || 0;
+}
+
+/**
+ * Map stage id → latest ESAT scaled score from completed sessions
+ * (overall predicted, else latest section score).
+ */
 export function buildRoadmapStageScores(
   stages: RoadmapStage[],
   sessions: PaperSession[],
@@ -99,22 +151,21 @@ export function buildRoadmapStageScores(
 
   for (const stage of stages) {
     const variants = stageVariants(stage);
-    const matched = sessions.filter((session) =>
-      sessionMatchesStage(session, stage, variants),
-    );
+    const matched = sessions
+      .filter((session) => sessionMatchesStage(session, stage, variants))
+      .sort((a, b) => sessionRecency(b) - sessionRecency(a));
 
-    let bestPredicted: number | null = null;
-
+    let latestScore: number | null = null;
     for (const session of matched) {
-      if (!isEsatScaledScore(session.predictedScore)) continue;
-      bestPredicted =
-        bestPredicted == null
-          ? session.predictedScore
-          : Math.max(bestPredicted, session.predictedScore);
+      const score = esatScoreFromSession(session);
+      if (score != null) {
+        latestScore = score;
+        break;
+      }
     }
 
     result.set(stage.id, {
-      predictedScore: bestPredicted,
+      predictedScore: latestScore,
       accuracyPercent: null,
     });
   }
@@ -125,9 +176,8 @@ export function buildRoadmapStageScores(
 /** Format Your Score as an ESAT scaled value only (never accuracy %). */
 export function formatRoadmapScore(score: RoadmapStageScore | undefined): string {
   if (!score) return "-";
-  if (isEsatScaledScore(score.predictedScore)) {
-    return clampEsatScore(score.predictedScore).toFixed(1);
-  }
+  const value = coerceEsatScaledScore(score.predictedScore);
+  if (value != null) return clampEsatScore(value).toFixed(1);
   return "-";
 }
 
@@ -198,9 +248,9 @@ export function averageScoreForStage(
   for (const key of keys) {
     if (seen.has(key)) continue;
     seen.add(key);
-    const avg = maps.averages[key];
+    const avg = coerceEsatScaledScore(maps.averages[key]);
     // Reject percentages / raw marks that slipped through (must be 1–9).
-    if (!isEsatScaledScore(avg)) continue;
+    if (avg == null) continue;
     const n = maps.counts?.[key] ?? 1;
     if (!Number.isFinite(n) || n <= 0) continue;
     sum += avg * n;
@@ -214,8 +264,8 @@ export function averageScoreForStage(
       `${stage.examName}:${stage.year}`,
     ];
     for (const key of yearKeys) {
-      const avg = maps.yearAverages?.[key];
-      if (!isEsatScaledScore(avg)) continue;
+      const avg = coerceEsatScaledScore(maps.yearAverages?.[key]);
+      if (avg == null) continue;
       const n = maps.yearCounts?.[key] ?? 1;
       if (!Number.isFinite(n) || n <= 0) continue;
       sum += avg * n;
@@ -239,11 +289,13 @@ export function formatNumericScore(
 ): string {
   if (value == null) return inventedEsatAverage("fallback").toFixed(1);
   if (typeof value === "object") {
-    if (!isEsatScaledScore(value.value)) {
+    const coerced = coerceEsatScaledScore(value.value);
+    if (coerced == null) {
       return inventedEsatAverage("fallback").toFixed(1);
     }
-    return clampEsatScore(value.value).toFixed(1);
+    return clampEsatScore(coerced).toFixed(1);
   }
-  if (!isEsatScaledScore(value)) return inventedEsatAverage("fallback").toFixed(1);
-  return clampEsatScore(value).toFixed(1);
+  const coerced = coerceEsatScaledScore(value);
+  if (coerced == null) return inventedEsatAverage("fallback").toFixed(1);
+  return clampEsatScore(coerced).toFixed(1);
 }
