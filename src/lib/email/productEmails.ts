@@ -1,8 +1,8 @@
 import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { PRODUCTION_SITE_URL } from "@/lib/seo/config";
 import { sendResendEmail } from "@/lib/email/resend";
+import { buildTrackedProductEmailBody } from "@/lib/email/tracking";
 
 export type ProductEmailRecipient = {
   id: string;
@@ -84,16 +84,6 @@ export async function listProductEmailRecipients(
     }));
 }
 
-function buildProductEmailBody(body: string): string {
-  return [
-    body.trim(),
-    "",
-    "---",
-    "You're receiving this because you opted in to Tips and Tricks / product emails on ESAT Camp.",
-    `Manage preferences: ${PRODUCTION_SITE_URL}/profile`,
-  ].join("\n");
-}
-
 export async function sendProductEmailCampaign(params: {
   service: SupabaseClient;
   createdBy: string;
@@ -150,12 +140,38 @@ export async function sendProductEmailCampaign(params: {
     };
   }
 
-  const text = buildProductEmailBody(body);
+  const { data: campaignRow, error: campaignError } = await params.service
+    .from("product_email_campaigns")
+    .insert({
+      subject,
+      body,
+      created_by: params.createdBy,
+      recipient_count: recipients.length,
+      sent_count: 0,
+      failed_count: 0,
+      skipped_count: 0,
+      status: "failed",
+    })
+    .select("id")
+    .maybeSingle();
+
+  if (campaignError || !campaignRow?.id) {
+    throw new Error(
+      campaignError?.message || "Failed to create email campaign",
+    );
+  }
+
+  const campaignId = String(campaignRow.id);
   let sentCount = 0;
   let failedCount = 0;
   const errors: string[] = [];
 
   for (const recipient of recipients) {
+    const text = buildTrackedProductEmailBody({
+      body,
+      campaignId,
+      recipientId: recipient.id,
+    });
     const result = await sendResendEmail({
       to: recipient.email,
       subject,
@@ -183,20 +199,14 @@ export async function sendProductEmailCampaign(params: {
         ? "partial"
         : "completed";
 
-  const { data: inserted } = await params.service
+  await params.service
     .from("product_email_campaigns")
-    .insert({
-      subject,
-      body,
-      created_by: params.createdBy,
-      recipient_count: recipients.length,
+    .update({
       sent_count: sentCount,
       failed_count: failedCount,
-      skipped_count: 0,
       status,
     })
-    .select("id")
-    .maybeSingle();
+    .eq("id", campaignId);
 
   return {
     status,
@@ -204,7 +214,7 @@ export async function sendProductEmailCampaign(params: {
     sentCount,
     failedCount,
     skippedCount: 0,
-    campaignId: (inserted?.id as string | undefined) ?? null,
+    campaignId,
     errors,
   };
 }

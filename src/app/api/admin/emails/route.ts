@@ -5,6 +5,10 @@ import {
   listProductEmailRecipients,
   sendProductEmailCampaign,
 } from "@/lib/email/productEmails";
+import {
+  getCampaignEngagementByIds,
+  getProductEmailEngagementStats,
+} from "@/lib/email/tracking";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -19,7 +23,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const [stats, recipients, campaignsRes] = await Promise.all([
+    const [stats, recipients, campaignsRes, engagement] = await Promise.all([
       getProductEmailConsentStats(admin.service),
       listProductEmailRecipients(admin.service, 300),
       admin.service
@@ -29,12 +33,31 @@ export async function GET(request: NextRequest) {
         )
         .order("created_at", { ascending: false })
         .limit(20),
+      getProductEmailEngagementStats(admin.service),
     ]);
+
+    const campaigns = campaignsRes.data ?? [];
+    const byCampaign = await getCampaignEngagementByIds(
+      admin.service,
+      campaigns.map((c) => String(c.id)),
+    );
+
+    const campaignsWithEngagement = campaigns.map((c) => {
+      const id = String(c.id);
+      const e = byCampaign[id];
+      return {
+        ...c,
+        click_count: e?.clickCount ?? 0,
+        unique_clickers: e?.uniqueClickers ?? 0,
+        unsubscribe_count: e?.unsubscribeCount ?? 0,
+      };
+    });
 
     return NextResponse.json({
       stats,
+      engagement,
       recipients,
-      campaigns: campaignsRes.data ?? [],
+      campaigns: campaignsWithEngagement,
       configured: Boolean(process.env.RESEND_API_KEY?.trim()),
     });
   } catch (err) {

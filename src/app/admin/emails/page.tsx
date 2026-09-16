@@ -12,6 +12,14 @@ type Stats = {
   totalProfiles: number;
 };
 
+type Engagement = {
+  emailsSent: number;
+  campaignsSent: number;
+  clickCount: number;
+  uniqueClickers: number;
+  unsubscribeCount: number;
+};
+
 type Recipient = {
   id: string;
   email: string;
@@ -27,6 +35,9 @@ type Campaign = {
   failed_count: number;
   status: string;
   created_at: string;
+  click_count: number;
+  unique_clickers: number;
+  unsubscribe_count: number;
 };
 
 function Stat({ label, value }: { label: string; value: string | number }) {
@@ -43,6 +54,7 @@ export default function AdminEmailsPage() {
   const [loading, setLoading] = useState(true);
   const [configured, setConfigured] = useState(false);
   const [stats, setStats] = useState<Stats | null>(null);
+  const [engagement, setEngagement] = useState<Engagement | null>(null);
   const [recipients, setRecipients] = useState<Recipient[]>([]);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [subject, setSubject] = useState("");
@@ -72,8 +84,9 @@ export default function AdminEmailsPage() {
       return;
     }
     setStats(json.stats ?? null);
+    setEngagement((json.engagement ?? null) as Engagement | null);
     setRecipients(json.recipients ?? []);
-    setCampaigns(json.campaigns ?? []);
+    setCampaigns((json.campaigns ?? []) as Campaign[]);
     setConfigured(Boolean(json.configured));
     setLoading(false);
   }, []);
@@ -193,6 +206,23 @@ export default function AdminEmailsPage() {
             <Stat label="Profiles total" value={stats?.totalProfiles ?? 0} />
           </div>
 
+          <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            <Stat label="Emails sent" value={engagement?.emailsSent ?? 0} />
+            <Stat
+              label="Campaigns sent"
+              value={engagement?.campaignsSent ?? 0}
+            />
+            <Stat label="Link clicks" value={engagement?.clickCount ?? 0} />
+            <Stat
+              label="People who clicked"
+              value={engagement?.uniqueClickers ?? 0}
+            />
+            <Stat
+              label="Unsubscribed via email"
+              value={engagement?.unsubscribeCount ?? 0}
+            />
+          </div>
+
           <div className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
             <section className="rounded-organic-xl bg-surface-elevated px-5 py-5">
               <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-text-muted">
@@ -245,7 +275,8 @@ export default function AdminEmailsPage() {
               </label>
 
               <p className="mt-2 text-xs text-text-subtle">
-                Footer auto-adds an opt-in note and link to /profile.
+                Footer auto-adds manage-preferences and unsubscribe links.
+                Links in the body are tracked for admin stats.
               </p>
 
               <label className="mt-4 flex items-start gap-2 text-sm text-text-muted">
@@ -368,13 +399,16 @@ export default function AdminEmailsPage() {
           <section className="mt-8">
             <h2 className="text-sm font-semibold text-text">Recent campaigns</h2>
             <div className="mt-3 overflow-x-auto rounded-organic-xl bg-surface-elevated">
-              <table className="w-full min-w-[640px] text-left text-sm">
+              <table className="w-full min-w-[760px] text-left text-sm">
                 <thead className="text-xs uppercase tracking-wide text-text-muted">
                   <tr>
                     <th className="px-4 py-3 font-medium">When</th>
                     <th className="px-4 py-3 font-medium">Subject</th>
                     <th className="px-4 py-3 font-medium">Status</th>
                     <th className="px-4 py-3 font-medium">Sent</th>
+                    <th className="px-4 py-3 font-medium">Clicks</th>
+                    <th className="px-4 py-3 font-medium">People</th>
+                    <th className="px-4 py-3 font-medium">Unsub</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -389,12 +423,21 @@ export default function AdminEmailsPage() {
                         {c.sent_count}/{c.recipient_count}
                         {c.failed_count ? ` · ${c.failed_count} fail` : ""}
                       </td>
+                      <td className="px-4 py-2.5 tabular-nums text-text-muted">
+                        {c.click_count ?? 0}
+                      </td>
+                      <td className="px-4 py-2.5 tabular-nums text-text-muted">
+                        {c.unique_clickers ?? 0}
+                      </td>
+                      <td className="px-4 py-2.5 tabular-nums text-text-muted">
+                        {c.unsubscribe_count ?? 0}
+                      </td>
                     </tr>
                   ))}
                   {campaigns.length === 0 ? (
                     <tr>
                       <td
-                        colSpan={4}
+                        colSpan={7}
                         className="px-4 py-6 text-sm text-text-muted"
                       >
                         No campaigns yet.
