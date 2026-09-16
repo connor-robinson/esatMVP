@@ -19,6 +19,7 @@
     "generate:fermi-month": "npx tsx scripts/generate-fermi-month.ts",
     "import:esat-m1-hook": "npx tsx scripts/import-esat-hook-sets.ts --only=math1",
     "import:esat-hook-sets": "npx tsx scripts/import-esat-hook-sets.ts",
+    "label:mock-difficulty": "npx tsx scripts/label-mock-difficulty.ts",
     "build:check": "npm run type-check && npm run lint && npm run build",
     "postinstall": "patch-package",
     "prepare": "husky"
