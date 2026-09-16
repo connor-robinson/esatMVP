@@ -259,25 +259,47 @@ def run_backfill_one_by_one(
 
         stats["attempted"] += 1
         print(f"[backfill:one] {qid} ({row.get('subjects')})…", flush=True)
-        try:
-            audit = run_auto_image_diagram_for_row(
-                {
-                    **row,
-                    "quality_gate_graph_mode": row.get("quality_gate_graph_mode")
-                    or "missing_expected",
-                    "quality_gate_graph_candidate": True,
-                },
-                dry_run=dry_run,
-                max_retries=1,
-                allow_high_precision_image=True,
-                replace_existing_diagram=False,
-                route_graphs_to_svg=False,
-                trace=lambda m: print(f"  {m}", flush=True),
-                supabase_client=None if dry_run else client,
+        audit: Dict[str, Any] = {"final_status": "failed", "reason": "no_attempt"}
+        for attempt in range(1, 4):
+            try:
+                audit = run_auto_image_diagram_for_row(
+                    {
+                        **row,
+                        "quality_gate_graph_mode": row.get("quality_gate_graph_mode")
+                        or "missing_expected",
+                        "quality_gate_graph_candidate": True,
+                    },
+                    dry_run=dry_run,
+                    max_retries=1,
+                    allow_high_precision_image=True,
+                    replace_existing_diagram=False,
+                    # Prefer SVG for graphs; image path falls back to SVG if Imagen is unavailable.
+                    route_graphs_to_svg=True,
+                    trace=lambda m: print(f"  {m}", flush=True),
+                    supabase_client=None if dry_run else client,
+                )
+            except Exception as ex:
+                audit = {"final_status": "failed", "reason": f"row_exception: {ex}"}
+                print(f"[backfill:one] FAIL {qid} (attempt {attempt}/3): {ex}", flush=True)
+
+            status_try = str(audit.get("final_status") or "failed")
+            reason_try = str(audit.get("reason") or "")
+            transient = status_try == "failed" and (
+                "disconnected" in reason_try.lower()
+                or "timeout" in reason_try.lower()
+                or "429" in reason_try
+                or "unavailable" in reason_try.lower()
+                or "row_exception" in reason_try.lower()
             )
-        except Exception as ex:
-            audit = {"final_status": "failed", "reason": f"row_exception: {ex}"}
-            print(f"[backfill:one] FAIL {qid}: {ex}", flush=True)
+            if status_try in ("merged", "skipped", "dry_run_pass") or not transient:
+                break
+            wait_s = 8.0 * attempt
+            print(
+                f"[backfill:one] retry {qid} after transient failure "
+                f"({reason_try[:120]}) sleep={wait_s:.0f}s",
+                flush=True,
+            )
+            time.sleep(wait_s)
 
         status = str(audit.get("final_status") or "failed")
         stats["by_id"][qid] = {

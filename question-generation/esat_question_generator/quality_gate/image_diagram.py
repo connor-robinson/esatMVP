@@ -726,14 +726,29 @@ def run_auto_image_diagram_for_row(
     image_path = tmp_dir / "diagram.png"
 
     try:
-        image_path, used_model, _gen_meta = generate_image_file(
-            gen_prompt,
-            image_model=im,
-            fallback_model=fb,
-            aspect_ratio=aspect,
-            out_path=image_path,
-            trace=trace,
-        )
+        try:
+            image_path, used_model, _gen_meta = generate_image_file(
+                gen_prompt,
+                image_model=im,
+                fallback_model=fb,
+                aspect_ratio=aspect,
+                out_path=image_path,
+                trace=trace,
+            )
+        except Exception as imagen_ex:
+            # Vertex project may lack Imagen access; fall back to inline SVG designer.
+            _t(f"[image] imagen unavailable ({imagen_ex}); falling back to SVG for {qid}")
+            svg_audit = run_svg_graph_for_row(
+                row,
+                brief,
+                diagram_model=svg_diagram_model,
+                dry_run=dry_run,
+                replace_existing_diagram=replace_existing_diagram,
+                trace=trace,
+            )
+            svg_audit["brief_payload"] = brief
+            svg_audit["imagen_fallback_error"] = str(imagen_ex)[:500]
+            return svg_audit
         audit["image_model_used"] = used_model
 
         verification, _raw_v = verify_image(
