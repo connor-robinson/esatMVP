@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import time
 import traceback
 from datetime import datetime, timezone
 from pathlib import Path
@@ -213,15 +214,30 @@ def attach_source_options(questions: list[EvalQuestion]) -> dict[int, dict[str, 
     return by_id
 
 
-def already_generated_ids(store: ReviewStore) -> set[int]:
+def already_generated_ids(
+    store: ReviewStore,
+    *,
+    exclude_statuses: set[str] | frozenset[str] | None = None,
+) -> set[int]:
+    """Source IDs that still block reuse.
+
+    By default rejected review rows do not block (they should be regenerated).
+    """
+    exclude = {str(s).strip().lower() for s in (exclude_statuses or {"rejected"})}
     found: set[int] = set()
     for item in store.list_items(status_filter="all", latest_only=True, pipeline=PIPELINE):
+        status = str(item.get("question_status") or "").strip().lower()
+        if status in exclude:
+            continue
         qid = str(item.get("question_id") or "")
         if qid.startswith("nsaa-"):
+            tail = qid.split("-", 1)[1]
+            # nsaa-123 or nsaa-123-far / nsaa-123-far2
+            head = tail.split("-", 1)[0]
             try:
-                found.add(int(qid.split("-", 1)[1]))
+                found.add(int(head))
             except ValueError:
-                continue
+                pass
         source = {}
         try:
             source = json.loads(item.get("source_json") or "{}")
@@ -234,6 +250,37 @@ def already_generated_ids(store: ReviewStore) -> set[int]:
             except (TypeError, ValueError):
                 pass
     return found
+
+
+def source_id_from_review_item(item: dict[str, Any]) -> int | None:
+    """Best-effort NSAA source id from a review row."""
+    try:
+        source = json.loads(item.get("source_json") or "{}")
+    except json.JSONDecodeError:
+        source = {}
+    if isinstance(source, dict) and source.get("source_question_id") is not None:
+        try:
+            return int(source.get("source_question_id"))
+        except (TypeError, ValueError):
+            pass
+    qid = str(item.get("question_id") or "")
+    if qid.startswith("nsaa-"):
+        head = qid.split("-", 1)[1].split("-", 1)[0]
+        try:
+            return int(head)
+        except ValueError:
+            return None
+    return None
+
+
+def next_far_question_id(store: ReviewStore, source_id: int) -> str:
+    """Allocate nsaa-{id}-far, then -far2, -far3, ... avoiding collisions."""
+    base = nsaa_question_id(source_id)
+    for n in range(0, 50):
+        candidate = f"{base}-far" if n == 0 else f"{base}-far{n + 1}"
+        if store.get_item(candidate) is None:
+            return candidate
+    return f"{base}-far{int(time.time())}"
 
 
 def _idea_plan_for_diagram(design: NsaaQuestionDesign) -> dict[str, Any]:
@@ -315,8 +362,9 @@ def generate_one(
     allowed_visual_types: set[str] | None = None,
     review_label: str | None = None,
     diagram_suitability_retry: bool = False,
+    review_question_id: str | None = None,
 ) -> dict[str, Any]:
-    qid = nsaa_question_id(eq.question_id)
+    qid = (review_question_id or "").strip() or nsaa_question_id(eq.question_id)
     out_dir = ARTIFACTS / qid
     out_dir.mkdir(parents=True, exist_ok=True)
     source_png = _save_source_image(eq, out_dir)
@@ -370,10 +418,15 @@ def generate_one(
                 f"Your previous draft used visual_type={visual_type or 'none'} "
                 "(no rendered diagram). Decide honestly:\n"
                 "A) If this source CAN support a genuine rendered-diagram MCQ "
-                "(physics: graph; mathematics: geometry or graph), rewrite the full item "
-                "with that diagram visual_type, a clear visual_brief, and graph_preset when needed.\n"
+                "(physics: geometry setup sketch OR graph; mathematics: geometry or graph), "
+                "rewrite the full item with that diagram visual_type, a clear visual_brief, "
+                "and graph_preset when it is a graph.\n"
                 "B) If it is NOT suitable for an honest diagram, set skip=true and explain why "
                 "in skip_reason.\n"
+                "Physics: match the source. Block/pulley/forces/rays → geometry. "
+                "Circuits → geometry schematic (not skip). "
+                "Plotted data (T-t, F-x, v-t) → graph. "
+                "Do not invent a sensor/time graph just to avoid drawing a setup. "
                 "Do not invent a forced or fake diagram. Do not return none/table if option A is possible."
             )
             print(
@@ -426,6 +479,7 @@ def generate_one(
 
     diagram_required = visual_type in {
         "graph",
+        "geometry",
         "chem_structure",
         "energy_profile",
         "bio_diagram",
@@ -474,11 +528,35 @@ def generate_one(
             parent_attempt_id=parent_attempt_id,
         )
         auto_flags = result.auto_flags
+        from visual_engine.pedigree_check import check_pedigree_render_consistency
+
+        ped_check = check_pedigree_render_consistency(
+            design.idea_plan.get("pedigree") or {},
+            rendered_object=(spec.get("objects") or [{}])[0],
+        )
+        (out_dir / "pedigree_check.json").write_text(
+            json.dumps(ped_check, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        if ped_check.get("status") != "PASS":
+            auto_flags = list(auto_flags) + [
+                {
+                    "code": "pedigree_schema_mismatch",
+                    "message": "; ".join(ped_check.get("errors") or ["pedigree check failed"]),
+                    "severity": "reject",
+                }
+            ]
+            result.auto_flags = auto_flags
+        # Persist normalized schema on the idea plan for review/regen.
+        if isinstance(spec.get("pedigree_schema"), dict):
+            design.idea_plan["pedigree"] = spec["pedigree_schema"]
     else:
-        # graph, energy_profile, bio_diagram -> diagram designer + matplotlib
+        # graph, geometry, energy_profile, bio_diagram -> diagram designer + matplotlib
         if visual_type == "energy_profile":
             design.idea_plan["diagram_type"] = "graph"
             design.idea_plan.setdefault("graph_preset", "science_xy")
+        if visual_type == "geometry":
+            design.idea_plan["diagram_type"] = "geometry"
         idea_plan = _idea_plan_for_diagram(design)
         idea_plan["original_stem"] = eq.reference_question
         d_inp = DiagramDesignerInput(
@@ -652,11 +730,30 @@ def _mix_hint(
             )
         if subject == "physics":
             return (
-                "Prefer a rendered physics graph when the source honestly supports one. "
-                "If suitable: set idea_plan.visual_type to graph, needs_diagram true, graph_preset "
-                "(science_xy / cartesian / signed_y / multi_series as appropriate), and visual_brief. "
-                "If not suitable for an honest graph, set skip=true and explain why. "
-                "Do not use none or table for this slot, and do not invent a forced fake diagram."
+                "Prefer a rendered physics figure when the source honestly supports one. "
+                "Match the source form: "
+                "block/pulley/string/force/ray setups → visual_type geometry "
+                "(diagram_type geometry, visual_brief describing the sketch); "
+                "questions about reading a plot → visual_type graph with graph_preset "
+                "(science_xy / cartesian / signed_y / multi_series) and visual_brief. "
+                "Do NOT invent a force-sensor / T-t graph merely because a setup diagram is harder. "
+                "If neither geometry nor graph is suitable, set skip=true and explain why. "
+                "Do not use none or table for this slot."
+            )
+        if subject == "biology":
+            return (
+                "Prefer a rendered biology diagram when suitable: graph, bio_diagram, or pedigree. "
+                "If suitable, set visual_type accordingly with visual_brief or pedigree semantics. "
+                "If not suitable for an honest diagram, set skip=true and explain why. "
+                "Do not use none or table for this slot."
+            )
+        if subject == "chemistry":
+            return (
+                "Prefer a rendered chemistry diagram when suitable: chem_structure (SMILES only), "
+                "graph, or energy_profile. "
+                "If suitable, set visual_type accordingly. "
+                "If not suitable for an honest diagram, set skip=true and explain why. "
+                "Do not use none or table for this slot. Never use apparatus."
             )
         return (
             "This batch is for reviewing rendered diagrams only. "
@@ -699,9 +796,12 @@ def _mix_hint(
         if target >= 0.75:
             prefer = (
                 "The source likely supports a figure. Strongly prefer a rendered diagram "
-                "(graph/geometry for math, graph for physics). "
+                "(graph/geometry for math; geometry setup sketches or graphs for physics). "
                 f"Aim for roughly {diagram_parts} diagram questions for every {text_parts} plain-text/table. "
-                "Do not invent unsupported diagrams (no circuits/apparatus the renderer cannot draw)."
+                "Physics: use geometry for setups and for simple circuit schematics "
+                "(wires/lines, zigzag resistors, parallel-line cells, labelled meter circles). "
+                "Use graph only for plotted data. "
+                "Do not invent unsupported diagrams (no photographic lab kits or 3D casings)."
             )
         else:
             prefer = (
@@ -844,6 +944,9 @@ def regenerate_nsaa_question(
         parent_attempt_id=int(parent_id) if parent_id else None,
         previous_attempt_ids=[int(parent_id)] if parent_id else None,
         attempt=attempt,
+        review_question_id=str(item.get("question_id") or "") or None,
+        require_rendered_visual=True,
+        review_label=str(item.get("subject") or "") or None,
     )
     if rec.get("status") == "skipped":
         raise ValueError(rec.get("skip_reason") or "Designer skipped this source")
@@ -963,16 +1066,39 @@ def run_batch(
                 "If the source cannot support a structural formula, set skip true."
             )
         try:
-            rec = generate_one(
-                eq,
-                store=store,
-                source_options=options_by_id.get(eq.question_id) or {},
-                model=model,
-                mix_hint=(chem_force_hint + " " + _mix_hint(wanted, mix_counts, diagrams_only=diagrams_only)).strip(),
-                require_rendered_visual=diagrams_only,
-                allowed_visual_types=allowed_visual_types,
-                review_label=review_label,
-            )
+            rec = None
+            for attempt in range(6):
+                try:
+                    rec = generate_one(
+                        eq,
+                        store=store,
+                        source_options=options_by_id.get(eq.question_id) or {},
+                        model=model,
+                        mix_hint=(chem_force_hint + " " + _mix_hint(wanted, mix_counts, diagrams_only=diagrams_only)).strip(),
+                        require_rendered_visual=diagrams_only,
+                        allowed_visual_types=allowed_visual_types,
+                        review_label=review_label,
+                    )
+                    break
+                except Exception as exc:
+                    msg = str(exc)
+                    rate_limited = (
+                        "429" in msg
+                        or "RESOURCE_EXHAUSTED" in msg
+                        or "disconnected" in msg.lower()
+                    )
+                    if rate_limited and attempt < 5:
+                        delay = min(180, 30 * (attempt + 1))
+                        print(
+                            f"  rate-limit/disconnect; sleep {delay}s then retry "
+                            f"({attempt + 1}/6): {exc}",
+                            flush=True,
+                        )
+                        time.sleep(delay)
+                        continue
+                    raise
+            if rec is None:
+                continue
         except Exception as exc:
             rec = {
                 "status": "error",
@@ -987,6 +1113,7 @@ def run_batch(
             vtype = str(rec.get("visual_type") or "none")
             mix_counts[vtype] = mix_counts.get(vtype, 0) + 1
             print(f"  {rec.get('variation_mode')} {vtype} -> {rec.get('question_id')}", flush=True)
+            time.sleep(8)
         elif rec.get("status") == "skipped":
             summary["skipped"] += 1
             print(f"  skip: {rec.get('skip_reason')}", flush=True)

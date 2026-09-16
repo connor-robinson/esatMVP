@@ -28,14 +28,30 @@ class MultimodalCallResult:
 
 
 def _load_env() -> None:
-    env_path = Path(__file__).resolve().parents[2] / ".env.local"
-    if env_path.exists():
-        try:
-            from dotenv import load_dotenv
+    """Load Vertex / Supabase env from the nearest ``.env.local``.
 
+    ``llm.py`` lives at ``.../esat_question_generator/visual_engine/llm.py``.
+    Candidates (first existing wins):
+    - repo root (nocalcMVP2_real/.env.local)
+    - esat_question_generator/.env.local
+    - question-generation/.env.local
+    - cwd .env.local
+    """
+    here = Path(__file__).resolve()
+    candidates = [
+        here.parents[3] / ".env.local",  # repo root
+        here.parents[1] / ".env.local",  # esat_question_generator
+        here.parents[2] / ".env.local",  # question-generation
+        Path.cwd() / ".env.local",
+    ]
+    try:
+        from dotenv import load_dotenv
+    except ImportError:
+        return
+    for env_path in candidates:
+        if env_path.is_file():
             load_dotenv(env_path)
-        except ImportError:
-            pass
+            return
 
 
 def make_client() -> genai.Client:
@@ -100,7 +116,7 @@ def call_json_multimodal(
     model: str | None = None,
     thinking_level: str = "high",
     temperature: float = 0.2,
-    max_retries: int = 3,
+    max_retries: int = 8,
 ) -> MultimodalCallResult:
     """Call Gemini with optional image(s) + JSON instructions; return parsed JSON."""
     client = make_client()
@@ -153,7 +169,14 @@ def call_json_multimodal(
                 or "RemoteProtocolError" in type(exc).__name__
             )
             if retryable and attempt < max_retries - 1:
-                time.sleep(2 ** attempt * 5)
+                # Vertex quota dumps need long pauses; cap at 3 minutes.
+                delay = min(180, (2 ** attempt) * 8)
+                print(
+                    f"  llm retryable error ({type(exc).__name__}); "
+                    f"sleeping {delay}s (attempt {attempt + 1}/{max_retries})",
+                    flush=True,
+                )
+                time.sleep(delay)
                 continue
             raise
     raise last_err or RuntimeError("Diagram Designer multimodal call failed")
