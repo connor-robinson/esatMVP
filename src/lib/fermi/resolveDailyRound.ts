@@ -34,9 +34,44 @@ export type DailyRoundResponse =
       questions: FermiQuestion[];
     };
 
+/** In-process cache so /evaluate after /daily does not re-query Supabase every guess. */
+let scheduledDayCache: {
+  dateKey: string;
+  rows: ScheduledBatchRow[];
+  byId: Map<number, ScheduledBatchRow>;
+} | null = null;
+
+function setScheduledDayCache(dateKey: string, rows: ScheduledBatchRow[]) {
+  scheduledDayCache = {
+    dateKey,
+    rows,
+    byId: new Map(rows.map((r) => [r.batch_item_id, r])),
+  };
+}
+
+function rememberRows(rows: ScheduledBatchRow[]) {
+  if (rows.length === 0) return;
+  if (!scheduledDayCache) {
+    const dateKey = rows[0].scheduled_date;
+    setScheduledDayCache(dateKey, rows);
+    return;
+  }
+  for (const row of rows) {
+    scheduledDayCache.byId.set(row.batch_item_id, row);
+  }
+}
+
 async function selectScheduled(
   filter: { dateKey?: string; batchItemId?: number },
 ): Promise<ScheduledBatchRow[]> {
+  if (filter.dateKey && scheduledDayCache?.dateKey === filter.dateKey) {
+    return scheduledDayCache.rows;
+  }
+  if (filter.batchItemId != null) {
+    const cached = scheduledDayCache?.byId.get(filter.batchItemId);
+    if (cached) return [cached];
+  }
+
   const base = supabaseAdmin.from("fermi_scheduled_questions");
   let query = base.select(SCHEDULED_SELECT_FULL);
   if (filter.dateKey) {
@@ -49,7 +84,10 @@ async function selectScheduled(
 
   const { data, error } = await query;
   if (!error) {
-    return (data ?? []) as ScheduledBatchRow[];
+    const rows = (data ?? []) as ScheduledBatchRow[];
+    if (filter.dateKey) setScheduledDayCache(filter.dateKey, rows);
+    else rememberRows(rows);
+    return rows;
   }
 
   let legacy = base.select(SCHEDULED_SELECT_LEGACY);
@@ -62,7 +100,10 @@ async function selectScheduled(
   }
   const second = await legacy;
   if (second.error) return [];
-  return (second.data ?? []) as ScheduledBatchRow[];
+  const rows = (second.data ?? []) as ScheduledBatchRow[];
+  if (filter.dateKey) setScheduledDayCache(filter.dateKey, rows);
+  else rememberRows(rows);
+  return rows;
 }
 
 export async function getScheduledRowsForDate(

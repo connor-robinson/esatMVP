@@ -198,55 +198,86 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
     setError(null);
 
     try {
-      let result: FermiResult;
-
-      if (roundMode === "scheduled") {
-        const res = await fetch("/api/fermi/evaluate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ questionId: current.id, guess }),
-        });
-        if (!res.ok) {
-          setError("Could not score that guess. Try again.");
-          return;
-        }
-        const data = (await res.json()) as {
-          question: FermiQuestion;
-          logErr: number;
-          score: number;
-          verdict: FermiVerdict;
-          guess: number;
-        };
-        result = {
-          question: data.question,
-          guess: data.guess,
-          logErr: data.logErr,
-          score: data.score,
-          verdict: data.verdict,
-        };
-      } else {
+      if (roundMode !== "scheduled") {
         if (current.answer == null) {
           setError("Something went wrong loading this question.");
           return;
         }
         const logErr = logError(guess, current.answer);
-        result = {
-          question: current as FermiQuestion,
-          guess,
-          logErr,
-          score: closenessScore(logErr),
-          verdict: getVerdict(guess, current.answer),
-        };
+        setResults((prev) => [
+          ...prev,
+          {
+            question: current as FermiQuestion,
+            guess,
+            logErr,
+            score: closenessScore(logErr),
+            verdict: getVerdict(guess, current.answer),
+          },
+        ]);
+        setPhase("revealed");
+        return;
       }
 
-      setResults((prev) => [...prev, result]);
+      // Scheduled: flip to reveal immediately while evaluate runs.
+      setResults((prev) => [
+        ...prev,
+        {
+          question: {
+            id: current.id,
+            question: current.question,
+            answer: 1,
+            unit: current.unit,
+            category: (current.category ?? "everyday") as FermiQuestion["category"],
+            note: current.note,
+            didYouKnow: current.didYouKnow,
+            factSourceUrl: current.factSourceUrl,
+            factSourceLabel: current.factSourceLabel,
+          },
+          guess,
+          logErr: 0,
+          score: 0,
+          verdict: { label: "…", detail: "", tone: "ok", stars: 0 },
+          pending: true,
+        },
+      ]);
       setPhase("revealed");
+
+      const res = await fetch("/api/fermi/evaluate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ questionId: current.id, guess }),
+      });
+      if (!res.ok) {
+        setResults((prev) => prev.slice(0, -1));
+        setPhase("playing");
+        setError("Could not score that guess. Try again.");
+        return;
+      }
+      const data = (await res.json()) as {
+        question: FermiQuestion;
+        logErr: number;
+        score: number;
+        verdict: FermiVerdict;
+        guess: number;
+      };
+      setResults((prev) => [
+        ...prev.slice(0, -1),
+        {
+          question: data.question,
+          guess: data.guess,
+          logErr: data.logErr,
+          score: data.score,
+          verdict: data.verdict,
+        },
+      ]);
     } finally {
       setSubmitting(false);
     }
   }, [phase, current, input, completedToday, submitting, roundMode]);
 
   const handleNext = useCallback(() => {
+    if (submitting) return;
+    if (results[results.length - 1]?.pending) return;
     if (index + 1 >= round.length) {
       setCompletedToday(true);
       setPhase("summary");
@@ -256,7 +287,23 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
     setInput("");
     setError(null);
     setPhase("playing");
-  }, [index, round.length]);
+  }, [index, round.length, submitting, results]);
+
+  useEffect(() => {
+    if (phase !== "revealed" || submitting) return;
+    if (results[results.length - 1]?.pending) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Enter" && e.key !== "ArrowRight") return;
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable)) {
+        return;
+      }
+      e.preventDefault();
+      handleNext();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [phase, submitting, handleNext, results]);
 
   const averageScore = useMemo(() => {
     if (results.length === 0) return 0;
@@ -727,21 +774,25 @@ function IconActionButton({
   onClick,
   label,
   tone = "muted",
+  disabled = false,
   children,
 }: {
   onClick: () => void;
   label: string;
   tone?: "muted" | "primary";
+  disabled?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       title={label}
       aria-label={label}
       className={cn(
         "group/btn inline-flex h-11 items-center justify-center gap-0 overflow-hidden rounded-sm px-3 outline-none transition-all duration-150",
+        disabled && "cursor-not-allowed opacity-40",
         tone === "primary"
           ? "bg-secondary text-white hover:brightness-110"
           : "bg-surface text-text-muted hover:bg-surface-mid hover:text-text",
@@ -766,34 +817,51 @@ function ScoreReveal({
   scoreClassName,
   slashClassName,
   ariaLabel,
+  holdMs = 320,
+  holdUntilReady = false,
 }: {
   score: number;
   scoreClassName: string;
   slashClassName: string;
   ariaLabel: string;
+  /** How long to show the dots before revealing (ignored while holdUntilReady). */
+  holdMs?: number;
+  /** Keep loading until parent flips this off (e.g. evaluate still in flight). */
+  holdUntilReady?: boolean;
 }) {
   const [phase, setPhase] = useState<"loading" | "ready">("loading");
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
+    if (holdUntilReady) {
+      setPhase("loading");
+      setTick(0);
+      const tickId = window.setInterval(() => {
+        setTick((t) => (t + 1) % 3);
+      }, 120);
+      return () => window.clearInterval(tickId);
+    }
+
     setPhase("loading");
     setTick(0);
     const tickId = window.setInterval(() => {
       setTick((t) => (t + 1) % 3);
-    }, 140);
+    }, 120);
     const readyId = window.setTimeout(() => {
       window.clearInterval(tickId);
       setPhase("ready");
-    }, 720);
+    }, holdMs);
     return () => {
       window.clearInterval(tickId);
       window.clearTimeout(readyId);
     };
-  }, [score]);
+  }, [score, holdMs, holdUntilReady]);
+
+  const showLoading = holdUntilReady || phase === "loading";
 
   return (
     <p className={cn(scoreClassName, "tabular-nums")} aria-label={ariaLabel} aria-live="polite">
-      {phase === "loading" ? (
+      {showLoading ? (
         <span className="inline-flex items-end gap-1 text-text-muted" aria-hidden>
           {[0, 1, 2].map((i) => (
             <span
@@ -808,9 +876,9 @@ function ScoreReveal({
         </span>
       ) : (
         <motion.span
-          initial={{ opacity: 0, y: 6 }}
+          initial={{ opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
           className="inline-flex items-end"
         >
           {score}
@@ -834,6 +902,7 @@ function RevealedView({
 }) {
   const tone = toneClasses[result.verdict.tone];
   const { question, guess, score, verdict } = result;
+  const pending = Boolean(result.pending);
   const solution =
     question.note?.trim() ||
     `Answer ≈ ${formatFermiNumber(question.answer)}${question.unit ? ` ${question.unit}` : ""}`;
@@ -851,34 +920,34 @@ function RevealedView({
           {question.question}
         </motion.h2>
 
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
-          className="mt-2 flex min-h-0 flex-1 flex-col items-center justify-center text-center"
-        >
+        <div className="mt-2 flex min-h-0 flex-1 flex-col items-center justify-center text-center">
           <ScoreReveal
             score={score}
             scoreClassName={cn(
               "text-5xl font-bold leading-none sm:text-6xl",
-              tone.text,
+              pending ? "text-text-muted" : tone.text,
             )}
             slashClassName="text-2xl font-semibold text-text-muted sm:text-3xl"
-            ariaLabel={`Score ${score} out of 100`}
+            ariaLabel={pending ? "Scoring guess" : `Score ${score} out of 100`}
+            holdMs={280}
+            holdUntilReady={pending}
           />
           <h3
             className={cn(
               "mt-2 text-lg font-bold uppercase tracking-wide sm:text-xl",
-              tone.text,
+              pending ? "text-text-muted" : tone.text,
             )}
           >
-            {verdict.label}
+            {pending ? "Scoring…" : verdict.label}
           </h3>
-        </motion.div>
+        </div>
       </div>
 
       <FermiControlsColumn>
-        <LogScaleBar guess={guess} answer={question.answer} tone={tone.text} />
+        {!pending && (
+          <LogScaleBar guess={guess} answer={question.answer} tone={tone.text} />
+        )}
+        {pending && <div className="h-[4.25rem]" aria-hidden />}
 
         <div className="flex h-16 w-full items-center gap-2 rounded-sm bg-surface-elevated pl-5 pr-2">
           <span
@@ -892,6 +961,7 @@ function RevealedView({
               onClick={() => setShowSolution((v) => !v)}
               label={showSolution ? "Hide solution" : "View our solution"}
               tone="muted"
+              disabled={pending}
             >
               <Eye className="h-5 w-5" strokeWidth={2} />
             </IconActionButton>
@@ -899,6 +969,7 @@ function RevealedView({
               onClick={onNext}
               label={isLastQuestion ? "See results" : "Next question"}
               tone="primary"
+              disabled={pending}
             >
               <ArrowRight className="h-5 w-5" strokeWidth={2.5} />
             </IconActionButton>
@@ -907,10 +978,14 @@ function RevealedView({
 
         <p className="min-h-[1.5rem] text-left text-xl font-medium leading-snug text-text sm:text-2xl">
           <span className="text-text-muted">Answer </span>
-          <span className="font-bold text-primary">
-            {formatFermiAnswerDisplay(question.answer)}
-            {question.unit ? ` ${question.unit}` : ""}
-          </span>
+          {pending ? (
+            <span className="font-bold text-text-muted">…</span>
+          ) : (
+            <span className="font-bold text-primary">
+              {formatFermiAnswerDisplay(question.answer)}
+              {question.unit ? ` ${question.unit}` : ""}
+            </span>
+          )}
         </p>
       </FermiControlsColumn>
 
@@ -1081,6 +1156,7 @@ function SummaryView({
         scoreClassName="text-6xl font-bold leading-none text-secondary"
         slashClassName="mb-1 ml-0.5 text-lg font-semibold text-text-muted"
         ariaLabel={`Average score ${averageScore} out of 100`}
+        holdMs={480}
       />
 
       {bestScore != null && (

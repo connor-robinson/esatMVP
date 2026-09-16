@@ -42,6 +42,8 @@ export interface HydratedFermiResult {
   logErr: number;
   score: number;
   verdict: FermiVerdict;
+  /** True while scheduled evaluate is in flight after optimistic reveal. */
+  pending?: boolean;
 }
 
 export interface HydratedFermiDailyState {
@@ -166,12 +168,16 @@ export function saveFermiDailyState(
       }
     }
 
+    const durable = results.filter((r) => !r.pending);
+    const durablePhase =
+      phase === "revealed" && durable.length < results.length ? "playing" : phase;
+
     const payload: StoredFermiDailyState = {
       dateKey: todayKey,
       index,
-      phase,
+      phase: durablePhase,
       roundMode,
-      results: results.map((r) => ({
+      results: durable.map((r) => ({
         questionId: r.question.id,
         question: r.question.question,
         answer: r.question.answer,
