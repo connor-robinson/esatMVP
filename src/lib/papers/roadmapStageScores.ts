@@ -97,3 +97,29 @@ export function formatRoadmapScore(score: RoadmapStageScore | undefined): string
   }
   return "-";
 }
+
+/** Average predicted score across doers for a stage's paper variants. */
+export function averageScoreForStage(
+  stage: RoadmapStage,
+  averagesByVariant: Record<string, number> | Map<string, number>,
+): number | null {
+  const variants = stageVariants(stage);
+  const values: number[] = [];
+  for (const variant of variants) {
+    const raw =
+      averagesByVariant instanceof Map
+        ? averagesByVariant.get(variant)
+        : averagesByVariant[variant];
+    if (typeof raw === "number" && Number.isFinite(raw)) {
+      values.push(raw);
+    }
+  }
+  if (values.length === 0) return null;
+  const mean = values.reduce((a, b) => a + b, 0) / values.length;
+  return Math.round(mean * 10) / 10;
+}
+
+export function formatNumericScore(value: number | null | undefined): string {
+  if (value == null || !Number.isFinite(value)) return "-";
+  return value.toFixed(1);
+}

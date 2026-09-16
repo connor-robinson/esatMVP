@@ -92,3 +92,43 @@ export function getRoadmapPartSectionDownloads(
 ): RoadmapDownloadLinks | null {
   return getRoadmapSectionDownloads(stage, part.paperName);
 }
+
+/** All unique paper PDF URLs for a stage (every section). */
+export function getRoadmapStageAllPaperUrls(stage: RoadmapStage): string[] {
+  const urls: string[] = [];
+  const seen = new Set<string>();
+  for (const { links } of getRoadmapStageSectionDownloads(stage)) {
+    if (!links.paperUrl || seen.has(links.paperUrl)) continue;
+    seen.add(links.paperUrl);
+    urls.push(links.paperUrl);
+  }
+  return urls;
+}
+
+/** All unique answers PDF URLs for a stage (every section). */
+export function getRoadmapStageAllAnswersUrls(stage: RoadmapStage): string[] {
+  const urls: string[] = [];
+  const seen = new Set<string>();
+  for (const { links } of getRoadmapStageSectionDownloads(stage)) {
+    if (!links.answersUrl || seen.has(links.answersUrl)) continue;
+    seen.add(links.answersUrl);
+    urls.push(links.answersUrl);
+  }
+  return urls;
+}
+
+/** Trigger sequential downloads for a list of PDF URLs. */
+export function downloadAllUrls(urls: string[]): void {
+  if (typeof document === "undefined" || urls.length === 0) return;
+  urls.forEach((href, index) => {
+    window.setTimeout(() => {
+      const a = document.createElement("a");
+      a.href = href;
+      a.download = "";
+      a.rel = "noopener";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }, index * 250);
+  });
+}
