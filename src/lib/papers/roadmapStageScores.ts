@@ -120,6 +120,6 @@ export function averageScoreForStage(
 }
 
 export function formatNumericScore(value: number | null | undefined): string {
-  if (value == null || !Number.isFinite(value)) return "-";
+  if (value == null || !Number.isFinite(value)) return "No data";
   return value.toFixed(1);
 }

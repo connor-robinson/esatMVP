@@ -10,7 +10,6 @@ import { cn } from "@/lib/utils";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
 import { isEsatCampMockRoadmapStage } from "@/lib/papers/roadmapConfig";
 import { getRoadmapPartKey } from "@/lib/papers/roadmapPartKey";
-import { defaultTmuaSelectedParts } from "@/lib/papers/tmuaRoadmapParts";
 import {
   displayLabelForGroup,
   expandDisplayGroupsToParts,
@@ -42,6 +41,7 @@ import {
   type StageCommentary,
 } from "./roadmapTimelineMarkers";
 import type { RoadmapStartOptions } from "./StageListCard";
+import { RoadmapStartSessionModal } from "./RoadmapStartSessionModal";
 
 type StageCompletionEntry = {
   completed: number;
@@ -104,58 +104,6 @@ function commentaryForStage(
     return null;
   }
   return getStageCommentary(stage.id);
-}
-
-function getDefaultPartsForStage(
-  stage: RoadmapStage,
-  partCompletion: Map<string, boolean>,
-): RoadmapPart[] {
-  const getPartKey = getRoadmapPartKey;
-  const displayGroups = groupRoadmapPartsForDisplay(stage.parts);
-
-  if (stage.examName === "TMUA") {
-    return defaultTmuaSelectedParts(stage, partCompletion, getPartKey);
-  }
-
-  if (stage.examName === "ENGAA") {
-    const keys = new Set<string>();
-    for (const group of displayGroups) {
-      const startsSelected = group.internalParts.some(
-        (part) => part.defaultSelected !== false,
-      );
-      if (
-        startsSelected &&
-        !isDisplayGroupCompleted(group, partCompletion, getPartKey)
-      ) {
-        keys.add(group.key);
-      }
-    }
-    if (keys.size === 0) {
-      for (const group of displayGroups) {
-        if (!isDisplayGroupCompleted(group, partCompletion, getPartKey)) {
-          keys.add(group.key);
-        }
-      }
-    }
-    return expandDisplayGroupsToParts(stage.parts, keys);
-  }
-
-  const incomplete = displayGroups.filter(
-    (group) => !isDisplayGroupCompleted(group, partCompletion, getPartKey),
-  );
-  const keys = new Set(
-    (incomplete.length > 0 ? incomplete : displayGroups).map((g) => g.key),
-  );
-  return expandDisplayGroupsToParts(stage.parts, keys);
-}
-
-function describeDefaultSections(defaultParts: RoadmapPart[]): string[] {
-  const groups = groupRoadmapPartsForDisplay(defaultParts);
-  if (groups.length === 0) return [];
-  return groups.map((group) => {
-    const label = displayLabelForGroup(group);
-    return group.paperName ? `${label} (${group.paperName})` : label;
-  });
 }
 
 function CompactBtn({
@@ -260,14 +208,6 @@ function SectionsExpandPanel({
     () => groupRoadmapPartsForDisplay(stage.parts),
     [stage.parts],
   );
-  const defaultParts = useMemo(
-    () => getDefaultPartsForStage(stage, partCompletion),
-    [stage, partCompletion],
-  );
-  const sectionSummary = useMemo(
-    () => describeDefaultSections(defaultParts),
-    [defaultParts],
-  );
 
   const startGroup = (group: RoadmapDisplayGroup) => {
     onStartSession(
@@ -305,13 +245,6 @@ function SectionsExpandPanel({
 
   return (
     <div className="space-y-3 border-t border-white/[0.06] bg-[#121826] px-3 py-3.5 sm:px-3.5">
-      {sectionSummary.length > 0 ? (
-        <p className="text-sm text-[#94A3B8]">
-          Default start includes:{" "}
-          <span className="text-[#CBD5E1]">{sectionSummary.join(" · ")}</span>
-        </p>
-      ) : null}
-
       <p className="text-xs font-medium uppercase tracking-wide text-[#64748B]">
         Sections
       </p>
@@ -404,6 +337,7 @@ export function RoadmapTable({
 }: Props) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [statusBusyId, setStatusBusyId] = useState<string | null>(null);
+  const [startStage, setStartStage] = useState<RoadmapStage | null>(null);
   const [averagesByVariant, setAveragesByVariant] = useState<
     Record<string, number>
   >({});
@@ -493,15 +427,6 @@ export function RoadmapTable({
     } finally {
       setStatusBusyId(null);
     }
-  };
-
-  const startStageDefaults = (stage: RoadmapStage) => {
-    const parts = getDefaultPartsForStage(
-      stage,
-      completionData.get(stage.id)?.parts ?? new Map(),
-    );
-    if (parts.length === 0) return;
-    onStartSession(stage, parts, { newQuestionsOnly });
   };
 
   return (
@@ -675,6 +600,8 @@ export function RoadmapTable({
                       <td className="px-3 py-2.5 align-middle tabular-nums text-[#94A3B8]">
                         {averagesLoading ? (
                           <span className="inline-block h-3.5 w-8 animate-pulse rounded-sm bg-white/10" />
+                        ) : avgScore == null ? (
+                          <span className="text-xs font-normal">No data</span>
                         ) : (
                           formatNumericScore(avgScore)
                         )}
@@ -713,7 +640,7 @@ export function RoadmapTable({
                       <td className="px-3 py-2.5 align-middle">
                         <CompactBtn
                           tone="blue"
-                          onClick={() => startStageDefaults(stage)}
+                          onClick={() => setStartStage(stage)}
                         >
                           Start now
                           <Play
@@ -758,6 +685,20 @@ export function RoadmapTable({
           No papers match your subjects yet. Set ESAT modules in your profile.
         </p>
       ) : null}
+
+      <RoadmapStartSessionModal
+        open={startStage != null}
+        stage={startStage}
+        partCompletion={
+          startStage
+            ? (completionData.get(startStage.id)?.parts ?? new Map())
+            : new Map()
+        }
+        newQuestionsOnly={newQuestionsOnly}
+        onNewQuestionsOnlyChange={onNewQuestionsOnlyChange}
+        onClose={() => setStartStage(null)}
+        onStart={onStartSession}
+      />
     </div>
   );
 }

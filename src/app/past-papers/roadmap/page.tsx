@@ -30,9 +30,9 @@ import {
 import { examNameToPaperType } from '@/lib/papers/paperConfig';
 import type { PaperSection, Question, Paper } from '@/types/papers';
 import type { RoadmapPart } from '@/lib/papers/roadmapConfig';
-import { LoadingPage } from '@/components/shared/LoadingPage';
 import { allowLoadingPaint } from '@/lib/papers/allowLoadingPaint';
 import { preloadQuestionsAssets } from '@/lib/pearson/preloadQuestionAssets';
+import { PearsonPleaseWaitScreen } from '@/components/pearson/PearsonPleaseWaitScreen';
 import { applyEsatSubjectsToRoadmapStages } from '@/lib/papers/roadmapEsatFilter';
 import type { RoadmapStartOptions } from '@/components/papers/roadmap/StageListCard';
 import { questionMatchesRoadmapPart } from '@/lib/papers/roadmapQuestionMatch';
@@ -632,7 +632,7 @@ export default function PapersRoadmapPage() {
       />
 
       {isStartingSession ? (
-        <LoadingPage variant="session" message="Loading your paper" />
+        <PearsonPleaseWaitScreen label="Loading, please wait..." />
       ) : null}
     </Container>
   );
