@@ -370,12 +370,20 @@ export default function AdminQuestionReportsDashboardPage() {
                           </span>
                         </td>
                         <td className="px-3 py-2.5 text-right">
-                          <Link
-                            href={`/admin/question-reports/review?status=${encodeURIComponent(status)}&ticket=${encodeURIComponent(item.meta.ticketId)}`}
-                            className="text-sm font-semibold text-text underline-offset-2 hover:underline"
-                          >
-                            Review
-                          </Link>
+                          <div className="flex items-center justify-end gap-3">
+                            <button
+                              type="button"
+                              className="text-sm font-semibold text-text"
+                            >
+                              Resolve
+                            </button>
+                            <Link
+                              href={`/admin/question-reports/review?status=${encodeURIComponent(status)}&ticket=${encodeURIComponent(item.meta.ticketId)}`}
+                              className="text-sm font-semibold text-text underline-offset-2 hover:underline"
+                            >
+                              Review
+                            </Link>
+                          </div>
                         </td>
                       </tr>
                     ))}
