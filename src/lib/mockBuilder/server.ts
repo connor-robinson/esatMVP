@@ -14,6 +14,10 @@ import { toMockCandidate, withAttemptFlags, type RawBankQuestionRow } from "./me
 import { assembleMockPaper, proposeReplacements } from "./select";
 import { filterMockPool, isFreeTierHookQuestion } from "./poolFilters";
 import {
+  analysePoolPlan,
+  assertPoolPlanFeasible,
+} from "./poolPlan";
+import {
   EXCLUDE_SETTING_KEY,
   parseExcludeSetting,
 } from "./exclusivity";
@@ -183,13 +187,21 @@ export async function countAvailableDiagrams(
 export async function enrichMockMetadataForSubject(
   service: SupabaseClient,
   subject: MockBuilderSubject,
-  options?: { maxQuestions?: number; onlyMissingDifficulty?: boolean },
+  options?: {
+    maxQuestions?: number;
+    onlyMissingDifficulty?: boolean;
+    /** Prefer off-bank (pending / practice_eligible=false) first. */
+    preferOffBank?: boolean;
+  },
 ): Promise<{
   attempted: number;
   labeledCount: number;
   source: "vertex" | "gemini" | null;
 }> {
   const onlyMissing = options?.onlyMissingDifficulty !== false;
+  const maxQuestions = options?.maxQuestions ?? 200;
+  const preferOffBank = options?.preferOffBank !== false;
+
   let query = service
     .from("ai_generated_questions")
     .select(POOL_SELECT)
@@ -197,7 +209,7 @@ export async function enrichMockMetadataForSubject(
     .in("status", ["approved", "pending"])
     .eq("mock_eligible", true)
     .order("created_at", { ascending: false })
-    .limit(options?.maxQuestions ?? 120);
+    .limit(Math.max(maxQuestions * 3, 300));
 
   if (onlyMissing) {
     query = query.is("mock_difficulty", null);
@@ -205,13 +217,23 @@ export async function enrichMockMetadataForSubject(
 
   const { data, error } = await query;
   if (error) throw new Error(error.message);
-  const rows = ((data as unknown as RawBankQuestionRow[] | null) ?? []).filter(
+  let rows = ((data as unknown as RawBankQuestionRow[] | null) ?? []).filter(
     (row) =>
       !isFreeTierHookQuestion({
         id: row.id,
         generationId: row.generation_id,
       }),
   );
+
+  if (preferOffBank) {
+    rows = [...rows].sort((a, b) => {
+      const tier = (r: RawBankQuestionRow) =>
+        r.status === "pending" || r.practice_eligible === false ? 0 : 1;
+      return tier(a) - tier(b);
+    });
+  }
+  rows = rows.slice(0, maxQuestions);
+
   if (rows.length === 0) {
     return { attempted: 0, labeledCount: 0, source: null };
   }
@@ -233,7 +255,7 @@ export async function enrichMockMetadataForSubject(
 
   const { labels, labeledCount, source, attempted } =
     await labelMockMetadataInChunks(inputs, {
-      maxQuestions: options?.maxQuestions ?? 120,
+      maxQuestions,
     });
 
   if (attempted > 0 && labeledCount === 0) {
@@ -708,19 +730,31 @@ export async function generateAndPersist(
     (mock.blueprint_snapshot as MockBlueprintConfig | null) ??
     (await resolveBlueprint(service, subject, mock.blueprint_id));
 
-  // Prefer AI 1-5 difficulty labels before assembly (fills missing mock_difficulty).
+  const pipeline: Record<string, unknown> = {
+    startedAt: new Date().toISOString(),
+  };
+
+  // Stage A: AI rate difficulty 1–5 for unlabeled pool rows.
   let enrichNote: string | null = null;
   if (options?.enrichMetadata !== false) {
     try {
       const enrich = await enrichMockMetadataForSubject(service, subject, {
-        maxQuestions: 120,
+        maxQuestions: 200,
         onlyMissingDifficulty: true,
+        preferOffBank: true,
       });
       enrichNote = `AI labeled ${enrich.labeledCount}/${enrich.attempted} questions via ${enrich.source ?? "none"}.`;
+      pipeline.labeled = {
+        attempted: enrich.attempted,
+        labeledCount: enrich.labeledCount,
+        source: enrich.source,
+      };
     } catch (e) {
-      enrichNote = `AI difficulty labeling failed: ${
-        e instanceof Error ? e.message : "unknown error"
-      }. Using Easy/Medium/Hard fallback where mock_difficulty is missing.`;
+      throw new Error(
+        `AI difficulty labeling required before assemble failed: ${
+          e instanceof Error ? e.message : "unknown error"
+        }`,
+      );
     }
   }
 
@@ -729,30 +763,45 @@ export async function generateAndPersist(
     : [];
   const allowIds = new Set(lockedSlots.map((s) => s.questionId));
 
-  const pool = await loadEligiblePool(service, subject, {
+  // Stage B: load pool, analyse vs blueprint, fail if hard mins impossible.
+  let pool = await loadEligiblePool(service, subject, {
     includeReserved: false,
     allowIds,
   });
+  pool = filterMockPool(pool, { allowIds });
 
-  // Assemble with a short optimistic retry: parallel generates can race between
-  // reading used IDs and persisting slots. Re-check before write.
   const maxAssembleAttempts = 3;
   let assembly: PaperAssemblyResult | null = null;
   let usedElsewhere = new Set<string>();
+  let poolPlanSummary = "";
+
   for (let attempt = 1; attempt <= maxAssembleAttempts; attempt++) {
     usedElsewhere = await loadUsedQuestionIds(service, mockId);
     const safePool = pool.filter(
       (q) =>
-        !isFreeTierHookQuestion(q) &&
         (!q.reservedForMock || allowIds.has(q.id)) &&
         !usedElsewhere.has(q.id),
     );
+
+    const plan = analysePoolPlan(safePool, blueprint, {
+      allowIds,
+      requireAiDifficulty: true,
+    });
+    poolPlanSummary = plan.summary;
+    pipeline.poolPlan = plan;
+    assertPoolPlanFeasible(plan);
+
+    const difficultyTargets = Object.fromEntries(
+      plan.difficultyTargets.map((t) => [t.difficulty, t.target]),
+    ) as Partial<Record<1 | 2 | 3 | 4 | 5, number>>;
 
     const candidate = assembleMockPaper({
       blueprint,
       pool: safePool,
       lockedSlots,
       usedElsewhereIds: usedElsewhere,
+      requireAiDifficulty: true,
+      difficultyTargets,
     });
 
     for (const slot of candidate.slots) {
@@ -773,8 +822,15 @@ export async function generateAndPersist(
       }
     }
 
-    // Re-read after assemble so another concurrent generate that just persisted
-    // is visible before we write.
+    const unlabeledOnPaper = candidate.slots.filter(
+      (s) => s.question && !s.question.hasAiMockDifficulty && !allowIds.has(s.questionId),
+    );
+    if (unlabeledOnPaper.length > 0) {
+      throw new Error(
+        `${unlabeledOnPaper.length} selected questions lack AI difficulty 1–5. Re-run generate after labeling.`,
+      );
+    }
+
     const freshUsed = await loadUsedQuestionIds(service, mockId);
     const clashIds = candidate.slots
       .map((s) => s.questionId)
@@ -794,8 +850,15 @@ export async function generateAndPersist(
     throw new Error("Failed to assemble mock paper.");
   }
 
-  if (enrichNote) {
-    assembly.notes.unshift(enrichNote);
+  if (enrichNote) assembly.notes.unshift(enrichNote);
+  assembly.notes.unshift(poolPlanSummary);
+
+  // Scorecard gate before persist: difficulty must clear soft threshold.
+  if (assembly.score.difficulty < 0.5) {
+    const gapMsgs = assembly.gaps.map((g) => g.message).slice(0, 5);
+    throw new Error(
+      `Assembled paper fails difficulty scorecard (${Math.round(assembly.score.difficulty * 100)}). ${gapMsgs.join(" ") || poolPlanSummary}`,
+    );
   }
 
   const lockMap = new Map(
@@ -803,60 +866,12 @@ export async function generateAndPersist(
   );
   await persistAssembly(service, mockId, assembly, lockMap);
 
-  // Per-question stem/options/answer-key scan (uses DB QG when present, else LLM).
+  // Stage E: quality scan + auto-fix (Major replace / Minor edit).
   try {
-    const { data: notesRow } = await service
-      .from("esat_mocks")
-      .select("generation_notes")
-      .eq("id", mockId)
-      .maybeSingle();
-    const existingNotes =
-      (notesRow?.generation_notes as Record<string, unknown> | null) ?? {};
-
-    const { slots: scannedSlots } = await getMockWithSlots(service, mockId);
-    const { scanMockQuestionQuality } = await import("./questionQualityScan");
-    const questionQualityScan = await scanMockQuestionQuality(scannedSlots);
-    assembly.notes.push(
-      `Question quality scan: ${questionQualityScan.summary.pass} Pass, ${questionQualityScan.summary.minor} Minor, ${questionQualityScan.summary.major} Major, ${questionQualityScan.summary.unscanned} unscanned (${questionQualityScan.source}).`,
-    );
-    await service
-      .from("esat_mocks")
-      .update({
-        generation_notes: {
-          ...existingNotes,
-          score: assembly.score,
-          similarityIssues: assembly.similarityIssues,
-          gaps: assembly.gaps,
-          notes: assembly.notes,
-          questionQualityScan,
-        },
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", mockId);
-  } catch (e) {
-    assembly.notes.push(
-      `Question quality scan failed: ${
-        e instanceof Error ? e.message : "unknown error"
-      }`,
-    );
-    await service
-      .from("esat_mocks")
-      .update({
-        generation_notes: {
-          score: assembly.score,
-          similarityIssues: assembly.similarityIssues,
-          gaps: assembly.gaps,
-          notes: assembly.notes,
-        },
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", mockId);
-  }
-
-  // Auto-fix Minor/Major flags, then run AI paper review.
-  try {
+    await runQuestionQualityScan(service, mockId, { force: false });
     const remediation = await autoRemediateMockQuality(service, mockId, {
       rescanFirst: false,
+      forceRescanAfter: true,
     });
     const edited = remediation.outcomes.filter(
       (o) => o.plan === "edit" && o.status === "ok",
@@ -870,6 +885,14 @@ export async function generateAndPersist(
     assembly.notes.push(
       `Auto-fix quality: ${edited} edited, ${replaced} replaced, ${failed} failed.`,
     );
+    pipeline.qualityFix = { edited, replaced, failed };
+    pipeline.questionQualityScan = remediation.scan;
+
+    if (remediation.scan.summary.major > 0) {
+      assembly.notes.push(
+        `Warning: ${remediation.scan.summary.major} Major flags remain after auto-fix.`,
+      );
+    }
   } catch (e) {
     assembly.notes.push(
       `Auto-fix quality failed: ${
@@ -878,11 +901,51 @@ export async function generateAndPersist(
     );
   }
 
+  // Refresh metrics after possible replacements.
+  const { mock: refreshedMock, slots: refreshedSlots } =
+    await getMockWithSlots(service, mockId);
+  const refreshedQuestions = refreshedSlots
+    .map((s) => s.question)
+    .filter((q): q is MockCandidateQuestion => Boolean(q));
+  if (refreshedQuestions.length === blueprint.questionCount) {
+    const { findSimilarityIssues } = await import("./similarity");
+    const { computePaperScore, meanDifficulty, totalWorkloadSeconds } =
+      await import("./scoring");
+    const sim = findSimilarityIssues(refreshedQuestions);
+    const score = computePaperScore(refreshedQuestions, blueprint, sim);
+    assembly.score = score;
+    assembly.predictedDifficulty = meanDifficulty(refreshedQuestions);
+    assembly.predictedWorkloadSeconds = totalWorkloadSeconds(refreshedQuestions);
+    assembly.similarityIssues = sim;
+    assembly.slots = refreshedSlots;
+
+    if (score.difficulty < 0.45) {
+      throw new Error(
+        `After quality fixes, difficulty scorecard is still too low (${Math.round(score.difficulty * 100)}). Add more diverse difficulty-1/5 stock and regenerate.`,
+      );
+    }
+
+    await service
+      .from("esat_mocks")
+      .update({
+        predicted_difficulty: assembly.predictedDifficulty,
+        predicted_workload_seconds: assembly.predictedWorkloadSeconds,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", mockId);
+  }
+
+  // Stage F: advisory paper review (best-effort).
   try {
     const { review, source } = await runAiPaperReview(service, mockId);
     assembly.notes.push(
       `AI paper review: ${review.pass ? "PASS" : "REVIEW"} (overall ${review.overallScore}, via ${source}).`,
     );
+    pipeline.paperReview = {
+      pass: review.pass,
+      overallScore: review.overallScore,
+      source,
+    };
   } catch (e) {
     assembly.notes.push(
       `AI paper review failed: ${
@@ -891,29 +954,33 @@ export async function generateAndPersist(
     );
   }
 
-  // Persist final notes (remediation/review may have overwritten generation_notes).
-  {
-    const { data: notesRow } = await service
-      .from("esat_mocks")
-      .select("generation_notes")
-      .eq("id", mockId)
-      .maybeSingle();
-    const existingNotes =
-      (notesRow?.generation_notes as Record<string, unknown> | null) ?? {};
-    await service
-      .from("esat_mocks")
-      .update({
-        generation_notes: {
-          ...existingNotes,
-          score: assembly.score,
-          similarityIssues: assembly.similarityIssues,
-          gaps: assembly.gaps,
-          notes: assembly.notes,
-        },
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", mockId);
-  }
+  pipeline.finishedAt = new Date().toISOString();
+  pipeline.finalScore = assembly.score;
+
+  const { data: notesRow } = await service
+    .from("esat_mocks")
+    .select("generation_notes")
+    .eq("id", mockId)
+    .maybeSingle();
+  const existingNotes =
+    (notesRow?.generation_notes as Record<string, unknown> | null) ?? {};
+  const nextStatus =
+    refreshedMock.status === "draft" ? "review" : refreshedMock.status;
+  await service
+    .from("esat_mocks")
+    .update({
+      generation_notes: {
+        ...existingNotes,
+        score: assembly.score,
+        similarityIssues: assembly.similarityIssues,
+        gaps: assembly.gaps,
+        notes: assembly.notes,
+        pipeline,
+      },
+      status: nextStatus,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", mockId);
 
   return assembly;
 }
@@ -1001,7 +1068,7 @@ async function stageQuestionForMockPool(
 export async function autoRemediateMockQuality(
   service: SupabaseClient,
   mockId: string,
-  options?: { rescanFirst?: boolean },
+  options?: { rescanFirst?: boolean; forceRescanAfter?: boolean },
 ): Promise<{
   outcomes: import("./questionQualityRemediate").RemediateSlotOutcome[];
   scan: import("./questionQualityScan").QuestionQualityScanResult;
@@ -1043,6 +1110,9 @@ export async function autoRemediateMockQuality(
   });
 
   if (actionable.length === 0) {
+    if (options?.forceRescanAfter) {
+      scan = await runQuestionQualityScan(service, mockId, { force: true });
+    }
     return { outcomes: [], scan };
   }
 
@@ -1201,7 +1271,7 @@ export async function autoRemediateMockQuality(
   }
 
   const refreshedScan = await runQuestionQualityScan(service, mockId, {
-    force: false,
+    force: options?.forceRescanAfter === true,
   });
 
   const { data: notesRow } = await service
@@ -1326,6 +1396,8 @@ export async function getReplacementOptions(
     position,
     limit,
     usedElsewhereIds: usedElsewhere,
+    preferPassQuality: true,
+    requireAiDifficulty: true,
   });
 }
 

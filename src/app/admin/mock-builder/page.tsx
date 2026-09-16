@@ -186,7 +186,7 @@ export default function AdminMockBuilderPage() {
       for (let i = 0; i < count; i++) {
         setCreateProgress(
           count === 1
-            ? "Generating + fixing + reviewing…"
+            ? "Analyse → rate → assemble → fix…"
             : `Building mock ${i + 1} of ${count} (no shared questions)…`,
         );
         const res = await fetch("/api/admin/mock-builder", {
@@ -451,13 +451,12 @@ export default function AdminMockBuilderPage() {
         </div>
         <p className="mt-2 text-xs text-text-subtle">{diagramHint}</p>
         <p className="mt-1 text-xs text-text-subtle">
-          Generate draft labels difficulty, assembles the paper, auto-fixes
-          Minor/Major question flags, then runs AI paper review. When you
-          create several at once, they run one after another so each mock
-          claims its questions before the next starts (no pool clashes).
-          Selection priority: off-bank first (pending / mock-staged), then
-          never-attempted bank, then already-attempted only if needed. Free-tier
-          preview questions are never used.
+          One pipeline: analyse the pool, AI-rate difficulty 1–5, assemble to
+          blueprint mins, swap high-similarity pairs, auto-fix Major/Minor,
+          then paper review. Fails clearly if the pool cannot support a
+          balanced paper. Batch create runs mocks one after another so they do
+          not share questions. Off-bank is preferred without overriding
+          difficulty/topic balance. Free-tier preview questions are never used.
         </p>
         {error ? <p className="mt-2 text-sm text-red-700">{error}</p> : null}
       </section>

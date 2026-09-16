@@ -74,7 +74,7 @@ function makeQuestion(
     qualityGateReason: overrides.qualityGateReason ?? null,
     qualityGateAssessedAt: overrides.qualityGateAssessedAt ?? null,
     solutionReasoning: overrides.solutionReasoning ?? null,
-    hasAiMockDifficulty: overrides.hasAiMockDifficulty ?? false,
+    hasAiMockDifficulty: overrides.hasAiMockDifficulty ?? true,
     generationId: overrides.generationId ?? null,
     hasAttempts: overrides.hasAttempts ?? false,
   };
@@ -721,9 +721,9 @@ describe("difficultyVsTypical", () => {
 });
 
 describe("pool tier preference", () => {
-  it("exhausts off-bank questions before unattempted bank questions", () => {
+  it("still prefers off-bank when blueprint fit is comparable", () => {
     const blueprint = getDefaultBlueprint("Math 1");
-    const offBank = Array.from({ length: 27 }, (_, i) =>
+    const offBank = Array.from({ length: 40 }, (_, i) =>
       makeQuestion({
         id: `off-${i}`,
         status: "pending",
@@ -735,10 +735,11 @@ describe("pool tier preference", () => {
         correctOption: ["A", "B", "C", "D", "E"][i % 5],
         stemSummary: `off bank unique ${i}`,
         questionStem: `Off bank question body ${i}`,
-        qualityScore: 0.4,
+        qualityScore: 0.85,
+        hasAiMockDifficulty: true,
       }),
     );
-    const unattempted = Array.from({ length: 40 }, (_, i) =>
+    const bank = Array.from({ length: 40 }, (_, i) =>
       makeQuestion({
         id: `bank-${i}`,
         status: "approved",
@@ -750,61 +751,108 @@ describe("pool tier preference", () => {
         correctOption: ["A", "B", "C", "D", "E"][i % 5],
         stemSummary: `bank unique ${i}`,
         questionStem: `Bank question body ${i}`,
-        qualityScore: 0.99,
+        qualityScore: 0.85,
+        hasAiMockDifficulty: true,
       }),
     );
-
     const assembly = assembleMockPaper({
       blueprint,
-      pool: [...unattempted, ...offBank],
-      seed: 7,
-    });
-
-    expect(assembly.slots).toHaveLength(27);
-    expect(
-      assembly.slots.every((s) => s.question && mockPoolTier(s.question) === "off_bank"),
-    ).toBe(true);
-  });
-
-  it("uses unattempted bank only after off-bank is exhausted", () => {
-    const blueprint = getDefaultBlueprint("Math 1");
-    const offBank = Array.from({ length: 10 }, (_, i) =>
-      makeQuestion({
-        id: `off-small-${i}`,
-        status: "pending",
-        practiceEligible: false,
-        hasAttempts: false,
-        mockDifficulty: ((i % 5) + 1) as 1 | 2 | 3 | 4 | 5,
-        topicCode: ["M1", "M2", "M3", "M4", "M5", "M6", "M7"][i % 7],
-        primaryTag: ["M1", "M2", "M3", "M4", "M5", "M6", "M7"][i % 7],
-        correctOption: ["A", "B", "C", "D", "E"][i % 5],
-        stemSummary: `off small ${i}`,
-        questionStem: `Off small body ${i}`,
-      }),
-    );
-    const unattempted = Array.from({ length: 40 }, (_, i) =>
-      makeQuestion({
-        id: `unatt-${i}`,
-        status: "approved",
-        practiceEligible: true,
-        hasAttempts: false,
-        mockDifficulty: ((i % 5) + 1) as 1 | 2 | 3 | 4 | 5,
-        topicCode: ["M1", "M2", "M3", "M4", "M5", "M6", "M7"][i % 7],
-        primaryTag: ["M1", "M2", "M3", "M4", "M5", "M6", "M7"][i % 7],
-        correctOption: ["A", "B", "C", "D", "E"][i % 5],
-        stemSummary: `unatt ${i}`,
-        questionStem: `Unattempted body ${i}`,
-      }),
-    );
-
-    const assembly = assembleMockPaper({
-      blueprint,
-      pool: [...unattempted, ...offBank],
+      pool: [...offBank, ...bank],
       seed: 3,
     });
+    const offCount = assembly.slots.filter(
+      (s) => s.question && mockPoolTier(s.question) === "off_bank",
+    ).length;
+    expect(offCount).toBeGreaterThanOrEqual(14);
+  });
 
-    const tiers = assembly.slots.map((s) => mockPoolTier(s.question!));
-    expect(tiers.filter((t) => t === "off_bank")).toHaveLength(10);
-    expect(tiers.filter((t) => t === "unattempted_bank")).toHaveLength(17);
+  it("excludes Major quality-gate questions from assembly", () => {
+    const blueprint = getDefaultBlueprint("Math 1");
+    const good = buildPool(80);
+    const bad = Array.from({ length: 10 }, (_, i) =>
+      makeQuestion({
+        id: `major-${i}`,
+        mockDifficulty: 3,
+        qualityGateVerdict: "Major",
+        qualityGateAction: "human_review",
+        hasAiMockDifficulty: true,
+        stemSummary: `major bad ${i}`,
+        questionStem: `Major flagged ${i}`,
+      }),
+    );
+    const assembly = assembleMockPaper({
+      blueprint,
+      pool: [...good, ...bad],
+      seed: 1,
+    });
+    expect(
+      assembly.slots.every((s) => !s.questionId.startsWith("major-")),
+    ).toBe(true);
+  });
+});
+
+describe("poolPlan", () => {
+  it("fails when difficulty-1 stock is below hard min", async () => {
+    const { analysePoolPlan } = await import("./poolPlan");
+    const blueprint = getDefaultBlueprint("Math 1");
+    const pool = Array.from({ length: 40 }, (_, i) =>
+      makeQuestion({
+        id: `p-${i}`,
+        mockDifficulty: ((i % 4) + 2) as 2 | 3 | 4 | 5, // no D1
+        hasAiMockDifficulty: true,
+      }),
+    );
+    const plan = analysePoolPlan(pool, blueprint);
+    expect(plan.feasible).toBe(false);
+    expect(plan.shortfalls.join(" ")).toMatch(/difficulty-1/);
+  });
+
+  it("is feasible when each band meets mins", async () => {
+    const { analysePoolPlan, assertPoolPlanFeasible } = await import(
+      "./poolPlan"
+    );
+    const blueprint = getDefaultBlueprint("Math 1");
+    const plan = analysePoolPlan(buildPool(100), blueprint);
+    expect(plan.feasible).toBe(true);
+    expect(() => assertPoolPlanFeasible(plan)).not.toThrow();
+  });
+});
+
+describe("similarity high swaps", () => {
+  it("swaps one side of a high-similarity pair", async () => {
+    const { swapHighSimilarityPairs } = await import("./select");
+    const blueprint = getDefaultBlueprint("Math 1");
+    const twinA = makeQuestion({
+      id: "twin-a",
+      topicCode: "M4",
+      primaryTag: "M4",
+      reasoningType: "multi_step",
+      mockDifficulty: 3,
+      stemSummary: "same mechanism twin a",
+      questionStem: "Same mechanism twin A",
+    });
+    const twinB = makeQuestion({
+      id: "twin-b",
+      topicCode: "M4",
+      primaryTag: "M4",
+      reasoningType: "multi_step",
+      mockDifficulty: 3,
+      stemSummary: "same mechanism twin b",
+      questionStem: "Same mechanism twin B",
+    });
+    const others = buildPool(40).filter(
+      (q) => q.topicCode !== "M4" || q.reasoningType !== "multi_step",
+    );
+    const paper = [twinA, twinB, ...others.slice(0, 25)];
+    const slots = paper.map((q, i) => ({
+      position: i + 1,
+      questionId: q.id,
+      locked: false,
+      question: q,
+    }));
+    const result = swapHighSimilarityPairs(slots, [...paper, ...others], blueprint);
+    expect(result.swapCount).toBeGreaterThanOrEqual(1);
+    const ids = new Set(result.slots.map((s) => s.questionId));
+    expect(ids.has("twin-a") && ids.has("twin-b")).toBe(false);
   });
 });

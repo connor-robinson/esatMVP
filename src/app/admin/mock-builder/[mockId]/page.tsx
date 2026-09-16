@@ -486,7 +486,7 @@ export default function AdminMockDetailPage() {
             className="rounded border border-stone-300 bg-white px-3 py-1.5 text-sm"
           >
             {busy === "generate"
-              ? "Generating + fixing + reviewing…"
+              ? "Analyse → rate → assemble → fix…"
               : "Regenerate"}
           </button>
           <button
@@ -564,11 +564,11 @@ export default function AdminMockDetailPage() {
           </button>
         </div>
         <p className="mb-4 text-xs text-stone-500">
-          Generate draft / Regenerate assemble the paper, auto-fix Minor and
-          Major flags (edit or replace), then run AI paper review. Labels like
-          Minor · review or Major · regenerate come from the quality scan.
-          Auto-fix flagged re-runs fix + paper review. Locked slots are kept
-          on regenerate. Cancel deletes this mock and frees its questions.
+          Generate / Regenerate run one pipeline: analyse pool, AI-rate
+          difficulty 1–5, assemble to blueprint mins, swap high-similarity
+          pairs, auto-fix Major/Minor, then paper review. Scan / Auto-fix /
+          AI review remain as manual overrides. Locked slots are kept on
+          regenerate. Cancel deletes this mock and frees its questions.
         </p>
 
         {error && <p className="mb-4 text-sm text-red-700">{error}</p>}
