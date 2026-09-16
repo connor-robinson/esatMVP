@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildHomeLaunchQuestionsUrl,
   fingerprintHomeLaunch,
+  sampleMixedSessionQuestions,
   sessionQuestionPoolLimit,
 } from "@/lib/questionBank/sessionLaunchPrefetch";
 import type { QuestionBankHomeLaunchPayload } from "@/lib/questionBank/homeLaunch";
@@ -35,7 +36,7 @@ describe("sessionLaunchPrefetch", () => {
   it("builds an incorrect-only fetch URL without New filter", () => {
     const url = buildHomeLaunchQuestionsUrl({
       ...samplePayload,
-      incorrectOnly: true,
+      questionPool: "incorrect",
       playMode: "exam",
     });
     expect(url).toContain("attemptResult=Incorrect+Before");
@@ -51,8 +52,23 @@ describe("sessionLaunchPrefetch", () => {
     expect(a).not.toEqual(b);
     const c = fingerprintHomeLaunch({
       ...samplePayload,
-      incorrectOnly: true,
+      questionPool: "mixed",
     });
     expect(a).not.toEqual(c);
+  });
+
+  it("samples a mixed session without duplicate ids", () => {
+    const incorrect = Array.from({ length: 6 }, (_, i) => ({
+      id: `wrong-${i}`,
+      difficulty: "Medium" as const,
+    }));
+    const fresh = Array.from({ length: 8 }, (_, i) => ({
+      id: `new-${i}`,
+      difficulty: "Easy" as const,
+    }));
+    const picked = sampleMixedSessionQuestions(incorrect, fresh, 10, "Auto");
+    expect(picked).toHaveLength(10);
+    expect(new Set(picked.map((q) => q.id)).size).toBe(10);
+    expect(picked.filter((q) => q.id.startsWith("wrong-")).length).toBeGreaterThanOrEqual(4);
   });
 });

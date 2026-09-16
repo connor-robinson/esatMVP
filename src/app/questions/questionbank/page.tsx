@@ -65,13 +65,17 @@ import type {
 import {
   QUESTION_BANK_HOME_LAUNCH_EVENT,
   QUESTION_BANK_HOME_LAUNCH_KEY,
+  resolveQuestionPool,
   type QuestionBankHomeLaunchPayload,
   type QuestionBankPlayMode,
+  type QuestionBankQuestionPool,
 } from '@/lib/questionBank/homeLaunch';
 import {
+  buildHomeLaunchQuestionsUrl,
   resolveHookQuestionsForSubjects,
-  sessionQuestionPoolLimit,
-  takeHomeLaunchQuestionsPrefetch,
+  sampleMixedSessionQuestions,
+  takeHomeLaunchPrefetch,
+  type HomeLaunchPrefetchResult,
 } from '@/lib/questionBank/sessionLaunchPrefetch';
 import {
   applyExtraTimeMinutes,
@@ -1048,19 +1052,19 @@ export default function QuestionBankPage() {
         uiDifficulties?: UiDifficultyLabel[];
         difficultyMix?: DifficultyMixPreset;
         playMode?: QuestionBankPlayMode;
+        questionPool?: QuestionBankQuestionPool;
         incorrectOnly?: boolean;
       },
       scope?: {
         subjects?: SubjectFilter[];
         testType?: TestTypeFilter;
         source?: QuestionBankSessionSource;
-        prefetchedQuestions?: Promise<QuestionBankQuestion[] | null> | null;
+        prefetched?: Promise<HomeLaunchPrefetchResult | null> | null;
       },
     ) => {
-      const params = new URLSearchParams();
-      const incorrectOnly = Boolean(config.incorrectOnly);
+      const questionPool = resolveQuestionPool(config);
       const playMode: QuestionBankPlayMode =
-        incorrectOnly
+        questionPool === 'incorrect'
           ? 'instant'
           : config.playMode === 'exam'
             ? 'exam'
@@ -1076,15 +1080,6 @@ export default function QuestionBankPage() {
               : [];
 
       const testResolved = scope?.testType ?? filters.testType;
-      if (testResolved === 'ESAT' || testResolved === 'TMUA') {
-        params.append('testType', testResolved);
-      }
-
-      if (subjectsResolved.length === 1) {
-        params.append('subject', subjectsResolved[0]);
-      } else if (subjectsResolved.length > 1) {
-        params.append('subject', subjectsResolved.join(','));
-      }
 
       const mix: DifficultyMixPreset =
         config.difficultyMix &&
@@ -1099,62 +1094,107 @@ export default function QuestionBankPage() {
             ? config.uiDifficulties[0]
             : 'Auto';
 
-      // Always pull a mixed pool, then sample by weighted mix.
-      if (config.topics.length > 0) {
-        params.append('tags', config.topics.join(','));
+      const launchPayload: QuestionBankHomeLaunchPayload = {
+        testType:
+          testResolved === 'ESAT' || testResolved === 'TMUA'
+            ? testResolved
+            : 'ESAT',
+        subjects: subjectsResolved,
+        timeLimitMinutes: config.timeLimitMinutes ?? Math.ceil(config.count * 1.5),
+        questionCount: config.count,
+        difficulties: config.difficulties,
+        difficultyMix: mix,
+        topics: config.topics,
+        playMode,
+        questionPool,
+      };
+
+      if (
+        (questionPool === 'incorrect' || questionPool === 'mixed') &&
+        !session?.user
+      ) {
+        window.alert(
+          'Sign in to practice questions from your attempt history.',
+        );
+        return;
       }
 
-      params.append('limit', sessionQuestionPoolLimit(config.count).toString());
-      params.append('random', 'true');
-      if (incorrectOnly) {
-        if (!session?.user) {
-          window.alert(
-            'Sign in to practice questions you have gotten wrong before.',
-          );
-          return;
-        }
-        // Any prior wrong attempt qualifies, including later-corrected questions.
-        params.append('attemptResult', 'Incorrect Before');
-      } else if (session?.user) {
-        // Exclude answered questions. Abandoned-session items never attempted stay eligible.
-        params.append('attemptedStatus', 'New');
-      }
+      const filterByDifficulty = (list: QuestionBankQuestion[]) => {
+        const filtered = list.filter((q) =>
+          config.difficulties.length === 0
+            ? true
+            : config.difficulties.includes(q.difficulty),
+        );
+        const seenIds = new Set<string>();
+        return filtered.filter((q) => {
+          if (seenIds.has(q.id)) return false;
+          seenIds.add(q.id);
+          return true;
+        });
+      };
 
       setSessionStarting(true);
       try {
-        let questions: QuestionBankQuestion[] | null = null;
-        if (scope?.prefetchedQuestions) {
-          questions = await scope.prefetchedQuestions;
-        }
-        if (!questions) {
-          const response = await fetch(
-            `/api/question-bank/questions?${params.toString()}`,
-            { credentials: 'include' },
+        let prefetch = scope?.prefetched ? await scope.prefetched : null;
+
+        let sessionQs: QuestionBankQuestion[] = [];
+
+        if (questionPool === 'mixed') {
+          let incorrectList: QuestionBankQuestion[] = [];
+          let freshList: QuestionBankQuestion[] = [];
+          if (prefetch?.kind === 'mixed') {
+            incorrectList = prefetch.incorrect;
+            freshList = prefetch.fresh;
+          } else {
+            const [incorrectRes, freshRes] = await Promise.all([
+              fetch(
+                buildHomeLaunchQuestionsUrl(launchPayload, {
+                  pool: 'incorrect',
+                }),
+                { credentials: 'include' },
+              ),
+              fetch(
+                buildHomeLaunchQuestionsUrl(launchPayload, { pool: 'all' }),
+                { credentials: 'include' },
+              ),
+            ]);
+            if (!incorrectRes.ok || !freshRes.ok) {
+              throw new Error('Failed to fetch session questions');
+            }
+            const incorrectData = await incorrectRes.json();
+            const freshData = await freshRes.json();
+            incorrectList = Array.isArray(incorrectData.questions)
+              ? incorrectData.questions
+              : [];
+            freshList = Array.isArray(freshData.questions)
+              ? freshData.questions
+              : [];
+          }
+          sessionQs = sampleMixedSessionQuestions(
+            filterByDifficulty(incorrectList),
+            filterByDifficulty(freshList),
+            config.count,
+            mix,
           );
-          if (!response.ok) throw new Error('Failed to fetch session questions');
+        } else {
+          let questions: QuestionBankQuestion[] | null = null;
+          if (prefetch?.kind === 'single') {
+            questions = prefetch.questions;
+          }
+          if (!questions) {
+            const response = await fetch(
+              buildHomeLaunchQuestionsUrl(launchPayload),
+              { credentials: 'include' },
+            );
+            if (!response.ok) {
+              throw new Error('Failed to fetch session questions');
+            }
+            const data = await response.json();
+            questions = Array.isArray(data.questions) ? data.questions : null;
+          }
 
-          const data = await response.json();
-          questions = Array.isArray(data.questions) ? data.questions : null;
-        }
-
-        if (questions && questions.length > 0) {
-          const pool = questions.filter((q) =>
-            config.difficulties.length === 0
-              ? true
-              : config.difficulties.includes(q.difficulty),
-          );
-
-          // Deduplicate by id so a session never repeats the same question.
-          const seenIds = new Set<string>();
-          const uniquePool = pool.filter((q) => {
-            if (seenIds.has(q.id)) return false;
-            seenIds.add(q.id);
-            return true;
-          });
-
-          let sessionQs: QuestionBankQuestion[];
-          if (incorrectOnly) {
-            // No hook injection: stay inside the incorrect pool only.
+          const uniquePool = filterByDifficulty(questions ?? []);
+          if (questionPool === 'incorrect') {
             sessionQs = sampleSessionBankQuestions(
               uniquePool,
               Math.min(config.count, uniquePool.length),
@@ -1173,75 +1213,65 @@ export default function QuestionBankPage() {
                     hookQuestions,
                     count: config.count,
                     mix,
-                    // Only lead with hooks still in the New-filtered pool so
-                    // attempted hook questions are not replayed every session.
                     eligibleHookIds: poolIds,
                   })
                 : sampleSessionBankQuestions(uniquePool, config.count, mix);
           }
+        }
 
-          if (sessionQs.length > 0) {
-            setSessionQuestions(sessionQs);
-            setSessionCurrentIndex(0);
-            setSessionMode(true);
-            setSessionPlayMode(playMode);
-            if (playMode === 'exam') {
-              setSessionUiVariant('esat');
-            }
-            updateCurrentQuestion(sessionQs[0]);
-            setAnswerRevealed(false);
-            setCurrentSelection(null);
-            setIncorrectAnswers(new Set());
-
-            const source =
-              scope?.source ??
-              (subjectsResolved.length > 1 ? 'mixed' : 'home');
-
-            await initializeTrackedSession({
-              questions: sessionQs,
-              timeLimitMinutes: config.timeLimitMinutes,
-              source,
-              subjects: subjectsResolved,
-              testType:
-                testResolved === 'ESAT' || testResolved === 'TMUA'
-                  ? testResolved
-                  : null,
-              uiDifficulties: config.uiDifficulties,
-            });
-
-            const limitMinutes =
-              config.timeLimitMinutes != null && config.timeLimitMinutes > 0
-                ? config.timeLimitMinutes
-                : Math.ceil(sessionQs.length * 1.5);
-            const accessPrefs = await fetchAccessArrangementPrefs();
-            const adjustedLimitMinutes = applyExtraTimeMinutes(
-              limitMinutes,
-              accessPrefs.extraTime,
-            );
-            const startTime = Date.now();
-            const timeLimitMs = adjustedLimitMinutes * 60 * 1000;
-            setRestBreaksEnabled(accessPrefs.restBreaks.enabled);
-            setRestBreakActive(false);
-            setRestBreaksUsed(0);
-            setTimerStartTime(startTime);
-            setTimeLimitMinutes(adjustedLimitMinutes);
-            // Pearson owns the countdown in exam mode.
-            if (playMode === 'exam') {
-              setDeadline(null);
-              setRemainingTime(null);
-            } else {
-              setDeadline(startTime + timeLimitMs);
-              setRemainingTime(Math.ceil(timeLimitMs / 1000));
-            }
-          } else if (incorrectOnly) {
-            window.alert(
-              'No incorrectly answered questions match these filters yet.',
-            );
-            router.replace('/questions');
-          } else {
-            router.replace('/questions');
+        if (sessionQs.length > 0) {
+          setSessionQuestions(sessionQs);
+          setSessionCurrentIndex(0);
+          setSessionMode(true);
+          setSessionPlayMode(playMode);
+          if (playMode === 'exam') {
+            setSessionUiVariant('esat');
           }
-        } else if (incorrectOnly) {
+          updateCurrentQuestion(sessionQs[0]);
+          setAnswerRevealed(false);
+          setCurrentSelection(null);
+          setIncorrectAnswers(new Set());
+
+          const source =
+            scope?.source ??
+            (subjectsResolved.length > 1 ? 'mixed' : 'home');
+
+          await initializeTrackedSession({
+            questions: sessionQs,
+            timeLimitMinutes: config.timeLimitMinutes,
+            source,
+            subjects: subjectsResolved,
+            testType:
+              testResolved === 'ESAT' || testResolved === 'TMUA'
+                ? testResolved
+                : null,
+            uiDifficulties: config.uiDifficulties,
+          });
+
+          const limitMinutes =
+            config.timeLimitMinutes != null && config.timeLimitMinutes > 0
+              ? config.timeLimitMinutes
+              : Math.ceil(sessionQs.length * 1.5);
+          const accessPrefs = await fetchAccessArrangementPrefs();
+          const adjustedLimitMinutes = applyExtraTimeMinutes(
+            limitMinutes,
+            accessPrefs.extraTime,
+          );
+          const startTime = Date.now();
+          const timeLimitMs = adjustedLimitMinutes * 60 * 1000;
+          setRestBreaksEnabled(accessPrefs.restBreaks.enabled);
+          setRestBreakActive(false);
+          setRestBreaksUsed(0);
+          setTimerStartTime(startTime);
+          setTimeLimitMinutes(adjustedLimitMinutes);
+          if (playMode === 'exam') {
+            setDeadline(null);
+            setRemainingTime(null);
+          } else {
+            setDeadline(startTime + timeLimitMs);
+            setRemainingTime(Math.ceil(timeLimitMs / 1000));
+          }
+        } else if (questionPool === 'incorrect') {
           window.alert(
             'No incorrectly answered questions match these filters yet.',
           );
@@ -1334,17 +1364,17 @@ export default function QuestionBankPage() {
           uiDifficulties: data.uiDifficulties,
           difficultyMix: data.difficultyMix,
           playMode:
-            data.incorrectOnly
+            resolveQuestionPool(data) === 'incorrect'
               ? 'instant'
               : data.playMode === 'exam'
                 ? 'exam'
                 : 'instant',
-          incorrectOnly: Boolean(data.incorrectOnly),
+          questionPool: resolveQuestionPool(data),
         },
         {
           subjects: data.subjects,
           testType: data.testType,
-          prefetchedQuestions: takeHomeLaunchQuestionsPrefetch(data),
+          prefetched: takeHomeLaunchPrefetch(data),
         },
       );
     };

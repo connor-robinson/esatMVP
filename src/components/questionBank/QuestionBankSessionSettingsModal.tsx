@@ -7,6 +7,7 @@ import type { SubjectFilter } from "@/types/questionBank";
 import type {
   QuestionBankHomeLaunchPayload,
   QuestionBankPlayMode,
+  QuestionBankQuestionPool,
 } from "@/lib/questionBank/homeLaunch";
 import type { SubjectTileConfig } from "./QuestionBankHomeScreen";
 import {
@@ -226,7 +227,8 @@ export function QuestionBankSessionSettingsModal({
     useState<DifficultyMixPreset>("Auto");
   const [advanced, setAdvanced] = useState(false);
   const [playMode, setPlayMode] = useState<QuestionBankPlayMode>("instant");
-  const [incorrectOnly, setIncorrectOnly] = useState(false);
+  const [questionPool, setQuestionPool] =
+    useState<QuestionBankQuestionPool>("all");
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [topicOptions, setTopicOptions] = useState<LibraryOutlineTag[]>([]);
   const [topicsLoading, setTopicsLoading] = useState(false);
@@ -245,7 +247,7 @@ export function QuestionBankSessionSettingsModal({
     setDifficultyMix(isMixed ? "Medium" : "Auto");
     setAdvanced(Boolean(isMixed));
     setPlayMode("instant");
-    setIncorrectOnly(false);
+    setQuestionPool("all");
     setSelectedTopics([]);
     setTopicOptions([]);
     setTopicsError(null);
@@ -301,21 +303,21 @@ export function QuestionBankSessionSettingsModal({
       setSubjectKeys([originTile.key as SubjectFilter]);
       setSelectedTopics([]);
       setPlayMode("instant");
-      setIncorrectOnly(false);
+      setQuestionPool("all");
     } else if (next && isMixed && originTile) {
       setSubjectKeys(siblingTiles.map((t) => t.key as SubjectFilter));
     }
   };
 
   const selectPlayMode = (mode: QuestionBankPlayMode) => {
-    if (incorrectOnly && mode === "exam") return;
+    if (questionPool === "incorrect" && mode === "exam") return;
     setPlayMode(mode);
   };
 
-  const selectIncorrectOnly = (next: boolean) => {
-    if (next && previewOnly) return;
-    setIncorrectOnly(next);
-    if (next) setPlayMode("instant");
+  const selectQuestionPool = (next: QuestionBankQuestionPool) => {
+    if ((next === "incorrect" || next === "mixed") && previewOnly) return;
+    setQuestionPool(next);
+    if (next === "incorrect") setPlayMode("instant");
   };
 
   const handleQuestionCountChange = (count: number) => {
@@ -349,7 +351,8 @@ export function QuestionBankSessionSettingsModal({
 
   const handleStart = () => {
     if (!originTile || subjectKeys.length === 0) return;
-    const useIncorrectOnly = advanced && incorrectOnly && !previewOnly;
+    const pool: QuestionBankQuestionPool =
+      advanced && !previewOnly ? questionPool : "all";
     onConfirm({
       testType: originTile.testType,
       subjects: subjectKeys,
@@ -359,8 +362,8 @@ export function QuestionBankSessionSettingsModal({
       uiDifficulties: uiDifficultiesForMix(difficultyMix),
       difficultyMix,
       topics: topicFilterEnabled ? selectedTopics : [],
-      playMode: advanced && !useIncorrectOnly ? playMode : "instant",
-      incorrectOnly: useIncorrectOnly,
+      playMode: advanced && pool !== "incorrect" ? playMode : "instant",
+      questionPool: pool,
     });
     onClose();
   };
@@ -456,7 +459,7 @@ export function QuestionBankSessionSettingsModal({
           onClick={() => selectPlayMode("instant")}
           className={cn(
             "rounded-organic-lg px-4 py-3 text-sm font-semibold transition-colors",
-            playMode === "instant" || incorrectOnly
+            playMode === "instant" || questionPool === "incorrect"
               ? "bg-secondary text-background"
               : "bg-surface text-text hover:bg-surface-mid",
           )}
@@ -466,13 +469,13 @@ export function QuestionBankSessionSettingsModal({
         <button
           type="button"
           onClick={() => selectPlayMode("exam")}
-          disabled={incorrectOnly}
+          disabled={questionPool === "incorrect"}
           className={cn(
             "rounded-organic-lg px-4 py-3 text-sm font-semibold transition-colors",
-            playMode === "exam" && !incorrectOnly
+            playMode === "exam" && questionPool !== "incorrect"
               ? "bg-[#6b4a72] text-white"
               : "bg-surface text-text hover:bg-surface-mid",
-            incorrectOnly &&
+            questionPool === "incorrect" &&
               "cursor-not-allowed opacity-45 hover:bg-surface",
           )}
         >
@@ -487,46 +490,46 @@ export function QuestionBankSessionSettingsModal({
       <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
         Question pool
       </span>
-      <div className="grid grid-cols-2 gap-2">
-        <button
-          type="button"
-          onClick={() => selectIncorrectOnly(false)}
-          className={cn(
-            "rounded-organic-lg px-4 py-3 text-sm font-semibold transition-colors",
-            !incorrectOnly
-              ? "bg-secondary text-background"
-              : "bg-surface text-text hover:bg-surface-mid",
-          )}
-        >
-          All questions
-        </button>
-        <button
-          type="button"
-          onClick={() => selectIncorrectOnly(true)}
-          disabled={previewOnly}
-          title={
-            previewOnly
-              ? "Sign in with full access to drill incorrect questions"
-              : "Only questions you have gotten wrong at least once"
-          }
-          className={cn(
-            "rounded-organic-lg px-4 py-3 text-sm font-semibold transition-colors",
-            incorrectOnly
-              ? "bg-secondary text-background"
-              : "bg-surface text-text hover:bg-surface-mid",
-            previewOnly &&
-              "cursor-not-allowed opacity-45 hover:bg-surface",
-          )}
-        >
-          Incorrect only
-        </button>
+      <div className="grid grid-cols-3 gap-2">
+        {(
+          [
+            { id: "all", label: "All" },
+            { id: "mixed", label: "Mixed" },
+            { id: "incorrect", label: "Incorrect" },
+          ] as const
+        ).map((option) => {
+          const needsAuth = option.id !== "all";
+          const active = questionPool === option.id;
+          const disabled = needsAuth && previewOnly;
+          return (
+            <button
+              key={option.id}
+              type="button"
+              onClick={() => selectQuestionPool(option.id)}
+              disabled={disabled}
+              title={
+                disabled
+                  ? "Sign in with full access to use this pool"
+                  : option.id === "incorrect"
+                    ? "Only questions you have gotten wrong at least once"
+                    : option.id === "mixed"
+                      ? "Blend prior incorrect questions with new ones"
+                      : undefined
+              }
+              className={cn(
+                "rounded-organic-lg px-2 py-3 text-sm font-semibold transition-colors sm:px-3",
+                active
+                  ? "bg-secondary text-background"
+                  : "bg-surface text-text hover:bg-surface-mid",
+                disabled &&
+                  "cursor-not-allowed opacity-45 hover:bg-surface",
+              )}
+            >
+              {option.label}
+            </button>
+          );
+        })}
       </div>
-      {incorrectOnly ? (
-        <p className="text-xs leading-relaxed text-text-muted">
-          Any prior wrong attempt counts, even if you later got it right.
-          Session uses unique questions only and stops at how many you have.
-        </p>
-      ) : null}
     </div>
   );
 
@@ -742,10 +745,20 @@ export function QuestionBankSessionSettingsModal({
                   </span>
                 </div>
 
-                <div className="grid gap-5 sm:grid-cols-2 sm:gap-6">
+                <div className="grid grid-cols-2 items-start gap-4 sm:gap-6">
                   {playModeBlock}
                   {questionPoolBlock}
                 </div>
+                {questionPool === "incorrect" ? (
+                  <p className="text-xs leading-relaxed text-text-muted">
+                    Any prior wrong attempt counts, even if you later got it
+                    right. Unique questions only; stops at how many you have.
+                  </p>
+                ) : questionPool === "mixed" ? (
+                  <p className="text-xs leading-relaxed text-text-muted">
+                    About half prior incorrect, half new. Unique questions only.
+                  </p>
+                ) : null}
 
                 <div className="border-t border-transparent pt-1">
                   {topicsBlock}
@@ -767,13 +780,13 @@ export function QuestionBankSessionSettingsModal({
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
               advanced &&
                 playMode === "exam" &&
-                !incorrectOnly &&
+                questionPool !== "incorrect" &&
                 "bg-[#6b4a72] hover:bg-[#5d3f63]",
             )}
           >
-            {advanced && playMode === "exam" && !incorrectOnly
+            {advanced && playMode === "exam" && questionPool !== "incorrect"
               ? "Start exam session"
-              : incorrectOnly
+              : questionPool === "incorrect"
                 ? "Start incorrect drill"
                 : "Start your session"}
             <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
