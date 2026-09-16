@@ -801,16 +801,8 @@ export function QuestionBankSessionSettingsModal({
                 {modalTitle}
               </h2>
               <p className="text-sm text-text-muted">
-                {previewOnly
-                  ? "Preview session options. Turn on Advanced for more controls."
-                  : "Configure your practice session before you start."}
+                Configure your practice session before you start.
               </p>
-              {previewOnly ? (
-                <p className="text-xs text-text-muted">
-                  You are not on full access, so Start may open a free preview
-                  instead of a full exam/practice session.
-                </p>
-              ) : null}
             </div>
             <div className="flex shrink-0 items-center gap-3 pt-0.5">
               <AdvancedToggle

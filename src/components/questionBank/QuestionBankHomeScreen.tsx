@@ -403,8 +403,17 @@ export function QuestionBankHomeScreen() {
   const openSessionModal = (tile: SubjectTileConfig) => {
     if (tile.comingSoon) return;
     if (accessPending || sessionPending) return;
-    // Always open settings (incl. logged-out / free tier) so Advanced options
-    // can be previewed. Starting a paid session still requires full access.
+    // Free / unpaid / logged-out: skip settings and start the subject preview.
+    if (!showFullAccess) {
+      if (freeTierPending) return;
+      if (isFreeTierPreviewSubject(tile.key)) {
+        launchFreeTierPreview(tile.key);
+        return;
+      }
+      setBlockedSubject(null);
+      setShowFreeTierBlocked(true);
+      return;
+    }
     setModalTile(tile);
     setSessionModalOpen(true);
   };
@@ -419,15 +428,17 @@ export function QuestionBankHomeScreen() {
     const startSubject = params.get("startSubject");
     if (!startSubject || !isFreeTierPreviewSubject(startSubject)) return;
     calibrationLaunchHandled.current = true;
-    const tile = SUBJECT_TILES.find((t) => t.key === startSubject);
-    if (tile) openSessionModal(tile);
+    if (showFullAccess) {
+      const tile = SUBJECT_TILES.find((t) => t.key === startSubject);
+      if (tile) openSessionModal(tile);
+    } else {
+      launchFreeTierPreview(startSubject);
+    }
     router.replace("/questions", { scroll: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- deep-link once ready
   }, [accessPending, freeTierPending, sessionPending, showFullAccess]);
 
   const handleSessionConfirm = (payload: QuestionBankHomeLaunchPayload) => {
-    // Local experiment: always launch the configured session (incl. exam mode)
-    // so Advanced settings can be previewed without full access.
     try {
       sessionStorage.setItem(
         QUESTION_BANK_HOME_LAUNCH_KEY,
@@ -561,8 +572,6 @@ export function QuestionBankHomeScreen() {
                   ? Math.min(100, Math.round((stats.attempted / stats.total) * 100))
                   : 0;
               const comingSoon = !!tile.comingSoon;
-              // Allow opening session settings to preview Advanced options even
-              // when logged out / without full access (coming soon stays locked).
               const disabled = comingSoon;
               const Icon = SUBJECT_ICONS[tile.key];
 
@@ -699,7 +708,6 @@ export function QuestionBankHomeScreen() {
           setModalTile(null);
         }}
         onConfirm={handleSessionConfirm}
-        previewOnly={!showFullAccess}
       />
     </div>
   );
