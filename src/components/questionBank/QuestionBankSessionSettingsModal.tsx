@@ -202,7 +202,7 @@ function AdvancedToggle({
         onClick={() => onCheckedChange(!checked)}
         className={cn(
           "relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors",
-          checked ? "bg-secondary" : "bg-surface-elevated",
+          checked ? "bg-secondary" : "bg-surface-mid",
         )}
       >
         <span
