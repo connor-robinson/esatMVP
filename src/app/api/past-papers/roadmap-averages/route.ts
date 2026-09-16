@@ -132,7 +132,7 @@ function parseVariantYear(variant: string): string | null {
 }
 
 /** exam + variant, e.g. NSAA::2016-Section 1-Official */
-export function averageKey(paperName: string, variant: string): string {
+function averageKey(paperName: string, variant: string): string {
   return `${paperName}::${variant}`;
 }
 

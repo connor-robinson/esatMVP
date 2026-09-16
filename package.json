@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
+    "check:routes": "node scripts/check-route-exports.js",
     "test": "vitest run",
     "test:e2e:ga": "playwright test e2e/ga-consent.spec.ts",
     "test:e2e:pearson": "playwright test e2e/pearson/pearson-shell.spec.ts",

@@ -1,5 +1,5 @@
-# Catch TypeScript / compile errors before (or in parallel with) Vercel.
-# This is the same class of failure that breaks `next build` on deploy.
+# Catch the same failures Vercel hits on `next build`.
+# Plain `tsc` misses Next.js route export rules (e.g. exporting helpers from route.ts).
 
 name: Pre-deploy check
 
@@ -15,10 +15,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  typecheck:
-    name: TypeScript
+  predeploy:
+    name: Next.js build gate
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
 
@@ -30,5 +30,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Typecheck
-        run: npm run type-check
+      - name: Check route exports
+        run: npm run check:routes
+
+      - name: Next.js production build
+        env:
+          # Placeholders are enough to compile; this mirrors Vercel type/route checks.
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
+          SUPABASE_SERVICE_ROLE_KEY: placeholder-service-role
+          NEXT_PUBLIC_SITE_URL: https://example.com
+        run: npm run build

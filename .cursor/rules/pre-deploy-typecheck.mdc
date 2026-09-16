@@ -1,21 +1,20 @@
 ---
-description: Run type-check before finishing TypeScript/Next changes that could break Vercel builds
+description: Catch Vercel/Next build breaks including invalid route exports before push
 globs: src/**/*.{ts,tsx}
 alwaysApply: false
 ---
 
-# Pre-deploy type safety
+# Pre-deploy build safety
 
-Vercel runs `next build`, which typechecks. Local `npm run build` is slow; prefer:
+Vercel runs `next build`. That is stricter than `tsc`:
 
-```bash
-npm run type-check
-```
+- Invalid **route exports** (helpers exported from `route.ts`) fail only on `next build`
+- App Router routes may only export handlers and config fields (`GET`, `POST`, `runtime`, `dynamic`, `maxDuration`, …)
 
-Before ending a task that touches `src/**/*.ts` or `src/**/*.tsx` (especially `src/lib/**` or admin APIs):
+Before ending a task that touches `src/app/**/route.ts` or other deploy-sensitive code:
 
-1. Run `npm run type-check`
-2. Fix any errors you introduced
-3. Only then commit/push
+1. Prefer `node scripts/check-route-exports.js` (fast) for route files
+2. For broader changes, run `npm run build` when practical, or at least `npm run type-check`
+3. Do **not** `export` helper functions/constants from `route.ts` / `page.tsx` unless they are valid Next.js route/page fields. Move helpers to `src/lib/...`
 
-Do not leave known `tsc` errors for Vercel to catch.
+Do not leave known Next/Vercel compile errors for production to catch.
