@@ -117,7 +117,6 @@ function formatTime(ms: number) {
 
 export function QuestionBankSessionResults({
   attempts,
-  sessionSource,
   subjectsLabel,
   startedAt,
   timedOut = false,
@@ -194,11 +193,11 @@ export function QuestionBankSessionResults({
     [result.topicStats],
   );
 
-  const subtitleParts = [
-    `${result.totalQuestions} ${result.totalQuestions === 1 ? 'question' : 'questions'}`,
-    subjectsLabel,
-    sessionSource === 'library' ? 'Library session' : null,
-  ].filter(Boolean);
+  const [reviewExpanded, setReviewExpanded] = useState(false);
+  const visibleReviewAttempts = reviewExpanded
+    ? sortedAttempts
+    : sortedAttempts.slice(0, 3);
+  const hiddenReviewCount = Math.max(0, sortedAttempts.length - 3);
 
   return (
     <div className='min-h-screen bg-background'>
@@ -212,11 +211,6 @@ export function QuestionBankSessionResults({
                   ? 'Exam complete'
                   : 'Session Complete!'}
             </h1>
-            <p className='text-sm text-text-muted sm:text-base'>
-              {playMode === 'exam' ? 'Exam mode' : 'Question bank session'} •{' '}
-              {subtitleParts.join(' • ')}
-              {timedOut ? ' • Ended when the timer ran out' : ''}
-            </p>
             <p className='mt-1 text-xs text-text-subtle'>
               {new Date(startedAt).toLocaleString()}
             </p>
@@ -457,7 +451,7 @@ export function QuestionBankSessionResults({
               </div>
 
               <div className='space-y-2'>
-                {sortedAttempts.map((attempt) => {
+                {visibleReviewAttempts.map((attempt) => {
                   const firstTryCorrect = countsAsSessionCorrect(attempt);
                   const topicLabel = attempt.primaryTag
                     ? labelForQuestionBankTag(
@@ -528,6 +522,18 @@ export function QuestionBankSessionResults({
                   );
                 })}
               </div>
+
+              {hiddenReviewCount > 0 ? (
+                <button
+                  type='button'
+                  onClick={() => setReviewExpanded((open) => !open)}
+                  className='mt-4 text-sm font-medium text-text-muted transition-colors hover:text-text'
+                >
+                  {reviewExpanded
+                    ? 'Show fewer questions'
+                    : `Show ${hiddenReviewCount} more question${hiddenReviewCount === 1 ? '' : 's'}`}
+                </button>
+              ) : null}
             </div>
           </motion.div>
         )}
