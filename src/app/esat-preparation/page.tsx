@@ -22,9 +22,10 @@ import {
 
 const PATH = SEO_ROUTES.preparation;
 
-const TITLE = "ESAT Preparation 2026/27 | Study Plan, Practice & Timing";
+const TITLE =
+  "How to Prepare for the ESAT | 2026/27 Study Plan | ESAT CAMP";
 const DESCRIPTION =
-  "Prepare for the ESAT with a clear plan for no-calculator speed, module practice, past papers, timing and mistake review. Start with a free calibration test.";
+  "Learn how to prepare for the ESAT with a practical study plan covering diagnostics, no-calculator practice, past papers, timed questions and mock tests.";
 
 export const metadata: Metadata = buildSeoMetadata({
   title: TITLE,
@@ -66,10 +67,10 @@ export default function EsatPreparationPage() {
     <SeoPageLayout
       path={PATH}
       eyebrow="Preparation hub"
-      title="ESAT Preparation Guide"
+      title="How to Prepare for the ESAT"
       intro={[
-        "Preparing for the ESAT is not just about learning more content. You need to answer unfamiliar maths and science questions quickly, without a calculator, across separately timed modules.",
-        "The best preparation plan is simple: check the specification, build no-calculator fluency, practise ESAT-style questions, and review mistakes by skill rather than by paper.",
+        "Preparing for the ESAT means more than revising content. You need to apply maths and science quickly, without a calculator, across separately timed modules.",
+        "This guide explains the most effective preparation order, from checking the specification and diagnosing weaknesses to targeted practice, past papers and full mock tests.",
       ]}
       primaryCta={{ href: APP_ROUTES.calibration, label: "Start free calibration" }}
       secondaryCta={{
@@ -94,11 +95,16 @@ export default function EsatPreparationPage() {
       )}
       sources={[SOURCES.esatTest, SOURCES.prepare, SOURCES.contentSpec]}
       schema={articleSchema({
-        headline: "ESAT Preparation Guide",
+        headline: "How to Prepare for the ESAT",
         description: DESCRIPTION,
         path: PATH,
       })}
     >
+      <p className="text-sm leading-relaxed text-[#94A3B8]">
+        For interactive questions, timed drills and mock tools, explore the complete{" "}
+        <SeoTextLink href="/">ESAT Camp preparation platform</SeoTextLink>.
+      </p>
+
       <SeoSection
         heading="What makes the ESAT different"
         lead="Five structural facts shape almost every sensible preparation decision."
