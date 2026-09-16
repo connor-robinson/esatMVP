@@ -16,7 +16,7 @@ const SEO_SUBTEXT =
 
 export const metadata: Metadata = buildSeoMetadata({
   ...MAIN_DOWNLOAD_PAGE_METADATA,
-  title: "ESAT Past Papers | NSAA & ENGAA Practice Papers",
+  title: "ESAT Past Papers Download: NSAA & ENGAA PDFs FREE",
   description:
     "ESAT past papers for practice: download NSAA and ENGAA PDFs and mark schemes, then open the interactive past-papers library for timed sittings.",
   keywords: [

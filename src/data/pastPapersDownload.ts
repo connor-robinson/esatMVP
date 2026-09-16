@@ -693,7 +693,7 @@ export function buildExamHubMetadata(exam: DownloadExam) {
 }
 
 export const MAIN_DOWNLOAD_PAGE_METADATA = {
-  title: "ESAT Past Papers: NSAA & ENGAA PDFs | ESAT Camp",
+  title: "ESAT Past Papers Download: NSAA & ENGAA PDFs FREE",
   description:
     "Download NSAA and ENGAA past papers and answer keys for ESAT preparation. Free PDF question papers and mark schemes.",
   path: SEO_ROUTES.pastPapers,
