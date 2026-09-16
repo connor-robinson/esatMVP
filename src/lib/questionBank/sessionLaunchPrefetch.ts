@@ -29,6 +29,7 @@ export function sessionQuestionPoolLimit(questionCount: number): number {
 
 export function fingerprintHomeLaunch(
   payload: QuestionBankHomeLaunchPayload,
+  opts?: { authenticated?: boolean },
 ): string {
   const topics = [...(payload.topics ?? [])].sort();
   const questionPool = resolveQuestionPool(payload);
@@ -45,6 +46,8 @@ export function fingerprintHomeLaunch(
         ? "instant"
         : (payload.playMode ?? "instant"),
     questionPool,
+    // Guests cannot use New/incorrect filters; fingerprint must match fetch opts.
+    authenticated: Boolean(opts?.authenticated),
   });
 }
 
@@ -70,18 +73,25 @@ function appendSharedLaunchParams(
 
 export function buildHomeLaunchQuestionsUrl(
   payload: QuestionBankHomeLaunchPayload,
-  opts?: { excludeAttempted?: boolean; pool?: "new" | "incorrect" },
+  opts?: {
+    excludeAttempted?: boolean;
+    pool?: "new" | "incorrect";
+    authenticated?: boolean;
+  },
 ): string {
   const params = new URLSearchParams();
   appendSharedLaunchParams(params, payload);
   const questionPool = opts?.pool ?? resolveQuestionPool(payload);
+  const authenticated = opts?.authenticated !== false;
+  const excludeAttempted = opts?.excludeAttempted ?? authenticated;
 
   if (questionPool === "incorrect" || opts?.pool === "incorrect") {
     // Any prior wrong attempt qualifies, including later-corrected questions.
     params.append("attemptResult", "Incorrect Before");
-  } else if (opts?.excludeAttempted !== false) {
+  } else if (excludeAttempted) {
     // Skip questions the user already answered. Unanswered items from sessions
     // left early are not in attempts, so they can still appear.
+    // Requires auth; guests omit this and get an unfiltered Mix pool.
     params.append("attemptedStatus", "New");
   }
   return `/api/question-bank/questions?${params.toString()}`;
@@ -175,20 +185,29 @@ export function sampleMixedSessionQuestions<
 /** Kick off the session question fetch while navigating home → practice. */
 export function beginHomeLaunchQuestionsPrefetch(
   payload: QuestionBankHomeLaunchPayload,
+  opts?: { authenticated?: boolean },
 ): void {
   if (typeof window === "undefined") return;
 
-  const fingerprint = fingerprintHomeLaunch(payload);
+  const authenticated = Boolean(opts?.authenticated);
+  const fingerprint = fingerprintHomeLaunch(payload, { authenticated });
   const questionPool = resolveQuestionPool(payload);
+  const fetchOpts = { authenticated };
 
   const promise: Promise<HomeLaunchPrefetchResult | null> =
     questionPool === "mixed"
       ? Promise.all([
           fetchLaunchQuestions(
-            buildHomeLaunchQuestionsUrl(payload, { pool: "incorrect" }),
+            buildHomeLaunchQuestionsUrl(payload, {
+              ...fetchOpts,
+              pool: "incorrect",
+            }),
           ),
           fetchLaunchQuestions(
-            buildHomeLaunchQuestionsUrl(payload, { pool: "new" }),
+            buildHomeLaunchQuestionsUrl(payload, {
+              ...fetchOpts,
+              pool: "new",
+            }),
           ),
         ]).then(([incorrect, fresh]) => {
           const incorrectList = incorrect ?? [];
@@ -200,11 +219,12 @@ export function beginHomeLaunchQuestionsPrefetch(
             fresh: freshList,
           };
         })
-      : fetchLaunchQuestions(buildHomeLaunchQuestionsUrl(payload)).then(
-          (questions) =>
-            questions && questions.length > 0
-              ? { kind: "single" as const, questions }
-              : null,
+      : fetchLaunchQuestions(
+          buildHomeLaunchQuestionsUrl(payload, fetchOpts),
+        ).then((questions) =>
+          questions && questions.length > 0
+            ? { kind: "single" as const, questions }
+            : null,
         );
 
   entry = { fingerprint, promise };
@@ -212,9 +232,15 @@ export function beginHomeLaunchQuestionsPrefetch(
 
 export function takeHomeLaunchPrefetch(
   payload: QuestionBankHomeLaunchPayload,
+  opts?: { authenticated?: boolean },
 ): Promise<HomeLaunchPrefetchResult | null> | null {
   if (!entry) return null;
-  if (entry.fingerprint !== fingerprintHomeLaunch(payload)) {
+  if (
+    entry.fingerprint !==
+    fingerprintHomeLaunch(payload, {
+      authenticated: Boolean(opts?.authenticated),
+    })
+  ) {
     entry = null;
     return null;
   }

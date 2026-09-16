@@ -1111,9 +1111,12 @@ export default function QuestionBankPage() {
         questionPool,
       };
 
+      const authenticated = Boolean(session?.user);
+      const fetchOpts = { authenticated };
+
       if (
         (questionPool === 'incorrect' || questionPool === 'mixed') &&
-        !session?.user
+        !authenticated
       ) {
         window.alert(
           'Sign in to practice questions from your attempt history.',
@@ -1151,12 +1154,16 @@ export default function QuestionBankPage() {
             const [incorrectRes, freshRes] = await Promise.all([
               fetch(
                 buildHomeLaunchQuestionsUrl(launchPayload, {
+                  ...fetchOpts,
                   pool: 'incorrect',
                 }),
                 { credentials: 'include' },
               ),
               fetch(
-                buildHomeLaunchQuestionsUrl(launchPayload, { pool: 'new' }),
+                buildHomeLaunchQuestionsUrl(launchPayload, {
+                  ...fetchOpts,
+                  pool: 'new',
+                }),
                 { credentials: 'include' },
               ),
             ]);
@@ -1185,7 +1192,7 @@ export default function QuestionBankPage() {
           }
           if (!questions) {
             const response = await fetch(
-              buildHomeLaunchQuestionsUrl(launchPayload),
+              buildHomeLaunchQuestionsUrl(launchPayload, fetchOpts),
               { credentials: 'include' },
             );
             if (!response.ok) {
@@ -1376,7 +1383,9 @@ export default function QuestionBankPage() {
         {
           subjects: data.subjects,
           testType: data.testType,
-          prefetched: takeHomeLaunchPrefetch(data),
+          prefetched: takeHomeLaunchPrefetch(data, {
+            authenticated: Boolean(session?.user),
+          }),
         },
       );
     };
@@ -1386,7 +1395,7 @@ export default function QuestionBankPage() {
     return () => {
       window.removeEventListener(QUESTION_BANK_HOME_LAUNCH_EVENT, bootHomeLaunch);
     };
-  }, [handleStartSession, setFilters, accessPending]);
+  }, [handleStartSession, setFilters, accessPending, session?.user]);
 
   const handleNextQuestionInSession = async () => {
     if (sessionPlayMode === 'exam') {

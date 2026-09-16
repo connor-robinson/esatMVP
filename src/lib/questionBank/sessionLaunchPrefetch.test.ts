@@ -23,7 +23,9 @@ describe("sessionLaunchPrefetch", () => {
   });
 
   it("builds a random subject-scoped fetch URL", () => {
-    const url = buildHomeLaunchQuestionsUrl(samplePayload);
+    const url = buildHomeLaunchQuestionsUrl(samplePayload, {
+      authenticated: true,
+    });
     expect(url).toContain("/api/question-bank/questions?");
     expect(url).toContain("testType=ESAT");
     expect(url).toContain("subject=Math+1");
@@ -31,6 +33,14 @@ describe("sessionLaunchPrefetch", () => {
     expect(url).toContain("random=true");
     expect(url).toContain("attemptedStatus=New");
     expect(url).not.toContain("attemptResult=");
+  });
+
+  it("omits New filter for guests so exam mode can load without auth", () => {
+    const url = buildHomeLaunchQuestionsUrl(samplePayload, {
+      authenticated: false,
+    });
+    expect(url).not.toContain("attemptedStatus=");
+    expect(url).toContain("random=true");
   });
 
   it("builds an incorrect-only fetch URL without New filter", () => {

@@ -372,14 +372,6 @@ export function QuestionBankHomeScreen() {
     [modalTile],
   );
 
-  const previewAvailableFor = useCallback(
-    (subject: FreeTierPreviewSubject) => {
-      const stats = subjectStatus(subject);
-      return !!stats && !stats.isExhausted && stats.remaining > 0;
-    },
-    [subjectStatus],
-  );
-
   const launchFreeTierPreview = (subject: FreeTierPreviewSubject) => {
     if (accessPending || freeTierPending || sessionPending) return;
 
@@ -411,15 +403,8 @@ export function QuestionBankHomeScreen() {
   const openSessionModal = (tile: SubjectTileConfig) => {
     if (tile.comingSoon) return;
     if (accessPending || sessionPending) return;
-    if (!showFullAccess) {
-      if (isFreeTierPreviewSubject(tile.key)) {
-        launchFreeTierPreview(tile.key);
-      } else {
-        setBlockedSubject(null);
-        setShowFreeTierBlocked(true);
-      }
-      return;
-    }
+    // Always open settings (incl. logged-out / free tier) so Advanced options
+    // can be previewed. Starting a paid session still requires full access.
     setModalTile(tile);
     setSessionModalOpen(true);
   };
@@ -441,6 +426,8 @@ export function QuestionBankHomeScreen() {
   }, [accessPending, freeTierPending, sessionPending, showFullAccess]);
 
   const handleSessionConfirm = (payload: QuestionBankHomeLaunchPayload) => {
+    // Local experiment: always launch the configured session (incl. exam mode)
+    // so Advanced settings can be previewed without full access.
     try {
       sessionStorage.setItem(
         QUESTION_BANK_HOME_LAUNCH_KEY,
@@ -449,10 +436,10 @@ export function QuestionBankHomeScreen() {
     } catch {
       /* quota / private mode */
     }
-    // Overlap the questions API with the practice-route navigation.
-    beginHomeLaunchQuestionsPrefetch(payload);
+    beginHomeLaunchQuestionsPrefetch(payload, {
+      authenticated: Boolean(session?.user) || isLoggedIn,
+    });
     if (pathname === "/questions/questionbank") {
-      // Already on the practice route (home alias). Soft-push would no-op.
       window.dispatchEvent(new Event(QUESTION_BANK_HOME_LAUNCH_EVENT));
       return;
     }
@@ -569,24 +556,14 @@ export function QuestionBankHomeScreen() {
           <div className="mt-5 grid gap-x-4 gap-y-9 sm:grid-cols-2 xl:grid-cols-4">
             {SUBJECT_TILES.map((tile) => {
               const stats = tiles[tile.key];
-              const previewSubject = isFreeTierPreviewSubject(tile.key)
-                ? tile.key
-                : null;
-              const previewAvailable =
-                showFullAccess ||
-                accessPending ||
-                (previewSubject != null && previewAvailableFor(previewSubject));
               const pct =
                 stats.total > 0
                   ? Math.min(100, Math.round((stats.attempted / stats.total) * 100))
                   : 0;
               const comingSoon = !!tile.comingSoon;
-              const disabled =
-                comingSoon ||
-                (!showFullAccess &&
-                  !accessPending &&
-                  !freeTierPending &&
-                  !previewAvailable);
+              // Allow opening session settings to preview Advanced options even
+              // when logged out / without full access (coming soon stays locked).
+              const disabled = comingSoon;
               const Icon = SUBJECT_ICONS[tile.key];
 
               return (
@@ -722,6 +699,7 @@ export function QuestionBankHomeScreen() {
           setModalTile(null);
         }}
         onConfirm={handleSessionConfirm}
+        previewOnly={!showFullAccess}
       />
     </div>
   );
