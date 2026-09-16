@@ -1,11 +1,11 @@
 /**
- * First-run / change-default chooser: Home vs Library.
+ * First-run / change-default chooser: Home, Roadmap, or Library.
  */
 
 "use client";
 
 import Link from "next/link";
-import { Home, Library } from "lucide-react";
+import { Home, Library, Map } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { PastPapersUiPreference } from "@/lib/papers/pastPapersUiPreference";
 import {
@@ -31,9 +31,15 @@ const OPTIONS: Array<{
     id: "home",
     title: "Home",
     description:
-      "Practice table with years, scores, downloads, and one-click start.",
+      "Updated practice table with years, scores, downloads, and one-click start.",
     icon: Home,
     recommended: true,
+  },
+  {
+    id: "roadmap",
+    title: "Roadmap",
+    description: "Same practice table at the classic Roadmap URL.",
+    icon: Map,
   },
   {
     id: "library",
@@ -50,7 +56,7 @@ export function PastPapersPreferenceChooser({ onChoose, compact }: Props) {
         "font-sans",
         compact
           ? "rounded-sm border border-border-subtle bg-surface-elevated p-4"
-          : "mx-auto w-full max-w-2xl",
+          : "mx-auto w-full max-w-3xl",
       )}
     >
       <div className={compact ? "" : "text-center"}>
@@ -70,14 +76,18 @@ export function PastPapersPreferenceChooser({ onChoose, compact }: Props) {
             compact ? "mt-1 text-sm" : "mt-2 text-sm sm:text-base",
           )}
         >
-          Home is the default. You can switch anytime from the layout menu.
+          We recently updated the past paper layout. Home is the new default;
+          Roadmap and Library are still available. You can switch anytime from
+          the layout menu.
         </p>
       </div>
 
       <div
         className={cn(
           "grid gap-3",
-          compact ? "mt-4 sm:grid-cols-2" : "mt-8 sm:grid-cols-2 sm:gap-4",
+          compact
+            ? "mt-4 sm:grid-cols-3"
+            : "mt-8 sm:grid-cols-3 sm:gap-4",
         )}
       >
         {OPTIONS.map((option) => {
@@ -96,7 +106,7 @@ export function PastPapersPreferenceChooser({ onChoose, compact }: Props) {
                   : "border-border-subtle",
               )}
             >
-              <span className="flex items-center gap-2">
+              <span className="flex flex-wrap items-center gap-2">
                 <Icon className="h-4 w-4 text-primary" aria-hidden />
                 <span className="text-sm font-semibold text-text">
                   {option.title}
@@ -119,6 +129,13 @@ export function PastPapersPreferenceChooser({ onChoose, compact }: Props) {
         <p className="mt-6 text-center text-xs text-text-muted">
           Also:{" "}
           <Link
+            href={PAST_PAPERS_HOME_PATH}
+            className="underline underline-offset-2 hover:text-text"
+          >
+            Home
+          </Link>
+          {" · "}
+          <Link
             href={PAST_PAPERS_ROADMAP_PATH}
             className="underline underline-offset-2 hover:text-text"
           >
@@ -130,13 +147,6 @@ export function PastPapersPreferenceChooser({ onChoose, compact }: Props) {
             className="underline underline-offset-2 hover:text-text"
           >
             Library
-          </Link>
-          {" · "}
-          <Link
-            href={PAST_PAPERS_HOME_PATH}
-            className="underline underline-offset-2 hover:text-text"
-          >
-            Home
           </Link>
         </p>
       ) : null}
