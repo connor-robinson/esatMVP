@@ -1054,6 +1054,7 @@ export default function QuestionBankPage() {
         playMode?: QuestionBankPlayMode;
         questionPool?: QuestionBankQuestionPool;
         incorrectOnly?: boolean;
+        extraTimeApplied?: boolean;
       },
       scope?: {
         subjects?: SubjectFilter[];
@@ -1069,6 +1070,7 @@ export default function QuestionBankPage() {
           : config.playMode === 'exam'
             ? 'exam'
             : 'instant';
+      const extraTimeAlreadyApplied = Boolean(config.extraTimeApplied);
 
       const subjectsResolved: SubjectFilter[] =
         scope?.subjects != null && scope.subjects.length > 0
@@ -1253,10 +1255,9 @@ export default function QuestionBankPage() {
               ? config.timeLimitMinutes
               : Math.ceil(sessionQs.length * 1.5);
           const accessPrefs = await fetchAccessArrangementPrefs();
-          const adjustedLimitMinutes = applyExtraTimeMinutes(
-            limitMinutes,
-            accessPrefs.extraTime,
-          );
+          const adjustedLimitMinutes = extraTimeAlreadyApplied
+            ? limitMinutes
+            : applyExtraTimeMinutes(limitMinutes, accessPrefs.extraTime);
           const startTime = Date.now();
           const timeLimitMs = adjustedLimitMinutes * 60 * 1000;
           setRestBreaksEnabled(accessPrefs.restBreaks.enabled);
@@ -1370,6 +1371,7 @@ export default function QuestionBankPage() {
                 ? 'exam'
                 : 'instant',
           questionPool: resolveQuestionPool(data),
+          extraTimeApplied: Boolean(data.extraTimeApplied),
         },
         {
           subjects: data.subjects,

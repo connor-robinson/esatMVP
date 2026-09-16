@@ -41,6 +41,11 @@ export interface QuestionBankHomeLaunchPayload {
    * @deprecated Prefer `questionPool: "incorrect"`. Kept for older launches.
    */
   incorrectOnly?: boolean;
+  /**
+   * When true, `timeLimitMinutes` already includes access-arrangement extra
+   * time, so the session runner should not apply it again.
+   */
+  extraTimeApplied?: boolean;
 }
 
 export function resolveQuestionPool(

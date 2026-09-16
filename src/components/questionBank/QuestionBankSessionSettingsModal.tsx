@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X, ArrowRight, Minus, Plus, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { SubjectFilter } from "@/types/questionBank";
@@ -29,6 +29,11 @@ import {
 import type { LibraryFilters } from "@/lib/questionBank/libraryQueryParams";
 import { isVerifiedCurriculumTag } from "@/lib/questionBank/esatTagCanonicalize";
 import { UNTAGGED_TOPIC } from "@/lib/questionBank/libraryQueryParams";
+import {
+  applyExtraTimeMinutes,
+  fetchExtraTimePrefs,
+  type ExtraTimePrefs,
+} from "@/lib/papers/extraTime";
 
 const QUESTION_STEP = 1;
 const QUESTION_MIN = 1;
@@ -233,9 +238,30 @@ export function QuestionBankSessionSettingsModal({
   const [topicOptions, setTopicOptions] = useState<LibraryOutlineTag[]>([]);
   const [topicsLoading, setTopicsLoading] = useState(false);
   const [topicsError, setTopicsError] = useState<string | null>(null);
+  const [extraTimePrefs, setExtraTimePrefs] = useState<ExtraTimePrefs | null>(
+    null,
+  );
+  const [extraTimeOn, setExtraTimeOn] = useState(false);
+  const baseMinutesRef = useRef(autoTimeLimitMinutes(10));
 
   const singleSubject = subjectKeys.length === 1 ? subjectKeys[0] : null;
   const topicFilterEnabled = advanced && Boolean(singleSubject);
+  const extraTimePercent =
+    extraTimePrefs && extraTimePrefs.enabled && extraTimePrefs.percentage > 0
+      ? extraTimePrefs.percentage
+      : 0;
+  const canUseExtraTime = extraTimePercent > 0;
+
+  const setMinutesFromBase = (base: number, withExtraTime: boolean) => {
+    const safeBase = clamp(roundToStep(base, TIME_STEP), TIME_MIN, TIME_MAX);
+    baseMinutesRef.current = safeBase;
+    if (withExtraTime && extraTimePercent > 0) {
+      const adjusted = applyExtraTimeMinutes(safeBase, extraTimePercent);
+      setMinutes(clamp(roundToStep(adjusted, TIME_STEP), TIME_MIN, TIME_MAX));
+      return;
+    }
+    setMinutes(safeBase);
+  };
 
   useEffect(() => {
     if (!open || !originTile) return;
@@ -243,7 +269,9 @@ export function QuestionBankSessionSettingsModal({
     setSubjectKeys([originTile.key as SubjectFilter]);
     const initialCount = 10;
     setQuestionCount(initialCount);
-    setMinutes(autoTimeLimitMinutes(initialCount));
+    const initialMinutes = autoTimeLimitMinutes(initialCount);
+    baseMinutesRef.current = initialMinutes;
+    setMinutes(initialMinutes);
     setDifficultyMix(isMixed ? "Medium" : "Auto");
     setAdvanced(Boolean(isMixed));
     setPlayMode("instant");
@@ -251,8 +279,20 @@ export function QuestionBankSessionSettingsModal({
     setSelectedTopics([]);
     setTopicOptions([]);
     setTopicsError(null);
+    setExtraTimeOn(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, originTile?.key, isMixed]);
+
+  useEffect(() => {
+    if (!open || !advanced) return;
+    let cancelled = false;
+    void fetchExtraTimePrefs().then((prefs) => {
+      if (!cancelled) setExtraTimePrefs(prefs);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [open, advanced]);
 
   useEffect(() => {
     if (!open || !advanced || !topicFilterEnabled || !singleSubject) {
@@ -304,6 +344,10 @@ export function QuestionBankSessionSettingsModal({
       setSelectedTopics([]);
       setPlayMode("instant");
       setQuestionPool("all");
+      if (extraTimeOn) {
+        setExtraTimeOn(false);
+        setMinutesFromBase(baseMinutesRef.current, false);
+      }
     } else if (next && isMixed && originTile) {
       setSubjectKeys(siblingTiles.map((t) => t.key as SubjectFilter));
     }
@@ -322,7 +366,33 @@ export function QuestionBankSessionSettingsModal({
 
   const handleQuestionCountChange = (count: number) => {
     setQuestionCount(count);
-    setMinutes(autoTimeLimitMinutes(count));
+    setMinutesFromBase(autoTimeLimitMinutes(count), extraTimeOn);
+  };
+
+  const handleMinutesChange = (next: number) => {
+    if (extraTimeOn && extraTimePercent > 0) {
+      // Treat edits as the post-extra value; keep base in sync for toggle-off.
+      const safeNext = clamp(roundToStep(next, TIME_STEP), TIME_MIN, TIME_MAX);
+      setMinutes(safeNext);
+      baseMinutesRef.current = clamp(
+        roundToStep(safeNext / (1 + extraTimePercent / 100), TIME_STEP),
+        TIME_MIN,
+        TIME_MAX,
+      );
+      return;
+    }
+    setMinutesFromBase(next, false);
+  };
+
+  const applyAutoTimeLimit = () => {
+    setMinutesFromBase(autoTimeLimitMinutes(questionCount), extraTimeOn);
+  };
+
+  const toggleExtraTime = () => {
+    if (!canUseExtraTime) return;
+    const next = !extraTimeOn;
+    setExtraTimeOn(next);
+    setMinutesFromBase(baseMinutesRef.current, next);
   };
 
   const selectSubject = (key: SubjectFilter) => {
@@ -345,10 +415,6 @@ export function QuestionBankSessionSettingsModal({
     );
   };
 
-  const applyAutoTimeLimit = () => {
-    setMinutes(autoTimeLimitMinutes(questionCount));
-  };
-
   const handleStart = () => {
     if (!originTile || subjectKeys.length === 0) return;
     const pool: QuestionBankQuestionPool =
@@ -364,6 +430,7 @@ export function QuestionBankSessionSettingsModal({
       topics: topicFilterEnabled ? selectedTopics : [],
       playMode: advanced && pool !== "incorrect" ? playMode : "instant",
       questionPool: pool,
+      extraTimeApplied: advanced && extraTimeOn && canUseExtraTime,
     });
     onClose();
   };
@@ -381,8 +448,19 @@ export function QuestionBankSessionSettingsModal({
 
   const modalTitle = isMixed && advanced ? "Mixed Practice" : "Session Settings";
   const showSubjectToggles = siblingTiles.length > 1;
-  const autoMinutes = autoTimeLimitMinutes(questionCount);
-  const isAutoTime = Math.abs(minutes - autoMinutes) < 0.001;
+  const autoBaseMinutes = autoTimeLimitMinutes(questionCount);
+  const expectedAutoMinutes =
+    extraTimeOn && extraTimePercent > 0
+      ? clamp(
+          roundToStep(
+            applyExtraTimeMinutes(autoBaseMinutes, extraTimePercent),
+            TIME_STEP,
+          ),
+          TIME_MIN,
+          TIME_MAX,
+        )
+      : autoBaseMinutes;
+  const isAutoTime = Math.abs(minutes - expectedAutoMinutes) < 0.001;
 
   const subjectsBlock =
     showSubjectToggles ? (
@@ -608,7 +686,7 @@ export function QuestionBankSessionSettingsModal({
           <div className="min-w-0 flex-1">
             <NumericStepper
               value={minutes}
-              onChange={setMinutes}
+              onChange={handleMinutesChange}
               min={TIME_MIN}
               max={TIME_MAX}
               step={TIME_STEP}
@@ -621,14 +699,14 @@ export function QuestionBankSessionSettingsModal({
             type="button"
             onClick={applyAutoTimeLimit}
             disabled={isAutoTime}
-            title={`Reset to ${formatStepperValue(autoMinutes, TIME_STEP)} min (90s per question)`}
+            title={`Reset to ${formatStepperValue(expectedAutoMinutes, TIME_STEP)} min (90s per question${extraTimeOn && extraTimePercent > 0 ? ` +${extraTimePercent}%` : ""})`}
             className={cn(
               "flex min-h-14 shrink-0 items-center gap-1.5 self-stretch rounded-organic-lg px-3 text-xs font-semibold transition-colors",
               "bg-surface-elevated text-text-muted hover:bg-surface-mid hover:text-text",
               "disabled:cursor-default disabled:opacity-45 disabled:hover:bg-surface-elevated disabled:hover:text-text-muted",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/35",
             )}
-            aria-label={`Reset time limit to ${formatStepperValue(autoMinutes, TIME_STEP)} minutes`}
+            aria-label={`Reset time limit to ${formatStepperValue(expectedAutoMinutes, TIME_STEP)} minutes`}
           >
             <RotateCcw className="h-3.5 w-3.5 shrink-0" aria-hidden />
             Reset
@@ -759,6 +837,42 @@ export function QuestionBankSessionSettingsModal({
                     About half prior incorrect, half new. Unique questions only.
                   </p>
                 ) : null}
+
+                <div className="space-y-3">
+                  <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
+                    Access arrangements
+                  </span>
+                  <button
+                    type="button"
+                    onClick={toggleExtraTime}
+                    disabled={!canUseExtraTime}
+                    title={
+                      canUseExtraTime
+                        ? extraTimeOn
+                          ? `Remove +${extraTimePercent}% from the time limit`
+                          : `Apply +${extraTimePercent}% to the time limit`
+                        : "Enable extra time in your profile to use this"
+                    }
+                    className={cn(
+                      "rounded-organic-lg px-4 py-3 text-sm font-semibold transition-colors",
+                      extraTimeOn && canUseExtraTime
+                        ? "bg-secondary text-background"
+                        : "bg-surface text-text hover:bg-surface-mid",
+                      !canUseExtraTime &&
+                        "cursor-not-allowed opacity-45 hover:bg-surface",
+                    )}
+                  >
+                    {canUseExtraTime
+                      ? `Extra time (+${extraTimePercent}%)`
+                      : "Extra time"}
+                  </button>
+                  {extraTimeOn && canUseExtraTime ? (
+                    <p className="text-xs leading-relaxed text-text-muted">
+                      Time limit includes your +{extraTimePercent}% arrangement.
+                      Base time stays {formatStepperValue(baseMinutesRef.current, TIME_STEP)} min.
+                    </p>
+                  ) : null}
+                </div>
 
                 <div className="border-t border-transparent pt-1">
                   {topicsBlock}
