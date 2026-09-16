@@ -746,7 +746,7 @@ export function QuestionBankSessionSettingsModal({
       <div
         className="relative z-[101] flex w-full max-w-[960px] max-h-[min(94vh,920px)] flex-col overflow-hidden rounded-[4px] bg-surface p-8 sm:p-10"
       >
-        <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden pr-1">
+        <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable]">
           {/* Header */}
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0 space-y-2">

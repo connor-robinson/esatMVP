@@ -40,6 +40,8 @@ function loadEnvFile(filePath: string) {
 loadEnvFile(path.resolve(process.cwd(), ".env.local"));
 
 function argValue(flag: string): string | null {
+  const eq = process.argv.find((a) => a.startsWith(`${flag}=`));
+  if (eq) return eq.slice(flag.length + 1) || null;
   const i = process.argv.indexOf(flag);
   if (i < 0 || i + 1 >= process.argv.length) return null;
   return process.argv[i + 1] ?? null;

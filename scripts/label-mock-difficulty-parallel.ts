@@ -9,6 +9,8 @@ import path from "path";
 import { MOCK_BUILDER_SUBJECTS } from "../src/lib/mockBuilder/types";
 
 function argValue(flag: string): string | null {
+  const eq = process.argv.find((a) => a.startsWith(`${flag}=`));
+  if (eq) return eq.slice(flag.length + 1) || null;
   const i = process.argv.indexOf(flag);
   if (i < 0 || i + 1 >= process.argv.length) return null;
   return process.argv[i + 1] ?? null;
@@ -21,24 +23,13 @@ const script = path.resolve("scripts/label-mock-difficulty.ts");
 async function runSubject(subject: string): Promise<number> {
   return new Promise((resolve) => {
     console.log(`[start] ${subject} (max=${max}, concurrency=${concurrency})`);
-    const child = spawn(
-      "npx",
-      [
-        "tsx",
-        script,
-        "--subject",
-        subject,
-        "--max",
-        max,
-        "--concurrency",
-        concurrency,
-      ],
-      {
-        stdio: ["ignore", "pipe", "pipe"],
-        shell: true,
-        env: process.env,
-      },
-    );
+    // Single command string so "Math 1" / "Math 2" stay intact on Windows.
+    const cmd = `npx tsx "${script}" --subject="${subject}" --max=${max} --concurrency=${concurrency}`;
+    const child = spawn(cmd, {
+      stdio: ["ignore", "pipe", "pipe"],
+      shell: true,
+      env: process.env,
+    });
     const prefix = `[${subject}] `;
     child.stdout?.on("data", (buf: Buffer) => {
       for (const line of buf.toString().split(/\r?\n/)) {
