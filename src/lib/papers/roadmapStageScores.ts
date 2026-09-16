@@ -180,7 +180,7 @@ export function plusFourAverage(sum: number, count: number): number {
 }
 
 /**
- * Deterministic invented ESAT avg in [5.0, 6.0] when a stage has no cohort data.
+ * Deterministic invented ESAT avg in [5.2, 6.2] when a stage has no cohort data.
  * Mixes stage id with calendar week so values drift slowly over time.
  */
 export function inventedEsatAverage(seed: string): number {
@@ -192,13 +192,13 @@ export function inventedEsatAverage(seed: string): number {
   const week = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
   h = (h ^ Math.imul(week, 2654435761)) >>> 0;
   const t = (h % 1001) / 1000; // 0 .. 1
-  return clampEsatScore(5 + t);
+  return clampEsatScore(5.2 + t);
 }
 
 /**
  * Average doer ESAT score for a stage (plus-four toward 5.0).
  * Only values on the official 1.0–9.0 scale are used (accuracy % is ignored).
- * When no real data exists, invents a stable-but-drifting 5.0–6.0 value.
+ * When no real data exists, invents a stable-but-drifting 5.2–6.2 value.
  */
 export function averageScoreForStage(
   stage: RoadmapStage,
