@@ -114,6 +114,16 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
   color: var(--eup-text) !important;
 }
 
+/* Markdown / HTML bold in stems stays black (not themed purple ink). */
+.esat-ui-preview-root .math-content strong,
+.esat-ui-preview-root .stem-content strong,
+.esat-ui-preview-root .math-content b,
+.esat-ui-preview-root .stem-content b,
+.esat-ui-preview-root .math-content .text-black,
+.esat-ui-preview-root .stem-content .text-black {
+  color: #000000 !important;
+}
+
 .esat-ui-preview-root .katex,
 .esat-ui-preview-root .katex * {
   color: var(--eup-text) !important;

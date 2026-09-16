@@ -299,7 +299,7 @@ function renderMathTextSegment(contentStr: string): string {
     .replace(/'/g, "&#39;");
 
   return escaped
-    .replace(/__BOLD__/g, '<strong class="font-semibold text-text">')
+    .replace(/__BOLD__/g, '<strong class="font-semibold text-black">')
     .replace(/__ENDBOLD__/g, "</strong>");
 }
 

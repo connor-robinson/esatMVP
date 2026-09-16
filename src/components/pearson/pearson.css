@@ -127,6 +127,16 @@ html.pearson-exam-active body {
   line-height: 1.4;
 }
 
+/* Markdown / HTML bold in stems stays black. */
+.pearson-exam-root .math-content strong,
+.pearson-exam-root .stem-content strong,
+.pearson-exam-root .math-content b,
+.pearson-exam-root .stem-content b,
+.pearson-exam-root .math-content .text-black,
+.pearson-exam-root .stem-content .text-black {
+  color: #000000 !important;
+}
+
 /* Keep KaTeX's own math fonts; global inherit above breaks glyphs (esp. Safari). */
 .pearson-exam-root .katex,
 .pearson-exam-root .katex * {
