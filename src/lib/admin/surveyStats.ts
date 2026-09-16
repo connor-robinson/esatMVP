@@ -38,6 +38,7 @@ export type SurveyStatsPayload = {
   qbUiSurveyChoice: CountRow[];
   qbUiVariant: CountRow[];
   qbUiPreferenceSource: CountRow[];
+  /** Past-papers Home vs Library survey answers / current preference. */
   pastPapersUiSurveyChoice: CountRow[];
   pastPapersUiPreference: CountRow[];
   pastPapersUiPreferenceSource: CountRow[];
