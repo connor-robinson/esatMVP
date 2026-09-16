@@ -6,6 +6,7 @@ import { StemContent } from "@/components/shared/StemContent";
 import { StatementItemsList } from "@/components/shared/StatementItemsList";
 import { getQuestionStatementItems } from "@/lib/questionBank/statementItems";
 import { QuestionWithGraph } from "@/components/shared/QuestionWithGraph";
+import { stemHasLetterLabeledTable } from "@/lib/papers/tableBackedOptions";
 import type { QuestionBankQuestion } from "@/types/questionBank";
 import { cn } from "@/lib/utils";
 import {
@@ -151,6 +152,7 @@ export function QuestionCard({
   const optionLetters = Object.keys(question.options).sort();
   const statementItems = getQuestionStatementItems(question);
   const showSessionNotation = questionNumber != null;
+  const letterOnlyOptions = stemHasLetterLabeledTable(question.question_stem);
 
   // Locked only when fully resolved (correct or revealed). Retry stays open.
   const optionsLocked = answerRevealed || (isAnswered && isCorrect === true);
@@ -534,7 +536,9 @@ export function QuestionCard({
                     )}
                   >
                     <StemContent
-                      content={question.options[letter]}
+                      content={
+                        letterOnlyOptions ? letter : question.options[letter]
+                      }
                       className="text-inherit inline"
                     />
                   </div>

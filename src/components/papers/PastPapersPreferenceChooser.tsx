@@ -1,18 +1,12 @@
 /**
- * First-run / change-default chooser: Home, Roadmap, or Library.
+ * First-run / change-default chooser: Home (new), Roadmap (classic), or Library.
  */
 
 "use client";
 
-import Link from "next/link";
 import { Home, Library, Map } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { PastPapersUiPreference } from "@/lib/papers/pastPapersUiPreference";
-import {
-  PAST_PAPERS_HOME_PATH,
-  PAST_PAPERS_LIBRARY_PATH,
-  PAST_PAPERS_ROADMAP_PATH,
-} from "@/lib/papers/pastPapersUiPreference";
 
 type Props = {
   onChoose: (preference: PastPapersUiPreference) => void;
@@ -31,14 +25,14 @@ const OPTIONS: Array<{
     id: "home",
     title: "Home",
     description:
-      "Updated practice table with years, scores, downloads, and one-click start.",
+      "New practice table with years, scores, downloads, and one-click start.",
     icon: Home,
     recommended: true,
   },
   {
     id: "roadmap",
     title: "Roadmap",
-    description: "Same practice table at the classic Roadmap URL.",
+    description: "Classic unlock-based stage list for working through papers.",
     icon: Map,
   },
   {
@@ -76,18 +70,16 @@ export function PastPapersPreferenceChooser({ onChoose, compact }: Props) {
             compact ? "mt-1 text-sm" : "mt-2 text-sm sm:text-base",
           )}
         >
-          We recently updated the past paper layout. Home is the new default;
-          Roadmap and Library are still available. You can switch anytime from
-          the layout menu.
+          We recently updated the past paper layout. Home is the new default
+          practice table. Roadmap is the classic stage list. Library is still
+          available. You can switch anytime from the layout menu.
         </p>
       </div>
 
       <div
         className={cn(
           "grid gap-3",
-          compact
-            ? "mt-4 sm:grid-cols-3"
-            : "mt-8 sm:grid-cols-3 sm:gap-4",
+          compact ? "mt-4 sm:grid-cols-3" : "mt-8 sm:grid-cols-3 sm:gap-4",
         )}
       >
         {OPTIONS.map((option) => {
@@ -113,7 +105,7 @@ export function PastPapersPreferenceChooser({ onChoose, compact }: Props) {
                 </span>
                 {option.recommended ? (
                   <span className="rounded-sm bg-surface-mid px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-text-muted">
-                    Default
+                    New
                   </span>
                 ) : null}
               </span>
@@ -124,32 +116,6 @@ export function PastPapersPreferenceChooser({ onChoose, compact }: Props) {
           );
         })}
       </div>
-
-      {!compact ? (
-        <p className="mt-6 text-center text-xs text-text-muted">
-          Also:{" "}
-          <Link
-            href={PAST_PAPERS_HOME_PATH}
-            className="underline underline-offset-2 hover:text-text"
-          >
-            Home
-          </Link>
-          {" · "}
-          <Link
-            href={PAST_PAPERS_ROADMAP_PATH}
-            className="underline underline-offset-2 hover:text-text"
-          >
-            Roadmap
-          </Link>
-          {" · "}
-          <Link
-            href={PAST_PAPERS_LIBRARY_PATH}
-            className="underline underline-offset-2 hover:text-text"
-          >
-            Library
-          </Link>
-        </p>
-      ) : null}
     </div>
   );
 }

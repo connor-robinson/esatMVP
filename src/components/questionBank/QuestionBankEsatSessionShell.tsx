@@ -14,7 +14,9 @@ import {
 import { StemContent } from "@/components/shared/StemContent";
 import { StatementItemsList } from "@/components/shared/StatementItemsList";
 import { QuestionWithGraph } from "@/components/shared/QuestionWithGraph";
+import { EupOptionTable } from "@/components/questionBank/esatUiPreview/EupOptionTable";
 import { getQuestionStatementItems } from "@/lib/questionBank/statementItems";
+import { extractLetterLabeledTable } from "@/lib/papers/tableBackedOptions";
 import type {
   QuestionBankQuestion,
   QuestionBankSessionAttempt,
@@ -73,6 +75,10 @@ export interface QuestionBankEsatSessionShellProps {
   remainingTimeMs: number | null;
   timerLabel: string;
   reviewMode?: boolean;
+  /** Instant: feedback as you go. Exam: no feedback until finish. */
+  examMode?: boolean;
+  /** Instant mode: selecting an option immediately checks it. */
+  instantReveal?: boolean;
   currentSelection: string | null;
   incorrectAnswers: Set<string>;
   isAnswered: boolean;
@@ -82,6 +88,8 @@ export interface QuestionBankEsatSessionShellProps {
   flaggedIds: Set<string>;
   onToggleFlag: (questionId: string) => void;
   onSelectionChange: (letter: string | null) => void;
+  /** Instant mode: check/reveal using this letter immediately. */
+  onInstantSelect?: (letter: string) => void;
   onSubmitAnswer: () => void;
   onRevealAnswer: () => void;
   onShowExplanation: () => void;
@@ -124,6 +132,8 @@ export function QuestionBankEsatSessionShell({
   remainingTimeMs,
   timerLabel,
   reviewMode = false,
+  examMode = false,
+  instantReveal = false,
   currentSelection,
   incorrectAnswers,
   isAnswered,
@@ -133,6 +143,7 @@ export function QuestionBankEsatSessionShell({
   flaggedIds,
   onToggleFlag,
   onSelectionChange,
+  onInstantSelect,
   onSubmitAnswer,
   onRevealAnswer,
   onShowExplanation,
@@ -173,16 +184,22 @@ export function QuestionBankEsatSessionShell({
 
   const total = questions.length;
   const progressPct = total > 0 ? ((currentIndex + 1) / total) * 100 : 0;
-  const locked =
-    reviewMode || answerRevealed || (isAnswered && isCorrect === true);
-  const canProceed = locked;
+  const hideLiveFeedback = examMode && !reviewMode;
+  const locked = hideLiveFeedback
+    ? false
+    : reviewMode || answerRevealed || (isAnswered && isCorrect === true);
+  const canProceed = hideLiveFeedback ? true : locked;
   const canSubmit =
+    !hideLiveFeedback &&
+    !instantReveal &&
     !!currentSelection &&
     !incorrectAnswers.has(currentSelection) &&
     !canProceed;
   const isLast = currentIndex >= total - 1;
   const optionLetters = Object.keys(question.options).sort();
   const statementItems = getQuestionStatementItems(question) ?? [];
+  const optionTableExtracted = extractLetterLabeledTable(question.question_stem);
+  const useInlineOptionTable = optionTableExtracted.table != null;
   const subjectLabel = question.subjects?.trim() || "Question bank";
   const flagged = flaggedIds.has(question.id);
 
@@ -195,6 +212,15 @@ export function QuestionBankEsatSessionShell({
   const unfinishedCount = useMemo(() => {
     let n = 0;
     questions.forEach((q, i) => {
+      if (hideLiveFeedback) {
+        const attempt = attemptsById.get(q.id);
+        const answeredHere =
+          i === currentIndex
+            ? !!currentSelection
+            : Boolean(attempt?.userAnswer);
+        if (!answeredHere) n += 1;
+        return;
+      }
       const status = resolveNavStatus(
         q.id,
         i,
@@ -214,6 +240,8 @@ export function QuestionBankEsatSessionShell({
     locked,
     isCorrect,
     answerRevealed,
+    hideLiveFeedback,
+    currentSelection,
   ]);
 
   useEffect(() => {
@@ -229,7 +257,22 @@ export function QuestionBankEsatSessionShell({
   }, [question.id]);
 
   const selectOption = (letter: string) => {
-    if (locked || incorrectAnswers.has(letter)) return;
+    if (locked || (!hideLiveFeedback && incorrectAnswers.has(letter))) return;
+    if (hideLiveFeedback) {
+      onSelectionChange(letter);
+      return;
+    }
+    if (instantReveal && onInstantSelect) {
+      onSelectionChange(letter);
+      const correct = letter === question.correct_option;
+      setResultFlash({
+        letter,
+        kind: correct ? "correct" : "wrong",
+      });
+      window.setTimeout(() => setResultFlash(null), 550);
+      onInstantSelect(letter);
+      return;
+    }
     onSelectionChange(letter);
   };
 
@@ -245,7 +288,7 @@ export function QuestionBankEsatSessionShell({
   };
 
   const handleReveal = () => {
-    if (locked) return;
+    if (locked || hideLiveFeedback) return;
     setResultFlash({
       letter: question.correct_option,
       kind: "correct",
@@ -263,8 +306,9 @@ export function QuestionBankEsatSessionShell({
     <div
       className="esat-ui-preview-root"
       data-theme="light"
+      data-session-mode={examMode ? "exam" : "instant"}
       role="application"
-      aria-label="Question bank session"
+      aria-label={examMode ? "Question bank exam session" : "Question bank session"}
     >
       {restBreakActive && onEndRestBreak ? (
         <RestBreakOverlay
@@ -276,16 +320,27 @@ export function QuestionBankEsatSessionShell({
       <header className="eup-header">
         <div className="eup-header-left">
           <div className="eup-header-title">
-            {reviewMode ? "Review" : "Question bank"} · {subjectLabel}
+            {reviewMode
+              ? "Review"
+              : examMode
+                ? "Exam mode"
+                : "Question bank"}{" "}
+            · {subjectLabel}
           </div>
-          <button
-            type="button"
-            className="eup-theme-toggle"
-            onClick={onUseClassicUi}
-            title="Switch back to the previous question bank layout"
-          >
-            Classic UI
-          </button>
+          {!examMode || reviewMode ? (
+            <button
+              type="button"
+              className="eup-theme-toggle"
+              onClick={onUseClassicUi}
+              title="Switch back to the previous question bank layout"
+            >
+              Classic UI
+            </button>
+          ) : (
+            <span className="eup-theme-toggle" style={{ cursor: "default", opacity: 0.85 }}>
+              Exam conditions
+            </span>
+          )}
         </div>
         <div className="eup-header-right">
           {!reviewMode && restBreaksEnabled && remainingTimeMs != null ? (
@@ -370,46 +425,54 @@ export function QuestionBankEsatSessionShell({
             />
             <span>Flag for Review</span>
           </button>
-          <span className="eup-toolbar-divider" aria-hidden />
-          {!reviewMode ? (
+          {!hideLiveFeedback ? (
             <>
+              <span className="eup-toolbar-divider" aria-hidden />
+              {!reviewMode ? (
+                <>
+                  <button
+                    type="button"
+                    className="eup-toolbar-btn"
+                    onClick={handleReveal}
+                    disabled={locked}
+                  >
+                    <Eye size={17} strokeWidth={2} aria-hidden />
+                    <span>Reveal answer</span>
+                  </button>
+                  <span className="eup-toolbar-divider" aria-hidden />
+                </>
+              ) : null}
+              {hasHint ? (
+                <>
+                  <button
+                    type="button"
+                    className="eup-toolbar-btn"
+                    onClick={onShowHint}
+                  >
+                    <span>Hint</span>
+                  </button>
+                  <span className="eup-toolbar-divider" aria-hidden />
+                </>
+              ) : null}
               <button
                 type="button"
                 className="eup-toolbar-btn"
-                onClick={handleReveal}
-                disabled={locked}
+                onClick={onShowExplanation}
+                disabled={!locked || !explanationContent}
+                title={
+                  locked
+                    ? "View explanation"
+                    : "Solve or reveal the answer first"
+                }
               >
-                <Eye size={17} strokeWidth={2} aria-hidden />
-                <span>Reveal answer</span>
+                <span>Explanation</span>
               </button>
-              <span className="eup-toolbar-divider" aria-hidden />
             </>
-          ) : null}
-          {hasHint ? (
-            <>
-              <button
-                type="button"
-                className="eup-toolbar-btn"
-                onClick={onShowHint}
-              >
-                <span>Hint</span>
-              </button>
-              <span className="eup-toolbar-divider" aria-hidden />
-            </>
-          ) : null}
-          <button
-            type="button"
-            className="eup-toolbar-btn"
-            onClick={onShowExplanation}
-            disabled={!locked || !explanationContent}
-            title={
-              locked
-                ? "View explanation"
-                : "Solve or reveal the answer first"
-            }
-          >
-            <span>Explanation</span>
-          </button>
+          ) : (
+            <span className="eup-toolbar-btn" style={{ cursor: "default", opacity: 0.9 }}>
+              Answers hidden until finish
+            </span>
+          )}
         </div>
       </div>
 
@@ -439,10 +502,61 @@ export function QuestionBankEsatSessionShell({
             <div className="eup-stem">
               {question.graph_specs ? (
                 <QuestionWithGraph
-                  questionText={question.question_stem}
+                  questionText={
+                    useInlineOptionTable
+                      ? optionTableExtracted.before
+                      : question.question_stem
+                  }
                   graphSpecs={question.graph_specs}
                   className="text-inherit"
                 />
+              ) : useInlineOptionTable ? (
+                <>
+                  {optionTableExtracted.before.trim() ? (
+                    <StemContent
+                      content={optionTableExtracted.before}
+                      className="text-inherit"
+                    />
+                  ) : null}
+                  {optionTableExtracted.table ? (
+                    <EupOptionTable
+                      name={`qb-esat-${question.id}`}
+                      table={optionTableExtracted.table}
+                      value={currentSelection}
+                      onChange={selectOption}
+                      locked={locked}
+                      rowState={(letter) => {
+                        const isCorrectOption =
+                          letter === question.correct_option;
+                        const wasWrong =
+                          !hideLiveFeedback && incorrectAnswers.has(letter);
+                        const showCorrect =
+                          !hideLiveFeedback &&
+                          ((locked &&
+                            isCorrectOption &&
+                            isCorrect === true) ||
+                            (answerRevealed && isCorrectOption));
+                        const isFlashing =
+                          !hideLiveFeedback &&
+                          resultFlash?.letter === letter;
+                        return {
+                          wrong: wasWrong,
+                          showCorrect,
+                          flashCorrect:
+                            isFlashing && resultFlash?.kind === "correct",
+                          flashWrong:
+                            isFlashing && resultFlash?.kind === "wrong",
+                        };
+                      }}
+                    />
+                  ) : null}
+                  {optionTableExtracted.after.trim() ? (
+                    <StemContent
+                      content={optionTableExtracted.after}
+                      className="text-inherit"
+                    />
+                  ) : null}
+                </>
               ) : (
                 <StemContent
                   content={question.question_stem}
@@ -458,6 +572,7 @@ export function QuestionBankEsatSessionShell({
             </div>
           </div>
 
+          {useInlineOptionTable ? null : (
           <ul
             className="eup-radio-list"
             role="radiogroup"
@@ -466,12 +581,15 @@ export function QuestionBankEsatSessionShell({
             {optionLetters.map((letter) => {
               const text = question.options[letter];
               const isCorrectOption = letter === question.correct_option;
-              const wasWrong = incorrectAnswers.has(letter);
+              const wasWrong =
+                !hideLiveFeedback && incorrectAnswers.has(letter);
               const isSelected = currentSelection === letter;
               const showCorrect =
-                (locked && isCorrectOption && isCorrect === true) ||
-                (answerRevealed && isCorrectOption);
-              const isFlashing = resultFlash?.letter === letter;
+                !hideLiveFeedback &&
+                ((locked && isCorrectOption && isCorrect === true) ||
+                  (answerRevealed && isCorrectOption));
+              const isFlashing =
+                !hideLiveFeedback && resultFlash?.letter === letter;
               const flashCorrect =
                 isFlashing && resultFlash?.kind === "correct";
               const flashWrong = isFlashing && resultFlash?.kind === "wrong";
@@ -515,6 +633,7 @@ export function QuestionBankEsatSessionShell({
               );
             })}
           </ul>
+          )}
 
           {belowQuestion ? (
             <div className="mt-6 w-full max-w-4xl">{belowQuestion}</div>
@@ -553,27 +672,41 @@ export function QuestionBankEsatSessionShell({
                   <tbody>
                     {questions.map((q, i) => {
                       const attempt = attemptsById.get(q.id);
-                      const status = resolveNavStatus(
-                        q.id,
-                        i,
-                        currentIndex,
-                        attempt,
-                        locked,
-                        isCorrect,
-                        answerRevealed,
-                      );
+                      const examAnswered =
+                        hideLiveFeedback &&
+                        (i === currentIndex
+                          ? !!currentSelection
+                          : Boolean(attempt?.userAnswer));
+                      const status = hideLiveFeedback
+                        ? examAnswered
+                          ? ("incomplete" as NavStatus)
+                          : ("unseen" as NavStatus)
+                        : resolveNavStatus(
+                            q.id,
+                            i,
+                            currentIndex,
+                            attempt,
+                            locked,
+                            isCorrect,
+                            answerRevealed,
+                          );
                       const canJump =
+                        hideLiveFeedback ||
+                        reviewMode ||
                         i === currentIndex ||
                         !!attempt ||
-                        i < currentIndex ||
-                        reviewMode;
+                        i < currentIndex;
                       return (
                         <tr
                           key={q.id}
                           className={cn(
                             i === currentIndex && "eup-nav-row--current",
-                            status === "correct" && "eup-nav-row--correct",
-                            status === "incorrect" && "eup-nav-row--incorrect",
+                            !hideLiveFeedback &&
+                              status === "correct" &&
+                              "eup-nav-row--correct",
+                            !hideLiveFeedback &&
+                              status === "incorrect" &&
+                              "eup-nav-row--incorrect",
                           )}
                         >
                           <td>
@@ -592,7 +725,11 @@ export function QuestionBankEsatSessionShell({
                               `eup-nav-status--${status}`,
                             )}
                           >
-                            {navStatusLabel(status)}
+                            {hideLiveFeedback
+                              ? examAnswered
+                                ? "Answered"
+                                : "Unseen"
+                              : navStatusLabel(status)}
                           </td>
                           <td className="eup-nav-flag-cell">
                             {flaggedIds.has(q.id) ? (
@@ -609,7 +746,11 @@ export function QuestionBankEsatSessionShell({
                 </table>
               </div>
               <div className="eup-nav-window-footer">
-                <span>{unfinishedCount} Unseen/Incomplete</span>
+                <span>
+            {hideLiveFeedback
+              ? `${unfinishedCount} unanswered`
+              : `${unfinishedCount} Unseen/Incomplete`}
+          </span>
                 <button
                   type="button"
                   className="eup-nav-close"
@@ -816,7 +957,7 @@ export function QuestionBankEsatSessionShell({
               onClick={onNext}
               disabled={!canProceed && !reviewMode && !isLast}
               title={
-                canProceed || reviewMode
+                canProceed || reviewMode || hideLiveFeedback
                   ? undefined
                   : "Check or reveal the answer before continuing"
               }
@@ -827,7 +968,9 @@ export function QuestionBankEsatSessionShell({
                     ? "Summary"
                     : "Next"
                   : isLast
-                    ? "Finish"
+                    ? examMode
+                      ? "Finish exam"
+                      : "Finish"
                     : "Next"}
               </span>
               <ChevronRight size={22} strokeWidth={2} aria-hidden />

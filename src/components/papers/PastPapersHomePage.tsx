@@ -86,11 +86,7 @@ function buildDefaultCompletion(stages: RoadmapStage[]): Map<string, StageComple
 const INITIAL_STAGES = getRoadmapStagesShell();
 const INITIAL_COMPLETION = buildDefaultCompletion(INITIAL_STAGES);
 
-export default function PastPapersHomePage({
-  layoutCurrent = "home",
-}: {
-  layoutCurrent?: "home" | "roadmap";
-}) {
+export default function PastPapersHomePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const forceSurvey = searchParams.get("choose") === "1";
@@ -101,9 +97,8 @@ export default function PastPapersHomePage({
   useEffect(() => {
     if (forceSurvey) return;
     const pref = readPastPapersUiPreference();
-    // Only auto-route from Home based on saved default. Roadmap/Library
-    // remain reachable via legacy links even when another default is set.
-    if (layoutCurrent !== "home") return;
+    // Home is the new practice table. Route away only when the saved default
+    // is a different layout.
     if (pref === "library") {
       router.replace(PAST_PAPERS_LIBRARY_PATH);
       return;
@@ -111,7 +106,7 @@ export default function PastPapersHomePage({
     if (pref === "roadmap") {
       router.replace(PAST_PAPERS_ROADMAP_PATH);
     }
-  }, [forceSurvey, layoutCurrent, router]);
+  }, [forceSurvey, router]);
   const [stages, setStages] = useState<RoadmapStage[]>(INITIAL_STAGES);
   const [completionData, setCompletionData] = useState<
     Map<string, StageCompletionEntry>
@@ -699,7 +694,7 @@ export default function PastPapersHomePage({
         subjectSuggestion={subjectSuggestion}
         layoutControls={
           <PastPapersLegacyLinks
-            current={layoutCurrent}
+            current="home"
             onRequestSurvey={() => setForceSurveyOpen(true)}
           />
         }

@@ -661,32 +661,32 @@
       "specRefs": [
         "B3.2"
       ],
-      "stemMarkdown": "A diploid cell of a species contains \\(10\\) chromosomes. Before DNA replication, its nucleus contains \\(8\\text{ pg}\\) of DNA.\n\nWhich row gives the chromosome number and DNA mass in **one cell immediately after meiosis I**, and in **one gamete immediately after meiosis II**?",
+      "stemMarkdown": "A diploid cell of a species contains \\(10\\) chromosomes. Before DNA replication, its nucleus contains \\(8\\text{ pg}\\) of DNA.\n\nWhich row gives the chromosome number and DNA mass in **one cell immediately after meiosis I**, and in **one gamete immediately after meiosis II**?\n\n|  | chromosomes after meiosis I | DNA mass after meiosis I / pg | chromosomes in gamete | DNA mass in gamete / pg |\n| --- | --- | --- | --- | --- |\n| A | \\(10\\) | \\(8\\) | \\(5\\) | \\(4\\) |\n| B | \\(5\\) | \\(8\\) | \\(5\\) | \\(4\\) |\n| C | \\(5\\) | \\(4\\) | \\(5\\) | \\(2\\) |\n| D | \\(10\\) | \\(16\\) | \\(5\\) | \\(8\\) |\n| E | \\(5\\) | \\(8\\) | \\(10\\) | \\(4\\) |\n| F | \\(10\\) | \\(8\\) | \\(10\\) | \\(4\\) |",
       "diagramSvg": null,
       "options": [
         {
           "id": "A",
-          "textMarkdown": "after meiosis I: \\(10\\) chromosomes, \\(8\\text{ pg}\\); gamete: \\(5\\) chromosomes, \\(4\\text{ pg}\\)"
+          "textMarkdown": "\\(10\\); \\(8\\); \\(5\\); \\(4\\)"
         },
         {
           "id": "B",
-          "textMarkdown": "after meiosis I: \\(5\\) chromosomes, \\(8\\text{ pg}\\); gamete: \\(5\\) chromosomes, \\(4\\text{ pg}\\)"
+          "textMarkdown": "\\(5\\); \\(8\\); \\(5\\); \\(4\\)"
         },
         {
           "id": "C",
-          "textMarkdown": "after meiosis I: \\(5\\) chromosomes, \\(4\\text{ pg}\\); gamete: \\(5\\) chromosomes, \\(2\\text{ pg}\\)"
+          "textMarkdown": "\\(5\\); \\(4\\); \\(5\\); \\(2\\)"
         },
         {
           "id": "D",
-          "textMarkdown": "after meiosis I: \\(10\\) chromosomes, \\(16\\text{ pg}\\); gamete: \\(5\\) chromosomes, \\(8\\text{ pg}\\)"
+          "textMarkdown": "\\(10\\); \\(16\\); \\(5\\); \\(8\\)"
         },
         {
           "id": "E",
-          "textMarkdown": "after meiosis I: \\(5\\) chromosomes, \\(8\\text{ pg}\\); gamete: \\(10\\) chromosomes, \\(4\\text{ pg}\\)"
+          "textMarkdown": "\\(5\\); \\(8\\); \\(10\\); \\(4\\)"
         },
         {
           "id": "F",
-          "textMarkdown": "after meiosis I: \\(10\\) chromosomes, \\(8\\text{ pg}\\); gamete: \\(10\\) chromosomes, \\(4\\text{ pg}\\)"
+          "textMarkdown": "\\(10\\); \\(8\\); \\(10\\); \\(4\\)"
         }
       ],
       "correctOptionId": "B",
@@ -698,7 +698,7 @@
           "Meiosis II divides this DNA again without another replication.",
           "Each gamete therefore has \\(5\\) chromosomes and \\(4\\) pg of DNA."
         ],
-        "finalAnswerMarkdown": "\\(\\boxed{\\text{after meiosis I: }5,8\\text{ pg; gamete: }5,4\\text{ pg}}\\)"
+        "finalAnswerMarkdown": "\\(\\boxed{B}\\)"
       },
       "distractorMap": [
         {

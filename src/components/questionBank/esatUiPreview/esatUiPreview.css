@@ -555,6 +555,60 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
   font-weight: 700;
 }
 
+.esat-ui-preview-root .eup-option-table {
+  margin-top: 0.55em;
+  margin-bottom: 0.55em;
+}
+
+.esat-ui-preview-root .eup-option-table-row {
+  cursor: pointer;
+}
+
+.esat-ui-preview-root .eup-option-table-row--selected:not(.eup-option-table-row--correct):not(.eup-option-table-row--wrong) {
+  background: color-mix(in srgb, var(--eup-radio) 12%, #ffffff);
+}
+
+.esat-ui-preview-root .eup-option-table-row--correct {
+  background: color-mix(in srgb, #1f7a4c 14%, #ffffff);
+}
+
+.esat-ui-preview-root .eup-option-table-row--wrong {
+  background: color-mix(in srgb, #b42318 12%, #ffffff);
+}
+
+.esat-ui-preview-root .eup-option-table-row--locked {
+  cursor: default;
+}
+
+.esat-ui-preview-root .eup-option-table-row--dim {
+  opacity: 0.55;
+}
+
+.esat-ui-preview-root .eup-option-table-row--flash-correct .eup-radio-control {
+  animation: eup-radio-pulse-correct 0.5s ease-out;
+}
+
+.esat-ui-preview-root .eup-option-table-row--flash-wrong .eup-radio-control {
+  animation: eup-radio-pulse-wrong 0.5s ease-out;
+}
+
+.esat-ui-preview-root .eup-option-table-letter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.esat-ui-preview-root .eup-option-table-row--locked .eup-option-table-letter {
+  cursor: default;
+}
+
+.esat-ui-preview-root .eup-option-table td:first-child {
+  white-space: nowrap;
+}
+
 .eup-radio-body,
 .eup-radio-body .stem-content,
 .eup-radio-body .math-content {
@@ -1256,3 +1310,49 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
   line-height: 1.5;
   color: #777777;
 }
+
+/* Exam mode: same layout, purple chrome throughout */
+.esat-ui-preview-root[data-session-mode="exam"] {
+  --eup-header: #4a2f52;
+  --eup-toolbar: #5a3a63;
+  --eup-footer: #4a2f52;
+  --eup-content-bg: #fbf7fc;
+  --eup-page-bg: #f3ebf5;
+  --eup-text: #1a101c;
+  --eup-text-muted: #6d5a72;
+  --eup-border: rgba(90, 58, 99, 0.22);
+  --eup-chrome-text: #f8f1fa;
+  --eup-radio-face: #ffffff;
+  --eup-progress-track: #e2d3e8;
+  --eup-accent: #af6da1;
+  --eup-accent-strong: #8f5285;
+  --eup-accent-bright: #c489b8;
+  --eup-pink: #af6da1;
+  --eup-radio: #8f5285;
+  --eup-progress-fill: #af6da1;
+}
+
+.esat-ui-preview-root[data-session-mode="exam"] .eup-header,
+.esat-ui-preview-root[data-session-mode="exam"] .eup-toolbar,
+.esat-ui-preview-root[data-session-mode="exam"] .eup-footer {
+  background: linear-gradient(180deg, #5d3f66 0%, #4a2f52 100%);
+}
+
+.esat-ui-preview-root[data-session-mode="exam"] .eup-radio-row--selected {
+  background: color-mix(in srgb, #af6da1 14%, #ffffff);
+}
+
+.esat-ui-preview-root[data-session-mode="exam"] .eup-footer-action--primary {
+  background: #af6da1;
+  color: #fff;
+}
+
+.esat-ui-preview-root[data-session-mode="exam"] .eup-nav-window-header {
+  background: #5a3a63;
+  color: #f8f1fa;
+}
+
+.esat-ui-preview-root[data-session-mode="exam"] .eup-progress-fill {
+  background: linear-gradient(90deg, #8f5285, #c489b8);
+}
+

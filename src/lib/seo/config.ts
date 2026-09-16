@@ -108,7 +108,7 @@ export const APP_ROUTES = {
   pastPapers: "/past-papers",
   /** Legacy Library layout. */
   pastPaperLibrary: "/past-papers/library",
-  /** Legacy Roadmap URL (same practice table; not in main nav). */
+  /** Legacy Roadmap: classic unlock-based stage list (not in main nav). */
   pastPaperRoadmap: "/past-papers/roadmap",
   faqs: "/tools/faqs",
   signUp: "/login?mode=signup",

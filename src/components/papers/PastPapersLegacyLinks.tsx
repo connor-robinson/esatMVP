@@ -1,10 +1,9 @@
 /**
- * Layout strip: default-layout dropdown + legacy links (right-aligned).
+ * Layout strip: default-layout dropdown only (right-aligned).
  */
 
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
@@ -45,7 +44,7 @@ export function PastPapersLegacyLinks({
     }
     setDefaultLayout(value);
     const href = applyPastPapersUiPreference(value, "toggle");
-    if (href !== pathForCurrent(current)) {
+    if (href !== pathForPreference(current)) {
       router.push(href);
     }
   };
@@ -71,45 +70,11 @@ export function PastPapersLegacyLinks({
           <option value="ask">Ask me again…</option>
         </select>
       </label>
-
-      <p className="text-xs text-text-muted">
-        Prefer a different layout? Open legacy{" "}
-        <Link
-          href={PAST_PAPERS_LIBRARY_PATH}
-          className="font-medium text-text underline underline-offset-2 hover:text-primary"
-        >
-          Library
-        </Link>
-        {" · "}
-        <Link
-          href={PAST_PAPERS_ROADMAP_PATH}
-          className="font-medium text-text underline underline-offset-2 hover:text-primary"
-        >
-          Roadmap
-        </Link>
-        {current !== "home" ? (
-          <>
-            {" · "}
-            <Link
-              href={PAST_PAPERS_HOME_PATH}
-              className="font-medium text-text underline underline-offset-2 hover:text-primary"
-            >
-              Home
-            </Link>
-          </>
-        ) : null}
-      </p>
     </div>
   );
 }
 
-function pathForCurrent(current: PastPapersUiPreference): string {
-  return pathForPastPapersPreferenceSafe(current);
-}
-
-function pathForPastPapersPreferenceSafe(
-  preference: PastPapersUiPreference,
-): string {
+function pathForPreference(preference: PastPapersUiPreference): string {
   if (preference === "library") return PAST_PAPERS_LIBRARY_PATH;
   if (preference === "roadmap") return PAST_PAPERS_ROADMAP_PATH;
   return PAST_PAPERS_HOME_PATH;

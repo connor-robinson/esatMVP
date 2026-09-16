@@ -1,8 +1,8 @@
 /**
  * Past Papers layout preference (Home / Library / Roadmap).
- * Home is the default practice-table UI. Library and Roadmap stay reachable
- * via legacy links and the default-layout dropdown (Roadmap is hidden from nav).
- * localStorage for snappy UX; profiles columns for admin analytics.
+ * Home is the new practice-table UI (default). Roadmap is the classic
+ * unlock-based stage list. Library is the section browser.
+ * Roadmap stays out of the main nav; use the default-layout dropdown.
  */
 
 import { trackEvent } from "@/lib/ga/trackEvent";
