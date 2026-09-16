@@ -199,11 +199,12 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
 
     try {
       if (roundMode !== "scheduled") {
-        if (current.answer == null) {
+        const answer = current.answer;
+        if (answer == null) {
           setError("Something went wrong loading this question.");
           return;
         }
-        const logErr = logError(guess, current.answer);
+        const logErr = logError(guess, answer);
         setResults((prev) => [
           ...prev,
           {
@@ -211,7 +212,7 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
             guess,
             logErr,
             score: closenessScore(logErr),
-            verdict: getVerdict(guess, current.answer),
+            verdict: getVerdict(guess, answer),
           },
         ]);
         setPhase("revealed");
