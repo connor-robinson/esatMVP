@@ -560,7 +560,7 @@ export function QuestionBankSessionSettingsModal({
             "rounded-organic-lg px-4 py-3 text-sm font-semibold transition-colors",
             playMode === "instant" || questionPool === "incorrect"
               ? "bg-secondary text-background"
-              : "bg-surface text-text hover:bg-surface-mid",
+              : "bg-surface-mid text-text hover:bg-surface-neutral",
           )}
         >
           Practice
@@ -573,9 +573,9 @@ export function QuestionBankSessionSettingsModal({
             "rounded-organic-lg px-4 py-3 text-sm font-semibold transition-colors",
             playMode === "exam" && questionPool !== "incorrect"
               ? "bg-[#6b4a72] text-white"
-              : "bg-surface text-text hover:bg-surface-mid",
+              : "bg-surface-mid text-text hover:bg-surface-neutral",
             questionPool === "incorrect" &&
-              "cursor-not-allowed opacity-45 hover:bg-surface",
+              "cursor-not-allowed opacity-45 hover:bg-surface-mid",
           )}
         >
           Exam mode
@@ -619,9 +619,9 @@ export function QuestionBankSessionSettingsModal({
                 "rounded-organic-lg px-2 py-3 text-sm font-semibold transition-colors sm:px-3",
                 active
                   ? "bg-secondary text-background"
-                  : "bg-surface text-text hover:bg-surface-mid",
+                  : "bg-surface-mid text-text hover:bg-surface-neutral",
                 disabled &&
-                  "cursor-not-allowed opacity-45 hover:bg-surface",
+                  "cursor-not-allowed opacity-45 hover:bg-surface-mid",
               )}
             >
               {option.label}
@@ -636,7 +636,7 @@ export function QuestionBankSessionSettingsModal({
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-3">
         <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
-          Curriculum topics
+          Topics
         </span>
         {topicFilterEnabled && selectedTopics.length > 0 ? (
           <button
@@ -650,9 +650,9 @@ export function QuestionBankSessionSettingsModal({
       </div>
 
       {!topicFilterEnabled ? (
-        <p className="rounded-organic-lg bg-surface px-4 py-3 text-xs leading-relaxed text-text-muted">
+        <p className="rounded-organic-lg bg-surface-mid px-4 py-3 text-xs leading-relaxed text-text-muted">
           Topic filter needs exactly one subject. Deselect extras in Subjects
-          above to filter by curriculum topic.
+          above to filter by topic.
         </p>
       ) : topicsLoading ? (
         <p className="text-xs text-text-muted">Loading topics…</p>
@@ -660,8 +660,7 @@ export function QuestionBankSessionSettingsModal({
         <p className="text-xs text-text-muted">{topicsError}</p>
       ) : topicOptions.length === 0 ? (
         <p className="text-xs text-text-muted">
-          No verified curriculum topics with more than one question for this
-          subject yet.
+          No verified topics with more than one question for this subject yet.
         </p>
       ) : (
         <div className="flex max-h-[min(28vh,240px)] flex-wrap content-start gap-2 overflow-y-auto overflow-x-hidden">
@@ -676,7 +675,7 @@ export function QuestionBankSessionSettingsModal({
                   "rounded-organic-md px-3 py-2 text-left text-xs font-medium transition-colors",
                   active
                     ? "bg-secondary text-background"
-                    : "bg-surface text-text hover:bg-surface-mid",
+                    : "bg-surface-mid text-text hover:bg-surface-neutral",
                 )}
                 title={topic.tag}
               >
