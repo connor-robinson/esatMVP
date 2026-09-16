@@ -155,7 +155,7 @@ const navSections: NavSectionConfig[] = [
     items: [
       {
         href: '/questions',
-        label: 'ESAT Question Bank',
+        label: 'Question Bank',
         description: 'Overview and mixed practice',
         icon: Home,
         badge: 'NEW',
@@ -176,14 +176,14 @@ const navSections: NavSectionConfig[] = [
     items: [
       {
         href: '/exam-tools/calibration/math-1',
-        label: 'ESAT Calibration Test',
+        label: 'Calibration Test',
         description: 'Calibration and readiness check',
         icon: Target,
         badge: 'NEW',
       },
       {
         href: '/tools/score-converter',
-        label: 'ESAT Score Converter',
+        label: 'Score Converter',
         description: 'Convert raw scores to percentiles',
         icon: ArrowLeftRight,
       },
