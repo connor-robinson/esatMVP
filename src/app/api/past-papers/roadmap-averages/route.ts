@@ -24,14 +24,18 @@ function mean(values: number[]): number | null {
 /**
  * ESAT scaled score from a session: overall predicted, else mean of
  * section_percentiles scores (so single-section sittings still count).
+ * Official ESAT / UAT-UK scale is 1.0–9.0 only.
  */
 function esatScoreFromSession(row: {
   predicted_score?: number | null;
   section_percentiles?: unknown;
 }): number | null {
+  const inRange = (value: number) =>
+    Number.isFinite(value) && value >= 1 && value <= 9;
+
   if (
     typeof row.predicted_score === "number" &&
-    Number.isFinite(row.predicted_score)
+    inRange(row.predicted_score)
   ) {
     return row.predicted_score;
   }
@@ -43,11 +47,7 @@ function esatScoreFromSession(row: {
   for (const value of Object.values(
     percentiles as Record<string, SectionPercentile>,
   )) {
-    if (
-      value &&
-      typeof value.score === "number" &&
-      Number.isFinite(value.score)
-    ) {
+    if (value && typeof value.score === "number" && inRange(value.score)) {
       sectionScores.push(value.score);
     }
   }

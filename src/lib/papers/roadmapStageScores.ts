@@ -29,12 +29,32 @@ export type StageAverageScore = {
 /** Plus-four prior: four phantom sittings at 5.0. */
 const PLUS_FOUR_COUNT = 4;
 const PLUS_FOUR_SCORE = 5.0;
+const ESAT_SCORE_MIN = 1.0;
+const ESAT_SCORE_MAX = 9.0;
 
 function stageVariants(stage: RoadmapStage): Set<string> {
   return new Set(
     stage.parts.map(
       (part) => `${stage.year}-${part.paperName}-${part.examType}`,
     ),
+  );
+}
+
+/** True only for official UAT-UK / ESAT-style scaled scores (1.0–9.0). */
+export function isEsatScaledScore(value: unknown): value is number {
+  return (
+    typeof value === "number" &&
+    Number.isFinite(value) &&
+    value >= ESAT_SCORE_MIN &&
+    value <= ESAT_SCORE_MAX
+  );
+}
+
+function clampEsatScore(value: number): number {
+  return (
+    Math.round(
+      Math.min(ESAT_SCORE_MAX, Math.max(ESAT_SCORE_MIN, value)) * 10,
+    ) / 10
   );
 }
 
@@ -151,12 +171,12 @@ function normalizeAverageMaps(
   };
 }
 
-/** Plus-four Bayesian average toward 5.0. */
+/** Plus-four Bayesian average toward 5.0 (result stays on the 1–9 ESAT scale). */
 export function plusFourAverage(sum: number, count: number): number {
   const n = Math.max(0, count);
   const value =
     (sum + PLUS_FOUR_COUNT * PLUS_FOUR_SCORE) / (n + PLUS_FOUR_COUNT);
-  return Math.round(value * 10) / 10;
+  return clampEsatScore(value);
 }
 
 /**
@@ -164,21 +184,20 @@ export function plusFourAverage(sum: number, count: number): number {
  * Mixes stage id with calendar week so values drift slowly over time.
  */
 export function inventedEsatAverage(seed: string): number {
-  let h = 2166136261;
+  let h = 2166136261 >>> 0;
   for (let i = 0; i < seed.length; i++) {
     h ^= seed.charCodeAt(i);
-    h = Math.imul(h, 16777619);
+    h = Math.imul(h, 16777619) >>> 0;
   }
   const week = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
-  h ^= Math.imul(week, 2654435761);
-  h >>>= 0;
+  h = (h ^ Math.imul(week, 2654435761)) >>> 0;
   const t = (h % 1001) / 1000; // 0 .. 1
-  return Math.round((5 + t) * 10) / 10;
+  return clampEsatScore(5 + t);
 }
 
 /**
  * Average doer ESAT score for a stage (plus-four toward 5.0).
- * Individual section sittings count via exam::variant keys.
+ * Only values on the official 1.0–9.0 scale are used (accuracy % is ignored).
  * When no real data exists, invents a stable-but-drifting 5.0–6.0 value.
  */
 export function averageScoreForStage(
@@ -199,8 +218,10 @@ export function averageScoreForStage(
     if (seen.has(key)) continue;
     seen.add(key);
     const avg = maps.averages[key];
-    if (typeof avg !== "number" || !Number.isFinite(avg)) continue;
+    // Reject percentages / raw marks that slipped through (must be 1–9).
+    if (!isEsatScaledScore(avg)) continue;
     const n = maps.counts?.[key] ?? 1;
+    if (!Number.isFinite(n) || n <= 0) continue;
     sum += avg * n;
     count += n;
   }
@@ -213,8 +234,9 @@ export function averageScoreForStage(
     ];
     for (const key of yearKeys) {
       const avg = maps.yearAverages?.[key];
-      if (typeof avg !== "number" || !Number.isFinite(avg)) continue;
+      if (!isEsatScaledScore(avg)) continue;
       const n = maps.yearCounts?.[key] ?? 1;
+      if (!Number.isFinite(n) || n <= 0) continue;
       sum += avg * n;
       count += n;
       break;
@@ -236,11 +258,11 @@ export function formatNumericScore(
 ): string {
   if (value == null) return inventedEsatAverage("fallback").toFixed(1);
   if (typeof value === "object") {
-    if (!Number.isFinite(value.value)) {
+    if (!isEsatScaledScore(value.value)) {
       return inventedEsatAverage("fallback").toFixed(1);
     }
-    return value.value.toFixed(1);
+    return clampEsatScore(value.value).toFixed(1);
   }
-  if (!Number.isFinite(value)) return inventedEsatAverage("fallback").toFixed(1);
-  return value.toFixed(1);
+  if (!isEsatScaledScore(value)) return inventedEsatAverage("fallback").toFixed(1);
+  return clampEsatScore(value).toFixed(1);
 }
