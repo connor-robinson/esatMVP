@@ -21,6 +21,7 @@
     "import:esat-hook-sets": "npx tsx scripts/import-esat-hook-sets.ts",
     "label:mock-difficulty": "npx tsx scripts/label-mock-difficulty.ts",
     "label:mock-difficulty:parallel": "npx tsx scripts/label-mock-difficulty-parallel.ts",
+    "label:mock-difficulty:keepalive": "npx tsx scripts/label-mock-difficulty-keepalive.ts",
     "build:check": "npm run type-check && npm run lint && npm run build",
     "postinstall": "patch-package",
     "prepare": "husky"
