@@ -142,24 +142,43 @@ export async function countAvailableDiagrams(
   service: SupabaseClient,
   subject: MockBuilderSubject,
 ): Promise<{ available: number; reserved: number }> {
-  const query = service
+  // Light columns only: full pool select was pulling stems/options for every row.
+  const { data, error } = await service
     .from("ai_generated_questions")
-    .select(POOL_SELECT)
+    .select(
+      "id, generation_id, has_visual, presentation_type, reserved_for_mock",
+    )
     .eq("subjects", subject)
     .in("status", ["approved", "pending"])
     .eq("mock_eligible", true)
     .limit(3000);
-  const { data, error } = await query;
   if (error) throw new Error(error.message);
-  const all = ((data as unknown as RawBankQuestionRow[] | null) ?? []).map(
-    toMockCandidate,
-  );
-  const usable = filterMockPool(all);
-  return {
-    available: usable.filter(isDiagramQuestion).length,
-    reserved: all.filter((q) => q.reservedForMock && isDiagramQuestion(q))
-      .length,
-  };
+
+  let available = 0;
+  let reserved = 0;
+  for (const row of data ?? []) {
+    const r = row as {
+      id: string;
+      generation_id: string | null;
+      has_visual: boolean | null;
+      presentation_type: string | null;
+      reserved_for_mock: boolean | null;
+    };
+    const isDiagram =
+      Boolean(r.has_visual) ||
+      r.presentation_type === "diagram" ||
+      r.presentation_type === "graph";
+    if (!isDiagram) continue;
+    if (isFreeTierHookQuestion({ id: r.id, generationId: r.generation_id })) {
+      continue;
+    }
+    if (r.reserved_for_mock) {
+      reserved += 1;
+      continue;
+    }
+    available += 1;
+  }
+  return { available, reserved };
 }
 
 /**
@@ -337,14 +356,52 @@ export async function resolveBlueprint(
 
 export async function listMocks(
   service: SupabaseClient,
+  options?: { light?: boolean },
 ): Promise<EsatMockRow[]> {
+  const columns = options?.light
+    ? [
+        "id",
+        "subject",
+        "mock_number",
+        "title",
+        "status",
+        "is_free",
+        "question_count",
+        "time_limit_minutes",
+        "predicted_difficulty",
+        "predicted_workload_seconds",
+        "ai_review",
+        "created_at",
+        "updated_at",
+      ].join(", ")
+    : "*";
   const { data, error } = await service
     .from("esat_mocks")
-    .select("*")
+    .select(columns)
     .order("subject")
     .order("mock_number");
   if (error) throw new Error(error.message);
   return (data ?? []) as EsatMockRow[];
+}
+
+/** Next free mock number per subject from an already-loaded mocks list. */
+export function nextMockNumbersFromList(
+  mocks: Array<Pick<EsatMockRow, "subject" | "mock_number">>,
+): Record<MockBuilderSubject, number> {
+  const usedBySubject = new Map<string, Set<number>>();
+  for (const m of mocks) {
+    const set = usedBySubject.get(m.subject) ?? new Set<number>();
+    set.add(m.mock_number);
+    usedBySubject.set(m.subject, set);
+  }
+  const out = {} as Record<MockBuilderSubject, number>;
+  for (const subject of MOCK_BUILDER_SUBJECTS) {
+    const used = usedBySubject.get(subject) ?? new Set<number>();
+    let next = 1;
+    while (used.has(next) && next <= 99) next += 1;
+    out[subject] = next;
+  }
+  return out;
 }
 
 export async function getMockWithSlots(
@@ -720,6 +777,68 @@ export async function generateAndPersist(
       .eq("id", mockId);
   }
 
+  // Auto-fix Minor/Major flags, then run AI paper review.
+  try {
+    const remediation = await autoRemediateMockQuality(service, mockId, {
+      rescanFirst: false,
+    });
+    const edited = remediation.outcomes.filter(
+      (o) => o.plan === "edit" && o.status === "ok",
+    ).length;
+    const replaced = remediation.outcomes.filter(
+      (o) => o.plan === "replace" && o.status === "ok",
+    ).length;
+    const failed = remediation.outcomes.filter(
+      (o) => o.status === "failed",
+    ).length;
+    assembly.notes.push(
+      `Auto-fix quality: ${edited} edited, ${replaced} replaced, ${failed} failed.`,
+    );
+  } catch (e) {
+    assembly.notes.push(
+      `Auto-fix quality failed: ${
+        e instanceof Error ? e.message : "unknown error"
+      }`,
+    );
+  }
+
+  try {
+    const { review, source } = await runAiPaperReview(service, mockId);
+    assembly.notes.push(
+      `AI paper review: ${review.pass ? "PASS" : "REVIEW"} (overall ${review.overallScore}, via ${source}).`,
+    );
+  } catch (e) {
+    assembly.notes.push(
+      `AI paper review failed: ${
+        e instanceof Error ? e.message : "unknown error"
+      }`,
+    );
+  }
+
+  // Persist final notes (remediation/review may have overwritten generation_notes).
+  {
+    const { data: notesRow } = await service
+      .from("esat_mocks")
+      .select("generation_notes")
+      .eq("id", mockId)
+      .maybeSingle();
+    const existingNotes =
+      (notesRow?.generation_notes as Record<string, unknown> | null) ?? {};
+    await service
+      .from("esat_mocks")
+      .update({
+        generation_notes: {
+          ...existingNotes,
+          score: assembly.score,
+          similarityIssues: assembly.similarityIssues,
+          gaps: assembly.gaps,
+          notes: assembly.notes,
+        },
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", mockId);
+  }
+
   return assembly;
 }
 
@@ -838,6 +957,18 @@ export async function autoRemediateMockQuality(
     scan.byPosition.map((row) => [row.questionId, row]),
   );
   const outcomes: RemediateSlotOutcome[] = [];
+
+  const actionable = slots.filter((slot) => {
+    const row = byQuestionId.get(slot.questionId);
+    if (!row) return false;
+    return (
+      planRemediation({ ...row, locked: slot.locked }).kind !== "skip"
+    );
+  });
+
+  if (actionable.length === 0) {
+    return { outcomes: [], scan };
+  }
 
   for (const slot of slots) {
     const row = byQuestionId.get(slot.questionId);

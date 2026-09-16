@@ -172,7 +172,7 @@ export default function AdminMockDetailPage() {
 
   async function autoFixQuality() {
     const ok = window.confirm(
-      "Auto-fix flagged questions?\n\n• Minor / human_review: AI edits the question in place\n• Major / regenerate / delete: remove from this mock and replace from the pool (bad question demoted to pending)\n\nLocked slots are skipped.",
+      "Auto-fix flagged questions, then run AI paper review?\n\n• Minor / human_review: AI edits the question in place\n• Major / regenerate / delete: remove from this mock and replace from the pool (bad question demoted to pending)\n• Then AI paper review runs automatically\n\nLocked slots are skipped.",
     );
     if (!ok) return;
     await run("quality-fix", async () => {
@@ -486,7 +486,7 @@ export default function AdminMockDetailPage() {
             className="rounded border border-stone-300 bg-white px-3 py-1.5 text-sm"
           >
             {busy === "generate"
-              ? "Labeling + regenerating…"
+              ? "Generating + fixing + reviewing…"
               : "Regenerate"}
           </button>
           <button
@@ -519,7 +519,7 @@ export default function AdminMockDetailPage() {
             onClick={autoFixQuality}
             className="rounded border border-amber-400 bg-amber-50 px-3 py-1.5 text-sm font-medium text-amber-950"
           >
-            {busy === "quality-fix" ? "Fixing…" : "Auto-fix flagged"}
+            {busy === "quality-fix" ? "Fixing + reviewing…" : "Auto-fix flagged"}
           </button>
           <button
             type="button"
@@ -564,12 +564,11 @@ export default function AdminMockDetailPage() {
           </button>
         </div>
         <p className="mb-4 text-xs text-stone-500">
-          Generate runs a per-question quality scan (stem/options/answer key)
-          after assembly. Labels like Minor · human_review or Major · regenerate
-          are recommendations from that scan (or existing quality-gate DB fields).
-          Auto-fix flagged applies them: edit Minors in place; remove and
-          replace Majors/regenerate/delete. Locked slots are kept on regenerate.
-          Cancel deletes this mock and frees its questions.
+          Generate draft / Regenerate assemble the paper, auto-fix Minor and
+          Major flags (edit or replace), then run AI paper review. Labels like
+          Minor · review or Major · regenerate come from the quality scan.
+          Auto-fix flagged re-runs fix + paper review. Locked slots are kept
+          on regenerate. Cancel deletes this mock and frees its questions.
         </p>
 
         {error && <p className="mb-4 text-sm text-red-700">{error}</p>}
@@ -670,7 +669,7 @@ export default function AdminMockDetailPage() {
                         >
                           {qScan.verdict}
                           {qScan.action !== "unknown"
-                            ? ` · ${qScan.action}`
+                            ? ` · ${qualityActionLabel(qScan.action)}`
                             : ""}
                         </span>
                       ) : (

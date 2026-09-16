@@ -3,6 +3,7 @@ import { requireTesterAdmin } from "@/lib/tester/admin";
 import {
   autoRemediateMockQuality,
   getMockWithSlots,
+  runAiPaperReview,
 } from "@/lib/mockBuilder/server";
 
 export const dynamic = "force-dynamic";
@@ -27,8 +28,22 @@ export async function POST(
       params.mockId,
       { rescanFirst: body.rescanFirst === true },
     );
+    let review: unknown = null;
+    let reviewSource: string | null = null;
+    try {
+      const paper = await runAiPaperReview(admin.service, params.mockId);
+      review = paper.review;
+      reviewSource = paper.source;
+    } catch {
+      // Remediation succeeded; paper review is best-effort on this path.
+    }
     const result = await getMockWithSlots(admin.service, params.mockId);
-    return NextResponse.json({ ...result, ...remediation });
+    return NextResponse.json({
+      ...result,
+      ...remediation,
+      review,
+      reviewSource,
+    });
   } catch (e) {
     return NextResponse.json(
       { error: e instanceof Error ? e.message : "Auto-fix failed" },
