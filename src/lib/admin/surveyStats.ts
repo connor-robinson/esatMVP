@@ -38,6 +38,9 @@ export type SurveyStatsPayload = {
   qbUiSurveyChoice: CountRow[];
   qbUiVariant: CountRow[];
   qbUiPreferenceSource: CountRow[];
+  pastPapersUiSurveyChoice: CountRow[];
+  pastPapersUiPreference: CountRow[];
+  pastPapersUiPreferenceSource: CountRow[];
   partnerCodes: Array<{
     code: string;
     label: string | null;

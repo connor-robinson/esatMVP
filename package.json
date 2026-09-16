@@ -9,6 +9,7 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "check:routes": "node scripts/check-route-exports.js",
+    "precommit:check": "node scripts/precommit-check.js",
     "test": "vitest run",
     "test:e2e:ga": "playwright test e2e/ga-consent.spec.ts",
     "test:e2e:pearson": "playwright test e2e/pearson/pearson-shell.spec.ts",
@@ -19,7 +20,8 @@
     "import:esat-m1-hook": "npx tsx scripts/import-esat-hook-sets.ts --only=math1",
     "import:esat-hook-sets": "npx tsx scripts/import-esat-hook-sets.ts",
     "build:check": "npm run type-check && npm run lint && npm run build",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "prepare": "husky"
   },
   "dependencies": {
     "@dnd-kit/accessibility": "^3.1.1",
@@ -69,6 +71,7 @@
     "autoprefixer": "^10.4.17",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.0",
+    "husky": "^9.1.7",
     "jsdom": "^26.1.0",
     "patch-package": "^8.0.1",
     "pdfkit": "^0.19.1",
