@@ -57,14 +57,21 @@ export const DASHBOARD_TOPICS: DashboardTopic[] = [
     accent: "accent",
     items: [
       {
+        label: "Practice",
+        href: "/past-papers",
+        analyticsDestination: "past_papers",
+      },
+      {
         label: "Library",
         href: "/past-papers/library",
         analyticsDestination: "past_papers",
+        description: "Legacy",
       },
       {
         label: "Roadmap",
         href: "/past-papers/roadmap",
         analyticsDestination: "past_papers_roadmap",
+        description: "Legacy",
       },
       {
         label: "Analytics",
@@ -139,7 +146,7 @@ export const HOMEPAGE_SECTIONS: MainSectionGroup[] = [
       {
         label: "Past Papers",
         description: "Full exam practice",
-        href: "/past-papers/library",
+        href: "/past-papers",
         icon: "Library",
         analyticsDestination: "past_papers",
       },

@@ -46,6 +46,7 @@ import {
   HelpCircle,
   GraduationCap,
   Home,
+  LayoutGrid,
   Library,
   LogOut,
   Map,
@@ -113,19 +114,25 @@ const navSections: NavSectionConfig[] = [
   },
   {
     label: 'Past Papers',
-    href: '/past-papers/roadmap',
+    href: '/past-papers',
     section: 'papers',
     items: [
       {
+        href: '/past-papers',
+        label: 'Past Papers',
+        description: 'Choose your layout',
+        icon: LayoutGrid,
+      },
+      {
         href: '/past-papers/roadmap',
         label: 'Roadmap',
-        description: 'Plan your prep',
+        description: 'Legacy practice table',
         icon: Map,
       },
       {
         href: '/past-papers/library',
         label: 'Library',
-        description: 'Browse exam papers',
+        description: 'Legacy paper browser',
         icon: Library,
       },
       {
@@ -250,7 +257,7 @@ export function Navbar() {
     const redirectTo =
       pathname && pathname !== '/login' && pathname !== '/'
         ? pathname
-        : '/past-papers/library';
+        : '/past-papers';
     return `/login?mode=signup&redirectTo=${encodeURIComponent(redirectTo)}`;
   }, [pathname]);
 

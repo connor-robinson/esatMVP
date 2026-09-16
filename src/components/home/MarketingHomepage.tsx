@@ -421,7 +421,7 @@ export function MarketingHomepage({
                   ESAT Past Papers
                 </Link>
                 <Link
-                  href="/past-papers/roadmap"
+                  href="/past-papers"
                   className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-transparent px-7 py-3.5 font-bold text-white transition-colors hover:border-white/40 hover:bg-white/5"
                 >
                   Open simulator

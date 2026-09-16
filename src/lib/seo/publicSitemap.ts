@@ -62,6 +62,7 @@ export const SITEMAP_EXCLUDED_PATHS = [
   "/questions",
   "/questions/questionbank",
   "/questions/questionbank/analytics",
+  "/past-papers",
   "/past-papers/library",
   "/past-papers/roadmap",
   "/past-papers/solve/session",

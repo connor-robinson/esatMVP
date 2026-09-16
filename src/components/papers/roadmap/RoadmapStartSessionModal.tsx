@@ -144,10 +144,15 @@ export function RoadmapStartSessionModal({
     });
   };
 
+  const showUniqueQuestionsOption = stage.examName === "ENGAA";
+  const effectiveNewQuestionsOnly = showUniqueQuestionsOption
+    ? newQuestionsOnly
+    : false;
+
   const handleStart = () => {
     if (selectedGroups.size === 0) return;
     const parts = expandDisplayGroupsToParts(stage.parts, selectedGroups);
-    onStart(stage, parts, { newQuestionsOnly });
+    onStart(stage, parts, { newQuestionsOnly: effectiveNewQuestionsOnly });
     onClose();
   };
 
@@ -234,37 +239,39 @@ export function RoadmapStartSessionModal({
             })}
           </ul>
 
-          <div className="mt-5 flex items-center justify-between gap-3 border-t border-border-subtle pt-4">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-text-muted">
-                Unique questions only
-              </span>
-              <RoadmapInfoPopover title="Unique questions only">
-                <p>
-                  When on, sessions skip questions you have already tried
-                  (including NSAA / ENGAA overlaps).
-                </p>
-              </RoadmapInfoPopover>
-            </div>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={newQuestionsOnly}
-              aria-label="Unique questions only"
-              onClick={() => onNewQuestionsOnlyChange(!newQuestionsOnly)}
-              className={cn(
-                "relative h-5 w-9 shrink-0 rounded-sm transition-colors",
-                newQuestionsOnly ? "bg-primary" : "bg-surface-neutral",
-              )}
-            >
-              <span
+          {showUniqueQuestionsOption ? (
+            <div className="mt-5 flex items-center justify-between gap-3 border-t border-border-subtle pt-4">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-text-muted">
+                  Unique questions only
+                </span>
+                <RoadmapInfoPopover title="Unique questions only">
+                  <p>
+                    When on, ENGAA sessions skip questions you already did in
+                    NSAA (and other overlaps).
+                  </p>
+                </RoadmapInfoPopover>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={newQuestionsOnly}
+                aria-label="Unique questions only"
+                onClick={() => onNewQuestionsOnlyChange(!newQuestionsOnly)}
                 className={cn(
-                  "absolute top-0.5 h-4 w-4 rounded-sm bg-white transition-transform",
-                  newQuestionsOnly ? "left-[16px]" : "left-0.5",
+                  "relative h-5 w-9 shrink-0 rounded-sm transition-colors",
+                  newQuestionsOnly ? "bg-primary" : "bg-surface-neutral",
                 )}
-              />
-            </button>
-          </div>
+              >
+                <span
+                  className={cn(
+                    "absolute top-0.5 h-4 w-4 rounded-sm bg-white transition-transform",
+                    newQuestionsOnly ? "left-[16px]" : "left-0.5",
+                  )}
+                />
+              </button>
+            </div>
+          ) : null}
         </div>
 
         <div className="flex items-center justify-end gap-3 border-t border-border-subtle px-5 py-4">

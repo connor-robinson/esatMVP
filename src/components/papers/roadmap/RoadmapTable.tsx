@@ -217,7 +217,11 @@ function SectionsExpandPanel({
     onStartSession(
       stage,
       expandDisplayGroupsToParts(stage.parts, new Set([group.key])),
-      { newQuestionsOnly },
+      {
+        // Unique-questions filtering is ENGAA-only (NSAA overlaps).
+        newQuestionsOnly:
+          stage.examName === "ENGAA" ? newQuestionsOnly : false,
+      },
     );
   };
 

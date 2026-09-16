@@ -15,6 +15,7 @@ import {
   type RoadmapStage,
 } from '@/lib/papers/roadmapConfig';
 import { RoadmapTable } from '@/components/papers/roadmap/RoadmapTable';
+import { PastPapersLegacyLinks } from '@/components/papers/PastPapersLegacyLinks';
 import {
   RoadmapSubjectPreview,
   type RoadmapPreviewState,
@@ -502,7 +503,10 @@ export default function PapersRoadmapPage() {
         }
 
 
-        if (options.newQuestionsOnly) {
+        const applyUniqueFilter =
+          options.newQuestionsOnly && stage.examName === "ENGAA";
+
+        if (applyUniqueFilter) {
           matchingQuestions = filterToUniqueQuestionsOnly(
             matchingQuestions,
             attemptedQuestionsRef.current,
@@ -518,7 +522,7 @@ export default function PapersRoadmapPage() {
 
         if (matchingQuestions.length === 0) {
           alert(
-            options.newQuestionsOnly
+            applyUniqueFilter
               ? 'No unique questions left in the selected parts. Turn off "Unique questions only" to repeat questions you have already done.'
               : 'No questions matched the selected parts.',
           );
@@ -645,6 +649,7 @@ export default function PapersRoadmapPage() {
 
   return (
     <Container size="lg" className="overflow-x-clip bg-background pb-16 pt-6 font-sans sm:pb-20 sm:pt-8">
+      <PastPapersLegacyLinks current="roadmap" />
       <RoadmapSubjectPreview
         value={subjectPreview}
         onChange={setSubjectPreview}

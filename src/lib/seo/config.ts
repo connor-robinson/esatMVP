@@ -104,7 +104,11 @@ export const APP_ROUTES = {
   questionBank: "/questions/questionbank",
   /** Subject picker / home for the question bank app shell. */
   questionBankHome: "/questions",
+  /** Preference hub; routes to Library or Roadmap after the user chooses. */
+  pastPapers: "/past-papers",
+  /** Legacy Library layout (kept for bookmarks and preference). */
   pastPaperLibrary: "/past-papers/library",
+  /** Legacy Roadmap / practice-table layout. */
   pastPaperRoadmap: "/past-papers/roadmap",
   faqs: "/tools/faqs",
   signUp: "/login?mode=signup",

@@ -16,7 +16,7 @@ const PAGES = [
   {
     name: "Papers",
     description: "Exam Practice",
-    href: "/past-papers/library",
+    href: "/past-papers",
   },
 ];
 

@@ -19,9 +19,11 @@ const CRITICAL_ROUTES = [
 ];
 
 const SECONDARY_ROUTES = [
+  "/past-papers",
   "/past-papers/analytics",
   "/past-papers/mark",
   "/past-papers/library",
+  "/past-papers/roadmap",
   "/past-papers/solve",
 ];
 

@@ -346,6 +346,7 @@ describe("index hygiene: sitemap", () => {
     expect(isPublicSitemapPath("/esat-biology")).toBe(true);
     expect(isPublicSitemapPath("/esat-mock-tests")).toBe(true);
     expect(isPublicSitemapPath(APP_ROUTES.fermiGame)).toBe(false);
+    expect(isPublicSitemapPath("/past-papers")).toBe(false);
     expect(isPublicSitemapPath("/past-papers/library")).toBe(false);
     expect(isPublicSitemapPath("/questions")).toBe(false);
     expect(isPublicSitemapPath("/questions/questionbank")).toBe(false);
