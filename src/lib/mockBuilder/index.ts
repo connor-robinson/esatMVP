@@ -16,3 +16,4 @@ export * from "./vertexClient";
 export * from "./poolFilters";
 export * from "./difficultyVsTypical";
 export * from "./questionQualityScan";
+export * from "./toPearsonQuestion";

@@ -479,6 +479,14 @@ export default function AdminMockDetailPage() {
           )}
 
         <div className="mb-6 flex flex-wrap items-center gap-2">
+          <Link
+            href={`/admin/mock-builder/${mockId}/preview`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded bg-sky-800 px-3 py-1.5 text-sm font-medium text-white"
+          >
+            Preview in Pearson UI
+          </Link>
           <button
             type="button"
             disabled={!!busy}

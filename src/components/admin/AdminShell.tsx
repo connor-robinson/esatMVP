@@ -135,6 +135,14 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     void loadBadge();
   }, [pathname, loadBadge]);
 
+  // Full-bleed Pearson / exam chrome: no admin nav.
+  const chromeLess =
+    /\/admin\/mock-builder\/[^/]+\/preview\/?$/.test(pathname);
+
+  if (chromeLess) {
+    return <>{children}</>;
+  }
+
   return (
     <div className="min-h-screen bg-surface">
       <header className="border-b border-border-subtle bg-surface-elevated">
