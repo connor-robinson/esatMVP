@@ -31,8 +31,6 @@ import { isVerifiedCurriculumTag } from "@/lib/questionBank/esatTagCanonicalize"
 import { UNTAGGED_TOPIC } from "@/lib/questionBank/libraryQueryParams";
 import {
   applyExtraTimeMinutes,
-  fetchExtraTimePrefs,
-  type ExtraTimePrefs,
 } from "@/lib/papers/extraTime";
 
 const QUESTION_STEP = 1;
@@ -42,6 +40,8 @@ const QUESTION_MAX = 120;
 const TIME_STEP = 0.5;
 const TIME_MIN = 0.5;
 const TIME_MAX = 180;
+/** Fallback when profile has no percentage set. */
+const DEFAULT_EXTRA_TIME_PERCENT = 25;
 
 const EMPTY_LIBRARY_FILTERS: LibraryFilters = {
   searchQuery: "",
@@ -238,25 +238,22 @@ export function QuestionBankSessionSettingsModal({
   const [topicOptions, setTopicOptions] = useState<LibraryOutlineTag[]>([]);
   const [topicsLoading, setTopicsLoading] = useState(false);
   const [topicsError, setTopicsError] = useState<string | null>(null);
-  const [extraTimePrefs, setExtraTimePrefs] = useState<ExtraTimePrefs | null>(
-    null,
+  const [extraTimePercent, setExtraTimePercent] = useState(
+    DEFAULT_EXTRA_TIME_PERCENT,
   );
   const [extraTimeOn, setExtraTimeOn] = useState(false);
   const baseMinutesRef = useRef(autoTimeLimitMinutes(10));
+  const extraTimePercentRef = useRef(DEFAULT_EXTRA_TIME_PERCENT);
 
   const singleSubject = subjectKeys.length === 1 ? subjectKeys[0] : null;
   const topicFilterEnabled = advanced && Boolean(singleSubject);
-  const extraTimePercent =
-    extraTimePrefs && extraTimePrefs.enabled && extraTimePrefs.percentage > 0
-      ? extraTimePrefs.percentage
-      : 0;
-  const canUseExtraTime = extraTimePercent > 0;
 
   const setMinutesFromBase = (base: number, withExtraTime: boolean) => {
     const safeBase = clamp(roundToStep(base, TIME_STEP), TIME_MIN, TIME_MAX);
     baseMinutesRef.current = safeBase;
-    if (withExtraTime && extraTimePercent > 0) {
-      const adjusted = applyExtraTimeMinutes(safeBase, extraTimePercent);
+    const percent = extraTimePercentRef.current;
+    if (withExtraTime && percent > 0) {
+      const adjusted = applyExtraTimeMinutes(safeBase, percent);
       setMinutes(clamp(roundToStep(adjusted, TIME_STEP), TIME_MIN, TIME_MAX));
       return;
     }
@@ -284,15 +281,43 @@ export function QuestionBankSessionSettingsModal({
   }, [open, originTile?.key, isMixed]);
 
   useEffect(() => {
-    if (!open || !advanced) return;
+    if (!open) return;
     let cancelled = false;
-    void fetchExtraTimePrefs().then((prefs) => {
-      if (!cancelled) setExtraTimePrefs(prefs);
-    });
+    void (async () => {
+      try {
+        const res = await fetch("/api/profile/preferences", {
+          credentials: "include",
+        });
+        if (!res.ok) {
+          if (!cancelled) {
+            extraTimePercentRef.current = DEFAULT_EXTRA_TIME_PERCENT;
+            setExtraTimePercent(DEFAULT_EXTRA_TIME_PERCENT);
+          }
+          return;
+        }
+        const data = (await res.json()) as {
+          extra_time_percentage?: number | null;
+        };
+        const pct = Math.max(
+          0,
+          Number(data.extra_time_percentage ?? DEFAULT_EXTRA_TIME_PERCENT) || 0,
+        );
+        const next = pct > 0 ? pct : DEFAULT_EXTRA_TIME_PERCENT;
+        if (!cancelled) {
+          extraTimePercentRef.current = next;
+          setExtraTimePercent(next);
+        }
+      } catch {
+        if (!cancelled) {
+          extraTimePercentRef.current = DEFAULT_EXTRA_TIME_PERCENT;
+          setExtraTimePercent(DEFAULT_EXTRA_TIME_PERCENT);
+        }
+      }
+    })();
     return () => {
       cancelled = true;
     };
-  }, [open, advanced]);
+  }, [open]);
 
   useEffect(() => {
     if (!open || !advanced || !topicFilterEnabled || !singleSubject) {
@@ -344,10 +369,6 @@ export function QuestionBankSessionSettingsModal({
       setSelectedTopics([]);
       setPlayMode("instant");
       setQuestionPool("all");
-      if (extraTimeOn) {
-        setExtraTimeOn(false);
-        setMinutesFromBase(baseMinutesRef.current, false);
-      }
     } else if (next && isMixed && originTile) {
       setSubjectKeys(siblingTiles.map((t) => t.key as SubjectFilter));
     }
@@ -370,12 +391,13 @@ export function QuestionBankSessionSettingsModal({
   };
 
   const handleMinutesChange = (next: number) => {
-    if (extraTimeOn && extraTimePercent > 0) {
+    const percent = extraTimePercentRef.current;
+    if (extraTimeOn && percent > 0) {
       // Treat edits as the post-extra value; keep base in sync for toggle-off.
       const safeNext = clamp(roundToStep(next, TIME_STEP), TIME_MIN, TIME_MAX);
       setMinutes(safeNext);
       baseMinutesRef.current = clamp(
-        roundToStep(safeNext / (1 + extraTimePercent / 100), TIME_STEP),
+        roundToStep(safeNext / (1 + percent / 100), TIME_STEP),
         TIME_MIN,
         TIME_MAX,
       );
@@ -389,7 +411,6 @@ export function QuestionBankSessionSettingsModal({
   };
 
   const toggleExtraTime = () => {
-    if (!canUseExtraTime) return;
     const next = !extraTimeOn;
     setExtraTimeOn(next);
     setMinutesFromBase(baseMinutesRef.current, next);
@@ -430,7 +451,7 @@ export function QuestionBankSessionSettingsModal({
       topics: topicFilterEnabled ? selectedTopics : [],
       playMode: advanced && pool !== "incorrect" ? playMode : "instant",
       questionPool: pool,
-      extraTimeApplied: advanced && extraTimeOn && canUseExtraTime,
+      extraTimeApplied: extraTimeOn,
     });
     onClose();
   };
@@ -696,10 +717,34 @@ export function QuestionBankSessionSettingsModal({
             />
           </div>
           <button
+              type="button"
+              onClick={toggleExtraTime}
+              title={
+                extraTimeOn
+                  ? `Remove +${extraTimePercent}% from the time limit`
+                  : `Apply +${extraTimePercent}% to the time limit`
+              }
+              className={cn(
+                "flex min-h-14 shrink-0 items-center self-stretch rounded-organic-lg px-3 text-xs font-semibold transition-colors",
+                extraTimeOn
+                  ? "bg-secondary text-background"
+                  : "bg-surface-elevated text-text-muted hover:bg-surface-mid hover:text-text",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/35",
+              )}
+              aria-pressed={extraTimeOn}
+              aria-label={
+                extraTimeOn
+                  ? `Extra time on, +${extraTimePercent} percent`
+                  : `Apply extra time, +${extraTimePercent} percent`
+              }
+            >
+              +{extraTimePercent}%
+            </button>
+          <button
             type="button"
             onClick={applyAutoTimeLimit}
             disabled={isAutoTime}
-            title={`Reset to ${formatStepperValue(expectedAutoMinutes, TIME_STEP)} min (90s per question${extraTimeOn && extraTimePercent > 0 ? ` +${extraTimePercent}%` : ""})`}
+            title={`Reset to ${formatStepperValue(expectedAutoMinutes, TIME_STEP)} min (90s per question${extraTimeOn ? ` +${extraTimePercent}%` : ""})`}
             className={cn(
               "flex min-h-14 shrink-0 items-center gap-1.5 self-stretch rounded-organic-lg px-3 text-xs font-semibold transition-colors",
               "bg-surface-elevated text-text-muted hover:bg-surface-mid hover:text-text",
@@ -837,42 +882,6 @@ export function QuestionBankSessionSettingsModal({
                     About half prior incorrect, half new. Unique questions only.
                   </p>
                 ) : null}
-
-                <div className="space-y-3">
-                  <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
-                    Access arrangements
-                  </span>
-                  <button
-                    type="button"
-                    onClick={toggleExtraTime}
-                    disabled={!canUseExtraTime}
-                    title={
-                      canUseExtraTime
-                        ? extraTimeOn
-                          ? `Remove +${extraTimePercent}% from the time limit`
-                          : `Apply +${extraTimePercent}% to the time limit`
-                        : "Enable extra time in your profile to use this"
-                    }
-                    className={cn(
-                      "rounded-organic-lg px-4 py-3 text-sm font-semibold transition-colors",
-                      extraTimeOn && canUseExtraTime
-                        ? "bg-secondary text-background"
-                        : "bg-surface text-text hover:bg-surface-mid",
-                      !canUseExtraTime &&
-                        "cursor-not-allowed opacity-45 hover:bg-surface",
-                    )}
-                  >
-                    {canUseExtraTime
-                      ? `Extra time (+${extraTimePercent}%)`
-                      : "Extra time"}
-                  </button>
-                  {extraTimeOn && canUseExtraTime ? (
-                    <p className="text-xs leading-relaxed text-text-muted">
-                      Time limit includes your +{extraTimePercent}% arrangement.
-                      Base time stays {formatStepperValue(baseMinutesRef.current, TIME_STEP)} min.
-                    </p>
-                  ) : null}
-                </div>
 
                 <div className="border-t border-transparent pt-1">
                   {topicsBlock}
