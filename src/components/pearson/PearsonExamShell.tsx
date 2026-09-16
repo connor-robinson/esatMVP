@@ -4,6 +4,7 @@ import { useEffect, type CSSProperties, type PointerEvent, type ReactNode } from
 import {
   colourSchemeCssVars,
   usesFullPageTheme,
+  type PearsonChromeVariant,
 } from "@/lib/pearson/colourSchemes";
 import type { ColourSchemeId, ZoomLevel } from "@/lib/pearson/types";
 import { cn } from "@/lib/utils";
@@ -21,6 +22,8 @@ function clearRadioFocusOutsideOption(e: PointerEvent<HTMLDivElement>) {
 interface PearsonExamShellProps {
   colourScheme: ColourSchemeId;
   zoomLevel: ZoomLevel;
+  /** Blue = specimen default. Purple = question-bank exam branding. */
+  chromeVariant?: PearsonChromeVariant;
   className?: string;
   children: ReactNode;
 }
@@ -28,10 +31,13 @@ interface PearsonExamShellProps {
 export function PearsonExamShell({
   colourScheme,
   zoomLevel,
+  chromeVariant = "blue",
   className,
   children,
 }: PearsonExamShellProps) {
-  const vars = colourSchemeCssVars(colourScheme) as CSSProperties;
+  const vars = colourSchemeCssVars(colourScheme, chromeVariant) as CSSProperties;
+  // Keep "blue" chrome-mode selectors (hover yellow, borders) even for purple
+  // branding. Colour comes from CSS variables, not data-chrome-mode.
   const chromeMode = usesFullPageTheme(colourScheme) ? "themed" : "blue";
 
   // Lock document scroll and detach site typography while the player is open.

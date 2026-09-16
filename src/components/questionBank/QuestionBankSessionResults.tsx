@@ -22,6 +22,8 @@ import type {
   QuestionBankSessionSource,
   UiDifficultyLabel,
 } from '@/types/questionBank';
+import type { QuestionBankPlayMode } from '@/lib/questionBank/homeLaunch';
+import { estimateQuestionBankEsatScore } from '@/lib/questionBank/estimatedEsatScore';
 import {
   ArrowLeft,
   ArrowRight,
@@ -40,6 +42,8 @@ interface QuestionBankSessionResultsProps {
   subjectsLabel?: string;
   startedAt: number;
   timedOut?: boolean;
+  playMode?: QuestionBankPlayMode;
+  timeLimitMinutes?: number;
   onBack: () => void;
   /** Open full question layout review for a session question id. */
   onReviewQuestion?: (questionId: string) => void;
@@ -117,6 +121,8 @@ export function QuestionBankSessionResults({
   subjectsLabel,
   startedAt,
   timedOut = false,
+  playMode = 'instant',
+  timeLimitMinutes,
   onBack,
   onReviewQuestion,
   showUpgradeBanner = false,
@@ -144,6 +150,23 @@ export function QuestionBankSessionResults({
     () => buildSessionSummary(attempts, labelForQuestionBankTag),
     [attempts],
   );
+
+  const examEstimate = useMemo(() => {
+    if (playMode !== 'exam') return null;
+    return estimateQuestionBankEsatScore({
+      attempts,
+      subjectsLabel,
+      elapsedMs: result.totalTimeMs > 0 ? result.totalTimeMs : Date.now() - startedAt,
+      timeLimitMinutes,
+    });
+  }, [
+    attempts,
+    playMode,
+    result.totalTimeMs,
+    startedAt,
+    subjectsLabel,
+    timeLimitMinutes,
+  ]);
 
   const sortedAttempts = useMemo(
     () =>
@@ -183,10 +206,15 @@ export function QuestionBankSessionResults({
         <div className='mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end'>
           <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}>
             <h1 className='mb-2 font-heading text-2xl font-bold tracking-tight text-text sm:text-3xl'>
-              {timedOut ? "Time's up!" : 'Session Complete!'}
+              {timedOut
+                ? "Time's up!"
+                : playMode === 'exam'
+                  ? 'Exam complete'
+                  : 'Session Complete!'}
             </h1>
             <p className='text-sm text-text-muted sm:text-base'>
-              Question bank session • {subtitleParts.join(' • ')}
+              {playMode === 'exam' ? 'Exam mode' : 'Question bank session'} •{' '}
+              {subtitleParts.join(' • ')}
               {timedOut ? ' • Ended when the timer ran out' : ''}
             </p>
             <p className='mt-1 text-xs text-text-subtle'>
@@ -255,6 +283,57 @@ export function QuestionBankSessionResults({
               subtext="You've finished your free preview. Upgrade for unlimited sessions across every subject."
               ctaLabel="View plans"
             />
+          </motion.div>
+        ) : null}
+
+        {examEstimate ? (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.08 }}
+            className="mb-8"
+          >
+            <div
+              className={cn(
+                'relative overflow-hidden p-6 sm:p-8',
+                resultsCard,
+              )}
+              style={{
+                background:
+                  'linear-gradient(135deg, color-mix(in srgb, #6b4a72 18%, var(--color-surface-elevated)) 0%, var(--color-surface-elevated) 55%)',
+              }}
+            >
+              <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <div className="mb-2 flex items-center gap-2">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-[#af6da1]">
+                      Estimated ESAT score
+                    </span>
+                    <span className="rounded-organic-md bg-[#6b4a72]/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#af6da1]">
+                      Beta
+                    </span>
+                  </div>
+                  <div className="text-5xl font-bold tabular-nums leading-none text-text sm:text-6xl">
+                    {examEstimate.score.toFixed(1)}
+                  </div>
+                  <p className="mt-3 max-w-xl text-sm leading-relaxed text-text-muted">
+                    Rough 1.0–9.0 estimate from difficulty-weighted accuracy and
+                    pace vs your time limit. Not an official ESAT conversion.
+                  </p>
+                </div>
+                <div className="shrink-0 text-left sm:text-right">
+                  <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+                    Final percentage
+                  </div>
+                  <div className="mt-1 text-3xl font-bold tabular-nums text-text">
+                    {examEstimate.percentage.toFixed(1)}%
+                  </div>
+                  <div className="mt-1 text-xs text-text-subtle">
+                    {result.correctCount} / {result.totalQuestions} correct
+                  </div>
+                </div>
+              </div>
+            </div>
           </motion.div>
         ) : null}
 

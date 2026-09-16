@@ -223,6 +223,27 @@ export function labelForEsatTag(
   return canonical;
 }
 
+/** True when the tag maps to an official ESAT curriculum topic for the subject. */
+export function isVerifiedCurriculumTag(
+  raw: string | null | undefined,
+  opts?: { subject?: string; schemaId?: string },
+): boolean {
+  if (!raw || !raw.trim()) return false;
+  if (raw.trim() === UNTAGGED_TOPIC) return false;
+
+  const canonical = canonicalizeEsatTag(raw, opts);
+  if (canonical === UNTAGGED_TOPIC) return false;
+
+  const paperId =
+    esatPaperIdFromSubject(opts?.subject ?? "") ??
+    esatPaperIdFromSchema(opts?.schemaId ?? "", opts?.subject ?? "");
+  if (!paperId) return false;
+
+  const rawCode = rawCodeFromPrefixed(canonical, paperId);
+  if (!rawCode) return false;
+  return codeToTitle.has(rawCode.toUpperCase());
+}
+
 /** Sort key for topic groups - alphabetical by display title. */
 export function compareEsatTagLabels(
   a: string,

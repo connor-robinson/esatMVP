@@ -22,7 +22,37 @@ export const PEARSON_BLUE_CHROME = {
   "--pearson-footer": "#006daa",
   "--pearson-header-text": "#ffffff",
   "--pearson-toolbar-divider": "#000000",
+  "--pearson-nav-blue": "#00599c",
+  "--pearson-nav-header": "#587ab5",
+  "--pearson-dialog-blue": "#0066a1",
+  "--pearson-radio-blue": "#0078d4",
 } as const;
+
+/**
+ * Question-bank exam mode: same Pearson layout/behaviour, purple chrome.
+ * Tuned to mirror blue specimen contrast with brand purple.
+ */
+export const PEARSON_PURPLE_CHROME = {
+  "--pearson-header": "#5c3d63",
+  "--pearson-toolbar": "#7a5285",
+  "--pearson-footer": "#5c3d63",
+  "--pearson-header-text": "#ffffff",
+  "--pearson-toolbar-divider": "#000000",
+  "--pearson-nav-blue": "#4a2f52",
+  "--pearson-nav-header": "#6b4a72",
+  "--pearson-dialog-blue": "#6b4a72",
+  "--pearson-radio-blue": "#af6da1",
+} as const;
+
+export type PearsonChromeVariant = "blue" | "purple";
+
+export function pearsonChromeCssVars(
+  variant: PearsonChromeVariant,
+): Record<string, string> {
+  return variant === "purple"
+    ? { ...PEARSON_PURPLE_CHROME }
+    : { ...PEARSON_BLUE_CHROME };
+}
 
 export const COLOUR_SCHEMES: readonly ColourSchemeDef[] = [
   {
@@ -79,7 +109,10 @@ export function usesFullPageTheme(id: ColourSchemeId): boolean {
   return getColourScheme(id).fullPageTheme;
 }
 
-export function colourSchemeCssVars(id: ColourSchemeId): Record<string, string> {
+export function colourSchemeCssVars(
+  id: ColourSchemeId,
+  chromeVariant: PearsonChromeVariant = "blue",
+): Record<string, string> {
   const scheme = getColourScheme(id);
   const base: Record<string, string> = {
     "--pearson-text": scheme.contentText,
@@ -103,8 +136,8 @@ export function colourSchemeCssVars(id: ColourSchemeId): Record<string, string> 
 
   return {
     ...base,
-    ...PEARSON_BLUE_CHROME,
-    "--pearson-chrome-mode": "blue",
+    ...pearsonChromeCssVars(chromeVariant),
+    "--pearson-chrome-mode": chromeVariant === "purple" ? "purple" : "blue",
   };
 }
 

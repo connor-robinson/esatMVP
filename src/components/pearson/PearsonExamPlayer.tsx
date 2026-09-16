@@ -12,13 +12,13 @@
 
 import { useMemo } from "react";
 import type { Question } from "@/types/papers";
-import type {
-  ExamMode,
+import type { ExamMode,
   ModuleTransitionConfig,
   PearsonAnswerMap,
   PearsonFlagMap,
   PearsonModuleResult,
 } from "@/lib/pearson/types";
+import type { PearsonChromeVariant } from "@/lib/pearson/colourSchemes";
 import { usePearsonExamController } from "@/lib/pearson/usePearsonExamController";
 import { DesktopFidelityGate } from "./DesktopFidelityGate";
 import { EndExamDialog } from "./EndExamDialog";
@@ -67,6 +67,8 @@ export interface PearsonExamPlayerProps {
   /** Profile access arrangement: pause-the-clock rest breaks. */
   restBreaksEnabled?: boolean;
   onRestBreakChange?: (active: boolean) => void;
+  /** Blue specimen chrome, or purple for question-bank exam mode. */
+  chromeVariant?: PearsonChromeVariant;
 }
 
 export function PearsonExamPlayer({
@@ -92,6 +94,7 @@ export function PearsonExamPlayer({
   showQuestionReport = true,
   restBreaksEnabled = false,
   onRestBreakChange,
+  chromeVariant = "blue",
 }: PearsonExamPlayerProps) {
   const c = usePearsonExamController({
     mode,
@@ -153,7 +156,11 @@ export function PearsonExamPlayer({
   };
 
   return (
-    <PearsonExamShell colourScheme={c.colourScheme} zoomLevel={c.zoomLevel}>
+    <PearsonExamShell
+      colourScheme={c.colourScheme}
+      zoomLevel={c.zoomLevel}
+      chromeVariant={chromeVariant}
+    >
       <PearsonHotkeyManager controller={hotkeyApi} />
       <DesktopFidelityGate />
 

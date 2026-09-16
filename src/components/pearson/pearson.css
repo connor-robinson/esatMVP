@@ -1214,7 +1214,7 @@ html.pearson-exam-active body {
   width: 14px;
   height: 12px;
   background: #ffff00;
-  border: 1px solid #00599c;
+  border: 1px solid var(--pearson-nav-blue);
   clip-path: polygon(0 0, 100% 20%, 100% 100%, 0 80%);
 }
 
@@ -1457,7 +1457,7 @@ html.pearson-exam-active body {
   margin-left: -2.5px;
   margin-top: -24px;
   border-radius: 2.5px;
-  background: #4678be;
+  background: var(--pearson-toolbar);
   transform-origin: 50% 24px;
   opacity: 0.18;
   animation: pearson-spinner-chase 1.2s linear infinite;
@@ -1466,10 +1466,10 @@ html.pearson-exam-active body {
 @keyframes pearson-spinner-chase {
   0% {
     opacity: 1;
-    background: #006daa;
+    background: var(--pearson-header);
   }
   100% {
     opacity: 0.12;
-    background: #b8c9e0;
+    background: color-mix(in srgb, var(--pearson-toolbar) 35%, #ffffff);
   }
 }

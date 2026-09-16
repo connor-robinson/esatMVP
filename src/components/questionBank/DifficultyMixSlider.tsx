@@ -165,119 +165,136 @@ export function DifficultyMixSlider({ value, onChange }: Props) {
 
   return (
     <div className="space-y-3 pt-1">
+      {/*
+        Inset the track by half a label column so snap points sit on the
+        horizontal center of Auto / Easy / Medium / Hard.
+      */}
       <div
-        ref={trackRef}
-        className={cn(
-          "relative h-8 touch-none select-none",
-          dragging ? "cursor-grabbing" : "cursor-grab",
-        )}
-        onPointerDown={(event) => {
-          if (event.button !== 0) return;
-          event.preventDefault();
-          setSnapping(false);
-          setDragging(true);
-          applyFromClientX(event.clientX, { commitVisual: true });
+        className="relative"
+        style={{
+          paddingLeft: `${50 / options.length}%`,
+          paddingRight: `${50 / options.length}%`,
         }}
       >
-        {/* Base track with difficulty-tinted gradient aligned to snap points */}
         <div
-          className="absolute left-0 right-0 top-1/2 h-2 -translate-y-1/2 rounded-full"
-          style={{
-            background:
-              "linear-gradient(to right, var(--color-surface-neutral) 0%, color-mix(in srgb, var(--color-difficulty-pill-easy) 42%, var(--color-surface-mid)) 33%, color-mix(in srgb, var(--color-difficulty-pill-medium) 42%, var(--color-surface-mid)) 66%, color-mix(in srgb, var(--color-difficulty-pill-hard) 42%, var(--color-surface-mid)) 100%)",
-          }}
-        />
-
-        {/* Active fill to thumb */}
-        <div
+          ref={trackRef}
           className={cn(
-            "absolute left-0 top-1/2 h-2 -translate-y-1/2 rounded-full",
-            activeAccent.fill,
-            dragging
-              ? "transition-none"
-              : "transition-[width,background-color] duration-300",
+            "relative h-8 touch-none select-none",
+            dragging ? "cursor-grabbing" : "cursor-grab",
           )}
-          style={{
-            width: `${visualPct}%`,
-            transitionTimingFunction: dragging ? undefined : SNAP_EASE,
+          onPointerDown={(event) => {
+            if (event.button !== 0) return;
+            event.preventDefault();
+            setSnapping(false);
+            setDragging(true);
+            applyFromClientX(event.clientX, { commitVisual: true });
           }}
-        />
+        >
+          {/* Base track with difficulty-tinted gradient aligned to snap points */}
+          <div
+            className="absolute left-0 right-0 top-1/2 h-2 -translate-y-1/2 rounded-full"
+            style={{
+              background:
+                "linear-gradient(to right, var(--color-surface-neutral) 0%, color-mix(in srgb, var(--color-difficulty-pill-easy) 42%, var(--color-surface-mid)) 33%, color-mix(in srgb, var(--color-difficulty-pill-medium) 42%, var(--color-surface-mid)) 66%, color-mix(in srgb, var(--color-difficulty-pill-hard) 42%, var(--color-surface-mid)) 100%)",
+            }}
+          />
 
-        {options.map((option, optionIndex) => {
-          const markPct = max === 0 ? 0 : (optionIndex / max) * 100;
-          const reached = optionIndex <= index;
-          const isLive = option === liveValue;
-          const markAccent = accentFor(option);
-          return (
-            <button
-              key={option}
-              type="button"
-              aria-label={option}
-              onClick={(event) => {
-                event.stopPropagation();
-                selectPreset(option);
-              }}
-              className={cn(
-                "absolute top-1/2 z-[1] h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full",
-                reached || isLive ? markAccent.markActive : markAccent.markIdle,
-                "transition-[transform,background-color] duration-300",
-                isLive && snapping && "scale-125",
-                dragging ? "cursor-grabbing" : "cursor-grab",
-                controlBase,
-              )}
-              style={{
-                left: `${markPct}%`,
-                transitionTimingFunction: SNAP_EASE,
-              }}
-            />
-          );
-        })}
+          {/* Active fill to thumb */}
+          <div
+            className={cn(
+              "absolute left-0 top-1/2 h-2 -translate-y-1/2 rounded-full",
+              activeAccent.fill,
+              dragging
+                ? "transition-none"
+                : "transition-[width,background-color] duration-300",
+            )}
+            style={{
+              width: `${visualPct}%`,
+              transitionTimingFunction: dragging ? undefined : SNAP_EASE,
+            }}
+          />
 
-        <div
-          role="slider"
-          tabIndex={0}
-          aria-valuemin={0}
-          aria-valuemax={max}
-          aria-valuenow={index}
-          aria-valuetext={value}
-          aria-labelledby={labelId}
-          className={cn(
-            "absolute top-1/2 z-[2] h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full shadow-sm",
-            activeAccent.thumb,
-            dragging ? "cursor-grabbing scale-110" : "cursor-grab",
-            snapping && !dragging && "scale-110",
-            dragging
-              ? "transition-none"
-              : "transition-[left,transform,background-color] duration-300",
-            "focus-visible:ring-2 focus-visible:ring-secondary/35",
-            controlBase,
-          )}
-          style={{
-            left: `${visualPct}%`,
-            transitionTimingFunction: dragging ? undefined : SNAP_EASE,
-          }}
-          onKeyDown={(event) => {
-            if (event.key === "ArrowRight" || event.key === "ArrowUp") {
-              event.preventDefault();
-              selectPreset(options[Math.min(max, index + 1)]!);
-            }
-            if (event.key === "ArrowLeft" || event.key === "ArrowDown") {
-              event.preventDefault();
-              selectPreset(options[Math.max(0, index - 1)]!);
-            }
-            if (event.key === "Home") {
-              event.preventDefault();
-              selectPreset(options[0]!);
-            }
-            if (event.key === "End") {
-              event.preventDefault();
-              selectPreset(options[max]!);
-            }
-          }}
-        />
+          {options.map((option, optionIndex) => {
+            const markPct = max === 0 ? 0 : (optionIndex / max) * 100;
+            const reached = optionIndex <= index;
+            const isLive = option === liveValue;
+            const markAccent = accentFor(option);
+            return (
+              <button
+                key={option}
+                type="button"
+                aria-label={option}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  selectPreset(option);
+                }}
+                className={cn(
+                  "absolute top-1/2 z-[1] h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full",
+                  reached || isLive
+                    ? markAccent.markActive
+                    : markAccent.markIdle,
+                  "transition-[transform,background-color] duration-300",
+                  isLive && snapping && "scale-125",
+                  dragging ? "cursor-grabbing" : "cursor-grab",
+                  controlBase,
+                )}
+                style={{
+                  left: `${markPct}%`,
+                  transitionTimingFunction: SNAP_EASE,
+                }}
+              />
+            );
+          })}
+
+          <div
+            role="slider"
+            tabIndex={0}
+            aria-valuemin={0}
+            aria-valuemax={max}
+            aria-valuenow={index}
+            aria-valuetext={value}
+            aria-labelledby={labelId}
+            className={cn(
+              "absolute top-1/2 z-[2] h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full shadow-sm",
+              activeAccent.thumb,
+              dragging ? "cursor-grabbing scale-110" : "cursor-grab",
+              snapping && !dragging && "scale-110",
+              dragging
+                ? "transition-none"
+                : "transition-[left,transform,background-color] duration-300",
+              "focus-visible:ring-2 focus-visible:ring-secondary/35",
+              controlBase,
+            )}
+            style={{
+              left: `${visualPct}%`,
+              transitionTimingFunction: dragging ? undefined : SNAP_EASE,
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "ArrowRight" || event.key === "ArrowUp") {
+                event.preventDefault();
+                selectPreset(options[Math.min(max, index + 1)]!);
+              }
+              if (event.key === "ArrowLeft" || event.key === "ArrowDown") {
+                event.preventDefault();
+                selectPreset(options[Math.max(0, index - 1)]!);
+              }
+              if (event.key === "Home") {
+                event.preventDefault();
+                selectPreset(options[0]!);
+              }
+              if (event.key === "End") {
+                event.preventDefault();
+                selectPreset(options[max]!);
+              }
+            }}
+          />
+        </div>
       </div>
 
-      <div className="flex justify-between gap-1 px-0.5">
+      <div
+        className="grid gap-1"
+        style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}
+      >
         {options.map((option) => {
           const labelAccent = accentFor(option);
           const active = option === value;
@@ -287,7 +304,7 @@ export function DifficultyMixSlider({ value, onChange }: Props) {
               type="button"
               onClick={() => selectPreset(option)}
               className={cn(
-                "min-w-0 flex-1 text-center text-[10px] font-semibold uppercase tracking-wide transition-colors duration-300 sm:text-xs",
+                "min-w-0 text-center text-[10px] font-semibold uppercase tracking-wide transition-colors duration-300 sm:text-xs",
                 active ? labelAccent.labelActive : labelAccent.labelIdle,
                 controlBase,
               )}
