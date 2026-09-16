@@ -760,6 +760,67 @@ function IconActionButton({
   );
 }
 
+/** Brief score-only suspense, then settle on the final X/100. */
+function ScoreReveal({
+  score,
+  scoreClassName,
+  slashClassName,
+  ariaLabel,
+}: {
+  score: number;
+  scoreClassName: string;
+  slashClassName: string;
+  ariaLabel: string;
+}) {
+  const [phase, setPhase] = useState<"loading" | "ready">("loading");
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    setPhase("loading");
+    setTick(0);
+    const tickId = window.setInterval(() => {
+      setTick((t) => (t + 1) % 3);
+    }, 140);
+    const readyId = window.setTimeout(() => {
+      window.clearInterval(tickId);
+      setPhase("ready");
+    }, 720);
+    return () => {
+      window.clearInterval(tickId);
+      window.clearTimeout(readyId);
+    };
+  }, [score]);
+
+  return (
+    <p className={cn(scoreClassName, "tabular-nums")} aria-label={ariaLabel} aria-live="polite">
+      {phase === "loading" ? (
+        <span className="inline-flex items-end gap-1 text-text-muted" aria-hidden>
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              className={cn(
+                "inline-block h-2.5 w-2.5 rounded-sm bg-current transition-opacity duration-150",
+                tick === i ? "opacity-100" : "opacity-25",
+              )}
+            />
+          ))}
+          <span className={cn("mb-0.5 ml-1", slashClassName)}>/100</span>
+        </span>
+      ) : (
+        <motion.span
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+          className="inline-flex items-end"
+        >
+          {score}
+          <span className={slashClassName}>/100</span>
+        </motion.span>
+      )}
+    </p>
+  );
+}
+
 function RevealedView({
   result,
   input,
@@ -796,13 +857,15 @@ function RevealedView({
           transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
           className="mt-2 flex min-h-0 flex-1 flex-col items-center justify-center text-center"
         >
-          <p
-            className={cn("text-5xl font-bold tabular-nums leading-none sm:text-6xl", tone.text)}
-            aria-label={`Score ${score} out of 100`}
-          >
-            {score}
-            <span className="text-2xl font-semibold text-text-muted sm:text-3xl">/100</span>
-          </p>
+          <ScoreReveal
+            score={score}
+            scoreClassName={cn(
+              "text-5xl font-bold leading-none sm:text-6xl",
+              tone.text,
+            )}
+            slashClassName="text-2xl font-semibold text-text-muted sm:text-3xl"
+            ariaLabel={`Score ${score} out of 100`}
+          />
           <h3
             className={cn(
               "mt-2 text-lg font-bold uppercase tracking-wide sm:text-xl",
@@ -1013,10 +1076,12 @@ function SummaryView({
         <p className="text-sm font-medium text-text-muted">Today&apos;s average closeness</p>
       </div>
 
-      <div className="flex items-end gap-2">
-        <span className="text-6xl font-bold text-secondary">{averageScore}</span>
-        <span className="mb-2 text-lg font-semibold text-text-muted">/ 100</span>
-      </div>
+      <ScoreReveal
+        score={averageScore}
+        scoreClassName="text-6xl font-bold leading-none text-secondary"
+        slashClassName="mb-1 ml-0.5 text-lg font-semibold text-text-muted"
+        ariaLabel={`Average score ${averageScore} out of 100`}
+      />
 
       {bestScore != null && (
         <p className="text-sm font-semibold text-text-muted">
