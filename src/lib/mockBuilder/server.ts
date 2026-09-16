@@ -12,7 +12,7 @@ import {
 } from "./blueprints";
 import { toMockCandidate, withAttemptFlags, type RawBankQuestionRow } from "./metadata";
 import { assembleMockPaper, proposeReplacements } from "./select";
-import { filterMockPool, isDiagramQuestion, isFreeTierHookQuestion } from "./poolFilters";
+import { filterMockPool, isFreeTierHookQuestion } from "./poolFilters";
 import {
   EXCLUDE_SETTING_KEY,
   parseExcludeSetting,
@@ -142,16 +142,17 @@ export async function countAvailableDiagrams(
   service: SupabaseClient,
   subject: MockBuilderSubject,
 ): Promise<{ available: number; reserved: number }> {
-  // Light columns only: full pool select was pulling stems/options for every row.
+  // Only diagram/graph rows; avoid pulling the whole subject pool.
   const { data, error } = await service
     .from("ai_generated_questions")
-    .select(
-      "id, generation_id, has_visual, presentation_type, reserved_for_mock",
-    )
+    .select("id, generation_id, reserved_for_mock")
     .eq("subjects", subject)
     .in("status", ["approved", "pending"])
     .eq("mock_eligible", true)
-    .limit(3000);
+    .or(
+      "has_visual.eq.true,presentation_type.eq.diagram,presentation_type.eq.graph",
+    )
+    .limit(1000);
   if (error) throw new Error(error.message);
 
   let available = 0;
@@ -160,15 +161,8 @@ export async function countAvailableDiagrams(
     const r = row as {
       id: string;
       generation_id: string | null;
-      has_visual: boolean | null;
-      presentation_type: string | null;
       reserved_for_mock: boolean | null;
     };
-    const isDiagram =
-      Boolean(r.has_visual) ||
-      r.presentation_type === "diagram" ||
-      r.presentation_type === "graph";
-    if (!isDiagram) continue;
     if (isFreeTierHookQuestion({ id: r.id, generationId: r.generation_id })) {
       continue;
     }
@@ -381,7 +375,7 @@ export async function listMocks(
     .order("subject")
     .order("mock_number");
   if (error) throw new Error(error.message);
-  return (data ?? []) as EsatMockRow[];
+  return (data ?? []) as unknown as EsatMockRow[];
 }
 
 /** Next free mock number per subject from an already-loaded mocks list. */
@@ -1583,104 +1577,133 @@ async function fetchAllRows<T>(
   return out;
 }
 
-/** Inventory for mock creation: off-bank pool + never-attempted bank questions. */
+/** Fast off-bank inventory only (head counts; no attempt scans). */
+export async function loadMockPoolInventoryLite(
+  service: SupabaseClient,
+): Promise<MockPoolInventory> {
+  const subjectRows = await Promise.all(
+    MOCK_BUILDER_SUBJECTS.map(async (subject) => {
+      const [pending, mockStaged] = await Promise.all([
+        service
+          .from("ai_generated_questions")
+          .select("id", { count: "exact", head: true })
+          .eq("subjects", subject)
+          .eq("status", "pending"),
+        service
+          .from("ai_generated_questions")
+          .select("id", { count: "exact", head: true })
+          .eq("subjects", subject)
+          .eq("status", "approved")
+          .eq("practice_eligible", false),
+      ]);
+      if (pending.error) throw new Error(pending.error.message);
+      if (mockStaged.error) throw new Error(mockStaged.error.message);
+      const pendingN = pending.count ?? 0;
+      const stagedN = mockStaged.count ?? 0;
+      if (pendingN === 0 && stagedN === 0) return null;
+      return {
+        subject,
+        mockStaged: stagedN,
+        pending: pendingN,
+        totalNotInPracticeBank: stagedN + pendingN,
+        unattemptedInBank: 0,
+      } satisfies MockPoolInventorySubjectRow;
+    }),
+  );
+
+  const subjects = subjectRows.filter(
+    (r): r is MockPoolInventorySubjectRow => r != null,
+  );
+  const totals = subjects.reduce(
+    (acc, row) => {
+      acc.mockStaged += row.mockStaged;
+      acc.pending += row.pending;
+      acc.totalNotInPracticeBank += row.totalNotInPracticeBank;
+      return acc;
+    },
+    {
+      mockStaged: 0,
+      pending: 0,
+      totalNotInPracticeBank: 0,
+      unattemptedInBank: 0,
+    },
+  );
+  return { subjects, totals };
+}
+
+/** Full inventory: off-bank counts + never-attempted bank (scoped per subject). */
 export async function loadMockPoolInventory(
   service: SupabaseClient,
 ): Promise<MockPoolInventory> {
-  const offBank = await fetchAllRows<{
-    subjects: string | null;
-    status: string | null;
-    practice_eligible: boolean | null;
-  }>((from, to) =>
-    service
-      .from("ai_generated_questions")
-      .select("subjects, status, practice_eligible")
-      .or(
-        "status.eq.pending,and(status.eq.approved,practice_eligible.eq.false)",
-      )
-      .range(from, to),
-  );
+  const subjectRows = await Promise.all(
+    MOCK_BUILDER_SUBJECTS.map(async (subject) => {
+      const [pendingRes, stagedRes, bankIds] = await Promise.all([
+        service
+          .from("ai_generated_questions")
+          .select("id", { count: "exact", head: true })
+          .eq("subjects", subject)
+          .eq("status", "pending"),
+        service
+          .from("ai_generated_questions")
+          .select("id", { count: "exact", head: true })
+          .eq("subjects", subject)
+          .eq("status", "approved")
+          .eq("practice_eligible", false),
+        fetchAllRows<{ id: string }>((from, to) =>
+          service
+            .from("ai_generated_questions")
+            .select("id")
+            .eq("subjects", subject)
+            .eq("status", "approved")
+            .eq("practice_eligible", true)
+            .eq("reserved_for_mock", false)
+            .range(from, to),
+        ),
+      ]);
+      if (pendingRes.error) throw new Error(pendingRes.error.message);
+      if (stagedRes.error) throw new Error(stagedRes.error.message);
 
-  const bank = await fetchAllRows<{
-    id: string;
-    subjects: string | null;
-  }>((from, to) =>
-    service
-      .from("ai_generated_questions")
-      .select("id, subjects")
-      .eq("status", "approved")
-      .eq("practice_eligible", true)
-      .eq("reserved_for_mock", false)
-      .range(from, to),
-  );
+      const pending = pendingRes.count ?? 0;
+      const mockStaged = stagedRes.count ?? 0;
 
-  const attempted = await fetchAllRows<{ question_id: string }>((from, to) =>
-    service
-      .from("question_bank_attempts")
-      .select("question_id")
-      .range(from, to),
-  );
+      let unattemptedInBank = 0;
+      if (bankIds.length > 0) {
+        const attempted = new Set<string>();
+        const pageSize = 200;
+        for (let i = 0; i < bankIds.length; i += pageSize) {
+          const chunk = bankIds.slice(i, i + pageSize).map((r) => r.id);
+          const { data, error } = await service
+            .from("question_bank_attempts")
+            .select("question_id")
+            .in("question_id", chunk);
+          if (error) throw new Error(error.message);
+          for (const row of data ?? []) {
+            attempted.add((row as { question_id: string }).question_id);
+          }
+        }
+        unattemptedInBank = bankIds.reduce(
+          (n, r) => n + (attempted.has(r.id) ? 0 : 1),
+          0,
+        );
+      }
 
-  const attemptedIds = new Set(attempted.map((r) => r.question_id));
-
-  const bySubject = new Map<
-    string,
-    {
-      mockStaged: number;
-      pending: number;
-      unattemptedInBank: number;
-    }
-  >();
-
-  const bump = (subject: string) => {
-    const key = subject.trim() || "Unknown";
-    let row = bySubject.get(key);
-    if (!row) {
-      row = { mockStaged: 0, pending: 0, unattemptedInBank: 0 };
-      bySubject.set(key, row);
-    }
-    return row;
-  };
-
-  for (const row of offBank) {
-    const subject = (row.subjects ?? "Unknown").trim() || "Unknown";
-    // TMUA Paper 1/2 are not part of the ESAT mock pool inventory.
-    if (subject === "Paper 1" || subject === "Paper 2") continue;
-    const entry = bump(subject);
-    if (row.status === "pending") entry.pending += 1;
-    else if (row.status === "approved" && row.practice_eligible === false) {
-      entry.mockStaged += 1;
-    }
-  }
-
-  for (const row of bank) {
-    if (attemptedIds.has(row.id)) continue;
-    bump(row.subjects ?? "Unknown").unattemptedInBank += 1;
-  }
-
-  const preferred = [...MOCK_BUILDER_SUBJECTS];
-  const extras = [...bySubject.keys()]
-    .filter((s) => !preferred.includes(s as MockBuilderSubject))
-    .sort((a, b) => a.localeCompare(b));
-  const order = [...preferred, ...extras];
-
-  const subjects: MockPoolInventorySubjectRow[] = order
-    .map((subject) => {
-      const row = bySubject.get(subject);
-      if (!row) return null;
-      const totalNotInPracticeBank = row.mockStaged + row.pending;
-      if (totalNotInPracticeBank === 0 && row.unattemptedInBank === 0) {
+      const totalNotInPracticeBank = mockStaged + pending;
+      if (totalNotInPracticeBank === 0 && unattemptedInBank === 0) {
         return null;
       }
       return {
         subject,
-        mockStaged: row.mockStaged,
-        pending: row.pending,
+        mockStaged,
+        pending,
         totalNotInPracticeBank,
-        unattemptedInBank: row.unattemptedInBank,
-      };
-    })
-    .filter((r): r is MockPoolInventorySubjectRow => r != null);
+        unattemptedInBank,
+      } satisfies MockPoolInventorySubjectRow;
+    }),
+  );
+
+  const subjects = subjectRows.filter(
+    (r): r is MockPoolInventorySubjectRow => r != null,
+  );
 
   const totals = subjects.reduce(
     (acc, row) => {

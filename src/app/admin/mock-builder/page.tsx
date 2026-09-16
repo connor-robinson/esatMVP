@@ -105,6 +105,7 @@ export default function AdminMockBuilderPage() {
   const [creating, setCreating] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [inventoryLoading, setInventoryLoading] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -129,6 +130,22 @@ export default function AdminMockBuilderPage() {
     setDiagramAvailability(data.diagramAvailability ?? {});
     setNextMockNumbers(data.nextMockNumbers ?? {});
     setLoading(false);
+
+    // Enrich with never-attempted bank counts in the background.
+    setInventoryLoading(true);
+    try {
+      const invRes = await fetch("/api/admin/mock-builder/inventory", {
+        cache: "no-store",
+      });
+      if (invRes.ok) {
+        const invData = await invRes.json();
+        if (invData.inventory) setInventory(invData.inventory);
+      }
+    } catch {
+      // Off-bank table already shown; unattempted is optional.
+    } finally {
+      setInventoryLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -292,11 +309,15 @@ export default function AdminMockBuilderPage() {
           />
           <InventoryTable
             title="In question bank, never attempted"
-            caption="Approved practice-bank questions with zero attempts from anyone. Still available for mock drafts (unless already reserved)."
+            caption={
+              inventoryLoading
+                ? "Loading never-attempted bank counts…"
+                : "Approved practice-bank questions with zero attempts from anyone. Still available for mock drafts (unless already reserved)."
+            }
             headers={["Subject", "Unattempted"]}
             rows={unattemptedRows}
             footer={
-              unattemptedSubjects.length
+              !inventoryLoading && unattemptedSubjects.length
                 ? ["Total", unattemptedTotal]
                 : undefined
             }

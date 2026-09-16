@@ -5,8 +5,8 @@ import {
   countAvailableDiagrams,
   getExcludePublishedFromPractice,
   listMocks,
-  loadMockPoolInventory,
-  nextAvailableMockNumber,
+  loadMockPoolInventoryLite,
+  nextMockNumbersFromList,
   setExcludePublishedFromPractice,
 } from "@/lib/mockBuilder/server";
 import {
@@ -28,25 +28,29 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const mocks = await listMocks(admin.service);
-    const exclude = await getExcludePublishedFromPractice(admin.service);
-    const inventory = await loadMockPoolInventory(admin.service);
-    const diagramAvailability: Record<
-      string,
-      { available: number; reserved: number; defaultTarget: number }
-    > = {};
-    const nextMockNumbers: Record<string, number> = {};
-    for (const subject of MOCK_BUILDER_SUBJECTS) {
-      const counts = await countAvailableDiagrams(admin.service, subject);
-      diagramAvailability[subject] = {
-        ...counts,
-        defaultTarget: getDiagramTarget(getDefaultBlueprint(subject)),
-      };
-      nextMockNumbers[subject] = await nextAvailableMockNumber(
-        admin.service,
-        subject,
-      );
-    }
+    // Fast path: light mocks + off-bank counts + diagrams in parallel.
+    // Full unattempted-bank inventory loads separately so the table can paint first.
+    const [mocks, exclude, inventory, diagramRows] = await Promise.all([
+      listMocks(admin.service, { light: true }),
+      getExcludePublishedFromPractice(admin.service),
+      loadMockPoolInventoryLite(admin.service),
+      Promise.all(
+        MOCK_BUILDER_SUBJECTS.map(async (subject) => {
+          const counts = await countAvailableDiagrams(admin.service!, subject);
+          return [
+            subject,
+            {
+              ...counts,
+              defaultTarget: getDiagramTarget(getDefaultBlueprint(subject)),
+            },
+          ] as const;
+        }),
+      ),
+    ]);
+
+    const diagramAvailability = Object.fromEntries(diagramRows);
+    const nextMockNumbers = nextMockNumbersFromList(mocks);
+
     return NextResponse.json({
       mocks,
       settings: { excludePublishedMockQuestionsFromPractice: exclude },
