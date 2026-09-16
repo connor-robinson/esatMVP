@@ -11,6 +11,7 @@ import type {
 import type { SupportNotificationItem } from "@/lib/admin/supportNotifications";
 import { requestAdminBadgesRefresh } from "@/lib/admin/adminBadges";
 import { SUPPORT_CATEGORY_LABELS, type SupportCategory } from "@/lib/support";
+import { getPublicDisplayName } from "@/lib/profile/publicDisplayName";
 import { cn } from "@/lib/utils";
 
 type TicketSource = "support" | "legacy_bug";
@@ -29,6 +30,7 @@ interface Ticket {
   context: Record<string, string> | null;
   source: TicketSource;
   username?: string | null;
+  display_name?: string | null;
   profile_email?: string | null;
   inbox_replies?: number;
   can_inbox_reply?: boolean;
@@ -773,11 +775,15 @@ export default function AdminSupportPage() {
               const busy =
                 busyKey === `${ticket.id}:status` ||
                 busyKey === `${ticket.id}:reply`;
-              const contact =
-                ticket.username ||
-                ticket.profile_email ||
+              const submitterName = getPublicDisplayName(
+                {
+                  username: ticket.username,
+                  display_name: ticket.display_name,
+                },
                 ticket.reply_email ||
-                "No account email";
+                  ticket.profile_email ||
+                  "Unknown user",
+              );
               const highlighted = highlightTicketId === ticket.id;
 
               return (
@@ -796,6 +802,8 @@ export default function AdminSupportPage() {
                         {isLegacy ? " · legacy" : ""}
                         {" · "}
                         {statusLabel(ticket.status)}
+                        {" · "}
+                        {submitterName}
                         {(ticket.inbox_replies ?? 0) > 0
                           ? ` · ${ticket.inbox_replies} inbox reply`
                           : ""}
@@ -815,8 +823,8 @@ export default function AdminSupportPage() {
 
                   <dl className="mt-4 grid gap-1 text-xs text-text-subtle sm:grid-cols-2">
                     <div>
-                      <dt className="inline text-text-muted">From: </dt>
-                      <dd className="inline">{contact}</dd>
+                      <dt className="inline text-text-muted">User: </dt>
+                      <dd className="inline">{submitterName}</dd>
                     </div>
                     {ticket.reply_email ? (
                       <div>

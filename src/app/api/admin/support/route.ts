@@ -111,16 +111,17 @@ export async function GET(request: NextRequest) {
 
   const profileById = new Map<
     string,
-    { username: string | null; email: string | null }
+    { username: string | null; display_name: string | null; email: string | null }
   >();
   if (userIds.length > 0) {
     const { data: profiles } = await admin.service
       .from("profiles")
-      .select("id, username, email")
+      .select("id, username, display_name, email")
       .in("id", userIds);
     for (const p of profiles ?? []) {
       profileById.set(p.id, {
         username: p.username ?? null,
+        display_name: p.display_name ?? null,
         email: p.email ?? null,
       });
     }
@@ -167,6 +168,7 @@ export async function GET(request: NextRequest) {
       ...row,
       source: "support" as const,
       username: profile?.username ?? null,
+      display_name: profile?.display_name ?? null,
       profile_email: profile?.email ?? null,
       inbox_replies: replyCountBySupport.get(row.id) ?? 0,
       can_inbox_reply: Boolean(row.user_id),
@@ -190,6 +192,7 @@ export async function GET(request: NextRequest) {
       context: row.user_agent ? { user_agent: row.user_agent } : null,
       source: "legacy_bug" as const,
       username: profile?.username ?? null,
+      display_name: profile?.display_name ?? null,
       profile_email: profile?.email ?? null,
       inbox_replies: replyCountByLegacy.get(row.id) ?? 0,
       can_inbox_reply: Boolean(row.user_id),

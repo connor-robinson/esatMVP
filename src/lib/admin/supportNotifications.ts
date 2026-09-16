@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { getPublicDisplayName } from "@/lib/profile/publicDisplayName";
 
 export type SupportNotificationItem = {
   id: string;
@@ -117,16 +118,17 @@ export async function loadSupportNotifications(
 
   const profileById = new Map<
     string,
-    { username: string | null; email: string | null }
+    { username: string | null; display_name: string | null; email: string | null }
   >();
   if (userIds.size > 0) {
     const { data: profiles } = await service
       .from("profiles")
-      .select("id, username, email")
+      .select("id, username, display_name, email")
       .in("id", [...userIds]);
     for (const p of profiles ?? []) {
       profileById.set(p.id as string, {
         username: (p.username as string | null) ?? null,
+        display_name: (p.display_name as string | null) ?? null,
         email: (p.email as string | null) ?? null,
       });
     }
@@ -152,7 +154,7 @@ export async function loadSupportNotifications(
       messageId: null,
       rootMessageId: null,
       userId: (ticket.user_id as string | null) ?? null,
-      username: profile?.username ?? null,
+      username: getPublicDisplayName(profile, profile?.email ?? "Unknown user"),
       email:
         profile?.email ??
         (typeof ticket.reply_email === "string" ? ticket.reply_email : null),
@@ -178,7 +180,7 @@ export async function loadSupportNotifications(
       messageId: null,
       rootMessageId: null,
       userId: (ticket.user_id as string | null) ?? null,
-      username: profile?.username ?? null,
+      username: getPublicDisplayName(profile, profile?.email ?? "Unknown user"),
       email: profile?.email ?? null,
     });
   }
@@ -218,7 +220,7 @@ export async function loadSupportNotifications(
       messageId: row.id,
       rootMessageId: row.parent_id ?? row.id,
       userId: row.created_by,
-      username: profile?.username ?? null,
+      username: getPublicDisplayName(profile, profile?.email ?? "Unknown user"),
       email: profile?.email ?? null,
     });
   }
