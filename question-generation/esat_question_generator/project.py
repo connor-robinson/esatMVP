@@ -2685,12 +2685,25 @@ def _map_biology_tag_labeler_codes_to_curriculum(obj: Dict[str, Any]) -> None:
     obj["secondary_tags"] = out
 
 
-_CHEM_TAG_RE = re.compile(r"^C(1[0-6]|[1-9])$", re.IGNORECASE)
+_CHEM_TAG_RE = re.compile(r"^C(1[0-7]|[1-9])$", re.IGNORECASE)
+_CHEM_TAG_EXTRACT_RE = re.compile(r"\bC(1[0-7]|[1-9])\b", re.IGNORECASE)
+
+
+def _normalize_chemistry_tag_labeler_code(s: str) -> str:
+    """Accept bare ``C1``–``C17`` or ``C1 Atomic structure`` style outputs."""
+    t = str(s).strip()
+    if not t:
+        return t
+    if _CHEM_TAG_RE.fullmatch(t):
+        return t.upper()
+    m = _CHEM_TAG_EXTRACT_RE.search(t)
+    if m:
+        return f"C{m.group(1)}"
+    return t
 
 
 def _chemistry_tag_labeler_code_ok(s: str) -> bool:
-    t = str(s).strip()
-    return bool(_CHEM_TAG_RE.fullmatch(t))
+    return bool(_CHEM_TAG_RE.fullmatch(_normalize_chemistry_tag_labeler_code(s)))
 
 
 def tag_labeler_call(
@@ -2810,10 +2823,23 @@ Return raw JSON only (one object) per your system instructions."""
                 if primary_tag and not _chemistry_tag_labeler_code_ok(primary_tag):
                     raise ValueError(
                         f"Tag Labeler assigned invalid Chemistry primary_tag: {primary_tag}. "
-                        "Expected C1–C16."
+                        "Expected C1–C17."
                     )
                 if primary_tag:
-                    obj["primary_tag"] = str(primary_tag).strip().upper()
+                    obj["primary_tag"] = _normalize_chemistry_tag_labeler_code(primary_tag)
+                sec = obj.get("secondary_tags")
+                if isinstance(sec, list):
+                    cleaned_sec = []
+                    for item in sec:
+                        if isinstance(item, dict):
+                            d = dict(item)
+                            code = d.get("code")
+                            if code is not None:
+                                d["code"] = _normalize_chemistry_tag_labeler_code(str(code))
+                            cleaned_sec.append(d)
+                        else:
+                            cleaned_sec.append(_normalize_chemistry_tag_labeler_code(str(item)))
+                    obj["secondary_tags"] = cleaned_sec
             obj["_raw_text"] = txt
             return obj
 

@@ -3,12 +3,14 @@
 Backfill ``primary_tag`` / ``secondary_tags`` for ESAT rows where tags are missing
 (e.g. after ``revert_reclass_question_labels.py --target new`` cleared mismatched tags).
 
-Uses the same classifier + normalization as ``batch_process_questions.stage_tag``.
+Uses subject Tag Labelers + official ``ESAT_CURRICULUM.json`` allow-lists.
+Primary and secondary tags are restricted to the question's subject curriculum only.
 Does not change ``verifier_report`` batch-processing status.
 
   python label_missing_tags.py --dry-run
   python label_missing_tags.py --only-schema-reclass
   python label_missing_tags.py --limit 5
+  python label_missing_tags.py --workers 12
   python label_missing_tags.py --id <uuid>
 
 Requires: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, GOOGLE_CLOUD_PROJECT, GOOGLE_CLOUD_LOCATION
@@ -22,6 +24,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
 import sys
 import threading
 import concurrent.futures
@@ -34,14 +37,27 @@ if str(_BASE) not in sys.path:
     sys.path.insert(0, str(_BASE))
 
 _env_local = _BASE / ".env.local"
-if _env_local.is_file():
-    try:
-        from dotenv import load_dotenv
+_env_root = _BASE.parent.parent / ".env.local"
+try:
+    from dotenv import load_dotenv
 
+    if _env_local.is_file():
         load_dotenv(_env_local)
-        load_dotenv(_BASE.parent.parent / ".env.local")
-    except ImportError:
-        pass
+    if _env_root.is_file():
+        load_dotenv(_env_root)
+except ImportError:
+    # Minimal fallback when python-dotenv is not installed
+    for env_path in (_env_local, _env_root):
+        if not env_path.is_file():
+            continue
+        for line in env_path.read_text(encoding="utf-8").splitlines():
+            t = line.strip()
+            if not t or t.startswith("#") or "=" not in t:
+                continue
+            k, _, v = t.partition("=")
+            k, v = k.strip(), v.strip().strip('"').strip("'")
+            if k and k not in os.environ:
+                os.environ[k] = v
 
 if sys.platform == "win32":
     try:
@@ -50,16 +66,59 @@ if sys.platform == "win32":
     except AttributeError:
         pass
 
-from curriculum_parser import CurriculumParser, coerce_classifier_topic_code
+from curriculum_parser import (
+    CurriculumParser,
+    canonicalize_esat_tag,
+    coerce_classifier_topic_code,
+)
 from db_sync import DatabaseSync
-from project import LLMClient, ModelsConfig, classifier_call, load_prompts
+from project import LLMClient, ModelsConfig, load_prompts, tag_labeler_call
 
 
 COLS = (
-    "id, schema_id, question_stem, options, correct_option, solution_reasoning, "
+    "id, schema_id, subjects, question_stem, options, correct_option, solution_reasoning, "
     "solution_key_insight, distractor_map, idea_plan, test_type, primary_tag, "
     "secondary_tags, schema_reclass_review_tier"
 )
+
+# Official ESAT subject → Tag Labeler schema / paper scoping.
+# Topics are restricted to that subject's curriculum only (no cross-subject tags).
+_SUBJECT_TAGGING: Dict[str, Dict[str, Any]] = {
+    "Math 1": {"schema_id": "M1", "math_paper": None, "paper_id": "math1"},
+    "Math 2": {"schema_id": "M1", "math_paper": "Math 2", "paper_id": "math2"},
+    "Physics": {"schema_id": "P1", "math_paper": None, "paper_id": "physics"},
+    "Chemistry": {"schema_id": "C1", "math_paper": None, "paper_id": "chemistry"},
+    "Biology": {"schema_id": "B1", "math_paper": None, "paper_id": "biology"},
+}
+
+
+def _resolve_subject(row: Dict[str, Any]) -> Optional[str]:
+    sub = (row.get("subjects") or "").strip()
+    if sub in _SUBJECT_TAGGING:
+        return sub
+    sid = (row.get("schema_id") or "").strip().lower()
+    if sid.startswith("nsaa-review-"):
+        key = sid[len("nsaa-review-") :]
+        mapping = {
+            "math1": "Math 1",
+            "math2": "Math 2",
+            "physics": "Physics",
+            "chemistry": "Chemistry",
+            "biology": "Biology",
+        }
+        return mapping.get(key)
+    return None
+
+
+def _prefixed_codes_for_paper(
+    curriculum_parser: CurriculumParser, paper_id: str
+) -> set[str]:
+    allowed: set[str] = set()
+    for topic in curriculum_parser.get_topics_for_paper(paper_id):
+        prefixed = curriculum_parser._get_prefixed_code(paper_id, topic["code"])
+        if prefixed:
+            allowed.add(prefixed)
+    return allowed
 
 
 def _is_esat_row(r: Dict[str, Any]) -> bool:
@@ -87,7 +146,7 @@ def _row_ok(
 ) -> bool:
     if not _is_esat_row(r):
         return False
-    if not (r.get("schema_id") or "").strip():
+    if not _resolve_subject(r):
         return False
     if only_schema_reclass and not (r.get("schema_reclass_review_tier") or "").strip():
         return False
@@ -116,7 +175,7 @@ def fetch_rows(
             r = batch[0]
             if not _row_ok(r, only_schema_reclass=only_schema_reclass):
                 print(
-                    f"[SKIP] {uid}: not ESAT / no schema / wrong reclass filter / already tagged",
+                    f"[SKIP] {uid}: not ESAT / unknown subject / wrong reclass filter / already tagged",
                     file=sys.stderr,
                 )
                 continue
@@ -175,6 +234,77 @@ def fetch_rows(
     return out
 
 
+def _parse_tag_obj_loose(text: str) -> Optional[Dict[str, Any]]:
+    """Parse YAML-ish / messy Tag Labeler output when strict JSON fails."""
+    if not text or not str(text).strip():
+        return None
+    raw = str(text)
+    if "Preview:" in raw:
+        raw = raw.split("Preview:", 1)[1]
+    raw = raw.strip()
+    if not raw:
+        return None
+
+    brace = raw.find("{")
+    if brace >= 0:
+        depth = 0
+        for i, ch in enumerate(raw[brace:], start=brace):
+            if ch == "{":
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth == 0:
+                    snippet = raw[brace : i + 1]
+                    try:
+                        import json
+
+                        obj = json.loads(snippet)
+                        if isinstance(obj, dict) and "primary_tag" in obj:
+                            return obj
+                    except Exception:
+                        break
+                    break
+
+    m = re.search(
+        r'primary_tag\s*[:=]\s*["\']?([A-Za-z0-9\-]+)',
+        raw,
+        flags=re.IGNORECASE,
+    )
+    if not m:
+        return None
+    primary = m.group(1).strip()
+    secondary: List[Any] = []
+    sec_block = re.search(
+        r"secondary_tags\s*[:=]\s*\[([^\]]*)\]",
+        raw,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    if sec_block:
+        secondary = re.findall(r'["\']?([A-Za-z0-9\-]+)["\']?', sec_block.group(1))
+    else:
+        sec_lines = re.search(
+            r"secondary_tags\s*:\s*((?:\n[ \t]*-[ \t]*[^\n]+)*)",
+            raw,
+            flags=re.IGNORECASE,
+        )
+        if sec_lines:
+            secondary = re.findall(
+                r'-\s*["\']?([A-Za-z0-9\-]+)',
+                sec_lines.group(1),
+            )
+    conf_m = re.search(
+        r"primary_confidence\s*[:=]\s*([0-9]*\.?[0-9]+)",
+        raw,
+        flags=re.IGNORECASE,
+    )
+    conf = float(conf_m.group(1)) if conf_m else 0.0
+    return {
+        "primary_tag": primary,
+        "secondary_tags": secondary,
+        "primary_confidence": conf,
+    }
+
+
 def build_tag_updates(
     question: Dict[str, Any],
     *,
@@ -183,9 +313,18 @@ def build_tag_updates(
     models: ModelsConfig,
     curriculum_parser: CurriculumParser,
 ) -> Tuple[Dict[str, Any], Optional[str]]:
-    schema_id = (question.get("schema_id") or "").strip()
-    if not schema_id:
-        return {}, "Missing schema_id"
+    subject = _resolve_subject(question)
+    if not subject:
+        return {}, "Unrecognized subject for ESAT curriculum tagging"
+
+    tagging = _SUBJECT_TAGGING[subject]
+    schema_id = tagging["schema_id"]
+    math_paper = tagging["math_paper"]
+    paper_id = tagging["paper_id"]
+
+    prefixed_allowed = _prefixed_codes_for_paper(curriculum_parser, paper_id)
+    if not prefixed_allowed:
+        return {}, f"No official curriculum topics for subject={subject}"
 
     question_package = {
         "question": {
@@ -200,65 +339,76 @@ def build_tag_updates(
         "distractor_map": question.get("distractor_map", {}) or {},
     }
 
-    tag_result = classifier_call(
-        llm,
-        prompts,
-        models,
-        question_package,
-        schema_id,
-        curriculum_parser,
-    )
+    try:
+        tag_result = tag_labeler_call(
+            llm,
+            prompts,
+            models,
+            question_package,
+            schema_id,
+            curriculum_parser,
+            math_paper=math_paper,
+        )
+    except Exception as e:
+        loose = _parse_tag_obj_loose(str(e))
+        if not loose:
+            return {}, str(e)
+        tag_result = loose
 
-    primary_tag = tag_result.get("primary_tag", "") or ""
+    primary_raw = tag_result.get("primary_tag", "") or ""
     secondary_tags = tag_result.get("secondary_tags", []) or []
     tags_confidence = tag_result.get("primary_confidence", 0.0)
 
-    if primary_tag:
-        coerced = coerce_classifier_topic_code(schema_id, primary_tag)
-        normalized_primary = curriculum_parser.normalize_topic_code(coerced)
-        if normalized_primary:
-            primary_tag = normalized_primary
-        elif coerced != primary_tag:
-            primary_tag = coerced
+    primary_tag = canonicalize_esat_tag(
+        primary_raw,
+        schema_id=schema_id,
+        subjects=subject,
+        paper_id=paper_id,
+        parser=curriculum_parser,
+    )
+    if not primary_tag or primary_tag not in prefixed_allowed:
+        return {}, (
+            f"Primary tag {primary_raw!r} not in official {subject} curriculum "
+            f"(normalized={primary_tag!r})"
+        )
 
     normalized_secondary: List[str] = []
+    confidence_dict: Dict[str, Any] = {"primary": tags_confidence}
+
     for tag in secondary_tags:
         if isinstance(tag, dict):
             tag_code = tag.get("code", "")
+            tag_conf = tag.get("confidence", None)
         else:
             tag_code = str(tag)
-        if tag_code:
-            coerced = coerce_classifier_topic_code(schema_id, tag_code)
-            normalized_tag = curriculum_parser.normalize_topic_code(coerced)
-            if normalized_tag:
-                normalized_secondary.append(normalized_tag)
+            tag_conf = None
+        if not tag_code:
+            continue
+        norm = canonicalize_esat_tag(
+            tag_code,
+            schema_id=schema_id,
+            subjects=subject,
+            paper_id=paper_id,
+            parser=curriculum_parser,
+        )
+        if not norm or norm not in prefixed_allowed:
+            continue
+        if norm == primary_tag or norm in normalized_secondary:
+            continue
+        normalized_secondary.append(norm)
+        if tag_conf is not None:
+            confidence_dict[norm] = tag_conf
 
-    confidence_dict: Dict[str, Any] = {"primary": tags_confidence}
-    if isinstance(secondary_tags, list):
-        for tag in secondary_tags:
-            if isinstance(tag, dict):
-                tag_code = tag.get("code", "")
-                tag_conf = tag.get("confidence", 0.0)
-                if tag_code:
-                    coerced = coerce_classifier_topic_code(schema_id, tag_code)
-                    normalized_tag = curriculum_parser.normalize_topic_code(coerced)
-                    if normalized_tag:
-                        confidence_dict[normalized_tag] = tag_conf
+    normalized_secondary = normalized_secondary[:2]
 
-    db_updates: Dict[str, Any] = {
+    # Never rewrite subjects; primary/secondary must stay within this subject's curriculum.
+    return {
         "primary_tag": primary_tag,
         "secondary_tags": normalized_secondary,
         "tags_confidence": confidence_dict,
         "tags_labeled_at": datetime.now().isoformat(),
         "tags_labeled_by": "label_missing_tags",
-    }
-
-    if schema_id[0].upper() == "M" and "paper" in tag_result:
-        p = tag_result["paper"]
-        if p in ("Math 1", "Math 2"):
-            db_updates["subjects"] = p
-
-    return db_updates, None
+    }, None
 
 
 def repair_numeric_physics_tags(
@@ -341,7 +491,7 @@ def main() -> None:
         help="Only rows with schema_reclass_review_tier set",
     )
     parser.add_argument("--limit", type=int, default=None, help="Max questions to process")
-    parser.add_argument("--workers", type=int, default=4, help="Parallel LLM calls")
+    parser.add_argument("--workers", type=int, default=12, help="Parallel LLM calls")
     parser.add_argument("--id", action="append", dest="ids", help="Process specific question UUID (repeatable)")
     args = parser.parse_args()
 
@@ -379,8 +529,9 @@ def main() -> None:
 
     print(f"Candidates: {len(rows)}")
     for r in rows[:50]:
-        sid = (r.get("schema_id") or "")[:16]
-        print(f"  {r.get('id')}  schema={sid}...  tier={(r.get('schema_reclass_review_tier') or '')!r}")
+        sid = (r.get("schema_id") or "")[:24]
+        sub = _resolve_subject(r) or "?"
+        print(f"  {r.get('id')}  subject={sub}  schema={sid}...")
     if len(rows) > 50:
         print(f"  ... and {len(rows) - 50} more")
 
@@ -397,33 +548,64 @@ def main() -> None:
     curriculum_parser = CurriculumParser(str(curriculum_file))
 
     lock = threading.Lock()
+    tls = threading.local()
     ok = 0
     fail = 0
+
+    def _thread_llm() -> LLMClient:
+        # LLMClient.generate() rebuilds the shared genai Client; use one client per thread.
+        client = getattr(tls, "llm", None)
+        if client is None:
+            client = LLMClient(api_key="")
+            tls.llm = client
+        return client
 
     def one(q: Dict[str, Any]) -> None:
         nonlocal ok, fail
         qid = q.get("id")
-        try:
-            updates, err = build_tag_updates(
-                q,
-                llm=llm,
-                prompts=prompts,
-                models=models,
-                curriculum_parser=curriculum_parser,
-            )
-            if err:
-                print(f"FAIL {qid}: {err}")
+        last_err: Optional[str] = None
+        for attempt in range(5):
+            try:
+                updates, err = build_tag_updates(
+                    q,
+                    llm=_thread_llm(),
+                    prompts=prompts,
+                    models=models,
+                    curriculum_parser=curriculum_parser,
+                )
+                if err:
+                    last_err = err
+                    # Retry transient empty/invalid model outputs
+                    if "JSON parsing error" in err or "invalid JSON" in err.lower():
+                        continue
+                    print(f"FAIL {qid}: {err}")
+                    with lock:
+                        fail += 1
+                    return
+                with lock:
+                    db.client.table(table).update(updates).eq("id", qid).execute()
+                    ok += 1
+                print(
+                    f"OK {str(qid)[:8]}... subject={_resolve_subject(q)} "
+                    f"primary={updates.get('primary_tag')!r} "
+                    f"secondary={updates.get('secondary_tags')!r}"
+                )
+                return
+            except Exception as e:
+                last_err = str(e)
+                msg = last_err.lower()
+                if "json parsing error" in msg or "invalid json" in msg or "expecting value" in msg:
+                    continue
+                print(f"FAIL {qid}: {e}")
                 with lock:
                     fail += 1
                 return
-            with lock:
-                db.client.table(table).update(updates).eq("id", qid).execute()
-                ok += 1
-            print(f"OK {qid[:8]}... primary_tag={updates.get('primary_tag')!r}")
-        except Exception as e:
-            print(f"FAIL {qid}: {e}")
-            with lock:
-                fail += 1
+        print(f"FAIL {qid}: {last_err}")
+        with lock:
+            fail += 1
+
+    # Unused shared llm kept constructed so Vertex env is validated early.
+    _ = llm
 
     if args.workers <= 1:
         for q in rows:
