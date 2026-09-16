@@ -32,12 +32,6 @@ import {
 } from "@/lib/papers/roadmapStageScores";
 import { RoadmapInfoPopover } from "./RoadmapInfoPopover";
 import {
-  markPartAsCompleted,
-  setRoadmapStageManualStatus,
-  unmarkPartAsCompleted,
-  type ManualRoadmapStatus,
-} from "@/lib/papers/roadmapCompletion";
-import {
   getStageCommentary,
   type StageCommentary,
 } from "./roadmapTimelineMarkers";
@@ -191,25 +185,55 @@ function UniqueQuestionsSwitch({
   );
 }
 
+type StageStatus = "not_started" | "in_progress" | "done";
+
+function statusFromCounts(completed: number, total: number): StageStatus {
+  if (total > 0 && completed === total) return "done";
+  if (completed > 0) return "in_progress";
+  return "not_started";
+}
+
+const STATUS_LABEL: Record<StageStatus, string> = {
+  not_started: "Not started",
+  in_progress: "In progress",
+  done: "Done",
+};
+
+/** Read-only status chip: blue / neutral / faded neutral (no red-yellow-green). */
+function StatusChip({
+  status,
+  size = "md",
+}: {
+  status: StageStatus;
+  size?: "sm" | "md";
+}) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center rounded-sm font-medium",
+        size === "sm" ? "px-1.5 py-0.5 text-xs" : "px-2 py-1 text-sm",
+        status === "done" && "bg-primary/12 text-primary",
+        status === "in_progress" && "bg-surface-neutral text-text",
+        status === "not_started" && "bg-surface-mid/60 text-text-muted",
+      )}
+    >
+      {STATUS_LABEL[status]}
+    </span>
+  );
+}
+
 function SectionsExpandPanel({
   stage,
   partCompletion,
   newQuestionsOnly,
-  userId,
-  statusBusy,
   onStartSession,
-  onCompletionChange,
 }: {
   stage: RoadmapStage;
   partCompletion: Map<string, boolean>;
   newQuestionsOnly: boolean;
-  userId: string | null;
-  statusBusy: boolean;
   onStartSession: Props["onStartSession"];
-  onCompletionChange: Props["onCompletionChange"];
 }) {
   const getPartKey = getRoadmapPartKey;
-  const [markingKey, setMarkingKey] = useState<string | null>(null);
   const displayGroups = useMemo(
     () => groupRoadmapPartsForDisplay(stage.parts),
     [stage.parts],
@@ -225,32 +249,6 @@ function SectionsExpandPanel({
           stage.examName === "ENGAA" ? newQuestionsOnly : false,
       },
     );
-  };
-
-  const setGroupDone = async (group: RoadmapDisplayGroup, done: boolean) => {
-    if (!userId || statusBusy) return;
-    setMarkingKey(group.key);
-    try {
-      for (const part of group.internalParts) {
-        const ok = done
-          ? await markPartAsCompleted(
-              userId,
-              stage.examName,
-              stage.year,
-              part,
-            )
-          : await unmarkPartAsCompleted(
-              userId,
-              stage.examName,
-              stage.year,
-              part,
-            );
-        if (!ok) break;
-      }
-      await onCompletionChange();
-    } finally {
-      setMarkingKey(null);
-    }
   };
 
   return (
@@ -269,7 +267,6 @@ function SectionsExpandPanel({
             stage,
             group.internalParts[0]!,
           );
-          const busy = markingKey === group.key || statusBusy;
 
           return (
             <li
@@ -308,18 +305,10 @@ function SectionsExpandPanel({
                 )}
               </div>
               <div className="flex shrink-0 items-center gap-2.5">
-                <select
-                  value={done ? "done" : "not_started"}
-                  disabled={!userId || busy}
-                  onChange={(e) => {
-                    void setGroupDone(group, e.target.value === "done");
-                  }}
-                  aria-label={`Status for ${displayLabelForGroup(group)}`}
-                  className="rounded-sm border-0 bg-background px-2 py-1 text-xs font-medium text-text outline-none ring-1 ring-border-subtle disabled:opacity-50"
-                >
-                  <option value="not_started">Not done</option>
-                  <option value="done">Done</option>
-                </select>
+                <StatusChip
+                  status={done ? "done" : "not_started"}
+                  size="sm"
+                />
                 <CompactBtn tone="blue" onClick={() => startGroup(group)}>
                   Start
                   <Play className="h-3 w-3 fill-current opacity-80" aria-hidden />
@@ -339,16 +328,15 @@ export function RoadmapTable({
   stageScores,
   completionLoading = false,
   scoresLoading = false,
-  userId,
+  userId: _userId,
   newQuestionsOnly,
   onNewQuestionsOnlyChange,
   onStartSession,
-  onCompletionChange,
+  onCompletionChange: _onCompletionChange,
   subjectSuggestion = null,
   layoutControls = null,
 }: Props) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [statusBusyId, setStatusBusyId] = useState<string | null>(null);
   const [startStage, setStartStage] = useState<RoadmapStage | null>(null);
   const [averageMaps, setAverageMaps] = useState<RoadmapAverageMaps>({
     averages: {},
@@ -423,28 +411,8 @@ export function RoadmapTable({
     return { completed, total };
   }, [stages, completionData]);
 
-  const statusValue = (
-    completed: number,
-    total: number,
-  ): ManualRoadmapStatus | "in_progress" => {
-    if (total > 0 && completed === total) return "done";
-    if (completed > 0) return "in_progress";
-    return "not_started";
-  };
-
-  const handleStageStatusChange = async (
-    stage: RoadmapStage,
-    next: ManualRoadmapStatus,
-  ) => {
-    if (!userId || statusBusyId) return;
-    setStatusBusyId(stage.id);
-    try {
-      await setRoadmapStageManualStatus(userId, stage, next);
-      await onCompletionChange();
-    } finally {
-      setStatusBusyId(null);
-    }
-  };
+  const statusValue = (completed: number, total: number): StageStatus =>
+    statusFromCounts(completed, total);
 
   return (
     <div className="font-sans">
@@ -571,7 +539,6 @@ export function RoadmapTable({
                 );
                 const commentary = commentaryForStage(stage, stages);
                 const currentStatus = statusValue(completed, total);
-                const busy = statusBusyId === stage.id;
                 const paperUrls = getRoadmapStageAllPaperUrls(stage);
                 const answersUrls = getRoadmapStageAllAnswersUrls(stage);
 
@@ -629,30 +596,7 @@ export function RoadmapTable({
                       </td>
 
                       <td className="px-3 py-2.5 align-middle">
-                        <select
-                          value={
-                            currentStatus === "in_progress"
-                              ? "in_progress"
-                              : currentStatus
-                          }
-                          disabled={!userId || busy}
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            if (value === "in_progress") return;
-                            void handleStageStatusChange(
-                              stage,
-                              value as ManualRoadmapStatus,
-                            );
-                          }}
-                          aria-label={`Status for ${stageYearLabel(stage)}`}
-                          className="rounded-sm border-0 bg-background px-2 py-1.5 text-sm font-medium text-text outline-none ring-1 ring-border-subtle disabled:opacity-50"
-                        >
-                          <option value="not_started">Not started</option>
-                          {currentStatus === "in_progress" ? (
-                            <option value="in_progress">In progress</option>
-                          ) : null}
-                          <option value="done">Done</option>
-                        </select>
+                        <StatusChip status={currentStatus} />
                       </td>
 
                       <td className="px-3 py-2.5 align-middle tabular-nums text-text-muted">
@@ -714,10 +658,7 @@ export function RoadmapTable({
                             stage={stage}
                             partCompletion={data?.parts ?? new Map()}
                             newQuestionsOnly={newQuestionsOnly}
-                            userId={userId}
-                            statusBusy={busy}
                             onStartSession={onStartSession}
-                            onCompletionChange={onCompletionChange}
                           />
                         </td>
                       </tr>
