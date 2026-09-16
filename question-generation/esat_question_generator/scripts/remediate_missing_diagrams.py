@@ -218,22 +218,152 @@ def queue_for_backfill(client: Any, rows: List[Dict[str, Any]], *, dry_run: bool
     return n
 
 
-def run_backfill_queued(*, dry_run: bool, limit: int) -> Dict[str, Any]:
-    from quality_gate.image_backfill import run_missing_image_backfill
-
-    log: List[str] = []
-    stats = run_missing_image_backfill(
-        limit=max(1, limit),
-        dry_run=dry_run,
-        require_operator_queue=True,
-        allow_high_precision_image=True,
-        replace_existing_diagram=False,
-        diagram_mode="auto",
-        route_graphs_to_svg=True,
-        max_retries=1,
-        log_lines=log,
-        progress_callback=lambda m: print(m, flush=True),
+def run_backfill_one_by_one(
+    client: Any,
+    ids: List[str],
+    *,
+    dry_run: bool,
+) -> Dict[str, Any]:
+    """Process each queued id independently so one Vertex failure cannot abort the batch."""
+    from quality_gate.image_diagram import run_auto_image_diagram_for_row
+    from quality_gate.diagram_backfill_review import (
+        BACKFILL_KIND_IMAGE,
+        BACKFILL_KIND_SVG,
+        build_backfill_human_review_patch,
     )
+    from quality_gate.image_backfill import _apply_merged_image_patch, append_image_backfill_history, _history_record
+    from quality_gate.supabase_io import fetch_question_stem_fields, update_question_assessment
+    import time
+
+    stats: Dict[str, Any] = {
+        "attempted": 0,
+        "merged": 0,
+        "merged_imagen": 0,
+        "merged_svg": 0,
+        "skipped": 0,
+        "failed": 0,
+        "by_id": {},
+    }
+
+    for qid in ids:
+        row = _fetch_full_row(client, qid)
+        if not row:
+            stats["failed"] += 1
+            stats["by_id"][qid] = {"final_status": "failed", "reason": "not_found"}
+            continue
+        if _has_any_diagram(row):
+            stats["skipped"] += 1
+            stats["by_id"][qid] = {"final_status": "skipped", "reason": "already_has_diagram"}
+            update_question_assessment(client, qid, {"svg_operator_backfill_choice": None})
+            continue
+
+        stats["attempted"] += 1
+        print(f"[backfill:one] {qid} ({row.get('subjects')})…", flush=True)
+        try:
+            audit = run_auto_image_diagram_for_row(
+                {
+                    **row,
+                    "quality_gate_graph_mode": row.get("quality_gate_graph_mode")
+                    or "missing_expected",
+                    "quality_gate_graph_candidate": True,
+                },
+                dry_run=dry_run,
+                max_retries=1,
+                allow_high_precision_image=True,
+                replace_existing_diagram=False,
+                route_graphs_to_svg=False,
+                trace=lambda m: print(f"  {m}", flush=True),
+                supabase_client=None if dry_run else client,
+            )
+        except Exception as ex:
+            audit = {"final_status": "failed", "reason": f"row_exception: {ex}"}
+            print(f"[backfill:one] FAIL {qid}: {ex}", flush=True)
+
+        status = str(audit.get("final_status") or "failed")
+        stats["by_id"][qid] = {
+            "final_status": status,
+            "reason": audit.get("reason"),
+            "verification_verdict": audit.get("verification_verdict"),
+            "visual_kind": audit.get("visual_kind"),
+        }
+
+        if status == "merged" and not dry_run:
+            merged = audit.get("merged_stem")
+            if merged:
+                prev_stem = str(row.get("question_stem") or "")
+                stem_backup = (
+                    prev_stem
+                    if prev_stem != merged and not row.get("question_stem_before_auto_diagram")
+                    else row.get("question_stem_before_auto_diagram")
+                )
+                is_svg = audit.get("renderer") == "svg" or audit.get("reason") == "graph_svg_ok"
+                if is_svg:
+                    patch = {
+                        "question_stem": merged,
+                        "question_stem_before_auto_diagram": stem_backup,
+                        **build_backfill_human_review_patch(row, kind=BACKFILL_KIND_SVG),
+                    }
+                    stats["merged_svg"] += 1
+                else:
+                    patch = {
+                        "question_stem": merged,
+                        "question_stem_before_auto_diagram": stem_backup,
+                        "quality_gate_diagram_image_url": audit.get("uploaded_url"),
+                        "quality_gate_diagram_image_model": audit.get("image_model_used"),
+                        "quality_gate_diagram_image_verified_at": audit.get("verified_at"),
+                        "quality_gate_diagram_image_payload": {
+                            "brief": audit.get("brief_payload"),
+                            "verification": audit.get("verification_payload"),
+                        },
+                        **build_backfill_human_review_patch(row, kind=BACKFILL_KIND_IMAGE),
+                    }
+                    stats["merged_imagen"] += 1
+                # Keep student-facing approved while flagging human_review
+                if (row.get("status") or "").lower() == "approved":
+                    patch.pop("status", None)
+                try:
+                    _apply_merged_image_patch(
+                        client, qid, patch, log=lambda m: print(m, flush=True)
+                    )
+                    snap = fetch_question_stem_fields(client, qid)
+                    st = snap.get("question_stem") or ""
+                    print(
+                        f"[backfill:one] saved {qid} stem_len={len(st)} "
+                        f"svg={'<svg' in st.lower()} img={'<img' in st.lower()}",
+                        flush=True,
+                    )
+                    stats["merged"] += 1
+                except Exception as ex2:
+                    print(f"[backfill:one] DB patch failed {qid}: {ex2}", flush=True)
+                    stats["failed"] += 1
+                    status = "failed"
+            try:
+                append_image_backfill_history(_history_record(audit))
+            except Exception:
+                pass
+        elif status in ("skipped", "dry_run_pass"):
+            stats["skipped"] += 1
+            if not dry_run:
+                update_question_assessment(client, qid, {"svg_operator_backfill_choice": None})
+        else:
+            stats["failed"] += 1
+            # Defer this id so the next round can try others first
+            if not dry_run:
+                update_question_assessment(
+                    client,
+                    qid,
+                    {
+                        "svg_operator_backfill_choice": None,
+                        "quality_gate_graph_notes": (
+                            (row.get("quality_gate_graph_notes") or "")
+                            + f"\n[deferred:{_iso_now()}] {audit.get('reason')}"
+                        )[:4000],
+                    },
+                )
+
+        print(f"[backfill:one] {qid} -> {status}", flush=True)
+        time.sleep(3.0)
+
     return stats
 
 
@@ -455,55 +585,24 @@ def main() -> int:
     backfill_stats: Dict[str, Any] = {"merged": 0, "skipped": 0, "failed": 0, "rounds": []}
     post_stats: Dict[str, Any] = {}
     if not args.skip_backfill and confirmed:
-        print("[4] Running diagram backfill + verify QC (operator queue)…", flush=True)
-        # Retry rounds so a transient Vertex disconnect does not abort the whole batch.
-        for round_i in range(1, 4):
-            remaining = (
-                client.table("ai_generated_questions")
-                .select("id, question_stem, has_visual, visual_type, quality_gate_diagram_backfill_kind, graphs")
-                .eq("svg_operator_backfill_choice", "queue")
-                .neq("status", "deleted")
-                .limit(200)
-                .execute()
+        print("[4] Running diagram backfill + verify QC (one-by-one)…", flush=True)
+        backfill_ids = [str(r["id"]) for r in confirmed if not _has_any_diagram(r)]
+        try:
+            backfill_stats = run_backfill_one_by_one(
+                client,
+                backfill_ids,
+                dry_run=args.dry_run,
             )
-            still = [r for r in list(remaining.data or []) if not _has_any_diagram(r)]
-            if not still:
-                print(f"[4] No remaining queue rows without diagrams (round {round_i})", flush=True)
-                break
-            print(f"[4] Backfill round {round_i}: {len(still)} remaining…", flush=True)
-            try:
-                round_stats = run_backfill_queued(
-                    dry_run=args.dry_run,
-                    limit=len(still) + 5,
-                )
-                backfill_stats["rounds"].append(
-                    {k: v for k, v in round_stats.items() if k != "row_audits"}
-                )
-                backfill_stats["merged"] += int(round_stats.get("merged") or 0)
-                backfill_stats["skipped"] += int(round_stats.get("skipped") or 0)
-                backfill_stats["failed"] += int(round_stats.get("failed") or 0)
-            except Exception as ex:
-                print(f"[4] Backfill round {round_i} crashed: {ex}", flush=True)
-                backfill_stats["rounds"].append({"error": str(ex)})
-                continue
+        except Exception as ex:
+            print(f"[4] Backfill crashed: {ex}", flush=True)
+            backfill_stats["rounds"].append({"error": str(ex)})
         print(
             f"  totals merged={backfill_stats.get('merged')} skipped={backfill_stats.get('skipped')} "
             f"failed={backfill_stats.get('failed')}",
             flush=True,
         )
         print("[4b] Setting presentation_type / restoring approved after QC…", flush=True)
-        # Use original confirmed ids + anything still/was queued
-        id_set = {str(r["id"]) for r in confirmed}
-        qresp = (
-            client.table("ai_generated_questions")
-            .select("id")
-            .eq("svg_operator_backfill_choice", "queue")
-            .limit(200)
-            .execute()
-        )
-        for r in list(qresp.data or []):
-            id_set.add(str(r["id"]))
-        # Also include recently backfilled from this job's confirmed list
+        id_set = set(qg_id_list) | {str(r["id"]) for r in confirmed}
         post_stats = post_backfill_presentation_and_status(
             client,
             sorted(id_set),

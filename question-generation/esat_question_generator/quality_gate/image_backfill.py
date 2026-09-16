@@ -225,21 +225,29 @@ def run_missing_image_backfill(
             continue
         processed_ids.append(qid)
 
-        audit = run_auto_image_diagram_for_row(
-            row,
-            image_model=im,
-            brief_model=bm,
-            verify_model=vm,
-            integrate_model=intm,
-            dry_run=dry_run,
-            max_retries=max_retries,
-            allow_high_precision_image=allow_high_precision_image,
-            replace_existing_diagram=replace_existing_diagram,
-            route_graphs_to_svg=route_graphs_to_svg and dm in ("image", "auto"),
-            svg_diagram_model=svg_dm,
-            trace=_log,
-            supabase_client=None if dry_run else client,
-        )
+        try:
+            audit = run_auto_image_diagram_for_row(
+                row,
+                image_model=im,
+                brief_model=bm,
+                verify_model=vm,
+                integrate_model=intm,
+                dry_run=dry_run,
+                max_retries=max_retries,
+                allow_high_precision_image=allow_high_precision_image,
+                replace_existing_diagram=replace_existing_diagram,
+                route_graphs_to_svg=route_graphs_to_svg and dm in ("image", "auto"),
+                svg_diagram_model=svg_dm,
+                trace=_log,
+                supabase_client=None if dry_run else client,
+            )
+        except Exception as ex:
+            audit = {
+                "question_id": qid,
+                "final_status": "failed",
+                "reason": f"row_exception: {ex}",
+            }
+            _log(f"[image-backfill] row exception {qid}: {ex}")
         row_audits.append(audit)
         status = str(audit.get("final_status") or "failed")
 
@@ -306,6 +314,14 @@ def run_missing_image_backfill(
                 append_image_backfill_history(_history_record(audit))
             except OSError:
                 pass
+
+        # Brief pause between Vertex/Imagen calls to reduce 429 / disconnect storms.
+        try:
+            import time
+
+            time.sleep(2.0)
+        except Exception:
+            pass
 
     stats["processed_ids"] = processed_ids[:500]
     stats["row_audits"] = row_audits
