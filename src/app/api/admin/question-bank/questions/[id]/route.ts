@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireTesterAdmin } from "@/lib/tester/admin";
 import { normalizeMathSpacing } from "@/lib/utils/mathSpacing";
 import { normalizeQuestionBankRow } from "@/lib/admin/reportedQuestions";
+import {
+  missingDiagramApprovalBlock,
+  missingDiagramBlockMessage,
+} from "@/lib/questionBank/missingDiagramGuard";
 
 export const dynamic = "force-dynamic";
 
@@ -123,6 +127,48 @@ export async function PATCH(
     updates.solution_key_insight = normalizeMathSpacing(
       updates.solution_key_insight,
     );
+  }
+
+  if (String(updates.status ?? "") === "approved") {
+    const { data: existing, error: existingError } = await admin.service
+      .from("ai_generated_questions")
+      .select(
+        "question_stem, has_visual, visual_type, quality_gate_graph_mode, quality_gate_diagram_backfill_kind, answer_depends_on_visual, graphs",
+      )
+      .eq("id", questionId)
+      .maybeSingle();
+
+    if (existingError) {
+      return NextResponse.json({ error: existingError.message }, { status: 500 });
+    }
+    if (!existing) {
+      return NextResponse.json({ error: "Question not found" }, { status: 404 });
+    }
+
+    const merged = {
+      questionStem:
+        typeof updates.question_stem === "string"
+          ? updates.question_stem
+          : (existing.question_stem as string | null),
+      hasVisual: existing.has_visual as boolean | null,
+      visualType: existing.visual_type as string | null,
+      qualityGateGraphMode: existing.quality_gate_graph_mode as string | null,
+      qualityGateDiagramBackfillKind:
+        existing.quality_gate_diagram_backfill_kind as string | null,
+      answerDependsOnVisual: existing.answer_depends_on_visual as boolean | null,
+      graphs: existing.graphs,
+    };
+    const block = missingDiagramApprovalBlock(merged);
+    if (block) {
+      return NextResponse.json(
+        {
+          error: missingDiagramBlockMessage(block),
+          code: "missing_diagram",
+          reason: block,
+        },
+        { status: 409 },
+      );
+    }
   }
 
   const { data, error } = await admin.service

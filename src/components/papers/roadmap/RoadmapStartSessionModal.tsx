@@ -1,5 +1,5 @@
 /**
- * Start-session popup for a roadmap paper (navy past-papers styling).
+ * Start-session popup for a roadmap paper (past-papers theme).
  */
 
 "use client";
@@ -153,32 +153,32 @@ export function RoadmapStartSessionModal({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
+      className="past-papers-theme fixed inset-0 z-[100] flex items-center justify-center p-4 font-sans sm:p-6"
       role="dialog"
       aria-modal="true"
       aria-labelledby="roadmap-start-title"
     >
       <button
         type="button"
-        className="absolute inset-0 bg-black/80"
+        className="absolute inset-0 bg-black/70"
         aria-label="Close"
         onClick={onClose}
       />
-      <div className="relative z-[101] flex max-h-[min(92vh,720px)] w-full max-w-lg flex-col overflow-hidden rounded-sm bg-[#161D2F]">
-        <div className="flex items-start justify-between gap-4 border-b border-white/[0.06] px-5 py-4">
+      <div className="relative z-[101] flex max-h-[min(92vh,720px)] w-full max-w-lg flex-col overflow-hidden rounded-sm border border-border-subtle bg-surface-elevated shadow-modal-card">
+        <div className="flex items-start justify-between gap-4 border-b border-border-subtle px-5 py-4">
           <div>
             <h2
               id="roadmap-start-title"
-              className="text-lg font-semibold text-[#F1F5F9]"
+              className="text-lg font-semibold text-text"
             >
               Start session
             </h2>
-            <p className="mt-1 text-sm text-[#94A3B8]">{stageTitle(stage)}</p>
+            <p className="mt-1 text-sm text-text-muted">{stageTitle(stage)}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-sm text-[#94A3B8] transition-colors hover:bg-white/[0.06] hover:text-[#F1F5F9]"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-sm text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
             aria-label="Close"
           >
             <X className="h-4 w-4" strokeWidth={2.5} />
@@ -187,10 +187,10 @@ export function RoadmapStartSessionModal({
 
         <div className="flex-1 overflow-y-auto px-5 py-4">
           <div className="mb-3 flex items-center justify-between gap-3">
-            <span className="text-xs font-medium uppercase tracking-wide text-[#64748B]">
+            <span className="text-xs font-medium uppercase tracking-wide text-text-subtle">
               Sections
             </span>
-            <span className="text-xs text-[#94A3B8]">
+            <span className="text-xs text-text-muted">
               {selectedGroups.size} selected
             </span>
           </div>
@@ -209,21 +209,21 @@ export function RoadmapStartSessionModal({
                     className={cn(
                       "flex cursor-pointer items-center gap-3 rounded-sm px-3 py-2.5 transition-colors",
                       selected
-                        ? "bg-white/[0.06]"
-                        : "hover:bg-white/[0.03]",
+                        ? "bg-surface-mid"
+                        : "hover:bg-surface-mid/60",
                     )}
                   >
                     <input
                       type="checkbox"
                       checked={selected}
                       onChange={() => toggleGroup(group.key)}
-                      className="h-4 w-4 accent-[#3B82F6]"
+                      className="h-4 w-4 accent-[var(--color-primary)]"
                     />
                     <span className="min-w-0 flex-1">
-                      <span className="block text-sm font-medium text-[#F1F5F9]">
+                      <span className="block text-sm font-medium text-text">
                         {displayLabelForGroup(group)}
                       </span>
-                      <span className="mt-0.5 block text-xs text-[#94A3B8]">
+                      <span className="mt-0.5 block text-xs text-text-muted">
                         {group.paperName}
                         {done ? " · Done" : ""}
                       </span>
@@ -234,15 +234,12 @@ export function RoadmapStartSessionModal({
             })}
           </ul>
 
-          <div className="mt-5 flex items-center justify-between gap-3 border-t border-white/[0.06] pt-4">
+          <div className="mt-5 flex items-center justify-between gap-3 border-t border-border-subtle pt-4">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-[#CBD5E1]">
+              <span className="text-sm text-text-muted">
                 Unique questions only
               </span>
-              <RoadmapInfoPopover
-                title="Unique questions only"
-                panelClassName="bg-[#1B2438]"
-              >
+              <RoadmapInfoPopover title="Unique questions only">
                 <p>
                   When on, sessions skip questions you have already tried
                   (including NSAA / ENGAA overlaps).
@@ -257,7 +254,7 @@ export function RoadmapStartSessionModal({
               onClick={() => onNewQuestionsOnlyChange(!newQuestionsOnly)}
               className={cn(
                 "relative h-5 w-9 shrink-0 rounded-sm transition-colors",
-                newQuestionsOnly ? "bg-[#3B82F6]/80" : "bg-[#334155]",
+                newQuestionsOnly ? "bg-primary" : "bg-surface-neutral",
               )}
             >
               <span
@@ -270,11 +267,11 @@ export function RoadmapStartSessionModal({
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-3 border-t border-white/[0.06] px-5 py-4">
+        <div className="flex items-center justify-end gap-3 border-t border-border-subtle px-5 py-4">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-sm px-3 py-2 text-sm font-medium text-[#94A3B8] transition-colors hover:bg-white/[0.06] hover:text-[#F1F5F9]"
+            className="rounded-sm px-3 py-2 text-sm font-medium text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
           >
             Cancel
           </button>
@@ -285,8 +282,8 @@ export function RoadmapStartSessionModal({
             className={cn(
               "inline-flex items-center gap-1.5 rounded-sm px-4 py-2 text-sm font-semibold transition-colors",
               selectedGroups.size > 0
-                ? "bg-[#3B82F6]/85 text-white hover:bg-[#3B82F6]"
-                : "cursor-not-allowed bg-[#334155] text-[#94A3B8]",
+                ? "bg-primary text-white hover:bg-primary-hover"
+                : "cursor-not-allowed bg-surface-neutral text-text-disabled",
             )}
           >
             Start session

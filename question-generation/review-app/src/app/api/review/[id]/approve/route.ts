@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getReviewSupabase } from '@/lib/supabaseService';
 import type { ReviewQuestion } from '@/types/review';
+import {
+  missingDiagramApprovalBlock,
+  missingDiagramBlockMessage,
+} from '@/lib/missingDiagramGuard';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,10 +35,12 @@ export async function PATCH(
       data: { user },
     } = await supabase.auth.getUser();
 
-    // Check if question exists
+    // Check if question exists and load diagram-related fields
     const { data: existingQuestion, error: checkError } = await supabase
       .from('ai_generated_questions')
-      .select('id')
+      .select(
+        'id, question_stem, has_visual, visual_type, quality_gate_graph_mode, quality_gate_diagram_backfill_kind, answer_depends_on_visual, graphs',
+      )
       .eq('id', id)
       .maybeSingle();
 
@@ -50,6 +56,18 @@ export async function PATCH(
       return NextResponse.json(
         { error: 'Question not found' },
         { status: 404 }
+      );
+    }
+
+    const block = missingDiagramApprovalBlock(existingQuestion);
+    if (block) {
+      return NextResponse.json(
+        {
+          error: missingDiagramBlockMessage(block),
+          code: 'missing_diagram',
+          reason: block,
+        },
+        { status: 409 },
       );
     }
 
@@ -84,5 +102,3 @@ export async function PATCH(
     );
   }
 }
-
-

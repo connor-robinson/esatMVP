@@ -128,11 +128,11 @@ function CompactBtn({
       className={cn(
         "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-sm px-2.5 py-1.5 text-sm font-medium leading-none transition-colors disabled:cursor-not-allowed disabled:opacity-40",
         tone === "slate" &&
-          "bg-[#334155] text-[#F8FAFC] hover:bg-[#475569]",
+          "bg-surface-neutral text-text hover:bg-surface-mid",
         tone === "blue" &&
-          "bg-[#3B82F6]/85 text-white hover:bg-[#3B82F6]",
+          "bg-primary text-white hover:bg-primary-hover",
         tone === "ghost" &&
-          "bg-transparent text-[#94A3B8] hover:bg-white/[0.06] hover:text-[#F1F5F9]",
+          "bg-transparent text-text-muted hover:bg-surface-mid hover:text-text",
         className,
       )}
       {...rest}
@@ -151,13 +151,10 @@ function UniqueQuestionsSwitch({
 }) {
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs text-[#94A3B8] sm:text-sm">
+      <span className="text-xs text-text-muted sm:text-sm">
         Unique questions only
       </span>
-      <RoadmapInfoPopover
-        title="Unique questions only"
-        panelClassName="bg-[#1B2438]"
-      >
+      <RoadmapInfoPopover title="Unique questions only">
         <p>
           When on, ENGAA sessions skip questions you already did in NSAA (and
           other overlaps).
@@ -171,7 +168,7 @@ function UniqueQuestionsSwitch({
         onClick={() => onChange(!enabled)}
         className={cn(
           "relative h-5 w-9 shrink-0 rounded-sm transition-colors",
-          enabled ? "bg-[#3B82F6]/80" : "bg-[#334155]",
+          enabled ? "bg-primary" : "bg-surface-neutral",
         )}
       >
         <span
@@ -244,8 +241,8 @@ function SectionsExpandPanel({
   };
 
   return (
-    <div className="space-y-3 border-t border-white/[0.06] bg-[#121826] px-3 py-3.5 sm:px-3.5">
-      <p className="text-xs font-medium uppercase tracking-wide text-[#64748B]">
+    <div className="space-y-3 border-t border-border-subtle bg-surface-mid/40 px-3 py-3.5 sm:px-3.5">
+      <p className="text-xs font-medium uppercase tracking-wide text-text-subtle">
         Sections
       </p>
       <ul>
@@ -266,13 +263,13 @@ function SectionsExpandPanel({
               key={group.key}
               className={cn(
                 "flex flex-wrap items-center justify-between gap-3 py-2.5",
-                idx > 0 && "border-t border-white/[0.06]",
+                idx > 0 && "border-t border-border-subtle",
               )}
             >
               <div className="min-w-0">
-                <p className="text-sm text-[#F1F5F9]">
+                <p className="text-sm text-text">
                   {displayLabelForGroup(group)}
-                  <span className="ml-2 text-[#94A3B8]">{group.paperName}</span>
+                  <span className="ml-2 text-text-muted">{group.paperName}</span>
                 </p>
                 {(links?.paperUrl || links?.answersUrl) && (
                   <div className="mt-1.5 flex flex-wrap gap-2">
@@ -280,7 +277,7 @@ function SectionsExpandPanel({
                       <a
                         href={links.paperUrl}
                         download
-                        className="text-xs font-medium text-[#94A3B8] underline-offset-2 hover:text-[#F1F5F9] hover:underline"
+                        className="text-xs font-medium text-text-muted underline-offset-2 hover:text-text hover:underline"
                       >
                         Paper
                       </a>
@@ -289,7 +286,7 @@ function SectionsExpandPanel({
                       <a
                         href={links.answersUrl}
                         download
-                        className="text-xs font-medium text-[#94A3B8] underline-offset-2 hover:text-[#F1F5F9] hover:underline"
+                        className="text-xs font-medium text-text-muted underline-offset-2 hover:text-text hover:underline"
                       >
                         Answers
                       </a>
@@ -305,7 +302,7 @@ function SectionsExpandPanel({
                     void setGroupDone(group, e.target.value === "done");
                   }}
                   aria-label={`Status for ${displayLabelForGroup(group)}`}
-                  className="rounded-sm border-0 bg-[#1B2438] px-2 py-1 text-xs font-medium text-[#E2E8F0] outline-none ring-1 ring-white/10 disabled:opacity-50"
+                  className="rounded-sm border-0 bg-background px-2 py-1 text-xs font-medium text-text outline-none ring-1 ring-border-subtle disabled:opacity-50"
                 >
                   <option value="not_started">Not done</option>
                   <option value="done">Done</option>
@@ -459,8 +456,8 @@ export function RoadmapTable({
               className={cn(
                 "rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
                 activeTab === tab
-                  ? "bg-[#334155] text-[#F1F5F9]"
-                  : "bg-transparent text-[#94A3B8] hover:bg-white/[0.04] hover:text-[#CBD5E1]",
+                  ? "bg-surface-neutral text-text"
+                  : "bg-transparent text-text-muted hover:bg-surface-mid hover:text-text",
               )}
             >
               {TAB_LABELS[tab]}
@@ -469,9 +466,9 @@ export function RoadmapTable({
         </div>
       ) : null}
 
-      <div className="overflow-hidden rounded-sm bg-[#161D2F]">
-        <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2.5">
-          <h2 className="text-sm font-semibold tracking-tight text-[#F1F5F9]">
+      <div className="overflow-hidden rounded-sm border border-border-subtle bg-surface-elevated">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border-subtle px-3 py-2.5">
+          <h2 className="text-sm font-semibold tracking-tight text-text">
             {TAB_LABELS[activeTab]}
           </h2>
           {activeTab === "ENGAA" ? (
@@ -485,7 +482,7 @@ export function RoadmapTable({
         <div className="overflow-x-auto">
           <table className="w-full min-w-[56rem] text-left text-sm">
             <thead>
-              <tr className="text-xs font-medium uppercase tracking-wide text-[#94A3B8]">
+              <tr className="text-xs font-medium uppercase tracking-wide text-text-muted">
                 <th className="px-3 py-2">Year</th>
                 <th className="w-10 px-2 py-2" />
                 <th className="px-3 py-2">Parts</th>
@@ -522,13 +519,13 @@ export function RoadmapTable({
                       data-stage-id={stage.id}
                       className={
                         index % 2 === 0
-                          ? "bg-white/[0.035]"
+                          ? "bg-surface-mid/35"
                           : "bg-transparent"
                       }
                     >
                       <td className="px-3 py-2.5 align-middle">
                         <div className="flex items-center gap-1.5">
-                          <span className="tabular-nums font-medium text-[#F1F5F9]">
+                          <span className="tabular-nums font-medium text-text">
                             {stageYearLabel(stage)}
                           </span>
                           {commentary ? (
@@ -536,7 +533,6 @@ export function RoadmapTable({
                               title={commentary.title}
                               label={`About ${commentary.title}`}
                               align="left"
-                              panelClassName="bg-[#1B2438]"
                             >
                               <p>{commentary.text}</p>
                             </RoadmapInfoPopover>
@@ -566,7 +562,7 @@ export function RoadmapTable({
                         </CompactBtn>
                       </td>
 
-                      <td className="px-3 py-2.5 align-middle tabular-nums text-[#CBD5E1]">
+                      <td className="px-3 py-2.5 align-middle tabular-nums text-text-muted">
                         {completed}/{total}
                       </td>
 
@@ -587,7 +583,7 @@ export function RoadmapTable({
                             );
                           }}
                           aria-label={`Status for ${stageYearLabel(stage)}`}
-                          className="rounded-sm border-0 bg-[#1B2438] px-2 py-1.5 text-sm font-medium text-[#E2E8F0] outline-none ring-1 ring-white/10 disabled:opacity-50"
+                          className="rounded-sm border-0 bg-background px-2 py-1.5 text-sm font-medium text-text outline-none ring-1 ring-border-subtle disabled:opacity-50"
                         >
                           <option value="not_started">Not started</option>
                           {currentStatus === "in_progress" ? (
@@ -597,9 +593,9 @@ export function RoadmapTable({
                         </select>
                       </td>
 
-                      <td className="px-3 py-2.5 align-middle tabular-nums text-[#94A3B8]">
+                      <td className="px-3 py-2.5 align-middle tabular-nums text-text-muted">
                         {averagesLoading ? (
-                          <span className="inline-block h-3.5 w-8 animate-pulse rounded-sm bg-white/10" />
+                          <span className="inline-block h-3.5 w-8 animate-pulse rounded-sm bg-surface-mid" />
                         ) : avgScore == null ? (
                           <span className="text-xs font-normal">No data</span>
                         ) : (
@@ -607,9 +603,9 @@ export function RoadmapTable({
                         )}
                       </td>
 
-                      <td className="px-3 py-2.5 align-middle tabular-nums font-medium text-[#93C5FD]">
+                      <td className="px-3 py-2.5 align-middle tabular-nums font-medium text-primary">
                         {scoresLoading ? (
-                          <span className="inline-block h-3.5 w-8 animate-pulse rounded-sm bg-white/10" />
+                          <span className="inline-block h-3.5 w-8 animate-pulse rounded-sm bg-surface-mid" />
                         ) : (
                           formatRoadmapScore(yourScore)
                         )}
@@ -674,7 +670,7 @@ export function RoadmapTable({
         </div>
 
         {visibleStages.length === 0 ? (
-          <p className="px-3 py-8 text-center text-sm text-[#94A3B8]">
+          <p className="px-3 py-8 text-center text-sm text-text-muted">
             No papers in this group for your subjects.
           </p>
         ) : null}
