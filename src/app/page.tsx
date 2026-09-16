@@ -12,11 +12,11 @@ import {
   type FaqItem,
 } from "@/lib/seo/config";
 
-/** Hyphen used instead of em dash (project style). */
+/** SEO only. Not shown as homepage UI copy. */
 const HOME_TITLE =
-  "ESAT CAMP - ESAT Question Bank, Past Papers & Practice";
+  "ESAT Preparation: Questions, Mocks & Past Papers | ESAT CAMP";
 const HOME_DESCRIPTION =
-  "Prepare for the ESAT with realistic question banks, past papers, timed practice, score conversion and full mock exams for Maths, Physics, Chemistry and Biology.";
+  "Prepare for the 2026 ESAT with 2,334+ practice questions across all five modules, timed mocks, official past papers and no-calculator drills. Start free and identify the areas costing you marks.";
 /** Trailing slash matches the preferred homepage canonical host form. */
 const HOME_CANONICAL = `${PRODUCTION_SITE_URL}/`;
 
