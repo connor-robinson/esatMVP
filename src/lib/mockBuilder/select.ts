@@ -420,6 +420,8 @@ export type ReplaceSlotOptions = {
   currentSlots: MockSlot[];
   position: number;
   limit?: number;
+  /** Questions already on other active mocks (draft→published). */
+  usedElsewhereIds?: Set<string>;
 };
 
 /**
@@ -428,7 +430,14 @@ export type ReplaceSlotOptions = {
 export function proposeReplacements(
   options: ReplaceSlotOptions,
 ): MockCandidateQuestion[] {
-  const { blueprint, pool, currentSlots, position, limit = 5 } = options;
+  const {
+    blueprint,
+    pool,
+    currentSlots,
+    position,
+    limit = 5,
+    usedElsewhereIds = new Set(),
+  } = options;
   const current = currentSlots
     .map((s) => s.question)
     .filter((q): q is MockCandidateQuestion => Boolean(q));
@@ -443,6 +452,7 @@ export function proposeReplacements(
       (q) =>
         isSelectableForMock(q) &&
         !usedIds.has(q.id) &&
+        !usedElsewhereIds.has(q.id) &&
         !isFreeTierHookQuestion(q) &&
         !q.reservedForMock,
     )

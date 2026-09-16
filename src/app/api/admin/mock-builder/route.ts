@@ -109,12 +109,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // One mock per request so each generate gets a full serverless time budget.
+    // The admin UI loops this for batch create; each call sees prior drafts'
+    // question IDs via loadUsedQuestionIds so pools do not clash.
     const result = await createMock(admin.service, {
       subject,
       mockNumber,
       createdBy: admin.userId,
       generate: body.generate !== false,
       diagramCount,
+      autoNumber: body.autoNumber !== false,
     });
 
     return NextResponse.json(result);

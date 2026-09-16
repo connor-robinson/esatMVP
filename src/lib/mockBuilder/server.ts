@@ -541,6 +541,67 @@ export async function createMock(
   return { mock: refreshed, assembly };
 }
 
+/**
+ * Create and generate several mocks for one subject, one after another.
+ * Sequential so each draft's slots deplete the pool before the next assemble
+ * (avoids question clashes). Prefer calling this from the client in a loop when
+ * N is large so each generate gets its own serverless time budget.
+ */
+export async function createMocksBatch(
+  service: SupabaseClient,
+  input: {
+    subject: MockBuilderSubject;
+    /** First mock number to try; later ones auto-advance to free numbers. */
+    startMockNumber: number;
+    count: number;
+    createdBy?: string | null;
+    generate?: boolean;
+    diagramCount?: number;
+  },
+): Promise<{
+  mocks: EsatMockRow[];
+  errors: Array<{ index: number; mockNumber: number; error: string }>;
+}> {
+  const count = Math.floor(input.count);
+  if (!Number.isFinite(count) || count < 1 || count > 10) {
+    throw new Error("count must be between 1 and 10");
+  }
+
+  const mocks: EsatMockRow[] = [];
+  const errors: Array<{ index: number; mockNumber: number; error: string }> =
+    [];
+  let nextNumber = input.startMockNumber;
+
+  for (let i = 0; i < count; i++) {
+    try {
+      const result = await createMock(service, {
+        subject: input.subject,
+        mockNumber: nextNumber,
+        createdBy: input.createdBy,
+        generate: input.generate !== false,
+        diagramCount: input.diagramCount,
+        autoNumber: true,
+      });
+      mocks.push(result.mock);
+      nextNumber = result.mock.mock_number + 1;
+    } catch (e) {
+      errors.push({
+        index: i,
+        mockNumber: nextNumber,
+        error: e instanceof Error ? e.message : "Create failed",
+      });
+      // Advance past a colliding number so the rest of the batch can continue.
+      nextNumber += 1;
+    }
+  }
+
+  if (mocks.length === 0 && errors.length > 0) {
+    throw new Error(errors.map((e) => e.error).join("; "));
+  }
+
+  return { mocks, errors };
+}
+
 async function persistAssembly(
   service: SupabaseClient,
   mockId: string,
@@ -672,45 +733,71 @@ export async function generateAndPersist(
     includeReserved: false,
     allowIds,
   });
-  const usedElsewhere = await loadUsedQuestionIds(service, mockId);
 
-  // Hard guard: never assemble free-tier or reserved/used questions.
-  const safePool = pool.filter(
-    (q) =>
-      !isFreeTierHookQuestion(q) &&
-      (!q.reservedForMock || allowIds.has(q.id)) &&
-      !usedElsewhere.has(q.id),
-  );
+  // Assemble with a short optimistic retry: parallel generates can race between
+  // reading used IDs and persisting slots. Re-check before write.
+  const maxAssembleAttempts = 3;
+  let assembly: PaperAssemblyResult | null = null;
+  let usedElsewhere = new Set<string>();
+  for (let attempt = 1; attempt <= maxAssembleAttempts; attempt++) {
+    usedElsewhere = await loadUsedQuestionIds(service, mockId);
+    const safePool = pool.filter(
+      (q) =>
+        !isFreeTierHookQuestion(q) &&
+        (!q.reservedForMock || allowIds.has(q.id)) &&
+        !usedElsewhere.has(q.id),
+    );
 
-  const assembly = assembleMockPaper({
-    blueprint,
-    pool: safePool,
-    lockedSlots,
-    usedElsewhereIds: usedElsewhere,
-  });
+    const candidate = assembleMockPaper({
+      blueprint,
+      pool: safePool,
+      lockedSlots,
+      usedElsewhereIds: usedElsewhere,
+    });
+
+    for (const slot of candidate.slots) {
+      const q = slot.question;
+      if (!q) continue;
+      if (isFreeTierHookQuestion(q) && !allowIds.has(q.id)) {
+        throw new Error(
+          `Free-tier preview question ${q.id} cannot enter a mock.`,
+        );
+      }
+      if (
+        (q.reservedForMock || usedElsewhere.has(q.id)) &&
+        !allowIds.has(q.id)
+      ) {
+        throw new Error(
+          `Reserved/published mock question ${q.id} cannot be reused.`,
+        );
+      }
+    }
+
+    // Re-read after assemble so another concurrent generate that just persisted
+    // is visible before we write.
+    const freshUsed = await loadUsedQuestionIds(service, mockId);
+    const clashIds = candidate.slots
+      .map((s) => s.questionId)
+      .filter((id) => freshUsed.has(id) && !allowIds.has(id));
+    if (clashIds.length === 0) {
+      assembly = candidate;
+      break;
+    }
+    if (attempt === maxAssembleAttempts) {
+      throw new Error(
+        `Could not assemble without overlapping other mocks after ${maxAssembleAttempts} attempts (clashed on ${clashIds.slice(0, 3).join(", ")}). Retry generate.`,
+      );
+    }
+  }
+
+  if (!assembly) {
+    throw new Error("Failed to assemble mock paper.");
+  }
 
   if (enrichNote) {
     assembly.notes.unshift(enrichNote);
   }
 
-  // Final assertion on assembled slots
-  for (const slot of assembly.slots) {
-    const q = slot.question;
-    if (!q) continue;
-    if (isFreeTierHookQuestion(q) && !allowIds.has(q.id)) {
-      throw new Error(
-        `Free-tier preview question ${q.id} cannot enter a mock.`,
-      );
-    }
-    if (
-      (q.reservedForMock || usedElsewhere.has(q.id)) &&
-      !allowIds.has(q.id)
-    ) {
-      throw new Error(
-        `Reserved/published mock question ${q.id} cannot be reused.`,
-      );
-    }
-  }
   const lockMap = new Map(
     lockedSlots.map((s) => [s.questionId, true] as const),
   );
@@ -1226,15 +1313,19 @@ export async function getReplacementOptions(
   const blueprint =
     (mock.blueprint_snapshot as MockBlueprintConfig | null) ??
     (await resolveBlueprint(service, subject, mock.blueprint_id));
-  const pool = await loadEligiblePool(service, subject, {
-    includeReserved: false,
-  });
+  const [pool, usedElsewhere] = await Promise.all([
+    loadEligiblePool(service, subject, {
+      includeReserved: false,
+    }),
+    loadUsedQuestionIds(service, mockId),
+  ]);
   return proposeReplacements({
     blueprint,
     pool,
     currentSlots: slots,
     position,
     limit,
+    usedElsewhereIds: usedElsewhere,
   });
 }
 

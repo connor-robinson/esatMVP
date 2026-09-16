@@ -97,12 +97,14 @@ export default function AdminMockBuilderPage() {
   const [subject, setSubject] = useState<MockBuilderSubject>("Math 1");
   const [mockNumber, setMockNumber] = useState(1);
   const [diagramCount, setDiagramCount] = useState(3);
+  const [createCount, setCreateCount] = useState(1);
   const [diagramAvailability, setDiagramAvailability] =
     useState<DiagramAvailability>({});
   const [nextMockNumbers, setNextMockNumbers] = useState<
     Partial<Record<MockBuilderSubject, number>>
   >({});
   const [creating, setCreating] = useState(false);
+  const [createProgress, setCreateProgress] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [inventoryLoading, setInventoryLoading] = useState(false);
@@ -171,27 +173,68 @@ export default function AdminMockBuilderPage() {
   }, [diagramMeta]);
 
   async function createMock() {
+    const count = Math.min(10, Math.max(1, Math.floor(createCount) || 1));
     setCreating(true);
     setError(null);
-    const res = await fetch("/api/admin/mock-builder", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        subject,
-        mockNumber,
-        diagramCount,
-        generate: true,
-      }),
-    });
-    const data = await res.json();
-    setCreating(false);
-    if (!res.ok) {
-      setError(data.error || "Create failed");
-      return;
-    }
-    await load();
-    if (data.mock?.id) {
-      window.location.href = `/admin/mock-builder/${data.mock.id}`;
+    setCreateProgress(null);
+
+    const createdIds: string[] = [];
+    const failures: string[] = [];
+    let nextNumber = mockNumber;
+
+    try {
+      for (let i = 0; i < count; i++) {
+        setCreateProgress(
+          count === 1
+            ? "Generating + fixing + reviewing…"
+            : `Building mock ${i + 1} of ${count} (no shared questions)…`,
+        );
+        const res = await fetch("/api/admin/mock-builder", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            subject,
+            mockNumber: nextNumber,
+            diagramCount,
+            generate: true,
+            autoNumber: true,
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          failures.push(
+            `#${nextNumber}: ${(data as { error?: string }).error || "Create failed"}`,
+          );
+          nextNumber += 1;
+          continue;
+        }
+        const mock = (data as { mock?: EsatMockRow }).mock;
+        if (mock?.id) {
+          createdIds.push(mock.id);
+          nextNumber = mock.mock_number + 1;
+        } else {
+          nextNumber += 1;
+        }
+      }
+
+      await load();
+
+      if (createdIds.length === 0) {
+        setError(failures.join("; ") || "Create failed");
+        return;
+      }
+      if (failures.length > 0) {
+        setError(
+          `Created ${createdIds.length}/${count}. Failed: ${failures.join("; ")}`,
+        );
+      }
+      if (count === 1 && createdIds[0]) {
+        window.location.href = `/admin/mock-builder/${createdIds[0]}`;
+        return;
+      }
+    } finally {
+      setCreating(false);
+      setCreateProgress(null);
     }
   }
 
@@ -356,7 +399,7 @@ export default function AdminMockBuilderPage() {
             </select>
           </label>
           <label className="text-sm">
-            <span className="mb-1 block text-text-muted">Mock number</span>
+            <span className="mb-1 block text-text-muted">Start number</span>
             <input
               type="number"
               min={1}
@@ -370,6 +413,17 @@ export default function AdminMockBuilderPage() {
                 Next free: {nextMockNumbers[subject]}
               </span>
             ) : null}
+          </label>
+          <label className="text-sm">
+            <span className="mb-1 block text-text-muted">How many</span>
+            <input
+              type="number"
+              min={1}
+              max={10}
+              className="w-20 rounded-organic-md border border-border-subtle bg-surface px-2 py-1.5 text-text"
+              value={createCount}
+              onChange={(e) => setCreateCount(Number(e.target.value))}
+            />
           </label>
           <label className="text-sm">
             <span className="mb-1 block text-text-muted">Diagram questions</span>
@@ -388,19 +442,21 @@ export default function AdminMockBuilderPage() {
             onClick={createMock}
             className="rounded-organic-md bg-secondary px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
           >
-            {creating ? "Generating + fixing + reviewing…" : "Generate draft"}
+            {creating
+              ? createProgress || "Working…"
+              : createCount > 1
+                ? `Generate ${Math.min(10, Math.max(1, Math.floor(createCount) || 1))} drafts`
+                : "Generate draft"}
           </button>
         </div>
         <p className="mt-2 text-xs text-text-subtle">{diagramHint}</p>
         <p className="mt-1 text-xs text-text-subtle">
           Generate draft labels difficulty, assembles the paper, auto-fixes
-          Minor/Major question flags, then runs AI paper review. Selection
-          priority: use up questions not in the practice bank first (pending /
-          mock-staged), then deeply deprioritised never-attempted bank
-          questions, then already-attempted bank questions only if needed. Aim
-          for about 5 mocks per subject so off-bank stock is consumed before
-          dipping into the bank. Drafts also exclude each other&apos;s
-          questions so generation does not reuse the same items. Free-tier
+          Minor/Major question flags, then runs AI paper review. When you
+          create several at once, they run one after another so each mock
+          claims its questions before the next starts (no pool clashes).
+          Selection priority: off-bank first (pending / mock-staged), then
+          never-attempted bank, then already-attempted only if needed. Free-tier
           preview questions are never used.
         </p>
         {error ? <p className="mt-2 text-sm text-red-700">{error}</p> : null}
