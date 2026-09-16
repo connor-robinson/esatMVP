@@ -926,11 +926,12 @@ export async function generateAndPersist(
   if (enrichNote) assembly.notes.unshift(enrichNote);
   assembly.notes.unshift(poolPlanSummary);
 
-  // Scorecard gate before persist: difficulty must clear soft threshold.
+  // Difficulty mix is aspirational (nice to be close to ideals). Never block
+  // persist on the difficulty scorecard; leave a note when below the soft line.
   if (assembly.score.difficulty < 0.5) {
     const gapMsgs = assembly.gaps.map((g) => g.message).slice(0, 5);
-    throw new Error(
-      `Assembled paper fails difficulty scorecard (${Math.round(assembly.score.difficulty * 100)}). ${gapMsgs.join(" ") || poolPlanSummary}`,
+    assembly.notes.push(
+      `Note: difficulty mix score ${Math.round(assembly.score.difficulty * 100)} (soft target; not blocking). ${gapMsgs.join(" ")}`,
     );
   }
 

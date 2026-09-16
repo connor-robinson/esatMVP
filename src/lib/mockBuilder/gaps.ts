@@ -3,6 +3,7 @@
  */
 
 import { totalWorkloadSeconds } from "./scoring";
+import { isDiagramQuestion } from "./poolFilters";
 import type {
   MockBlueprintConfig,
   MockCandidateQuestion,
@@ -58,7 +59,11 @@ export function detectGaps(
 
   for (const p of blueprint.presentationTargets) {
     if (p.type === "text") continue;
-    const n = presentationCounts[p.type] ?? 0;
+    // Match selector: diagram target counts has_visual / diagram / graph.
+    const n =
+      p.type === "diagram"
+        ? questions.filter(isDiagramQuestion).length
+        : (presentationCounts[p.type] ?? 0);
     if (n < p.min) {
       gaps.push({
         kind: "presentation",

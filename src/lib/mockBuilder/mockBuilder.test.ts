@@ -704,9 +704,9 @@ describe("question quality remediation plans", () => {
 });
 
 describe("difficultyVsTypical", () => {
-  it("ideal mean from default blueprint is about 3.15", () => {
+  it("ideal mean from default blueprint is about 2.96", () => {
     const mean = idealMeanDifficulty(getDefaultBlueprint("Math 1"));
-    expect(mean).toBeCloseTo(85 / 27, 5);
+    expect(mean).toBeCloseTo(80 / 27, 5);
   });
 
   it("labels typical, easier, and harder papers", () => {
@@ -803,8 +803,25 @@ describe("pool tier preference", () => {
 });
 
 describe("poolPlan", () => {
-  it("stays feasible with soft band gap when difficulty-1 stock is below min but total pool fills", async () => {
+  it("stays feasible with soft band gap when difficulty-2 stock is below min but total pool fills", async () => {
     const { analysePoolPlan, assertPoolPlanFeasible } = await import("./poolPlan");
+    const blueprint = getDefaultBlueprint("Math 1");
+    // Plenty of D1/D3/D4/D5, almost no D2 (min is still 4).
+    const pool = Array.from({ length: 40 }, (_, i) =>
+      makeQuestion({
+        id: `p-${i}`,
+        mockDifficulty: ([1, 3, 4, 5] as const)[i % 4],
+        hasAiMockDifficulty: true,
+      }),
+    );
+    const plan = analysePoolPlan(pool, blueprint);
+    expect(plan.feasible).toBe(true);
+    expect(plan.summary).toMatch(/Soft band gaps:.*difficulty-2/);
+    expect(() => assertPoolPlanFeasible(plan)).not.toThrow();
+  });
+
+  it("does not soft-gap difficulty-1 when D1 min is aspirational (0)", async () => {
+    const { analysePoolPlan } = await import("./poolPlan");
     const blueprint = getDefaultBlueprint("Math 1");
     const pool = Array.from({ length: 40 }, (_, i) =>
       makeQuestion({
@@ -815,8 +832,7 @@ describe("poolPlan", () => {
     );
     const plan = analysePoolPlan(pool, blueprint);
     expect(plan.feasible).toBe(true);
-    expect(plan.summary).toMatch(/Soft band gaps:.*difficulty-1/);
-    expect(() => assertPoolPlanFeasible(plan)).not.toThrow();
+    expect(plan.summary).not.toMatch(/difficulty-1/);
   });
 
   it("hard-fails when total eligible stock is below paper size", async () => {

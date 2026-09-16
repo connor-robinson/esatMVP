@@ -63,20 +63,46 @@ async function main() {
 
   const count = Math.min(10, Math.max(1, Number(argValue("--count") || 1)));
   const diagramsRaw = argValue("--diagrams");
-  const diagramCount =
-    diagramsRaw == null ? undefined : Math.min(27, Math.max(0, Number(diagramsRaw)));
+  /** Single number for all mocks, or comma list (e.g. 9,9,9,9,8) sized to --count. */
+  let diagramCounts: Array<number | undefined> = Array.from(
+    { length: count },
+    () => undefined,
+  );
+  if (diagramsRaw != null) {
+    const parts = diagramsRaw.split(",").map((s) => s.trim()).filter(Boolean);
+    if (parts.length === 1) {
+      const n = Math.min(27, Math.max(0, Number(parts[0])));
+      diagramCounts = Array.from({ length: count }, () => n);
+    } else {
+      diagramCounts = parts.slice(0, count).map((p) =>
+        Math.min(27, Math.max(0, Number(p))),
+      );
+      while (diagramCounts.length < count) {
+        diagramCounts.push(diagramCounts[diagramCounts.length - 1]);
+      }
+    }
+  }
 
   const service = createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
   let nextNumber = await nextAvailableMockNumber(service, subject);
+  const diagramNote =
+    diagramsRaw == null
+      ? "default blueprint diagrams"
+      : `diagrams=[${diagramCounts.join(",")}]`;
   console.log(
-    `Generating ${count} ${subject} mock(s) starting at #${nextNumber}…`,
+    `Generating ${count} ${subject} mock(s) starting at #${nextNumber} (${diagramNote})…`,
   );
 
   for (let i = 0; i < count; i++) {
-    console.log(`\n--- Mock ${i + 1}/${count} (try #${nextNumber}) ---`);
+    const diagramCount = diagramCounts[i];
+    console.log(
+      `\n--- Mock ${i + 1}/${count} (try #${nextNumber}` +
+        (diagramCount != null ? `, diagrams=${diagramCount}` : "") +
+        `) ---`,
+    );
     const result = await createMock(service, {
       subject,
       mockNumber: nextNumber,

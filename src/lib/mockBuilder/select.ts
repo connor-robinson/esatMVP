@@ -1,6 +1,6 @@
 /**
  * Mock selection + iterative replacement optimiser.
- * Hard difficulty-band constraints; soft topic/timing/variety pressures.
+ * Soft difficulty-band pressures (prefer ideals); soft topic/timing/variety.
  */
 
 import { effectiveQuestionTimeSeconds } from "./metadata";
@@ -216,11 +216,7 @@ function scoreCandidateFit(
   const remainingSlots = blueprint.questionCount - current.length - 1;
   const projectedFinal =
     projectedTime + remainingSlots * (ideal / blueprint.questionCount);
-  // Strong pull toward ~40 minutes so inflated estimates cannot dominate.
-  score -= Math.abs(projectedFinal - ideal) / 35;
-  if (projectedFinal > blueprint.estimatedTimingSeconds.max) {
-    score -= (projectedFinal - blueprint.estimatedTimingSeconds.max) / 25;
-  }
+  score -= Math.abs(projectedFinal - ideal) / 80;
 
   return score;
 }

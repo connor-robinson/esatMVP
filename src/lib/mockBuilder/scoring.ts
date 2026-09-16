@@ -3,6 +3,7 @@
  */
 
 import { effectiveQuestionTimeSeconds } from "./metadata";
+import { isDiagramQuestion } from "./poolFilters";
 import type {
   MockBlueprintConfig,
   MockCandidateQuestion,
@@ -50,13 +51,13 @@ export function scoreDifficultyDistribution(
   let score = 1;
   for (const band of blueprint.difficultyDistribution) {
     const n = counts[band.difficulty] ?? 0;
+    // Prefer proximity to ideal; under-min is a mild nudge, not a hard fail.
     if (n < band.min) {
-      score -= 0.08 * (band.min - n);
+      score -= 0.03 * (band.min - n);
     } else if (n > band.max) {
-      score -= 0.08 * (n - band.max);
-    } else {
-      score -= 0.02 * Math.abs(n - band.ideal);
+      score -= 0.05 * (n - band.max);
     }
+    score -= 0.02 * Math.abs(n - band.ideal);
   }
   return clamp01(score);
 }
@@ -133,7 +134,10 @@ export function scorePresentationMix(
   const counts = countBy(questions.map((q) => q.presentationType));
   let score = 1;
   for (const target of blueprint.presentationTargets) {
-    const n = counts[target.type] ?? 0;
+    const n =
+      target.type === "diagram"
+        ? questions.filter(isDiagramQuestion).length
+        : (counts[target.type] ?? 0);
     if (n < target.min) score -= 0.07 * (target.min - n);
     if (n > target.max) score -= 0.05 * (n - target.max);
   }

@@ -10,11 +10,12 @@ import type {
 } from "./types";
 
 const BASE_DIFFICULTY = [
-  { difficulty: 1 as const, min: 2, max: 3, ideal: 2 },
+  // D1/D5 are aspirational: nice to be close to ideal, never a hard floor.
+  { difficulty: 1 as const, min: 0, max: 3, ideal: 2 },
   { difficulty: 2 as const, min: 4, max: 5, ideal: 5 },
   { difficulty: 3 as const, min: 9, max: 11, ideal: 10 },
   { difficulty: 4 as const, min: 6, max: 8, ideal: 7 },
-  { difficulty: 5 as const, min: 1, max: 3, ideal: 3 },
+  { difficulty: 5 as const, min: 0, max: 3, ideal: 2 },
 ];
 
 /** Soft uniform-ish topic caps from syllabus topic lists. */
