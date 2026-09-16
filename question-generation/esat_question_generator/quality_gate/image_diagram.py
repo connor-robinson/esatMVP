@@ -285,7 +285,7 @@ def skip_reason_from_brief(
             if stem_has_existing_diagram(stem) and not replace_existing_diagram:
                 return "existing_diagram_present"
             return None
-        return "graph_use_svg_not_imagen"
+        # Fall through to Imagen path when SVG routing is disabled.
     if str(brief.get("spoiler_risk") or "").lower() == "high":
         return "spoiler_risk=high"
     prec = str(brief.get("precision_risk") or "").lower()
