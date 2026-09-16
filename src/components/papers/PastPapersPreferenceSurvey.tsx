@@ -71,7 +71,6 @@ export function PastPapersPreferenceSurvey({
   };
 
   const handleChoose = (preference: PastPapersUiPreference) => {
-    if (preference !== "home" && preference !== "library") return;
     const href = applyPastPapersUiPreference(preference, "survey");
     setOpen(false);
     onClose?.();
