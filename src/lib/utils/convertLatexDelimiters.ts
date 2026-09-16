@@ -167,9 +167,75 @@ export function convertProseLatexLineBreaks(text: string): string {
   return out;
 }
 
+function repairCorruptedLatexCommands(span: string): string {
+  return span
+    // JSON `\f` / `\b` escapes consumed by `\frac`, `\binom`, etc.
+    .replace(/\frac/g, "\\frac")
+    .replace(/\fbox/g, "\\fbox")
+    .replace(/\binom/g, "\\binom")
+    .replace(/\beta/g, "\\beta")
+    .replace(/\begin/g, "\\begin")
+    .replace(/\boxed/g, "\\boxed")
+    .replace(/\mathbf/g, "\\mathbf")
+    // Over-escaped commands: `\\cos` -> `\cos` (keep matrix row `\\` intact).
+    .replace(/\\(\\+)([a-zA-Z@]+)/g, (_m, _slashes: string, cmd: string) => `\\${cmd}`);
+}
+
+/** Repair LaTeX broken by JSON control-char escapes (e.g. `\f` in `\frac` -> form feed + `rac`). */
+export function repairJsonEscapeCorruptedLatex(text: string): string {
+  if (!text) return text;
+
+  let out = "";
+  let i = 0;
+  while (i < text.length) {
+    if (text[i] === "$") {
+      const isDisplay = text[i + 1] === "$";
+      const delim = isDisplay ? "$$" : "$";
+      const start = i;
+      i += delim.length;
+      const end = text.indexOf(delim, i);
+      if (end === -1) {
+        out += text.slice(start);
+        break;
+      }
+      const inner = text.slice(i, end);
+      out += `${delim}${repairCorruptedLatexCommands(inner)}${delim}`;
+      i = end + delim.length;
+      continue;
+    }
+
+    if (text[i] === "\\" && text[i + 1] === "(") {
+      const end = text.indexOf("\\)", i + 2);
+      if (end !== -1) {
+        out += `$${repairCorruptedLatexCommands(text.slice(i + 2, end))}$`;
+        i = end + 2;
+        continue;
+      }
+    }
+
+    if (text[i] === "\\" && text[i + 1] === "[") {
+      const end = text.indexOf("\\]", i + 2);
+      if (end !== -1) {
+        out += `$$${repairCorruptedLatexCommands(text.slice(i + 2, end))}$$`;
+        i = end + 2;
+        continue;
+      }
+    }
+
+    out += text[i];
+    i += 1;
+  }
+
+  return out;
+}
+
 export function prepareQuestionBankMathText(text: string): string {
   return unwrapLatexBoxed(
-    convertLatexDelimiters(convertProseLatexLineBreaks(normalizeStemNewlines(text))),
+    convertLatexDelimiters(
+      repairJsonEscapeCorruptedLatex(
+        convertProseLatexLineBreaks(normalizeStemNewlines(text)),
+      ),
+    ),
   );
 }
 

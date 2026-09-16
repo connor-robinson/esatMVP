@@ -4,6 +4,7 @@ import {
   convertProseLatexLineBreaks,
   normalizeDisplayMathEnvironments,
   prepareQuestionBankMathText,
+  repairJsonEscapeCorruptedLatex,
 } from "./convertLatexDelimiters";
 
 describe("convertProseLatexLineBreaks", () => {
@@ -62,6 +63,20 @@ describe("normalizeDisplayMathEnvironments", () => {
     expect(out).toContain("\\begin{aligned}");
     expect(out).toContain("\\end{aligned}");
     expect(out).not.toContain("align*");
+  });
+});
+
+describe("repairJsonEscapeCorruptedLatex", () => {
+  it("repairs form-feed corruption in display math (\\frac -> rac)", () => {
+    const corrupted = `How many distinct real solutions does the following equation have?\n\n$$\n${"\f"}rac{e^{2x} - 1}{e^x + 1} + ${"\f"}rac{e^{2x} - 5e^x + 6}{e^x - 2} = 0\n$$`;
+    const repaired = repairJsonEscapeCorruptedLatex(corrupted);
+    expect(repaired).toContain("\\frac{e^{2x} - 1}{e^x + 1}");
+    expect(repaired).not.toContain("\f");
+    expect(repaired).not.toMatch(/\frac\{e/);
+
+    const html = renderMathContent(repaired);
+    expect(html).toContain("katex");
+    expect(html).not.toContain("katex-error");
   });
 });
 
