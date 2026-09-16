@@ -1,6 +1,9 @@
 import type { Paper, PaperSection } from "@/types/papers";
 
-/** Past papers unpaid users can try without a subscription. */
+/** Past papers unpaid users used to preview without a subscription.
+ * Papers are now free to sit for everyone; these constants remain for
+ * tutorial highlights and any soft “suggested starting paper” UX.
+ */
 export const FREE_PREVIEW_PAST_PAPERS = [
   { examName: "NSAA", examYear: 2016 },
   { examName: "NSAA", examYear: 2017 },
@@ -38,13 +41,16 @@ export function isFreePreviewRoadmapStage(stage: {
   );
 }
 
-/** Locked for unpaid users unless the paper is in the free preview set. */
+/**
+ * Papers are free to sit for everyone. Full marking (solutions, mistake
+ * review, detailed stats, analytics) is gated on the mark page via
+ * `hasFullAccess`. Kept for call-site compatibility; always unlocked.
+ */
 export function isPastPaperLibraryLocked(
-  paper: Pick<Paper, "examName" | "examYear">,
-  hasFullAccess: boolean,
+  _paper: Pick<Paper, "examName" | "examYear">,
+  _hasFullAccess: boolean,
 ): boolean {
-  if (hasFullAccess) return false;
-  return !isFreePreviewPastPaper(paper);
+  return false;
 }
 
 /** Paper to highlight during the library add-paper tutorial (free users). */

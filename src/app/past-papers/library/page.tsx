@@ -34,12 +34,6 @@ import { LoadingPage } from '@/components/shared/LoadingPage';
 import { allowLoadingPaint } from '@/lib/papers/allowLoadingPaint';
 import { preloadQuestionsAssets } from '@/lib/pearson/preloadQuestionAssets';
 import {
-  isPastPaperLibraryLocked,
-  freePreviewPastPapersLabel,
-  applyFreePreviewPaperSectionDefaults,
-  filterFreePreviewSubjectParts,
-} from '@/lib/papers/freePreviewPapers';
-import {
   filterSectionsByEsatSubjects,
   filterSubjectPartsByEsatSubjects,
   esatSubjectsForPaperAdd,
@@ -124,12 +118,10 @@ function buildSessionPaperVariant(
 export default function PapersLibraryPage() {
   const router = useRouter();
   const { hasFullAccess, isLoading: subscriptionLoading } = useSubscription();
-  const libraryLocked = !subscriptionLoading && !hasFullAccess;
+  // Papers are free to sit; upgrade unlocks full marking / analytics.
+  const showMarkingUpgrade = !subscriptionLoading && !hasFullAccess;
   const treatAsFullAccess = subscriptionLoading || hasFullAccess;
   const { startSession, loadQuestions } = usePaperSessionStore();
-
-  const paperIsLocked = (paper: Paper) =>
-    isPastPaperLibraryLocked(paper, treatAsFullAccess);
 
   // Papers data
   const [papers, setPapers] = useState<Paper[]>([]);
@@ -232,7 +224,6 @@ export default function PapersLibraryPage() {
 
   // Add paper to selection
   const handleAddPaper = (paper: Paper) => {
-    if (paperIsLocked(paper)) return;
     if (selectedPaperIds.has(paper.id)) {
       // Already selected, remove it
       setSelectedPapers((prev) =>
@@ -252,15 +243,11 @@ export default function PapersLibraryPage() {
     paper: Paper,
     sectionsByMain: Map<string, Set<PaperSection>>,
   ) => {
-    if (paperIsLocked(paper)) return;
-    const esatFiltered = filterSectionsByEsatSubjects(
+    const sectionsToAdd = filterSectionsByEsatSubjects(
       sectionsByMain,
       paper,
       subjectsForAdd,
     );
-    const sectionsToAdd = libraryLocked
-      ? applyFreePreviewPaperSectionDefaults(esatFiltered, paper)
-      : esatFiltered;
     const existingPaper = selectedPapers.find((sp) => sp.paper.id === paper.id);
     if (existingPaper) {
       handleUpdateSections(
@@ -281,15 +268,11 @@ export default function PapersLibraryPage() {
     sectionName: string,
     subjectParts: PaperSection[],
   ) => {
-    if (paperIsLocked(paper)) return;
-    const esatFiltered = filterSubjectPartsByEsatSubjects(
+    const filteredParts = filterSubjectPartsByEsatSubjects(
       subjectParts,
       paper,
       subjectsForAdd,
     );
-    const filteredParts = libraryLocked
-      ? filterFreePreviewSubjectParts(esatFiltered, paper, sectionName)
-      : esatFiltered;
     const existingPaper = selectedPapers.find((sp) => sp.paper.id === paper.id);
 
     if (existingPaper) {
@@ -324,7 +307,7 @@ export default function PapersLibraryPage() {
 
     if (!selectedPaper) {
       const paper = papers.find((p) => p.id === paperId);
-      if (!paper || !mainSectionName || paperIsLocked(paper)) return;
+      if (!paper || !mainSectionName) return;
 
       const newSections = new Map<string, Set<PaperSection>>();
       newSections.set(mainSectionName, new Set([section]));
@@ -457,11 +440,6 @@ export default function PapersLibraryPage() {
 
     if (validPapers.length === 0) {
       alert('Please select at least one paper with at least one section.');
-      return;
-    }
-
-    if (validPapers.some((sp) => paperIsLocked(sp.paper))) {
-      alert(`Upgrade to unlock the selected papers, or choose ${freePreviewPastPapersLabel()} to try for free.`);
       return;
     }
 
@@ -649,12 +627,8 @@ export default function PapersLibraryPage() {
   );
 
   const subjectsForAdd = useMemo(
-    () =>
-      esatSubjectsForPaperAdd(userEsatSubjects, {
-        firstPaperOnly:
-          !treatAsFullAccess && showTutorial && selectedPapers.length === 0,
-      }),
-    [userEsatSubjects, showTutorial, selectedPapers.length, treatAsFullAccess],
+    () => esatSubjectsForPaperAdd(userEsatSubjects),
+    [userEsatSubjects],
   );
 
   const tutorialStep = useMemo(
@@ -682,11 +656,11 @@ export default function PapersLibraryPage() {
 
   return (
     <Container size='lg' className='py-7 sm:py-9'>
-      {libraryLocked ? (
+      {showMarkingUpgrade ? (
         <DrillUpgradeBanner
           className="mb-5"
-          headline="Unlock every past paper"
-          subtext={`${freePreviewPastPapersLabel()} are free to try. Upgrade for the full paper library, session builder, and analytics`}
+          headline="Sit any past paper free"
+          subtext="Scores and accuracy are included. Upgrade for written solutions, mistake review, detailed stats, and analytics."
           ctaLabel="View plans"
           href="/pricing"
         />
@@ -718,8 +692,7 @@ export default function PapersLibraryPage() {
             onAddFullPaper={handleAddFullPaper}
             onAddPaper={handleAddPaper}
             onAddSection={handleAddSection}
-            locked={libraryLocked}
-            isPaperLocked={paperIsLocked}
+            locked={false}
             showTutorial={showTutorial}
             tutorialStep={tutorialStep}
             onDismissTutorial={dismissTutorial}

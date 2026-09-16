@@ -12,17 +12,17 @@ import PricingPageClient from "./PricingPageClient";
 
 const FREE_FEATURES = [
   "Mental maths: Addition module only",
-  "Past papers: First 3 roadmap items",
+  "Past papers: sit any paper (scores & accuracy)",
   "Question Bank: 10 free questions per subject",
-  "No solutions or stats overview",
+  "No solutions, mistake review, or detailed stats",
   "No drills / flashcard mode",
 ] as const;
 
 const PAID_FEATURES = [
   "Full mental maths access",
-  "Full roadmap & past papers",
+  "Full past-paper marking & analytics",
   "Unlimited Question Bank",
-  "Solutions & stats overview",
+  "Solutions, mistake review & stats",
   "Drills & flashcard mode",
 ] as const;
 
@@ -79,7 +79,8 @@ export default function PricingPage() {
         <div className="sr-only">
           <p>
             Compare Free, Weekly, Monthly and Exam Season Pass. Paid plans unlock
-            full past papers, the question bank, mental maths and analytics.
+            full past-paper marking and analytics, the question bank, mental maths
+            and drills.
           </p>
           {plans.map((plan) => (
             <article key={plan.name}>

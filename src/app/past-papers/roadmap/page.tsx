@@ -37,7 +37,6 @@ import type { RoadmapPart } from '@/lib/papers/roadmapConfig';
 import { LoadingPage } from '@/components/shared/LoadingPage';
 import { allowLoadingPaint } from '@/lib/papers/allowLoadingPaint';
 import { preloadQuestionsAssets } from '@/lib/pearson/preloadQuestionAssets';
-import { isFreePreviewRoadmapStage } from '@/lib/papers/freePreviewPapers';
 import { applyEsatSubjectsToRoadmapStages } from '@/lib/papers/roadmapEsatFilter';
 import {
   addManualRoadmapUnlock,
@@ -583,18 +582,9 @@ export default function PapersRoadmapPage() {
       options: RoadmapStartOptions,
     ) => {
       if (isStartingSession) return;
-      if (
-        !hasFullAccess &&
-        !isFreePreviewRoadmapStage({
-          examName: stage.examName,
-          year: stage.year,
-        })
-      ) {
-        return;
-      }
       await executeStartStage(stage, selectedParts, options);
     },
-    [executeStartStage, hasFullAccess, isStartingSession],
+    [executeStartStage, isStartingSession],
   );
 
   // Refresh completion data
@@ -648,42 +638,24 @@ export default function PapersRoadmapPage() {
 
   const timelineAnchorRef = useRef<HTMLDivElement>(null);
 
-  // Everyone sees the full track. Free users can start free-preview papers;
-  // everything else stays greyed/locked (paywall still below).
+  // Everyone sees the full track. Progression unlocks apply to all users;
+  // marking extras stay gated on the mark page for free accounts.
   const visibleStages = subjectFilteredStages;
 
   const progressionUnlocked = unlockedStages;
   const visibleUnlocked = new Set<string>();
 
   for (const stage of visibleStages) {
-    const isPreview = isFreePreviewRoadmapStage({
-      examName: stage.examName,
-      year: stage.year,
-    });
-
-    if (hasFullAccess) {
-      if (progressionUnlocked.has(stage.id) || manualUnlocks.has(stage.id)) {
-        visibleUnlocked.add(stage.id);
-      }
-    } else if (isPreview) {
+    if (progressionUnlocked.has(stage.id) || manualUnlocks.has(stage.id)) {
       visibleUnlocked.add(stage.id);
     }
   }
 
   const resolveLockReason = (
-    stage: RoadmapStage,
+    _stage: RoadmapStage,
     isUnlocked: boolean,
   ): RoadmapLockReason | null => {
     if (isUnlocked) return null;
-    if (
-      !hasFullAccess &&
-      !isFreePreviewRoadmapStage({
-        examName: stage.examName,
-        year: stage.year,
-      })
-    ) {
-      return "paywall";
-    }
     return "progression";
   };
 
@@ -801,14 +773,14 @@ export default function PapersRoadmapPage() {
               onStartSession={handleStartStage}
               newQuestionsOnly={newQuestionsOnly}
               onNewQuestionsOnlyChange={handleNewQuestionsOnlyChange}
-              onUnlockStage={hasFullAccess ? handleUnlockStage : undefined}
+              onUnlockStage={handleUnlockStage}
               onNodePositionsUpdate={handleNodePositionsUpdate}
               timelineNodePositions={nodePositions}
               timelineAnchorRef={timelineAnchorRef}
             />
             {!hasFullAccess && (
               <div className="mt-4 -translate-y-2 sm:mt-5 sm:-translate-y-3">
-                <UpgradeCTA feature="the full roadmap" />
+                <UpgradeCTA feature="written solutions, mistake review, detailed stats, and analytics" />
               </div>
             )}
           </div>

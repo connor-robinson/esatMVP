@@ -155,11 +155,11 @@ export default function PapersMarkPage() {
     selectedPartIds,
     finishMarkSession,
   } = usePaperSessionStore();
-  const { hasFullAccess, isLoading: subscriptionLoading } = useSubscription();
+  const { hasFullAccess } = useSubscription();
   const [hubMarkPreview, setHubMarkPreview] = useState(false);
   // Hub Start now teaser: always unpaid mark (solutions/stats locked).
-  const treatAsFullAccess =
-    !hubMarkPreview && (subscriptionLoading || hasFullAccess);
+  // Do not treat subscription loading as full access (avoids flashing paid mark UI).
+  const treatAsFullAccess = !hubMarkPreview && hasFullAccess;
   // Hub guests: score + which questions were wrong stay behind login.
   const hideResultsBehindLogin = hubMarkPreview && !isLoggedIn;
   const loginRedirectHref = `/login?redirectTo=${encodeURIComponent("/past-papers/mark")}`;

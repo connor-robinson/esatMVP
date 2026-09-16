@@ -1,6 +1,7 @@
 /**
  * Past Papers Home: practice table (formerly roadmap).
- * Free for everyone. Subject filtering comes from the user profile.
+ * All papers are free to sit. Full marking (solutions, mistake review,
+ * detailed stats, analytics) requires an upgrade.
  */
 
 'use client';
@@ -17,6 +18,8 @@ import {
 import { RoadmapTable } from '@/components/papers/roadmap/RoadmapTable';
 import { PastPapersLegacyLinks } from '@/components/papers/PastPapersLegacyLinks';
 import { PastPapersPreferenceSurvey } from '@/components/papers/PastPapersPreferenceSurvey';
+import { DrillUpgradeBanner } from '@/components/builder/DrillUpgradeBanner';
+import { useSubscription } from '@/hooks/useSubscription';
 import {
   RoadmapSubjectPreview,
   type RoadmapPreviewState,
@@ -87,6 +90,8 @@ export default function PastPapersHomePage() {
   const forceSurvey = searchParams.get("choose") === "1";
   const [forceSurveyOpen, setForceSurveyOpen] = useState(forceSurvey);
   const session = useSupabaseSession();
+  const { hasFullAccess, isLoading: subscriptionLoading } = useSubscription();
+  const showMarkingUpgrade = !subscriptionLoading && !hasFullAccess;
   const { startSession, setQuestions } = usePaperSessionStore();
 
   // Explicit /past-papers (and nav Home) always stays on Home.
@@ -657,6 +662,16 @@ export default function PastPapersHomePage() {
 
   return (
     <Container size="lg" className="overflow-x-clip bg-background pb-16 pt-6 font-sans sm:pb-20 sm:pt-8">
+      {showMarkingUpgrade ? (
+        <DrillUpgradeBanner
+          className="mb-5"
+          headline="Sit any past paper free"
+          subtext="Scores and accuracy are included. Upgrade for written solutions, mistake review, detailed stats, and analytics."
+          ctaLabel="View plans"
+          href="/pricing"
+        />
+      ) : null}
+
       <RoadmapSubjectPreview
         value={subjectPreview}
         onChange={setSubjectPreview}
