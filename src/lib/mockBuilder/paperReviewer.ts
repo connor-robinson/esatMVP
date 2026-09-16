@@ -220,7 +220,7 @@ export async function reviewMockPaper(
   const fallback = heuristicPaperReview(input);
   try {
     const llm = await generateJsonWithLlm(buildPrompt(input));
-    if (!llm) return { review: fallback, source: "heuristic" };
+    if (!llm.text) return { review: fallback, source: "heuristic" };
     return {
       review: normalizeReview(extractJsonObject(llm.text), fallback),
       source: llm.source,

@@ -2,6 +2,7 @@
  * Shared Vertex / Gemini JSON generation for mock-builder AI stages.
  */
 
+import crypto from "crypto";
 import { GoogleAuth } from "google-auth-library";
 
 export function resolveVertexLocation(
@@ -42,16 +43,118 @@ function vertexGenerateUrl(
   return `https://${location}-aiplatform.googleapis.com/v1/projects/${project}/locations/${location}/publishers/google/models/${model}:generateContent`;
 }
 
-async function getVertexAccessToken(): Promise<string | null> {
+type ServiceAccount = {
+  client_email: string;
+  private_key: string;
+};
+
+function readVertexServiceAccount(): ServiceAccount | null {
+  const raw = (
+    process.env.VERTEX_SERVICE_ACCOUNT_JSON ||
+    process.env.GOOGLE_SERVICE_ACCOUNT_JSON ||
+    ""
+  ).trim();
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw) as ServiceAccount;
+    if (!parsed.client_email || !parsed.private_key) return null;
+    return {
+      client_email: parsed.client_email,
+      private_key: parsed.private_key.replace(/\\n/g, "\n"),
+    };
+  } catch {
+    return null;
+  }
+}
+
+function base64url(value: string | Buffer): string {
+  return Buffer.from(value)
+    .toString("base64")
+    .replace(/=/g, "")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_");
+}
+
+async function getServiceAccountAccessToken(
+  account: ServiceAccount,
+): Promise<string | null> {
+  try {
+    const now = Math.floor(Date.now() / 1000);
+    const header = base64url(JSON.stringify({ alg: "RS256", typ: "JWT" }));
+    const claim = base64url(
+      JSON.stringify({
+        iss: account.client_email,
+        scope: "https://www.googleapis.com/auth/cloud-platform",
+        aud: "https://oauth2.googleapis.com/token",
+        iat: now,
+        exp: now + 3600,
+      }),
+    );
+    const unsigned = `${header}.${claim}`;
+    const signer = crypto.createSign("RSA-SHA256");
+    signer.update(unsigned);
+    signer.end();
+    const signature = signer
+      .sign(account.private_key, "base64")
+      .replace(/=/g, "")
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_");
+    const assertion = `${unsigned}.${signature}`;
+
+    const response = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
+        assertion,
+      }),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!response.ok) return null;
+    const json = (await response.json()) as { access_token?: string };
+    return json.access_token ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function getVertexAccessToken(): Promise<{
+  token: string | null;
+  detail: string;
+}> {
+  const sa = readVertexServiceAccount();
+  if (sa) {
+    const token = await getServiceAccountAccessToken(sa);
+    if (token) {
+      return { token, detail: "service_account_json" };
+    }
+    return {
+      token: null,
+      detail:
+        "VERTEX_SERVICE_ACCOUNT_JSON present but token exchange failed",
+    };
+  }
+
   try {
     const auth = new GoogleAuth({
       scopes: ["https://www.googleapis.com/auth/cloud-platform"],
     });
     const client = await auth.getClient();
     const token = await client.getAccessToken();
-    return typeof token === "string" ? token : token?.token ?? null;
-  } catch {
-    return null;
+    const value = typeof token === "string" ? token : token?.token ?? null;
+    if (value) return { token: value, detail: "adc" };
+    return {
+      token: null,
+      detail:
+        "ADC available but returned no token (on Vercel set VERTEX_SERVICE_ACCOUNT_JSON)",
+    };
+  } catch (e) {
+    return {
+      token: null,
+      detail: `ADC unavailable: ${
+        e instanceof Error ? e.message : "unknown"
+      } (on Vercel set VERTEX_SERVICE_ACCOUNT_JSON or GEMINI_API_KEY)`,
+    };
   }
 }
 
@@ -59,34 +162,57 @@ async function postGenerateContent(input: {
   url: string;
   headers: Record<string, string>;
   promptText: string;
-}): Promise<string | null> {
-  const res = await fetch(input.url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...input.headers,
-    },
-    body: JSON.stringify({
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: input.promptText }],
-        },
-      ],
-      generationConfig: {
-        temperature: 0.2,
-        responseMimeType: "application/json",
+}): Promise<{ text: string | null; error?: string }> {
+  try {
+    const res = await fetch(input.url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...input.headers,
       },
-    }),
-  });
-  if (!res.ok) return null;
-  const data = (await res.json()) as {
-    candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
-  };
-  return (
-    data.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ??
-    null
-  );
+      body: JSON.stringify({
+        contents: [
+          {
+            role: "user",
+            parts: [{ text: input.promptText }],
+          },
+        ],
+        generationConfig: {
+          temperature: 0.2,
+          responseMimeType: "application/json",
+        },
+      }),
+      signal: AbortSignal.timeout(60000),
+    });
+    const bodyText = await res.text();
+    if (!res.ok) {
+      const snippet = bodyText.replace(/\s+/g, " ").slice(0, 240);
+      return {
+        text: null,
+        error: `HTTP ${res.status} from model endpoint: ${snippet || res.statusText}`,
+      };
+    }
+    let data: {
+      candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+    };
+    try {
+      data = JSON.parse(bodyText) as typeof data;
+    } catch {
+      return { text: null, error: "Model response was not JSON" };
+    }
+    const text =
+      data.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ??
+      null;
+    if (!text) {
+      return { text: null, error: "Model returned no candidate text" };
+    }
+    return { text };
+  } catch (e) {
+    return {
+      text: null,
+      error: e instanceof Error ? e.message : "fetch failed",
+    };
+  }
 }
 
 /**
@@ -124,16 +250,21 @@ export function extractJsonObject(text: string): unknown {
 
 export type LlmJsonSource = "vertex" | "gemini" | null;
 
+export type LlmJsonResult =
+  | { text: string; source: Exclude<LlmJsonSource, null>; error?: undefined }
+  | { text?: undefined; source?: null; error: string };
+
 /**
- * Prefer Vertex ADC (GOOGLE_CLOUD_PROJECT), then Gemini API key.
+ * Prefer Vertex (service account JSON, then ADC), then Gemini API key.
  */
 export async function generateJsonWithLlm(
   prompt: unknown,
   options?: { model?: string },
-): Promise<{ text: string; source: Exclude<LlmJsonSource, null> } | null> {
+): Promise<LlmJsonResult> {
   const promptText =
     typeof prompt === "string" ? prompt : JSON.stringify(prompt);
   const model = options?.model || mockBuilderModelId();
+  const errors: string[] = [];
 
   const project =
     process.env.GOOGLE_CLOUD_PROJECT || process.env.VERTEX_PROJECT || "";
@@ -143,26 +274,36 @@ export async function generateJsonWithLlm(
         process.env.GOOGLE_CLOUD_LOCATION ||
         "",
     );
-    const token = await getVertexAccessToken();
+    const { token, detail } = await getVertexAccessToken();
     if (token) {
-      const text = await postGenerateContent({
+      const posted = await postGenerateContent({
         url: vertexGenerateUrl(project, location, model),
         headers: { Authorization: `Bearer ${token}` },
         promptText,
       });
-      if (text) return { text, source: "vertex" };
+      if (posted.text) return { text: posted.text, source: "vertex" };
+      errors.push(
+        `vertex(${location}/${model} via ${detail}): ${posted.error ?? "empty"}`,
+      );
+    } else {
+      errors.push(`vertex: ${detail}`);
     }
+  } else {
+    errors.push("vertex: GOOGLE_CLOUD_PROJECT unset");
   }
 
   const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
   if (apiKey) {
-    const text = await postGenerateContent({
+    const posted = await postGenerateContent({
       url: `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
       headers: {},
       promptText,
     });
-    if (text) return { text, source: "gemini" };
+    if (posted.text) return { text: posted.text, source: "gemini" };
+    errors.push(`gemini(${model}): ${posted.error ?? "empty"}`);
+  } else {
+    errors.push("gemini: GEMINI_API_KEY unset");
   }
 
-  return null;
+  return { error: errors.join(" | ") };
 }

@@ -149,7 +149,7 @@ export async function llmEditQuestion(input: {
   };
 
   const llm = await generateJsonWithLlm(prompt);
-  if (!llm) return null;
+  if (!llm.text) return null;
   const parsed = extractJsonObject(llm.text);
   if (!parsed || typeof parsed !== "object") return null;
   return validateEditedQuestion(parsed as Partial<EditedQuestionFields>);

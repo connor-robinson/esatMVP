@@ -253,14 +253,16 @@ export async function enrichMockMetadataForSubject(
     hasVisual: Boolean(row.has_visual),
   }));
 
-  const { labels, labeledCount, source, attempted } =
+  const { labels, labeledCount, source, attempted, error: labelError } =
     await labelMockMetadataInChunks(inputs, {
       maxQuestions,
     });
 
   if (attempted > 0 && labeledCount === 0) {
     throw new Error(
-      `AI difficulty labeling returned 0 labels for ${attempted} questions (check Vertex ADC / model).`,
+      labelError
+        ? `AI difficulty labeling returned 0 labels for ${attempted} questions: ${labelError}`
+        : `AI difficulty labeling returned 0 labels for ${attempted} questions (check Vertex ADC / VERTEX_SERVICE_ACCOUNT_JSON / GEMINI_API_KEY).`,
     );
   }
   const rowById = new Map(rows.map((r) => [r.id, r]));
@@ -735,6 +737,7 @@ export async function generateAndPersist(
   };
 
   // Stage A: AI rate difficulty 1–5 for unlabeled pool rows.
+  // Soft-fail: assemble can still use Easy/Medium/Hard bank fallbacks.
   let enrichNote: string | null = null;
   if (options?.enrichMetadata !== false) {
     try {
@@ -750,11 +753,13 @@ export async function generateAndPersist(
         source: enrich.source,
       };
     } catch (e) {
-      throw new Error(
-        `AI difficulty labeling required before assemble failed: ${
-          e instanceof Error ? e.message : "unknown error"
-        }`,
-      );
+      enrichNote = `AI difficulty labeling failed (using Easy/Medium/Hard bank fallback): ${
+        e instanceof Error ? e.message : "unknown error"
+      }`;
+      pipeline.labeled = {
+        failed: true,
+        error: e instanceof Error ? e.message : "unknown error",
+      };
     }
   }
 

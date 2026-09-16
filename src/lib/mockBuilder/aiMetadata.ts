@@ -162,21 +162,39 @@ function buildLabelPrompt(batch: AiMetadataLabelInput[]) {
  */
 export async function labelMockMetadataBatch(
   batch: AiMetadataLabelInput[],
-): Promise<{ labels: AiMetadataLabel[]; source: "vertex" | "gemini" | null }> {
+): Promise<{
+  labels: AiMetadataLabel[];
+  source: "vertex" | "gemini" | null;
+  error?: string;
+}> {
   if (batch.length === 0) return { labels: [], source: null };
   const llm = await generateJsonWithLlm(buildLabelPrompt(batch));
-  if (!llm) return { labels: [], source: null };
+  if (!llm.text) {
+    return { labels: [], source: null, error: llm.error };
+  }
   try {
     const parsed = extractJsonObject(llm.text);
+    const labels = parseAiMetadataBatchResponse(
+      parsed,
+      batch.map((b) => b.id),
+    );
+    if (labels.length === 0) {
+      return {
+        labels: [],
+        source: llm.source,
+        error: "Model JSON parsed but no usable difficulty labels matched ids",
+      };
+    }
     return {
-      labels: parseAiMetadataBatchResponse(
-        parsed,
-        batch.map((b) => b.id),
-      ),
+      labels,
       source: llm.source,
     };
-  } catch {
-    return { labels: [], source: llm.source };
+  } catch (e) {
+    return {
+      labels: [],
+      source: llm.source,
+      error: e instanceof Error ? e.message : "Failed to parse model JSON",
+    };
   }
 }
 
@@ -188,17 +206,20 @@ export async function labelMockMetadataInChunks(
   labeledCount: number;
   source: "vertex" | "gemini" | null;
   attempted: number;
+  error?: string;
 }> {
   const batchSize = options?.batchSize ?? BATCH_SIZE;
   const maxQuestions = options?.maxQuestions ?? inputs.length;
   const slice = inputs.slice(0, maxQuestions);
   const labels: AiMetadataLabel[] = [];
   let source: "vertex" | "gemini" | null = null;
+  let error: string | undefined;
 
   for (let i = 0; i < slice.length; i += batchSize) {
     const batch = slice.slice(i, i + batchSize);
     const result = await labelMockMetadataBatch(batch);
     if (result.source) source = result.source;
+    if (result.error && !error) error = result.error;
     labels.push(...result.labels);
   }
 
@@ -207,5 +228,6 @@ export async function labelMockMetadataInChunks(
     labeledCount: labels.length,
     source,
     attempted: slice.length,
+    error,
   };
 }

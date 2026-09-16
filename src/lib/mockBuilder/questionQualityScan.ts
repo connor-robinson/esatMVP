@@ -181,7 +181,7 @@ async function scanBatchWithLlm(
   };
 
   const llm = await generateJsonWithLlm(prompt);
-  if (!llm) return new Map();
+  if (!llm.text) return new Map();
   const parsed = extractJsonObject(llm.text);
   return parseLlmBatch(
     parsed,
