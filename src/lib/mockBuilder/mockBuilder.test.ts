@@ -291,6 +291,17 @@ describe("publish gates", () => {
   });
 });
 
+describe("normalizeMockEstimatedTimeSeconds", () => {
+  it("clamps inflated AI estimates into 40-minute ESAT bands", async () => {
+    const { normalizeMockEstimatedTimeSeconds } = await import("./metadata");
+    expect(normalizeMockEstimatedTimeSeconds(3, 150)).toBe(100);
+    expect(normalizeMockEstimatedTimeSeconds(4, 240)).toBe(120);
+    expect(normalizeMockEstimatedTimeSeconds(5, 220)).toBe(140);
+    expect(normalizeMockEstimatedTimeSeconds(2, 80)).toBe(74);
+    expect(normalizeMockEstimatedTimeSeconds(3, 85)).toBe(85);
+  });
+});
+
 describe("vertex JSON extract", () => {
   it("parses array responses without truncating to the first object", async () => {
     const { extractJsonObject } = await import("./vertexClient");

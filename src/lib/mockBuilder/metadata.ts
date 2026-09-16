@@ -25,12 +25,31 @@ const DIFFICULTY_FROM_LABEL: Record<string, MockDifficulty> = {
   Hard: 4,
 };
 
-const DEFAULT_TIME_BY_DIFFICULTY: Record<MockDifficulty, number> = {
+/**
+ * Per-question defaults sized so a typical 27-question mix lands near
+ * 40 minutes of work (ESAT module time limit).
+ */
+export const DEFAULT_TIME_BY_DIFFICULTY: Record<MockDifficulty, number> = {
   1: 55,
   2: 70,
   3: 85,
   4: 105,
   5: 125,
+};
+
+/**
+ * Allowed AI / stored estimate bands under 40-minute ESAT pressure.
+ * Caps stop inflated labels from producing 60–70 minute "workloads".
+ */
+export const ESTIMATED_TIME_BAND_BY_DIFFICULTY: Record<
+  MockDifficulty,
+  { min: number; max: number }
+> = {
+  1: { min: 40, max: 65 },
+  2: { min: 55, max: 85 },
+  3: { min: 70, max: 100 },
+  4: { min: 90, max: 120 },
+  5: { min: 105, max: 140 },
 };
 
 export function mapLabelToMockDifficulty(
@@ -42,6 +61,31 @@ export function mapLabelToMockDifficulty(
   }
   const key = (label ?? "Medium").trim();
   return DIFFICULTY_FROM_LABEL[key] ?? 3;
+}
+
+/**
+ * Clamp a raw estimate into the ESAT 40-minute band for its difficulty.
+ * Missing / invalid values fall back to the difficulty default.
+ * Values above the band midpoint are pulled toward the ideal so a full
+ * paper stays near 40 minutes instead of stacking at every band ceiling.
+ */
+export function normalizeMockEstimatedTimeSeconds(
+  mockDifficulty: MockDifficulty,
+  raw: number | null | undefined,
+): number {
+  const ideal = DEFAULT_TIME_BY_DIFFICULTY[mockDifficulty];
+  const band = ESTIMATED_TIME_BAND_BY_DIFFICULTY[mockDifficulty];
+  if (raw == null || !Number.isFinite(raw) || raw <= 0) {
+    return ideal;
+  }
+  const rounded = Math.round(raw);
+  if (rounded <= ideal) {
+    return Math.max(band.min, rounded);
+  }
+  // Compress overestimate: keep some signal, but do not let AI leisurely
+  // solve-times dominate a timed module.
+  const compressed = Math.round(ideal + (rounded - ideal) * 0.35);
+  return Math.max(band.min, Math.min(band.max, compressed));
 }
 
 export function heuristicEstimatedTimeSeconds(input: {
@@ -64,7 +108,10 @@ export function heuristicEstimatedTimeSeconds(input: {
   if (input.reasoningType === "estimation") seconds -= 8;
   if (input.stemLength > 600) seconds += 15;
   else if (input.stemLength > 350) seconds += 8;
-  return Math.max(40, Math.min(180, Math.round(seconds)));
+  return normalizeMockEstimatedTimeSeconds(
+    input.mockDifficulty,
+    Math.round(seconds),
+  );
 }
 
 export function inferPresentationType(input: {
@@ -225,7 +272,8 @@ export function toMockCandidate(row: RawBankQuestionRow): MockCandidateQuestion 
     solution: row.solution_reasoning,
   });
 
-  const estimatedTimeSeconds =
+  const estimatedTimeSeconds = normalizeMockEstimatedTimeSeconds(
+    mockDifficulty,
     row.estimated_time_seconds && row.estimated_time_seconds > 0
       ? row.estimated_time_seconds
       : heuristicEstimatedTimeSeconds({
@@ -233,7 +281,8 @@ export function toMockCandidate(row: RawBankQuestionRow): MockCandidateQuestion 
           presentationType,
           reasoningType,
           stemLength: row.question_stem?.length ?? 0,
-        });
+        }),
+  );
 
   const topicCode = normalizeTopicCode(row.primary_tag, row.subjects);
   const topicTitle =

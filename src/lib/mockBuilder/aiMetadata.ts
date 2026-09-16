@@ -5,7 +5,11 @@
 import type { MockDifficulty, ReasoningType, PresentationType } from "./types";
 import { REASONING_TYPES, PRESENTATION_TYPES } from "./types";
 import { extractJsonObject, generateJsonWithLlm } from "./vertexClient";
-import { stemSummary } from "./metadata";
+import {
+  DEFAULT_TIME_BY_DIFFICULTY,
+  normalizeMockEstimatedTimeSeconds,
+  stemSummary,
+} from "./metadata";
 
 export type AiMetadataLabelInput = {
   id: string;
@@ -41,8 +45,8 @@ function clampTime(n: unknown): number | null {
   const v = typeof n === "string" ? Number(n) : n;
   if (typeof v !== "number" || !Number.isFinite(v)) return null;
   const rounded = Math.round(v);
-  // Allow short easy items; still reject absurd outliers.
-  if (rounded < 20 || rounded > 240) return null;
+  // Raw parse only; difficulty band clamp applied in normalizeMockEstimatedTimeSeconds.
+  if (rounded < 20 || rounded > 180) return null;
   return rounded;
 }
 
@@ -85,12 +89,15 @@ export function parseAiMetadataBatchResponse(
       row.mockDifficulty ?? row.mock_difficulty ?? row.difficulty,
     );
     if (mockDifficulty == null) continue;
-    const estimatedTimeSeconds =
-      clampTime(
-        row.estimatedTimeSeconds ??
-          row.estimated_time_seconds ??
-          row.targetSeconds,
-      ) ?? (55 + mockDifficulty * 14);
+    const rawTime = clampTime(
+      row.estimatedTimeSeconds ??
+        row.estimated_time_seconds ??
+        row.targetSeconds,
+    );
+    const estimatedTimeSeconds = normalizeMockEstimatedTimeSeconds(
+      mockDifficulty,
+      rawTime ?? DEFAULT_TIME_BY_DIFFICULTY[mockDifficulty],
+    );
     const reasoningType =
       asReasoning(row.reasoningType ?? row.reasoning_type) ??
       "direct_application";
@@ -124,7 +131,9 @@ function buildLabelPrompt(batch: AiMetadataLabelInput[]) {
       "Judge as ESAT module difficulty under 40-minute / no-calculator pressure.",
       "Do NOT just copy Easy/Medium/Hard bank labels; recalibrate on the 1-5 scale.",
       "Use the full 1-5 range when justified. Most questions will be 2-4; reserve 1 and 5 for clear extremes.",
-      "estimatedTimeSeconds is for a strong candidate working carefully but under time pressure.",
+      "estimatedTimeSeconds is seconds for a strong candidate under real 40-minute module pressure (not leisurely solve time).",
+      "A full 27-question paper must total about 35–42 minutes of work (~75–95s average).",
+      "Typical estimatedTimeSeconds by difficulty: 1→45–65, 2→60–80, 3→75–100, 4→95–120, 5→110–140. Never exceed 150.",
       "Return one item per input id. Prefer {\"items\":[...]} JSON; a bare array of items is also accepted.",
     ],
     questions: batch.map((q) => ({

@@ -905,6 +905,14 @@ export async function generateAndPersist(
     );
   }
 
+  // Hard gate: predicted work must fit a 40-minute ESAT module (blueprint max).
+  const timingMax = blueprint.estimatedTimingSeconds.max;
+  if (assembly.predictedWorkloadSeconds > timingMax) {
+    throw new Error(
+      `Assembled paper predicted workload is ${Math.round(assembly.predictedWorkloadSeconds / 60)} min (${assembly.predictedWorkloadSeconds}s), above the ${Math.round(timingMax / 60)}-minute target max. Re-run generate after shorter questions are labeled, or replace long items.`,
+    );
+  }
+
   const lockMap = new Map(
     lockedSlots.map((s) => [s.questionId, true] as const),
   );

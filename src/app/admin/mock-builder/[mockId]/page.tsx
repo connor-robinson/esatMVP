@@ -384,10 +384,10 @@ export default function AdminMockDetailPage() {
             <div className="font-medium">{vsTypical?.label ?? "–"}</div>
           </div>
           <div>
-            <div className="text-stone-500">Predicted workload</div>
+            <div className="text-stone-500">Predicted workload (40 min limit)</div>
             <div className="font-medium">
               {mock.predicted_workload_seconds != null
-                ? `${Math.round(mock.predicted_workload_seconds / 60)} min (${mock.predicted_workload_seconds}s)`
+                ? `${Math.round(mock.predicted_workload_seconds / 60)} / 40 min (${mock.predicted_workload_seconds}s)`
                 : "–"}
             </div>
           </div>

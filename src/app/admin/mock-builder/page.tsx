@@ -471,7 +471,7 @@ export default function AdminMockBuilderPage() {
                 <th className="py-2 pr-3 font-medium">Access</th>
                 <th className="py-2 pr-3 font-medium">Difficulty</th>
                 <th className="py-2 pr-3 font-medium">Vs typical ESAT</th>
-                <th className="py-2 pr-3 font-medium">Workload</th>
+                <th className="py-2 pr-3 font-medium">Workload / 40 min</th>
                 <th className="py-2 pr-3 font-medium">AI review</th>
                 <th className="py-2 font-medium"> </th>
               </tr>
@@ -504,7 +504,7 @@ export default function AdminMockBuilderPage() {
                   <td className="py-2.5 pr-3 text-text">{vs?.label ?? "–"}</td>
                   <td className="py-2.5 pr-3 tabular-nums text-text">
                     {m.predicted_workload_seconds != null
-                      ? `${Math.round(m.predicted_workload_seconds / 60)} min`
+                      ? `${Math.round(m.predicted_workload_seconds / 60)} / 40 min`
                       : "–"}
                   </td>
                   <td className="py-2.5 pr-3 text-text">

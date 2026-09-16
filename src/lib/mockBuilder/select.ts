@@ -216,7 +216,11 @@ function scoreCandidateFit(
   const remainingSlots = blueprint.questionCount - current.length - 1;
   const projectedFinal =
     projectedTime + remainingSlots * (ideal / blueprint.questionCount);
-  score -= Math.abs(projectedFinal - ideal) / 80;
+  // Strong pull toward ~40 minutes so inflated estimates cannot dominate.
+  score -= Math.abs(projectedFinal - ideal) / 35;
+  if (projectedFinal > blueprint.estimatedTimingSeconds.max) {
+    score -= (projectedFinal - blueprint.estimatedTimingSeconds.max) / 25;
+  }
 
   return score;
 }
