@@ -399,7 +399,7 @@ export function FermiGame({ onExit }: { onExit: () => void }) {
       <div
         className={cn(
           "flex min-h-0 flex-1 justify-center overflow-y-auto px-4 py-4 sm:px-6",
-          displayPhase === "summary" ? "items-start" : "items-start pt-6 sm:pt-10",
+          displayPhase === "summary" ? "items-start" : "items-center",
         )}
       >
         <div className="w-full max-w-3xl">
