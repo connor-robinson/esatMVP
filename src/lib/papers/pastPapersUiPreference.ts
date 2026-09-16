@@ -2,7 +2,9 @@
  * Past Papers layout preference (Home / Library / Roadmap).
  * Home is the new practice-table UI (default). Roadmap is the classic
  * unlock-based stage list. Library is the section browser.
- * Roadmap stays out of the main nav; use the default-layout dropdown.
+ * Saved default only affects the Past Papers nav parent link and the
+ * Default layout dropdown. Explicit nav items (Home, Library, …) always
+ * open their own routes.
  */
 
 import { trackEvent } from "@/lib/ga/trackEvent";

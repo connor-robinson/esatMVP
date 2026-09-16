@@ -17,6 +17,7 @@ export function sessionQuestionPoolLimit(questionCount: number): number {
 export function fingerprintHomeLaunch(
   payload: QuestionBankHomeLaunchPayload,
 ): string {
+  const topics = [...(payload.topics ?? [])].sort();
   return JSON.stringify({
     testType: payload.testType,
     subjects: payload.subjects,
@@ -24,6 +25,11 @@ export function fingerprintHomeLaunch(
     difficulties: payload.difficulties,
     difficultyMix: payload.difficultyMix ?? null,
     timeLimitMinutes: payload.timeLimitMinutes,
+    topics,
+    playMode: payload.incorrectOnly
+      ? "instant"
+      : (payload.playMode ?? "instant"),
+    incorrectOnly: Boolean(payload.incorrectOnly),
   });
 }
 
@@ -38,11 +44,17 @@ export function buildHomeLaunchQuestionsUrl(
   } else if (payload.subjects.length > 1) {
     params.append("subject", payload.subjects.join(","));
   }
+  if (payload.topics && payload.topics.length > 0) {
+    params.append("tags", payload.topics.join(","));
+  }
   params.append("limit", String(sessionQuestionPoolLimit(payload.questionCount)));
   params.append("random", "true");
-  // Skip questions the user already answered. Unanswered items from sessions
-  // left early are not in attempts, so they can still appear.
-  if (opts?.excludeAttempted !== false) {
+  if (payload.incorrectOnly) {
+    // Any prior wrong attempt qualifies, including later-corrected questions.
+    params.append("attemptResult", "Incorrect Before");
+  } else if (opts?.excludeAttempted !== false) {
+    // Skip questions the user already answered. Unanswered items from sessions
+    // left early are not in attempts, so they can still appear.
     params.append("attemptedStatus", "New");
   }
   return `/api/question-bank/questions?${params.toString()}`;

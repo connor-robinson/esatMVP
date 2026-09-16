@@ -48,12 +48,7 @@ import {
   readNewQuestionsOnlyPreference,
   writeNewQuestionsOnlyPreference,
 } from '@/lib/papers/roadmapNewQuestionsPreference';
-import {
-  PAST_PAPERS_HOME_PATH,
-  PAST_PAPERS_LIBRARY_PATH,
-  PAST_PAPERS_ROADMAP_PATH,
-  readPastPapersUiPreference,
-} from '@/lib/papers/pastPapersUiPreference';
+import { PAST_PAPERS_HOME_PATH } from '@/lib/papers/pastPapersUiPreference';
 import {
   countDisplayGroupCompletion,
   groupRoadmapPartsForDisplay,
@@ -94,19 +89,8 @@ export default function PastPapersHomePage() {
   const session = useSupabaseSession();
   const { startSession, setQuestions } = usePaperSessionStore();
 
-  useEffect(() => {
-    if (forceSurvey) return;
-    const pref = readPastPapersUiPreference();
-    // Home is the new practice table. Route away only when the saved default
-    // is a different layout.
-    if (pref === "library") {
-      router.replace(PAST_PAPERS_LIBRARY_PATH);
-      return;
-    }
-    if (pref === "roadmap") {
-      router.replace(PAST_PAPERS_ROADMAP_PATH);
-    }
-  }, [forceSurvey, router]);
+  // Explicit /past-papers (and nav Home) always stays on Home.
+  // Saved default only affects the Past Papers nav parent link + layout dropdown.
   const [stages, setStages] = useState<RoadmapStage[]>(INITIAL_STAGES);
   const [completionData, setCompletionData] = useState<
     Map<string, StageCompletionEntry>

@@ -22,6 +22,11 @@ import { QuestionBankSessionResults } from '@/components/questionBank/QuestionBa
 import { QuestionBankSessionBar } from '@/components/questionBank/QuestionBankSessionBar';
 import { QuestionBankEsatSessionShell } from '@/components/questionBank/QuestionBankEsatSessionShell';
 import { QuestionBankHomeScreen } from '@/components/questionBank/QuestionBankHomeScreen';
+import { PearsonExamPlayer } from '@/components/pearson/PearsonExamPlayer';
+import type { PearsonModuleResult } from '@/lib/pearson/types';
+import {
+  questionBankQuestionsToPearson,
+} from '@/lib/questionBank/toPearsonQuestion';
 import {
   QuestionBankTimeUpModal,
   QUESTION_BANK_TIME_EXTENSION_MINUTES,
@@ -61,6 +66,7 @@ import {
   QUESTION_BANK_HOME_LAUNCH_EVENT,
   QUESTION_BANK_HOME_LAUNCH_KEY,
   type QuestionBankHomeLaunchPayload,
+  type QuestionBankPlayMode,
 } from '@/lib/questionBank/homeLaunch';
 import {
   resolveHookQuestionsForSubjects,
@@ -208,6 +214,8 @@ export default function QuestionBankPage() {
   );
   const [sessionUiVariant, setSessionUiVariant] =
     useState<QuestionBankSessionUiVariant>('esat');
+  const [sessionPlayMode, setSessionPlayMode] =
+    useState<QuestionBankPlayMode>('instant');
   const [flaggedQuestionIds, setFlaggedQuestionIds] = useState<Set<string>>(
     () => new Set(),
   );
@@ -427,12 +435,17 @@ export default function QuestionBankPage() {
   ]);
 
   const completeSession = useCallback(
-    async (options?: { timedOut?: boolean }) => {
+    async (options?: {
+      timedOut?: boolean;
+      attemptsOverride?: QuestionBankSessionAttempt[];
+    }) => {
       if (sessionCompleting) return;
 
       const guestPreview = !session?.user && wasFreeTierSession;
+      // Local experiment: allow guest exam/practice results without free-tier flag.
+      const guestSession = !session?.user && sessionMode;
 
-      if (!session?.user && !guestPreview) {
+      if (!session?.user && !guestPreview && !guestSession) {
         router.push(
           `/login?redirectTo=${encodeURIComponent('/questions/questionbank')}`,
         );
@@ -443,7 +456,73 @@ export default function QuestionBankPage() {
       if (options?.timedOut) {
         setSessionEndedByTimer(true);
       }
-      ensureCurrentQuestionLogged();
+
+      if (options?.attemptsOverride) {
+        sessionAttemptLogRef.current = options.attemptsOverride;
+        setSessionAttemptLog(options.attemptsOverride);
+      } else if (sessionPlayMode === 'exam') {
+        // Inline persist so finish always captures the current selection
+        // even if persistExamSelection is defined later in the component body.
+        if (currentQuestion) {
+          const timeSpentMs = Date.now() - questionStartedAtRef.current;
+          const answer = currentSelection ?? '';
+          const correct =
+            !!answer && answer === currentQuestion.correct_option;
+          if (answer) {
+            const entry = buildSessionAttemptEntry(
+              currentQuestion,
+              sessionCurrentIndex + 1,
+              answer,
+              correct,
+              timeSpentMs,
+              sessionUiDifficulties,
+              {
+                wasRevealed: false,
+                usedHint: false,
+                wrongAnswersBefore: [],
+              },
+            );
+            const next = [
+              ...sessionAttemptLogRef.current.filter(
+                (a) => a.questionId !== currentQuestion.id,
+              ),
+              entry,
+            ];
+            sessionAttemptLogRef.current = next;
+            setSessionAttemptLog(next);
+          }
+        }
+        // Unanswered exam items count as incorrect (exam conditions).
+        const answeredIds = new Set(
+          sessionAttemptLogRef.current.map((a) => a.questionId),
+        );
+        const missing: QuestionBankSessionAttempt[] = [];
+        sessionQuestions.forEach((q, index) => {
+          if (answeredIds.has(q.id)) return;
+          missing.push(
+            buildSessionAttemptEntry(
+              q,
+              index + 1,
+              '',
+              false,
+              0,
+              sessionUiDifficulties,
+              {
+                wasRevealed: false,
+                usedHint: false,
+                wrongAnswersBefore: [],
+              },
+            ),
+          );
+        });
+        if (missing.length > 0) {
+          const next = [...sessionAttemptLogRef.current, ...missing];
+          sessionAttemptLogRef.current = next;
+          setSessionAttemptLog(next);
+        }
+      } else {
+        ensureCurrentQuestionLogged();
+      }
       // Flip UI first so leave/finish is never blocked by persistence.
       setShowLeaveConfirm(false);
       setDeadline(null);
@@ -477,12 +556,19 @@ export default function QuestionBankPage() {
       setSessionCompleting(false);
     },
     [
+      currentQuestion,
+      currentSelection,
       ensureCurrentQuestionLogged,
       ensureSessionRegistered,
       qbSessionId,
       router,
       session?.user,
       sessionCompleting,
+      sessionCurrentIndex,
+      sessionPlayMode,
+      sessionQuestions,
+      sessionUiDifficulties,
+      sessionMode,
       hasFullAccess,
       refreshFreeTier,
       wasFreeTierSession,
@@ -961,6 +1047,8 @@ export default function QuestionBankPage() {
         timeLimitMinutes?: number;
         uiDifficulties?: UiDifficultyLabel[];
         difficultyMix?: DifficultyMixPreset;
+        playMode?: QuestionBankPlayMode;
+        incorrectOnly?: boolean;
       },
       scope?: {
         subjects?: SubjectFilter[];
@@ -970,6 +1058,13 @@ export default function QuestionBankPage() {
       },
     ) => {
       const params = new URLSearchParams();
+      const incorrectOnly = Boolean(config.incorrectOnly);
+      const playMode: QuestionBankPlayMode =
+        incorrectOnly
+          ? 'instant'
+          : config.playMode === 'exam'
+            ? 'exam'
+            : 'instant';
 
       const subjectsResolved: SubjectFilter[] =
         scope?.subjects != null && scope.subjects.length > 0
@@ -1011,8 +1106,17 @@ export default function QuestionBankPage() {
 
       params.append('limit', sessionQuestionPoolLimit(config.count).toString());
       params.append('random', 'true');
-      // Exclude answered questions. Abandoned-session items never attempted stay eligible.
-      if (session?.user) {
+      if (incorrectOnly) {
+        if (!session?.user) {
+          window.alert(
+            'Sign in to practice questions you have gotten wrong before.',
+          );
+          return;
+        }
+        // Any prior wrong attempt qualifies, including later-corrected questions.
+        params.append('attemptResult', 'Incorrect Before');
+      } else if (session?.user) {
+        // Exclude answered questions. Abandoned-session items never attempted stay eligible.
         params.append('attemptedStatus', 'New');
       }
 
@@ -1039,29 +1143,55 @@ export default function QuestionBankPage() {
               ? true
               : config.difficulties.includes(q.difficulty),
           );
-          const hookQuestions = await resolveHookQuestionsForSubjects(
-            subjectsResolved,
-            pool,
-          );
-          const poolIds = new Set(pool.map((q) => q.id));
-          const sessionQs =
-            hookQuestions.length > 0
-              ? buildSessionQuestionsWithHookLead({
-                  pool,
-                  hookQuestions,
-                  count: config.count,
-                  mix,
-                  // Only lead with hooks still in the New-filtered pool so
-                  // attempted hook questions are not replayed every session.
-                  eligibleHookIds: poolIds,
-                })
-              : sampleSessionBankQuestions(pool, config.count, mix);
+
+          // Deduplicate by id so a session never repeats the same question.
+          const seenIds = new Set<string>();
+          const uniquePool = pool.filter((q) => {
+            if (seenIds.has(q.id)) return false;
+            seenIds.add(q.id);
+            return true;
+          });
+
+          let sessionQs: QuestionBankQuestion[];
+          if (incorrectOnly) {
+            // No hook injection: stay inside the incorrect pool only.
+            sessionQs = sampleSessionBankQuestions(
+              uniquePool,
+              Math.min(config.count, uniquePool.length),
+              mix,
+            );
+          } else {
+            const hookQuestions = await resolveHookQuestionsForSubjects(
+              subjectsResolved,
+              uniquePool,
+            );
+            const poolIds = new Set(uniquePool.map((q) => q.id));
+            sessionQs =
+              hookQuestions.length > 0
+                ? buildSessionQuestionsWithHookLead({
+                    pool: uniquePool,
+                    hookQuestions,
+                    count: config.count,
+                    mix,
+                    // Only lead with hooks still in the New-filtered pool so
+                    // attempted hook questions are not replayed every session.
+                    eligibleHookIds: poolIds,
+                  })
+                : sampleSessionBankQuestions(uniquePool, config.count, mix);
+          }
 
           if (sessionQs.length > 0) {
             setSessionQuestions(sessionQs);
             setSessionCurrentIndex(0);
             setSessionMode(true);
+            setSessionPlayMode(playMode);
+            if (playMode === 'exam') {
+              setSessionUiVariant('esat');
+            }
             updateCurrentQuestion(sessionQs[0]);
+            setAnswerRevealed(false);
+            setCurrentSelection(null);
+            setIncorrectAnswers(new Set());
 
             const source =
               scope?.source ??
@@ -1093,13 +1223,29 @@ export default function QuestionBankPage() {
             setRestBreaksEnabled(accessPrefs.restBreaks.enabled);
             setRestBreakActive(false);
             setRestBreaksUsed(0);
-            setDeadline(startTime + timeLimitMs);
             setTimerStartTime(startTime);
             setTimeLimitMinutes(adjustedLimitMinutes);
-            setRemainingTime(Math.ceil(timeLimitMs / 1000));
+            // Pearson owns the countdown in exam mode.
+            if (playMode === 'exam') {
+              setDeadline(null);
+              setRemainingTime(null);
+            } else {
+              setDeadline(startTime + timeLimitMs);
+              setRemainingTime(Math.ceil(timeLimitMs / 1000));
+            }
+          } else if (incorrectOnly) {
+            window.alert(
+              'No incorrectly answered questions match these filters yet.',
+            );
+            router.replace('/questions');
           } else {
             router.replace('/questions');
           }
+        } else if (incorrectOnly) {
+          window.alert(
+            'No incorrectly answered questions match these filters yet.',
+          );
+          router.replace('/questions');
         } else {
           router.replace('/questions');
         }
@@ -1140,7 +1286,7 @@ export default function QuestionBankPage() {
     if (typeof window === 'undefined') return;
 
     const bootHomeLaunch = () => {
-      if (accessPending || !treatAsFullAccess) return;
+      if (accessPending) return;
 
       const raw = sessionStorage.getItem(QUESTION_BANK_HOME_LAUNCH_KEY);
       if (!raw) return;
@@ -1182,11 +1328,18 @@ export default function QuestionBankPage() {
       void handleStartSession(
         {
           count: data.questionCount,
-          topics: [],
+          topics: Array.isArray(data.topics) ? data.topics : [],
           difficulties: data.difficulties,
           timeLimitMinutes: data.timeLimitMinutes,
           uiDifficulties: data.uiDifficulties,
           difficultyMix: data.difficultyMix,
+          playMode:
+            data.incorrectOnly
+              ? 'instant'
+              : data.playMode === 'exam'
+                ? 'exam'
+                : 'instant',
+          incorrectOnly: Boolean(data.incorrectOnly),
         },
         {
           subjects: data.subjects,
@@ -1201,10 +1354,14 @@ export default function QuestionBankPage() {
     return () => {
       window.removeEventListener(QUESTION_BANK_HOME_LAUNCH_EVENT, bootHomeLaunch);
     };
-  }, [handleStartSession, setFilters, treatAsFullAccess, accessPending]);
+  }, [handleStartSession, setFilters, accessPending]);
 
   const handleNextQuestionInSession = async () => {
-    ensureCurrentQuestionLogged();
+    if (sessionPlayMode === 'exam') {
+      persistExamSelection();
+    } else {
+      ensureCurrentQuestionLogged();
+    }
     const nextIndex = sessionCurrentIndex + 1;
     if (nextIndex < sessionQuestions.length) {
       loadSessionQuestionAt(nextIndex);
@@ -1256,6 +1413,13 @@ export default function QuestionBankPage() {
       setSessionCurrentIndex(index);
 
       if (attempt) {
+        if (sessionPlayMode === 'exam' && sessionView === 'playing') {
+          updateCurrentQuestion(nextQuestion);
+          setAnswerRevealed(false);
+          setCurrentSelection(attempt.userAnswer || null);
+          setIncorrectAnswers(new Set());
+          return;
+        }
         const wrongs = new Set(attempt.wrongAnswersBefore ?? []);
         if (attempt.userAnswer && !attempt.isCorrect) {
           wrongs.add(attempt.userAnswer);
@@ -1281,8 +1445,63 @@ export default function QuestionBankPage() {
       setCurrentSelection(null);
       setIncorrectAnswers(new Set());
     },
-    [sessionAttemptLog, sessionQuestions, updateCurrentQuestion],
+    [
+      sessionAttemptLog,
+      sessionPlayMode,
+      sessionQuestions,
+      sessionView,
+      updateCurrentQuestion,
+    ],
   );
+
+  const persistExamSelection = useCallback(() => {
+    if (sessionPlayMode !== 'exam' || sessionView !== 'playing') return;
+    if (!currentQuestion) return;
+
+    const timeSpentMs = Date.now() - questionStartedAtRef.current;
+    const answer = currentSelection ?? '';
+    const correct =
+      !!answer && answer === currentQuestion.correct_option;
+
+    if (!answer) {
+      const next = sessionAttemptLogRef.current.filter(
+        (a) => a.questionId !== currentQuestion.id,
+      );
+      sessionAttemptLogRef.current = next;
+      setSessionAttemptLog(next);
+      return;
+    }
+
+    const entry = buildSessionAttemptEntry(
+      currentQuestion,
+      sessionCurrentIndex + 1,
+      answer,
+      correct,
+      timeSpentMs,
+      sessionUiDifficulties,
+      {
+        wasRevealed: false,
+        usedHint: false,
+        wrongAnswersBefore: [],
+      },
+    );
+
+    const next = [
+      ...sessionAttemptLogRef.current.filter(
+        (a) => a.questionId !== currentQuestion.id,
+      ),
+      entry,
+    ];
+    sessionAttemptLogRef.current = next;
+    setSessionAttemptLog(next);
+  }, [
+    currentQuestion,
+    currentSelection,
+    sessionCurrentIndex,
+    sessionPlayMode,
+    sessionUiDifficulties,
+    sessionView,
+  ]);
 
   const enterReviewAt = useCallback(
     (index: number) => {
@@ -1342,6 +1561,7 @@ export default function QuestionBankPage() {
   // Must stay above any early returns (complete / home / blocked) or React #300 fires.
   const submitCurrentSelection = useCallback(() => {
     if (sessionView === 'review' || !currentQuestion) return;
+    if (sessionPlayMode === 'exam') return;
     if (!currentSelection || incorrectAnswers.has(currentSelection)) return;
     const correct = currentSelection === currentQuestion.correct_option;
     handleSessionAnswerSubmit(currentSelection, correct, {
@@ -1361,12 +1581,14 @@ export default function QuestionBankPage() {
     deadline,
     handleSessionAnswerSubmit,
     incorrectAnswers,
+    sessionPlayMode,
     sessionView,
     showHint,
   ]);
 
   const handleRevealAnswer = useCallback(() => {
     if (sessionView === 'review' || !currentQuestion) return;
+    if (sessionPlayMode === 'exam') return;
     if (answerRevealed || (isAnswered && isCorrect === true)) return;
 
     const correctLetter = currentQuestion.correct_option;
@@ -1385,6 +1607,7 @@ export default function QuestionBankPage() {
     incorrectAnswers,
     isAnswered,
     isCorrect,
+    sessionPlayMode,
     sessionView,
     setCurrentSelection,
     showHint,
@@ -1425,6 +1648,8 @@ export default function QuestionBankPage() {
         subjectsLabel={sessionSubjectsLabel}
         startedAt={sessionStartedAt}
         timedOut={sessionEndedByTimer}
+        playMode={sessionPlayMode}
+        timeLimitMinutes={timeLimitMinutes}
         onBack={() => router.push('/questions')}
         onReviewQuestion={
           sessionQuestions.length > 0 ? enterReviewByQuestionId : undefined
@@ -1503,6 +1728,67 @@ export default function QuestionBankPage() {
       </Fragment>
     ) : null;
 
+  if (showSessionLoading) {
+    return (
+      <Fragment>
+        <QuestionBankSessionLoadingScreen />
+      </Fragment>
+    );
+  }
+
+  // Exam mode: real Pearson specimen player with purple chrome.
+  if (
+    activeSession &&
+    sessionPlayMode === 'exam' &&
+    sessionView === 'playing' &&
+    sessionQuestions.length > 0
+  ) {
+    const pearsonQuestions = questionBankQuestionsToPearson(sessionQuestions);
+    const handlePearsonExamComplete = (result: PearsonModuleResult) => {
+      const attempts = sessionQuestions.map((q, index) => {
+        const pearsonId = index + 1;
+        const letter = result.answers[pearsonId] ?? '';
+        const answer = letter || '';
+        const correct = !!answer && answer === q.correct_option;
+        return buildSessionAttemptEntry(
+          q,
+          index + 1,
+          answer,
+          correct,
+          0,
+          sessionUiDifficulties,
+          {
+            wasRevealed: false,
+            usedHint: false,
+            wrongAnswersBefore: [],
+          },
+        );
+      });
+      void completeSession({
+        timedOut: result.remainingMsAtEnd <= 0,
+        attemptsOverride: attempts,
+      });
+    };
+
+    return (
+      <PearsonExamPlayer
+        mode="strict-simulation"
+        examTitle="Question bank"
+        questions={pearsonQuestions}
+        timeLimitSeconds={Math.max(60, Math.round(timeLimitMinutes * 60))}
+        introMode="resume-questions"
+        suppressCompleteScreen
+        chromeVariant="purple"
+        moduleTransition={{ enabled: false }}
+        sessionId={qbSessionId}
+        restBreaksEnabled={restBreaksEnabled}
+        onRestBreakChange={setRestBreakActive}
+        onModuleComplete={handlePearsonExamComplete}
+        isLastModule
+      />
+    );
+  }
+
   if (activeSession && currentQuestion && sessionUiVariant === 'esat') {
     return (
       <Fragment>
@@ -1517,6 +1803,8 @@ export default function QuestionBankPage() {
           }
           timerLabel={formatTimerDisplay()}
           reviewMode={sessionView === 'review'}
+          examMode={sessionPlayMode === 'exam'}
+          instantReveal={false}
           currentSelection={currentSelection}
           incorrectAnswers={incorrectAnswers}
           isAnswered={isAnswered}
@@ -1566,12 +1854,18 @@ export default function QuestionBankPage() {
               enterReviewAt(sessionCurrentIndex - 1);
               return;
             }
+            if (sessionPlayMode === 'exam') {
+              persistExamSelection();
+            }
             loadSessionQuestionAt(sessionCurrentIndex - 1);
           }}
           onJumpTo={(index) => {
             if (sessionView === 'review') {
               enterReviewAt(index);
               return;
+            }
+            if (sessionPlayMode === 'exam') {
+              persistExamSelection();
             }
             loadSessionQuestionAt(index);
           }}

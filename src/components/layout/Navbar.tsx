@@ -61,6 +61,11 @@ import {
 import { InboxNavButton } from '@/components/inbox/InboxNavButton';
 import { DEFAULT_POST_AUTH_PATH } from '@/lib/onboarding/redirect';
 import { useHomepageAutoHideNav } from '@/hooks/useHomepageAutoHideNav';
+import {
+  PAST_PAPERS_HOME_PATH,
+  pathForPastPapersPreference,
+  readPastPapersUiPreference,
+} from '@/lib/papers/pastPapersUiPreference';
 
 /** Unified lucide sizing so logout / login glyphs match sun + gear optically */
 const NAV_ICON_PX = 20;
@@ -112,11 +117,12 @@ const navSections: NavSectionConfig[] = [
   },
   {
     label: 'Past Papers',
-    href: '/past-papers',
+    // Parent label uses the saved default layout (see resolvedNavSections).
+    href: PAST_PAPERS_HOME_PATH,
     section: 'papers',
     items: [
       {
-        href: '/past-papers',
+        href: PAST_PAPERS_HOME_PATH,
         label: 'Home',
         description: 'Practice table',
         icon: Home,
@@ -249,9 +255,29 @@ export function Navbar() {
     const redirectTo =
       pathname && pathname !== '/login' && pathname !== '/'
         ? pathname
-        : '/past-papers';
+        : PAST_PAPERS_HOME_PATH;
     return `/login?mode=signup&redirectTo=${encodeURIComponent(redirectTo)}`;
   }, [pathname]);
+
+  /** Past Papers parent label → saved default; child items keep fixed paths. */
+  const [pastPapersDefaultHref, setPastPapersDefaultHref] = useState(
+    PAST_PAPERS_HOME_PATH,
+  );
+  useEffect(() => {
+    setPastPapersDefaultHref(
+      pathForPastPapersPreference(readPastPapersUiPreference()),
+    );
+  }, [pathname]);
+
+  const resolvedNavSections = useMemo(
+    () =>
+      navSections.map((section) =>
+        section.section === 'papers'
+          ? { ...section, href: pastPapersDefaultHref }
+          : section,
+      ),
+    [pastPapersDefaultHref],
+  );
 
   /** Shared pill style for Sign up / Sign in and Upgrade for free */
   const navCtaClass = cn(
@@ -532,7 +558,7 @@ export function Navbar() {
 
                 {!isImmersivePaperView && (
                   <div className='hidden min-w-0 flex-1 items-center gap-x-4 lg:gap-x-6 xl:gap-x-7 md:flex'>
-                    {navSections.map((section) => (
+                    {resolvedNavSections.map((section) => (
                       <NavSectionDropdown
                         key={section.section}
                         config={section}
@@ -579,7 +605,7 @@ export function Navbar() {
             {!isImmersivePaperView && mobileMenuOpen && (
               <div className='border-t border-border-subtle pb-5 pt-4 md:hidden'>
                 <div className='flex flex-col gap-6'>
-                  {navSections.map((section) => (
+                  {resolvedNavSections.map((section) => (
                     <div key={section.section}>
                       <Link
                         href={section.href}

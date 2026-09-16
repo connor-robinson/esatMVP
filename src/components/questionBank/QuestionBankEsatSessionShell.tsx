@@ -75,9 +75,12 @@ export interface QuestionBankEsatSessionShellProps {
   remainingTimeMs: number | null;
   timerLabel: string;
   reviewMode?: boolean;
-  /** Instant: feedback as you go. Exam: no feedback until finish. */
+  /** Practice: feedback as you go. Exam: no feedback until finish. */
   examMode?: boolean;
-  /** Instant mode: selecting an option immediately checks it. */
+  /**
+   * Legacy: selecting an option immediately checks it.
+   * Prefer false so Practice requires Check answer / Next.
+   */
   instantReveal?: boolean;
   currentSelection: string | null;
   incorrectAnswers: Set<string>;

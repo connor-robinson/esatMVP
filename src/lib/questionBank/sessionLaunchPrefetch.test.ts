@@ -17,8 +17,8 @@ const samplePayload: QuestionBankHomeLaunchPayload = {
 
 describe("sessionLaunchPrefetch", () => {
   it("sizes the question pool tightly around the requested count", () => {
-    expect(sessionQuestionPoolLimit(30)).toBe(60);
-    expect(sessionQuestionPoolLimit(5)).toBe(20);
+    expect(sessionQuestionPoolLimit(30)).toBe(120);
+    expect(sessionQuestionPoolLimit(5)).toBe(45);
   });
 
   it("builds a random subject-scoped fetch URL", () => {
@@ -26,8 +26,20 @@ describe("sessionLaunchPrefetch", () => {
     expect(url).toContain("/api/question-bank/questions?");
     expect(url).toContain("testType=ESAT");
     expect(url).toContain("subject=Math+1");
-    expect(url).toContain("limit=60");
+    expect(url).toContain("limit=120");
     expect(url).toContain("random=true");
+    expect(url).toContain("attemptedStatus=New");
+    expect(url).not.toContain("attemptResult=");
+  });
+
+  it("builds an incorrect-only fetch URL without New filter", () => {
+    const url = buildHomeLaunchQuestionsUrl({
+      ...samplePayload,
+      incorrectOnly: true,
+      playMode: "exam",
+    });
+    expect(url).toContain("attemptResult=Incorrect+Before");
+    expect(url).not.toContain("attemptedStatus=");
   });
 
   it("fingerprints launches by session settings", () => {
@@ -37,5 +49,10 @@ describe("sessionLaunchPrefetch", () => {
       questionCount: 31,
     });
     expect(a).not.toEqual(b);
+    const c = fingerprintHomeLaunch({
+      ...samplePayload,
+      incorrectOnly: true,
+    });
+    expect(a).not.toEqual(c);
   });
 });
