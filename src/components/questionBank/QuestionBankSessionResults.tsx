@@ -316,10 +316,6 @@ export function QuestionBankSessionResults({
                   <div className="text-5xl font-bold tabular-nums leading-none text-text sm:text-6xl">
                     {examEstimate.score.toFixed(1)}
                   </div>
-                  <p className="mt-3 max-w-xl text-sm leading-relaxed text-text-muted">
-                    Rough 1.0–9.0 estimate from difficulty-weighted accuracy and
-                    pace vs your time limit. Not an official ESAT conversion.
-                  </p>
                 </div>
                 <div className="shrink-0 text-left sm:text-right">
                   <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
