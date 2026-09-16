@@ -233,7 +233,7 @@ export function QuestionBankSessionSettingsModal({
   const [advanced, setAdvanced] = useState(false);
   const [playMode, setPlayMode] = useState<QuestionBankPlayMode>("instant");
   const [questionPool, setQuestionPool] =
-    useState<QuestionBankQuestionPool>("all");
+    useState<QuestionBankQuestionPool>("new");
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [topicOptions, setTopicOptions] = useState<LibraryOutlineTag[]>([]);
   const [topicsLoading, setTopicsLoading] = useState(false);
@@ -272,7 +272,7 @@ export function QuestionBankSessionSettingsModal({
     setDifficultyMix(isMixed ? "Medium" : "Auto");
     setAdvanced(Boolean(isMixed));
     setPlayMode("instant");
-    setQuestionPool("all");
+    setQuestionPool("new");
     setSelectedTopics([]);
     setTopicOptions([]);
     setTopicsError(null);
@@ -368,7 +368,7 @@ export function QuestionBankSessionSettingsModal({
       setSubjectKeys([originTile.key as SubjectFilter]);
       setSelectedTopics([]);
       setPlayMode("instant");
-      setQuestionPool("all");
+      setQuestionPool("new");
     } else if (next && isMixed && originTile) {
       setSubjectKeys(siblingTiles.map((t) => t.key as SubjectFilter));
     }
@@ -439,7 +439,7 @@ export function QuestionBankSessionSettingsModal({
   const handleStart = () => {
     if (!originTile || subjectKeys.length === 0) return;
     const pool: QuestionBankQuestionPool =
-      advanced && !previewOnly ? questionPool : "all";
+      advanced && !previewOnly ? questionPool : "new";
     onConfirm({
       testType: originTile.testType,
       subjects: subjectKeys,
@@ -592,12 +592,12 @@ export function QuestionBankSessionSettingsModal({
       <div className="grid grid-cols-3 gap-2">
         {(
           [
-            { id: "all", label: "All" },
-            { id: "mixed", label: "Mixed" },
+            { id: "new", label: "New" },
             { id: "incorrect", label: "Incorrect" },
+            { id: "mixed", label: "Mixed" },
           ] as const
         ).map((option) => {
-          const needsAuth = option.id !== "all";
+          const needsAuth = option.id !== "new";
           const active = questionPool === option.id;
           const disabled = needsAuth && previewOnly;
           return (
@@ -613,7 +613,7 @@ export function QuestionBankSessionSettingsModal({
                     ? "Only questions you have gotten wrong at least once"
                     : option.id === "mixed"
                       ? "Blend prior incorrect questions with new ones"
-                      : undefined
+                      : "Only questions you have not answered yet"
               }
               className={cn(
                 "rounded-organic-lg px-2 py-3 text-sm font-semibold transition-colors sm:px-3",

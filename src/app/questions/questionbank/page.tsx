@@ -1156,7 +1156,7 @@ export default function QuestionBankPage() {
                 { credentials: 'include' },
               ),
               fetch(
-                buildHomeLaunchQuestionsUrl(launchPayload, { pool: 'all' }),
+                buildHomeLaunchQuestionsUrl(launchPayload, { pool: 'new' }),
                 { credentials: 'include' },
               ),
             ]);

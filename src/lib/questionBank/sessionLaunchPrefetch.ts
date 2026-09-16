@@ -70,7 +70,7 @@ function appendSharedLaunchParams(
 
 export function buildHomeLaunchQuestionsUrl(
   payload: QuestionBankHomeLaunchPayload,
-  opts?: { excludeAttempted?: boolean; pool?: "all" | "incorrect" },
+  opts?: { excludeAttempted?: boolean; pool?: "new" | "incorrect" },
 ): string {
   const params = new URLSearchParams();
   appendSharedLaunchParams(params, payload);
@@ -188,7 +188,7 @@ export function beginHomeLaunchQuestionsPrefetch(
             buildHomeLaunchQuestionsUrl(payload, { pool: "incorrect" }),
           ),
           fetchLaunchQuestions(
-            buildHomeLaunchQuestionsUrl(payload, { pool: "all" }),
+            buildHomeLaunchQuestionsUrl(payload, { pool: "new" }),
           ),
         ]).then(([incorrect, fresh]) => {
           const incorrectList = incorrect ?? [];

@@ -10,7 +10,7 @@ export const QUESTION_BANK_HOME_LAUNCH_KEY = "questionBankHomeLaunch";
 export type QuestionBankPlayMode = "instant" | "exam";
 
 /** Which questions fill the session pool. */
-export type QuestionBankQuestionPool = "all" | "incorrect" | "mixed";
+export type QuestionBankQuestionPool = "new" | "incorrect" | "mixed";
 
 export interface QuestionBankHomeLaunchPayload {
   testType: "ESAT" | "TMUA";
@@ -31,12 +31,12 @@ export interface QuestionBankHomeLaunchPayload {
   /** Practice feedback style. Defaults to practice (`instant`) when omitted. */
   playMode?: QuestionBankPlayMode;
   /**
-   * Session question source. Defaults to `all`.
-   * - `all`: prefer unanswered / New
+   * Session question source. Defaults to `new`.
+   * - `new`: unanswered / New only
    * - `incorrect`: only questions with any prior wrong attempt
    * - `mixed`: blend prior incorrect with New questions
    */
-  questionPool?: QuestionBankQuestionPool;
+  questionPool?: QuestionBankQuestionPool | "all";
   /**
    * @deprecated Prefer `questionPool: "incorrect"`. Kept for older launches.
    */
@@ -51,8 +51,11 @@ export interface QuestionBankHomeLaunchPayload {
 export function resolveQuestionPool(
   payload: Pick<QuestionBankHomeLaunchPayload, "questionPool" | "incorrectOnly">,
 ): QuestionBankQuestionPool {
-  if (payload.questionPool === "all" || payload.questionPool === "incorrect" || payload.questionPool === "mixed") {
+  if (payload.questionPool === "new" || payload.questionPool === "all") {
+    return "new";
+  }
+  if (payload.questionPool === "incorrect" || payload.questionPool === "mixed") {
     return payload.questionPool;
   }
-  return payload.incorrectOnly ? "incorrect" : "all";
+  return payload.incorrectOnly ? "incorrect" : "new";
 }
