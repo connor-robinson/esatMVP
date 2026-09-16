@@ -1,0 +1,71 @@
+# When a Vercel deployment fails (usually TypeScript / next build), open a GitHub issue
+# with the failure details so it is visible and easy to hand to an agent to fix.
+# Does not auto-commit fixes: that would be unsafe on main without review.
+
+name: Vercel deploy failure alert
+
+on:
+  deployment_status:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  alert:
+    name: Open issue on failed deploy
+    if: >-
+      github.event.deployment_status.state == 'failure' &&
+      (github.event.deployment.environment == 'Production' ||
+       github.event.deployment.environment == 'production' ||
+       contains(github.event.deployment.environment, 'Production'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Find existing open alert for this commit
+        id: existing
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA: ${{ github.event.deployment.sha }}
+        run: |
+          set -euo pipefail
+          short="${SHA:0:7}"
+          q="repo:${{ github.repository }} is:issue is:open in:title \"Vercel deploy failed\" \"${short}\""
+          count="$(gh issue list --search "$q" --limit 1 --json number --jq 'length')"
+          echo "count=${count}" >> "$GITHUB_OUTPUT"
+
+      - name: Create issue
+        if: steps.existing.outputs.count == '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA: ${{ github.event.deployment.sha }}
+          ENV: ${{ github.event.deployment.environment }}
+          TARGET: ${{ github.event.deployment_status.target_url }}
+          DESC: ${{ github.event.deployment_status.description }}
+          LOG: ${{ github.event.deployment_status.log_url }}
+        run: |
+          set -euo pipefail
+          short="${SHA:0:7}"
+          title="Vercel deploy failed (${ENV}) @ ${short}"
+          body="$(cat <<EOF
+          ## Vercel deployment failed
+
+          - **Environment:** ${ENV}
+          - **Commit:** ${SHA}
+          - **Status:** ${DESC:-unknown}
+          - **Deployment:** ${TARGET:-n/a}
+          - **Logs:** ${LOG:-n/a}
+
+          ### Suggested fix prompt
+
+          Paste into Cursor:
+
+          \`\`\`
+          Vercel production deploy failed for commit ${SHA}.
+          Open the deployment logs, find the build/type error, fix it in the repo, run \`npm run type-check\`, then commit and push.
+          \`\`\`
+
+          _Opened automatically by \`.github/workflows/vercel-deploy-failure.yml\`._
+          EOF
+          )"
+          gh issue create --title "$title" --body "$body" --label "bug" || \
+            gh issue create --title "$title" --body "$body"

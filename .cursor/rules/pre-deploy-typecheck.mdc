@@ -1,0 +1,21 @@
+---
+description: Run type-check before finishing TypeScript/Next changes that could break Vercel builds
+globs: src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Pre-deploy type safety
+
+Vercel runs `next build`, which typechecks. Local `npm run build` is slow; prefer:
+
+```bash
+npm run type-check
+```
+
+Before ending a task that touches `src/**/*.ts` or `src/**/*.tsx` (especially `src/lib/**` or admin APIs):
+
+1. Run `npm run type-check`
+2. Fix any errors you introduced
+3. Only then commit/push
+
+Do not leave known `tsc` errors for Vercel to catch.
