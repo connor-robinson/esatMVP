@@ -37,13 +37,6 @@ const TIME_STEP = 0.5;
 const TIME_MIN = 0.5;
 const TIME_MAX = 180;
 
-/** Advanced mode: pick a concrete mix (no Auto). */
-const ADVANCED_DIFFICULTY_OPTIONS: DifficultyMixPreset[] = [
-  "Easy",
-  "Medium",
-  "Hard",
-];
-
 const EMPTY_LIBRARY_FILTERS: LibraryFilters = {
   searchQuery: "",
   subjectFilter: "ALL",
@@ -304,17 +297,13 @@ export function QuestionBankSessionSettingsModal({
   const handleAdvancedChange = (next: boolean) => {
     setAdvanced(next);
     if (!next && originTile) {
-      // Leaving advanced: lock back to a single subject.
+      // Leaving advanced: lock back to a single subject; keep difficulty / time.
       setSubjectKeys([originTile.key as SubjectFilter]);
       setSelectedTopics([]);
       setPlayMode("instant");
       setIncorrectOnly(false);
-    } else if (next) {
-      if (isMixed && originTile) {
-        setSubjectKeys(siblingTiles.map((t) => t.key as SubjectFilter));
-      }
-      // Advanced never uses Auto - snap to a concrete mix.
-      setDifficultyMix((prev) => (prev === "Auto" ? "Medium" : prev));
+    } else if (next && isMixed && originTile) {
+      setSubjectKeys(siblingTiles.map((t) => t.key as SubjectFilter));
     }
   };
 
@@ -427,7 +416,7 @@ export function QuestionBankSessionSettingsModal({
       </div>
     ) : null;
 
-  const regularDifficultyBlock = (
+  const difficultyBlock = (
     <div className={cn("space-y-3", !showSubjectToggles && "lg:col-span-2")}>
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5">
@@ -456,39 +445,6 @@ export function QuestionBankSessionSettingsModal({
     </div>
   );
 
-  const advancedDifficultyBlock = (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
-          Difficulty
-        </span>
-        <span className="text-xs font-medium text-text-muted">
-          {DIFFICULTY_MIX_BLURBS[difficultyMix]}
-        </span>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {ADVANCED_DIFFICULTY_OPTIONS.map((option) => {
-          const active = difficultyMix === option;
-          return (
-            <button
-              key={option}
-              type="button"
-              onClick={() => setDifficultyMix(option)}
-              className={cn(
-                "rounded-organic-md px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors",
-                active
-                  ? "bg-secondary text-background"
-                  : "bg-surface-elevated text-text hover:bg-surface-mid",
-              )}
-            >
-              {option}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-
   const playModeBlock = (
     <div className="space-y-3">
       <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
@@ -502,7 +458,7 @@ export function QuestionBankSessionSettingsModal({
             "rounded-organic-lg px-4 py-3 text-sm font-semibold transition-colors",
             playMode === "instant" || incorrectOnly
               ? "bg-secondary text-background"
-              : "bg-surface-elevated text-text hover:bg-surface-mid",
+              : "bg-surface text-text hover:bg-surface-mid",
           )}
         >
           Practice
@@ -515,9 +471,9 @@ export function QuestionBankSessionSettingsModal({
             "rounded-organic-lg px-4 py-3 text-sm font-semibold transition-colors",
             playMode === "exam" && !incorrectOnly
               ? "bg-[#6b4a72] text-white"
-              : "bg-surface-elevated text-text hover:bg-surface-mid",
+              : "bg-surface text-text hover:bg-surface-mid",
             incorrectOnly &&
-              "cursor-not-allowed opacity-45 hover:bg-surface-elevated",
+              "cursor-not-allowed opacity-45 hover:bg-surface",
           )}
         >
           Exam mode
@@ -539,7 +495,7 @@ export function QuestionBankSessionSettingsModal({
             "rounded-organic-lg px-4 py-3 text-sm font-semibold transition-colors",
             !incorrectOnly
               ? "bg-secondary text-background"
-              : "bg-surface-elevated text-text hover:bg-surface-mid",
+              : "bg-surface text-text hover:bg-surface-mid",
           )}
         >
           All questions
@@ -557,9 +513,9 @@ export function QuestionBankSessionSettingsModal({
             "rounded-organic-lg px-4 py-3 text-sm font-semibold transition-colors",
             incorrectOnly
               ? "bg-secondary text-background"
-              : "bg-surface-elevated text-text hover:bg-surface-mid",
+              : "bg-surface text-text hover:bg-surface-mid",
             previewOnly &&
-              "cursor-not-allowed opacity-45 hover:bg-surface-elevated",
+              "cursor-not-allowed opacity-45 hover:bg-surface",
           )}
         >
           Incorrect only
@@ -592,9 +548,9 @@ export function QuestionBankSessionSettingsModal({
       </div>
 
       {!topicFilterEnabled ? (
-        <p className="rounded-organic-lg bg-surface-elevated px-4 py-3 text-xs leading-relaxed text-text-muted">
-          Topic filter needs exactly one subject. Deselect extras below to
-          filter by curriculum topic.
+        <p className="rounded-organic-lg bg-surface px-4 py-3 text-xs leading-relaxed text-text-muted">
+          Topic filter needs exactly one subject. Deselect extras in Subjects
+          above to filter by curriculum topic.
         </p>
       ) : topicsLoading ? (
         <p className="text-xs text-text-muted">Loading topics…</p>
@@ -618,7 +574,7 @@ export function QuestionBankSessionSettingsModal({
                   "rounded-organic-md px-3 py-2 text-left text-xs font-medium transition-colors",
                   active
                     ? "bg-secondary text-background"
-                    : "bg-surface-elevated text-text hover:bg-surface-mid",
+                    : "bg-surface text-text hover:bg-surface-mid",
                 )}
                 title={topic.tag}
               >
@@ -707,10 +663,7 @@ export function QuestionBankSessionSettingsModal({
         onClick={onClose}
       />
       <div
-        className={cn(
-          "relative z-[101] flex w-full max-w-[960px] flex-col overflow-hidden rounded-[4px] bg-surface p-8 sm:p-10",
-          advanced ? "max-h-[min(94vh,920px)]" : "max-h-[min(92vh,880px)]",
-        )}
+        className="relative z-[101] flex w-full max-w-[960px] max-h-[min(94vh,920px)] flex-col overflow-hidden rounded-[4px] bg-surface p-8 sm:p-10"
       >
         <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden pr-1">
           {/* Header */}
@@ -722,14 +675,12 @@ export function QuestionBankSessionSettingsModal({
               >
                 {modalTitle}
               </h2>
-              {!advanced ? (
-                <p className="text-sm text-text-muted">
-                  {previewOnly
-                    ? "Preview session options. Turn on Advanced for more controls."
-                    : "Configure your practice session before you start."}
-                </p>
-              ) : null}
-              {previewOnly && !advanced ? (
+              <p className="text-sm text-text-muted">
+                {previewOnly
+                  ? "Preview session options. Turn on Advanced for more controls."
+                  : "Configure your practice session before you start."}
+              </p>
+              {previewOnly ? (
                 <p className="text-xs text-text-muted">
                   You are not on full access, so Start may open a free preview
                   instead of a full exam/practice session.
@@ -752,29 +703,56 @@ export function QuestionBankSessionSettingsModal({
             </div>
           </div>
 
-          {advanced ? (
-            <div className="mt-6 space-y-6">
-              {playModeBlock}
-              {questionPoolBlock}
-              {topicsBlock}
-              {subjectsBlock}
-              {advancedDifficultyBlock}
-              {timeQuestionsBlock}
-            </div>
-          ) : (
-            <>
+          {/* Stable core: stays put when Advanced opens */}
+          <div
+            className={cn(
+              "mt-8 grid gap-6 lg:gap-8",
+              showSubjectToggles ? "lg:grid-cols-2" : "grid-cols-1",
+            )}
+          >
+            {subjectsBlock}
+            {difficultyBlock}
+          </div>
+          <div className="mt-8">{timeQuestionsBlock}</div>
+
+          {/* Advanced panel: expands below without reshuffling the core */}
+          <div
+            className={cn(
+              "grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+              advanced ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+            )}
+            aria-hidden={!advanced}
+          >
+            <div className="min-h-0 overflow-hidden">
               <div
                 className={cn(
-                  "mt-8 grid gap-6 lg:gap-8",
-                  showSubjectToggles ? "lg:grid-cols-2" : "grid-cols-1",
+                  "mt-6 space-y-5 rounded-[4px] bg-surface-elevated/55 px-4 py-5 sm:px-5",
+                  "transition-opacity duration-300 ease-out",
+                  advanced
+                    ? "pointer-events-auto opacity-100"
+                    : "pointer-events-none opacity-0",
                 )}
               >
-                {subjectsBlock}
-                {regularDifficultyBlock}
+                <div className="flex items-baseline justify-between gap-3">
+                  <h3 className="text-xs font-semibold uppercase tracking-wide text-text">
+                    Advanced options
+                  </h3>
+                  <span className="text-[11px] text-text-muted">
+                    Play style, pool, and topics
+                  </span>
+                </div>
+
+                <div className="grid gap-5 sm:grid-cols-2 sm:gap-6">
+                  {playModeBlock}
+                  {questionPoolBlock}
+                </div>
+
+                <div className="border-t border-transparent pt-1">
+                  {topicsBlock}
+                </div>
               </div>
-              <div className="mt-8">{timeQuestionsBlock}</div>
-            </>
-          )}
+            </div>
+          </div>
         </div>
 
         {/* Footer */}
