@@ -37,11 +37,11 @@ export function getSubjectPillActiveClass(subject: SubjectFilter): string {
   return SUBJECT_PILL_ACTIVE[subject] ?? SUBJECT_PILL_ACTIVE.All;
 }
 
-/** Session settings - subject hue as pill background, neutral label text. */
+/** Session settings - subject hue as pill background, black label text. */
 export function getSubjectSessionPillActiveClass(subject: SubjectFilter): string {
   const key = resolveSubjectTileKey(subject);
-  if (!key) return "bg-surface-mid text-text";
-  return cn(SUBJECT_TILE_STYLES[key].progressFillClass, "text-text");
+  if (!key) return "bg-surface-mid text-black";
+  return cn(SUBJECT_TILE_STYLES[key].progressFillClass, "text-black");
 }
 
 export function getSubjectPillClass(subject?: string | null): string {
