@@ -67,6 +67,12 @@ type Props = {
     options: RoadmapStartOptions,
   ) => void;
   onCompletionChange: () => void | Promise<void>;
+  /** When set, show subject-suggestion copy + Show all / Show suggested toggle. */
+  subjectSuggestion?: {
+    subjects: string[];
+    showingAll: boolean;
+    onToggleShowAll: () => void;
+  } | null;
 };
 
 const TAB_ORDER: ExamTab[] = ["NSAA", "ENGAA", "TMUA", "Mocks"];
@@ -332,6 +338,7 @@ export function RoadmapTable({
   onNewQuestionsOnlyChange,
   onStartSession,
   onCompletionChange,
+  subjectSuggestion = null,
 }: Props) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [statusBusyId, setStatusBusyId] = useState<string | null>(null);
@@ -447,6 +454,32 @@ export function RoadmapTable({
             </>
           )}
         </p>
+        {subjectSuggestion ? (
+          <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
+            <p className="text-sm text-text-muted">
+              {subjectSuggestion.showingAll ? (
+                <>Showing all past papers.</>
+              ) : subjectSuggestion.subjects.length > 0 ? (
+                <>
+                  Suggested based on your indicated ESAT subjects:{" "}
+                  <span className="font-medium text-text">
+                    {subjectSuggestion.subjects.join(", ")}
+                  </span>
+                  .
+                </>
+              ) : (
+                <>Suggested based on your exam preference.</>
+              )}
+            </p>
+            <button
+              type="button"
+              onClick={subjectSuggestion.onToggleShowAll}
+              className="rounded-sm px-2.5 py-1 text-sm font-medium text-primary ring-1 ring-primary/35 transition-colors hover:bg-primary/10"
+            >
+              {subjectSuggestion.showingAll ? "Show suggested" : "Show all"}
+            </button>
+          </div>
+        ) : null}
       </div>
 
       {availableTabs.length > 0 ? (

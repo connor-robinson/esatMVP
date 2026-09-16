@@ -110,6 +110,7 @@ export default function PapersRoadmapPage() {
     examPreference: 'ESAT',
     subjects: ['Math 1', 'Physics'],
   });
+  const [showAllPapers, setShowAllPapers] = useState(false);
 
   const effectiveExamPreference = useMemo((): "ESAT" | "TMUA" | null => {
     if (subjectPreview.enabled) return subjectPreview.examPreference;
@@ -137,6 +138,39 @@ export default function PapersRoadmapPage() {
       ),
     [stages, effectiveEsatSubjects, effectiveExamPreference],
   );
+
+  const subjectFilterRelevant = useMemo(() => {
+    if (effectiveExamPreference === "TMUA") return true;
+    return (
+      effectiveExamPreference === "ESAT" &&
+      (effectiveEsatSubjects?.length ?? 0) > 0
+    );
+  }, [effectiveExamPreference, effectiveEsatSubjects]);
+
+  const displayedStages = useMemo(() => {
+    if (!subjectFilterRelevant || showAllPapers) return stages;
+    return subjectFilteredStages;
+  }, [
+    subjectFilterRelevant,
+    showAllPapers,
+    stages,
+    subjectFilteredStages,
+  ]);
+
+  const subjectSuggestion = useMemo(() => {
+    if (!subjectFilterRelevant) return null;
+    return {
+      subjects:
+        effectiveExamPreference === "ESAT" ? (effectiveEsatSubjects ?? []) : [],
+      showingAll: showAllPapers,
+      onToggleShowAll: () => setShowAllPapers((v) => !v),
+    };
+  }, [
+    subjectFilterRelevant,
+    effectiveExamPreference,
+    effectiveEsatSubjects,
+    showAllPapers,
+  ]);
 
   // Load user exam preference + ESAT subjects
   useEffect(() => {
@@ -226,7 +260,7 @@ export default function PapersRoadmapPage() {
 
   // Load completion in background (progress rings, unlock state)
   useEffect(() => {
-    if (subjectFilteredStages.length === 0) return;
+    if (displayedStages.length === 0) return;
 
     let cancelled = false;
 
@@ -240,7 +274,7 @@ export default function PapersRoadmapPage() {
             await import('@/lib/papers/roadmapCompletion');
           const completedPartIds = await getCompletedPartIds(session.user.id);
 
-          for (const stage of subjectFilteredStages) {
+          for (const stage of displayedStages) {
             const parts = await getStageCompletionFromSessions(
               session.user.id,
               stage,
@@ -261,7 +295,7 @@ export default function PapersRoadmapPage() {
             });
           }
         } else {
-          for (const stage of subjectFilteredStages) {
+          for (const stage of displayedStages) {
             completionMap.set(stage.id, {
               completed: 0,
               total: groupRoadmapPartsForDisplay(stage.parts).length,
@@ -276,7 +310,7 @@ export default function PapersRoadmapPage() {
       } catch (error) {
         if (cancelled) return;
 
-        const fallback = buildDefaultCompletion(subjectFilteredStages);
+        const fallback = buildDefaultCompletion(displayedStages);
         setCompletionData(fallback);
       } finally {
         if (!cancelled) setCompletionLoading(false);
@@ -287,14 +321,14 @@ export default function PapersRoadmapPage() {
     return () => {
       cancelled = true;
     };
-  }, [session?.user?.id, subjectFilteredStages]);
+  }, [session?.user?.id, displayedStages]);
 
   // Load predicted / accuracy scores for completed sessions
   useEffect(() => {
     let cancelled = false;
 
     async function loadScores() {
-      if (!session?.user?.id || subjectFilteredStages.length === 0) {
+      if (!session?.user?.id || displayedStages.length === 0) {
         setStageScores(new Map());
         setScoresLoading(false);
         return;
@@ -305,7 +339,7 @@ export default function PapersRoadmapPage() {
         const sessions = await fetchUserSessions();
         if (cancelled) return;
         setStageScores(
-          buildRoadmapStageScores(subjectFilteredStages, sessions),
+          buildRoadmapStageScores(displayedStages, sessions),
         );
       } catch {
         if (!cancelled) setStageScores(new Map());
@@ -318,7 +352,7 @@ export default function PapersRoadmapPage() {
     return () => {
       cancelled = true;
     };
-  }, [session?.user?.id, subjectFilteredStages]);
+  }, [session?.user?.id, displayedStages]);
 
   const executeStartStage = useCallback(
     async (
@@ -568,7 +602,7 @@ export default function PapersRoadmapPage() {
   );
 
   const refreshCompletionData = useCallback(async () => {
-    if (subjectFilteredStages.length === 0) return;
+    if (displayedStages.length === 0) return;
 
     try {
       const completionMap = new Map<string, StageCompletionEntry>();
@@ -580,7 +614,7 @@ export default function PapersRoadmapPage() {
         );
         const completedPartIds = await syncWithDatabase(session.user.id);
 
-        for (const stage of subjectFilteredStages) {
+        for (const stage of displayedStages) {
           const parts = await getStageCompletionFromSessions(
             session.user.id,
             stage,
@@ -594,7 +628,7 @@ export default function PapersRoadmapPage() {
           });
         }
       } else {
-        for (const stage of subjectFilteredStages) {
+        for (const stage of displayedStages) {
           completionMap.set(stage.id, {
             completed: 0,
             total: groupRoadmapPartsForDisplay(stage.parts).length,
@@ -607,7 +641,7 @@ export default function PapersRoadmapPage() {
     } catch {
       /* keep current completion if refresh fails */
     }
-  }, [session?.user?.id, subjectFilteredStages]);
+  }, [session?.user?.id, displayedStages]);
 
   return (
     <Container size="lg" className="overflow-x-clip bg-background pb-16 pt-6 font-sans sm:pb-20 sm:pt-8">
@@ -619,7 +653,7 @@ export default function PapersRoadmapPage() {
       />
 
       <RoadmapTable
-        stages={subjectFilteredStages}
+        stages={displayedStages}
         completionData={completionData}
         stageScores={stageScores}
         completionLoading={completionLoading}
@@ -629,6 +663,7 @@ export default function PapersRoadmapPage() {
         onNewQuestionsOnlyChange={handleNewQuestionsOnlyChange}
         onStartSession={handleStartStage}
         onCompletionChange={refreshCompletionData}
+        subjectSuggestion={subjectSuggestion}
       />
 
       {isStartingSession ? (
