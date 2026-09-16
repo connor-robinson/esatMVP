@@ -1,5 +1,5 @@
 /**
- * Layout strip: legacy link + default-layout dropdown.
+ * Layout strip: default-layout dropdown + legacy links (right-aligned).
  */
 
 "use client";
@@ -18,12 +18,17 @@ import {
 } from "@/lib/papers/pastPapersUiPreference";
 
 type Props = {
-  current: "home" | "library";
+  current: PastPapersUiPreference;
   /** Open the delayed survey immediately (change default). */
   onRequestSurvey?: () => void;
+  className?: string;
 };
 
-export function PastPapersLegacyLinks({ current, onRequestSurvey }: Props) {
+export function PastPapersLegacyLinks({
+  current,
+  onRequestSurvey,
+  className,
+}: Props) {
   const router = useRouter();
   const [defaultLayout, setDefaultLayout] = useState<PastPapersUiPreference>(
     () => readPastPapersUiPreference(),
@@ -35,7 +40,9 @@ export function PastPapersLegacyLinks({ current, onRequestSurvey }: Props) {
       onRequestSurvey?.();
       return;
     }
-    if (value !== "home" && value !== "library") return;
+    if (value !== "home" && value !== "library" && value !== "roadmap") {
+      return;
+    }
     setDefaultLayout(value);
     const href = applyPastPapersUiPreference(value, "toggle");
     if (href !== pathForCurrent(current)) {
@@ -44,47 +51,13 @@ export function PastPapersLegacyLinks({ current, onRequestSurvey }: Props) {
   };
 
   return (
-    <div className="mb-4 flex flex-wrap items-center justify-between gap-2 sm:mb-5">
-      <p className="text-xs text-text-muted">
-        Prefer a different layout?{" "}
-        {current === "home" ? (
-          <>
-            Open legacy{" "}
-            <Link
-              href={PAST_PAPERS_LIBRARY_PATH}
-              className="font-medium text-text underline underline-offset-2 hover:text-primary"
-            >
-              Library
-            </Link>
-            {" · "}
-            <Link
-              href={PAST_PAPERS_ROADMAP_PATH}
-              className="font-medium text-text underline underline-offset-2 hover:text-primary"
-            >
-              Roadmap
-            </Link>
-          </>
-        ) : (
-          <>
-            Open{" "}
-            <Link
-              href={PAST_PAPERS_ROADMAP_PATH}
-              className="font-medium text-text underline underline-offset-2 hover:text-primary"
-            >
-              Roadmap
-            </Link>
-            {" · "}
-            <Link
-              href={PAST_PAPERS_HOME_PATH}
-              className="font-medium text-text underline underline-offset-2 hover:text-primary"
-            >
-              Home
-            </Link>
-          </>
-        )}
-      </p>
-
-      <label className="flex items-center gap-2 text-xs text-text-muted">
+    <div
+      className={
+        className ??
+        "flex flex-wrap items-center justify-end gap-x-3 gap-y-2 text-xs text-text-muted"
+      }
+    >
+      <label className="flex items-center gap-2">
         <span className="whitespace-nowrap">Default layout</span>
         <select
           value={defaultLayout}
@@ -93,16 +66,51 @@ export function PastPapersLegacyLinks({ current, onRequestSurvey }: Props) {
           aria-label="Default Past Papers layout"
         >
           <option value="home">Home</option>
+          <option value="roadmap">Roadmap</option>
           <option value="library">Library</option>
           <option value="ask">Ask me again…</option>
         </select>
       </label>
+
+      <p className="text-xs text-text-muted">
+        Prefer a different layout? Open legacy{" "}
+        <Link
+          href={PAST_PAPERS_LIBRARY_PATH}
+          className="font-medium text-text underline underline-offset-2 hover:text-primary"
+        >
+          Library
+        </Link>
+        {" · "}
+        <Link
+          href={PAST_PAPERS_ROADMAP_PATH}
+          className="font-medium text-text underline underline-offset-2 hover:text-primary"
+        >
+          Roadmap
+        </Link>
+        {current !== "home" ? (
+          <>
+            {" · "}
+            <Link
+              href={PAST_PAPERS_HOME_PATH}
+              className="font-medium text-text underline underline-offset-2 hover:text-primary"
+            >
+              Home
+            </Link>
+          </>
+        ) : null}
+      </p>
     </div>
   );
 }
 
-function pathForCurrent(current: "home" | "library"): string {
-  return current === "library"
-    ? PAST_PAPERS_LIBRARY_PATH
-    : PAST_PAPERS_HOME_PATH;
+function pathForCurrent(current: PastPapersUiPreference): string {
+  return pathForPastPapersPreferenceSafe(current);
+}
+
+function pathForPastPapersPreferenceSafe(
+  preference: PastPapersUiPreference,
+): string {
+  if (preference === "library") return PAST_PAPERS_LIBRARY_PATH;
+  if (preference === "roadmap") return PAST_PAPERS_ROADMAP_PATH;
+  return PAST_PAPERS_HOME_PATH;
 }

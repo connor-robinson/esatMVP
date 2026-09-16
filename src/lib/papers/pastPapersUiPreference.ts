@@ -1,24 +1,25 @@
 /**
- * Past Papers layout preference (Home vs Library).
- * Home is the default new practice-table UI. Library is legacy.
+ * Past Papers layout preference (Home / Library / Roadmap).
+ * Home is the default practice-table UI. Library and Roadmap stay reachable
+ * via legacy links and the default-layout dropdown (Roadmap is hidden from nav).
  * localStorage for snappy UX; profiles columns for admin analytics.
  */
 
 import { trackEvent } from "@/lib/ga/trackEvent";
 
-export type PastPapersUiPreference = "home" | "library";
+export type PastPapersUiPreference = "home" | "library" | "roadmap";
 
 export type PastPapersUiPreferenceSource = "survey" | "toggle" | "default";
 
 const PREFERENCE_KEY = "pastPapers:uiPreference";
 const SURVEY_KEY = "pastPapers:uiSurvey";
+const SURVEY_NEVER_KEY = "pastPapers:uiSurveyNever";
 
 /** Delay before showing the preference questionnaire on Home. */
 export const PAST_PAPERS_SURVEY_DELAY_MS = 15_000;
 
 export const PAST_PAPERS_HOME_PATH = "/past-papers";
 export const PAST_PAPERS_LIBRARY_PATH = "/past-papers/library";
-/** Legacy URL; redirects to Home. */
 export const PAST_PAPERS_ROADMAP_PATH = "/past-papers/roadmap";
 
 /** @deprecated Use PAST_PAPERS_HOME_PATH */
@@ -27,15 +28,15 @@ export const PAST_PAPERS_HUB_PATH = PAST_PAPERS_HOME_PATH;
 export function isPastPapersUiPreference(
   value: unknown,
 ): value is PastPapersUiPreference {
-  return value === "home" || value === "library";
+  return value === "home" || value === "library" || value === "roadmap";
 }
 
-/** Normalize stored values; "roadmap" maps to home (former name). */
 export function normalizePastPapersUiPreference(
   value: unknown,
 ): PastPapersUiPreference | null {
   if (value === "library") return "library";
-  if (value === "home" || value === "roadmap") return "home";
+  if (value === "roadmap") return "roadmap";
+  if (value === "home") return "home";
   return null;
 }
 
@@ -48,9 +49,9 @@ export function isPastPapersUiPreferenceSource(
 export function pathForPastPapersPreference(
   preference: PastPapersUiPreference,
 ): string {
-  return preference === "library"
-    ? PAST_PAPERS_LIBRARY_PATH
-    : PAST_PAPERS_HOME_PATH;
+  if (preference === "library") return PAST_PAPERS_LIBRARY_PATH;
+  if (preference === "roadmap") return PAST_PAPERS_ROADMAP_PATH;
+  return PAST_PAPERS_HOME_PATH;
 }
 
 export function readPastPapersUiPreference(): PastPapersUiPreference {
@@ -84,8 +85,19 @@ export function readPastPapersUiSurveyChoice(): PastPapersUiPreference | null {
   }
 }
 
+export function hasOptedOutPastPapersUiSurvey(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return localStorage.getItem(SURVEY_NEVER_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
 export function hasCompletedPastPapersUiSurvey(): boolean {
-  return readPastPapersUiSurveyChoice() !== null;
+  return (
+    readPastPapersUiSurveyChoice() !== null || hasOptedOutPastPapersUiSurvey()
+  );
 }
 
 export function writePastPapersUiSurveyChoice(
@@ -95,15 +107,29 @@ export function writePastPapersUiSurveyChoice(
   try {
     localStorage.setItem(SURVEY_KEY, preference);
     localStorage.setItem(PREFERENCE_KEY, preference);
+    localStorage.removeItem(SURVEY_NEVER_KEY);
   } catch {
     /* ignore */
   }
+}
+
+export function optOutPastPapersUiSurveyForever(): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(SURVEY_NEVER_KEY, "1");
+  } catch {
+    /* ignore */
+  }
+  trackEvent("past_papers_layout_survey_opt_out", {
+    placement: "past_papers_survey",
+  });
 }
 
 export function clearPastPapersUiSurveyChoice(): void {
   if (typeof window === "undefined") return;
   try {
     localStorage.removeItem(SURVEY_KEY);
+    localStorage.removeItem(SURVEY_NEVER_KEY);
   } catch {
     /* ignore */
   }
@@ -114,6 +140,7 @@ export function clearPastPapersUiPreference(): void {
   try {
     localStorage.removeItem(PREFERENCE_KEY);
     localStorage.removeItem(SURVEY_KEY);
+    localStorage.removeItem(SURVEY_NEVER_KEY);
   } catch {
     /* ignore */
   }
@@ -164,7 +191,8 @@ export function applyPastPapersUiPreference(
   }
   persistPastPapersUiPreferenceToServer({
     preference,
-    surveyChoice: source === "survey" ? preference : readPastPapersUiSurveyChoice(),
+    surveyChoice:
+      source === "survey" ? preference : readPastPapersUiSurveyChoice(),
     source,
   });
   return pathForPastPapersPreference(preference);
@@ -216,7 +244,7 @@ export async function hydratePastPapersUiPreferenceFromServer(): Promise<{
 
     return {
       preference: readPastPapersUiPreference(),
-      surveyCompleted: localSurvey !== null,
+      surveyCompleted: hasCompletedPastPapersUiSurvey(),
     };
   } catch {
     return null;

@@ -51,6 +51,7 @@ import {
 import {
   PAST_PAPERS_HOME_PATH,
   PAST_PAPERS_LIBRARY_PATH,
+  PAST_PAPERS_ROADMAP_PATH,
   readPastPapersUiPreference,
 } from '@/lib/papers/pastPapersUiPreference';
 import {
@@ -85,7 +86,11 @@ function buildDefaultCompletion(stages: RoadmapStage[]): Map<string, StageComple
 const INITIAL_STAGES = getRoadmapStagesShell();
 const INITIAL_COMPLETION = buildDefaultCompletion(INITIAL_STAGES);
 
-export default function PastPapersHomePage() {
+export default function PastPapersHomePage({
+  layoutCurrent = "home",
+}: {
+  layoutCurrent?: "home" | "roadmap";
+}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const forceSurvey = searchParams.get("choose") === "1";
@@ -95,10 +100,18 @@ export default function PastPapersHomePage() {
 
   useEffect(() => {
     if (forceSurvey) return;
-    if (readPastPapersUiPreference() === "library") {
+    const pref = readPastPapersUiPreference();
+    // Only auto-route from Home based on saved default. Roadmap/Library
+    // remain reachable via legacy links even when another default is set.
+    if (layoutCurrent !== "home") return;
+    if (pref === "library") {
       router.replace(PAST_PAPERS_LIBRARY_PATH);
+      return;
     }
-  }, [forceSurvey, router]);
+    if (pref === "roadmap") {
+      router.replace(PAST_PAPERS_ROADMAP_PATH);
+    }
+  }, [forceSurvey, layoutCurrent, router]);
   const [stages, setStages] = useState<RoadmapStage[]>(INITIAL_STAGES);
   const [completionData, setCompletionData] = useState<
     Map<string, StageCompletionEntry>
@@ -665,10 +678,6 @@ export default function PastPapersHomePage() {
 
   return (
     <Container size="lg" className="overflow-x-clip bg-background pb-16 pt-6 font-sans sm:pb-20 sm:pt-8">
-      <PastPapersLegacyLinks
-        current="home"
-        onRequestSurvey={() => setForceSurveyOpen(true)}
-      />
       <RoadmapSubjectPreview
         value={subjectPreview}
         onChange={setSubjectPreview}
@@ -688,6 +697,12 @@ export default function PastPapersHomePage() {
         onStartSession={handleStartStage}
         onCompletionChange={refreshCompletionData}
         subjectSuggestion={subjectSuggestion}
+        layoutControls={
+          <PastPapersLegacyLinks
+            current={layoutCurrent}
+            onRequestSurvey={() => setForceSurveyOpen(true)}
+          />
+        }
       />
 
       {isStartingSession ? (

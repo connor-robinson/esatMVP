@@ -12,6 +12,7 @@ import {
   applyPastPapersUiPreference,
   hasCompletedPastPapersUiSurvey,
   hydratePastPapersUiPreferenceFromServer,
+  optOutPastPapersUiSurveyForever,
   type PastPapersUiPreference,
 } from "@/lib/papers/pastPapersUiPreference";
 
@@ -63,7 +64,14 @@ export function PastPapersPreferenceSurvey({
     onClose?.();
   };
 
+  const handleNever = () => {
+    optOutPastPapersUiSurveyForever();
+    setOpen(false);
+    onClose?.();
+  };
+
   const handleChoose = (preference: PastPapersUiPreference) => {
+    if (preference !== "home" && preference !== "library") return;
     const href = applyPastPapersUiPreference(preference, "survey");
     setOpen(false);
     onClose?.();
@@ -88,7 +96,14 @@ export function PastPapersPreferenceSurvey({
           Which Past Papers layout do you prefer?
         </div>
         <PastPapersPreferenceChooser onChoose={handleChoose} compact />
-        <div className="mt-4 flex justify-end">
+        <div className="mt-4 flex items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={handleNever}
+            className="rounded-sm px-3 py-2 text-sm font-medium text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
+          >
+            Never show again
+          </button>
           <button
             type="button"
             onClick={close}

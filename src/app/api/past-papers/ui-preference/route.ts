@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
     const preference = normalizePastPapersUiPreference(preferenceRaw);
     if (!preference || !isPastPapersUiPreference(preference)) {
       return NextResponse.json(
-        { error: "preference must be home or library" },
+        { error: "preference must be home, library, or roadmap" },
         { status: 400 },
       );
     }
@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
       const surveyChoice = normalizePastPapersUiPreference(surveyChoiceRaw);
       if (!surveyChoice) {
         return NextResponse.json(
-          { error: "surveyChoice must be home or library" },
+          { error: "surveyChoice must be home, library, or roadmap" },
           { status: 400 },
         );
       }

@@ -144,6 +144,10 @@ export async function GET(request: NextRequest) {
 /**
  * POST /api/admin/inbox
  * Compose a personal or broadcast inbox message.
+ *
+ * In-app only: inserts into `inbox_messages` (and recipients for personal).
+ * Does not send email. Support ticket replies that also email live under
+ * `/api/admin/support`, not here.
  */
 export async function POST(request: NextRequest) {
   const admin = await requireTesterAdmin(request);

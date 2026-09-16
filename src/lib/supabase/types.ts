@@ -390,8 +390,8 @@ export type UserProfileRow = {
   qb_session_ui_survey_choice: 'esat' | 'classic' | null;
   qb_session_ui_preference_source: 'survey' | 'toggle' | 'inferred' | null;
   qb_session_ui_preference_updated_at: string | null;
-  past_papers_ui_preference: 'home' | 'library' | null;
-  past_papers_ui_survey_choice: 'home' | 'library' | null;
+  past_papers_ui_preference: 'home' | 'library' | 'roadmap' | null;
+  past_papers_ui_survey_choice: 'home' | 'library' | 'roadmap' | null;
   past_papers_ui_preference_source: 'survey' | 'toggle' | 'default' | null;
   past_papers_ui_preference_updated_at: string | null;
   created_at: string;
@@ -422,8 +422,8 @@ export type UserProfileInsert = {
   qb_session_ui_survey_choice?: 'esat' | 'classic' | null;
   qb_session_ui_preference_source?: 'survey' | 'toggle' | 'inferred' | null;
   qb_session_ui_preference_updated_at?: string | null;
-  past_papers_ui_preference?: 'home' | 'library' | null;
-  past_papers_ui_survey_choice?: 'home' | 'library' | null;
+  past_papers_ui_preference?: 'home' | 'library' | 'roadmap' | null;
+  past_papers_ui_survey_choice?: 'home' | 'library' | 'roadmap' | null;
   past_papers_ui_preference_source?: 'survey' | 'toggle' | 'default' | null;
   past_papers_ui_preference_updated_at?: string | null;
 };

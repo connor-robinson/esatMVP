@@ -15,6 +15,9 @@ type SendOutboundArgs = {
 
 /**
  * Create a personal outbound inbox message and attach one recipient.
+ *
+ * In-app only: writes to `inbox_messages` / `inbox_message_recipients`.
+ * Does not send email (no Resend / SMTP). Users see it in the product inbox.
  */
 export async function sendPersonalInboxMessage(
   args: SendOutboundArgs,

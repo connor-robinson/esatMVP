@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useEffect, useMemo, useState, Fragment } from "react";
+import { useEffect, useMemo, useState, Fragment, type ReactNode } from "react";
 import { ChevronDown, Download, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
@@ -30,13 +30,13 @@ import {
   type RoadmapAverageMaps,
   type RoadmapStageScore,
 } from "@/lib/papers/roadmapStageScores";
+import { RoadmapInfoPopover } from "./RoadmapInfoPopover";
 import {
   markPartAsCompleted,
   setRoadmapStageManualStatus,
   unmarkPartAsCompleted,
   type ManualRoadmapStatus,
 } from "@/lib/papers/roadmapCompletion";
-import { RoadmapInfoPopover } from "./RoadmapInfoPopover";
 import {
   getStageCommentary,
   type StageCommentary,
@@ -73,6 +73,8 @@ type Props = {
     showingAll: boolean;
     onToggleShowAll: () => void;
   } | null;
+  /** Optional layout controls shown on the Past papers title row (right side). */
+  layoutControls?: ReactNode;
 };
 
 const TAB_ORDER: ExamTab[] = ["NSAA", "ENGAA", "TMUA", "Mocks"];
@@ -343,6 +345,7 @@ export function RoadmapTable({
   onStartSession,
   onCompletionChange,
   subjectSuggestion = null,
+  layoutControls = null,
 }: Props) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [statusBusyId, setStatusBusyId] = useState<string | null>(null);
@@ -446,44 +449,60 @@ export function RoadmapTable({
   return (
     <div className="font-sans">
       <div className="mb-5">
-        <h1 className="text-xl font-semibold tracking-tight text-text sm:text-2xl">
-          Past papers
-        </h1>
-        <p className="mt-1 text-sm text-text-muted">
-          {completionLoading ? (
-            <span className="inline-block h-4 w-28 animate-pulse rounded bg-surface-mid" />
-          ) : (
-            <>
-              {totals.completed} of {totals.total} parts done across all papers.
-            </>
-          )}
-        </p>
-        {subjectSuggestion ? (
-          <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
-            <p className="text-sm text-text-muted">
-              {subjectSuggestion.showingAll ? (
-                <>Showing all past papers.</>
-              ) : subjectSuggestion.subjects.length > 0 ? (
-                <>
-                  Suggested based on your indicated ESAT subjects:{" "}
-                  <span className="font-medium text-text">
-                    {subjectSuggestion.subjects.join(", ")}
-                  </span>
-                  .
-                </>
+        <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5">
+              <h1 className="text-xl font-semibold tracking-tight text-text sm:text-2xl">
+                Past papers
+              </h1>
+              {subjectSuggestion ? (
+                <RoadmapInfoPopover
+                  title="Paper suggestions"
+                  label="Subject suggestions"
+                  align="left"
+                >
+                  <p className="text-sm text-text-muted">
+                    {subjectSuggestion.showingAll ? (
+                      <>Showing all past papers.</>
+                    ) : subjectSuggestion.subjects.length > 0 ? (
+                      <>
+                        Suggested based on your indicated ESAT subjects:{" "}
+                        <span className="font-medium text-text">
+                          {subjectSuggestion.subjects.join(", ")}
+                        </span>
+                        .
+                      </>
+                    ) : (
+                      <>Suggested based on your exam preference.</>
+                    )}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={subjectSuggestion.onToggleShowAll}
+                    className="mt-3 rounded-sm px-2.5 py-1 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
+                  >
+                    {subjectSuggestion.showingAll
+                      ? "Show suggested"
+                      : "Show all"}
+                  </button>
+                </RoadmapInfoPopover>
+              ) : null}
+            </div>
+            <p className="mt-1 text-sm text-text-muted">
+              {completionLoading ? (
+                <span className="inline-block h-4 w-28 animate-pulse rounded bg-surface-mid" />
               ) : (
-                <>Suggested based on your exam preference.</>
+                <>
+                  {totals.completed} of {totals.total} parts done across all
+                  papers.
+                </>
               )}
             </p>
-            <button
-              type="button"
-              onClick={subjectSuggestion.onToggleShowAll}
-              className="rounded-sm px-2.5 py-1 text-sm font-medium text-primary ring-1 ring-primary/35 transition-colors hover:bg-primary/10"
-            >
-              {subjectSuggestion.showingAll ? "Show suggested" : "Show all"}
-            </button>
           </div>
-        ) : null}
+          {layoutControls ? (
+            <div className="ml-auto w-full sm:w-auto">{layoutControls}</div>
+          ) : null}
+        </div>
       </div>
 
       {availableTabs.length > 0 ? (
