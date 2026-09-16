@@ -182,7 +182,7 @@ async function postGenerateContent(input: {
           responseMimeType: "application/json",
         },
       }),
-      signal: AbortSignal.timeout(60000),
+      signal: AbortSignal.timeout(120000),
     });
     const bodyText = await res.text();
     if (!res.ok) {

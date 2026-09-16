@@ -27,7 +27,7 @@ export type AiMetadataLabel = {
   presentationType: PresentationType;
 };
 
-const BATCH_SIZE = 12;
+const BATCH_SIZE = 6;
 
 function clampDifficulty(n: unknown): MockDifficulty | null {
   const v = typeof n === "string" ? Number(n) : n;
@@ -168,34 +168,35 @@ export async function labelMockMetadataBatch(
   error?: string;
 }> {
   if (batch.length === 0) return { labels: [], source: null };
-  const llm = await generateJsonWithLlm(buildLabelPrompt(batch));
-  if (!llm.text) {
-    return { labels: [], source: null, error: llm.error };
-  }
-  try {
-    const parsed = extractJsonObject(llm.text);
-    const labels = parseAiMetadataBatchResponse(
-      parsed,
-      batch.map((b) => b.id),
-    );
-    if (labels.length === 0) {
-      return {
-        labels: [],
-        source: llm.source,
-        error: "Model JSON parsed but no usable difficulty labels matched ids",
-      };
+
+  let lastError: string | undefined;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const llm = await generateJsonWithLlm(buildLabelPrompt(batch));
+    if (!llm.text) {
+      lastError = llm.error;
+      continue;
     }
-    return {
-      labels,
-      source: llm.source,
-    };
-  } catch (e) {
-    return {
-      labels: [],
-      source: llm.source,
-      error: e instanceof Error ? e.message : "Failed to parse model JSON",
-    };
+    try {
+      const parsed = extractJsonObject(llm.text);
+      const labels = parseAiMetadataBatchResponse(
+        parsed,
+        batch.map((b) => b.id),
+      );
+      if (labels.length === 0) {
+        lastError =
+          "Model JSON parsed but no usable difficulty labels matched ids";
+        continue;
+      }
+      return {
+        labels,
+        source: llm.source,
+      };
+    } catch (e) {
+      lastError = e instanceof Error ? e.message : "Failed to parse model JSON";
+    }
   }
+
+  return { labels: [], source: null, error: lastError };
 }
 
 export async function labelMockMetadataInChunks(

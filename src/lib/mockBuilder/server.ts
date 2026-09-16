@@ -27,7 +27,8 @@ import {
 } from "./publish";
 import { reviewMockPaper } from "./paperReviewer";
 import {
-  labelMockMetadataInChunks,
+  labelMockMetadataBatch,
+  type AiMetadataLabel,
   type AiMetadataLabelInput,
 } from "./aiMetadata";
 import {
@@ -126,16 +127,34 @@ async function loadAttemptedQuestionIds(
 ): Promise<Set<string>> {
   if (questionIds.length === 0) return new Set();
   const attempted = new Set<string>();
-  const pageSize = 500;
+  // Keep URL/body small; large `.in()` lists intermittently fail with "fetch failed".
+  const pageSize = 80;
   for (let i = 0; i < questionIds.length; i += pageSize) {
     const chunk = questionIds.slice(i, i + pageSize);
-    const { data, error } = await service
-      .from("question_bank_attempts")
-      .select("question_id")
-      .in("question_id", chunk);
-    if (error) throw new Error(error.message);
-    for (const row of data ?? []) {
-      attempted.add((row as { question_id: string }).question_id);
+    let lastError: string | null = null;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const { data, error } = await service
+          .from("question_bank_attempts")
+          .select("question_id")
+          .in("question_id", chunk);
+        if (error) {
+          lastError = error.message;
+          continue;
+        }
+        for (const row of data ?? []) {
+          attempted.add((row as { question_id: string }).question_id);
+        }
+        lastError = null;
+        break;
+      } catch (e) {
+        lastError = e instanceof Error ? e.message : "fetch failed";
+      }
+    }
+    if (lastError) {
+      console.warn(
+        `loadAttemptedQuestionIds: skipping chunk at ${i} (${lastError})`,
+      );
     }
   }
   return attempted;
@@ -253,42 +272,59 @@ export async function enrichMockMetadataForSubject(
     hasVisual: Boolean(row.has_visual),
   }));
 
-  const { labels, labeledCount, source, attempted, error: labelError } =
-    await labelMockMetadataInChunks(inputs, {
-      maxQuestions,
-    });
+  const batchSize = 6;
+  const labels: AiMetadataLabel[] = [];
+  let source: "vertex" | "gemini" | null = null;
+  let firstError: string | undefined;
+  const rowById = new Map(rows.map((r) => [r.id, r]));
+
+  for (let i = 0; i < inputs.length; i += batchSize) {
+    const batch = inputs.slice(i, i + batchSize);
+    const result = await labelMockMetadataBatch(batch);
+    if (result.source) source = result.source;
+    if (result.error && !firstError) firstError = result.error;
+
+    for (const label of result.labels) {
+      labels.push(label);
+      const existing = rowById.get(label.id);
+      const patch: Record<string, unknown> = {
+        mock_difficulty: label.mockDifficulty,
+        updated_at: new Date().toISOString(),
+      };
+      if (
+        existing?.estimated_time_seconds == null ||
+        existing.estimated_time_seconds <= 0
+      ) {
+        patch.estimated_time_seconds = label.estimatedTimeSeconds;
+      }
+      if (!existing?.reasoning_type) {
+        patch.reasoning_type = label.reasoningType;
+      }
+      if (!existing?.presentation_type) {
+        patch.presentation_type = label.presentationType;
+      }
+      const { error: upErr } = await service
+        .from("ai_generated_questions")
+        .update(patch)
+        .eq("id", label.id);
+      if (upErr) throw new Error(upErr.message);
+    }
+
+    console.log(
+      `  ${subject}: labeled ${labels.length}/${inputs.length}` +
+        (result.error ? ` (batch warn: ${result.error})` : ""),
+    );
+  }
+
+  const attempted = inputs.length;
+  const labeledCount = labels.length;
 
   if (attempted > 0 && labeledCount === 0) {
     throw new Error(
-      labelError
-        ? `AI difficulty labeling returned 0 labels for ${attempted} questions: ${labelError}`
+      firstError
+        ? `AI difficulty labeling returned 0 labels for ${attempted} questions: ${firstError}`
         : `AI difficulty labeling returned 0 labels for ${attempted} questions (check Vertex ADC / VERTEX_SERVICE_ACCOUNT_JSON / GEMINI_API_KEY).`,
     );
-  }
-  const rowById = new Map(rows.map((r) => [r.id, r]));
-  for (const label of labels) {
-    const existing = rowById.get(label.id);
-    const patch: Record<string, unknown> = {
-      mock_difficulty: label.mockDifficulty,
-      updated_at: new Date().toISOString(),
-    };
-    if (
-      existing?.estimated_time_seconds == null ||
-      existing.estimated_time_seconds <= 0
-    ) {
-      patch.estimated_time_seconds = label.estimatedTimeSeconds;
-    }
-    if (!existing?.reasoning_type) {
-      patch.reasoning_type = label.reasoningType;
-    }
-    if (!existing?.presentation_type) {
-      patch.presentation_type = label.presentationType;
-    }
-    const { error: upErr } = await service
-      .from("ai_generated_questions")
-      .update(patch)
-      .eq("id", label.id);
-    if (upErr) throw new Error(upErr.message);
   }
 
   return { attempted, labeledCount, source };
@@ -492,6 +528,8 @@ export async function createMock(
     diagramCount?: number;
     /** If the requested number is taken, assign the next free one. Default true. */
     autoNumber?: boolean;
+    /** When generating, whether to run AI difficulty labeling first. Default true. */
+    enrichMetadata?: boolean;
   },
 ): Promise<{ mock: EsatMockRow; assembly: PaperAssemblyResult | null }> {
   let blueprint = await resolveBlueprint(service, input.subject);
@@ -560,6 +598,7 @@ export async function createMock(
 
   const assembly = await generateAndPersist(service, mock.id, {
     keepLocks: false,
+    enrichMetadata: input.enrichMetadata,
   });
   const { mock: refreshed } = await getMockWithSlots(service, mock.id);
   return { mock: refreshed, assembly };
