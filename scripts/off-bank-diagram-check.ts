@@ -6,7 +6,6 @@ import fs from "fs";
 import path from "path";
 import { createClient } from "@supabase/supabase-js";
 import {
-  missingDiagramApprovalBlock,
   questionHasDiagramAsset,
 } from "../src/lib/questionBank/missingDiagramGuard";
 
@@ -79,124 +78,57 @@ async function main() {
     from += pageSize;
   }
 
-  type Agg = {
-    total: number;
-    needsDiagram: number;
-    graphFlagNoAsset: number;
-    queuedNoAsset: number;
-    byReason: Record<string, number>;
-  };
+  type Agg = { total: number; hasDiagram: number };
   const bySubject = new Map<string, Agg>();
 
   for (const row of rows) {
     if (!isOffBank(row)) continue;
     const subject = (row.subjects || "(none)").trim() || "(none)";
-    const agg = bySubject.get(subject) ?? {
-      total: 0,
-      needsDiagram: 0,
-      graphFlagNoAsset: 0,
-      queuedNoAsset: 0,
-      byReason: {},
-    };
+    const agg = bySubject.get(subject) ?? { total: 0, hasDiagram: 0 };
     agg.total += 1;
-    const input = {
-      questionStem: row.question_stem,
-      hasVisual: row.has_visual,
-      visualType: row.visual_type,
-      qualityGateGraphMode: row.quality_gate_graph_mode,
-      qualityGateDiagramBackfillKind: row.quality_gate_diagram_backfill_kind,
-      answerDependsOnVisual: row.answer_depends_on_visual,
-      graphs: row.graphs,
-    };
-    const hasAsset = questionHasDiagramAsset(input);
-    const block = missingDiagramApprovalBlock(input);
-    if (block) {
-      agg.needsDiagram += 1;
-      agg.byReason[block] = (agg.byReason[block] ?? 0) + 1;
-    }
-    const mode = (row.quality_gate_graph_mode ?? "").toLowerCase();
-    const flagged =
-      mode === "missing_expected" ||
-      mode === "candidate" ||
-      row.quality_gate_graph_candidate === true;
-    if (flagged && !hasAsset) agg.graphFlagNoAsset += 1;
-    if (row.svg_operator_backfill_choice === "queue" && !hasAsset) {
-      agg.queuedNoAsset += 1;
+    if (
+      questionHasDiagramAsset({
+        questionStem: row.question_stem,
+        hasVisual: row.has_visual,
+        visualType: row.visual_type,
+        qualityGateGraphMode: row.quality_gate_graph_mode,
+        qualityGateDiagramBackfillKind: row.quality_gate_diagram_backfill_kind,
+        answerDependsOnVisual: row.answer_depends_on_visual,
+        graphs: row.graphs,
+      })
+    ) {
+      agg.hasDiagram += 1;
     }
     bySubject.set(subject, agg);
   }
 
   const subjects = [...bySubject.keys()].sort((a, b) => a.localeCompare(b));
   let totalAll = 0;
-  let needAll = 0;
-  let flagAll = 0;
-  let queueAll = 0;
+  let hasAll = 0;
 
   console.log(
     "Off-bank only (pending, or approved + practice_eligible=false)\n",
   );
-  console.log(
-    "Subject".padEnd(12) +
-      "Need".padStart(6) +
-      " / " +
-      "Total".padStart(5) +
-      "  " +
-      "QG-flag".padStart(8) +
-      "  " +
-      "Queued".padStart(6),
-  );
-  console.log("-".repeat(48));
+  console.log("Subject".padEnd(12) + "Has".padStart(6) + " / " + "Total".padStart(5));
+  console.log("-".repeat(28));
   for (const s of subjects) {
     const a = bySubject.get(s)!;
     totalAll += a.total;
-    needAll += a.needsDiagram;
-    flagAll += a.graphFlagNoAsset;
-    queueAll += a.queuedNoAsset;
+    hasAll += a.hasDiagram;
     console.log(
       s.padEnd(12) +
-        String(a.needsDiagram).padStart(6) +
+        String(a.hasDiagram).padStart(6) +
         " / " +
-        String(a.total).padStart(5) +
-        "  " +
-        String(a.graphFlagNoAsset).padStart(8) +
-        "  " +
-        String(a.queuedNoAsset).padStart(6),
+        String(a.total).padStart(5),
     );
   }
-  console.log("-".repeat(48));
+  console.log("-".repeat(28));
   console.log(
     "ALL".padEnd(12) +
-      String(needAll).padStart(6) +
+      String(hasAll).padStart(6) +
       " / " +
-      String(totalAll).padStart(5) +
-      "  " +
-      String(flagAll).padStart(8) +
-      "  " +
-      String(queueAll).padStart(6),
+      String(totalAll).padStart(5),
   );
-
-  console.log("\nNeed = missingDiagramApprovalBlock (expects diagram, no asset)");
-  console.log(
-    "QG-flag = quality_gate candidate/missing_expected and still no asset",
-  );
-  console.log("Queued = svg_operator_backfill_choice=queue and no asset");
-
-  console.log("\nNeed reasons:");
-  const reasonTotals: Record<string, number> = {};
-  for (const a of bySubject.values()) {
-    for (const [r, n] of Object.entries(a.byReason)) {
-      reasonTotals[r] = (reasonTotals[r] ?? 0) + n;
-    }
-  }
-  if (Object.keys(reasonTotals).length === 0) {
-    console.log("  (none)");
-  } else {
-    for (const [r, n] of Object.entries(reasonTotals).sort(
-      (a, b) => b[1] - a[1],
-    )) {
-      console.log(`  ${r}: ${n}`);
-    }
-  }
 }
 
 main().catch((e) => {
