@@ -90,13 +90,7 @@ function sessionMatchesStage(
   );
 }
 
-function accuracyFromSession(session: PaperSession): number | null {
-  if (!session.score || session.score.total <= 0) return null;
-  if (session.score.correct <= 0) return null;
-  return (session.score.correct / session.score.total) * 100;
-}
-
-/** Map stage id → best predicted score (or accuracy fallback). */
+/** Map stage id → best ESAT scaled score (1.0–9.0 only; no accuracy %). */
 export function buildRoadmapStageScores(
   stages: RoadmapStage[],
   sessions: PaperSession[],
@@ -110,42 +104,29 @@ export function buildRoadmapStageScores(
     );
 
     let bestPredicted: number | null = null;
-    let bestAccuracy: number | null = null;
 
     for (const session of matched) {
-      if (
-        typeof session.predictedScore === "number" &&
-        Number.isFinite(session.predictedScore)
-      ) {
-        bestPredicted =
-          bestPredicted == null
-            ? session.predictedScore
-            : Math.max(bestPredicted, session.predictedScore);
-      }
-
-      const accuracy = accuracyFromSession(session);
-      if (accuracy != null) {
-        bestAccuracy =
-          bestAccuracy == null ? accuracy : Math.max(bestAccuracy, accuracy);
-      }
+      if (!isEsatScaledScore(session.predictedScore)) continue;
+      bestPredicted =
+        bestPredicted == null
+          ? session.predictedScore
+          : Math.max(bestPredicted, session.predictedScore);
     }
 
     result.set(stage.id, {
       predictedScore: bestPredicted,
-      accuracyPercent: bestAccuracy,
+      accuracyPercent: null,
     });
   }
 
   return result;
 }
 
+/** Format Your Score as an ESAT scaled value only (never accuracy %). */
 export function formatRoadmapScore(score: RoadmapStageScore | undefined): string {
   if (!score) return "-";
-  if (score.predictedScore != null) {
-    return score.predictedScore.toFixed(1);
-  }
-  if (score.accuracyPercent != null) {
-    return `${Math.round(score.accuracyPercent)}%`;
+  if (isEsatScaledScore(score.predictedScore)) {
+    return clampEsatScore(score.predictedScore).toFixed(1);
   }
   return "-";
 }

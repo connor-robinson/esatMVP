@@ -1,13 +1,12 @@
 /**
- * Past Papers hub: ask Library vs Roadmap preference, then route.
- * Direct legacy URLs (`/library`, `/roadmap`) stay available.
+ * Past Papers Home (default new practice-table UI).
  */
 
 import { Suspense } from "react";
 import { Container } from "@/components/layout/Container";
-import { PastPapersHubClient } from "@/components/papers/PastPapersHubClient";
+import PastPapersHomePage from "@/components/papers/PastPapersHomePage";
 
-function HubFallback() {
+function HomeFallback() {
   return (
     <Container className="flex min-h-[50vh] items-center justify-center py-10">
       <div
@@ -18,10 +17,10 @@ function HubFallback() {
   );
 }
 
-export default function PastPapersHubPage() {
+export default function PastPapersPage() {
   return (
-    <Suspense fallback={<HubFallback />}>
-      <PastPapersHubClient />
+    <Suspense fallback={<HomeFallback />}>
+      <PastPapersHomePage />
     </Suspense>
   );
 }

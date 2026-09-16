@@ -1,6 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { FEEDBACK_REFERRAL_SURVEY } from "@/lib/feedbackReferral/survey";
+import { loadFeedbackReferralStats } from "@/lib/admin/feedbackReferralAdmin";
+import type { FeedbackReferralSubmissionRow } from "@/lib/admin/feedbackReferralAdmin";
 
+export type { FeedbackReferralSubmissionRow };
 export type CountRow = { label: string; count: number };
 
 function bump(map: Map<string, number>, key: string, by = 1) {
@@ -17,59 +19,6 @@ function labelOrUnset(value: unknown): string {
   if (value == null || value === "") return "(not set)";
   return String(value);
 }
-
-const FEEDBACK_QUESTION_LABELS: Record<string, string> = {
-  ...Object.fromEntries(
-    FEEDBACK_REFERRAL_SURVEY.questions.map((q) => [q.id, q.label]),
-  ),
-  parts_used: "Which parts did you use?",
-};
-
-const FEEDBACK_OPTION_LABELS: Record<string, string> = Object.fromEntries(
-  FEEDBACK_REFERRAL_SURVEY.questions.flatMap((q) =>
-    (q.options ?? []).map((opt) => [opt.value, opt.label]),
-  ),
-);
-
-function formatAnswerValue(value: unknown): string {
-  if (value == null || value === "") return "(skipped)";
-  if (Array.isArray(value)) {
-    if (value.length === 0) return "(none)";
-    return value
-      .map((v) => FEEDBACK_OPTION_LABELS[String(v)] ?? String(v))
-      .join(", ");
-  }
-  if (typeof value === "number") return String(value);
-  const raw = String(value).trim();
-  if (!raw) return "(skipped)";
-  return FEEDBACK_OPTION_LABELS[raw] ?? raw;
-}
-
-function formatAnswerRows(
-  answers: Array<{ questionId?: string; value?: unknown }>,
-): FeedbackReferralSubmissionRow["answers"] {
-  return answers.map((answer) => {
-    const questionId = String(answer.questionId ?? "unknown");
-    return {
-      questionId,
-      label: FEEDBACK_QUESTION_LABELS[questionId] ?? questionId,
-      display: formatAnswerValue(answer.value),
-    };
-  });
-}
-
-export type FeedbackReferralSubmissionRow = {
-  id: string;
-  userId: string;
-  username: string | null;
-  email: string | null;
-  createdAt: string;
-  answers: Array<{
-    questionId: string;
-    label: string;
-    display: string;
-  }>;
-};
 
 export type SurveyStatsPayload = {
   funnel: {
@@ -115,6 +64,10 @@ export type SurveyStatsPayload = {
     mostUseful: CountRow[];
     leastUseful: CountRow[];
     partsUsed: CountRow[];
+    priceFair: CountRow[];
+    recommendMore: CountRow[];
+    campMissing: CountRow[];
+    almostStopped: CountRow[];
     recommendAvg: number | null;
     recommendCount: number;
     submissions: FeedbackReferralSubmissionRow[];
@@ -127,7 +80,7 @@ export async function loadSurveyStats(
   const { data: profiles, error: profilesError } = await service
     .from("profiles")
     .select(
-      "referral_source, exam_preference, esat_subjects, target_universities, is_early_applicant, marketing_emails_consent, onboarding_completed, qb_session_ui_variant, qb_session_ui_survey_choice, qb_session_ui_preference_source",
+      "referral_source, exam_preference, esat_subjects, target_universities, is_early_applicant, marketing_emails_consent, onboarding_completed, qb_session_ui_variant, qb_session_ui_survey_choice, qb_session_ui_preference_source, past_papers_ui_preference, past_papers_ui_survey_choice, past_papers_ui_preference_source",
     );
 
   if (profilesError) {
@@ -143,6 +96,9 @@ export async function loadSurveyStats(
   const qbUiSurveyChoice = new Map<string, number>();
   const qbUiVariant = new Map<string, number>();
   const qbUiPreferenceSource = new Map<string, number>();
+  const pastPapersUiSurveyChoice = new Map<string, number>();
+  const pastPapersUiPreference = new Map<string, number>();
+  const pastPapersUiPreferenceSource = new Map<string, number>();
 
   let onboardingCompleted = 0;
   let hasReferralSource = 0;
@@ -191,6 +147,19 @@ export async function loadSurveyStats(
       qbUiPreferenceSource,
       labelOrUnset(row.qb_session_ui_preference_source),
     );
+
+    bump(
+      pastPapersUiSurveyChoice,
+      labelOrUnset(row.past_papers_ui_survey_choice),
+    );
+    bump(
+      pastPapersUiPreference,
+      labelOrUnset(row.past_papers_ui_preference),
+    );
+    bump(
+      pastPapersUiPreferenceSource,
+      labelOrUnset(row.past_papers_ui_preference_source),
+    );
   }
 
   const { data: partners } = await service.from("partners").select("id, slug");
@@ -232,96 +201,7 @@ export async function loadSurveyStats(
     else if (status === "expired") partnerInviteSummary.expired += 1;
   }
 
-  const { data: feedbackCodes } = await service
-    .from("feedback_referral_codes")
-    .select("redeemed_at");
-  const codesIssued = feedbackCodes?.length ?? 0;
-  const codesRedeemed = (feedbackCodes ?? []).filter((c) => c.redeemed_at).length;
-
-  const { count: askedCount, error: askedError } = await service
-    .from("profiles")
-    .select("id", { count: "exact", head: true })
-    .not("feedback_referral_asked_at", "is", null);
-
-  if (askedError) {
-    throw new Error(askedError.message);
-  }
-
-  const { data: submissions, error: submissionsError } = await service
-    .from("feedback_referral_submissions")
-    .select("id, user_id, answers, created_at")
-    .order("created_at", { ascending: false });
-
-  if (submissionsError) {
-    throw new Error(submissionsError.message);
-  }
-
-  const answered = submissions?.length ?? 0;
-  const asked = askedCount ?? 0;
-
-  const submissionUserIds = [
-    ...new Set(
-      (submissions ?? [])
-        .map((s) => s.user_id as string | null)
-        .filter((id): id is string => Boolean(id)),
-    ),
-  ];
-  const submissionProfileById = new Map<
-    string,
-    { username: string | null; email: string | null }
-  >();
-  if (submissionUserIds.length > 0) {
-    const { data: submissionProfiles } = await service
-      .from("profiles")
-      .select("id, username, email")
-      .in("id", submissionUserIds);
-    for (const profile of submissionProfiles ?? []) {
-      submissionProfileById.set(profile.id as string, {
-        username: (profile.username as string | null) ?? null,
-        email: (profile.email as string | null) ?? null,
-      });
-    }
-  }
-
-  const mostUseful = new Map<string, number>();
-  const leastUseful = new Map<string, number>();
-  const partsUsed = new Map<string, number>();
-  let recommendSum = 0;
-  let recommendCount = 0;
-  const submissionRows: FeedbackReferralSubmissionRow[] = [];
-
-  for (const submission of submissions ?? []) {
-    const answers = Array.isArray(submission.answers)
-      ? (submission.answers as Array<{ questionId?: string; value?: unknown }>)
-      : [];
-    const profile = submissionProfileById.get(String(submission.user_id ?? ""));
-    submissionRows.push({
-      id: String(submission.id),
-      userId: String(submission.user_id ?? ""),
-      username: profile?.username ?? null,
-      email: profile?.email ?? null,
-      createdAt: String(submission.created_at ?? ""),
-      answers: formatAnswerRows(answers),
-    });
-
-    for (const answer of answers) {
-      const id = String(answer.questionId ?? "");
-      const value = answer.value;
-      if (id === "most_useful" && typeof value === "string") {
-        bump(mostUseful, FEEDBACK_OPTION_LABELS[value] ?? value);
-      } else if (id === "least_useful" && typeof value === "string") {
-        bump(leastUseful, FEEDBACK_OPTION_LABELS[value] ?? value);
-      } else if (id === "parts_used" && Array.isArray(value)) {
-        for (const part of value) {
-          const key = String(part);
-          bump(partsUsed, FEEDBACK_OPTION_LABELS[key] ?? key);
-        }
-      } else if (id === "recommend" && typeof value === "number") {
-        recommendSum += value;
-        recommendCount += 1;
-      }
-    }
-  }
+  const feedbackReferral = await loadFeedbackReferralStats(service);
 
   return {
     funnel: {
@@ -341,26 +221,29 @@ export async function loadSurveyStats(
     qbUiSurveyChoice: toSortedRows(qbUiSurveyChoice),
     qbUiVariant: toSortedRows(qbUiVariant),
     qbUiPreferenceSource: toSortedRows(qbUiPreferenceSource),
+    pastPapersUiSurveyChoice: toSortedRows(pastPapersUiSurveyChoice),
+    pastPapersUiPreference: toSortedRows(pastPapersUiPreference),
+    pastPapersUiPreferenceSource: toSortedRows(pastPapersUiPreferenceSource),
     partnerCodes,
     partnerInviteSummary,
     feedbackReferral: {
-      asked,
-      answered,
-      responseRate:
-        asked > 0 ? Math.round((answered / asked) * 1000) / 10 : null,
-      codesIssued,
-      codesRedeemed,
-      codesUnused: codesIssued - codesRedeemed,
-      surveySubmissions: answered,
-      mostUseful: toSortedRows(mostUseful),
-      leastUseful: toSortedRows(leastUseful),
-      partsUsed: toSortedRows(partsUsed),
-      recommendAvg:
-        recommendCount > 0
-          ? Math.round((recommendSum / recommendCount) * 10) / 10
-          : null,
-      recommendCount,
-      submissions: submissionRows,
+      asked: feedbackReferral.asked,
+      answered: feedbackReferral.answered,
+      responseRate: feedbackReferral.responseRate,
+      codesIssued: feedbackReferral.codesIssued,
+      codesRedeemed: feedbackReferral.codesRedeemed,
+      codesUnused: feedbackReferral.codesUnused,
+      surveySubmissions: feedbackReferral.surveySubmissions,
+      mostUseful: feedbackReferral.mostUseful,
+      leastUseful: feedbackReferral.leastUseful,
+      partsUsed: feedbackReferral.partsUsed,
+      priceFair: feedbackReferral.priceFair,
+      recommendMore: feedbackReferral.recommendMore,
+      campMissing: feedbackReferral.campMissing,
+      almostStopped: feedbackReferral.almostStopped,
+      recommendAvg: feedbackReferral.recommendAvg,
+      recommendCount: feedbackReferral.recommendCount,
+      submissions: feedbackReferral.submissions,
     },
   };
 }

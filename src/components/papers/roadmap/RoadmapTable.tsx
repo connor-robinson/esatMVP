@@ -531,7 +531,7 @@ export function RoadmapTable({
                 <th className="px-3 py-2">Parts</th>
                 <th className="px-3 py-2">Status</th>
                 <th className="px-3 py-2">ESATCamp Avg Score</th>
-                <th className="px-3 py-2">Your score</th>
+                <th className="px-3 py-2">Your ESAT score</th>
                 <th className="px-3 py-2">Paper</th>
                 <th className="px-3 py-2">Answers</th>
                 <th className="px-3 py-2">Start</th>

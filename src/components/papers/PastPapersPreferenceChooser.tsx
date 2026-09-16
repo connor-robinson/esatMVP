@@ -1,14 +1,15 @@
 /**
- * First-run chooser: Library vs Roadmap. Both stay available via legacy links.
+ * First-run / change-default chooser: Home vs Library.
  */
 
 "use client";
 
 import Link from "next/link";
-import { Library, Map } from "lucide-react";
+import { Home, Library } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { PastPapersUiPreference } from "@/lib/papers/pastPapersUiPreference";
 import {
+  PAST_PAPERS_HOME_PATH,
   PAST_PAPERS_LIBRARY_PATH,
   PAST_PAPERS_ROADMAP_PATH,
 } from "@/lib/papers/pastPapersUiPreference";
@@ -23,24 +24,21 @@ const OPTIONS: Array<{
   id: PastPapersUiPreference;
   title: string;
   description: string;
-  href: string;
-  icon: typeof Map;
+  icon: typeof Home;
   recommended?: boolean;
 }> = [
   {
-    id: "roadmap",
-    title: "Roadmap",
+    id: "home",
+    title: "Home",
     description:
       "Practice table with years, scores, downloads, and one-click start.",
-    href: PAST_PAPERS_ROADMAP_PATH,
-    icon: Map,
+    icon: Home,
     recommended: true,
   },
   {
     id: "library",
     title: "Library",
     description: "Browse papers and build a session from selected sections.",
-    href: PAST_PAPERS_LIBRARY_PATH,
     icon: Library,
   },
 ];
@@ -56,24 +54,23 @@ export function PastPapersPreferenceChooser({ onChoose, compact }: Props) {
       )}
     >
       <div className={compact ? "" : "text-center"}>
-        <h1
+        <h2
           className={cn(
             "font-semibold tracking-tight text-text",
             compact ? "text-base" : "text-2xl sm:text-3xl",
           )}
         >
           {compact
-            ? "Switch Past Papers layout"
+            ? "Which layout do you prefer?"
             : "Which Past Papers layout do you prefer?"}
-        </h1>
+        </h2>
         <p
           className={cn(
             "text-text-muted",
             compact ? "mt-1 text-sm" : "mt-2 text-sm sm:text-base",
           )}
         >
-          Pick one as your default. You can still open the other anytime from
-          legacy links.
+          Home is the default. You can switch anytime from the layout menu.
         </p>
       </div>
 
@@ -106,7 +103,7 @@ export function PastPapersPreferenceChooser({ onChoose, compact }: Props) {
                 </span>
                 {option.recommended ? (
                   <span className="rounded-sm bg-surface-mid px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-text-muted">
-                    Recommended
+                    Default
                   </span>
                 ) : null}
               </span>
@@ -120,7 +117,7 @@ export function PastPapersPreferenceChooser({ onChoose, compact }: Props) {
 
       {!compact ? (
         <p className="mt-6 text-center text-xs text-text-muted">
-          Legacy links:{" "}
+          Also:{" "}
           <Link
             href={PAST_PAPERS_ROADMAP_PATH}
             className="underline underline-offset-2 hover:text-text"
@@ -133,6 +130,13 @@ export function PastPapersPreferenceChooser({ onChoose, compact }: Props) {
             className="underline underline-offset-2 hover:text-text"
           >
             Library
+          </Link>
+          {" · "}
+          <Link
+            href={PAST_PAPERS_HOME_PATH}
+            className="underline underline-offset-2 hover:text-text"
+          >
+            Home
           </Link>
         </p>
       ) : null}

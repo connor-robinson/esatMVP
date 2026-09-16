@@ -46,10 +46,8 @@ import {
   HelpCircle,
   GraduationCap,
   Home,
-  LayoutGrid,
   Library,
   LogOut,
-  Map,
   Menu,
   Moon,
   Settings,
@@ -119,15 +117,9 @@ const navSections: NavSectionConfig[] = [
     items: [
       {
         href: '/past-papers',
-        label: 'Past Papers',
-        description: 'Choose your layout',
-        icon: LayoutGrid,
-      },
-      {
-        href: '/past-papers/roadmap',
-        label: 'Roadmap',
-        description: 'Legacy practice table',
-        icon: Map,
+        label: 'Home',
+        description: 'Practice table',
+        icon: Home,
       },
       {
         href: '/past-papers/library',

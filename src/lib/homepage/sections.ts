@@ -57,20 +57,14 @@ export const DASHBOARD_TOPICS: DashboardTopic[] = [
     accent: "accent",
     items: [
       {
-        label: "Practice",
+        label: "Home",
         href: "/past-papers",
-        analyticsDestination: "past_papers",
+        analyticsDestination: "past_papers_roadmap",
       },
       {
         label: "Library",
         href: "/past-papers/library",
         analyticsDestination: "past_papers",
-        description: "Legacy",
-      },
-      {
-        label: "Roadmap",
-        href: "/past-papers/roadmap",
-        analyticsDestination: "past_papers_roadmap",
         description: "Legacy",
       },
       {

@@ -264,6 +264,33 @@ export default function AdminSurveysPage() {
 
           <section>
             <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-text-muted">
+              Past papers layout preference
+            </h2>
+            <p className="mt-1 text-xs text-text-subtle">
+              From profiles: Home vs Library questionnaire answers, current
+              default, and how it was set (survey / toggle / default).
+            </p>
+            <div className="mt-3 grid gap-4 lg:grid-cols-3">
+              <CountChart
+                title="Preferred layout (survey)"
+                rows={stats.pastPapersUiSurveyChoice}
+                color="#2E79B5"
+              />
+              <CountChart
+                title="Current default"
+                rows={stats.pastPapersUiPreference}
+                color="#1F8A65"
+              />
+              <CountChart
+                title="Preference source"
+                rows={stats.pastPapersUiPreferenceSource}
+                color="#C06028"
+              />
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-text-muted">
               Referral / access code usage
             </h2>
             <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

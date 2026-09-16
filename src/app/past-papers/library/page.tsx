@@ -691,7 +691,12 @@ export default function PapersLibraryPage() {
           href="/pricing"
         />
       ) : null}
-      <PastPapersLegacyLinks current="library" />
+      <PastPapersLegacyLinks
+        current="library"
+        onRequestSurvey={() => {
+          window.location.href = "/past-papers?choose=1";
+        }}
+      />
       <PastPaperUatNotice />
       <div className='grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_min(100%,30rem)] lg:items-start lg:gap-6 xl:grid-cols-[minmax(0,1fr)_31rem]'>
         <div>
