@@ -27,6 +27,7 @@ import {
   averageScoreForStage,
   formatNumericScore,
   formatRoadmapScore,
+  type RoadmapAverageMaps,
   type RoadmapStageScore,
 } from "@/lib/papers/roadmapStageScores";
 import {
@@ -335,9 +336,9 @@ export function RoadmapTable({
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [statusBusyId, setStatusBusyId] = useState<string | null>(null);
   const [startStage, setStartStage] = useState<RoadmapStage | null>(null);
-  const [averagesByVariant, setAveragesByVariant] = useState<
-    Record<string, number>
-  >({});
+  const [averageMaps, setAverageMaps] = useState<RoadmapAverageMaps>({
+    averages: {},
+  });
   const [averagesLoading, setAveragesLoading] = useState(true);
 
   const grouped = useMemo(() => {
@@ -374,12 +375,19 @@ export function RoadmapTable({
       try {
         const res = await fetch("/api/past-papers/roadmap-averages");
         if (!res.ok) throw new Error("failed");
-        const data = (await res.json()) as {
-          averages?: Record<string, number>;
-        };
-        if (!cancelled) setAveragesByVariant(data.averages ?? {});
+        const data = (await res.json()) as RoadmapAverageMaps;
+        if (!cancelled) {
+          setAverageMaps({
+            averages: data.averages ?? {},
+            counts: data.counts,
+            units: data.units,
+            yearAverages: data.yearAverages,
+            yearCounts: data.yearCounts,
+            yearUnits: data.yearUnits,
+          });
+        }
       } catch {
-        if (!cancelled) setAveragesByVariant({});
+        if (!cancelled) setAverageMaps({ averages: {} });
       } finally {
         if (!cancelled) setAveragesLoading(false);
       }
@@ -505,7 +513,7 @@ export function RoadmapTable({
                 const yourScore = stageScores.get(stage.id);
                 const avgScore = averageScoreForStage(
                   stage,
-                  averagesByVariant,
+                  averageMaps,
                 );
                 const commentary = commentaryForStage(stage, stages);
                 const currentStatus = statusValue(completed, total);

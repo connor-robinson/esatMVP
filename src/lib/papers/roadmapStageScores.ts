@@ -13,12 +13,42 @@ export type RoadmapStageScore = {
   accuracyPercent: number | null;
 };
 
+export type ScoreUnit = "scaled" | "percent";
+
+export type RoadmapAverageMaps = {
+  averages: Record<string, number>;
+  counts?: Record<string, number>;
+  units?: Record<string, ScoreUnit>;
+  yearAverages?: Record<string, number>;
+  yearCounts?: Record<string, number>;
+  yearUnits?: Record<string, ScoreUnit>;
+};
+
+export type StageAverageScore = {
+  value: number;
+  unit: ScoreUnit;
+};
+
 function stageVariants(stage: RoadmapStage): Set<string> {
   return new Set(
     stage.parts.map(
       (part) => `${stage.year}-${part.paperName}-${part.examType}`,
     ),
   );
+}
+
+/** Keys used in /api/past-papers/roadmap-averages (exam::variant). */
+function stageAverageKeys(stage: RoadmapStage): string[] {
+  const paperType = examNameToPaperType(stage.examName) || stage.examName;
+  const variants = stageVariants(stage);
+  const keys: string[] = [];
+  for (const variant of variants) {
+    keys.push(`${paperType}::${variant}`);
+    if (stage.examName !== paperType) {
+      keys.push(`${stage.examName}::${variant}`);
+    }
+  }
+  return keys;
 }
 
 function sessionMatchesStage(
@@ -41,6 +71,7 @@ function sessionMatchesStage(
 
 function accuracyFromSession(session: PaperSession): number | null {
   if (!session.score || session.score.total <= 0) return null;
+  if (session.score.correct <= 0) return null;
   return (session.score.correct / session.score.total) * 100;
 }
 
@@ -98,28 +129,100 @@ export function formatRoadmapScore(score: RoadmapStageScore | undefined): string
   return "-";
 }
 
-/** Average predicted score across doers for a stage's paper variants. */
-export function averageScoreForStage(
-  stage: RoadmapStage,
-  averagesByVariant: Record<string, number> | Map<string, number>,
-): number | null {
-  const variants = stageVariants(stage);
-  const values: number[] = [];
-  for (const variant of variants) {
-    const raw =
-      averagesByVariant instanceof Map
-        ? averagesByVariant.get(variant)
-        : averagesByVariant[variant];
-    if (typeof raw === "number" && Number.isFinite(raw)) {
-      values.push(raw);
-    }
+function normalizeAverageMaps(
+  averagesByVariant:
+    | Record<string, number>
+    | Map<string, number>
+    | RoadmapAverageMaps,
+): RoadmapAverageMaps {
+  if (
+    averagesByVariant &&
+    typeof averagesByVariant === "object" &&
+    "averages" in averagesByVariant
+  ) {
+    return averagesByVariant as RoadmapAverageMaps;
   }
-  if (values.length === 0) return null;
-  const mean = values.reduce((a, b) => a + b, 0) / values.length;
-  return Math.round(mean * 10) / 10;
+  return {
+    averages:
+      averagesByVariant instanceof Map
+        ? Object.fromEntries(averagesByVariant)
+        : ((averagesByVariant as Record<string, number>) ?? {}),
+  };
 }
 
-export function formatNumericScore(value: number | null | undefined): string {
-  if (value == null || !Number.isFinite(value)) return "No data";
+/**
+ * Average doer score for a stage.
+ * Individual section sittings count: weight exact paper_variant averages,
+ * then fall back to exam+year aggregates. Prefer scaled ESAT scores when
+ * present; otherwise use accuracy %.
+ */
+export function averageScoreForStage(
+  stage: RoadmapStage,
+  averagesByVariant:
+    | Record<string, number>
+    | Map<string, number>
+    | RoadmapAverageMaps,
+): StageAverageScore | null {
+  const maps = normalizeAverageMaps(averagesByVariant);
+  const keys = stageAverageKeys(stage);
+
+  let scaledTotal = 0;
+  let scaledCount = 0;
+  let percentTotal = 0;
+  let percentCount = 0;
+
+  for (const key of keys) {
+    const avg = maps.averages[key];
+    if (typeof avg !== "number" || !Number.isFinite(avg)) continue;
+    const n = maps.counts?.[key] ?? 1;
+    const unit = maps.units?.[key] ?? "scaled";
+    if (unit === "percent") {
+      percentTotal += avg * n;
+      percentCount += n;
+    } else {
+      scaledTotal += avg * n;
+      scaledCount += n;
+    }
+  }
+
+  if (scaledCount > 0) {
+    return {
+      value: Math.round((scaledTotal / scaledCount) * 10) / 10,
+      unit: "scaled",
+    };
+  }
+  if (percentCount > 0) {
+    return {
+      value: Math.round((percentTotal / percentCount) * 10) / 10,
+      unit: "percent",
+    };
+  }
+
+  // Fall back: any completed sittings for this exam year (any section).
+  const paperType = examNameToPaperType(stage.examName) || stage.examName;
+  const yearKeys = [
+    `${paperType}:${stage.year}`,
+    `${stage.examName}:${stage.year}`,
+  ];
+  for (const key of yearKeys) {
+    const avg = maps.yearAverages?.[key];
+    if (typeof avg !== "number" || !Number.isFinite(avg)) continue;
+    const unit = maps.yearUnits?.[key] ?? "scaled";
+    return { value: avg, unit };
+  }
+
+  return null;
+}
+
+export function formatNumericScore(
+  value: number | StageAverageScore | null | undefined,
+): string {
+  if (value == null) return "No data";
+  if (typeof value === "object") {
+    if (!Number.isFinite(value.value)) return "No data";
+    if (value.unit === "percent") return `${Math.round(value.value)}%`;
+    return value.value.toFixed(1);
+  }
+  if (!Number.isFinite(value)) return "No data";
   return value.toFixed(1);
 }

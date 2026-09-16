@@ -1014,6 +1014,35 @@ export default function PapersMarkPage() {
     paperName,
   ]);
 
+  // Persist scaled / section scores so cohort averages can use them later.
+  useEffect(() => {
+    if (!isLoggedIn || !sessionId) return;
+    const hasSectionScores = Object.values(sectionPercentiles).some(
+      (entry) => typeof entry?.score === "number" && Number.isFinite(entry.score),
+    );
+    if (predictedScore == null && !hasSectionScores) return;
+
+    const timer = window.setTimeout(() => {
+      void fetch("/api/past-papers/sessions", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          id: sessionId,
+          predictedScore: predictedScore ?? null,
+          sectionPercentiles:
+            Object.keys(sectionPercentiles).length > 0
+              ? sectionPercentiles
+              : null,
+        }),
+      }).catch(() => {
+        // fail-soft: averages still fall back to accuracy
+      });
+    }, 800);
+
+    return () => window.clearTimeout(timer);
+  }, [isLoggedIn, sessionId, predictedScore, sectionPercentiles]);
+
   // Crop images for TMUA (when both question and answer are images)
   useEffect(() => {
     if (selectedIndex === -1) {
@@ -2686,7 +2715,7 @@ export default function PapersMarkPage() {
             <div
               className={cn(
                 "text-lg font-semibold",
-                hubMarkPreview ? "text-black" : "text-text",
+                hubMarkPreview || lightMarkShell ? "text-black" : "text-text",
               )}
             >
               Session Notes
@@ -2696,7 +2725,7 @@ export default function PapersMarkPage() {
                   <button
                     className={cn(
                       "flex h-5 w-5 items-center justify-center rounded-full",
-                      hubMarkPreview
+                      hubMarkPreview || lightMarkShell
                         ? "bg-black/10 text-black"
                         : "bg-surface-mid text-text-muted",
                     )}
@@ -2711,7 +2740,7 @@ export default function PapersMarkPage() {
                   <div
                     className={cn(
                       "absolute left-0 z-10 hidden w-64 rounded-md border p-2 text-[11px] shadow-lg group-hover:block",
-                      hubMarkPreview
+                      hubMarkPreview || lightMarkShell
                         ? "border-black/10 bg-white text-black"
                         : "border-border bg-surface-elevated text-text-muted",
                     )}
@@ -2724,7 +2753,9 @@ export default function PapersMarkPage() {
                 <div
                   className={cn(
                     "text-[11px]",
-                    hubMarkPreview ? "text-black/60" : "text-text-muted",
+                    hubMarkPreview || lightMarkShell
+                      ? "text-black/60"
+                      : "text-text-muted",
                   )}
                 >
                   Private to you
@@ -2737,7 +2768,9 @@ export default function PapersMarkPage() {
             <div
               className={cn(
                 "text-sm",
-                hubMarkPreview ? "text-black" : "text-text-muted",
+                hubMarkPreview || lightMarkShell
+                  ? "text-black"
+                  : "text-text-muted",
               )}
             >
               Summarise your key mistakes and strategies for next time. You’ll be able to review these before your next paper. Notes save automatically and are available in the Papers archive.
@@ -2753,7 +2786,7 @@ export default function PapersMarkPage() {
                 placeholder="Summarise mistakes, patterns, and specific actions to improve next time."
                 className={cn(
                   "w-full resize-none rounded-md px-4 py-3 text-sm outline-none ring-0 focus:outline-none focus:ring-0",
-                  hubMarkPreview
+                  hubMarkPreview || lightMarkShell
                     ? "border border-black/10 bg-white text-black placeholder:text-black/45"
                     : "border border-border-subtle bg-surface-elevated text-text placeholder:text-text-muted",
                 )}
