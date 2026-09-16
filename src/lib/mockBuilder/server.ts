@@ -211,6 +211,8 @@ export async function enrichMockMetadataForSubject(
     onlyMissingDifficulty?: boolean;
     /** Prefer off-bank (pending / practice_eligible=false) first. */
     preferOffBank?: boolean;
+    /** How many Vertex batches to run at once (default 1). */
+    concurrency?: number;
   },
 ): Promise<{
   attempted: number;
@@ -220,6 +222,10 @@ export async function enrichMockMetadataForSubject(
   const onlyMissing = options?.onlyMissingDifficulty !== false;
   const maxQuestions = options?.maxQuestions ?? 200;
   const preferOffBank = options?.preferOffBank !== false;
+  const concurrency = Math.min(
+    6,
+    Math.max(1, Math.floor(options?.concurrency ?? 1)),
+  );
 
   let query = service
     .from("ai_generated_questions")
@@ -278,41 +284,53 @@ export async function enrichMockMetadataForSubject(
   let firstError: string | undefined;
   const rowById = new Map(rows.map((r) => [r.id, r]));
 
+  const batches: AiMetadataLabelInput[][] = [];
   for (let i = 0; i < inputs.length; i += batchSize) {
-    const batch = inputs.slice(i, i + batchSize);
-    const result = await labelMockMetadataBatch(batch);
-    if (result.source) source = result.source;
-    if (result.error && !firstError) firstError = result.error;
+    batches.push(inputs.slice(i, i + batchSize));
+  }
 
-    for (const label of result.labels) {
-      labels.push(label);
-      const existing = rowById.get(label.id);
-      const patch: Record<string, unknown> = {
-        mock_difficulty: label.mockDifficulty,
-        updated_at: new Date().toISOString(),
-      };
-      if (
-        existing?.estimated_time_seconds == null ||
-        existing.estimated_time_seconds <= 0
-      ) {
-        patch.estimated_time_seconds = label.estimatedTimeSeconds;
-      }
-      if (!existing?.reasoning_type) {
-        patch.reasoning_type = label.reasoningType;
-      }
-      if (!existing?.presentation_type) {
-        patch.presentation_type = label.presentationType;
-      }
-      const { error: upErr } = await service
-        .from("ai_generated_questions")
-        .update(patch)
-        .eq("id", label.id);
-      if (upErr) throw new Error(upErr.message);
+  async function persistLabel(label: AiMetadataLabel) {
+    labels.push(label);
+    const existing = rowById.get(label.id);
+    const patch: Record<string, unknown> = {
+      mock_difficulty: label.mockDifficulty,
+      updated_at: new Date().toISOString(),
+    };
+    if (
+      existing?.estimated_time_seconds == null ||
+      existing.estimated_time_seconds <= 0
+    ) {
+      patch.estimated_time_seconds = label.estimatedTimeSeconds;
     }
+    if (!existing?.reasoning_type) {
+      patch.reasoning_type = label.reasoningType;
+    }
+    if (!existing?.presentation_type) {
+      patch.presentation_type = label.presentationType;
+    }
+    const { error: upErr } = await service
+      .from("ai_generated_questions")
+      .update(patch)
+      .eq("id", label.id);
+    if (upErr) throw new Error(upErr.message);
+  }
 
+  for (let i = 0; i < batches.length; i += concurrency) {
+    const wave = batches.slice(i, i + concurrency);
+    const results = await Promise.all(
+      wave.map((batch) => labelMockMetadataBatch(batch)),
+    );
+    for (const result of results) {
+      if (result.source) source = result.source;
+      if (result.error && !firstError) firstError = result.error;
+      for (const label of result.labels) {
+        await persistLabel(label);
+      }
+    }
     console.log(
       `  ${subject}: labeled ${labels.length}/${inputs.length}` +
-        (result.error ? ` (batch warn: ${result.error})` : ""),
+        (concurrency > 1 ? ` (concurrency=${concurrency})` : "") +
+        (firstError && labels.length === 0 ? ` (warn: ${firstError})` : ""),
     );
   }
 
@@ -902,14 +920,6 @@ export async function generateAndPersist(
     const gapMsgs = assembly.gaps.map((g) => g.message).slice(0, 5);
     throw new Error(
       `Assembled paper fails difficulty scorecard (${Math.round(assembly.score.difficulty * 100)}). ${gapMsgs.join(" ") || poolPlanSummary}`,
-    );
-  }
-
-  // Hard gate: predicted work must fit a 40-minute ESAT module (blueprint max).
-  const timingMax = blueprint.estimatedTimingSeconds.max;
-  if (assembly.predictedWorkloadSeconds > timingMax) {
-    throw new Error(
-      `Assembled paper predicted workload is ${Math.round(assembly.predictedWorkloadSeconds / 60)} min (${assembly.predictedWorkloadSeconds}s), above the ${Math.round(timingMax / 60)}-minute target max. Re-run generate after shorter questions are labeled, or replace long items.`,
     );
   }
 

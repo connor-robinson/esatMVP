@@ -1,5 +1,5 @@
 /**
- * Delayed Home vs Library preference questionnaire.
+ * Delayed Home / Roadmap / Library preference questionnaire.
  */
 
 "use client";
@@ -27,20 +27,20 @@ export function PastPapersPreferenceSurvey({
   onClose,
 }: Props) {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(forceOpen);
 
   useEffect(() => {
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout> | null = null;
 
+    if (forceOpen) {
+      setOpen(true);
+      return;
+    }
+
     void (async () => {
       await hydratePastPapersUiPreferenceFromServer();
       if (cancelled) return;
-
-      if (forceOpen) {
-        setOpen(true);
-        return;
-      }
 
       if (hasCompletedPastPapersUiSurvey()) return;
 
@@ -90,7 +90,7 @@ export function PastPapersPreferenceSurvey({
         aria-label="Dismiss"
         onClick={close}
       />
-      <div className="relative z-[101] w-full max-w-2xl rounded-sm border border-border-subtle bg-surface-elevated p-5 shadow-modal-card sm:p-6">
+      <div className="relative z-[101] w-full max-w-3xl rounded-sm border border-border-subtle bg-surface-elevated p-5 shadow-modal-card sm:p-6">
         <div id="past-papers-pref-title" className="sr-only">
           Which Past Papers layout do you prefer?
         </div>

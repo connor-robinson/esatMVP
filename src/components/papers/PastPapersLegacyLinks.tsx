@@ -61,7 +61,7 @@ export function PastPapersLegacyLinks({
         <select
           value={defaultLayout}
           onChange={(e) => handleDefaultChange(e.target.value)}
-          className="rounded-sm border-0 bg-background px-2 py-1.5 text-xs font-medium text-text outline-none ring-1 ring-border-subtle"
+          className="rounded-sm border-0 bg-background px-2 py-1.5 text-xs font-medium text-text outline-none"
           aria-label="Default Past Papers layout"
         >
           <option value="home">Home</option>

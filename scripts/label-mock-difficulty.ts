@@ -1,9 +1,9 @@
 /**
  * Run mock difficulty labeling locally (uses Vertex ADC from gcloud).
  *
- *   npx tsx scripts/label-mock-difficulty.ts
- *   npx tsx scripts/label-mock-difficulty.ts --subject "Math 1" --max 200
- *   npx tsx scripts/label-mock-difficulty.ts --all --max 300
+ *   npx tsx scripts/label-mock-difficulty.ts --subject "Math 1" --max 200 --concurrency 3
+ *   npx tsx scripts/label-mock-difficulty.ts --all --max 800 --concurrency 3
+ *   npx tsx scripts/label-mock-difficulty-parallel.ts
  *
  * Requires: .env.local with Supabase + GOOGLE_CLOUD_PROJECT,
  * and `gcloud auth application-default login`.
@@ -67,8 +67,12 @@ async function main() {
   });
 
   const maxQuestions = Math.min(
-    500,
+    1200,
     Math.max(12, Number(argValue("--max") || argValue("--maxQuestions") || 200)),
+  );
+  const concurrency = Math.min(
+    6,
+    Math.max(1, Number(argValue("--concurrency") || 1)),
   );
   const onlyMissing = !hasFlag("--relabel");
 
@@ -86,7 +90,7 @@ async function main() {
   }
 
   console.log(
-    `Labeling mock_difficulty (max ${maxQuestions}/subject, onlyMissing=${onlyMissing})…`,
+    `Labeling mock_difficulty (max ${maxQuestions}/subject, concurrency=${concurrency}, onlyMissing=${onlyMissing})…`,
   );
 
   for (const subject of subjects) {
@@ -95,6 +99,7 @@ async function main() {
       maxQuestions,
       onlyMissingDifficulty: onlyMissing,
       preferOffBank: true,
+      concurrency,
     });
     console.log(
       `attempted=${result.attempted} labeled=${result.labeledCount} source=${result.source ?? "none"}`,
