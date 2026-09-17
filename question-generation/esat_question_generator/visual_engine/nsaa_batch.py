@@ -1117,7 +1117,8 @@ def run_batch(
             time.sleep(20)
         elif rec.get("status") == "skipped":
             summary["skipped"] += 1
-            print(f"  skip: {rec.get('skip_reason')}", flush=True)
+            reason = str(rec.get("skip_reason") or "")
+            print(f"  skip: {reason.encode('ascii', 'replace').decode('ascii')}", flush=True)
             time.sleep(4)
         else:
             summary["errors"] += 1

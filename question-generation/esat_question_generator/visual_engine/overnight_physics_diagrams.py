@@ -242,7 +242,7 @@ def _qa_cohort(
         try:
             first = _eval_item(item, model=acceptor_model, aggressive=False)
         except Exception as exc:
-            print(f"  eval error → reject: {exc}", flush=True)
+            print(f"  eval error -> reject: {exc}", flush=True)
             _reject_item(store, item, f"[overnight_qa] evaluator_error | {exc}")
             rejected.append(qid)
             stats["rejected_major"] += 1
@@ -250,15 +250,15 @@ def _qa_cohort(
 
         if _is_major(first):
             fb = _feedback_from_result(first, prefix="[overnight_qa major]")
-            print(f"  MAJOR → delete ({first.decision})", flush=True)
+            print(f"  MAJOR -> delete ({first.decision})", flush=True)
             _reject_item(store, item, fb)
             rejected.append(qid)
             stats["rejected_major"] += 1
             continue
 
         if _is_minor(first):
-            fb = _feedback_from_result(first, prefix="[overnight_qa minor→regen]")
-            print(f"  MINOR → regenerate once", flush=True)
+            fb = _feedback_from_result(first, prefix="[overnight_qa minor->regen]")
+            print(f"  MINOR -> regenerate once", flush=True)
             try:
                 regenerate_nsaa_question(
                     store,
@@ -269,7 +269,7 @@ def _qa_cohort(
                 regenerated.append(qid)
                 stats["regenerated"] += 1
             except Exception as exc:
-                print(f"  regen failed → delete: {exc}", flush=True)
+                print(f"  regen failed -> delete: {exc}", flush=True)
                 _reject_item(store, item, f"[overnight_qa regen_failed] {exc}")
                 rejected.append(qid)
                 stats["rejected_after_regen"] += 1
@@ -279,27 +279,27 @@ def _qa_cohort(
             try:
                 second = _eval_item(refreshed, model=acceptor_model, aggressive=True)
             except Exception as exc:
-                print(f"  re-eval error → delete: {exc}", flush=True)
+                print(f"  re-eval error -> delete: {exc}", flush=True)
                 _reject_item(store, refreshed, f"[overnight_qa reeval_error] {exc}")
                 rejected.append(qid)
                 stats["rejected_after_regen"] += 1
                 continue
 
-            # After regen: any major OR remaining minor → delete.
+            # After regen: any major OR remaining minor -> delete.
             if _is_major(second) or _is_minor(second):
                 fb2 = _feedback_from_result(second, prefix="[overnight_qa post-regen delete]")
-                print(f"  still flawed → delete", flush=True)
+                print(f"  still flawed -> delete", flush=True)
                 _reject_item(store, refreshed, fb2)
                 rejected.append(qid)
                 stats["rejected_after_regen"] += 1
                 continue
 
-            print("  clean after regen → keep", flush=True)
+            print("  clean after regen -> keep", flush=True)
             kept.append(qid)
             stats["kept"] += 1
             continue
 
-        print("  clean → keep", flush=True)
+        print("  clean -> keep", flush=True)
         kept.append(qid)
         stats["kept"] += 1
 
@@ -335,7 +335,7 @@ def _wait_for_magnetism_process(*, poll_s: float = 30.0) -> None:
                 hits.append(proc.info.get("pid"))
         if not hits:
             return
-        print(f"Waiting for magnetism job pid={hits} …", flush=True)
+        print(f"Waiting for magnetism job pid={hits} ...", flush=True)
         time.sleep(poll_s)
 
 
@@ -403,7 +403,7 @@ def run_overnight(
         else:
             _ingest_new("magnetism_ids")
 
-        if time_left():
+        if time_left() and general_n > 0:
             state["phase"] = "general_physics"
             _write_status(state)
             try:
@@ -414,6 +414,8 @@ def run_overnight(
                 }
             except Exception:
                 traceback.print_exc()
+            _ingest_new("general_ids")
+        else:
             _ingest_new("general_ids")
 
         # First QA pass
@@ -441,7 +443,7 @@ def run_overnight(
             state["kept"] = len(cohort.get("kept_ids") or [])
             _write_status(state)
             print(
-                f"\n=== TOP-UP {topup_round}: need {need} more keepers → generate {gen_n} ===",
+                f"\n=== TOP-UP {topup_round}: need {need} more keepers -> generate {gen_n} ===",
                 flush=True,
             )
             try:
