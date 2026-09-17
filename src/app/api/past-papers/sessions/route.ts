@@ -106,6 +106,25 @@ export async function POST(request: Request) {
   }
 
   try {
+    const { data: existing } = await (supabase as any)
+      .from('paper_sessions')
+      .select('id, deleted_at, user_id')
+      .eq('id', payload.id)
+      .maybeSingle();
+
+    if (existing?.deleted_at) {
+      return NextResponse.json(
+        { error: 'Session was deleted', code: 'SESSION_DELETED', session: null },
+        { status: 410 },
+      );
+    }
+    if (existing && existing.user_id !== session.user.id) {
+      return NextResponse.json(
+        { error: 'Session id already exists', code: 'SESSION_EXISTS' },
+        { status: 409 },
+      );
+    }
+
     const { data, error } = await (supabase as any)
       .from('paper_sessions')
       .insert({
@@ -139,6 +158,13 @@ export async function POST(request: Request) {
       .single();
 
     if (error) {
+      // Soft-deleted row still occupies the primary key.
+      if (error.code === '23505') {
+        return NextResponse.json(
+          { error: 'Session was deleted', code: 'SESSION_DELETED', session: null },
+          { status: 410 },
+        );
+      }
       return NextResponse.json(
         {
           error: 'Failed to create session',
@@ -240,6 +266,7 @@ export async function PATCH(request: Request) {
     .update(updates)
     .eq('id', payload.id)
     .eq('user_id', session.user.id)
+    .is('deleted_at', null)
     .select('*')
     .maybeSingle();
 
@@ -248,6 +275,21 @@ export async function PATCH(request: Request) {
       { error: 'Failed to update session', details: error.message },
       { status: 500 },
     );
+  }
+
+  if (!data) {
+    const { data: existing } = await (supabase as any)
+      .from('paper_sessions')
+      .select('id, deleted_at')
+      .eq('id', payload.id)
+      .eq('user_id', session.user.id)
+      .maybeSingle();
+    if (existing?.deleted_at) {
+      return NextResponse.json(
+        { session: null, deleted: true, code: 'SESSION_DELETED' },
+        { status: 410 },
+      );
+    }
   }
 
   return NextResponse.json({ session: data ?? null });
@@ -274,6 +316,7 @@ export async function GET(request: Request) {
       .select('*')
       .eq('id', id)
       .eq('user_id', session.user.id)
+      .is('deleted_at', null)
       .maybeSingle();
 
     if (error) {
@@ -290,7 +333,8 @@ export async function GET(request: Request) {
   let query = (supabase as any)
     .from('paper_sessions')
     .select('*')
-    .eq('user_id', session.user.id);
+    .eq('user_id', session.user.id)
+    .is('deleted_at', null);
 
   // Filter for in-progress sessions (ended_at IS NULL)
   if (inProgress) {
@@ -321,19 +365,37 @@ export async function DELETE(request: Request) {
   }
 
   const supabase = createRouteClient();
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get('id');
+  const deletedAt = new Date().toISOString();
 
-  // Delete all sessions for this user
-  const { error } = await (supabase as any)
+  // Soft-delete one session (history trash) or all sessions for this user.
+  let query = (supabase as any)
     .from('paper_sessions')
-    .delete()
-    .eq('user_id', session.user.id);
+    .update({ deleted_at: deletedAt, updated_at: deletedAt })
+    .eq('user_id', session.user.id)
+    .is('deleted_at', null);
+
+  if (id) {
+    query = query.eq('id', id);
+  }
+
+  const { data, error } = await query.select('id');
 
   if (error) {
     return NextResponse.json(
-      { error: 'Failed to delete sessions' },
+      { error: id ? 'Failed to delete session' : 'Failed to delete sessions' },
       { status: 500 },
     );
   }
 
-  return NextResponse.json({ success: true, message: 'All sessions deleted' });
+  const deletedIds = Array.isArray(data)
+    ? data.map((row: { id: string }) => row.id).filter(Boolean)
+    : [];
+
+  return NextResponse.json({
+    success: true,
+    deletedIds,
+    message: id ? 'Session deleted' : 'All sessions deleted',
+  });
 }

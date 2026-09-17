@@ -1593,6 +1593,26 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             );
             const result = await upsertPaperSessionOnServer(payload);
 
+            if (result.deleted) {
+              const { markPaperSessionTombstoned } = await import(
+                "@/lib/papers/paperSessionTombstones"
+              );
+              markPaperSessionTombstoned(String(payload.id));
+              const currentState = get();
+              const filteredQueue = currentState.pendingPersistQueue.filter(
+                (item) => item.payload.id !== payload.id,
+              );
+              if (currentState.sessionId === payload.id) {
+                get().clearClientSession();
+                set({ pendingPersistQueue: filteredQueue });
+              } else if (
+                filteredQueue.length !== currentState.pendingPersistQueue.length
+              ) {
+                set({ pendingPersistQueue: filteredQueue });
+              }
+              return false;
+            }
+
             if (result.status === 401) {
               // Still logged out. Keep local sitting; retry after login.
               const currentState = get();
@@ -1739,7 +1759,37 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             const { upsertPaperSessionOnServer } = await import(
               "@/lib/papers/upsertPaperSessionOnServer"
             );
-            const result = await upsertPaperSessionOnServer(item.payload);
+            const { isPaperSessionTombstoned } = await import(
+              "@/lib/papers/paperSessionTombstones"
+            );
+            if (isPaperSessionTombstoned(String(item.payload?.id ?? ""))) {
+              const currentState = get();
+              const filtered = currentState.pendingPersistQueue.filter(
+                (q) =>
+                  q.payload.id !== item.payload.id ||
+                  q.timestamp !== item.timestamp,
+              );
+              set({ pendingPersistQueue: filtered });
+              continue;
+            }
+            const result = await upsertPaperSessionOnServer(item.payload, {
+              createIfMissing: true,
+            });
+
+            if (result.deleted) {
+              const { markPaperSessionTombstoned } = await import(
+                "@/lib/papers/paperSessionTombstones"
+              );
+              markPaperSessionTombstoned(String(item.payload.id));
+              const currentState = get();
+              const filtered = currentState.pendingPersistQueue.filter(
+                (q) =>
+                  q.payload.id !== item.payload.id ||
+                  q.timestamp !== item.timestamp,
+              );
+              set({ pendingPersistQueue: filtered });
+              continue;
+            }
 
             if (result.ok) {
               const currentState = get();

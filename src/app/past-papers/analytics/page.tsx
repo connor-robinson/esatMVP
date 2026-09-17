@@ -16,7 +16,10 @@ import type { PaperSession } from '@/types/papers';
 import { useSupabaseSession } from '@/components/auth/SupabaseSessionProvider';
 import { useSubscription } from '@/hooks/useSubscription';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
-import { deletePaperSession } from '@/lib/supabase/papers';
+import {
+  deleteAllPaperSessionsRemote,
+  deletePaperSessionRemote,
+} from '@/lib/papers/deletePaperSession';
 
 export default function PapersAnalyticsPage() {
   const router = useRouter();
@@ -97,7 +100,7 @@ export default function PapersAnalyticsPage() {
       return;
     }
     try {
-      await deletePaperSession(sessionId);
+      await deletePaperSessionRemote(sessionId);
       setSessions((prev) => prev.filter((s) => s.id !== sessionId));
     } catch {
       alert('Failed to delete session. Please try again.');
@@ -106,12 +109,7 @@ export default function PapersAnalyticsPage() {
 
   const handleClearAllSessions = async () => {
     if (!session?.user || analyticsLocked) return;
-    const response = await fetch('/api/past-papers/sessions', {
-      method: 'DELETE',
-    });
-    if (!response.ok) {
-      throw new Error('Failed to clear sessions');
-    }
+    await deleteAllPaperSessionsRemote();
     setSessions([]);
   };
 

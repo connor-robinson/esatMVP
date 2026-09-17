@@ -82,6 +82,7 @@ export function StageDetailsModal({
             .eq("user_id", currentUserId)
             .eq("paper_name", currentStage.examName)
             .eq("paper_variant", variant)
+            .is("deleted_at", null)
             .not("ended_at", "is", null);
           
           if (variantError) {

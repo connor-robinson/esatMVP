@@ -265,12 +265,14 @@ async function fetchEligibleSessions(
       .select(
         "user_id, paper_name, paper_variant, predicted_score, section_percentiles, score, selected_sections",
       )
+      .is("deleted_at", null)
       .not("ended_at", "is", null);
     const withoutScore = service
       .from("paper_sessions")
       .select(
         "user_id, paper_name, paper_variant, predicted_score, section_percentiles",
       )
+      .is("deleted_at", null)
       .not("ended_at", "is", null);
 
     const { data, error } = options.includeScore

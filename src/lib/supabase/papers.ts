@@ -93,6 +93,7 @@ export async function getPaperSession(id: string) {
       .from('paper_sessions')
       .select('*')
       .eq('id', id)
+      .is('deleted_at', null)
       .single();
 
     if (error) throw error;
@@ -105,10 +106,12 @@ export async function getPaperSession(id: string) {
 
 export async function deletePaperSession(id: string) {
   try {
-    const { error } = await supabase
+    const deletedAt = new Date().toISOString();
+    const { error } = await (supabase as any)
       .from('paper_sessions')
-      .delete()
-      .eq('id', id);
+      .update({ deleted_at: deletedAt, updated_at: deletedAt })
+      .eq('id', id)
+      .is('deleted_at', null);
 
     if (error) throw error;
     return true;
@@ -120,10 +123,12 @@ export async function deletePaperSession(id: string) {
 
 export async function deleteAllPaperSessions(userId: string) {
   try {
-    const { error } = await supabase
+    const deletedAt = new Date().toISOString();
+    const { error } = await (supabase as any)
       .from('paper_sessions')
-      .delete()
-      .eq('user_id', userId);
+      .update({ deleted_at: deletedAt, updated_at: deletedAt })
+      .eq('user_id', userId)
+      .is('deleted_at', null);
 
     if (error) throw error;
     return true;
@@ -138,6 +143,7 @@ export async function getPaperSessionAnalytics(paperName?: string) {
     let query = supabase
       .from('paper_sessions')
       .select('*')
+      .is('deleted_at', null)
       .not('score', 'is', null);
 
     if (paperName) {

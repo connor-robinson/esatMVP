@@ -47,6 +47,7 @@ export async function loadAttemptedQuestionsContext(
       .from("paper_sessions")
       .select("paper_id, question_start, question_end")
       .eq("user_id", userId)
+      .is("deleted_at", null)
       .not("ended_at", "is", null)
       .not("paper_id", "is", null);
 

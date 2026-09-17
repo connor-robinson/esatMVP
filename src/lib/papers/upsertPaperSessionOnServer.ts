@@ -1,10 +1,38 @@
 /**
  * Upsert a past-paper sitting to the server.
  * Guest starts never create a row; after login PATCH matches nothing, so we POST.
+ * Deleted sittings must never be recreated (tombstone + soft-delete 410).
  */
+
+import { isPaperSessionTombstoned } from "@/lib/papers/paperSessionTombstones";
+
+export type UpsertPaperSessionOptions = {
+  /**
+   * When true, create a row if PATCH finds nothing (guest → login).
+   * Defaults to true only for in-progress sittings (endedAt unset).
+   */
+  createIfMissing?: boolean;
+};
+
 export async function upsertPaperSessionOnServer(
   payload: Record<string, unknown>,
-): Promise<{ ok: boolean; status: number; created: boolean }> {
+  options?: UpsertPaperSessionOptions,
+): Promise<{
+  ok: boolean;
+  status: number;
+  created: boolean;
+  deleted?: boolean;
+}> {
+  const sessionId = typeof payload.id === "string" ? payload.id : "";
+  if (sessionId && isPaperSessionTombstoned(sessionId)) {
+    return { ok: false, status: 410, created: false, deleted: true };
+  }
+
+  const endedAt = payload.endedAt;
+  const defaultCreateIfMissing =
+    endedAt == null || endedAt === undefined;
+  const createIfMissing = options?.createIfMissing ?? defaultCreateIfMissing;
+
   const patchRes = await fetch("/api/past-papers/sessions", {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
@@ -16,15 +44,28 @@ export async function upsertPaperSessionOnServer(
     return { ok: false, status: 401, created: false };
   }
 
+  if (patchRes.status === 410) {
+    return { ok: false, status: 410, created: false, deleted: true };
+  }
+
   if (!patchRes.ok) {
     return { ok: false, status: patchRes.status, created: false };
   }
 
   const patchData = (await patchRes.json().catch(() => ({}))) as {
     session?: unknown;
+    deleted?: boolean;
+    code?: string;
   };
   if (patchData.session) {
     return { ok: true, status: 200, created: false };
+  }
+  if (patchData.deleted || patchData.code === "SESSION_DELETED") {
+    return { ok: false, status: 410, created: false, deleted: true };
+  }
+
+  if (!createIfMissing) {
+    return { ok: false, status: 404, created: false };
   }
 
   // No row for this user yet (typical guest → login path). Create it.
@@ -34,6 +75,10 @@ export async function upsertPaperSessionOnServer(
     credentials: "include",
     body: JSON.stringify(payload),
   });
+
+  if (postRes.status === 410) {
+    return { ok: false, status: 410, created: false, deleted: true };
+  }
 
   if (postRes.ok) {
     return { ok: true, status: postRes.status, created: true };
@@ -50,6 +95,9 @@ export async function upsertPaperSessionOnServer(
     credentials: "include",
     body: JSON.stringify(payload),
   });
+  if (retryPatch.status === 410) {
+    return { ok: false, status: 410, created: false, deleted: true };
+  }
   if (!retryPatch.ok) {
     return { ok: false, status: postRes.status, created: false };
   }

@@ -135,6 +135,7 @@ export async function queryCompletedSessions(
     .select('id, ended_at, selected_sections, selected_part_ids, paper_name, paper_variant, paper_id, question_start, question_end')
     .eq('user_id', userId)
     .eq('paper_name', paperTypeName)
+    .is('deleted_at', null)
     .not('ended_at', 'is', null);
   
   if (yearFilter) {
@@ -158,6 +159,7 @@ export async function queryCompletedSessions(
       .select('id, ended_at, selected_sections, selected_part_ids, paper_name, paper_variant, paper_id, question_start, question_end')
       .eq('user_id', userId)
       .eq('paper_name', examName)
+      .is('deleted_at', null)
       .not('ended_at', 'is', null);
     
     if (yearFilter) {
@@ -241,6 +243,7 @@ export async function loadAllCompletedSessionsByPaperName(
       .from('paper_sessions')
       .select('id, ended_at, selected_sections, selected_part_ids, paper_name, paper_variant, paper_id, question_start, question_end')
       .eq('user_id', userId)
+      .is('deleted_at', null)
       .not('ended_at', 'is', null)
       .order('paper_variant');
 

@@ -32,6 +32,7 @@ export async function cleanupStaleSessions(daysInactive: number = 7): Promise<nu
       .from('paper_sessions')
       .select('id')
       .is('ended_at', null)
+      .is('deleted_at', null)
       .lt('started_at', cutoffISO);
 
     if (fetchError) {

@@ -1035,9 +1035,18 @@ export default function PapersMarkPage() {
               ? sectionPercentiles
               : null,
         }),
-      }).catch(() => {
-        // fail-soft: averages still fall back to accuracy
-      });
+      })
+        .then(async (res) => {
+          if (res.status !== 410) return;
+          const { markPaperSessionTombstoned } = await import(
+            "@/lib/papers/paperSessionTombstones"
+          );
+          markPaperSessionTombstoned(sessionId);
+          usePaperSessionStore.getState().clearClientSession();
+        })
+        .catch(() => {
+          // fail-soft: averages still fall back to accuracy
+        });
     }, 800);
 
     return () => window.clearTimeout(timer);
