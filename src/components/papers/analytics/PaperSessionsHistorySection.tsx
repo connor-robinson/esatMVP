@@ -21,7 +21,7 @@ import { sectionShell } from './styles';
 
 const SESSION_HISTORY_PREVIEW = 4;
 
-export type PaperSessionSortMode = 'recent' | 'percentage' | 'percentile';
+export type PaperSessionSortMode = 'recent' | 'percentage' | 'percentile' | 'scaled';
 
 interface PaperSessionsHistorySectionProps {
   sessions: EnrichedPaperSession[];
@@ -61,6 +61,10 @@ export function PaperSessionsHistorySection({
       );
     } else if (sessionSortBy === 'percentile') {
       sorted.sort((a, b) => (b.percentile || 0) - (a.percentile || 0));
+    } else if (sessionSortBy === 'scaled') {
+      sorted.sort(
+        (a, b) => (b.predictedScore || 0) - (a.predictedScore || 0),
+      );
     }
     return sorted;
   }, [sessions, sessionSortBy]);
@@ -114,6 +118,7 @@ export function PaperSessionsHistorySection({
                   aria-label="Sort sessions"
                 >
                   <option value="recent">Sort by Recent</option>
+                  <option value="scaled">Highest scaled score</option>
                   <option value="percentage">Highest score %</option>
                   <option value="percentile">Highest percentile</option>
                 </select>
@@ -164,11 +169,14 @@ export function PaperSessionsHistorySection({
             ) : (
               <div className="relative">
                 <div className="overflow-x-auto rounded-organic-lg bg-surface-mid/40">
-                  <table className="w-full min-w-[720px] border-collapse text-left text-sm">
+                  <table className="w-full min-w-[800px] border-collapse text-left text-sm">
                     <thead>
                       <tr className="border-b border-border-subtle bg-surface-mid/80 font-mono text-[10px] font-semibold uppercase tracking-wider text-text-muted">
                         <th className="px-4 py-3">Paper</th>
                         <th className="px-4 py-3">Sections</th>
+                        <th className="px-4 py-3 text-right tabular-nums">
+                          Score
+                        </th>
                         <th className="px-4 py-3 text-right tabular-nums">%</th>
                         <th className="px-4 py-3 text-right tabular-nums">
                           Percentile
@@ -230,6 +238,12 @@ export function PaperSessionsHistorySection({
                             </td>
                             <td className="max-w-[200px] truncate px-4 py-3 text-text-muted">
                               {sectionInfo}
+                            </td>
+                            <td className="px-4 py-3 text-right tabular-nums font-medium text-text">
+                              {typeof s.predictedScore === 'number' &&
+                              Number.isFinite(s.predictedScore)
+                                ? s.predictedScore.toFixed(1)
+                                : '-'}
                             </td>
                             <td className="px-4 py-3 text-right tabular-nums text-text">
                               {s.scorePercentage !== null

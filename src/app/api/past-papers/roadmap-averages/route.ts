@@ -48,21 +48,16 @@ function isLocalhostRequest(request: Request): boolean {
 /**
  * Prefer stored scaled ESAT score; else mean of section_percentiles scores.
  */
-function coerceEsatValue(value: unknown): number | null {
-  if (typeof value === "number" && inEsatRange(value)) return value;
-  if (typeof value === "string" && value.trim() !== "") {
-    const parsed = Number(value);
-    if (inEsatRange(parsed)) return parsed;
-  }
-  return null;
-}
-
 function esatScoreFromStored(row: {
-  predicted_score?: number | string | null;
+  predicted_score?: number | null;
   section_percentiles?: unknown;
 }): number | null {
-  const overall = coerceEsatValue(row.predicted_score);
-  if (overall != null) return overall;
+  if (
+    typeof row.predicted_score === "number" &&
+    inEsatRange(row.predicted_score)
+  ) {
+    return row.predicted_score;
+  }
 
   const percentiles = row.section_percentiles;
   if (!percentiles || typeof percentiles !== "object") return null;
@@ -71,8 +66,9 @@ function esatScoreFromStored(row: {
   for (const value of Object.values(
     percentiles as Record<string, SectionPercentile>,
   )) {
-    const score = coerceEsatValue(value?.score);
-    if (score != null) sectionScores.push(score);
+    if (value && typeof value.score === "number" && inEsatRange(value.score)) {
+      sectionScores.push(value.score);
+    }
   }
   return mean(sectionScores);
 }
@@ -121,6 +117,18 @@ function esatScoreFromAccuracy(
       }),
     );
     if (matched.length > 0) parts = matched;
+  }
+
+  // TMUA: never blend Overall (0–40) with Paper 1/2 (0–20) for a single raw estimate.
+  const isTmuaTable = allParts.some((p) => /^paper\s*[12]$/i.test(p) || /^overall$/i.test(p));
+  if (isTmuaTable) {
+    const paperParts = parts.filter((p) => /^paper\s*[12]$/i.test(p));
+    const onlyOverall = parts.length === 1 && /^overall$/i.test(parts[0]);
+    if (paperParts.length > 0) {
+      parts = paperParts;
+    } else if (!onlyOverall) {
+      parts = parts.filter((p) => !/^overall$/i.test(p));
+    }
   }
 
   const scaled: number[] = [];

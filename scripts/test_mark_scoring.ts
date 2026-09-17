@@ -177,8 +177,13 @@ async function main() {
         const okMatch = resolved.matched;
         const okTable = exam === "TMUA" ? tableKey === "tmua_paper" : tableKey !== null;
         const okHelper = viaHelper === (typeof scaled === "number" ? Math.round(scaled * 10) / 10 : null);
+        const okTmuaPart =
+          exam !== "TMUA" ||
+          resolved.name === section ||
+          (section === "Paper 1" && resolved.name === "Paper 1") ||
+          (section === "Paper 2" && resolved.name === "Paper 2");
 
-        if (okScaled && okMatch && okTable && okHelper) {
+        if (okScaled && okMatch && okTable && okHelper && okTmuaPart) {
           passed++;
         } else {
           failures.push(

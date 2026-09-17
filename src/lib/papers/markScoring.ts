@@ -114,7 +114,18 @@ export function resolveConversionPartName(
   const candidateNames: string[] = [];
 
   if (examName === "TMUA") {
-    candidateNames.push("Overall");
+    // Prefer the paper-specific curve (0–20). Overall (0–40) is only for combined sittings.
+    const paperSection =
+      mapTmuaPaperNameToSection(paperName) ||
+      mapTmuaPaperNameToSection(partLetterRaw) ||
+      mapTmuaPaperNameToSection(partName);
+    if (paperSection) {
+      candidateNames.push(paperSection);
+    } else if (/overall/i.test(`${partLetterRaw} ${partName || ""} ${paperName || ""}`)) {
+      candidateNames.push("Overall");
+    } else {
+      candidateNames.push("Paper 1", "Paper 2");
+    }
   } else if (examName === "ENGAA") {
     const paperLower = (paperName || "").toLowerCase();
     if (paperLower.includes("section 2")) {
@@ -223,6 +234,16 @@ export function computeScaledScore(
     }
   }
 
+  // TMUA: never average Overall (0–40) with Paper 1/2 (0–20) for the same raw count.
+  if (examName.toUpperCase() === "TMUA") {
+    return {
+      scaled: null,
+      convPartName,
+      matched: false,
+      usedAverage: false,
+    };
+  }
+
   const partNames = [
     ...new Set(
       scopedRows
@@ -290,6 +311,32 @@ export function computePredictedScore(
     [...rowsByPaperId.values()].some((rows) => rows.length > 0);
   if (entries.length === 0 || (!hasScopedRows && conversionRows.length === 0)) {
     return null;
+  }
+
+  const exam = examName.toUpperCase();
+
+  // TMUA with both papers: use the Overall (0–40) curve on the combined raw mark.
+  if (exam === "TMUA") {
+    const paper1 = sectionAnalytics["Paper 1"];
+    const paper2 = sectionAnalytics["Paper 2"];
+    const hasP1 = !!paper1 && paper1.total > 0;
+    const hasP2 = !!paper2 && paper2.total > 0;
+
+    if (hasP1 && hasP2) {
+      const overallRaw = paper1.correct + paper2.correct;
+      const overallRows =
+        getConversionRowsForSection(
+          questions,
+          "Paper 1",
+          examName,
+          conversionRows,
+          rowsByPaperId,
+        ) || conversionRows;
+      const overallScaled = scaleScore(overallRows, "Overall", overallRaw, "nearest");
+      if (typeof overallScaled === "number") {
+        return Math.round(overallScaled * 10) / 10;
+      }
+    }
   }
 
   let weightedSum = 0;
