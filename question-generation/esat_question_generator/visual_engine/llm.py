@@ -17,6 +17,23 @@ from .errors import VisualSpecError
 
 DEFAULT_DIAGRAM_DESIGNER_MODEL = os.environ.get("MODEL_DIAGRAM_DESIGNER", "gemini-3.7-flash")
 GEMINI_REQUEST_TIMEOUT_MS = int(float(os.environ.get("DIAGRAM_GEMINI_TIMEOUT_S", "180")) * 1000)
+# Minimum gap between Vertex calls to avoid RPM / shared-capacity 429 storms.
+VERTEX_MIN_INTERVAL_S = float(os.environ.get("VERTEX_MIN_INTERVAL_S", "12"))
+_last_vertex_call_at = 0.0
+
+
+def _pace_vertex_calls() -> None:
+    """Serialize Vertex traffic so back-to-back designer/render calls do not burst."""
+    global _last_vertex_call_at
+    gap = max(0.0, float(VERTEX_MIN_INTERVAL_S))
+    if gap <= 0:
+        _last_vertex_call_at = time.time()
+        return
+    now = time.time()
+    wait = gap - (now - _last_vertex_call_at)
+    if wait > 0:
+        time.sleep(wait)
+    _last_vertex_call_at = time.time()
 
 
 @dataclass
@@ -142,6 +159,7 @@ def call_json_multimodal(
     response = None
     for attempt in range(max_retries):
         try:
+            _pace_vertex_calls()
             response = client.models.generate_content(
                 model=m,
                 contents=[types.Content(role="user", parts=parts)],

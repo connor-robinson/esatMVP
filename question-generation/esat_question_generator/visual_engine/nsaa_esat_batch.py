@@ -4,16 +4,17 @@ One new review question per unused NSAA Section 1 source. ENGAA and specimen
 papers are never used. A source ID is only marked used (ticked) after a
 successful kept generation; skips and errors can be retried later.
 
-Per-cycle ratio:
-  Math 1 / Math 2 only on odd cycles (halved vs prior 1+1 every cycle)
-  Each cycle: 2 Physics + 3 Biology + 3 Chemistry
-  Odd cycles also: 1 Math 1 + 1 Math 2
+Per-cycle ratio (default):
+  2 Math 1 + 2 Math 2 + 1 Physics + 3 Biology + 4 Chemistry
+
+Unused sources: all unused NSAA items are queued (diagram sources first, then
+text-only). Far-reuse of already-used sources follows when unused stock is gone.
 
 Diagram targets (suitability retry; skip if not honest, never force fake figures):
-  - Math 1 / Math 2: ~100% rendered diagram (diagram-source pool only)
-  - Physics: ~75% figure (geometry setup sketches or graphs; match source form)
+  - Math 1 / Math 2: ~95% rendered diagram when the source supports one
+  - Physics: ~50% figure (geometry setup sketches or graphs; match source form)
   - Biology: ~90% graph / bio_diagram / pedigree
-  - Chemistry: ~80% chem_structure / graph / energy_profile
+  - Chemistry: ~92% chem_structure / graph / energy_profile
 
 Example:
 
@@ -56,23 +57,24 @@ from visual_engine.review_store import ReviewStore
 STATUS_PATH = Path(__file__).resolve().parent / "review_data" / "nsaa_esat_batch_status.json"
 USED_PATH = Path(__file__).resolve().parent / "review_data" / "nsaa_esat_used_sources.json"
 
-DEFAULT_WORKERS = 4
+DEFAULT_WORKERS = 2
 
-# Per-cycle slot counts. Math 1 / Math 2 fire only every MATH_SLOT_PERIOD cycles
-# (period 2 => half the previous Math throughput).
+# Per-cycle slot counts.
 RATIO = {
-    "Math 1": 1,
-    "Math 2": 1,
-    "Physics": 2,
+    "Math 1": 2,
+    "Math 2": 2,
+    "Physics": 1,
     "Biology": 3,
-    "Chemistry": 3,
+    "Chemistry": 4,
 }
-MATH_SLOT_PERIOD = 2
+# 1 = math every cycle. >1 spaces math slots (legacy half-rate used 2).
+MATH_SLOT_PERIOD = 1
 MATH_LABELS = frozenset({"Math 1", "Math 2"})
 
-PHYSICS_DIAGRAM_RATIO = 0.75
+MATH_DIAGRAM_RATIO = 0.95
+PHYSICS_DIAGRAM_RATIO = 0.50
 BIOLOGY_DIAGRAM_RATIO = 0.90
-CHEMISTRY_DIAGRAM_RATIO = 0.80
+CHEMISTRY_DIAGRAM_RATIO = 0.92
 
 DIAGRAM_TYPES = {
     "mathematics": frozenset({"graph", "geometry"}),
@@ -241,8 +243,7 @@ def _require_diagram(
 ) -> bool:
     if allow_non_diagram:
         return False
-    if subject == "mathematics":
-        return True
+    # Sources that already have a figure should keep a figure when we ask for one.
     if _has_stem_diagram(eq):
         return True
     rendered = DIAGRAM_TYPES.get(subject, frozenset({"graph"}))
@@ -289,18 +290,32 @@ def _slot_mix(
     if review_label.startswith("Math"):
         if allow_non_diagram:
             bits.append(
-                _mix_hint(designer_subject, mix_counts, diagrams_only=False, diagram_target_ratio=0.5)
+                _mix_hint(
+                    designer_subject,
+                    mix_counts,
+                    diagrams_only=False,
+                    diagram_target_ratio=MATH_DIAGRAM_RATIO,
+                )
             )
         else:
             bits.append(MATH_DIAGRAM_HINT)
-            bits.append(_mix_hint(designer_subject, mix_counts, diagrams_only=True))
+            bits.append(
+                _mix_hint(
+                    designer_subject,
+                    mix_counts,
+                    diagrams_only=True,
+                    diagram_target_ratio=MATH_DIAGRAM_RATIO,
+                )
+            )
         return " ".join(b for b in bits if b).strip()
 
     targets = {
         "physics": (
             PHYSICS_DIAGRAM_RATIO,
-            "geometry setup sketches or graphs (match the source; do not invent T-t plots for pulley setups)",
-            "geometry/graph",
+            "geometry setups, simple circuit schematics, or graphs "
+            "(circuits = line-art geometry: wires/lines, zigzag resistors, parallel-line cells, "
+            "labelled meter/bulb circles; do not invent T-t plots for pulley setups)",
+            "geometry/graph/circuit-schematic",
         ),
         "biology": (BIOLOGY_DIAGRAM_RATIO, "graph, bio_diagram, or pedigree", "graph/bio_diagram/pedigree"),
         "chemistry": (
@@ -327,18 +342,30 @@ def _slot_mix(
         "If not suitable for an honest diagram, set skip=true and say why "
         "(do not fill with none/table just to avoid a diagram)."
     )
+    if designer_subject == "physics":
+        hint += (
+            " ELECTRICAL CIRCUITS ARE SUPPORTED: never skip only because the source is a circuit. "
+            "Use visual_type geometry and draw a simple exam schematic with line primitives "
+            "(not photographic apparatus)."
+        )
     if allow_non_diagram:
         hint = (
             f"{designer_subject.upper()}: diagram preferred when honest (~{pct}%), "
             "but this slot may keep none/table. "
             f"Prefer {prefer_text} when the source supports it."
         )
+        if designer_subject == "physics":
+            hint += (
+                " Circuits still preferred as geometry schematics when the source is a circuit."
+            )
     elif must:
         hint += (
             f" This slot prefers a diagram ({short}) if suitable. "
             "If suitable → diagram visual_type. If not → skip=true. "
             "Do not use none/table for this slot."
         )
+        if designer_subject == "physics":
+            hint += " A circuit source is suitable: use geometry schematic, do not skip."
     if _has_stem_diagram(eq):
         hint += " SOURCE HAS A DIAGRAM: keep a diagram-based sibling/far variation when honest."
     elif must:
@@ -417,7 +444,7 @@ def _process_one(
         _write_status(summary)
 
     targets = {
-        "mathematics": 1.0,
+        "mathematics": MATH_DIAGRAM_RATIO,
         "physics": PHYSICS_DIAGRAM_RATIO,
         "biology": BIOLOGY_DIAGRAM_RATIO,
         "chemistry": CHEMISTRY_DIAGRAM_RATIO,
@@ -444,12 +471,12 @@ def _process_one(
         qid_override = review_question_id
         existing = local_store.get_item(f"nsaa-{eq.question_id}")
         existing_status = str((existing or {}).get("question_status") or "").lower()
-        # Freed rejected sources should come back as far variations, not near-siblings.
+        # Freed rejected sources should come back as far variations, not near-siblings,
+        # and must not overwrite the rejected row (that resurrects it into Pending).
         if existing_status == "rejected":
             prefer_far = True
         if prefer_far and not qid_override:
-            # Avoid overwriting an existing keep when reusing a still-active source.
-            if existing and existing_status not in {"", "rejected"}:
+            if existing:
                 qid_override = next_far_question_id(local_store, int(eq.question_id))
         rec = generate_one(
             eq,
@@ -664,12 +691,8 @@ def _schedule_jobs(
                     allow_non_diagram = not (_has_stem_diagram(eq) if eq else False)
                 if eq is None:
                     continue
-                # Science unused queues already include text at the tail.
-                if (
-                    phase == "unused-diagram"
-                    and subject != "mathematics"
-                    and not _has_stem_diagram(eq)
-                ):
+                # Unused queues include text at the tail for every subject.
+                if phase == "unused-diagram" and not _has_stem_diagram(eq):
                     phase = "unused-text"
                     allow_non_diagram = True
                 jobs.append(
@@ -714,10 +737,9 @@ def run_esat_batch(
     biology_pool = select_nsaa_subject_questions(subject="biology")
     chemistry_pool = select_nsaa_subject_questions(subject="chemistry")
 
-    math_diagram = [eq for eq in math_pool if _has_stem_diagram(eq) and eq.question_id not in done]
-    math1_q, math2_q = _split_math(math_diagram)
-    text_math = _unused_text_math(math_pool, done)
-    text_m1, text_m2 = _split_math(text_math)
+    # All unused sources (diagram first, then text-only) for every subject.
+    math_unused = _diagram_source_queue(math_pool, done)
+    math1_q, math2_q = _split_math(math_unused)
 
     queues: dict[str, list[EvalQuestion]] = {
         "Math 1": list(math1_q),
@@ -726,10 +748,10 @@ def run_esat_batch(
         "Biology": _diagram_source_queue(biology_pool, done),
         "Chemistry": _diagram_source_queue(chemistry_pool, done),
     }
-    text_math_queues = {"Math 1": list(text_m1), "Math 2": list(text_m2)}
+    # Kept for schedule API compatibility; unused math text now lives in queues.
+    text_math_queues: dict[str, list[EvalQuestion]] = {"Math 1": [], "Math 2": []}
 
     queued_ids = {eq.question_id for q in queues.values() for eq in q}
-    queued_ids |= {eq.question_id for q in text_math_queues.values() for eq in q}
     far_queues: dict[str, list[EvalQuestion]] = {
         "Math 1": _far_reuse_pool(math_pool, done=done, already_queued=queued_ids, diagram_only=False),
         "Math 2": [],
@@ -775,12 +797,17 @@ def run_esat_batch(
         target_cycles = min(int(cycles), max_cycles)
 
     ratio_text = (
-        f"Math1/Math2 every {MATH_SLOT_PERIOD} cycles (half prior rate) · "
-        "2 Physics : 3 Biology : 3 Chemistry each cycle"
+        f"{RATIO['Math 1']} Math1 : {RATIO['Math 2']} Math2 : "
+        f"{RATIO['Physics']} Physics : {RATIO['Biology']} Biology : "
+        f"{RATIO['Chemistry']} Chemistry each cycle"
     )
     diagram_policy = (
-        "Prefer unused diagram sources; if exhausted use unused text (non-diagram OK), "
-        "then far-reuse already-used sources. Rejected/failed ticks are freed before each run."
+        f"Unused: all NSAA sources (diagram-first, then text). "
+        f"Diagram targets math~{int(MATH_DIAGRAM_RATIO*100)}% / "
+        f"physics~{int(PHYSICS_DIAGRAM_RATIO*100)}% / "
+        f"biology~{int(BIOLOGY_DIAGRAM_RATIO*100)}% / "
+        f"chemistry~{int(CHEMISTRY_DIAGRAM_RATIO*100)}%. "
+        "Then far-reuse already-used sources. Rejected ticks are freed before each run."
     )
     summary: dict[str, Any] = {
         "status": "running",
@@ -796,11 +823,13 @@ def run_esat_batch(
         "freed_ticks": freed,
         "phase_plan": [
             {
-                "phase": "diagram-then-text-then-far",
-                "math1_diagram": len(queues["Math 1"]),
-                "math2_diagram": len(queues["Math 2"]),
-                "math1_text": len(text_math_queues["Math 1"]),
-                "math2_text": len(text_math_queues["Math 2"]),
+                "phase": "unused-all-then-far",
+                "math1_unused": len(queues["Math 1"]),
+                "math2_unused": len(queues["Math 2"]),
+                "math1_diagram": sum(1 for eq in queues["Math 1"] if _has_stem_diagram(eq)),
+                "math2_diagram": sum(1 for eq in queues["Math 2"] if _has_stem_diagram(eq)),
+                "math1_text": sum(1 for eq in queues["Math 1"] if not _has_stem_diagram(eq)),
+                "math2_text": sum(1 for eq in queues["Math 2"] if not _has_stem_diagram(eq)),
                 "math1_far": len(far_queues["Math 1"]),
                 "math2_far": len(far_queues["Math 2"]),
                 "physics": len(queues["Physics"]),
@@ -823,7 +852,7 @@ def run_esat_batch(
             "biology_remaining": _effective_len("Biology"),
             "chemistry_remaining": _effective_len("Chemistry"),
             "already_ticked": len(done),
-            "phase": "diagram-then-text-then-far",
+            "phase": "unused-all-then-far",
             "phase_math1": _effective_len("Math 1"),
             "phase_math2": _effective_len("Math 2"),
             "phase_physics": _effective_len("Physics"),
@@ -847,7 +876,7 @@ def run_esat_batch(
         "current": None,
         "recent": [],
         "started_at": _now(),
-        "phase": "diagram-then-text-then-far",
+        "phase": "unused-all-then-far",
     }
     _write_status(summary)
 
@@ -985,7 +1014,7 @@ def run_esat_batch(
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Generate Math1/Math2/Physics/Biology/Chemistry from NSAA at 1:1:2:3:3"
+        description="Generate Math1/Math2/Physics/Biology/Chemistry from NSAA (default 2:2:1:3:4)"
     )
     parser.add_argument(
         "--cycles",

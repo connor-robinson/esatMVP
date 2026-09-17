@@ -203,9 +203,13 @@ def main() -> int:
                 print(f"  skip: {rec.get('skip_reason')}", flush=True)
             else:
                 errors += 1
-            # Brief pause between successes to reduce Vertex 429 storms overnight.
+            # Slow pacing (~2x) to reduce Vertex 429 storms overnight.
             if status == "generated":
-                time.sleep(8)
+                time.sleep(20)
+            elif status == "skipped":
+                time.sleep(4)
+            else:
+                time.sleep(10)
 
     summary = {
         "status": "completed",

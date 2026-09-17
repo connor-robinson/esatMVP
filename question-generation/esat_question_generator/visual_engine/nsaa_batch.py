@@ -1113,12 +1113,15 @@ def run_batch(
             vtype = str(rec.get("visual_type") or "none")
             mix_counts[vtype] = mix_counts.get(vtype, 0) + 1
             print(f"  {rec.get('variation_mode')} {vtype} -> {rec.get('question_id')}", flush=True)
-            time.sleep(8)
+            # Slow pacing (~2x) to stay under Vertex RPM / shared capacity.
+            time.sleep(20)
         elif rec.get("status") == "skipped":
             summary["skipped"] += 1
             print(f"  skip: {rec.get('skip_reason')}", flush=True)
+            time.sleep(4)
         else:
             summary["errors"] += 1
+            time.sleep(10)
         summary["visual_type_counts"] = mix_counts
         summary["results"] = results
         summary["counts"] = store.counts()
