@@ -61,6 +61,7 @@ export async function updatePaperSession(id: string, updates: Partial<PaperSessi
       .from('paper_sessions')
       .update(updateData)
       .eq('id', id)
+      .is('deleted_at', null)
       .select()
       .single();
 
