@@ -1,4 +1,4 @@
-# Resume overnight Physics: skip gen, run strict QA + top-up to >=40 keepers.
+# Resume overnight Physics: far top-up + strict QA until >=40 keepers.
 $ErrorActionPreference = "Continue"
 Set-Location "c:\Users\anson\Desktop\nocalcMVP2_real\question-generation\esat_question_generator"
 $env:PYTHONIOENCODING = "utf-8"
@@ -9,7 +9,7 @@ $log = Join-Path $logDir "overnight_physics_$stamp.log"
 
 Write-Host "Logging to $log"
 python -u -m visual_engine.overnight_physics_diagrams `
-  --hours 8 `
+  --hours 6 `
   --min-keep 40 `
   --magnetism-n 20 `
   --general-n 0 `

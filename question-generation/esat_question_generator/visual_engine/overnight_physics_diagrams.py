@@ -180,16 +180,114 @@ def _run_magnetism(n: int, model: str) -> dict[str, Any]:
     return {"status": "ok" if code == 0 else "failed", "exit_code": code}
 
 
-def _run_general_physics(n: int, model: str) -> dict[str, Any]:
-    print(f"\n=== PHASE general Physics diagrams (target {n}) ===", flush=True)
-    return run_batch(
-        n=n,
-        subject="physics",
-        diagrams_only=True,
-        model=model,
-        review_label="Physics",
-        force=False,
+def _run_general_physics(n: int, model: str, *, far: bool = False) -> dict[str, Any]:
+    print(
+        f"\n=== PHASE general Physics diagrams (target {n}"
+        f"{', far variants' if far else ''}) ===",
+        flush=True,
     )
+    if not far:
+        return run_batch(
+            n=n,
+            subject="physics",
+            diagrams_only=True,
+            model=model,
+            review_label="Physics",
+            force=False,
+        )
+
+    # Top-up path: unused sources first, then far reuse of used sources so we
+    # never overwrite rejected sibling IDs that QA would skip.
+    from visual_engine.eval.question_selector import select_nsaa_subject_questions
+    from visual_engine.nsaa_batch import (
+        already_generated_ids,
+        attach_source_options,
+        generate_one,
+        next_far_question_id,
+        _mix_hint,
+    )
+
+    store = ReviewStore()
+    pool = select_nsaa_subject_questions(
+        subject="physics",
+        count=None,
+        require_diagram=True,
+    )
+    done = already_generated_ids(store)
+    unused = [eq for eq in pool if eq.question_id not in done]
+    used = [eq for eq in pool if eq.question_id in done]
+    ordered = unused + used
+    options_by_id = attach_source_options(ordered)
+    generated = 0
+    skipped = 0
+    errors = 0
+    mix_counts: dict[str, int] = {}
+    target = max(1, int(n))
+
+    for i, eq in enumerate(ordered, start=1):
+        if generated >= target:
+            break
+        print(
+            f"[topup {i}/{len(ordered)}] source {eq.question_id} "
+            f"({eq.exam_year} Q{eq.question_number})",
+            flush=True,
+        )
+        qid_override = next_far_question_id(store, int(eq.question_id))
+        mix = (
+            "TOPIC FOCUS: any ESAT Physics topic with a genuine exam diagram "
+            "(geometry schematic or graph). "
+            + _mix_hint("physics", mix_counts, diagrams_only=True)
+            + " You MUST set variation_mode to far (not sibling)."
+        )
+        try:
+            rec = generate_one(
+                eq,
+                store=store,
+                source_options=options_by_id.get(eq.question_id) or {},
+                model=model,
+                mix_hint=mix,
+                require_rendered_visual=True,
+                allowed_visual_types={"geometry", "graph"},
+                review_label="Physics",
+                review_question_id=qid_override,
+            )
+        except Exception as exc:
+            rec = {
+                "status": "error",
+                "source_question_id": eq.question_id,
+                "error": f"{type(exc).__name__}: {exc}",
+            }
+            print(f"  error: {exc}", flush=True)
+            traceback.print_exc()
+        status = str(rec.get("status") or "")
+        if status == "generated":
+            generated += 1
+            vtype = str(rec.get("visual_type") or "none")
+            mix_counts[vtype] = mix_counts.get(vtype, 0) + 1
+            print(
+                f"  {rec.get('variation_mode')} {vtype} -> {rec.get('question_id')} "
+                f"({generated}/{target})",
+                flush=True,
+            )
+            time.sleep(20)
+        elif status == "skipped":
+            skipped += 1
+            reason = str(rec.get("skip_reason") or "")
+            print(f"  skip: {reason.encode('ascii', 'replace').decode('ascii')}", flush=True)
+            time.sleep(4)
+        else:
+            errors += 1
+            time.sleep(10)
+
+    summary = {
+        "status": "completed",
+        "generated": generated,
+        "skipped": skipped,
+        "errors": errors,
+        "visual_type_counts": mix_counts,
+    }
+    print(json.dumps(summary, indent=2), flush=True)
+    return summary
 
 
 def _qa_cohort(
@@ -216,6 +314,9 @@ def _qa_cohort(
     for qid in pending_items:
         if qid not in ids:
             ids.append(qid)
+        # Re-queued pending items must leave the rejected set so QA can re-check.
+        if qid in rejected:
+            rejected = [r for r in rejected if r != qid]
 
     stats = {
         "evaluated": 0,
@@ -447,7 +548,7 @@ def run_overnight(
                 flush=True,
             )
             try:
-                _run_general_physics(gen_n, designer_model)
+                _run_general_physics(gen_n, designer_model, far=True)
             except Exception:
                 traceback.print_exc()
             _ingest_new("general_ids")
