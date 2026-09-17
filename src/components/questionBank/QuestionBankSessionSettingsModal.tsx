@@ -15,7 +15,6 @@ import {
   SUBJECT_PILL_INACTIVE,
 } from "@/lib/questionBank/subjectColors";
 import {
-  DIFFICULTY_MIX_BLURBS,
   difficultiesForMixApi,
   type DifficultyMixPreset,
   uiDifficultiesForMix,
@@ -486,14 +485,9 @@ export function QuestionBankSessionSettingsModal({
   const subjectsBlock =
     showSubjectToggles ? (
       <div className="space-y-3">
-        <div className="flex items-center justify-between gap-4">
-          <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
-            {advanced ? "Subjects" : "Subject"}
-          </span>
-          <span className="text-xs text-text-muted">
-            {advanced ? `${subjectKeys.length} selected` : "One subject"}
-          </span>
-        </div>
+        <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
+          {advanced ? "Subjects" : "Subject"}
+        </span>
         <div className="flex flex-wrap gap-2.5">
           {siblingTiles.map((t) => {
             const key = t.key as SubjectFilter;
@@ -520,28 +514,20 @@ export function QuestionBankSessionSettingsModal({
 
   const difficultyBlock = (
     <div className={cn("space-y-3", !showSubjectToggles && "lg:col-span-2")}>
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-1.5">
-          <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
-            Difficulty
-          </span>
-          <RoadmapInfoPopover
-            title="How difficulty works"
-            label="Difficulty info"
-            align="left"
-          >
-            <p>
-              This is still a mixed session. The slider sets a general
-              difficulty bias, not a single fixed level.
-            </p>
-          </RoadmapInfoPopover>
-        </div>
-        <span
-          key={difficultyMix}
-          className="text-xs font-medium text-text-muted"
-        >
-          {DIFFICULTY_MIX_BLURBS[difficultyMix]}
+      <div className="flex items-center gap-1.5">
+        <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
+          Difficulty
         </span>
+        <RoadmapInfoPopover
+          title="How difficulty works"
+          label="Difficulty info"
+          align="left"
+        >
+          <p>
+            This is still a mixed session. The slider sets a general
+            difficulty bias, not a single fixed level.
+          </p>
+        </RoadmapInfoPopover>
       </div>
       <DifficultyMixSlider value={difficultyMix} onChange={setDifficultyMix} />
     </div>
@@ -586,35 +572,15 @@ export function QuestionBankSessionSettingsModal({
 
   const questionPoolBlock = (
     <div className="space-y-3">
-      <div className="space-y-1">
-        <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
-          Which questions
-        </span>
-        <p className="text-[11px] leading-snug text-text-muted">
-          Filter by whether you have seen them before
-        </p>
-      </div>
+      <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
+        Which questions
+      </span>
       <div className="grid grid-cols-3 gap-2">
         {(
           [
-            {
-              id: "new",
-              label: "New only",
-              hint: "Not attempted yet",
-              title: "Only questions you have not answered yet",
-            },
-            {
-              id: "incorrect",
-              label: "Incorrect",
-              hint: "Previously wrong",
-              title: "Only questions you have gotten wrong at least once",
-            },
-            {
-              id: "mixed",
-              label: "Mixed",
-              hint: "Wrong + new",
-              title: "About half prior incorrect questions, half new ones",
-            },
+            { id: "new", label: "New only" },
+            { id: "incorrect", label: "Incorrect" },
+            { id: "mixed", label: "Mixed" },
           ] as const
         ).map((option) => {
           const needsAuth = option.id !== "new";
@@ -629,7 +595,7 @@ export function QuestionBankSessionSettingsModal({
               title={
                 disabled
                   ? "Sign in with full access to use this option"
-                  : option.title
+                  : undefined
               }
               className={cn(
                 "rounded-organic-lg px-2 py-2.5 text-center transition-colors sm:px-3",
@@ -642,14 +608,6 @@ export function QuestionBankSessionSettingsModal({
             >
               <span className="block text-sm font-semibold leading-tight">
                 {option.label}
-              </span>
-              <span
-                className={cn(
-                  "mt-0.5 block text-[10px] font-medium leading-tight",
-                  active ? "text-background/75" : "text-text-muted",
-                )}
-              >
-                {option.hint}
               </span>
             </button>
           );
@@ -819,16 +777,13 @@ export function QuestionBankSessionSettingsModal({
         <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable]">
           {/* Header */}
           <div className="flex items-start justify-between gap-4">
-            <div className="min-w-0 space-y-2">
+            <div className="min-w-0">
               <h2
                 id="session-settings-title"
                 className="text-lg font-semibold text-text sm:text-xl"
               >
                 {modalTitle}
               </h2>
-              <p className="text-sm text-text-muted">
-                Configure your practice session before you start.
-              </p>
             </div>
             <div className="flex shrink-0 items-center gap-3 pt-0.5">
               <AdvancedToggle
@@ -876,36 +831,14 @@ export function QuestionBankSessionSettingsModal({
                     : "pointer-events-none opacity-0",
                 )}
               >
-                <div className="flex items-baseline justify-between gap-3">
-                  <h3 className="text-xs font-semibold uppercase tracking-wide text-text">
-                    Advanced options
-                  </h3>
-                  <span className="text-[11px] text-text-muted">
-                    Play style, which questions, and topics
-                  </span>
-                </div>
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-text">
+                  Advanced options
+                </h3>
 
                 <div className="grid grid-cols-2 items-start gap-4 sm:gap-6">
                   {playModeBlock}
                   {questionPoolBlock}
                 </div>
-                {questionPool === "incorrect" ? (
-                  <p className="text-xs leading-relaxed text-text-muted">
-                    Drills questions you have gotten wrong before (even if you
-                    later got them right). Unique questions only; stops when you
-                    run out.
-                  </p>
-                ) : questionPool === "mixed" ? (
-                  <p className="text-xs leading-relaxed text-text-muted">
-                    About half previously incorrect, half brand-new. Unique
-                    questions only.
-                  </p>
-                ) : questionPool === "new" && advanced ? (
-                  <p className="text-xs leading-relaxed text-text-muted">
-                    Only questions you have not answered yet in the question
-                    bank.
-                  </p>
-                ) : null}
 
                 <div className="border-t border-transparent pt-1">
                   {topicsBlock}
