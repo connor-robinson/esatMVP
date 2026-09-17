@@ -43,13 +43,23 @@ export async function GET(_request: NextRequest, context: RouteContext) {
         used_hint,
         wrong_answers_before,
         ai_generated_questions (
+          id,
+          generation_id,
+          schema_id,
           question_stem,
           correct_option,
           options,
           difficulty,
           subjects,
+          test_type,
           primary_tag,
-          secondary_tags
+          secondary_tags,
+          solution_reasoning,
+          solution_key_insight,
+          distractor_map,
+          has_visual,
+          status,
+          created_at
         )
       `,
       )

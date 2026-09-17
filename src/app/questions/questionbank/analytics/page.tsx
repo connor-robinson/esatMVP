@@ -1,13 +1,22 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useEffect, useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Container } from '@/components/layout/Container';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { QuestionBankDifficultySection } from '@/components/questionBank/analytics/QuestionBankDifficultySection';
 import { QuestionBankWeakestTopicsSection } from '@/components/questionBank/analytics/QuestionBankWeakestTopicsSection';
 import { QuestionBankSessionHistory } from '@/components/questionBank/analytics/QuestionBankSessionHistory';
 import { useSupabaseSession } from '@/components/auth/SupabaseSessionProvider';
+import { useQuestionBankMarkStore } from '@/store/questionBankMarkStore';
+import { deleteQuestionBankSession } from '@/lib/questionBank/sessionTracking';
+import {
+  getQuestionBankDemoOverview,
+  getQuestionBankDemoSessions,
+  isQuestionBankDemoPreviewAllowed,
+  isQuestionBankDemoSessionId,
+  QB_DEMO_SESSION_IDS,
+} from '@/lib/questionBank/demoMarkFixtures';
 import type {
   QuestionBankAnalyticsOverview,
   QuestionBankSessionRecord,
@@ -19,9 +28,15 @@ const sectionShell =
 
 const statTile = 'rounded-organic-md bg-surface-mid p-4';
 
-export default function QuestionBankAnalyticsPage() {
+function QuestionBankAnalyticsContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const highlightedSessionId = searchParams.get('highlight');
+  const demoRequested = searchParams.get('demo') === '1';
+  const demoMode =
+    demoRequested && isQuestionBankDemoPreviewAllowed();
   const authSession = useSupabaseSession();
+  const loadSession = useQuestionBankMarkStore((s) => s.loadSession);
   const [loading, setLoading] = useState(true);
   const [overview, setOverview] = useState<QuestionBankAnalyticsOverview | null>(
     null,
@@ -30,6 +45,14 @@ export default function QuestionBankAnalyticsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (demoMode) {
+      setOverview(getQuestionBankDemoOverview());
+      setSessions(getQuestionBankDemoSessions());
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
     if (authSession === undefined) return;
     if (!authSession?.user) {
       router.replace(
@@ -68,9 +91,44 @@ export default function QuestionBankAnalyticsPage() {
     return () => {
       cancelled = true;
     };
-  }, [authSession, router]);
+  }, [authSession, demoMode, router]);
 
-  if (authSession === undefined || loading) {
+  const handleViewMarkPage = async (sessionId: string) => {
+    await loadSession(sessionId);
+    const demoQs = demoMode || isQuestionBankDemoSessionId(sessionId) ? '&demo=1' : '';
+    router.push(
+      `/questions/questionbank/mark?sessionId=${encodeURIComponent(sessionId)}${demoQs}`,
+    );
+  };
+
+  const handleDeleteSession = async (sessionId: string) => {
+    if (demoMode || isQuestionBankDemoSessionId(sessionId)) {
+      setSessions((prev) => prev.filter((s) => s.id !== sessionId));
+      return;
+    }
+    const ok = await deleteQuestionBankSession(sessionId);
+    if (!ok) {
+      alert('Failed to delete session. Please try again.');
+      return;
+    }
+    setSessions((prev) => prev.filter((s) => s.id !== sessionId));
+  };
+
+  const demoBanner = useMemo(() => {
+    if (!demoMode) return null;
+    return (
+      <div className='mb-6 rounded-organic-lg bg-surface-mid px-4 py-3 text-sm text-text-muted'>
+        Localhost demo preview (no login). Sample sessions:{' '}
+        <span className='font-medium text-text'>
+          {Object.values(QB_DEMO_SESSION_IDS).join(', ')}
+        </span>
+        . Click <span className='font-medium text-text'>Mark</span> to open a
+        full session.
+      </div>
+    );
+  }, [demoMode]);
+
+  if ((!demoMode && authSession === undefined) || loading) {
     return (
       <Container size='lg'>
         <div className='flex flex-col items-center justify-center py-24'>
@@ -97,11 +155,18 @@ export default function QuestionBankAnalyticsPage() {
         <div className='mb-8'>
           <h1 className='font-heading text-2xl font-bold tracking-tight text-text sm:text-3xl'>
             Question Bank Analytics
+            {demoMode ? (
+              <span className='ml-2 text-base font-semibold text-text-muted'>
+                (demo)
+              </span>
+            ) : null}
           </h1>
           <p className='mt-2 text-sm text-text-muted sm:text-base'>
             Track your progress, review sessions, and focus on weak topics
           </p>
         </div>
+
+        {demoBanner}
 
         {overview && (
           <div className='space-y-6 sm:space-y-8'>
@@ -160,12 +225,34 @@ export default function QuestionBankAnalyticsPage() {
               </div>
             </div>
 
+            <QuestionBankSessionHistory
+              sessions={sessions}
+              highlightedSessionId={highlightedSessionId}
+              onViewMarkPage={handleViewMarkPage}
+              onDeleteSession={handleDeleteSession}
+            />
             <QuestionBankDifficultySection breakdown={overview.difficultyBreakdown} />
             <QuestionBankWeakestTopicsSection topics={overview.weakestTopics} />
-            <QuestionBankSessionHistory sessions={sessions} />
           </div>
         )}
       </Container>
     </div>
+  );
+}
+
+export default function QuestionBankAnalyticsPage() {
+  return (
+    <Suspense
+      fallback={
+        <Container size='lg'>
+          <div className='flex flex-col items-center justify-center py-24'>
+            <LoadingSpinner size='lg' />
+            <p className='mt-4 text-sm text-text-muted'>Loading analytics…</p>
+          </div>
+        </Container>
+      }
+    >
+      <QuestionBankAnalyticsContent />
+    </Suspense>
   );
 }

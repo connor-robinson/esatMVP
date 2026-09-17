@@ -45,6 +45,8 @@ interface QuestionBankSessionResultsProps {
   playMode?: QuestionBankPlayMode;
   timeLimitMinutes?: number;
   onBack: () => void;
+  /** Label for the top-right back control. */
+  backLabel?: string;
   /** Open full question layout review for a session question id. */
   onReviewQuestion?: (questionId: string) => void;
   showUpgradeBanner?: boolean;
@@ -123,6 +125,7 @@ export function QuestionBankSessionResults({
   playMode = 'instant',
   timeLimitMinutes,
   onBack,
+  backLabel = 'Back to Question Bank',
   onReviewQuestion,
   showUpgradeBanner = false,
   showSignInBanner = false,
@@ -228,7 +231,7 @@ export function QuestionBankSessionResults({
               className='min-h-[2.875rem] rounded-organic-md border-0 bg-surface-mid px-5 py-3.5 text-sm font-semibold text-text shadow-none hover:bg-surface-neutral focus-visible:ring-success/35'
             >
               <ArrowLeft className='mr-2 h-4 w-4' />
-              Back to Question Bank
+              {backLabel}
             </Button>
           </motion.div>
         </div>
