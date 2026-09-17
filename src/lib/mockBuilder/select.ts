@@ -218,6 +218,13 @@ function scoreCandidateFit(
     projectedTime + remainingSlots * (ideal / blueprint.questionCount);
   score -= Math.abs(projectedFinal - ideal) / 80;
 
+  // Prefer shorter stems so papers do not drift into long reading items.
+  const stemLen = (candidate.questionStem || "").length;
+  if (stemLen > 900) score -= 10;
+  else if (stemLen > 600) score -= 5;
+  else if (stemLen > 400) score -= 2;
+  else if (stemLen > 0 && stemLen < 280) score += 1.5;
+
   return score;
 }
 
