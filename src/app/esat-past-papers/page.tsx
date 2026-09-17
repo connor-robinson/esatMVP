@@ -73,6 +73,10 @@ export default function EsatPastPapersPage() {
         <SeoTextLink href={SEO_ROUTES.pastPapersGuide}>
           Which legacy papers to use for ESAT
         </SeoTextLink>
+        {" · "}
+        <SeoTextLink href={SEO_ROUTES.mockTests}>
+          Free ESAT mock tests
+        </SeoTextLink>
       </p>
 
       <PastPaperGuideContent />

@@ -80,7 +80,7 @@ export default function EsatMaths1Page() {
         primary: { href: APP_ROUTES.calibration, label: "Start free calibration" },
         secondary: { href: APP_ROUTES.noCalcPractice, label: "Open the trainer" },
       }}
-      related={seoLinks("drill", "maths2", "pastPapers", "calibration")}
+      related={seoLinks("drill", "maths2", "pastPapers", "mockTests", "calibration")}
       sources={[SOURCES.contentSpec, SOURCES.esatTest]}
       schema={articleSchema({
         headline: "ESAT Maths 1 Preparation",
@@ -158,6 +158,13 @@ export default function EsatMaths1Page() {
             ["5", "Mixed timed sets at 40 minutes for 27 questions"],
           ]}
         />
+        <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
+          For full-length Maths 1 sittings under current ESAT timing, try our{" "}
+          <SeoTextLink href={SEO_ROUTES.mockTests}>
+            free ESAT Maths 1 mocks
+          </SeoTextLink>
+          .
+        </p>
       </SeoSection>
 
       <SeoSection heading="Old papers for Maths 1">

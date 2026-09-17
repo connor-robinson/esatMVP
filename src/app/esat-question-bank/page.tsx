@@ -78,7 +78,16 @@ export default function EsatQuestionBankPage() {
         primary: { href: APP_ROUTES.questionBank, label: "Open the question bank" },
         secondary: { href: SEO_ROUTES.pastPapers, label: "Browse past papers" },
       }}
-      related={seoLinks("questionBankGuide", "maths1", "physics", "chemistry", "biology", "drill", "pastPapers")}
+      related={seoLinks(
+        "questionBankGuide",
+        "maths1",
+        "physics",
+        "chemistry",
+        "biology",
+        "drill",
+        "pastPapers",
+        "mockTests",
+      )}
       sources={[SOURCES.contentSpec, SOURCES.esatTest]}
       schema={articleSchema({
         headline: "ESAT Question Bank",
@@ -189,9 +198,14 @@ export default function EsatQuestionBankPage() {
           ]}
         />
         <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
-          Full past papers and mocks:{" "}
+          Full past papers:{" "}
           <SeoTextLink href={SEO_ROUTES.pastPapers}>
             ESAT past papers library
+          </SeoTextLink>
+          . When you want unseen full-length modules under current ESAT timing,
+          move on to our{" "}
+          <SeoTextLink href={SEO_ROUTES.mockTests}>
+            free ESAT mock tests
           </SeoTextLink>
           .
         </p>

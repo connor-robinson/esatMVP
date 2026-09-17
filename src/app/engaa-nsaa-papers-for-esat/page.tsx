@@ -120,6 +120,7 @@ export default function EngaaNsaaPapersPage() {
       related={seoLinks(
         "pastPapersGuide",
         "pastPapers",
+        "mockTests",
         "tmuaForEsat",
         "maths1",
         "maths2",
@@ -328,6 +329,11 @@ export default function EngaaNsaaPapersPage() {
           For where TMUA fits alongside these papers, see{" "}
           <SeoTextLink href={SEO_ROUTES.tmuaForEsat}>
             TMUA for ESAT preparation
+          </SeoTextLink>
+          . When the legacy papers are no longer unseen, practise under current
+          ESAT timing with our{" "}
+          <SeoTextLink href={SEO_ROUTES.mockTests}>
+            free full-length ESAT mocks
           </SeoTextLink>
           .
         </p>

@@ -89,6 +89,7 @@ export default function EsatPreparationPage() {
         "maths2",
         "physics",
         "pastPapers",
+        "mockTests",
         "testDates",
         "universityRequirements",
         "calibration",
@@ -168,6 +169,13 @@ export default function EsatPreparationPage() {
             "Past papers are useful, but they are not a complete plan. If a student keeps missing ratio questions because their fraction manipulation is slow, doing another full paper will not fix the cause quickly.",
           ]}
         />
+        <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
+          When past papers are no longer unseen, move on to{" "}
+          <SeoTextLink href={SEO_ROUTES.mockTests}>
+            free full-length ESAT mock tests
+          </SeoTextLink>{" "}
+          under the current 27-question, 40-minute format.
+        </p>
       </SeoSection>
 
       <SeoSection heading="Preparation timeline">

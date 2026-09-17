@@ -113,6 +113,7 @@ export default function EsatTestDayPage() {
         "whiteboard",
         "calculatorRules",
         "preparation",
+        "mockTests",
         "testDates",
         "calibration",
       )}

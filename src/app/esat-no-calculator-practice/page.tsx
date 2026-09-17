@@ -75,7 +75,7 @@ export default function EsatNoCalculatorPracticePage() {
         primary: { href: APP_ROUTES.calibration, label: "Start free calibration" },
         secondary: { href: APP_ROUTES.noCalcPractice, label: "Open the trainer" },
       }}
-      related={seoLinks("calculatorRules", "maths1", "physics", "calibration", "questionBank")}
+      related={seoLinks("calculatorRules", "maths1", "physics", "calibration", "questionBank", "mockTests")}
       sources={[SOURCES.esatTest, SOURCES.candidateHandbook]}
       schema={webApplicationSchema({
         name: "ESAT no-calculator trainer",
@@ -149,6 +149,10 @@ export default function EsatNoCalculatorPracticePage() {
           , or the rules themselves in{" "}
           <SeoTextLink href={SEO_ROUTES.calculatorRules}>
             are calculators allowed in ESAT
+          </SeoTextLink>
+          . When you are ready for full modules, try our{" "}
+          <SeoTextLink href={SEO_ROUTES.mockTests}>
+            free ESAT mock tests
           </SeoTextLink>
           .
         </p>
