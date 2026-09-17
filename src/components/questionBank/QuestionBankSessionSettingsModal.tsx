@@ -586,15 +586,35 @@ export function QuestionBankSessionSettingsModal({
 
   const questionPoolBlock = (
     <div className="space-y-3">
-      <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
-        Question pool
-      </span>
+      <div className="space-y-1">
+        <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
+          Which questions
+        </span>
+        <p className="text-[11px] leading-snug text-text-muted">
+          Filter by whether you have seen them before
+        </p>
+      </div>
       <div className="grid grid-cols-3 gap-2">
         {(
           [
-            { id: "new", label: "New" },
-            { id: "incorrect", label: "Incorrect" },
-            { id: "mixed", label: "Mixed" },
+            {
+              id: "new",
+              label: "New only",
+              hint: "Not attempted yet",
+              title: "Only questions you have not answered yet",
+            },
+            {
+              id: "incorrect",
+              label: "Incorrect",
+              hint: "Previously wrong",
+              title: "Only questions you have gotten wrong at least once",
+            },
+            {
+              id: "mixed",
+              label: "Mixed",
+              hint: "Wrong + new",
+              title: "About half prior incorrect questions, half new ones",
+            },
           ] as const
         ).map((option) => {
           const needsAuth = option.id !== "new";
@@ -608,15 +628,11 @@ export function QuestionBankSessionSettingsModal({
               disabled={disabled}
               title={
                 disabled
-                  ? "Sign in with full access to use this pool"
-                  : option.id === "incorrect"
-                    ? "Only questions you have gotten wrong at least once"
-                    : option.id === "mixed"
-                      ? "Blend prior incorrect questions with new ones"
-                      : "Only questions you have not answered yet"
+                  ? "Sign in with full access to use this option"
+                  : option.title
               }
               className={cn(
-                "rounded-organic-lg px-2 py-3 text-sm font-semibold transition-colors sm:px-3",
+                "rounded-organic-lg px-2 py-2.5 text-center transition-colors sm:px-3",
                 active
                   ? "bg-secondary text-background"
                   : "bg-surface-mid text-text hover:bg-surface-neutral",
@@ -624,7 +640,17 @@ export function QuestionBankSessionSettingsModal({
                   "cursor-not-allowed opacity-45 hover:bg-surface-mid",
               )}
             >
-              {option.label}
+              <span className="block text-sm font-semibold leading-tight">
+                {option.label}
+              </span>
+              <span
+                className={cn(
+                  "mt-0.5 block text-[10px] font-medium leading-tight",
+                  active ? "text-background/75" : "text-text-muted",
+                )}
+              >
+                {option.hint}
+              </span>
             </button>
           );
         })}
@@ -855,7 +881,7 @@ export function QuestionBankSessionSettingsModal({
                     Advanced options
                   </h3>
                   <span className="text-[11px] text-text-muted">
-                    Play style, pool, and topics
+                    Play style, which questions, and topics
                   </span>
                 </div>
 
@@ -865,12 +891,19 @@ export function QuestionBankSessionSettingsModal({
                 </div>
                 {questionPool === "incorrect" ? (
                   <p className="text-xs leading-relaxed text-text-muted">
-                    Any prior wrong attempt counts, even if you later got it
-                    right. Unique questions only; stops at how many you have.
+                    Drills questions you have gotten wrong before (even if you
+                    later got them right). Unique questions only; stops when you
+                    run out.
                   </p>
                 ) : questionPool === "mixed" ? (
                   <p className="text-xs leading-relaxed text-text-muted">
-                    About half prior incorrect, half new. Unique questions only.
+                    About half previously incorrect, half brand-new. Unique
+                    questions only.
+                  </p>
+                ) : questionPool === "new" && advanced ? (
+                  <p className="text-xs leading-relaxed text-text-muted">
+                    Only questions you have not answered yet in the question
+                    bank.
                   </p>
                 ) : null}
 
