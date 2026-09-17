@@ -110,15 +110,9 @@ export default function EsatMockTestsPage() {
       compactTitle
       title="25 Free ESAT Mock Tests"
       intro={[
-        "Finished the official material? Finished the NSAA and ENGAA papers?",
-        "Now find out whether you can sustain ESAT pace.",
-        "Five full-length mocks for every ESAT module.",
-        "27 questions · 40 minutes · no calculator",
+        "Finished the official material? Finished the NSAA and ENGAA papers? Now find out whether you can sustain ESAT pace.",
+        "Five full-length mocks for every ESAT module. 27 questions · 40 minutes · no calculator.",
       ]}
-      primaryCta={{
-        href: `#${SELECTOR_ID}`,
-        label: "Start a free mock",
-      }}
       faq={FAQ}
       faqHeading="ESAT mock tests FAQ"
       related={seoLinks(
@@ -161,8 +155,13 @@ export default function EsatMockTestsPage() {
         aria-label="Choose an ESAT module"
         className="-mt-2 scroll-mt-24 sm:-mt-4"
       >
+        <ul className="mb-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-[#94A3B8]">
+          <li>Timed like the real exam</li>
+          <li>ESAT-style questions</li>
+          <li>Review after every attempt</li>
+        </ul>
         <EsatMockModuleSelector />
-        <p className="mt-4 text-sm leading-relaxed text-[#64748B]">
+        <p className="mt-5 text-sm leading-relaxed text-[#64748B]">
           {TOTAL_ESAT_MOCK_COUNT} original mocks across Maths 1, Maths 2,
           Physics, Chemistry and Biology. Free to take. Create an account after
           an attempt if you want saved scores and five-mock progression.
