@@ -51,8 +51,8 @@ export type EsatMockSlot = {
    */
   fullHref: string | null;
   /**
-   * Editorial 1–5 star difficulty (Mock A easier → Mock E harder).
-   * Placeholder ranking for display only, not an empirically measured score.
+   * Display difficulty stars (2–4), derived from mock-builder
+   * `predicted_difficulty` / AI review. A typical NSAA paper ≈ 2 stars.
    */
   difficultyStars: number;
 };
@@ -121,10 +121,32 @@ export function mockDisplayName(
 }
 
 /**
- * Editorial star difficulty (1–5). Escalates Mock A → E for display only.
- * Not derived from live attempt data.
+ * Snapshot of mock-builder `predicted_difficulty` (mean question difficulty 1–5)
+ * from AI review. Used only for landing-page star display.
+ *
+ * Calibration: a typical NSAA paper ≈ 2 stars on this scale.
  */
-const SLOT_DIFFICULTY_STARS: readonly number[] = [2, 3, 3, 4, 5];
+const PREDICTED_DIFFICULTY_BY_MODULE: Record<
+  EsatMockModuleId,
+  readonly number[]
+> = {
+  "maths-1": [2.85, 2.96, 2.93, 2.93, 3.04],
+  "maths-2": [2.93, 2.96, 2.96, 3.04, 3.33],
+  physics: [2.89, 2.89, 2.89, 3.19, 3.33],
+  chemistry: [3.19, 3.33, 3.33, 3.07, 3.04],
+  biology: [3.11, 3.07, 3.11, 3.11, 3.11],
+};
+
+/**
+ * Map predicted mean difficulty (1–5) to display stars (2–4).
+ * Anchored so a typical NSAA paper lands at about 2 stars.
+ */
+export function starsFromPredictedDifficulty(predicted: number): number {
+  if (!Number.isFinite(predicted)) return 3;
+  if (predicted < 2.95) return 2;
+  if (predicted < 3.25) return 3;
+  return 4;
+}
 
 /** All catalog slots have admin mock-builder PDFs (5 × 5). */
 function pdfHrefsForSlot(
@@ -146,10 +168,12 @@ function pdfHrefsForSlot(
 export function mockSlotsForModule(
   module: EsatMockModuleCatalogEntry,
 ): EsatMockSlot[] {
+  const predictedBySlot = PREDICTED_DIFFICULTY_BY_MODULE[module.id];
   return Array.from({ length: module.mockCount }, (_, index) => {
     const mockNumber = index + 1;
     const letter = mockLetterForNumber(mockNumber);
     const pdfs = pdfHrefsForSlot(module.id, mockNumber);
+    const predicted = predictedBySlot?.[index] ?? 3.1;
     return {
       mockNumber,
       letter,
@@ -160,7 +184,7 @@ export function mockSlotsForModule(
       paperHref: pdfs.paperHref,
       answerKeyHref: pdfs.answerKeyHref,
       fullHref: pdfs.fullHref,
-      difficultyStars: SLOT_DIFFICULTY_STARS[index] ?? 3,
+      difficultyStars: starsFromPredictedDifficulty(predicted),
     };
   });
 }

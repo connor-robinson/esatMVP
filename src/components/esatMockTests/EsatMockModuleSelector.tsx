@@ -11,6 +11,7 @@ import {
   type EsatMockAttemptSummary,
   type EsatMockModuleId,
 } from "@/lib/esatMockTests/catalog";
+import { RoadmapInfoPopover } from "@/components/papers/roadmap/RoadmapInfoPopover";
 
 type EsatMockModuleSelectorProps = {
   /** Optional completion rows keyed by module id (logged-in only). */
@@ -142,7 +143,22 @@ export function EsatMockModuleSelector({
             )}
           >
             <div>Mock</div>
-            <div>Difficulty</div>
+            <div className="flex items-center gap-1">
+              <span>Difficulty</span>
+              <RoadmapInfoPopover
+                title="Difficulty scale"
+                label="About difficulty stars"
+                align="left"
+                className="text-[#94A3B8] [&_button]:text-[#94A3B8] [&_button:hover]:bg-white/[0.08] [&_button:hover]:text-[#E2E8F0]"
+                panelClassName="bg-[#1E293B] text-[#E2E8F0] shadow-lg [&_p]:text-[#94A3B8] [&_button]:text-[#94A3B8] [&_button:hover]:bg-white/[0.08] [&_button:hover]:text-[#E2E8F0]"
+              >
+                <p>
+                  Star ratings come from our AI paper review (predicted mean
+                  question difficulty), scaled from 2 to 4 stars.
+                </p>
+                <p>A typical NSAA paper is about 2 stars on this scale.</p>
+              </RoadmapInfoPopover>
+            </div>
             <div className="sr-only">Actions</div>
           </div>
 
