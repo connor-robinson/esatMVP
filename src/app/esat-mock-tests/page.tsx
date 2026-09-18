@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
   APP_ROUTES,
   SEO_ROUTES,
@@ -19,7 +20,6 @@ import {
 import { SeoPageLayout } from "@/components/seo/SeoPageLayout";
 import { EsatMockModuleSelector } from "@/components/esatMockTests/EsatMockModuleSelector";
 import { EsatMockTestsIntroBanner } from "@/components/esatMockTests/EsatMockTestsIntroBanner";
-import { PastPaperDownloadSections } from "@/components/pastPapersDownload";
 import {
   HighlightBox,
   SeoList,
@@ -163,16 +163,26 @@ export default function EsatMockTestsPage() {
         />
       </SeoSection>
 
-      <SeoSection heading="Official past papers">
-        <SeoProse
-          paragraphs={[
-            "Still working through NSAA and ENGAA? Pick an exam and section below to download papers and answer keys, or practise them in the ESAT simulator.",
-          ]}
-        />
-        <div className="mt-6">
-          <PastPaperDownloadSections />
+      <Link
+        href={SEO_ROUTES.pastPapers}
+        className="group flex flex-col gap-3 rounded-2xl bg-white/[0.04] px-5 py-5 transition-colors hover:bg-white/[0.07] sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-6 sm:py-6"
+      >
+        <div className="min-w-0 space-y-1.5">
+          <p className="font-display text-lg font-bold tracking-tight text-white sm:text-xl">
+            Official past paper simulators
+          </p>
+          <p className="text-sm leading-relaxed text-[#94A3B8] sm:text-base">
+            Still working through NSAA and ENGAA? Practise them timed in the
+            ESAT simulator.
+          </p>
         </div>
-      </SeoSection>
+        <span className="inline-flex shrink-0 items-center gap-2 text-sm font-bold text-[#93C5FD] transition-colors group-hover:text-[#BFDBFE]">
+          Open past papers
+          <span aria-hidden className="text-lg leading-none">
+            →
+          </span>
+        </span>
+      </Link>
 
       <SeoSection heading="Why ESAT CAMP Mocks?">
         <SeoProse
