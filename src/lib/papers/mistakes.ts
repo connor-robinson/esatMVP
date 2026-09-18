@@ -8,6 +8,7 @@ import type { Letter, Question } from "@/types/papers";
 import type { PaperSessionRow } from "@/lib/supabase/types";
 import {
   getEsatCampMockQuestions,
+  getEsatCampMockModuleByPaperId,
   isEsatCampMockPaperId,
 } from "@/lib/papers/esatCampMocks";
 
@@ -69,9 +70,57 @@ export const MISTAKES_EXAM_FILTERS: MistakesExamFilter[] = [
   "TMUA",
 ];
 
+export type MistakesSubjectFilter =
+  | "ALL"
+  | "Mathematics"
+  | "Mathematics 2"
+  | "Physics"
+  | "Chemistry"
+  | "Biology";
+
+export const MISTAKES_SUBJECT_FILTERS: MistakesSubjectFilter[] = [
+  "ALL",
+  "Mathematics",
+  "Mathematics 2",
+  "Physics",
+  "Chemistry",
+  "Biology",
+];
+
 export function isMistakesSupportedExam(examName: string): boolean {
   const upper = examName.trim().toUpperCase();
   return (MISTAKES_SUPPORTED_EXAMS as readonly string[]).includes(upper);
+}
+
+/** Map free-text part / module names onto Mistakes subject chips. */
+export function normalizeMistakeSubject(
+  raw: string | null | undefined,
+): MistakesSubjectFilter | null {
+  const value = (raw || "").trim().toLowerCase();
+  if (!value) return null;
+  if (
+    value === "mathematics 2" ||
+    value === "math 2" ||
+    value === "maths 2" ||
+    value === "mathematics2" ||
+    value.includes("advanced mathematics")
+  ) {
+    return "Mathematics 2";
+  }
+  if (
+    value === "mathematics" ||
+    value === "math 1" ||
+    value === "maths 1" ||
+    value === "mathematics 1" ||
+    value === "maths" ||
+    value === "math"
+  ) {
+    return "Mathematics";
+  }
+  if (value === "physics" || value.includes("physics")) return "Physics";
+  if (value === "chemistry" || value.includes("chemistry")) return "Chemistry";
+  if (value === "biology" || value.includes("biology")) return "Biology";
+  return null;
 }
 
 export function normalizeMistakesPoolMode(
@@ -108,6 +157,8 @@ export type MistakePoolItem = {
   paperName: string;
   paperVariant: string;
   examName: string;
+  /** Normalized subject chip when known (from module / part name). */
+  subject: MistakesSubjectFilter | null;
   questionNumber: number;
   questionId: number | null;
   timesWrong: number;
@@ -128,6 +179,9 @@ export type MistakesSummary = {
   untouched: number;
   bounceBacks?: number;
   byExam: Record<string, number>;
+  bySubject: Record<string, number>;
+  /** Counts for exam × subject intersections. */
+  byExamSubject: Record<string, Record<string, number>>;
 };
 
 export function isMistakesSession(row: {
@@ -245,6 +299,7 @@ function ensureItem(
     if (!existing.paperVariant && seed.paperVariant) {
       existing.paperVariant = seed.paperVariant;
     }
+    if (!existing.subject && seed.subject) existing.subject = seed.subject;
     return existing;
   }
   const created: MutableItem = {
@@ -253,6 +308,7 @@ function ensureItem(
     paperName: seed.paperName,
     paperVariant: seed.paperVariant,
     examName: seed.examName,
+    subject: seed.subject ?? null,
     questionNumber: seed.questionNumber,
     questionId: seed.questionId,
     timesWrong: 0,
@@ -275,6 +331,26 @@ function examFromPaperName(paperName: string): string {
     }
   }
   return paperName.trim() || "OTHER";
+}
+
+function inferMistakeSubject(parts: {
+  paperId?: number | null;
+  paperVariant?: string;
+  paperName?: string;
+  partName?: string;
+  subjectHint?: string;
+}): MistakesSubjectFilter | null {
+  return (
+    normalizeMistakeSubject(parts.subjectHint) ||
+    normalizeMistakeSubject(parts.partName) ||
+    normalizeMistakeSubject(parts.paperVariant) ||
+    normalizeMistakeSubject(parts.paperName) ||
+    (parts.paperId != null
+      ? normalizeMistakeSubject(
+          getEsatCampMockModuleByPaperId(parts.paperId)?.subject,
+        )
+      : null)
+  );
 }
 
 /**
@@ -324,6 +400,7 @@ export function aggregateMistakePool(
       let questionNumber: number | null = null;
       let questionId: number | null = null;
       let examName = examFromPaperName(paperName);
+      let subjectHint = "";
 
       if (mistakesSession && typeof partIds[i] === "string") {
         const parsed = parsePartKey(partIds[i]);
@@ -346,6 +423,7 @@ export function aggregateMistakePool(
               questionNumber?: number;
               questionId?: number | null;
               examName?: string;
+              subject?: string;
             };
             if (meta.key) key = meta.key;
             if (meta.paperId != null) paperId = meta.paperId;
@@ -356,6 +434,7 @@ export function aggregateMistakePool(
             }
             if (meta.questionId != null) questionId = meta.questionId;
             if (meta.examName) examName = meta.examName;
+            if (meta.subject) subjectHint = meta.subject;
           }
         } catch {
           /* ignore */
@@ -380,11 +459,19 @@ export function aggregateMistakePool(
         isCorrect = choice === correctChoice;
       }
 
+      const subject = inferMistakeSubject({
+        paperId,
+        paperVariant,
+        paperName,
+        subjectHint,
+      });
+
       const item = ensureItem(map, key, {
         paperId,
         paperName,
         paperVariant: mistakesSession ? paperVariant || "" : paperVariant,
         examName,
+        subject,
         questionNumber,
         questionId,
       });
@@ -441,11 +528,30 @@ export function summarizeMistakePool(items: MistakePoolItem[]): MistakesSummary 
     NSAA: 0,
     TMUA: 0,
   };
+  const bySubject: Record<string, number> = {
+    Mathematics: 0,
+    "Mathematics 2": 0,
+    Physics: 0,
+    Chemistry: 0,
+    Biology: 0,
+  };
+  const byExamSubject: Record<string, Record<string, number>> = {
+    ENGAA: {},
+    NSAA: {},
+    TMUA: {},
+  };
   let untouched = 0;
   for (const item of items) {
     const exam = item.examName.toUpperCase();
     if (isMistakesSupportedExam(exam)) {
       byExam[exam] = (byExam[exam] || 0) + 1;
+      if (item.subject) {
+        const bucket = byExamSubject[exam] || (byExamSubject[exam] = {});
+        bucket[item.subject] = (bucket[item.subject] || 0) + 1;
+      }
+    }
+    if (item.subject) {
+      bySubject[item.subject] = (bySubject[item.subject] || 0) + 1;
     }
     if (item.neverReviewed) untouched += 1;
   }
@@ -453,7 +559,21 @@ export function summarizeMistakePool(items: MistakePoolItem[]): MistakesSummary 
     totalIncorrect: items.length,
     untouched,
     byExam,
+    bySubject,
+    byExamSubject,
   };
+}
+
+export function countMistakesForFilters(
+  summary: MistakesSummary | null | undefined,
+  exam: MistakesExamFilter,
+  subject: MistakesSubjectFilter,
+): number {
+  if (!summary) return 0;
+  if (exam === "ALL" && subject === "ALL") return summary.totalIncorrect;
+  if (subject === "ALL") return summary.byExam[exam] ?? 0;
+  if (exam === "ALL") return summary.bySubject[subject] ?? 0;
+  return summary.byExamSubject?.[exam]?.[subject] ?? 0;
 }
 
 function shuffleInPlace<T>(arr: T[]): T[] {
@@ -464,14 +584,20 @@ function shuffleInPlace<T>(arr: T[]): T[] {
   return arr;
 }
 
-function filterByExam(
+function filterByExamAndSubject(
   items: MistakePoolItem[],
   exam: MistakesExamFilter,
+  subject: MistakesSubjectFilter = "ALL",
 ): MistakePoolItem[] {
-  if (exam === "ALL") return items;
-  return items.filter(
-    (item) => item.examName.toUpperCase() === exam.toUpperCase(),
-  );
+  return items.filter((item) => {
+    if (exam !== "ALL" && item.examName.toUpperCase() !== exam.toUpperCase()) {
+      return false;
+    }
+    if (subject !== "ALL" && item.subject !== subject) {
+      return false;
+    }
+    return true;
+  });
 }
 
 /**
@@ -483,10 +609,15 @@ export function selectMistakeItems(
   opts: {
     mode: MistakesPoolMode | MistakesPoolModeLegacy;
     exam: MistakesExamFilter;
+    subject?: MistakesSubjectFilter;
     count: number;
   },
 ): MistakePoolItem[] {
-  const filtered = filterByExam(items, opts.exam);
+  const filtered = filterByExamAndSubject(
+    items,
+    opts.exam,
+    opts.subject ?? "ALL",
+  );
   if (filtered.length === 0 || opts.count <= 0) return [];
 
   const take = Math.min(opts.count, filtered.length);
@@ -615,6 +746,14 @@ export async function hydrateMistakeQuestions(
       questionId: question.id,
       examName: question.examName || item.examName,
       paperName: item.paperName || question.paperName,
+      subject:
+        item.subject ||
+        inferMistakeSubject({
+          paperId: item.paperId,
+          paperVariant: item.paperVariant,
+          paperName: item.paperName,
+          partName: question.partName,
+        }),
       question,
     });
   }
@@ -650,6 +789,7 @@ export function buildMistakesSessionPayload(opts: {
         questionNumber: item.questionNumber,
         questionId: item.questionId,
         examName: item.examName,
+        subject: item.subject,
       }),
       correctChoice: (item.question.answerLetter as Letter) || null,
       explanation: "",

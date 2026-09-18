@@ -34,6 +34,7 @@ function QbMistakesContent({ demoMode }: { demoMode: boolean }) {
     sessionId: string;
     mode: QbMistakesLaunchConfig["mode"];
     exam: QbMistakesLaunchConfig["exam"];
+    subject: QbMistakesLaunchConfig["subject"];
     timeLimitMinutes: number;
     questions: QbMistakeQuestionPayload[];
     startedAt: number;
@@ -95,6 +96,7 @@ function QbMistakesContent({ demoMode }: { demoMode: boolean }) {
         const questions = startQbMistakesDemoSession({
           mode: config.mode,
           exam: config.exam,
+          subject: config.subject,
           questionCount: config.questionCount,
         });
         if (questions.length === 0) {
@@ -105,6 +107,7 @@ function QbMistakesContent({ demoMode }: { demoMode: boolean }) {
           sessionId: `demo-qb-mistakes-${Date.now()}`,
           mode: config.mode,
           exam: config.exam,
+          subject: config.subject,
           timeLimitMinutes: config.timeLimitMinutes,
           questions,
           startedAt: Date.now(),
@@ -135,6 +138,7 @@ function QbMistakesContent({ demoMode }: { demoMode: boolean }) {
             : `qb-mistakes-${Date.now()}`,
         mode: config.mode,
         exam: config.exam,
+        subject: config.subject,
         timeLimitMinutes: data.timeLimitMinutes ?? config.timeLimitMinutes,
         questions,
         startedAt: Date.now(),
@@ -166,6 +170,7 @@ function QbMistakesContent({ demoMode }: { demoMode: boolean }) {
         sessionId: active.sessionId,
         mode: active.mode,
         exam: active.exam,
+        subject: active.subject,
         timeLimitMinutes: active.timeLimitMinutes,
         startedAt: active.startedAt,
         endedAt: Date.now(),

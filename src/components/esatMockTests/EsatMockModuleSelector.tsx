@@ -27,7 +27,7 @@ type TabId = EsatMockModuleId | "full";
 
 /** Mirrors past-papers RoadmapTable stage grid (without Parts / Avg / Your ESAT / Status). */
 const MOCK_ROW_GRID =
-  "grid min-w-[46rem] grid-cols-[14rem_7.5rem_minmax(16rem,1fr)] items-center gap-x-3";
+  "grid min-w-[50rem] grid-cols-[18rem_7.5rem_minmax(16rem,1fr)] items-center gap-x-3";
 
 const ACTION_BTN =
   "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-sm px-3.5 py-2 text-[15px] font-medium leading-none transition-colors";
@@ -74,9 +74,11 @@ function pillClass(selected: boolean) {
 }
 
 function MockSlotRow({
+  title,
   slot,
   showStartNow,
 }: {
+  title: string;
   slot: EsatMockSlot;
   showStartNow: boolean;
 }) {
@@ -85,7 +87,7 @@ function MockSlotRow({
       <div className={MOCK_ROW_GRID}>
         <div className="flex items-center gap-1.5">
           <span className="text-base font-semibold tracking-tight text-white sm:text-lg">
-            ESAT CAMP Mock {slot.letter}
+            {title}
           </span>
         </div>
 
@@ -204,12 +206,6 @@ export function EsatMockModuleSelector({
           isFullTab ? "mock-tab-full" : `mock-tab-${selectedModule.id}`
         }
       >
-        <h2 className="mb-4 font-display text-xl font-bold tracking-tight text-white sm:text-2xl">
-          {isFullTab
-            ? "ESAT CAMP Full papers"
-            : `ESAT CAMP ${selectedModule.builderSubject}`}
-        </h2>
-
         <div className="overflow-x-auto">
           <div
             className={cn(
@@ -237,6 +233,11 @@ export function EsatMockModuleSelector({
             {slots.map((slot) => (
               <MockSlotRow
                 key={slot.mockNumber}
+                title={
+                  isFullTab
+                    ? `ESAT CAMP Mock ${slot.letter}`
+                    : `ESAT CAMP Mock ${slot.letter} ${selectedModule.builderSubject}`
+                }
                 slot={slot}
                 showStartNow={isFullTab}
               />

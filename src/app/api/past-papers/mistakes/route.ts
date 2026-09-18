@@ -9,12 +9,15 @@ import {
   selectMistakeItems,
   summarizeMistakePool,
   type MistakesExamFilter,
+  type MistakesSubjectFilter,
+  MISTAKES_SUBJECT_FILTERS,
 } from "@/lib/papers/mistakes";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const VALID_EXAMS: MistakesExamFilter[] = ["ALL", "ENGAA", "NSAA", "TMUA"];
+const VALID_SUBJECTS = new Set<string>(MISTAKES_SUBJECT_FILTERS);
 
 async function loadPool(supabase: any, userId: string) {
   const { data, error } = await supabase
@@ -86,6 +89,7 @@ export async function POST(request: Request) {
     const body = (await request.json()) as {
       mode?: string;
       exam?: MistakesExamFilter;
+      subject?: MistakesSubjectFilter;
       questionCount?: number;
       timeLimitMinutes?: number;
     };
@@ -93,6 +97,9 @@ export async function POST(request: Request) {
     const mode = normalizeMistakesPoolMode(body.mode);
     const exam = VALID_EXAMS.includes(body.exam as MistakesExamFilter)
       ? (body.exam as MistakesExamFilter)
+      : "ALL";
+    const subject = VALID_SUBJECTS.has(body.subject || "")
+      ? (body.subject as MistakesSubjectFilter)
       : "ALL";
     const questionCount = Math.max(
       1,
@@ -107,6 +114,7 @@ export async function POST(request: Request) {
     const selected = selectMistakeItems(items, {
       mode,
       exam,
+      subject,
       count: questionCount,
     });
 
@@ -139,6 +147,7 @@ export async function POST(request: Request) {
       summary,
       mode,
       exam,
+      subject,
       timeLimitMinutes,
       questions: hydrated,
     });

@@ -14,6 +14,16 @@ export type QbMistakesPoolMode = "unreviewed" | "most_missed" | "shuffle";
 
 export type QbMistakesExamFilter = "ALL" | "ESAT" | "TMUA";
 
+export type QbMistakesSubjectFilter =
+  | "ALL"
+  | "Math 1"
+  | "Math 2"
+  | "Physics"
+  | "Chemistry"
+  | "Biology"
+  | "Paper 1"
+  | "Paper 2";
+
 export const QB_MISTAKES_POOL_OPTIONS: Array<{
   id: QbMistakesPoolMode;
   label: string;
@@ -41,6 +51,26 @@ export const QB_MISTAKES_EXAM_FILTERS: QbMistakesExamFilter[] = [
   "ESAT",
   "TMUA",
 ];
+
+export const QB_MISTAKES_SUBJECT_FILTERS: QbMistakesSubjectFilter[] = [
+  "ALL",
+  "Math 1",
+  "Math 2",
+  "Physics",
+  "Chemistry",
+  "Biology",
+  "Paper 1",
+  "Paper 2",
+];
+
+export const QB_MISTAKES_SUBJECTS_BY_EXAM: Record<
+  QbMistakesExamFilter,
+  QbMistakesSubjectFilter[]
+> = {
+  ALL: QB_MISTAKES_SUBJECT_FILTERS,
+  ESAT: ["ALL", "Math 1", "Math 2", "Physics", "Chemistry", "Biology"],
+  TMUA: ["ALL", "Paper 1", "Paper 2"],
+};
 
 export function normalizeQbMistakesPoolMode(
   mode: string | null | undefined,
@@ -89,6 +119,8 @@ export type QbMistakesSummary = {
   totalIncorrect: number;
   untouched: number;
   byExam: Record<string, number>;
+  bySubject: Record<string, number>;
+  byExamSubject: Record<string, Record<string, number>>;
 };
 
 export type QbAttemptSeed = {
@@ -237,25 +269,58 @@ export function summarizeQbMistakePool(
   items: QbMistakePoolItem[],
 ): QbMistakesSummary {
   const byExam: Record<string, number> = { ESAT: 0, TMUA: 0 };
+  const bySubject: Record<string, number> = {};
+  const byExamSubject: Record<string, Record<string, number>> = {
+    ESAT: {},
+    TMUA: {},
+  };
   let untouched = 0;
   for (const item of items) {
     if (item.neverReviewed) untouched += 1;
-    if (item.testType === "ESAT") byExam.ESAT += 1;
-    else if (item.testType === "TMUA") byExam.TMUA += 1;
+    if (item.testType === "ESAT" || item.testType === "TMUA") {
+      byExam[item.testType] += 1;
+    }
+    const subject = item.subjects?.trim();
+    if (subject) {
+      bySubject[subject] = (bySubject[subject] || 0) + 1;
+      if (item.testType === "ESAT" || item.testType === "TMUA") {
+        const bucket =
+          byExamSubject[item.testType] || (byExamSubject[item.testType] = {});
+        bucket[subject] = (bucket[subject] || 0) + 1;
+      }
+    }
   }
   return {
     totalIncorrect: items.length,
     untouched,
     byExam,
+    bySubject,
+    byExamSubject,
   };
 }
 
-function filterByExam(
+export function countQbMistakesForFilters(
+  summary: QbMistakesSummary | null | undefined,
+  exam: QbMistakesExamFilter,
+  subject: QbMistakesSubjectFilter,
+): number {
+  if (!summary) return 0;
+  if (exam === "ALL" && subject === "ALL") return summary.totalIncorrect;
+  if (subject === "ALL") return summary.byExam[exam] ?? 0;
+  if (exam === "ALL") return summary.bySubject[subject] ?? 0;
+  return summary.byExamSubject?.[exam]?.[subject] ?? 0;
+}
+
+function filterByExamAndSubject(
   items: QbMistakePoolItem[],
   exam: QbMistakesExamFilter,
+  subject: QbMistakesSubjectFilter,
 ): QbMistakePoolItem[] {
-  if (exam === "ALL") return items;
-  return items.filter((i) => i.testType === exam);
+  return items.filter((item) => {
+    if (exam !== "ALL" && item.testType !== exam) return false;
+    if (subject !== "ALL" && item.subjects !== subject) return false;
+    return true;
+  });
 }
 
 export function selectQbMistakeItems(
@@ -263,10 +328,15 @@ export function selectQbMistakeItems(
   opts: {
     mode: QbMistakesPoolMode;
     exam: QbMistakesExamFilter;
+    subject?: QbMistakesSubjectFilter;
     count: number;
   },
 ): QbMistakePoolItem[] {
-  const filtered = filterByExam(items, opts.exam);
+  const filtered = filterByExamAndSubject(
+    items,
+    opts.exam,
+    opts.subject ?? "ALL",
+  );
   if (filtered.length === 0 || opts.count <= 0) return [];
   const take = Math.min(opts.count, filtered.length);
   const mode = normalizeQbMistakesPoolMode(opts.mode);
@@ -349,12 +419,14 @@ export async function hydrateQbMistakeQuestions(
 export function buildQbMistakesSessionSummary(opts: {
   mode: QbMistakesPoolMode;
   exam: QbMistakesExamFilter;
+  subject?: QbMistakesSubjectFilter;
   questionIds: string[];
 }): Record<string, unknown> {
   return {
     kind: QB_MISTAKES_SUMMARY_KIND,
     mode: opts.mode,
     exam: opts.exam,
+    subject: opts.subject ?? "ALL",
     questionIds: opts.questionIds,
   };
 }

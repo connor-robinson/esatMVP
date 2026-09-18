@@ -11,6 +11,7 @@ import {
   type QbMistakeQuestionPayload,
   type QbMistakesExamFilter,
   type QbMistakesPoolMode,
+  type QbMistakesSubjectFilter,
   type QbMistakesSummary,
 } from "@/lib/questionBank/mistakes";
 
@@ -150,12 +151,14 @@ export function getQbMistakesDemoSummary(): QbMistakesSummary {
 export function startQbMistakesDemoSession(opts: {
   mode: QbMistakesPoolMode;
   exam: QbMistakesExamFilter;
+  subject?: QbMistakesSubjectFilter;
   questionCount: number;
 }): QbMistakeQuestionPayload[] {
   const base = applyLocalReviews(buildBaseDemoPool());
   const selected = selectQbMistakeItems(base, {
     mode: opts.mode,
     exam: opts.exam,
+    subject: opts.subject ?? "ALL",
     count: opts.questionCount,
   });
   const byId = new Map(base.map((item) => [item.questionId, item]));

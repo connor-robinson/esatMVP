@@ -9,7 +9,9 @@ import {
   summarizeQbMistakePool,
   type QbAttemptSeed,
   type QbMistakesExamFilter,
+  type QbMistakesSubjectFilter,
   type QbSessionSeed,
+  QB_MISTAKES_SUBJECT_FILTERS,
 } from "@/lib/questionBank/mistakes";
 import { applyPublishedQuestionBankFilter } from "@/lib/questionBank/libraryFilterServer";
 
@@ -17,6 +19,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const VALID_EXAMS: QbMistakesExamFilter[] = ["ALL", "ESAT", "TMUA"];
+const VALID_SUBJECTS = new Set<string>(QB_MISTAKES_SUBJECT_FILTERS);
 
 async function loadPool(supabase: any, userId: string) {
   const [attemptsRes, sessionsRes] = await Promise.all([
@@ -131,6 +134,7 @@ export async function POST(request: Request) {
     const body = (await request.json()) as {
       mode?: string;
       exam?: QbMistakesExamFilter;
+      subject?: QbMistakesSubjectFilter;
       questionCount?: number;
       timeLimitMinutes?: number;
     };
@@ -138,6 +142,9 @@ export async function POST(request: Request) {
     const mode = normalizeQbMistakesPoolMode(body.mode);
     const exam = VALID_EXAMS.includes(body.exam as QbMistakesExamFilter)
       ? (body.exam as QbMistakesExamFilter)
+      : "ALL";
+    const subject = VALID_SUBJECTS.has(body.subject || "")
+      ? (body.subject as QbMistakesSubjectFilter)
       : "ALL";
     const questionCount = Math.max(
       1,
@@ -152,6 +159,7 @@ export async function POST(request: Request) {
     const selected = selectQbMistakeItems(items, {
       mode,
       exam,
+      subject,
       count: questionCount,
     });
 
@@ -182,6 +190,7 @@ export async function POST(request: Request) {
       summary,
       mode,
       exam,
+      subject,
       timeLimitMinutes,
       questions: hydrated,
     });

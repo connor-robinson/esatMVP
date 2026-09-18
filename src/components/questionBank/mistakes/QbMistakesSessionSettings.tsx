@@ -6,8 +6,11 @@ import { cn } from "@/lib/utils";
 import {
   QB_MISTAKES_EXAM_FILTERS,
   QB_MISTAKES_POOL_OPTIONS,
+  QB_MISTAKES_SUBJECTS_BY_EXAM,
+  countQbMistakesForFilters,
   type QbMistakesExamFilter,
   type QbMistakesPoolMode,
+  type QbMistakesSubjectFilter,
   type QbMistakesSummary,
 } from "@/lib/questionBank/mistakes";
 import {
@@ -140,6 +143,7 @@ function NumericStepper({
 export type QbMistakesLaunchConfig = {
   mode: QbMistakesPoolMode;
   exam: QbMistakesExamFilter;
+  subject: QbMistakesSubjectFilter;
   questionCount: number;
   timeLimitMinutes: number;
 };
@@ -160,6 +164,7 @@ export function QbMistakesSessionSettings({
   onStart,
 }: QbMistakesSessionSettingsProps) {
   const [exam, setExam] = useState<QbMistakesExamFilter>("ALL");
+  const [subject, setSubject] = useState<QbMistakesSubjectFilter>("ALL");
   const [mode, setMode] = useState<QbMistakesPoolMode>("unreviewed");
   const [questionCount, setQuestionCount] = useState(10);
   const [minutes, setMinutes] = useState(autoTimeLimitMinutes(10));
@@ -198,11 +203,18 @@ export function QbMistakesSessionSettings({
     }
   }, [expectedAutoMinutes, timeManual]);
 
-  const poolAvailable = useMemo(() => {
-    if (!summary) return 0;
-    if (exam === "ALL") return summary.totalIncorrect;
-    return summary.byExam[exam] ?? 0;
-  }, [summary, exam]);
+  const subjectOptions = QB_MISTAKES_SUBJECTS_BY_EXAM[exam];
+
+  useEffect(() => {
+    if (!subjectOptions.includes(subject)) {
+      setSubject("ALL");
+    }
+  }, [exam, subject, subjectOptions]);
+
+  const poolAvailable = useMemo(
+    () => countQbMistakesForFilters(summary, exam, subject),
+    [summary, exam, subject],
+  );
 
   const handleQuestionCountChange = (next: number) => {
     setQuestionCount(next);
@@ -270,15 +282,47 @@ export function QbMistakesSessionSettings({
         <div className="flex flex-wrap gap-2">
           {QB_MISTAKES_EXAM_FILTERS.map((value) => {
             const active = exam === value;
-            const count =
-              value === "ALL"
-                ? summary?.totalIncorrect ?? 0
-                : summary?.byExam[value] ?? 0;
+            const count = countQbMistakesForFilters(summary, value, subject);
             return (
               <button
                 key={value}
                 type="button"
                 onClick={() => setExam(value)}
+                className={cn(
+                  "rounded-organic-md px-3 py-2 text-sm font-medium transition-colors",
+                  active
+                    ? "bg-secondary text-background"
+                    : "bg-surface-elevated text-text hover:bg-surface-mid",
+                )}
+              >
+                {value === "ALL" ? "All" : value}
+                <span
+                  className={cn(
+                    "ml-1.5 tabular-nums",
+                    active ? "text-background/70" : "text-text-muted",
+                  )}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="mt-8 space-y-3">
+        <label className="text-xs font-medium uppercase tracking-wide text-text-muted">
+          Subject
+        </label>
+        <div className="flex flex-wrap gap-2">
+          {subjectOptions.map((value) => {
+            const active = subject === value;
+            const count = countQbMistakesForFilters(summary, exam, value);
+            return (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setSubject(value)}
                 className={cn(
                   "rounded-organic-md px-3 py-2 text-sm font-medium transition-colors",
                   active
@@ -410,8 +454,9 @@ export function QbMistakesSessionSettings({
       {!loadingSummary && poolAvailable === 0 ? (
         <p className="mt-6 text-sm text-text-muted">
           No incorrect questions yet
-          {exam !== "ALL" ? ` for ${exam}` : ""}. Practice in the question bank
-          to build this pool.
+          {exam !== "ALL" ? ` for ${exam}` : ""}
+          {subject !== "ALL" ? ` · ${subject}` : ""}. Practice in the question
+          bank to build this pool.
         </p>
       ) : null}
 
@@ -423,6 +468,7 @@ export function QbMistakesSessionSettings({
             onStart({
               mode,
               exam,
+              subject,
               questionCount: Math.min(questionCount, Math.max(1, poolAvailable)),
               timeLimitMinutes: minutes,
             })

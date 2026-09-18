@@ -60,6 +60,8 @@ export async function POST(request: Request) {
 
     const mode = normalizeQbMistakesPoolMode(body.mode);
     const exam = (body.exam ?? "ALL") as QbMistakesExamFilter;
+    const subject =
+      (body as { subject?: string }).subject ?? "ALL";
     const startedAt = body.startedAt ?? Date.now();
     const endedAt = body.endedAt ?? Date.now();
     const correctCount = answers.filter((a) => a.isCorrect).length;
@@ -79,6 +81,7 @@ export async function POST(request: Request) {
       ...buildQbMistakesSessionSummary({
         mode,
         exam,
+        subject: subject as any,
         questionIds: questions.map((q) => q.questionId),
       }),
       totalQuestions: questions.length,

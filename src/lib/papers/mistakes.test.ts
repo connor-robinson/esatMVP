@@ -14,6 +14,7 @@ function baseItem(
     paperName: "Section 1",
     paperVariant: "2023",
     examName: "NSAA",
+    subject: "Mathematics",
     questionNumber: 1,
     questionId: 10,
     timesWrong: 1,

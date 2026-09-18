@@ -11,11 +11,13 @@ import {
 } from "@/lib/papers/esatCampMocks";
 import {
   mistakePoolKey,
+  normalizeMistakeSubject,
   selectMistakeItems,
   summarizeMistakePool,
   type MistakeQuestionPayload,
   type MistakesExamFilter,
   type MistakesPoolMode,
+  type MistakesSubjectFilter,
   type MistakesSummary,
   type MistakePoolItem,
 } from "@/lib/papers/mistakes";
@@ -88,6 +90,7 @@ function buildBaseDemoPool(): MistakePoolItem[] {
         paperName: question.paperName,
         paperVariant: mockModule.title || "Demo paper",
         examName,
+        subject: normalizeMistakeSubject(mockModule.subject),
         questionNumber: question.questionNumber,
         questionId: question.id,
         timesWrong,
@@ -202,12 +205,14 @@ export function getMistakesDemoSummary(): MistakesSummary {
 export function startMistakesDemoSession(opts: {
   mode: MistakesPoolMode;
   exam: MistakesExamFilter;
+  subject?: MistakesSubjectFilter;
   questionCount: number;
 }): MistakeQuestionPayload[] {
   const pool = applyLocalReviews(buildBaseDemoPool());
   const selected = selectMistakeItems(pool, {
     mode: opts.mode,
     exam: opts.exam,
+    subject: opts.subject ?? "ALL",
     count: opts.questionCount,
   });
   return selected

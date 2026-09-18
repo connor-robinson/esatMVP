@@ -6,8 +6,11 @@ import { cn } from "@/lib/utils";
 import {
   MISTAKES_EXAM_FILTERS,
   MISTAKES_POOL_OPTIONS,
+  MISTAKES_SUBJECT_FILTERS,
+  countMistakesForFilters,
   type MistakesExamFilter,
   type MistakesPoolMode,
+  type MistakesSubjectFilter,
   type MistakesSummary,
 } from "@/lib/papers/mistakes";
 import {
@@ -140,6 +143,7 @@ function NumericStepper({
 export type MistakesLaunchConfig = {
   mode: MistakesPoolMode;
   exam: MistakesExamFilter;
+  subject: MistakesSubjectFilter;
   questionCount: number;
   timeLimitMinutes: number;
 };
@@ -160,6 +164,7 @@ export function MistakesSessionSettings({
   onStart,
 }: MistakesSessionSettingsProps) {
   const [exam, setExam] = useState<MistakesExamFilter>("ALL");
+  const [subject, setSubject] = useState<MistakesSubjectFilter>("ALL");
   const [mode, setMode] = useState<MistakesPoolMode>("unreviewed");
   const [questionCount, setQuestionCount] = useState(10);
   const [minutes, setMinutes] = useState(autoTimeLimitMinutes(10));
@@ -198,11 +203,10 @@ export function MistakesSessionSettings({
     }
   }, [expectedAutoMinutes, timeManual]);
 
-  const poolAvailable = useMemo(() => {
-    if (!summary) return 0;
-    if (exam === "ALL") return summary.totalIncorrect;
-    return summary.byExam[exam] ?? 0;
-  }, [summary, exam]);
+  const poolAvailable = useMemo(
+    () => countMistakesForFilters(summary, exam, subject),
+    [summary, exam, subject],
+  );
 
   const handleQuestionCountChange = (next: number) => {
     setQuestionCount(next);
@@ -270,15 +274,47 @@ export function MistakesSessionSettings({
         <div className="flex flex-wrap gap-2">
           {MISTAKES_EXAM_FILTERS.map((value) => {
             const active = exam === value;
-            const count =
-              value === "ALL"
-                ? summary?.totalIncorrect ?? 0
-                : summary?.byExam[value] ?? 0;
+            const count = countMistakesForFilters(summary, value, subject);
             return (
               <button
                 key={value}
                 type="button"
                 onClick={() => setExam(value)}
+                className={cn(
+                  "rounded-organic-md px-3 py-2 text-sm font-medium transition-colors",
+                  active
+                    ? "bg-secondary text-background"
+                    : "bg-surface-elevated text-text hover:bg-surface-mid",
+                )}
+              >
+                {value === "ALL" ? "All" : value}
+                <span
+                  className={cn(
+                    "ml-1.5 tabular-nums",
+                    active ? "text-background/70" : "text-text-muted",
+                  )}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="mt-8 space-y-3">
+        <label className="text-xs font-medium uppercase tracking-wide text-text-muted">
+          Subject
+        </label>
+        <div className="flex flex-wrap gap-2">
+          {MISTAKES_SUBJECT_FILTERS.map((value) => {
+            const active = subject === value;
+            const count = countMistakesForFilters(summary, exam, value);
+            return (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setSubject(value)}
                 className={cn(
                   "rounded-organic-md px-3 py-2 text-sm font-medium transition-colors",
                   active
@@ -407,8 +443,9 @@ export function MistakesSessionSettings({
       {!loadingSummary && poolAvailable === 0 ? (
         <p className="mt-6 text-sm text-text-muted">
           No incorrect questions yet
-          {exam !== "ALL" ? ` for ${exam}` : ""}. Finish a past paper and mark
-          answers to build this pool.
+          {exam !== "ALL" ? ` for ${exam}` : ""}
+          {subject !== "ALL" ? ` · ${subject}` : ""}. Finish a past paper and
+          mark answers to build this pool.
         </p>
       ) : null}
 
@@ -420,6 +457,7 @@ export function MistakesSessionSettings({
             onStart({
               mode,
               exam,
+              subject,
               questionCount: Math.min(questionCount, Math.max(1, poolAvailable)),
               timeLimitMinutes: minutes,
             })

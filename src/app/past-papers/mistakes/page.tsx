@@ -34,6 +34,7 @@ function MistakesContent({ demoMode }: { demoMode: boolean }) {
     sessionId: string;
     mode: MistakesLaunchConfig["mode"];
     exam: MistakesLaunchConfig["exam"];
+    subject: MistakesLaunchConfig["subject"];
     timeLimitMinutes: number;
     questions: MistakeQuestionPayload[];
     startedAt: number;
@@ -95,6 +96,7 @@ function MistakesContent({ demoMode }: { demoMode: boolean }) {
         const questions = startMistakesDemoSession({
           mode: config.mode,
           exam: config.exam,
+          subject: config.subject,
           questionCount: config.questionCount,
         });
         if (questions.length === 0) {
@@ -105,6 +107,7 @@ function MistakesContent({ demoMode }: { demoMode: boolean }) {
           sessionId: `demo-mistakes-${Date.now()}`,
           mode: config.mode,
           exam: config.exam,
+          subject: config.subject,
           timeLimitMinutes: config.timeLimitMinutes,
           questions,
           startedAt: Date.now(),
@@ -135,6 +138,7 @@ function MistakesContent({ demoMode }: { demoMode: boolean }) {
             : `mistakes-${Date.now()}`,
         mode: config.mode,
         exam: config.exam,
+        subject: config.subject,
         timeLimitMinutes: data.timeLimitMinutes ?? config.timeLimitMinutes,
         questions,
         startedAt: Date.now(),
@@ -166,6 +170,7 @@ function MistakesContent({ demoMode }: { demoMode: boolean }) {
         sessionId: active.sessionId,
         mode: active.mode,
         exam: active.exam,
+        subject: active.subject,
         timeLimitMinutes: active.timeLimitMinutes,
         startedAt: active.startedAt,
         endedAt: Date.now(),
