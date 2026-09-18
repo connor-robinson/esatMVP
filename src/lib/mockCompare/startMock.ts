@@ -18,8 +18,8 @@ import {
   type ActiveMockCompareContext,
 } from "./client";
 
-export async function startCompareMockSitting(
-  ctx: ActiveMockCompareContext,
+export async function startCompareCatalogSitting(
+  ctx: ActiveMockCompareContext & { paperId: number },
 ): Promise<void> {
   const mockModule = getEsatCampMockModuleByPaperId(ctx.paperId);
   if (!mockModule) {
@@ -63,3 +63,6 @@ export async function startCompareMockSitting(
   await markCompareStarted(ctx.roomId, ctx.participantId);
   setActiveMockCompare(ctx);
 }
+
+/** @deprecated Prefer startCompareCatalogSitting */
+export const startCompareMockSitting = startCompareCatalogSitting;

@@ -146,6 +146,13 @@ const navSections: NavSectionConfig[] = [
         description: 'Review your results',
         icon: BarChart3,
       },
+      {
+        href: '/past-papers/mistakes',
+        label: 'Mistakes',
+        description: 'Drill questions you got wrong',
+        icon: ClipboardList,
+        badge: 'PRO',
+      },
     ],
   },
   {
