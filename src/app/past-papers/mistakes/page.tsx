@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { SubscriptionGate } from "@/components/subscription/SubscriptionGate";
 import { Container } from "@/components/layout/Container";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
@@ -14,9 +15,16 @@ import type {
   MistakeQuestionPayload,
   MistakesSummary,
 } from "@/lib/papers/mistakes";
+import {
+  getMistakesDemoSummary,
+  isMistakesDemoPreviewAllowed,
+  markMistakesDemoReviewed,
+  resetMistakesDemoReviews,
+  startMistakesDemoSession,
+} from "@/lib/papers/mistakesDemo";
 import type { Letter } from "@/types/papers";
 
-function MistakesContent() {
+function MistakesContent({ demoMode }: { demoMode: boolean }) {
   const session = useSupabaseSession();
   const [summary, setSummary] = useState<MistakesSummary | null>(null);
   const [loadingSummary, setLoadingSummary] = useState(true);
@@ -34,6 +42,11 @@ function MistakesContent() {
   const loadSummary = useCallback(async () => {
     setLoadingSummary(true);
     setError(null);
+    if (demoMode) {
+      setSummary(getMistakesDemoSummary());
+      setLoadingSummary(false);
+      return;
+    }
     try {
       const res = await fetch("/api/past-papers/mistakes", {
         method: "GET",
@@ -58,9 +71,13 @@ function MistakesContent() {
     } finally {
       setLoadingSummary(false);
     }
-  }, []);
+  }, [demoMode]);
 
   useEffect(() => {
+    if (demoMode) {
+      void loadSummary();
+      return;
+    }
     if (session === undefined) return;
     if (!session?.user) {
       setLoadingSummary(false);
@@ -68,12 +85,33 @@ function MistakesContent() {
       return;
     }
     void loadSummary();
-  }, [session, loadSummary]);
+  }, [session, loadSummary, demoMode]);
 
   const handleStart = async (config: MistakesLaunchConfig) => {
     setStarting(true);
     setError(null);
     try {
+      if (demoMode) {
+        const questions = startMistakesDemoSession({
+          mode: config.mode,
+          exam: config.exam,
+          questionCount: config.questionCount,
+        });
+        if (questions.length === 0) {
+          setError("No demo questions available for this pool.");
+          return;
+        }
+        setActive({
+          sessionId: `demo-mistakes-${Date.now()}`,
+          mode: config.mode,
+          exam: config.exam,
+          timeLimitMinutes: config.timeLimitMinutes,
+          questions,
+          startedAt: Date.now(),
+        });
+        return;
+      }
+
       const res = await fetch("/api/past-papers/mistakes", {
         method: "POST",
         credentials: "include",
@@ -116,6 +154,10 @@ function MistakesContent() {
     }>,
   ) => {
     if (!active) return;
+    if (demoMode) {
+      markMistakesDemoReviewed(active.questions.map((q) => q.key));
+      return;
+    }
     await fetch("/api/past-papers/mistakes/complete", {
       method: "POST",
       credentials: "include",
@@ -138,31 +180,60 @@ function MistakesContent() {
     void loadSummary();
   };
 
-  if (session === undefined) {
+  if (!demoMode && session === undefined) {
     return (
       <div className="animate-pulse rounded-lg bg-surface-subtle h-24" />
     );
   }
 
-  if (!session?.user) {
+  if (!demoMode && !session?.user) {
+    const demoHref = "/past-papers/mistakes?demo=1";
     return (
       <div className="mx-auto max-w-lg rounded-[4px] bg-surface p-8 text-center">
         <h1 className="text-lg font-semibold text-text">Mistakes</h1>
         <p className="mt-2 text-sm text-text-muted">
           Sign in to drill past-paper questions you got wrong.
         </p>
-        <Link
-          href={`/login?redirectTo=${encodeURIComponent("/past-papers/mistakes")}`}
-          className="mt-6 inline-flex rounded-organic-lg bg-secondary px-5 py-3 text-sm font-semibold text-background hover:opacity-90"
-        >
-          Sign in
-        </Link>
+        <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          <Link
+            href={`/login?redirectTo=${encodeURIComponent("/past-papers/mistakes")}`}
+            className="inline-flex rounded-organic-lg bg-secondary px-5 py-3 text-sm font-semibold text-background hover:opacity-90"
+          >
+            Sign in
+          </Link>
+          {isMistakesDemoPreviewAllowed() ? (
+            <Link
+              href={demoHref}
+              className="inline-flex rounded-organic-lg bg-surface-elevated px-5 py-3 text-sm font-semibold text-text hover:bg-surface-mid"
+            >
+              Try demo preview
+            </Link>
+          ) : null}
+        </div>
       </div>
     );
   }
 
   return (
     <div className="py-8 sm:py-10">
+      {demoMode ? (
+        <div className="mx-auto mb-4 flex max-w-[960px] flex-wrap items-center justify-between gap-2 rounded-[4px] bg-surface-elevated px-4 py-3 text-sm text-text-muted">
+          <span>
+            Demo preview — sample ESAT CAMP questions, no login required.
+            Reviews stay in this browser tab only.
+          </span>
+          <button
+            type="button"
+            onClick={() => {
+              resetMistakesDemoReviews();
+              void loadSummary();
+            }}
+            className="rounded-organic-md px-3 py-1.5 text-xs font-semibold text-text hover:bg-surface-mid"
+          >
+            Reset demo reviews
+          </button>
+        </div>
+      ) : null}
       {active ? (
         <MistakesPracticeRunner
           questions={active.questions}
@@ -183,12 +254,36 @@ function MistakesContent() {
   );
 }
 
+function MistakesPageInner() {
+  const searchParams = useSearchParams();
+  const wantsDemo = searchParams.get("demo") === "1";
+  const demoAllowed = isMistakesDemoPreviewAllowed();
+  const demoMode = wantsDemo && demoAllowed;
+
+  const body = useMemo(
+    () => (
+      <Container size="xl">
+        <MistakesContent demoMode={demoMode} />
+      </Container>
+    ),
+    [demoMode],
+  );
+
+  if (demoMode) return body;
+
+  return <SubscriptionGate feature="drill">{body}</SubscriptionGate>;
+}
+
 export default function PastPapersMistakesPage() {
   return (
-    <SubscriptionGate feature="drill">
-      <Container size="xl">
-        <MistakesContent />
-      </Container>
-    </SubscriptionGate>
+    <Suspense
+      fallback={
+        <Container size="xl">
+          <div className="animate-pulse rounded-lg bg-surface-subtle h-24 my-8" />
+        </Container>
+      }
+    >
+      <MistakesPageInner />
+    </Suspense>
   );
 }

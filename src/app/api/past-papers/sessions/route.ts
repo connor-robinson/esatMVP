@@ -354,111 +354,257 @@ export async function GET(request: Request) {
 
   const sessions = Array.isArray(data) ? [...data] : [];
 
-  // Re-score ended sittings from the answer key (self-mark removed).
+  // Re-score ended sittings from the answer key and fill ESAT predicted_score.
   try {
     const { autoScoreSessionRow } = await import(
       '@/lib/papers/autoScoreSessionRow'
     );
-
-    const needsKeys = sessions.filter(
-      (row: {
-        ended_at?: string | null;
-        paper_id?: number | null;
-        answers?: unknown;
-        correct_flags?: unknown;
-        score?: unknown;
-      }) => {
-        if (!row?.ended_at || row.paper_id == null) return false;
-        const answers = Array.isArray(row.answers) ? row.answers : [];
-        const hasChoice = answers.some(
-          (a: { choice?: string | null }) =>
-            a?.choice != null && String(a.choice).trim() !== '',
-        );
-        if (!hasChoice) return false;
-        const flags = Array.isArray(row.correct_flags) ? row.correct_flags : [];
-        const score = row.score as { correct?: number } | null;
-        return (
-          flags.length === 0 ||
-          flags.every((f: unknown) => f == null) ||
-          (score != null && score.correct === 0)
-        );
-      },
+    const { predictEsatScoreFromAccuracy } = await import(
+      '@/lib/papers/predictEsatFromAccuracy'
+    );
+    const { fetchConversionRowsForTables } = await import(
+      '@/lib/scoreConverter/fetchConversionRows.server'
     );
 
-    if (needsKeys.length > 0) {
-      const paperIds = [
-        ...new Set(
-          needsKeys
-            .map((row: { paper_id?: number | null }) => row.paper_id)
-            .filter(
-              (id: number | null | undefined): id is number => id != null,
-            ),
-        ),
-      ];
+    type SessionRow = {
+      id: string;
+      ended_at?: string | null;
+      paper_id?: number | null;
+      answers?: unknown;
+      correct_flags?: unknown;
+      score?: { correct?: number; total?: number } | null;
+      predicted_score?: number | null;
+      selected_sections?: string[] | null;
+    };
 
-      const questionsByPaper = new Map<
-        number,
-        Array<{ question_number: number; answer_letter: string | null }>
-      >();
+    const needsAutoScore = (row: SessionRow) => {
+      if (!row?.ended_at || row.paper_id == null) return false;
+      const answers = Array.isArray(row.answers) ? row.answers : [];
+      const hasChoice = answers.some(
+        (a: { choice?: string | null }) =>
+          a?.choice != null && String(a.choice).trim() !== '',
+      );
+      if (!hasChoice) return false;
+      const flags = Array.isArray(row.correct_flags) ? row.correct_flags : [];
+      const score = row.score;
+      return (
+        flags.length === 0 ||
+        flags.every((f: unknown) => f == null) ||
+        (score != null && score.correct === 0)
+      );
+    };
 
-      if (paperIds.length > 0) {
-        const { data: questionRows } = await (supabase as any)
-          .from('questions')
-          .select('paper_id, question_number, answer_letter')
-          .in('paper_id', paperIds)
-          .order('question_number', { ascending: true });
+    const needsPredicted = (row: SessionRow) => {
+      if (!row?.ended_at || row.paper_id == null) return false;
+      if (
+        typeof row.predicted_score === 'number' &&
+        Number.isFinite(row.predicted_score)
+      ) {
+        return false;
+      }
+      const score = row.score;
+      return (
+        score != null &&
+        typeof score.correct === 'number' &&
+        typeof score.total === 'number' &&
+        Number.isFinite(score.correct) &&
+        Number.isFinite(score.total) &&
+        score.total > 0
+      );
+    };
 
-        for (const q of questionRows || []) {
-          const pid = q.paper_id as number;
-          if (!questionsByPaper.has(pid)) questionsByPaper.set(pid, []);
-          questionsByPaper.get(pid)!.push({
-            question_number: q.question_number,
-            answer_letter: q.answer_letter,
-          });
+    const paperIdsForKeys = [
+      ...new Set(
+        sessions
+          .filter(needsAutoScore)
+          .map((row: SessionRow) => row.paper_id)
+          .filter((id: number | null | undefined): id is number => id != null),
+      ),
+    ];
+
+    const questionsByPaper = new Map<
+      number,
+      Array<{ question_number: number; answer_letter: string | null }>
+    >();
+
+    if (paperIdsForKeys.length > 0) {
+      const { data: questionRows } = await (supabase as any)
+        .from('questions')
+        .select('paper_id, question_number, answer_letter')
+        .in('paper_id', paperIdsForKeys)
+        .order('question_number', { ascending: true });
+
+      for (const q of questionRows || []) {
+        const pid = q.paper_id as number;
+        if (!questionsByPaper.has(pid)) questionsByPaper.set(pid, []);
+        questionsByPaper.get(pid)!.push({
+          question_number: q.question_number,
+          answer_letter: q.answer_letter,
+        });
+      }
+    }
+
+    for (let i = 0; i < sessions.length; i++) {
+      const row = sessions[i] as SessionRow;
+      if (!needsAutoScore(row) || row.paper_id == null) continue;
+      const paperQuestions = questionsByPaper.get(row.paper_id);
+      if (!paperQuestions?.length) continue;
+      const result = autoScoreSessionRow(row, paperQuestions);
+      if (!result?.changed) continue;
+      sessions[i] = {
+        ...row,
+        correct_flags: result.correct_flags,
+        score: result.score,
+      };
+    }
+
+    const paperIdsForPredicted = [
+      ...new Set(
+        sessions
+          .filter(needsPredicted)
+          .map((row: SessionRow) => row.paper_id)
+          .filter((id: number | null | undefined): id is number => id != null),
+      ),
+    ];
+
+    const conversionByPaper = new Map<
+      number,
+      import('@/types/papers').ConversionRow[]
+    >();
+
+    if (paperIdsForPredicted.length > 0) {
+      const { data: papers } = await (supabase as any)
+        .from('papers')
+        .select('id, conversion_tables(id)')
+        .in('id', paperIdsForPredicted);
+
+      const tableIdToPaper = new Map<number, number>();
+      const tableIds: number[] = [];
+
+      for (const paper of papers || []) {
+        const tables = paper.conversion_tables as
+          | { id: number }
+          | { id: number }[]
+          | null;
+        const list = Array.isArray(tables)
+          ? tables
+          : tables
+            ? [tables]
+            : [];
+        for (const table of list) {
+          if (typeof table?.id !== 'number') continue;
+          tableIds.push(table.id);
+          tableIdToPaper.set(table.id, paper.id as number);
         }
       }
 
-      const backfills: Array<{
+      if (tableIds.length > 0) {
+        const records = await fetchConversionRowsForTables(supabase, tableIds);
+        for (const record of records) {
+          const paperId = tableIdToPaper.get(record.table_id);
+          if (paperId == null) continue;
+          if (!conversionByPaper.has(paperId)) {
+            conversionByPaper.set(paperId, []);
+          }
+          conversionByPaper.get(paperId)!.push({
+            id: 0,
+            tableId: record.table_id,
+            partName: record.part_name,
+            rawScore: record.raw_score,
+            scaledScore: record.scaled_score,
+            createdAt: '',
+            updatedAt: '',
+          });
+        }
+      }
+    }
+
+    const backfills: Array<{
+      id: string;
+      correct_flags?: (boolean | null)[];
+      score?: { correct: number; total: number };
+      predicted_score?: number | null;
+    }> = [];
+
+    for (let i = 0; i < sessions.length; i++) {
+      const original = (Array.isArray(data) ? data[i] : null) as SessionRow | null;
+      const row = sessions[i] as SessionRow;
+      if (!row?.ended_at || row.paper_id == null) continue;
+
+      let predicted =
+        typeof row.predicted_score === 'number' &&
+        Number.isFinite(row.predicted_score)
+          ? row.predicted_score
+          : null;
+
+      if (predicted == null && needsPredicted(row)) {
+        const conversionRows = conversionByPaper.get(row.paper_id) ?? [];
+        predicted = predictEsatScoreFromAccuracy(
+          row.score,
+          row.selected_sections,
+          conversionRows,
+        );
+        if (predicted != null) {
+          sessions[i] = { ...row, predicted_score: predicted };
+        }
+      }
+
+      const scored = sessions[i] as SessionRow;
+      const flagsChanged =
+        original != null &&
+        JSON.stringify(original.correct_flags ?? null) !==
+          JSON.stringify(scored.correct_flags ?? null);
+      const scoreChanged =
+        original != null &&
+        JSON.stringify(original.score ?? null) !==
+          JSON.stringify(scored.score ?? null);
+      const predictedChanged =
+        predicted != null &&
+        (typeof original?.predicted_score !== 'number' ||
+          original.predicted_score !== predicted);
+
+      if (!flagsChanged && !scoreChanged && !predictedChanged) continue;
+
+      const update: {
         id: string;
-        correct_flags: (boolean | null)[];
-        score: { correct: number; total: number };
-      }> = [];
+        correct_flags?: (boolean | null)[];
+        score?: { correct: number; total: number };
+        predicted_score?: number | null;
+      } = { id: row.id };
 
-      for (let i = 0; i < sessions.length; i++) {
-        const row = sessions[i];
-        if (!row?.paper_id || !row.ended_at) continue;
-        const paperQuestions = questionsByPaper.get(row.paper_id);
-        if (!paperQuestions?.length) continue;
-        const result = autoScoreSessionRow(row, paperQuestions);
-        if (!result?.changed) continue;
-        sessions[i] = {
-          ...row,
-          correct_flags: result.correct_flags,
-          score: result.score,
-        };
-        backfills.push({
-          id: row.id,
-          correct_flags: result.correct_flags,
-          score: result.score,
-        });
+      if (flagsChanged || scoreChanged) {
+        update.correct_flags = scored.correct_flags as (boolean | null)[];
+        update.score = scored.score as { correct: number; total: number };
       }
+      if (predictedChanged) {
+        update.predicted_score = predicted;
+      }
+      backfills.push(update);
+    }
 
-      if (backfills.length > 0) {
-        void Promise.all(
-          backfills.map((item) =>
-            (supabase as any)
-              .from('paper_sessions')
-              .update({
-                correct_flags: item.correct_flags,
-                score: item.score,
-                updated_at: new Date().toISOString(),
-              })
-              .eq('id', item.id)
-              .eq('user_id', session.user.id)
-              .is('deleted_at', null),
-          ),
-        ).catch(() => {});
-      }
+    if (backfills.length > 0) {
+      void Promise.all(
+        backfills.map((item) => {
+          const patch: Record<string, unknown> = {
+            updated_at: new Date().toISOString(),
+          };
+          if (item.correct_flags !== undefined) {
+            patch.correct_flags = item.correct_flags;
+          }
+          if (item.score !== undefined) {
+            patch.score = item.score;
+          }
+          if (item.predicted_score !== undefined) {
+            patch.predicted_score = item.predicted_score;
+          }
+          return (supabase as any)
+            .from('paper_sessions')
+            .update(patch)
+            .eq('id', item.id)
+            .eq('user_id', session.user.id)
+            .is('deleted_at', null);
+        }),
+      ).catch(() => {});
     }
   } catch {
     // fail-soft
