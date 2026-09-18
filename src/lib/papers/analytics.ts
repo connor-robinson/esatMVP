@@ -117,13 +117,23 @@ function coerceOptionalNumber(value: unknown): number | null | undefined {
 }
 
 export function convertSessionRow(row: PaperSessionRow): PaperSession {
-  const score = row.score as { correct: number; total: number } | null;
+  let score = row.score as { correct: number; total: number } | null;
   const answers = (row.answers as any[]) || [];
   const perQuestionSec = (row.per_question_seconds as number[]) || [];
   const correctFlags = (row.correct_flags as (boolean | null)[]) || [];
   const guessedFlags = (row.guessed_flags as boolean[]) || [];
   const mistakeTags = (row.mistake_tags as MistakeTag[]) || [];
   const sectionPercentiles = row.section_percentiles as Record<string, { percentile: number | null; score: number | null; table: string | null; label: string }> | null;
+
+  const hasGradedFlag = correctFlags.some((f) => f === true || f === false);
+  if (hasGradedFlag) {
+    const correct = correctFlags.filter((f) => f === true).length;
+    const total =
+      typeof score?.total === "number" && score.total > 0
+        ? score.total
+        : Math.max(correctFlags.length, answers.length, 1);
+    score = { correct, total };
+  }
 
   const normalizedSections = sectionPercentiles
     ? Object.fromEntries(

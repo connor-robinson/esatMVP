@@ -1284,24 +1284,11 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           clearTimeout(state.persistTimer);
         }
         
-        // Mark session as ended in database BEFORE clearing state
-        // This ensures the database is updated before SessionRestore can detect it
+        // Full persist on quit so answer-key scores are saved (not a bare endedAt PATCH).
         if (sessionIdToQuit && !state.endedAt) {
           try {
-            const endedAt = Date.now();
-            const response = await fetch('/api/past-papers/sessions', {
-              method: 'PATCH',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                id: sessionIdToQuit,
-                endedAt: endedAt,
-              }),
-            });
-            
-            if (!response.ok) {
-              const errorText = await response.text();
-            } else {
-            }
+            set({ endedAt: Date.now() });
+            await get().persistSessionToServer({ immediate: true });
           } catch (error) {
             // Continue with reset even if database update fails
           }
@@ -1559,6 +1546,31 @@ export const usePaperSessionStore = create<PaperSessionState>()(
 
         const totalQuestions = state.questionRange.end - state.questionRange.start + 1;
 
+        // Always grade from the answer key (self-mark removed).
+        let correctFlagsForPersist = state.correctFlags;
+        let scoreForPersist = {
+          correct: state.correctFlags.filter((flag) => flag === true).length,
+          total: totalQuestions,
+        };
+        if (state.questions.length > 0) {
+          const { deriveCorrectFlags, scoreFromCorrectFlags } = await import(
+            "@/lib/papers/sessionAutoScore"
+          );
+          const derived = deriveCorrectFlags({
+            answers: state.answers,
+            answerLetters: state.questions.map((q) => q.answerLetter),
+            treatUnansweredAsIncorrect: Boolean(state.endedAt),
+          });
+          scoreForPersist = scoreFromCorrectFlags(derived, totalQuestions);
+          correctFlagsForPersist = derived;
+          if (
+            derived.length === state.correctFlags.length &&
+            derived.some((f, i) => f !== state.correctFlags[i])
+          ) {
+            set({ correctFlags: derived });
+          }
+        }
+
         const payload = {
           id: state.sessionId, // Unique session ID (UUID)
           paperId: state.paperId,
@@ -1575,15 +1587,12 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           deadlineAt: state.deadline,
           perQuestionSec: state.perQuestionSec,
           answers: state.answers,
-          correctFlags: state.correctFlags,
+          correctFlags: correctFlagsForPersist,
           guessedFlags: state.guessedFlags,
           reviewFlags: state.reviewFlags,
           mistakeTags: state.mistakeTags,
           notes: state.notes,
-          score: {
-            correct: state.correctFlags.filter((flag) => flag === true).length,
-            total: totalQuestions,
-          },
+          score: scoreForPersist,
         };
 
         const persistPromise = (async (): Promise<boolean> => {
@@ -1837,7 +1846,22 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       
       getCorrectCount: () => {
         const state = get();
-        return state.correctFlags.filter(flag => flag === true).length;
+        if (state.questions.length > 0) {
+          let correct = 0;
+          for (let i = 0; i < state.questions.length; i++) {
+            const key = (state.questions[i]?.answerLetter || "")
+              .toString()
+              .trim()
+              .toUpperCase();
+            const user = (state.answers[i]?.choice || "")
+              .toString()
+              .trim()
+              .toUpperCase();
+            if (key && user && user === key) correct += 1;
+          }
+          return correct;
+        }
+        return state.correctFlags.filter((flag) => flag === true).length;
       },
       
       getRemainingTime: () => {
@@ -2097,7 +2121,28 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           set({ persistTimer: null });
         }
 
-        if (!state.endedAt) {
+        // Grade from answer key and queue wrong answers for drill.
+        if (state.questions.length > 0) {
+          const { deriveCorrectFlags } = await import(
+            "@/lib/papers/sessionAutoScore"
+          );
+          const derived = deriveCorrectFlags({
+            answers: state.answers,
+            answerLetters: state.questions.map((q) => q.answerLetter),
+            treatUnansweredAsIncorrect: true,
+          });
+          const nextAnswers = state.answers.map((answer, i) => {
+            if (derived[i] === false) {
+              return { ...answer, addToDrill: true };
+            }
+            return answer;
+          });
+          set({
+            correctFlags: derived,
+            answers: nextAnswers,
+            endedAt: state.endedAt ?? Date.now(),
+          });
+        } else if (!state.endedAt) {
           set({ endedAt: Date.now() });
         }
 

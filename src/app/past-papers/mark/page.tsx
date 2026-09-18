@@ -143,7 +143,6 @@ export default function PapersMarkPage() {
     questionRange,
     answers,
     perQuestionSec,
-    correctFlags,
     guessedFlags,
     mistakeTags,
     notes,
@@ -347,7 +346,7 @@ export default function PapersMarkPage() {
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
   
-  // Section breakdown (conversion by section placeholder: raw correct/total per section)
+  // Section breakdown from answer-key grading
   const sectionBreakdown = useMemo(() => {
     const bySection: Record<string, { correct: number; total: number }> = {};
     const qs = usePaperSessionStore.getState().questions;
@@ -364,13 +363,15 @@ export default function PapersMarkPage() {
         paperName as ExamName,
       );
       if (!bySection[key]) bySection[key] = { correct: 0, total: 0 };
-      if (correctFlags[i] === true) bySection[key].correct += 1;
+      const user = (answers[i]?.choice || "").toString().toUpperCase();
+      const correct = (qs[i]?.answerLetter || "").toString().toUpperCase();
+      if (correct && user && user === correct) bySection[key].correct += 1;
       bySection[key].total += 1;
     }
     return bySection;
-  }, [correctFlags]);
+  }, [answers, paperName]);
 
-  // Auto-derive correctness if not manually set
+  // Grade from answer key only (self-mark removed)
   const derivedCorrectFlags = useMemo(() => {
     return questionNumbers.map((_, i) => {
       const user = (answers[i]?.choice || "").toString().toUpperCase();
@@ -654,7 +655,7 @@ export default function PapersMarkPage() {
     });
     
     return analytics;
-  }, [questions, totalQuestions, correctFlags, derivedCorrectFlags, guessedFlags, perQuestionSec]);
+  }, [questions, totalQuestions, derivedCorrectFlags, guessedFlags, perQuestionSec]);
 
   const validSectionEntries = useMemo(() => {
     return Object.entries(sectionAnalytics).filter(
@@ -688,7 +689,7 @@ export default function PapersMarkPage() {
   const wrongQuestions = useMemo(() => {
     return questionNumbers
       .map((qn, index) => {
-        if ((derivedCorrectFlags[index] ?? correctFlags[index]) !== false) {
+        if (derivedCorrectFlags[index] !== false) {
           return null;
         }
         const q = questions[index];
@@ -720,7 +721,6 @@ export default function PapersMarkPage() {
   }, [
     questionNumbers,
     derivedCorrectFlags,
-    correctFlags,
     questions,
     paperName,
     mistakeTags,
@@ -760,8 +760,8 @@ export default function PapersMarkPage() {
     const guessedIdx: number[] = [];
     for (let i = 0; i < guessedFlags.length; i++) if (guessedFlags[i]) guessedIdx.push(i);
     const count = guessedIdx.length;
-    const correctGuesses = guessedIdx.filter(i => (derivedCorrectFlags[i] ?? correctFlags[i]) === true).length;
-    const wrongGuesses = guessedIdx.filter(i => (derivedCorrectFlags[i] ?? correctFlags[i]) === false).length;
+    const correctGuesses = guessedIdx.filter(i => derivedCorrectFlags[i] === true).length;
+    const wrongGuesses = guessedIdx.filter(i => derivedCorrectFlags[i] === false).length;
     const timeOnGuessed = guessedIdx.reduce((sum, i) => sum + (perQuestionSec[i] || 0), 0);
     const medianBeforeGuess = getMedian(guessedIdx.map(i => perQuestionSec[i] || 0));
     const accuracy = count > 0 ? Math.round((correctGuesses / count) * 100) : 0;
@@ -769,11 +769,11 @@ export default function PapersMarkPage() {
     // Non-guessed performance
     const nonGuessedIdx: number[] = [];
     for (let i = 0; i < guessedFlags.length; i++) if (!guessedFlags[i]) nonGuessedIdx.push(i);
-    const nonGuessedCorrect = nonGuessedIdx.filter(i => (derivedCorrectFlags[i] ?? correctFlags[i]) === true).length;
+    const nonGuessedCorrect = nonGuessedIdx.filter(i => derivedCorrectFlags[i] === true).length;
     const nonGuessedAccuracy = nonGuessedIdx.length > 0 ? Math.round((nonGuessedCorrect / nonGuessedIdx.length) * 100) : 0;
     // Time on correct vs wrong guesses
-    const correctGuessTimes = guessedIdx.filter(i => (derivedCorrectFlags[i] ?? correctFlags[i]) === true).map(i => perQuestionSec[i] || 0);
-    const wrongGuessTimes = guessedIdx.filter(i => (derivedCorrectFlags[i] ?? correctFlags[i]) === false).map(i => perQuestionSec[i] || 0);
+    const correctGuessTimes = guessedIdx.filter(i => derivedCorrectFlags[i] === true).map(i => perQuestionSec[i] || 0);
+    const wrongGuessTimes = guessedIdx.filter(i => derivedCorrectFlags[i] === false).map(i => perQuestionSec[i] || 0);
     const avgTimeCorrectGuess = correctGuessTimes.length > 0 ? correctGuessTimes.reduce((a, b) => a + b, 0) / correctGuessTimes.length : 0;
     const avgTimeWrongGuess = wrongGuessTimes.length > 0 ? wrongGuessTimes.reduce((a, b) => a + b, 0) / wrongGuessTimes.length : 0;
     // Guess distribution (early vs late)
@@ -782,7 +782,7 @@ export default function PapersMarkPage() {
     const middleGuesses = guessedIdx.filter(i => i >= third && i < 2 * third).length;
     const lateGuesses = guessedIdx.filter(i => i >= 2 * third).length;
     return { count, correctGuesses, wrongGuesses, accuracy, timeOnGuessed, medianBeforeGuess, shareOfTotalTime, nonGuessedAccuracy, avgTimeCorrectGuess, avgTimeWrongGuess, earlyGuesses, middleGuesses, lateGuesses };
-  }, [guessedFlags, derivedCorrectFlags, correctFlags, perQuestionSec, timeSplits.totalTime, totalQuestions]);
+  }, [guessedFlags, derivedCorrectFlags, perQuestionSec, timeSplits.totalTime, totalQuestions]);
 
   // Session insights (auto-generated, substantial)
   // Key insights removed per product direction

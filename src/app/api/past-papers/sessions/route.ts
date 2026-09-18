@@ -352,7 +352,119 @@ export async function GET(request: Request) {
     );
   }
 
-  return NextResponse.json({ sessions: data });
+  const sessions = Array.isArray(data) ? [...data] : [];
+
+  // Re-score ended sittings from the answer key (self-mark removed).
+  try {
+    const { autoScoreSessionRow } = await import(
+      '@/lib/papers/autoScoreSessionRow'
+    );
+
+    const needsKeys = sessions.filter(
+      (row: {
+        ended_at?: string | null;
+        paper_id?: number | null;
+        answers?: unknown;
+        correct_flags?: unknown;
+        score?: unknown;
+      }) => {
+        if (!row?.ended_at || row.paper_id == null) return false;
+        const answers = Array.isArray(row.answers) ? row.answers : [];
+        const hasChoice = answers.some(
+          (a: { choice?: string | null }) =>
+            a?.choice != null && String(a.choice).trim() !== '',
+        );
+        if (!hasChoice) return false;
+        const flags = Array.isArray(row.correct_flags) ? row.correct_flags : [];
+        const score = row.score as { correct?: number } | null;
+        return (
+          flags.length === 0 ||
+          flags.every((f: unknown) => f == null) ||
+          (score != null && score.correct === 0)
+        );
+      },
+    );
+
+    if (needsKeys.length > 0) {
+      const paperIds = [
+        ...new Set(
+          needsKeys
+            .map((row: { paper_id?: number | null }) => row.paper_id)
+            .filter(
+              (id: number | null | undefined): id is number => id != null,
+            ),
+        ),
+      ];
+
+      const questionsByPaper = new Map<
+        number,
+        Array<{ question_number: number; answer_letter: string | null }>
+      >();
+
+      if (paperIds.length > 0) {
+        const { data: questionRows } = await (supabase as any)
+          .from('questions')
+          .select('paper_id, question_number, answer_letter')
+          .in('paper_id', paperIds)
+          .order('question_number', { ascending: true });
+
+        for (const q of questionRows || []) {
+          const pid = q.paper_id as number;
+          if (!questionsByPaper.has(pid)) questionsByPaper.set(pid, []);
+          questionsByPaper.get(pid)!.push({
+            question_number: q.question_number,
+            answer_letter: q.answer_letter,
+          });
+        }
+      }
+
+      const backfills: Array<{
+        id: string;
+        correct_flags: (boolean | null)[];
+        score: { correct: number; total: number };
+      }> = [];
+
+      for (let i = 0; i < sessions.length; i++) {
+        const row = sessions[i];
+        if (!row?.paper_id || !row.ended_at) continue;
+        const paperQuestions = questionsByPaper.get(row.paper_id);
+        if (!paperQuestions?.length) continue;
+        const result = autoScoreSessionRow(row, paperQuestions);
+        if (!result?.changed) continue;
+        sessions[i] = {
+          ...row,
+          correct_flags: result.correct_flags,
+          score: result.score,
+        };
+        backfills.push({
+          id: row.id,
+          correct_flags: result.correct_flags,
+          score: result.score,
+        });
+      }
+
+      if (backfills.length > 0) {
+        void Promise.all(
+          backfills.map((item) =>
+            (supabase as any)
+              .from('paper_sessions')
+              .update({
+                correct_flags: item.correct_flags,
+                score: item.score,
+                updated_at: new Date().toISOString(),
+              })
+              .eq('id', item.id)
+              .eq('user_id', session.user.id)
+              .is('deleted_at', null),
+          ),
+        ).catch(() => {});
+      }
+    }
+  } catch {
+    // fail-soft
+  }
+
+  return NextResponse.json({ sessions });
 }
 
 export async function DELETE(request: Request) {
