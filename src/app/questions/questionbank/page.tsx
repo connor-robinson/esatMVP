@@ -119,8 +119,7 @@ function hasSessionBootPayload(): boolean {
   if (typeof window === 'undefined') return false;
   return (
     !!sessionStorage.getItem(QUESTION_BANK_HOME_LAUNCH_KEY) ||
-    hasFreeTierLaunchPayload() ||
-    !!sessionStorage.getItem('questionBankSession')
+    hasFreeTierLaunchPayload()
   );
 }
 
@@ -316,7 +315,8 @@ export default function QuestionBankPage() {
         uiDifficulties: uiDiffs,
       };
 
-      await ensureSessionRegistered(id);
+      // Registration is best-effort; the playing effect also retries.
+      void ensureSessionRegistered(id);
     },
     [ensureSessionRegistered],
   );
@@ -665,28 +665,37 @@ export default function QuestionBankPage() {
         setSessionCurrentIndex(0);
         setSessionMode(true);
         updateCurrentQuestion(sessionQs[0]);
+        // Drop the loader immediately; prefs / tracking can finish in the background.
+        setSessionStarting(false);
 
         const limitMinutes = Math.ceil(sessionQs.length * 1.5);
-        const accessPrefs = await fetchAccessArrangementPrefs();
-        const adjustedLimitMinutes = applyExtraTimeMinutes(
-          limitMinutes,
-          accessPrefs.extraTime,
-        );
         const startTime = Date.now();
-        const timeLimitMs = adjustedLimitMinutes * 60 * 1000;
-        setRestBreaksEnabled(accessPrefs.restBreaks.enabled);
-        setRestBreakActive(false);
-        setRestBreaksUsed(0);
-        setDeadline(startTime + timeLimitMs);
+        const provisionalMs = limitMinutes * 60 * 1000;
         setTimerStartTime(startTime);
-        setTimeLimitMinutes(adjustedLimitMinutes);
-        setRemainingTime(Math.ceil(timeLimitMs / 1000));
+        setTimeLimitMinutes(limitMinutes);
+        setDeadline(startTime + provisionalMs);
+        setRemainingTime(Math.ceil(provisionalMs / 1000));
 
-        await initializeTrackedSession({
+        void initializeTrackedSession({
           questions: sessionQs,
-          timeLimitMinutes: adjustedLimitMinutes,
+          timeLimitMinutes: limitMinutes,
           source: 'home',
           uiDifficulties: inferUiDifficultiesFromQuestions(sessionQs),
+        });
+
+        void fetchAccessArrangementPrefs().then((accessPrefs) => {
+          const adjustedLimitMinutes = applyExtraTimeMinutes(
+            limitMinutes,
+            accessPrefs.extraTime,
+          );
+          setRestBreaksEnabled(accessPrefs.restBreaks.enabled);
+          setRestBreakActive(false);
+          setRestBreaksUsed(0);
+          if (adjustedLimitMinutes === limitMinutes) return;
+          const adjustedMs = adjustedLimitMinutes * 60 * 1000;
+          setTimeLimitMinutes(adjustedLimitMinutes);
+          setDeadline(startTime + adjustedMs);
+          setRemainingTime(Math.ceil(adjustedMs / 1000));
         });
 
         return true;
@@ -777,9 +786,18 @@ export default function QuestionBankPage() {
     isSessionMode ||
     (typeof window !== 'undefined' && hasSessionBootPayload());
 
+  // Orphaned legacy payload without ?session=true would pin the loading screen forever.
+  useEffect(() => {
+    if (typeof window === 'undefined' || isSessionMode) return;
+    if (sessionStorage.getItem('questionBankSession')) {
+      sessionStorage.removeItem('questionBankSession');
+    }
+  }, [isSessionMode]);
+
   // Load session data from sessionStorage if in session mode
   useEffect(() => {
     if (!isSessionMode) return;
+    if (accessPending) return;
 
     if (!treatAsFullAccess) {
       sessionStorage.removeItem('questionBankSession');
@@ -791,42 +809,52 @@ export default function QuestionBankPage() {
     try {
       const sessionDataStr = sessionStorage.getItem('questionBankSession');
       if (sessionDataStr) {
-          const sessionData = JSON.parse(sessionDataStr);
-          const questions = sessionData.questions || [];
-          setSessionQuestions(questions);
-          setSessionCurrentIndex(0);
-          setSessionMode(true);
-          setTimeLimitMinutes(
-            sessionData.timeLimitMinutes ||
-              Math.ceil((questions.length || 0) * 1.5),
-          );
+        const sessionData = JSON.parse(sessionDataStr);
+        const questions = sessionData.questions || [];
+        sessionStorage.removeItem('questionBankSession');
 
-          const startTime = Date.now();
-          const timeLimitMs =
-            (sessionData.timeLimitMinutes ||
-              Math.ceil((questions.length || 0) * 1.5)) *
-            60 *
-            1000;
-          setDeadline(startTime + timeLimitMs);
-          setTimerStartTime(startTime);
-          setRemainingTime(Math.ceil(timeLimitMs / 1000));
-
-          void initializeTrackedSession({
-            questions,
-            timeLimitMinutes: sessionData.timeLimitMinutes,
-            source: sessionData.source === 'library' ? 'library' : 'home',
-            uiDifficulties: inferUiDifficultiesFromQuestions(questions),
-          });
-
-          if (questions.length > 0) {
-            updateCurrentQuestion(questions[0]);
-          }
-
-          sessionStorage.removeItem('questionBankSession');
+        if (!Array.isArray(questions) || questions.length === 0) {
+          router.replace('/questions');
+          return;
         }
-      } catch (err) {
+
+        setSessionQuestions(questions);
+        setSessionCurrentIndex(0);
+        setSessionMode(true);
+        setTimeLimitMinutes(
+          sessionData.timeLimitMinutes ||
+            Math.ceil((questions.length || 0) * 1.5),
+        );
+
+        const startTime = Date.now();
+        const timeLimitMs =
+          (sessionData.timeLimitMinutes ||
+            Math.ceil((questions.length || 0) * 1.5)) *
+          60 *
+          1000;
+        setDeadline(startTime + timeLimitMs);
+        setTimerStartTime(startTime);
+        setRemainingTime(Math.ceil(timeLimitMs / 1000));
+
+        void initializeTrackedSession({
+          questions,
+          timeLimitMinutes: sessionData.timeLimitMinutes,
+          source: sessionData.source === 'library' ? 'library' : 'home',
+          uiDifficulties: inferUiDifficultiesFromQuestions(questions),
+        });
+
+        updateCurrentQuestion(questions[0]);
+        return;
       }
+
+      // ?session=true with nothing to restore — leave the loader.
+      router.replace('/questions');
+    } catch {
+      sessionStorage.removeItem('questionBankSession');
+      router.replace('/questions');
+    }
   }, [
+    accessPending,
     isSessionMode,
     router,
     treatAsFullAccess,
@@ -1142,6 +1170,8 @@ export default function QuestionBankPage() {
         window.alert(
           'Sign in to practice questions from your attempt history.',
         );
+        setSessionStarting(false);
+        router.replace('/questions');
         return;
       }
 
@@ -1268,12 +1298,32 @@ export default function QuestionBankPage() {
           setAnswerRevealed(false);
           setCurrentSelection(null);
           setIncorrectAnswers(new Set());
+          // Show the first question immediately — do not wait on register/prefs.
+          setSessionStarting(false);
 
           const source =
             scope?.source ??
             (subjectsResolved.length > 1 ? 'mixed' : 'home');
 
-          await initializeTrackedSession({
+          const limitMinutes =
+            config.timeLimitMinutes != null && config.timeLimitMinutes > 0
+              ? config.timeLimitMinutes
+              : Math.ceil(sessionQs.length * 1.5);
+
+          // Start the clock with the requested limit; adjust if prefs resolve.
+          const startTime = Date.now();
+          const provisionalMs = limitMinutes * 60 * 1000;
+          setTimerStartTime(startTime);
+          setTimeLimitMinutes(limitMinutes);
+          if (playMode === 'exam') {
+            setDeadline(null);
+            setRemainingTime(null);
+          } else {
+            setDeadline(startTime + provisionalMs);
+            setRemainingTime(Math.ceil(provisionalMs / 1000));
+          }
+
+          void initializeTrackedSession({
             questions: sessionQs,
             timeLimitMinutes: config.timeLimitMinutes,
             source,
@@ -1285,28 +1335,20 @@ export default function QuestionBankPage() {
             uiDifficulties: config.uiDifficulties,
           });
 
-          const limitMinutes =
-            config.timeLimitMinutes != null && config.timeLimitMinutes > 0
-              ? config.timeLimitMinutes
-              : Math.ceil(sessionQs.length * 1.5);
-          const accessPrefs = await fetchAccessArrangementPrefs();
-          const adjustedLimitMinutes = extraTimeAlreadyApplied
-            ? limitMinutes
-            : applyExtraTimeMinutes(limitMinutes, accessPrefs.extraTime);
-          const startTime = Date.now();
-          const timeLimitMs = adjustedLimitMinutes * 60 * 1000;
-          setRestBreaksEnabled(accessPrefs.restBreaks.enabled);
-          setRestBreakActive(false);
-          setRestBreaksUsed(0);
-          setTimerStartTime(startTime);
-          setTimeLimitMinutes(adjustedLimitMinutes);
-          if (playMode === 'exam') {
-            setDeadline(null);
-            setRemainingTime(null);
-          } else {
-            setDeadline(startTime + timeLimitMs);
-            setRemainingTime(Math.ceil(timeLimitMs / 1000));
-          }
+          void fetchAccessArrangementPrefs().then((accessPrefs) => {
+            const adjustedLimitMinutes = extraTimeAlreadyApplied
+              ? limitMinutes
+              : applyExtraTimeMinutes(limitMinutes, accessPrefs.extraTime);
+            setRestBreaksEnabled(accessPrefs.restBreaks.enabled);
+            setRestBreakActive(false);
+            setRestBreaksUsed(0);
+            if (adjustedLimitMinutes === limitMinutes) return;
+            setTimeLimitMinutes(adjustedLimitMinutes);
+            if (playMode === 'exam') return;
+            const adjustedMs = adjustedLimitMinutes * 60 * 1000;
+            setDeadline(startTime + adjustedMs);
+            setRemainingTime(Math.ceil(adjustedMs / 1000));
+          });
         } else if (questionPool === 'incorrect') {
           window.alert(
             'No incorrectly answered questions match these filters yet.',
@@ -1336,9 +1378,18 @@ export default function QuestionBankPage() {
     if (typeof window === 'undefined') return;
 
     const bootFreeTierLaunch = () => {
-      if (accessPending || treatAsFullAccess) return;
+      if (accessPending) return;
       const launch = resolveFreeTierLaunch(window.location.search);
       if (!launch) return;
+
+      // Paid users must not keep a free-tier launch flag — that pinned the loader.
+      if (treatAsFullAccess) {
+        clearFreeTierLaunch();
+        if (window.location.search.includes('startSubject=')) {
+          router.replace('/questions/questionbank', { scroll: false });
+        }
+        return;
+      }
 
       clearFreeTierLaunch();
       if (window.location.search.includes('startSubject=')) {
@@ -1713,12 +1764,14 @@ export default function QuestionBankPage() {
       )
     : [];
 
+  // Never keep the loader once questions are ready — registration / prefs can
+  // hang on network and used to pin "Loading, please wait..." forever.
   const showSessionLoading =
-    sessionStarting ||
-    (!activeSession &&
-      sessionBootPending &&
-      sessionView !== 'complete' &&
-      sessionView !== 'review');
+    !activeSession &&
+    (sessionStarting ||
+      (sessionBootPending &&
+        sessionView !== 'complete' &&
+        sessionView !== 'review'));
 
   if (sessionView === 'complete') {
     return (

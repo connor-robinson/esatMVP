@@ -120,9 +120,18 @@ export function useSubscription(): SubscriptionStatus {
       }
     }
 
+    // Avoid indefinite accessPending when the status request hangs.
+    const hangTimeout = window.setTimeout(() => {
+      if (!mounted) return;
+      setState((prev) =>
+        prev.isLoading ? { ...prev, isLoading: false } : prev,
+      );
+    }, 8_000);
+
     fetchStatus();
     return () => {
       mounted = false;
+      window.clearTimeout(hangTimeout);
     };
   }, []);
 
