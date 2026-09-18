@@ -15,16 +15,28 @@ export const MISTAKES_PAPER_VARIANT = "Mistakes review";
 export const MISTAKES_SESSION_PREFIX = "[Mistakes]";
 export const MISTAKES_PAPER_NAME = "OTHER" as const;
 
-export type MistakesPoolMode = "unreviewed" | "most_missed" | "shuffle";
-
-/** @deprecated legacy mode ids still accepted by selectMistakeItems */
-export type MistakesPoolModeLegacy =
-  | MistakesPoolMode
+export type MistakesPoolMode =
+  | "unreviewed"
+  | "most_missed"
+  | "shuffle"
+  // Legacy / alternate pool ids still accepted by API + UI.
   | "untouched"
   | "repeat_offenders"
+  | "cold_cases"
+  | "bounce_backs"
   | "lucky_dip";
 
-export type MistakesExamFilter = "ALL" | "ENGAA" | "NSAA" | "TMUA";
+/** @deprecated use MistakesPoolMode */
+export type MistakesPoolModeLegacy = MistakesPoolMode;
+
+export type MistakesExamFilter =
+  | "ALL"
+  | "ENGAA"
+  | "NSAA"
+  | "TMUA"
+  | "ESAT"
+  | "PAT"
+  | "MAT";
 
 export const MISTAKES_SUPPORTED_EXAMS = ["ENGAA", "NSAA", "TMUA"] as const;
 
@@ -114,6 +126,7 @@ export type MistakeQuestionPayload = MistakePoolItem & {
 export type MistakesSummary = {
   totalIncorrect: number;
   untouched: number;
+  bounceBacks?: number;
   byExam: Record<string, number>;
 };
 

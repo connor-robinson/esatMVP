@@ -152,13 +152,45 @@ function escapeHtml(text: string): string {
     .replace(/"/g, "&quot;");
 }
 
+/**
+ * Prefer exam-style fractions in inline math: same digit size as surrounding
+ * text, taller vertically (TeX `\displaystyle`), matching the in-app KaTeX hook.
+ */
+function withInlineDisplayStyle(math: string): string {
+  const trimmed = math.trimStart();
+  if (
+    /^\\(?:displaystyle|textstyle|scriptstyle|scriptscriptstyle)(?![A-Za-z])/.test(
+      trimmed,
+    )
+  ) {
+    return math;
+  }
+  return `\\displaystyle ${math}`;
+}
+
+/**
+ * Chromium's PDF engine mis-clips KaTeX's 400em-wide sqrt SVGs inside
+ * `.hide-tail`, leaving only the vinculum. Match SVG width to the visible
+ * min-width so the radical hook stays in frame.
+ */
+function fixKatexSqrtSvgWidths(html: string): string {
+  return html.replace(
+    /(<span class="[^"]*hide-tail[^"]*" style="[^"]*?min-width:([0-9.]+)em[^"]*"[^>]*>\s*<svg\b[^>]*?)\bwidth="400em"/g,
+    `$1width="$2em"`,
+  );
+}
+
 function renderKatex(tex: string, displayMode: boolean): string {
   try {
-    return katex.renderToString(tex, {
+    const math = displayMode ? tex : withInlineDisplayStyle(tex);
+    const html = katex.renderToString(math, {
       displayMode,
       throwOnError: false,
       strict: "ignore",
+      // Slightly thicker rules so frac/sqrt lines survive print rasterisation.
+      minRuleThickness: 0.05,
     });
+    return fixKatexSqrtSvgWidths(html);
   } catch {
     return `<code>${escapeHtml(tex)}</code>`;
   }
@@ -361,11 +393,33 @@ html, body {
 .stem p { margin: 0 0 2mm; }
 .stem .display-math { margin: 3mm 0 4mm; text-align: center; }
 .display-math .katex-display { margin: 0; }
-.stem figure, .stem .diagram, .option-text figure {
+.stem figure, .stem .diagram, .option-text figure, .option-text .diagram {
   display: block; margin: 2.5mm auto; max-width: 72mm; text-align: center;
 }
-.stem img, .stem svg, .option-text img, .option-text svg, .diagram img {
+/* Diagram images only — never restyle KaTeX sqrt / stretchy SVGs. */
+.stem figure img, .stem figure > svg, .stem .diagram img, .stem .diagram > svg,
+.option-text figure img, .option-text figure > svg,
+.option-text .diagram img, .option-text .diagram > svg,
+.diagram img, .diagram > svg {
   display: block; margin: 0 auto; max-width: 72mm; max-height: 55mm; width: auto; height: auto;
+}
+.katex svg {
+  fill: currentColor;
+  stroke: currentColor;
+  max-width: none;
+  max-height: none;
+  width: auto;
+  height: inherit;
+  margin: 0;
+  display: block;
+}
+.katex .mfrac .frac-line,
+.katex .overline .overline-line,
+.katex .underline .underline-line,
+.katex .hline,
+.katex .hdashline,
+.katex .rule {
+  min-height: 0.04em;
 }
 .md-table-wrap { margin: 3mm 0 4mm; overflow: visible; }
 .md-table {
@@ -375,7 +429,7 @@ html, body {
   line-height: 1.25;
 }
 .md-table th, .md-table td {
-  border: 1px solid #111;
+  border: 0.4pt solid #333;
   padding: 1.4mm 1.8mm;
   vertical-align: top;
   text-align: left;
@@ -392,11 +446,11 @@ html, body {
 .key-wrap { max-width: 42mm; margin: 12mm 0 0 8mm; }
 .key-table { width: 100%; border-collapse: collapse; font-size: 10pt; }
 .key-table th, .key-table td {
-  border: 1px solid #000; padding: 1.1mm 2.5mm; text-align: left; line-height: 1.15;
+  border: 0.4pt solid #333; padding: 1.1mm 2.5mm; text-align: left; line-height: 1.15;
 }
 .key-table thead th { font-weight: 700; }
 .key-title {
-  border: 1px solid #000; border-bottom: 0; padding: 1.6mm 2.5mm;
+  border: 0.4pt solid #333; border-bottom: 0; padding: 1.6mm 2.5mm;
   font-weight: 700; font-size: 10pt;
 }
 `;

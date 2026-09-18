@@ -160,7 +160,7 @@ export function MistakesSessionSettings({
   onStart,
 }: MistakesSessionSettingsProps) {
   const [exam, setExam] = useState<MistakesExamFilter>("ALL");
-  const [mode, setMode] = useState<MistakesPoolMode>("untouched");
+  const [mode, setMode] = useState<MistakesPoolMode>("unreviewed");
   const [questionCount, setQuestionCount] = useState(10);
   const [minutes, setMinutes] = useState(autoTimeLimitMinutes(10));
   const [timeManual, setTimeManual] = useState(false);
@@ -203,8 +203,6 @@ export function MistakesSessionSettings({
     if (exam === "ALL") return summary.totalIncorrect;
     return summary.byExam[exam] ?? 0;
   }, [summary, exam]);
-
-  const modeHint = MISTAKES_POOL_OPTIONS.find((o) => o.id === mode);
 
   const handleQuestionCountChange = (next: number) => {
     setQuestionCount(next);
@@ -258,15 +256,9 @@ export function MistakesSessionSettings({
           </span>
         </span>
         <span>
-          Untouched:{" "}
+          Unreviewed:{" "}
           <span className="font-semibold tabular-nums text-text">
             {loadingSummary ? "…" : summary?.untouched ?? 0}
-          </span>
-        </span>
-        <span>
-          Bounce-backs:{" "}
-          <span className="font-semibold tabular-nums text-text">
-            {loadingSummary ? "…" : summary?.bounceBacks ?? 0}
           </span>
         </span>
       </div>
@@ -294,7 +286,7 @@ export function MistakesSessionSettings({
                     : "bg-surface-elevated text-text hover:bg-surface-mid",
                 )}
               >
-                {value === "ALL" ? "All exams" : value}
+                {value === "ALL" ? "All" : value}
                 <span
                   className={cn(
                     "ml-1.5 tabular-nums",
@@ -313,7 +305,7 @@ export function MistakesSessionSettings({
         <label className="text-xs font-medium uppercase tracking-wide text-text-muted">
           Question pool
         </label>
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className="grid gap-2 sm:grid-cols-3">
           {MISTAKES_POOL_OPTIONS.map((option) => {
             const active = mode === option.id;
             return (
@@ -341,11 +333,6 @@ export function MistakesSessionSettings({
             );
           })}
         </div>
-        {modeHint ? (
-          <p className="text-xs text-text-muted sm:hidden">
-            {modeHint.description}
-          </p>
-        ) : null}
       </div>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 sm:gap-6">

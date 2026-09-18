@@ -2,17 +2,16 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowRight, Check, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { QuestionCard } from "@/components/questionBank/QuestionCard";
 import { QuestionDisplay } from "@/components/papers/QuestionDisplay";
 import { ChoicePill } from "@/components/papers/ChoicePill";
+import { MistakeQuestionHistoryStrip } from "@/components/papers/mistakes/MistakeQuestionHistoryStrip";
 import {
   getPastPaperOptionLetters,
   shouldRenderPastPaperAsText,
 } from "@/lib/papers/pastPaperTextMode";
-import type {
-  MistakeHistoryEvent,
-  MistakeQuestionPayload,
-} from "@/lib/papers/mistakes";
+import { papersQuestionToQuestionBankQuestion } from "@/lib/papers/papersQuestionToQuestionBank";
+import type { MistakeQuestionPayload } from "@/lib/papers/mistakes";
 import type { Letter } from "@/types/papers";
 import { formatTime } from "@/lib/papers/analytics";
 
@@ -32,47 +31,6 @@ interface MistakesPracticeRunnerProps {
     timeSec: number;
     isCorrect: boolean;
   }>) => Promise<void>;
-}
-
-function HistoryList({ events }: { events: MistakeHistoryEvent[] }) {
-  if (events.length === 0) {
-    return (
-      <p className="text-xs text-text-muted">No prior attempts recorded.</p>
-    );
-  }
-  return (
-    <ul className="space-y-2">
-      {events.slice(0, 8).map((event) => (
-        <li
-          key={`${event.sessionId}-${event.at}-${event.source}`}
-          className="text-xs text-text-muted"
-        >
-          <span
-            className={cn(
-              "font-medium",
-              event.isCorrect ? "text-success" : "text-error",
-            )}
-          >
-            {event.isCorrect ? "Correct" : "Wrong"}
-          </span>
-          {" · "}
-          {event.source === "mistakes" ? "Mistakes" : "Paper"}
-          {event.choice ? ` · you ${event.choice}` : ""}
-          {event.timeSec > 0 ? ` · ${formatTime(event.timeSec)}` : ""}
-          <div className="text-[11px] text-text-subtle">
-            {new Date(event.at).toLocaleString(undefined, {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-            {event.sessionName ? ` · ${event.sessionName}` : ""}
-          </div>
-        </li>
-      ))}
-    </ul>
-  );
 }
 
 export function MistakesPracticeRunner({
@@ -99,17 +57,22 @@ export function MistakesPracticeRunner({
   );
   const questionStartedAt = useRef(Date.now());
   const tickRef = useRef<number | null>(null);
+  const timedOutRef = useRef(false);
 
   const current = questions[index];
   const total = questions.length;
+
+  const qbQuestion = useMemo(
+    () =>
+      current ? papersQuestionToQuestionBankQuestion(current.question) : null,
+    [current],
+  );
 
   useEffect(() => {
     questionStartedAt.current = Date.now();
     setSelected(null);
     setChecked(false);
   }, [index]);
-
-  const timedOutRef = useRef(false);
 
   useEffect(() => {
     if (finished) return;
@@ -139,7 +102,9 @@ export function MistakesPracticeRunner({
     return getPastPaperOptionLetters(current.question) as Letter[];
   }, [current]);
 
-  const correctLetter = (current?.question.answerLetter || "").toUpperCase() as Letter;
+  const correctLetter = (
+    current?.question.answerLetter || ""
+  ).toUpperCase() as Letter;
 
   const elapsedForCurrent = () =>
     Math.max(1, Math.round((Date.now() - questionStartedAt.current) / 1000));
@@ -159,6 +124,13 @@ export function MistakesPracticeRunner({
     setChecked(true);
   };
 
+  const handleCardAnswer = (selectedAnswer: string, isCorrect: boolean) => {
+    const letter = selectedAnswer.toUpperCase() as Letter;
+    setSelected(letter);
+    commitCurrent(letter, isCorrect);
+    setChecked(true);
+  };
+
   const finishSession = async (finalAnswers: AnswerState[]) => {
     if (saving || finished) return;
     setSaving(true);
@@ -171,8 +143,6 @@ export function MistakesPracticeRunner({
             isCorrect: a.isCorrect,
           };
         }
-        // Timed out / exited mid-question: count as incorrect if they picked wrong,
-        // otherwise unanswered → incorrect for pool tracking.
         if (i === index && selected) {
           return {
             choice: selected,
@@ -210,8 +180,8 @@ export function MistakesPracticeRunner({
       <div className="mx-auto w-full max-w-[720px] rounded-[4px] bg-surface p-8 text-center sm:p-10">
         <h2 className="text-xl font-semibold text-text">Session complete</h2>
         <p className="mt-2 text-sm text-text-muted">
-          {correct}/{total} correct this round. Reviewed questions stay out of
-          Untouched until that pool is empty.
+          {correct}/{total} correct. Unreviewed questions stay out until that
+          pool is empty.
         </p>
         <button
           type="button"
@@ -226,154 +196,143 @@ export function MistakesPracticeRunner({
   }
 
   const textMode = shouldRenderPastPaperAsText(current.question);
+  const useQuestionCard = Boolean(qbQuestion);
 
   return (
-    <div className="mx-auto grid w-full max-w-[1200px] gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
-      <div className="min-w-0 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="text-sm text-text-muted">
-            <span className="font-semibold text-text">
-              {index + 1}/{total}
-            </span>
-            {" · "}
-            {current.examName} {current.paperVariant || current.paperName} · Q
-            {current.questionNumber}
-          </div>
-          <div className="flex items-center gap-3 text-sm tabular-nums text-text-muted">
-            <span>Time left {formatTime(remainingSec)}</span>
-            <button
-              type="button"
-              onClick={onExit}
-              className="rounded-organic-md px-3 py-1.5 text-text-muted hover:bg-surface-elevated hover:text-text"
-            >
-              Exit
-            </button>
-          </div>
+    <div className="mx-auto w-full max-w-[920px] space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="text-sm text-text-muted">
+          <span className="font-semibold text-text">
+            {index + 1}/{total}
+          </span>
+          {" · "}
+          {current.examName} {current.paperVariant || current.paperName} · Q
+          {current.questionNumber}
+          <span className="ml-2 tabular-nums">
+            Wrong {current.timesWrong}
+            {checked && selected !== correctLetter ? " +1" : ""}x
+          </span>
         </div>
-
-        <QuestionDisplay
-          question={current.question}
-          questionNumber={current.questionNumber}
-          remainingTime={remainingSec}
-          totalTimeMinutes={timeLimitMinutes}
-          paperName={current.examName}
-          currentQuestion={current.question}
-          selectedChoice={textMode ? selected : null}
-          onChoiceSelect={
-            textMode && !checked
-              ? (letter) => setSelected(letter)
-              : undefined
-          }
-          showOptionsInStem={textMode}
-        />
-
-        {!textMode ? (
-          <div className="rounded-[4px] bg-surface p-5">
-            <div className="mb-3 text-xs font-medium uppercase tracking-wide text-text-muted">
-              Your answer
-            </div>
-            <div className="grid grid-flow-col auto-cols-fr gap-2">
-              {letters.map((letter) => {
-                let variant: "default" | "correct" | "wrong" = "default";
-                if (checked) {
-                  if (letter === correctLetter) variant = "correct";
-                  else if (letter === selected) variant = "wrong";
-                }
-                return (
-                  <ChoicePill
-                    key={letter}
-                    letter={letter}
-                    selected={selected === letter}
-                    disabled={checked}
-                    variant={variant}
-                    onClick={() => setSelected(letter)}
-                  />
-                );
-              })}
-            </div>
-          </div>
-        ) : null}
-
-        {checked ? (
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-[4px] bg-surface px-5 py-4">
-            <div className="flex items-center gap-2 text-sm font-medium">
-              {selected === correctLetter ? (
-                <>
-                  <Check className="h-4 w-4 text-success" />
-                  <span className="text-success">Correct</span>
-                </>
-              ) : (
-                <>
-                  <X className="h-4 w-4 text-error" />
-                  <span className="text-error">
-                    Incorrect — answer is {correctLetter}
-                  </span>
-                </>
-              )}
-            </div>
-            <button
-              type="button"
-              onClick={() => void handleNext()}
-              disabled={saving}
-              className="inline-flex items-center gap-2 rounded-organic-lg bg-secondary px-4 py-2.5 text-sm font-semibold text-background hover:opacity-90 disabled:opacity-40"
-            >
-              {index >= total - 1
-                ? saving
-                  ? "Saving…"
-                  : "Finish"
-                : "Next question"}
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          </div>
-        ) : (
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={handleCheck}
-              disabled={!selected}
-              className="inline-flex items-center gap-2 rounded-organic-lg bg-secondary px-4 py-2.5 text-sm font-semibold text-background hover:opacity-90 disabled:opacity-40"
-            >
-              Check answer
-            </button>
-          </div>
-        )}
+        <div className="flex items-center gap-3 text-sm tabular-nums text-text-muted">
+          <span>Time left {formatTime(remainingSec)}</span>
+          <button
+            type="button"
+            onClick={onExit}
+            className="rounded-organic-md px-3 py-1.5 text-text-muted hover:bg-surface-elevated hover:text-text"
+          >
+            Exit
+          </button>
+        </div>
       </div>
 
-      <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
-        <div className="rounded-[4px] bg-surface p-5">
-          <div className="text-xs font-medium uppercase tracking-wide text-text-muted">
-            This question
-          </div>
-          <div className="mt-3 space-y-2 text-sm text-text">
-            <div className="flex justify-between gap-2">
-              <span className="text-text-muted">Times wrong</span>
-              <span className="font-semibold tabular-nums">
-                {current.timesWrong}
-                {checked && selected !== correctLetter ? " +1" : ""}
-              </span>
-            </div>
-            <div className="flex justify-between gap-2">
-              <span className="text-text-muted">Mistakes reviews</span>
-              <span className="font-semibold tabular-nums">
-                {current.timesSeenInMistakes}
-              </span>
-            </div>
-            <div className="flex justify-between gap-2">
-              <span className="text-text-muted">Status</span>
-              <span className="font-semibold">
-                {current.neverReviewed ? "Untouched" : "Reviewed before"}
-              </span>
-            </div>
-          </div>
-        </div>
+      <MistakeQuestionHistoryStrip events={current.history} />
 
-        <div className="rounded-[4px] bg-surface p-5">
-          <div className="mb-3 text-xs font-medium uppercase tracking-wide text-text-muted">
-            History
+      {useQuestionCard && qbQuestion ? (
+        <QuestionCard
+          question={qbQuestion}
+          questionNumber={index + 1}
+          onAnswerSubmit={handleCardAnswer}
+          isAnswered={checked}
+          selectedAnswer={selected}
+          correctAnswer={correctLetter}
+          isCorrect={checked ? selected === correctLetter : null}
+          allowRetry={false}
+          headerTrailing={
+            <span className="text-sm tabular-nums text-text-muted">
+              {formatTime(remainingSec)}
+            </span>
+          }
+        />
+      ) : (
+        <>
+          <QuestionDisplay
+            question={current.question}
+            questionNumber={current.questionNumber}
+            remainingTime={remainingSec}
+            totalTimeMinutes={timeLimitMinutes}
+            paperName={current.examName}
+            currentQuestion={current.question}
+            selectedChoice={textMode ? selected : null}
+            onChoiceSelect={
+              textMode && !checked
+                ? (letter) => setSelected(letter)
+                : undefined
+            }
+            showOptionsInStem={textMode}
+          />
+
+          {!textMode ? (
+            <div className="rounded-organic-xl bg-surface-elevated p-5">
+              <div className="mb-3 text-xs font-medium uppercase tracking-wide text-text-muted">
+                Your answer
+              </div>
+              <div className="grid grid-flow-col auto-cols-fr gap-2">
+                {letters.map((letter) => {
+                  let variant: "default" | "correct" | "wrong" = "default";
+                  if (checked) {
+                    if (letter === correctLetter) variant = "correct";
+                    else if (letter === selected) variant = "wrong";
+                  }
+                  return (
+                    <ChoicePill
+                      key={letter}
+                      letter={letter}
+                      selected={selected === letter}
+                      disabled={checked}
+                      variant={variant}
+                      onClick={() => setSelected(letter)}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          ) : null}
+        </>
+      )}
+
+      {checked ? (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-organic-xl bg-surface-elevated px-5 py-4">
+          <div className="flex items-center gap-2 text-sm font-medium">
+            {selected === correctLetter ? (
+              <>
+                <Check className="h-4 w-4 text-success" />
+                <span className="text-success">Correct</span>
+              </>
+            ) : (
+              <>
+                <X className="h-4 w-4 text-error" />
+                <span className="text-error">
+                  Incorrect. Answer is {correctLetter}
+                </span>
+              </>
+            )}
           </div>
-          <HistoryList events={current.history} />
+          <button
+            type="button"
+            onClick={() => void handleNext()}
+            disabled={saving}
+            className="inline-flex items-center gap-2 rounded-organic-lg bg-secondary px-4 py-2.5 text-sm font-semibold text-background hover:opacity-90 disabled:opacity-40"
+          >
+            {index >= total - 1
+              ? saving
+                ? "Saving…"
+                : "Finish"
+              : "Next question"}
+            <ArrowRight className="h-4 w-4" />
+          </button>
         </div>
-      </aside>
+      ) : useQuestionCard ? null : (
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={handleCheck}
+            disabled={!selected}
+            className="inline-flex items-center gap-2 rounded-organic-lg bg-secondary px-4 py-2.5 text-sm font-semibold text-background hover:opacity-90 disabled:opacity-40"
+          >
+            Check answer
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 /**
  * Localhost / ?demo=1 fixtures for Past Papers Mistakes.
- * Uses bundled ESAT CAMP mock questions — no auth or DB required.
+ * Bundled mock stems labeled as ENGAA / NSAA / TMUA for UI preview.
  */
 
 import { ESAT_CAMP_MOCK_MODULES } from "@/data/esatCampMocks";
@@ -19,9 +19,10 @@ import {
   type MistakesSummary,
   type MistakePoolItem,
 } from "@/lib/papers/mistakes";
-import type { Letter } from "@/types/papers";
+import type { ExamName, Letter } from "@/types/papers";
 
 const DEMO_REVIEWED_KEY = "nocalc:mistakesDemoReviewed";
+const DEMO_EXAMS: ExamName[] = ["ENGAA", "NSAA", "TMUA"];
 
 export function isMistakesDemoPreviewAllowed(hostname?: string): boolean {
   if (typeof process !== "undefined" && process.env.NODE_ENV === "production") {
@@ -65,12 +66,15 @@ function buildBaseDemoPool(): MistakePoolItem[] {
 
   modules.forEach((mockModule, moduleIndex) => {
     const paperId = paperIdForEsatCampMockModule(mockModule.id);
+    const examName = DEMO_EXAMS[moduleIndex % DEMO_EXAMS.length];
     const sample = mockModule.questions.slice(0, 6);
     sample.forEach((q, i) => {
       const question = mockQuestionToPaperQuestion(mockModule, q);
       const timesWrong = 1 + ((moduleIndex + i) % 4);
       const lastWrongAt = now - (i + moduleIndex + 1) * day * (0.5 + i * 0.25);
-      const correctChoice = (question.answerLetter || "A").toUpperCase() as Letter;
+      const correctChoice = (
+        question.answerLetter || "A"
+      ).toUpperCase() as Letter;
       const key = mistakePoolKey({
         paperId,
         paperName: question.paperName,
@@ -82,8 +86,8 @@ function buildBaseDemoPool(): MistakePoolItem[] {
         key,
         paperId,
         paperName: question.paperName,
-        paperVariant: mockModule.title || "ESAT CAMP Mock",
-        examName: "ESAT",
+        paperVariant: mockModule.title || "Demo paper",
+        examName,
         questionNumber: question.questionNumber,
         questionId: question.id,
         timesWrong,
@@ -122,7 +126,7 @@ function buildBaseDemoPool(): MistakePoolItem[] {
           choice: correct2,
           correctChoice: correct2,
           timeSec: 50,
-          sessionName: "[Mistakes] Demo · prior",
+          sessionName: "[Mistakes] Demo prior",
           sessionId: "demo-mistakes-prior-1",
         },
         ...items[2].history,
@@ -144,7 +148,7 @@ function buildBaseDemoPool(): MistakePoolItem[] {
           choice: "A",
           correctChoice: correct3,
           timeSec: 70,
-          sessionName: "[Mistakes] Demo · bounce",
+          sessionName: "[Mistakes] Demo bounce",
           sessionId: "demo-mistakes-bounce-1",
         },
         ...items[3].history,
@@ -183,9 +187,11 @@ function hydrateDemoItem(item: MistakePoolItem): MistakeQuestionPayload | null {
   return {
     ...item,
     questionId: question.id,
-    examName: question.examName || item.examName,
     paperName: item.paperName || question.paperName,
-    question,
+    question: {
+      ...question,
+      examName: item.examName as ExamName,
+    },
   };
 }
 
@@ -201,7 +207,7 @@ export function startMistakesDemoSession(opts: {
   const pool = applyLocalReviews(buildBaseDemoPool());
   const selected = selectMistakeItems(pool, {
     mode: opts.mode,
-    exam: opts.exam === "ALL" ? "ALL" : "ESAT",
+    exam: opts.exam,
     count: opts.questionCount,
   });
   return selected
@@ -209,7 +215,6 @@ export function startMistakesDemoSession(opts: {
     .filter((q): q is MistakeQuestionPayload => q != null);
 }
 
-/** Mark demo questions as reviewed for Untouched behaviour in this browser tab. */
 export function markMistakesDemoReviewed(keys: string[]) {
   const reviewed = readReviewedKeys();
   for (const key of keys) reviewed.add(key);

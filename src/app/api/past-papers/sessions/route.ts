@@ -355,12 +355,18 @@ export async function GET(request: Request) {
   const sessions = Array.isArray(data) ? [...data] : [];
 
   // Re-score ended sittings from the answer key and fill ESAT predicted_score.
+  // Predicted scores are per-section converted then averaged (never diluted to
+  // whole-paper raw when only one section was sat).
   try {
     const { autoScoreSessionRow } = await import(
       '@/lib/papers/autoScoreSessionRow'
     );
-    const { predictEsatScoreFromAccuracy } = await import(
-      '@/lib/papers/predictEsatFromAccuracy'
+    const {
+      predictEsatScoreFromAccuracy,
+      predictEsatScoreFromSectionScores,
+    } = await import('@/lib/papers/predictEsatFromAccuracy');
+    const { buildSectionRawScoresFromSession } = await import(
+      '@/lib/papers/buildSectionRawScoresFromSession'
     );
     const { fetchConversionRowsForTables } = await import(
       '@/lib/scoreConverter/fetchConversionRows.server'
@@ -372,9 +378,33 @@ export async function GET(request: Request) {
       paper_id?: number | null;
       answers?: unknown;
       correct_flags?: unknown;
+      question_order?: unknown;
+      question_start?: number | null;
+      question_end?: number | null;
       score?: { correct?: number; total?: number } | null;
       predicted_score?: number | null;
       selected_sections?: string[] | null;
+    };
+
+    type QuestionMeta = {
+      question_number: number;
+      answer_letter: string | null;
+      part_name?: string | null;
+      part_letter?: string | null;
+      paper_name?: string | null;
+      exam_name?: string | null;
+    };
+
+    const hasScore = (row: SessionRow) => {
+      const score = row.score;
+      return (
+        score != null &&
+        typeof score.correct === 'number' &&
+        typeof score.total === 'number' &&
+        Number.isFinite(score.correct) &&
+        Number.isFinite(score.total) &&
+        score.total > 0
+      );
     };
 
     const needsAutoScore = (row: SessionRow) => {
@@ -394,44 +424,39 @@ export async function GET(request: Request) {
       );
     };
 
+    // Missing predicted, or multi-section (refresh away from old combined-accuracy).
     const needsPredicted = (row: SessionRow) => {
-      if (!row?.ended_at || row.paper_id == null) return false;
-      if (
+      if (!row?.ended_at || row.paper_id == null || !hasScore(row)) return false;
+      const multiSection =
+        Array.isArray(row.selected_sections) &&
+        row.selected_sections.length > 1;
+      if (multiSection) return true;
+      return !(
         typeof row.predicted_score === 'number' &&
         Number.isFinite(row.predicted_score)
-      ) {
-        return false;
-      }
-      const score = row.score;
-      return (
-        score != null &&
-        typeof score.correct === 'number' &&
-        typeof score.total === 'number' &&
-        Number.isFinite(score.correct) &&
-        Number.isFinite(score.total) &&
-        score.total > 0
       );
     };
 
-    const paperIdsForKeys = [
+    const paperIdsNeeded = [
       ...new Set(
         sessions
-          .filter(needsAutoScore)
+          .filter(
+            (row: SessionRow) => needsAutoScore(row) || needsPredicted(row),
+          )
           .map((row: SessionRow) => row.paper_id)
           .filter((id: number | null | undefined): id is number => id != null),
       ),
     ];
 
-    const questionsByPaper = new Map<
-      number,
-      Array<{ question_number: number; answer_letter: string | null }>
-    >();
+    const questionsByPaper = new Map<number, QuestionMeta[]>();
 
-    if (paperIdsForKeys.length > 0) {
+    if (paperIdsNeeded.length > 0) {
       const { data: questionRows } = await (supabase as any)
         .from('questions')
-        .select('paper_id, question_number, answer_letter')
-        .in('paper_id', paperIdsForKeys)
+        .select(
+          'paper_id, question_number, answer_letter, part_name, part_letter, paper_name, exam_name',
+        )
+        .in('paper_id', paperIdsNeeded)
         .order('question_number', { ascending: true });
 
       for (const q of questionRows || []) {
@@ -440,6 +465,10 @@ export async function GET(request: Request) {
         questionsByPaper.get(pid)!.push({
           question_number: q.question_number,
           answer_letter: q.answer_letter,
+          part_name: q.part_name,
+          part_letter: q.part_letter,
+          paper_name: q.paper_name,
+          exam_name: q.exam_name,
         });
       }
     }
@@ -537,14 +566,23 @@ export async function GET(request: Request) {
           ? row.predicted_score
           : null;
 
-      if (predicted == null && needsPredicted(row)) {
+      if (needsPredicted(row)) {
         const conversionRows = conversionByPaper.get(row.paper_id) ?? [];
-        predicted = predictEsatScoreFromAccuracy(
-          row.score,
-          row.selected_sections,
-          conversionRows,
+        const paperQuestions = questionsByPaper.get(row.paper_id) ?? [];
+        const sectionScores = buildSectionRawScoresFromSession(
+          row,
+          paperQuestions,
         );
-        if (predicted != null) {
+        const next =
+          sectionScores.length > 0
+            ? predictEsatScoreFromSectionScores(sectionScores, conversionRows)
+            : predictEsatScoreFromAccuracy(
+                row.score,
+                row.selected_sections,
+                conversionRows,
+              );
+        if (next != null) {
+          predicted = next;
           sessions[i] = { ...row, predicted_score: predicted };
         }
       }

@@ -5,32 +5,16 @@ import type { PaperSessionRow } from "@/lib/supabase/types";
 import {
   aggregateMistakePool,
   hydrateMistakeQuestions,
+  normalizeMistakesPoolMode,
   selectMistakeItems,
   summarizeMistakePool,
   type MistakesExamFilter,
-  type MistakesPoolMode,
 } from "@/lib/papers/mistakes";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const VALID_MODES: MistakesPoolMode[] = [
-  "untouched",
-  "repeat_offenders",
-  "cold_cases",
-  "bounce_backs",
-  "lucky_dip",
-];
-
-const VALID_EXAMS: MistakesExamFilter[] = [
-  "ALL",
-  "ESAT",
-  "TMUA",
-  "NSAA",
-  "ENGAA",
-  "PAT",
-  "MAT",
-];
+const VALID_EXAMS: MistakesExamFilter[] = ["ALL", "ENGAA", "NSAA", "TMUA"];
 
 async function loadPool(supabase: any, userId: string) {
   const { data, error } = await supabase
@@ -100,15 +84,13 @@ export async function POST(request: Request) {
     }
 
     const body = (await request.json()) as {
-      mode?: MistakesPoolMode;
+      mode?: string;
       exam?: MistakesExamFilter;
       questionCount?: number;
       timeLimitMinutes?: number;
     };
 
-    const mode = VALID_MODES.includes(body.mode as MistakesPoolMode)
-      ? (body.mode as MistakesPoolMode)
-      : "untouched";
+    const mode = normalizeMistakesPoolMode(body.mode);
     const exam = VALID_EXAMS.includes(body.exam as MistakesExamFilter)
       ? (body.exam as MistakesExamFilter)
       : "ALL";
