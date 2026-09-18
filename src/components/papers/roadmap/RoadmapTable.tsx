@@ -83,7 +83,7 @@ const TAB_LABELS: Record<ExamTab, string> = {
 };
 
 const STAGE_GRID =
-  "grid min-w-[52rem] grid-cols-[7rem_5.5rem_8rem_5rem_7rem_minmax(16rem,1fr)] items-center gap-x-3";
+  "grid min-w-[52rem] grid-cols-[7rem_5.5rem_5rem_7rem_8rem_minmax(16rem,1fr)] items-center gap-x-3";
 
 const ACTION_BTN = "rounded px-3.5 py-2 text-[15px]";
 const CHEVRON_SPACER = "inline-flex h-9 w-9 shrink-0";
@@ -301,14 +301,14 @@ function SectionsExpandRows({
               </div>
             </div>
 
+            <div aria-hidden />
+            <div aria-hidden />
             <div>
               <StatusChip
                 status={done ? "done" : "not_started"}
                 size="sm"
               />
             </div>
-            <div aria-hidden />
-            <div aria-hidden />
 
             <div className="flex flex-wrap items-center justify-end gap-2.5">
               <CompactBtn
@@ -540,11 +540,11 @@ export function RoadmapTable({
           >
             <div>Year</div>
             <div>Parts</div>
-            <div>Status</div>
             <div>Avg</div>
             <div>
               {activeTab === "TMUA" ? "Your TMUA" : "Your ESAT"}
             </div>
+            <div>Status</div>
             <div className="sr-only">Actions</div>
           </div>
 
@@ -590,10 +590,6 @@ export function RoadmapTable({
                       {completed}/{total}
                     </div>
 
-                    <div>
-                      <StatusChip status={currentStatus} />
-                    </div>
-
                     <div className="text-sm tabular-nums text-text-muted">
                       {averagesLoading ? (
                         <span className="inline-block h-3.5 w-8 animate-pulse rounded-sm bg-surface-mid" />
@@ -608,6 +604,10 @@ export function RoadmapTable({
                       ) : (
                         formatRoadmapScore(yourScore)
                       )}
+                    </div>
+
+                    <div>
+                      <StatusChip status={currentStatus} />
                     </div>
 
                     <div className="flex flex-wrap items-center justify-end gap-2.5">
