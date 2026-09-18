@@ -34,6 +34,7 @@
     "e2e",
     "playwright.config.ts",
     "tmp_math_mocks",
+    "tmp_mock_pdf_build",
     "**/.next-stale*",
     "**/*.test.ts",
     "**/*.test.tsx",
