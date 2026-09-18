@@ -14,6 +14,7 @@ import {
   ESAT_CAMP_MOCK_DISPLAY_NAMES,
   ESAT_CAMP_MOCKS_ENABLED,
 } from '@/lib/papers/esatCampMocks';
+import { ADMIN_ESAT_MOCK_ROADMAP_STAGES } from '@/lib/papers/adminEsatMocks';
 
 function esatCampMockRoadmapPart(
   paperName: string,
@@ -89,11 +90,8 @@ export const ESAT_CAMP_MATH1_MOCK_1_STAGE: RoadmapStage = {
   ],
 };
 
-export const ESAT_CAMP_MOCK_ROADMAP_STAGES: RoadmapStage[] = [
-  ESAT_CAMP_FULL_MOCK_1_STAGE,
-  ESAT_CAMP_FULL_MOCK_2_STAGE,
-  ESAT_CAMP_MATH1_MOCK_1_STAGE,
-];
+export const ESAT_CAMP_MOCK_ROADMAP_STAGES: RoadmapStage[] =
+  ADMIN_ESAT_MOCK_ROADMAP_STAGES;
 
 export function isEsatCampMockRoadmapStage(
   stage: Pick<RoadmapStage, "id"> | string,
@@ -103,9 +101,7 @@ export function isEsatCampMockRoadmapStage(
 }
 
 /**
- * Spread ESAT CAMP mocks through official practice:
- * Full Mock 1 after NSAA 2016-2019, Full Mock 2 after ENGAA/TMUA,
- * leftover singular mocks after NSAA 2023.
+ * Official papers, then admin Mock 1–5 (or legacy static when enabled).
  */
 export function assembleRoadmapStages(options: {
   nsaaStages: RoadmapStage[];
@@ -117,27 +113,24 @@ export function assembleRoadmapStages(options: {
   const nsaaEarly = nsaaStages.filter((stage) => stage.year <= 2019);
   const nsaaLate = nsaaStages.filter((stage) => stage.year >= 2020);
 
-  if (!ESAT_CAMP_MOCKS_ENABLED) {
-    const ordered: RoadmapStage[] = [
-      ...nsaaEarly,
-      ...nsaaLate,
-      ...engaaStages,
-      ...tmuaStages,
-    ];
-    if (nsaa2023) ordered.push(nsaa2023);
-    return ordered;
-  }
-
   const ordered: RoadmapStage[] = [
     ...nsaaEarly,
-    ESAT_CAMP_FULL_MOCK_1_STAGE,
     ...nsaaLate,
     ...engaaStages,
     ...tmuaStages,
-    ESAT_CAMP_FULL_MOCK_2_STAGE,
   ];
   if (nsaa2023) ordered.push(nsaa2023);
-  ordered.push(ESAT_CAMP_MATH1_MOCK_1_STAGE);
+
+  if (ESAT_CAMP_MOCKS_ENABLED) {
+    ordered.push(
+      ESAT_CAMP_FULL_MOCK_1_STAGE,
+      ESAT_CAMP_FULL_MOCK_2_STAGE,
+      ESAT_CAMP_MATH1_MOCK_1_STAGE,
+    );
+  } else {
+    ordered.push(...ADMIN_ESAT_MOCK_ROADMAP_STAGES);
+  }
+
   return ordered;
 }
 

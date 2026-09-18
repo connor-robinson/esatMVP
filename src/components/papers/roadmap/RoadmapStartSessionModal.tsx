@@ -17,6 +17,7 @@ import {
   groupRoadmapPartsForDisplay,
   isDisplayGroupCompleted,
 } from "@/lib/papers/roadmapDisplayGroups";
+import { roadmapPartMatchesEsatSubjects } from "@/lib/papers/roadmapEsatFilter";
 import { RoadmapInfoPopover } from "./RoadmapInfoPopover";
 import type { RoadmapStartOptions } from "./StageListCard";
 
@@ -26,6 +27,7 @@ type Props = {
   partCompletion: Map<string, boolean>;
   newQuestionsOnly: boolean;
   onNewQuestionsOnlyChange: (enabled: boolean) => void;
+  preferredEsatSubjects?: string[] | null;
   onClose: () => void;
   onStart: (
     stage: RoadmapStage,
@@ -52,6 +54,7 @@ function stageTitle(stage: RoadmapStage): string {
 function defaultSelectedGroupKeys(
   stage: RoadmapStage,
   partCompletion: Map<string, boolean>,
+  preferredEsatSubjects?: string[] | null,
 ): Set<string> {
   const getPartKey = getRoadmapPartKey;
   const displayGroups = groupRoadmapPartsForDisplay(stage.parts);
@@ -100,6 +103,34 @@ function defaultSelectedGroupKeys(
     return keys;
   }
 
+  if (
+    isEsatCampMockRoadmapStage(stage) &&
+    preferredEsatSubjects &&
+    preferredEsatSubjects.length > 0
+  ) {
+    const matching = displayGroups.filter((group) =>
+      group.internalParts.some((part) =>
+        roadmapPartMatchesEsatSubjects(
+          part,
+          stage.examName,
+          preferredEsatSubjects,
+        ),
+      ),
+    );
+    const incompleteMatching = matching.filter(
+      (group) => !isDisplayGroupCompleted(group, partCompletion, getPartKey),
+    );
+    const chosen =
+      incompleteMatching.length > 0
+        ? incompleteMatching
+        : matching.length > 0
+          ? matching
+          : null;
+    if (chosen) {
+      return new Set(chosen.map((g) => g.key));
+    }
+  }
+
   const incomplete = displayGroups.filter(
     (group) => !isDisplayGroupCompleted(group, partCompletion, getPartKey),
   );
@@ -114,6 +145,7 @@ export function RoadmapStartSessionModal({
   partCompletion,
   newQuestionsOnly,
   onNewQuestionsOnlyChange,
+  preferredEsatSubjects = null,
   onClose,
   onStart,
   onCompareWithFriend,
@@ -127,8 +159,10 @@ export function RoadmapStartSessionModal({
 
   useEffect(() => {
     if (!open || !stage) return;
-    setSelectedGroups(defaultSelectedGroupKeys(stage, partCompletion));
-  }, [open, stage, partCompletion]);
+    setSelectedGroups(
+      defaultSelectedGroupKeys(stage, partCompletion, preferredEsatSubjects),
+    );
+  }, [open, stage, partCompletion, preferredEsatSubjects]);
 
   useEffect(() => {
     if (!open) return;
@@ -326,17 +360,14 @@ export function RoadmapStartSessionModal({
               disabled={selectedGroups.size === 0}
               onClick={handleCompare}
               className={cn(
-                "relative inline-flex w-full items-center justify-center gap-1.5 rounded-sm px-4 py-2 text-sm font-medium transition-colors",
+                "inline-flex w-full items-center justify-center gap-1.5 rounded-sm px-4 py-2 text-sm font-medium transition-colors",
                 selectedGroups.size > 0
                   ? "bg-surface-mid text-text hover:bg-surface-neutral"
                   : "cursor-not-allowed bg-surface-neutral text-text-disabled",
               )}
             >
-              <span className="absolute -right-1 -top-2 rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-bold uppercase leading-none tracking-wide text-white">
-                New
-              </span>
               <Users className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
-              Invite a friend
+              Compare with a friend
             </button>
           ) : null}
         </div>

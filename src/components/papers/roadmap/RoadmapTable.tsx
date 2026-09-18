@@ -1,12 +1,14 @@
 /**
- * Past-papers practice table with NSAA / ENGAA / TMUA pills.
+ * Past-papers practice list with NSAA / ENGAA / TMUA / ESAT CAMP Mocks pills.
+ * Separated row cards (not a table).
  */
 
 "use client";
 
-import { useEffect, useMemo, useState, Fragment, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { ChevronDown, Download, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getExamAccentFillClass } from "@/config/colors";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
 import { isEsatCampMockRoadmapStage } from "@/lib/papers/roadmapConfig";
 import { getRoadmapPartKey } from "@/lib/papers/roadmapPartKey";
@@ -51,7 +53,6 @@ type Props = {
   stages: RoadmapStage[];
   completionData: Map<string, StageCompletionEntry>;
   stageScores: Map<string, RoadmapStageScore>;
-  completionLoading?: boolean;
   scoresLoading?: boolean;
   userId: string | null;
   newQuestionsOnly: boolean;
@@ -62,24 +63,30 @@ type Props = {
     options: RoadmapStartOptions,
   ) => void;
   onCompletionChange: () => void | Promise<void>;
-  /** When set, show subject-suggestion copy + Show all / Show suggested toggle. */
   subjectSuggestion?: {
     subjects: string[];
     showingAll: boolean;
     onToggleShowAll: () => void;
   } | null;
-  /** Optional layout controls shown on the Past papers title row (right side). */
+  preferredEsatSubjects?: string[] | null;
   layoutControls?: ReactNode;
+  showFreePill?: boolean;
 };
 
-const TAB_ORDER: ExamTab[] = ["NSAA", "ENGAA", "TMUA", "Mocks"];
+const TAB_ORDER: ExamTab[] = ["Mocks", "NSAA", "ENGAA", "TMUA"];
 
 const TAB_LABELS: Record<ExamTab, string> = {
   NSAA: "NSAA",
   ENGAA: "ENGAA",
   TMUA: "TMUA",
-  Mocks: "Mocks",
+  Mocks: "ESAT CAMP Mocks",
 };
+
+const STAGE_GRID =
+  "grid min-w-[52rem] grid-cols-[7rem_5.5rem_8rem_5rem_7rem_minmax(16rem,1fr)] items-center gap-x-3";
+
+const ACTION_BTN = "rounded px-3.5 py-2 text-[15px]";
+const CHEVRON_SPACER = "inline-flex h-9 w-9 shrink-0";
 
 function stageTab(stage: RoadmapStage): ExamTab {
   if (isEsatCampMockRoadmapStage(stage)) return "Mocks";
@@ -115,13 +122,15 @@ function CompactBtn({
   onClick,
   disabled,
   tone = "slate",
+  examName,
   className,
   ...rest
 }: {
   children: React.ReactNode;
   onClick?: () => void;
   disabled?: boolean;
-  tone?: "slate" | "blue" | "ghost";
+  tone?: "slate" | "blue" | "ghost" | "exam";
+  examName?: string;
   className?: string;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
@@ -137,6 +146,8 @@ function CompactBtn({
           "bg-primary text-white hover:bg-primary-hover",
         tone === "ghost" &&
           "bg-transparent text-text-muted hover:bg-surface-mid hover:text-text",
+        tone === "exam" &&
+          cn(getExamAccentFillClass(examName ?? "NSAA"), "!text-white hover:opacity-90"),
         className,
       )}
       {...rest}
@@ -200,7 +211,6 @@ const STATUS_LABEL: Record<StageStatus, string> = {
   done: "Done",
 };
 
-/** Read-only status chip: blue / neutral / faded neutral (no red-yellow-green). */
 function StatusChip({
   status,
   size = "md",
@@ -228,26 +238,24 @@ function SectionsExpandRows({
   partCompletion,
   newQuestionsOnly,
   onStartSession,
-  zebra,
 }: {
   stage: RoadmapStage;
   partCompletion: Map<string, boolean>;
   newQuestionsOnly: boolean;
   onStartSession: Props["onStartSession"];
-  zebra: boolean;
 }) {
   const getPartKey = getRoadmapPartKey;
   const displayGroups = useMemo(
     () => groupRoadmapPartsForDisplay(stage.parts),
     [stage.parts],
   );
+  const isMock = isEsatCampMockRoadmapStage(stage);
 
   const startGroup = (group: RoadmapDisplayGroup) => {
     onStartSession(
       stage,
       expandDisplayGroupsToParts(stage.parts, new Set([group.key])),
       {
-        // Unique-questions filtering is ENGAA-only (NSAA overlaps).
         newQuestionsOnly:
           stage.examName === "ENGAA" ? newQuestionsOnly : false,
       },
@@ -255,7 +263,11 @@ function SectionsExpandRows({
   };
 
   return (
-    <>
+    <div className="relative space-y-1 pt-3">
+      <div
+        aria-hidden
+        className="absolute bottom-2 left-[0.85rem] top-3 w-px bg-border-subtle"
+      />
       {displayGroups.map((group, idx) => {
         const done = isDisplayGroupCompleted(
           group,
@@ -266,69 +278,76 @@ function SectionsExpandRows({
           stage,
           group.internalParts[0]!,
         );
+        const isLast = idx === displayGroups.length - 1;
 
         return (
-          <tr
-            key={group.key}
-            className={cn(
-              zebra ? "bg-surface-mid/50" : "bg-surface-mid/30",
-              idx === 0 && "border-t border-border-subtle",
-            )}
-          >
-            <td className="px-3 py-2.5 align-middle">
-              {idx === 0 ? (
-                <span className="text-xs font-medium uppercase tracking-wide text-text-subtle">
-                  Sections
-                </span>
-              ) : null}
-            </td>
-            <td className="px-2 py-2.5 align-middle" />
-            <td className="px-3 py-2.5 align-middle">
-              <p className="text-sm text-text">
-                {displayLabelForGroup(group)}
-                <span className="ml-2 text-text-muted">{group.paperName}</span>
-              </p>
-            </td>
-            <td className="px-3 py-2.5 align-middle">
+          <div key={group.key} className={cn(STAGE_GRID, "relative py-2")}>
+            <div className="col-span-2 flex min-w-0 items-center gap-2.5 pl-0.5">
+              <span className="relative z-[1] flex h-5 w-5 shrink-0 items-center justify-center bg-surface-elevated">
+                <span
+                  className={cn(
+                    "h-1.5 w-1.5 rounded-full",
+                    isLast ? "bg-text-subtle" : "bg-text-muted",
+                  )}
+                />
+              </span>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-medium text-text">
+                  {displayLabelForGroup(group)}
+                </p>
+                <p className="truncate text-xs text-text-muted">
+                  {isMock ? "40 min · 27 questions" : group.paperName}
+                </p>
+              </div>
+            </div>
+
+            <div>
               <StatusChip
                 status={done ? "done" : "not_started"}
                 size="sm"
               />
-            </td>
-            <td className="px-3 py-2.5 align-middle" />
-            <td className="px-3 py-2.5 align-middle" />
-            <td className="px-3 py-2.5 align-middle">
-              {links?.paperUrl ? (
-                <a
-                  href={links.paperUrl}
-                  download
-                  className="text-xs font-medium text-text-muted underline-offset-2 hover:text-text hover:underline"
-                >
-                  Paper
-                </a>
-              ) : null}
-            </td>
-            <td className="px-3 py-2.5 align-middle">
-              {links?.answersUrl ? (
-                <a
-                  href={links.answersUrl}
-                  download
-                  className="text-xs font-medium text-text-muted underline-offset-2 hover:text-text hover:underline"
-                >
-                  Answers
-                </a>
-              ) : null}
-            </td>
-            <td className="px-3 py-2.5 align-middle">
-              <CompactBtn tone="blue" onClick={() => startGroup(group)}>
-                Start
-                <Play className="h-3.5 w-3.5 fill-current opacity-80" aria-hidden />
+            </div>
+            <div aria-hidden />
+            <div aria-hidden />
+
+            <div className="flex flex-wrap items-center justify-end gap-2.5">
+              <CompactBtn
+                tone="slate"
+                disabled={!links?.paperUrl}
+                onClick={() => {
+                  if (links?.paperUrl) downloadAllUrls([links.paperUrl]);
+                }}
+                className={ACTION_BTN}
+              >
+                Paper
+                <Download className="h-4 w-4 opacity-80" aria-hidden />
               </CompactBtn>
-            </td>
-          </tr>
+              <CompactBtn
+                tone="slate"
+                disabled={!links?.answersUrl}
+                onClick={() => {
+                  if (links?.answersUrl) downloadAllUrls([links.answersUrl]);
+                }}
+                className={ACTION_BTN}
+              >
+                Answers
+                <Download className="h-4 w-4 opacity-80" aria-hidden />
+              </CompactBtn>
+              <CompactBtn
+                tone="exam"
+                examName={stage.examName}
+                onClick={() => startGroup(group)}
+                className={ACTION_BTN}
+              >
+                Start now
+                <Play className="h-4 w-4 fill-current opacity-80" aria-hidden />
+              </CompactBtn>
+              <span className={CHEVRON_SPACER} aria-hidden />
+            </div>
+          </div>
         );
       })}
-    </>
+    </div>
   );
 }
 
@@ -336,7 +355,6 @@ export function RoadmapTable({
   stages,
   completionData,
   stageScores,
-  completionLoading = false,
   scoresLoading = false,
   userId: _userId,
   newQuestionsOnly,
@@ -344,7 +362,9 @@ export function RoadmapTable({
   onStartSession,
   onCompletionChange: _onCompletionChange,
   subjectSuggestion = null,
+  preferredEsatSubjects = null,
   layoutControls = null,
+  showFreePill = false,
 }: Props) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [startStage, setStartStage] = useState<RoadmapStage | null>(null);
@@ -415,29 +435,25 @@ export function RoadmapTable({
 
   const visibleStages = grouped[activeTab] ?? [];
 
-  const totals = useMemo(() => {
-    let completed = 0;
-    let total = 0;
-    for (const stage of stages) {
-      const data = completionData.get(stage.id);
-      completed += data?.completed ?? 0;
-      total += data?.total ?? groupRoadmapPartsForDisplay(stage.parts).length;
-    }
-    return { completed, total };
-  }, [stages, completionData]);
-
   const statusValue = (completed: number, total: number): StageStatus =>
     statusFromCounts(completed, total);
 
   return (
     <div className="font-sans">
-      <div className="mb-5">
+      <div className="mb-8">
         <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
-              <h1 className="text-xl font-semibold tracking-tight text-text sm:text-2xl">
-                Past papers
-              </h1>
+              <div className="relative inline-block pr-8">
+                <h1 className="text-3xl font-semibold tracking-tight text-text sm:text-4xl">
+                  Past papers
+                </h1>
+                {showFreePill ? (
+                  <span className="absolute -right-0 -top-1 rounded-full bg-white px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.06em] text-text-muted dark:bg-white/90 dark:text-neutral-700">
+                    Free
+                  </span>
+                ) : null}
+              </div>
               {subjectSuggestion ? (
                 <RoadmapInfoPopover
                   title="Paper suggestions"
@@ -471,16 +487,6 @@ export function RoadmapTable({
                 </RoadmapInfoPopover>
               ) : null}
             </div>
-            <p className="mt-1 text-sm text-text-muted">
-              {completionLoading ? (
-                <span className="inline-block h-4 w-28 animate-pulse rounded bg-surface-mid" />
-              ) : (
-                <>
-                  {totals.completed} of {totals.total} parts done across all
-                  papers.
-                </>
-              )}
-            </p>
           </div>
           {layoutControls ? (
             <div className="ml-auto w-full sm:w-auto">{layoutControls}</div>
@@ -499,189 +505,183 @@ export function RoadmapTable({
                 setExpandedId(null);
               }}
               className={cn(
-                "rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
+                "relative rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
                 activeTab === tab
                   ? "bg-surface-neutral text-text"
                   : "bg-transparent text-text-muted hover:bg-surface-mid hover:text-text",
               )}
             >
               {TAB_LABELS[tab]}
+              {tab === "Mocks" ? (
+                <span className="absolute -right-1 -top-1.5 rounded-full bg-error px-1.5 py-0.5 text-[9px] font-bold uppercase leading-none tracking-wide text-white">
+                  New
+                </span>
+              ) : null}
             </button>
           ))}
+          {activeTab === "ENGAA" ? (
+            <div className="ml-auto">
+              <UniqueQuestionsSwitch
+                enabled={newQuestionsOnly}
+                onChange={onNewQuestionsOnlyChange}
+              />
+            </div>
+          ) : null}
         </div>
       ) : null}
 
-      <div className="overflow-hidden rounded-sm border border-border-subtle bg-surface-elevated">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border-subtle px-3 py-2.5">
-          <h2 className="text-sm font-semibold tracking-tight text-text">
-            {TAB_LABELS[activeTab]}
-          </h2>
-          {activeTab === "ENGAA" ? (
-            <UniqueQuestionsSwitch
-              enabled={newQuestionsOnly}
-              onChange={onNewQuestionsOnlyChange}
-            />
-          ) : null}
-        </div>
-
+      <div>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[56rem] text-left text-sm">
-            <thead>
-              <tr className="text-xs font-medium uppercase tracking-wide text-text-muted">
-                <th className="px-3 py-2">Year</th>
-                <th className="w-10 px-2 py-2" />
-                <th className="px-3 py-2">Parts</th>
-                <th className="px-3 py-2">Status</th>
-                <th className="px-3 py-2">ESATCamp Avg Score</th>
-                <th className="px-3 py-2">
-                  {activeTab === "TMUA" ? "Your TMUA score" : "Your ESAT score"}
-                </th>
-                <th className="px-3 py-2">Paper</th>
-                <th className="px-3 py-2">Answers</th>
-                <th className="px-3 py-2">Start</th>
-              </tr>
-            </thead>
-            <tbody>
-              {visibleStages.map((stage, index) => {
-                const data = completionData.get(stage.id);
-                const completed = data?.completed ?? 0;
-                const total =
-                  data?.total ??
-                  groupRoadmapPartsForDisplay(stage.parts).length;
-                const isOpen = expandedId === stage.id;
-                const yourScore = stageScores.get(stage.id);
-                const avgScore = averageScoreForStage(
-                  stage,
-                  averageMaps,
-                );
-                const commentary = commentaryForStage(stage, stages);
-                const currentStatus = statusValue(completed, total);
-                const paperUrls = getRoadmapStageAllPaperUrls(stage);
-                const answersUrls = getRoadmapStageAllAnswersUrls(stage);
+          <div
+            className={cn(
+              STAGE_GRID,
+              "mb-2 px-5 text-xs font-medium uppercase tracking-wide text-text-muted",
+            )}
+          >
+            <div>Year</div>
+            <div>Parts</div>
+            <div>Status</div>
+            <div>Avg</div>
+            <div>
+              {activeTab === "TMUA" ? "Your TMUA" : "Your ESAT"}
+            </div>
+            <div className="sr-only">Actions</div>
+          </div>
 
-                return (
-                  <Fragment key={stage.id}>
-                    <tr
-                      data-stage-id={stage.id}
-                      className={
-                        index % 2 === 0
-                          ? "bg-surface-mid/35"
-                          : "bg-transparent"
-                      }
-                    >
-                      <td className="px-3 py-2.5 align-middle">
-                        <div className="flex items-center gap-1.5">
-                          <span className="tabular-nums font-medium text-text">
-                            {stageYearLabel(stage)}
-                          </span>
-                          {commentary ? (
-                            <RoadmapInfoPopover
-                              title={commentary.title}
-                              label={`About ${commentary.title}`}
-                              align="left"
-                            >
-                              <p>{commentary.text}</p>
-                            </RoadmapInfoPopover>
-                          ) : null}
-                        </div>
-                      </td>
+          <div className="space-y-3" role="list">
+            {visibleStages.map((stage) => {
+              const data = completionData.get(stage.id);
+              const completed = data?.completed ?? 0;
+              const total =
+                data?.total ??
+                groupRoadmapPartsForDisplay(stage.parts).length;
+              const isOpen = expandedId === stage.id;
+              const yourScore = stageScores.get(stage.id);
+              const avgScore = averageScoreForStage(stage, averageMaps);
+              const commentary = commentaryForStage(stage, stages);
+              const currentStatus = statusValue(completed, total);
+              const paperUrls = getRoadmapStageAllPaperUrls(stage);
+              const answersUrls = getRoadmapStageAllAnswersUrls(stage);
 
-                      <td className="px-2 py-2.5 align-middle">
-                        <CompactBtn
-                          tone="ghost"
-                          aria-expanded={isOpen}
-                          onClick={() =>
-                            setExpandedId(isOpen ? null : stage.id)
-                          }
-                          className="!px-1.5"
+              return (
+                <div
+                  key={stage.id}
+                  data-stage-id={stage.id}
+                  role="listitem"
+                  className="rounded bg-surface-elevated px-5 py-5"
+                >
+                  <div className={STAGE_GRID}>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-base font-semibold tabular-nums tracking-tight text-text sm:text-lg">
+                        {stageYearLabel(stage)}
+                      </span>
+                      {commentary ? (
+                        <RoadmapInfoPopover
+                          title={commentary.title}
+                          label={`About ${commentary.title}`}
+                          align="left"
                         >
-                          <ChevronDown
-                            className={cn(
-                              "h-4 w-4 transition-transform",
-                              isOpen && "rotate-180",
-                            )}
-                            aria-hidden
-                          />
-                          <span className="sr-only">
-                            {isOpen ? "Hide sections" : "Show sections"}
-                          </span>
-                        </CompactBtn>
-                      </td>
+                          <p>{commentary.text}</p>
+                        </RoadmapInfoPopover>
+                      ) : null}
+                    </div>
 
-                      <td className="px-3 py-2.5 align-middle tabular-nums text-text-muted">
-                        {completed}/{total}
-                      </td>
+                    <div className="text-sm tabular-nums text-text-muted">
+                      {completed}/{total}
+                    </div>
 
-                      <td className="px-3 py-2.5 align-middle">
-                        <StatusChip status={currentStatus} />
-                      </td>
+                    <div>
+                      <StatusChip status={currentStatus} />
+                    </div>
 
-                      <td className="px-3 py-2.5 align-middle tabular-nums text-text-muted">
-                        {averagesLoading ? (
-                          <span className="inline-block h-3.5 w-8 animate-pulse rounded-sm bg-surface-mid" />
-                        ) : (
-                          formatNumericScore(avgScore)
-                        )}
-                      </td>
+                    <div className="text-sm tabular-nums text-text-muted">
+                      {averagesLoading ? (
+                        <span className="inline-block h-3.5 w-8 animate-pulse rounded-sm bg-surface-mid" />
+                      ) : (
+                        formatNumericScore(avgScore)
+                      )}
+                    </div>
 
-                      <td className="px-3 py-2.5 align-middle tabular-nums font-medium text-primary">
-                        {scoresLoading ? (
-                          <span className="inline-block h-3.5 w-8 animate-pulse rounded-sm bg-surface-mid" />
-                        ) : (
-                          formatRoadmapScore(yourScore)
-                        )}
-                      </td>
+                    <div className="text-sm tabular-nums font-medium text-primary">
+                      {scoresLoading ? (
+                        <span className="inline-block h-3.5 w-8 animate-pulse rounded-sm bg-surface-mid" />
+                      ) : (
+                        formatRoadmapScore(yourScore)
+                      )}
+                    </div>
 
-                      <td className="px-3 py-2.5 align-middle">
-                        <CompactBtn
-                          tone="slate"
-                          disabled={paperUrls.length === 0}
-                          onClick={() => downloadAllUrls(paperUrls)}
-                        >
-                          Paper
-                          <Download className="h-3.5 w-3.5 opacity-80" aria-hidden />
-                        </CompactBtn>
-                      </td>
+                    <div className="flex flex-wrap items-center justify-end gap-2.5">
+                      <CompactBtn
+                        tone="slate"
+                        disabled={paperUrls.length === 0}
+                        onClick={() => downloadAllUrls(paperUrls)}
+                        className={ACTION_BTN}
+                      >
+                        Paper
+                        <Download className="h-4 w-4 opacity-80" aria-hidden />
+                      </CompactBtn>
+                      <CompactBtn
+                        tone="slate"
+                        disabled={answersUrls.length === 0}
+                        onClick={() => downloadAllUrls(answersUrls)}
+                        className={ACTION_BTN}
+                      >
+                        Answers
+                        <Download className="h-4 w-4 opacity-80" aria-hidden />
+                      </CompactBtn>
+                      <CompactBtn
+                        tone="exam"
+                        examName={stage.examName}
+                        onClick={() => setStartStage(stage)}
+                        className={ACTION_BTN}
+                      >
+                        Start now
+                        <Play
+                          className="h-4 w-4 fill-current opacity-80"
+                          aria-hidden
+                        />
+                      </CompactBtn>
+                      <CompactBtn
+                        tone="ghost"
+                        aria-expanded={isOpen}
+                        aria-label={
+                          isOpen ? "Hide sections" : "Show sections"
+                        }
+                        onClick={() =>
+                          setExpandedId(isOpen ? null : stage.id)
+                        }
+                        className="!px-2"
+                      >
+                        <ChevronDown
+                          className={cn(
+                            "h-5 w-5 transition-transform duration-300 ease-out",
+                            isOpen && "rotate-180",
+                          )}
+                          aria-hidden
+                        />
+                      </CompactBtn>
+                    </div>
+                  </div>
 
-                      <td className="px-3 py-2.5 align-middle">
-                        <CompactBtn
-                          tone="slate"
-                          disabled={answersUrls.length === 0}
-                          onClick={() => downloadAllUrls(answersUrls)}
-                        >
-                          Answers
-                          <Download className="h-3.5 w-3.5 opacity-80" aria-hidden />
-                        </CompactBtn>
-                      </td>
-
-                      <td className="px-3 py-2.5 align-middle">
-                        <CompactBtn
-                          tone="blue"
-                          onClick={() => setStartStage(stage)}
-                        >
-                          Start now
-                          <Play
-                            className="h-3.5 w-3.5 fill-current opacity-80"
-                            aria-hidden
-                          />
-                        </CompactBtn>
-                      </td>
-                    </tr>
-
-                    {isOpen ? (
+                  <div
+                    className={cn(
+                      "grid transition-[grid-template-rows] duration-300 ease-out",
+                      isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+                    )}
+                  >
+                    <div className="overflow-hidden">
                       <SectionsExpandRows
                         stage={stage}
                         partCompletion={data?.parts ?? new Map()}
                         newQuestionsOnly={newQuestionsOnly}
                         onStartSession={onStartSession}
-                        zebra={index % 2 === 0}
                       />
-                    ) : null}
-                  </Fragment>
-                );
-              })}
-            </tbody>
-          </table>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {visibleStages.length === 0 ? (
@@ -707,6 +707,7 @@ export function RoadmapTable({
         }
         newQuestionsOnly={newQuestionsOnly}
         onNewQuestionsOnlyChange={onNewQuestionsOnlyChange}
+        preferredEsatSubjects={preferredEsatSubjects}
         onClose={() => setStartStage(null)}
         onStart={onStartSession}
         onCompareWithFriend={(stage, selectedParts, options) => {

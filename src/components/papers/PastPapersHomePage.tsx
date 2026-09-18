@@ -18,12 +18,7 @@ import {
 import { RoadmapTable } from '@/components/papers/roadmap/RoadmapTable';
 import { PastPapersLegacyLinks } from '@/components/papers/PastPapersLegacyLinks';
 import { PastPapersPreferenceSurvey } from '@/components/papers/PastPapersPreferenceSurvey';
-import { DrillUpgradeBanner } from '@/components/builder/DrillUpgradeBanner';
 import { useSubscription } from '@/hooks/useSubscription';
-import {
-  RoadmapSubjectPreview,
-  type RoadmapPreviewState,
-} from '@/components/papers/roadmap/RoadmapSubjectPreview';
 import { getSectionForRoadmapPart } from '@/lib/papers/roadmapConfig';
 import { deriveTmuaSectionFromQuestion } from '@/lib/papers/sectionMapping';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
@@ -61,7 +56,6 @@ import {
   buildRoadmapStageScores,
   type RoadmapStageScore,
 } from '@/lib/papers/roadmapStageScores';
-import { ESAT_SUBJECTS } from '@/components/profile/settingsSubjectPills';
 
 type StageCompletionEntry = {
   completed: number;
@@ -100,7 +94,7 @@ export default function PastPapersHomePage() {
   const [completionData, setCompletionData] = useState<
     Map<string, StageCompletionEntry>
   >(() => new Map(INITIAL_COMPLETION));
-  const [completionLoading, setCompletionLoading] = useState(true);
+  const [, setCompletionLoading] = useState(true);
   const [stageScores, setStageScores] = useState<Map<string, RoadmapStageScore>>(
     () => new Map(),
   );
@@ -119,29 +113,15 @@ export default function PastPapersHomePage() {
   const [userEsatSubjects, setUserEsatSubjects] = useState<string[] | null>(
     null,
   );
-  const [subjectPreview, setSubjectPreview] = useState<RoadmapPreviewState>({
-    enabled: false,
-    examPreference: 'ESAT',
-    subjects: ['Math 1', 'Physics'],
-  });
   const [showAllPapers, setShowAllPapers] = useState(false);
 
   const effectiveExamPreference = useMemo((): "ESAT" | "TMUA" | null => {
-    if (subjectPreview.enabled) return subjectPreview.examPreference;
     if (examPreference) return examPreference;
     if (userEsatSubjects?.length) return "ESAT";
     return null;
-  }, [examPreference, userEsatSubjects, subjectPreview]);
+  }, [examPreference, userEsatSubjects]);
 
-  const effectiveEsatSubjects = useMemo((): string[] | null => {
-    if (subjectPreview.enabled) {
-      if (subjectPreview.examPreference === "TMUA") return null;
-      return subjectPreview.subjects.length > 0
-        ? subjectPreview.subjects
-        : [...ESAT_SUBJECTS];
-    }
-    return userEsatSubjects;
-  }, [subjectPreview, userEsatSubjects]);
+  const effectiveEsatSubjects = userEsatSubjects;
 
   const subjectFilteredStages = useMemo(
     () =>
@@ -662,28 +642,10 @@ export default function PastPapersHomePage() {
 
   return (
     <Container size="lg" className="overflow-x-clip bg-background pb-16 pt-6 font-sans sm:pb-20 sm:pt-8">
-      {showMarkingUpgrade ? (
-        <DrillUpgradeBanner
-          className="mb-5"
-          headline="Sit any past paper free"
-          subtext="Scores and accuracy are included. Upgrade for written solutions, mistake review, detailed stats, and analytics."
-          ctaLabel="View plans"
-          href="/pricing"
-        />
-      ) : null}
-
-      <RoadmapSubjectPreview
-        value={subjectPreview}
-        onChange={setSubjectPreview}
-        profileSubjects={userEsatSubjects}
-        profileExamPreference={examPreference}
-      />
-
       <RoadmapTable
         stages={displayedStages}
         completionData={completionData}
         stageScores={stageScores}
-        completionLoading={completionLoading}
         scoresLoading={scoresLoading}
         userId={session?.user?.id ?? null}
         newQuestionsOnly={newQuestionsOnly}
@@ -691,6 +653,8 @@ export default function PastPapersHomePage() {
         onStartSession={handleStartStage}
         onCompletionChange={refreshCompletionData}
         subjectSuggestion={subjectSuggestion}
+        preferredEsatSubjects={effectiveEsatSubjects}
+        showFreePill={showMarkingUpgrade}
         layoutControls={
           <PastPapersLegacyLinks
             current="home"
