@@ -1,11 +1,10 @@
 'use client';
 
-import { Fragment, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { Suspense, useCallback, useEffect, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Container } from '@/components/layout/Container';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { QuestionBankSessionResults } from '@/components/questionBank/QuestionBankSessionResults';
-import { QuestionBankEsatSessionShell } from '@/components/questionBank/QuestionBankEsatSessionShell';
 import { useSupabaseSession } from '@/components/auth/SupabaseSessionProvider';
 import { useQuestionBankMarkStore } from '@/store/questionBankMarkStore';
 import type { QuestionBankPlayMode } from '@/lib/questionBank/homeLaunch';
@@ -30,12 +29,6 @@ function QuestionBankMarkContent() {
   const loading = useQuestionBankMarkStore((s) => s.loading);
   const error = useQuestionBankMarkStore((s) => s.error);
   const loadSession = useQuestionBankMarkStore((s) => s.loadSession);
-
-  const [view, setView] = useState<'summary' | 'review'>('summary');
-  const [reviewIndex, setReviewIndex] = useState(0);
-  const [showExplanation, setShowExplanation] = useState(false);
-  const [showHint, setShowHint] = useState(false);
-  const [flaggedIds, setFlaggedIds] = useState<Set<string>>(() => new Set());
 
   const resolvedSessionId =
     sessionIdParam ||
@@ -89,38 +82,6 @@ function QuestionBankMarkContent() {
       ? 'exam'
       : 'instant';
 
-  const enterReviewAt = useCallback(
-    (index: number) => {
-      if (!questions[index]) return;
-      setReviewIndex(index);
-      setShowExplanation(false);
-      setShowHint(false);
-      setView('review');
-    },
-    [questions],
-  );
-
-  const enterReviewByQuestionId = useCallback(
-    (questionId: string) => {
-      const byId = questions.findIndex((q) => q.id === questionId);
-      if (byId >= 0) {
-        enterReviewAt(byId);
-        return;
-      }
-      const attempt = attempts.find((a) => a.questionId === questionId);
-      if (attempt) {
-        enterReviewAt(Math.max(0, attempt.questionNumber - 1));
-      }
-    },
-    [attempts, enterReviewAt, questions],
-  );
-
-  const exitReviewToSummary = useCallback(() => {
-    setShowExplanation(false);
-    setShowHint(false);
-    setView('summary');
-  }, []);
-
   const backToAnalytics = useCallback(() => {
     const highlight = session?.id;
     const demoQs = demoMode ? '&demo=1' : '';
@@ -132,21 +93,6 @@ function QuestionBankMarkContent() {
           : '/questions/questionbank/analytics',
     );
   }, [demoMode, router, session?.id]);
-
-  const currentQuestion = questions[reviewIndex] ?? null;
-  const reviewAttempt = currentQuestion
-    ? attempts.find((a) => a.questionId === currentQuestion.id) ??
-      attempts.find((a) => a.questionNumber === reviewIndex + 1) ??
-      null
-    : null;
-
-  const incorrectAnswers = useMemo(() => {
-    const wrongs = new Set(reviewAttempt?.wrongAnswersBefore ?? []);
-    if (reviewAttempt?.userAnswer && !reviewAttempt.isCorrect) {
-      wrongs.add(reviewAttempt.userAnswer);
-    }
-    return wrongs;
-  }, [reviewAttempt]);
 
   if ((!demoMode && authSession === undefined) || (loading && !hydrated)) {
     return (
@@ -216,72 +162,11 @@ function QuestionBankMarkContent() {
     );
   }
 
-  if (view === 'review' && currentQuestion) {
-    return (
-      <Fragment>
-        <QuestionBankEsatSessionShell
-          question={currentQuestion}
-          questions={questions}
-          currentIndex={reviewIndex}
-          attemptLog={attempts}
-          remainingTimeMs={null}
-          timerLabel='Review'
-          reviewMode
-          examMode={false}
-          instantReveal={false}
-          currentSelection={reviewAttempt?.userAnswer ?? null}
-          incorrectAnswers={incorrectAnswers}
-          isAnswered
-          isCorrect={reviewAttempt ? reviewAttempt.isCorrect : null}
-          answerRevealed
-          showLeaveConfirm={false}
-          flaggedIds={flaggedIds}
-          onToggleFlag={(id) => {
-            setFlaggedIds((prev) => {
-              const next = new Set(prev);
-              if (next.has(id)) next.delete(id);
-              else next.add(id);
-              return next;
-            });
-          }}
-          onSelectionChange={() => {}}
-          onSubmitAnswer={() => {}}
-          onRevealAnswer={() => {}}
-          onShowExplanation={() => setShowExplanation(true)}
-          onShowHint={() => setShowHint(true)}
-          hasHint={!!currentQuestion.solution_key_insight}
-          showHint={showHint}
-          hintContent={currentQuestion.solution_key_insight ?? null}
-          onCloseHint={() => setShowHint(false)}
-          onNext={() => {
-            if (reviewIndex < questions.length - 1) {
-              enterReviewAt(reviewIndex + 1);
-            } else {
-              exitReviewToSummary();
-            }
-          }}
-          onPrevious={() => {
-            if (reviewIndex <= 0) return;
-            enterReviewAt(reviewIndex - 1);
-          }}
-          onJumpTo={(index) => enterReviewAt(index)}
-          onOpenLeaveConfirm={exitReviewToSummary}
-          onCloseLeaveConfirm={() => {}}
-          onSaveAndLeave={exitReviewToSummary}
-          onDiscardSession={exitReviewToSummary}
-          onUseClassicUi={() => {}}
-          showExplanation={showExplanation}
-          explanationContent={currentQuestion.solution_reasoning}
-          onCloseExplanation={() => setShowExplanation(false)}
-          sessionId={session.id}
-        />
-      </Fragment>
-    );
-  }
-
   return (
     <QuestionBankSessionResults
       attempts={attempts}
+      questions={questions}
+      sessionId={session.id}
       sessionSource={session.source}
       subjectsLabel={session.subjects ?? undefined}
       startedAt={startedAt}
@@ -289,9 +174,6 @@ function QuestionBankMarkContent() {
       timeLimitMinutes={session.time_limit_minutes ?? undefined}
       onBack={backToAnalytics}
       backLabel='Back to Analytics'
-      onReviewQuestion={
-        questions.length > 0 ? enterReviewByQuestionId : undefined
-      }
     />
   );
 }
