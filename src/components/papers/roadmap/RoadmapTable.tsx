@@ -76,7 +76,7 @@ type Props = {
   showFreePill?: boolean;
 };
 
-const TAB_ORDER: ExamTab[] = ["Mocks", "NSAA", "ENGAA", "TMUA"];
+const TAB_ORDER: ExamTab[] = ["NSAA", "ENGAA", "TMUA", "Mocks"];
 
 const TAB_LABELS: Record<ExamTab, string> = {
   NSAA: "NSAA",
@@ -581,7 +581,9 @@ export function RoadmapTable({
               const total =
                 data?.total ??
                 groupRoadmapPartsForDisplay(stage.parts).length;
-              const isOpen = expandedId === stage.id;
+              const isMockStage = isEsatCampMockRoadmapStage(stage);
+              // Mocks always show subject rows with per-part Start now.
+              const isOpen = isMockStage || expandedId === stage.id;
               const yourScore = stageScores.get(stage.id);
               const avgScore = averageScoreForStage(stage, averageMaps);
               const commentary = commentaryForStage(stage, stages);
@@ -667,25 +669,29 @@ export function RoadmapTable({
                           aria-hidden
                         />
                       </CompactBtn>
-                      <CompactBtn
-                        tone="ghost"
-                        aria-expanded={isOpen}
-                        aria-label={
-                          isOpen ? "Hide sections" : "Show sections"
-                        }
-                        onClick={() =>
-                          setExpandedId(isOpen ? null : stage.id)
-                        }
-                        className="!px-2"
-                      >
-                        <ChevronDown
-                          className={cn(
-                            "h-5 w-5 transition-transform duration-300 ease-out",
-                            isOpen && "rotate-180",
-                          )}
-                          aria-hidden
-                        />
-                      </CompactBtn>
+                      {isMockStage ? (
+                        <span className={CHEVRON_SPACER} aria-hidden />
+                      ) : (
+                        <CompactBtn
+                          tone="ghost"
+                          aria-expanded={isOpen}
+                          aria-label={
+                            isOpen ? "Hide sections" : "Show sections"
+                          }
+                          onClick={() =>
+                            setExpandedId(isOpen ? null : stage.id)
+                          }
+                          className="!px-2"
+                        >
+                          <ChevronDown
+                            className={cn(
+                              "h-5 w-5 transition-transform duration-300 ease-out",
+                              isOpen && "rotate-180",
+                            )}
+                            aria-hidden
+                          />
+                        </CompactBtn>
+                      )}
                     </div>
                   </div>
 
