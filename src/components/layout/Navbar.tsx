@@ -162,7 +162,7 @@ const navSections: NavSectionConfig[] = [
       },
       {
         href: '/questions/questionbank/analytics',
-        label: 'Analytics',
+        label: 'Analytics & History',
         description: 'Track your progress',
         icon: BarChart3,
       },
