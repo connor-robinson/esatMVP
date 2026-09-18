@@ -112,8 +112,9 @@ export default function EsatMockTestsPage() {
     <SeoPageLayout
       path={PATH}
       compactTitle
+      suppressVisibleTitle
       contentMaxWidth="wide"
-      title="25 Free ESAT Mock Tests"
+      title="ESAT CAMP Free Mock Tests"
       visuallyHiddenIntro={SEO_SUBTEXT}
       faq={FAQ}
       faqHeading="ESAT mock tests FAQ"
@@ -141,7 +142,7 @@ export default function EsatMockTestsPage() {
       }}
       schema={[
         articleSchema({
-          headline: "25 Free ESAT Mock Tests",
+          headline: "ESAT CAMP Free Mock Tests",
           description: DESCRIPTION,
           path: PATH,
           dateModified: "2026-09-18",
@@ -159,6 +160,18 @@ export default function EsatMockTestsPage() {
       >
         <EsatMockTestsIntroBanner />
         <EsatMockModuleSelector />
+        <div className="rounded-2xl bg-white/[0.04] px-4 py-4 sm:px-5">
+          <h2 className="font-display text-lg font-bold tracking-tight text-white sm:text-xl">
+            Stamina is what students felt least prepared for
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-[#94A3B8] sm:text-base">
+            This is what students reported feeling most underprepared for,
+            because they only did NSAA papers which had only 19 questions, one
+            paper at a time. The ESAT asks you to keep performing across 27
+            questions in 40 minutes, so these mocks are built to train that
+            stretch.
+          </p>
+        </div>
         <p className="text-sm leading-relaxed text-[#64748B]">
           {TOTAL_ESAT_MOCK_COUNT} original mocks across Maths 1, Maths 2,
           Physics, Chemistry and Biology. Free to take.{" "}

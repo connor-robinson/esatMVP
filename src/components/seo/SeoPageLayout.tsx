@@ -36,6 +36,11 @@ type SeoPageLayoutProps = {
   introFullWidth?: boolean;
   /** Smaller page title for utility pages such as download hubs. */
   compactTitle?: boolean;
+  /**
+   * When true, skip the header H1 so the page can render its own (e.g. title
+   * beside a hero image). Keep a single visible H1 in children.
+   */
+  suppressVisibleTitle?: boolean;
   /** Wider content column for data-heavy pages. */
   contentMaxWidth?: "default" | "wide";
   /** Optional hero CTAs - omit when the page should open with content first. */
@@ -73,6 +78,7 @@ export function SeoPageLayout({
   visuallyHiddenIntro,
   introFullWidth,
   compactTitle,
+  suppressVisibleTitle,
   contentMaxWidth = "default",
   primaryCta,
   secondaryCta,
@@ -104,99 +110,128 @@ export function SeoPageLayout({
     Boolean(compactTitle) &&
     intro.length === 0 &&
     !primaryCta &&
-    !lastChecked;
+    !lastChecked &&
+    !suppressVisibleTitle;
+
+  const showHeaderChrome =
+    !suppressVisibleTitle ||
+    Boolean(eyebrow) ||
+    Boolean(visuallyHiddenIntro) ||
+    intro.length > 0 ||
+    Boolean(lastChecked) ||
+    Boolean(primaryCta);
 
   return (
     <div className="bg-[#0A0F1D] text-white">
       {schemas.length ? <JsonLd schema={schemas} /> : null}
 
-      <header
-        className={cn(
-          "relative overflow-hidden",
-          denseCompactHeader
-            ? "pt-6 pb-2 sm:pt-8 sm:pb-3"
-            : compactTitle
-              ? "pt-8 pb-4 sm:pt-10 sm:pb-5"
-              : "pt-12 pb-8 sm:pt-16 sm:pb-12",
-        )}
-      >
+      {showHeaderChrome ? (
+        <header
+          className={cn(
+            "relative overflow-hidden",
+            suppressVisibleTitle && !eyebrow && intro.length === 0 && !primaryCta && !lastChecked
+              ? "pt-6 pb-0 sm:pt-8"
+              : denseCompactHeader
+                ? "pt-6 pb-2 sm:pt-8 sm:pb-3"
+                : compactTitle
+                  ? "pt-8 pb-4 sm:pt-10 sm:pb-5"
+                  : "pt-12 pb-8 sm:pt-16 sm:pb-12",
+          )}
+        >
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 opacity-[0.4]"
+            style={{
+              backgroundImage:
+                "radial-gradient(rgba(147, 197, 253, 0.3) 1px, transparent 1px)",
+              backgroundSize: "22px 22px",
+            }}
+          />
+          <div className={cn("relative", contentClassName)}>
+            {eyebrow ? (
+              <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
+                {eyebrow}
+              </p>
+            ) : null}
+            {!suppressVisibleTitle ? (
+              <h1
+                className={cn(
+                  "font-display font-bold tracking-tight",
+                  compactTitle
+                    ? "text-2xl text-white sm:text-3xl"
+                    : cn(
+                        "leading-[1.1]",
+                        eyebrow ? "mt-4" : "",
+                        "text-4xl sm:text-5xl lg:text-[3.5rem]",
+                      ),
+                )}
+              >
+                {title}
+              </h1>
+            ) : null}
+            {visuallyHiddenIntro ? (
+              <p className="sr-only">{visuallyHiddenIntro}</p>
+            ) : null}
+            {intro.length > 0 ? (
+              <div
+                className={cn(
+                  "mt-4 space-y-2.5",
+                  introFullWidth ? "w-full max-w-none" : "max-w-2xl",
+                )}
+              >
+                {intro.map((paragraph) => (
+                  <p
+                    key={paragraph}
+                    className="text-base leading-snug text-[#94A3B8] sm:text-[1.05rem] sm:leading-relaxed"
+                  >
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            ) : null}
+
+            {lastChecked ? (
+              <div className="mt-7 rounded-2xl bg-white/[0.04] p-4">
+                <LastCheckedNote
+                  detail={lastChecked === true ? undefined : lastChecked.detail}
+                />
+              </div>
+            ) : null}
+
+            {primaryCta ? (
+              <SeoCtaRow className="mt-8">
+                <SeoCta href={primaryCta.href} placement="hero" feature="seo_guide">
+                  {primaryCta.label}
+                </SeoCta>
+                {secondaryCta ? (
+                  <SeoCta
+                    href={secondaryCta.href}
+                    variant="quiet"
+                    placement="hero_secondary"
+                    feature="seo_guide"
+                  >
+                    {secondaryCta.label}
+                  </SeoCta>
+                ) : null}
+              </SeoCtaRow>
+            ) : null}
+          </div>
+        </header>
+      ) : (
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.4]"
-          style={{
-            backgroundImage:
-              "radial-gradient(rgba(147, 197, 253, 0.3) 1px, transparent 1px)",
-            backgroundSize: "22px 22px",
-          }}
-        />
-        <div className={cn("relative", contentClassName)}>
-          {eyebrow ? (
-            <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#3B82F6]">
-              {eyebrow}
-            </p>
-          ) : null}
-          <h1
-            className={cn(
-              "font-display font-bold tracking-tight",
-              compactTitle
-                ? "text-2xl text-white sm:text-3xl"
-                : cn(
-                    "leading-[1.1]",
-                    eyebrow ? "mt-4" : "",
-                    "text-4xl sm:text-5xl lg:text-[3.5rem]",
-                  ),
-            )}
-          >
-            {title}
-          </h1>
-          {visuallyHiddenIntro ? (
-            <p className="sr-only">{visuallyHiddenIntro}</p>
-          ) : null}
-          {intro.length > 0 ? (
-            <div
-              className={cn(
-                "mt-4 space-y-2.5",
-                introFullWidth ? "w-full max-w-none" : "max-w-2xl",
-              )}
-            >
-              {intro.map((paragraph) => (
-                <p
-                  key={paragraph}
-                  className="text-base leading-snug text-[#94A3B8] sm:text-[1.05rem] sm:leading-relaxed"
-                >
-                  {paragraph}
-                </p>
-              ))}
-            </div>
-          ) : null}
-
-          {lastChecked ? (
-            <div className="mt-7 rounded-2xl bg-white/[0.04] p-4">
-              <LastCheckedNote
-                detail={lastChecked === true ? undefined : lastChecked.detail}
-              />
-            </div>
-          ) : null}
-
-          {primaryCta ? (
-            <SeoCtaRow className="mt-8">
-              <SeoCta href={primaryCta.href} placement="hero" feature="seo_guide">
-                {primaryCta.label}
-              </SeoCta>
-              {secondaryCta ? (
-                <SeoCta
-                  href={secondaryCta.href}
-                  variant="quiet"
-                  placement="hero_secondary"
-                  feature="seo_guide"
-                >
-                  {secondaryCta.label}
-                </SeoCta>
-              ) : null}
-            </SeoCtaRow>
-          ) : null}
+          className="pointer-events-none relative overflow-hidden pt-6 sm:pt-8"
+        >
+          <div
+            className="absolute inset-0 opacity-[0.4]"
+            style={{
+              backgroundImage:
+                "radial-gradient(rgba(147, 197, 253, 0.3) 1px, transparent 1px)",
+              backgroundSize: "22px 22px",
+            }}
+          />
         </div>
-      </header>
+      )}
 
       <div className={cn("space-y-14 pb-6 sm:space-y-16", contentClassName)}>
         {children}
