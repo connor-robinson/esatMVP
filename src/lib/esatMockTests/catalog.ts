@@ -46,10 +46,15 @@ export type EsatMockSlot = {
   /** Static answer-key PDF when generated. */
   answerKeyHref: string | null;
   /**
-   * Relative difficulty vs a typical ESAT paper (display number, like roadmap AVG).
-   * Escalates gently Mock A → E.
+   * Combined paper + answers PDF when generated.
+   * Null until the full bundle exists (UI still shows a Full control).
    */
-  difficulty: number;
+  fullHref: string | null;
+  /**
+   * Editorial 1–5 star difficulty (Mock A easier → Mock E harder).
+   * Placeholder ranking for display only, not an empirically measured score.
+   */
+  difficultyStars: number;
 };
 
 export type EsatMockAttemptSummary = {
@@ -115,14 +120,17 @@ export function mockDisplayName(
   return `ESAT CAMP ${module.builderSubject} Mock ${mockLetterForNumber(mockNumber)}`;
 }
 
-/** Display difficulty (same 1-decimal style as roadmap AVG). */
-const SLOT_DIFFICULTY: readonly number[] = [3.4, 3.7, 4.0, 4.3, 4.6];
+/**
+ * Editorial star difficulty (1–5). Escalates Mock A → E for display only.
+ * Not derived from live attempt data.
+ */
+const SLOT_DIFFICULTY_STARS: readonly number[] = [2, 3, 3, 4, 5];
 
 /** All catalog slots have admin mock-builder PDFs (5 × 5). */
 function pdfHrefsForSlot(
   moduleId: EsatMockModuleId,
   mockNumber: number,
-): Pick<EsatMockSlot, "paperHref" | "answerKeyHref"> {
+): Pick<EsatMockSlot, "paperHref" | "answerKeyHref" | "fullHref"> {
   const module = findMockModule(moduleId);
   const letter = mockLetterForNumber(mockNumber);
   const stem = `ESAT CAMP ${module.builderSubject} Mock ${letter}`;
@@ -130,6 +138,8 @@ function pdfHrefsForSlot(
   return {
     paperHref: `${dir}/${encodeURIComponent(stem)}.pdf`,
     answerKeyHref: `${dir}/${encodeURIComponent(`${stem} Answer Key`)}.pdf`,
+    // Full paper+answers bundle not generated yet.
+    fullHref: null,
   };
 }
 
@@ -149,7 +159,8 @@ export function mockSlotsForModule(
       startHref: null,
       paperHref: pdfs.paperHref,
       answerKeyHref: pdfs.answerKeyHref,
-      difficulty: SLOT_DIFFICULTY[index] ?? 4.0,
+      fullHref: pdfs.fullHref,
+      difficultyStars: SLOT_DIFFICULTY_STARS[index] ?? 3,
     };
   });
 }

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Download, Play } from "lucide-react";
+import { Download, Play, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   ESAT_MOCK_MODULES,
@@ -22,10 +22,42 @@ type EsatMockModuleSelectorProps = {
 
 /** Mirrors past-papers RoadmapTable stage grid (without Parts / Avg / Your ESAT / Status). */
 const MOCK_ROW_GRID =
-  "grid min-w-[36rem] grid-cols-[7rem_5rem_minmax(16rem,1fr)] items-center gap-x-3";
+  "grid min-w-[42rem] grid-cols-[8.5rem_7.5rem_minmax(16rem,1fr)] items-center gap-x-3";
 
 const ACTION_BTN =
   "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-sm px-3.5 py-2 text-[15px] font-medium leading-none transition-colors";
+
+const QUIET_BTN = cn(
+  ACTION_BTN,
+  "bg-white/[0.08] text-[#F8FAFC] hover:bg-white/[0.12]",
+);
+
+function DifficultyStars({ rating }: { rating: number }) {
+  const clamped = Math.max(0, Math.min(5, Math.round(rating)));
+  return (
+    <div
+      className="flex items-center gap-0.5"
+      aria-label={`${clamped} out of 5 stars`}
+      title={`${clamped} / 5`}
+    >
+      {Array.from({ length: 5 }, (_, index) => {
+        const filled = index < clamped;
+        return (
+          <Star
+            key={index}
+            aria-hidden
+            className={cn(
+              "h-4 w-4",
+              filled
+                ? "fill-[#FBBF24] text-[#FBBF24]"
+                : "fill-transparent text-[#475569]",
+            )}
+          />
+        );
+      })}
+    </div>
+  );
+}
 
 export function EsatMockModuleSelector({
   attemptsByModule: _attemptsByModule,
@@ -96,13 +128,13 @@ export function EsatMockModuleSelector({
               >
                 <div className={MOCK_ROW_GRID}>
                   <div className="flex items-center gap-1.5">
-                    <span className="text-base font-semibold tabular-nums tracking-tight text-white sm:text-lg">
-                      {slot.letter}
+                    <span className="text-base font-semibold tracking-tight text-white sm:text-lg">
+                      {slot.label}
                     </span>
                   </div>
 
-                  <div className="text-sm tabular-nums text-[#94A3B8]">
-                    {slot.difficulty.toFixed(1)}
+                  <div>
+                    <DifficultyStars rating={slot.difficultyStars} />
                   </div>
 
                   <div className="flex flex-wrap items-center justify-end gap-2.5">
@@ -111,10 +143,7 @@ export function EsatMockModuleSelector({
                         href={slot.paperHref}
                         download
                         aria-label={`Download ${slot.displayName} paper PDF`}
-                        className={cn(
-                          ACTION_BTN,
-                          "bg-white/[0.08] text-[#F8FAFC] hover:bg-white/[0.12]",
-                        )}
+                        className={QUIET_BTN}
                       >
                         Paper
                         <Download
@@ -128,10 +157,7 @@ export function EsatMockModuleSelector({
                         href={slot.answerKeyHref}
                         download
                         aria-label={`Download ${slot.displayName} answer key PDF`}
-                        className={cn(
-                          ACTION_BTN,
-                          "bg-white/[0.08] text-[#F8FAFC] hover:bg-white/[0.12]",
-                        )}
+                        className={QUIET_BTN}
                       >
                         Answers
                         <Download
@@ -140,6 +166,32 @@ export function EsatMockModuleSelector({
                         />
                       </a>
                     ) : null}
+                    {slot.fullHref ? (
+                      <a
+                        href={slot.fullHref}
+                        download
+                        aria-label={`Download ${slot.displayName} full paper PDF`}
+                        className={QUIET_BTN}
+                      >
+                        Full
+                        <Download
+                          className="h-4 w-4 opacity-80"
+                          aria-hidden
+                        />
+                      </a>
+                    ) : (
+                      <span
+                        className={cn(QUIET_BTN, "opacity-45")}
+                        aria-disabled="true"
+                        title="Full paper download coming soon"
+                      >
+                        Full
+                        <Download
+                          className="h-4 w-4 opacity-80"
+                          aria-hidden
+                        />
+                      </span>
+                    )}
                     {slot.startHref ? (
                       <Link
                         href={slot.startHref}

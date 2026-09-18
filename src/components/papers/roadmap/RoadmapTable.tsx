@@ -296,9 +296,11 @@ function SectionsExpandRows({
                 <p className="truncate text-sm font-medium text-text">
                   {displayLabelForGroup(group)}
                 </p>
-                <p className="truncate text-xs text-text-muted">
-                  {isMock ? "40 min · 27 questions" : group.paperName}
-                </p>
+                {isEsatCampMockRoadmapStage(stage) ? null : (
+                  <p className="truncate text-xs text-text-muted">
+                    {group.paperName}
+                  </p>
+                )}
               </div>
             </div>
 
