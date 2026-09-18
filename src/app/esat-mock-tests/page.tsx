@@ -177,7 +177,7 @@ export default function EsatMockTestsPage() {
       <SeoSection heading="Official past papers">
         <SeoProse
           paragraphs={[
-            "Still working through NSAA and ENGAA? Download the papers and answer keys below, or practise them in the ESAT simulator from Past Papers.",
+            "Still working through NSAA and ENGAA? Pick an exam and section below to download papers and answer keys, or practise them in the ESAT simulator.",
           ]}
         />
         <div className="mt-6">
