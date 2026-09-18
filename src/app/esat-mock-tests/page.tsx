@@ -163,10 +163,10 @@ export default function EsatMockTestsPage() {
           {TOTAL_ESAT_MOCK_COUNT} original mocks across Maths 1, Maths 2,
           Physics, Chemistry and Biology. Free to take.{" "}
           <SeoTextLink href="/esat-mock-tests/compare">
-            Compare with a friend
+            Invite a friend
           </SeoTextLink>{" "}
-          on the same paper — no signup needed. Create an account after an
-          attempt if you want saved scores and five-mock progression.
+          to the same paper (no signup). Save scores by creating an account
+          after an attempt.
         </p>
       </section>
 

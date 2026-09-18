@@ -299,7 +299,7 @@ export function MockCompareSplitView({
               marketing ? "text-[#94A3B8]" : "text-text-muted",
             )}
           >
-            Compare · 2 players max · no account needed for these stats
+            Side by side · 2 players · no signup
           </div>
         </div>
       </div>
@@ -352,7 +352,7 @@ export function MockCompareSplitView({
           waitingLabel={
             friend
               ? "Waiting for your friend to finish…"
-              : "Share the link — waiting for a friend to join."
+              : "Waiting for them to join the link."
           }
           marketing={marketing}
         />
@@ -445,17 +445,16 @@ export function MockCompareSplitView({
               marketing ? "text-white" : "text-text",
             )}
           >
-            Sign in for deeper stats
+            Sign in for more
           </div>
           <p
             className={cn(
-              "mt-1 text-xs leading-relaxed",
+              "mt-1 text-xs",
               marketing ? "text-[#94A3B8]" : "text-text-muted",
             )}
           >
-            Free guest compare shows score, accuracy, pacing and the question
-            grid. Sign in to unlock detailed pacing charts, mistake tags, and
-            saved history.
+            Guests get score, accuracy, pacing and the grid. Sign in for charts,
+            mistake tags and history.
           </p>
           <Link
             href={loginHref}

@@ -19,7 +19,7 @@ import type { MockCompareRoom } from "@/lib/mockCompare/types";
 
 type Props = { roomId: string };
 
-/** Friend join — settings locked from the host's Start choices. */
+/** Friend join: settings locked from the host's Start choices. */
 export function MockCompareJoinClient({ roomId }: Props) {
   const router = useRouter();
   const [room, setRoom] = useState<MockCompareRoom | null>(null);
@@ -124,15 +124,19 @@ export function MockCompareJoinClient({ roomId }: Props) {
   return (
     <div className="mx-auto w-full max-w-md space-y-6 px-4 py-12 sm:px-6">
       <div className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#93C5FD]">
-          Friend compare
-        </p>
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#93C5FD]">
+            Shared mock
+          </p>
+          <span className="rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-bold uppercase leading-none tracking-wide text-white">
+            New
+          </span>
+        </div>
         <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
           Join this mock
         </h1>
-        <p className="text-sm leading-relaxed text-[#94A3B8]">
-          Your friend already set the papers. Join and start when you&apos;re
-          ready.
+        <p className="text-sm text-[#94A3B8]">
+          Papers are already set. Join, then start.
         </p>
       </div>
 

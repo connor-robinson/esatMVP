@@ -326,14 +326,17 @@ export function RoadmapStartSessionModal({
               disabled={selectedGroups.size === 0}
               onClick={handleCompare}
               className={cn(
-                "inline-flex w-full items-center justify-center gap-1.5 rounded-sm px-4 py-2 text-sm font-medium transition-colors",
+                "relative inline-flex w-full items-center justify-center gap-1.5 rounded-sm px-4 py-2 text-sm font-medium transition-colors",
                 selectedGroups.size > 0
                   ? "bg-surface-mid text-text hover:bg-surface-neutral"
                   : "cursor-not-allowed bg-surface-neutral text-text-disabled",
               )}
             >
+              <span className="absolute -right-1 -top-2 rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-bold uppercase leading-none tracking-wide text-white">
+                New
+              </span>
               <Users className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
-              Compare with a friend
+              Invite a friend
             </button>
           ) : null}
         </div>

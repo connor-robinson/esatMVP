@@ -145,25 +145,29 @@ export function CompareInviteModal({
                 id="compare-invite-title"
                 className="text-lg font-semibold text-text"
               >
-                Compare with a friend
+                Invite a friend
               </h2>
               <p className="mt-1 text-sm text-text-muted">{paperLabel}</p>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-sm text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
-            aria-label="Close"
-          >
-            <X className="h-4 w-4" strokeWidth={2.5} />
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            <span className="rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-bold uppercase leading-none tracking-wide text-white">
+              New
+            </span>
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex h-9 w-9 items-center justify-center rounded-sm text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
+              aria-label="Close"
+            >
+              <X className="h-4 w-4" strokeWidth={2.5} />
+            </button>
+          </div>
         </div>
 
         <div className="space-y-4 px-5 py-4">
-          <p className="text-sm leading-relaxed text-text-muted">
-            Uses the papers and timing you just chose. Send the link — compare
-            when you both finish. No signup needed.
+          <p className="text-sm text-text-muted">
+            Same papers and timing. Share the link, then see scores side by side.
           </p>
 
           {error ? (
@@ -227,8 +231,7 @@ export function CompareInviteModal({
                 {busy ? "Starting…" : "Start my attempt"}
               </button>
               <p className="text-xs text-text-subtle">
-                Your friend opens the link and starts the same paper. You can
-                start before they join.
+                They open the link for the same paper. You can start first.
               </p>
             </>
           )}

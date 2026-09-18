@@ -35,8 +35,8 @@ const BASE_SECTIONS: {
 
 const COMPARE_SECTION = {
   id: "compare" as const,
-  label: "Compare",
-  shortLabel: "Compare",
+  label: "vs friend",
+  shortLabel: "Friend",
   icon: Users,
 };
 
