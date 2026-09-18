@@ -18,7 +18,7 @@ type EsatMockTestsIntroBannerProps = {
 };
 
 /**
- * Above-the-fold hero: title, Ewan note, compact stats, and simulator preview.
+ * Above-the-fold hero: title, Ewan note, and simulator preview.
  */
 export function EsatMockTestsIntroBanner({
   className,
@@ -67,33 +67,6 @@ export function EsatMockTestsIntroBanner({
             to build your stamina for the ESAT.
           </blockquote>
         </aside>
-
-        <dl className="grid grid-cols-2 gap-2">
-          <div className="bg-white/[0.06] px-3 py-3">
-            <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-[#64748B]">
-              Questions
-            </dt>
-            <dd className="mt-1.5 text-base font-semibold tabular-nums text-white sm:text-lg">
-              27
-            </dd>
-          </div>
-          <div className="row-span-2 flex flex-col justify-center bg-white/[0.06] px-3 py-3">
-            <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-[#64748B]">
-              Difficulty
-            </dt>
-            <dd className="mt-1.5 text-base font-semibold leading-snug text-white sm:text-lg">
-              Slightly harder than NSAA
-            </dd>
-          </div>
-          <div className="bg-white/[0.06] px-3 py-3">
-            <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-[#64748B]">
-              Minutes
-            </dt>
-            <dd className="mt-1.5 text-base font-semibold tabular-nums text-white sm:text-lg">
-              40
-            </dd>
-          </div>
-        </dl>
       </div>
 
       <aside

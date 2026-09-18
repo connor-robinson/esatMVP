@@ -1181,6 +1181,10 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
   justify-content: center;
   padding: 16px 20px;
   z-index: 22;
+  box-sizing: border-box;
+  /* Cap the dialog to this shell region (not the full viewport). */
+  overflow: hidden;
+  min-height: 0;
 }
 
 .esat-ui-preview-root[data-theme="dark"] .eup-explain-backdrop {
@@ -1189,9 +1193,11 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
 
 .eup-explain-window {
   width: min(1180px, 96%);
-  max-height: min(860px, 90vh);
+  /* Fit the available shell (backdrop), not 90vh — otherwise Close can clip. */
+  max-height: 100%;
   display: flex;
   flex-direction: column;
+  min-height: 0;
   background: var(--eup-header);
   color: var(--eup-chrome-text);
   border-radius: 2px;
@@ -1205,6 +1211,7 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
   justify-content: space-between;
   gap: 12px;
   padding: 10px 14px;
+  flex-shrink: 0;
 }
 
 .eup-explain-header h2 {
@@ -1231,8 +1238,12 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
 }
 
 .eup-explain-body {
-  flex: 1;
-  overflow: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   background: var(--eup-content-bg);
   color: var(--eup-text);
   margin: 0 8px 8px;

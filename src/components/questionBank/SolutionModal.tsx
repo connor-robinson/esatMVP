@@ -119,13 +119,13 @@ export function SolutionModal({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.99 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            className="relative flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-organic-xl bg-surface-elevated shadow-modal-card"
+            className="relative flex max-h-[min(90dvh,90vh)] w-full max-w-5xl flex-col overflow-hidden rounded-organic-xl bg-surface-elevated shadow-modal-card"
             role="dialog"
             aria-modal="true"
             aria-labelledby="detailed-explanation-title"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-start justify-between gap-4 px-5 py-4 sm:px-8 sm:py-5">
+            <div className="flex shrink-0 items-start justify-between gap-4 px-5 py-4 sm:px-8 sm:py-5">
               <div className="flex min-w-0 items-start gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md bg-surface-mid text-secondary">
                   <ListOrdered className="h-5 w-5" aria-hidden />
