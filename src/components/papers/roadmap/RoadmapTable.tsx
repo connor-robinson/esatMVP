@@ -401,14 +401,14 @@ export function RoadmapTable({
     [grouped],
   );
 
-  const [activeTab, setActiveTab] = useState<ExamTab>("Mocks");
+  const [activeTab, setActiveTab] = useState<ExamTab>("NSAA");
   const searchParams = useSearchParams();
 
   useEffect(() => {
     if (availableTabs.length === 0) return;
     if (!availableTabs.includes(activeTab)) {
       setActiveTab(
-        availableTabs.includes("Mocks") ? "Mocks" : availableTabs[0]!,
+        availableTabs.includes("NSAA") ? "NSAA" : availableTabs[0]!,
       );
     }
   }, [availableTabs, activeTab]);
