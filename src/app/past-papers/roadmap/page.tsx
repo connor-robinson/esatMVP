@@ -28,10 +28,8 @@ import { getSectionForRoadmapPart } from '@/lib/papers/roadmapConfig';
 import { deriveTmuaSectionFromQuestion } from '@/lib/papers/sectionMapping';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
 import { getPaper, getQuestions } from '@/lib/supabase/questions';
-import {
-  getEsatCampMockModulePapersByPaperName,
-  isEsatCampMockExamType,
-} from '@/lib/papers/esatCampMocks';
+import { isEsatCampMockExamType } from '@/lib/papers/esatCampMocks';
+import { getAdminEsatMockPapersForSelectedParts } from '@/lib/papers/adminEsatMocks';
 import { examNameToPaperType } from '@/lib/papers/paperConfig';
 import type { PaperSection, Question, Paper } from '@/types/papers';
 import type { RoadmapPart } from '@/lib/papers/roadmapConfig';
@@ -429,10 +427,24 @@ export default function PapersRoadmapPage() {
 
           allPapers.set(paperKey, paper);
 
-          // ESAT CAMP papers with the same display name can span module paper IDs.
+          // ESAT CAMP admin mocks: one Mock A–E label spans module paper IDs.
+          // Load only the selected subjects so Math 1 / Math 2 do not cross-match.
           const modulePapers = isEsatCampMockExamType(firstPartInPaper.examType)
-            ? getEsatCampMockModulePapersByPaperName(firstPartInPaper.paperName)
+            ? getAdminEsatMockPapersForSelectedParts(
+                firstPartInPaper.paperName,
+                parts,
+              )
             : [paper];
+
+          if (
+            isEsatCampMockExamType(firstPartInPaper.examType) &&
+            modulePapers.length === 0
+          ) {
+            alert(
+              `ESAT CAMP mock modules not found for ${firstPartInPaper.paperName}.`,
+            );
+            return;
+          }
 
           let combined: Question[] = [];
           for (const modulePaper of modulePapers) {
@@ -465,6 +477,13 @@ export default function PapersRoadmapPage() {
               return Array.from(allSections).includes(section);
             });
             matchingQuestions = [...matchingQuestions, ...filtered];
+          }
+        } else if (
+          selectedParts.every((part) => isEsatCampMockExamType(part.examType))
+        ) {
+          // Admin mocks are already loaded per selected subject paper ID.
+          for (const questions of allQuestionsByPaper.values()) {
+            matchingQuestions = [...matchingQuestions, ...questions];
           }
         } else {
           // For NSAA/ENGAA, filter questions from all papers to match ALL selected parts

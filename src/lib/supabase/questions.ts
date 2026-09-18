@@ -14,6 +14,10 @@ import {
   mergePapersWithEsatCampMocks,
 } from '@/lib/papers/esatCampMocks';
 import {
+  getAdminEsatMockPaper,
+  isAdminEsatMockPaperId,
+} from '@/lib/papers/adminEsatMocks';
+import {
   preferSameSectionForExam,
   rankConversionFallbackPapers,
 } from '@/lib/papers/conversionTableFallback';
@@ -76,6 +80,18 @@ function mapQuestionPartRow(row: Record<string, unknown>): QuestionPartRow {
 export async function getQuestionPartsForPaper(
   paperId: number,
 ): Promise<QuestionPartRow[]> {
+  if (isAdminEsatMockPaperId(paperId)) {
+    const questions = await fetchAdminEsatMockQuestions(paperId);
+    return questions.map((q) => ({
+      paperId: q.paperId,
+      partLetter: q.partLetter,
+      partName: q.partName,
+      examType: q.examType,
+      paperName: q.paperName,
+      questionNumber: q.questionNumber,
+    }));
+  }
+
   if (isEsatCampMockPaperId(paperId)) {
     return getEsatCampMockQuestionParts(paperId);
   }
@@ -96,12 +112,20 @@ export async function getQuestionPartsForPaperIds(
 ): Promise<QuestionPartRow[]> {
   if (paperIds.length === 0) return [];
 
-  const mockIds = paperIds.filter(isEsatCampMockPaperId);
-  const dbIds = paperIds.filter((id) => !isEsatCampMockPaperId(id));
+  const adminIds = paperIds.filter(isAdminEsatMockPaperId);
+  const mockIds = paperIds.filter(
+    (id) => isEsatCampMockPaperId(id) && !isAdminEsatMockPaperId(id),
+  );
+  const dbIds = paperIds.filter(
+    (id) => !isEsatCampMockPaperId(id) && !isAdminEsatMockPaperId(id),
+  );
 
+  const adminParts = (
+    await Promise.all(adminIds.map((id) => getQuestionPartsForPaper(id)))
+  ).flat();
   const mockParts = mockIds.flatMap((id) => getEsatCampMockQuestionParts(id));
 
-  if (dbIds.length === 0) return mockParts;
+  if (dbIds.length === 0) return [...adminParts, ...mockParts];
 
   const { data, error } = await supabase
     .from('questions')
@@ -110,6 +134,7 @@ export async function getQuestionPartsForPaperIds(
 
   if (error) throw error;
   return [
+    ...adminParts,
     ...mockParts,
     ...(data || []).map((row) =>
       mapQuestionPartRow(row as Record<string, unknown>),
@@ -190,9 +215,30 @@ export async function getPapersByExamAndYear(examName: ExamName, examYear: numbe
   }
 }
 
+async function fetchAdminEsatMockQuestions(
+  paperId: number,
+): Promise<Question[]> {
+  const response = await fetch(
+    `/api/past-papers/esat-mocks/questions?paperId=${paperId}`,
+  );
+  if (!response.ok) {
+    throw new Error(`Failed to load ESAT CAMP mock questions (${response.status})`);
+  }
+  const payload = (await response.json()) as { questions?: Question[] };
+  return Array.isArray(payload.questions) ? payload.questions : [];
+}
+
 // Get specific paper with fallback to try common name variations
 export async function getPaper(examName: ExamName, examYear: number, paperName: string, examType: ExamType) {
   try {
+    const adminMockPaper = getAdminEsatMockPaper(
+      examName,
+      examYear,
+      paperName,
+      examType,
+    );
+    if (adminMockPaper) return adminMockPaper;
+
     const mockPaper = getEsatCampMockPaper(examName, examYear, paperName, examType);
     if (mockPaper) return mockPaper;
 
@@ -287,6 +333,10 @@ const QUESTION_SOLVE_SELECT = [
 ].join(",");
 
 async function fetchQuestionsFromDb(paperId: number): Promise<Question[]> {
+  if (isAdminEsatMockPaperId(paperId)) {
+    return fetchAdminEsatMockQuestions(paperId);
+  }
+
   if (isEsatCampMockPaperId(paperId)) {
     return getEsatCampMockQuestions(paperId);
   }

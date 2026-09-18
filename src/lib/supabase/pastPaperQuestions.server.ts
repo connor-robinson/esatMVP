@@ -5,6 +5,8 @@ import {
   getEsatCampMockQuestions,
   isEsatCampMockPaperId,
 } from "@/lib/papers/esatCampMocks";
+import { isAdminEsatMockPaperId } from "@/lib/papers/adminEsatMocks";
+import { getAdminEsatMockQuestionsForPaperId } from "@/lib/papers/adminEsatMocks.server";
 import type { Question } from "@/types/papers";
 
 function mapQuestionRow(row: Record<string, unknown>): Question {
@@ -36,6 +38,10 @@ function mapQuestionRow(row: Record<string, unknown>): Question {
  * Load full past-paper question rows for server routes (service role, no RLS gaps).
  */
 export async function getPastPaperQuestions(paperId: number): Promise<Question[]> {
+  if (isAdminEsatMockPaperId(paperId)) {
+    return getAdminEsatMockQuestionsForPaperId(paperId);
+  }
+
   if (isEsatCampMockPaperId(paperId)) {
     return getEsatCampMockQuestions(paperId);
   }

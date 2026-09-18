@@ -544,11 +544,38 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                 getEsatCampMockModuleByPaperId,
                 getEsatCampMockQuestionsByPaperName,
               } = await import('@/lib/papers/esatCampMocks');
+              const {
+                isAdminEsatMockPaperId,
+                parseAdminEsatMockPaperId,
+                adminMockPaperName,
+                getAdminEsatMockModulePapersByPaperName,
+              } = await import('@/lib/papers/adminEsatMocks');
               let allQuestions = await getQuestions(paperId);
 
               // ESAT CAMP full mocks: one library card / paperName, several module paper IDs.
               // Expand to every module that shares the display name before section filters run.
-              if (isEsatCampMockPaperId(paperId)) {
+              if (isAdminEsatMockPaperId(paperId)) {
+                const parsed = parseAdminEsatMockPaperId(paperId);
+                if (parsed) {
+                  const siblingPapers = getAdminEsatMockModulePapersByPaperName(
+                    adminMockPaperName(parsed.mockNumber),
+                  );
+                  const batches = await Promise.all(
+                    siblingPapers.map(async (paper) => {
+                      try {
+                        return await getQuestions(paper.id);
+                      } catch {
+                        return [];
+                      }
+                    }),
+                  );
+                  const mergedById = new Map<number, (typeof allQuestions)[number]>();
+                  batches.flat().forEach((question) => {
+                    mergedById.set(question.id, question);
+                  });
+                  allQuestions = Array.from(mergedById.values());
+                }
+              } else if (isEsatCampMockPaperId(paperId)) {
                 const mockModule = getEsatCampMockModuleByPaperId(paperId);
                 if (mockModule) {
                   allQuestions = getEsatCampMockQuestionsByPaperName(
@@ -617,8 +644,16 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                 }
               }
               
+              const isEsatCampSession =
+                isAdminEsatMockPaperId(paperId) ||
+                isEsatCampMockPaperId(paperId) ||
+                String(allQuestions[0]?.examType || "")
+                  .trim()
+                  .toLowerCase() === "esat camp";
+
               const isTmuaPaper = state.paperName === 'TMUA';
               const willUsePartIdFilter =
+                !isEsatCampSession &&
                 state.selectedPartIds.length > 0 &&
                 !isTmuaPaper &&
                 (state.paperName === 'NSAA' ||

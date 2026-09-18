@@ -163,6 +163,71 @@ export function getAdminEsatMockPaper(
   return papers[0] ?? null;
 }
 
+/** Resolve a roadmap part to its admin mock-builder subject. */
+export function subjectForAdminMockRoadmapPart(part: {
+  displayName?: string;
+  partName: string;
+  partKey?: string;
+}): AdminEsatMockSubject | null {
+  const display = part.displayName?.trim();
+  if (
+    display &&
+    (ADMIN_ESAT_MOCK_SUBJECTS as readonly string[]).includes(display)
+  ) {
+    return display as AdminEsatMockSubject;
+  }
+
+  const partName = part.partName.trim();
+  for (const subject of ADMIN_ESAT_MOCK_SUBJECTS) {
+    if (ADMIN_MOCK_SUBJECT_TO_PART_NAME[subject] === partName) {
+      return subject;
+    }
+  }
+
+  const key = (part.partKey || "").toLowerCase();
+  for (const subject of ADMIN_ESAT_MOCK_SUBJECTS) {
+    const slug = subject.toLowerCase().replace(/\s+/g, "-");
+    if (key.includes(slug)) return subject;
+  }
+
+  return null;
+}
+
+/**
+ * Module paper rows for the selected roadmap parts of one Mock A–E sitting.
+ * Prefer this over loading every subject, so Math 1 / Math 2 do not cross-match.
+ */
+export function getAdminEsatMockPapersForSelectedParts(
+  paperName: string,
+  parts: ReadonlyArray<{
+    displayName?: string;
+    partName: string;
+    partKey?: string;
+  }>,
+): Paper[] {
+  const mockNumber = parseAdminMockPaperName(paperName);
+  if (mockNumber == null) return [];
+
+  const seen = new Set<AdminEsatMockSubject>();
+  const out: Paper[] = [];
+  for (const part of parts) {
+    const subject = subjectForAdminMockRoadmapPart(part);
+    if (!subject || seen.has(subject)) continue;
+    seen.add(subject);
+    out.push({
+      id: paperIdForAdminEsatMock(mockNumber, subject),
+      examName: ADMIN_ESAT_MOCK_EXAM_NAME,
+      examYear: ADMIN_ESAT_MOCK_EXAM_YEAR,
+      paperName: adminMockPaperName(mockNumber),
+      examType: ADMIN_ESAT_MOCK_EXAM_TYPE,
+      hasConversion: false,
+      createdAt: "",
+      updatedAt: "",
+    });
+  }
+  return out;
+}
+
 export function adminMockSlotsToPaperQuestions(
   slots: MockSlot[],
   mock: Pick<EsatMockRow, "id" | "title" | "subject" | "mock_number">,
