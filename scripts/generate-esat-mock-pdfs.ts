@@ -2,10 +2,10 @@
  * Generate NSAA-style question papers + answer keys for all admin mock-builder
  * papers in `esat_mocks` (5 subjects × 5 mocks).
  *
- * - Cover: icon + "ESAT CAMP MOCK TEST A" on one line (letters A–E)
- * - Every page header: icon + "ESAT CAMP" text (same size as subject)
- * - Markdown tables (including MCQ option tables in the stem) → HTML tables
- * - Diagrams capped to a compact width
+ * - Cover: large title "ESAT CAMP MOCK TEST A" (letters A–E)
+ * - Question/answer headers: icon + Space Grotesk "ESAT CAMP" (header only)
+ * - Filenames: "ESAT CAMP Math 1 Mock A.pdf"
+ * - Markdown tables / KaTeX / capped diagrams
  *
  * Run: npx tsx scripts/generate-esat-mock-pdfs.ts
  * Optional: --only=biology --mock=1
@@ -29,6 +29,18 @@ const LOGO_MARK_BLACK_PATH = path.join(
   "brand",
   "logo-mark-black.png",
 );
+const SPACE_GROTESK_500 = path.join(
+  ROOT,
+  "public",
+  "fonts",
+  "space-grotesk-500.woff2",
+);
+const SPACE_GROTESK_700 = path.join(
+  ROOT,
+  "public",
+  "fonts",
+  "space-grotesk-700.woff2",
+);
 const KATEX_CSS = path.join(
   ROOT,
   "node_modules",
@@ -37,7 +49,7 @@ const KATEX_CSS = path.join(
   "katex.min.css",
 );
 
-/** Header / cover brand text size — matches Mathematics 1 on page headers. */
+/** Running-header brand / subject size (pt). */
 const BRAND_FONT_PT = 10;
 
 const SUBJECT_TO_CATALOG: Record<
@@ -143,6 +155,8 @@ function fileToDataUri(filePath: string): string {
 }
 
 let LOGO_MARK_BLACK_DATA_URI = "";
+let SPACE_GROTESK_500_DATA_URI = "";
+let SPACE_GROTESK_700_DATA_URI = "";
 
 function escapeHtml(text: string): string {
   return text
@@ -336,6 +350,18 @@ function paperCss(): string {
   const katexCss = fs.readFileSync(KATEX_CSS, "utf8");
   return `
 ${katexCss}
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("${SPACE_GROTESK_500_DATA_URI}") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("${SPACE_GROTESK_700_DATA_URI}") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+}
 @page { size: A4; margin: 22mm 16mm 18mm 18mm; }
 * { box-sizing: border-box; }
 html, body {
@@ -345,23 +371,65 @@ html, body {
   background: #fff;
   -webkit-print-color-adjust: exact; print-color-adjust: exact;
 }
+body.has-running-header {
+  padding-top: 4mm;
+}
+/* Repeats on every printed page (Chromium PDF). Header brand uses Space Grotesk only. */
+.page-running-header {
+  position: fixed;
+  top: 11mm;
+  left: 18mm;
+  right: 16mm;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 5.5mm;
+  z-index: 20;
+  pointer-events: none;
+}
+.page-running-header-brand {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2.4mm;
+}
+.page-running-header-brand img {
+  display: block;
+  height: ${BRAND_FONT_PT}pt;
+  width: auto;
+}
+.page-running-header-brand span {
+  font-family: "Space Grotesk", Arial, sans-serif;
+  font-weight: 500;
+  font-size: ${BRAND_FONT_PT}pt;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: #000;
+}
+.page-running-header-subject {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: ${BRAND_FONT_PT}pt;
+  line-height: 1;
+  color: #000;
+}
 .page-cover, .page-blank, .page-part { page-break-after: always; }
 .cover-brand {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 2.8mm;
-  margin: 0 0 8mm;
+  gap: 3.5mm;
+  margin: 0 0 10mm;
   white-space: nowrap;
 }
 .cover-brand-logo {
   display: block;
-  height: 13pt;
+  height: 22pt;
   width: auto;
   flex: 0 0 auto;
 }
 .cover-brand-title {
-  font-size: 13pt;
+  font-size: 24pt;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.02em;
@@ -398,14 +466,14 @@ html, body {
 .stem .display-math { margin: 3mm 0 4mm; text-align: center; }
 .display-math .katex-display { margin: 0; }
 .stem figure, .stem .diagram, .option-text figure, .option-text .diagram {
-  display: block; margin: 2.5mm auto; max-width: 72mm; text-align: center;
+  display: block; margin: 2.5mm auto; max-width: 84mm; text-align: center;
 }
 /* Diagram images only — never restyle KaTeX sqrt / stretchy SVGs. */
 .stem figure img, .stem figure > svg, .stem .diagram img, .stem .diagram > svg,
 .option-text figure img, .option-text figure > svg,
 .option-text .diagram img, .option-text .diagram > svg,
 .diagram img, .diagram > svg {
-  display: block; margin: 0 auto; max-width: 72mm; max-height: 55mm; width: auto; height: auto;
+  display: block; margin: 0 auto; max-width: 84mm; max-height: 64mm; width: auto; height: auto;
 }
 .katex svg {
   fill: currentColor;

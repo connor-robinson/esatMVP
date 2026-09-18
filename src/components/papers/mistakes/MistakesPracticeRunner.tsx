@@ -223,33 +223,34 @@ export function MistakesPracticeRunner({
   };
 
   const attemptLog: QuestionBankSessionAttempt[] = useMemo(() => {
-    return answers
-      .map((a, i) => {
-        if (!a.checked) return null;
-        const q = qbQuestions[i];
-        const payload = questions[i];
-        if (!q || !payload) return null;
-        return {
-          questionId: q.id,
-          questionNumber: i + 1,
-          userAnswer: a.choice ?? "",
-          isCorrect: a.isCorrect,
-          timeSpentMs: (a.timeSec || 0) * 1000,
-          wasRevealed: a.revealed,
-          usedHint: false,
-          wrongAnswersBefore: a.wrongBefore,
-          difficulty: q.difficulty,
-          uiDifficulty: q.difficulty,
-          primaryTag: q.primary_tag,
-          secondaryTags: q.secondary_tags,
-          subjects: q.subjects,
-          questionStem: q.question_stem,
-          correctOption: q.correct_option,
-          options: q.options,
-          timestamp: Date.now(),
-        } satisfies QuestionBankSessionAttempt;
-      })
-      .filter((row): row is QuestionBankSessionAttempt => row != null);
+    const rows: QuestionBankSessionAttempt[] = [];
+    for (let i = 0; i < answers.length; i++) {
+      const a = answers[i];
+      if (!a.checked) continue;
+      const q = qbQuestions[i];
+      const payload = questions[i];
+      if (!q || !payload) continue;
+      rows.push({
+        questionId: q.id,
+        questionNumber: i + 1,
+        userAnswer: a.choice ?? "",
+        isCorrect: a.isCorrect,
+        timeSpentMs: (a.timeSec || 0) * 1000,
+        wasRevealed: a.revealed,
+        usedHint: false,
+        wrongAnswersBefore: a.wrongBefore,
+        difficulty: q.difficulty,
+        uiDifficulty: q.difficulty,
+        primaryTag: q.primary_tag,
+        secondaryTags: q.secondary_tags,
+        subjects: q.subjects,
+        questionStem: q.question_stem,
+        correctOption: q.correct_option,
+        options: q.options,
+        timestamp: Date.now(),
+      });
+    }
+    return rows;
   }, [answers, qbQuestions, questions]);
 
   if (!currentPayload || !currentQuestion) return null;
