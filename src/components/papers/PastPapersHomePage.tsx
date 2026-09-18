@@ -32,6 +32,7 @@ import { allowLoadingPaint } from '@/lib/papers/allowLoadingPaint';
 import { preloadQuestionsAssets } from '@/lib/pearson/preloadQuestionAssets';
 import { PearsonPleaseWaitScreen } from '@/components/pearson/PearsonPleaseWaitScreen';
 import { applyEsatSubjectsToRoadmapStages } from '@/lib/papers/roadmapEsatFilter';
+import { rememberHubMarkPreview } from '@/lib/papers/hubMarkPreview';
 import type { RoadmapStartOptions } from '@/components/papers/roadmap/StageListCard';
 import { questionMatchesRoadmapPart } from '@/lib/papers/roadmapQuestionMatch';
 import { generatePartIdFromRoadmapPart } from '@/lib/papers/partIdUtils';
@@ -597,6 +598,13 @@ export default function PastPapersHomePage() {
         // Keep the already-filtered set. Reloading by paperId would drop
         // multi-paper ENGAA/NSAA sessions and question-number filters.
         setQuestions(matchingQuestions);
+
+        if (
+          selectedParts.every((part) => part.examType === 'ESAT CAMP')
+        ) {
+          const sessionId = usePaperSessionStore.getState().sessionId;
+          if (sessionId) rememberHubMarkPreview(sessionId);
+        }
 
         // Stay on LoadingPage until every question diagram/image is decoded.
         await preloadQuestionsAssets(matchingQuestions);

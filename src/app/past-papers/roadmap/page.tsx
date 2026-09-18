@@ -38,6 +38,7 @@ import { allowLoadingPaint } from '@/lib/papers/allowLoadingPaint';
 import { preloadQuestionsAssets } from '@/lib/pearson/preloadQuestionAssets';
 import { applyEsatSubjectsToRoadmapStages } from '@/lib/papers/roadmapEsatFilter';
 import { PastPaperGuestStartModal } from '@/components/papers/PastPaperGuestStartModal';
+import { rememberHubMarkPreview } from '@/lib/papers/hubMarkPreview';
 import {
   addManualRoadmapUnlock,
   readManualRoadmapUnlocks,
@@ -592,6 +593,13 @@ export default function PapersRoadmapPage() {
         // Keep the already-filtered set. Reloading by paperId would drop
         // multi-paper ENGAA/NSAA sessions and question-number filters.
         setQuestions(matchingQuestions);
+
+        if (
+          selectedParts.every((part) => part.examType === 'ESAT CAMP')
+        ) {
+          const sessionId = usePaperSessionStore.getState().sessionId;
+          if (sessionId) rememberHubMarkPreview(sessionId);
+        }
 
         // Stay on LoadingPage until every question diagram/image is decoded.
         await preloadQuestionsAssets(matchingQuestions);

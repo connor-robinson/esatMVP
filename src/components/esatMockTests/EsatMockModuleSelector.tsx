@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import Link from "next/link";
+import { useCallback, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Download, Play, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -13,7 +13,15 @@ import {
   type EsatMockModuleId,
   type EsatMockSlot,
 } from "@/lib/esatMockTests/catalog";
+import {
+  startCatalogMockSitting,
+  warmCatalogMockStart,
+  type StartCatalogMockInput,
+} from "@/lib/esatMockTests/startCatalogMockSitting";
 import { RoadmapInfoPopover } from "@/components/papers/roadmap/RoadmapInfoPopover";
+import { PastPaperGuestStartModal } from "@/components/papers/PastPaperGuestStartModal";
+import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
+import { usePaperSessionStore } from "@/store/paperSessionStore";
 
 type EsatMockModuleSelectorProps = {
   /** Optional completion rows keyed by module id (logged-in only). */
@@ -76,11 +84,15 @@ function pillClass(selected: boolean) {
 function MockSlotRow({
   title,
   slot,
-  showStartNow,
+  starting,
+  onStart,
+  onWarm,
 }: {
   title: string;
   slot: EsatMockSlot;
-  showStartNow: boolean;
+  starting: boolean;
+  onStart: () => void;
+  onWarm: () => void;
 }) {
   return (
     <li role="listitem" className="rounded bg-[#161D2F] px-5 py-5">
@@ -118,30 +130,21 @@ function MockSlotRow({
               <Download className="h-4 w-4 opacity-80" aria-hidden />
             </a>
           ) : null}
-          {showStartNow ? (
-            slot.startHref ? (
-              <Link
-                href={slot.startHref}
-                className={cn(
-                  ACTION_BTN,
-                  "bg-[#3B82F6] text-white hover:bg-[#2563EB]",
-                )}
-                aria-label={`Start now: ${slot.displayName}`}
-              >
-                Start now
-                <Play className="h-4 w-4 fill-current opacity-80" aria-hidden />
-              </Link>
-            ) : (
-              <span
-                className={cn(ACTION_BTN, "bg-[#3B82F6] text-white opacity-45")}
-                aria-disabled="true"
-                title="Coming soon in the simulator"
-              >
-                Start now
-                <Play className="h-4 w-4 fill-current opacity-80" aria-hidden />
-              </span>
-            )
-          ) : null}
+          <button
+            type="button"
+            disabled={starting}
+            onMouseEnter={onWarm}
+            onFocus={onWarm}
+            onClick={onStart}
+            className={cn(
+              ACTION_BTN,
+              "bg-[#3B82F6] text-white hover:bg-[#2563EB] disabled:opacity-45",
+            )}
+            aria-label={`Start now: ${slot.displayName}`}
+          >
+            Start now
+            <Play className="h-4 w-4 fill-current opacity-80" aria-hidden />
+          </button>
         </div>
       </div>
     </li>
@@ -152,7 +155,13 @@ export function EsatMockModuleSelector({
   attemptsByModule: _attemptsByModule,
   className,
 }: EsatMockModuleSelectorProps) {
+  const router = useRouter();
+  const session = useSupabaseSession();
   const [selectedId, setSelectedId] = useState<TabId>("maths-1");
+  const [pendingStart, setPendingStart] = useState<StartCatalogMockInput | null>(
+    null,
+  );
+  const [starting, setStarting] = useState(false);
   const isFullTab = selectedId === "full";
   const selectedModule = isFullTab
     ? findMockModule("maths-1")
@@ -160,6 +169,55 @@ export function EsatMockModuleSelector({
   const slots = useMemo(
     () => (isFullTab ? fullMockSlots() : mockSlotsForModule(selectedModule)),
     [isFullTab, selectedModule],
+  );
+
+  const buildStartInput = useCallback(
+    (mockNumber: number): StartCatalogMockInput =>
+      isFullTab
+        ? { mode: "full", mockNumber }
+        : { mode: "module", moduleId: selectedModule.id, mockNumber },
+    [isFullTab, selectedModule.id],
+  );
+
+  const launchSitting = useCallback(
+    async (input: StartCatalogMockInput) => {
+      if (starting) return;
+      setStarting(true);
+      setPendingStart(null);
+
+      router.prefetch("/past-papers/solve");
+      usePaperSessionStore.getState().beginSessionBootstrap();
+      router.push("/past-papers/solve");
+
+      try {
+        await startCatalogMockSitting(input);
+        usePaperSessionStore.getState().finishSessionBootstrap();
+      } catch (err) {
+        usePaperSessionStore
+          .getState()
+          .finishSessionBootstrap(
+            err instanceof Error
+              ? err.message
+              : "Failed to start this mock.",
+          );
+      } finally {
+        setStarting(false);
+      }
+    },
+    [router, starting],
+  );
+
+  const requestStart = useCallback(
+    (mockNumber: number) => {
+      const input = buildStartInput(mockNumber);
+      warmCatalogMockStart(input);
+      if (!session?.user) {
+        setPendingStart(input);
+        return;
+      }
+      void launchSitting(input);
+    },
+    [buildStartInput, launchSitting, session?.user],
   );
 
   return (
@@ -239,12 +297,23 @@ export function EsatMockModuleSelector({
                     : `ESAT CAMP Mock ${slot.letter} ${selectedModule.builderSubject}`
                 }
                 slot={slot}
-                showStartNow
+                starting={starting}
+                onWarm={() => warmCatalogMockStart(buildStartInput(slot.mockNumber))}
+                onStart={() => requestStart(slot.mockNumber)}
               />
             ))}
           </ul>
         </div>
       </div>
+
+      <PastPaperGuestStartModal
+        open={pendingStart != null}
+        onClose={() => setPendingStart(null)}
+        onContinueWithoutAccount={() => {
+          if (!pendingStart) return;
+          void launchSitting(pendingStart);
+        }}
+      />
     </div>
   );
 }
