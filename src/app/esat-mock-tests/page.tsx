@@ -97,14 +97,6 @@ const FORMAT_STATS = [
   { value: "No", label: "calculator" },
 ] as const;
 
-const MOCK_PROGRESSION = [
-  { mock: "Mock 1", focus: "Find your baseline." },
-  { mock: "Mock 2", focus: "Fix the obvious weaknesses." },
-  { mock: "Mock 3", focus: "Improve your pacing." },
-  { mock: "Mock 4", focus: "Practise under strict exam conditions." },
-  { mock: "Mock 5", focus: "Treat it like the real thing." },
-] as const;
-
 const QUESTIONS_PER_MODULE = ESAT_MOCKS_PER_MODULE * ESAT_MOCK_QUESTION_COUNT;
 
 export default function EsatMockTestsPage() {
@@ -130,7 +122,7 @@ export default function EsatMockTestsPage() {
       showDisclaimer
       finalCta={{
         heading: "You've practised the questions. Now practise the test.",
-        body: `${TOTAL_ESAT_MOCK_COUNT} full ESAT mocks. ${TOTAL_ESAT_MOCK_QUESTION_COUNT} unseen questions. Five modules. Free.`,
+        body: `${TOTAL_ESAT_MOCK_COUNT} full ESAT mocks. ${TOTAL_ESAT_MOCK_QUESTION_COUNT} new questions. Five modules. Free.`,
         primary: {
           href: `#${SELECTOR_ID}`,
           label: "Start a mock",
@@ -160,19 +152,16 @@ export default function EsatMockTestsPage() {
       >
         <EsatMockTestsIntroBanner />
         <EsatMockModuleSelector />
-        <div className="rounded-2xl bg-white/[0.04] px-4 py-4 sm:px-5">
-          <h2 className="font-display text-lg font-bold tracking-tight text-white sm:text-xl">
-            Stamina is what students felt least prepared for
-          </h2>
-          <p className="mt-2 text-sm leading-relaxed text-[#94A3B8] sm:text-base">
-            This is what students reported feeling most underprepared for,
-            because they only did NSAA papers which had only 19 questions, one
-            paper at a time. The ESAT asks you to keep performing across 27
-            questions in 40 minutes, so these mocks are built to train that
-            stretch.
-          </p>
-        </div>
       </section>
+
+      <SeoSection heading="Train your stamina and improve your guessing">
+        <SeoProse
+          paragraphs={[
+            "Stamina is what students reported feeling most underprepared for, because NSAA only has 20 questions per section. The ESAT has 27 questions in 40 minutes, so these mocks are built to train for that.",
+            "And our answers are also designed to help you improve your ability to eliminate options and improve your guessing when time runs out.",
+          ]}
+        />
+      </SeoSection>
 
       <SeoSection heading="Official past papers">
         <SeoProse
@@ -185,23 +174,21 @@ export default function EsatMockTestsPage() {
         </div>
       </SeoSection>
 
+      <SeoSection heading="Why ESAT CAMP Mocks?">
+        <SeoProse
+          paragraphs={[
+            "We have curated our questions to be chosen from commonly missed topics, and to reflect the real difficulty of the ESAT. We think that our ESAT CAMP Mocks are a better representation of the real ESAT than any NSAA or ENGAA past papers.",
+          ]}
+        />
+      </SeoSection>
+
       <SeoSection heading="Finished all your ESAT material?">
         <SeoProse
           paragraphs={[
-            "There comes a point where doing another old NSAA or ENGAA paper gives you less and less.",
-            "You recognise the questions. You remember the methods. Sometimes you even remember the answers.",
-            "But the real ESAT requires you to keep performing across 27 questions in only 40 minutes.",
-            "That is what these mocks are built for.",
+            "If you've finished all your ENGAA and NSAA past papers already, what's the point of redoing them? Instead, try our ESAT CAMP Free Mock papers to train your ability to problem-solve and think on the spot. They are designed to be time-pressured, so don't worry if you are getting slightly lower scores.",
+            "Unlike the NSAA and ENGAA, which have fewer questions, our mocks have 27 full questions: a much better representation of the stamina you will need in the real exam.",
           ]}
         />
-        <div className="mt-8 space-y-3">
-          <p className="font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
-            Past papers train the questions.
-          </p>
-          <p className="font-display text-2xl font-bold tracking-tight text-[#93C5FD] sm:text-3xl">
-            Mocks train the test.
-          </p>
-        </div>
       </SeoSection>
 
       <SeoSection heading="Built for the current ESAT format">
@@ -224,9 +211,8 @@ export default function EsatMockTestsPage() {
         <SeoProse
           className="mt-6"
           paragraphs={[
-            "NSAA and ENGAA papers remain excellent practice.",
-            "But they were written for older admissions tests with different structures and pacing.",
-            "Our mocks are designed around the current ESAT format and the stamina required to keep solving under pressure.",
+            "Of course, NSAA and ENGAA papers are still the best source for ESAT practice. But they were written for older admissions tests with different structures and fewer questions. Our mocks are designed around the current ESAT format and the stamina required to keep solving under pressure.",
+            "Many students have also reported seeing a lot more diagrams and question types in the ESAT compared to the NSAA / ENGAA papers, so we have tried our very best to write questions in this style.",
           ]}
         />
       </SeoSection>
@@ -234,32 +220,29 @@ export default function EsatMockTestsPage() {
       <SeoSection heading="Designed to feel harder.">
         <SeoProse
           paragraphs={[
-            "Students who sat the ESAT told us the same thing repeatedly: the real test felt tougher and more time-pressured than the material they had practised beforehand.",
-            "So we took that seriously.",
-            "Based on their feedback and our tutors' experience, these mocks have been deliberately curated to be demanding.",
+            "Students who sat the ESAT told us the same thing: the real test felt tougher and more time-pressured than the NSAA and ENGAA material they had practised beforehand. Based on their feedback and our tutors' experience, these mocks have been deliberately curated to be demanding.",
           ]}
         />
         <SeoList
           className="mt-6"
           items={[
-            "Hard questions.",
-            "Tight timing.",
-            "Convincing wrong answers.",
-            "Very little room for careless mistakes.",
+            "Difficult questions.",
+            "More information to process (more tedious questions).",
+            "More graph reading and diagrams.",
           ]}
         />
         <SeoProse
           className="mt-6"
           paragraphs={[
-            "The idea is simple: if you can stay composed here, the real ESAT should feel less intimidating.",
-            "We would much rather expose your weaknesses during Mock 2 than on test day.",
+            "If you can stay composed doing our mocks, the real ESAT should feel less intimidating.",
+            "Expose your weaknesses today rather than on test day.",
           ]}
         />
       </SeoSection>
 
       <SeoSection
-        heading={`${TOTAL_ESAT_MOCK_QUESTION_COUNT} unseen questions.`}
-        lead={`There are ${TOTAL_ESAT_MOCK_COUNT} complete mocks across the five ESAT modules.`}
+        heading={`${TOTAL_ESAT_MOCK_QUESTION_COUNT} new questions.`}
+        lead={`There are ${TOTAL_ESAT_MOCK_COUNT} complete mocks across the five ESAT modules, with completely original questions you won't find anywhere else.`}
       >
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {ESAT_MOCK_MODULES.map((module) => (
@@ -282,11 +265,9 @@ export default function EsatMockTestsPage() {
       <SeoSection heading="Not recycled past-paper questions.">
         <SeoProse
           paragraphs={[
-            "You can only redo the same material so many times.",
-            "These questions were handwritten and curated by us specifically for ESAT practice.",
-            "They are not simply NSAA or ENGAA questions rearranged into a new paper.",
-            "Every mock is deliberately assembled around ESAT-style reasoning, realistic topic coverage, convincing distractors, time pressure, question ordering, difficulty progression and overall paper stamina.",
-            "The aim is simple: give you material you haven't already seen.",
+            "You can only redo the same material so many times, but these questions were handwritten and curated by us specifically for ESAT practice.",
+            "They are not NSAA or ENGAA questions. Every mock is deliberately assembled around ESAT-style reasoning, realistic topic coverage, convincing distractors, time pressure, question ordering, difficulty progression and overall paper stamina.",
+            "We aim to give you material you haven't already seen.",
           ]}
         />
       </SeoSection>
@@ -297,47 +278,7 @@ export default function EsatMockTestsPage() {
             "Our former students consistently told us that the real ESAT felt harder and more time-pressured than the historical NSAA and ENGAA material they used to prepare.",
             "Our tutors reported the same problem: old papers are excellent practice, but they do not always recreate the pressure, pacing and stamina demanded by the current ESAT.",
             "So we designed our mocks around that gap.",
-            "Using feedback from students who have sat the ESAT, alongside our tutors' experience, we have handwritten, reviewed and curated each mock to test sustained performance across all 27 questions, aggressive time pressure, convincing distractors, careful reading, unfamiliar problem solving, pacing and question selection, and staying accurate when tired.",
-            "The goal isn't to predict the exact questions you'll see. It's to make sure the real test doesn't feel like the first time you've experienced that level of pressure.",
-          ]}
-        />
-      </SeoSection>
-
-      <SeoSection heading="The bit practice sets don't test: stamina.">
-        <SeoProse
-          paragraphs={[
-            "Getting one difficult question right is one skill.",
-            "Getting question 24 right after 35 minutes of calculations, diagrams and decision-making is another.",
-            "By the end of a real module, you may be rushing, second-guessing yourself, making arithmetic mistakes, rereading simple questions, or spending too long on one problem.",
-            "That isn't separate from the ESAT. That is part of the ESAT.",
-          ]}
-        />
-        <p className="mt-6 font-display text-xl font-bold tracking-tight text-white sm:text-2xl">
-          So train it.
-        </p>
-      </SeoSection>
-
-      <SeoSection heading="Five mocks. Five chances to improve.">
-        <ol className="space-y-3">
-          {MOCK_PROGRESSION.map((step) => (
-            <li
-              key={step.mock}
-              className="flex flex-col gap-1 rounded-2xl bg-white/[0.04] px-4 py-3 sm:flex-row sm:items-baseline sm:gap-4"
-            >
-              <span className="shrink-0 font-semibold text-white">
-                {step.mock}
-              </span>
-              <span className="text-sm leading-relaxed text-[#94A3B8] sm:text-base">
-                {step.focus}
-              </span>
-            </li>
-          ))}
-        </ol>
-        <SeoProse
-          className="mt-6"
-          paragraphs={[
-            "Don't burn through all five in one weekend.",
-            "The value comes from what you do between them.",
+            "Using feedback from 300+ students who have sat the ESAT, alongside our tutors' experience, we have handwritten, reviewed and curated each mock to test sustained performance across all 27 questions, aggressive time pressure, convincing distractors, careful reading, unfamiliar problem solving, pacing and question selection, and staying accurate when tired.",
           ]}
         />
       </SeoSection>
@@ -365,67 +306,25 @@ export default function EsatMockTestsPage() {
         </HighlightBox>
       </SeoSection>
 
-      <SeoSection heading="The questions you get wrong are the useful ones.">
-        <SeoProse
-          paragraphs={[
-            "A mock where you score 27/27 feels good.",
-            "A mock that discovers three weaknesses you didn't know you had may be more useful.",
-            "You would rather discover them here than on test day.",
-          ]}
-        />
-      </SeoSection>
-
-      <SeoSection heading="Already completed the past papers?">
-        <SeoProse
-          paragraphs={[
-            "Good. You should.",
-            "Official and historical material should be a major part of your preparation.",
-            "But once you have worked through it properly, repeatedly recycling familiar questions becomes less representative.",
-            "That is where these mocks fit.",
-            "Past papers first. Unseen mocks next.",
-          ]}
-        />
-        <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
-          Start with the{" "}
-          <SeoTextLink href={SEO_ROUTES.pastPapers}>
-            ESAT past papers library
-          </SeoTextLink>{" "}
-          and the{" "}
-          <SeoTextLink href={SEO_ROUTES.pastPapersGuide}>
-            past-paper guide
-          </SeoTextLink>
-          , then return here for full-length mocks.
-        </p>
-      </SeoSection>
-
-      <SeoSection heading="Try one under proper conditions.">
-        <SeoProse
-          paragraphs={[
-            'Not while watching YouTube. Not with your calculator beside you. Not with unlimited time because "it\'s only practice."',
-            "Set 40 minutes. Use scrap paper. Put your phone away. Start the timer.",
-            "And see where you actually are.",
-          ]}
-        />
-        <SeoCtaRow className="mt-7">
-          <SeoCta href={`#${SELECTOR_ID}`} placement="conditions">
-            Start a free ESAT mock
-          </SeoCta>
-          <SeoCta
-            href={APP_ROUTES.scoreConverter}
-            variant="quiet"
-            placement="conditions"
-          >
-            Score converter
-          </SeoCta>
-          <SeoCta
-            href={SEO_ROUTES.testDay}
-            variant="quiet"
-            placement="conditions"
-          >
-            Test-day guide
-          </SeoCta>
-        </SeoCtaRow>
-      </SeoSection>
+      <SeoCtaRow className="mt-2">
+        <SeoCta href={`#${SELECTOR_ID}`} placement="conditions">
+          Start a free ESAT mock
+        </SeoCta>
+        <SeoCta
+          href={APP_ROUTES.scoreConverter}
+          variant="quiet"
+          placement="conditions"
+        >
+          Score converter
+        </SeoCta>
+        <SeoCta
+          href={SEO_ROUTES.testDay}
+          variant="quiet"
+          placement="conditions"
+        >
+          Test-day guide
+        </SeoCta>
+      </SeoCtaRow>
     </SeoPageLayout>
   );
 }
