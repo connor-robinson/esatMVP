@@ -41,6 +41,12 @@ const SPACE_GROTESK_700 = path.join(
   "fonts",
   "space-grotesk-700.woff2",
 );
+const SPACE_GROTESK_TTF = path.join(
+  ROOT,
+  "public",
+  "fonts",
+  "SpaceGrotesk-Medium.ttf",
+);
 const KATEX_CSS = path.join(
   ROOT,
   "node_modules",
@@ -51,6 +57,8 @@ const KATEX_CSS = path.join(
 
 /** Running-header brand / subject size (pt). */
 const BRAND_FONT_PT = 10;
+/** A4 content inset — must match `@page` left/right margin (mm). */
+const PAGE_MARGIN_MM = 16;
 
 const SUBJECT_TO_CATALOG: Record<
   MockBuilderSubject,
@@ -167,48 +175,23 @@ function escapeHtml(text: string): string {
 }
 
 /**
- * Prefer exam-style fractions in inline math: same digit size as surrounding
- * text, taller vertically (TeX `\displaystyle` + `\dfrac`), matching the
- * in-app KaTeX hook.
+ * Prefer exam-style fractions in inline math via `\dfrac` (text-size digits).
+ * Do NOT wrap in `\displaystyle` — that inflates radicals/operators vs body text.
  */
-function withInlineDisplayStyle(math: string): string {
-  let next = math;
-  // \dfrac keeps numerator/denominator at text size (not script size).
-  next = next.replace(/(?<![a-zA-Z])\\frac(?![a-zA-Z])/g, "\\dfrac");
-  const trimmed = next.trimStart();
-  if (
-    /^\\(?:displaystyle|textstyle|scriptstyle|scriptscriptstyle)(?![A-Za-z])/.test(
-      trimmed,
-    )
-  ) {
-    return next;
-  }
-  return `\\displaystyle ${next}`;
-}
-
-/**
- * Chromium's PDF engine mis-clips KaTeX's 400em-wide sqrt SVGs inside
- * `.hide-tail`, leaving only the vinculum. Match SVG width to the visible
- * min-width so the radical hook stays in frame.
- */
-function fixKatexSqrtSvgWidths(html: string): string {
-  return html.replace(
-    /(<span class="[^"]*hide-tail[^"]*" style="[^"]*?min-width:([0-9.]+)em[^"]*"[^>]*>\s*<svg\b[^>]*?)\bwidth="400em"/g,
-    `$1width="$2em"`,
-  );
+function withInlineExamFractions(math: string): string {
+  return math.replace(/(?<![a-zA-Z])\\frac(?![a-zA-Z])/g, "\\dfrac");
 }
 
 function renderKatex(tex: string, displayMode: boolean): string {
   try {
-    const math = displayMode ? tex : withInlineDisplayStyle(tex);
-    const html = katex.renderToString(math, {
+    const math = displayMode ? tex : withInlineExamFractions(tex);
+    return katex.renderToString(math, {
       displayMode,
       throwOnError: false,
       strict: "ignore",
       // Slightly thicker rules so frac/sqrt lines survive print rasterisation.
       minRuleThickness: 0.05,
     });
-    return fixKatexSqrtSvgWidths(html);
   } catch {
     return `<code>${escapeHtml(tex)}</code>`;
   }
@@ -347,7 +330,10 @@ function renderRichContent(raw: string): string {
 }
 
 function paperCss(): string {
-  const katexCss = fs.readFileSync(KATEX_CSS, "utf8");
+  // Drop KaTeX webfonts so math glyphs use the same Arial stack as body text.
+  const katexCss = fs
+    .readFileSync(KATEX_CSS, "utf8")
+    .replace(/@font-face\{.*?\}/g, "");
   return `
 ${katexCss}
 @font-face {
@@ -362,7 +348,7 @@ ${katexCss}
   font-weight: 700;
   font-style: normal;
 }
-@page { size: A4; margin: 14mm 16mm 16mm 16mm; }
+@page { size: A4; margin: 14mm ${PAGE_MARGIN_MM}mm 16mm ${PAGE_MARGIN_MM}mm; }
 * { box-sizing: border-box; }
 html, body {
   margin: 0; padding: 0;
@@ -371,50 +357,7 @@ html, body {
   background: #fff;
   -webkit-print-color-adjust: exact; print-color-adjust: exact;
 }
-body.has-running-header {
-  padding-top: 12mm;
-}
-/* Repeats on every printed page (Chromium PDF). Header brand uses Space Grotesk only. */
-.page-running-header {
-  position: fixed;
-  top: 5mm;
-  left: 16mm;
-  right: 16mm;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  height: 7mm;
-  z-index: 20;
-  pointer-events: none;
-}
-.page-running-header-brand {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 3.2mm;
-}
-.page-running-header-brand img {
-  display: block;
-  height: ${BRAND_FONT_PT * 1.05}pt;
-  width: auto;
-}
-.page-running-header-brand span {
-  font-family: "Space Grotesk", Arial, sans-serif;
-  font-weight: 500;
-  font-size: ${BRAND_FONT_PT}pt;
-  line-height: 1;
-  letter-spacing: 0.02em;
-  color: #000;
-  display: flex;
-  align-items: center;
-}
-.page-running-header-subject {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: ${BRAND_FONT_PT}pt;
-  line-height: 1;
-  color: #000;
-}
+/* Running headers are stamped with PyMuPDF (CSS fixed is unreliable in Chromium PDF). */
 .page-cover, .page-blank, .page-part { page-break-after: always; }
 .cover-brand {
   display: flex;
@@ -477,23 +420,75 @@ body.has-running-header {
 .diagram img, .diagram > svg {
   display: block; margin: 0 auto; max-width: 84mm; max-height: 64mm; width: auto; height: auto;
 }
+/* KaTeX default size is 1.21em; 0.95em optically matches Arial body text. */
+.katex {
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 0.95em !important;
+  font-weight: normal !important;
+  line-height: 1.2 !important;
+}
+.katex .mathnormal,
+.katex .mathit,
+.katex .textit {
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-style: italic !important;
+}
+.katex .mathrm,
+.katex .textrm,
+.katex .textup,
+.katex .mathbf,
+.katex .textbf,
+.katex .mathsf,
+.katex .textsf,
+.katex .mathtt,
+.katex .texttt,
+.katex .mord,
+.katex .mbin,
+.katex .mrel,
+.katex .mopen,
+.katex .mclose,
+.katex .mpunct,
+.katex .minner {
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+/* Fill-only: stroking KaTeX stretchy paths splits radical from vinculum. */
 .katex svg {
   fill: currentColor;
-  stroke: currentColor;
-  max-width: none;
-  max-height: none;
-  width: auto;
-  height: inherit;
+  stroke: none !important;
+  max-width: none !important;
+  max-height: none !important;
   margin: 0;
   display: block;
 }
-.katex .mfrac .frac-line,
-.katex .overline .overline-line,
-.katex .underline .underline-line,
-.katex .hline,
-.katex .hdashline,
-.katex .rule {
-  min-height: 0.04em;
+.katex .hide-tail {
+  overflow: hidden;
+  max-width: none;
+}
+/* PDF-safe square roots: one stretched SVG (hook + bar) over the radicand. */
+.css-sqrt {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+  vertical-align: baseline;
+  padding: 0.08em 0.12em 0.02em 0.5em;
+  line-height: 1.12;
+}
+.css-sqrt-sym {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0;
+}
+.css-sqrt-inner {
+  position: relative;
+  z-index: 1;
+  line-height: 1.15;
 }
 .md-table-wrap { margin: 3mm 0 4mm; overflow: visible; }
 .md-table {
@@ -564,19 +559,6 @@ function questionHtml(q: PdfQuestion): string {
 </article>`;
 }
 
-function runningHeaderHtml(paper: PdfPaper): string {
-  const logo = LOGO_MARK_BLACK_DATA_URI
-    ? `<img src="${LOGO_MARK_BLACK_DATA_URI}" alt=""/>`
-    : "";
-  return `<header class="page-running-header" aria-hidden="true">
-  <div class="page-running-header-brand">
-    ${logo}
-    <span>ESAT CAMP</span>
-  </div>
-  <span class="page-running-header-subject">${escapeHtml(paper.header)}</span>
-</header>`;
-}
-
 function paperFileStem(paper: PdfPaper): string {
   return `ESAT CAMP ${paper.subject} Mock ${paper.mockLetter}`;
 }
@@ -626,8 +608,7 @@ function buildQuestionsHtml(paper: PdfPaper): string {
   return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"/>
 <title>${escapeHtml(paperFileStem(paper))} — Questions</title>
-<style>${paperCss()}</style></head><body class="has-running-header">
-${runningHeaderHtml(paper)}
+<style>${paperCss()}</style></head><body>
 <section>${paper.questions.map(questionHtml).join("\n")}</section>
 </body></html>`;
 }
@@ -642,8 +623,7 @@ function buildAnswerKeyHtml(paper: PdfPaper): string {
   return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"/>
 <title>${escapeHtml(paperFileStem(paper))} Answer Key</title>
-<style>${paperCss()}</style></head><body class="has-running-header">
-${runningHeaderHtml(paper)}
+<style>${paperCss()}</style></head><body>
 <div class="key-wrap">
   <div class="key-title">
     <div class="key-title-main">ESAT CAMP MOCK ${escapeHtml(paper.mockLetter)}</div>
@@ -657,6 +637,50 @@ ${runningHeaderHtml(paper)}
 </body></html>`;
 }
 
+/**
+ * Replace KaTeX sqrt SVG with one stretched <img> covering hook + vinculum.
+ * object-fit:fill keeps the bar joined to the hook across any radicand width.
+ */
+async function fixKatexSqrtsInPage(
+  page: Awaited<ReturnType<Awaited<ReturnType<typeof chromium.launch>>["newPage"]>>,
+): Promise<void> {
+  await page.evaluate(() => {
+    // Hook ends at (28, 6); bar runs from there to the right edge.
+    const radicalSvg =
+      "data:image/svg+xml;charset=utf-8," +
+      encodeURIComponent(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" preserveAspectRatio="none">' +
+          '<path d="M3 23 L11 35 L27 9 H117" fill="none" stroke="#000" ' +
+          'stroke-width="2.4" stroke-linecap="square" stroke-linejoin="miter"/>' +
+          "</svg>",
+      );
+
+    document.querySelectorAll(".katex .mord.sqrt").forEach((sqrtEl) => {
+      const radicand = sqrtEl.querySelector(".svg-align > .mord");
+      if (!radicand) return;
+      const content =
+        radicand.querySelector(":scope > .mord") || radicand;
+      const wrap = document.createElement("span");
+      wrap.className = "css-sqrt";
+      const img = document.createElement("img");
+      img.className = "css-sqrt-sym";
+      img.src = radicalSvg;
+      img.alt = "";
+      img.setAttribute("aria-hidden", "true");
+      const inner = document.createElement("span");
+      inner.className = "css-sqrt-inner";
+      inner.innerHTML = content.innerHTML;
+      inner.querySelectorAll<HTMLElement>("[style]").forEach((el) => {
+        el.style.paddingLeft = "0";
+        el.style.marginLeft = "0";
+      });
+      wrap.appendChild(img);
+      wrap.appendChild(inner);
+      sqrtEl.replaceWith(wrap);
+    });
+  });
+}
+
 async function htmlToPdf(
   html: string,
   outPath: string,
@@ -666,6 +690,7 @@ async function htmlToPdf(
   try {
     await page.setContent(html, { waitUntil: "networkidle" });
     await page.emulateMedia({ media: "print" });
+    await fixKatexSqrtsInPage(page);
     fs.mkdirSync(path.dirname(outPath), { recursive: true });
     await page.pdf({
       path: outPath,
@@ -700,17 +725,45 @@ out.close()
   }
 }
 
+/** Stamp running header + page numbers. Header aligns to each page's content edges. */
 function annotatePaperPdf(
   pdfPath: string,
   subject: string,
   frontMatterPages: number,
-  _logoPath: string,
+  logoPath: string,
 ): void {
-  // Brand header is rendered in HTML (Space Grotesk). Only stamp page numbers.
   const script = `
-import fitz, sys
-path, front = sys.argv[1], int(sys.argv[2])
+import fitz, sys, os
+path, subject, front, logo, font_path, margin_mm, brand_pt = sys.argv[1:8]
+front = int(front)
+margin_mm = float(margin_mm)
+brand_pt = float(brand_pt)
 doc = fitz.open(path)
+fallback_margin = margin_mm * 72 / 25.4
+logo_h = brand_pt * 1.15
+gap = 2.0 * 72 / 25.4
+header_top = 5.5 * 72 / 25.4
+
+def content_x_bounds(page, fallback_left, fallback_right):
+    """Use real text/image edges so the header matches question start/end."""
+    left, right = None, None
+    footer_y = page.rect.height - 40
+    for block in page.get_text("dict").get("blocks", []):
+        bbox = block.get("bbox")
+        if not bbox:
+            continue
+        x0, y0, x1, y1 = bbox
+        if y0 > footer_y or y1 < 12:
+            continue
+        # Skip tiny noise
+        if x1 - x0 < 1 or y1 - y0 < 1:
+            continue
+        left = x0 if left is None else min(left, x0)
+        right = x1 if right is None else max(right, x1)
+    if left is None or right is None or right - left < 100:
+        return fallback_left, fallback_right
+    return left, right
+
 for i, page in enumerate(doc):
     rect = page.rect
     page.insert_text(
@@ -720,15 +773,57 @@ for i, page in enumerate(doc):
         fontname="helv",
         color=(0, 0, 0),
     )
+    if i < front:
+        continue
+    left, right = content_x_bounds(page, fallback_margin, rect.width - fallback_margin)
+    if os.path.isfile(logo):
+        img = fitz.open(logo)
+        try:
+            pix = img[0]
+            aspect = pix.rect.width / max(pix.rect.height, 1)
+        finally:
+            img.close()
+        logo_w = logo_h * aspect
+        logo_rect = fitz.Rect(left, header_top, left + logo_w, header_top + logo_h)
+        page.insert_image(logo_rect, filename=logo, keep_proportion=True)
+        text_x = left + logo_w + gap
+    else:
+        text_x = left
+    page.insert_font(fontname="spaceg", fontfile=font_path)
+    brand_baseline = header_top + logo_h * 0.78
+    page.insert_text(
+        (text_x, brand_baseline),
+        "ESAT CAMP",
+        fontsize=brand_pt,
+        fontname="spaceg",
+        color=(0, 0, 0),
+    )
+    subject_w = fitz.get_text_length(subject, fontname="helv", fontsize=brand_pt)
+    page.insert_text(
+        (right - subject_w, brand_baseline),
+        subject,
+        fontsize=brand_pt,
+        fontname="helv",
+        color=(0, 0, 0),
+    )
 out = path + ".annotated.pdf"
 doc.save(out, garbage=3, deflate=True)
 doc.close()
-import os
 os.replace(out, path)
 `;
   const result = spawnSync(
     "python",
-    ["-c", script, pdfPath, String(frontMatterPages)],
+    [
+      "-c",
+      script,
+      pdfPath,
+      subject,
+      String(frontMatterPages),
+      logoPath,
+      SPACE_GROTESK_TTF,
+      String(PAGE_MARGIN_MM),
+      String(BRAND_FONT_PT),
+    ],
     { encoding: "utf8" },
   );
   if (result.status !== 0) {
@@ -738,10 +833,13 @@ os.replace(out, path)
   }
 }
 
-function annotateAnswerKeyPdf(pdfPath: string, _logoPath: string): void {
-  // Header is HTML; no extra stamp needed on answer keys.
-  void pdfPath;
-  void _logoPath;
+function annotateAnswerKeyPdf(
+  pdfPath: string,
+  subject: string,
+  logoPath: string,
+): void {
+  // Same header stamp; no front-matter skip (every page gets the header).
+  annotatePaperPdf(pdfPath, subject, 0, logoPath);
 }
 
 function toPdfPaper(
@@ -841,6 +939,12 @@ async function main() {
     );
     process.exit(1);
   }
+  if (!fs.existsSync(SPACE_GROTESK_TTF)) {
+    console.error(
+      "Missing SpaceGrotesk-Medium.ttf in public/fonts (needed for PDF headers)",
+    );
+    process.exit(1);
+  }
   SPACE_GROTESK_500_DATA_URI = fileToDataUri(SPACE_GROTESK_500);
   SPACE_GROTESK_700_DATA_URI = fileToDataUri(SPACE_GROTESK_700);
 
@@ -893,7 +997,7 @@ async function main() {
       mergePdfs([frontPath, questionsPath], paperPath);
       annotatePaperPdf(paperPath, paper.header, 3, logoPath);
       await htmlToPdf(buildAnswerKeyHtml(paper), keyPath, browser);
-      annotateAnswerKeyPdf(keyPath, logoPath);
+      annotateAnswerKeyPdf(keyPath, paper.header, logoPath);
     }
   } finally {
     await browser.close();
