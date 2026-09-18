@@ -50,6 +50,8 @@ interface QuestionBankSessionResultsProps {
   showUpgradeBanner?: boolean;
   showSignInBanner?: boolean;
   signInRedirectTo?: string;
+  /** Optional jump into per-question review from analytics Mark. */
+  onReviewQuestion?: (questionId: string) => void;
 }
 
 const resultsCard = 'rounded-organic-lg bg-surface-elevated';
