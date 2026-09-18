@@ -15,21 +15,18 @@ export const MISTAKES_PAPER_VARIANT = "Mistakes review";
 export const MISTAKES_SESSION_PREFIX = "[Mistakes]";
 export const MISTAKES_PAPER_NAME = "OTHER" as const;
 
-export type MistakesPoolMode =
+export type MistakesPoolMode = "unreviewed" | "most_missed" | "shuffle";
+
+/** @deprecated legacy mode ids still accepted by selectMistakeItems */
+export type MistakesPoolModeLegacy =
+  | MistakesPoolMode
   | "untouched"
   | "repeat_offenders"
-  | "cold_cases"
-  | "bounce_backs"
   | "lucky_dip";
 
-export type MistakesExamFilter =
-  | "ALL"
-  | "ESAT"
-  | "TMUA"
-  | "NSAA"
-  | "ENGAA"
-  | "PAT"
-  | "MAT";
+export type MistakesExamFilter = "ALL" | "ENGAA" | "NSAA" | "TMUA";
+
+export const MISTAKES_SUPPORTED_EXAMS = ["ENGAA", "NSAA", "TMUA"] as const;
 
 export const MISTAKES_POOL_OPTIONS: Array<{
   id: MistakesPoolMode;
@@ -37,45 +34,50 @@ export const MISTAKES_POOL_OPTIONS: Array<{
   description: string;
 }> = [
   {
-    id: "untouched",
-    label: "Untouched",
-    description:
-      "Skip anything you've already opened in Mistakes. Recycles only when that list runs dry.",
+    id: "unreviewed",
+    label: "Unreviewed",
+    description: "Not opened in Mistakes yet.",
   },
   {
-    id: "repeat_offenders",
-    label: "Repeat offenders",
-    description:
-      "Highest miss count first — the questions that keep getting you.",
+    id: "most_missed",
+    label: "Most missed",
+    description: "Highest wrong count first.",
   },
   {
-    id: "cold_cases",
-    label: "Cold cases",
-    description:
-      "Longest since you last missed them — memory that may be fading.",
-  },
-  {
-    id: "bounce_backs",
-    label: "Bounce-backs",
-    description:
-      "You reviewed them in Mistakes and still got them wrong last time.",
-  },
-  {
-    id: "lucky_dip",
-    label: "Lucky dip",
-    description: "Random draw from every incorrect past-paper question.",
+    id: "shuffle",
+    label: "Shuffle",
+    description: "Random from the full pool.",
   },
 ];
 
 export const MISTAKES_EXAM_FILTERS: MistakesExamFilter[] = [
   "ALL",
-  "ESAT",
-  "TMUA",
-  "NSAA",
   "ENGAA",
-  "PAT",
-  "MAT",
+  "NSAA",
+  "TMUA",
 ];
+
+export function isMistakesSupportedExam(examName: string): boolean {
+  const upper = examName.trim().toUpperCase();
+  return (MISTAKES_SUPPORTED_EXAMS as readonly string[]).includes(upper);
+}
+
+export function normalizeMistakesPoolMode(
+  mode: string | null | undefined,
+): MistakesPoolMode {
+  switch (mode) {
+    case "most_missed":
+    case "repeat_offenders":
+      return "most_missed";
+    case "shuffle":
+    case "lucky_dip":
+      return "shuffle";
+    case "unreviewed":
+    case "untouched":
+    default:
+      return "unreviewed";
+  }
+}
 
 export type MistakeHistoryEvent = {
   at: number;
@@ -112,7 +114,6 @@ export type MistakeQuestionPayload = MistakePoolItem & {
 export type MistakesSummary = {
   totalIncorrect: number;
   untouched: number;
-  bounceBacks: number;
   byExam: Record<string, number>;
 };
 
@@ -410,8 +411,10 @@ export function aggregateMistakePool(
     }
   }
 
-  // Keep only questions that were wrong at least once (paper or mistakes)
-  const items = [...map.values()].filter((item) => item.timesWrong > 0);
+  // Keep only ENGAA / NSAA / TMUA questions wrong at least once
+  const items = [...map.values()].filter(
+    (item) => item.timesWrong > 0 && isMistakesSupportedExam(item.examName),
+  );
   for (const item of items) {
     item.history.sort((a, b) => b.at - a.at);
     item.neverReviewed = item.timesSeenInMistakes === 0;
@@ -420,18 +423,22 @@ export function aggregateMistakePool(
 }
 
 export function summarizeMistakePool(items: MistakePoolItem[]): MistakesSummary {
-  const byExam: Record<string, number> = {};
+  const byExam: Record<string, number> = {
+    ENGAA: 0,
+    NSAA: 0,
+    TMUA: 0,
+  };
   let untouched = 0;
-  let bounceBacks = 0;
   for (const item of items) {
-    byExam[item.examName] = (byExam[item.examName] || 0) + 1;
+    const exam = item.examName.toUpperCase();
+    if (isMistakesSupportedExam(exam)) {
+      byExam[exam] = (byExam[exam] || 0) + 1;
+    }
     if (item.neverReviewed) untouched += 1;
-    if (item.lastMistakesOutcome === "wrong") bounceBacks += 1;
   }
   return {
     totalIncorrect: items.length,
     untouched,
-    bounceBacks,
     byExam,
   };
 }
@@ -461,7 +468,7 @@ function filterByExam(
 export function selectMistakeItems(
   items: MistakePoolItem[],
   opts: {
-    mode: MistakesPoolMode;
+    mode: MistakesPoolMode | MistakesPoolModeLegacy;
     exam: MistakesExamFilter;
     count: number;
   },
@@ -470,29 +477,15 @@ export function selectMistakeItems(
   if (filtered.length === 0 || opts.count <= 0) return [];
 
   const take = Math.min(opts.count, filtered.length);
+  const mode = normalizeMistakesPoolMode(opts.mode);
 
-  if (opts.mode === "lucky_dip") {
+  if (mode === "shuffle") {
     return shuffleInPlace([...filtered]).slice(0, take);
   }
 
-  if (opts.mode === "bounce_backs") {
-    const sticky = filtered.filter(
-      (item) => item.lastMistakesOutcome === "wrong",
-    );
-    const rest = filtered.filter(
-      (item) => item.lastMistakesOutcome !== "wrong",
-    );
-    const ordered = [
-      ...shuffleInPlace(sticky),
-      ...shuffleInPlace(rest),
-    ];
-    return ordered.slice(0, take);
-  }
-
-  if (opts.mode === "repeat_offenders") {
+  if (mode === "most_missed") {
     const sorted = [...filtered].sort((a, b) => {
       if (b.timesWrong !== a.timesWrong) return b.timesWrong - a.timesWrong;
-      // Prefer untouched when tied
       if (a.neverReviewed !== b.neverReviewed) {
         return a.neverReviewed ? -1 : 1;
       }
@@ -501,15 +494,7 @@ export function selectMistakeItems(
     return sorted.slice(0, take);
   }
 
-  if (opts.mode === "cold_cases") {
-    const sorted = [...filtered].sort((a, b) => {
-      if (a.lastWrongAt !== b.lastWrongAt) return a.lastWrongAt - b.lastWrongAt;
-      return b.timesWrong - a.timesWrong;
-    });
-    return sorted.slice(0, take);
-  }
-
-  // untouched (default): never-reviewed first, then recycle
+  // unreviewed: never-reviewed first, then recycle
   const fresh = shuffleInPlace(filtered.filter((i) => i.neverReviewed));
   const recycled = shuffleInPlace(filtered.filter((i) => !i.neverReviewed));
   return [...fresh, ...recycled].slice(0, take);
@@ -659,8 +644,10 @@ export function buildMistakesSessionPayload(opts: {
     };
   });
 
+  const resolvedMode = normalizeMistakesPoolMode(opts.mode);
   const modeLabel =
-    MISTAKES_POOL_OPTIONS.find((o) => o.id === opts.mode)?.label ?? opts.mode;
+    MISTAKES_POOL_OPTIONS.find((o) => o.id === resolvedMode)?.label ??
+    resolvedMode;
 
   return {
     id: opts.sessionId,
@@ -684,7 +671,7 @@ export function buildMistakesSessionPayload(opts: {
     correctFlags: answers.map((a) => a.isCorrect),
     guessedFlags: items.map(() => false),
     mistakeTags: items.map(() => "None"),
-    notes: `exam=${opts.exam};mode=${opts.mode}`,
+    notes: `exam=${opts.exam};mode=${resolvedMode}`,
     score: {
       correct: answers.filter((a) => a.isCorrect).length,
       total: items.length,
