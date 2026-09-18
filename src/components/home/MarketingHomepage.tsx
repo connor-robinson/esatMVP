@@ -810,6 +810,12 @@ export function MarketingHomepage({
             </p>
             <div className="flex flex-wrap items-center justify-center gap-6">
               <Link
+                href="/privacy"
+                className="text-xs text-[#94A3B8] transition-colors hover:text-white"
+              >
+                Privacy
+              </Link>
+              <Link
                 href="/cookie-policy"
                 className="text-xs text-[#94A3B8] transition-colors hover:text-white"
               >

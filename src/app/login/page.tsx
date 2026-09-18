@@ -361,7 +361,17 @@ export default function LoginPage() {
           ))}
         </div>
       }
-      footer="By continuing, you create or access an ESAT CAMP account."
+      footer={
+        <>
+          By continuing, you create or access an ESAT CAMP account.{" "}
+          <Link
+            href="/privacy"
+            className="text-text-muted underline-offset-2 hover:underline"
+          >
+            Privacy Policy
+          </Link>
+        </>
+      }
     >
       {error && !emailOpen ? (
         <div

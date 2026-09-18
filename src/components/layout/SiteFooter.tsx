@@ -26,6 +26,12 @@ export function SiteFooter() {
           className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2"
         >
           <Link
+            href="/privacy"
+            className="text-text-muted transition-colors hover:text-text"
+          >
+            Privacy
+          </Link>
+          <Link
             href="/cookie-policy"
             className="text-text-muted transition-colors hover:text-text"
           >

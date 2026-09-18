@@ -190,6 +190,15 @@ describe("rolled-back page metadata", () => {
     expect(metadata.robots).toEqual(NOINDEX_FOLLOW);
   });
 
+  it("marks /privacy as noindex, follow", () => {
+    const metadata = buildNoIndexMetadata({
+      title: "Privacy Policy | ESAT Camp",
+      description:
+        "How ESAT Camp collects, uses and protects account and usage information.",
+    });
+    expect(metadata.robots).toEqual(NOINDEX_FOLLOW);
+  });
+
   it("marks NSAA 2021 score-converter year page as noindex, follow", () => {
     const metadata = buildNoIndexMetadata({
       title: "NSAA 2021 Score Conversion",

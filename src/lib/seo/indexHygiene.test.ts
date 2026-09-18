@@ -234,10 +234,14 @@ describe("index hygiene: public pages stay indexable", () => {
     }
   });
 
-  it("marks rolled-back cookie-policy and NSAA year pages as noindex, follow", () => {
+  it("marks rolled-back cookie-policy, privacy and NSAA year pages as noindex, follow", () => {
     const cookiePolicy = readAppSource("cookie-policy", "page.tsx");
     expect(cookiePolicy).toContain("buildNoIndexMetadata");
     expect(cookiePolicy).not.toContain("buildSeoMetadata");
+
+    const privacy = readAppSource("privacy", "page.tsx");
+    expect(privacy).toContain("buildNoIndexMetadata");
+    expect(privacy).not.toContain("buildSeoMetadata");
 
     const nsaaYear = readAppSource(
       "tools",
@@ -362,6 +366,7 @@ describe("index hygiene: sitemap", () => {
     expect(urls).toContain(`${SITE_URL}${APP_ROUTES.scoreConverter}`);
     expect(urls).toContain(`${SITE_URL}/esat-no-calculator-practice`);
     expect(isPublicSitemapPath("/cookie-policy")).toBe(false);
+    expect(isPublicSitemapPath("/privacy")).toBe(false);
     expect(isPublicSitemapPath("/tools/score-converter/nsaa/2021")).toBe(false);
     expect(isPublicSitemapPath("/help")).toBe(false);
     expect(isPublicSitemapPath("/esat-breaks")).toBe(false);
